@@ -521,7 +521,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 	
 	@Override
 	public void onRemove(IContractPayment payment) {
-		Payment draftPayment = newPayment((IContractPayment) payment);
+		Payment draftPayment = newPayment(payment);
 		salaryDraft.addPayment(draftPayment);
 	}
 	
@@ -585,6 +585,12 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		undefVar.setPayment(newPayment(contractPayment));
 
 		salaryDraft.addUndefinedVariable(undefVar);
+	}
+
+	@Override
+	public void onRemove(IContractDeduction deduction) {
+		Deduction draftDeduction = newDeduction(deduction);
+		salaryDraft.addDeduction(draftDeduction);
 	}
 
 	@Override

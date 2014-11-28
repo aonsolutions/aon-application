@@ -41,6 +41,7 @@ import com.esferalia.aon.gwt.payroll.shared.UndefinedDeductionVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -369,7 +370,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	}
 
-
 	static interface Factory<T, V> {
 		T create(V v);
 	}
@@ -587,7 +587,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		@Override
 		public TextListBox create(Variable variable) {
-			TextListBox textListBox = new TextListBox(){
+			TextListBox textListBox = new TextListBox() {
 				@Override
 				public String getValue() {
 					return getValue(getSelectedIndex());
@@ -1600,11 +1600,11 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	@UiField
 	Label dbRemunerationLabel;
 	@UiField
-	ValueLabel cgcBaseLabel;
+	ValueTextBox cgcBaseLabel;
 	@UiField
 	Label dbCgcBaseLabel;
 	@UiField
-	ValueLabel cgpBaseLabel;
+	ValueTextBox cgpBaseLabel;
 	@UiField
 	Label dbCgpBaseLabel;
 	@UiField
@@ -1684,6 +1684,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	private Payment totalPayments = null;
 	private Payment totalLiquidPayment = null;
+	private Deduction cgcBaseDeduction = null;
+	private Deduction cgpBaseDeduction = null;
 
 	// managing the focus
 	private NewPaymentHandler newPaymentHandler;
@@ -1811,6 +1813,80 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		totalLiquidLabel
 				.setText(String.valueOf(NumberUtils.isNotValid(liquid) ? 0.00
 						: AON.round(liquid)));
+	}
+
+	@UiHandler("cgcBaseLabel")
+	void onCgcBaseChange(ChangeEvent event) {
+		String expression = cgcBaseLabel.getValue();
+
+		if (cgcBaseDeduction == null) {
+			cgcBaseDeduction = new Deduction();
+			cgcBaseDeduction.setScope(Scope.SALARY);
+			cgcBaseDeduction.setDescription("BASE_CGC");
+			cgcBaseDeduction.setType(Deduction.Type.OTHER);
+			cgcBaseDeduction.setSalaryType(salaryDraftObject.getType());
+		}
+
+		cgcBaseDeduction.setExpression("BASE_CGC = /*user*/ " + expression
+				+ "/**/;" + " BUILDER.setCgcBase(BASE_CGC);" + " REMOVE();");
+
+		salaryDraftObject.addDraftDeduction(cgcBaseDeduction);
+
+		salaryDraftObject.calculate(this);
+
+	}
+	@UiHandler("cgcBaseLabel")
+	void onCgcBaseBlur(BlurEvent event) {
+		cgcBaseLabel.setText(format(salaryDraftObject.getCgcBase()));
+	}
+
+	@UiHandler("cgcBaseLabel")
+	void onCgcBaseFocus(FocusEvent event) {
+		if (cgcBaseDeduction != null) {
+			cgcBaseLabel.setText(cgcBaseDeduction.getExpression());
+		} else {
+			Double cgcBase = salaryDraftObject.getCgcBase();
+			cgcBaseLabel
+					.setText(String.valueOf(NumberUtils.isNotValid(cgcBase) ? 0.00
+							: AON.round(cgcBase)));
+		}
+	}
+
+	@UiHandler("cgpBaseLabel")
+	void onCgpBaseChange(ChangeEvent event) {
+		String expression = cgpBaseLabel.getValue();
+
+		if (cgpBaseDeduction == null) {
+			cgpBaseDeduction = new Deduction();
+			cgpBaseDeduction.setScope(Scope.SALARY);
+			cgpBaseDeduction.setDescription("BASE_CGP");
+			cgpBaseDeduction.setType(Deduction.Type.OTHER);
+			cgpBaseDeduction.setSalaryType(salaryDraftObject.getType());
+		}
+		cgpBaseDeduction.setExpression("BASE_CGP = /*user*/ " + expression
+				+ "/**/;" + " BUILDER.setCgpBase(BASE_CGP);" + " REMOVE();");
+
+		salaryDraftObject.addDraftDeduction(cgpBaseDeduction);
+
+		salaryDraftObject.calculate(this);
+
+	}
+
+	@UiHandler("cgpBaseLabel")
+	void onCgpBaseBlur(BlurEvent event) {
+		cgpBaseLabel.setText(format(salaryDraftObject.getCgpBase()));
+	}
+
+	@UiHandler("cgpBaseLabel")
+	void onCgpBaseFocus(FocusEvent event) {
+		if (cgpBaseDeduction != null) {
+			cgpBaseLabel.setText(cgpBaseDeduction.getExpression());
+		} else {
+			Double cgpBase = salaryDraftObject.getCgpBase();
+			cgpBaseLabel
+					.setText(String.valueOf(NumberUtils.isNotValid(cgpBase) ? 0.00
+							: AON.round(cgpBase)));
+		}
 	}
 
 	@UiHandler("totalPaymentsLabel")
@@ -1993,27 +2069,29 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		dbCgcBaseLabel.setText(format(salaryDraftObject.getDbCgcBase()));
 		setDbStyleName(dbCgcBaseLabel, cgcBaseLabel);
 		Double rawCgcBase = salaryDraftObject.getRawCgcBase();
+		setWarnStyles(
+				cgcBaseLabel,
+				cgcBase != null && !cgcBase.equals(rawCgcBase),
+				"La Base por Contingecias Comunes "
+						+ format(rawCgcBase)
+						+ "\u20A0 ha sido "
+						+ (rawCgcBase > cgcBase ? "limitada al m\u00e1ximo permitido"
+								: "ampliada al m\u00ednimo obligatorio"));
 
-		if (cgcBase != null && !cgcBase.equals(rawCgcBase)) {
-			cgcBaseLabel.addStyleName(AON.AON_ICON_WARN);
-			cgcBaseLabel.addStyleName(AON.AON_PADDING_LEFT);
-			cgcBaseLabel
-					.setTitle("La Base por Contingecias Comunes "
-							+ format(rawCgcBase)
-							+ "\u20A0 ha sido "
-							+ (rawCgcBase > cgcBase ? "limitada al m\u00e1ximo permitido"
-									: "ampliada al m\u00ednimo obligatorio"));
-			//TODO : Too many literals here ???
-		} else {
-			cgcBaseLabel.removeStyleName(AON.AON_ICON_WARN);
-			cgcBaseLabel.removeStyleName(AON.AON_PADDING_LEFT);
-			cgcBaseLabel.setTitle("");
-		}
-
-		cgpBaseLabel.setText(format(salaryDraftObject.getCgpBase()),
-				displayChanges);
-		dbCgpBaseLabel.setText(format(salaryDraftObject.getDbCgpBase()));
+		Double cgpBase = salaryDraftObject.getCgpBase();
+		cgpBaseLabel.setText(format(cgpBase), displayChanges);
+		dbCgpBaseLabel.setText(format(cgpBase));
 		setDbStyleName(dbCgpBaseLabel, cgpBaseLabel);
+		Double rawCgpBase = salaryDraftObject.getRawCgpBase();
+		setWarnStyles(
+				cgpBaseLabel,
+				cgpBase != null && !cgpBase.equals(rawCgpBase),
+				"La Base por Accidentes de Trabajo y Enfermedades Profesionales  "
+						+ format(rawCgpBase)
+						+ "\u20A0 ha sido "
+						+ (rawCgpBase > cgpBase ? "limitada al m\u00e1ximo permitido"
+								: "ampliada al m\u00ednimo obligatorio"));
+
 		irpfBaseLabel.setText(format(salaryDraftObject.getIrpfBase()),
 				displayChanges);
 		dbIrpfBaseLabel.setText(format(salaryDraftObject.getDbIrpfBase()));
@@ -2482,11 +2560,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 				PaymentChangeHandler<TextBox> handler = new PaymentChangeHandler<TextBox>(
 						payment);
-				dumpPayment(payment, paymentsTable.getRowCount(), getIconRowStyle(payment), handler);
+				dumpPayment(payment, paymentsTable.getRowCount(),
+						getIconRowStyle(payment), handler);
 
 				handlers.add(handler);
 
-			} else if ( payment.getId() != null ){
+			} else if (payment.getId() != null) {
 				int row = paymentsTable.getRowCount();
 				PaymentChangeHandler<TextBox> handler = new PaymentChangeHandler<TextBox>(
 						payment);
@@ -2495,11 +2574,10 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				handlers.add(handler);
 				addStyle(paymentsTable, row, styles[1]);
 
-
 			} else {
 				String styles[] = eventStyles.get(Event.Type.ERROR);
-				dumpDbItem(payment, paymentsTable.getRowCount(), styles[0], styles[1],
-						new RecoverPaymentHandler(payment), false);
+				dumpDbItem(payment, paymentsTable.getRowCount(), styles[0],
+						styles[1], new RecoverPaymentHandler(payment), false);
 			}
 		}
 
@@ -2637,11 +2715,18 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 					dumpItem(deduction, row++, getIconRowStyle(deduction),
 							new DeductionChangeHandler<TextBox>(deduction),
 							true);
-				else {
+				else if (deduction.getId() == null) {
 					String styles[] = eventStyles.get(Event.Type.ERROR);
 					dumpDbItem(deduction, row++, styles[0], styles[1],
 							new RecoverDeductionHandler(deduction), false);
 
+				}
+				else { 
+					//REMOVE() deductions
+					if ( isCgcBaseDeduction(deduction))
+						cgcBaseDeduction = deduction;
+					else if ( isCgpBaseDeduction(deduction))
+						cgpBaseDeduction = deduction;
 				}
 
 			}
@@ -2666,7 +2751,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			labelWidget = newPercentLabel(format(quote));
 			labelWidget.addStyleName(AON.AON_ICON_BONUS_SMALL);
 			labelWidget.getElement().getStyle().setPaddingRight(16, Unit.PX);
-			labelWidget.getElement().getStyle().setProperty("backgroundPosition", "center right");
+			labelWidget.getElement().getStyle()
+					.setProperty("backgroundPosition", "center right");
 		}
 
 		Button expandButton = null;
@@ -3493,7 +3579,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		return paymentsTable.getRowFormatter().getElement(idx);
 
 	}
-	
+
 	private Element showDeduction(Deduction deduction, String iconStyleName,
 			String textStyleName) {
 
@@ -3656,7 +3742,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		for (Variable var : salaryDraftObject.getContext())
 			if (StringUtils.equals(var.getName(), name))
 				return var;
-		
+
 		return null;
 	}
 
@@ -4072,16 +4158,33 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 						.format(childEnd);
 
 	}
-	
-	private static void addStyle(FlexTable table, int row , String style) {
+
+	private static void setWarnStyles(Widget cgcBaseLabel, boolean warn,
+			String title) {
+		cgcBaseLabel.setTitle(warn ? title : "");
+		setStyles(cgcBaseLabel, warn, AON.AON_ICON_WARN, AON.AON_PADDING_LEFT);
+	}
+
+	private static void setStyles(Widget widget, boolean add, String... styles) {
+		for (String style : styles)
+			widget.setStyleName(style, add);
+	}
+
+	private static void addStyle(FlexTable table, int row, String style) {
 		CellFormatter fomatter = table.getCellFormatter();
 		for (int col = 0; col < table.getCellCount(row); col++)
 			fomatter.addStyleName(row, col, style);
 	}
-	
-	private static <T extends Item<?>> boolean  isRemove(T item) {
+
+	private static <T extends Item<?>> boolean isRemove(T item) {
 		return StringUtils.equalsIgnoreCase("REMOVE()", item.getExpression());
 	}
 
-	
+	private static <T extends Item<?>> boolean isCgcBaseDeduction(T item) {
+		return StringUtils.equalsIgnoreCase("BASE_CGC", item.getDescription());
+	}
+
+	private static <T extends Item<?>> boolean isCgpBaseDeduction(T item) {
+		return StringUtils.equalsIgnoreCase("BASE_CGP", item.getDescription());
+	}
 }

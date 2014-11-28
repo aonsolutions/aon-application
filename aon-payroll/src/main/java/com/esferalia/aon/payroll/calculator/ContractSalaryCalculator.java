@@ -69,6 +69,8 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 		public void onCompileError(String variableName, String message);
 
+		public void onRemove(IContractDeduction payment);
+
 		public void onRemove(IContractPayment payment);
 
 		public void onCheckError(IContractPayment payment, String message);
@@ -180,7 +182,10 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 		salaryBuilder.createNewSalary();
 		salaryBuilder.setContract(contractSalaryCalculatorContext
 				.getSalaryProxy());
-
+		
+		
+		expressionContext.setVariable("BUILDER", salaryBuilder, start, end);
+		
 		fillEnterpriseData(contractSalaryCalculatorContext);
 		fillEmployeeData(contractSalaryCalculatorContext);
 		fillSalaryData(contractSalaryCalculatorContext);
@@ -890,6 +895,12 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 			for (int i = 0; i < variableNames.length; i++) {
 				listener.onInvalidData(bonus, variableNames[i], message);
 			}
+		}
+	}
+
+	private void onRemove(IContractDeduction deduction) {
+		if (listener != null) {
+			listener.onRemove(deduction);
 		}
 	}
 

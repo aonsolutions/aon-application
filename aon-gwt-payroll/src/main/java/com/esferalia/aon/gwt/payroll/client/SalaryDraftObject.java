@@ -86,7 +86,6 @@ public class SalaryDraftObject implements IContextProvider {
 				edit.undo();
 		}
 
-
 	}
 
 	class UndoableVariableEdit extends UndoableEdit<Variable> {
@@ -249,8 +248,8 @@ public class SalaryDraftObject implements IContextProvider {
 	public void calculate(final CalculateCallback callback) {
 
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
-		removeSalaryPart(salaryDraft);		
-		
+		removeSalaryPart(salaryDraft);
+
 		salaryDraft.setDraftLeaveIts(getDrafLeaveIts());
 
 		employeesServiceAsync.calculateSalaryDraft(salaryDraft,
@@ -435,6 +434,12 @@ public class SalaryDraftObject implements IContextProvider {
 		return salaryDraft.getRawCgcBase();
 	}
 
+	public Double getRawCgpBase() {
+		return salaryDraft.getRawCgcBase() 
+				+ salaryDraft.gethExtraBase()
+				+ salaryDraft.getNonHExtraBase();
+	}
+
 	public Double gethExtraBase() {
 		return salaryDraft.gethExtraBase();
 	}
@@ -536,7 +541,7 @@ public class SalaryDraftObject implements IContextProvider {
 				|| !isDraftPeriodSet(getDraftStartDate(), getDraftEndDate(),
 						salaryDraft);
 	}
-	
+
 	public List<Variable> getDrafContext() {
 		return salaryDraft.getDraftContext();
 	}
@@ -716,7 +721,7 @@ public class SalaryDraftObject implements IContextProvider {
 		twins.add(payment);
 
 		String name = payment.getName();
-		if ( StringUtils.isBlank(name))
+		if (StringUtils.isBlank(name))
 			return twins;
 
 		for (Payment p : salaryDraft.getPayments()) {
@@ -725,17 +730,17 @@ public class SalaryDraftObject implements IContextProvider {
 			if (StringUtils.equals(name, p.getName()))
 				twins.add(p);
 		}
-		
-		for( Variable var : salaryDraft.getContext() ) {
-			if (!( var instanceof UndefinedPaymentVariable ))
+
+		for (Variable var : salaryDraft.getContext()) {
+			if (!(var instanceof UndefinedPaymentVariable))
 				continue;
 			if (var.getScope().compareTo(Scope.AGREEMENT) > 0)
 				continue;
-			Payment p = ((UndefinedPaymentVariable)var).getPayment();
+			Payment p = ((UndefinedPaymentVariable) var).getPayment();
 			if (StringUtils.equals(name, p.getName()))
 				twins.add(p);
 		}
-		
+
 		return twins;
 	}
 
@@ -747,7 +752,7 @@ public class SalaryDraftObject implements IContextProvider {
 		}
 		undoManager.add(new CompositeUndoableEdit(edits));
 	}
-	
+
 	private List<ITDataPerson> getDrafLeaveIts() {
 		return dataObject.getDraftList(salaryDraft.getEmployee().getId());
 	}

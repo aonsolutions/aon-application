@@ -373,8 +373,8 @@
 												<g:Label styleName="{style.cell-label}">BASE TOTAL
 													COTIZ.</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
-													<e:ValueInlineHTML
-														changeDisplayStyleName="{style.value-changed}" ui:field="cgcBaseLabel">&nbsp; </e:ValueInlineHTML>
+													<e:ValueExpressionBox styleName="gwt-TextBox aon-nopadding aon-nomargin aon-text-center" visibleLength="9"
+														changeDisplayStyleName="{style.value-changed}" ui:field="cgcBaseLabel">&nbsp; </e:ValueExpressionBox>
 													<g:InlineHTML ui:field="dbCgcBaseLabel"
 														visible="false" />
 												</g:HTMLPanel>
@@ -403,8 +403,8 @@
 											<g:HTMLPanel>
 												<g:Label styleName="{style.cell-label}">BASE AT Y EP.</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
-													<e:ValueInlineHTML
-														changeDisplayStyleName="{style.value-changed}" ui:field="cgpBaseLabel">&nbsp; </e:ValueInlineHTML>
+													<e:ValueExpressionBox styleName="gwt-TextBox aon-nopadding aon-nomargin aon-text-center" visibleLength="9"
+														changeDisplayStyleName="{style.value-changed}" ui:field="cgpBaseLabel">&nbsp; </e:ValueExpressionBox>
 													<g:InlineHTML ui:field="dbCgpBaseLabel"
 														visible="false" />
 												</g:HTMLPanel>
