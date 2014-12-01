@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import com.esferalia.aon.gwt.common.shared.FiscalParameters;
 import com.esferalia.aon.gwt.fiscal.shared.Activity;
 import com.esferalia.aon.gwt.fiscal.shared.Enterprise;
-import com.esferalia.aon.gwt.fiscal.shared.Mod180;
-import com.esferalia.aon.gwt.fiscal.shared.Mod180Detail;
-import com.esferalia.aon.gwt.fiscal.shared.Mod180Receiver;
 import com.esferalia.aon.gwt.fiscal.shared.Mod190;
 import com.esferalia.aon.gwt.fiscal.shared.Mod190Detail;
 import com.esferalia.aon.gwt.fiscal.shared.Mod190Receiver;
@@ -15,6 +12,8 @@ import com.esferalia.aon.gwt.fiscal.shared.Mod303Results;
 import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390Detail;
+import com.esferalia.aon.occam.api.model.Mod180;
+import com.esferalia.aon.occam.api.model.Mod180Detail;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -52,21 +51,20 @@ public interface FiscalServiceAsync {
 	void getMod190Detail(Integer id, AsyncCallback<Mod190Receiver> callback);
 
 	// ---------------------------------------------------------------MODELO 180
-	void deleteMod180(Mod180 mod180, AsyncCallback<Void> callback);
+	void deleteMod180(String domainName, int domain, Mod180 mod180,
+			AsyncCallback<Void> callback);
 
-	void saveMod180(Mod180 mod180, AsyncCallback<Mod180> callback);
-
-	void saveMod180(Mod180 mod180, ArrayList<Mod180Receiver> perceptors,
+	void saveMod180(String domainName, int domain, Mod180 mod180,
 			AsyncCallback<Mod180> callback);
 
-	void getMod180s(int domain, AsyncCallback<ArrayList<Mod180>> callback);
+	void getMod180s(String domainName, int domain,
+			AsyncCallback<ArrayList<Mod180>> callback);
 
-	void getMod180(Integer id, AsyncCallback<Mod180> callback);
+	void getMod180(String domainName, int domain, Integer id,
+			AsyncCallback<Mod180> callback);
 
-	void getMod180DetailByMod180(int domain, int offset, int limit,
-			AsyncCallback<ArrayList<Mod180Detail>> callback);
-
-	void getMod180Detail(Integer id, AsyncCallback<Mod180Receiver> callback);
+	void getMod180Detail(String domainName, int domain, Integer id,
+			AsyncCallback<Mod180Detail> callback);
 
 	// ---------------------------------------------------------------MODELO 390
 	void getMod390Details(int domain, Integer year,

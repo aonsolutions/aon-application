@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.function.Function;
 
@@ -11,11 +12,14 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Mod180;
+import com.esferalia.aon.occam.api.model.Mod180Detail;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.AccountingImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
+import com.esferalia.aon.occam.impl.jooq.FiscalImpl;
 import com.esferalia.aon.occam.impl.jooq.SalaryImpl;
 
 public class AON {
@@ -30,6 +34,10 @@ public class AON {
 
 	private static ISalary getSalary() {
 		return new SalaryImpl();
+	}
+	
+	private static IFiscal getFiscal() {
+		return new FiscalImpl();
 	}
 
 	// ********************************************
@@ -153,4 +161,25 @@ public class AON {
 		return getAccounting().insertSalaryEntry(ctx, sae);
 	}
 
+	// ********************************************
+	// ********************************** COMMON **
+	// ********************************************
+
+	// ----------------------------------MODELO 180
+	public static ArrayList<Mod180> getMod180s(String domainName, int domainId) {
+		return getFiscal().getMod180s(AONContext.getAONContext(domainName, domainId),domainId);
+	}
+	public static Mod180 getMod180(String domainName, int domainId,Integer id) {
+		return getFiscal().getMod180(AONContext.getAONContext(domainName, domainId),id);
+	}
+	
+	public static Mod180 saveMod180(String domainName, int domainId,Mod180 mod180) {
+		return getFiscal().saveMod180(AONContext.getAONContext(domainName, domainId), mod180);
+	}
+	public static void deleteMod180(String domainName, int domainId,Mod180 mod180) {
+		getFiscal().deleteMod180(AONContext.getAONContext(domainName, domainId), mod180);
+	}
+	public static Mod180Detail getMod180Detail(String domainName, int domainId,Integer id) {
+		return getFiscal().getMod180Detail(AONContext.getAONContext(domainName, domainId),id);
+	}
 }

@@ -1,4 +1,4 @@
-package com.esferalia.aon.watson.util;
+package com.esferalia.aon.watson.server;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

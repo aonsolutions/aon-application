@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.sql.Connection;
-import java.util.ArrayList;
 
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.file.format.model.FileFiller;
@@ -17,12 +15,13 @@ import com.code.aon.file.tax.model.MOD180.MOD180Format;
 import com.code.aon.file.tax.model.MOD180.Receiver;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
-import com.esferalia.aon.gwt.fiscal.shared.Mod180;
-import com.esferalia.aon.gwt.fiscal.sql.SQLMod180;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Mod180;
+import com.esferalia.aon.occam.api.model.Mod180Detail;
 
 public class MOD180Writer {
 
-	public FileOutput createMOD180(Connection conn, Integer mod180, int year,
+	public FileOutput createMOD180(String domainName, int domainId, Integer mod180, int year,
 			Integer administration) throws AonSQLException {
 		try {
 			MOD180Format format = obtainFormat(year, administration);
@@ -33,7 +32,7 @@ public class MOD180Writer {
 								+ " en la administraci\u00F3n "
 								+ administration);
 			}
-			Deponent deponent = getDeponent(conn, mod180, format);
+			Deponent deponent = getDeponent(domainName,domainId, mod180, format);
 			
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;
@@ -66,9 +65,9 @@ public class MOD180Writer {
 		return f;
 	}
 
-	private Deponent getDeponent(Connection conn, Integer id,
+	private Deponent getDeponent(String domainName, int domainId, Integer id,
 			MOD180Format format) throws AonSQLException {
-		Mod180 mod180 = SQLMod180.getById(id, conn);
+		Mod180 mod180 = AON.getMod180(domainName,domainId, id);
 		Deponent deponent = new Deponent();
 		deponent.setYear(mod180.getYear());
 		deponent.setDocument(mod180.getDocument());
@@ -84,18 +83,15 @@ public class MOD180Writer {
 		// TODO Soporte al número de justificante
 		deponent.setReceipt( (AonUtil.isEmpty(mod180.getReceipt()))?"0":mod180.getReceipt() );
 		deponent.setReplacedReceipt( (AonUtil.isEmpty(mod180.getReplacedReceipt()))?"0":mod180.getReplacedReceipt());
-		fillReceivers(conn, deponent, id, format);
+		fillReceivers(mod180, deponent, format);
 		return deponent;
 	}
 
-	private void fillReceivers(Connection conn, Deponent deponent,
-			Integer mod180, MOD180Format format) throws AonSQLException {
-		ArrayList<com.esferalia.aon.gwt.fiscal.shared.Mod180Receiver> list = SQLMod180
-				.getReceiversByMod180(mod180, conn);
+	private void fillReceivers(Mod180 mod180, Deponent deponent,MOD180Format format) throws AonSQLException {
 		int c001 = 0;
 		double c002 = 0;
 		double c003 = 0;		
-		for (com.esferalia.aon.gwt.fiscal.shared.Mod180Receiver det : list) {
+		for (Mod180Detail det : mod180.getDetails()) {
 			Receiver receiver = new Receiver();
 
 			receiver.setDocument(det.getDocument());

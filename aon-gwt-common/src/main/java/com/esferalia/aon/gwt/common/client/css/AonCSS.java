@@ -291,4 +291,7 @@ public interface AonCSS extends  CssResource {
 	@ClassName("progressbar-completed")
 	String progressbarCompleted();
 	
-}
+	@ClassName("aon-inner-label")
+	String aonInnerLabel();
+	
+	}

@@ -1,19 +1,9 @@
-package com.esferalia.aon.gwt.fiscal.shared;
+package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-import com.google.gwt.view.client.ProvidesKey;
-
-@SuppressWarnings("serial")
-public class Mod180 implements Serializable, IsSerializable {
-
-	public static final ProvidesKey<Mod180> PROVIDES_KEY = new ProvidesKey<Mod180>() {
-		@Override
-		public Object getKey(Mod180 mod180) {
-			return mod180 == null ? null : mod180.getId();
-		}
-	};
+public class Mod180 implements Serializable {
 
 	private Integer id;
 	private int domain;
@@ -32,6 +22,8 @@ public class Mod180 implements Serializable, IsSerializable {
 	private int receiverCountTotal;
 	private double receiptTotal;
 	private double retentionTotal;
+	
+	private ArrayList<Mod180Detail> details;
 
 	public Integer getId() { 
 		return id;
@@ -169,6 +161,15 @@ public class Mod180 implements Serializable, IsSerializable {
 		this.retentionTotal = retentionTotal;
 	}
 
-	// ------------------------------------------------------------ Ops. Methods
+	public ArrayList<Mod180Detail> getDetails() {
+		if (details == null) {
+			details = new ArrayList<Mod180Detail>();
+		}
+		return details;
+	}
+
+	public void setDetails(ArrayList<Mod180Detail> details) {
+		this.details = details;
+	}
 
 }

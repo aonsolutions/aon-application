@@ -1,4 +1,6 @@
-package com.esferalia.aon.watson.util;
+package com.esferalia.aon.watson.server;
+
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public class AonNumberUtils {

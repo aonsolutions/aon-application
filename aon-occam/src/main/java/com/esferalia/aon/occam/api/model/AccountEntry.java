@@ -23,9 +23,9 @@ public class AccountEntry implements Serializable {
 		setAccountPeriod(accountPeriod);
 		setDomain(domain);
 		setEntryDate(entryDate);
-		setEntryType(AccountEntryType.getValue(entryType));
+		setEntryType(AccountEntryType.values()[entryType]);
 		setJournal(journal);
-		setSecurityLevel(SecurityLevel.getValue(securityLevel));
+		setSecurityLevel(SecurityLevel.values()[securityLevel]);
 		setComments(comments);
 	}	
 	

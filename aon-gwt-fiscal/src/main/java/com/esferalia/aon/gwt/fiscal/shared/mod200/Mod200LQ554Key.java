@@ -1,6 +1,28 @@
 package com.esferalia.aon.gwt.fiscal.shared.mod200;
 
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.*;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.CP0C1;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.CP0C2;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.CP0C3;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.CP0C4;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.CP0C6;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.CP0C7;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.CP0C8;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.CP0C9;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.CP0E1;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.CP0E2;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.CP0E3;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.CP0E4;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.CP0E5;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.CP0E6;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.CP0E7;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.CP0E8;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.CP0E9;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.CPC10;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.CPC11;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.CPC12;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.CPE11;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.CPE12;
+
 import java.io.Serializable;
 
 import com.google.gwt.user.client.rpc.IsSerializable;

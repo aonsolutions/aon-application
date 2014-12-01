@@ -20,11 +20,12 @@
 				<configuration>
 					<deploy>${project.build.directory}/extra</deploy>
 					<extra>${project.build.directory}/extra</extra>
-          <module>com.esferalia.aon.gwt.fiscal.Fiscal</module>
+          			<module>com.esferalia.aon.gwt.fiscal.Fiscal</module>
 					<webappDirectory>${project.build.outputDirectory}</webappDirectory>
 					<compileSourcesArtifacts>
 					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.common</compileSourcesArtifact>  
 					  <compileSourcesArtifact>com.esferalia.aon:aon.accounting.mining</compileSourcesArtifact>
+					  <compileSourcesArtifact>com.esferalia.aon:aon.occam</compileSourcesArtifact>
 					</compileSourcesArtifacts>
 				</configuration>
 				<executions>
@@ -51,6 +52,19 @@
 			<artifactId>aon.master.jooq</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.occam</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.occam</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+			<classifier>sources</classifier>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>

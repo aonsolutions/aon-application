@@ -11,8 +11,8 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountPeriodValidation;
-import com.esferalia.aon.watson.util.AonDateUtils;
-import com.esferalia.aon.watson.util.AonEnumUtils;
+import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.server.AonEnumUtils;
 
 public class AccountPeriodDAO {
 
@@ -48,7 +48,7 @@ public class AccountPeriodDAO {
 		period.setName(record.getName());
 		period.setInitiationDate(record.getInitiationDate());
 		period.setDeadline(record.getDeadline());
-		period.setStatus(AccountPeriodStatus.getValue(record.getStatus()));
+		period.setStatus(AccountPeriodStatus.values()[record.getStatus()]);
 		return period;
 	}
 

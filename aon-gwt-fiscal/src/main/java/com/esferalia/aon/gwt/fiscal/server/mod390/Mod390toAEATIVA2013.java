@@ -48,9 +48,9 @@ import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.Deducci
 import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.Deducciones.OpIntragrupoBienesInversion;
 import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.Deducciones.OpIntragrupoCorrientes;
 import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.Deducciones.RectifDeducciones;
+import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegSimplificado;
 import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegSimplificado.ActAgricGanadForest;
 import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegSimplificado.Actividad;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegSimplificado;
 import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegSimplificado.Actividad.Modulo;
 import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegSimplificado.IvaDeducible;
 import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegSimplificado.IvaDevengado;
@@ -66,8 +66,8 @@ import com.esferalia.aon.gwt.fiscal.server.mod390.TipoGrupoEntidades.UltAutoliqu
 import com.esferalia.aon.gwt.fiscal.server.mod390.TipoGrupoEntidades.UltAutoliquidSI;
 import com.esferalia.aon.gwt.fiscal.shared.Activity;
 import com.esferalia.aon.gwt.fiscal.shared.Address;
-import com.esferalia.aon.gwt.fiscal.shared.FiscalEnum.Mod390DetailKey;
 import com.esferalia.aon.gwt.fiscal.shared.FarmerRegimeActivity;
+import com.esferalia.aon.gwt.fiscal.shared.FiscalEnum.Mod390DetailKey;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390Detail;
 import com.esferalia.aon.gwt.fiscal.shared.SimpliedRegimeActivity;

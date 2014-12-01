@@ -28,8 +28,8 @@ import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountEntryValidation;
 import com.esferalia.aon.watson.AonCoreException;
-import com.esferalia.aon.watson.util.AonDateUtils;
-import com.esferalia.aon.watson.util.AonEnumUtils;
+import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.server.AonEnumUtils;
 
 public class AccountEntryDAO {
 	
@@ -147,9 +147,9 @@ public class AccountEntryDAO {
 		ae.setDomain(record.getDomain());
 		ae.setAccountPeriod(record.getAccountPeriod());
 		ae.setEntryDate(AonDateUtils.toSql(record.getEntryDate()));
-		ae.setEntryType(AccountEntryType.getValue(record.getEntryType()));
+		ae.setEntryType(AccountEntryType.values()[record.getEntryType()]);
 		ae.setJournal(record.getJournal());
-		ae.setSecurityLevel(SecurityLevel.getValue(record.getSecurityLevel()));
+		ae.setSecurityLevel(SecurityLevel.values()[record.getSecurityLevel()]);
 		ae.setComments(record.getComments());
 		return ae;
 	}

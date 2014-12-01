@@ -30,7 +30,7 @@ import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.AonCoreException;
-import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 
 public class AccountEntryTest {

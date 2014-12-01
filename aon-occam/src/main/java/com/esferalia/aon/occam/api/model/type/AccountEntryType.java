@@ -33,15 +33,4 @@ public enum AccountEntryType  implements Serializable {
 	RETURNED_PAYMENT,
 	RETURNED_COLLECTION,
 	SOCIAL_INSURANCE_ADJUST;
-	
-	public static AccountEntryType getValue(Byte value) {
-		if (value == null) {
-			throw new AonCoreException(AonError.ACCOUNT_ENTRY_TYPE_INVALID,"NULL");
-		}
-		try {
-			return AccountEntryType.values()[value];
-		} catch (IndexOutOfBoundsException e) {
-			throw new AonCoreException(AonError.ACCOUNT_ENTRY_TYPE_INVALID,value);
-		}
-	}
 }

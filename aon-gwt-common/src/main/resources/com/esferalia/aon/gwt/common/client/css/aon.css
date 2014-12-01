@@ -249,6 +249,7 @@
 }
 
 @sprite .aon-icon-aeat{
+	width: auto;
 	gwt-image: "aonAeat";
 	background-color: transparent;
 	background-attachment: scroll;
@@ -694,6 +695,12 @@ input:disabled + label{
 
 .progressbar-completed {
 	background: #32CD32;
+}
+.aon-inner-label {
+	font-style: italic;
+	margin-left: 5px;
+	margin-right: 5px;
+	display: inline;
 }
 
 

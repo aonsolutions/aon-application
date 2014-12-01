@@ -2,12 +2,12 @@ package com.esferalia.aon.gwt.fiscal.client.mod200;
 
 import static com.esferalia.aon.gwt.fiscal.client.mod200.Model200.MSG;
 
+import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Constants;
+import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200LQ547Key;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200LQ554Key;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200LQ561Key;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200LQ579Key;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Constants;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;

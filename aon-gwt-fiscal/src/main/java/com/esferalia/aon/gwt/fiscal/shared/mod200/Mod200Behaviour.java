@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.shared.mod200;
 
-import static java.lang.Boolean.TRUE;
 import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 
 import java.util.HashMap;
 import java.util.Map;

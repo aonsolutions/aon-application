@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
@@ -23,85 +24,216 @@ public class SalaryAccountEntry implements Serializable {
 	}
 	@FunctionalInterface
 	private interface ISocialInsuranceCalculatorVisitor { 
-		public void visit(SalaryAccountEntryLine salaryAccountEntryLine, MutableDouble netAmount);
+		public void visit(SalaryAccountEntryLine sael, MutableDouble socialInsAmount); 
 	}
 	
 	public static enum SalaryAccountEntryLineType implements Serializable{
 		 SALARY(
 				AppParam.ACC_DEFAULT_SALARY_ACC
-				, (aed,sae,sael) -> aed.setDebit( sael.getAmount() )
-				, (sael,sae,netAmount) -> netAmount.setValue(AonMathUtils.round(netAmount.getValue() + sael.getAmount()))
+				, new IFillAccountEntryAmountVisitor() {
+					@Override
+					public void visit(AccountEntryDetail aed,SalaryAccountEntry sae, SalaryAccountEntryLine sael) {
+						aed.setDebit( sael.getAmount() );
+					}
+				}
+				, new INetAmountCalculatorVisitor() {
+					@Override
+					public void visit(SalaryAccountEntryLine sael,SalaryAccountEntry sae, MutableDouble netAmount) {
+						netAmount.setValue(AonMathUtils.round(netAmount.getValue() + sael.getAmount()));
+					}
+				}
 				, null 
 				)
 		,SALARY_IN_KIND( 
 				AppParam.ACC_DEFAULT_SALARY_IK_ACC
-				, (aed,sae,sael) -> aed.setDebit( sael.getAmount() )
-				, (sael,sae,netAmount) -> netAmount.setValue(AonMathUtils.round(netAmount.getValue() + sael.getAmount()))
+				, new IFillAccountEntryAmountVisitor() {
+					@Override
+					public void visit(AccountEntryDetail aed,
+							SalaryAccountEntry sae, SalaryAccountEntryLine sael) {
+						aed.setDebit( sael.getAmount() );
+					}
+				}
+				, new INetAmountCalculatorVisitor() {
+					@Override
+					public void visit(SalaryAccountEntryLine sael,SalaryAccountEntry sae, MutableDouble netAmount) {
+						netAmount.setValue(AonMathUtils.round(netAmount.getValue() + sael.getAmount()));
+					}
+				}
 				, null 
 				)
 		,ALLOWANCE(
 				AppParam.ACC_DEFAULT_ALLOWANCE_ACC
-				, (aed,sae,sael) -> aed.setDebit( sael.getAmount() )
-			    , (sael,sae,netAmount) -> netAmount.setValue(AonMathUtils.round(netAmount.getValue() + sael.getAmount()))
+				, new IFillAccountEntryAmountVisitor() {
+					@Override
+					public void visit(AccountEntryDetail aed,
+							SalaryAccountEntry sae, SalaryAccountEntryLine sael) {
+						aed.setDebit( sael.getAmount() );
+					}
+				}
+				, new INetAmountCalculatorVisitor() {
+					@Override
+					public void visit(SalaryAccountEntryLine sael,SalaryAccountEntry sae, MutableDouble netAmount) {
+						netAmount.setValue(AonMathUtils.round(netAmount.getValue() + sael.getAmount()));
+					}
+				}
 				, null 
 				)				
 		,COMPENSATION(
 				AppParam.ACC_DEFAULT_COMPENSATION_ACC
-				, (aed,sae,sael) -> aed.setDebit( sael.getAmount() )
-				, (sael,sae,netAmount) -> netAmount.setValue(AonMathUtils.round(netAmount.getValue() + sael.getAmount()))
+				, new IFillAccountEntryAmountVisitor() {
+					@Override
+					public void visit(AccountEntryDetail aed,
+							SalaryAccountEntry sae, SalaryAccountEntryLine sael) {
+						aed.setDebit( sael.getAmount() );
+					}
+				}
+				, new INetAmountCalculatorVisitor() {
+					@Override
+					public void visit(SalaryAccountEntryLine sael,SalaryAccountEntry sae, MutableDouble netAmount) {
+						netAmount.setValue(AonMathUtils.round(netAmount.getValue() + sael.getAmount()));
+					}
+				}
 				, null 
 				)
 		,RETENTION(
 				AppParam.ACC_SALARY_CHARGED_RET_ACC
-				, (aed,sae,sael) -> aed.setCredit( sael.getAmount() )
-				, (sael,sae,netAmount) -> netAmount.setValue(AonMathUtils.round(netAmount.getValue() - sael.getAmount()))
+				, new IFillAccountEntryAmountVisitor() {
+					@Override
+					public void visit(AccountEntryDetail aed,
+							SalaryAccountEntry sae, SalaryAccountEntryLine sael) {
+						aed.setCredit( sael.getAmount() );
+					}
+				}
+				, new INetAmountCalculatorVisitor() {
+					@Override
+					public void visit(SalaryAccountEntryLine sael,SalaryAccountEntry sae, MutableDouble netAmount) {
+						netAmount.setValue(AonMathUtils.round(netAmount.getValue() - sael.getAmount()));
+					}
+				}
 				, null 
 				)
 		,RETENTION_IN_KIND(
 				AppParam.ACC_SALARY_CHARGED_RET_IK_ACC
-				, (aed,sae,sael) -> aed.setCredit( sael.getAmount() )
-				, (sael,sae,netAmount) -> netAmount.setValue(AonMathUtils.round(netAmount.getValue() - sael.getAmount()))
+				, new IFillAccountEntryAmountVisitor() {
+					@Override
+					public void visit(AccountEntryDetail aed,
+							SalaryAccountEntry sae, SalaryAccountEntryLine sael) {
+						aed.setCredit( sael.getAmount() );
+					}
+				}
+				, new INetAmountCalculatorVisitor() {
+					@Override
+					public void visit(SalaryAccountEntryLine sael,SalaryAccountEntry sae, MutableDouble netAmount) {
+						netAmount.setValue(AonMathUtils.round(netAmount.getValue() - sael.getAmount()));
+					}
+				}
 				, null 
 				)
 		,EMPLOYEE_SOC_INS(
 				AppParam.ACC_DEFAULT_SOCIAL_INSURANCE_ACC
-				, (aed,sae,sael) -> aed.setCredit( sae.getSocialInsuranceAmount() )
-				, (sael,sae,netAmount) -> netAmount.setValue(AonMathUtils.round(netAmount.getValue() - sae.getSocialInsuranceAmount()))
-				, (sael, socialInsAmount) -> socialInsAmount.setValue(AonMathUtils.round(socialInsAmount.getValue() + sael.getAmount()))
+				, new IFillAccountEntryAmountVisitor() {
+					@Override
+					public void visit(AccountEntryDetail aed,
+							SalaryAccountEntry sae, SalaryAccountEntryLine sael) {
+						aed.setCredit( sae.getSocialInsuranceAmount() );
+					}
+				}
+				, new INetAmountCalculatorVisitor() {
+					@Override
+					public void visit(SalaryAccountEntryLine sael,SalaryAccountEntry sae, MutableDouble netAmount) {
+						netAmount.setValue(AonMathUtils.round(netAmount.getValue() - sae.getSocialInsuranceAmount()));
+					}
+				}
+				, new ISocialInsuranceCalculatorVisitor() {
+
+					@Override
+					public void visit(SalaryAccountEntryLine sael,MutableDouble socialInsAmount) {
+						socialInsAmount.setValue(AonMathUtils.round(socialInsAmount.getValue() + sael.getAmount()));
+					}
+
+				}
 				)
 		,COMPANY_SOC_INS(
 				AppParam.ACC_DEFAULT_COMPANY_SOC_INS_ACC
-				, (aed,sae,sael) -> aed.setDebit( sael.getAmount() )
-				, (sael,sae,netAmount) -> netAmount.setValue(AonMathUtils.round(netAmount.getValue() + sael.getAmount()))
-				, (sael,socialInsAmount) -> socialInsAmount.setValue(AonMathUtils.round(socialInsAmount.getValue() + sael.getAmount()))
+				, new IFillAccountEntryAmountVisitor() {
+					@Override
+					public void visit(AccountEntryDetail aed,
+							SalaryAccountEntry sae, SalaryAccountEntryLine sael) {
+						aed.setDebit( sael.getAmount() );
+					}
+				}
+				, new INetAmountCalculatorVisitor() {
+					@Override
+					public void visit(SalaryAccountEntryLine sael,SalaryAccountEntry sae, MutableDouble netAmount) {
+						netAmount.setValue(AonMathUtils.round(netAmount.getValue() + sael.getAmount()));
+					}
+				}
+				, new ISocialInsuranceCalculatorVisitor() {
+
+					@Override
+					public void visit(SalaryAccountEntryLine sael,MutableDouble socialInsAmount) {
+						socialInsAmount.setValue(AonMathUtils.round(socialInsAmount.getValue() + sael.getAmount()));
+					}
+
+				}
 				)
 		,DED_ADVANCE_PAYMENT (
 				AppParam.ACC_SALARY_DED_ADVANCE_PAYMENT_ACC
-				, (aed,sae,sael) -> aed.setDebit( sae.getNetAmount() )
+				, new IFillAccountEntryAmountVisitor() {
+					@Override
+					public void visit(AccountEntryDetail aed,
+							SalaryAccountEntry sae, SalaryAccountEntryLine sael) {
+						aed.setDebit( sae.getNetAmount() );
+					}
+				}
 				, null 
 				, null 
 				)
 		,DED_SEIZE (
 				AppParam.ACC_SALARY_DED_SEIZE_ACC
-				, (aed,sae,sael) -> aed.setCredit( sael.getAmount() )
+				, new IFillAccountEntryAmountVisitor() {
+					@Override
+					public void visit(AccountEntryDetail aed,
+							SalaryAccountEntry sae, SalaryAccountEntryLine sael) {
+						aed.setCredit( sael.getAmount() );
+					}
+				}
 				, null 
 				, null 
 				)
 		,DED_IN_KIND (
 				AppParam.ACC_SALARY_DED_IK_ACC
-				, (aed,sae,sael) -> aed.setCredit( sael.getAmount() )
+				, new IFillAccountEntryAmountVisitor() {
+					@Override
+					public void visit(AccountEntryDetail aed,
+							SalaryAccountEntry sae, SalaryAccountEntryLine sael) {
+						aed.setCredit( sael.getAmount() );
+					}
+				}
 				, null 
 				, null 
 				)
 		,DED_OTHER (
 				AppParam.ACC_SALARY_DED_OTHER_ACC
-				, (aed,sae,sael) -> aed.setCredit( sael.getAmount() )
+				, new IFillAccountEntryAmountVisitor() {
+					@Override
+					public void visit(AccountEntryDetail aed,
+							SalaryAccountEntry sae, SalaryAccountEntryLine sael) {
+						aed.setCredit( sael.getAmount() );
+					}
+				}
 				, null 
 				, null 
 				)
 		,DEFAULT_PENDING_SALARY(
 				AppParam.ACC_DEFAULT_PENDING_SALARY_ACC
-				, (aed,sae,sael) -> aed.setCredit( sael.getAmount() )
+				, new IFillAccountEntryAmountVisitor() {
+					@Override
+					public void visit(AccountEntryDetail aed,
+							SalaryAccountEntry sae, SalaryAccountEntryLine sael) {
+						aed.setCredit( sael.getAmount() );
+					}
+				}
 				, null 
 				, null 
 				)
@@ -212,16 +344,20 @@ public class SalaryAccountEntry implements Serializable {
 		this.lines.add(line);
 		return this;
 	}
+
 	public double getNetAmount() {
 		final MutableDouble netAmount = new MutableDouble(0.0);
-		lines.stream()
-			.forEach( sael -> sael.getType().visitNetAmountCalculator(sael, this, netAmount) );
+		for (SalaryAccountEntryLine sael : lines ) {
+			sael.getType().visitNetAmountCalculator(sael,SalaryAccountEntry.this, netAmount);
+		}
 		return netAmount.getValue();
 	}
+
 	public double getSocialInsuranceAmount() {
 		final MutableDouble socInsAmount = new MutableDouble(0.0);
-		lines.stream()
-			.forEach( sael -> sael.getType().visitSocialInsuranceCalculator(sael, socInsAmount) );
+		for (SalaryAccountEntryLine sael : lines ) {
+			sael.getType().visitSocialInsuranceCalculator(sael,socInsAmount);
+		}
 		return socInsAmount.getValue();
 	}
 	

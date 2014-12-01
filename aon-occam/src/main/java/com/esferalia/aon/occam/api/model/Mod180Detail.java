@@ -1,11 +1,13 @@
-package com.esferalia.aon.gwt.fiscal.shared;
+package com.esferalia.aon.occam.api.model;
 
-@SuppressWarnings("serial")
-public class Mod180Receiver extends Mod180Detail {
+import java.io.Serializable;
 
+public class Mod180Detail implements Serializable {
+
+	private Integer id;
+	private String name;
 	private int domain;
 	private int mod180;
-
 	private String document;
 	private String representativeDocument;
 	private int province;
@@ -14,6 +16,25 @@ public class Mod180Receiver extends Mod180Detail {
 	private double perception;
 	private double retention;
 	private int accrualYear;
+
+	private boolean dirty;
+	private boolean deleted;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	public int getDomain() {
 		return domain;
@@ -94,4 +115,21 @@ public class Mod180Receiver extends Mod180Detail {
 	public void setPercent(double percent) {
 		this.percent = percent;
 	}
+
+	public boolean isDirty() {
+		return dirty;
+	}
+
+	public void setDirty(boolean dirty) {
+		this.dirty = dirty;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+
 }

@@ -18,8 +18,8 @@ import com.esferalia.aon.gwt.common.shared.LegalRepresentative;
 import com.esferalia.aon.gwt.common.shared.Secretary;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.DoubleVariable;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200.BalanceType;
+import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
 
 public class Mod200File {
 	

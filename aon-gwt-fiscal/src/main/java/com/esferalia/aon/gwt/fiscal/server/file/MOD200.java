@@ -13,7 +13,6 @@ import com.code.aon.file.format.model.AbstractFileFiller;
 import com.code.aon.file.format.model.Fd0Exception;
 import com.esferalia.aon.gwt.fiscal.server.mod200.Mod200File;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200.BalanceType;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
 
 public class MOD200  extends AbstractFileFiller{
 

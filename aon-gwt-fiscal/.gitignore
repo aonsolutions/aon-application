@@ -2,3 +2,6 @@
 /target/
 /.project
 /.classpath
+/.gwt/
+/gwt-unitCache/
+/war/

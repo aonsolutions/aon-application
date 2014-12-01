@@ -5,14 +5,14 @@ import com.esferalia.aon.gwt.common.shared.CommonEnum.Province;
 import com.google.gwt.i18n.client.Messages;
 
 public interface CommonMessages extends Messages {
-	// Ã --> \u00C1 Ã¡ --> \u00E1
-	// Ã‰ --> \u00C9 Ã© --> \u00E9
-	// Ã --> \u00CD Ã­ --> \u00ED
-	// Ã“ --> \u00D3 Ã³ --> \u00F3
-	// Ãš --> \u00DA Ãº --> \u00FA
-	// Ã‘ --> \u00D1 Ã± --> \u00F1
-	// Âº --> \u00AA Âª --> \u00BA
-	// Â¿ --> \u00BF
+	// Á --> \u00C1 á --> \u00E1
+	// É --> \u00C9 é --> \u00E9
+	// Í --> \u00CD í --> \u00ED
+	// Ó --> \u00D3 ó --> \u00F3
+	// Ú --> \u00DA ú --> \u00FA
+	// Ñ --> \u00D1 ñ --> \u00F1
+	// º --> \u00AA ª --> \u00BA
+	// ¿ --> \u00BF
 	
 	// ----------------------------------------------------------------- Format
 	@DefaultMessage("#,##0")
@@ -104,6 +104,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("\u00BFContinuar con el borrado?")
 	String confirmDeleteAction();
+
+	@DefaultMessage("Si continua se borrar\u00E1 la declaraci\u00F3n completa. \u00BFContinuar con el borrado?")
+	String confirmDeclarationDeleteAction();
 
 	@DefaultMessage("Restaurar")
 	String restoreAction();

@@ -18,9 +18,9 @@
 
 	<g:FlowPanel>
 		<g:Label text="{msg.document}" styleName="{style.inner-label}"/>
-		<g:SuggestBox ui:field="document"  limit="10" width="100px" />
+		<g:SuggestBox ui:field="document"  limit="10" width="100px" styleName="aon-inputText"/>
 		<g:Label text="{msg.companyName}" styleName="{style.inner-label}"/>
-		<g:TextBox visibleLength="42" maxLength="40" ui:field="name" />
+		<g:TextBox visibleLength="42" maxLength="40" ui:field="name" styleName="aon-inputText"/>
 	</g:FlowPanel>
 	
 </ui:UiBinder>

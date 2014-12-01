@@ -28,7 +28,7 @@ import com.esferalia.aon.occam.api.model.SalaryAccountEntry.SalaryAccountEntryLi
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.AonCoreException;
 import com.esferalia.aon.watson.AonError;
-import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SalaryDAO {
