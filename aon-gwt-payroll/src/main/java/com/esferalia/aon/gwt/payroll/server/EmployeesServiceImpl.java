@@ -48,6 +48,7 @@ import java.util.Map.Entry;
 import java.util.MissingResourceException;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.function.Supplier;
 
 import javax.faces.context.FacesContext;
 
@@ -152,8 +153,12 @@ import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContex
 import com.esferalia.aon.payroll.calculator.sql.SQLContractNotEnjoyedCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.AgreementContextKey;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.CCCContextKey;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSettleCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLSystemExpressionContextFactory;
+import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
 import com.esferalia.aon.payroll.irpf.sql.SQLIrpfCalculatorContext;
 import com.esferalia.aon.payroll.sql.SQLConstants;
@@ -2817,7 +2822,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			Set<Payment> allPayments = new HashSet<Payment>();
 			for (Payment payment : payments) {
 
-				if (hide(payment, dbPayments ))
+				if (hide(payment, dbPayments))
 					continue;
 
 				try {
@@ -2922,16 +2927,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			return false;
 		if (!StringUtils.equals(REMOVE, payment.getExpression()))
 			return false;
-		
-		if ( payment.getId() < 0 )
+
+		if (payment.getId() < 0)
 			return true;
 
 		return parents
 				.stream()
-				.filter(parent -> parent.getConceptId().equals(payment
-						.getConceptId())
-						&& parent.getDomain().equals(payment.getDomain())).findAny()
-				.isPresent();
+				.filter(parent -> parent.getConceptId().equals(
+						payment.getConceptId())
+						&& parent.getDomain().equals(payment.getDomain()))
+				.findAny().isPresent();
 	}
 
 	private static void calculateAndSave(Connection conn, SalaryDraft draft)
@@ -4233,8 +4238,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			conn = getConnection();
 
-			SQLAgreementContextFactory factory = new SQLAgreementContextFactory(
-					conn, start, end, ISQLContractSalaryCalculatorContext.NEWER);
+			SQLSystemExpressionContextFactory systemCtxFactory = new SQLSystemExpressionContextFactory(
+					conn, start, end);
+
+			Supplier<ExpressionContext> systemCtxSupplier = () -> systemCtxFactory
+					.create(new CCCContextKey(null,null));
+			
+			SQLAgreementContextFactory agreementCtxFactory = new SQLAgreementContextFactory(
+					conn, systemCtxSupplier, start, end,
+					ISQLContractSalaryCalculatorContext.NEWER);
 
 			LinkedList<Variable> defVars = new LinkedList<Variable>(
 					salaryTable.getVariables(0));
@@ -4243,7 +4255,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 				AgreementContextKey levelKey = new AgreementContextKey(
 						agreementId, level.getId());
-				ExpressionContext levelCtx = factory.create(levelKey);
+				ExpressionContext levelCtx = agreementCtxFactory.create(levelKey);
 
 				for (Variable defVar : defVars)
 					if (!salaryTable.contains(level.getId(), defVar.getName()))

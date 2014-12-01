@@ -339,6 +339,22 @@ public class SQLContractSalaryCalculatorContext extends
 
 	}
 
+	public static class CCCContextKey extends Pair<CCCType, SSRegimeType> {
+
+		public CCCContextKey(CCCType cccType, SSRegimeType ssRegime) {
+			super(cccType, ssRegime);
+		}
+
+		public CCCType getCCC() {
+			return getFirst();
+		};
+
+		public SSRegimeType getSSRegime() {
+			return getSecond();
+		};
+
+	}
+
 	protected static class GuarenteeException extends SalaryException {
 
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
@@ -392,27 +408,29 @@ public class SQLContractSalaryCalculatorContext extends
 						Date leaveEnd, long parentDays, LeaveType type,
 						Double dailyRegBase, ExpressionContext exprCtx)
 						throws ExpressionException {
-					
-					Period leavePeriod  = new Period(leaveStart, leaveEnd);
-					
+
+					Period leavePeriod = new Period(leaveStart, leaveEnd);
+
 					Calendar leaveCalendar = Calendar.getInstance();
 					leaveCalendar.setTime(leaveStart);
-					leaveCalendar.add(Calendar.DATE, start - (int)parentDays );
+					leaveCalendar.add(Calendar.DATE, start - (int) parentDays);
 					Date guarenteeStart = leaveCalendar.getTime();
-					leaveCalendar.add(Calendar.DATE, end - start );
+					leaveCalendar.add(Calendar.DATE, end - start);
 					Date guarenteeEnd = leaveCalendar.getTime();
 
-					Period guarenteePeriod = new Period(guarenteeStart, guarenteeEnd);
-					
-					List<Period> leavePeriods = leavePeriod.sub(guarenteePeriod);
-					for ( Period p : leavePeriods ) {
-						long leaveParentDays = CommonUtil.getDaysBetweenDates(leaveStart, p.getStart());
-						super.loadContractLeave(id, p.getStart(),
-								p.getEnd(), parentDays + leaveParentDays, type,
+					Period guarenteePeriod = new Period(guarenteeStart,
+							guarenteeEnd);
+
+					List<Period> leavePeriods = leavePeriod
+							.sub(guarenteePeriod);
+					for (Period p : leavePeriods) {
+						long leaveParentDays = CommonUtil.getDaysBetweenDates(
+								leaveStart, p.getStart());
+						super.loadContractLeave(id, p.getStart(), p.getEnd(),
+								parentDays + leaveParentDays, type,
 								dailyRegBase, exprCtx);
 					}
 
-					
 					if (dailyRegBase != null) {
 						exprCtx.putVariable(ContextVariable.REGULATORY_BASE,
 								new TimedObject<Double>(dailyRegBase,
@@ -649,6 +667,8 @@ public class SQLContractSalaryCalculatorContext extends
 	private LRUCache<AgreementContextKey, ExpressionContext> agreementExpressionContexts;
 	private SQLAgreementContextFactory agreementContextFactory;
 
+	private LRUCache<CCCContextKey, ExpressionContext> cccExpressionContexts;
+
 	private Criteria paymentsCriteria;
 	private OrderByList order;
 
@@ -767,8 +787,13 @@ public class SQLContractSalaryCalculatorContext extends
 		this.agreementPayments = new LRUCache<Integer, Collection<IContractPayment>>(
 				CACHE_SIZE, agreementPaymentsFactory);
 
+		cccExpressionContexts = new LRUCache<CCCContextKey, ExpressionContext>(
+				CACHE_SIZE, new SQLSystemExpressionContextFactory(connection,
+						startDate, endDate));
+
 		agreementContextFactory = new SQLAgreementContextFactory(connection,
-				this.startDate, this.endDate, order);
+				this::getCCCExpressionContext, this.startDate, this.endDate,
+				order);
 		this.agreementExpressionContexts = new LRUCache<AgreementContextKey, ExpressionContext>(
 				CACHE_SIZE, agreementContextFactory);
 		this.leaveLoader = new SQLContractLeaveLoader(this.startDate,
@@ -818,7 +843,14 @@ public class SQLContractSalaryCalculatorContext extends
 
 	@Override
 	public ExpressionContext getSystemExpressionContext() {
-		return agreementContextFactory.getSystemExpressionContext();
+		try {
+			return cccExpressionContexts.get(new CCCContextKey(getCCCType(),
+					getSSRegime()));
+		} catch (Exception e) {
+			return cccExpressionContexts.get(new CCCContextKey(
+					null, null));
+			// TODO: This is very simple, too much
+		}
 	}
 
 	@Override
@@ -1490,28 +1522,28 @@ public class SQLContractSalaryCalculatorContext extends
 	}
 
 	private boolean filter(ISystemCost systemCost, CCCType cccType) {
-		return systemCost.getDomain() == (-1) * (cccType.ordinal() + 100);
+		return systemCost.getDomain() == getDomain(cccType);
 	}
 
 	private boolean filter(ISystemCost systemCost, SSRegimeType ssRegime) {
-		return systemCost.getDomain() == (-1) * ssRegime.ordinal();
+		return systemCost.getDomain() == getDomain(ssRegime);
 	}
 
 	private boolean filter(ISystemPayment systemPayment, SSRegimeType ssRegime) {
-		return systemPayment.getDomain() == (-1) * ssRegime.ordinal();
+		return systemPayment.getDomain() == getDomain(ssRegime);
 	}
 
 	private boolean filter(ISystemPayment systemPayment, CCCType cccType) {
-		return systemPayment.getDomain() == (-1) * (cccType.ordinal() + 100);
+		return systemPayment.getDomain() == getDomain(cccType);
 	}
 
 	private boolean filter(ISystemDeduction systemDeduction,
 			SSRegimeType ssRegime) {
-		return systemDeduction.getDomain() == (-1) * ssRegime.ordinal();
+		return systemDeduction.getDomain() == getDomain(ssRegime);
 	}
 
 	private boolean filter(ISystemDeduction systemDeduction, CCCType cccType) {
-		return systemDeduction.getDomain() == (-1) * (cccType.ordinal() + 100);
+		return systemDeduction.getDomain() == getDomain(cccType);
 	}
 
 	/*
@@ -1637,13 +1669,13 @@ public class SQLContractSalaryCalculatorContext extends
 		if (leaveLoader.isEmpty())
 			throw new UndefinedContextVariablesException(
 					ContextVariable.LEAVE_DAYS);
-		
-		// Assert all PREST_IT payments have been calculated. 
+
+		// Assert all PREST_IT payments have been calculated.
 		Double totalPayment = getVariable(ContextVariable.TOTAL_PAYMENT,
 				Double.class);
 		if (totalPayment == null)
 			throw new UndefinedTotalPaymentException();
-		
+
 		final Criteria contractCriteria = new Criteria();
 		contractCriteria.addExpression(criteria.getExpression());
 		contractCriteria.addEqualExpression(SQLConstants.CONTRACT + "."
@@ -2470,7 +2502,6 @@ public class SQLContractSalaryCalculatorContext extends
 					};
 				});
 
-
 		this.implicitExpressionContext.putVariable(SALARY_HOURS,
 				new LazyTimedVariable<Double>() {
 					@Override
@@ -2848,10 +2879,25 @@ public class SQLContractSalaryCalculatorContext extends
 		}
 	}
 
+	private ExpressionContext getCCCExpressionContext() {
+		return cccExpressionContexts.get(new CCCContextKey(getCCCType(),
+				getSSRegime()));
+	}
+
+	// ------------------------------------------------------------------------
+
 	/**
 	 * ORDER BY literal.
 	 */
 	private static final String ORDER_BY = " ORDER BY "; //$NON-NLS-1$
+
+	public static Integer getDomain(CCCType cccType) {
+		return (-1) * (cccType.ordinal() + 100);
+	}
+
+	public static Integer getDomain(SSRegimeType ssRegime) {
+		return (-1) * ssRegime.ordinal();
+	}
 
 	protected static String orderBy(String stmt, OrderByList orderBy) {
 		StringBuffer buffer = new StringBuffer(stmt);

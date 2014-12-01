@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.mvel2.MVEL;
 
 import com.code.aon.common.AonException;
 import com.esferalia.aon.payroll.enumeration.AbstractSSRegimeTypeVisitor;
@@ -426,32 +427,14 @@ public abstract class QuoteCalculator {
 	protected double getLimitedCgcBase(double rawCgcBase,
 			ExpressionContext ctx, Date start, Date end)
 			throws ExpressionException {
-		String quoteGroup = ctx.getVariable(QUOTE_GROUP, start, end,
-				String.class);
-
-		Map<String, String> minLimits = ctx.getVariable(CGC_BASE_MIN, start,
-				end, Map.class);
-
-		if (minLimits == null) {
-			String variableName = CGC_BASE_MIN.getName();
-			throw new UndefinedVariablesException(variableName);
-		}
-
-		Double minLimit = getLimit(minLimits.get(quoteGroup), ctx, start, end);
+		Double minLimit = getLimit(CGC_BASE_MIN.getName(), ctx, start, end);
+		
 
 		if (minLimit != null && rawCgcBase < minLimit) {
 			return minLimit;
 		}
 
-		Map<String, String> maxLimits = ctx.getVariable(CGC_BASE_MAX, start,
-				end, Map.class);
-
-		if (maxLimits == null) {
-			String variableName = CGC_BASE_MIN.getName();
-			throw new UndefinedVariablesException(variableName);
-		}
-
-		Double maxLimit = getLimit(maxLimits.get(quoteGroup), ctx, start, end);
+		Double maxLimit = getLimit(CGC_BASE_MAX.getName(), ctx, start, end);
 
 		if (maxLimit != null && rawCgcBase > maxLimit) {
 			return maxLimit;
@@ -463,19 +446,14 @@ public abstract class QuoteCalculator {
 	protected double getLimitedCgpBase(double rawCgpBase,
 			ExpressionContext ctx, Date start, Date end)
 			throws ExpressionException {
-		String minExpression = ctx.getVariable(CGP_BASE_MIN, start, end,
-				String.class);
 
-		Double minLimit = getLimit(minExpression, ctx, start, end);
+		Double minLimit = getLimit(CGP_BASE_MIN.getName(), ctx, start, end);
 
 		if (minLimit != null && rawCgpBase < minLimit) {
 			return minLimit;
 		}
 
-		String maxExpression = ctx.getVariable(CGP_BASE_MAX, start, end,
-				String.class);
-
-		Double maxLimit = getLimit(maxExpression, ctx, start, end);
+		Double maxLimit = getLimit(CGP_BASE_MAX.getName(), ctx, start, end);
 
 		if (maxLimit != null && rawCgpBase > maxLimit) {
 			return maxLimit;
@@ -506,5 +484,6 @@ public abstract class QuoteCalculator {
 
 		return limit;
 	}
+	
 
 }

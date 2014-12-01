@@ -1,0 +1,180 @@
+package com.esferalia.aon.payroll.calculator.sql;
+
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_END;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_START;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.YEAR_DAYS;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLType;
+import java.sql.Types;
+import java.util.Calendar;
+import java.util.Date;
+
+import com.code.aon.common.util.CommonUtil;
+import com.esferalia.aon.payroll.calculator.AonConstants;
+import com.esferalia.aon.payroll.calculator.AonFunctions;
+import com.esferalia.aon.payroll.calculator.ContextFunctions;
+import com.esferalia.aon.payroll.calculator.ExcelFunctions;
+import com.esferalia.aon.payroll.calculator.LRUCacheFactory;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.CCCContextKey;
+import com.esferalia.aon.payroll.sql.SQLConstants.SystemDataColumns;
+import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionContext.DeferredExpressionVariable;
+import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionImpl;
+import com.esferalia.aon.salary.expression.ExpressionScope;
+import com.esferalia.aon.salary.expression.Period;
+
+public class SQLSystemExpressionContextFactory implements
+		LRUCacheFactory<CCCContextKey, ExpressionContext> {
+
+	private static final String SYSTEM_DATA_SQL = "SELECT * "
+			+ " FROM `system_data`" + " WHERE start_date <= ? "
+			+ " AND ( end_date IS NULL " + " OR end_date >= ? )"
+			+ " AND domain IN (0,?,?) ORDER BY domain DESC ";
+
+	private static Long getYearDays(Date startDate, Date endDate) {
+		Date startDay = CommonUtil.getYearFirstDay(startDate);
+		Date endDay = CommonUtil.getYearLastDay(endDate);
+		long yearDays = CommonUtil.getDaysBetweenDates(startDay, endDay);
+		yearDays += 1;
+		return yearDays;
+	}
+
+	private static void initMonthVariables(ExpressionContext ctx,
+			Date startDate, Date endDate) {
+
+		Calendar startCalendar = Calendar.getInstance();
+		startCalendar.setTime(startDate);
+		startCalendar.set(Calendar.DAY_OF_MONTH, 1);
+
+		Calendar endCalendar = Calendar.getInstance();
+		endCalendar.setTime(endDate);
+
+		while (startCalendar.compareTo(endCalendar) <= 0) {
+			int monthDays = startCalendar
+					.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+			Date monthStart = startCalendar.getTime();
+
+			startCalendar.set(Calendar.DAY_OF_MONTH, monthDays);
+			Date monthEnd = startCalendar.getTime();
+
+			ctx.setVariable(MONTH_DAYS, monthDays, monthStart, monthEnd);
+			ctx.setVariable(PAY_DAYS, monthDays, monthStart, monthEnd);
+
+			startCalendar.set(Calendar.DAY_OF_MONTH, 1);
+			startCalendar.add(Calendar.MONTH, 1);
+		}
+
+	}
+
+	private static void loadSystemData(Connection connection, Date startDate,
+			Date endDate, ExpressionContext expressionCtx, CCCContextKey key)
+			throws SQLException, ExpressionException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+			stmt = connection.prepareStatement(SYSTEM_DATA_SQL);
+			stmt.setDate(1, new java.sql.Date(endDate.getTime()));
+			stmt.setDate(2, new java.sql.Date(startDate.getTime()));
+			
+			if ( key.getSSRegime() != null )
+				stmt.setInt(3, SQLContractSalaryCalculatorContext.getDomain(key
+						.getSSRegime()));
+			else
+				stmt.setNull(3, Types.INTEGER);
+			
+			if ( key.getCCC() != null )
+				stmt.setInt(4, SQLContractSalaryCalculatorContext.getDomain(key
+						.getCCC()));
+			else
+				stmt.setNull(3, Types.INTEGER);
+			
+			
+			rs = stmt.executeQuery();
+			while (rs.next()) {
+				ExpressionImpl expr = new ExpressionImpl();
+				expr.setName(rs.getString(SystemDataColumns.NAME));
+				expr.setExpression(rs.getString(SystemDataColumns.EXPRESSION));
+				expr.setScope(ExpressionScope.SYSTEM);
+				Date start = Period.max(
+						rs.getDate(SystemDataColumns.START_DATE), startDate);
+				Date end = Period.min(rs.getDate(SystemDataColumns.END_DATE),
+						endDate);
+				try {
+					expressionCtx.addExpression(expr, start, end);
+				} catch (Exception e) {
+					DeferredExpressionVariable<Object> variable = new DeferredExpressionVariable<Object>(
+							start, end, expr);
+					expressionCtx.putVariable(expr.getName(), variable);
+				}
+			}
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+		}
+	}
+
+	private static ExpressionContext newSystemCtx(Connection connection,
+			Date startDate, Date endDate, CCCContextKey cccCtxKey) {
+		ExpressionContext systemExpressionContext = new ExpressionContext();
+
+		AonConstants.load(systemExpressionContext, startDate, endDate);
+		AonFunctions.load(systemExpressionContext, startDate, endDate);
+
+		Long yearDays = getYearDays(startDate, endDate);
+		systemExpressionContext.setVariable(YEAR_DAYS, yearDays, startDate,
+				endDate);
+
+		initMonthVariables(systemExpressionContext, startDate, endDate);
+
+		try {
+			loadSystemData(connection, startDate, endDate,
+					systemExpressionContext, cccCtxKey);
+		} catch (ExpressionException | SQLException e) {
+			// TODO:
+		}
+
+		systemExpressionContext.setVariable(SALARY_START, startDate, startDate,
+				endDate);
+		systemExpressionContext.setVariable(SALARY_END, endDate, startDate,
+				endDate);
+
+		ExcelFunctions.load(systemExpressionContext, startDate, endDate);
+		try {
+			ContextFunctions.loadFunctions(systemExpressionContext, startDate,
+					endDate);
+		} catch (ExpressionException e) {
+			// TODO:
+		}
+
+		return systemExpressionContext;
+	}
+
+	private Date endDate;
+	private Date startDate;
+	private Connection connection;
+
+	public SQLSystemExpressionContextFactory(Connection connection,
+			Date startDate, Date endDate) {
+		this.connection = connection;
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
+
+	// ------------------------------------------------------------------------
+	//
+
+	@Override
+	public ExpressionContext create(CCCContextKey key) {
+		return newSystemCtx(connection, startDate, endDate, key);
+	}
+}
