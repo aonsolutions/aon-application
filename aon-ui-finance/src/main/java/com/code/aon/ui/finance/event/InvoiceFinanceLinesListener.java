@@ -22,7 +22,8 @@ public class InvoiceFinanceLinesListener extends LinesControllerListener {
 		InvoiceController invoiceController = (InvoiceController)event.getController();
 		Invoice invoice = (Invoice)invoiceController.getTo();
 		InvoiceDetailController detailController = (InvoiceDetailController)FormUtil.getController(invoiceController.getInvoiceDetailControllerName());
-		double amount = ((InvoiceDetail)detailController.getTo()).getTotalSalesPrice();
+		InvoiceDetail invoiceDetail = (InvoiceDetail)detailController.getTo();
+		double amount = (invoiceDetail != null) ? invoiceDetail.getTotalSalesPrice() : 0;
 		if (invoiceController.getFinanceGenerationMode() == 1 && amount != 0) {
 			Finance finance = (Finance)financeController.getTo();
 			if (finance != null) {
