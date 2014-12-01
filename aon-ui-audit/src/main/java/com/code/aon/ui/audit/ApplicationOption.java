@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.code.aon.AonVersion;
@@ -13,7 +14,7 @@ import com.code.aon.ui.audit.controller.MenuParser;
 /**
  * The Class ApplicationOption.
  */
-public class ApplicationOption extends BasicOption {
+public class ApplicationOption extends BasicOption implements Comparable<ApplicationOption> {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -60,4 +61,20 @@ public class ApplicationOption extends BasicOption {
 		return ToStringBuilder.reflectionToString(this);
 	}	
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) { return false; }
+		if (obj == this) { return true; }
+		if (obj.getClass() != getClass()) {
+			return false;
+		}
+		ApplicationOption ao = (ApplicationOption) obj;
+		return new EqualsBuilder().append(getId(), ao.getId()).isEquals();		
+	}
+	
+	@Override
+	public int compareTo(ApplicationOption o) {
+		return getDescription().compareToIgnoreCase( o.getDescription() );
+	}
+	
 }

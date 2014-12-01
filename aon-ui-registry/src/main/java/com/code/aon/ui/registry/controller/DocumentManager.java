@@ -85,7 +85,7 @@ public class DocumentManager implements Serializable {
 			updateDomain = true;
 			domain.setMaxDocumentSize(MAXIMUM_MAX_DOCUMENT_SIZE);
 		}
-		value = domain.getMaxTotalDocumentSize();
+		value = ( domain.getMaxTotalDocumentSize() != null) ? domain.getMaxTotalDocumentSize() : 0;
 		int newValue = getMaximumTotalDocumentSize(value);
 		if ( value != newValue ) {
 			updateDomain = true;

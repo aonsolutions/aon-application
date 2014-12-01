@@ -20,7 +20,7 @@ public class DomainControllerListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		DomainController dc = (DomainController) event.getController();
 		try {		
-			dc.saveApplications();
+			dc.getBookingInfo().save();
 			dc.updateDomainApplication();
 			dc.saveOEM();
 			dc.saveProductDetailLevel();

@@ -149,7 +149,8 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 			this.showFiscalInfo = AuditManager.hasModule(parentDomainId, appId, Module.FISCAL);
 			this.showPayrollInfo = AuditManager.hasModule(parentDomainId, appId, Module.PAYROLL);
 			this.showDocumentalInfo = AuditManager.hasModule(parentDomainId, appId, Module.DOCUMENT);
-			this.showPayrollPortal = AuditManager.hasModule(domainId, appId, Module.PAYROLL_PORTAL);
+			this.showPayrollPortal = AuditManager.hasModule(parentDomainId, appId, Module.PAYROLL_PORTAL) ||
+					AuditManager.hasModule(domainId, appId, Module.PAYROLL_PORTAL);
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 		}							
@@ -164,6 +165,7 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 	        this.user.setPassword( AdminUtil.encodeSHA(newPassword) );
 	        this.user.setPasswordExpiration( DateUtils.addDays(new Date(), 180) );					
 			updateUser();
+			AppParamUtil.insertParameter(AppParam.AON_PORTAL, portalValue);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> accept",e);
 			AonUtil.addErrorMessage(e.getMessage());

@@ -114,10 +114,16 @@ public class DomainApplicationInfo implements Serializable {
 		updateApplicationModules();
 	}
 	
-	public void updateApplicationModules() throws ManagerBeanException {
-		for( DomainModuleInfo dmi: getApplicationModules() ) {
-			dmi.update(getDomainApplication());
+	public boolean updateApplicationModules( List<DomainModuleInfo> list ) throws ManagerBeanException {
+		boolean updated = false;
+		for( DomainModuleInfo dmi: list ) {
+			updated |= dmi.update(getDomainApplication());
 		}		
+		return updated;
+	}
+	
+	public void updateApplicationModules() throws ManagerBeanException {
+		updateApplicationModules(getApplicationModules());
 	}
 
 	public void unregister() throws ManagerBeanException {
@@ -164,14 +170,18 @@ public class DomainApplicationInfo implements Serializable {
 		return null;		
 	}
 
-	public void sortApplicationModules() {
+	public void sortApplicationModules( List<DomainModuleInfo> list ) {
     	Comparator<DomainModuleInfo> comparator = new Comparator<DomainModuleInfo>() {
 			@Override
 			public int compare(DomainModuleInfo o1, DomainModuleInfo o2) {
 				return o1.getDescription().compareTo(o2.getDescription());
 			}	    		
 		};
-    	Collections.sort( getApplicationModules(), comparator );					
+    	Collections.sort( list, comparator );					
+	}
+
+	public void sortApplicationModules() {
+		sortApplicationModules(getApplicationModules());
 	}
 	
 	public static DomainApplicationInfo getApplicationInfos( Domain domain, String applicationName ) throws ManagerBeanException {

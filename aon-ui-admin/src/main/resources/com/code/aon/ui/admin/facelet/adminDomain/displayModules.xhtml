@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/com/code/aon/ui/admin/facelet/globalConfig/configLayout.xhtml">
+
+	<ui:define name="configContent">
+
+		<aon:form id="displayModulesForm">
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{bundle.admin_domain_management}" />
+				<ui:define name="beforeToolbarContent">
+					<aon:commandButton id="saveDisplayModules"
+						title="#{bundle.aon_key_save_accelerator}"
+						value="#{bundle.aon_save}"
+						action="adminDomain_displayModules"
+						actionListener="#{adminDomain.bookingInfo.onSaveDisplayModules}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_save}" />									
+					<aon:commandButton id="back"
+						value="#{bundle.aon_back}" immediate="true"
+						action="#{adminDomain.action}" 
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_cancel}" />
+				</ui:define>
+			</ui:decorate>
+	
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-form-group-title aon-margin-top">
+					<aon:div styleClass="aon-form-group-title-internal">
+						<aon:outputText value="#{bundle.admin_modules_display}"/>
+					</aon:div>
+				</aon:div>
+		
+				<aon:div styleClass="aon-scroll-area">
+					<aon:div styleClass="aon-note">
+						<aon:div styleClass="aon-note-internal">
+							<aon:panelGroup>
+								<aon:outputText value="#{bundle.admin_domain_module_message2}" />
+							</aon:panelGroup>
+						</aon:div>
+					</aon:div>
+					<aon:div styleClass="aon-padding-left aon-margin-top">
+						<a4j:region>
+							<a4j:repeat var="appModule"
+								value="#{adminDomain.bookingInfo.displayModules}" >
+								<aon:div>
+									<aon:selectBooleanCheckbox value="#{appModule.checked}" />						
+									<aon:outputText styleClass="aon-italic"
+										value="#{appModule.description}" />
+								</aon:div>
+							</a4j:repeat>
+						</a4j:region>
+					</aon:div>				
+				</aon:div>
+			</aon:div>	
+			
+		</aon:form>
+			
+	</ui:define>
+</ui:composition>

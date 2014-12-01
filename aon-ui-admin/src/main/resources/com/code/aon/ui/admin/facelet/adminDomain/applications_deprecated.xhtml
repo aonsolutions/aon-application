@@ -18,44 +18,44 @@
 		</aon:div>	
 		<aon:div styleClass="aon-padding-left">
 			<a4j:region>
-				<aon:if test="#{adminDomain.showPayrollSelection}">
+				<aon:if test="#{adminDomain.bookingInfo.showPayrollSelection}">
 					<a4j:region>
 						<h:panelGrid id="payrollModuleDiv" columns="2" >
-							<aon:selectOneRadio value="#{adminDomain.payrollModule}">
-								<f:selectItems value="#{adminDomain.payrollModules}" />
+							<aon:selectOneRadio value="#{adminDomain.bookingInfo.payrollModule}">
+								<f:selectItems value="#{adminDomain.bookingInfo.payrollModules}" />
 							</aon:selectOneRadio>		
 							<aon:commandButton reRender="payrollModuleDiv"
 								styleClass="aon-editDataTable-button aon-icon-delete" >
-								<f:setPropertyActionListener target="#{adminDomain.payrollModule}" value="#{null}" />
+								<f:setPropertyActionListener target="#{adminDomain.bookingInfo.payrollModule}" value="#{null}" />
 							</aon:commandButton>
 						</h:panelGrid>
 					</a4j:region>
 				</aon:if>						
-				<aon:if test="#{adminDomain.showDocumentSelection}">						
+				<aon:if test="#{adminDomain.bookingInfo.showDocumentSelection}">						
 					<a4j:region>
 						<h:panelGrid id="documentModuleDiv" columns="2" >
-							<aon:selectOneRadio value="#{adminDomain.documentModule}">
-								<f:selectItems value="#{adminDomain.documentModules}" />
+							<aon:selectOneRadio value="#{adminDomain.bookingInfo.documentModule}">
+								<f:selectItems value="#{adminDomain.bookingInfo.documentModules}" />
 								<a4j:support event="onchange" ajaxSingle="true"
-									actionListener="#{adminDomain.onPortalDocumentalChanged}"
+									actionListener="#{adminDomain.bookingInfo.onPortalDocumentalChanged}"
 									reRender="Domain_maxTotalDocumentSize" />									
 							</aon:selectOneRadio>		
 							<aon:commandButton reRender="documentModuleDiv,Domain_maxTotalDocumentSize"
 								styleClass="aon-editDataTable-button aon-icon-delete" >
-								<f:setPropertyActionListener target="#{adminDomain.documentModule}" value="#{null}" />
-								<aon:actionListener method="#{adminDomain.onPortalDocumentalChanged}" />
+								<f:setPropertyActionListener target="#{adminDomain.bookingInfo.documentModule}" value="#{null}" />
+								<aon:actionListener method="#{adminDomain.bookingInfo.onPortalDocumentalChanged}" />
 							</aon:commandButton>
 						</h:panelGrid>
 					</a4j:region>
 				</aon:if>
-				<a4j:repeat value="#{adminDomain.aioInfo.applicationModules}"
-					rendered="#{adminDomain.aioInfo.checked}" var="appModule">
+				<a4j:repeat value="#{adminDomain.bookingInfo.applicationModules}"
+					rendered="#{adminDomain.bookingInfo.showApplications}" var="appModule">
 					<aon:div rendered="#{appModule.rendered}">
 						<aon:selectBooleanCheckbox value="#{appModule.checked}"
 							disabled="#{appModule.disabled}" >
 							<a4j:support event="onchange" ajaxSingle="true"
 								rendered="#{appModule.module == 'DOCUMENT'}"
-								actionListener="#{adminDomain.onDocumentalChanged}"
+								actionListener="#{adminDomain.bookingInfo.onDocumentalChanged}"
 								reRender="Domain_maxTotalDocumentSize" />
 						</aon:selectBooleanCheckbox>								
 						<aon:outputText styleClass="aon-italic"

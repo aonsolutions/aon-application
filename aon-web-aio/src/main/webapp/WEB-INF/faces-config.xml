@@ -164,6 +164,10 @@
 			<from-outcome>menu_contrata</from-outcome>
 			<to-view-id>/facelet/menu/contrata.xhtml</to-view-id> 
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_aonOne</from-outcome>
+			<to-view-id>/facelet/menu/aonOne.xhtml</to-view-id> 
+		</navigation-case>
 	</navigation-rule>
 	
    	<!-- ************************************************** -->

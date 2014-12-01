@@ -342,7 +342,7 @@ public class MenuParser {
 					this.group.setId(id);
 					controller.getGroupMap().put( id, this.group );
 				} else {
-					LOGGER.error( "Duplicated id for option group {}", panelGrid );
+					LOGGER.error( "Duplicated id for option group {}, {}", id, panelGrid );
 				}		
 			} else {
 				LOGGER.error( "Option group without id {}", panelGrid );
@@ -446,7 +446,7 @@ public class MenuParser {
 		if (! controller.getOptionMap().containsKey(option.getAction()) ) {
 			controller.getOptionMap().put( option.getAction(), option );
 		} else {
-			LOGGER.error( "Duplicated action for option {}", option );
+			LOGGER.error( "Duplicated action for option {}, {}", option.getAction(), option );
 		}		
 		String id = option.getId();
 		if ( (! StringUtils.isEmpty(id)) && isDuplicatedId(id) ) {

@@ -107,7 +107,7 @@ public class DomainsController extends BasicController {
 			groups = new String[]{IAuditConstants.GROUP_CONFIG_SECURITY, IAuditConstants.GROUP_CONFIG_COMPANY};			
 		}
 		AonUtil.getRoleManager().setSysAdmin();			
-		adc.enableOnly(categories, groups);					
+		adc.getManager().enableOnly(categories, groups);					
 	}
 
 	public int getCurrentDomainChildNumber() throws ManagerBeanException {

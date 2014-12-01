@@ -1,9 +1,6 @@
 package com.code.aon.ui.admin.controller;
 
-import static com.code.aon.ui.common.ICommonConstants.AON_AIO_APPLICATION;
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
-import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
-import static com.code.aon.ui.registry.controller.DocumentManager.MAX_TOTAL_DOCUMENT_SIZE_VALUES;
 import static javax.faces.application.FacesMessage.SEVERITY_ERROR;
 
 import java.io.File;
@@ -23,7 +20,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.mail.Address;
 import javax.mail.internet.AddressException;
@@ -40,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
-import com.code.aon.audit.DomainApplicationModule;
 import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.AonException;
 import com.code.aon.common.BasicAttachment;
@@ -54,7 +49,6 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.company.Company;
-import com.code.aon.config.Application;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Domain;
 import com.code.aon.config.DomainApplication;
@@ -70,11 +64,11 @@ import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
-import com.code.aon.ui.admin.DomainApplicationInfo;
+import com.code.aon.ui.admin.BookingInfo;
+import com.code.aon.ui.admin.DeprecatedBookingInfo;
 import com.code.aon.ui.admin.DomainInfo;
-import com.code.aon.ui.admin.DomainModuleInfo;
-import com.code.aon.ui.admin.DomainModuleInfoManagement;
-import com.code.aon.ui.audit.AuditManager;
+import com.code.aon.ui.admin.IBookingInfo;
+import com.code.aon.ui.audit.VisibilityManager;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.audit.controller.IAuditConstants;
 import com.code.aon.ui.common.ICommonConstants;
@@ -120,16 +114,6 @@ public class DomainController extends BasicController {
 	
 	public final static int MAX_DOMAIN_NAME_LENGTH = 253;
 	
-	private DomainApplicationInfo aioInfo;
-	
-	private DomainModuleInfo documental;
-	
-	private DomainModuleInfo documentPortal;
-
-	private DomainModuleInfo payroll;
-	
-	private DomainModuleInfo payrollPortal;
-	
 	private DomainApplication domainApplication;
 		
 	private boolean OEM;
@@ -144,14 +128,6 @@ public class DomainController extends BasicController {
 	
 	private DomainInfo currentDomainInfo;
 	
-	private List<SelectItem> payrollModules;
-	
-	private List<SelectItem> documentModules;
-	
-	private Module payrollModule;
-	
-	private Module documentModule;
-	
 	private boolean showAuditInfoWindow;
 	
 	private DataScrollerState historyState;
@@ -159,6 +135,8 @@ public class DomainController extends BasicController {
 	private int externalApplications;
 	
 	private int productDetailLevel;
+	
+	private IBookingInfo bookingInfo;
 
 	private AdminMainController getAdmin() {
 		return (AdminMainController) AonUtil.getRegisteredBean(IAdminConstants.ADMIN_CONTROLLER_NAME);
@@ -176,214 +154,46 @@ public class DomainController extends BasicController {
 		return null;
 	}
 
+	public IBookingInfo getBookingInfo() {
+		return bookingInfo;
+	}
+	
+	public DomainInfo getCurrentDomainInfo() {
+		return currentDomainInfo;
+	}
+
 	public void onInit( ActionEvent event ) {
 		getAdmin().resetTermsOfServiceAccepted();
 		try {
 			select(event, DomainManager.getCurrentDomain());
 			initDomainApplication();
-			initApplicationInfos();
+			initBookingInfo();
 			initOEM();
 			initProductDetailLevel();
 			initHistory(getCompany().getId());
 			initExternalApplications();
+			updateDocumental();
 			this.currentDomainInfo = getDomainInfo();
 			if ( this.historyState.getDirectModel().getRowCount() == 0 ) {
 				saveHistory(this.currentDomainInfo);
 			}
-			updateDocumental();
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
 		}				
 	}
 	
-	public DomainModuleInfo getDocumental() {
-		return documental;
-	}
-
-	public void onDocumentalChanged( ActionEvent event ) {
-		if (! getDocumental().isChecked() ) {
-			getDomain().setMaxTotalDocumentSize(DocumentManager.MINIMUM_MAX_TOTAL_DOCUMENT_SIZE);
-		}
-	}
-
-	public void onPortalDocumentalChanged( ActionEvent event ) {
-		getDocumental().setChecked(getDocumentModule() == Module.DOCUMENT);
-		onDocumentalChanged(event);
-	}
-	
-	public boolean isConsultancyParent() throws ManagerBeanException {
-		Domain parent = getParentDomain();
-		return parent != null && parent.getType()==DomainType.CONSULTANCY;
-	}
-	
-	private List<Module> getDisabledModules() throws ManagerBeanException {
-		List<Module> list = new LinkedList<Module>();
-		Domain parent = getParentDomain();
-		if ( parent != null ) {
-			IManagerBean bean = BeanManager.getManagerBean(DomainApplicationModule.class);
-			Criteria criteria = new Criteria();
-			criteria.setSkipDomainFilter(true);
-			Application application = DomainApplicationInfo.getApplication(AON_AIO_APPLICATION);
-			Integer da = AdminUtil.getDomainApplication(parent.getId(), application.getId());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_MODULE_DOMAIN), parent.getId());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_MODULE_DOMAIN_APPLICATION_ID), da);
-			for( ITransferObject to : bean.getList(criteria) ) {
-				DomainApplicationModule dam = (DomainApplicationModule) to;
-				list.add(dam.getModule());
+	private void initBookingInfo() {
+		try {
+			if ( VisibilityManager.isDeprecatedBookingInfo() ) {
+				this.bookingInfo = new DeprecatedBookingInfo(getDomain(), getParentDomain());
+				this.bookingInfo.init();				
+			} else {
+				this.bookingInfo = new BookingInfo(getDomain(), getParentDomain());
+				this.bookingInfo.init();								
 			}
-			if ( isConsultancyParent() ) {
-				list.remove(Module.DOCUMENT);
-				list.remove(Module.PAYROLL);
-				list.remove(Module.DOCUMENT_PORTAL);
-				list.remove(Module.PAYROLL_PORTAL);
-				list.remove(Module.CONTRATA);
-			}
-		}
-		return list;
-	}
-	
-	private void joinManagementTreasury() throws ManagerBeanException {
-		DomainModuleInfo management = this.aioInfo.getModuleInfo(Module.MANAGEMENT);
-		DomainModuleInfo treasury = this.aioInfo.getModuleInfo(Module.TREASURY);
-		if ( management != null && treasury != null ) {
-			DomainModuleInfoManagement dmim = new DomainModuleInfoManagement(management, treasury);
-			this.aioInfo.getApplicationModules().remove(management);
-			this.aioInfo.getApplicationModules().remove(treasury);
-			this.aioInfo.getApplicationModules().add(dmim);
-			dmim.setDescription(AonUtil.getMessage(ICommonMessages.MODULE_MANAGEMENT_FINANCE));				
-		}
-	}
-	
-	public boolean isShowDocumentSelection() {
-		if ( documental != null && documentPortal != null ) {
-			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-			return ds.isChildDomain();
-		}
-		return false;
-	}
-
-	public boolean isShowPayrollSelection() {
-		if ( payroll != null && payrollPortal != null ) {
-			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-			return ds.isChildDomain();
-		}
-		return false;
-	}
-	
-	private void initPortalModules() throws ManagerBeanException {
-		setDocumentModule(null);
-		setPayrollModule(null);
-		this.documental = this.aioInfo.getModuleInfo(Module.DOCUMENT);
-		this.documentPortal = this.aioInfo.getModuleInfo(Module.DOCUMENT_PORTAL);
-		this.payroll = this.aioInfo.getModuleInfo(Module.PAYROLL);
-		this.payrollPortal = this.aioInfo.getModuleInfo(Module.PAYROLL_PORTAL);		
-		if ( isShowDocumentSelection() ) {
-			getDocumental().setRendered(false);
-			documentPortal.setRendered(false);
-			if ( getDocumental().isChecked() ) {				
-				setDocumentModule(Module.DOCUMENT);
-				documentPortal.setChecked(false);
-			}
-			if ( documentPortal.isChecked() ) {
-				setDocumentModule(Module.DOCUMENT_PORTAL);
-			}
-		}
-		if ( isShowPayrollSelection() ) {		
-			payroll.setRendered(false);
-			payrollPortal.setRendered(false);
-			if ( payroll.isChecked() ) {				
-				setPayrollModule(Module.PAYROLL);
-				payrollPortal.setChecked(false);
-			}
-			if ( payrollPortal.isChecked() ) {
-				setPayrollModule(Module.PAYROLL_PORTAL);
-			}
-		}
-		if ( (this.payrollPortal != null) && getDomain().isDomainManagement() && (getDomain().getType() == DomainType.CONSULTANCY) ) {
-			String description = AonUtil.getMessage(ICommonMessages.ADMIN_GLOBAL_PORTAL);
-			this.payrollPortal.setDescription(description);
-		}
-	}
-	
-	private void updateModules( DomainApplicationInfo appInfo, boolean sysAdmin ) throws ManagerBeanException {
-		if (! sysAdmin ) {
-			List<Module> disabledModules = getDisabledModules();
-			for( Module module : disabledModules ) {
-				DomainModuleInfo info = appInfo.getModuleInfo(module);
-				if ( info == null ) {
-					info = new DomainModuleInfo(module);
-					appInfo.getApplicationModules().add(info);
-					LOGGER.debug( "Added: {}", module );
-				}			
-				info.setChecked(true);
-				info.setDisabled(true);
-				LOGGER.debug( "Checked and disabled: {}", info );
-			}
-			List<Module> visibleModules = AuditManager.getVisibleModules(getDomain().getId(), appInfo.getApplication().getId());
-			for( int i = appInfo.getApplicationModules().size()-1; i >= 0; i-- ) {
-				DomainModuleInfo info =  appInfo.getApplicationModules().get(i);
-				if (! visibleModules.contains(info.getModule()) ) {
-					appInfo.removeModuleInfo(info);
-					LOGGER.debug( "Removed from list: {}", info );
-				}
-			}
-		} else {
-			DomainModuleInfo info =  appInfo.getModuleInfo(Module.CONFIGURATION);
-			appInfo.removeModuleInfo(info);
-		}
-		joinManagementTreasury();
-		initPortalModules();
-		appInfo.updateApplicationModules();
-		appInfo.sortApplicationModules();
-		if (! sysAdmin ) {
-			DomainModuleInfo infoweb = this.aioInfo.getModuleInfo(Module.INFOWEB);
-			if ( infoweb != null ) {
-				this.aioInfo.getApplicationModules().remove(infoweb);
-			}
-		}
-	}
-
-	public DomainApplicationInfo getAioInfo() {
-		return aioInfo;
-	}
-
-	public void initApplicationInfos() throws ManagerBeanException {
-		this.aioInfo = DomainApplicationInfo.getApplicationInfos(getDomain(), AON_AIO_APPLICATION);
-		updateModules(this.aioInfo, AonUtil.getRoleManager().isSysAdmin());
-	}
-	
-	private void updatePortalModules() throws ManagerBeanException {
-		if ( isShowDocumentSelection()) {
-			getDocumental().setChecked(false);
-			documentPortal.setChecked(false);
-			if ( getDocumentModule() == Module.DOCUMENT ) {
-				getDocumental().setChecked(true);
-			} else if ( getDocumentModule() == Module.DOCUMENT_PORTAL ) {
-				documentPortal.setChecked(true);
-			}
-		}
-		if ( isShowPayrollSelection() ) {
-			payroll.setChecked(false);
-			payrollPortal.setChecked(false);
-			if ( getPayrollModule() == Module.PAYROLL ) {
-				payroll.setChecked(true);
-			} else if ( getPayrollModule() == Module.PAYROLL_PORTAL ) {
-				payrollPortal.setChecked(true);
-			}
-		}
-	}	
-
-	public void saveApplications() throws ManagerBeanException {
-		updatePortalModules();
-		if ( this.aioInfo.isChecked() ) {
-			this.aioInfo.register();
-		} else {
-			this.aioInfo.unregister();
-		}
-	}	
-	
-	public boolean isShowApplications() {
-		return this.aioInfo.isChecked();
+		} catch (ManagerBeanException e) {
+			LOGGER.error( e.getMessage(), e );
+		}				
 	}
 
 	private void initDomainApplication() {
@@ -628,13 +438,8 @@ public class DomainController extends BasicController {
 		di.setNumberOfUsers(domain.getMaxDefinedUsers());
 		di.setMaxTotalDocumentSize(domain.getMaxTotalDocumentSize());
 		di.setDomainManagement(domain.isDomainManagement());
-		List<Module> modules = new LinkedList<Module>();
-		for( DomainModuleInfo dim : this.aioInfo.getApplicationModules() ) {
-			if ( dim.isChecked() ) {
-				modules.add(dim.getModule());	
-			}
-		}
-		di.setModules(modules);
+		di.setBookingModules(bookingInfo.getBookingModules());
+		di.setDisplayModules(bookingInfo.getDisplayModules());
 		return di;
 	}
 	
@@ -671,10 +476,10 @@ public class DomainController extends BasicController {
 		String size = FileUtils.byteCountToDisplaySize(di.getMaxTotalDocumentSize()*FileUtils.ONE_MB);
 		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_4, type, di.getNumberOfUsers(), size ) );
 		String multiDomain = di.isDomainManagement() ? AonUtil.getMessage(ICommonMessages.YES) : AonUtil.getMessage(ICommonMessages.NO);
-		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_5, multiDomain, di.getModules().size()) );
-		if (! di.getModules().isEmpty() ) {
+		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_5, multiDomain, di.getBookingModules().size()) );
+		if (! di.getBookingModules().isEmpty() ) {
 			body.append( "<ul>" );
-			for( Module module : di.getModules() ) {
+			for( Module module : di.getBookingModules() ) {
 				String name = StringEscapeUtils.escapeHtml(module.getName(locale));
 				body.append( "<li>" ).append(name).append( "</li>" );
 			}
@@ -743,50 +548,18 @@ public class DomainController extends BasicController {
 				diffFile.clean();
 				termsOfServiceFile.clean();
 			}
-			if ( DomainSwitcher.getDomainType(principal.getDomainId()) != DomainType.ADMIN ) {
-				ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(IAuditConstants.ACTION_DENIED_CONTROLLER_NAME);
-				adc.init();
-			}
+			reloadModuleConfiguration(principal);
 			initHistory(getCompany().getId());
 		}
 		this.currentDomainInfo = di;
 	}
-
-	public Module getPayrollModule() {
-		return payrollModule;
-	}
-
-	public void setPayrollModule(Module payrollModule) {
-		this.payrollModule = payrollModule;
-	}
 	
-	public List<SelectItem> getPayrollModules() {
-		if ( payrollModules == null ) {
-			Locale locale = AonUtil.getCurrentLocale();
-			payrollModules = new LinkedList<SelectItem>();
-			payrollModules.add(new SelectItem(Module.PAYROLL_PORTAL, Module.PAYROLL_PORTAL.getName(locale)));		
-			payrollModules.add(new SelectItem(Module.PAYROLL, Module.PAYROLL.getName(locale)));
-		}
-		return payrollModules;
+	public void reloadModuleConfiguration( AuthPrincipal principal ) {
+		if ( DomainSwitcher.getDomainType(principal.getDomainId()) != DomainType.ADMIN ) {
+			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(IAuditConstants.ACTION_DENIED_CONTROLLER_NAME);
+			adc.init();
+		}		
 	}
-
-	public Module getDocumentModule() {
-		return documentModule;
-	}
-
-	public void setDocumentModule(Module documentModule) {
-		this.documentModule = documentModule;
-	}	
-	
-	public List<SelectItem> getDocumentModules() {
-		if ( documentModules == null ) {
-			Locale locale = AonUtil.getCurrentLocale();
-			documentModules = new LinkedList<SelectItem>();
-			documentModules.add(new SelectItem(Module.DOCUMENT_PORTAL, Module.DOCUMENT_PORTAL.getName(locale)));		
-			documentModules.add(new SelectItem(Module.DOCUMENT, Module.DOCUMENT.getName(locale)));			
-		}
-		return documentModules;
-	}	
 
 	public boolean isShowAuditInfoWindow() {
 		return showAuditInfoWindow;
@@ -1031,21 +804,10 @@ public class DomainController extends BasicController {
 	public void setProductDetailLevel(int productDetailLevel) {
 		this.productDetailLevel = productDetailLevel;
 	}
-
-	public List<SelectItem> getMaxTotalDocumentSizes() {
-		List<SelectItem> list = new LinkedList<SelectItem>();
-		for (int i = 0; i < MAX_TOTAL_DOCUMENT_SIZE_VALUES.length; i++) {
-			int value = MAX_TOTAL_DOCUMENT_SIZE_VALUES[i];
-			String name = FileUtils.byteCountToDisplaySize(value*FileUtils.ONE_MB);
-			SelectItem item = new SelectItem(value, name);
-			if (i > 0) {
-				boolean disabled = (getDocumental() == null) || !getDocumental().isChecked(); 
-				item.setDisabled(disabled);
-			}
-			list.add(item);					
-		}
-		return list;
-	}		
+	
+	public String action() {
+		return VisibilityManager.isDeprecatedBookingInfo() ? "adminDomain_form_deprecated" : "adminDomain_form";
+	}
 	
 	private static class ParentDomainFilter extends ControllerAdapter {
 		

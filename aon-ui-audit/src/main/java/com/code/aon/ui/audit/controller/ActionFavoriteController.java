@@ -94,7 +94,7 @@ public class ActionFavoriteController implements IAuditConstants, Serializable {
 	public void onInit( ActionEvent event ) {
 		this.options = new ArrayList<ApplicationOption>( getDeniedController().getOptions(false) );
 		this.options.removeAll(this.favorites);
-		Collection<ApplicationOption> deniedList = getDeniedController().getDeniedOptions();
+		Collection<ApplicationOption> deniedList = getDeniedController().getManager().getDeniedOptions();
 		this.options.removeAll(deniedList);
 	}
 	
@@ -158,7 +158,7 @@ public class ActionFavoriteController implements IAuditConstants, Serializable {
 					ActionFavorite af = (ActionFavorite) to;
 					String action = af.getAction().getName();
 					ApplicationOption option = options.get(action);
-					if ( (option != null) && (!getDeniedController().isDenied(option)) ) {
+					if ( (option != null) && (!getDeniedController().getManager().isDenied(option)) ) {
 						if ( option.isRendered() ) {
 							this.favorites.add(option);	
 						}

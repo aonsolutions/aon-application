@@ -42,7 +42,7 @@
 									actionListener="#{companyAddress.onCancel}"
 									value="#{bundle.registry_addresses}" />
 							</aon:div>
-							<aon:if test="#{!((aonRole.payroll and actionDenied.moduleEnabled['payroll']) or actionDenied.moduleEnabled['contrata'])}">
+							<aon:if test="#{!actionDenied.manager.renderPayrollConfig}">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="workplaces" 
 										reRender="configPanelBar,configContent"
@@ -51,7 +51,7 @@
 										value="#{bundle.company_workplaces}" />
 								</aon:div>
 							</aon:if>
-							<aon:if test="#{(aonRole.payroll and actionDenied.moduleEnabled['payroll']) or actionDenied.moduleEnabled['contrata']}">
+							<aon:if test="#{actionDenied.manager.renderPayrollConfig}">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="payrollWorkplaces" 
 										reRender="configPanelBar,configContent"
@@ -164,7 +164,7 @@
 									</aon:div>
 								</aon:if>
 							</aon:if>
-							<aon:if test="#{(aonRole.payroll and actionDenied.moduleEnabled['payroll']) or actionDenied.moduleEnabled['contrata']}">
+							<aon:if test="#{actionDenied.manager.renderPayrollConfig}">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="payrollParameters" 
 										reRender="configPanelBar,configContent"
@@ -276,7 +276,7 @@
 						<aon:if test="#{aonRole.sysAdmin or (!domainSwitcher.disableDomainManagement)}">
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="adminDomain"
-									action="adminDomain_form"
+									action="#{adminDomain.action}"
 									actionListener="#{adminDomain.onInit}"
 									value="#{bundle.admin_domain_management}" />
 							</aon:div>

@@ -94,7 +94,8 @@ public class DomainModuleInfo implements Serializable {
 		}			
 	}
 	
-	private void insert( DomainApplication domainApplication ) throws ManagerBeanException {
+	private boolean insert( DomainApplication domainApplication ) throws ManagerBeanException {
+		boolean inserted = false;
 		if ( this.applicationModule == null && domainApplication != null ) {
 			DomainApplicationModule dam = new DomainApplicationModule();
 			dam.setDomainApplication( domainApplication );
@@ -103,16 +104,19 @@ public class DomainModuleInfo implements Serializable {
 			damBean.insert(dam);
 			setApplicationModule(dam);
 			LOGGER.info( "Added: {}", dam );
+			inserted = true;
 		}
+		return inserted;
 	}	
 	
-	public void update( DomainApplication domainApplication ) throws ManagerBeanException {
+	public boolean update( DomainApplication domainApplication ) throws ManagerBeanException {
+		boolean updated = true;
 		if ( isChecked() ) {
-			insert(domainApplication);
+			updated = insert(domainApplication);
 		} else {
 			remove();
 		}
-		
+		return updated;
 	}
 
 	@Override

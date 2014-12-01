@@ -44,6 +44,8 @@ public class DomainInfo implements Serializable {
 	private static final String DOMAIN_MANAGEMENT = "domainManagement";
 
 	private static final String MODULES = "modules";
+	
+	private static final String DISPLAY_MODULES = "displayModules";
 
 	private static final String NUMBER_OF_USERS = "numberOfUsers";
 
@@ -61,7 +63,9 @@ public class DomainInfo implements Serializable {
 	
 	private boolean domainManagement;
 
-	private List<Module> modules;
+	private List<Module> bookinModules;
+	
+	private List<Module> displayModules;
 	
 	private Date date;
 	
@@ -69,7 +73,8 @@ public class DomainInfo implements Serializable {
 		type = DomainType.ENTERPRISE;
 		numberOfUsers = 0;
 		maxTotalDocumentSize = DocumentManager.MINIMUM_MAX_TOTAL_DOCUMENT_SIZE;
-		modules = Collections.emptyList();
+		bookinModules = Collections.emptyList();
+		displayModules = Collections.emptyList();
 	}
 	
 	public DomainInfo( byte[] data  ) {
@@ -98,11 +103,18 @@ public class DomainInfo implements Serializable {
 		if ( NumberUtils.isDigits(maxTotalDocumentSizeValue) ) {
 			this.maxTotalDocumentSize = NumberUtils.toInt(maxTotalDocumentSizeValue);
 		}
-		String modulesValue = properties.getProperty(MODULES);
-		if (! StringUtils.isEmpty(modulesValue) ) {
-			this.modules = new LinkedList<Module>();
-			for( String value : StringUtils.split(modulesValue) ) {
-				this.modules.add(Module.valueOf(value));
+		String bookingModulesValue = properties.getProperty(MODULES);
+		if (! StringUtils.isEmpty(bookingModulesValue) ) {
+			this.bookinModules = new LinkedList<Module>();
+			for( String value : StringUtils.split(bookingModulesValue) ) {
+				this.bookinModules.add(Module.valueOf(value));
+			}
+		}
+		String displayModulesValue = properties.getProperty(DISPLAY_MODULES);
+		if (! StringUtils.isEmpty(displayModulesValue) ) {
+			this.displayModules = new LinkedList<Module>();
+			for( String value : StringUtils.split(displayModulesValue) ) {
+				this.displayModules.add(Module.valueOf(value));
 			}
 		}
 	}
@@ -142,7 +154,7 @@ public class DomainInfo implements Serializable {
 	public boolean[] getModuleArray() {
 		boolean[] array = new boolean[Module.values().length];
 		for( int i = 0; i < array.length; i++ ) {
-			array[i] = this.modules.contains(Module.values()[i]);
+			array[i] = this.bookinModules.contains(Module.values()[i]);
 		}
 		return array;
 	}
@@ -150,18 +162,35 @@ public class DomainInfo implements Serializable {
 	public String getModuleList() {
 		Set<String> modules = new TreeSet<String>();
 		Locale locale = AonUtil.getCurrentLocale();
-		for( Module module : this.modules ) {
+		for( Module module : this.bookinModules ) {
+			modules.add( module.getName(locale) );
+		}
+		for( Module module : this.displayModules ) {
 			modules.add( module.getName(locale) );
 		}
 		return StringUtils.join(modules, ", ");
 	}	
 	
-	public List<Module> getModules() {
-		return modules;
+	public List<Module> getBookingModules() {
+		return bookinModules;
 	}
 
-	public void setModules(List<Module> modules) {
-		this.modules = modules;
+	private List<Module> getModules(List<DomainModuleInfo> moduleInfos) {
+		List<Module> list = new LinkedList<Module>();
+		for( DomainModuleInfo dim : moduleInfos ) {
+			if ( dim.isChecked() ) {
+				list.add(dim.getModule());	
+			}
+		}
+		return list;
+	}
+	
+	public void setBookingModules(List<DomainModuleInfo> moduleInfos) {
+		this.bookinModules = getModules(moduleInfos);
+	}
+
+	public void setDisplayModules(List<DomainModuleInfo> moduleInfos) {
+		this.displayModules = getModules(moduleInfos);
 	}
 	
 	public Date getDate() {
@@ -227,7 +256,7 @@ public class DomainInfo implements Serializable {
 			diff( sb, ICommonMessages.DOMAIN_DOMAIN_MANAGEMENT, isDomainManagement(), di.isDomainManagement() );
 		}
 		if (! Arrays.equals(getModuleArray(), di.getModuleArray()) ) {
-			diffList( sb, ICommonMessages.DOMAIN_MODULES, getModules(), di.getModules() );
+			diffList( sb, ICommonMessages.DOMAIN_MODULES, getBookingModules(), di.getBookingModules() );
 		}
 		return sb.toString();
 	}
@@ -247,9 +276,13 @@ public class DomainInfo implements Serializable {
 		if (! StringUtils.isEmpty(user)) {
 			properties.setProperty(USER, user);	
 		}
-		if (! modules.isEmpty() ) {
-			String modulesValue = StringUtils.join(modules, " ");
+		if (! bookinModules.isEmpty() ) {
+			String modulesValue = StringUtils.join(bookinModules, " ");
 			properties.setProperty(MODULES, modulesValue);			
+		}
+		if (! displayModules.isEmpty() ) {
+			String modulesValue = StringUtils.join(displayModules, " ");
+			properties.setProperty(DISPLAY_MODULES, modulesValue);			
 		}
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try {

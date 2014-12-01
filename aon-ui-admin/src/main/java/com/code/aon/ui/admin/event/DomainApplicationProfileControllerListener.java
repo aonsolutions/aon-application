@@ -41,7 +41,7 @@ public class DomainApplicationProfileControllerListener extends ControllerAdapte
 			throws ControllerListenerException {
 		ApplicationProfileController apc = (ApplicationProfileController) event.getController();
 		try {		
-			Set<Module> enabledModules = getActionDeniedController().getEnabledModules(null, true);
+			Set<Module> enabledModules = getActionDeniedController().getManager().getEnabledModules(null, true);
 			apc.initProfileInfos( enabledModules );
 			getProfileActionDeniedController().init((Profile) apc.getTo(), enabledModules);
 		} catch (Throwable e) {
@@ -55,7 +55,7 @@ public class DomainApplicationProfileControllerListener extends ControllerAdapte
 			throws ControllerListenerException {
 		ApplicationProfileController apc = (ApplicationProfileController) event.getController();
 		try {		
-			Set<Module> enabledModules = getActionDeniedController().getEnabledModules(null, true);
+			Set<Module> enabledModules = getActionDeniedController().getManager().getEnabledModules(null, true);
 			apc.initProfileInfos( enabledModules );
 			getProfileActionDeniedController().init((Profile) apc.getTo(), enabledModules);
 		} catch (Throwable e) {

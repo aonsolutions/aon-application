@@ -55,9 +55,10 @@ public class DomainModuleInfoManagement extends DomainModuleInfo {
 	}
 	
 	@Override
-	public void update( DomainApplication domainApplication ) throws ManagerBeanException {
-		this.management.update(domainApplication);
-		this.treasury.update(domainApplication);		
+	public boolean update( DomainApplication domainApplication ) throws ManagerBeanException {
+		boolean updated = this.management.update(domainApplication);
+		updated |= this.treasury.update(domainApplication);		
+		return updated;
 	}
 	
 }

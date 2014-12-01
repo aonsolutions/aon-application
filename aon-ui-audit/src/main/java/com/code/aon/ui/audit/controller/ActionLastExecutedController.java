@@ -15,6 +15,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
+import com.code.aon.ui.audit.IVisibilityManager;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -30,8 +31,8 @@ public class ActionLastExecutedController extends BasicController implements IAu
 		return ApplicationOptionController.getInstance();
 	}
 
-	private ActionDeniedController getDeniedController() {
-		return (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+	private IVisibilityManager getVisibilityManager() {
+		return ((ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME)).getManager();
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -54,7 +55,7 @@ public class ActionLastExecutedController extends BasicController implements IAu
 				String action = ((ActionEntry) to).getAction().getName();
 				ApplicationOption option = options.get(action);
 				if ( option != null ) {
-					if (! getDeniedController().isDenied(option) ) {
+					if (! getVisibilityManager().isDenied(option) ) {
 						list.add(option);
 					} else {
 						LOGGER.warn( "Action {} is denied", action );

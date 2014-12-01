@@ -63,8 +63,15 @@ public class ApplicationOptionController {
 		return groupMap;
 	}
 
-	public List<ApplicationCategory> getCategories() {
+	public List<ApplicationCategory> getCategories( boolean sorted ) {
+		if ( sorted ) {
+			Collections.sort( this.categories );
+		}
 		return categories;
+	}
+	
+	public List<ApplicationCategory> getCategories() {
+		return getCategories(false);
 	}
 
 	public ApplicationCategory getCategory( String action ) {
@@ -81,7 +88,6 @@ public class ApplicationOptionController {
 		this.groupMap = new HashMap<String, OptionGroup>();
 		this.categories = new ArrayList<ApplicationCategory>();
 		new MenuParser(servletContext).parse(this);
-		Collections.sort( this.categories );
 	}
 
 	private VelocityHelper getVelocityHelper() {

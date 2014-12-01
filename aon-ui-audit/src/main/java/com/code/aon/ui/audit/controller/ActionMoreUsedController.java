@@ -21,6 +21,7 @@ import com.code.aon.audit.ActionEntry;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.AuditManager;
+import com.code.aon.ui.audit.IVisibilityManager;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.DataScrollerState;
@@ -43,9 +44,9 @@ public class ActionMoreUsedController extends DataScrollerState implements IAudi
 		return ApplicationOptionController.getInstance();
 	}
 	
-	private ActionDeniedController getDeniedController() {
-		return (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
-	}	
+	private IVisibilityManager getVisibilityManager() {
+		return ((ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME)).getManager();
+	}
 	
 	protected List<ActionMoreUsed> getMoreUsed( int maxResults ) {
 		List<ActionMoreUsed> list = new LinkedList<ActionMoreUsed>();
@@ -80,7 +81,7 @@ public class ActionMoreUsedController extends DataScrollerState implements IAudi
 		        	String actionName = (String) array[2];
 					ApplicationOption option = options.get(actionName);
 					if ( option != null ) {
-						if (option.isRendered() && (!getDeniedController().isDenied(option)) ) {
+						if (option.isRendered() && (!getVisibilityManager().isDenied(option)) ) {
 							ActionMoreUsed ams = new ActionMoreUsed( (Integer) array[0], option );
 							list.add( ams );
 						}

@@ -112,9 +112,10 @@ public class DesktopState implements Serializable {
 			initAcademy();
 			initHotel();				
 		}
-		User user = initUser();
-		initSupport();
+		User user = UserUtils.getInstance().getLoggedUser();
 		initPortal(user, ds);
+		initUser(user);
+		initSupport();
 		initExternalApplications(user);
 		checkSerialization();
 	}
@@ -133,7 +134,7 @@ public class DesktopState implements Serializable {
 			categories = (String[]) ArrayUtils.add(categories, IAuditConstants.DOCUMENT_CATEGORY);
 			groups = (String[]) ArrayUtils.addAll(groups, new String[]{IAuditConstants.GROUP_DOCUMENT, IAuditConstants.GROUP_DOCUMENT_UTILITIES});
 		}
-		adc.enableOnly(categories, groups, IAuditConstants.MAIL_ACCOUNT_ACTION, IAuditConstants.SIGNATURE_ACTION);
+		adc.getManager().enableOnly(categories, groups, IAuditConstants.MAIL_ACCOUNT_ACTION, IAuditConstants.SIGNATURE_ACTION);
 	}
 	
 	private void updateRecentNoteModel()  {
@@ -155,7 +156,7 @@ public class DesktopState implements Serializable {
 		ApplicationOptionController aoc = ApplicationOptionController.getInstance();
 		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
 		ApplicationOption option = aoc.getOptionMap().get(actionName);
-		if ( option!=null && option.getViewId()!=null && !adc.isDenied(option) ) {
+		if ( option!=null && option.getViewId()!=null && !adc.getManager().isDenied(option) ) {
 			smc.setLastMenuAction(option.getGroup().getCategory().getAction());
 			return option;	
 		}
@@ -194,8 +195,7 @@ public class DesktopState implements Serializable {
 		this.patchInitAction = StringUtils.equals(value, Boolean.TRUE.toString());
 	}
 	
-	private User initUser() {
-		User user = UserUtils.getInstance().getLoggedUser();
+	private User initUser( User user ) {
 		setupInitAction(user);
 		ConfigurationController cc = AonUtil.getConfigurationController();
 		if (! StringUtils.isEmpty(user.getLocale()) ) {
@@ -236,13 +236,13 @@ public class DesktopState implements Serializable {
 		}
 	}	
 
-	private boolean isPayrollPortal() {
-		if (this.initOption!=null) {
+	private boolean isPayrollPortal( User user ) {
+		if (user.getInitAction()!=null) {
 			if ((this.portalValue & IAdminConstants.PAYROLL_PORTAL) != 0) {
 				return true;
 			}
 			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
-			List<Module> modules = adc.getVisibleModules();
+			List<Module> modules = adc.getManager().getVisibleModules();
 			if ( modules.size()==1 && modules.get(0)==Module.PAYROLL_PORTAL ) {
 				return true;
 			}
@@ -253,7 +253,7 @@ public class DesktopState implements Serializable {
 	private boolean isPortalActive( User user, DomainSwitcher ds ) {
 		if ( ds.isChildDomain() ) {
 			if ( user.getEnterprise() != null ) {
-				if (this.initOption!=null) {
+				if (user.getInitAction()!=null) {
 					return true;	
 				} else if (portalValue != 0) {
 					return true;
@@ -266,9 +266,9 @@ public class DesktopState implements Serializable {
 		return false;
 	}
 	
-	private String[] getPortalEnabledCategories() {
+	private String[] getPortalEnabledCategories( User user) {
 		String[] categories = new String[0];
-		if ( isPayrollPortal() || isPayrollInfoVisibleForPortal() ) {
+		if ( isPayrollPortal(user) || isPayrollInfoVisibleForPortal() ) {
 			categories = (String[]) ArrayUtils.add(categories, Module.PAYROLL_PORTAL.getName());
 		}
 		if ( isDocumentalInfoVisibleForPortal() ) {
@@ -293,11 +293,11 @@ public class DesktopState implements Serializable {
 				properties.put( ICommonConstants.HIDE_MENU_WEB_MAP, Boolean.TRUE );
 				properties.put( ICommonConstants.HIDE_MENU_HELP, Boolean.TRUE );
 				ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
-				if ( isPayrollPortal() ) {
+				if ( isPayrollPortal(user) ) {
 					properties.put( ICommonConstants.HIDE_MENU_HOME, Boolean.TRUE );
 					properties.put( ICommonConstants.HIDE_MENU_ABOUT, Boolean.TRUE );
 				}
-				adc.enableOnly(getPortalEnabledCategories(), new String[0], IAuditConstants.USER_PROFILE_ACTION, IAuditConstants.BATCH_DOCUMENT_ACTION);				
+				adc.getManager().enableOnly(getPortalEnabledCategories(user), new String[0], IAuditConstants.USER_PROFILE_ACTION, IAuditConstants.BATCH_DOCUMENT_ACTION);				
 			}
 		} else {
 			portalValue = 0;

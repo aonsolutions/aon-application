@@ -66,7 +66,7 @@ public class ApplicationCategory extends BasicOption implements Comparable<Appli
 	
 	@Override
 	public int compareTo(ApplicationCategory o) {
-		return getRawDescription().compareTo( o.getRawDescription() );
+		return getDescription().compareToIgnoreCase( o.getDescription() );
 	}
 
 	@Override
