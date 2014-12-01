@@ -23,10 +23,13 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IHeaderObject;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.IBankAccountContainer;
 import com.code.aon.config.IPayMethod;
+import com.code.aon.config.IScopable;
 import com.code.aon.config.PayMethod;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.ql.Criteria;
@@ -35,7 +38,7 @@ import com.esferalia.aon.entity.master.OfferDB;
 
 @Entity
 @Table(name="offer", uniqueConstraints = @UniqueConstraint(columnNames={"series", "number", "version"}))
-public class Offer extends OfferDB implements IHeaderObject, ICalculableContainer, IBankAccountContainer, IPayMethod {
+public class Offer extends OfferDB implements IHeaderObject, ICalculableContainer, IBankAccountContainer, IPayMethod, IScopable, IAuditable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
     private static final String DELIM = " ";
@@ -124,7 +127,7 @@ public class Offer extends OfferDB implements IHeaderObject, ICalculableContaine
 	}
 
 	@Transient
-	public List<?> getDetailList() {
+	public List<ITransferObject> getDetailList() {
 		try {
 			IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 			Criteria criteria = new Criteria();

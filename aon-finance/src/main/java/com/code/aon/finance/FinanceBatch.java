@@ -18,6 +18,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -25,7 +26,7 @@ import com.esferalia.aon.entity.master.FinanceBatchDB;
 
 @Entity
 @Table(name = "fbatch")
-public class FinanceBatch extends FinanceBatchDB {
+public class FinanceBatch extends FinanceBatchDB implements IAuditable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 

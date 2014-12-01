@@ -13,6 +13,7 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.product.strategy.ICalculable;
@@ -25,7 +26,7 @@ import com.esferalia.aon.entity.master.PurchaseDetailDB;
 
 @Entity
 @Table(name="purchase_detail")
-public class PurchaseDetail extends PurchaseDetailDB implements ICalculable {
+public class PurchaseDetail extends PurchaseDetailDB implements ICalculable, IAuditable {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	private final static Logger LOGGER = LoggerFactory.getLogger(PurchaseDetail.class);

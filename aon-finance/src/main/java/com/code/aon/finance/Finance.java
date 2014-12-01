@@ -16,9 +16,11 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.IBankAccountContainer;
+import com.code.aon.config.IPayMethod;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.finance.enumeration.FinanceStatus;
@@ -29,7 +31,7 @@ import com.esferalia.aon.entity.master.FinanceDB;
 
 @Entity
 @Table(name = "finance")
-public class Finance extends FinanceDB implements IBankAccountContainer, IScopable {
+public class Finance extends FinanceDB implements IBankAccountContainer, IScopable, IAuditable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	

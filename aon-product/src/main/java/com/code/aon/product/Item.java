@@ -20,6 +20,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.annotations.Heritable;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tax;
 import com.code.aon.product.enumeration.ProductStatus;
@@ -33,7 +34,7 @@ import com.esferalia.aon.entity.master.ItemDB;
 @Entity
 @Table(name="item")
 @Heritable
-public class Item extends ItemDB implements IPriceable {
+public class Item extends ItemDB implements IPriceable, IAuditable {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	

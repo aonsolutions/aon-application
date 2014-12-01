@@ -14,6 +14,7 @@ import org.hibernate.annotations.Where;
 
 import com.code.aon.commercial.enumeration.Advertising;
 import com.code.aon.commercial.enumeration.TargetStatus;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.AonVersion;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
@@ -28,7 +29,7 @@ import com.esferalia.aon.entity.master.TargetDB;
 
 @Entity
 @Table(name="target")
-public class Target extends TargetDB implements ITaxInfo, IRegistry, IScopable, ITariffable {
+public class Target extends TargetDB implements IRegistry, ITaxInfo, IScopable, ITariffable, IAuditable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 

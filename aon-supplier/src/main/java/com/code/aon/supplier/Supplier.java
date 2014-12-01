@@ -11,6 +11,7 @@ import javax.persistence.Transient;
 
 import com.code.aon.account.IAccount;
 import com.code.aon.AonVersion;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.Tariff;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
@@ -23,7 +24,7 @@ import com.esferalia.aon.entity.master.SupplierDB;
 
 @Entity
 @Table(name="supplier")
-public class Supplier extends SupplierDB implements ITaxInfo, IScopable, IRegistry, IAccount, ITariffable {
+public class Supplier extends SupplierDB implements IRegistry, ITaxInfo, IScopable, IAccount, ITariffable, IAuditable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 

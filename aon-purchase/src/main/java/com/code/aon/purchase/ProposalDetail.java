@@ -7,6 +7,7 @@ import javax.persistence.Transient;
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.purchase.enumeration.ProposalDetailStatus;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -14,7 +15,7 @@ import com.esferalia.aon.entity.master.ProposalDetailDB;
 
 @Entity
 @Table(name="proposal_detail")
-public class ProposalDetail extends ProposalDetailDB {
+public class ProposalDetail extends ProposalDetailDB implements IAuditable {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	

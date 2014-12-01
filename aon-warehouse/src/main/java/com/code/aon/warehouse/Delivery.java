@@ -26,9 +26,11 @@ import com.code.aon.common.IHeaderObject;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.IBankAccountContainer;
 import com.code.aon.config.IPayMethod;
+import com.code.aon.config.IScopable;
 import com.code.aon.config.PayMethod;
 import com.code.aon.customer.Customer;
 import com.code.aon.product.strategy.ICalculableContainer;
@@ -40,7 +42,7 @@ import com.esferalia.aon.entity.master.DeliveryDB;
 
 @Entity
 @Table(name="delivery", uniqueConstraints = @UniqueConstraint(columnNames={"series", "number"}))
-public class Delivery extends DeliveryDB implements IHeaderObject, ICalculableContainer, IBankAccountContainer, IPayMethod {
+public class Delivery extends DeliveryDB implements IHeaderObject, ICalculableContainer, IBankAccountContainer, IPayMethod, IScopable, IAuditable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	private static final String DELIM = " ";
@@ -125,7 +127,7 @@ public class Delivery extends DeliveryDB implements IHeaderObject, ICalculableCo
 	}
 
 	@Transient
-	public List<?> getDetailList() {
+	public List<ITransferObject> getDetailList() {
 		try {
 			IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 			Criteria criteria = new Criteria();

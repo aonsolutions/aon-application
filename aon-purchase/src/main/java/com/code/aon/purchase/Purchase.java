@@ -22,11 +22,13 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IHeaderObject;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.IConfidentialable;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.IBankAccountContainer;
 import com.code.aon.config.IPayMethod;
+import com.code.aon.config.IScopable;
 import com.code.aon.config.PayMethod;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.purchase.enumeration.PurchaseDocumentType;
@@ -37,7 +39,7 @@ import com.esferalia.aon.entity.master.PurchaseDB;
 
 @Entity
 @Table(name="purchase", uniqueConstraints = @UniqueConstraint(columnNames={"supplier", "series", "number"}))
-public class Purchase extends PurchaseDB implements IHeaderObject, ICalculableContainer, IBankAccountContainer, IPayMethod, IConfidentialable {
+public class Purchase extends PurchaseDB implements IHeaderObject, ICalculableContainer, IBankAccountContainer, IPayMethod, IScopable, IAuditable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	private static final String DELIM = " ";
@@ -110,9 +112,8 @@ public class Purchase extends PurchaseDB implements IHeaderObject, ICalculableCo
 		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Transient
-	public List getDetailList() {
+	public List<ITransferObject> getDetailList() {
 		try {
 			IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
 			Criteria criteria = new Criteria();

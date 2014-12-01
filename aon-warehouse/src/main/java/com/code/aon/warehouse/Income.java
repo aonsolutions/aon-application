@@ -1,6 +1,5 @@
 package com.code.aon.warehouse;
 
-
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -25,8 +24,10 @@ import com.code.aon.common.IHeaderObject;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.config.IBankAccountContainer;
 import com.code.aon.config.IPayMethod;
+import com.code.aon.config.IScopable;
 import com.code.aon.config.PayMethod;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
@@ -36,7 +37,7 @@ import com.esferalia.aon.entity.master.IncomeDB;
 
 @Entity
 @Table(name="income", uniqueConstraints = @UniqueConstraint(columnNames={"supplier", "reference_code"}))
-public class Income extends IncomeDB implements ICalculableContainer, IBankAccountContainer, IPayMethod, IHeaderObject {
+public class Income extends IncomeDB implements IHeaderObject, ICalculableContainer, IBankAccountContainer, IPayMethod, IScopable, IAuditable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
     private static final String DELIM = " ";
@@ -114,9 +115,6 @@ public class Income extends IncomeDB implements ICalculableContainer, IBankAccou
 		}
 		return null;
 	}
-	
-	
-	
 	
 	@Transient
 	public String getSeries() {

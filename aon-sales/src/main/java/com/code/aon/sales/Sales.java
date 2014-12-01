@@ -1,6 +1,5 @@
 package com.code.aon.sales;
 
-
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -23,11 +22,13 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IHeaderObject;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.IConfidentialable;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.IBankAccountContainer;
 import com.code.aon.config.IPayMethod;
+import com.code.aon.config.IScopable;
 import com.code.aon.config.PayMethod;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.ql.Criteria;
@@ -37,7 +38,7 @@ import com.esferalia.aon.entity.master.SalesDB;
 
 @Entity
 @Table(name="sales", uniqueConstraints = @UniqueConstraint(columnNames={"series", "number"}))
-public class Sales extends SalesDB implements IHeaderObject, ICalculableContainer, IBankAccountContainer, IPayMethod, IConfidentialable {
+public class Sales extends SalesDB implements IHeaderObject, ICalculableContainer, IBankAccountContainer, IPayMethod, IScopable, IAuditable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	private static final String DELIM = " ";
@@ -108,8 +109,7 @@ public class Sales extends SalesDB implements IHeaderObject, ICalculableContaine
 	}
 	
 	@Transient
-	@SuppressWarnings("unchecked")
-	public List getDetailList() {
+	public List<ITransferObject> getDetailList() {
 		try {
 			IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
 			Criteria criteria = new Criteria();

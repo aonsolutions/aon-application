@@ -20,6 +20,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.annotations.Heritable;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.ProductDB;
@@ -27,7 +28,7 @@ import com.esferalia.aon.entity.master.ProductDB;
 @Entity
 @Table(name="product", uniqueConstraints = @UniqueConstraint(columnNames="code"))
 @Heritable
-public class Product extends ProductDB {
+public class Product extends ProductDB implements IAuditable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 

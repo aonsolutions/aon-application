@@ -6,13 +6,14 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.enumeration.IConfidentialable;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.esferalia.aon.entity.master.FinanceTrackingDB;
 
 @Entity
 @Table(name="finance_tracking")
-public class FinanceTracking extends FinanceTrackingDB implements IConfidentialable{
+public class FinanceTracking extends FinanceTrackingDB implements IConfidentialable, IAuditable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 

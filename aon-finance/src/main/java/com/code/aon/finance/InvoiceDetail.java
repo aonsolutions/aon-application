@@ -13,6 +13,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.PrepaymentCollect;
@@ -30,7 +31,7 @@ import com.esferalia.aon.entity.master.InvoiceDetailDB;
 
 @Entity
 @Table(name="invoice_detail")
-public class InvoiceDetail extends InvoiceDetailDB implements ICalculable, IStockable {
+public class InvoiceDetail extends InvoiceDetailDB implements ICalculable, IStockable, IAuditable {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 

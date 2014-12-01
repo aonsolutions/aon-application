@@ -10,12 +10,14 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.audit.IAuditable;
+import com.code.aon.config.IScopable;
 import com.code.aon.purchase.enumeration.ProposalStatus;
 import com.esferalia.aon.entity.master.ProposalDB;
 
 @Entity
 @Table(name="proposal")
-public class Proposal extends ProposalDB {
+public class Proposal extends ProposalDB implements IScopable, IAuditable {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
