@@ -156,6 +156,7 @@ public class SalaryDraft extends SalaryPreview {
 	}
 
 	public void clearDb() {
+		dbId = null;
 		dbGgcBase = null;
 		dbGgpBase = null;
 		dbHExtraBase = null;
