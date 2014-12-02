@@ -123,12 +123,14 @@ public class UserUtils implements Serializable {
 					scopes.add((Scope) ito);
 				}
 			} else {
+				Integer[] domains = getDomains(forceHeredity);
 				IManagerBean userScopeBean = BeanManager.getManagerBean(UserScope.class);
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_USER_ID), getLoggedUser().getId());
+				criteria.addInExpression("UserScope.scope.domain", domains);
 				criteria.addOrder(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_SCOPE_DESCRIPTION));
 				for (ITransferObject ito : userScopeBean.getList(criteria)) {
-					scopes.add(((UserScope)ito).getScope());
+					scopes.add(((UserScope)ito).getScope());	
 				}
 			}
 		} catch (ManagerBeanException e) {
@@ -211,14 +213,21 @@ public class UserUtils implements Serializable {
 		return ljAlias;
 	}
 
-	public void addForceHeredityDomainCondition( Criteria criteria, String alias ) {
-		criteria.setSkipDomainFilter(true);
+	public Integer[] getDomains( boolean forceHeredity ) {
+		Integer[] domains = null;
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
-		if ( ds.isChildDomain() ) {
-			Object[] values = new Object[]{ds.getParentDomainId(), ds.getDomainId()};
-			criteria.addInExpression(alias, values);
+		if ( ds.isChildDomain() && (ds.isEnableHeredity() || forceHeredity) ) {
+			domains = new Integer[]{ds.getParentDomainId(), ds.getDomainId()};
 		} else {
-			criteria.addEqualExpression(alias, ds.getDomainId());	
+			domains = new Integer[]{ds.getDomainId()};
+		}
+		return domains;
+	}
+	
+	public void addForceHeredityDomainCondition( Criteria criteria, String alias ) {
+		if (! criteria.isSkipDomainFilter() ) {
+			criteria.setSkipDomainFilter(true);
+			criteria.addInExpression(alias, getDomains(true));
 		}
 	}
 	
