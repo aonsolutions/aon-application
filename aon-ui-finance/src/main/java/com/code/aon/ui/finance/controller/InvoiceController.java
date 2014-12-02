@@ -735,7 +735,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 				invoiceDetail.getDiscountExpression().setDiscountExpr(getDiscountExpression());
 				invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
 				invoiceDetail.setSkipServiceProcess(true);
-				invoiceDetail.setUpdateEnabled(detailList.lastIndexOf(invoiceDetail) == detailList.size()-1);
+				invoiceDetail.getInvoice().setUpdateEnabled(detailList.lastIndexOf(invoiceDetail) == detailList.size()-1);
 				invoiceDetailController.getManagerBean().update(invoiceDetail);
 			}
 			refresh(null);
@@ -758,7 +758,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 						InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
 						invoiceDetail.setPrice(taxableBase);
 						invoiceDetail.setTaxableBase(CommonUtil.round(taxableBase - getPriceStrategy().getBasePrice(invoiceDetail)));
-						invoiceDetail.setUpdateEnabled(increaseDetails.lastIndexOf(invoiceDetail) == increaseDetails.size()-1);
+						invoiceDetail.getInvoice().setUpdateEnabled(increaseDetails.lastIndexOf(invoiceDetail) == increaseDetails.size()-1);
 						invoiceDetailController.getManagerBean().update(invoiceDetail);
 					}
 					refresh(null);
