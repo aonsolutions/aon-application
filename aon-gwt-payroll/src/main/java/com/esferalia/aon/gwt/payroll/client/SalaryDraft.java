@@ -1733,13 +1733,13 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		if (draftObjectChanged)
 			this.salaryDraftObject = salaryDraftObject;
 
-		salarySelect.setSalaryPreview(salaryDraftObject.asSalaryPreview());
-
 		// I don't like it. But almost it's clear enough.
 		if (isPreviewVisible()) {
 			getPrintPreview();
 		}
 		dumpSalaryDraft(!draftObjectChanged);
+
+		salarySelect.setSalaryPreview(salaryDraftObject.asSalaryPreview());
 
 		loadContentAssistManager();
 
