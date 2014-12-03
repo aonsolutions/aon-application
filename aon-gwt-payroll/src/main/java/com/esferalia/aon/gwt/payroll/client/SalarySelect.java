@@ -252,6 +252,11 @@ public class SalarySelect extends Composite {
 					}
 				}
 				Extra extra = SalarySelect.this.getExtraByIssueDate(issueDate);
+				
+				if ( extra == null ) {
+					issueDate = SalarySelect.this.salaryPreview.getIssueDate();
+					extra = SalarySelect.this.getExtraByIssueDate(issueDate);
+				} // TODO: syncDateListBox & scheduleFinally
 
 				Date startDate = SalarySelect.getStartDate(extra, issueDate);
 				Date endDate = SalarySelect.getEndDate(extra, issueDate);
