@@ -68,11 +68,11 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 
 		for (TaxBreakDown breakDown : map.values()) {
 			if (breakDown.getTaxQuota() == 0) {
-				breakDown.setTaxQuota(CommonUtil.round(breakDown.getBase() * breakDown.getTaxPercent() / 100));
+				breakDown.setTaxQuota(obtainQuota(breakDown.getBase(), breakDown.getTaxPercent()));
 			}
 			if (iti.isSurcharge()) {
 				if (breakDown.getSurchargeQuota() == 0) {
-					breakDown.setSurchargeQuota(CommonUtil.round(breakDown.getBase() * breakDown.getSurchargePercent() / 100));
+					breakDown.setSurchargeQuota(obtainQuota(breakDown.getBase(), breakDown.getSurchargePercent()));
 				}
 			} else {
 				breakDown.setSurchargeQuota(0.0);

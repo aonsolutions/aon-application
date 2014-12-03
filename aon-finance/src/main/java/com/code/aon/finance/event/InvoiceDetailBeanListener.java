@@ -190,20 +190,6 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 				percentage = tax.getPercentage();
 				if (invoice.isSurcharge()) {
 					surcharge = tax.getSurcharge();
-				} else {
-					/*if (tax.isVat() && percentage == 4 && base % 0.125 == 0 && base % 0.250 != 0) {
-						base = CommonUtil.round(base + 0.005);
-						quota = CommonUtil.round(base * percentage / 100 - 0.005);
-
-						boolean detailUpdate = invoiceDetail.isUpdateEnabled();
-						boolean invoiceUpdate = invoiceDetail.getInvoice().isUpdateEnabled();
-						invoiceDetail.setTaxableBase(base);
-						invoiceDetail.setUpdateEnabled(false);
-						invoiceDetail.getInvoice().setUpdateEnabled(false);
-						BeanManager.getManagerBean(InvoiceDetail.class).update(invoiceDetail);
-						invoiceDetail.setUpdateEnabled(detailUpdate);
-						invoiceDetail.getInvoice().setUpdateEnabled(invoiceUpdate);
-					}*/
 				}
 			}
 		}

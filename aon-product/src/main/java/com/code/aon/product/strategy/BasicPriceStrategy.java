@@ -215,9 +215,9 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 		}
 
 		for (TaxBreakDown taxBreakDown : map.values()) {
-			taxBreakDown.setTaxQuota(CommonUtil.round(taxBreakDown.getBase() * taxBreakDown.getTaxPercent() / 100));
+			taxBreakDown.setTaxQuota(obtainQuota(taxBreakDown.getBase(), taxBreakDown.getTaxPercent()));
 			if (iti.isSurcharge()) {
-				taxBreakDown.setSurchargeQuota(CommonUtil.round(taxBreakDown.getBase() * taxBreakDown.getSurchargePercent() / 100));
+				taxBreakDown.setSurchargeQuota(obtainQuota(taxBreakDown.getBase(), taxBreakDown.getSurchargePercent()));
 			} else{
 				taxBreakDown.setSurchargeQuota(0.0);
 				taxBreakDown.setSurchargePercent(0.0);
@@ -303,5 +303,13 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 		}
 		return null;
 	}
-	
+
+	protected double obtainQuota(double base, double percentage) {
+		double quota = CommonUtil.round(base * percentage / 100);
+		if (base % 0.125 == 0 && base % 0.250 != 0  && percentage == 4) {
+			quota = CommonUtil.round(quota - 0.01);
+		}
+		return quota;
+	}
+
 }
