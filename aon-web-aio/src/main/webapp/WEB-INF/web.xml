@@ -248,8 +248,27 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>DownloadFiles</servlet-name>
-		<url-pattern>/aon_gwt_document/gwt_download</url-pattern>
+		<url-pattern>/aon_gwt_document/gwt_download/*</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>openDocument2Image</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.document.server.OpenDocument2ImageServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>openDocument2Image</servlet-name>
+		<url-pattern>/openDocument2Image/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>openDocumentConverter</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.document.server.OpenDocumentConverterServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>openDocumentConverter</servlet-name>
+		<url-pattern>/openDocumentConverter/*</url-pattern>
+	</servlet-mapping>
+	
 	
 	<!-- SignIn with Google Servlet -->
 	<servlet>

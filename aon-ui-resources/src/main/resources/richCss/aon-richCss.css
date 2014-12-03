@@ -3045,4 +3045,21 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	opacity:0.4 !important;	
 }
 
-}
+   .aon-next-button{
+	background:transparent url(images/aon-icon-big/aon-next-button.png) scroll left center no-repeat;	
+ }
+     .aon-prev-button{
+	background:transparent url(images/aon-icon-big/aon-prev-button.png) scroll left center no-repeat;	
+ }
+      .aon-icon-print{
+	background:transparent url(images/aon-icon-big/aon-icon-print.png) scroll left center no-repeat;	
+ }
+      .aon-icon-share2{
+	background:transparent url(images/aon-icon-big/aon-icon-share2.png) scroll left center no-repeat;	
+ }
+      .aon-icon-download2{
+	background:transparent url(images/aon-icon-big/aon-icon-download2.png) scroll left center no-repeat;	
+ }
+       .aon-icon-close2{
+	background:transparent url(images/aon-icon-big/aon-icon-close2.png) scroll left center no-repeat;	
+ }

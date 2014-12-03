@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.FileInfo;
@@ -35,7 +36,10 @@ public class DownloadFilesServlet extends HttpServlet {
     protected void doGet(HttpServletRequest p_request, HttpServletResponse p_response)throws ServletException, IOException{
         String driveId = p_request.getParameter("drive_id");
         String fileId = p_request.getParameter("file_id");
+        String mtype = p_request.getParameter("mimetype");
         String domain = AonUtil.getDomainName();
+        Integer m = Integer.parseInt(mtype);
+        String mimetype = MimeType.values()[m].getName();
         FileInfo fi=null;
         if (driveId != ""){
 			DomainGserviceaccount g;
@@ -77,7 +81,9 @@ public class DownloadFilesServlet extends HttpServlet {
         long length = file.length();
         FileInputStream fis = new FileInputStream(file);
         p_response.addHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
-        p_response.setContentType("application/octet-stream");
+        //p_response.setContentType("application/octet-stream");
+        p_response.setContentType(mimetype);
+
         if (length > 0 && length <= Integer.MAX_VALUE);
             p_response.setContentLength((int)length);
         ServletOutputStream out = p_response.getOutputStream();
@@ -88,6 +94,8 @@ public class DownloadFilesServlet extends HttpServlet {
         int bytes;
         while ((bytes = bis.read(buffer, 0, bufSize)) >= 0)
             out.write(buffer, 0, bytes);
+        
+        
         bis.close();
         fis.close();
         out.flush();

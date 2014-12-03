@@ -4,10 +4,12 @@ import java.util.Vector;
 
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import com.google.gwt.user.client.ui.SuggestOracle;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 
 public class Utils {
 
-	
+
 	public static boolean isNotAlpKey(int code) {
 	    switch (code) {
 	      case KeyCodes.KEY_ALT:
@@ -63,5 +65,26 @@ public class Utils {
 		return oracleSons;
 	}
 
+	static MultiWordSuggestOracle createOracle2(Vector<String> l) {
+		Vector<Suggestion> suggestions = new Vector<SuggestOracle.Suggestion>();
+		for (String string : l) {
+			suggestions.add(new Suggestion() {
+				//Sustituye el string en SuggestBox.
+				@Override
+				public String getReplacementString() {
+					return  "1";
+				}
+				
+				//Sustituye el string en el popUp.
+				@Override
+				public String getDisplayString() {
+					return  "1";
+				}
+			});
+		}
+		
+		return new MultiWordSuggestOracle();
+	}
+	
 }
 

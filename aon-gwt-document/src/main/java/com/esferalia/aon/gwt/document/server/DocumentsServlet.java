@@ -1,12 +1,22 @@
 package com.esferalia.aon.gwt.document.server;
 
+import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.naming.NamingException;
@@ -31,11 +41,15 @@ import com.esferalia.aon.gwt.document.shared.Lists;
 import com.esferalia.aon.gwt.document.shared.SearchInfo;
 import com.esferalia.aon.gwt.document.shared.Tags;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
+import com.esferalia.aon.payroll.sql.SQLConstants;
+import com.esferalia.aon.payroll.sql.SQLConstants.RattachColumns;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.About;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.sun.pdfview.PDFFile;
+import com.sun.pdfview.PDFPage;
 
 
 public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
@@ -336,7 +350,6 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		} catch (AonConnectionException e) {
 			e.printStackTrace();
 		} catch (NamingException e) {
-			// TODO Bloque catch generado automáticamente
 			e.printStackTrace();
 		}
 		return fi;
@@ -381,10 +394,8 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		} catch (GeneralSecurityException e) {
 			e.printStackTrace();
 		} catch (AonConnectionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NamingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -439,16 +450,12 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 				Drive d = DriveUtils.serviceInitialize(g);
 				ShareFiles.setPermission(d, driveId, email);
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (KeyStoreException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (GeneralSecurityException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -461,5 +468,174 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		});
 		return aux;
 	}
+	
+	//-------------------- Visualizar Archivo
+
+	public String getAsHTML(FileInfo doc, int zoom) {
+		IDocument2HtmlConverter converter = 
+				getDocument2HtmlConverter(doc);
+		try {
+			ByteArrayOutputStream os = 
+					new ByteArrayOutputStream();
+			converter.transform(doc, os, zoom);
+			os.flush();
+			return os.toString();
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+private IDocument2HtmlConverter getDocument2HtmlConverter(FileInfo document) {
+		
+		MimeType mimeType = MimeType.values()[document.getMimetype()];
+		return DOC2HTML_CONVERTERS.get(mimeType);
+		
+	}
+	
+	
+	public static final Map<MimeType, IDocument2HtmlConverter> DOC2HTML_CONVERTERS = 
+			new HashMap<MimeType, IDocument2HtmlConverter>(){
+		{
+			put(MimeType.MIME_PDF, OpenDocument2HtmlConverter.INSTANCE );
+			put(MimeType.MIME_MS_WORD, OpenDocument2HtmlConverter.INSTANCE );
+			put(MimeType.MIME_MS_WORD_2007, OpenDocument2HtmlConverter.INSTANCE );
+			put(MimeType.MIME_MS_EXCEL, OpenDocument2HtmlConverter.INSTANCE );
+			put(MimeType.MIME_MS_EXCEL_2007, OpenDocument2HtmlConverter.INSTANCE );
+			put(MimeType.MIME_MS_POWER_POINT, OpenDocument2HtmlConverter.INSTANCE );
+			put(MimeType.MIME_MS_POWER_POINT_2007, OpenDocument2HtmlConverter.INSTANCE );
+			put(MimeType.MIME_HTML, Noop2HtmlConverter.INSTANCE );
+			put(MimeType.MIME_TXT, Noop2HtmlConverter.INSTANCE );
+
+			put(MimeType.MIME_BMP, Image2HtmlConverter.INSTANCE );
+			put(MimeType.MIME_JPEG, Image2HtmlConverter.INSTANCE );
+			put(MimeType.MIME_PNG, Image2HtmlConverter.INSTANCE );
+			put(MimeType.MIME_GIF, Image2HtmlConverter.INSTANCE );
+		}
+	};
+	
+	
+	private static interface IDocument2HtmlConverter {
+		void transform(FileInfo doc, OutputStream os, int zoom) throws Exception;
+	}
+	
+private static class OpenDocument2HtmlConverter implements IDocument2HtmlConverter {
+		
+		private static  IDocument2HtmlConverter INSTANCE = new OpenDocument2HtmlConverter();
+
+		@Override
+		public void transform(FileInfo doc, OutputStream os, int zoom) throws Exception {
+			
+			PrintStream printStream = new PrintStream(os);
+			
+			PDFFile pdfFile = OpenDocument2ImageServlet.getPDFFile(doc);
+			
+			for (int page = 1; page <= pdfFile.getNumPages(); page++) {
+				
+				PDFPage pdfPage = pdfFile.getPage(page);
+
+				// get the width and height for the doc at the default zoom
+				double width =  pdfPage.getBBox().getWidth() * zoom / 100 ;
+				double height = pdfPage.getBBox().getHeight() * zoom / 100 ;
+				
+				printStream.printf("<div class='page' style='width:%dpx;height:%dpx;'   ><img src='openDocument2Image/%d.png?%s=%d&%s=%d'></img> </div>",
+						(long)width,
+						(long)height,
+						doc.getFileId(),
+						OpenDocument2ImageServlet.PAGE_PARAM,
+						page,
+						OpenDocument2ImageServlet.ZOOM_PARAM,
+						zoom);
+			}		
+		}
+	}
+
+private static class Noop2HtmlConverter  extends  Document2HtmlConverter  {
+	
+	private static  IDocument2HtmlConverter INSTANCE = new Noop2HtmlConverter();
+	
+	
+	@Override
+	void transform(InputStream is, OutputStream os) throws Exception {
+		int read ;
+		byte buffer [] = new byte [256];
+		while ( ( read = is.read(buffer)) == buffer.length ) {
+			os.write(buffer, 0, read);
+		}
+	}
+}
+private static class Image2HtmlConverter implements IDocument2HtmlConverter {
+	
+	private static  IDocument2HtmlConverter INSTANCE = new Image2HtmlConverter();
+
+	@Override
+	public void transform(FileInfo doc, OutputStream os, int zoom) throws Exception {
+		
+		PrintStream printStream = new PrintStream(os);
+		
+		MimeType mimeType = MimeType.values()[doc.getMimetype()];
+		
+		printStream.printf("<div class='page'  ><img src='openDocumentConverter/%d.%s'></img> </div>",
+				doc.getFileId(),
+				mimeType.getExtension());
+	}
+}
+private abstract static class Document2HtmlConverter implements IDocument2HtmlConverter{
+	@Override
+	public void transform(FileInfo doc, OutputStream os, int zoom) throws Exception {
+		Connection conn = null;
+
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+			conn = getConnection();
+			stmt = conn.prepareStatement(
+					"SELECT " + RattachColumns.DATA
+					+ " FROM " + SQLConstants.RATTACH + " WHERE "
+					+ RattachColumns.ID + "= ? ");
+
+			stmt.setInt(1, doc.getFileId());
+			
+			rs = stmt.executeQuery();
+			
+			if (!rs.next()) {
+				throw new IllegalArgumentException();
+			}
+
+			InputStream is = rs.getBinaryStream(RattachColumns.DATA);
+			transform(is, os);
+		}
+		catch (Exception e ) {
+			throw new IllegalArgumentException(e);
+		}
+		finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new IllegalArgumentException(e);
+				}
+			}
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					throw new IllegalArgumentException(e);
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					throw new IllegalArgumentException(e);
+				}
+			}
+		}
+	}
+	
+	
+	
+	abstract void transform(InputStream is, OutputStream os) throws Exception;
+	
+}
 
 }

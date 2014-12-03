@@ -51,6 +51,9 @@ public interface IDocumentAsync {
 	void searchFile(SearchInfo si, Vector<FileInfo> files,
 			Vector<FileInfo> allFiles, AsyncCallback<Vector<FileInfo>> callback);
 
+	void getAsHTML(FileInfo doc, int zoom, AsyncCallback<String> callback);
+
+
 
 
 
