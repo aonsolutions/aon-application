@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
+import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.Salary.TypeVisitor;
@@ -118,7 +119,9 @@ public class SalarySelect extends Composite {
 		this.salaryPreview = salaryPreview;
 		syncTypeListBox();
 		syncDateListBox(getSelectedType());
-
+		//reset start, end & issue dates
+		syncSalarySelectDates();
+		
 	}
 
 	public void addListener(Listener listener) {
@@ -128,6 +131,8 @@ public class SalarySelect extends Composite {
 	public void removeListener(Listener listener) {
 		listeners.remove(listener);
 	}
+
+	
 
 	// -------------------------------------------------------------------------
 	@UiHandler("dateListBox")
@@ -399,14 +404,15 @@ public class SalarySelect extends Composite {
 				dateListBox.setVisible(false);
 				fromMonthListBox.setVisible(true);
 				monthListBox.setVisible(true);
-				
-				Date draftStartDate  = null;
-				if ( salaryPreview.getType() == type )
+
+				Date draftStartDate = null;
+				if (salaryPreview.getType() == type)
 					draftStartDate = CalendarUtil.copyDate(salaryPreview
-						.getStartDate());
-				else 
-					draftStartDate = max(contractStartDate, DateUtils.getFirstDayOfYear(draftEndDate)); 
-					
+							.getStartDate());
+				else
+					draftStartDate = max(contractStartDate,
+							DateUtils.getFirstDayOfYear(draftEndDate));
+
 				monthListBox.setFirstMonth(draftStartDate);
 				monthListBox.setLastMonth(new Date());
 				monthListBox.setSelectedMonth(draftEndDate);
@@ -436,7 +442,6 @@ public class SalarySelect extends Composite {
 			}
 		}
 	}
-
 
 	private int getOffsetFirstExtra() {
 		Employee employee = salaryPreview.getEmployee();
@@ -590,7 +595,7 @@ public class SalarySelect extends Composite {
 	private static Date parseExtraDate(String text, Date date) {
 		return AgreementDraft.parseExtraDate(text, date);
 	}
-	
+
 	private static Date max(Date a, Date b) {
 		return a.compareTo(b) >= 0 ? a : b;
 	}
