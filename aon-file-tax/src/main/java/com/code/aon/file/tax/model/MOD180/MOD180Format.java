@@ -4,21 +4,36 @@ import com.code.aon.config.enumeration.Administration;
 
 public enum MOD180Format {
 
-	ALAVA_2013(2013,Administration.ALAVA
-			,"/com/code/aon/file/tax/model/MOD180/Deponent.xml"
-			,"/com/code/aon/file/tax/model/MOD180/Receiver.xml"),
-	BIZKAIA_2013(2013,Administration.BIZKAIA
-			,"/com/code/aon/file/tax/model/MOD180/Deponent.xml"
-			,"/com/code/aon/file/tax/model/MOD180/Receiver.xml"),
-	GIPUZKOA_2013(2013,Administration.GIPUZKOA
-			,"/com/code/aon/file/tax/model/MOD180/Deponent.xml"
-			,"/com/code/aon/file/tax/model/MOD180/Receiver.xml"),
-	NAVARRA_2013(2013,Administration.NAVARRA
-			,"/com/code/aon/file/tax/model/MOD180/Deponent.xml"
-			,"/com/code/aon/file/tax/model/MOD180/Receiver.xml"),
-	AEAT_2013(2013,Administration.COMMON_TERRITORY
-			,"/com/code/aon/file/tax/model/MOD180/Deponent.xml"
-			,"/com/code/aon/file/tax/model/MOD180/Receiver.xml");
+	 ALAVA_2014(2014,Administration.ALAVA
+			,"/com/code/aon/file/tax/model/MOD180/2014_Mod180.xml"
+			,"/com/code/aon/file/tax/model/MOD180/2014_Mod180Detail.xml")
+	,BIZKAIA_2014(2014,Administration.BIZKAIA
+			,"/com/code/aon/file/tax/model/MOD180/2014_Mod180.xml"
+			,"/com/code/aon/file/tax/model/MOD180/2014_Mod180Detail.xml")
+	,GIPUZKOA_2014(2014,Administration.GIPUZKOA
+			,"/com/code/aon/file/tax/model/MOD180/2014_Mod180.xml"
+			,"/com/code/aon/file/tax/model/MOD180/2014_Mod180Detail.xml")
+	,NAVARRA_2014(2014,Administration.NAVARRA
+			,"/com/code/aon/file/tax/model/MOD180/2014_Mod180.xml"
+			,"/com/code/aon/file/tax/model/MOD180/2014_Mod180Detail.xml")
+	,AEAT_2014(2014,Administration.COMMON_TERRITORY
+			,"/com/code/aon/file/tax/model/MOD180/2014_Mod180.xml"
+			,"/com/code/aon/file/tax/model/MOD180/2014_Mod180Detail.xml")
+	,ALAVA_2013(2013,Administration.ALAVA
+			,"/com/code/aon/file/tax/model/MOD180/2013_Mod180.xml"
+			,"/com/code/aon/file/tax/model/MOD180/2013_Mod180Detail.xml")
+	,BIZKAIA_2013(2013,Administration.BIZKAIA
+			,"/com/code/aon/file/tax/model/MOD180/2013_Mod180.xml"
+			,"/com/code/aon/file/tax/model/MOD180/2013_Mod180Detail.xml")
+	,GIPUZKOA_2013(2013,Administration.GIPUZKOA
+			,"/com/code/aon/file/tax/model/MOD180/2013_Mod180.xml"
+			,"/com/code/aon/file/tax/model/MOD180/2013_Mod180Detail.xml")
+	,NAVARRA_2013(2013,Administration.NAVARRA
+			,"/com/code/aon/file/tax/model/MOD180/2013_Mod180.xml"
+			,"/com/code/aon/file/tax/model/MOD180/2013_Mod180Detail.xml")
+	,AEAT_2013(2013,Administration.COMMON_TERRITORY
+			,"/com/code/aon/file/tax/model/MOD180/2013_Mod180.xml"
+			,"/com/code/aon/file/tax/model/MOD180/2013_Mod180Detail.xml");
 			  
 	private Integer year;
 	private Administration administration;

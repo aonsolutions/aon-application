@@ -334,6 +334,25 @@ public class Mod180DAO {
 		detail.setRetention(record.getRetention());
 		detail.setPercent(record.getPercentage());
 		detail.setAccrualYear(record.getAccrualYear());
+		detail.setLocation(record.getLocation());
+		detail.setCadasdralReference(record.getCadasdralReference());
+		detail.setStreetType(record.getStreetType());
+		detail.setStreetName(record.getStreetName());
+		detail.setNumberType(record.getNumberType());
+		detail.setNumber(record.getNumber());
+		detail.setNumberSuffix(record.getNumberSuffix());
+		detail.setBlock(record.getBlock());
+		detail.setHall(record.getHall());
+		detail.setStair(record.getStair());
+		detail.setFloor(record.getFloor());
+		detail.setDoor(record.getDoor());
+		detail.setComplement(record.getComplement());
+		detail.setCity(record.getCity());
+		detail.setTown(record.getTown());
+		detail.setTownCode(record.getTownCode());
+		detail.setProvinceCode(record.getProvinceCode());
+		detail.setZip(record.getZip());
+		
 	}
 
 	public static void saveDetail(AONContext ctx, Mod180 mod180, Mod180Detail detail){
@@ -369,6 +388,24 @@ public class Mod180DAO {
 			.set(FS_MODEL180_DETAIL.PERCENTAGE,detail.getPercent())
 			.set(FS_MODEL180_DETAIL.RETENTION,detail.getRetention())
 			.set(FS_MODEL180_DETAIL.ACCRUAL_YEAR,detail.getAccrualYear())
+			.set(FS_MODEL180_DETAIL.LOCATION,detail.getLocation())
+			.set(FS_MODEL180_DETAIL.CADASDRAL_REFERENCE,detail.getCadasdralReference())
+			.set(FS_MODEL180_DETAIL.STREET_TYPE,detail.getStreetType())
+			.set(FS_MODEL180_DETAIL.STREET_NAME,detail.getStreetName())
+			.set(FS_MODEL180_DETAIL.NUMBER_TYPE,detail.getNumberType())
+			.set(FS_MODEL180_DETAIL.NUMBER,detail.getNumber())
+			.set(FS_MODEL180_DETAIL.NUMBER_SUFFIX,detail.getNumberSuffix())
+			.set(FS_MODEL180_DETAIL.BLOCK,detail.getBlock())
+			.set(FS_MODEL180_DETAIL.HALL,detail.getHall())
+			.set(FS_MODEL180_DETAIL.STAIR,detail.getStair())
+			.set(FS_MODEL180_DETAIL.FLOOR,detail.getFloor())
+			.set(FS_MODEL180_DETAIL.DOOR,detail.getDoor())
+			.set(FS_MODEL180_DETAIL.COMPLEMENT,detail.getComplement())
+			.set(FS_MODEL180_DETAIL.CITY,detail.getCity())
+			.set(FS_MODEL180_DETAIL.TOWN,detail.getTown())
+			.set(FS_MODEL180_DETAIL.TOWN_CODE,detail.getTownCode())
+			.set(FS_MODEL180_DETAIL.PROVINCE_CODE,detail.getProvinceCode())
+			.set(FS_MODEL180_DETAIL.ZIP,detail.getZip())
 			.execute();
 	}
 
@@ -384,6 +421,24 @@ public class Mod180DAO {
 			.set(FS_MODEL180_DETAIL.PERCENTAGE,detail.getPercent())
 			.set(FS_MODEL180_DETAIL.RETENTION,detail.getRetention())
 			.set(FS_MODEL180_DETAIL.ACCRUAL_YEAR,detail.getAccrualYear())
+			.set(FS_MODEL180_DETAIL.LOCATION,detail.getLocation())
+			.set(FS_MODEL180_DETAIL.CADASDRAL_REFERENCE,detail.getCadasdralReference())
+			.set(FS_MODEL180_DETAIL.STREET_TYPE,detail.getStreetType())
+			.set(FS_MODEL180_DETAIL.STREET_NAME,detail.getStreetName())
+			.set(FS_MODEL180_DETAIL.NUMBER_TYPE,detail.getNumberType())
+			.set(FS_MODEL180_DETAIL.NUMBER,detail.getNumber())
+			.set(FS_MODEL180_DETAIL.NUMBER_SUFFIX,detail.getNumberSuffix())
+			.set(FS_MODEL180_DETAIL.BLOCK,detail.getBlock())
+			.set(FS_MODEL180_DETAIL.HALL,detail.getHall())
+			.set(FS_MODEL180_DETAIL.STAIR,detail.getStair())
+			.set(FS_MODEL180_DETAIL.FLOOR,detail.getFloor())
+			.set(FS_MODEL180_DETAIL.DOOR,detail.getDoor())
+			.set(FS_MODEL180_DETAIL.COMPLEMENT,detail.getComplement())
+			.set(FS_MODEL180_DETAIL.CITY,detail.getCity())
+			.set(FS_MODEL180_DETAIL.TOWN,detail.getTown())
+			.set(FS_MODEL180_DETAIL.TOWN_CODE,detail.getTownCode())
+			.set(FS_MODEL180_DETAIL.PROVINCE_CODE,detail.getProvinceCode())
+			.set(FS_MODEL180_DETAIL.ZIP,detail.getZip())
 			.where(FS_MODEL180_DETAIL.ID.equal(detail.getId()))
 			.execute();
 	}

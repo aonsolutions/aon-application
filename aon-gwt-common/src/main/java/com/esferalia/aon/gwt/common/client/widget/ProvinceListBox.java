@@ -8,13 +8,12 @@ import com.google.gwt.user.client.ui.ListBox;
 
 public class ProvinceListBox extends ListBox {
 
+	private static final CommonMessages MSGS = GWT.create(CommonMessages.class);
 	
 	public ProvinceListBox() {
 		setWidth("120px");
-		CommonMessages msgs = (CommonMessages) GWT.create(CommonMessages.class);
-		
 		for (Province p : Province.values()) {
-			this.addItem( msgs.provinceName( p ));	
+			this.addItem( MSGS.provinceName( p ));	
 		}
 	}
 	

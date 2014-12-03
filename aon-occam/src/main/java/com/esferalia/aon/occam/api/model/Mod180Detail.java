@@ -16,6 +16,25 @@ public class Mod180Detail implements Serializable {
 	private double perception;
 	private double retention;
 	private int accrualYear;
+	
+	private String location;
+	private String cadasdralReference;
+	private String streetType;
+	private String streetName;
+	private String numberType;
+	private String number;
+	private String numberSuffix;
+	private String block;
+	private String hall;
+	private String stair;
+	private String floor;
+	private String door;
+	private String complement;
+	private String city;
+	private String town;
+	private String townCode;
+	private String provinceCode;
+	private String zip;
 
 	private boolean dirty;
 	private boolean deleted;
@@ -114,6 +133,150 @@ public class Mod180Detail implements Serializable {
 
 	public void setPercent(double percent) {
 		this.percent = percent;
+	}
+	
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
+	public String getCadasdralReference() {
+		return cadasdralReference;
+	}
+
+	public void setCadasdralReference(String cadasdralReference) {
+		this.cadasdralReference = cadasdralReference;
+	}
+
+	public String getStreetType() {
+		return streetType;
+	}
+
+	public void setStreetType(String streetType) {
+		this.streetType = streetType;
+	}
+
+	public String getStreetName() {
+		return streetName;
+	}
+
+	public void setStreetName(String streetName) {
+		this.streetName = streetName;
+	}
+
+	public String getNumberType() {
+		return numberType;
+	}
+
+	public void setNumberType(String numberType) {
+		this.numberType = numberType;
+	}
+
+	public String getNumber() {
+		return number;
+	}
+
+	public void setNumber(String number) {
+		this.number = number;
+	}
+
+	public String getNumberSuffix() {
+		return numberSuffix;
+	}
+
+	public void setNumberSuffix(String numberSuffix) {
+		this.numberSuffix = numberSuffix;
+	}
+
+	public String getBlock() {
+		return block;
+	}
+
+	public void setBlock(String block) {
+		this.block = block;
+	}
+
+	public String getHall() {
+		return hall;
+	}
+
+	public void setHall(String hall) {
+		this.hall = hall;
+	}
+
+	public String getStair() {
+		return stair;
+	}
+
+	public void setStair(String stair) {
+		this.stair = stair;
+	}
+
+	public String getFloor() {
+		return floor;
+	}
+
+	public void setFloor(String floor) {
+		this.floor = floor;
+	}
+
+	public String getDoor() {
+		return door;
+	}
+
+	public void setDoor(String door) {
+		this.door = door;
+	}
+
+	public String getComplement() {
+		return complement;
+	}
+
+	public void setComplement(String complement) {
+		this.complement = complement;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getTown() {
+		return town;
+	}
+
+	public void setTown(String town) {
+		this.town = town;
+	}
+
+	public String getTownCode() {
+		return townCode;
+	}
+
+	public void setTownCode(String townCode) {
+		this.townCode = townCode;
+	}
+
+	public String getProvinceCode() {
+		return provinceCode;
+	}
+
+	public void setProvinceCode(String provinceCode) {
+		this.provinceCode = provinceCode;
+	}
+
+	public String getZip() {
+		return zip;
+	}
+
+	public void setZip(String zip) {
+		this.zip = zip;
 	}
 
 	public boolean isDirty() {

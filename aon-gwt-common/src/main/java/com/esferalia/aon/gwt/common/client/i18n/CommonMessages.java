@@ -230,14 +230,35 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Tel\u00E9fono")
 	String phone();
 
+	@DefaultMessage("Datos del inmueble")
+	String buildingData();
+
+	@DefaultMessage("Situaci\u00F3n del inmueble")
+	String buildingLocation();
+
+	@DefaultMessage("Referencia catastral")
+	String cadasdralReference();
+
 	@DefaultMessage("Tipo v\u00EDa")
 	String streetType();
 
 	@DefaultMessage("Nombre de la v\u00EDa p\u00FAblica")
 	String streetName();
 
+	@DefaultMessage("Tipo de num.")
+	String streetNumberType();
+
 	@DefaultMessage("N\u00FAmero")
 	String streetNumber();
+
+	@DefaultMessage("Calif. N\u00FAm.")
+	String streetNumberSuffix();
+
+	@DefaultMessage("Bloq.")
+	String streetBlock();
+
+	@DefaultMessage("Port.")
+	String streetHall();
 
 	@DefaultMessage("Esc.")
 	String streetStair();
@@ -248,12 +269,22 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Prta.")
 	String streetDoor();
 
+	@DefaultMessage("Complemento.")
+	String streetComplement();
+
+	@DefaultMessage("Localidad o poblaci\u00F3n")
+	String city();
+
 	@DefaultMessage("Municipio")
 	String town();
+
+	@DefaultMessage("C\u00F3digo de municipio")
+	String townCode();
 
 	@DefaultMessage("Cod.Postal")
 	String zip();
 
+	
 	@DefaultMessage("Base imponible")
 	String taxableBase();
 
@@ -806,6 +837,16 @@ public interface CommonMessages extends Messages {
 			"NO_RESIDENTE", "No residente" })
 	String provinceName(@Select Province province);
 
+	@DefaultMessage("{0}")
+	@AlternateMessage({
+	 		 "=0", "-------------------"
+	 		,"=1", "Territorio espa\u00F1ol, excepto Pais Vasco y Navarra"
+			,"=2", "Pais Vasco o Navarra"
+			,"=3", "Sin referencia catastral"
+			})
+	String buildingLocationValue(@PluralCount int location);
+
+	
 	@DefaultMessage("Datos de secretario, representantes y administradores")
 	String administratorPage();
 

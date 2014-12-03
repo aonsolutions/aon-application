@@ -11,7 +11,7 @@
 	<meta name="gwt:property" content="locale=es_ES" />
 	<aon:valueParam name="entryPoint" default="Model180" />
 	<aon:valueParam name="gwtDomain" default="#{domainSwitcher.domainId}" />
-	<aon:valueParam name="gwtDomainName" default="#{domainSwitcher.domainName}" />
+	<aon:valueParam name="gwtDomainName" default="#{domainSwitcher.domainNameURL}" />
 	
 <style>
 body {
@@ -38,8 +38,7 @@ body {
             	return #{gwtDomain};
             }
             function getCurrentDomainName() {
-            	//return """;
-            	return "equipu.ecastellano.dev";
+            	return "#{gwtDomainName}"
             }
             ]]>
     </script> 

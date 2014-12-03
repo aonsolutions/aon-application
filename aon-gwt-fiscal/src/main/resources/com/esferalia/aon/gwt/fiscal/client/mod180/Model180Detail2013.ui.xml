@@ -4,95 +4,239 @@
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 	
 	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
-	
-	<ui:style>
-		.perceptor-label {
-			padding-right: 2px;
-			font-size: 0.9em;
-			text-align: center;
-		}
-		.detailToolbar {
-			height: 20px;
-		}
-	</ui:style>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 	
 	<g:VerticalPanel>
-		<g:FlowPanel
-			styleName="aon-finding-title-toolbar aon-width-all gwt-MenuBar-horizontal {style.detailToolbar}">
+		<g:FlowPanel height="20px"
+			styleName="aon-finding-title-toolbar aon-width-all gwt-MenuBar-horizontal aon-margin-top">
 			<g:Button ui:field='deleteDetailButton'
 				styleName='aon-finding-toolbar-item aon-icon-delete' text="{msg.deleteAction}" />
 			<g:Button ui:field='restoreDeletedButton'
 				styleName='aon-finding-toolbar-item aon-icon-refresh' text="{msg.restoreAction}" />
 		</g:FlowPanel>
 		<g:HTMLPanel>
-			<table>
-				<tr>
-					<td class="{style.perceptor-label}">
-						<g:Label text="{msg.receiverDocument}" />
-					</td>
-					<td class="{style.perceptor-label}">
-						<g:Label text="{msg.representativeDocument}" />
-					</td>
-					<td class="{style.perceptor-label}">
-						<g:Label text="{msg.fullName}" />
-					</td>
-					<td class="{style.perceptor-label}">
-						<g:Label text="{msg.province}" />
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<aon:DocumentTextBox ui:field="receiverDocument" styleName="aon-inputText"/>
-					</td>
-					<td>
-						<aon:DocumentTextBox ui:field="representativeDocument" styleName="aon-inputText"/>
-					</td>
-					<td>
-						<g:TextBox maxLength="40" visibleLength="40"
-							ui:field="fullName" styleName="aon-inputText"/>
-					</td>
-					<td>
-						<aon:ProvinceListBox ui:field="province" />
-					</td>
-				</tr>
-			</table>
-
-			<table>
-				<tr>
-					<td>
-					</td>
-					<td class="{style.perceptor-label}">
-						<g:Label text="{msg.perception}" />
-					</td>
-					<td class="{style.perceptor-label}">
-						<g:Label text="{msg.percent}" />
-					</td>
-					<td class="{style.perceptor-label}">
-						<g:Label text="{msg.retention}" />
-					</td>
-					<td class="{style.perceptor-label}">
-						<g:Label text="{msg.accrualYear}" />
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<g:CheckBox ui:field="inKind" text="{msg.inKind}"/>
-					</td>
-					<td>
-						<aon:DoubleTextBox ui:field="perception" styleName="aon-inputText"/>
-					</td>
-					<td>
-						<aon:DoubleTextBox ui:field="percent" styleName="aon-inputText"/>
-					</td>
-					<td>
-						<aon:DoubleTextBox ui:field="retention" styleName="aon-inputText"/>
-					</td>
-					<td>
-						<aon:IntegerTextBox maxLength="4"
-							visibleLength="4" ui:field="accrualYear" styleName="aon-inputText"/>
-					</td>
-				</tr>
-			</table>
+		 	<div class="{aonResources.css.aonGroup}">
+				<div class="{aonResources.css.aonGroupTitle}">
+					<g:InlineLabel text="{msg.perceptionData}" />
+				</div>
+				<div class="{aonResources.css.aonGroupBody}">
+					<table>
+						<tr>
+							<td class="{aonResources.css.aonTableLabel}">
+								<g:Label text="{msg.receiverDocument}" />
+							</td>
+							<td class="{aonResources.css.aonTableLabel}">
+								<g:Label text="{msg.representativeDocument}" />
+							</td>
+							<td class="{aonResources.css.aonTableLabel}">
+								<g:Label text="{msg.fullName}" />
+							</td>
+							<td class="{aonResources.css.aonTableLabel}">
+								<g:Label text="{msg.province}" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<aon:DocumentTextBox ui:field="receiverDocument" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<aon:DocumentTextBox ui:field="representativeDocument" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox maxLength="40" visibleLength="40"
+									ui:field="fullName" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<aon:ProvinceListBox ui:field="province" />
+							</td>
+						</tr>
+					</table>
+		
+					<table>
+						<tr>
+							<td>
+							</td>
+							<td class="{aonResources.css.aonTableLabel}">
+								<g:Label text="{msg.perception}" />
+							</td>
+							<td class="{aonResources.css.aonTableLabel}">
+								<g:Label text="{msg.percent}" />
+							</td>
+							<td class="{aonResources.css.aonTableLabel}">
+								<g:Label text="{msg.retention}" />
+							</td>
+							<td class="{aonResources.css.aonTableLabel}">
+								<g:Label text="{msg.accrualYear}" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:CheckBox ui:field="inKind" text="{msg.inKind}"/>
+							</td>
+							<td>
+								<aon:DoubleTextBox ui:field="perception" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<aon:DoubleTextBox ui:field="percent" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<aon:DoubleTextBox ui:field="retention" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<aon:IntegerTextBox maxLength="4"
+									visibleLength="4" ui:field="accrualYear" styleName="aon-inputText"/>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			
+		 	<div class="{aonResources.css.aonGroup}">
+				<div class="{aonResources.css.aonGroupTitle}">
+					<g:InlineLabel text="{msg.buildingData}" />
+				</div>
+				<div class="{aonResources.css.aonGroupBody}">
+					<table>
+						<tr>
+							<td class="{aonResources.css.aonTableLabel}">
+								<g:Label text="{msg.buildingLocation}" />
+							</td>
+							<td class="{aonResources.css.aonTableLabel}">
+								<g:Label text="{msg.cadasdralReference}" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:ListBox ui:field="location" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="cadasdralReference" maxLength="20" visibleLength="20" styleName="aon-inputText"/>
+							</td>
+						</tr>
+					</table>
+		
+					<table>
+						<tr>
+							<td class="{aonResources.css.aonTableLabel}">
+								<g:Label text="{msg.streetType}" />
+							</td>
+							<td class="{aonResources.css.aonTableLabel}">
+								<g:Label text="{msg.streetName}" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:TextBox ui:field="streetType" maxLength="5" visibleLength="5" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="streetName" maxLength="50" visibleLength="30" styleName="aon-inputText"/>
+							</td>
+						</tr>
+					</table>
+		
+					<table>
+						<tr>
+							<td class="{aonResources.css.aonTableLabel}">
+								<g:Label text="{msg.streetNumberType}" />
+							</td>
+							<td class="{aonResources.css.aonTableLabel}">
+								<g:Label text="{msg.streetNumber}" />
+							</td>
+							<td class="{aonResources.css.aonTableLabel}">
+								<g:Label text="{msg.streetNumberSuffix}" />
+							</td>
+							<td class="{aonResources.css.aonTableLabel}">
+								<g:Label text="{msg.streetBlock}" />
+							</td>
+							<td class="{aonResources.css.aonTableLabel}">
+								<g:Label text="{msg.streetHall}" />
+							</td>
+							<td class="{aonResources.css.aonTableLabel}">
+								<g:Label text="{msg.streetStair}" />
+							</td>
+							<td class="{aonResources.css.aonTableLabel}">
+								<g:Label text="{msg.streetFloor}" />
+							</td>
+							<td class="{aonResources.css.aonTableLabel}">
+								<g:Label text="{msg.streetDoor}" />
+							</td>
+							<td class="{aonResources.css.aonTableLabel}">
+								<g:Label text="{msg.streetComplement}" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:TextBox ui:field="numberType" maxLength="3" visibleLength="3" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="number" maxLength="5" visibleLength="5" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="numberSuffix" maxLength="3" visibleLength="3" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="block" maxLength="3" visibleLength="3" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="hall" maxLength="3" visibleLength="3" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="stair" maxLength="3" visibleLength="3" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="floor" maxLength="3" visibleLength="3" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="door" maxLength="3" visibleLength="3" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="complement" maxLength="40" visibleLength="20" styleName="aon-inputText"/>
+							</td>
+						</tr>
+					</table>
+		
+					<table>
+						<tr>
+							<td class="{aonResources.css.aonTableLabel}">
+								<g:Label text="{msg.city}" />
+							</td>
+							<td class="{aonResources.css.aonTableLabel}">
+								<g:Label text="{msg.town}" />
+							</td>
+							<td class="{aonResources.css.aonTableLabel}">
+								<g:Label text="{msg.townCode}" />
+							</td>
+							<td class="{aonResources.css.aonTableLabel}">
+								<g:Label text="{msg.province}" />
+							</td>
+							<td class="{aonResources.css.aonTableLabel}">
+								<g:Label text="{msg.zip}" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:TextBox ui:field="city" maxLength="30" visibleLength="20" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="town" maxLength="30" visibleLength="20" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="townCode" maxLength="5" visibleLength="5" styleName="aon-inputText"/>
+								<a href="http://www.ine.es/daco/daco42/codmun/codmunmapa.htm"
+									target="_blank" style="padding-left: 18px;"
+									class="aon-button-goto">&#160;
+								</a>
+							</td>
+							<td>
+								<aon:ProvinceListBox ui:field="provinceCode"/> 
+							</td>
+							<td>
+								<g:TextBox ui:field="zip" maxLength="5" visibleLength="5" styleName="aon-inputText"/>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
 		</g:HTMLPanel>
 	</g:VerticalPanel>
 	

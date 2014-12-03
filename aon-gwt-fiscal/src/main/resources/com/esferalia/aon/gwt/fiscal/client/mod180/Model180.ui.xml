@@ -64,7 +64,7 @@
 		<g:center>
 			<g:DeckLayoutPanel ui:field="deckPanel">
 				<g:DockLayoutPanel ui:field="formPanel" unit="PX">
-					<g:north size="150">
+					<g:north size="140">
 						<g:HTMLPanel styleName="aon-scroll-area">
 							<g:HorizontalPanel ui:field='messagesPanel'/>
 							<table class="aon-panelGrid aon-margin-top aon-width-all">

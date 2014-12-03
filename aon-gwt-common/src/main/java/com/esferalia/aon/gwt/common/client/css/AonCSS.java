@@ -294,4 +294,7 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-inner-label")
 	String aonInnerLabel();
 	
+	@ClassName("aon-table-label")
+	String aonTableLabel();
+	
 	}

@@ -57,18 +57,18 @@ public class AonCoreException extends RuntimeException {
         this.errorCode = errorCode;
         this.argumentsMessage = MessageFormat.format(errorCode.getMessage(), arguments);
     }
-    
+/*    
     public String getAonMessage() {
         return this.errorCode == null
-        		?this.getMessage()
+        		?super.getMessage()
         		:this.argumentsMessage== null
         			?errorCode.getMessage()
         			:this.argumentsMessage; 
 	}
-    
+*/    
     public String getMessage() {
         return this.errorCode == null
-        		?this.getMessage()
+        		?super.getMessage()
         		:this.argumentsMessage== null
         			?errorCode.getMessage()
         			:this.argumentsMessage; 

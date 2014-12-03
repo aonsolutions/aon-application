@@ -46,8 +46,8 @@ public class Mod180Print extends HttpServlet {
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			Mod180 mod180 = AON.getMod180(domainName, domainId, id);
-			FileOutput fileoutput = writer.createMOD180(domainName, domainId, id,
-					mod180.getYear(), mod180.getAdministration());
+			FileOutput fileoutput = writer.createMOD180(domainName, domainId,
+					id, mod180.getYear(), mod180.getAdministration());
 
 			String s = mod180.getName();
 			StringBuilder sb = new StringBuilder();
@@ -63,7 +63,8 @@ public class Mod180Print extends HttpServlet {
 			String fileName = "Mod180" + "_" + mod180.getYear() + "_"
 					+ sb.toString();
 
-			downloadPDF(req, resp, fileName, fileoutput.getContent());
+			downloadPDF(req, resp, fileName, fileoutput.getContent(),
+					Integer.toString(mod180.getYear()));
 
 		} catch (Throwable e) {
 			throw new ServletException(e);
@@ -71,8 +72,8 @@ public class Mod180Print extends HttpServlet {
 
 	}
 
-	private void downloadPDF(HttpServletRequest req, HttpServletResponse resp,
-			String fileName, byte[] content) throws IOException, KeyManagementException, NoSuchAlgorithmException {
+	private void downloadPDF(HttpServletRequest req, HttpServletResponse resp, 
+			String fileName, byte[] content, String year) throws IOException, KeyManagementException, NoSuchAlgorithmException {
 		String fileString = new String(content);
 		fileString = fileString.replace("\n", "");
 		fileString = fileString.replace("\r", "");
@@ -85,7 +86,7 @@ public class Mod180Print extends HttpServlet {
 				"&RUT=" + 
 				"&PRG=" + 
 				"&FIN=" + 
-				"&EJF=2013" + 
+				"&EJF=" + year +
 				"&MOD=180";
 		
 		String request = "https://www2.agenciatributaria.gob.es/l/zi22zilk0022";

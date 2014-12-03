@@ -1,8 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.mod180;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonCellList;
@@ -60,6 +58,7 @@ import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 public class Model180 extends MainEntryPoint {
@@ -86,8 +85,6 @@ public class Model180 extends MainEntryPoint {
 
 	private static final Model180Binder MODEL_180_BINDER = GWT
 			.create(Model180Binder.class);
-
-	private Map<Integer, Mod180Detail> modified = new HashMap<Integer, Mod180Detail>();
 
 	private Mod180 currentMod180;
 
@@ -188,7 +185,15 @@ public class Model180 extends MainEntryPoint {
 
 		// Add a selection model so we can select cells.
 		detailModel = new SingleSelectionModel<Mod180Detail>(MOD180_DETAIL_PROVIDES_KEY);
-		detailModel.addSelectionChangeHandler(new Mod180DetailSelectionHandler());
+		detailModel.addSelectionChangeHandler(new Handler() {
+			
+			@Override
+			public void onSelectionChange(SelectionChangeEvent event) {
+				final Mod180Detail selected = detailModel.getSelectedObject();
+				perceptorPanel.setDetail(selected);
+			}
+			
+		});
 
 		detailList.setSelectionModel(detailModel);
 		detailList.setEmptyListWidget(new HTML(MSG.noData()));
@@ -203,22 +208,6 @@ public class Model180 extends MainEntryPoint {
 			@Override
 			public void redrawList(Mod180Detail detail) {
 				detailList.redraw();
-			}
-
-			@Override
-			public void delete(Mod180Detail detail) {
-				detailModel.getSelectedObject().setDeleted(true);
-			}
-
-			@Override
-			public void restore(Mod180Detail detail) {
-				modified.remove(detailModel.getSelectedObject().getId());
-				detailModel.getSelectedObject().setDeleted(false);
-			}
-
-			@Override
-			public Map<Integer, Mod180Detail> getModified() {
-				return modified;
 			}
 		});
 
@@ -285,42 +274,6 @@ public class Model180 extends MainEntryPoint {
 									.unableToReadMod180(caught.getMessage()));
 						}
 					});
-		}
-	}
-
-	class Mod180DetailSelectionHandler implements SelectionChangeEvent.Handler {
-		@Override
-		public void onSelectionChange(SelectionChangeEvent event) {
-			final Mod180Detail selected = detailModel.getSelectedObject();
-			if (modified.containsKey(selected.getId())) {
-				perceptorPanel.setDetail(selected);
-				perceptorPanel
-						.populatePerceptor(modified.get(selected.getId()));
-			} else {
-				mod180Service.getMod180Detail(getCurrentDomainName(),
-						getCurrentDomain(), selected.getId(),
-						new AsyncCallback<Mod180Detail>() {
-							@Override
-							public void onSuccess(Mod180Detail perceptor) {
-								if (perceptor == null) {
-									DialogMessages.alertErrorWidget(MSG.unableToFindMod180Detail(MSG
-											.unableToFindPerceptor(selected
-													.getId())));
-								} else {
-									perceptorPanel.setDetail(selected);
-									perceptorPanel.populatePerceptor(perceptor);
-								}
-							}
-
-							@Override
-							public void onFailure(Throwable caught) {
-								DialogMessages.alertErrorWidget(MSG
-										.unableToFindMod180Detail(caught
-												.getMessage()));
-							}
-						});
-			}
-
 		}
 	}
 
@@ -445,7 +398,6 @@ public class Model180 extends MainEntryPoint {
 				this.currentMod180, new AsyncCallback<Mod180>() {
 					@Override
 					public void onSuccess(Mod180 result) {
-						initializeModified();
 						select(result);
 						popup.hide();
 						cleanErrorMessage();
@@ -458,10 +410,6 @@ public class Model180 extends MainEntryPoint {
 								.getMessage()));
 					}
 				});
-	}
-
-	private void initializeModified() {
-		modified = new HashMap<Integer, Mod180Detail>();
 	}
 
 	@UiHandler("deleteButton")
@@ -487,7 +435,6 @@ public class Model180 extends MainEntryPoint {
 	@UiHandler("newButton")
 	void onNewButtonClick(ClickEvent event) {
 		cleanErrorMessage();
-		initializeModified();
 		mod180Service.getFiscalParameters(getCurrentDomain(),
 				new AsyncCallback<FiscalParameters>() {
 					@Override
@@ -523,7 +470,6 @@ public class Model180 extends MainEntryPoint {
 	@UiHandler("cancelButton")
 	void onCancelButtonClick(ClickEvent event) {
 		cleanErrorMessage();
-		initializeModified();
 		detailList.setVisibleRangeAndClearData(detailList.getVisibleRange(),true);
 		int i = deckPanel.getWidgetIndex(listPanel);
 		deckPanel.showWidget(i);
@@ -532,19 +478,22 @@ public class Model180 extends MainEntryPoint {
 
 	@UiHandler("newDetailButton")
 	void onNewDetailButtonClick(ClickEvent event) {
-		int newKey = -1;
-		for (Integer key : modified.keySet()) {
-			newKey = newKey + ((key < 0) ? (-1) : 0);
-		}
+		int newKey = (currentMod180.getDetails().size() + 1) * (-1);
 		final Mod180Detail perceptor = new Mod180Detail();
 		perceptor.setId(newKey);
-		modified.put(newKey, perceptor);
+		currentMod180.getDetails().add(perceptor);
 		perceptorPanel.setDetail(perceptor);
-		currentMod180.getDetails().add(perceptor);		
 		detailList.setRowCount(detailList.getRowCount() + 1);
 		detailList.setPageSize(detailList.getRowCount());
-		// detailList.setRowData(detailList.getRowCount(), list);
+		selectInList(currentMod180.getDetails().size() - 1);
 		detailList.redraw();
+	}
+
+	private void selectInList(int i) {
+		detailModel.setSelected(currentMod180.getDetails().get(i),true);
+		detailList.getRowElement(i).scrollIntoView();
+		pagerPanel.scrollToLeft();
+		
 	}
 
 	@UiHandler("enterpriseSuggest")
@@ -594,10 +543,7 @@ public class Model180 extends MainEntryPoint {
 					updateRowCount(currentMod180.getDetails().size(), true);
 					updateRowData(0, currentMod180.getDetails());
 					detailList.setPageSize(currentMod180.getDetails().size());
-					int selectIdx = 0;
-					detailModel.setSelected(currentMod180.getDetails().get(selectIdx),true);
-					detailList.getRowElement(selectIdx).scrollIntoView();
-					pagerPanel.scrollToLeft();
+					selectInList(0);
 				}
 			}
 		}

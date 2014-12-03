@@ -702,5 +702,10 @@ input:disabled + label{
 	margin-right: 5px;
 	display: inline;
 }
+.aon-table-label {
+	padding-right: 2px;
+	font-size: 0.9em;
+	text-align: center;
+}
 
 

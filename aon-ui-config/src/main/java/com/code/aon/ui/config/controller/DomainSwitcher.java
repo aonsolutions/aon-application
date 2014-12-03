@@ -48,6 +48,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 	private DataModel filteredModel;
 	private Integer parentDomain;
 	private String domainName;
+	private String domainNameURL;
 	private String filter;
 	private String modelFilter;
 	private String domainURL;
@@ -118,6 +119,17 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 		this.domainName = domainName;
 	}
 	
+	public String getDomainNameURL() {
+		if (domainNameURL == null) {
+			assignDomainNameURL(getDomainId());
+		}
+		return domainNameURL;
+	}
+	
+	public void setDomainNameURL(String domainNameURL) {
+		this.domainNameURL = domainNameURL;
+	}
+
 	public String getFilter() {
 		return filter;
 	}
@@ -284,6 +296,18 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 		setDomainName(name);
 	}
 	
+	private void assignDomainNameURL(Integer domainId) {
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName(Domain.class.getName());
+		String q = "SELECT d.name FROM domain d"
+				+ " WHERE d.id = " + domainId;
+		SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(q);
+		String name = (String) query
+				.addScalar("name", Hibernate.STRING)
+				.uniqueResult();
+		HibernateUtil.closeSession(sessionFactoryName, false);
+		setDomainNameURL(name);
+	}
+
 	private boolean isRemovable(String key, String className) {
 		return (StringUtils.startsWith(className, "com.code.aon")  
 			&& !StringUtils.startsWith(key, "com.code.aon.audit.") 

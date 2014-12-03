@@ -62,6 +62,7 @@ public class MOD180Writer {
 				}
 			}
 		}
+		System.out.println( f);
 		return f;
 	}
 
@@ -103,6 +104,25 @@ public class MOD180Writer {
 			receiver.setRetention(det.getRetention());
 			receiver.setPercent(det.getPercent());
 			receiver.setAccrualYear(det.getAccrualYear());
+			receiver.setLocation(det.getLocation());
+			receiver.setCadasdralReference(det.getCadasdralReference()); 
+			receiver.setStreetType(det.getStreetType());
+			receiver.setStreetName(det.getStreetName());
+			receiver.setNumberType(det.getNumberType());
+			receiver.setNumber(det.getNumber());
+			receiver.setNumberSuffix(det.getNumberSuffix());
+			receiver.setBlock(det.getBlock());
+			receiver.setHall(det.getHall());
+			receiver.setStair(det.getStair());
+			receiver.setFloor(det.getFloor());
+			receiver.setDoor(det.getDoor());
+			receiver.setComplement(det.getComplement());
+			receiver.setCity(det.getCity());
+			receiver.setTown(det.getTown());
+			receiver.setTownCode(det.getTownCode());
+			receiver.setProvinceCode(det.getProvinceCode());
+			receiver.setZip(det.getZip());
+			
 			c001++;
 			c002 += det.getPerception();
 			c003 += det.getRetention();

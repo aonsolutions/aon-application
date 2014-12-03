@@ -171,5 +171,5 @@ public class Mod180 implements Serializable {
 	public void setDetails(ArrayList<Mod180Detail> details) {
 		this.details = details;
 	}
-
+	
 }
