@@ -74,6 +74,10 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 	public void setDefined(Map<String, boolean[]> defined) {
 		this.defined = defined;
 	}
+	
+	public void clearDb() {
+		salaryDraft.clearDb();
+	}
 
 	public void setDbSalary(ISalary dbSalary) throws SalaryException {
 

@@ -2724,6 +2724,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			ISalary dbSalary = getDBSalary(draft);
 			if (dbSalary != null)
 				salaryBuilder.setDbSalary(dbSalary);
+			else 
+				salaryBuilder.clearDb();
 		} catch (SalaryException e) {
 		} catch (ManagerBeanException e) {
 		}
@@ -2941,7 +2943,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	private static void calculateAndSave(Connection conn, SalaryDraft draft)
 			throws SQLException {
-		deleteSalaries(conn, draft.getDbId());
+		if ( draft.hasDbSalary() )
+			deleteSalaries(conn, draft.getDbId());
 
 		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(conn);
 		jooqSalaryBuilder.setListener(new SalaryBuilderListener());
