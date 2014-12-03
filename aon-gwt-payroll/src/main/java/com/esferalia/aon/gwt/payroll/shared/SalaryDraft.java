@@ -144,7 +144,6 @@ public class SalaryDraft extends SalaryPreview {
 	}
 
 	public void clear() {
-		clearDb();
 		clearCosts();
 		clearEvents();
 		clearContext();
