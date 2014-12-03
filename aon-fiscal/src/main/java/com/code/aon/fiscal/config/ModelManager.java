@@ -130,7 +130,6 @@ public class ModelManager {
 	}
 	
 	private void fillFiscalModel(DSLContext ctx, List<ModelConfig> list,ModelManagerParams params) {
-		String modelLit = params.getModel()==Model.M303_RS?"303":params.getModel().getName();
 		
 		SelectConditionStep<Record9<Byte,String,String,String,Byte,String,Byte,Integer,String>> select = 
 				ctx
@@ -148,6 +147,7 @@ public class ModelManager {
 								.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
 								)));
 		if (params.getModel() != null) {
+			String modelLit = params.getModel()==Model.M303_RS?"303":params.getModel().getName();
 			select = select.and(FS_MODEL.MODEL.equal(modelLit));
 		}
 		System.out.println( select.orderBy(FS_MODEL.YEAR).getSQL(true) );
