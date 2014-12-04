@@ -82,8 +82,10 @@
 													action="mod303_search"
 													actionListener="#{mod303.onEditSearch}"
 													title="#{bundle.fiscal_model_310_module}">
-													<aon:outputText styleClass="aon-fiscal-link-box" value="303" />
-													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_310_module}" />
+													<aon:outputText styleClass="aon-fiscal-link-box" value="303"/>
+													<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
+														style="margin-left: 5px; padding-left: 20px;" 
+														value="#{bundle.fiscal_model_310_module}" />
 												</aon:commandLink>
 	
 												<aon:commandLink id="mod347_report" 
@@ -139,8 +141,10 @@
 											<aon:commandLink id="gwt_mod180"
 												action="gwt_mod180"
 												title="#{bundle.fiscal_model_180_module}">
-												<aon:outputText styleClass="aon-fiscal-link-box" value="180" />
-												<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_180_module}" />
+												<aon:outputText styleClass="aon-fiscal-link-box" value="180"/>
+												<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
+													style="margin-left: 5px; padding-left: 20px;" 
+													value="#{bundle.fiscal_model_180_module}"/>
 											</aon:commandLink>
 
 											<aon:if test="#{domainSwitcher.domainManagementAvailable}">
