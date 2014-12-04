@@ -15,16 +15,42 @@
 	<field name="toDeduct" value="bean" bean="dec" property="toDeduct" format="DefNumeric" pattern="S9(14)V99" />
 	<field name="result" value="bean" bean="dec" property="result" format="DefNumeric" pattern="S9(14)V99" />
 
-	<field name="vatAccrualOutputBase" value="bean" bean="dec" property="vatAccrualOutputBase" format="DefNumeric" pattern="9(15)V99" />
-	<field name="vatAccrualOutputQuota" value="bean" bean="dec" property="vatAccrualOutputQuota" format="DefNumeric" pattern="9(15)V99" />
-	<field name="vatAccrualInputBase" value="bean" bean="dec" property="vatAccrualInputBase" format="DefNumeric" pattern="9(15)V99" />
-	<field name="vatAccrualInputQuota" value="bean" bean="dec" property="vatAccrualInputQuota" format="DefNumeric" pattern="9(15)V99" />
+	<field name="vatAccrualOutputBase" value="bean" bean="dec" property="vatAccrualOutputBase" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="vatAccrualOutputQuota" value="bean" bean="dec" property="vatAccrualOutputQuota" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="vatAccrualInputBase" value="bean" bean="dec" property="vatAccrualInputBase" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="vatAccrualInputQuota" value="bean" bean="dec" property="vatAccrualInputQuota" format="DefNumeric" pattern="S9(14)V99" />
 	
 	<field name="complementary" value="bean" bean="dec" property="complementaryLetter" format="AlphaNumeric" pattern="X(1)" />
 	<field name="free5" value=" " format="Alphabetic" pattern="X(13)" />
 	<field name="withoutActivity" value="bean" bean="dec" property="withoutActivityLetter" format="AlphaNumeric" pattern="X(1)" />
 	
 	<field name="bankAccount" value="bean" bean="dec" property="bankAccount" format="AlphaNumeric" pattern="X(34)" />
-	<field name="free6" value=" " format="Alphabetic" pattern="X(289)" />
+
+	<field name="free" value="0" format="Alphabetic" pattern="9(1)" />
+	<field name="free" value=" " format="Alphabetic" pattern="X(4)" />
+	<field name="free" value="0" format="Alphabetic" pattern="9(1)" />
+	<field name="free" value=" " format="Alphabetic" pattern="X(4)" />
+	<field name="free" value="0" format="Alphabetic" pattern="9(1)" />
+	<field name="free" value=" " format="Alphabetic" pattern="X(4)" />
+	<field name="free" value="0" format="Alphabetic" pattern="9(1)" />
+	<field name="free" value=" " format="Alphabetic" pattern="X(4)" />
+	<field name="free" value="0" format="Alphabetic" pattern="9(1)" />
+	<field name="free" value=" " format="Alphabetic" pattern="X(4)" />
+	<field name="free" value="0" format="Alphabetic" pattern="9(1)" />
+	<field name="free" value=" " format="Alphabetic" pattern="X(4)" />
+	<field name="free" value=" " format="Alphabetic" pattern="9(1)" />
+	<field name="free" value="0" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="free" value="0" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="free" value="0" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="free" value="0" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="free" value="0" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="free" value="0" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="free" value="0" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="free" value="0" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="free" value="0" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="free" value="0" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="free" value="0" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="free6" value=" " format="Alphabetic" pattern="X(71)" />
+
 	<field name="free7" value="&lt;/T30303>" format="Alphabetic" pattern="X(9)" />
 </register>
