@@ -1,9 +1,9 @@
 package com.code.aon.ui.admin;
 
-import java.io.Serializable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -17,14 +17,15 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.audit.enumeration.Module;
 import com.code.aon.AonVersion;
+import com.code.aon.audit.enumeration.Module;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.ui.common.ICommonMessages;
@@ -53,6 +54,10 @@ public class DomainInfo implements Serializable {
 	
 	private static final String USER = "user";
 	
+	private static final String TIRANT = "tirant";
+	
+	private static final String DEH_ONLINE = "dehOnline";
+	
 	private DomainType type;
 	
 	private String user;
@@ -68,6 +73,10 @@ public class DomainInfo implements Serializable {
 	private List<Module> displayModules;
 	
 	private Date date;
+	
+	private boolean tirant;
+	
+	private boolean dehOnline;
 	
 	public DomainInfo() {
 		type = DomainType.ENTERPRISE;
@@ -117,6 +126,14 @@ public class DomainInfo implements Serializable {
 				this.displayModules.add(Module.valueOf(value));
 			}
 		}
+		String tirantValue = properties.getProperty(TIRANT);
+		if ( BooleanUtils.toBoolean(tirantValue) ) {
+			this.tirant = true;
+		}		
+		String dehOnlineValue = properties.getProperty(DEH_ONLINE);
+		if ( BooleanUtils.toBoolean(dehOnlineValue) ) {
+			this.dehOnline = true;
+		}		
 	}
 
 	public DomainType getType() {
@@ -208,6 +225,26 @@ public class DomainInfo implements Serializable {
 	public void setUser(String user) {
 		this.user = user;
 	}
+	
+	public boolean isTirant() {
+		return tirant;
+	}
+
+	public void setTirant(boolean tirant) {
+		this.tirant = tirant;
+	}
+
+	public boolean isDehOnline() {
+		return dehOnline;
+	}
+
+	public void setDehOnline(boolean dehOnline) {
+		this.dehOnline = dehOnline;
+	}
+	
+	private void diff( StringBuffer sb, String message, boolean newValue ) {
+		diff( sb, message, newValue ? "+" : "-" );
+	}	
 
 	private void diff( StringBuffer sb, String message, Object oldValue, Object newValue ) {
 		diff( sb, message, oldValue + " -> "+ newValue );
@@ -258,6 +295,12 @@ public class DomainInfo implements Serializable {
 		if (! Arrays.equals(getModuleArray(), di.getModuleArray()) ) {
 			diffList( sb, ICommonMessages.DOMAIN_MODULES, getBookingModules(), di.getBookingModules() );
 		}
+		if ( isTirant() != di.isTirant() ) {
+			diff( sb, ICommonMessages.EXTERNAL_TIRANT, di.isTirant() );
+		}
+		if ( isDehOnline() != di.isDehOnline() ) {
+			diff( sb, ICommonMessages.EXTERNAL_DEH_ONLINE, di.isDehOnline() );
+		}
 		return sb.toString();
 	}
 	
@@ -283,6 +326,12 @@ public class DomainInfo implements Serializable {
 		if (! displayModules.isEmpty() ) {
 			String modulesValue = StringUtils.join(displayModules, " ");
 			properties.setProperty(DISPLAY_MODULES, modulesValue);			
+		}
+		if ( tirant ) {
+			properties.setProperty(TIRANT, Boolean.TRUE.toString());
+		}
+		if ( dehOnline ) {
+			properties.setProperty(DEH_ONLINE, Boolean.TRUE.toString());
 		}
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try {

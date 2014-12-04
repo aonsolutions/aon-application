@@ -23,11 +23,13 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Domain;
 import com.code.aon.config.User;
 import com.code.aon.config.enumeration.DomainType;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
@@ -200,6 +202,28 @@ public class DomainPrintController extends BasicController {
 			DomainController controller = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
 			controller.initHistory(companyId);
 		}
+	}
+	
+	public boolean isCurrentTirant() throws ManagerBeanException {
+		if ( getModel().isRowAvailable() ) {
+			Domain domain = (Domain) getSelectedTO();
+			Integer value = AppParamUtil.getValueAsInteger(AppParam.AON_EXTERNAL_APPLICATIONS, domain.getId());
+			value = (value != null) ? value : 0;
+			return (value & IAdminConstants.TIRANT_EXTERNAL_APP) != 0;
+		}
+		return false;				
+	}
+
+	public boolean isCurrentDehOnline() throws ManagerBeanException {
+		if ( getModel().isRowAvailable() ) {
+			Domain domain = (Domain) getSelectedTO();
+			if (! domain.isDomainManagement() ) {
+				Integer value = AppParamUtil.getValueAsInteger(AppParam.AON_EXTERNAL_APPLICATIONS, domain.getId());
+				value = (value != null) ? value : 0;
+				return (value & IAdminConstants.DEH_ONLINE_EXTERNAL_APP) != 0;
+			}
+		}
+		return false;				
 	}
 	
 	private static class DomainFilter extends ControllerAdapter {

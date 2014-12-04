@@ -269,12 +269,12 @@ public class DomainController extends BasicController {
 	}
 	
 	public void initExternalApplications() {
-		if ( (getDomain().getType() == DomainType.CONSULTANCY) && (getParentDomain() == null) ) {
-			Integer value = AppParamUtil.getValueAsInteger(AppParam.AON_EXTERNAL_APPLICATIONS);
-			externalApplications = (value != null) ? value : 0;
-		} else {
-			externalApplications = 0;
-		}
+		externalApplications = AppParamUtil.getValueAsInt(AppParam.AON_EXTERNAL_APPLICATIONS);
+		boolean tirant = isTirant();
+		boolean dehOnline = !getDomain().isDomainManagement() && isDehOnline();
+		externalApplications = 0;
+		setTirant(tirant);
+		setDehOnline(dehOnline);
 	}
 	
 	private void saveOEMDomain( AppParam appParam, Domain domain) throws ManagerBeanException {
@@ -313,7 +313,7 @@ public class DomainController extends BasicController {
 		} else {
 			AppParamUtil.removeParameter(AppParam.AON_EXTERNAL_APPLICATIONS);
 		}
-		if ( (externalApplications & IAdminConstants.DEH_ONLINE_EXTERNAL_APP) == 0 ) {
+		if (! isDehOnline() ) {
 			AppParamUtil.removeParameter(AppParam.AON_DEH_ONLINE_USER);
 			AppParamUtil.removeParameter(AppParam.AON_DEH_ONLINE_PASSWORD);			
 		}
@@ -440,6 +440,8 @@ public class DomainController extends BasicController {
 		di.setDomainManagement(domain.isDomainManagement());
 		di.setBookingModules(bookingInfo.getBookingModules());
 		di.setDisplayModules(bookingInfo.getDisplayModules());
+		di.setTirant(isTirant());
+		di.setDehOnline(isDehOnline());
 		return di;
 	}
 	

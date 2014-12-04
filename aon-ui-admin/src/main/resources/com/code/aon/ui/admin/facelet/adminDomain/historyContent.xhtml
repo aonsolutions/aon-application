@@ -77,6 +77,16 @@
 							<aon:outputText value="#{bundle.admin_modules}" />
 						</f:facet>							
 						<aon:outputText value="#{to.moduleList}" />
+						<aon:div styleClass="aon-margin-left" layout="inline"
+							rendered="#{to.tirant}" >
+							<h:graphicImage title="#{bundle.aon_external_tirant}"
+								url="#{aonResource.resolve['/images/icon-tirant-asesores.png']}" />
+						</aon:div>								
+						<aon:div styleClass="aon-margin-left" layout="inline"
+							rendered="#{to.dehOnline}" >								
+							<h:graphicImage title="#{bundle.aon_external_dehOnline}"
+								url="#{aonResource.resolve['/images/icon-deh-online.png']}" />						
+						</aon:div>																						
 					</aon:column>		
 					
 					<aon:column styleClass="aon-editDataTable-iconColumn">

@@ -98,7 +98,8 @@ public class DesktopState implements Serializable {
     private int portalValue;
     private boolean userWithPortalView;
     private boolean showFavorites;
-    private int externalApplicationsValue;
+    private boolean showTirant;
+    private boolean showDehOnline;
 	
     public DesktopState() {
     	initCompany();
@@ -116,7 +117,7 @@ public class DesktopState implements Serializable {
 		initPortal(user, ds);
 		initUser(user);
 		initSupport();
-		initExternalApplications(user);
+		initExternalApplications(user, ds);
 		checkSerialization();
 	}
 
@@ -278,8 +279,7 @@ public class DesktopState implements Serializable {
 	}
 	
 	private void initPortal( User user, DomainSwitcher ds ) {
-		Integer value = AppParamUtil.getValueAsInteger(AppParam.AON_PORTAL);
-		portalValue = (value != null) ? value : 0;
+		portalValue = AppParamUtil.getValueAsInt(AppParam.AON_PORTAL);
 		if ( isPortalActive(user, ds) ) {
 			this.userWithPortalView = user.getEnterprise() == null;
 			if (! this.userWithPortalView ) {
@@ -549,9 +549,16 @@ public class DesktopState implements Serializable {
 		return false;
 	}
 
-	private void initExternalApplications( User user ) {
-		Integer value = AppParamUtil.getValueAsInteger(AppParam.AON_EXTERNAL_APPLICATIONS, user.getDomain());
-		externalApplicationsValue = (value != null) ? value : 0;
+	private void initExternalApplications( User user, DomainSwitcher ds ) {
+		int domainValue = AppParamUtil.getValueAsInt(AppParam.AON_EXTERNAL_APPLICATIONS);
+		if (! ds.isDomainManagementAvailable() ) {
+			this.showDehOnline = (domainValue & IAdminConstants.DEH_ONLINE_EXTERNAL_APP) != 0;
+		}
+		this.showTirant = (domainValue & IAdminConstants.TIRANT_EXTERNAL_APP) != 0;
+		if ( ! this.showTirant && ds.isParentDomainUserInChildDomain() ) {
+			int userValue = AppParamUtil.getValueAsInt(AppParam.AON_EXTERNAL_APPLICATIONS, user.getDomain());
+			this.showTirant = (userValue & IAdminConstants.TIRANT_EXTERNAL_APP) != 0;
+		}
 	}	
 	
 	public boolean isShowExternalApplications() {
@@ -559,7 +566,7 @@ public class DesktopState implements Serializable {
 	}
 
 	public boolean isShowDehOnline() {
-		if ( (externalApplicationsValue & IAdminConstants.DEH_ONLINE_EXTERNAL_APP) != 0 ) {
+		if ( this.showDehOnline ) {
 			return (!StringUtils.isEmpty(getDEHOnlineUser())) && (!StringUtils.isEmpty(getDEHOnlinePassword())); 
 		}
 		return false;
@@ -570,11 +577,11 @@ public class DesktopState implements Serializable {
 	}
 
 	public boolean isShowTirant() {
-		return ((externalApplicationsValue & IAdminConstants.TIRANT_EXTERNAL_APP) != 0) || isFiscalEnabled() || isPayrollEnabled();
+		return this.showTirant || isFiscalEnabled() || isPayrollEnabled();
 	}
 	
 	private int getTirantType() {
-		if ( (externalApplicationsValue & IAdminConstants.TIRANT_EXTERNAL_APP) != 0) {
+		if ( this.showTirant) {
 			return TirantConnectionServlet.TIRANT_FULL;
 		} else if ( isFiscalEnabled() && isPayrollEnabled() ) {
 			return TirantConnectionServlet.TIRANT_FISCAL_PAYROLL;
@@ -600,13 +607,11 @@ public class DesktopState implements Serializable {
 	}
 	
 	public String getDEHOnlineUser() {
-		User user = UserUtils.getInstance().getLoggedUser();
-		return AppParamUtil.getValue(AppParam.AON_DEH_ONLINE_USER, user.getDomain());
+		return AppParamUtil.getValue(AppParam.AON_DEH_ONLINE_USER);
 	}
 
 	public String getDEHOnlinePassword() {
-		User user = UserUtils.getInstance().getLoggedUser();
-		return AppParamUtil.getValue(AppParam.AON_DEH_ONLINE_PASSWORD, user.getDomain());		
+		return AppParamUtil.getValue(AppParam.AON_DEH_ONLINE_PASSWORD);		
 	}
 
 	public boolean isShowFavorites() {

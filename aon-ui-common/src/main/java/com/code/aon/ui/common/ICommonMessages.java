@@ -224,6 +224,8 @@ public interface ICommonMessages {
 	String ADMIN_BACKUP_INFO = "admin_backup_info";
 	String ADMIN_ADVANCED_MODE = "admin_advanced_mode";
 	String ADMIN_GLOBAL_PORTAL = "admin_global_portal";
+	String EXTERNAL_TIRANT = "aon_external_tirant";
+	String EXTERNAL_DEH_ONLINE = "aon_external_dehOnline";
 	
 	String AUDIT_LEVEL = "audit_audit_level";	
 	

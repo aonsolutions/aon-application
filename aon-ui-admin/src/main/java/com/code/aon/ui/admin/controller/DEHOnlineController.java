@@ -8,9 +8,7 @@ import javax.faces.event.ActionEvent;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.enumeration.AppParam;
-import com.code.aon.config.User;
 import com.code.aon.config.util.AppParamUtil;
-import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 
 public class DEHOnlineController {
@@ -22,9 +20,8 @@ public class DEHOnlineController {
 	private String confirmPassword;	
 
 	public boolean isShowConfiguration() {
-		User user = UserUtils.getInstance().getLoggedUser();
-		Integer value = AppParamUtil.getValueAsInteger(AppParam.AON_EXTERNAL_APPLICATIONS, user.getDomain());
-		return (value != null) && ((value & IAdminConstants.DEH_ONLINE_EXTERNAL_APP) != 0 );
+		int value = AppParamUtil.getValueAsInt(AppParam.AON_EXTERNAL_APPLICATIONS);
+		return (value & IAdminConstants.DEH_ONLINE_EXTERNAL_APP) != 0;
 	}	
 	
 	public void onInit(ActionEvent event) {

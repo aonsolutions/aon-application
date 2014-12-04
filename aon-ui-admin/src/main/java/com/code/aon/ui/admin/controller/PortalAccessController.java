@@ -119,8 +119,7 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 	public void onInit( ActionEvent event ) {
 		try {		
 			setActive(false);
-			Integer value = AppParamUtil.getValueAsInteger(AppParam.AON_PORTAL);
-			this.portalValue = (value != null) ? value : 0;
+			this.portalValue = AppParamUtil.getValueAsInt(AppParam.AON_PORTAL);
 			this.user = getPortalUser();
 			if ( this.user == null ) {
 				resetTo();

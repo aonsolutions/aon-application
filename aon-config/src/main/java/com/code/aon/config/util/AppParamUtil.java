@@ -140,6 +140,15 @@ public class AppParamUtil {
 	public static Integer getValueAsInteger( AppParam appParam ) {
 		return getValueAsInteger(appParam, null);
 	}
+
+	public static int getValueAsInt( AppParam appParam, Integer domainId ) {
+		Integer value = getValueAsInteger(appParam, domainId);
+		return value != null ? value : 0;
+	}
+	
+	public static int getValueAsInt( AppParam appParam ) {
+		return getValueAsInt(appParam, null);
+	}
 	
 	public static Date getValueAsDate( AppParam appParam, Integer domainId ) {
 		String value = getValue(appParam, domainId);

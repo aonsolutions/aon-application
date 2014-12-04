@@ -262,22 +262,22 @@
 						</aon:div>	
 					</aon:if>
 
-					<aon:if test="#{(adminDomain.to.type == 'CONSULTANCY') and (!domainSwitcher.childDomain)}">
-						<aon:outputLabel for="Domain_externalApplications"
-							value="#{bundle.aon_external_applications}" />
-						<aon:div>
+					<aon:outputLabel for="Domain_externalApplications"
+						value="#{bundle.aon_external_applications}" />
+					<aon:div>
+						<aon:if test="#{!domainSwitcher.domainManagementAvailable}">					
 							<aon:selectBooleanCheckbox id="ExternalApplication_DEHOnline"
 								value="#{adminDomain.dehOnline}">
 							</aon:selectBooleanCheckbox>
 							<aon:outputLabel for="ExternalApplication_DEHOnline"
-								value="#{bundle.aon_external_dehOnline}" />			
-							<aon:selectBooleanCheckbox id="ExternalApplication_Tirant"
-								value="#{adminDomain.tirant}">
-							</aon:selectBooleanCheckbox>
-							<aon:outputLabel for="ExternalApplication_Tirant"
-								value="#{bundle.aon_external_tirant}" />						
-						</aon:div>
-					</aon:if>
+								value="#{bundle.aon_external_dehOnline}" />
+						</aon:if>			
+						<aon:selectBooleanCheckbox id="ExternalApplication_Tirant"
+							value="#{adminDomain.tirant}">
+						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="ExternalApplication_Tirant"
+							value="#{bundle.aon_external_tirant}" />						
+					</aon:div>
 					
 				</aon:panelGrid>								
 
