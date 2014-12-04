@@ -137,7 +137,7 @@ public class A3Writer extends BasicExporter {
 		// Fecha del apunte
 		setDate(accountEntry.getEntryDate(), 6);
 		// Tipo de Registro
-		if ( getFinance() != null ) {
+		if (! isInvoiceExport() ) {
 			setInteger( 0, 14, 1);
 		} else if ( isAbono() || (getTotal()<0) ) {
 			setInteger( 2, 14, 1);
@@ -146,7 +146,7 @@ public class A3Writer extends BasicExporter {
 		}
 		// Cuenta - Descripción de la cuenta 
 		setAccountAndDescription(aed.getAccount());
-		if ( getFinance() != null ) {
+		if (! isInvoiceExport() ) {
 			// Tipo de importe (D/H)			
 			if ( aed.getCredit() == 0 ) {
 				setString("D", 57, 1);
@@ -628,13 +628,18 @@ public class A3Writer extends BasicExporter {
 	
 	@Override
 	public void write( AccountEntry accountEntry ) throws IOException, ManagerBeanException {
-		fillHeader(accountEntry, getRegistryDetail(), true);
-		writeLine();
+		boolean first = true;
+		if ( getRegistryDetail() != null ) {
+			fillHeader(accountEntry, getRegistryDetail(), first);
+			writeLine();
+			first = false;
+		}
 		while (! getDetails().isEmpty() ) {
 			AccountEntryDetail aed = getNextDetail();
-			if ( getFinance() != null ) {
-				fillHeader(accountEntry, aed, false);
+			if (! isInvoiceExport() ) {
+				fillHeader(accountEntry, aed, first);
 				writeLine();				
+				first = false;
 			} else {
 				writeDetail(accountEntry, aed);	
 			}
@@ -642,7 +647,9 @@ public class A3Writer extends BasicExporter {
 		for( Finance finance : getFinances() ) {
 			writeFinance(finance);
 		}
-		writeRegistry();
+		if ( getRegistryDetail() != null ) {
+			writeRegistry();	
+		}
 	}
 
 	@Override

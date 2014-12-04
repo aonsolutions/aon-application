@@ -261,8 +261,10 @@ public class ExcelWriter extends BasicExporter {
 	
 	private void addFirstLine( AccountEntry accountEntry ) throws ReportException {
 		this.exporter.startLine();
-		addDetail(accountEntry, getRegistryDetail());
-		if ( getFinance() == null ) {
+		if ( getRegistryDetail() != null ) {
+			addDetail(accountEntry, getRegistryDetail());	
+		}
+		if ( isInvoiceExport() ) {
 			addInvoiceHeader();
 			addInvoice(accountEntry);
 			addTaxes();

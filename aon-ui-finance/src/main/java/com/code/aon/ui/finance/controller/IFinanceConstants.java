@@ -23,6 +23,7 @@ public interface IFinanceConstants {
 	String FINANCE_BATCH_LIST_CONTROLLER_NAME = "fbatchList";
 	String FINANCE_BATCH_CONTROLLER_NAME = "fbatch";
 	String FINANCE_BATCH_DETAIL_CONTROLLER_NAME = "fBatchDetail";
+	String FINANCE_BATCH_SEARCH_LISTENER_NAME = "fBatchSearch";
 	
 	String SALE_INVOICE_FORM_NAME = "saleInvoice_form";
 	String SALE_INVOICE_LIST_NAME = "saleInvoice_list";

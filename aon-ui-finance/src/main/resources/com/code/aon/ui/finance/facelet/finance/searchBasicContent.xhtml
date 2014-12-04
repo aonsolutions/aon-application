@@ -171,7 +171,7 @@
 
 	<aon:outputText value="#{bundle.aon_status}" />
 	<aon:selectManyCheckbox value="#{searchController.financeStatuses}">
-		<f:selectItems value="#{financeCollections.financeStatuses}" />
+		<f:selectItems value="#{searchController.financeStatusList}" />
 	</aon:selectManyCheckbox>							
 
 </ui:composition>

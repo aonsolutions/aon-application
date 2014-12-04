@@ -147,8 +147,10 @@ public class AplifisaWriter extends BasicExporter {
 	@Override
 	public void write( AccountEntry accountEntry ) throws IOException, ManagerBeanException {
 		writeAccounts();
-		appendNewLine(this.writer);
-		appendEntryDetail( accountEntry, getRegistryDetail() );
+		if ( getRegistryDetail() != null ) {
+			appendNewLine(this.writer);
+			appendEntryDetail( accountEntry, getRegistryDetail() );			
+		}
 		while (! getDetails().isEmpty() ) {
 			appendNewLine(this.writer);
 			AccountEntryDetail aed = getDetails().get(0);
@@ -159,7 +161,7 @@ public class AplifisaWriter extends BasicExporter {
 	}
 
 	private void writeAccounts() throws IOException {
-		if (! isExported(getRegistryDetail()) ) {
+		if ( (getRegistryDetail() != null) && !isExported(getRegistryDetail()) ) {
 			appendNewLine(this.accountWriter);
 			writeAccounts( getRegistryDetail(), true );
 		}

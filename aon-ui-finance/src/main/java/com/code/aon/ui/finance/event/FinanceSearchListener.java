@@ -5,8 +5,10 @@ import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.ObjectUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
@@ -17,6 +19,8 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
+import com.code.aon.ui.finance.controller.FinanceCollectionsController;
+import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.IFinanceController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -32,7 +36,16 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 	private PayMethod[] payMethods;
 	private boolean skipPayrollFilter;
 	private boolean nullInvoice;
+	private boolean skipBatched;
 	
+	public boolean isSkipBatched() {
+		return skipBatched;
+	}
+
+	public void setSkipBatched(boolean skipBatched) {
+		this.skipBatched = skipBatched;
+	}
+
 	public Registry getRegistry() {
 		return registry;
 	}
@@ -100,6 +113,7 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 
 		FinanceStatus[] defaultFinanceStatus = {FinanceStatus.PENDING, FinanceStatus.RETURNED};
 		setFinanceStatuses(defaultFinanceStatus);
+		setSkipBatched(false);
 	}
 
 	public void initData() throws ManagerBeanException {
@@ -150,4 +164,19 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 		}
 	}
 
+	public List<SelectItem> getFinanceStatusList() {
+		FinanceCollectionsController fcc = (FinanceCollectionsController) AonUtil.getRegisteredBean(IFinanceConstants.COLLECTIONS_CONTROLLER_NAME);
+		List<SelectItem> list = fcc.getFinanceStatuses();
+		if ( isSkipBatched() ) {
+			List<SelectItem> newList = new LinkedList<SelectItem>();
+			for( SelectItem item : list ) {
+				if (! ObjectUtils.equals(item.getValue(), FinanceStatus.BATCHED) ) {
+					newList.add(item);
+				}
+			}
+			return newList;
+		}
+		return list;
+	}	
+	
 }

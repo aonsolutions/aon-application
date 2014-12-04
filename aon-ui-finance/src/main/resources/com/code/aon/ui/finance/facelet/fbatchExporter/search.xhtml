@@ -9,26 +9,25 @@
 
 	<ui:define name="content">
 	
-		<aon:form id="financeExporterForm">
+		<aon:form id="fbatchExporterForm">
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{bundle.finance_account_export_module}" />
-				<ui:param name="controller" value="#{financeExporter}" />
+				<ui:param name="toolbarTitle" value="#{bundle.fbatch_account_export_module}" />
+				<ui:param name="controller" value="#{fbatchExporter}" />
 				<ui:param name="skipResetButton" value="#{true}" />
 			</ui:include>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
-				<ui:param name="controller" value="#{financeExporter}" />
-				<ui:param name="searchController" value="#{financeSearch}" />
+				<ui:param name="controller" value="#{fbatchExporter}" />
 				<ui:param name="skipAfterSearch" value="#{true}" />
 				<ui:define name="searchContent">
 					
-					<ui:decorate template="/com/code/aon/ui/finance/facelet/finance/searchContent.xhtml" >
-						<ui:define name="additionalFinanceSearchContent">
+					<ui:decorate template="/com/code/aon/ui/finance/facelet/fbatch/searchContent.xhtml" >
+						<ui:define name="additionalFBatchSearchContent">
 
-							<aon:outputLabel for="Finance_payment"
+							<aon:outputLabel for="FBatch_payment"
 								value="#{bundle.aon_type}" />
-							<aon:selectOneMenu id="Finance_payment"
-								reRender="financeExporterForm"
+							<aon:selectOneMenu id="FBatch_payment"
+								reRender="fbatchExporterForm"
 								value="#{controller.payment}">
 								<f:selectItem itemLabel="#{bundle.finance_charge}" itemValue="#{false}" />
 								<f:selectItem itemLabel="#{bundle.finance_payment}" itemValue="#{true}" />

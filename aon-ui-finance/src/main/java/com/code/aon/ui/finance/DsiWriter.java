@@ -90,7 +90,7 @@ public class DsiWriter extends BasicExporter {
 	
 	@Override
 	protected boolean isSkipAccount(Account account) {
-		if ( getFinance() != null ) {
+		if (! isInvoiceExport() ) {
 			return false;			
 		}
 		return super.isSkipAccount(account);
@@ -116,7 +116,7 @@ public class DsiWriter extends BasicExporter {
 	
 	private String getInteger( Integer value, int maxLength ) {
 		String string = (value != null) ? value.toString() : null;
-		return getString(string, maxLength);
+		return getString(StringUtils.leftPad(string, maxLength, "0"), maxLength);
 	}
 
 	private String getDate( Date date ) {
@@ -624,9 +624,11 @@ public class DsiWriter extends BasicExporter {
 	public void write( AccountEntry accountEntry ) throws IOException, ManagerBeanException {
 		this.line = 1;
 		writeAccounts();
-		if ( getFinance() != null ) {
+		if (! isInvoiceExport() ) {
 			appendEntry(accountEntry);
-			appendEntryDetail( accountEntry, getRegistryDetail() );
+			if ( getRegistryDetail() != null ) {
+				appendEntryDetail( accountEntry, getRegistryDetail() );	
+			}
 			while (! getDetails().isEmpty() ) {
 				AccountEntryDetail aed = getDetails().get(0);
 				getDetails().remove(0);
@@ -639,7 +641,7 @@ public class DsiWriter extends BasicExporter {
 	}
 
 	private void writeAccounts() throws IOException {
-		if (! isExported(getRegistryDetail()) ) {
+		if ( (getRegistryDetail() != null) && !isExported(getRegistryDetail()) ) {
 			writeAccounts( getRegistryDetail(), true );
 		}
 		for( AccountEntryDetail aed : getDetails() ) {
@@ -972,7 +974,7 @@ public class DsiWriter extends BasicExporter {
 	public Map<String, File> getDataMap() {
 		Map<String, File> map = new HashMap<String, File>();
 		try {
-			addDBF(map, accountMap, getAccounFields(), (getFinance() != null) ? "CUE" : "CLI" );
+			addDBF(map, accountMap, getAccounFields(), isInvoiceExport() ? "CLI" : "CUE" );
 			addDBF(map, accountEntryMap, getAccounEntryFields(), "CAS");
 			addDBF(map, accountEntryDetailMap, getAccounEntryDetailFields(), "LAS");
 			addDBF(map, facturasRecibidasMap, getFacturasRecibidasFields(), "FAP");

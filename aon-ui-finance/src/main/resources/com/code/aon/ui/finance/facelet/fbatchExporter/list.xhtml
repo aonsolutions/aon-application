@@ -11,20 +11,20 @@
 
 	<ui:define name="content">
 	
-		<aon:form id="financeExporterForm">
+		<aon:form id="fbatchExporterForm">
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{bundle.finance_account_export_module}" />
-				<ui:param name="controller" value="#{financeExporter}" />
+				<ui:param name="toolbarTitle" value="#{bundle.fbatch_account_export_module}" />
+				<ui:param name="controller" value="#{fbatchExporter}" />
 				<ui:param name="skipResetButton" value="true" />
 				
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="startDownloadExport"
 						value="#{bundle.webmail_download}: #{exporter.configuration.type}"
 						styleClass="aon-finding-toolbar-item aon-icon-mail-save" 
-						disabled="#{empty financeExporter.checkList}" reRender="financeExporterToolbar,financeDataDiv"
-						actionListener="#{financeExporter.onStart}" >
+						disabled="#{empty fbatchExporter.checkList}" reRender="fbatchExporterToolbar,financeDataDiv"
+						actionListener="#{fbatchExporter.onStart}" >
 						<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
 					</aon:commandButton>
 				</ui:define>				
@@ -33,21 +33,37 @@
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
-				<aon:div styleClass="aon-toolbar" rendered="#{financeExporter.model.rowCount > 0}">
+
+				<aon:div styleClass="aon-margin-bottom">
+					<aon:panelGrid id="menuGrid" columns="2"
+						rendered="#{!fbatchExporter.recorded}" >
+	
+						<aon:outputLabel for="FinanceBatch_recordDate"
+							value="#{bundle.finance_record_date}" />
+						<aon:selectInputDate id="FinanceBatch_recordDate"
+							required="true" 
+							value="#{fbatchExporter.recordDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}" />
+	
+					</aon:panelGrid>
+				</aon:div>			
+			
+				<aon:div styleClass="aon-toolbar" rendered="#{fbatchExporter.model.rowCount > 0}">
 					<aon:commandButton title="#{bundle.aon_check_all}"
 						styleClass="aon-finding-toolbar-item aon-icon-checkAll"
 						value="#{bundle.aon_check_all}"
-						ajaxSingle="true" reRender="financeDataDiv,financeExporterToolbar"
-						actionListener="#{financeExporter.checkAll}"/>	
+						ajaxSingle="true" reRender="financeDataDiv,fbatchExporterToolbar"
+						actionListener="#{fbatchExporter.checkAll}"/>	
 					<aon:commandButton title="#{bundle.aon_uncheck_all}"
 						styleClass="aon-finding-toolbar-item aon-icon-checkNone"
 						value="#{bundle.aon_uncheck_all}"
-						ajaxSingle="true" reRender="financeDataDiv,financeExporterToolbar"
-						actionListener="#{financeExporter.checkNone}" />				
+						ajaxSingle="true" reRender="financeDataDiv,fbatchExporterToolbar"
+						actionListener="#{fbatchExporter.checkNone}" />				
 				</aon:div>
 				<aon:div id="financeDataDiv">					
 					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-						<ui:param name="controller" value="#{financeExporter}" />
+						<ui:param name="controller" value="#{fbatchExporter}" />
 						<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
 						<ui:param name="skipSelectButton" value="#{true}" />
 						<ui:define name="columns">
@@ -57,8 +73,8 @@
 									<aon:outputText value="&#160;" />
 								</f:facet>
 								<aon:selectBooleanCheckbox id="Included_Row_checked"
-									value="#{financeExporter.rowChecked}"
-									ajaxSingle="true" reRender="financeExporterToolbar" />	
+									value="#{fbatchExporter.rowChecked}"
+									ajaxSingle="true" reRender="fbatchExporterToolbar" />	
 							</aon:column>
 
 							<aon:column styleClass="aon-editDataTable-textColumn aon-width-60">
@@ -68,10 +84,7 @@
 								<aon:outputText value="#{(to.payment) ? (bundle.finance_payment) : (bundle.finance_charge)}" />
 							</aon:column>
 							
-							<ui:include src="/com/code/aon/ui/finance/facelet/finance/listContent.xhtml">
-								<ui:param name="skipTotalFinanceAmount" value="#{true}" />
-								<ui:param name="financeRegistryLabel" value="#{bundle.warehouse_stock_target}" />
-							</ui:include>
+							<ui:include src="/com/code/aon/ui/finance/facelet/fbatch/listContent.xhtml" />
 
 						</ui:define>
 					</ui:decorate>
@@ -81,7 +94,7 @@
 
 		<aon:methodParam name="closeLogPanelAtionListener" value="#{exporter.onFinish}" type="actionListener" />
 		<ui:decorate template="/com/code/aon/faces/logPanel/modal.xhtml" >
-			<ui:param name="logPanelTitle" value="#{bundle.finance_account_export_module}" />			
+			<ui:param name="logPanelTitle" value="#{bundle.fbatch_account_export_module}" />			
 			<ui:param name="pollInterval" value="5000" /> 
 			<ui:define name="additionalLogPanelContent">
 				<aon:if test="#{exporter.finished and (!exporter.dataEmpty)}">

@@ -239,7 +239,9 @@ public class GeyceWriter extends BasicExporter {
 	}
 	
 	private void writeGycPlan() throws IOException {
-		writeGycPlan( getRegistryDetail(), true );
+		if ( getRegistryDetail() != null ) {
+			writeGycPlan( getRegistryDetail(), true );	
+		}
 		for( AccountEntryDetail aed : getDetails() ) {
 			writeGycPlan( aed, false );
 		}
@@ -326,7 +328,9 @@ public class GeyceWriter extends BasicExporter {
 	public void write( AccountEntry accountEntry ) throws IOException, ManagerBeanException {
 		writeGycPlan();		
 		initLine( accountEntry );
-		writeRegistryDetail();
+		if ( getRegistryDetail() != null ) {
+			writeRegistryDetail();	
+		}
 		while (! getDetails().isEmpty() ) {
 			writeNewLine();
 			writeDetail();

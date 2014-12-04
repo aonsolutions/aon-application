@@ -155,7 +155,9 @@ public class LogicWinWriter extends BasicExporter {
 		setNumber( amount, 71, 15);
 		
 		// Cuenta Cliente Proveedor
-		setStringLeftPad(getRegistryDetail().getAccount().getCode(), 110, 9);
+		if ( getRegistryDetail() != null ) {
+			setStringLeftPad(getRegistryDetail().getAccount().getCode(), 110, 9);	
+		}
 		// NIF Cliente Proveedor
 		if ( getRegistryDocument() != null ) {
 			setStringLeftPad( getRegistryDocument().getDocument(), 119, 11);	
@@ -207,7 +209,9 @@ public class LogicWinWriter extends BasicExporter {
 	@Override
 	public void write( AccountEntry accountEntry ) throws IOException, ManagerBeanException {
 		initLine( accountEntry );
-		writeRegistryDetail();
+		if ( getRegistryDetail() != null ) {
+			writeRegistryDetail();	
+		}
 		while (! getDetails().isEmpty() ) {
 			writeNewLine();
 			fillLine(getNextDetail());

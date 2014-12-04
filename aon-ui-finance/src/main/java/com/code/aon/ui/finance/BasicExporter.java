@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.AonVersion;
 import com.code.aon.account.Account;
 import com.code.aon.account.IAccount;
+import com.code.aon.account.bridge.AccountEntryFinanceBatch;
 import com.code.aon.account.bridge.AccountEntryFinanceTracking;
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.accounting.AccountEntry;
@@ -36,6 +37,7 @@ import com.code.aon.config.enumeration.VatDeductionType;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Finance;
+import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceType;
@@ -129,6 +131,8 @@ public abstract class BasicExporter implements Serializable {
 	
 	private boolean withholdingFarmer;	
 	
+	private boolean invoiceExport;
+	
 	public BasicExporter( InvoiceExportConfiguration configuration ) {
 		this.configuration = configuration;
 	}
@@ -137,14 +141,23 @@ public abstract class BasicExporter implements Serializable {
 		initBasic(invoice);
 		this.accountEntries = obtainAccountEntries(invoice);
 		this.taxBreakDowns = obtainTaxBreakDowns();		
+		this.invoiceExport = true;
 	}
 	
 	public void init( Finance finance ) throws ManagerBeanException, IOException {
 		initBasic(finance);
 		this.accountEntries = obtainAccountEntries(finance);
-		this.taxBreakDowns = Collections.emptyList();		
+		this.taxBreakDowns = Collections.emptyList();
+		this.invoiceExport = false;
 	}	
 
+	public void init( FinanceBatch fBatch ) throws ManagerBeanException, IOException {
+		initBasic(fBatch);
+		this.accountEntries = obtainAccountEntries(fBatch);
+		this.taxBreakDowns = Collections.emptyList();
+		this.invoiceExport = false;
+	}	
+	
 	private Date getDueDate( Invoice invoice ) {
 		Date date = invoice.getDate();
 		for( Finance finance : invoice.getFinances() ) {
@@ -251,6 +264,21 @@ public abstract class BasicExporter implements Serializable {
 		this.total = finance.getTotalAmount();
 		this.investment = false;
 	}
+
+	private void initBasic( FinanceBatch fBatch ) throws ManagerBeanException {
+		this.mainId = fBatch.getId();
+		this.referenceCode = String.valueOf(this.mainId);
+		this.date = fBatch.getIssueDate();	
+		this.dueDate = this.date;
+		this.taxDate = this.date;
+		if ( fBatch.isPayment() ) {
+			this.invoiceType = InvoiceType.PURCHASE;
+		} else {
+			this.invoiceType = InvoiceType.SALES;
+		}
+		this.transaction = InvoiceTransactionType.NATIONAL;
+		this.investment = false;
+	}
 	
 	public Integer getMainId() {
 		return mainId;
@@ -320,6 +348,10 @@ public abstract class BasicExporter implements Serializable {
 		return this.investment;
 	}	
 	
+	public void setTotal(double total) {
+		this.total = total;
+	}
+
 	public double getTotal() {
 		return total;
 	}
@@ -329,7 +361,7 @@ public abstract class BasicExporter implements Serializable {
 	}
 
 	public Set<Finance> getFinances() {
-		if ( finance == null ) {
+		if ( isInvoiceExport() ) {
 			return invoice.getFinances();
 		}
 		return Collections.emptySet();
@@ -360,6 +392,22 @@ public abstract class BasicExporter implements Serializable {
 		if (! list.isEmpty() ) {
 			for( ITransferObject to : list ) {
 				AccountEntryFinanceTracking aeft = (AccountEntryFinanceTracking) to;
+				entries.add(aeft.getAccountEntry());
+			}
+		}
+		return entries;
+	}
+
+	private List<AccountEntry> obtainAccountEntries( FinanceBatch fBatch ) throws ManagerBeanException {
+		List<AccountEntry> entries = new LinkedList<AccountEntry>();
+		IManagerBean bean = BeanManager.getManagerBean(AccountEntryFinanceBatch.class);
+		Criteria criteria = new Criteria();
+		String alias = bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_FINANCE_BATCH_FINANCE_BATCH_ID);
+		criteria.addEqualExpression(alias, fBatch.getId());
+		List<ITransferObject> list = bean.getList(criteria);
+		if (! list.isEmpty() ) {
+			for( ITransferObject to : list ) {
+				AccountEntryFinanceBatch aeft = (AccountEntryFinanceBatch) to;
 				entries.add(aeft.getAccountEntry());
 			}
 		}
@@ -515,19 +563,21 @@ public abstract class BasicExporter implements Serializable {
 	
 	protected AccountEntryDetail obtainRegistryDetail(IAccount entity) throws ManagerBeanException {
 		AccountEntryDetail detail = null;
-		Account registryAccount = entity.getAccount();
-		if ( registryAccount != null ) {
-			for( AccountEntryDetail aed : getDetails() ) {
-				if ( aed.getAccount() == registryAccount ) {
-					detail = aed;
-					break;
+		if ( entity != null ) {
+			Account registryAccount = entity.getAccount();
+			if ( registryAccount != null ) {
+				for( AccountEntryDetail aed : getDetails() ) {
+					if ( aed.getAccount() == registryAccount ) {
+						detail = aed;
+						break;
+					}
 				}
 			}
+			if ( detail == null ) {
+				detail = getDetails().get(0);
+			}
+			getDetails().remove(detail);			
 		}
-		if ( detail == null ) {
-			detail = getDetails().get(0);
-		}
-		getDetails().remove(detail);
 		return detail;
 	}
 	
@@ -622,6 +672,10 @@ public abstract class BasicExporter implements Serializable {
 			return accountEntry.getJournal();
 		}
 		return accountEntry.getId();
+	}
+	
+	protected boolean isInvoiceExport() {
+		return this.invoiceExport;
 	}
 	
 	public void write() throws IOException, ManagerBeanException {

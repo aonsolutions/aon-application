@@ -299,6 +299,17 @@
 														target="#{exporter.backAction}" />
 												</aon:commandLink>
 											</aon:div>
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="fbatchExporter"
+													action="#{exporter.initialAction}"
+													actionListener="#{exporter.onInit}"
+													value="#{bundle.fbatch_account_export_module}">
+													<aon:actionListener
+														method="#{fbatchExporter.onEditSearch}" />
+													<f:setPropertyActionListener value="fbatchExporter_search"
+														target="#{exporter.backAction}" />
+												</aon:commandLink>
+											</aon:div>
 										</aon:if>
 									</aon:if>
 									<aon:if test="#{aonRole.payroll}">

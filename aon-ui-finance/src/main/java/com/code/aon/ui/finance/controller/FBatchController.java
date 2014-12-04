@@ -59,7 +59,7 @@ import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class FBatchController extends BasicController implements ICollectionProvider, IFinanceConstants {
+public class FBatchController extends BasicController implements ICollectionProvider, IFinanceConstants, IFinanceController {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
