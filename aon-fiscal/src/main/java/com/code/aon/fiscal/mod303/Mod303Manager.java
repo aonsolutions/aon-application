@@ -19,7 +19,6 @@ import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.VatTaxDetail;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
-import com.code.aon.fiscal.enumeration.Mod130Key;
 import com.code.aon.fiscal.enumeration.Mod303Key;
 import com.code.aon.fiscal.enumeration.VatTaxKey;
 import com.code.aon.fiscal.model.FiscalModelManager;
@@ -84,6 +83,7 @@ public class Mod303Manager extends FiscalModelManager {
 			double c51 = 0.0;
 			double c53 = 0.0;
 			double c55 = 0.0;
+			double cuotasSoportadas = 0.0;
 			for (VatTaxDetail vatDetail : vatDetails) {
 				// Adquisiciones intracomunitarias de bienes corrientes
 				if (vatDetail.getKey() == VatTaxKey.A3 ) {
@@ -97,6 +97,13 @@ public class Mod303Manager extends FiscalModelManager {
 				if (vatDetail.getKey() == VatTaxKey.D2
 				 || vatDetail.getKey() == VatTaxKey.C2) {
 					c55 = c55 + vatDetail.getQuotaAccumulated(); 
+				}
+				if (vatDetail.getKey() == VatTaxKey.B1
+				  || vatDetail.getKey() == VatTaxKey.B3
+				  || vatDetail.getKey() == VatTaxKey.C1
+				  || vatDetail.getKey() == VatTaxKey.D1
+				  || vatDetail.getKey() == VatTaxKey.D3) {
+					cuotasSoportadas = cuotasSoportadas + vatDetail.getQuotaAccumulated(); 
 				}
 				
 			}

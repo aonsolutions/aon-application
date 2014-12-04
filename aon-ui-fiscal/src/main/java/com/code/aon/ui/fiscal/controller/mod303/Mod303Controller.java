@@ -135,6 +135,16 @@ public class Mod303Controller extends FiscalModelController {
 		}
 	}
 	
+	public void onChangeHD(ActionEvent event) {
+		try {
+			getDeclaration().calculate();
+			fillActivities();
+		} catch (Throwable e) {
+			AonUtil.addErrorMessage(e.getMessage()); 
+			throw new AbortProcessingException(e.getMessage(),e);
+		}
+	}
+
 	public List<Mod303Key> getModuleKeys() {
 		return moduleKeys;
 	}
@@ -217,6 +227,24 @@ public class Mod303Controller extends FiscalModelController {
 	public Mod303Key getModFKey() { return getSelectedKey("F"); }
 	public FiscalModelDetail getModF() { return getSelectedDetail("F"); }
 	
+	public Mod303Key getModGKey() { return getSelectedKey("G"); }
+	public FiscalModelDetail getModG() { return getSelectedDetail("G"); }
+	public Mod303Key getModHKey() { return getSelectedKey("H"); }
+	public FiscalModelDetail getModH() { return getSelectedDetail("H"); }
+	public Mod303Key getModHAKey() { return getSelectedKey("HA"); }
+	public FiscalModelDetail getModHA() { return getSelectedDetail("HA"); }
+	public Mod303Key getModHDKey() { return getSelectedKey("HD"); }
+	public FiscalModelDetail getModHD() { return getSelectedDetail("HD"); }
+	public Mod303Key getModIKey() { return getSelectedKey("I"); }
+	public FiscalModelDetail getModI() { return getSelectedDetail("I"); }
+	public Mod303Key getModJKey() { return getSelectedKey("J"); }
+	public FiscalModelDetail getModJ() { return getSelectedDetail("J"); }
+	public Mod303Key getModKKey() { return getSelectedKey("K"); }
+	public FiscalModelDetail getModK() { return getSelectedDetail("K"); }
+	public Mod303Key getModLKey() { return getSelectedKey("L"); }
+	public FiscalModelDetail getModL() { return getSelectedDetail("L"); }
+	public Mod303Key getModMKey() { return getSelectedKey("M"); }
+	public FiscalModelDetail getModM() { return getSelectedDetail("M"); }
 	
 	public Mod303Key getModV1Key() { return getSelectedKey("V1"); }
 	public Mod303Key getModV2Key() { return getSelectedKey("V2"); }

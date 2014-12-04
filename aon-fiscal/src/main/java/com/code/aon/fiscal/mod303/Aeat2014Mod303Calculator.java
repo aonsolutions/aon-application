@@ -10,7 +10,7 @@ public class Aeat2014Mod303Calculator extends FiscalModelDetailCalculator implem
 
 	@Override
 	public boolean accept(int year, Administration administration) {
-		if ( year >= 2011 && administration == Administration.COMMON_TERRITORY) {
+		if ( year >= 2014 && administration == Administration.COMMON_TERRITORY) {
 			return true;
 		}
 		return false;
@@ -21,91 +21,207 @@ public class Aeat2014Mod303Calculator extends FiscalModelDetailCalculator implem
 		calculateDetails(mod303.getDetails());
 		
 		if (mod303.getDetail(Mod303Key.CAC1) != null) {
-			double z1 = mod303.ensureAmount( Mod303Key.CAC1_Z);
-			double zd1 = mod303.ensureAmount( Mod303Key.CAC1_ZD);
-			double za1 = 0;
-			if (z1 == 0) {
-				z1 = 1;
-				za1 = 90;
-				if (zd1 == 0) {
-					zd1 = 90;
+			if (!mod303.isLastPeriod()) {
+				double z1 = mod303.ensureAmount( Mod303Key.CAC1_Z);
+				double zd1 = mod303.ensureAmount( Mod303Key.CAC1_ZD);
+				double za1 = 0;
+				if (z1 == 0) {
+					z1 = 1;
+					za1 = 90;
+					if (zd1 == 0) {
+						zd1 = 90;
+					}
+				} else {
+					za1 = mod303.ensureAmount( Mod303Key.CAC1_ZA);
 				}
+				double c1 = mod303.ensureAmount( Mod303Key.CAC1_C);
+				double d1 = mod303.ensureAmount( Mod303Key.CAC1_D);
+				double e1 = mod303.ensureAmount( Mod303Key.CAC1_E);
+				double f1 = CommonUtil.round( (c1 - d1) * e1 / 100 );
+				f1 = CommonUtil.round(f1 * z1 );
+				f1 = CommonUtil.round( f1 * zd1 / za1 );
+				mod303.getDetail( Mod303Key.CAC1_F ).setAmount( f1 );
 			} else {
-				za1 = mod303.ensureAmount( Mod303Key.CAC1_ZA);
+				double h1 = mod303.ensureAmount( Mod303Key.CAC1_H);
+				double hd1 = mod303.ensureAmount( Mod303Key.CAC1_HD);
+				double ha1 = 0;
+				if (h1 == 0) {
+					h1 = 1;
+					ha1 = 90;
+					if (hd1 == 0) {
+						hd1 = 90;
+					}
+				} else {
+					ha1 = mod303.ensureAmount( Mod303Key.CAC1_HA);
+				}
+				double c1 = mod303.ensureAmount( Mod303Key.CAC1_C);
+				double d1 = mod303.ensureAmount( Mod303Key.CAC1_D);
+				double g1 = mod303.ensureAmount( Mod303Key.CAC1_G);
+				double i1 = CommonUtil.round( (c1 - d1 - g1));
+				i1 = CommonUtil.round(i1 * h1 );
+				i1 = CommonUtil.round( i1 * hd1 / ha1 );
+				mod303.getDetail( Mod303Key.CAC1_I ).setAmount( i1 );
+				
+				double j1 = mod303.ensureAmount( Mod303Key.CAC1_J);
+				double k1 = mod303.ensureAmount( Mod303Key.CAC1_K);
+				double l1 = CommonUtil.round( ((c1 - d1) * j1 / 100) + k1);
+				mod303.getDetail( Mod303Key.CAC1_L ).setAmount( l1 );
+				
+				mod303.getDetail( Mod303Key.CAC1_M ).setAmount( l1>i1?l1:i1 );
 			}
-			double c1 = mod303.ensureAmount( Mod303Key.CAC1_C);
-			double d1 = mod303.ensureAmount( Mod303Key.CAC1_D);
-			double e1 = mod303.ensureAmount( Mod303Key.CAC1_E);
-			double f1 = CommonUtil.round( (c1 - d1) * e1 / 100 );
-			f1 = CommonUtil.round(f1 * z1 );
-			f1 = CommonUtil.round( f1 * zd1 / za1 );
-			mod303.getDetail( Mod303Key.CAC1_F ).setAmount( f1 );
 		}
 		
 		if (mod303.getDetail(Mod303Key.CAC2) != null) {
-			double z2 = mod303.ensureAmount( Mod303Key.CAC2_Z);
-			double za2 = mod303.ensureAmount( Mod303Key.CAC2_ZA);
-			double zd2 = mod303.ensureAmount( Mod303Key.CAC2_ZD);
-			if (z2 == 0) {
-				z2 = 1;
-				za2 = 90;
-				if (zd2 == 0) {
-					zd2 = 90;
+			if (!mod303.isLastPeriod()) {
+				double z2 = mod303.ensureAmount( Mod303Key.CAC2_Z);
+				double za2 = mod303.ensureAmount( Mod303Key.CAC2_ZA);
+				double zd2 = mod303.ensureAmount( Mod303Key.CAC2_ZD);
+				if (z2 == 0) {
+					z2 = 1;
+					za2 = 90;
+					if (zd2 == 0) {
+						zd2 = 90;
+					}
+				} else {
+					za2 = mod303.ensureAmount( Mod303Key.CAC2_ZA);
 				}
+				double c2 = mod303.ensureAmount( Mod303Key.CAC2_C);
+				double d2 = mod303.ensureAmount( Mod303Key.CAC2_D);
+				double e2 = mod303.ensureAmount( Mod303Key.CAC2_E);
+				double f2 = CommonUtil.round( (c2 - d2) * e2 / 100 );
+				f2 = CommonUtil.round(f2 * z2 );
+				f2 = CommonUtil.round( f2 * zd2 / za2 );
+				mod303.getDetail( Mod303Key.CAC2_F ).setAmount( f2 );
 			} else {
-				za2 = mod303.ensureAmount( Mod303Key.CAC2_ZA);
+				double h2 = mod303.ensureAmount( Mod303Key.CAC2_H);
+				double hd2 = mod303.ensureAmount( Mod303Key.CAC2_HD);
+				double ha2 = 0;
+				if (h2 == 0) {
+					h2 = 1;
+					ha2 = 90;
+					if (hd2 == 0) {
+						hd2 = 90;
+					}
+				} else {
+					ha2 = mod303.ensureAmount( Mod303Key.CAC2_HA);
+				}
+				double c2 = mod303.ensureAmount( Mod303Key.CAC2_C);
+				double d2 = mod303.ensureAmount( Mod303Key.CAC2_D);
+				double g2 = mod303.ensureAmount( Mod303Key.CAC2_G);
+				double i2 = CommonUtil.round( (c2 - d2 - g2));
+				i2 = CommonUtil.round(i2 * h2 );
+				i2 = CommonUtil.round( i2 * hd2 / ha2 );
+				mod303.getDetail( Mod303Key.CAC2_I ).setAmount( i2 );
+				
+				double j2 = mod303.ensureAmount( Mod303Key.CAC2_J);
+				double k2 = mod303.ensureAmount( Mod303Key.CAC2_K);
+				double l2 = CommonUtil.round( ((c2 - d2) * j2 / 200) + k2);
+				mod303.getDetail( Mod303Key.CAC2_L ).setAmount( l2 );
+				
+				mod303.getDetail( Mod303Key.CAC2_M ).setAmount( l2>i2?l2:i2 );
 			}
-			double c2 = mod303.ensureAmount( Mod303Key.CAC2_C);
-			double d2 = mod303.ensureAmount( Mod303Key.CAC2_D);
-			double e2 = mod303.ensureAmount( Mod303Key.CAC2_E);
-			double f2 = CommonUtil.round( (c2 - d2) * e2 / 100 );
-			f2 = CommonUtil.round(f2 * z2 );
-			f2 = CommonUtil.round( f2 * zd2 / za2 );
-			mod303.getDetail( Mod303Key.CAC2_F ).setAmount( f2 );
 		}
 		
 		if (mod303.getDetail(Mod303Key.CAC3) != null) {
-			double z3 = mod303.ensureAmount( Mod303Key.CAC3_Z);
-			double za3 = mod303.ensureAmount( Mod303Key.CAC3_ZA);
-			double zd3 = mod303.ensureAmount( Mod303Key.CAC3_ZD);
-			if (z3 == 0) {
-				z3 = 1;
-				za3 = 90;
-				if (zd3 == 0) {
-					zd3 = 90;
+			if (!mod303.isLastPeriod()) {
+				double z3 = mod303.ensureAmount( Mod303Key.CAC3_Z);
+				double za3 = mod303.ensureAmount( Mod303Key.CAC3_ZA);
+				double zd3 = mod303.ensureAmount( Mod303Key.CAC3_ZD);
+				if (z3 == 0) {
+					z3 = 1;
+					za3 = 90;
+					if (zd3 == 0) {
+						zd3 = 90;
+					}
+				} else {
+					za3 = mod303.ensureAmount( Mod303Key.CAC3_ZA);
 				}
+				double c3 = mod303.ensureAmount( Mod303Key.CAC3_C);
+				double d3 = mod303.ensureAmount( Mod303Key.CAC3_D);
+				double e3 = mod303.ensureAmount( Mod303Key.CAC3_E);
+				double f3 = CommonUtil.round( (c3 - d3) * e3 / 100 );
+				f3 = CommonUtil.round(f3 * z3 );
+				f3 = CommonUtil.round( f3 * zd3 / za3 );
+				mod303.getDetail( Mod303Key.CAC3_F ).setAmount( f3 );
 			} else {
-				za3 = mod303.ensureAmount( Mod303Key.CAC3_ZA);
+				double h3 = mod303.ensureAmount( Mod303Key.CAC3_H);
+				double hd3 = mod303.ensureAmount( Mod303Key.CAC3_HD);
+				double ha3 = 0;
+				if (h3 == 0) {
+					h3 = 1;
+					ha3 = 90;
+					if (hd3 == 0) {
+						hd3 = 90;
+					}
+				} else {
+					ha3 = mod303.ensureAmount( Mod303Key.CAC3_HA);
+				}
+				double c3 = mod303.ensureAmount( Mod303Key.CAC3_C);
+				double d3 = mod303.ensureAmount( Mod303Key.CAC3_D);
+				double g3 = mod303.ensureAmount( Mod303Key.CAC3_G);
+				double i3 = CommonUtil.round( (c3 - d3 - g3));
+				i3 = CommonUtil.round(i3 * h3 );
+				i3 = CommonUtil.round( i3 * hd3 / ha3 );
+				mod303.getDetail( Mod303Key.CAC3_I ).setAmount( i3 );
+				
+				double j3 = mod303.ensureAmount( Mod303Key.CAC3_J);
+				double k3 = mod303.ensureAmount( Mod303Key.CAC3_K);
+				double l3 = CommonUtil.round( ((c3 - d3) * j3 / 100) + k3);
+				mod303.getDetail( Mod303Key.CAC3_L ).setAmount( l3 );
+				
+				mod303.getDetail( Mod303Key.CAC3_M ).setAmount( l3>i3?l3:i3 );
 			}
-			double c3 = mod303.ensureAmount( Mod303Key.CAC3_C);
-			double d3 = mod303.ensureAmount( Mod303Key.CAC3_D);
-			double e3 = mod303.ensureAmount( Mod303Key.CAC3_E);
-			double f3 = CommonUtil.round( (c3 - d3) * e3 / 100 );
-			f3 = CommonUtil.round(f3 * z3 );
-			f3 = CommonUtil.round( f3 * zd3 / za3 );
-			mod303.getDetail( Mod303Key.CAC3_F ).setAmount( f3 );
 		}
 		
 		if (mod303.getDetail(Mod303Key.CAC4) != null) {
-			double z4 = mod303.ensureAmount( Mod303Key.CAC4_Z);
-			double za4 = mod303.ensureAmount( Mod303Key.CAC4_ZA);
-			double zd4 = mod303.ensureAmount( Mod303Key.CAC4_ZD);
-			if (z4 == 0) {
-				z4 = 1;
-				za4 = 90;
-				if (zd4 == 0) {
-					zd4 = 90;
+			if (!mod303.isLastPeriod()) {
+				double z4 = mod303.ensureAmount( Mod303Key.CAC4_Z);
+				double za4 = mod303.ensureAmount( Mod303Key.CAC4_ZA);
+				double zd4 = mod303.ensureAmount( Mod303Key.CAC4_ZD);
+				if (z4 == 0) {
+					z4 = 1;
+					za4 = 90;
+					if (zd4 == 0) {
+						zd4 = 90;
+					}
+				} else {
+					za4 = mod303.ensureAmount( Mod303Key.CAC4_ZA);
 				}
+				double c4 = mod303.ensureAmount( Mod303Key.CAC4_C);
+				double d4 = mod303.ensureAmount( Mod303Key.CAC4_D);
+				double e4 = mod303.ensureAmount( Mod303Key.CAC4_E);
+				double f4 = CommonUtil.round( (c4 - d4) * e4 / 100 );
+				f4 = CommonUtil.round(f4 * z4 );
+				f4 = CommonUtil.round( f4 * zd4 / za4 );
+				mod303.getDetail( Mod303Key.CAC4_F ).setAmount( f4 );
 			} else {
-				za4 = mod303.ensureAmount( Mod303Key.CAC4_ZA);
+				double h4 = mod303.ensureAmount( Mod303Key.CAC4_H);
+				double hd4 = mod303.ensureAmount( Mod303Key.CAC4_HD);
+				double ha4 = 0;
+				if (h4 == 0) {
+					h4 = 1;
+					ha4 = 90;
+					if (hd4 == 0) {
+						hd4 = 90;
+					}
+				} else {
+					ha4 = mod303.ensureAmount( Mod303Key.CAC4_HA);
+				}
+				double c4 = mod303.ensureAmount( Mod303Key.CAC4_C);
+				double d4 = mod303.ensureAmount( Mod303Key.CAC4_D);
+				double g4 = mod303.ensureAmount( Mod303Key.CAC4_G);
+				double i4 = CommonUtil.round( (c4 - d4 - g4));
+				i4 = CommonUtil.round(i4 * h4 );
+				i4 = CommonUtil.round( i4 * hd4 / ha4 );
+				mod303.getDetail( Mod303Key.CAC4_I ).setAmount( i4 );
+				
+				double j4 = mod303.ensureAmount( Mod303Key.CAC4_J);
+				double k4 = mod303.ensureAmount( Mod303Key.CAC4_K);
+				double l4 = CommonUtil.round( ((c4 - d4) * j4 / 100) + k4);
+				mod303.getDetail( Mod303Key.CAC4_L ).setAmount( l4 );
+				
+				mod303.getDetail( Mod303Key.CAC4_M ).setAmount( l4>i4?l4:i4 );
 			}
-			double c4 = mod303.ensureAmount( Mod303Key.CAC4_C);
-			double d4 = mod303.ensureAmount( Mod303Key.CAC4_D);
-			double e4 = mod303.ensureAmount( Mod303Key.CAC4_E);
-			double f4 = CommonUtil.round( (c4 - d4) * e4 / 100 );
-			f4 = CommonUtil.round(f4 * z4 );
-			f4 = CommonUtil.round( f4 * zd4 / za4 );
-			mod303.getDetail( Mod303Key.CAC4_F ).setAmount( f4 );
 		}
 
 		double c47 = 0.0;
