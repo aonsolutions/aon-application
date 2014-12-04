@@ -42,22 +42,22 @@ public class Bizkaia2012MOD303Factory implements IMOD303Factory {
 	private class Bizkaia2012MOD303 extends AbstractFileFiller {
 		private static final String DECLARATION = "Declaration";
 		private static final String HEADER = "Header";
-		private static final String HEADER_METADATA = "/com/code/aon/file/tax/model/MOD303/xml/2012_BIZKAIA_Header.xml";
+		private static final String HEADER_METADATA = "/com/code/aon/file/tax/model/MOD303/2012_BIZKAIA_Header.xml";
 		private static final String BANK_DATA = "BankData";
-		private static final String BANK_DATA_METADATA = "/com/code/aon/file/tax/model/MOD303/xml/2012_BIZKAIA_BankData.xml";
+		private static final String BANK_DATA_METADATA = "/com/code/aon/file/tax/model/MOD303/2012_BIZKAIA_BankData.xml";
 		private static final String DEPONENT = "Deponent";
-		private static final String DEPONENT_METADATA = "/com/code/aon/file/tax/model/MOD303/xml/2012_BIZKAIA_Deponent.xml";
+		private static final String DEPONENT_METADATA = "/com/code/aon/file/tax/model/MOD303/2012_BIZKAIA_Deponent.xml";
 		private static final String ENTRY = "Entry_";
-		private static final String ENTRY_MR_METADATA = "/com/code/aon/file/tax/model/MOD303/xml/2012_BIZKAIA_MR.xml";
-		private static final String ENTRY_EP_METADATA = "/com/code/aon/file/tax/model/MOD303/xml/2012_BIZKAIA_EP.xml";
-		private static final String ENTRY_P2_METADATA = "/com/code/aon/file/tax/model/MOD303/xml/2012_BIZKAIA_P2.xml";
-		private static final String ENTRY_P3_METADATA = "/com/code/aon/file/tax/model/MOD303/xml/2012_BIZKAIA_P3.xml";
-		private static final String ENTRY_FE_METADATA = "/com/code/aon/file/tax/model/MOD303/xml/2012_BIZKAIA_FE.xml";
-		private static final String ENTRY_N0_METADATA = "/com/code/aon/file/tax/model/MOD303/xml/2012_BIZKAIA_N0.xml";
-		private static final String ENTRY_D2_METADATA = "/com/code/aon/file/tax/model/MOD303/xml/2012_BIZKAIA_D2.xml";
-		private static final String ENTRY_D3_METADATA = "/com/code/aon/file/tax/model/MOD303/xml/2012_BIZKAIA_D3.xml";
-		private static final String ENTRY_TX_METADATA = "/com/code/aon/file/tax/model/MOD303/xml/2012_BIZKAIA_TX.xml";
-		private static final String ENTRY_IM_METADATA = "/com/code/aon/file/tax/model/MOD303/xml/2012_BIZKAIA_IM.xml";
+		private static final String ENTRY_MR_METADATA = "/com/code/aon/file/tax/model/MOD303/2012_BIZKAIA_MR.xml";
+		private static final String ENTRY_EP_METADATA = "/com/code/aon/file/tax/model/MOD303/2012_BIZKAIA_EP.xml";
+		private static final String ENTRY_P2_METADATA = "/com/code/aon/file/tax/model/MOD303/2012_BIZKAIA_P2.xml";
+		private static final String ENTRY_P3_METADATA = "/com/code/aon/file/tax/model/MOD303/2012_BIZKAIA_P3.xml";
+		private static final String ENTRY_FE_METADATA = "/com/code/aon/file/tax/model/MOD303/2012_BIZKAIA_FE.xml";
+		private static final String ENTRY_N0_METADATA = "/com/code/aon/file/tax/model/MOD303/2012_BIZKAIA_N0.xml";
+		private static final String ENTRY_D2_METADATA = "/com/code/aon/file/tax/model/MOD303/2012_BIZKAIA_D2.xml";
+		private static final String ENTRY_D3_METADATA = "/com/code/aon/file/tax/model/MOD303/2012_BIZKAIA_D3.xml";
+		private static final String ENTRY_TX_METADATA = "/com/code/aon/file/tax/model/MOD303/2012_BIZKAIA_TX.xml";
+		private static final String ENTRY_IM_METADATA = "/com/code/aon/file/tax/model/MOD303/2012_BIZKAIA_IM.xml";
 		
 		private List<Declaration> declarations;
 		

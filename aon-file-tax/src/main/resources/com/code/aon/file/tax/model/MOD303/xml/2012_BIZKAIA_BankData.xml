@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<register name="BankData">
-	<field name="type" value="R03" format="AlphaNumeric" pattern="X(3)" />
-	<field name="bankName" value="bean" bean="Declaration" property="bankName" format="AlphaNumeric" pattern="X(25)" />
-	<field name="bankAccount" value="bean" bean="Declaration" property="ccc" format="AlphaNumeric" pattern="X(20)" />
-	<field name="free" value=" " format="Alphabetic" pattern="X(5)" />
-</register>
