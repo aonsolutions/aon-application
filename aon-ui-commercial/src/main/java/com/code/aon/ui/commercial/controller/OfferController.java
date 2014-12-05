@@ -64,6 +64,7 @@ import com.code.aon.tas.TasItem;
 import com.code.aon.ui.commercial.util.CommercialEmailUtil;
 import com.code.aon.ui.commercial.util.OfferImportManager;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.HeaderObjectController;
@@ -82,7 +83,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class OfferController extends HeaderObjectController implements ISignatureController, ICommercialConstants {
+public class OfferController extends HeaderObjectController implements ISignatureController, ICommercialConstants, IAuditableController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -112,6 +113,7 @@ public class OfferController extends HeaderObjectController implements ISignatur
 	private Date projectTasDate;
 	private TasItem projectTasItem;
 	private CommercialEmailUtil emailUtil;
+	private boolean showAuditInfoWindow;
 	
 	public OfferController() {
 		this.emailUtil = new CommercialEmailUtil();
@@ -993,6 +995,16 @@ public class OfferController extends HeaderObjectController implements ISignatur
 	public List<SelectItem> getSeriesCodes() throws ManagerBeanException {
 		ConfigCollectionsController ccc = (ConfigCollectionsController) AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
 		return ccc.getOfferSeriesIds();
+	}
+
+	@Override
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	@Override
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
 	}
 	
 }

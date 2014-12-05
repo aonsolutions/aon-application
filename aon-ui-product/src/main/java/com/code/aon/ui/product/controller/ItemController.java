@@ -13,11 +13,12 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
 import com.code.aon.product.pricing.ItemPricesManager;
+import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.stat.controller.ProductStatEngineController;
 import com.code.aon.ui.util.AonUtil;
 
-public class ItemController extends BasicController {
+public class ItemController extends BasicController implements IAuditableController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -30,7 +31,8 @@ public class ItemController extends BasicController {
 	private boolean showNewAddInfoWindow;
 	private boolean showNewAttachmentWindow;
 	private ItemPricesManager pricesManager;
-
+	private boolean showAuditInfoWindow;
+	
 	public String getSelectedTab() {
 		return selectedTab;
 	}
@@ -151,5 +153,15 @@ public class ItemController extends BasicController {
 			item.setBarcode(null);
 		}
 	}	
+
+	@Override
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	@Override
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
+	}
 	
 }

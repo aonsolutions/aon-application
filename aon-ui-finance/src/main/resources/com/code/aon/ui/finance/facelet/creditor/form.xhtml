@@ -24,6 +24,7 @@
 						<ui:param name="addInfoController" value="#{creditorAddInfo}" /> 
 						<ui:param name="rAttachController" value="#{creditorRAttach}" />
 					</ui:include>
+					<ui:include src="/com/code/aon/ui/common/facelet/auditable/menuContent.xhtml" />
 				</ui:define>
 			</ui:decorate>
 
@@ -176,6 +177,9 @@
 				<ui:param name="attachmentController" value="#{creditorRAttach}" />
 				<ui:param name="modalReRender" value="creditorTab" />
 			</ui:include>
+			<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
+				<ui:param name="auditableController" value="#{creditor}" />
+			</ui:include>						
 		</aon:if>
 	</ui:define>
 </ui:composition>

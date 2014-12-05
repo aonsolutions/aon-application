@@ -50,13 +50,16 @@ import com.code.aon.report.poi.ReportExporter;
 import com.code.aon.sales.bridge.util.SalesBridgeUtil;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.ICommonMessages;
+import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
 
-public class TargetController extends RegistryController implements ICommonMessages {
+public class TargetController extends RegistryController implements ICommonMessages, IAuditableController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
+	private boolean showAuditInfoWindow;
 
 	@Override
 	public void onRemove(ActionEvent event) {
@@ -249,6 +252,16 @@ public class TargetController extends RegistryController implements ICommonMessa
 			DatabaseUtil.closeQuietly(ps);
 			DatabaseUtil.closeQuietly(conn);
 		}
+	}
+
+	@Override
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	@Override
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
 	}
 	
 }

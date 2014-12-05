@@ -49,6 +49,7 @@ import com.code.aon.sales.bridge.DeliveryManager;
 import com.code.aon.sales.bridge.SalesTransferManager;
 import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.HeaderObjectController;
@@ -68,7 +69,7 @@ import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class DeliveryController extends HeaderObjectController implements IWarehouseConstants {
+public class DeliveryController extends HeaderObjectController implements IWarehouseConstants, IAuditableController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
@@ -89,6 +90,7 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	private WarehouseEmailUtil emailUtil;
 	private String selectedTab;
 	private boolean shippingAlternativeAddress;
+	private boolean showAuditInfoWindow;
 	
     public DeliveryController() {
     	this.emailUtil = new WarehouseEmailUtil();
@@ -619,6 +621,16 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	public List<SelectItem> getSeriesCodes() throws ManagerBeanException {
 		ConfigCollectionsController ccc = (ConfigCollectionsController) AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
 		return ccc.getDeliverySeriesIds();
+	}
+
+	@Override
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	@Override
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
 	}
 	
 }

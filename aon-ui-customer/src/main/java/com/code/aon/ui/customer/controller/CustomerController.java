@@ -12,12 +12,13 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.enumeration.CustomerStatus;
+import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.stat.controller.RegistryStatEngineController;
 import com.code.aon.ui.util.AonUtil;
 
-public class CustomerController extends CustomerListController implements ICustomerConstants {
+public class CustomerController extends CustomerListController implements ICustomerConstants, IAuditableController {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
@@ -25,6 +26,7 @@ public class CustomerController extends CustomerListController implements ICusto
     private boolean showAlumnUpdateConfirmWindow;
     private Integer courseAlumnCount;
 	private boolean updateCourseAlumn;
+	private boolean showAuditInfoWindow;
 	
 	public boolean isUpdateCourseAlumn() {
 		return updateCourseAlumn;
@@ -148,4 +150,14 @@ public class CustomerController extends CustomerListController implements ICusto
 		invoicingGroupController.onLoad(event, customer.getInvoicingGroup().getId(), CUSTOMER_FORM_NAME, CUSTOMER_CONTROLLER_NAME + ".select");
 	}
 
+	@Override
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	@Override
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
+	}
+	
 }

@@ -12,13 +12,16 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.supplier.Supplier;
+import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
 
-public class SupplierController extends RegistryController {
+public class SupplierController extends RegistryController implements IAuditableController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
+	private boolean showAuditInfoWindow;
+	
 	public void onWithholdingChanged(ValueChangeEvent event) {
 		Boolean value = (Boolean)event.getNewValue();
 		if (!value) {
@@ -73,8 +76,18 @@ public class SupplierController extends RegistryController {
 		}
 	}
 
-	   public String getReportTitle(){
-	    	return AonUtil.getMessage(SUPPLIER_REPORT);
-		}
+   public String getReportTitle(){
+	   return AonUtil.getMessage(SUPPLIER_REPORT);
+   }
+   
+	@Override
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	@Override
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
+	}
 
 }

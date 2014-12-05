@@ -56,6 +56,8 @@
 							<f:param name="reportKey" value="#{delivery.reportTemplate}" />
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
+						<ui:include
+							src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml" />						
 					</ui:define>
 				</ui:decorate>
 			</aon:div>			
@@ -367,5 +369,8 @@
 		<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/modalConfirmStock.xhtml" />
 		<ui:include src="/com/code/aon/ui/product/facelet/item/modalInfo.xhtml" />
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+		<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
+			<ui:param name="auditableController" value="#{delivery}" />
+		</ui:include>						
 	</ui:define>
 </ui:composition>

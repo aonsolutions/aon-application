@@ -25,6 +25,7 @@ import com.code.aon.product.Item;
 import com.code.aon.product.Product;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.form.BasicController;
@@ -32,7 +33,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Stock;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class ProductController extends BasicController {
+public class ProductController extends BasicController implements IAuditableController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -45,6 +46,8 @@ public class ProductController extends BasicController {
 	private Item saveStateItem;
 	
 	private int detailLevel;
+	
+	private boolean showAuditInfoWindow;
 	
 	public ProductController() {
 		String value = AppParamUtil.getValue(AON_PRODUCT_DETAIL_LEVEL);
@@ -235,6 +238,16 @@ public class ProductController extends BasicController {
 			LOGGER.error(e.getMessage(), e);
 		}
 		return false;
+	}
+
+	@Override
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	@Override
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
 	}
 	
 }

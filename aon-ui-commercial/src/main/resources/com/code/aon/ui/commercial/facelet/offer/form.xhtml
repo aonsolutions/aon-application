@@ -95,7 +95,9 @@
 								oncomplete="Richfaces.hideModalPanel('waitProccess')"
 								styleClass="aon-finding-toolbar-item aon-icon-go">
 							</aon:commandButton>
-						</aon:if>						
+						</aon:if>		
+						<ui:include
+							src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml" />
 					</ui:define>
 				</ui:decorate>
 			</aon:div>			
@@ -520,5 +522,8 @@
 			<ui:param name="signButtonreRender" value="offerForm,showNewMessageWindow" />
 			<aon:methodParam name="signActionListener" value="#{offerSigner.onSign}" type="actionListener" />
 		</ui:include>
+		<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
+			<ui:param name="auditableController" value="#{offer}" />
+		</ui:include>						
 	</ui:define>
 </ui:composition>

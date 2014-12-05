@@ -105,15 +105,9 @@
 							</aon:menuItem>
 						</aon:if>
 
-						<rich:menuSeparator id="invoiceAddsMenuSeparator" />
+						<ui:include
+							src="/com/code/aon/ui/common/facelet/auditable/menuContent.xhtml" />
 
-						<aon:menuItem id="audit-info"
-							value="#{bundle.aon_audit}"
-							iconClass="aon-icon-audit"
-							reRender="showAuditInfoWindow">
-							<f:setPropertyActionListener target="#{undeductibleInvoice.showAuditInfoWindow}"
-								value="#{true}" />							
-						</aon:menuItem>	
 					</ui:define>
 				</ui:decorate>
 			</aon:div>

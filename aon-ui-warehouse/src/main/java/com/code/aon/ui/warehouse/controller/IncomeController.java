@@ -10,6 +10,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.AonVersion;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
@@ -41,6 +42,7 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -53,7 +55,7 @@ import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.enumeration.IncomeStatus;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class IncomeController extends BasicController implements IWarehouseConstants {
+public class IncomeController extends BasicController implements IWarehouseConstants, IAuditableController {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
@@ -71,6 +73,7 @@ public class IncomeController extends BasicController implements IWarehouseConst
 	private Date invoiceDate;
 	private boolean showConfirmWindow;
 	private boolean showPurchaseFilterWindow;
+	private boolean showAuditInfoWindow;	
 	
 	public boolean isShowConfirmWindow() {
 		return showConfirmWindow;
@@ -548,4 +551,14 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		}
 	}
 
+	@Override
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	@Override
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
+	}
+	
 }

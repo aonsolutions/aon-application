@@ -35,14 +35,10 @@
 						rendered="#{adminDomain.historyState.model.rowCount &gt; 1}"
 						action="adminDomain_history"
 						value="#{bundle.aon_history}"
-						styleClass="aon-finding-toolbar-item aon-icon-info" />						
-					<aon:commandButton id="audit-info"
-						value="#{bundle.aon_audit}" immediate="true"
-						styleClass="aon-finding-toolbar-item aon-icon-audit"
-						reRender="showAuditInfoWindow">
-						<f:setPropertyActionListener target="#{adminDomain.showAuditInfoWindow}"
-							value="#{true}" />							
-					</aon:commandButton>	
+						styleClass="aon-finding-toolbar-item aon-icon-info" />		
+					<ui:include src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml">
+						<ui:param name="controller" value="#{adminDomain}" />
+					</ui:include>								
 					<aon:htmlCommandLink id="showTermsOfService"
 						rendered="#{!aonRole.sysAdmin}"
 						value="#{bundle.admin_service_terms}" target="_blank"

@@ -85,6 +85,7 @@
 							<f:setPropertyActionListener target="#{item.showNewAttachmentWindow}" value="#{true}" />							
 						</aon:menuItem>
 					</aon:if>
+					<ui:include src="/com/code/aon/ui/common/facelet/auditable/menuContent.xhtml" /> 
 				</ui:define>
 			</ui:decorate>
 
@@ -267,6 +268,13 @@
 					<ui:param name="modalReRender" value="productDiv" />
 				</ui:include>
 			</aon:if>
+			<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
+				<ui:param name="auditableController" value="#{product}" />
+			</ui:include>			
+			<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
+				<ui:param name="auditableController" value="#{item}" />
+				<ui:param name="auditInfoWindowId" value="showAuditInfoWindowItem" />
+			</ui:include>			
 		</aon:if>
 
 	</ui:define>

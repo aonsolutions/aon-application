@@ -11,12 +11,15 @@
 	<ui:define name="content">
 		<aon:form id="invoicingGroupForm">
 
-			<ui:include
-				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.customer_invoicing_group_module}" />
 				<ui:param name="controller" value="#{invoicingGroup}" />
 				<ui:param name="skipSearchButton" value="#{true}" />
-			</ui:include>
+				<ui:define name="beforeSpinToolbarContent">
+					<ui:include src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml" />
+				</ui:define>
+			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="dataTable" columns="4" styleClass="aon-width-all"
@@ -80,5 +83,8 @@
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
+		<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
+			<ui:param name="auditableController" value="#{invoicingGroup}" />
+		</ui:include>					
 	</ui:define>
 </ui:composition>

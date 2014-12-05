@@ -7,10 +7,12 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
+	
+	<aon:valueParam name="auditInfoWindowId" default="showAuditInfoWindow"/>
 
-	<aon:panelGroup id="showAuditInfoWindow">
+	<aon:panelGroup id="#{auditInfoWindowId}">
 		<aon:if test="#{auditableController.showAuditInfoWindow}">
-			<rich:modalPanel id="auditInfoModalPanel"
+			<rich:modalPanel
 				minWidth="450" minHeight="200" zindex="90"
 				showWhenRendered="#{auditableController.showAuditInfoWindow}" >
 				<f:facet name="header">
@@ -22,7 +24,7 @@
 					<aon:form>
 						<aon:commandButton type="button"
 							styleClass="aon-popupWindow-close"
-							reRender="showAuditInfoWindow" immediate="true">
+							reRender="#{auditInfoWindowId}" immediate="true">
 							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
 								target="#{auditableController.showAuditInfoWindow}"
@@ -30,12 +32,12 @@
 						</aon:commandButton>
 					</aon:form>
 				</f:facet>
-				<aon:form id="auditInfoForm">
+				<aon:form>
 					<aon:div styleClass="aon-popupWindow-content">
 						<aon:div style="width:100%">
 							<aon:div styleClass="aon-popupWindow-content-internal">
 							
-								<aon:panelGrid id="menuGrid" columns="2" dir="true"
+								<aon:panelGrid columns="2"
 									styleClass="aon-margin-top"  
 									columnClasses="aon-panelGrid-even aon-noborder aon-bold, 
 										aon-panelGrid-even aon-noborder aon-bold">

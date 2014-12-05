@@ -25,6 +25,10 @@
 			styleClass="aon-finding-toolbar-item aon-icon-new" >			
 			<f:setPropertyActionListener target="#{product.showNewItemWindow}" value="#{true}" />							
 		</aon:commandButton>
+		<ui:include src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml">
+			<ui:param name="controller" value="#{item}" />
+			<ui:param name="auditInfoWindowId" value="showAuditInfoWindowItem" />
+		</ui:include>								
 	</aon:div>	
 									
 	<ui:include src="/com/code/aon/ui/product/facelet/product/item/form_content.xhtml" />

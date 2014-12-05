@@ -462,6 +462,9 @@
 			<ui:include src="/com/code/aon/ui/academy/facelet/alumn/modalAlumnGroupConfirm.xhtml">
 				<ui:param name="controller" value="#{customer}" />
 			</ui:include>
+			<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
+				<ui:param name="auditableController" value="#{customer}" />
+			</ui:include>						
 		</aon:if>
 	</ui:define>
 </ui:composition>

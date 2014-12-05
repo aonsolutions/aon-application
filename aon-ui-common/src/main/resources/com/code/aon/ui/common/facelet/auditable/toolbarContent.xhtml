@@ -1,0 +1,21 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:valueParam name="auditInfoWindowId" default="showAuditInfoWindow"/>
+
+	<aon:commandButton id="#{controller.beanName}AuditInfo"
+		value="#{bundle.aon_audit}" immediate="true"
+		styleClass="aon-finding-toolbar-item aon-icon-audit"
+		rendered="#{!controller.nevv}"
+		reRender="#{auditInfoWindowId}">
+		<f:setPropertyActionListener value="#{true}"
+			target="#{controller.showAuditInfoWindow}" />							
+	</aon:commandButton>	
+
+</ui:composition>

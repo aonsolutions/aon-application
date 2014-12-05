@@ -68,6 +68,7 @@ import com.code.aon.registry.IAddress;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.seller.Seller;
+import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.HeaderObjectController;
@@ -83,7 +84,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class InvoiceController extends HeaderObjectController implements ISignatureController, IFinanceConstants {
+public class InvoiceController extends HeaderObjectController implements ISignatureController, IFinanceConstants, IAuditableController {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	

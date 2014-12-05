@@ -55,6 +55,7 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.HeaderObjectController;
@@ -73,7 +74,7 @@ import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class PurchaseController extends HeaderObjectController implements IPurchaseConstants, IEmailable {
+public class PurchaseController extends HeaderObjectController implements IPurchaseConstants, IEmailable, IAuditableController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
@@ -101,6 +102,8 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 	private List<String> moreRecipients;
 	
 	private List<IEmailControllerListener> emailControllerListenerClasses;
+	
+	private boolean showAuditInfoWindow;
 
 	public boolean isShippingAlternativeAddress() {
 		return shippingAlternativeAddress;
@@ -728,6 +731,16 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 	public List<SelectItem> getSeriesCodes() throws ManagerBeanException {
 		ConfigCollectionsController ccc = (ConfigCollectionsController) AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
 		return ccc.getSalesSeriesIds();
+	}
+
+	@Override
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	@Override
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
 	}
 	
 }

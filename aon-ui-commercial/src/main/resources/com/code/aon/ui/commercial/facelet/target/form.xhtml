@@ -40,6 +40,7 @@
 						<ui:param name="registrySupplierController" value="#{targetSupplier}" />
 						<ui:param name="rAttachController" value="#{targetRAttach}" />
 					</ui:include>
+					<ui:include src="/com/code/aon/ui/common/facelet/auditable/menuContent.xhtml" />
 				</ui:define>
 			</ui:decorate>
 
@@ -265,6 +266,9 @@
 				<ui:param name="attachmentController" value="#{targetRAttach}" />
 				<ui:param name="modalReRender" value="targetTab" />
 			</ui:include>
+			<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
+				<ui:param name="auditableController" value="#{target}" />
+			</ui:include>						
 		</aon:if>	
 	</ui:define>
 </ui:composition>

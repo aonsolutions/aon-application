@@ -51,6 +51,7 @@ import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.LongProcessThread;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.HeaderObjectController;
@@ -73,7 +74,7 @@ import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class SalesController extends HeaderObjectController implements ISalesConstants {
+public class SalesController extends HeaderObjectController implements ISalesConstants, IAuditableController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
@@ -102,6 +103,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private boolean showShipmentWindow;
 	private ProgressionState progressionState;
 	private Integer invoiceId;
+	private boolean showAuditInfoWindow;
 	
     public SalesController() {
     	this.emailUtil = new SalesEmailUtil();
@@ -817,6 +819,16 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		SalesInvoiceProcess sip = new SalesInvoiceProcess(this);
 		LongProcessThread thread = new LongProcessThread(sip); 
 		thread.start();		
+	}
+
+	@Override
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	@Override
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
 	}
 	
 }

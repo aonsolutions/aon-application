@@ -7,15 +7,18 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.InvoicingGroup;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class InvoicingGroupController extends BasicController implements ICustomerConstants {
+public class InvoicingGroupController extends BasicController implements ICustomerConstants, IAuditableController {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private String selectedTab;
+	
+	private boolean showAuditInfoWindow;
 
 	public String getSelectedTab() {
 		return selectedTab;
@@ -45,4 +48,14 @@ public class InvoicingGroupController extends BasicController implements ICustom
 		FormUtil.getController(INVOICING_GROUP_FEE_CONTROLLER_NAME).onSearch(event);
 	}
 
+	@Override
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	@Override
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
+	}
+	
 }

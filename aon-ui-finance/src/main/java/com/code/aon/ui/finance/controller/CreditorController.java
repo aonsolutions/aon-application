@@ -11,13 +11,16 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.Creditor;
+import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
 
-public class CreditorController extends RegistryController {
+public class CreditorController extends RegistryController implements IAuditableController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
+	private boolean showAuditInfoWindow;
+	
 	public boolean isAccountSynchronizable() {
 		return isAccountSynchronizable((Creditor)getTo());
 	}
@@ -62,4 +65,14 @@ public class CreditorController extends RegistryController {
     	return AonUtil.getMessage(CREDITOR_REPORT);
 	}
 
+	@Override
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	@Override
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
+	}
+    
 }

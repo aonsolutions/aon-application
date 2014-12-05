@@ -87,6 +87,8 @@
 							<f:setPropertyActionListener target="#{purchase.showShipmentWindow}"
 								value="#{true}" />
 						</aon:menuItem>
+						<ui:include
+							src="/com/code/aon/ui/common/facelet/auditable/menuContent.xhtml" />						
 					</ui:define>
 				</ui:decorate>
 			</aon:div>			
@@ -450,5 +452,8 @@
 				<ui:param name="projectLabel" value="#{bundle.tas_project_tas}" />
 			</aon:if>
 		</ui:include>
+		<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
+			<ui:param name="auditableController" value="#{purchase}" />
+		</ui:include>			
 	</ui:define>
 </ui:composition>
