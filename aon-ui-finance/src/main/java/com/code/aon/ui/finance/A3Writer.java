@@ -333,7 +333,7 @@ public class A3Writer extends BasicExporter {
 			// Subtipo de factura (01 a 07)
 			setString( getSubtipoDeFactura(tbd.getVatDeductionType()), 99, 2);					
 			// Base imponible
-			setNumber( tbd.getBase(), 101, 14);			
+			// setNumber( tbd.getBase(), 101, 14);			
 			writeLine();
 			lineWritten = true;
 		}
