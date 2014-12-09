@@ -1,12 +1,9 @@
 package com.esferalia.aon.gwt.connect.client;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
-import org.eclipse.jdt.internal.core.util.Util.Comparer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
