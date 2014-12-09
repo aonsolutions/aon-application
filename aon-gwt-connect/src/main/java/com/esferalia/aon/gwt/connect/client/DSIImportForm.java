@@ -2,8 +2,8 @@ package com.esferalia.aon.gwt.connect.client;
 
 import gwtupload.client.IFileInput.FileInputType;
 import gwtupload.client.IUploadStatus.Status;
-import gwtupload.client.IUploader.UploadedInfo;
 import gwtupload.client.IUploader;
+import gwtupload.client.IUploader.UploadedInfo;
 import gwtupload.client.SingleUploader;
 import gwtupload.client.Utils;
 
