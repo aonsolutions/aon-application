@@ -9,7 +9,7 @@
 
 	<aon:valueParam name="registry" default="#{controller.to.registry}"/>
 
-	<aon:panelGrid columns="2" columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-500">
+	<aon:panelGrid columns="2" style="width: 100%;" >
 
 		<aon:outputLabel for="Person_id" value="#{bundle.aon_id}" />
 		<aon:div>
@@ -117,19 +117,23 @@
 			</aon:selectOneMenu>
 		</aon:div>
 	
-		<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
-			<ui:param name="controllerLookupListener" value="#{personForm}"/>
-			<ui:param name="addressRequired" value="#{true}"/>
-			<ui:param name="skipFax" value="#{true}"/>
-			<ui:param name="skipWeb" value="#{true}"/>
-			<ui:param name="showMunicipality" value="#{true}" />
-		</ui:include>	
+		<aon:if test="#{!skipPersonAddress}">
+			<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
+				<ui:param name="controllerLookupListener" value="#{personForm}"/>
+				<ui:param name="addressRequired" value="#{true}"/>
+				<ui:param name="skipFax" value="#{true}"/>
+				<ui:param name="skipWeb" value="#{true}"/>
+				<ui:param name="showMunicipality" value="#{true}" />
+			</ui:include>	
+		</aon:if>
 
 	</aon:panelGrid>
 
-	<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formPayMethod.xhtml">
-		<ui:param name="controllerLookupListener" value="#{personPayMethodForm}"/>
-	</ui:include>
-
+	<aon:if test="#{!skipPersonPayMethodForm}">
+		<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formPayMethod.xhtml">
+			<ui:param name="controllerLookupListener" value="#{personPayMethodForm}"/>
+		</ui:include>
+	</aon:if>
+	
 </ui:composition>
 
