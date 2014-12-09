@@ -878,6 +878,7 @@
                       <require>tomcat8</require>
                       <require>mysql-connector-java</require>
                       <require>slf4j</require>
+                      <require>urw-fonts</require>
                     </requires>
                     <mappings>
                       <mapping>
