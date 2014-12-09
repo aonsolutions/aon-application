@@ -32,7 +32,10 @@
             </goals>
             <configuration>
               <systemPropertyVariables>
+                <integration.base.user>admin</integration.base.user>
+                <integration.base.password>test</integration.base.password>
                 <integration.base.url>http://demos.esferalia.net</integration.base.url>
+                <integration.payroll.url>http://despacho-demos.esferalia.net</integration.payroll.url>
               </systemPropertyVariables>
             </configuration>
           </execution>
