@@ -30,6 +30,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
+import org.apache.commons.fileupload.FileItem;
+
 import org.apache.commons.lang.StringUtils;
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -72,6 +74,11 @@ import com.google.gwt.thirdparty.guava.common.io.Files;
 @MultipartConfig
 public class DSIImportServlet extends HttpServlet implements DSIImportService,
 		GetActionHandler<HttpServletRequest, HttpServletResponse, IOException> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private static int MAX_MEM_SIZE = 4 * 1024;
 
@@ -181,9 +188,14 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-
-		GetAction.valueOf(req.getParameter(GET_ACTION_PARAM)).handle(this, req,
-				resp);
+		
+		try {
+			GetAction.valueOf(req.getParameter(GET_ACTION_PARAM)).handle(this, req,
+					resp);
+		}catch (Exception ex) {
+			System.out.println(ex.getMessage() 
+					+ " " + ex.getCause() + " " + ex.getLocalizedMessage());
+		}
 	}
 
 	/**
@@ -197,7 +209,7 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 				"UTF-8");
 
 		try {
-
+			
 			ServletContext context = getServletContext();
 			AonServletUtils.initFacesContext(context, req, resp);
 
@@ -206,7 +218,7 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 			// @formatter:off
 			print.print(req.getParts().stream()
 					.map(DSIImportServlet::processPart)
-					.map(f->String.format("\"%s\"", f.getAbsolutePath()))
+					.map(f -> String.format("\"%s\"", f.getAbsolutePath()))
 					.collect(Collectors.joining(",", "[", "]")));
 			// @formatter:on
 
@@ -214,12 +226,75 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 
 			if (print != null)
 				print.close();
-
+		
 			AonServletUtils.releaseFacesContext();
 		}
 	}
 
+	/**
+	 * The post method is used to receive the file and import/load it .
+	 */
+/*	protected void __doPost(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		File tempDir = null;
 
+		OutputStream out = null;
+		PrintStream print = null;
+
+		try {
+			out = resp.getOutputStream();
+			print = new PrintStream(out, false, "UTF-8");
+			// resp.setContentType("application/json;charset=UTF-8");
+			resp.setContentType("text/html;charset=UTF-8");
+
+			ServletContext context = getServletContext();
+			AonServletUtils.initFacesContext(context, req, resp);
+
+			// checks if the request actually contains upload file
+			if (!isMultipartContent(req)) {
+				// if not, we stop here(?:X
+				resp.sendError(SC_BAD_REQUEST,
+						"Petición erronea, no es 'multipart/form-data'");
+				return;
+			}
+
+			// Create a factory for disk-based file items
+			DiskFileItemFactory factory = new DiskFileItemFactory();
+
+			// Set factory constraints
+			factory.setSizeThreshold(MAX_MEM_SIZE);
+			tempDir = Files.createTempDir();
+			factory.setRepository(tempDir);
+
+			// Create a new file upload handler
+			ServletFileUpload upload = new ServletFileUpload(factory);
+			// No limit for maximum allowed size of a complete request
+
+			List<File> dbs = new ArrayList<File>();
+			// Parse the request
+			List<FileItem> fileItems = upload.parseRequest(req);
+			for (FileItem fileItem : fileItems) {
+				if (fileItem.isFormField()) {
+					processFormField(fileItem);
+				} else {
+					dbs.add(processUploadFile(fileItem));
+				}
+			}
+
+			print(print, dbs);
+
+		} catch (FileUploadException e) {
+
+		} finally {
+			if (tempDir != null)
+				tempDir.delete();
+			if (print != null)
+				print.close();
+
+			AonServletUtils.releaseFacesContext();
+		}
+	}
+*/
 	// ------------------------------------------------------------------------
 
 	public void doCancel(HttpServletRequest t, HttpServletResponse i)
@@ -309,8 +384,11 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 								empres.getF20sscod()));
 						print.print(format("\"ssnum\":\"%s\",",
 								empres.getF20ssnum()));
-						print.print(format("\"rsocial\":\"%s\"",
+						print.print(format("\"rsocial\":\"%s\",",
 								empres.getF20rsocial()));
+						print.print(format("\"nif\":\"%s\"",
+								empres.getF20nif()));
+
 						print.print("}");
 					}
 					print.print(']');

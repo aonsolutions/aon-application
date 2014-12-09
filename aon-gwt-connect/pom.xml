@@ -108,4 +108,115 @@
     </build>
     </profile>
   </profiles>
+
+	<parent>
+		<groupId>com.code.aon</groupId>
+		<artifactId>aon.parent</artifactId>
+		<version>8.9-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.esferalia.aon</groupId>
+	<artifactId>aon.gwt.connect</artifactId>
+	<packaging>jar</packaging>
+	<version>8.9-SNAPSHOT</version>
+	<description>AON GWT CONECT@</description>
+	<name>AON GWT CONECT@</name>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>gwt-maven-plugin</artifactId>
+				<version>2.6.0</version>
+				<configuration>
+					<webappDirectory>${project.build.outputDirectory}</webappDirectory>
+					<deploy>${project.build.directory}/extra</deploy>
+					<extra>${project.build.directory}/extra</extra>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>compile</goal>
+							<!--goal>generateAsync</goal-->
+							<!--goal>test</goal -->
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+
+	<dependencies>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.2.2</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.dsi</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-servlet</artifactId>
+			<version>2.6.1</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-user</artifactId>
+			<version>2.6.1</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.gwt.common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.config</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon-dbutils</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.pool</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>		
+			
+      <dependency>
+        <groupId>com.googlecode.gwtupload</groupId>
+        <artifactId>gwtupload</artifactId>
+        <version>1.0.1</version>
+      </dependency>
+		
+	</dependencies>
+	
+
 </project>

@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.connect.client;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.esferalia.aon.dsi.util.DBUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.connect.shared.DSIImportService;
 import com.esferalia.aon.gwt.connect.shared.JsEmpres;
@@ -64,7 +65,8 @@ public class DSIImportClient implements DSIImportService {
 				requestDataBuffer.append('{');
 				requestDataBuffer.append("db:\"" + empres.getDB()+ "\","  );
 				requestDataBuffer.append("sscod:\"" + empres.getSScod()+ "\","  );
-				requestDataBuffer.append("ssnum:\"" + empres.getSSnum()+ "\""  );
+				requestDataBuffer.append("ssnum:\"" + empres.getSSnum()+ "\","  );
+				requestDataBuffer.append("nif:\"" + empres.getNif()+ "\""  );
 				requestDataBuffer.append('}');
 			}			
 		}
@@ -74,8 +76,9 @@ public class DSIImportClient implements DSIImportService {
 		} catch (RequestException e) {
 			cb.onError(e);
 		}				
-
 	}
+	
+	
 	
 	private static boolean containsRSocial (Set<DSILoadSelected> selected, String rSocial ) {
 		Iterator<DSILoadSelected> iterator = selected.iterator();

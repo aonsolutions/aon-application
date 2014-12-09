@@ -10,6 +10,11 @@ public interface AonResources extends ClientBundle, Images {
 	@Source("aon.css")
 	@CssResource.NotStrict
 	AonCSS css();
+	
+	@Source("aonDataGrid.css")
+	@CssResource.NotStrict
+	AonDataGrid aonDataGrid();
+
 
 	@Source("images/aon-icon-rowSelector.png")
 	ImageResource aonIconRowSelector();

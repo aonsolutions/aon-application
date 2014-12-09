@@ -1,11 +1,9 @@
 package com.esferalia.aon.gwt.connect.client;
 
-
 public interface DSILoadSelected {
 	
 	String getName();
 	
-	String getCompanyIcon();
+	String getNif();
 	
-	String getEmployeeIcon();
 }

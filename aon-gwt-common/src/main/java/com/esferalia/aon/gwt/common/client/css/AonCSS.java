@@ -296,5 +296,15 @@ public interface AonCSS extends  CssResource {
 	
 	@ClassName("aon-table-label")
 	String aonTableLabel();
+
+	/*
+	 * DataGrid Load Empress
+	 */
 	
-	}
+	@ClassName("childCell")
+	String childCell();
+	
+	@ClassName("groupHeaderCell")
+	String groupHeaderCell();
+}
+

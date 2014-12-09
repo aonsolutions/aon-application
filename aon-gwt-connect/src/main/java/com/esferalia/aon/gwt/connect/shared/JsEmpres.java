@@ -38,10 +38,19 @@ public final class JsEmpres extends JavaScriptObject {
 		return this;
 	}-*/;
 
+	public native String getNif() /*-{
+		return this.nif;
+	}-*/;
+
+	public native JsEmpres setNif(String nif) /*-{
+		this.nif = nif;
+		return this;
+	}-*/;
+
 	public native String getRSocial() /*-{
 		return this.rsocial;
 	}-*/;
-	
+
 	public native JsEmpres setRSocial(String rsocial) /*-{
 		this.rsocial = rsocial;
 		return this;

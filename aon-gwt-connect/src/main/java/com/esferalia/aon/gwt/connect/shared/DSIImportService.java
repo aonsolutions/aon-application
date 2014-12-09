@@ -14,7 +14,7 @@ public interface DSIImportService {
 	public static final String GET_REPLACE_PARAM = "get-replace-param";
 
 	public static final String GET_ACTION_PARAM = "get-action-param";
-
+	
 	public static interface GetActionHandler<T, I, E extends Throwable> {
 		void doCancel(T t, I i) throws E;
 
@@ -45,6 +45,7 @@ public interface DSIImportService {
 				handler.doListEmpress(t, i);
 			}
 		};
+		
 
 		public abstract <T, I, E extends Throwable> void handle(
 				GetActionHandler<T, I, E> handler, T t, I i) throws E;

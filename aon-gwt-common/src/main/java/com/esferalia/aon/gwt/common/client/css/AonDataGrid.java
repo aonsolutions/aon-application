@@ -11,5 +11,5 @@ public interface AonDataGrid extends DataGrid.Resources {
 	
 	@Source("images/aon-dataTable-header.png")
 	ImageResource aonDataTableHeader();
-	
+
 }
