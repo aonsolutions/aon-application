@@ -37,7 +37,7 @@ public class JooqDeductions {
 			concept.setDescription(record.getValue(DEDUCTION_CONCEPT.DESCRIPTION));
 			concept.setExpression(record.getValue(DEDUCTION_CONCEPT.EXPRESSION));
 			concepts.add(concept);
-			concept.setType(getDeductionType(record.getValue(DEDUCTION_CONCEPT.TYPE)));
+			concept.setType(getDeductionType((int) record.getValue(DEDUCTION_CONCEPT.TYPE)));
 		}
 		return concepts;
 	}

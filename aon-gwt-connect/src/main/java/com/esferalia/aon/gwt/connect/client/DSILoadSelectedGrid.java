@@ -126,7 +126,7 @@ public class DSILoadSelectedGrid extends CustomDataGrid<DSILoadSelected>
 			boolean isSortAscending = (sortedInfo == null) ? false : sortedInfo
 					.isAscending();
 
-			tr = startRow().className(AON.AON_CSS.childCell());
+			tr = startRow().className(AON.AON_CSS.aonLinkListItem());
 			buildHeader(tr, checkHeader, checkBox, 
 					sortedColumn, isSortAscending, false, false);
 			buildHeader(tr, nifHeader, nif, 
