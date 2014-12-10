@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.document.server;
 
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,12 +16,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.Vector;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.naming.NamingException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.enumeration.MimeType;
@@ -35,6 +41,7 @@ import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
 import com.esferalia.aon.gwt.document.client.IDocument;
 import com.esferalia.aon.gwt.document.jooq.DBConsults;
 import com.esferalia.aon.gwt.document.shared.Document;
+import com.esferalia.aon.gwt.document.shared.Domain;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
 import com.esferalia.aon.gwt.document.shared.FilterUtil;
 import com.esferalia.aon.gwt.document.shared.Lists;
@@ -47,6 +54,7 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.About;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
+import com.google.api.services.drive.model.ParentReference;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.sun.pdfview.PDFFile;
 import com.sun.pdfview.PDFPage;
@@ -207,16 +215,19 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		return true;
 	}
 	
-	public Vector<String> getSons(){
+	public Vector<Domain> getSons(){
 		String domain = AonUtil.getDomainName();
 		
-		Vector<String> vector = new Vector<String>();
+		Vector<Domain> vector = new Vector<Domain>();
 		try {
 			vector = DBConsults.getSons(domain);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		vector.add(domain);
+		Domain d = new Domain();
+		d.setName(domain);
+		d.setDescription("");
+		vector.add(d);
 		return vector;
 		
 		
@@ -407,7 +418,85 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		
 	}
 	
-
+	public String getRootId() {
+		if(GoogleDriveController.gconnection){
+			Drive drive = GoogleDriveController.dconnection;
+			About about = null;
+			try {
+				about = drive.about().get().execute();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return about.getRootFolderId();
+		}
+		else return "";
+	}
+	
+	public FileList getFileList(String id){
+		Drive drive = GoogleDriveController.dconnection;
+		FileList fl=null;
+		try {
+			fl = drive.files().list().setQ("'"+id+"' in parents and mimeType = 'application/vnd.google-apps.folder'").execute();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return fl;
+	}
+	public FileList getFileList2(String id){
+		Drive drive = GoogleDriveController.dconnection;
+		FileList fl=null;
+		try {
+			fl = drive.files().list().setQ("'"+id+"' in parents ").execute();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return fl;
+	}
+	
+	public Vector<FileInfo> getDriveFiles(String id){
+		Vector<FileInfo> v = new Vector<FileInfo>();
+		FileList fl = getFileList2(id);
+		for (File f : fl.getItems()) {
+			FileInfo fi = new FileInfo();
+			fi.setTitle(f.getTitle());
+			fi.setCategoryStr("-");	
+			fi.setDateStr("-");
+			fi.setSizeStr("-");
+			fi.setTagsStr("-");
+			v.add(fi);
+		}
+		return v; 
+	}
+	public TreeMap<String, List<FileInfo>> drive(TreeMap<String, List<FileInfo>> folders , String id)  {
+		if (GoogleDriveController.gconnection){
+			if(id.equals("")){
+				id= getRootId();
+				folders.put(getRootId(), new Vector<FileInfo>());
+			}
+		
+			FileList fl=  getFileList(id);
+	
+			for (File f : fl.getItems()) {
+			
+				FileInfo fi = new FileInfo();
+				fi.setTitle(f.getTitle());
+				fi.setDriveId(f.getId());
+				for (ParentReference pr : f.getParents()) {
+					if(folders.containsKey(pr.getId())){
+						folders.get(pr.getId()).add(fi);
+					}
+					else{
+						folders.put(pr.getId(), new Vector<FileInfo>());
+						folders.get(pr.getId()).add(fi);
+					}
+				}
+			}
+		}
+		return folders;
+	}
+	
 	public Vector<TreeDriveInfo> myDrive(String id){
 		Drive drive = GoogleDriveController.dconnection;
 		FileList fl = null;
@@ -510,6 +599,8 @@ private IDocument2HtmlConverter getDocument2HtmlConverter(FileInfo document) {
 			put(MimeType.MIME_JPEG, Image2HtmlConverter.INSTANCE );
 			put(MimeType.MIME_PNG, Image2HtmlConverter.INSTANCE );
 			put(MimeType.MIME_GIF, Image2HtmlConverter.INSTANCE );
+			
+			put(MimeType.MIME_ZIP, Zip2HtmlConverter.INSTANCE);
 		}
 	};
 	
@@ -517,7 +608,46 @@ private IDocument2HtmlConverter getDocument2HtmlConverter(FileInfo document) {
 	private static interface IDocument2HtmlConverter {
 		void transform(FileInfo doc, OutputStream os, int zoom) throws Exception;
 	}
-	
+
+	private static class Zip2HtmlConverter implements IDocument2HtmlConverter{
+		private static IDocument2HtmlConverter INSTANCE = new Zip2HtmlConverter();
+		
+		@Override
+		public void transform(FileInfo doc, OutputStream os, int zoom)
+				throws Exception {
+			
+			PrintStream printStream = new PrintStream(os);
+			InputStream in = null;
+			if(doc.getDriveId() != null){ 
+				DomainGserviceaccount g = DatabaseSync.getServiceAccount(AonUtil.getDomainName());
+				Drive d = DriveUtils.serviceInitialize(g);
+				File f = d.files().get(doc.getDriveId()).execute();
+				in = DriveUtils.downloadFile(d, f);
+			}
+			else {
+				ViewerUtils.RAttach rattach = ViewerUtils.getRAttach(doc.getFileId());
+				byte[] b = rattach.bytes;				
+				in = new ByteArrayInputStream(b);
+			}
+			ZipInputStream zip = new ZipInputStream(in);
+			ZipEntry entry;
+			String html="<div class='page' style=' width:150%s; background-color:#FFF;border-radius: 5px 5px 5px 5px;'>"
+					+ "<table style='padding-top:10px; padding-bottom:5px;'>";
+			while (null != (entry=zip.getNextEntry()) ){
+				String icon = entry.isDirectory()?"aon-icon-google-drive-folder":"aon-icon-google-drive-unknown";
+				if(!entry.getName().substring(0,entry.getName().length()-1).contains("/")){
+					if(entry.isDirectory())
+						html = html + "<tr><td style='padding-left:5px;'><button onclick='alert(hola);' class='aon-editDataTable-button "+icon+"' style='padding-left: 20px;'>"+entry.getName()+"</button></td></tr>";
+					else{
+						html = html + "<tr><td style='padding-left:5px;'><span class='"+icon+"' style='padding-left: 20px;'>"+entry.getName()+"</span></td></tr>";
+					}
+				}
+			}
+			html = html + "</table></div>";
+			System.out.println(html);
+			printStream.printf(html,"%");
+		}
+	}
 private static class OpenDocument2HtmlConverter implements IDocument2HtmlConverter {
 		
 		private static  IDocument2HtmlConverter INSTANCE = new OpenDocument2HtmlConverter();

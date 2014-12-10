@@ -252,6 +252,15 @@
 	</servlet-mapping>
 	
 	<servlet>
+		<servlet-name>PrintFiles</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.document.server.PdfPrintServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>PrintFiles</servlet-name>
+		<url-pattern>/aon_gwt_document/gwt_print/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
 		<servlet-name>openDocument2Image</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.document.server.OpenDocument2ImageServlet</servlet-class>
 	</servlet>

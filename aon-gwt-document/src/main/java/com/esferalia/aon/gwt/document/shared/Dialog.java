@@ -15,7 +15,7 @@ public class Dialog {
 	String baseUrl;
 	Lists lists;
 	SingleUploader upload;
-	Vector<String> sons;
+	Vector<Domain> sons;
 	
 	FileInfo fileInfo;
  	
@@ -92,11 +92,11 @@ public class Dialog {
 		this.upload = upload;
 	}
 
-	public Vector<String> getSons() {
+	public Vector<Domain> getSons() {
 		return sons;
 	}
 
-	public void setSons(Vector<String> sons) {
+	public void setSons(Vector<Domain> sons) {
 		this.sons = sons;
 	}
 

@@ -14,6 +14,7 @@ import java.util.Vector;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.Dialog;
+import com.esferalia.aon.gwt.document.shared.Domain;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
 import com.esferalia.aon.gwt.document.shared.Lists;
 import com.esferalia.aon.gwt.document.shared.Scope;
@@ -479,7 +480,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 	}
 	
 	Boolean bool;
-	private void searchFile(Vector<String> sons) {
+	private void searchFile(Vector<Domain> sons) {
 		ListBox lb1 = new ListBox();
 		lb1.addItem("-");
 		ListBox lb2 = new ListBox();

@@ -50,7 +50,7 @@
 		}
 		.auxiliar3{
 			background-color:  rgba(0,0,0,0);
-			right:0px;
+			right:20px;
 			position:absolute;
 			height: 100%;
 			width: 150px;

@@ -2995,6 +2995,24 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
     
 	background:transparent url(images/aon-icon/aon-icon-google-drive-pdf-sinfondo.png) scroll left center no-repeat;	
  }
+ .aon-icon-google-drive-excel{
+	background:transparent url(images/aon-icon/aon-icon-google-drive-excel.png) scroll left center no-repeat;	
+ }
+ 
+  .aon-icon-google-drive-power-point{
+	background:transparent url(images/aon-icon/aon-icon-google-drive-power-point.png) scroll left center no-repeat;	
+ }
+ 
+  .aon-icon-google-drive-zip{
+	background:transparent url(images/aon-icon/aon-icon-google-drive-zip.png) scroll left center no-repeat;	
+ }
+  .aon-icon-google-drive-mov{
+	background:transparent url(images/aon-icon/aon-icon-google-drive-mov.png) scroll left center no-repeat;	
+ }
+ 
+  .aon-icon-google-drive-audio{
+	background:transparent url(images/aon-icon/aon-icon-google-drive-audio.png) scroll left center no-repeat;	
+ }
  
  .aon-icon-google-drive-word{
 	background:transparent url(images/aon-icon/aon-icon-google-drive-word.png) scroll left center no-repeat;	
@@ -3066,3 +3084,8 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
        .aon-icon-close2{
 	background:transparent url(images/aon-icon-big/aon-icon-close2.png) scroll left center no-repeat;	
  }
+ 
+ 	.aon-tree-item{
+ 		padding-left:20px;
+ 		cursor:pointer;
+ 	}

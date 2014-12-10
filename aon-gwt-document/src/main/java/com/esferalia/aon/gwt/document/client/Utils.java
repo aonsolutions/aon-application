@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.document.client;
 
 import java.util.Vector;
 
+import com.esferalia.aon.google.sql.AbstractSQL.Domain;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle;
@@ -56,17 +57,25 @@ public class Utils {
 	    }
 	  }
 
-	static MultiWordSuggestOracle createOracle(Vector<String> l) {
+	static MultiWordSuggestOracle createOracle(Vector<com.esferalia.aon.gwt.document.shared.Domain> vector) {
 		MultiWordSuggestOracle oracleSons = new MultiWordSuggestOracle();
 
-		for (String s : l) {
-			oracleSons.add(s);
+		for (com.esferalia.aon.gwt.document.shared.Domain d : vector) {
+			oracleSons.add(d.getDescription()+" ( "+d.getName()+")");
 		}
 		return oracleSons;
 	}
 
+	static String getOracleString(String s){
+		String aux;
+		Integer pos = s.indexOf('(');
+		aux = s.substring(pos+2,s.length()-1);
+		return aux;
+	}
+	
 	static MultiWordSuggestOracle createOracle2(Vector<String> l) {
 		Vector<Suggestion> suggestions = new Vector<SuggestOracle.Suggestion>();
+		
 		for (String string : l) {
 			suggestions.add(new Suggestion() {
 				//Sustituye el string en SuggestBox.
@@ -86,5 +95,11 @@ public class Utils {
 		return new MultiWordSuggestOracle();
 	}
 	
+	
+	public static void main(String[] args) {
+		String s = "ARISTIZABAL GARCIA, ROBINSON ( robinson-novus.aibanez.net)";
+		System.out.println(s);
+		System.out.println(getOracleString(s));
+	}
 }
 

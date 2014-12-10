@@ -32,6 +32,7 @@ import com.code.aon.google.apis.jooq.JooqSettings;
 import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.CategoryList;
 import com.esferalia.aon.gwt.document.shared.Document;
+import com.esferalia.aon.gwt.document.shared.Domain;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
 import com.esferalia.aon.gwt.document.shared.Scope;
 import com.esferalia.aon.gwt.document.shared.ScopeList;
@@ -206,6 +207,20 @@ public class DBConsults {
 			} else if (MimeType.MIME_MS_WORD.getName().equals(t.getName())
 					|| MimeType.MIME_MS_WORD_2007.getName().equals(t.getName())) {
 				return "aon-icon-google-drive-word";
+			} else if (MimeType.MIME_MS_EXCEL.getName().equals(t.getName())
+					|| MimeType.MIME_MS_EXCEL_2007.getName().equals(t.getName())){
+				return "aon-icon-google-drive-excel";
+			} else if (MimeType.MIME_MS_POWER_POINT.getName().equals(t.getName())
+					|| MimeType.MIME_MS_POWER_POINT_2007.getName().equals(t.getName())){
+				return "aon-icon-google-drive-power-point";
+			} else if (MimeType.MIME_ZIP.getName().equals(t.getName())){
+				return "aon-icon-google-drive-zip";
+			} else if (MimeType.MIME_AVI.getName().equals(t.getName())
+					|| MimeType.MIME_MPEG.getName().equals(t.getName())){
+				return "aon-icon-google-drive-mov";
+			} else if (MimeType.MIME_MP3.getName().equals(t.getName())
+					|| MimeType.MIME_WAV.getName().equals(t.getName())){
+				return "aon-icon-google-drive-audio";
 			} else
 				return "aon-icon-google-drive-unknown";
 
@@ -589,25 +604,28 @@ public class DBConsults {
 	}
 
 	
-	public static Vector<String> getSons(String domain) throws SQLException{
+	public static Vector<Domain> getSons(String domain) throws SQLException{
 		Connection connection = null;
 		try {
 			connection = DatabaseSync.getConnection(domain);
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
 
-			Result<Record1<String>> sons = dslContext
-					.select(DOMAIN.NAME)
+			Result<Record2<String, String>> sons = dslContext
+					.select(DOMAIN.NAME,DOMAIN.DESCRIPTION)
 					.from(DOMAIN)
 					.where(DOMAIN.PARENT.eq(dslContext.select(DOMAIN.ID)
 												.from(DOMAIN)
 												.where(DOMAIN.NAME.eq(domain))))
 					.fetch();
 			
-			Vector<String> vector = new Vector<String>();
+			Vector<Domain> vector = new Vector<Domain>();
 			
-			for (Record1<String> record : sons) {
-				vector.add(record.value1());
+			for (Record2<String, String> record : sons) {
+				Domain d = new Domain();
+				d.setName(record.value1());
+				d.setDescription(record.value2());
+				vector.add(d);
 			}
 			return vector;
 			

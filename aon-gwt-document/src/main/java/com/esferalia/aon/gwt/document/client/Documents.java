@@ -4,10 +4,9 @@ import gwtupload.client.SingleUploader;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.Vector;
 
-import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.google.apis.calendar.View;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
@@ -16,6 +15,7 @@ import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.Dialog;
 import com.esferalia.aon.gwt.document.shared.DisclosureImages;
 import com.esferalia.aon.gwt.document.shared.Document;
+import com.esferalia.aon.gwt.document.shared.Domain;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
 import com.esferalia.aon.gwt.document.shared.FilterUtil;
 import com.esferalia.aon.gwt.document.shared.Lists;
@@ -25,14 +25,16 @@ import com.esferalia.aon.gwt.document.shared.Tag;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.Cell.Context;
+import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;
+import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.BrowserEvents;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -56,6 +58,7 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -67,6 +70,7 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -75,7 +79,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineHTML;
@@ -83,20 +86,17 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
-import com.google.gwt.user.client.ui.SuggestionEvent;
-import com.google.gwt.user.client.ui.SuggestionHandler;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
@@ -240,6 +240,9 @@ public class Documents extends Composite implements EntryPoint {
 	 */
 
 	@UiField
+	SimplePanel sp;
+	
+	@UiField
 	InlineHTML html;
 	
 	@UiField
@@ -251,8 +254,8 @@ public class Documents extends Composite implements EntryPoint {
 	@UiField(provided=true)
 	DisclosurePanel epanel;
 
-	@UiField(provided=true)
-	ScrollPanel treepanel;
+	//@UiField(provided=true)
+	//ScrollPanel treepanel;
 
 	@UiField(provided=true)
 	DisclosurePanel dpanel;
@@ -354,7 +357,7 @@ public class Documents extends Composite implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 		stack1 = new StackLayoutPanel(Unit.EM);
-		treepanel = new ScrollPanel();
+		//treepanel = new ScrollPanel();
 		//DisclosureImages di = new DisclosureImages();
 		//dpanel = new DisclosurePanel(di.getClosed(), di.getOpen(), "Categor\u00edas");
 		//epanel = new DisclosurePanel(di.getClosed(), di.getOpen(), "Etiquetas");
@@ -366,6 +369,7 @@ public class Documents extends Composite implements EntryPoint {
 	Category cAux;
 	Tag tAux;
 	public void Load() {
+		tree();
 		getSons();
 		/** CATEGORIES **/
 	/*	filterButton = new Button();
@@ -379,6 +383,7 @@ public class Documents extends Composite implements EntryPoint {
 		*/
 		VerticalPanel vcat =  new VerticalPanel();
 		for(Category c : lists.getCategoryList().getList()){
+			
 			cAux= c;
 			Button b =new Button(c.getName()); 
 			b.setStyleName("aon-editDataTable-button aon-icon-category");
@@ -403,7 +408,6 @@ public class Documents extends Composite implements EntryPoint {
 										filterLabel.setStyleName("aon-icon-category");
 										filterLabel.setText(cAux.getName());
 										*/
-										Window.alert(result.getCategory());
 
 										html.setText(result.getCategory());
 										html.setVisible(true);
@@ -448,7 +452,6 @@ public class Documents extends Composite implements EntryPoint {
 										filterLabel.setStyleName("aon-icon-tag");
 										filterLabel.setText(tAux.getName());
 										*/
-										Window.alert(result.getTag());
 										html.setText(result.getTag());
 										html.setVisible(true);
 										
@@ -699,8 +702,8 @@ public class Documents extends Composite implements EntryPoint {
 
 	private Boolean esta(String s) {
 		if(s.equals(""))return true;
-		for (String string : getSons()) {
-			if(s.equals(string)){
+		for (Domain string : getSons()) {
+			if(s.equals(string.getName())){
 				return true;
 			}
 		}
@@ -908,12 +911,12 @@ public class Documents extends Composite implements EntryPoint {
 	}
 	
 	
-	public Vector<String> getSons() {
+	public Vector<Domain> getSons() {
 		if(sons==null){
-		idoc.getSons(new AsyncCallback<Vector<String>>() {
+		idoc.getSons(new AsyncCallback<Vector<Domain>>() {
 			
 			@Override
-			public void onSuccess(Vector<String> result) {
+			public void onSuccess(Vector<Domain> result) {
 				sons= result;
 			}
 			
@@ -928,7 +931,7 @@ public class Documents extends Composite implements EntryPoint {
 	
 	
 	
-	Vector<String> sons = null;
+	Vector<Domain> sons = null;
 	FileUpload fuchange;
 	SingleUploader fuchange2;
 	
@@ -1037,7 +1040,7 @@ public class Documents extends Composite implements EntryPoint {
             		if(!esta(sb.getText())){
             			fi.setDomain("false"); 
             		}
-            		else fi.setDomain(sb.getText());
+            		else fi.setDomain(Utils.getOracleString(sb.getText()));
 				}
             	else fi.setDomain("");
             	
@@ -1072,15 +1075,11 @@ public class Documents extends Composite implements EntryPoint {
 										
 										if(html.isVisible()){
 											Integer i = 0;
-											Window.alert(html.getText());
-											Window.alert(result.getTags().get(i).getName());
-											
+
 											while(i<result.getTags().size() && !html.getText().equals(result.getTags().get(i).getName())){
 												i++;
 											}
-											Window.alert("asdas");
 											if(!html.isVisible() || (html.isVisible() && (html.getText().equals(result.getCategoryStr()) || result.getTags().size()>i))){
-												Window.alert("entraHTML");
 												aux= new Vector<FileInfo>();
 												for (FileInfo f : docs.getFilter()) {
 													aux.add(f);
@@ -1215,7 +1214,7 @@ public class Documents extends Composite implements EntryPoint {
 	void sbutton(ClickEvent event) {
 		html.setVisible(false);
 		filterButton.setVisible(false);
-		String searchStr = enterpriseSearchBox.getText();
+		String searchStr = Utils.getOracleString(enterpriseSearchBox.getText());
 		
 		idoc.eSearchFile(docs.getFiles(),searchStr,
 				new AsyncCallback<Vector<FileInfo>>() {
@@ -1397,6 +1396,43 @@ public class Documents extends Composite implements EntryPoint {
 
 		dataGrid.setColumnWidth(dateColumn, 13, Unit.PCT);
 		
+		/** Confidential Column **/
+		Column<FileInfo, Boolean> confColumn = new Column<FileInfo, Boolean>(new CheckboxCell(){
+			@Override
+			public void onBrowserEvent(
+					com.google.gwt.cell.client.Cell.Context context,
+					Element parent, Boolean value, NativeEvent event,
+					ValueUpdater<Boolean> valueUpdater) {
+
+			}
+			
+			@Override
+			public boolean isEditing(
+					com.google.gwt.cell.client.Cell.Context context,
+					Element parent, Boolean value) {
+				return false;
+			}
+			
+		}){
+			@Override
+			public Boolean getValue(FileInfo object) {
+				return object.getConfidential();
+			}
+			
+		};
+		
+		
+	SafeHtml sh = new SafeHtml() {
+		
+		@Override
+		public String asString() {
+			return "<span class='aon-icon-confidential' style='padding-left:15px' title='Confidencial'>&nbsp;</span>";
+		}
+	};
+		dataGrid.addColumn(confColumn,sh);
+		
+		
+		dataGrid.setColumnWidth(confColumn, 5 , Unit.PCT);
 		/** Size Column **/
 		Column<FileInfo, String> sizeColumn = new Column<FileInfo, String>(
 				new TextCell()) {
@@ -1495,7 +1531,17 @@ public class Documents extends Composite implements EntryPoint {
                 + "?file_id=" + Integer.toString(object.getFileId())
                 + "&drive_id=" +URL.encode(driveId)
                 + "&mimetype=" +object.getMimetype();
-        Window.open( fileDownloadURL, "_blank",null);//"status=0,toolbar=0,menubar=0,location=0");
+		Window.open( fileDownloadURL, "_blank",null);//"status=0,toolbar=0,menubar=0,location=0");
+	}
+	
+	private void print(FileInfo object){
+		String driveId="";
+		if(object.getDriveId()!=null)driveId= object.getDriveId();
+		String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_print/"
+                + "?file_id=" + Integer.toString(object.getFileId())
+                + "&drive_id=" +URL.encode(driveId)
+                + "&mimetype=" +object.getMimetype();
+		PrintWindow.open(fileDownloadURL, "_blank", null);
 	}
 	
 	private void search() {
@@ -1521,7 +1567,7 @@ public class Documents extends Composite implements EntryPoint {
 					if ("".equals(tb0.getText()))
 						si.setDomain(null);
 					else
-						si.setDomain(tb0.getText());
+						si.setDomain(Utils.getOracleString(tb0.getText()));
 				}else si.setDomain(null);
 				
 				TextBox tb1 = (TextBox) grid.getWidget(1, 1);
@@ -1531,7 +1577,6 @@ public class Documents extends Composite implements EntryPoint {
 					si.setName(tb1.getText());
 
 				CheckBox cb = (CheckBox) grid.getWidget(2, 1);
-				;
 				si.setConfidential(cb.getValue());
 
 				DateBox tb2 = (DateBox) grid.getWidget(3, 1);
@@ -1623,7 +1668,7 @@ public class Documents extends Composite implements EntryPoint {
 
 							@Override
 							public void onSuccess(Vector<FileInfo> result) {
-								if(!docs.getEfiles().get(0).getDomain().equals(result.get(0).getDomain())){
+								if( !result.isEmpty() && !docs.getEfiles().get(0).getDomain().equals(result.get(0).getDomain())){
 									idoc.eSearchFile(docs.getFiles(), result.get(0).getDomain(), new AsyncCallback<Vector<FileInfo>>() {
 										
 										@Override
@@ -1722,7 +1767,47 @@ public class Documents extends Composite implements EntryPoint {
 			sons(ti, f.getSons());
 		}
 	}
-
+	
+	String rootId;
+	Tree t ;
+	public void tree(){
+		sp = new SimplePanel();
+		t = new Tree();
+		
+		idoc.getRootId(new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				rootId = result;
+			}
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+		idoc.drive(new TreeMap<String, List<FileInfo>>(),"",new AsyncCallback<TreeMap<String,List<FileInfo>>>() {
+			@Override
+			public void onSuccess(TreeMap<String, List<FileInfo>> result) {
+				TreeItem ti = new TreeItem();
+				ti = t.addTextItem("Mi Unidad");
+				treeSons(ti,result,rootId);
+				sp.add(t);
+			}
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+		
+	}
+	public void treeSons(TreeItem t,TreeMap<String, List<FileInfo>> folders , String id){
+	
+		for (FileInfo f : folders.get(id)) {
+			TreeItem ti = new TreeItem();
+			Button button = new Button(f.getTitle());
+			button.setStyleName("aon-editDataTable-button aon-icon-google-drive-folder");
+			ti = t.addItem(button);
+			ti.setTitle(f.getDriveId());
+			if(folders.containsKey(f.getDriveId())){
+				treeSons(ti, folders, f.getDriveId());
+			}
+		}
+	}
 	public void myDrive() {
 		idoc.myDrive("", new AsyncCallback<Vector<TreeDriveInfo>>() {
 
@@ -1735,7 +1820,7 @@ public class Documents extends Composite implements EntryPoint {
 					ti = tree.addTextItem(f.getParent().getTitle());
 					sons(ti, f.getSons());
 				}
-				treepanel.add(tree);
+				//treepanel.add(tree);
 			}
 
 			@Override
@@ -1757,7 +1842,6 @@ public class Documents extends Composite implements EntryPoint {
 		dataGrid.redraw();
 	}
 	Viewer viewer;
-	
 	private  void getAsHTMl(FileInfo object, Integer num) {
 		viewer = new Viewer(dataProvider.getList(),num,object){
 			@Override
@@ -1766,6 +1850,7 @@ public class Documents extends Composite implements EntryPoint {
 			}
 			@Override
 			protected void onPrint() {	
+				print(fileInfo);
 			}
 			@Override
 			protected void onShare() {
@@ -1853,13 +1938,15 @@ public class Documents extends Composite implements EntryPoint {
 		
 		viewer.title.setText(object.getTitle());
 		viewer.title.addStyleName(object.getIcon());
+		if(viewer.num.equals(viewer.list.size()-1))viewer.next.setVisible(false);
+		if(viewer.num.equals(0)) viewer.prev.setVisible(false);
+		viewer.show();
 		idoc.getAsHTML(object, 100 , new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
 				viewer.container.setHTML(result);
-				if(viewer.num.equals(viewer.list.size()-1))viewer.next.setVisible(false);
-				if(viewer.num.equals(0)) viewer.prev.setVisible(false);
-				viewer.show();
+
+				
 			}
 			@Override
 			public void onFailure(Throwable caught) {}

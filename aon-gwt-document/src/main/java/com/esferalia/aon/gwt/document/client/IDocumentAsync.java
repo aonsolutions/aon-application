@@ -1,13 +1,18 @@
 package com.esferalia.aon.gwt.document.client;
 
+import java.util.Hashtable;
+import java.util.List;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.document.shared.Document;
+import com.esferalia.aon.gwt.document.shared.Domain;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
 import com.esferalia.aon.gwt.document.shared.FilterUtil;
 import com.esferalia.aon.gwt.document.shared.Lists;
 import com.esferalia.aon.gwt.document.shared.SearchInfo;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
+import com.google.api.services.drive.model.File;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface IDocumentAsync {
@@ -24,7 +29,7 @@ public interface IDocumentAsync {
 	//void searchFile(SearchInfo si, Vector<FileInfo> files,
 		//	AsyncCallback<Vector<FileInfo>> callback);
 
-	void getSons(AsyncCallback<Vector<String>> callback);
+	void getSons(AsyncCallback<Vector<Domain>> callback);
 
 	void removeFile(FileInfo fi, AsyncCallback<Void> callback);
 
@@ -52,6 +57,12 @@ public interface IDocumentAsync {
 			Vector<FileInfo> allFiles, AsyncCallback<Vector<FileInfo>> callback);
 
 	void getAsHTML(FileInfo doc, int zoom, AsyncCallback<String> callback);
+
+	void drive(TreeMap<String, List<FileInfo>> folders,String id,AsyncCallback<TreeMap<String, List<FileInfo>>> callback);
+
+	void getRootId(AsyncCallback<String> callback);
+
+	void getDriveFiles(String id, AsyncCallback<Vector<FileInfo>> callback);
 
 
 
