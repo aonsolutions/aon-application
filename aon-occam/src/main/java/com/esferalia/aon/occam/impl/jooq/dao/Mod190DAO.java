@@ -804,16 +804,4 @@ public class Mod190DAO {
 		return irpfResult;
 	}
 	
-	public static void main(String[] args) throws ClassNotFoundException {
-		Class.forName( org.gjt.mm.mysql.Driver.class.getName() );		
-		AONContext ctx = AONContext.getAONContext("mac.ecastellano.dev", 536);
-		Mod190 mod190 = new Mod190();
-		mod190.setDomain(536);
-		mod190.setYear(2014);
-		mod190.setAdministration((byte) 4);
-		mod190.setName("M.A.C. Asesores y Consultores Integrales SL");
-		mod190.setDocument("B95363917");
-		mod190.setEnterprise(51332);
-		Mod190DAO.save(ctx, mod190);
-	}
 }
