@@ -155,7 +155,11 @@ public class ExpressionContext {
 
 		@Override
 		public T getValue() {
-			Period period = getPeriod();
+			return getValue(getPeriod());
+		}
+		
+		@Override
+		public T getValue(Period period) {
 			IExpression expression = getExpression();
 			throw new ExpressionExceptionWrapper(
 					new DeferredExpressionException(expression, period));
