@@ -6,15 +6,14 @@ import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.gwt.common.shared.FiscalParameters;
 import com.esferalia.aon.gwt.fiscal.shared.Activity;
 import com.esferalia.aon.gwt.fiscal.shared.Enterprise;
-import com.esferalia.aon.gwt.fiscal.shared.Mod190;
-import com.esferalia.aon.gwt.fiscal.shared.Mod190Detail;
-import com.esferalia.aon.gwt.fiscal.shared.Mod190Receiver;
 import com.esferalia.aon.gwt.fiscal.shared.Mod303Results;
 import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390Detail;
 import com.esferalia.aon.occam.api.model.Mod180;
 import com.esferalia.aon.occam.api.model.Mod180Detail;
+import com.esferalia.aon.occam.api.model.Mod190;
+import com.esferalia.aon.occam.api.model.Mod190Detail;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -36,21 +35,11 @@ public interface FiscalService extends RemoteService {
 	ArrayList<Activity> getActivities(int activityGroup) throws AonSQLException;
 	
 	// ---------------------------------------------------------------MODELO 190
-	void deleteMod190(Mod190 mod190) throws AonSQLException;
-
-	Mod190 saveMod190(Mod190 mod190) throws AonSQLException;
-
-	Mod190 saveMod190(Mod190 mod190, ArrayList<Mod190Receiver> perceptors)
-			throws AonSQLException;
-
-	ArrayList<Mod190> getMod190s(int domain) throws AonSQLException;
-
-	Mod190 getMod190(Integer id) throws AonSQLException;
-
-	ArrayList<Mod190Detail> getMod190DetailByMod190(int mod190, int offset,
-			int limit) throws AonSQLException;
-
-	Mod190Receiver getMod190Detail(Integer id) throws AonSQLException;
+	void deleteMod190(String domainName, int domain,Mod190 mod190) throws AonSQLException;
+	Mod190 saveMod190(String domainName, int domain,Mod190 mod190) throws AonSQLException;
+	ArrayList<Mod190> getMod190s(String domainName, int domain) throws AonSQLException;
+	Mod190 getMod190(String domainName, int domain,Integer id) throws AonSQLException;
+	Mod190Detail getMod190Detail(String domainName, int domain,Integer id) throws AonSQLException;
 
 	// ---------------------------------------------------------------MODELO 180
 	void deleteMod180(String domainName, int domain,Mod180 mod180) throws AonSQLException;

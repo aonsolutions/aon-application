@@ -21,11 +21,11 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Model180Detail2013 extends ResizeComposite {
+public class Model180Detail2014 extends ResizeComposite {
 
-	interface Model180Detail2013Binder extends UiBinder<Widget, Model180Detail2013> {}
-	private static Model180Detail2013Binder MODEL180_DETAIL_2013_BINDER 
-		= GWT.create(Model180Detail2013Binder.class);
+	interface Model180Detail2014Binder extends UiBinder<Widget, Model180Detail2014> {}
+	private static Model180Detail2014Binder MODEL180_DETAIL_2014_BINDER 
+		= GWT.create(Model180Detail2014Binder.class);
 
 	static interface ICallBack {
 		void redrawList( Mod180Detail detail);
@@ -96,8 +96,8 @@ public class Model180Detail2013 extends ResizeComposite {
 	TextBox zip;
 	
 	
-	public Model180Detail2013() {
-		Widget ui = MODEL180_DETAIL_2013_BINDER.createAndBindUi(this);
+	public Model180Detail2014() {
+		Widget ui = MODEL180_DETAIL_2014_BINDER.createAndBindUi(this);
 		initWidget(ui);
 		location.addItem( MSG.buildingLocationValue(0) );
 		location.addItem( MSG.buildingLocationValue(1) );	

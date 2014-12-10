@@ -29,19 +29,17 @@ import com.esferalia.aon.gwt.fiscal.server.Activities.Type7Activities;
 import com.esferalia.aon.gwt.fiscal.server.Activities.TypeActivity;
 import com.esferalia.aon.gwt.fiscal.shared.Activity;
 import com.esferalia.aon.gwt.fiscal.shared.Enterprise;
-import com.esferalia.aon.gwt.fiscal.shared.Mod190;
-import com.esferalia.aon.gwt.fiscal.shared.Mod190Detail;
-import com.esferalia.aon.gwt.fiscal.shared.Mod190Receiver;
 import com.esferalia.aon.gwt.fiscal.shared.Mod303Results;
 import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390Detail;
 import com.esferalia.aon.gwt.fiscal.sql.SQLEnterprise;
-import com.esferalia.aon.gwt.fiscal.sql.SQLMod190;
 import com.esferalia.aon.gwt.fiscal.sql.SQLMod390;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Mod180;
 import com.esferalia.aon.occam.api.model.Mod180Detail;
+import com.esferalia.aon.occam.api.model.Mod190;
+import com.esferalia.aon.occam.api.model.Mod190Detail;
 
 /**
  * The server side implementation of the RPC service.
@@ -123,159 +121,30 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements
 	
 	// ---------------------------------------------------------------MODELO 190
 	@Override
-	public void deleteMod190(Mod190 mod190) throws AonSQLException {
-		Connection conn = null;
-		try {
-			conn = getConnection();
-			disableAutoCommit(conn);
-			SQLMod190.delete(conn, mod190);
-			commit(conn);
-		} catch (AonSQLException e) {
-			rollback(conn);
-			throw e;
-		} catch (Throwable e) {
-			rollback(conn);
-			throw new AonSQLException(e);
-		} finally {
-			enableAutoCommit(conn);
-			SQLUtils.closeQuietly(conn);
-		}
+	public ArrayList<Mod190> getMod190s(String domainName, int domain) {
+		return AON.getMod190s(domainName, domain);
 	}
 
 	@Override
-	public Mod190 saveMod190(Mod190 mod190) throws AonSQLException {
-		Connection conn = null;
-		try {
-			conn = getConnection();
-			disableAutoCommit(conn);
-			Mod190 ret = SQLMod190.save(conn, mod190);
-			commit(conn);
-			return ret;
-		} catch (AonSQLException e) {
-			rollback(conn);
-			throw e;
-		} catch (Throwable e) {
-			rollback(conn);
-			throw new AonSQLException(e);
-		} finally {
-			enableAutoCommit(conn);
-			SQLUtils.closeQuietly(conn);
-		}
+	public void deleteMod190(String domainName, int domain, Mod190 mod190) throws AonSQLException {
+		AON.deleteMod190(domainName, domain, mod190);
 	}
 
 	@Override
-	public Mod190 saveMod190(Mod190 mod190, ArrayList<Mod190Receiver> perceptors)
-			throws AonSQLException {
-		Connection conn = null;
-		try {
-			conn = getConnection();
-			disableAutoCommit(conn);
-			Mod190 ret = SQLMod190.save(conn, mod190, perceptors);
-			commit(conn);
-			return ret;
-		} catch (AonSQLException e) {
-			rollback(conn);
-			throw e;
-		} catch (Throwable e) {
-			rollback(conn);
-			throw new AonSQLException(e);
-		} finally {
-			enableAutoCommit(conn);
-			SQLUtils.closeQuietly(conn);
-		}
+	public Mod190 saveMod190(String domainName, int domain,Mod190 mod190) throws AonSQLException {
+		return AON.saveMod190(domainName, domain, mod190);
+	}
+
+
+	@Override
+	public Mod190 getMod190(String domainName, int domain, Integer id) {
+		return AON.getMod190(domainName, domain, id);
 	}
 
 	@Override
-	public ArrayList<Mod190> getMod190s(int domain)
-			throws AonSQLException {
-		Connection conn = null;
-		ArrayList<Mod190> list = null;
-		try {
-			conn = getConnection();
-			disableAutoCommit(conn);
-			list = SQLMod190.getByDomain(domain, conn);
-			commit(conn);
-			return list;
-		} catch (AonSQLException e) {
-			rollback(conn);
-			throw e;
-		} catch (Throwable e) {
-			rollback(conn);
-			throw new AonSQLException(e);
-		} finally {
-			enableAutoCommit(conn);
-			SQLUtils.closeQuietly(conn);
-		}
+	public Mod190Detail getMod190Detail(String domainName, int domain, Integer id) {
+		return AON.getMod190Detail(domainName, domain, id);
 	}
-
-	@Override
-	public Mod190 getMod190(Integer id) throws AonSQLException {
-		Connection conn = null;
-		Mod190 mod190 = null;
-		try {
-			conn = getConnection();
-			disableAutoCommit(conn);
-			mod190 = SQLMod190.getById(id, conn);
-			commit(conn);
-			return mod190;
-		} catch (AonSQLException e) {
-			rollback(conn);
-			throw e;
-		} catch (Throwable e) {
-			rollback(conn);
-			throw new AonSQLException(e);
-		} finally {
-			enableAutoCommit(conn);
-			SQLUtils.closeQuietly(conn);
-		}
-	}
-
-	@Override
-	public ArrayList<Mod190Detail> getMod190DetailByMod190(int mod190,
-			int offset, int limit) throws AonSQLException {
-		Connection conn = null;
-		ArrayList<Mod190Detail> list = null;
-		try {
-			conn = getConnection();
-			disableAutoCommit(conn);
-			list = SQLMod190.getDetailsByMod190(mod190, offset, limit, conn);
-			commit(conn);
-			return list;
-		} catch (AonSQLException e) {
-			rollback(conn);
-			throw e;
-		} catch (Throwable e) {
-			rollback(conn);
-			throw new AonSQLException(e);
-		} finally {
-			enableAutoCommit(conn);
-			SQLUtils.closeQuietly(conn);
-		}
-	}
-
-	@Override
-	public Mod190Receiver getMod190Detail(Integer id)
-			throws AonSQLException {
-		Connection conn = null;
-		Mod190Receiver perceptor = null;
-		try {
-			conn = getConnection();
-			disableAutoCommit(conn);
-			perceptor = SQLMod190.getDetailById(id, conn);
-			commit(conn);
-			return perceptor;
-		} catch (AonSQLException e) {
-			rollback(conn);
-			throw e;
-		} catch (Throwable e) {
-			rollback(conn);
-			throw new AonSQLException(e);
-		} finally {
-			enableAutoCommit(conn);
-			SQLUtils.closeQuietly(conn);
-		}
-	}
-
 
 	// ---------------------------------------------------------------MODELO 180
 	@Override

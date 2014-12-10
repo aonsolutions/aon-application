@@ -17,7 +17,7 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
-import com.esferalia.aon.gwt.fiscal.client.mod180.Model180Detail2013.ICallBack;
+import com.esferalia.aon.gwt.fiscal.client.mod180.Model180Detail2014.ICallBack;
 import com.esferalia.aon.gwt.fiscal.client.widget.EnterpriseSuggestBox;
 import com.esferalia.aon.occam.api.model.Mod180;
 import com.esferalia.aon.occam.api.model.Mod180Detail;
@@ -115,7 +115,7 @@ public class Model180 extends MainEntryPoint {
 	@UiField
 	ShowMorePagerPanel pagerPanel;
 	@UiField
-	Model180Detail2013 perceptorPanel;
+	Model180Detail2014 perceptorPanel;
 
 	@UiField
 	Button saveButton;
@@ -174,11 +174,8 @@ public class Model180 extends MainEntryPoint {
 		table = new Model180Table(new Mod180SelectionHandler());
 
 		Mod180DetailCell mod180DetailCell = new Mod180DetailCell();
-
 		CellList.Resources cellListStyle = GWT.create(AonCellList.class);
-		detailList = new CellList<Mod180Detail>(mod180DetailCell,cellListStyle
-				, MOD180_DETAIL_PROVIDES_KEY);
-
+		detailList = new CellList<Mod180Detail>(mod180DetailCell,cellListStyle, MOD180_DETAIL_PROVIDES_KEY);
 		detailList.setStylePrimaryName(DATA_GRID_STYLE.dataGridStyle().dataGridWidget());
 		detailList.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
 		detailList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);

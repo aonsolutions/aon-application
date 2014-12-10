@@ -14,6 +14,8 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Mod180;
 import com.esferalia.aon.occam.api.model.Mod180Detail;
+import com.esferalia.aon.occam.api.model.Mod190;
+import com.esferalia.aon.occam.api.model.Mod190Detail;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AppParam;
@@ -162,7 +164,7 @@ public class AON {
 	}
 
 	// ********************************************
-	// ********************************** COMMON **
+	// ********************************** FISCAL **
 	// ********************************************
 
 	// ----------------------------------MODELO 180
@@ -182,4 +184,22 @@ public class AON {
 	public static Mod180Detail getMod180Detail(String domainName, int domainId,Integer id) {
 		return getFiscal().getMod180Detail(AONContext.getAONContext(domainName, domainId),id);
 	}
+	// ----------------------------------MODELO 190
+	public static ArrayList<Mod190> getMod190s(String domainName, int domainId) {
+		return getFiscal().getMod190s(AONContext.getAONContext(domainName, domainId),domainId);
+	}
+	public static Mod190 getMod190(String domainName, int domainId,Integer id) {
+		return getFiscal().getMod190(AONContext.getAONContext(domainName, domainId),id);
+	}
+	
+	public static Mod190 saveMod190(String domainName, int domainId,Mod190 mod190) {
+		return getFiscal().saveMod190(AONContext.getAONContext(domainName, domainId), mod190);
+	}
+	public static void deleteMod190(String domainName, int domainId,Mod190 mod190) {
+		getFiscal().deleteMod190(AONContext.getAONContext(domainName, domainId), mod190);
+	}
+	public static Mod190Detail getMod190Detail(String domainName, int domainId,Integer id) {
+		return getFiscal().getMod190Detail(AONContext.getAONContext(domainName, domainId),id);
+	}
+	
 }

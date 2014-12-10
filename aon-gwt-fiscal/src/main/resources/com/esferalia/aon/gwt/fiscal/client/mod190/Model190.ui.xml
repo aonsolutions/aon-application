@@ -7,14 +7,9 @@
 	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'>
 
 	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
-
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+	
 	<ui:style>
-		.inner-label {
-			font-style: italic;
-			margin-left: 5px;
-			margin-right: 5px;
-			display: inline;
-		}
 		
 		.scrollable {
 			height: 100%;
@@ -23,38 +18,11 @@
 			text-align: left;
 		}
 		
-		.perception-label {
-			font-weight: bold;
-			text-decoration: underline;
-		}
-		
-		.perceptor-group-label {
-			font-weight: bold;
-			font-size: 0.9em;
-			border-bottom: 1px solid #CCCCCC;
-		}
-		
-		.perceptor-label {
-			padding-right: 2px;
-			font-size: 0.9em;
-			text-align: center;
-		}
-		
-		.div-amounts-caption {
-			font-size: 0.9em;
-			padding-left: 2px;
-			font-weight: bold;
-		}
-		
 		.newDetailButton {
 			background-color: rgba(0, 0, 0, 0);
 			border: 0 none;
 			cursor: pointer;
 			min-height: 16px;
-		}
-		
-		.detailToolbar {
-			height: 20px;
 		}
 	</ui:style>
 
@@ -98,81 +66,77 @@
 		<g:center>
 			<g:DeckLayoutPanel ui:field="deckPanel">
 				<g:DockLayoutPanel ui:field="formPanel" unit="PX">
-					<g:north size="125">
+					<g:north size="130">
 						<g:HTMLPanel styleName="aon-scroll-area">
 							<g:HorizontalPanel ui:field='messagesPanel'/>
 							<table class="aon-panelGrid aon-margin-top aon-width-all">
 								<colgroup>
-									<col style="width: 100px;" />
-									<col style="width: auto;" />
+									<col style="width: 120px;" />
+									<col style="width: 180px;" />
+									<col style="width: 110px;" />
+									<col style="width: 120px;" />
+									<col style="width: 110px;" />
+									<col style="width: 120px;" />
+									<col style="width: auto; white-space: nowrap;" />
 								</colgroup>
 								<tr>
 									<td class="aon-panelGrid-odd">
 										<g:Label text="{msg.deponentData}" />
 									</td>
-									<td class="aon-panelGrid-even">
+									<td class="aon-panelGrid-even" colspan="6">
 										<fiscal:EnterpriseSuggestBox ui:field="enterpriseSuggest" />
 									</td>
 								</tr>
-							</table>
-							<table class="aon-panelGrid aon-width-all">
-								<colgroup>
-									<col style="width: 100px;" />
-									<col style="width: 75px;" />
-									<col style="width: 100px;" />
-									<col style="width: 150px;" />
-									<col style="width: 100px;" />
-									<col style="width: 100px;" />
-									<col style="width: auto; white-space: nowrap;" />
-								</colgroup>
+								
 								<tr>
 									<td class="aon-panelGrid-odd">
 										<g:Label text="{msg.fiscalYear}" />
 									</td>
-									<td class="aon-panelGrid-even">
-										<g:TextBox maxLength="4" visibleLength="4" ui:field="year"></g:TextBox>
+									<td class="aon-panelGrid-even aon-nowrap">
+										<g:TextBox maxLength="4" visibleLength="4" ui:field="year" styleName="aon-inputText"/>
+										<g:CheckBox ui:field="confidential" text="{msg.confidential}" />
 									</td>
 									<td class="aon-panelGrid-odd">
 										<g:Label text="{msg.administration}" />
 									</td>
-									<td class="aon-panelGrid-even aon-nowrap">
+									<td class="aon-panelGrid-even">
 										<aon:AdministrationListBox ui:field="administration" />
 									</td>
-									<td class="aon-panelGrid-even aon-nowrap">
-										<g:CheckBox ui:field="confidential" text="{msg.confidential}" />
-										<g:CheckBox ui:field="replacement" text="{msg.replacement}" />
-									</td>
-									<td class="aon-panelGrid-odd">
-										<g:Label text="{msg.contactPerson}" />
-									</td>
-									<td class="aon-panelGrid-even aon-nowrap">
-										<g:Label text="{msg.phone}" styleName="{style.inner-label}" />
-										<g:TextBox visibleLength="10" ui:field="contactPhone" />
-										<g:Label text="{msg.contactPerson}" styleName="{style.inner-label}" />
-										<g:TextBox visibleLength="30" ui:field="contactPerson" />
-									</td>
-								</tr>
-								<tr>
 									<td class="aon-panelGrid-odd">
 										<g:Label text="{msg.receipt}" />
 									</td>
-									<td class="aon-panelGrid-even" colspan="2">
-										<g:TextBox visibleLength="13" ui:field="receipt" />
+									<td class="aon-panelGrid-even">
+										<g:TextBox visibleLength="13" ui:field="receipt" styleName="aon-inputText"/>
 									</td>
-									<td class="aon-panelGrid-odd" rowspan="2">
-										<g:Label text="{msg.comments}" />
+									<td class="aon-panelGrid-even aon-nowrap">
+										<g:HorizontalPanel>
+											<g:CheckBox ui:field="replacement" text="{msg.replacement}" />
+											<g:FlowPanel ui:field="replacementPanel">
+												<g:InlineLabel text="{msg.replacedReceipt}" styleName="{aonResources.css.aonInnerLabel}"/>
+												<g:TextBox visibleLength="13" ui:field="replacedReceipt" styleName="aon-inputText"/>
+											</g:FlowPanel>
+										</g:HorizontalPanel>
 									</td>
-									<td class="aon-panelGrid-even" rowspan="2" colspan="3">
-										<g:TextArea visibleLines="1" characterWidth="80"
-											ui:field="comments"></g:TextArea>
+								</tr>
+								
+								<tr>
+									<td class="aon-panelGrid-odd">
+										<g:Label text="{msg.contactPerson}" />
+									</td>
+									<td class="aon-panelGrid-even aon-nowrap" colspan="6">
+										<g:InlineLabel text="{msg.phone}" styleName="{aonResources.css.aonInnerLabel}" />
+										<g:TextBox visibleLength="10" ui:field="contactPhone" styleName="aon-inputText"/>
+										<g:InlineLabel text="{msg.contactPerson}" styleName="{aonResources.css.aonInnerLabel}" />
+										<g:TextBox visibleLength="30" ui:field="contactPerson" styleName="aon-inputText"/>
 									</td>
 								</tr>
 								<tr>
 									<td class="aon-panelGrid-odd">
-										<g:Label text="{msg.replacedReceipt}" />
+										<g:Label text="{msg.comments}" />
 									</td>
-									<td class="aon-panelGrid-even" colspan="2">
-										<g:TextBox visibleLength="13" ui:field="replacedReceipt" />
+									<td class="aon-panelGrid-even" colspan="6">
+										<g:TextArea visibleLines="1" characterWidth="80"
+											ui:field="comments" styleName="aon-inputText"/>
 									</td>
 								</tr>
 							</table>
@@ -202,494 +166,12 @@
 						</g:HTMLPanel>
 					</g:west>
 					<g:center>
-						<g:ScrollPanel ui:field="perceptorPanel" styleName="aon-scroll-area">
-							<g:VerticalPanel>
-								<g:FlowPanel
-									styleName="aon-finding-title-toolbar aon-width-all gwt-MenuBar-horizontal {style.detailToolbar}">
-									<g:Button ui:field='deleteDetailButton'
-										styleName='aon-finding-toolbar-item aon-icon-delete' text="{msg.deleteAction}" />
-									<g:Button ui:field='restoreDeletedButton'
-										styleName='aon-finding-toolbar-item aon-icon-refresh' text="{msg.restoreAction}" />
-								</g:FlowPanel>
-								<g:HTMLPanel>
-									<table>
-										<tr>
-											<td class="{style.perceptor-label}">
-												<g:Label text="{msg.receiverDocument}" />
-											</td>
-											<td class="{style.perceptor-label}">
-												<g:Label text="{msg.representativeDocument}" />
-											</td>
-											<td class="{style.perceptor-label}">
-												<g:Label text="{msg.fullName}" />
-											</td>
-											<td class="{style.perceptor-label}">
-												<g:Label text="{msg.province}" />
-											</td>
-										</tr>
-										<tr>
-											<td>
-												<aon:DocumentTextBox ui:field="receiverDocument" />
-											</td>
-											<td>
-												<aon:DocumentTextBox ui:field="representativeDocument" />
-											</td>
-											<td>
-												<g:TextBox maxLength="40" visibleLength="40"
-													ui:field="fullName" />
-											</td>
-											<td>
-												<aon:ProvinceListBox ui:field="province" />
-											</td>
-										</tr>
-									</table>
-
-									<table>
-										<tr>
-											<td class="{style.perception-label}" colspan="5">
-												<g:Label text="{msg.perceptionData}" />
-											</td>
-											<td class="{style.perceptor-label}">
-												<g:Label text="{msg.perception}" />
-											</td>
-											<td class="{style.perceptor-label}">
-												<g:Label text="{msg.retention}" />
-											</td>
-											<td>
-											</td>
-											<td class="{style.perceptor-label}">
-												<g:Label text="{msg.accrualYear}" />
-											</td>
-										</tr>
-										<tr>
-											<td class="{style.perceptor-label}" rowspan="3">
-												<g:Label text="{msg.key}" />
-											</td>
-											<td rowspan="3">
-												<m190:Model190.KeyListBox ui:field="key" />
-											</td>
-											<td class="{style.perceptor-label}" rowspan="3">
-												<g:Label text="{msg.subkey}" />
-											</td>
-											<td rowspan="3">
-												<g:ListBox ui:field="subkey" />
-											</td>
-											<td>
-												<g:Label text="{msg.money}" styleName="{style.div-amounts-caption}" />
-											</td>
-											<td>
-												<aon:DoubleTextBox ui:field="perception" />
-											</td>
-											<td>
-												<aon:DoubleTextBox ui:field="retention" />
-											</td>
-											<td>
-											</td>
-											<td>
-												<aon:IntegerTextBox maxLength="4"
-													visibleLength="4" ui:field="accrualYear" />
-											</td>
-										</tr>
-										<tr>
-											<td>
-											</td>
-											<td class="{style.perceptor-label}">
-												<g:Label text="{msg.inKindPerception}" />
-											</td>
-											<td class="{style.perceptor-label}">
-												<g:Label text="{msg.inKindDeposit}" />
-											</td>
-											<td class="{style.perceptor-label}">
-												<g:Label text="{msg.inKindOutputDeposit}" />
-											</td>
-											<td class="{style.perceptor-label}">
-												<g:Label text="{msg.ceutaMelillaAbbrv}" />
-											</td>
-										</tr>
-										<tr>
-											<td>
-												<g:Label text="{msg.inKind}" styleName="{style.div-amounts-caption}" />
-											</td>
-											<td>
-												<aon:DoubleTextBox ui:field="inKindPerception" />
-											</td>
-											<td>
-												<aon:DoubleTextBox ui:field="inKindDeposit" />
-											</td>
-											<td>
-												<aon:DoubleTextBox ui:field="inKindOutputDeposit" />
-											</td>
-											<td class="aon-text-center">
-												<g:CheckBox ui:field="ceutaMelilla" />
-											</td>
-										</tr>
-									</table>
-									<g:HTMLPanel ui:field="additionalDataPanel">
-										<table>
-											<tr>
-												<td class="{style.perception-label}" colspan="14">
-													<g:Label text="{msg.additionalData}" />
-												</td>
-											</tr>
-											<tr>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.birthYear}" />
-												</td>
-												<td>
-													<aon:IntegerTextBox maxLength="4"
-														visibleLength="4" ui:field="birthYear" />
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.familySituation}" />
-												</td>
-												<td>
-													<g:ListBox width="40px" ui:field="familySituation" />
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.spouseDocument}" />
-												</td>
-												<td>
-													<aon:DocumentTextBox ui:field="spouseDocument" />
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.disability}" />
-												</td>
-												<td>
-													<g:ListBox width="40px" ui:field="disability" />
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.contract}" />
-												</td>
-												<td>
-													<g:ListBox width="40px" ui:field="contract" />
-												</td>
-											</tr>
-										</table>
-
-										<table>
-											<tr>
-												<td class="{style.perceptor-label}">
-													<g:CheckBox ui:field="workActivityExtension"
-														text="{msg.workActivityExtension}" />
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:CheckBox ui:field="geographicMobility" text="{msg.geographicMobility}" />
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:CheckBox ui:field="homeLoanCommunnication"
-														text="{msg.homeLoanCommunnication}" />
-												</td>
-											</tr>
-										</table>
-
-										<table>
-											<colgroup>
-												<col style="width: 150px;" />
-												<col style="width: 150px;" />
-												<col style="width: 150px;" />
-												<col style="width: 150px;" />
-												<col style="width: auto;" />
-											</colgroup>
-											<tr>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.applicableReduction}" />
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.deducibleExpense}" />
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.compensatoryPension}" />
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.foodAnnuality}" />
-												</td>
-												<td>
-												</td>
-											</tr>
-											<tr>
-												<td class="aon-text-center">
-													<aon:DoubleTextBox ui:field="applicableReduction" />
-												</td>
-												<td class="aon-text-center">
-													<aon:DoubleTextBox ui:field="deducibleExpense" />
-												</td>
-												<td class="aon-text-center">
-													<aon:DoubleTextBox ui:field="compensatoryPension" />
-												</td>
-												<td class="aon-text-center">
-													<aon:DoubleTextBox ui:field="foodAnnuality" />
-												</td>
-											</tr>
-										</table>
-										<table>
-											<tr>
-												<td class="{style.perceptor-group-label}" colspan="10">
-													<g:Label text="{msg.descendant}" />
-												</td>
-											</tr>
-											<tr>
-												<td>
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.total}" />
-												</td>
-												<td class="{style.perceptor-label} aon-nowrap">
-													<g:Label text="{msg.byInteger}" />
-												</td>
-												<td>
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.total}" />
-												</td>
-												<td class="{style.perceptor-label} aon-nowrap">
-													<g:Label text="{msg.byInteger}" />
-												</td>
-												<td>
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.first}" />
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.second}" />
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.third}" />
-												</td>
-											</tr>
-											<tr>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.lessThan3}" />
-												</td>
-												<td>
-													<aon:IntegerTextBox maxLength="1"
-														visibleLength="1" ui:field="lessThan3Descendent" />
-												</td>
-												<td>
-													<aon:IntegerTextBox maxLength="1"
-														visibleLength="1" ui:field="lessThan3DescendentRatio" />
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.remainder}" />
-												</td>
-												<td>
-													<aon:IntegerTextBox maxLength="2"
-														visibleLength="2" ui:field="otherDescendent" />
-												</td>
-												<td>
-													<aon:IntegerTextBox maxLength="2"
-														visibleLength="2" ui:field="otherDescendentRatio" />
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.first3Calculation}" />
-												</td>
-												<td>
-													<g:ListBox width="40px" ui:field="firstChildCalculation" />
-												</td>
-												<td>
-													<g:ListBox width="40px" ui:field="secondChildCalculation" />
-												</td>
-												<td>
-													<g:ListBox width="40px" ui:field="thirdChildCalculation" />
-												</td>
-											</tr>
-										</table>
-
-
-										<table>
-											<tr>
-												<td class="{style.perceptor-group-label}" colspan="9">
-													<g:Label text="{msg.disabilityDescendant}" />
-												</td>
-											</tr>
-											<tr>
-												<td>
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.total}" />
-												</td>
-												<td class="{style.perceptor-label} aon-nowrap">
-													<g:Label text="{msg.byInteger}" />
-												</td>
-												<td>
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.total}" />
-												</td>
-												<td class="{style.perceptor-label} aon-nowrap">
-													<g:Label text="{msg.byInteger}" />
-												</td>
-												<td>
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.total}" />
-												</td>
-												<td class="{style.perceptor-label} aon-nowrap">
-													<g:Label text="{msg.byInteger}" />
-												</td>
-											</tr>
-											<tr>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.moreThan33lessThan65}" />
-												</td>
-												<td>
-													<aon:IntegerTextBox maxLength="2"
-														visibleLength="2" ui:field="disabilityDescendent33" />
-												</td>
-												<td>
-													<aon:IntegerTextBox maxLength="2"
-														visibleLength="2" ui:field="disabilityDescendent33Ratio" />
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.reducedMovilitiy}" />
-												</td>
-												<td>
-													<aon:IntegerTextBox maxLength="2"
-														visibleLength="2" ui:field="disabilityDescendentDependence" />
-												</td>
-												<td>
-													<aon:IntegerTextBox maxLength="2"
-														visibleLength="2" ui:field="disabilityDescendentDependenceRatio" />
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.moreThan65}" />
-												</td>
-												<td>
-													<aon:IntegerTextBox maxLength="2"
-														visibleLength="2" ui:field="disabilityDescendent65" />
-												</td>
-												<td>
-													<aon:IntegerTextBox maxLength="2"
-														visibleLength="2" ui:field="disabilityDescendent65Ratio" />
-												</td>
-											</tr>
-										</table>
-										<table>
-											<tr>
-												<td class="{style.perceptor-group-label}" colspan="6">
-													<g:Label text="{msg.ascendant}" />
-												</td>
-											</tr>
-											<tr>
-												<td>
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.total}" />
-												</td>
-												<td class="{style.perceptor-label} aon-nowrap">
-													<g:Label text="{msg.byInteger}" />
-												</td>
-												<td>
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.total}" />
-												</td>
-												<td class="{style.perceptor-label} aon-nowrap">
-													<g:Label text="{msg.byInteger}" />
-												</td>
-											</tr>
-											<tr>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.lessThan75}" />
-												</td>
-												<td>
-													<aon:IntegerTextBox maxLength="1"
-														visibleLength="1" ui:field="lessThan75Ascendant" />
-												</td>
-												<td>
-													<aon:IntegerTextBox maxLength="1"
-														visibleLength="1" ui:field="lessThan75AscendantRatio" />
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.greatherThan75}" />
-												</td>
-												<td>
-													<aon:IntegerTextBox maxLength="1"
-														visibleLength="1" ui:field="ascendant" />
-												</td>
-												<td>
-													<aon:IntegerTextBox maxLength="1"
-														visibleLength="1" ui:field="ascendantRatio" />
-												</td>
-											</tr>
-										</table>
-										<table>
-											<tr>
-												<td class="{style.perceptor-group-label}" colspan="9">
-													<g:Label text="{msg.disabilityAscendant}" />
-												</td>
-											</tr>
-											<tr>
-												<td>
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.total}" />
-												</td>
-												<td class="{style.perceptor-label} aon-nowrap">
-													<g:Label text="{msg.byInteger}" />
-												</td>
-												<td>
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.total}" />
-												</td>
-												<td class="{style.perceptor-label} aon-nowrap">
-													<g:Label text="{msg.byInteger}" />
-												</td>
-												<td>
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.total}" />
-												</td>
-												<td class="{style.perceptor-label} aon-nowrap">
-													<g:Label text="{msg.byInteger}" />
-												</td>
-											</tr>
-											<tr>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.moreThan33lessThan65}" />
-												</td>
-												<td>
-													<aon:IntegerTextBox maxLength="1"
-														visibleLength="1" ui:field="disabilityAscendant33" />
-												</td>
-												<td>
-													<aon:IntegerTextBox maxLength="1"
-														visibleLength="1" ui:field="disabilityAscendant33Ratio" />
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.reducedMovilitiy}" />
-												</td>
-												<td>
-													<aon:IntegerTextBox maxLength="1"
-														visibleLength="1" ui:field="disabilityAscendantDependence" />
-												</td>
-												<td>
-													<aon:IntegerTextBox maxLength="1"
-														visibleLength="1" ui:field="disabilityAscendantDependenceRatio" />
-												</td>
-												<td class="{style.perceptor-label}">
-													<g:Label text="{msg.moreThan65}" />
-												</td>
-												<td>
-													<aon:IntegerTextBox maxLength="1"
-														visibleLength="1" ui:field="disabilityAscendant65" />
-												</td>
-												<td>
-													<aon:IntegerTextBox maxLength="1"
-														visibleLength="1" ui:field="disabilityAscendant65Ratio" />
-												</td>
-											</tr>
-										</table>
-									</g:HTMLPanel>
-								</g:HTMLPanel>
-							</g:VerticalPanel>
-						</g:ScrollPanel>
+						<m190:Model190Detail2014 ui:field="perceptorPanel"/>
 					</g:center>
 				</g:DockLayoutPanel>
 
 				<g:ScrollPanel ui:field="listPanel" styleName="aon-scroll-area">
-					<!-- here will be inserted de CellTable -->
-					<cell:CellTable ui:field="table" />
+					<m190:Model190Table ui:field="table" />
 				</g:ScrollPanel>
 			</g:DeckLayoutPanel>
 		</g:center>

@@ -1,9 +1,12 @@
-package com.esferalia.aon.gwt.fiscal.shared;
+package com.esferalia.aon.occam.api.model;
 
+import java.io.Serializable;
 
 @SuppressWarnings("serial")
-public class Mod190Receiver extends Mod190Detail {
-	
+public class Mod190Detail implements Serializable {
+
+	private Integer id;
+	private String name;
 	private int domain;
 	private int mod190;
 
@@ -23,7 +26,25 @@ public class Mod190Receiver extends Mod190Detail {
 	private IrpfData irpfData;
 	private IrpfResult irpfResult;
 
-	
+	private boolean dirty;
+	private boolean deleted;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public int getDomain() {
 		return domain;
 	}
@@ -135,7 +156,7 @@ public class Mod190Receiver extends Mod190Detail {
 	public void setIrpfData(IrpfData irpfData) {
 		this.irpfData = irpfData;
 	}
-	
+
 	public IrpfResult getIrpfResult() {
 		return irpfResult;
 	}
@@ -143,6 +164,19 @@ public class Mod190Receiver extends Mod190Detail {
 	public void setIrpfResult(IrpfResult irpfResult) {
 		this.irpfResult = irpfResult;
 	}
+	public boolean isDirty() {
+		return dirty;
+	}
 
+	public void setDirty(boolean dirty) {
+		this.dirty = dirty;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
 }
-

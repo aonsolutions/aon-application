@@ -108,11 +108,13 @@
 										<g:TextBox visibleLength="13" ui:field="receipt" styleName="aon-inputText"/>
 									</td>
 									<td class="aon-panelGrid-even aon-nowrap">
-										<g:CheckBox ui:field="replacement" text="{msg.replacement}" />
-										<g:FlowPanel ui:field="replacementPanel">
-											<g:InlineLabel text="{msg.replacedReceipt}" styleName="{aonResources.css.aonInnerLabel}"/>
-											<g:TextBox visibleLength="13" ui:field="replacedReceipt" styleName="aon-inputText"/>
-										</g:FlowPanel>
+										<g:HorizontalPanel>
+											<g:CheckBox ui:field="replacement" text="{msg.replacement}" />
+											<g:FlowPanel ui:field="replacementPanel">
+												<g:InlineLabel text="{msg.replacedReceipt}" styleName="{aonResources.css.aonInnerLabel}"/>
+												<g:TextBox visibleLength="13" ui:field="replacedReceipt" styleName="aon-inputText"/>
+											</g:FlowPanel>
+										</g:HorizontalPanel>
 									</td>
 								</tr>
 								
@@ -163,7 +165,7 @@
 						</g:HTMLPanel>
 					</g:west>
 					<g:center>
-						<m180:Model180Detail2013 ui:field="perceptorPanel"/>
+						<m180:Model180Detail2014 ui:field="perceptorPanel"/>
 					</g:center>
 				</g:DockLayoutPanel>
 

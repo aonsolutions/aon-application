@@ -1,25 +1,16 @@
-package com.esferalia.aon.gwt.fiscal.shared;
+package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
-
-import com.google.gwt.user.client.rpc.IsSerializable;
-import com.google.gwt.view.client.ProvidesKey;
+import java.util.ArrayList;
 
 @SuppressWarnings("serial")
-public class Mod190 implements Serializable, IsSerializable {
-
-	public static final ProvidesKey<Mod190> PROVIDES_KEY = new ProvidesKey<Mod190>() {
-		@Override
-		public Object getKey(Mod190 mod190) {
-			return mod190 == null ? null : mod190.getId();
-		}
-	};
+public class Mod190 implements Serializable {
 
 	private Integer id;
 	private int domain;
 	private int enterprise;
 	private int year;
-	private int administration;
+	private byte administration;
 	private boolean confidential;
 	private boolean replacement;
 	private String receipt;
@@ -32,11 +23,8 @@ public class Mod190 implements Serializable, IsSerializable {
 	private int receiverCountTotal;
 	private double receiptTotal;
 	private double retentionTotal;
-
-	// private boolean status;
-	// private boolean complementary;
-	// private int number;
-	// private int replaced_number;
+	
+	private ArrayList<Mod190Detail> details;
 
 	public Integer getId() { 
 		return id;
@@ -70,11 +58,11 @@ public class Mod190 implements Serializable, IsSerializable {
 		this.year = year;
 	}
 
-	public int getAdministration() {
+	public byte getAdministration() {
 		return administration;
 	}
 
-	public void setAdministration(int administration) {
+	public void setAdministration(byte administration) {
 		this.administration = administration;
 	}
 
@@ -174,6 +162,15 @@ public class Mod190 implements Serializable, IsSerializable {
 		this.retentionTotal = retentionTotal;
 	}
 
-	// ------------------------------------------------------------ Ops. Methods
+	public ArrayList<Mod190Detail> getDetails() {
+		if (details == null) {
+			details = new ArrayList<Mod190Detail>();
+		}
+		return details;
+	}
+
+	public void setDetails(ArrayList<Mod190Detail> details) {
+		this.details = details;
+	}
 
 }

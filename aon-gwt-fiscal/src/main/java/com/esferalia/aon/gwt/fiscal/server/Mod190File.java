@@ -23,8 +23,8 @@ import com.code.aon.file.format.output.FileOutput;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.gwt.common.sql.SQLUtils;
 import com.esferalia.aon.gwt.fiscal.server.file.MOD190Writer;
-import com.esferalia.aon.gwt.fiscal.shared.Mod190;
-import com.esferalia.aon.gwt.fiscal.sql.SQLMod190;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Mod190;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod190 File download", urlPatterns = { "/aon_gwt_fiscal/Model190File" })
@@ -40,9 +40,11 @@ public class Mod190File extends HttpServlet {
 			disableAutoCommit(conn);
 			MOD190Writer writer = new MOD190Writer();
 			int id = Integer.parseInt(req.getParameter("mod190"));
-			Mod190 mod190 = SQLMod190.getById(id, conn);
+			String domainName = req.getParameter("domainName");
+			int domainId = Integer.parseInt(req.getParameter("domainId"));
+			Mod190 mod190 = AON.getMod190(domainName, domainId, id);
 
-			FileOutput fileoutput = writer.createMOD190(conn, id,
+			FileOutput fileoutput = writer.createMOD190(domainName,domainId, id,
 					mod190.getYear(), mod190.getAdministration());
 			commit(conn);
 			

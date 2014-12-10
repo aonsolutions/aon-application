@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.sql.Connection;
-import java.util.ArrayList;
 
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.Administration;
@@ -18,13 +16,14 @@ import com.code.aon.file.tax.model.MOD190.MOD190Format;
 import com.code.aon.file.tax.model.MOD190.Receiver;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
-import com.esferalia.aon.gwt.fiscal.shared.Mod190;
-import com.esferalia.aon.gwt.fiscal.sql.SQLMod190;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Mod190;
+import com.esferalia.aon.occam.api.model.Mod190Detail;
 
 public class MOD190Writer {
 
-	public FileOutput createMOD190(Connection conn, Integer mod190, int year,
-			Integer administration) throws AonSQLException {
+	public FileOutput createMOD190(String domainName,Integer domainId, Integer mod190, int year,
+			Byte administration) throws AonSQLException {
 		try {
 			MOD190Format format = obtainFormat(year, administration);
 			if (format == null) {
@@ -34,7 +33,7 @@ public class MOD190Writer {
 								+ " en la administraci\u00F3n "
 								+ administration);
 			}
-			Deponent deponent = getDeponent(conn, mod190, format);
+			Deponent deponent = getDeponent(domainName,domainId, mod190, format);
 			
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;
@@ -67,9 +66,9 @@ public class MOD190Writer {
 		return f;
 	}
 
-	private Deponent getDeponent(Connection conn, Integer id,
+	private Deponent getDeponent(String domainName, int domainId, Integer id,
 			MOD190Format format) throws AonSQLException {
-		Mod190 mod190 = SQLMod190.getById(id, conn);
+		Mod190 mod190 = AON.getMod190(domainName,domainId, id);
 		Deponent deponent = new Deponent();
 		deponent.setYear(mod190.getYear());
 		deponent.setDocument(mod190.getDocument());
@@ -85,19 +84,17 @@ public class MOD190Writer {
 		// TODO Soporte al número de justificante
 		deponent.setReceipt( (AonUtil.isEmpty(mod190.getReceipt()))?"0":mod190.getReceipt() );
 		deponent.setReplacedReceipt( (AonUtil.isEmpty(mod190.getReplacedReceipt()))?"0":mod190.getReplacedReceipt());
-		fillReceivers(conn, deponent, id, format);
+		fillReceivers(mod190, deponent, format);
 		
 		return deponent;
 	}
 
-	private void fillReceivers(Connection conn, Deponent deponent,
-			Integer mod190, MOD190Format format) throws AonSQLException {
-		ArrayList<com.esferalia.aon.gwt.fiscal.shared.Mod190Receiver> list = SQLMod190
-				.getReceiversByMod190(mod190, conn);
+	private void fillReceivers(Mod190 mod190, Deponent deponent,
+			 MOD190Format format) throws AonSQLException {
 		int c01 = 0;
 		double c02 = 0.0;
 		double c03 = 0.0;
-		for (com.esferalia.aon.gwt.fiscal.shared.Mod190Receiver det : list) {
+		for (Mod190Detail det : mod190.getDetails()) {
 			Receiver receiver = new Receiver();
 
 			receiver.setDocument(det.getDocument());
