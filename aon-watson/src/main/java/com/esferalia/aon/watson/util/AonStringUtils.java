@@ -315,7 +315,7 @@ public class AonStringUtils {
 		if (cs == null || (cs.length()) == 0) {
 			return true;
 		}
-		return trimToNull(cs) != null;
+		return trimToNull(cs) == null;
 	}
 
 	/**
