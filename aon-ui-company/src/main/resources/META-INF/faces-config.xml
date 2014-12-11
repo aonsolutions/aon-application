@@ -1210,6 +1210,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{contractClauseListener}</value>
+				<value>#{contractClauseSkipDomainListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
