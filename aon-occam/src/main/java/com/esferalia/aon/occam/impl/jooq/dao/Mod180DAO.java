@@ -16,11 +16,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jooq.Field;
-import org.jooq.Record19;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.FsModel180;
 import com.esferalia.aon.jooq.tables.records.FsModel180DetailRecord;
 import com.esferalia.aon.jooq.tables.records.FsModel180Record;
 import com.esferalia.aon.occam.api.AONContext;
@@ -168,30 +166,35 @@ public class Mod180DAO {
 	}
 
 	private static void validate(AONContext ctx, Mod180 mod180) {
-		FsModel180Record record = ctx.getDslContext().fetchOne(FS_MODEL180,
-				FS_MODEL180.YEAR.equal(mod180.getYear())
-				.and(FS_MODEL180.ENTERPRISE.equal(mod180.getEnterprise()))
-				.and(FS_MODEL180.REPLACEMENT.equal((byte) 0)));
 		if (mod180.isReplacement()) {
-			// Se comprueba que exista una declaración a la que sustituir.
-			if (record == null)
-				throw new AonCoreException(AonError.FISCAL_NO_REPLACED_DECLARATION);
-			
-			// Se comprueba que no exista una declaración sustitutiva.
-			record = ctx.getDslContext().fetchOne(FS_MODEL180,
-					FS_MODEL180.YEAR.equal(mod180.getYear())
+			// Se comprueba que exista la declaración ssustituida.
+			if (ctx.getDslContext().selectOne()
+					.from(FS_MODEL180)
+					.where(FS_MODEL180.YEAR.equal(mod180.getYear())
 					.and(FS_MODEL180.ENTERPRISE.equal(mod180.getEnterprise()))
-					.and(FS_MODEL180.REPLACEMENT.equal((byte) 1)));
-			if (record != null)
+					.and(FS_MODEL180.RECEIPT.equal(mod180.getReplacedReceipt()))).fetchCount() == 0) 
+				throw new AonCoreException(
+						AonError.FISCAL_NO_REPLACED_DECLARATION);
+
+			// Se comprueba que no exista una declaraci?n sustitutiva.
+			if (ctx.getDslContext().selectOne()
+					.from(FS_MODEL180)
+					.where(FS_MODEL180.YEAR.equal(mod180.getYear())
+					.and(FS_MODEL180.ENTERPRISE.equal(mod180.getEnterprise()))
+					.and(FS_MODEL180.REPLACEMENT.equal((byte) 1))					
+					.and(FS_MODEL180.REPLACED_RECEIPT.equal(mod180.getReplacedReceipt()))).fetchCount() > 0 )
 				throw new AonCoreException(AonError.FISCAL_DECLARATION_ALREADY_REPLACED);
-			
 		} else {
-			// Se comprueba que no exista ya una declaración.
-			if (record != null)
-				throw new AonCoreException(AonError.FISCAL_DECLARATION_ALREADY_EXISTS);
+			// Se comprueba que no exista ya una declaraci?n.
+			if (ctx.getDslContext().selectOne()
+					.from(FS_MODEL180)
+					.where(FS_MODEL180.YEAR.equal(mod180.getYear())
+					.and(FS_MODEL180.ENTERPRISE.equal(mod180.getEnterprise()))
+					.and(FS_MODEL180.REPLACEMENT.equal((byte) 0))).fetchCount() > 0 ) 
+				throw new AonCoreException(
+						AonError.FISCAL_DECLARATION_ALREADY_EXISTS);
 		}
 	}
-
 	//		DETAIL
 	
 	public static Mod180Detail getDetail(AONContext ctx, int id) {
