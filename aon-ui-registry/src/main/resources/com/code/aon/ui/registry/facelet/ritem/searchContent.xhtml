@@ -12,13 +12,31 @@
 		<ui:param name="skipNewButton" value="#{true}" />		
 	</ui:include>
 	
-	<aon:outputLabel for="#{controller.pojoShortName}_items_status"
-		value="#{bundle.aon_status}" />
-	<aon:selectOneMenu id="#{controller.pojoShortName}_items_status"
-		converter="aon.EnumConverter"
-		valueChangeListener="#{controller.addExpression}">
-		<f:selectItem itemLabel="-" value="#{null}"/>
-		<f:selectItems value="#{registryCollections.registryItemStatuses}" />
-	</aon:selectOneMenu>									
+	<aon:if test="#{rItemController.saleType or rItemController.purchaseType}">
+		<aon:outputLabel for="#{controller.pojoShortName}_items_code"
+			value="#{bundle.product_item_customer_code}"
+			rendered="#{rItemController.saleType}" />
+		<aon:outputLabel for="#{controller.pojoShortName}_items_code"
+			value="#{bundle.product_item_supplier_code}"
+			rendered="#{rItemController.purchaseType}" />
+		<aon:inputText id="#{controller.pojoShortName}_items_code"
+			valueChangeListener="#{controller.addExpression}" size="25" />
+
+		<aon:outputLabel for="#{controller.pojoShortName}_items_price"
+			value="#{bundle.aon_price}" />
+		<aon:inputText id="#{controller.pojoShortName}_items_price"
+			valueChangeListener="#{controller.addExpression}" size="25" />
+	</aon:if>
+
+	<aon:if test="#{rItemController.commercialType}">
+		<aon:outputLabel for="#{controller.pojoShortName}_items_status"
+			value="#{bundle.aon_status}" />
+		<aon:selectOneMenu id="#{controller.pojoShortName}_items_status"
+			converter="aon.EnumConverter"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="-" value="#{null}"/>
+			<f:selectItems value="#{registryCollections.registryItemStatuses}" />
+		</aon:selectOneMenu>
+	</aon:if>									
 
 </ui:composition>

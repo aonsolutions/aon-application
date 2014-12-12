@@ -198,6 +198,7 @@
 			showAccount="true"
 			showSegment="true"
 			showAddInfo="true"
+			showProduct="true"
 		/>
 	</supplier:config>
 

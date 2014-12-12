@@ -891,7 +891,7 @@
 
 	<managed-bean>
 		<managed-bean-name>targetItem</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>		
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryItemController</managed-bean-class>		
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -908,6 +908,10 @@
 		<managed-property>
 			<property-name>masterControllerName</property-name>
 			<value>target</value>
+		</managed-property>
+		<managed-property>
+			<property-name>type</property-name>
+			<value>0</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultExpressions</property-name>

@@ -28,7 +28,7 @@
 				</f:facet>
 			</aon:column>
 
-			<aon:column	styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-auto aon-nowrap">
+			<aon:column	styleClass="aon-editDataTable-textColumn aon-width-auto aon-nowrap">
 				<f:facet name="header">
 					<aon:outputLabel for="Supplier_id" value="#{bundle.aon_supplier}" />
 				</f:facet>
@@ -58,7 +58,7 @@
 			</aon:column>
 
 			<aon:column
-				styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-150 aon-nowrap">
+				styleClass="aon-editDataTable-textColumn aon-width-150 aon-nowrap">
 				<f:facet name="header">
 					<aon:outputLabel for="ItemSupplier_Code" value="#{bundle.product_item_supplier_code}" />
 				</f:facet>
@@ -74,7 +74,7 @@
 			</aon:column>
 
 			<aon:column
-				styleClass="aon-editDataTable-numberColumn aon-vertical-align-top aon-width-80 aon-nowrap">
+				styleClass="aon-editDataTable-numberColumn aon-width-80 aon-nowrap">
 				<f:facet name="header">
 					<aon:outputLabel for="ItemSupplier_Price" value="#{bundle.aon_price}" />
 				</f:facet>
@@ -92,7 +92,7 @@
 			</aon:column>
 
 			<aon:column
-				styleClass="aon-editDataTable-numberColumn aon-vertical-align-top aon-width-80 aon-nowrap">
+				styleClass="aon-editDataTable-numberColumn aon-width-80 aon-nowrap">
 				<f:facet name="header">
 					<aon:outputLabel for="ItemSupplier_Discount" value="#{bundle.aon_discount}" />
 				</f:facet>
@@ -110,9 +110,9 @@
 				</f:facet>
 			</aon:column>
 
-			<aon:if test="#{companyCollections.currentUserWorkPlacesCount > 1}" >
+			<aon:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">
 				<aon:column
-					styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-150 aon-nowrap">
+					styleClass="aon-editDataTable-textColumn aon-width-150 aon-nowrap">
 					<f:facet name="header">
 						<aon:outputLabel for="ItemSupplier_workPlace" value="#{bundle.purchase_workplace}" />
 					</f:facet>

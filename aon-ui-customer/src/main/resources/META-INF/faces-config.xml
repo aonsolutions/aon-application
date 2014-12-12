@@ -857,7 +857,7 @@
 	<!-- **************** CUSTOMER ITEM  *************** -->
 	<managed-bean>
 		<managed-bean-name>customerItem</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>		
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryItemController</managed-bean-class>		
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -876,11 +876,15 @@
 			<value>customer</value>
 		</managed-property>
 		<managed-property>
+			<property-name>type</property-name>
+			<value>1</value>
+		</managed-property>
+		<managed-property>
 			<property-name>defaultExpressions</property-name>
 			<map-entries>
 				<map-entry>
 					<key>RegistryItem_type</key>
-					<value>0</value>
+					<value>1</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>		

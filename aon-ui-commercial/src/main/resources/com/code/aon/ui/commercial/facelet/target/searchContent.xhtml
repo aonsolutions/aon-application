@@ -26,7 +26,7 @@
 				<ui:insert name="additionalTargetSearchContent"/>				
 			</aon:panelGrid>
 		</aon:panelCollapsible>					
-					
+
 		<aon:panelCollapsible expanded="false" label="#{bundle.registry_address_module}" >
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 				<ui:include src="/com/code/aon/ui/registry/facelet/raddress/searchContent.xhtml" />
@@ -38,7 +38,7 @@
 				<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/searchContent.xhtml" />
 			</aon:panelGrid>
 		</aon:panelCollapsible>
-				
+
 		<aon:panelCollapsible expanded="false" label="#{bundle.registry_segment_module}">
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 				<ui:include src="/com/code/aon/ui/registry/facelet/rsegment/searchContent.xhtml" />
@@ -48,11 +48,13 @@
 		<aon:if test="#{aonConfiguration.bean.target.showProduct}">						
 			<aon:panelCollapsible expanded="false" label="#{bundle.aon_role_product}" >					
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
-					<ui:include src="/com/code/aon/ui/registry/facelet/ritem/searchContent.xhtml" />					
+					<ui:include src="/com/code/aon/ui/registry/facelet/ritem/searchContent.xhtml">
+						<ui:param name="rItemController" value="#{targetItem}" />
+					</ui:include>					
 				</aon:panelGrid>
 			</aon:panelCollapsible>
 		</aon:if>
-						
+
 		<aon:if test="#{aonConfiguration.bean.target.showSeller}">						
 			<aon:panelCollapsible expanded="false" label="#{bundle.aon_module_commercial}">
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">					
@@ -68,7 +70,7 @@
 				</aon:panelGrid>
 			</aon:panelCollapsible>
 		</aon:if>
-		
+
 		<aon:if test="#{aonRole.document}">
 			<aon:panelCollapsible expanded="false" label="#{bundle.aon_documents}">
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
@@ -76,9 +78,9 @@
 				</aon:panelGrid>
 			</aon:panelCollapsible>
 		</aon:if>
-		
+
 		<ui:include src="/com/code/aon/ui/common/facelet/auditable/searchContent.xhtml" />
-				
+
 	</aon:div>
 
 </ui:composition>

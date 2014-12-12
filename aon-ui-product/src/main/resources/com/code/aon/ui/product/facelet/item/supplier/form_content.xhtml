@@ -39,7 +39,7 @@
 
 	<aon:if test="#{companyCollections.currentUserWorkPlacesCount > 1}" >
 		<aon:outputLabel for="ItemSupplier_workPlace" value="#{bundle.purchase_workplace}" />
-		<aon:selectOneMenu id="ItemSupplier_workPlace-New" 
+		<aon:selectOneMenu id="ItemSupplier_workPlace" 
 			value="#{controller.to.workPlace}">
 			<f:selectItem itemLabel=" - " itemValue="null" />
 			<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />

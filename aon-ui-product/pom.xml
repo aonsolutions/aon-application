@@ -65,12 +65,6 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>com.code.aon</groupId>
-      <artifactId>aon.ui.supplier</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
       <version>3.1.0</version>

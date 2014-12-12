@@ -9,6 +9,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Where;
+
 import com.code.aon.account.IAccount;
 import com.code.aon.AonVersion;
 import com.code.aon.common.audit.IAuditable;
@@ -19,6 +21,7 @@ import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.ITariffable;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.registry.RegistryItem;
 import com.code.aon.supplier.enumeration.SupplierStatus;
 import com.esferalia.aon.entity.master.SupplierDB;
 
@@ -29,6 +32,7 @@ public class Supplier extends SupplierDB implements IRegistry, ITaxInfo, IScopab
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Set<RegistryAttachment> documents = new HashSet<RegistryAttachment>();
+	private Set<RegistryItem> items = new HashSet<RegistryItem>();
 
 	public Supplier() {
     	setTransaction(InvoiceTransactionType.NATIONAL);
@@ -42,6 +46,16 @@ public class Supplier extends SupplierDB implements IRegistry, ITaxInfo, IScopab
 	public void setDocuments(Set<RegistryAttachment> documents) {
 		this.documents = documents;
 	}	
+
+	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})	
+	@Where(clause = "type=2")
+	public Set<RegistryItem> getItems() {
+		return items;
+	}
+
+	public void setItems(Set<RegistryItem> items) {
+		this.items = items;
+	}
 
 	@Transient
 	public boolean isSurcharge() {
