@@ -34,8 +34,8 @@ import com.esferalia.aon.occam.api.model.IrpfData;
 import com.esferalia.aon.occam.api.model.IrpfResult;
 import com.esferalia.aon.occam.api.model.Mod190;
 import com.esferalia.aon.occam.api.model.Mod190Detail;
-import com.esferalia.aon.watson.AonCoreException;
 import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -46,6 +46,7 @@ public class Mod190DAO {
 	private static final IrpfResult EMPTY_IRPF_RESULT = new IrpfResult();
 
 	public static Mod190 save(AONContext ctx, Mod190 mod190) {
+		ctx.checkWrite();
 		if (mod190.getId() == null) {
 			mod190 = insert(ctx, mod190);
 			insertDetails(ctx, mod190);
@@ -244,6 +245,7 @@ public class Mod190DAO {
 	
 	public static void saveDetail(AONContext ctx, Mod190 mod190,
 			Mod190Detail detail) {
+		ctx.checkWrite();
 		if (detail.getId() == null || detail.getId() < 0) {
 			if (!detail.isDeleted()) {
 				detail.setDomain(mod190.getDomain());
@@ -472,7 +474,7 @@ public class Mod190DAO {
 					.and(FS_MODEL190.ENTERPRISE.equal(mod190.getEnterprise()))
 					.and(FS_MODEL190.RECEIPT.equal(mod190.getReplacedReceipt()))).fetchCount() == 0) 
 				throw new AonCoreException(
-						AonError.FISCAL_NO_REPLACED_DECLARATION);
+						AonError.FISCAL_NO_REPLACED_DECLARATION.getMessage());
 
 			// Se comprueba que no exista una declaraci?n sustitutiva.
 			if (ctx.getDslContext().selectOne()
@@ -481,7 +483,7 @@ public class Mod190DAO {
 					.and(FS_MODEL190.ENTERPRISE.equal(mod190.getEnterprise()))
 					.and(FS_MODEL190.REPLACEMENT.equal((byte) 1))					
 					.and(FS_MODEL190.REPLACED_RECEIPT.equal(mod190.getReplacedReceipt()))).fetchCount() > 0 )
-				throw new AonCoreException(AonError.FISCAL_DECLARATION_ALREADY_REPLACED);
+				throw new AonCoreException(AonError.FISCAL_DECLARATION_ALREADY_REPLACED.getMessage());
 		} else {
 			// Se comprueba que no exista ya una declaraci?n.
 			if (ctx.getDslContext().selectOne()
@@ -490,11 +492,12 @@ public class Mod190DAO {
 					.and(FS_MODEL190.ENTERPRISE.equal(mod190.getEnterprise()))
 					.and(FS_MODEL190.REPLACEMENT.equal((byte) 0))).fetchCount() > 0 ) 
 				throw new AonCoreException(
-						AonError.FISCAL_DECLARATION_ALREADY_EXISTS);
+						AonError.FISCAL_DECLARATION_ALREADY_EXISTS.getMessage());
 		}
 	}
 
 	public static void delete(AONContext ctx, Mod190 mod190) {
+		ctx.checkWrite();
 		deleteDetails(ctx, mod190);
 		ctx.getDslContext().delete(FS_MODEL190)
 				.where(FS_MODEL190.ID.equal(mod190.getId())).execute();
@@ -512,6 +515,7 @@ public class Mod190DAO {
 	}
 
 	public static ArrayList<Mod190> getByDomain(AONContext ctx, int domain) {
+		ctx.checkRead();
 		ArrayList<Mod190> list = new ArrayList<Mod190>();
 		ctx.getDslContext()
 				.select(FS_MODEL190.fields())
@@ -537,6 +541,7 @@ public class Mod190DAO {
 	}
 
 	public static Mod190 getById(AONContext ctx, int id) {
+		ctx.checkRead();
 		Mod190 mod190 = new Mod190();
 		ctx.getDslContext()
 				.selectFrom(FS_MODEL190)
@@ -580,6 +585,7 @@ public class Mod190DAO {
 		FsModel190DetailRecord record = ctx.getDslContext()
 				.selectFrom(FS_MODEL190_DETAIL)
 				.where(FS_MODEL190_DETAIL.ID.equal(id)).fetchOne();
+		ctx.checkRead();
 		Mod190Detail detail = null;
 		if (record != null) {
 			detail = new Mod190Detail();
@@ -592,6 +598,7 @@ public class Mod190DAO {
 		Result<FsModel190DetailRecord> records = ctx.getDslContext()
 				.selectFrom(FS_MODEL190_DETAIL)
 				.where(FS_MODEL190_DETAIL.FS_MODEL190.equal(mod190)).fetch();
+		ctx.checkRead();
 		ArrayList<Mod190Detail> list = new ArrayList<>();
 		Mod190Detail detail = null;
 		for (FsModel190DetailRecord record : records) {
@@ -827,8 +834,9 @@ public class Mod190DAO {
 
 	}
 
-	public static IrpfData getLastIrpfDataByPerson(AONContext ctx, int person,
+	private static IrpfData getLastIrpfDataByPerson(AONContext ctx, int person,
 			Date fromDate, Date toDate) {
+		ctx.checkRead();
 		IrpfDataRecord record = ctx
 				.getDslContext()
 				.select(IRPF_DATA.fields())
@@ -860,8 +868,9 @@ public class Mod190DAO {
 		return irpfData;
 	}
 
-	public static IrpfResult getLastIrpfResultByPerson(AONContext ctx,
+	private static IrpfResult getLastIrpfResultByPerson(AONContext ctx,
 			int person, Date fromDate, Date toDate) {
+		ctx.checkRead();
 		IrpfResultRecord record = ctx
 				.getDslContext()
 				.select(IRPF_RESULT.fields())

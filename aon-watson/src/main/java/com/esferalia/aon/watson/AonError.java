@@ -1,7 +1,10 @@
 package com.esferalia.aon.watson;
 
+import java.io.Serializable;
+import java.text.MessageFormat;
 
-public enum AonError {
+
+public enum AonError implements Serializable{
 	// -----------------------------------------------------------
 	// --------------------- SECUROTY ----------------------------
 	// -----------------------------------------------------------
@@ -67,6 +70,10 @@ public enum AonError {
 	
 	public String getMessage() {
 		return this.msg;
+	}
+	
+	public String format(Object...arguments) {
+		return MessageFormat.format(msg, arguments);
 	}
 
 }

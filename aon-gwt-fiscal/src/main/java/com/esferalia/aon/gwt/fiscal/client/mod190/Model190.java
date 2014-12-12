@@ -10,6 +10,9 @@ import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
 import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
 import com.esferalia.aon.gwt.common.client.widget.AdministrationListBox;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.client.widget.ShowMorePagerPanel;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.common.shared.FiscalParameters;
@@ -21,6 +24,7 @@ import com.esferalia.aon.gwt.fiscal.client.mod190.Model190Detail2014.ICallBack;
 import com.esferalia.aon.gwt.fiscal.client.widget.EnterpriseSuggestBox;
 import com.esferalia.aon.occam.api.model.Mod190;
 import com.esferalia.aon.occam.api.model.Mod190Detail;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;
@@ -45,10 +49,11 @@ import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVisibility;
 import com.google.gwt.user.client.ui.Hidden;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -117,6 +122,8 @@ public class Model190 extends MainEntryPoint {
 	final static DataGrid.Resources DATA_GRID_STYLE = GWT.create(AonDataGrid.class);
 	
 	@UiField
+	SplitLayoutPanel splitLayoutPanel;
+	@UiField
 	DeckLayoutPanel deckPanel;
 	@UiField
 	Panel listPanel;
@@ -125,7 +132,9 @@ public class Model190 extends MainEntryPoint {
 	@UiField
 	DockLayoutPanel formPanel;
 	@UiField
-	HorizontalPanel messagesPanel;
+	ResultsPanel resultsPanel;
+	@UiField
+	MinimizePanel footPanel;
 	@UiField
 	Panel formContainer;
 
@@ -356,20 +365,6 @@ public class Model190 extends MainEntryPoint {
 				});
 	}
 
-	private void cleanErrorMessage() {
-		for (int i = 0; i < messagesPanel.getWidgetCount(); i++) {
-			messagesPanel.remove(messagesPanel.getWidget(i));
-		}
-	}
-
-	private void addErrorMessage(String msg) {
-		Label label = new Label(msg);
-		label.addStyleName("aon-icon-errorwarning");
-		label.addStyleName("aon-message-error");
-		label.addStyleName("aon-icon");
-		messagesPanel.add(label);
-	}
-
 	@UiHandler("saveButton")
 	void onAcceptButtonClick(ClickEvent event) {
 		if (AonUtil.isEmpty(year.getValue())) {
@@ -398,8 +393,7 @@ public class Model190 extends MainEntryPoint {
 					@Override
 					public void onFailure(Throwable caught) {
 						popup.hide();
-						addErrorMessage(MSG.unableToSaveMod190(caught
-								.getMessage()));
+						showErrorMessage(MSG.unableToSaveMod190(caught.getMessage()));
 					}
 				});
 	}
@@ -566,5 +560,57 @@ public class Model190 extends MainEntryPoint {
 		diskForm.submit();
 	}
 
+	//*****************************************************************************
+	//*****************************************************************************
+	//*****************************************************************************
+	//*****************************************************************************
+	@UiHandler("footPanel")
+	void onFootMinimize(MinimizeEvent event) {
+		closeFootPanel();
+	}
+	@UiHandler("footPanel")
+	void onFootMaximize(MinimizeEvent event) {
+	}
+
+	private void closeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 0);
+	}
+
+	private void maximizeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 0);
+	}
+	
+	private void showResultsPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 5);
+	}
+
+	private boolean isResultsPanelVisible() {
+		return splitLayoutPanel.getWidgetSize(footPanel) > 0;
+	}
+	
+	private void cleanErrorMessage() {
+		resultsPanel.clearFlowPanel();
+		SimplePanel panel = new SimplePanel();
+		Label label = new Label("");
+		panel.add(label);
+		resultsPanel.setWidget(panel);
+		closeFootPanel();
+	}
+
+	private void showErrorMessage(String msg) {
+		showResultsPanel();
+		addErrorMessage(msg);
+	}
+
+	private void addErrorMessage(String msg) {
+		SimplePanel panel = new SimplePanel();
+		Label label = new Label(msg);
+		label.addStyleName("aon-icon-errorwarning");
+		label.addStyleName("aon-message-error");
+		label.addStyleName("aon-icon");
+		panel.add(label);
+		resultsPanel.setWidget(panel);
+	}
+	
 
 }

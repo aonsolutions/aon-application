@@ -1,14 +1,10 @@
-package com.esferalia.aon.watson;
+package com.esferalia.aon.watson.error;
 
-import java.text.MessageFormat;
 
 public class AonCoreException extends RuntimeException {
 
-	private static final long serialVersionUID = -9000345934049079813L;
-	
-	private AonError errorCode;
-	private String argumentsMessage;
-	
+	private static final long serialVersionUID = -3730190195705367708L;
+
     public AonCoreException() {
         super();
     }
@@ -21,6 +17,11 @@ public class AonCoreException extends RuntimeException {
     public AonCoreException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    /*	
+	private AonError errorCode;
+	private String argumentsMessage;
+	
     public AonCoreException(AonError errorCode) {
         super();
         this.errorCode = errorCode;
@@ -40,32 +41,24 @@ public class AonCoreException extends RuntimeException {
     public AonCoreException(AonError errorCode,Object...arguments) {
         super();
         this.errorCode = errorCode;
-        this.argumentsMessage = MessageFormat.format(errorCode.getMessage(), arguments);
+        this.argumentsMessage = String.format(errorCode.getMessage(), arguments);
     }
     public AonCoreException(String message,AonError errorCode,Object...arguments) {
         super(message);
         this.errorCode = errorCode;
-        this.argumentsMessage = MessageFormat.format(errorCode.getMessage(), arguments);
+        this.argumentsMessage = String.format(errorCode.getMessage(), arguments);
     }
     public AonCoreException(Throwable cause,AonError errorCode,Object...arguments) {
         super(cause);
         this.errorCode = errorCode;
-        this.argumentsMessage = MessageFormat.format(errorCode.getMessage(), arguments);
+        this.argumentsMessage = String.format(errorCode.getMessage(), arguments);
     }
     public AonCoreException(String message, Throwable cause,AonError errorCode,Object...arguments) {
         super(message, cause);
         this.errorCode = errorCode;
-        this.argumentsMessage = MessageFormat.format(errorCode.getMessage(), arguments);
+        this.argumentsMessage = String.format(errorCode.getMessage(), arguments);
     }
-/*    
-    public String getAonMessage() {
-        return this.errorCode == null
-        		?super.getMessage()
-        		:this.argumentsMessage== null
-        			?errorCode.getMessage()
-        			:this.argumentsMessage; 
-	}
-*/    
+
     public String getMessage() {
         return this.errorCode == null
         		?super.getMessage()
@@ -73,5 +66,5 @@ public class AonCoreException extends RuntimeException {
         			?errorCode.getMessage()
         			:this.argumentsMessage; 
 	}
-    
+ */   
 }

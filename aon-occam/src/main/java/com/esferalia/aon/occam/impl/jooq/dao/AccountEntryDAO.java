@@ -27,7 +27,7 @@ import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountEntryValidation;
-import com.esferalia.aon.watson.AonCoreException;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
@@ -39,6 +39,7 @@ public class AccountEntryDAO {
 				, Condition condition
 				, int offset
 				, int numberOfRows) {
+		ctx.checkRead();
 		Function<ResultSet, AccountEntry> function = Unchecked.function(rs -> new AccountEntry(
 			 rs.getInt(ACCOUNT_ENTRY.ID.getName())
 			,rs.getInt(ACCOUNT_ENTRY.ACCOUNT_PERIOD.getName())

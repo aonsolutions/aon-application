@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.Mod180;
 import com.esferalia.aon.occam.api.model.Mod180Detail;
 import com.esferalia.aon.occam.api.model.Mod190;
 import com.esferalia.aon.occam.api.model.Mod190Detail;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -35,18 +36,18 @@ public interface FiscalService extends RemoteService {
 	ArrayList<Activity> getActivities(int activityGroup) throws AonSQLException;
 	
 	// ---------------------------------------------------------------MODELO 190
-	void deleteMod190(String domainName, int domain,Mod190 mod190) throws AonSQLException;
-	Mod190 saveMod190(String domainName, int domain,Mod190 mod190) throws AonSQLException;
-	ArrayList<Mod190> getMod190s(String domainName, int domain) throws AonSQLException;
-	Mod190 getMod190(String domainName, int domain,Integer id) throws AonSQLException;
+	void deleteMod190(String domainName, int domain,Mod190 mod190) throws AonCoreException;
+	Mod190 saveMod190(String domainName, int domain,Mod190 mod190) throws AonCoreException;
+	ArrayList<Mod190> getMod190s(String domainName, int domain) throws AonCoreException;
+	Mod190 getMod190(String domainName, int domain,Integer id) throws AonCoreException;
 	Mod190Detail getMod190Detail(String domainName, int domain,Integer id) throws AonSQLException;
 
 	// ---------------------------------------------------------------MODELO 180
-	void deleteMod180(String domainName, int domain,Mod180 mod180) throws AonSQLException;
-	Mod180 saveMod180(String domainName, int domain,Mod180 mod180) throws AonSQLException;
-	ArrayList<Mod180> getMod180s(String domainName, int domain);
-	Mod180 getMod180(String domainName, int domain,Integer id);
-	Mod180Detail getMod180Detail(String domainName, int domain,Integer id);
+	void deleteMod180(String domainName, int domain,Mod180 mod180) throws AonCoreException;
+	Mod180 saveMod180(String domainName, int domain,Mod180 mod180) throws AonCoreException;
+	ArrayList<Mod180> getMod180s(String domainName, int domain) throws AonCoreException;
+	Mod180 getMod180(String domainName, int domain,Integer id) throws AonCoreException;
+	Mod180Detail getMod180Detail(String domainName, int domain,Integer id) throws AonCoreException;
 
 	// ---------------------------------------------------------------MODELO 390
 	ArrayList<Mod390Detail> getMod390Details(int domain,Integer year) throws AonSQLException;

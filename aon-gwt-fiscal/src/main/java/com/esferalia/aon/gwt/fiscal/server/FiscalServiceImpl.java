@@ -126,12 +126,12 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public void deleteMod190(String domainName, int domain, Mod190 mod190) throws AonSQLException {
+	public void deleteMod190(String domainName, int domain, Mod190 mod190) {
 		AON.deleteMod190(domainName, domain, mod190);
 	}
 
 	@Override
-	public Mod190 saveMod190(String domainName, int domain,Mod190 mod190) throws AonSQLException {
+	public Mod190 saveMod190(String domainName, int domain,Mod190 mod190) {
 		return AON.saveMod190(domainName, domain, mod190);
 	}
 
@@ -153,12 +153,12 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public void deleteMod180(String domainName, int domain, Mod180 mod180) throws AonSQLException {
+	public void deleteMod180(String domainName, int domain, Mod180 mod180){
 		AON.deleteMod180(domainName, domain, mod180);
 	}
 
 	@Override
-	public Mod180 saveMod180(String domainName, int domain,Mod180 mod180) throws AonSQLException {
+	public Mod180 saveMod180(String domainName, int domain,Mod180 mod180) {
 		return AON.saveMod180(domainName, domain, mod180);
 	}
 

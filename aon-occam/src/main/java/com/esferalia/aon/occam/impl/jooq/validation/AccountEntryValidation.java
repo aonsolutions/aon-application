@@ -15,8 +15,8 @@ import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
-import com.esferalia.aon.watson.AonCoreException;
 import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -27,7 +27,7 @@ public class AccountEntryValidation {
 	 */
 	public static BiConsumer<AccountEntry,AONContext> EMPTY_DOMAIN = (ae,ctx) -> {
 		if (ae.getDomain() == null) 
-			throw new AonCoreException(AonError.ACCOUNT_ENTRY_DOMAIN);
+			throw new AonCoreException(AonError.ACCOUNT_ENTRY_DOMAIN.getMessage());
 	};
 	
 	/**
@@ -35,7 +35,7 @@ public class AccountEntryValidation {
 	 */
 	public static BiConsumer<AccountEntry,AONContext> EMPTY_DATE = (ae,ctx) -> {
 		if (ae.getEntryDate() == null)
-			throw new AonCoreException(AonError.ACCOUNT_ENTRY_EMPTY_DATE);
+			throw new AonCoreException(AonError.ACCOUNT_ENTRY_EMPTY_DATE.getMessage());
 	};
 	
 	/**
@@ -43,7 +43,7 @@ public class AccountEntryValidation {
 	 */
 	public static BiConsumer<AccountEntry,AONContext> EMPTY_PERIOD = (ae,ctx) -> {
 		if (ae.getAccountPeriod() == null) 
-			throw new AonCoreException(AonError.ACCOUNT_ENTRY_EMPTY_PERIOD);
+			throw new AonCoreException(AonError.ACCOUNT_ENTRY_EMPTY_PERIOD.getMessage());
 	};
 	
 	/**
@@ -51,7 +51,7 @@ public class AccountEntryValidation {
 	 */
 	public static BiConsumer<AccountEntry,AONContext> EMPTY_ENTRY_TYPE = (ae,ctx) -> {
 		if (ae.getEntryType() == null) {
-			throw new AonCoreException(AonError.ACCOUNT_ENTRY_EMPTY_TYPE);
+			throw new AonCoreException(AonError.ACCOUNT_ENTRY_EMPTY_TYPE.getMessage());
 		}
 	};
 	
@@ -68,7 +68,7 @@ public class AccountEntryValidation {
 				.and(ACCOUNT_PERIOD.DOMAIN.equal(ae.getDomain())));
 		// El periodo debe existir y tener el mismo dominio que el asiento.
 		if (period == null) {
-			throw new AonCoreException(AonError.ACCOUNT_ENTRY_WRONG_DOMAIN,ae.getDomain());
+			throw new AonCoreException(AonError.ACCOUNT_ENTRY_WRONG_DOMAIN.format(ae.getDomain()));
 		}
 		// Se chequea que la fecha del apunte esté comprendida
 		// entre la fecha inicial y la fecha final del ejercicio.
@@ -77,11 +77,11 @@ public class AccountEntryValidation {
 		if (!AonDateUtils.isSameDay(ae.getEntryDate(), periodFrom)
 				&& !AonDateUtils.isSameDay(ae.getEntryDate(), periodTo)
 				&& (ae.getEntryDate().before(periodFrom) || ae.getEntryDate().after(periodTo))) {
-			throw new AonCoreException(AonError.ACCOUNT_ENTRY_DATE_IN_PERIOD,period.getName());
+			throw new AonCoreException(AonError.ACCOUNT_ENTRY_DATE_IN_PERIOD.format(period.getName()));
 		}
 		// Se chequea que el ejericio no esté inactivo.
 		if (period.getStatus() == AccountPeriodStatus.INACTIVE) {
-			throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_INACTIVE,period.getName());
+			throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_INACTIVE.format(period.getName()));
 		}
 
 		// Si el ejercicio está en explotación, solo se permite la introducción
@@ -89,13 +89,13 @@ public class AccountEntryValidation {
 		if (period.getStatus() == AccountPeriodStatus.OPERATING
 				&& ae.getEntryType() != AccountEntryType.OPERATING
 				&& ae.getEntryType() != AccountEntryType.CLOSING) {
-			throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_OPERATING,period.getName());
+			throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_OPERATING.format(period.getName()));
 		}
 		// Si el ejercicio está cerrado, solo se permite la introducción de
 		// apuntes de cierre.
 		if (period.getStatus() == AccountPeriodStatus.CLOSED
 			&& ae.getEntryType() != AccountEntryType.CLOSING) {
-			throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_CLOSING,period.getName());
+			throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_CLOSING.format(period.getName()));
 		}
 	};
 
@@ -104,7 +104,7 @@ public class AccountEntryValidation {
 	 */
 	public static BiConsumer<AccountEntryDetail,AONContext> EMPTY_CONCEPT = (detail,ctx) -> {
 		if (AonStringUtils.isEmpty(detail.getConcept() ))
-			throw new AonCoreException(AonError.ACCOUNT_ENTRY_EMPTY_CONCEPT);
+			throw new AonCoreException(AonError.ACCOUNT_ENTRY_EMPTY_CONCEPT.getMessage());
 	};
 	
 	/**
@@ -112,8 +112,8 @@ public class AccountEntryValidation {
 	 */
 	public static BiConsumer<AccountEntryDetail,AONContext> EMPTY_ACCOUNT = (detail,ctx) -> {
 		if (detail.getAccount() == null )
-			throw new AonCoreException(AonError.ACCOUNT_ENTRY_EMPTY_ACCOUNT,detail.getLine()
-				,detail.getConcept(),detail.getDebit(),detail.getCredit());
+			throw new AonCoreException(AonError.ACCOUNT_ENTRY_EMPTY_ACCOUNT.format(detail.getLine()
+				,detail.getConcept(),detail.getDebit(),detail.getCredit()));
 	};
 	
 
@@ -122,16 +122,16 @@ public class AccountEntryValidation {
 		Account account = AccountDAO.fetchOne(ctx, detail.getAccount());
 		if (account == null)
 			throw new AonCoreException(AonError.ACCOUNT_ENTRY_ACCOUNT_NOT_FOUND
-					,Objects.toString(detail.getAccount())
-					,detail.getAccountCode(),detail.getAccountDescription());
+					.format(Objects.toString(detail.getAccount())
+					,detail.getAccountCode(),detail.getAccountDescription()));
 		if (!account.isActive())
 			throw new AonCoreException(AonError.ACCOUNT_ENTRY_ACCOUNT_INACTIVE
-					,Objects.toString(detail.getAccount())
-					,detail.getAccountCode(),detail.getAccountDescription());
+					.format(Objects.toString(detail.getAccount())
+					,detail.getAccountCode(),detail.getAccountDescription()));
 		if (account.getCode().length() != 9)
 			throw new AonCoreException(AonError.ACCOUNT_ENTRY_ACCOUNT_INVALID_LENGTH
-					,Objects.toString(detail.getAccount())
-					,detail.getAccountCode(),detail.getAccountDescription());
+					.format(Objects.toString(detail.getAccount())
+					,detail.getAccountCode(),detail.getAccountDescription()));
 	}
 	
 	/**

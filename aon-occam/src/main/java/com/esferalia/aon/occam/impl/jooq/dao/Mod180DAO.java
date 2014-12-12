@@ -24,8 +24,8 @@ import com.esferalia.aon.jooq.tables.records.FsModel180Record;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Mod180;
 import com.esferalia.aon.occam.api.model.Mod180Detail;
-import com.esferalia.aon.watson.AonCoreException;
 import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -35,6 +35,7 @@ public class Mod180DAO {
 	private static Logger LOGGER = Logger.getLogger(Mod180DAO.class.getName());
 
 	public static ArrayList<Mod180> getByDomain(AONContext ctx, int domain) {
+		ctx.checkRead();
 		ArrayList<Mod180> list = new ArrayList<Mod180>();
 		ctx.getDslContext().select(FS_MODEL180.fields())
 			.from(FS_MODEL180)
@@ -56,6 +57,7 @@ public class Mod180DAO {
 	}
 
 	public static Mod180 getById(AONContext ctx, int id) {
+		ctx.checkRead();
 		Mod180 mod180 = new Mod180();
 		ctx.getDslContext().selectFrom(FS_MODEL180)
 		.where(FS_MODEL180.ID.equal(id))
@@ -92,6 +94,7 @@ public class Mod180DAO {
 	}
 	
 	public static Mod180 save(AONContext ctx, Mod180 mod180) {
+		ctx.checkWrite();
 		if (mod180.getId() == null) {
 			LOGGER.log(Level.INFO, "INSERTING Mod180");
 			mod180 = insert(ctx, mod180); 
@@ -158,6 +161,7 @@ public class Mod180DAO {
 	}
 
 	public static void delete(AONContext ctx, Mod180 mod180) {
+		ctx.checkWrite();
 		deleteDetails(ctx, mod180);
 		LOGGER.log(Level.INFO, "DELETING DECLARATION(" + mod180.getId() + ")");
 		ctx.getDslContext().delete(FS_MODEL180)
@@ -174,7 +178,7 @@ public class Mod180DAO {
 					.and(FS_MODEL180.ENTERPRISE.equal(mod180.getEnterprise()))
 					.and(FS_MODEL180.RECEIPT.equal(mod180.getReplacedReceipt()))).fetchCount() == 0) 
 				throw new AonCoreException(
-						AonError.FISCAL_NO_REPLACED_DECLARATION);
+						AonError.FISCAL_NO_REPLACED_DECLARATION.getMessage());
 
 			// Se comprueba que no exista una declaraci?n sustitutiva.
 			if (ctx.getDslContext().selectOne()
@@ -183,7 +187,7 @@ public class Mod180DAO {
 					.and(FS_MODEL180.ENTERPRISE.equal(mod180.getEnterprise()))
 					.and(FS_MODEL180.REPLACEMENT.equal((byte) 1))					
 					.and(FS_MODEL180.REPLACED_RECEIPT.equal(mod180.getReplacedReceipt()))).fetchCount() > 0 )
-				throw new AonCoreException(AonError.FISCAL_DECLARATION_ALREADY_REPLACED);
+				throw new AonCoreException(AonError.FISCAL_DECLARATION_ALREADY_REPLACED.getMessage());
 		} else {
 			// Se comprueba que no exista ya una declaraci?n.
 			if (ctx.getDslContext().selectOne()
@@ -192,12 +196,13 @@ public class Mod180DAO {
 					.and(FS_MODEL180.ENTERPRISE.equal(mod180.getEnterprise()))
 					.and(FS_MODEL180.REPLACEMENT.equal((byte) 0))).fetchCount() > 0 ) 
 				throw new AonCoreException(
-						AonError.FISCAL_DECLARATION_ALREADY_EXISTS);
+						AonError.FISCAL_DECLARATION_ALREADY_EXISTS.getMessage());
 		}
 	}
 	//		DETAIL
 	
 	public static Mod180Detail getDetail(AONContext ctx, int id) {
+		ctx.checkRead();
 		FsModel180DetailRecord record = ctx.getDslContext()
 			.selectFrom(FS_MODEL180_DETAIL)
 			.where(FS_MODEL180_DETAIL.ID.equal(id))
@@ -211,6 +216,7 @@ public class Mod180DAO {
 	}
 
 	public static ArrayList<Mod180Detail> getDetails(AONContext ctx, int mod180) {
+		ctx.checkRead();
 		Result<FsModel180DetailRecord> records = ctx.getDslContext()
 			.selectFrom(FS_MODEL180_DETAIL)
 			.where(FS_MODEL180_DETAIL.FS_MODEL180.equal(mod180))
@@ -258,6 +264,7 @@ public class Mod180DAO {
 	}
 
 	public static void saveDetail(AONContext ctx, Mod180 mod180, Mod180Detail detail){
+		ctx.checkWrite();
 		if (detail.getId() == null || detail.getId() < 0) {
 			if (!detail.isDeleted()) {
 				detail.setDomain(mod180.getDomain());
