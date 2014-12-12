@@ -10,7 +10,24 @@
 	<name>AON WATSON</name>
 	<dependencies>
 		<!--
+			******************************************************************
 			¡¡ANALIZAR EXHAUSTIVAMENTE SI ES NECESARIO CREAR UNA DEPENDENCIA!!  
+			******************************************************************
 		 -->
+
+
+
+
+		<!--
+			******************************************************************
+			******************************************************************
+		 -->
+		<!-- TEST DEPENDENCIES -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.1</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>
