@@ -127,7 +127,7 @@
 
 		<div class="{style.buttons} {style.form} ">
 			<g:Button ui:field="cancelButton">Cancelar</g:Button>
-			<g:Button ui:field="acceptButton">Aceptar</g:Button>
+			<g:Button ui:field="acceptButton" enabled="false" >Aceptar</g:Button>
 		</div>
 
 	</g:HTMLPanel>

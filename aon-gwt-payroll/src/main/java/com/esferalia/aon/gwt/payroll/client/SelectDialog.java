@@ -303,6 +303,8 @@ public class SelectDialog<T extends HasId<?>> extends CustomDialog {
 								.size() > 0);
 					}
 				});
+		
+		acceptButton.setEnabled(false);
 
 	}
 
