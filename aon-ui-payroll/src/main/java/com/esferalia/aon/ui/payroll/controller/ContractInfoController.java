@@ -23,6 +23,10 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -348,6 +352,101 @@ public class ContractInfoController extends BasicController {
 			field.setFieldName(fn);
 			contractFieldList.add(field);
 		}
+		completeDirStaff(contract);
+	}
+	
+	private void completeDirStaff(Contract contract) {
+		ContractController controller = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
+		IContractFieldName nameField = null;
+		IContractFieldName nifField = null;
+		IContractFieldName chargeField = null;
+		if(controller.getParams()!=null && controller.getParams().getContractModelOption()!=null
+			&& controller.getParams().getContractModelOption().getPdfModel()!=null){
+			String contractModel = controller.getParams().getContractModelOption().getPdfModel();
+			if(IndefiniteModel.MODEL_NAME.equals(contractModel)){
+				nameField = PdfFieldIndefinite.ENTERPRISE_DIR_STAFF_NAME;
+				nifField = PdfFieldIndefinite.ENTERPRISE_DIR_STAFF_NIF;
+				chargeField = PdfFieldIndefinite.ENTERPRISE_DIR_STAFF_CHARGE;
+			} else if(TemporaryModel.MODEL_NAME.equals(contractModel)){
+				nameField = PdfFieldTemporary.ENTERPRISE_DIR_STAFF_NAME;
+				nifField = PdfFieldTemporary.ENTERPRISE_DIR_STAFF_NIF;
+				chargeField = PdfFieldTemporary.ENTERPRISE_DIR_STAFF_CHARGE;
+			} else if(LearningModel.MODEL_NAME.equals(contractModel)){
+				nameField = PdfFieldTemporary.ENTERPRISE_DIR_STAFF_NAME;
+				nifField = PdfFieldTemporary.ENTERPRISE_DIR_STAFF_NIF;
+				chargeField = PdfFieldTemporary.ENTERPRISE_DIR_STAFF_CHARGE;
+			} else if(PracticeModel.MODEL_NAME.equals(contractModel)){
+				nameField = PdfFieldPractice.ENTERPRISE_DIR_STAFF_NAME;
+				nifField = PdfFieldPractice.ENTERPRISE_DIR_STAFF_NIF;
+				chargeField = PdfFieldPractice.ENTERPRISE_DIR_STAFF_CHARGE;
+			}
+			
+			ContractInfo name = null;
+			ContractInfo nif = null;
+			ContractInfo charge = null;
+			for(ContractField field: getContractFieldList()){
+				if(StringUtils.equals(nameField.toString(), field.getContractInfo().getName())){
+					name = field.getContractInfo();
+				}
+				if(StringUtils.equals(nifField.toString(), field.getContractInfo().getName())){
+					nif = field.getContractInfo();
+				}
+				if(StringUtils.equals(chargeField.toString(), field.getContractInfo().getName())){
+					charge = field.getContractInfo();
+				}
+			}
+			if( name != null && StringUtils.isBlank(name.getExpression()) 
+					&& nif != null && StringUtils.isBlank(nif.getExpression())
+					&& charge != null && StringUtils.isBlank(charge.getExpression()) ){
+				try {
+					RegistryDirStaff rDirStaff = obtainRegistryDirStaff(contract.getWorkPlace().getEnterprise().getRegistry()); 
+					name.setExpression(rDirStaff.getName());
+					nif.setExpression(rDirStaff.getDocument());
+					
+					String rDirStaddCharge = null;
+					if ( rDirStaff.isShareHolder() ){
+						rDirStaddCharge = "Socio";
+					} else if ( rDirStaff.isRepresentative() ){
+						rDirStaddCharge = "Apoderado";
+					} else if( rDirStaff.isDirector() ){
+						rDirStaddCharge = "Administrador";
+					} else if ( rDirStaff.isRepresentativeLabor() ){
+						rDirStaddCharge = "Repr. laboral";
+					}
+					charge.setExpression(rDirStaddCharge);
+				} catch (NullPointerException e) {
+					// do nothing
+				} catch (ManagerBeanException e) {
+					// do nothing
+				}
+			}
+		}
+	}
+	
+	public RegistryDirStaff obtainRegistryDirStaff(Registry registry) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(RegistryDirStaff.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_REGISTRY_ID), registry.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_REPRESENTATIVE_LABOR), Boolean.TRUE);
+		Expression exp1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DUE_DATE), new Date());
+		Expression exp2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DUE_DATE));
+		criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
+		List<ITransferObject> list = bean.getList(criteria);
+		if(!list.isEmpty()){
+			return (RegistryDirStaff) list.get(0);
+		} else {
+			bean = BeanManager.getManagerBean(RegistryDirStaff.class);
+			criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_REGISTRY_ID), registry.getId());
+			exp1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DUE_DATE), new Date());
+			exp2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DUE_DATE));
+			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
+			list = bean.getList(criteria);
+			if(!list.isEmpty()){
+				return (RegistryDirStaff) list.get(0);
+			}
+		}
+		return null;
 	}
 	
 	public void saveContractFields(){
@@ -399,6 +498,7 @@ public class ContractInfoController extends BasicController {
 				bean.insert(info);
 			}
 			loadContractFields(contract, false);
+			saveContractFields(contractFieldList);
 		} catch (ManagerBeanException e) {
 			String msg = "Error al grabar el modelo del contrato. (" +e.getMessage() + ")";
 			AonUtil.addErrorMessage(msg);
