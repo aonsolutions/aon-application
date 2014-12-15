@@ -24,7 +24,6 @@ import com.esferalia.aon.gwt.fiscal.client.mod190.Model190Detail2014.ICallBack;
 import com.esferalia.aon.gwt.fiscal.client.widget.EnterpriseSuggestBox;
 import com.esferalia.aon.occam.api.model.Mod190;
 import com.esferalia.aon.occam.api.model.Mod190Detail;
-import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;
@@ -590,10 +589,6 @@ public class Model190 extends MainEntryPoint {
 	
 	private void cleanErrorMessage() {
 		resultsPanel.clearFlowPanel();
-		SimplePanel panel = new SimplePanel();
-		Label label = new Label("");
-		panel.add(label);
-		resultsPanel.setWidget(panel);
 		closeFootPanel();
 	}
 

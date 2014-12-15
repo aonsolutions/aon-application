@@ -24,7 +24,7 @@
 		}
 	</ui:style>
 
-	<g:DockLayoutPanel ui:field="dockLayoutPanel">
+	<g:SplitLayoutPanel ui:field="splitLayoutPanel">
 		<g:north size="26">
 			<g:FlowPanel ui:field="toolbarPanel" height="100%"
 				styleName="aon-finding-title-toolbar aon-width-all">
@@ -175,5 +175,19 @@
 				
 			</g:DeckLayoutPanel>
 		</g:center>
-	</g:DockLayoutPanel>
+		<g:south size="0">
+			<aon:MinimizePanel ui:field="footPanel">
+				<g:TabLayoutPanel barHeight="26" barUnit="PX">
+					<g:tab>
+						<g:header>
+							<span class="aon-icon-time aon-icon-commandButton" style="padding-left: 20px;">
+								Notificaciones
+							</span>
+						</g:header>
+						<aon:ResultsPanel ui:field="resultsPanel" />
+					</g:tab>
+				</g:TabLayoutPanel>
+			</aon:MinimizePanel>
+		</g:south>
+	</g:SplitLayoutPanel>
 </ui:UiBinder>
