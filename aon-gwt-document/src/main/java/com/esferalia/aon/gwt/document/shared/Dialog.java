@@ -16,16 +16,17 @@ public class Dialog {
 	Lists lists;
 	SingleUploader upload;
 	Vector<Domain> sons;
-	
+	Boolean son;
 	FileInfo fileInfo;
  	
-	public Dialog(String type,String title,String cancelButtonName,Boolean isCancelButton,String acceptButtonName,Boolean isAcceptButton){
+	public Dialog(String type,String title,String cancelButtonName,Boolean isCancelButton,String acceptButtonName,Boolean isAcceptButton,Boolean son){
 		this.type = type;
 		this.title = title;
 		this.cancelButtonName = cancelButtonName;
 		this.isCancelButton = isCancelButton;
 		this.acceptButtonName = acceptButtonName;
 		this.isAcceptButton = isAcceptButton;
+		this.son = son;
 	}
 	
 	public String getType() {
@@ -114,6 +115,14 @@ public class Dialog {
 
 	public void setFileInfo(FileInfo fileInfo) {
 		this.fileInfo = fileInfo;
+	}
+
+	public Boolean getSon() {
+		return son;
+	}
+
+	public void setSon(Boolean son) {
+		this.son = son;
 	}
 
 	

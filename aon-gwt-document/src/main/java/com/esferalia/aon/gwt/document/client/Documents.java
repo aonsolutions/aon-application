@@ -156,6 +156,21 @@ public class Documents extends Composite implements EntryPoint {
 		private MenuItem downloadItem;
 		private MenuItem infoItem;
 
+		public MenuItem getDownloadItem() {
+			return downloadItem;
+		}
+		public void setDownloadItem(MenuItem downloadItem) {
+			this.downloadItem = downloadItem;
+		}
+		
+		public MenuItem getEditItem() {
+			return editItem;
+		}
+		public void setEditItem(MenuItem editItem) {
+			this.editItem = editItem;
+		}
+		
+		
 		public DocumentContextMenu() {
 			
 			viewItem = addItem("Visualizar",viewCommand,
@@ -202,6 +217,8 @@ public class Documents extends Composite implements EntryPoint {
 			public void onContextMenu(ContextMenuEvent event) {
 				event.preventDefault();
 				event.stopPropagation();
+				FileInfo object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
+				
 			}
 
 		};
@@ -243,6 +260,9 @@ public class Documents extends Composite implements EntryPoint {
 	SimplePanel sp;
 	
 	@UiField
+	Button upDrive;
+	
+	@UiField
 	InlineHTML html;
 	
 	@UiField
@@ -280,6 +300,9 @@ public class Documents extends Composite implements EntryPoint {
 	
 	@UiField
 	Button delFile;
+	
+	@UiField
+	Button reset;
 	
 	@UiField(provided = true)
 	DataGrid<FileInfo> dataGrid;
@@ -336,7 +359,6 @@ public class Documents extends Composite implements EntryPoint {
 						DisclosureImages di = new DisclosureImages();
 						dpanel = new DisclosurePanel(di.getClosed(), di.getOpen(), "Categor\u00edas");
 						epanel = new DisclosurePanel(di.getClosed(), di.getOpen(), "Etiquetas");
-
 						Load();
 					}
 				});
@@ -387,6 +409,7 @@ public class Documents extends Composite implements EntryPoint {
 			cAux= c;
 			Button b =new Button(c.getName()); 
 			b.setStyleName("aon-editDataTable-button aon-icon-category");
+			
 			b.addClickHandler(new ClickHandler() {
 					Category c = cAux;
 					@Override
@@ -397,7 +420,6 @@ public class Documents extends Composite implements EntryPoint {
 								new AsyncCallback<FilterUtil>() {
 									@Override
 									public void onSuccess(FilterUtil result) {
-										// TODO AÑADIR IU FILTER
 										searchs = result.getFiles();
 										docs.setFilter(result.getFiles());
 										dataProvider = new ListDataProvider<FileInfo>(
@@ -441,7 +463,6 @@ public class Documents extends Composite implements EntryPoint {
 								new AsyncCallback<FilterUtil>() {
 									@Override
 									public void onSuccess(FilterUtil result) {
-										// TODO AÑADIR IU FILTER
 										searchs = result.getFiles();
 										docs.setFilter(result.getFiles());
 										dataProvider = new ListDataProvider<FileInfo>(
@@ -479,17 +500,17 @@ public class Documents extends Composite implements EntryPoint {
 		}, ChangeEvent.getType());
 		
 		searchBox.addKeyPressHandler(new KeyPressHandler() {
+			
 			@Override
 			public void onKeyPress(KeyPressEvent event) {
-				
+
 				if(!Utils.isNotAlpKey(event.getNativeEvent().getKeyCode())){
-					event.preventDefault();
+					event.getNativeEvent().preventDefault();
 					if(KeyCodes.KEY_DELETE != event.getNativeEvent().getKeyCode() && KeyCodes.KEY_BACKSPACE != event.getNativeEvent().getKeyCode()){
 						char c = (char) event.getNativeEvent().getCharCode();
 						searchBox.setText(searchBox.getText()+Character.toString(c));
 					}
 					else{
-						
 						Integer pos = searchBox.getCursorPos();
 						String str = searchBox.getText();
 						Integer length = str.length();
@@ -719,125 +740,121 @@ public class Documents extends Composite implements EntryPoint {
 	public void editFile(SingleUploader up) {
 		Integer n =dataGrid.getKeyboardSelectedRow();
 		FileInfo fi = dataProvider.getList().get(n);
-		Dialog d = new Dialog("edit", "Editar Archivo", "Cancelar", true, "Editar", true);
-		d.setLists(lists);
-		d.setFileInfo(fi);
+		if(!fi.getIsDrive()){
+			Dialog d = new Dialog("edit", "Editar Archivo", "Cancelar", true, "Editar", true,son);
+			d.setLists(lists);
+			d.setFileInfo(fi);
 
-		popup2 = new DocumentsDialog(d){
-			@Override
-			protected void onAccept() {
-				Integer n =dataGrid.getKeyboardSelectedRow();
-        		FileInfo fileInfo = dataProvider.getList().get(n);
+			popup2 = new DocumentsDialog(d){
+				@Override
+				protected void onAccept() {
+					Integer n =dataGrid.getKeyboardSelectedRow();
+        			FileInfo fileInfo = dataProvider.getList().get(n);
             	
-            	// Descripción - Description
-            	TextBox tb = (TextBox)grid.getWidget(0, 1);
-            	if(!tb.getText().equals(""))
-            		fileInfo.setTitle(tb.getText());
+            		// Descripción - Description
+            		TextBox tb = (TextBox)grid.getWidget(0, 1);
+            		if(!tb.getText().equals(""))
+            			fileInfo.setTitle(tb.getText());
             	
-            	// Confidencial - Confidential
-            	CheckBox cb = (CheckBox)grid.getWidget(2, 1);
-            	fileInfo.setConfidential(cb.getValue());
+            		// Confidencial - Confidential
+            		CheckBox cb = (CheckBox)grid.getWidget(2, 1);
+            		fileInfo.setConfidential(cb.getValue());
             	
-            	// Fecha - Date
-            	DateBox db = (DateBox)grid.getWidget(3, 1);
-            	if(!db.getTextBox().getText().equals(""))
-            		fileInfo.setDate(db.getValue());
+            		// Fecha - Date
+            		DateBox db = (DateBox)grid.getWidget(3, 1);
+            		if(!db.getTextBox().getText().equals(""))
+            			fileInfo.setDate(db.getValue());
             	
-            	// Categoria - Category
-            	ListBox lb1 = (ListBox)grid.getWidget(4, 1);
-            	for (Category c : lists.getCategoryList().getList()) {
-            		
-            		String s1 = lb1.getItemText(lb1.getSelectedIndex());
-            		if(s1.substring(0, 1).equals(Character.toString((char)9650)) || s1.substring(0, 1).equals(Character.toString((char)9660)) )
-            			s1 = s1.substring(1);
-            		if(c.getName().equals(s1)){
-						fileInfo.setCategory(c.getId());
-					}
-				}
-            	
-            	// Ambito - Scope
-            	ListBox lb3 = (ListBox)grid.getWidget(6, 1);
-            	for (Scope s : lists.getScopeList().getList()) {
-            		String s3 = lb3.getItemText(lb1.getSelectedIndex());
-            		if(s3.substring(0, 1).equals(Character.toString((char)9650)) || s3.substring(0, 1).equals(Character.toString((char)9660)) )
-            			s3 = s3.substring(1);
-					if(s.getName().equals(s3)){
-						fileInfo.setScope(s);
-					}
-				}	            	
-            	
-            	// Etiquetas - Tags
-            	Vector<Tag> tags = new Vector<Tag>();
-            	VerticalPanel vp = (VerticalPanel)grid.getWidget(5, 1);
-            	for(Integer i = 0 ;i<vp.getWidgetCount();i++){
-            		HorizontalPanel hp = (HorizontalPanel)vp.getWidget(i);
-            		ListBox lb = (ListBox)hp.getWidget(0);
-            		for (Tag t : lists.getTagList().getList()) {
-                		String s2 = lb.getItemText(lb.getSelectedIndex());
-                		if(s2.substring(0, 1).equals(Character.toString((char)9650)) || s2.substring(0, 1).equals(Character.toString((char)9660)) )
-                			s2 = s2.substring(1);
-						if(t.getName().equals(s2)){
-							fileInfo.setTags(tags);
+            		// Categoria - Category
+            		ListBox lb1 = (ListBox)grid.getWidget(4, 1);
+            		for (Category c : lists.getCategoryList().getList()) {
+            			String s1 = lb1.getItemText(lb1.getSelectedIndex());
+            			if(s1.substring(0, 1).equals(Character.toString((char)9650)) || s1.substring(0, 1).equals(Character.toString((char)9660)) )
+            				s1 = s1.substring(1);
+            			if(c.getName().equals(s1)){
+							fileInfo.setCategory(c.getId());
 						}
 					}
-            	}
             	
-            	idoc.editFile(fileInfo,new AsyncCallback<Void>() {
-					
-					@Override
-					public void onSuccess(Void result) {
-						
+            		// Ambito - Scope
+            		ListBox lb3 = (ListBox)grid.getWidget(6, 1);
+            		for (Scope s : lists.getScopeList().getList()) {
+            			String s3 = lb3.getItemText(lb1.getSelectedIndex());
+            			if(s3.substring(0, 1).equals(Character.toString((char)9650)) || s3.substring(0, 1).equals(Character.toString((char)9660)) )
+            				s3 = s3.substring(1);
+						if(s.getName().equals(s3)){
+							fileInfo.setScope(s);
+						}
+					}	            	
+            	
+            		// Etiquetas - Tags
+            		Vector<Tag> tags = new Vector<Tag>();
+            		VerticalPanel vp = (VerticalPanel)grid.getWidget(5, 1);
+            		for(Integer i = 0 ;i<vp.getWidgetCount();i++){
+            			HorizontalPanel hp = (HorizontalPanel)vp.getWidget(i);
+            			ListBox lb = (ListBox)hp.getWidget(0);
+            			for (Tag t : lists.getTagList().getList()) {
+                			String s2 = lb.getItemText(lb.getSelectedIndex());
+                			if(s2.substring(0, 1).equals(Character.toString((char)9650)) || s2.substring(0, 1).equals(Character.toString((char)9660)) )
+                				s2 = s2.substring(1);
+							if(t.getName().equals(s2)){
+								fileInfo.setTags(tags);
+							}
+						}
+            		}
+            	
+            		idoc.editFile(fileInfo,new AsyncCallback<Void>() {
+						@Override
+						public void onSuccess(Void result) {
+						}
+						@Override
+						public void onFailure(Throwable caught) {}
+					});
+					hide();
+					vertical = new VerticalPanel();
+					Vector<FileInfo> aux = new Vector<FileInfo>();
+					for (FileInfo f : docs.getFiles()) {
+						if(f.getFileId() == fileInfo.getFileId())
+							aux.add(fileInfo);
+						else aux.add(f);		
 					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						
+					docs.setFiles(aux);
+					aux = new Vector<FileInfo>();
+					for (FileInfo f : docs.getEfiles()) {
+						if(f.getFileId() == fileInfo.getFileId())
+							aux.add(fileInfo);
+						else aux.add(f);		
 					}
-				});
-				hide();
-				vertical = new VerticalPanel();
-				Vector<FileInfo> aux = new Vector<FileInfo>();
-				for (FileInfo f : docs.getFiles()) {
-					if(f.getFileId() == fileInfo.getFileId())
+					docs.setEfiles(aux);
+					aux = new Vector<FileInfo>();
+					for (FileInfo f : docs.getFilter()) {
+						if(f.getFileId() == fileInfo.getFileId())
+							aux.add(fileInfo);
+						else aux.add(f);		
+					}
+					docs.setFilter(aux);
+					aux= new Vector<FileInfo>();
+					for (FileInfo f : dataProvider.getList()) {
+						if(f.getFileId() == fileInfo.getFileId()){
 						aux.add(fileInfo);
-					else aux.add(f);		
-				}
-				docs.setFiles(aux);
-				aux = new Vector<FileInfo>();
-				for (FileInfo f : docs.getEfiles()) {
-					if(f.getFileId() == fileInfo.getFileId())
-						aux.add(fileInfo);
-					else aux.add(f);		
-				}
-				docs.setEfiles(aux);
-				aux = new Vector<FileInfo>();
-				for (FileInfo f : docs.getFilter()) {
-					if(f.getFileId() == fileInfo.getFileId())
-						aux.add(fileInfo);
-					else aux.add(f);		
-				}
-				docs.setFilter(aux);
-				aux= new Vector<FileInfo>();
-				for (FileInfo f : dataProvider.getList()) {
-					if(f.getFileId() == fileInfo.getFileId()){
-					aux.add(fileInfo);
+						}
+						else{
+							aux.add(f);
+						}
 					}
-					else{
-						aux.add(f);
-					}
+					dataProvider = new ListDataProvider<FileInfo>(aux);
+					dataProvider.addDataDisplay(dataGrid); 
+					dataGrid.redraw();
 				}
-				dataProvider = new ListDataProvider<FileInfo>(aux);
-				dataProvider.addDataDisplay(dataGrid); 
-				dataGrid.redraw();
-			}
-			@Override
-			protected void onCancel() {
-				hide();
-				vertical = new VerticalPanel();				
-			}
-		};
-		popup2.setGlassEnabled(true);
-		popup2.show();
+				@Override
+				protected void onCancel() {
+					hide();
+					vertical = new VerticalPanel();				
+				}
+			};
+			popup2.setGlassEnabled(true);
+			popup2.show();
+		}
 	}
 
 	@UiHandler("delFile")
@@ -849,7 +866,7 @@ public class Documents extends Composite implements EntryPoint {
 	public void removeFile(){
 		Integer n =dataGrid.getKeyboardSelectedRow();
 		FileInfo fi  = dataProvider.getList().get(n);
-		Dialog d = new Dialog("delete", "Borrar Archivo", "Cancelar", true, "Borrar", true);
+		Dialog d = new Dialog("delete", "Borrar Archivo", "Cancelar", true, "Borrar", true,son);
 		d.setFileInfo(fi);
 		
 		popup2 = new DocumentsDialog(d) {
@@ -862,11 +879,19 @@ public class Documents extends Composite implements EntryPoint {
 			@Override
 			protected void onAccept() {
 				hide();
-				idoc.removeFile(getFileInfo(), new AsyncCallback<Void>() {
+				if(getFileInfo().getIsDrive()){
+					idoc.deleteMydrive(getFileInfo(), new AsyncCallback<Void>() {
+						@Override
+						public void onSuccess(Void result) {
+							//TODO Actualizar datagrid!!!
+						}
+						@Override
+						public void onFailure(Throwable caught) {}
+					});
+				}
+				else idoc.removeFile(getFileInfo(), new AsyncCallback<Void>() {
 					@Override
-					public void onFailure(Throwable caught) {
-						
-					}
+					public void onFailure(Throwable caught) {}
 					@Override
 					public void onSuccess(Void result) {
 						Integer n =dataGrid.getKeyboardSelectedRow();
@@ -901,6 +926,7 @@ public class Documents extends Composite implements EntryPoint {
 						dataProvider = new ListDataProvider<FileInfo>(l);
 						dataProvider.addDataDisplay(dataGrid);
 						dataGrid.redraw();
+						
 					}
 				} );
 			}
@@ -944,7 +970,7 @@ public class Documents extends Composite implements EntryPoint {
 	DocumentsDialog popup2;
 	
 	private void newFile(SingleUploader up) {	
-		Dialog d = new Dialog("new","Nuevo Archivo","Cancelar",true,"Guardar",true);
+		Dialog d = new Dialog("new","Nuevo Archivo","Cancelar",true,"Guardar",true,son);
 		d.setBaseUrl(GWT.getModuleBaseURL());
 		d.setLists(lists);
 		d.setSons(getSons());
@@ -1209,16 +1235,14 @@ public class Documents extends Composite implements EntryPoint {
 				});
 	}
 	
-	
+	Boolean son = false;
 	@UiHandler("eSearchButton")
 	void sbutton(ClickEvent event) {
 		html.setVisible(false);
 		filterButton.setVisible(false);
 		String searchStr = Utils.getOracleString(enterpriseSearchBox.getText());
-		
-		idoc.eSearchFile(docs.getFiles(),searchStr,
-				new AsyncCallback<Vector<FileInfo>>() {
-
+		son = !searchStr.equals(docs.getDomain());
+		idoc.eSearchFile(docs.getFiles(),searchStr,new AsyncCallback<Vector<FileInfo>>() {
 					@Override
 					public void onSuccess(Vector<FileInfo> result) {
 						docs.setEfiles(result);
@@ -1228,11 +1252,8 @@ public class Documents extends Composite implements EntryPoint {
 						dataProvider.addDataDisplay(dataGrid);
 						dataGrid.redraw();
 					}
-
 					@Override
-					public void onFailure(Throwable caught) {
-
-					}
+					public void onFailure(Throwable caught) {}
 				});
 	}
 	
@@ -1251,6 +1272,7 @@ public class Documents extends Composite implements EntryPoint {
 				isServiconvenios=false;
 				dataGrid.redraw();
 			}
+
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -1488,7 +1510,9 @@ public class Documents extends Composite implements EntryPoint {
 			@Override
 			public void render(Context context, FileInfo object,
 					SafeHtmlBuilder sb) {
-				   sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-mail-save\" tabindex=\"-1\">");
+				if(object.getIsDrive() && object.getIsGdocs())
+					sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-mail-save-black-white\" tabindex=\"-1\">");				
+				else sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-mail-save\" tabindex=\"-1\">");
 				    /*if (data != null) {
 				      sb.append(data);
 				    }*/
@@ -1525,13 +1549,16 @@ public class Documents extends Composite implements EntryPoint {
 	Vector<TreeDriveInfo> vtree;
 	
 	private void download(FileInfo object){
-		String driveId="";
-		if(object.getDriveId()!=null)driveId= object.getDriveId();
-		String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download/"
-                + "?file_id=" + Integer.toString(object.getFileId())
-                + "&drive_id=" +URL.encode(driveId)
-                + "&mimetype=" +object.getMimetype();
-		Window.open( fileDownloadURL, "_blank",null);//"status=0,toolbar=0,menubar=0,location=0");
+		if(!object.getIsGdocs()){
+			String driveId="";
+			if(object.getDriveId()!=null)driveId= object.getDriveId();
+			String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download/"
+                	+ "?file_id=" + Integer.toString(object.getFileId())
+                	+ "&drive_id=" +URL.encode(driveId)
+                	+ "&mimetype=" +object.getMimetype()
+                	+ "&isdrive=" +object.getIsDrive();
+			Window.open( fileDownloadURL, "_blank",null);//"status=0,toolbar=0,menubar=0,location=0");
+		}
 	}
 	
 	private void print(FileInfo object){
@@ -1546,7 +1573,7 @@ public class Documents extends Composite implements EntryPoint {
 	
 	private void search() {
 		Dialog d = new Dialog("search", "Busqueda Avanzada", "Cancelar", true,
-				"Buscar", true);
+				"Buscar", true,son);
 		d.setLists(lists);
 		d.setSons(getSons());
 		popup2 = new DocumentsDialog(d) {
@@ -1710,22 +1737,27 @@ public class Documents extends Composite implements EntryPoint {
 
 	private void share(FileInfo object) {
 		Dialog d = new Dialog("share", "Compartir Archivo", "Cancelar", true,
-				"Compartir", true);
-		dId = object.getDriveId();
+				"Compartir", true,son);
+		d.setFileInfo(object);
 		popup2 = new DocumentsDialog(d) {
 			@Override
 			protected void onAccept() {
 				TextBox tb = (TextBox) grid.getWidget(0, 1);
 				// TODO CHECK EMAIL
 				hide();
-				idoc.share(tb.getText(), dId, new AsyncCallback<Void>() {
+				if(getFileInfo().getIsDrive()){
+					idoc.shareMydrive(tb.getText(), getFileInfo().getDriveId(), new AsyncCallback<Void>() {
+						@Override
+						public void onSuccess(Void result) {}
+						@Override
+						public void onFailure(Throwable caught) {}
+					});
+				}
+				else idoc.share(tb.getText(), getFileInfo().getDriveId(), new AsyncCallback<Void>() {
 					@Override
-					public void onSuccess(Void result) {
-					}
-
+					public void onSuccess(Void result) {}
 					@Override
-					public void onFailure(Throwable caught) {
-					}
+					public void onFailure(Throwable caught) {}
 				});
 			}
 
@@ -1740,7 +1772,7 @@ public class Documents extends Composite implements EntryPoint {
 
 	private void info(FileInfo object) {
 		Dialog d = new Dialog("info", "Detalles Archivo", "Cancelar", false,
-				"Salir", true);
+				"Salir", true,son);
 		d.setFileInfo(object);
 		popup2 = new DocumentsDialog(d) {
 
@@ -1795,17 +1827,37 @@ public class Documents extends Composite implements EntryPoint {
 		});
 		
 	}
+	FileInfo auxiliarf;
 	public void treeSons(TreeItem t,TreeMap<String, List<FileInfo>> folders , String id){
-	
+		Integer i = 0;
 		for (FileInfo f : folders.get(id)) {
+			auxiliarf = f;
 			TreeItem ti = new TreeItem();
 			Button button = new Button(f.getTitle());
 			button.setStyleName("aon-editDataTable-button aon-icon-google-drive-folder");
+			button.addClickHandler(new ClickHandler() {
+				FileInfo f = auxiliarf;
+				@Override
+				public void onClick(ClickEvent event) {
+					idoc.getDriveFile(f.getDriveId(), new AsyncCallback<Vector<FileInfo>>() {
+						@Override
+						public void onSuccess(Vector<FileInfo> result) {
+							Window.alert(result.get(0).getTitle());
+							dataProvider = new ListDataProvider<FileInfo>(result);
+							dataProvider.addDataDisplay(dataGrid);
+							dataGrid.redraw();
+						}
+						@Override
+						public void onFailure(Throwable caught) {}
+					});
+				}
+			});
 			ti = t.addItem(button);
 			ti.setTitle(f.getDriveId());
 			if(folders.containsKey(f.getDriveId())){
 				treeSons(ti, folders, f.getDriveId());
 			}
+			i++;
 		}
 	}
 	public void myDrive() {
@@ -1843,7 +1895,7 @@ public class Documents extends Composite implements EntryPoint {
 	}
 	Viewer viewer;
 	private  void getAsHTMl(FileInfo object, Integer num) {
-		viewer = new Viewer(dataProvider.getList(),num,object){
+		viewer = new Viewer(dataProvider.getList(),num,object,100){
 			@Override
 			protected void onDownload() {
 				download(fileInfo);
@@ -1865,6 +1917,28 @@ public class Documents extends Composite implements EntryPoint {
 					public void onSuccess(String result) {
 						viewer.container.setHTML(result);
 						viewer.show();
+					}
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
+			}
+			@Override
+			protected void onZoomPlus() {					
+				idoc.getAsHTML(fileInfo, zoom , new AsyncCallback<String>() {
+					@Override
+					public void onSuccess(String result) {
+						viewer.container.setHTML(result);	
+					}
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
+			}
+			@Override
+			protected void onZoomMinus() {	
+				idoc.getAsHTML(fileInfo, zoom , new AsyncCallback<String>() {
+					@Override
+					public void onSuccess(String result) {
+						viewer.container.setHTML(result);	
 					}
 					@Override
 					public void onFailure(Throwable caught) {}
@@ -1944,12 +2018,66 @@ public class Documents extends Composite implements EntryPoint {
 		idoc.getAsHTML(object, 100 , new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
-				viewer.container.setHTML(result);
-
-				
+				viewer.container.setHTML(result);	
 			}
 			@Override
 			public void onFailure(Throwable caught) {}
 		});
+	}
+	
+	@UiHandler("reset")
+	void reset(ClickEvent event){
+		html.setVisible(false);
+		filterButton.setVisible(false);
+		String searchStr = docs.getDomain();
+		son =false;
+		enterpriseSearchBox.setText("");
+		idoc.eSearchFile(docs.getFiles(),searchStr,new AsyncCallback<Vector<FileInfo>>() {
+					@Override
+					public void onSuccess(Vector<FileInfo> result) {
+						docs.setEfiles(result);
+						docs.setFilter(result);
+						searchs = result;
+						dataProvider = new ListDataProvider<FileInfo>(result);
+						dataProvider.addDataDisplay(dataGrid);
+						dataGrid.redraw();
+					}
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
+	}
+	
+	@UiHandler("upDrive")
+	void upDrive(ClickEvent event){
+		Dialog d = new Dialog("upload", "Subir Archivo", "Cancelar", true,
+				"Subir", true,son);
+		d.setBaseUrl(GWT.getModuleBaseURL());
+
+		popup2 = new DocumentsDialog(d){ 
+			@Override
+			protected void onAccept() {
+				hide();
+				FileInfo fi = new FileInfo();
+            	TextBox tb = (TextBox)grid.getWidget(1, 1);
+            	fi.setTitle(tb.getText());				
+            	idoc.upload(fi, new AsyncCallback<Void>() {
+					@Override
+					public void onSuccess(Void result) {
+						//TODO Actualizar datagrid!!!
+					}
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
+			}
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+		
+		};
+		popup2.setGlassEnabled(true);
+		popup2.setAnimationEnabled(false);
+		popup2.setModal(false);
+		popup2.show();
 	}
 }

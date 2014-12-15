@@ -14,6 +14,7 @@ public class Document implements IsSerializable{
 	Vector<FileInfo> serviconvenios = new Vector<FileInfo>();
 	Vector<FileInfo> filter = new Vector<FileInfo>();
 	Vector<FileInfo> efiles = new Vector<FileInfo>();
+	String domain;
 	
 	public Vector<FileInfo> getFiles() {
 		return files;
@@ -40,8 +41,10 @@ public class Document implements IsSerializable{
 	public void setEfiles(Vector<FileInfo> efiles) {
 		this.efiles = efiles;
 	}
-	
-	
-	
- 
+	public String getDomain() {
+		return domain;
+	}
+	public void setDomain(String domain) {
+		this.domain = domain;
+	}
 }

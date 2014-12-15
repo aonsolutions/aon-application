@@ -85,10 +85,8 @@ public class OpenDocumentConverterServlet extends HttpServlet {
 						InputStream in = DriveUtils.downloadFile(d, f);
 						b = Utils.InputStreamToByte(in);
 					} catch (KeyStoreException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (GeneralSecurityException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}	
 				}

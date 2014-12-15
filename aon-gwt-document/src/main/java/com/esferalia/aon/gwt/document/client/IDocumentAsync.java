@@ -64,13 +64,13 @@ public interface IDocumentAsync {
 
 	void getDriveFiles(String id, AsyncCallback<Vector<FileInfo>> callback);
 
+	void getDriveFile(String id, AsyncCallback<Vector<FileInfo>> callback);
 
+	void upload(FileInfo fi, AsyncCallback<Void> callback);
 
+	void deleteMydrive(FileInfo fi, AsyncCallback<Void> callback);
 
-
-
-
-
+	void shareMydrive(String email, String driveId, AsyncCallback<Void> callback);
 
 
 }

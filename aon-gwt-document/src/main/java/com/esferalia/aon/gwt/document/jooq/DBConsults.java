@@ -7,19 +7,18 @@ import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
+import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Vector;
-import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
-import org.jooq.Record10;
 import org.jooq.Record11;
-import org.jooq.Record13;
+import org.jooq.Record14;
 import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Record7;
@@ -44,124 +43,161 @@ public class DBConsults {
 	private static Vector<FileInfo> filesGwt;
 	private static String atype=null;
 	private static String domain1=null;
+	private static Vector<FileInfo> vaux;
 
-	public static Document getAllRattach(String domain) throws SQLException {
+	public static Document getAllRattach(String domain,Integer user_id, Boolean confidential) throws SQLException {
 		Connection connection = null;
 		try {
 			
+
 			if ((domain1==null || domain1!=domain)||(atype == null || atype != "all")) {
 				
-					domain1=domain;
+				domain1=domain;
 				atype="all";
 				filesGwt = new Vector<FileInfo>();
+				vaux = new Vector<FileInfo>();
 				connection = DatabaseSync.getConnection(domain);
 
 				DSLContext dslContext = DSL.using(connection,
 						JooqSettings.getDefaultSettings());
 				Byte sh = 5;
-				
-				Result<Record13<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String>> username = dslContext
+				//rattach domain + parent domain + scope not null
+				Result<Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer>> username = dslContext
 						.select(RATTACH.ID, RATTACH.DESCRIPTION,
 								RATTACH.MIMETYPE, RATTACH.TYPE,
-								RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.DPARENT_ID,DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION)
+								RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.DPARENT_ID,DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION,DOMAIN.PARENT)
 						.from(RATTACH)
 						.join(DOMAIN)
 						.on(RATTACH.DOMAIN.eq(DOMAIN.ID))
-						.where(RATTACH.TYPE.eq(sh).and(
+						.join(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(RATTACH.SCOPE))
+						.where(USER_SCOPE.USER_ID.eq(user_id).and(RATTACH.TYPE.eq(sh).and(
 								DOMAIN.NAME.eq(domain).or(
-								DOMAIN.PARENT.eq(dslContext.select(DOMAIN.ID)
+								DOMAIN.ID.eq(dslContext.select(DOMAIN.PARENT)
+														.from(DOMAIN)
+														.where(DOMAIN.NAME.eq(domain)))))))
+						.fetch();
+				
+				//rattach scope null + sons domain
+				Result<Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer>> result = dslContext
+						.select(RATTACH.ID, RATTACH.DESCRIPTION,
+								RATTACH.MIMETYPE, RATTACH.TYPE,
+								RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.DPARENT_ID,DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION,DOMAIN.PARENT)
+						.from(RATTACH)
+						.join(DOMAIN)
+						.on(RATTACH.DOMAIN.eq(DOMAIN.ID))
+						.where(RATTACH.TYPE.eq(sh).and((RATTACH.SCOPE.isNull().and(DOMAIN.NAME.eq(domain)).or(DOMAIN.PARENT.eq(dslContext.select(DOMAIN.ID)
 										.from(DOMAIN)
-										.where(DOMAIN.NAME.eq(domain))))))
+										.where(DOMAIN.NAME.eq(domain)))))))
 						.fetch();
 
-				for (Record13<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String> record : username) {
-					FileInfo fi = new FileInfo();
-					fi.setAonType("registry");
-					if (record.value1() != null) {
-						fi.setFileId(record.value1());
-					}
-					if (record.value2() != null) {
-						fi.setTitle(record.value2());
-					}
-					if (record.value3() != null) {
-						fi.setMimetype(record.value3());
-					}
-					if (record.value4() != null) {
-						fi.setType(record.value4());
-					}
-					if (record.value5() != null) {
-						fi.setDate(record.value5());
-						String dateStr = fi.getDate().toString();
-						Integer pos = dateStr.indexOf("-");
-						Integer pos2 = dateStr.substring(pos+1).indexOf("-");
-						String aux = dateStr.substring(pos2+pos+2)+"-"+dateStr.substring(pos+1, pos2+pos+1)+"-"+dateStr.substring(0,pos);
-						fi.setDateStr(aux);
-					}
-					else fi.setDateStr("-");
-					if (record.value6() != null) {
-						fi.setDriveId(record.value6());
-					}
-					if (record.value7() != null) {
-						fi.setCategory(record.value7());
-					}
-					Tags tags = getTags(domain , fi.getFileId());
 				
-					if(record.value7() != null) {
-						Result<Record1<String>> a = dslContext.select(CATEGORY.NAME).from(CATEGORY).where(CATEGORY.ID.eq((record.value7()))).fetch();
-						a.stream().forEach(r-> {
-							fi.setCategoryStr(r.value1());
-						});
+				for (Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer> record : username) {
+					FileInfo fi = newFileInfo(dslContext,domain,record);
+					if (!fi.getConfidential() || (confidential && fi.getConfidential())){
+						filesGwt.add(fi);
+						if(fi.getDomain().equalsIgnoreCase(domain) || fi.getIsParent())
+							vaux.add(fi);
 					}
-					
-					else fi.setCategoryStr("-");
-					
-					fi.setTags(tags.getTags().getList());
-					if(tags.getTagsStr()!=null)fi.setTagsStr(tags.getTagsStr()); else fi.setTagsStr("-");
-					if(record.value8()!=null) {
-						Scope s = getScope(domain,record.value8());
-						fi.setScope(s);
+				}
+				for (Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer> record : result) {
+					FileInfo fi = newFileInfo(dslContext,domain,record);
+					if (!fi.getConfidential() || (confidential && fi.getConfidential())){
+						filesGwt.add(fi);
+						if(fi.getDomain().equalsIgnoreCase(domain) || fi.getIsParent())
+							vaux.add(fi);
 					}
-					if(record.value9()!=null){
-						Byte val = record.value9();
-						if(val ==0 ) fi.setConfidential(false);
-						else fi.setConfidential(true);
-					}
-					
-					if (record.value10() != null){
-						String s = record.value10();
-						fi.setSize(Integer.valueOf(s));
-					}
-					else fi.setSize(0);
-					fi.setSizeStr(FileUtils.byteCountToDisplaySize(fi.getSize()!=null?fi.getSize():0));
-					
-					
-					fi.setIcon(getmType(fi));
-					if(record.value11()!=null)
-						fi.setDomainId(record.value11());
-					if(record.value12()!=null)
-						fi.setDomain(record.value12());
-					if(record.value13()!=null)
-						fi.setDomainDescription(record.value13());
-					
-					filesGwt.add(fi);
 				}
 			
 			}
 			Document document = new Document();			
 			document.setFiles(filesGwt);
-			Vector<FileInfo> aux = new Vector<FileInfo>();//=  filesGwt.stream().filter(d -> d.getDomain().equalsIgnoreCase(domain));
+			/*Vector<FileInfo> aux = new Vector<FileInfo>();//=  filesGwt.stream().filter(d -> d.getDomain().equalsIgnoreCase(domain));
 			filesGwt.stream().forEach(f -> {
 				if(f.getDomain().equalsIgnoreCase(domain))
 					aux.add(f);
-			});
-			document.setEfiles(aux);
-			document.setFilter(aux);
+			});*/
+			document.setEfiles(vaux);
+			document.setFilter(vaux);
 			return document;
 			
 		} finally {
 			if (connection != null)
 				connection.close();
 		}
+	}
+	
+	private static FileInfo newFileInfo(DSLContext dslContext, String domain, Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer> record) throws SQLException {
+		FileInfo fi = new FileInfo();
+		fi.setAonType("registry");
+		if (record.value1() != null) {
+			fi.setFileId(record.value1());
+		}
+		if (record.value2() != null) {
+			fi.setTitle(record.value2());
+		}
+		if (record.value3() != null) {
+			fi.setMimetype(record.value3());
+		}
+		if (record.value4() != null) {
+			fi.setType(record.value4());
+		}
+		if (record.value5() != null) {
+			fi.setDate(record.value5());
+			String dateStr = fi.getDate().toString();
+			Integer pos = dateStr.indexOf("-");
+			Integer pos2 = dateStr.substring(pos+1).indexOf("-");
+			String aux = dateStr.substring(pos2+pos+2)+"-"+dateStr.substring(pos+1, pos2+pos+1)+"-"+dateStr.substring(0,pos);
+			fi.setDateStr(aux);
+		}
+		else fi.setDateStr("-");
+		if (record.value6() != null) {
+			fi.setDriveId(record.value6());
+		}
+		if (record.value7() != null) {
+			fi.setCategory(record.value7());
+		}
+		Tags tags = getTags(domain , fi.getFileId());
+	
+		if(record.value7() != null) {
+			Result<Record1<String>> a = dslContext.select(CATEGORY.NAME).from(CATEGORY).where(CATEGORY.ID.eq((record.value7()))).fetch();
+			a.stream().forEach(r-> {
+				fi.setCategoryStr(r.value1());
+			});
+		}
+		
+		else fi.setCategoryStr("-");
+		
+		fi.setTags(tags.getTags().getList());
+		if(tags.getTagsStr()!=null)fi.setTagsStr(tags.getTagsStr()); else fi.setTagsStr("-");
+		if(record.value8()!=null) {
+			Scope s = getScope(domain,record.value8());
+			fi.setScope(s);
+		}
+		if(record.value9()!=null){
+			Byte val = record.value9();
+			if(val ==0 ) fi.setConfidential(false);
+			else fi.setConfidential(true);
+		}
+		
+		if (record.value10() != null){
+			String s = record.value10();
+			fi.setSize(Integer.valueOf(s));
+		}
+		else fi.setSize(0);
+		fi.setSizeStr(FileUtils.byteCountToDisplaySize(fi.getSize()!=null?fi.getSize():0));
+		
+		
+		fi.setIcon(getmType(fi));
+		if(record.value11()!=null)
+			fi.setDomainId(record.value11());
+		if(record.value12()!=null)
+			fi.setDomain(record.value12());
+		if(record.value13()!=null)
+			fi.setDomainDescription(record.value13());
+		if(record.value14()==null)
+			fi.setIsParent(true);
+		
+		return fi;
 	}
 
 	public static Scope getScope(String domain , Integer id) throws SQLException{
@@ -271,7 +307,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static ScopeList getScopeList(String domain) throws SQLException{
+	public static ScopeList getScopeList(String domain,Integer user_id) throws SQLException{
 		Connection connection = null;
 		try {
 			ScopeList sl = new ScopeList();
@@ -283,8 +319,9 @@ public class DBConsults {
 
 			Result<Record2<String, Integer>> scope = dslContext.select(SCOPE.DESCRIPTION, SCOPE.ID)
 					.from(SCOPE).join(DOMAIN)
-					.on(SCOPE.DOMAIN.eq(DOMAIN.ID))
-					.where(DOMAIN.NAME.eq(domain)).fetch();
+					.on(SCOPE.DOMAIN.eq(DOMAIN.ID)).join(USER_SCOPE)
+					.on(USER_SCOPE.SCOPE.eq(SCOPE.ID))
+					.where(DOMAIN.NAME.eq(domain).and(USER_SCOPE.USER_ID.eq(user_id))).fetch();
 			
 			Vector<Scope> vector = new Vector<Scope>();
 			for (Record2<String, Integer> record : scope) {
@@ -300,8 +337,9 @@ public class DBConsults {
 			
 			Result<Record2<String, Integer>> scopeParent = dslContext.select(SCOPE.DESCRIPTION, SCOPE.ID)
 					.from(SCOPE).join(DOMAIN)
-					.on(SCOPE.DOMAIN.eq(DOMAIN.PARENT))
-					.where(DOMAIN.NAME.eq(domain)).fetch();
+					.on(SCOPE.DOMAIN.eq(DOMAIN.PARENT)).join(USER_SCOPE)
+					.on(USER_SCOPE.SCOPE.eq(SCOPE.ID))
+					.where(DOMAIN.NAME.eq(domain).and(USER_SCOPE.USER_ID.eq(user_id))).fetch();
 			
 			for (Record2<String, Integer> record : scopeParent) {
 				Scope s = new Scope();
@@ -324,7 +362,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static ScopeList getScopeListSon(String domain) throws SQLException{
+	public static ScopeList getScopeListSon(String domain, Integer user_id) throws SQLException{
 		Connection connection = null;
 		try {
 			ScopeList sl = new ScopeList();

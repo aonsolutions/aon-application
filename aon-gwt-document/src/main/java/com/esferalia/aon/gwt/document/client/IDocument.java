@@ -61,4 +61,12 @@ public interface IDocument extends RemoteService{
 	public String getRootId();
 
 	public Vector<FileInfo> getDriveFiles(String id);
+	
+	public Vector<FileInfo> getDriveFile(String id);
+	
+	public void upload(FileInfo fi);
+	
+	public void deleteMydrive(FileInfo fi);
+	
+	public void shareMydrive(String email, String driveId);
 }

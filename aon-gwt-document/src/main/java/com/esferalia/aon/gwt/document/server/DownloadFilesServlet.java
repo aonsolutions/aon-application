@@ -20,6 +20,7 @@ import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.FileInfo;
 import com.code.aon.google.apis.Utils;
+import com.code.aon.ui.google.apis.controller.GoogleDriveController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
 import com.esferalia.aon.gwt.document.jooq.DBConsults;
@@ -37,33 +38,36 @@ public class DownloadFilesServlet extends HttpServlet {
         String driveId = p_request.getParameter("drive_id");
         String fileId = p_request.getParameter("file_id");
         String mtype = p_request.getParameter("mimetype");
+        String isDrive = p_request.getParameter("isdrive");
         String domain = AonUtil.getDomainName();
         Integer m = Integer.parseInt(mtype);
         String mimetype = MimeType.values()[m].getName();
         FileInfo fi=null;
         if (driveId != ""){
-			DomainGserviceaccount g;
-			Drive d = null;
-			try {
-				g = DatabaseSync.getServiceAccount(domain);
-				d = DriveUtils.serviceInitialize(g);
-			} catch (SQLException e) {
-				// TODO Bloque catch generado automáticamente
-				e.printStackTrace();
-			} catch (KeyStoreException e) {
-				// TODO Bloque catch generado automáticamente
-				e.printStackTrace();
-			} catch (GeneralSecurityException e) {
-				// TODO Bloque catch generado automáticamente
-				e.printStackTrace();
-			}
-			
+        	Drive d = null;
+        	if(isDrive.equals("true")){
+        		d = GoogleDriveController.dconnection;
+        	}
+        	else{
+        		DomainGserviceaccount g;
+				try {
+					g = DatabaseSync.getServiceAccount(domain);
+					d = DriveUtils.serviceInitialize(g);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				} catch (KeyStoreException e) {
+					e.printStackTrace();
+				} catch (GeneralSecurityException e) {
+					e.printStackTrace();
+				}
+        	}
 			com.google.api.services.drive.model.File f = d.files().get(driveId).execute();
 			InputStream in = DriveUtils.downloadFile(d, f);
 			fi = new FileInfo();
 			byte[] b = Utils.InputStreamToByte(in);
 		    fi.setData(b);
 		    fi.setTitle(f.getTitle());
+        	
         }
         else if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);

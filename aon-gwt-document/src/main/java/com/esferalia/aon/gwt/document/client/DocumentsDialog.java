@@ -9,12 +9,9 @@ import gwtupload.client.IUploader.OnStartUploaderHandler;
 import gwtupload.client.IUploader.OnStatusChangedHandler;
 import gwtupload.client.SingleUploader;
 
-import java.util.Vector;
-
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.Dialog;
-import com.esferalia.aon.gwt.document.shared.Domain;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
 import com.esferalia.aon.gwt.document.shared.Lists;
 import com.esferalia.aon.gwt.document.shared.Scope;
@@ -46,7 +43,6 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.datepicker.client.DateBox;
 
 public abstract class DocumentsDialog extends CustomDialog {
@@ -57,7 +53,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 	private static final Binder binder = GWT.create(Binder.class);
 	
 	String email;
-	
+
 	Lists lists;
 	@UiField(provided = true) 
 	FlexTable grid;
@@ -105,9 +101,10 @@ public abstract class DocumentsDialog extends CustomDialog {
 	private void gridBuild(Dialog dialog) {
 		switch (dialog.getType()) {
 			case "new": newFile(dialog);break;
+			case "upload": uploadFile(dialog);break;
 			case "edit": editFile(dialog);break;
 			case "delete": deleteFile(dialog.getFileInfo().getTitle());break;
-			case "search": searchFile(dialog.getSons());break;
+			case "search": searchFile(dialog);break;
 			case "info": infoFile(dialog.getFileInfo());break;
 			case "share":shareFile();break;
 			default:
@@ -115,7 +112,6 @@ public abstract class DocumentsDialog extends CustomDialog {
 		}
 		
 	}
-	
 	HorizontalPanel h2;
 	VerticalPanel vertical;
 	String url;
@@ -135,6 +131,11 @@ public abstract class DocumentsDialog extends CustomDialog {
 			else if(s.getIsSon())
 				lb3.addItem(Character.toString((char)9660)+s.getName());
 			else lb3.addItem(s.getName());
+		}
+		if(dialog.getSon()){
+			for(Scope s : lists.getScopeListSon().getList()){
+				lb3.addItem(Character.toString((char)9660)+s.getName());
+			}
 		}
 		for (Tag t : lists.getTagList().getList()) {
 			if(t.getIsParent())
@@ -281,6 +282,50 @@ public abstract class DocumentsDialog extends CustomDialog {
 		}
 	}
 	
+	private void uploadFile(Dialog dialog){
+		final SingleUploader upload = newUploader(dialog.getUpload(),dialog.getBaseUrl());
+        upload.addOnCancelUploadHandler(new OnCancelUploaderHandler() {
+        	
+			@Override
+			public void onCancel(IUploader uploader) {
+				final SingleUploader upload3 = newUploader(null,url) ;
+				grid.setWidget(1, 1, upload3);
+			}
+		});
+
+		grid.setStyleName("aon-panelGrid");
+		grid.setWidth("400px");
+		grid.setBorderWidth(1);
+		grid.setCellSpacing(0);
+		
+		final TextBox tb1 = new TextBox();tb1.setStyleName("aon-inputText");
+		tb1.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				tb1.setStyleName("aon-inputText");
+			}
+		});
+		
+		grid.setWidget(1, 0, new Label("Descripci\u00f3n"));
+		grid.setWidget(1, 1, tb1);
+		
+		grid.setWidget(2, 0, new Label("Archivo"));
+		grid.setWidget(2, 1, upload);
+		
+
+		for (int i = 0; i < grid.getRowCount(); i++) {
+			for (int j = 0; j < grid.getCellCount(i); j++) {
+				if ((j % 2) == 0) {
+					grid.getCellFormatter().setStyleName(i, j,
+							"aon-panelGrid-odd");
+				} else {
+					grid.getCellFormatter().setStyleName(i, j,
+							"aon-panelGrid-even");
+				}
+			}
+		}
+	}
+	
 	private void editFile(Dialog dialog) {
 		url = dialog.getBaseUrl();
 		FileInfo fi = dialog.getFileInfo();
@@ -296,6 +341,11 @@ public abstract class DocumentsDialog extends CustomDialog {
 			else if(s.getIsSon())
 				lb3.addItem(Character.toString((char)9660)+s.getName());
 			else lb3.addItem(s.getName());
+		}
+		if(dialog.getSon()){
+			for(Scope s : lists.getScopeListSon().getList()){
+				lb3.addItem(Character.toString((char)9660)+s.getName());
+			}
 		}
 		for (Tag t : lists.getTagList().getList()) {
 			if(t.getIsParent())
@@ -480,7 +530,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 	}
 	
 	Boolean bool;
-	private void searchFile(Vector<Domain> sons) {
+	private void searchFile(Dialog dialog) {
 		ListBox lb1 = new ListBox();
 		lb1.addItem("-");
 		ListBox lb2 = new ListBox();
@@ -494,6 +544,11 @@ public abstract class DocumentsDialog extends CustomDialog {
 			else if(s.getIsSon())
 				lb3.addItem(Character.toString((char)9660)+s.getName());
 			else lb3.addItem(s.getName());
+		}
+		if(dialog.getSon()){
+			for(Scope s : lists.getScopeListSon().getList()){
+				lb3.addItem(Character.toString((char)9660)+s.getName());
+			}
 		}
 		for (Tag t : lists.getTagList().getList()) {
 			if(t.getIsParent())
@@ -515,8 +570,8 @@ public abstract class DocumentsDialog extends CustomDialog {
 		grid.setWidth("400px");
 		grid.setBorderWidth(1);
 		grid.setCellSpacing(0);
-		if(sons.size() != 1){
-		SuggestBox tb0 = new SuggestBox(Utils.createOracle(sons));
+		if(dialog.getSons().size() != 1){
+		SuggestBox tb0 = new SuggestBox(Utils.createOracle(dialog.getSons()));
 		tb0.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
 			@Override
 			public void onSelection(
@@ -622,36 +677,49 @@ public abstract class DocumentsDialog extends CustomDialog {
 	}
 	
 	
-	private void infoFile(FileInfo object) {		
+	private void infoFile(FileInfo object) {
 		grid.setStyleName("aon-panelGrid");
 		grid.setWidth("300px");
 		grid.setBorderWidth(1);
 		grid.setCellSpacing(0);
-
-		grid.setWidget(0, 0, new Label("Descripci\u00f3n"));
-		grid.setWidget(0, 1, new Label(object.getTitle()));
+		if(object.getIsDrive()){
+			grid.setWidget(0, 0, new Label("Descripci\u00f3n"));
+			grid.setWidget(0, 1, new Label(object.getTitle()));
 		
-		grid.setWidget(1, 0, new Label("Confidencial"));
-		grid.setWidget(1, 1, new Label(object.getConfidential() ? "Si" : "No"));
+			grid.setWidget(1, 0, new Label("Fecha"));
+			grid.setWidget(1, 1, new Label(object.getDateStr()));
 		
-		grid.setWidget(2, 0, new Label("Fecha"));
-		grid.setWidget(2, 1, new Label(object.getDateStr()));
+			grid.setWidget(2, 0, new Label("Tamaño"));
+			grid.setWidget(2, 1, new Label(object.getSizeStr()));
 		
-		grid.setWidget(3, 0, new Label("Categoria"));
-		grid.setWidget(3, 1, new Label(object.getCategoryStr()));
+			grid.setWidget(3, 0, new Label("Mime Type"));
+			grid.setWidget(3, 1, new Label(""));
+		}
+		else{
+			grid.setWidget(0, 0, new Label("Descripci\u00f3n"));
+			grid.setWidget(0, 1, new Label(object.getTitle()));
 		
-		grid.setWidget(4, 0, new Label("Etiquetas"));
-		grid.setWidget(4, 1, new Label(object.getTagsStr()));
+			grid.setWidget(1, 0, new Label("Confidencial"));
+			grid.setWidget(1, 1, new Label(object.getConfidential() ? "Si" : "No"));
+		
+			grid.setWidget(2, 0, new Label("Fecha"));
+			grid.setWidget(2, 1, new Label(object.getDateStr()));
+		
+			grid.setWidget(3, 0, new Label("Categoria"));
+			grid.setWidget(3, 1, new Label(object.getCategoryStr()));
+		
+			grid.setWidget(4, 0, new Label("Etiquetas"));
+			grid.setWidget(4, 1, new Label(object.getTagsStr()));
 	
-		grid.setWidget(5, 0, new Label("Ambito"));
-		grid.setWidget(5, 1, new Label(object.getScope().getName()));
+			grid.setWidget(5, 0, new Label("Ambito"));
+			grid.setWidget(5, 1, new Label(object.getScope().getName()));
 		
-		grid.setWidget(6, 0, new Label("Tamaño"));
-		grid.setWidget(6, 1, new Label(object.getSizeStr()));
+			grid.setWidget(6, 0, new Label("Tamaño"));
+			grid.setWidget(6, 1, new Label(object.getSizeStr()));
 		
-		grid.setWidget(7, 0, new Label("Mime Type"));
-		grid.setWidget(7, 1, new Label(""));//MimeType.values()[object.getMimetype()].getName()));
-				
+			grid.setWidget(7, 0, new Label("Mime Type"));
+			grid.setWidget(7, 1, new Label(""));//MimeType.values()[object.getMimetype()].getName()));
+		}	
 		for (int i = 0; i < grid.getRowCount(); i++) {
 			for (int j = 0; j < grid.getCellCount(i); j++) {
 				if ((j % 2) == 0) {
