@@ -6,30 +6,29 @@
 //
 
 
-package com.esferalia.aon.gwt.fiscal.server.mod390;
+package com.esferalia.aon.occam.api.model.mod390.e2013;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
 
 /**
- * <p>Java class for tipo_IdentificacionPersonaJuridica complex type.
+ * <p>Java class for tipo_BaseImponible_y_Cuota complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="tipo_IdentificacionPersonaJuridica">
+ * &lt;complexType name="tipo_BaseImponible_y_Cuota">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="NIF" type="{}tipo_Nif"/>
- *         &lt;element name="RazonSocial" type="{}tipo_RazonSocial"/>
+ *         &lt;element name="BI" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="Cuota" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -39,64 +38,64 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "tipo_IdentificacionPersonaJuridica", propOrder = {
-    "nif",
-    "razonSocial"
+@XmlType(name = "tipo_BaseImponible_y_Cuota", propOrder = {
+    "bi",
+    "cuota"
 })
 @SuppressWarnings("serial")
-public class TipoIdentificacionPersonaJuridica implements Serializable, IsSerializable{
+public class TipoBaseImponibleYCuota implements Serializable{
 
-    @XmlElement(name = "NIF", required = true)
-    protected String nif;
-    @XmlElement(name = "RazonSocial", required = true)
-    protected String razonSocial;
+    @XmlElement(name = "BI")
+    protected BigDecimal bi;
+    @XmlElement(name = "Cuota")
+    protected BigDecimal cuota;
 
     /**
-     * Gets the value of the nif property.
+     * Gets the value of the bi property.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link BigDecimal }
      *     
      */
-    public String getNIF() {
-        return nif;
+    public BigDecimal getBI() {
+        return bi;
     }
 
     /**
-     * Sets the value of the nif property.
+     * Sets the value of the bi property.
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link BigDecimal }
      *     
      */
-    public void setNIF(String value) {
-        this.nif = value;
+    public void setBI(BigDecimal value) {
+        this.bi = value;
     }
 
     /**
-     * Gets the value of the razonSocial property.
+     * Gets the value of the cuota property.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link BigDecimal }
      *     
      */
-    public String getRazonSocial() {
-        return razonSocial;
+    public BigDecimal getCuota() {
+        return cuota;
     }
 
     /**
-     * Sets the value of the razonSocial property.
+     * Sets the value of the cuota property.
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link BigDecimal }
      *     
      */
-    public void setRazonSocial(String value) {
-        this.razonSocial = value;
+    public void setCuota(BigDecimal value) {
+        this.cuota = value;
     }
 
 }

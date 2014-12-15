@@ -6,7 +6,7 @@
 //
 
 
-package com.esferalia.aon.gwt.fiscal.server.mod390;
+package com.esferalia.aon.occam.api.model.mod390.e2013;
 
 import java.io.Serializable;
 
@@ -15,23 +15,21 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
 
 /**
- * <p>Java class for tipo_RepresentanteJuridica complex type.
+ * <p>Java class for tipo_IdentificacionPersonaFisica complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="tipo_RepresentanteJuridica">
+ * &lt;complexType name="tipo_IdentificacionPersonaFisica">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="Nombre" type="{}tipo_NombreRepresentanteJuridica" minOccurs="0"/>
- *         &lt;element name="NIF" type="{}tipo_Nif" minOccurs="0"/>
- *         &lt;element name="FechaPoder" type="{}tipo_DiaMesAnno" minOccurs="0"/>
- *         &lt;element name="Notaria" type="{}tipo_Notaria" minOccurs="0"/>
+ *         &lt;element name="NIF" type="{}tipo_Nif"/>
+ *         &lt;element name="Ape1" type="{}tipo_Nombre"/>
+ *         &lt;element name="Ape2" type="{}tipo_Nombre" minOccurs="0"/>
+ *         &lt;element name="Nombre" type="{}tipo_Nombre"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -41,47 +39,23 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "tipo_RepresentanteJuridica", propOrder = {
-    "nombre",
+@XmlType(name = "tipo_IdentificacionPersonaFisica", propOrder = {
     "nif",
-    "fechaPoder",
-    "notaria"
+    "ape1",
+    "ape2",
+    "nombre"
 })
 @SuppressWarnings("serial")
-public class TipoRepresentanteJuridica implements Serializable, IsSerializable{
+public class TipoIdentificacionPersonaFisica implements Serializable{
 
-    @XmlElement(name = "Nombre")
-    protected String nombre;
-    @XmlElement(name = "NIF")
+    @XmlElement(name = "NIF", required = true)
     protected String nif;
-    @XmlElement(name = "FechaPoder")
-    protected String fechaPoder;
-    @XmlElement(name = "Notaria")
-    protected String notaria;
-
-    /**
-     * Gets the value of the nombre property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getNombre() {
-        return nombre;
-    }
-
-    /**
-     * Sets the value of the nombre property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setNombre(String value) {
-        this.nombre = value;
-    }
+    @XmlElement(name = "Ape1", required = true)
+    protected String ape1;
+    @XmlElement(name = "Ape2")
+    protected String ape2;
+    @XmlElement(name = "Nombre", required = true)
+    protected String nombre;
 
     /**
      * Gets the value of the nif property.
@@ -108,51 +82,75 @@ public class TipoRepresentanteJuridica implements Serializable, IsSerializable{
     }
 
     /**
-     * Gets the value of the fechaPoder property.
+     * Gets the value of the ape1 property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getFechaPoder() {
-        return fechaPoder;
+    public String getApe1() {
+        return ape1;
     }
 
     /**
-     * Sets the value of the fechaPoder property.
+     * Sets the value of the ape1 property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setFechaPoder(String value) {
-        this.fechaPoder = value;
+    public void setApe1(String value) {
+        this.ape1 = value;
     }
 
     /**
-     * Gets the value of the notaria property.
+     * Gets the value of the ape2 property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getNotaria() {
-        return notaria;
+    public String getApe2() {
+        return ape2;
     }
 
     /**
-     * Sets the value of the notaria property.
+     * Sets the value of the ape2 property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setNotaria(String value) {
-        this.notaria = value;
+    public void setApe2(String value) {
+        this.ape2 = value;
+    }
+
+    /**
+     * Gets the value of the nombre property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNombre() {
+        return nombre;
+    }
+
+    /**
+     * Sets the value of the nombre property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNombre(String value) {
+        this.nombre = value;
     }
 
 }

@@ -1,12 +1,10 @@
-package com.esferalia.aon.gwt.common.shared;
+package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 import java.util.Date;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
 @SuppressWarnings("serial")
-public class LegalRepresentative implements Serializable, IsSerializable {
+public class LegalRepresentative implements Serializable  {
 
 	private String name;
 	private String document;

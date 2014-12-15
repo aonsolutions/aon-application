@@ -6,7 +6,7 @@
 //
 
 
-package com.esferalia.aon.gwt.fiscal.server.mod390;
+package com.esferalia.aon.occam.api.model.mod390.e2013;
 
 import java.io.Serializable;
 
@@ -14,8 +14,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-
-import com.google.gwt.user.client.rpc.IsSerializable;
 
 
 /**
@@ -44,7 +42,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
     "domicilio"
 })
 @SuppressWarnings("serial")
-public class TipoRepresentanteFisica implements Serializable, IsSerializable{
+public class TipoRepresentanteFisica implements Serializable{
 
     @XmlElement(name = "Ident")
     protected TipoIdentificacionPersonaJuridica ident;

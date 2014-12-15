@@ -19,7 +19,7 @@ import com.esferalia.aon.gwt.fiscal.client.widget.EnterpriseSuggestBox;
 import com.esferalia.aon.gwt.fiscal.shared.FiscalEnum.Administration;
 import com.esferalia.aon.gwt.fiscal.shared.Mod303Results;
 import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
-import com.esferalia.aon.gwt.fiscal.shared.Mod390;
+import com.esferalia.aon.occam.api.model.Mod390;
 import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -42,6 +42,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -54,9 +55,18 @@ import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.NoSelectionModel;
+import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
+
 public class Model390 extends MainEntryPoint {
+
+	public static final ProvidesKey<Mod390> MOD390_PROVIDES_KEY = new ProvidesKey<Mod390>() {
+		@Override
+		public Object getKey(Mod390 mod390) {
+			return mod390 == null ? null : mod390.getId();
+		}
+	};
 
 	interface Model390Binder extends UiBinder<Widget, Model390> {
 	}
@@ -67,16 +77,17 @@ public class Model390 extends MainEntryPoint {
 	private Mod390 mod390;
 	private FiscalServiceAsync fiscalService;
 	private final static CommonMessages MSG = GWT.create(CommonMessages.class);
-	private final static AonResources RESOURCES = GWT.create(AonResources.class);
+	private final static AonResources RESOURCES = GWT
+			.create(AonResources.class);
 
 	@UiField
 	Label simplifiedRegime;
-	
+
 	@UiField
 	DeckLayoutPanel deckPanel;
 	@UiField
 	DeckPanel pagesPanel;
-	
+
 	@UiField
 	Panel panel0;
 	@UiField
@@ -86,7 +97,7 @@ public class Model390 extends MainEntryPoint {
 	Panel panel1;
 	@UiField
 	FocusPanel linkPage1;
-	
+
 	@UiField
 	Panel panel3;
 	@UiField
@@ -141,7 +152,7 @@ public class Model390 extends MainEntryPoint {
 	Panel panel13;
 	@UiField
 	FocusPanel linkPage13;
-	
+
 	@UiField
 	Panel listPanel;
 	@UiField
@@ -169,8 +180,8 @@ public class Model390 extends MainEntryPoint {
 	Button cancelButton;
 	@UiField
 	Button generateFileButton;
-//	@UiField
-//	Button printButton;
+	// @UiField
+	// Button printButton;
 
 	@UiField
 	TextBox year;
@@ -183,7 +194,9 @@ public class Model390 extends MainEntryPoint {
 
 	FormPanel diskForm;
 	Hidden mod390Hidden;
-	
+	Hidden domainIdHidden;
+	Hidden domainNameHidden;
+
 	// PAGE 0
 	@UiField
 	Page0 page0;
@@ -195,7 +208,7 @@ public class Model390 extends MainEntryPoint {
 	// PAGE 3
 	@UiField
 	Page3 page3;
-	
+
 	// PAGE 4
 	@UiField
 	Page4 page4;
@@ -216,7 +229,7 @@ public class Model390 extends MainEntryPoint {
 	@UiField
 	Page8 page8;
 
-	// PAGE 
+	// PAGE
 	@UiField
 	Page9 page9;
 
@@ -236,7 +249,6 @@ public class Model390 extends MainEntryPoint {
 	@UiField
 	Page13 page13;
 
-	
 	@Override
 	public void onModuleLoad() {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
@@ -249,7 +261,7 @@ public class Model390 extends MainEntryPoint {
 
 		CellTable.Resources tableStyle = GWT.create(AonCellTable.class);
 
-		table = new CellTable<Mod390>(1, tableStyle, Mod390.PROVIDES_KEY);
+		table = new CellTable<Mod390>(1, tableStyle, MOD390_PROVIDES_KEY);
 		table.setKeyboardPagingPolicy(KeyboardPagingPolicy.CHANGE_PAGE);
 		table.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 
@@ -259,21 +271,28 @@ public class Model390 extends MainEntryPoint {
 		addDocumentColumn();
 		addNameColumn();
 
-		model = new NoSelectionModel<Mod390>(Mod390.PROVIDES_KEY);
+		model = new NoSelectionModel<Mod390>(MOD390_PROVIDES_KEY);
 		model.addSelectionChangeHandler(new Mod390SelectionHandler());
 		table.setSelectionModel(model);
 		table.setEmptyTableWidget(new HTML(MSG.noData()));
-		
+
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = MODEL_390_BINDER.createAndBindUi(this);
 
 		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
-
+		
 		diskForm = new FormPanel("_blank");
 		diskForm.setMethod(FormPanel.METHOD_POST);
+		FlowPanel formFlowPanel = new FlowPanel();
+		diskForm.add(formFlowPanel);
 		mod390Hidden = new Hidden("mod390");
-		diskForm.add(mod390Hidden);
+		formFlowPanel.add(mod390Hidden);
+		domainIdHidden = new Hidden("domainId");
+		formFlowPanel.add(domainIdHidden);
+		domainNameHidden = new Hidden("domainName");
+		formFlowPanel.add(domainNameHidden);
 		formContainer.add(diskForm);
+		
 
 		// Add the outer panel to the RootLayoutPanel, so that it will be
 		// displayed.
@@ -282,16 +301,21 @@ public class Model390 extends MainEntryPoint {
 
 		// http://code.google.com/p/google-web-toolkit/issues/detail?id=6889
 		deckPanel.onResize();
-		
+
 		page5.setPage10(page10);
 		page7.setPage5(page5);
 		page7.setPage6(page6);
 		page8.setPage5(page5);
 		page8.setPage6(page6);
-		
+
 		// HABILITAR
-		
+
 	}
+
+	public static native String getCurrentDomainName()
+	/*-{
+		return $wnd.getCurrentDomainName();
+	}-*/;
 
 	public static native int getCurrentDomain()
 	/*-{
@@ -363,7 +387,8 @@ public class Model390 extends MainEntryPoint {
 		@Override
 		public void onSelectionChange(SelectionChangeEvent event) {
 			Mod390 sel = model.getLastSelectedObject();
-			fiscalService.getMod390(sel.getId(), new AsyncCallback<Mod390>() {
+			fiscalService.getMod390(getCurrentDomainName(), getCurrentDomain(),
+					sel.getId(), new AsyncCallback<Mod390>() {
 				@Override
 				public void onSuccess(Mod390 selected) {
 					if (selected == null) {
@@ -393,14 +418,15 @@ public class Model390 extends MainEntryPoint {
 		onLinkPage1(null);
 		enterprise = m390.getEnterprise();
 		domain = m390.getDomain();
-		
+
 		year.setValue(Integer.toString(m390.getYear()));
-		enterpriseSuggest.setValue(m390.getDocument(), m390.getEnterpriseName());
+		enterpriseSuggest
+				.setValue(m390.getDocument(), m390.getEnterpriseName());
 		replacement.setValue(m390.isReplacement());
 		replacedReceipt.setValue(m390.getReplacedReceipt());
-		
+
 		page0.setValue(m390);
-		
+
 		page1.setValue(m390);
 		page3.setValue(m390);
 		page4.setValue(m390);
@@ -413,23 +439,21 @@ public class Model390 extends MainEntryPoint {
 		page11.setValue(m390);
 		page12.setValue(m390);
 		page13.setValue(m390);
-		
-		
-		
+
 		// Toolbar states
 		deleteButton.setVisible(mod390.getId() != null);
 		newButton.setVisible(mod390.getId() != null);
 		cancelButton.setVisible(table.getRowCount() > 0);
 		saveButton.setVisible(true);
 		generateFileButton.setVisible(mod390.getId() != null);
-//		printButton.setVisible(mod390.getId() != null);
+		// printButton.setVisible(mod390.getId() != null);
 
 		simplifiedRegime.setVisible(mod390.isSimplifiedRegime());
 	}
 
 	@UiHandler("table")
 	void onTableRangeChange(RangeChangeEvent event) {
-		fiscalService.getMod390s(getCurrentDomain(),
+		fiscalService.getMod390s(getCurrentDomainName(), getCurrentDomain(),
 				new AsyncCallback<ArrayList<Mod390>>() {
 					@Override
 					public void onSuccess(ArrayList<Mod390> result) {
@@ -444,7 +468,7 @@ public class Model390 extends MainEntryPoint {
 							deleteButton.setVisible(false);
 							newButton.setVisible(true);
 							generateFileButton.setVisible(false);
-//							printButton.setVisible(false);
+							// printButton.setVisible(false);
 						}
 					}
 
@@ -469,7 +493,7 @@ public class Model390 extends MainEntryPoint {
 		label.addStyleName("aon-icon");
 		messagesPanel.add(label);
 	}
-	
+
 	@UiHandler("saveButton")
 	void onAcceptButtonClick(ClickEvent event) {
 		accept(new AcceptAsyncCallback());
@@ -496,7 +520,7 @@ public class Model390 extends MainEntryPoint {
 
 	private class AcceptAsyncCallback implements AsyncCallback<Mod390> {
 		PopupPanel popup;
-		
+
 		public void setPopup(PopupPanel popup) {
 			this.popup = popup;
 		}
@@ -513,61 +537,75 @@ public class Model390 extends MainEntryPoint {
 			popup.hide();
 			addErrorMessage(MSG.unableToSaveMod190(caught.getMessage()));
 		}
-		
+
 	}
-	
+
 	private void validate(Mod390 m390) {
 		if (AonUtil.isEmpty(year.getValue())) {
-			throw new IllegalArgumentException(MSG.requiredField(MSG.fiscalYear()));
+			throw new IllegalArgumentException(MSG.requiredField(MSG
+					.fiscalYear()));
 		}
 		if (!m390.isLegalEntity()) {
 			if (AonUtil.isEmpty(m390.getDocument())) {
-				throw new IllegalArgumentException(MSG.requiredField(" Apart. 0: " + MSG.document()));
+				throw new IllegalArgumentException(
+						MSG.requiredField(" Apart. 0: " + MSG.document()));
 			}
 			if (!DocumentUtil.isValid(m390.getDocument())) {
 				throw new IllegalArgumentException("El NIF/DNI no es correcto");
 			}
 			if (AonUtil.isEmpty(m390.getName())) {
-				throw new IllegalArgumentException("Para personas f\u00EDsicas, el nombre es obligatorio (Apartado 0)");	
+				throw new IllegalArgumentException(
+						"Para personas f\u00EDsicas, el nombre es obligatorio (Apartado 0)");
 			}
 			if (AonUtil.isEmpty(m390.getFirstSurname())) {
-				throw new IllegalArgumentException("Para personas f\u00EDsicas, el primer apellido es obligatorio (Apartado 0)");	
+				throw new IllegalArgumentException(
+						"Para personas f\u00EDsicas, el primer apellido es obligatorio (Apartado 0)");
 			}
 			if (AonUtil.isEmpty(m390.getSecondSurname())) {
-				throw new IllegalArgumentException("Para personas f\u00EDsicas, el segundo apellido es obligatorio (Apartado 0)");	
+				throw new IllegalArgumentException(
+						"Para personas f\u00EDsicas, el segundo apellido es obligatorio (Apartado 0)");
 			}
 		} else {
 			if (AonUtil.isEmpty(m390.getName())) {
-				throw new IllegalArgumentException("No se ha indicado el nombre del declarante. (Apartado 0)");	
+				throw new IllegalArgumentException(
+						"No se ha indicado el nombre del declarante. (Apartado 0)");
 			}
 		}
-		if (m390.getMainActivity() == null || AonUtil.isEmpty(m390.getMainActivity().getKey()) ) {
-			throw new IllegalArgumentException("No se ha indicado actividad principal (Apartado 3)");
+		if (m390.getMainActivity() == null
+				|| AonUtil.isEmpty(m390.getMainActivity().getKey())) {
+			throw new IllegalArgumentException(
+					"No se ha indicado actividad principal (Apartado 3)");
 		}
 		if (!m390.isLegalEntity()) {
 			if (m390.getAddress() == null) {
-				throw new IllegalArgumentException("Indique datos del represante (Apartado 4)");
+				throw new IllegalArgumentException(
+						"Indique datos del represante (Apartado 4)");
 			}
 			if (AonUtil.isEmpty(m390.getAddress().getRdocument())) {
-				throw new IllegalArgumentException("Para personas f\u00EDsicas, el NIF/DNI del representante es obligatorio. (Apartado 4)");
+				throw new IllegalArgumentException(
+						"Para personas f\u00EDsicas, el NIF/DNI del representante es obligatorio. (Apartado 4)");
 			}
 			if (!DocumentUtil.isValid(m390.getAddress().getRdocument())) {
-				throw new IllegalArgumentException("El NIF/DNI del representante no es correcto. (Apartado 4)");
+				throw new IllegalArgumentException(
+						"El NIF/DNI del representante no es correcto. (Apartado 4)");
 			}
 		} else {
 			if (m390.getLegalRepr1() != null) {
 				if (!DocumentUtil.isValid(m390.getLegalRepr1().getDocument())) {
-					throw new IllegalArgumentException("El NIF del primer representante para personas jurídicas no es correcto. (Apartado 4)");
+					throw new IllegalArgumentException(
+							"El NIF del primer representante para personas jurídicas no es correcto. (Apartado 4)");
 				}
 			}
 			if (m390.getLegalRepr2() != null) {
 				if (!DocumentUtil.isValid(m390.getLegalRepr2().getDocument())) {
-					throw new IllegalArgumentException("El NIF del segundo representante para personas jurídicas no es correcto. (Apartado 4)");
+					throw new IllegalArgumentException(
+							"El NIF del segundo representante para personas jurídicas no es correcto. (Apartado 4)");
 				}
 			}
 			if (m390.getLegalRepr3() != null) {
 				if (!DocumentUtil.isValid(m390.getLegalRepr3().getDocument())) {
-					throw new IllegalArgumentException("El NIF del tercer representante para personas jurídicas no es correcto. (Apartado 4)");
+					throw new IllegalArgumentException(
+							"El NIF del tercer representante para personas jurídicas no es correcto. (Apartado 4)");
 				}
 			}
 		}
@@ -610,26 +648,30 @@ public class Model390 extends MainEntryPoint {
 						mod390.setYear(params.getDefaultYear() != null ? params
 								.getDefaultYear() : 2013);
 						if (mod390.isLegalEntity()) {
-							mod390.setName(mod390.getEnterpriseName());	
+							mod390.setName(mod390.getEnterpriseName());
 						} else {
 							String tmpName = mod390.getEnterpriseName();
 							if (AonUtil.contains(tmpName, ',')) {
-								mod390.setName(AonUtil.trim(AonUtil.substringAfter(tmpName, ",")));
-								mod390.setFirstSurname(AonUtil.trim(AonUtil.substringBefore(tmpName, ",")));
+								mod390.setName(AonUtil.trim(AonUtil
+										.substringAfter(tmpName, ",")));
+								mod390.setFirstSurname(AonUtil.trim(AonUtil
+										.substringBefore(tmpName, ",")));
 							} else {
-								mod390.setName(AonUtil.trim(AonUtil.substringBefore(tmpName, " ")));
-								mod390.setFirstSurname(AonUtil.trim(AonUtil.substringAfter(tmpName, " ")));
+								mod390.setName(AonUtil.trim(AonUtil
+										.substringBefore(tmpName, " ")));
+								mod390.setFirstSurname(AonUtil.trim(AonUtil
+										.substringAfter(tmpName, " ")));
 							}
 						}
 						select(mod390);
-						
+
 						page0.setValue(mod390);
 						initializePages(mod390);
 						int i = deckPanel.getWidgetIndex(formPanel);
 						deckPanel.showWidget(i);
 						i = pagesPanel.getWidgetIndex(panel1);
 						pagesPanel.showWidget(i);
-						
+
 						year.selectAll();
 						year.setFocus(true);
 					}
@@ -647,48 +689,52 @@ public class Model390 extends MainEntryPoint {
 	private void initializePages(final Mod390 mod390) {
 		try {
 			final int y = Integer.parseInt(year.getValue());
-			fiscalService.getMod311Results(domain, y, new AsyncCallback<ArrayList<Mod311Results>>() {
-				@Override
-				public void onSuccess(ArrayList<Mod311Results> result) {
-					int a = 0;
-					int f = 0;
-					for (Mod311Results re : result) {
-						if (re.isFarmer()) {
-							if (f >= 0 && f <=4) {
-								page6.setFarmerValue(f, re );
-								f++;
+			fiscalService.getMod311Results(domain, y,
+					new AsyncCallback<ArrayList<Mod311Results>>() {
+						@Override
+						public void onSuccess(ArrayList<Mod311Results> result) {
+							int a = 0;
+							int f = 0;
+							for (Mod311Results re : result) {
+								if (re.isFarmer()) {
+									if (f >= 0 && f <= 4) {
+										page6.setFarmerValue(f, re);
+										f++;
+									}
+								} else {
+									if (a == 0) {
+										page6.getActivity1().setValue(re);
+										a++;
+									} else if (a == 1) {
+										page6.getActivity2().setValue(re);
+										a++;
+									}
+								}
 							}
-						} else {
-							if (a == 0) {
-								page6.getActivity1().setValue( re );
-								a++;
-							} else if (a == 1) {
-								page6.getActivity2().setValue( re );
-								a++;
-							}
+
+							page6.refresh();
+							page6.populate(mod390);
+							page5.initialize(domain, y, mod390);
+							initializeMod303Values(domain, y, mod390);
+							simplifiedRegime.setVisible(mod390
+									.isSimplifiedRegime());
 						}
-					}
 
-					page6.refresh();
-					page6.populate(mod390);
-					page5.initialize(domain, y ,mod390);
-					initializeMod303Values(domain, y ,mod390);
-					simplifiedRegime.setVisible(mod390.isSimplifiedRegime());
-				}
+						@Override
+						public void onFailure(Throwable caught) {
+							DialogMessages.alertErrorWidget(MSG
+									.unableToFindMod190Detail(caught
+											.getMessage()));
+						}
+					});
 
-				@Override
-				public void onFailure(Throwable caught) {
-					DialogMessages.alertErrorWidget(MSG
-							.unableToFindMod190Detail(caught.getMessage()));
-				}
-			});
-			
 		} catch (NumberFormatException e) {
 			// nothing
 		}
 	}
 
-	private void initializeMod303Values(int domain, int year, final Mod390 mod390) {
+	private void initializeMod303Values(int domain, int year,
+			final Mod390 mod390) {
 		fiscalService.getMod303Results(domain, year,
 				new AsyncCallback<Mod303Results>() {
 					@Override
@@ -725,15 +771,19 @@ public class Model390 extends MainEntryPoint {
 		mod390.setEnterpriseName(enterpriseSuggest.getName().getValue());
 		if (AonUtil.isEmpty(mod390.getName())) {
 			if (mod390.isLegalEntity()) {
-				mod390.setName(enterpriseSuggest.getName().getValue());	
+				mod390.setName(enterpriseSuggest.getName().getValue());
 			} else {
 				String tmpName = enterpriseSuggest.getName().getValue();
 				if (AonUtil.contains(tmpName, ',')) {
-					mod390.setName(AonUtil.trim(AonUtil.substringAfter(tmpName, ",")));
-					mod390.setFirstSurname(AonUtil.trim(AonUtil.substringBefore(tmpName, ",")));
+					mod390.setName(AonUtil.trim(AonUtil.substringAfter(tmpName,
+							",")));
+					mod390.setFirstSurname(AonUtil.trim(AonUtil
+							.substringBefore(tmpName, ",")));
 				} else {
-					mod390.setName(AonUtil.trim(AonUtil.substringBefore(tmpName, " ")));
-					mod390.setFirstSurname(AonUtil.trim(AonUtil.substringAfter(tmpName, " ")));
+					mod390.setName(AonUtil.trim(AonUtil.substringBefore(
+							tmpName, " ")));
+					mod390.setFirstSurname(AonUtil.trim(AonUtil.substringAfter(
+							tmpName, " ")));
 				}
 			}
 		}
@@ -745,17 +795,20 @@ public class Model390 extends MainEntryPoint {
 
 	@UiHandler("year")
 	void onChangeYear(ChangeEvent event) {
-		if (Window.confirm("El ejercicio ha cambiado, desea recalcular los datos?")) {
+		if (Window
+				.confirm("El ejercicio ha cambiado, desea recalcular los datos?")) {
 			if (domain != 0) {
 				try {
-					page5.initialize(domain, Integer.parseInt(year.getValue()), mod390 );
+					page5.initialize(domain, Integer.parseInt(year.getValue()),
+							mod390);
 				} catch (NumberFormatException e) {
 					// nothing
 				}
 			}
-		};
+		}
+		;
 	}
-	
+
 	private void populateMod390() {
 		try {
 			mod390.setYear(Integer.parseInt(year.getValue()));
@@ -767,12 +820,12 @@ public class Model390 extends MainEntryPoint {
 		mod390.setDocument(enterpriseSuggest.getValue());
 		mod390.setEnterpriseName(enterpriseSuggest.getName().getValue());
 		mod390.setYear(Integer.parseInt(year.getValue()));
-		mod390.setAdministration(Administration.COMMON_TERRITORY.ordinal());
+		mod390.setAdministration( (byte) Administration.COMMON_TERRITORY.ordinal());
 		mod390.setConfidential(false);
 		mod390.setReplacement(replacement.getValue());
 		mod390.setReplacedReceipt(replacedReceipt.getValue());
 		mod390.setComments(null);
-		
+
 		// Populate Pages
 		page0.populate(mod390);
 		page1.populate(mod390);
@@ -787,7 +840,7 @@ public class Model390 extends MainEntryPoint {
 		page11.populate(mod390);
 		page12.populate(mod390);
 		page13.populate(mod390);
-		
+
 	}
 
 	// -------------------------------------------------------------- UiHandler
@@ -802,25 +855,24 @@ public class Model390 extends MainEntryPoint {
 		mod390Hidden.setValue(String.valueOf(mod390.getId()));
 		diskForm.submit();
 	}
-	
 
-//	@UiHandler("printButton")
-//	void onPrintButtonClick(ClickEvent event) {
-//		diskForm.setAction(GWT.getHostPageBaseURL()
-//				+ "/aon_gwt_fiscal/Model390Print");
-//		mod390Hidden.setValue(String.valueOf(mod390.getId()));
-//		diskForm.submit();
-//	}
+	// @UiHandler("printButton")
+	// void onPrintButtonClick(ClickEvent event) {
+	// diskForm.setAction(GWT.getHostPageBaseURL()
+	// + "/aon_gwt_fiscal/Model390Print");
+	// mod390Hidden.setValue(String.valueOf(mod390.getId()));
+	// diskForm.submit();
+	// }
 
 	private void clearLinks() {
-		Panel[] panels = new Panel[] { linkPage0, linkPage1, linkPage3, 
-				linkPage4,  linkPage5, linkPage6, linkPage7, linkPage8, 
-				linkPage9,  linkPage10, linkPage11, linkPage12, linkPage13 };
+		Panel[] panels = new Panel[] { linkPage0, linkPage1, linkPage3,
+				linkPage4, linkPage5, linkPage6, linkPage7, linkPage8,
+				linkPage9, linkPage10, linkPage11, linkPage12, linkPage13 };
 		for (Panel p : panels) {
 			p.getElement().getStyle().setBackgroundColor("");
 			p.getElement().getStyle().setColor("");
 		}
-		
+
 	}
 
 	@UiHandler("linkPage0")
@@ -843,27 +895,28 @@ public class Model390 extends MainEntryPoint {
 		applySelectedStyle(linkPage3);
 		pagesPanel.showWidget(pagesPanel.getWidgetIndex(panel3));
 	}
-	
-	
-	
+
 	@UiHandler("linkPage4")
 	void onLinkPage4(ClickEvent event) {
 		clearLinks();
 		applySelectedStyle(linkPage4);
 		pagesPanel.showWidget(pagesPanel.getWidgetIndex(panel4));
 	}
+
 	@UiHandler("linkPage5")
 	void onLinkPage5(ClickEvent event) {
 		clearLinks();
 		applySelectedStyle(linkPage5);
 		pagesPanel.showWidget(pagesPanel.getWidgetIndex(panel5));
 	}
+
 	@UiHandler("linkPage6")
 	void onLinkPage6(ClickEvent event) {
 		clearLinks();
 		applySelectedStyle(linkPage6);
 		pagesPanel.showWidget(pagesPanel.getWidgetIndex(panel6));
 	}
+
 	@UiHandler("linkPage7")
 	void onLinkPage7(ClickEvent event) {
 		clearLinks();
@@ -871,6 +924,7 @@ public class Model390 extends MainEntryPoint {
 		pagesPanel.showWidget(pagesPanel.getWidgetIndex(panel7));
 		page7.refresh();
 	}
+
 	@UiHandler("linkPage8")
 	void onLinkPage8(ClickEvent event) {
 		clearLinks();
@@ -878,36 +932,42 @@ public class Model390 extends MainEntryPoint {
 		pagesPanel.showWidget(pagesPanel.getWidgetIndex(panel8));
 		page8.refresh();
 	}
+
 	@UiHandler("linkPage9")
 	void onLinkPage9(ClickEvent event) {
 		clearLinks();
 		applySelectedStyle(linkPage9);
 		pagesPanel.showWidget(pagesPanel.getWidgetIndex(panel9));
 	}
+
 	@UiHandler("linkPage10")
 	void onLinkPage10(ClickEvent event) {
 		clearLinks();
 		applySelectedStyle(linkPage10);
 		pagesPanel.showWidget(pagesPanel.getWidgetIndex(panel10));
 	}
+
 	@UiHandler("linkPage11")
 	void onLinkPage11(ClickEvent event) {
 		clearLinks();
 		applySelectedStyle(linkPage11);
 		pagesPanel.showWidget(pagesPanel.getWidgetIndex(panel11));
 	}
+
 	@UiHandler("linkPage12")
 	void onLinkPage12(ClickEvent event) {
 		clearLinks();
 		applySelectedStyle(linkPage12);
 		pagesPanel.showWidget(pagesPanel.getWidgetIndex(panel12));
 	}
+
 	@UiHandler("linkPage13")
 	void onLinkPage13(ClickEvent event) {
 		clearLinks();
 		applySelectedStyle(linkPage13);
 		pagesPanel.showWidget(pagesPanel.getWidgetIndex(panel13));
 	}
+
 	private void applySelectedStyle(FocusPanel panel) {
 		panel.getElement().getStyle().setBackgroundColor("#999");
 		panel.getElement().getStyle().setColor("white");

@@ -6,13 +6,11 @@
 //
 
 
-package com.esferalia.aon.gwt.fiscal.server.mod390;
+package com.esferalia.aon.occam.api.model.mod390.e2013;
 
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlRegistry;
-
-import com.google.gwt.user.client.rpc.IsSerializable;
 
 
 /**
@@ -31,7 +29,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  */
 @SuppressWarnings("serial")
 @XmlRegistry
-public class ObjectFactory implements Serializable, IsSerializable{
+public class ObjectFactory implements Serializable{
 
 
     /**

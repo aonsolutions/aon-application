@@ -42,7 +42,6 @@ import com.esferalia.aon.gwt.common.shared.CompanyBank;
 import com.esferalia.aon.gwt.common.shared.CompanyParticipation;
 import com.esferalia.aon.gwt.common.shared.DocumentUtil;
 import com.esferalia.aon.gwt.common.shared.FiscalParameters;
-import com.esferalia.aon.gwt.common.shared.LegalRepresentative;
 import com.esferalia.aon.gwt.common.sql.SQLAppParams;
 import com.esferalia.aon.gwt.common.sql.SQLCompany;
 import com.esferalia.aon.gwt.common.sql.SQLUtils;
@@ -56,6 +55,7 @@ import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200.BalanceType;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.ValidationMessage;
 import com.esferalia.aon.gwt.fiscal.sql.SQLMod200;
+import com.esferalia.aon.occam.api.model.LegalRepresentative;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod200 Servlet", urlPatterns = { "/aon_gwt_fiscal/Mod200" })

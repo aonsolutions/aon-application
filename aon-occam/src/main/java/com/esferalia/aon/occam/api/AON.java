@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.Mod180;
 import com.esferalia.aon.occam.api.model.Mod180Detail;
 import com.esferalia.aon.occam.api.model.Mod190;
 import com.esferalia.aon.occam.api.model.Mod190Detail;
+import com.esferalia.aon.occam.api.model.Mod390;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AppParam;
@@ -201,5 +202,16 @@ public class AON {
 	public static Mod190Detail getMod190Detail(String domainName, int domainId,Integer id) {
 		return getFiscal().getMod190Detail(AONContext.getAONContext(domainName, domainId),id);
 	}
+	// ----------------------------------MODELO 390
+	public static ArrayList<Mod390> getMod390s(String domainName, int domainId) {
+		return getFiscal().getMod390s(AONContext.getAONContext(domainName, domainId),domainId);
+	}
+	public static Mod390 getMod390(String domainName, int domainId, int id) {
+		return getFiscal().getMod390(AONContext.getAONContext(domainName, domainId),id);
+	}
+	public static String getMod390XML(String domainName, int domainId, int id) {
+		return getFiscal().getMod390XML(AONContext.getAONContext(domainName, domainId),id);
+	}
+	
 	
 }

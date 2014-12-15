@@ -8,8 +8,10 @@ import com.esferalia.aon.occam.api.model.Mod180;
 import com.esferalia.aon.occam.api.model.Mod180Detail;
 import com.esferalia.aon.occam.api.model.Mod190;
 import com.esferalia.aon.occam.api.model.Mod190Detail;
+import com.esferalia.aon.occam.api.model.Mod390;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod180DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod190DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.Mod390DAO;
 
 public class FiscalImpl implements IFiscal {
 
@@ -69,4 +71,20 @@ public class FiscalImpl implements IFiscal {
 	public Mod190Detail getMod190Detail(AONContext ctx, Integer id) {
 		return Mod190DAO.getDetail(ctx, id);
 	}
+	
+	@Override
+	public ArrayList<Mod390> getMod390s(AONContext ctx, int domain) {
+		return Mod390DAO.getByDomain(ctx, domain);
+	}
+
+	@Override
+	public Mod390 getMod390(AONContext ctx, Integer id) {
+		return Mod390DAO.getById(ctx, id);
+	}
+
+	@Override
+	public String getMod390XML(AONContext ctx, int id) {
+		return Mod390DAO.getXMLContentById(ctx, id);
+	}
+	
 }

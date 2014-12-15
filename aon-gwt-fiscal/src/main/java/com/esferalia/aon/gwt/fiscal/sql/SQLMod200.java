@@ -18,7 +18,6 @@ import com.code.aon.accounting.util.AccountingUtil;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.gwt.common.shared.CompanyAdministrator;
 import com.esferalia.aon.gwt.common.shared.CompanyParticipation;
-import com.esferalia.aon.gwt.common.shared.LegalRepresentative;
 import com.esferalia.aon.gwt.common.shared.Secretary;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.DoubleVariable;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200;
@@ -27,6 +26,7 @@ import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
 import com.esferalia.aon.jooq.tables.records.FsModel200DetailRecord;
 import com.esferalia.aon.jooq.tables.records.FsModel200Record;
 import com.esferalia.aon.jooq.tables.records.FsModel200RegistryRecord;
+import com.esferalia.aon.occam.api.model.LegalRepresentative;
 
 public class SQLMod200 {
 	

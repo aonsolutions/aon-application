@@ -6,7 +6,7 @@
 //
 
 
-package com.esferalia.aon.gwt.fiscal.server.mod390;
+package com.esferalia.aon.occam.api.model.mod390.e2013;
 
 import java.io.Serializable;
 
@@ -15,20 +15,18 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
 
 /**
- * <p>Java class for tipo_PersonaJuridica complex type.
+ * <p>Java class for tipo_PersonaFisica complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="tipo_PersonaJuridica">
+ * &lt;complexType name="tipo_PersonaFisica">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="IdentPersJuridica" type="{}tipo_IdentificacionPersonaJuridica"/>
+ *         &lt;element name="Ident" type="{}tipo_IdentificacionPersonaFisica"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -38,37 +36,37 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "tipo_PersonaJuridica", propOrder = {
-    "identPersJuridica"
+@XmlType(name = "tipo_PersonaFisica", propOrder = {
+    "ident"
 })
 @SuppressWarnings("serial")
-public class TipoPersonaJuridica implements Serializable, IsSerializable{
+public class TipoPersonaFisica implements Serializable{
 
-    @XmlElement(name = "IdentPersJuridica", required = true)
-    protected TipoIdentificacionPersonaJuridica identPersJuridica;
+    @XmlElement(name = "Ident", required = true)
+    protected TipoIdentificacionPersonaFisica ident;
 
     /**
-     * Gets the value of the identPersJuridica property.
+     * Gets the value of the ident property.
      * 
      * @return
      *     possible object is
-     *     {@link TipoIdentificacionPersonaJuridica }
+     *     {@link TipoIdentificacionPersonaFisica }
      *     
      */
-    public TipoIdentificacionPersonaJuridica getIdentPersJuridica() {
-        return identPersJuridica;
+    public TipoIdentificacionPersonaFisica getIdent() {
+        return ident;
     }
 
     /**
-     * Sets the value of the identPersJuridica property.
+     * Sets the value of the ident property.
      * 
      * @param value
      *     allowed object is
-     *     {@link TipoIdentificacionPersonaJuridica }
+     *     {@link TipoIdentificacionPersonaFisica }
      *     
      */
-    public void setIdentPersJuridica(TipoIdentificacionPersonaJuridica value) {
-        this.identPersJuridica = value;
+    public void setIdent(TipoIdentificacionPersonaFisica value) {
+        this.ident = value;
     }
 
 }

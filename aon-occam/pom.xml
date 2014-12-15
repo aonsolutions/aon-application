@@ -53,6 +53,15 @@
 			<artifactId>jool</artifactId>
 			<version>0.9.2</version>
 		</dependency>
+
+		<!-- Used to marshall unmarshall Mod390 declaration --> 
+		<dependency>
+    		<groupId>com.sun.xml.bind</groupId>
+    		<artifactId>jaxb-impl</artifactId>
+	    	<version>2.2.5-2</version>
+			<scope>compile</scope>
+		</dependency>
+		
 		
 		<!-- TEST DEPENDENCIES -->
 		<dependency>

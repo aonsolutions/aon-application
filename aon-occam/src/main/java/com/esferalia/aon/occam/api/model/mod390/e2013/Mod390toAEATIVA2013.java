@@ -1,76 +1,77 @@
-package com.esferalia.aon.gwt.fiscal.server.mod390;
+package com.esferalia.aon.occam.api.model.mod390.e2013;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.esferalia.aon.gwt.common.shared.AonUtil;
-import com.esferalia.aon.gwt.common.shared.LegalRepresentative;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.Administraciones;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.DatEstadisticos;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.DatEstadisticos.Conjunta;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.DatEstadisticos.OpTercerasPax;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.DatEstadisticos.Otras;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.DatEstadisticos.Pral;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.DatIdent;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.Devengo;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.Devengo.ConcursoUltPerNO;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.Devengo.ConcursoUltPerSI;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.Devengo.DecSustitutiva;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.Devengo.RegDevMensual;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.LiqAnual;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.OpEspecificas;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.BaseImponibleyCuota;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.BaseImponibleyCuota.AdqIntracomBienes;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.BaseImponibleyCuota.AdqIntracomServicios;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.BaseImponibleyCuota.IVAdevengadoInversionSP;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.BaseImponibleyCuota.ModBasesyCuotas;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.BaseImponibleyCuota.ModBasesyCuotasConcursoAcreedores;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.BaseImponibleyCuota.ModRecargoEquivalencia;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.BaseImponibleyCuota.ModRecargoEquivalenciaConcursoAcreedores;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.BaseImponibleyCuota.OpIntragrupo;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.BaseImponibleyCuota.RecargoEquivalencia;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.BaseImponibleyCuota.RegAgViajes;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.BaseImponibleyCuota.RegBienesUsados;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.BaseImponibleyCuota.RegOrdinario;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.BaseImponibleyCuota.TotalBasesyCuotasIVA;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.Deducciones;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.Deducciones.AdqIntracomunitariasBienesCorrientes;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.Deducciones.AdqIntracomunitariasBienesInversion;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.Deducciones.AdqIntracomunitariasServicios;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.Deducciones.ComRegAgricGanadPesca;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.Deducciones.ImportacionesBienesCorrientes;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.Deducciones.ImportacionesBienesInversion;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.Deducciones.OpInterioresBienesInversion;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.Deducciones.OpInterioresBienesServiciosCorrientes;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.Deducciones.OpIntragrupoBienesInversion;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.Deducciones.OpIntragrupoCorrientes;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegGeneral.Deducciones.RectifDeducciones;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegSimplificado;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegSimplificado.ActAgricGanadForest;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegSimplificado.Actividad;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegSimplificado.Actividad.Modulo;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegSimplificado.IvaDeducible;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.RegSimplificado.IvaDevengado;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.ResLiquidaciones;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.ResLiquidaciones.PerNoRegGrupos;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.ResLiquidaciones.PerSiRegGrupos;
-import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.VolOperaciones;
-import com.esferalia.aon.gwt.fiscal.server.mod390.TipoGrupoEntidades.Art65NO;
-import com.esferalia.aon.gwt.fiscal.server.mod390.TipoGrupoEntidades.Art65SI;
-import com.esferalia.aon.gwt.fiscal.server.mod390.TipoGrupoEntidades.Dependiente;
-import com.esferalia.aon.gwt.fiscal.server.mod390.TipoGrupoEntidades.Dominante;
-import com.esferalia.aon.gwt.fiscal.server.mod390.TipoGrupoEntidades.UltAutoliquidNO;
-import com.esferalia.aon.gwt.fiscal.server.mod390.TipoGrupoEntidades.UltAutoliquidSI;
-import com.esferalia.aon.gwt.fiscal.shared.Activity;
-import com.esferalia.aon.gwt.fiscal.shared.Address;
-import com.esferalia.aon.gwt.fiscal.shared.FarmerRegimeActivity;
-import com.esferalia.aon.gwt.fiscal.shared.FiscalEnum.Mod390DetailKey;
-import com.esferalia.aon.gwt.fiscal.shared.Mod390;
-import com.esferalia.aon.gwt.fiscal.shared.Mod390Detail;
-import com.esferalia.aon.gwt.fiscal.shared.SimpliedRegimeActivity;
+import com.esferalia.aon.occam.api.model.LegalRepresentative;
+import com.esferalia.aon.occam.api.model.Mod390;
+import com.esferalia.aon.occam.api.model.Mod390.Activity;
+import com.esferalia.aon.occam.api.model.Mod390.Address;
+import com.esferalia.aon.occam.api.model.Mod390.FarmerRegimeActivity;
+import com.esferalia.aon.occam.api.model.Mod390.Mod390Detail;
+import com.esferalia.aon.occam.api.model.Mod390.Mod390DetailKey;
+import com.esferalia.aon.occam.api.model.Mod390.SimpliedRegimeActivity;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.Administraciones;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.DatEstadisticos;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.DatEstadisticos.Conjunta;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.DatEstadisticos.OpTercerasPax;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.DatEstadisticos.Otras;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.DatEstadisticos.Pral;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.DatIdent;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.Devengo;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.Devengo.ConcursoUltPerNO;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.Devengo.ConcursoUltPerSI;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.Devengo.DecSustitutiva;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.Devengo.RegDevMensual;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.LiqAnual;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.OpEspecificas;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.BaseImponibleyCuota;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.BaseImponibleyCuota.AdqIntracomBienes;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.BaseImponibleyCuota.AdqIntracomServicios;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.BaseImponibleyCuota.IVAdevengadoInversionSP;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.BaseImponibleyCuota.ModBasesyCuotas;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.BaseImponibleyCuota.ModBasesyCuotasConcursoAcreedores;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.BaseImponibleyCuota.ModRecargoEquivalencia;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.BaseImponibleyCuota.ModRecargoEquivalenciaConcursoAcreedores;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.BaseImponibleyCuota.OpIntragrupo;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.BaseImponibleyCuota.RecargoEquivalencia;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.BaseImponibleyCuota.RegAgViajes;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.BaseImponibleyCuota.RegBienesUsados;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.BaseImponibleyCuota.RegOrdinario;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.BaseImponibleyCuota.TotalBasesyCuotasIVA;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.Deducciones;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.Deducciones.AdqIntracomunitariasBienesCorrientes;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.Deducciones.AdqIntracomunitariasBienesInversion;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.Deducciones.AdqIntracomunitariasServicios;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.Deducciones.ComRegAgricGanadPesca;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.Deducciones.ImportacionesBienesCorrientes;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.Deducciones.ImportacionesBienesInversion;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.Deducciones.OpInterioresBienesInversion;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.Deducciones.OpInterioresBienesServiciosCorrientes;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.Deducciones.OpIntragrupoBienesInversion;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.Deducciones.OpIntragrupoCorrientes;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.Deducciones.RectifDeducciones;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegSimplificado;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegSimplificado.ActAgricGanadForest;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegSimplificado.Actividad;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegSimplificado.Actividad.Modulo;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegSimplificado.IvaDeducible;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegSimplificado.IvaDevengado;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.ResLiquidaciones;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.ResLiquidaciones.PerNoRegGrupos;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.ResLiquidaciones.PerSiRegGrupos;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.VolOperaciones;
+import com.esferalia.aon.occam.api.model.mod390.e2013.TipoGrupoEntidades.Art65NO;
+import com.esferalia.aon.occam.api.model.mod390.e2013.TipoGrupoEntidades.Art65SI;
+import com.esferalia.aon.occam.api.model.mod390.e2013.TipoGrupoEntidades.Dependiente;
+import com.esferalia.aon.occam.api.model.mod390.e2013.TipoGrupoEntidades.Dominante;
+import com.esferalia.aon.occam.api.model.mod390.e2013.TipoGrupoEntidades.UltAutoliquidNO;
+import com.esferalia.aon.occam.api.model.mod390.e2013.TipoGrupoEntidades.UltAutoliquidSI;
+import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod390toAEATIVA2013 {
 
@@ -100,7 +101,7 @@ public class Mod390toAEATIVA2013 {
 			tp.setIdent(tipf);
 			datIdent.setPersFisica(tp);
 		}
-		if (AonUtil.isNotEmpty(mod390.getContactPhone())) {
+		if (AonStringUtils.isNotEmpty(mod390.getContactPhone())) {
 			datIdent.setTelefono(mod390.getContactPhone());
 		}
 		iva.setDatIdent(datIdent);
@@ -358,7 +359,7 @@ public class Mod390toAEATIVA2013 {
 		if (mod390.isMod347()) {
 			datEstadisticos.setOpTercerasPax(new OpTercerasPax());
 		}
-		if (!AonUtil.isEmpty(mod390.getMergedDeclarationDocument())) {
+		if (AonStringUtils.isNotEmpty(mod390.getMergedDeclarationDocument())) {
 			Conjunta conjunta = new Conjunta();
 			conjunta.setNIF(mod390.getMergedDeclarationDocument());
 			conjunta.setRazonSocial(mod390.getMergedDeclarationName());
@@ -399,39 +400,39 @@ public class Mod390toAEATIVA2013 {
 			trf.setIdent(tipf);
 			TipoDomicilio domicilio = new TipoDomicilio();
 			boolean something = false;
-			if (AonUtil.isNotEmpty(address.getRstreetName())) {
+			if (AonStringUtils.isNotEmpty(address.getRstreetName())) {
 				domicilio.setViaPublica(toUppercase(address.getRstreetName()));
 				something = true;
 			}
-			if (AonUtil.isNotEmpty(address.getRstreetType())) { 
+			if (AonStringUtils.isNotEmpty(address.getRstreetType())) { 
 				domicilio.setSG(toUppercase(address.getRstreetType()));
 				something = true;
 			}
-			if (AonUtil.isNotEmpty(address.getRstreetNumber())) {
+			if (AonStringUtils.isNotEmpty(address.getRstreetNumber())) {
 				domicilio.setNum(toUppercase(address.getRstreetNumber()));
 				something = true;
 			}
-			if (AonUtil.isNotEmpty(address.getRstreetStair())) {
+			if (AonStringUtils.isNotEmpty(address.getRstreetStair())) {
 				domicilio.setEsc(toUppercase(address.getRstreetStair()));
 				something = true;
 			}
-			if (AonUtil.isNotEmpty(address.getRstreetFloor())) {
+			if (AonStringUtils.isNotEmpty(address.getRstreetFloor())) {
 				domicilio.setPiso(toUppercase(address.getRstreetFloor()));
 				something = true;
 			}
-			if (AonUtil.isNotEmpty(address.getRstreetDoor())) {
+			if (AonStringUtils.isNotEmpty(address.getRstreetDoor())) {
 				domicilio.setPuerta(toUppercase(address.getRstreetDoor()));
 				something = true;
 			}
-			if (AonUtil.isNotEmpty(address.getRphone())) {
+			if (AonStringUtils.isNotEmpty(address.getRphone())) {
 				domicilio.setTelefono(toUppercase(address.getRphone()));
 				something = true;
 			}
-			if (AonUtil.isNotEmpty(address.getRzip())) {
+			if (AonStringUtils.isNotEmpty(address.getRzip())) {
 				domicilio.setCPostal(toUppercase(address.getRzip()));
 				something = true;
 			}
-			if (AonUtil.isNotEmpty(address.getRtown())) {
+			if (AonStringUtils.isNotEmpty(address.getRtown())) {
 				domicilio.setMunicipio(toUppercase(address.getRtown()));
 				something = true;
 			}
@@ -461,7 +462,7 @@ public class Mod390toAEATIVA2013 {
 		Mod390Detail detail = getKey(mod390,Mod390DetailKey.K37);
 		String total = null;
 		if (detail != null) {
-			total = Double.toString( AonUtil.round(detail.getQuota()) ); 			
+			total = Double.toString( AonMathUtils.round(detail.getQuota()) ); 			
 		}
 		return total;
 	}

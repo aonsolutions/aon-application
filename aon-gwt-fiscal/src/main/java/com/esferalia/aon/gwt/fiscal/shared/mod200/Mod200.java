@@ -10,8 +10,8 @@ import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.common.shared.CommonEnum.Administration;
 import com.esferalia.aon.gwt.common.shared.CompanyAdministrator;
 import com.esferalia.aon.gwt.common.shared.CompanyParticipation;
-import com.esferalia.aon.gwt.common.shared.LegalRepresentative;
 import com.esferalia.aon.gwt.common.shared.Secretary;
+import com.esferalia.aon.occam.api.model.LegalRepresentative;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")

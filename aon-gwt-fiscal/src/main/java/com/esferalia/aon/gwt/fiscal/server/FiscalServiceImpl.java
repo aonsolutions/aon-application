@@ -27,12 +27,9 @@ import com.esferalia.aon.gwt.fiscal.server.Activities.Type3Activities;
 import com.esferalia.aon.gwt.fiscal.server.Activities.Type4Activities;
 import com.esferalia.aon.gwt.fiscal.server.Activities.Type7Activities;
 import com.esferalia.aon.gwt.fiscal.server.Activities.TypeActivity;
-import com.esferalia.aon.gwt.fiscal.shared.Activity;
 import com.esferalia.aon.gwt.fiscal.shared.Enterprise;
 import com.esferalia.aon.gwt.fiscal.shared.Mod303Results;
 import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
-import com.esferalia.aon.gwt.fiscal.shared.Mod390;
-import com.esferalia.aon.gwt.fiscal.shared.Mod390Detail;
 import com.esferalia.aon.gwt.fiscal.sql.SQLEnterprise;
 import com.esferalia.aon.gwt.fiscal.sql.SQLMod390;
 import com.esferalia.aon.occam.api.AON;
@@ -40,6 +37,9 @@ import com.esferalia.aon.occam.api.model.Mod180;
 import com.esferalia.aon.occam.api.model.Mod180Detail;
 import com.esferalia.aon.occam.api.model.Mod190;
 import com.esferalia.aon.occam.api.model.Mod190Detail;
+import com.esferalia.aon.occam.api.model.Mod390;
+import com.esferalia.aon.occam.api.model.Mod390.Activity;
+import com.esferalia.aon.occam.api.model.Mod390.Mod390Detail;
 
 /**
  * The server side implementation of the RPC service.
@@ -244,48 +244,13 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public Mod390 getMod390(Integer id) throws AonSQLException {
-		Connection conn = null;
-		Mod390 mod390 = null;
-		try {
-			conn = getConnection();
-			disableAutoCommit(conn);
-			mod390 = SQLMod390.getById(id, conn);
-			commit(conn);
-			return mod390;
-		} catch (AonSQLException e) {
-			rollback(conn);
-			throw e;
-		} catch (Throwable e) {
-			rollback(conn);
-			throw new AonSQLException(e);
-		} finally {
-			enableAutoCommit(conn);
-			SQLUtils.closeQuietly(conn);
-		}
+	public Mod390 getMod390(String domainName, Integer domain,Integer id) {
+		return AON.getMod390(domainName, domain, id);
 	}
 
 	@Override
-	public ArrayList<Mod390> getMod390s(int domain)
-			throws AonSQLException {
-		Connection conn = null;
-		ArrayList<Mod390> list = null;
-		try {
-			conn = getConnection();
-			disableAutoCommit(conn);
-			list = SQLMod390.getByDomain(domain, conn);
-			commit(conn);
-			return list;
-		} catch (AonSQLException e) {
-			rollback(conn);
-			throw e;
-		} catch (Throwable e) {
-			rollback(conn);
-			throw new AonSQLException(e);
-		} finally {
-			enableAutoCommit(conn);
-			SQLUtils.closeQuietly(conn);
-		}
+	public ArrayList<Mod390> getMod390s(String domainName, Integer domain) {
+		return AON.getMod390s(domainName, domain);
 	}
 	
 	@Override
