@@ -3100,7 +3100,7 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
  	}
  	
  	.aon-chart-table-header{
- 		background:url(http://novus.aibanez.net:8080/aon-aio/aonResource/images/aon-content/aon-dataTable-header.png) repeat-x scroll left top #DADADA;
+ 		background:#dadada url(images/aon-content/aon-dataTable-header.png) scroll left top repeat-x;
  	}
  	
 	.aon-chart-table-header-cell{

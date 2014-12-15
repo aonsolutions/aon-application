@@ -32,7 +32,12 @@
 				<aon:div id="recentsFileGraphContainer"
 					style="width: 98%; height: 200px; border:solid #BBB 1px; text-align: center; margin-left: 5px;padding-top: 5px;">
 					<aon:div styleClass="aon-bold">
-						<aon:outputText value="#{bundle.recent_files}" />
+						<aon:commandLink 
+								id="gwtDocuments2"
+								action="gwt_documents"><!-- #{bundle.aon_documents}"-->
+						<span class="aon-outputText aon-icon-documental-docs" style="padding-left:20px;color: #4b4b4b !important;">Documental - Archivos recientes</span>
+						<!--  aon:outputText value="#{bundle.recent_files}" /-->
+						</aon:commandLink>						
 						<!-- <aon:selectOneMenu id="Dashboard_recentsFilePeriod"
 							style="border: none;" value="#{dashboard.salaryYear}">
 							<a4j:support event="onchange"
@@ -71,9 +76,13 @@
 						             	'#{recent.category}',
 						             	'#{recent.sizeString}']);											
 						</c:forEach>
-						var options = {
+						
+						var cssClasses = {headerRow: 'aon-chart-table-header', headerCell:'aon-chart-table-header-cell'};
+						
+        				var options = {
         						showRowNumber: false,
         						allowHtml: true,
+        						'cssClassNames':cssClasses
 						      };
         				var table = new google.visualization.Table(document.getElementById('aonContent:mainForm:table_div-recent_files'));
            				table.draw(data, options);

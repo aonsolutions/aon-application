@@ -7,6 +7,7 @@ import org.apache.commons.io.FileUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.MimeType;
+import com.esferalia.aon.gwt.document.client.Utils;
 
 public class DashboardRecentFiles implements Serializable {
 	
@@ -82,16 +83,19 @@ public class DashboardRecentFiles implements Serializable {
 			this.icon = "aon-icon-google-drive-unknown";
 
 		else {
+			
 			short type = icon.shortValue();
 			MimeType t = MimeType.values()[type];
-			if (t.getName().equals("application/pdf"))
+			this.icon = Utils.icon(t.getName());
+			
+			/*if (t.getName().equals("application/pdf"))
 				this.icon = "aon-icon-google-drive-pdf";
 			else if (t.getName().equals("aapplication/msword"))
 				this.icon = "aon-icon-google-drive-word";
 			else if (isImage(t.getName()))
 				this.icon = "aon-icon-google-drive-image";
 			else
-				this.icon = "aon-icon-google-drive-unknown";
+				this.icon = "aon-icon-google-drive-unknown";*/
 		}
 
 	}
