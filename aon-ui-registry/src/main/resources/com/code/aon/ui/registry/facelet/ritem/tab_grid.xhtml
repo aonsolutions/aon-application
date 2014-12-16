@@ -7,41 +7,41 @@
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 		<ui:define name="columns">
 
-			<aon:column styleClass="aon-editDataTable-textColumn"
-				alias="RegistryItem.item.product.name">
-				<f:facet name="header">
-					<aon:outputLabel for="Item_id" value="#{bundle.aon_product}" />
-				</f:facet>
-				<aon:outputText value="#{to.item.product.name} #{to.item.detail}"
-					rendered="#{formList}" />
-					
-				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
-					<ui:param name="lookupTo" value="#{controller.to.item}" />
-					<ui:param name="idRequired" value="#{true}" />
-					<ui:param name="skipLabel" value="#{true}" />
-					<ui:param name="lookupRendered" value="#{formEdit}" />
-					<aon:if test="#{controller.purchaseType}">
-						<ui:param name="lookupReRender"	value="RegistryItem_Priority" />
-					</aon:if>
-					<aon:methodParam name="lookupChangeListener"
-						value="#{controller.onItemChanged}" type="lookupChangeListener" />
-				</ui:include>
-				<f:facet name="footer" >
+			<aon:if test="#{!controller.masterItem}">
+				<aon:column styleClass="aon-editDataTable-textColumn"
+					alias="RegistryItem.item.product.name">
+					<f:facet name="header">
+						<aon:outputLabel for="Item_id" value="#{bundle.aon_product}" />
+					</f:facet>
+					<aon:outputText value="#{to.item.product.name} #{to.item.detail}"
+						rendered="#{formList}" />
 					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{controller.to.item}" />
 						<ui:param name="idRequired" value="#{true}" />
 						<ui:param name="skipLabel" value="#{true}" />
-						<ui:param name="lookupRendered" value="#{formNew}" />
-						<ui:param name="lookupSuffix" value="-New" />
+						<ui:param name="lookupRendered" value="#{formEdit}" />
 						<aon:if test="#{controller.purchaseType}">
-							<ui:param name="lookupReRender"	value="RegistryItem_Priority-New" />
+							<ui:param name="lookupReRender"	value="RegistryItem_Priority" />
 						</aon:if>
 						<aon:methodParam name="lookupChangeListener"
 							value="#{controller.onItemChanged}" type="lookupChangeListener" />
-						</ui:include>
-				</f:facet>					
-
-			</aon:column>
+					</ui:include>
+					<f:facet name="footer" >
+						<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{controller.to.item}" />
+							<ui:param name="idRequired" value="#{true}" />
+							<ui:param name="skipLabel" value="#{true}" />
+							<ui:param name="lookupRendered" value="#{formNew}" />
+							<ui:param name="lookupSuffix" value="-New" />
+							<aon:if test="#{controller.purchaseType}">
+								<ui:param name="lookupReRender"	value="RegistryItem_Priority-New" />
+							</aon:if>
+							<aon:methodParam name="lookupChangeListener"
+								value="#{controller.onItemChanged}" type="lookupChangeListener" />
+							</ui:include>
+					</f:facet>					
+				</aon:column>
+			</aon:if>
 
 			<aon:if test="#{controller.saleType or controller.purchaseType}">
 				<aon:if test="#{controller.purchaseType}">
@@ -60,6 +60,61 @@
 								required="true" size="2" maxlength="3" />
 						</f:facet>
 					</aon:column>
+				</aon:if>
+
+				<aon:if test="#{controller.masterItem}">
+					<aon:if test="#{controller.saleType}">
+						<aon:column	styleClass="aon-editDataTable-textColumn aon-width-auto aon-nowrap">
+							<f:facet name="header">
+								<aon:outputLabel for="Customer_id" value="#{bundle.aon_customer}" />
+							</f:facet>
+							<aon:outputText value="#{to.registry.fullName}"
+								rendered="#{formList}" />
+							<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+								<ui:param name="lookupTo" value="#{controller.to.registry}" />
+								<ui:param name="lookupForRegistry" value="#{true}" />
+								<ui:param name="idRequired" value="#{true}" />						
+								<ui:param name="skipLabel" value="#{true}" />
+								<ui:param name="lookupRendered" value="#{formEdit}" />
+							</ui:include>
+							<f:facet name="footer">
+								<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+									<ui:param name="lookupTo" value="#{controller.to.registry}" />
+									<ui:param name="lookupForRegistry" value="#{true}" />
+									<ui:param name="idRequired" value="#{true}" />
+									<ui:param name="skipLabel" value="#{true}" />
+									<ui:param name="lookupRendered" value="#{formNew}" />
+									<ui:param name="lookupSuffix" value="-New" />
+								</ui:include>
+							</f:facet>
+						</aon:column>
+					</aon:if>
+					<aon:if test="#{controller.purchaseType}">
+						<aon:column	styleClass="aon-editDataTable-textColumn aon-width-auto aon-nowrap">
+							<f:facet name="header">
+								<aon:outputLabel for="Supplier_id" value="#{bundle.aon_supplier}" />
+							</f:facet>
+							<aon:outputText value="#{to.registry.fullName}"
+								rendered="#{formList}" />
+							<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
+								<ui:param name="lookupTo" value="#{controller.to.registry}" />
+								<ui:param name="lookupForRegistry" value="#{true}" />
+								<ui:param name="idRequired" value="#{true}" />						
+								<ui:param name="skipLabel" value="#{true}" />
+								<ui:param name="lookupRendered" value="#{formEdit}" />
+							</ui:include>
+							<f:facet name="footer">
+								<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
+									<ui:param name="lookupTo" value="#{controller.to.registry}" />
+									<ui:param name="lookupForRegistry" value="#{true}" />
+									<ui:param name="idRequired" value="#{true}" />
+									<ui:param name="skipLabel" value="#{true}" />
+									<ui:param name="lookupRendered" value="#{formNew}" />
+									<ui:param name="lookupSuffix" value="-New" />
+								</ui:include>
+							</f:facet>
+						</aon:column>
+					</aon:if>
 				</aon:if>
 
 				<aon:column	styleClass="aon-editDataTable-textColumn aon-width-150 aon-nowrap"

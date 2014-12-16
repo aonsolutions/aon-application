@@ -624,7 +624,7 @@
 	<!-- ************ ITEM CUSTOMER ************* -->
 	<managed-bean>
 		<managed-bean-name>itemCustomer</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.product.controller.ItemCustomerController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryItemController</managed-bean-class>		
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -633,6 +633,10 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>itemCustomer</value>
+		</managed-property>
+		<managed-property>
+			<property-name>type</property-name>
+			<value>1</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultExpressions</property-name>
@@ -678,7 +682,7 @@
 	<managed-bean>
 		<managed-bean-name>itemCustomerControllerListener</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.product.event.ItemCustomerControllerListener
+			com.code.aon.ui.registry.controller.event.RegistryItemControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
@@ -686,7 +690,7 @@
 	<!-- ************ ITEM SUPPLIER ************* -->
 	<managed-bean>
 		<managed-bean-name>itemSupplier</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.product.controller.ItemSupplierController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryItemController</managed-bean-class>		
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -695,6 +699,10 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>itemSupplier</value>
+		</managed-property>
+		<managed-property>
+			<property-name>type</property-name>
+			<value>2</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultExpressions</property-name>
@@ -740,7 +748,7 @@
 	<managed-bean>
 		<managed-bean-name>itemSupplierControllerListener</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.product.event.ItemSupplierControllerListener
+			com.code.aon.ui.registry.controller.event.RegistryItemControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>

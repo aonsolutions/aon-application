@@ -1,6 +1,8 @@
 package com.code.aon.ui.registry.controller.event;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.product.Item;
 import com.code.aon.registry.RegistryItem;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -16,6 +18,13 @@ public class RegistryItemControllerListener extends ControllerAdapter {
 		RegistryItemController controller = (RegistryItemController)event.getController();
 		RegistryItem rItem = (RegistryItem)controller.getTo();
 		rItem.setType(controller.getRegistryMode());
+		if (controller.isPurchaseType() && controller.isMasterItem()) {
+			try {
+				rItem.setPriority(controller.calculateNextPriority((Item)controller.getMasterController().getTo()));
+			} catch (ManagerBeanException ex) {
+				throw new ControllerListenerException(ex.getMessage());
+			}
+		}
 	}
 
 }

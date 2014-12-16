@@ -42,15 +42,6 @@
 							<f:setPropertyActionListener target="#{controller.showNewCatalogueWindow}" value="#{true}" />							
 						</aon:menuItem>
 					</aon:if>
-					<aon:if test="#{aonConfiguration.bean.product.showSuppliers}">
-						<aon:menuItem id="supplier-button"
-							value="#{bundle.aon_suppliers}"
-							reRender="showNewSupplierWindow"
-							iconClass="aon-icon-supplier"
-							actionListener="#{itemSupplier.onReset}">
-							<f:setPropertyActionListener target="#{controller.showNewSupplierWindow}" value="#{true}" />							
-						</aon:menuItem>
-					</aon:if>
 					<aon:if test="#{aonConfiguration.bean.product.showAlternatives}">
 						<aon:menuItem id="alternative-button"
 							value="#{bundle.product_alternative_items}"
@@ -97,7 +88,6 @@
 									(aonConfiguration.bean.product.showStock and item.to.product.inventoriable) or
 									(aonConfiguration.bean.product.showTariff and itemTariff.model.rowCount > 0) or
 									(aonConfiguration.bean.product.showCatalogues and itemCatalogue.model.rowCount > 0) or
-									(aonConfiguration.bean.product.showSuppliers and itemSupplier.model.rowCount > 0) or
 									(aonConfiguration.bean.product.showAlternatives and itemAlternative.model.rowCount > 0) or
 									(aonConfiguration.bean.product.showAddInfo and itemAddInfo.model.rowCount > 0) or
 									(aonConfiguration.bean.product.showAttachment and itemAttach.model.rowCount > 0)}">
@@ -135,16 +125,6 @@
 									label="#{bundle.product_catalogue_module}">
 									<ui:include	src="/com/code/aon/ui/product/facelet/item/catalogue/tab_grid.xhtml">
 										<ui:param name="controller" value="#{itemCatalogue}" />
-										<ui:param name="removeButtonReRender" value="itemDiv" />
-									</ui:include>
-								</aon:panelTab>
-							</aon:if>
-
-							<aon:if test="#{aonConfiguration.bean.product.showSuppliers and itemSupplier.model.rowCount > 0}">
-								<aon:panelTab id="itemSupplierPanelTab"
-									label="#{bundle.aon_suppliers}">
-									<ui:include	src="/com/code/aon/ui/product/facelet/item/supplier/tab_grid.xhtml">
-										<ui:param name="controller" value="#{itemSupplier}" />
 										<ui:param name="removeButtonReRender" value="itemDiv" />
 									</ui:include>
 								</aon:panelTab>
@@ -189,9 +169,6 @@
 			<aon:if test="#{aonConfiguration.bean.product.showComposition or aonConfiguration.bean.product.showAlternatives}">
 				<aon:lookupButtonPopup lookup="#{itemLookup}" />
 			</aon:if>
-			<aon:if test="#{aonConfiguration.bean.product.showSuppliers}">
-				<aon:lookupButtonPopup lookup="#{supplierLookup}" />
-			</aon:if>
 			<aon:if test="#{aonRole.accountingOperator and aonConfiguration.bean.product.showAccount}">
 				<aon:lookupButtonPopup lookup="#{accountLookup}" />
 			</aon:if>
@@ -209,13 +186,6 @@
 				<ui:include src="/com/code/aon/ui/product/facelet/item/catalogue/newCatalogueModal.xhtml">
 					<ui:param name="controller" value="#{item}" />
 					<ui:param name="catalogueController" value="#{itemCatalogue}" />
-					<ui:param name="modalReRender" value="itemDiv" />
-				</ui:include>
-			</aon:if>
-			<aon:if test="#{aonConfiguration.bean.product.showSuppliers}">
-				<ui:include src="/com/code/aon/ui/product/facelet/item/supplier/newSupplierModal.xhtml">
-					<ui:param name="controller" value="#{item}" />
-					<ui:param name="supplierController" value="#{itemSupplier}" />
 					<ui:param name="modalReRender" value="itemDiv" />
 				</ui:include>
 			</aon:if>

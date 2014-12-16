@@ -8,14 +8,15 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
 	
+	<aon:valueParam name="detailId" default="RegistryItem" />
+	<aon:valueParam name="minWidth" default="720" />
+	<aon:valueParam name="minHeight" default="250" />
+	<aon:valueParam name="modalTitle" default="#{bundle.aon_role_product}" />
+	<aon:valueParam name="showNewDetailWindow" default="#{controller.showNewRegistryItemWindow}"/>
+	<aon:valueParam name="detailController" default="#{registryItemController}" />
+
 	<ui:decorate template="/com/code/aon/ui/registry/facelet/registry/newDetailModal.xhtml">
-		<ui:param name="detailId" value="RegistryItem" />
-		<ui:param name="minWidth" value="720" />
-		<ui:param name="minHeight" value="250" />
-		<ui:param name="modalTitle" value="#{bundle.aon_role_product}" />
-		<ui:param name="showNewDetailWindow" value="#{controller.showNewRegistryItemWindow}" />
-		<ui:param name="detailController" value="#{registryItemController}" />
-	
+
 		<ui:define name="content">
 			<ui:include src="/com/code/aon/ui/registry/facelet/ritem/form_content.xhtml" >
 				<ui:param name="controller" value="#{registryItemController}" />

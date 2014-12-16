@@ -45,14 +45,14 @@
 					<aon:if test="#{aonConfiguration.bean.product.showSuppliers}">
 						<aon:menuItem id="customer-button"
 							value="#{bundle.customer_finance_checking}"
-							reRender="showNewCustomerWindow"
+							reRender="showNewItemCustomerWindow"
 							iconClass="aon-icon-customer"
 							actionListener="#{itemCustomer.onReset}">
 							<f:setPropertyActionListener target="#{item.showNewCustomerWindow}" value="#{true}" />							
 						</aon:menuItem>
 						<aon:menuItem id="supplier-button"
 							value="#{bundle.aon_suppliers}"
-							reRender="showNewSupplierWindow"
+							reRender="showNewItemSupplierWindow"
 							iconClass="aon-icon-supplier"
 							actionListener="#{itemSupplier.onReset}">
 							<f:setPropertyActionListener target="#{item.showNewSupplierWindow}" value="#{true}" />							
@@ -151,7 +151,7 @@
 						<aon:if test="#{aonConfiguration.bean.product.showSuppliers and itemCustomer.model.rowCount > 0}">
 							<aon:panelTab id="itemCustomerPanelTab"
 								label="#{bundle.customer_finance_checking}">
-								<ui:include	src="/com/code/aon/ui/product/facelet/item/customer/tab_grid.xhtml">
+								<ui:include	src="/com/code/aon/ui/registry/facelet/ritem/tab_grid.xhtml">
 									<ui:param name="controller" value="#{itemCustomer}" />
 									<ui:param name="removeButtonReRender" value="productDiv" />
 								</ui:include>
@@ -161,7 +161,7 @@
 						<aon:if test="#{aonConfiguration.bean.product.showSuppliers and itemSupplier.model.rowCount > 0}">
 							<aon:panelTab id="itemSupplierPanelTab"
 								label="#{bundle.aon_suppliers}">
-								<ui:include	src="/com/code/aon/ui/product/facelet/item/supplier/tab_grid.xhtml">
+								<ui:include src="/com/code/aon/ui/registry/facelet/ritem/tab_grid.xhtml">
 									<ui:param name="controller" value="#{itemSupplier}" />
 									<ui:param name="removeButtonReRender" value="productDiv" />
 								</ui:include>
@@ -236,14 +236,20 @@
 				</ui:include>
 			</aon:if>
 			<aon:if test="#{aonConfiguration.bean.product.showSuppliers}">
-				<ui:include src="/com/code/aon/ui/product/facelet/item/customer/newCustomerModal.xhtml">
+				<ui:include src="/com/code/aon/ui/registry/facelet/ritem/newItemModal.xhtml">
 					<ui:param name="controller" value="#{item}" />
-					<ui:param name="customerController" value="#{itemCustomer}" />
+					<ui:param name="registryItemController" value="#{itemCustomer}" />
+					<ui:param name="detailId" value="ItemCustomer" />
+					<ui:param name="showNewDetailWindow" value="#{item.showNewCustomerWindow}" />
+					<ui:param name="modalTitle" value="#{bundle.customer_finance_checking}" />
 					<ui:param name="modalReRender" value="productDiv" />
 				</ui:include>
-				<ui:include src="/com/code/aon/ui/product/facelet/item/supplier/newSupplierModal.xhtml">
+				<ui:include src="/com/code/aon/ui/registry/facelet/ritem/newItemModal.xhtml">
 					<ui:param name="controller" value="#{item}" />
-					<ui:param name="supplierController" value="#{itemSupplier}" />
+					<ui:param name="registryItemController" value="#{itemSupplier}" />
+					<ui:param name="detailId" value="ItemSupplier" />
+					<ui:param name="showNewDetailWindow" value="#{item.showNewSupplierWindow}" />
+					<ui:param name="modalTitle" value="#{bundle.aon_suppliers}" />
 					<ui:param name="modalReRender" value="productDiv" />
 				</ui:include>
 			</aon:if>

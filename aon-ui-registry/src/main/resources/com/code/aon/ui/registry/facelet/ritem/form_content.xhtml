@@ -4,15 +4,17 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:outputLabel for="Item_id" value="#{bundle.aon_product}" />
-	<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
-		<ui:param name="lookupTo" value="#{controller.to.item}" />
-		<ui:param name="idRequired" value="#{true}" />
-		<ui:param name="skipLabel" value="#{true}" />
-		<ui:param name="lookupReRender"	value="showNewRegistryItemWindow" />
-		<aon:methodParam name="lookupChangeListener"
-			value="#{controller.onItemChanged}" type="lookupChangeListener" />
-	</ui:include>
+	<aon:if test="#{!controller.masterItem}">
+		<aon:outputLabel for="Item_id" value="#{bundle.aon_product}" />
+		<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+			<ui:param name="lookupTo" value="#{controller.to.item}" />
+			<ui:param name="idRequired" value="#{true}" />
+			<ui:param name="skipLabel" value="#{true}" />
+			<ui:param name="lookupReRender"	value="showNewRegistryItemWindow" />
+			<aon:methodParam name="lookupChangeListener"
+				value="#{controller.onItemChanged}" type="lookupChangeListener" />
+		</ui:include>
+	</aon:if>
 
 	<aon:if test="#{controller.to.saleType or controller.to.purchaseType}">
 		<aon:if test="#{controller.to.purchaseType}">
@@ -20,6 +22,29 @@
 			<aon:inputText id="RegistryItem_Priority" 
 				value="#{controller.to.priority}"
 				required="true" size="2" maxlength="3" />
+		</aon:if>
+
+		<aon:if test="#{controller.masterItem}">
+			<aon:if test="#{controller.to.saleType}">
+				<aon:outputLabel for="Customer_id" value="#{bundle.aon_customer}" />
+				<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+					<ui:param name="lookupTo" value="#{controller.to.registry}" />
+					<ui:param name="lookupForRegistry" value="#{true}" />
+					<ui:param name="lookupSuffix" value="-Item" />
+					<ui:param name="idRequired" value="#{true}" />
+					<ui:param name="skipLabel" value="#{true}" />
+				</ui:include>
+			</aon:if>
+			<aon:if test="#{controller.to.purchaseType}">
+				<aon:outputLabel for="Supplier_id" value="#{bundle.aon_supplier}" />
+				<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
+					<ui:param name="lookupTo" value="#{controller.to.registry}" />
+					<ui:param name="lookupForRegistry" value="#{true}" />
+					<ui:param name="lookupSuffix" value="-Item" />
+					<ui:param name="idRequired" value="#{true}" />
+					<ui:param name="skipLabel" value="#{true}" />
+				</ui:include>
+			</aon:if>
 		</aon:if>
 
 		<aon:outputLabel for="RegistryItem_Code" value="#{bundle.product_item_customer_code}"

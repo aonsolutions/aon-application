@@ -46,6 +46,10 @@ public class RegistryItemController extends LinesController {
 		return Integer.parseInt(getType()) == RegistryMode.CREDITOR.ordinal();
 	}
 
+	public boolean isMasterItem() {
+		return !(getMasterController() instanceof RegistryController);
+	}
+
 	public void onItemChanged(LookupChangeEvent event) throws ManagerBeanException {
 		if (isPurchaseType()) {
 			if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
@@ -55,7 +59,7 @@ public class RegistryItemController extends LinesController {
 		}
 	}	
 
-	private	Integer calculateNextPriority(Item item) throws ManagerBeanException {
+	public	Integer calculateNextPriority(Item item) throws ManagerBeanException {
 		IManagerBean rItemBean = BeanManager.getManagerBean(RegistryItem.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_ITEM_ID), item.getId());
