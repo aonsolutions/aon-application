@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.10.1
+# Version: 8.11.0
 # Created by: girazu
-# Creation Date: 03/12/2014 11:30
+# Creation Date: 16/12/2014 19:50
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -2342,6 +2342,10 @@ CREATE TABLE `rattach` (
   `attach_date` date default NULL COMMENT 'Fecha del Archivo Adjunto',
   `drive_id` varchar(45) collate latin1_spanish_ci default NULL,
   `dparent_id` varchar(45) collate latin1_spanish_ci default NULL,
+  `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime default NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime default NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY  (`id`),
   KEY `IDX_RATTACH_SCOPE` (`scope`),
   KEY `IDX_RATTACH_CATEGORY` (`category`),
@@ -7715,7 +7719,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.10.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.11.0');
 
 COMMIT;
 
