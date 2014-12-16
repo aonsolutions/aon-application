@@ -3,6 +3,7 @@
 	<property name="ireport.zoom" value="1.3636363636363635"/>
 	<property name="ireport.x" value="57"/>
 	<property name="ireport.y" value="402"/>
+	<import value="com.code.aon.common.util.CommonUtil"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
 	<import value="com.esferalia.aon.ui.payroll.utils.ReportUtils"/>
 	<style name="label" vAlign="Bottom" fontSize="9">
@@ -575,10 +576,10 @@
 					<textElement/>
 					<text><![CDATA[Contingencias comunes]]></text>
 				</staticText>
-				<textField isBlankWhenNull="true">
+				<textField isBlankWhenNull="true" pattern="#,##0.00" >
 					<reportElement uuid="29a9594f-4fa2-4632-a144-523dec597014" style="amount" x="283" y="45" width="40" height="13"/>
 					<textElement textAlignment="Center"/>
-					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getCommonContingency().getDescription()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getCommonBase() == 0.00 ? null : CommonUtil.round($F{salary}.getDeductions().getCommonContingency().getAmount()/$F{salary}.getCommonBase()*100)]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="e60068b8-4525-4ca5-bf41-9e25c36c2b3e" style="amount" x="348" y="45" width="97" height="13"/>
@@ -590,10 +591,10 @@
 					<textElement/>
 					<text><![CDATA[Desempleo]]></text>
 				</staticText>
-				<textField isBlankWhenNull="true">
+				<textField isBlankWhenNull="true" pattern="#,##0.00"  >
 					<reportElement uuid="81bebab8-eca8-4d14-811f-223c7216be44" style="amount" x="283" y="58" width="40" height="13"/>
 					<textElement textAlignment="Center"/>
-					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getUnemployment().getDescription()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getProfessionalBase() == 0.00 ? null : CommonUtil.round($F{salary}.getDeductions().getUnemployment().getAmount()/$F{salary}.getProfessionalBase()*100)]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="f53573fc-46ef-4a11-ba25-b28c2eee32ad" style="amount" x="348" y="58" width="97" height="13"/>
@@ -605,10 +606,10 @@
 					<textElement/>
 					<text><![CDATA[Formación Profesional]]></text>
 				</staticText>
-				<textField isBlankWhenNull="true">
+				<textField isBlankWhenNull="true" pattern="#,##0.00" >
 					<reportElement uuid="d8a6ead1-818c-45fd-9b7c-a46bf18e280f" style="amount" x="283" y="71" width="40" height="13"/>
 					<textElement textAlignment="Center"/>
-					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getJobTraining().getDescription()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getProfessionalBase() == 0.00 ? null : CommonUtil.round($F{salary}.getDeductions().getJobTraining().getAmount()/$F{salary}.getProfessionalBase()*100)]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="11b51246-d106-4a2b-b4a7-48836a9394d9" style="amount" x="348" y="71" width="97" height="13"/>
@@ -625,10 +626,10 @@
 					<textElement/>
 					<text><![CDATA[Fuerza mayor o estructurales]]></text>
 				</staticText>
-				<textField isBlankWhenNull="true">
+				<textField isBlankWhenNull="true" pattern="#,##0.00"  > 
 					<reportElement uuid="74795e81-048a-4a72-825a-fef7cb07666a" style="amount" x="283" y="97" width="40" height="13"/>
 					<textElement textAlignment="Center"/>
-					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getStructuralOvertime().getDescription()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getOvertimeBase() == 0.00 ? null : CommonUtil.round($F{salary}.getDeductions().getStructuralOvertime().getAmount()/$F{salary}.getOvertimeBase()*100)]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="ea2d616d-2099-4a31-a72d-9300968b75af" style="amount" x="348" y="97" width="97" height="13"/>
@@ -640,10 +641,10 @@
 					<textElement/>
 					<text><![CDATA[No estructurales]]></text>
 				</staticText>
-				<textField isBlankWhenNull="true">
+				<textField isBlankWhenNull="true" pattern="#,##0.00" >
 					<reportElement uuid="873309a8-ce0b-46af-96df-8000cda70c5e" style="amount" x="283" y="110" width="40" height="13"/>
 					<textElement textAlignment="Center"/>
-					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getNonStructuralOvertime().getDescription()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getNonEstructuralOvertimeBase() == 0.00 ? null : CommonUtil.round($F{salary}.getDeductions().getNonStructuralOvertime().getAmount()/$F{salary}.getNonEstructuralOvertimeBase()*100)]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="c91c16bb-050b-4f03-9a24-6f273b3884e0" style="amount" x="348" y="110" width="97" height="13"/>
@@ -660,10 +661,10 @@
 					<textElement/>
 					<text><![CDATA[2. Impuesto sobre la renta de las personas físicas]]></text>
 				</staticText>
-				<textField isBlankWhenNull="true">
+				<textField isBlankWhenNull="true" pattern="#,##0.00" >
 					<reportElement uuid="e69d9315-14fb-42e6-b72e-89eafffc7d47" style="amount" x="283" y="136" width="40" height="13"/>
 					<textElement textAlignment="Center"/>
-					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getIrpf().getDescription()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getIrpfBase() == 0.00 ? null : CommonUtil.round($F{salary}.getDeductions().getIrpf().getAmount()/$F{salary}.getIrpfBase()*100)]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="5c4ee81e-4c8e-445f-bb72-38356ffad593" style="amount" x="348" y="136" width="97" height="13"/>
