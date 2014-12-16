@@ -56,6 +56,8 @@ public interface ICommonMessages {
 	String FILE_UPLOAD_ERROR = "aon_fileUpload_error";
 	String FINANCIAL_YEAR = "aon_financial_year";
 	String FIXED_PHONE = "aon_fixed_phone";
+	String GTA_FOOTER_TEXT_1 = "gta_footer_text_1"; 
+	String GTA_FOOTER_TEXT_2 = "gta_footer_text_2";
 	String HOLDER = "aon_holder";
 	String HOME = "aon_home";
 	String ID = "aon_id";
@@ -130,6 +132,9 @@ public interface ICommonMessages {
 	String SURCHARGE_QUOTA = "aon_surcharge_quota";	
 	String TARGET = "aon_target";
 	String TARGET_ADVERTISING = "target_advertising";
+	String TAS_LEGAL_TEXT_1 = "tas_legal_text_1";
+	String TAS_LEGAL_TEXT_2 = "tas_legal_text_2";
+	String TAS_LEGAL_TEXT_3 = "tas_legal_text_3";
 	String TAXABLE_BASE = "aon_taxable_base";
 	String TICKET = "aon_ticket";
 	String TIME_2_PATTERN = "aon_time2_pattern";
