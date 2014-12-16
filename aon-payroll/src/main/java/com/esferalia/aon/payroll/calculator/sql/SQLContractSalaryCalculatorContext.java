@@ -789,7 +789,7 @@ public class SQLContractSalaryCalculatorContext extends
 
 		cccExpressionContexts = new LRUCache<CCCContextKey, ExpressionContext>(
 				CACHE_SIZE, new SQLSystemExpressionContextFactory(connection,
-						startDate, endDate));
+						this.startDate, this.endDate));
 
 		agreementContextFactory = new SQLAgreementContextFactory(connection,
 				this::getCCCExpressionContext, this.startDate, this.endDate,

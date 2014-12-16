@@ -180,9 +180,9 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 				values.add(position, var);
 				if (values.size() == 1) {
 					return;
-				} // Es el único valor para esta variable
+				} // Only one value, all ok.
 
-				// TODO : cuidado con los que se superponen
+				// Fix NEXT value 
 				if (position + 1 < values.size()) {
 					ITimedVariable<?> next = values.get(position + 1);
 					if (intersects(var, next)) {
@@ -201,23 +201,22 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 							// antiguo valor.
 					}
 				}
-
+				
+				// Fix PREV value 
 				if (position - 1 >= 0) {
 					ITimedVariable<?> prev = values.get(position - 1);
 					if (intersects(var, prev)) {
 						Date end = var.getPeriod().getStart();
-						Date start = prev.getPeriod().getStart();
+						Date start = prev.getPeriod().getStart(); // start remain untouch
 						if (Period.compare(start, end) >= 0) {
 							values.remove(position - 1);
-						} // La nueva variable sobreescribe totalmente el
-							// antiguo valor.
+						} 
 						else {
 							end = Variables.add(end, -1);
 							ITimedVariable<?> wrapPrev = new WrapTimedVariable<Object>(
 									start, end, prev);
 							values.set(position - 1, wrapPrev);
-						} // La nueva variable sobreescribe parcialmente el
-							// antiguo valor.
+						} 
 					} // Eliminamos
 				}
 
