@@ -1,10 +1,10 @@
 package com.esferalia.aon.gwt.document.server;
 
+import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -30,7 +30,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.enumeration.MimeType;
@@ -40,6 +39,7 @@ import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.drive.ShareFiles;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.google.apis.controller.GoogleDriveController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
@@ -100,18 +100,26 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	void releaseFacesContext() {
 		AonServletUtils.releaseFacesContext();
 	}
+	Boolean confidential;
+	public void initAux(){
+		initFacesContext();
+
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+		domainId = ds.getDomainId();
+		confidential = AonUtil.getRoleManager().isConfidentiality();
+
+	}
 	
 	public Document getAllFiles(){
 		
+		/*DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+		Integer domainId = ds.getDomainId();*/
 		String domain = AonUtil.getDomainName();
 		Integer user_id=AonUtil.getAuthPrincipal().getUserId();
-		ServletContext ctx = getServletContext();
-		initFacesContext();
-		Boolean confidential = AonUtil.getRoleManager().isConfidentiality();
 		Document docs = new Document();
 		try {
-			docs  = DBConsults.getAllRattach(domain,user_id, confidential);
-			
+			String domainUrl = DBConsults.getDomain(domain, domainId);
+			docs  = DBConsults.getAllRattach(domain,domainUrl,user_id, confidential,domainId);
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -122,6 +130,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	}
 	
 	public Vector<FileInfo> getServiConveniosFiles(){
+	
 		String domain = AonUtil.getDomainName();
 		Vector<FileInfo> v = new Vector<FileInfo>();
 		try {
@@ -238,13 +247,15 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		}
 		return true;
 	}
-	
+	Integer domainId;
 	public Vector<Domain> getSons(){
+		
 		String domain = AonUtil.getDomainName();
 		
 		Vector<Domain> vector = new Vector<Domain>();
 		try {
-			vector = DBConsults.getSons(domain);
+			String domainUrl= DBConsults.getDomain(domain, domainId);
+			vector = DBConsults.getSons(domainUrl);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -259,11 +270,15 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	}
 	
 	public Lists getLists(){
+		/*initFacesContext();
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+		Integer domainId = ds.getDomainId();*/
 		String domain = AonUtil.getDomainName();
 		Integer user_id=AonUtil.getAuthPrincipal().getUserId();
 		Lists lists= new Lists();
 		
 		try {
+			domain = DBConsults.getDomain(domain, domainId);
 			lists.setCategoryList(DBConsults.getCategoryList(domain));
 			lists.setCategoryListSon(DBConsults.getCategoryListSon(domain));
 			lists.setScopeList(DBConsults.getScopeList(domain,user_id));
@@ -279,7 +294,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	}
 	
 	public void removeFile(FileInfo fi){
-		
+
 		String domain = AonUtil.getDomainName();
 		try {
 			DBConsults.removeFile(domain, fi.getFileId());
@@ -327,7 +342,15 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			date = new Date(fi.getDate().getYear(),
 					fi.getDate().getMonth(), fi.getDate().getDate());
 
+		/*initFacesContext();
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+		Integer domainId2 = ds.getDomainId();*/
 		String domain = AonUtil.getDomainName();
+		try {
+			domain= DBConsults.getDomain(domain, domainId);
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
 		// Integer registry = AdminUtil.getCompanyId(fi.getDomainId());
 		com.code.aon.google.apis.FileInfo fileInfo = new com.code.aon.google.apis.FileInfo();
 		fileInfo.setAonType("registry");
@@ -337,7 +360,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		fileInfo.setDateSql(date);
 		fileInfo.setMimetype((byte) MimeType.get(getMimetype()).ordinal());
 		fileInfo.setTitle(fi.getTitle());
-		fileInfo.setType((short) 5);// TODO tipo correcto!!
+		fileInfo.setType((short)RegistryAttachmentType.CORPORATE_IDENTITY.ordinal());// TODO tipo correcto!!
 		if (fi.getScope().getId() != -1)
 			fileInfo.setScopeId(fi.getScope().getId());
 		else fileInfo.setScopeId(null);
@@ -355,7 +378,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		else
 			dom = fi.getDomain();
 		try {
-			Integer domainId = DBConsults.getDomainId(domain, dom);
+			//Integer domainId = DBConsults.getDomainId(domain, dom);
 			fileInfo.setDomainId(domainId);
 			Integer id = DBConsults.insertFile(domain, fileInfo);
 			DBConsults.insertTagsFile(id, fi.getTags(), domain, domainId);
@@ -519,7 +542,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			fi.setDate(null);
 			fi.setDomain("");
 			fi.setFileId(0);
-			fi.setType((short) 5);
+			fi.setType((short) RegistryAttachmentType.CORPORATE_IDENTITY.ordinal());
 			fi.setIsDrive(true);
 			if(MimeType.get(f.getMimeType())!=null)
 				fi.setMimetype((byte)MimeType.get(f.getMimeType()).ordinal());

@@ -69,4 +69,6 @@ public interface IDocument extends RemoteService{
 	public void deleteMydrive(FileInfo fi);
 	
 	public void shareMydrive(String email, String driveId);
+	
+	public void initAux();
 }

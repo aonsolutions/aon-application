@@ -28,6 +28,8 @@ import org.jooq.impl.DSL;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.jooq.JooqSettings;
+import com.code.aon.product.enumeration.AttachmentType;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.CategoryList;
 import com.esferalia.aon.gwt.document.shared.Document;
@@ -45,12 +47,12 @@ public class DBConsults {
 	private static String domain1=null;
 	private static Vector<FileInfo> vaux;
 
-	public static Document getAllRattach(String domain,Integer user_id, Boolean confidential) throws SQLException {
+	public static Document getAllRattach(String domain,String domain2,Integer user_id, Boolean confidential, Integer domainId) throws SQLException {
 		Connection connection = null;
 		try {
 			
 
-			if ((domain1==null || domain1!=domain)||(atype == null || atype != "all")) {
+			//if ((domain1==null || domain1!=domain)||(atype == null || atype != "all")) {
 				
 				domain1=domain;
 				atype="all";
@@ -60,7 +62,7 @@ public class DBConsults {
 
 				DSLContext dslContext = DSL.using(connection,
 						JooqSettings.getDefaultSettings());
-				Byte sh = 5;
+				Byte sh = (byte)RegistryAttachmentType.CORPORATE_IDENTITY.ordinal();//5;
 				//rattach domain + parent domain + scope not null
 				Result<Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer>> username = dslContext
 						.select(RATTACH.ID, RATTACH.DESCRIPTION,
@@ -71,10 +73,23 @@ public class DBConsults {
 						.on(RATTACH.DOMAIN.eq(DOMAIN.ID))
 						.join(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(RATTACH.SCOPE))
 						.where(USER_SCOPE.USER_ID.eq(user_id).and(RATTACH.TYPE.eq(sh).and(
-								DOMAIN.NAME.eq(domain).or(
-								DOMAIN.ID.eq(dslContext.select(DOMAIN.PARENT)
+								RATTACH.DOMAIN.eq(domainId).or(
+								RATTACH.DOMAIN.eq(dslContext.select(DOMAIN.PARENT)
 														.from(DOMAIN)
-														.where(DOMAIN.NAME.eq(domain)))))))
+														.where(DOMAIN.ID.eq(domainId)))))))
+						.fetch();
+				
+				//rattach scope null parent
+				Result<Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer>> result1 = dslContext
+						.select(RATTACH.ID, RATTACH.DESCRIPTION,
+								RATTACH.MIMETYPE, RATTACH.TYPE,
+								RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.DPARENT_ID,DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION,DOMAIN.PARENT)
+						.from(RATTACH)
+						.join(DOMAIN)
+						.on(RATTACH.DOMAIN.eq(DOMAIN.ID))
+						.where(RATTACH.TYPE.eq(sh).and((RATTACH.SCOPE.isNull().and(RATTACH.DOMAIN.eq(dslContext.select(DOMAIN.PARENT)
+										.from(DOMAIN)
+										.where(DOMAIN.ID.eq(domainId)))))))
 						.fetch();
 				
 				//rattach scope null + sons domain
@@ -85,9 +100,9 @@ public class DBConsults {
 						.from(RATTACH)
 						.join(DOMAIN)
 						.on(RATTACH.DOMAIN.eq(DOMAIN.ID))
-						.where(RATTACH.TYPE.eq(sh).and((RATTACH.SCOPE.isNull().and(DOMAIN.NAME.eq(domain)).or(DOMAIN.PARENT.eq(dslContext.select(DOMAIN.ID)
+						.where(RATTACH.TYPE.eq(sh).and((RATTACH.SCOPE.isNull().and(RATTACH.DOMAIN.eq(domainId)).or(DOMAIN.PARENT.eq(dslContext.select(DOMAIN.ID)
 										.from(DOMAIN)
-										.where(DOMAIN.NAME.eq(domain)))))))
+										.where(DOMAIN.ID.eq(domainId)))))))
 						.fetch();
 
 				
@@ -95,20 +110,34 @@ public class DBConsults {
 					FileInfo fi = newFileInfo(dslContext,domain,record);
 					if (!fi.getConfidential() || (confidential && fi.getConfidential())){
 						filesGwt.add(fi);
-						if(fi.getDomain().equalsIgnoreCase(domain) || fi.getIsParent())
-							vaux.add(fi);
+						if(fi.getDomain().equalsIgnoreCase(domain2) || fi.getIsParent())
+							if(domain.equals(domain2))
+								vaux.add(fi);
+							else if(!fi.getIsParent()) vaux.add(fi);
 					}
 				}
 				for (Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer> record : result) {
 					FileInfo fi = newFileInfo(dslContext,domain,record);
 					if (!fi.getConfidential() || (confidential && fi.getConfidential())){
 						filesGwt.add(fi);
-						if(fi.getDomain().equalsIgnoreCase(domain) || fi.getIsParent())
-							vaux.add(fi);
+						if(fi.getDomain().equalsIgnoreCase(domain2) || fi.getIsParent())
+							if(domain.equals(domain2))
+								vaux.add(fi);
+							else if(!fi.getIsParent()) vaux.add(fi);
 					}
 				}
-			
-			}
+				for (Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer> record : result1) {
+					FileInfo fi = newFileInfo(dslContext,domain,record);
+					if (!fi.getConfidential() || (confidential && fi.getConfidential())){
+						filesGwt.add(fi);
+						if(fi.getDomain().equalsIgnoreCase(domain2) || fi.getIsParent())
+							if(domain.equals(domain2))
+								vaux.add(fi);
+							else if(!fi.getIsParent()) 
+								vaux.add(fi);
+					}
+				}
+			//}
 			Document document = new Document();			
 			document.setFiles(filesGwt);
 			/*Vector<FileInfo> aux = new Vector<FileInfo>();//=  filesGwt.stream().filter(d -> d.getDomain().equalsIgnoreCase(domain));

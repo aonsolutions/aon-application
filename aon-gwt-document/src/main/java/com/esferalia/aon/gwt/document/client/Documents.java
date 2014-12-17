@@ -322,8 +322,48 @@ public class Documents extends Composite implements EntryPoint {
 	Boolean gConnection;
 	
 	private void init() {
-		getSons();
-		
+		idoc.initAux(new AsyncCallback<Void>() {
+			@Override
+			public void onSuccess(Void result) {
+				getSons();
+				if(docs.getEfiles()==null||docs.getEfiles().isEmpty()){
+					idoc.getAllFiles(new AsyncCallback<Document>() {
+					
+					@Override
+					public void onSuccess(Document result) {
+						docs = result;
+						idoc.getLists(new AsyncCallback<Lists>() {
+
+							@Override
+							public void onFailure(Throwable caught) {
+								Window.alert(caught.toString());
+							}
+
+							@Override
+							public void onSuccess(Lists result) {
+								lists = result;
+								DisclosureImages di = new DisclosureImages();
+								dpanel = new DisclosurePanel(di.getClosed(), di.getOpen(), "Categor\u00edas");
+								epanel = new DisclosurePanel(di.getClosed(), di.getOpen(), "Etiquetas");
+								Load();
+							}
+						});
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+
+						Window.alert(caught.toString() + ": "
+								+ caught.getCause().toString());
+					}
+				});
+				}
+				
+			}
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+
 		idoc.isGconnection(new AsyncCallback<Boolean>() {
 			@Override
 			public void onSuccess(Boolean result) {
@@ -340,40 +380,6 @@ public class Documents extends Composite implements EntryPoint {
 			}
 		});
 
-		if(docs.getEfiles()==null||docs.getEfiles().isEmpty()){
-			idoc.getAllFiles(new AsyncCallback<Document>() {
-			
-			@Override
-			public void onSuccess(Document result) {
-				docs = result;
-				idoc.getLists(new AsyncCallback<Lists>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						Window.alert(caught.toString());
-					}
-
-					@Override
-					public void onSuccess(Lists result) {
-						lists = result;
-						DisclosureImages di = new DisclosureImages();
-						dpanel = new DisclosurePanel(di.getClosed(), di.getOpen(), "Categor\u00edas");
-						epanel = new DisclosurePanel(di.getClosed(), di.getOpen(), "Etiquetas");
-						Load();
-					}
-				});
-				
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-
-				Window.alert(caught.toString() + ": "
-						+ caught.getCause().toString());
-			}
-		});
-	
-		}
 	}
 	
 	@Override
@@ -543,7 +549,10 @@ public class Documents extends Composite implements EntryPoint {
 		});
 		
 		enterpriseSearchBox = new SuggestBox(Utils.createOracle(getSons()));
-		if (getSons().size() == 1) enterpriseSearchBox.setEnabled(false);
+		if (getSons().size() == 1) {
+			enterpriseSearchBox.setEnabled(false);			
+			
+		}
 		enterpriseSearchBox.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
 			
 			@Override
@@ -1322,7 +1331,7 @@ public class Documents extends Composite implements EntryPoint {
 		}
 		docs.setFilter(docs.getServiconvenios());
 	}
-
+	
 	private void initTableColumns(
 			final SelectionModel<FileInfo> selectionModel,
 			ListHandler<FileInfo> sortHandler) {
@@ -1343,7 +1352,6 @@ public class Documents extends Composite implements EntryPoint {
 			}
 		};
 		nameColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
-
 		 nameColumn.setSortable(true); 
 		 sortHandler.setComparator(nameColumn,new Comparator<FileInfo>() {
 			
@@ -1370,7 +1378,6 @@ public class Documents extends Composite implements EntryPoint {
 				new TextCell()) {
 			@Override
 			public String getValue(FileInfo object) {
-
 				return object.getCategoryStr();
 			}
 		};
@@ -1394,7 +1401,6 @@ public class Documents extends Composite implements EntryPoint {
 				new TextCell()) {
 			@Override
 			public String getValue(FileInfo object) {
-
 				return object.getDateStr();
 			}
 		};
@@ -1484,10 +1490,10 @@ public class Documents extends Composite implements EntryPoint {
 			public String getValue(FileInfo object) {
 				return object.getTagsStr();
 			}
+			
 		};
 		
 		 tagColumn.setSortable(true); 
-		 
 		 sortHandler.setComparator(tagColumn,new Comparator<FileInfo>() {
 			
 			@Override
@@ -2029,6 +2035,12 @@ public class Documents extends Composite implements EntryPoint {
 	void reset(ClickEvent event){
 		html.setVisible(false);
 		filterButton.setVisible(false);
+		if(getSons().size()==1){
+			dataProvider = new ListDataProvider<FileInfo>(docs.getEfiles());
+			dataProvider.addDataDisplay(dataGrid);
+			dataGrid.redraw();
+		}
+		else{
 		String searchStr = docs.getDomain();
 		son =false;
 		enterpriseSearchBox.setText("");
@@ -2045,6 +2057,7 @@ public class Documents extends Composite implements EntryPoint {
 					@Override
 					public void onFailure(Throwable caught) {}
 				});
+		}
 	}
 	
 	@UiHandler("upDrive")
