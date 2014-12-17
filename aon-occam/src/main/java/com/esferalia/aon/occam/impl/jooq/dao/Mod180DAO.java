@@ -372,12 +372,12 @@ public class Mod180DAO {
 
 		Field<Integer> minRegistry = DSL.min(INVOICE.REGISTRY).as(INVOICE.REGISTRY.getName());
 		Field<BigDecimal> sumBase = DSL.sum(INVOICE_TAX.BASE).as(INVOICE_TAX.BASE.getName());
-		Field<BigDecimal> invoiceTaxSum = DSL.sum((DSL.round( (INVOICE_TAX.BASE.mul(INVOICE_TAX.PERCENTAGE)).div(100) ,2)));
+		Field<Double> invoiceTaxSum = DSL.round( (INVOICE_TAX.BASE.mul(INVOICE_TAX.PERCENTAGE)).div(100) ,2);
 		Field<Double> maxPercent = DSL.max(INVOICE_TAX.PERCENTAGE).as(INVOICE_TAX.PERCENTAGE.getName());
-		Field<BigDecimal> quotaOp = DSL.decode()
-				.when(INVOICE_TAX.QUOTA.notEqual(0.0), INVOICE_TAX.QUOTA.cast(BigDecimal.class))
+		Field<BigDecimal> quotaOp = DSL.sum(DSL.decode()
+				.when(INVOICE_TAX.QUOTA.notEqual(0.0), INVOICE_TAX.QUOTA)
 				.when(INVOICE_TAX.QUOTA.equal(0.0), invoiceTaxSum)
-				.as(INVOICE_TAX.QUOTA.getName());
+				.as(INVOICE_TAX.QUOTA.getName()));
 		ctx.getDslContext().select(
 			INVOICE.RDOCUMENT
 			,INVOICE.RNAME
