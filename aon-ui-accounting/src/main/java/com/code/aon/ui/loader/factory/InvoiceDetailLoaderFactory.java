@@ -33,6 +33,7 @@ import com.code.aon.product.Item;
 import com.code.aon.product.Product;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
+import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.loader.Column;
@@ -54,6 +55,7 @@ public class InvoiceDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		,new Column(DET,"concepto"			,2,64	,true	,null)
 		,new Column(DET,"cantidad"			,1,16	,true	,null)
 		,new Column(DET,"precio"			,1,16	,true	,null)
+		,new Column(DET,"descuentos"		,2,16	,false	,null)
 		,new Column(DET,"baseImponible"		,1,17	,true	,null)
 		,new Column(DET,"porcentajeIva"		,1,6	,true	,null)
 		,new Column(DET,"cuotaIva"			,1,16	,true	,null)
@@ -159,6 +161,9 @@ public class InvoiceDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 			detail.setSource(InvoiceSource.DIRECT_INVOICE);
 		}
 		detail.setPrice(loaded.getPrecio());
+		if (StringUtils.isNotBlank(loaded.getDescuentos())) {
+			detail.setDiscountExpression(new DiscountExpression(loaded.getDescuentos()));
+		}
 		detail.setQuantity(loaded.getCantidad());
 		detail.setTaxableBase(loaded.getBaseImponible());
 		detail.setWorkPlace(params.getWorkPlace());

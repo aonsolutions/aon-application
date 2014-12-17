@@ -15,6 +15,7 @@ public class LoadedInvoiceDetail implements ILoadedPojo{
 	private String concepto;
 	private Double cantidad;
 	private Double precio;
+	private String descuentos;
 	private Double baseImponible;
 	private Double porcentajeIva;
 	private Double cuotaIva;
@@ -69,6 +70,13 @@ public class LoadedInvoiceDetail implements ILoadedPojo{
 	public void setPrecio(Double precio) {
 		this.precio = precio;
 	}
+	public String getDescuentos() {
+		return descuentos;
+	}
+	public void setDescuentos(String descuentos) {
+		this.descuentos = descuentos;
+	}
+
 	public Double getBaseImponible() {
 		return baseImponible;
 	}
