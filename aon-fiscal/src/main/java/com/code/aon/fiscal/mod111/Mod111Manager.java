@@ -43,11 +43,13 @@ public class Mod111Manager extends FiscalModelManager {
 	private static final String WITHHOLDING_TYPE = "withholding_type";
 	private static final String TAXABLE_BASE = "taxable_base";
 	private static final String QUOTA = "quota";
-	private static String EMPLOYEE_DOCUMENT = "employee_document";
-	private static String IRPF_BASE = "irpf_base";
-	private static String MONEY_IRPF_BASE = "money_irpf_base";
-	private static String INKIND_IRPF_BASE = "inkind_irpf_base";
-	private static String TOTAL_IRPF = "total_irpf";
+
+	private static final String ISSUE_DATE = "salary_issue_date";
+	private static final String EMPLOYEE_DOCUMENT = "employee_document";
+	private static final String IRPF_BASE = "irpf_base";
+	private static final String MONEY_IRPF_BASE = "money_irpf_base";
+	private static final String INKIND_IRPF_BASE = "inkind_irpf_base";
+	private static final String TOTAL_IRPF = "total_irpf";
 	
 	//  Se deben tener en cuenta las retenciones PROFESSIONAL, que van a una casilla
 	//	y luego las de FARMER y TRANSPORT_OPERATOR, que van a otra juntas.
@@ -84,6 +86,7 @@ public class Mod111Manager extends FiscalModelManager {
 	
 	private static String PAYROLL_SELECT = "SELECT " 
 			+"  s.employee_document " + EMPLOYEE_DOCUMENT
+			+" ,s.issue_date " + ISSUE_DATE
 			+" ,s.irpf_base " + IRPF_BASE
 			+" ,s.money_irpf_base " + MONEY_IRPF_BASE
 			+" ,s.inkind_irpf_base " + INKIND_IRPF_BASE
@@ -302,6 +305,8 @@ public class Mod111Manager extends FiscalModelManager {
 		FiscalModel fiscalModel = mod111.getHeader();
 		Date dateFrom = getInitialDate(fiscalModel);	
 		Date dateTo = getDueDate(fiscalModel);
+		Date periodFrom = fiscalModel.getPeriod().getStartDate(fiscalModel.getYear());	
+		Date periodTo = fiscalModel.getPeriod().getDueDate(fiscalModel.getYear());
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
@@ -320,6 +325,7 @@ public class Mod111Manager extends FiscalModelManager {
 			Set<String> documents = new HashSet<String>();
 			while (rs.next()) {
 				String doc = rs.getString(EMPLOYEE_DOCUMENT);
+				Date issueDate = rs.getDate(ISSUE_DATE);
 				
 				double base = rs.getDouble(IRPF_BASE);
 				double quota = rs.getDouble(TOTAL_IRPF);
@@ -336,7 +342,8 @@ public class Mod111Manager extends FiscalModelManager {
 					moneyBase = base;
 					moneyQuota = quota;
 				}
-				if (!documents.contains(doc)) {
+				// Se contabilizan los perceptores cuyas nóminas pertenezcan al periodo fiscal.
+				if ( !issueDate.before(periodFrom) && !issueDate.after(periodTo) && !documents.contains(doc)) { 
 					documents.add(doc);
 					receivers = receivers + (moneyQuota !=0 || moneyBase!=0?1:0);
 					inKindReceivers = inKindReceivers + (inKindQuota !=0 || inKindBase!=0?1:0);
