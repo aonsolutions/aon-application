@@ -3,57 +3,94 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
 
 	<ui:style>
-
-		.buttons {
+	.form {
+		padding: 10px;
+	}
+	
+	.label {
+		margin-top: 10x;
+		font-weight: bold;
+		padding: 1px 0.5em;
+		white-space: nowrap;
+		background-color: #F2F2F2;
+	}
+	
+	.labeltop {
+		margin-top: 10x;
+		font-weight: bold;
+		padding: 1px 0.5em;
+		vertical-align: top;
+		white-space: nowrap;
+		background-color: #F2F2F2;
+	}
+	
+	.field {
+		padding: 1px 0.5em;
+	}
+	
+	.buttons {
 		padding-top: 10px;
 		text-align: right;
-		}
-
-
+	}
+	
+	.info {
+		
+	}
+	
+	.warn {
+		
+	}
+	
+	.error {
+		
+	}
+	
+	.messages {
+		padding-left: 0.5em;
+		padding-bottom: 10px;
+	}
 	</ui:style>
 
-	<g:HTMLPanel>
-		<g:InlineLabel ui:field="nameEmployee"></g:InlineLabel>
-		<hr />
-		<table>
-			<tr>
-				<td>
-					<g:InlineLabel>Inicio de contrato:</g:InlineLabel>
-				</td>
-				<td>
-					<datepicker:DateBox ui:field="startDate" width="6em" />
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<g:Label>Fin de contrato:</g:Label>
-				</td>
-				<td>
-					<datepicker:DateBox ui:field="endDate" width="6em" />
-				</td>
-			</tr>
-			<tr>
-			    <td colspan="3">
-			        <g:CheckBox ui:field="especifico" 
-			            text="Añadir datos específicos de contrato" />
-			    </td>
-			</tr>
-		</table>
-		<table>
-			<tr>
-				<td>
-					<div styleName="{style.buttons}">
-						<g:Button ui:field="acceptButton">Aceptar</g:Button>
-					</div>
+	<g:HTMLPanel styleName="{style.form}">
 
-				</td>
-				<td>
-					<div styleName="{style.buttons}">
-						<g:Button ui:field="cancelButton">Cancelar</g:Button>
-					</div>
+		<div class="{style.messages}">
+			<g:Label styleName="{style.info}" ui:field="nameEmployee"></g:Label>
+		</div>
 
-				</td>
-			</tr>
-		</table>
+		<g:Grid width="100%">
+			<g:row>
+				<g:customCell styleName="{style.label}">
+					<g:Label text="Inicio de contrato" />
+				</g:customCell>
+				<g:customCell styleName="{style.field}">
+					<datepicker:DateBox width="50%" ui:field="startDate" />
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell styleName="{style.label}">
+					<g:Label text="Fin de contrato" />
+				</g:customCell>
+				<g:customCell styleName="{style.field}">
+					<datepicker:DateBox width="50%" ui:field="endDate" />
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell>
+					<g:Label />
+				</g:customCell>
+				<g:customCell  styleName="{style.field}">
+					<g:CheckBox ui:field="especifico"
+						text="Añadir datos específicos de contrato" />
+				</g:customCell>
+			</g:row>
+		</g:Grid>
+
+		<div class="{style.buttons}">
+			<g:Button ui:field="cancelButton">Cancelar</g:Button>
+			<g:Button ui:field="acceptButton">Aceptar</g:Button>
+		</div>
+
 	</g:HTMLPanel>
+
+
 </ui:UiBinder> 
