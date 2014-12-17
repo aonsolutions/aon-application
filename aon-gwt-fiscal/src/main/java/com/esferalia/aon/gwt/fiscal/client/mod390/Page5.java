@@ -52,6 +52,7 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 	@UiField(provided = true)
 	FlexTable table;
 	
+	String domainName;
 	int domain;
 	int year;
 	private Page10 page10;
@@ -59,6 +60,8 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 	Map<Mod390DetailKey,Mod390Detail> map;
 	Map<Mod390DetailKey,DoubleTextBox> taxableBaseMap;
 	Map<Mod390DetailKey,DoubleTextBox> quotaMap;
+
+	
 	
 	public Page5() {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
@@ -77,7 +80,8 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 		this.page10 = page10;
 	}
 	
-	public void initialize(int domain, int year, Mod390 mod390) {
+	public void initialize(String domainName, int domain, int year, Mod390 mod390) {
+		this.domainName = domainName;
 		this.domain = domain;
 		this.year = year;
 		initializeList(mod390);
@@ -92,7 +96,7 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		fiscalService.getMod390Details(domain, year,
+		fiscalService.getMod390Details(domainName,domain, mod390,
 				new AsyncCallback<ArrayList<Mod390Detail>>() {
 					@Override
 					public void onSuccess(ArrayList<Mod390Detail> result) {
@@ -200,6 +204,7 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 				
 				if ( det.getKey().isShowTaxableBase() ) {
 					DoubleTextBox taxableBase = new DoubleTextBox();
+					taxableBase.addStyleName("aon-inputText");
 					taxableBaseMap.put(det.getKey(), taxableBase);
 					if  (det.getKey().isEditable() && det.getPercent() != 0.0) {
 						
@@ -267,6 +272,7 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 				++y;
 			
 				final DoubleTextBox quota = new DoubleTextBox();
+				quota.addStyleName("aon-inputText");
 				quotaMap.put(det.getKey(), quota);
 				quota.setValue(det.getQuota());
 				quota.addValueChangeHandler(new ValueChangeHandler<String>() {

@@ -43,10 +43,10 @@
 			</tr>
 			<tr>
 				<td>
-					<aon:DocumentTextBox ui:field="rdocument" />
+					<aon:DocumentTextBox ui:field="rdocument" styleName="aon-inputText"/>
 				</td>
 				<td>
-					<g:TextBox visibleLength="42" maxLength="40" ui:field="rname" />
+					<g:TextBox visibleLength="42" maxLength="40" ui:field="rname" styleName="aon-inputText"/>
 				</td>
 			</tr>
 		</table>
@@ -76,25 +76,25 @@
 			</tr>
 			<tr>
 				<td>
-					<g:TextBox visibleLength="4" maxLength="4" ui:field="rstreetType" />
+					<g:TextBox visibleLength="4" maxLength="4" ui:field="rstreetType" styleName="aon-inputText"/>
 				</td>
 				<td>
-					<g:TextBox visibleLength="30" maxLength="30" ui:field="rstreetName" />
+					<g:TextBox visibleLength="30" maxLength="30" ui:field="rstreetName" styleName="aon-inputText"/>
 				</td>
 				<td>
-					<g:TextBox visibleLength="5" maxLength="5" ui:field="rstreetNumber" />
+					<g:TextBox visibleLength="5" maxLength="5" ui:field="rstreetNumber" styleName="aon-inputText"/>
 				</td>
 				<td>
-					<g:TextBox visibleLength="3" maxLength="3" ui:field="rstreetStair" />
+					<g:TextBox visibleLength="3" maxLength="3" ui:field="rstreetStair" styleName="aon-inputText"/>
 				</td>
 				<td>
-					<g:TextBox visibleLength="3" maxLength="3" ui:field="rstreetFloor" />
+					<g:TextBox visibleLength="3" maxLength="3" ui:field="rstreetFloor" styleName="aon-inputText"/>
 				</td>
 				<td>
-					<g:TextBox visibleLength="3" maxLength="3" ui:field="rstreetDoor" />
+					<g:TextBox visibleLength="3" maxLength="3" ui:field="rstreetDoor" styleName="aon-inputText"/>
 				</td>
 				<td>
-					<g:TextBox visibleLength="9" maxLength="9" ui:field="rphone" />
+					<g:TextBox visibleLength="9" maxLength="9" ui:field="rphone" styleName="aon-inputText"/>
 				</td>
 			</tr>
 		</table>
@@ -112,13 +112,13 @@
 			</tr>
 			<tr>
 				<td>
-					<g:TextBox visibleLength="30" maxLength="30" ui:field="rtown" />
+					<g:TextBox visibleLength="30" maxLength="30" ui:field="rtown" styleName="aon-inputText"/>
 				</td>
 				<td>
 					<aon:ProvinceListBox ui:field="rprovince" />
 				</td>
 				<td>
-					<g:TextBox visibleLength="5" maxLength="5" ui:field="rzip" />
+					<g:TextBox visibleLength="5" maxLength="5" ui:field="rzip" styleName="aon-inputText"/>
 				</td>
 			</tr>
 		</table>
@@ -140,13 +140,13 @@
 					<g:Label text="D."/>
 				</td>
 				<td>
-					<g:TextBox ui:field="name1" visibleLength="15" maxLength="40" tabIndex="100"/>
+					<g:TextBox ui:field="name1" visibleLength="15" maxLength="40" tabIndex="100" styleName="aon-inputText"/>
 				</td>
 				<td>
-					<g:TextBox ui:field="name2" visibleLength="15" maxLength="40" tabIndex="200"/>
+					<g:TextBox ui:field="name2" visibleLength="15" maxLength="40" tabIndex="200" styleName="aon-inputText"/>
 				</td>
 				<td>
-					<g:TextBox ui:field="name3" visibleLength="15" maxLength="40" tabIndex="300"/>
+					<g:TextBox ui:field="name3" visibleLength="15" maxLength="40" tabIndex="300" styleName="aon-inputText"/>
 				</td>
 			</tr>
 			<tr>
@@ -154,13 +154,13 @@
 					<g:Label text="NIF"/>
 				</td>
 				<td>
-					<aon:DocumentTextBox ui:field="document1" tabIndex="101"/>
+					<aon:DocumentTextBox ui:field="document1" tabIndex="101" styleName="aon-inputText"/>
 				</td>
 				<td>
-					<aon:DocumentTextBox ui:field="document2" tabIndex="201"/>
+					<aon:DocumentTextBox ui:field="document2" tabIndex="201" styleName="aon-inputText"/>
 				</td>
 				<td>
-					<aon:DocumentTextBox ui:field="document3" tabIndex="301"/>
+					<aon:DocumentTextBox ui:field="document3" tabIndex="301" styleName="aon-inputText"/>
 				</td>
 			</tr>
 			<tr>
@@ -168,13 +168,13 @@
 					<g:Label text="{msg.registrationDate}" />
 				</td>
 				<td>
-					<aon:DateBoxEx ui:field="notaryDate1" tabIndex="102"/>
+					<aon:DateBoxEx ui:field="notaryDate1" tabIndex="102" styleName="aon-inputText"/>
 				</td>
 				<td>
-					<aon:DateBoxEx ui:field="notaryDate2" tabIndex="202"/>
+					<aon:DateBoxEx ui:field="notaryDate2" tabIndex="202" styleName="aon-inputText"/>
 				</td>
 				<td>
-					<aon:DateBoxEx ui:field="notaryDate3" tabIndex="302"/>
+					<aon:DateBoxEx ui:field="notaryDate3" tabIndex="302" styleName="aon-inputText"/>
 				</td>
 			</tr>
 			<tr>
@@ -182,13 +182,13 @@
 					<g:Label text="{msg.notary}"/>
 				</td>
 				<td>
-					<g:TextBox ui:field="notary1" visibleLength="20" maxLength="20" tabIndex="103"/>
+					<g:TextBox ui:field="notary1" visibleLength="20" maxLength="20" tabIndex="103" styleName="aon-inputText"/>
 				</td>
 				<td>
-					<g:TextBox ui:field="notary2" visibleLength="20" maxLength="20" tabIndex="203"/>
+					<g:TextBox ui:field="notary2" visibleLength="20" maxLength="20" tabIndex="203" styleName="aon-inputText"/>
 				</td>
 				<td>
-					<g:TextBox ui:field="notary3" visibleLength="20" maxLength="20" tabIndex="303"/>
+					<g:TextBox ui:field="notary3" visibleLength="20" maxLength="20" tabIndex="303" styleName="aon-inputText"/>
 				</td>
 			</tr>
 		</table>

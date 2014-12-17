@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.gwt.common.shared.FiscalParameters;
 import com.esferalia.aon.gwt.fiscal.shared.Enterprise;
-import com.esferalia.aon.gwt.fiscal.shared.Mod303Results;
 import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
 import com.esferalia.aon.occam.api.model.Mod180;
 import com.esferalia.aon.occam.api.model.Mod180Detail;
@@ -13,6 +12,7 @@ import com.esferalia.aon.occam.api.model.Mod190;
 import com.esferalia.aon.occam.api.model.Mod190Detail;
 import com.esferalia.aon.occam.api.model.Mod390;
 import com.esferalia.aon.occam.api.model.Mod390.Activity;
+import com.esferalia.aon.occam.api.model.Mod390.Mod303Results;
 import com.esferalia.aon.occam.api.model.Mod390.Mod390Detail;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -52,18 +52,15 @@ public interface FiscalService extends RemoteService {
 	// ---------------------------------------------------------------MODELO 390
 	Mod390 getMod390(String domainName, Integer domain,Integer id) throws AonCoreException;
 	ArrayList<Mod390> getMod390s(String domainName, Integer domain) throws AonCoreException;
-	
-	
-	ArrayList<Mod390Detail> getMod390Details(int domain,Integer year) throws AonSQLException;
-	
-	Mod303Results getMod303Results(int domain, int year) throws AonSQLException;
+	Mod390 saveMod390(String domainName, Integer domain,Mod390 mod390) throws AonCoreException;
+	void deleteMod390(String domainName, Integer domain,Mod390 mod390) throws AonCoreException;
+	ArrayList<Mod390Detail> getMod390Details(String domainName, Integer domain,Mod390 mod390) throws AonCoreException;
+	Mod303Results getMod303Results(String domainName, Integer domain, int year) throws AonCoreException;
 	
 	ArrayList<Mod311Results> getMod311Results(int domain, int year) throws AonSQLException;
 
 //	Mod390 getMod390(Integer id) throws AonSQLException;
 //	ArrayList<Mod390> getMod390s(int domain) throws AonSQLException;
-	
-	Mod390 saveMod390(Mod390 mod390) throws AonSQLException;
-	
-	void deleteMod390(Mod390 mod390) throws AonSQLException;
+//	Mod390 saveMod390(Mod390 mod390) throws AonSQLException;
+//	void deleteMod390(Mod390 mod390) throws AonSQLException;
 }

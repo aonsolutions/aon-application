@@ -28,7 +28,6 @@ import com.esferalia.aon.gwt.fiscal.server.Activities.Type4Activities;
 import com.esferalia.aon.gwt.fiscal.server.Activities.Type7Activities;
 import com.esferalia.aon.gwt.fiscal.server.Activities.TypeActivity;
 import com.esferalia.aon.gwt.fiscal.shared.Enterprise;
-import com.esferalia.aon.gwt.fiscal.shared.Mod303Results;
 import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
 import com.esferalia.aon.gwt.fiscal.sql.SQLEnterprise;
 import com.esferalia.aon.gwt.fiscal.sql.SQLMod390;
@@ -39,6 +38,7 @@ import com.esferalia.aon.occam.api.model.Mod190;
 import com.esferalia.aon.occam.api.model.Mod190Detail;
 import com.esferalia.aon.occam.api.model.Mod390;
 import com.esferalia.aon.occam.api.model.Mod390.Activity;
+import com.esferalia.aon.occam.api.model.Mod390.Mod303Results;
 import com.esferalia.aon.occam.api.model.Mod390.Mod390Detail;
 
 /**
@@ -175,49 +175,33 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements
 
 	// ---------------------------------------------------------------MODELO 390
 	@Override
-	public ArrayList<Mod390Detail> getMod390Details(int domain, Integer year)
-			throws AonSQLException {
-		Connection conn = null;
-		ArrayList<Mod390Detail> list = new ArrayList<Mod390Detail>();
-		try {
-			conn = getConnection();
-			disableAutoCommit(conn);
-			list = SQLMod390.getMod390Details(domain,year,conn);
-			commit(conn);
-			return list;
-		} catch (AonSQLException e) {
-			rollback(conn);
-			throw e;
-		} catch (Throwable e) {
-			rollback(conn);
-			throw new AonSQLException(e);
-		} finally {
-			enableAutoCommit(conn);
-			SQLUtils.closeQuietly(conn);
-		}
+	public Mod390 getMod390(String domainName, Integer domain,Integer id) {
+		return AON.getMod390(domainName, domain, id);
+	}
+
+	@Override
+	public ArrayList<Mod390> getMod390s(String domainName, Integer domain) {
+		return AON.getMod390s(domainName, domain);
+	}
+
+	@Override
+	public Mod390 saveMod390(String domainName, Integer domain, Mod390 mod390) {
+		return AON.saveMod390(domainName, domain, mod390);
+	}
+
+	@Override
+	public void deleteMod390(String domainName, Integer domain, Mod390 mod390) {
+		AON.deleteMod390(domainName, domain, mod390);
 	}
 	
 	@Override
-	public Mod303Results getMod303Results(int domain, int year)
-			throws AonSQLException {
-		Connection conn = null;
-		Mod303Results result = new Mod303Results();
-		try {
-			conn = getConnection();
-			disableAutoCommit(conn);
-			result = SQLMod390.getMod303Results(domain,year,conn);
-			commit(conn);
-			return result;
-		} catch (AonSQLException e) {
-			rollback(conn);
-			throw e;
-		} catch (Throwable e) {
-			rollback(conn);
-			throw new AonSQLException(e);
-		} finally {
-			enableAutoCommit(conn);
-			SQLUtils.closeQuietly(conn);
-		}
+	public ArrayList<Mod390Detail> getMod390Details(String domainName, Integer domain, Mod390 mod390) {
+		return AON.getMod390Details(domainName, domain, mod390);
+	}
+	
+	@Override
+	public Mod303Results getMod303Results(String domainName, Integer domain, int year) {
+		return AON.getMod303Results(domainName, domain, year);
 	}
 
 	@Override
@@ -231,57 +215,6 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements
 			result = SQLMod390.getMod311Results(domain,year,conn);
 			commit(conn);
 			return result;
-		} catch (AonSQLException e) {
-			rollback(conn);
-			throw e;
-		} catch (Throwable e) {
-			rollback(conn);
-			throw new AonSQLException(e);
-		} finally {
-			enableAutoCommit(conn);
-			SQLUtils.closeQuietly(conn);
-		}
-	}
-
-	@Override
-	public Mod390 getMod390(String domainName, Integer domain,Integer id) {
-		return AON.getMod390(domainName, domain, id);
-	}
-
-	@Override
-	public ArrayList<Mod390> getMod390s(String domainName, Integer domain) {
-		return AON.getMod390s(domainName, domain);
-	}
-	
-	@Override
-	public Mod390 saveMod390(Mod390 mod390) throws AonSQLException {
-		Connection conn = null;
-		try {
-			conn = getConnection();
-			disableAutoCommit(conn);
-			Mod390 ret = SQLMod390.save(conn, mod390);
-			commit(conn);
-			return ret;
-		} catch (AonSQLException e) {
-			rollback(conn);
-			throw e;
-		} catch (Throwable e) {
-			rollback(conn);
-			throw new AonSQLException(e);
-		} finally {
-			enableAutoCommit(conn);
-			SQLUtils.closeQuietly(conn);
-		}
-	}
-	
-	@Override
-	public void deleteMod390(Mod390 mod390) throws AonSQLException {
-		Connection conn = null;
-		try {
-			conn = getConnection();
-			disableAutoCommit(conn);
-			SQLMod390.delete(conn, mod390);
-			commit(conn);
 		} catch (AonSQLException e) {
 			rollback(conn);
 			throw e;

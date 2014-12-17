@@ -58,43 +58,43 @@
 							</tr>
 							<tr>
 								<td><g:TextBox ui:field="f01A"/></td>
-								<td><aon:DoubleTextBox ui:field="f01B"/></td>
-								<td><aon:DoubleTextBox ui:field="f01C"/></td>
-								<td><aon:DoubleTextBox ui:field="f01D"/></td>
-								<td><aon:DoubleTextBox ui:field="f01E"/></td>
-								<td><aon:DoubleTextBox ui:field="f01K"/></td>
+								<td><aon:DoubleTextBox ui:field="f01B" styleName="aon-inputText"/></td>
+								<td><aon:DoubleTextBox ui:field="f01C" styleName="aon-inputText"/></td>
+								<td><aon:DoubleTextBox ui:field="f01D" styleName="aon-inputText"/></td>
+								<td><aon:DoubleTextBox ui:field="f01E" styleName="aon-inputText"/></td>
+								<td><aon:DoubleTextBox ui:field="f01K" styleName="aon-inputText"/></td>
 							</tr>
 							<tr>
 								<td><g:TextBox ui:field="f02A"/></td>
-								<td><aon:DoubleTextBox ui:field="f02B"/></td>
-								<td><aon:DoubleTextBox ui:field="f02C"/></td>
-								<td><aon:DoubleTextBox ui:field="f02D"/></td>
-								<td><aon:DoubleTextBox ui:field="f02E"/></td>
-								<td><aon:DoubleTextBox ui:field="f02K"/></td>
+								<td><aon:DoubleTextBox ui:field="f02B" styleName="aon-inputText"/></td>
+								<td><aon:DoubleTextBox ui:field="f02C" styleName="aon-inputText"/></td>
+								<td><aon:DoubleTextBox ui:field="f02D" styleName="aon-inputText"/></td>
+								<td><aon:DoubleTextBox ui:field="f02E" styleName="aon-inputText"/></td>
+								<td><aon:DoubleTextBox ui:field="f02K" styleName="aon-inputText"/></td>
 							</tr>
 							<tr>
 								<td><g:TextBox ui:field="f03A"/></td>
-								<td><aon:DoubleTextBox ui:field="f03B"/></td>
-								<td><aon:DoubleTextBox ui:field="f03C"/></td>
-								<td><aon:DoubleTextBox ui:field="f03D"/></td>
-								<td><aon:DoubleTextBox ui:field="f03E"/></td>
-								<td><aon:DoubleTextBox ui:field="f03K"/></td>
+								<td><aon:DoubleTextBox ui:field="f03B" styleName="aon-inputText"/></td>
+								<td><aon:DoubleTextBox ui:field="f03C" styleName="aon-inputText"/></td>
+								<td><aon:DoubleTextBox ui:field="f03D" styleName="aon-inputText"/></td>
+								<td><aon:DoubleTextBox ui:field="f03E" styleName="aon-inputText"/></td>
+								<td><aon:DoubleTextBox ui:field="f03K" styleName="aon-inputText"/></td>
 							</tr>
 							<tr>
 								<td><g:TextBox ui:field="f04A"/></td>
-								<td><aon:DoubleTextBox ui:field="f04B"/></td>
-								<td><aon:DoubleTextBox ui:field="f04C"/></td>
-								<td><aon:DoubleTextBox ui:field="f04D"/></td>
-								<td><aon:DoubleTextBox ui:field="f04E"/></td>
-								<td><aon:DoubleTextBox ui:field="f04K"/></td>
+								<td><aon:DoubleTextBox ui:field="f04B" styleName="aon-inputText"/></td>
+								<td><aon:DoubleTextBox ui:field="f04C" styleName="aon-inputText"/></td>
+								<td><aon:DoubleTextBox ui:field="f04D" styleName="aon-inputText"/></td>
+								<td><aon:DoubleTextBox ui:field="f04E" styleName="aon-inputText"/></td>
+								<td><aon:DoubleTextBox ui:field="f04K" styleName="aon-inputText"/></td>
 							</tr>
 							<tr>
 								<td><g:TextBox ui:field="f05A"/></td>
-								<td><aon:DoubleTextBox ui:field="f05B"/></td>
-								<td><aon:DoubleTextBox ui:field="f05C"/></td>
-								<td><aon:DoubleTextBox ui:field="f05D"/></td>
-								<td><aon:DoubleTextBox ui:field="f05E"/></td>
-								<td><aon:DoubleTextBox ui:field="f05K"/></td>
+								<td><aon:DoubleTextBox ui:field="f05B" styleName="aon-inputText"/></td>
+								<td><aon:DoubleTextBox ui:field="f05C" styleName="aon-inputText"/></td>
+								<td><aon:DoubleTextBox ui:field="f05D" styleName="aon-inputText"/></td>
+								<td><aon:DoubleTextBox ui:field="f05E" styleName="aon-inputText"/></td>
+								<td><aon:DoubleTextBox ui:field="f05K" styleName="aon-inputText"/></td>
 							</tr>
 						</table>
 					</td>
@@ -113,7 +113,7 @@
 						<g:Label text="74" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 					</td>
 					<td>
-						<aon:DoubleTextBox ui:field="box74"/>
+						<aon:DoubleTextBox ui:field="box74" styleName="aon-inputText"/>
 					</td>
 				</tr>
 				<tr>
@@ -124,7 +124,7 @@
 						<g:Label text="75" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 					</td>
 					<td>
-						<aon:DoubleTextBox ui:field="box75"/>
+						<aon:DoubleTextBox ui:field="box75" styleName="aon-inputText"/>
 					</td>
 				</tr>
 				<tr>
@@ -135,7 +135,7 @@
 						<g:Label text="76" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 					</td>
 					<td>
-						<aon:DoubleTextBox ui:field="box76"/>
+						<aon:DoubleTextBox ui:field="box76" styleName="aon-inputText"/>
 					</td>
 				</tr>
 				<tr>
@@ -146,7 +146,7 @@
 						<g:Label text="77" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 					</td>
 					<td>
-						<aon:DoubleTextBox ui:field="box77"/>
+						<aon:DoubleTextBox ui:field="box77" styleName="aon-inputText"/>
 					</td>
 				</tr>
 				<tr>
@@ -157,7 +157,7 @@
 						<g:Label text="78" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 					</td>
 					<td>
-						<aon:DoubleTextBox ui:field="box78"/>
+						<aon:DoubleTextBox ui:field="box78" styleName="aon-inputText"/>
 					</td>
 				</tr>
 				<tr>
@@ -168,7 +168,7 @@
 						<g:Label text="79" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 					</td>
 					<td>
-						<aon:DoubleTextBox ui:field="box79"/>
+						<aon:DoubleTextBox ui:field="box79" styleName="aon-inputText"/>
 					</td>
 				</tr>
 				<tr>
@@ -184,7 +184,7 @@
 						<g:Label text="80" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 					</td>
 					<td>
-						<aon:DoubleTextBox ui:field="box80"/>
+						<aon:DoubleTextBox ui:field="box80" styleName="aon-inputText"/>
 					</td>
 				</tr>
 				<tr>
@@ -195,7 +195,7 @@
 						<g:Label text="81" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 					</td>
 					<td>
-						<aon:DoubleTextBox ui:field="box81"/>
+						<aon:DoubleTextBox ui:field="box81" styleName="aon-inputText"/>
 					</td>
 				</tr>
 				<tr>
@@ -206,7 +206,7 @@
 						<g:Label text="82" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 					</td>
 					<td>
-						<aon:DoubleTextBox ui:field="box82"/>
+						<aon:DoubleTextBox ui:field="box82" styleName="aon-inputText"/>
 					</td>
 				</tr>
 				<tr>
@@ -222,7 +222,7 @@
 						<g:Label text="83" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 					</td>
 					<td>
-						<aon:DoubleTextBox ui:field="box83"/>
+						<aon:DoubleTextBox ui:field="box83" styleName="aon-inputText"/>
 					</td>
 				</tr>
 				<tr>

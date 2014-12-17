@@ -1,48 +1,22 @@
 package com.esferalia.aon.gwt.fiscal.sql;
 
-import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Date;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-
-import com.code.aon.config.enumeration.Administration;
-import com.code.aon.config.enumeration.InvoiceTransactionType;
-import com.code.aon.config.enumeration.VatDeductionType;
-import com.code.aon.finance.enumeration.InvoiceType;
-import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.fiscal.enumeration.FiscalActivityInfoKey;
 import com.code.aon.fiscal.enumeration.FiscalActivityInfoType;
 import com.code.aon.fiscal.enumeration.Mod311Key;
-import com.code.aon.fiscal.enumeration.Period;
-import com.code.aon.fiscal.enumeration.VatTaxKey;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.common.sql.SQLUtils;
-import com.esferalia.aon.gwt.fiscal.shared.Mod303Results;
 import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
-import com.esferalia.aon.occam.api.model.Mod390;
-import com.esferalia.aon.occam.api.model.Mod390.Mod390Detail;
-import com.esferalia.aon.occam.api.model.Mod390.Mod390DetailKey;
-import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013;
-import com.esferalia.aon.occam.api.model.mod390.e2013.Mod390toAEATIVA2013;
-import com.esferalia.aon.payroll.sql.SQLConstants;
-import com.esferalia.aon.payroll.sql.SQLConstants.FsModel390Columns;
-import com.esferalia.aon.payroll.sql.SQLConstants.FsVatColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.FsVatDeclarationColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.FsVatDetailColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.InvoiceColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.InvoiceDetailColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.InvoiceTaxColumns;
 
 public class SQLMod390 {
 	
 	//@formatter:off
+	/*
 	private static final String MOD390_DELETE = "DELETE FROM " +SQLConstants.FS_MODEL390 
 			+" WHERE " + SQLConstants.FS_MODEL390 +"."+ FsModel390Columns.ID + " = ?";
 
@@ -120,6 +94,7 @@ public class SQLMod390 {
 			+SQLConstants.INVOICE_TAX +"."+ InvoiceTaxColumns.SURCHARGE + ","
 			+ SQLConstants.INVOICE_TAX +"."+ InvoiceTaxColumns.VAT_DEDUCTION_TYPE
 		;
+
 	private static final String VAT_TAX_DECLARATION_SELECT = 
 			"SELECT "  
 				+SQLConstants.FS_VAT +"." + FsVatColumns.PERIOD +" "+FsVatColumns.PERIOD + ","  
@@ -134,7 +109,6 @@ public class SQLMod390 {
 				+" WHERE " + SQLConstants.FS_VAT +"."+FsVatColumns.DOMAIN+"=?"
 				+" AND " + SQLConstants.FS_VAT +"."+FsVatColumns.YEAR +"=?"
 				+" AND "+SQLConstants.FS_VAT_DECLARATION+"."+FsVatDeclarationColumns.ADMINISTRATION+"=" + Administration.COMMON_TERRITORY.ordinal();
-
 	private static final String VAT_TAX_DETAIL_SELECT = 
 			"SELECT "
 				+SQLConstants.FS_VAT_DETAIL +"." + FsVatDetailColumns.VAT_KEY +" "+FsVatDetailColumns.VAT_KEY + ","
@@ -146,8 +120,9 @@ public class SQLMod390 {
 				+" WHERE " + SQLConstants.FS_VAT +"."+FsVatColumns.DOMAIN+"=?"
 				+" AND " + SQLConstants.FS_VAT +"."+FsVatColumns.YEAR +"=?"
 				+" AND " + SQLConstants.FS_VAT +"."+FsVatColumns.PERIOD +"!=" + Period.YEAR.ordinal();  
-//@formatter:on
-
+*/
+	//@formatter:on
+/*
 	public static Mod390 save(Connection conn, Mod390 mod390) throws AonSQLException {
 		if (mod390.getId() == null) {
 			return insert(conn, mod390);
@@ -247,7 +222,7 @@ public class SQLMod390 {
 		}
 	}
 	
-/*
+
 	public static String getXMLContentById(int id, Connection conn) throws AonSQLException {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -269,7 +244,6 @@ public class SQLMod390 {
 			SQLUtils.closeQuietly(stmt);
 		}
 	}
-*/
 	public static void delete(Connection conn, Mod390 mod390)
 			throws AonSQLException {
 		PreparedStatement deleteStmt = null;
@@ -285,7 +259,6 @@ public class SQLMod390 {
 			SQLUtils.closeQuietly(deleteStmt);
 		}
 	}
-
 
 	public static ArrayList<Mod390Detail> getMod390Details(int domain,
 			Integer year, Connection conn) throws AonSQLException  {
@@ -753,9 +726,10 @@ public class SQLMod390 {
 		}
 		throw new IllegalArgumentException("La clave " + key + " no soportada");
 	}
+*/
 
-
-	public static Mod303Results getMod303Results(int domain, int year,
+/*
+	private static Mod303Results getMod303Results(int domain, int year,
 			Connection conn)  throws AonSQLException  {
 		
 		PreparedStatement stmt = null;
@@ -825,7 +799,7 @@ public class SQLMod390 {
 			SQLUtils.closeQuietly(stmt);
 		}
 	}
-
+*/
 	public static ArrayList<Mod311Results> getMod311Results(int domain, int year,
 			Connection conn) throws AonSQLException  {
 		

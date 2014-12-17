@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
-public class Mod303Results implements Serializable, IsSerializable {
+public class OLD_Mod303Results implements Serializable, IsSerializable {
 	
 	private double depositSum;
 	private double paybackSum;

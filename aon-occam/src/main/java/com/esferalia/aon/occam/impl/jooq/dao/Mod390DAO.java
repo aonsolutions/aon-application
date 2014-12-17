@@ -2,169 +2,358 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.FsModel390.FS_MODEL390;
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
+import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 
+import java.io.Serializable;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+
+import org.jooq.Field;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.FsModel390Record;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.Mod390;
-import com.esferalia.aon.occam.api.model.Mod390.Activity;
-import com.esferalia.aon.occam.api.model.Mod390.Address;
-import com.esferalia.aon.occam.api.model.Mod390.FarmerRegimeActivity;
+import com.esferalia.aon.occam.api.model.Mod390.Mod303Results;
 import com.esferalia.aon.occam.api.model.Mod390.Mod390Detail;
 import com.esferalia.aon.occam.api.model.Mod390.Mod390DetailKey;
-import com.esferalia.aon.occam.api.model.Mod390.SimpliedRegimeActivity;
 import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013;
-import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.Administraciones;
-import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.DatEstadisticos;
-import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.DatEstadisticos.Otras;
-import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.DatIdent;
-import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.Devengo;
-import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.LiqAnual;
-import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.OpEspecificas;
-import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.BaseImponibleyCuota;
-import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegGeneral.Deducciones;
-import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegSimplificado;
-import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegSimplificado.ActAgricGanadForest;
-import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegSimplificado.Actividad;
-import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegSimplificado.Actividad.Modulo;
-import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegSimplificado.IvaDeducible;
-import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.RegSimplificado.IvaDevengado;
-import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.ResLiquidaciones;
-import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.ResLiquidaciones.PerNoRegGrupos;
-import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.ResLiquidaciones.PerSiRegGrupos;
-import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013.VolOperaciones;
-import com.esferalia.aon.occam.api.model.mod390.e2013.TipoBaseImponibleYCuota;
-import com.esferalia.aon.occam.api.model.mod390.e2013.TipoDomicilio;
-import com.esferalia.aon.occam.api.model.mod390.e2013.TipoGrupoEntidades;
-import com.esferalia.aon.occam.api.model.mod390.e2013.TipoIdentificacionPersonaFisica;
-import com.esferalia.aon.occam.api.model.mod390.e2013.TipoIdentificacionPersonaJuridica;
-import com.esferalia.aon.occam.api.model.mod390.e2013.TipoPersonaFisica;
-import com.esferalia.aon.occam.api.model.mod390.e2013.TipoPersonaJuridica;
-import com.esferalia.aon.occam.api.model.mod390.e2013.TipoRepresentanteFisica;
-import com.esferalia.aon.occam.api.model.mod390.e2013.TipoRepresentanteJuridica;
+import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013toMod390;
+import com.esferalia.aon.occam.api.model.mod390.e2013.Mod390toAEATIVA2013;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.RectificationType;
+import com.esferalia.aon.occam.api.model.type.VatDeductionType;
+import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 
 public class Mod390DAO {
 	
-	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
-	
-/*	
+	@FunctionalInterface
+	public static interface IMod390DetailKey {
+		boolean accept(VatContext vc);
+	}
 
-	//@formatter:off
+	public static class VatContext {
+		private InvoiceType invoiceType;
+		private RectificationType rectificationType;
+		private boolean service;
+		private InvoiceTransactionType transaction;
+		private boolean investment;
+		private boolean surcharge;
+		private double percentage;
+		private VatDeductionType vatDeductionType;
+		
+		public InvoiceType getInvoiceType() {
+			return invoiceType;
+		}
+		public void setInvoiceType(InvoiceType invoiceType) {
+			this.invoiceType = invoiceType;
+		}
+		public RectificationType getRectificationType() {
+			return rectificationType;
+		}
+		public void setRectificationType(RectificationType rectificationType) {
+			this.rectificationType = rectificationType;
+		}
+		public boolean isService() {
+			return service;
+		}
+		public void setService(boolean service) {
+			this.service = service;
+		}
+		public InvoiceTransactionType getTransaction() {
+			return transaction;
+		}
+		public void setTransaction(InvoiceTransactionType transaction) {
+			this.transaction = transaction;
+		}
+		public boolean isInvestment() {
+			return investment;
+		}
+		public void setInvestment(boolean investment) {
+			this.investment = investment;
+		}
+		public boolean isSurcharge() {
+			return surcharge;
+		}
+		public void setSurcharge(boolean surcharge) {
+			this.surcharge = surcharge;
+		}
+		public double getPercentage() {
+			return percentage;
+		}
+		public void setPercentage(double percentage) {
+			this.percentage = percentage;
+		}
+		public VatDeductionType getVatDeductionType() {
+			return vatDeductionType;
+		}
+		public void setVatDeductionType(VatDeductionType vatDeductionType) {
+			this.vatDeductionType = vatDeductionType;
+		}
+		public boolean isRectification() {
+			return (rectificationType == RectificationType.SPECIAL_RECTIFIER);
+		}
+		public boolean isSales() {
+			return (invoiceType == InvoiceType.SALES);
+		}
+		public boolean isPurchase() {
+			return (invoiceType == InvoiceType.PURCHASE);
+		}
+		public boolean isExpenses() {
+			return (invoiceType == InvoiceType.EXPENSES);
+		}
+		public boolean isNational() {
+			return (transaction == InvoiceTransactionType.NATIONAL);
+		}
+		public boolean isIntracommunity() {
+			return (transaction == InvoiceTransactionType.INTRACOMMUNITY);
+		}
+		public boolean isExtracommunity() {
+			return (transaction == InvoiceTransactionType.EXTRACOMMUNITY);
+		}
+		public boolean isCanCeuMel() {
+			return (transaction == InvoiceTransactionType.CAN_CEU_MEL);
+		}
+		public boolean isOtherISP() {
+			return (transaction == InvoiceTransactionType.OTHER_ISP);
+		}
+		public boolean isNationalSales() {
+			return isNational() && isSales();
+		}
+		public boolean isIntracommunitySales() {
+		return isIntracommunity() && isSales();
+	}
+		public boolean isNationalPurchase() {
+			return isNational() && isPurchase();
+		}
+		public boolean isOtherISPPurchase() {
+			return isOtherISP() && isPurchase();
+		}
+		public boolean isIntracommunityPurchase(){
+			return isIntracommunity() && isPurchase();
+		} 
+		public boolean isExtracommunityPurchase(){
+			return isExtracommunity() && isPurchase();
+		} 
+		public boolean isCanCeuMelPurchase(){
+			return isCanCeuMel() && isPurchase();
+		}
+		public boolean isNationalExpenses() {
+			return isNational() && isExpenses();
+		}
+		public boolean isOtherISPExpenses() {
+			return isOtherISP() && isExpenses();
+		}
+		public boolean isExtracommunityExpenses(){
+			return isExtracommunity() && isExpenses();
+		} 
+		public boolean isCanCeuMelExpenses(){
+			return isCanCeuMel() && isExpenses();
+		}
+		public boolean isIntracommunityExpenses(){
+			return isIntracommunity() && isExpenses();
+		} 
+		public boolean isWithoutRightDeductionType() {
+			return  vatDeductionType == VatDeductionType.WITHOUT_RIGHT;
+		}
+	}
 	
-	private static final String MOD390_SELECT = "SELECT "
-			+SQLConstants.FS_MODEL390 +"."+ FsModel390Columns.ID + " " + FsModel390Columns.ID + ","  
-			+SQLConstants.FS_MODEL390 +"."+ FsModel390Columns.ADMINISTRATION + " " + FsModel390Columns.ADMINISTRATION + ","  
-			+SQLConstants.FS_MODEL390 +"."+ FsModel390Columns.YEAR + " " + FsModel390Columns.YEAR + ","
-			+SQLConstants.FS_MODEL390 +"."+ FsModel390Columns.DOMAIN + " " + FsModel390Columns.DOMAIN+ ","  
-			+SQLConstants.FS_MODEL390 +"."+ FsModel390Columns.ENTERPRISE + " " + FsModel390Columns.ENTERPRISE + ","  
-			+SQLConstants.FS_MODEL390 +"."+ FsModel390Columns.DOCUMENT + " " + FsModel390Columns.DOCUMENT + ","  
-			+SQLConstants.FS_MODEL390 +"."+ FsModel390Columns.NAME + " " + FsModel390Columns.NAME + ","  
-			+SQLConstants.FS_MODEL390 +"."+ FsModel390Columns.RECEIPT + " " + FsModel390Columns.RECEIPT + ","  
-			+SQLConstants.FS_MODEL390 +"."+ FsModel390Columns.REPLACEMENT  + " " + FsModel390Columns.REPLACEMENT + ","  
-			+SQLConstants.FS_MODEL390 +"."+ FsModel390Columns.REPLACED_RECEIPT + " " + FsModel390Columns.REPLACED_RECEIPT + ","  
-			+SQLConstants.FS_MODEL390 +"."+ FsModel390Columns.COMMENTS + " " + FsModel390Columns.COMMENTS + ","  
-			+SQLConstants.FS_MODEL390 +"."+ FsModel390Columns.COMPLEMENTARY + " " + FsModel390Columns.COMPLEMENTARY + ","  
-			+SQLConstants.FS_MODEL390 +"."+ FsModel390Columns.SECURITY_LEVEL + " " + FsModel390Columns.SECURITY_LEVEL + ","
-			+SQLConstants.FS_MODEL390 +"."+ FsModel390Columns.STATUS + " " + FsModel390Columns.STATUS + ","
-			+SQLConstants.FS_MODEL390 +"."+ FsModel390Columns.MODEL + " " + FsModel390Columns.MODEL 
-			+" FROM " + SQLConstants.FS_MODEL390
-			+" WHERE " + SQLConstants.FS_MODEL390 +"."+ FsModel390Columns.ID + " = ?";
+	public static enum DetailKey implements Serializable {
+		
+		  K00_04 (Mod390DetailKey.K00_04, (vc -> (vc.isNationalSales() && !vc.isRectification() && vc.getPercentage() ==  4)))
+		 ,K00_08 (Mod390DetailKey.K00_08, (vc -> (vc.isNationalSales() && !vc.isRectification() && vc.getPercentage() ==  8)))
+		 ,K00_10 (Mod390DetailKey.K00_10, (vc -> (vc.isNationalSales() && !vc.isRectification() && vc.getPercentage() == 10)))
+		 ,K00_18 (Mod390DetailKey.K00_18, (vc -> (vc.isNationalSales() && !vc.isRectification() && vc.getPercentage() == 18)))
+		 ,K00_21 (Mod390DetailKey.K00_21, (vc -> (vc.isNationalSales() && !vc.isRectification() && vc.getPercentage() == 21)))
+		 ,K01_04 (Mod390DetailKey.K01_04, null)
+		 ,K01_08 (Mod390DetailKey.K01_08, null)
+		 ,K01_10 (Mod390DetailKey.K01_10, null)
+		 ,K01_18 (Mod390DetailKey.K01_18, null)
+		 ,K01_21 (Mod390DetailKey.K01_21, null)
+		 ,K02_04 (Mod390DetailKey.K02_04, null)
+		 ,K02_08 (Mod390DetailKey.K02_08, null)
+		 ,K02_10 (Mod390DetailKey.K02_10, null)
+		 ,K02_18 (Mod390DetailKey.K02_18, null)
+		 ,K02_21 (Mod390DetailKey.K02_21, null)
+		 ,K03_18 (Mod390DetailKey.K03_18, null)
+		 ,K03_21 (Mod390DetailKey.K03_21, null)
+		 ,K04_04 (Mod390DetailKey.K04_04, (vc -> (vc.isIntracommunityPurchase() && vc.getPercentage() ==  4)))
+		 ,K04_08 (Mod390DetailKey.K04_08, (vc -> (vc.isIntracommunityPurchase() && vc.getPercentage() ==  8)))
+		 ,K04_10 (Mod390DetailKey.K04_10, (vc -> (vc.isIntracommunityPurchase() && vc.getPercentage() ==  10)))
+		 ,K04_18 (Mod390DetailKey.K04_18, (vc -> (vc.isIntracommunityPurchase() && vc.getPercentage() ==  18)))
+		 ,K04_21 (Mod390DetailKey.K04_21, (vc -> (vc.isIntracommunityPurchase() && vc.getPercentage() ==  21)))
+	
+		 ,K05_04 (Mod390DetailKey.K05_04, (vc -> (vc.isIntracommunityExpenses() && vc.getPercentage() ==  4)))
+		 ,K05_08 (Mod390DetailKey.K05_08, (vc -> (vc.isIntracommunityExpenses() && vc.getPercentage() ==  8)))
+		 ,K05_10 (Mod390DetailKey.K05_10, (vc -> (vc.isIntracommunityExpenses() && vc.getPercentage() == 10)))
+		 ,K05_18 (Mod390DetailKey.K05_18, (vc -> (vc.isIntracommunityExpenses() && vc.getPercentage() == 18)))
+		 ,K05_21 (Mod390DetailKey.K05_21, (vc -> (vc.isIntracommunityExpenses() && vc.getPercentage() == 21)))
+		 ,K06	 (Mod390DetailKey.K06	, (vc -> ( vc.isOtherISPPurchase() 
+				 								|| vc.isOtherISPExpenses() 
+				 								|| vc.isCanCeuMelExpenses() 
+				 								|| vc.isExtracommunityExpenses())))
+		 
+		 ,K07	 (Mod390DetailKey.K07	, (vc -> (vc.isNationalSales() && vc.isRectification())))
+		 ,K08	 (Mod390DetailKey.K08	, null)
+		 ,K09	 (Mod390DetailKey.K09	, null)
+		 ,K10_05 (Mod390DetailKey.K10_05, null)
+		 ,K10_1  (Mod390DetailKey.K10_1 , null)
+		 ,K10_14 (Mod390DetailKey.K10_14, null)
+		 ,K10_4  (Mod390DetailKey.K10_4 , null)
+		 ,K10_52 (Mod390DetailKey.K10_52, null)
+		 ,K10_175(Mod390DetailKey.K10_175,null)
+		 ,K11	 (Mod390DetailKey.K11	, null)
+		 ,K12	 (Mod390DetailKey.K12	, null)
+		 ,K13	 (Mod390DetailKey.K13	, null)
+		 
+		 ,K14_04 (Mod390DetailKey.K14_04, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && vc.getPercentage() == 4))) 
+		 ,K14_07 (Mod390DetailKey.K14_07, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && vc.getPercentage() == 7))) 
+		 ,K14_08 (Mod390DetailKey.K14_08, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && vc.getPercentage() == 8))) 
+		 ,K14_10 (Mod390DetailKey.K14_10, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && vc.getPercentage() == 10))) 
+		 ,K14_16 (Mod390DetailKey.K14_16, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && vc.getPercentage() == 16)))
+		 ,K14_18 (Mod390DetailKey.K14_18, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && vc.getPercentage() == 18)))
+		 ,K14_21 (Mod390DetailKey.K14_21, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && vc.getPercentage() == 21))) 
+		 ,K15	 (Mod390DetailKey.K15	, null)
+		 
+		 ,K16_04 (Mod390DetailKey.K16_04, null)
+		 ,K16_07 (Mod390DetailKey.K16_07, null)
+		 ,K16_08 (Mod390DetailKey.K16_08, null)
+		 ,K16_10 (Mod390DetailKey.K16_10, null)
+		 ,K16_16 (Mod390DetailKey.K16_16, null)
+		 ,K16_18 (Mod390DetailKey.K16_18, null)
+		 ,K16_21 (Mod390DetailKey.K16_21, null)
+		 ,K17	 (Mod390DetailKey.K17	, null)
+		 
+		 ,K18_04 (Mod390DetailKey.K18_04, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && vc.getPercentage() ==  4)))
+		 ,K18_07 (Mod390DetailKey.K18_07, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && vc.getPercentage() ==  7)))
+		 ,K18_08 (Mod390DetailKey.K18_08, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && vc.getPercentage() ==  8)))
+		 ,K18_10 (Mod390DetailKey.K18_10, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && vc.getPercentage() == 10))) 
+		 ,K18_16 (Mod390DetailKey.K18_16, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && vc.getPercentage() == 16))) 
+		 ,K18_18 (Mod390DetailKey.K18_18, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && vc.getPercentage() == 18))) 
+		 ,K18_21 (Mod390DetailKey.K18_21, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && vc.getPercentage() == 21)))
+		 ,K19	 (Mod390DetailKey.K19	, null)
+		 
+		 ,K20_04 (Mod390DetailKey.K20_04, null)
+		 ,K20_07 (Mod390DetailKey.K20_07, null)
+		 ,K20_08 (Mod390DetailKey.K20_08, null)
+		 ,K20_10 (Mod390DetailKey.K20_10, null)
+		 ,K20_16 (Mod390DetailKey.K20_16, null)
+		 ,K20_18 (Mod390DetailKey.K20_18, null)
+		 ,K20_21 (Mod390DetailKey.K20_21, null)
+		 ,K21	 (Mod390DetailKey.K21	, null)
+		 
+		 ,K22_04 (Mod390DetailKey.K22_04, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && vc.getPercentage() == 4)))
+		 ,K22_07 (Mod390DetailKey.K22_07, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && vc.getPercentage() == 4)))
+		 ,K22_08 (Mod390DetailKey.K22_08, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && vc.getPercentage() == 4)))
+		 ,K22_10 (Mod390DetailKey.K22_10, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && vc.getPercentage() == 4)))
+		 ,K22_16 (Mod390DetailKey.K22_16, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && vc.getPercentage() == 4)))
+		 ,K22_18 (Mod390DetailKey.K22_18, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && vc.getPercentage() == 4)))
+		 ,K22_21 (Mod390DetailKey.K22_21, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && vc.getPercentage() == 4)))
+		 ,K23	 (Mod390DetailKey.K23	, null)
+		 
+		 ,K24_04 (Mod390DetailKey.K24_04, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() == 4)))
+		 ,K24_07 (Mod390DetailKey.K24_07, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() == 7)))
+		 ,K24_08 (Mod390DetailKey.K24_08, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() == 8)))
+		 ,K24_10 (Mod390DetailKey.K24_10, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() == 10)))
+		 ,K24_16 (Mod390DetailKey.K24_16, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() == 16)))
+		 ,K24_18 (Mod390DetailKey.K24_18, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() == 18)))
+		 ,K24_21 (Mod390DetailKey.K24_21, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() == 21)))
+		 ,K25	 (Mod390DetailKey.K25	, null)
+		 
+		 ,K26_04 (Mod390DetailKey.K26_04, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && vc.getPercentage() ==  4)))
+		 ,K26_07 (Mod390DetailKey.K26_07, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && vc.getPercentage() ==  7)))
+		 ,K26_08 (Mod390DetailKey.K26_08, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && vc.getPercentage() ==  8)))
+		 ,K26_10 (Mod390DetailKey.K26_10, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && vc.getPercentage() ==  10)))
+		 ,K26_16 (Mod390DetailKey.K26_16, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && vc.getPercentage() ==  16)))
+		 ,K26_18 (Mod390DetailKey.K26_18, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && vc.getPercentage() ==  18)))
+		 ,K26_21 (Mod390DetailKey.K26_21, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && vc.getPercentage() ==  21)))
+		 ,K27	 (Mod390DetailKey.K27	, null)
+		 
+		 ,K28_04 (Mod390DetailKey.K28_04, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() ==  4)))
+		 ,K28_07 (Mod390DetailKey.K28_07, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() ==  7))) 
+		 ,K28_08 (Mod390DetailKey.K28_08, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() ==  8))) 
+		 ,K28_10 (Mod390DetailKey.K28_10, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() ==  10))) 
+		 ,K28_16 (Mod390DetailKey.K28_16, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() ==  16))) 
+		 ,K28_18 (Mod390DetailKey.K28_18, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() ==  18))) 
+		 ,K28_21 (Mod390DetailKey.K28_21, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() ==  21))) 
+		 ,K29	 (Mod390DetailKey.K29   , null)
+		 
+		 ,K30_04 (Mod390DetailKey.K30_04, null)
+		 ,K30_07 (Mod390DetailKey.K30_07, null)
+		 ,K30_08 (Mod390DetailKey.K30_08, null)
+		 ,K30_10 (Mod390DetailKey.K30_10, null)
+		 ,K30_16 (Mod390DetailKey.K30_16, null)
+		 ,K30_18 (Mod390DetailKey.K30_18, null)
+		 ,K30_21 (Mod390DetailKey.K30_21, null)
+		 ,K31	 (Mod390DetailKey.K31   , null)
+		 
+		 ,K32	 (Mod390DetailKey.K32, null)
+		 ,K33	 (Mod390DetailKey.K33, null)
+		 ,K34	 (Mod390DetailKey.K34, null)
+		 ,K35	 (Mod390DetailKey.K35, null)
+		 ,K36	 (Mod390DetailKey.K36, null)
+		 ,K37	 (Mod390DetailKey.K37, null)
+		 
+		 ,B099	 (Mod390DetailKey.B099, (vc -> (vc.isNationalSales() && !vc.isRectification() && !vc.isSurcharge())))
+		 ,B103	 (Mod390DetailKey.B103, (vc -> (vc.isIntracommunitySales() && !vc.isWithoutRightDeductionType())))
+		 ,B104	 (Mod390DetailKey.B104, (vc -> (vc.isSales() && !vc.isWithoutRightDeductionType() && (vc.isExtracommunity() || vc.isCanCeuMel()) )))
+		 ,B105	 (Mod390DetailKey.B105, (vc -> (vc.isSales() && !vc.isNational() && vc.isWithoutRightDeductionType())))
+		 ,B110	 (Mod390DetailKey.B110, (vc -> (vc.isSales() && !vc.isWithoutRightDeductionType() && vc.isOtherISP())))
+		 ,B112	 (Mod390DetailKey.B112, null)
+		 ,B100	 (Mod390DetailKey.B100, null)
+		 ,B101	 (Mod390DetailKey.B101, null)
+		 ,B102	 (Mod390DetailKey.B102, (vc -> (vc.isNationalSales() && vc.isRectification() && vc.isSurcharge())))
+		 ,B227	 (Mod390DetailKey.B227, null)
+		 ,B228	 (Mod390DetailKey.B228, null)
+		 ,B106	 (Mod390DetailKey.B106, null)
+		 ,B107	 (Mod390DetailKey.B107, null)
+		 ,B108	 (Mod390DetailKey.B108, null)
+		 ;
+		 
+		private Mod390DetailKey key;
+		private IMod390DetailKey accept;
 			
-	private static final String MOD390_DELETE = "DELETE FROM " +SQLConstants.FS_MODEL390 
-			+" WHERE " + SQLConstants.FS_MODEL390 +"."+ FsModel390Columns.ID + " = ?";
+		private DetailKey(Mod390DetailKey key, IMod390DetailKey accept) {
+			this.key = key;
+			this.accept = accept;
+		}
 
-	private static final String MOD390_INSERT = "INSERT INTO "
-			+SQLConstants.FS_MODEL390 + "( " 
-			+ FsModel390Columns.DOMAIN + ","
-			+ FsModel390Columns.ENTERPRISE + ","
-			+ FsModel390Columns.YEAR + ","
-			+ FsModel390Columns.ADMINISTRATION + ","
-			+ FsModel390Columns.STATUS + ","
-			+ FsModel390Columns.SECURITY_LEVEL + ","
-			+ FsModel390Columns.DOCUMENT + ","
-			+ FsModel390Columns.NAME + ","
-			+ FsModel390Columns.COMPLEMENTARY + ","
-			+ FsModel390Columns.REPLACEMENT + ","
-			+ FsModel390Columns.COMMENTS + ","
-			+ FsModel390Columns.RECEIPT + ","
-			+ FsModel390Columns.REPLACED_RECEIPT + ","
-			+ FsModel390Columns.MODEL 
-			+ ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";  
-	
-	private static final String MOD390_UPDATE = "UPDATE "
-			+SQLConstants.FS_MODEL390 + " SET " 
-			+ FsModel390Columns.DOMAIN + "=?,"
-			+ FsModel390Columns.ENTERPRISE + "=?,"
-			+ FsModel390Columns.YEAR + "=?,"
-			+ FsModel390Columns.ADMINISTRATION + "=?,"
-			+ FsModel390Columns.STATUS + "=?,"
-			+ FsModel390Columns.SECURITY_LEVEL + "=?,"
-			+ FsModel390Columns.DOCUMENT + "=?,"
-			+ FsModel390Columns.NAME + "=?,"
-			+ FsModel390Columns.COMPLEMENTARY + "=?,"
-			+ FsModel390Columns.REPLACEMENT + "=?,"
-			+ FsModel390Columns.COMMENTS + "=?,"
-			+ FsModel390Columns.RECEIPT + "=?,"
-			+ FsModel390Columns.REPLACED_RECEIPT + "=?,"
-			+ FsModel390Columns.MODEL + "=?"
-			+" WHERE " + SQLConstants.FS_MODEL390 +"."+ FsModel390Columns.ID + " = ?";  
-
-	private static final String INVOICE_SELECT = "SELECT "
-			+SQLConstants.INVOICE +"."+ InvoiceColumns.TYPE + " " + InvoiceColumns.TYPE +","
-			+SQLConstants.INVOICE +"."+ InvoiceColumns.RECTIFICATION_TYPE + " " + InvoiceColumns.RECTIFICATION_TYPE+ ","
-			+SQLConstants.INVOICE +"."+ InvoiceColumns.SERVICE + " "+ InvoiceColumns.SERVICE + ","
-			+SQLConstants.INVOICE +"."+ InvoiceColumns.TRANSACTION +" "+ InvoiceColumns.TRANSACTION+ ","
-			+SQLConstants.INVOICE +"."+ InvoiceColumns.INVESTMENT +" "+ InvoiceColumns.INVESTMENT+ ","
-			+SQLConstants.INVOICE_TAX +"."+ InvoiceTaxColumns.PERCENTAGE +" "+ InvoiceTaxColumns.PERCENTAGE+ ","
-			+SQLConstants.INVOICE_TAX +"."+ InvoiceTaxColumns.SURCHARGE +" "+ InvoiceTaxColumns.SURCHARGE+ ","
-			+ SQLConstants.INVOICE_TAX +"."+ InvoiceTaxColumns.VAT_DEDUCTION_TYPE +" "+ InvoiceTaxColumns.VAT_DEDUCTION_TYPE+ ","
-			+" SUM( " + SQLConstants.INVOICE_DETAIL + "." + InvoiceDetailColumns.TAXABLE_BASE + ") " + InvoiceDetailColumns.TAXABLE_BASE + ","
-			+ "SUM( IF( " + SQLConstants.INVOICE_TAX +"."+ InvoiceTaxColumns.QUOTA + "!= 0," +
-					SQLConstants.INVOICE_TAX +"."+ InvoiceTaxColumns.QUOTA +"," +
-					"ROUND(" + SQLConstants.INVOICE_DETAIL + "." + InvoiceDetailColumns.TAXABLE_BASE + "*" 
-					+ SQLConstants.INVOICE_TAX +"."+ InvoiceTaxColumns.PERCENTAGE + "/ 100, 2) ) ) " + InvoiceTaxColumns.QUOTA+ "," 
-			+" SUM( IF(" + SQLConstants.INVOICE_TAX +"."+ InvoiceTaxColumns.SURCHARGE_QUOTA+ " != 0," +
-					SQLConstants.INVOICE_TAX +"."+ InvoiceTaxColumns.SURCHARGE_QUOTA+"," 
-					+"ROUND(" + SQLConstants.INVOICE_DETAIL + "." + InvoiceDetailColumns.TAXABLE_BASE + "*" 
-					+ SQLConstants.INVOICE_TAX +"."+ InvoiceTaxColumns.SURCHARGE +"/ 100, 2) ) ) "  + InvoiceTaxColumns.SURCHARGE_QUOTA
-			+" FROM " + SQLConstants.INVOICE_TAX
-		+" INNER JOIN "+SQLConstants.INVOICE_DETAIL
-		+ " ON " + SQLConstants.INVOICE_TAX + "." + InvoiceTaxColumns.INVOICE_DETAIL 
-		+ " = " + SQLConstants.INVOICE_DETAIL + "." + InvoiceDetailColumns.ID 
-		+" INNER JOIN "+SQLConstants.INVOICE
-		+" ON " + SQLConstants.INVOICE_DETAIL + "." + InvoiceDetailColumns.INVOICE
-		+ " = " + SQLConstants.INVOICE + "." + InvoiceColumns.ID
-		+" WHERE "+ SQLConstants.INVOICE_TAX + "." + InvoiceTaxColumns.DOMAIN +" = ?"
-		+" AND " + SQLConstants.INVOICE_TAX + "." + InvoiceTaxColumns.TAX_TYPE + " = 1"
-		+" AND "+ SQLConstants.INVOICE + "." + InvoiceColumns.TAX_DATE +" BETWEEN ? AND ?"
-		+" GROUP BY "
-			+SQLConstants.INVOICE +"."+ InvoiceColumns.TYPE + ","
-			+SQLConstants.INVOICE +"."+ InvoiceColumns.RECTIFICATION_TYPE + ","
-			+SQLConstants.INVOICE +"."+ InvoiceColumns.SERVICE + ","
-			+SQLConstants.INVOICE +"."+ InvoiceColumns.TRANSACTION + ","
-			+SQLConstants.INVOICE +"."+ InvoiceColumns.INVESTMENT + ","
-			+SQLConstants.INVOICE_TAX +"."+ InvoiceTaxColumns.PERCENTAGE + ","
-			+SQLConstants.INVOICE_TAX +"."+ InvoiceTaxColumns.SURCHARGE + ","
-			+ SQLConstants.INVOICE_TAX +"."+ InvoiceTaxColumns.VAT_DEDUCTION_TYPE
-		;
+		public Mod390DetailKey getKey() {
+			return key;
+		}
+		public boolean accept(VatContext vc) {
+			return (accept==null)?false:accept.accept(vc);
+		}
+		
+		public static Mod390DetailKey[] getKeys(VatContext vc) {
+			List<Mod390DetailKey> list = new ArrayList<Mod390DetailKey>();
+			for (DetailKey key : DetailKey.values()) {
+				if (key.accept(vc)) {
+					list.add(key.getKey()); 
+				}
+			}
+			return list.size()==0?null:list.toArray(new Mod390DetailKey[list.size()]);
+		}
+	}
+	/*
 	private static final String VAT_TAX_DECLARATION_SELECT = 
 			"SELECT "  
 				+SQLConstants.FS_VAT +"." + FsVatColumns.PERIOD +" "+FsVatColumns.PERIOD + ","  
@@ -191,7 +380,6 @@ public class Mod390DAO {
 				+" WHERE " + SQLConstants.FS_VAT +"."+FsVatColumns.DOMAIN+"=?"
 				+" AND " + SQLConstants.FS_VAT +"."+FsVatColumns.YEAR +"=?"
 				+" AND " + SQLConstants.FS_VAT +"."+FsVatColumns.PERIOD +"!=" + Period.YEAR.ordinal();  
-//@formatter:on
 */
 
 	public static ArrayList<Mod390> getByDomain(AONContext ctx, int domain) {
@@ -253,7 +441,9 @@ public class Mod390DAO {
 				JAXBContext context = JAXBContext.newInstance(AEATIVA2013.class);
 				Unmarshaller um = context.createUnmarshaller();
 				AEATIVA2013 iva = (AEATIVA2013) um.unmarshal(reader);
-				populate(mod390, iva);
+				
+				AEATIVA2013toMod390.populate(mod390, iva);
+				
 			} catch (JAXBException e1) {
 				throw new AonCoreException("XML PROBLEM");
 			} catch (ParseException e) {
@@ -272,589 +462,203 @@ public class Mod390DAO {
 	}
 
 
-	public static Mod390 save(Connection conn, Mod390 mod390)  {
-		return null;
-/*		
+	public static Mod390 save(AONContext ctx, Mod390 mod390)  {
 		if (mod390.getId() == null) {
-			return insert(conn, mod390);
+			return insert(ctx, mod390);
 		} else {
-			return update(conn, mod390);
-		}
-*/
-	}
-
-/*	
-	private static Mod390 update(Connection conn, Mod390 mod390)
-		throws AonSQLException {
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		try {
-			stmt = conn.prepareStatement(MOD390_UPDATE);
-			SQLUtils.setInt(stmt, 1, mod390.getDomain());
-			SQLUtils.setInt(stmt, 2, mod390.getEnterprise());
-			SQLUtils.setInt(stmt, 3, mod390.getYear());
-			SQLUtils.setInt(stmt, 4, mod390.getAdministration());
-			SQLUtils.setInt(stmt, 5, 0);
-			SQLUtils.setInt(stmt, 6, mod390.isConfidential() ? 1 : 0);
-			SQLUtils.setString(stmt, 7, mod390.getDocument());
-			SQLUtils.setString(stmt, 8, mod390.getEnterpriseName());
-			SQLUtils.setInt(stmt, 9, 0);
-			SQLUtils.setInt(stmt, 10,mod390.isReplacement() ? 1 : 0);
-			SQLUtils.setString(stmt, 11, mod390.getComments());
-			SQLUtils.setString(stmt, 12, mod390.getReceipt());
-			SQLUtils.setString(stmt, 13, mod390.getReplacedReceipt());
-			
-			AEATIVA2013 iva = Mod390toAEATIVA2013.getAEATIVA2013(mod390);
-			StringWriter writer = new StringWriter();
-			JAXBContext context = JAXBContext.newInstance(AEATIVA2013.class);				
-			Marshaller um = context.createMarshaller();
-			um.setProperty("jaxb.encoding", "ISO-8859-1");
-			um.marshal(iva,writer);
-			SQLUtils.setString(stmt, 14, writer.toString());
-			SQLUtils.setInt(stmt, 15, mod390.getId());
-			stmt.execute();
-			return getById(mod390.getId(), conn);
-		} catch (AonSQLException e) {
-			throw e;
-		} catch (Throwable e) {
-			throw new AonSQLException(e);
-		} finally {
-			SQLUtils.closeQuietly(rs);
-			SQLUtils.closeQuietly(stmt);
-		}
-
-	}
-
-
-	private static Mod390 insert(Connection conn, Mod390 mod390)
-			throws AonSQLException {
-		PreparedStatement insertStmt = null;
-		ResultSet rs = null;
-		try {
-			insertStmt = conn.prepareStatement(MOD390_INSERT,
-					Statement.RETURN_GENERATED_KEYS);
-			SQLUtils.setInt(insertStmt, 1, mod390.getDomain());
-			SQLUtils.setInt(insertStmt, 2, mod390.getEnterprise());
-			SQLUtils.setInt(insertStmt, 3, mod390.getYear());
-			SQLUtils.setInt(insertStmt, 4, mod390.getAdministration());
-			SQLUtils.setInt(insertStmt, 5, 0);
-			SQLUtils.setInt(insertStmt, 6, mod390.isConfidential() ? 1 : 0);
-			SQLUtils.setString(insertStmt, 7, mod390.getDocument());
-			SQLUtils.setString(insertStmt, 8, mod390.getEnterpriseName());
-			SQLUtils.setInt(insertStmt, 9, 0);
-			SQLUtils.setInt(insertStmt, 10,mod390.isReplacement() ? 1 : 0);
-			SQLUtils.setString(insertStmt, 11, mod390.getComments());
-			SQLUtils.setString(insertStmt, 12, mod390.getReceipt());
-			SQLUtils.setString(insertStmt, 13, mod390.getReplacedReceipt());
-			
-			AEATIVA2013 iva = Mod390toAEATIVA2013.getAEATIVA2013(mod390);
-			StringWriter writer = new StringWriter();
-			JAXBContext context = JAXBContext.newInstance(AEATIVA2013.class);				
-			Marshaller um = context.createMarshaller();
-			um.setProperty("jaxb.encoding", "ISO-8859-1");
-			um.marshal(iva,writer);
-			SQLUtils.setString(insertStmt, 14, writer.toString());
-			
-			insertStmt.execute();
-			rs = insertStmt.getGeneratedKeys();
-			if (!rs.next()) {
-				throw new AonSQLException("Unable to recover last inserted id");
-			}
-			mod390.setId(rs.getInt(1));
-			return getById(mod390.getId(), conn);
-		} catch (AonSQLException e) {
-			throw e;
-		} catch (Throwable e) {
-			throw new AonSQLException(e);
-		} finally {
-			SQLUtils.closeQuietly(rs);
-			SQLUtils.closeQuietly(insertStmt);
+			return update(ctx, mod390);
 		}
 	}
 	
-
-	public static String getXMLContentById(int id, Connection conn) throws AonSQLException {
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
+	private static String getXMLModel( Mod390 mod390 ) {
 		try {
-			stmt = conn.prepareStatement(MOD390_SELECT,
-					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			stmt.setInt(1, id);
-			rs = stmt.executeQuery();
-			String model =  null;
-			while (rs.next()) {
-				model =  rs.getString(FsModel390Columns.MODEL);
-			}
-			return model;
-		} catch (Throwable e) {
+			AEATIVA2013 iva = Mod390toAEATIVA2013.getAEATIVA2013(mod390);
+			StringWriter writer = new StringWriter();
+			JAXBContext context = JAXBContext.newInstance(AEATIVA2013.class);
+			Marshaller um = context.createMarshaller();
+			um.setProperty("jaxb.encoding", "ISO-8859-1");
+			um.marshal(iva,writer);
+			return writer.toString();
+		} catch (JAXBException e) {
 			e.printStackTrace();
-			throw new AonSQLException(e.getMessage());
-		} finally {
-			SQLUtils.closeQuietly(rs);
-			SQLUtils.closeQuietly(stmt);
+			throw new AonCoreException("Error en conversión XML",e);
+		}				
+	}
+	
+
+	private static Mod390 insert(AONContext ctx, Mod390 mod390) {
+		validate(ctx, mod390);
+		FsModel390Record record = ctx.getDslContext()
+			.insertInto(FS_MODEL390)
+			.set(FS_MODEL390.DOMAIN, mod390.getDomain())
+			.set(FS_MODEL390.ENTERPRISE, mod390.getEnterprise())
+			.set(FS_MODEL390.YEAR, mod390.getYear())
+			.set(FS_MODEL390.ADMINISTRATION, mod390.getAdministration())
+			.set(FS_MODEL390.STATUS, (byte) 0)
+			.set(FS_MODEL390.SECURITY_LEVEL,AonEnumUtils.getByte(mod390.isConfidential()))
+			.set(FS_MODEL390.DOCUMENT, mod390.getDocument())
+			.set(FS_MODEL390.NAME, mod390.getName())
+			.set(FS_MODEL390.COMPLEMENTARY, (byte) 0)
+			.set(FS_MODEL390.REPLACEMENT,AonEnumUtils.getByte(mod390.isReplacement()))
+			.set(FS_MODEL390.COMMENTS, mod390.getComments())
+			.set(FS_MODEL390.RECEIPT, mod390.getReceipt())
+			.set(FS_MODEL390.REPLACED_RECEIPT, mod390.getReplacedReceipt())
+			.set(FS_MODEL390.MODEL, getXMLModel(mod390))
+			.returning(FS_MODEL390.ID).fetchOne();
+		mod390.setId(record.getId());
+		return mod390;
+	}
+	
+	private static Mod390 update(AONContext ctx, Mod390 mod390) {
+		validate(ctx, mod390);
+		ctx.getDslContext()
+			.update(FS_MODEL390)
+			.set(FS_MODEL390.YEAR, mod390.getYear())
+			.set(FS_MODEL390.ADMINISTRATION, mod390.getAdministration())
+			.set(FS_MODEL390.STATUS, (byte) 0)
+			.set(FS_MODEL390.SECURITY_LEVEL,AonEnumUtils.getByte(mod390.isConfidential()))
+			.set(FS_MODEL390.DOCUMENT, mod390.getDocument())
+			.set(FS_MODEL390.NAME, mod390.getName())
+			.set(FS_MODEL390.COMPLEMENTARY, (byte) 0)
+			.set(FS_MODEL390.REPLACEMENT,AonEnumUtils.getByte(mod390.isReplacement()))
+			.set(FS_MODEL390.COMMENTS, mod390.getComments())
+			.set(FS_MODEL390.RECEIPT, mod390.getReceipt())
+			.set(FS_MODEL390.REPLACED_RECEIPT, mod390.getReplacedReceipt())
+			.set(FS_MODEL390.MODEL, getXMLModel(mod390))
+			.where(FS_MODEL390.ID.equal(mod390.getId())).execute();
+		return mod390;
+	}
+
+	private static void validate(AONContext ctx, Mod390 mod390) {
+		if (mod390.isReplacement()) {
+			// Se comprueba que exista la declaración ssustituida.
+			if (ctx.getDslContext().selectOne()
+					.from(FS_MODEL390)
+					.where(FS_MODEL390.YEAR.equal(mod390.getYear())
+					.and(FS_MODEL390.ENTERPRISE.equal(mod390.getEnterprise()))
+					.and(FS_MODEL390.RECEIPT.equal(mod390.getReplacedReceipt()))).fetchCount() == 0) 
+				throw new AonCoreException(
+						AonError.FISCAL_NO_REPLACED_DECLARATION.getMessage());
+
+			// Se comprueba que no exista una declaraci?n sustitutiva.
+			if (ctx.getDslContext().selectOne()
+					.from(FS_MODEL390)
+					.where(FS_MODEL390.YEAR.equal(mod390.getYear())
+					.and(FS_MODEL390.ENTERPRISE.equal(mod390.getEnterprise()))
+					.and(FS_MODEL390.REPLACEMENT.equal((byte) 1))					
+					.and(FS_MODEL390.REPLACED_RECEIPT.equal(mod390.getReplacedReceipt()))).fetchCount() > 0 )
+				throw new AonCoreException(AonError.FISCAL_DECLARATION_ALREADY_REPLACED.getMessage());
+		} else {
+			// Se comprueba que no exista ya una declaraci?n.
+			if (ctx.getDslContext().selectOne()
+					.from(FS_MODEL390)
+					.where(FS_MODEL390.YEAR.equal(mod390.getYear())
+					.and(FS_MODEL390.ENTERPRISE.equal(mod390.getEnterprise()))
+					.and(FS_MODEL390.REPLACEMENT.equal((byte) 0))).fetchCount() > 0 ) 
+				throw new AonCoreException(
+						AonError.FISCAL_DECLARATION_ALREADY_EXISTS.getMessage());
 		}
 	}
 
-	public static void delete(Connection conn, Mod390 mod390)
-			throws AonSQLException {
-		PreparedStatement deleteStmt = null;
-		PreparedStatement deleteDetailStmt = null;
-		try {
-			deleteStmt = conn.prepareStatement(MOD390_DELETE);
-			SQLUtils.setInt(deleteStmt, 1, mod390.getId());
-			deleteStmt.execute();
-		} catch (Throwable e) {
-			throw new AonSQLException(e.getMessage());
-		} finally {
-			SQLUtils.closeQuietly(deleteDetailStmt);
-			SQLUtils.closeQuietly(deleteStmt);
-		}
+	public static void delete(AONContext ctx, Mod390 mod390) {
+		ctx.checkWrite();
+		ctx.getDslContext().delete(FS_MODEL390)
+				.where(FS_MODEL390.ID.equal(mod390.getId())).execute();
 	}
 
-	public static ArrayList<Mod390Detail> getMod390Details(int domain,
-			Integer year, Connection conn) throws AonSQLException  {
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		try {
+	public static ArrayList<Mod390Detail> getMod390Details(AONContext ctx, Mod390 mod390 ) {
+		Date firstDay = AonDateUtils.getYearFirstDay(mod390.getYear());
+		Date lastDay = AonDateUtils.getYearLastDay(mod390.getYear());
+		
+		Field<BigDecimal> sumBase = DSL.sum(INVOICE_DETAIL.TAXABLE_BASE).as(INVOICE_DETAIL.TAXABLE_BASE.getName());
+		
+		Field<Double> invoiceTaxQuota = DSL.round( (INVOICE_DETAIL.TAXABLE_BASE.mul(INVOICE_TAX.PERCENTAGE)).div(100), 2);
+		Field<BigDecimal> sumQuotaOp = DSL.sum(DSL.decode()
+				.when(INVOICE_TAX.QUOTA.notEqual(0.0),INVOICE_TAX.QUOTA)
+				.when(INVOICE_TAX.QUOTA.equal(0.0), invoiceTaxQuota));		
 
-			Date firstDay = SQLUtils.getYearFirstDay(year);
-			Date lastDay = SQLUtils.getYearLastDay(year);
-
-			stmt = conn.prepareStatement(INVOICE_SELECT,
-					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			stmt.setInt(1, domain);
-			stmt.setDate(2, new java.sql.Date(firstDay.getTime()));
-			stmt.setDate(3, new java.sql.Date(lastDay.getTime()));
-			
-			ArrayList<Mod390Detail> list = initializeList(false);
-			Mod390Detail detail = null;
-			
-			rs = stmt.executeQuery();
-			while (rs.next()) {
-				InvoiceType invoiceType = InvoiceType.values()[rs.getInt( InvoiceColumns.TYPE )];
-				RectificationType rectificationType = RectificationType.values()[rs.getInt( InvoiceColumns.RECTIFICATION_TYPE )];
-				boolean service = rs.getBoolean( InvoiceColumns.SERVICE ); 
-				InvoiceTransactionType transaction = InvoiceTransactionType.values()[rs.getInt( InvoiceColumns.TRANSACTION )];
-				boolean investment = rs.getBoolean( InvoiceColumns.INVESTMENT );
-				double percentage = rs.getDouble( InvoiceTaxColumns.PERCENTAGE );
-				VatDeductionType vatDeductionType = VatDeductionType.values()[rs.getInt( InvoiceTaxColumns.VAT_DEDUCTION_TYPE )];
-				double taxableBase = rs.getDouble( InvoiceDetailColumns.TAXABLE_BASE );
-				double quota = rs.getDouble( InvoiceTaxColumns.QUOTA );
-				double surchargePercent = rs.getDouble( InvoiceTaxColumns.SURCHARGE );
-				boolean surcharge = (surchargePercent > 0); 
-				double surchargeQuota = rs.getDouble( InvoiceTaxColumns.SURCHARGE_QUOTA );
-				Mod390DetailKey[] keys = getKeys(invoiceType,rectificationType,service,transaction,investment,surcharge,percentage,vatDeductionType);
-				if (keys != null) {
-					for (Mod390DetailKey key : keys) {
-						detail = getDetail(list,key);
-						detail.setKey(key);
-						detail.setPercent(percentage);
-						detail.setQuota( AonUtil.round(detail.getQuota()  + quota));
-						detail.setTaxableBase( AonUtil.round( detail.getTaxableBase() + taxableBase));
-						list.add(detail);
-						if (surcharge && invoiceType == InvoiceType.SALES && transaction == InvoiceTransactionType.NATIONAL) {
-							Mod390DetailKey surchargeKey = null;
-							if (percentage == 0.5) {
-								surchargeKey = Mod390DetailKey.K10_05;
-							} else if (percentage == 1) {
-								surchargeKey = Mod390DetailKey.K10_1;
-							} else if (percentage == 1.4) {
-								surchargeKey = Mod390DetailKey.K10_14;
-							} else if (percentage == 4) {
-								surchargeKey = Mod390DetailKey.K10_4;
-							} else if (percentage == 5.2) {
-								surchargeKey = Mod390DetailKey.K10_52;
-							} else if (percentage == 1.75) {
-								surchargeKey = Mod390DetailKey.K10_175;
-							}
-							if (surchargeKey != null) {
-								detail = getDetail(list,surchargeKey);
-								detail.setKey(surchargeKey);
-								detail.setPercent(surchargePercent);
-								detail.setQuota( AonUtil.round(detail.getQuota()  + surchargeQuota));
-								detail.setTaxableBase( AonUtil.round( detail.getTaxableBase() + taxableBase));
-								list.add(detail);
+		Field<Double> invoiceSurchargeQuota = DSL.round( (INVOICE_DETAIL.TAXABLE_BASE.mul(INVOICE_TAX.SURCHARGE)).div(100), 2);
+		Field<BigDecimal> sumSurchargeQuotaOp = DSL.sum(DSL.decode()
+				.when(INVOICE_TAX.SURCHARGE_QUOTA.notEqual(0.0),INVOICE_TAX.SURCHARGE_QUOTA)
+				.when(INVOICE_TAX.SURCHARGE_QUOTA.equal(0.0), invoiceSurchargeQuota));		
+				
+		ArrayList<Mod390Detail> list = initializeList();
+		ctx.getDslContext().select(INVOICE.TYPE
+				,INVOICE.RECTIFICATION_TYPE
+				,INVOICE.SERVICE
+				,INVOICE.TRANSACTION
+				,INVOICE.INVESTMENT
+				,INVOICE_TAX.PERCENTAGE
+				,INVOICE_TAX.SURCHARGE
+				,INVOICE_TAX.VAT_DEDUCTION_TYPE
+				,sumBase
+				,sumQuotaOp
+				,sumSurchargeQuotaOp)
+				.from(INVOICE_TAX)
+				.join(INVOICE_DETAIL).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
+				.join(INVOICE).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
+				.where(INVOICE_TAX.DOMAIN.equal(mod390.getDomain()))
+				.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
+				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
+				.groupBy(INVOICE.TYPE
+						,INVOICE.RECTIFICATION_TYPE
+						,INVOICE.SERVICE
+						,INVOICE.TRANSACTION
+						,INVOICE.INVESTMENT
+						,INVOICE_TAX.PERCENTAGE
+						,INVOICE_TAX.SURCHARGE
+						,INVOICE_TAX.VAT_DEDUCTION_TYPE)
+				.fetch()
+				.stream()
+				.forEach(
+						record -> {
+							VatContext vc = new VatContext();
+							vc.setInvoiceType(InvoiceType.values()[record.getValue(INVOICE.TYPE)]);
+							vc.setRectificationType(RectificationType.values()[record.getValue(INVOICE.RECTIFICATION_TYPE)]);
+							vc.setService(record.getValue(INVOICE.SERVICE) == 1);
+							vc.setTransaction(InvoiceTransactionType.values()[record.getValue(INVOICE.TRANSACTION)]);
+							vc.setInvestment(record.getValue(INVOICE.INVESTMENT) == 1);
+							double surchargePercent = record.getValue(INVOICE_TAX.SURCHARGE).doubleValue();
+							boolean surcharge = (surchargePercent > 0); 
+							vc.setSurcharge(surcharge);
+							double percentage = record.getValue(INVOICE_TAX.PERCENTAGE); 
+							vc.setPercentage(percentage);
+							vc.setVatDeductionType(VatDeductionType.values()[record.getValue(INVOICE_TAX.VAT_DEDUCTION_TYPE)]);
+							double taxableBase = record.getValue(sumBase).doubleValue();
+							double quota = record.getValue(sumQuotaOp).doubleValue();
+							Mod390DetailKey[] keys = DetailKey.getKeys(vc);			
+							if (keys != null) {
+								for (Mod390DetailKey key : keys) {
+									Mod390Detail detail = getDetail(list,key);
+									detail.setKey(key);
+									detail.setPercent(percentage);
+									detail.setQuota( AonMathUtils.round(detail.getQuota()  + quota));
+									detail.setTaxableBase( AonMathUtils.round( detail.getTaxableBase() + taxableBase));
+									if (vc.isSurcharge() && vc.isNationalSales()) {
+										double surchargeQuota = record.getValue(sumSurchargeQuotaOp).doubleValue();
+										Mod390DetailKey surchargeKey = null;
+										if (percentage == 0.5) surchargeKey = Mod390DetailKey.K10_05;
+										else if (percentage == 1) surchargeKey = Mod390DetailKey.K10_1;
+										else if (percentage == 1.4) surchargeKey = Mod390DetailKey.K10_14;
+										else if (percentage == 4) surchargeKey = Mod390DetailKey.K10_4;
+										else if (percentage == 5.2) surchargeKey = Mod390DetailKey.K10_52;
+										else if (percentage == 1.75) surchargeKey = Mod390DetailKey.K10_175;
+										if (surchargeKey != null) {
+											detail = getDetail(list,surchargeKey);
+											detail.setKey(surchargeKey);
+											detail.setPercent(surchargePercent);
+											detail.setQuota( AonMathUtils.round(detail.getQuota()  + surchargeQuota));
+											detail.setTaxableBase( AonMathUtils.round( detail.getTaxableBase() + taxableBase));
+										}
+									}
+								}
 							}
 						}
-					}
-				}
-			}
-			return list;
-		} catch (Throwable e) {
-			e.printStackTrace();
-			throw new AonSQLException(e.getMessage());
-		} finally {
-			SQLUtils.closeQuietly(rs);
-			SQLUtils.closeQuietly(stmt);
-		}
+				);
+		return list;
 	}
 
-	private static Mod390DetailKey[] getKeys(InvoiceType invoiceType,
-			RectificationType rectificationType, boolean service,
-			InvoiceTransactionType transaction, boolean investment,
-			boolean surcharge, double percentage,
-			VatDeductionType vatDeductionType) {
-
-		boolean rectification = (rectificationType == RectificationType.SPECIAL_RECTIFIER);
-		Mod390DetailKey[] keys = null;
-		if (invoiceType == InvoiceType.SALES) {
-			keys = getSalesKeys(invoiceType, rectification, service,
-					transaction, investment, surcharge, percentage,
-					vatDeductionType);
-		} else if (invoiceType == InvoiceType.PURCHASE) {
-			keys = getPurchaseKeys(invoiceType, rectification, service,
-					transaction, investment, surcharge, percentage,
-					vatDeductionType);
-		} else if (invoiceType == InvoiceType.EXPENSES) {
-			keys = getExpensesKeys(invoiceType, rectification, service,
-					transaction, investment, surcharge, percentage,
-					vatDeductionType);
-		}
-		return keys;
-	}
-
-	private static Mod390DetailKey[] getSalesKeys(InvoiceType invoiceType,
-			boolean  rectification, boolean service,
-			InvoiceTransactionType transaction, boolean investment,
-			boolean surcharge, double percentage,
-			VatDeductionType vatDeductionType) {
-		Mod390DetailKey[] keys = null;
-		if (transaction == InvoiceTransactionType.NATIONAL) {
-			Mod390DetailKey page11Key = surcharge?Mod390DetailKey.B102:Mod390DetailKey.B099;
-			if (rectification) {
-				return new Mod390DetailKey[]{Mod390DetailKey.K07,page11Key};
-			} else {
-				if (percentage == 4) {
-					keys = new Mod390DetailKey[]{Mod390DetailKey.K00_04,page11Key};
-				} else if (percentage == 8) {
-					keys = new Mod390DetailKey[]{Mod390DetailKey.K00_08,page11Key};
-				} else if (percentage == 10) {
-					keys = new Mod390DetailKey[]{Mod390DetailKey.K00_10,page11Key};
-				} else if (percentage == 18) {
-					keys = new Mod390DetailKey[]{Mod390DetailKey.K00_18,page11Key};
-				} else if (percentage == 21) {
-					keys = new Mod390DetailKey[]{Mod390DetailKey.K00_21,page11Key};
-				}
-			}
-		} else {
-			if (vatDeductionType == VatDeductionType.WITHOUT_RIGHT) {
-				keys = new Mod390DetailKey[]{Mod390DetailKey.B105};
-			} else {
-				if (transaction == InvoiceTransactionType.INTRACOMMUNITY) {
-					keys = new Mod390DetailKey[]{Mod390DetailKey.B103};
-				} else if (transaction == InvoiceTransactionType.EXTRACOMMUNITY) {
-					keys = new Mod390DetailKey[]{Mod390DetailKey.B104};
-				} else if (transaction == InvoiceTransactionType.CAN_CEU_MEL) {
-					keys = new Mod390DetailKey[]{Mod390DetailKey.B104};
-				} else if (transaction == InvoiceTransactionType.OTHER_ISP) {
-					keys = new Mod390DetailKey[]{Mod390DetailKey.B110};
-				}
-			}
-		}
-		return keys;
-	}
-
-	private static Mod390DetailKey[] getPurchaseKeys(InvoiceType invoiceType,
-			boolean  rectification, boolean service,
-			InvoiceTransactionType transaction, boolean investment,
-			boolean surcharge, double percentage,
-			VatDeductionType vatDeductionType) {
-		if (transaction == InvoiceTransactionType.NATIONAL) {
-			if (investment) {
-				if (percentage == 4) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K18_04};
-				} else if (percentage == 7) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K18_07};
-				} else if (percentage == 8) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K18_08};
-				} else if (percentage == 10) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K18_10};
-				} else if (percentage == 16) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K18_16};
-				} else if (percentage == 18) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K18_18};
-				} else if (percentage == 21) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K18_21};
-				}
-			} else {
-				if (percentage == 4) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K14_04};
-				} else if (percentage == 7) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K14_07};
-				} else if (percentage == 8) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K14_08};
-				} else if (percentage == 10) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K14_10};
-				} else if (percentage == 16) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K14_16};
-				} else if (percentage == 18) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K14_18};
-				} else if (percentage == 21) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K14_21};
-				}
-			}
-		}
-		if (transaction == InvoiceTransactionType.OTHER_ISP) {
-			if (investment) {
-				if (percentage == 4) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K18_04};
-				} else if (percentage == 7) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K18_07};
-				} else if (percentage == 8) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K18_08};
-				} else if (percentage == 10) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K18_10};
-				} else if (percentage == 16) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K18_16};
-				} else if (percentage == 18) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K18_18};
-				} else if (percentage == 21) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K18_21};
-				}
-			} else {
-				if (percentage == 4) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K14_04};
-				} else if (percentage == 7) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K14_07};
-				} else if (percentage == 8) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K14_08};
-				} else if (percentage == 10) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K14_10};
-				} else if (percentage == 16) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K14_16};
-				} else if (percentage == 18) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K14_18};
-				} else if (percentage == 21) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K14_21};
-				}
-			}
-		}
-		if (transaction == InvoiceTransactionType.EXTRACOMMUNITY || transaction == InvoiceTransactionType.CAN_CEU_MEL) {
-			if (investment) {
-				if (percentage == 4) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K24_04};
-				} else if (percentage == 7) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K24_07};
-				} else if (percentage == 8) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K24_08};
-				} else if (percentage == 10) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K24_10};
-				} else if (percentage == 16) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K24_16};
-				} else if (percentage == 18) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K24_18};
-				} else if (percentage == 21) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K24_21};
-				}
-			} else {
-				if (percentage == 4) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K22_04};
-				} else if (percentage == 7) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K22_07};
-				} else if (percentage == 8) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K22_08};
-				} else if (percentage == 10) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K22_10};
-				} else if (percentage == 16) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K22_16};
-				} else if (percentage == 18) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K22_18};
-				} else if (percentage == 21) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K22_21};
-				}
-			}
-		}
-		if (transaction == InvoiceTransactionType.INTRACOMMUNITY) {
-			if (investment) {
-				if (percentage == 4) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K04_04,Mod390DetailKey.K28_04};
-				} else if (percentage == 7) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K28_07};
-				} else if (percentage == 8) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K04_08,Mod390DetailKey.K28_08};
-				} else if (percentage == 10) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K04_10,Mod390DetailKey.K28_10};
-				} else if (percentage == 16) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K28_16};
-				} else if (percentage == 18) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K04_18,Mod390DetailKey.K28_18};
-				} else if (percentage == 21) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K04_21,Mod390DetailKey.K28_21};
-				}
-			} else {
-				if (percentage == 4) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K04_04,Mod390DetailKey.K26_04};
-				} else if (percentage == 7) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K26_07};
-				} else if (percentage == 8) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K04_08,Mod390DetailKey.K26_08};
-				} else if (percentage == 10) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K04_10,Mod390DetailKey.K26_10};
-				} else if (percentage == 16) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K26_16};
-				} else if (percentage == 18) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K04_18,Mod390DetailKey.K26_18};
-				} else if (percentage == 21) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K04_21,Mod390DetailKey.K26_21};
-				}
-			}
-		}
-		return null;
-	}
-
-	private static Mod390DetailKey[] getExpensesKeys(InvoiceType invoiceType,
-			boolean  rectification, boolean service,
-			InvoiceTransactionType transaction, boolean investment,
-			boolean surcharge, double percentage,
-			VatDeductionType vatDeductionType) {
-		if (transaction == InvoiceTransactionType.NATIONAL) {
-			if (transaction == InvoiceTransactionType.NATIONAL) {
-				if (investment) {
-					if (percentage == 4) {
-						return new Mod390DetailKey[]{Mod390DetailKey.K18_04};
-					} else if (percentage == 7) {
-						return new Mod390DetailKey[]{Mod390DetailKey.K18_07};
-					} else if (percentage == 8) {
-						return new Mod390DetailKey[]{Mod390DetailKey.K18_08};
-					} else if (percentage == 10) {
-						return new Mod390DetailKey[]{Mod390DetailKey.K18_10};
-					} else if (percentage == 16) {
-						return new Mod390DetailKey[]{Mod390DetailKey.K18_16};
-					} else if (percentage == 18) {
-						return new Mod390DetailKey[]{Mod390DetailKey.K18_18};
-					} else if (percentage == 21) {
-						return new Mod390DetailKey[]{Mod390DetailKey.K18_21};
-					}
-				} else {
-					if (percentage == 4) {
-						return new Mod390DetailKey[]{Mod390DetailKey.K14_04};
-					} else if (percentage == 7) {
-						return new Mod390DetailKey[]{Mod390DetailKey.K14_07};
-					} else if (percentage == 8) {
-						return new Mod390DetailKey[]{Mod390DetailKey.K14_08};
-					} else if (percentage == 10) {
-						return new Mod390DetailKey[]{Mod390DetailKey.K14_10};
-					} else if (percentage == 16) {
-						return new Mod390DetailKey[]{Mod390DetailKey.K14_16};
-					} else if (percentage == 18) {
-						return new Mod390DetailKey[]{Mod390DetailKey.K14_18};
-					} else if (percentage == 21) {
-						return new Mod390DetailKey[]{Mod390DetailKey.K14_21};
-					}
-				}
-			}
-		} 
-		if (transaction == InvoiceTransactionType.CAN_CEU_MEL || transaction == InvoiceTransactionType.OTHER_ISP) {
-			if (investment) {
-				if (percentage == 4) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K18_04};
-				} else if (percentage == 7) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K18_07};
-				} else if (percentage == 8) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K18_08};
-				} else if (percentage == 10) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K18_10};
-				} else if (percentage == 16) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K18_16};
-				} else if (percentage == 18) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K18_18};
-				} else if (percentage == 21) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K18_21};
-				}
-			} else {
-				if (percentage == 4) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K14_04};
-				} else if (percentage == 7) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K14_07};
-				} else if (percentage == 8) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K14_08};
-				} else if (percentage == 10) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K14_10};
-				} else if (percentage == 16) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K14_16};
-				} else if (percentage == 18) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K14_18};
-				} else if (percentage == 21) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K14_21};
-				}
-			}
-		}
-		if (transaction == InvoiceTransactionType.EXTRACOMMUNITY) {
-			if (investment) {
-				if (percentage == 4) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K24_04};
-				} else if (percentage == 7) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K24_07};
-				} else if (percentage == 8) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K24_08};
-				} else if (percentage == 10) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K24_10};
-				} else if (percentage == 16) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K24_16};
-				} else if (percentage == 18) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K24_18};
-				} else if (percentage == 21) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K24_21};
-				}
-			} else {
-				if (percentage == 4) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K22_04};
-				} else if (percentage == 7) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K22_07};
-				} else if (percentage == 8) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K22_08};
-				} else if (percentage == 10) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K22_10};
-				} else if (percentage == 16) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K22_16};
-				} else if (percentage == 18) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K22_18};
-				} else if (percentage == 21) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K06,Mod390DetailKey.K22_21};
-				}
-			}
-		}
-		
-		if (transaction == InvoiceTransactionType.INTRACOMMUNITY) {
-			if (investment) {
-				if (percentage == 4) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K05_04,Mod390DetailKey.K28_04};
-				} else if (percentage == 7) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K28_07};
-				} else if (percentage == 8) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K05_08,Mod390DetailKey.K28_08};
-				} else if (percentage == 10) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K05_10,Mod390DetailKey.K28_10};
-				} else if (percentage == 16) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K28_16};
-				} else if (percentage == 18) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K05_18,Mod390DetailKey.K28_18};
-				} else if (percentage == 21) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K05_21,Mod390DetailKey.K28_21};
-				}
-			} else {
-				if (percentage == 4) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K05_04,Mod390DetailKey.K26_04};
-				} else if (percentage == 7) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K26_07};
-				} else if (percentage == 8) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K05_08,Mod390DetailKey.K26_08};
-				} else if (percentage == 10) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K05_10,Mod390DetailKey.K26_10};
-				} else if (percentage == 16) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K26_16};
-				} else if (percentage == 18) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K05_18,Mod390DetailKey.K26_18};
-				} else if (percentage == 21) {
-					return new Mod390DetailKey[]{Mod390DetailKey.K05_21,Mod390DetailKey.K26_21};
-				}
-			}
-		}
-		return null;
-	}
-
-	private static Mod390Detail getDetail(ArrayList<Mod390Detail> list,
-			Mod390DetailKey key) {
+	private static Mod390Detail getDetail(ArrayList<Mod390Detail> list, Mod390DetailKey key) {
 		for (Mod390Detail detail : list) {
 			if (detail.getKey() == key) {
 				return detail;
@@ -863,6 +667,24 @@ public class Mod390DAO {
 		throw new IllegalArgumentException("La clave " + key + " no soportada");
 	}
 
+	private static ArrayList<Mod390Detail> initializeList() {
+		ArrayList<Mod390Detail> list = new ArrayList<Mod390Detail>();
+		Mod390Detail detail = null;
+		for (Mod390DetailKey key : Mod390DetailKey.values()) {
+			detail = new Mod390Detail();
+			detail.setKey(key);
+			detail.setPercent(key.getPercent());
+			list.add(detail);
+		}
+		return list;
+	}
+
+	public static Mod303Results getMod390Results(AONContext ctx, int year) {
+		// TODO RELLENAR!!
+		return new Mod303Results();
+	}
+
+	/*	
 	public static Mod303Results getMod303Results(int domain, int year,
 			Connection conn)  throws AonSQLException  {
 		
@@ -1075,546 +897,6 @@ public class Mod390DAO {
 	}
 	
 */
-
-	private static void populate(Mod390 mod390, AEATIVA2013 iva) throws ParseException {
-		DatIdent datIdent = iva.getDatIdent();
-		if ( !mod390.isLegalEntity() ) {
-			TipoPersonaFisica tpf = datIdent.getPersFisica();
-			TipoIdentificacionPersonaFisica tipf = tpf.getIdent();
-			mod390.setName(tipf.getNombre());
-			mod390.setFirstSurname(tipf.getApe1());
-			mod390.setSecondSurname(tipf.getApe2());
-		} else {
-			TipoPersonaJuridica tpj = datIdent.getPersJuridica();
-			TipoIdentificacionPersonaJuridica tipj = tpj.getIdentPersJuridica();
-			mod390.setName(tipj.getRazonSocial());
-		}
-		mod390.setContactPhone(datIdent.getTelefono());
-		
-		Devengo devengo = iva.getDevengo();
-		mod390.setInsolvencyDeclarations((devengo.getConcursoUltPerSI() != null));
-		mod390.setTaxRefund(devengo.getRegDevMensual() != null);
-		TipoGrupoEntidades tge = devengo.getRegGrupoEntidades();
-		if (tge != null) {
-			mod390.setSpecialGroupRegime(true);
-			mod390.setGroupNumber(tge.getNumGrupo());
-			mod390.setGroupDependent( tge.getDependiente() != null );
-			mod390.setGroupDependent( !(tge.getDominante() != null) );
-			if (tge.getArt65SI() != null) {
-				mod390.setGroupRegimeType( true );
-				mod390.setGroupDocument(tge.getNIFEntidadDominante());
-			} else {
-				mod390.setGroupRegimeType( false );
-			}
-			mod390.setGroupDeclarations( tge.getUltAutoliquidSI() != null );
-		}
-		DatEstadisticos dat = iva.getDatEstadisticos();
-		if (dat.getPral() != null) {
-			Activity activity = new Activity();
-			activity.setKey(dat.getPral().getClave());
-			activity.setDescription(dat.getPral().getDescripcion());
-			activity.setEpigraph(dat.getPral().getEpigrafe());
-			mod390.setMainActivity(activity);
-		}
-		int i = 1;
-		for (Otras otras : dat.getOtras() ) {
-			if (otras != null) {
-				Activity activity = new Activity();
-				activity.setKey(otras.getClave());
-				activity.setDescription(otras.getDescripcion());
-				activity.setEpigraph(otras.getEpigrafe());
-				if (i==1) {
-					mod390.setActivity1(activity);
-				} else if (i==2) { 
-					mod390.setActivity2(activity);
-				} else if (i==3) { 
-					mod390.setActivity3(activity);
-				} else if (i==4) { 
-					mod390.setActivity4(activity);
-				} else if (i==5) {
-					mod390.setActivity5(activity);
-				}
-			}
-			++i;
-		}
-		mod390.setMod347(dat.getOpTercerasPax() != null);
-		if (dat.getConjunta() != null) {
-			mod390.setMergedDeclarationDocument(dat.getConjunta().getNIF());
-			mod390.setMergedDeclarationName(dat.getConjunta().getRazonSocial());
-		}
-		if (iva.getRepresentanteFisica() != null) {
-			TipoRepresentanteFisica trf = iva.getRepresentanteFisica();
-			TipoIdentificacionPersonaJuridica tipj = trf.getIdent();
-			Address adr = new Address();
-			if (tipj != null) {
-				adr.setRdocument(tipj.getNIF());
-				adr.setRname(tipj.getRazonSocial());
-			}
-			TipoDomicilio dom = trf.getDomicilio();
-			if (dom != null) {
-				adr.setRstreetType(dom.getSG());
-				adr.setRstreetName(dom.getViaPublica());
-				adr.setRstreetNumber(dom.getNum());
-				adr.setRstreetStair(dom.getEsc());
-				adr.setRstreetFloor(dom.getPiso());
-				adr.setRstreetDoor(dom.getPuerta());
-				adr.setRphone(dom.getTelefono());
-				adr.setRtown(dom.getMunicipio());
-				try {
-					adr.setRprovince(Integer.parseInt(dom.getCodProv()));
-				} catch (NumberFormatException e) {
-					// Nothing.
-				}
-				adr.setRzip(dom.getCPostal());
-			}
-			mod390.setAddress(adr);
-		}
-		List<TipoRepresentanteJuridica> list = iva.getRepresentanteJuridica();
-		i = 1;
-		if (list != null && list.size() > 0) {
-			for (TipoRepresentanteJuridica trj : list){
-				LegalRepresentative lg = new  LegalRepresentative();
-				lg.setDocument(trj.getNIF());
-				lg.setName(trj.getNombre());
-				lg.setNotary(trj.getNotaria());
-				
-				// lg.setNotaryDate(trj.getFechaPoder());
-				String fec = trj.getFechaPoder();
-				
-				lg.setNotaryDate( fec==null?null: DATE_FORMAT.parse(fec) );
-
-				
-				if (i == 1) {
-					mod390.setLegalRepr1(lg);
-				} else if (i == 2) {
-					mod390.setLegalRepr2(lg);
-				} else if (i == 3) {
-					mod390.setLegalRepr3(lg);
-				}
-				i++;
-			}
-		}
-		
-		
-		Map<Mod390DetailKey, Mod390Detail> map = new TreeMap<Mod390DetailKey, Mod390Detail>();
-		ArrayList<Mod390Detail> mapList = initializeList(true);
-		for (Mod390Detail detail : mapList) {
-			map.put(detail.getKey(), detail);
-		}
-		mod390.setGeneralRegime(map);
-
-		if (iva.getRegGeneral() != null) {
-			BaseImponibleyCuota b = iva.getRegGeneral().getBaseImponibleyCuota();
-			if (b != null) {
-				if (b.getRegOrdinario() != null) {
-					put(mod390,Mod390DetailKey.K00_04,b.getRegOrdinario().getTipo4());
-					put(mod390,Mod390DetailKey.K00_08,b.getRegOrdinario().getTipo8());
-					put(mod390,Mod390DetailKey.K00_10,b.getRegOrdinario().getTipo10());
-					put(mod390,Mod390DetailKey.K00_18,b.getRegOrdinario().getTipo18());
-					put(mod390,Mod390DetailKey.K00_21,b.getRegOrdinario().getTipo21());
-				}
-				if (b.getOpIntragrupo() != null) {
-					put(mod390,Mod390DetailKey.K01_04,b.getOpIntragrupo().getTipo4());
-					put(mod390,Mod390DetailKey.K01_08,b.getOpIntragrupo().getTipo8());
-					put(mod390,Mod390DetailKey.K01_10,b.getOpIntragrupo().getTipo10());
-					put(mod390,Mod390DetailKey.K01_18,b.getOpIntragrupo().getTipo18());
-					put(mod390,Mod390DetailKey.K01_21,b.getOpIntragrupo().getTipo21());
-				}
-				if (b.getRegBienesUsados() != null) {
-					put(mod390,Mod390DetailKey.K02_04,b.getRegBienesUsados().getTipo4());
-					put(mod390,Mod390DetailKey.K02_08,b.getRegBienesUsados().getTipo8());
-					put(mod390,Mod390DetailKey.K02_10,b.getRegBienesUsados().getTipo10());
-					put(mod390,Mod390DetailKey.K02_18,b.getRegBienesUsados().getTipo18());
-					put(mod390,Mod390DetailKey.K02_21,b.getRegBienesUsados().getTipo21());
-				}
-				if (b.getRegAgViajes() != null) {
-					put(mod390,Mod390DetailKey.K03_18,b.getRegAgViajes().getTipo18());
-					put(mod390,Mod390DetailKey.K03_21,b.getRegAgViajes().getTipo21());
-				}
-				if (b.getAdqIntracomBienes() != null) {
-					put(mod390,Mod390DetailKey.K04_04,b.getAdqIntracomBienes().getTipo4());
-					put(mod390,Mod390DetailKey.K04_08,b.getAdqIntracomBienes().getTipo8());
-					put(mod390,Mod390DetailKey.K04_10,b.getAdqIntracomBienes().getTipo10());
-					put(mod390,Mod390DetailKey.K04_18,b.getAdqIntracomBienes().getTipo18());
-					put(mod390,Mod390DetailKey.K04_21,b.getAdqIntracomBienes().getTipo21());
-				}
-				if (b.getAdqIntracomServicios() != null) {
-					put(mod390,Mod390DetailKey.K05_04,b.getAdqIntracomServicios().getTipo4());
-					put(mod390,Mod390DetailKey.K05_08,b.getAdqIntracomServicios().getTipo8());
-					put(mod390,Mod390DetailKey.K05_10,b.getAdqIntracomServicios().getTipo10());
-					put(mod390,Mod390DetailKey.K05_18,b.getAdqIntracomServicios().getTipo18());
-					put(mod390,Mod390DetailKey.K05_21,b.getAdqIntracomServicios().getTipo21());
-				}
-				if (b.getIVAdevengadoInversionSP() != null) {
-					put(mod390,Mod390DetailKey.K06,b.getIVAdevengadoInversionSP().getTipoX());
-				}
-				if (b.getModBasesyCuotas() != null) {
-					put(mod390,Mod390DetailKey.K07,b.getModBasesyCuotas().getTipoX());
-				}
-				if (b.getModBasesyCuotasConcursoAcreedores() != null) {
-					put(mod390,Mod390DetailKey.K08,b.getModBasesyCuotasConcursoAcreedores().getTipoX());
-				}
-				if (b.getTotalBasesyCuotasIVA() != null) {
-					put(mod390,Mod390DetailKey.K09,b.getTotalBasesyCuotasIVA().getTipoX());
-				}
-				if (b.getRecargoEquivalencia() != null) {
-					put(mod390,Mod390DetailKey.K10_05,b.getRecargoEquivalencia().getTipo05());
-					put(mod390,Mod390DetailKey.K10_1,b.getRecargoEquivalencia().getTipo1());
-					put(mod390,Mod390DetailKey.K10_14,b.getRecargoEquivalencia().getTipo14());
-					put(mod390,Mod390DetailKey.K10_175,b.getRecargoEquivalencia().getTipo175());
-					put(mod390,Mod390DetailKey.K10_4,b.getRecargoEquivalencia().getTipo4());
-					put(mod390,Mod390DetailKey.K10_52,b.getRecargoEquivalencia().getTipo52());
-				}
-				if (b.getModRecargoEquivalencia() != null) {
-					put(mod390,Mod390DetailKey.K11,b.getModRecargoEquivalencia().getTipoX());
-				}
-				if (b.getModRecargoEquivalenciaConcursoAcreedores() != null) {
-					put(mod390,Mod390DetailKey.K12,b.getModRecargoEquivalenciaConcursoAcreedores().getTipoX());
-				}
-				if (b.getTotalCuotasIVA() != null) {
-					put(mod390,Mod390DetailKey.K13,b.getTotalCuotasIVA());
-				}
-			}
-			if (iva.getRegGeneral().getDeducciones() != null) {
-				Deducciones d = iva.getRegGeneral().getDeducciones();
-				if (d.getOpInterioresBienesServiciosCorrientes() != null) {
-					put(mod390,Mod390DetailKey.K14_04,d.getOpInterioresBienesServiciosCorrientes().getTipo4());
-					put(mod390,Mod390DetailKey.K14_07,d.getOpInterioresBienesServiciosCorrientes().getTipo7());
-					put(mod390,Mod390DetailKey.K14_08,d.getOpInterioresBienesServiciosCorrientes().getTipo8());
-					put(mod390,Mod390DetailKey.K14_10,d.getOpInterioresBienesServiciosCorrientes().getTipo10());
-					put(mod390,Mod390DetailKey.K14_16,d.getOpInterioresBienesServiciosCorrientes().getTipo16());
-					put(mod390,Mod390DetailKey.K14_18,d.getOpInterioresBienesServiciosCorrientes().getTipo18());
-					put(mod390,Mod390DetailKey.K14_21,d.getOpInterioresBienesServiciosCorrientes().getTipo21());
-				}
-				if (d.getOpIntragrupoCorrientes() != null) {
-					put(mod390,Mod390DetailKey.K16_04,d.getOpIntragrupoCorrientes().getTipo4());
-					put(mod390,Mod390DetailKey.K16_07,d.getOpIntragrupoCorrientes().getTipo7());
-					put(mod390,Mod390DetailKey.K16_08,d.getOpIntragrupoCorrientes().getTipo8());
-					put(mod390,Mod390DetailKey.K16_10,d.getOpIntragrupoCorrientes().getTipo10());
-					put(mod390,Mod390DetailKey.K16_16,d.getOpIntragrupoCorrientes().getTipo16());
-					put(mod390,Mod390DetailKey.K16_18,d.getOpIntragrupoCorrientes().getTipo18());
-					put(mod390,Mod390DetailKey.K16_21,d.getOpIntragrupoCorrientes().getTipo21());
-				}
-				if (d.getOpInterioresBienesInversion() != null) {
-					put(mod390,Mod390DetailKey.K18_04,d.getOpInterioresBienesInversion().getTipo4());
-					put(mod390,Mod390DetailKey.K18_07,d.getOpInterioresBienesInversion().getTipo7());
-					put(mod390,Mod390DetailKey.K18_08,d.getOpInterioresBienesInversion().getTipo8());
-					put(mod390,Mod390DetailKey.K18_10,d.getOpInterioresBienesInversion().getTipo10());
-					put(mod390,Mod390DetailKey.K18_16,d.getOpInterioresBienesInversion().getTipo16());
-					put(mod390,Mod390DetailKey.K18_18,d.getOpInterioresBienesInversion().getTipo18());
-					put(mod390,Mod390DetailKey.K18_21,d.getOpInterioresBienesInversion().getTipo21());
-				}
-				if (d.getOpIntragrupoBienesInversion() != null) {
-					put(mod390,Mod390DetailKey.K20_04,d.getOpIntragrupoBienesInversion().getTipo4());
-					put(mod390,Mod390DetailKey.K20_07,d.getOpIntragrupoBienesInversion().getTipo7());
-					put(mod390,Mod390DetailKey.K20_08,d.getOpIntragrupoBienesInversion().getTipo8());
-					put(mod390,Mod390DetailKey.K20_10,d.getOpIntragrupoBienesInversion().getTipo10());
-					put(mod390,Mod390DetailKey.K20_16,d.getOpIntragrupoBienesInversion().getTipo16());
-					put(mod390,Mod390DetailKey.K20_18,d.getOpIntragrupoBienesInversion().getTipo18());
-					put(mod390,Mod390DetailKey.K20_21,d.getOpIntragrupoBienesInversion().getTipo21());
-				}
-				if (d.getImportacionesBienesCorrientes() != null) {
-					put(mod390,Mod390DetailKey.K22_04,d.getImportacionesBienesCorrientes().getTipo4());
-					put(mod390,Mod390DetailKey.K22_07,d.getImportacionesBienesCorrientes().getTipo7());
-					put(mod390,Mod390DetailKey.K22_08,d.getImportacionesBienesCorrientes().getTipo8());
-					put(mod390,Mod390DetailKey.K22_10,d.getImportacionesBienesCorrientes().getTipo10());
-					put(mod390,Mod390DetailKey.K22_16,d.getImportacionesBienesCorrientes().getTipo16());
-					put(mod390,Mod390DetailKey.K22_18,d.getImportacionesBienesCorrientes().getTipo18());
-					put(mod390,Mod390DetailKey.K22_21,d.getImportacionesBienesCorrientes().getTipo21());
-				}
-				if (d.getImportacionesBienesInversion() != null) {
-					put(mod390,Mod390DetailKey.K24_04,d.getImportacionesBienesInversion().getTipo4());
-					put(mod390,Mod390DetailKey.K24_07,d.getImportacionesBienesInversion().getTipo7());
-					put(mod390,Mod390DetailKey.K24_08,d.getImportacionesBienesInversion().getTipo8());
-					put(mod390,Mod390DetailKey.K24_10,d.getImportacionesBienesInversion().getTipo10());
-					put(mod390,Mod390DetailKey.K24_16,d.getImportacionesBienesInversion().getTipo16());
-					put(mod390,Mod390DetailKey.K24_18,d.getImportacionesBienesInversion().getTipo18());
-					put(mod390,Mod390DetailKey.K24_21,d.getImportacionesBienesInversion().getTipo21());
-				}
-				if (d.getAdqIntracomunitariasBienesCorrientes() != null) {
-					put(mod390,Mod390DetailKey.K26_04,d.getAdqIntracomunitariasBienesCorrientes().getTipo4());
-					put(mod390,Mod390DetailKey.K26_07,d.getAdqIntracomunitariasBienesCorrientes().getTipo7());
-					put(mod390,Mod390DetailKey.K26_08,d.getAdqIntracomunitariasBienesCorrientes().getTipo8());
-					put(mod390,Mod390DetailKey.K26_10,d.getAdqIntracomunitariasBienesCorrientes().getTipo10());
-					put(mod390,Mod390DetailKey.K26_16,d.getAdqIntracomunitariasBienesCorrientes().getTipo16());
-					put(mod390,Mod390DetailKey.K26_18,d.getAdqIntracomunitariasBienesCorrientes().getTipo18());
-					put(mod390,Mod390DetailKey.K26_21,d.getAdqIntracomunitariasBienesCorrientes().getTipo21());
-				}
-				if (d.getAdqIntracomunitariasBienesInversion() != null) {
-					put(mod390,Mod390DetailKey.K28_04,d.getAdqIntracomunitariasBienesInversion().getTipo4());
-					put(mod390,Mod390DetailKey.K28_07,d.getAdqIntracomunitariasBienesInversion().getTipo7());
-					put(mod390,Mod390DetailKey.K28_08,d.getAdqIntracomunitariasBienesInversion().getTipo8());
-					put(mod390,Mod390DetailKey.K28_10,d.getAdqIntracomunitariasBienesInversion().getTipo10());
-					put(mod390,Mod390DetailKey.K28_16,d.getAdqIntracomunitariasBienesInversion().getTipo16());
-					put(mod390,Mod390DetailKey.K28_18,d.getAdqIntracomunitariasBienesInversion().getTipo18());
-					put(mod390,Mod390DetailKey.K28_21,d.getAdqIntracomunitariasBienesInversion().getTipo21());
-				}
-				if (d.getAdqIntracomunitariasServicios() != null) {
-					put(mod390,Mod390DetailKey.K30_04,d.getAdqIntracomunitariasServicios().getTipo4());
-					put(mod390,Mod390DetailKey.K30_07,d.getAdqIntracomunitariasServicios().getTipo7());
-					put(mod390,Mod390DetailKey.K30_08,d.getAdqIntracomunitariasServicios().getTipo8());
-					put(mod390,Mod390DetailKey.K30_10,d.getAdqIntracomunitariasServicios().getTipo10());
-					put(mod390,Mod390DetailKey.K30_16,d.getAdqIntracomunitariasServicios().getTipo16());
-					put(mod390,Mod390DetailKey.K30_18,d.getAdqIntracomunitariasServicios().getTipo18());
-					put(mod390,Mod390DetailKey.K30_21,d.getAdqIntracomunitariasServicios().getTipo21());
-				}
-				if (d.getComRegAgricGanadPesca() != null) {
-					put(mod390,Mod390DetailKey.K32,d.getComRegAgricGanadPesca().getTipoX());
-				}
-				if (d.getRectifDeducciones() != null) {
-					put(mod390,Mod390DetailKey.K33,d.getRectifDeducciones().getTipoX());
-				}
-				if (d.getRegularizInversiones() != null) {
-					put(mod390,Mod390DetailKey.K34,d.getRegularizInversiones());
-				}
-				if (d.getRegularizPorcProrrata() != null) {
-					put(mod390,Mod390DetailKey.K35,d.getRegularizPorcProrrata());
-				}
-				if (d.getSumDeducciones() != null) {
-					put(mod390,Mod390DetailKey.K36,d.getSumDeducciones());
-				}
-				
-			}
-			String res = iva.getRegGeneral().getResRegGeneral();
-			if (AonStringUtils.isNotEmpty(res)) {
-				try {
-					double val = Double.parseDouble(res); 
-					put(mod390,Mod390DetailKey.K37, new BigDecimal(val) );
-				} catch (NumberFormatException e) {
-					// Nothing
-				}
-			}
-		}
-		RegSimplificado reg = iva.getRegSimplificado();
-		if (reg != null) {
-			if (reg.getActividad().size() > 0) {
-				Actividad actividad = reg.getActividad().get(0);
-				SimpliedRegimeActivity sra = getSimpliedRegimeActivity(actividad);
-				mod390.setSimpRegime1(sra);
-			}
-			if (reg.getActividad().size() > 1) {
-				Actividad actividad = reg.getActividad().get(1);
-				SimpliedRegimeActivity sra = getSimpliedRegimeActivity(actividad);
-				mod390.setSimpRegime2(sra);
-			}
-			if (reg.getActAgricGanadForest().size() > 0 ) {
-				ActAgricGanadForest actividad = reg.getActAgricGanadForest().get(0);
-				FarmerRegimeActivity sra = getFarmerRegimeActivity(actividad);
-				mod390.setFarmerRegime1(sra);
-			}
-			if (reg.getActAgricGanadForest().size() > 1 ) {
-				ActAgricGanadForest actividad = reg.getActAgricGanadForest().get(1);
-				FarmerRegimeActivity sra = getFarmerRegimeActivity(actividad);
-				mod390.setFarmerRegime2(sra);
-			}
-			if (reg.getActAgricGanadForest().size() > 2 ) {
-				ActAgricGanadForest actividad = reg.getActAgricGanadForest().get(2);
-				FarmerRegimeActivity sra = getFarmerRegimeActivity(actividad);
-				mod390.setFarmerRegime3(sra);
-			}
-			if (reg.getActAgricGanadForest().size() > 3 ) {
-				ActAgricGanadForest actividad = reg.getActAgricGanadForest().get(3);
-				FarmerRegimeActivity sra = getFarmerRegimeActivity(actividad);
-				mod390.setFarmerRegime4(sra);
-			}
-			if (reg.getActAgricGanadForest().size() > 4 ) {
-				ActAgricGanadForest actividad = reg.getActAgricGanadForest().get(4);
-				FarmerRegimeActivity sra = getFarmerRegimeActivity(actividad);
-				mod390.setFarmerRegime5(sra);
-			}
-			IvaDevengado ivaDev = reg.getIvaDevengado();
-			if (ivaDev != null) {
-				mod390.setBox74(ensureBigDecimal(ivaDev.getSumaCuotasNoAgric()));
-				mod390.setBox75(ensureBigDecimal(ivaDev.getSumaCuotasAgric()));
-				mod390.setBox76(ensureBigDecimal(ivaDev.getAdqIntracomunitarias()));
-				mod390.setBox77(ensureBigDecimal(ivaDev.getInversionSujetoPasivo()));
-				mod390.setBox78(ensureBigDecimal(ivaDev.getEntregasActivosFijos()));
-				mod390.setBox79(ensureBigDecimal(ivaDev.getTotalCuota()));
-			}
-			IvaDeducible ivaDed = reg.getIvaDeducible();
-			if (ivaDed != null) {
-				mod390.setBox80(ensureBigDecimal(ivaDed.getIVASoportadoAdqActivosFijos()));
-				mod390.setBox81(ensureBigDecimal(ivaDed.getRegBienesInversion()));
-				mod390.setBox82(ensureBigDecimal(ivaDed.getSumaDeducciones()));
-			}
-			mod390.setBox83(ensureBigDecimal(reg.getResRegimenSimplificado()));
-		}
-		
-		Administraciones adm = iva.getAdministraciones();
-		if (adm == null) {
-			LiqAnual liq = iva.getLiqAnual();
-			if (liq != null) {
-				mod390.setBox84( ensureBigDecimal(liq.getSumResultados()) );
-				mod390.setBox85( ensureBigDecimal(liq.getCompCuotasEjercicioAnterior()) );
-				mod390.setBox86( ensureBigDecimal(liq.getResLiquidacion()) );
-			}
-		} else {
-			if (adm != null) {
-				mod390.setBox87( ensureBigDecimal(adm.getComun()) );
-				mod390.setBox88( ensureBigDecimal(adm.getArabaAlava()) );
-				mod390.setBox89( ensureBigDecimal(adm.getGipuzkoa()) );
-				mod390.setBox90( ensureBigDecimal(adm.getBizkaia()) );
-				mod390.setBox91( ensureBigDecimal(adm.getNavarra()) );
-				mod390.setBox84( ensureBigDecimal(adm.getSumResultados()) );
-				mod390.setBox92( ensureBigDecimal(adm.getResTerrComun()) );
-				mod390.setBox93( ensureBigDecimal(adm.getComCuotasEjercicioAnteriorTerrComun()) );
-				mod390.setBox94( ensureBigDecimal(adm.getResLiqAnualTerrComun()) );
-			}
-		}
-		ResLiquidaciones res = iva.getResLiquidaciones();
-		if (res != null) {
-			PerNoRegGrupos perNo = res.getPerNoRegGrupos();
-			if (perNo != null) {
-				mod390.setBox95( ensureBigDecimal(perNo.getTotIngresosIVA()) );
-				mod390.setBox96( ensureBigDecimal(perNo.getTotDevIVASPRegDevMensual()) );
-				mod390.setBox524(ensureBigDecimal(perNo.getTotDevAdqElemTrans()) );
-				mod390.setBox97( ensureBigDecimal(perNo.getImporteACompensarUltimoPeriodo()) );
-				mod390.setBox98( ensureBigDecimal(perNo.getImporteADevolverUltimoPeriodo()) );
-			}
-			PerSiRegGrupos perSi = res.getPerSiRegGrupos();
-			if (perNo != null) {
-				mod390.setBox525(ensureBigDecimal(perSi.getTotResulPositivos322()) );
-				mod390.setBox526(ensureBigDecimal(perSi.getTotResulNegativos322()) );
-			}
-		}
-		VolOperaciones vol = iva.getVolOperaciones();
-		if (vol != null) {
-			mod390.setBox99 (ensureBigDecimal(vol.getOpRegGeneral()) );
-			mod390.setBox103(ensureBigDecimal(vol.getEntregasIntracomunitariasExentas()) );
-			mod390.setBox104(ensureBigDecimal(vol.getExportacionesExentasConDrchoDeduccion()) );
-			mod390.setBox105(ensureBigDecimal(vol.getOpExentasSinDrchoDeduccion()) );
-			mod390.setBox110(ensureBigDecimal(vol.getOpNoSujetas()) );
-			mod390.setBox112(ensureBigDecimal(vol.getEntregasBienesInstalacionOtrosEM()) );
-			mod390.setBox100(ensureBigDecimal(vol.getOpRegSimplificado()) );
-			mod390.setBox101(ensureBigDecimal(vol.getOpRegEspAgricPescGanad()) );
-			mod390.setBox102(ensureBigDecimal(vol.getOpRegEspRecEquivalencia()) );
-			mod390.setBox227(ensureBigDecimal(vol.getOpRegEspBienesUsados()) );
-			mod390.setBox228(ensureBigDecimal(vol.getOpRegEspAgViajes()) );
-			mod390.setBox106(ensureBigDecimal(vol.getEntregasBienesInmuebles()) );
-			mod390.setBox107(ensureBigDecimal(vol.getEntregasBienesInversion()) );
-			mod390.setBox108(ensureBigDecimal(vol.getTotalVolOp()) );
-		}
-		OpEspecificas op = iva.getOpEspecificas();
-		if (op != null) {
-			mod390.setBox230 (ensureBigDecimal(op.getAdqInterioresExentas()) );
-			mod390.setBox109 (ensureBigDecimal(op.getAdqIntracomunitariasExentas()) );
-			mod390.setBox231 (ensureBigDecimal(op.getImportacionesExentas()) );
-			mod390.setBox232 (ensureBigDecimal(op.getBasesIVASoportadoNoDeducible()) );
-			mod390.setBox111 (ensureBigDecimal(op.getOpSujetas()) );
-			mod390.setBox113 (ensureBigDecimal(op.getEntregasInteriores()) );
-			mod390.setBox523 (ensureBigDecimal(op.getServInversionSP()) );
-		}
-		
-		// TODO
-		// iva.prorratas
-		// TODO
-		// iva.ivaDeducibleGrupo1
-		// TODO
-		// iva.ivaDeducibleGrupo2
-		// TODO
-		// iva.ivaDeducibleGrupo3
-
-	}
-
-	private static ArrayList<Mod390Detail> initializeList(boolean onlyPage5) {
-		ArrayList<Mod390Detail> list = new ArrayList<Mod390Detail>();
-		Mod390Detail detail = null;
-		for (Mod390DetailKey key : Mod390DetailKey.values()) {
-			if (!onlyPage5 || (onlyPage5 && key.isPage5Key())) {
-				detail = new Mod390Detail();
-				detail.setKey(key);
-				detail.setPercent(key.getPercent());
-				list.add(detail);
-			}
-		}
-		return list;
-	}
-
-	private static FarmerRegimeActivity getFarmerRegimeActivity(ActAgricGanadForest actividad) {
-		FarmerRegimeActivity ac = new FarmerRegimeActivity();
-		ac.setCodigo( actividad.getCodigo() );
-		ac.setIncomes(ensureBigDecimal( actividad.getVolIngresos() ));
-		ac.setQuotaIndex( ensureBigDecimal( actividad.getIndCuota() ));
-		ac.setAccrualQuota( ensureBigDecimal( actividad.getCuotaDevengada() ));
-		ac.setInputQuotas( ensureBigDecimal( actividad.getCuotasSoportadas() ));
-		ac.setQuota( ensureBigDecimal( actividad.getCuotaRegSimplificado() ));
-		return ac;
-	}
-
-
-	private static SimpliedRegimeActivity getSimpliedRegimeActivity(Actividad act) {
-		SimpliedRegimeActivity sra = new SimpliedRegimeActivity();
-		sra.setEpigrafe(act.getEpigrafe());
-		List<Modulo> modulos = act.getModulo();
-		if (modulos.size() > 0) {
-			sra.setUnit1(ensureBigDecimal( modulos.get(0).getUnidades()));
-			sra.setAmount1(ensureBigDecimal( modulos.get(0).getImporte()));
-		}
-		if (modulos.size() > 1) {
-			sra.setUnit2(ensureBigDecimal( modulos.get(1).getUnidades()));
-			sra.setAmount2(ensureBigDecimal( modulos.get(1).getImporte()));
-		}
-		if (modulos.size() > 2) {
-			sra.setUnit3(ensureBigDecimal( modulos.get(2).getUnidades()));
-			sra.setAmount3(ensureBigDecimal( modulos.get(2).getImporte()));
-		}
-		if (modulos.size() > 3) {
-			sra.setUnit4(ensureBigDecimal( modulos.get(3).getUnidades()));
-			sra.setAmount4(ensureBigDecimal( modulos.get(3).getImporte()));
-		}
-		if (modulos.size() > 4) {
-			sra.setUnit5(ensureBigDecimal( modulos.get(4).getUnidades()));
-			sra.setAmount5(ensureBigDecimal( modulos.get(4).getImporte()));
-		}
-		if (modulos.size() > 5) {
-			sra.setUnit6(ensureBigDecimal( modulos.get(5).getUnidades()));
-			sra.setAmount6(ensureBigDecimal( modulos.get(5).getImporte()));
-		}
-		if (modulos.size() > 6) {
-			sra.setUnit7(ensureBigDecimal( modulos.get(6).getUnidades()));
-			sra.setAmount7(ensureBigDecimal( modulos.get(6).getImporte()));
-		}
-		sra.setBoxC(ensureBigDecimal(act.getCuotaDevengada()));
-		sra.setBoxD(ensureBigDecimal(act.getCuotaSoportada()));
-		sra.setBoxE(ensureBigDecimal(act.getIndiceCorrector()));
-		sra.setBoxF(ensureBigDecimal(act.getResultado()));
-		sra.setBoxG(ensureBigDecimal(act.getPorcCuotaMinima()));
-		sra.setBoxH(ensureBigDecimal(act.getDevCuotaSopOtrosPaises()));
-		sra.setBoxI(ensureBigDecimal(act.getCuotaMinima()));
-		sra.setBoxJ(ensureBigDecimal(act.getCuotaRegSimplificado()));
-		return sra;
-	}
-
-
-	private static void put(Mod390 mod390,Mod390DetailKey key,TipoBaseImponibleYCuota tipo) {
-		if (tipo != null) {
-			Mod390Detail detail = new Mod390Detail();
-			detail.setKey(key);
-			detail.setPercent(key.getPercent());
-			if (tipo.getBI() != null) {
-				detail.setTaxableBase(tipo.getBI().doubleValue());
-			}
-			if (tipo.getCuota() != null) {
-				detail.setQuota(tipo.getCuota().doubleValue());
-			}
-			mod390.getGeneralRegime().put(key, detail);
-		}
-		
-	}
-	private static void put(Mod390 mod390,Mod390DetailKey key,BigDecimal quota) {
-		if (quota != null) {
-			Mod390Detail detail = new Mod390Detail();
-			detail.setKey(key);
-			detail.setPercent(key.getPercent());
-			detail.setQuota(quota.doubleValue());
-			mod390.getGeneralRegime().put(key, detail);
-		}
-		
-	}
-	
-	private static double ensureBigDecimal(BigDecimal bigDecimal) {
-		return bigDecimal==null?0.0:bigDecimal.doubleValue();
-	}
 
 }
  

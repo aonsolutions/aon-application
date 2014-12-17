@@ -35,13 +35,13 @@
 			<g:CheckBox ui:field="specialGroupRegime" text="{msg.specialGroupRegime}" />
 			<div style="margin-left: 15px; padding-left: 5px; padding-right: 5px">
 				<g:Label text="{msg.groupNumber}" styleName="{style.inner-label}" />
-				<g:TextBox maxLength="5" visibleLength="5" ui:field="groupNumber" />
+				<g:TextBox maxLength="5" visibleLength="5" ui:field="groupNumber" styleName="aon-inputText"/>
 				<g:CheckBox ui:field="groupDependent" text="{msg.groupDependent}" />
 			</div>
 			<div style="margin-left: 15px; padding-left: 5px; padding-right: 5px">
 				<g:CheckBox ui:field="groupRegimeType" text="{msg.groupRegimeType}" />
 				<g:Label text="{msg.groupDocument}" styleName="{style.inner-label}" />
-				<aon:DocumentTextBox ui:field="groupDocument"/>
+				<aon:DocumentTextBox ui:field="groupDocument" styleName="aon-inputText"/>
 			</div>
 			<div style="margin-left: 15px; padding-left: 5px; padding-right: 5px">
 				<g:CheckBox ui:field="groupDeclarations" text="{msg.groupDeclarations}" />

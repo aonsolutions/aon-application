@@ -8,6 +8,9 @@ import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
 import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.common.shared.DocumentUtil;
 import com.esferalia.aon.gwt.common.shared.FiscalParameters;
@@ -17,9 +20,9 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.widget.EnterpriseSuggestBox;
 import com.esferalia.aon.gwt.fiscal.shared.FiscalEnum.Administration;
-import com.esferalia.aon.gwt.fiscal.shared.Mod303Results;
 import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
 import com.esferalia.aon.occam.api.model.Mod390;
+import com.esferalia.aon.occam.api.model.Mod390.Mod303Results;
 import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -47,10 +50,11 @@ import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Hidden;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -83,6 +87,12 @@ public class Model390 extends MainEntryPoint {
 	@UiField
 	Label simplifiedRegime;
 
+	@UiField
+	SplitLayoutPanel splitLayoutPanel;
+	@UiField
+	ResultsPanel resultsPanel;
+	@UiField
+	MinimizePanel footPanel;
 	@UiField
 	DeckLayoutPanel deckPanel;
 	@UiField
@@ -157,8 +167,6 @@ public class Model390 extends MainEntryPoint {
 	Panel listPanel;
 	@UiField
 	DockLayoutPanel formPanel;
-	@UiField
-	HorizontalPanel messagesPanel;
 	@UiField
 	Panel formContainer;
 
@@ -480,20 +488,6 @@ public class Model390 extends MainEntryPoint {
 				});
 	}
 
-	private void cleanErrorMessage() {
-		for (int i = 0; i < messagesPanel.getWidgetCount(); i++) {
-			messagesPanel.remove(messagesPanel.getWidget(i));
-		}
-	}
-
-	private void addErrorMessage(String msg) {
-		Label label = new Label(msg);
-		label.addStyleName("aon-icon-errorwarning");
-		label.addStyleName("aon-message-error");
-		label.addStyleName("aon-icon");
-		messagesPanel.add(label);
-	}
-
 	@UiHandler("saveButton")
 	void onAcceptButtonClick(ClickEvent event) {
 		accept(new AcceptAsyncCallback());
@@ -511,7 +505,7 @@ public class Model390 extends MainEntryPoint {
 		try {
 			populateMod390();
 			validate(this.mod390);
-			fiscalService.saveMod390(this.mod390, callback);
+			fiscalService.saveMod390(getCurrentDomainName(),getCurrentDomain(),this.mod390, callback);
 		} catch (IllegalArgumentException e) {
 			popup.hide();
 			DialogMessages.alertErrorWidget(e.getMessage()).center();
@@ -614,7 +608,8 @@ public class Model390 extends MainEntryPoint {
 	@UiHandler("deleteButton")
 	void onDeleteButtonClick(ClickEvent event) {
 		if (Window.confirm(MSG.confirmDeleteAction())) {
-			fiscalService.deleteMod390(this.mod390, new AsyncCallback<Void>() {
+			fiscalService.deleteMod390(getCurrentDomainName(),getCurrentDomain(),
+					this.mod390, new AsyncCallback<Void>() {
 				@Override
 				public void onSuccess(Void result) {
 					select(new Mod390());
@@ -646,7 +641,7 @@ public class Model390 extends MainEntryPoint {
 						mod390.setDocument(params.getDocument());
 						mod390.setEnterpriseName(params.getName());
 						mod390.setYear(params.getDefaultYear() != null ? params
-								.getDefaultYear() : 2013);
+								.getDefaultYear() : 2014);
 						if (mod390.isLegalEntity()) {
 							mod390.setName(mod390.getEnterpriseName());
 						} else {
@@ -714,7 +709,7 @@ public class Model390 extends MainEntryPoint {
 
 							page6.refresh();
 							page6.populate(mod390);
-							page5.initialize(domain, y, mod390);
+							page5.initialize(getCurrentDomainName(),domain, y, mod390);
 							initializeMod303Values(domain, y, mod390);
 							simplifiedRegime.setVisible(mod390
 									.isSimplifiedRegime());
@@ -735,7 +730,7 @@ public class Model390 extends MainEntryPoint {
 
 	private void initializeMod303Values(int domain, int year,
 			final Mod390 mod390) {
-		fiscalService.getMod303Results(domain, year,
+		fiscalService.getMod303Results(getCurrentDomainName(), getCurrentDomain(), year,
 				new AsyncCallback<Mod303Results>() {
 					@Override
 					public void onSuccess(Mod303Results result) {
@@ -799,7 +794,7 @@ public class Model390 extends MainEntryPoint {
 				.confirm("El ejercicio ha cambiado, desea recalcular los datos?")) {
 			if (domain != 0) {
 				try {
-					page5.initialize(domain, Integer.parseInt(year.getValue()),
+					page5.initialize(getCurrentDomainName(),domain, Integer.parseInt(year.getValue()),
 							mod390);
 				} catch (NumberFormatException e) {
 					// nothing
@@ -972,4 +967,44 @@ public class Model390 extends MainEntryPoint {
 		panel.getElement().getStyle().setBackgroundColor("#999");
 		panel.getElement().getStyle().setColor("white");
 	}
+	@UiHandler("footPanel")
+	void onFootMinimize(MinimizeEvent event) {
+		closeFootPanel();
+	}
+	@UiHandler("footPanel")
+	void onFootMaximize(MinimizeEvent event) {
+	}
+
+	private void closeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 0);
+	}
+
+	private void maximizeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 0);
+	}
+	
+	private void showResultsPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 5);
+	}
+
+	private boolean isResultsPanelVisible() {
+		return splitLayoutPanel.getWidgetSize(footPanel) > 0;
+	}
+	
+	private void cleanErrorMessage() {
+		resultsPanel.clearFlowPanel();
+		closeFootPanel();
+	}
+
+	private void addErrorMessage(String msg) {
+		showResultsPanel();
+		SimplePanel panel = new SimplePanel();
+		Label label = new Label(msg);
+		label.addStyleName("aon-icon-errorwarning");
+		label.addStyleName("aon-message-error");
+		label.addStyleName("aon-icon");
+		panel.add(label);
+		resultsPanel.setWidget(panel);
+	}
+	
 }

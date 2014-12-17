@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.esferalia.aon.gwt.common.shared.FiscalParameters;
 import com.esferalia.aon.gwt.fiscal.shared.Enterprise;
-import com.esferalia.aon.gwt.fiscal.shared.Mod303Results;
 import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
 import com.esferalia.aon.occam.api.model.Mod180;
 import com.esferalia.aon.occam.api.model.Mod180Detail;
@@ -12,12 +11,10 @@ import com.esferalia.aon.occam.api.model.Mod190;
 import com.esferalia.aon.occam.api.model.Mod190Detail;
 import com.esferalia.aon.occam.api.model.Mod390;
 import com.esferalia.aon.occam.api.model.Mod390.Activity;
+import com.esferalia.aon.occam.api.model.Mod390.Mod303Results;
 import com.esferalia.aon.occam.api.model.Mod390.Mod390Detail;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-/**
- * The async counterpart of <code>EmployeesService</code>.
- */
 public interface FiscalServiceAsync {
 
 	// ------------------------------------------------------- FISCAL PARAMETERS
@@ -49,23 +46,15 @@ public interface FiscalServiceAsync {
 	// ---------------------------------------------------------------MODELO 390
 	void getMod390(String domainName, Integer domain,Integer id, AsyncCallback<Mod390> callback);
 	void getMod390s(String domainName, Integer domain, AsyncCallback<ArrayList<Mod390>> callback);
+	void saveMod390(String domainName, Integer domain, Mod390 mod390, AsyncCallback<Mod390> callback);
+	void deleteMod390(String domainName, Integer domain, Mod390 mod390, AsyncCallback<Void> callback);
+	void getMod390Details(String domainName, Integer domain, Mod390 mod390,AsyncCallback<ArrayList<Mod390Detail>> callback);
+	void getMod303Results(String domainName, Integer domain, int year,AsyncCallback<Mod303Results> asyncCallback);
+
+	void getMod311Results(int domain, int year,AsyncCallback<ArrayList<Mod311Results>> asyncCallback);
+
 	
-	
-	void getMod390Details(int domain, Integer year,
-			AsyncCallback<ArrayList<Mod390Detail>> callback);
 
-	void getMod303Results(int domain, int year,
-			AsyncCallback<Mod303Results> asyncCallback);
-
-	void getMod311Results(int domain, int year,
-			AsyncCallback<ArrayList<Mod311Results>> asyncCallback);
-
-//	void getMod390(Integer id, AsyncCallback<Mod390> callback);
-//	void getMod390s(int domain, AsyncCallback<ArrayList<Mod390>> callback);
-
-	void saveMod390(Mod390 mod390, AsyncCallback<Mod390> callback);
-
-	void deleteMod390(Mod390 mod390, AsyncCallback<Void> callback);
 	
 
 }
