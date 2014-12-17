@@ -32,6 +32,20 @@ public class Mod303Manager extends FiscalModelManager {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
+	// Ingresos a cuenta realizados en el ejercicio
+	private static String SELECT_49 = "SELECT " 
+			+" SUM(fmd.amount)"
+			+" FROM fs_model_detail fmd"
+			+" INNER JOIN fs_model fm ON (fmd.fs_model = fm.id)" 
+			+" WHERE " + DomainManager.getStaticSQLWhereClause("fmd.domain")
+			+" AND fm.model = ? "
+			+" AND fm.administration = ? "
+			+" AND fm.year = ? "
+			+" AND fm.period < ? "
+			+" AND fmd.type = ? "
+			+" AND fmd.amount > 0 "
+			+ "ORDER BY fm.period DESC";
+
 	// Cuotas a compensar de periodos anteriores
 	private static String SELECT_67 = "SELECT " 
 			+" fmd.amount"
@@ -105,7 +119,10 @@ public class Mod303Manager extends FiscalModelManager {
 				  || vatDetail.getKey() == VatTaxKey.D3) {
 					cuotasSoportadas = cuotasSoportadas + vatDetail.getQuotaAccumulated(); 
 				}
-				
+			}
+			if (mod303.isLastPeriod()) {
+				double c49 = getPreviousAmount(conn, SELECT_49, fiscalModel, Mod303Key.C71);
+				mod303.ensureDetail( Mod303Key.C49).addAccumulatedAmount(CommonUtil.round(c49));
 			}
 			mod303.ensureDetail( Mod303Key.C65).addAccumulatedAmount(100.0);
 			mod303.ensureDetail( Mod303Key.C51).addAccumulatedAmount(CommonUtil.round(c51));
