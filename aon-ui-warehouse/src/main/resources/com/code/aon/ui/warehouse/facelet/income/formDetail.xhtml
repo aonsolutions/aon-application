@@ -37,7 +37,7 @@
 				focus="#{(focusOnSelect != null)?(focusOnSelect):''}">
 			</aon:commandLink>
 		</ui:define>
-
+		
 		<ui:define name="columns">
 	
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
@@ -250,6 +250,9 @@
 			</aon:column>
 		</ui:define>
 		<ui:define name="endFormListContent">
+			<ui:include src="/com/code/aon/ui/common/facelet/auditable/toolTipAuditInfo.xhtml">
+				<ui:param name="auditableTO" value="#{to}" />
+			</ui:include>
 			<aon:confirmButton
 				id="transferedDetail-remove" title="#{bundle.aon_remove} (#{bundle.aon_key_remove_line_accelerator})"
 				immediate="true" rendered="#{income.pending and !aonRole.productOperator and to.purchaseDetail != null}"

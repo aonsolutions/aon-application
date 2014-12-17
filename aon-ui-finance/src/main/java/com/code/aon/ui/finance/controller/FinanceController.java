@@ -58,6 +58,7 @@ import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -70,7 +71,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
-public class FinanceController extends FinanceListController implements IFinanceController {
+public class FinanceController extends FinanceListController implements IFinanceController, IAuditableController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -105,6 +106,7 @@ public class FinanceController extends FinanceListController implements IFinance
 	private Month payrollMonth;
 	private int payrollYear;
 	private List<ITransferObject> orderedList;
+	private boolean showAuditInfoWindow;
 	
 	public Company getCompany() {
 		if (company == null) {
@@ -996,4 +998,14 @@ public class FinanceController extends FinanceListController implements IFinance
 		return condition;
 	}
 
+	@Override
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	@Override
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
+	}
+	
 }

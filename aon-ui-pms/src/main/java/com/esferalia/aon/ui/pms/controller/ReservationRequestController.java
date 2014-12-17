@@ -19,6 +19,7 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
+import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.ReservationRequest;
@@ -26,7 +27,7 @@ import com.esferalia.aon.pms.ReservationRequestGuest;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.ui.pms.util.PmsUtils;
 
-public class ReservationRequestController extends BasicController implements IPmsConstants {
+public class ReservationRequestController extends BasicController implements IPmsConstants, IAuditableController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	

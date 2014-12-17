@@ -13,7 +13,7 @@
 	<aon:panelGroup id="#{auditInfoWindowId}">
 		<aon:if test="#{auditableController.showAuditInfoWindow}">
 			<rich:modalPanel
-				minWidth="450" minHeight="200" zindex="90"
+				minWidth="350" minHeight="100" zindex="90"
 				showWhenRendered="#{auditableController.showAuditInfoWindow}" >
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -59,7 +59,7 @@
 										<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
 											timeZone="#{timeZoneController.timeZoneId}" />
 									</aon:outputText>
-										
+																			
 								</aon:panelGrid>
 								
 							</aon:div>

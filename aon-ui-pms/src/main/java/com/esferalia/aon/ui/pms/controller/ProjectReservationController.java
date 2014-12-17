@@ -47,6 +47,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.registry.RegistryPayMethod;
+import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.finance.util.PosUtils;
@@ -72,7 +73,7 @@ import com.esferalia.aon.pms.reservation.ReservationUtils;
 import com.esferalia.aon.ui.pms.ProjectReservationPermission;
 import com.esferalia.aon.ui.pms.util.PmsUtils;
 
-public class ProjectReservationController extends BasicController implements IPmsConstants {
+public class ProjectReservationController extends BasicController implements IPmsConstants, IAuditableController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 

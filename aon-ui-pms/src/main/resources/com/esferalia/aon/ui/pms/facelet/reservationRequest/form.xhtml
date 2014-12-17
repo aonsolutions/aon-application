@@ -14,15 +14,9 @@
 				<ui:param name="toolbarTitle" value="#{bundle.pms_reservation_request_module}" />
 				<ui:param name="controller" value="#{reservationRequest}" />
 				<ui:param name="skipRemoveButton" value="#{!reservationRequest.to.active}" />
-				<ui:define name="beforeSpinToolbarContent">				
-					<aon:commandButton id="audit-info"
-						styleClass="aon-finding-toolbar-item aon-icon-audit"
-						value="#{bundle.aon_audit}"
-						rendered="#{!reservationRequest.nevv}"
-						reRender="showAuditInfoWindow">
-						<f:setPropertyActionListener target="#{reservationRequest.showAuditInfoWindow}"
-							value="#{true}" />							
-					</aon:commandButton>	
+				<ui:define name="beforeSpinToolbarContent">
+					<ui:include
+						src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml" />											
 				</ui:define>				
 			</ui:decorate>
 

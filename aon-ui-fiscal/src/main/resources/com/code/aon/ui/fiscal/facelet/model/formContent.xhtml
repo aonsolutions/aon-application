@@ -67,14 +67,9 @@
 					</aon:htmlCommandLink>
 				</aon:if>
 				
-				<aon:commandButton id="audit-info"
-					value="#{bundle.aon_audit}"
-					styleClass="aon-finding-toolbar-item aon-icon-audit"
-					rendered="#{!controller.nevv}"
-					reRender="showAuditInfoWindow">
-					<f:setPropertyActionListener target="#{controller.showAuditInfoWindow}"
-						value="#{true}" />							
-				</aon:commandButton>		
+				<ui:include
+					src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml" />											
+
 			</ui:define>
 		</ui:decorate>
 

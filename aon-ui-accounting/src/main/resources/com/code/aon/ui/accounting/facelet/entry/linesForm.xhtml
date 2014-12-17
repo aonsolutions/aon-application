@@ -315,6 +315,11 @@
 							<aon:outputText value="&#160;" />
 						</f:facet>
 						<aon:div>
+								<aon:div rendered="#{formList}" layout="none">
+									<ui:include src="/com/code/aon/ui/common/facelet/auditable/toolTipAuditInfo.xhtml">
+										<ui:param name="auditableTO" value="#{to}" />
+									</ui:include>
+								</aon:div>						
 								<aon:outputText value="&#160;" />
 								<aon:commandButton id="entryDetailTable-save"
 									title="#{bundle.aon_accept} (ALT+#{bundle.aon_key_save_line})"

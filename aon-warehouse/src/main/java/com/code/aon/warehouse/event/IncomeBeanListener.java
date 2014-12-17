@@ -22,15 +22,17 @@ public class IncomeBeanListener extends ManagerBeanListenerAdapter {
 		Income income = (Income) evt.getTo();
 
 		Project project = (income.getProject() != null && income.getProject().getId() != null) ? income.getProject() : null;
-		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_INCOME_ID), income.getId());
-		for (ITransferObject ito : incomeDetailBean.getList(criteria)) {
-			IncomeDetail incomeDetail = (IncomeDetail)ito;
-			if (incomeDetail.getProject() == null || incomeDetail.getProject().getId() == null) {
-				incomeDetail.setProject(project);
-				incomeDetailBean.update(incomeDetail);
-			}
+		if ( project != null ) {
+			IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_INCOME_ID), income.getId());
+			for (ITransferObject ito : incomeDetailBean.getList(criteria)) {
+				IncomeDetail incomeDetail = (IncomeDetail)ito;
+				if (incomeDetail.getProject() == null || incomeDetail.getProject().getId() == null) {
+					incomeDetail.setProject(project);
+					incomeDetailBean.update(incomeDetail);
+				}
+			}			
 		}
 	}
 

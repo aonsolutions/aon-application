@@ -21,6 +21,8 @@
 				<ui:param name="skipRemoveButton" value="#{fbatch.readOnly}" />
 				
 				<ui:define name="beforeSpinToolbarContent">
+					<ui:include
+						src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml" />										
 					<aon:htmlCommandLink id="fBatch-excel-report"
 						value="&#160;" target="_blank"
 						action="#{report.onExecute}" rendered="#{!fbatch.nevv}"
@@ -209,6 +211,9 @@
 			<ui:param name="progressBarBean" value="#{fbatch.progressionState}" />
 			<aon:methodParam name="progressBarCloseActionListener"
 				default="#{fbatch.onClosePanel}" type="actionListener" />
-		</ui:include>		
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
+			<ui:param name="auditableController" value="#{fbatch}" />
+		</ui:include>				
 	</ui:define>
 </ui:composition>
