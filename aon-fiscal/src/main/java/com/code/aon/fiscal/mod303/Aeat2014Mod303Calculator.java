@@ -256,7 +256,7 @@ public class Aeat2014Mod303Calculator extends FiscalModelDetailCalculator implem
 		double c53 = mod303.getDetail( Mod303Key.C53 ).getAmount();
 		double c54 = 0.0; 
 		if (mod303.isLastPeriod()) {
-			mod303.getDetail( Mod303Key.C48 ).setAmount( CommonUtil.round(c47) );
+			mod303.getDetail( Mod303Key.C48 ).setAmount( CommonUtil.round(c48) );
 			double c49 = mod303.getDetail( Mod303Key.C49 ).getAmount();
 			double c50 = CommonUtil.round(c48 - c49);
 			mod303.getDetail( Mod303Key.C50 ).setAmount( c50 );
