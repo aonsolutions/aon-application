@@ -108,7 +108,8 @@ public class Mod303Manager extends FiscalModelManager {
 					c53 = c53 + vatDetail.getQuotaAccumulated(); 
 				}
 				// Adquisiciones o importacion de activos fijos
-				if (vatDetail.getKey() == VatTaxKey.D2
+				if (vatDetail.getKey() == VatTaxKey.B2
+				 || vatDetail.getKey() == VatTaxKey.D2
 				 || vatDetail.getKey() == VatTaxKey.C2) {
 					c55 = c55 + vatDetail.getQuotaAccumulated(); 
 				}
@@ -132,8 +133,6 @@ public class Mod303Manager extends FiscalModelManager {
 			if (c67 < 0 ) {
 				mod303.ensureDetail( Mod303Key.C67).addAccumulatedAmount(CommonUtil.round(c67 * (-1) ));
 			}
-			mod303.ensureDetail( Mod303Key.C55).addAccumulatedAmount(CommonUtil.round(c55));
-			
 			vatDetails = null;
 			return mod303;
 			

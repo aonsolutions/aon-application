@@ -3,6 +3,7 @@ package com.code.aon.fiscal.mod303;
 import com.code.aon.common.AonException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.Administration;
+import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.enumeration.Mod303Key;
 import com.code.aon.fiscal.model.FiscalModelDetailCalculator;
 
@@ -42,8 +43,42 @@ public class Aeat2014Mod303Calculator extends FiscalModelDetailCalculator implem
 				f1 = CommonUtil.round( f1 * zd1 / za1 );
 				mod303.getDetail( Mod303Key.CAC1_F ).setAmount( f1 );
 			} else {
-				double h1 = mod303.ensureAmount( Mod303Key.CAC1_H);
+				Mod303Key[] units = new Mod303Key[] {
+						Mod303Key.CAC1_M1U,Mod303Key.CAC1_M2U
+						,Mod303Key.CAC1_M3U,Mod303Key.CAC1_M4U
+						,Mod303Key.CAC1_M5U,Mod303Key.CAC1_M6U
+						,Mod303Key.CAC1_M7U};
+				Mod303Key[] modules = new Mod303Key[] {
+						Mod303Key.CAC1_M1I,Mod303Key.CAC1_M2I
+						,Mod303Key.CAC1_M3I,Mod303Key.CAC1_M4I
+						,Mod303Key.CAC1_M5I,Mod303Key.CAC1_M6I
+						,Mod303Key.CAC1_M7I};
+				
+				double ht1 = mod303.ensureAmount( Mod303Key.CAC1_HT);
 				double hd1 = mod303.ensureAmount( Mod303Key.CAC1_HD);
+				
+				for (int i = 0; i < units.length ; i++) {
+					Mod303Key mod = units[i];
+					if (mod303.getDetail( mod ) != null) {
+						double u1 = mod303.ensureAmount( mod );
+						double or = mod303.getDetail( mod ).getDeclaredAmount();
+						u1 = CommonUtil.round( (ht1 + hd1) * or / 360);
+						mod303.getDetail( mod ).setAmount( u1 );
+						
+						FiscalModelDetail det = mod303.getDetail( modules[i] );
+						det.setAmount( CommonUtil.round( det.getDeclaredAmount() * u1 ) );
+					}
+				}
+				
+				double c1 = 0.0;
+				for (int i = 0; i < modules.length ; i++) {
+					if (mod303.getDetail( modules[i] ) != null) {
+						c1 = CommonUtil.round(c1 + mod303.getDetail( modules[i] ).getAmount());
+					}
+				}
+				mod303.getDetail( Mod303Key.CAC1_C ).setAmount( c1 );
+				
+				double h1 = mod303.ensureAmount( Mod303Key.CAC1_H);
 				double ha1 = 0;
 				if (h1 == 0) {
 					h1 = 1;
@@ -54,7 +89,7 @@ public class Aeat2014Mod303Calculator extends FiscalModelDetailCalculator implem
 				} else {
 					ha1 = mod303.ensureAmount( Mod303Key.CAC1_HA);
 				}
-				double c1 = mod303.ensureAmount( Mod303Key.CAC1_C);
+				
 				double d1 = mod303.ensureAmount( Mod303Key.CAC1_D);
 				double g1 = mod303.ensureAmount( Mod303Key.CAC1_G);
 				double i1 = CommonUtil.round( (c1 - d1 - g1));
@@ -93,8 +128,41 @@ public class Aeat2014Mod303Calculator extends FiscalModelDetailCalculator implem
 				f2 = CommonUtil.round( f2 * zd2 / za2 );
 				mod303.getDetail( Mod303Key.CAC2_F ).setAmount( f2 );
 			} else {
-				double h2 = mod303.ensureAmount( Mod303Key.CAC2_H);
+				Mod303Key[] units = new Mod303Key[] {
+						Mod303Key.CAC2_M1U,Mod303Key.CAC2_M2U
+						,Mod303Key.CAC2_M3U,Mod303Key.CAC2_M4U
+						,Mod303Key.CAC2_M5U,Mod303Key.CAC2_M6U
+						,Mod303Key.CAC2_M7U};
+				Mod303Key[] modules = new Mod303Key[] {
+						Mod303Key.CAC2_M1I,Mod303Key.CAC2_M2I
+						,Mod303Key.CAC2_M3I,Mod303Key.CAC2_M4I
+						,Mod303Key.CAC2_M5I,Mod303Key.CAC2_M6I
+						,Mod303Key.CAC2_M7I};
+				
+				double ht2 = mod303.ensureAmount( Mod303Key.CAC2_HT);
 				double hd2 = mod303.ensureAmount( Mod303Key.CAC2_HD);
+				
+				for (int i = 0; i < units.length ; i++) {
+					Mod303Key mod = units[i];
+					if (mod303.getDetail( mod ) != null) {
+						double u2 = mod303.ensureAmount( mod );
+						double or = mod303.getDetail( mod ).getDeclaredAmount();
+						u2 = CommonUtil.round( (ht2 + hd2) * or / 360);
+						mod303.getDetail( mod ).setAmount( u2 );
+						
+						FiscalModelDetail det = mod303.getDetail( modules[i] );
+						det.setAmount( CommonUtil.round( det.getDeclaredAmount() * u2 ) );
+					}
+				}
+				
+				double c2 = 0.0;
+				for (int i = 0; i < modules.length ; i++) {
+					if (mod303.getDetail( modules[i] ) != null) {
+						c2 = CommonUtil.round(c2 + mod303.getDetail( modules[i] ).getAmount());
+					}
+				}
+				mod303.getDetail( Mod303Key.CAC2_C ).setAmount( c2 );
+				double h2 = mod303.ensureAmount( Mod303Key.CAC2_H);
 				double ha2 = 0;
 				if (h2 == 0) {
 					h2 = 1;
@@ -105,7 +173,6 @@ public class Aeat2014Mod303Calculator extends FiscalModelDetailCalculator implem
 				} else {
 					ha2 = mod303.ensureAmount( Mod303Key.CAC2_HA);
 				}
-				double c2 = mod303.ensureAmount( Mod303Key.CAC2_C);
 				double d2 = mod303.ensureAmount( Mod303Key.CAC2_D);
 				double g2 = mod303.ensureAmount( Mod303Key.CAC2_G);
 				double i2 = CommonUtil.round( (c2 - d2 - g2));
@@ -144,8 +211,41 @@ public class Aeat2014Mod303Calculator extends FiscalModelDetailCalculator implem
 				f3 = CommonUtil.round( f3 * zd3 / za3 );
 				mod303.getDetail( Mod303Key.CAC3_F ).setAmount( f3 );
 			} else {
-				double h3 = mod303.ensureAmount( Mod303Key.CAC3_H);
+				Mod303Key[] units = new Mod303Key[] {
+						Mod303Key.CAC3_M1U,Mod303Key.CAC3_M1U
+						,Mod303Key.CAC3_M3U,Mod303Key.CAC3_M4U
+						,Mod303Key.CAC3_M5U,Mod303Key.CAC3_M6U
+						,Mod303Key.CAC3_M7U};
+				Mod303Key[] modules = new Mod303Key[] {
+						Mod303Key.CAC3_M2I,Mod303Key.CAC3_M2I
+						,Mod303Key.CAC3_M3I,Mod303Key.CAC3_M4I
+						,Mod303Key.CAC3_M5I,Mod303Key.CAC3_M6I
+						,Mod303Key.CAC3_M7I};
+				
+				double ht3 = mod303.ensureAmount( Mod303Key.CAC3_HT);
 				double hd3 = mod303.ensureAmount( Mod303Key.CAC3_HD);
+				
+				for (int i = 0; i < units.length ; i++) {
+					Mod303Key mod = units[i];
+					if (mod303.getDetail( mod ) != null) {
+						double u3 = mod303.ensureAmount( mod );
+						double or = mod303.getDetail( mod ).getDeclaredAmount();
+						u3 = CommonUtil.round( (ht3 + hd3) * or / 360);
+						mod303.getDetail( mod ).setAmount( u3 );
+						
+						FiscalModelDetail det = mod303.getDetail( modules[i] );
+						det.setAmount( CommonUtil.round( det.getDeclaredAmount() * u3 ) );
+					}
+				}
+				
+				double c3 = 0.0;
+				for (int i = 0; i < modules.length ; i++) {
+					if (mod303.getDetail( modules[i] ) != null) {
+						c3 = CommonUtil.round(c3 + mod303.getDetail( modules[i] ).getAmount());
+					}
+				}
+				mod303.getDetail( Mod303Key.CAC3_C ).setAmount( c3 );
+				double h3 = mod303.ensureAmount( Mod303Key.CAC3_H);
 				double ha3 = 0;
 				if (h3 == 0) {
 					h3 = 1;
@@ -156,7 +256,6 @@ public class Aeat2014Mod303Calculator extends FiscalModelDetailCalculator implem
 				} else {
 					ha3 = mod303.ensureAmount( Mod303Key.CAC3_HA);
 				}
-				double c3 = mod303.ensureAmount( Mod303Key.CAC3_C);
 				double d3 = mod303.ensureAmount( Mod303Key.CAC3_D);
 				double g3 = mod303.ensureAmount( Mod303Key.CAC3_G);
 				double i3 = CommonUtil.round( (c3 - d3 - g3));
@@ -195,8 +294,41 @@ public class Aeat2014Mod303Calculator extends FiscalModelDetailCalculator implem
 				f4 = CommonUtil.round( f4 * zd4 / za4 );
 				mod303.getDetail( Mod303Key.CAC4_F ).setAmount( f4 );
 			} else {
-				double h4 = mod303.ensureAmount( Mod303Key.CAC4_H);
+				Mod303Key[] units = new Mod303Key[] {
+						Mod303Key.CAC4_M1U,Mod303Key.CAC4_M1U
+						,Mod303Key.CAC4_M3U,Mod303Key.CAC4_M4U
+						,Mod303Key.CAC4_M5U,Mod303Key.CAC4_M6U
+						,Mod303Key.CAC4_M7U};
+				Mod303Key[] modules = new Mod303Key[] {
+						Mod303Key.CAC4_M2I,Mod303Key.CAC4_M2I
+						,Mod303Key.CAC4_M3I,Mod303Key.CAC4_M4I
+						,Mod303Key.CAC4_M5I,Mod303Key.CAC4_M6I
+						,Mod303Key.CAC4_M7I};
+				
+				double ht4 = mod303.ensureAmount( Mod303Key.CAC4_HT);
 				double hd4 = mod303.ensureAmount( Mod303Key.CAC4_HD);
+				
+				for (int i = 0; i < units.length ; i++) {
+					Mod303Key mod = units[i];
+					if (mod303.getDetail( mod ) != null) {
+						double u4 = mod303.ensureAmount( mod );
+						double or = mod303.getDetail( mod ).getDeclaredAmount();
+						u4 = CommonUtil.round( (ht4 + hd4) * or / 360);
+						mod303.getDetail( mod ).setAmount( u4 );
+						
+						FiscalModelDetail det = mod303.getDetail( modules[i] );
+						det.setAmount( CommonUtil.round( det.getDeclaredAmount() * u4 ) );
+					}
+				}
+				
+				double c4 = 0.0;
+				for (int i = 0; i < modules.length ; i++) {
+					if (mod303.getDetail( modules[i] ) != null) {
+						c4 = CommonUtil.round(c4 + mod303.getDetail( modules[i] ).getAmount());
+					}
+				}
+				mod303.getDetail( Mod303Key.CAC3_C ).setAmount( c4 );
+				double h4 = mod303.ensureAmount( Mod303Key.CAC4_H);
 				double ha4 = 0;
 				if (h4 == 0) {
 					h4 = 1;
@@ -207,7 +339,6 @@ public class Aeat2014Mod303Calculator extends FiscalModelDetailCalculator implem
 				} else {
 					ha4 = mod303.ensureAmount( Mod303Key.CAC4_HA);
 				}
-				double c4 = mod303.ensureAmount( Mod303Key.CAC4_C);
 				double d4 = mod303.ensureAmount( Mod303Key.CAC4_D);
 				double g4 = mod303.ensureAmount( Mod303Key.CAC4_G);
 				double i4 = CommonUtil.round( (c4 - d4 - g4));

@@ -142,13 +142,17 @@ public class Mod303 implements IFiscalDeclaration, IMod303Declaration, Serializa
 			    	detail.setFiscalModel(getHeader());
 					detail.setType(Mod303Key.ACTIVITIES_PREFIX + ac + "M" + moduleNumber + "U");
 					detail.setDescription(info.getInfoKey().getName(locale));
-					detail.setAccumulatedAmount(info.getDoubleValue());
+					double unit = info.getDoubleValue();
+					detail.setAccumulatedAmount(unit);
+					detail.setDeclaredAmount(unit);
 					addDetail(detail);
+					
 					detail = new FiscalModelDetail();
 			    	detail.setFiscalModel(getHeader());
 					detail.setType(Mod303Key.ACTIVITIES_PREFIX + ac + "M" + moduleNumber + "I");
 					detail.setDescription(info.getInfoKey().getName(locale));
 					detail.setAccumulatedAmount(info.getBase());
+					detail.setDeclaredAmount( unit == 0?0:info.getBase() / unit);
 					addDetail(detail);
 					
 					detail = getDetail(Mod303Key.getKeyWithValue(Mod303Key.ACTIVITIES_PREFIX + ac + "C") );
@@ -298,6 +302,13 @@ public class Mod303 implements IFiscalDeclaration, IMod303Declaration, Serializa
 								detail.setType(Mod303Key.ACTIVITIES_PREFIX + ac + "HD");
 								detail.setAccumulatedAmount(seasonDays>0?seasonDays:90);
 								addDetail(detail);
+								
+								detail = new FiscalModelDetail();
+						    	detail.setFiscalModel(getHeader());
+								detail.setType(Mod303Key.ACTIVITIES_PREFIX + ac + "HT");
+								double yearDays = getPreviousDays(fiscalModel,Mod303Key.ACTIVITIES_PREFIX + ac);
+								detail.setAccumulatedAmount(seasonDays>0?seasonDays:yearDays);
+								addDetail(detail);
 							} 
 						}
 					}
@@ -306,6 +317,29 @@ public class Mod303 implements IFiscalDeclaration, IMod303Declaration, Serializa
 		}
 	}
     
+	private double getPreviousDays(FiscalModel fiscalModel, String prefix) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(FiscalModelDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression("FiscalModelDetail.fiscalModel.year", fiscalModel.getYear());
+		criteria.addLessThanExpression("FiscalModelDetail.fiscalModel.period", fiscalModel.getPeriod() );
+		criteria.addEqualExpression("FiscalModelDetail.fiscalModel.model", FiscalModelType.M303 );
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_MODEL_DETAIL_TYPE), prefix + "ZD");
+		List<ITransferObject> list = bean.getList(criteria);
+		double t1 = 90;
+		double t2 = 90;
+		double t3 = 90;
+		for (ITransferObject to : list) {
+			FiscalModelDetail detail = (FiscalModelDetail) to;
+			if (detail.getFiscalModel().getPeriod() == Period.T1) {
+				t1 = detail.getAmount();			
+			} else if (detail.getFiscalModel().getPeriod() == Period.T2) {
+				t2 = detail.getAmount();
+			} else if (detail.getFiscalModel().getPeriod() == Period.T3) {
+				t3 = detail.getAmount();
+			}
+		}
+		return CommonUtil.round(t1+t2+t3);
+	}
 	private void addFarmerActivity(FiscalActivity fa, int ag) throws ManagerBeanException {
 		FiscalModelDetail detail = new FiscalModelDetail();
 		detail.setFiscalModel(getHeader());

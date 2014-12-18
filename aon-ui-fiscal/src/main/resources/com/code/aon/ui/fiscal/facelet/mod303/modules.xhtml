@@ -15,6 +15,19 @@
 			style="margin-top: 5px;font-weight: bold;" />
 	</aon:div>
 	<aon:div id="modulesGridContainer">
+		<aon:if test="#{controller.declaration.lastPeriod}">
+			<aon:panelGrid columns="2" styleClass="aon-panelGrid aon-width-all aon-margin-top"
+				columnClasses="aon-panelGrid-odd aon-width-auto 
+					,aon-panelGrid-even aon-width-150 aon-text-right">
+					
+				<aon:outputText value="#{controller.modHTKey}" />
+				<aon:inputText value="#{controller.modHT.accumulatedAmount}"
+					 required="true" size="8">
+					 <a4j:support event="onchange" reRender="modulesGridContainer"
+					 	ajaxSingle="true" actionListener="#{controller.onChangeHD}"/>
+				</aon:inputText>
+			</aon:panelGrid>
+		</aon:if>
 		<aon:panelGrid  columns="3" styleClass="aon-panelGrid aon-width-all aon-margin-top"
 			columnClasses="aon-panelGrid-odd aon-width-auto 
 				,aon-panelGrid-even aon-width-100 aon-text-right
@@ -100,12 +113,12 @@
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
 	
-			<aon:outputText value="#{controller.modDKey}" />
-			<aon:outputText value="#{controller.modD.amount}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
-	
 			<aon:if test="#{!controller.declaration.lastPeriod}">
+				<aon:outputText value="#{controller.modDKey}" />
+				<aon:outputText value="#{controller.modD.amount}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+	
 				<aon:outputText value="#{controller.modZKey}" />
 				<aon:outputText value="#{controller.modZ.amount}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
@@ -147,6 +160,13 @@
 				</aon:div>
 			</aon:if>
 			<aon:if test="#{controller.declaration.lastPeriod}">
+				<aon:outputText value="#{controller.modDKey}" />
+				<aon:inputText value="#{controller.modD.accumulatedAmount}"
+					 required="true" size="8">
+					 <a4j:support event="onchange" reRender="modulesGridContainer"
+					 	ajaxSingle="true" actionListener="#{controller.onChangeHD}"/>
+				</aon:inputText>
+			
 				<aon:outputText value="#{controller.modGKey}" />
 				<aon:inputText value="#{controller.modG.accumulatedAmount}"
 					 required="true" size="8">
