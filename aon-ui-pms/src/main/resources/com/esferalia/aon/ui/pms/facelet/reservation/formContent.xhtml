@@ -108,11 +108,37 @@
 	</aon:panelGrid>
 
 	<aon:outputLabel for="ProjectReservation_code" value="#{bundle.report_reservation_code}" />
-	<aon:outputText	value="#{reservation.to.code}" styleClass="aon-bold"
-		rendered="#{!reservation.nevv and !reservation.reservationPermission.reservationCodeEditable}" />
-	<aon:inputText id="ProjectReservation_code" value="#{reservation.to.code}"
-		size="30" maxlength="32" required="true"
-		rendered="#{reservation.nevv or reservation.reservationPermission.reservationCodeEditable}" />
+	<aon:div>
+		<aon:outputText	value="#{reservation.to.code}" styleClass="aon-bold"
+			rendered="#{!reservation.nevv and !reservation.reservationPermission.reservationCodeEditable}" />
+		<aon:inputText id="ProjectReservation_code" value="#{reservation.to.code}"
+			size="30" maxlength="32" required="true"
+			rendered="#{reservation.nevv or reservation.reservationPermission.reservationCodeEditable}" />
+		<aon:div style="display:inline; cursor:pointer;" styleClass="aon-margin-left"
+			rendered="#{reservation.multipleReservationSize > 0}">
+			<aon:outputText value="&#160;" styleClass="aon-icon-list-warn"
+				style="padding-left:12px" />
+			<rich:toolTip showEvent="onclick" hideEvent="onmouseout" hideDelay="#{reservation.multipleReservationSize * 1000}">
+				<aon:outputText value="#{bundle.aon_reservation_multiple}"
+					styleClass="aon-uppercase" />
+				<a4j:repeat value="#{reservation.multipleReservation}" var="multipleReservationId">
+					<aon:panelGrid columns="2" dir="true"
+						columnClasses="aon-panelGrid-even aon-noborder aon-bold, 
+							aon-panelGrid-even aon-noborder aon-bold">
+
+						<aon:outputText value="#{multipleReservationId}" />
+						<aon:commandLink id="multipleReservation-link" immediate="true"
+							styleClass="aon-button-goto aon-margin-left" style="padding-right: 20px;"
+							value="&#160;" title="#{bundle.aon_go}"
+							actionListener="#{reservation.onLoadMultipleReservation}">
+							<f:param name="multipleReservation" value="#{multipleReservationId}"/>
+						</aon:commandLink>
+
+					</aon:panelGrid>
+				</a4j:repeat>
+			</rich:toolTip>
+		</aon:div>
+	</aon:div>
 
 	<aon:outputLabel for="ProjectReservation_startDate" value="#{bundle.report_checkin}" />
 	<aon:panelGrid columns="2" columnClasses="aon-width-130, aon-width-auto">

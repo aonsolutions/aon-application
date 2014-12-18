@@ -22,15 +22,17 @@ public class PurchaseBeanListener extends ManagerBeanListenerAdapter {
 		Purchase purchase = (Purchase) evt.getTo();
 
 		Project project = (purchase.getProject() != null && purchase.getProject().getId() != null) ? purchase.getProject() : null;
-		IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
-		for (ITransferObject ito : purchaseDetailBean.getList(criteria)) {
-			PurchaseDetail purchaseDetail = (PurchaseDetail)ito;
-			if (purchaseDetail.getProject() == null || purchaseDetail.getProject().getId() == null) {
-				purchaseDetail.setProject(project);
-				purchaseDetailBean.update(purchaseDetail);
-			}
+		if ( project != null ) {
+			IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
+			for (ITransferObject ito : purchaseDetailBean.getList(criteria)) {
+				PurchaseDetail purchaseDetail = (PurchaseDetail)ito;
+				if (purchaseDetail.getProject() == null || purchaseDetail.getProject().getId() == null) {
+					purchaseDetail.setProject(project);
+					purchaseDetailBean.update(purchaseDetail);
+				}
+			}			
 		}
 	}
 

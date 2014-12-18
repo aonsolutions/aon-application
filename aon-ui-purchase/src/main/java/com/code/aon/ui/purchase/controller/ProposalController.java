@@ -29,6 +29,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryItem;
 import com.code.aon.registry.enumeration.RegistryMode;
 import com.code.aon.ui.common.ICommonMessages;
+import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -40,7 +41,7 @@ import com.code.aon.ui.purchase.util.PurchaseUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class ProposalController extends BasicController {
+public class ProposalController extends BasicController implements IAuditableController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
@@ -53,6 +54,7 @@ public class ProposalController extends BasicController {
 	private Department destinationDepartment;
 	private PurchaseUtils utils;
 	private boolean showTransferWindow;
+	private boolean showAuditInfoWindow;
 	
 	public PurchaseUtils getUtils() {
 		if(utils == null) {
@@ -433,6 +435,16 @@ public class ProposalController extends BasicController {
 			AonUtil.addErrorMessage(msg);
 		}
 	}
+	
+	@Override
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	@Override
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
+	}	
 	
 	public enum ProposalType {
 		ORDER,

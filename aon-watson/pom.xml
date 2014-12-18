@@ -3,14 +3,31 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>8.10-SNAPSHOT</version>
+		<version>8.11-SNAPSHOT</version>
 	</parent>
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon.watson</artifactId>
 	<name>AON WATSON</name>
 	<dependencies>
 		<!--
+			******************************************************************
 			¡¡ANALIZAR EXHAUSTIVAMENTE SI ES NECESARIO CREAR UNA DEPENDENCIA!!  
+			******************************************************************
 		 -->
+
+
+
+
+		<!--
+			******************************************************************
+			******************************************************************
+		 -->
+		<!-- TEST DEPENDENCIES -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.1</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>

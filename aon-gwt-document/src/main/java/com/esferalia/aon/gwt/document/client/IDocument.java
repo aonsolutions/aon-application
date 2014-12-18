@@ -1,13 +1,18 @@
 package com.esferalia.aon.gwt.document.client;
 
+import java.util.Hashtable;
+import java.util.List;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.document.shared.Document;
+import com.esferalia.aon.gwt.document.shared.Domain;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
 import com.esferalia.aon.gwt.document.shared.FilterUtil;
 import com.esferalia.aon.gwt.document.shared.Lists;
 import com.esferalia.aon.gwt.document.shared.SearchInfo;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
+import com.google.api.services.drive.model.File;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -27,7 +32,7 @@ public interface IDocument extends RemoteService{
 	
 	public Lists getLists();
 	
-	public Vector<String> getSons();
+	public Vector<Domain> getSons();
 	
 	public void removeFile(FileInfo fi);
 	
@@ -51,4 +56,19 @@ public interface IDocument extends RemoteService{
 			Vector<FileInfo> allFiles);
 	public String getAsHTML(FileInfo doc, int zoom);
 	
+	public TreeMap<String, List<FileInfo>> drive(TreeMap<String, List<FileInfo>> folders,String id);
+	
+	public String getRootId();
+
+	public Vector<FileInfo> getDriveFiles(String id);
+	
+	public Vector<FileInfo> getDriveFile(String id);
+	
+	public void upload(FileInfo fi);
+	
+	public void deleteMydrive(FileInfo fi);
+	
+	public void shareMydrive(String email, String driveId);
+	
+	public void initAux();
 }

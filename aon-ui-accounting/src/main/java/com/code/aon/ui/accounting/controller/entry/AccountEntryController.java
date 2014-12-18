@@ -43,6 +43,7 @@ import com.code.aon.report.ReportException;
 import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.book.AonReportType;
 import com.code.aon.ui.accounting.controller.report.JournalReportController;
+import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.InvoiceController;
 import com.code.aon.ui.form.BasicController;
@@ -52,7 +53,7 @@ import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class AccountEntryController extends BasicController {
+public class AccountEntryController extends BasicController implements IAuditableController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
@@ -82,6 +83,8 @@ public class AccountEntryController extends BasicController {
 
 	private boolean commentPanelVisible;
 	private boolean duplicateEntryPanelVisible;
+	
+	private boolean showAuditInfoWindow;
 	
 	private SpecialEntryControllerManager getControllerManager() {
 		if (controllerManager == null) {
@@ -647,4 +650,15 @@ public class AccountEntryController extends BasicController {
 			}
 		}
 	}
+
+	@Override
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	@Override
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
+	}
+
 }

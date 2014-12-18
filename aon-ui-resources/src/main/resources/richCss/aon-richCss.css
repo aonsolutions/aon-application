@@ -518,6 +518,9 @@ color:#000;
  .aon-icon-wrong{
 	background:transparent url(images/aon-icon/aon-icon-wrong.png) scroll left center no-repeat;	
  }
+ .aon-icon-list-warn{
+	background:transparent url(images/aon-icon/aon-icon-list-warn.png) scroll left center no-repeat;	
+ }
  .aon-icon-cash{
 	background:transparent url(images/aon-icon/aon-icon-cash.png) scroll left center no-repeat;	
  }
@@ -2995,6 +2998,24 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
     
 	background:transparent url(images/aon-icon/aon-icon-google-drive-pdf-sinfondo.png) scroll left center no-repeat;	
  }
+ .aon-icon-google-drive-excel{
+	background:transparent url(images/aon-icon/aon-icon-google-drive-excel.png) scroll left center no-repeat;	
+ }
+ 
+  .aon-icon-google-drive-power-point{
+	background:transparent url(images/aon-icon/aon-icon-google-drive-power-point.png) scroll left center no-repeat;	
+ }
+ 
+  .aon-icon-google-drive-zip{
+	background:transparent url(images/aon-icon/aon-icon-google-drive-zip.png) scroll left center no-repeat;	
+ }
+  .aon-icon-google-drive-mov{
+	background:transparent url(images/aon-icon/aon-icon-google-drive-mov.png) scroll left center no-repeat;	
+ }
+ 
+  .aon-icon-google-drive-audio{
+	background:transparent url(images/aon-icon/aon-icon-google-drive-audio.png) scroll left center no-repeat;	
+ }
  
  .aon-icon-google-drive-word{
 	background:transparent url(images/aon-icon/aon-icon-google-drive-word.png) scroll left center no-repeat;	
@@ -3014,6 +3035,10 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	background:transparent url(images/aon-icon/aon-icon-serviconvenios.png) scroll left center no-repeat;	
  }
 
+ .aon-icon-documental-docs{
+	background:transparent url(images/aon-icon/aon-icon-documental-docs.png) scroll left center no-repeat;	
+ }
+ 
  .aon-icon-share{
 	background:transparent url(images/aon-icon/aon-icon-share.png) scroll left center no-repeat;	
  }
@@ -3048,21 +3073,41 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	opacity:0.4 !important;	
 }
 
-   .aon-next-button{
+ .aon-next-button{
 	background:transparent url(images/aon-icon-big/aon-next-button.png) scroll left center no-repeat;	
  }
-     .aon-prev-button{
+ .aon-prev-button{
 	background:transparent url(images/aon-icon-big/aon-prev-button.png) scroll left center no-repeat;	
  }
-      .aon-icon-print{
+ .aon-icon-print{
 	background:transparent url(images/aon-icon-big/aon-icon-print.png) scroll left center no-repeat;	
  }
-      .aon-icon-share2{
+ .aon-icon-share2{
 	background:transparent url(images/aon-icon-big/aon-icon-share2.png) scroll left center no-repeat;	
  }
-      .aon-icon-download2{
+ .aon-icon-download2{
 	background:transparent url(images/aon-icon-big/aon-icon-download2.png) scroll left center no-repeat;	
  }
-       .aon-icon-close2{
+ .aon-icon-close2{
 	background:transparent url(images/aon-icon-big/aon-icon-close2.png) scroll left center no-repeat;	
  }
+ .aon-icon-zoom-plus{
+	background:transparent url(images/aon-icon-big/aon-icon-zoom-plus.png) scroll left center no-repeat;	
+ }
+ .aon-icon-zoom-minus{
+	background:transparent url(images/aon-icon-big/aon-icon-zoom-minus.png) scroll left center no-repeat;	
+ }
+ 	.aon-tree-item{
+ 		padding-left:20px;
+ 		cursor:pointer;
+ 	}
+ 	
+ 	.aon-chart-table-header{
+ 		background:#dadada url(images/aon-content/aon-dataTable-header.png) scroll left top repeat-x;
+ 	}
+ 	
+	.aon-chart-table-header-cell{
+ 		padding: 1px !important;
+		font-weight: bold;
+		border: 1px solid #EEE;
+ 	} 	

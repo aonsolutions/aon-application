@@ -10,7 +10,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -42,7 +44,10 @@ import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.finance.util.FinanceUtil;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.registry.RegistryPayMethod;
+import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.finance.util.PosUtils;
@@ -68,7 +73,7 @@ import com.esferalia.aon.pms.reservation.ReservationUtils;
 import com.esferalia.aon.ui.pms.ProjectReservationPermission;
 import com.esferalia.aon.ui.pms.util.PmsUtils;
 
-public class ProjectReservationController extends BasicController implements IPmsConstants {
+public class ProjectReservationController extends BasicController implements IPmsConstants, IAuditableController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -93,6 +98,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	private Invoice invoiceToRectify;
 	private boolean showModificationWindow;
 	private Invoice invoiceToModify;
+	private List<Integer> multipleReservation;
 	private DataModel invoiceModel;
 
 	public ReservationUtils getReservationUtils() {
@@ -292,6 +298,18 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	public void setInvoiceToModify(Invoice invoiceToModify) {
 		this.invoiceToModify = invoiceToModify;
+	}
+
+	public List<Integer> getMultipleReservation() {
+		return multipleReservation;
+	}
+
+	public void setMultipleReservation(List<Integer> multipleReservation) {
+		this.multipleReservation = multipleReservation;
+	}
+
+	public int getMultipleReservationSize() {
+		return (multipleReservation != null) ? multipleReservation.size() : 0;
 	}
 
 	public DataModel getInvoiceModel() {
@@ -561,6 +579,31 @@ public class ProjectReservationController extends BasicController implements IPm
     	reservationRoomController.onSearch(event);
 		IController reservationServiceController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_SERVICE_CONTROLLER_NAME);
     	reservationServiceController.onSearch(event);
+	}
+
+	public void checkMultipleReservation() throws ManagerBeanException {
+		multipleReservation = new LinkedList<Integer>();
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		Criteria criteria = new Criteria();
+		criteria.addNotEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_ID), reservation.getId());
+		criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_CODE), reservation.getCode());
+		criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), reservation.getStartDate());
+		criteria.addNotEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.CANCELLED);
+		if (reservation.getAgency() != null && reservation.getAgency().getId() != null) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_AGENCY_ID), reservation.getAgency().getId());
+		} else {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_BOOKING_HOLDER), BookingHolder.GUEST);
+		}
+		ProjectionList projectionList = new ProjectionList(Projection.property(getFieldName(IEntityAlias.PROJECT_RESERVATION_ID)));
+		for (Object obj : getManagerBean().getList(projectionList, criteria)) {
+			multipleReservation.add((Integer)obj);
+		}
+	}
+
+	public void onLoadMultipleReservation(ActionEvent event) throws ManagerBeanException {
+		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+		Map<String, String> params = ec.getRequestParameterMap();
+		select(event, new Integer(params.get(IPmsConstants.MULTIPLE_RESERVATION)));
 	}
 
 	public void onAdvanceInvoiceShow(ActionEvent event) {

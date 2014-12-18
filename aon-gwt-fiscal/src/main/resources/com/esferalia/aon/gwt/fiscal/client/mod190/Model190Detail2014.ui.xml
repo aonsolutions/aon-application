@@ -1,0 +1,496 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:m190='urn:import:com.esferalia.aon.gwt.fiscal.client.mod190'>
+	
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+	
+	<ui:style>
+		.group-label {
+			font-size: 0.9em;
+			font-weight: bold;
+		}
+	</ui:style>
+
+	<g:ScrollPanel styleName="aon-scroll-area">
+		<g:HTMLPanel>
+			<g:FlowPanel height="20px"
+				styleName="aon-finding-title-toolbar aon-width-all gwt-MenuBar-horizontal aon-margin-top">
+				<g:Button ui:field='deleteDetailButton'
+					styleName='aon-finding-toolbar-item aon-icon-delete' text="{msg.deleteAction}" />
+				<g:Button ui:field='restoreDeletedButton'
+					styleName='aon-finding-toolbar-item aon-icon-refresh' text="{msg.restoreAction}" />
+			</g:FlowPanel>
+			<g:HTMLPanel>
+			 	<div class="{aonResources.css.aonGroup}">
+					<div class="{aonResources.css.aonGroupTitle}">
+						<g:InlineLabel text="{msg.perceptionData}" />
+					</div>
+					<div class="{aonResources.css.aonGroupBody}">
+						<table>
+							<tr>
+								<td class="{aonResources.css.aonTableLabel}">
+									<g:Label text="{msg.receiverDocument}" />
+								</td>
+								<td class="{aonResources.css.aonTableLabel}">
+									<g:Label text="{msg.representativeDocument}" />
+								</td>
+								<td class="{aonResources.css.aonTableLabel}">
+									<g:Label text="{msg.fullName}" />
+								</td>
+								<td class="{aonResources.css.aonTableLabel}">
+									<g:Label text="{msg.province}" />
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<aon:DocumentTextBox ui:field="receiverDocument" styleName="aon-inputText"/>
+								</td>
+								<td>
+									<aon:DocumentTextBox ui:field="representativeDocument" styleName="aon-inputText"/>
+								</td>
+								<td>
+									<g:TextBox maxLength="40" visibleLength="40" ui:field="fullName" styleName="aon-inputText"/>
+								</td>
+								<td>
+									<aon:ProvinceListBox ui:field="province" />
+								</td>
+							</tr>
+						</table>
+				
+						<table>
+							<tr>
+								<td colspan="5"/>
+								<td class="{aonResources.css.aonTableLabel}">
+									<g:Label text="{msg.perception}" />
+								</td>
+								<td class="{aonResources.css.aonTableLabel}">
+									<g:Label text="{msg.retention}" />
+								</td>
+								<td>
+								</td>
+								<td class="{aonResources.css.aonTableLabel}">
+									<g:Label text="{msg.accrualYear}" />
+								</td>
+							</tr>
+							<tr>
+								<td class="{aonResources.css.aonTableLabel}" rowspan="3">
+									<g:Label text="{msg.key}" />
+								</td>
+								<td rowspan="3">
+									<m190:Model190Detail2014.KeyListBox ui:field="key" styleName="aon-inputText"/>
+								</td>
+								<td class="{aonResources.css.aonTableLabel}" rowspan="3">
+									<g:Label text="{msg.subkey}" />
+								</td>
+								<td rowspan="3">
+									<g:ListBox ui:field="subkey" styleName="aon-inputText"/>
+								</td>
+								<td>
+									<g:Label text="{msg.money}" />
+								</td>
+								<td>
+									<aon:DoubleTextBox ui:field="perception" styleName="aon-inputText"/>
+								</td>
+								<td>
+									<aon:DoubleTextBox ui:field="retention" styleName="aon-inputText"/>
+								</td>
+								<td>
+								</td>
+								<td>
+									<aon:IntegerTextBox maxLength="4"
+										visibleLength="4" ui:field="accrualYear" styleName="aon-inputText"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+								</td>
+								<td class="{aonResources.css.aonTableLabel}">
+									<g:Label text="{msg.inKindPerception}" />
+								</td>
+								<td class="{aonResources.css.aonTableLabel}">
+									<g:Label text="{msg.inKindDeposit}" />
+								</td>
+								<td class="{aonResources.css.aonTableLabel}">
+									<g:Label text="{msg.inKindOutputDeposit}" />
+								</td>
+								<td class="{aonResources.css.aonTableLabel}">
+									<g:Label text="{msg.ceutaMelillaAbbrv}" />
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.inKind}" />
+								</td>
+								<td>
+									<aon:DoubleTextBox ui:field="inKindPerception" styleName="aon-inputText"/>
+								</td>
+								<td>
+									<aon:DoubleTextBox ui:field="inKindDeposit" styleName="aon-inputText"/>
+								</td>
+								<td>
+									<aon:DoubleTextBox ui:field="inKindOutputDeposit" styleName="aon-inputText"/>
+								</td>
+								<td class="aon-text-center">
+									<g:CheckBox ui:field="ceutaMelilla"/>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+				
+				<g:HTMLPanel ui:field="additionalDataPanel">
+				 	<div class="{aonResources.css.aonGroup}">
+						<div class="{aonResources.css.aonGroupTitle}">
+							<g:InlineLabel text="{msg.additionalData}" />
+						</div>
+						<div class="{aonResources.css.aonGroupBody}">
+							<table>
+								<tr>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.birthYear}" />
+									</td>
+									<td>
+										<aon:IntegerTextBox maxLength="4" styleName="aon-inputText"
+											visibleLength="4" ui:field="birthYear" />
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.familySituation}" />
+									</td>
+									<td>
+										<g:ListBox width="40px" ui:field="familySituation" styleName="aon-inputText"/>
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.spouseDocument}" />
+									</td>
+									<td>
+										<aon:DocumentTextBox ui:field="spouseDocument" styleName="aon-inputText"/>
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.disability}" />
+									</td>
+									<td>
+										<g:ListBox width="40px" ui:field="disability" styleName="aon-inputText"/>
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.contract}" />
+									</td>
+									<td>
+										<g:ListBox width="40px" ui:field="contract" styleName="aon-inputText"/>
+									</td>
+								</tr>
+							</table>
+				
+							<table>
+								<tr>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:CheckBox ui:field="workActivityExtension" 
+											text="{msg.workActivityExtension}" />
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:CheckBox ui:field="geographicMobility" text="{msg.geographicMobility}"/>
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:CheckBox ui:field="homeLoanCommunnication" 
+											text="{msg.homeLoanCommunnication}" />
+									</td>
+								</tr>
+							</table>
+				
+							<table>
+								<colgroup>
+									<col style="width: 150px;" />
+									<col style="width: 150px;" />
+									<col style="width: 150px;" />
+									<col style="width: 150px;" />
+									<col style="width: auto;" />
+								</colgroup>
+								<tr>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.applicableReduction}" />
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.deducibleExpense}" />
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.compensatoryPension}" />
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.foodAnnuality}" />
+									</td>
+									<td>
+									</td>
+								</tr>
+								<tr>
+									<td class="aon-text-center">
+										<aon:DoubleTextBox ui:field="applicableReduction" styleName="aon-inputText"/>
+									</td>
+									<td class="aon-text-center">
+										<aon:DoubleTextBox ui:field="deducibleExpense" styleName="aon-inputText"/>
+									</td>
+									<td class="aon-text-center">
+										<aon:DoubleTextBox ui:field="compensatoryPension" styleName="aon-inputText"/>
+									</td>
+									<td class="aon-text-center">
+										<aon:DoubleTextBox ui:field="foodAnnuality" styleName="aon-inputText"/>
+									</td>
+								</tr>
+							</table>
+							<div style="border-top: solid #888888 0.5px;">
+							<table>
+								<tr>
+									<td>
+										<g:InlineLabel text="{msg.descendant}" styleName="{style.group-label}"/>
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.total}" />
+									</td>
+									<td class="{aonResources.css.aonTableLabel} aon-nowrap">
+										<g:Label text="{msg.byInteger}" />
+									</td>
+									<td>
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.total}" />
+									</td>
+									<td class="{aonResources.css.aonTableLabel} aon-nowrap">
+										<g:Label text="{msg.byInteger}" />
+									</td>
+									<td>
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.first}" />
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.second}" />
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.third}" />
+									</td>
+								</tr>
+								<tr>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.lessThan3}" />
+									</td>
+									<td>
+										<aon:IntegerTextBox maxLength="1" styleName="aon-inputText"
+											visibleLength="1" ui:field="lessThan3Descendent" />
+									</td>
+									<td>
+										<aon:IntegerTextBox maxLength="1" styleName="aon-inputText"
+											visibleLength="1" ui:field="lessThan3DescendentRatio" />
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.remainder}" />
+									</td>
+									<td>
+										<aon:IntegerTextBox maxLength="2" styleName="aon-inputText"
+											visibleLength="2" ui:field="otherDescendent" />
+									</td>
+									<td>
+										<aon:IntegerTextBox maxLength="2" styleName="aon-inputText"
+											visibleLength="2" ui:field="otherDescendentRatio" />
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.first3Calculation}" />
+									</td>
+									<td>
+										<g:ListBox width="40px" ui:field="firstChildCalculation" styleName="aon-inputText"/>
+									</td>
+									<td>
+										<g:ListBox width="40px" ui:field="secondChildCalculation" styleName="aon-inputText"/>
+									</td>
+									<td>
+										<g:ListBox width="40px" ui:field="thirdChildCalculation" styleName="aon-inputText"/>
+									</td>
+								</tr>
+							</table>
+							</div>
+							<div style="border-top: solid #888888 0.5px;">
+							<table>
+								<tr>
+									<td>
+										<g:InlineLabel text="{msg.disabilityDescendant}" styleName="{style.group-label}"/>
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.total}" />
+									</td>
+									<td class="{aonResources.css.aonTableLabel} aon-nowrap">
+										<g:Label text="{msg.byInteger}" />
+									</td>
+									<td>
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.total}" />
+									</td>
+									<td class="{aonResources.css.aonTableLabel} aon-nowrap">
+										<g:Label text="{msg.byInteger}" />
+									</td>
+									<td>
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.total}" />
+									</td>
+									<td class="{aonResources.css.aonTableLabel} aon-nowrap">
+										<g:Label text="{msg.byInteger}" />
+									</td>
+								</tr>
+								<tr>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.moreThan33lessThan65}" />
+									</td>
+									<td>
+										<aon:IntegerTextBox maxLength="2" styleName="aon-inputText"
+											visibleLength="2" ui:field="disabilityDescendent33" />
+									</td>
+									<td>
+										<aon:IntegerTextBox maxLength="2" styleName="aon-inputText"
+											visibleLength="2" ui:field="disabilityDescendent33Ratio" />
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.reducedMovilitiy}" />
+									</td>
+									<td>
+									<aon:IntegerTextBox maxLength="2" styleName="aon-inputText"
+											visibleLength="2" ui:field="disabilityDescendentDependence" />
+									</td>
+									<td>
+										<aon:IntegerTextBox maxLength="2" styleName="aon-inputText"
+											visibleLength="2" ui:field="disabilityDescendentDependenceRatio" />
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.moreThan65}" />
+									</td>
+									<td>
+										<aon:IntegerTextBox maxLength="2" styleName="aon-inputText"
+											visibleLength="2" ui:field="disabilityDescendent65" />
+									</td>
+									<td>
+										<aon:IntegerTextBox maxLength="2" styleName="aon-inputText"
+											visibleLength="2" ui:field="disabilityDescendent65Ratio" />
+									</td>
+								</tr>
+							</table>
+							</div>
+							<div style="border-top: solid #888888 0.5px;">
+							<table>
+								<tr>
+									<td>
+										<g:InlineLabel text="{msg.ascendant}" styleName="{style.group-label}"/>
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.total}" />
+									</td>
+									<td class="{aonResources.css.aonTableLabel} aon-nowrap">
+										<g:Label text="{msg.byInteger}" />
+									</td>
+									<td>
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.total}" />
+									</td>
+									<td class="{aonResources.css.aonTableLabel} aon-nowrap">
+										<g:Label text="{msg.byInteger}" />
+									</td>
+								</tr>
+								<tr>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.lessThan75}" />
+									</td>
+									<td>
+										<aon:IntegerTextBox maxLength="1" styleName="aon-inputText"
+											visibleLength="1" ui:field="lessThan75Ascendant" />
+									</td>
+									<td>
+										<aon:IntegerTextBox maxLength="1" styleName="aon-inputText"
+											visibleLength="1" ui:field="lessThan75AscendantRatio" />
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.greatherThan75}" />
+									</td>
+									<td>
+										<aon:IntegerTextBox maxLength="1" styleName="aon-inputText"
+											visibleLength="1" ui:field="ascendant" />
+									</td>
+									<td>
+										<aon:IntegerTextBox maxLength="1" styleName="aon-inputText"
+											visibleLength="1" ui:field="ascendantRatio" />
+									</td>
+								</tr>
+							</table>
+							</div>
+							<div style="border-top: solid #888888 0.5px;">
+							<table>
+								<tr>
+									<td>
+										<g:InlineLabel text="{msg.disabilityAscendant}" styleName="{style.group-label}"/>
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.total}" />
+									</td>
+									<td class="{aonResources.css.aonTableLabel} aon-nowrap">
+										<g:Label text="{msg.byInteger}" />
+									</td>
+									<td>
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.total}" />
+									</td>
+									<td class="{aonResources.css.aonTableLabel} aon-nowrap">
+										<g:Label text="{msg.byInteger}" />
+									</td>
+									<td>
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.total}" />
+									</td>
+									<td class="{aonResources.css.aonTableLabel} aon-nowrap">
+										<g:Label text="{msg.byInteger}" />
+									</td>
+								</tr>
+								<tr>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.moreThan33lessThan65}" />
+									</td>
+									<td>
+										<aon:IntegerTextBox maxLength="1" styleName="aon-inputText"
+											visibleLength="1" ui:field="disabilityAscendant33" />
+									</td>
+									<td>
+										<aon:IntegerTextBox maxLength="1" styleName="aon-inputText"
+											visibleLength="1" ui:field="disabilityAscendant33Ratio" />
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.reducedMovilitiy}" />
+									</td>
+									<td>
+										<aon:IntegerTextBox maxLength="1" styleName="aon-inputText"
+											visibleLength="1" ui:field="disabilityAscendantDependence" />
+									</td>
+									<td>
+										<aon:IntegerTextBox maxLength="1" styleName="aon-inputText"
+											visibleLength="1" ui:field="disabilityAscendantDependenceRatio" />
+									</td>
+									<td class="{aonResources.css.aonTableLabel}">
+										<g:Label text="{msg.moreThan65}" />
+									</td>
+									<td>
+										<aon:IntegerTextBox maxLength="1" styleName="aon-inputText"
+											visibleLength="1" ui:field="disabilityAscendant65" />
+									</td>
+									<td>
+										<aon:IntegerTextBox maxLength="1" styleName="aon-inputText"
+											visibleLength="1" ui:field="disabilityAscendant65Ratio" />
+									</td>
+								</tr>
+							</table>
+							</div>
+						</div>
+					</div>
+				</g:HTMLPanel>
+			</g:HTMLPanel>
+		</g:HTMLPanel>
+	</g:ScrollPanel>
+</ui:UiBinder>

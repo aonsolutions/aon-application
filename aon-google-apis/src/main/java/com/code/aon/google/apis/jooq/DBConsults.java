@@ -19,6 +19,8 @@ import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.CommercialTracking.COMMERCIAL_TRACKING;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
+import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
+
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -133,6 +135,44 @@ public class DBConsults {
 			dslContext.update(RATTACH)
 			.set(RATTACH.DATA,bs)
 			.where(RATTACH.DRIVE_ID.eq(driveId)).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static void deleteFileRAttach(String domain, String driveId) throws SQLException{
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			dslContext.delete(RATTACH)
+				.where(RATTACH.DRIVE_ID.eq(driveId)).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static void deleteRAttachTags(String domain,String drive_id) throws SQLException {
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			Result<Record1<Integer>> data =dslContext.select(RATTACH.ID)
+				.from(RATTACH)
+				.where(RATTACH.DRIVE_ID.eq(drive_id)).fetch();
+			
+			dslContext.delete(RATTACH_TAG)
+				.where(RATTACH_TAG.RATTACH.eq(data.get(0).value1())).execute();
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -316,6 +356,23 @@ public class DBConsults {
 		}
 	}
 	
+	public static void deleteFileContractAttach(String domain, String driveId) throws SQLException{
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			dslContext.delete(CONTRACT_ATTACH)
+				.where(CONTRACT_ATTACH.DRIVEID.eq(driveId)).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
 	//ITEM ATTACH
 	public static Vector<FileInfo> getIattach(String domain,
 			Vector<FileInfo> attachs) throws AonConnectionException,
@@ -455,6 +512,23 @@ public class DBConsults {
 			dslContext.update(IATTACH)
 			.set(IATTACH.DATA,bs)
 			.where(IATTACH.DRIVEID.eq(driveId)).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static void deleteFileIAttach(String domain, String driveId) throws SQLException{
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			dslContext.delete(IATTACH)
+				.where(IATTACH.DRIVEID.eq(driveId)).execute();
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -640,6 +714,23 @@ public class DBConsults {
 		}
 	}
 	
+	public static void deleteFileInvoiceAttach(String domain, String driveId) throws SQLException{
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			dslContext.delete(INVOICE_ATTACH)
+				.where(INVOICE_ATTACH.DRIVEID.eq(driveId)).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
 	//OFFER ATTACH
 	public static Vector<FileInfo> getOfferAttach(String domain,
 			Vector<FileInfo> attachs) throws AonConnectionException,
@@ -778,6 +869,23 @@ public class DBConsults {
 			dslContext.update(OFFER_ATTACH)
 			.set(OFFER_ATTACH.DATA,bs)
 			.where(OFFER_ATTACH.DRIVEID.eq(driveId)).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static void deleteFileOfferAttach(String domain, String driveId) throws SQLException{
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			dslContext.delete(OFFER_ATTACH)
+				.where(OFFER_ATTACH.DRIVEID.eq(driveId)).execute();
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -929,6 +1037,23 @@ public class DBConsults {
 			dslContext.update(PAYROLL_BATCH_ATTACH)
 			.set(PAYROLL_BATCH_ATTACH.DATA,bs)
 			.where(PAYROLL_BATCH_ATTACH.DRIVEID.eq(driveId)).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static void deleteFilePayrollAttach(String domain,String driveId) throws SQLException{
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			dslContext.delete(PAYROLL_BATCH_ATTACH)
+				.where(PAYROLL_BATCH_ATTACH.DRIVEID.eq(driveId)).execute();
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -1115,6 +1240,22 @@ public class DBConsults {
 		}
 	}
 	
+	public static void deleteFileProjectAttach(String domain, String driveId) throws SQLException{
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			dslContext.delete(PROJECT_ATTACH)
+				.where(PROJECT_ATTACH.DRIVEID.eq(driveId)).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
 	
 	//SEPE BATCH ATTACH
 	public static Vector<FileInfo> getSepeAttach(String domain,
@@ -1262,6 +1403,25 @@ public class DBConsults {
 		}
 	}
 	
+	public static void deleteFileSepeAttach(String domain, String driveId) throws SQLException{
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			dslContext.delete(SEPE_BATCH_ATTACH)
+				.where(SEPE_BATCH_ATTACH.DRIVEID.eq(driveId)).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	
+	
 	public static Vector<String> getCommercial(String domain,
 			Integer id) throws AonConnectionException,
 			SQLException {
@@ -1315,7 +1475,6 @@ public class DBConsults {
 				connection.close();
 		}
 	}
-	
 	
 	public static String getUserName(String domain, Integer id) throws AonConnectionException,
 	SQLException {

@@ -4,7 +4,6 @@ import org.apache.commons.lang.ArrayUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.product.Item;
@@ -18,7 +17,6 @@ public class CustomerSearchListener extends RegistryPayMethodSearchListener {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private CustomerStatus[] customerStatuses;
-	
 	private Item item;
 	
 	public CustomerStatus[] getCustomerStatuses() {
@@ -41,8 +39,7 @@ public class CustomerSearchListener extends RegistryPayMethodSearchListener {
 	protected void init() throws ManagerBeanException {
 		CustomerStatus[] defaultCustomerStatus = {CustomerStatus.ACTIVE};
 		setCustomerStatuses(defaultCustomerStatus);
-		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
-		setItem( (Item) itemBean.createNewTo() );		
+		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());		
 		super.init();
 	}
 	
@@ -52,7 +49,7 @@ public class CustomerSearchListener extends RegistryPayMethodSearchListener {
 			String status = getController().resolveAlias(IEntityAlias.CUSTOMER_STATUS);
 			addEnumToCriteria(criteria, status, getCustomerStatuses());
 		}
-		if ( getItem() != null && getItem().getId() != null ) {
+		if (getItem() != null && getItem().getId() != null) {
 			String item = getController().resolveAlias("Registry_items_item_id");
 			criteria.addEqualExpression(item, getItem().getId());			
 		}

@@ -16,10 +16,67 @@
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
-				<ui:include src="/com/code/aon/ui/registry/facelet/person/formContent.xhtml">
-					<ui:param name="controller" value="#{person}" />
-				</ui:include>
+			
+				<aon:panelGrid columns="2" styleClass="aon-panelGrid-formatting aon-width-all"
+					columnClasses="aon-vertical-align-top aon-width-auto, aon-vertical-align-top aon-width-auto">
+					<aon:div>
+						<ui:include src="/com/code/aon/ui/registry/facelet/person/formContent.xhtml">
+							<ui:param name="controller" value="#{person}" />
+							<ui:param name="skipPersonAddress" value="#{true}" />
+							<ui:param name="skipPersonPayMethodForm" value="#{true}" />
+						</ui:include>
+					</aon:div>
+					<aon:div>
+						<aon:panelGrid columns="2" style="width: 100%;" 
+							columnClasses="aon-panelGrid-odd aon-width-50,aon-panelGrid-even aon-width-500">
+							<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
+								<ui:param name="controller" value="#{person}" />
+								<ui:param name="controllerLookupListener" value="#{personForm}"/>
+								<ui:param name="addressRequired" value="#{true}"/>
+								<ui:param name="skipFax" value="#{true}"/>
+								<ui:param name="skipWeb" value="#{true}"/>
+								<ui:param name="showMunicipality" value="#{true}" />
+							</ui:include>	
+							<ui:include src="/com/code/aon/ui/registry/facelet/person/formLogo.xhtml">
+								<ui:param name="controller" value="#{person}" />
+							</ui:include>
+						</aon:panelGrid>
+					</aon:div>
+				</aon:panelGrid>
+				
+				<aon:if test="#{!person.nevv}">
+					<aon:panelTabSet >
+						<aon:panelTab id="finance"
+							label="#{bundle.registry_finance_data_module}">
+							<aon:panel>
+								<f:facet name="header">
+									<aon:outputText	value="#{bundle.registry_banks_module}" />
+								</f:facet>
+								<ui:include
+									src="/com/code/aon/ui/registry/facelet/rbank/tab_grid.xhtml">
+									<ui:param name="controller" value="#{personRbank}" />
+									<ui:param name="showSuffix" value="#{false}" />
+								</ui:include>
+							</aon:panel>
+							<aon:panel>
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.config_predef_paymethod}" />
+								</f:facet>
+								<ui:include
+									src="/com/code/aon/ui/registry/facelet/rpaymethod/tab_grid.xhtml">
+									<ui:param name="controller" value="#{personRPayMethod}" />
+								</ui:include>
+							</aon:panel>
+						</aon:panelTab>
+						<aon:panelTab id="documentManagement" label="#{bundle.aon_documents}">
+							<ui:include src="/com/code/aon/ui/registry/facelet/documentManager/tab_grid.xhtml">
+								<ui:param name="controller" value="#{personRAttach}" />
+							</ui:include>								
+						</aon:panelTab>
+					</aon:panelTabSet>
+				</aon:if>
 			</aon:div>
+			
 		</aon:form>
 		<aon:if test="#{aonConfiguration.bean.rmedia.showSendEmail}">
 			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />

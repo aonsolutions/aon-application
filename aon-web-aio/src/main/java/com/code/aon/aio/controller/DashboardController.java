@@ -1664,7 +1664,6 @@ public class DashboardController implements Serializable {
 		}
 	}
 	private  void view(DashboardPayrollPortal d) {
-		// TODO Apéndice de método generado automáticamente
 		LOGGER.debug("AÑO:  "+ d.getAno());
 		LOGGER.debug("MES:  "+d.getMes());
 		LOGGER.debug("SS:   "+d.getSs());

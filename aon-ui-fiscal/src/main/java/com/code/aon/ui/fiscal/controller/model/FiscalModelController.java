@@ -49,6 +49,7 @@ import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
+import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.controller.FinanceController;
@@ -58,7 +59,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public abstract class FiscalModelController extends BasicController implements IFiscalModelController{
+public abstract class FiscalModelController extends BasicController implements IFiscalModelController, IAuditableController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 

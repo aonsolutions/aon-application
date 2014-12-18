@@ -11,8 +11,8 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalMessages;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
-import com.esferalia.aon.gwt.fiscal.shared.Activity;
 import com.esferalia.aon.gwt.fiscal.shared.FiscalEnum.ActivityGroup;
+import com.esferalia.aon.occam.api.model.Mod390.Activity;
 import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -36,10 +36,18 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.NoSelectionModel;
+import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class ActivityPanel extends CustomDialog {
+
+	public static final ProvidesKey<Activity> ACTIVITY_PROVIDES_KEY = new ProvidesKey<Activity>() {
+		@Override
+		public Object getKey(Activity activity) {
+			return activity == null ? null : activity.getEpigraph();
+		}
+	};
 
 	public interface SelectionCallBack {
 		void onSelect(Activity activity);
@@ -100,7 +108,7 @@ public class ActivityPanel extends CustomDialog {
 		AON_RESOURCES.css().ensureInjected();
 		CellTable.Resources tableStyle = GWT.create(AonCellTable.class);
 
-		table = new CellTable<Activity>(1, tableStyle, Activity.PROVIDES_KEY);
+		table = new CellTable<Activity>(1, tableStyle, ACTIVITY_PROVIDES_KEY);
 		table.setKeyboardPagingPolicy(KeyboardPagingPolicy.CHANGE_PAGE);
 		table.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 
@@ -108,7 +116,7 @@ public class ActivityPanel extends CustomDialog {
 		addEpigraphColumn();
 		addDescriptionColumn();
 
-		model = new NoSelectionModel<Activity>(Activity.PROVIDES_KEY);
+		model = new NoSelectionModel<Activity>(ACTIVITY_PROVIDES_KEY);
 		model.addSelectionChangeHandler(new ActivitySelectionHandler());
 		table.setSelectionModel(model);
 		table.setEmptyTableWidget(new HTML(MSG.noData()));

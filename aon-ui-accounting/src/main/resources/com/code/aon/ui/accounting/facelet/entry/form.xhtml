@@ -113,6 +113,11 @@
 							styleClass="aon-finding-toolbar-item aon-icon-copy"
 							immediate="true" />
 						
+						<ui:include
+							src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml">
+							<ui:param name="controller" value="#{accountEntry}" />
+						</ui:include>						
+						
 						<aon:htmlCommandLink id="journalBookXls-excel-report"
 							value="&#160;" target="_blank" 
 							actionListener="#{accountEntry.onExcelJournal}"
@@ -430,5 +435,8 @@
 		<aon:if test="#{accountEntry.nevv}">
 			<rich:jQuery timing="onload" selector="#AccountEntry_accountPeriod" query="focus()"/>
 		</aon:if>
+		<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
+			<ui:param name="auditableController" value="#{accountEntry}" />
+		</ui:include>						
 	</ui:define>
 </ui:composition>

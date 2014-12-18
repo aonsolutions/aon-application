@@ -26,7 +26,7 @@
 					<g:Label text="{msg.document}" />
 				</td>
 				<td>
-					<aon:DocumentTextBox ui:field="document" />
+					<aon:DocumentTextBox ui:field="document" styleName="aon-inputText"/>
 				</td>
 			</tr>
 
@@ -35,7 +35,7 @@
 					<g:Label text="{msg.name}" />
 				</td>
 				<td>
-					<g:TextBox ui:field="name" visibleLength="25"/>
+					<g:TextBox ui:field="name" visibleLength="25" styleName="aon-inputText"/>
 				</td>
 			</tr>
 
@@ -44,8 +44,8 @@
 					<g:Label text="{msg.surname}" />
 				</td>
 				<td>
-					<g:TextBox ui:field="firstSurname" maxLength="15" visibleLength="16"/>
-					<g:TextBox ui:field="secondSurname" maxLength="15" visibleLength="16"/>
+					<g:TextBox ui:field="firstSurname" maxLength="15" visibleLength="16" styleName="aon-inputText"/>
+					<g:TextBox ui:field="secondSurname" maxLength="15" visibleLength="16" styleName="aon-inputText"/>
 				</td>
 			</tr>
 
@@ -54,7 +54,7 @@
 					<g:Label text="{msg.phone}" />
 				</td>
 				<td>
-					<g:TextBox ui:field="phone" />
+					<g:TextBox ui:field="phone" styleName="aon-inputText"/>
 				</td>
 			</tr>
 		</table>

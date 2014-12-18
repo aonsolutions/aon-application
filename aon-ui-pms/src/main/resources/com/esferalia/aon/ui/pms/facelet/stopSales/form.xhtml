@@ -13,15 +13,9 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.pms_stop_sales_module}" />
 				<ui:param name="controller" value="#{stopSales}" />
-				<ui:define name="beforeSpinToolbarContent">				
-					<aon:commandButton id="audit-info"
-						styleClass="aon-finding-toolbar-item aon-icon-audit"
-						value="#{bundle.aon_audit}"
-						rendered="#{!stopSales.nevv}"
-						reRender="showAuditInfoWindow">
-						<f:setPropertyActionListener target="#{stopSales.showAuditInfoWindow}"
-							value="#{true}" />
-					</aon:commandButton>
+				<ui:define name="beforeSpinToolbarContent">
+					<ui:include
+						src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml" />											
 				</ui:define>
 			</ui:decorate>
 

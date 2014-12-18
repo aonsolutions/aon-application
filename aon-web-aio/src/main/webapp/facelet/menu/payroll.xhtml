@@ -339,8 +339,46 @@
 					<aon:panelGroup>
 						<aon:panelGrid id="group_hacienda" styleClass="aon-width-all"
 							columnClasses="aon-padding"
-							headerClass="aon-icon-aeat aon-direct-access-panel">
+							headerClass="aon-direct-access-panel">
 							<f:facet name="header">
+							
+								<h:panelGrid columns="6" style="width: 100%;height: 100%; position: relative; left: -30px;"
+									columnClasses="aon-width-20, aon-width-20, aon-width-20, aon-width-20, aon-width-20, aon-width-auto">
+									<h:outputLink target="_blank" value="http://www.aeat.es"
+										title="#{bundle.aon_navigate_to_official_website}">
+										<h:graphicImage styleClass="aon-vertical-align-middle"
+											title="Agencia Tributaria"
+											url="#{aonResource.resolve['/images/aon-icon/aon-aeat.png']}" />
+									</h:outputLink>
+									<h:outputLink target="_blank" value="http://www.alava.net"
+										title="#{bundle.aon_navigate_to_official_website}">
+										<h:graphicImage styleClass="aon-vertical-align-middle"
+											title="Diputación Foral de Alava / Arabako Foru Aldundia"
+											url="#{aonResource.resolve['/images/aon-icon/aon-icon-araba.png']}" />
+									</h:outputLink>
+									<h:outputLink target="_blank" value="http://www.bizkaia.net"
+										title="#{bundle.aon_navigate_to_official_website}">
+										<h:graphicImage styleClass="aon-vertical-align-middle"
+											title="Diputación Foral de Bizkaia / Bizkaiako Foru Aldundia"
+											url="#{aonResource.resolve['/images/aon-icon/aon-icon-bizkaia.png']}" />
+									</h:outputLink>
+									<h:outputLink target="_blank" value="http://www.gipuzkoa.net"
+										title="#{bundle.aon_navigate_to_official_website}">
+										<h:graphicImage styleClass="aon-vertical-align-middle"
+											title="Diputación Foral de Gipuzkoa / Gipuzkoako Foru Aldundia"
+											url="#{aonResource.resolve['/images/aon-icon/aon-icon-gipuzkoa.png']}" />
+									</h:outputLink>
+									<h:outputLink target="_blank" value="http://www.navarra.es"
+										title="#{bundle.aon_navigate_to_official_website}">
+										<h:graphicImage styleClass="aon-vertical-align-middle"
+											title="Gobierno de Navarra / Nafarroako Gobernua"
+											url="#{aonResource.resolve['/images/aon-icon/aon-icon-navarra.png']}" />
+									</h:outputLink>
+									<aon:outputText value="Modelos tributarios"
+										style="font-size: 10px;"
+										 styleClass="aon-padding-left"/>
+								</h:panelGrid>
+<!-- 							
 								<aon:div>
 									<h:outputLink target="_blank"
 										value="http://www.agenciatributaria.es">
@@ -354,40 +392,70 @@
 											url="#{aonResource.resolve['/images/aon-icon/aon-icon-lookup-goto.png']}" />
 									</h:outputLink>
 								</aon:div>
+-->
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
+								
+								<aon:div>
 									<aon:commandLink id="irpfData-payroll"
-										action="irpfData_search-payroll"
+										action="irpfData_search-payroll" style="white-space: nowrap;"
 										actionListener="#{irpfData.onEditSearch}"
-										value="#{bundle.payroll_model_145_module}">
+										title="#{bundle.payroll_model_145_module}">
 										<aon:actionListener method="#{contract.onEditSearch}" />
+										<aon:outputText styleClass="aon-fiscal-link-box" value="145" />
+										<aon:outputText styleClass="aon-fiscal-link-label"
+											style="white-space: normal;" 
+											value="#{bundle.payroll_model_145_module}" />
 									</aon:commandLink>
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="mod111-payroll"
-										action="mod111_search-payroll"
+
+								<aon:div styleClass="aon-margin-top">
+									<aon:commandLink id="mod111-payroll" 
+										action="mod111_search-payroll" style="white-space: nowrap;"
 										actionListener="#{mod111.onEditSearch}"
-										value="Mod. 111 - #{bundle.fiscal_model_111_module_abbr}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="gwt_mod190-payroll"
-										action="gwt_mod190-payroll"
-										value="Mod. 190 - Resumen anual de retenciones e ingresos a cuenta ">
+										title="#{bundle.fiscal_model_111_module}">
+										<aon:outputText styleClass="aon-fiscal-link-box" value="111" />
+										<aon:outputText styleClass="aon-fiscal-link-label"
+											style="white-space: normal;" 
+											value="#{bundle.fiscal_model_111_module}" />
 									</aon:commandLink>
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
+								
+								<aon:div styleClass="aon-margin-top">
+									<aon:commandLink id="gwt_mod190-payroll"
+										action="gwt_mod190-payroll" style="white-space: nowrap;"
+										title="#{bundle.fiscal_model_190_module}">
+										<aon:outputText styleClass="aon-fiscal-link-box" value="190"/>
+										<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
+											style="white-space: normal; margin-left: 5px; padding-left: 20px;" 
+											value="#{bundle.fiscal_model_190_module}" />
+									</aon:commandLink>
+								</aon:div>
+								
+								<aon:div styleClass="aon-margin-top">
+									<a4j:commandLink ajaxSingle="true" immediate="true" 
+										onclick="alert('#{bundle.aio_not_yet}');return false;"
+										title="Retenciones de trabajo de No Residentes"
+										style="color:grey;font-style:oblique; white-space: nowrap;">
+										<aon:outputText styleClass="aon-fiscal-link-box" value="216"/>
+										<aon:outputText styleClass="aon-fiscal-link-label"
+											style="white-space: normal;" 
+											value="Retenciones de trabajo de No Residentes" />
+									</a4j:commandLink>
+								</aon:div>
+								
+								<aon:div styleClass="aon-margin-top">
 									<a4j:commandLink ajaxSingle="true" immediate="true"
 										onclick="alert('#{bundle.aio_not_yet}');return false;"
-										value="Modelo 216 - Retenciones de trabajo de No Residentes"
-										style="color:grey;font-style:oblique;" />
+										title="Resumen IRPF Anual de No Residentes"
+										style="color:grey;font-style:oblique;white-space: nowrap;">
+										<aon:outputText styleClass="aon-fiscal-link-box" value="296"/>
+										<aon:outputText styleClass="aon-fiscal-link-label"
+											style="white-space: normal;" 
+											value="Resumen IRPF Anual de No Residentes" />
+									</a4j:commandLink>
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<a4j:commandLink ajaxSingle="true" immediate="true"
-										onclick="alert('#{bundle.aio_not_yet}');return false;"
-										value="Modelo 296 - Resumen IRPF Anual de No Residentes"
-										style="color:grey;font-style:oblique;" />
-								</aon:div>
+								
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>

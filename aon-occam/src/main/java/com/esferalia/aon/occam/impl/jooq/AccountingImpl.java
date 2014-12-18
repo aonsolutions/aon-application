@@ -17,14 +17,13 @@ import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
-import com.esferalia.aon.occam.api.model.SalaryAccountEntry.SalaryAccountEntryLineType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
-import com.esferalia.aon.watson.AonCoreException;
 import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -144,16 +143,18 @@ public class AccountingImpl implements IAccounting {
 		ae.setSecurityLevel(sae.getSecurityLevel());
 		ae.setEntryType(AccountEntryType.SALARY);
 		AccountPeriod period = AccountPeriodDAO.fetchOne(ctx, sae.getDate());
-		if (period == null) 
-			throw new AonCoreException(AonError.ACCOUNT_PERIOD_UNKOWN_FOR_DATE,sae.getDate());
+		if (period == null)
+			throw new AonCoreException(
+					AonError.ACCOUNT_PERIOD_UNKOWN_FOR_DATE.format(sae.getDate())
+					);
 		if (period.getStatus() == AccountPeriodStatus.INACTIVE) 
-			throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_INACTIVE,period.getName());
+			throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_INACTIVE.format(period.getName()));
 		else if (period.getStatus() == AccountPeriodStatus.OPERATING) 
-			throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_OPERATING,period.getName());
+			throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_OPERATING.format(period.getName()));
 		else if (period.getStatus() == AccountPeriodStatus.CLOSED) 
-			throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_CLOSING,period.getName());
+			throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_CLOSING.format(period.getName()));
 		if (sae.getLines() == null || sae.getLines().size() == 0) {
-			throw new AonCoreException(AonError.ACCOUNT_ENTRY_SALARY_NO_LINES);
+			throw new AonCoreException(AonError.ACCOUNT_ENTRY_SALARY_NO_LINES.getMessage());
 		}
 		ae.setAccountPeriod(period.getId());
 		sae.getLines()
@@ -172,7 +173,7 @@ public class AccountingImpl implements IAccounting {
 							}
 						}
 						if (aed.getAccount() == null)
-							throw new AonCoreException(AonError.ACCOUNT_ENTRY_SALARY_NO_ACCOUNT,line.getType(),line.getAmount(),line.getType().getParam() );				
+							throw new AonCoreException(AonError.ACCOUNT_ENTRY_SALARY_NO_ACCOUNT.format(line.getType(),line.getAmount(),line.getType().getParam() ));				
 					}
 					aed.setConcept( sae.getConcept() );
 					line.getType().visitFillAccountEntry(aed,sae,line);

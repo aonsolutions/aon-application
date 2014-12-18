@@ -29,6 +29,7 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
+import com.code.aon.ui.google.apis.controller.GoogleDriveController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
@@ -105,8 +106,14 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 		byte[] b = null;
 		MimeType mimetype = MimeType.values()[doc.getMimetype()];
 		if(doc.getDriveId()!= null){
-			DomainGserviceaccount g = DatabaseSync.getServiceAccount(AonUtil.getDomainName());
-			Drive d = DriveUtils.serviceInitialize(g);
+        	Drive d = null;
+        	if(doc.getIsDrive()){
+        		d = GoogleDriveController.dconnection;
+        	}
+        	else{
+        		DomainGserviceaccount g = DatabaseSync.getServiceAccount(AonUtil.getDomainName());
+        		d = DriveUtils.serviceInitialize(g);
+        	}
 			com.google.api.services.drive.model.File f = d.files().get(doc.getDriveId()).execute();
 			InputStream in = DriveUtils.downloadFile(d, f);
 			b = Utils.InputStreamToByte(in);

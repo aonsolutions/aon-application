@@ -14,14 +14,8 @@
 				<ui:param name="toolbarTitle" value="#{bundle.pms_allotment_module}" />
 				<ui:param name="controller" value="#{allotment}" />
 				<ui:define name="beforeSpinToolbarContent">				
-					<aon:commandButton id="audit-info"
-						styleClass="aon-finding-toolbar-item aon-icon-audit"
-						value="#{bundle.aon_audit}"
-						rendered="#{!allotment.nevv}"
-						reRender="showAuditInfoWindow">
-						<f:setPropertyActionListener target="#{allotment.showAuditInfoWindow}"
-							value="#{true}" />							
-					</aon:commandButton>	
+					<ui:include
+						src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml" />											
 				</ui:define>				
 			</ui:decorate>
 
@@ -31,9 +25,11 @@
 		</aon:form>
 		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 
-		<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
-			<ui:param name="auditableController" value="#{allotment}" />
-		</ui:include>
+		<aon:if test="#{!allotment.nevv}">
+			<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
+				<ui:param name="auditableController" value="#{allotment}" />
+			</ui:include>
+		</aon:if>
 
 	</ui:define>
 </ui:composition>

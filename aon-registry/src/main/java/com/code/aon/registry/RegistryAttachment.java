@@ -33,6 +33,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.annotations.Heritable;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.dao.hibernate.BlobEntityListener;
 import com.code.aon.common.dao.hibernate.HibernateBlobManager;
 import com.code.aon.common.enumeration.SecurityLevel;
@@ -46,7 +47,7 @@ import com.esferalia.aon.entity.master.RegistryAttachmentDB;
 @Table(name="rattach")
 @Heritable(force=true)
 @EntityListeners(BlobEntityListener.class)
-public class RegistryAttachment extends RegistryAttachmentDB implements IAttachment,IScopable, IBlobObject {
+public class RegistryAttachment extends RegistryAttachmentDB implements IAttachment, IScopable, IBlobObject, IAuditable {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 

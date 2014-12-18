@@ -17,13 +17,11 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.person.Person;
-import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
@@ -38,6 +36,7 @@ import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.ui.payroll.controller.ContractInfoController;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
+import com.esferalia.aon.ui.payroll.controller.contract.ContractClauseController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.utils.ContractUtils;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
@@ -241,11 +240,9 @@ public class ContractControllerListener extends ControllerAdapter{
 	
 	private void importContractClauses(Contract contract) {
 		try {
+			ContractClauseController controller = (ContractClauseController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CLAUSE_CONTROLLER);
+			List<ITransferObject> list = controller.obtainAvailableClausesModel(true);
 			IManagerBean bean = BeanManager.getManagerBean(ContractClause.class);
-			Criteria criteria = new Criteria();
-			criteria.addNullExpression("ContractClause.contract");
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_CLAUSE_GENERAL), true);
-			List<ITransferObject> list = bean.getList(criteria);
 			for(ITransferObject to: list){
 				ContractClause enterpriseClause = (ContractClause) to;
 				ContractClause clause = new ContractClause();

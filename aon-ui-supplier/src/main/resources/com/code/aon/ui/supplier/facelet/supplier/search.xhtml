@@ -23,5 +23,8 @@
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
+		<aon:if test="#{aonConfiguration.bean.supplier.showProduct}">
+			<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		</aon:if>			
 	</ui:define>
 </ui:composition>

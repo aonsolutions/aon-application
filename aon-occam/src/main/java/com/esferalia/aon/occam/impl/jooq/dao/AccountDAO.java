@@ -14,7 +14,8 @@ public class AccountDAO {
 	public static Account fetchOne(AONContext ctx, Integer accountId) {
 		Condition condition = ACCOUNT.ID.equal(accountId).and(
 				ctx.getDomainInheritanceCondition(
-						ctx.getDomainId(),ACCOUNT.DOMAIN));		
+						ctx.getDomainId(),ACCOUNT.DOMAIN));
+		ctx.checkRead();
 		return populateRecord(ctx.getDslContext().fetchOne(ACCOUNT,condition));
 	}
 

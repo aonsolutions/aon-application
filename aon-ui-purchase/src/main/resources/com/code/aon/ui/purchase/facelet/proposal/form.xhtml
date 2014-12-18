@@ -30,6 +30,8 @@
 							target="#{proposal.showTransferWindow}"
 							value="#{true}" />
 					</aon:commandButton>
+					<ui:include
+						src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml" />											
 					<aon:htmlCommandLink id="purchaseProposal-report" value="#{bundle.purchase_proposal}"
 						target="_new" rendered="#{!proposal.nevv and proposalDetail.model.rowCount > 0}"
 						action="#{report.onExecute}"
@@ -145,9 +147,13 @@
 			
 		</aon:form>
 		
-		<aon:lookupButtonPopup lookup="#{itemLookup}" />
-		<ui:include src="/com/code/aon/ui/purchase/facelet/proposal/modalTransfer.xhtml" />
-		
+		<aon:if test="#{!proposal.nevv}">
+			<aon:lookupButtonPopup lookup="#{itemLookup}" />
+			<ui:include src="/com/code/aon/ui/purchase/facelet/proposal/modalTransfer.xhtml" />
+			<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
+				<ui:param name="auditableController" value="#{proposal}" />
+			</ui:include>
+		</aon:if>					
 		
 	</ui:define>
 </ui:composition>

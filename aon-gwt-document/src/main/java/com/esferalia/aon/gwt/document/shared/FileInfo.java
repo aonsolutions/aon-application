@@ -32,8 +32,10 @@ import com.google.gwt.view.client.ProvidesKey;
 		private Byte mimetype;
 		private Integer category;
 		private Vector<String> emails= new Vector<String>();
-
-
+		
+		private Boolean isGdocs = false;
+		private Boolean isDrive = false;
+		private Boolean isParent = false;
 		private Boolean isNomina = false;
 		private Vector<Tag> tags;
 		private String tagsStr;
@@ -268,6 +270,31 @@ import com.google.gwt.view.client.ProvidesKey;
 		public void setDomainDescription(String domainDescription) {
 			this.domainDescription = domainDescription;
 		}
+
+		public Boolean getIsParent() {
+			return isParent;
+		}
+
+		public void setIsParent(Boolean isParent) {
+			this.isParent = isParent;
+		}
+
+		public Boolean getIsDrive() {
+			return isDrive;
+		}
+
+		public void setIsDrive(Boolean isDrive) {
+			this.isDrive = isDrive;
+		}
+
+		public Boolean getIsGdocs() {
+			return isGdocs;
+		}
+
+		public void setIsGdocs(Boolean isGdocs) {
+			this.isGdocs = isGdocs;
+		}
+		
 		
 
 	}

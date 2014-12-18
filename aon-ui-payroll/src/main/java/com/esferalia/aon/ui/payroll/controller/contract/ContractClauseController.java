@@ -1,5 +1,7 @@
 package com.esferalia.aon.ui.payroll.controller.contract;
 
+import java.util.List;
+
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
@@ -7,9 +9,13 @@ import javax.faces.model.DataModel;
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.LinesController;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -74,12 +80,21 @@ public class ContractClauseController extends LinesController {
 	}
 	
 	private void buildAvailableClausesModel() throws ManagerBeanException {
+		setAvailableClausesModel(new SerializableListDataModel(obtainAvailableClausesModel(false)));
+	}
+
+	public List<ITransferObject> obtainAvailableClausesModel(boolean general) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ContractClause.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_CLAUSE_GENERAL), false);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_CLAUSE_GENERAL), general);
 		criteria.addNullExpression("ContractClause.contract");
+		Integer parentDomain = DomainManager.getParentDomain();
+		criteria.setSkipDomainFilter(true);
+		Expression expr1 = ExpressionUtilities.getEqualExpression(this.getFieldName(IEntityAlias.CONTRACT_CLAUSE_DOMAIN), DomainManager.getCurrentDomain());
+		Expression expr2 = ExpressionUtilities.getEqualExpression(this.getFieldName(IEntityAlias.CONTRACT_CLAUSE_DOMAIN), parentDomain);
+		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
 		criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_CLAUSE_LINE));
-		setAvailableClausesModel(new SerializableListDataModel(bean.getList(criteria)));
+		return bean.getList(criteria);
 	}
 
 	public Integer calculateNextLine(boolean general) throws ManagerBeanException {

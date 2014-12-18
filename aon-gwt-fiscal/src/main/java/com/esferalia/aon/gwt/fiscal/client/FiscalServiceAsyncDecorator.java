@@ -5,17 +5,16 @@ import java.util.ArrayList;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.gwt.common.shared.FiscalParameters;
-import com.esferalia.aon.gwt.fiscal.shared.Activity;
 import com.esferalia.aon.gwt.fiscal.shared.Enterprise;
-import com.esferalia.aon.gwt.fiscal.shared.Mod190;
-import com.esferalia.aon.gwt.fiscal.shared.Mod190Detail;
-import com.esferalia.aon.gwt.fiscal.shared.Mod190Receiver;
-import com.esferalia.aon.gwt.fiscal.shared.Mod303Results;
 import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
-import com.esferalia.aon.gwt.fiscal.shared.Mod390;
-import com.esferalia.aon.gwt.fiscal.shared.Mod390Detail;
 import com.esferalia.aon.occam.api.model.Mod180;
 import com.esferalia.aon.occam.api.model.Mod180Detail;
+import com.esferalia.aon.occam.api.model.Mod190;
+import com.esferalia.aon.occam.api.model.Mod190Detail;
+import com.esferalia.aon.occam.api.model.Mod390;
+import com.esferalia.aon.occam.api.model.Mod390.Activity;
+import com.esferalia.aon.occam.api.model.Mod390.Mod303Results;
+import com.esferalia.aon.occam.api.model.Mod390.Mod390Detail;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
@@ -55,55 +54,43 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 
 	// ---------------------------------------------------------------MODELO 190
 	@Override
-	public void deleteMod190(Mod190 mod190, AsyncCallback<Void> callback) {
+	public void deleteMod190(String domainName, int domain, Mod190 mod190,
+			AsyncCallback<Void> callback) {
 		AON.start();
-		fiscalServiceAsync.deleteMod190(mod190, new AsyncCallbackWrapper<Void>(
-				callback));
+		fiscalServiceAsync.deleteMod190(domainName, domain, mod190,
+				new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void saveMod190(Mod190 mod190, AsyncCallback<Mod190> callback) {
-		AON.start();
-		fiscalServiceAsync.saveMod190(mod190, new AsyncCallbackWrapper<Mod190>(
-				callback));
-	}
-
-	@Override
-	public void saveMod190(Mod190 mod190, ArrayList<Mod190Receiver> perceptors,
+	public void saveMod190(String domainName, int domain, Mod190 mod190,
 			AsyncCallback<Mod190> callback) {
 		AON.start();
-		fiscalServiceAsync.saveMod190(mod190, perceptors,
+		fiscalServiceAsync.saveMod190(domainName, domain, mod190,
 				new AsyncCallbackWrapper<Mod190>(callback));
 	}
 
 	@Override
-	public void getMod190s(int domain, AsyncCallback<ArrayList<Mod190>> callback) {
+	public void getMod190s(String domainName, int domain,
+			AsyncCallback<ArrayList<Mod190>> callback) {
 		AON.start();
-		fiscalServiceAsync.getMod190s(domain,
+		fiscalServiceAsync.getMod190s(domainName, domain,
 				new AsyncCallbackWrapper<ArrayList<Mod190>>(callback));
 	}
 
 	@Override
-	public void getMod190(Integer id, AsyncCallback<Mod190> callback) {
+	public void getMod190(String domainName, int domain, Integer id,
+			AsyncCallback<Mod190> callback) {
 		AON.start();
-		fiscalServiceAsync.getMod190(id, new AsyncCallbackWrapper<Mod190>(
-				callback));
+		fiscalServiceAsync.getMod190(domainName, domain, id,
+				new AsyncCallbackWrapper<Mod190>(callback));
 	}
 
 	@Override
-	public void getMod190DetailByMod190(int mod190, int offset, int limit,
-			AsyncCallback<ArrayList<Mod190Detail>> callback) {
+	public void getMod190Detail(String domainName, int domain, Integer id,
+			AsyncCallback<Mod190Detail> callback) {
 		AON.start();
-		fiscalServiceAsync.getMod190DetailByMod190(mod190, offset, limit,
-				new AsyncCallbackWrapper<ArrayList<Mod190Detail>>(callback));
-	}
-
-	@Override
-	public void getMod190Detail(Integer id,
-			AsyncCallback<Mod190Receiver> callback) {
-		AON.start();
-		fiscalServiceAsync.getMod190Detail(id,
-				new AsyncCallbackWrapper<Mod190Receiver>(callback));
+		fiscalServiceAsync.getMod190Detail(domainName, domain, id,
+				new AsyncCallbackWrapper<Mod190Detail>(callback));
 	}
 
 	// ---------------------------------------------------------------MODELO 180
@@ -149,18 +136,50 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 
 	// ---------------------------------------------------------------MODELO 390
 	@Override
-	public void getMod390Details(int domain, Integer year,
+	public void getMod390(String domainName, Integer domain, Integer id,
+			AsyncCallback<Mod390> callback) {
+		AON.start();
+		fiscalServiceAsync.getMod390(domainName, domain, id,
+				new AsyncCallbackWrapper<Mod390>(callback));
+	}
+
+	@Override
+	public void getMod390s(String domainName, Integer domain,
+			AsyncCallback<ArrayList<Mod390>> callback) {
+		AON.start();
+		fiscalServiceAsync.getMod390s(domainName, domain,
+				new AsyncCallbackWrapper<ArrayList<Mod390>>(callback));
+	}
+
+	@Override
+	public void saveMod390(String domainName, Integer domain, Mod390 mod390,
+			AsyncCallback<Mod390> callback) {
+		AON.start();
+		fiscalServiceAsync.saveMod390(domainName, domain, mod390,
+				new AsyncCallbackWrapper<Mod390>(callback));
+	}
+
+	@Override
+	public void deleteMod390(String domainName, Integer domain, Mod390 mod390,
+			AsyncCallback<Void> callback) {
+		AON.start();
+		fiscalServiceAsync.deleteMod390(domainName, domain, mod390,
+				new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void getMod390Details(String domainName, Integer domain, Mod390 mod390,
 			AsyncCallback<ArrayList<Mod390Detail>> callback) {
 		AON.start();
-		fiscalServiceAsync.getMod390Details(domain, year,
+		fiscalServiceAsync.getMod390Details(domainName,domain, mod390,
 				new AsyncCallbackWrapper<ArrayList<Mod390Detail>>(callback));
 	}
-	
+
 	@Override
-	public void getMod303Results(int domain, int year,
+	public void getMod303Results(String domainName, Integer domain, int year,
 			AsyncCallback<Mod303Results> callback) {
 		AON.start();
-		fiscalServiceAsync.getMod303Results(domain, year,
+		fiscalServiceAsync.getMod303Results(domainName,domain, year,
 				new AsyncCallbackWrapper<Mod303Results>(callback));
 	}
 
@@ -170,34 +189,6 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		AON.start();
 		fiscalServiceAsync.getMod311Results(domain, year,
 				new AsyncCallbackWrapper<ArrayList<Mod311Results>>(callback));
-	}
-
-	@Override
-	public void getMod390(Integer id, AsyncCallback<Mod390> callback) {
-		AON.start();
-		fiscalServiceAsync.getMod390(id, new AsyncCallbackWrapper<Mod390>(
-				callback));
-	}
-
-	@Override
-	public void getMod390s(int domain, AsyncCallback<ArrayList<Mod390>> callback) {
-		AON.start();
-		fiscalServiceAsync.getMod390s(domain,
-				new AsyncCallbackWrapper<ArrayList<Mod390>>(callback));
-	}
-
-	@Override
-	public void saveMod390(Mod390 mod390, AsyncCallback<Mod390> callback) {
-		AON.start();
-		fiscalServiceAsync.saveMod390(mod390, new AsyncCallbackWrapper<Mod390>(
-				callback));
-	}
-
-	@Override
-	public void deleteMod390(Mod390 mod390, AsyncCallback<Void> callback) {
-		AON.start();
-		fiscalServiceAsync.deleteMod390(mod390, new AsyncCallbackWrapper<Void>(
-				callback));
 	}
 
 }

@@ -43,7 +43,7 @@ public class CalcDialog<T extends HasId<?>> extends SelectDialog<T> {
 	public CalcDialog() {
 
 		// Create a DataGrid
-
+		super();
 		setCaption("Calcular...");
 		setWidget(binder.createAndBindUi(this));
 		monthListBox.setSelectedMonth(new Date());

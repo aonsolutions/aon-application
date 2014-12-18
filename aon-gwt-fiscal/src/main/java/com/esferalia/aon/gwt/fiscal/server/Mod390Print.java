@@ -1,11 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.commit;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.disableAutoCommit;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.enableAutoCommit;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.rollback;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileReader;
@@ -17,7 +11,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.sql.Connection;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -34,10 +27,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 
-import com.esferalia.aon.gwt.common.shared.AonSQLException;
-import com.esferalia.aon.gwt.common.sql.SQLUtils;
-import com.esferalia.aon.gwt.fiscal.shared.Mod390;
-import com.esferalia.aon.gwt.fiscal.sql.SQLMod390;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Mod390;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod390 Print", urlPatterns = { "/aon_gwt_fiscal/Model390Print" })
@@ -47,14 +38,12 @@ public class Mod390Print extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		Connection conn = null;
 		try {
-			conn = getConnection();
-			disableAutoCommit(conn);
 			int id = Integer.parseInt(req.getParameter("mod390"));
-			Mod390 mod390 = SQLMod390.getById(id, conn);
-			String content = SQLMod390.getXMLContentById(id, conn);
-			commit(conn);
+			String domainName = req.getParameter("domainName");
+			int domainId = Integer.parseInt(req.getParameter("domainId"));
+			Mod390 mod390 = AON.getMod390(domainName, domainId, id);
+			String content = AON.getMod390XML(domainName, domainId, id);
 
 			String s = mod390.getName();
 			StringBuilder sb = new StringBuilder();
@@ -72,16 +61,9 @@ public class Mod390Print extends HttpServlet {
 
 			downloadPDF(req, resp, fileName, content.getBytes());
 
-		} catch (AonSQLException e) {
-			rollback(conn);
-			throw new ServletException(e);
 		} catch (Throwable e) {
-			rollback(conn);
 			e.printStackTrace();
 			throw new ServletException(e);
-		} finally {
-			enableAutoCommit(conn);
-			SQLUtils.closeQuietly(conn);
 		}
 
 	}

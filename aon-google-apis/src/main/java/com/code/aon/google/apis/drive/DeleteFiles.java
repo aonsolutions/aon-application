@@ -49,6 +49,28 @@ public class DeleteFiles {
 			if (aonType.equals("sepe")) DBConsults.deleteDriveIdSepeAttach(domain, f.getId());
 		}
 	}
+	
+	private static void deleteFileBD(File f, String domain)
+			throws SQLException, AonConnectionException {
+		String aonType = null;
+		if(f.getProperties() != null){
+			for (Property property : f.getProperties()) {
+				if(property.getKey().equals("aontype"))
+					aonType = property.getValue();
+			}
+			if (aonType.equals("registry")){
+				DBConsults.deleteRAttachTags(domain, f.getId());
+				DBConsults.deleteFileRAttach(domain, f.getId());
+			}
+			if (aonType.equals("contract")) DBConsults.deleteFileContractAttach(domain, f.getId());
+			if (aonType.equals("item")) DBConsults.deleteFileIAttach(domain, f.getId());
+			if (aonType.equals("invoice")) DBConsults.deleteFileInvoiceAttach(domain, f.getId());
+			if (aonType.equals("offer")) DBConsults.deleteFileOfferAttach(domain, f.getId());
+			if (aonType.equals("payroll")) DBConsults.deleteFilePayrollAttach(domain, f.getId());
+			if (aonType.equals("project")) DBConsults.deleteFileProjectAttach(domain, f.getId());
+			if (aonType.equals("sepe")) DBConsults.deleteFileSepeAttach(domain, f.getId());
+		}
+	}
 		
 	private static void insertBlobs(byte[] data, String driveId, String domain)
 			throws SQLException, AonConnectionException {
@@ -64,16 +86,23 @@ public class DeleteFiles {
 
 	public static void deleteFile(Drive drive, File f, String domain)
 			throws IOException, SQLException, AonConnectionException {
-		if(!f.getMimeType().equals("application/vnd.google-apps.folder")){
-			InputStream data = DriveUtils.downloadFile(drive, f);
-			insertBlobs(Utils.InputStreamToByte(data), f.getId(), domain);
+		if(remove.equals("force")){
+			if(!f.getMimeType().equals("application/vnd.google-apps.folder")){
+				deleteFileBD(f, domain);
+			}
+			drive.files().delete(f.getId()).execute();
 		}
-		drive.files().delete(f.getId()).execute();
+		else{
+			if(!f.getMimeType().equals("application/vnd.google-apps.folder")){
+				InputStream data = DriveUtils.downloadFile(drive, f);
+				insertBlobs(Utils.InputStreamToByte(data), f.getId(), domain);
+			}
+			drive.files().delete(f.getId()).execute();
 		
-		if(!f.getMimeType().equals("application/vnd.google-apps.folder")) deleteDriveIds(f, domain);
+			if(!f.getMimeType().equals("application/vnd.google-apps.folder")) deleteDriveIds(f, domain);
 			
+		}
 		View.delete(f);
-		
 	}
 
 	public static void deleteFilesId(Drive drive, String domain)
@@ -154,6 +183,7 @@ public class DeleteFiles {
 	private static String action = "all";
 	private static String values[];
 	private static String out = "normally";
+	private static String remove = "normally";
 
 	private static void parse(String args[]) {
 		CommandLineParser parser = new PosixParser();
@@ -200,6 +230,13 @@ public class DeleteFiles {
 				.withDescription("Tipo de salida al aplicar el comando. Ej: normally");
 		OptionBuilder.withValueSeparator(',');
 		Option outOption = OptionBuilder.create("o");
+		
+		OptionBuilder.isRequired(false);
+		OptionBuilder.hasArg(true);
+		OptionBuilder
+				.withDescription("Borrado");
+		OptionBuilder.withValueSeparator(',');
+		Option removeOption = OptionBuilder.create("r");
 
 		options.addOption(helpOption);
 		options.addOption(outOption);
@@ -207,6 +244,8 @@ public class DeleteFiles {
 		options.addOption(typeOption);
 		options.addOption(valueOption);
 		options.addOption(actionOption);
+		options.addOption(removeOption);
+
 
 		try {
 			CommandLine line = parser.parse(options, args);
@@ -231,6 +270,11 @@ public class DeleteFiles {
 			String outaux = line.getOptionValue("o");
 			if (outaux != null)
 				out = outaux;
+			
+			String removeaux = line.getOptionValue("r");
+			if (removeaux != null)
+				remove = removeaux;
+			
 		} catch (ParseException e) {
 			helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX,
 					options, true);

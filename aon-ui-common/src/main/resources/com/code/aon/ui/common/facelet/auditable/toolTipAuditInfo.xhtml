@@ -9,7 +9,8 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:div style="display:inline; cursor:pointer;"
-		rendered="#{auditableTO.creationDate != null}">
+		styleClass="aon-margin-right"
+		rendered="#{(auditableTO.creationDate != null) or (auditableTO.modificationDate != null)}">
 		<aon:outputText value="&#160;" styleClass="aon-icon-audit"
 			style="padding-left:12px" />
 		<rich:toolTip showEvent="onclick" hideEvent="onmouseout">
@@ -17,20 +18,28 @@
 				columnClasses="aon-panelGrid-even aon-noborder aon-bold, 
 					aon-panelGrid-even aon-noborder aon-bold">
 
-				<aon:outputLabel value="#{bundle.aon_creation_user}:" />
-				<aon:outputText value="#{auditableTO.creationUser}" />
-
-				<aon:outputLabel value="#{bundle.aon_creation_date}:" />
-				<aon:outputText value="#{auditableTO.creationDate}" >
+				<aon:outputLabel rendered="#{auditableTO.creationDate != null}"
+					value="#{bundle.aon_creation_user}:" />
+				<aon:outputText rendered="#{auditableTO.creationDate != null}"
+					value="#{auditableTO.creationUser}" />
+	
+				<aon:outputLabel rendered="#{auditableTO.creationDate != null}"
+					value="#{bundle.aon_creation_date}:" />
+				<aon:outputText rendered="#{auditableTO.creationDate != null}"
+					value="#{auditableTO.creationDate}" >
 					<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
 
-				<aon:outputLabel value="#{bundle.aon_modification_user}:" />
-				<aon:outputText value="#{auditableTO.modificationUser}" />
-
-				<aon:outputLabel value="#{bundle.aon_modification_date}:" />
-				<aon:outputText value="#{auditableTO.modificationDate}">
+				<aon:outputLabel rendered="#{auditableTO.modificationDate != null}"
+					value="#{bundle.aon_modification_user}:" />
+				<aon:outputText rendered="#{auditableTO.modificationDate != null}"
+					value="#{auditableTO.modificationUser}" />
+	
+				<aon:outputLabel rendered="#{auditableTO.modificationDate != null}"
+					value="#{bundle.aon_modification_date}:" />
+				<aon:outputText rendered="#{auditableTO.modificationDate != null}"
+					value="#{auditableTO.modificationDate}">
 					<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>

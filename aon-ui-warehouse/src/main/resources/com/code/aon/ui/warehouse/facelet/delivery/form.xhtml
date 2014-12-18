@@ -47,6 +47,8 @@
 							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
 							<aon:actionListener method="#{delivery.onSendByEmail}" />
 						</aon:commandButton>															
+						<ui:include
+							src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml" />						
 						<aon:htmlCommandLink id="delivery-report" value="#{bundle.aon_invoice_delivery}"
 							target="_new" rendered="#{!delivery.nevv and deliveryDetail.model.rowCount > 0}"
 							action="#{report.onExecute}" 
@@ -56,8 +58,6 @@
 							<f:param name="reportKey" value="#{delivery.reportTemplate}" />
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
-						<ui:include
-							src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml" />						
 					</ui:define>
 				</ui:decorate>
 			</aon:div>			

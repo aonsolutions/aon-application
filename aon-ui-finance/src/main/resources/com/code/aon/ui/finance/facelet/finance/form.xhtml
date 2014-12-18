@@ -58,6 +58,8 @@
 						<f:setPropertyActionListener target="#{finance.showRemarksWindow}"
 							value="#{true}" />							
 					</aon:menuItem>		
+					<ui:include
+						src="/com/code/aon/ui/common/facelet/auditable/menuContent.xhtml" />					
 				</ui:define>
 			</ui:decorate>
 
@@ -488,6 +490,9 @@
 											<aon:outputText value="&#160;" />
 										</f:facet>
 										<aon:div styleClass="aon-nowrap">
+											<ui:include src="/com/code/aon/ui/common/facelet/auditable/toolTipAuditInfo.xhtml">
+												<ui:param name="auditableTO" value="#{to}" />
+											</ui:include>										
 											<aon:if test="#{aonRole.accountingOperator}">
 												<aon:commandButton id="record"
 													title="#{bundle.finance_record}"
@@ -546,5 +551,8 @@
 			<ui:param name="modalReRender" value="Finance_amount-Panel,Finance_total" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />				
+		<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
+			<ui:param name="auditableController" value="#{finance}" />
+		</ui:include>
 	</ui:define>
 </ui:composition>

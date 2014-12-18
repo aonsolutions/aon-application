@@ -1131,6 +1131,19 @@ public class FANWriter implements Serializable {
 		}
 		return null;
 	}
+
+	private boolean existSalaryBonuses(Salary salary) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(SalaryBonus.class);
+			Criteria criteria = new Criteria();
+			criteria.setSkipDomainFilter(true);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_BONUS_SALARY_ID), salary.getId());
+			return bean.getCount(criteria)>0;
+		} catch (ManagerBeanException e) {
+			// NADA
+		}
+		return false;
+	}
 	
 	private BonusType obtainBonusType(SalaryBonus bonus) {
 		try {
@@ -1190,8 +1203,14 @@ public class FANWriter implements Serializable {
 	}
 	
 	private String getParticularGroup(Contract contract) {
-		String o = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.QUOTE_PECULIARITY_COLLECTIVE.getName());
-		return o!=null && !o.isEmpty()?o.replaceAll("\"", ""):null;
+		if(liquidationType!=LiquidationType.L13){
+			Salary salary = getSalary(contract, SalaryType.SALARY);
+			if(existSalaryBonuses(salary)){
+				String o = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.QUOTE_PECULIARITY_COLLECTIVE.getName());
+				return o!=null && !o.isEmpty()?o.replaceAll("\"", ""):null;
+			}
+		}
+		return null;
 	}
 	private Integer getEmploymentRelation(Contract contract) {
 		// TODO getEmploymentRelation

@@ -1,19 +1,13 @@
 package com.esferalia.aon.htmlunit;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
-import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
@@ -23,39 +17,48 @@ import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class HtmlUnitIT {
 
-	private static final Logger LOGGER = Logger
+	public static final Logger LOGGER = Logger
 			.getLogger("com.gargoylesoftware.htmlunit");
 
-	private static String webUrl;
+	public static final String AON_MAIN_MENU_FORM = "aonContent:mainMenuForm";
+	public static final String INTEGRATION_BASE_PASSWORD = "integration.base.password";
+	public static final String INTEGRATION_BASE_USER = "integration.base.user";
+	public static final String INTEGRATION_BASE_URL = "integration.base.url";
 
-	private static WebClient webClient;
-	private static HtmlPage homePage;
-
-	private static Map<String, HtmlPage> mainMenuPages = 
-			new HashMap<String, HtmlPage>();
-
-	@BeforeClass
-	public static void setUp() {
-		webUrl = System.getProperty("integration.base.url");
-		webClient = new WebClient();
-		webClient.getOptions().setThrowExceptionOnScriptError(false);
-		LOGGER.setLevel(Level.WARNING);
+	// ------------------------------------------------------------------------
+	
+	public static void wait4(HtmlPage page, Predicate<HtmlPage> predicate) throws InterruptedException{
+        //try 20 times to wait .5 second each for filling the page.
+        for (int i = 0; i < 20; i++) {
+            if (predicate.test(page)) {
+                break;
+            }
+            synchronized (page) {
+                page.wait(500);
+            }
+        }		
 	}
 
-	@AfterClass
-	public static void tearDown() {
-		webClient.closeAllWindows();
+	public static <T> T wait4(HtmlPage page, Supplier<T> supplier) throws InterruptedException{
+        //try 20 times to wait .5 second each for filling the page.
+        for (int i = 0; i < 20; i++) {
+        	T t = supplier.get();
+            if ( t != null ) {
+                return t;
+            }
+            synchronized (page) {
+                page.wait(500);
+            }
+        }
+        return null;
 	}
 
-	/**
-	 * Test login
-	 */
-	@Test
-	public void test01Login() throws Exception {
-		LOGGER.warning("Connecting to: " + webUrl);
+	public static HtmlPage login(WebClient webClient, String url, String user, String password)
+			throws Exception {
+		LOGGER.warning("Connecting to: " + url);
 
 		// Get the login/index page
-		final HtmlPage loginPage = webClient.getPage(webUrl);
+		final HtmlPage loginPage = webClient.getPage(url);
 
 		// Get the login form and within that form, find the submit button,
 		// the user name input text and password input.
@@ -69,32 +72,15 @@ public class HtmlUnitIT {
 				.getInputByName("j_password");
 
 		// Sets the value of user name text field
-		userText.setValueAttribute("admin");
+		userText.setValueAttribute(user);
 		// Sets the value of password text field
-		passwdPassword.setValueAttribute("test");
+		passwdPassword.setValueAttribute(password);
 
 		// Now submit the form by clicking the button and get back the second
 		// page
-		homePage = loginButton.click();
+		return loginButton.click();
 	}
 
-	/**
-	 * Test Main Menu
-	 */
-	@Test
-	public void test02MainMenu() throws Exception {
 
-		final HtmlForm mainMenuForm = homePage
-				.getFormByName("aonContent:mainMenuForm");
 
-		List<HtmlAnchor> menuItems = (List<HtmlAnchor>) mainMenuForm
-				.getByXPath(".//a");
-		for (HtmlAnchor menuItem : menuItems) {
-			if  ( !menuItem.isDisplayed() )
-				continue;
-			String id = menuItem.getId().replaceFirst("aonContent:mainMenuForm:", "");
-			LOGGER.warning("Click on: " + id );
-			mainMenuPages.put(id, menuItem.click());
-		}
-	}
 }

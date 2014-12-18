@@ -234,6 +234,5 @@
     	<attribute name="ontyperejected" value="alert('#{bundle.aon_document_type_rejected}');" />
     	<attribute name="immediateUpload" value="true" type="1" />    	
     	<attribute name="autoclear" value="true" type="1" />
-    	<attribute name="allowFlash" value="auto" />
 	</component>
 </components>

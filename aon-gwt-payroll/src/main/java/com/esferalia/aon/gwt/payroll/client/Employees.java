@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedSet;
 
+import com.code.aon.config.User;
 import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.esferalia.aon.gwt.common.shared.CollectionUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -113,13 +114,13 @@ public class Employees extends ResizeComposite implements
 
 		void onEnterpriseContextMenu(Enterprise enterprise,
 				ContextMenuEvent event);
-		
+
 		void onCtrlCPressed(Employee employee);
-		
+
 		void onCtrlVPressed(Workplace workplace);
-		
+
 		void onCtrlXPress(Employee employee);
-		
+
 		void onSuprPress(Employee employee);
 	}
 
@@ -190,7 +191,7 @@ public class Employees extends ResizeComposite implements
 				employeesServiceRaw);
 
 		initWidget(binder.createAndBindUi(this));
-		
+
 		tree.addOpenHandler(this);
 		tree.addSelectionHandler(this);
 		tree.addDomHandler(this, ContextMenuEvent.getType());
@@ -204,23 +205,21 @@ public class Employees extends ResizeComposite implements
 		});
 
 		// employeesService.getEnterprise(this);
-/*		employeesService.getEnterprises(new AsyncCallback<Enterprise[]>() {
+		/*
+		 * employeesService.getEnterprises(new AsyncCallback<Enterprise[]>() {
+		 * 
+		 * @Override public void onFailure(Throwable caught) {
+		 * Window.alert(caught.getLocalizedMessage()); }
+		 * 
+		 * @Override public void onSuccess(Enterprise[] enterprises) { for
+		 * (Enterprise enterprise : enterprises)
+		 * Employees.this.onEnterprise(enterprise); }
+		 * 
+		 * });
+		 * 
+		 * scrollPanel.addScrollHandler(this);
+		 */
 
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert(caught.getLocalizedMessage());
-			}
-
-			@Override
-			public void onSuccess(Enterprise[] enterprises) {
-				for (Enterprise enterprise : enterprises)
-					Employees.this.onEnterprise(enterprise);
-			}
-
-		});
-
-		scrollPanel.addScrollHandler(this);*/
-		
 		load();
 
 	}
@@ -311,29 +310,14 @@ public class Employees extends ResizeComposite implements
 							workplace.getId(),
 							agreement != null ? agreement.getId() : null,
 							employeesService,
-							//@formatter:off
+							// @formatter:off
 							new EnumEventMetaData("DESEMPE\u00D1O",
 									"DESEMPE\u00D1O",
 									"Desempe\u00F1o por Trabajador y Jornada",
-									"", 
-									new String[]{
-									"4", 
-									"8", 
-									"10", 
-									"12", 
-									"L", 
-									"LT", 
-									"LR",
-									"F", 
-									"FT", 
-									"FR", 
-									"V", 
-									"B", 
-									"P", 
-									"AI", 
-									"M"}, 
-									DAY),
-							//@formatter:on
+									"", new String[] { "4", "8", "10", "12",
+											"L", "LT", "LR", "F", "FT", "FR",
+											"V", "B", "P", "AI", "M" }, DAY),
+							// @formatter:on
 							new DecimalEventMetaData("INCENTIVOS", MONTH),
 							new DecimalEventMetaData("ATRASOS", MONTH),
 							new DecimalEventMetaData("ANTICIPOS", MONTH),
@@ -401,7 +385,8 @@ public class Employees extends ResizeComposite implements
 				agreementDraft.setStartDate(DateUtils.getFirstDayOfMonth());
 				agreementDraft.setEndDate(DateUtils.getLastDayOfMonth());
 				final AgreementDraftObject agreementDraftObject = new AgreementDraftObject(
-						enterprise.getDomain(), agreementDraft, employeesService);
+						enterprise.getDomain(), agreementDraft,
+						employeesService);
 
 				employeesService.getChanges(agreement,
 						new AsyncCallback<SortedSet<Date>>() {
@@ -471,7 +456,7 @@ public class Employees extends ResizeComposite implements
 
 		TreeItem item = event.getSelectedItem();
 		Object userObject = item.getUserObject();
-		
+
 		// TODO : I know that's so ugly and not Object oriented. But
 		// it's much more clear than anything else. I promise
 		// to change ( even improve ) it soon.
@@ -492,9 +477,11 @@ public class Employees extends ResizeComposite implements
 		// 'SalariesDocuments' extends 'CostDocuments' its test must be first.
 		// If not, onSalariesSelected(SalariesDocuments) method won't be called.
 		else if (userObject instanceof SalariesDocuments) {
-			onSalariesSelected((SalariesDocuments) userObject);
+			//onSalariesSelected((SalariesDocuments) userObject);
+			onSalariesDocumentsSelected(item);
 		} else if (userObject instanceof CostDocuments) {
-			onCostsSelected((CostDocuments) userObject);
+			//onCostsSelected((CostDocuments) userObject);
+			onCostsDocumentsSelected(item);
 		} else if (userObject instanceof ReportsObject) {
 			onReportsSelected((ReportsObject) userObject);
 		} else if (userObject instanceof Statistics) {
@@ -502,7 +489,7 @@ public class Employees extends ResizeComposite implements
 		} else if (userObject instanceof ITDataObject) {
 			onITDataSelected((ITDataObject) userObject);
 		} else if (userObject instanceof SalaryDocuments) {
-			onSalariesSelected(item);
+			onSalaryDocumentsSelected(item);
 		} else if (userObject instanceof ISpinnable<?>) {
 			onDocumentsSelected((ISpinnable<IDocument>) userObject);
 		} else if (userObject instanceof EventsDraftObject) {
@@ -513,31 +500,30 @@ public class Employees extends ResizeComposite implements
 			onAgreementDraftSelected((AgreementDraftObject) userObject);
 		}
 	}
-	
+
 	@Override
 	public void onKeyDown(KeyDownEvent event) {
 		int keyCode = event.getNativeKeyCode();
 		int charCode = event.getNativeEvent().getCharCode();
 		Object object = tree.getSelectedItem().getUserObject();
-				
-		if ( ( event.isControlKeyDown() && keyCode == KeyCodes.KEY_C ) 
-				&& ( keyCode == KeyCodes.KEY_C ) && ( object instanceof Employee )) {
-			onCtrlCPressed( (Employee) object);
-		} else if (event.getNativeEvent().getCtrlKey() && keyCode == KeyCodes.KEY_V 
-				&& object instanceof Workplace) {
-			onCtrlVPressed((Workplace) object);
-		} else if ( event.getNativeEvent().getCtrlKey() && keyCode == KeyCodes.KEY_X 
-				&& object instanceof Employee) {
-			onCtrlXPressed((Employee) object);
-		} else if ( keyCode == KeyCodes.KEY_DELETE && object instanceof Employee) {
-			onSuprPressed((Employee) object);
-		}		
-	}
 
+		if ((event.isControlKeyDown() && keyCode == KeyCodes.KEY_C)
+				&& (keyCode == KeyCodes.KEY_C) && (object instanceof Employee)) {
+			onCtrlCPressed((Employee) object);
+		} else if (event.getNativeEvent().getCtrlKey()
+				&& keyCode == KeyCodes.KEY_V && object instanceof Workplace) {
+			onCtrlVPressed((Workplace) object);
+		} else if (event.getNativeEvent().getCtrlKey()
+				&& keyCode == KeyCodes.KEY_X && object instanceof Employee) {
+			onCtrlXPressed((Employee) object);
+		} else if (keyCode == KeyCodes.KEY_DELETE && object instanceof Employee) {
+			onSuprPressed((Employee) object);
+		}
+	}
 
 	@Override
 	public void onScroll(ScrollEvent event) {
-		
+
 		// If scrolling up, ignore the event.
 		int oldScrollPos = lastScrollPos;
 		lastScrollPos = scrollPanel.getVerticalScrollPosition();
@@ -550,7 +536,7 @@ public class Employees extends ResizeComposite implements
 			if (elementInViewport(employeeItem.getElement())) {
 
 				final int limit = getEmployeeLimit();
-				
+
 				final TreeItem workplaceItem = employeeItem.getParentItem();
 
 				loadEmployees(workplaceItem, limit);
@@ -560,8 +546,8 @@ public class Employees extends ResizeComposite implements
 		}
 	}
 
-	public void load () {
-		tree.clear();	
+	public void load() {
+		tree.clear();
 		employeesService.getEnterprises(new AsyncCallback<Enterprise[]>() {
 
 			@Override
@@ -578,13 +564,13 @@ public class Employees extends ResizeComposite implements
 		});
 
 		scrollPanel.addScrollHandler(this);
-		
+
 		for (TreeItem employeeItem : employeeCentinels) {
 
 			if (elementInViewport(employeeItem.getElement())) {
 
 				final int limit = getEmployeeLimit();
-				
+
 				final TreeItem workplaceItem = employeeItem.getParentItem();
 
 				loadEmployees(workplaceItem, limit);
@@ -978,13 +964,13 @@ public class Employees extends ResizeComposite implements
 			listener.onITDataSelected(dataObject);
 		}
 	}
-	
+
 	private void onCtrlCPressed(Employee employee) {
 		for (Listener listener : listeners) {
 			listener.onCtrlCPressed(employee);
 		}
 	}
-	
+
 	private void onCtrlVPressed(Workplace workplace) {
 		for (Listener listener : listeners) {
 			listener.onCtrlVPressed(workplace);
@@ -996,14 +982,135 @@ public class Employees extends ResizeComposite implements
 			listener.onCtrlXPress(employee);
 		}
 	}
-	
+
 	private void onSuprPressed(Employee employee) {
 		for (Listener listener : listeners) {
 			listener.onSuprPress(employee);
 		}
 	}
 
-	private void onSalariesSelected(final TreeItem salariesItem) {
+	private void onSalariesDocumentsSelected(final TreeItem salariesItem) {
+		TreeItem parentItem = salariesItem.getParentItem();
+		Object parent = parentItem.getUserObject();
+		if ( parent instanceof Workplace)
+			onSalariesDocumentsSelected((Workplace)parent, salariesItem);
+		else
+			onSalariesDocumentsSelected((Enterprise)parent, salariesItem);
+
+	}
+
+	private void onSalariesDocumentsSelected(Workplace workplace, final TreeItem salariesItem) {
+		employeesService.getWorkplaceCosts(workplace.getId(),
+				new AsyncCallback<List<Cost>>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+						Window.alert(caught.getLocalizedMessage());
+
+					}
+
+					@Override
+					public void onSuccess(List<Cost> costs) {
+						// CostDocuments documents = new CostDocuments(costs,
+						// employeesService);
+						// costsItem.setUserObject(documents);
+
+						SalariesDocuments docs = new SalariesDocuments(costs,
+								employeesService);
+						salariesItem.setUserObject(docs);
+						for (Listener listener : listeners) {
+							listener.onSalariesSelected(docs);
+						}
+					}
+				});
+	}
+
+	private void onSalariesDocumentsSelected(Enterprise enterprise, final TreeItem salariesItem) {
+		employeesService.getEnterpriseCosts(enterprise.getId(),
+				new AsyncCallback<List<Cost>>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+						Window.alert(caught.getLocalizedMessage());
+
+					}
+
+					@Override
+					public void onSuccess(List<Cost> costs) {
+						// CostDocuments documents = new CostDocuments(costs,
+						// employeesService);
+						// costsItem.setUserObject(documents);
+
+						SalariesDocuments docs = new SalariesDocuments(costs,
+								employeesService);
+						salariesItem.setUserObject(docs);
+						for (Listener listener : listeners) {
+							listener.onSalariesSelected(docs);
+						}
+					}
+				});
+	}
+
+
+	private void onCostsDocumentsSelected(final TreeItem costsItem) {
+		TreeItem parentItem = costsItem.getParentItem();
+		Object parent = parentItem.getUserObject();
+		if ( parent instanceof Workplace)
+			onCostsDocumentsSelected((Workplace)parent, costsItem);
+		else
+			onCostsDocumentsSelected((Enterprise)parent, costsItem);
+	}
+
+	private void onCostsDocumentsSelected(Workplace workplace, final TreeItem costsItem) {
+		employeesService.getWorkplaceCosts(workplace.getId(),
+				new AsyncCallback<List<Cost>>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+						Window.alert(caught.getLocalizedMessage());
+
+					}
+
+					@Override
+					public void onSuccess(List<Cost> costs) {
+						CostDocuments docs = new CostDocuments(costs,
+								employeesService);
+						costsItem.setUserObject(docs);
+
+						costsItem.setUserObject(docs);
+						for (Listener listener : listeners) {
+							listener.onCostsSelected(docs);
+						}
+					}
+				});
+	}
+
+	private void onCostsDocumentsSelected(Enterprise enterprise, final TreeItem costsItem) {
+		employeesService.getEnterpriseCosts(enterprise.getId(),
+				new AsyncCallback<List<Cost>>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+						Window.alert(caught.getLocalizedMessage());
+
+					}
+
+					@Override
+					public void onSuccess(List<Cost> costs) {
+						CostDocuments docs = new CostDocuments(costs,
+								employeesService);
+						costsItem.setUserObject(docs);
+
+						costsItem.setUserObject(docs);
+						for (Listener listener : listeners) {
+							listener.onCostsSelected(docs);
+						}
+					}
+				});
+	}
+
+
+	private void onSalaryDocumentsSelected(final TreeItem salariesItem) {
 		TreeItem employeeItem = salariesItem.getParentItem();
 		Employee employee = (Employee) employeeItem.getUserObject();
 		employeesService.getSalaries(employee,
@@ -1078,8 +1185,7 @@ public class Employees extends ResizeComposite implements
 		}
 	}
 
-	private void onCategoryDraftSelected(
-			CategoryDraftObject categoryDraftObject) {
+	private void onCategoryDraftSelected(CategoryDraftObject categoryDraftObject) {
 		for (Listener listener : listeners) {
 			listener.onCategoryDraftSelected(categoryDraftObject);
 		}
@@ -1091,7 +1197,7 @@ public class Employees extends ResizeComposite implements
 			listener.onAgreementDraftSelected(agreementDraftObject);
 		}
 	}
-	
+
 	private void loadEmployess(TreeItem workplaceItem,
 			List<Employee> employees, int limit) {
 
@@ -1120,9 +1226,9 @@ public class Employees extends ResizeComposite implements
 			addImageItem(employeeItem, "N\u00F3minas", images.salaries());
 
 			if (extended) {
-				
+
 				ITDataObject dataObject = getITDataObject(workplaceItem);
-				
+
 				Date salaryDate = DateUtils.before(
 						DateUtils.after(new Date(), employee.getStartDate()),
 						employee.getEndDate());
@@ -1147,21 +1253,22 @@ public class Employees extends ResizeComposite implements
 				addImageItem(employeeItem, "Regularizaciones", images.aet());
 
 				Category category = employee.getCategory();
-				
+
 				// Agreement Category
-				if ( category == null  )
+				if (category == null)
 					continue;
 
 				Agreement agreement = category.getAgreement();
 				Agreement workplaceAgreement = ((Workplace) workplaceItem
 						.getUserObject()).getAgreement();
-				
-				if ( workplaceAgreement != null && 
-						workplaceAgreement.getId() == agreement.getId() )
+
+				if (workplaceAgreement != null
+						&& workplaceAgreement.getId() == agreement.getId())
 					continue;
 
 				TreeItem enterpriseItem = workplaceItem.getParentItem();
-				Enterprise enterprise = (Enterprise) enterpriseItem.getUserObject();
+				Enterprise enterprise = (Enterprise) enterpriseItem
+						.getUserObject();
 
 				TreeItem categoryItem = addImageItem(employeeItem,
 						category.getLevel() + ". " + category.getDescription(),
@@ -1176,9 +1283,8 @@ public class Employees extends ResizeComposite implements
 				CategoryDraftObject categoryDraftObject = new CategoryDraftObject(
 						enterprise.getDomain(), categoryDraft, employeesService);
 				categoryItem.setUserObject(categoryDraftObject);
-				
-			}
 
+			}
 
 		}
 		if (added == limit) {

@@ -14,7 +14,7 @@
 			</aon:panelGrid>
 		</aon:panelCollapsible>					
 					
-		<aon:panelCollapsible expanded="false" label="#{bundle.registry_address_module}" >
+		<aon:panelCollapsible expanded="false" label="#{bundle.registry_address_module}">
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 				<ui:include src="/com/code/aon/ui/registry/facelet/raddress/searchContent.xhtml">
 					<ui:param name="searchController" value="#{customerSearch}" />
@@ -22,7 +22,7 @@
 			</aon:panelGrid>
 		</aon:panelCollapsible>
 
-		<aon:panelCollapsible expanded="false" label="#{bundle.aon_contacts}" >
+		<aon:panelCollapsible expanded="false" label="#{bundle.aon_contacts}">
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 				<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/searchContent.xhtml">
 					<ui:param name="searchController" value="#{customerSearch}" />
@@ -50,15 +50,17 @@
 			</aon:panelCollapsible>
 		</aon:if>
 		
-		<aon:if test="#{aonConfiguration.bean.customer.showProduct}">						
+		<aon:if test="#{aonConfiguration.bean.customer.showProduct}">
 			<aon:panelCollapsible expanded="false" label="#{bundle.aon_role_product}" >					
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
-					<ui:include src="/com/code/aon/ui/registry/facelet/ritem/searchContent.xhtml" />					
+					<ui:include src="/com/code/aon/ui/registry/facelet/ritem/searchContent.xhtml">
+						<ui:param name="rItemController" value="#{customerItem}" />
+					</ui:include>					
 				</aon:panelGrid>
 			</aon:panelCollapsible>
 		</aon:if>
 						
-		<aon:if test="#{aonConfiguration.bean.customer.showSeller}">						
+		<aon:if test="#{aonConfiguration.bean.customer.showSeller}">
 			<aon:panelCollapsible expanded="false" label="#{bundle.aon_module_commercial}">
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">					
 					<ui:include src="/com/code/aon/ui/registry/facelet/rseller/searchContent.xhtml" />					

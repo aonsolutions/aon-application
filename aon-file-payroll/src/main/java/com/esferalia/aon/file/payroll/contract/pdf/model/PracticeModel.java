@@ -14,7 +14,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.registry.RegistryAddress;
-import com.code.aon.registry.RegistryDirStaff;
 import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
 import com.esferalia.aon.file.payroll.contract.pdf.PdfFieldPractice;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
@@ -57,23 +56,14 @@ public class PracticeModel extends AbstractContractModel {
 			 * Contract enterprise fields
 			 */
 			setPdfFieldValue(PdfFieldPractice.ENTERPRISE_CIF.getValue(),contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
-			RegistryDirStaff rDirStaff = obtainRegistryDirStaff(contract.getWorkPlace().getEnterprise().getRegistry()); 
-			try {
-				setPdfFieldValue(PdfFieldPractice.ENTERPRISE_DIR_STAFF_NAME.getValue(),rDirStaff.getName());
-				setPdfFieldValue(PdfFieldPractice.ENTERPRISE_DIR_STAFF_NIF.getValue(),rDirStaff.getDocument());
-				String rDirStaddCharge = null;
-				if ( rDirStaff.isShareHolder() ){
-					rDirStaddCharge = "Socio";
-				} else if ( rDirStaff.isRepresentative() ){
-					rDirStaddCharge = "Apoderado";
-				} else if( rDirStaff.isDirector() ){
-					rDirStaddCharge = "Administrador";
-				} else if ( rDirStaff.isRepresentativeLabor() ){
-					rDirStaddCharge = "Repr. laboral";
-				}
-				setPdfFieldValue(PdfFieldPractice.ENTERPRISE_DIR_STAFF_CHARGE.getValue(),rDirStaddCharge);
-			} catch (NullPointerException npe) {
-				// do nothing
+			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldPractice.ENTERPRISE_DIR_STAFF_NAME.toString()))){
+				setPdfFieldValue(PdfFieldPractice.ENTERPRISE_DIR_STAFF_NAME.getValue(), getContractInfoMap(contract).get(PdfFieldPractice.ENTERPRISE_DIR_STAFF_NAME.toString()));
+			}
+			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldPractice.ENTERPRISE_DIR_STAFF_NIF.toString()))){
+				setPdfFieldValue(PdfFieldPractice.ENTERPRISE_DIR_STAFF_NIF.getValue(), getContractInfoMap(contract).get(PdfFieldPractice.ENTERPRISE_DIR_STAFF_NIF.toString()));
+			}
+			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldPractice.ENTERPRISE_DIR_STAFF_CHARGE.toString()))){
+				setPdfFieldValue(PdfFieldPractice.ENTERPRISE_DIR_STAFF_CHARGE.getValue(), getContractInfoMap(contract).get(PdfFieldPractice.ENTERPRISE_DIR_STAFF_CHARGE.toString()));
 			}
 			setPdfFieldValue(PdfFieldPractice.ENTERPRISE_NAME.getValue(),contract.getWorkPlace().getEnterprise().getRegistry().getFullName());
 			setPdfFieldValue(PdfFieldPractice.ENTERPRISE_ADDRESS.getValue(),contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getFullAddress());
@@ -89,13 +79,15 @@ public class PracticeModel extends AbstractContractModel {
 			}
 			try {	
 				RegistryAddress address = contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress();
-				ResourceBundle bundle = ResourceBundle.getBundle(MUNICIPALITIES_BUNDLE_BASE_NAME);
-				setPdfFieldValue(PdfFieldPractice.ENTERPRISE_MUNICIPALITY.getValue(),bundle.getString(address.getMunicipalityCode()));
-				setPdfFieldValue(PdfFieldPractice.ENTERPRISE_MUNICIPALITY_CODE1.getValue(),address.getMunicipalityCode().substring(0, 1));
-				setPdfFieldValue(PdfFieldPractice.ENTERPRISE_MUNICIPALITY_CODE2.getValue(),address.getMunicipalityCode().substring(1, 2));
-				setPdfFieldValue(PdfFieldPractice.ENTERPRISE_MUNICIPALITY_CODE3.getValue(),address.getMunicipalityCode().substring(2, 3));
-				setPdfFieldValue(PdfFieldPractice.ENTERPRISE_MUNICIPALITY_CODE4.getValue(),address.getMunicipalityCode().substring(3, 4));
-				setPdfFieldValue(PdfFieldPractice.ENTERPRISE_MUNICIPALITY_CODE5.getValue(),address.getMunicipalityCode().substring(4, 5));
+				if(StringUtils.isNotBlank(address.getMunicipalityCode())){
+					ResourceBundle bundle = ResourceBundle.getBundle(MUNICIPALITIES_BUNDLE_BASE_NAME);
+					setPdfFieldValue(PdfFieldPractice.ENTERPRISE_MUNICIPALITY.getValue(),bundle.getString(address.getMunicipalityCode()));
+					setPdfFieldValue(PdfFieldPractice.ENTERPRISE_MUNICIPALITY_CODE1.getValue(),address.getMunicipalityCode().substring(0, 1));
+					setPdfFieldValue(PdfFieldPractice.ENTERPRISE_MUNICIPALITY_CODE2.getValue(),address.getMunicipalityCode().substring(1, 2));
+					setPdfFieldValue(PdfFieldPractice.ENTERPRISE_MUNICIPALITY_CODE3.getValue(),address.getMunicipalityCode().substring(2, 3));
+					setPdfFieldValue(PdfFieldPractice.ENTERPRISE_MUNICIPALITY_CODE4.getValue(),address.getMunicipalityCode().substring(3, 4));
+					setPdfFieldValue(PdfFieldPractice.ENTERPRISE_MUNICIPALITY_CODE5.getValue(),address.getMunicipalityCode().substring(4, 5));
+				}
 			} catch (StringIndexOutOfBoundsException aie) {
 				// do nothing
 			} catch (NullPointerException npe) {
@@ -149,13 +141,15 @@ public class PracticeModel extends AbstractContractModel {
 			}
 			try {
 				RegistryAddress address = contract.getWorkPlace().getAddress();
-				ResourceBundle bundle = ResourceBundle.getBundle(MUNICIPALITIES_BUNDLE_BASE_NAME);
-				setPdfFieldValue(PdfFieldPractice.WORKPLACE_MUNICIPALITY.getValue(),bundle.getString(address.getMunicipalityCode()));
-				setPdfFieldValue(PdfFieldPractice.WORKPLACE_MUNICIPALITY_CODE1.getValue(),address.getMunicipalityCode().substring(0, 1));
-				setPdfFieldValue(PdfFieldPractice.WORKPLACE_MUNICIPALITY_CODE2.getValue(),address.getMunicipalityCode().substring(1, 2));
-				setPdfFieldValue(PdfFieldPractice.WORKPLACE_MUNICIPALITY_CODE3.getValue(),address.getMunicipalityCode().substring(2, 3));
-				setPdfFieldValue(PdfFieldPractice.WORKPLACE_MUNICIPALITY_CODE4.getValue(),address.getMunicipalityCode().substring(3, 4));
-				setPdfFieldValue(PdfFieldPractice.WORKPLACE_MUNICIPALITY_CODE5.getValue(),address.getMunicipalityCode().substring(4, 5));
+				if(StringUtils.isNotBlank(address.getMunicipalityCode())){
+					ResourceBundle bundle = ResourceBundle.getBundle(MUNICIPALITIES_BUNDLE_BASE_NAME);
+					setPdfFieldValue(PdfFieldPractice.WORKPLACE_MUNICIPALITY.getValue(),bundle.getString(address.getMunicipalityCode()));
+					setPdfFieldValue(PdfFieldPractice.WORKPLACE_MUNICIPALITY_CODE1.getValue(),address.getMunicipalityCode().substring(0, 1));
+					setPdfFieldValue(PdfFieldPractice.WORKPLACE_MUNICIPALITY_CODE2.getValue(),address.getMunicipalityCode().substring(1, 2));
+					setPdfFieldValue(PdfFieldPractice.WORKPLACE_MUNICIPALITY_CODE3.getValue(),address.getMunicipalityCode().substring(2, 3));
+					setPdfFieldValue(PdfFieldPractice.WORKPLACE_MUNICIPALITY_CODE4.getValue(),address.getMunicipalityCode().substring(3, 4));
+					setPdfFieldValue(PdfFieldPractice.WORKPLACE_MUNICIPALITY_CODE5.getValue(),address.getMunicipalityCode().substring(4, 5));
+				}
 			} catch (StringIndexOutOfBoundsException aie) {
 				// do nothing
 			} catch (NullPointerException npe) {
@@ -188,13 +182,15 @@ public class PracticeModel extends AbstractContractModel {
 			}
 			try {
 				RegistryAddress address = contract.getPerson().getRegistry().getDefaultAddress();
-				ResourceBundle bundle = ResourceBundle.getBundle(MUNICIPALITIES_BUNDLE_BASE_NAME);
-				setPdfFieldValue(PdfFieldPractice.EMPLOYEE_ADDRESS_MUNICIPALITY.getValue(),bundle.getString(address.getMunicipalityCode()));
-				setPdfFieldValue(PdfFieldPractice.EMPLOYEE_ADDRESS_MUNICIPALITY_CODE1.getValue(),address.getMunicipalityCode().substring(0, 1));
-				setPdfFieldValue(PdfFieldPractice.EMPLOYEE_ADDRESS_MUNICIPALITY_CODE2.getValue(),address.getMunicipalityCode().substring(1, 2));
-				setPdfFieldValue(PdfFieldPractice.EMPLOYEE_ADDRESS_MUNICIPALITY_CODE3.getValue(),address.getMunicipalityCode().substring(2, 3));
-				setPdfFieldValue(PdfFieldPractice.EMPLOYEE_ADDRESS_MUNICIPALITY_CODE4.getValue(),address.getMunicipalityCode().substring(3, 4));
-				setPdfFieldValue(PdfFieldPractice.EMPLOYEE_ADDRESS_MUNICIPALITY_CODE5.getValue(),address.getMunicipalityCode().substring(4, 5));
+				if(StringUtils.isNotBlank(address.getMunicipalityCode())){
+					ResourceBundle bundle = ResourceBundle.getBundle(MUNICIPALITIES_BUNDLE_BASE_NAME);
+					setPdfFieldValue(PdfFieldPractice.EMPLOYEE_ADDRESS_MUNICIPALITY.getValue(),bundle.getString(address.getMunicipalityCode()));
+					setPdfFieldValue(PdfFieldPractice.EMPLOYEE_ADDRESS_MUNICIPALITY_CODE1.getValue(),address.getMunicipalityCode().substring(0, 1));
+					setPdfFieldValue(PdfFieldPractice.EMPLOYEE_ADDRESS_MUNICIPALITY_CODE2.getValue(),address.getMunicipalityCode().substring(1, 2));
+					setPdfFieldValue(PdfFieldPractice.EMPLOYEE_ADDRESS_MUNICIPALITY_CODE3.getValue(),address.getMunicipalityCode().substring(2, 3));
+					setPdfFieldValue(PdfFieldPractice.EMPLOYEE_ADDRESS_MUNICIPALITY_CODE4.getValue(),address.getMunicipalityCode().substring(3, 4));
+					setPdfFieldValue(PdfFieldPractice.EMPLOYEE_ADDRESS_MUNICIPALITY_CODE5.getValue(),address.getMunicipalityCode().substring(4, 5));
+				}
 			} catch (StringIndexOutOfBoundsException aie) {
 				// do nothing
 			} catch (NullPointerException npe) {

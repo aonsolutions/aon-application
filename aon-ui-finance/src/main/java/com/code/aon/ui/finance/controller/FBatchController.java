@@ -49,6 +49,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.LongProcessThread;
+import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.event.FinanceListSearchListener;
@@ -59,7 +60,7 @@ import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class FBatchController extends BasicController implements ICollectionProvider, IFinanceConstants, IFinanceController {
+public class FBatchController extends BasicController implements ICollectionProvider, IFinanceConstants, IFinanceController, IAuditableController {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
@@ -76,6 +77,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 	private boolean showSEPAWindow;
 	private AccountEntryFinanceWriter writer;
 	private ProgressionState progressionState;
+	private boolean showAuditInfoWindow;
 
 	public Company getCompany() {
 		if (company == null) {
@@ -576,6 +578,16 @@ public class FBatchController extends BasicController implements ICollectionProv
 	public void onClosePanel(ActionEvent event) {
 		setShowSEPAWindow(false);
 		getProgressionState().finish();
+	}
+
+	@Override
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	@Override
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
 	}
 	
 }

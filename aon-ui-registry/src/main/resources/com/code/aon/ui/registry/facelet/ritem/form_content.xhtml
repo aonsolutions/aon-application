@@ -4,18 +4,84 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:outputLabel for="Item_id" value="#{bundle.aon_product}" />
-	<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
-		<ui:param name="lookupTo" value="#{controller.to.item}" />
-		<ui:param name="idRequired" value="#{true}" />
-		<ui:param name="skipLabel" value="#{true}" />
-	</ui:include>
-	
-	<aon:outputLabel for="RegistryItem_status" value="#{bundle.aon_status}" />
-	<aon:selectOneMenu id="RegistryItem_status" 
-		required="true" value="#{controller.to.status}">
-		<f:selectItem itemLabel="-" value="#{null}"/>
-		<f:selectItems value="#{registryCollections.registryItemStatuses}" />
-	</aon:selectOneMenu>								
-	
+	<aon:if test="#{!controller.masterItem}">
+		<aon:outputLabel for="Item_id" value="#{bundle.aon_product}" />
+		<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+			<ui:param name="lookupTo" value="#{controller.to.item}" />
+			<ui:param name="idRequired" value="#{true}" />
+			<ui:param name="skipLabel" value="#{true}" />
+			<ui:param name="lookupReRender"	value="showNewRegistryItemWindow" />
+			<aon:methodParam name="lookupChangeListener"
+				value="#{controller.onItemChanged}" type="lookupChangeListener" />
+		</ui:include>
+	</aon:if>
+
+	<aon:if test="#{controller.to.saleType or controller.to.purchaseType}">
+		<aon:if test="#{controller.to.purchaseType}">
+			<aon:outputLabel for="RegistryItem_Priority" value="#{bundle.aon_priority}" />
+			<aon:inputText id="RegistryItem_Priority" 
+				value="#{controller.to.priority}"
+				required="true" size="2" maxlength="3" />
+		</aon:if>
+
+		<aon:if test="#{controller.masterItem}">
+			<aon:if test="#{controller.to.saleType}">
+				<aon:outputLabel for="Customer_id" value="#{bundle.aon_customer}" />
+				<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+					<ui:param name="lookupTo" value="#{controller.to.registry}" />
+					<ui:param name="lookupForRegistry" value="#{true}" />
+					<ui:param name="lookupSuffix" value="-Item" />
+					<ui:param name="idRequired" value="#{true}" />
+					<ui:param name="skipLabel" value="#{true}" />
+				</ui:include>
+			</aon:if>
+			<aon:if test="#{controller.to.purchaseType}">
+				<aon:outputLabel for="Supplier_id" value="#{bundle.aon_supplier}" />
+				<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
+					<ui:param name="lookupTo" value="#{controller.to.registry}" />
+					<ui:param name="lookupForRegistry" value="#{true}" />
+					<ui:param name="lookupSuffix" value="-Item" />
+					<ui:param name="idRequired" value="#{true}" />
+					<ui:param name="skipLabel" value="#{true}" />
+				</ui:include>
+			</aon:if>
+		</aon:if>
+
+		<aon:outputLabel for="RegistryItem_Code" value="#{bundle.product_item_customer_code}"
+			rendered="#{controller.to.saleType}" />
+		<aon:outputLabel for="RegistryItem_Code" value="#{bundle.product_item_supplier_code}"
+			rendered="#{controller.to.purchaseType}" />
+		<aon:inputText id="RegistryItem_Code"
+			value="#{controller.to.code}"
+			size="15" maxlength="15" />
+
+		<aon:outputLabel for="RegistryItem_Price" value="#{bundle.aon_price}" />
+		<aon:inputText id="RegistryItem_Price"
+			value="#{controller.to.price}"
+			required="true" size="5" />
+
+		<aon:outputLabel for="RegistryItem_Discount" value="#{bundle.aon_discount}" />
+		<aon:inputText id="RegistryItem_Discount"
+			value="#{controller.to.discountExpression.discountExpr}"
+			required="true" size="5" />
+	</aon:if>
+
+	<aon:if test="#{controller.to.purchaseType and companyCollections.currentUserWorkPlacesCount > 1}">
+		<aon:outputLabel for="RegistryItem_WorkPlace" value="#{bundle.purchase_workplace}" />
+		<aon:selectOneMenu id="RegistryItem_WorkPlace" 
+			value="#{controller.to.workPlace}">
+			<f:selectItem itemLabel=" - " itemValue="null" />
+			<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
+		</aon:selectOneMenu>
+	</aon:if>
+
+	<aon:if test="#{controller.to.commercialType}">
+		<aon:outputLabel for="RegistryItem_status" value="#{bundle.aon_status}" />
+		<aon:selectOneMenu id="RegistryItem_status" 
+			required="true" value="#{controller.to.status}">
+			<f:selectItem itemLabel="-" value="#{null}"/>
+			<f:selectItems value="#{registryCollections.registryItemStatuses}" />
+		</aon:selectOneMenu>
+	</aon:if>								
+
 </ui:composition>

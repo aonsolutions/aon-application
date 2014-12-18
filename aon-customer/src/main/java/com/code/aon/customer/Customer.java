@@ -55,7 +55,7 @@ public class Customer extends CustomerDB implements IRegistry, ITaxInfo, IScopab
 	}	
 	
 	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})	
-	@Where(clause = "type=0")
+	@Where(clause = "type=1")
 	public Set<RegistryItem> getItems() {
 		return items;
 	}

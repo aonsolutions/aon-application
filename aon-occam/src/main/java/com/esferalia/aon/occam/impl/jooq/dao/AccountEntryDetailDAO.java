@@ -23,7 +23,7 @@ import com.esferalia.aon.jooq.tables.records.AccountEntryDetailRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountEntryValidation;
-import com.esferalia.aon.watson.AonCoreException;
+import com.esferalia.aon.watson.error.AonCoreException;
 
 public class AccountEntryDetailDAO {
 	
@@ -82,11 +82,13 @@ public class AccountEntryDetailDAO {
 	}
 
 	public static AccountEntryDetail fetchOne(AONContext ctx, Condition condition) {
+		ctx.checkWrite();
 		return populateRecord(ctx.getDslContext().fetchOne(ACCOUNT_ENTRY_DETAIL, condition));
 	}
 
 	public static void batchInsert(AONContext ctx,
 			Collection<AccountEntryDetail> details) {
+		ctx.checkWrite();
 		InsertValuesStep9<AccountEntryDetailRecord, Integer, Integer, Integer, UInteger, String, Double, 
 			Double, Integer, String> insert = ctx.getDslContext().insertInto(ACCOUNT_ENTRY_DETAIL
 				,ACCOUNT_ENTRY_DETAIL.DOMAIN

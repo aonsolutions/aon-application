@@ -11,8 +11,8 @@ import org.jooq.SelectConditionStep;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
-import com.esferalia.aon.watson.AonCoreException;
 import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.error.AonCoreException;
 
 public class AccountPeriodValidation {
 
@@ -21,7 +21,7 @@ public class AccountPeriodValidation {
 	 */
 	public static BiConsumer<AccountPeriod,AONContext> EMPTY_INITIATION_DATE_VALIDATION = (ap,ctx) -> {
 		if (ap.getInitiationDate() == null) 
-			throw new AonCoreException(AonError.ACCOUNT_PERIOD_EMPTY_INITIATION_DATE);
+			throw new AonCoreException(AonError.ACCOUNT_PERIOD_EMPTY_INITIATION_DATE.getMessage());
 	};
 	
 	/**
@@ -29,7 +29,7 @@ public class AccountPeriodValidation {
 	 */
 	public static BiConsumer<AccountPeriod,AONContext> EMPTY_DEADLINE = (ap,ctx) -> {
 		if (ap.getDeadline() == null)
-			throw new AonCoreException(AonError.ACCOUNT_PERIOD_EMPTY_DEADLINE);
+			throw new AonCoreException(AonError.ACCOUNT_PERIOD_EMPTY_DEADLINE.getMessage());
 	};
 	
 	/**
@@ -37,7 +37,7 @@ public class AccountPeriodValidation {
 	 */
 	public static BiConsumer<AccountPeriod,AONContext> WRONG_RANGE = (ap,ctx) -> {
 		if (ap.getInitiationDate().after(ap.getDeadline()))
-			throw new AonCoreException(AonError.ACCOUNT_PERIOD_WRONG_RANGE);
+			throw new AonCoreException(AonError.ACCOUNT_PERIOD_WRONG_RANGE.getMessage());
 	};
 	
 	/**
@@ -45,7 +45,7 @@ public class AccountPeriodValidation {
 	 */
 	public static BiConsumer<AccountPeriod,AONContext> EMPTY_STATUS = (ap,ctx) -> {
 		if (ap.getStatus() == null)
-			throw new AonCoreException(AonError.ACCOUNT_PERIOD_TYPE_INVALID, "null");
+			throw new AonCoreException(AonError.ACCOUNT_PERIOD_TYPE_INVALID.format("null"));
 	};
 
 	/**
@@ -69,14 +69,14 @@ public class AccountPeriodValidation {
 			if (ap.getInitiationDate().compareTo(pFrom) >= 0 
 				&& ap.getInitiationDate().compareTo(pTo) <= 0) {
 				throw new AonCoreException(
-						AonError.ACCOUNT_PERIOD_START_OVERLAP,
-						record.getValue(ACCOUNT_PERIOD.NAME));
+						AonError.ACCOUNT_PERIOD_START_OVERLAP.format(
+						record.getValue(ACCOUNT_PERIOD.NAME)));
 			}
 			if (ap.getDeadline().compareTo(pFrom) >= 0 
 				&& ap.getDeadline().compareTo(pTo) <= 0) {
 				throw new AonCoreException(
-						AonError.ACCOUNT_PERIOD_END_OVERLAP,
-						record.getValue(ACCOUNT_PERIOD.NAME));
+						AonError.ACCOUNT_PERIOD_END_OVERLAP.format(
+						record.getValue(ACCOUNT_PERIOD.NAME)));
 			}
 		}
 	};

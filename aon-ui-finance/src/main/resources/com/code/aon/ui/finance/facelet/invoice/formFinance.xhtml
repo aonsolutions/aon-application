@@ -274,6 +274,9 @@
 					</ui:define>
 
 					<ui:define name="endFormListContent">
+						<ui:include src="/com/code/aon/ui/common/facelet/auditable/toolTipAuditInfo.xhtml">
+							<ui:param name="auditableTO" value="#{to}" />
+						</ui:include>					
 						<aon:commandLink id="finance_link" immediate="true"
 							styleClass="aon-button-goto" style="padding-right: 10px;"
 							value="&#160;" title="#{bundle.aon_go}" 

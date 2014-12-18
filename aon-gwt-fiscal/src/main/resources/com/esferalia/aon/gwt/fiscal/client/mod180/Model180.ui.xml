@@ -24,7 +24,7 @@
 		}
 	</ui:style>
 
-	<g:DockLayoutPanel ui:field="dockLayoutPanel">
+	<g:SplitLayoutPanel ui:field="splitLayoutPanel">
 		<g:north size="26">
 			<g:FlowPanel ui:field="toolbarPanel" height="100%"
 				styleName="aon-finding-title-toolbar aon-width-all">
@@ -108,11 +108,13 @@
 										<g:TextBox visibleLength="13" ui:field="receipt" styleName="aon-inputText"/>
 									</td>
 									<td class="aon-panelGrid-even aon-nowrap">
-										<g:CheckBox ui:field="replacement" text="{msg.replacement}" />
-										<g:FlowPanel ui:field="replacementPanel">
-											<g:InlineLabel text="{msg.replacedReceipt}" styleName="{aonResources.css.aonInnerLabel}"/>
-											<g:TextBox visibleLength="13" ui:field="replacedReceipt" styleName="aon-inputText"/>
-										</g:FlowPanel>
+										<g:HorizontalPanel>
+											<g:CheckBox ui:field="replacement" text="{msg.replacement}" />
+											<g:FlowPanel ui:field="replacementPanel">
+												<g:InlineLabel text="{msg.replacedReceipt}" styleName="{aonResources.css.aonInnerLabel}"/>
+												<g:TextBox visibleLength="13" ui:field="replacedReceipt" styleName="aon-inputText"/>
+											</g:FlowPanel>
+										</g:HorizontalPanel>
 									</td>
 								</tr>
 								
@@ -163,7 +165,7 @@
 						</g:HTMLPanel>
 					</g:west>
 					<g:center>
-						<m180:Model180Detail2013 ui:field="perceptorPanel"/>
+						<m180:Model180Detail2014 ui:field="perceptorPanel"/>
 					</g:center>
 				</g:DockLayoutPanel>
 
@@ -173,5 +175,19 @@
 				
 			</g:DeckLayoutPanel>
 		</g:center>
-	</g:DockLayoutPanel>
+		<g:south size="0">
+			<aon:MinimizePanel ui:field="footPanel">
+				<g:TabLayoutPanel barHeight="26" barUnit="PX">
+					<g:tab>
+						<g:header>
+							<span class="aon-icon-time aon-icon-commandButton" style="padding-left: 20px;">
+								Notificaciones
+							</span>
+						</g:header>
+						<aon:ResultsPanel ui:field="resultsPanel" />
+					</g:tab>
+				</g:TabLayoutPanel>
+			</aon:MinimizePanel>
+		</g:south>
+	</g:SplitLayoutPanel>
 </ui:UiBinder>

@@ -41,7 +41,8 @@
 					<aon:if test="#{!company.customReportTemplate}">
 						<aon:selectOneMenu id="Sale_invoice_template"
 							value="#{company.saleInvoiceTemplate}" >
-								<f:selectItems value="#{companyCollections.saleInvoiceTemplates}" />
+							<f:selectItems value="#{companyCollections.saleInvoiceTemplates}" />
+							<a4j:support event="onchange" reRender="saleInvoice_footer-panel" ajaxSingle="#{true}" />
 						</aon:selectOneMenu>
 					</aon:if>
 					<aon:if test="#{company.customReportTemplate}">
@@ -77,6 +78,13 @@
 						actionListener="#{companySaleInvoiceFooter.createLOPD}"
 						styleClass="aon-finding-toolbar-item aon-icon-sincronize" />
 				</aon:panelGrid>
+				<aon:div rendered="#{!company.printSaleInvoiceFooter 
+					and companySaleInvoiceFooter.garageDomainType
+					and companySaleInvoiceFooter.garageSaleInvoiceTemplate}" >
+					<aon:outputText value="#{bundle.gta_footer_text_default}: " styleClass="aon-italic aon-underline" />
+					<br />
+					<aon:outputText value="#{companySaleInvoiceFooter.text}" styleClass="aon-italic" />
+				</aon:div>
 			</aon:panel>
 			
 			<aon:panel>

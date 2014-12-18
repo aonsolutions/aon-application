@@ -19,10 +19,12 @@
 						<ui:param name="controller" value="#{supplier}" />
 						<ui:param name="showSegmentButton" value="#{aonConfiguration.bean.supplier.showSegment}" />
 						<ui:param name="showAddInfoButton" value="#{aonConfiguration.bean.supplier.showAddInfo}" />
+						<ui:param name="showProductButton" value="#{aonConfiguration.bean.supplier.showProduct}" />
 						
 						<ui:param name="segmentController" value="#{supplierSegment}" /> 
 						<ui:param name="addInfoController" value="#{supplierAddInfo}" /> 
 						<ui:param name="rAttachController" value="#{supplierRAttach}" />
+						<ui:param name="registryItemController" value="#{supplierItem}" />
 					</ui:include>
 					<ui:include src="/com/code/aon/ui/common/facelet/auditable/menuContent.xhtml" />
 				</ui:define>
@@ -155,6 +157,15 @@
 								</ui:include>								
 							</aon:panelTab>
 						</aon:if>
+
+						<aon:if test="#{aonConfiguration.bean.supplier.showProduct and supplierItem.model.rowCount > 0}">
+							<aon:panelTab id="supplierItem" label="#{bundle.aon_role_product}">
+								<ui:include src="/com/code/aon/ui/registry/facelet/ritem/tab_grid.xhtml" >
+									<ui:param name="controller" value="#{supplierItem}" />
+									<ui:param name="removeButtonReRender" value="supplierTab" />
+								</ui:include>
+							</aon:panelTab>
+						</aon:if>
 					</aon:panelTabSet>
 				</aon:if>
 			</aon:div>
@@ -162,6 +173,9 @@
 		<aon:if test="#{aonRole.accountingOperator}">
 			<aon:lookupButtonPopup lookup="#{accountLookup}" />
 		</aon:if>
+		<aon:if test="#{aonConfiguration.bean.supplier.showProduct}">
+			<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		</aon:if>	
 		<aon:if test="#{aonConfiguration.bean.rmedia.showSendEmail}">
 			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 		</aon:if>
@@ -185,6 +199,13 @@
 				<ui:param name="attachmentController" value="#{supplierRAttach}" />
 				<ui:param name="modalReRender" value="supplierTab" />
 			</ui:include>
+			<aon:if test="#{aonConfiguration.bean.supplier.showProduct}">
+				<ui:include src="/com/code/aon/ui/registry/facelet/ritem/newItemModal.xhtml">
+					<ui:param name="controller" value="#{supplier}" />
+					<ui:param name="registryItemController" value="#{supplierItem}" />
+					<ui:param name="modalReRender" value="supplierTab" />
+				</ui:include>
+			</aon:if>
 			<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
 				<ui:param name="auditableController" value="#{supplier}" />
 			</ui:include>						

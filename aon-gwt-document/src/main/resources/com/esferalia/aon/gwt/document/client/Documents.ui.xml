@@ -40,13 +40,13 @@
 	
 	.aon-panelGrid-search-info-internal2{
 	background:transparent url(images/aon-icon/aon-icon-search-title-item.png) scroll left 8px no-repeat;
-	padding-left:8px;
+	padding-left:15px;
 	font-weight:bold;
 	margin-left:5px;
 	}
 	
 	.aon-search-box{
-		width: 600px;
+		width: 100%;
 		margin-left:5px;
 		padding:3px 3px 3px 3px;
  		border:solid 1px #DEDEDE;
@@ -55,7 +55,7 @@
 	}
 	
 	.aon-search-box2{
-		width: 350px;
+		width: 100%;
 		margin-left:5px;
 		padding:3px 3px 3px 3px;
  		border:solid 1px #DEDEDE;
@@ -112,6 +112,17 @@
 		border-bottom:1px solid #BBB;
 		border-right: 0px !important;
 	}
+	.aon-editDataTable-buttonWest{
+		min-height: 22px;
+		border: 0;
+		cursor: pointer;
+		padding-left: 15px;
+		padding-top: 0px;
+		padding-bottom: 0px;
+		padding-right: 0px;
+		background-color: transparent;
+		margin-right: 5px;
+	}	
 
 @external .gwt-SplitLayoutPanel-HDragger;
 @external .gwt-SplitLayoutPanel-VDragger;
@@ -130,9 +141,7 @@
 .gwt-MenuBarPopup {
     margin: 0px !important;
     background: none repeat scroll 0% 0% #FFF !important;
-    border-right: 1px solid #EBEBEF !important;
-    border-left: 1px solid #EBEBEF !important;
-    border-bottom: 1px solid #EBEBEF !important;
+    border: 1px solid #DDDDDD !important;
     padding: 4px 0px !important;
     box-shadow: 2px 2px 5px 1px #EBEBEF !important;
 }
@@ -178,6 +187,7 @@ background-color:#D4CFC7;
 
 .aon-editDataTable-button{
 	margin-rigth:0px !important;
+	padding-left: 20px !important;
 }
 
 
@@ -220,6 +230,9 @@ background-color:#D4CFC7;
 	padding:2px 5px 2px 2px;
 	padding:1px 0.5em 1px 0.5em;
 }
+.aon-aux-up{
+	margin-left:7px;
+	}
 	</ui:style>
 
 
@@ -240,13 +253,13 @@ background-color:#D4CFC7;
 
 						<g:VerticalPanel styleName="{style.vpanel}">
 							<g:AbsolutePanel styleName="{style.vpanel}">
-								<g:Button styleName="aon-editDataTable-button aon-icon-attach-file"
+								<g:Button styleName="{style.aon-editDataTable-buttonWest} aon-icon-attach-file"
 									ui:field="allButton">
 									Todos
 								</g:Button>
 							</g:AbsolutePanel>
 							<g:AbsolutePanel styleName="{style.vpanel}">
-								<g:Button styleName="aon-editDataTable-button aon-icon-serviconvenios"
+								<g:Button styleName="{style.aon-editDataTable-buttonWest} aon-icon-serviconvenios"
 									ui:field="serviConveniosButton">
 									ServiConvenios
 								</g:Button>
@@ -271,20 +284,18 @@ background-color:#D4CFC7;
 						</div>
 					</g:header>
 					<g:AbsolutePanel styleName="{style.stackBorder}">
-						<g:ScrollPanel ui:field="treepanel">
+						<!-- g:ScrollPanel ui:field="treepanel" width="100%" height="100%">
 						    
 						    
-						</g:ScrollPanel>
-						<!--g:VerticalPanel styleName="{style.vpanel}">
-							<g:AbsolutePanel styleName="{style.vpanel}">
-								<g:Button
-									styleName="aon-editDataTable-button aon-icon-google-drive-folder">Mi Unidad</g:Button>
-							</g:AbsolutePanel>
-							<g:AbsolutePanel styleName="{style.vpanel}">
-								<g:Button
-									styleName="aon-editDataTable-button aon-icon-google-drive-folder">Compartido</g:Button>
-							</g:AbsolutePanel>
-						</g:VerticalPanel-->
+						</g:ScrollPanel-->
+						<g:VerticalPanel styleName="{style.vpanel}">
+							<g:Button ui:field="upDrive" styleName="{style.aon-aux-up} {style.aon-editDataTable-buttonWest} aon-icon-new" text="Subir"></g:Button>
+							<g:SimplePanel ui:field="sp">
+								
+							</g:SimplePanel>
+						</g:VerticalPanel>
+						
+						
 						<!--g:Tree ui:field="tree"/ -->
 					</g:AbsolutePanel>
 				</g:stack>
@@ -377,19 +388,19 @@ background-color:#D4CFC7;
 										<td>
 											<span class="{style.aon-panelGrid-search-info-internal2}">Nombre:</span>
 										</td>
-										<td>
+										<td style="width:600px">
 											<g:TextBox ui:field="searchBox" styleName="{style.aon-search-box}">
 											</g:TextBox>
 										</td>
 										<td>
 											<span class="{style.aon-panelGrid-search-info-internal2}">Empresa:</span>
 										</td>
-										<td>
+										<td style="width:350px;">
 											<g:SuggestBox ui:field="enterpriseSearchBox" styleName="{style.aon-search-box2}"
 													autoSelectEnabled="true" popupStyleName="{style.aon-search-box-popup}">
 											</g:SuggestBox>
 										</td>    
-							
+										<td style="padding-left:20px;"><g:Button ui:field="reset" styleName="aon-editDataTable-button aon-icon-home"></g:Button></td>
 										<td><g:Button visible="false" ui:field="searchButton" styleName="aon-editDataTable-button"> </g:Button> 
 										</td>
 										<td><g:Button visible="false" ui:field="eSearchButton" styleName="aon-editDataTable-button"> </g:Button> 

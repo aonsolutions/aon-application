@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.watson.error.AonCoreException;
 
 public interface IAccounting {
 
@@ -35,6 +36,6 @@ public interface IAccounting {
 	public void insert(AONContext ctx,AccountEntry ae);
 	public void update(AONContext ctx,AccountEntry ae);
 	public void delete(AONContext ctx,AccountEntry accountEntry);
-	public AccountEntry insertSalaryEntry(AONContext ctx,SalaryAccountEntry sae);
+	public AccountEntry insertSalaryEntry(AONContext ctx,SalaryAccountEntry sae) throws AonCoreException;
 	
 }

@@ -14,12 +14,12 @@ import com.code.aon.file.tax.FileTaxUtil;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.common.shared.CompanyAdministrator;
 import com.esferalia.aon.gwt.common.shared.CompanyParticipation;
-import com.esferalia.aon.gwt.common.shared.LegalRepresentative;
 import com.esferalia.aon.gwt.common.shared.Secretary;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.DoubleVariable;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200.BalanceType;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
+import com.esferalia.aon.occam.api.model.LegalRepresentative;
 
 public class Mod200File {
 	

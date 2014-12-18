@@ -14,7 +14,6 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ProvidesResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ResultsPanel extends ResizeComposite implements ProvidesResize {
@@ -104,7 +103,6 @@ public class ResultsPanel extends ResizeComposite implements ProvidesResize {
 
 	public void setWidget(Widget child) {
 		dockLayoutPanel.add(child);
-		TextBox b;
 	}
 
 	public void setHTML(String html) {

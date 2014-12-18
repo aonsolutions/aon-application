@@ -62,11 +62,16 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 		ProjectReservationController controller = (ProjectReservationController)event.getController();
 		ProjectReservation reservation = (ProjectReservation)controller.getTo();
 
-		controller.getReservationPermission().setReservation(reservation);
-		controller.resetStartTime();
-		controller.resetEndTime();
-		controller.resetNights();
-		controller.setInvoiceModel(null);
+		try {
+			controller.getReservationPermission().setReservation(reservation);
+			controller.resetStartTime();
+			controller.resetEndTime();
+			controller.resetNights();
+			controller.checkMultipleReservation();
+			controller.setInvoiceModel(null);
+		} catch(ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
 	}
 
 	@Override

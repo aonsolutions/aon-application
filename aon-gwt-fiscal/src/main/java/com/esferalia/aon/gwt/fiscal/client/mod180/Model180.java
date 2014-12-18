@@ -10,6 +10,9 @@ import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
 import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
 import com.esferalia.aon.gwt.common.client.widget.AdministrationListBox;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.client.widget.ShowMorePagerPanel;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.common.shared.FiscalParameters;
@@ -17,7 +20,7 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
-import com.esferalia.aon.gwt.fiscal.client.mod180.Model180Detail2013.ICallBack;
+import com.esferalia.aon.gwt.fiscal.client.mod180.Model180Detail2014.ICallBack;
 import com.esferalia.aon.gwt.fiscal.client.widget.EnterpriseSuggestBox;
 import com.esferalia.aon.occam.api.model.Mod180;
 import com.esferalia.aon.occam.api.model.Mod180Detail;
@@ -45,10 +48,11 @@ import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVisibility;
 import com.google.gwt.user.client.ui.Hidden;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -89,6 +93,8 @@ public class Model180 extends MainEntryPoint {
 	private Mod180 currentMod180;
 
 	@UiField
+	SplitLayoutPanel splitLayoutPanel;
+	@UiField
 	DeckLayoutPanel deckPanel;
 	@UiField
 	Panel listPanel;
@@ -97,7 +103,9 @@ public class Model180 extends MainEntryPoint {
 	@UiField
 	DockLayoutPanel formPanel;
 	@UiField
-	HorizontalPanel messagesPanel;
+	ResultsPanel resultsPanel;
+	@UiField
+	MinimizePanel footPanel;
 	@UiField
 	Panel formContainer;
 
@@ -115,7 +123,7 @@ public class Model180 extends MainEntryPoint {
 	@UiField
 	ShowMorePagerPanel pagerPanel;
 	@UiField
-	Model180Detail2013 perceptorPanel;
+	Model180Detail2014 perceptorPanel;
 
 	@UiField
 	Button saveButton;
@@ -174,11 +182,8 @@ public class Model180 extends MainEntryPoint {
 		table = new Model180Table(new Mod180SelectionHandler());
 
 		Mod180DetailCell mod180DetailCell = new Mod180DetailCell();
-
 		CellList.Resources cellListStyle = GWT.create(AonCellList.class);
-		detailList = new CellList<Mod180Detail>(mod180DetailCell,cellListStyle
-				, MOD180_DETAIL_PROVIDES_KEY);
-
+		detailList = new CellList<Mod180Detail>(mod180DetailCell,cellListStyle, MOD180_DETAIL_PROVIDES_KEY);
 		detailList.setStylePrimaryName(DATA_GRID_STYLE.dataGridStyle().dataGridWidget());
 		detailList.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
 		detailList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
@@ -365,20 +370,6 @@ public class Model180 extends MainEntryPoint {
 				});
 	}
 
-	private void cleanErrorMessage() {
-		for (int i = 0; i < messagesPanel.getWidgetCount(); i++) {
-			messagesPanel.remove(messagesPanel.getWidget(i));
-		}
-	}
-
-	private void addErrorMessage(String msg) {
-		Label label = new Label(msg);
-		label.addStyleName("aon-icon-errorwarning");
-		label.addStyleName("aon-message-error");
-		label.addStyleName("aon-icon");
-		messagesPanel.add(label);
-	}
-
 	@UiHandler("saveButton")
 	void onAcceptButtonClick(ClickEvent event) {
 		if (AonUtil.isEmpty(year.getValue())) {
@@ -406,8 +397,7 @@ public class Model180 extends MainEntryPoint {
 					@Override
 					public void onFailure(Throwable caught) {
 						popup.hide();
-						addErrorMessage(MSG.unableToSaveMod180(caught
-								.getMessage()));
+						showErrorMessage(MSG.unableToSaveMod180(caught.getMessage()));
 					}
 				});
 	}
@@ -576,4 +566,52 @@ public class Model180 extends MainEntryPoint {
 		diskForm.submit();
 	}
 
+
+	//*****************************************************************************
+	//*****************************************************************************
+	//*****************************************************************************
+	//*****************************************************************************
+	@UiHandler("footPanel")
+	void onFootMinimize(MinimizeEvent event) {
+		closeFootPanel();
+	}
+	@UiHandler("footPanel")
+	void onFootMaximize(MinimizeEvent event) {
+	}
+
+	private void closeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 0);
+	}
+
+	private void maximizeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 0);
+	}
+	
+	private void showResultsPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 5);
+	}
+
+	private boolean isResultsPanelVisible() {
+		return splitLayoutPanel.getWidgetSize(footPanel) > 0;
+	}
+	
+	private void cleanErrorMessage() {
+		resultsPanel.clearFlowPanel();
+		closeFootPanel();
+	}
+
+	private void showErrorMessage(String msg) {
+		showResultsPanel();
+		addErrorMessage(msg);
+	}
+
+	private void addErrorMessage(String msg) {
+		SimplePanel panel = new SimplePanel();
+		Label label = new Label(msg);
+		label.addStyleName("aon-icon-errorwarning");
+		label.addStyleName("aon-message-error");
+		label.addStyleName("aon-icon");
+		panel.add(label);
+		resultsPanel.setWidget(panel);
+	}
 }

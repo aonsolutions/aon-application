@@ -34,6 +34,16 @@
 			</aon:panelCollapsible>
 		</aon:if>
 
+		<aon:if test="#{aonConfiguration.bean.supplier.showProduct}">
+			<aon:panelCollapsible expanded="false" label="#{bundle.aon_role_product}" >					
+				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+					<ui:include src="/com/code/aon/ui/registry/facelet/ritem/searchContent.xhtml">
+						<ui:param name="rItemController" value="#{supplierItem}" />
+					</ui:include>					
+				</aon:panelGrid>
+			</aon:panelCollapsible>
+		</aon:if>
+						
 		<aon:if test="#{aonRole.document}">
 			<aon:panelCollapsible expanded="false" label="#{bundle.aon_documents}">
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		

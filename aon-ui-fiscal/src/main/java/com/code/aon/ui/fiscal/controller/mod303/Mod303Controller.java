@@ -235,6 +235,8 @@ public class Mod303Controller extends FiscalModelController {
 	public FiscalModelDetail getModHA() { return getSelectedDetail("HA"); }
 	public Mod303Key getModHDKey() { return getSelectedKey("HD"); }
 	public FiscalModelDetail getModHD() { return getSelectedDetail("HD"); }
+	public Mod303Key getModHTKey() { return getSelectedKey("HT"); }
+	public FiscalModelDetail getModHT() { return getSelectedDetail("HT"); }
 	public Mod303Key getModIKey() { return getSelectedKey("I"); }
 	public FiscalModelDetail getModI() { return getSelectedDetail("I"); }
 	public Mod303Key getModJKey() { return getSelectedKey("J"); }

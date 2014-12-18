@@ -1,6 +1,5 @@
 package com.esferalia.aon.watson.server;
 
-import com.esferalia.aon.watson.AonCoreException;
 
 public class AonEnumUtils {
 	
@@ -12,7 +11,7 @@ public class AonEnumUtils {
 		return (enume == null) ? null : (byte) enume.ordinal();
 	}
 
-	public static boolean getBoolean(Byte value) throws AonCoreException {
+	public static boolean getBoolean(Byte value) {
 		if (value == null)
 			return false;
 		return (value == 1);

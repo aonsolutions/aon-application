@@ -84,14 +84,8 @@
 					</aon:menuItem>
 				</ui:define>
 				<ui:define name="beforeSpinToolbarContent">				
-					<aon:commandButton id="audit-info"
-						styleClass="aon-finding-toolbar-item aon-icon-audit"
-						value="#{bundle.aon_audit}"
-						rendered="#{!reservation.nevv}"
-						reRender="showAuditInfoWindow">
-						<f:setPropertyActionListener target="#{reservation.showAuditInfoWindow}"
-							value="#{true}" />							
-					</aon:commandButton>	
+					<ui:include
+						src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml" />											
 				</ui:define>				
 			</ui:decorate>
 

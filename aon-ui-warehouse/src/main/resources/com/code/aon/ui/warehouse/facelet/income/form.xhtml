@@ -42,6 +42,8 @@
 									value="#{true}" />
 							</aon:commandButton>
 						</aon:if>
+						<ui:include
+							src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml" />						
 						<aon:htmlCommandLink id="incomeForm-report" value="#{bundle.aon_invoice_delivery}"
 							target="_new" rendered="#{!income.nevv and incomeDetail.model.rowCount > 0}"
 							action="#{report.onExecute}" 
@@ -51,8 +53,6 @@
 							<f:param name="reportKey" value="incomeForm" />
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
-						<ui:include
-							src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml" />						
 					</ui:define>
 				</ui:decorate>
 			</aon:div>			

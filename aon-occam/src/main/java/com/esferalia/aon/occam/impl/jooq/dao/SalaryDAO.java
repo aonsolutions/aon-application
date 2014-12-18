@@ -26,8 +26,8 @@ import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry.SalaryAccountEntryLine;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry.SalaryAccountEntryLineType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
-import com.esferalia.aon.watson.AonCoreException;
 import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -57,9 +57,9 @@ public class SalaryDAO {
 	public static SalaryAccountEntry getSalaryEntry(AONContext ctx, Integer enterprise
 			,Date from, Date to,String concept, Integer registryBank) {
 		ctx.checkRead();
-		if (enterprise == null) throw new AonCoreException(AonError.EMPTY_ENTERPRISE);
-		if (from == null) throw new AonCoreException(AonError.EMPTY_DATE_FROM);
-		if (to == null) throw new AonCoreException(AonError.EMPTY_DATE_TO);
+		if (enterprise == null) throw new AonCoreException(AonError.EMPTY_ENTERPRISE.getMessage());
+		if (from == null) throw new AonCoreException(AonError.EMPTY_DATE_FROM.getMessage());
+		if (to == null) throw new AonCoreException(AonError.EMPTY_DATE_TO.getMessage());
 		Field<BigDecimal> sueldosYSalarios  = DSL.sum(DSL.round( SALARY.IRPF_BASE ,2)).as(SUM_IRPF_BASE);
 		Field<BigDecimal> totalIRPF  = DSL.sum(DSL.round( SALARY.TOTAL_IRPF ,2)).as(SUM_TOTAL_IRPF);
 		Field<BigDecimal> segSocEmployee  = DSL.sum(DSL.round( SALARY.SOCIAL_SECURITY_CONTRIBUTIONS,2)).as(SUM_SOCIAL_SECURITY_CONTRIBUTIONS);
