@@ -38,16 +38,11 @@ import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.pool.AonConnectionException;
 import com.esferalia.aon.dsi.DSI2AON;
-import com.esferalia.aon.dsi.jooq.tables.Fnrelaci;
 import com.esferalia.aon.dsi.jooq.tables.records.FnempresRecord;
 import com.esferalia.aon.dsi.jooq.tables.records.FnnomincRecord;
-import com.esferalia.aon.dsi.jooq.tables.records.FnnominlRecord;
-import com.esferalia.aon.dsi.jooq.tables.records.FnrelaciRecord;
 import com.esferalia.aon.dsi.util.DBUtils;
 import com.esferalia.aon.dsi.util.DSIUtils;
-import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.gwt.connect.jooq.AONUtils;
 import com.esferalia.aon.gwt.connect.shared.DSIImportService;
 import com.esferalia.aon.gwt.connect.shared.DSIImportService.GetActionHandler;
 import com.esferalia.aon.gwt.connect.shared.JsImportEvent;
@@ -55,7 +50,6 @@ import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.jooq.tables.records.PersonRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
-import com.google.gwt.i18n.shared.DateTimeFormat;
 import com.google.gwt.thirdparty.guava.common.io.Files;
 
 //@MultipartConfig(location="/tmp", fileSizeThreshold=1024*1024, 
@@ -303,8 +297,8 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 		OutputStream out = null;
 		PrintStream print = null;
 		try {
-			String domain = req.getServerName(); // getDomainName();			
-			Connection aonConn = DatabaseUtil.getConnection(domain);
+			//String domain = req.getServerName(); // getDomainName();			
+			//Connection aonConn = DatabaseUtil.getConnection(domain);
 			out = resp.getOutputStream();
 			print = new PrintStream(out);
 			
@@ -313,7 +307,6 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 				try {
 					conn = getDSIConn(db);
 					List<FnempresRecord> empress = DSIUtils.getEmpress(conn);
-					List<FnnominlRecord> nominasL = DSIUtils.getNominasL(conn);
 					List<FnnomincRecord> nominasC = DSIUtils.getNominasC(conn);
 					// @formatter:off
 					print.print('[');
@@ -321,7 +314,6 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 						if (i > 0)
 							print.println(',');
 						FnempresRecord empres = empress.get(i);
-						FnnominlRecord nominaL = nominasL.get(i);
 						FnnomincRecord nominaC = nominasC.get(i);
 						
 						print.print("{");
@@ -363,7 +355,7 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 				}
 			}
 			
-		} catch (AonConnectionException ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 			
 		} finally {
