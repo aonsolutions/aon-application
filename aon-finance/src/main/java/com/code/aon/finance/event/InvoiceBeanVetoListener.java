@@ -109,6 +109,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			if (changeTaxDate(invoice)) {
 				invoice.setTaxDate(invoice.getIssueDate());
 			}
+			invoice.setUpdateDetails(updateDetailsNeeded(invoice));
 		}
 	}
 
@@ -199,11 +200,27 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
         List<?> list = query.addScalar("issue_date", Hibernate.DATE).addScalar("tax_date", Hibernate.DATE).list();
         if (!list.isEmpty()) {
         	Object[] obj = (Object[])list.get(0);
-            Date issueDate= (Date) obj[0];
-            Date taxDate= (Date) obj[1];
+            Date issueDate = (Date)obj[0];
+            Date taxDate = (Date)obj[1];
             if (!ObjectUtils.equals(issueDate, invoice.getIssueDate())) {
                 return (taxDate == null || ObjectUtils.equals(issueDate, taxDate));
             }
+        }
+        return false;
+	}
+
+	private boolean updateDetailsNeeded(Invoice invoice) throws ManagerBeanVetoListenerException {
+    	String select = "SELECT invoice.issue_date issue_date, invoice.registry registry " +
+						"FROM invoice as invoice " +
+						"WHERE invoice.id = " + invoice.getId();
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+		SQLQuery query = session.createSQLQuery(select);
+        List<?> list = query.addScalar("issue_date", Hibernate.DATE).addScalar("registry", Hibernate.INTEGER).list();
+        if (!list.isEmpty()) {
+        	Object[] obj = (Object[])list.get(0);
+            Date issueDate = (Date)obj[0];
+            Integer registry = (Integer)obj[1];
+            return (!ObjectUtils.equals(issueDate, invoice.getIssueDate()) || !ObjectUtils.equals(registry, invoice.getRegistry().getId()));
         }
         return false;
 	}

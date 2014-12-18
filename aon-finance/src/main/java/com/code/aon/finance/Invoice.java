@@ -60,6 +60,7 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 	private int issueDay;
 	private boolean defaultTaxInfo;
 	private boolean updateEnabled;
+	private boolean updateDetails;
 	private boolean attachmentAvailable;
 
 	private Set<InvoiceDetail> lines = new HashSet<InvoiceDetail>();
@@ -71,6 +72,7 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 		setIssueDate(new Date());
 		setDefaultTaxInfo(true);
 		setUpdateEnabled(true);
+		setUpdateDetails(false);
 	}
 
     @Formula("year(issue_date)")
@@ -111,6 +113,14 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 	}
 	public void setUpdateEnabled(boolean updateEnabled) {
 		this.updateEnabled = updateEnabled;
+	}
+
+	@Transient
+	public boolean isUpdateDetails() {
+		return updateDetails;
+	}
+	public void setUpdateDetails(boolean updateDetails) {
+		this.updateDetails = updateDetails;
 	}
 
 	@Formula("(select COUNT(*) from invoice_attach ia where id = ia.invoice)")

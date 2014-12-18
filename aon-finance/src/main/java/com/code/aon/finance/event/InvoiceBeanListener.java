@@ -3,15 +3,19 @@ package com.code.aon.finance.event;
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Invoice;
+import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.project.Project;
+import com.code.aon.ql.Criteria;
 import com.code.aon.tas.ProjectTas;
 import com.code.aon.tas.enumeration.ProjectStatus;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 	
@@ -33,6 +37,9 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 		}
 
 		if (invoice.isUpdateEnabled()) {
+			if (invoice.isUpdateDetails()) {
+				updateDetails(invoice);
+			}
 			updateTotals(invoice);
 		}
 		invoice.setUpdateEnabled(true);
@@ -54,6 +61,19 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 				projectTas.setStatus(status);
 				projectTasBean.update(projectTas);
 			}
+		}
+	}
+
+	private void updateDetails(Invoice invoice) throws ManagerBeanException {
+		boolean updateDetailsEnabled = (invoice.isSales()) ? invoice.getPosShift() == null || invoice.getPosShift().getId() == null : invoice.isPurchase();
+		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+		for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
+			InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
+			invoiceDetail.setUpdateEnabled(updateDetailsEnabled);
+			invoiceDetail.getInvoice().setUpdateEnabled(false);
+			invoiceDetailBean.update(invoiceDetail);
 		}
 	}
 
