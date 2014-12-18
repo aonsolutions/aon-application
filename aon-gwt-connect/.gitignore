@@ -2,3 +2,4 @@
 /target/
 /.project
 /.classpath
+src/main/resources/com/esferalia/aon/gwt/connect/Connect.gwt.xml
