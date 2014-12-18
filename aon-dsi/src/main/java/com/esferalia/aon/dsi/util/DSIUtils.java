@@ -10,7 +10,11 @@ import org.jooq.DSLContext;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.dsi.jooq.tables.Fnnominc;
+import com.esferalia.aon.dsi.jooq.tables.Fnnominl;
 import com.esferalia.aon.dsi.jooq.tables.records.FnempresRecord;
+import com.esferalia.aon.dsi.jooq.tables.records.FnnomincRecord;
+import com.esferalia.aon.dsi.jooq.tables.records.FnnominlRecord;
 
 public class DSIUtils {
 	
@@ -31,5 +35,23 @@ public class DSIUtils {
 		//@formatter:on
 	}
 	
+	public static List<FnnominlRecord> getNominasL(Connection conn, Condition ...conditions) {
+		//@formatter:off
+		return getDSLContext(conn)
+				.select()
+				.from(Fnnominl.FNNOMINL)
+				.where(conditions)
+				.fetchInto(Fnnominl.FNNOMINL);
+		//@formatter:on
+	}
 	
+	public static List<FnnomincRecord> getNominasC(Connection conn, Condition ...conditions) {
+		//@formatter:off
+		return getDSLContext(conn)
+				.select()
+				.from(Fnnominc.FNNOMINC)
+				.where(conditions)
+				.fetchInto(Fnnominc.FNNOMINC);
+		//@formatter:on
+	}
 }

@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.connect.client;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.esferalia.aon.dsi.util.DBUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.connect.shared.DSIImportService;
 import com.esferalia.aon.gwt.connect.shared.JsEmpres;
@@ -17,6 +16,7 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.xhr.client.ReadyStateChangeHandler;
 import com.google.gwt.xhr.client.XMLHttpRequest;
 
@@ -66,6 +66,8 @@ public class DSIImportClient implements DSIImportService {
 				requestDataBuffer.append("db:\"" + empres.getDB()+ "\","  );
 				requestDataBuffer.append("sscod:\"" + empres.getSScod()+ "\","  );
 				requestDataBuffer.append("ssnum:\"" + empres.getSSnum()+ "\","  );
+				requestDataBuffer.append("fnomina:\"" + empres.getFirstSalary()+ "\","  );
+				requestDataBuffer.append("lnomina:\"" + empres.getLastSalary()+ "\","  );
 				requestDataBuffer.append("nif:\"" + empres.getNif()+ "\""  );
 				requestDataBuffer.append('}');
 			}			
@@ -77,8 +79,6 @@ public class DSIImportClient implements DSIImportService {
 			cb.onError(e);
 		}				
 	}
-	
-	
 	
 	private static boolean containsRSocial (Set<DSILoadSelected> selected, String rSocial ) {
 		Iterator<DSILoadSelected> iterator = selected.iterator();
@@ -138,7 +138,6 @@ public class DSIImportClient implements DSIImportService {
 			}
 		});
 		builder.send();
-
 	}
 
 	private static <T extends JavaScriptObject> void sendX(String requestData,

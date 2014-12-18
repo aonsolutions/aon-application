@@ -55,4 +55,28 @@ public final class JsEmpres extends JavaScriptObject {
 		this.rsocial = rsocial;
 		return this;
 	}-*/;
+	
+	/**
+	 *  MINE
+	 */
+	
+	public native JsEmpres setFirstSalary(String fnomina) /*-{
+		this.fnomina = fnomina;
+		return this;
+	}-*/;
+
+	
+	public native String getFirstSalary() /*-{
+		return this.fnomina;
+	}-*/;
+	
+	public native JsEmpres setLastSalary(String lnomina) /*-{
+		this.lnomina = lnomina;
+		return this;
+	}-*/;
+
+	public native String getLastSalary() /*-{
+		return this.lnomina;
+	}-*/;
+
 }

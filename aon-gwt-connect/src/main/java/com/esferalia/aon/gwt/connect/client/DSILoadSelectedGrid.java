@@ -10,6 +10,8 @@ import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.connect.shared.JsEmpres;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.CheckboxCell;
+import com.google.gwt.cell.client.ClickableTextCell;
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.builder.shared.TableCellBuilder;
@@ -26,6 +28,7 @@ import com.google.gwt.user.cellview.client.ColumnSortList;
 import com.google.gwt.user.cellview.client.ColumnSortList.ColumnSortInfo;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.TextHeader;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.MultiSelectionModel;
@@ -39,22 +42,23 @@ public class DSILoadSelectedGrid extends CustomDataGrid<DSILoadSelected>
 	interface Listener {
 		void onSelectionChangeHandler(SelectionChangeEvent event);
 	}
-	
+
 	public enum Columns {
-		
-		CHECK(""),		
-		NIF("NIF"),
-		EMPRESA("EMPRESA"),
-		ULTIMA_FECHA_IMPORTADA("ULTIMA FECHA IMPORTADA"),
-		RANGO("RANGO FECHAS"),
-		NUEVO_TRASPASO("FECHA NUEVO TRASPASO");
-		
+	
+		CHECK(""), 
+		NIF("NIF"), 
+		EMPRESA("EMPRESA"), 
+		ULTIMA_FECHA_IMPORTADA("PRIMERA NOMINA"), 
+		RANGO("RANGO FECHAS"), 
+		NUEVO_TRASPASO("NUEVO TRASPASO"), 
+		INFORME("INFORME");
+	
 		private final String mensaje;
-		
+
 		private Columns(String mensaje) {
 			this.mensaje = mensaje;
 		}
-		
+
 		public String getColumnName() {
 			return mensaje;
 		}
@@ -81,6 +85,16 @@ public class DSILoadSelectedGrid extends CustomDataGrid<DSILoadSelected>
 		public String getNif() {
 			return empres.getNif();
 		}
+		
+		@Override
+		public String getFirstSalary() {
+			return empres.getFirstSalary();
+		}
+		
+		@Override
+		public String getLastSalary() {
+			return empres.getLastSalary();
+		}
 	}
 
 	public static class EnterpriseDSILoadSelected extends
@@ -93,15 +107,23 @@ public class DSILoadSelectedGrid extends CustomDataGrid<DSILoadSelected>
 
 	private class HeaderBuilder extends
 			AbstractHeaderOrFooterBuilder<DSILoadSelected> {
-		
-		private Header<Boolean> checkHeader = DSILoadSelectedGrid.this.newCheckHeader();
-		private Header<String> nifHeader = new TextHeader(Columns.NIF.getColumnName());
-		private Header<String> enterpriseNameHeader = new TextHeader(Columns.EMPRESA.getColumnName());
-		private Header<String> lastDateHeader = new TextHeader(Columns.ULTIMA_FECHA_IMPORTADA.getColumnName());
+
+		private final Integer ROW_COUNT = 1;
+
+		private Header<Boolean> checkHeader = DSILoadSelectedGrid.this
+				.newCheckHeader();
+		private Header<String> nifHeader = new TextHeader(
+				Columns.NIF.getColumnName());
+		private Header<String> enterpriseNameHeader = new TextHeader(
+				Columns.EMPRESA.getColumnName());
+		private Header<String> lastDateHeader = new TextHeader(
+				Columns.ULTIMA_FECHA_IMPORTADA.getColumnName());
 		private Header<String> dateIntervalsHeader = new TextHeader(
 				Columns.RANGO.getColumnName());
 		private Header<String> transferHeader = new TextHeader(
 				Columns.NUEVO_TRASPASO.getColumnName());
+		private Header<String> informeHeader = new TextHeader(
+				Columns.INFORME.getColumnName());
 
 		public HeaderBuilder() {
 			super(DSILoadSelectedGrid.this, false);
@@ -111,11 +133,12 @@ public class DSILoadSelectedGrid extends CustomDataGrid<DSILoadSelected>
 		@Override
 		protected boolean buildHeaderOrFooterImpl() {
 			TableRowBuilder tr = startRow();
-			tr.startTH().colSpan(Columns.values().length).rowSpan(1);
+			tr.startTH().colSpan(Columns.values().length).rowSpan(ROW_COUNT);
 			tr.endTH();
-			
+
 			// Get information about the sorted column.
-			ColumnSortList sortList = DSILoadSelectedGrid.this.getColumnSortList();
+			ColumnSortList sortList = DSILoadSelectedGrid.this
+					.getColumnSortList();
 			ColumnSortInfo sortedInfo = (sortList.size() == 0) ? null
 					: sortList.get(0);
 			Column<?, ?> sortedColumn = (sortedInfo == null) ? null
@@ -124,10 +147,10 @@ public class DSILoadSelectedGrid extends CustomDataGrid<DSILoadSelected>
 					.isAscending();
 
 			tr = startRow().className(AON.AON_CSS.childCell());
-			buildHeader(tr, checkHeader, checkBox, 
-					sortedColumn, isSortAscending, false, false);
-			buildHeader(tr, nifHeader, nif, 
-					sortedColumn, isSortAscending, false, false);
+			buildHeader(tr, checkHeader, checkBox, sortedColumn,
+					isSortAscending, false, false);
+			buildHeader(tr, nifHeader, nif, sortedColumn, isSortAscending,
+					false, false);
 			buildHeader(tr, enterpriseNameHeader, enterpriseName, sortedColumn,
 					isSortAscending, false, false);
 			buildHeader(tr, lastDateHeader, lastDate, sortedColumn,
@@ -136,7 +159,9 @@ public class DSILoadSelectedGrid extends CustomDataGrid<DSILoadSelected>
 					isSortAscending, false, false);
 			buildHeader(tr, transferHeader, newTransferFrom, sortedColumn,
 					isSortAscending, false, false);
-			
+			buildHeader(tr, informeHeader, informe, sortedColumn,
+					isSortAscending, false, false);
+
 			tr.endTR();
 
 			return true;
@@ -157,54 +182,81 @@ public class DSILoadSelectedGrid extends CustomDataGrid<DSILoadSelected>
 		}
 
 	}
-	
-	private class TableBuilder extends AbstractCellTableBuilder<DSILoadSelected> {
-		
-		public TableBuilder() {
+
+	private class CellTableBuilder extends
+			AbstractCellTableBuilder<DSILoadSelected> {
+
+		private final String rowStyle;
+		private final String selectedRowStyle;
+
+		public CellTableBuilder() {
 			super(DSILoadSelectedGrid.this);
+			
+			rowStyle = getResources().style().evenRow();
+			selectedRowStyle = " " + getResources().style().selectedRow();
 		}
 
 		@Override
 		protected void buildRowImpl(DSILoadSelected rowValue, int absRowIndex) {
-			buildEnterpriseImpl(rowValue, absRowIndex);			
+
+			buildEnterpriseImpl(rowValue, absRowIndex);
 		}
-		
+
 		public void buildEnterpriseImpl(DSILoadSelected rowValue, int rowIndex) {
 			
+			boolean isSelected = (selectionModel == null || rowValue == null) ? false
+					: selectionModel.isSelected(rowValue);
+			StringBuilder trClasses = new StringBuilder(rowStyle);
+			if (isSelected) {
+				trClasses.append(selectedRowStyle);
+			}
+
 			int col = 0;
-			
-			TableRowBuilder row = startRow();
+
+			TableRowBuilder row = startRow().className(trClasses.toString());
 			TableCellBuilder td;
-			
-			td = row.startTD().align(HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString())
+
+			td = row.startTD()
+					.align(HasHorizontalAlignment.ALIGN_LEFT
+							.getTextAlignString())
 					.className(AON.AON_CSS.childCell());
 			renderCell(td, createContext(col++), checkBox, rowValue);
 			td.endTD();
 
-			td = row.startTD().align(HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
+			td = row.startTD().align(
+					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
 			renderCell(td, createContext(col++), nif, rowValue);
 			td.endTD();
-			
-			td = row.startTD().align(HasHorizontalAlignment.ALIGN_LEFT.getTextAlignString());
-			td.className(AON.AON_BOLD);			
+
+			td = row.startTD().align(
+					HasHorizontalAlignment.ALIGN_LEFT.getTextAlignString());
+			td.className(AON.AON_BOLD);
 			renderCell(td, createContext(col++), enterpriseName, rowValue);
 			td.endTD();
-			
-			td = row.startTD().align(HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
+
+			td = row.startTD().align(
+					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
 			renderCell(td, createContext(col++), lastDate, rowValue);
 			td.endTD();
-			
-			td = row.startTD().align(HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
+
+			td = row.startTD().align(
+					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
 			renderCell(td, createContext(col++), intervalsDate, rowValue);
 			td.endTD();
 
-			td = row.startTD().align(HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
+			td = row.startTD().align(
+					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
 			renderCell(td, createContext(col++), newTransferFrom, rowValue);
 			td.endTD();
 			
+			td = row.startTD().align(
+					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
+			renderCell(td, createContext(col++), informe, rowValue);
+			td.endTD();
+
 			row.endTR();
 		}
-		
+
 	}
 
 	// ******************************************************
@@ -223,6 +275,7 @@ public class DSILoadSelectedGrid extends CustomDataGrid<DSILoadSelected>
 	private Column<DSILoadSelected, String> lastDate;
 	private Column<DSILoadSelected, String> intervalsDate;
 	private Column<DSILoadSelected, String> newTransferFrom;
+	private Column<DSILoadSelected, String> informe;
 
 	public DSILoadSelectedGrid() {
 		super();
@@ -230,13 +283,13 @@ public class DSILoadSelectedGrid extends CustomDataGrid<DSILoadSelected>
 		listeners = new ArrayList<DSILoadSelectedGrid.Listener>();
 		checkBox = newCheckColumn();
 		selectionModel = new MultiSelectionModel<DSILoadSelected>();
-		
+
 		setAutoHeaderRefreshDisabled(false);
 		initializeSelectionModel();
 		setSkipRowHoverCheck(true);
-		initializeColumns();	
+		initializeColumns();
 		setHeaderBuilder(new HeaderBuilder());
-		setTableBuilder(new TableBuilder());
+		setTableBuilder(new CellTableBuilder());
 	}
 
 	public void addListener(Listener listener) {
@@ -261,8 +314,9 @@ public class DSILoadSelectedGrid extends CustomDataGrid<DSILoadSelected>
 
 	private void initializeSelectionModel() {
 
-		setSelectionModel(selectionModel, DefaultSelectionEventManager
-				.<DSILoadSelected> createCheckboxManager(0));
+		setSelectionModel(selectionModel,
+				DefaultSelectionEventManager
+						.<DSILoadSelected> createCheckboxManager(0));
 		selectionModel.addSelectionChangeHandler(new Handler() {
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
@@ -278,58 +332,62 @@ public class DSILoadSelectedGrid extends CustomDataGrid<DSILoadSelected>
 		int col = 0;
 
 		addColumn(checkBox);
-		setColumnWidth(col++, 30, Unit.PX);
-	
+		setColumnWidth(col++, 2, Unit.PCT);
+
 		nif = new Column<DSILoadSelected, String>(new TextCell()) {
-			
+
 			@Override
 			public String getValue(DSILoadSelected object) {
 				return object.getNif();
 			}
 		};
-		setColumnWidth(col++, 20, Unit.PCT);
-		
-		enterpriseName = new Column<DSILoadSelected, String>(
-				new TextCell()) {
+		setColumnWidth(col++, 20, Unit.PX);
+
+		enterpriseName = new Column<DSILoadSelected, String>(new TextCell()) {
 
 			@Override
 			public String getValue(DSILoadSelected object) {
-				// TODO Auto-generated method stub
 				return object.getName();
 			}
 		};
-		setColumnWidth(col++, 40, Unit.PCT);
+		setColumnWidth(col++, 30, Unit.PX);
 		
 		lastDate = new Column<DSILoadSelected, String>(new TextCell()) {
-
-			@Override
-			public String getValue(DSILoadSelected object) {
-				
-				return AON.DATE_FORMAT.format(new Date());
-			}
-		};
-		
-		setColumnWidth(col++, 20, Unit.PCT);
-		
-		intervalsDate = new Column<DSILoadSelected, String>(new TextCell()) {
-
-			@Override
-			public String getValue(DSILoadSelected object) {
-				
-				return AON.DATE_FORMAT.format(new Date()) + 
-						" - " + AON.DATE_FORMAT.format(new Date());			
-			}
-		};
-		setColumnWidth(col++, 40, Unit.PCT);
-				
-		newTransferFrom = new Column<DSILoadSelected, String>(new TextCell()) {
 			
 			@Override
 			public String getValue(DSILoadSelected object) {
+								
+				return object.getLastSalary();
+			}
+		};
+		setColumnWidth(col++, 15, Unit.PX);
+		
+		intervalsDate = new Column<DSILoadSelected, String>(new TextCell()) {
+			
+			@Override
+			public String getValue(DSILoadSelected object) {				
+				return object.getFirstSalary() + " - " + object.getLastSalary();
+			}
+		};
+		setColumnWidth(col++, 30, Unit.PX);
+
+		newTransferFrom = new Column<DSILoadSelected, String>(new TextCell()) {
+
+			@Override
+			public String getValue(DSILoadSelected object) {
 				return AON.DATE_FORMAT.format(new Date());
 			}
 		};
-		setColumnWidth(col++, 20, Unit.PCT);
+		setColumnWidth(col++, 15, Unit.PX);
+		
+		informe = new Column<DSILoadSelected, String>(new ClickableTextCell()) {
+
+			@Override
+			public String getValue(DSILoadSelected object) {
+				return "Mostrar";
+			}
+		};
+		setColumnWidth(col++, 15, Unit.PX);
 	}
 
 	private Header<Boolean> newCheckHeader() {
@@ -345,27 +403,38 @@ public class DSILoadSelectedGrid extends CustomDataGrid<DSILoadSelected>
 		header.setUpdater(new ValueUpdater<Boolean>() {
 			@Override
 			public void update(Boolean value) {
-				for(DSILoadSelected item : getVisibleItems())
+				for (DSILoadSelected item : getVisibleItems())
 					selectionModel.setSelected(item, value);
-					//getSelectionModel().setSelected(item, value);			
+				// getSelectionModel().setSelected(item, value);
 			}
 		});
-		
+
 		return header;
 	}
 
 	private Column<DSILoadSelected, Boolean> newCheckColumn() {
-		
-		Column<DSILoadSelected, Boolean> checkColumn = new Column<DSILoadSelected, Boolean>(new CheckboxCell()) {
-			
+
+		Column<DSILoadSelected, Boolean> checkColumn = new Column<DSILoadSelected, Boolean>(
+				new CheckboxCell()) {
+
 			@Override
 			public Boolean getValue(DSILoadSelected object) {
 				return selectionModel.isSelected(object);
-				//	return getSelectionModel().isSelected(object);
+				// return getSelectionModel().isSelected(object);
 			}
 		};
 
-		return checkColumn;		
+		checkColumn
+				.setFieldUpdater(new FieldUpdater<DSILoadSelected, Boolean>() {
+
+					@Override
+					public void update(int index, DSILoadSelected object,
+							Boolean value) {
+						redraw();
+					}
+				});
+
+		return checkColumn;
 	}
 
 	public Set<DSILoadSelected> getSelectedObject() {

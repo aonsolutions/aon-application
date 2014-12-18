@@ -7,7 +7,6 @@ import gwtupload.client.IUploader.UploadedInfo;
 import gwtupload.client.SingleUploader;
 import gwtupload.client.Utils;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -189,7 +188,6 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 		fileUpload.setAutoSubmit(true);
 		fileUpload.setServletPath(GWT.getModuleBaseURL() + "?" + URL);
 		fileUpload.getForm().setAction(URL);
-//		fileUpload.setValidExtensions("zip");
 		fileUpload.avoidEmptyFiles(true);
 		fileUpload.setMultipleSelection(false);
 
@@ -203,12 +201,10 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 					@Override
 					public void onSubmitComplete(SubmitCompleteEvent event) {
 						fileUpload.getStatusWidget().setProgress(100, 100);
-						fileUpload.getStatusWidget().setStatus(Status.SUCCESS);
 						
 						String json = event.getResults();
-						
 						JsArrayString dbs = JsonUtils.safeEval(json);
-
+				
 						DSIImportClient.getEmpress(dbs,
 								new DSIImportCallback<JsArray<JsEmpres>>() {
 
@@ -224,14 +220,16 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 									public void onSuccess(
 											JsArray<JsEmpres> empress) {
 										DSIImportForm.this.empress = empress;
+
 										try {
-											loadEmpress(empress);
+											loadEmpress(empress);		
+											fileUpload.getStatusWidget().setStatus(Status.SUCCESS);
 											dockPanel.setVisible(true);
 										} catch (Exception ex) {
 											GWT.log(ex.getMessage() + ", "
 													+ ex.getCause());
 										} finally {
-											initFileUpload();
+											//initFileUpload();
 										}
 									}
 								});
@@ -296,12 +294,6 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 			Document doc = XMLParser.parse(response);
 			String message = Utils.getXmlNodeValue(doc, "message");
 			System.out.println(response);
-			// fileList.remove("");
-
-			/*
-			 * Window.alert("onCancelUploader: " + uploader.getStatus().name());
-			 * initFileUpload();
-			 */
 		}
 	};
 
@@ -318,7 +310,13 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 
 		final Set<DSILoadSelected> selected = dataGrid.getSelectedObject();
 		final Iterator<DSILoadSelected> iterator = selected.iterator();
-
+		
+		String mensaje = "";
+		while(iterator.hasNext()) {
+			mensaje += iterator.next().getName() + "\n";
+		}
+		Window.alert(mensaje);
+		
 		evalProgressBar(selected.size() * 2);
 
 		DSIImportClient.importSelected(selected, empress,
@@ -406,18 +404,13 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 	private void evalProgressBar(int cargaTrabajo) {
 		progressBarCallback.scheduleRepeating(cargaTrabajo);
 	}
-
+	
 	private void loadEmpress(JsArray<JsEmpres> empress) throws Exception {
-
-		List<String> documents = new ArrayList<String>();
-
+		
 		for (int x = 0; x < empress.length(); x++) {
-
-			documents.add(empress.get(x).getNif());
-
+			
 			DSILoadSelected selected = new DSILoadSelectedGrid.EnterpriseDSILoadSelected(
-					empress.get(x));
-
+					empress.get(x));			
 			loads.add(selected);
 		}
 	}
