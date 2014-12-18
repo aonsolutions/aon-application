@@ -256,7 +256,6 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 			Map<String, List<Properties>> empresMap = getEmpresMap(req);
 			for (String db : empresMap.keySet()) {
 				try {
-						
 					Condition condition = DSL.condition(true);
 					for (Properties empres : empresMap.get(db)) {
 						// @formatter:off
