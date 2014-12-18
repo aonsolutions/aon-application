@@ -72,7 +72,7 @@ public interface IDocumentAsync {
 
 	void shareMydrive(String email, String driveId, AsyncCallback<Void> callback);
 
-	void initAux(AsyncCallback<Void> callback);
+	void initAux(AsyncCallback<Boolean> callback);
 
 
 }

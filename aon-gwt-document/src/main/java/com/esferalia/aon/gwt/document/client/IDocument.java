@@ -70,5 +70,5 @@ public interface IDocument extends RemoteService{
 	
 	public void shareMydrive(String email, String driveId);
 	
-	public void initAux();
+	public Boolean initAux();
 }

@@ -101,13 +101,15 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		AonServletUtils.releaseFacesContext();
 	}
 	Boolean confidential;
-	public void initAux(){
-		initFacesContext();
-
+	public Boolean initAux(){
+		try{initFacesContext();
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		domainId = ds.getDomainId();
 		confidential = AonUtil.getRoleManager().isConfidentiality();
-
+		Boolean documentManager = AonUtil.getRoleManager().isDocumentManager();
+		return documentManager;
+		}
+		finally{releaseFacesContext();}
 	}
 	
 	public Document getAllFiles(){
@@ -115,11 +117,12 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		/*DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		Integer domainId = ds.getDomainId();*/
 		String domain = AonUtil.getDomainName();
+		Integer userDomainId = AonUtil.getAuthPrincipal().getUserDomainId();
 		Integer user_id=AonUtil.getAuthPrincipal().getUserId();
 		Document docs = new Document();
 		try {
 			String domainUrl = DBConsults.getDomain(domain, domainId);
-			docs  = DBConsults.getAllRattach(domain,domainUrl,user_id, confidential,domainId);
+			docs  = DBConsults.getAllRattach(domain,domainUrl,user_id, confidential,domainId, userDomainId);
 			
 		} catch (SQLException e) {
 			e.printStackTrace();

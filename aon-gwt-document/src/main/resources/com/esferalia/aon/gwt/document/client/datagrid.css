@@ -29,7 +29,7 @@
   padding: 3px 15px;
   overflow: hidden;
   white-space: nowrap;
-  background:  url('/aon-aio/aonResource/images/aon-content/aon-dataTable-header.png') repeat-x scroll left top rgb(218, 218, 218);
+  background:  url('/aonResource/images/aon-content/aon-dataTable-header.png') repeat-x scroll left top rgb(218, 218, 218);
   
 }
 
@@ -109,9 +109,8 @@
 }
 
 .dataGridSelectedRow {
-  background: #FFFADC;
-  height: auto;
-  overflow: auto;
+  background: #E2F1F5;
+
 }
 
 .dataGridSelectedRowCell {

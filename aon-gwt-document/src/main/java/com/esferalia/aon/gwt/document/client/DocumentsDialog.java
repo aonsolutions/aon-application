@@ -74,6 +74,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 		
 		setWidget(binder.createAndBindUi(this));
 		
+		acceptButton.setFocus(true);
 		acceptButton.setText(dialog.getAcceptButtonName());
 		acceptButton.setVisible(dialog.getIsAcceptButton());
 		acceptButton.addClickHandler(new ClickHandler() {
@@ -106,7 +107,8 @@ public abstract class DocumentsDialog extends CustomDialog {
 			case "delete": deleteFile(dialog.getFileInfo().getTitle());break;
 			case "search": searchFile(dialog);break;
 			case "info": infoFile(dialog.getFileInfo());break;
-			case "share":shareFile();break;
+			case "share": shareFile();break;
+			case "alert": alert(dialog);
 			default:
 				break;
 		}
@@ -529,6 +531,13 @@ public abstract class DocumentsDialog extends CustomDialog {
 		label.setText("Estas seguro de eliminar el archivo "+name);
 	}
 	
+	private void alert(Dialog dialog){
+		String type="";
+		if(dialog.getTitle().equals("Editar Archivo"))type = "editar";
+		else if(dialog.getTitle().equals("Borrar Archivo"))type = "borrar";
+		label.setText("No tiene permisos para "+type+" el archivo "+dialog.getFileInfo().getTitle());
+	}
+	
 	Boolean bool;
 	private void searchFile(Dialog dialog) {
 		ListBox lb1 = new ListBox();
@@ -756,6 +765,8 @@ public abstract class DocumentsDialog extends CustomDialog {
 			}
 		}	
 	}
+	
+	
 	
 	
 	//-------------------- Gets & Sets

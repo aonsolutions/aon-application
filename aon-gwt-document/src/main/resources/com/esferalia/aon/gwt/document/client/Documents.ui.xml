@@ -321,15 +321,15 @@ background-color:#D4CFC7;
 							</g:HTMLPanel>
 							<g:HorizontalPanel styleName="aon-finding-toolbar">
 								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-									<g:Button ui:field="newFile" styleName='aon-finding-toolbar-item aon-icon-new'
+									<g:Button ui:field="newFile" visible="true" styleName='aon-finding-toolbar-item aon-icon-new'
 										text="Nuevo" />
 								</g:HTMLPanel>
 								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-									<g:Button ui:field="editFile" styleName='aon-finding-toolbar-item aon-icon-edit'
+									<g:Button ui:field="editFile" visible="false" styleName='aon-finding-toolbar-item aon-icon-edit'
 										text="Editar" />
 								</g:HTMLPanel>
 								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-									<g:Button ui:field="delFile" styleName='aon-finding-toolbar-item aon-icon-delete'
+									<g:Button ui:field="delFile" visible="false" styleName='aon-finding-toolbar-item aon-icon-delete'
 										text="Borrar" />
 								</g:HTMLPanel>
 							</g:HorizontalPanel>
@@ -400,7 +400,7 @@ background-color:#D4CFC7;
 													autoSelectEnabled="true" popupStyleName="{style.aon-search-box-popup}">
 											</g:SuggestBox>
 										</td>    
-										<td style="padding-left:20px;"><g:Button ui:field="reset" styleName="aon-editDataTable-button aon-icon-home"></g:Button></td>
+										<td style="padding-left:20px;"><g:Button ui:field="reset" visible="true" styleName="aon-editDataTable-button aon-icon-home"></g:Button></td>
 										<td><g:Button visible="false" ui:field="searchButton" styleName="aon-editDataTable-button"> </g:Button> 
 										</td>
 										<td><g:Button visible="false" ui:field="eSearchButton" styleName="aon-editDataTable-button"> </g:Button> 

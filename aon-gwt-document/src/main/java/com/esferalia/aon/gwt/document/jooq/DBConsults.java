@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.Vector;
 
 import org.apache.commons.io.FileUtils;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
 import org.jooq.Record11;
@@ -47,7 +48,7 @@ public class DBConsults {
 	private static String domain1=null;
 	private static Vector<FileInfo> vaux;
 
-	public static Document getAllRattach(String domain,String domain2,Integer user_id, Boolean confidential, Integer domainId) throws SQLException {
+	public static Document getAllRattach(String domain,String domain2,Integer user_id, Boolean confidential, Integer domainId,Integer userDomainId) throws SQLException {
 		Connection connection = null;
 		try {
 			
@@ -62,10 +63,15 @@ public class DBConsults {
 
 				DSLContext dslContext = DSL.using(connection,
 						JooqSettings.getDefaultSettings());
+				Condition c;
+				if(userDomainId!= domainId)
+					c=(RATTACH.SCOPE.isNotNull().or(RATTACH.SCOPE.isNull()));
+				else
+					c = RATTACH.SCOPE.isNull();
 				Byte sh = (byte)RegistryAttachmentType.CORPORATE_IDENTITY.ordinal();//5;
 				//rattach domain + parent domain + scope not null
 				Result<Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer>> username = dslContext
-						.select(RATTACH.ID, RATTACH.DESCRIPTION,
+						.selectDistinct(RATTACH.ID, RATTACH.DESCRIPTION,
 								RATTACH.MIMETYPE, RATTACH.TYPE,
 								RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.DPARENT_ID,DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION,DOMAIN.PARENT)
 						.from(RATTACH)
@@ -94,20 +100,20 @@ public class DBConsults {
 				
 				//rattach scope null + sons domain
 				Result<Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer>> result = dslContext
-						.select(RATTACH.ID, RATTACH.DESCRIPTION,
+						.selectDistinct(RATTACH.ID, RATTACH.DESCRIPTION,
 								RATTACH.MIMETYPE, RATTACH.TYPE,
 								RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.DPARENT_ID,DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION,DOMAIN.PARENT)
 						.from(RATTACH)
 						.join(DOMAIN)
 						.on(RATTACH.DOMAIN.eq(DOMAIN.ID))
-						.where(RATTACH.TYPE.eq(sh).and((RATTACH.SCOPE.isNull().and(RATTACH.DOMAIN.eq(domainId)).or(DOMAIN.PARENT.eq(dslContext.select(DOMAIN.ID)
+						.where(RATTACH.TYPE.eq(sh).and((c.and(RATTACH.DOMAIN.eq(domainId)).or(DOMAIN.PARENT.eq(dslContext.select(DOMAIN.ID)
 										.from(DOMAIN)
 										.where(DOMAIN.ID.eq(domainId)))))))
 						.fetch();
 
 				
 				for (Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer> record : username) {
-					FileInfo fi = newFileInfo(dslContext,domain,record);
+					FileInfo fi = newFileInfo(dslContext,domain,domain2,record);
 					if (!fi.getConfidential() || (confidential && fi.getConfidential())){
 						filesGwt.add(fi);
 						if(fi.getDomain().equalsIgnoreCase(domain2) || fi.getIsParent())
@@ -117,7 +123,7 @@ public class DBConsults {
 					}
 				}
 				for (Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer> record : result) {
-					FileInfo fi = newFileInfo(dslContext,domain,record);
+					FileInfo fi = newFileInfo(dslContext,domain,domain2,record);
 					if (!fi.getConfidential() || (confidential && fi.getConfidential())){
 						filesGwt.add(fi);
 						if(fi.getDomain().equalsIgnoreCase(domain2) || fi.getIsParent())
@@ -127,7 +133,7 @@ public class DBConsults {
 					}
 				}
 				for (Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer> record : result1) {
-					FileInfo fi = newFileInfo(dslContext,domain,record);
+					FileInfo fi = newFileInfo(dslContext,domain,domain2,record);
 					if (!fi.getConfidential() || (confidential && fi.getConfidential())){
 						filesGwt.add(fi);
 						if(fi.getDomain().equalsIgnoreCase(domain2) || fi.getIsParent())
@@ -155,7 +161,7 @@ public class DBConsults {
 		}
 	}
 	
-	private static FileInfo newFileInfo(DSLContext dslContext, String domain, Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer> record) throws SQLException {
+	private static FileInfo newFileInfo(DSLContext dslContext, String domain, String domain2, Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer> record) throws SQLException {
 		FileInfo fi = new FileInfo();
 		fi.setAonType("registry");
 		if (record.value1() != null) {
@@ -224,7 +230,8 @@ public class DBConsults {
 		if(record.value13()!=null)
 			fi.setDomainDescription(record.value13());
 		if(record.value14()==null)
-			fi.setIsParent(true);
+			if(!fi.getDomain().equals(domain2))
+				fi.setIsParent(true);
 		
 		return fi;
 	}
