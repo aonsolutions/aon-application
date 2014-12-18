@@ -217,6 +217,14 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 									start, end, prev);
 							values.set(position - 1, wrapPrev);
 						} 
+						
+						end = var.getPeriod().getEnd(); 
+						if ( Period.compare(prev.getPeriod().getEnd(), end)>0 ){
+							ITimedVariable<?> wrapPrev = new WrapTimedVariable<Object>(
+									Variables.add(end, +1), prev.getPeriod().getEnd(), prev);
+							values.add(position + 1, wrapPrev);
+							
+						}
 					} // Eliminamos
 				}
 
