@@ -504,6 +504,14 @@ public class DesktopState implements Serializable {
 		return false;
 	}
 
+	public boolean isAccoutingEnabled() {
+		if ( AonUtil.getRoleManager().isAccountingManager() ) {
+			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+			return ! adc.isDeniedModule(Module.ACCOUNTING.getName());
+		}
+		return false;
+	}
+	
 	public boolean isFiscalEnabled() {
 		if ( AonUtil.getRoleManager().isFiscal() ) {
 			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
@@ -516,6 +524,16 @@ public class DesktopState implements Serializable {
 		if ( AonUtil.getRoleManager().isDocument() ) {
 			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
 			return ! adc.isDeniedModule(Module.DOCUMENT.getName());
+		}
+		return false;
+	}
+
+	public boolean isAccountingInfoVisibleForPortal() {
+		if ( (this.portalValue & IAdminConstants.ACCOUNTING_PORTAL) != 0 ) {
+			if ( this.userWithPortalView ) {
+				return isAccoutingEnabled();
+			}
+			return true;
 		}
 		return false;
 	}

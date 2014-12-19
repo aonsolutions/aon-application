@@ -20,6 +20,7 @@
 				<aon:panelTabSet id="fiscalPortletTab" selectedTab="#{dashboard.fiscalPortal.selectedTab}">
 
 					<aon:panelTab id="fiscalPortletTabY" label="#{bundle.account_year_evolution}"
+						rendered="#{desktop.state.accountingInfoVisibleForPortal}"
 						actionListener="#{dashboard.fiscalPortal.onPygGraph}">
 						<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabY'}">
 						<aon:panelGrid columns="1" styleClass="aon-width-all" columnClasses="aon-width-all">
@@ -77,6 +78,7 @@
 					</aon:panelTab>
 
 					<aon:panelTab id="fiscalPortletTabM" label="#{bundle.account_month_evolution}"
+						rendered="#{desktop.state.accountingInfoVisibleForPortal}"
 						actionListener="#{dashboard.fiscalPortal.onPygGraph}">
 						<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabM'}">
 						<aon:div styleClass="aon-bold">
@@ -148,6 +150,7 @@
 					</aon:panelTab>
 
 					<aon:panelTab id="fiscalPortletTabE" label="#{bundle.accounting_expense_breakdown}"
+						rendered="#{desktop.state.accountingInfoVisibleForPortal}"
 						actionListener="#{dashboard.fiscalPortal.onExpenseGraph}">
 						<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabE'}">
 						<aon:div styleClass="aon-bold">
@@ -194,7 +197,8 @@
 						</aon:if>
 					</aon:panelTab>
 
-					<aon:panelTab id="fiscalPortletTabF" label="#{bundle.finance_fiscal_information}">
+					<aon:panelTab id="fiscalPortletTabF" label="#{bundle.finance_fiscal_information}"
+						rendered="#{desktop.state.fiscalInfoVisibleForPortal}">
 						<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabF'}">
 						<aon:div id="fiscal_status_div">
 							<aon:div styleClass="aon-bold">

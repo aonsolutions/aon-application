@@ -53,6 +53,8 @@ public class DesktopController implements Serializable {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(DesktopController.class);
 	
+	public final static String CONTROLLER_NAME = "desktop";
+	
 	private DesktopState state;
 	private Boolean logEnabled;
 	

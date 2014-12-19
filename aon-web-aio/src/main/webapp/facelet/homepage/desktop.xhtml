@@ -36,7 +36,7 @@
 								<ui:include	src="/facelet/homepage/portlet/fiscalDashboardPortlet.xhtml" />
 							</aon:if>
 	
-							<aon:if test="#{desktop.state.fiscalInfoVisibleForPortal}">
+							<aon:if test="#{desktop.state.fiscalInfoVisibleForPortal or desktop.state.accountingInfoVisibleForPortal}">
 								<ui:include	src="/facelet/homepage/portlet/fiscalPortalDashboardPortlet.xhtml" />
 							</aon:if>
 							

@@ -46,6 +46,15 @@
 										<aon:outputLabel for="PortalAccess_fiscalInfo"
 											value="#{bundle.admin_portal_fiscal_info}" />
 									</aon:if>							
+									<aon:if test="#{portalAccess.showAccountingInfo}">			
+										<aon:selectBooleanCheckbox id="PortalAccess_accountingInfo"
+											actionListener="#{portalAccess.onInfoChanged}"
+											reRender="portalAccessOptionsDiv"
+											value="#{portalAccess.accountingInfo}">
+										</aon:selectBooleanCheckbox>
+										<aon:outputLabel for="PortalAccess_accountingInfo"
+											value="#{bundle.admin_portal_accounting_info}" />
+									</aon:if>							
 									<aon:if test="#{portalAccess.showPayrollInfo}">
 										<aon:selectBooleanCheckbox id="PortalAccess_payrollInfo"
 											actionListener="#{portalAccess.onInfoChanged}"

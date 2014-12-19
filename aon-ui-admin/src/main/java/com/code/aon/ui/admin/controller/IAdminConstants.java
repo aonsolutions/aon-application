@@ -42,6 +42,7 @@ public interface IAdminConstants {
 	int FISCAL_INFO_PORTAL = 2;
 	int DOCUMENTAL_INFO_PORTAL = 4;
 	int PAYROLL_PORTAL = 8;
+	int ACCOUNTING_PORTAL = 16;
 	
 	int TIRANT_EXTERNAL_APP = 1;
 	int DEH_ONLINE_EXTERNAL_APP = 4;

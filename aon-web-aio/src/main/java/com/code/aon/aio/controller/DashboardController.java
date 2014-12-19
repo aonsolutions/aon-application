@@ -1,10 +1,8 @@
 package com.code.aon.aio.controller;
 
-import static com.code.aon.google.apis.jooq.DBConsults.getCategory;
 import static com.code.aon.google.apis.jooq.DBConsults.getCategoryName;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
-import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
@@ -45,13 +43,9 @@ import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Record3;
-import org.jooq.Record4;
-import org.jooq.Record5;
 import org.jooq.Record6;
-import org.jooq.Record7;
 import org.jooq.Record8;
 import org.jooq.Result;
-import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +91,6 @@ import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
 import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.model.File;
 
 public class DashboardController implements Serializable {
 	
@@ -208,6 +201,10 @@ public class DashboardController implements Serializable {
 			fiscalPortal.setDomainName(AonUtil.getDomainName());
 			fiscalPortal.setPygEntriesPeriod(getAccountingPeriod());
 			fiscalPortal.setExpensesPeriod(getAccountingPeriod());
+			DesktopController controller = (DesktopController) AonUtil.getRegisteredBean(DesktopController.CONTROLLER_NAME);
+			if ( controller.getState().isFiscalInfoVisibleForPortal() && ! controller.getState().isAccountingInfoVisibleForPortal() ) {
+				fiscalPortal.setSelectedTab(DashboardFiscalPortal.FISCAL_PORTLET_TAB);
+			}
 		}
 		return fiscalPortal;
 	}

@@ -40,6 +40,8 @@ public class DashboardFiscalPortal implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
+	public static final String FISCAL_PORTLET_TAB = "fiscalPortletTabF";
+	
 	private String selectedTab = "fiscalPortletTabY";
 	
 	private DashboardPygEntry[] yearPygEntries;

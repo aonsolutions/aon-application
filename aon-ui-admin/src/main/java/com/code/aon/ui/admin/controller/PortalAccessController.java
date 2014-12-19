@@ -66,6 +66,8 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 	
 	private int portalValue;
 	
+	private boolean showAccountingInfo;
+	
 	private boolean showFiscalInfo;
 	
 	private boolean showPayrollInfo;
@@ -145,11 +147,27 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 		Integer domainId = DomainManager.getCurrentDomain();
 		Integer appId = AonUtil.getAuthPrincipal().getApplicationId();
 		try {
+			this.showAccountingInfo = AuditManager.hasModule(parentDomainId, appId, Module.ACCOUNTING);
+			if (! this.showAccountingInfo ) {
+				setAccountingInfo(false);
+			}
 			this.showFiscalInfo = AuditManager.hasModule(parentDomainId, appId, Module.FISCAL);
+			if (! this.showFiscalInfo ) {
+				setFiscalInfo(false);
+			}
 			this.showPayrollInfo = AuditManager.hasModule(parentDomainId, appId, Module.PAYROLL);
+			if (! this.showPayrollInfo ) {
+				setPayrollInfo(false);
+			}
 			this.showDocumentalInfo = AuditManager.hasModule(parentDomainId, appId, Module.DOCUMENT);
+			if (! this.showDocumentalInfo ) {
+				setDocumentalInfo(false);
+			}
 			this.showPayrollPortal = AuditManager.hasModule(parentDomainId, appId, Module.PAYROLL_PORTAL) ||
 					AuditManager.hasModule(domainId, appId, Module.PAYROLL_PORTAL);
+			if (! this.showPayrollPortal ) {
+				setPayrollPortal(false);
+			}
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 		}							
@@ -350,6 +368,18 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 		}
 	}
 	
+	public boolean isAccountingInfo() {
+		return getPortalValue(IAdminConstants.ACCOUNTING_PORTAL);
+	}
+		
+	public void setAccountingInfo(boolean fiscalInfo) {
+		setPortalValue(fiscalInfo, IAdminConstants.ACCOUNTING_PORTAL);
+	}	
+	
+	public boolean isShowAccountingInfo() {
+		return this.showAccountingInfo;
+	}
+
 	public boolean isFiscalInfo() {
 		return getPortalValue(IAdminConstants.FISCAL_INFO_PORTAL);
 	}
@@ -387,11 +417,11 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 	}	
 
 	public boolean isShowInfo() {
-		return isShowDocumentalInfo() || isShowFiscalInfo() || isShowPayrollInfo();
+		return isShowDocumentalInfo() || isShowFiscalInfo() || isShowPayrollInfo() || isShowAccountingInfo();
 	}
 	
 	public boolean isInfoEnabled() {
-		return isDocumentalInfo() || isFiscalInfo() || isPayrollInfo();
+		return isDocumentalInfo() || isFiscalInfo() || isPayrollInfo() || isAccountingInfo();
 	}
 	
 	public boolean isPayrollPortal() {
@@ -417,6 +447,7 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 			setFiscalInfo(false);
 			setDocumentalInfo(false);
 			setPayrollInfo(false);
+			setAccountingInfo(false);
 		}
 	}
 
