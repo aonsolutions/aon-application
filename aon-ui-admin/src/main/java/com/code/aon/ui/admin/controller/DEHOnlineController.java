@@ -24,10 +24,23 @@ public class DEHOnlineController {
 		return (value & IAdminConstants.DEH_ONLINE_EXTERNAL_APP) != 0;
 	}	
 	
+	private void reset() {
+		this.user = null;
+		this.password = null;
+		this.confirmPassword = null;		
+	}
+	
 	public void onInit(ActionEvent event) {
-		this.user = AppParamUtil.getValue(AppParam.AON_DEH_ONLINE_USER);
+		reset();
+		this.user = getStoredUser();
 	}
 
+	public void onRemove(ActionEvent event) {
+		AppParamUtil.removeParameter(AppParam.AON_DEH_ONLINE_USER);
+		AppParamUtil.removeParameter(AppParam.AON_DEH_ONLINE_PASSWORD);
+		reset();
+	}
+	
 	public void acceptPassword(ActionEvent event) {
 		if (! StringUtils.equals(password, confirmPassword) ) {
 			String message = AonUtil.addErrorMessageFromBundle(NEW_PASSWORD_ERROR);
@@ -63,6 +76,14 @@ public class DEHOnlineController {
 
 	public String getStoredPassword() {
 		return AppParamUtil.getValue(AppParam.AON_DEH_ONLINE_PASSWORD);
+	}
+	
+	public String getStoredUser() {
+		return AppParamUtil.getValue(AppParam.AON_DEH_ONLINE_USER);
+	}
+
+	public boolean isConfigured() {
+		return (!StringUtils.isEmpty(getStoredUser())) && (!StringUtils.isEmpty(getStoredPassword()));
 	}
 	
 }

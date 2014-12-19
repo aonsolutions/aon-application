@@ -49,6 +49,7 @@ import com.code.aon.groupware.enumeration.TaskStatus;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.admin.controller.DEHOnlineController;
 import com.code.aon.ui.admin.controller.IAdminConstants;
 import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
@@ -567,7 +568,8 @@ public class DesktopState implements Serializable {
 
 	public boolean isShowDehOnline() {
 		if ( this.showDehOnline ) {
-			return (!StringUtils.isEmpty(getDEHOnlineUser())) && (!StringUtils.isEmpty(getDEHOnlinePassword())); 
+			DEHOnlineController controller = (DEHOnlineController) AonUtil.getRegisteredBean(IAdminConstants.DEH_ONLINE_CONTROLLER_NAME);
+			return controller.isConfigured(); 
 		}
 		return false;
 	}
@@ -604,14 +606,6 @@ public class DesktopState implements Serializable {
 			url += type;
 		}
 		return url;		
-	}
-	
-	public String getDEHOnlineUser() {
-		return AppParamUtil.getValue(AppParam.AON_DEH_ONLINE_USER);
-	}
-
-	public String getDEHOnlinePassword() {
-		return AppParamUtil.getValue(AppParam.AON_DEH_ONLINE_PASSWORD);		
 	}
 
 	public boolean isShowFavorites() {

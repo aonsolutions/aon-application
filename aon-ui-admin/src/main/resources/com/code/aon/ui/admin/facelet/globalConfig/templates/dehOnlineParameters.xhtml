@@ -18,7 +18,17 @@
 					actionListener="#{dehOnline.acceptPassword}"
 					styleClass="aon-finding-toolbar-item aon-icon-accept"
 					accesskey="#{bundle.aon_key_save}" />
-				<aon:if test="#{dehOnline.storedPassword != null}">
+				<aon:confirmButton id="remove"
+					rendered="#{dehOnline.configured}"
+					title="#{bundle.aon_key_remove_accelerator}"
+					value="#{bundle.aon_remove}" immediate="true"
+					styleClass="aon-finding-toolbar-item aon-icon-delete"
+					confirmTitle="#{bundle.aon_confirm_title}"
+					confirmMessage="#{bundle.aon_remove_confirm}"
+					confirmActionListener="#{dehOnline.onRemove}"
+					confirmAction="globalConfig_form"
+					accesskey="#{bundle.aon_key_remove}" />					
+				<aon:if test="#{dehOnline.configured}">
 					<h:outputLink id="dehOnlineTest" target="_blank"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						onclick="document.getElementById('dehonlineForm').submit();return false;" >

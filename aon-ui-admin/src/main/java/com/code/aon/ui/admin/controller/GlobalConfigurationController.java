@@ -127,7 +127,7 @@ public class GlobalConfigurationController implements Serializable {
 		return currentOption;
 	}
 
-	private void setCurrentOption(String currentOption) {
+	public void setCurrentOption(String currentOption) {
 		this.currentOption = currentOption;
 		setTemplate(TEMPLATE_PREFFIX+currentOption+".xhtml");
 	}

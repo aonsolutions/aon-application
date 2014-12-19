@@ -261,18 +261,38 @@
 					<aon:outputLabel for="Domain_externalApplications"
 						value="#{bundle.aon_external_applications}" />
 					<aon:div>
-						<aon:if test="#{!domainSwitcher.domainManagementAvailable}">					
-							<aon:selectBooleanCheckbox id="ExternalApplication_DEHOnline"
-								value="#{adminDomain.dehOnline}">
-							</aon:selectBooleanCheckbox>
-							<aon:outputLabel for="ExternalApplication_DEHOnline"
-								value="#{bundle.aon_external_dehOnline}" />
-						</aon:if>			
 						<aon:selectBooleanCheckbox id="ExternalApplication_Tirant"
 							value="#{adminDomain.tirant}">
 						</aon:selectBooleanCheckbox>
 						<aon:outputLabel for="ExternalApplication_Tirant"
 							value="#{bundle.aon_external_tirant}" />						
+						<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+							<aon:selectBooleanCheckbox id="ExternalApplication_DEHOnline"
+								value="#{adminDomain.dehOnline}">
+							</aon:selectBooleanCheckbox>
+							<aon:outputLabel for="ExternalApplication_DEHOnline"
+								value="#{bundle.aon_external_dehOnline}" />
+							<aon:if test="#{dehOnline.showConfiguration}">								
+								<aon:if test="#{!dehOnline.configured}">	
+									<aon:div styleClass="aon-margin-left aon-margin-right" layout="inline" >
+										<aon:outputText value="&#160;" styleClass="aon-icon-warning"
+											style="padding-left:12px" />
+										<rich:toolTip value="#{bundle.admin_domain_dehOnline_warning}" />
+									</aon:div>												
+								</aon:if>				
+								<aon:commandLink id="dehOnlineParameters"
+									styleClass="aon-button-goto aon-margin-left"
+									style="padding-right: 20px;"
+									value="&#160;" title="#{bundle.admin_goTo_dehOnline}"
+									actionListener="#{dehOnline.onInit}"
+									action="globalConfig_form" >
+									<f:setPropertyActionListener value="parameters"
+										target="#{globalConfig.selectedPanel}" />
+									<f:setPropertyActionListener value="dehOnlineParameters"
+										target="#{globalConfig.currentOption}" />
+								</aon:commandLink>									
+							</aon:if>								
+						</aon:if>			
 					</aon:div>
 					
 				</aon:panelGrid>								
