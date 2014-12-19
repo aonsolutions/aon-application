@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import org.apache.commons.io.FileUtils;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
@@ -170,29 +172,44 @@ public class Documents extends Composite implements EntryPoint {
 			this.editItem = editItem;
 		}
 		
-		
+		public DocumentContextMenu(Boolean permiso){
+			if(permiso){
+				viewItem = addItem("Visualizar",viewCommand,
+						"aon-icon-open-popup",AON.AON_ICON_CMD_BUTTON);
+				viewItem.setEnabled(true);
+				addSeparator();
+				downloadItem = addItem("Descargar",downloadCommand,
+						"aon-icon-mail-save",AON.AON_ICON_CMD_BUTTON);
+				downloadItem.setEnabled(true);
+				infoItem = addItem("Detalles",infoCommand,
+						"aon-icon-info",AON.AON_ICON_CMD_BUTTON);
+				infoItem.setEnabled(true);
+			}
+			else{
+				viewItem = addItem("Visualizar",viewCommand,
+						"aon-icon-open-popup",AON.AON_ICON_CMD_BUTTON);
+				viewItem.setEnabled(true);
+				addSeparator();
+				editItem = addItem("Editar", editCommand,
+						"aon-icon-edit", AON.AON_ICON_CMD_BUTTON);
+				editItem.setEnabled(true);
+				removeItem = addItem("Borrar", removeCommand,
+						AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
+				removeItem.setEnabled(true);
+				addSeparator();
+				shareItem = addItem("Compartir",shareCommand,
+						"aon-icon-google-drive",AON.AON_ICON_CMD_BUTTON);
+				shareItem.setEnabled(true);
+				downloadItem = addItem("Descargar",downloadCommand,
+						"aon-icon-mail-save",AON.AON_ICON_CMD_BUTTON);
+				downloadItem.setEnabled(true);
+				infoItem = addItem("Detalles",infoCommand,
+						"aon-icon-info",AON.AON_ICON_CMD_BUTTON);
+				infoItem.setEnabled(true);
+			}
+		}
 		public DocumentContextMenu() {
 			
-			viewItem = addItem("Visualizar",viewCommand,
-					"aon-icon-open-popup",AON.AON_ICON_CMD_BUTTON);
-			viewItem.setEnabled(true);
-			addSeparator();
-			editItem = addItem("Editar", editCommand,
-					"aon-icon-edit", AON.AON_ICON_CMD_BUTTON);
-			editItem.setEnabled(true);
-			removeItem = addItem("Borrar", removeCommand,
-					AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
-			removeItem.setEnabled(true);
-			addSeparator();
-			shareItem = addItem("Compartir",shareCommand,
-					"aon-icon-google-drive",AON.AON_ICON_CMD_BUTTON);
-			shareItem.setEnabled(true);
-			downloadItem = addItem("Descargar",downloadCommand,
-					"aon-icon-mail-save",AON.AON_ICON_CMD_BUTTON);
-			downloadItem.setEnabled(true);
-			infoItem = addItem("Detalles",infoCommand,
-					"aon-icon-info",AON.AON_ICON_CMD_BUTTON);
-			infoItem.setEnabled(true);
 		}
 
 		@Override
@@ -209,7 +226,7 @@ public class Documents extends Composite implements EntryPoint {
 
 	}
 	
-	DocumentContextMenu contextMenu = new DocumentContextMenu();
+	//DocumentContextMenu contextMenu = new DocumentContextMenu();
 	
 	private void initContextMenu() {
 		ContextMenuHandler contextMenuHandler = new ContextMenuHandler() {
@@ -217,7 +234,7 @@ public class Documents extends Composite implements EntryPoint {
 			public void onContextMenu(ContextMenuEvent event) {
 				event.preventDefault();
 				event.stopPropagation();
-				FileInfo object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
+				//FileInfo object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
 				
 			}
 
@@ -447,9 +464,7 @@ public class Documents extends Composite implements EntryPoint {
 										html.setText(result.getCategory());
 										html.setVisible(true);
 										filterButton.setVisible(true);
-										dataGrid.removeColumn(6);
-										dataGrid.addColumn(getDownloadColumn(), "Archivo("+dataProvider.getList().size()+")");
-										dataGrid.setColumnWidth(getDownloadColumn(), 10, Unit.PCT);
+										updateDatagridColumns();
 										dataGrid.redraw();
 									}
 									@Override
@@ -495,9 +510,8 @@ public class Documents extends Composite implements EntryPoint {
 										html.setVisible(true);
 										
 										filterButton.setVisible(true);
-										dataGrid.removeColumn(6);
-										dataGrid.addColumn(getDownloadColumn(), "Archivo("+dataProvider.getList().size()+")");
-										dataGrid.setColumnWidth(getDownloadColumn(), 10, Unit.PCT);
+										
+										updateDatagridColumns();
 										dataGrid.redraw();
 									}
 									@Override
@@ -577,9 +591,25 @@ public class Documents extends Composite implements EntryPoint {
 		});
 
 		DefaultKeyboardSelectionHandler<FileInfo> selHandler = new DefaultKeyboardSelectionHandler<FileInfo>(dataGrid){
-			
 			@Override
 			public void onCellPreview(CellPreviewEvent<FileInfo> event) {
+				if(KeyCodes.KEY_DOWN == event.getNativeEvent().getKeyCode()
+					|| KeyCodes.KEY_LEFT == event.getNativeEvent().getKeyCode()
+					|| KeyCodes.KEY_RIGHT == event.getNativeEvent().getKeyCode()
+					|| KeyCodes.KEY_UP == event.getNativeEvent().getKeyCode()){
+
+			    	FileInfo object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
+			    	if(!isServiconvenios && !object.getIsParent() && documentManager){
+						editFile.setVisible(true);
+						delFile.setVisible(true);
+					}
+			    	else{
+			    		editFile.setVisible(false);
+						delFile.setVisible(false);
+			    	}
+			   
+				}
+
 				
 			    if(BrowserEvents.CLICK.equals(event.getNativeEvent().getType())){
 			    	Integer relRow = event.getIndex() - dataGrid.getPageStart();
@@ -601,7 +631,9 @@ public class Documents extends Composite implements EntryPoint {
 				    Integer subrow = event.getContext().getSubIndex();
 				    dataGrid.setKeyboardSelectedRow(relRow, subrow, true); 
    					NativeEvent nativeEvent = event.getNativeEvent();
-   					
+			    	FileInfo object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
+
+			    	DocumentContextMenu contextMenu = new DocumentContextMenu(isServiconvenios || object.getIsParent() || !documentManager);
    					if(nativeEvent.getClientY()>590){
    						if(nativeEvent.getClientX()>994)
    							contextMenu.setPopupPosition(nativeEvent.getClientX()-120,
@@ -880,9 +912,7 @@ public class Documents extends Composite implements EntryPoint {
 					}
 					dataProvider = new ListDataProvider<FileInfo>(aux);
 					dataProvider.addDataDisplay(dataGrid);
-					dataGrid.removeColumn(6);
-					dataGrid.addColumn(getDownloadColumn(), "Archivo("+dataProvider.getList().size()+")");
-					dataGrid.setColumnWidth(getDownloadColumn(), 10, Unit.PCT);
+					updateDatagridColumns();
 					dataGrid.redraw();
 				}
 				@Override
@@ -982,9 +1012,7 @@ public class Documents extends Composite implements EntryPoint {
 						}
 						dataProvider = new ListDataProvider<FileInfo>(l);
 						dataProvider.addDataDisplay(dataGrid);
-						dataGrid.removeColumn(6);
-						dataGrid.addColumn(getDownloadColumn(), "Archivo("+dataProvider.getList().size()+")");
-						dataGrid.setColumnWidth(getDownloadColumn(), 10, Unit.PCT);
+						updateDatagridColumns();
 						dataGrid.redraw();
 						
 					}
@@ -1195,9 +1223,7 @@ public class Documents extends Composite implements EntryPoint {
 												aux.add(result);
 												dataProvider = new ListDataProvider<FileInfo>(aux);
 												dataProvider.addDataDisplay(dataGrid); 
-												dataGrid.removeColumn(6);
-												dataGrid.addColumn(getDownloadColumn(), "Archivo("+dataProvider.getList().size()+")");
-												dataGrid.setColumnWidth(getDownloadColumn(), 10, Unit.PCT);
+												updateDatagridColumns();
 												dataGrid.redraw();
 											}
 										}
@@ -1215,9 +1241,7 @@ public class Documents extends Composite implements EntryPoint {
 											aux.add(result);
 											dataProvider = new ListDataProvider<FileInfo>(aux);
 											dataProvider.addDataDisplay(dataGrid); 
-											dataGrid.removeColumn(6);
-											dataGrid.addColumn(getDownloadColumn(), "Archivo("+dataProvider.getList().size()+")");
-											dataGrid.setColumnWidth(getDownloadColumn(), 10, Unit.PCT);
+											updateDatagridColumns();
 											dataGrid.redraw();
 										}
 									}
@@ -1311,9 +1335,7 @@ public class Documents extends Composite implements EntryPoint {
 						searchs = result;
 						dataProvider = new ListDataProvider<FileInfo>(result);
 						dataProvider.addDataDisplay(dataGrid);
-						dataGrid.removeColumn(6);
-						dataGrid.addColumn(getDownloadColumn(), "Archivo("+dataProvider.getList().size()+")");
-						dataGrid.setColumnWidth(getDownloadColumn(), 10, Unit.PCT);
+						updateDatagridColumns();
 						dataGrid.redraw();
 					}
 
@@ -1339,9 +1361,7 @@ public class Documents extends Composite implements EntryPoint {
 						searchs = result;
 						dataProvider = new ListDataProvider<FileInfo>(result);
 						dataProvider.addDataDisplay(dataGrid);
-						dataGrid.removeColumn(6);
-						dataGrid.addColumn(getDownloadColumn(), "Archivo("+dataProvider.getList().size()+")");
-						dataGrid.setColumnWidth(getDownloadColumn(), 10, Unit.PCT);
+						updateDatagridColumns();
 						dataGrid.redraw();
 					}
 					@Override
@@ -1364,9 +1384,7 @@ public class Documents extends Composite implements EntryPoint {
 				docs = result;
 				addDataDisplay(dataGrid);
 				isServiconvenios=false;
-				dataGrid.removeColumn(6);
-				dataGrid.addColumn(getDownloadColumn(), "Archivo("+dataProvider.getList().size()+")");
-				dataGrid.setColumnWidth(getDownloadColumn(), 10, Unit.PCT);
+				updateDatagridColumns();
 				dataGrid.redraw();
 			}
 
@@ -1382,9 +1400,7 @@ public class Documents extends Composite implements EntryPoint {
 		else{
 			addDataDisplay(dataGrid);
 			isServiconvenios=false;
-			dataGrid.removeColumn(6);
-			dataGrid.addColumn(getDownloadColumn(), "Archivo("+dataProvider.getList().size()+")");
-			dataGrid.setColumnWidth(getDownloadColumn(), 10, Unit.PCT);
+			updateDatagridColumns();
 			dataGrid.redraw();
 		}
 		docs.setFilter(docs.getEfiles());
@@ -1407,9 +1423,7 @@ public class Documents extends Composite implements EntryPoint {
 				docs.setServiconvenios(result);
 				dataProvider = new ListDataProvider<FileInfo>(docs.getServiconvenios());
 				dataProvider.addDataDisplay(dataGrid);
-				dataGrid.removeColumn(6);
-				dataGrid.addColumn(getDownloadColumn(), "Archivo("+dataProvider.getList().size()+")");
-				dataGrid.setColumnWidth(getDownloadColumn(), 10, Unit.PCT);
+				updateDatagridColumns();
 				dataGrid.redraw();
 			}
 
@@ -1423,9 +1437,7 @@ public class Documents extends Composite implements EntryPoint {
 		else{
 			dataProvider = new ListDataProvider<FileInfo>(docs.getServiconvenios());
 			dataProvider.addDataDisplay(dataGrid);
-			dataGrid.removeColumn(6);
-			dataGrid.addColumn(getDownloadColumn(), "Archivo("+dataProvider.getList().size()+")");
-			dataGrid.setColumnWidth(getDownloadColumn(), 10, Unit.PCT);
+			updateDatagridColumns();
 			dataGrid.redraw();
 		}
 		docs.setFilter(docs.getServiconvenios());
@@ -1565,96 +1577,22 @@ public class Documents extends Composite implements EntryPoint {
 		}
 	};
 		dataGrid.addColumn(confColumn,sh);
-		
-		
 		dataGrid.setColumnWidth(confColumn, 5 , Unit.PCT);
+		
 		/** Size Column **/
-		Column<FileInfo, String> sizeColumn = new Column<FileInfo, String>(
-				new TextCell()) {
-			@Override
-			public String getValue(FileInfo object) {
-				return object.getSizeStr();
-			}
-		};
-		 sizeColumn.setSortable(true); 
-		 sortHandler.setComparator(sizeColumn,new Comparator<FileInfo>() {
-			
-			@Override
-			public int compare(FileInfo o1, FileInfo o2) {
-				return o1.getSize().compareTo(o2.getSize());
-			}
-		});
-
+		Column<FileInfo, String> sizeColumn = getSizeColumn(sortHandler);
 		dataGrid.getColumnSortList().push(sizeColumn);
-		dataGrid.addColumn(sizeColumn, "Tama\u00f1o");
-
-		dataGrid.setColumnWidth(sizeColumn, 10, Unit.PCT);
+		dataGrid.addColumn(sizeColumn, "Tama\u00f1o("+getTotalSize()+")");
+		dataGrid.setColumnWidth(sizeColumn, 13, Unit.PCT);
 
 		/** Tag Column **/
-		Column<FileInfo, String> tagColumn = new Column<FileInfo, String>(
-				new TextCell()) {
-			@Override
-			public String getValue(FileInfo object) {
-				return object.getTagsStr();
-			}
-			
-		};
-		
-		 tagColumn.setSortable(true); 
-		 sortHandler.setComparator(tagColumn,new Comparator<FileInfo>() {
-			
-			@Override
-			public int compare(FileInfo o1, FileInfo o2) {
-				return o1.getTagsStr().compareTo(o2.getTagsStr());
-			}
-		});
-
+		Column<FileInfo, String> tagColumn = getTagColumn(sortHandler);
 		dataGrid.getColumnSortList().push(tagColumn);
-		dataGrid.addColumn(tagColumn, "Etiquetas");
-		
-		
-		
+		dataGrid.addColumn(tagColumn, "Etiquetas");	
 		dataGrid.setColumnWidth(tagColumn, 16, Unit.PCT);
 
 		/** Download Column **/
-		
-		Column<FileInfo,String> downloadColumn = new Column<FileInfo, String>(new ButtonCell()) {
-			
-			@Override
-			public void render(Context context, FileInfo object,
-					SafeHtmlBuilder sb) {
-				if(object.getIsDrive() && object.getIsGdocs())
-					sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-mail-save-black-white\" tabindex=\"-1\">");				
-				else sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-mail-save\" tabindex=\"-1\">");
-				    /*if (data != null) {
-				      sb.append(data);
-				    }*/
-				    sb.appendHtmlConstant("</button>");				
-				/*sb.appendHtmlConstant("<button id=\"downloadFile\" class=\"aon-editDataTable-button aon-icon-mail-save\" >"
-				+ "</g:Button><g:Button id=\"editFile\" class=\"aon-editDataTable-button aon-icon-edit\"></g:Button>"
-			+ "<g:Button id=\"removeFile\" class=\"aon-editDataTable-button aon-icon-delete\"></g:Button>");*/
-			}
-			
-			@Override
-			public String getValue(FileInfo object) {
-				// The value to display in the button.
-				return "";
-			}
-
-			
-		};
-		
-		
-		downloadColumn.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
-
-		
-		downloadColumn.setFieldUpdater(new FieldUpdater<FileInfo, String>() {
-			@Override
-			public void update(int index, FileInfo object, String value) {
-				download(object);
-			}
-		});
-
+		Column<FileInfo,String> downloadColumn = getDownloadColumn();
 		dataGrid.addColumn(downloadColumn, "Archivo("+dataProvider.getList().size()+")");
 		dataGrid.setColumnWidth(downloadColumn, 10, Unit.PCT);
 	}
@@ -1826,9 +1764,7 @@ public class Documents extends Composite implements EntryPoint {
 								dataProvider = new ListDataProvider<FileInfo>(
 										searchs);
 								dataProvider.addDataDisplay(dataGrid);
-								dataGrid.removeColumn(6);
-								dataGrid.addColumn(getDownloadColumn(), "Archivo("+dataProvider.getList().size()+")");
-								dataGrid.setColumnWidth(getDownloadColumn(), 10, Unit.PCT);
+								updateDatagridColumns();
 								dataGrid.redraw();
 
 							}
@@ -1960,9 +1896,7 @@ public class Documents extends Composite implements EntryPoint {
 							Window.alert(result.get(0).getTitle());
 							dataProvider = new ListDataProvider<FileInfo>(result);
 							dataProvider.addDataDisplay(dataGrid);
-							dataGrid.removeColumn(6);
-							dataGrid.addColumn(getDownloadColumn(), "Archivo("+dataProvider.getList().size()+")");
-							dataGrid.setColumnWidth(getDownloadColumn(), 10, Unit.PCT);
+							updateDatagridColumns();
 							dataGrid.redraw();
 						}
 						@Override
@@ -2009,9 +1943,7 @@ public class Documents extends Composite implements EntryPoint {
 			dataProvider = new ListDataProvider<FileInfo>(docs.getServiconvenios());
 			dataProvider.addDataDisplay(dataGrid); 
 		}
-		dataGrid.removeColumn(6);
-		dataGrid.addColumn(getDownloadColumn(), "Archivo("+dataProvider.getList().size()+")");
-		dataGrid.setColumnWidth(getDownloadColumn(), 10, Unit.PCT);
+		updateDatagridColumns();
 		dataGrid.redraw();
 	}
 	Viewer viewer;
@@ -2155,9 +2087,7 @@ public class Documents extends Composite implements EntryPoint {
 		if(getSons().size()==1){
 			dataProvider = new ListDataProvider<FileInfo>(docs.getEfiles());
 			dataProvider.addDataDisplay(dataGrid);
-			dataGrid.removeColumn(6);
-			dataGrid.addColumn(getDownloadColumn(), "Archivo("+dataProvider.getList().size()+")");
-			dataGrid.setColumnWidth(getDownloadColumn(), 10, Unit.PCT);
+			updateDatagridColumns();
 			dataGrid.redraw();
 		}
 		else{
@@ -2172,9 +2102,7 @@ public class Documents extends Composite implements EntryPoint {
 						searchs = result;
 						dataProvider = new ListDataProvider<FileInfo>(result);
 						dataProvider.addDataDisplay(dataGrid);
-						dataGrid.removeColumn(6);
-						dataGrid.addColumn(getDownloadColumn(), "Archivo("+dataProvider.getList().size()+")");
-						dataGrid.setColumnWidth(getDownloadColumn(), 10, Unit.PCT);
+						updateDatagridColumns();
 						dataGrid.redraw();
 					}
 					@Override
@@ -2256,4 +2184,101 @@ public class Documents extends Composite implements EntryPoint {
 		});
 		return downloadColumn;
 	}
+	String sizestr;
+	private String getTotalSize(){
+		Integer size=0;
+		for (FileInfo fi : dataProvider.getList()) {
+			size = size + fi.getSize();
+		} 
+		//Window.alert(size.toString());
+		
+		/*idoc.sizeToString(size, new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				sizestr = result;
+			}
+			@Override
+			public void onFailure(Throwable caught) {}
+		});*/
+		return byteCountToDisplaySize(size);
+	}
+	private Column<FileInfo,String> getSizeColumn(ListHandler<FileInfo> sortHandler){
+ 
+		
+		Column<FileInfo, String> sizeColumn = new Column<FileInfo, String>(
+				new TextCell()) {
+			@Override
+			public String getValue(FileInfo object) {
+				return object.getSizeStr();
+			}
+		};
+		 sizeColumn.setSortable(true); 
+		 sortHandler.setComparator(sizeColumn,new Comparator<FileInfo>() {
+			
+			@Override
+			public int compare(FileInfo o1, FileInfo o2) {
+				return o1.getSize().compareTo(o2.getSize());
+			}
+		});
+		 return sizeColumn;
+	}
+	
+	private Column<FileInfo,String>  getTagColumn(ListHandler<FileInfo> sortHandler){
+		/** Tag Column **/
+		Column<FileInfo, String> tagColumn = new Column<FileInfo, String>(
+				new TextCell()) {
+			@Override
+			public String getValue(FileInfo object) {
+				return object.getTagsStr();
+			}
+			
+		};
+		
+		 tagColumn.setSortable(true); 
+		 sortHandler.setComparator(tagColumn,new Comparator<FileInfo>() {
+			
+			@Override
+			public int compare(FileInfo o1, FileInfo o2) {
+				return o1.getTagsStr().compareTo(o2.getTagsStr());
+			}
+		});
+		return tagColumn;
+	}
+	
+	private void updateDatagridColumns(){
+		dataGrid.removeColumn(6);
+		dataGrid.removeColumn(5);
+		dataGrid.removeColumn(4);
+		
+		dataGrid.getColumnSortList().push(getSizeColumn(getSortHandler()));
+		dataGrid.addColumn(getSizeColumn(getSortHandler()), "Tama\u00f1o("+getTotalSize()+")");
+		dataGrid.setColumnWidth(getSizeColumn(getSortHandler()), 13, Unit.PCT);
+		
+		dataGrid.getColumnSortList().push(getTagColumn(getSortHandler()));
+		dataGrid.addColumn(getTagColumn(getSortHandler()), "Etiquetas");
+		dataGrid.setColumnWidth(getTagColumn(getSortHandler()), 16, Unit.PCT);
+		
+		
+		dataGrid.addColumn(getDownloadColumn(), "Archivo("+dataProvider.getList().size()+")");
+		dataGrid.setColumnWidth(getDownloadColumn(), 10, Unit.PCT);
+	}
+	
+	 public static String byteCountToDisplaySize(long size) {
+	        String displaySize;
+	        
+	        final long ONE_KB = 1024;
+	        final long ONE_MB = ONE_KB * ONE_KB;
+	        final long ONE_GB = ONE_KB * ONE_MB;
+	        
+	        if (size / ONE_GB > 0) {
+	            displaySize = String.valueOf(size / ONE_GB) + " GB";
+	        } else if (size / ONE_MB > 0) {
+	            displaySize = String.valueOf(size / ONE_MB) + " MB";
+	        } else if (size / ONE_KB > 0) {
+	            displaySize = String.valueOf(size / ONE_KB) + " KB";
+	        } else {
+	            displaySize = String.valueOf(size) + " bytes";
+	        }
+	        return displaySize;
+	    }
 }
