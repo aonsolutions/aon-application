@@ -396,7 +396,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		}
 		setSavedProject(invoice.getProject());
 
-		if (detailsChanged) {
+		if (!onlyDetails && detailsChanged) {
 			IController invoiceDetailController = FormUtil.getController(invoiceDetailControllerName);
 			invoiceDetailController.onSearch(null);
 		}
@@ -745,11 +745,11 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	}
 
 	public void autoGenerateIncreases() {
-		IController invoiceDetailController = FormUtil.getController(invoiceDetailControllerName);
 		if (getInvoice().isSales()) {
 			try {
 				List<ITransferObject> increaseDetails = getInvoice().getIncreaseDetails();
 				if (increaseDetails.size() > 0) {
+					IController invoiceDetailController = FormUtil.getController(invoiceDetailControllerName);
 					double taxableBase = getInvoice().getTaxableBase();
 					for (ITransferObject ito : increaseDetails) {
 						InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
@@ -763,6 +763,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 						invoiceDetailController.getManagerBean().update(invoiceDetail);
 					}
 					refresh(null);
+					invoiceDetailController.setModel(null);
 				}
 			} catch (ManagerBeanException e) {
 				String msg = AonUtil.getMessage(GENERATE_INCREASES_ERROR_KEY) + ". " + e.getMessage();
@@ -770,7 +771,6 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 				throw new AbortProcessingException(msg,e);
 			}
 		}
-		invoiceDetailController.setModel(null);
 	}
 
 	public void onGenerateFinances(ActionEvent event) {
