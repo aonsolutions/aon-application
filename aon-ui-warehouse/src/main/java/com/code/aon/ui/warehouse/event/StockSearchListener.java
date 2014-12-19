@@ -12,7 +12,6 @@ import org.apache.commons.lang.ArrayUtils;
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tag;
 import com.code.aon.config.enumeration.TagType;
@@ -21,6 +20,7 @@ import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.form.event.ControllerSearchListenerEx;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -126,18 +126,13 @@ public class StockSearchListener extends ControllerSearchListenerEx {
 		}
 	}		
 	 
-    public List<SelectItem> getSelectableTags() throws ManagerBeanException {
-    	List<SelectItem> tags = new LinkedList<SelectItem>();
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public List<SelectItem> getSelectableTags() throws ManagerBeanException {
     	IManagerBean tagBean = BeanManager.getManagerBean(Tag.class);
     	Criteria criteria = new Criteria();
     	criteria.addEqualExpression(tagBean.getFieldName(IEntityAlias.TAG_TYPE), TagType.PRODUCT );
     	criteria.addOrder(tagBean.getFieldName(IEntityAlias.TAG_NAME));
-    	for( ITransferObject to : tagBean.getList(criteria) ) {
-    		Tag tag = (Tag) to;
-    		SelectItem item = new SelectItem(tag, tag.getName());
-    		tags.add(item);
-    	}
-    	return tags;
+    	return ConfigCollectionsController.getTagList( (List) tagBean.getList(criteria));
     }    
 
 }

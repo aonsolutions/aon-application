@@ -33,9 +33,12 @@ import com.code.aon.registry.Registry;
 import com.code.aon.registry.Segment;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.config.controller.ConfigCollectionsController;
+import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.event.ControllerSearchListenerEx;
 import com.code.aon.ui.registry.controller.RegistryCollectionsController;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class RegistrySearchListener extends ControllerSearchListenerEx {
@@ -45,8 +48,6 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 	private static final GeoZone EMPTY_GEOZONE = new GeoZone();
 	
 	private static final Segment EMPTY_SEGMENT = new Segment();
-	
-	private static final Scope EMPTY_SCOPE = new Scope();
 	
 	private String preffix;
 
@@ -74,7 +75,7 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 	
 	public Scope[] getScopes() {
 		if (ArrayUtils.isEmpty(scopes)) {
-			scopes = new Scope[]{EMPTY_SCOPE};
+			scopes = new Scope[]{getEmptyScope()};
 		}
 		return scopes;
 	}
@@ -276,7 +277,7 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 		getMediaTypes().add(null);
 		setGeoZones(new GeoZone[]{EMPTY_GEOZONE});
 		setSegments(new Segment[]{EMPTY_SEGMENT});
-		setScopes( new Scope[]{EMPTY_SCOPE} );
+		setScopes( new Scope[]{getEmptyScope()} );
 		IManagerBean registryBean = BeanManager.getManagerBean(Registry.class);
 		setRegistrySeller( (Registry) registryBean.createNewTo() );
 		setQuestion( (Question) BeanManager.getManagerBean(Question.class).createNewTo() );
@@ -419,7 +420,7 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 	}
 
 	public void onAddScope(ActionEvent event) {
-		this.scopes = (Scope[]) ArrayUtils.add(this.scopes, EMPTY_SCOPE);
+		this.scopes = (Scope[]) ArrayUtils.add(this.scopes, getEmptyScope());
 	}
 	
 	public void onRemoveScope(ActionEvent event) {
@@ -427,8 +428,16 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("index"));		
 		this.scopes = (Scope[]) ArrayUtils.remove(this.scopes, index);
 		if ( ArrayUtils.isEmpty(this.scopes) ) {
-			setScopes(new Scope[]{EMPTY_SCOPE});
+			setScopes(new Scope[]{getEmptyScope()});
 		}
 	}		
+
+	private ConfigCollectionsController getCollectionsController() {
+		return (ConfigCollectionsController)AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
+	}
 	
+	private Scope getEmptyScope() {
+		return getCollectionsController().getEmptyScope();
+	}
+		
 }

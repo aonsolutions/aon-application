@@ -116,6 +116,7 @@ public class UserUtils implements Serializable {
 			if (DomainManager.isParentDomainUserInChildDomain()) {
 				IManagerBean scopeBean = BeanManager.getManagerBean(Scope.class);
 				Criteria criteria = new Criteria();
+				criteria.addOrder(scopeBean.getFieldName(IEntityAlias.SCOPE_DESCRIPTION));
 				if ( forceHeredity ) {
 					UserUtils.getInstance().addForceHeredityDomainCondition(criteria, scopeBean.getFieldName(IEntityAlias.SCOPE_DOMAIN) );
 				}

@@ -13,6 +13,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.Catalogue;
 import com.code.aon.config.CommissionType;
@@ -20,6 +21,7 @@ import com.code.aon.config.PayMethod;
 import com.code.aon.config.PayMethodTypeDetail;
 import com.code.aon.config.Scope;
 import com.code.aon.config.Series;
+import com.code.aon.config.Tag;
 import com.code.aon.config.Tariff;
 import com.code.aon.config.TariffAddInfo;
 import com.code.aon.config.Tax;
@@ -55,6 +57,8 @@ public class ConfigCollectionsController implements Serializable {
 	private List<SelectItem> toolbars;
 	private List<SelectItem> tagTypes;
 	private List<SelectItem> payMethodTypeForDetails;
+	private Scope emptyScope;
+	private Tag emptyTag;
 
 	public List<SelectItem> getTaxTypes() {
 		if (taxTypes == null) {
@@ -314,14 +318,25 @@ public class ConfigCollectionsController implements Serializable {
 	}
 
 	public List<SelectItem> getCurrentUserScopes() {
-		List<SelectItem> currentUserScopes = new LinkedList<SelectItem>();
-		for (Scope scope : UserUtils.getInstance().getCurrentUserScopes()) {
-			SelectItem item = new SelectItem(scope, scope.getDescription());
-			currentUserScopes.add(item);
+		return getScopeList(UserUtils.getInstance().getCurrentUserScopes());
+	}
+	
+	public static List<SelectItem> getScopeList( List<Scope> scopes ) {
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		for (Scope scope : scopes) {
+			list.add( AonUtil.getSelectItem(scope, scope.getDescription()));
 		}
-		return currentUserScopes;
+		return list;
 	}
 
+	public static List<SelectItem> getTagList( List<Tag> tags ) {
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		for (Tag tag : tags) {
+			list.add( AonUtil.getSelectItem(tag, tag.getName()));
+		}
+		return list;
+	}
+	
 	public List<SelectItem> getWorkgroups() throws ManagerBeanException {
 		List<SelectItem> workgroups = new LinkedList<SelectItem>(); 
 		IManagerBean workGroupBean = BeanManager.getManagerBean(WorkGroup.class); 
@@ -506,4 +521,22 @@ public class ConfigCollectionsController implements Serializable {
 		return catalogues;
 	}
 
+	public Scope getEmptyScope() {
+		if ( this.emptyScope == null ) {
+			this.emptyScope = new Scope();
+			this.emptyScope.setDescription("-");
+			this.emptyScope.setDomain(DomainManager.getCurrentDomain());			
+		}
+		return this.emptyScope;
+	}
+
+	public Tag getEmptyTag() {
+		if ( this.emptyScope == null ) {
+			this.emptyTag = new Tag();
+			this.emptyTag.setName("-");
+			this.emptyTag.setDomain(DomainManager.getCurrentDomain());			
+		}
+		return this.emptyTag;
+	}
+	
 }

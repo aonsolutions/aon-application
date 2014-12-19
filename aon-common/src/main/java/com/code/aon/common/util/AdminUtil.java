@@ -171,6 +171,23 @@ public class AdminUtil {
 	}
 
 	@SuppressWarnings("unchecked")
+	public static String getDomainDescription(int domainId) {
+		String stmt = "SELECT description FROM domain as domain WHERE domain.id = :domainId";
+		String domainDescription = null;
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
+		try {
+			Session session = HibernateUtil.getSession(sessionFactoryName);
+			SQLQuery query = session.createSQLQuery(stmt);
+			query.setInteger("domainId", domainId);
+			List<Object> list = query.list();
+			domainDescription = !list.isEmpty() ? query.list().get(0).toString() : null;			
+		} finally {
+			closeSession();	
+		}
+		return domainDescription;
+	}
+	
+	@SuppressWarnings("unchecked")
 	public static Integer getDomainType(int domainId) {
 		String stmt = "SELECT type FROM domain as domain WHERE domain.id = :domainId";
 		Integer domainType = null;

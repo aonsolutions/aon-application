@@ -1,5 +1,7 @@
 package com.code.aon.ui.admin.controller;
 
+import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -15,11 +17,11 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Scope;
 import com.code.aon.config.User;
 import com.code.aon.config.UserScope;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
@@ -119,6 +121,11 @@ public class UserScopeController implements Serializable {
 			list.remove(this.selected[i]);
 		}
 		this.scopes = list.toArray(new Scope[list.size()]);
+	}
+
+	public String getParentDomainDescription() {
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+		return AdminUtil.getDomainDescription(ds.getParentDomainId());
 	}
 	
 }

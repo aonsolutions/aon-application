@@ -14,7 +14,6 @@ import com.code.aon.AonVersion;
 import com.code.aon.account.Account;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tag;
 import com.code.aon.config.Tax;
@@ -25,15 +24,16 @@ import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.supplier.Supplier;
+import com.code.aon.ui.config.controller.ConfigCollectionsController;
+import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.form.event.ControllerSearchListenerEx;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProductSearchListener extends ControllerSearchListenerEx {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
-	private static final Tag EMPTY_TAG = new Tag();
-	
 	private ProductStatus[] statuses;
 	
 	private ProductStatus[] itemStatuses;
@@ -130,7 +130,7 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 	
 	public Tag[] getTags() {
 		if (ArrayUtils.isEmpty(tags)) {
-			tags = new Tag[]{EMPTY_TAG};
+			tags = new Tag[]{getEmptyTag()};
 		}
 		return tags;
 	}
@@ -172,7 +172,7 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 		setPurchaseAccount( (Account) accountBean.createNewTo() );
 		setSalesAccount( (Account) accountBean.createNewTo() );
 		setItemStatuses( new ProductStatus[0] );
-		setTags( new Tag[]{EMPTY_TAG} );
+		setTags( new Tag[]{getEmptyTag()} );
 		IManagerBean supplierBean = BeanManager.getManagerBean(Supplier.class);
 		setSupplier((Supplier)supplierBean.createNewTo());
 		setSupplierCode(null);
@@ -223,7 +223,7 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 	}
 	
 	public void onAddTag(ActionEvent event) {
-		this.tags = (Tag[]) ArrayUtils.add(this.tags, EMPTY_TAG);
+		this.tags = (Tag[]) ArrayUtils.add(this.tags, getEmptyTag());
 	}
 	
 	public void onRemoveTag(ActionEvent event) {
@@ -231,22 +231,25 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("index"));		
 		this.tags = (Tag[]) ArrayUtils.remove(this.tags, index);
 		if ( ArrayUtils.isEmpty(this.tags) ) {
-			setTags(new Tag[]{EMPTY_TAG});
+			setTags(new Tag[]{getEmptyTag()});
 		}
 	}		
 	 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
     public List<SelectItem> getSelectableTags() throws ManagerBeanException {
-    	List<SelectItem> tags = new LinkedList<SelectItem>();
     	IManagerBean tagBean = BeanManager.getManagerBean(Tag.class);
     	Criteria criteria = new Criteria();
     	criteria.addEqualExpression(tagBean.getFieldName(IEntityAlias.TAG_TYPE), TagType.PRODUCT );
     	criteria.addOrder(tagBean.getFieldName(IEntityAlias.TAG_NAME));
-    	for( ITransferObject to : tagBean.getList(criteria) ) {
-    		Tag tag = (Tag) to;
-    		SelectItem item = new SelectItem(tag, tag.getName());
-    		tags.add(item);
-    	}
-    	return tags;
+    	return ConfigCollectionsController.getTagList( (List) tagBean.getList(criteria));
     }    
+    
+	private ConfigCollectionsController getCollectionsController() {
+		return (ConfigCollectionsController)AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
+	}
+    
+	private Tag getEmptyTag() {
+		return getCollectionsController().getEmptyTag();
+	}	
 	
 }

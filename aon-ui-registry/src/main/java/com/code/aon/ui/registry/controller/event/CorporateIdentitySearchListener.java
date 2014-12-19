@@ -15,25 +15,24 @@ import org.apache.commons.lang.ArrayUtils;
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tag;
 import com.code.aon.config.enumeration.TagType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.Category;
+import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.event.ScopeSearchListener;
 import com.code.aon.ui.registry.controller.ICorporateIdentityController;
+import com.code.aon.ui.registry.controller.IRegistryConstants;
+import com.code.aon.ui.registry.controller.RegistryCollectionsController;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CorporateIdentitySearchListener extends ScopeSearchListener {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
-	private static final Category EMPTY_CATEGORY = new Category();
-	
-	private static final Tag EMPTY_TAG = new Tag();
-	
 	private Integer sizeFrom;
 	
 	private Integer sizeTo;
@@ -60,7 +59,7 @@ public class CorporateIdentitySearchListener extends ScopeSearchListener {
 	
 	public Category[] getCategories() {
 		if (ArrayUtils.isEmpty(categories)) {
-			categories = new Category[]{EMPTY_CATEGORY};
+			categories = new Category[]{getEmptyCategory()};
 		}
 		return categories;
 	}
@@ -85,7 +84,7 @@ public class CorporateIdentitySearchListener extends ScopeSearchListener {
 	
 	public Tag[] getTags() {
 		if (ArrayUtils.isEmpty(tags)) {
-			tags = new Tag[]{EMPTY_TAG};
+			tags = new Tag[]{getEmptyTag()};
 		}
 		return tags;
 	}
@@ -117,8 +116,8 @@ public class CorporateIdentitySearchListener extends ScopeSearchListener {
 		super.init();
 		setSizeFrom(null);
 		setSizeTo(null);
-		setCategories( new Category[]{EMPTY_CATEGORY} );
-		setTags( new Tag[]{EMPTY_TAG} );
+		setCategories( new Category[]{getEmptyCategory()} );
+		setTags( new Tag[]{getEmptyTag()} );
 	}
 
 	@Override
@@ -139,7 +138,7 @@ public class CorporateIdentitySearchListener extends ScopeSearchListener {
 	}
 	
 	public void onAddCategory(ActionEvent event) {
-		this.categories = (Category[]) ArrayUtils.add(this.categories, EMPTY_CATEGORY);
+		this.categories = (Category[]) ArrayUtils.add(this.categories, getEmptyCategory());
 	}
 	
 	public void onRemoveCategory(ActionEvent event) {
@@ -147,12 +146,12 @@ public class CorporateIdentitySearchListener extends ScopeSearchListener {
 		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("index"));		
 		this.categories = (Category[]) ArrayUtils.remove(this.categories, index);
 		if ( ArrayUtils.isEmpty(this.categories) ) {
-			setCategories(new Category[]{EMPTY_CATEGORY});
+			setCategories(new Category[]{getEmptyCategory()});
 		}
-}		
+	}		
 
 	public void onAddTag(ActionEvent event) {
-		this.tags = (Tag[]) ArrayUtils.add(this.tags, EMPTY_TAG);
+		this.tags = (Tag[]) ArrayUtils.add(this.tags, getEmptyTag());
 	}
 	
 	public void onRemoveTag(ActionEvent event) {
@@ -160,12 +159,12 @@ public class CorporateIdentitySearchListener extends ScopeSearchListener {
 		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("index"));		
 		this.tags = (Tag[]) ArrayUtils.remove(this.tags, index);
 		if ( ArrayUtils.isEmpty(this.tags) ) {
-			setTags(new Tag[]{EMPTY_TAG});
+			setTags(new Tag[]{getEmptyTag()});
 		}
 	}		
-	 
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
     public List<SelectItem> getSelectableTags() throws ManagerBeanException {
-    	List<SelectItem> tags = new LinkedList<SelectItem>();
     	IManagerBean tagBean = BeanManager.getManagerBean(Tag.class);
     	Criteria criteria = new Criteria();
     	if ( getController() instanceof ICorporateIdentityController ) {
@@ -177,12 +176,16 @@ public class CorporateIdentitySearchListener extends ScopeSearchListener {
     	}
     	criteria.addEqualExpression(tagBean.getFieldName(IEntityAlias.TAG_TYPE), TagType.RATTACH );
     	criteria.addOrder(tagBean.getFieldName(IEntityAlias.TAG_NAME));
-    	for( ITransferObject to : tagBean.getList(criteria) ) {
-    		Tag tag = (Tag) to;
-    		SelectItem item = new SelectItem(tag, tag.getName());
-    		tags.add(item);
-    	}
-    	return tags;
+    	return ConfigCollectionsController.getTagList( (List) tagBean.getList(criteria));
     }    
-    
+ 	
+	private Tag getEmptyTag() {
+		return getCollectionsController().getEmptyTag();
+	}	
+ 
+	private Category getEmptyCategory() {
+		RegistryCollectionsController rcc = (RegistryCollectionsController)AonUtil.getRegisteredBean(IRegistryConstants.COLLECTIONS_CONTROLLER_NAME);
+		return rcc.getEmptyCategory();
+	}
+	
 }

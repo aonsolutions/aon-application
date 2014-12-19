@@ -16,6 +16,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.User;
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.person.enumeration.MaritalStatus;
@@ -66,6 +67,7 @@ public class RegistryCollectionsController implements Serializable {
 	private List<SelectItem> registryItemStatuses;
 	private List<SelectItem> registrySellerStatuses;
 	private List<SelectItem> questionTypes;
+	private Category emptyCategory;
 	private RegistryBank rBank; // No Borrar. Euke.
 								// Se utiliza como selector 
 								// en la pantalla de alta de vencimientos.
@@ -292,20 +294,22 @@ public class RegistryCollectionsController implements Serializable {
 		// void
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<SelectItem> getCategories() throws ManagerBeanException {
-		List<SelectItem> users = new LinkedList<SelectItem>();
 		IManagerBean categoryBean = BeanManager.getManagerBean(Category.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(categoryBean.getFieldName(IEntityAlias.CATEGORY_TYPE), CategoryType.REGISTRY_ATTACHMENT);
 		criteria.addOrder(categoryBean.getFieldName(IEntityAlias.CATEGORY_NAME));
-		Iterator<?> iter = categoryBean.getList(criteria).iterator();
-		while(iter.hasNext()){
-			Category category = (Category) iter.next();
-			SelectItem item = new SelectItem(category, category.getName());
-			users.add(item);
-		}
-		return users;
+		return getCategoryList( (List) categoryBean.getList(criteria));
 	}
+	
+	public static List<SelectItem> getCategoryList( List<Category> categories ) {
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		for (Category category : categories) {
+			list.add( AonUtil.getSelectItem(category, category.getName()));
+		}
+		return list;
+	}	
 	
 	public Category getCategory() {
 		return null;
@@ -399,5 +403,14 @@ public class RegistryCollectionsController implements Serializable {
 		}
 		return questionTypes;
 	}	
+
+	public Category getEmptyCategory() {
+		if ( this.emptyCategory == null ) {
+			this.emptyCategory = new Category();
+			this.emptyCategory.setName("-");
+			this.emptyCategory.setDomain(DomainManager.getCurrentDomain());			
+		}
+		return this.emptyCategory;
+	}
 	
 }

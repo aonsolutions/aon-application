@@ -10,7 +10,6 @@ import javax.faces.model.SelectItem;
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.marketing.enumeration.ActionMediaType;
 import com.code.aon.marketing.enumeration.ActionTargetStatus;
@@ -21,6 +20,7 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.registry.Category;
 import com.code.aon.registry.enumeration.CategoryType;
 import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.registry.controller.RegistryCollectionsController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -82,20 +82,15 @@ public class MarketingCollectionsController implements Serializable {
 		return actionTargetStatuses;
 	}	
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<SelectItem> getChannels() throws ManagerBeanException {
-		List<SelectItem> channels = new LinkedList<SelectItem>();
 		IManagerBean categoryBean = BeanManager.getManagerBean(Category.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(categoryBean.getFieldName(IEntityAlias.CATEGORY_TYPE), CategoryType.ARTICLE);
 		Expression exp = UserUtils.getInstance().getNullableScopeExpression(categoryBean.getFieldName(IEntityAlias.CATEGORY_SCOPE_ID));
 		criteria.addExpression(exp);
 		criteria.addOrder(categoryBean.getFieldName(IEntityAlias.CATEGORY_NAME));
-		for( ITransferObject to : categoryBean.getList(criteria) ) {
-			Category category = (Category) to;
-			SelectItem item = new SelectItem(category, category.getName());
-			channels.add(item);
-		}
-		return channels;
+		return RegistryCollectionsController.getCategoryList( (List) categoryBean.getList(criteria));
 	}
 	
 	public Category getCategory() {

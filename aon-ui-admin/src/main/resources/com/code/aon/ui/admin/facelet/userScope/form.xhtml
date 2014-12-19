@@ -38,6 +38,9 @@
 					<aon:outputText value="#{bundle.aon_name}" />
 				</f:facet>					
 				<aon:outputText value="#{to.description}" />
+				<aon:outputText
+					rendered="#{to.domain != domainSwitcher.domainId}"
+					value=" (#{userScopeEx.parentDomainDescription})" />
 			</rich:column>
       		</rich:listShuttle>
 

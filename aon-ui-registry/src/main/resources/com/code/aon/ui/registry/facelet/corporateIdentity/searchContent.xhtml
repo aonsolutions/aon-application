@@ -6,6 +6,8 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
+	<aon:valueParam name="showDomainLookup" default="#{false}" />
+
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 		<ui:param name="skipAfterSearch" value="#{true}" />
 		<ui:define name="searchContent">

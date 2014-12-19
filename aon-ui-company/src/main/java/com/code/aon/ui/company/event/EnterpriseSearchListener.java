@@ -17,6 +17,8 @@ import com.code.aon.config.Domain;
 import com.code.aon.config.Scope;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.config.controller.ConfigCollectionsController;
+import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -32,13 +34,11 @@ public class EnterpriseSearchListener extends ControllerSearchListenerEx {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-	private static final Scope EMPTY_SCOPE = new Scope();
-	
 	private Scope[] scopes;
 	
 	public Scope[] getScopes() {
 		if (ArrayUtils.isEmpty(scopes)) {
-			scopes = new Scope[]{EMPTY_SCOPE};
+			scopes = new Scope[]{getEmptyScope()};
 		}
 		return scopes;
 	}
@@ -87,7 +87,7 @@ public class EnterpriseSearchListener extends ControllerSearchListenerEx {
 	
 	@Override
 	protected void init() throws ManagerBeanException {
-		setScopes( new Scope[]{EMPTY_SCOPE} );
+		setScopes( new Scope[]{getEmptyScope()} );
 	}
 	
 	@Override
@@ -121,6 +121,14 @@ public class EnterpriseSearchListener extends ControllerSearchListenerEx {
 			}
 		} 
 		return idList;
+	}
+
+	private ConfigCollectionsController getCollectionsController() {
+		return (ConfigCollectionsController)AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
+	}
+	
+	private Scope getEmptyScope() {
+		return getCollectionsController().getEmptyScope();
 	}
 	
 }

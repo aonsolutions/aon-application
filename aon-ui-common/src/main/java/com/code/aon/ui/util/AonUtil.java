@@ -35,6 +35,9 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.domain.IDomain;
+import com.code.aon.common.util.AdminUtil;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
 import com.code.aon.ui.common.ICommonMessages;
@@ -603,6 +606,22 @@ public class AonUtil {
     	Collections.sort( list, comparator );
     }
  
+    /**
+     * Get SelectItem for an IDomain object.
+     * 
+     * @param to
+     * @param label
+	 * @return SelectItem 
+     */
+	public static SelectItem getSelectItem( IDomain to, String label ) {
+		String _label = label;
+		if ( to.getDomain() != DomainManager.getCurrentDomain() ) {
+			String domainDescription = AdminUtil.getDomainDescription(to.getDomain());
+			_label = label + " (" + domainDescription + ")"; 
+		}
+		SelectItem item = new SelectItem(to, _label);
+		return item;
+	}
 
 	/**
 	 * Returns the AuthPrincipal
