@@ -308,6 +308,12 @@
 												<include>aon-google-drive.sh</include>
 											</includes>
 										</source>
+										<source>
+											<location>src/main/scripts</location>
+											<includes>
+												<include>aon-rattach.sh</include>
+											</includes>
+										</source>
 									</sources>
 								</mapping>
 							</mappings>

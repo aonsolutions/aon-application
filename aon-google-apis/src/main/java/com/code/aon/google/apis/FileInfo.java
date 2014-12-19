@@ -54,6 +54,7 @@ public class FileInfo{
 	private Integer scopeId;
 	private Byte securityLevel;
 	private Integer domainId;
+	private Integer size;
 	public FileInfo() {
 		// TODO Apéndice de constructor generado automáticamente
 	}
@@ -195,6 +196,14 @@ public class FileInfo{
 
 	public void setDomainId(Integer domainId) {
 		this.domainId = domainId;
+	}
+
+	public Integer getSize() {
+		return size;
+	}
+
+	public void setSize(Integer size) {
+		this.size = size;
 	}
 	
 	

@@ -21,7 +21,6 @@ import static com.esferalia.aon.jooq.tables.CommercialTracking.COMMERCIAL_TRACKI
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
 
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -1505,4 +1504,53 @@ try {
 	//getParentName(schemas.get(sch)))
 	
 
+	public static Vector<FileInfo> getRattach(String domain) throws SQLException {
+		Connection connection = null;
+		try {
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			Result<Record3<Integer, String, Integer>> data = dslContext
+					.select(RATTACH.ID,RATTACH.DRIVE_ID,RATTACH.DATA.length())
+					.from(RATTACH).join(DOMAIN)
+						.on(DOMAIN.ID.eq(RATTACH.DOMAIN))
+					.where(DOMAIN.NAME.eq(domain))
+					.fetch();
+			Vector<FileInfo> v = new Vector<FileInfo>();
+ 			data.stream().forEach(d->{
+				FileInfo fi = new FileInfo();
+				if(d.value1() != null) fi.setFileId(d.value1());
+				if(d.value2() != null) fi.setDriveId(d.value2());
+				if(d.value3() != null) fi.setSize(d.value3());
+				v.add(fi);
+			});
+			
+			return v;
+
+		}finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static void upsize(String domain, Integer id , Integer size) throws SQLException {
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());			
+			dslContext.update(RATTACH)
+			.set(RATTACH.DPARENT_ID,size.toString())
+			.where(RATTACH.ID.eq(id)).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	
 }
