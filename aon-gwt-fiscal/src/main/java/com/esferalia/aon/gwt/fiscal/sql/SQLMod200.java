@@ -26,7 +26,7 @@ import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
 import com.esferalia.aon.jooq.tables.records.FsModel200DetailRecord;
 import com.esferalia.aon.jooq.tables.records.FsModel200Record;
 import com.esferalia.aon.jooq.tables.records.FsModel200RegistryRecord;
-import com.esferalia.aon.occam.api.model.LegalRepresentative;
+import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 
 public class SQLMod200 {
 	

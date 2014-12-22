@@ -88,7 +88,7 @@ public abstract class PageAbs extends ResizeComposite {
 			desc.setStyleName(RESOURCES.css().aonBold());
 		}
 		tab.setWidget(row, 0, desc);
-		tab.getFlexCellFormatter().setStyleName(row, 0, RESOURCES.css().aonMod200BorderBottom());
+		tab.getFlexCellFormatter().setStyleName(row, 0, RESOURCES.css().aonFiscalBorderBottom());
 		paintKeyField(tab,key,row,1);	
 		return ++row;
 	}
@@ -111,15 +111,15 @@ public abstract class PageAbs extends ResizeComposite {
 			}
 		});
 		text.setValue(mod200Object.getDoubleValue(key));
-		text.addStyleName(RESOURCES.css().aonMod200MarginLeft());
-		text.addStyleName(RESOURCES.css().aonMod200PaddingLeft());
+		text.addStyleName(RESOURCES.css().aonFiscalMarginLeft());
+		text.addStyleName(RESOURCES.css().aonFiscalPaddingLeft());
 		text.setChangeDisplayStyleName(RESOURCES.css().aonValueChanged());
 		text.setEnabled(!disabled);
 		panel.add(text);
 		
 		getInputs().put(key, text);
 		if (!isTitle(key)) {
-			panel.addStyleName(RESOURCES.css().aonMod200PaddingRight());
+			panel.addStyleName(RESOURCES.css().aonFiscalPaddingRight());
 		}
 		tab.setWidget(row, col, panel);
 		tab.getFlexCellFormatter().addStyleName(row, col, RESOURCES.css().aonTextRight());
@@ -144,7 +144,7 @@ public abstract class PageAbs extends ResizeComposite {
 		for (IMod200KeysProvider key : keysProvider) {
 			Label desc = new Label(key.getDescription() );
 			tableDetail.setWidget(r, 0, desc);
-			tableDetail.getFlexCellFormatter().setStyleName(r, 0, RESOURCES.css().aonMod200BorderBottom());
+			tableDetail.getFlexCellFormatter().setStyleName(r, 0, RESOURCES.css().aonFiscalBorderBottom());
 			col = 1;
 			for (final Mod200Key k : key.getKeys() ) {
 				if (k != null){
@@ -167,8 +167,8 @@ public abstract class PageAbs extends ResizeComposite {
 						}
 					});
 					text.setValue(mod200Object.getDoubleValue(k));
-					text.addStyleName(RESOURCES.css().aonMod200MarginLeft());
-					text.addStyleName(RESOURCES.css().aonMod200PaddingLeft());
+					text.addStyleName(RESOURCES.css().aonFiscalMarginLeft());
+					text.addStyleName(RESOURCES.css().aonFiscalPaddingLeft());
 					text.setChangeDisplayStyleName(RESOURCES.css().aonValueChanged());
 					text.setEnabled(!disabled);
 					panel.add(text);
@@ -210,14 +210,14 @@ public abstract class PageAbs extends ResizeComposite {
 			@Override
 			public void onOpen(OpenEvent<DisclosurePanel> event) {
 				titleLabel.setText(label + " \u25BC");
-				bodyContainer.addStyleName(RESOURCES.css().aonMod200InnerGroupBody());
+				bodyContainer.addStyleName(RESOURCES.css().aonFiscalInnerGroupBody());
 			}
 		});
 		bodyContainer.addCloseHandler(new CloseHandler<DisclosurePanel>() {
 			@Override
 			public void onClose(CloseEvent<DisclosurePanel> event) {
 				titleLabel.setText(label + " \u25BA");
-				bodyContainer.removeStyleName(RESOURCES.css().aonMod200InnerGroupBody());
+				bodyContainer.removeStyleName(RESOURCES.css().aonFiscalInnerGroupBody());
 			}
 		});
 		bodyContainer.addStyleName(RESOURCES.css().aonGroupBody());

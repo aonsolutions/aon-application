@@ -56,7 +56,7 @@
 						<g:HorizontalPanel ui:field='messagesPanel'/>
 						<table class="aon-width-all" style="text-align: center;font-weight:bold;">
 							<tr>
-								<td rowspan="2" class="{aonResources.css.aonMod200Title}">
+								<td rowspan="2" class="{aonResources.css.aonFiscalTitle}">
 									<span style=" font-size: 1.2em; font-weight: bold;">
 										<g:Label text="{msg.mod200Desc}"/>
 									</span>
@@ -67,12 +67,12 @@
 										<g:Label text="{msg.mod200Desc3}"/>
 									</span>
 								</td>
-								<td class="{aonResources.css.aonMod200Year}">
+								<td class="{aonResources.css.aonFiscalYear}">
 									<g:Label text="2013" />
 								</td>
 							</tr>
 							<tr>
-								<td class="{aonResources.css.aonMod200Model}">
+								<td class="{aonResources.css.aonFiscalModel}">
 									<g:Label text="{msg.mod200}" />
 								</td>
 							</tr>

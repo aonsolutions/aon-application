@@ -14,21 +14,23 @@ import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.common.shared.DocumentUtil;
 import com.esferalia.aon.gwt.common.shared.FiscalParameters;
+import com.esferalia.aon.gwt.fiscal.client.FiscalMessages;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.widget.EnterpriseSuggestBox;
-import com.esferalia.aon.gwt.fiscal.shared.FiscalEnum.Administration;
 import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
-import com.esferalia.aon.occam.api.model.Mod390;
-import com.esferalia.aon.occam.api.model.Mod390.Mod303Results;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod303Results;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -41,7 +43,6 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -80,9 +81,11 @@ public class Model390 extends MainEntryPoint {
 
 	private Mod390 mod390;
 	private FiscalServiceAsync fiscalService;
-	private final static CommonMessages MSG = GWT.create(CommonMessages.class);
-	private final static AonResources RESOURCES = GWT
-			.create(AonResources.class);
+	
+	protected final static CommonMessages MSG = GWT.create(CommonMessages.class);
+	protected final static AonResources RESOURCES = GWT.create(AonResources.class);
+	protected static final FiscalMessages FISCAL_MSG = GWT.create(FiscalMessages.class);
+	protected static final NumberFormat FMT = NumberFormat.getFormat( MSG.decimalPattern(), MSG.currencyCode());
 
 	@UiField
 	Label simplifiedRegime;
@@ -102,11 +105,6 @@ public class Model390 extends MainEntryPoint {
 	Panel panel0;
 	@UiField
 	FocusPanel linkPage0;
-
-	@UiField
-	Panel panel1;
-	@UiField
-	FocusPanel linkPage1;
 
 	@UiField
 	Panel panel3;
@@ -195,65 +193,34 @@ public class Model390 extends MainEntryPoint {
 	TextBox year;
 	@UiField
 	EnterpriseSuggestBox enterpriseSuggest;
-	@UiField
-	CheckBox replacement;
-	@UiField
-	TextBox replacedReceipt;
 
 	FormPanel diskForm;
 	Hidden mod390Hidden;
 	Hidden domainIdHidden;
 	Hidden domainNameHidden;
 
-	// PAGE 0
 	@UiField
 	Page0 page0;
-
-	// PAGE 1
-	@UiField
-	Page1 page1;
-
-	// PAGE 3
 	@UiField
 	Page3 page3;
-
-	// PAGE 4
 	@UiField
 	Page4 page4;
-
-	// PAGE 5
 	@UiField
 	Page5 page5;
-
-	// PAGE 6
 	@UiField
 	Page6 page6;
-
-	// PAGE 7
 	@UiField
 	Page7 page7;
-
-	// PAGE 8
 	@UiField
 	Page8 page8;
-
-	// PAGE
 	@UiField
 	Page9 page9;
-
-	// PAGE 10
 	@UiField
 	Page10 page10;
-
-	// PAGE 11
 	@UiField
 	Page11 page11;
-
-	// PAGE 12
 	@UiField
 	Page12 page12;
-
-	// PAGE 13
 	@UiField
 	Page13 page13;
 
@@ -310,7 +277,7 @@ public class Model390 extends MainEntryPoint {
 		// http://code.google.com/p/google-web-toolkit/issues/detail?id=6889
 		deckPanel.onResize();
 
-		page5.setPage10(page10);
+		//page5.setPage10(page10);
 		page7.setPage5(page5);
 		page7.setPage6(page6);
 		page8.setPage5(page5);
@@ -423,19 +390,15 @@ public class Model390 extends MainEntryPoint {
 
 	private void select(Mod390 m390) {
 		mod390 = m390;
-		onLinkPage1(null);
+		onLinkPage0(null);
 		enterprise = m390.getEnterprise();
 		domain = m390.getDomain();
 
 		year.setValue(Integer.toString(m390.getYear()));
 		enterpriseSuggest
 				.setValue(m390.getDocument(), m390.getEnterpriseName());
-		replacement.setValue(m390.isReplacement());
-		replacedReceipt.setValue(m390.getReplacedReceipt());
-
+		
 		page0.setValue(m390);
-
-		page1.setValue(m390);
 		page3.setValue(m390);
 		page4.setValue(m390);
 		page5.setValue(m390);
@@ -490,10 +453,6 @@ public class Model390 extends MainEntryPoint {
 
 	@UiHandler("saveButton")
 	void onAcceptButtonClick(ClickEvent event) {
-		accept(new AcceptAsyncCallback());
-	}
-
-	private void accept(AcceptAsyncCallback callback) {
 		final PopupPanel popup = new PopupPanel(false, true);
 		Label label = new Label(MSG.processing());
 		label.addStyleName(RESOURCES.css().aonTimer());
@@ -501,37 +460,28 @@ public class Model390 extends MainEntryPoint {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		callback.setPopup(popup);
 		try {
 			populateMod390();
 			validate(this.mod390);
-			fiscalService.saveMod390(getCurrentDomainName(),getCurrentDomain(),this.mod390, callback);
+			fiscalService.saveMod390(getCurrentDomainName(),getCurrentDomain(),this.mod390
+					, new AsyncCallback<Mod390>() {
+						@Override
+						public void onSuccess(Mod390 result) {
+							select(result);
+							popup.hide();
+							cleanErrorMessage();
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+							popup.hide();
+							addErrorMessage(MSG.unableToSaveMod190(caught.getMessage()));
+						}
+					});
 		} catch (IllegalArgumentException e) {
 			popup.hide();
 			DialogMessages.alertErrorWidget(e.getMessage()).center();
 		}
-	}
-
-	private class AcceptAsyncCallback implements AsyncCallback<Mod390> {
-		PopupPanel popup;
-
-		public void setPopup(PopupPanel popup) {
-			this.popup = popup;
-		}
-
-		@Override
-		public void onSuccess(Mod390 result) {
-			select(result);
-			popup.hide();
-			cleanErrorMessage();
-		}
-
-		@Override
-		public void onFailure(Throwable caught) {
-			popup.hide();
-			addErrorMessage(MSG.unableToSaveMod190(caught.getMessage()));
-		}
-
 	}
 
 	private void validate(Mod390 m390) {
@@ -647,15 +597,11 @@ public class Model390 extends MainEntryPoint {
 						} else {
 							String tmpName = mod390.getEnterpriseName();
 							if (AonUtil.contains(tmpName, ',')) {
-								mod390.setName(AonUtil.trim(AonUtil
-										.substringAfter(tmpName, ",")));
-								mod390.setFirstSurname(AonUtil.trim(AonUtil
-										.substringBefore(tmpName, ",")));
+								mod390.setName(AonUtil.trim(AonUtil.substringAfter(tmpName, ",")));
+								mod390.setFirstSurname(AonUtil.trim(AonUtil.substringBefore(tmpName, ",")));
 							} else {
-								mod390.setName(AonUtil.trim(AonUtil
-										.substringBefore(tmpName, " ")));
-								mod390.setFirstSurname(AonUtil.trim(AonUtil
-										.substringAfter(tmpName, " ")));
+								mod390.setName(AonUtil.trim(AonUtil.substringBefore(tmpName, " ")));
+								mod390.setFirstSurname(AonUtil.trim(AonUtil.substringAfter(tmpName, " ")));
 							}
 						}
 						select(mod390);
@@ -664,7 +610,7 @@ public class Model390 extends MainEntryPoint {
 						initializePages(mod390);
 						int i = deckPanel.getWidgetIndex(formPanel);
 						deckPanel.showWidget(i);
-						i = pagesPanel.getWidgetIndex(panel1);
+						i = pagesPanel.getWidgetIndex(panel0);
 						pagesPanel.showWidget(i);
 
 						year.selectAll();
@@ -790,12 +736,16 @@ public class Model390 extends MainEntryPoint {
 
 	@UiHandler("year")
 	void onChangeYear(ChangeEvent event) {
-		if (Window
-				.confirm("El ejercicio ha cambiado, desea recalcular los datos?")) {
+		if (Window.confirm("El ejercicio ha cambiado, desea recalcular los datos?")) {
 			if (domain != 0) {
 				try {
-					page5.initialize(getCurrentDomainName(),domain, Integer.parseInt(year.getValue()),
-							mod390);
+					try {
+						mod390.setYear(Integer.parseInt(year.getValue()));
+					} catch (NumberFormatException e) {
+						throw new IllegalArgumentException(MSG.unableToParseYear());
+					}
+					page0.setValue(mod390);
+					page5.initialize(getCurrentDomainName(),domain, Integer.parseInt(year.getValue()), mod390);
 				} catch (NumberFormatException e) {
 					// nothing
 				}
@@ -817,13 +767,10 @@ public class Model390 extends MainEntryPoint {
 		mod390.setYear(Integer.parseInt(year.getValue()));
 		mod390.setAdministration( (byte) Administration.COMMON_TERRITORY.ordinal());
 		mod390.setConfidential(false);
-		mod390.setReplacement(replacement.getValue());
-		mod390.setReplacedReceipt(replacedReceipt.getValue());
 		mod390.setComments(null);
 
 		// Populate Pages
 		page0.populate(mod390);
-		page1.populate(mod390);
 		page3.populate(mod390);
 		page4.populate(mod390);
 		page5.populate(mod390);
@@ -860,7 +807,7 @@ public class Model390 extends MainEntryPoint {
 	// }
 
 	private void clearLinks() {
-		Panel[] panels = new Panel[] { linkPage0, linkPage1, linkPage3,
+		Panel[] panels = new Panel[] { linkPage0, linkPage3,
 				linkPage4, linkPage5, linkPage6, linkPage7, linkPage8,
 				linkPage9, linkPage10, linkPage11, linkPage12, linkPage13 };
 		for (Panel p : panels) {
@@ -875,13 +822,6 @@ public class Model390 extends MainEntryPoint {
 		clearLinks();
 		applySelectedStyle(linkPage0);
 		pagesPanel.showWidget(pagesPanel.getWidgetIndex(panel0));
-	}
-
-	@UiHandler("linkPage1")
-	void onLinkPage1(ClickEvent event) {
-		clearLinks();
-		applySelectedStyle(linkPage1);
-		pagesPanel.showWidget(pagesPanel.getWidgetIndex(panel1));
 	}
 
 	@UiHandler("linkPage3")

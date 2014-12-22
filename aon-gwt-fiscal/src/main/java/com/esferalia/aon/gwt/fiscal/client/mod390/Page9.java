@@ -1,10 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390;
 
-import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
-import com.esferalia.aon.occam.api.model.Mod390;
-import com.esferalia.aon.occam.api.model.Mod390.Mod303Results;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod303Results;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -19,10 +18,6 @@ public class Page9 extends ResizeComposite implements RequiresResize {
 
 	private static final Page7Binder page7Binder = GWT
 			.create(Page7Binder.class);
-
-	private static final AonResources RESOURCES = GWT
-			.create(AonResources.class);
-	
 
 	@UiField
 	DoubleTextBox box95;
@@ -44,7 +39,7 @@ public class Page9 extends ResizeComposite implements RequiresResize {
 
 	public Page9() {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-		RESOURCES.css().ensureInjected();
+		Model390.RESOURCES.css().ensureInjected();
 
 		Widget ui = page7Binder.createAndBindUi(this);
 		initWidget(ui);

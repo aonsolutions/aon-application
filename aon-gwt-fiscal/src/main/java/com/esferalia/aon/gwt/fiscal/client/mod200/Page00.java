@@ -14,12 +14,12 @@ import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
-import com.esferalia.aon.gwt.common.shared.CommonEnum.Administration;
-import com.esferalia.aon.gwt.common.shared.CommonEnum.CNAE;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.DoubleVariable;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200.BalanceType;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
+import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.CNAE;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -260,7 +260,7 @@ public class Page00 extends PageAbs {
 
 			});
 			inputs.put(key, check);
-			check.setStyleName(RESOURCES.css().aonMod200Checkbox());
+			check.setStyleName(RESOURCES.css().aonFiscalCheckbox());
 			table.setWidget(row, colOffset + 1, check);
 			colOffset = colOffset + 2;				
 			++mustAdd;

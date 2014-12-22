@@ -1,14 +1,13 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390;
 
-import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.client.widget.SimplifiedRegimePanel;
 import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
-import com.esferalia.aon.occam.api.model.Mod390;
-import com.esferalia.aon.occam.api.model.Mod390.FarmerRegimeActivity;
-import com.esferalia.aon.occam.api.model.Mod390.SimpliedRegimeActivity;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390.FarmerRegimeActivity;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390.SimpliedRegimeActivity;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.i18n.client.NumberFormat;
@@ -24,13 +23,10 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 
 	interface Page6Binder extends UiBinder<Widget, Page6> {
 	}
-	private static final NumberFormat FMT = NumberFormat.getFormat("#0.0000");
+	private static final NumberFormat FMT_4DEC = NumberFormat.getFormat("#0.0000");
 	
 	private static final Page6Binder page6Binder = GWT
 			.create(Page6Binder.class);
-
-	private static final AonResources RESOURCES = GWT
-			.create(AonResources.class);
 
 	@UiField
 	SimplifiedRegimePanel activity1;
@@ -135,7 +131,7 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 	
 	public Page6() {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-		RESOURCES.css().ensureInjected();
+		Model390.RESOURCES.css().ensureInjected();
 
 		Widget ui = page6Binder.createAndBindUi(this);
 		initWidget(ui);
@@ -293,7 +289,7 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 			farmer = new FarmerRegimeActivity();
 			farmer.setCodigo(f01A.getValue());
 			farmer.setIncomes(f01B.getDoubleValue());
-			farmer.setQuotaIndex(f01C.getDoubleValue(FMT));
+			farmer.setQuotaIndex(f01C.getDoubleValue(FMT_4DEC));
 			farmer.setAccrualQuota(f01D.getDoubleValue());
 			farmer.setInputQuotas(f01E.getDoubleValue());
 			farmer.setQuota(f01K.getDoubleValue());
@@ -303,7 +299,7 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 			farmer = new FarmerRegimeActivity();
 			farmer.setCodigo(f02A.getValue());
 			farmer.setIncomes(f02B.getDoubleValue());
-			farmer.setQuotaIndex(f02C.getDoubleValue(FMT));
+			farmer.setQuotaIndex(f02C.getDoubleValue(FMT_4DEC));
 			farmer.setAccrualQuota(f02D.getDoubleValue());
 			farmer.setInputQuotas(f02E.getDoubleValue());
 			farmer.setQuota(f02K.getDoubleValue());
@@ -313,7 +309,7 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 			farmer = new FarmerRegimeActivity();
 			farmer.setCodigo(f03A.getValue());
 			farmer.setIncomes(f03B.getDoubleValue());
-			farmer.setQuotaIndex(f03C.getDoubleValue(FMT));
+			farmer.setQuotaIndex(f03C.getDoubleValue(FMT_4DEC));
 			farmer.setAccrualQuota(f03D.getDoubleValue());
 			farmer.setInputQuotas(f03E.getDoubleValue());
 			farmer.setQuota(f03K.getDoubleValue());
@@ -323,7 +319,7 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 			farmer = new FarmerRegimeActivity();
 			farmer.setCodigo(f04A.getValue());
 			farmer.setIncomes(f04B.getDoubleValue());
-			farmer.setQuotaIndex(f04C.getDoubleValue(FMT));
+			farmer.setQuotaIndex(f04C.getDoubleValue(FMT_4DEC));
 			farmer.setAccrualQuota(f04D.getDoubleValue());
 			farmer.setInputQuotas(f04E.getDoubleValue());
 			farmer.setQuota(f04K.getDoubleValue());
@@ -333,7 +329,7 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 			farmer = new FarmerRegimeActivity();
 			farmer.setCodigo(f05A.getValue());
 			farmer.setIncomes(f05B.getDoubleValue());
-			farmer.setQuotaIndex(f05C.getDoubleValue(FMT));
+			farmer.setQuotaIndex(f05C.getDoubleValue(FMT_4DEC));
 			farmer.setAccrualQuota(f05D.getDoubleValue());
 			farmer.setInputQuotas(f05E.getDoubleValue());
 			farmer.setQuota(f05K.getDoubleValue());
@@ -366,7 +362,7 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 		if (f==0) {
 			f01A.setValue(farmer.getCodigo());
 			f01B.setValue(farmer.getIncomes());
-			f01C.setValue(farmer.getQuotaIndex(),FMT);
+			f01C.setValue(farmer.getQuotaIndex(),FMT_4DEC);
 			f01D.setValue(farmer.getAccrualQuota());
 			f01E.setValue(farmer.getInputQuotas());
 			f01K.setValue(farmer.getQuota());
@@ -374,7 +370,7 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 		if (f==1) {
 			f02A.setValue(farmer.getCodigo());
 			f02B.setValue(farmer.getIncomes());
-			f02C.setValue(farmer.getQuotaIndex(),FMT);
+			f02C.setValue(farmer.getQuotaIndex(),FMT_4DEC);
 			f02D.setValue(farmer.getAccrualQuota());
 			f02E.setValue(farmer.getInputQuotas());
 			f02K.setValue(farmer.getQuota());
@@ -382,7 +378,7 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 		if (f==2) {
 			f03A.setValue(farmer.getCodigo());
 			f03B.setValue(farmer.getIncomes());
-			f03C.setValue(farmer.getQuotaIndex(),FMT);
+			f03C.setValue(farmer.getQuotaIndex(),FMT_4DEC);
 			f03D.setValue(farmer.getAccrualQuota());
 			f03E.setValue(farmer.getInputQuotas());
 			f03K.setValue(farmer.getQuota());
@@ -390,7 +386,7 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 		if (f==3) {
 			f04A.setValue(farmer.getCodigo());
 			f04B.setValue(farmer.getIncomes());
-			f04C.setValue(farmer.getQuotaIndex(),FMT);
+			f04C.setValue(farmer.getQuotaIndex(),FMT_4DEC);
 			f04D.setValue(farmer.getAccrualQuota());
 			f04E.setValue(farmer.getInputQuotas());
 			f04K.setValue(farmer.getQuota());
@@ -398,7 +394,7 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 		if (f==4) {
 			f05A.setValue(farmer.getCodigo());
 			f05B.setValue(farmer.getIncomes());
-			f05C.setValue(farmer.getQuotaIndex(),FMT);
+			f05C.setValue(farmer.getQuotaIndex(),FMT_4DEC);
 			f05D.setValue(farmer.getAccrualQuota());
 			f05E.setValue(farmer.getInputQuotas());
 			f05K.setValue(farmer.getQuota());

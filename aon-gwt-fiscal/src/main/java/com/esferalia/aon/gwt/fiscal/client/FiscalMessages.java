@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
-import com.esferalia.aon.gwt.fiscal.shared.FiscalEnum.ActivityGroup;
-import com.esferalia.aon.occam.api.model.Mod390.Mod390DetailKey;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390DetailKey;
+import com.esferalia.aon.occam.api.model.type.ActivityGroup;
 import com.google.gwt.i18n.client.Messages;
 
 public interface FiscalMessages extends Messages {

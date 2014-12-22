@@ -2,7 +2,7 @@ package com.esferalia.aon.gwt.fiscal.shared.mod200;
 
 import java.io.Serializable;
 
-import com.esferalia.aon.gwt.common.shared.CommonEnum.Administration;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public enum Mod200Key implements Serializable, IsSerializable {

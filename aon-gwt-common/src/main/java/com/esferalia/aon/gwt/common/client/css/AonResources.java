@@ -48,6 +48,9 @@ public interface AonResources extends ClientBundle, Images {
 
 	@Source("images/input-warn.png")
 	ImageResource aonInputError();
+	
+	@Source("images/curly-lt.png")
+	ImageResource aonCurlyLT();
 
 	// ------------------------------------------------------------------------
 	

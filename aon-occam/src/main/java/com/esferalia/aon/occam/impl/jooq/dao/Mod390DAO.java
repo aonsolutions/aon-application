@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.EnumMap;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
@@ -25,17 +26,17 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.FsModel390Record;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.Mod390;
-import com.esferalia.aon.occam.api.model.Mod390.Mod303Results;
-import com.esferalia.aon.occam.api.model.Mod390.Mod390Detail;
-import com.esferalia.aon.occam.api.model.Mod390.Mod390DetailKey;
-import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013;
-import com.esferalia.aon.occam.api.model.mod390.e2013.AEATIVA2013toMod390;
-import com.esferalia.aon.occam.api.model.mod390.e2013.Mod390toAEATIVA2013;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod303Results;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390DetailKey;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2013.AEATIVA2013;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2013.AEATIVA2013toMod390;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2013.Mod390toAEATIVA2013;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -441,9 +442,7 @@ public class Mod390DAO {
 				JAXBContext context = JAXBContext.newInstance(AEATIVA2013.class);
 				Unmarshaller um = context.createUnmarshaller();
 				AEATIVA2013 iva = (AEATIVA2013) um.unmarshal(reader);
-				
 				AEATIVA2013toMod390.populate(mod390, iva);
-				
 			} catch (JAXBException e1) {
 				throw new AonCoreException("XML PROBLEM");
 			} catch (ParseException e) {
@@ -581,8 +580,8 @@ public class Mod390DAO {
 		Field<BigDecimal> sumSurchargeQuotaOp = DSL.sum(DSL.decode()
 				.when(INVOICE_TAX.SURCHARGE_QUOTA.notEqual(0.0),INVOICE_TAX.SURCHARGE_QUOTA)
 				.when(INVOICE_TAX.SURCHARGE_QUOTA.equal(0.0), invoiceSurchargeQuota));		
-				
-		ArrayList<Mod390Detail> list = initializeList();
+		EnumMap<Mod390DetailKey, Mod390Detail> map = new EnumMap<Mod390DetailKey, Mod390Detail>(Mod390DetailKey.class);
+		
 		ctx.getDslContext().select(INVOICE.TYPE
 				,INVOICE.RECTIFICATION_TYPE
 				,INVOICE.SERVICE
@@ -629,7 +628,8 @@ public class Mod390DAO {
 							Mod390DetailKey[] keys = DetailKey.getKeys(vc);			
 							if (keys != null) {
 								for (Mod390DetailKey key : keys) {
-									Mod390Detail detail = getDetail(list,key);
+									Mod390Detail detail = map.get(key);
+									if (detail == null) detail = new Mod390Detail();
 									detail.setKey(key);
 									detail.setPercent(percentage);
 									detail.setQuota( AonMathUtils.round(detail.getQuota()  + quota));
@@ -644,7 +644,8 @@ public class Mod390DAO {
 										else if (percentage == 5.2) surchargeKey = Mod390DetailKey.K10_52;
 										else if (percentage == 1.75) surchargeKey = Mod390DetailKey.K10_175;
 										if (surchargeKey != null) {
-											detail = getDetail(list,surchargeKey);
+											detail = map.get(key);
+											if (detail == null) detail = new Mod390Detail();
 											detail.setKey(surchargeKey);
 											detail.setPercent(surchargePercent);
 											detail.setQuota( AonMathUtils.round(detail.getQuota()  + surchargeQuota));
@@ -655,9 +656,10 @@ public class Mod390DAO {
 							}
 						}
 				);
-		return list;
+		return new ArrayList<Mod390Detail>(map.values());
 	}
-
+	
+/*
 	private static Mod390Detail getDetail(ArrayList<Mod390Detail> list, Mod390DetailKey key) {
 		for (Mod390Detail detail : list) {
 			if (detail.getKey() == key) {
@@ -678,7 +680,7 @@ public class Mod390DAO {
 		}
 		return list;
 	}
-
+*/
 	public static Mod303Results getMod390Results(AONContext ctx, int year) {
 		// TODO RELLENAR!!
 		return new Mod303Results();

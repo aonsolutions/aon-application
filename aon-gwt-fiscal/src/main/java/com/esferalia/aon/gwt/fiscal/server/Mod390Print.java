@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.Mod390;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod390 Print", urlPatterns = { "/aon_gwt_fiscal/Model390Print" })

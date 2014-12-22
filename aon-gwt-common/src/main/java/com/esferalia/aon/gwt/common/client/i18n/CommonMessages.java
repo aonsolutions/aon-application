@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.common.client.i18n;
 
-import com.esferalia.aon.gwt.common.shared.CommonEnum.Administration;
-import com.esferalia.aon.gwt.common.shared.CommonEnum.Province;
+import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.i18n.client.Messages;
 
 public interface CommonMessages extends Messages {
@@ -33,7 +33,13 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Modelo 390")
 	String mod390();
-
+	
+	@DefaultMessage("Impuesto sobre el Valor A\u00F1adido")
+	String mod390Desc();
+	
+	@DefaultMessage("Declaraci\u00F3n-Resumen anual")
+	String mod390Desc2();
+	
 	@DefaultMessage("Modelo 200")
 	String mod200();
 
@@ -181,6 +187,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Sustitutiva")
 	String replacement();
+	
+	@DefaultMessage("Declaraci\u00F3n sustituva por rectificaci\u00F3n de cuotas en caso de concurso de acreedores ( art. 80.Tres LIVA)")
+	String replacementDueInsolvencyState();
 
 	@DefaultMessage("Num. Declaraci\u00F3n")
 	String receipt();
@@ -520,6 +529,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Sujeto Pasivo")
 	String pasiveSubject();
 
+	@DefaultMessage("Sujeto Pasivo y Devengo")
+	String pasiveSubjectAndAccrual();
+
 	@DefaultMessage("Devengo")
 	String accrual();
 
@@ -774,6 +786,24 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("\u00BFLas declaraciones del \u00FAltimo periodo de liquidaci\u00F3n del ejercicio corresponden a declaraciones concursales?")
 	String insolvencyDeclarations();
+	
+	@DefaultMessage("Concurso de acreedores")
+	String insolvencyState();
+	
+	@DefaultMessage("\u00BFHa sido declarado en concurso de acreeedores en este ejercicio?")
+	String insolvencyStateThisYear();
+	
+	@DefaultMessage("\u00BFLas autoliquidaciones del \u00FAltimo periodo de liquidaci\u00F3n corresponden a declaraciones concursales?")
+	String insolvencyStateLastPeriod();
+	
+	@DefaultMessage("Criterio de caja")
+	String cashAccrualRegime();
+
+	@DefaultMessage("\u00BFHa optado por el r\u00E9gimen especial del criterio de caja (art. 163 undecies LIVA)?")
+	String accrualRegime();
+	
+	@DefaultMessage("\u00BFHa sido destinatario de operaciones a las que se aplique el r\u00E9gimen especial del criterio de caja?")
+	String accrualRegimeTarget();
 
 	@DefaultMessage("R\u00E9gimen especial del grupo de entidades en "
 			+ "alg\u00FAn per\u00EDodo del ejercicio")

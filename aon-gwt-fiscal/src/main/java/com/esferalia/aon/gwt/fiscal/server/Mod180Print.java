@@ -30,7 +30,7 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.format.output.FileOutput;
 import com.esferalia.aon.gwt.fiscal.server.file.MOD180Writer;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.Mod180;
+import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod180 Print", urlPatterns = { "/aon_gwt_fiscal/Model180Print" })

@@ -18,7 +18,7 @@
 			<div class="{aonResources.css.aonGroupBody}">
 				<table class="aon-width-all">
 					<tr>
-						<td class="{aonResources.css.aonMod200BorderBottom}">
+						<td class="{aonResources.css.aonFiscalBorderBottom}">
 							<g:Label text="{msg.nif}"/>
 						</td>
 						<td style="width: 250px;">
@@ -26,7 +26,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td class="{aonResources.css.aonMod200BorderBottom}">
+						<td class="{aonResources.css.aonFiscalBorderBottom}">
 							<g:Label text="{msg.companyName}"/>
 						</td>
 						<td>
@@ -34,7 +34,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td class="{aonResources.css.aonMod200BorderBottom}">
+						<td class="{aonResources.css.aonFiscalBorderBottom}">
 							<g:Label text="{msg.province}"/>
 						</td>
 						<td>
@@ -52,7 +52,7 @@
 			<div class="{aonResources.css.aonGroupBody}">
 				<table class="aon-width-all">
 					<tr>
-						<td class="{aonResources.css.aonMod200BorderBottom}">
+						<td class="{aonResources.css.aonFiscalBorderBottom}">
 							<g:Label text="{msg.partMsg4}"/>
 						</td>
 						<td style="width: 150px;">
@@ -60,7 +60,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td class="{aonResources.css.aonMod200BorderBottom}">
+						<td class="{aonResources.css.aonFiscalBorderBottom}">
 							<g:Label text="{msg.partMsg5}"/>
 						</td>
 						<td>
@@ -68,7 +68,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td class="{aonResources.css.aonMod200BorderBottom}">
+						<td class="{aonResources.css.aonFiscalBorderBottom}">
 							<g:Label text="{msg.partMsg6}"/>
 						</td>
 						<td>
@@ -76,7 +76,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td class="{aonResources.css.aonMod200BorderBottom}">
+						<td class="{aonResources.css.aonFiscalBorderBottom}">
 							<g:Label text="{msg.partMsg7}"/>
 						</td>
 						<td>
@@ -94,7 +94,7 @@
 			<div class="{aonResources.css.aonGroupBody}">
 				<table class="aon-width-all">
 					<tr>
-						<td class="{aonResources.css.aonMod200BorderBottom}">
+						<td class="{aonResources.css.aonFiscalBorderBottom}">
 							<g:Label text="{msg.partMsg9}"/>
 						</td>
 						<td style="width: 150px;">
@@ -102,7 +102,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td class="{aonResources.css.aonMod200BorderBottom}">
+						<td class="{aonResources.css.aonFiscalBorderBottom}">
 							<g:Label text="{msg.partMsg10}"/>
 						</td>
 						<td>
@@ -110,7 +110,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td class="{aonResources.css.aonMod200BorderBottom}">
+						<td class="{aonResources.css.aonFiscalBorderBottom}">
 							<g:Label text="{msg.partMsg11}"/>
 						</td>
 						<td>
@@ -118,7 +118,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td class="{aonResources.css.aonMod200BorderBottom}">
+						<td class="{aonResources.css.aonFiscalBorderBottom}">
 							<g:Label text="{msg.partMsg12}"/>
 						</td>
 						<td>
@@ -136,7 +136,7 @@
 			<div class="{aonResources.css.aonGroupBody}">
 				<table class="aon-width-all">
 					<tr>
-						<td class="{aonResources.css.aonMod200BorderBottom}">
+						<td class="{aonResources.css.aonFiscalBorderBottom}">
 							<g:Label text="{msg.partMsg14}"/>
 						</td>
 						<td style="width: 150px;">
@@ -144,7 +144,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td class="{aonResources.css.aonMod200BorderBottom}">
+						<td class="{aonResources.css.aonFiscalBorderBottom}">
 							<g:Label text="{msg.partMsg15}"/>
 						</td>
 						<td>
@@ -152,7 +152,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td class="{aonResources.css.aonMod200BorderBottom}">
+						<td class="{aonResources.css.aonFiscalBorderBottom}">
 							<g:Label text="{msg.partMsg16}"/>
 						</td>
 						<td>
@@ -160,7 +160,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td class="{aonResources.css.aonMod200BorderBottom}">
+						<td class="{aonResources.css.aonFiscalBorderBottom}">
 							<g:Label text="{msg.partMsg17}"/>
 						</td>
 						<td>

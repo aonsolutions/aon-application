@@ -4,10 +4,10 @@ import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
 import com.esferalia.aon.gwt.common.client.widget.IntegerTextBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
-import com.esferalia.aon.gwt.fiscal.client.mod190.Model190Enum.Key;
-import com.esferalia.aon.occam.api.model.IrpfData;
-import com.esferalia.aon.occam.api.model.IrpfResult;
-import com.esferalia.aon.occam.api.model.Mod190Detail;
+import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
+import com.esferalia.aon.occam.api.model.fiscal.IrpfResult;
+import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod190Key;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -43,7 +43,7 @@ public class Model190Detail2014 extends ResizeComposite {
 			subkey.setWidth("45px");
 
 			setWidth("40px");
-			for (Key key : Key.values()) {
+			for (Mod190Key key : Mod190Key.values()) {
 				this.addItem(key.getValue());
 			}
 
@@ -52,7 +52,7 @@ public class Model190Detail2014 extends ResizeComposite {
 				@Override
 				public void onChange(ChangeEvent event) {
 					subkey.clear();
-					Key keyEnum = Key.values()[getSelectedIndex()];
+					Mod190Key keyEnum = Mod190Key.values()[getSelectedIndex()];
 					if (keyEnum.hasSubkeys()) {
 						subkey.setEnabled(true);
 						for (int i = 0; i < keyEnum.getSubKeys().length; i++) {
@@ -66,7 +66,7 @@ public class Model190Detail2014 extends ResizeComposite {
 		}
 
 		public boolean hasSubkeys() {
-			Key keyEnum = Key.values()[getSelectedIndex()];
+			Mod190Key keyEnum = Mod190Key.values()[getSelectedIndex()];
 			return keyEnum.hasSubkeys();
 		}
 
@@ -75,7 +75,7 @@ public class Model190Detail2014 extends ResizeComposite {
 		}
 
 		public void setValue(String key, String subKey) {
-			Key keyEnum = Key.valueOf(key);
+			Mod190Key keyEnum = Mod190Key.valueOf(key);
 			setSelectedIndex(keyEnum.ordinal());
 			getSubkey().clear();
 			if (hasSubkeys()) {
@@ -324,12 +324,13 @@ public class Model190Detail2014 extends ResizeComposite {
 	}
 
 	private void enableOrDisableAdditionalDataPanel() {
-		Key keyEnum = Key.values()[key.getSelectedIndex()];
+		Mod190Key keyEnum = Mod190Key.values()[key.getSelectedIndex()];
 		String subk = ((key.getSubkey().getSelectedIndex() == -1) ? null : key
 				.getSubkey().getValue(key.getSubkey().getSelectedIndex()));
-		if (Key.A == keyEnum || Key.C == keyEnum || Key.D == keyEnum
-				|| (Key.B == keyEnum && "01".equals(subk))
-				|| (Key.B == keyEnum && "02".equals(subk))) {
+		if (Mod190Key.A == keyEnum || Mod190Key.C == keyEnum
+				|| Mod190Key.D == keyEnum
+				|| (Mod190Key.B == keyEnum && "01".equals(subk))
+				|| (Mod190Key.B == keyEnum && "02".equals(subk))) {
 			additionalDataPanel.setVisible(true);
 		} else {
 			additionalDataPanel.setVisible(false);
@@ -397,7 +398,7 @@ public class Model190Detail2014 extends ResizeComposite {
 
 	@UiHandler("key")
 	void onChangeKey(ChangeEvent event) {
-		detail.setKey(Key.values()[key.getSelectedIndex()].getValue());
+		detail.setKey(Mod190Key.values()[key.getSelectedIndex()].getValue());
 		detail.setDirty(true);
 		enableOrDisableAdditionalDataPanel();
 	}

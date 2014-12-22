@@ -1,12 +1,16 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390;
 
-import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
-import com.esferalia.aon.occam.api.model.Mod390;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.DeckPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -14,19 +18,53 @@ import com.google.gwt.user.client.ui.Widget;
 public class Page0 extends ResizeComposite {
 
 	@UiField
-	DocumentTextBox document;
+	DeckPanel page0Panel;
+	@UiField
+	FlowPanel panel0;
+	@UiField
+	FlowPanel panel1;
 	
+	@UiField
+	DocumentTextBox document;
 	@UiField
 	TextBox name;
-	
 	@UiField
 	TextBox firstSurname;
-	
 	@UiField
 	TextBox secondSurname;
-	
 	@UiField
 	TextBox phone;
+	@UiField
+	CheckBox replacement;
+	@UiField
+	TextBox replacedReceipt;
+	@UiField
+	CheckBox replacementDueInsolvencyState;
+	@UiField
+	CheckBox taxRefund;
+	@UiField
+	CheckBox specialGroupRegime;
+	@UiField
+	TextBox groupNumber;
+	@UiField
+	CheckBox groupDependent;
+	@UiField
+	CheckBox groupDeclarations;
+	@UiField
+	CheckBox insolvencyDeclarations;
+	@UiField
+	CheckBox groupRegimeType;
+	@UiField
+	DocumentTextBox groupDocument;
+	
+	@UiField
+	CheckBox insolvencyStateThisYear;
+	@UiField
+	CheckBox insolvencyStateLastPeriod;
+	@UiField
+	CheckBox accrualRegime;
+	@UiField
+	CheckBox accrualRegimeTarget;
 	
 	interface Page1Binder extends
 			UiBinder<Widget, Page0> {
@@ -35,11 +73,9 @@ public class Page0 extends ResizeComposite {
 	private static final Page1Binder page1Binder = GWT
 			.create(Page1Binder.class);
 
-	private final static AonResources RESOURCES = GWT.create(AonResources.class);
-	
 	public Page0() {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-		RESOURCES.css().ensureInjected();
+		Model390.RESOURCES.css().ensureInjected();
 		
 		Widget ui = page1Binder.createAndBindUi(this);
 		initWidget(ui);
@@ -49,6 +85,9 @@ public class Page0 extends ResizeComposite {
 	public void setValue(Mod390 m390) {
 		document.setValue(m390.getDocument());
 		name.setValue(m390.getName());
+		replacement.setValue(m390.isReplacement());
+		replacedReceipt.setValue(m390.getReplacedReceipt());
+		replacementDueInsolvencyState.setValue(m390.isReplacementDueInsolvencyState());
 		if (m390.isLegalEntity()) {
 			name.setMaxLength(37);
 			firstSurname.setValue(null);
@@ -63,6 +102,25 @@ public class Page0 extends ResizeComposite {
 			secondSurname.setEnabled(true);
 		}
 		phone.setValue(m390.getContactPhone());
+		taxRefund.setValue(m390.isTaxRefund());
+		groupNumber.setValue(m390.getGroupNumber());
+		groupDependent.setValue(m390.isGroupDependent());
+		groupDeclarations.setValue(m390.isGroupDeclarations());
+		
+		if (m390.is2013()) {
+			page0Panel.showWidget(page0Panel.getWidgetIndex(panel0));
+			insolvencyDeclarations.setValue(m390.isInsolvencyDeclarations());
+		} else {
+			page0Panel.showWidget(page0Panel.getWidgetIndex(panel1));
+			insolvencyStateThisYear.setValue(m390.isInsolvencyStateThisYear());
+			insolvencyStateLastPeriod.setValue(m390.isInsolvencyStateLastPeriod());
+			accrualRegime.setValue(m390.isAccrualRegime());
+			accrualRegimeTarget.setValue(m390.isAccrualRegimeTarget());
+		}
+		groupDocument.setValue(m390.getGroupDocument());
+		groupDeclarations.setValue(m390.isGroupDeclarations());
+		specialGroupRegime.setValue(m390.isSpecialGroupRegime(),true);
+		onClickSpecialGroupRegime(null);
 	}
 
 	public void populate(Mod390 mod390) {
@@ -70,6 +128,37 @@ public class Page0 extends ResizeComposite {
 		mod390.setFirstSurname(firstSurname.getValue());
 		mod390.setSecondSurname(secondSurname.getValue());
 		mod390.setContactPhone(phone.getValue());
+		mod390.setReplacement(replacement.getValue());
+		mod390.setReplacementDueInsolvencyState(replacementDueInsolvencyState.getValue());
+		mod390.setReplacedReceipt(replacedReceipt.getValue());
+		mod390.setInsolvencyDeclarations(insolvencyDeclarations.getValue());
+		mod390.setInsolvencyStateThisYear(insolvencyStateThisYear.getValue());
+		mod390.setInsolvencyStateLastPeriod(insolvencyStateLastPeriod.getValue());
+		mod390.setAccrualRegime(accrualRegime.getValue());
+		mod390.setAccrualRegimeTarget(accrualRegimeTarget.getValue());
+		mod390.setTaxRefund(taxRefund.getValue());
+		mod390.setSpecialGroupRegime(specialGroupRegime.getValue());
+		mod390.setGroupNumber( groupNumber.getValue());
+		mod390.setGroupDependent( groupDependent.getValue());
+		mod390.setGroupRegimeType(groupRegimeType.getValue());
+		mod390.setGroupDocument( groupDocument.getValue());
+		mod390.setGroupDeclarations( groupDeclarations.getValue());
 	}
 
+	@UiHandler("specialGroupRegime")
+	void onClickSpecialGroupRegime(ClickEvent event) {
+		groupNumber.setEnabled(specialGroupRegime.getValue());
+		groupDependent.setEnabled(specialGroupRegime.getValue());
+		groupRegimeType.setEnabled(specialGroupRegime.getValue());
+		groupDocument.setEnabled(specialGroupRegime.getValue());
+		groupDeclarations.setEnabled(specialGroupRegime.getValue());
+		
+		if (!specialGroupRegime.getValue()) {
+			groupNumber.setValue(null);
+			groupDependent.setValue(false);
+			groupRegimeType.setValue(false);
+			groupDocument.setValue(null);
+			groupDeclarations.setValue(false);
+		}
+	}
 }

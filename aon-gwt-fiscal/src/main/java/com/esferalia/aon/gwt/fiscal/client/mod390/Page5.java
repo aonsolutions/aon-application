@@ -1,35 +1,25 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
-import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
-import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
-import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMessages;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
-import com.esferalia.aon.occam.api.model.Mod390;
-import com.esferalia.aon.occam.api.model.Mod390.Mod390Detail;
-import com.esferalia.aon.occam.api.model.Mod390.Mod390DetailKey;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390DetailKey;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
@@ -42,12 +32,19 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 	private static final Page5Binder page5Binder = GWT
 			.create(Page5Binder.class);
 
-	private static final AonResources RESOURCES = GWT.create(AonResources.class);
-	private static final CommonMessages MSG = GWT.create(CommonMessages.class);
-	private static final FiscalMessages FISCAL_MSG = GWT.create(FiscalMessages.class);
-	private static final NumberFormat FMT = NumberFormat.getFormat(
-			MSG.decimalPattern(), MSG.currencyCode());
-	private FiscalServiceAsync fiscalService;
+//	private FiscalServiceAsync fiscalService;
+	
+	public static class Mod390DetailFields {
+		Mod390Detail detail;
+		DoubleTextBox taxableBase;
+		DoubleTextBox quota;
+		
+		protected Mod390DetailFields(Mod390Detail detail) {
+			this.detail = detail;
+			taxableBase = new DoubleTextBox();
+			quota = new DoubleTextBox();
+		}
+	} 
 	
 	@UiField(provided = true)
 	FlexTable table;
@@ -55,89 +52,84 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 	String domainName;
 	int domain;
 	int year;
-	private Page10 page10;
+//	private Page10 page10;
 	
-	Map<Mod390DetailKey,Mod390Detail> map;
-	Map<Mod390DetailKey,DoubleTextBox> taxableBaseMap;
-	Map<Mod390DetailKey,DoubleTextBox> quotaMap;
-
-	
+	EnumMap<Mod390DetailKey, Mod390DetailFields> map; 
 	
 	public Page5() {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-		RESOURCES.css().ensureInjected();
-
-		FiscalServiceAsync mod190ServiceRaw = GWT.create(FiscalService.class);
-		fiscalService = new FiscalServiceAsyncDecorator(mod190ServiceRaw);
-
+		Model390.RESOURCES.css().ensureInjected();
+//		FiscalServiceAsync mod190ServiceRaw = GWT.create(FiscalService.class);
+//		fiscalService = new FiscalServiceAsyncDecorator(mod190ServiceRaw);
 		table = new FlexTable();
 		Widget ui = page5Binder.createAndBindUi(this);
-		
 		initWidget(ui);
+		initializeTable();
 	}
 
-	public void setPage10(Page10 page10) {
-		this.page10 = page10;
-	}
+//	public void setPage10(Page10 page10) {
+//		this.page10 = page10;
+//	}
 	
 	public void initialize(String domainName, int domain, int year, Mod390 mod390) {
 		this.domainName = domainName;
 		this.domain = domain;
 		this.year = year;
-		initializeList(mod390);
+//		initializeList(mod390);
 	}
 
-	private void initializeList(final Mod390 mod390) {
-		map = new HashMap<Mod390DetailKey,Mod390Detail>();
-		final PopupPanel popup = new PopupPanel(false, true);
-		Label label = new Label(MSG.processing());
-		label.addStyleName(RESOURCES.css().aonTimer());
-		popup.add(label);
-		popup.setGlassEnabled(true);
-		popup.setAnimationEnabled(true);
-		popup.center();
-		fiscalService.getMod390Details(domainName,domain, mod390,
-				new AsyncCallback<ArrayList<Mod390Detail>>() {
-					@Override
-					public void onSuccess(ArrayList<Mod390Detail> result) {
-						for (Mod390Detail detail : result) {
-							if (detail.getKey().isPage5Key()) {
-								if (!mod390.isSimplifiedRegime() ) {
-									map.put(detail.getKey(),detail);
-								} else {
-									detail.setPercent(0);
-									detail.setQuota(0);
-									detail.setTaxableBase(0);
-									map.put(detail.getKey(),detail);
-								}
-							}
-							if (detail.getKey().isPage10Key()) {
-								page10.fillBox( detail );
-							}
-						}
-						initializeTable();
-						calculate();
-						popup.hide();
-						populate(mod390);
-					}
+//	private void initializeList(final Mod390 mod390) {
+//		map = new EnumMap<Mod390DetailKey, Mod390DetailFields>(Mod390DetailKey.class);
+//		final PopupPanel popup = new PopupPanel(false, true);
+//		Label label = new Label(Model390.MSG.processing());
+//		label.addStyleName(Model390.RESOURCES.css().aonTimer());
+//		popup.add(label);
+//		popup.setGlassEnabled(true);
+//		popup.setAnimationEnabled(true);
+//		popup.center();
+//		fiscalService.getMod390Details(domainName,domain, mod390,
+//				new AsyncCallback<ArrayList<Mod390Detail>>() {
+//					@Override
+//					public void onSuccess(ArrayList<Mod390Detail> result) {
+//						for (Mod390Detail detail : result) {
+//							map.put(detail.getKey(),new Mod390DetailFields(detail));
+//								
+//							if (detail.getKey().isPage5Key()) {
+//								if (!mod390.isSimplifiedRegime() ) {
+//								} else {
+//									detail.setPercent(0);
+//									detail.setQuota(0);
+//									detail.setTaxableBase(0);
+//									map.put(detail.getKey(),detail);
+//								}
+//							}
+//							if (detail.getKey().isPage10Key()) {
+//								page10.fillBox( detail );
+//							}
+//						}
+//						initializeTable();
+//						calculate();
+//						popup.hide();
+//						populate(mod390);
+//					}
+//
+//					@Override
+//					public void onFailure(Throwable caught) {
+//						popup.hide();
+//						DialogMessages.alertErrorWidget(Model390.MSG
+//								.unableToFindMod190Detail(caught
+//										.getMessage()));
+//					}
+//				});
+//	}
 
-					@Override
-					public void onFailure(Throwable caught) {
-						popup.hide();
-						DialogMessages.alertErrorWidget(MSG
-								.unableToFindMod190Detail(caught
-										.getMessage()));
-					}
-				});
-	}
-
-	public Map<Mod390DetailKey, DoubleTextBox> getQuotaMap() {
-		return quotaMap;
-	}
+//	public Map<Mod390DetailKey, DoubleTextBox> getQuotaMap() {
+//		return quotaMap;
+//	}
 	
 	private void initializeTable() {
-		taxableBaseMap = new HashMap<Mod390DetailKey, DoubleTextBox>();
-		quotaMap = new HashMap<Mod390DetailKey, DoubleTextBox>();
+//		taxableBaseMap = new HashMap<Mod390DetailKey, DoubleTextBox>();
+//		quotaMap = new HashMap<Mod390DetailKey, DoubleTextBox>();
 		
 		table.setWidth("100%");
 		table.setCellSpacing(0);
@@ -160,127 +152,124 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 		boolean oddRow = false;
 		boolean showBorder = false;
 		if (map != null) {
-			for (final Mod390Detail det : map.values() ) {
+			for (final Mod390DetailFields fields : map.values() ) {
+				Mod390Detail det = fields.detail;
 				showBorder = false;
 				y = 0;
-				if ( det.isShowDescription() ) {
+				String label = Model390.FISCAL_MSG.mod390DetailKey(det.getKey());
+				if ( AonStringUtils.isNotBlank(label )) {
 					z = 1;
 					oddRow = !oddRow;
-					rowspan = det.getKey().getRowspan();
-					fmt.setRowSpan(x, y, det.getKey().getRowspan());
-					fmt.addStyleName(x, y,RESOURCES.css().aonVerticalAlignMiddle() );
-					fmt.addStyleName(x, y,RESOURCES.css().aonPaddingLeft() );
-					fmt.addStyleName(x, y,RESOURCES.css().aonPaddingRight() );
-					fmt.addStyleName(x, y,RESOURCES.css().aonBorderBottom() );
-					if (!det.getKey().isEditable()) {
-						fmt.addStyleName(x, y,RESOURCES.css().aonBold());	
+					rowspan = 3;
+					fmt.setRowSpan(x, y, rowspan);
+					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonVerticalAlignMiddle() );
+					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonPaddingLeft() );
+					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonPaddingRight() );
+					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBorderBottom() );
+					if (rowspan > 1) {
+						fmt.addStyleName(x, y,Model390.RESOURCES.css().aonCurlyLT() );
 					}
+//					if (false) {
+//						fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBold());	
+//					}
 					if (oddRow) {
-						fmt.addStyleName(x, y,RESOURCES.css().aonBackgroundDisabled() );	
+						fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBackgroundDisabled() );	
 					}
-					Label label = new Label(FISCAL_MSG.mod390DetailKey(det.getKey()));
-					table.setWidget(x, y, label);
+					table.setWidget(x, y, new Label(label));
 					++y;
 				}
 				showBorder = (z == rowspan);
 				
-				if ( det.getKey().isShowTaxableBase() ) {
+				if ( true ) {
 					FlowPanel p = new FlowPanel();
-					p.addStyleName(RESOURCES.css().aonTextCenter() );
-					p.addStyleName(RESOURCES.css().aonSimpleBorder() );
-					p.addStyleName(RESOURCES.css().aonFontSmall() );
-					p.addStyleName(RESOURCES.css().aonPadding2() );
-					Label label = new Label(Integer.toString(det.getTaxableBaseBox()));
-					p.add(label);
+					p.addStyleName(Model390.RESOURCES.css().aonTextCenter() );
+					p.addStyleName(Model390.RESOURCES.css().aonSimpleBorder() );
+					p.addStyleName(Model390.RESOURCES.css().aonFontSmall() );
+					p.addStyleName(Model390.RESOURCES.css().aonPadding2() );
+					p.add(new Label(Integer.toString(det.getTaxableBaseBox())));
 					table.setWidget(x, y, p);
 				} 
 				if (oddRow) {
-					fmt.addStyleName(x, y,RESOURCES.css().aonBackgroundDisabled() );	
+					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBackgroundDisabled() );	
 				}
 				if (showBorder) {
-					fmt.addStyleName(x, y,RESOURCES.css().aonBorderBottom());	
+					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBorderBottom());	
 				}
 				++y;
 				
-				if ( det.getKey().isShowTaxableBase() ) {
-					DoubleTextBox taxableBase = new DoubleTextBox();
-					taxableBase.addStyleName("aon-inputText");
-					taxableBaseMap.put(det.getKey(), taxableBase);
-					if  (det.getKey().isEditable() && det.getPercent() != 0.0) {
-						
+				if ( true ) {
+					DoubleTextBox taxableBase = fields.taxableBase;
+					taxableBase.addStyleName(Model390.RESOURCES.css().aonInputTextImportant());
+					if  (det.getPercent() != 0.0) {
 						final double percent = det.getPercent();
 						taxableBase.addValueChangeHandler(new ValueChangeHandler<String>() {
 							
 							@Override
 							public void onValueChange(ValueChangeEvent<String> event) {
 								try {
-									double tBase = FMT.parse(event.getValue());
-									double d = quotaMap.get(det.getKey()).getDoubleValue();
-									if (d == 0) {
-										quotaMap.get(det.getKey()).setValue( AonUtil.round( tBase * percent / 100));	
+									double tBase = Model390.FMT.parse(event.getValue());
+									if (fields.detail.getQuota() == 0) {
+										fields.detail.setQuota( AonUtil.round( tBase * percent / 100));	
 									}
-									calculate();
+									fields.detail.setTaxableBase(tBase);
 								} catch (NumberFormatException e) {
 									// Nothing
 								}
 							}
 						});
 					}
-					taxableBase.setEnabled(det.getKey().isEditable());
 					taxableBase.setValue(det.getTaxableBase());
 					table.setWidget(x, y, taxableBase);
 				} 
-				fmt.addStyleName(x, y ,RESOURCES.css().aonTextRight());
+				fmt.addStyleName(x, y ,Model390.RESOURCES.css().aonTextRight());
 				if (oddRow) {
-					fmt.addStyleName(x, y ,RESOURCES.css().aonBackgroundDisabled() );	
+					fmt.addStyleName(x, y ,Model390.RESOURCES.css().aonBackgroundDisabled() );	
 				}
 				if (showBorder) {
-					fmt.addStyleName(x, y,RESOURCES.css().aonBorderBottom());	
+					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBorderBottom());	
 				}
 				++y;
 	
 				FlowPanel p1 = new FlowPanel();
 				if  (det.getPercent() != 0.0) {
-					p1.addStyleName(RESOURCES.css().aonTextCenter() );
-					p1.addStyleName(RESOURCES.css().aonSimpleBorder() );
-					Label label = new Label(FMT.format(det.getPercent()));
-					p1.add(label); 
+					p1.addStyleName(Model390.RESOURCES.css().aonTextCenter() );
+					p1.addStyleName(Model390.RESOURCES.css().aonSimpleBorder() );
+					p1.add(new Label(Model390.FMT.format(det.getPercent()))); 
 				} 
 				table.setWidget(x, y, p1);
 				if (oddRow) {
-					fmt.addStyleName(x, y,RESOURCES.css().aonBackgroundDisabled() );	
+					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBackgroundDisabled() );	
 				}
 				if (showBorder) {
-					fmt.addStyleName(x, y,RESOURCES.css().aonBorderBottom());	
+					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBorderBottom());	
 				}
 				++y;
 				
 				FlowPanel p2 = new FlowPanel();
-				p2.addStyleName(RESOURCES.css().aonTextCenter() );
-				p2.addStyleName(RESOURCES.css().aonSimpleBorder() );
-				p2.addStyleName(RESOURCES.css().aonFontSmall() );
-				p2.addStyleName(RESOURCES.css().aonPadding2() );			
-				Label label = new Label(Integer.toString(det.getBox()));
-				p2.add(label);
+				p2.addStyleName(Model390.RESOURCES.css().aonTextCenter() );
+				p2.addStyleName(Model390.RESOURCES.css().aonSimpleBorder() );
+				p2.addStyleName(Model390.RESOURCES.css().aonFontSmall() );
+				p2.addStyleName(Model390.RESOURCES.css().aonPadding2() );			
+				p2.add(new Label(Integer.toString(det.getBox())));
 				table.setWidget(x, y, p2);
 				if (oddRow) {
-					fmt.addStyleName(x, y,RESOURCES.css().aonBackgroundDisabled() );	
+					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBackgroundDisabled() );	
 				}
 				if (showBorder) {
-					fmt.addStyleName(x, y,RESOURCES.css().aonBorderBottom());	
+					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBorderBottom());	
 				}
 				++y;
 			
-				final DoubleTextBox quota = new DoubleTextBox();
-				quota.addStyleName("aon-inputText");
-				quotaMap.put(det.getKey(), quota);
+				final DoubleTextBox quota = fields.quota;
+				quota.addStyleName(Model390.RESOURCES.css().aonInputTextImportant());
 				quota.setValue(det.getQuota());
 				quota.addValueChangeHandler(new ValueChangeHandler<String>() {
 					
 					@Override
 					public void onValueChange(ValueChangeEvent<String> event) {
 						try {
-							calculate();
+							double tBase = Model390.FMT.parse(event.getValue());
+							fields.detail.setQuota(tBase);
 						} catch (NumberFormatException e) {
 							// Nothing
 						}
@@ -288,30 +277,29 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 				});
 	
 				table.setWidget(x, y, quota);
-				fmt.addStyleName(x, y ,RESOURCES.css().aonTextRight());
+				fmt.addStyleName(x, y ,Model390.RESOURCES.css().aonTextRight());
 				if (oddRow) {
-					fmt.addStyleName(x, y,RESOURCES.css().aonBackgroundDisabled() );	
+					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBackgroundDisabled() );	
 				}
-				quota.setEnabled(det.getKey().isEditable());
 				if (showBorder) {
-					fmt.addStyleName(x, y,RESOURCES.css().aonBorderBottom());	
+					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBorderBottom());	
 				}
 				++y;
 				
 				Label l = new Label("");
 				table.setWidget(x, y, l);
 				if (oddRow) {
-					fmt.addStyleName(x, y,RESOURCES.css().aonBackgroundDisabled() );	
+					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBackgroundDisabled() );	
 				}
 				if (showBorder) {
-					fmt.addStyleName(x, y,RESOURCES.css().aonBorderBottom());	
+					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBorderBottom());	
 				}
 				++x;
 				++z;
 			}
 		}		
 	}
-
+/*	
 	private static final Mod390DetailKey[] K09_FORMULA = {
 			Mod390DetailKey.K00_04, Mod390DetailKey.K00_08,
 			Mod390DetailKey.K00_10, Mod390DetailKey.K00_18,
@@ -393,7 +381,7 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 			Mod390DetailKey.K17, Mod390DetailKey.K19, Mod390DetailKey.K21,
 			Mod390DetailKey.K23, Mod390DetailKey.K25, Mod390DetailKey.K27,
 			Mod390DetailKey.K29, Mod390DetailKey.K31 };
-	
+
 	private void calculate() {
 		add(taxableBaseMap,Mod390DetailKey.K09,K09_FORMULA);
 		add(quotaMap,Mod390DetailKey.K09,K09_FORMULA);
@@ -434,7 +422,7 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 				quotaMap.get(Mod390DetailKey.K36).getDoubleValue()));
 		
 	}
-
+	
 	private void add(Map<Mod390DetailKey, DoubleTextBox> map,
 			Mod390DetailKey intoKey, Mod390DetailKey[] keys) {
 		double result = 0;
@@ -443,27 +431,33 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 		}
 		map.get(intoKey).setValue(result);
 	}
+*/
 
 	public void setValue(Mod390 m390) {
-		map = m390.getGeneralRegime();
+		wrap(m390.getGeneralRegime());
 		if (map != null) {
 			initializeTable();
-			calculate();
+		}
+	}
+
+	private void wrap(Map<Mod390DetailKey, Mod390Detail> generalRegime) {
+		for (Mod390DetailKey key : generalRegime.keySet()) {
+			map.put(key,new Mod390DetailFields(generalRegime.get(key)));	
 		}
 	}
 
 	public void populate(Mod390 mod390) {
-		for (Mod390DetailKey key : taxableBaseMap.keySet()) {
-			DoubleTextBox box = taxableBaseMap.get(key);
-			Mod390Detail detail = map.get(key);
-			detail.setTaxableBase(box.getDoubleValue());
-		}
-		for (Mod390DetailKey key : quotaMap.keySet()) {
-			DoubleTextBox box = quotaMap.get(key);
-			Mod390Detail detail = map.get(key);
-			detail.setQuota(box.getDoubleValue());
-		}
-		mod390.setGeneralRegime(map);
+//		for (Mod390DetailKey key : taxableBaseMap.keySet()) {
+//			DoubleTextBox box = taxableBaseMap.get(key);
+//			Mod390Detail detail = map.get(key);
+//			detail.setTaxableBase(box.getDoubleValue());
+//		}
+//		for (Mod390DetailKey key : quotaMap.keySet()) {
+//			DoubleTextBox box = quotaMap.get(key);
+//			Mod390Detail detail = map.get(key);
+//			detail.setQuota(box.getDoubleValue());
+//		}
+//		mod390.setGeneralRegime(map);
 	}
 
 }

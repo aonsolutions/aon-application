@@ -2,15 +2,14 @@ package com.esferalia.aon.gwt.fiscal.client.mod390;
 
 import java.util.Date;
 
-import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
-import com.esferalia.aon.occam.api.model.LegalRepresentative;
-import com.esferalia.aon.occam.api.model.Mod390;
-import com.esferalia.aon.occam.api.model.Mod390.Address;
+import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390.Address;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -27,8 +26,6 @@ public class Page4 extends ResizeComposite {
 	private static final Page4Binder page4Binder = GWT
 			.create(Page4Binder.class);
 
-	private final static AonResources RESOURCES = GWT.create(AonResources.class);
-	
 	@UiField
 	DocumentTextBox rdocument;
 	@UiField
@@ -83,7 +80,7 @@ public class Page4 extends ResizeComposite {
 
 	public Page4() {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-		RESOURCES.css().ensureInjected();
+		Model390.RESOURCES.css().ensureInjected();
 		
 		Widget ui = page4Binder.createAndBindUi(this);
 		initWidget(ui);

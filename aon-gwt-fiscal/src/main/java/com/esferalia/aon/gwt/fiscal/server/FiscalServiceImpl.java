@@ -32,14 +32,14 @@ import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
 import com.esferalia.aon.gwt.fiscal.sql.SQLEnterprise;
 import com.esferalia.aon.gwt.fiscal.sql.SQLMod390;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.Mod180;
-import com.esferalia.aon.occam.api.model.Mod180Detail;
-import com.esferalia.aon.occam.api.model.Mod190;
-import com.esferalia.aon.occam.api.model.Mod190Detail;
-import com.esferalia.aon.occam.api.model.Mod390;
-import com.esferalia.aon.occam.api.model.Mod390.Activity;
-import com.esferalia.aon.occam.api.model.Mod390.Mod303Results;
-import com.esferalia.aon.occam.api.model.Mod390.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod180;
+import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod190;
+import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod303Results;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
 
 /**
  * The server side implementation of the RPC service.

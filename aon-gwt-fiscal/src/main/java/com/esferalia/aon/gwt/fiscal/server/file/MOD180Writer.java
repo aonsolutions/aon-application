@@ -16,8 +16,8 @@ import com.code.aon.file.tax.model.MOD180.Receiver;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.Mod180;
-import com.esferalia.aon.occam.api.model.Mod180Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod180;
+import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 
 public class MOD180Writer {
 

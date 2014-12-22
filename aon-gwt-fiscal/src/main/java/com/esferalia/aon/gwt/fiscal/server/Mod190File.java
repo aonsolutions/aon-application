@@ -24,7 +24,7 @@ import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.gwt.common.sql.SQLUtils;
 import com.esferalia.aon.gwt.fiscal.server.file.MOD190Writer;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.Mod190;
+import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod190 File download", urlPatterns = { "/aon_gwt_fiscal/Model190File" })

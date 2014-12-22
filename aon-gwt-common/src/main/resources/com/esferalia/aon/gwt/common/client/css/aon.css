@@ -1,12 +1,7 @@
 @external .*;
 
-@def mod200BackgroundColor #DDDDDD;	
-@def mod200SelectedBackgroundColor #BBBBBB;	
-
-/*
-	//#FFE0B2
-	//#FFC266
-*/
+@def fiscalBackgroundColor #DDDDDD;	
+@def fiscalSelectedBackgroundColor #BBBBBB;	
 
 .aon-width-all {
 	width: 100%;
@@ -141,18 +136,18 @@
 	margin-top: 5px;
 }
 .aon-link-item{
-	background-color: mod200BackgroundColor;
+	background-color: fiscalBackgroundColor;
 	cursor: pointer;
     margin-bottom: 2px;
     padding: 3px 0;
 }
 .aon-link-item:hover{
-	background-color: mod200SelectedBackgroundColor;
+	background-color: fiscalSelectedBackgroundColor;
 }
 .aon-link-item-selected {
     margin-bottom: 2px;
     padding: 3px 0;
-	background-color: mod200SelectedBackgroundColor;
+	background-color: fiscalSelectedBackgroundColor;
 }
 .aon-link-number{
 	border-top: solid #CCC .5px;
@@ -245,9 +240,21 @@
 	color: red !important;
 	width: auto;
 	height: auto;
-	gwt-image: "aonInputError" ; 
+	gwt-image: "aonInputError" ;
+	padding-left: 9px !important; 
 }
 
+@url imageUrl aonCurlyLT;
+.aon-curly-lt {
+	border-style:solid;
+    border-width:1px 15px 1px 0px;
+    border-image: imageUrl 0 250 0 0;
+    padding-right: 10px;
+}
+.aon-input-text-important {
+	border: 1px solid #808080 !important;
+	padding: 1px;
+}
 @sprite .aon-icon-aeat{
 	width: auto;
 	gwt-image: "aonAeat";
@@ -441,42 +448,42 @@
 }
 
 
-.aon-mod200-title {
-	background-color: mod200BackgroundColor; 
+.aon-fiscal-title {
+	background-color: fiscalBackgroundColor; 
 	border: 1px solid #FFFFFF;
 	padding-bottom: 4px;
 }
-.aon-mod200-year {
-	background-color: mod200BackgroundColor; 
+.aon-fiscal-year {
+	background-color: fiscalBackgroundColor; 
 	border: 1px solid #FFFFFF; 
 	font-size: 16px; 
 	font-weight: bold;	
 }
-.aon-mod200-model {
-	background-color: mod200BackgroundColor; 
+.aon-fiscal-model {
+	background-color: fiscalBackgroundColor; 
 	border: 1px solid #FFFFFF; 
 	font-size: 14px;
 }
 
 
-.aon-mod200-header {
-	background-color: mod200BackgroundColor;
+.aon-fiscal-header {
+	background-color: fiscalBackgroundColor;
 	color: black;
 	font-weight: bold;
 	font-size: 1.2em;
 	padding-left: 25px;
 	margin-bottom: 10px;
 }
-.aon-mod200-box {
-    border: 0.5px solid mod200SelectedBackgroundColor;
-    color: mod200SelectedBackgroundColor;
+.aon-fiscal-box {
+    border: 0.5px solid fiscalSelectedBackgroundColor;
+    color: fiscalSelectedBackgroundColor;
     font-family: monospace Courier !important;
     font-size: 0.9em;
     padding: 2px 2px 2px 3px;
     text-align: center;
     display: inline;
 }	
-.aon-mod200-box-error {
+.aon-fiscal-box-error {
     border: 0.5px solid #880000;
     color: white;
     background-color: #880000;
@@ -486,50 +493,50 @@ input:disabled + label{
   color: #CCC;
 }
 
-.aon-mod200-checkbox {
+.aon-fiscal-checkbox {
     display: inline-block;
     font-size: 0.9em;
     line-height: 1em;
     margin-top: 0.2em;
 }
-.aon-mod200-checkbox input{
+.aon-fiscal-checkbox input{
     float: left;
     margin-right: 0.4em;	
 }
 
-.aon-mod200-border-bottom {
-	border-bottom: 0.5px solid mod200SelectedBackgroundColor;
+.aon-fiscal-border-bottom {
+	border-bottom: 0.5px solid fiscalSelectedBackgroundColor;
 }
 
-.aon-mod200-container{
+.aon-fiscal-container{
 	width: 100%;	
 }
 
-.aon-mod200-margin-left{
+.aon-fiscal-margin-left{
 	margin-left: 3px;
 }
-.aon-mod200-padding-left{
+.aon-fiscal-padding-left{
 	padding-left: 8px;
 }
 
-.aon-mod200-padding-right {
+.aon-fiscal-padding-right {
 	padding-right: 50px;
 }
-.aon-mod200-rotate-text {
+.aon-fiscal-rotate-text {
     transform: rotate(270deg);
 }
 
-.aon-mod200-scroll-table-wrapper {
+.aon-fiscal-scroll-table-wrapper {
 	overflow-x: auto;
 }
 
-.aon-mod200-scroll-table-wrapper td:first-child {
+.aon-fiscal-scroll-table-wrapper td:first-child {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     width: 200px;
 }
-.aon-mod200-inner-group-body {
+.aon-fiscal-inner-group-body {
 	background-color: #f0f0f0;
 }
 

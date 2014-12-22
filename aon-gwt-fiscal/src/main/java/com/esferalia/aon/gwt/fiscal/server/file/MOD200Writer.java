@@ -10,9 +10,9 @@ import java.sql.Connection;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
-import com.esferalia.aon.gwt.common.shared.CommonEnum.Administration;
 import com.esferalia.aon.gwt.fiscal.server.mod200.Mod200File;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200;
+import com.esferalia.aon.occam.api.model.type.Administration;
 
 public class MOD200Writer {
 	

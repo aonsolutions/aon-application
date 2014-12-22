@@ -11,21 +11,21 @@ public class BoxLabel extends Label {
 
 	public BoxLabel() {
 		super();
-		this.setStyleName(RESOURCES.css().aonMod200Box());
+		this.setStyleName(RESOURCES.css().aonFiscalBox());
 	}
 
 	public BoxLabel(String text) {
 		super(text);
-		this.setStyleName(RESOURCES.css().aonMod200Box());
+		this.setStyleName(RESOURCES.css().aonFiscalBox());
 	}
 	
 	public void removeErrorState() {
-		removeStyleName(RESOURCES.css().aonMod200BoxError());
+		removeStyleName(RESOURCES.css().aonFiscalBoxError());
 		setTitle(null);
 	}
 	
 	public void addErrorState(String errorMsg) {
-		addStyleName(RESOURCES.css().aonMod200BoxError());
+		addStyleName(RESOURCES.css().aonFiscalBoxError());
 		setTitle(errorMsg);
 	}
 	

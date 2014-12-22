@@ -13,7 +13,7 @@ import org.junit.Test;
 import com.code.aon.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.Mod390;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 
 
 public class Mod390Test {

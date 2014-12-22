@@ -9,48 +9,6 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
-	<ui:style>
-		.linkPanel {
-			padding: 0px 0px 1.5em 1.5em;
-		}
-		.linkContainer {
-			width: 100%;
-			height: 100%;
-			border: solid #CCC 1px;
-			background-color: #EEE;
-		}
-		.linkItem{
-			padding-top: 5px;
-			cursor: pointer;
-		}
-		.linkItem:hover{
-			background-color: #DDD;
-		}
-		.linkItemSelected {
-			background-color: #CCC;
-			font-weight: bold;
-		}
-		.linkNumber{
-			border-top: solid #CCC .5px;
-			border-left: solid #BBB 2px;
-			border-bottom: solid #BBB 2px;
-			width: 20px;
-			margin-left: 10px;
-			text-align: center;
-		}
-		.linkDescription{
-			text-align: right;
-			font-size: 1.1em;
-			padding-right: 20px;
-			padding-left: 5px;
-		}
-		.simplifiedRegime {
-			text-align: center;
-			color: red;
-			font-weight: bold;
-		}
-	</ui:style>
-
 	<g:SplitLayoutPanel ui:field="splitLayoutPanel">
 		<g:north size="26">
 			<g:FlowPanel ui:field="toolbarPanel" height="100%"
@@ -93,15 +51,30 @@
 		<g:center>
 			<g:DeckLayoutPanel ui:field="deckPanel">
 				<g:DockLayoutPanel ui:field="formPanel" unit="PX">
-					<g:north size="75">
+					<g:north size="100">
 						<g:HTMLPanel styleName="aon-scroll-area">
+							<table class="aon-width-all" style="text-align: center;font-weight:bold;">
+								<tr>
+									<td class="{aonResources.css.aonFiscalTitle}">
+										<span style=" font-size: 1.2em; font-weight: bold;">
+											<g:Label text="{msg.mod390Desc}"/>
+										</span>
+										<span style="font-weight: bold;">
+											<g:Label text="{msg.mod390Desc2}"/>
+										</span>
+									</td>
+									<td class="{aonResources.css.aonFiscalYear}">
+										<g:Label text="2014" />
+									</td>
+								</tr>
+							</table>
 							<table class="aon-panelGrid aon-margin-top aon-width-all">
 								<colgroup>
 									<col style="width: 100px;" />
 									<col style="width: 75px;" />
 									<col style="width: 100px;" />
-									<col style="width: 150px;" />
 									<col style="width: auto;" />
+									<col style="width: 120px;" />
 								</colgroup>
 								<tr>
 									<td class="aon-panelGrid-odd">
@@ -113,23 +86,11 @@
 									<td class="aon-panelGrid-odd">
 										<g:Label text="{msg.deponentData}" />
 									</td>
-									<td class="aon-panelGrid-even" colspan="2">
+									<td class="aon-panelGrid-even">
 										<fiscal:EnterpriseSuggestBox ui:field="enterpriseSuggest" />
 									</td>  
-								</tr>
-								<tr>
-									<td class="aon-panelGrid-even" style="text-align: right;" colspan="2">
-										<g:CheckBox ui:field="replacement" text="{msg.replacement}" />
-									</td>
-									<td class="aon-panelGrid-odd">
-										<g:Label text="{msg.replacedReceipt}" />
-									</td>
-									<td class="aon-panelGrid-even">
-										<g:TextBox visibleLength="13" ui:field="replacedReceipt" styleName="aon-inputText"/>
-									</td>
-									<td class="aon-panelGrid-even">
+									<td class="aon-panelGrid-even" style="text-align: center; color: red; font-weight: bold;">
 										<g:Label ui:field="simplifiedRegime"
-										 	 styleName="{style.simplifiedRegime}"
 											 text="{msg.simplifiedRegime}" />
 									</td>
 								</tr>
@@ -137,148 +98,77 @@
 						</g:HTMLPanel>
 					</g:north>
 					<g:west size="200">
-						<g:ScrollPanel styleName="{style.linkPanel}">
-							<g:FlowPanel styleName="{style.linkContainer}">
-								<g:FocusPanel ui:field='linkPage0' styleName="{style.linkItem}">
-									<g:FlowPanel>
-										<g:FlowPanel styleName="{style.linkNumber}">
-											<g:Label text="0" />
-										</g:FlowPanel>
-										<g:FlowPanel styleName="{style.linkDescription}">
-											<g:Label text="{msg.deponentData}" />
-										</g:FlowPanel>
+						<g:ScrollPanel styleName="{aonResources.css.aonLinkPanel}">
+							<g:FlowPanel styleName="{aonResources.css.aonLinkContainer}">
+								<g:FocusPanel ui:field='linkPage0' styleName="{aonResources.css.aonLinkItem}">
+									<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+										<g:InlineLabel text="{msg.pasiveSubjectAndAccrual}" />
 									</g:FlowPanel>
 								</g:FocusPanel>
 
-								<g:FocusPanel ui:field='linkPage1' styleName="{style.linkItem}">
-									<g:FlowPanel>
-										<g:FlowPanel styleName="{style.linkNumber}">
-											<g:Label text="1" />
-										</g:FlowPanel>
-										<g:FlowPanel styleName="{style.linkDescription}">
-											<g:Label text="{msg.pasiveSubject}" />
-										</g:FlowPanel>
+								<g:FocusPanel ui:field='linkPage3' styleName="{aonResources.css.aonLinkItem}">
+									<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+										<g:InlineLabel text="{msg.stadisticalData}" />
 									</g:FlowPanel>
 								</g:FocusPanel>
 	
-								<g:FocusPanel ui:field='linkPage3' styleName="{style.linkItem}">
-									<g:FlowPanel>
-										<g:FlowPanel styleName="{style.linkNumber}">
-											<g:Label text="3" />
-										</g:FlowPanel>
-										<g:FlowPanel styleName="{style.linkDescription}">
-											<g:Label text="{msg.stadisticalData}" />
-										</g:FlowPanel>
-									</g:FlowPanel>
-								</g:FocusPanel>
-	
-								<g:FocusPanel ui:field='linkPage4' styleName="{style.linkItem}">
-									<g:FlowPanel>
-										<g:FlowPanel styleName="{style.linkNumber}">
-											<g:Label text="4" />
-										</g:FlowPanel>
-										<g:FlowPanel styleName="{style.linkDescription}">
-											<g:Label text="{msg.representativeData}" />
-										</g:FlowPanel>
+								<g:FocusPanel ui:field='linkPage4' styleName="{aonResources.css.aonLinkItem}">
+									<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+										<g:InlineLabel text="{msg.representativeData}" />
 									</g:FlowPanel>
 								</g:FocusPanel>
 								
-								<g:FocusPanel ui:field='linkPage5' styleName="{style.linkItem}">
-									<g:FlowPanel>
-										<g:FlowPanel styleName="{style.linkNumber}">
-											<g:Label text="5" />
-										</g:FlowPanel>
-										<g:FlowPanel styleName="{style.linkDescription}">
-											<g:Label text="{msg.generalRegimeOperations}" />
-										</g:FlowPanel>
+								<g:FocusPanel ui:field='linkPage5' styleName="{aonResources.css.aonLinkItem}">
+									<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+										<g:InlineLabel text="{msg.generalRegimeOperations}" />
 									</g:FlowPanel>
 								</g:FocusPanel>
 	
-								<g:FocusPanel ui:field='linkPage6' styleName="{style.linkItem}">
-									<g:FlowPanel>
-										<g:FlowPanel styleName="{style.linkNumber}">
-											<g:Label text="6" />
-										</g:FlowPanel>
-										<g:FlowPanel styleName="{style.linkDescription}">
-											<g:Label text="{msg.simplifiedRegimeOperations}" />
-										</g:FlowPanel>
+								<g:FocusPanel ui:field='linkPage6' styleName="{aonResources.css.aonLinkItem}">
+									<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+										<g:InlineLabel text="{msg.simplifiedRegimeOperations}" />
 									</g:FlowPanel>
 								</g:FocusPanel>
 	
-								<g:FocusPanel ui:field='linkPage7' styleName="{style.linkItem}">
-									<g:FlowPanel>
-										<g:FlowPanel styleName="{style.linkNumber}">
-											<g:Label text="7" />
-										</g:FlowPanel>
-										<g:FlowPanel styleName="{style.linkDescription}">
-											<g:Label text="{msg.annualLiquidationResult}" />
-										</g:FlowPanel>
+								<g:FocusPanel ui:field='linkPage7' styleName="{aonResources.css.aonLinkItem}">
+									<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+										<g:InlineLabel text="{msg.annualLiquidationResult}" />
 									</g:FlowPanel>
 								</g:FocusPanel>
 								
-								<g:FocusPanel ui:field='linkPage8' styleName="{style.linkItem}">
-									<g:FlowPanel>
-										<g:FlowPanel styleName="{style.linkNumber}">
-											<g:Label text="8" />
-										</g:FlowPanel>
-										<g:FlowPanel styleName="{style.linkDescription}">
-											<g:Label text="{msg.taxByTerritory}" />
-										</g:FlowPanel>
+								<g:FocusPanel ui:field='linkPage8' styleName="{aonResources.css.aonLinkItem}">
+									<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+										<g:InlineLabel text="{msg.taxByTerritory}" />
 									</g:FlowPanel>
 								</g:FocusPanel>
 										
-								<g:FocusPanel ui:field='linkPage9' styleName="{style.linkItem}">
-									<g:FlowPanel>
-										<g:FlowPanel styleName="{style.linkNumber}">
-											<g:Label text="9" />
-										</g:FlowPanel>
-										<g:FlowPanel styleName="{style.linkDescription}">
-											<g:Label text="{msg.liquidationsResult}" />
-										</g:FlowPanel>
+								<g:FocusPanel ui:field='linkPage9' styleName="{aonResources.css.aonLinkItem}">
+									<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+										<g:InlineLabel text="{msg.liquidationsResult}" />
 									</g:FlowPanel>
 								</g:FocusPanel>
 	
-								<g:FocusPanel ui:field='linkPage10' styleName="{style.linkItem}">
-									<g:FlowPanel>
-										<g:FlowPanel styleName="{style.linkNumber}">
-											<g:Label text="10" />
-										</g:FlowPanel>
-										<g:FlowPanel styleName="{style.linkDescription}">
-											<g:Label text="{msg.operationsVolume}" />
-										</g:FlowPanel>
+								<g:FocusPanel ui:field='linkPage10' styleName="{aonResources.css.aonLinkItem}">
+									<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+										<g:InlineLabel text="{msg.operationsVolume}" />
 									</g:FlowPanel>
 								</g:FocusPanel>
 	
-								<g:FocusPanel ui:field='linkPage11' styleName="{style.linkItem}">
-									<g:FlowPanel>
-										<g:FlowPanel styleName="{style.linkNumber}">
-											<g:Label text="11" />
-										</g:FlowPanel>
-										<g:FlowPanel styleName="{style.linkDescription}">
-											<g:Label text="{msg.specificOperations}" />
-										</g:FlowPanel>
+								<g:FocusPanel ui:field='linkPage11' styleName="{aonResources.css.aonLinkItem}">
+									<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+										<g:InlineLabel text="{msg.specificOperations}" />
 									</g:FlowPanel>
 								</g:FocusPanel>
 	
-								<g:FocusPanel ui:field='linkPage12' styleName="{style.linkItem}">
-									<g:FlowPanel>
-										<g:FlowPanel styleName="{style.linkNumber}">
-											<g:Label text="12" />
-										</g:FlowPanel>
-										<g:FlowPanel styleName="{style.linkDescription}">
-											<g:Label text="{msg.prorrata}" />
-										</g:FlowPanel>
+								<g:FocusPanel ui:field='linkPage12' styleName="{aonResources.css.aonLinkItem}">
+									<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+										<g:InlineLabel text="{msg.prorrata}" />
 									</g:FlowPanel>
 								</g:FocusPanel>
 	
-								<g:FocusPanel ui:field='linkPage13' styleName="{style.linkItem}">
-									<g:FlowPanel>
-										<g:FlowPanel styleName="{style.linkNumber}">
-											<g:Label text="13" />
-										</g:FlowPanel>
-										<g:FlowPanel styleName="{style.linkDescription}">
-											<g:Label text="{msg.difActivitiesRegime}" />
-										</g:FlowPanel>
+								<g:FocusPanel ui:field='linkPage13' styleName="{aonResources.css.aonLinkItem}">
+									<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+										<g:InlineLabel text="{msg.difActivitiesRegime}" />
 									</g:FlowPanel>
 								</g:FocusPanel>
 							</g:FlowPanel>
@@ -289,9 +179,6 @@
 							<g:DeckPanel ui:field="pagesPanel">
 								<g:FlowPanel ui:field="panel0">
 									<m390:Page0 ui:field="page0"/>
-								</g:FlowPanel>
-								<g:FlowPanel ui:field="panel1">
-									<m390:Page1 ui:field="page1"/>
 								</g:FlowPanel>
 								<g:FlowPanel ui:field="panel3">
 									<m390:Page3 ui:field="page3"/>

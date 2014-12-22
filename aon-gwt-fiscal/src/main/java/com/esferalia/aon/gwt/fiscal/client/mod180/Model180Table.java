@@ -4,7 +4,7 @@ import static com.esferalia.aon.gwt.fiscal.client.mod180.Model180.AON_RESOURCES;
 import static com.esferalia.aon.gwt.fiscal.client.mod180.Model180.MSG;
 
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
-import com.esferalia.aon.occam.api.model.Mod180;
+import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;

@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.Mod390;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod390 File download", urlPatterns = { "/aon_gwt_fiscal/Model390File" })

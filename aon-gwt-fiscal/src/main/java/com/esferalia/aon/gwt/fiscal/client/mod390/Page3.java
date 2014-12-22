@@ -1,13 +1,12 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390;
 
-import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.client.widget.ActivityPanel;
 import com.esferalia.aon.gwt.fiscal.client.widget.ActivityPanel.SelectionCallBack;
-import com.esferalia.aon.occam.api.model.Mod390;
-import com.esferalia.aon.occam.api.model.Mod390.Activity;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -29,8 +28,6 @@ public class Page3 extends ResizeComposite {
 	private static final Page3Binder page3Binder = GWT
 			.create(Page3Binder.class);
 
-	private final static AonResources RESOURCES = GWT.create(AonResources.class);
-	
 	@UiField
 	Button mainActivityButton;
 	@UiField
@@ -112,7 +109,7 @@ public class Page3 extends ResizeComposite {
 	
 	public Page3() {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-		RESOURCES.css().ensureInjected();
+		Model390.RESOURCES.css().ensureInjected();
 		
 		activityPanel = new ActivityPanel();
 		

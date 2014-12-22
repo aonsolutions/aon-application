@@ -8,7 +8,7 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
-	<g:HTMLPanel ui:field="basePanel" styleName="{aonResources.css.aonMod200Container}">
+	<g:HTMLPanel ui:field="basePanel" styleName="{aonResources.css.aonFiscalContainer}">
 		<div class="{aonResources.css.aonGroup}">
 			<div class="{aonResources.css.aonGroupTitle}">
 				<g:InlineLabel text="{msg.corrections}" />
@@ -24,7 +24,7 @@
 				 		<col width="40px"/>
 				 	</colgroup>
 					<tr>
-						<td colspan="3" class="{aonResources.css.aonMod200BorderBottom}">
+						<td colspan="3" class="{aonResources.css.aonFiscalBorderBottom}">
 							<g:Label text="Resultado de la cuenta de perdidas y ganancias"/>
 						</td>
 						<td>
@@ -36,7 +36,7 @@
 						<td>&#160;</td>
 					</tr>
 					<tr>
-						<td class="{aonResources.css.aonMod200BorderBottom}">
+						<td class="{aonResources.css.aonFiscalBorderBottom}">
 							<g:Label text="Correcciones por Impuesto sobre Sociedades"/>
 						</td>
 						<td>
@@ -54,7 +54,7 @@
 						<td>&#160;</td>
 					</tr>
 					<tr>
-						<td colspan="3" class="{aonResources.css.aonMod200BorderBottom}">
+						<td colspan="3" class="{aonResources.css.aonFiscalBorderBottom}">
 							<g:Label text="Resultado de la cuenta de perdidas y ganancias antes de Impuestos de Sociedades"/>
 						</td>
 						<td>
@@ -119,7 +119,7 @@
 				 		<col width="40px"/>
 				 	</colgroup>
 					<tr>
-						<td class="{aonResources.css.aonMod200BorderBottom}">
+						<td class="{aonResources.css.aonFiscalBorderBottom}">
 							<g:Label text="Total correcciones al resultado de la cuenta de perdidas y ganancias"/>
 						</td>
 						<td>

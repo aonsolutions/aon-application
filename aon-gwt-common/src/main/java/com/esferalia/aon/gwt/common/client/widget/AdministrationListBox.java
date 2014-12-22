@@ -2,7 +2,7 @@ package com.esferalia.aon.gwt.common.client.widget;
 
 
 import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
-import com.esferalia.aon.gwt.common.shared.CommonEnum.Administration;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ListBox;
 

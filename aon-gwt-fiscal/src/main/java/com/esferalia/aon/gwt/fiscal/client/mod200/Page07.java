@@ -119,7 +119,7 @@ public class Page07 extends PageAbs {
 				);
 			if (rowVisible) {
 				table.setWidget(row, 0, new Label(Page7Row.values()[row].getName()));
-				table.getFlexCellFormatter().setStyleName(row, 0, RESOURCES.css().aonMod200BorderBottom());
+				table.getFlexCellFormatter().setStyleName(row, 0, RESOURCES.css().aonFiscalBorderBottom());
 				if (Page7Row.values()[row].isTitle()) {
 					table.getFlexCellFormatter().addStyleName(row, 0, RESOURCES.css().aonBold());	
 				}
@@ -143,8 +143,8 @@ public class Page07 extends PageAbs {
 							}
 						});
 						text.setValue(mod200Object.getDoubleValue(key));
-						text.addStyleName(RESOURCES.css().aonMod200MarginLeft());
-						text.addStyleName(RESOURCES.css().aonMod200PaddingLeft());
+						text.addStyleName(RESOURCES.css().aonFiscalMarginLeft());
+						text.addStyleName(RESOURCES.css().aonFiscalPaddingLeft());
 						text.setChangeDisplayStyleName(RESOURCES.css().aonValueChanged());
 						text.setEnabled( !isDisabled(key) );
 						text.setTabIndex((col * 100 + row));

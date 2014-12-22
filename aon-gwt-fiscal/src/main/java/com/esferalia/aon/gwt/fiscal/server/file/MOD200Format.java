@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.server.file;
 
-import com.esferalia.aon.gwt.common.shared.CommonEnum.Administration;
+import com.esferalia.aon.occam.api.model.type.Administration;
 
 public enum MOD200Format {
 

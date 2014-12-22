@@ -2,13 +2,13 @@ package com.esferalia.aon.occam.api;
 
 import java.util.ArrayList;
 
-import com.esferalia.aon.occam.api.model.Mod180;
-import com.esferalia.aon.occam.api.model.Mod180Detail;
-import com.esferalia.aon.occam.api.model.Mod190;
-import com.esferalia.aon.occam.api.model.Mod190Detail;
-import com.esferalia.aon.occam.api.model.Mod390;
-import com.esferalia.aon.occam.api.model.Mod390.Mod303Results;
-import com.esferalia.aon.occam.api.model.Mod390.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod180;
+import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod190;
+import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod303Results;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
 
 public interface IFiscal {
 
