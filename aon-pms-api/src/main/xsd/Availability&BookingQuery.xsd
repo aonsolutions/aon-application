@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns="http://www.solmelia.com/namespaces/solres" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.solmelia.com/namespaces/solres" elementFormDefault="qualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
 	<!-- **************************** AvailabilityQueryRequest ************************************** -->
 	<xs:element name="HITISOperation" type="HITISOperationType" substitutionGroup="HITISOperationAbstract"/>
 	<xs:complexType name="HITISOperationType">
