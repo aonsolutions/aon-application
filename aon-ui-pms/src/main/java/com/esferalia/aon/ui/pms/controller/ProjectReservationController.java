@@ -1135,15 +1135,11 @@ public class ProjectReservationController extends BasicController implements IPm
 					getReservationInvoiceTo().setSeries(obtainHotelRectificationSeries());
 					getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
 					getReservationInvoiceTo().setEarlyCheckOut(true); //Para que no borre los servicios asociados, en caso de Factura de Servicios.
-					Invoice rectifierInvoice = reservationInvoicing.rectify(getInvoiceToRectify(), getReservationInvoiceTo(), false);
+					reservationInvoicing.rectify(getInvoiceToRectify(), getReservationInvoiceTo(), false);
 
 					getReservationInvoiceTo().setSeries(obtainHotelInvoiceSeries());
 					getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
-					Invoice newInvoice = reservationInvoicing.duplicate(invoice, reservationInvoiceTo);
-
-					if (!isFinancesModified()) {
-						reservationInvoicing.settle(rectifierInvoice, newInvoice);
-					}
+					reservationInvoicing.duplicate(invoice, reservationInvoiceTo);
 				}
 			}
 		} catch (ManagerBeanException ex) {
@@ -1159,25 +1155,6 @@ public class ProjectReservationController extends BasicController implements IPm
 			return isPayMethodOk();
 		}
 		return true;
-	}
-
-	private boolean isFinancesModified() throws ManagerBeanException {
-		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), getInvoiceToModify().getId());
-		for (ITransferObject ito : financeBean.getList(criteria)) {
-			Finance invoiceFinance = (Finance)ito;
-			boolean found = false;
-			for (Finance modifyFinance : getReservationInvoiceTo().getFinances()) {
-				if (invoiceFinance.getAmount() == modifyFinance.getAmount() && invoiceFinance.getPayMethod().equals(modifyFinance.getPayMethod())) {
-					found = true;
-				}
-			}
-			if (!found) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public void onEarlyCheckOutShow(ActionEvent event) {

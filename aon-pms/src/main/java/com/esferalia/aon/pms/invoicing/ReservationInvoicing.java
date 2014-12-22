@@ -224,10 +224,6 @@ public class ReservationInvoicing implements IReservationConstants {
 		}
 	}
 
-	public boolean settle(ProjectReservation reservation) throws ManagerBeanException {
-		return true;
-	}
-
 	public void settle(Invoice invoice1, Invoice invoice2) throws ManagerBeanException {
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		Criteria criteria = new Criteria();
