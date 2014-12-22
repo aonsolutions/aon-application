@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.11.0
+# Version: 8.11.1
 # Created by: girazu
-# Creation Date: 16/12/2014 19:50
+# Creation Date: 17/12/2014 16:10
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -6976,6 +6976,28 @@ CREATE TABLE `rsupplier` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Proveedores relacionados con Personas o Empresas';
 
 #
+# Structure for the `rtax` table : 
+#
+
+CREATE TABLE `rtax` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `registry` int(4) NOT NULL COMMENT 'Identificador de Persona o Empresa',
+  `tax` int(4) NOT NULL COMMENT 'Identificador del Impuesto',
+  `percentage` double(15,3) NOT NULL default '0.000' COMMENT 'Porcentaje de recargo actual',
+  `surcharge` double(15,3) NOT NULL default '0.000' COMMENT 'Porcentaje de recargo de equivalencia actual',
+  `start_date` date NOT NULL COMMENT 'Fecha de inicio de vigencia',
+  `end_date` date default NULL COMMENT 'Fecha de fin de vigencia',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_RTAX_DOMAIN` (`domain`),
+  KEY `IDX_RTAX_REGISTRY` (`registry`),
+  KEY `IDX_RTAX_TAX` (`tax`),
+  CONSTRAINT `FK_RTAX_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_RTAX_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
+  CONSTRAINT `FK_RTAX_TAX` FOREIGN KEY (`tax`) REFERENCES `tax` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Impuestos redefinidos para Personas o Empresas';
+
+#
 # Structure for the `salary` table : 
 #
 
@@ -7719,7 +7741,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.11.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.11.1');
 
 COMMIT;
 

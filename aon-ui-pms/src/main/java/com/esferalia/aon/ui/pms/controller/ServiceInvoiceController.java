@@ -50,6 +50,7 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.Registry;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.finance.controller.SaleInvoiceController;
 import com.code.aon.ui.finance.util.PosUtils;
@@ -634,6 +635,11 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 		}
 	}
 
+
+	@Override
+	public Registry getRegistry() {
+		return getReservationInvoiceTo().getRegistry();
+	}
 
 	@Override
 	public Date getDate() {

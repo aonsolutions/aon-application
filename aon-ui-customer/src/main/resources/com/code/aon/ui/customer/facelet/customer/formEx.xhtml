@@ -262,6 +262,15 @@
 							</aon:panelTab>
 						</aon:if>
 
+						<aon:if test="#{aonConfiguration.bean.customer.showTax and customerTax.model.rowCount > 0}">
+							<aon:panelTab id="customerTax" label="#{bundle.config_tax_module}">
+								<ui:include src="/com/code/aon/ui/registry/facelet/rtax/tab_grid.xhtml" >
+									<ui:param name="controller" value="#{customerTax}" />
+									<ui:param name="removeButtonReRender" value="customerTab" />
+								</ui:include>
+							</aon:panelTab>
+						</aon:if>
+
 						<aon:if test="#{aonConfiguration.bean.customer.showSeller and customerSeller.model.rowCount > 0}">
 							<aon:panelTab id="customerSeller" label="#{bundle.aon_module_commercial}">
 								<ui:include src="/com/code/aon/ui/registry/facelet/rseller/tab_grid.xhtml" >
@@ -435,6 +444,13 @@
 				<ui:include src="/com/code/aon/ui/registry/facelet/ritem/newItemModal.xhtml">
 					<ui:param name="controller" value="#{customer}" />
 					<ui:param name="registryItemController" value="#{customerItem}" />
+					<ui:param name="modalReRender" value="customerTab" />
+				</ui:include>
+			</aon:if>
+			<aon:if test="#{aonConfiguration.bean.customer.showTax}">
+				<ui:include src="/com/code/aon/ui/registry/facelet/rtax/newTaxModal.xhtml">
+					<ui:param name="controller" value="#{customer}" />
+					<ui:param name="registryTaxController" value="#{customerTax}" />
 					<ui:param name="modalReRender" value="customerTab" />
 				</ui:include>
 			</aon:if>

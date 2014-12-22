@@ -18,6 +18,7 @@
 			<xs:attribute name="showAccount" type="xs:boolean" use="required"/>
 			<xs:attribute name="showSegment" type="xs:boolean" use="required"/>
 			<xs:attribute name="showAddInfo" type="xs:boolean" use="required"/>
+			<xs:attribute name="showTax" type="xs:boolean" use="required"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="invoice">

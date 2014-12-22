@@ -34,6 +34,7 @@ import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.project.IProject;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.Registry;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.ProjectReservationDB;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
@@ -411,6 +412,11 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	@Transient
 	public double getPendingAmount() throws ManagerBeanException {
 		return CommonUtil.round(getTotal() - getAdvancedAmount());
+	}
+
+	@Transient
+	public Registry getRegistry() {
+		return getProject().getRegistry();
 	}
 
 	@Transient

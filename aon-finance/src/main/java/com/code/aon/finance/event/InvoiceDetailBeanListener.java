@@ -25,6 +25,7 @@ import com.code.aon.finance.invoicing.remover.InvoiceRemoverFactory;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
+import com.code.aon.registry.RegistryTax;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
@@ -184,8 +185,14 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 				surcharge = (tax.isVat()) ? invoiceDetail.getSurchargePercent() : 0;
 				surchargeQuota = (tax.isVat()) ? invoiceDetail.getSurchargeQuota() : 0;
 			} else {
-				if (invoice.getIssueDate().before(tax.getStartDate())) {
-					tax = obtainTax(tax.getId(), invoice.getIssueDate());
+				RegistryTax rTax = invoice.getRegistry().getTax(tax.getId(), invoice.getIssueDate());
+				if (rTax != null) {
+					tax.setPercentage(rTax.getPercentage());
+					tax.setSurcharge(rTax.getSurcharge());
+				} else {
+					if (invoice.getIssueDate().before(tax.getStartDate())) {
+						tax = obtainTax(tax.getId(), invoice.getIssueDate());
+					}
 				}
 				percentage = tax.getPercentage();
 				if (invoice.isSurcharge()) {
@@ -202,19 +209,17 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 		return invoiceTax;
 	}
 
-	private Tax obtainTax(Integer id, Date date) throws ManagerBeanException {
+	private Tax obtainTax(Integer taxId, Date date) throws ManagerBeanException {
 		IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
     	Criteria criteria = new Criteria();
-    	criteria.addEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_TAX_ID), id);
+    	criteria.addEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_TAX_ID), taxId);
     	criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_START_DATE), date);
     	criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_END_DATE), date);
     	for (ITransferObject ito : taxDetailBean.getList(criteria)) {
     		TaxDetail taxDetail = (TaxDetail)ito;
-    		Tax tax = new Tax();
-    		tax.setId(taxDetail.getTax().getId());
+    		Tax tax = taxDetail.getTax();
     		tax.setPercentage(taxDetail.getValue());
     		tax.setSurcharge(taxDetail.getSurcharge());
-    		tax.setType(taxDetail.getTax().getType());
     		return tax;
     	}
 		return null;

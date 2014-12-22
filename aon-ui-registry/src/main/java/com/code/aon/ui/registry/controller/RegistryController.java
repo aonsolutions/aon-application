@@ -104,6 +104,7 @@ public class RegistryController extends BasicController {
 	private boolean showNewAddInfoWindow;
 	private boolean showNewDirStaffWindow;
 	private boolean showNewRegistryItemWindow;
+	private boolean showNewRegistryTaxWindow;
 	private boolean showNewRegistryProfileWindow;
 	private boolean showNewRegistrySellerWindow;
 	private boolean showNewRegistrySupplierWindow;
@@ -187,6 +188,14 @@ public class RegistryController extends BasicController {
 
 	public void setShowNewRegistryItemWindow(boolean showNewRegistryItemWindow) {
 		this.showNewRegistryItemWindow = showNewRegistryItemWindow;
+	}
+
+	public boolean isShowNewRegistryTaxWindow() {
+		return showNewRegistryTaxWindow;
+	}
+
+	public void setShowNewRegistryTaxWindow(boolean showNewRegistryTaxWindow) {
+		this.showNewRegistryTaxWindow = showNewRegistryTaxWindow;
 	}
 
 	public boolean isShowNewRegistryProfileWindow() {

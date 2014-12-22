@@ -36,6 +36,7 @@ import com.code.aon.customer.Customer;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.Registry;
 import com.code.aon.tas.ProjectTas;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.DeliveryDB;
@@ -54,11 +55,6 @@ public class Delivery extends DeliveryDB implements IHeaderObject, ICalculableCo
 	public Delivery() {
 		setIssueTime( new Date());
 	}
-
-    @Transient
-    public int[] getPaymentDaysArray() {
-    	return paymentDaysArray;
-    }
 
     public void setPaymentDays(String paymentDays) {
         super.setPaymentDays( paymentDays );
@@ -89,6 +85,11 @@ public class Delivery extends DeliveryDB implements IHeaderObject, ICalculableCo
     }
 
 	@Transient
+	public Registry getRegistry() {
+		return getCustomer().getRegistry();
+	}
+
+	@Transient
 	public Date getDate() {
 		return getIssueTime();
 	}
@@ -107,6 +108,11 @@ public class Delivery extends DeliveryDB implements IHeaderObject, ICalculableCo
 	public PayMethod getPayment() {
 		return getPayMethod();
 	}
+
+    @Transient
+    public int[] getPaymentDaysArray() {
+    	return paymentDaysArray;
+    }
 
 	@Transient
 	public boolean isConfidential() {
@@ -152,7 +158,7 @@ public class Delivery extends DeliveryDB implements IHeaderObject, ICalculableCo
 		}
 		return null;
 	}
-	
+
 	@Transient
 	public String getStatusModificationHour(){
 		if(this.getStatusModificationDate()!=null){
@@ -165,7 +171,7 @@ public class Delivery extends DeliveryDB implements IHeaderObject, ICalculableCo
 			this.setStatusModificationDate(DateUtils.setHours(this.getStatusModificationDate(), Integer.parseInt(hour)));
 		}
 	}
-	
+
 	@Transient
 	public String getStatusModificationMinute(){
 		if(this.getStatusModificationDate()!=null){
@@ -178,4 +184,5 @@ public class Delivery extends DeliveryDB implements IHeaderObject, ICalculableCo
 			this.setStatusModificationDate(DateUtils.setMinutes(this.getStatusModificationDate(), Integer.parseInt(minute)));
 		}
 	}
+
 }

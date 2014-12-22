@@ -529,6 +529,7 @@ public class AonExporter extends GenericExporter{
 		map.put("RegistrySegment","com.code.aon.registry.RegistrySegment");
 		map.put("RegistrySeller","com.code.aon.registry.RegistrySeller");
 		map.put("RegistrySupplier","com.code.aon.registry.RegistrySupplier");		
+		map.put("RegistryTax","com.code.aon.registry.RegistryTax");		
 		map.put("Relationship","com.code.aon.registry.Relationship");
 		map.put("Segment","com.code.aon.registry.Segment");
 

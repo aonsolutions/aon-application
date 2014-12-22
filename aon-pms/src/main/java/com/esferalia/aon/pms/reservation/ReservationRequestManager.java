@@ -17,6 +17,31 @@ import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPMessage;
 
+import noNamespace.AvailabilitySummaryRecordDocument.AvailabilitySummaryRecord;
+import noNamespace.AvailabilitySummaryRecordsDocument.AvailabilitySummaryRecords;
+import noNamespace.BookingRulesDocument.BookingRules;
+import noNamespace.CancelPenaltyType;
+import noNamespace.CustProfileDocument.CustProfile;
+import noNamespace.ErrorsDocument.Errors;
+import noNamespace.GuestCountsDocument.GuestCounts;
+import noNamespace.HITISMessageDocument;
+import noNamespace.HITISMessageDocument.HITISMessage;
+import noNamespace.HITISOperationType;
+import noNamespace.HITISOperationType.OperationType;
+import noNamespace.PaymentInstructionsDocument.PaymentInstructions;
+import noNamespace.PaymentInstructionsDocument.PaymentInstructions.PaymentInstruction.PaymentMethodType;
+import noNamespace.ProfileDocument.Profile.ProfileType;
+import noNamespace.RateDescriptionsDocument.RateDescriptions.RateDescription;
+import noNamespace.RatePlansDocument.RatePlans;
+import noNamespace.ResProfilesDocument.ResProfiles.ResProfile;
+import noNamespace.ReservationRequestTypeDocument.ReservationRequestType.ReservationRequestType2;
+import noNamespace.ReservationTransactionDocument.ReservationTransaction.ActionCode;
+import noNamespace.ReservationTransactionDocument.ReservationTransaction.ReservationTransactionType;
+import noNamespace.RoomInformationsDocument.RoomInformations;
+import noNamespace.RoomInformationsDocument.RoomInformations.RoomInformation;
+import noNamespace.RoomStaysDocument.RoomStays;
+import noNamespace.RoomStaysDocument.RoomStays.RoomStay;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.w3c.dom.Document;
@@ -44,29 +69,6 @@ import com.esferalia.aon.pms.ReservationRequestRoom;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationSource;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
-import com.solmelia.namespaces.solres.AvailabilitySummaryRecordDocument.AvailabilitySummaryRecord;
-import com.solmelia.namespaces.solres.AvailabilitySummaryRecordsDocument.AvailabilitySummaryRecords;
-import com.solmelia.namespaces.solres.BookingRulesDocument.BookingRules;
-import com.solmelia.namespaces.solres.CancelPenaltyType;
-import com.solmelia.namespaces.solres.CustProfileDocument.CustProfile;
-import com.solmelia.namespaces.solres.GuestCountsDocument.GuestCounts;
-import com.solmelia.namespaces.solres.HITISMessageDocument;
-import com.solmelia.namespaces.solres.HITISMessageDocument.HITISMessage;
-import com.solmelia.namespaces.solres.HITISOperationType;
-import com.solmelia.namespaces.solres.HITISOperationType.OperationType;
-import com.solmelia.namespaces.solres.PaymentInstructionsDocument.PaymentInstructions;
-import com.solmelia.namespaces.solres.PaymentInstructionsDocument.PaymentInstructions.PaymentInstruction.PaymentMethodType;
-import com.solmelia.namespaces.solres.ProfileDocument.Profile.ProfileType;
-import com.solmelia.namespaces.solres.RateDescriptionsDocument.RateDescriptions.RateDescription;
-import com.solmelia.namespaces.solres.RatePlansDocument.RatePlans;
-import com.solmelia.namespaces.solres.ResProfilesDocument.ResProfiles.ResProfile;
-import com.solmelia.namespaces.solres.ReservationRequestTypeDocument.ReservationRequestType.ReservationRequestType2;
-import com.solmelia.namespaces.solres.ReservationTransactionDocument.ReservationTransaction.ActionCode;
-import com.solmelia.namespaces.solres.ReservationTransactionDocument.ReservationTransaction.ReservationTransactionType;
-import com.solmelia.namespaces.solres.RoomInformationsDocument.RoomInformations;
-import com.solmelia.namespaces.solres.RoomInformationsDocument.RoomInformations.RoomInformation;
-import com.solmelia.namespaces.solres.RoomStaysDocument.RoomStays;
-import com.solmelia.namespaces.solres.RoomStaysDocument.RoomStays.RoomStay;
 
 public class ReservationRequestManager implements IReservationConstants {
 
@@ -277,7 +279,7 @@ public class ReservationRequestManager implements IReservationConstants {
 		if (message.getHeader().getOriginalMessageID().equals(getMessageId())) {
 			HITISOperationType operation = (HITISOperationType)message.getBody().getHITISOperationAbstract();
 			if (operation.getErrors() != null && operation.getErrors().sizeOfErrorArray() > 0) {
-				for (com.solmelia.namespaces.solres.ErrorsDocument.Errors.Error error : operation.getErrors().getErrorArray()) {
+				for (Errors.Error error : operation.getErrors().getErrorArray()) {
 					AvailableRoomStay availableRoomStay = new AvailableRoomStay();
 					availableRoomStay.setError(true);
 					availableRoomStay.setErrorMessage(error.getStringValue());
@@ -512,7 +514,7 @@ public class ReservationRequestManager implements IReservationConstants {
 		if (message.getHeader().getOriginalMessageID().equals(getMessageId())) {
 			HITISOperationType operation = (HITISOperationType)message.getBody().getHITISOperationAbstract();
 			if (operation.getErrors() != null && operation.getErrors().sizeOfErrorArray() > 0) {
-				for (com.solmelia.namespaces.solres.ErrorsDocument.Errors.Error error : operation.getErrors().getErrorArray()) {
+				for (Errors.Error error : operation.getErrors().getErrorArray()) {
 					availableRoomStay.setError(true);
 					availableRoomStay.setErrorMessage(error.getStringValue());
 					if (StringUtils.isEmpty(availableRoomStay.getErrorMessage())) {

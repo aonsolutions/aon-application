@@ -11,9 +11,9 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -31,6 +31,8 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryTax;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.ui.common.ICommonMessages;
@@ -143,10 +145,11 @@ public class InvoiceDetailController extends LinesController implements IFinance
 		Invoice invoice = getInvoice();
 		InvoiceDetail invoiceDetail = (InvoiceDetail)getTo();
 		if (invoiceDetail.getItem() != null && invoiceDetail.getItem().getId() != null) {
+			Registry registry = invoice.getRegistry();
 			Tax vat = invoiceDetail.getItem().getProduct().getVat();
 			Tax retention = (invoice.isWithholding()) ? invoiceDetail.getItem().getProduct().getRetention() : null;
-			invoiceDetail.setVatPercent((vat!=null && vat.getId()!=null) ? getTaxPercent(vat, invoice.getIssueDate(), false) : 0);
-			invoiceDetail.setRetentionPercent((retention!=null && retention.getId()!=null) ? getTaxPercent(retention, invoice.getIssueDate(), false) : 0);
+			invoiceDetail.setVatPercent((vat!=null && vat.getId()!=null) ? getTaxPercent(registry, vat, invoice.getIssueDate(), false) : 0);
+			invoiceDetail.setRetentionPercent((retention!=null && retention.getId()!=null) ? getTaxPercent(registry, retention, invoice.getIssueDate(), false) : 0);
 
 			if (workWithSalesPrice) {
 				ItemPricesManager pricesManager = new ItemPricesManager();
@@ -170,7 +173,7 @@ public class InvoiceDetailController extends LinesController implements IFinance
 		InvoiceDetail invoiceDetail = (InvoiceDetail)getTo();
 		Item item = invoiceDetail.getItem();
 		if (item != null && item.getId() != null && item.getProduct().getVat() != null && item.getProduct().getVat().getId() != null) {
-			return getTaxPercent(item.getProduct().getVat(), getInvoice().getIssueDate(), false);
+			return getTaxPercent(getInvoice().getRegistry(), item.getProduct().getVat(), getInvoice().getIssueDate(), false);
 		}
 		return 0;
 	}
@@ -179,7 +182,7 @@ public class InvoiceDetailController extends LinesController implements IFinance
 		InvoiceDetail invoiceDetail = (InvoiceDetail)getTo();
 		Item item = invoiceDetail.getItem();
 		if (item != null && item.getId() != null && item.getProduct().getVat() != null && item.getProduct().getVat().getId() != null) {
-			return getTaxPercent(item.getProduct().getVat(), getInvoice().getIssueDate(), true);
+			return getTaxPercent(getInvoice().getRegistry(), item.getProduct().getVat(), getInvoice().getIssueDate(), true);
 		}
 		return 0;
 	}
@@ -188,32 +191,37 @@ public class InvoiceDetailController extends LinesController implements IFinance
 		InvoiceDetail invoiceDetail = (InvoiceDetail)getTo();
 		Item item = invoiceDetail.getItem();
 		if (item != null && item.getId() != null && item.getProduct().isWithholding()) {
-			return getTaxPercent(item.getProduct().getRetention(), getInvoice().getIssueDate(), false);
+			return getTaxPercent(getInvoice().getRegistry(), item.getProduct().getRetention(), getInvoice().getIssueDate(), false);
 		}
 		return 0;
 	}
 
-	public double getTaxPercent(Tax tax, Date taxDate, boolean surcharge) {
+	public double getTaxPercent(Registry registry, Tax tax, Date taxDate, boolean surcharge) {
 		double percent = 0;
-		if (!tax.getStartDate().after(taxDate)) {
-			percent = surcharge ? tax.getSurcharge() : tax.getPercentage();
-		} else {
-			try {
-				IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_TAX_ID), tax.getId());
-				criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_START_DATE), taxDate);
-				criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_END_DATE), taxDate);
-				Iterator<?> iterator = taxDetailBean.getList(criteria).iterator();
-				if (iterator.hasNext()) {
-					TaxDetail taxDetail = (TaxDetail)iterator.next();
-					percent = surcharge ? taxDetail.getSurcharge() : taxDetail.getValue();
+		try {
+			RegistryTax rTax = registry.getTax(tax.getId(), taxDate);
+			if (rTax != null) {
+				percent = surcharge ? rTax.getSurcharge() : rTax.getPercentage();
+			} else {
+				if (!tax.getStartDate().after(taxDate)) {
+					percent = surcharge ? tax.getSurcharge() : tax.getPercentage();
+				} else {
+					IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_TAX_ID), tax.getId());
+					criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_START_DATE), taxDate);
+					criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_END_DATE), taxDate);
+					Iterator<?> iterator = taxDetailBean.getList(criteria).iterator();
+					if (iterator.hasNext()) {
+						TaxDetail taxDetail = (TaxDetail)iterator.next();
+						percent = surcharge ? taxDetail.getSurcharge() : taxDetail.getValue();
+					}
 				}
-			} catch (ManagerBeanException ex) {
-				String msg = "Error obteniendo informacion de Impuestos";
-				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(msg);
 			}
+		} catch (ManagerBeanException ex) {
+			String msg = "Error obteniendo informacion de Impuestos";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
 		return percent;
 	}

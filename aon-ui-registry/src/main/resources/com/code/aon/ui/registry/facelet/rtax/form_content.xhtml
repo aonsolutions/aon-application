@@ -1,0 +1,53 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:outputLabel for="RegistryTax_TaxType" value="#{bundle.aon_type}" />
+	<aon:selectOneRadio id="RegistryTax_TaxType" 
+		value="#{controller.taxType}" required="true"
+		reRender="RegistryTax_Tax,RegistryTax_Surcharge">
+		<f:selectItems value="#{configCollections.taxTypes}" />
+	</aon:selectOneRadio>
+
+	<aon:outputLabel for="RegistryTax_Tax" value="#{bundle.config_tax}" />
+	<aon:selectOneMenu id="RegistryTax_Tax" 
+		value="#{controller.to.tax}" required="true">
+		<aon:if test="#{controller.vat}">
+			<f:selectItems value="#{configCollections.vatTaxes}" />
+		</aon:if>
+		<aon:if test="#{controller.retention}">
+			<f:selectItems value="#{configCollections.retentionTaxes}" />
+		</aon:if>
+	</aon:selectOneMenu>
+
+	<aon:outputLabel value="#{bundle.aon_period}" />
+	<aon:div>
+		<aon:outputLabel for="RegistryTax_StartDate" value="#{bundle.aon_date_from}"
+			styleClass="aon-margin-right" />
+		<aon:selectInputDate id="RegistryTax_StartDate"
+			value="#{controller.to.startDate}" required="true"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+		<aon:outputLabel for="RegistryTax_EndDate" value="#{bundle.aon_date_to}"
+			styleClass="aon-margin-left aon-margin-right" />
+		<aon:selectInputDate id="RegistryTax_EndDate"
+			value="#{controller.to.endDate}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+	</aon:div>
+
+	<aon:outputLabel for="RegistryTax_Percentage" value="#{bundle.aon_percentage}" />
+	<aon:inputText id="RegistryTax_Percentage"
+		value="#{controller.to.percentage}"
+		required="true" size="5" />
+
+	<aon:outputLabel for="RegistryTax_Surcharge" value="#{bundle.aon_surcharge}" />
+	<aon:inputText id="RegistryTax_Surcharge"
+		value="#{controller.to.surcharge}"
+		required="true" size="5"
+		disabled="#{!controller.vat}" />
+
+</ui:composition>
