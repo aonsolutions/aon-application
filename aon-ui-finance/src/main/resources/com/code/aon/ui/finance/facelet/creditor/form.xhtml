@@ -19,10 +19,12 @@
 						<ui:param name="controller" value="#{creditor}" />
 						<ui:param name="showSegmentButton" value="#{aonConfiguration.bean.creditor.showSegment}" />
 						<ui:param name="showAddInfoButton" value="#{aonConfiguration.bean.creditor.showAddInfo}" />
-						
+						<ui:param name="showTaxButton" value="#{aonConfiguration.bean.creditor.showTax}" />
+
 						<ui:param name="segmentController" value="#{creditorSegment}" /> 
 						<ui:param name="addInfoController" value="#{creditorAddInfo}" /> 
 						<ui:param name="rAttachController" value="#{creditorRAttach}" />
+						<ui:param name="registryTaxController" value="#{creditorTax}" />
 					</ui:include>
 					<ui:include src="/com/code/aon/ui/common/facelet/auditable/menuContent.xhtml" />
 				</ui:define>
@@ -147,6 +149,15 @@
 								</ui:include>								
 							</aon:panelTab>
 						</aon:if>
+
+						<aon:if test="#{aonConfiguration.bean.creditor.showTax and creditorTax.model.rowCount > 0}">
+							<aon:panelTab id="creditorTax" label="#{bundle.config_tax_module}">
+								<ui:include src="/com/code/aon/ui/registry/facelet/rtax/tab_grid.xhtml" >
+									<ui:param name="controller" value="#{creditorTax}" />
+									<ui:param name="removeButtonReRender" value="creditorTab" />
+								</ui:include>
+							</aon:panelTab>
+						</aon:if>
 					</aon:panelTabSet>
 				</aon:if>
 			</aon:div>
@@ -177,6 +188,13 @@
 				<ui:param name="attachmentController" value="#{creditorRAttach}" />
 				<ui:param name="modalReRender" value="creditorTab" />
 			</ui:include>
+			<aon:if test="#{aonConfiguration.bean.creditor.showTax}">
+				<ui:include src="/com/code/aon/ui/registry/facelet/rtax/newTaxModal.xhtml">
+					<ui:param name="controller" value="#{creditor}" />
+					<ui:param name="registryTaxController" value="#{creditorTax}" />
+					<ui:param name="modalReRender" value="creditorTab" />
+				</ui:include>
+			</aon:if>
 			<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
 				<ui:param name="auditableController" value="#{creditor}" />
 			</ui:include>						

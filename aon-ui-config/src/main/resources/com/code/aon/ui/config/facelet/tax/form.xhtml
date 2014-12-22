@@ -34,7 +34,7 @@
 						value="#{bundle.config_tax}" />
 					<aon:selectOneMenu id="Tax_type"
 						value="#{tax.to.type}" required="true"
-						reRender="Tax_type_label,Tax_type_value">
+						reRender="Tax_type_label,Tax_type_value,Tax_surcharge">
 						<f:selectItems value="#{configCollections.taxTypes}" />
 					</aon:selectOneMenu>
 
@@ -76,7 +76,8 @@
 					<aon:outputLabel for="Tax_surcharge" 
 						value="#{bundle.aon_surcharge}" />
 					<aon:inputText id="Tax_surcharge" size="6"
-						value="#{tax.to.surcharge}" required="true" />
+						value="#{tax.to.surcharge}" required="true"
+						disabled="#{!tax.to.vat}" />
 				</aon:panelGrid>
 				
 				<aon:panelGrid columns="2" style="width: 100%;"

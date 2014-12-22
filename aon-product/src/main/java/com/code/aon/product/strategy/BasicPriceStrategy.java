@@ -31,6 +31,7 @@ import com.code.aon.registry.ITariffable;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryItem;
+import com.code.aon.registry.RegistryTax;
 import com.code.aon.registry.enumeration.RegistryItemStatus;
 import com.code.aon.registry.enumeration.RegistryMode;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -194,7 +195,7 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 					if (map.containsKey(vat.getId())) {
 						vatBreakDown = map.get(vat.getId());
 					} else {
-						vatBreakDown = getTaxBreakDownObject(icc.getDate(), vat);
+						vatBreakDown = getTaxBreakDownObject(icc.getRegistry(), icc.getDate(), vat);
 					}
 					vatBreakDown.setBase(CommonUtil.round(vatBreakDown.getBase() + getBasePrice(calc), 4)); 
 					map.put(vat.getId(), vatBreakDown);
@@ -206,7 +207,7 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 					if (map.containsKey(retention.getId())) {
 						retentionBreakDown = map.get(retention.getId());
 					} else {
-						retentionBreakDown = getTaxBreakDownObject(icc.getDate(), retention);
+						retentionBreakDown = getTaxBreakDownObject(icc.getRegistry(), icc.getDate(), retention);
 					}
 					retentionBreakDown.setBase(CommonUtil.round(retentionBreakDown.getBase() + getBasePrice(calc), 4)); 
 					map.put(retention.getId(), retentionBreakDown);
@@ -266,42 +267,46 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 		return CommonUtil.round(total);
 	}
 	
-	private TaxBreakDown getTaxBreakDownObject(Date valueDate, Tax tax) {
+	private TaxBreakDown getTaxBreakDownObject(Registry registry, Date valueDate, Tax tax) {
 		double percent = 0;
 		double surcharge = 0;
-		if (valueDate.before(tax.getStartDate())) {
-			TaxDetail taxDetail = obtainTaxDetail(tax, valueDate);
-			if (taxDetail != null) {
-				percent = taxDetail.getValue();
-				surcharge = taxDetail.getSurcharge();
+		try {
+			RegistryTax rTax = registry.getTax(tax.getId(), valueDate);
+			if (rTax != null) {
+				tax.setPercentage(rTax.getPercentage());
+				tax.setSurcharge(rTax.getSurcharge());
+			} else {
+				if (valueDate.before(tax.getStartDate())) {
+					tax = obtainTax(tax, valueDate);
+				}
 			}
-		} else{
-			percent = tax.getPercentage();
-			surcharge = tax.getSurcharge();
+		} catch (ManagerBeanException e) {
+			LOGGER.error("Error obtaining tax info", e);
 		}
+		percent = tax.getPercentage();
+		surcharge = tax.getSurcharge();
 
 		TaxBreakDown taxBreakDown = new TaxBreakDown();
 		taxBreakDown.setTaxType(tax.getType());
+		taxBreakDown.setBase(0);
 		taxBreakDown.setTaxPercent(percent);
 		taxBreakDown.setSurchargePercent(surcharge);
-		taxBreakDown.setBase(0);
 		return taxBreakDown;
 	}
 
-	private TaxDetail obtainTaxDetail(Tax tax, Date date) {
-		try {
-			IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_TAX_ID), tax.getId());
-			criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_START_DATE), date);
-			criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_END_DATE), date);
-			for (ITransferObject ito : taxDetailBean.getList(criteria)) {
-				return (TaxDetail)ito;
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.error("Error obtaining taxDetail for tax with id= " + tax.getId(), e);
+	private Tax obtainTax(Tax tax, Date date) throws ManagerBeanException {
+		IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_TAX_ID), tax.getId());
+		criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_START_DATE), date);
+		criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_END_DATE), date);
+		for (ITransferObject ito : taxDetailBean.getList(criteria)) {
+    		TaxDetail taxDetail = (TaxDetail)ito;
+    		tax = taxDetail.getTax();
+    		tax.setPercentage(taxDetail.getValue());
+    		tax.setSurcharge(taxDetail.getSurcharge());
 		}
-		return null;
+		return tax;
 	}
 
 	protected double obtainQuota(double base, double percentage) {

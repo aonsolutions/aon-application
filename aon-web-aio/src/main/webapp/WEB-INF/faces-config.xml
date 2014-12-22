@@ -205,22 +205,9 @@
 			<!--  aon.ui.customer -->
 			<value>#{customerPersonListener}</value>
 			<!--  aon.ui.registry -->
-			<value>#{customerItemListener}</value>
 			<value>#{customerSellerListener}</value>
 			<value>#{customerProfileListener}</value>
 			<value>#{customerSupplierListener}</value>			
-		</list-entries>
-	</managed-bean>
-
-	<!-- ************ SUPPLIER LISTENERS ******************* -->
-	<managed-bean>
-		<managed-bean-name>supplierOptionalListeners</managed-bean-name>
-	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<list-entries>
-			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-			<!--  aon.ui.registry -->
-			<value>#{supplierItemListener}</value>
 		</list-entries>
 	</managed-bean>
 

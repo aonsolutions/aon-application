@@ -88,6 +88,15 @@
 			<f:setPropertyActionListener target="#{controller.showNewRegistryItemWindow}" value="#{true}" />							
 		</aon:menuItem>		
 	</aon:if>
+	<aon:if test="#{showTaxButton}">
+		<aon:menuItem id="tax-button"
+			value="#{(taxButtonLabel!=null)?(taxButtonLabel):(bundle.config_tax_module)}"
+			iconClass="aon-icon-tax"
+			reRender="showNewRegistryTaxWindow"
+			actionListener="#{registryTaxController.onReset}">
+			<f:setPropertyActionListener target="#{controller.showNewRegistryTaxWindow}" value="#{true}" />							
+		</aon:menuItem>		
+	</aon:if>
 	<aon:if test="#{showProfileButton}">
 		<aon:menuItem id="profile-button"
 			value="#{(profileButtonLabel!=null)?(profileButtonLabel):(bundle.registry_profile)}"

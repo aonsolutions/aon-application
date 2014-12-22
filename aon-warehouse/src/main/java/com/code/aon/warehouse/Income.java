@@ -32,6 +32,7 @@ import com.code.aon.config.PayMethod;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.Registry;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.IncomeDB;
 
@@ -69,10 +70,10 @@ public class Income extends IncomeDB implements IHeaderObject, ICalculableContai
 		this.lines = lines;
 	}
 
-    @Transient
-    public int[] getPaymentDaysArray() {
-    	return paymentDaysArray;
-    }
+	@Transient
+	public Registry getRegistry() {
+		return getSupplier().getRegistry();
+	}
 
 	@Transient
 	public Date getDate() {
@@ -88,6 +89,11 @@ public class Income extends IncomeDB implements IHeaderObject, ICalculableContai
 	public PayMethod getPayment() {
 		return getPayMethod();
 	}
+
+    @Transient
+    public int[] getPaymentDaysArray() {
+    	return paymentDaysArray;
+    }
 
 	@Transient
 	public List<ITransferObject> getDetailList() {

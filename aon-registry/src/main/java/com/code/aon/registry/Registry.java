@@ -1,5 +1,6 @@
 package com.code.aon.registry;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,6 +24,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.MediaType;
@@ -229,5 +232,21 @@ public class Registry extends RegistryDB implements IRegistry{
 		}
 		return (values=="")?"":values.substring(0, values.length()-2);		
 	}
-	
+
+	@Transient
+	public RegistryTax getTax(Integer taxId, Date date) throws ManagerBeanException {
+		IManagerBean rTaxBean = BeanManager.getManagerBean(RegistryTax.class);
+    	Criteria criteria = new Criteria();
+    	criteria.addEqualExpression(rTaxBean.getFieldName(IEntityAlias.REGISTRY_TAX_REGISTRY_ID), getId());
+    	criteria.addEqualExpression(rTaxBean.getFieldName(IEntityAlias.REGISTRY_TAX_TAX_ID), taxId);
+    	criteria.addLessThanOrEqualExpression(rTaxBean.getFieldName(IEntityAlias.REGISTRY_TAX_START_DATE), date);
+		Expression endNull = ExpressionUtilities.getNullExpression(rTaxBean.getFieldName(IEntityAlias.REGISTRY_TAX_END_DATE));
+		Expression endExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(rTaxBean.getFieldName(IEntityAlias.REGISTRY_TAX_END_DATE), date);
+		criteria.addExpression(ExpressionUtilities.getOrExpression(endNull, endExpr));
+    	for (ITransferObject ito : rTaxBean.getList(criteria)) {
+    		return (RegistryTax)ito;
+    	}
+		return null;
+	}
+
 }

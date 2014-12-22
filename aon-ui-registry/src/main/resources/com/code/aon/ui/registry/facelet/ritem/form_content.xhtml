@@ -78,7 +78,7 @@
 	<aon:if test="#{controller.to.commercialType}">
 		<aon:outputLabel for="RegistryItem_status" value="#{bundle.aon_status}" />
 		<aon:selectOneMenu id="RegistryItem_status" 
-			required="true" value="#{controller.to.status}">
+			value="#{controller.to.status}" required="true">
 			<f:selectItem itemLabel="-" value="#{null}"/>
 			<f:selectItems value="#{registryCollections.registryItemStatuses}" />
 		</aon:selectOneMenu>

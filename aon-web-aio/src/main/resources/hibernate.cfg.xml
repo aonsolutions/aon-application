@@ -352,6 +352,7 @@
 		<mapping class="com.code.aon.registry.RegistrySegment"/>
 		<mapping class="com.code.aon.registry.RegistrySeller"/>
 		<mapping class="com.code.aon.registry.RegistrySupplier"/>		
+		<mapping class="com.code.aon.registry.RegistryTax"/>		
 		<mapping class="com.code.aon.registry.Relationship"/>
 		<mapping class="com.code.aon.registry.Segment"/>
 

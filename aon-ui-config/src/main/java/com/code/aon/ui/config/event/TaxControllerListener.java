@@ -39,6 +39,7 @@ public class TaxControllerListener extends ControllerAdapter {
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		Tax tax = (Tax) event.getController().getTo();
 		if (tax.getType() != TaxType.VAT) {
+			tax.setSurcharge(0);
 			tax.setVatDeductionType(VatDeductionType.WITH_RIGHT);
 		}
 		if (tax.getType() != TaxType.RETENTION) {
@@ -50,6 +51,7 @@ public class TaxControllerListener extends ControllerAdapter {
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		Tax tax = (Tax) event.getController().getTo();
 		if (tax.getType() != TaxType.VAT) {
+			tax.setSurcharge(0);
 			tax.setVatDeductionType(VatDeductionType.WITH_RIGHT);
 		}
 		if (tax.getType() != TaxType.RETENTION) {

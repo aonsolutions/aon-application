@@ -81,6 +81,7 @@
 			showCourse="false"			
 			showPerson="false"
 			showProduct="true"
+			showTax="true"
 			showSeller="true"
 			showProfile="true"
 			showSupplier="true"
@@ -94,6 +95,7 @@
 			showAccount="true"
 			showSegment="true"
 			showAddInfo="true"
+			showTax="true"
 		/>
 		<finance:invoice
 			showWarehouseData="true" 
@@ -199,6 +201,7 @@
 			showSegment="true"
 			showAddInfo="true"
 			showProduct="true"
+			showTax="true"
 		/>
 	</supplier:config>
 

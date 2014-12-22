@@ -85,6 +85,7 @@
     	<mapping class="com.code.aon.registry.RegistrySegment"/>
     	<mapping class="com.code.aon.registry.RegistrySeller"/>
     	<mapping class="com.code.aon.registry.RegistrySupplier"/>
+    	<mapping class="com.code.aon.registry.RegistryTax"/>
     	<mapping class="com.code.aon.registry.Segment"/>	
     	<mapping class="com.code.aon.seller.Seller"/>
     	<mapping class="com.code.aon.supplier.Supplier"/>

@@ -33,6 +33,7 @@ import com.code.aon.config.IScopable;
 import com.code.aon.config.PayMethod;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.Registry;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.OfferDB;
 
@@ -102,10 +103,10 @@ public class Offer extends OfferDB implements IHeaderObject, ICalculableContaine
     	return referenceCode;
     }
 
-    @Transient
-    public int[] getPaymentDaysArray() {
-    	return paymentDaysArray;
-    }
+	@Transient
+	public Registry getRegistry() {
+		return getTarget().getRegistry();
+	}
 
 	@Transient
 	public Date getDate() {
@@ -116,6 +117,11 @@ public class Offer extends OfferDB implements IHeaderObject, ICalculableContaine
 	public PayMethod getPayment() {
 		return getPayMethod();
 	}
+
+    @Transient
+    public int[] getPaymentDaysArray() {
+    	return paymentDaysArray;
+    }
 
 	@Transient
 	public boolean isConfidential() {

@@ -20,11 +20,13 @@
 						<ui:param name="showSegmentButton" value="#{aonConfiguration.bean.supplier.showSegment}" />
 						<ui:param name="showAddInfoButton" value="#{aonConfiguration.bean.supplier.showAddInfo}" />
 						<ui:param name="showProductButton" value="#{aonConfiguration.bean.supplier.showProduct}" />
+						<ui:param name="showTaxButton" value="#{aonConfiguration.bean.supplier.showTax}" />
 						
 						<ui:param name="segmentController" value="#{supplierSegment}" /> 
 						<ui:param name="addInfoController" value="#{supplierAddInfo}" /> 
 						<ui:param name="rAttachController" value="#{supplierRAttach}" />
 						<ui:param name="registryItemController" value="#{supplierItem}" />
+						<ui:param name="registryTaxController" value="#{supplierTax}" />
 					</ui:include>
 					<ui:include src="/com/code/aon/ui/common/facelet/auditable/menuContent.xhtml" />
 				</ui:define>
@@ -166,6 +168,15 @@
 								</ui:include>
 							</aon:panelTab>
 						</aon:if>
+
+						<aon:if test="#{aonConfiguration.bean.supplier.showTax and supplierTax.model.rowCount > 0}">
+							<aon:panelTab id="supplierTax" label="#{bundle.config_tax_module}">
+								<ui:include src="/com/code/aon/ui/registry/facelet/rtax/tab_grid.xhtml" >
+									<ui:param name="controller" value="#{supplierTax}" />
+									<ui:param name="removeButtonReRender" value="supplierTab" />
+								</ui:include>
+							</aon:panelTab>
+						</aon:if>
 					</aon:panelTabSet>
 				</aon:if>
 			</aon:div>
@@ -203,6 +214,13 @@
 				<ui:include src="/com/code/aon/ui/registry/facelet/ritem/newItemModal.xhtml">
 					<ui:param name="controller" value="#{supplier}" />
 					<ui:param name="registryItemController" value="#{supplierItem}" />
+					<ui:param name="modalReRender" value="supplierTab" />
+				</ui:include>
+			</aon:if>
+			<aon:if test="#{aonConfiguration.bean.supplier.showTax}">
+				<ui:include src="/com/code/aon/ui/registry/facelet/rtax/newTaxModal.xhtml">
+					<ui:param name="controller" value="#{supplier}" />
+					<ui:param name="registryTaxController" value="#{supplierTax}" />
 					<ui:param name="modalReRender" value="supplierTab" />
 				</ui:include>
 			</aon:if>
