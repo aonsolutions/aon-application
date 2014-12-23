@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.common.shared;
+package com.esferalia.aon.occam.api.model;
 
 public interface IIbanContainer {
 	public String getIBan();

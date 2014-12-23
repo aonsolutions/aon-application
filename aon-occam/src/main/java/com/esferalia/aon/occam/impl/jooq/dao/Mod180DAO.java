@@ -22,6 +22,7 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.jooq.tables.records.FsModel180DetailRecord;
 import com.esferalia.aon.jooq.tables.records.FsModel180Record;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.watson.AonError;
@@ -424,6 +425,21 @@ public class Mod180DAO {
 				});
 			insertDetail(ctx,detail);
 		});
+	}
+
+	public static Mod180 initialize(AONContext ctx, int year) {
+		Mod180 mod180 = new Mod180();
+		FiscalParameters params = AppParamDAO.getFiscalParameters(ctx,year);
+		mod180.setEnterprise(params.getCompany());
+		mod180.setDomain(ctx.getDomainId());
+		mod180.setDocument(params.getDocument());
+		mod180.setName(params.getName());
+		mod180.setYear(params.getDefaultYear() != null ? params.getDefaultYear() : 2014);
+		mod180.setAdministration(params.getAdministration() != null ? params.getAdministration() : 4);
+		mod180.setContactPerson(params.getContactPerson());
+		mod180.setContactPhone(params.getContactPhone());
+		mod180.setDetails(new ArrayList<Mod180Detail>());
+		return mod180; 
 	}
 }
 																								

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
-import com.esferalia.aon.gwt.common.shared.CompanyBank;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200;
+import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class Mod200ServiceAsyncDecorator implements Mod200ServiceAsync {
@@ -17,9 +17,9 @@ public class Mod200ServiceAsyncDecorator implements Mod200ServiceAsync {
 	}
 
 	@Override
-	public void getMod200(int domain, int year, AsyncCallback<Mod200> callback)  {
+	public void getMod200(String domainName,int domain, int year, AsyncCallback<Mod200> callback)  {
 		AON.start();
-		mod200ServiceAsync.getMod200(domain, year,
+		mod200ServiceAsync.getMod200(domainName,domain, year,
 				new AsyncCallbackWrapper<Mod200>(callback));
 	}
 
@@ -32,17 +32,17 @@ public class Mod200ServiceAsyncDecorator implements Mod200ServiceAsync {
 	}
 
 	@Override
-	public void save(Mod200 mod200, AsyncCallback<Mod200> callback) {
+	public void save(String domainName,int domain, Mod200 mod200, AsyncCallback<Mod200> callback) {
 		AON.start();
-		mod200ServiceAsync.save(mod200, 
+		mod200ServiceAsync.save(domainName,domain,mod200, 
 				new AsyncCallbackWrapper<Mod200>(callback));
 		
 	}
 
 	@Override
-	public void initialize(Mod200 mod200, AsyncCallback<Mod200> callback) {
+	public void initialize(String domainName,int domain, Mod200 mod200, AsyncCallback<Mod200> callback) {
 		AON.start();
-		mod200ServiceAsync.initialize(mod200,
+		mod200ServiceAsync.initialize(domainName,domain,mod200,
 				new AsyncCallbackWrapper<Mod200>(callback));
 	}
 
@@ -53,9 +53,9 @@ public class Mod200ServiceAsyncDecorator implements Mod200ServiceAsync {
 	}
 
 	@Override
-	public void delete(Mod200 mod200, AsyncCallback<Mod200> callback) {
+	public void delete(String domainName,int domain, Mod200 mod200, AsyncCallback<Mod200> callback) {
 		AON.start();
-		mod200ServiceAsync.delete(mod200,
+		mod200ServiceAsync.delete(domainName,domain,mod200,
 				new AsyncCallbackWrapper<Mod200>(callback));
 	}
 
@@ -66,9 +66,9 @@ public class Mod200ServiceAsyncDecorator implements Mod200ServiceAsync {
 				new AsyncCallbackWrapper<String>(callback));
 	}
 
-	public void getCompanyBanks(int enterprise,AsyncCallback<ArrayList<CompanyBank>> callback) {
+	public void getCompanyBanks(String domainName,int domain,int enterprise,AsyncCallback<ArrayList<CompanyBank>> callback) {
 		AON.start();
-		mod200ServiceAsync.getCompanyBanks(enterprise,
+		mod200ServiceAsync.getCompanyBanks(domainName,domain, enterprise,
 				new AsyncCallbackWrapper<ArrayList<CompanyBank>>(callback));
 	}
 

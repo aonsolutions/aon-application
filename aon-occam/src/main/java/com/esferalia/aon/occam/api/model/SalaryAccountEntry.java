@@ -4,15 +4,14 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Consumer;
 
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.mutable.MutableDouble;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
+@SuppressWarnings("serial")
 public class SalaryAccountEntry implements Serializable {
-	private static final long serialVersionUID = 4147035089236493960L;
 	
 	@FunctionalInterface
 	private interface IFillAccountEntryAmountVisitor {

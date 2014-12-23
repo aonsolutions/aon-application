@@ -4,7 +4,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import com.esferalia.aon.watson.util.AonValidationUtils;
+import com.esferalia.aon.watson.util.AonCadasdralReferenceUtils;
 
 public class TestCadasdralReferenceValidation {
 	private static final String[] TRUE_REFS = new String[] {
@@ -81,14 +81,14 @@ public class TestCadasdralReferenceValidation {
 	@Test
 	public void testTrue() {
 		for (String ref : TRUE_REFS) {
-			Assert.assertTrue(AonValidationUtils.isValidCadasdralReference(ref));
+			Assert.assertTrue(AonCadasdralReferenceUtils.isValidCadasdralReference(ref));
 		}
 	}
 
 	@Test
 	public void testFalse() {
 		for (String ref : FALSE_REFS) {
-			Assert.assertFalse(AonValidationUtils
+			Assert.assertFalse(AonCadasdralReferenceUtils
 					.isValidCadasdralReference(ref));
 		}
 	}

@@ -1,7 +1,7 @@
 package com.esferalia.aon.watson.util;
 
 
-public class AonValidationUtils {
+public class AonCadasdralReferenceUtils {
 
 	private static char[] ALTERNATIVE = {'?','A','B','C','D','E','F','G','H','I','J','K','L','M','N'
 		,'Ñ','O','P','Q','R','S','T','U','V','W','X','Y','Z'};

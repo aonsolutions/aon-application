@@ -4,16 +4,13 @@ import java.util.ArrayList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
-import com.esferalia.aon.gwt.common.shared.FiscalParameters;
 import com.esferalia.aon.gwt.fiscal.shared.Enterprise;
-import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod303Results;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -23,15 +20,6 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 
 	public FiscalServiceAsyncDecorator(FiscalServiceAsync mod190ServiceAsync) {
 		this.fiscalServiceAsync = mod190ServiceAsync;
-	}
-
-	// ------------------------------------------------------- FISCAL PARAMETERS
-	@Override
-	public void getFiscalParameters(int domain,
-			AsyncCallback<FiscalParameters> callback) {
-		AON.start();
-		fiscalServiceAsync.getFiscalParameters(domain,
-				new AsyncCallbackWrapper<FiscalParameters>(callback));
 	}
 
 	// -------------------------------------------------------------- ENTERPRISE
@@ -76,6 +64,13 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		fiscalServiceAsync.getMod190s(domainName, domain,
 				new AsyncCallbackWrapper<ArrayList<Mod190>>(callback));
 	}
+	@Override
+	public void initializeMod190(String domainName, Integer domain,
+			Integer year, AsyncCallback<Mod190> callback) {
+		AON.start();
+		fiscalServiceAsync.initializeMod190(domainName, domain, year, 
+				new AsyncCallbackWrapper<Mod190>(callback));
+	}
 
 	@Override
 	public void getMod190(String domainName, int domain, Integer id,
@@ -116,6 +111,14 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		AON.start();
 		fiscalServiceAsync.getMod180s(domainName, domainId,
 				new AsyncCallbackWrapper<ArrayList<Mod180>>(callback));
+	}
+
+	@Override
+	public void initializeMod180(String domainName, Integer domain,
+			Integer year, AsyncCallback<Mod180> callback) {
+		AON.start();
+		fiscalServiceAsync.initializeMod180(domainName, domain, year, 
+				new AsyncCallbackWrapper<Mod180>(callback));
 	}
 
 	@Override
@@ -176,19 +179,10 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 	}
 
 	@Override
-	public void getMod303Results(String domainName, Integer domain, int year,
-			AsyncCallback<Mod303Results> callback) {
+	public void initializeMod390(String domainName, Integer domain,
+			Integer year, AsyncCallback<Mod390> callback) {
 		AON.start();
-		fiscalServiceAsync.getMod303Results(domainName,domain, year,
-				new AsyncCallbackWrapper<Mod303Results>(callback));
-	}
-
-	@Override
-	public void getMod311Results(int domain, int year,
-			AsyncCallback<ArrayList<Mod311Results>> callback) {
-		AON.start();
-		fiscalServiceAsync.getMod311Results(domain, year,
-				new AsyncCallbackWrapper<ArrayList<Mod311Results>>(callback));
+		fiscalServiceAsync.initializeMod390(domainName, domain, year, callback);
 	}
 
 }

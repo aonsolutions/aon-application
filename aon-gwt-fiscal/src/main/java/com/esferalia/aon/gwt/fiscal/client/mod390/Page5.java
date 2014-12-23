@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390;
 
 import java.util.EnumMap;
-import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
@@ -434,30 +433,23 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 */
 
 	public void setValue(Mod390 m390) {
-		wrap(m390.getGeneralRegime());
+		if (m390.getGeneralRegime()!= null ) {
+			for (Mod390DetailKey key : m390.getGeneralRegime().keySet()) {
+				map.put(key,new Mod390DetailFields(m390.getGeneralRegime().get(key)));	
+			}
+		}
 		if (map != null) {
 			initializeTable();
 		}
 	}
 
-	private void wrap(Map<Mod390DetailKey, Mod390Detail> generalRegime) {
-		for (Mod390DetailKey key : generalRegime.keySet()) {
-			map.put(key,new Mod390DetailFields(generalRegime.get(key)));	
-		}
-	}
 
 	public void populate(Mod390 mod390) {
-//		for (Mod390DetailKey key : taxableBaseMap.keySet()) {
-//			DoubleTextBox box = taxableBaseMap.get(key);
-//			Mod390Detail detail = map.get(key);
-//			detail.setTaxableBase(box.getDoubleValue());
-//		}
-//		for (Mod390DetailKey key : quotaMap.keySet()) {
-//			DoubleTextBox box = quotaMap.get(key);
-//			Mod390Detail detail = map.get(key);
-//			detail.setQuota(box.getDoubleValue());
-//		}
-//		mod390.setGeneralRegime(map);
+		for (Mod390DetailKey key : map.keySet()) {
+			Mod390DetailFields f = map.get(key);			
+			f.detail.setTaxableBase(f.taxableBase.getDoubleValue());
+			f.detail.setQuota(f.quota.getDoubleValue());
+		}
 	}
 
 }

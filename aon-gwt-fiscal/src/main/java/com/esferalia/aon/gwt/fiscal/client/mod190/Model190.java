@@ -15,7 +15,6 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.client.widget.ShowMorePagerPanel;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
-import com.esferalia.aon.gwt.common.shared.FiscalParameters;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
@@ -422,35 +421,22 @@ public class Model190 extends MainEntryPoint {
 	void onNewButtonClick(ClickEvent event) {
 		cleanErrorMessage();
 		detailList.setVisibleRangeAndClearData(detailList.getVisibleRange(),true);
-		mod190Service.getFiscalParameters(getCurrentDomain(),
-				new AsyncCallback<FiscalParameters>() {
-					@Override
-					public void onSuccess(FiscalParameters params) {
-						Mod190 mod190 = new Mod190();
-						enterprise = params.getCompany();
-						domain = getCurrentDomain();
-						mod190.setEnterprise(params.getCompany());
-						mod190.setDomain(getCurrentDomain());
-						mod190.setDocument(params.getDocument());
-						mod190.setName(params.getName());
-						mod190.setYear(params.getDefaultYear()!=null?params.getDefaultYear():2014);
-						mod190.setAdministration((byte) (params.getAdministration()!=null?params.getAdministration():4));
-						mod190.setContactPerson(params.getContactPerson());
-						mod190.setContactPhone(params.getContactPhone());
-						select(mod190);
+		mod190Service.initializeMod190(getCurrentDomainName(), getCurrentDomain(),2014 ,
+				new AsyncCallback<Mod190>() {
+			@Override
+			public void onSuccess(Mod190 m190) {
+				select(m190);
+				int i = deckPanel.getWidgetIndex(formPanel);
+				deckPanel.showWidget(i);
+			}
 
-						int i = deckPanel.getWidgetIndex(formPanel);
-						deckPanel.showWidget(i);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						DialogMessages.alertErrorWidget(MSG
-								.unableToReadFiscalParameters(caught
-										.getMessage()));
-					}
-				});
-		
+			@Override
+			public void onFailure(Throwable caught) {
+				DialogMessages.alertErrorWidget(MSG
+						.unableToReadFiscalParameters(caught
+								.getMessage()));
+			}
+		});
 	}
 
 	@UiHandler("cancelButton")

@@ -15,7 +15,6 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.client.widget.ShowMorePagerPanel;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
-import com.esferalia.aon.gwt.common.shared.FiscalParameters;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
@@ -425,24 +424,12 @@ public class Model180 extends MainEntryPoint {
 	@UiHandler("newButton")
 	void onNewButtonClick(ClickEvent event) {
 		cleanErrorMessage();
-		mod180Service.getFiscalParameters(getCurrentDomain(),
-				new AsyncCallback<FiscalParameters>() {
+		mod180Service.initializeMod180(getCurrentDomainName(),getCurrentDomain(), 2014,
+				new AsyncCallback<Mod180>() {
 					@Override
-					public void onSuccess(FiscalParameters params) {
-						Mod180 mod180 = new Mod180();
-						enterprise = params.getCompany();
-						domain = getCurrentDomain();
-						mod180.setEnterprise(params.getCompany());
-						mod180.setDomain(getCurrentDomain());
-						mod180.setDocument(params.getDocument());
-						mod180.setName(params.getName());
-						mod180.setYear(params.getDefaultYear() != null ? params.getDefaultYear() : 2014);
-						mod180.setAdministration(params.getAdministration() != null ? params.getAdministration() : 4);
-						mod180.setContactPerson(params.getContactPerson());
-						mod180.setContactPhone(params.getContactPhone());
-						mod180.setDetails(new ArrayList<Mod180Detail>());
+					public void onSuccess(Mod180 m180) {
 						detailList.setVisibleRangeAndClearData(detailList.getVisibleRange(),true);
-						select(mod180);
+						select(m180);
 						int i = deckPanel.getWidgetIndex(formPanel);
 						deckPanel.showWidget(i);
 					}
@@ -454,7 +441,6 @@ public class Model180 extends MainEntryPoint {
 										.getMessage()));
 					}
 				});
-
 	}
 
 	@UiHandler("cancelButton")

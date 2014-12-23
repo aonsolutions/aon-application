@@ -3,7 +3,7 @@ package com.esferalia.aon.gwt.common.client.widget;
 
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
-import com.esferalia.aon.gwt.common.shared.IIbanContainer;
+import com.esferalia.aon.occam.api.model.IIbanContainer;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionHandler;

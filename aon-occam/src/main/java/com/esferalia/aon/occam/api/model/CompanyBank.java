@@ -1,12 +1,11 @@
-package com.esferalia.aon.gwt.common.shared;
+package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class CompanyBank implements Serializable, IsSerializable, IIbanContainer {
-	
-	private static final long serialVersionUID = 1439647684878998653L;
+@SuppressWarnings("serial")
+public class CompanyBank implements Serializable, IIbanContainer {
 	
 	private String bankAccount;
 	private String bic;
@@ -37,7 +36,7 @@ public class CompanyBank implements Serializable, IsSerializable, IIbanContainer
 	}
 	@Override
 	public String getDisplay() {
-		return AonUtil.isEmpty(alias)?"":"(" + alias +") " + bankAccount;
+		return AonStringUtils.isEmpty(alias)?"":"(" + alias +") " + bankAccount;
 	}
 	
 }

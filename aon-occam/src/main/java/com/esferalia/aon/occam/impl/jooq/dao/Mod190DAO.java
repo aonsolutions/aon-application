@@ -1,3 +1,4 @@
+
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
@@ -30,6 +31,7 @@ import com.esferalia.aon.jooq.tables.records.FsModel190Record;
 import com.esferalia.aon.jooq.tables.records.IrpfDataRecord;
 import com.esferalia.aon.jooq.tables.records.IrpfResultRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfResult;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
@@ -987,6 +989,20 @@ public class Mod190DAO {
 			irpfResult.setThirdChildCalculation(record.getDescendentsThird());
 		}
 		return irpfResult;
+	}
+
+	public static Mod190 initialize(AONContext ctx, int year) {
+		Mod190 mod190 = new Mod190();
+		FiscalParameters params = AppParamDAO.getFiscalParameters(ctx,year);
+		mod190.setEnterprise(params.getCompany());
+		mod190.setDomain(ctx.getDomainId());
+		mod190.setDocument(params.getDocument());
+		mod190.setName(params.getName());
+		mod190.setYear(params.getDefaultYear()!=null?params.getDefaultYear():2014);
+		mod190.setAdministration((byte) (params.getAdministration()!=null?params.getAdministration():4));
+		mod190.setContactPerson(params.getContactPerson());
+		mod190.setContactPhone(params.getContactPhone());
+		return mod190;
 	}
 
 }

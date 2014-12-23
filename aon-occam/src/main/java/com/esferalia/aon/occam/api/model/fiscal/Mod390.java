@@ -10,90 +10,6 @@ public class Mod390 implements Serializable {
 
 	private static final String LEGAL_ENTITY_PATTERN = "^[0-9|X|Y|Z].*";
 
-	public static class Mod303Results implements Serializable {
-		
-		private double depositSum;
-		private double paybackSum;
-		private double lastPeriodCompensateResult;
-		private double lastPeriodPaybackResult;
-		
-		private double nationalSales;
-		private double reSales;
-		private double intracommunitarySales;
-		private double extracommunitarySales;
-		private double withoutRightSales;
-		private double ISPSales;
-		private double investmentSales;
-		
-		
-		public double getDepositSum() {
-			return depositSum;
-		}
-		public void setDepositSum(double depositSum) {
-			this.depositSum = depositSum;
-		}
-		public double getPaybackSum() {
-			return paybackSum;
-		}
-		public void setPaybackSum(double paybackSum) {
-			this.paybackSum = paybackSum;
-		}
-		public double getLastPeriodCompensateResult() {
-			return lastPeriodCompensateResult;
-		}
-		public void setLastPeriodCompensateResult(double lastPeriodCompensateResult) {
-			this.lastPeriodCompensateResult = lastPeriodCompensateResult;
-		}
-		public double getLastPeriodPaybackResult() {
-			return lastPeriodPaybackResult;
-		}
-		public void setLastPeriodPaybackResult(double lastPeriodPaybackResult) {
-			this.lastPeriodPaybackResult = lastPeriodPaybackResult;
-		}
-		public double getNationalSales() {
-			return nationalSales;
-		}
-		public void setNationalSales(double nationalSales) {
-			this.nationalSales = nationalSales;
-		}
-		public double getReSales() {
-			return reSales;
-		}
-		public void setReSales(double reSales) {
-			this.reSales = reSales;
-		}
-		public double getIntracommunitarySales() {
-			return intracommunitarySales;
-		}
-		public void setIntracommunitarySales(double intracommunitarySales) {
-			this.intracommunitarySales = intracommunitarySales;
-		}
-		public double getExtracommunitarySales() {
-			return extracommunitarySales;
-		}
-		public void setExtracommunitarySales(double extracommunitarySales) {
-			this.extracommunitarySales = extracommunitarySales;
-		}
-		public double getWithoutRightSales() {
-			return withoutRightSales;
-		}
-		public void setWithoutRightSales(double withoutRightSales) {
-			this.withoutRightSales = withoutRightSales;
-		}
-		public double getISPSales() {
-			return ISPSales;
-		}
-		public void setISPSales(double iSPSales) {
-			ISPSales = iSPSales;
-		}
-		public double getInvestmentSales() {
-			return investmentSales;
-		}
-		public void setInvestmentSales(double investmentSales) {
-			this.investmentSales = investmentSales;
-		}
-	}
-
 	public static class Activity implements Serializable {
 
 		private String description;
@@ -403,7 +319,24 @@ public class Mod390 implements Serializable {
 		public void setBoxJ(double boxJ) {
 			this.boxJ = boxJ;
 		}
-	    
+		public void setUnit(int line, double value) {
+			if (line == 1) setUnit1(value);
+			else if (line == 2) setUnit2(value);
+			else if (line == 3) setUnit3(value);
+			else if (line == 4) setUnit4(value);
+			else if (line == 5) setUnit5(value);
+			else if (line == 6) setUnit6(value);
+			else if (line == 7) setUnit7(value);
+		}
+		public void setAmount(int line, double value) {
+			if (line == 1) setAmount1(value);
+			else if (line == 2) setAmount2(value);
+			else if (line == 3) setAmount3(value);
+			else if (line == 4) setAmount4(value);
+			else if (line == 5) setAmount5(value);
+			else if (line == 6) setAmount6(value);
+			else if (line == 7) setAmount7(value);
+		}
 	}
 
 	public static class FarmerRegimeActivity implements Serializable {

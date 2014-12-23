@@ -1,12 +1,11 @@
-package com.esferalia.aon.gwt.common.shared;
+package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.type.Administration;
-import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
-public class FiscalParameters implements Serializable, IsSerializable {
+public class FiscalParameters implements Serializable {
 
 	private Integer company;
 	private String document;

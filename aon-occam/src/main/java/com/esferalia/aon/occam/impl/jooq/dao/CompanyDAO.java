@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.common.sql;
+package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
@@ -9,20 +9,19 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.jooq.DSLContext;
 import org.jooq.Record3;
 import org.jooq.Record6;
 
-import com.esferalia.aon.gwt.common.shared.AonSQLException;
-import com.esferalia.aon.gwt.common.shared.Company;
-import com.esferalia.aon.gwt.common.shared.CompanyAdministrator;
-import com.esferalia.aon.gwt.common.shared.CompanyBank;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.CompanyAdministrator;
+import com.esferalia.aon.occam.api.model.CompanyBank;
 
-public class SQLCompany {
+public class CompanyDAO {
 	
-	public static Company getCompany(DSLContext ctx,int domain) throws AonSQLException {
+	public static Company getCompany(AONContext ctx,int domain) {
 		Record3<Integer,String,String> record = 
-			ctx.select(COMPANY.REGISTRY,REGISTRY.DOCUMENT,REGISTRY.NAME)
+			ctx.getDslContext().select(COMPANY.REGISTRY,REGISTRY.DOCUMENT,REGISTRY.NAME)
 				.from(COMPANY)
 				.join(REGISTRY).onKey()
 				.where(COMPANY.DOMAIN.equal(domain))
@@ -36,9 +35,9 @@ public class SQLCompany {
 		return company;
 	}
 	
-	public static List<CompanyAdministrator> getDirStaff(DSLContext ctx,int domain) throws AonSQLException {
+	public static List<CompanyAdministrator> getDirStaff(AONContext ctx,int domain) {
 		List<Record6<String,String,Byte,Byte,Double,Double>> record = 
-			ctx.select(RDIR_STAFF.DOCUMENT,RDIR_STAFF.NAME,RDIR_STAFF.DIRECTOR,RDIR_STAFF.SHAREHOLDER,RDIR_STAFF.PERCENT_SHARE,RDIR_STAFF.NOMINAL_VALUE)
+			ctx.getDslContext().select(RDIR_STAFF.DOCUMENT,RDIR_STAFF.NAME,RDIR_STAFF.DIRECTOR,RDIR_STAFF.SHAREHOLDER,RDIR_STAFF.PERCENT_SHARE,RDIR_STAFF.NOMINAL_VALUE)
 				.from(COMPANY)
 				.join(RDIR_STAFF).on( COMPANY.REGISTRY.equal(RDIR_STAFF.REGISTRY) )
 				.where(COMPANY.DOMAIN.equal(domain))
@@ -57,9 +56,9 @@ public class SQLCompany {
 		return list;
 	}
 		
-	public static ArrayList<CompanyBank> getBanks(DSLContext ctx,int enterprise) throws AonSQLException {
+	public static ArrayList<CompanyBank> getBanks(AONContext ctx,int enterprise) {
 		List<Record3<String,String,String>> record = 
-			ctx.select(RBANK.BANK_ACCOUNT,RBANK.BIC,RBANK.ALIAS)
+			ctx.getDslContext().select(RBANK.BANK_ACCOUNT,RBANK.BIC,RBANK.ALIAS)
 				.from(COMPANY)
 				.join(RBANK).on( COMPANY.REGISTRY.equal(RBANK.REGISTRY) )
 				.where(COMPANY.REGISTRY.equal(enterprise))

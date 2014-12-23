@@ -8,7 +8,7 @@ import java.util.List;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceCountryListBox;
-import com.esferalia.aon.gwt.common.shared.CompanyParticipation;
+import com.esferalia.aon.occam.api.model.CompanyParticipation;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;

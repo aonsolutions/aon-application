@@ -1,11 +1,9 @@
-package com.esferalia.aon.gwt.common.shared;
+package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
 @SuppressWarnings("serial")
-public class Company implements Serializable, IsSerializable {
+public class Company implements Serializable {
 
 	private Integer id;
 	private String document;

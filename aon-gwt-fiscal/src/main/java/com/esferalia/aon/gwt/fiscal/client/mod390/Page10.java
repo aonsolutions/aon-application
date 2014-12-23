@@ -4,7 +4,6 @@ import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod303Results;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390DetailKey;
 import com.google.gwt.core.client.GWT;
@@ -223,7 +222,7 @@ public class Page10 extends ResizeComposite implements RequiresResize {
 					-box106.getDoubleValue()
 					-box107.getDoubleValue()));
 	}
-
+/*
 	public void setValue(Mod303Results result) {
 		box99.setValue(result.getNationalSales());
 		box102.setValue(result.getReSales());
@@ -234,5 +233,5 @@ public class Page10 extends ResizeComposite implements RequiresResize {
 		box110.setValue(result.getISPSales());
 		refresh();
 	}
-	
+*/	
 }

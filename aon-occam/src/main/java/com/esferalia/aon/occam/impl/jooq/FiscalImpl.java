@@ -9,7 +9,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod303Results;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod180DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod190DAO;
@@ -28,6 +27,11 @@ public class FiscalImpl implements IFiscal {
 	}
 
 	@Override
+	public Mod180 initializeMod180(AONContext ctx, int year) {
+		return Mod180DAO.initialize(ctx, year);
+	}
+
+	@Override
 	public Mod180 saveMod180(AONContext ctx, Mod180 mod180) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod180DAO.save(ctx, mod180));
@@ -37,7 +41,6 @@ public class FiscalImpl implements IFiscal {
 	public void deleteMod180(AONContext ctx, Mod180 mod180) {
 		ctx.getDslContext().transaction(
 				configuration -> Mod180DAO.delete(ctx, mod180));
-
 	}
 
 	@Override
@@ -56,6 +59,10 @@ public class FiscalImpl implements IFiscal {
 		return Mod190DAO.getById(ctx, id);
 	}
 
+	@Override
+	public Mod190 initializeMod190(AONContext ctx, int year) {
+		return Mod190DAO.initialize(ctx, year);
+	}
 	@Override
 	public Mod190 saveMod190(AONContext ctx, Mod190 mod190) {
 		return ctx.getDslContext().transactionResult(
@@ -90,6 +97,11 @@ public class FiscalImpl implements IFiscal {
 	}
 	
 	@Override
+	public Mod390 initializeMod390(AONContext ctx, int year) {
+		return Mod390DAO.initialize(ctx, year);
+	}
+
+	@Override
 	public Mod390 saveMod390(AONContext ctx, Mod390 mod390) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod390DAO.save(ctx, mod390));
@@ -106,8 +118,4 @@ public class FiscalImpl implements IFiscal {
 		return Mod390DAO.getMod390Details(ctx, mod390);
 	}
 
-	@Override
-	public Mod303Results getMod303Results(AONContext ctx, int year) {
-		return Mod390DAO.getMod390Results(ctx, year);
-	}
 }

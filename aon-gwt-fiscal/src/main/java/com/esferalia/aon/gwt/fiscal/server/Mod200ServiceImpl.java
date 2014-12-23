@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.fiscal.server;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.commit;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.disableAutoCommit;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.enableAutoCommit;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.rollback;
 import static com.esferalia.aon.gwt.fiscal.server.mod200.Mod200Activation.ACTIVE_EXPRESSION_MAP;
 import static com.esferalia.aon.gwt.fiscal.server.mod200.Mod200Compute.COMPUTE_EXPRESSION_MAP;
@@ -22,10 +21,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import org.jooq.DSLContext;
-import org.jooq.impl.DSL;
-
-import com.code.aon.accounting.util.AccountingUtil;
 import com.esferalia.aon.accounting.mining.server.IAccMiningKeyAccept;
 import com.esferalia.aon.accounting.mining.shared.AccMiningException;
 import com.esferalia.aon.accounting.mining.shared.AccMiningParameters;
@@ -35,13 +30,6 @@ import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.common.server.DateUtil;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
-import com.esferalia.aon.gwt.common.shared.CompanyAdministrator;
-import com.esferalia.aon.gwt.common.shared.CompanyBank;
-import com.esferalia.aon.gwt.common.shared.CompanyParticipation;
-import com.esferalia.aon.gwt.common.shared.DocumentUtil;
-import com.esferalia.aon.gwt.common.shared.FiscalParameters;
-import com.esferalia.aon.gwt.common.sql.SQLAppParams;
-import com.esferalia.aon.gwt.common.sql.SQLCompany;
 import com.esferalia.aon.gwt.common.sql.SQLUtils;
 import com.esferalia.aon.gwt.fiscal.client.Mod200Service;
 import com.esferalia.aon.gwt.fiscal.server.mod200.Mod200MVELContext;
@@ -53,9 +41,17 @@ import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200.BalanceType;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.ValidationMessage;
 import com.esferalia.aon.gwt.fiscal.sql.SQLMod200;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.CompanyAdministrator;
+import com.esferalia.aon.occam.api.model.CompanyBank;
+import com.esferalia.aon.occam.api.model.CompanyParticipation;
+import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.CNAE;
+import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod200 Servlet", urlPatterns = { "/aon_gwt_fiscal/Mod200" })
@@ -78,18 +74,18 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 
 	// ------------------------------------------------------- FISCAL PARAMETERS
 	@Override
-	public Mod200 getMod200(int domain, int year) throws AonSQLException {
+	public Mod200 getMod200(String domainName,int domain, int year) throws AonSQLException {
 		Connection conn = null;
 		try {
-			conn = getConnection();
+			AONContext ctx = AONContext.getAONContext(domainName, domain);
+			conn = ctx.getDslContext().configuration().connectionProvider().acquire();
 			disableAutoCommit(conn);
-			DSLContext dsl = DSL.using(conn, AccountingUtil.getDefaultSettings());
 			Mod200 mod200 = SQLMod200.get( conn,domain,year );
 			if (mod200 == null) {
 				mod200 = new Mod200();
 				mod200.setDomain(domain);
 				mod200.setYear(year);
-				initializeNewMod200(mod200, dsl, conn);
+				initializeNewMod200(ctx,mod200);
 			} else {
 				initializeActiveMap(mod200);
 			}
@@ -106,13 +102,13 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 	}
 
 	@Override
-	public Mod200 initialize(Mod200 mod200) throws AonSQLException {
+	public Mod200 initialize(String domainName,int domain,Mod200 mod200) throws AonSQLException {
 		Connection conn = null;
 		try {
-			conn = getConnection();
+			AONContext ctx = AONContext.getAONContext(domainName, domain);
+			conn = ctx.getDslContext().configuration().connectionProvider().acquire();
 			disableAutoCommit(conn);
-			DSLContext dsl = DSL.using(conn, AccountingUtil.getDefaultSettings());
-			initializeMod200(mod200, dsl, conn);
+			initializeMod200(AONContext.getAONContext(domainName, domain),mod200);
 			commit(conn);
 			return mod200;
 		} catch (Throwable e) {
@@ -125,7 +121,7 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 		}
 	}
 	
-	private void initializeNewMod200(Mod200 mod200,DSLContext dsl, Connection conn) throws AonSQLException, AccMiningException {
+	private void initializeNewMod200(AONContext ctx,Mod200 mod200) throws AonSQLException, AccMiningException {
 		mod200.setPeriodType(1);
 		mod200.setPeriodStart(DateUtil.getYearFirstDay(mod200.getYear()));
 		mod200.setPeriodEnd(DateUtil.getYearLastDay(mod200.getYear()));
@@ -133,7 +129,7 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 		mod200.setBalanceType( BalanceType.ABREVIADO );
 		mod200.setPygType(BalanceType.ABREVIADO );
 		
-		FiscalParameters fiscalParameters = SQLAppParams.getFiscalParameters(dsl, mod200.getDomain());
+		FiscalParameters fiscalParameters = AppParamDAO.getFiscalParameters(ctx, mod200.getDomain());
 		
 		mod200.setEnterprise(fiscalParameters.getCompany());
 		mod200.setEnterpriseDocument(fiscalParameters.getDocument());
@@ -144,8 +140,8 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 		mod200.setAdministration(adm.ordinal());
 	}
 
-	private void initializeMod200(Mod200 mod200,DSLContext dsl, Connection conn) throws AonSQLException, AccMiningException {
-		List<CompanyAdministrator> adms = SQLCompany.getDirStaff(dsl, mod200.getDomain());
+	private void initializeMod200(AONContext ctx,Mod200 mod200) throws AonSQLException, AccMiningException {
+		List<CompanyAdministrator> adms = CompanyDAO.getDirStaff(ctx, mod200.getDomain());
 		if ( adms != null && adms.size() > 0 ) {
 			for (CompanyAdministrator ca : adms ) {
 				if (ca.isAdministrator()) {
@@ -170,18 +166,19 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 																							}
 		}
 
-		Mod200MVELContext ctx = new Mod200MVELContext( mod200, ACCEPTER );
-		ctx.setAccounts( SQLAccounting.getAccountBalances(conn, getParams(conn,mod200)) );
-		ctx.setExpressionMap(INITIALIZE_EXPRESSION_MAP);
-		addCharacters(ctx,mod200);
-		addBalanceCharacters(ctx,mod200);
+		Mod200MVELContext mvelCtx = new Mod200MVELContext( mod200, ACCEPTER );
+		Connection conn = ctx.getDslContext().configuration().connectionProvider().acquire();
+		mvelCtx.setAccounts( SQLAccounting.getAccountBalances(conn, getParams(conn,mod200)) );
+		mvelCtx.setExpressionMap(INITIALIZE_EXPRESSION_MAP);
+		addCharacters(mvelCtx,mod200);
+		addBalanceCharacters(mvelCtx,mod200);
 		DoubleVariable dv = null;
 		for (String stringKey : INITIALIZE_EXPRESSION_MAP.keySet()) {
 			Mod200Key k = Mod200Key.valueOf(stringKey.toString());
 			String expression = INITIALIZE_EXPRESSION_MAP.get(stringKey);
-			ctx.put(stringKey, 0.0 );
-			Object ret = ctx.evaluateExpression(stringKey,expression);
-			ctx.put(stringKey, ret );
+			mvelCtx.put(stringKey, 0.0 );
+			Object ret = mvelCtx.evaluateExpression(stringKey,expression);
+			mvelCtx.put(stringKey, ret );
 			if (ret instanceof Double ) {
 				dv = new DoubleVariable( k );
 				dv.setValue( (Double) ret );
@@ -324,10 +321,11 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 	}
 
 	@Override
-	public Mod200 save(Mod200 mod200) throws AonSQLException {
+	public Mod200 save(String domainName, int domain,Mod200 mod200) throws AonSQLException {
 		Connection conn = null;
 		try {
-			conn = getConnection();
+			AONContext ctx = AONContext.getAONContext(domainName, domain);
+			conn = ctx.getDslContext().configuration().connectionProvider().acquire();
 			disableAutoCommit(conn);
 			mod200 = SQLMod200.save(conn, mod200);
 			commit(conn);
@@ -343,10 +341,11 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 	}
 	
 	@Override
-	public Mod200 delete(Mod200 mod200) throws AonSQLException {
+	public Mod200 delete(String domainName, int domain,Mod200 mod200) throws AonSQLException {
 		Connection conn = null;
 		try {
-			conn = getConnection();
+			AONContext ctx = AONContext.getAONContext(domainName, domain);
+			conn = ctx.getDslContext().configuration().connectionProvider().acquire();
 			disableAutoCommit(conn);
 			SQLMod200.delete(conn, mod200);
 			commit(conn);
@@ -377,13 +376,13 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 	}
 	
 	@Override
-	public ArrayList<CompanyBank> getCompanyBanks(int enterprise) throws AonSQLException {
+	public ArrayList<CompanyBank> getCompanyBanks(String domainName, int domain,int enterprise) throws AonSQLException {
 		Connection conn = null;
 		try {
-			conn = getConnection();
+			AONContext ctx = AONContext.getAONContext(domainName, domain);
+			conn = ctx.getDslContext().configuration().connectionProvider().acquire();
 			disableAutoCommit(conn);
-			DSLContext dsl = DSL.using(conn, AccountingUtil.getDefaultSettings());
-			ArrayList<CompanyBank> list = SQLCompany.getBanks(dsl, enterprise);
+			ArrayList<CompanyBank> list = CompanyDAO.getBanks(ctx, enterprise);
 			commit(conn);
 			return list;
 		} catch (Throwable e) {
@@ -449,7 +448,7 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 	}
 
 	private void validateDocument(List<ValidationMessage> list, Mod200 mod200) {
-		if (!DocumentUtil.isValid(mod200.getEnterpriseDocument())) {
+		if (!AonDocumentUtil.isValid(mod200.getEnterpriseDocument())) {
 			list.add(new ValidationMessage(PAGE00,"NIF de la declaraci\u00F3n incorrecto."));
 		}
 		
@@ -467,7 +466,7 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 		} else {
 			for (int i = 0; i < mod200.getAdministrators().size(); i++ ) {
 				CompanyAdministrator ca = mod200.getAdministrators().get(i); 
-				if (!DocumentUtil.isValid(ca.getDocument())) {
+				if (!AonDocumentUtil.isValid(ca.getDocument())) {
 					list.add(new ValidationMessage(PAGE01,"NIF del administrador nº "+(i+1) +" incorrecto ["+ca.getDocument()+"]"));		
 				}
 				if (AonUtil.isEmpty(ca.getName())) {
@@ -478,11 +477,11 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 	}
 	
 	private void validateSecretary(List<ValidationMessage> list, Mod200 mod200) {
-		if (DocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
+		if (AonDocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
 			if (mod200.getSecretary() == null) {
 				list.add(new ValidationMessage(PAGE01,"Para personas jur\u00EDdicas, debe rellenar los datos del secretario"));
 			} else {
-				if (!DocumentUtil.isValid(mod200.getSecretary().getDocument())) {
+				if (!AonDocumentUtil.isValid(mod200.getSecretary().getDocument())) {
 					list.add(new ValidationMessage(PAGE01,"NIF del secretario incorrecto."));
 				}
 				if ( AonUtil.isEmpty(mod200.getSecretary().getName())) {
@@ -498,13 +497,13 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 	}
 
 	private void validateRepresentatives(List<ValidationMessage> list,Mod200 mod200) {
-		if (DocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
+		if (AonDocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
 			if (mod200.getRepresentatives() == null || mod200.getRepresentatives().size() == 0 ) {
 				list.add(new ValidationMessage(PAGE01,"Para personas jur\u00EDdicas, debe rellenar al menos un representante."));
 			} else {
 				for (int i = 0; i < mod200.getRepresentatives().size(); i++ ) {
 					LegalRepresentative lr = mod200.getRepresentatives().get(i); 
-					if (!DocumentUtil.isValid(lr.getDocument())) {
+					if (!AonDocumentUtil.isValid(lr.getDocument())) {
 						list.add(new ValidationMessage(PAGE01,"NIF del representante legal nº "+(i+1) +" incorrecto ["+lr.getDocument()+"]"));		
 					}
 					if (AonUtil.isEmpty(lr.getName())) {
@@ -524,14 +523,14 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 	}
 	
 	private void validateParticipationsIn(List<ValidationMessage> list,Mod200 mod200) {
-		 if (DocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
+		 if (AonDocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
 			 List<CompanyParticipation> participations = mod200.getParticipationsIn();
 			if (participations == null || participations.size() == 0) {
 				list.add(new ValidationMessage(PAGE02,"Para personas jur\u00EDdicas, debe rellenar los datos de participaci\u00F3n en la declarante"));
 			} else {
 				for (int i = 0; i < participations.size(); i++ ) {
 					CompanyParticipation cp = participations.get(i); 
-					if (!DocumentUtil.isValid(cp.getDocument())) {
+					if (!AonDocumentUtil.isValid(cp.getDocument())) {
 						list.add(new ValidationMessage(PAGE02,"NIF de la participaci\u00F3n en la declarante nº "+(i+1) +" incorrecto ["+cp.getDocument()+"]"));		
 					}
 					if (AonUtil.isEmpty(cp.getName())) {
@@ -546,13 +545,13 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 	}
 	
 	private void validateParticipationsOut(List<ValidationMessage> list,Mod200 mod200) {
-		 if (DocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
+		 if (AonDocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
 			 List<CompanyParticipation> participations = mod200.getParticipationsOut();
 			if (participations == null || participations.size() == 0) {
 			} else {
 				for (int i = 0; i < participations.size(); i++ ) {
 					CompanyParticipation cp = participations.get(i); 
-					if (!DocumentUtil.isValid(cp.getDocument())) {
+					if (!AonDocumentUtil.isValid(cp.getDocument())) {
 						list.add(new ValidationMessage(PAGE02,"NIF de la participaci\u00F3n de la declarante en otras nº "+(i+1) +" incorrecto ["+cp.getDocument()+"]"));		
 					}
 					if (AonUtil.isEmpty(cp.getName())) {

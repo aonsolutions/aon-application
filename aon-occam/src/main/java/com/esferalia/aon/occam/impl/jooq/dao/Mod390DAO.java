@@ -1,7 +1,11 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.FsActivity.FS_ACTIVITY;
+import static com.esferalia.aon.jooq.tables.FsActivityInfo.FS_ACTIVITY_INFO;
+import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.FsModel390.FS_MODEL390;
+import static com.esferalia.aon.jooq.tables.FsModelDetail.FS_MODEL_DETAIL;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
@@ -26,12 +30,15 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.FsModel390Record;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod303Results;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390.FarmerRegimeActivity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390DetailKey;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390.SimpliedRegimeActivity;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2013.AEATIVA2013;
@@ -42,6 +49,7 @@ import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public class Mod390DAO {
@@ -382,6 +390,29 @@ public class Mod390DAO {
 				+" AND " + SQLConstants.FS_VAT +"."+FsVatColumns.YEAR +"=?"
 				+" AND " + SQLConstants.FS_VAT +"."+FsVatColumns.PERIOD +"!=" + Period.YEAR.ordinal();  
 */
+	public static Mod390 initialize(AONContext ctx, int year) {
+		Mod390 mod390 = new Mod390();
+		FiscalParameters params = AppParamDAO.getFiscalParameters(ctx,year);
+		mod390.setEnterprise(params.getCompany());
+		mod390.setDomain(ctx.getDomainId());
+		mod390.setDocument(params.getDocument());
+		mod390.setEnterpriseName(params.getName());
+		mod390.setYear( 2014 );
+		if (mod390.isLegalEntity()) mod390.setName(mod390.getEnterpriseName());
+		else {
+			String tmpName = mod390.getEnterpriseName();
+			if (AonStringUtils.contains(tmpName, ',')) {
+				mod390.setName(AonStringUtils.trim(AonStringUtils.substringAfter(tmpName, ",")));
+				mod390.setFirstSurname(AonStringUtils.trim(AonStringUtils.substringBefore(tmpName, ",")));
+			} else {
+				mod390.setName(AonStringUtils.trim(AonStringUtils.substringBefore(tmpName, " ")));
+				mod390.setFirstSurname(AonStringUtils.trim(AonStringUtils.substringAfter(tmpName, " ")));
+			}
+		}
+		fillGeneralRegimeData(ctx, mod390);
+		fillSimplifedRegimeData(ctx, mod390);
+		return mod390;	
+	}
 
 	public static ArrayList<Mod390> getByDomain(AONContext ctx, int domain) {
 		ctx.checkRead();
@@ -681,12 +712,11 @@ public class Mod390DAO {
 		return list;
 	}
 */
-	public static Mod303Results getMod390Results(AONContext ctx, int year) {
-		// TODO RELLENAR!!
-		return new Mod303Results();
+	private static Mod390 fillGeneralRegimeData(AONContext ctx, Mod390 mod390) {
+		return mod390;
 	}
 
-	/*	
+/*	
 	public static Mod303Results getMod303Results(int domain, int year,
 			Connection conn)  throws AonSQLException  {
 		
@@ -757,148 +787,102 @@ public class Mod390DAO {
 			SQLUtils.closeQuietly(stmt);
 		}
 	}
-
-	public static ArrayList<Mod311Results> getMod311Results(int domain, int year,
-			Connection conn) throws AonSQLException  {
-		
-		String SELECT_ACTIVITY = 
-		"SELECT fsd.info_key ky,fsd.type type,fsd.line line,fsd.value value,fsd.base base,fs.farmer"
-			+" FROM fs_activity fs"
-			+" INNER JOIN fs_activity_info fsd ON fsd.fs_activity = fs.id"
-			+" WHERE fs.domain = ? "
-			+" AND fs.year = ? "
-			+" AND fs.epigraph = ? "
-			+" AND " 
-			+" ((fsd.info_key like 'M%' and fsd.type = 1) OR"
-			+" (fsd.info_key like 'X%' and fsd.type = 6) OR"
-			+" (fsd.info_key like 'Y%' and fsd.type = 7))";
-
-		String SELECT_MOD311 = "SELECT fsd.type type, fsd.description description, fsd.amount amount"
-				+" FROM fs_model fs"
-				+" INNER JOIN fs_model_detail fsd ON fsd.fs_model = fs.id"
-				+" WHERE fs.domain = ? "
-				+" AND fs.year = ?  "
-				+" AND fs.model = '311'";
-		ArrayList<Mod311Results> result = new ArrayList<Mod311Results>();
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		PreparedStatement stmt1 = null;
-		ResultSet rs1 = null;
-		try {
-			stmt1 = conn.prepareStatement(SELECT_ACTIVITY,
-					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			stmt = conn.prepareStatement(SELECT_MOD311,
-					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			stmt.setInt(1, domain);
-			stmt.setInt(2, year);
-			rs = stmt.executeQuery();
-			while (rs.next()) {
-				String description = rs.getString("description");
-				Mod311Key key = null;
-				String type = rs.getString("type");
-				for (Mod311Key k : Mod311Key.values()) {
-					if (k.getValue().equals(type)) {
-						key = k;
-						break;
-					}
-				}
-				if (key != null && ( 
-						key.getValue().startsWith(Mod311Key.ACTIVITIES_PREFIX)
-						|| key.getValue().startsWith(Mod311Key.FARMING_ACTIVITIES_PREFIX)
-						)) {
-					Mod311Results r = new Mod311Results();
-					String epi = AonUtil.substringBefore(description, "-");
-					epi = AonUtil.trim(epi);
-					stmt1.setInt(1, domain);
-					stmt1.setInt(2, year);
-					stmt1.setString(3, epi);
-					rs1 = stmt1.executeQuery();
-					while (rs1.next()) {
-						boolean farmer = rs1.getBoolean("farmer");
-						FiscalActivityInfoKey k = FiscalActivityInfoKey.valueOf(rs1.getString("ky"));
-						FiscalActivityInfoType t = FiscalActivityInfoType.values()[rs1.getInt("type")];
-						int line = rs1.getInt("line");
-						double value = rs1.getDouble("value");
-						double base = rs1.getDouble("base");
-						r.setFarmer(farmer);
+*/
+	
+	private static Mod390 fillSimplifedRegimeData(AONContext ctx, Mod390 mod390) {
+		ctx.getDslContext().select(FS_MODEL_DETAIL.TYPE
+				, FS_MODEL_DETAIL.DESCRIPTION
+				, FS_MODEL_DETAIL.AMOUNT)
+			.from(FS_MODEL)
+			.join(FS_MODEL_DETAIL).on(FS_MODEL.ID.equal(FS_MODEL_DETAIL.FS_MODEL))
+			.where(FS_MODEL.DOMAIN.equal(mod390.getDomain()))
+			.and(FS_MODEL.YEAR.equal(mod390.getYear()))
+			.and(FS_MODEL.MODEL.equal("303"))
+		.fetch()
+		.stream()
+		.forEach( record -> {
+			String description = record.getValue( FS_MODEL_DETAIL.DESCRIPTION );
+			String type = record.getValue( FS_MODEL_DETAIL.TYPE );
+			Mod303Key key = Mod303Key.getKeyWithValue(type);
+			if (key != null && (key.isActivity() || key.isFarmer())) {
+				final String epigraph  = AonStringUtils.trim(AonStringUtils.substringBefore(description, "-"));
+				ctx.getDslContext().select(FS_ACTIVITY_INFO.INFO_KEY 
+						,FS_ACTIVITY_INFO.TYPE 
+						,FS_ACTIVITY_INFO.LINE  
+						,FS_ACTIVITY_INFO.VALUE
+						,FS_ACTIVITY_INFO.BASE 
+						,FS_ACTIVITY.FARMER)
+					.from(FS_ACTIVITY)
+					.join(FS_ACTIVITY_INFO).on(FS_ACTIVITY.ID.equal(FS_ACTIVITY_INFO.FS_ACTIVITY))
+					.where(FS_ACTIVITY.DOMAIN.equal(mod390.getDomain()))
+					.and(FS_ACTIVITY.YEAR.equal(mod390.getYear()))
+					.and(FS_ACTIVITY.EPIGRAPH.equal(epigraph))
+					.and(
+						   (FS_ACTIVITY_INFO.INFO_KEY.like("M%").and(FS_ACTIVITY_INFO.TYPE.equal((byte) 1)))
+						.or(FS_ACTIVITY_INFO.INFO_KEY.like("X%").and(FS_ACTIVITY_INFO.TYPE.equal((byte) 6)))
+						.or(FS_ACTIVITY_INFO.INFO_KEY.like("Y%").and(FS_ACTIVITY_INFO.TYPE.equal((byte) 7)))
+					).fetch()
+					.stream()
+					.forEach( record2 -> {
+						boolean farmer = AonEnumUtils.getBoolean( record2.getValue(FS_ACTIVITY.FARMER));
+						int line = record2.getValue( FS_ACTIVITY_INFO.LINE );
+						String strValue = record2.getValue(FS_ACTIVITY_INFO.VALUE);
+						double value = 0.0;
+						try {
+							value = Double.parseDouble(strValue);
+						} catch (NumberFormatException e) {
+							// Nothing, zero as double.
+						}
+						double base = record2.getValue(FS_ACTIVITY_INFO.BASE);
+						String infoKey = record2.getValue(FS_ACTIVITY_INFO.INFO_KEY);
+						Byte infoType = record2.getValue(FS_ACTIVITY_INFO.TYPE);
+						mod390.setSimpRegime1(null);
+						mod390.setSimpRegime2(null);
 						if (!farmer) {
-							r.setEpigrafe(epi);
-							if (FiscalActivityInfoType.M311_DETAIL == t) {
-								if (FiscalActivityInfoKey.X01 == k) {
-									r.setBoxC(value);
-								} else if (FiscalActivityInfoKey.X00 == k) {
-									r.setBoxC(value);
-								} else if (FiscalActivityInfoKey.X05 == k) {
-									r.setBoxD(value);
-								} else if (FiscalActivityInfoKey.X06 == k) {
-									r.setBoxE(value);
-								} else if (FiscalActivityInfoKey.X07 == k) {
-									r.setBoxF(value);
-								} else if (FiscalActivityInfoKey.X08 == k) {
-									r.setBoxG(value);
-								} else if (FiscalActivityInfoKey.X09 == k) {
-									r.setBoxH(value);
-								} else if (FiscalActivityInfoKey.X10 == k) {
-									r.setBoxI(value);
-								} else if (FiscalActivityInfoKey.X11 == k) {
-									r.setBoxJ(value);
-								}
+							SimpliedRegimeActivity act =  new SimpliedRegimeActivity();
+							act.setEpigrafe(epigraph);
+							if (infoType == 6 ) {	// M311_DETAIL
+								if ("X00".equals(infoKey)) act.setBoxC(value);
+								else if ("X01".equals(infoKey)) act.setBoxC(value);
+								else if ("X05".equals(infoKey)) act.setBoxD(value);
+								else if ("X06".equals(infoKey)) act.setBoxE(value);
+								else if ("X07".equals(infoKey)) act.setBoxF(value);
+								else if ("X08".equals(infoKey)) act.setBoxG(value);
+								else if ("X09".equals(infoKey)) act.setBoxH(value);
+								else if ("X10".equals(infoKey)) act.setBoxI(value);
+								else if ("X11".equals(infoKey)) act.setBoxJ(value);
 							} else {
-								if (line == 1) {
-									r.setUnit1(value);
-									r.setAmount1(base);
-								} else if (line == 2) {
-									r.setUnit2(value);
-									r.setAmount2(base);
-								} else if (line == 3) {
-									r.setUnit3(value);
-									r.setAmount3(base);
-								} else if (line == 4) {
-									r.setUnit4(value);
-									r.setAmount4(base);
-								} else if (line == 5) {
-									r.setUnit5(value);
-									r.setAmount5(base);
-								} else if (line == 6) {
-									r.setUnit6(value);
-									r.setAmount6(base);
-								} else if (line == 7) {
-									r.setUnit7(value);
-									r.setAmount7(base);
-								}
+								act.setUnit(line,value);
+								act.setAmount(line,base);
+							}
+							if (mod390.getSimpRegime1() == null) {
+								mod390.setSimpRegime1(act);
+							} else if (mod390.getSimpRegime2() == null) {
+								mod390.setSimpRegime2(act);
 							}
 						} else {
-							r.setCodigo(epi);
-							if (FiscalActivityInfoKey.Y01 == k) {
-								r.setIncomes(value);
-							} else if (FiscalActivityInfoKey.Y02 == k) {
-								r.setQuotaIndex(value);
-							} else if (FiscalActivityInfoKey.Y03 == k) {
-								r.setAccrualQuota(value);
-							} else if (FiscalActivityInfoKey.Y07 == k) {
-								r.setInputQuotas(value);
-							} else if (FiscalActivityInfoKey.Y08 == k) {
-								r.setQuota(value);
+							FarmerRegimeActivity act =  new FarmerRegimeActivity();
+							act.setCodigo(epigraph);
+							if ("Y01".equals(infoKey)) act.setIncomes(value); 
+							else if ("Y02".equals(infoKey)) act.setQuotaIndex(value);
+							else if ("Y03".equals(infoKey)) act.setAccrualQuota(value);
+							else if ("Y07".equals(infoKey)) act.setInputQuotas(value);
+							else if ("Y08".equals(infoKey)) act.setQuota(value);
+							
+							if (mod390.getFarmerRegime1() == null) {
+								mod390.setFarmerRegime1(act);
+							} else if (mod390.getFarmerRegime2() == null) {
+								mod390.setFarmerRegime2(act);
 							}
 						}
-					}
-					rs1.close();
-					result.add(r);
+						
+					});
 				}
 			}
-			return result;
-		} catch (Throwable e) {
-			e.printStackTrace();
-			throw new AonSQLException(e);
-		} finally {
-			SQLUtils.closeQuietly(rs);
-			SQLUtils.closeQuietly(stmt);
-			SQLUtils.closeQuietly(rs1);
-			SQLUtils.closeQuietly(stmt1);
-		}
+		);
+		return mod390;
 	}
 	
-*/
 
 }
  

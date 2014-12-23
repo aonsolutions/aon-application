@@ -19,7 +19,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod303Results;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AppParam;
@@ -184,7 +183,9 @@ public class AON {
 	public static Mod180 getMod180(String domainName, int domainId,Integer id) {
 		return getFiscal().getMod180(AONContext.getAONContext(domainName, domainId),id);
 	}
-	
+	public static Mod180 initializeMod180(String domainName, int domainId,Integer year) {
+		return getFiscal().initializeMod180(AONContext.getAONContext(domainName, domainId), year);
+	}
 	public static Mod180 saveMod180(String domainName, int domainId,Mod180 mod180) {
 		return getFiscal().saveMod180(AONContext.getAONContext(domainName, domainId), mod180);
 	}
@@ -201,7 +202,9 @@ public class AON {
 	public static Mod190 getMod190(String domainName, int domainId,Integer id) {
 		return getFiscal().getMod190(AONContext.getAONContext(domainName, domainId),id);
 	}
-	
+	public static Mod190 initializeMod190(String domainName, int domainId,Integer year) {
+		return getFiscal().initializeMod190(AONContext.getAONContext(domainName, domainId), year);
+	}
 	public static Mod190 saveMod190(String domainName, int domainId,Mod190 mod190) {
 		return getFiscal().saveMod190(AONContext.getAONContext(domainName, domainId), mod190);
 	}
@@ -221,25 +224,21 @@ public class AON {
 	public static String getMod390XML(String domainName, int domainId, int id) {
 		return getFiscal().getMod390XML(AONContext.getAONContext(domainName, domainId),id);
 	}
+	public static Mod390 initializeMod390(String domainName, int domainId,Integer year) {
+		return getFiscal().initializeMod390(AONContext.getAONContext(domainName, domainId), year);
+	}
 	public static Mod390 saveMod390(String domainName, int domainId,Mod390 mod390) {
 		return getFiscal().saveMod390(AONContext.getAONContext(domainName, domainId), mod390);
 	}
 	public static void deleteMod390(String domainName, int domainId,Mod390 mod390) {
 		getFiscal().deleteMod390(AONContext.getAONContext(domainName, domainId), mod390);
 	}
-
 	public static ArrayList<Mod390Detail> getMod390Details(String domainName,Integer domain,Mod390 mod390) {
 		return getFiscal().getMod390Details(AONContext.getAONContext(domainName, domain), mod390);
 	}
-
-	public static Mod303Results getMod303Results(String domainName,Integer domain, int year) {
-		return getFiscal().getMod303Results(AONContext.getAONContext(domainName, domain), year);
-	}
 	
 	// 
-	
 	public static void saveAgreement(AONContext ctx, Agreement ...agreements) throws AonCoreException {
 		getAgreement().save(ctx, agreements);
 	}
-	
 }

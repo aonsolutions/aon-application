@@ -1,12 +1,12 @@
-package com.esferalia.aon.gwt.common.shared;
+package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class CompanyParticipation implements Serializable, IsSerializable {
-
-	private static final long serialVersionUID = 1439647684878998653L;
+@SuppressWarnings("serial")
+public class CompanyParticipation implements Serializable {
 
 	private String document;
 	private String name;
@@ -151,19 +151,17 @@ public class CompanyParticipation implements Serializable, IsSerializable {
 		this.result = result;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
 	public String getEntity() {
-		if (AonUtil.isEmpty(document)) {
+		if (AonStringUtils.isEmpty(document)) {
 			return null;
 		}
-		return DocumentUtil.isEntity(document)?"J":"F";
+		return AonDocumentUtil.isEntity(document)?"J":"F";
 	}
 	public String getProvinceStr() {
 		String p = Integer.toString(province);
-		return AonUtil.isEmpty(getDocument())?null:AonUtil.leftPad(p, 2, "0");
+		return AonStringUtils.isEmpty(getDocument())
+				?null
+				:AonStringUtils.leftPad(p, 2, "0");
 	}
 	public String getRepresenStr() {
 		return isRepresentative()?"1":"0"; 

@@ -147,6 +147,10 @@ public class Model200 extends MainEntryPoint {
 	Hidden mod200Hidden;
 	
 	// ----
+	public static native String getCurrentDomainName()
+	/*-{
+		return $wnd.getCurrentDomainName();
+	}-*/;
 	public static native int getCurrentDomain()
 	/*-{
 		return $wnd.getCurrentDomain();
@@ -176,7 +180,8 @@ public class Model200 extends MainEntryPoint {
 
 
 	private void startModel() {
-		mod200 = new Mod200Object(getCurrentDomain(), year, mod200Service);
+		mod200 = new Mod200Object(getCurrentDomainName(),getCurrentDomain()
+				, year, mod200Service);
 		mod200.getMod200(new AsyncCallback<Mod200>() {
 			
 			@Override

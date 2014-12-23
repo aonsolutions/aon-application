@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.common.client.widget;
 
 import com.esferalia.aon.gwt.common.client.css.AonResources;
-import com.esferalia.aon.gwt.common.shared.DocumentUtil;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -18,7 +18,7 @@ public class DocumentTextBox extends TextBox {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				if (DocumentUtil.isValid(event.getValue())) {
+				if (AonDocumentUtil.isValid(event.getValue())) {
 					removeStyleName(AON_RESOURCES.css().aonTextBoxError() );	
 				} else {
 					addStyleName(AON_RESOURCES.css().aonTextBoxError() );	
@@ -31,7 +31,7 @@ public class DocumentTextBox extends TextBox {
 	@Override
 	public void setValue(String value) {
 		super.setValue(value);
-		if (value == null || value.length() == 0 || DocumentUtil.isValid(getValue()) ){
+		if (value == null || value.length() == 0 || AonDocumentUtil.isValid(getValue()) ){
 			removeStyleName(AON_RESOURCES.css().aonTextBoxError() );	
 		} else {
 			addStyleName(AON_RESOURCES.css().aonTextBoxError() );	

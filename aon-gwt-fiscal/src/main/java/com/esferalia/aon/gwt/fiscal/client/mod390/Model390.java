@@ -8,22 +8,20 @@ import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
 import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
+import com.esferalia.aon.gwt.common.client.widget.IntegerTextBox;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
-import com.esferalia.aon.gwt.common.shared.AonUtil;
-import com.esferalia.aon.gwt.common.shared.DocumentUtil;
-import com.esferalia.aon.gwt.common.shared.FiscalParameters;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMessages;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.widget.EnterpriseSuggestBox;
-import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod303Results;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -57,7 +55,6 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.ProvidesKey;
@@ -86,6 +83,8 @@ public class Model390 extends MainEntryPoint {
 	protected final static AonResources RESOURCES = GWT.create(AonResources.class);
 	protected static final FiscalMessages FISCAL_MSG = GWT.create(FiscalMessages.class);
 	protected static final NumberFormat FMT = NumberFormat.getFormat( MSG.decimalPattern(), MSG.currencyCode());
+
+	private static final Integer DEFAULT_YEAR = 2014;
 
 	@UiField
 	Label simplifiedRegime;
@@ -190,7 +189,7 @@ public class Model390 extends MainEntryPoint {
 	// Button printButton;
 
 	@UiField
-	TextBox year;
+	IntegerTextBox year;
 	@UiField
 	EnterpriseSuggestBox enterpriseSuggest;
 
@@ -255,6 +254,9 @@ public class Model390 extends MainEntryPoint {
 		Widget ui = MODEL_390_BINDER.createAndBindUi(this);
 
 		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
+		
+		domain = getCurrentDomain();
+		year.setValue( DEFAULT_YEAR );
 		
 		diskForm = new FormPanel("_blank");
 		diskForm.setMethod(FormPanel.METHOD_POST);
@@ -367,8 +369,7 @@ public class Model390 extends MainEntryPoint {
 				@Override
 				public void onSuccess(Mod390 selected) {
 					if (selected == null) {
-						DialogMessages.alertErrorWidget(MSG
-								.unableToFindMod190());
+						DialogMessages.alertErrorWidget(MSG.unableToFindMod190());
 					} else {
 						select(selected);
 						int i = deckPanel.getWidgetIndex(formPanel);
@@ -393,11 +394,8 @@ public class Model390 extends MainEntryPoint {
 		onLinkPage0(null);
 		enterprise = m390.getEnterprise();
 		domain = m390.getDomain();
-
 		year.setValue(Integer.toString(m390.getYear()));
-		enterpriseSuggest
-				.setValue(m390.getDocument(), m390.getEnterpriseName());
-		
+		enterpriseSuggest.setValue(m390.getDocument(), m390.getEnterpriseName());
 		page0.setValue(m390);
 		page3.setValue(m390);
 		page4.setValue(m390);
@@ -410,7 +408,6 @@ public class Model390 extends MainEntryPoint {
 		page11.setValue(m390);
 		page12.setValue(m390);
 		page13.setValue(m390);
-
 		// Toolbar states
 		deleteButton.setVisible(mod390.getId() != null);
 		newButton.setVisible(mod390.getId() != null);
@@ -418,7 +415,6 @@ public class Model390 extends MainEntryPoint {
 		saveButton.setVisible(true);
 		generateFileButton.setVisible(mod390.getId() != null);
 		// printButton.setVisible(mod390.getId() != null);
-
 		simplifiedRegime.setVisible(mod390.isSimplifiedRegime());
 	}
 
@@ -484,77 +480,6 @@ public class Model390 extends MainEntryPoint {
 		}
 	}
 
-	private void validate(Mod390 m390) {
-		if (AonUtil.isEmpty(year.getValue())) {
-			throw new IllegalArgumentException(MSG.requiredField(MSG
-					.fiscalYear()));
-		}
-		if (!m390.isLegalEntity()) {
-			if (AonUtil.isEmpty(m390.getDocument())) {
-				throw new IllegalArgumentException(
-						MSG.requiredField(" Apart. 0: " + MSG.document()));
-			}
-			if (!DocumentUtil.isValid(m390.getDocument())) {
-				throw new IllegalArgumentException("El NIF/DNI no es correcto");
-			}
-			if (AonUtil.isEmpty(m390.getName())) {
-				throw new IllegalArgumentException(
-						"Para personas f\u00EDsicas, el nombre es obligatorio (Apartado 0)");
-			}
-			if (AonUtil.isEmpty(m390.getFirstSurname())) {
-				throw new IllegalArgumentException(
-						"Para personas f\u00EDsicas, el primer apellido es obligatorio (Apartado 0)");
-			}
-			if (AonUtil.isEmpty(m390.getSecondSurname())) {
-				throw new IllegalArgumentException(
-						"Para personas f\u00EDsicas, el segundo apellido es obligatorio (Apartado 0)");
-			}
-		} else {
-			if (AonUtil.isEmpty(m390.getName())) {
-				throw new IllegalArgumentException(
-						"No se ha indicado el nombre del declarante. (Apartado 0)");
-			}
-		}
-		if (m390.getMainActivity() == null
-				|| AonUtil.isEmpty(m390.getMainActivity().getKey())) {
-			throw new IllegalArgumentException(
-					"No se ha indicado actividad principal (Apartado 3)");
-		}
-		if (!m390.isLegalEntity()) {
-			if (m390.getAddress() == null) {
-				throw new IllegalArgumentException(
-						"Indique datos del represante (Apartado 4)");
-			}
-			if (AonUtil.isEmpty(m390.getAddress().getRdocument())) {
-				throw new IllegalArgumentException(
-						"Para personas f\u00EDsicas, el NIF/DNI del representante es obligatorio. (Apartado 4)");
-			}
-			if (!DocumentUtil.isValid(m390.getAddress().getRdocument())) {
-				throw new IllegalArgumentException(
-						"El NIF/DNI del representante no es correcto. (Apartado 4)");
-			}
-		} else {
-			if (m390.getLegalRepr1() != null) {
-				if (!DocumentUtil.isValid(m390.getLegalRepr1().getDocument())) {
-					throw new IllegalArgumentException(
-							"El NIF del primer representante para personas jurídicas no es correcto. (Apartado 4)");
-				}
-			}
-			if (m390.getLegalRepr2() != null) {
-				if (!DocumentUtil.isValid(m390.getLegalRepr2().getDocument())) {
-					throw new IllegalArgumentException(
-							"El NIF del segundo representante para personas jurídicas no es correcto. (Apartado 4)");
-				}
-			}
-			if (m390.getLegalRepr3() != null) {
-				if (!DocumentUtil.isValid(m390.getLegalRepr3().getDocument())) {
-					throw new IllegalArgumentException(
-							"El NIF del tercer representante para personas jurídicas no es correcto. (Apartado 4)");
-				}
-			}
-		}
-	}
-
 	@UiHandler("deleteButton")
 	void onDeleteButtonClick(ClickEvent event) {
 		if (Window.confirm(MSG.confirmDeleteAction())) {
@@ -575,123 +500,30 @@ public class Model390 extends MainEntryPoint {
 			});
 		}
 	}
-
+	
 	@UiHandler("newButton")
 	void onNewButtonClick(ClickEvent event) {
 		cleanErrorMessage();
-		fiscalService.getFiscalParameters(getCurrentDomain(),
-				new AsyncCallback<FiscalParameters>() {
-					@Override
-					public void onSuccess(FiscalParameters params) {
-						Mod390 mod390 = new Mod390();
-						enterprise = params.getCompany();
-						domain = getCurrentDomain();
-						mod390.setEnterprise(params.getCompany());
-						mod390.setDomain(getCurrentDomain());
-						mod390.setDocument(params.getDocument());
-						mod390.setEnterpriseName(params.getName());
-						mod390.setYear(params.getDefaultYear() != null ? params
-								.getDefaultYear() : 2014);
-						if (mod390.isLegalEntity()) {
-							mod390.setName(mod390.getEnterpriseName());
-						} else {
-							String tmpName = mod390.getEnterpriseName();
-							if (AonUtil.contains(tmpName, ',')) {
-								mod390.setName(AonUtil.trim(AonUtil.substringAfter(tmpName, ",")));
-								mod390.setFirstSurname(AonUtil.trim(AonUtil.substringBefore(tmpName, ",")));
-							} else {
-								mod390.setName(AonUtil.trim(AonUtil.substringBefore(tmpName, " ")));
-								mod390.setFirstSurname(AonUtil.trim(AonUtil.substringAfter(tmpName, " ")));
-							}
-						}
-						select(mod390);
+		fiscalService.initializeMod390(getCurrentDomainName(),domain, year.getIntValue(),
+				new AsyncCallback<Mod390>() {
+			@Override
+			public void onSuccess(Mod390 mod390) {
+				select( mod390 );
+				int i = deckPanel.getWidgetIndex(formPanel);
+				deckPanel.showWidget(i);
+				i = pagesPanel.getWidgetIndex(panel0);
+				pagesPanel.showWidget(i);
+				year.selectAll();
+				year.setFocus(true);
+			}
 
-						page0.setValue(mod390);
-						initializePages(mod390);
-						int i = deckPanel.getWidgetIndex(formPanel);
-						deckPanel.showWidget(i);
-						i = pagesPanel.getWidgetIndex(panel0);
-						pagesPanel.showWidget(i);
-
-						year.selectAll();
-						year.setFocus(true);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						DialogMessages.alertErrorWidget(MSG
-								.unableToReadFiscalParameters(caught
-										.getMessage()));
-					}
-				});
-
-	}
-
-	private void initializePages(final Mod390 mod390) {
-		try {
-			final int y = Integer.parseInt(year.getValue());
-			fiscalService.getMod311Results(domain, y,
-					new AsyncCallback<ArrayList<Mod311Results>>() {
-						@Override
-						public void onSuccess(ArrayList<Mod311Results> result) {
-							int a = 0;
-							int f = 0;
-							for (Mod311Results re : result) {
-								if (re.isFarmer()) {
-									if (f >= 0 && f <= 4) {
-										page6.setFarmerValue(f, re);
-										f++;
-									}
-								} else {
-									if (a == 0) {
-										page6.getActivity1().setValue(re);
-										a++;
-									} else if (a == 1) {
-										page6.getActivity2().setValue(re);
-										a++;
-									}
-								}
-							}
-
-							page6.refresh();
-							page6.populate(mod390);
-							page5.initialize(getCurrentDomainName(),domain, y, mod390);
-							initializeMod303Values(domain, y, mod390);
-							simplifiedRegime.setVisible(mod390
-									.isSimplifiedRegime());
-						}
-
-						@Override
-						public void onFailure(Throwable caught) {
-							DialogMessages.alertErrorWidget(MSG
-									.unableToFindMod190Detail(caught
-											.getMessage()));
-						}
-					});
-
-		} catch (NumberFormatException e) {
-			// nothing
-		}
-	}
-
-	private void initializeMod303Values(int domain, int year,
-			final Mod390 mod390) {
-		fiscalService.getMod303Results(getCurrentDomainName(), getCurrentDomain(), year,
-				new AsyncCallback<Mod303Results>() {
-					@Override
-					public void onSuccess(Mod303Results result) {
-						page9.setValue(result);
-						page9.populate(mod390);
-						page10.setValue(result);
-						page10.populate(mod390);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						DialogMessages.alertErrorWidget(MSG
-								.unableToFindMod190Detail(caught.getMessage()));
-					}
-				});
+			@Override
+			public void onFailure(Throwable caught) {
+				DialogMessages.alertErrorWidget(MSG
+						.unableToReadFiscalParameters(caught
+								.getMessage()));
+			}
+		});
 	}
 
 	@UiHandler("cancelButton")
@@ -705,53 +537,19 @@ public class Model390 extends MainEntryPoint {
 	@UiHandler("enterpriseSuggest")
 	void onSelectEnterprise(SelectionEvent<Suggestion> event) {
 		domain = enterpriseSuggest.getDomainId();
-		mod390.setDomain(domain);
-		enterprise = enterpriseSuggest.getEnterpriseId();
-		mod390.setEnterprise(enterprise);
-		mod390.setDocument(enterpriseSuggest.getDocument().getValue());
-		mod390.setEnterpriseName(enterpriseSuggest.getName().getValue());
-		if (AonUtil.isEmpty(mod390.getName())) {
-			if (mod390.isLegalEntity()) {
-				mod390.setName(enterpriseSuggest.getName().getValue());
-			} else {
-				String tmpName = enterpriseSuggest.getName().getValue();
-				if (AonUtil.contains(tmpName, ',')) {
-					mod390.setName(AonUtil.trim(AonUtil.substringAfter(tmpName,
-							",")));
-					mod390.setFirstSurname(AonUtil.trim(AonUtil
-							.substringBefore(tmpName, ",")));
-				} else {
-					mod390.setName(AonUtil.trim(AonUtil.substringBefore(
-							tmpName, " ")));
-					mod390.setFirstSurname(AonUtil.trim(AonUtil.substringAfter(
-							tmpName, " ")));
-				}
-			}
-		}
-		year.selectAll();
-		year.setFocus(true);
-		page0.setValue(mod390);
-		initializePages(mod390);
+		onNewButtonClick(null);
 	}
 
 	@UiHandler("year")
 	void onChangeYear(ChangeEvent event) {
 		if (Window.confirm("El ejercicio ha cambiado, desea recalcular los datos?")) {
-			if (domain != 0) {
-				try {
-					try {
-						mod390.setYear(Integer.parseInt(year.getValue()));
-					} catch (NumberFormatException e) {
-						throw new IllegalArgumentException(MSG.unableToParseYear());
-					}
-					page0.setValue(mod390);
-					page5.initialize(getCurrentDomainName(),domain, Integer.parseInt(year.getValue()), mod390);
-				} catch (NumberFormatException e) {
-					// nothing
-				}
+			try {
+				mod390.setYear(Integer.parseInt(year.getValue()));
+			} catch (NumberFormatException e) {
+				throw new IllegalArgumentException(MSG.unableToParseYear());
 			}
-		}
-		;
+			onNewButtonClick(null);
+		};
 	}
 
 	private void populateMod390() {
@@ -947,4 +745,74 @@ public class Model390 extends MainEntryPoint {
 		resultsPanel.setWidget(panel);
 	}
 	
+	private void validate(Mod390 m390) {
+		if (AonStringUtils.isEmpty(year.getValue())) {
+			throw new IllegalArgumentException(MSG.requiredField(MSG
+					.fiscalYear()));
+		}
+		if (!m390.isLegalEntity()) {
+			if (AonStringUtils.isEmpty(m390.getDocument())) {
+				throw new IllegalArgumentException(
+						MSG.requiredField(" Apart. 0: " + MSG.document()));
+			}
+			if (!AonDocumentUtil.isValid(m390.getDocument())) {
+				throw new IllegalArgumentException("El NIF/DNI no es correcto");
+			}
+			if (AonStringUtils.isEmpty(m390.getName())) {
+				throw new IllegalArgumentException(
+						"Para personas f\u00EDsicas, el nombre es obligatorio (Apartado 0)");
+			}
+			if (AonStringUtils.isEmpty(m390.getFirstSurname())) {
+				throw new IllegalArgumentException(
+						"Para personas f\u00EDsicas, el primer apellido es obligatorio (Apartado 0)");
+			}
+			if (AonStringUtils.isEmpty(m390.getSecondSurname())) {
+				throw new IllegalArgumentException(
+						"Para personas f\u00EDsicas, el segundo apellido es obligatorio (Apartado 0)");
+			}
+		} else {
+			if (AonStringUtils.isEmpty(m390.getName())) {
+				throw new IllegalArgumentException(
+						"No se ha indicado el nombre del declarante. (Apartado 0)");
+			}
+		}
+		if (m390.getMainActivity() == null
+				|| AonStringUtils.isEmpty(m390.getMainActivity().getKey())) {
+			throw new IllegalArgumentException(
+					"No se ha indicado actividad principal (Apartado 3)");
+		}
+		if (!m390.isLegalEntity()) {
+			if (m390.getAddress() == null) {
+				throw new IllegalArgumentException(
+						"Indique datos del represante (Apartado 4)");
+			}
+			if (AonStringUtils.isEmpty(m390.getAddress().getRdocument())) {
+				throw new IllegalArgumentException(
+						"Para personas f\u00EDsicas, el NIF/DNI del representante es obligatorio. (Apartado 4)");
+			}
+			if (!AonDocumentUtil.isValid(m390.getAddress().getRdocument())) {
+				throw new IllegalArgumentException(
+						"El NIF/DNI del representante no es correcto. (Apartado 4)");
+			}
+		} else {
+			if (m390.getLegalRepr1() != null) {
+				if (!AonDocumentUtil.isValid(m390.getLegalRepr1().getDocument())) {
+					throw new IllegalArgumentException(
+							"El NIF del primer representante para personas jurídicas no es correcto. (Apartado 4)");
+				}
+			}
+			if (m390.getLegalRepr2() != null) {
+				if (!AonDocumentUtil.isValid(m390.getLegalRepr2().getDocument())) {
+					throw new IllegalArgumentException(
+							"El NIF del segundo representante para personas jurídicas no es correcto. (Apartado 4)");
+				}
+			}
+			if (m390.getLegalRepr3() != null) {
+				if (!AonDocumentUtil.isValid(m390.getLegalRepr3().getDocument())) {
+					throw new IllegalArgumentException(
+							"El NIF del tercer representante para personas jurídicas no es correcto. (Apartado 4)");
+				}
+			}
+		}
+	}
 }

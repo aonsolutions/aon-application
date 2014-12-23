@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.fiscal.client.mod390;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod303Results;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -44,14 +43,14 @@ public class Page9 extends ResizeComposite implements RequiresResize {
 		Widget ui = page7Binder.createAndBindUi(this);
 		initWidget(ui);
 	}
-	
+/*	
 	public void setValue(Mod303Results result) {
 		box95.setValue(result.getDepositSum());
 		box96.setValue(result.getPaybackSum());
 		box97.setValue(result.getLastPeriodCompensateResult());
 		box98.setValue(result.getLastPeriodPaybackResult());
 	}
-
+*/
 	public void setValue(Mod390 m390) {
 		box95.setValue(m390.getBox95());
 		box96.setValue(m390.getBox96());
