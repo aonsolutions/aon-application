@@ -163,11 +163,19 @@ public class SQLContractDelayCalculatorContext extends
 			throws SQLException {
 		Collection<Extra> extras = Collections.emptyList();
 		Collection<Extra> agrementExtras = Collections.emptyList();
+		
+		/*
+		AgreementKey enterpriseAgreementKey = getEnterpriseAgreementKey();
+		if (enterpriseAgreementKey != null) {
+			agrementExtras = getAgreementExtras(agreementKey, startDate, endDate);
+			extras = getExtras(agrementExtras, startDate, endDate);
+		}*/
+		// TODO: Overriden Extras
 
-		Integer agreement = getAgreement();
+		AgreementKey agreementKey = getAgreementKey();
 
-		if (agreement != null) {
-			agrementExtras = getAgreementExtras(agreement, startDate, endDate);
+		if (agreementKey != null) {
+			agrementExtras = getAgreementExtras(agreementKey, startDate, endDate);
 			extras = getExtras(agrementExtras, startDate, endDate);
 		}
 
@@ -179,7 +187,7 @@ public class SQLContractDelayCalculatorContext extends
 
 	}
 
-	private Collection<Extra> getAgreementExtras(Integer agreement,
+	private Collection<Extra> getAgreementExtras(AgreementKey agreementKey,
 			Date startDate, Date endDate) throws SQLException {
 		Collection<Extra> extras = new LinkedList<Extra>();
 
@@ -192,9 +200,14 @@ public class SQLContractDelayCalculatorContext extends
 
 		try {
 			Connection connection = getConnection();
+			//@formatter:off
 			stmt = connection.prepareStatement("SELECT *"
-					+ " FROM agreement_extra" + " WHERE agreement= ?");
-			stmt.setInt(1, agreement);
+					+ " FROM agreement_extra" 
+					+ " WHERE agreement= ?"
+					+ " AND domain = ? ");
+			//@formatter:on
+			stmt.setInt(1, agreementKey.getId());
+			stmt.setInt(2, agreementKey.getDomain());
 			rs = stmt.executeQuery();
 			while (rs.next()) {
 				String extraIssue = rs

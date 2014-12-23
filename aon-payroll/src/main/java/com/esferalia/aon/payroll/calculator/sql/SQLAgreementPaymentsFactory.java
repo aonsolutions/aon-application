@@ -11,23 +11,26 @@ import java.util.Date;
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.ISystemPayment;
 import com.esferalia.aon.payroll.calculator.LRUCacheFactory;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 
 
 public class SQLAgreementPaymentsFactory 
-	implements LRUCacheFactory<Integer, Collection<IContractPayment>> {
-
+	implements LRUCacheFactory<AgreementKey, Collection<ISystemPayment>> {
+	
 	private static final String SQL = 
 		"SELECT * " 
 		+", " + ExpressionScope.AGREEMENT.ordinal() + " AS " + SQLContractPayment.SCOPE_ALIAS
 		+" FROM agreement_payment AS " + SQLContractPayment.PAYMENT_ALIAS
 		+" LEFT JOIN  payment_concept" 							// LEFT JOIN: payment_concept puede ser NULL
 		+"	ON payment_concept = payment_concept.id"
-		+" WHERE agreement = ?"
+		+" WHERE "+SQLContractPayment.PAYMENT_ALIAS+".domain = ?"
+		+" AND agreement = ?"
 		+" AND start_date <= ?"
 		+" AND ( end_date IS NULL"
-		+" OR end_date >= ? )";
+		+" OR end_date >= ? )"
+		;
 	
 	private PreparedStatement 		stmt;
 
@@ -50,16 +53,17 @@ public class SQLAgreementPaymentsFactory
 	}
 	
 	@Override
-	public Collection<IContractPayment> create(Integer agreementId) {
-		if ( agreementId == null ){
+	public Collection<ISystemPayment> create(AgreementKey agreementKey) {
+		if ( agreementKey == null ){
 			return Collections.emptyList();
 		}// LRUCache<K,V> as LinkedHasMap accepts null keys and/or values.
 		
 		ResultSet rs = null;
 		try {
-			stmt.setInt(1, agreementId);
+			stmt.setInt(1, agreementKey.getDomain());
+			stmt.setInt(2, agreementKey.getId());
 			rs = stmt.executeQuery();
-			return SQLCollections.paymentsCollection(rs);
+			return SQLCollections.systemPaymentsCollection(rs);
 		}catch (SQLException e) {
 			//TODO : ¿ Deberiamos crear una excepción espefícica como CreateException ? 
 			throw new RuntimeException(e);
@@ -86,8 +90,8 @@ public class SQLAgreementPaymentsFactory
 		String sql = CriteriaUtilities.toSQLString(criteria, SQL);    
 		this.stmt  = 
 			connection.prepareStatement(sql);
-		this.stmt.setDate(2, new java.sql.Date(endDate.getTime()) );
-		this.stmt.setDate(3, new java.sql.Date(startDate.getTime()) );
+		this.stmt.setDate(3, new java.sql.Date(endDate.getTime()) );
+		this.stmt.setDate(4, new java.sql.Date(startDate.getTime()) );
 	}
 	
 	

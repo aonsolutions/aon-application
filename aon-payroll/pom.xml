@@ -19,7 +19,19 @@
 					<workingDirectory>target</workingDirectory>
 				</configuration>
 			</plugin>
-		</plugins>
+			<plugin>
+			     <groupId>org.apache.maven.plugins</groupId>
+			     <artifactId>maven-surefire-plugin</artifactId>
+			     <configuration>
+			        <systemProperties>
+			          <property>
+			             <name>dbName</name>
+			             <value>aon_jooq_${buildNumber}</value>
+			          </property>
+			        </systemProperties>
+			     </configuration>
+			</plugin>
+   		</plugins>
 	</build>
 	<dependencies>
 		
@@ -118,5 +130,30 @@
 			<scope>compile</scope>
 			<version>3.2</version>
 		</dependency>
-	</dependencies>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.0.8</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.occam</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.watson</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.pool</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+		</dependencies>
 </project>

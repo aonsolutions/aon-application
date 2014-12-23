@@ -28,9 +28,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.IT_RATE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MALE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MORE_THAN_65;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY;
@@ -97,6 +95,7 @@ import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.ContextFunctions;
 import com.esferalia.aon.payroll.calculator.ContractLeaveLoader.Leave;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.DomainPayments;
 import com.esferalia.aon.payroll.calculator.HierarchyDeductions;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractCost;
@@ -123,13 +122,14 @@ import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
 import com.esferalia.aon.payroll.irpf.IrpfCalculator;
 import com.esferalia.aon.payroll.irpf.sql.SQLIrpfCalculatorContext;
 import com.esferalia.aon.payroll.sql.SQLConstants;
+import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelCategoryColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseActivityColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseCccColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PayrollWorkplaceColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
@@ -185,6 +185,7 @@ public class SQLContractSalaryCalculatorContext extends
 			+ " LEFT JOIN enterprise_activity ON (contract.enterprise_activity = enterprise_activity.id)"
 			+ " LEFT JOIN agreement_level_category ON (contract.agreement_level_category = agreement_level_category.id)"
 			+ " LEFT JOIN agreement_level ON (agreement_level.id = agreement_level_category.agreement_level)"
+			+ " LEFT JOIN agreement ON (agreement.id = agreement_level.agreement)"
 			+ ", person"
 			+ ", registry AS "
 			+ PERSON_REGISTRY
@@ -323,19 +324,30 @@ public class SQLContractSalaryCalculatorContext extends
 
 	private static final int CACHE_SIZE = 25;
 
-	public static class AgreementContextKey extends Pair<Integer, Integer> {
+	public static class AgreementContextKey {
 
-		public AgreementContextKey(Integer agreementId, Integer agreementLevelId) {
-			super(agreementId, agreementLevelId);
+		private Integer domain;
+		private Integer agreementId;
+		private Integer agreementLevelId;
+
+		public AgreementContextKey(Integer domain, Integer agreementId,
+				Integer agreementLevelId) {
+			this.domain = domain;
+			this.agreementId = agreementId;
+			this.agreementLevelId = agreementLevelId;
+		}
+
+		public Integer getDomain() {
+			return domain;
 		}
 
 		public Integer getAgreementId() {
-			return getFirst();
-		};
+			return agreementId;
+		}
 
 		public Integer getAgreementLevelId() {
-			return getSecond();
-		};
+			return agreementLevelId;
+		}
 
 	}
 
@@ -662,7 +674,7 @@ public class SQLContractSalaryCalculatorContext extends
 	private SQLCnae2009 cnae2009;
 	private LRUCache<Integer, ICalendar> calendars;
 	private SQLCalendarFactory calendarFactory;
-	private LRUCache<Integer, Collection<IContractPayment>> agreementPayments;
+	private LRUCache<AgreementKey, Collection<ISystemPayment>> agreementPayments;
 	private SQLAgreementPaymentsFactory agreementPaymentsFactory;
 	private LRUCache<AgreementContextKey, ExpressionContext> agreementExpressionContexts;
 	private SQLAgreementContextFactory agreementContextFactory;
@@ -784,7 +796,7 @@ public class SQLContractSalaryCalculatorContext extends
 
 		agreementPaymentsFactory = new SQLAgreementPaymentsFactory(connection,
 				this.startDate, this.endDate, this.paymentsCriteria);
-		this.agreementPayments = new LRUCache<Integer, Collection<IContractPayment>>(
+		this.agreementPayments = new LRUCache<AgreementKey, Collection<ISystemPayment>>(
 				CACHE_SIZE, agreementPaymentsFactory);
 
 		cccExpressionContexts = new LRUCache<CCCContextKey, ExpressionContext>(
@@ -847,8 +859,7 @@ public class SQLContractSalaryCalculatorContext extends
 			return cccExpressionContexts.get(new CCCContextKey(getCCCType(),
 					getSSRegime()));
 		} catch (Exception e) {
-			return cccExpressionContexts.get(new CCCContextKey(
-					null, null));
+			return cccExpressionContexts.get(new CCCContextKey(null, null));
 			// TODO: This is very simple, too much
 		}
 	}
@@ -1000,8 +1011,14 @@ public class SQLContractSalaryCalculatorContext extends
 
 	@Override
 	public Collection<IContractPayment> getAgreementPayments() {
-		Integer agreementId = getAgreement();
-		return agreementPayments.get(agreementId);
+		AgreementKey agreementKey = getAgreementKey();
+		Collection<ISystemPayment> payments = agreementPayments
+				.get(agreementKey);
+
+		AgreementKey enterpriseAgreementKey = getEnterpriseAgreementKey();
+		Collection<ISystemPayment> enterprisePayments = agreementPayments
+				.get(enterpriseAgreementKey);
+		return new DomainPayments(enterprisePayments, payments);
 	}
 
 	@Override
@@ -1364,10 +1381,37 @@ public class SQLContractSalaryCalculatorContext extends
 		this.agreementContextFactory = null;
 	}
 
-	protected Integer getAgreement() {
-		Object value = getObject(SQLConstants.AGREEMENT_LEVEL,
-				AgreementLevelColumns.AGREEMENT);
-		return value == null ? null : (Integer) value;
+	protected Integer getAgreementId() {
+		Object id = getObject(SQLConstants.AGREEMENT, AgreementColumns.ID);
+		return id == null ? null : (Integer) id;
+	}
+
+	protected Integer getAgreementDomain() {
+		Object domain = getObject(SQLConstants.AGREEMENT,
+				AgreementColumns.DOMAIN);
+		return domain == null ? null : (Integer) domain;
+	}
+
+	protected Integer getEnterpriseDomain() {
+		Object domain = getObject(SQLConstants.ENTERPRISE,
+				EnterpriseColumns.DOMAIN);
+		return domain == null ? null : (Integer) domain;
+	}
+
+	protected AgreementKey getAgreementKey() {
+		Object id = getObject(SQLConstants.AGREEMENT, AgreementColumns.ID);
+		Object domain = getObject(SQLConstants.AGREEMENT,
+				AgreementColumns.DOMAIN);
+		return id == null ? null : new AgreementKey((Integer) id,
+				(Integer) domain);
+	}
+
+	protected AgreementKey getEnterpriseAgreementKey() {
+		Object id = getObject(SQLConstants.AGREEMENT, AgreementColumns.ID);
+		Object domain = getObject(SQLConstants.ENTERPRISE,
+				EnterpriseColumns.DOMAIN);
+		return id == null ? null : new AgreementKey((Integer) id,
+				(Integer) domain);
 	}
 
 	// --------------------------------------------------------- Private methods
@@ -1435,11 +1479,25 @@ public class SQLContractSalaryCalculatorContext extends
 
 	private ExpressionContext getAgreementContext() throws SQLException,
 			ExpressionException {
-		Integer agreementId = getAgreement();
+
+		Integer agreementId = getAgreementId();
 		Integer agreementLevelId = getAgreementLevel();
-		AgreementContextKey agreementAndLevel = new AgreementContextKey(
+		Integer agreementDomain = getAgreementDomain();
+		
+		AgreementContextKey agreementAndLevelKey = new AgreementContextKey(agreementDomain,
 				agreementId, agreementLevelId);
-		return agreementExpressionContexts.get(agreementAndLevel);
+
+		ExpressionContext agreementCtx = agreementExpressionContexts.get(agreementAndLevelKey);
+
+		Integer enterpriseDomain = getEnterpriseDomain();
+		AgreementContextKey enterpriseAndLevel = new AgreementContextKey(enterpriseDomain,
+				agreementId, agreementLevelId);
+		ExpressionContext enterpriseCtx = agreementExpressionContexts.get(enterpriseAndLevel);
+		
+		ExpressionContext ctx = new ExpressionContext(agreementCtx);
+		ctx.add(enterpriseCtx);
+		
+		return ctx;
 	}
 
 	private Collection<IContractCost> getCCCCosts() throws AonException {

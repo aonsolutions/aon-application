@@ -20,6 +20,8 @@ import com.esferalia.aon.payroll.calculator.SimpleContractPayment;
 import com.esferalia.aon.payroll.calculator.SimpleSystemCost;
 import com.esferalia.aon.payroll.calculator.SimpleSystemDeduction;
 import com.esferalia.aon.payroll.calculator.SimpleSystemPayment;
+import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.AgreementPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemCostColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDeductionColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemPaymentColumns;
@@ -49,6 +51,26 @@ public class SQLCollections {
 			return systemPaymentList;
 		}
 
+	public static Collection<ISystemPayment> agreementPaymentsCollection(ResultSet rs) 
+			throws SQLException {
+			
+			SQLContractPayment sqlContractPayments = 
+				new SQLContractPayment(rs);
+			List<ISystemPayment> systemPaymentList = 
+				new ArrayList<ISystemPayment>();
+			
+			for (IContractPayment sqlContractPayment : sqlContractPayments) {
+				
+				SimpleSystemPayment systemPayment = 
+					new SimpleSystemPayment(sqlContractPayment);
+				systemPayment.setDomain(rs.getInt(AgreementPaymentColumns.DOMAIN));
+			
+				systemPaymentList.add(systemPayment);
+			}
+			
+			return systemPaymentList;
+		}
+
 	public static Collection<IContractPayment> paymentsCollection(ResultSet rs) 
 		throws SQLException {
 		
@@ -61,7 +83,6 @@ public class SQLCollections {
 			
 			SimpleContractPayment contractPayment = 
 				new SimpleContractPayment(sqlContractPayment);
-		
 			contractPaymentList.add(contractPayment);
 		}
 		

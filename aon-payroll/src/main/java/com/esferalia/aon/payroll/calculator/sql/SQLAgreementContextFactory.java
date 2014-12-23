@@ -24,16 +24,19 @@ import com.esferalia.aon.salary.expression.Period;
 public class SQLAgreementContextFactory implements
 		LRUCacheFactory<AgreementContextKey, ExpressionContext> {
 
-
+	// @formatter:off
 	private static final String AGREEMENT_DATA_SQL = "SELECT * "
-			+ " FROM `agreement_data`" + " WHERE agreement = ? "
-			+ " AND start_date <= ? " + " AND ( end_date IS NULL "
-			+ " OR end_date >= ? )";
+			+ " FROM `agreement_data`" + " WHERE domain = ? "
+			+ " AND agreement = ? " + " AND start_date <= ? "
+			+ " AND ( end_date IS NULL " + " OR end_date >= ? )";
+	// @formatter:on
 
+	// @formatter:off
 	private static final String AGREEMENT_LEVEL_DATA_SQL = "SELECT * "
-			+ " FROM `agreement_level_data`" + " WHERE agreement_level = ? "
-			+ " AND start_date <= ? " + " AND ( end_date IS NULL "
-			+ " OR end_date >= ? )";
+			+ " FROM `agreement_level_data`" + " WHERE domain = ? "
+			+ " AND agreement_level = ? " + " AND start_date <= ? "
+			+ " AND ( end_date IS NULL " + " OR end_date >= ? )";
+	// @formatter:on
 
 	private Date endDate;
 	private Date startDate;
@@ -42,11 +45,10 @@ public class SQLAgreementContextFactory implements
 	private PreparedStatement agreementDataStmt;
 	private PreparedStatement agreementLevelDataStmt;
 
-	private LRUCache<Integer, ExpressionContext> agreementDataCache;
+	private LRUCache<AgreementKey, ExpressionContext> agreementDataCache;
 
 	private Supplier<ExpressionContext> systemExpressionContextSupplier;
 
-	
 	public SQLAgreementContextFactory(Connection conn,
 			Supplier<ExpressionContext> systemExpressionCtxtSupplier,
 			Date startDate, Date endDate, OrderByList order)
@@ -73,12 +75,13 @@ public class SQLAgreementContextFactory implements
 		super.finalize();
 	}
 
-	public ExpressionContext create(Integer agreementId) {
+	public ExpressionContext create(AgreementKey agreementKey) {
 		try {
 			ExpressionContext expressionCtx = new ExpressionContext(
 					systemExpressionContextSupplier.get());
 
-			agreementDataStmt.setInt(1, agreementId);
+			agreementDataStmt.setInt(1, agreementKey.getDomain());
+			agreementDataStmt.setInt(2, agreementKey.getId());
 			loadData(agreementDataStmt, expressionCtx);
 
 			return expressionCtx;
@@ -96,15 +99,15 @@ public class SQLAgreementContextFactory implements
 		} // LRUCache<K,V> as LinkedHasMap accepts null keys and/or values.
 
 		try {
-			ExpressionContext parentContext = agreementDataCache.get(key
-					.getAgreementId());
-			ExpressionContext expressionCtx = new ExpressionContext(
-					parentContext);
+			ExpressionContext allContext = agreementDataCache
+					.get(new AgreementKey(key.getAgreementId(), key.getDomain()));
+			ExpressionContext levelCtx = new ExpressionContext(allContext);
 
-			agreementLevelDataStmt.setInt(1, key.getAgreementLevelId());
-			loadData(agreementLevelDataStmt, expressionCtx);
+			agreementLevelDataStmt.setInt(1, key.getDomain());
+			agreementLevelDataStmt.setInt(2, key.getAgreementLevelId());
+			loadData(agreementLevelDataStmt, levelCtx);
 
-			return expressionCtx;
+			return levelCtx;
 		} catch (SQLException e) {
 			// TODO : ¿ Deberiamos crear una excepción espefícica como
 			// CreateException ?
@@ -163,16 +166,16 @@ public class SQLAgreementContextFactory implements
 				AGREEMENT_DATA_SQL, orderByList);
 
 		agreementDataStmt = connection.prepareStatement(agreementDataSql);
-		agreementDataStmt.setDate(2, new java.sql.Date(endDate.getTime()));
-		agreementDataStmt.setDate(3, new java.sql.Date(startDate.getTime()));
+		agreementDataStmt.setDate(3, new java.sql.Date(endDate.getTime()));
+		agreementDataStmt.setDate(4, new java.sql.Date(startDate.getTime()));
 		dataStmts[0] = agreementDataStmt;
 
 		String agreementLevelDataSql = SQLContractSalaryCalculatorContext
 				.orderBy(AGREEMENT_LEVEL_DATA_SQL, orderByList);
 		agreementLevelDataStmt = connection
 				.prepareStatement(agreementLevelDataSql);
-		agreementLevelDataStmt.setDate(2, new java.sql.Date(endDate.getTime()));
-		agreementLevelDataStmt.setDate(3,
+		agreementLevelDataStmt.setDate(3, new java.sql.Date(endDate.getTime()));
+		agreementLevelDataStmt.setDate(4,
 				new java.sql.Date(startDate.getTime()));
 		dataStmts[1] = agreementLevelDataStmt;
 	}
@@ -186,18 +189,17 @@ public class SQLAgreementContextFactory implements
 	}
 
 	private void initAgreementDataContextCache() {
-		LRUCacheFactory<Integer, ExpressionContext> factory = new LRUCacheFactory<Integer, ExpressionContext>() {
+		LRUCacheFactory<AgreementKey, ExpressionContext> factory = new LRUCacheFactory<AgreementKey, ExpressionContext>() {
 			@Override
-			public ExpressionContext create(Integer agreementId) {
-				return SQLAgreementContextFactory.this.create(agreementId);
+			public ExpressionContext create(AgreementKey agreementKey) {
+				return SQLAgreementContextFactory.this.create(agreementKey);
 			}
 		};
-		this.agreementDataCache = new LRUCache<Integer, ExpressionContext>(25,
-				factory);
+		this.agreementDataCache = new LRUCache<AgreementKey, ExpressionContext>(
+				25, factory);
 	}
 
 	// ------------------------------------------------------------------------
 	//
-
 
 }

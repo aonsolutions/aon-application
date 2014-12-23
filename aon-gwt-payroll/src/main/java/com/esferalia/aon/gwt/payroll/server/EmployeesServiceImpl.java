@@ -1447,17 +1447,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					SQLUtils.date2sql(start), SQLUtils.date2sql(end),
 					workplaces);
 
-			//@formatter:off
-			ReportData reportData = new ReportData(
-					new ReportData.StringColumn("NIF"),
-					new ReportData.StringColumn("NOMBRE TRABAJADOR"),
+			// @formatter:off
+			ReportData reportData = new ReportData(new ReportData.StringColumn(
+					"NIF"), new ReportData.StringColumn("NOMBRE TRABAJADOR"),
 					new ReportData.DoubleColumn("PLUS TURNICIDAD"),
 					new ReportData.DoubleColumn("INCENTIVOS"),
 					new ReportData.DoubleColumn("EMBARGOS"),
 					new ReportData.DoubleColumn("ATRASOS"),
-					new ReportData.StringColumn("OBSERVACIONES")
-					);
-			//@formatter:on
+					new ReportData.StringColumn("OBSERVACIONES"));
+			// @formatter:on
 
 			int cecoCols = 0;
 
@@ -1484,9 +1482,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					values.add(ceco.getValue());
 				}
 
-				//@formatter:off
+				// @formatter:off
 				reportData.addRow(values.toArray());
-				//@formatter:on
+				// @formatter:on
 			}
 
 			return reportData;
@@ -1514,10 +1512,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			initFacesContext();
 			conn = getConnection();
 
-			//@formatter:off
-			ReportData reportData = new ReportData(
-					new ReportData.StringColumn("HOTEL"),
-					new ReportData.StringColumn("DEPARTAMENTO"),
+			// @formatter:off
+			ReportData reportData = new ReportData(new ReportData.StringColumn(
+					"HOTEL"), new ReportData.StringColumn("DEPARTAMENTO"),
 					new ReportData.StringColumn("PUESTO"),
 					new ReportData.IntColumn("SEMANA"),
 					new ReportData.DateColumn("FECHA"),
@@ -1525,29 +1522,21 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					new ReportData.BooleanColumn("CIERRE"),
 					new ReportData.IntColumn("HORAS"),
 					new ReportData.IntColumn("PERSONAL"),
-					new ReportData.DoubleColumn("PERSONAL EFECTIVO")
-					);
-			//@formatter:on
+					new ReportData.DoubleColumn("PERSONAL EFECTIVO"));
+			// @formatter:on
 
 			Report<FTELine> fteReport = JooqGPSReports.getFTEReport(conn,
 					SQLUtils.date2sql(start), SQLUtils.date2sql(end),
 					workplaces);
 
 			for (FTELine fteLine : fteReport) {
-				//@formatter:off
-				reportData.addRow(
-						fteLine.getHotel(),
-						fteLine.getSection(),
-						fteLine.getJob(),
-						fteLine.getWeek(),
-						fteLine.getDay(),
-						fteLine.getPerson(),
-						fteLine.isClosed(),
-						fteLine.getHours(),
-						fteLine.getStaff(),
-						fteLine.getRealStaff()
-						);
-				//@formatter:on
+				// @formatter:off
+				reportData.addRow(fteLine.getHotel(), fteLine.getSection(),
+						fteLine.getJob(), fteLine.getWeek(), fteLine.getDay(),
+						fteLine.getPerson(), fteLine.isClosed(),
+						fteLine.getHours(), fteLine.getStaff(),
+						fteLine.getRealStaff());
+				// @formatter:on
 			}
 
 			return reportData;
@@ -1576,50 +1565,39 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			initFacesContext();
 			conn = getConnection();
 
-			//@formatter:off
-			ReportData reportData = new ReportData(
-					new ReportData.StringColumn("HOTEL"),
-					new ReportData.StringColumn("DEPARTAMENTO"),
+			// @formatter:off
+			ReportData reportData = new ReportData(new ReportData.StringColumn(
+					"HOTEL"), new ReportData.StringColumn("DEPARTAMENTO"),
 					new ReportData.StringColumn("PUESTO"),
 					new ReportData.IntColumn("SEMANA"),
 					new ReportData.DateColumn("FECHA"),
 					new ReportData.StringColumn("PERSONA"),
 					new ReportData.BooleanColumn("CIERRE"),
-					new ReportData.IntColumn("V"),
-					new ReportData.IntColumn("FT"),
-					new ReportData.IntColumn("FR"),
-					new ReportData.IntColumn("LT"),
-					new ReportData.IntColumn("LL"),
-					new ReportData.IntColumn("LL-LT"),
-					new ReportData.IntColumn("HE"),
-					new ReportData.IntColumn("HFD-HE")
-					);
-			//@formatter:on
+					new ReportData.IntColumn("V"), new ReportData.IntColumn(
+							"FT"), new ReportData.IntColumn("FR"),
+					new ReportData.IntColumn("LT"), new ReportData.IntColumn(
+							"LL"), new ReportData.IntColumn("LL-LT"),
+					new ReportData.IntColumn("HE"), new ReportData.IntColumn(
+							"HFD-HE"));
+			// @formatter:on
 
 			Report<HolidayLine> holidayReport = JooqGPSReports
 					.getHolidayReport(conn, SQLUtils.date2sql(start),
 							SQLUtils.date2sql(end), workplaces);
 
 			for (HolidayLine holidayLine : holidayReport) {
-				//@formatter:off
-				reportData.addRow(
-						holidayLine.getHotel(),
-						holidayLine.getSection(),
-						holidayLine.getJob(),
-						holidayLine.getWeek(),
-						holidayLine.getDay(),
-						holidayLine.getPerson(),
-						holidayLine.isClosed(),
-						holidayLine.getV(),
-						holidayLine.getFT(),
-						holidayLine.getFR(),
-						holidayLine.getLT(),
-						holidayLine.getLL() ,
+				// @formatter:off
+				reportData.addRow(holidayLine.getHotel(),
+						holidayLine.getSection(), holidayLine.getJob(),
+						holidayLine.getWeek(), holidayLine.getDay(),
+						holidayLine.getPerson(), holidayLine.isClosed(),
+						holidayLine.getV(), holidayLine.getFT(),
+						holidayLine.getFR(), holidayLine.getLT(),
+						holidayLine.getLL(),
 						holidayLine.getLL() - holidayLine.getLT(),
 						holidayLine.getHE(),
-						holidayLine.getHFD() - holidayLine.getHE() 
-						);
-				//@formatter:on
+						holidayLine.getHFD() - holidayLine.getHE());
+				// @formatter:on
 			}
 
 			return reportData;
@@ -2725,7 +2703,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			ISalary dbSalary = getDBSalary(draft);
 			if (dbSalary != null)
 				salaryBuilder.setDbSalary(dbSalary);
-			else 
+			else
 				salaryBuilder.clearDb();
 		} catch (SalaryException e) {
 		} catch (ManagerBeanException e) {
@@ -2917,7 +2895,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			draft.setDatesWithChanges(datesWithChanges);
 
 			eval(draft.getId(), allLevels, allSalaryTable,
-					draft.getStartDate(), draft.getEndDate());
+					draft.getStartDate(), draft.getEndDate(), parentDomainId,
+					domainId);
 
 		} finally {
 			if (connection != null)
@@ -2944,7 +2923,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	private static void calculateAndSave(Connection conn, SalaryDraft draft)
 			throws SQLException {
-		if ( draft.hasDbSalary() )
+		if (draft.hasDbSalary())
 			deleteSalaries(conn, draft.getDbId());
 
 		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(conn);
@@ -4235,7 +4214,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	private static void eval(int agreementId, Set<Level> levels,
-			SalaryTable salaryTable, Date start, Date end) {
+			SalaryTable salaryTable, Date start, Date end, int... domainIds) {
 		// try to resolve some variables. Here we go.
 		Connection conn = null;
 		try {
@@ -4246,8 +4225,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					conn, start, end);
 
 			Supplier<ExpressionContext> systemCtxSupplier = () -> systemCtxFactory
-					.create(new CCCContextKey(null,null));
-			
+					.create(new CCCContextKey(null, null));
+
 			SQLAgreementContextFactory agreementCtxFactory = new SQLAgreementContextFactory(
 					conn, systemCtxSupplier, start, end,
 					ISQLContractSalaryCalculatorContext.NEWER);
@@ -4256,10 +4235,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					salaryTable.getVariables(0));
 
 			for (Level level : levels) {
+				ExpressionContext levelCtx = new ExpressionContext();
 
-				AgreementContextKey levelKey = new AgreementContextKey(
-						agreementId, level.getId());
-				ExpressionContext levelCtx = agreementCtxFactory.create(levelKey);
+				for (Integer domainId : domainIds) {
+					AgreementContextKey levelKey = new AgreementContextKey(
+							domainId, agreementId, level.getId());
+					levelCtx.add(agreementCtxFactory.create(levelKey));
+				}
 
 				for (Variable defVar : defVars)
 					if (!salaryTable.contains(level.getId(), defVar.getName()))

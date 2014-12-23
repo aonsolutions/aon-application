@@ -30,6 +30,7 @@ public class SQLAgreementSalaryCalculatorContext extends
 			+ " LEFT JOIN enterprise_activity ON (contract.enterprise_activity = enterprise_activity.id)"
 			+ " LEFT JOIN %s ON (contract.agreement_level_category = agreement_level_category.id)"
 			+ " LEFT JOIN agreement_level ON (agreement_level.id = agreement_level_category.agreement_level)"
+			+ " LEFT JOIN agreement ON (agreement.id = agreement_level.agreement)"
 			+ ", %s"
 			+ ", %s " 
 			+ ", %s" 
@@ -200,8 +201,6 @@ public class SQLAgreementSalaryCalculatorContext extends
 				WORKPLACE, ENTERPRISE, E_REGISTRY, RADDRESS);
 	}
 
-	
-	
 	
 	// ------------------------------------------------------------------------
 
