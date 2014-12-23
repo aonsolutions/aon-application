@@ -85,5 +85,8 @@ public class DelegateContractPayment implements IContractPayment {
 		return contractPayment.isDescriptionDecorable();
 	}
 	
+	public IContractPayment getContractPayment() {
+		return contractPayment;
+	}
 	
 }
