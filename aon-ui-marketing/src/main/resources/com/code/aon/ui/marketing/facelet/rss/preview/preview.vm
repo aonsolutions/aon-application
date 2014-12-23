@@ -25,11 +25,13 @@ $(document).ready(function() {
 		var feedurl = $('option:selected', obj).val();
 		
 		if (feedurl) {
+			feedurl = feedurl + "?nocache=" + (new Date).getTime() + '$!{URLSuffix}';
 			$('#test').rssfeed(feedurl, {$!{parameters}});
 		}
 	}
 #else
-	$('#test').rssfeed('${channelURL}rss-${channels.get(0).id}.xml$!{URLSuffix}');
+	var feedurl = '${channelURL}rss-${channels.get(0).id}.xml?nocache=' + (new Date).getTime() + '$!{URLSuffix}';
+	$('#test').rssfeed(feedurl, {$!{parameters}});
 #end
 });
 </script>
@@ -40,7 +42,7 @@ $(document).ready(function() {
 	<b>Canales RSS</b>
 	<select id="menu">
 	#foreach($channel in $channels)
-		<option value="${channelURL}rss-${channel.id}.xml$!{URLSuffix}">$esc.html(${channel.name})</option>
+		<option value="${channelURL}rss-${channel.id}.xml">$esc.html(${channel.name})</option>
 	#end
 	</select>
 	<br>

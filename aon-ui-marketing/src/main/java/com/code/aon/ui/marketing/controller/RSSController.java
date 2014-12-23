@@ -300,7 +300,7 @@ public class RSSController implements Serializable {
 			TemplateHelper th = velocityHelper.getTemplateHelper();
 			th.putInContext(ESC_TOOL_PARAMETER, new EscapeTool());
 			if ( date != null ) {
-				th.putInContext(URL_SUFFIX_PARAMETER, "?" + RSSServlet.DATE_PARAMETER + "="+date.getTime());
+				th.putInContext(URL_SUFFIX_PARAMETER, "&" + RSSServlet.DATE_PARAMETER + "="+date.getTime());
 			}
 			if (! StringUtils.isEmpty(limit) ) {
 				th.putInContext(PARAMETERS_PARAMETER, "limit:" + limit);
