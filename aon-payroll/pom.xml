@@ -26,7 +26,7 @@
 			        <systemProperties>
 			          <property>
 			             <name>dbName</name>
-			             <value>aon_jooq_${buildNumber}</value>
+			             <value>aon_jooq_</value>
 			          </property>
 			        </systemProperties>
 			     </configuration>

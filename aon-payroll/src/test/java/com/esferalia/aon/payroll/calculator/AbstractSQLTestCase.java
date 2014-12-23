@@ -2,10 +2,13 @@ package com.esferalia.aon.payroll.calculator;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.junit.After;
 import org.junit.Before;
+
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public abstract class AbstractSQLTestCase {
 
@@ -46,9 +49,16 @@ public abstract class AbstractSQLTestCase {
 		String dbName = getDbName();
 		String dbUser = getDbUser();
 		String dbPasswd = getDbPasswd();
-
-		String url = String.format("jdbc:mysql://%s:%s/%s", dbHost, dbPort,dbName);
+		
+		String url = String.format("jdbc:mysql://%s:%s", dbHost, dbPort,dbName);
 		connection = DriverManager.getConnection(url, dbUser, dbPasswd);
+		
+		ResultSet rs = connection.createStatement().executeQuery("SHOW DATABASES");
+		while( rs.next()) {
+			if ( rs.getString(1).startsWith(dbName) ) {
+				connection.createStatement().execute("use " + rs.getString(1) );
+			}
+		}
 	}
 	
 	@After
