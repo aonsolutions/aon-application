@@ -5,13 +5,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -402,6 +400,11 @@ public class ExpressionContext {
 	public <T> T getVariable(Object name, Date start, Date end, Class<T> toType) {
 		return (T) variables.get(name.toString(), new Period(start, end));
 	}
+
+	public void add(ExpressionContext ctx){
+		variables.putAll(ctx.variables);
+	}
+	
 
 	public List<ITimedResult<Object>> addExpression(IExpression expression,
 			Date start, Date end) throws ExpressionException {

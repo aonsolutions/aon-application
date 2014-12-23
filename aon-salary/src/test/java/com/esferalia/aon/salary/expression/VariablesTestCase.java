@@ -88,4 +88,59 @@ public class VariablesTestCase {
 		assertEquals(test_vars.get(4).getValue(new Period(month_end,month_end)), 1000.00);
 	}
 
+	@Test
+	public void testPutAll() {
+
+		Calendar calendar = Calendar.getInstance();
+
+		calendar.set(Calendar.DAY_OF_MONTH,
+				calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
+		Date month_start = calendar.getTime();
+		calendar.set(Calendar.DAY_OF_MONTH,
+				calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+		Date month_end = calendar.getTime();
+		calendar.set(Calendar.DAY_OF_MONTH,10);
+		Date month_tenth = calendar.getTime();
+		calendar.set(Calendar.DAY_OF_MONTH,9);
+		Date month_ninth = calendar.getTime();
+		
+		Variables variables = new Variables(var -> Collections.emptyList());
+		variables.put("TEST_VARS", new TimedObject<Double>(1.00, new Period(month_start, month_ninth)));
+		variables.put("TEST_VARS", new TimedObject<Double>(2.00, new Period(month_tenth, month_end)));
+		
+		// Test whole override
+		Variables other_variables = new Variables(var -> Collections.emptyList());
+		other_variables.put("TEST_VARS", new TimedObject<Double>(10.00, new Period(month_start, month_ninth)));
+		other_variables.put("TEST_VARS", new TimedObject<Double>(20.00, new Period(month_tenth, month_end)));
+		variables.putAll(other_variables);
+		List<ITimedVariable<?>> test_vars = variables.get("TEST_VARS");
+		assertEquals(test_vars.get(0).getPeriod(), new Period(month_start, month_ninth));
+		assertEquals(test_vars.get(0).getValue(new Period(month_start, month_ninth)), 10.00);
+		assertEquals(test_vars.get(1).getPeriod(), new Period(month_tenth, month_end));
+		assertEquals(test_vars.get(1).getValue(new Period(month_tenth, month_end)), 20.00);
+		
+		calendar.set(Calendar.DAY_OF_MONTH,15);
+		Date month_fiftenth = calendar.getTime();
+		calendar.set(Calendar.DAY_OF_MONTH,25);
+		Date month_twenthyfifth = calendar.getTime();
+		
+		calendar.set(Calendar.DAY_OF_MONTH,14);
+		Date month_fourteenth = calendar.getTime();
+		calendar.set(Calendar.DAY_OF_MONTH,26);
+		Date month_twenthysixth = calendar.getTime();
+		// Test partial override
+		other_variables = new Variables(var -> Collections.emptyList());
+		other_variables.put("TEST_VARS", new TimedObject<Double>(25.00, new Period(month_fiftenth, month_twenthyfifth)));
+		variables.putAll(other_variables);
+		test_vars = variables.get("TEST_VARS");
+		assertEquals(test_vars.get(0).getPeriod(), new Period(month_start, month_ninth));
+		assertEquals(test_vars.get(0).getValue(new Period(month_start, month_ninth)), 10.00);
+		assertEquals(test_vars.get(1).getPeriod(), new Period(month_tenth, month_fourteenth));
+		assertEquals(test_vars.get(1).getValue(new Period(month_tenth, month_fourteenth)), 20.00);
+		assertEquals(test_vars.get(2).getPeriod(), new Period(month_fiftenth, month_twenthyfifth));
+		assertEquals(test_vars.get(2).getValue(new Period(month_fiftenth, month_twenthyfifth)), 25.00);
+		assertEquals(test_vars.get(3).getPeriod(), new Period(month_twenthysixth, month_end));
+		assertEquals(test_vars.get(3).getValue(new Period(month_twenthysixth, month_end)), 20.00);
+	}
+
 }

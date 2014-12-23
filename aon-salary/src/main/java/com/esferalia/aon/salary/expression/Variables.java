@@ -16,7 +16,6 @@ import java.util.Set;
 
 import com.code.aon.AonVersion;
 
-
 public class Variables implements Comparator<ITimedVariable<?>> {
 
 	public static interface NotFoundHandler {
@@ -26,7 +25,7 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 	public static class NotFoundVariableError extends Error {
 
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-		
+
 		private String variableName;
 
 		public NotFoundVariableError(String variableName) {
@@ -165,6 +164,15 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		return vars.keySet();
 	}
 
+	public void putAll(Variables variables) {
+		for (Entry<String, List<ITimedVariable<?>>> entry : variables.vars
+				.entrySet()) {
+			for (ITimedVariable<?> timedVar: entry.getValue()) {
+				put(entry.getKey(),timedVar);
+			}
+		}
+	}
+
 	public void put(String name, ITimedVariable<?> var) {
 		List<ITimedVariable<?>> values = vars.get(name);
 		if (values == null) {
@@ -182,7 +190,7 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 					return;
 				} // Only one value, all ok.
 
-				// Fix NEXT value 
+				// Fix NEXT value
 				if (position + 1 < values.size()) {
 					ITimedVariable<?> next = values.get(position + 1);
 					if (intersects(var, next)) {
@@ -201,29 +209,31 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 							// antiguo valor.
 					}
 				}
-				
-				// Fix PREV value 
+
+				// Fix PREV value
 				if (position - 1 >= 0) {
 					ITimedVariable<?> prev = values.get(position - 1);
 					if (intersects(var, prev)) {
 						Date end = var.getPeriod().getStart();
-						Date start = prev.getPeriod().getStart(); // start remain untouch
+						Date start = prev.getPeriod().getStart(); // start
+																	// remain
+																	// untouch
 						if (Period.compare(start, end) >= 0) {
 							values.remove(position - 1);
-						} 
-						else {
+						} else {
 							end = Variables.add(end, -1);
 							ITimedVariable<?> wrapPrev = new WrapTimedVariable<Object>(
 									start, end, prev);
 							values.set(position - 1, wrapPrev);
-						} 
-						
-						end = var.getPeriod().getEnd(); 
-						if ( Period.compare(prev.getPeriod().getEnd(), end)>0 ){
+						}
+
+						end = var.getPeriod().getEnd();
+						if (Period.compare(prev.getPeriod().getEnd(), end) > 0) {
 							ITimedVariable<?> wrapPrev = new WrapTimedVariable<Object>(
-									Variables.add(end, +1), prev.getPeriod().getEnd(), prev);
+									Variables.add(end, +1), prev.getPeriod()
+											.getEnd(), prev);
 							values.add(position + 1, wrapPrev);
-							
+
 						}
 					} // Eliminamos
 				}
@@ -232,19 +242,19 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		}
 
 	}
-	
+
 	public void remove(String name, Period p) {
-		List<ITimedVariable<?>> values = vars.get(name);		
-		
-		if (values == null) 
+		List<ITimedVariable<?>> values = vars.get(name);
+
+		if (values == null)
 			return;
-		
+
 		Iterator<ITimedVariable<?>> iterator = values.iterator();
-		
-		while(iterator.hasNext()) {
-			
+
+		while (iterator.hasNext()) {
+
 			ITimedVariable<?> object = iterator.next();
-			if(object.getPeriod().compareTo(p) == 0) {				
+			if (object.getPeriod().compareTo(p) == 0) {
 				iterator.remove();
 				return;
 			}
@@ -394,7 +404,6 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		return ret;
 
 	}
-
 
 	protected Variables getSnapshot(Set<String> variables) {
 
