@@ -11,6 +11,7 @@ import org.jooq.lambda.Seq;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
+import com.esferalia.aon.occam.api.model.Agreement;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
@@ -23,9 +24,11 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.AccountingImpl;
+import com.esferalia.aon.occam.impl.jooq.AgreementImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
 import com.esferalia.aon.occam.impl.jooq.FiscalImpl;
 import com.esferalia.aon.occam.impl.jooq.SalaryImpl;
+import com.esferalia.aon.watson.error.AonCoreException;
 
 public class AON {
 
@@ -43,6 +46,10 @@ public class AON {
 	
 	private static IFiscal getFiscal() {
 		return new FiscalImpl();
+	}
+
+	private static IAgreement getAgreement() {
+		return new AgreementImpl();
 	}
 
 	// ********************************************
@@ -229,5 +236,10 @@ public class AON {
 		return getFiscal().getMod303Results(AONContext.getAONContext(domainName, domain), year);
 	}
 	
+	// 
+	
+	public static void saveAgreement(AONContext ctx, Agreement ...agreements) throws AonCoreException {
+		getAgreement().save(ctx, agreements);
+	}
 	
 }

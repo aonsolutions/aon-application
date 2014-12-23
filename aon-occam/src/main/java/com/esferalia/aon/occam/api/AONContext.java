@@ -49,14 +49,14 @@ public class AONContext {
 	private String domainName;
 	private int domainId;
 
-	private AONContext(Connection connection, String domainName, int domainId) {
+	public AONContext(Connection connection, String domainName, int domainId) {
 		this.domainName = domainName;
 		this.domainId = domainId;
 		this.connection = connection;
 		this.dslContext = DSL.using(connection,getDefaultSettings());
 	}
 
-	private AONContext(DSLContext dslContext, String domainName, int domainId) {
+	public AONContext(DSLContext dslContext, String domainName, int domainId) {
 		this.domainName = domainName;
 		this.domainId = domainId;
 		this.dslContext = dslContext;
