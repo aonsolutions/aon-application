@@ -13,29 +13,33 @@ import java.util.NoSuchElementException;
 
 import com.code.aon.AonVersion;
 import com.esferalia.aon.payroll.DelegateContractPayment;
-import com.esferalia.aon.salary.enumeration.PaymentType;
-import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.Period;
+import com.google.api.services.drive.Drive.Permissions.GetIdForEmail;
 
-public class CompositePayments extends CompositeCollection<IContractPayment> {
+public class CompositePayments<T extends IContractPayment> extends
+		CompositeCollection<T> {
 
-	public CompositePayments(Collection<IContractPayment>... payments) {
+	public CompositePayments(Collection<T>... payments) {
 		super(payments);
 	}
-	
+
 	@Override
-	public Iterator<IContractPayment> iterator() {
-		return new PaymentsIterator(super.iterator());
+	public Iterator<T> iterator() {
+		return new PaymentsIterator(super.iterator(), this);
 	}
 
-	private static class PaymentsIterator implements Iterator<IContractPayment> {
+	private static class PaymentsIterator<T extends IContractPayment>
+			implements Iterator<IContractPayment> {
 		private Iterator<IContractPayment> next;
 
-		private Iterator<IContractPayment> iterator;
+		private Iterator<T> iterator;
+		private CompositePayments<T> payments;
 		private Map<String, Map<Integer, List<Period>>> processed;
 
-		public PaymentsIterator(Iterator<IContractPayment> iterator) {
+		public PaymentsIterator(Iterator<T> iterator,
+				CompositePayments<T> payments) {
 			this.iterator = iterator;
+			this.payments = payments;
 			this.next = EmptyIterator.EMPTY_ITERATOR;
 			this.processed = new HashMap<String, Map<Integer, List<Period>>>();
 		}
@@ -60,7 +64,7 @@ public class CompositePayments extends CompositeCollection<IContractPayment> {
 
 		private Iterator<IContractPayment> nextImpl() {
 			while (iterator.hasNext()) {
-				IContractPayment payment = iterator.next();
+				T payment = iterator.next();
 				Iterator<IContractPayment> next = visit(payment);
 				if (next.hasNext()) {
 					return next;
@@ -69,41 +73,39 @@ public class CompositePayments extends CompositeCollection<IContractPayment> {
 			return EmptyIterator.EMPTY_ITERATOR;
 		}
 
-		private Iterator<IContractPayment> visit(IContractPayment payment) {
+		private Iterator<IContractPayment> visit(T payment) {
 			String name = payment.getName();
 			if (name == null) {
 				return iterator(payment);
 			}
 
-
 			Period period = new Period(payment.getStartDate(),
 					payment.getEndDate());
 
-			ExpressionScope scope = payment.getScope();
-			List<Period> periods = getProcessed(name, scope);
+			int level = payments.getLevel(payment);
+			List<Period> periods = getProcessed(name, level);
 
 			if (periods == null) {
 				periods = new LinkedList<Period>();
 				periods.add(period);
-				addProcessed(name, scope, periods);
+				addProcessed(name, level, periods);
 
 				return iterator(payment);
 			}
 
 			List<Period> diffs = Period.sub(period, periods);
-			addProcessed(name, scope, diffs);
+			addProcessed(name, level, diffs);
 
-			return new PeriodsContractPaymentIterator(payment, diffs.iterator());
+			return payments.getIterator4(payment, diffs.iterator());
 
 		}
 
-		private List<Period> getProcessed(String name, ExpressionScope scope) {
+		private List<Period> getProcessed(String name, int level) {
 
 			Map<Integer, List<Period>> levelPeriods = processed.get(name);
 			if (levelPeriods == null)
 				return null;
 
-			int level = getScopeLevel(scope);
 			List<Period> processed = new LinkedList<Period>();
 			for (Entry<Integer, List<Period>> entry : levelPeriods.entrySet()) {
 				if (entry.getKey() != level) {
@@ -114,9 +116,7 @@ public class CompositePayments extends CompositeCollection<IContractPayment> {
 			return processed;
 		}
 
-		private void addProcessed(String name, ExpressionScope scope,
-				List<Period> periods) {
-			int level = getScopeLevel(scope);
+		private void addProcessed(String name, int level, List<Period> periods) {
 			Map<Integer, List<Period>> levelPeriods = processed.get(name);
 			if (levelPeriods == null) {
 				levelPeriods = new HashMap<Integer, List<Period>>();
@@ -151,56 +151,58 @@ public class CompositePayments extends CompositeCollection<IContractPayment> {
 			}
 		}
 
-
-		private static Iterator<IContractPayment> iterator(
-				IContractPayment payment) {
+		private static <T extends IContractPayment> Iterator<T> iterator(
+				T payment) {
 			return Collections.nCopies(1, payment).iterator();
 		}
 
-		private static class PeriodsContractPaymentIterator extends
-				DelegateContractPayment implements Iterator<IContractPayment> {
+	}
+	
+	
+	
+	protected static class PeriodsContractPaymentIterator extends
+			DelegateContractPayment implements Iterator<IContractPayment> {
 
-			private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-			
-			private Period nextPeriod;
-			private Iterator<Period> periodsIt;
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
-			public PeriodsContractPaymentIterator(IContractPayment payment,
-					Iterator<Period> periodsIt) {
-				super(payment);
-				this.periodsIt = periodsIt;
-			}
+		private Period nextPeriod;
+		private Iterator<Period> periodsIt;
 
-			@Override
-			public boolean hasNext() {
-				return periodsIt.hasNext();
-			}
+		public PeriodsContractPaymentIterator(IContractPayment payment,
+				Iterator<Period> periodsIt) {
+			super(payment);
+			this.periodsIt = periodsIt;
+		}
 
-			@Override
-			public IContractPayment next() {
-				nextPeriod = periodsIt.next();
-				return this;
-			}
+		@Override
+		public boolean hasNext() {
+			return periodsIt.hasNext();
+		}
 
-			@Override
-			public void remove() {
-				throw new UnsupportedOperationException();
-			}
+		@Override
+		public IContractPayment next() {
+			nextPeriod = periodsIt.next();
+			return this;
+		}
 
-			@Override
-			public Date getEndDate() {
-				return nextPeriod.getEnd();
-			}
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
 
-			@Override
-			public Date getStartDate() {
-				return nextPeriod.getStart();
-			}
+		@Override
+		public Date getEndDate() {
+			return nextPeriod.getEnd();
+		}
+
+		@Override
+		public Date getStartDate() {
+			return nextPeriod.getStart();
 		}
 	}
 
-	private static int getScopeLevel(ExpressionScope scope) {
-		switch (scope) {
+	protected int getLevel(T payment) {
+		switch (payment.getScope()) {
 		case SYSTEM:
 			return 0;
 		case APPLICATION:
@@ -214,6 +216,11 @@ public class CompositePayments extends CompositeCollection<IContractPayment> {
 			return -1;
 
 		}
+	}
+	
+	protected Iterator<IContractPayment> getIterator4(T payment,
+			Iterator<Period> periodsIt) {
+		return new PeriodsContractPaymentIterator(payment, periodsIt);
 	}
 
 }
