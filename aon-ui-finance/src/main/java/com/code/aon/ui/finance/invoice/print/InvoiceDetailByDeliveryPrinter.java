@@ -12,8 +12,11 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.finance.Finance;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
@@ -39,11 +42,27 @@ public class InvoiceDetailByDeliveryPrinter {
 		return total!=null?total:null;
 	}
 	
+	public Double getTotalCommercialProduct(Integer invoiceId) {
+		Double total = null;
+		Collection<InvoiceDetail> collection = getCollection(invoiceId, false, null, ProductType.COMMERCIAL_PRODUCT);
+		if(!collection.isEmpty()){
+			total = 0.0;
+			for(InvoiceDetail detail: collection){
+				total += detail.getTaxableBase();
+			}
+		}
+		return total!=null?total:null;
+	}
+	
 	public Collection<InvoiceDetail> getCollection(Integer invoiceId, boolean productTypeOrder) {
 		return getCollection(invoiceId, productTypeOrder, null);
 	}
 	
 	public Collection<InvoiceDetail> getCollection(Integer invoiceId, boolean productTypeOrder, Boolean searchPrepayments) {
+		return getCollection(invoiceId, productTypeOrder, searchPrepayments, null);
+	}
+	
+	public Collection<InvoiceDetail> getCollection(Integer invoiceId, boolean productTypeOrder, Boolean searchPrepayments, ProductType type) {
 		List<InvoiceDetail> invoiceDetailList = new LinkedList<InvoiceDetail>();
 		Map<Integer, List<InvoiceDetail>> deliveryMap = new HashMap<Integer, List<InvoiceDetail>>();
 		try {
@@ -55,6 +74,9 @@ public class InvoiceDetailByDeliveryPrinter {
 			}
 			if (productTypeOrder) {
 				criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ITEM_PRODUCT_TYPE));
+			}
+			if (type!=null) {
+				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ITEM_PRODUCT_TYPE), type);
 			}
 			criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_LINE));
 			for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
@@ -79,6 +101,22 @@ public class InvoiceDetailByDeliveryPrinter {
 			LOGGER.log(Level.SEVERE, "Error obtaining invoiceDetailList Collection", e);
 		}
 		return invoiceDetailList;
+	}
+	
+	public Double getTotalFinanceAdvance(Integer invoiceId) {
+		try {
+			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), invoiceId);
+			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_ADVANCE), true);
+
+			Projection projection = Projection.sum(financeBean.getFieldName(IEntityAlias.FINANCE_AMOUNT));
+			Object value = financeBean.getUniqueResult(projection, criteria);
+			return ((value!=null)?((Double)value):(null));
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error obtaining finances total amount", e);
+		}
+		return null;
 	}
 	
 	protected Delivery obtainDelivery(InvoiceDetail invoiceDetail) {
