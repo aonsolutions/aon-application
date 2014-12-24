@@ -998,7 +998,7 @@ public class Mod190DAO {
 		mod190.setDomain(ctx.getDomainId());
 		mod190.setDocument(params.getDocument());
 		mod190.setName(params.getName());
-		mod190.setYear(params.getDefaultYear()!=null?params.getDefaultYear():2014);
+		mod190.setYear(year);
 		mod190.setAdministration((byte) (params.getAdministration()!=null?params.getAdministration():4));
 		mod190.setContactPerson(params.getContactPerson());
 		mod190.setContactPhone(params.getContactPhone());
