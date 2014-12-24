@@ -48,6 +48,22 @@ public class DBConsults {
 	private static String domain1=null;
 	private static Vector<FileInfo> vaux;
 
+	private static boolean esta(FileInfo fi,Integer user_id,DSLContext dslContext){
+		Result<Record1<Integer>> result = dslContext.select(USER_SCOPE.SCOPE)
+				.from(USER_SCOPE)
+				.where(USER_SCOPE.USER_ID.eq(user_id))
+				
+				.fetch();
+		
+		for (Record1<Integer> r: result) {
+			if(fi.getScope()!=null){
+				if(fi.getScope().getId().equals(r.value1())){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	public static Document getAllRattach(String domain,String domain2,Integer user_id, Boolean confidential, Integer domainId,Integer userDomainId) throws SQLException {
 		Connection connection = null;
 		try {
@@ -64,8 +80,12 @@ public class DBConsults {
 				DSLContext dslContext = DSL.using(connection,
 						JooqSettings.getDefaultSettings());
 				Condition c;
-				if(userDomainId!= domainId)
+
+				if(userDomainId!= domainId){
+
 					c=(RATTACH.SCOPE.isNotNull().or(RATTACH.SCOPE.isNull()));
+					
+				}
 				else
 					c = RATTACH.SCOPE.isNull();
 				Byte sh = (byte)RegistryAttachmentType.CORPORATE_IDENTITY.ordinal();//5;
@@ -114,6 +134,7 @@ public class DBConsults {
 				
 				for (Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer> record : username) {
 					FileInfo fi = newFileInfo(dslContext,domain,domain2,record);
+					
 					if (!fi.getConfidential() || (confidential && fi.getConfidential())){
 						filesGwt.add(fi);
 						if(fi.getDomain().equalsIgnoreCase(domain2) || fi.getIsParent())
@@ -124,7 +145,7 @@ public class DBConsults {
 				}
 				for (Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer> record : result) {
 					FileInfo fi = newFileInfo(dslContext,domain,domain2,record);
-					if (!fi.getConfidential() || (confidential && fi.getConfidential())){
+					if (!esta(fi,user_id,dslContext)&&(!fi.getConfidential() || (confidential && fi.getConfidential()))){
 						filesGwt.add(fi);
 						if(fi.getDomain().equalsIgnoreCase(domain2) || fi.getIsParent())
 							if(domain.equals(domain2))
@@ -789,7 +810,7 @@ public class DBConsults {
 				.where(DOMAIN.NAME.eq(domain)).fetch();
 						
 			return dslContext.insertInto(RATTACH,RATTACH.REGISTRY,RATTACH.DOMAIN,RATTACH.CATEGORY,RATTACH.MIMETYPE,RATTACH.DESCRIPTION,RATTACH.TYPE,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.ATTACH_DATE,RATTACH.DATA,RATTACH.DRIVE_ID,RATTACH.DPARENT_ID)
-						.values(reg.get(0).value1(),fi.getDomainId(),fi.getCategory(),fi.getMimetype(),fi.getTitle(),(byte)fi.getType(),fi.getScopeId(),fi.getSecurityLevel(),fi.getDateSql(),null,null,null).returning(RATTACH.ID).fetchOne().getId();
+						.values(reg.get(0).value1(),fi.getDomainId(),fi.getCategory(),fi.getMimetype(),fi.getTitle(),(byte)fi.getType(),fi.getScopeId(),fi.getSecurityLevel(),fi.getDateSql(),null,null,fi.getSize().toString()).returning(RATTACH.ID).fetchOne().getId();
 	
 		} finally {
 			if (connection != null)
@@ -879,14 +900,14 @@ public class DBConsults {
 		}
 	}
 	
-	public static Integer insertFileData(String domain,Integer id, byte[] a) throws SQLException{
+	public static void insertFileData(String domain,Integer id, byte[] a) throws SQLException{
 		Connection connection = null;
 		try {
 			connection = DatabaseSync.getConnection(domain);
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
-			return dslContext.update(RATTACH).set(RATTACH.DATA,a).where(RATTACH.ID.eq(id)).execute();
-
+			dslContext.update(RATTACH).set(RATTACH.DATA,a).where(RATTACH.ID.eq(id)).execute();
+			
 		} finally {
 			if (connection != null)
 				connection.close();

@@ -32,8 +32,8 @@ public class UploadFilesServlet extends UploadAction{
 	        
 	          
 	          String mimetype = item.getContentType();
-
-	  
+	          Long size = item.getSize();
+	          DocumentsServlet.setSize(size.intValue());
 	          DocumentsServlet.setOut(item.get());
 	          DocumentsServlet.setMimetype(mimetype);
 	        

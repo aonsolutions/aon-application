@@ -160,8 +160,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	public Vector<FileInfo> searchFile(String searchStr, Vector<FileInfo> files){
 		Vector<FileInfo> vector = new Vector<FileInfo>();
 		for (FileInfo fileInfo : files) {
-			if(StringUtils.contains(fileInfo.getTitle(), searchStr)){
-				
+			if(StringUtils.containsIgnoreCase(fileInfo.getTitle(), searchStr)){
 				vector.add(fileInfo);
 			}
 		}
@@ -383,6 +382,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		try {
 			//Integer domainId = DBConsults.getDomainId(domain, dom);
 			fileInfo.setDomainId(domainId);
+			fileInfo.setSize((Integer) getSize());
 			Integer id = DBConsults.insertFile(domain, fileInfo);
 			DBConsults.insertTagsFile(id, fi.getTags(), domain, domainId);
 			byte[] b = getOut();//.toByteArray();
@@ -390,7 +390,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			fileInfo.setData(b);
 			DomainGserviceaccount g = DatabaseSync
 					.getServiceAccount(domain);
-			if (g!=null){
+			if (g.getClientId()!=null){
 				Drive d = DriveUtils.serviceInitialize(g);
 				String[] types = { RegistryAttachmentType.DOCUMENT.toString() };// TODO
 				DriveUtils.types = types;
@@ -884,10 +884,22 @@ private abstract static class Document2HtmlConverter implements IDocument2HtmlCo
 		}
 	}
 	
-	
-	
+
+
+
 	abstract void transform(InputStream is, OutputStream os) throws Exception;
 	
+}
+static Integer size;
+
+
+public Integer getSize() {
+	return size;
+}
+
+
+public static void setSize(Integer sizea) {
+	size = sizea;
 }
 
 }

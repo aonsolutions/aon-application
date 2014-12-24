@@ -58,8 +58,8 @@ public class Utils {
 	    }
 	  }
 
-	static MultiWordSuggestOracle createOracle(Vector<com.esferalia.aon.gwt.document.shared.Domain> vector) {
-		MultiWordSuggestOracle oracleSons = new MultiWordSuggestOracle();
+	static AonSuggestOracle createOracle(Vector<com.esferalia.aon.gwt.document.shared.Domain> vector) {
+		AonSuggestOracle oracleSons = new AonSuggestOracle();
 
 		for (com.esferalia.aon.gwt.document.shared.Domain d : vector) {
 			oracleSons.add(d.getDescription()+" ( "+d.getName()+")");

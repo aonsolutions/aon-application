@@ -779,9 +779,9 @@ public class Documents extends Composite implements EntryPoint {
 		
 	}
 	
-	MultiWordSuggestOracle oracleSons;
-	MultiWordSuggestOracle createOracle(Vector<String> l) {
-		oracleSons = new MultiWordSuggestOracle();
+	AonSuggestOracle oracleSons;
+	AonSuggestOracle createOracle(Vector<String> l) {
+		oracleSons = new AonSuggestOracle();
 
 		for (String s : l) {
 			oracleSons.add(s);
@@ -1156,7 +1156,7 @@ public class Documents extends Composite implements EntryPoint {
                 	for (Tag t : lists.getTagListSon().getList()) {
                 		String s2 = lb.getItemText(lb.getSelectedIndex());
     					if(s2.substring(0, 1).equals(Character.toString((char)9660))){
-    						s2= s2.substring(0);
+    						s2= s2.substring(1);
     						if(t.getName().equals(s2))
     							tags.add(t);
     					}
@@ -1194,6 +1194,7 @@ public class Documents extends Composite implements EntryPoint {
 									}
 									aux.add(result);
 									docs.setFiles(aux);
+									// TODO si filter get(0) es del dominio padre¿?? x elllo no se carga el archvio al añadir uno nuevo
 									if(result.getDomain().equals(docs.getFilter().get(0).getDomain())){
 										aux = new Vector<FileInfo>();
 										for (FileInfo f : docs.getEfiles()) {
@@ -1202,7 +1203,8 @@ public class Documents extends Composite implements EntryPoint {
 										aux.add(result);
 										docs.setEfiles(aux);
 
-										
+										Window.alert(Boolean.toString(html.isVisible()));
+								
 										if(html.isVisible()){
 											Integer i = 0;
 
@@ -1675,24 +1677,33 @@ public class Documents extends Composite implements EntryPoint {
 					si.setCategory(null);
 				else
 					si.setCategory(s1);
-
+// TODO		
+ 
 				VerticalPanel vp = (VerticalPanel) grid.getWidget(5, 1);
 
 				Vector<String> v = new Vector<String>();
 				Vector<String> v2 = new Vector<String>();
 				HorizontalPanel hp = (HorizontalPanel) vp.getWidget(0);
+
 				ListBox lb2 = (ListBox) hp.getWidget(0);
 
 				String s2 = null;
 				for (int i = 0; i < lb2.getItemCount(); i++) {
+
 					if (lb2.isItemSelected(i)) {
+
 						s2 = lb2.getValue(i);
+
 						if(s2.substring(0, 1).equals(Character.toString((char)9660))|| s2.substring(0, 1).equals(Character.toString((char)9650)))
 							s2= s2.substring(1);
+
 					}
 				}
+
 				if ("-".equals(s2) || s2 == null)
+
 					si.setTag(null);
+					
 				else {
 					v.add(s2);
 
@@ -1705,6 +1716,8 @@ public class Documents extends Composite implements EntryPoint {
 						for (int j = 0; j < lb.getItemCount(); j++) {
 							if (lb.isItemSelected(j)) {
 								s = lb.getValue(j);
+								if(s.substring(0, 1).equals(Character.toString((char)9660))|| s.substring(0, 1).equals(Character.toString((char)9650)))
+									s= s.substring(1);
 							}
 						}
 						String ss = null;
@@ -1721,6 +1734,7 @@ public class Documents extends Composite implements EntryPoint {
 					si.setTag(v);
 					si.setYoTag(v2);
 				}
+
 				ListBox lb3 = (ListBox) grid.getWidget(6, 1);
 				String s3 = null;
 				for (int i = 0; i < lb3.getItemCount(); i++) {
@@ -1739,7 +1753,7 @@ public class Documents extends Composite implements EntryPoint {
 					vaux = docs.getServiconvenios();
 				else
 					vaux = docs.getEfiles();
-				
+
 				idoc.searchFile(si, vaux,docs.getFiles(),
 							new AsyncCallback<Vector<FileInfo>>() {
 
@@ -1774,7 +1788,6 @@ public class Documents extends Composite implements EntryPoint {
 
 							}
 						});
-
 				hide();
 				vertical = new VerticalPanel();
 			}

@@ -435,7 +435,11 @@ public abstract class DocumentsDialog extends CustomDialog {
 					lbs[k] = new ListBox();
 					lbs[k].addItem("-");
 					for (Tag t : lists.getTagList().getList()) {
-						lbs[k].addItem(t.getName());
+						if(t.getIsParent())
+							lbs[k].addItem(Character.toString((char)9650)+t.getName());
+						else if(t.getIsSon())
+							lbs[k].addItem(Character.toString((char)9660)+t.getName());
+						else lbs[k].addItem(t.getName());
 					}
 					HorizontalPanel hp = new HorizontalPanel();
 					for (int i = 0; i<lbs[k].getItemCount();i++) {
@@ -655,8 +659,12 @@ public abstract class DocumentsDialog extends CustomDialog {
 		grid.setWidget(4, 1, lb1);
 		bool = lb2.getItemCount() <= 2;
 		if (lb2.getItemCount() <= 2) {
+			VerticalPanel vp= new VerticalPanel();
+			HorizontalPanel hp = new HorizontalPanel();
+			hp.add(lb2);
+			vp.add(hp);
 			grid.setWidget(5, 0, new Label("Etiqueta"));
-			grid.setWidget(5, 1, lb2);
+			grid.setWidget(5, 1, vp);
 		} else {
 
 			h2 = new HorizontalPanel();
@@ -928,7 +936,11 @@ public abstract class DocumentsDialog extends CustomDialog {
 				lb2.addItem("-");
 				
 				for (Tag t : lists.getTagList().getList()) {
-					lb2.addItem(t.getName());
+					if(t.getIsParent())
+						lb2.addItem(Character.toString((char)9650)+t.getName());
+					else if(t.getIsSon())
+						lb2.addItem(Character.toString((char)9660)+t.getName());
+					else lb2.addItem(t.getName());
 				}
 				ListBox AndOr = new ListBox();
 				AndOr.addItem("Y");
@@ -978,7 +990,11 @@ public abstract class DocumentsDialog extends CustomDialog {
 				lb2.addItem("-");
 				
 				for (Tag t : lists.getTagList().getList()) {
-					lb2.addItem(t.getName());
+					if(t.getIsParent())
+						lb2.addItem(Character.toString((char)9650)+t.getName());
+					else if(t.getIsSon())
+						lb2.addItem(Character.toString((char)9660)+t.getName());
+					else lb2.addItem(t.getName());
 				}
 				
 				h2 = new HorizontalPanel();
