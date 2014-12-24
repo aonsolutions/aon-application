@@ -397,7 +397,7 @@ public class Mod390DAO {
 		mod390.setDomain(ctx.getDomainId());
 		mod390.setDocument(params.getDocument());
 		mod390.setEnterpriseName(params.getName());
-		mod390.setYear( 2014 );
+		mod390.setYear( year );
 		if (mod390.isLegalEntity()) mod390.setName(mod390.getEnterpriseName());
 		else {
 			String tmpName = mod390.getEnterpriseName();

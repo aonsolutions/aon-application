@@ -102,12 +102,12 @@ public class AppParamDAO {
 	}
 
 	public static FiscalParameters getFiscalParameters(AONContext ctx,
-			int domain) {
+			int year) {
 		FiscalParameters params = new FiscalParameters();
 		ctx.getDslContext()
 				.select(APP_PARAM.NAME, APP_PARAM.VALUE)
 				.from(APP_PARAM)
-				.where(APP_PARAM.DOMAIN.equal(domain))
+				.where(APP_PARAM.DOMAIN.equal(ctx.getDomainId()))
 				.and(APP_PARAM.NAME.like("FS_%"))
 				.and(APP_PARAM.VALUE.isNotNull())
 				.fetch()
@@ -126,9 +126,9 @@ public class AppParamDAO {
 						});
 		// En el caso de un dominio hijo o standalone, se
 		// rellenan los datos de document y name con los de company.
-		Company company = CompanyDAO.getCompany(ctx, domain);
+		Company company = CompanyDAO.getCompany(ctx, ctx.getDomainId());
 		params.setCompany(company.getId());
-		Domain dom = DomainDAO.getDomain(ctx, domain);
+		Domain dom = DomainDAO.getDomain(ctx, ctx.getDomainId());
 		if (dom.isStandalone() || dom.isChild()) {
 			params.setDocument(company.getDocument());
 			params.setName(company.getName());

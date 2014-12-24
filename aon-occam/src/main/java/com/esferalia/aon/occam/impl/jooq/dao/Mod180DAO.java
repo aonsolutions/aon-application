@@ -434,7 +434,7 @@ public class Mod180DAO {
 		mod180.setDomain(ctx.getDomainId());
 		mod180.setDocument(params.getDocument());
 		mod180.setName(params.getName());
-		mod180.setYear(params.getDefaultYear() != null ? params.getDefaultYear() : 2014);
+		mod180.setYear(year);
 		mod180.setAdministration(params.getAdministration() != null ? params.getAdministration() : 4);
 		mod180.setContactPerson(params.getContactPerson());
 		mod180.setContactPhone(params.getContactPhone());
