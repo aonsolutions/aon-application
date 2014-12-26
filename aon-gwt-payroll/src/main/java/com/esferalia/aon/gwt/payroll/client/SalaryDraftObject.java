@@ -435,9 +435,16 @@ public class SalaryDraftObject implements IContextProvider {
 	}
 
 	public Double getRawCgpBase() {
-		return salaryDraft.getRawCgcBase() 
-				+ salaryDraft.gethExtraBase()
-				+ salaryDraft.getNonHExtraBase();
+		Double rawCgcBase = salaryDraft.getRawCgcBase();
+		if (rawCgcBase == null)
+			return null;
+		Double hExtraBase = salaryDraft.gethExtraBase();
+		if (hExtraBase == null)
+			return null;
+		Double nonHExtraBase = salaryDraft.getNonHExtraBase();
+		if (nonHExtraBase == null)
+			return null;
+		return rawCgcBase + hExtraBase + nonHExtraBase;
 	}
 
 	public Double gethExtraBase() {

@@ -2069,28 +2069,32 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		dbCgcBaseLabel.setText(format(salaryDraftObject.getDbCgcBase()));
 		setDbStyleName(dbCgcBaseLabel, cgcBaseLabel);
 		Double rawCgcBase = salaryDraftObject.getRawCgcBase();
-		setWarnStyles(
-				cgcBaseLabel,
-				cgcBase != null && !cgcBase.equals(rawCgcBase),
-				"La Base por Contingecias Comunes "
-						+ format(rawCgcBase)
-						+ "\u20A0 ha sido "
-						+ (rawCgcBase > cgcBase ? "limitada al m\u00e1ximo permitido"
-								: "ampliada al m\u00ednimo obligatorio"));
+		if ( !NumberUtils.equals(cgcBase, rawCgcBase)) {
+			setWarnStyles(
+					cgcBaseLabel,
+					true,
+					"La Base por Contingecias Comunes "
+							+ format(rawCgcBase)
+							+ "\u20A0 ha sido "
+							+ (rawCgcBase > cgcBase ? "limitada al m\u00e1ximo permitido"
+									: "ampliada al m\u00ednimo obligatorio"));
+		}
 
 		Double cgpBase = salaryDraftObject.getCgpBase();
 		cgpBaseLabel.setText(format(cgpBase), displayChanges);
 		dbCgpBaseLabel.setText(format(cgpBase));
 		setDbStyleName(dbCgpBaseLabel, cgpBaseLabel);
 		Double rawCgpBase = salaryDraftObject.getRawCgpBase();
+		if ( !NumberUtils.equals(cgpBase, rawCgpBase)) {
 		setWarnStyles(
 				cgpBaseLabel,
-				cgpBase != null && !cgpBase.equals(rawCgpBase),
+				true,
 				"La Base por Accidentes de Trabajo y Enfermedades Profesionales  "
 						+ format(rawCgpBase)
 						+ "\u20A0 ha sido "
 						+ (rawCgpBase > cgpBase ? "limitada al m\u00e1ximo permitido"
 								: "ampliada al m\u00ednimo obligatorio"));
+		}
 
 		irpfBaseLabel.setText(format(salaryDraftObject.getIrpfBase()),
 				displayChanges);
@@ -3989,20 +3993,20 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		switch (type) {
 		case IRPF:
-			return amount / irpfBase * 100;
+			return NumberUtils.isValid(irpfBase) ? amount / irpfBase * 100 : null;
 			// case JOB_TRAINING:
 			// case UNEMPLOYMENT:
 			// case COMMON_CONTINGENCY:
 			// return amount / cgcBase * 100;
 		case FOGASA:
 		case PROFESSIONAL_CONTINGENCY:
-			return amount / cgpBase * 100;
+			return NumberUtils.isValid(cgpBase) ? amount / cgpBase * 100 : null;
 		case STRUCTURAL_OVERTIME:
-			return amount / hExtraBase * 100;
+			return NumberUtils.isValid(hExtraBase) ? amount / hExtraBase * 100 : null;
 		case NON_STRUCTURAL_OVERTIME:
-			return amount / nonHExtraBase * 100;
+			return NumberUtils.isValid(nonHExtraBase) ?  amount / nonHExtraBase * 100 : null;
 		default:
-			return amount / cgcBase * 100;
+			return NumberUtils.isValid(cgcBase) ? amount / cgcBase * 100 : null ;
 		}
 	}
 

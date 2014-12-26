@@ -43,56 +43,96 @@ public abstract class QuoteCalculator {
 	protected double structuralBase = 0;
 	protected double nonStructuralBase = 0;
 
-	public double getItBase() throws AonException {
+	public Double getItBase() throws AonException {
 		return itBase;
 	}
 
-	public double getCgcBase() throws AonException {
+	public Double getCgcBase() throws AonException {
 		return rawCgcBase;
 	}
 
-	public double getRawCgcBase() {
+	public Double getRawCgcBase() {
 		return rawCgcBase;
 	}
 
-	public double getRawCgpBase() {
+	public Double getRawCgpBase() {
 		return rawCgcBase + structuralBase + nonStructuralBase;
 	}
 
-	public double getCgpBase() throws AonException {
+	public Double getCgpBase() throws AonException {
 		return rawCgcBase + structuralBase + nonStructuralBase;
 	}
 
-	public double getProExtBase() throws AonException {
+	public Double getProExtBase() throws AonException {
 		return proExtBase;
 	}
 
-	public double getStructuralBase() throws AonException {
+	public Double getStructuralBase() throws AonException {
 		return structuralBase;
 	}
 
-	public double getNonStructuralBase() throws AonException {
+	public Double getNonStructuralBase() throws AonException {
 		return nonStructuralBase;
 	}
 
-	public abstract double getMaternityBase() throws AonException;
+	public abstract Double getMaternityBase() throws AonException;
 
-	public abstract double quote(IContractPayment payment, Date start, Date end,
+	public abstract Double quote(IContractPayment payment, Date start, Date end,
 			double amount) throws AonException;
 
 	public static class NonQuote extends QuoteCalculator {
 		private NonQuote() {
 		}
-
+		
 		@Override
-		public double quote(IContractPayment payment, Date start, Date end,
-				double amount) throws AonException {
-			return 0.00 ; // No cotiza...
+		public Double getItBase() throws AonException {
+			return null;
 		}
 
 		@Override
-		public double getMaternityBase() throws AonException {
-			return 0.00;
+		public Double getCgcBase() throws AonException {
+			return null;
+		}
+
+		@Override
+		public Double getRawCgcBase() {
+			return null;
+		}
+
+		@Override
+		public Double getRawCgpBase() {
+			return null;
+		}
+
+		@Override
+		public Double getCgpBase() throws AonException {
+			return null;
+		}
+
+		@Override
+		public Double getProExtBase() throws AonException {
+			return null;
+		}
+
+		@Override
+		public Double getStructuralBase() throws AonException {
+			return null;
+		}
+
+		@Override
+		public Double getNonStructuralBase() throws AonException {
+			return null;
+		}
+		
+		@Override
+		public Double quote(IContractPayment payment, Date start, Date end,
+				double amount) throws AonException {
+			return null ; // No cotiza...
+		}
+
+		@Override
+		public Double getMaternityBase() throws AonException {
+			return null;
 		}
 
 		private static QuoteCalculator SINGLETON = new NonQuote();
@@ -123,7 +163,7 @@ public abstract class QuoteCalculator {
 		}
 
 		@Override
-		public double getCgcBase() throws AonException {
+		public Double getCgcBase() throws AonException {
 			if (cgcBase == null) {
 				cgcBase = getLimitedCgcBase(rawCgcBase, context, salaryStart,
 						salaryEnd);
@@ -132,7 +172,7 @@ public abstract class QuoteCalculator {
 		}
 
 		@Override
-		public double getCgpBase() throws AonException {
+		public Double getCgpBase() throws AonException {
 			if (cgpBase == null) {
 				Double rawCgpBase = rawCgcBase + structuralBase
 						+ nonStructuralBase;
@@ -143,7 +183,7 @@ public abstract class QuoteCalculator {
 		}
 
 		@Override
-		public double getMaternityBase() throws AonException {
+		public Double getMaternityBase() throws AonException {
 			return bases.containsKey(MATERNITY.getName()) ? bases.get(MATERNITY
 					.getName()) : 0.00;
 		}
@@ -175,7 +215,7 @@ public abstract class QuoteCalculator {
 		}
 
 		@Override
-		public double quote(IContractPayment payment, Date start, Date end,
+		public Double quote(IContractPayment payment, Date start, Date end,
 				double amount) throws AonException {
 
 			final double quote = getQuote(payment, start, end, amount);
@@ -262,12 +302,12 @@ public abstract class QuoteCalculator {
 		}
 
 		@Override
-		public double getCgcBase() throws AonException {
+		public Double getCgcBase() throws AonException {
 			return super.getRawCgcBase();
 		}
 
 		@Override
-		public double getCgpBase() throws AonException {
+		public Double getCgpBase() throws AonException {
 			return super.getRawCgcBase() + getStructuralBase()
 					+ getNonStructuralBase();
 		}
@@ -301,7 +341,7 @@ public abstract class QuoteCalculator {
 		}
 
 		@Override
-		public double getCgcBase() throws AonException {
+		public Double getCgcBase() throws AonException {
 			double cgcBase = 0.00;
 			for (GeneralQuote calculator : calculators)
 				cgcBase += calculator.getCgcBase();
@@ -309,7 +349,7 @@ public abstract class QuoteCalculator {
 		}
 
 		@Override
-		public double getCgpBase() throws AonException {
+		public Double getCgpBase() throws AonException {
 			double cgpBase = 0.00;
 			for (GeneralQuote calculator : calculators)
 				cgpBase += calculator.getCgpBase();
@@ -317,7 +357,7 @@ public abstract class QuoteCalculator {
 		}
 
 		@Override
-		public double getRawCgcBase() {
+		public Double getRawCgcBase() {
 			double rawCgcBase = 0.00;
 			for (GeneralQuote calculator : calculators)
 				rawCgcBase += calculator.getRawCgcBase();
@@ -325,7 +365,7 @@ public abstract class QuoteCalculator {
 		}
 
 		@Override
-		public double getRawCgpBase() {
+		public Double getRawCgpBase() {
 			double rawCgpBase = 0.00;
 			for (GeneralQuote calculator : calculators)
 				rawCgpBase += calculator.getRawCgpBase();
@@ -333,7 +373,7 @@ public abstract class QuoteCalculator {
 		}
 
 		@Override
-		public double getMaternityBase() throws AonException {
+		public Double getMaternityBase() throws AonException {
 			double maternityBase = 0.00;
 			for (GeneralQuote calculator : calculators)
 				maternityBase += calculator.getMaternityBase();
@@ -341,7 +381,7 @@ public abstract class QuoteCalculator {
 		}
 
 		@Override
-		public double quote(IContractPayment payment, Date start, Date end,
+		public Double quote(IContractPayment payment, Date start, Date end,
 				double amount) throws AonException {
 			double quote = 0.00;
 			for (GeneralQuote calculator : calculators) {

@@ -226,26 +226,30 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 
 	@Override
 	public void setItBase(Double itBase) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.IT_BASE, itBase);
+		if (itBase != null)
+			insertMoreSalary = insertMoreSalary.set(SALARY.IT_BASE, itBase);
 
 	}
 
 	@Override
 	public void setRawCgcBase(Double rawCgcBase) {
-		insertMoreSalary = insertMoreSalary
-				.set(SALARY.RAW_CGC_BASE, rawCgcBase);
+		if (rawCgcBase != null)
+			insertMoreSalary = insertMoreSalary.set(SALARY.RAW_CGC_BASE,
+					rawCgcBase);
 
 	}
 
 	@Override
 	public void setCgcBase(Double cgcBase) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.CGC_BASE, cgcBase);
+		if (cgcBase != null)
+			insertMoreSalary = insertMoreSalary.set(SALARY.CGC_BASE, cgcBase);
 
 	}
 
 	@Override
 	public void setCgpBase(Double cgpBase) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.CGP_BASE, cgpBase);
+		if (cgpBase != null)
+			insertMoreSalary = insertMoreSalary.set(SALARY.CGP_BASE, cgpBase);
 
 	}
 
@@ -257,30 +261,36 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 
 	@Override
 	public void setProExtBase(Double proExtBase) {
-		insertMoreSalary = insertMoreSalary
-				.set(SALARY.PRO_EXT_BASE, proExtBase);
+		if (proExtBase != null)
+			insertMoreSalary = insertMoreSalary.set(SALARY.PRO_EXT_BASE,
+					proExtBase);
 	}
 
 	@Override
 	public void setIrpfBase(Double irpfBase) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.IRPF_BASE, irpfBase);
+		if (irpfBase != null)
+			insertMoreSalary = insertMoreSalary.set(SALARY.IRPF_BASE, irpfBase);
 	}
 
 	@Override
 	public void setInkindIrpfBase(Double inkindIrpfBase) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.INKIND_IRPF_BASE,
-				inkindIrpfBase);
+		if (inkindIrpfBase != null)
+			insertMoreSalary = insertMoreSalary.set(SALARY.INKIND_IRPF_BASE,
+					inkindIrpfBase);
 	}
 
 	@Override
 	public void setHExtraBase(Double hExtraBase) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.HEXTRA_BASE, hExtraBase);
+		if (hExtraBase != null)
+			insertMoreSalary = insertMoreSalary.set(SALARY.HEXTRA_BASE,
+					hExtraBase);
 	}
 
 	@Override
 	public void setNonHExtraBase(Double nonHExtraBase) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.NON_HEXTRA_BASE,
-				nonHExtraBase);
+		if (nonHExtraBase != null)
+			insertMoreSalary = insertMoreSalary.set(SALARY.NON_HEXTRA_BASE,
+					nonHExtraBase);
 	}
 
 	@Override
@@ -382,30 +392,38 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 			String description, Date startDate, Date endDate, IPayment payment,
 			Map<String, ITimedVariable<?>> context) {
 
-
 		if (isSiblingOfPrevious(payment)) {
-			tax += prevPayment.getIrpf();
-			quote += prevPayment.getQuote();
-			amount += prevPayment.getAmount();
-			insertMorePayment.set(SALARY_PAYMENT.IRPF, tax);
-			insertMorePayment.set(SALARY_PAYMENT.QUOTE, quote);
-			insertMorePayment.set(SALARY_PAYMENT.AMOUNT, amount);
+			if (prevPayment.getIrpf() != null) {
+				tax += prevPayment.getIrpf();
+				insertMorePayment.set(SALARY_PAYMENT.IRPF, tax);
+			}
+			if (prevPayment.getQuote() != null){
+				quote += prevPayment.getQuote();
+				insertMorePayment.set(SALARY_PAYMENT.QUOTE, quote);
+			}
+			if (prevPayment.getAmount() != null){
+				amount += prevPayment.getAmount();
+				insertMorePayment.set(SALARY_PAYMENT.AMOUNT, amount);
+			}
 		} else {
-			
-			InsertSetStep<SalaryPaymentRecord>  insertPayment = insertMorePayment == null ? dslContext
+
+			InsertSetStep<SalaryPaymentRecord> insertPayment = insertMorePayment == null ? dslContext
 					.insertInto(SALARY_PAYMENT) : insertMorePayment.newRecord();
 			PaymentType type = payment.getType();
 
 			insertMorePayment = insertPayment
 					.set(SALARY_PAYMENT.DOMAIN, this.domainId)
 					.set(SALARY_PAYMENT.SALARY, salaryId)
-					.set(SALARY_PAYMENT.AMOUNT, amount)
-					.set(SALARY_PAYMENT.QUOTE, quote).set(SALARY_PAYMENT.IRPF, tax)
 					.set(SALARY_PAYMENT.PAYMENT_CONCEPT, payment.getName())
-					// .set(SALARY_PAYMENT.EXPRESSION, payment.getExpression())
 					.set(SALARY_PAYMENT.DESCRIPTION, description)
 					.set(SALARY_PAYMENT.TYPE,
 							type != null ? (byte) type.ordinal() : null);
+			if ( tax != null )
+				insertMorePayment = insertMorePayment.set(SALARY_PAYMENT.IRPF, tax);
+			if ( quote != null )
+				insertMorePayment = insertMorePayment.set(SALARY_PAYMENT.QUOTE, quote);
+			if ( amount != null )
+				insertMorePayment = insertMorePayment.set(SALARY_PAYMENT.AMOUNT, amount);
 		}
 
 		prevPayment.setIrpf(tax);
