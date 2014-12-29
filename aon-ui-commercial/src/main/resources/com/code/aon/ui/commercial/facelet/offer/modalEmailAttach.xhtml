@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showEmailOptionWindow">
+		<aon:if test="#{offer.showEmailOptionWindow}">
+			<rich:modalPanel id="emailOptionModalPanel" minHeight="#{offer.includeEmailSddMandateReport?'400':'200'}"
+				minWidth="#{offer.includeEmailSddMandateReport?'500':'250'}"
+				rendered="#{offer.showEmailOptionWindow}"
+				showWhenRendered="true" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{bundle.webmail_attach_file}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showEmailOptionWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{offer.showEmailOptionWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="emailOptionForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="emailOption-accept"
+										value="#{bundle.aon_accept}"
+										actionListener="#{offer.onSendEmail}"
+										reRender="showEmailOptionWindow, showNewMessageWindow"
+										styleClass="aon-finding-toolbar-item aon-icon-accept">
+										<rich:componentControl for="emailOptionModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{offer.showEmailOptionWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 0.5em;">
+
+								    <aon:panelGrid columns="1" styleClass="aon-width-all"
+								    	columnClasses="aon-panelGrid-even">
+									    <aon:div>
+									        <aon:selectBooleanCheckbox id="includeEmailOfferReport"
+												value="#{offer.includeEmailOfferReport}" />
+									    	<aon:outputLabel for="includeEmailOfferReport"
+												value="#{bundle.commercial_offer_email_include_offer}" />
+									    </aon:div>
+									    
+									    <aon:div>
+									        <aon:selectBooleanCheckbox id="includeEmailOfferAttach"
+												value="#{offer.includeEmailOfferAttach}" />
+									    	<aon:outputLabel for="includeEmailOfferAttach"
+												value="#{bundle.commercial_offer_email_include_attach}" />
+										</aon:div>
+	
+									    <aon:div>
+					                        <aon:selectBooleanCheckbox id="includeEmailSddMandateReport"
+												value="#{offer.includeEmailSddMandateReport}" >
+												<a4j:support event="onclick" ajaxSingle="true"
+													reRender="emailOptionModalPanel" />
+											</aon:selectBooleanCheckbox>
+											<aon:outputLabel for="includeEmailSddMandateReport"
+												value="#{bundle.commercial_offer_email_include_sddMandate}" />
+									    </aon:div>
+								    </aon:panelGrid>
+									    
+									<aon:panel rendered="#{offer.includeEmailSddMandateReport}">
+										<f:facet name="header">
+											<aon:panelGroup>
+												<aon:outputText value="#{bundle.finance_sddMandate_module}" />
+											</aon:panelGroup>
+										</f:facet>
+									    <aon:panelGrid columns="2" style="width: 100%;">
+											<aon:outputLabel for="sddMandate_sign_date" 
+												value="#{bundle.finance_sddMandate_sign_date}" />
+											<aon:selectInputDate id="sddMandate_sign_date"
+												disabled="#{!offer.includeEmailSddMandateReport}"
+												value="#{offer.sddMandate.signDate}"
+												timeZone="#{timeZoneController.timeZone}"
+												popupDateFormat="#{bundle.aon_date_pattern}" />
+					
+											<aon:outputLabel for="sddMandate_reference-all"
+												value="#{bundle.aon_reference}" />
+											<aon:inputText id="sddMandate_reference-all"
+												disabled="#{!offer.includeEmailSddMandateReport}"
+												value="#{offer.sddMandate.reference}" />
+											
+											<aon:outputLabel for="sddMandate_paymentType-all"
+												value="#{bundle.finance_sddMandate_paymentType}" />
+											<aon:selectOneRadio id="sddMandate_paymentType-all" layout="pageDirection"
+												disabled="#{!offer.includeEmailSddMandateReport}"
+												value="#{offer.sddMandate.recurrentPayment}">
+												<f:selectItem  itemValue="#{true}" 
+													itemLabel="#{bundle.finance_sddMandate_recurrent}" />
+												<f:selectItem itemValue="#{false}" 
+													itemLabel="#{bundle.finance_sddMandate_oneOff}" />
+											</aon:selectOneRadio>
+									     </aon:panelGrid>
+									</aon:panel>
+									
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</aon:if>
+	</aon:panelGroup>
+
+</ui:composition>

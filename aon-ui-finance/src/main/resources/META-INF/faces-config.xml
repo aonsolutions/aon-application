@@ -4191,6 +4191,42 @@
 			</list-entries>
 		</managed-property>						
 	</managed-bean>
+	
+	<!--  **** SEPA Direct Debit Mandate **** -->
+	<managed-bean>
+		<managed-bean-name>sddMandate</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.finance.controller.SddMandateController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>sddMandate</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.customer.Customer</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Customer_registry_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{sddMandateSearch}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>sddMandateSearch</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.customer.event.CustomerSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 
 	<!-- ========================================================== -->
 	<!-- ======================= LOOKUP =========================== -->
@@ -4738,6 +4774,18 @@
 		<navigation-case>
 			<from-outcome>fbatchExporter_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/finance/facelet/fbatchExporter/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== SEPA Direct Debit Mandate ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>sddMandate_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/sddMandate/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>sddMandate_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/sddMandate/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>   
 

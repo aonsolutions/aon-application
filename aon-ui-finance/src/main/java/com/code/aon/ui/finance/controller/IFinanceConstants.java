@@ -113,5 +113,7 @@ public interface IFinanceConstants {
 	String POS_DEFAULT_CUSTOMER_ID = "POS_CUSTOMER_ID";
 	
 	String EXPORTER_CONTROLLER_NAME = "exporter";
+	
+	String REPORT_TEMPLATE_SDD_MANDATE = "sddMandate";
 
 }

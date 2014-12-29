@@ -948,5 +948,26 @@
 			<param id="calculator" value="#{posClosing.getCalculator}" />
 		</params>
 	</report>
+	
+	<!--  *********  SEPA Direct Debit Mandate  ********* -->
+	<report id="sddMandate" description="SEPA Direct Debit Mandate's Report">
+		<template path="/com/code/aon/ui/finance/report/sddMandate.jasper"/>
+		<collection provider="#{sddMandate}" forceRefresh="true"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}" />
+			<param id="printLogo" value="#{company.isPrintLogo}" />
+			<param id="printName" value="#{company.getPrintName}" />
+			<param id="printNif" value="#{company.getPrintNif}" />
+			<param id="printAddress" value="#{company.getPrintAddress}" />
+		</params>
+	</report>
 
 </report-config>

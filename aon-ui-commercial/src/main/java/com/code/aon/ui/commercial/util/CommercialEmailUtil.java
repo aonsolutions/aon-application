@@ -2,6 +2,7 @@ package com.code.aon.ui.commercial.util;
 
 import static com.code.aon.ui.common.ICommonMessages.COMMERCIAL_OFFER_EMAIL_BODY;
 import static com.code.aon.ui.common.ICommonMessages.COMMERCIAL_OFFER_EMAIL_SUBJECT;
+import static com.code.aon.ui.common.ICommonMessages.COMMERCIAL_OFFER_SDD_MANDATE_EMAIL_BODY;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,10 +14,10 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferAttachment;
 import com.code.aon.commercial.Target;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
@@ -28,6 +29,8 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
+import com.code.aon.ui.finance.SddMandateObject;
+import com.code.aon.ui.finance.util.FinanceEmailUtil;
 import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
@@ -38,17 +41,33 @@ public class CommercialEmailUtil extends CompanyEmailUtil {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public void initMessageController( MessageController messageController, Offer offer ) throws ManagerBeanException, IOException, ReportException {
+		initMessageController( messageController, offer, null, true, true, false);
+	}
+	
+	public void initMessageController( MessageController messageController, Offer offer, SddMandateObject sddMandateObject, boolean includeOffer, boolean includeOfferAttach, boolean includeSddMandate) throws ManagerBeanException, IOException, ReportException {
 		String[] emails = null;
 		Target target = offer.getTarget();
 		if ( target != null ) {
 			emails = getAdministrativeEmails(target.getRegistry());
 		}
-		initMessageController(messageController, emails, getEmailBody(offer));
+		initMessageController(messageController, emails);
 		messageController.setSubject( getEmailSubject(offer) );
-		messageController.addAttachment(getOfferFile(offer));
-		for( AonFile aonFile : getOfferAttachemnts(offer) ) {
-			messageController.addAttachment(aonFile);
-		}		
+		String bodyMessage = "";
+		if(includeOffer){
+			bodyMessage += getEmailOfferBody(offer);
+			messageController.addAttachment(getOfferFile(offer));
+		}
+		if(includeOfferAttach){
+			for( AonFile aonFile : getOfferAttachemnts(offer) ) {
+				messageController.addAttachment(aonFile);
+			}		
+		}
+		if(includeSddMandate){
+			bodyMessage += getEmailSddMandateBody(offer);
+			FinanceEmailUtil emailUtil = new FinanceEmailUtil();
+			messageController.addAttachment(emailUtil.getSddMandateReport(sddMandateObject));
+		}
+		messageController.updateMessageBody( this.getEmailContent(bodyMessage) );
 	}
 	
 	public String getEmailSubject( Offer offer ) {
@@ -56,8 +75,13 @@ public class CommercialEmailUtil extends CompanyEmailUtil {
 		return MessageFormat.format(message, offer.getReferenceCode() );
 	}
 	
-	public String getEmailBody( Offer offer ) throws UnsupportedEncodingException {
+	public String getEmailOfferBody( Offer offer ) throws UnsupportedEncodingException {
 		String bodyMessage = AonUtil.getMessage(COMMERCIAL_OFFER_EMAIL_BODY); 
+		return MessageFormat.format(bodyMessage, offer.getReferenceCode(), offer.getIssueDate() );
+	}
+
+	public String getEmailSddMandateBody( Offer offer ) throws UnsupportedEncodingException {
+		String bodyMessage = AonUtil.getMessage(COMMERCIAL_OFFER_SDD_MANDATE_EMAIL_BODY); 
 		return MessageFormat.format(bodyMessage, offer.getReferenceCode(), offer.getIssueDate() );
 	}
 	

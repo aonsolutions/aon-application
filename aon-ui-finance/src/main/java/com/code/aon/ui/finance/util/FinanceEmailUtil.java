@@ -8,8 +8,11 @@ import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_SEND_EMAIL;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_SEND_EMAIL_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_WITHOUT_EMAIL;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 
@@ -24,8 +27,8 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.AonException;
 import com.code.aon.AonVersion;
+import com.code.aon.common.AonException;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
@@ -35,8 +38,10 @@ import com.code.aon.facturae.FacturaeWriter;
 import com.code.aon.finance.Invoice;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
+import com.code.aon.ui.finance.SddMandateObject;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.InvoiceController;
+import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.bean.AonMessage;
@@ -117,6 +122,21 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 		aonFile.setFile(file);	
 		aonFile.setFileName( fileName + ".pdf" );
 		aonFile.setMimeType(MimeType.MIME_PDF);
+		return aonFile;
+	}
+	
+	public AonFile getSddMandateReport(SddMandateObject sddMandateObject) throws ReportException, IOException {
+		AonFile aonFile = new AonFile();
+		File file = File.createTempFile( "ssdMandate-temp", "." + MimeType.MIME_PDF.getExtension() );
+		aonFile.setFile( file );
+		aonFile.setFileName( "Domiciliacion-Bancaria-SEPA" + "." + MimeType.MIME_PDF.getExtension() );
+		aonFile.setMimeType(MimeType.MIME_PDF);
+
+		ReportManager reportManager = new ReportManager();
+		reportManager.setCollectionProvider( sddMandateObject );
+		OutputStream out = new BufferedOutputStream( new FileOutputStream(file) );
+		reportManager.execute( out, REPORT_TEMPLATE_SDD_MANDATE );
+		out.close();
 		return aonFile;
 	}
 

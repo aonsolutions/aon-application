@@ -236,6 +236,7 @@ public interface ICommonMessages {
 	
 	String COMMERCIAL_OFFER_EMAIL_SUBJECT = "commercial_offer_email_subject";
 	String COMMERCIAL_OFFER_EMAIL_BODY = "commercial_offer_email_body";
+	String COMMERCIAL_OFFER_SDD_MANDATE_EMAIL_BODY = "commercial_offer_email_body_sddMandate";
 	String COMMERCIAL_COMMISSION_DATES_ERROR = "commercial_commission_dates_error";	
 	String COMMERCIAL_TARGET_NO_REMOVE = "commercial_target_no_remove";
 	String COMMERCIAL_TARGET_IS_CUSTOMER = "commercial_target_is_customer";
@@ -360,6 +361,14 @@ public interface ICommonMessages {
 	String FINANCE_EXPORTER_NOT_CONFIG = "finance_exporter_not_config";
 	String FINANCE_EXPORTER_NO_DATA = "finance_exporter_no_data";
 	String FINANCE_NONE = "finance_none";
+	String FINANCE_SDD_MANDATE_EMAIL_BODY = "finance_sddMandate_email_body";
+	String FINANCE_SDD_MANDATE_EMAIL_SENDED_TO = "finance_sddMandate_email_sended_to";
+	String FINANCE_SDD_MANDATE_SEND_EMAIL_FINISH = "finance_sddMandate_send_email_finish";
+	String FINANCE_SDD_MANDATE_SEND_EMAIL_KO = "finance_sddMandate_send_email_message_ko";
+	String FINANCE_SDD_MANDATE_SEND_EMAIL_OK = "finance_sddMandate_send_email_message_ok";
+	String FINANCE_SDD_MANDATE_SEND_EMAIL_PROCESS_INIT = "finance_sddMandate_send_email_process_init";
+	String FINANCE_SDD_MANDATE = "finance_sddMandate_module";
+	String FINANCE_SDD_MANDATE_LIST_NAME = "sddMandate_list";
 	
 	String FISCAL_RESULT = "fiscal_result";
 	

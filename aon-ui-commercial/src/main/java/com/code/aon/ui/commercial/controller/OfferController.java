@@ -68,6 +68,7 @@ import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.HeaderObjectController;
+import com.code.aon.ui.finance.SddMandateObject;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.SaleInvoiceController;
 import com.code.aon.ui.form.BasicController;
@@ -114,9 +115,45 @@ public class OfferController extends HeaderObjectController implements ISignatur
 	private TasItem projectTasItem;
 	private CommercialEmailUtil emailUtil;
 	private boolean showAuditInfoWindow;
+	private boolean showEmailOptionWindow;
+	private boolean includeEmailOfferAttach;
+	private boolean includeEmailOfferReport;
+	private boolean includeEmailSddMandateReport;
+	private SddMandateObject sddMandate;
 	
 	public OfferController() {
 		this.emailUtil = new CommercialEmailUtil();
+	}
+	
+	public boolean isIncludeEmailOfferAttach() {
+		return includeEmailOfferAttach;
+	}
+
+	public void setIncludeEmailOfferAttach(boolean includeEmailOfferAttach) {
+		this.includeEmailOfferAttach = includeEmailOfferAttach;
+	}
+
+	public boolean isIncludeEmailOfferReport() {
+		return includeEmailOfferReport;
+	}
+
+	public void setIncludeEmailOfferReport(boolean includeEmailOfferReport) {
+		this.includeEmailOfferReport = includeEmailOfferReport;
+	}
+
+	public boolean isIncludeEmailSddMandateReport() {
+		return includeEmailSddMandateReport;
+	}
+
+	public void setIncludeEmailSddMandateReport(boolean includeEmailSddMandateReport) {
+		this.includeEmailSddMandateReport = includeEmailSddMandateReport;
+	}
+	public SddMandateObject getSddMandate() {
+		return sddMandate;
+	}
+
+	public void setSddMandate(SddMandateObject sddMandate) {
+		this.sddMandate = sddMandate;
 	}
 
 	public String getSelectedTab() {
@@ -303,6 +340,14 @@ public class OfferController extends HeaderObjectController implements ISignatur
 
 	public void setProjectTasItem(TasItem projectTasItem) {
 		this.projectTasItem = projectTasItem;
+	}
+
+	public boolean isShowEmailOptionWindow() {
+		return showEmailOptionWindow;
+	}
+
+	public void setShowEmailOptionWindow(boolean showEmailOptionWindow) {
+		this.showEmailOptionWindow = showEmailOptionWindow;
 	}
 
 	private Offer getOffer() {
@@ -831,14 +876,25 @@ public class OfferController extends HeaderObjectController implements ISignatur
 		projectTasController.getModel().setRowIndex(0);
 		projectTasController.onSelect(event);
 	}
-
-	public void onSendOfferByEmail(ActionEvent event) {
+	
+	public void onShowEmailOptionWindow(ActionEvent event) {
+		setIncludeEmailOfferReport(true);
+		setIncludeEmailOfferAttach(true);
+		setIncludeEmailSddMandateReport(false);
+		Offer offer = (Offer) this.getTo();
+		setSddMandate(new SddMandateObject());
+		getSddMandate().setSignDate(offer.getDate());
+		getSddMandate().setRegistry(offer.getTarget().getRegistry());
+		getSddMandate().setReference("PPTO. "+offer.getReferenceCode());
+	}
+	
+	public void onSendEmail(ActionEvent event) {
 		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
 		controller.onPrepareEmailWindow(event);
 		if ( controller.isShowNewMessageWindow() ) {	
 			try {
 				controller.onNewMessage(event);
-				emailUtil.initMessageController(controller, getOffer());
+				emailUtil.initMessageController(controller, getOffer(), getSddMandate(), isIncludeEmailOfferReport(), isIncludeEmailOfferAttach(), isIncludeEmailSddMandateReport() );
 			} catch (Throwable th) {
 				LOGGER.error(th.getMessage(), th);
 				AonUtil.addErrorMessage(th.getMessage());

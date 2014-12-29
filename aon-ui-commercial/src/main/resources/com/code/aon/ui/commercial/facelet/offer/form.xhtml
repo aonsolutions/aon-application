@@ -20,53 +20,17 @@
 					<ui:param name="skipFocusFirst" value="true" />
 					<ui:param name="skipSaveButton" value="#{offer.readOnly}" />
 					<ui:param name="skipRemoveButton" value="#{offer.readOnly}" />
+					<ui:param name="showMoreMenu" value="#{!offer.nevv and offerDetail.to == null}" />
 					<ui:define name="beforeSpinToolbarContent">
-						<aon:if test="#{aonConfiguration.bean.offer.showTasData}">
-							<aon:commandButton id="projectTas"
-								value=" O.R."
-								immediate="#{true}" rendered="#{offer.pending and offerDetail.model.rowCount > 0}"
-								styleClass="aon-finding-toolbar-item aon-icon-car"
-								actionListener="#{offer.onProjectTasShow}"
-								reRender="showProjectTasWindow">
-								<f:setPropertyActionListener target="#{offer.showProjectTasWindow}"
-									value="#{true}" />
-							</aon:commandButton>
-						</aon:if>
-						<aon:if test="#{aonConfiguration.bean.offer.showSalesOrder and aonRole.saleOperator}">
-							<aon:commandButton id="sales"
-								value="#{bundle.aon_invoice_sales}"
-								immediate="#{true}" rendered="#{(offer.pending or offer.approved) and offer.linesPending}"
-								styleClass="aon-finding-toolbar-item aon-icon-open-popup" 
-								actionListener="#{offer.onSalesShow}"
-								reRender="showSalesWindow">
-								<f:setPropertyActionListener target="#{offer.showSalesWindow}"
-									value="#{true}" />
-							</aon:commandButton>
-						</aon:if>
-						<aon:if test="#{aonConfiguration.bean.offer.showInvoicing and aonRole.financeOperator}">
-							<aon:commandButton id="invoice"
-								value="#{bundle.aon_key_invoice_description}"
-								immediate="#{true}" rendered="#{(offer.pending or offer.approved) and offer.linesPending and !offer.linesSold}"
-								styleClass="aon-finding-toolbar-item aon-icon-favorite"
-								actionListener="#{offer.onInvoiceShow}"
-								reRender="showInvoiceWindow">
-								<f:setPropertyActionListener target="#{offer.showInvoiceWindow}"
-									value="#{true}" />
-							</aon:commandButton>
-						</aon:if>
 						<aon:commandButton value="&#160;" id="email"
 							title="#{bundle.webmail_send_email}"
-							actionListener="#{offer.onSendOfferByEmail}"
-							rendered="#{offerDetail.model.rowCount > 0 and offerDetail.to == null}"
+							rendered="#{!offer.nevv and offerDetail.model.rowCount > 0}" immediate="#{true}" 
+							actionListener="#{offer.onShowEmailOptionWindow}"
+							reRender="showEmailOptionWindow"
 							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
-						</aon:commandButton>			
-						<aon:htmlCommandLink id="offer-excel-report" value="&#160;"
-							target="_blank" action="#{report.onExecute}"
-							rendered="#{!offer.nevv and offerDetail.model.rowCount > 0}" disabled="#{offerDetail.to != null}"
-							styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
-							<f:param name="reportKey" value="#{offer.reportTemplate}" />
-							<f:param name="outputFormat" value="MS Excel" />
-						</aon:htmlCommandLink>											
+							<f:setPropertyActionListener target="#{offer.showEmailOptionWindow}"
+								value="#{true}" />
+						</aon:commandButton>
 						<aon:htmlCommandLink id="offer-report" value="#{bundle.aon_invoice_offer}"
 							target="_blank" action="#{offerSigner.onReport}"
 							rendered="#{!offer.nevv and offerDetail.model.rowCount > 0}" disabled="#{offerDetail.to != null}"
@@ -75,12 +39,6 @@
 							<f:param name="reportKey" value="#{offer.reportTemplate}" />
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
-						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signToolbar.xhtml">
-							<ui:param name="signController" value="#{offerSigner}" />
-							<ui:param name="skipSignButton" value="#{offer.nevv or offer.to.signed or (!certificate.signable)}" />
-							<ui:param name="skipCancelSignButton" value="#{offer.nevv or (!offer.to.signed)}" />
-							<ui:param name="signButtonReRender" value="offerForm,showNewMessageWindow" />
-						</ui:include>
 						<aon:if test="#{aonConfiguration.bean.offer.showTasData}">
 							<aon:htmlCommandLink id="audagateCall" value="#{bundle.audabridge_edit_assessment}"
 								rendered="#{!offer.nevv and offer.to.audatexOffer and offer.to.externalReference != null and offerDetail.model.rowCount == 0}" target="_new"
@@ -95,9 +53,53 @@
 								oncomplete="Richfaces.hideModalPanel('waitProccess')"
 								styleClass="aon-finding-toolbar-item aon-icon-go">
 							</aon:commandButton>
-						</aon:if>		
+						</aon:if>	
+					</ui:define>
+					<ui:define name="moreMenuContent">
+						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signMenuItem.xhtml">
+							<ui:param name="signController" value="#{offerSigner}" />
+							<ui:param name="skipSignButton" value="#{offer.nevv or offer.to.signed or (!certificate.signable)}" />
+							<ui:param name="skipCancelSignButton" value="#{offer.nevv or (!offer.to.signed)}" />
+							<ui:param name="signButtonReRender" value="offerForm,showNewMessageWindow" />
+						</ui:include>
+						
+						<rich:menuSeparator id="actionMenuSeparator" />
+					
+						<aon:if test="#{aonConfiguration.bean.offer.showTasData}">
+							<aon:menuItem id="projectTas"
+								value=" O.R."
+								immediate="#{true}" rendered="#{offer.pending and offerDetail.model.rowCount > 0}"
+								iconClass="aon-icon-car"
+								actionListener="#{offer.onProjectTasShow}"
+								reRender="showProjectTasWindow">
+								<f:setPropertyActionListener target="#{offer.showProjectTasWindow}"
+									value="#{true}" />
+							</aon:menuItem>
+						</aon:if>
+						<aon:if test="#{aonConfiguration.bean.offer.showSalesOrder and aonRole.saleOperator}">
+							<aon:menuItem id="sales"
+								value="#{bundle.aon_invoice_sales}"
+								immediate="#{true}" rendered="#{(offer.pending or offer.approved) and offer.linesPending}"
+								iconClass="aon-icon-open-popup" 
+								actionListener="#{offer.onSalesShow}"
+								reRender="showSalesWindow">
+								<f:setPropertyActionListener target="#{offer.showSalesWindow}"
+									value="#{true}" />
+							</aon:menuItem>
+						</aon:if>
+						<aon:if test="#{aonConfiguration.bean.offer.showInvoicing and aonRole.financeOperator}">
+							<aon:menuItem id="invoice"
+								value="#{bundle.aon_key_invoice_description}"
+								immediate="#{true}" rendered="#{(offer.pending or offer.approved) and offer.linesPending and !offer.linesSold}"
+								iconClass="aon-icon-favorite"
+								actionListener="#{offer.onInvoiceShow}"
+								reRender="showInvoiceWindow">
+								<f:setPropertyActionListener target="#{offer.showInvoiceWindow}"
+									value="#{true}" />
+							</aon:menuItem>
+						</aon:if>
 						<ui:include
-							src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml" />
+							src="/com/code/aon/ui/common/facelet/auditable/menuContent.xhtml" />
 					</ui:define>
 				</ui:decorate>
 			</aon:div>			
@@ -515,6 +517,7 @@
 		<ui:include src="/com/code/aon/ui/commercial/facelet/offer/modalTas.xhtml" />
 		<ui:include src="/com/code/aon/ui/commercial/facelet/offer/modalSales.xhtml" />
 		<ui:include src="/com/code/aon/ui/commercial/facelet/offer/modalInvoice.xhtml" />
+		<ui:include src="/com/code/aon/ui/commercial/facelet/offer/modalEmailAttach.xhtml" />
 		<ui:include src="/com/code/aon/ui/product/facelet/item/modalInfo.xhtml" />
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />

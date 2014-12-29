@@ -160,6 +160,12 @@
 											action="financeChecking_form"
 											value="#{bundle.finance_invoice_checking_module}" />
 									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="sddMandate"
+											action="sddMandate_search"
+											actionListener="#{sddMandate.onEditSearch}"
+											value="#{bundle.finance_sddMandate_module}" />
+									</aon:div>
 									<aon:if test="#{actionDenied.moduleEnabled['hotel']}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="pos_finance_bath" 
