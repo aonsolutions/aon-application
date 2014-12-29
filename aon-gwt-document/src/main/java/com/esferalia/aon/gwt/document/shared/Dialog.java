@@ -18,6 +18,8 @@ public class Dialog {
 	Vector<Domain> sons;
 	Boolean son;
 	FileInfo fileInfo;
+	Tag tag;
+	Category cat;
  	
 	public Dialog(String type,String title,String cancelButtonName,Boolean isCancelButton,String acceptButtonName,Boolean isAcceptButton,Boolean son){
 		this.type = type;
@@ -124,6 +126,24 @@ public class Dialog {
 	public void setSon(Boolean son) {
 		this.son = son;
 	}
+
+	public Tag getTag() {
+		return tag;
+	}
+
+	public void setTag(Tag tag) {
+		this.tag = tag;
+	}
+
+	public Category getCat() {
+		return cat;
+	}
+
+	public void setCat(Category cat) {
+		this.cat = cat;
+	}
+
+
 
 	
 	

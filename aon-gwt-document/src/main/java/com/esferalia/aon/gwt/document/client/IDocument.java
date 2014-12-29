@@ -5,12 +5,16 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.gwt.document.jooq.DBConsults;
+import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.Document;
 import com.esferalia.aon.gwt.document.shared.Domain;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
 import com.esferalia.aon.gwt.document.shared.FilterUtil;
 import com.esferalia.aon.gwt.document.shared.Lists;
 import com.esferalia.aon.gwt.document.shared.SearchInfo;
+import com.esferalia.aon.gwt.document.shared.Tag;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
 import com.google.api.services.drive.model.File;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -71,4 +75,16 @@ public interface IDocument extends RemoteService{
 	public void shareMydrive(String email, String driveId);
 	
 	public Boolean initAux();
+	
+	public Tag newTag(String name);
+
+	public void editTag(String name, Integer tagId);
+
+	public void deleteTag(Integer tagId);
+
+	public Category newCategory(String name);
+
+	public void editCategory(String name, Integer categoryId);
+
+	public void deleteCategory(Integer categoryId);
 }

@@ -47,12 +47,14 @@ import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.document.client.IDocument;
 import com.esferalia.aon.gwt.document.client.Utils;
 import com.esferalia.aon.gwt.document.jooq.DBConsults;
+import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.Document;
 import com.esferalia.aon.gwt.document.shared.Domain;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
 import com.esferalia.aon.gwt.document.shared.FilterUtil;
 import com.esferalia.aon.gwt.document.shared.Lists;
 import com.esferalia.aon.gwt.document.shared.SearchInfo;
+import com.esferalia.aon.gwt.document.shared.Tag;
 import com.esferalia.aon.gwt.document.shared.Tags;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
 import com.esferalia.aon.payroll.sql.SQLConstants;
@@ -444,8 +446,13 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 				byte[] b = getOut();//.toByteArray();
 				fileInfo.setData(b);
 				DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
-				Drive d = DriveUtils.serviceInitialize(g);
-				DriveUtils.sync2(d, fileInfo, domain);
+				if(g.getClientId()!=null){
+					Drive d = DriveUtils.serviceInitialize(g);
+					DriveUtils.sync2(d, fileInfo, domain);
+				}
+				else{
+					
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -902,4 +909,88 @@ public static void setSize(Integer sizea) {
 	size = sizea;
 }
 
+//-------------------- Administrar tags & categories
+
+public Tag newTag(String name) {
+	initAux();
+	String domain = AonUtil.getDomainName();
+	Integer id = null;
+	String dom = "";
+	try {
+		dom = DBConsults.getDomain(domain, domainId);
+		id = DBConsults.newTag(domain,domainId,name);
+	} catch (SQLException e) {
+		e.printStackTrace();
+	}
+	Tag t = new Tag();
+	t.setId(id);
+	t.setIsParent(false);
+	t.setIsSon(false);
+	t.setDomain(dom);
+	t.setName(name);
+	return t;
+}
+
+public void editTag(String name, Integer id) {
+	initAux();
+	String domain = AonUtil.getDomainName();
+	try {
+		DBConsults.editTag(domain,name,id);
+	} catch (SQLException e) {
+		e.printStackTrace();
+	}
+
+}
+
+public void deleteTag(Integer tagId) {
+	initAux();
+	String domain = AonUtil.getDomainName();
+	try {
+		DBConsults.deleteTag(domain,tagId);
+	} catch (SQLException e) {
+		e.printStackTrace();
+	}
+}
+
+public Category newCategory(String name) {
+	initAux();
+	String domain = AonUtil.getDomainName();
+	Integer id = null;
+	String dom ="";
+	try {
+		dom = DBConsults.getDomain(domain, domainId);
+		id = DBConsults.newCategory(domain,domainId,name);
+	} catch (SQLException e) {
+		e.printStackTrace();
+	}
+	Category c = new Category();
+	c.setDomain(dom);
+	c.setId(id);
+	c.setIsParent(false);
+	c.setIsSon(false);
+	c.setName(name);
+	return c;
+}
+
+public void editCategory(String name, Integer id) {
+	initAux();
+	String domain = AonUtil.getDomainName();
+	try {
+		DBConsults.editCategory(domain,name,id);
+	} catch (SQLException e) {
+		e.printStackTrace();
+	}
+
+}
+
+public void deleteCategory(Integer categoryId) {
+	initAux();
+	String domain = AonUtil.getDomainName();
+	try {
+		DBConsults.deleteCategory(domain,categoryId);
+	} catch (SQLException e) {
+		e.printStackTrace();
+	}
+
+}
 }

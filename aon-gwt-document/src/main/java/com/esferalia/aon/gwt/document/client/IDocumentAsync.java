@@ -5,12 +5,14 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.Document;
 import com.esferalia.aon.gwt.document.shared.Domain;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
 import com.esferalia.aon.gwt.document.shared.FilterUtil;
 import com.esferalia.aon.gwt.document.shared.Lists;
 import com.esferalia.aon.gwt.document.shared.SearchInfo;
+import com.esferalia.aon.gwt.document.shared.Tag;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
 import com.google.api.services.drive.model.File;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -73,6 +75,19 @@ public interface IDocumentAsync {
 	void shareMydrive(String email, String driveId, AsyncCallback<Void> callback);
 
 	void initAux(AsyncCallback<Boolean> callback);
+
+	void newTag(String name, AsyncCallback<Tag> callback);
+
+	void editTag(String name, Integer tagId, AsyncCallback<Void> callback);
+
+	void deleteTag(Integer tagId, AsyncCallback<Void> callback);
+
+	void newCategory(String name, AsyncCallback<Category> callback);
+
+	void editCategory(String name, Integer categoryId,
+			AsyncCallback<Void> callback);
+
+	void deleteCategory(Integer categoryId, AsyncCallback<Void> callback);
 
 
 }

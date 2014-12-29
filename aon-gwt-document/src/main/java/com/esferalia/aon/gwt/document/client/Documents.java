@@ -50,6 +50,8 @@ import com.google.gwt.event.dom.client.DragOverEvent;
 import com.google.gwt.event.dom.client.DragOverHandler;
 import com.google.gwt.event.dom.client.DropEvent;
 import com.google.gwt.event.dom.client.DropHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
@@ -81,6 +83,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineHTML;
@@ -89,6 +92,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SimplePanel;
+
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
@@ -226,6 +230,122 @@ public class Documents extends Composite implements EntryPoint {
 
 	}
 	
+	
+	class TagContextMenu extends ContextMenu {
+		ScheduledCommand editCommand = new ScheduledCommand() {
+			public void execute() {
+				editTag(tag);
+			};
+		};
+		ScheduledCommand removeCommand = new ScheduledCommand() {
+			public void execute() {
+				removeTag(tag);
+			};
+		};
+
+		private MenuItem editItem;
+		private MenuItem removeItem;
+		private Tag tag;
+		public TagContextMenu(Tag t){
+			tag = t;
+			if(t.getIsParent()){
+				Dialog d = new Dialog("alert", "Permisos", "Cancelar", false, "Volver", true,false);
+				DocumentsDialog popup2 = new DocumentsDialog(d) {
+					
+					@Override
+					protected void onCancel() {
+						hide();
+					}
+					
+					@Override
+					protected void onAccept() {
+						hide();
+					}
+				};
+			
+				popup2.setGlassEnabled(true);
+				popup2.show();
+			}
+			else{
+				editItem = addItem("Editar", editCommand,
+						"aon-icon-edit", AON.AON_ICON_CMD_BUTTON);
+				editItem.setEnabled(true);
+				removeItem = addItem("Borrar", removeCommand,
+						AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
+				removeItem.setEnabled(true);
+			}
+		}
+		public TagContextMenu() {}
+
+		@Override
+		public void show() {
+			super.show();
+		}
+	}
+	
+	
+	class CategoryContextMenu extends ContextMenu {
+		ScheduledCommand editCommand = new ScheduledCommand() {
+			public void execute() {
+				editCategory(category);
+			};
+		};
+		ScheduledCommand removeCommand = new ScheduledCommand() {
+			public void execute() {
+				removeCategory(category);
+			};
+		};
+
+		private MenuItem editItem;
+		private MenuItem removeItem;
+		private Category category;
+		public CategoryContextMenu(Category c){
+			category = c;
+			if(c.getIsParent()){
+				Dialog d = new Dialog("alert", "Permisos", "Cancelar", false, "Volver", true,false);
+				DocumentsDialog popup2 = new DocumentsDialog(d) {
+					
+					@Override
+					protected void onCancel() {
+						hide();
+					}
+					
+					@Override
+					protected void onAccept() {
+						hide();
+					}
+				};
+			
+				popup2.setGlassEnabled(true);
+				popup2.show();			}
+			else{
+				
+				editItem = addItem("Editar", editCommand,
+						"aon-icon-edit", AON.AON_ICON_CMD_BUTTON);
+				editItem.setEnabled(true);
+				removeItem = addItem("Borrar", removeCommand,
+						AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
+				removeItem.setEnabled(true);
+			}
+		}
+		public CategoryContextMenu() {
+			
+		}
+
+		@Override
+		public void show() {
+			//sync();
+			super.show();
+		}
+
+		//private void sync() {
+			//Agreement agreement = Agreements.this.getSelectedAgreement();
+			
+			//deleteItem.setEnabled(agreement.canDelete());
+		//}
+
+	}
+	
 	//DocumentContextMenu contextMenu = new DocumentContextMenu();
 	
 	private void initContextMenu() {
@@ -241,7 +361,7 @@ public class Documents extends Composite implements EntryPoint {
 		};
 
 		dataGrid.addDomHandler(contextMenuHandler, ContextMenuEvent.getType());
-
+		
 	}
 	
 	Document docs = new Document();
@@ -273,68 +393,53 @@ public class Documents extends Composite implements EntryPoint {
 	 * @UiField RangeLabelPager rangeLabelPager;
 	 */
 
-	@UiField
-	SimplePanel sp;
+	@UiField SimplePanel sp;
 	
-	@UiField
-	Button upDrive;
+	@UiField Button upDrive;
 	
-	@UiField
-	InlineHTML html;
+	@UiField InlineHTML html;
 	
-	@UiField
-	Button filterButton;
 	
-	@UiField
-	Button advanceSearch;
+	@UiField Button filterButton;
+	
+	@UiField Button advanceSearch;
 
-	@UiField(provided=true)
-	DisclosurePanel epanel;
+	@UiField(provided=true) DisclosurePanel epanel;
 
 	//@UiField(provided=true)
 	//ScrollPanel treepanel;
 
-	@UiField(provided=true)
-	DisclosurePanel dpanel;
+	@UiField(provided=true) DisclosurePanel dpanel;
 
-	@UiField
-	SplitLayoutPanel splitLayoutPanel;
+	@UiField SplitLayoutPanel splitLayoutPanel;
 
-	@UiField
-	StackLayoutPanel stack1;
+	@UiField StackLayoutPanel stack1;
 
-	@UiField
-	Button allButton;
+	@UiField Button allButton;
 
-	@UiField
-	Button serviConveniosButton;
+	@UiField Button serviConveniosButton;
 
-	@UiField							
-	Button newFile;
+	@UiField Button newFile;
 
-	@UiField
-	Button editFile;
+	@UiField Button editFile;
 	
-	@UiField
-	Button delFile;
+	@UiField Button delFile;
 	
-	@UiField
-	Button reset;
+	@UiField Button reset;
 	
-	@UiField(provided = true)
-	DataGrid<FileInfo> dataGrid;
+	@UiField(provided = true) DataGrid<FileInfo> dataGrid;
 
-	@UiField(provided = true)
-	TextBox searchBox;
+	@UiField(provided = true) TextBox searchBox;
 	
-	@UiField(provided = true)
-	SuggestBox enterpriseSearchBox;
+	@UiField(provided = true) SuggestBox enterpriseSearchBox;
 	
-	@UiField
-	Button searchButton;
+	@UiField Button searchButton;
 	
-	@UiField
-	Button eSearchButton;
+	@UiField Button eSearchButton;
+	
+	@UiField Button tagButton;
+	
+	@UiField Button catButton;
 
 	Boolean gConnection;
 	Boolean documentManager;
@@ -418,6 +523,7 @@ public class Documents extends Composite implements EntryPoint {
 	}
 	Category cAux;
 	Tag tAux;
+	
 	public void Load() {
 		tree();
 		getSons();
@@ -437,7 +543,19 @@ public class Documents extends Composite implements EntryPoint {
 			cAux= c;
 			Button b =new Button(c.getName()); 
 			b.setStyleName("aon-editDataTable-button aon-icon-category");
-			
+			b.addDomHandler(new ContextMenuHandler() {
+				Category c = cAux;
+				@Override
+				public void onContextMenu(ContextMenuEvent event) {
+					event.preventDefault();
+					event.stopPropagation();
+					NativeEvent nativeEvent = event.getNativeEvent();
+					CategoryContextMenu ccm = new CategoryContextMenu(c);
+					ccm.setPopupPosition(nativeEvent.getClientX(),
+							nativeEvent.getClientY());
+					ccm.show();
+				}
+			}, ContextMenuEvent.getType());
 			b.addClickHandler(new ClickHandler() {
 					Category c = cAux;
 					@Override
@@ -473,15 +591,28 @@ public class Documents extends Composite implements EntryPoint {
 								});
 					}
 				});
-				vcat.add(b); 
+			vcat.add(b); 
 		}
-		dpanel.add(vcat);
-		
+		//dpanel.add(vcat);
+		dpanel.setContent(vcat);
 		VerticalPanel vtag =  new VerticalPanel();
 		for(Tag t : lists.getTagList().getList()){
 			tAux=t;
 			Button b =new Button(t.getName()); 
 			b.setStyleName("aon-editDataTable-button aon-icon-tag");
+			b.addDomHandler(new ContextMenuHandler() {
+				Tag t=tAux;	
+				@Override
+				public void onContextMenu(ContextMenuEvent event) {
+					event.preventDefault();
+					event.stopPropagation();
+					NativeEvent nativeEvent =  event.getNativeEvent();
+					TagContextMenu tcm = new TagContextMenu(t);
+					tcm.setPopupPosition(nativeEvent.getClientX(),
+								nativeEvent.getClientY());
+					tcm.show();
+				}
+			}, ContextMenuEvent.getType());
 			b.addClickHandler(new ClickHandler() {
 				Tag t=tAux;	
 				@Override
@@ -520,9 +651,10 @@ public class Documents extends Composite implements EntryPoint {
 								});
 					}
 				});
-				vtag.add(b); 
+			vtag.add(b); 
 		}
-		epanel.add(vtag);
+		//epanel.add(vtag);
+		epanel.setContent(vtag);
 		
 		searchBox = new TextBox();
 		searchBox.addBitlessDomHandler(new ChangeHandler() {
@@ -808,6 +940,7 @@ public class Documents extends Composite implements EntryPoint {
 	public void editFile(SingleUploader up) {
 		Integer n =dataGrid.getKeyboardSelectedRow();
 		FileInfo fi = dataProvider.getList().get(n);
+
 		if(!fi.getIsDrive() && !fi.getIsParent() && !isServiconvenios){
 			Dialog d = new Dialog("edit", "Editar Archivo", "Cancelar", true, "Editar", true,son);
 			d.setLists(lists);
@@ -846,11 +979,16 @@ public class Documents extends Composite implements EntryPoint {
             	
             		// Ambito - Scope
             		ListBox lb3 = (ListBox)grid.getWidget(6, 1);
+
             		for (Scope s : lists.getScopeList().getList()) {
-            			String s3 = lb3.getItemText(lb1.getSelectedIndex());
+            			String s3 = lb3.getItemText(lb3.getSelectedIndex());
             			if(s3.substring(0, 1).equals(Character.toString((char)9650)) || s3.substring(0, 1).equals(Character.toString((char)9660)) )
+            				{
             				s3 = s3.substring(1);
-						if(s.getName().equals(s3)){
+            					
+            				}
+
+            			if(s.getName().equals(s3)){
 							fileInfo.setScope(s);
 						}
 					}	            	
@@ -870,7 +1008,12 @@ public class Documents extends Composite implements EntryPoint {
 							}
 						}
             		}
-            	
+            		/*Window.alert(fileInfo.getAonType()+"/n"
+            				+Integer.toString(fileInfo.getCategory())+"/n" 
+            				+fileInfo.getConf().toString()+"/n"
+            				+fileInfo.getDate()+"/n"
+            				+fileInfo.getScope().toString()+"/n"
+            				);*/
             		idoc.editFile(fileInfo,new AsyncCallback<Void>() {
 						@Override
 						public void onSuccess(Void result) {
@@ -1085,20 +1228,15 @@ public class Documents extends Composite implements EntryPoint {
 	//upload.getForm().submit();
 				
 				FileInfo fi = new  FileInfo();
-
             	// DescripciÃ³n - Description
             	TextBox tb = (TextBox)grid.getWidget(1, 1);
-            	
             	fi.setTitle(tb.getText());
-            	
             	// Confidencial - Confidential
             	CheckBox cb = (CheckBox)grid.getWidget(3, 1);
             	fi.setConfidential(cb.getValue());
-            	            	
             	// Fecha - Date
             	DateBox db = (DateBox)grid.getWidget(4, 1);
             	fi.setDate(db.getValue());
-            	
             	// Categoria - Category
             	fi.setCategory(-1);
             	ListBox lb1 = (ListBox)grid.getWidget(5, 1);
@@ -1118,7 +1256,6 @@ public class Documents extends Composite implements EntryPoint {
 							fi.setCategory(c.getId());
 					}
 				}
-            	
             	// Ambito - Scope
             	fi.setScope(new Scope(-1));
             	ListBox lb3 = (ListBox)grid.getWidget(7, 1);
@@ -1141,7 +1278,9 @@ public class Documents extends Composite implements EntryPoint {
             	
             	// Etiquetas - Tags
             	Vector<Tag> tags = new Vector<Tag>();
+
             	VerticalPanel vp = (VerticalPanel)grid.getWidget(6, 1);
+
             	for(Integer i = 0 ;i<vp.getWidgetCount();i++){
             		HorizontalPanel hp = (HorizontalPanel)vp.getWidget(i);
             		ListBox lb = (ListBox)hp.getWidget(0);
@@ -1173,7 +1312,6 @@ public class Documents extends Composite implements EntryPoint {
             		else fi.setDomain(Utils.getOracleString(sb.getText()));
 				}
             	else fi.setDomain("");
-            	
             	finsert= fi;
                 idoc.newFile(fi,new AsyncCallback<Boolean>() {
 					
@@ -1194,8 +1332,11 @@ public class Documents extends Composite implements EntryPoint {
 									}
 									aux.add(result);
 									docs.setFiles(aux);
-									// TODO si filter get(0) es del dominio padre¿?? x elllo no se carga el archvio al añadir uno nuevo
-									if(result.getDomain().equals(docs.getFilter().get(0).getDomain())){
+									Integer index=0;
+									while(docs.getFilter().get(index).getIsParent()){
+										index++;
+									}
+									if(result.getDomain().equals(docs.getFilter().get(index).getDomain())){
 										aux = new Vector<FileInfo>();
 										for (FileInfo f : docs.getEfiles()) {
 											aux.add(f);		
@@ -1203,7 +1344,6 @@ public class Documents extends Composite implements EntryPoint {
 										aux.add(result);
 										docs.setEfiles(aux);
 
-										Window.alert(Boolean.toString(html.isVisible()));
 								
 										if(html.isVisible()){
 											Integer i = 0;
@@ -1906,7 +2046,6 @@ public class Documents extends Composite implements EntryPoint {
 					idoc.getDriveFile(f.getDriveId(), new AsyncCallback<Vector<FileInfo>>() {
 						@Override
 						public void onSuccess(Vector<FileInfo> result) {
-							Window.alert(result.get(0).getTitle());
 							dataProvider = new ListDataProvider<FileInfo>(result);
 							dataProvider.addDataDisplay(dataGrid);
 							updateDatagridColumns();
@@ -2294,4 +2433,495 @@ public class Documents extends Composite implements EntryPoint {
 	        }
 	        return displaySize;
 	    }
+	 Tag tagAux;
+	 String tagname;
+	 @UiHandler("tagButton")
+	 void tagb(ClickEvent event){
+		 epanel.setOpen(true);
+		 TextBox tb = new TextBox();
+		 tb.setStyleName("aon-inputText");
+		 tb.addFocusListener(new FocusListener() {
+				
+				@Override
+				public void onLostFocus(Widget sender) {
+					VerticalPanel v = (VerticalPanel) epanel.getContent();
+					v.remove(v.getWidgetCount() - 1);
+				}
+				
+				@Override
+				public void onFocus(Widget sender) {
+					
+				}
+			});
+		 
+		 tb.addKeyPressHandler(new KeyPressHandler() {
+			
+			@Override
+			public void onKeyPress(KeyPressEvent event) {
+				if(event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER){
+					VerticalPanel v = (VerticalPanel) epanel.getContent();
+					TextBox t =  (TextBox) v.getWidget(v.getWidgetCount() - 1);
+					tagname = t.getText();
+					Window.alert(tagname);
+					idoc.newTag(tagname, new AsyncCallback<Tag>() {
+						@Override
+						public void onSuccess(Tag result) {
+							lists.getTagList().getList().add(result);
+							VerticalPanel v = (VerticalPanel) epanel.getContent();
+							tagAux = result;
+							Button b =new Button(tagname); 
+							b.setStyleName("aon-editDataTable-button aon-icon-tag");
+							b.addDomHandler(new ContextMenuHandler() {
+								Tag t=tagAux;	
+								@Override
+								public void onContextMenu(ContextMenuEvent event) {
+									event.preventDefault();
+									event.stopPropagation();
+									NativeEvent nativeEvent =  event.getNativeEvent();
+									TagContextMenu tcm = new TagContextMenu(t);
+									tcm.setPopupPosition(nativeEvent.getClientX(),
+												nativeEvent.getClientY());
+									tcm.show();
+								}
+							}, ContextMenuEvent.getType());
+							b.addClickHandler(new ClickHandler() {
+								String s=tagname;	
+								@Override
+									public void onClick(ClickEvent event) {
+										editFile.setVisible(false);
+										delFile.setVisible(false);
+										SearchInfo si = new SearchInfo();
+										Vector<String> v = new Vector<String>();
+										v.add(s);
+										si.setTag(v);
+										idoc.searchFile2(si, docs.getEfiles(),
+												new AsyncCallback<FilterUtil>() {
+													@Override
+													public void onSuccess(FilterUtil result) {
+														searchs = result.getFiles();
+														docs.setFilter(result.getFiles());
+														dataProvider = new ListDataProvider<FileInfo>(
+																searchs);
+														dataProvider.addDataDisplay(dataGrid);
+														isServiconvenios=false;
+														/*filterLabel= new Label();
+														filterLabel.setStyleName("aon-icon-tag");
+														filterLabel.setText(tAux.getName());
+														*/
+														html.setText(result.getTag());
+														html.setVisible(true);
+														
+														filterButton.setVisible(true);
+														
+														updateDatagridColumns();
+														dataGrid.redraw();
+													}
+													@Override
+													public void onFailure(Throwable caught) {
+													}
+												});
+									}
+								});
+							v.remove(v.getWidgetCount() - 1);
+							v.add(b);
+						}
+						@Override
+						public void onFailure(Throwable caught) {}
+					});
+
+				}
+			}
+		});
+		 
+		 VerticalPanel vp = (VerticalPanel) epanel.getContent();
+		 vp.add(tb);
+		 tb.getElement().focus();
+		 
+	 }
+	 Category catAux;
+	 String catname;
+	 @UiHandler("catButton")
+	 void categoryb(ClickEvent event){
+		 dpanel.setOpen(true);
+		 TextBox tb = new TextBox();
+		 tb.setStyleName("aon-inputText");
+		 tb.addFocusListener(new FocusListener() {
+			
+			@Override
+			public void onLostFocus(Widget sender) {
+				VerticalPanel v = (VerticalPanel) dpanel.getContent();
+				v.remove(v.getWidgetCount() - 1);
+			}
+			
+			@Override
+			public void onFocus(Widget sender) {
+				
+			}
+		});
+		 tb.addKeyPressHandler(new KeyPressHandler() {
+			@Override
+			public void onKeyPress(KeyPressEvent event) {
+				if(event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER){
+					VerticalPanel v = (VerticalPanel) dpanel.getContent();
+					TextBox t =  (TextBox) v.getWidget(v.getWidgetCount() - 1);
+					catname = t.getText();
+					idoc.newCategory(catname, new AsyncCallback<Category>() {
+						@Override
+						public void onSuccess(Category result) {
+							lists.getCategoryList().getList().add(result);
+							VerticalPanel v = (VerticalPanel) dpanel.getContent();
+							catAux = result;
+							Button b =new Button(catname); 
+							b.setStyleName("aon-editDataTable-button aon-icon-category");
+							b.addDomHandler(new ContextMenuHandler() {
+								Category c = catAux;
+								@Override
+								public void onContextMenu(ContextMenuEvent event) {
+									event.preventDefault();
+									event.stopPropagation();
+									NativeEvent nativeEvent = event.getNativeEvent();
+									CategoryContextMenu ccm = new CategoryContextMenu(c);
+									ccm.setPopupPosition(nativeEvent.getClientX(),
+											nativeEvent.getClientY());
+									ccm.show();
+								}
+							}, ContextMenuEvent.getType());
+							b.addClickHandler(new ClickHandler() {
+									String s = catname;
+									@Override
+									public void onClick(ClickEvent event) {
+										editFile.setVisible(false);
+										delFile.setVisible(false);
+										SearchInfo si = new SearchInfo();
+										si.setCategory(s);
+										idoc.searchFile2(si, docs.getEfiles(),
+												new AsyncCallback<FilterUtil>() {
+													@Override
+													public void onSuccess(FilterUtil result) {
+														searchs = result.getFiles();
+														docs.setFilter(result.getFiles());
+														dataProvider = new ListDataProvider<FileInfo>(
+																searchs);
+														dataProvider.addDataDisplay(dataGrid);
+														isServiconvenios=false;
+														/*filterLabel= new Label();
+														filterLabel.setStyleName("aon-icon-category");
+														filterLabel.setText(cAux.getName());
+														*/
+
+														html.setText(result.getCategory());
+														html.setVisible(true);
+														filterButton.setVisible(true);
+														updateDatagridColumns();
+														dataGrid.redraw();
+													}
+													@Override
+													public void onFailure(Throwable caught) {
+													}
+												});
+									}
+								});
+							v.remove(v.getWidgetCount() - 1);
+							v.add(b);
+						}
+						@Override
+						public void onFailure(Throwable caught) {}
+					});
+
+				}
+			}
+		});
+		 VerticalPanel vp = (VerticalPanel) dpanel.getContent();
+		 vp.add(tb);
+		 tb.getElement().focus();
+
+		 //dpanel.setContent(vp);
+		 
+	 }
+	 String oldName;
+	 String newName;
+	 private void editTag(Tag tag) {
+		 Dialog d = new Dialog("edit2", "Editar Etiqueta", "Cancelar", true, "Editar", true,false);
+		 d.setTag(tag);
+		 oldName = tag.getName();
+		 DocumentsDialog popup = new DocumentsDialog(d) {
+			
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+			
+			@Override
+			protected void onAccept() {
+				hide();
+				TextBox tb = (TextBox)grid.getWidget(0, 1);
+				tag.setName(tb.getText());
+				newName= tb.getText();
+				idoc.editTag(tag.getName(),tag.getId(), new AsyncCallback<Void>() {
+						@Override
+						public void onSuccess(Void result) {
+							VerticalPanel v = (VerticalPanel) epanel.getContent();
+							for (int i = 0; i<v.getWidgetCount() ; i++) {
+								Button b = (Button) v.getWidget(i);
+								Window.alert(b.getText()+" - "+oldName + Boolean.toString(b.getText().equals(oldName)));
+								if(b.getText().equals(oldName)){
+									b.setText(newName);
+								}
+							}
+							for (FileInfo f : docs.getEfiles()) {
+								String s="";
+								Integer size = f.getTags().size();
+								for(Tag t : f.getTags()){
+									if(size<=1 && t.getName().equals(oldName)){
+										t.setName(newName);
+										f.setTagsStr(newName);
+									}
+									else if(!t.getName().equals(oldName)){
+										s = s+t.getName()+", ";
+									}
+									else{
+										t.setName(newName);
+										s = s + newName+", ";
+									}
+								}
+								if(!s.equals("")) f.setTagsStr(s.substring(0,s.length()-2 ));
+							}
+							for (FileInfo f : docs.getFiles()) {
+								String s="";
+								Integer size = f.getTags().size();
+								for(Tag t : f.getTags()){
+									if(size<=1 && t.getName().equals(oldName)){
+										t.setName(newName);
+										f.setTagsStr(newName);
+									}
+									else if(!t.getName().equals(oldName)){
+										s = s+t.getName()+", ";
+									}
+									else{
+										t.setName(newName);
+										f.getTags().add(tag);										s = s + newName+", ";
+									}
+								}
+								if(!s.equals("")) f.setTagsStr(s.substring(0,s.length()-2 ));
+							}
+							for (FileInfo f : docs.getFilter()) {
+								String s="";
+								Integer size = f.getTags().size();
+								for(Tag t : f.getTags()){
+									if(size<=1 && t.getName().equals(oldName)){
+										t.setName(newName);
+										f.setTagsStr(newName);
+									}
+									else if(!t.getName().equals(oldName)){
+										s = s+t.getName()+", ";
+									}
+									else{
+										t.setName(newName);
+										s = s + newName+", ";
+									}
+								}
+								if(!s.equals("")) f.setTagsStr(s.substring(0,s.length()-2 ));
+							}
+							dataProvider = new ListDataProvider<FileInfo>(docs.getFilter());
+							dataProvider.addDataDisplay(dataGrid);
+							/*for (FileInfo f : dataProvider.getList()) {
+								String s="";
+								for(Tag t : f.getTags()){
+									if(f.getTags().size()<=1 && t.getName().equals(oldName))
+										f.setTagsStr(newName);
+									else if(!t.getName().equals(oldName)){
+										s = s+t.getName()+", ";
+									}
+									else{
+										t.setName(newName);
+										s = s + newName+", ";
+									}
+								}
+								if(!s.equals("")) f.setTagsStr(s.substring(0,s.length()-2 ));							
+							}*/
+							dataGrid.redraw();
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {}
+					});
+			}
+		};
+		popup.setGlassEnabled(true);
+		popup.show();
+	}
+	 
+	 private void removeTag(Tag tag) {
+		 Dialog d = new Dialog("delete2", "Borrar Etiqueta", "Cancelar", true, "Borrar", true,false);
+		 d.setTag(tag);
+		 oldName = tag.getName();
+
+		 DocumentsDialog popup = new DocumentsDialog(d) {
+			
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+			
+			@Override
+			protected void onAccept() {
+				hide();
+				idoc.deleteTag(tag.getId(), new AsyncCallback<Void>() {
+						
+						@Override
+						public void onSuccess(Void result) {
+							VerticalPanel v = (VerticalPanel) epanel.getContent();
+							for (int i = 0; i<v.getWidgetCount() ; i++) {
+								Button b = (Button) v.getWidget(i);
+								if(b.getText().equals(oldName)){
+									v.remove(i);
+								}
+							}
+							for (FileInfo f : docs.getFiles()) {
+								String s="";
+								Integer size = f.getTags().size();
+								for(Tag t : f.getTags()){
+									if(size<=1 && t.getName().equals(oldName))
+										f.setTagsStr("-");
+									else if(!t.getName().equals(oldName)){
+										s = s+t.getName()+", ";
+									}	
+								}
+								if(!s.equals("")) f.setTagsStr(s.substring(0,s.length()-2 ));
+							}
+							for (FileInfo f : docs.getEfiles()) {
+								String s="";
+								Integer size = f.getTags().size();
+								for(Tag t : f.getTags()){
+									if(size<=1 && t.getName().equals(oldName))
+										f.setTagsStr("-");
+									
+									else if(!t.getName().equals(oldName))
+										s = s+t.getName()+", ";
+										
+								}
+								if(!s.equals("")) f.setTagsStr(s.substring(0,s.length()-2 ));
+							}
+							
+							for (FileInfo f : dataProvider.getList()) {
+								String s="";
+								for(Tag t : f.getTags()){
+									if(f.getTags().size()<=1 && t.getName().equals(oldName))
+										f.setTagsStr("-");
+									else if(!t.getName().equals(oldName)){
+										s = s+t.getName()+", ";
+									}	
+								}
+								if(!s.equals("")) f.setTagsStr(s.substring(0,s.length()-2 ));							
+							}
+							dataGrid.redraw();
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {}
+				});
+			}
+		};
+		popup.setGlassEnabled(true);
+		popup.show();
+	
+		
+	}
+	 
+	 private void editCategory(Category category) {
+		
+		 Dialog d = new Dialog("edit2", "Editar Categoría", "Cancelar", true, "Editar", true,false);
+		 d.setCat(category);
+		 oldName = category.getName();
+		 DocumentsDialog popup = new DocumentsDialog(d) {
+			
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+			
+			@Override
+			protected void onAccept() {
+				hide();
+				TextBox tb = (TextBox)grid.getWidget(0, 1);
+				cat.setName(tb.getText());
+				newName= tb.getText();
+				idoc.editCategory(cat.getName(),cat.getId(), new AsyncCallback<Void>() {
+						@Override
+						public void onSuccess(Void result) {
+							VerticalPanel v = (VerticalPanel) dpanel.getContent();
+							for (int i = 0; i<v.getWidgetCount() ; i++) {
+								Button b = (Button) v.getWidget(i);
+								if(b.getText().equals(oldName)){
+									b.setText(newName);
+								}
+							}
+							for (FileInfo f : docs.getFiles()) {
+								if(f.getCategoryStr().equals(oldName))
+									f.setCategoryStr(newName);
+							}
+							for (FileInfo f : dataProvider.getList()) {
+								if(f.getCategoryStr().equals(oldName))
+									f.setCategoryStr(newName);
+							}
+							dataGrid.redraw();
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {}
+					});
+			}
+		};
+		popup.setGlassEnabled(true);
+		popup.show();
+	}
+	 
+	 private void removeCategory(Category category) {
+		
+		 Dialog d = new Dialog("delete2", "Borrar Etiqueta", "Cancelar", true, "Borrar", true,false);
+		 d.setCat(category);
+		 oldName = category.getName();
+
+		 DocumentsDialog popup = new DocumentsDialog(d) {
+			
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+			
+			@Override
+			protected void onAccept() {
+				hide();
+				 idoc.deleteCategory(cat.getId(),new AsyncCallback<Void>() {
+						
+						@Override
+						public void onSuccess(Void result) {
+							VerticalPanel v = (VerticalPanel) dpanel.getContent();
+							for (int i = 0; i<v.getWidgetCount() ; i++) {
+								Button b = (Button) v.getWidget(i);
+								if(b.getText().equals(oldName)){
+									v.remove(i);
+								}
+							}
+							for (FileInfo f : docs.getFiles()) {
+								if(f.getCategoryStr().equals(oldName))
+									f.setCategoryStr("-");
+							}
+							for (FileInfo f : dataProvider.getList()) {
+								if(f.getCategoryStr().equals(oldName))
+									f.setCategoryStr("-");
+							}
+							dataGrid.redraw();
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {}
+					});
+			}
+		};
+		popup.setGlassEnabled(true);
+		popup.show();
+		 
+		
+	}
 }

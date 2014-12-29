@@ -62,30 +62,34 @@ public abstract class DocumentsDialog extends CustomDialog {
 	Label label;
 	@UiField Button acceptButton;
 	@UiField Button cancelButton;
-	
+	Tag tag;
+	Category cat;
 	
 	public DocumentsDialog(Dialog dialog) {
+		if(dialog.getTag() != null)tag = dialog.getTag();
+		if(dialog.getCat() != null)cat = dialog.getCat();
 		lists  = dialog.getLists();
 		setFileInfo(dialog.getFileInfo());
 		setCaption(dialog.getTitle());
 		label = new Label();
 		grid = new FlexTable();
 		gridBuild(dialog);
-		
 		setWidget(binder.createAndBindUi(this));
-		
+
 		acceptButton.setFocus(true);
 		acceptButton.setText(dialog.getAcceptButtonName());
 		acceptButton.setVisible(dialog.getIsAcceptButton());
+
 		acceptButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				onAccept();
 			}
 		});
-		
+
 		cancelButton.setText(dialog.getCancelButtonName());
 		cancelButton.setVisible(dialog.getIsCancelButton());
+
 		cancelButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -93,6 +97,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 				
 			}
 		});
+
 	}
 	
 	protected abstract void onAccept();
@@ -104,7 +109,9 @@ public abstract class DocumentsDialog extends CustomDialog {
 			case "new": newFile(dialog);break;
 			case "upload": uploadFile(dialog);break;
 			case "edit": editFile(dialog);break;
+			case "edit2": edit2();break;
 			case "delete": deleteFile(dialog.getFileInfo().getTitle());break;
+			case "delete2": delete2(dialog);break;
 			case "search": searchFile(dialog);break;
 			case "info": infoFile(dialog.getFileInfo());break;
 			case "share": shareFile();break;
@@ -114,6 +121,29 @@ public abstract class DocumentsDialog extends CustomDialog {
 		}
 		
 	}
+	private void edit2() {
+		grid.setStyleName("aon-panelGrid");
+		grid.setWidth("400px");
+		grid.setBorderWidth(1);
+		grid.setCellSpacing(0);
+		TextBox tb = new TextBox();
+		tb.setStyleName("aon-inputText");
+		grid.setWidget(0, 0, new Label("Descripci\u00f3n"));
+		grid.setWidget(0, 1, tb);
+		
+		for (int i = 0; i < grid.getRowCount(); i++) {
+			for (int j = 0; j < grid.getCellCount(i); j++) {
+				if ((j % 2) == 0) {
+					grid.getCellFormatter().setStyleName(i, j,
+							"aon-panelGrid-odd");
+				} else {
+					grid.getCellFormatter().setStyleName(i, j,
+							"aon-panelGrid-even");
+				}
+			}
+		}	
+	}
+	
 	HorizontalPanel h2;
 	VerticalPanel vertical;
 	String url;
@@ -211,7 +241,6 @@ public abstract class DocumentsDialog extends CustomDialog {
 					}
 				}
 				for (Scope scope : lists.getScopeListSon().getList()) {
-					Window.alert(scope.getDomain());
 
 					if(scope.getDomain().equals(string)){
 						ListBox lb = (ListBox) grid.getWidget(7, 1);
@@ -254,8 +283,12 @@ public abstract class DocumentsDialog extends CustomDialog {
 		grid.setWidget(5, 0, new Label("Categor\u00eda"));
 		grid.setWidget(5, 1, lb1);
 		if(lb2.getItemCount() <= 2){
+			VerticalPanel vp= new VerticalPanel();
+			HorizontalPanel hp = new HorizontalPanel();
+			hp.add(lb2);
+			vp.add(hp);
 			grid.setWidget(6, 0, new Label("Etiqueta"));
-			grid.setWidget(6, 1, lb2);	
+			grid.setWidget(6, 1, vp);	
 		}
 		else{
 			h2 = new HorizontalPanel();
@@ -413,6 +446,9 @@ public abstract class DocumentsDialog extends CustomDialog {
 		grid.setWidget(4, 1, lb1);
 
 		if(lb2.getItemCount() <= 2){
+			VerticalPanel vp= new VerticalPanel();
+			HorizontalPanel hp = new HorizontalPanel();
+			
 			grid.setWidget(5, 0, new Label("Etiqueta"));
 			for (int i = 0; i<lb2.getItemCount();i++) {
 				String s2 = lb2.getItemText(i);
@@ -423,7 +459,9 @@ public abstract class DocumentsDialog extends CustomDialog {
 					lb2.setItemSelected(i, true);
 				}
 			}
-			grid.setWidget(5, 1, lb2);	
+			hp.add(lb2);
+			vp.add(hp);
+			grid.setWidget(5, 1, vp);	
 		}
 		else{
 			Integer size = fi.getTags().size();
@@ -529,7 +567,13 @@ public abstract class DocumentsDialog extends CustomDialog {
 			}
 		}
 	}
-
+	
+	private void delete2(Dialog dialog) {
+		String name = "";
+		if(dialog.getTag() != null) name = "la etiqueta "+dialog.getTag().getName();
+		else if(dialog.getCat() != null) name = "la categoría "+dialog.getCat().getName();
+		label.setText("Estas seguro de eliminar "+name);
+	}
 	
 	private void deleteFile(String name) {
 		label.setText("Estas seguro de eliminar el archivo "+name);
@@ -539,7 +583,10 @@ public abstract class DocumentsDialog extends CustomDialog {
 		String type="";
 		if(dialog.getTitle().equals("Editar Archivo"))type = "editar";
 		else if(dialog.getTitle().equals("Borrar Archivo"))type = "borrar";
-		label.setText("No tiene permisos para "+type+" el archivo "+dialog.getFileInfo().getTitle());
+		if(dialog.getTitle().equals("Permisos")) {
+			label.setText("No tiene permisos para modificar o borrar");
+		}
+		else label.setText("No tiene permisos para "+type+" el archivo "+dialog.getFileInfo().getTitle());
 	}
 	
 	Boolean bool;
@@ -624,7 +671,6 @@ public abstract class DocumentsDialog extends CustomDialog {
 					}
 				}
 				for (Scope scope : lists.getScopeListSon().getList()) {
-					Window.alert(scope.getDomain());
 
 					if(scope.getDomain().equals(string)){
 						ListBox lb = (ListBox) grid.getWidget(6, 1);

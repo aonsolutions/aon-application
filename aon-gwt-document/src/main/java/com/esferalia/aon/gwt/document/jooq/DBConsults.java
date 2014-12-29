@@ -31,6 +31,7 @@ import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.jooq.JooqSettings;
 import com.code.aon.product.enumeration.AttachmentType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.CategoryList;
 import com.esferalia.aon.gwt.document.shared.Document;
@@ -469,7 +470,7 @@ public class DBConsults {
 			Result<Record2<String, Integer>> tag = dslContext.select(TAG.NAME, TAG.ID)
 					.from(TAG).join(DOMAIN)
 					.on(TAG.DOMAIN.eq(DOMAIN.ID))
-					.where(DOMAIN.NAME.eq(domain)).orderBy(TAG.NAME).fetch();
+					.where(DOMAIN.NAME.eq(domain).and(TAG.TYPE.eq((byte)0))).orderBy(TAG.NAME).fetch();
 			
 			Vector<Tag> vector = new Vector<Tag>();
 			for (Record2<String, Integer> record : tag) {
@@ -486,7 +487,7 @@ public class DBConsults {
 			Result<Record2<String, Integer>> tagParent = dslContext.select(TAG.NAME, TAG.ID)
 					.from(TAG).join(DOMAIN)
 					.on(TAG.DOMAIN.eq(DOMAIN.PARENT))
-					.where(DOMAIN.NAME.eq(domain)).orderBy(TAG.NAME).fetch();
+					.where(DOMAIN.NAME.eq(domain).and(TAG.TYPE.eq((byte)0))).orderBy(TAG.NAME).fetch();
 			
 			for (Record2<String, Integer> record : tagParent) {
 				Tag t = new Tag();
@@ -523,7 +524,7 @@ public class DBConsults {
 				.on(TAG.DOMAIN.eq(DOMAIN.ID))
 				.where(DOMAIN.PARENT.eq(dslContext.select(DOMAIN.ID)
 						.from(DOMAIN)
-						.where(DOMAIN.NAME.eq(domain)))).orderBy(TAG.NAME).fetch();
+						.where(DOMAIN.NAME.eq(domain))).and(TAG.TYPE.eq((byte)0))).orderBy(TAG.NAME).fetch();
 		Vector<Tag> vector = new Vector<Tag>();
 		for (Record3<String, Integer, String> record : tagSon) {
 			Tag t = new Tag();
@@ -559,7 +560,7 @@ public class DBConsults {
 			Result<Record2<String, Integer>> category = dslContext.select(CATEGORY.NAME,CATEGORY.ID)
 					.from(CATEGORY).join(DOMAIN)
 					.on(CATEGORY.DOMAIN.eq(DOMAIN.ID))
-					.where(DOMAIN.NAME.eq(domain)).orderBy(CATEGORY.NAME).fetch();
+					.where(DOMAIN.NAME.eq(domain).and(CATEGORY.TYPE.eq((byte)0))).orderBy(CATEGORY.NAME).fetch();
 			Vector<Category> vector = new Vector<Category>();
 			for (Record2<String, Integer> record : category) {
 				Category c = new Category();
@@ -575,7 +576,7 @@ public class DBConsults {
 			Result<Record2<String, Integer>> categoryParent = dslContext.select(CATEGORY.NAME,CATEGORY.ID)
 					.from(CATEGORY).join(DOMAIN)
 					.on(CATEGORY.DOMAIN.eq(DOMAIN.PARENT))
-					.where(DOMAIN.NAME.eq(domain)).orderBy(CATEGORY.NAME).fetch();
+					.where(DOMAIN.NAME.eq(domain).and(CATEGORY.TYPE.eq((byte)0))).orderBy(CATEGORY.NAME).fetch();
 			for (Record2<String, Integer> record : categoryParent) {
 				Category c = new Category();
 				if (record.value1() != null)
@@ -610,7 +611,7 @@ public class DBConsults {
 				.on(CATEGORY.DOMAIN.eq(DOMAIN.ID))
 				.where(DOMAIN.PARENT.eq(dslContext.select(DOMAIN.ID)
 						.from(DOMAIN)
-						.where(DOMAIN.NAME.eq(domain)))).orderBy(CATEGORY.NAME).fetch();
+						.where(DOMAIN.NAME.eq(domain))).and(CATEGORY.TYPE.eq((byte)0))).orderBy(CATEGORY.NAME).fetch();
 		Vector<Category> vector = new Vector<Category>();
 		for (Record3<String, Integer, String> record : categorySon) {
 			Category c = new Category();
@@ -971,5 +972,100 @@ public class DBConsults {
 				connection.close();
 		}
 			
+	}
+	
+	public static Integer newTag(String domain, Integer domainId,String name) throws SQLException {
+		Connection connection = null;
+		try {
+			connection = DatabaseSync.getConnection(domain);
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+		
+			return dslContext.insertInto(TAG,TAG.DOMAIN,TAG.NAME,TAG.TYPE)
+				.values(domainId,name,(byte)0).returning(TAG.ID).fetchOne().getId();
+			
+		} finally {
+			if (connection != null)
+				connection.close();
+		}	
+	}
+
+	public static void editTag(String domain, String name,Integer id) throws SQLException {
+		Connection connection = null;
+		try {
+			connection = DatabaseSync.getConnection(domain);
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			dslContext.update(TAG).set(TAG.NAME,name)
+							.where(TAG.ID.eq(id)).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}	
+	}
+
+	public static void deleteTag(String domain, Integer tagId) throws SQLException {
+		Connection connection = null;
+		try {
+			connection = DatabaseSync.getConnection(domain);
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			dslContext.delete(RATTACH_TAG).where(RATTACH_TAG.TAG.eq(tagId)).execute();
+			dslContext.delete(TAG).where(TAG.ID.eq(tagId)).execute();
+			
+		} finally {
+			if (connection != null)
+				connection.close();
+		}	
+	}
+
+	public static Integer newCategory(String domain, Integer domainId, String name) throws SQLException {
+		Connection connection = null;
+		try {
+			connection = DatabaseSync.getConnection(domain);
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+		
+			return dslContext.insertInto(CATEGORY,CATEGORY.DOMAIN,CATEGORY.NAME,CATEGORY.TYPE)
+				.values(domainId,name,(byte)0).returning(CATEGORY.ID).fetchOne().getId();
+			
+		} finally {
+			if (connection != null)
+				connection.close();
+		}		
+	}
+
+	public static void editCategory(String domain, String name,Integer id) throws SQLException {
+		Connection connection = null;
+		try {
+			connection = DatabaseSync.getConnection(domain);
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			dslContext.update(CATEGORY).set(CATEGORY.NAME,name)
+							.where(CATEGORY.ID.eq(id)).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}	
+	}
+
+	public static void deleteCategory(String domain, Integer categoryId) throws SQLException {
+		Connection connection = null;
+		try {
+			connection = DatabaseSync.getConnection(domain);
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+
+			String sql = "UPDATE rattach SET category = NULL WHERE category = "+categoryId+";";
+			dslContext.fetch(sql);
+			dslContext.delete(CATEGORY).where(CATEGORY.ID.eq(categoryId)).execute();
+			
+		} finally {
+			if (connection != null)
+				connection.close();
+		}	
 	}
 }
