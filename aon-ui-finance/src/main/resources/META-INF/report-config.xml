@@ -237,6 +237,52 @@
 			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
 		</params>
 	</report>
+	<report id="saleInvoiceTemplate5" description="Fee Invoice's Report Template5">
+		<template path="/com/code/aon/ui/finance/report/saleInvoiceTemplate5.jasper"/>
+		<collection provider="#{saleInvoice}" forceRefresh="true"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
+			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}" />
+			<param id="printLogo" value="#{company.isPrintLogo}" />
+			<param id="printName" value="#{company.getPrintName}" />
+			<param id="printNif" value="#{company.getPrintNif}" />
+			<param id="printAddress" value="#{company.getPrintAddress}" />
+			<param id="printInternetData" value="#{company.getPrintInternetData}" />
+			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
+			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
+		</params>
+	</report>
+	<report id="saleInvoiceTemplate6" description="Fee Invoice's Report Template6">
+		<template path="/com/code/aon/ui/finance/report/saleInvoiceTemplate6.jasper"/>
+		<collection provider="#{saleInvoice}" forceRefresh="true"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
+			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}" />
+			<param id="printLogo" value="#{company.isPrintLogo}" />
+			<param id="printName" value="#{company.getPrintName}" />
+			<param id="printNif" value="#{company.getPrintNif}" />
+			<param id="printAddress" value="#{company.getPrintAddress}" />
+			<param id="printInternetData" value="#{company.getPrintInternetData}" />
+			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
+			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
+		</params>
+	</report>
 	<report id="saleInvoiceGta" description="Fee Invoice's Report GTA">
 		<template path="/com/code/aon/ui/finance/report/saleInvoiceGta.jasper"/>
 		<collection provider="#{saleInvoice}" forceRefresh="true"/>
@@ -518,6 +564,54 @@
 	</report>
 	<report id="invoicePrintTemplate4" description="Invoice's Report Template4">
 		<template path="/com/code/aon/ui/finance/report/saleInvoiceTemplate4.jasper"/>
+		<bean key="com.code.aon.finance.Invoice" />
+		<criteria provider="#{invoicePrint}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
+			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}" />
+			<param id="printLogo" value="#{company.isPrintLogo}" />
+			<param id="printName" value="#{company.getPrintName}" />
+			<param id="printNif" value="#{company.getPrintNif}" />
+			<param id="printAddress" value="#{company.getPrintAddress}" />
+			<param id="printInternetData" value="#{company.getPrintInternetData}" />
+			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
+			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
+		</params>
+	</report>
+	<report id="invoicePrintTemplate5" description="Invoice's Report Template5">
+		<template path="/com/code/aon/ui/finance/report/saleInvoiceTemplate5.jasper"/>
+		<bean key="com.code.aon.finance.Invoice" />
+		<criteria provider="#{invoicePrint}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
+			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}" />
+			<param id="printLogo" value="#{company.isPrintLogo}" />
+			<param id="printName" value="#{company.getPrintName}" />
+			<param id="printNif" value="#{company.getPrintNif}" />
+			<param id="printAddress" value="#{company.getPrintAddress}" />
+			<param id="printInternetData" value="#{company.getPrintInternetData}" />
+			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
+			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
+		</params>
+	</report>
+	<report id="invoicePrintTemplate6" description="Invoice's Report Template6">
+		<template path="/com/code/aon/ui/finance/report/saleInvoiceTemplate6.jasper"/>
 		<bean key="com.code.aon.finance.Invoice" />
 		<criteria provider="#{invoicePrint}"/>
 		<params>
