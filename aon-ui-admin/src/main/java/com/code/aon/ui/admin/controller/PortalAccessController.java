@@ -62,8 +62,6 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 	
 	private String confirmPassword;	
 	
-	private boolean active;
-	
 	private int portalValue;
 	
 	private boolean showAccountingInfo;
@@ -75,6 +73,8 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 	private boolean showDocumentalInfo;
 	
 	private boolean showPayrollPortal;
+	
+	private boolean showChangePasswordWindow;
 	
 	public PortalAccessController() {
 		this.idCheck = new UserIdCheckUtil();
@@ -172,36 +172,32 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 			LOGGER.error(e.getMessage(), e);
 		}							
 	}
-	
-	public void onSaveUser(ActionEvent event) {	
-		try {
-			if (! StringUtils.equals(newPassword, confirmPassword)) {
-				String message = AonUtil.addErrorMessageFromBundle(ICommonMessages.NEW_PASSWORD_ERROR);
-				throw new AbortProcessingException( message );
-			}		
-	        this.user.setPassword( AdminUtil.encodeSHA(newPassword) );
-	        this.user.setPasswordExpiration( DateUtils.addDays(new Date(), 180) );					
-			updateUser();
-			AppParamUtil.insertParameter(AppParam.AON_PORTAL, portalValue);
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> accept",e);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		}			
-		getIdCheck().setOldValue( getUser().getLogin() );
-	}
 
+	public void onChangePassword( ActionEvent event ) {
+		if (! StringUtils.equals(newPassword, confirmPassword)) {
+			String message = AonUtil.addErrorMessageFromBundle(ICommonMessages.NEW_PASSWORD_ERROR);
+			throw new AbortProcessingException( message );
+		}		
+		try {
+	        this.user.setPassword( AdminUtil.encodeSHA(newPassword) );
+	        this.user.setPasswordExpiration( DateUtils.addDays(new Date(), 180) );
+			IManagerBean bean = BeanManager.getManagerBean(User.class);
+			bean.insertOrUpdate(this.user);
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+			AonUtil.addErrorMessage("Error cambiando la contraseña" );
+		}
+	}
+	
 	public void accept( ActionEvent event ) {
 		try {
 			if ( isActive() ) {
 				AppParamUtil.insertParameter(AppParam.AON_PORTAL, portalValue);
-				if (this.user.getId() != null) {
-			        updateUser();	
-				}
+		        updateUser();	
 			} else {
 				AppParamUtil.removeParameter(AppParam.AON_PORTAL);
 				if (this.user.getId() != null) {
-					onRemoveUser(event);
+					removeUser();
 				}
 			}
 		} catch (ManagerBeanException e) {
@@ -219,21 +215,27 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 			this.user.setInitAction(null);
 		}
 		this.user.setEnterprise(getEnterpriseId());
+		DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(IAdminConstants.DOMAIN_USER_CONTROLLER_NAME);
+		if ( isNevv ) {
+			duc.resetPassword( user );
+		}
 		IManagerBean bean = BeanManager.getManagerBean(User.class);
 		bean.insertOrUpdate(this.user);
 		if ( isNevv ) {
-			DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(IAdminConstants.DOMAIN_USER_CONTROLLER_NAME);
 			duc.registerScope(user, GENERAL_SCOPE);
 			updateScopes();
+		} else {
+			saveScopes();
 		}
 		DomainApplication domainApplication = getDomainApplication();
 		if ( domainApplication != null ) {
 			ApplicationUser appUser = ensureApplicationUser(user, domainApplication);
 			ensureProfiles(appUser);
 		}			
+		getIdCheck().setOldValue( getUser().getLogin() );
 	}
 	
-	public void onRemoveUser(ActionEvent event) {
+	private void removeUser() {
 		DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(IAdminConstants.DOMAIN_USER_CONTROLLER_NAME);
 		try {		
 			duc.removeUserReferences(user.getId());
@@ -337,23 +339,12 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 		}
 	}
 
-	public void onResetPassword( ActionEvent event ) {
-		try {
-			DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(IAdminConstants.DOMAIN_USER_CONTROLLER_NAME);
-			duc.resetPassword( user );
-			updateUser();
-		} catch (Throwable e) {
-			LOGGER.error(e.getMessage(), e);
-			AonUtil.addErrorMessage("Error cambiando la contraseña" );
-		}		
-	}	
-
 	public boolean isActive() {
-		return active;
+		return getPortalValue(IAdminConstants.ACTIVE_PORTAL);
 	}
 
 	public void setActive(boolean active) {
-		this.active = active;
+		setPortalValue(active, IAdminConstants.ACTIVE_PORTAL);
 	}
 
 	private boolean getPortalValue(int bitwise) {
@@ -451,9 +442,28 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 		}
 	}
 
+	private void saveScopes() {
+		UserScopeController usc = (UserScopeController) AonUtil.getRegisteredBean(IAdminConstants.USER_SCOPE_EX_CONTROLLER_NAME);
+		usc.accept(null);
+	}	
+	
 	private void updateScopes() {
 		UserScopeController usc = (UserScopeController) AonUtil.getRegisteredBean(IAdminConstants.USER_SCOPE_EX_CONTROLLER_NAME);
 		usc.init(user);
 	}	
+
+	public void onShowChangePasswordWindow( ActionEvent event ) {
+		setShowChangePasswordWindow(true);
+		setNewPassword(null);
+		setConfirmPassword(null);
+	}
+
+	public boolean isShowChangePasswordWindow() {
+		return showChangePasswordWindow;
+	}
+
+	public void setShowChangePasswordWindow(boolean showChangePasswordWindow) {
+		this.showChangePasswordWindow = showChangePasswordWindow;
+	}
 	
 }

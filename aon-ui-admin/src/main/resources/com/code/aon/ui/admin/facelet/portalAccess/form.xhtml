@@ -6,6 +6,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
 	template="/com/code/aon/ui/admin/facelet/globalConfig/configLayout.xhtml">
 
 	<ui:define name="configContent">
@@ -24,112 +25,111 @@
 				</ui:define>				
 			</ui:decorate>
 
-			<aon:div styleClass="aon-scroll-area">
+			<aon:div styleClass="aon-scroll-area" style="padding-bottom: 0;">
 			
 				<aon:panelGrid columns="2">
 				
 					<aon:outputLabel for="PortalAccess_active"
 						value="#{bundle.aon_active}" />
-					<aon:div>
-						<aon:selectBooleanCheckbox id="PortalAccess_active"
-							reRender="portalAccessOptionsDiv,portalAccessUserDiv"
-							value="#{portalAccess.active}" />
-						<aon:div id="portalAccessOptionsDiv">
+					<aon:div id="portalAccessOptionsDiv">
+						<aon:div>
+							<aon:selectBooleanCheckbox id="PortalAccess_active"
+								reRender="portalAccessOptionsDiv,portalAccessUserDiv"
+								value="#{portalAccess.active}" />
+							<aon:outputLabel for="PortalAccess_payrollPortal"
+								rendered="#{portalAccess.showPayrollPortal and !portalAccess.showInfo and portalAccess.active}"
+								value="#{bundle.menu_integral}" />
+						</aon:div>
+						<aon:div>
 							<aon:div rendered="#{portalAccess.active}">
-								<aon:panel rendered="#{portalAccess.showInfo and !portalAccess.payrollPortal}">														
+							
+								<aon:div styleClass="aon-margin-top" >
+									<aon:selectOneRadio id="Domain_aonOne" 
+										layout="pageDirection"
+										rendered="#{portalAccess.showPayrollPortal and portalAccess.showInfo}"
+										value="#{portalAccess.payrollPortal}" >
+										<f:selectItem itemLabel="#{bundle.menu_integral}" itemValue="#{true}" />
+										<f:selectItem itemLabel="#{bundle.admin_portal_show}:" itemValue="#{false}" />
+										<a4j:support event="onchange" ajaxSingle="true"
+											actionListener="#{portalAccess.onPayrollPortalChanged}"
+											reRender="portalAccessOptionsDiv" />
+									</aon:selectOneRadio>
+								</aon:div>					
+														
+								<aon:div rendered="#{portalAccess.showInfo}"
+									style="margin-left:2em;">														
 									<aon:if test="#{portalAccess.showFiscalInfo}">			
 										<aon:selectBooleanCheckbox id="PortalAccess_fiscalInfo"
+											disabled="#{portalAccess.payrollPortal}"
 											actionListener="#{portalAccess.onInfoChanged}"
-											reRender="portalAccessOptionsDiv"
 											value="#{portalAccess.fiscalInfo}">
 										</aon:selectBooleanCheckbox>
 										<aon:outputLabel for="PortalAccess_fiscalInfo"
-											value="#{bundle.admin_portal_fiscal_info}" />
+											value="#{bundle.admin_portal_fiscal_info}"
+											style="#{(portalAccess.payrollPortal)?'color: graytext;':''}" />
 									</aon:if>							
 									<aon:if test="#{portalAccess.showAccountingInfo}">			
 										<aon:selectBooleanCheckbox id="PortalAccess_accountingInfo"
+											disabled="#{portalAccess.payrollPortal}"
 											actionListener="#{portalAccess.onInfoChanged}"
-											reRender="portalAccessOptionsDiv"
 											value="#{portalAccess.accountingInfo}">
 										</aon:selectBooleanCheckbox>
 										<aon:outputLabel for="PortalAccess_accountingInfo"
-											value="#{bundle.admin_portal_accounting_info}" />
+											value="#{bundle.admin_portal_accounting_info}"
+											style="#{(portalAccess.payrollPortal)?'color: graytext;':''}" />
 									</aon:if>							
 									<aon:if test="#{portalAccess.showPayrollInfo}">
 										<aon:selectBooleanCheckbox id="PortalAccess_payrollInfo"
+											disabled="#{portalAccess.payrollPortal}"
 											actionListener="#{portalAccess.onInfoChanged}"
-											reRender="portalAccessOptionsDiv"
 											value="#{portalAccess.payrollInfo}">
 										</aon:selectBooleanCheckbox>
 										<aon:outputLabel for="PortalAccess_payrollInfo"
-											value="#{bundle.admin_portal_payroll_info}" />
+											value="#{bundle.admin_portal_payroll_info}"
+											style="#{(portalAccess.payrollPortal)?'color: graytext;':''}" />
 									</aon:if>							
 									<aon:if test="#{portalAccess.showDocumentalInfo}">
 										<aon:selectBooleanCheckbox id="PortalAccess_documentalInfo"
+											disabled="#{portalAccess.payrollPortal}"
 											actionListener="#{portalAccess.onInfoChanged}"
-											reRender="portalAccessOptionsDiv"
 											value="#{portalAccess.documentalInfo}">
 										</aon:selectBooleanCheckbox>
 										<aon:outputLabel for="PortalAccess_documentalInfo"
-											value="#{bundle.admin_portal_documental_info}" />
+											value="#{bundle.admin_portal_documental_info}"
+											style="#{(portalAccess.payrollPortal)?'color: graytext;':''}" />
 									</aon:if>
-								</aon:panel>				
-								<aon:panel rendered="#{portalAccess.showPayrollPortal and !portalAccess.infoEnabled}">		
-									<aon:selectBooleanCheckbox id="PortalAccess_payrollPortal"
-										actionListener="#{portalAccess.onPayrollPortalChanged}"
-										reRender="portalAccessOptionsDiv"
-										value="#{portalAccess.payrollPortal}">
-									</aon:selectBooleanCheckbox>
-									<aon:outputLabel for="PortalAccess_payrollPortal"
-										value="#{bundle.menu_integral}" />
-								</aon:panel>																
+								</aon:div>				
+
 							</aon:div>		
 						</aon:div>								
 					</aon:div>						
 				</aon:panelGrid>
 			</aon:div>
-		</aon:form>
 		
-
-		<aon:div styleClass="aon-scroll-area">
-
-			<aon:div id="portalAccessUserDiv">
-				<aon:panel rendered="#{portalAccess.active}">
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.aon_login_user}" />
-					</f:facet>
+			<aon:div styleClass="aon-scroll-area">
 	
-					<aon:form id="portalAccessUserForm">
-						<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-							<ui:param name="toolbarID" value="portalAccessUserToolbar" />
-							<ui:param name="innerToolbar" value="#{true}" />
-							<ui:param name="skipToolbarTitle" value="true" />
-							<ui:param name="skipToolbarDescription" value="true" />
-							<ui:define name="toolbarContent">
-								<aon:commandButton id="portalAccessUser-save"
-									value="#{bundle.aon_save}"
-									accesskey="#{bundle.aon_key_save}"
-									actionListener="#{portalAccess.onSaveUser}"
-									styleClass="aon-finding-toolbar-item aon-icon-accept" />								
-								<aon:confirmButton id="portalAccessUser-remove"
-									title="#{bundle.aon_key_remove_accelerator}"
-									value="#{bundle.aon_remove}" reRender="aonContent" 
-									rendered="#{portalAccess.user.id != null}" immediate="true"
-									styleClass="aon-finding-toolbar-item aon-icon-delete"
-									confirmTitle="#{bundle.aon_confirm_title}"
-									confirmMessage="#{bundle.aon_remove_confirm}"
-									confirmAction="portalAccess_form"
-									confirmActionListener="#{portalAccess.onRemoveUser}"
-									accesskey="#{bundle.aon_key_remove}" />
-								<aon:commandButton id="portalAccessUser-resetPassword"
-									value="#{bundle.admin_reset_password}"
-									rendered="#{portalAccess.user.id != null}"
-									action="portalAccess_form"
-									actionListener="#{portalAccess.onResetPassword}" immediate="true"
-									styleClass="aon-finding-toolbar-item aon-icon-utilities" />						
-							</ui:define>				
-						</ui:decorate>
+				<aon:div id="portalAccessUserDiv">
+					<aon:panel rendered="#{portalAccess.active}">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_login_user}" />
+						</f:facet>
 		
+						<aon:if test="#{portalAccess.user.id != null}" >					
+							<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+								<ui:param name="toolbarID" value="portalAccessUserToolbar" />
+								<ui:param name="innerToolbar" value="#{true}" />
+								<ui:param name="skipToolbarTitle" value="true" />
+								<ui:param name="skipToolbarDescription" value="true" />
+								<ui:define name="toolbarContent">
+									<aon:commandButton id="portalAccessUser-changePasswordAdmin"
+										value="#{bundle.admin_change_password}"
+										actionListener="#{portalAccess.onShowChangePasswordWindow}"
+										reRender="showChangePasswordWindow"  immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-utilities" />															
+								</ui:define>				
+							</ui:decorate>
+						</aon:if>
+			
 						<aon:panelGrid columns="2">
 						
 							<aon:outputLabel for="User_login"
@@ -144,45 +144,33 @@
 							<aon:inputText id="User_name"
 								size="55" maxlength="64" required="true" 
 								value="#{portalAccess.user.name}" />		
-								
-							<aon:outputLabel for="User_Password"
-								value="#{bundle.aon_login_passwd}" />
-							<aon:inputSecret id="User_Password"
-								required="true" size="20" maxlength="16"
-								value="#{portalAccess.newPassword}">
-								<f:validateLength minimum="4" />
-							</aon:inputSecret>
-		
-							<aon:outputLabel for="User_ConfirmPassword"
-								value="#{bundle.config_user_confirm_password}" />
-							<aon:inputSecret id="User_ConfirmPassword"
-								required="true" size="20" maxlength="16"
-								value="#{portalAccess.confirmPassword}" >
-								<f:validateLength minimum="4" />
-							</aon:inputSecret>
-						
+
 							<aon:outputLabel for="User_active"
 								value="#{bundle.aon_active}" />
 							<aon:selectBooleanCheckbox id="User_active"
 								value="#{portalAccess.user.active}" />
 							
 						</aon:panelGrid>
-					</aon:form>
-
-					<aon:if test="#{portalAccess.user.id != null}" >
-						<aon:form id="portalAccessUserScopesForm">
+	
+						<aon:if test="#{portalAccess.user.id != null}" >
 							<aon:div styleClass="aon-form-group-title aon-margin-top">
 								<aon:div styleClass="aon-form-group-title-internal">
 									<aon:outputText value="#{bundle.config_scopes}"/>
 								</aon:div>
 							</aon:div>
-							<ui:include src="/com/code/aon/ui/admin/facelet/userScope/form.xhtml" />
-						</aon:form>
-					</aon:if>
-											
-				</aon:panel>
+							<ui:include src="/com/code/aon/ui/admin/facelet/userScope/form.xhtml" >
+								<ui:param name="skipUseScopeToolbar" value="#{true}" />
+							</ui:include>
+						</aon:if>
+												
+					</aon:panel>
+				</aon:div>
+															
 			</aon:div>
-														
-		</aon:div>
+
+		</aon:form>
+		<ui:include src="/com/code/aon/ui/admin/facelet/domainUser/changePassword.xhtml" >
+			<ui:param name="controller" value="#{portalAccess}" />
+		</ui:include>
 	</ui:define>
 </ui:composition>

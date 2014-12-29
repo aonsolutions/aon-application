@@ -8,18 +8,22 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j" >
 
-	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-		<ui:param name="toolbarID" value="userScopeToolbar" />
-		<ui:param name="innerToolbar" value="#{true}" />
-		<ui:define name="toolbarContent">	
-			<aon:commandButton id="userScope-store"
-				title="#{bundle.aon_key_save_accelerator}"
-				value="#{bundle.aon_save}"
-				actionListener="#{userScopeEx.accept}"
-				styleClass="aon-finding-toolbar-item aon-icon-accept"
-				accesskey="#{bundle.aon_key_save}" />
-		</ui:define>
-	</ui:decorate>
+	<aon:valueParam name="skipUseScopeToolbar" default="#{false}" />
+
+	<aon:if test="#{!skipUseScopeToolbar}" >
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+			<ui:param name="toolbarID" value="userScopeToolbar" />
+			<ui:param name="innerToolbar" value="#{true}" />
+			<ui:define name="toolbarContent">	
+				<aon:commandButton id="userScope-store"
+					title="#{bundle.aon_key_save_accelerator}"
+					value="#{bundle.aon_save}"
+					actionListener="#{userScopeEx.accept}"
+					styleClass="aon-finding-toolbar-item aon-icon-accept"
+					accesskey="#{bundle.aon_key_save}" />
+			</ui:define>
+		</ui:decorate>
+	</aon:if>
 
 	<aon:div styleClass="aon-scroll-area">
 	

@@ -101,7 +101,8 @@ public class DesktopState implements Serializable {
     private boolean showFavorites;
     private boolean showTirant;
     private boolean showDehOnline;
-	
+	private boolean portalUser;
+    
     public DesktopState() {
     	initCompany();
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
@@ -284,6 +285,7 @@ public class DesktopState implements Serializable {
 		if ( isPortalActive(user, ds) ) {
 			this.userWithPortalView = user.getEnterprise() == null;
 			if (! this.userWithPortalView ) {
+				this.portalUser = true;
 				AonUtil.setBeanValue(IGroupWareConstants.ALARM_CONTROLLER_NAME, IGroupWareConstants.SHOW_PENDING, Boolean.FALSE);
 				AonUtil.setBeanValue(IGroupWareConstants.ALARM_CONTROLLER_NAME, IGroupWareConstants.SHOW_LIST, Boolean.FALSE);
 				Map<String, Object> properties = AonUtil.getConfigurationController().getProperties();
@@ -581,7 +583,7 @@ public class DesktopState implements Serializable {
 	}	
 	
 	public boolean isShowExternalApplications() {
-		return isShowDehOnline() || isShowServiconvenios() || isShowTirant();
+		return !this.portalUser && (isShowDehOnline() || isShowServiconvenios() || isShowTirant());
 	}
 
 	public boolean isShowDehOnline() {

@@ -226,7 +226,9 @@
 	<aon:if test="#{aonRole.sysAdmin}" >
 		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
 		<aon:lookupButtonPopup lookup="#{registryLookup}" />
-		<ui:include src="/com/code/aon/ui/admin/facelet/domainUser/changePassword.xhtml" />
+		<ui:include src="/com/code/aon/ui/admin/facelet/domainUser/changePassword.xhtml" >
+			<ui:param name="controller" value="#{domainUser}" />
+		</ui:include>
 	</aon:if>
 	<ui:include src="/com/code/aon/ui/config/facelet/changePassword/passwordChanged.xhtml" />
 		
