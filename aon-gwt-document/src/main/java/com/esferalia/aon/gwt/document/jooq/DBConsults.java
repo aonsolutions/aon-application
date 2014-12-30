@@ -931,12 +931,20 @@ public class DBConsults {
 		}
 	}
 	
-	public static void updateFile(String domain,com.code.aon.google.apis.FileInfo fi) throws SQLException{
+	public static void updateFile(String domain,com.code.aon.google.apis.FileInfo fi,Vector<Tag> tags, Integer domainId) throws SQLException{
 		Connection connection = null;
 		try {
 			connection = DatabaseSync.getConnection(domain);
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
+			
+			
+			dslContext.delete(RATTACH_TAG).where(RATTACH_TAG.RATTACH.eq(fi.getFileId())).execute();
+
+			for (Tag tag : tags) {
+				dslContext.insertInto(RATTACH_TAG,RATTACH_TAG.DOMAIN,RATTACH_TAG.RATTACH,RATTACH_TAG.TAG)
+				.values(domainId,fi.getFileId(),tag.getId()).execute();
+			}
 			
 			dslContext.update(RATTACH).set(RATTACH.CATEGORY,fi.getCategory())
 									.set(RATTACH.MIMETYPE,fi.getMimetype())

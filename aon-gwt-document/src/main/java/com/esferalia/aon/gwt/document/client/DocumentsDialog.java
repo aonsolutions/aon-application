@@ -397,7 +397,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 			else lb1.addItem(c.getName());
 		}
 		lb2.addChangeHandler(OneHandler2());
-		final SingleUploader upload = newUploader(dialog.getUpload(),url);
+		final SingleUploader upload = newUploader(dialog.getUpload(),dialog.getBaseUrl());
         upload.addOnCancelUploadHandler(new OnCancelUploaderHandler() {
         	
 			@Override

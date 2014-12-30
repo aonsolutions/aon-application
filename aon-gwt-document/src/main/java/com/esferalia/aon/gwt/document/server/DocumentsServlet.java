@@ -431,16 +431,25 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		com.code.aon.google.apis.FileInfo fileInfo = new com.code.aon.google.apis.FileInfo();
 		fileInfo.setFileId(fi.getFileId());
 		fileInfo.setAonType("registry");
-		fileInfo.setCategory(fi.getCategory());
-		fileInfo.setDate(fi.getDate());
+		if(fi.getCategory()!=null)fileInfo.setCategory(fi.getCategory());
+		if(fi.getDate() != null){
+			fileInfo.setDate(fi.getDate());
+			Date date = null;
+			if (fi.getDate() != null)
+			date = new Date(fi.getDate().getYear(),
+					fi.getDate().getMonth(), fi.getDate().getDate());
+			fileInfo.setDateSql(date);
+		}
 		if(getMimetype()!=null)fileInfo.setMimetype((byte)MimeType.get(getMimetype()).ordinal());
 		else fileInfo.setMimetype(fi.getMimetype());
 		fileInfo.setTitle(fi.getTitle());
-		fileInfo.setScopeId(fi.getScope().getId());
+		if(fi.getScope() != null)fileInfo.setScopeId(fi.getScope().getId());
 		Byte conf;if(fi.getConfidential())conf=1; else conf=0;
 		fileInfo.setSecurityLevel(conf);
+
 		try {
-			DBConsults.updateFile(domain, fileInfo);
+			DBConsults.updateFile(domain, fileInfo,fi.getTags(),domainId);
+			
 			if(getMimetype()!=null){
 				//InputStream file = getFile();
 				byte[] b = getOut();//.toByteArray();
@@ -451,7 +460,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 					DriveUtils.sync2(d, fileInfo, domain);
 				}
 				else{
-					
+					DBConsults.insertFileData(domain, fileInfo.getFileId(), b );
 				}
 			}
 		} catch (SQLException e) {

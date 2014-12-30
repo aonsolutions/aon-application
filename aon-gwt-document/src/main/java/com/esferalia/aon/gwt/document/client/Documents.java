@@ -3,11 +3,10 @@ package com.esferalia.aon.gwt.document.client;
 import gwtupload.client.SingleUploader;
 
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
-
-import org.apache.commons.io.FileUtils;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
@@ -44,14 +43,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
-import com.google.gwt.event.dom.client.DragLeaveEvent;
-import com.google.gwt.event.dom.client.DragLeaveHandler;
-import com.google.gwt.event.dom.client.DragOverEvent;
-import com.google.gwt.event.dom.client.DragOverHandler;
-import com.google.gwt.event.dom.client.DropEvent;
-import com.google.gwt.event.dom.client.DropHandler;
-import com.google.gwt.event.dom.client.FocusEvent;
-import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
@@ -74,7 +65,6 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -90,9 +80,7 @@ import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SimplePanel;
-
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
@@ -406,6 +394,7 @@ public class Documents extends Composite implements EntryPoint {
 
 	@UiField(provided=true) DisclosurePanel epanel;
 
+	
 	//@UiField(provided=true)
 	//ScrollPanel treepanel;
 
@@ -440,6 +429,7 @@ public class Documents extends Composite implements EntryPoint {
 	@UiField Button tagButton;
 	
 	@UiField Button catButton;
+	
 
 	Boolean gConnection;
 	Boolean documentManager;
@@ -449,7 +439,7 @@ public class Documents extends Composite implements EntryPoint {
 			public void onSuccess(Boolean result) {
 				documentManager = result;
 				if(!documentManager){
-					newFile.setVisible(false);
+					//newFile.setVisible(false);
 	
 				}
 				getSons();
@@ -459,6 +449,7 @@ public class Documents extends Composite implements EntryPoint {
 					@Override
 					public void onSuccess(Document result) {
 						docs = result;
+
 						idoc.getLists(new AsyncCallback<Lists>() {
 
 							@Override
@@ -473,6 +464,8 @@ public class Documents extends Composite implements EntryPoint {
 								dpanel = new DisclosurePanel(di.getClosed(), di.getOpen(), "Categor\u00edas");
 								epanel = new DisclosurePanel(di.getClosed(), di.getOpen(), "Etiquetas");
 								Load();
+							
+
 							}
 						});
 					}
@@ -516,17 +509,20 @@ public class Documents extends Composite implements EntryPoint {
 		//DisclosureImages di = new DisclosureImages();
 		//dpanel = new DisclosurePanel(di.getClosed(), di.getOpen(), "Categor\u00edas");
 		//epanel = new DisclosurePanel(di.getClosed(), di.getOpen(), "Etiquetas");
+	
 		
-			
-			
+
+		
 
 	}
 	Category cAux;
 	Tag tAux;
 	
 	public void Load() {
+
 		tree();
 		getSons();
+
 		/** CATEGORIES **/
 	/*	filterButton = new Button();
 	filterButton.addClickHandler(new ClickHandler() {
@@ -940,32 +936,38 @@ public class Documents extends Composite implements EntryPoint {
 	public void editFile(SingleUploader up) {
 		Integer n =dataGrid.getKeyboardSelectedRow();
 		FileInfo fi = dataProvider.getList().get(n);
-
 		if(!fi.getIsDrive() && !fi.getIsParent() && !isServiconvenios){
 			Dialog d = new Dialog("edit", "Editar Archivo", "Cancelar", true, "Editar", true,son);
 			d.setLists(lists);
 			d.setFileInfo(fi);
-
+			d.setUpload(up);
+			d.setBaseUrl(GWT.getModuleBaseURL());
 			popup2 = new DocumentsDialog(d){
 				@Override
 				protected void onAccept() {
 					Integer n =dataGrid.getKeyboardSelectedRow();
         			FileInfo fileInfo = dataProvider.getList().get(n);
-            	
             		// Descripción - Description
             		TextBox tb = (TextBox)grid.getWidget(0, 1);
             		if(!tb.getText().equals(""))
             			fileInfo.setTitle(tb.getText());
-            	
             		// Confidencial - Confidential
             		CheckBox cb = (CheckBox)grid.getWidget(2, 1);
             		fileInfo.setConfidential(cb.getValue());
-            	
             		// Fecha - Date
             		DateBox db = (DateBox)grid.getWidget(3, 1);
-            		if(!db.getTextBox().getText().equals(""))
-            			fileInfo.setDate(db.getValue());
-            	
+            		if(!db.getTextBox().getText().equals("")){
+            			Date d = db.getValue();
+            			fileInfo.setDate(d);
+            			String year="";
+            			if(d.getYear()>100) year = "20"+Integer.toString(d.getYear()).substring(1); 
+            			else year = "19"+Integer.toString(d.getYear());
+            			fileInfo.setDateStr(Integer.toString(d.getDate())+"-"+Integer.toString(d.getMonth())+"-"+year);
+            		}
+            		else {
+            			fileInfo.setDate(null);
+            			fileInfo.setDateStr("-");
+            		}
             		// Categoria - Category
             		ListBox lb1 = (ListBox)grid.getWidget(4, 1);
             		for (Category c : lists.getCategoryList().getList()) {
@@ -974,9 +976,13 @@ public class Documents extends Composite implements EntryPoint {
             				s1 = s1.substring(1);
             			if(c.getName().equals(s1)){
 							fileInfo.setCategory(c.getId());
+							fileInfo.setCategoryStr(s1);
 						}
+            			if(s1.equals("-")){
+							fileInfo.setCategory(null);
+							fileInfo.setCategoryStr(s1);
+            			}
 					}
-            	
             		// Ambito - Scope
             		ListBox lb3 = (ListBox)grid.getWidget(6, 1);
 
@@ -987,15 +993,14 @@ public class Documents extends Composite implements EntryPoint {
             				s3 = s3.substring(1);
             					
             				}
-
             			if(s.getName().equals(s3)){
 							fileInfo.setScope(s);
 						}
 					}	            	
-            	
             		// Etiquetas - Tags
             		Vector<Tag> tags = new Vector<Tag>();
             		VerticalPanel vp = (VerticalPanel)grid.getWidget(5, 1);
+            		String str="";
             		for(Integer i = 0 ;i<vp.getWidgetCount();i++){
             			HorizontalPanel hp = (HorizontalPanel)vp.getWidget(i);
             			ListBox lb = (ListBox)hp.getWidget(0);
@@ -1004,10 +1009,16 @@ public class Documents extends Composite implements EntryPoint {
                 			if(s2.substring(0, 1).equals(Character.toString((char)9650)) || s2.substring(0, 1).equals(Character.toString((char)9660)) )
                 				s2 = s2.substring(1);
 							if(t.getName().equals(s2)){
-								fileInfo.setTags(tags);
+								tags.add(t);
+								str = str+t.getName()+", ";
 							}
 						}
             		}
+            		if(tags.size()<1)
+            			fileInfo.setTagsStr("-");
+            		else fileInfo.setTagsStr(str.substring(0,str.length()-2));
+            		fileInfo.setTags(tags);
+            		
             		/*Window.alert(fileInfo.getAonType()+"/n"
             				+Integer.toString(fileInfo.getCategory())+"/n" 
             				+fileInfo.getConf().toString()+"/n"
@@ -1443,7 +1454,7 @@ public class Documents extends Composite implements EntryPoint {
 		popup2.show();
 	}
 	
-	Lists lists = new Lists();
+	Lists lists ;
 	FlexTable grid;
 	HorizontalPanel h2;
 	
@@ -2462,7 +2473,6 @@ public class Documents extends Composite implements EntryPoint {
 					VerticalPanel v = (VerticalPanel) epanel.getContent();
 					TextBox t =  (TextBox) v.getWidget(v.getWidgetCount() - 1);
 					tagname = t.getText();
-					Window.alert(tagname);
 					idoc.newTag(tagname, new AsyncCallback<Tag>() {
 						@Override
 						public void onSuccess(Tag result) {
@@ -2663,7 +2673,6 @@ public class Documents extends Composite implements EntryPoint {
 							VerticalPanel v = (VerticalPanel) epanel.getContent();
 							for (int i = 0; i<v.getWidgetCount() ; i++) {
 								Button b = (Button) v.getWidget(i);
-								Window.alert(b.getText()+" - "+oldName + Boolean.toString(b.getText().equals(oldName)));
 								if(b.getText().equals(oldName)){
 									b.setText(newName);
 								}
@@ -2770,6 +2779,7 @@ public class Documents extends Composite implements EntryPoint {
 						
 						@Override
 						public void onSuccess(Void result) {
+							
 							VerticalPanel v = (VerticalPanel) epanel.getContent();
 							for (int i = 0; i<v.getWidgetCount() ; i++) {
 								Button b = (Button) v.getWidget(i);
@@ -2814,6 +2824,8 @@ public class Documents extends Composite implements EntryPoint {
 								}
 								if(!s.equals("")) f.setTagsStr(s.substring(0,s.length()-2 ));							
 							}
+							
+							
 							dataGrid.redraw();
 						}
 						
@@ -2896,6 +2908,7 @@ public class Documents extends Composite implements EntryPoint {
 						
 						@Override
 						public void onSuccess(Void result) {
+							
 							VerticalPanel v = (VerticalPanel) dpanel.getContent();
 							for (int i = 0; i<v.getWidgetCount() ; i++) {
 								Button b = (Button) v.getWidget(i);
@@ -2911,6 +2924,7 @@ public class Documents extends Composite implements EntryPoint {
 								if(f.getCategoryStr().equals(oldName))
 									f.setCategoryStr("-");
 							}
+
 							dataGrid.redraw();
 						}
 						
