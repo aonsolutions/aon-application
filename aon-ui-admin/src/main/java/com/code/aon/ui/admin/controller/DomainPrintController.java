@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.audit.DomainApplicationModule;
+import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -105,7 +106,13 @@ public class DomainPrintController extends BasicController {
 					Locale locale = AonUtil.getCurrentLocale();
 					for( ITransferObject to : list ) {
 						DomainApplicationModule dam = (DomainApplicationModule) to;
-						modules.add( dam.getModule().getName(locale) );
+						String name = null;
+						if ( domain.isDomainManagement() && (dam.getModule() == Module.PAYROLL_PORTAL) ) {
+							name = AonUtil.getMessage(ICommonMessages.ADMIN_GLOBAL_PORTAL);
+						} else {
+							name = dam.getModule().getName(locale);
+						}
+						modules.add( name );
 					}
 					return StringUtils.join(modules, ", ");					
 				}			

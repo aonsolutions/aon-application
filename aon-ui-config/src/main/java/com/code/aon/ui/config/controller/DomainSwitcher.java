@@ -1,8 +1,13 @@
 package com.code.aon.ui.config.controller;
 
+import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.DomainApplicationModule.DOMAIN_APPLICATION_MODULE;
+import static com.esferalia.aon.jooq.tables.User.USER;
+
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.net.IDN;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,13 +20,17 @@ import javax.faces.model.DataModel;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.jooq.Condition;
+import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
+import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -30,13 +39,16 @@ import com.code.aon.common.domain.AbstractDomainSwitcher;
 import com.code.aon.common.domain.DomainEvent;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.domain.IDomainChangeListener;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.Domain;
 import com.code.aon.config.UserScope;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
+import com.code.aon.ui.config.DomainData;
 import com.code.aon.ui.form.ITemplateController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.occam.api.AONContext;
 
 public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateController, Serializable {
 
@@ -197,41 +209,61 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 		return scopes;
 	}
 	
-	private String getDomainWhere() {
-		StringBuffer sb = new StringBuffer();
-		sb.append( " WHERE d.parent = ").append( getParentDomain() );
-		sb.append( " AND (d.expirationDate is null OR d.expirationDate > NOW())");
+	private Condition getDomainCondition() {
+		Condition condition = DOMAIN.PARENT.eq(getParentDomain());
+		Condition expirationCondition = DOMAIN.EXPIRATIONDATE.isNull().or(DOMAIN.EXPIRATIONDATE.gt(DSL.currentDate()));
+		condition = condition.and(expirationCondition);
 		if (! isShowInactive() ) {
-			sb.append( " AND d.active = 1" );
+			condition = condition.and(DOMAIN.ACTIVE.eq((byte)1));
 		}			
 		if (! isAdminDomain() ) {
-			sb.append( " AND (d.scope is null" );
+			Condition scopeCondition = DOMAIN.SCOPE.isNull();
 			List<Integer> scopes = getUserScopes();
 			if (! scopes.isEmpty() ) {
-				sb.append( " or d.scope in (" );
-				sb.append( StringUtils.join(scopes, ",") );
-				sb.append( ')' );
+				scopeCondition = scopeCondition.or(DOMAIN.SCOPE.in(scopes));
 			}
-			sb.append( ')' );
-		}		
-		return sb.toString();
-	}
+			condition = condition.and(scopeCondition);
+		}
+		return condition;
+	}	
 	
+	private void fillDomainData( AONContext ctx, DomainData data ) {
+		String portalValue = ctx.getDslContext().
+				select(APP_PARAM.VALUE).
+				from(APP_PARAM).
+				where(APP_PARAM.DOMAIN.eq(data.getId()).and(APP_PARAM.NAME.eq(AppParam.AON_PORTAL.getValue()))).
+				fetchOne(0, String.class);
+		if (! StringUtils.isEmpty(portalValue) ) {
+			data.setPortal( NumberUtils.toInt(portalValue) > 0 );
+		}
+		int activeUsers = ctx.getDslContext().
+				selectCount().
+				from(USER).
+				where(USER.DOMAIN.eq(data.getId()).and(USER.ACTIVE.eq((byte)1)).and(USER.ENTERPRISE.isNull())).
+				fetchOne(0, int.class);
+		data.setActiveUsers(activeUsers);
+		int aonOneModule  = ctx.getDslContext().
+				selectCount().
+				from(DOMAIN_APPLICATION_MODULE).
+				where(DOMAIN_APPLICATION_MODULE.DOMAIN.eq(data.getId()).and(DOMAIN_APPLICATION_MODULE.MODULE.eq((byte)Module.AON_ONE.ordinal()))).
+				fetchOne(0, int.class);
+		data.setAonOne(aonOneModule > 0);
+	}
+
 	private void initializeModel() {
-		List<Domain> domains = new LinkedList<Domain>();
+		List<DomainData> domains = Collections.emptyList();
 		if (getParentDomain() != null) {
-			String sessionFactoryName = HibernateUtil.getSessionFactoryName(Domain.class.getName());
-			StringBuffer sb = new StringBuffer( "SELECT d FROM Domain d" );
-			sb.append(getDomainWhere());
-			sb.append(" ORDER BY d.description" );
-			Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(sb.toString());
-			List<?> queryList = query.list();
-			Iterator<?> iterator = queryList.iterator();
-			while (iterator.hasNext()) {
-				Domain dom = (Domain) iterator.next();
-				domains.add(dom);	
+			AONContext ctx = AONContext.getAONContext(getDomainNameURL(), domainId);
+			domains = ctx.getDslContext().
+					select(DOMAIN.ID,DOMAIN.NAME, DOMAIN.DESCRIPTION, DOMAIN.MAXDEFINEDUSERS,DOMAIN.ENABLEHEREDITY).
+					from(DOMAIN).
+					where(getDomainCondition()).
+					orderBy(DOMAIN.DESCRIPTION).
+					fetch().into(DomainData.class);
+			for( DomainData data : domains ) {
+				fillDomainData(ctx, data);
 			}
-			HibernateUtil.closeSession(sessionFactoryName, false);
+			ctx.finalize();			
 		} 
 		setModel(new SerializableListDataModel(domains));
 	}
@@ -243,13 +275,14 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 	
 	public int getDomainCount() {
 		if (getParentDomain() != null) {
-			String sessionFactoryName = HibernateUtil.getSessionFactoryName(Domain.class.getName());
-			StringBuffer sb = new StringBuffer( "SELECT count(d.id) FROM domain d" );
-			sb.append(getDomainWhere());
-			SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(sb.toString());
-			BigInteger count = (BigInteger) query.uniqueResult();
-			HibernateUtil.closeSession(sessionFactoryName, false);
-			return count.intValue();	
+			AONContext ctx = AONContext.getAONContext(getDomainNameURL(), domainId);
+			int count = ctx.getDslContext().
+					selectCount().
+					from(DOMAIN).
+					where(getDomainCondition()).
+					fetchOne(0, int.class);
+			ctx.finalize();
+			return count;	
 		}
 		return 0;
 	}
@@ -365,8 +398,8 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 
 	public String getCurrentDomainURL() throws ManagerBeanException {
 		if ( getModel().isRowAvailable() ) {
-			Domain domain = (Domain) getModel().getRowData();
-			String name = IDN.toASCII(domain.getName());
+			DomainData domainData = (DomainData) getModel().getRowData();
+			String name = IDN.toASCII(domainData.getName());
 			return name;
 		}
 		return null;

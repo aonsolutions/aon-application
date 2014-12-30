@@ -46,20 +46,39 @@
 			<ui:param name="skipFocusFirst" value="true" />
 			<ui:define name="columns">
 				<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_name}" />
+					</f:facet>							
 					<aon:outputText value="#{to.description}" />
 				</aon:column>
-				<aon:column styleClass="aon-editDataTable-textColumn aon-width-200 aon-nowrap">
-					<aon:div onmouseover="disableRowSelector();"
-						onmouseup="disableRowSelector();"
-						onmouseout="enableRowSelector();" >
-						<aon:outputLink target="_blank" value="http://#{domainSwitcher.currentDomainURL}" >
-							<aon:outputText style="#{customize.fontStyle}" value="http://#{to.name}">
-								<aon:abbreviateConverter maxWidth="40" />
-							</aon:outputText>
-					    </aon:outputLink>
-					</aon:div>
+				<aon:column styleClass="aon-text-center aon-width-40 aon-nowrap">
+					<f:facet name="header">
+						<aon:outputText style="text-transform: none;"
+							value="One" />
+					</f:facet>							
+					<aon:outputText rendered="#{!to.aonOne}" value="-" />
+					<aon:outputText rendered="#{to.aonOne}"
+						value="#{to.activeUsers} / #{to.maxDefinedUsers}" />
 				</aon:column>
-				<aon:column styleClass="aon-editDataTable-iconColumn">				
+				<aon:column styleClass="aon-text-center aon-width-40 aon-nowrap">
+					<f:facet name="header">
+						<aon:outputText style="text-transform: none;"
+							 value="AiO" />
+					</f:facet>							
+					<aon:outputText rendered="#{to.aonOne}" value="-" />
+					<aon:outputText rendered="#{!to.aonOne}"
+						value="#{to.activeUsers} / #{to.maxDefinedUsers}" />
+				</aon:column>
+				<aon:column styleClass="aon-editDataTable-iconColumn aon-text-center">
+					<f:facet name="header">
+						<aon:outputText value="Portal" />
+					</f:facet>						
+					<aon:outputText rendered="#{!to.portal}" value="-" />
+					<aon:outputText value="&#160;"
+						rendered="#{to.portal}" styleClass="aon-icon-check-black"
+						style="padding-left:12px" />				
+				</aon:column>
+				<aon:column styleClass="aon-width-40">
 					<aon:outputText value="&#160;"
 						rendered="#{to.enableHeredity}"
 						title="#{bundle.aon_domian_enableHeredity}"
@@ -67,7 +86,14 @@
 					<aon:outputText value="&#160;"
 						rendered="#{!to.enableHeredity}"
 						title="#{bundle.aon_domian_disableHeredity}"
-						styleClass="aon-icon2 aon-icon-disableHeredity" />														
+						styleClass="aon-icon2 aon-icon-disableHeredity" />
+					<aon:div onmouseover="disableRowSelector();" onmouseup="disableRowSelector();"
+						onmouseout="enableRowSelector();" layout="inline" >										
+						<h:outputLink 
+							value="http://#{domainSwitcher.currentDomainURL}" target="_blank"
+							title="http://#{to.name}"
+							styleClass="aon-icon aon-icon-globe" />
+					</aon:div>
 				</aon:column>
 			</ui:define>
 		</ui:decorate>

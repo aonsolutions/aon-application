@@ -28,6 +28,7 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.audit.controller.IAuditConstants;
+import com.code.aon.ui.config.DomainData;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
@@ -154,8 +155,8 @@ public class DomainsController extends BasicController {
 	public void onSelectChildDomain( ActionEvent event) throws ManagerBeanException {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		if ( ds.getModel().isRowAvailable() ) {
-			Domain domain = (Domain) ds.getModel().getRowData();
-			ds.select(domain.getId(), domain.getDescription());
+			DomainData domainData = (DomainData) ds.getModel().getRowData();
+			ds.select(domainData.getId(), domainData.getDescription());
 			if ( isAdminDomain() ) {
 				setConfigurationMenu();
 			}
