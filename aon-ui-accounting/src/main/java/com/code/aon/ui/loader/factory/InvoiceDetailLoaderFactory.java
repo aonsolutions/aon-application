@@ -157,7 +157,11 @@ public class InvoiceDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		} else {
 			Item item = obtainItem( params, loaded, invoice );
 			detail.setItem(item);
-			detail.setDescription(StringUtils.join(new String[]{item.getProduct().getName(),item.getDescription()}," "));
+			if ( StringUtils.isEmpty( loaded.getConcepto() )) {
+				detail.setDescription(StringUtils.join(new String[]{item.getProduct().getName(),item.getDescription()}," "));
+			} else {
+				detail.setDescription( loaded.getConcepto() ); 
+			}
 			detail.setSource(InvoiceSource.DIRECT_INVOICE);
 		}
 		detail.setPrice(loaded.getPrecio());
