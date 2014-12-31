@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.document.shared.Category;
+import com.esferalia.aon.gwt.document.shared.CategoryList;
 import com.esferalia.aon.gwt.document.shared.Dialog;
 import com.esferalia.aon.gwt.document.shared.DisclosureImages;
 import com.esferalia.aon.gwt.document.shared.Document;
@@ -23,6 +24,7 @@ import com.esferalia.aon.gwt.document.shared.Lists;
 import com.esferalia.aon.gwt.document.shared.Scope;
 import com.esferalia.aon.gwt.document.shared.SearchInfo;
 import com.esferalia.aon.gwt.document.shared.Tag;
+import com.esferalia.aon.gwt.document.shared.TagList;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.Cell.Context;
@@ -46,6 +48,9 @@ import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.dom.client.LoadEvent;
+import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
@@ -399,7 +404,8 @@ public class Documents extends Composite implements EntryPoint {
 	//ScrollPanel treepanel;
 
 	@UiField(provided=true) DisclosurePanel dpanel;
-
+	
+	
 	@UiField SplitLayoutPanel splitLayoutPanel;
 
 	@UiField StackLayoutPanel stack1;
@@ -438,10 +444,7 @@ public class Documents extends Composite implements EntryPoint {
 			@Override
 			public void onSuccess(Boolean result) {
 				documentManager = result;
-				if(!documentManager){
-					//newFile.setVisible(false);
-	
-				}
+
 				getSons();
 				if(docs.getEfiles()==null||docs.getEfiles().isEmpty()){
 					idoc.getAllFiles(new AsyncCallback<Document>() {
@@ -505,6 +508,7 @@ public class Documents extends Composite implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 		stack1 = new StackLayoutPanel(Unit.EM);
+	
 		//treepanel = new ScrollPanel();
 		//DisclosureImages di = new DisclosureImages();
 		//dpanel = new DisclosurePanel(di.getClosed(), di.getOpen(), "Categor\u00edas");
@@ -665,7 +669,8 @@ public class Documents extends Composite implements EntryPoint {
 			
 			@Override
 			public void onKeyPress(KeyPressEvent event) {
-
+				///Window.alert(Integer.toString(event.getCharCode()) +" - "+Integer.toString(event.getNativeEvent().getKeyCode()));
+				
 				if(!Utils.isNotAlpKey(event.getNativeEvent().getKeyCode())){
 					event.getNativeEvent().preventDefault();
 					if(KeyCodes.KEY_DELETE != event.getNativeEvent().getKeyCode() && KeyCodes.KEY_BACKSPACE != event.getNativeEvent().getKeyCode()){
@@ -1228,6 +1233,23 @@ public class Documents extends Composite implements EntryPoint {
 	DocumentsDialog popup2;
 	
 	private void newFile(SingleUploader up) {	
+		if(!documentManager){
+			Dialog d = new Dialog("alert","Nuevo Archivo","Cancelar",false,"Volver",true,son);
+			popup2 = new DocumentsDialog(d) {
+				
+				@Override
+				protected void onCancel() {
+					hide();
+				}
+				
+				@Override
+				protected void onAccept() {
+					hide();
+				}
+			};
+
+		}
+		else{
 		Dialog d = new Dialog("new","Nuevo Archivo","Cancelar",true,"Guardar",true,son);
 		d.setBaseUrl(GWT.getModuleBaseURL());
 		d.setLists(lists);
@@ -1450,11 +1472,13 @@ public class Documents extends Composite implements EntryPoint {
 				vertical = new VerticalPanel();			
 			}
 		};
+		}
 		popup2.setGlassEnabled(true);
 		popup2.show();
+	
 	}
 	
-	Lists lists ;
+	Lists lists =new Lists();
 	FlexTable grid;
 	HorizontalPanel h2;
 	
@@ -2033,7 +2057,27 @@ public class Documents extends Composite implements EntryPoint {
 			@Override
 			public void onSuccess(TreeMap<String, List<FileInfo>> result) {
 				TreeItem ti = new TreeItem();
-				ti = t.addTextItem("Mi Unidad");
+				Button button = new Button("Mi Unidad");
+				button.setStyleName("aon-editDataTable-button aon-icon-google-drive-folder-root");
+				button.addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						idoc.getDriveFile(rootId, new AsyncCallback<Vector<FileInfo>>() {
+							@Override
+							public void onSuccess(Vector<FileInfo> result) {
+
+								docs.setFilter(result);
+								dataProvider = new ListDataProvider<FileInfo>(result);
+								dataProvider.addDataDisplay(dataGrid);
+								updateDatagridColumns();
+								dataGrid.redraw();
+							}
+							@Override
+							public void onFailure(Throwable caught) {}
+						});
+					}
+				});
+				ti = t.addItem(button);
 				treeSons(ti,result,rootId);
 				sp.add(t);
 			}
@@ -2043,6 +2087,8 @@ public class Documents extends Composite implements EntryPoint {
 		
 	}
 	FileInfo auxiliarf;
+	TreeItem tiaux;
+	FileInfo faux;
 	public void treeSons(TreeItem t,TreeMap<String, List<FileInfo>> folders , String id){
 		Integer i = 0;
 		for (FileInfo f : folders.get(id)) {
@@ -2057,6 +2103,8 @@ public class Documents extends Composite implements EntryPoint {
 					idoc.getDriveFile(f.getDriveId(), new AsyncCallback<Vector<FileInfo>>() {
 						@Override
 						public void onSuccess(Vector<FileInfo> result) {
+
+							docs.setFilter(result);
 							dataProvider = new ListDataProvider<FileInfo>(result);
 							dataProvider.addDataDisplay(dataGrid);
 							updateDatagridColumns();
@@ -2069,9 +2117,22 @@ public class Documents extends Composite implements EntryPoint {
 			});
 			ti = t.addItem(button);
 			ti.setTitle(f.getDriveId());
-			if(folders.containsKey(f.getDriveId())){
+			tiaux = ti;
+			faux= f;
+			idoc.drive(folders, f.getDriveId(), new AsyncCallback<TreeMap<String,List<FileInfo>>>() {
+				TreeItem ti = tiaux;
+				FileInfo f = faux;
+				@Override
+				public void onSuccess(TreeMap<String, List<FileInfo>> result) {
+					treeSons(ti, result, f.getDriveId());
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {}
+			});
+			/*if(folders.containsKey(f.getDriveId())){
 				treeSons(ti, folders, f.getDriveId());
-			}
+			}*/
 			i++;
 		}
 	}
@@ -2775,6 +2836,25 @@ public class Documents extends Composite implements EntryPoint {
 			@Override
 			protected void onAccept() {
 				hide();
+				
+				Vector<Tag> v = new Vector<Tag>();
+				for(Integer i = 0; i< lists.getTagList().getList().size();i++){
+					if(!lists.getTagList().getList().get(i).getName().equals(oldName))
+						v.add(lists.getTagList().getList().get(i));
+				}
+				TagList tagList = new TagList();
+				tagList.setList(v);
+				lists.setTagList(tagList);
+
+				v = new Vector<Tag>();
+				for(Integer i = 0; i< lists.getTagListSon().getList().size();i++){
+					if(!lists.getTagListSon().getList().get(i).getName().equals(oldName))
+						v.add(lists.getTagListSon().getList().get(i));
+				}
+				tagList = new TagList();
+				tagList.setList(v);
+				lists.setTagListSon(tagList);
+				
 				idoc.deleteTag(tag.getId(), new AsyncCallback<Void>() {
 						
 						@Override
@@ -2887,9 +2967,9 @@ public class Documents extends Composite implements EntryPoint {
 		popup.setGlassEnabled(true);
 		popup.show();
 	}
-	 
+	 Vector<Category> catList = new Vector<Category>();
 	 private void removeCategory(Category category) {
-		
+		 catList = lists.getCategoryList().getList();
 		 Dialog d = new Dialog("delete2", "Borrar Etiqueta", "Cancelar", true, "Borrar", true,false);
 		 d.setCat(category);
 		 oldName = category.getName();
@@ -2904,6 +2984,24 @@ public class Documents extends Composite implements EntryPoint {
 			@Override
 			protected void onAccept() {
 				hide();
+				Vector<Category> v = new Vector<Category>();
+				for(Integer i = 0; i< lists.getCategoryList().getList().size();i++){
+					if(!lists.getCategoryList().getList().get(i).getName().equals(oldName))
+						v.add(lists.getCategoryList().getList().get(i));
+				}
+				CategoryList categoryList = new CategoryList();
+				categoryList.setList(v);
+				lists.setCategoryList(categoryList);
+
+				v = new Vector<Category>();
+				for(Integer i = 0; i< lists.getCategoryListSon().getList().size();i++){
+					if(!lists.getCategoryListSon().getList().get(i).getName().equals(oldName))
+						v.add(lists.getCategoryListSon().getList().get(i));
+				}
+				categoryList = new CategoryList();
+				categoryList.setList(v);
+				lists.setCategoryListSon(categoryList);
+
 				 idoc.deleteCategory(cat.getId(),new AsyncCallback<Void>() {
 						
 						@Override

@@ -2968,6 +2968,10 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	background:transparent url(images/aon-icon/aon-icon-google-drive-folder.png) scroll left center no-repeat;	
  }
  
+ .aon-icon-google-drive-folder-root{
+	background:transparent url(images/aon-icon/aon-icon-google-drive-folder-root.png) scroll left center no-repeat;	
+ }
+ 
   .aon-icon-google-drive-docs{
 	background:transparent url(images/aon-icon/aon-icon-google-drive-docs.png) scroll left center no-repeat;	
  }

@@ -54,7 +54,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 	
 	String email;
 
-	Lists lists;
+	Lists lists2;
 	@UiField(provided = true) 
 	FlexTable grid;
 	FileInfo fileInfo;
@@ -64,11 +64,11 @@ public abstract class DocumentsDialog extends CustomDialog {
 	@UiField Button cancelButton;
 	Tag tag;
 	Category cat;
-	
+	String n;
 	public DocumentsDialog(Dialog dialog) {
-		if(dialog.getTag() != null)tag = dialog.getTag();
-		if(dialog.getCat() != null)cat = dialog.getCat();
-		lists  = dialog.getLists();
+		if(dialog.getTag() != null){tag = dialog.getTag();n=tag.getName();}
+		if(dialog.getCat() != null){cat = dialog.getCat();n=cat.getName();}
+		lists2  = dialog.getLists();
 		setFileInfo(dialog.getFileInfo());
 		setCaption(dialog.getTitle());
 		label = new Label();
@@ -128,6 +128,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 		grid.setCellSpacing(0);
 		TextBox tb = new TextBox();
 		tb.setStyleName("aon-inputText");
+		tb.setText(n);
 		grid.setWidget(0, 0, new Label("Descripci\u00f3n"));
 		grid.setWidget(0, 1, tb);
 		
@@ -157,7 +158,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 		ListBox lb3 = new ListBox();
 		lb3.addItem("-");
 
-		for (Scope s : lists.getScopeList().getList()) {
+		for (Scope s : lists2.getScopeList().getList()) {
 			if(s.getIsParent())
 				lb3.addItem(Character.toString((char)9650)+s.getName());
 			else if(s.getIsSon())
@@ -165,18 +166,18 @@ public abstract class DocumentsDialog extends CustomDialog {
 			else lb3.addItem(s.getName());
 		}
 		if(dialog.getSon()){
-			for(Scope s : lists.getScopeListSon().getList()){
+			for(Scope s : lists2.getScopeListSon().getList()){
 				lb3.addItem(Character.toString((char)9660)+s.getName());
 			}
 		}
-		for (Tag t : lists.getTagList().getList()) {
+		for (Tag t : lists2.getTagList().getList()) {
 			if(t.getIsParent())
 				lb2.addItem(Character.toString((char)9650)+t.getName());
 			else if(t.getIsSon())
 				lb2.addItem(Character.toString((char)9660)+t.getName());
 			else lb2.addItem(t.getName());
 		}
-		for (Category c : lists.getCategoryList().getList()) {
+		for (Category c : lists2.getCategoryList().getList()) {
 			if(c.getIsParent())
 				lb1.addItem(Character.toString((char)9650)+c.getName());
 			else if(c.getIsSon())
@@ -212,14 +213,14 @@ public abstract class DocumentsDialog extends CustomDialog {
 				String s2 = s.substring(pos2);
 				Integer pos3 = s2.indexOf('>');
 				String string = s.substring(pos1+1,pos2)+s2.substring(pos3+1);
-				for (Category c : lists.getCategoryListSon().getList()) {
+				for (Category c : lists2.getCategoryListSon().getList()) {
 					if(c.getDomain().equals(string)){
 						ListBox lb = (ListBox) grid.getWidget(5, 1);
 						lb.addItem(Character.toString((char)9660)+c.getName());
 						grid.setWidget(5, 1, lb);
 					}
 				}
-				for (Tag t : lists.getTagListSon().getList()) {
+				for (Tag t : lists2.getTagListSon().getList()) {
 					if(t.getDomain().equals(string)){
 					
 						if (bool) {
@@ -240,7 +241,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 						}					
 					}
 				}
-				for (Scope scope : lists.getScopeListSon().getList()) {
+				for (Scope scope : lists2.getScopeListSon().getList()) {
 
 					if(scope.getDomain().equals(string)){
 						ListBox lb = (ListBox) grid.getWidget(7, 1);
@@ -370,7 +371,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 		lb2.addItem("-");
 		ListBox lb3 = new ListBox();
 		lb3.addItem("-");
-		for (Scope s : lists.getScopeList().getList()) {
+		for (Scope s : lists2.getScopeList().getList()) {
 			if(s.getIsParent())
 				lb3.addItem(Character.toString((char)9650)+s.getName());
 			else if(s.getIsSon())
@@ -378,18 +379,18 @@ public abstract class DocumentsDialog extends CustomDialog {
 			else lb3.addItem(s.getName());
 		}
 		if(dialog.getSon()){
-			for(Scope s : lists.getScopeListSon().getList()){
+			for(Scope s : lists2.getScopeListSon().getList()){
 				lb3.addItem(Character.toString((char)9660)+s.getName());
 			}
 		}
-		for (Tag t : lists.getTagList().getList()) {
+		for (Tag t : lists2.getTagList().getList()) {
 			if(t.getIsParent())
 				lb2.addItem(Character.toString((char)9650)+t.getName());
 			else if(t.getIsSon())
 				lb2.addItem(Character.toString((char)9660)+t.getName());
 			else lb2.addItem(t.getName());
 		}
-		for (Category c : lists.getCategoryList().getList()) {
+		for (Category c : lists2.getCategoryList().getList()) {
 			if(c.getIsParent())
 				lb1.addItem(Character.toString((char)9650)+c.getName());
 			else if(c.getIsSon())
@@ -472,7 +473,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 				for(Integer k = 0; k< size ; k++){
 					lbs[k] = new ListBox();
 					lbs[k].addItem("-");
-					for (Tag t : lists.getTagList().getList()) {
+					for (Tag t : lists2.getTagList().getList()) {
 						if(t.getIsParent())
 							lbs[k].addItem(Character.toString((char)9650)+t.getName());
 						else if(t.getIsSon())
@@ -497,7 +498,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 						bMenos.setStyleName("aon-finding-toolbar-item aon-search-minus");
 						bMenos.addClickHandler(menosHandler2());
 						hp.add(bMenos);
-						if(size < lists.getTagList().getList().size()){
+						if(size < lists2.getTagList().getList().size()){
 							Button mas = new Button("");
 							mas.setStyleName("aon-finding-toolbar-item aon-search-add");
 							mas.addClickHandler(masHandler2());
@@ -580,13 +581,14 @@ public abstract class DocumentsDialog extends CustomDialog {
 	}
 	
 	private void alert(Dialog dialog){
-		String type="";
-		if(dialog.getTitle().equals("Editar Archivo"))type = "editar";
-		else if(dialog.getTitle().equals("Borrar Archivo"))type = "borrar";
-		if(dialog.getTitle().equals("Permisos")) {
-			label.setText("No tiene permisos para modificar o borrar");
+		switch (dialog.getTitle()) {
+			case "Editar Archivo": label.setText("No tiene permisos para editar el archivo "+dialog.getFileInfo().getTitle());break;
+			case "Borrar Archivo": label.setText("No tiene permisos para borrar el archivo "+dialog.getFileInfo().getTitle());;break;
+			case "Permisos":label.setText("No tiene permisos para modificar o borrar");break;
+			case "Nuevo Archivo": label.setText("No tiene permisos para crear un nuevo archivo"); break;
+			default:
+				break;
 		}
-		else label.setText("No tiene permisos para "+type+" el archivo "+dialog.getFileInfo().getTitle());
 	}
 	
 	Boolean bool;
@@ -598,7 +600,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 		ListBox lb3 = new ListBox();
 		lb3.addItem("-");
 
-		for (Scope s : lists.getScopeList().getList()) {
+		for (Scope s : lists2.getScopeList().getList()) {
 			if(s.getIsParent())
 				lb3.addItem(Character.toString((char)9650)+s.getName());
 			else if(s.getIsSon())
@@ -606,18 +608,18 @@ public abstract class DocumentsDialog extends CustomDialog {
 			else lb3.addItem(s.getName());
 		}
 		if(dialog.getSon()){
-			for(Scope s : lists.getScopeListSon().getList()){
+			for(Scope s : lists2.getScopeListSon().getList()){
 				lb3.addItem(Character.toString((char)9660)+s.getName());
 			}
 		}
-		for (Tag t : lists.getTagList().getList()) {
+		for (Tag t : lists2.getTagList().getList()) {
 			if(t.getIsParent())
 				lb2.addItem(Character.toString((char)9650)+t.getName());
 			else if(t.getIsSon())
 				lb2.addItem(Character.toString((char)9660)+t.getName());
 			else lb2.addItem(t.getName());
 		}
-		for (Category c : lists.getCategoryList().getList()) {
+		for (Category c : lists2.getCategoryList().getList()) {
 			if(c.getIsParent())
 				lb1.addItem(Character.toString((char)9650)+c.getName());
 			else if(c.getIsSon())
@@ -642,14 +644,14 @@ public abstract class DocumentsDialog extends CustomDialog {
 				String s2 = s.substring(pos2);
 				Integer pos3 = s2.indexOf('>');
 				String string = s.substring(pos1+1,pos2)+s2.substring(pos3+1);
-				for (Category c : lists.getCategoryListSon().getList()) {
+				for (Category c : lists2.getCategoryListSon().getList()) {
 					if(c.getDomain().equals(string)){
 						ListBox lb = (ListBox) grid.getWidget(4, 1);
 						lb.addItem(Character.toString((char)9660)+c.getName());
 						grid.setWidget(4, 1, lb);
 					}
 				}
-				for (Tag t : lists.getTagListSon().getList()) {
+				for (Tag t : lists2.getTagListSon().getList()) {
 					if(t.getDomain().equals(string)){
 					
 						if (bool) {
@@ -670,7 +672,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 						}					
 					}
 				}
-				for (Scope scope : lists.getScopeListSon().getList()) {
+				for (Scope scope : lists2.getScopeListSon().getList()) {
 
 					if(scope.getDomain().equals(string)){
 						ListBox lb = (ListBox) grid.getWidget(6, 1);
@@ -925,7 +927,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 					bMas.setStyleName("aon-finding-toolbar-item aon-search-add");
 					bMas.addClickHandler(masHandler());
 					
-					if(vertical.getWidgetCount()<lists.getTagList().getLength()){
+					if(vertical.getWidgetCount()<lists2.getTagList().getLength()){
 						h2.add(bMas);
 					}
 				}
@@ -956,7 +958,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 					bMas.setStyleName("aon-finding-toolbar-item aon-search-add");
 					bMas.addClickHandler(masHandler2());
 					
-					if(vertical.getWidgetCount()<lists.getTagList().getLength()){
+					if(vertical.getWidgetCount()<lists2.getTagList().getLength()){
 						h2.add(bMas);
 					}
 				}
@@ -981,7 +983,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 				
 				lb2.addItem("-");
 				
-				for (Tag t : lists.getTagList().getList()) {
+				for (Tag t : lists2.getTagList().getList()) {
 					if(t.getIsParent())
 						lb2.addItem(Character.toString((char)9650)+t.getName());
 					else if(t.getIsSon())
@@ -1035,7 +1037,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 				
 				lb2.addItem("-");
 				
-				for (Tag t : lists.getTagList().getList()) {
+				for (Tag t : lists2.getTagList().getList()) {
 					if(t.getIsParent())
 						lb2.addItem(Character.toString((char)9650)+t.getName());
 					else if(t.getIsSon())

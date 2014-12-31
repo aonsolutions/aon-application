@@ -85,7 +85,7 @@ public class DownloadFilesServlet extends HttpServlet {
         long length = file.length();
         FileInputStream fis = new FileInputStream(file);
         
-        p_response.addHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
+        p_response.addHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"."+MimeType.values()[m].getExtension()+"\"");
         //p_response.setContentType("application/octet-stream");
         p_response.setContentType(mimetype);
 
