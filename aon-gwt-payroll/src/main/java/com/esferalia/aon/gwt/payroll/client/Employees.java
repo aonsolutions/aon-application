@@ -3,12 +3,13 @@ package com.esferalia.aon.gwt.payroll.client;
 import static com.esferalia.aon.gwt.payroll.client.EventsDraftObject.DateField.DAY;
 import static com.esferalia.aon.gwt.payroll.client.EventsDraftObject.DateField.MONTH;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 
-import com.code.aon.config.User;
 import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.esferalia.aon.gwt.common.shared.CollectionUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -42,6 +43,8 @@ import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.LoadEvent;
+import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
@@ -71,9 +74,12 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class Employees extends ResizeComposite implements
 		OpenHandler<TreeItem>, SelectionHandler<TreeItem>, ScrollHandler,
-		ContextMenuHandler, KeyDownHandler {
+		ContextMenuHandler, KeyDownHandler, LoadHandler {
 
 	interface Listener {
+
+		void onLoadAvaiableEmployees(Map<String, String> map);
+
 		void onEmployeeSelected(Employee employee);
 
 		void onEnterpriseSelected(Enterprise enterprise);
@@ -161,6 +167,8 @@ public class Employees extends ResizeComposite implements
 	private EmployeesServiceAsync employeesService;
 	private StatisticsServiceAsync statisticsService;
 
+	private Map<String, String> employeesDomain;
+
 	private boolean formers = true;
 	private boolean endDate = true;
 	private boolean extended = false;
@@ -204,23 +212,42 @@ public class Employees extends ResizeComposite implements
 			}
 		});
 
-		// employeesService.getEnterprise(this);
-		/*
-		 * employeesService.getEnterprises(new AsyncCallback<Enterprise[]>() {
-		 * 
-		 * @Override public void onFailure(Throwable caught) {
-		 * Window.alert(caught.getLocalizedMessage()); }
-		 * 
-		 * @Override public void onSuccess(Enterprise[] enterprises) { for
-		 * (Enterprise enterprise : enterprises)
-		 * Employees.this.onEnterprise(enterprise); }
-		 * 
-		 * });
-		 * 
-		 * scrollPanel.addScrollHandler(this);
-		 */
+		//employeesService.getEnterprise(this);
 
-		load();
+		employeesService.getEnterprises(new AsyncCallback<Enterprise[]>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert(caught.getLocalizedMessage());
+			}
+
+			@Override
+			public void onSuccess(Enterprise[] enterprises) {
+				for (Enterprise enterprise : enterprises)
+					Employees.this.onEnterprise(enterprise);
+			}
+
+		});
+
+		scrollPanel.addScrollHandler(this);
+
+		//load();
+
+		employeesService
+				.getAvaiableEmployees(new AsyncCallback<Map<String, String>>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert("NO");
+
+					}
+
+					@Override
+					public void onSuccess(Map<String, String> result) {
+						Employees.this.employeesDomain = result;
+						Employees.this.onAvaiableEmployees(result);
+					}
+				});
 
 	}
 
@@ -245,8 +272,12 @@ public class Employees extends ResizeComposite implements
 		listeners.remove(listener);
 	}
 
-	public void onEnterprise(Enterprise enterprise) {
+	public void onAvaiableEmployees(Map<String, String> map) {
+		onLoadAvaiableEmployees(map);
+	}
 
+	public void onEnterprise(Enterprise enterprise) {
+		tree.clear();
 		List<Workplace> workplaces = enterprise.getWorkplaces();
 
 		final TreeItem enterpriseItem = new TreeItem(imageItemHTML(
@@ -477,10 +508,10 @@ public class Employees extends ResizeComposite implements
 		// 'SalariesDocuments' extends 'CostDocuments' its test must be first.
 		// If not, onSalariesSelected(SalariesDocuments) method won't be called.
 		else if (userObject instanceof SalariesDocuments) {
-			//onSalariesSelected((SalariesDocuments) userObject);
+			// onSalariesSelected((SalariesDocuments) userObject);
 			onSalariesDocumentsSelected(item);
 		} else if (userObject instanceof CostDocuments) {
-			//onCostsSelected((CostDocuments) userObject);
+			// onCostsSelected((CostDocuments) userObject);
 			onCostsDocumentsSelected(item);
 		} else if (userObject instanceof ReportsObject) {
 			onReportsSelected((ReportsObject) userObject);
@@ -546,7 +577,7 @@ public class Employees extends ResizeComposite implements
 		}
 	}
 
-	public void load() {
+/*	public void load() {
 		tree.clear();
 		employeesService.getEnterprises(new AsyncCallback<Enterprise[]>() {
 
@@ -579,7 +610,7 @@ public class Employees extends ResizeComposite implements
 			}
 		}
 
-	}
+	}*/
 
 	@Override
 	public void onContextMenu(ContextMenuEvent event) {
@@ -917,6 +948,12 @@ public class Employees extends ResizeComposite implements
 		});
 	}
 
+	private void onLoadAvaiableEmployees(Map<String, String> map) {
+		for (Listener listener : listeners) {
+			listener.onLoadAvaiableEmployees(map);
+		}
+	}
+
 	private void onEnterpriseSelected(Enterprise enterprise) {
 		for (Listener listener : listeners) {
 			listener.onEnterpriseSelected(enterprise);
@@ -992,14 +1029,15 @@ public class Employees extends ResizeComposite implements
 	private void onSalariesDocumentsSelected(final TreeItem salariesItem) {
 		TreeItem parentItem = salariesItem.getParentItem();
 		Object parent = parentItem.getUserObject();
-		if ( parent instanceof Workplace)
-			onSalariesDocumentsSelected((Workplace)parent, salariesItem);
+		if (parent instanceof Workplace)
+			onSalariesDocumentsSelected((Workplace) parent, salariesItem);
 		else
-			onSalariesDocumentsSelected((Enterprise)parent, salariesItem);
+			onSalariesDocumentsSelected((Enterprise) parent, salariesItem);
 
 	}
 
-	private void onSalariesDocumentsSelected(Workplace workplace, final TreeItem salariesItem) {
+	private void onSalariesDocumentsSelected(Workplace workplace,
+			final TreeItem salariesItem) {
 		employeesService.getWorkplaceCosts(workplace.getId(),
 				new AsyncCallback<List<Cost>>() {
 					@Override
@@ -1025,7 +1063,8 @@ public class Employees extends ResizeComposite implements
 				});
 	}
 
-	private void onSalariesDocumentsSelected(Enterprise enterprise, final TreeItem salariesItem) {
+	private void onSalariesDocumentsSelected(Enterprise enterprise,
+			final TreeItem salariesItem) {
 		employeesService.getEnterpriseCosts(enterprise.getId(),
 				new AsyncCallback<List<Cost>>() {
 					@Override
@@ -1050,18 +1089,18 @@ public class Employees extends ResizeComposite implements
 					}
 				});
 	}
-
 
 	private void onCostsDocumentsSelected(final TreeItem costsItem) {
 		TreeItem parentItem = costsItem.getParentItem();
 		Object parent = parentItem.getUserObject();
-		if ( parent instanceof Workplace)
-			onCostsDocumentsSelected((Workplace)parent, costsItem);
+		if (parent instanceof Workplace)
+			onCostsDocumentsSelected((Workplace) parent, costsItem);
 		else
-			onCostsDocumentsSelected((Enterprise)parent, costsItem);
+			onCostsDocumentsSelected((Enterprise) parent, costsItem);
 	}
 
-	private void onCostsDocumentsSelected(Workplace workplace, final TreeItem costsItem) {
+	private void onCostsDocumentsSelected(Workplace workplace,
+			final TreeItem costsItem) {
 		employeesService.getWorkplaceCosts(workplace.getId(),
 				new AsyncCallback<List<Cost>>() {
 					@Override
@@ -1085,7 +1124,8 @@ public class Employees extends ResizeComposite implements
 				});
 	}
 
-	private void onCostsDocumentsSelected(Enterprise enterprise, final TreeItem costsItem) {
+	private void onCostsDocumentsSelected(Enterprise enterprise,
+			final TreeItem costsItem) {
 		employeesService.getEnterpriseCosts(enterprise.getId(),
 				new AsyncCallback<List<Cost>>() {
 					@Override
@@ -1108,7 +1148,6 @@ public class Employees extends ResizeComposite implements
 					}
 				});
 	}
-
 
 	private void onSalaryDocumentsSelected(final TreeItem salariesItem) {
 		TreeItem employeeItem = salariesItem.getParentItem();
@@ -1197,11 +1236,24 @@ public class Employees extends ResizeComposite implements
 			listener.onAgreementDraftSelected(agreementDraftObject);
 		}
 	}
+	
+	public void addEmployee (TreeItem workplaceItem,
+			Employees employee, int limit) {
+		
+		List<Employees> employees = new ArrayList<Employees>();
+		employees.add(employee);
+		
+		
+		
+		
+	}
+	
 
 	private void loadEmployess(TreeItem workplaceItem,
 			List<Employee> employees, int limit) {
 
 		int added = 0;
+		
 
 		for (Employee employee : employees) {
 
@@ -1681,4 +1733,11 @@ public class Employees extends ResizeComposite implements
 		return (ITDataObject) workplaceItem.getChild(WORKPLACE_PARTSIT_INDEX)
 				.getUserObject();
 	}
+
+	@Override
+	public void onLoad(LoadEvent event) {
+		// TODO Auto-generated method stub
+
+	}
+
 }

@@ -10,7 +10,9 @@ import static com.esferalia.aon.gwt.payroll.shared.CalculateService.WORKPLACES;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -149,7 +151,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		public void execute() {
 			employeeCopy = employee;
 			setPasteItemVisible(true);
-			
 		}
 
 		private void setEmployeeCopy(Employee employee) {
@@ -167,8 +168,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	class PasteEmployeeCommand implements ScheduledCommand,
 			EmployeePopupCopy.Listener {
-		
-		private Employee employeePaste;
 
 		public PasteEmployeeCommand() {
 			paste = new EmployeePopupCopy();
@@ -178,11 +177,29 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		@Override
 		public void execute() {
 			setEmployeePaste(singlenton.employeeContextMenu.getEmployeeCopy());
+			setMapAvaiableEmployees(singlenton.avaiableEmployees);
 			showPopUpPanel();
 		}
 		
 		private void showPopUpPanel() {
 			paste.showPopUpPanel();
+		}
+		
+		private void setPaste ( int contractId, String document, Date startDate, Date endDate ) {
+			
+			paste.getEndDateWidget().removeStyleName(AON.AON_ICON_ERROR);
+			paste.getEndDateWidget().setTitle("");
+			
+			if ( startDate.after(endDate) ) {
+				paste.getEndDateWidget().setStyleName(AON.AON_ICON_ERROR);
+				paste.getEndDateWidget().setTitle("Fecha inicio posterior a Fecha fin");
+			}
+			
+			else {
+				pasteContract(workplace.getId(), contractId, document, 
+						startDate, endDate, paste.getEspecificoValue(), null);
+				paste.hide();
+			}
 		}
 
 		@Override
@@ -192,19 +209,25 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 				paste.getStartDateWidget().setStyleName(AON.AON_ICON_WARN);
 				paste.getStartDateWidget().setTitle("Campo obligatorio");
 				
-			} else {			
-
-				employeePaste.setStartDate(paste.getStartDateWidget().getValue());
-				employeePaste.setEndDate(paste.getEndDateWidget().getValue());
-				pasteContract(workplace.getId(), employeePaste, paste.getEspecificoValue(), null);
+			} else {
 				
-				paste.hide();				
+				int contractId = singlenton.employeeContextMenu.getEmployeeCopy().getId();
+				String document = paste.getDocument();
+				Date startDate = paste.getStartDateWidget().getValue();
+				Date endDate = paste.getEndDateWidget().getValue();
+				
+				setPaste(contractId, document, startDate, endDate);
+				
 			}
 		}
 		
 		private void setEmployeePaste(Employee employee) {
-			this.employeePaste = employee;
-			paste.setFullName(employeePaste.getFullname());
+	//		this.employeePaste = employee;
+			paste.setEmployee(employee);
+		}
+		
+		private void setMapAvaiableEmployees (Map<String, String> map) {
+			paste.setMapAvaiableEmployees(map);
 		}
 	}
 
@@ -589,7 +612,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
 			pasteItem = addItem("Pegar", pasteCmd = new PasteEmployeeCommand(),
-					AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
+					AON.AON_CSS.aonIconPaste(), AON.AON_ICON_CMD_BUTTON);
 			pasteItem.setVisible(false);
 			MenuItem saveItem = addItem("Guardar", new NewEmployeeCommand(),
 					AON.AON_ICON_ACCEPT, AON.AON_ICON_CMD_BUTTON);
@@ -608,6 +631,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		
 		private void setEmployee(Employee employee) {
 			pasteCmd.setEmployeePaste(employee);
+		}
+		
+		private void setMapAvaiableEmployees(Map<String, String> map) {
+			pasteCmd.setMapAvaiableEmployees(map);
 		}
 
 		private void showPastePanel() {
@@ -783,8 +810,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	private ShareResultsGrid shareResultsGrid;
 	private ListDataProvider<JsShareResult> shareResultsProvider;
+	
+	private Map<String, String> avaiableEmployees;
 
 	private MenuItem pasteItem;
+	
+	private Map<String, String> domainNames;
 
 	/**
 	 * This method constructs the application user interface by instantiating
@@ -844,6 +875,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		shareResultsGrid = new ShareResultsGrid();
 		shareResultsProvider = new ListDataProvider<JsShareResult>();
 		shareResultsProvider.addDataDisplay(shareResultsGrid);
+		
+		domainNames = new HashMap<String, String>();
 
 		singlenton = this;
 
@@ -907,7 +940,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 
 	// ---------------------------------------------- Employees.Listener methods
-
+	
+	@Override
+	public void onLoadAvaiableEmployees(Map<String, String> map) {
+		avaiableEmployees = (map != null) ? map : new HashMap<String, String>();
+	}
+	
 	@Override
 	public void onEnterpriseSelected(Enterprise enterprise) {
 		employeeDetail.setWidget(jsf);
@@ -1062,6 +1100,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	public void onCtrlVPressed(Workplace workplace) {
 		Employee employee = singlenton.employeeContextMenu.getEmployeeCopy();
 		singlenton.workplaceContextMenu.setEmployee(employee);
+		singlenton.workplaceContextMenu.setMapAvaiableEmployees(singlenton.avaiableEmployees);
 		singlenton.workplaceContextMenu.showPastePanel();
 	}
 
@@ -1135,25 +1174,24 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 
 	}
+	
+	private void pasteContract ( int workplaceId, int contractId, String document, Date startDate, 
+			Date endDate, boolean check, final AsyncCallback<Employee> callback) {
+		
+		employees.getEmployeesService().pasteContract(workplaceId, contractId, document, startDate, 
+				endDate, check, new AsyncCallback<Employee>() {
 
-	private void pasteContract(int workplaceId, Employee employee, boolean check,
-			final AsyncCallback<Employee> callback) {
+			@Override
+			public void onFailure(Throwable caught) {
+				callback.onFailure(caught);
+			}
 
-		employees.getEmployeesService().pasteContract(workplaceId, employee, check,
-				new AsyncCallback<Employee>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						callback.onFailure(caught);
-					}
-
-					@Override
-					public void onSuccess(Employee result) {
-
-						employees.load();
-						callback.onSuccess(result);				
-					}
-				});
+			@Override
+			public void onSuccess(Employee result) {			
+				employees.onEnterprise(enterprise);
+				callback.onSuccess(result);
+			}
+		});
 	}
 
 	private void deleteContract(Employee employee, final AsyncCallback<Void> callback) {
@@ -1168,7 +1206,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 					@Override
 					public void onSuccess(Void result) {
-						employees.load();
+						employees.onEnterprise(enterprise);						
 						callback.onSuccess(result);
 					}
 				});

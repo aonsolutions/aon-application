@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
@@ -134,12 +135,16 @@ public interface EmployeesService extends RemoteService, StatisticsService,
 	SortedSet<Date> getChanges(Agreement agreement)
 			throws IllegalArgumentException;
 	
-	Employee pasteContract(int workplaceId, Employee employee, boolean check) 
-			throws IllegalArgumentException;
+	Employee pasteContract (int workplaceId, int contractId, String document, Date startDate, 
+			Date endDate, boolean check) throws IllegalArgumentException;
+	
 	
 	void deleteContract(Employee employee)
 			throws IllegalArgumentException;
 
 	void delete(Salary salaries[]) throws IllegalArgumentException;
+	
+	Map<String, String> getAvaiableEmployees() 
+			throws IllegalArgumentException;
 
 }

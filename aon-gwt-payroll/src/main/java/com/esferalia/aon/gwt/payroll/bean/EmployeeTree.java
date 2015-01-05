@@ -132,7 +132,9 @@ public class EmployeeTree implements Serializable {
 				.getId();
 		BasicController personController = (BasicController) AonUtil
 				.getRegisteredBean(IPayrollConstants.PERSON_CONTROLLER_NAME);
+		
 		personController.load(event, personId);
+		
 
 		this.selection = Selection.EMPLOYEE;
 	}

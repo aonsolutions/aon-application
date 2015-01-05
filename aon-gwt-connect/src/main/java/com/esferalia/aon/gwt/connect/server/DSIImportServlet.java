@@ -32,14 +32,15 @@ import javax.servlet.http.Part;
 
 import org.apache.commons.lang.StringUtils;
 import org.jooq.Condition;
+import org.jooq.Record;
 import org.jooq.impl.DSL;
 
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.pool.AonConnectionException;
 import com.esferalia.aon.dsi.DSI2AON;
-import com.esferalia.aon.dsi.jooq.tables.records.FnempresRecord;
-import com.esferalia.aon.dsi.jooq.tables.records.FnnomincRecord;
+import com.esferalia.aon.dsi.jooq.tables.Fnempres;
+import com.esferalia.aon.dsi.jooq.tables.Fnnominc;
 import com.esferalia.aon.dsi.util.DBUtils;
 import com.esferalia.aon.dsi.util.DSIUtils;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
@@ -290,12 +291,48 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 		
 	}
 	
+	private void printIterator ( PrintStream print, String db, 
+			Record empres, String start, String end, int index ) {
+		
+		try {
+			
+			if (index > 0)
+				print.println(',');
+			
+			print.print("{");
+			print.print(format("\"db\":\"%s\",", db));
+			print.print(format("\"sscod\":\"%s\",",
+					((empres.getValue(Fnempres.FNEMPRES.F20SSCOD)))));
+			print.print(format("\"ssnum\":\"%s\",", 
+					empres.getValue(Fnempres.FNEMPRES.F20SSNUM)));
+			print.print(format("\"rsocial\":\"%s\",",
+					empres.getValue(Fnempres.FNEMPRES.F20RSOCIAL)));
+			print.print(format("\"nif\":\"%s\",",
+					empres.getValue(Fnempres.FNEMPRES.F20NIF)));
+			
+			//if startDate is null
+			print.print(format("\"fnomina\":\"%s\",",
+					start));
+			//if endDate is null
+			print.print(format("\"lnomina\":\"%s\"",
+					end));
+			
+			print.print("}");
+
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
 	@Override
 	public void doListEmpress(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 
 		OutputStream out = null;
 		PrintStream print = null;
+		int index = 0;
+		
 		try {
 			//String domain = req.getServerName(); // getDomainName();			
 			//Connection aonConn = DatabaseUtil.getConnection(domain);
@@ -306,40 +343,22 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 				Connection conn = null;
 				try {
 					conn = getDSIConn(db);
-					List<FnempresRecord> empress = DSIUtils.getEmpress(conn);
-					List<FnnomincRecord> nominasC = DSIUtils.getNominasC(conn);
+					List<Record> empress = DSIUtils.getEmpress(conn);
+					
 					// @formatter:off
 					print.print('[');
-					for (int i = 0; i < empress.size(); i++) {
-						if (i > 0)
-							print.println(',');
-						FnempresRecord empres = empress.get(i);
-						FnnomincRecord nominaC = nominasC.get(i);
+					
+					for(Record r : empress) {
 						
-						print.print("{");
-						print.print(format("\"db\":\"%s\",", db));
-						print.print(format("\"sscod\":\"%s\",",
-								empres.getF20sscod()));
-						print.print(format("\"ssnum\":\"%s\",",
-								empres.getF20ssnum()));
-						print.print(format("\"rsocial\":\"%s\",",
-								empres.getF20rsocial()));
-						String key = empres.getF20sscod() + empres.getF20ssnum();
-						print.print(format("\"nif\":\"%s\",",
-								empres.getF20nif()));
+					//	List<FnnomincRecord> nominasC = DSIUtils.getlistNominas(conn, record.getF20ssnum());
+						String start = ( r.getValue(Fnnominc.FNNOMINC.F30FALTA) != null ) 
+								? ""+ r.getValue(Fnnominc.FNNOMINC.F30FALTA) : "**";
+								
+						String end = ( r.getValue(Fnnominc.FNNOMINC.F30FECHA) != null ) 
+								? ""+ r.getValue(Fnnominc.FNNOMINC.F30FECHA) : "**";
 						
-						//if startDate is null
-						String fdate = (nominaC.getF30falta() != null) 
-								? "" + nominaC.getF30falta() : " ** ";
-						print.print(format("\"fnomina\":\"%s\",",
-								fdate));
-						//if endDate is null
-						String ldate = (nominaC.getF30fecha() != null) 
-								? "" + nominaC.getF30fecha() : " ** ";
-						print.print(format("\"lnomina\":\"%s\"",
-								ldate));
+						printIterator(print, db, r, start, end, index++);
 						
-						print.print("}");
 					}
 					print.print(']');
 					// @formatter:on

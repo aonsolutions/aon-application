@@ -145,7 +145,7 @@ public class Employee implements Serializable, HasId<Integer> {
 
 		return sb.toString();
 	}
-
+	
 	public Date getStartDate() {
 		return startDate;
 	}

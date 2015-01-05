@@ -1,6 +1,9 @@
 package com.esferalia.aon.gwt.connect.client;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.shared.StringUtils;
@@ -16,7 +19,6 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.xhr.client.ReadyStateChangeHandler;
 import com.google.gwt.xhr.client.XMLHttpRequest;
 

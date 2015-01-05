@@ -191,6 +191,12 @@
 	width: auto;
 	gwt-image: "aonIconDelete";
 }
+
+@sprite .aon-icon-paste {
+	width: auto;
+	gwt-image: "aonIconPaste";
+}
+
 @sprite .aon-icon-enterprise {
 	gwt-image: "aonIconEnterprise";
 }

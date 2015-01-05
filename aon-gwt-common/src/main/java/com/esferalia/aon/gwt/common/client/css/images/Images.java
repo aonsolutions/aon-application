@@ -32,6 +32,9 @@ public interface Images extends ClientBundle, Tree.Resources {
 	ImageResource calendar();
 
 	ImageResource enterprise();
+	
+	@Source("aon-icon-paste.png")
+	ImageResource aonIconPaste();
 
 	ImageResource workplace();
 

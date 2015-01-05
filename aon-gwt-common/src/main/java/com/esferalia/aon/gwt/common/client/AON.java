@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.common.client;
 
 import com.esferalia.aon.gwt.common.client.css.AonCSS;
-import com.esferalia.aon.gwt.common.client.css.AonDataGrid;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
@@ -76,6 +75,7 @@ public class AON {
 	public static final String AON_ICON_DELETE = AON_CSS.aonIconDelete(); // "aon-icon-delete";
 	public static final String AON_ICON_CANCEL = "aon-icon-cancel";
 	public static final String AON_ICON_ACCEPT = "aon-icon-accept";
+	public static final String AON_ICON_PASTE = "aon-icon-paste";
 	public static final String AON_ICON_INE = "aon-icon-ine";
 	public static final String AON_ICON_AET = AON_CSS.aonIconAeat();// "aon-icon-aet";
 	public static final String AON_ICON_BLANK = "aon-icon-blank";

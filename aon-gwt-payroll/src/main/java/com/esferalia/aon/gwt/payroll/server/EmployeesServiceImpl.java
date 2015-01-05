@@ -122,8 +122,8 @@ import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.gwt.payroll.sql.JooqEmployee;
 import com.esferalia.aon.gwt.payroll.sql.SQLAgreementDraft;
-import com.esferalia.aon.gwt.payroll.sql.SQLEmployee;
 import com.esferalia.aon.gwt.payroll.sql.SQLEvents;
 import com.esferalia.aon.gwt.payroll.sql.SQLITData;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
@@ -156,9 +156,7 @@ import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorConte
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.CCCContextKey;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSettleCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLSystemExpressionContextFactory;
-import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
-import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
 import com.esferalia.aon.payroll.irpf.sql.SQLIrpfCalculatorContext;
 import com.esferalia.aon.payroll.sql.SQLConstants;
@@ -868,22 +866,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			releaseFacesContext();
 		}
 	}
-
+	
 	@Override
-	public Employee pasteContract(int workplaceId, Employee employee,
-			boolean check) throws IllegalArgumentException {
-
+	public Map<String, String> getAvaiableEmployees()
+			throws IllegalArgumentException {
+		
 		Connection conn = null;
 		try {
 			initFacesContext();
 			conn = getConnection();
 			disableAutoCommit(conn);
-			SQLEmployee.save(conn, getDomainID(), workplaceId,
-					employee.getId(), employee.getStartDate(),
-					employee.getEndDate(), check);
-			commit(conn);
-
-			return employee;
+			return JooqEmployees.getAvaiableEmployees(conn, getDomainID(), getParentDomainID());
 		} catch (SQLException ex) {
 			rollback(conn);
 			ex.printStackTrace();
@@ -898,6 +891,42 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 			releaseFacesContext();
 		}
+		
+	}
+	
+	@Override
+	public Employee pasteContract(int workplaceId, int contractId, String document,
+			Date startDate, Date endDate, boolean check)
+			throws IllegalArgumentException {
+		
+		Connection conn = null;
+		try {
+			
+			initFacesContext();
+			conn = getConnection();
+			disableAutoCommit(conn);
+			Employee employee = JooqEmployees.paste(conn, getDomainID(), 
+					workplaceId, contractId, document, 
+					startDate, endDate, check);
+			commit(conn);
+
+			return employee;
+			
+		} catch (SQLException ex) {
+			rollback(conn);
+			ex.printStackTrace();
+			throw new IllegalArgumentException(ex);
+		} finally {
+			enableAutoCommit(conn);
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException ex) {
+				}
+			}
+			releaseFacesContext();
+		}
+
 	}
 
 	@Override
@@ -909,7 +938,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			initFacesContext();
 			conn = getConnection();
 			disableAutoCommit(conn);
-			SQLEmployee.delete(conn, employee.getId());
+			JooqEmployees.delete(conn, employee.getId());
 			commit(conn);
 		} catch (SQLException ex) {
 			rollback(conn);

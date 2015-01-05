@@ -53,9 +53,19 @@
 
 	<g:HTMLPanel styleName="{style.form}">
 
-		<div class="{style.messages}">
-			<g:Label styleName="{style.info}" ui:field="nameEmployee"></g:Label>
-		</div>
+		<g:Grid width="100%">
+			<g:row>
+				<g:customCell>
+					<g:Label styleName="aon-icon-employee aon-icon-commandButton"
+						title="Selecciona la persona sobre la que desee copiar el contrato" />
+				</g:customCell>
+				<g:customCell styleName="{style.field}">
+					<g:SuggestBox ui:field="suggest" styleName="aon-inputText"
+						width="280px" />
+				</g:customCell>
+			</g:row>
+
+		</g:Grid>
 
 		<g:Grid width="100%">
 			<g:row>
@@ -78,7 +88,7 @@
 				<g:customCell>
 					<g:Label />
 				</g:customCell>
-				<g:customCell  styleName="{style.field}">
+				<g:customCell styleName="{style.field}">
 					<g:CheckBox ui:field="especifico"
 						text="Añadir datos específicos de contrato" />
 				</g:customCell>

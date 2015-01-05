@@ -4,6 +4,8 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 
+import java.util.Map;
+
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
@@ -240,4 +242,9 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		
 	}
 	
+	@Override
+	public void onLoadAvaiableEmployees(Map<String, String> map) {
+		// TODO Auto-generated method stub
+		
+	}
 }

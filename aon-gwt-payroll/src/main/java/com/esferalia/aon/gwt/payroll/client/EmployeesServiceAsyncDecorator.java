@@ -393,13 +393,14 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 		employeesServiceAsync.saveITDataPerson(inserts, deletes, updates, 
 				new AsyncCallbackWrapper<ITData>(callback));		
 	}
-
+	
 	@Override
-	public void pasteContract(int workplaceId, Employee employee, boolean check,
-			AsyncCallback<Employee> callback) throws IllegalArgumentException {
+	public void pasteContract(int workplaceId, int contractId, String document, Date startDate,
+			Date endDate, boolean check, AsyncCallback<Employee> callback)
+			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.pasteContract(workplaceId, employee, check,
-				new AsyncCallbackWrapper<Employee>(callback));		
+		employeesServiceAsync.pasteContract(workplaceId, contractId, document, startDate, endDate, check, 
+				new AsyncCallbackWrapper<Employee>(callback));
 	}
 	
 	@Override
@@ -408,6 +409,15 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 		AON.start();
 		employeesServiceAsync.deleteContract(employee, 
 				new AsyncCallbackWrapper<Void>(callback));			
+	}
+	
+	@Override
+	public void getAvaiableEmployees(
+			AsyncCallback<Map<String, String>> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getAvaiableEmployees( 
+				new AsyncCallbackWrapper<Map<String,String>>(callback));
 	}
 	// ------------------------------------------------- GPSReportsServiceAsync
 	@Override
