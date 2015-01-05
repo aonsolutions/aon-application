@@ -10,6 +10,10 @@
 
 	<ui:style>
 
+	.editor{
+	border:0px !important;
+
+	}
 	.cellTable {
 		border-bottom: 1px solid #ccc;
 		text-align: left;
@@ -136,7 +140,7 @@
 @external .gwt-DialogBox .dialogTopCenter;
 @external .gwt-StackLayoutPanel;
 @external .gwt-MenuBarPopup;
-
+@external .gwt-StackLayoutPanelContent; 
 
 .gwt-MenuBarPopup {
     margin: 0px !important;
@@ -147,6 +151,10 @@
 }
 
 .gwt-StackLayoutPanelHeader{
+	border-right:0px !important;
+}
+
+.gwt-StackLayoutPanelContent{
 	border-right:0px !important;
 }
 
@@ -254,7 +262,8 @@ background-color:#D4CFC7;
 							Documentos
 						</div>
 					</g:header>
-					<g:AbsolutePanel styleName="{style.stackBorder}">
+					<g:ScrollPanel styleName="{style.stackBorder}">
+					<g:AbsolutePanel>
 
 						<g:VerticalPanel styleName="{style.vpanel}">
 							<g:AbsolutePanel styleName="{style.vpanel}">
@@ -284,6 +293,7 @@ background-color:#D4CFC7;
 							</g:HorizontalPanel>
 						</g:VerticalPanel>
 					</g:AbsolutePanel>
+					</g:ScrollPanel>
 				</g:stack>
 				<g:stack>
 					<g:header size='3'>
@@ -293,7 +303,8 @@ background-color:#D4CFC7;
 	
 						</div>
 					</g:header>
-					<g:AbsolutePanel styleName="{style.stackBorder}">
+					<g:ScrollPanel styleName="{style.stackBorder}">
+					<g:AbsolutePanel>
 						<!-- g:ScrollPanel ui:field="treepanel" width="100%" height="100%">
 						    
 						    
@@ -308,6 +319,7 @@ background-color:#D4CFC7;
 						
 						<!--g:Tree ui:field="tree"/ -->
 					</g:AbsolutePanel>
+					</g:ScrollPanel>
 				</g:stack>
 			</g:StackLayoutPanel>
 		</g:west>

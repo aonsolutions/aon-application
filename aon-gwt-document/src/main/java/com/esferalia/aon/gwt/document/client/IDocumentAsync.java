@@ -37,7 +37,7 @@ public interface IDocumentAsync {
 
 	void newFile(FileInfo fi, AsyncCallback<Boolean> callback);
 
-	void editFile(FileInfo fi, AsyncCallback<Void> callback);
+	void editFile(FileInfo fi, AsyncCallback<FileInfo> callback);
 
 	void check(AsyncCallback<Boolean> callback);
 
@@ -68,7 +68,7 @@ public interface IDocumentAsync {
 
 	void getDriveFile(String id, AsyncCallback<Vector<FileInfo>> callback);
 
-	void upload(FileInfo fi, AsyncCallback<Void> callback);
+	void upload(FileInfo fi, String parentId, AsyncCallback<Void> callback);
 
 	void deleteMydrive(FileInfo fi, AsyncCallback<Void> callback);
 

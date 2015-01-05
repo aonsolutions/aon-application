@@ -647,11 +647,12 @@ public class DriveUtils implements IBlobManager {
 	}
 
 	public static File insertFile(Drive drive, java.io.File file,
-			DriveFile driveFile) throws IOException {
+			DriveFile driveFile,List<ParentReference> parents) throws IOException {
 
 		File fileAux = new File();
 		fileAux.setTitle(driveFile.getDescription());
 		fileAux.setMimeType(driveFile.getMimetype());
+		if(parents != null) fileAux.setParents(parents);
 
 		FileContent mediaContent = new FileContent(driveFile.getMimetype(),
 				file);

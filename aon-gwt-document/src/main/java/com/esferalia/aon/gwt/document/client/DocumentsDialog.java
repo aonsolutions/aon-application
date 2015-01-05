@@ -1,5 +1,9 @@
 package com.esferalia.aon.gwt.document.client;
 
+import java.util.List;
+import java.util.TreeMap;
+import java.util.Vector;
+
 import gwtupload.client.IFileInput.FileInputType;
 import gwtupload.client.IUploadStatus.Status;
 import gwtupload.client.IUploader;
@@ -9,6 +13,7 @@ import gwtupload.client.IUploader.OnStartUploaderHandler;
 import gwtupload.client.IUploader.OnStatusChangedHandler;
 import gwtupload.client.SingleUploader;
 
+import com.code.aon.common.enumeration.MimeType;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.Dialog;
@@ -27,6 +32,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -38,12 +44,17 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
+import com.google.gwt.view.client.ListDataProvider;
 
 public abstract class DocumentsDialog extends CustomDialog {
 
@@ -66,6 +77,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 	Category cat;
 	String n;
 	public DocumentsDialog(Dialog dialog) {
+		tree();
 		if(dialog.getTag() != null){tag = dialog.getTag();n=tag.getName();}
 		if(dialog.getCat() != null){cat = dialog.getCat();n=cat.getName();}
 		lists2  = dialog.getLists();
@@ -348,6 +360,12 @@ public abstract class DocumentsDialog extends CustomDialog {
 		grid.setWidget(2, 0, new Label("Archivo"));
 		grid.setWidget(2, 1, upload);
 		
+		ScrollPanel scroll = new ScrollPanel();
+		scroll.setHeight("100px");
+		scroll.add(sp);
+		grid.setWidget(3, 0, new Label("Carpeta"));
+		grid.setWidget(3, 1, scroll);
+		
 
 		for (int i = 0; i < grid.getRowCount(); i++) {
 			for (int j = 0; j < grid.getCellCount(i); j++) {
@@ -573,11 +591,11 @@ public abstract class DocumentsDialog extends CustomDialog {
 		String name = "";
 		if(dialog.getTag() != null) name = "la etiqueta "+dialog.getTag().getName();
 		else if(dialog.getCat() != null) name = "la categoría "+dialog.getCat().getName();
-		label.setText("Estas seguro de eliminar "+name);
+		label.setText("Est\u00e1s seguro de eliminar "+name);
 	}
 	
 	private void deleteFile(String name) {
-		label.setText("Estas seguro de eliminar el archivo "+name);
+		label.setText("Est\u00e1s seguro de eliminar el archivo "+name);
 	}
 	
 	private void alert(Dialog dialog){
@@ -750,40 +768,44 @@ public abstract class DocumentsDialog extends CustomDialog {
 		if(object.getIsDrive()){
 			grid.setWidget(0, 0, new Label("Descripci\u00f3n"));
 			grid.setWidget(0, 1, new Label(object.getTitle()));
-		
+
 			grid.setWidget(1, 0, new Label("Fecha"));
 			grid.setWidget(1, 1, new Label(object.getDateStr()));
-		
-			grid.setWidget(2, 0, new Label("Tamaño"));
+
+			grid.setWidget(2, 0, new Label("Tama\u00f1o"));
 			grid.setWidget(2, 1, new Label(object.getSizeStr()));
-		
+			
 			grid.setWidget(3, 0, new Label("Mime Type"));
-			grid.setWidget(3, 1, new Label(""));
+			//if(object.getMimetype() != null)grid.setWidget(3, 1, new Label(MimeType.values()[object.getMimetype()].getExtension().toString()));
+			/*else*/ grid.setWidget(3, 1, new Label("-"));
 		}
 		else{
+
 			grid.setWidget(0, 0, new Label("Descripci\u00f3n"));
 			grid.setWidget(0, 1, new Label(object.getTitle()));
-		
+
 			grid.setWidget(1, 0, new Label("Confidencial"));
 			grid.setWidget(1, 1, new Label(object.getConfidential() ? "Si" : "No"));
-		
+
 			grid.setWidget(2, 0, new Label("Fecha"));
 			grid.setWidget(2, 1, new Label(object.getDateStr()));
-		
-			grid.setWidget(3, 0, new Label("Categoria"));
+
+			grid.setWidget(3, 0, new Label("Categor\u00eda"));
 			grid.setWidget(3, 1, new Label(object.getCategoryStr()));
-		
+
 			grid.setWidget(4, 0, new Label("Etiquetas"));
 			grid.setWidget(4, 1, new Label(object.getTagsStr()));
-	
-			grid.setWidget(5, 0, new Label("Ambito"));
-			grid.setWidget(5, 1, new Label(object.getScope().getName()));
-		
-			grid.setWidget(6, 0, new Label("Tamaño"));
+
+			grid.setWidget(5, 0, new Label("\u00c1mbito"));
+			if(object.getScope()!=null)grid.setWidget(5, 1, new Label(object.getScope().getName()));
+			else grid.setWidget(5, 1, new Label("-"));
+			
+			grid.setWidget(6, 0, new Label("Tama\u00f1o"));
 			grid.setWidget(6, 1, new Label(object.getSizeStr()));
-		
+			
 			grid.setWidget(7, 0, new Label("Mime Type"));
-			grid.setWidget(7, 1, new Label(""));//MimeType.values()[object.getMimetype()].getName()));
+			//if(object.getMimetype() != null)grid.setWidget(7, 1, new Label(MimeType.values()[object.getMimetype()].getExtension().toString()));
+			/*else*/ grid.setWidget(7, 1, new Label("-"));
 		}	
 		for (int i = 0; i < grid.getRowCount(); i++) {
 			for (int j = 0; j < grid.getCellCount(i); j++) {
@@ -1222,5 +1244,88 @@ public abstract class DocumentsDialog extends CustomDialog {
         
         return upload;
 	}   
+	
+	String driveId;
+	String rootId;
+	final IDocumentAsync idoc = GWT.create(IDocument.class);
+	Tree t ;
+	SimplePanel sp;
+	public SimplePanel tree(){
+		sp = new SimplePanel();
+		t = new Tree();
+		
+		idoc.getRootId(new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				rootId = result;
+			}
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+		idoc.drive(new TreeMap<String, List<FileInfo>>(),"",new AsyncCallback<TreeMap<String,List<FileInfo>>>() {
+			@Override
+			public void onSuccess(TreeMap<String, List<FileInfo>> result) {
+				TreeItem ti = new TreeItem();
+				Button button = new Button("Mi Unidad");
+				button.setStyleName("aon-editDataTable-button aon-icon-google-drive-folder-root");
+				button.addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						Label l = new Label("Mi unidad");
+						l.setStyleName("aon-editDataTable-button aon-icon-google-drive-folder-root");
+						grid.setWidget(3, 1, l);
+						driveId = rootId;
+					}
+				});
+				ti = t.addItem(button);
+				treeSons(ti,result,rootId);
+				sp.add(t);
+			}
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+		return sp;
+	}
+	FileInfo auxiliarf;
+	TreeItem tiaux;
+	FileInfo faux;
+	public void treeSons(TreeItem t,TreeMap<String, List<FileInfo>> folders , String id){
+		Integer i = 0;
+		for (FileInfo f : folders.get(id)) {
+			auxiliarf = f;
+			TreeItem ti = new TreeItem();
+			Button button = new Button(f.getTitle());
+			button.setStyleName("aon-editDataTable-button aon-icon-google-drive-folder");
+			button.addClickHandler(new ClickHandler() {
+				FileInfo f = auxiliarf;
+				@Override
+				public void onClick(ClickEvent event) {
+					Label l = new Label(f.getTitle());
+					l.setStyleName("aon-editDataTable-button aon-icon-google-drive-folder");
+					grid.setWidget(3, 1, l);
+					driveId = f.getDriveId();
+				}
+			});
+			ti = t.addItem(button);
+			ti.setTitle(f.getDriveId());
+			tiaux = ti;
+			faux= f;
+			idoc.drive(folders, f.getDriveId(), new AsyncCallback<TreeMap<String,List<FileInfo>>>() {
+				TreeItem ti = tiaux;
+				FileInfo f = faux;
+				@Override
+				public void onSuccess(TreeMap<String, List<FileInfo>> result) {
+					treeSons(ti, result, f.getDriveId());
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {}
+			});
+			/*if(folders.containsKey(f.getDriveId())){
+				treeSons(ti, folders, f.getDriveId());
+			}*/
+			i++;
+		}
+	}
 }
 

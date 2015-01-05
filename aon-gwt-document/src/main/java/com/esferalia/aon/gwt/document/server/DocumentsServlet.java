@@ -30,6 +30,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.enumeration.MimeType;
@@ -394,7 +395,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 					.getServiceAccount(domain);
 			if (g.getClientId()!=null){
 				Drive d = DriveUtils.serviceInitialize(g);
-				String[] types = { RegistryAttachmentType.DOCUMENT.toString() };// TODO
+				String[] types = { RegistryAttachmentType.CORPORATE_IDENTITY.toString() };// TODO
 				DriveUtils.types = types;
 				DriveUtils.sync2(d, fileInfo, domain);
 			}
@@ -425,7 +426,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		
 	}
 	
-	public void editFile(FileInfo fi){
+	public FileInfo editFile(FileInfo fi){
 		String domain = AonUtil.getDomainName();
 		//Integer registry = AdminUtil.getCompanyId(fi.getDomainId());
 		com.code.aon.google.apis.FileInfo fileInfo = new com.code.aon.google.apis.FileInfo();
@@ -440,7 +441,13 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 					fi.getDate().getMonth(), fi.getDate().getDate());
 			fileInfo.setDateSql(date);
 		}
-		if(getMimetype()!=null)fileInfo.setMimetype((byte)MimeType.get(getMimetype()).ordinal());
+		if(getMimetype()!=null){
+			fileInfo.setMimetype((byte)MimeType.get(getMimetype()).ordinal());
+			fi.setMimetype((byte)MimeType.get(getMimetype()).ordinal());
+			fi.setIcon(Utils.icon(getMimetype()));
+
+		}
+		
 		else fileInfo.setMimetype(fi.getMimetype());
 		fileInfo.setTitle(fi.getTitle());
 		if(fi.getScope() != null)fileInfo.setScopeId(fi.getScope().getId());
@@ -476,6 +483,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		} catch (NamingException e) {
 			e.printStackTrace();
 		}
+		return fi;
 		
 	}
 	
@@ -528,8 +536,8 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			FileInfo fi = new FileInfo();
 			fi.setTitle(f.getTitle());
 			fi.setCategoryStr("-");	
-			fi.setDateStr("-");
-			fi.setSizeStr("-");
+			fi.setDateStr(f.getCreatedDate().toString());
+			fi.setSizeStr(FileUtils.byteCountToDisplaySize(fi.getSize()!=null?f.getFileSize():0));
 			fi.setTagsStr("-");
 			v.add(fi);
 		}
@@ -550,9 +558,10 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			fi.setDriveId(f.getId());
 			fi.setTitle(f.getTitle());
 			fi.setCategoryStr("-");	
-			fi.setDateStr("-");
-			fi.setSize(0);
-			fi.setSizeStr("-");
+			fi.setDateStr(f.getCreatedDate().toString());
+			if(f.getFileSize() != null){fi.setSize(f.getFileSize().intValue());
+			fi.setSizeStr(FileUtils.byteCountToDisplaySize(f.getFileSize()!=null?f.getFileSize():0));}
+			else {fi.setSize(0);fi.setSizeStr("-");}
 			fi.setTagsStr("-");
 			fi.setIcon(Utils.icon(f.getMimeType()));
 			fi.setConfidential(false);
@@ -633,16 +642,23 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	
 	}
 
-	public void upload(FileInfo fi){
+	public void upload(FileInfo fi,String parentId){
+		Vector<ParentReference> parents = null;
+		if(parentId != null){
+			parents = new Vector<ParentReference>();
+			ParentReference p = new ParentReference();
+			p.setId(parentId);
+			parents.add(p);
+		}
 		Drive drive = GoogleDriveController.dconnection;
 		byte[] b = getOut();
 		java.io.File aux = new java.io.File("/tmp/" + fi.getTitle());
-		
+	
 		DriveFile file=new DriveFile("","", fi.getTitle(), getMimetype());
-
+		
 		try {
 			org.apache.commons.io.FileUtils.writeByteArrayToFile(aux, b);
-			DriveUtils.insertFile(drive,aux, file);
+			DriveUtils.insertFile(drive,aux, file,parents);
 		} catch (IOException e) {
  			e.printStackTrace();
 		}

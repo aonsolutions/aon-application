@@ -40,7 +40,7 @@ public interface IDocument extends RemoteService{
 	
 	public void removeFile(FileInfo fi);
 	
-	public void editFile(FileInfo fi);
+	public FileInfo editFile(FileInfo fi);
 	
 	public Boolean newFile(FileInfo fi);
 
@@ -68,7 +68,7 @@ public interface IDocument extends RemoteService{
 	
 	public Vector<FileInfo> getDriveFile(String id);
 	
-	public void upload(FileInfo fi);
+	public void upload(FileInfo fi,String parentId);
 	
 	public void deleteMydrive(FileInfo fi);
 	

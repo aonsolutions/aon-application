@@ -134,7 +134,7 @@ public class GoogleDriveController implements Serializable {
 	public void fileUploaded(UploadEvent event) throws IOException {
 		Drive drive=getClientSession();
 		DriveFile file=new DriveFile("","", event.getUploadItem().getFileName(), event.getUploadItem().getContentType());
-		DriveUtils.insertFile(drive,event.getUploadItem().getFile(), file);
+		DriveUtils.insertFile(drive,event.getUploadItem().getFile(), file,null);
 	}
 	
 	public void fileDownloaded(ActionEvent event) throws IOException {
