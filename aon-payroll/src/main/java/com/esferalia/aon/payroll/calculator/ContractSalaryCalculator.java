@@ -360,7 +360,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 			try {
 				Double cgcBase = quoteCalculator.getCgcBase();
-				Double maternityBase = quoteCalculator.getCgcBase();
+				Double maternityBase = quoteCalculator.getMaternityBase();
 				if (cgcBase != null && maternityBase != null)
 					expressionContext.setVariable(CGC_BASE, cgcBase
 							- maternityBase, start, end);
@@ -403,7 +403,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 				onInvalidData(e.getVariableNames());
 			}
 			salaryBuilder.setCgcBase(cgcBase);
-			Double maternityBase = quoteCalculator.getCgcBase();
+			Double maternityBase = quoteCalculator.getMaternityBase();
 			if (cgcBase != null && maternityBase != null)
 				expressionContext.setVariable(CGC_BASE,
 						cgcBase - maternityBase, start, end);
@@ -418,15 +418,19 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 			if (cgpBase != null && maternityBase != null)
 				expressionContext.setVariable(CGP_BASE,
 						cgpBase - maternityBase, start, end);
+			Double nonStructuralBase = quoteCalculator
+					.getNonStructuralBase();
+			salaryBuilder.setNonHExtraBase(nonStructuralBase);
+			if ( nonStructuralBase != null  ) 
+				expressionContext.setVariable(NON_STRUCTURAL_OVERTIME_BASE,
+						nonStructuralBase, start, end);
 
-			salaryBuilder.setNonHExtraBase(quoteCalculator
-					.getNonStructuralBase());
-			expressionContext.setVariable(NON_STRUCTURAL_OVERTIME_BASE,
-					quoteCalculator.getNonStructuralBase(), start, end);
-
-			salaryBuilder.setHExtraBase(quoteCalculator.getStructuralBase());
-			expressionContext.setVariable(STRUCTURAL_OVERTIME_BASE,
-					quoteCalculator.getStructuralBase(), start, end);
+			Double structuralBase = quoteCalculator
+					.getStructuralBase();
+			salaryBuilder.setHExtraBase(structuralBase);
+			if ( structuralBase != null  ) 
+				expressionContext.setVariable(STRUCTURAL_OVERTIME_BASE,
+						structuralBase, start, end);
 
 			salaryBuilder.setProExtBase(quoteCalculator.getProExtBase());
 
