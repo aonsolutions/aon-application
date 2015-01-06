@@ -33,7 +33,7 @@
 					<g:Label text="99" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 				</td>
 				<td>
-					<aon:DoubleTextBox ui:field="box99"/>
+					<aon:DoubleTextBox ui:field="box99" styleName="aon-inputText"/>
 				</td>
 			</tr>
 
@@ -45,7 +45,7 @@
 					<g:Label text="103" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 				</td>
 				<td>
-					<aon:DoubleTextBox ui:field="box103"/>
+					<aon:DoubleTextBox ui:field="box103" styleName="aon-inputText"/>
 				</td>
 			</tr>
 
@@ -57,7 +57,7 @@
 					<g:Label text="104" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 				</td>
 				<td>
-					<aon:DoubleTextBox ui:field="box104"/>
+					<aon:DoubleTextBox ui:field="box104" styleName="aon-inputText"/>
 				</td>
 			</tr>
 
@@ -69,7 +69,7 @@
 					<g:Label text="105" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 				</td>
 				<td>
-					<aon:DoubleTextBox ui:field="box105"/>
+					<aon:DoubleTextBox ui:field="box105" styleName="aon-inputText"/>
 				</td>
 			</tr>
 
@@ -81,7 +81,7 @@
 					<g:Label text="110" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 				</td>
 				<td>
-					<aon:DoubleTextBox ui:field="box110"/>
+					<aon:DoubleTextBox ui:field="box110" styleName="aon-inputText"/>
 				</td>
 			</tr>
 
@@ -93,7 +93,7 @@
 					<g:Label text="112" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 				</td>
 				<td>
-					<aon:DoubleTextBox ui:field="box112"/>
+					<aon:DoubleTextBox ui:field="box112" styleName="aon-inputText"/>
 				</td>
 			</tr>
 
@@ -105,7 +105,7 @@
 					<g:Label text="100" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 				</td>
 				<td>
-					<aon:DoubleTextBox ui:field="box100"/>
+					<aon:DoubleTextBox ui:field="box100" styleName="aon-inputText"/>
 				</td>
 			</tr>
 
@@ -117,7 +117,7 @@
 					<g:Label text="101" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 				</td>
 				<td>
-					<aon:DoubleTextBox ui:field="box101"/>
+					<aon:DoubleTextBox ui:field="box101" styleName="aon-inputText"/>
 				</td>
 			</tr>
 
@@ -129,7 +129,7 @@
 					<g:Label text="102" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 				</td>
 				<td>
-					<aon:DoubleTextBox ui:field="box102"/>
+					<aon:DoubleTextBox ui:field="box102" styleName="aon-inputText"/>
 				</td>
 			</tr>
 			
@@ -141,7 +141,7 @@
 					<g:Label text="227" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 				</td>
 				<td>
-					<aon:DoubleTextBox ui:field="box227"/>
+					<aon:DoubleTextBox ui:field="box227" styleName="aon-inputText"/>
 				</td>
 			</tr>
 
@@ -153,7 +153,7 @@
 					<g:Label text="228" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 				</td>
 				<td>
-					<aon:DoubleTextBox ui:field="box228"/>
+					<aon:DoubleTextBox ui:field="box228" styleName="aon-inputText"/>
 				</td>
 			</tr>
 
@@ -165,7 +165,7 @@
 					<g:Label text="106" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 				</td>
 				<td>
-					<aon:DoubleTextBox ui:field="box106"/>
+					<aon:DoubleTextBox ui:field="box106" styleName="aon-inputText"/>
 				</td>
 			</tr>
 
@@ -177,7 +177,7 @@
 					<g:Label text="107" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 				</td>
 				<td>
-					<aon:DoubleTextBox ui:field="box107"/>
+					<aon:DoubleTextBox ui:field="box107" styleName="aon-inputText"/>
 				</td>
 			</tr>
 			
@@ -189,7 +189,7 @@
 					<g:Label text="108" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 				</td>
 				<td>
-					<aon:DoubleTextBox ui:field="box108"/>
+					<aon:DoubleTextBox ui:field="box108" styleName="aon-inputText"/>
 				</td>
 			</tr>
 			

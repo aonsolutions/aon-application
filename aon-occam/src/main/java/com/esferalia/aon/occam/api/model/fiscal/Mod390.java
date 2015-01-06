@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.fiscal;
 import java.io.Serializable;
 import java.util.Map;
 
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
@@ -438,9 +439,8 @@ public class Mod390 implements Serializable {
 		}
 
 	}
-	
+
 	public static enum Mod390DetailKey implements Serializable {
-		
 		  K00_04 (2,	 4.00, null)		
 		 ,K00_08 (528,	 8.00, 2013)
 		 ,K00_10 (4,	10.00, null)
@@ -451,6 +451,9 @@ public class Mod390 implements Serializable {
 		 ,K01_10 (503,	10.00, null)
 		 ,K01_18 (534,	18.00, 2013)
 		 ,K01_21 (505,	21.00, null)
+		 ,K40_04 (644,	 4.00, null)
+		 ,K40_10 (646,	10.00, null)
+		 ,K40_21 (648,	21.00, null)
 		 ,K02_04 (8  ,	 4.00, null)
 		 ,K02_08 (536,	 8.00, 2013)
 		 ,K02_10 (10 ,	10.00, null)
@@ -460,7 +463,7 @@ public class Mod390 implements Serializable {
 		 ,K03_21 (14 ,	21.00, null)
 		 ,K04_04 (22 ,	 4.00, null)
 		 ,K04_08 (542,	 8.00, 2013)
-		 ,K04_10 (43 ,	10.00, null)
+		 ,K04_10 (24 ,	10.00, null)
 		 ,K04_18 (544,	18.00, 2013)
 		 ,K04_21 (26 ,	21.00, null)
 		 ,K05_04 (546,	 4.00, null)
@@ -470,17 +473,19 @@ public class Mod390 implements Serializable {
 		 ,K05_21 (552,  21.00, null)
 		 ,K06	 (28,	 0.00, null)
 		 ,K07	 (30,	 0.00, null)
+		 ,K07_I	 (650,	 0.00, null)
 		 ,K08	 (32,	 0.00, null)
-		 ,K09	 (34,	 0.00, null)
-		 ,K10_05 (36,	 0.50, null)	
-		 ,K10_1  (600,	 1.40, 2013)
+		 ,K09	 (34,	 0.00, null, true, true)
+		 ,K10_05 (36,	 0.50, null)
+		 ,K10_1  (600,	 1.00, 2013)
 		 ,K10_14 (600,	 1.40, null)
-	 	 ,K10_4  (40,	 4.00, 2013)	
+	 	 ,K10_4  (40,	 4.00, 2013)
 		 ,K10_52 (602,	 5.20, null)
-		 ,K10_175(42,	 1.75, null)	
-		 ,K11	 (44,	 0.00, null)	
-		 ,K12	 (46,	 0.00, null)	
-		 ,K13	 (47,	 0.00, null)	
+		 ,K10_175(42,	 1.75, null)
+		 ,K11	 (44,	 0.00, null)
+		 ,K12	 (46,	 0.00, null)
+		 ,K13	 (47,	 0.00, null, false, true)
+		 
 		 ,K14_04 (191,	 4.00, null)
 		 ,K14_07 (193,	 7.00, null)
 		 ,K14_08 (556,	 8.00, null)
@@ -488,7 +493,7 @@ public class Mod390 implements Serializable {
 		 ,K14_16 (195,	16.00, null)
 		 ,K14_18 (558,	18.00, null)
 		 ,K14_21 (606,	21.00, null)
-		 ,K15	 (49,	 0.00, null)	
+		 ,K15	 (49,	 0.00, null, true, true)
 		 ,K16_04 (507,	 4.00, null)
 		 ,K16_07 (509,	 7.00, null)
 		 ,K16_08 (560,	 8.00, null)
@@ -496,7 +501,7 @@ public class Mod390 implements Serializable {
 		 ,K16_16 (511,	16.00, null)
 		 ,K16_18 (562,	18.00, null)
 		 ,K16_21 (610,	21.00, null)
-		 ,K17	 (513,	 0.00, null)
+		 ,K17	 (513,	 0.00, null, true, true)
 		 ,K18_04 (197,	 4.00, null)
 		 ,K18_07 (199,	 7.00, null)
 		 ,K18_08 (564,	 8.00, null)
@@ -504,7 +509,7 @@ public class Mod390 implements Serializable {
 		 ,K18_16 (201,	16.00, null)
 		 ,K18_18 (566,	18.00, null)
 		 ,K18_21 (614,	21.00, null)
-		 ,K19	 (51,	 0.00, null)	
+		 ,K19	 (51,	 0.00, null, true, true)
 		 ,K20_04 (515,	 4.00, null)
 		 ,K20_07 (517,	 7.00, null)
 		 ,K20_08 (568,	 8.00, null)
@@ -512,7 +517,7 @@ public class Mod390 implements Serializable {
 		 ,K20_16 (519,	16.00, null)
 		 ,K20_18 (570,	18.00, null)
 		 ,K20_21 (618,	21.00, null)
-		 ,K21	 (521,	 0.00, null)
+		 ,K21	 (521,	 0.00, null, true, true)
 		 ,K22_04 (203,	 4.00, null)
 		 ,K22_07 (205,	 7.00, null)
 		 ,K22_08 (272, 	 8.00, null)
@@ -520,7 +525,7 @@ public class Mod390 implements Serializable {
 		 ,K22_16 (207,	16.00, null)
 		 ,K22_18 (574, 	18.00, null)
 		 ,K22_21 (622,  21.00, null)
-		 ,K23	 (53,    0.00, null)	
+		 ,K23	 (53,    0.00, null, true, true)
 		 ,K24_04 (209,   4.00, null)
 		 ,K24_07 (211,   7.00, null)
 		 ,K24_08 (576,   8.00, null)
@@ -528,7 +533,7 @@ public class Mod390 implements Serializable {
 		 ,K24_16 (213,  16.00, null)
 		 ,K24_18 (578,  18.00, null)
 		 ,K24_21 (626,  21.00, null)
-		 ,K25	 (55,    0.00, null)
+		 ,K25	 (55,    0.00, null, true, true)
 		 ,K26_04 (215,   4.00, null)
 		 ,K26_07 (217,   7.00, null)
 		 ,K26_08 (580,   8.00, null)
@@ -536,7 +541,7 @@ public class Mod390 implements Serializable {
 		 ,K26_16 (219,  16.00, null)
 		 ,K26_18 (582,  18.00, null)
 		 ,K26_21 (630,  21.00, null)
-		 ,K27	 (57,    0.00, null)
+		 ,K27	 (57,    0.00, null, true, true)
 		 ,K28_04 (221,   4.00, null)
 		 ,K28_07 (223,   7.00, null)
 		 ,K28_08 (584,   8.00, null)
@@ -544,7 +549,8 @@ public class Mod390 implements Serializable {
 		 ,K28_16 (225,  16.00, null)
 		 ,K28_18 (586,  18.00, null)
 		 ,K28_21 (634,  21.00, null)
-		 ,K29	 (59,    0.00, null)
+		 ,K29	 (59,    0.00, null, true, true)
+		 
 		 ,K30_04 (588,   4.00, null)
 		 ,K30_07 (590,   7.00, null)
 		 ,K30_08 (592,   8.00, null)
@@ -552,13 +558,17 @@ public class Mod390 implements Serializable {
 		 ,K30_16 (594,  16.00, null)
 		 ,K30_18 (596,  18.00, null)
 		 ,K30_21 (638,  21.00, null)
-		 ,K31	 (598,   0.00, null)
+		 ,K31	 (598,   0.00, null, true, true)
+		 
 		 ,K32	 (61,    0.00, null)
+		 
 		 ,K33	 (62,    0.00, null)
-		 ,K34	 (63,    0.00, null)
-		 ,K35	 (522,   0.00, null)
-		 ,K36	 (64,    0.00, null)
-		 ,K37	 (65,    0.00, null)
+		 ,K33_I	 (652,   0.00, null)
+		 ,K34	 (63,    0.00, null, false, false)
+		 ,K35	 (522,   0.00, null, false, false)
+		 ,K36	 (64,    0.00, null, false, true)
+		 ,K37	 (65,    0.00, null, false, true)
+		 
 		 ,B099	 (99,    0.00, null)
 		 ,B103	 (103,   0.00, null)
 		 ,B104	 (104,   0.00, null)
@@ -576,16 +586,22 @@ public class Mod390 implements Serializable {
 		 ;
 		 
 		private int box;
-		private double percent;
+		private Double percent;
 		private Integer year;
+		private boolean taxableBaseAvailable;
+		private boolean readonly;
 			
-		private Mod390DetailKey(int box, double percent, Integer year) {
+		private Mod390DetailKey(int box, Double percent, Integer year) {
+			this(box,percent,year,true,false);
+		}
+		private Mod390DetailKey(int box, Double percent, Integer year, boolean taxableBaseAvailable, boolean readonly) {
 			this.percent = percent;
 			this.box = box;
 			this.year = year;
+			this.taxableBaseAvailable = taxableBaseAvailable;
+			this.readonly = readonly;
 		}
-
-		public double getPercent() {
+		public Double getPercent() {
 			return percent;
 		}
 
@@ -596,6 +612,92 @@ public class Mod390 implements Serializable {
 			return (this.year == null || this.year == year); 
 		}
 		
+		public boolean hasTaxableBaseAvailable(){
+			return taxableBaseAvailable;
+		}
+		public boolean isReadonly() {
+			return readonly;
+		}
+	}
+
+	public static enum Mod390DetailKeyGroup implements Serializable {
+		  DEV_001 (new Mod390DetailKey[]{Mod390DetailKey.K00_04,Mod390DetailKey.K00_08
+				 ,Mod390DetailKey.K00_10,Mod390DetailKey.K00_18,Mod390DetailKey.K00_21})
+		 ,DEV_002 (new Mod390DetailKey[]{Mod390DetailKey.K01_04,Mod390DetailKey.K01_08
+				 ,Mod390DetailKey.K01_10,Mod390DetailKey.K01_18,Mod390DetailKey.K01_21})
+		 ,DEV_003  (new Mod390DetailKey[]{Mod390DetailKey.K40_04,Mod390DetailKey.K40_10
+				 ,Mod390DetailKey.K40_21})
+		 ,DEV_004  (new Mod390DetailKey[]{Mod390DetailKey.K02_04,Mod390DetailKey.K02_08
+				 ,Mod390DetailKey.K02_10,Mod390DetailKey.K02_18,Mod390DetailKey.K02_21})
+		 ,DEV_005  (new Mod390DetailKey[]{Mod390DetailKey.K03_18,Mod390DetailKey.K03_21})
+		 ,DEV_006  (new Mod390DetailKey[]{Mod390DetailKey.K04_04,Mod390DetailKey.K04_08
+				 ,Mod390DetailKey.K04_10,Mod390DetailKey.K04_18,Mod390DetailKey.K04_21})
+		 ,DEV_007  (new Mod390DetailKey[]{Mod390DetailKey.K05_04,Mod390DetailKey.K05_08
+				 ,Mod390DetailKey.K05_10,Mod390DetailKey.K05_18,Mod390DetailKey.K05_21})
+		 ,DEV_008  (new Mod390DetailKey[]{Mod390DetailKey.K06})
+		 ,DEV_009  (new Mod390DetailKey[]{Mod390DetailKey.K07})
+		 ,DEV_010  (new Mod390DetailKey[]{Mod390DetailKey.K07_I})
+		 ,DEV_011  (new Mod390DetailKey[]{Mod390DetailKey.K08})
+		 ,DEV_012  (new Mod390DetailKey[]{Mod390DetailKey.K09})
+		 ,DEV_013  (new Mod390DetailKey[]{Mod390DetailKey.K10_05,Mod390DetailKey.K10_1
+				 ,Mod390DetailKey.K10_14,Mod390DetailKey.K10_4,Mod390DetailKey.K10_52
+				 ,Mod390DetailKey.K10_175})
+		 ,DEV_014  (new Mod390DetailKey[]{Mod390DetailKey.K11})
+		 ,DEV_015  (new Mod390DetailKey[]{Mod390DetailKey.K12})
+		 ,DEV_016  (new Mod390DetailKey[]{Mod390DetailKey.K13})
+		 ,DED_001  (new Mod390DetailKey[]{Mod390DetailKey.K14_04,Mod390DetailKey.K14_07
+				 ,Mod390DetailKey.K14_08,Mod390DetailKey.K14_10,Mod390DetailKey.K14_16
+				 ,Mod390DetailKey.K14_18,Mod390DetailKey.K14_21})
+		 ,DED_002  (new Mod390DetailKey[]{Mod390DetailKey.K15})
+		 ,DED_003  (new Mod390DetailKey[]{Mod390DetailKey.K16_04,Mod390DetailKey.K16_07
+				 ,Mod390DetailKey.K16_08,Mod390DetailKey.K16_10,Mod390DetailKey.K16_16
+				 ,Mod390DetailKey.K16_18,Mod390DetailKey.K16_21})
+		 ,DED_004  (new Mod390DetailKey[]{Mod390DetailKey.K17})
+		 ,DED_005  (new Mod390DetailKey[]{Mod390DetailKey.K18_04,Mod390DetailKey.K18_07
+				 ,Mod390DetailKey.K18_08,Mod390DetailKey.K18_10,Mod390DetailKey.K18_16
+				 ,Mod390DetailKey.K18_18,Mod390DetailKey.K18_21})
+		 ,DED_006  (new Mod390DetailKey[]{Mod390DetailKey.K19})
+		 ,DED_007  (new Mod390DetailKey[]{Mod390DetailKey.K20_04,Mod390DetailKey.K20_07
+				 ,Mod390DetailKey.K20_08,Mod390DetailKey.K20_10,Mod390DetailKey.K20_16
+				 ,Mod390DetailKey.K20_18,Mod390DetailKey.K20_21})
+		,DED_008  (new Mod390DetailKey[]{Mod390DetailKey.K21})
+		,DED_009  (new Mod390DetailKey[]{Mod390DetailKey.K22_04,Mod390DetailKey.K22_07
+				,Mod390DetailKey.K22_08,Mod390DetailKey.K22_10,Mod390DetailKey.K22_16
+				,Mod390DetailKey.K22_18,Mod390DetailKey.K22_21})
+		,DED_010  (new Mod390DetailKey[]{Mod390DetailKey.K23})
+		,DED_011  (new Mod390DetailKey[]{Mod390DetailKey.K24_04,Mod390DetailKey.K24_07
+				,Mod390DetailKey.K24_08,Mod390DetailKey.K24_10,Mod390DetailKey.K24_16
+				,Mod390DetailKey.K24_18,Mod390DetailKey.K24_21})
+		,DED_012  (new Mod390DetailKey[]{Mod390DetailKey.K25})
+		,DED_013  (new Mod390DetailKey[]{Mod390DetailKey.K26_04,Mod390DetailKey.K26_07
+				,Mod390DetailKey.K26_08,Mod390DetailKey.K26_10,Mod390DetailKey.K26_16
+				,Mod390DetailKey.K26_18,Mod390DetailKey.K26_21})
+		,DED_014  (new Mod390DetailKey[]{Mod390DetailKey.K27})
+		,DED_015  (new Mod390DetailKey[]{Mod390DetailKey.K28_04,Mod390DetailKey.K28_07
+				,Mod390DetailKey.K28_08,Mod390DetailKey.K28_10,Mod390DetailKey.K28_16
+				,Mod390DetailKey.K28_18,Mod390DetailKey.K28_21})
+		,DED_016  (new Mod390DetailKey[]{Mod390DetailKey.K29})
+		,DED_017  (new Mod390DetailKey[]{Mod390DetailKey.K30_04,Mod390DetailKey.K30_07
+				,Mod390DetailKey.K30_08,Mod390DetailKey.K30_10,Mod390DetailKey.K30_16
+				,Mod390DetailKey.K30_18,Mod390DetailKey.K30_21})
+		,DED_018  (new Mod390DetailKey[]{Mod390DetailKey.K31})
+		,DED_019  (new Mod390DetailKey[]{Mod390DetailKey.K32})
+		,DED_020  (new Mod390DetailKey[]{Mod390DetailKey.K33})
+		,DED_021  (new Mod390DetailKey[]{Mod390DetailKey.K33_I})
+		,DED_022  (new Mod390DetailKey[]{Mod390DetailKey.K34})
+		,DED_023  (new Mod390DetailKey[]{Mod390DetailKey.K35})
+		,DED_024  (new Mod390DetailKey[]{Mod390DetailKey.K36})
+		,DED_025  (new Mod390DetailKey[]{Mod390DetailKey.K37})
+		 ;
+		  
+		private Mod390DetailKey[] keys;
+		
+		private Mod390DetailKeyGroup(Mod390DetailKey[] keys) {
+			this.keys = keys;
+		}
+		public Mod390DetailKey[] getKeys() {
+			return keys;
+		}
 	}
 
 	private Integer id;
@@ -620,8 +722,10 @@ public class Mod390 implements Serializable {
 
 	
 	private boolean insolvencyDeclarations;
+	
 	private boolean insolvencyStateThisYear;
 	private boolean insolvencyStateLastPeriod;
+	
 	private boolean accrualRegime;
 	private boolean accrualRegimeTarget;
 
@@ -1324,6 +1428,122 @@ public class Mod390 implements Serializable {
 	}
 	public void setBox523(double box523) {
 		this.box523 = box523;
+	}
+	private static final Mod390DetailKey[] K09_FORMULA = new Mod390DetailKey[]{ Mod390DetailKey.K00_04
+				,Mod390DetailKey.K00_08,Mod390DetailKey.K00_10,Mod390DetailKey.K00_18
+				,Mod390DetailKey.K00_21,Mod390DetailKey.K01_04,Mod390DetailKey.K01_08
+				,Mod390DetailKey.K01_10,Mod390DetailKey.K01_18,Mod390DetailKey.K01_21
+				,Mod390DetailKey.K40_04,Mod390DetailKey.K40_10,Mod390DetailKey.K40_21
+				,Mod390DetailKey.K02_04,Mod390DetailKey.K02_08,Mod390DetailKey.K02_10
+				,Mod390DetailKey.K02_18,Mod390DetailKey.K02_21,Mod390DetailKey.K03_18
+				,Mod390DetailKey.K03_21,Mod390DetailKey.K04_04,Mod390DetailKey.K04_08
+				,Mod390DetailKey.K04_10,Mod390DetailKey.K04_18,Mod390DetailKey.K04_21
+				,Mod390DetailKey.K05_04,Mod390DetailKey.K05_08,Mod390DetailKey.K05_10
+				,Mod390DetailKey.K05_18,Mod390DetailKey.K05_21,Mod390DetailKey.K06
+				,Mod390DetailKey.K07   ,Mod390DetailKey.K07_I ,Mod390DetailKey.K08};
+	private static final Mod390DetailKey[] K13_FORMULA = new Mod390DetailKey[]{ Mod390DetailKey.K09
+				,Mod390DetailKey.K10_05,Mod390DetailKey.K10_1 ,Mod390DetailKey.K10_14 
+				,Mod390DetailKey.K10_4 ,Mod390DetailKey.K10_52,Mod390DetailKey.K10_175
+				,Mod390DetailKey.K11   ,Mod390DetailKey.K12};	 
+	private static final Mod390DetailKey[] K15_FORMULA = {
+		Mod390DetailKey.K14_04, Mod390DetailKey.K14_07,
+		Mod390DetailKey.K14_08, Mod390DetailKey.K14_10,
+		Mod390DetailKey.K14_16, Mod390DetailKey.K14_18,
+		Mod390DetailKey.K14_21 };
+
+	private static final Mod390DetailKey[] K17_FORMULA = {
+			Mod390DetailKey.K16_04, Mod390DetailKey.K16_07,
+			Mod390DetailKey.K16_08, Mod390DetailKey.K16_10,
+			Mod390DetailKey.K16_16, Mod390DetailKey.K16_18,
+			Mod390DetailKey.K16_21 };
+	
+	private static final Mod390DetailKey[] K19_FORMULA = {
+			Mod390DetailKey.K18_04, Mod390DetailKey.K18_07,
+			Mod390DetailKey.K18_08, Mod390DetailKey.K18_10,
+			Mod390DetailKey.K18_16, Mod390DetailKey.K18_18,
+			Mod390DetailKey.K18_21 };
+	
+	private static final Mod390DetailKey[] K21_FORMULA = {
+			Mod390DetailKey.K20_04, Mod390DetailKey.K20_07,
+			Mod390DetailKey.K20_08, Mod390DetailKey.K20_10,
+			Mod390DetailKey.K20_16, Mod390DetailKey.K20_18,
+			Mod390DetailKey.K20_21 };
+	
+	private static final Mod390DetailKey[] K23_FORMULA = {
+			Mod390DetailKey.K22_04, Mod390DetailKey.K22_07,
+			Mod390DetailKey.K22_08, Mod390DetailKey.K22_10,
+			Mod390DetailKey.K22_16, Mod390DetailKey.K22_18,
+			Mod390DetailKey.K22_21 };
+	
+	private static final Mod390DetailKey[] K25_FORMULA = {
+			Mod390DetailKey.K24_04, Mod390DetailKey.K24_07,
+			Mod390DetailKey.K24_08, Mod390DetailKey.K24_10,
+			Mod390DetailKey.K24_16, Mod390DetailKey.K24_18,
+			Mod390DetailKey.K24_21 };
+	
+	private static final Mod390DetailKey[] K27_FORMULA = {
+			Mod390DetailKey.K26_04, Mod390DetailKey.K26_07,
+			Mod390DetailKey.K26_08, Mod390DetailKey.K26_10,
+			Mod390DetailKey.K26_16, Mod390DetailKey.K26_18,
+			Mod390DetailKey.K26_21 };
+	
+	private static final Mod390DetailKey[] K29_FORMULA = {
+			Mod390DetailKey.K28_04, Mod390DetailKey.K28_07,
+			Mod390DetailKey.K28_08, Mod390DetailKey.K28_10,
+			Mod390DetailKey.K28_16, Mod390DetailKey.K28_18,
+			Mod390DetailKey.K28_21 };
+
+	private static final Mod390DetailKey[] K31_FORMULA = {
+		Mod390DetailKey.K30_04, Mod390DetailKey.K30_07,
+		Mod390DetailKey.K30_08, Mod390DetailKey.K30_10,
+		Mod390DetailKey.K30_16, Mod390DetailKey.K30_18,
+		Mod390DetailKey.K30_21 };	
+
+	private static final Mod390DetailKey[] K36_FORMULA = { Mod390DetailKey.K15,
+		Mod390DetailKey.K17, Mod390DetailKey.K19, Mod390DetailKey.K21,
+		Mod390DetailKey.K23, Mod390DetailKey.K25, Mod390DetailKey.K27,
+		Mod390DetailKey.K29, Mod390DetailKey.K31 };
+
+	public void calculate() {
+		calculate(Mod390DetailKey.K09, K09_FORMULA);
+		Mod390Detail k13 = calculate(Mod390DetailKey.K13, K13_FORMULA);
+		calculate(Mod390DetailKey.K15, K15_FORMULA);
+		calculate(Mod390DetailKey.K17, K17_FORMULA);
+		calculate(Mod390DetailKey.K19, K19_FORMULA);
+		calculate(Mod390DetailKey.K23, K21_FORMULA);
+		calculate(Mod390DetailKey.K23, K23_FORMULA);
+		calculate(Mod390DetailKey.K25, K25_FORMULA);
+		calculate(Mod390DetailKey.K27, K27_FORMULA);
+		calculate(Mod390DetailKey.K29, K29_FORMULA);
+		calculate(Mod390DetailKey.K31, K31_FORMULA);
+		Mod390Detail k36 = calculate(Mod390DetailKey.K36, K36_FORMULA);
+		Mod390Detail k37 = ensure(Mod390DetailKey.K37);
+		k37.setQuota( AonMathUtils.round(k13.getQuota() - k36.getQuota()));
+	}
+	
+	public Mod390Detail ensure(Mod390DetailKey key) {
+		Mod390Detail detail = getGeneralRegime().get(key);
+		if (detail == null) {
+			detail = new Mod390Detail();
+			detail.setKey(key);
+			detail.setPercent(key.getPercent());
+			getGeneralRegime().put(key, detail);
+		}
+		return detail;
+	}
+	
+	private Mod390Detail calculate(Mod390DetailKey key, Mod390DetailKey ... keys) {
+		Mod390Detail detail = ensure(key);
+		detail.setTaxableBase(0.0);
+		detail.setQuota(0.0);
+		for (Mod390DetailKey k : keys) {
+			Mod390Detail det = getGeneralRegime().get(k);
+			if (det != null) {
+				detail.setTaxableBase( AonMathUtils.round(detail.getTaxableBase() + det.getTaxableBase()));
+				detail.setQuota( AonMathUtils.round(detail.getQuota() + det.getQuota()));
+			}
+		}
+		return detail;
 	}
 
 }

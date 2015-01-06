@@ -278,15 +278,6 @@ public class Model390 extends MainEntryPoint {
 
 		// http://code.google.com/p/google-web-toolkit/issues/detail?id=6889
 		deckPanel.onResize();
-
-		//page5.setPage10(page10);
-		page7.setPage5(page5);
-		page7.setPage6(page6);
-		page8.setPage5(page5);
-		page8.setPage6(page6);
-
-		// HABILITAR
-
 	}
 
 	public static native String getCurrentDomainName()
@@ -487,7 +478,7 @@ public class Model390 extends MainEntryPoint {
 					this.mod390, new AsyncCallback<Void>() {
 				@Override
 				public void onSuccess(Void result) {
-					select(new Mod390());
+					// select(new Mod390());
 					table.setVisibleRangeAndClearData(table.getVisibleRange(),
 							true);
 				}
@@ -746,34 +737,28 @@ public class Model390 extends MainEntryPoint {
 	}
 	
 	private void validate(Mod390 m390) {
-		if (AonStringUtils.isEmpty(year.getValue())) {
-			throw new IllegalArgumentException(MSG.requiredField(MSG
-					.fiscalYear()));
+		if (m390.getYear() != 2014) {
+			throw new IllegalArgumentException(MSG.requiredField(MSG.fiscalYear()));
 		}
 		if (!m390.isLegalEntity()) {
 			if (AonStringUtils.isEmpty(m390.getDocument())) {
-				throw new IllegalArgumentException(
-						MSG.requiredField(" Apart. 0: " + MSG.document()));
+				throw new IllegalArgumentException(MSG.requiredField(" Apart. 0: " + MSG.document()));
 			}
 			if (!AonDocumentUtil.isValid(m390.getDocument())) {
 				throw new IllegalArgumentException("El NIF/DNI no es correcto");
 			}
 			if (AonStringUtils.isEmpty(m390.getName())) {
-				throw new IllegalArgumentException(
-						"Para personas f\u00EDsicas, el nombre es obligatorio (Apartado 0)");
+				throw new IllegalArgumentException("Para personas f\u00EDsicas, el nombre es obligatorio (Apartado 0)");
 			}
 			if (AonStringUtils.isEmpty(m390.getFirstSurname())) {
-				throw new IllegalArgumentException(
-						"Para personas f\u00EDsicas, el primer apellido es obligatorio (Apartado 0)");
+				throw new IllegalArgumentException("Para personas f\u00EDsicas, el primer apellido es obligatorio (Apartado 0)");
 			}
 			if (AonStringUtils.isEmpty(m390.getSecondSurname())) {
-				throw new IllegalArgumentException(
-						"Para personas f\u00EDsicas, el segundo apellido es obligatorio (Apartado 0)");
+				throw new IllegalArgumentException("Para personas f\u00EDsicas, el segundo apellido es obligatorio (Apartado 0)");
 			}
 		} else {
 			if (AonStringUtils.isEmpty(m390.getName())) {
-				throw new IllegalArgumentException(
-						"No se ha indicado el nombre del declarante. (Apartado 0)");
+				throw new IllegalArgumentException("No se ha indicado el nombre del declarante. (Apartado 0)");
 			}
 		}
 		if (m390.getMainActivity() == null

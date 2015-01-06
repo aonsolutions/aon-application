@@ -102,6 +102,11 @@
 .aon-padding-right{
 	padding-right: 1em;
 }
+.aon-border-bottom-important  {
+	border-bottom-style: solid !important;
+	border-bottom-width: 1px !important;
+	border-bottom-color: #999 !important;
+}
 .aon-border-bottom  {
 	border-bottom: solid #999 1px;
 }

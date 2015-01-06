@@ -568,6 +568,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("IVA DEVENGADO")
 	String outputVat();
 
+	@DefaultMessage("IVA DEDUCIBLE")
+	String inputVat();
+
 	@DefaultMessage("R\u00E9gimen Simplificado")
 	String simplifiedRegime();
 

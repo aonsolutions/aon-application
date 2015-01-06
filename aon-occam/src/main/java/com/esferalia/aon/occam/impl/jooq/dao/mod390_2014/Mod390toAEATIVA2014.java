@@ -1,7 +1,9 @@
-package com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014;
+package com.esferalia.aon.occam.impl.jooq.dao.mod390_2014;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,72 +15,75 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod390.FarmerRegimeActivity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390DetailKey;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.SimpliedRegimeActivity;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.Administraciones;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.DatEstadisticos;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.DatEstadisticos.Conjunta;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.DatEstadisticos.OpTercerasPax;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.DatEstadisticos.Otras;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.DatEstadisticos.Pral;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.DatIdent;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.Devengo;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.Devengo.ConcursoAcreedoresNO;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.Devengo.DecSustitutiva;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.Devengo.DestRegCriterioCajaNO;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.Devengo.DestRegCriterioCajaSI;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.Devengo.RegCriterioCajaNO;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.Devengo.RegCriterioCajaSI;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.Devengo.RegDevMensual;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.LiqAnual;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.OpEspecificas;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegGeneral;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota.AdqIntracomBienes;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota.AdqIntracomServicios;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota.IVAdevengadoInversionSP;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota.ModBasesyCuotas;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota.ModBasesyCuotasConcursoAcreedores;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota.ModRecargoEquivalencia;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota.ModRecargoEquivalenciaConcursoAcreedores;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota.OpIntragrupo;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota.RecargoEquivalencia;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota.RegAgViajes;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota.RegBienesUsados;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota.RegOrdinario;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota.TotalBasesyCuotasIVA;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegGeneral.Deducciones;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegGeneral.Deducciones.AdqIntracomunitariasBienesCorrientes;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegGeneral.Deducciones.AdqIntracomunitariasBienesInversion;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegGeneral.Deducciones.AdqIntracomunitariasServicios;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegGeneral.Deducciones.ComRegAgricGanadPesca;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegGeneral.Deducciones.ImportacionesBienesCorrientes;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegGeneral.Deducciones.ImportacionesBienesInversion;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegGeneral.Deducciones.OpInterioresBienesInversion;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegGeneral.Deducciones.OpInterioresBienesServiciosCorrientes;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegGeneral.Deducciones.OpIntragrupoBienesInversion;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegGeneral.Deducciones.OpIntragrupoCorrientes;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegGeneral.Deducciones.RectifDeducciones;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegSimplificado;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegSimplificado.ActAgricGanadForest;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegSimplificado.Actividad;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegSimplificado.Actividad.Modulo;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegSimplificado.IvaDeducible;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.RegSimplificado.IvaDevengado;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.ResLiquidaciones;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.ResLiquidaciones.PerNoRegGrupos;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.ResLiquidaciones.PerSiRegGrupos;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.AEATIVA2014.VolOperaciones;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.TipoConcursoUltPer.ConcursoUltPerNO;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.TipoConcursoUltPer.ConcursoUltPerSI;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.TipoGrupoEntidades.Art65NO;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.TipoGrupoEntidades.Art65SI;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.TipoGrupoEntidades.Dependiente;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.TipoGrupoEntidades.Dominante;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.TipoGrupoEntidades.UltAutoliquidNO;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014.TipoGrupoEntidades.UltAutoliquidSI;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.Administraciones;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.DatEstadisticos;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.DatIdent;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.Devengo;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.LiqAnual;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.OpEspecificas;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegSimplificado;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.ResLiquidaciones;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.VolOperaciones;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.DatEstadisticos.Conjunta;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.DatEstadisticos.OpTercerasPax;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.DatEstadisticos.Otras;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.DatEstadisticos.Pral;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.Devengo.ConcursoAcreedoresNO;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.Devengo.DecSustitutiva;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.Devengo.DestRegCriterioCajaNO;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.Devengo.DestRegCriterioCajaSI;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.Devengo.RegCriterioCajaNO;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.Devengo.RegCriterioCajaSI;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.Devengo.RegDevMensual;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral.Deducciones;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota.AdqIntracomBienes;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota.AdqIntracomServicios;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota.IVAdevengadoInversionSP;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota.ModBasesyCuotas;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota.ModBasesyCuotasConcursoAcreedores;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota.ModRecargoEquivalencia;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota.ModRecargoEquivalenciaConcursoAcreedores;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota.OpIntragrupo;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota.RecargoEquivalencia;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota.RegAgViajes;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota.RegBienesUsados;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota.RegCriterioCaja;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota.RegOrdinario;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral.BaseImponibleyCuota.TotalBasesyCuotasIVA;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral.Deducciones.AdqIntracomunitariasBienesCorrientes;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral.Deducciones.AdqIntracomunitariasBienesInversion;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral.Deducciones.AdqIntracomunitariasServicios;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral.Deducciones.ComRegAgricGanadPesca;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral.Deducciones.ImportacionesBienesCorrientes;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral.Deducciones.ImportacionesBienesInversion;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral.Deducciones.OpInterioresBienesInversion;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral.Deducciones.OpInterioresBienesServiciosCorrientes;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral.Deducciones.OpIntragrupoBienesInversion;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral.Deducciones.OpIntragrupoCorrientes;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral.Deducciones.RectifDeducciones;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegSimplificado.ActAgricGanadForest;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegSimplificado.Actividad;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegSimplificado.IvaDeducible;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegSimplificado.IvaDevengado;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegSimplificado.Actividad.Modulo;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.ResLiquidaciones.PerNoRegGrupos;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.ResLiquidaciones.PerSiRegGrupos;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.TipoConcursoUltPer.ConcursoUltPerNO;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.TipoConcursoUltPer.ConcursoUltPerSI;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.TipoGrupoEntidades.Art65NO;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.TipoGrupoEntidades.Art65SI;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.TipoGrupoEntidades.Dependiente;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.TipoGrupoEntidades.Dominante;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.TipoGrupoEntidades.UltAutoliquidNO;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.TipoGrupoEntidades.UltAutoliquidSI;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod390toAEATIVA2014 {
+
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 
 	public static AEATIVA2014 getAEATIVA2014(Mod390 mod390) {
 		AEATIVA2014 iva = new AEATIVA2014();
@@ -351,6 +356,16 @@ public class Mod390toAEATIVA2014 {
 			}
 			devengo.setRegGrupoEntidades(tge);
 		}
+		if (mod390.isAccrualRegime()) {
+			devengo.setRegCriterioCajaSI(new RegCriterioCajaSI());
+		} else {
+			devengo.setRegCriterioCajaNO(new RegCriterioCajaNO());
+		}
+		if (mod390.isAccrualRegimeTarget()){
+			devengo.setDestRegCriterioCajaSI(new DestRegCriterioCajaSI());
+		} else {
+			devengo.setDestRegCriterioCajaNO(new DestRegCriterioCajaNO());
+		}
 		return devengo;
 	}
 	
@@ -405,8 +420,11 @@ public class Mod390toAEATIVA2014 {
 				trj.setNIF(toUppercase(lr.getDocument()));
 				trj.setNombre(toUppercase(lr.getName()));
 				trj.setNotaria(toUppercase(lr.getNotary()));
-				// TODO
-				trj.setFechaPoder( lr.getNotaryDate().toString() );
+				if (lr.getNotaryDate() != null) {
+					trj.setFechaPoder( DATE_FORMAT.format(lr.getNotaryDate()) );	
+				} else {
+					trj.setFechaPoder( null );
+				}
 				list.add(trj);
 			}
 		}
@@ -692,6 +710,7 @@ public class Mod390toAEATIVA2014 {
 	private static BaseImponibleyCuota getBaseImponibleyCuota(Mod390 mod390) {
 		BaseImponibleyCuota b = new BaseImponibleyCuota();
 		b.setRegOrdinario(getRegOrdinario(mod390));
+		b.setRegCriterioCaja(getRegCriterioCaja(mod390));
 		b.setOpIntragrupo(getOpIntragrupo(mod390));
 		b.setRegBienesUsados(getRegBienesUsados(mod390));
 		b.setRegAgViajes(getRegAgViajes(mod390));
@@ -837,6 +856,14 @@ public class Mod390toAEATIVA2014 {
 		regOrdinario.setTipo10(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K00_10)));
 		regOrdinario.setTipo21(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K00_21)));
 		return regOrdinario;
+	}
+
+	private static RegCriterioCaja getRegCriterioCaja(Mod390 mod390) {
+		RegCriterioCaja regCriterioCaja = new RegCriterioCaja();
+		regCriterioCaja.setTipo4(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K40_04)));
+		regCriterioCaja.setTipo10(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K40_10)));
+		regCriterioCaja.setTipo21(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K40_21)));
+		return regCriterioCaja;
 	}
 
 	private static Mod390Detail getKey(Mod390 mod390, Mod390DetailKey key) {

@@ -6,7 +6,7 @@
 //
 
 
-package com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014;
+package com.esferalia.aon.occam.impl.jooq.dao.mod390_2014;
 
 import javax.xml.bind.annotation.XmlRegistry;
 
