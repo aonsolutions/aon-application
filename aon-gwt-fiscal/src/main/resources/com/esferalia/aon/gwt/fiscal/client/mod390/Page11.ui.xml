@@ -33,7 +33,7 @@
 					<g:Label text="230" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 				</td>
 				<td>
-					<aon:DoubleTextBox ui:field="box230"/>
+					<aon:DoubleTextBox ui:field="box230" styleName="aon-inputText"/>
 				</td>
 			</tr>
 
@@ -45,7 +45,7 @@
 					<g:Label text="109" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 				</td>
 				<td>
-					<aon:DoubleTextBox ui:field="box109"/>
+					<aon:DoubleTextBox ui:field="box109" styleName="aon-inputText"/>
 				</td>
 			</tr>
 
@@ -57,7 +57,7 @@
 					<g:Label text="231" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 				</td>
 				<td>
-					<aon:DoubleTextBox ui:field="box231"/>
+					<aon:DoubleTextBox ui:field="box231" styleName="aon-inputText"/>
 				</td>
 			</tr>
 
@@ -69,7 +69,7 @@
 					<g:Label text="232" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 				</td>
 				<td>
-					<aon:DoubleTextBox ui:field="box232"/>
+					<aon:DoubleTextBox ui:field="box232" styleName="aon-inputText"/>
 				</td>
 			</tr>
 
@@ -81,7 +81,7 @@
 					<g:Label text="111" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 				</td>
 				<td>
-					<aon:DoubleTextBox ui:field="box111"/>
+					<aon:DoubleTextBox ui:field="box111" styleName="aon-inputText"/>
 				</td>
 			</tr>
 
@@ -93,7 +93,7 @@
 					<g:Label text="113" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 				</td>
 				<td>
-					<aon:DoubleTextBox ui:field="box113"/>
+					<aon:DoubleTextBox ui:field="box113" styleName="aon-inputText"/>
 				</td>
 			</tr>
 
@@ -105,7 +105,7 @@
 					<g:Label text="523" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
 				</td>
 				<td>
-					<aon:DoubleTextBox ui:field="box523"/>
+					<aon:DoubleTextBox ui:field="box523" styleName="aon-inputText"/>
 				</td>
 			</tr>
 		</table>

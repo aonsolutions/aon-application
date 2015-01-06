@@ -57,7 +57,7 @@
 								<td><g:Label text="{msg.page6J}"/></td>
 							</tr>
 							<tr>
-								<td><g:TextBox ui:field="f01A"/></td>
+								<td><g:TextBox ui:field="f01A" styleName="aon-inputText"/></td>
 								<td><aon:DoubleTextBox ui:field="f01B" styleName="aon-inputText"/></td>
 								<td><aon:DoubleTextBox ui:field="f01C" styleName="aon-inputText"/></td>
 								<td><aon:DoubleTextBox ui:field="f01D" styleName="aon-inputText"/></td>
@@ -65,7 +65,7 @@
 								<td><aon:DoubleTextBox ui:field="f01K" styleName="aon-inputText"/></td>
 							</tr>
 							<tr>
-								<td><g:TextBox ui:field="f02A"/></td>
+								<td><g:TextBox ui:field="f02A" styleName="aon-inputText"/></td>
 								<td><aon:DoubleTextBox ui:field="f02B" styleName="aon-inputText"/></td>
 								<td><aon:DoubleTextBox ui:field="f02C" styleName="aon-inputText"/></td>
 								<td><aon:DoubleTextBox ui:field="f02D" styleName="aon-inputText"/></td>
@@ -73,7 +73,7 @@
 								<td><aon:DoubleTextBox ui:field="f02K" styleName="aon-inputText"/></td>
 							</tr>
 							<tr>
-								<td><g:TextBox ui:field="f03A"/></td>
+								<td><g:TextBox ui:field="f03A" styleName="aon-inputText"/></td>
 								<td><aon:DoubleTextBox ui:field="f03B" styleName="aon-inputText"/></td>
 								<td><aon:DoubleTextBox ui:field="f03C" styleName="aon-inputText"/></td>
 								<td><aon:DoubleTextBox ui:field="f03D" styleName="aon-inputText"/></td>
@@ -81,7 +81,7 @@
 								<td><aon:DoubleTextBox ui:field="f03K" styleName="aon-inputText"/></td>
 							</tr>
 							<tr>
-								<td><g:TextBox ui:field="f04A"/></td>
+								<td><g:TextBox ui:field="f04A" styleName="aon-inputText"/></td>
 								<td><aon:DoubleTextBox ui:field="f04B" styleName="aon-inputText"/></td>
 								<td><aon:DoubleTextBox ui:field="f04C" styleName="aon-inputText"/></td>
 								<td><aon:DoubleTextBox ui:field="f04D" styleName="aon-inputText"/></td>
@@ -89,7 +89,7 @@
 								<td><aon:DoubleTextBox ui:field="f04K" styleName="aon-inputText"/></td>
 							</tr>
 							<tr>
-								<td><g:TextBox ui:field="f05A"/></td>
+								<td><g:TextBox ui:field="f05A" styleName="aon-inputText"/></td>
 								<td><aon:DoubleTextBox ui:field="f05B" styleName="aon-inputText"/></td>
 								<td><aon:DoubleTextBox ui:field="f05C" styleName="aon-inputText"/></td>
 								<td><aon:DoubleTextBox ui:field="f05D" styleName="aon-inputText"/></td>

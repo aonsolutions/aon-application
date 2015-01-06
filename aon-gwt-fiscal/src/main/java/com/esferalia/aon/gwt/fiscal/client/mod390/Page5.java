@@ -8,10 +8,10 @@ import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390DetailKey;
-import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390DetailKeyGroup;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -31,112 +31,101 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 	private static final Page5Binder page5Binder = GWT
 			.create(Page5Binder.class);
 
-//	private FiscalServiceAsync fiscalService;
-	
 	public static class Mod390DetailFields {
-		Mod390Detail detail;
-		DoubleTextBox taxableBase;
-		DoubleTextBox quota;
+		private Mod390Detail detail;
+		private DoubleTextBox taxableBase;
+		private DoubleTextBox quota;
 		
 		protected Mod390DetailFields(Mod390Detail detail) {
 			this.detail = detail;
 			taxableBase = new DoubleTextBox();
 			quota = new DoubleTextBox();
 		}
+		public DoubleTextBox getTaxableBase() {
+			return taxableBase;
+		}
+		public void setTaxableBase(double value) {
+			this.taxableBase.setValue(value);
+			detail.setTaxableBase(value);
+		}
+		public DoubleTextBox getQuota() {
+			return quota;
+		}
+		public void setQuota(double value) {
+			this.quota.setValue(value);
+			detail.setQuota(value);
+		}
+		public Mod390Detail getDetail() {
+			return detail;
+		}
+		public void setDetail(Mod390Detail mod390Detail) {
+			detail = mod390Detail;
+		}
 	} 
 	
 	@UiField(provided = true)
 	FlexTable table;
+
+	private Mod390 mod390;
 	
-	String domainName;
-	int domain;
-	int year;
-//	private Page10 page10;
-	
-	EnumMap<Mod390DetailKey, Mod390DetailFields> map; 
+	private EnumMap<Mod390DetailKey, Mod390DetailFields> map; 
 	
 	public Page5() {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		Model390.RESOURCES.css().ensureInjected();
-//		FiscalServiceAsync mod190ServiceRaw = GWT.create(FiscalService.class);
-//		fiscalService = new FiscalServiceAsyncDecorator(mod190ServiceRaw);
 		table = new FlexTable();
 		Widget ui = page5Binder.createAndBindUi(this);
 		initWidget(ui);
+	}
+
+	public void setValue(Mod390 m390) {
+		this.mod390 = m390;
+		initializeMap();
+		refreshMap(m390,null);
 		initializeTable();
 	}
-
-//	public void setPage10(Page10 page10) {
-//		this.page10 = page10;
-//	}
-	
-	public void initialize(String domainName, int domain, int year, Mod390 mod390) {
-		this.domainName = domainName;
-		this.domain = domain;
-		this.year = year;
-//		initializeList(mod390);
+	private void initializeMap() {
+		map = new EnumMap<Mod390DetailKey, Mod390DetailFields>(Mod390DetailKey.class);
+		for (Mod390DetailKey key: Mod390DetailKey.values() ) {
+			if (key.accept(mod390.getYear())) {
+				Mod390Detail detail = new Mod390Detail();
+				detail.setKey(key);
+				detail.setPercent(key.getPercent());
+				map.put(key, new Mod390DetailFields(detail));
+			}
+		}
 	}
 
-//	private void initializeList(final Mod390 mod390) {
-//		map = new EnumMap<Mod390DetailKey, Mod390DetailFields>(Mod390DetailKey.class);
-//		final PopupPanel popup = new PopupPanel(false, true);
-//		Label label = new Label(Model390.MSG.processing());
-//		label.addStyleName(Model390.RESOURCES.css().aonTimer());
-//		popup.add(label);
-//		popup.setGlassEnabled(true);
-//		popup.setAnimationEnabled(true);
-//		popup.center();
-//		fiscalService.getMod390Details(domainName,domain, mod390,
-//				new AsyncCallback<ArrayList<Mod390Detail>>() {
-//					@Override
-//					public void onSuccess(ArrayList<Mod390Detail> result) {
-//						for (Mod390Detail detail : result) {
-//							map.put(detail.getKey(),new Mod390DetailFields(detail));
-//								
-//							if (detail.getKey().isPage5Key()) {
-//								if (!mod390.isSimplifiedRegime() ) {
-//								} else {
-//									detail.setPercent(0);
-//									detail.setQuota(0);
-//									detail.setTaxableBase(0);
-//									map.put(detail.getKey(),detail);
-//								}
-//							}
-//							if (detail.getKey().isPage10Key()) {
-//								page10.fillBox( detail );
-//							}
-//						}
-//						initializeTable();
-//						calculate();
-//						popup.hide();
-//						populate(mod390);
-//					}
-//
-//					@Override
-//					public void onFailure(Throwable caught) {
-//						popup.hide();
-//						DialogMessages.alertErrorWidget(Model390.MSG
-//								.unableToFindMod190Detail(caught
-//										.getMessage()));
-//					}
-//				});
-//	}
+	public void refreshMap(Mod390 mod390, Mod390DetailKey eventSource) {
+		for (Mod390DetailKey key : mod390.getGeneralRegime().keySet()) {
+			Mod390Detail detail = mod390.getGeneralRegime().get(key);
+			Mod390DetailFields fields = map.get(key);
+			if (fields == null) {
+				fields = new Mod390DetailFields(detail);
+				map.put(key,fields);	
+			} 
+			fields.setDetail(detail);
+			if (eventSource != key) {
+				fields.setTaxableBase(detail.getTaxableBase());
+				fields.setQuota(detail.getQuota());
+			}
+		}
+	}
+	public void populate(Mod390 mod390) {
+		for (Mod390DetailKey key : map.keySet()) {
+			Mod390DetailFields f = map.get(key);
+			mod390.getGeneralRegime().put(key, f.getDetail());
+		}
+	}
 
-//	public Map<Mod390DetailKey, DoubleTextBox> getQuotaMap() {
-//		return quotaMap;
-//	}
-	
 	private void initializeTable() {
-//		taxableBaseMap = new HashMap<Mod390DetailKey, DoubleTextBox>();
-//		quotaMap = new HashMap<Mod390DetailKey, DoubleTextBox>();
-		
 		table.setWidth("100%");
 		table.setCellSpacing(0);
 		ColumnFormatter cf = table.getColumnFormatter();
 		cf.setWidth(0, "450px");
 		cf.setWidth(1, "40px");
 		cf.setWidth(2, "140px");
-		cf.setWidth(3, "80px");
+		cf.setWidth(3, "60px");
 		cf.setWidth(4, "40px");
 		cf.setWidth(5, "140px");
 		
@@ -151,305 +140,165 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 		boolean oddRow = false;
 		boolean showBorder = false;
 		if (map != null) {
-			for (final Mod390DetailFields fields : map.values() ) {
-				Mod390Detail det = fields.detail;
+			for (Mod390DetailKeyGroup group: Mod390DetailKeyGroup.values() ) {
+				if (group == Mod390DetailKeyGroup.DEV_001) {
+					table.setWidget(x, y, new Label("."));
+					x++;
+					Label l = new Label(Model390.MSG.outputVat());
+					fmt.setColSpan(x, y, 7);
+					fmt.addStyleName(x, y, Model390.RESOURCES.css().aonPageHeader());
+					table.setWidget(x, y, l);
+					x++;
+				} else if (group == Mod390DetailKeyGroup.DED_001) {
+					table.setWidget(x, y, new Label("."));
+					x++;
+					Label l = new Label(Model390.MSG.inputVat());
+					fmt.setColSpan(x, y, 7);
+					fmt.addStyleName(x, y, Model390.RESOURCES.css().aonPageHeader());
+					table.setWidget(x, y, l);
+					x++;
+				}
+				// <g:Label text="{msg.generalRegimeOperations}" styleName="{aonResources.css.aonPageHeader}"/>
+
+				rowspan = 0;
 				showBorder = false;
-				y = 0;
-				String label = Model390.FISCAL_MSG.mod390DetailKey(det.getKey());
-				if ( AonStringUtils.isNotBlank(label )) {
+				for (Mod390DetailKey key: group.getKeys() ) {
+					if (key.accept(mod390.getYear())) {
+						rowspan++;		
+					}
+				}
+				if (rowspan > 0) {
+					y = 0;
+					String label = Model390.FISCAL_MSG.mod390DetailKeyGroup(group);
 					z = 1;
 					oddRow = !oddRow;
-					rowspan = 3;
 					fmt.setRowSpan(x, y, rowspan);
 					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonVerticalAlignMiddle() );
 					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonPaddingLeft() );
 					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonPaddingRight() );
-					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBorderBottom() );
+					FlowPanel p0 = new FlowPanel();
+					Label l0 = new Label(label);
+					l0.setHeight((rowspan * 20) + "px;");
+					p0.add(l0);
+					p0.addStyleName(Model390.RESOURCES.css().aonVerticalAlignMiddle() );
 					if (rowspan > 1) {
-						fmt.addStyleName(x, y,Model390.RESOURCES.css().aonCurlyLT() );
+						p0.addStyleName(Model390.RESOURCES.css().aonCurlyLT() );
 					}
-//					if (false) {
-//						fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBold());	
-//					}
-					if (oddRow) {
-						fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBackgroundDisabled() );	
-					}
-					table.setWidget(x, y, new Label(label));
-					++y;
-				}
-				showBorder = (z == rowspan);
-				
-				if ( true ) {
-					FlowPanel p = new FlowPanel();
-					p.addStyleName(Model390.RESOURCES.css().aonTextCenter() );
-					p.addStyleName(Model390.RESOURCES.css().aonSimpleBorder() );
-					p.addStyleName(Model390.RESOURCES.css().aonFontSmall() );
-					p.addStyleName(Model390.RESOURCES.css().aonPadding2() );
-					p.add(new Label(Integer.toString(det.getTaxableBaseBox())));
-					table.setWidget(x, y, p);
-				} 
-				if (oddRow) {
-					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBackgroundDisabled() );	
-				}
-				if (showBorder) {
-					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBorderBottom());	
-				}
-				++y;
-				
-				if ( true ) {
-					DoubleTextBox taxableBase = fields.taxableBase;
-					taxableBase.addStyleName(Model390.RESOURCES.css().aonInputTextImportant());
-					if  (det.getPercent() != 0.0) {
-						final double percent = det.getPercent();
-						taxableBase.addValueChangeHandler(new ValueChangeHandler<String>() {
-							
-							@Override
-							public void onValueChange(ValueChangeEvent<String> event) {
-								try {
-									double tBase = Model390.FMT.parse(event.getValue());
-									if (fields.detail.getQuota() == 0) {
-										fields.detail.setQuota( AonUtil.round( tBase * percent / 100));	
-									}
-									fields.detail.setTaxableBase(tBase);
-								} catch (NumberFormatException e) {
-									// Nothing
-								}
-							}
-						});
-					}
-					taxableBase.setValue(det.getTaxableBase());
-					table.setWidget(x, y, taxableBase);
-				} 
-				fmt.addStyleName(x, y ,Model390.RESOURCES.css().aonTextRight());
-				if (oddRow) {
-					fmt.addStyleName(x, y ,Model390.RESOURCES.css().aonBackgroundDisabled() );	
-				}
-				if (showBorder) {
-					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBorderBottom());	
-				}
-				++y;
-	
-				FlowPanel p1 = new FlowPanel();
-				if  (det.getPercent() != 0.0) {
-					p1.addStyleName(Model390.RESOURCES.css().aonTextCenter() );
-					p1.addStyleName(Model390.RESOURCES.css().aonSimpleBorder() );
-					p1.add(new Label(Model390.FMT.format(det.getPercent()))); 
-				} 
-				table.setWidget(x, y, p1);
-				if (oddRow) {
-					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBackgroundDisabled() );	
-				}
-				if (showBorder) {
-					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBorderBottom());	
-				}
-				++y;
-				
-				FlowPanel p2 = new FlowPanel();
-				p2.addStyleName(Model390.RESOURCES.css().aonTextCenter() );
-				p2.addStyleName(Model390.RESOURCES.css().aonSimpleBorder() );
-				p2.addStyleName(Model390.RESOURCES.css().aonFontSmall() );
-				p2.addStyleName(Model390.RESOURCES.css().aonPadding2() );			
-				p2.add(new Label(Integer.toString(det.getBox())));
-				table.setWidget(x, y, p2);
-				if (oddRow) {
-					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBackgroundDisabled() );	
-				}
-				if (showBorder) {
-					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBorderBottom());	
-				}
-				++y;
-			
-				final DoubleTextBox quota = fields.quota;
-				quota.addStyleName(Model390.RESOURCES.css().aonInputTextImportant());
-				quota.setValue(det.getQuota());
-				quota.addValueChangeHandler(new ValueChangeHandler<String>() {
+					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBorderBottomImportant() );
+					table.setWidget(x, y, p0);
+					y++;
 					
-					@Override
-					public void onValueChange(ValueChangeEvent<String> event) {
-						try {
-							double tBase = Model390.FMT.parse(event.getValue());
-							fields.detail.setQuota(tBase);
-						} catch (NumberFormatException e) {
-							// Nothing
+					for (Mod390DetailKey key: group.getKeys() ) {
+						if (key.accept(mod390.getYear())) {
+							final Mod390DetailFields fields = map.get(key); 
+							Mod390Detail det = fields.getDetail();
+							showBorder = (z == rowspan);
+							
+							// Taxable Base Box
+							if ( key.hasTaxableBaseAvailable() ) {
+								FlowPanel p = new FlowPanel();
+								p.addStyleName(Model390.RESOURCES.css().aonTextCenter() );
+								p.addStyleName(Model390.RESOURCES.css().aonSimpleBorder() );
+								p.addStyleName(Model390.RESOURCES.css().aonFontSmall() );
+								p.addStyleName(Model390.RESOURCES.css().aonPadding2() );
+								p.addStyleName(Model390.RESOURCES.css().aonBackgroundDisabled() );
+								p.add(new Label(Integer.toString(det.getTaxableBaseBox())));
+								table.setWidget(x, y, p);
+							}
+							if (showBorder) {
+								fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBorderBottom());	
+							}
+							++y;
+							
+							// Taxable Base 
+							if ( key.hasTaxableBaseAvailable() ) {
+								fields.getTaxableBase().addStyleName(Model390.RESOURCES.css().aonInputTextImportant());
+								fields.getTaxableBase().setReadOnly(key.isReadonly());
+								final double percent = det.getPercent();
+									fields.getTaxableBase().addChangeHandler(new ChangeHandler() {
+										@Override
+										public void onChange(ChangeEvent event) {
+											if (fields.getTaxableBase().isValidValue()) {
+												fields.getDetail().setTaxableBase(fields.getTaxableBase().getDoubleValue());
+												if  (percent != 0.0 && fields.getDetail().getQuota() == 0) {
+													fields.setQuota( AonUtil.round( fields.getTaxableBase().getDoubleValue() * percent / 100) );
+												}
+											mod390.calculate();
+											refreshMap(mod390,fields.detail.getKey());
+										}
+									}
+								});
+								fields.getTaxableBase().setValue(det.getTaxableBase());
+								table.setWidget(x, y, fields.getTaxableBase());
+							}
+							
+							fmt.addStyleName(x, y ,Model390.RESOURCES.css().aonTextRight());
+							if (showBorder) {
+								fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBorderBottom());	
+							}
+							++y;
+				
+							// Percent 
+							FlowPanel p1 = new FlowPanel();
+							if  (det.getPercent() != 0.0) {
+								p1.addStyleName(Model390.RESOURCES.css().aonTextCenter() );
+								p1.addStyleName(Model390.RESOURCES.css().aonSimpleBorder() );
+								p1.add(new Label(Model390.FMT.format(det.getPercent()))); 
+							} 
+							table.setWidget(x, y, p1);
+							if (showBorder) {
+								fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBorderBottom());	
+							}
+							++y;
+							
+							// Quota Box 
+							FlowPanel p2 = new FlowPanel();
+							p2.addStyleName(Model390.RESOURCES.css().aonTextCenter() );
+							p2.addStyleName(Model390.RESOURCES.css().aonSimpleBorder() );
+							p2.addStyleName(Model390.RESOURCES.css().aonFontSmall() );
+							p2.addStyleName(Model390.RESOURCES.css().aonPadding2() );			
+							p2.addStyleName(Model390.RESOURCES.css().aonBackgroundDisabled() );
+							p2.add(new Label(Integer.toString(det.getBox())));
+							table.setWidget(x, y, p2);
+							if (showBorder) {
+								fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBorderBottom());	
+							}
+							++y;
+						
+							// Quota  
+							fields.getQuota().addStyleName(Model390.RESOURCES.css().aonInputTextImportant());
+							fields.getQuota().setValue(det.getQuota());
+							fields.getQuota().setReadOnly(key.isReadonly());
+							fields.getQuota().addChangeHandler(new ChangeHandler() {
+								
+								@Override
+								public void onChange(ChangeEvent event) {
+									if (fields.getQuota().isValidValue()) {
+										fields.getDetail().setQuota(fields.getQuota().getDoubleValue());
+										mod390.calculate();
+										refreshMap(mod390,fields.detail.getKey());
+									}
+								}
+							});
+							table.setWidget(x, y, fields.getQuota());
+							fmt.addStyleName(x, y ,Model390.RESOURCES.css().aonTextRight());
+							if (showBorder) {
+								fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBorderBottom());	
+							}
+							++y;
+							
+							Label l = new Label("");
+							table.setWidget(x, y, l);
+							if (showBorder) {
+								fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBorderBottom());	
+							}
+							++x;
+							++z;
+							y = 0;
 						}
 					}
-				});
-	
-				table.setWidget(x, y, quota);
-				fmt.addStyleName(x, y ,Model390.RESOURCES.css().aonTextRight());
-				if (oddRow) {
-					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBackgroundDisabled() );	
 				}
-				if (showBorder) {
-					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBorderBottom());	
-				}
-				++y;
-				
-				Label l = new Label("");
-				table.setWidget(x, y, l);
-				if (oddRow) {
-					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBackgroundDisabled() );	
-				}
-				if (showBorder) {
-					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBorderBottom());	
-				}
-				++x;
-				++z;
-			}
-		}		
-	}
-/*	
-	private static final Mod390DetailKey[] K09_FORMULA = {
-			Mod390DetailKey.K00_04, Mod390DetailKey.K00_08,
-			Mod390DetailKey.K00_10, Mod390DetailKey.K00_18,
-			Mod390DetailKey.K00_21, Mod390DetailKey.K01_04,
-			Mod390DetailKey.K01_08, Mod390DetailKey.K01_10,
-			Mod390DetailKey.K01_18, Mod390DetailKey.K01_21,
-			Mod390DetailKey.K02_04, Mod390DetailKey.K02_08,
-			Mod390DetailKey.K02_10, Mod390DetailKey.K02_18,
-			Mod390DetailKey.K02_21, Mod390DetailKey.K03_18,
-			Mod390DetailKey.K03_21, Mod390DetailKey.K04_04,
-			Mod390DetailKey.K04_08, Mod390DetailKey.K04_10,
-			Mod390DetailKey.K04_18, Mod390DetailKey.K04_21,
-			Mod390DetailKey.K05_04, Mod390DetailKey.K05_08,
-			Mod390DetailKey.K05_10, Mod390DetailKey.K05_18,
-			Mod390DetailKey.K05_21, Mod390DetailKey.K06, Mod390DetailKey.K07,
-			Mod390DetailKey.K08 };
-	
-	private static final Mod390DetailKey[] K13_FORMULA = { Mod390DetailKey.K09,
-			Mod390DetailKey.K10_05, Mod390DetailKey.K10_1,
-			Mod390DetailKey.K10_14, Mod390DetailKey.K10_4,
-			Mod390DetailKey.K10_52, Mod390DetailKey.K10_175,
-			Mod390DetailKey.K11, Mod390DetailKey.K12 };
-
-	private static final Mod390DetailKey[] K15_FORMULA = {
-			Mod390DetailKey.K14_04, Mod390DetailKey.K14_07,
-			Mod390DetailKey.K14_08, Mod390DetailKey.K14_10,
-			Mod390DetailKey.K14_16, Mod390DetailKey.K14_18,
-			Mod390DetailKey.K14_21 };
-
-	private static final Mod390DetailKey[] K17_FORMULA = {
-			Mod390DetailKey.K16_04, Mod390DetailKey.K16_07,
-			Mod390DetailKey.K16_08, Mod390DetailKey.K16_10,
-			Mod390DetailKey.K16_16, Mod390DetailKey.K16_18,
-			Mod390DetailKey.K16_21 };
-
-	private static final Mod390DetailKey[] K19_FORMULA = {
-			Mod390DetailKey.K18_04, Mod390DetailKey.K18_07,
-			Mod390DetailKey.K18_08, Mod390DetailKey.K18_10,
-			Mod390DetailKey.K18_16, Mod390DetailKey.K18_18,
-			Mod390DetailKey.K18_21 };
-
-	private static final Mod390DetailKey[] K21_FORMULA = {
-			Mod390DetailKey.K20_04, Mod390DetailKey.K20_07,
-			Mod390DetailKey.K20_08, Mod390DetailKey.K20_10,
-			Mod390DetailKey.K20_16, Mod390DetailKey.K20_18,
-			Mod390DetailKey.K20_21 };
-
-	private static final Mod390DetailKey[] K23_FORMULA = {
-			Mod390DetailKey.K22_04, Mod390DetailKey.K22_07,
-			Mod390DetailKey.K22_08, Mod390DetailKey.K22_10,
-			Mod390DetailKey.K22_16, Mod390DetailKey.K22_18,
-			Mod390DetailKey.K22_21 };
-
-	private static final Mod390DetailKey[] K25_FORMULA = {
-			Mod390DetailKey.K24_04, Mod390DetailKey.K24_07,
-			Mod390DetailKey.K24_08, Mod390DetailKey.K24_10,
-			Mod390DetailKey.K24_16, Mod390DetailKey.K24_18,
-			Mod390DetailKey.K24_21 };
-
-	private static final Mod390DetailKey[] K27_FORMULA = {
-			Mod390DetailKey.K26_04, Mod390DetailKey.K26_07,
-			Mod390DetailKey.K26_08, Mod390DetailKey.K26_10,
-			Mod390DetailKey.K26_16, Mod390DetailKey.K26_18,
-			Mod390DetailKey.K26_21 };
-
-	private static final Mod390DetailKey[] K29_FORMULA = {
-			Mod390DetailKey.K28_04, Mod390DetailKey.K28_07,
-			Mod390DetailKey.K28_08, Mod390DetailKey.K28_10,
-			Mod390DetailKey.K28_16, Mod390DetailKey.K28_18,
-			Mod390DetailKey.K28_21 };
-
-	private static final Mod390DetailKey[] K31_FORMULA = {
-			Mod390DetailKey.K30_04, Mod390DetailKey.K30_07,
-			Mod390DetailKey.K30_08, Mod390DetailKey.K30_10,
-			Mod390DetailKey.K30_16, Mod390DetailKey.K30_18,
-			Mod390DetailKey.K30_21 };	
-	
-	private static final Mod390DetailKey[] K36_FORMULA = { Mod390DetailKey.K15,
-			Mod390DetailKey.K17, Mod390DetailKey.K19, Mod390DetailKey.K21,
-			Mod390DetailKey.K23, Mod390DetailKey.K25, Mod390DetailKey.K27,
-			Mod390DetailKey.K29, Mod390DetailKey.K31 };
-
-	private void calculate() {
-		add(taxableBaseMap,Mod390DetailKey.K09,K09_FORMULA);
-		add(quotaMap,Mod390DetailKey.K09,K09_FORMULA);
-		
-		add(quotaMap,Mod390DetailKey.K13,K13_FORMULA);
-		
-		add(taxableBaseMap,Mod390DetailKey.K15,K15_FORMULA);
-		add(quotaMap,Mod390DetailKey.K15,K15_FORMULA);
-		
-		add(taxableBaseMap,Mod390DetailKey.K17,K17_FORMULA);
-		add(quotaMap,Mod390DetailKey.K17,K17_FORMULA);
-		
-		add(taxableBaseMap,Mod390DetailKey.K19,K19_FORMULA);
-		add(quotaMap,Mod390DetailKey.K19,K19_FORMULA);
-		
-		add(taxableBaseMap,Mod390DetailKey.K21,K21_FORMULA);
-		add(quotaMap,Mod390DetailKey.K21,K21_FORMULA);
-		
-		add(taxableBaseMap,Mod390DetailKey.K23,K23_FORMULA);
-		add(quotaMap,Mod390DetailKey.K23,K23_FORMULA);
-		
-		add(taxableBaseMap,Mod390DetailKey.K25,K25_FORMULA);
-		add(quotaMap,Mod390DetailKey.K25,K25_FORMULA);
-		
-		add(taxableBaseMap,Mod390DetailKey.K27,K27_FORMULA);
-		add(quotaMap,Mod390DetailKey.K27,K27_FORMULA);
-		
-		add(taxableBaseMap,Mod390DetailKey.K29,K29_FORMULA);
-		add(quotaMap,Mod390DetailKey.K29,K29_FORMULA);
-		
-		add(taxableBaseMap,Mod390DetailKey.K31,K31_FORMULA);
-		add(quotaMap,Mod390DetailKey.K31,K31_FORMULA);
-
-		add(quotaMap,Mod390DetailKey.K36,K36_FORMULA);
-
-		quotaMap.get(Mod390DetailKey.K37).setValue( AonUtil.round(
-				quotaMap.get(Mod390DetailKey.K13).getDoubleValue() - 
-				quotaMap.get(Mod390DetailKey.K36).getDoubleValue()));
-		
-	}
-	
-	private void add(Map<Mod390DetailKey, DoubleTextBox> map,
-			Mod390DetailKey intoKey, Mod390DetailKey[] keys) {
-		double result = 0;
-		for (Mod390DetailKey key : keys ) {
-			result = AonUtil.round(result + map.get(key).getDoubleValue());
-		}
-		map.get(intoKey).setValue(result);
-	}
-*/
-
-	public void setValue(Mod390 m390) {
-		if (m390.getGeneralRegime()!= null ) {
-			for (Mod390DetailKey key : m390.getGeneralRegime().keySet()) {
-				map.put(key,new Mod390DetailFields(m390.getGeneralRegime().get(key)));	
 			}
 		}
-		if (map != null) {
-			initializeTable();
-		}
 	}
-
-
-	public void populate(Mod390 mod390) {
-		for (Mod390DetailKey key : map.keySet()) {
-			Mod390DetailFields f = map.get(key);			
-			f.detail.setTaxableBase(f.taxableBase.getDoubleValue());
-			f.detail.setQuota(f.quota.getDoubleValue());
-		}
-	}
-
 }

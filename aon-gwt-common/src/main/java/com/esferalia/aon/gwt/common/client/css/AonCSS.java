@@ -84,6 +84,10 @@ public interface AonCSS extends  CssResource {
 	
 	@ClassName("aon-border-bottom")
     String aonBorderBottom();
+
+	@ClassName("aon-border-bottom-important")
+    String aonBorderBottomImportant();
+
 	
 	@ClassName("aon-simple-border")
     String aonSimpleBorder();

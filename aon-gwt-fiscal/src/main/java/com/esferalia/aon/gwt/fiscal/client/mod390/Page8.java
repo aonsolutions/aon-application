@@ -22,8 +22,7 @@ public class Page8 extends ResizeComposite implements RequiresResize {
 	private static final Page7Binder page7Binder = GWT
 			.create(Page7Binder.class);
 
-	Page5 page5;
-	Page6 page6;
+	private Mod390 mod390;
 	
 	@UiField
 	DoubleTextBox box84;
@@ -75,13 +74,6 @@ public class Page8 extends ResizeComposite implements RequiresResize {
 		box94.setEnabled(false);
 	}
 	
-	public void setPage5(Page5 page5) {
-		this.page5 = page5;
-	}
-	public void setPage6(Page6 page6) {
-		this.page6 = page6;
-	}
-
 	@UiHandler("box87")
 	void onChangeBox87 (ChangeEvent event) {
 		if (box87.getDoubleValue() < 0) {
@@ -99,16 +91,14 @@ public class Page8 extends ResizeComposite implements RequiresResize {
 	}
 
 	public void refresh() {
-		double k37 = page5.map.get(Mod390DetailKey.K37).detail.getQuota();
-		double box83 = page6.getBox83();
-		double bx84 = AonUtil.round(k37 + box83);
-		box84.setValue(bx84);
-		
-		box92.setValue(AonUtil.round(bx84 * box87.getDoubleValue() / 100));
+		double k37 = mod390.ensure(Mod390DetailKey.K37).getQuota();
+		box84.setValue(AonUtil.round(k37 + mod390.getBox83()));
+		box92.setValue(AonUtil.round(box84.getDoubleValue() * box87.getDoubleValue() / 100));
 		box94.setValue(AonUtil.round(box92.getDoubleValue() - box93.getDoubleValue()));
 	}
 
 	public void setValue(Mod390 m390) {
+		this.mod390 = m390;
 		box84.setValue(m390.getBox84());
 		box87.setValue(m390.getBox87());
 		box88.setValue(m390.getBox88());

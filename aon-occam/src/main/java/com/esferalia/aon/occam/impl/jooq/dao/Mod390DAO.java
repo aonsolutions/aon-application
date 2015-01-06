@@ -44,6 +44,9 @@ import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2013.AEATIVA2013;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2013.AEATIVA2013toMod390;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2013.Mod390toAEATIVA2013;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014toMod390;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.Mod390toAEATIVA2014;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -362,34 +365,7 @@ public class Mod390DAO {
 			return list.size()==0?null:list.toArray(new Mod390DetailKey[list.size()]);
 		}
 	}
-	/*
-	private static final String VAT_TAX_DECLARATION_SELECT = 
-			"SELECT "  
-				+SQLConstants.FS_VAT +"." + FsVatColumns.PERIOD +" "+FsVatColumns.PERIOD + ","  
-				+SQLConstants.FS_VAT +"." + FsVatColumns.TAX_REFUND_REGISTRY +" "+FsVatColumns.TAX_REFUND_REGISTRY + ","
-				+SQLConstants.FS_VAT_DECLARATION +"." + FsVatDeclarationColumns.DEPOSIT+" "+FsVatDeclarationColumns.DEPOSIT + ","  
-				+SQLConstants.FS_VAT_DECLARATION+"."+FsVatDeclarationColumns.PAY_BACK+" "+FsVatDeclarationColumns.PAY_BACK + ","
-				+SQLConstants.FS_VAT_DECLARATION+"."+FsVatDeclarationColumns.COMPENSATE+" "+FsVatDeclarationColumns.COMPENSATE
-				+" FROM " + SQLConstants.FS_VAT
-				+ " INNER JOIN " + SQLConstants.FS_VAT_DECLARATION 
-				+" ON " +SQLConstants.FS_VAT_DECLARATION+"."+FsVatDeclarationColumns.FS_VAT
-				+" = " + SQLConstants.FS_VAT+"."+FsVatColumns.ID
-				+" WHERE " + SQLConstants.FS_VAT +"."+FsVatColumns.DOMAIN+"=?"
-				+" AND " + SQLConstants.FS_VAT +"."+FsVatColumns.YEAR +"=?"
-				+" AND "+SQLConstants.FS_VAT_DECLARATION+"."+FsVatDeclarationColumns.ADMINISTRATION+"=" + Administration.COMMON_TERRITORY.ordinal();
 
-	private static final String VAT_TAX_DETAIL_SELECT = 
-			"SELECT "
-				+SQLConstants.FS_VAT_DETAIL +"." + FsVatDetailColumns.VAT_KEY +" "+FsVatDetailColumns.VAT_KEY + ","
-				+SQLConstants.FS_VAT_DETAIL +"." + FsVatDetailColumns.TAXABLE_BASE +" "+FsVatDetailColumns.TAXABLE_BASE
-				+" FROM " + SQLConstants.FS_VAT
-				+ " INNER JOIN " + SQLConstants.FS_VAT_DETAIL 
-				+" ON " +SQLConstants.FS_VAT_DETAIL+"."+FsVatDetailColumns.FS_VAT
-				+" = " + SQLConstants.FS_VAT+"."+FsVatColumns.ID
-				+" WHERE " + SQLConstants.FS_VAT +"."+FsVatColumns.DOMAIN+"=?"
-				+" AND " + SQLConstants.FS_VAT +"."+FsVatColumns.YEAR +"=?"
-				+" AND " + SQLConstants.FS_VAT +"."+FsVatColumns.PERIOD +"!=" + Period.YEAR.ordinal();  
-*/
 	public static Mod390 initialize(AONContext ctx, int year) {
 		Mod390 mod390 = new Mod390();
 		FiscalParameters params = AppParamDAO.getFiscalParameters(ctx,year);
@@ -411,6 +387,7 @@ public class Mod390DAO {
 		}
 		fillGeneralRegimeData(ctx, mod390);
 		fillSimplifedRegimeData(ctx, mod390);
+		mod390.calculate();
 		return mod390;	
 	}
 
@@ -470,10 +447,18 @@ public class Mod390DAO {
 		if (populateModel) {
 			try {
 				StringReader reader = new StringReader(record.getValue(FS_MODEL390.MODEL));
-				JAXBContext context = JAXBContext.newInstance(AEATIVA2013.class);
-				Unmarshaller um = context.createUnmarshaller();
-				AEATIVA2013 iva = (AEATIVA2013) um.unmarshal(reader);
-				AEATIVA2013toMod390.populate(mod390, iva);
+				if (mod390.getYear() == 2013) {
+					
+					JAXBContext context = JAXBContext.newInstance(AEATIVA2013.class);
+					Unmarshaller um = context.createUnmarshaller();
+					AEATIVA2013 iva = (AEATIVA2013) um.unmarshal(reader);
+					AEATIVA2013toMod390.populate(mod390, iva);
+				} else if (mod390.getYear() == 2014) {
+					JAXBContext context = JAXBContext.newInstance(AEATIVA2014.class);
+					Unmarshaller um = context.createUnmarshaller();
+					AEATIVA2014 iva = (AEATIVA2014) um.unmarshal(reader);
+					AEATIVA2014toMod390.populate(mod390, iva);
+				}
 			} catch (JAXBException e1) {
 				throw new AonCoreException("XML PROBLEM");
 			} catch (ParseException e) {
@@ -502,13 +487,24 @@ public class Mod390DAO {
 	
 	private static String getXMLModel( Mod390 mod390 ) {
 		try {
-			AEATIVA2013 iva = Mod390toAEATIVA2013.getAEATIVA2013(mod390);
-			StringWriter writer = new StringWriter();
-			JAXBContext context = JAXBContext.newInstance(AEATIVA2013.class);
-			Marshaller um = context.createMarshaller();
-			um.setProperty("jaxb.encoding", "ISO-8859-1");
-			um.marshal(iva,writer);
-			return writer.toString();
+			if (mod390.getYear() == 2013) {
+				AEATIVA2013 iva = Mod390toAEATIVA2013.getAEATIVA2013(mod390);
+				StringWriter writer = new StringWriter();
+				JAXBContext context = JAXBContext.newInstance(AEATIVA2013.class);
+				Marshaller um = context.createMarshaller();
+				um.setProperty("jaxb.encoding", "ISO-8859-1");
+				um.marshal(iva,writer);
+				return writer.toString();
+			} else if (mod390.getYear() == 2014) {
+				AEATIVA2014 iva = Mod390toAEATIVA2014.getAEATIVA2014(mod390);
+				StringWriter writer = new StringWriter();
+				JAXBContext context = JAXBContext.newInstance(AEATIVA2014.class);
+				Marshaller um = context.createMarshaller();
+				um.setProperty("jaxb.encoding", "ISO-8859-1");
+				um.marshal(iva,writer);
+				return writer.toString();
+			}
+			return null;
 		} catch (JAXBException e) {
 			e.printStackTrace();
 			throw new AonCoreException("Error en conversión XML",e);
@@ -540,7 +536,7 @@ public class Mod390DAO {
 	}
 	
 	private static Mod390 update(AONContext ctx, Mod390 mod390) {
-		validate(ctx, mod390);
+		//validate(ctx, mod390);
 		ctx.getDslContext()
 			.update(FS_MODEL390)
 			.set(FS_MODEL390.YEAR, mod390.getYear())
@@ -612,6 +608,15 @@ public class Mod390DAO {
 				.when(INVOICE_TAX.SURCHARGE_QUOTA.notEqual(0.0),INVOICE_TAX.SURCHARGE_QUOTA)
 				.when(INVOICE_TAX.SURCHARGE_QUOTA.equal(0.0), invoiceSurchargeQuota));		
 		EnumMap<Mod390DetailKey, Mod390Detail> map = new EnumMap<Mod390DetailKey, Mod390Detail>(Mod390DetailKey.class);
+		Mod390Detail det = null;
+		for (Mod390DetailKey key : Mod390DetailKey.values() ) {
+			if (key.accept(mod390.getYear())) {
+				det = new Mod390Detail();
+				det.setKey(key);
+				det.setPercent(key.getPercent());
+				map.put(key, det);
+			}
+		}
 		
 		ctx.getDslContext().select(INVOICE.TYPE
 				,INVOICE.RECTIFICATION_TYPE
@@ -660,7 +665,10 @@ public class Mod390DAO {
 							if (keys != null) {
 								for (Mod390DetailKey key : keys) {
 									Mod390Detail detail = map.get(key);
-									if (detail == null) detail = new Mod390Detail();
+									if (detail == null) {
+										detail = new Mod390Detail();
+										map.put(key, detail );
+									}
 									detail.setKey(key);
 									detail.setPercent(percentage);
 									detail.setQuota( AonMathUtils.round(detail.getQuota()  + quota));
@@ -713,6 +721,11 @@ public class Mod390DAO {
 	}
 */
 	private static Mod390 fillGeneralRegimeData(AONContext ctx, Mod390 mod390) {
+		EnumMap<Mod390.Mod390DetailKey, Mod390.Mod390Detail> map = new EnumMap<Mod390.Mod390DetailKey, Mod390.Mod390Detail>(Mod390.Mod390DetailKey.class);
+		for (Mod390Detail detail : getMod390Details(ctx, mod390)) {
+			map.put(detail.getKey(), detail); 
+		}
+		mod390.setGeneralRegime(map);
 		return mod390;
 	}
 

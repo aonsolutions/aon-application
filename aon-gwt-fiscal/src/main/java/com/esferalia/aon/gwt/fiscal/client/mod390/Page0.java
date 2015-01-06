@@ -117,6 +117,7 @@ public class Page0 extends ResizeComposite {
 			accrualRegime.setValue(m390.isAccrualRegime());
 			accrualRegimeTarget.setValue(m390.isAccrualRegimeTarget());
 		}
+		groupRegimeType.setValue(m390.isGroupRegimeType());
 		groupDocument.setValue(m390.getGroupDocument());
 		groupDeclarations.setValue(m390.isGroupDeclarations());
 		specialGroupRegime.setValue(m390.isSpecialGroupRegime(),true);

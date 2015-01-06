@@ -6,9 +6,8 @@
 //
 
 
-package com.esferalia.aon.occam.impl.jooq.dao.mod390_e2014;
+package com.esferalia.aon.occam.impl.jooq.dao.mod390_2014;
 
-import java.math.BigDecimal;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -16,17 +15,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for tipo_BaseImponible_y_Cuota complex type.
+ * <p>Java class for tipo_IdentificacionPersonaJuridica complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="tipo_BaseImponible_y_Cuota">
+ * &lt;complexType name="tipo_IdentificacionPersonaJuridica">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="BI" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="Cuota" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="NIF" type="{}tipo_Nif"/>
+ *         &lt;element name="RazonSocial" type="{}tipo_RazonSocial"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -36,63 +35,63 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "tipo_BaseImponible_y_Cuota", propOrder = {
-    "bi",
-    "cuota"
+@XmlType(name = "tipo_IdentificacionPersonaJuridica", propOrder = {
+    "nif",
+    "razonSocial"
 })
-public class TipoBaseImponibleYCuota {
+public class TipoIdentificacionPersonaJuridica {
 
-    @XmlElement(name = "BI")
-    protected BigDecimal bi;
-    @XmlElement(name = "Cuota")
-    protected BigDecimal cuota;
+    @XmlElement(name = "NIF", required = true)
+    protected String nif;
+    @XmlElement(name = "RazonSocial", required = true)
+    protected String razonSocial;
 
     /**
-     * Gets the value of the bi property.
+     * Gets the value of the nif property.
      * 
      * @return
      *     possible object is
-     *     {@link BigDecimal }
+     *     {@link String }
      *     
      */
-    public BigDecimal getBI() {
-        return bi;
+    public String getNIF() {
+        return nif;
     }
 
     /**
-     * Sets the value of the bi property.
+     * Sets the value of the nif property.
      * 
      * @param value
      *     allowed object is
-     *     {@link BigDecimal }
+     *     {@link String }
      *     
      */
-    public void setBI(BigDecimal value) {
-        this.bi = value;
+    public void setNIF(String value) {
+        this.nif = value;
     }
 
     /**
-     * Gets the value of the cuota property.
+     * Gets the value of the razonSocial property.
      * 
      * @return
      *     possible object is
-     *     {@link BigDecimal }
+     *     {@link String }
      *     
      */
-    public BigDecimal getCuota() {
-        return cuota;
+    public String getRazonSocial() {
+        return razonSocial;
     }
 
     /**
-     * Sets the value of the cuota property.
+     * Sets the value of the razonSocial property.
      * 
      * @param value
      *     allowed object is
-     *     {@link BigDecimal }
+     *     {@link String }
      *     
      */
-    public void setCuota(BigDecimal value) {
-        this.cuota = value;
+    public void setRazonSocial(String value) {
+        this.razonSocial = value;
     }
 
 }

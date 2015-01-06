@@ -182,7 +182,8 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 	public void initializeMod390(String domainName, Integer domain,
 			Integer year, AsyncCallback<Mod390> callback) {
 		AON.start();
-		fiscalServiceAsync.initializeMod390(domainName, domain, year, callback);
+		fiscalServiceAsync.initializeMod390(domainName, domain, year, 
+				new AsyncCallbackWrapper<Mod390>(callback));
 	}
 
 }
