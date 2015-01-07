@@ -180,10 +180,10 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 		} else {
 			if (!StringUtils.equals(modelFilter, filter) || filteredModel == null) {
 				setPage(1);
-				List<Domain> filteredList = new LinkedList<Domain>();
+				List<DomainData> filteredList = new LinkedList<DomainData>();
 				@SuppressWarnings("unchecked")
-				List<Domain> list = (List<Domain>) model.getWrappedData();
-				for (Domain d :  list) {
+				List<DomainData> list = (List<DomainData>) model.getWrappedData();
+				for (DomainData d :  list) {
 					if (StringUtils.containsIgnoreCase(d.getName(), getFilter()) ||
 						StringUtils.containsIgnoreCase(d.getDescription(), getFilter())) {
 						filteredList.add(d);					
