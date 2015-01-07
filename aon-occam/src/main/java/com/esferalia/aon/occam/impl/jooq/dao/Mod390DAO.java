@@ -39,6 +39,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod390.SimpliedRegimeActivity;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2013.AEATIVA2013;
@@ -386,7 +387,7 @@ public class Mod390DAO {
 			}
 		}
 		fillGeneralRegimeData(ctx, mod390);
-		fillSimplifedRegimeData(ctx, mod390);
+		// fillSimplifedRegimeData(ctx, mod390);
 		mod390.calculate();
 		return mod390;	
 	}
@@ -825,6 +826,7 @@ public class Mod390DAO {
 			.join(FS_MODEL_DETAIL).on(FS_MODEL.ID.equal(FS_MODEL_DETAIL.FS_MODEL))
 			.where(FS_MODEL.DOMAIN.equal(mod390.getDomain()))
 			.and(FS_MODEL.YEAR.equal(mod390.getYear()))
+			.and(FS_MODEL.PERIOD.equal( (byte) Period.T4.ordinal()))
 			.and(FS_MODEL.MODEL.equal("303"))
 		.fetch()
 		.stream()
