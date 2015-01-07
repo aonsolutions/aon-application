@@ -74,7 +74,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 	public void setDefined(Map<String, boolean[]> defined) {
 		this.defined = defined;
 	}
-	
+
 	public void clearDb() {
 		salaryDraft.clearDb();
 	}
@@ -180,8 +180,8 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 
 		// match up draft embargos & db embargos
 		//
-		//List<IDeduction> dbEmbargos;
-		//dbEmbargos = new ArrayList<IDeduction>(dbSalary.getDeductionS()..);
+		// List<IDeduction> dbEmbargos;
+		// dbEmbargos = new ArrayList<IDeduction>(dbSalary.getDeductionS()..);
 	}
 
 	@Override
@@ -329,7 +329,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 	public void setIrpfBase(Double irpfBase) {
 		salaryDraft.setIrpfBase(irpfBase);
 	}
-	
+
 	@Override
 	public void setInkindIrpfBase(Double inkindIrpfBase) {
 		salaryDraft.setInkindIrpfBase(inkindIrpfBase);
@@ -395,7 +395,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		salaryDraft.addBonus(myBonus);
 
 	}
-	
+
 	@Override
 	public void addEmbargo(Integer id, Double amount, String description,
 			IDeduction iembargo, Map<String, ITimedVariable<?>> context) {
@@ -405,7 +405,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 
 		Deduction embargo = newEmbargo(contractEmbargo);
 		// override by calculated...
-		//embargo.setName(iembargo.getName());
+		// embargo.setName(iembargo.getName());
 		embargo.setAmount(amount);
 		embargo.setDescription(description);
 		embargo.setType(Deduction.Type.EMBARGO);
@@ -448,8 +448,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		draftPayment.setType(getPaymentType(payment.getType()));
 		draftPayment.setStartDate(startDate);
 		draftPayment.setEndDate(endDate);
-		
-		
+
 		CompositePayment compositePayment = getPayment(draftPayment.getId());
 
 		if (compositePayment != null)
@@ -495,13 +494,13 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 	public void addZeroEmbargo(Integer id, IDeduction embargo,
 			Map<String, ITimedVariable<?>> context) {
 		addEmbargo(id, 0.00, embargo.getDescription(), embargo, context);
-		
+
 	}
-	
+
 	@Override
 	public void setListener(ISalaryBuilderListener listener) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	// ContractSalaryCalculator.IListener methods
@@ -522,20 +521,20 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	@Override
 	public void onRemove(IContractPayment payment) {
 		Payment draftPayment = newPayment(payment);
 		salaryDraft.addPayment(draftPayment);
 	}
-	
+
 	@Override
 	public void onCheckError(IContractPayment payment, String message) {
 		PaymentEvent paymentEvent = new PaymentEvent();
 		paymentEvent.setMessage(message);
 		paymentEvent.setType(Event.Type.WARNING);
 		paymentEvent.setPayment(newPayment(payment));
-		
+
 		salaryDraft.addPaymentError(paymentEvent);
 
 	}
@@ -699,6 +698,16 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 
 	}
 
+	@Override
+	public void onRedefinedImplicit(String name, ITimedVariable<?> redefined,
+			ITimedVariable<?> implicit) {
+		salaryDraft
+				.addWarning(String
+						.format("La variable del sistema '%s' con valor '%s' esta redefinida con el valor '%s'",
+								name, implicit.getValue(implicit.getPeriod()),
+								redefined.getValue(redefined.getPeriod())));
+	}
+
 	// -------------------------------------------------------------------------
 
 	private void clearSalaryDraft() {
@@ -800,7 +809,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		List<Payment> payments = salaryDraft.getPayments();
 		for (int i = 0; i < payments.size(); i++) {
 			Payment payment = payments.get(i);
-			if ( payment.getId().equals(id)) {
+			if (payment.getId().equals(id)) {
 				if (payment instanceof CompositePayment)
 					return (CompositePayment) payment;
 

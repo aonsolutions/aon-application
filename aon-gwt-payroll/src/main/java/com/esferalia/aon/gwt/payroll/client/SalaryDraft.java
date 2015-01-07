@@ -74,6 +74,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.HasDirection.Direction;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -448,6 +449,17 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 			textListBox.addItem("30", "30");
 
+			try {
+				int value = Integer.valueOf(variable.getValue().toString());
+				if (value != 30 && value != lastDay)
+					textListBox.addItem(variable.getValue().toString(), 
+							variable.getValue().toString());
+			} 
+			catch ( Exception e ){
+				
+			}
+			
+			
 			return textListBox;
 		}
 
@@ -1835,6 +1847,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		salaryDraftObject.calculate(this);
 
 	}
+
 	@UiHandler("cgcBaseLabel")
 	void onCgcBaseBlur(BlurEvent event) {
 		cgcBaseLabel.setText(format(salaryDraftObject.getCgcBase()));
@@ -2069,7 +2082,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		dbCgcBaseLabel.setText(format(salaryDraftObject.getDbCgcBase()));
 		setDbStyleName(dbCgcBaseLabel, cgcBaseLabel);
 		Double rawCgcBase = salaryDraftObject.getRawCgcBase();
-		if ( !NumberUtils.equals(cgcBase, rawCgcBase)) {
+		if (!NumberUtils.equals(cgcBase, rawCgcBase)) {
 			setWarnStyles(
 					cgcBaseLabel,
 					true,
@@ -2085,15 +2098,15 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		dbCgpBaseLabel.setText(format(cgpBase));
 		setDbStyleName(dbCgpBaseLabel, cgpBaseLabel);
 		Double rawCgpBase = salaryDraftObject.getRawCgpBase();
-		if ( !NumberUtils.equals(cgpBase, rawCgpBase)) {
-		setWarnStyles(
-				cgpBaseLabel,
-				true,
-				"La Base por Accidentes de Trabajo y Enfermedades Profesionales  "
-						+ format(rawCgpBase)
-						+ "\u20A0 ha sido "
-						+ (rawCgpBase > cgpBase ? "limitada al m\u00e1ximo permitido"
-								: "ampliada al m\u00ednimo obligatorio"));
+		if (!NumberUtils.equals(cgpBase, rawCgpBase)) {
+			setWarnStyles(
+					cgpBaseLabel,
+					true,
+					"La Base por Accidentes de Trabajo y Enfermedades Profesionales  "
+							+ format(rawCgpBase)
+							+ "\u20A0 ha sido "
+							+ (rawCgpBase > cgpBase ? "limitada al m\u00e1ximo permitido"
+									: "ampliada al m\u00ednimo obligatorio"));
 		}
 
 		irpfBaseLabel.setText(format(salaryDraftObject.getIrpfBase()),
@@ -2173,9 +2186,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				break;
 		}
 
-		List<Event> events = salaryDraftObject.getEvents();
-		dumpEvents(events);
-
+		dumpEvents(salaryDraftObject.getEvents());
 		eventsTableSpace.setVisible(eventsTable.getRowCount() > 0);
 
 		dbSalaryCheck.setVisible(salaryDraftObject.hasDbSalary());
@@ -2532,6 +2543,9 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				eventsTable.setWidget(row, 2, itemButton);
 				itemButton.setValue(true, true); // down
 			}
+			else {
+				eventsTable.setHTML(row, 2, "&nbsp;");
+			}
 
 			eventsTable.getCellFormatter().getElement(row, 0).getStyle()
 					.setPropertyPx("borderRightWidth", 0);
@@ -2724,12 +2738,11 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 					dumpDbItem(deduction, row++, styles[0], styles[1],
 							new RecoverDeductionHandler(deduction), false);
 
-				}
-				else { 
-					//REMOVE() deductions
-					if ( isCgcBaseDeduction(deduction))
+				} else {
+					// REMOVE() deductions
+					if (isCgcBaseDeduction(deduction))
 						cgcBaseDeduction = deduction;
-					else if ( isCgpBaseDeduction(deduction))
+					else if (isCgpBaseDeduction(deduction))
 						cgpBaseDeduction = deduction;
 				}
 
@@ -3993,7 +4006,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		switch (type) {
 		case IRPF:
-			return NumberUtils.isValid(irpfBase) ? amount / irpfBase * 100 : null;
+			return NumberUtils.isValid(irpfBase) ? amount / irpfBase * 100
+					: null;
 			// case JOB_TRAINING:
 			// case UNEMPLOYMENT:
 			// case COMMON_CONTINGENCY:
@@ -4002,11 +4016,13 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		case PROFESSIONAL_CONTINGENCY:
 			return NumberUtils.isValid(cgpBase) ? amount / cgpBase * 100 : null;
 		case STRUCTURAL_OVERTIME:
-			return NumberUtils.isValid(hExtraBase) ? amount / hExtraBase * 100 : null;
+			return NumberUtils.isValid(hExtraBase) ? amount / hExtraBase * 100
+					: null;
 		case NON_STRUCTURAL_OVERTIME:
-			return NumberUtils.isValid(nonHExtraBase) ?  amount / nonHExtraBase * 100 : null;
+			return NumberUtils.isValid(nonHExtraBase) ? amount / nonHExtraBase
+					* 100 : null;
 		default:
-			return NumberUtils.isValid(cgcBase) ? amount / cgcBase * 100 : null ;
+			return NumberUtils.isValid(cgcBase) ? amount / cgcBase * 100 : null;
 		}
 	}
 
@@ -4081,6 +4097,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	//@formatter:off
 	private final static VariableEditorFactory VARIABLE_EDITOR_FACTORIES[] = {
 			new MonthDaysEditorFactory("DIAS_MES"),
+			new MonthDaysEditorFactory("DIAS_PAGA"),
+			new MonthDaysEditorFactory("DIAS_NOMINA"),
 			new DateEditorFactory("FECHA_PREAVISO"),
 			new EnumNameListBoxFactory<Employee.Occupation>("OCUPACION", Employee.Occupation.class), 
 			new DismissalFactory("CAUSA_INDEMNIZACION"), 

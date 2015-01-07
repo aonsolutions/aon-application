@@ -10,6 +10,7 @@ import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.IExpression;
+import com.esferalia.aon.salary.expression.ITimedVariable;
 
 public interface IContractSalaryCalculatorContext extends ISalaryCalculatorContext {
 
@@ -19,6 +20,8 @@ public interface IContractSalaryCalculatorContext extends ISalaryCalculatorConte
 		
 		void onUndefinedData(IExpression expression,
 				String variableName, String message, Date start, Date end);
+
+		void onRedefinedImplicit(String name, ITimedVariable<?> redefined, ITimedVariable<?> implicit);
 	}
 
 	public IListener getListener();

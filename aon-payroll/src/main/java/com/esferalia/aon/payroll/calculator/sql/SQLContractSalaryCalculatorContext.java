@@ -1483,20 +1483,22 @@ public class SQLContractSalaryCalculatorContext extends
 		Integer agreementId = getAgreementId();
 		Integer agreementLevelId = getAgreementLevel();
 		Integer agreementDomain = getAgreementDomain();
-		
-		AgreementContextKey agreementAndLevelKey = new AgreementContextKey(agreementDomain,
-				agreementId, agreementLevelId);
 
-		ExpressionContext agreementCtx = agreementExpressionContexts.get(agreementAndLevelKey);
+		AgreementContextKey agreementAndLevelKey = new AgreementContextKey(
+				agreementDomain, agreementId, agreementLevelId);
+
+		ExpressionContext agreementCtx = agreementExpressionContexts
+				.get(agreementAndLevelKey);
 
 		Integer enterpriseDomain = getEnterpriseDomain();
-		AgreementContextKey enterpriseAndLevel = new AgreementContextKey(enterpriseDomain,
-				agreementId, agreementLevelId);
-		ExpressionContext enterpriseCtx = agreementExpressionContexts.get(enterpriseAndLevel);
-		
+		AgreementContextKey enterpriseAndLevel = new AgreementContextKey(
+				enterpriseDomain, agreementId, agreementLevelId);
+		ExpressionContext enterpriseCtx = agreementExpressionContexts
+				.get(enterpriseAndLevel);
+
 		ExpressionContext ctx = new ExpressionContext(agreementCtx);
 		ctx.add(enterpriseCtx);
-		
+
 		return ctx;
 	}
 
@@ -2499,8 +2501,73 @@ public class SQLContractSalaryCalculatorContext extends
 			}
 		};
 
-		this.implicitExpressionContext = new ExpressionContext(
-				getAgreementContext(), this);
+		ExpressionContext agreementCtx = getAgreementContext();
+
+		this.implicitExpressionContext = new ExpressionContext(agreementCtx,
+				this) {
+			@Override
+			public void putVariable(final Object name,
+					ITimedVariable<?> implicitVariable) {
+				if (!isDef(name)) {
+					super.putVariable(name, implicitVariable);
+				} else {
+
+					final ITimedVariable<?> redefinedVariable = getVariable(
+							name, implicitVariable.getPeriod().getStart(),
+							implicitVariable.getPeriod().getStart());
+					super.putVariable(name, new IExpressionVariable() {
+						@Override
+						public Map<String, ITimedVariable<?>> getContext() {
+							return Collections.emptyMap();
+						}
+
+						@Override
+						public IExpression getExpression() {
+							return new IExpression() {
+
+								@Override
+								public boolean isReadOnly() {
+									return false;
+								}
+
+								@Override
+								public ExpressionScope getScope() {
+									return ExpressionScope.AGREEMENT;
+								}
+
+								@Override
+								public String getName() {
+									return name.toString();
+								}
+
+								@Override
+								public String getExpression() {
+									return null;
+								}
+							};
+						}
+
+						@Override
+						public Period getPeriod() {
+							return redefinedVariable.getPeriod();
+						}
+
+						@Override
+						public Object getValue(Period period) {
+							if (SQLContractSalaryCalculatorContext.this.listener != null)
+								SQLContractSalaryCalculatorContext.this.listener
+										.onRedefinedImplicit(name.toString(), redefinedVariable,
+												implicitVariable);
+							
+							return redefinedVariable.getValue(period);
+						};
+
+					});
+				}
+
+			}
+
+		};
 
 		// TODO: Tiene que ir aqui ???
 		SalaryType salaryType = getSalaryType();
@@ -2528,7 +2595,9 @@ public class SQLContractSalaryCalculatorContext extends
 		this.implicitExpressionContext.putVariable(END, end);
 
 		this.implicitExpressionContext.putVariable(WORKED_DAYS, workedDays);
+
 		this.implicitExpressionContext.putVariable(WORKED_WEEKS, workedWeeks);
+
 		this.implicitExpressionContext.putVariable(QUOTE_DAYS, workedDays);
 
 		this.implicitExpressionContext.putVariable(SALARY_DAYS, salaryDays);

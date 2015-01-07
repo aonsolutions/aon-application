@@ -3494,6 +3494,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 						String variableName, String message, Date start,
 						Date end) {
 				}
+				@Override
+				public void onRedefinedImplicit(String name, ITimedVariable<?> redefined,
+						ITimedVariable<?> implicit) {
+				}
 
 			}
 
@@ -4283,7 +4287,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 
 		} catch (Throwable e) {
-			System.out.println(e.getClass().getName());
 			// e.printStackTrace();
 		} finally {
 			if (conn != null)
