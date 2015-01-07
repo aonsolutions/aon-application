@@ -584,6 +584,8 @@ public class Model390 extends MainEntryPoint {
 		diskForm.setAction(GWT.getHostPageBaseURL()
 				+ "/aon_gwt_fiscal/Model390File");
 		mod390Hidden.setValue(String.valueOf(mod390.getId()));
+		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
+		domainNameHidden.setValue(getCurrentDomainName());
 		diskForm.submit();
 	}
 

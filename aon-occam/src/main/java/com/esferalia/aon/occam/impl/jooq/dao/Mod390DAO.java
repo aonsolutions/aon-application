@@ -726,6 +726,21 @@ public class Mod390DAO {
 			map.put(detail.getKey(), detail); 
 		}
 		mod390.setGeneralRegime(map);
+		mod390.setBox99(map.get(Mod390DetailKey.B099).getTaxableBase());
+		mod390.setBox100(map.get(Mod390DetailKey.B100).getTaxableBase());
+		mod390.setBox101(map.get(Mod390DetailKey.B101).getTaxableBase());
+		mod390.setBox102(map.get(Mod390DetailKey.B102).getTaxableBase());
+		mod390.setBox103(map.get(Mod390DetailKey.B103).getTaxableBase());
+		mod390.setBox104(map.get(Mod390DetailKey.B104).getTaxableBase());
+		mod390.setBox105(map.get(Mod390DetailKey.B105).getTaxableBase());
+		mod390.setBox106(map.get(Mod390DetailKey.B106).getTaxableBase());
+		mod390.setBox107(map.get(Mod390DetailKey.B107).getTaxableBase());
+		mod390.setBox108(map.get(Mod390DetailKey.B108).getTaxableBase());
+		mod390.setBox110(map.get(Mod390DetailKey.B110).getTaxableBase());
+		mod390.setBox112(map.get(Mod390DetailKey.B112).getTaxableBase());
+		mod390.setBox227(map.get(Mod390DetailKey.B227).getTaxableBase());
+		mod390.setBox228(map.get(Mod390DetailKey.B228).getTaxableBase());
+		
 		return mod390;
 	}
 
