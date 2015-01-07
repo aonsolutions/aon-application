@@ -92,7 +92,10 @@
 						<h:outputLink 
 							value="http://#{domainSwitcher.currentDomainURL}" target="_blank"
 							title="http://#{to.name}"
-							styleClass="aon-icon aon-icon-globe" />
+							styleClass="aon-icon"
+							style="background: url('#{customize.getToolbarLogo()}') no-repeat scroll left center transparent;" >
+							
+						</h:outputLink>
 					</aon:div>
 				</aon:column>
 			</ui:define>

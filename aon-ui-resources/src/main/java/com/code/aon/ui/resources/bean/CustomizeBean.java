@@ -46,8 +46,12 @@ public class CustomizeBean implements Serializable {
 	
 	private static final String FAVICON_DEFAULT = "/images/favicon.ico";
 	
+	private static final String TOOLBAR_LOGO_DEFAULT = "/images/aon-icon/aon-icon-logo.png";	
+
 	private static final String LOGIN_LOGO_DEFAULT = "/com/code/aon/ui/resources/facelet/login/css/images/login/aon-solutions.gif";	
 	
+	private String toolbarLogo;
+
 	private String favicon;
 	
 	private String loginLogo;
@@ -91,6 +95,7 @@ public class CustomizeBean implements Serializable {
 	protected void initResources(ResourceResolver resolver) {
 		this.loginLogo = resolver.getResolve().get(LOGIN_LOGO_DEFAULT);
 		this.favicon = resolver.getResolve().get(FAVICON_DEFAULT);
+		this.toolbarLogo= resolver.getResolve().get(TOOLBAR_LOGO_DEFAULT);
 	}
 
 	public ResourceBundle initMessages( Locale locale ) {
@@ -207,6 +212,7 @@ public class CustomizeBean implements Serializable {
 		updateHideVersion(connection);
 		this.favicon = StringUtils.defaultIfEmpty(getImageRef(connection, ICommonConstants.FAVICON_NAME), this.favicon);
 		this.loginLogo = StringUtils.defaultIfEmpty(getImageRef(connection, ICommonConstants.LOGIN_LOGO_NAME), this.loginLogo);
+		this.toolbarLogo = StringUtils.defaultIfEmpty(getImageRef(connection, ICommonConstants.TOOLBAR_LOGO_NAME), this.toolbarLogo);
 	}
 	
 	private String getValue( Connection connection, AppParam appParam ) {
@@ -327,6 +333,10 @@ public class CustomizeBean implements Serializable {
 	
 	public String getLoginLogo() {
 		return loginLogo;
+	}
+	
+	public String getToolbarLogo() {
+		return toolbarLogo;
 	}
 
 	public String getFontStyle() {
