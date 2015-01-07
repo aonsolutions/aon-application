@@ -6,8 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
-import bsh.StringUtil;
-
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 
 public class SalaryDraft extends SalaryPreview {
@@ -317,12 +315,11 @@ public class SalaryDraft extends SalaryPreview {
 	}
 
 	public void addWarning(String message) {
-		if (events
-				.stream()
-				.filter(event -> event.type == Event.Type.WARNING
-						&& StringUtils.equals(event.message, message))
-				.findAny().isPresent())
-			return;
+		for (Event event : events)
+			if (event.getType() == Event.Type.WARNING
+					&& StringUtils.equals(message, event.getMessage()))
+				return;
+
 		Event warning = new Event();
 		warning.setMessage(message);
 		warning.setType(Event.Type.WARNING);
