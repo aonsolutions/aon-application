@@ -370,6 +370,7 @@ public class Documents extends Composite implements EntryPoint {
 	
 	public Documents() {
 		init();
+		searchDomain = docs.getDomain();
 	}
 
 	interface Binder extends UiBinder<Widget, Documents> {
@@ -1525,10 +1526,15 @@ public class Documents extends Composite implements EntryPoint {
 	Boolean son = false;
 	@UiHandler("eSearchButton")
 	void sbutton(ClickEvent event) {
+		removeFilterCat();
+		removeFilterTag();
 		html.setVisible(false);
 		filterButton.setVisible(false);
 		String searchStr = Utils.getOracleString(enterpriseSearchBox.getText());
 		son = !searchStr.equals(docs.getDomain());
+		newFilterCat(searchStr);
+		newFilterTag(searchStr);
+		searchDomain = searchStr;
 		idoc.eSearchFile(docs.getFiles(),searchStr,new AsyncCallback<Vector<FileInfo>>() {
 					@Override
 					public void onSuccess(Vector<FileInfo> result) {
@@ -1546,6 +1552,145 @@ public class Documents extends Composite implements EntryPoint {
 				});
 	}
 	
+	private void newFilterCat(String domain){
+		VerticalPanel v = (VerticalPanel) dpanel.getContent();
+		for(Category c : lists.getCategoryListSon().getList()){
+			if(c.getDomain().equals(domain)){
+				catname = c.getName();
+				Button b =new Button(Character.toString((char)9660)+c.getName()); 
+				b.setStyleName("aon-editDataTable-button aon-icon-category");
+				b.addDomHandler(new ContextMenuHandler() {
+					Category c = catAux;
+					@Override
+					public void onContextMenu(ContextMenuEvent event) {
+						event.preventDefault();
+						event.stopPropagation();
+						NativeEvent nativeEvent = event.getNativeEvent();
+						CategoryContextMenu ccm = new CategoryContextMenu(c);
+						ccm.setPopupPosition(nativeEvent.getClientX(),
+								nativeEvent.getClientY());
+						ccm.show();
+					}
+				}, ContextMenuEvent.getType());
+				b.addClickHandler(new ClickHandler() {
+						String s = catname;
+						@Override
+						public void onClick(ClickEvent event) {
+							editFile.setVisible(false);
+							delFile.setVisible(false);
+							SearchInfo si = new SearchInfo();
+							si.setCategory(s);
+							idoc.searchFile2(si, docs.getEfiles(),
+									new AsyncCallback<FilterUtil>() {
+										@Override
+										public void onSuccess(FilterUtil result) {
+											searchs = result.getFiles();
+											docs.setFilter(result.getFiles());
+											dataProvider = new ListDataProvider<FileInfo>(
+													searchs);
+											dataProvider.addDataDisplay(dataGrid);
+											isServiconvenios=false;
+											/*filterLabel= new Label();
+											filterLabel.setStyleName("aon-icon-category");
+											filterLabel.setText(cAux.getName());
+											*/
+
+											html.setText(result.getCategory());
+											html.setVisible(true);
+											filterButton.setVisible(true);
+											updateDatagridColumns();
+											dataGrid.redraw();
+										}
+										@Override
+										public void onFailure(Throwable caught) {
+										}
+									});
+						}
+					});
+				v.add(b);
+			}
+		}
+	}
+	private void newFilterTag(String domain){
+		VerticalPanel v = (VerticalPanel) epanel.getContent();
+		for(Tag t : lists.getTagListSon().getList()){
+			if(t.getDomain().equals(domain)){
+				tagname = t.getName();
+				Button b =new Button(Character.toString((char)9660)+t.getName()); 
+				b.setStyleName("aon-editDataTable-button aon-icon-tag");
+				b.addDomHandler(new ContextMenuHandler() {
+					Tag t=tagAux;	
+					@Override
+					public void onContextMenu(ContextMenuEvent event) {
+						event.preventDefault();
+						event.stopPropagation();
+						NativeEvent nativeEvent =  event.getNativeEvent();
+						TagContextMenu tcm = new TagContextMenu(t);
+						tcm.setPopupPosition(nativeEvent.getClientX(),
+							nativeEvent.getClientY());
+						tcm.show();
+					}
+				}, ContextMenuEvent.getType());
+				b.addClickHandler(new ClickHandler() {
+					String s=tagname;	
+					@Override
+					public void onClick(ClickEvent event) {
+						editFile.setVisible(false);
+						delFile.setVisible(false);
+						SearchInfo si = new SearchInfo();
+						Vector<String> v = new Vector<String>();
+						v.add(s);
+						si.setTag(v);
+						idoc.searchFile2(si, docs.getEfiles(),
+								new AsyncCallback<FilterUtil>() {
+									@Override
+									public void onSuccess(FilterUtil result) {
+										searchs = result.getFiles();
+										docs.setFilter(result.getFiles());
+										dataProvider = new ListDataProvider<FileInfo>(
+											searchs);
+										dataProvider.addDataDisplay(dataGrid);
+										isServiconvenios=false;
+										/*filterLabel= new Label();
+										filterLabel.setStyleName("aon-icon-tag");
+										filterLabel.setText(tAux.getName());
+									 */
+										html.setText(result.getTag());
+										html.setVisible(true);
+									
+										filterButton.setVisible(true);
+									
+										updateDatagridColumns();
+										dataGrid.redraw();
+									}
+									@Override
+									public void onFailure(Throwable caught) {
+									}
+							});
+						}
+					});
+				v.add(b);
+			}}
+		
+	}
+	private void removeFilterCat(){
+		VerticalPanel v = (VerticalPanel) dpanel.getContent();
+		for (int i = v.getWidgetCount()-1 ; i>=0 ; i--) {
+			Button b = (Button) v.getWidget(i);
+			if(b.getText().substring(0, 1).equals(Character.toString((char)9660))){
+				v.remove(i);
+			}
+		}
+	}
+	private void removeFilterTag(){
+		VerticalPanel v = (VerticalPanel) epanel.getContent();
+		for (int i = v.getWidgetCount()-1 ; i>=0 ; i--) {
+			Button b = (Button) v.getWidget(i);
+			if(b.getText().substring(0, 1).equals(Character.toString((char)9660))){
+				v.remove(i);
+			}
+		}	
+	}
 
 	@UiHandler("allButton")
 	void getAllAttach(ClickEvent event) {
@@ -1798,11 +1943,13 @@ public class Documents extends Composite implements EntryPoint {
 		PrintWindow.open(fileDownloadURL, "_blank", null);
 	}
 	
+	String searchDomain;
 	private void search() {
 		Dialog d = new Dialog("search", "Busqueda Avanzada", "Cancelar", true,
 				"Buscar", true,son);
 		d.setLists(lists);
 		d.setSons(getSons());
+		d.setSearchDomain(searchDomain);
 		popup2 = new DocumentsDialog(d) {
 			
 			@Override
@@ -1820,8 +1967,15 @@ public class Documents extends Composite implements EntryPoint {
 					SuggestBox tb0 = (SuggestBox) grid.getWidget(0, 1);
 					if ("".equals(tb0.getText()))
 						si.setDomain(null);
-					else
-						si.setDomain(Utils.getOracleString(tb0.getText()));
+					else{
+						String domain = Utils.getOracleString(tb0.getText());
+						si.setDomain(domain);
+						searchDomain = domain;
+						removeFilterCat();
+						removeFilterTag();
+						newFilterCat(domain);
+						newFilterTag(domain);				
+					}
 				}else si.setDomain(null);
 				
 				TextBox tb1 = (TextBox) grid.getWidget(1, 1);
@@ -2304,6 +2458,9 @@ public class Documents extends Composite implements EntryPoint {
 	
 	@UiHandler("reset")
 	void reset(ClickEvent event){
+		removeFilterCat();
+		removeFilterTag();
+		searchDomain = docs.getDomain();
 		editFile.setVisible(false);
 		delFile.setVisible(false);
 		html.setVisible(false);

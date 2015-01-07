@@ -20,6 +20,7 @@ public class Dialog {
 	FileInfo fileInfo;
 	Tag tag;
 	Category cat;
+	String searchDomain;
  	
 	public Dialog(String type,String title,String cancelButtonName,Boolean isCancelButton,String acceptButtonName,Boolean isAcceptButton,Boolean son){
 		this.type = type;
@@ -31,6 +32,14 @@ public class Dialog {
 		this.son = son;
 	}
 	
+	public String getSearchDomain() {
+		return searchDomain;
+	}
+
+	public void setSearchDomain(String searchDomain) {
+		this.searchDomain = searchDomain;
+	}
+
 	public String getType() {
 		return type;
 	}

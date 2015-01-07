@@ -69,7 +69,7 @@ public class Utils {
 
 	static String getOracleString(String s){
 		String aux;
-		Integer pos = s.indexOf('(');
+		Integer pos = s.lastIndexOf('(');
 		aux = s.substring(pos+2,s.length()-1);
 		return aux;
 	}

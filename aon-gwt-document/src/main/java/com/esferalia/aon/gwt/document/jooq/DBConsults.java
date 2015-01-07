@@ -536,8 +536,9 @@ public class DBConsults {
 			t.setIsSon(true);
 			if(record.value3() !=null) 
 				t.setDomain(record.value3());
-			long i = vector.stream().filter(cat -> cat.getName().equals(t.getName())).count();
-			if(i==0) vector.add(t);			
+			//long i = vector.stream().filter(cat -> cat.getName().equals(t.getName())).count();
+			//if(i==0) 
+				vector.add(t);			
 		}
 		tl.setList(vector);
 		return tl;
