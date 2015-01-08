@@ -129,8 +129,8 @@ public interface Images extends ClientBundle, Tree.Resources {
 	
 	ImageResource aon_icon_row_c();
 	
-	@Source("rich-calendar-button.png")
-	ImageResource rich_calendar_button();
+	@Source("aon-icon-calendar.png")
+	ImageResource aon_icon_calendar();
 	
 	ImageResource tooltip_top ();
 

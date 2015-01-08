@@ -408,9 +408,9 @@
 	gwt-image: 'maximize';
 }
 
-@sprite .rich-calendar-button {
+@sprite .aon-icon-calendar {
 	float: right;
-	gwt-image: 'rich_calendar_button';
+	gwt-image: 'aon_icon_calendar';
 }
 
 @sprite .aon-icon-rowSelector-S {

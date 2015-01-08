@@ -2842,7 +2842,7 @@ public class AgreementDraft extends ResizeComposite implements
 		dateBox.addStyleName(AON.AON_TEXT_RIGHT);
 		dateBox.setVisibleLength(10);
 
-		button.setStyleName(AON.RICH_CALENDAR_BUTTON);
+		button.setStyleName(AON.AON_ICON_CALENDAR);
 		button.addStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON);
 		button.getElement().getStyle().setMarginRight(0, Unit.PX);
 		button.setTabIndex(-2);
