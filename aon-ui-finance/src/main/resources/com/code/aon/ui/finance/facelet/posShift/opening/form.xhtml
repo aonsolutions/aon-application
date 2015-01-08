@@ -18,7 +18,7 @@
 					<aon:commandButton id="posOpening-openPos" 
 						styleClass="aon-finding-toolbar-item #{(posOpening.posShift.id != null) ? ('aon-icon-accept') : ('aon-icon-open-safeBox')}"
 						value="#{(posOpening.posShift.id != null) ? (bundle.aon_save) : (bundle.finance_pos_to_open)}"
-						actionListener="#{posOpening.onAccept}" />
+						actionListener="#{posOpening.onOpen}" />
 				</ui:define>
 			</ui:decorate>
 

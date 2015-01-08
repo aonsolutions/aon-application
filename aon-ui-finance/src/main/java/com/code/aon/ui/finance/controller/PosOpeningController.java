@@ -132,7 +132,7 @@ public class PosOpeningController implements Serializable {
 		return shiftList;
 	}
 
-	public void onAccept(ActionEvent event) {
+	public void onOpen(ActionEvent event) {
 		if (getPosShift().getId() == null && validateOpening(getPosShift().getPos(), getPosShift().getShift())) {
 			getPosShift().setStartTime(new Date());
 			getPosShift().setUsername(UserUtils.getInstance().getLoggedUser().getLogin());

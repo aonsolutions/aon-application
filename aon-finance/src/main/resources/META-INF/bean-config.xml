@@ -37,6 +37,9 @@
 	
 	<bean description="">
 		<pojo>com.code.aon.finance.Finance</pojo>
+		<listeners>
+	        <listener>com.code.aon.finance.event.FinanceBeanListener</listener>
+		</listeners>
 		<vetoListeners>
 	        <vetoListener>com.code.aon.finance.event.FinanceBeanVetoListener</vetoListener>
 		</vetoListeners>
@@ -93,6 +96,20 @@
 		<vetoListeners>
 	        <vetoListener>com.code.aon.finance.event.PosBeanVetoListener</vetoListener>
 		</vetoListeners>
+	</bean>
+	
+	<bean description="">
+		<pojo>com.code.aon.finance.PosShift</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.finance.event.PosShiftBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+	
+	<bean description="">
+		<pojo>com.code.aon.finance.PosShiftCount</pojo>
+		<listeners>
+	        <listener>com.code.aon.finance.event.PosShiftCountBeanListener</listener>
+		</listeners>
 	</bean>
 	
 </bean-config>

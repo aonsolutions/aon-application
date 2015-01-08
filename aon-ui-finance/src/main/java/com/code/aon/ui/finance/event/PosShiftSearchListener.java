@@ -34,6 +34,7 @@ public class PosShiftSearchListener extends ControllerSearchListener {
 	private Date startTimeTo;
 	private Date endTimeFrom;
 	private Date endTimeTo;
+	private Integer imbalance;
 
 	public WorkPlace getWorkPlace() {
 		return workPlace;
@@ -91,6 +92,14 @@ public class PosShiftSearchListener extends ControllerSearchListener {
 		this.endTimeTo = endTimeTo;
 	}
 
+	public Integer getImbalance() {
+		return imbalance;
+	}
+
+	public void setImbalance(Integer imbalance) {
+		this.imbalance = imbalance;
+	}
+
 	@Override
 	protected void init() throws ManagerBeanException {
 		setWorkPlace((WorkPlace)BeanManager.getManagerBean(WorkPlace.class).createNewTo());
@@ -100,6 +109,7 @@ public class PosShiftSearchListener extends ControllerSearchListener {
 		setStartTimeTo(null);
 		setEndTimeFrom(null);
 		setEndTimeTo(null);
+		setImbalance(1);
 	}
 
 	public List<SelectItem> getWorkPlacePos() throws ManagerBeanException {
@@ -125,16 +135,17 @@ public class PosShiftSearchListener extends ControllerSearchListener {
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		if (getWorkPlace() != null && getWorkPlace().getId() != null) {
-			criteria.addEqualExpression(getFieldName(IEntityAlias.POS_SHIFT_POS_WORK_PLACE_ID), getWorkPlace().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.POS_SHIFT_POS_WORK_PLACE_ID), getWorkPlace().getId());
 		}
 		if (getDepartment() != null && getDepartment().getId() != null) {
-			criteria.addEqualExpression(getFieldName(IEntityAlias.POS_SHIFT_POS_DEPARTMENT_ID), getDepartment().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.POS_SHIFT_POS_DEPARTMENT_ID), getDepartment().getId());
 		}
 		if (getPos() != null && getPos().getId() != null) {
-			criteria.addEqualExpression(getFieldName(IEntityAlias.POS_SHIFT_POS_ID), getPos().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.POS_SHIFT_POS_ID), getPos().getId());
 		}
 		if (!AonUtil.getRoleManager().isConfig() && !AonUtil.getRoleManager().isSaleOperator()) {
-			criteria.addEqualExpression(getFieldName(IEntityAlias.POS_SHIFT_USERNAME), UserUtils.getInstance().getLoggedUser().getLogin());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.POS_SHIFT_USERNAME), UserUtils.getInstance().getLoggedUser().getLogin());
+			criteria.addNotNullExpression(getFieldName(IEntityAlias.POS_SHIFT_END_TIME));
 		}
 		if (getStartTimeFrom() != null) {
 			criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.POS_SHIFT_START_TIME), getStartTimeFrom());
@@ -149,6 +160,9 @@ public class PosShiftSearchListener extends ControllerSearchListener {
 		if (getEndTimeTo() != null) {
 			int millisFullDay = (int)(DateUtils.MILLIS_PER_DAY - DateUtils.MILLIS_PER_SECOND);
 			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.POS_SHIFT_END_TIME), DateUtils.addMilliseconds(getEndTimeTo(), millisFullDay));
+		}
+		if (getImbalance() != null) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.POS_SHIFT_IMBALANCE), getImbalance() == 1);
 		}
 	}
 

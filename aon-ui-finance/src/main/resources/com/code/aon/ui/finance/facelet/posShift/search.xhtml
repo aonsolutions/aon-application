@@ -92,6 +92,14 @@
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:div>
 
+					<aon:outputLabel value="#{bundle.finance_imbalanced}" />
+					<aon:selectOneRadio id="PosShift_imbalance"
+						value="#{posShiftSearch.imbalance}">
+						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="1" />
+						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="0" />
+						<f:selectItem itemLabel="#{bundle.aon_indifferent}" itemValue="#{null}" />
+					</aon:selectOneRadio>				
+
 				</ui:define>
 			</ui:decorate>				
 

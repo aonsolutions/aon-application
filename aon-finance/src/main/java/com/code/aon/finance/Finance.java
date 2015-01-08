@@ -20,7 +20,6 @@ import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.IBankAccountContainer;
-import com.code.aon.config.IPayMethod;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.finance.enumeration.FinanceStatus;

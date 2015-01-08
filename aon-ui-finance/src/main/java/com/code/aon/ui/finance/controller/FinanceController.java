@@ -917,8 +917,9 @@ public class FinanceController extends FinanceListController implements IFinance
 		Date fromDate = CommonUtil.getDate(getPayrollYear(), getPayrollMonth().getValue(), 1);
 		Date toDate = CommonUtil.getMonthLastDay(fromDate);
 
-		PreparedStatement statement = null;
 		Connection connection = null;
+		PreparedStatement deleteStmt = null;
+		PreparedStatement insertStmt = null;
 		try {
 			Integer maxId = new Integer(0);
 			Criteria criteria = new Criteria();
@@ -936,10 +937,10 @@ public class FinanceController extends FinanceListController implements IFinance
 			deleteFinances.append(" AND payroll = 1");
 			deleteFinances.append(" AND due_date BETWEEN ? AND ?");
 
-			statement = connection.prepareStatement(deleteFinances.toString());
-			statement.setDate(1, new java.sql.Date(fromDate.getTime()));
-			statement.setDate(2, new java.sql.Date(toDate.getTime()));
-			statement.execute();
+			deleteStmt = connection.prepareStatement(deleteFinances.toString());
+			deleteStmt.setDate(1, new java.sql.Date(fromDate.getTime()));
+			deleteStmt.setDate(2, new java.sql.Date(toDate.getTime()));
+			deleteStmt.execute();
 
 			StringWriter insertFinances = new StringWriter();
 			insertFinances.append("INSERT INTO finance (");
@@ -960,10 +961,10 @@ public class FinanceController extends FinanceListController implements IFinance
 			insertFinances.append(" GROUP BY s.id");
 			insertFinances.append(" HAVING total_amount <> 0");
 
-			statement = connection.prepareStatement(insertFinances.toString());
-			statement.setDate(1, new java.sql.Date(fromDate.getTime()));
-			statement.setDate(2, new java.sql.Date(toDate.getTime()));
-			statement.execute();
+			insertStmt = connection.prepareStatement(insertFinances.toString());
+			insertStmt.setDate(1, new java.sql.Date(fromDate.getTime()));
+			insertStmt.setDate(2, new java.sql.Date(toDate.getTime()));
+			insertStmt.execute();
 
 			if (maxId.intValue() > 0) {
 				FinanceSearchListener searchListener = (FinanceSearchListener)AonUtil.getRegisteredBean(FINANCE_SEARCH_LISTENER_NAME);
@@ -984,7 +985,8 @@ public class FinanceController extends FinanceListController implements IFinance
 			addMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);
 		} finally {
-			DatabaseUtil.closeQuietly(statement);
+			DatabaseUtil.closeQuietly(deleteStmt);
+			DatabaseUtil.closeQuietly(insertStmt);
 			DatabaseUtil.closeQuietly(connection);
 		}
 	}

@@ -16,13 +16,14 @@
 				<ui:param name="toolbarTitle" value="#{bundle.finance_posClosing_module}" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="posClosing-closePos" 
-						styleClass="aon-finding-toolbar-item #{(posClosing.posShift.endTime != null) ? ('aon-icon-accept') : ('aon-icon-safeBox')}"
-						value="#{(posClosing.posShift.endTime != null) ? (bundle.aon_save) : (bundle.finance_pos_to_close)}"
-						actionListener="#{posClosing.onAccept}" />
+						styleClass="aon-finding-toolbar-item #{(posClosing.posShift.closed) ? ('aon-icon-accept') : ('aon-icon-safeBox')}"
+						value="#{(posClosing.posShift.closed) ? (bundle.aon_save) : (bundle.finance_pos_to_close)}"
+						actionListener="#{posClosing.onConfirmClose}"
+						reRender="aonContent" />
 					<aon:htmlCommandLink id="posShift_report"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
 						value="#{bundle.finance_count}"
-						rendered="#{posClosing.posShift.endTime != null}"
+						rendered="#{posClosing.posShift.closed}"
 						action="#{report.onExecute}">
 						<f:param name="reportKey" value="posShift" />
 						<f:param name="outputFormat" value="PDF" />
@@ -68,8 +69,8 @@
 
 							<aon:if test="#{posClosing.posShift.pos.invoiceable}">
 								<aon:outputLabel value="#{bundle.aon_number} #{bundle.aon_of} #{bundle.aon_ticket}" 
-									rendered="#{posClosing.posShift.endTime == null}" />
-								<aon:div rendered="#{posClosing.posShift.endTime == null}">
+									rendered="#{!posClosing.posShift.closed}" />
+								<aon:div rendered="#{!posClosing.posShift.closed}">
 									<aon:outputLabel for="PosClosing_fromTicket" 
 										styleClass="aon-italic aon-margin-right" 
 										value="#{bundle.aon_date_from}" />
@@ -128,8 +129,8 @@
 							</aon:panelGrid>
 							<ui:include src="/com/code/aon/ui/finance/facelet/posShift/posShiftCount.xhtml">
 								<ui:param name="shiftController" value="#{posClosing}" />
-								<ui:param name="readOnly" value="#{posClosing.posShift.endTime != null}" />
-								<ui:param name="countReRender" value="" />
+								<ui:param name="readOnly" value="#{posClosing.posShift.closed}" />
+								<ui:param name="countReRender" value="posShiftCountPanel" />
 							</ui:include>
 						</aon:panel>
 					</aon:div>
@@ -139,11 +140,15 @@
 	
 		</aon:form>
 
+		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/posShift/calculator/calculatorModal.xhtml">
 			<ui:param name="controller" value="#{posClosing}" />								
 			<ui:param name="cashCalculator" value="#{posClosing.calculator}" />
 			<ui:param name="modalReRender" value="posClosingForm" />
 			<ui:param name="calculatorReport" value="posClosingCashCount" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/posShift/closing/modalConfirm.xhtml">
+			<ui:param name="controller" value="#{posClosing}" />
 		</ui:include>
 
 	</ui:define>

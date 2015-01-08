@@ -25,7 +25,7 @@
 					<aon:htmlCommandLink id="posShift_report"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
 						value="#{bundle.finance_count}"
-						rendered="#{posShift.to.endTime != null}"
+						rendered="#{posShift.to.closed}"
 						action="#{report.onExecute}">
 						<f:param name="reportKey" value="posShift" />
 						<f:param name="outputFormat" value="PDF" />

@@ -16,6 +16,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Department;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.PayMethod;
@@ -193,7 +194,7 @@ public class PosShiftController extends BasicController implements IFinanceConst
 	}
 
 	private boolean isCountOk(PosShift posShift, PayMethodType type) throws ManagerBeanException {
-		if (posShift.getEndTime() != null) {
+		if (posShift.isClosed()) {
 			for (PayMethod payMethod : posShift.getTotalShiftCountMap().keySet()) {
 				if (type == payMethod.getType()) {
 					double[] totals = posShift.getTotalShiftCountMap().get(payMethod);
@@ -319,6 +320,7 @@ public class PosShiftController extends BasicController implements IFinanceConst
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
+		accept(event);
 		onBackPosShift(event);
 	}
 
@@ -329,6 +331,7 @@ public class PosShiftController extends BasicController implements IFinanceConst
 			finance.getInvoice().setUpdateEnabled(false);
 			BeanManager.getManagerBean(Invoice.class).update(finance.getInvoice());
 		}
+		accept(event);
 		onBackPosShift(event);
 	}
 
@@ -370,6 +373,10 @@ public class PosShiftController extends BasicController implements IFinanceConst
 
 		public void setFinanceAmount(double financeAmount) {
 			this.financeAmount = financeAmount;
+		}
+
+		public double getDifference() {
+			return CommonUtil.round(countAmount - financeAmount);
 		}
 
 		@Override

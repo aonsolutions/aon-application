@@ -391,6 +391,16 @@ public class ConfigCollectionsController implements Serializable {
 		return getPayMethods(noCashDirectPayMethods);
 	}
 
+	public List<SelectItem> getExtendedDirectPayMethods() throws ManagerBeanException {
+		List<PayMethodType> directPayMethods = new LinkedList<PayMethodType>();
+		directPayMethods.add(PayMethodType.CASH_BASIS);
+		directPayMethods.add(PayMethodType.DEBIT_CARD);
+		directPayMethods.add(PayMethodType.CREDIT_CARD);
+		directPayMethods.add(PayMethodType.CHEQUE);
+		directPayMethods.add(PayMethodType.BANK_TRANSFER);
+		return getPayMethods(directPayMethods);
+	}
+
 	private List<SelectItem> getPayMethods(List<PayMethodType> payMethodTypes) throws ManagerBeanException {
 		List<SelectItem> payMethods = new LinkedList<SelectItem>();
 		IManagerBean payMethodBean = BeanManager.getManagerBean(PayMethod.class);

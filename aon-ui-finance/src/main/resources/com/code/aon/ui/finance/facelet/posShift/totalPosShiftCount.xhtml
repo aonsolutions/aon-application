@@ -39,7 +39,8 @@
 			<f:facet name="header">
 				<aon:outputLabel value="#{bundle.report_amount_difference}" />
 			</f:facet>
-			<aon:outputText value="#{to.countAmount - to.financeAmount}">
+			<aon:outputText value="#{to.difference}"
+				styleClass="#{(to.difference != 0) ? ('aon-label-error') : ('')}">
 				<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 			</aon:outputText>
 		</aon:column>

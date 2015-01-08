@@ -215,8 +215,8 @@
 	</bean>
 	
 	<bean class="com.code.aon.finance.PosShift" sqlName="pos_shift">
-		<alias names="id,domain,pos_id,pos_workPlace_id,pos_department,pos_department_id,pos_workPlace_scope_id,shift,username,startTime,endTime,initialAmount,remarks"/>
-		<hibernate names="id,domain,pos.id,pos.workPlace.id,pos.department,pos.department.id,pos.workPlace.scope.id,shift,username,startTime,endTime,initialAmount,remarks"/>
+		<alias names="id,domain,pos_id,pos_workPlace_id,pos_department,pos_department_id,pos_workPlace_scope_id,shift,username,startTime,endTime,initialAmount,imbalance,remarks"/>
+		<hibernate names="id,domain,pos.id,pos.workPlace.id,pos.department,pos.department.id,pos.workPlace.scope.id,shift,username,startTime,endTime,initialAmount,imbalance,remarks"/>
 	</bean> 
 
 	<bean class="com.code.aon.finance.PosShiftCount" sqlName="pos_shift_count">

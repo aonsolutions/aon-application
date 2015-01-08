@@ -14,9 +14,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationParameter;
-import com.code.aon.config.PayMethod;
 import com.code.aon.config.Tariff;
-import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.InvoicingGroup;
 import com.code.aon.customer.enumeration.CustomerStatus;
@@ -24,7 +22,6 @@ import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.seller.Seller;
 import com.code.aon.seller.enumeration.SellerStatus;
 import com.code.aon.ui.config.util.UserUtils;
@@ -365,41 +362,6 @@ public class PmsCollectionsController implements Serializable {
 			}
 		}
 		return bookingHolders;
-	}
-
-	public List<SelectItem> getDirectPayMethods() throws ManagerBeanException {
-		List<PayMethodType> directPayMethods = new LinkedList<PayMethodType>();
-		directPayMethods.add(PayMethodType.CASH_BASIS);
-		directPayMethods.add(PayMethodType.DEBIT_CARD);
-		directPayMethods.add(PayMethodType.CREDIT_CARD);
-		directPayMethods.add(PayMethodType.CHEQUE);
-		directPayMethods.add(PayMethodType.BANK_TRANSFER);
-		return getPayMethods(directPayMethods);
-	}
-
-	public List<SelectItem> getNoCashDirectPayMethods() throws ManagerBeanException {
-		List<PayMethodType> noCashDirectPayMethods = new LinkedList<PayMethodType>();
-		noCashDirectPayMethods.add(PayMethodType.DEBIT_CARD);
-		noCashDirectPayMethods.add(PayMethodType.CREDIT_CARD);
-		noCashDirectPayMethods.add(PayMethodType.CHEQUE);
-		noCashDirectPayMethods.add(PayMethodType.BANK_TRANSFER);
-		return getPayMethods(noCashDirectPayMethods);
-	}
-
-	private List<SelectItem> getPayMethods(List<PayMethodType> payMethodTypes) throws ManagerBeanException {
-		List<SelectItem> payMethods = new LinkedList<SelectItem>();
-		IManagerBean payMethodBean = BeanManager.getManagerBean(PayMethod.class);
-		Criteria criteria = new Criteria();
-		if (payMethodTypes != null && payMethodTypes.size() > 0) {
-			criteria.addExpression(ExpressionUtilities.getInExpression(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_TYPE), payMethodTypes));
-		}
-		criteria.addOrder(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_NAME));
-		for (ITransferObject ito : payMethodBean.getList(criteria)) {
-			PayMethod payMethod = (PayMethod)ito;
-			SelectItem item = new SelectItem(payMethod, payMethod.getName());
-			payMethods.add(item);
-		}
-		return payMethods;
 	}
 
 }

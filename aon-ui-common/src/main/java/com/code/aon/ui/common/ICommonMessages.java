@@ -313,6 +313,7 @@ public interface ICommonMessages {
 	String FINANCE_OPERATION_NOT_ALLOWED_PERIOD_EXCEEDED_ERROR = "finance_operation_deadline_overflow_error";
 	String FINANCE_POS_OPENED = "finance_pos_opened";
 	String FINANCE_POS_CATALOGUE_ERROR = "finance_pos_catalogue_error";
+	String FINANCE_POS_SHIFT_IMBALANCE_ERROR = "finance_pos_shift_closing_imbalance_msg";
 	String FINANCE_PREPAYMENTS = "finance_prepayments";
 	String FINANCE_INACCURACY_MSG = "finance_unable_record_inaccuracy_error";
 	String FINANCE_NO_AMORTIZATION_MSG = "finance_unable_record_no_amortization_error";

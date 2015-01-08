@@ -1,10 +1,11 @@
 package com.code.aon.ui.finance.controller;
 
-import java.io.Serializable;
 import static com.code.aon.ui.common.ICommonMessages.DATE_FROM;
 import static com.code.aon.ui.common.ICommonMessages.DATE_TO;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_POS_SHIFT_IMBALANCE_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.TICKET;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.faces.event.AbortProcessingException;
@@ -33,6 +34,7 @@ public class PosClosingController implements IFinanceConstants, Serializable {
 	private String fromTicket;
 	private String toTicket;
 	private CashCalculator calculator;
+	private boolean showConfirmWindow;
 
 	public PosShift getPosShift() {
 		return posShift;
@@ -69,6 +71,14 @@ public class PosClosingController implements IFinanceConstants, Serializable {
 		this.calculator = calculator;
 	}
 
+	public boolean isShowConfirmWindow() {
+		return showConfirmWindow;
+	}
+
+	public void setShowConfirmWindow(boolean showConfirmWindow) {
+		this.showConfirmWindow = showConfirmWindow;
+	}
+
     public void onLoad(ActionEvent event) {    	
     	setFromTicket(null);
     	setToTicket(null);
@@ -102,13 +112,34 @@ public class PosClosingController implements IFinanceConstants, Serializable {
 
 	public void onAcceptCount(ActionEvent event) {
 		FormUtil.getController(POS_SHIFT_COUNT_CONTROLLER_NAME).onAccept(event);
+		getPosShift().setTotalShiftCountMap(null);
 	}
 
 	public void onRemoveCount(ActionEvent event) {
 		FormUtil.getController(POS_SHIFT_COUNT_CONTROLLER_NAME).onRemove(event);
+		getPosShift().setTotalShiftCountMap(null);
 	}
 
-	public void onAccept(ActionEvent event) {
+	public void onConfirmClose(ActionEvent event) {
+		if (getPosShift().getEndTime() == null && PosUtils.isPosShiftImbalance(getPosShift())) {
+			setShowConfirmWindow(true);
+		} else {
+			onClose(event);
+		}
+	}
+
+	public String getImbalancePayMethodsError() {
+		String imbalance = "";
+		for (PayMethod payMethod : getPosShift().getTotalShiftCountMap().keySet()) {
+			double[] totals = posShift.getTotalShiftCountMap().get(payMethod);
+			if (totals[0] != totals[1]) {
+				imbalance += ", " + payMethod.getName();
+			}
+		}
+		return AonUtil.getMessage(FINANCE_POS_SHIFT_IMBALANCE_ERROR, imbalance.replaceFirst(", ", ""));
+	}
+
+	public void onClose(ActionEvent event) {
 		if (getPosShift().getEndTime() == null && validateClosing(getPosShift().getPos(), getPosShift().getShift())) {
 			getPosShift().setEndTime(new Date());
 		}

@@ -79,6 +79,8 @@ public class PosShift extends PosShiftDB {
 			criteria = new Criteria();
 			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_PAYMENT), new Boolean(false));
 			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_POS_SHIFT_ID), getId());
+			criteria.addNotEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_TYPE), PayMethodType.NEGOTIABLE_DOCUMENT);
+			criteria.addNotEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_TYPE), PayMethodType.OTHER);
 			criteria.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_NAME));
 			Projection projection = Projection.group(financeBean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD));
 			for (Object obj : financeBean.getList(new ProjectionList(projection), criteria)) {
@@ -137,6 +139,11 @@ public class PosShift extends PosShiftDB {
 			}
 		}
 		return value;
+	}
+
+	@Transient
+	public boolean isClosed() {
+		return getEndTime() != null;
 	}
 
 }

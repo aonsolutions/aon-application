@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.11.1
+# Version: 8.12.0
 # Created by: girazu
-# Creation Date: 17/12/2014 16:10
+# Creation Date: 22/12/2014 18:00
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -839,6 +839,7 @@ CREATE TABLE `pos_shift` (
   `start_time` datetime NOT NULL COMMENT 'Fecha-hora de apertura',
   `end_time` datetime default NULL COMMENT 'Fecha-hora de cierre',
   `initial_amount` double(15,2) default '0.00' COMMENT 'Efectivo inicial',
+  `imbalance` tinyint(1) NOT NULL default '0' COMMENT 'Indica si existen descuadres en el Turno',
   `remarks` text collate latin1_spanish_ci COMMENT 'Observaciones del turno',
   PRIMARY KEY  (`id`),
   KEY `IDX_POS_SHIFT_POS` (`pos`),
@@ -7741,7 +7742,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.11.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.12.0');
 
 COMMIT;
 
