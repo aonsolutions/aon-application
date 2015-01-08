@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import org.eclipse.jetty.webapp.WebInfConfiguration;
-
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
