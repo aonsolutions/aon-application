@@ -10,6 +10,8 @@ public class DomainData implements Serializable {
 	
 	private Integer id;
 	
+	private String logo;
+
 	private String name;
 	
 	private String description;
@@ -36,7 +38,11 @@ public class DomainData implements Serializable {
 	public Integer getId() {
 		return id;
 	}
-
+	
+	public String getLogo() {
+		return logo;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -75,6 +81,10 @@ public class DomainData implements Serializable {
 
 	public Integer getMaxDefinedUsers() {
 		return maxDefinedUsers;
+	}
+
+	public void setLogo(String logo) {
+		this.logo = logo;
 	}
 
 }

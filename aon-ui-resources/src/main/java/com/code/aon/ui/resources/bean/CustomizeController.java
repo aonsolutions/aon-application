@@ -19,7 +19,6 @@ public class CustomizeController extends CustomizeBean {
 
 	private static final String HEADER_LOGO_DEFAULT = "/images/aon-header/aon-solutions.png";
 
-	private static final String TOOLBAR_LOGO_DEFAULT = "/images/aon-icon/aon-icon-logo.png";
 	
 	private static final String STATUS_START_DEFAULT = "/images/aon-header/aon-outputConnectionStatus-start.gif";
 
@@ -28,8 +27,6 @@ public class CustomizeController extends CustomizeBean {
 	private static final String STATUS_FAILED_DEFAULT = "/images/aon-header/aon-outputConnectionStatus-failed.png";
 	
 	private String headerLogo;
-	
-	private String toolbarLogo;
 	
 	private String statusStartStyle;
 	
@@ -50,7 +47,6 @@ public class CustomizeController extends CustomizeBean {
 	protected void initResources(ResourceResolver resolver) {
 		super.initResources(resolver);
 		this.headerLogo = resolver.getResolve().get(HEADER_LOGO_DEFAULT);
-		this.toolbarLogo = resolver.getResolve().get(TOOLBAR_LOGO_DEFAULT);
 		String start = resolver.getResolve().get(STATUS_START_DEFAULT);
 		this.statusStartStyle = getBackgroundImageStyle(start);
 		String stop = resolver.getResolve().get(STATUS_STOP_DEFAULT);
@@ -75,7 +71,6 @@ public class CustomizeController extends CustomizeBean {
 	protected void loadValues( Connection connection ) {
 		super.loadValues(connection);
 		this.headerLogo = StringUtils.defaultIfEmpty(getImageRef(connection, ICommonConstants.HEADER_LOGO_NAME), this.headerLogo);
-		this.toolbarLogo = StringUtils.defaultIfEmpty(getImageRef(connection, ICommonConstants.TOOLBAR_LOGO_NAME), this.toolbarLogo);
 		this.statusStartStyle = getStatusStyle(connection, ICommonConstants.STATUS_START_NAME, this.statusStartStyle);
 		this.statusStopStyle = getStatusStyle(connection, ICommonConstants.STATUS_STOP_NAME, this.statusStopStyle);
 		this.statusFailedStyle = getStatusStyle(connection, ICommonConstants.STATUS_FAILED_NAME, this.statusFailedStyle);
@@ -83,10 +78,6 @@ public class CustomizeController extends CustomizeBean {
 
 	public String getHeaderLogo() {
 		return headerLogo;
-	}
-
-	public String getToolbarLogo() {
-		return toolbarLogo;
 	}
 
 	public String getStatusStartStyle() {

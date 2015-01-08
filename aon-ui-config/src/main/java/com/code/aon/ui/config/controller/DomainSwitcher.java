@@ -3,10 +3,12 @@ package com.code.aon.ui.config.controller;
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.DomainApplicationModule.DOMAIN_APPLICATION_MODULE;
+import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.io.Serializable;
 import java.net.IDN;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -25,6 +27,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.jooq.Condition;
+import org.jooq.Record2;
 import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,21 +43,30 @@ import com.code.aon.common.domain.DomainEvent;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.domain.IDomainChangeListener;
 import com.code.aon.common.enumeration.AppParam;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.config.Domain;
 import com.code.aon.config.UserScope;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.config.DomainData;
 import com.code.aon.ui.form.ITemplateController;
+import com.code.aon.ui.resources.bean.ResourceResolver;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.watson.util.AonArrayUtils;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 
-public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateController, Serializable {
+public class DomainSwitcher extends AbstractDomainSwitcher implements
+		ITemplateController, Serializable {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-	
-	private final static Logger LOGGER = LoggerFactory.getLogger(DomainSwitcher.class);
+
+	private static final String TOOLBAR_LOGO_DEFAULT = "/images/aon-icon/aon-icon-logo.png";
+
+	private final static Logger LOGGER = LoggerFactory
+			.getLogger(DomainSwitcher.class);
 	private List<IDomainChangeListener> listenerClasses;
 	private DataModel model;
 	private DataModel filteredModel;
@@ -68,29 +80,29 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 	private Integer pageLimit;
 	private boolean showInactive;
 	private String beanName;
-	
+
 	public DomainSwitcher() {
 		try {
 			setPageLimit(15);
-			super.setDomainId( initializeDomain());
+			super.setDomainId(initializeDomain());
 		} catch (Throwable th) {
 			super.setDomainId(1);
 		}
 	}
-	
+
 	private Integer initializeDomain() {
 		AuthPrincipal principal = AonUtil.getAuthPrincipal();
 		Integer domain = principal.getDomainId();
-		String sessionFactoryName = HibernateUtil.getSessionFactoryName(Domain.class.getName());
+		String sessionFactoryName = HibernateUtil
+				.getSessionFactoryName(Domain.class.getName());
 		String q = "SELECT d.parent FROM domain d WHERE d.id = " + domain;
-		SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(q);
-		List<?> queryList = query
-				.addScalar("parent", Hibernate.INTEGER)
-				.list();
+		SQLQuery query = HibernateUtil.getSession(sessionFactoryName)
+				.createSQLQuery(q);
+		List<?> queryList = query.addScalar("parent", Hibernate.INTEGER).list();
 		Iterator<?> iterator = queryList.iterator();
 		if (iterator.hasNext()) {
 			Integer pd = (Integer) iterator.next();
-			setParentDomain( pd == null ? domain : null );
+			setParentDomain(pd == null ? domain : null);
 		} else {
 			domain = null;
 		}
@@ -105,7 +117,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 	public void setListenerClasses(List<IDomainChangeListener> listenerClasses) {
 		this.listenerClasses = listenerClasses;
 		DomainEvent event = new DomainEvent(this, null, getDomainId());
-		for (IDomainChangeListener listener : this.listenerClasses ) {
+		for (IDomainChangeListener listener : this.listenerClasses) {
 			addDomainChangeListener(listener);
 			listener.afterDomainChanged(event);
 		}
@@ -118,26 +130,26 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 
 	public void setBeanName(String beanName) {
 		this.beanName = beanName;
-	}	
-	
+	}
+
 	public String getDomainName() {
 		if (domainName == null) {
 			assignDomainName(getDomainId());
 		}
 		return domainName;
 	}
-	
+
 	public void setDomainName(String domainName) {
 		this.domainName = domainName;
 	}
-	
+
 	public String getDomainNameURL() {
 		if (domainNameURL == null) {
 			assignDomainNameURL(getDomainId());
 		}
 		return domainNameURL;
 	}
-	
+
 	public void setDomainNameURL(String domainNameURL) {
 		this.domainNameURL = domainNameURL;
 	}
@@ -145,13 +157,15 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 	public String getFilter() {
 		return filter;
 	}
+
 	public void setFilter(String filter) {
 		this.filter = filter;
 	}
-	
+
 	public DataModel getFilteredModel() {
 		return filteredModel;
 	}
+
 	public void setFilteredModel(DataModel filteredModel) {
 		this.filteredModel = filteredModel;
 	}
@@ -159,14 +173,15 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 	public Integer getParentDomain() {
 		return parentDomain;
 	}
+
 	public void setParentDomain(Integer parentDomain) {
 		this.parentDomain = parentDomain;
 	}
-	
+
 	public boolean isChildDomain() {
 		return !isParentDomain();
 	}
-	
+
 	public boolean isParentDomainUserInChildDomain() {
 		return DomainManager.isParentDomainUserInChildDomain();
 	}
@@ -178,15 +193,19 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 		if (StringUtils.isBlank(getFilter())) {
 			return model;
 		} else {
-			if (!StringUtils.equals(modelFilter, filter) || filteredModel == null) {
+			if (!StringUtils.equals(modelFilter, filter)
+					|| filteredModel == null) {
 				setPage(1);
 				List<DomainData> filteredList = new LinkedList<DomainData>();
 				@SuppressWarnings("unchecked")
-				List<DomainData> list = (List<DomainData>) model.getWrappedData();
-				for (DomainData d :  list) {
-					if (StringUtils.containsIgnoreCase(d.getName(), getFilter()) ||
-						StringUtils.containsIgnoreCase(d.getDescription(), getFilter())) {
-						filteredList.add(d);					
+				List<DomainData> list = (List<DomainData>) model
+						.getWrappedData();
+				for (DomainData d : list) {
+					if (StringUtils
+							.containsIgnoreCase(d.getName(), getFilter())
+							|| StringUtils.containsIgnoreCase(
+									d.getDescription(), getFilter())) {
+						filteredList.add(d);
 					}
 				}
 				setFilteredModel(new SerializableListDataModel(filteredList));
@@ -195,120 +214,157 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 			return filteredModel;
 		}
 	}
-	
+
 	private List<Integer> getUserScopes() {
 		List<Integer> scopes = new LinkedList<Integer>();
 		AuthPrincipal principal = AonUtil.getAuthPrincipal();
-		String sessionFactoryName = HibernateUtil.getSessionFactoryName(UserScope.class.getName());
-		String q = "SELECT us FROM UserScope us WHERE us.user = " + principal.getUserId();
-		Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(q);
-		for( Object o : query.list() ) {
-			scopes.add( ((UserScope) o).getScope().getId() );
+		String sessionFactoryName = HibernateUtil
+				.getSessionFactoryName(UserScope.class.getName());
+		String q = "SELECT us FROM UserScope us WHERE us.user = "
+				+ principal.getUserId();
+		Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(
+				q);
+		for (Object o : query.list()) {
+			scopes.add(((UserScope) o).getScope().getId());
 		}
 		HibernateUtil.closeSession(sessionFactoryName, false);
 		return scopes;
 	}
-	
+
 	private Condition getDomainCondition() {
 		Condition condition = DOMAIN.PARENT.eq(getParentDomain());
-		Condition expirationCondition = DOMAIN.EXPIRATIONDATE.isNull().or(DOMAIN.EXPIRATIONDATE.gt(DSL.currentDate()));
+		Condition expirationCondition = DOMAIN.EXPIRATIONDATE.isNull().or(
+				DOMAIN.EXPIRATIONDATE.gt(DSL.currentDate()));
 		condition = condition.and(expirationCondition);
-		if (! isShowInactive() ) {
-			condition = condition.and(DOMAIN.ACTIVE.eq((byte)1));
-		}			
-		if (! isAdminDomain() ) {
+		if (!isShowInactive()) {
+			condition = condition.and(DOMAIN.ACTIVE.eq((byte) 1));
+		}
+		if (!isAdminDomain()) {
 			Condition scopeCondition = DOMAIN.SCOPE.isNull();
 			List<Integer> scopes = getUserScopes();
-			if (! scopes.isEmpty() ) {
+			if (!scopes.isEmpty()) {
 				scopeCondition = scopeCondition.or(DOMAIN.SCOPE.in(scopes));
 			}
 			condition = condition.and(scopeCondition);
 		}
 		return condition;
-	}	
-	
-	private void fillDomainData( AONContext ctx, DomainData data ) {
-		String portalValue = ctx.getDslContext().
-				select(APP_PARAM.VALUE).
-				from(APP_PARAM).
-				where(APP_PARAM.DOMAIN.eq(data.getId()).and(APP_PARAM.NAME.eq(AppParam.AON_PORTAL.getValue()))).
-				fetchOne(0, String.class);
-		if (! StringUtils.isEmpty(portalValue) ) {
-			data.setPortal( NumberUtils.toInt(portalValue) > 0 );
+	}
+
+	private void fillDomainData(AONContext ctx, DomainData data) {
+		String portalValue = ctx
+				.getDslContext()
+				.select(APP_PARAM.VALUE)
+				.from(APP_PARAM)
+				.where(APP_PARAM.DOMAIN.eq(data.getId()).and(
+						APP_PARAM.NAME.eq(AppParam.AON_PORTAL.getValue())))
+				.fetchOne(0, String.class);
+		if (!StringUtils.isEmpty(portalValue)) {
+			data.setPortal(NumberUtils.toInt(portalValue) > 0);
 		}
-		int activeUsers = ctx.getDslContext().
-				selectCount().
-				from(USER).
-				where(USER.DOMAIN.eq(data.getId()).and(USER.ACTIVE.eq((byte)1)).and(USER.ENTERPRISE.isNull())).
-				fetchOne(0, int.class);
+		int activeUsers = ctx
+				.getDslContext()
+				.selectCount()
+				.from(USER)
+				.where(USER.DOMAIN.eq(data.getId())
+						.and(USER.ACTIVE.eq((byte) 1))
+						.and(USER.ENTERPRISE.isNull())).fetchOne(0, int.class);
 		data.setActiveUsers(activeUsers);
-		int aonOneModule  = ctx.getDslContext().
-				selectCount().
-				from(DOMAIN_APPLICATION_MODULE).
-				where(DOMAIN_APPLICATION_MODULE.DOMAIN.eq(data.getId()).and(DOMAIN_APPLICATION_MODULE.MODULE.eq((byte)Module.AON_ONE.ordinal()))).
-				fetchOne(0, int.class);
+		int aonOneModule = ctx
+				.getDslContext()
+				.selectCount()
+				.from(DOMAIN_APPLICATION_MODULE)
+				.where(DOMAIN_APPLICATION_MODULE.DOMAIN.eq(data.getId()).and(
+						DOMAIN_APPLICATION_MODULE.MODULE
+								.eq((byte) Module.AON_ONE.ordinal())))
+				.fetchOne(0, int.class);
 		data.setAonOne(aonOneModule > 0);
+
+		Record2<byte[], Byte> logo = ctx
+				.getDslContext()
+				.select(RATTACH.DATA, RATTACH.MIMETYPE)
+				.from(APP_PARAM)
+				.leftOuterJoin(RATTACH)
+				.on(DSL.cast(APP_PARAM.VALUE, Integer.class).eq(RATTACH.REGISTRY))
+				.where(APP_PARAM.DOMAIN.eq(data.getId())
+						.and(APP_PARAM.NAME.eq(AppParam.AON_CUSTOMIZE_ID
+								.getValue())))
+				.and(RATTACH.DESCRIPTION.eq(ICommonConstants.TOOLBAR_LOGO_NAME))
+				.fetchOne();
+		
+
+		if (logo == null || AonArrayUtils.isEmpty(logo.value1())) {
+			ResourceResolver resolver = new ResourceResolver();
+			data.setLogo(resolver.getResolve().get(TOOLBAR_LOGO_DEFAULT));
+		} else {
+			MimeType mimeType = AonEnumUtils.enumValue(logo.value2(),
+					MimeType.MIME_PNG);
+			data.setLogo(String.format("data:%s;base64,%s", mimeType.getName(),
+					Base64.getEncoder().encodeToString(logo.value1())));
+		}
+
 	}
 
 	private void initializeModel() {
 		List<DomainData> domains = Collections.emptyList();
 		if (getParentDomain() != null) {
-			AONContext ctx = AONContext.getAONContext(getDomainNameURL(), domainId);
-			domains = ctx.getDslContext().
-					select(DOMAIN.ID,DOMAIN.NAME, DOMAIN.DESCRIPTION, DOMAIN.MAXDEFINEDUSERS,DOMAIN.ENABLEHEREDITY).
-					from(DOMAIN).
-					where(getDomainCondition()).
-					orderBy(DOMAIN.DESCRIPTION).
-					fetch().into(DomainData.class);
-			for( DomainData data : domains ) {
+			AONContext ctx = AONContext.getAONContext(getDomainNameURL(),
+					domainId);
+			domains = ctx
+					.getDslContext()
+					.select(DOMAIN.ID, DOMAIN.NAME, DOMAIN.DESCRIPTION,
+							DOMAIN.MAXDEFINEDUSERS, DOMAIN.ENABLEHEREDITY)
+					.from(DOMAIN).where(getDomainCondition())
+					.orderBy(DOMAIN.DESCRIPTION).fetch().into(DomainData.class);
+
+			for (DomainData data : domains) {
 				fillDomainData(ctx, data);
 			}
-			ctx.finalize();			
-		} 
+			ctx.finalize();
+		}
 		setModel(new SerializableListDataModel(domains));
 	}
-	
+
 	public void setModel(DataModel model) {
 		setPage(1);
 		this.model = model;
 	}
-	
+
 	public int getDomainCount() {
 		if (getParentDomain() != null) {
-			AONContext ctx = AONContext.getAONContext(getDomainNameURL(), domainId);
-			int count = ctx.getDslContext().
-					selectCount().
-					from(DOMAIN).
-					where(getDomainCondition()).
-					fetchOne(0, int.class);
+			AONContext ctx = AONContext.getAONContext(getDomainNameURL(),
+					domainId);
+			int count = ctx.getDslContext().selectCount().from(DOMAIN)
+					.where(getDomainCondition()).fetchOne(0, int.class);
 			ctx.finalize();
-			return count;	
+			return count;
 		}
 		return 0;
 	}
-	
-	public void onEditSearch(ActionEvent event){
+
+	public void onEditSearch(ActionEvent event) {
 		setModel(null);
 		setFilter(null);
 		setFilteredModel(null);
 	}
-	
-	public void onUpperDomain(ActionEvent event){
+
+	public void onUpperDomain(ActionEvent event) {
 		select(AonUtil.getAuthPrincipal().getDomainId(), null);
 	}
-	
-	public void select(Integer id, String name){
+
+	public void select(Integer id, String name) {
 		super.setDomainId(id);
 		setDomainName(name);
 		LOGGER.info("Domain swicthed. New domain: '{}' - '{}'", id, name);
 		FacesContext ctx = FacesContext.getCurrentInstance();
 		ExternalContext ec = ctx.getExternalContext();
-		Map<String,Object> map = ec.getSessionMap();
-		for (String key: map.keySet()) {
+		Map<String, Object> map = ec.getSessionMap();
+		for (String key : map.keySet()) {
 			String className = map.get(key).getClass().getName();
 			if (isRemovable(key, className)) {
 				map.remove(key);
-				LOGGER.debug("Element removed from session: [ key: {}, value class: {} ]", key, className);
+				LOGGER.debug(
+						"Element removed from session: [ key: {}, value class: {} ]",
+						key, className);
 			}
 		}
 		this.onEditSearch(null);
@@ -318,69 +374,78 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 	}
 
 	private void assignDomainName(Integer domainId) {
-		String sessionFactoryName = HibernateUtil.getSessionFactoryName(Domain.class.getName());
-		String q = "SELECT d.description FROM domain d"
-				+ " WHERE d.id = " + domainId;
-		SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(q);
-		String name = (String) query
-				.addScalar("description", Hibernate.STRING)
+		String sessionFactoryName = HibernateUtil
+				.getSessionFactoryName(Domain.class.getName());
+		String q = "SELECT d.description FROM domain d" + " WHERE d.id = "
+				+ domainId;
+		SQLQuery query = HibernateUtil.getSession(sessionFactoryName)
+				.createSQLQuery(q);
+		String name = (String) query.addScalar("description", Hibernate.STRING)
 				.uniqueResult();
 		HibernateUtil.closeSession(sessionFactoryName, false);
 		setDomainName(name);
 	}
-	
+
 	private void assignDomainNameURL(Integer domainId) {
-		String sessionFactoryName = HibernateUtil.getSessionFactoryName(Domain.class.getName());
-		String q = "SELECT d.name FROM domain d"
-				+ " WHERE d.id = " + domainId;
-		SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(q);
-		String name = (String) query
-				.addScalar("name", Hibernate.STRING)
+		String sessionFactoryName = HibernateUtil
+				.getSessionFactoryName(Domain.class.getName());
+		String q = "SELECT d.name FROM domain d" + " WHERE d.id = " + domainId;
+		SQLQuery query = HibernateUtil.getSession(sessionFactoryName)
+				.createSQLQuery(q);
+		String name = (String) query.addScalar("name", Hibernate.STRING)
 				.uniqueResult();
 		HibernateUtil.closeSession(sessionFactoryName, false);
 		setDomainNameURL(name);
 	}
 
 	private boolean isRemovable(String key, String className) {
-		return (StringUtils.startsWith(className, "com.code.aon")  
-			&& !StringUtils.startsWith(key, "com.code.aon.audit.") 
-			&& !StringUtils.startsWith(className, "com.code.aon.ui.audit.controller.ApplicationOptionController")
-			&& !StringUtils.startsWith(className, "com.code.aon.ui.resources.bean.ResourceResolver")
-			&& !StringUtils.startsWith(className, "com.code.aon.ui.common.controller.LoggedUser")
-			&& !StringUtils.equals(className, this.getClass().getName()))
-			|| StringUtils.startsWith(className, "com.esferalia.aon")
-			|| StringUtils.endsWith(key, "OptionalListeners");
+		return (StringUtils.startsWith(className, "com.code.aon")
+				&& !StringUtils.startsWith(key, "com.code.aon.audit.")
+				&& !StringUtils
+						.startsWith(className,
+								"com.code.aon.ui.audit.controller.ApplicationOptionController")
+				&& !StringUtils.startsWith(className,
+						"com.code.aon.ui.resources.bean.ResourceResolver")
+				&& !StringUtils.startsWith(className,
+						"com.code.aon.ui.common.controller.LoggedUser") && !StringUtils
+					.equals(className, this.getClass().getName()))
+				|| StringUtils.startsWith(className, "com.esferalia.aon")
+				|| StringUtils.endsWith(key, "OptionalListeners");
 	}
-	
+
 	public DomainType getType() {
 		return DomainType.values()[this.type];
 	}
-	
+
 	public String getDomainURL() throws ManagerBeanException {
-		if ( domainURL == null ) {
+		if (domainURL == null) {
 			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
 			Domain domain = (Domain) bean.get(getDomainId());
-			String path = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
+			String path = FacesContext.getCurrentInstance()
+					.getExternalContext().getRequestContextPath();
 			domainURL = "http://" + domain.getName() + path;
 		}
 		return domainURL;
-	}	
+	}
 
 	public boolean isEnabledGoToParent() {
-		if ( isParentDomainUserInChildDomain() || isAdminDomain() ) {
-			return ! ObjectUtils.equals(getDomainId(), AonUtil.getAuthPrincipal().getDomainId());
+		if (isParentDomainUserInChildDomain() || isAdminDomain()) {
+			return !ObjectUtils.equals(getDomainId(), AonUtil
+					.getAuthPrincipal().getDomainId());
 		}
 		return false;
 	}
-	
+
 	public boolean isAdminDomain() {
-		DomainType type = getDomainType(AonUtil.getAuthPrincipal().getDomainId());
+		DomainType type = getDomainType(AonUtil.getAuthPrincipal()
+				.getDomainId());
 		return type == DomainType.ADMIN;
 	}
 
-	public static DomainType getDomainType( Integer domainId ) {
+	public static DomainType getDomainType(Integer domainId) {
 		String sfn = HibernateUtil.getSessionFactoryName();
-		Query query = HibernateUtil.getSession(sfn).createQuery("SELECT d.type FROM Domain d WHERE d.id = ?");
+		Query query = HibernateUtil.getSession(sfn).createQuery(
+				"SELECT d.type FROM Domain d WHERE d.id = ?");
 		query.setInteger(0, domainId);
 		DomainType type = (DomainType) query.uniqueResult();
 		HibernateUtil.closeSession(sfn, false);
@@ -397,7 +462,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 	}
 
 	public String getCurrentDomainURL() throws ManagerBeanException {
-		if ( getModel().isRowAvailable() ) {
+		if (getModel().isRowAvailable()) {
 			DomainData domainData = (DomainData) getModel().getRowData();
 			String name = IDN.toASCII(domainData.getName());
 			return name;
@@ -413,7 +478,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 		this.showInactive = showInactive;
 	}
 
-	public void onChangeShowInactive( ActionEvent event ) {
+	public void onChangeShowInactive(ActionEvent event) {
 		setModel(null);
 	}
 
@@ -426,5 +491,5 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 	public void setPage(int page) {
 		this.page = page;
 	}
-	
+
 }
