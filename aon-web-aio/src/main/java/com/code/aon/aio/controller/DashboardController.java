@@ -1000,7 +1000,7 @@ public class DashboardController implements Serializable {
 			types= new Vector<DashboardDocs>();
 
 			String domain = AonUtil.getDomainName();
-			Result<Record3<Integer, String,String>> category =  DBConsults.getCategory(domain);
+			Result<Record3<Integer, String,String>> category =  DBConsults.getCategoryAux(domain);
 			sizes();
 			getTypesCatBD2();
 			//Vector<DashboardDocs> vector= new Vector<DashboardDocs>(); 
@@ -1211,11 +1211,32 @@ public class DashboardController implements Serializable {
 		return scopes;
 	}
 	
+	private Integer getDomainId(String domain) throws SQLException {
+		Connection connection = null;
+		Integer id;
+		try {
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection, JooqSettings.getDefaultSettings());
+			
+			id = dslContext.select(DOMAIN.ID).from(DOMAIN)
+					.where(DOMAIN.NAME.eq(domain))
+					.fetchOne(DOMAIN.ID);
+
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+		return id;
+	}
+	
 	private Condition getAttachmentCondition() throws SQLException {
+		String domain = AonUtil.getDomainName();
+		Integer domainId = getDomainId(domain);
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		List<Integer> domains = new LinkedList<Integer>();
 		domains.add(ds.getDomainId());
-		if ( ds.isChildDomain() ) {
+		if ( ds.isChildDomain() && domainId.equals(ds.getDomainId())) {
 			domains.add(ds.getParentDomainId());
 		}
 		Condition condition = RATTACH.DOMAIN.in(domains);

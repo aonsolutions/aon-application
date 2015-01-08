@@ -8,6 +8,8 @@ import gwtupload.client.SingleUploader;
 public class Dialog {
 	String type;
 	String title;
+	String nextButtonName;
+	Boolean isNextButton;
 	String cancelButtonName;
 	Boolean isCancelButton;
 	String acceptButtonName;
@@ -150,6 +152,22 @@ public class Dialog {
 
 	public void setCat(Category cat) {
 		this.cat = cat;
+	}
+
+	public String getNextButtonName() {
+		return nextButtonName;
+	}
+
+	public void setNextButtonName(String nextButtonName) {
+		this.nextButtonName = nextButtonName;
+	}
+
+	public Boolean getIsNextButton() {
+		return isNextButton;
+	}
+
+	public void setIsNextButton(Boolean isNextButton) {
+		this.isNextButton = isNextButton;
 	}
 
 

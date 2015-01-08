@@ -80,15 +80,7 @@ public class DBConsults {
 
 				DSLContext dslContext = DSL.using(connection,
 						JooqSettings.getDefaultSettings());
-				Condition c;
-
-				if(userDomainId!= domainId){
-
-					c=(RATTACH.SCOPE.isNotNull().or(RATTACH.SCOPE.isNull()));
-					
-				}
-				else
-					c = RATTACH.SCOPE.isNull();
+				
 				Byte sh = (byte)RegistryAttachmentType.CORPORATE_IDENTITY.ordinal();//5;
 				//rattach domain + parent domain + scope not null
 				Result<Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer>> username = dslContext
@@ -119,7 +111,7 @@ public class DBConsults {
 										.where(DOMAIN.ID.eq(domainId)))))))
 						.fetch();
 				
-				//rattach scope null + sons domain
+				//rattach scope null 
 				Result<Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer>> result = dslContext
 						.selectDistinct(RATTACH.ID, RATTACH.DESCRIPTION,
 								RATTACH.MIMETYPE, RATTACH.TYPE,
@@ -127,11 +119,21 @@ public class DBConsults {
 						.from(RATTACH)
 						.join(DOMAIN)
 						.on(RATTACH.DOMAIN.eq(DOMAIN.ID))
-						.where(RATTACH.TYPE.eq(sh).and((c.and(RATTACH.DOMAIN.eq(domainId)).or(DOMAIN.PARENT.eq(dslContext.select(DOMAIN.ID)
-										.from(DOMAIN)
-										.where(DOMAIN.ID.eq(domainId)))))))
+						.where(RATTACH.TYPE.eq(sh).and((RATTACH.SCOPE.isNull().and(RATTACH.DOMAIN.eq(domainId)))))
 						.fetch();
 
+				// sons domain
+				Result<Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer>> result2 = dslContext
+						.selectDistinct(RATTACH.ID, RATTACH.DESCRIPTION,
+								RATTACH.MIMETYPE, RATTACH.TYPE,
+								RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.DPARENT_ID,DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION,DOMAIN.PARENT)
+						.from(RATTACH)
+						.join(DOMAIN)
+						.on(RATTACH.DOMAIN.eq(DOMAIN.ID))
+						.where(RATTACH.TYPE.eq(sh).and(DOMAIN.PARENT.eq(dslContext.select(DOMAIN.ID)
+										.from(DOMAIN)
+										.where(DOMAIN.ID.eq(domainId)))))
+						.fetch();
 				
 				for (Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer> record : username) {
 					FileInfo fi = newFileInfo(dslContext,domain,domain2,record);
@@ -163,6 +165,17 @@ public class DBConsults {
 								vaux.add(fi);
 							else if(!fi.getIsParent()) 
 								vaux.add(fi);
+					}
+				}
+				for (Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer> record : result2) {
+					FileInfo fi = newFileInfo(dslContext,domain,domain2,record);
+					
+					if (!fi.getConfidential() || (confidential && fi.getConfidential())){
+						filesGwt.add(fi);
+						if(fi.getDomain().equalsIgnoreCase(domain2) || fi.getIsParent())
+							if(domain.equals(domain2))
+								vaux.add(fi);
+							else if(!fi.getIsParent()) vaux.add(fi);
 					}
 				}
 			//}

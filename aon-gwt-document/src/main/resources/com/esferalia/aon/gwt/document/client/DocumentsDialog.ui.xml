@@ -66,6 +66,7 @@
 		<div class="{style.buttons}">
 			<g:Button ui:field="cancelButton"></g:Button>
 			<g:Button ui:field="acceptButton"></g:Button>
+			<g:Button ui:field="nextButton"></g:Button>
 		</div>
 	
 	</g:HTMLPanel>

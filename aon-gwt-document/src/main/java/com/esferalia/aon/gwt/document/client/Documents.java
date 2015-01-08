@@ -1,12 +1,16 @@
 package com.esferalia.aon.gwt.document.client;
 
+import gwtupload.client.IUploader;
 import gwtupload.client.SingleUploader;
+import gwtupload.client.IUploader.OnCancelUploaderHandler;
 
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
+
+import org.eclipse.jetty.webapp.WebInfConfiguration;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
@@ -242,6 +246,7 @@ public class Documents extends Composite implements EntryPoint {
 			tag = t;
 			if(t.getIsParent()){
 				Dialog d = new Dialog("alert", "Permisos", "Cancelar", false, "Volver", true,false);
+				d.setIsNextButton(false);
 				DocumentsDialog popup2 = new DocumentsDialog(d) {
 					
 					@Override
@@ -252,6 +257,12 @@ public class Documents extends Composite implements EntryPoint {
 					@Override
 					protected void onAccept() {
 						hide();
+					}
+
+					@Override
+					protected void onNext() {
+						// TODO Auto-generated method stub
+						
 					}
 				};
 			
@@ -295,6 +306,7 @@ public class Documents extends Composite implements EntryPoint {
 			category = c;
 			if(c.getIsParent()){
 				Dialog d = new Dialog("alert", "Permisos", "Cancelar", false, "Volver", true,false);
+				d.setIsNextButton(false);
 				DocumentsDialog popup2 = new DocumentsDialog(d) {
 					
 					@Override
@@ -305,6 +317,12 @@ public class Documents extends Composite implements EntryPoint {
 					@Override
 					protected void onAccept() {
 						hide();
+					}
+
+					@Override
+					protected void onNext() {
+						// TODO Auto-generated method stub
+						
 					}
 				};
 			
@@ -940,11 +958,12 @@ public class Documents extends Composite implements EntryPoint {
 		Integer n =dataGrid.getKeyboardSelectedRow();
 		FileInfo fi = dataProvider.getList().get(n);
 		if(!fi.getIsDrive() && !fi.getIsParent() && !isServiconvenios){
-			Dialog d = new Dialog("edit", "Editar Archivo", "Cancelar", true, "Editar", true,son);
+			Dialog d = new Dialog("edit", "Editar Archivo", "Cancelar", true, "Grabar", true,son);
 			d.setLists(lists);
 			d.setFileInfo(fi);
 			d.setUpload(up);
 			d.setBaseUrl(GWT.getModuleBaseURL());
+			d.setIsNextButton(false);
 			popup2 = new DocumentsDialog(d){
 				@Override
 				protected void onAccept() {
@@ -1079,12 +1098,18 @@ public class Documents extends Composite implements EntryPoint {
 					hide();
 					vertical = new VerticalPanel();				
 				}
+				@Override
+				protected void onNext() {
+					// TODO Auto-generated method stub
+					
+				}
 			};
 
 		}
 		else{
 			Dialog d = new Dialog("alert", "Editar Archivo", "Cancelar", false, "Volver", true,son);
 			d.setFileInfo(fi);
+			d.setIsNextButton(false);
 			popup2 = new DocumentsDialog(d) {
 				
 				@Override
@@ -1095,6 +1120,12 @@ public class Documents extends Composite implements EntryPoint {
 				@Override
 				protected void onAccept() {
 					hide();
+				}
+
+				@Override
+				protected void onNext() {
+					// TODO Auto-generated method stub
+					
 				}
 			};
 		}
@@ -1114,7 +1145,7 @@ public class Documents extends Composite implements EntryPoint {
 		if(!fi.getIsParent() && !isServiconvenios){
 		Dialog d = new Dialog("delete", "Borrar Archivo", "Cancelar", true, "Borrar", true,son);
 		d.setFileInfo(fi);
-		
+		d.setIsNextButton(false);
 		popup2 = new DocumentsDialog(d) {
 			
 			@Override
@@ -1177,12 +1208,19 @@ public class Documents extends Composite implements EntryPoint {
 					}
 				} );
 			}
+
+			@Override
+			protected void onNext() {
+				// TODO Auto-generated method stub
+				
+			}
 		};
 
 	}
 		else{
 			Dialog d = new Dialog("alert", "Borrar Archivo", "Cancelar", false, "Volver", true,son);
 			d.setFileInfo(fi);
+			d.setIsNextButton(false);
 			popup2 = new DocumentsDialog(d){
 				@Override
 				protected void onAccept() {
@@ -1191,6 +1229,11 @@ public class Documents extends Composite implements EntryPoint {
 				@Override
 				protected void onCancel() {
 					hide();					
+				}
+				@Override
+				protected void onNext() {
+					// TODO Auto-generated method stub
+					
 				}
 			};
 		}
@@ -1231,10 +1274,12 @@ public class Documents extends Composite implements EntryPoint {
 	
 	FileInfo finsert;
 	DocumentsDialog popup2;
+	SingleUploader upAux;
 	
 	private void newFile(SingleUploader up) {	
 		if(!documentManager){
 			Dialog d = new Dialog("alert","Nuevo Archivo","Cancelar",false,"Volver",true,son);
+			d.setIsNextButton(false);
 			popup2 = new DocumentsDialog(d) {
 				
 				@Override
@@ -1246,6 +1291,12 @@ public class Documents extends Composite implements EntryPoint {
 				protected void onAccept() {
 					hide();
 				}
+
+				@Override
+				protected void onNext() {
+					// TODO Auto-generated method stub
+					
+				}
 			};
 
 		}
@@ -1255,11 +1306,13 @@ public class Documents extends Composite implements EntryPoint {
 		d.setLists(lists);
 		d.setSons(getSons());
 		d.setUpload(up);
+		d.setNextButtonName("Guardar & Continuar");
+		d.setIsNextButton(true);
 		popup2 = new DocumentsDialog(d){ 
+			
 			@Override
 			protected void onAccept() {				
 	//upload.getForm().submit();
-				
 				FileInfo fi = new  FileInfo();
             	// Descripción - Description
             	TextBox tb = (TextBox)grid.getWidget(1, 1);
@@ -1335,15 +1388,15 @@ public class Documents extends Composite implements EntryPoint {
     				}
             	}
             	fi.setTags(tags);
-            	SuggestBox sb = null;
+            	SuggestBox sb = (SuggestBox)grid.getWidget(0, 1);
             	// Dominio - Domain
+            	Window.alert("debug1");
             	if (getSons().size()!=1){
-            		 sb = (SuggestBox)grid.getWidget(0, 1);
-            		if(!esta(sb.getText())){
+            		if(!esta(Utils.getOracleString(sb.getText()))){
             			fi.setDomain("false"); 
             		}
             		else fi.setDomain(Utils.getOracleString(sb.getText()));
-				}
+            	}
             	else fi.setDomain("");
             	finsert= fi;
                 idoc.newFile(fi,new AsyncCallback<Boolean>() {
@@ -1471,13 +1524,277 @@ public class Documents extends Composite implements EntryPoint {
 				hide();
 				vertical = new VerticalPanel();			
 			}
+
+			@Override
+			protected void onNext() {
+				FileInfo fi = new  FileInfo();
+            	// Descripción - Description
+
+            	TextBox tb = (TextBox)grid.getWidget(1, 1);
+            	fi.setTitle(tb.getText());
+            
+
+            	// Confidencial - Confidential
+            	CheckBox cb = (CheckBox)grid.getWidget(3, 1);
+            	fi.setConfidential(cb.getValue());
+            	// Fecha - Date
+            	DateBox db = (DateBox)grid.getWidget(4, 1);
+            	fi.setDate(db.getValue());
+            	// Categoria - Category
+            	String categoryString="";
+            	fi.setCategory(-1);
+            	ListBox lb1 = (ListBox)grid.getWidget(5, 1);
+            	for (Category c : lists.getCategoryList().getList()) {
+            		String s1 = lb1.getItemText(lb1.getSelectedIndex());
+            		if(s1.substring(0, 1).equals(Character.toString((char)9650)))
+            			s1 = s1.substring(1);
+            		
+					if(c.getName().equals(s1)){
+						categoryString = lb1.getItemText(lb1.getSelectedIndex());
+						fi.setCategory(c.getId());
+					}
+				}
+            	for (Category c : lists.getCategoryListSon().getList()) {
+            		String s1 = lb1.getItemText(lb1.getSelectedIndex());
+					if(s1.substring(0, 1).equals(Character.toString((char)9660))){
+						s1= s1.substring(1);
+						if(c.getName().equals(s1)){
+							categoryString = lb1.getItemText(lb1.getSelectedIndex());
+							fi.setCategory(c.getId());
+						}
+					}
+				}
+            	// Ambito - Scope
+            	String scopeString = "";
+            	fi.setScope(new Scope(-1));
+            	ListBox lb3 = (ListBox)grid.getWidget(7, 1);
+            	for (Scope s : lists.getScopeList().getList()) {
+            		String s3 = lb3.getItemText(lb3.getSelectedIndex());
+            		if(s3.substring(0, 1).equals(Character.toString((char)9650)))
+            			s3 = s3.substring(1);
+					if(s.getName().equals(s3)){
+						scopeString = lb3.getItemText(lb3.getSelectedIndex());
+						fi.setScope(s);
+					}
+				}
+            	for (Scope scope : lists.getScopeListSon().getList()) {
+            		String s3 = lb3.getItemText(lb3.getSelectedIndex());
+					if(s3.substring(0, 1).equals(Character.toString((char)9660))){
+						s3= s3.substring(0);
+						if(scope.getName().equals(s3)){
+							scopeString = lb3.getItemText(lb3.getSelectedIndex());
+							fi.setScope(scope);
+						}
+					}
+				}
+            	
+            	// Etiquetas - Tags
+            	Vector<Tag> tags = new Vector<Tag>();
+
+            	VerticalPanel vp = (VerticalPanel)grid.getWidget(6, 1);
+            	Vector<String> tagsString = new Vector<String>();
+            	for(Integer i = 0 ;i<vp.getWidgetCount();i++){
+            		HorizontalPanel hp = (HorizontalPanel)vp.getWidget(i);
+            		ListBox lb = (ListBox)hp.getWidget(0);
+            		for (Tag t : lists.getTagList().getList()) {
+                		String s2 = lb.getItemText(lb.getSelectedIndex());
+                		if(s2.substring(0, 1).equals(Character.toString((char)9650)))
+                			s2 = s2.substring(1);
+						if(t.getName().equals(s2)){
+							tagsString.add(lb.getItemText(lb.getSelectedIndex()));
+			            	tags.add(t);
+						}
+					}
+                	for (Tag t : lists.getTagListSon().getList()) {
+                		String s2 = lb.getItemText(lb.getSelectedIndex());
+    					if(s2.substring(0, 1).equals(Character.toString((char)9660))){
+    						s2= s2.substring(1);
+    						if(t.getName().equals(s2)){
+    							tagsString.add(lb.getItemText(lb.getSelectedIndex()));
+    							tags.add(t);
+    						}
+    					}
+    				}
+            	}
+            	fi.setTags(tags);
+            	SuggestBox sb = null;
+            	// Dominio - Domain
+            	if (getSons().size()!=1){
+            		 sb = (SuggestBox)grid.getWidget(0, 1);
+            		if(!esta(Utils.getOracleString(sb.getText()))){
+            			fi.setDomain("false"); 
+            		}
+            		else fi.setDomain(Utils.getOracleString(sb.getText()));
+				}
+            	else fi.setDomain("");
+            	
+            	final SingleUploader upload = newUploader(null,GWT.getModuleBaseURL());
+                upload.addOnCancelUploadHandler(new OnCancelUploaderHandler() {
+                	
+        			@Override
+        			public void onCancel(IUploader uploader) {
+        				final SingleUploader upload3 = newUploader(null,GWT.getModuleBaseURL()) ;
+        				grid.setWidget(2, 1, upload3);
+        			}
+        		});
+                grid.setWidget(2, 1, upload);
+                
+                final TextBox tb1 = new TextBox();tb1.setStyleName("aon-inputText");
+        		tb1.addChangeHandler(new ChangeHandler() {
+        			@Override
+        			public void onChange(ChangeEvent event) {
+        				tb1.setStyleName("aon-inputText");
+        			}
+        		});
+        		grid.setWidget(1, 1, tb1);
+            	
+        		if(!scopeString.substring(0, 1).equals(Character.toString((char)9660)) 
+        				&& !categoryString.substring(0, 1).equals(Character.toString((char)9660)) 
+        				&& !isSontag(tagsString)){
+        			sb.setText("");
+    				removeFilter(lb3);
+    				removeFilter(lb1);
+                	for(Integer i = 0 ;i<vp.getWidgetCount();i++){
+                		HorizontalPanel hp = (HorizontalPanel)vp.getWidget(i);
+            			ListBox lb = (ListBox)hp.getWidget(0);
+    					removeFilter(lb);
+                	}
+
+        		}
+            	
+            	finsert= fi;
+                idoc.newFile(fi,new AsyncCallback<Boolean>() {
+					
+					@Override
+					public void onSuccess(Boolean result) {
+						if(result){
+							idoc.insertFile(finsert, new AsyncCallback<FileInfo>() {
+
+								@Override
+								public void onFailure(Throwable caught) {}
+								
+								@Override
+								public void onSuccess(FileInfo result) {
+									Vector<FileInfo> aux = new Vector<FileInfo>();
+									for (FileInfo f : docs.getFiles()) {
+										aux.add(f);		
+									}
+									aux.add(result);
+									docs.setFiles(aux);
+									Integer index=0;
+									while(docs.getFilter().get(index).getIsParent()){
+										index++;
+									}
+									if(result.getDomain().equals(docs.getFilter().get(index).getDomain())){
+										aux = new Vector<FileInfo>();
+										for (FileInfo f : docs.getEfiles()) {
+											aux.add(f);		
+										}
+										aux.add(result);
+										docs.setEfiles(aux);
+
+								
+										if(html.isVisible()){
+											Integer i = 0;
+
+											while(i<result.getTags().size() && !html.getText().equals(result.getTags().get(i).getName())){
+												i++;
+											}
+											if(!html.isVisible() || (html.isVisible() && (html.getText().equals(result.getCategoryStr()) || result.getTags().size()>i))){
+												aux= new Vector<FileInfo>();
+												for (FileInfo f : docs.getFilter()) {
+													aux.add(f);
+												}
+												aux.add(result);
+												docs.setFilter(aux);
+												aux= new Vector<FileInfo>();
+												for (FileInfo f : dataProvider.getList()) {
+													aux.add(f);
+												}
+												aux.add(result);
+												dataProvider = new ListDataProvider<FileInfo>(aux);
+												dataProvider.addDataDisplay(dataGrid); 
+												updateDatagridColumns();
+												dataGrid.redraw();
+											}
+										}
+										else{
+											aux= new Vector<FileInfo>();
+											for (FileInfo f : docs.getFilter()) {
+												aux.add(f);
+											}
+											aux.add(result);
+											docs.setFilter(aux);
+											aux= new Vector<FileInfo>();
+											for (FileInfo f : dataProvider.getList()) {
+												aux.add(f);
+											}
+											aux.add(result);
+											dataProvider = new ListDataProvider<FileInfo>(aux);
+											dataProvider.addDataDisplay(dataGrid); 
+											updateDatagridColumns();
+											dataGrid.redraw();
+										}
+									}
+								}
+							});
+							vertical = new VerticalPanel();
+						}
+						else{
+														
+							TextBox tb =(TextBox) grid.getWidget(0, 1);
+							SuggestBox sb =(SuggestBox) grid.getWidget(7, 1);
+							if(tb.getText().equals("")) grid.getWidget(0, 1).addStyleName("dateBoxFormatError");
+							else grid.getWidget(0, 1).setStyleName("aon-inputText");
+							if(!esta(sb.getText())) grid.getWidget(7, 1).addStyleName("dateBoxFormatError");
+							else grid.getWidget(7, 1).setStyleName("aon-inputText");
+							idoc.check(new AsyncCallback<Boolean>() {
+														
+								@Override
+								public void onSuccess(Boolean result) {
+									if(result){
+										final SingleUploader upload2 = newUploader(null,GWT.getModuleBaseURL());
+										upload2.addBitlessDomHandler(new ChangeHandler() {
+											
+											@Override
+											public void onChange(ChangeEvent event) {
+												upload2.removeStyleName("dateBoxFormatError");
+												upload2.addStyleName("aon-inputTextBackground");
+											}
+										},ChangeEvent.getType());
+										
+										upload2.addStyleName("dateBoxFormatError");
+										
+										grid.setWidget(1, 1, upload2);
+									}
+								}
+								
+								@Override
+								public void onFailure(Throwable caught) {}
+							});
+						}
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						
+					}
+				});
+			}
 		};
 		}
 		popup2.setGlassEnabled(true);
 		popup2.show();
 	
 	}
-	
+	private Boolean isSontag(Vector<String> v){
+		for (String string : v) {
+			if(string.substring(0, 1).equals(Character.toString((char)9660))){
+				return true;
+			}
+		}
+		return false;
+	}
 	Lists lists =new Lists();
 	FlexTable grid;
 	HorizontalPanel h2;
@@ -1950,6 +2267,7 @@ public class Documents extends Composite implements EntryPoint {
 		d.setLists(lists);
 		d.setSons(getSons());
 		d.setSearchDomain(searchDomain);
+		d.setIsNextButton(false);
 		popup2 = new DocumentsDialog(d) {
 			
 			@Override
@@ -2120,6 +2438,12 @@ public class Documents extends Composite implements EntryPoint {
 				hide();
 				vertical = new VerticalPanel();
 			}
+
+			@Override
+			protected void onNext() {
+				// TODO Auto-generated method stub
+				
+			}
 		};
 		popup2.setGlassEnabled(true);
 		popup2.show();
@@ -2132,6 +2456,7 @@ public class Documents extends Composite implements EntryPoint {
 		Dialog d = new Dialog("share", "Compartir Archivo", "Cancelar", true,
 				"Compartir", true,son);
 		d.setFileInfo(object);
+		d.setIsNextButton(false);
 		popup2 = new DocumentsDialog(d) {
 			@Override
 			protected void onAccept() {
@@ -2158,6 +2483,12 @@ public class Documents extends Composite implements EntryPoint {
 			protected void onCancel() {
 				hide();
 			}
+
+			@Override
+			protected void onNext() {
+				// TODO Auto-generated method stub
+				
+			}
 		};
 		popup2.setGlassEnabled(true);
 		popup2.show();
@@ -2167,6 +2498,7 @@ public class Documents extends Composite implements EntryPoint {
 		Dialog d = new Dialog("info", "Detalles Archivo", "Cancelar", false,
 				"Salir", true,son);
 		d.setFileInfo(object);
+		d.setIsNextButton(false);
 		popup2 = new DocumentsDialog(d) {
 
 			@Override
@@ -2177,6 +2509,12 @@ public class Documents extends Composite implements EntryPoint {
 			@Override
 			protected void onAccept() {
 				hide();
+			}
+
+			@Override
+			protected void onNext() {
+				// TODO Auto-generated method stub
+				
 			}
 		};
 		popup2.setGlassEnabled(true);
@@ -2497,7 +2835,7 @@ public class Documents extends Composite implements EntryPoint {
 		Dialog d = new Dialog("upload", "Subir Archivo", "Cancelar", true,
 				"Subir", true,son);
 		d.setBaseUrl(GWT.getModuleBaseURL());
-
+		d.setIsNextButton(false);
 		popup2 = new DocumentsDialog(d){ 
 			@Override
 			protected void onAccept() {
@@ -2519,6 +2857,11 @@ public class Documents extends Composite implements EntryPoint {
 			@Override
 			protected void onCancel() {
 				hide();
+			}
+			@Override
+			protected void onNext() {
+				// TODO Auto-generated method stub
+				
 			}
 		
 		};
@@ -2873,6 +3216,7 @@ public class Documents extends Composite implements EntryPoint {
 	 private void editTag(Tag tag) {
 		 Dialog d = new Dialog("edit2", "Editar Etiqueta", "Cancelar", true, "Editar", true,false);
 		 d.setTag(tag);
+		 d.setIsNextButton(false);
 		 oldName = tag.getName();
 		 DocumentsDialog popup = new DocumentsDialog(d) {
 			
@@ -2975,6 +3319,12 @@ public class Documents extends Composite implements EntryPoint {
 						public void onFailure(Throwable caught) {}
 					});
 			}
+
+			@Override
+			protected void onNext() {
+				// TODO Auto-generated method stub
+				
+			}
 		};
 		popup.setGlassEnabled(true);
 		popup.show();
@@ -2983,6 +3333,7 @@ public class Documents extends Composite implements EntryPoint {
 	 private void removeTag(Tag tag) {
 		 Dialog d = new Dialog("delete2", "Borrar Etiqueta", "Cancelar", true, "Borrar", true,false);
 		 d.setTag(tag);
+		 d.setIsNextButton(false);
 		 oldName = tag.getName();
 
 		 DocumentsDialog popup = new DocumentsDialog(d) {
@@ -3072,6 +3423,12 @@ public class Documents extends Composite implements EntryPoint {
 						public void onFailure(Throwable caught) {}
 				});
 			}
+
+			@Override
+			protected void onNext() {
+				// TODO Auto-generated method stub
+				
+			}
 		};
 		popup.setGlassEnabled(true);
 		popup.show();
@@ -3083,6 +3440,7 @@ public class Documents extends Composite implements EntryPoint {
 		
 		 Dialog d = new Dialog("edit2", "Editar Categor�a", "Cancelar", true, "Editar", true,false);
 		 d.setCat(category);
+		 d.setIsNextButton(false);
 		 oldName = category.getName();
 		 DocumentsDialog popup = new DocumentsDialog(d) {
 			
@@ -3122,6 +3480,12 @@ public class Documents extends Composite implements EntryPoint {
 						public void onFailure(Throwable caught) {}
 					});
 			}
+
+			@Override
+			protected void onNext() {
+				// TODO Auto-generated method stub
+				
+			}
 		};
 		popup.setGlassEnabled(true);
 		popup.show();
@@ -3131,6 +3495,7 @@ public class Documents extends Composite implements EntryPoint {
 		 catList = lists.getCategoryList().getList();
 		 Dialog d = new Dialog("delete2", "Borrar Etiqueta", "Cancelar", true, "Borrar", true,false);
 		 d.setCat(category);
+		 d.setIsNextButton(false);
 		 oldName = category.getName();
 
 		 DocumentsDialog popup = new DocumentsDialog(d) {
@@ -3188,6 +3553,12 @@ public class Documents extends Composite implements EntryPoint {
 						@Override
 						public void onFailure(Throwable caught) {}
 					});
+			}
+
+			@Override
+			protected void onNext() {
+				// TODO Auto-generated method stub
+				
 			}
 		};
 		popup.setGlassEnabled(true);

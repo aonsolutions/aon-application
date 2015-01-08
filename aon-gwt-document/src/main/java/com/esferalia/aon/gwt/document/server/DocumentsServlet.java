@@ -375,15 +375,13 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		else
 			conf = 0;
 		fileInfo.setSecurityLevel(conf);
-		String dom;
-		if (fi.getDomain().equals("")){
-			dom = domain;
-			fi.setDomain(domain);
+		if (!fi.getDomain().equals("")){
+			domain = fi.getDomain();
 		}
-		else
-			dom = fi.getDomain();
+		
+			
 		try {
-			//Integer domainId = DBConsults.getDomainId(domain, dom);
+			Integer domainId = DBConsults.getDomainId(domain, domain);
 			fileInfo.setDomainId(domainId);
 			fileInfo.setSize((Integer) getSize());
 			Integer id = DBConsults.insertFile(domain, fileInfo);

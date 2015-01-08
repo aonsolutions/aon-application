@@ -73,9 +73,12 @@ public abstract class DocumentsDialog extends CustomDialog {
 	Label label;
 	@UiField Button acceptButton;
 	@UiField Button cancelButton;
+	@UiField Button nextButton;
 	Tag tag;
 	Category cat;
 	String n;
+	Boolean son1;
+	String domainSon;
 	public DocumentsDialog(Dialog dialog) {
 		tree();
 		if(dialog.getTag() != null){tag = dialog.getTag();n=tag.getName();}
@@ -85,9 +88,10 @@ public abstract class DocumentsDialog extends CustomDialog {
 		setCaption(dialog.getTitle());
 		label = new Label();
 		grid = new FlexTable();
+		son1 = dialog.getSon();
 		gridBuild(dialog);
 		setWidget(binder.createAndBindUi(this));
-
+		
 		acceptButton.setFocus(true);
 		acceptButton.setText(dialog.getAcceptButtonName());
 		acceptButton.setVisible(dialog.getIsAcceptButton());
@@ -110,12 +114,25 @@ public abstract class DocumentsDialog extends CustomDialog {
 			}
 		});
 
+		if(dialog.getIsNextButton()) nextButton.setText(dialog.getNextButtonName());
+		else nextButton.setText("");
+		nextButton.setVisible(dialog.getIsNextButton());
+
+		nextButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onNext();
+				
+			}
+		});
 	}
 	
 	protected abstract void onAccept();
 	
 	protected abstract void onCancel();
 
+	protected abstract void onNext();
+	
 	private void gridBuild(Dialog dialog) {
 		switch (dialog.getType()) {
 			case "new": newFile(dialog);break;
@@ -177,11 +194,11 @@ public abstract class DocumentsDialog extends CustomDialog {
 				lb3.addItem(Character.toString((char)9660)+s.getName());
 			else lb3.addItem(s.getName());
 		}
-		if(dialog.getSon()){
+		/*if(dialog.getSon()){
 			for(Scope s : lists2.getScopeListSon().getList()){
 				lb3.addItem(Character.toString((char)9660)+s.getName());
 			}
-		}
+		}*/
 		for (Tag t : lists2.getTagList().getList()) {
 			if(t.getIsParent())
 				lb2.addItem(Character.toString((char)9650)+t.getName());
@@ -204,7 +221,8 @@ public abstract class DocumentsDialog extends CustomDialog {
 			@Override
 			public void onCancel(IUploader uploader) {
 				final SingleUploader upload3 = newUploader(null,url) ;
-				grid.setWidget(1, 1, upload3);
+					grid.setWidget(2, 1, upload3);
+
 			}
 		});
 		
@@ -220,50 +238,44 @@ public abstract class DocumentsDialog extends CustomDialog {
 			public void onSelection(
 					SelectionEvent<SuggestOracle.Suggestion> event) {
 				String s = event.getSelectedItem().getDisplayString();
-				Integer pos1 = s.indexOf('>');
-				Integer pos2 = s.indexOf('/')-1;
-				String s2 = s.substring(pos2);
-				Integer pos3 = s2.indexOf('>');
-				String string = s.substring(pos1+1,pos2)+s2.substring(pos3+1);
+				String string2 = Utils.getOracleString(s);
+				domainSon = string2;
+				son1=true;
+				ListBox auxlb = (ListBox) grid.getWidget(5, 1);
+				removeFilter(auxlb);
 				for (Category c : lists2.getCategoryListSon().getList()) {
-					if(c.getDomain().equals(string)){
-						ListBox lb = (ListBox) grid.getWidget(5, 1);
-						lb.addItem(Character.toString((char)9660)+c.getName());
-						grid.setWidget(5, 1, lb);
+					if(c.getDomain().equals(string2)){
+						auxlb.addItem(Character.toString((char)9660)+c.getName());
+						grid.setWidget(5, 1, auxlb);
 					}
 				}
+				VerticalPanel v = (VerticalPanel) grid.getWidget(6, 1);
+				HorizontalPanel h = (HorizontalPanel) v.getWidget(0);
+				ListBox auxlb2 = (ListBox) h.getWidget(0);
+				removeFilter(auxlb2);
 				for (Tag t : lists2.getTagListSon().getList()) {
-					if(t.getDomain().equals(string)){
-					
-						if (bool) {
-							ListBox lb = (ListBox) grid.getWidget(6, 1);
-							lb.addItem(Character.toString((char)9660)+t.getName());
-							grid.setWidget(6, 1, lb);
-						} else {
-							VerticalPanel v = (VerticalPanel) grid.getWidget(6, 1);
-							HorizontalPanel h = (HorizontalPanel) v.getWidget(0);
-							ListBox lb = (ListBox) h.getWidget(0);
-							lb.addItem(Character.toString((char)9660)+t.getName());
-								
-							h2 = new HorizontalPanel();
-							vertical = new VerticalPanel();
-							h2.add(lb);
-							vertical.add(h2);
-							grid.setWidget(6, 1, vertical);
-						}					
+					if(t.getDomain().equals(string2)){
+						auxlb2.addItem(Character.toString((char)9660)+t.getName());
+						
+						h2 = new HorizontalPanel();
+						vertical = new VerticalPanel();
+						h2.add(auxlb2);
+						vertical.add(h2);
+						grid.setWidget(6, 1, vertical);	
 					}
 				}
+				ListBox auxlb3 = (ListBox) grid.getWidget(7, 1);
+				removeFilter(auxlb3);
 				for (Scope scope : lists2.getScopeListSon().getList()) {
-
-					if(scope.getDomain().equals(string)){
-						ListBox lb = (ListBox) grid.getWidget(7, 1);
-						lb.addItem(Character.toString((char)9660)+scope.getName());
-						grid.setWidget(7, 1, lb);
+					if(scope.getDomain().equals(string2)){
+						auxlb3.addItem(Character.toString((char)9660)+scope.getName());
+						grid.setWidget(7, 1, auxlb3);
 					}
 				}
 			}
 			
 		});
+		
 		tb0.setStyleName("aon-inputText");
 		grid.setWidget(0, 0, new Label("Empresa"));
 		grid.setWidget(0, 1, tb0);
@@ -382,6 +394,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 	
 	private void editFile(Dialog dialog) {
 		url = dialog.getBaseUrl();
+		domainSon = dialog.getFileInfo().getDomain();
 		FileInfo fi = dialog.getFileInfo();
 		ListBox lb1 = new ListBox();
 		lb1.addItem("-");
@@ -396,9 +409,11 @@ public abstract class DocumentsDialog extends CustomDialog {
 				lb3.addItem(Character.toString((char)9660)+s.getName());
 			else lb3.addItem(s.getName());
 		}
+		
 		if(dialog.getSon()){
 			for(Scope s : lists2.getScopeListSon().getList()){
-				lb3.addItem(Character.toString((char)9660)+s.getName());
+				if(s.getDomain().equals(dialog.getFileInfo().getDomain()))
+					lb3.addItem(Character.toString((char)9660)+s.getName());
 			}
 		}
 		for (Tag t : lists2.getTagList().getList()) {
@@ -408,12 +423,24 @@ public abstract class DocumentsDialog extends CustomDialog {
 				lb2.addItem(Character.toString((char)9660)+t.getName());
 			else lb2.addItem(t.getName());
 		}
+		if(dialog.getSon()){
+			for(Tag t : lists2.getTagListSon().getList()){
+				if(t.getDomain().equals(dialog.getFileInfo().getDomain()))
+					lb2.addItem(Character.toString((char)9660)+t.getName());
+			}
+		}
 		for (Category c : lists2.getCategoryList().getList()) {
 			if(c.getIsParent())
 				lb1.addItem(Character.toString((char)9650)+c.getName());
 			else if(c.getIsSon())
 				lb1.addItem(Character.toString((char)9660)+c.getName());
 			else lb1.addItem(c.getName());
+		}
+		if(dialog.getSon()){
+			for(Category c : lists2.getCategoryListSon().getList()){
+				if(c.getDomain().equals(dialog.getFileInfo().getDomain()))
+					lb1.addItem(Character.toString((char)9660)+c.getName());
+			}
 		}
 		lb2.addChangeHandler(OneHandler2());
 		final SingleUploader upload = newUploader(dialog.getUpload(),dialog.getBaseUrl());
@@ -611,6 +638,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 	
 	Boolean bool;
 	private void searchFile(Dialog dialog) {
+		domainSon = dialog.getSearchDomain();
 		ListBox lb1 = new ListBox();
 		lb1.addItem("-");
 		ListBox lb2 = new ListBox();
@@ -676,6 +704,8 @@ public abstract class DocumentsDialog extends CustomDialog {
 				Integer pos3 = s2.indexOf('>');
 				String string = s.substring(pos1+1,pos2)+s2.substring(pos3+1);*/
 				String string2 = Utils.getOracleString(s);
+				domainSon = string2;
+				son1 = true;
 				ListBox auxlb = (ListBox) grid.getWidget(4, 1);
 				removeFilter(auxlb);
 				for (Category c : lists2.getCategoryListSon().getList()) {
@@ -905,6 +935,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 						s = lb.getValue(i);
 					}
 				}
+				
 				if(h2.getWidgetCount() == 1){
 					Button mas = new Button("");
 					mas.setStyleName("aon-finding-toolbar-item aon-search-add");
@@ -920,7 +951,6 @@ public abstract class DocumentsDialog extends CustomDialog {
 
 	}
 	
-	
 	public ChangeHandler OneHandler2(){
 		ChangeHandler ch = new ChangeHandler() {
 			
@@ -933,6 +963,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 						s = lb.getValue(i);
 					}
 				}
+				
 				if(h2.getWidgetCount() == 1){
 					Button mas = new Button("");
 					mas.setStyleName("aon-finding-toolbar-item aon-search-add");
@@ -966,7 +997,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 					bMas.setStyleName("aon-finding-toolbar-item aon-search-add");
 					bMas.addClickHandler(masHandler());
 					
-					if(vertical.getWidgetCount()<lists2.getTagList().getLength()){
+					if(vertical.getWidgetCount()<lb.getItemCount()-1){//lists2.getTagList().getLength()){
 						h2.add(bMas);
 					}
 				}
@@ -997,7 +1028,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 					bMas.setStyleName("aon-finding-toolbar-item aon-search-add");
 					bMas.addClickHandler(masHandler2());
 					
-					if(vertical.getWidgetCount()<lists2.getTagList().getLength()){
+					if(vertical.getWidgetCount()<lb.getItemCount()-1){//lists2.getTagList().getLength()){
 						h2.add(bMas);
 					}
 				}
@@ -1018,7 +1049,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 			public void onClick(ClickEvent event) {
 				ListBox lb2 = new ListBox();
 				
-				lb2.addChangeHandler(TwoHandler());
+				
 				
 				lb2.addItem("-");
 				
@@ -1029,6 +1060,16 @@ public abstract class DocumentsDialog extends CustomDialog {
 						lb2.addItem(Character.toString((char)9660)+t.getName());
 					else lb2.addItem(t.getName());
 				}
+				
+				//TODO				
+				if(son1){
+					for(Tag t : lists2.getTagListSon().getList()){
+						if(t.getDomain().equals(domainSon)){
+							lb2.addItem(Character.toString((char)9660)+t.getName());
+						}
+					}
+				}
+				lb2.addChangeHandler(TwoHandler());
 				ListBox AndOr = new ListBox();
 				AndOr.addItem("Y");
 				AndOr.addItem("O");
@@ -1084,8 +1125,17 @@ public abstract class DocumentsDialog extends CustomDialog {
 					else lb2.addItem(t.getName());
 				}
 				
+				//TODO
+				if(son1){
+					for(Tag t : lists2.getTagListSon().getList()){
+						if(t.getDomain().equals(domainSon))
+							lb2.addItem(Character.toString((char)9660)+t.getName());
+					}
+				}
+				lb2.addChangeHandler(TwoHandler2());
 				h2 = new HorizontalPanel();
 				h2.add(lb2);
+				
 				
 				Button bMenos = new Button();
 				bMenos.setStyleName("aon-finding-toolbar-item aon-search-minus");
@@ -1345,7 +1395,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 		}
 	}
 
-	private void removeFilter(ListBox lb){
+	protected void removeFilter(ListBox lb){
 		for (int i = lb.getItemCount()-1 ; i>=0 ; i--) {	
 			if(lb.getItemText(i).substring(0, 1).equals(Character.toString((char)9660))){
 				lb.removeItem(i);

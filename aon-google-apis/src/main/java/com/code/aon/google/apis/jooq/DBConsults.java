@@ -98,6 +98,35 @@ public class DBConsults {
 		}
 
 	}
+	
+	public static Result<Record3<Integer, String, String>> getCategoryAux(
+			String domain) throws AonConnectionException, SQLException {
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+
+			Result<Record3<Integer, String, String>> category = dslContext
+					.select(CATEGORY.ID, CATEGORY.NAME, CATEGORY.DESCRIPTION)
+					.from(CATEGORY)
+					.join(DOMAIN)
+					.on(CATEGORY.DOMAIN.eq(DOMAIN.ID))
+					.where(DOMAIN.NAME
+							.eq(domain)
+							.or(DOMAIN.ID.in(dslContext.select(DOMAIN.PARENT)
+									.from(DOMAIN).where(DOMAIN.NAME.eq(domain)))))
+					.fetch();
+
+			return category;
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+
+	}
 
 	public static Result<Record1<String>> getCategoryName(int id, String domain)
 			throws AonConnectionException, SQLException {
