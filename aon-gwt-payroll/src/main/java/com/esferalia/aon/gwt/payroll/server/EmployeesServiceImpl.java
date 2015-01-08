@@ -259,11 +259,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			Integer userID = getUserID();
 			int registryIDs[] = getEnterpriseIDs();
 			conn = getConnection();
-			Enterprise enterprises[] = new Enterprise[registryIDs.length];
+			ArrayList<Enterprise> enterprises = new ArrayList<Enterprise>();
 			for (int i = 0; i < registryIDs.length; i++) {
-				enterprises[i] = getEnterprise(registryIDs[i], userID, conn);
+				Enterprise enterprise = getEnterprise(registryIDs[i], userID, conn);
+				if ( enterprise != null ) {
+					enterprises.add(enterprise);
+				}
 			}
-			return enterprises;
+			return enterprises.toArray(new Enterprise[enterprises.size()]);
 
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -2623,6 +2626,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			groups(rs, enterpriseHandler, workplaceHandler);
 
 			Enterprise enterprise = enterpriseHandler.getEnterprise();
+			
+			if ( enterprise == null ) 
+				return null;
 
 			List<Activity> activities = getEnterpriseActivities(connection,
 					enterprise.getId());
