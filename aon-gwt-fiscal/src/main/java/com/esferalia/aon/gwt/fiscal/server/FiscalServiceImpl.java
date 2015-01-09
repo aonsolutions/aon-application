@@ -15,12 +15,6 @@ import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.gwt.common.sql.SQLUtils;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.server.Activities.Type1Activities;
-import com.esferalia.aon.gwt.fiscal.server.Activities.Type2Activities;
-import com.esferalia.aon.gwt.fiscal.server.Activities.Type3Activities;
-import com.esferalia.aon.gwt.fiscal.server.Activities.Type4Activities;
-import com.esferalia.aon.gwt.fiscal.server.Activities.Type7Activities;
-import com.esferalia.aon.gwt.fiscal.server.Activities.TypeActivity;
 import com.esferalia.aon.gwt.fiscal.shared.Enterprise;
 import com.esferalia.aon.gwt.fiscal.sql.SQLEnterprise;
 import com.esferalia.aon.occam.api.AON;
@@ -31,6 +25,12 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
+import com.esferalia.aon.occam.api.model.type.Activities.Type1Activities;
+import com.esferalia.aon.occam.api.model.type.Activities.Type2Activities;
+import com.esferalia.aon.occam.api.model.type.Activities.Type3Activities;
+import com.esferalia.aon.occam.api.model.type.Activities.Type4Activities;
+import com.esferalia.aon.occam.api.model.type.Activities.Type7Activities;
+import com.esferalia.aon.occam.api.model.type.Activities.TypeActivity;
 
 /**
  * The server side implementation of the RPC service.

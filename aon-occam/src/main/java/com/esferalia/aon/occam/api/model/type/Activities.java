@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.server;
+package com.esferalia.aon.occam.api.model.type;
 
 public interface Activities  {
 

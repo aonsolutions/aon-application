@@ -6,12 +6,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.DataModel;
 import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.AonVersion;
@@ -25,12 +28,21 @@ import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
 import com.code.aon.fiscal.enumeration.Mod303Key;
+import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.mod303.IMod303Declaration;
 import com.code.aon.fiscal.mod303.Mod303;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.fiscal.aeat.AeatUtils;
 import com.code.aon.ui.fiscal.controller.model.FiscalModelController;
 import com.code.aon.ui.fiscal.file.MOD303Writer;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
+import com.esferalia.aon.occam.api.model.type.Activities.Type1Activities;
+import com.esferalia.aon.occam.api.model.type.Activities.Type2Activities;
+import com.esferalia.aon.occam.api.model.type.Activities.Type3Activities;
+import com.esferalia.aon.occam.api.model.type.Activities.Type4Activities;
+import com.esferalia.aon.occam.api.model.type.Activities.Type7Activities;
+import com.esferalia.aon.occam.api.model.type.Activities.TypeActivity;
 
 public class Mod303Controller extends FiscalModelController {
 	
@@ -39,9 +51,13 @@ public class Mod303Controller extends FiscalModelController {
 	private boolean payBack;
 	private boolean modulesPanelVisible;
 	private boolean farmerPanelVisible;
-	
+	private boolean epigraphPanelVisible;
+
+	private int activityGroupSelected;
 	private Mod303Key selectedKey;
 	private LinkedList<Mod303Key> moduleKeys;
+	private DataModel epigraphModel;
+	
 	 
 	public boolean isModulesPanelVisible() {
 		return modulesPanelVisible;
@@ -61,6 +77,13 @@ public class Mod303Controller extends FiscalModelController {
 			this.modulesPanelVisible = false;
 		}
 	}
+	public boolean isExtraTabVisible() {
+		return (!isNevv() 
+				&& getDeclaration() != null 
+				&& getDeclaration().getHeader() != null 
+				&& getDeclaration().getHeader().getYear() >= 2014		
+				&& getDeclaration().getHeader().getPeriod() == Period.T4);
+	}
 	
 	public Mod303Key getSelectedKey() {
 		return selectedKey;
@@ -69,7 +92,19 @@ public class Mod303Controller extends FiscalModelController {
 	public void setSelectedKey(Mod303Key selectedKey) {
 		this.selectedKey = selectedKey;
 	}
-
+	public boolean isEpigraphPanelVisible() {
+		return epigraphPanelVisible;
+	}
+	public void setEpigraphPanelVisible(boolean epigraphPanelVisible) {
+		this.epigraphPanelVisible = epigraphPanelVisible;
+	}
+	public int getActivityGroupSelected() {
+		return activityGroupSelected;
+	}
+	public void setActivityGroupSelected(int activityGroupSelected) {
+		this.activityGroupSelected = activityGroupSelected;
+	}
+	
 	@Override
 	protected FiscalModelType getModelType() {
 		return 	FiscalModelType.M303;
@@ -85,7 +120,93 @@ public class Mod303Controller extends FiscalModelController {
 	public boolean isDifEnabled() {
 		return false;
 	}
+	public void onShowEpigraphPanel(ActionEvent event) {
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		String key = ctx.getExternalContext().getRequestParameterMap().get("key");
+		Mod303Key m303key = Mod303Key.valueOf(key); 
+		setSelectedKey(m303key);
+		setEpigraphPanelVisible(true);
+	}
+	public DataModel getEpigraphModel() {
+		if (epigraphModel == null) {
+			List<TypeActivity> list = Arrays.asList(Type1Activities.values()); 
+			epigraphModel = new SerializableListDataModel(list);
+		}
+		return epigraphModel;
+	}
+	public void onDeleteEpigraph(ActionEvent event) {
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		String k = ctx.getExternalContext().getRequestParameterMap().get("key");
+		Mod303Key m303key = Mod303Key.valueOf(k);
+		Mod303Key key = null;
+		Mod303Key epigraph = null;
+		Mod303Key description = null;
+		if (m303key == Mod303Key.IAC_01) {
+			key = Mod303Key.IAC_01;
+			epigraph = Mod303Key.IAE_01;
+			description = Mod303Key.IAD_01;
+		} else if (m303key == Mod303Key.IAC_02) {
+			key = Mod303Key.IAC_02;
+			epigraph = Mod303Key.IAE_02;
+			description = Mod303Key.IAD_02;
+		} else if (m303key == Mod303Key.IAC_03) {
+			key = Mod303Key.IAC_03;
+			epigraph = Mod303Key.IAE_03;
+			description = Mod303Key.IAD_03;
+		} else if (m303key == Mod303Key.IAC_04) {
+			key = Mod303Key.IAC_04;
+			epigraph = Mod303Key.IAE_04;
+			description = Mod303Key.IAD_04;
+		} else if (m303key == Mod303Key.IAC_05) {
+			key = Mod303Key.IAC_05;
+			epigraph = Mod303Key.IAE_05;
+			description = Mod303Key.IAD_05;
+		} else if (m303key == Mod303Key.IAC_06) {
+			key = Mod303Key.IAC_06;
+			epigraph = Mod303Key.IAE_06;
+			description = Mod303Key.IAD_06;
+		}
+		getDeclaration().getMap().get( key ).setDescription( null );
+		getDeclaration().getMap().get( epigraph).setDescription( null );
+		getDeclaration().getMap().get( description ).setDescription( null );
+		onHideEpigraphPanel(event);
+	}
 	
+	public void onSelectEpigraph(ActionEvent event) {
+		TypeActivity activity = (TypeActivity) getEpigraphModel().getRowData();
+		Mod303Key key = null;
+		Mod303Key epigraph = null;
+		Mod303Key description = null;
+		if (getSelectedKey() == Mod303Key.IAC_01) {
+			key = Mod303Key.IAC_01;
+			epigraph = Mod303Key.IAE_01;
+			description = Mod303Key.IAD_01;
+		} else if (getSelectedKey() == Mod303Key.IAC_02) {
+			key = Mod303Key.IAC_02;
+			epigraph = Mod303Key.IAE_02;
+			description = Mod303Key.IAD_02;
+		} else if (getSelectedKey() == Mod303Key.IAC_03) {
+			key = Mod303Key.IAC_03;
+			epigraph = Mod303Key.IAE_03;
+			description = Mod303Key.IAD_03;
+		} else if (getSelectedKey() == Mod303Key.IAC_04) {
+			key = Mod303Key.IAC_04;
+			epigraph = Mod303Key.IAE_04;
+			description = Mod303Key.IAD_04;
+		} else if (getSelectedKey() == Mod303Key.IAC_05) {
+			key = Mod303Key.IAC_05;
+			epigraph = Mod303Key.IAE_05;
+			description = Mod303Key.IAD_05;
+		} else if (getSelectedKey() == Mod303Key.IAC_06) {
+			key = Mod303Key.IAC_06;
+			epigraph = Mod303Key.IAE_06;
+			description = Mod303Key.IAD_06;
+		}
+		getDeclaration().getMap().get( key ).setDescription( "1" );
+		getDeclaration().getMap().get( epigraph).setDescription( activity.getEpigraph() );
+		getDeclaration().getMap().get( description ).setDescription( activity.getLiteral() );
+		onHideEpigraphPanel(event);
+	}
 	public void onShowActivities(ActionEvent event) {
 		onRecalculate(event);
 		FacesContext ctx = FacesContext.getCurrentInstance();
@@ -110,6 +231,10 @@ public class Mod303Controller extends FiscalModelController {
 		return detail.getDescription();
 	}
 	
+	public void onHideEpigraphPanel(ActionEvent event) {
+		setEpigraphPanelVisible(false);
+	}
+
 	public void onHideActivityPanel(ActionEvent event) {
 		setModulesPanelVisible(false);
 		setFarmerPanelVisible(false);
@@ -125,6 +250,14 @@ public class Mod303Controller extends FiscalModelController {
 		}
 	}
 	
+	public void onChangeExtraInfo(ActionEvent event) {
+		try {
+			getDeclaration().calculate();
+		} catch (Throwable e) {
+			AonUtil.addErrorMessage(e.getMessage()); 
+			throw new AbortProcessingException(e.getMessage(),e);
+		}
+	}
 	public void onChangeZD(ActionEvent event) {
 		try {
 			getDeclaration().calculate();
@@ -260,6 +393,86 @@ public class Mod303Controller extends FiscalModelController {
 	public FiscalModelDetail getModV5() { return getSelectedDetail("V5"); }
 	
 	
+	
+	public FiscalModelDetail getDetailC59()   { return getDeclaration().getMap().get(Mod303Key.C59); }
+	public Mod303Key getKeyC59()   { return Mod303Key.C59; }
+	public FiscalModelDetail getDetailC60()   { return getDeclaration().getMap().get(Mod303Key.C60); }
+	public Mod303Key getKeyC60()   { return Mod303Key.C60; }
+	public FiscalModelDetail getDetailC61()   { return getDeclaration().getMap().get(Mod303Key.C61); }
+	public Mod303Key getKeyC61()   { return Mod303Key.C61; }
+	public FiscalModelDetail getDetailC62()   { return getDeclaration().getMap().get(Mod303Key.C62); }
+	public Mod303Key getKeyC62()   { return Mod303Key.C62; }
+	public FiscalModelDetail getDetailC63()   { return getDeclaration().getMap().get(Mod303Key.C63); }
+	public Mod303Key getKeyC63()   { return Mod303Key.C63; }
+	public FiscalModelDetail getDetailC74()   { return getDeclaration().getMap().get(Mod303Key.C74); }
+	public Mod303Key getKeyC74()   { return Mod303Key.C74; }
+	public FiscalModelDetail getDetailC75()   { return getDeclaration().getMap().get(Mod303Key.C75); }
+	public Mod303Key getKeyC75()   { return Mod303Key.C75; }
+	
+	public FiscalModelDetail getDetailIAC_01()   { return getDeclaration().getMap().get(Mod303Key.IAC_01); }
+	public Mod303Key getKeyIAC_01()   { return Mod303Key.IAC_01; }
+	public FiscalModelDetail getDetailIAE_01()   { return getDeclaration().getMap().get(Mod303Key.IAE_01); }
+	public Mod303Key getKeyIAE_01()   { return Mod303Key.IAE_01; }
+	public FiscalModelDetail getDetailIAD_01()   { return getDeclaration().getMap().get(Mod303Key.IAD_01); }
+	public Mod303Key getKeyIAD_01()   { return Mod303Key.IAD_01; }
+	
+	
+	public FiscalModelDetail getDetailIAC_02()   { return getDeclaration().getMap().get(Mod303Key.IAC_02); }
+	public Mod303Key getKeyIAC_02()   { return Mod303Key.IAC_02; }
+	public FiscalModelDetail getDetailIAE_02()   { return getDeclaration().getMap().get(Mod303Key.IAE_02); }
+	public Mod303Key getKeyIAE_02()   { return Mod303Key.IAE_02; }
+	public FiscalModelDetail getDetailIAD_02()   { return getDeclaration().getMap().get(Mod303Key.IAD_02); }
+	public Mod303Key getKeyIAD_02()   { return Mod303Key.IAD_02; }
+	
+	public FiscalModelDetail getDetailIAC_03()   { return getDeclaration().getMap().get(Mod303Key.IAC_03); }
+	public Mod303Key getKeyIAC_03()   { return Mod303Key.IAC_03; }
+	public FiscalModelDetail getDetailIAE_03()   { return getDeclaration().getMap().get(Mod303Key.IAE_03); }
+	public Mod303Key getKeyIAE_03()   { return Mod303Key.IAE_03; }
+	public FiscalModelDetail getDetailIAD_03()   { return getDeclaration().getMap().get(Mod303Key.IAD_03); }
+	public Mod303Key getKeyIAD_03()   { return Mod303Key.IAD_03; }
+	
+	public FiscalModelDetail getDetailIAC_04()   { return getDeclaration().getMap().get(Mod303Key.IAC_04); }
+	public Mod303Key getKeyIAC_04()   { return Mod303Key.IAC_04; }
+	public FiscalModelDetail getDetailIAE_04()   { return getDeclaration().getMap().get(Mod303Key.IAE_04); }
+	public Mod303Key getKeyIAE_04()   { return Mod303Key.IAE_04; }
+	public FiscalModelDetail getDetailIAD_04()   { return getDeclaration().getMap().get(Mod303Key.IAD_04); }
+	public Mod303Key getKeyIAD_04()   { return Mod303Key.IAD_04; }
+	
+	public FiscalModelDetail getDetailIAC_05()   { return getDeclaration().getMap().get(Mod303Key.IAC_05); }
+	public Mod303Key getKeyIAC_05()   { return Mod303Key.IAC_05; }
+	public FiscalModelDetail getDetailIAE_05()   { return getDeclaration().getMap().get(Mod303Key.IAE_05); }
+	public Mod303Key getKeyIAE_05()   { return Mod303Key.IAE_05; }
+	public FiscalModelDetail getDetailIAD_05()   { return getDeclaration().getMap().get(Mod303Key.IAD_05); }
+	public Mod303Key getKeyIAD_05()   { return Mod303Key.IAD_05; }
+	
+	public FiscalModelDetail getDetailIAC_06()   { return getDeclaration().getMap().get(Mod303Key.IAC_06); }
+	public Mod303Key getKeyIAC_06()   { return Mod303Key.IAC_06; }
+	public FiscalModelDetail getDetailIAE_06()   { return getDeclaration().getMap().get(Mod303Key.IAE_06); }
+	public Mod303Key getKeyIAE_06()   { return Mod303Key.IAE_06; }
+	public FiscalModelDetail getDetailIAD_06()   { return getDeclaration().getMap().get(Mod303Key.IAD_06); }
+	public Mod303Key getKeyIAD_06()   { return Mod303Key.IAD_06; }
+	
+	public FiscalModelDetail getDetailD()   { return getDeclaration().getMap().get(Mod303Key.D); }
+	public Mod303Key getKeyD()   { return Mod303Key.D; }
+	public FiscalModelDetail getDetailC80()   { return getDeclaration().getMap().get(Mod303Key.C80); }
+	public Mod303Key getKeyC80()   { return Mod303Key.C80; }
+	public FiscalModelDetail getDetailC81()   { return getDeclaration().getMap().get(Mod303Key.C81); }
+	public Mod303Key getKeyC81()   { return Mod303Key.C81; }
+	public FiscalModelDetail getDetailC82()   { return getDeclaration().getMap().get(Mod303Key.C82); }
+	public Mod303Key getKeyC82()   { return Mod303Key.C82; }
+	public FiscalModelDetail getDetailC83()   { return getDeclaration().getMap().get(Mod303Key.C83); }
+	public Mod303Key getKeyC83()   { return Mod303Key.C83; }
+	public FiscalModelDetail getDetailC84()   { return getDeclaration().getMap().get(Mod303Key.C84); }
+	public Mod303Key getKeyC84()   { return Mod303Key.C84; }
+	public FiscalModelDetail getDetailC85()   { return getDeclaration().getMap().get(Mod303Key.C85); }
+	public Mod303Key getKeyC85()   { return Mod303Key.C85; }
+	public FiscalModelDetail getDetailC86()   { return getDeclaration().getMap().get(Mod303Key.C86); }
+	public Mod303Key getKeyC86()   { return Mod303Key.C86; }
+	public FiscalModelDetail getDetailC87()   { return getDeclaration().getMap().get(Mod303Key.C87); }
+	public Mod303Key getKeyC87()   { return Mod303Key.C87; }
+	public FiscalModelDetail getDetailC88()   { return getDeclaration().getMap().get(Mod303Key.C88); }
+	public Mod303Key getKeyC88()   { return Mod303Key.C88; }
+
 	private FiscalModelDetail getSelectedDetail(String suffix) {
 		String keyValue = getSelectedKey().toString() + "_" + suffix; 
 		Mod303Key key = Mod303Key.valueOf(keyValue);  
@@ -344,11 +557,37 @@ public class Mod303Controller extends FiscalModelController {
 	
 	public boolean isAeatOfficialReportEnabled() {
 		return super.isAeatOfficialReportEnabled();
-		//return false;
 	}
 	public boolean isAeatDraftReportEnabled() {
 		return super.isAeatDraftReportEnabled();
-		//return false;
 	}
 	
+	public ArrayList<Activity> getActivities(int activityGroup) {
+		try {
+			ArrayList<Activity> list = new ArrayList<Activity>();
+			TypeActivity[] types = null;
+			if (activityGroup == 0) {
+				types = Type1Activities.values();
+			} if (activityGroup == 1) {
+				types = Type2Activities.values();
+			} if (activityGroup == 2) {
+				types = Type3Activities.values();
+			} if (activityGroup == 3) {
+				types = Type4Activities.values();
+			} if (activityGroup == 6) {
+				types = Type7Activities.values();
+			}
+			Activity a;
+			for (TypeActivity type : types) {
+				a = new Activity();
+				a.setEpigraph(type.getEpigraph());
+				a.setDescription(type.getLiteral());
+				list.add(a);
+			}
+			return list;
+		} catch (Throwable e) {
+			AonUtil.addErrorMessage(e.getMessage()); 
+			throw new AbortProcessingException(e.getMessage(),e);
+		}
+	}
 }

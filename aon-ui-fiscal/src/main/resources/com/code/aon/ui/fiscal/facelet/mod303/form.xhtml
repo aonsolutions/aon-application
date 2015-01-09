@@ -16,6 +16,16 @@
 			<ui:param name="quarterPeriods" value="#{true}" />
 			<ui:param name="skipDetail" value="#{false}" />
 			
+			<ui:define name="afterTab">
+				<aon:if test="#{controller.extraTabVisible}">
+					<aon:panelTab id="extraTab" label="#{bundle.fiscal_model_347_extra_info}">
+						<ui:include src="/com/code/aon/ui/fiscal/facelet/mod303/extraInfo.xhtml" >
+							<ui:param name="controller" value="#{controller}" />
+						</ui:include>
+					</aon:panelTab>
+				</aon:if>
+			</ui:define>	
+			
 			<ui:define name="afterAll">
 				<aon:div id="activityContainer">
 					<aon:if test="#{controller.modulesPanelVisible}">
@@ -91,6 +101,61 @@
 						</rich:modalPanel>
 					</aon:if>
 				</aon:div>
+				
+				<aon:div id="epigraphContainer">
+					<aon:if test="#{controller.epigraphPanelVisible}">
+						<rich:modalPanel id="epigraphPanel" minHeight="450" minWidth="700"
+							showWhenRendered="#{controller.epigraphPanelVisible}" zindex="90">
+							<f:facet name="header">
+								<aon:div styleClass="aon-popupWindow-title">
+									<aon:outputText value="&#160;" />
+								</aon:div>
+							</f:facet>
+							<f:facet name="controls">
+								<aon:form id="finalizeEpigraphPanelCloseForm">
+									<aon:commandButton type="button"
+										styleClass="aon-popupWindow-close"
+										actionListener="#{controller.onHideEpigraphPanel}"
+										immediate="true">
+										<aon:actionHotKey key="esc" />
+									</aon:commandButton>
+								</aon:form>
+							</f:facet>
+							<aon:div styleClass="aon-popupWindow-content">
+								<aon:div style="height: 400px; overflow:auto;">
+									<aon:form id="finalizeEpigraphForm">
+										<aon:methodParam name="rowSelectorActionListener" value="#{controller.onSelectEpigraph}" type="actionListener"/>
+										<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+											<ui:param name="controller" value="#{controller}" />
+											<ui:param name="dataTableId" value="epigraphTable" />
+											<ui:param name="dataModel" value="#{controller.epigraphModel}" />
+											<ui:param name="rows" value="0" />
+											<ui:param name="showDataScroller" value="false" />
+											
+											<ui:define name="columns">
+												<aon:column styleClass="aon-editDataTable-TextColumn aon-width-150">
+													<f:facet name="header">
+														<aon:outputText value="&#160;" />
+													</f:facet>
+													<aon:outputText value="#{to.epigraph}" />
+												</aon:column>
+				
+												<aon:column styleClass="aon-editDataTable-TextColumn aon-width-auto}">
+													<f:facet name="header">
+														<aon:outputText value="&#160;" />
+													</f:facet>
+													<aon:outputText value="#{to.literal}" />
+												</aon:column>
+											</ui:define>
+										</ui:decorate>
+										
+									</aon:form>
+								</aon:div>
+							</aon:div>
+						</rich:modalPanel>
+					</aon:if>
+				</aon:div>
+				
 			</ui:define>
 		</ui:decorate>
 

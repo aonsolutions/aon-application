@@ -416,6 +416,17 @@ public class Aeat2014Mod303Calculator extends FiscalModelDetailCalculator implem
 		double c70 = mod303.getDetail( Mod303Key.C70 ).getAmount();
 		double c71 = CommonUtil.round(c69 - c70);
 		mod303.getDetail( Mod303Key.C71 ).setAmount( c71 );
+		
+		double c80 = mod303.getDetail( Mod303Key.C80 ).getAmount();
+		double c81 = mod303.getDetail( Mod303Key.C81 ).getAmount();
+		double c82 = mod303.getDetail( Mod303Key.C82 ).getAmount();
+		double c83 = mod303.getDetail( Mod303Key.C83 ).getAmount();
+		double c84 = mod303.getDetail( Mod303Key.C84 ).getAmount();
+		double c85 = mod303.getDetail( Mod303Key.C85 ).getAmount();
+		double c86 = mod303.getDetail( Mod303Key.C86 ).getAmount();
+		double c87 = mod303.getDetail( Mod303Key.C87 ).getAmount();
+		double c88 = CommonUtil.round(c80 + c81 + c82 + c83 + c84 + c85 + c86 - c87);
+		mod303.getDetail( Mod303Key.C88 ).setAmount( c88 );
 	}
 
 	@Override

@@ -72,6 +72,7 @@ color:#000;
 .aon-text-justify 	{ text-align:justify; }
 
 .aon-nowrap	{white-space:nowrap;}
+.aon-wrap	{white-space:normal !important;}
 
 .aon-bold 			{ font-weight:bold; }
 .aon-normal 		{ font-weight:normal; }

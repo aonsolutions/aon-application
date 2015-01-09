@@ -66,7 +66,7 @@ public class Mod303 implements IFiscalDeclaration, IMod303Declaration, Serializa
 		Period period = fiscalModel.getPeriod();
 		boolean cacAdded = false;
 		for (Mod303Key key : Mod303Key.values()) {
-			if (key.getParentKey() == null && key.accept(admin,period)) {
+			if (key.accept(admin,period) && (key.getParentKey() == null || key.getParentKey() == Mod303Key.PBK)) {
 				if (key == Mod303Key.CAC1 
 				 || key == Mod303Key.CAC2
 				 || key == Mod303Key.CAC3
@@ -179,7 +179,28 @@ public class Mod303 implements IFiscalDeclaration, IMod303Declaration, Serializa
 							  || vatDetail.getKey() == VatTaxKey.D3) {
 								g = g + vatDetail.getQuotaAccumulated(); 
 							}
-							
+							if (vatDetail.getKey() == VatTaxKey.EI || vatDetail.getKey() == VatTaxKey.PS) { 
+								ensureDetail(Mod303Key.C59).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
+								ensureDetail(Mod303Key.C82).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
+							}
+							if (vatDetail.getKey() == VatTaxKey.EX1 || vatDetail.getKey() == VatTaxKey.EX2) {
+								ensureDetail(Mod303Key.C60).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
+								ensureDetail(Mod303Key.C82).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
+							}
+							if (vatDetail.getKey() == VatTaxKey.XO) {
+								ensureDetail(Mod303Key.C62).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
+								ensureDetail(Mod303Key.C63).addAccumulatedAmount(vatDetail.getQuotaAccumulated());
+							}
+							if (vatDetail.getKey() == VatTaxKey.XI) {
+								ensureDetail(Mod303Key.C74).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
+								ensureDetail(Mod303Key.C75).addAccumulatedAmount(vatDetail.getQuotaAccumulated());
+							}
+							if (vatDetail.getKey() == VatTaxKey.OS) {
+								ensureDetail(Mod303Key.C83).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
+							}
+							if (vatDetail.getKey() == VatTaxKey.A1) {
+								ensureDetail(Mod303Key.C86).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
+							}
 						}
 						g = CommonUtil.round(g + (c * 1 / 100));
 						detail = getDetail(Mod303Key.getKeyWithValue(Mod303Key.ACTIVITIES_PREFIX + ac + "G") );
@@ -450,27 +471,13 @@ public class Mod303 implements IFiscalDeclaration, IMod303Declaration, Serializa
 		if (keysModel == null) {
 			keysModel = new LinkedList<Mod303Key>();
 			for (Mod303Key key : getMap().keySet()) {
-				if (key.getParentKey() == null
-						|| !isLastPeriod() && (key == Mod303Key.CAC1_F
-						|| key == Mod303Key.CAC2_F
-						|| key == Mod303Key.CAC3_F
-						|| key == Mod303Key.CAC4_F)
-					|| isLastPeriod() && (key == Mod303Key.CAC1_M
-						|| key == Mod303Key.CAC2_M
-						|| key == Mod303Key.CAC3_M
-						|| key == Mod303Key.CAC4_M)
-					|| !isLastPeriod() && (key == Mod303Key.CAG1_V5
-						|| key == Mod303Key.CAG2_V5
-						|| key == Mod303Key.CAG3_V5
-						|| key == Mod303Key.CAG4_V5)
-					|| isLastPeriod() && (key == Mod303Key.CAG1_V7
-						|| key == Mod303Key.CAG2_V7
-						|| key == Mod303Key.CAG3_V7
-						|| key == Mod303Key.CAG4_V7)
+				if ((key.getParentKey() == null)
+					|| (!isLastPeriod() && (key == Mod303Key.CAC1_F || key == Mod303Key.CAC2_F || key == Mod303Key.CAC3_F || key == Mod303Key.CAC4_F))
+					|| (isLastPeriod() && (key == Mod303Key.CAC1_M || key == Mod303Key.CAC2_M || key == Mod303Key.CAC3_M || key == Mod303Key.CAC4_M))
+					|| (!isLastPeriod() && (key == Mod303Key.CAG1_V5 || key == Mod303Key.CAG2_V5 || key == Mod303Key.CAG3_V5 || key == Mod303Key.CAG4_V5))
+					|| (isLastPeriod() && (key == Mod303Key.CAG1_V7 || key == Mod303Key.CAG2_V7 || key == Mod303Key.CAG3_V7 || key == Mod303Key.CAG4_V7))
 					) {
 						keysModel.add(key);	
-//					if (key != Mod303Key.PBK) {
-//					}
 				}
 			}
 		}
