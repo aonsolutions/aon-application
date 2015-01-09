@@ -4253,7 +4253,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	private static void eval(int agreementId, Set<Level> levels,
-			SalaryTable salaryTable, Date start, Date end, int... domainIds) {
+			SalaryTable salaryTable, Date start, Date end, Integer... domainIds) {
 		// try to resolve some variables. Here we go.
 		Connection conn = null;
 		try {
