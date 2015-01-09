@@ -88,7 +88,7 @@ public class SimplifiedRegime {
 	private double regularizacion;
 	private double totalDeducible;
 	private double result;
-
+	
 	public int getAgr1Code() {
 		return agr1Code;
 	}
@@ -587,6 +587,4 @@ public class SimplifiedRegime {
 	public void setResult(double result) {
 		this.result = result;
 	}
-	
-	
 }

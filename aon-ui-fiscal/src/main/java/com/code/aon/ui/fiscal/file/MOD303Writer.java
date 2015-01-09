@@ -500,6 +500,50 @@ public class MOD303Writer {
 		sr.setRegularizacion(mod303.getEnsuredAmount(Mod303Key.C56));
 		sr.setTotalDeducible(mod303.getEnsuredAmount(Mod303Key.C57));
 		sr.setResult(mod303.getEnsuredAmount(Mod303Key.C58));
+		
+		declaration.setIntracommunitaryDeliveries(mod303.getEnsuredAmount(Mod303Key.C59));
+		declaration.setExportationTotal(mod303.getEnsuredAmount(Mod303Key.C60));
+		declaration.setNonTaxableTotal(mod303.getEnsuredAmount(Mod303Key.C61));
+		declaration.setVatAccrualOutputBase(mod303.getEnsuredAmount(Mod303Key.C62));
+		declaration.setVatAccrualOutputQuota(mod303.getEnsuredAmount(Mod303Key.C63));
+		declaration.setVatAccrualInputBase(mod303.getEnsuredAmount(Mod303Key.C74));
+		declaration.setVatAccrualInputQuota(mod303.getEnsuredAmount(Mod303Key.C75));
+		
+		if ( mod303.getEnsuredAmount(Mod303Key.D) == 0) {
+			declaration.setMod347(" ");	
+		} else {
+			declaration.setMod347("X");
+		}
+		String k1 = mod303.ensureDetail(Mod303Key.IAC_01).getDescription();
+		declaration.setIae1Key(StringUtils.isBlank(k1)?0:Integer.parseInt(k1) );
+		String k2 = mod303.ensureDetail(Mod303Key.IAC_02).getDescription();
+		declaration.setIae2Key(StringUtils.isBlank(k2)?0:Integer.parseInt(k2) );
+		String k3 = mod303.ensureDetail(Mod303Key.IAC_03).getDescription();
+		declaration.setIae3Key(StringUtils.isBlank(k3)?0:Integer.parseInt(k3) );
+		String k4 = mod303.ensureDetail(Mod303Key.IAC_04).getDescription();
+		declaration.setIae4Key(StringUtils.isBlank(k4)?0:Integer.parseInt(k4) );
+		String k5 = mod303.ensureDetail(Mod303Key.IAC_05).getDescription();
+		declaration.setIae5Key(StringUtils.isBlank(k5)?0:Integer.parseInt(k5) );
+		String k6 = mod303.ensureDetail(Mod303Key.IAC_06).getDescription();
+		declaration.setIae6Key(StringUtils.isBlank(k6)?0:Integer.parseInt(k6) );
+		
+		declaration.setIae1Epigraph(mod303.ensureDetail(Mod303Key.IAE_01).getDescription());
+		declaration.setIae2Epigraph(mod303.ensureDetail(Mod303Key.IAE_02).getDescription());
+		declaration.setIae3Epigraph(mod303.ensureDetail(Mod303Key.IAE_03).getDescription());
+		declaration.setIae4Epigraph(mod303.ensureDetail(Mod303Key.IAE_04).getDescription());
+		declaration.setIae5Epigraph(mod303.ensureDetail(Mod303Key.IAE_05).getDescription());
+		declaration.setIae6Epigraph(mod303.ensureDetail(Mod303Key.IAE_06).getDescription());
+		
+		declaration.setC80(mod303.getEnsuredAmount(Mod303Key.C80));
+		declaration.setC81(mod303.getEnsuredAmount(Mod303Key.C81));
+		declaration.setC82(mod303.getEnsuredAmount(Mod303Key.C82));
+		declaration.setC83(mod303.getEnsuredAmount(Mod303Key.C83));
+		declaration.setC84(mod303.getEnsuredAmount(Mod303Key.C84));
+		declaration.setC85(mod303.getEnsuredAmount(Mod303Key.C85));
+		declaration.setC86(mod303.getEnsuredAmount(Mod303Key.C86));
+		declaration.setC87(mod303.getEnsuredAmount(Mod303Key.C87));
+		declaration.setC88(mod303.getEnsuredAmount(Mod303Key.C88));
+		
 	}
 	
 	private double ensureEpigraph(double epi) {

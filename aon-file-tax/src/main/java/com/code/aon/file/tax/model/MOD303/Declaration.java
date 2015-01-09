@@ -85,6 +85,30 @@ public class Declaration {
 	private double presIntraServices;
 	private double difference;
 	
+	private int iae1Key;
+	private String iae1Epigraph;
+	private int iae2Key;
+	private String iae2Epigraph;
+	private int iae3Key;
+	private String iae3Epigraph;
+	private int iae4Key;
+	private String iae4Epigraph;
+	private int iae5Key;
+	private String iae5Epigraph;
+	private int iae6Key;
+	private String iae6Epigraph;
+	
+	private String mod347;
+	
+	private double c80;
+	private double c81;
+	private double c82;
+	private double c83;
+	private double c84;
+	private double c85;
+	private double c86;
+	private double c87;
+	private double c88;
 
 	private GeneralRegime generalRegime;
 	private SimplifiedRegime simplifiedRegime;
@@ -670,6 +694,139 @@ public class Declaration {
 		return vector;
 	}
 	
+	public int getIae1Key() {
+		return iae1Key;
+	}
+	public void setIae1Key(int iae1Key) {
+		this.iae1Key = iae1Key;
+	}
+	public String getIae1Epigraph() {
+		return iae1Epigraph;
+	}
+	public void setIae1Epigraph(String iae1Epigraph) {
+		this.iae1Epigraph = iae1Epigraph;
+	}
+	public int getIae2Key() {
+		return iae2Key;
+	}
+	public void setIae2Key(int iae2Key) {
+		this.iae2Key = iae2Key;
+	}
+	public String getIae2Epigraph() {
+		return iae2Epigraph;
+	}
+	public void setIae2Epigraph(String iae2Epigraph) {
+		this.iae2Epigraph = iae2Epigraph;
+	}
+	public int getIae3Key() {
+		return iae3Key;
+	}
+	public void setIae3Key(int iae3Key) {
+		this.iae3Key = iae3Key;
+	}
+	public String getIae3Epigraph() {
+		return iae3Epigraph;
+	}
+	public void setIae3Epigraph(String iae3Epigraph) {
+		this.iae3Epigraph = iae3Epigraph;
+	}
+	public int getIae4Key() {
+		return iae4Key;
+	}
+	public void setIae4Key(int iae4Key) {
+		this.iae4Key = iae4Key;
+	}
+	public String getIae4Epigraph() {
+		return iae4Epigraph;
+	}
+	public void setIae4Epigraph(String iae4Epigraph) {
+		this.iae4Epigraph = iae4Epigraph;
+	}
+	public int getIae5Key() {
+		return iae5Key;
+	}
+	public void setIae5Key(int iae5Key) {
+		this.iae5Key = iae5Key;
+	}
+	public String getIae5Epigraph() {
+		return iae5Epigraph;
+	}
+	public void setIae5Epigraph(String iae5Epigraph) {
+		this.iae5Epigraph = iae5Epigraph;
+	}
+	public int getIae6Key() {
+		return iae6Key;
+	}
+	public void setIae6Key(int iae6Key) {
+		this.iae6Key = iae6Key;
+	}
+	public String getIae6Epigraph() {
+		return iae6Epigraph;
+	}
+	public void setIae6Epigraph(String iae6Epigraph) {
+		this.iae6Epigraph = iae6Epigraph;
+	}
+	public String getMod347() {
+		return mod347;
+	}
+	public void setMod347(String mod347) {
+		this.mod347 = mod347;
+	}
+	public double getC80() {
+		return c80;
+	}
+	public void setC80(double c80) {
+		this.c80 = c80;
+	}
+	public double getC81() {
+		return c81;
+	}
+	public void setC81(double c81) {
+		this.c81 = c81;
+	}
+	public double getC82() {
+		return c82;
+	}
+	public void setC82(double c82) {
+		this.c82 = c82;
+	}
+	public double getC83() {
+		return c83;
+	}
+	public void setC83(double c83) {
+		this.c83 = c83;
+	}
+	public double getC84() {
+		return c84;
+	}
+	public void setC84(double c84) {
+		this.c84 = c84;
+	}
+	public double getC85() {
+		return c85;
+	}
+	public void setC85(double c85) {
+		this.c85 = c85;
+	}
+	public double getC86() {
+		return c86;
+	}
+	public void setC86(double c86) {
+		this.c86 = c86;
+	}
+	public double getC87() {
+		return c87;
+	}
+	public void setC87(double c87) {
+		this.c87 = c87;
+	}
+	public double getC88() {
+		return c88;
+	}
+	public void setC88(double c88) {
+		this.c88 = c88;
+	}
+
 	public void changeInvalidCharacters() {
 		setPeriod(FileTaxUtil.changeInvalidCharacters(getPeriod()));
 		setBankName(FileTaxUtil.changeInvalidCharacters(getBankName()));
