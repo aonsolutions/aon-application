@@ -879,6 +879,50 @@
                       <require>mysql-connector-java</require>
                       <require>slf4j</require>
                       <require>urw-fonts</require>
+
+                      <require>cairo</require>
+                      <require>libGL</require>
+                      <require>libGLU</require>
+                      <require>libreoffice4.3</require>
+                      <require>libreoffice4.3-ure</require>
+                      <require>libobasis4.3-base</require>
+                      <require>libobasis4.3-calc</require>
+                      <require>libobasis4.3-core01</require>
+                      <require>libobasis4.3-core02</require>
+                      <require>libobasis4.3-core03</require>
+                      <require>libobasis4.3-core04</require>
+                      <require>libobasis4.3-core05</require>
+                      <require>libobasis4.3-core06</require>
+                      <require>libobasis4.3-core07</require>
+                      <require>libobasis4.3-draw</require>
+                      <require>libobasis4.3-en-US</require>
+                      <require>libobasis4.3-en-US-base</require>
+                      <require>libobasis4.3-en-US-calc</require>
+                      <require>libobasis4.3-en-US-math</require>
+                      <require>libobasis4.3-en-US-res</require>
+                      <require>libobasis4.3-en-US-writer</require>
+                      <require>libobasis4.3-extension-beanshell-script-provider</require>
+                      <require>libobasis4.3-extension-javascript-script-provider</require>
+                      <require>libobasis4.3-extension-mediawiki-publisher</require>
+                      <require>libobasis4.3-extension-nlpsolver</require>
+                      <require>libobasis4.3-extension-pdf-import</require>
+                      <require>libobasis4.3-extension-report-builder</require>
+                      <require>libobasis4.3-filter-data</require>
+                      <require>libobasis4.3-graphicfilter</require>
+                      <require>libobasis4.3-images</require>
+                      <require>libobasis4.3-impress</require>
+                      <require>libobasis4.3-kde-integration</require>
+                      <require>libobasis4.3-math</require>
+                      <require>libobasis4.3-ogltrans</require>
+                      <require>libobasis4.3-onlineupdate</require>
+                      <require>libobasis4.3-ooofonts</require>
+                      <require>libobasis4.3-ooolinguistic</require>
+                      <require>libobasis4.3-postgresql-sdbc</require>
+                      <require>libobasis4.3-python-script-provider</require>
+                      <require>libobasis4.3-pyuno</require>
+                      <require>libobasis4.3-writer</require>
+                      <require>libobasis4.3-xsltfilter</require>
+
                     </requires>
                     <mappings>
                       <mapping>
