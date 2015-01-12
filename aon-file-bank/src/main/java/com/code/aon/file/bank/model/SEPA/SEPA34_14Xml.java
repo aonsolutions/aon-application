@@ -56,7 +56,7 @@ public class SEPA34_14Xml extends BasicSEPAXml {
 		addValue(name, master.getOrderer().getName(), 70);
 		initiatingParty.appendChild(name);
 	
-		addOrganisationIdentification(initiatingParty, master.getCompanyId(), null);
+		addOrganisationIdentification(initiatingParty, master.getCompanyId(), null, null, null);
 	}	
 
 	private void addPaymentInformation( Element customerDirectDebitInitiation ) {
@@ -99,8 +99,9 @@ public class SEPA34_14Xml extends BasicSEPAXml {
 		addPaymentIdentification(creditTransferTransactionInformation, detail.getReceiver().getReferenceCode());
 		addPaymentTypeInformation(creditTransferTransactionInformation, detail.getCategoryPurposeCode());
 		addAmount(creditTransferTransactionInformation, detail.getAmount());
+		addChargeBearer(creditTransferTransactionInformation, FOLLOWING_SERVICE_LEVEL);
 		addCreditorAgent(creditTransferTransactionInformation, detail.getAccount());
-		addCreditor(creditTransferTransactionInformation, detail.getReceiver());
+		addCreditor(creditTransferTransactionInformation, detail.getReceiver(), true);
 		addCreditorAccount(creditTransferTransactionInformation, detail.getAccount());
 	}	
 	

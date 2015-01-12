@@ -51,7 +51,7 @@ public class SEPA19_14CoreXml extends BasicSEPAXml {
 		addValue(name, lot.getPresenter().getName(), 70);
 		initiatingParty.appendChild(name);
 	
-		addPrivateIdentification(initiatingParty, lot.getOrderer().getId(), null, null);
+		addOrganisationIdentification(initiatingParty, lot.getOrderer().getId(), null, getLocalInstrumentCode(), null );
 	}
 	
 	private void addGroupHeader( Element customerDirectDebitInitiation ) {
@@ -97,6 +97,10 @@ public class SEPA19_14CoreXml extends BasicSEPAXml {
 		addDebtorAccount(directDebitTransactionInformation, individual.getAccount(), null);
 	}
 	
+	private String getLocalInstrumentCode() {
+		return cor1 ? LOCAL_INSTRUMENT_CODE_COR1_VALUE : LOCAL_INSTRUMENT_CODE_CORE_VALUE;
+	}
+	
 	private void addPaymentInformation( Element customerDirectDebitInitiation ) {
 		Element paymentInformation = createElement(PAYMENT_INFORMATION);
 		customerDirectDebitInitiation.appendChild(paymentInformation);		
@@ -109,14 +113,13 @@ public class SEPA19_14CoreXml extends BasicSEPAXml {
 		addValue(paymentMethod, PAYMENT_METHOD_DD_VALUE);
 		paymentInformation.appendChild(paymentMethod);		
 
-		String licValue = cor1 ? LOCAL_INSTRUMENT_CODE_COR1_VALUE : LOCAL_INSTRUMENT_CODE_CORE_VALUE;
-		addPaymentTypeInformation(paymentInformation, licValue, SEQUENCE_TYPE_RCUR_VALUE);
+		addPaymentTypeInformation(paymentInformation, getLocalInstrumentCode(), SEQUENCE_TYPE_RCUR_VALUE);
 		
 		Element requestedCollectionDate = createElement(REQUEST_COLLECTION_DATE);
 		addISODate(requestedCollectionDate, lot.getPresenter().getMakeDate());
 		paymentInformation.appendChild(requestedCollectionDate);				
 		
-		addCreditor(paymentInformation, lot.getOrderer());
+		addCreditor(paymentInformation, lot.getOrderer(), false);
 		addCreditorAccount(paymentInformation, lot.getPresenter().getAccount());
 		addCreditorAgent(paymentInformation, lot.getPresenter().getAccount());
 		addChargeBearer(paymentInformation, FOLLOWING_SERVICE_LEVEL);

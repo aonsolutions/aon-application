@@ -18,7 +18,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.CharUtils;
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -28,7 +29,20 @@ import com.code.aon.file.format.model.Fd0Exception;
 import com.code.aon.file.format.model.FileFiller;
 
 public abstract class BasicSEPAXml implements FileFiller, ISEPAConstants {
+	
+	private static final char[] VALID_CHARS = new char[] {
+		'/', '-', '?', ':', '(', ')', '.', ',', '\'', '+', ' ', '&', '<', '>', '"' };
 
+	private static final char[] REPLACEABLE_CHARS = new char[] {
+		'\u00C1', '\u00C9', '\u00CD', '\u00D3', '\u00DA', '\u00E1', '\u00E9', '\u00ED', '\u00F3', '\u00FA',
+		'\u00C4', '\u00CB', '\u00CF', '\u00D6', '\u00DC', '\u00E4', '\u00EB', '\u00EF', '\u00F6', '\u00FC',
+		'\u00D1', '\u00F1', '\u00C7', '\u00E7' };
+
+	private static final String[] REPLACEMENT_STRINGS = new String[] {
+		"A", "E", "I", "O", "U", "a", "e", "i", "o", "u",
+		"A", "E", "I", "O", "U", "a", "e", "i", "o", "u",
+		"N", "n", "C", "c" };
+	
 	private Document document;
 	
 	private File file;
@@ -60,7 +74,7 @@ public abstract class BasicSEPAXml implements FileFiller, ISEPAConstants {
 		Transformer transformer = transformerFactory.newTransformer();
 		DOMSource source = new DOMSource(document);
 		StreamResult result = new StreamResult(this.file);
- 		transformer.transform(source, result);				
+ 		transformer.transform(source, result);
 	}
 	
     protected void addRawValue( Element element, String value ) {
@@ -69,14 +83,36 @@ public abstract class BasicSEPAXml implements FileFiller, ISEPAConstants {
     
 	protected void addValue( Element element, String value, int maxLength ) {
 		if (! StringUtils.isEmpty(value) ) {
-			String _value = StringEscapeUtils.escapeXml(value);
+			String _value = getText(value);
 			addRawValue(element, StringUtils.substring(_value, 0, maxLength));
 		}
 	}
+	
+	private boolean isValidChar( char c ) {
+		return CharUtils.isAsciiAlphanumeric(c) || ArrayUtils.contains(VALID_CHARS, c);
+	}
+	
+	private String getText( String text ) {
+		StringBuffer sb = new StringBuffer();
+		for( int i = 0; i < text.length(); i++ ) {
+			char c = text.charAt(i);
+			if ( isValidChar(c) ) {
+				sb.append(c);
+			} else {
+				int n = ArrayUtils.indexOf(REPLACEABLE_CHARS, c);
+				if ( n != -1 ) {
+					sb.append(REPLACEMENT_STRINGS[n]);
+				} else {
+					sb.append( ' ' );
+				}
+			}
+		}
+		return sb.toString();
+	}	
 
 	protected void addValue( Element element, String value ) {
 		if (! StringUtils.isEmpty(value) ) {
-			addRawValue(element, StringEscapeUtils.escapeXml(value) );
+			addRawValue(element, getText(value) );
 		}
 	}
 	
@@ -152,7 +188,7 @@ public abstract class BasicSEPAXml implements FileFiller, ISEPAConstants {
 		}
 
 		String addressLine2 = null;
-		String addressLine = StringEscapeUtils.escapeXml(address.getAddressLine());
+		String addressLine = getText(address.getAddressLine());
 		if ( addressLine.length() > 70 ) {
 			int mid = StringUtils.lastIndexOf(StringUtils.substring(addressLine, 0, 70), ' ');
 			int start = (mid == -1) ? 70 : mid+1;
@@ -172,51 +208,43 @@ public abstract class BasicSEPAXml implements FileFiller, ISEPAConstants {
 		}		
 	}	
 	
-	protected void addOrganisationIdentification( Element parent, String id, String issuer ) {
-		if (! StringUtils.isEmpty(id) ) {
-			Element identification = createElement(IDENTIFICATION);
-			parent.appendChild(identification);		
-	
-			Element organisationIdentification = createElement(ORGANISATION_IDENTIFICATION);
-			identification.appendChild(organisationIdentification);
-			
-			Element other = createElement(OTHER);
-			organisationIdentification.appendChild(other);		
-	
-			Element innerIdentification = createElement(IDENTIFICATION);
-			addValue(innerIdentification, id, 35);
-			other.appendChild(innerIdentification);
-	
-			if ( issuer != null ) {
-				Element issuerElement = createElement(ISSUER);
-				addValue(issuerElement, issuer, 35);
-				other.appendChild(issuerElement);					
-			}
-		}
+	protected void addOrganisationIdentification( Element parent, String id, String issuer, String code, String propietary ) {
+		addIdentification( parent, ORGANISATION_IDENTIFICATION, id, code, propietary, issuer );
 	}	
 	
 	protected void addPrivateIdentification( Element parent, String id, String propietary, String issuer ) {
-		if (! StringUtils.isEmpty(id) ) {
-			Element identification = createElement(IDENTIFICATION);
-			parent.appendChild(identification);		
+		addIdentification( parent, PRIVATE_IDENTIFICATION, id, null, propietary, issuer );
+	}	
 	
-			Element privateIdentification = createElement(PRIVATE_IDENTIFICATION);
-			identification.appendChild(privateIdentification);		
+	protected void addIdentification( Element parent, String idElement, String id, String code, String propietary, String issuer ) {
+		if (! StringUtils.isEmpty(id) ) {
+			Element mainElement = createElement(IDENTIFICATION);
+			parent.appendChild(mainElement);		
+	
+			Element identification = createElement(idElement);
+			mainElement.appendChild(identification);		
 	
 			Element other = createElement(OTHER);
-			privateIdentification.appendChild(other);		
+			identification.appendChild(other);		
 	
 			Element innerIdentification = createElement(IDENTIFICATION);
 			addValue(innerIdentification, id, 35);
 			other.appendChild(innerIdentification);
 			
-			if ( propietary != null ) {
+			if ( (code != null) || (propietary != null) ) {
 				Element schemeName = createElement(SCHEME_NAME);
 				other.appendChild(schemeName);		
 				
-				Element propietaryElement = createElement(PROPRIETARY);
-				addValue(propietaryElement, propietary, 35);
-				schemeName.appendChild(propietaryElement);
+				if ( code != null ) {
+					Element codeElement = createElement(CODE);
+					addValue(codeElement, code, 4);
+					schemeName.appendChild(codeElement);										
+				}
+				if ( propietary != null ) {
+					Element propietaryElement = createElement(PROPRIETARY);
+					addValue(propietaryElement, propietary, 35);
+					schemeName.appendChild(propietaryElement);					
+				}
 			}
 			
 			if ( issuer != null ) {
@@ -225,17 +253,17 @@ public abstract class BasicSEPAXml implements FileFiller, ISEPAConstants {
 				other.appendChild(issuerElement);					
 			}
 		}
-	}	
+	}		
 	
 	protected void addDebtor( Element parent, Entity entity ) {
-		addEntity(parent, DEBTOR, entity);
+		addEntity(parent, DEBTOR, entity, true);
 	}
 	
-	protected void addCreditor( Element parent, Entity entity ) {
-		addEntity(parent, CREDITOR, entity);
+	protected void addCreditor( Element parent, Entity entity, boolean includeIdentification ) {
+		addEntity(parent, CREDITOR, entity, includeIdentification);
 	}
 	
-	private void addEntity( Element parent, String elementName, Entity entity ) {
+	private void addEntity( Element parent, String elementName, Entity entity, boolean includeIdentification ) {
 		Element debtor = createElement(elementName);
 		parent.appendChild(debtor);			
 		
@@ -248,10 +276,12 @@ public abstract class BasicSEPAXml implements FileFiller, ISEPAConstants {
 			addAddress(debtor, address);
 		}		
 		
-		if ( entity.isOrganisation() ) {
-			addOrganisationIdentification(debtor, entity.getDocument(), entity.getDocumentType());
-		} else {
-			addPrivateIdentification(debtor, entity.getDocument(), null, entity.getDocumentType());
+		if ( includeIdentification ) {
+			if ( entity.isOrganisation() ) {
+				addOrganisationIdentification(debtor, entity.getDocument(), entity.getDocumentType(), null, null );
+			} else {
+				addPrivateIdentification(debtor, entity.getDocument(), null, entity.getDocumentType());
+			}			
 		}
 	}
 	
