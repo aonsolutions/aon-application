@@ -429,17 +429,20 @@ public class Mod180DAO {
 
 	public static Mod180 initialize(AONContext ctx, int year) {
 		Mod180 mod180 = new Mod180();
-		FiscalParameters params = AppParamDAO.getFiscalParameters(ctx,year);
+		FiscalParameters params = AppParamDAO.getFiscalParameters(ctx, year);
 		mod180.setEnterprise(params.getCompany());
 		mod180.setDomain(ctx.getDomainId());
 		mod180.setDocument(params.getDocument());
-		mod180.setName(params.getName());
+		mod180.setName(AonStringUtils.left(params.getName(), FS_MODEL180.NAME
+				.getDataType().length()));
 		mod180.setYear(year);
-		mod180.setAdministration(params.getAdministration() != null ? params.getAdministration() : 4);
-		mod180.setContactPerson(params.getContactPerson());
-		mod180.setContactPhone(params.getContactPhone());
+		mod180.setAdministration(params.getAdministration() != null ? params
+				.getAdministration() : 4);
+		mod180.setContactPerson(AonStringUtils.left(params.getContactPerson(),
+				FS_MODEL180.CONTACT_PERSON.getDataType().length()));
+		mod180.setContactPhone(AonStringUtils.left(params.getContactPhone(),
+				FS_MODEL180.CONTACT_PHONE.getDataType().length()));
 		mod180.setDetails(new ArrayList<Mod180Detail>());
-		return mod180; 
+		return mod180;
 	}
 }
-																								

@@ -73,10 +73,13 @@ public class AONContext {
 	
 	@Override
 	public void finalize() {
-		// TODO Revisar si es correcto esto aqui
-		AonDatabaseUtil.closeQuietly(connection);
+		close();
 	}
 	
+	public void close() {
+		AonDatabaseUtil.closeQuietly(connection);
+	}
+
 	public AONContext getNested(Configuration configuration) {
 		return new AONContext(DSL.using(configuration), getDomainName(), getDomainId());
 	}
