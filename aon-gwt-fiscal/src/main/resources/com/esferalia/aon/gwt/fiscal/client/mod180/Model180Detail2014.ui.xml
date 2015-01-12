@@ -126,7 +126,7 @@
 						</tr>
 						<tr>
 							<td>
-								<g:TextBox ui:field="streetType" maxLength="5" visibleLength="5" styleName="aon-inputText"/>
+								<aon:StreetTypeListBox ui:field="streetType" styleName="aon-inputText"/>
 							</td>
 							<td>
 								<g:TextBox ui:field="streetName" maxLength="50" visibleLength="30" styleName="aon-inputText"/>
