@@ -676,12 +676,12 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 
 	private void getPosStatusEmployee(String element) {
 
-		int auxX = element.indexOf("VL\":") + 4;
-		int auxY = element.indexOf("UL\":") - 2;
+		int auxX = element.indexOf("uO\":") + 4;
+		int auxY = element.indexOf("sO\":") - 2;
 
 		posColumn = Integer.parseInt(cadenaTooltip.substring(auxX, auxY));
 
-		auxX = element.indexOf("UL\":") + 4;
+		auxX = element.indexOf("sO\":") + 4;
 		auxY = element.indexOf("}}");
 
 		posCell = Integer.parseInt(element.substring(auxX, auxY));
@@ -692,7 +692,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 
 		String cadena = pElement;
 		getPosStatusEmployee(pElement);
-		if (cadena.contains("\"VL\":") && cadena.contains("\"UL\":")
+		if (cadena.contains("\"uO\":") && cadena.contains("\"sO\":")
 				&& data.isActive(posColumn, posCell) == false) {			
 			return true;
 		} else {
@@ -852,7 +852,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 			if (cadenaTooltip.contains("axis")) {
 				// Click sobre el Mes. De momento no hago nada
 			}
-			if (cadenaTooltip.contains("\"VL\":")) {
+			if (cadenaTooltip.contains("\"uO\":")) {
 				// Click en tipo de contrato
 				tratarContrato(cadenaTooltip, mouseClientX, mouseClientY);
 			}
@@ -1432,11 +1432,11 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 	}
 	
 	
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		
 		String json = "\"{\"type\":\"bar\",\"data\":{\"VL\":0,\"UL\":1}}\"";
 		
-	}
+	}*/
 	
 	
 }
