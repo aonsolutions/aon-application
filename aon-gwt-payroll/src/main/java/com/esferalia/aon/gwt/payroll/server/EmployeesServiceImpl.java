@@ -3504,13 +3504,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 						ITimedVariable<?> implicit) {
 				}
 
-				@Override
-				public void onRedefinedImplicit(String arg0,
-						ITimedVariable<?> arg1, ITimedVariable<?> arg2) {
-					// TODO Auto-generated method stub
-					
-				}
-
 			}
 
 			IrpfListener listener = new IrpfListener();
