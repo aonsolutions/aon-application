@@ -71,6 +71,7 @@
 								<mapping>
 									<filemode>755</filemode>
 									<directory>/etc/yum.repos.d</directory>
+									<configuration>noreplace</configuration>
 									<sources>
 										<source>
 											<location>.</location>
