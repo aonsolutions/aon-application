@@ -6,7 +6,9 @@ import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
 import com.esferalia.aon.gwt.common.client.widget.IntegerTextBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
+import com.esferalia.aon.gwt.common.client.widget.StreetTypeListBox;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
+import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -63,7 +65,7 @@ public class Model180Detail2014 extends ResizeComposite {
 	@UiField
 	TextBox cadasdralReference;
 	@UiField
-	TextBox streetType;
+	StreetTypeListBox streetType;
 	@UiField
 	TextBox streetName;
 	@UiField
@@ -128,7 +130,8 @@ public class Model180Detail2014 extends ResizeComposite {
 				location.setSelectedIndex( 0 );
 			}
 		cadasdralReference.setValue(detail.getCadasdralReference() );
-		streetType.setValue(detail.getStreetType() );
+		StreetType st = StreetType.getForIneCode(detail.getStreetType());
+		streetType.setSelectedIndex(st==null?0:st.ordinal());
 		streetName.setValue(detail.getStreetName() );
 		numberType.setValue(detail.getNumberType() );
 		number.setValue(detail.getNumber() );
@@ -230,7 +233,7 @@ public class Model180Detail2014 extends ResizeComposite {
 	}
 	@UiHandler("streetType")
 	void onChangeStreetType(ChangeEvent event) {
-		detail.setStreetType(streetType.getValue());
+		detail.setStreetType(StreetType.values()[streetType.getSelectedIndex()].getIneCode());
 		detail.setDirty(true);
 	}
 	@UiHandler("streetName")

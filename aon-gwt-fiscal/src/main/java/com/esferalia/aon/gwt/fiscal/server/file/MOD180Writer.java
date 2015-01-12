@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class MOD180Writer {
 
@@ -82,7 +83,7 @@ public class MOD180Writer {
 		deponent.setComplementary("");
 		deponent.setReplacement(mod180.isReplacement()?"S":"");
 		// TODO Soporte al número de justificante
-		deponent.setReceipt( (AonUtil.isEmpty(mod180.getReceipt()))?"0":mod180.getReceipt() );
+		deponent.setReceipt( (AonUtil.isEmpty(mod180.getReceipt()))?"1800000000001":mod180.getReceipt() );
 		deponent.setReplacedReceipt( (AonUtil.isEmpty(mod180.getReplacedReceipt()))?"0":mod180.getReplacedReceipt());
 		fillReceivers(mod180, deponent, format);
 		return deponent;
@@ -109,7 +110,12 @@ public class MOD180Writer {
 			receiver.setStreetType(det.getStreetType());
 			receiver.setStreetName(det.getStreetName());
 			receiver.setNumberType(det.getNumberType());
-			receiver.setNumber(det.getNumber());
+			if (AonStringUtils.isNumeric(AonStringUtils.trim(det.getNumber()))) {
+				Integer i = Integer.parseInt(det.getNumber());
+				receiver.setNumber(i);
+			} else {
+				receiver.setNumber(0);	
+			}
 			receiver.setNumberSuffix(det.getNumberSuffix());
 			receiver.setBlock(det.getBlock());
 			receiver.setHall(det.getHall());
@@ -120,9 +126,18 @@ public class MOD180Writer {
 			receiver.setCity(det.getCity());
 			receiver.setTown(det.getTown());
 			receiver.setTownCode(det.getTownCode());
-			receiver.setProvinceCode(det.getProvinceCode());
-			receiver.setZip(det.getZip());
-			
+			if (AonStringUtils.isNumeric(AonStringUtils.trim(det.getProvinceCode()))) {
+				Integer i = Integer.parseInt(det.getProvinceCode());
+				receiver.setProvinceCode(i);
+			} else {
+				receiver.setProvinceCode(0);	
+			}
+			if (AonStringUtils.isNumeric(AonStringUtils.trim(det.getZip()))) {
+				Integer i = Integer.parseInt(det.getZip());
+				receiver.setZip(i);
+			} else {
+				receiver.setZip(0);	
+			}
 			c001++;
 			c002 += det.getPerception();
 			c003 += det.getRetention();

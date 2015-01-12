@@ -19,7 +19,7 @@ public class Receiver {
 	private String streetType;
 	private String streetName;
 	private String numberType;
-	private String number;
+	private Integer number;
 	private String numberSuffix;
 	private String block;
 	private String hall;
@@ -30,8 +30,8 @@ public class Receiver {
 	private String city;
 	private String town;
 	private String townCode;
-	private String provinceCode;
-	private String zip;
+	private Integer provinceCode;
+	private Integer zip;
  	
 
 	public String getDocument() {
@@ -147,11 +147,11 @@ public class Receiver {
 		this.numberType = numberType;
 	}
 
-	public String getNumber() {
+	public Integer getNumber() {
 		return number;
 	}
 
-	public void setNumber(String number) {
+	public void setNumber(Integer number) {
 		this.number = number;
 	}
 
@@ -235,19 +235,19 @@ public class Receiver {
 		this.townCode = townCode;
 	}
 
-	public String getProvinceCode() {
+	public Integer getProvinceCode() {
 		return provinceCode;
 	}
 
-	public void setProvinceCode(String provinceCode) {
+	public void setProvinceCode(Integer provinceCode) {
 		this.provinceCode = provinceCode;
 	}
 
-	public String getZip() {
+	public Integer getZip() {
 		return zip;
 	}
 
-	public void setZip(String zip) {
+	public void setZip(Integer zip) {
 		this.zip = zip;
 	}
 	

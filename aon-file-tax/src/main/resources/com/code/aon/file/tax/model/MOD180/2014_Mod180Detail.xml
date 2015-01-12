@@ -15,12 +15,13 @@
  <field name="percent" value="bean" bean="RECEIVER" property="percent" format="Numeric" pattern="9(2)V99" />
  <field name="retenc_din" value="bean" bean="RECEIVER" property="retention" format="Numeric" pattern="9(11)V99" />
  <field name="devengo" value="bean" bean="RECEIVER" property="accrualYear" format="Numeric" pattern="9(4)" />
- <field name="location" value="bean" bean="RECEIVER" property="location" format="AlphaNumeric" pattern="X(1)" />
+
+ <field name="location" value="bean" bean="RECEIVER" property="location" format="Numeric" pattern="9(1)" />
  <field name="cadasdralReference" value="bean" bean="RECEIVER" property="cadasdralReference" format="AlphaNumeric" pattern="X(20)" />
  <field name="streetType" value="bean" bean="RECEIVER" property="streetType" format="AlphaNumeric" pattern="X(5)" />
  <field name="streetName" value="bean" bean="RECEIVER" property="streetName" format="AlphaNumeric" pattern="X(50)" />
  <field name="numberType" value="bean" bean="RECEIVER" property="numberType" format="AlphaNumeric" pattern="X(3)" />
- <field name="number" value="bean" bean="RECEIVER" property="number" format="AlphaNumeric" pattern="X(5)" />
+ <field name="number" value="bean" bean="RECEIVER" property="number" format="Numeric" pattern="9(5)" />
  <field name="numberSuffix" value="bean" bean="RECEIVER" property="numberSuffix" format="AlphaNumeric" pattern="X(3)" />
  <field name="block" value="bean" bean="RECEIVER" property="block" format="AlphaNumeric" pattern="X(3)" />
  <field name="hall" value="bean" bean="RECEIVER" property="hall" format="AlphaNumeric" pattern="X(3)" />
@@ -31,8 +32,9 @@
  <field name="city" value="bean" bean="RECEIVER" property="city" format="AlphaNumeric" pattern="X(30)" />
  <field name="town" value="bean" bean="RECEIVER" property="town" format="AlphaNumeric" pattern="X(30)" />
  <field name="townCode" value="bean" bean="RECEIVER" property="townCode" format="AlphaNumeric" pattern="X(5)" />
- <field name="provinceCode" value="bean" bean="RECEIVER" property="provinceCode" format="AlphaNumeric" pattern="X(2)" />
- <field name="zip" value="bean" bean="RECEIVER" property="zip" format="AlphaNumeric" pattern="X(5)" />
+ <field name="provinceCode" value="bean" bean="RECEIVER" property="provinceCode" format="Numeric" pattern="9(2)" />
+ <field name="zip" value="bean" bean="RECEIVER" property="zip" format="Numeric" pattern="9(5)" />
+ 
  <field name="free1" value=" " format="Alphabetic" pattern="X(173)" />
 </register>
 
