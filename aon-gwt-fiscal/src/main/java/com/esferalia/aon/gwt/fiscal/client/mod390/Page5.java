@@ -119,15 +119,19 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 	}
 
 	private void initializeTable() {
+		if (table.getRowCount() > 0) {
+			table.removeAllRows();
+		}
+		
 		table.setWidth("100%");
 		table.setCellSpacing(0);
 		ColumnFormatter cf = table.getColumnFormatter();
-		cf.setWidth(0, "450px");
+		cf.setWidth(0, "auto");
 		cf.setWidth(1, "40px");
 		cf.setWidth(2, "140px");
 		cf.setWidth(3, "60px");
 		cf.setWidth(4, "40px");
-		cf.setWidth(5, "140px");
+		cf.setWidth(5, "20px");
 		
 		
 		FlexCellFormatter fmt = table.getFlexCellFormatter();
@@ -178,10 +182,11 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonPaddingRight() );
 					FlowPanel p0 = new FlowPanel();
 					Label l0 = new Label(label);
-					l0.setHeight((rowspan * 20) + "px;");
 					p0.add(l0);
-					p0.addStyleName(Model390.RESOURCES.css().aonVerticalAlignMiddle() );
+					p0.setHeight("100%");
 					if (rowspan > 1) {
+						fmt.setHeight(x, y, (rowspan * 20) + "px;");
+						p0.addStyleName(Model390.RESOURCES.css().aonVerticalAlignMiddle() );
 						p0.addStyleName(Model390.RESOURCES.css().aonCurlyLT() );
 					}
 					fmt.addStyleName(x, y,Model390.RESOURCES.css().aonBorderBottomImportant() );

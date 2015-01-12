@@ -997,11 +997,14 @@ public class Mod190DAO {
 		mod190.setEnterprise(params.getCompany());
 		mod190.setDomain(ctx.getDomainId());
 		mod190.setDocument(params.getDocument());
-		mod190.setName(params.getName());
+		mod190.setName(AonStringUtils.left(params.getName(), FS_MODEL190.NAME
+				.getDataType().length()));
 		mod190.setYear(year);
 		mod190.setAdministration((byte) (params.getAdministration()!=null?params.getAdministration():4));
-		mod190.setContactPerson(params.getContactPerson());
-		mod190.setContactPhone(params.getContactPhone());
+		mod190.setContactPerson(AonStringUtils.left(params.getContactPerson(),
+				FS_MODEL190.CONTACT_PERSON.getDataType().length()));
+		mod190.setContactPhone(AonStringUtils.left(params.getContactPhone(),
+				FS_MODEL190.CONTACT_PHONE.getDataType().length()));
 		return mod190;
 	}
 

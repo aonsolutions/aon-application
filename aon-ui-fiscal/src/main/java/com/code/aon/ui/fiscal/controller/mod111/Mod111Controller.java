@@ -102,11 +102,11 @@ public class Mod111Controller extends FiscalModelController {
 	}
 
 	public String getInfoMessage() {
-		return "Para la generación del modelo, se leerán los apuntes de tipo nómina, y de ellos, "
-			 + "las líneas de percepciones monetarias (y en especie) computarán el saldo de las "
-			 + "diferentes percepciones  y las líneas de las retenciones monetarias (y en especie) "
-			 + "computarán el saldo de las diferentes retenciones.  Para identificar las percepciones"
-			 + " y retenciones del apunte, las cuentas deberán coincidir con las indicadas en los "
-			 + "parámetros contables a tal efecto.";
+		return "Para la generaci\u00F3n del modelo, se leer\u00E1n los apuntes de tipo n\u00F3mina, y de ellos, "
+			 + "las l\u00ED�neas de percepciones monetarias (y en especie) computar\u00E1n el saldo de las "
+			 + "diferentes percepciones  y las l\u00ED�neas de las retenciones monetarias (y en especie) "
+			 + "computar\u00E1n el saldo de las diferentes retenciones.  Para identificar las percepciones"
+			 + " y retenciones del apunte, las cuentas deber\u00E1n coincidir con las indicadas en los "
+			 + "par\u00E1metros contables a tal efecto.";
 	}
 }

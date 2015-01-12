@@ -105,14 +105,14 @@
 										<g:Label text="{msg.receipt}" />
 									</td>
 									<td class="aon-panelGrid-even">
-										<g:TextBox visibleLength="13" ui:field="receipt" styleName="aon-inputText"/>
+										<g:TextBox visibleLength="13" maxLength="13" ui:field="receipt" styleName="aon-inputText"/>
 									</td>
 									<td class="aon-panelGrid-even aon-nowrap">
 										<g:HorizontalPanel>
 											<g:CheckBox ui:field="replacement" text="{msg.replacement}" />
 											<g:FlowPanel ui:field="replacementPanel">
 												<g:InlineLabel text="{msg.replacedReceipt}" styleName="{aonResources.css.aonInnerLabel}"/>
-												<g:TextBox visibleLength="13" ui:field="replacedReceipt" styleName="aon-inputText"/>
+												<g:TextBox visibleLength="13" maxLength="13" ui:field="replacedReceipt" styleName="aon-inputText"/>
 											</g:FlowPanel>
 										</g:HorizontalPanel>
 									</td>
@@ -123,10 +123,10 @@
 										<g:Label text="{msg.contactPerson}" />
 									</td>
 									<td class="aon-panelGrid-even aon-nowrap" colspan="5">
-										<g:InlineLabel text="{msg.phone}" styleName="{aonResources.css.aonInnerLabel}" />
-										<g:TextBox visibleLength="10" ui:field="contactPhone" styleName="aon-inputText"/>
+										<g:InlineLabel text="{msg.phone}"  styleName="{aonResources.css.aonInnerLabel}" />
+										<g:TextBox visibleLength="10" maxLength="9" ui:field="contactPhone" styleName="aon-inputText"/>
 										<g:InlineLabel text="{msg.contactPerson}" styleName="{aonResources.css.aonInnerLabel}" />
-										<g:TextBox visibleLength="30" ui:field="contactPerson" styleName="aon-inputText"/>
+										<g:TextBox visibleLength="30" maxLength="40" ui:field="contactPerson" styleName="aon-inputText"/>
 									</td>
 								</tr>
 								<tr>
