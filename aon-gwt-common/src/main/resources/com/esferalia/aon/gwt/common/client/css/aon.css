@@ -199,7 +199,11 @@
 
 @sprite .aon-icon-paste {
 	width: auto;
-	gwt-image: "aonIconPaste";
+	gwt-image: 'aonIconPaste';
+}
+@sprite .aon-icon-duplicate {
+	width: auto;
+	gwt-image: 'aonIconDuplicate';
 }
 
 @sprite .aon-icon-enterprise {

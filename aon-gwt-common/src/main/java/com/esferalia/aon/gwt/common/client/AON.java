@@ -75,6 +75,7 @@ public class AON {
 	public static final String AON_ICON_DELETE = AON_CSS.aonIconDelete(); // "aon-icon-delete";
 	public static final String AON_ICON_CANCEL = "aon-icon-cancel";
 	public static final String AON_ICON_ACCEPT = "aon-icon-accept";
+	public static final String AON_ICON_DUPLICATE = "aon-icon-duplicate";
 	public static final String AON_ICON_PASTE = "aon-icon-paste";
 	public static final String AON_ICON_INE = "aon-icon-ine";
 	public static final String AON_ICON_AET = AON_CSS.aonIconAeat();// "aon-icon-aet";

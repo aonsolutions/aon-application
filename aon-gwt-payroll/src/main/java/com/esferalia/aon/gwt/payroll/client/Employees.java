@@ -121,11 +121,11 @@ public class Employees extends ResizeComposite implements
 		void onEnterpriseContextMenu(Enterprise enterprise,
 				ContextMenuEvent event);
 
-		void onCtrlCPressed(Employee employee);
+		void onEmployeeCopy(Employee employee);
 
-		void onCtrlVPressed(Workplace workplace);
+		void onEmployeePaste(Workplace workplace);
 
-		void onCtrlXPress(Employee employee);
+		void onEmployeeCut(Employee employee);
 
 		void onSuprPress(Employee employee);
 	}
@@ -540,13 +540,14 @@ public class Employees extends ResizeComposite implements
 
 		if ((event.isControlKeyDown() && keyCode == KeyCodes.KEY_C)
 				&& (keyCode == KeyCodes.KEY_C) && (object instanceof Employee)) {
-			onCtrlCPressed((Employee) object);
+			onEmployeeCopy((Employee) object);
 		} else if (event.getNativeEvent().getCtrlKey()
 				&& keyCode == KeyCodes.KEY_V && object instanceof Workplace) {
-			onCtrlVPressed((Workplace) object);
+			onEmployeePaste((Workplace) object);
 		} else if (event.getNativeEvent().getCtrlKey()
 				&& keyCode == KeyCodes.KEY_X && object instanceof Employee) {
 			onCtrlXPressed((Employee) object);
+			
 		} else if (keyCode == KeyCodes.KEY_DELETE && object instanceof Employee) {
 			onSuprPressed((Employee) object);
 		}
@@ -1002,21 +1003,21 @@ public class Employees extends ResizeComposite implements
 		}
 	}
 
-	private void onCtrlCPressed(Employee employee) {
+	private void onEmployeeCopy(Employee employee) {
 		for (Listener listener : listeners) {
-			listener.onCtrlCPressed(employee);
+			listener.onEmployeeCopy(employee);
 		}
 	}
 
-	private void onCtrlVPressed(Workplace workplace) {
+	private void onEmployeePaste(Workplace workplace) {
 		for (Listener listener : listeners) {
-			listener.onCtrlVPressed(workplace);
+			listener.onEmployeePaste(workplace);
 		}
 	}
 
 	private void onCtrlXPressed(Employee employee) {
 		for (Listener listener : listeners) {
-			listener.onCtrlXPress(employee);
+			listener.onEmployeeCut(employee);
 		}
 	}
 

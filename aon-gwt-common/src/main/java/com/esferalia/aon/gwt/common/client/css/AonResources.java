@@ -15,7 +15,6 @@ public interface AonResources extends ClientBundle, Images {
 	@CssResource.NotStrict
 	AonDataGrid aonDataGrid();
 
-
 	@Source("images/aon-icon-rowSelector.png")
 	ImageResource aonIconRowSelector();
 
@@ -24,7 +23,10 @@ public interface AonResources extends ClientBundle, Images {
 
 	@Source("images/aon-icon-paste.png")
 	ImageResource aonIconPaste();
-
+	
+	@Source("images/aon-icon-duplicate.png")
+	ImageResource aonIconDuplicate();
+	
 	@Source("images/aon-icon-delete.png")
 	ImageResource aonIconDelete();
 

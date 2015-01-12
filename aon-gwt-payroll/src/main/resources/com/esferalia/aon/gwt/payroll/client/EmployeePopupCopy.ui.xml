@@ -86,7 +86,7 @@
 			</g:row>
 			<g:row>
 				<g:customCell>
-					<g:Label />
+					<g:Label ui:field="warnLabel"/>
 				</g:customCell>
 				<g:customCell styleName="{style.field}">
 					<g:CheckBox ui:field="especifico"

@@ -248,7 +248,10 @@ public interface AonCSS extends  CssResource {
 	
 	@ClassName("aon-icon-paste")
 	String aonIconPaste();
-
+	
+	@ClassName("aon-icon-duplicate")
+	String aonIconDuplicate();
+	
 	@ClassName("aon-icon-rowSelector-Parent")
 	String aonIconRowSelectorParent();
 

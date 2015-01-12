@@ -122,7 +122,6 @@ import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
-import com.esferalia.aon.gwt.payroll.sql.JooqEmployee;
 import com.esferalia.aon.gwt.payroll.sql.SQLAgreementDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLEvents;
 import com.esferalia.aon.gwt.payroll.sql.SQLITData;
@@ -3503,6 +3502,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				@Override
 				public void onRedefinedImplicit(String name, ITimedVariable<?> redefined,
 						ITimedVariable<?> implicit) {
+				}
+
+				@Override
+				public void onRedefinedImplicit(String arg0,
+						ITimedVariable<?> arg1, ITimedVariable<?> arg2) {
+					// TODO Auto-generated method stub
+					
 				}
 
 			}

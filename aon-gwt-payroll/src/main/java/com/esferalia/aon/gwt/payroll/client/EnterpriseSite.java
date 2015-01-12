@@ -222,17 +222,17 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	}
 
 	@Override
-	public void onCtrlCPressed(Employee employee) {
+	public void onEmployeeCopy(Employee employee) {
 		// TODO Apéndice de método generado automáticamente		
 	}
 
 	@Override
-	public void onCtrlVPressed(Workplace workplace) {
+	public void onEmployeePaste(Workplace workplace) {
 		// TODO Apéndice de método generado automáticamente		
 	}
 
 	@Override
-	public void onCtrlXPress(Employee employee) {
+	public void onEmployeeCut(Employee employee) {
 		// TODO Apéndice de método generado automáticamente		
 	}
 

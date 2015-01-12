@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -16,8 +17,10 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
@@ -27,9 +30,7 @@ import com.google.gwt.user.datepicker.client.DateBox;
 public class EmployeePopupCopy extends CustomDialog {
 
 	interface Listener {
-		
-		void onAcceptButtonClickButton(ClickEvent event);
-
+		void onAcceptClick (Employee employee, boolean value);
 	}
 
 	private static EmployeePopupCopyUiBinder uiBinder = GWT
@@ -47,9 +48,14 @@ public class EmployeePopupCopy extends CustomDialog {
 	Button cancelButton;
 	@UiField
 	CheckBox especifico;
+	@UiField
+	Label warnLabel;
+	
+	private Employee originalEmployee;
 	
 	private Employee employee;
 	
+	private final String CAMPO_OBLIGATORIO = "Campo obligatorio";
 	private final String separator = " - ";
 	private String document;
 	
@@ -69,9 +75,9 @@ public class EmployeePopupCopy extends CustomDialog {
 		
 		this.especifico.setValue(true);
 		this.startDate.setFormat(new DateBox.DefaultFormat(AON.DATE_FORMAT));
-		this.startDate.getTextBox().setReadOnly(true);
+		//this.startDate.getTextBox().setReadOnly(true);
 		this.endDate.setFormat(new DateBox.DefaultFormat(AON.DATE_FORMAT));
-		this.endDate.getTextBox().setReadOnly(true);
+		//this.endDate.getTextBox().setReadOnly(true);
 
 		this.listeners = new ArrayList<Listener>();
 
@@ -112,10 +118,41 @@ public class EmployeePopupCopy extends CustomDialog {
 
 	// -------------------------------------------------------UiHandlers
 
-	@UiHandler("acceptButton")
+/*	@UiHandler("acceptButton")
 	void onAcceptButtonClick(ClickEvent event) {
 		for (Listener listener : listeners)
 			listener.onAcceptButtonClickButton(event);
+	}
+*/
+	@UiHandler("acceptButton")
+	void onAcceptButtonClick(ClickEvent event) {
+		if(startDate.getValue() == null) {
+			startDate.setStyleName(AON.AON_ICON_WARN);
+			startDate.setTitle(CAMPO_OBLIGATORIO);
+			return;
+		}
+		
+		if ( endDate.getValue() != null && startDate.getValue().after(endDate.getValue())) {
+			warnLabel.setStyleName(AON.AON_ICON_WARN + "" + AON.AON_ICON_CMD_BUTTON);
+			warnLabel.setTitle("Rango de fechas no correcto");
+			return;
+			
+		}
+/*		
+		if ( startDate.getValue().after(endDate.getValue())) {
+			warnLabel.setStyleName(AON.AON_ICON_WARN + "" + AON.AON_ICON_CMD_BUTTON);
+			warnLabel.setTitle("Rango de fechas no correcto");
+			return;
+		}
+*/		
+		Employee employee = new Employee();
+		employee.setDocument(getDocument());
+		employee.setStartDate(getStartDateWidget().getValue());
+		employee.setEndDate(getEndDateWidget().getValue());
+		
+		for (Listener listener : listeners)
+			listener.onAcceptClick(employee, getEspecificoValue());
+		
 	}
 
 	@UiHandler("cancelButton")
@@ -133,6 +170,8 @@ public class EmployeePopupCopy extends CustomDialog {
 		especifico.setEnabled(documentAux.equals(document));
 	}
 	
+	
+	
 	// -----------------------------------------------------------------
 	
 	@Override
@@ -146,8 +185,8 @@ public class EmployeePopupCopy extends CustomDialog {
 	public void showPopUpPanel() {
 		center();
 	}
-
-	public void setEmployee(final Employee employee) {
+	
+	public void setEmployee (final Employee employee) {
 		this.employee = employee;
 	}
 	
@@ -178,6 +217,17 @@ public class EmployeePopupCopy extends CustomDialog {
 	public void removeListener(Listener listener) {
 		listeners.remove(listener);
 	}
+	
+	public void duplicateEmployee(Employee selectedEmployee) {
+		
+		String fullName = selectedEmployee.getFullname();
+		String document = selectedEmployee.getDocument();
+		
+		suggest.getValueBox().setText(fullName.concat(separator).concat(document));
+		suggest.getValueBox().setReadOnly(true);
+	}
+	
+	
 
 	// --------------------------------------------------------------------
 
