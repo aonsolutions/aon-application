@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.gwt.common.shared.HasDomain;
 import com.esferalia.aon.gwt.common.shared.HasId;
 
 public class Extra implements Serializable, HasId<Integer>, HasDomain<Integer> {

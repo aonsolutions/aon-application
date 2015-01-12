@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+
 public class UndefinedDeductionVariable extends UndefinedVariable implements HasDeduction{
 
 	private Deduction deduction;

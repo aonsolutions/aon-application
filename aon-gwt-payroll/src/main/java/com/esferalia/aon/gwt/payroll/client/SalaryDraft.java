@@ -16,6 +16,7 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.SalaryDraftObject.CalculateCallback;
@@ -27,7 +28,6 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Employee.Dismissal;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.HasDeduction;
-import com.esferalia.aon.gwt.payroll.shared.HasDescription;
 import com.esferalia.aon.gwt.payroll.shared.HasPayment;
 import com.esferalia.aon.gwt.payroll.shared.Item;
 import com.esferalia.aon.gwt.payroll.shared.ItemComparator;

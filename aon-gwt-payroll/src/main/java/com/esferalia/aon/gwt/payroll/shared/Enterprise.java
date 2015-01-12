@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.esferalia.aon.gwt.common.shared.HasDomain;
 import com.esferalia.aon.gwt.common.shared.HasId;
 import com.esferalia.aon.gwt.common.shared.HasName;
 

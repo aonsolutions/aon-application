@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.lang.model.type.TypeVisitor;
 
+import com.esferalia.aon.gwt.common.shared.HasDescription;
+
 public class Salary implements Serializable {
 	
 	public static interface TypeVisitor<E> {

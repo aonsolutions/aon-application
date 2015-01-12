@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
+import com.esferalia.aon.gwt.common.shared.HasStartAndEndDate;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
@@ -13,7 +14,6 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
-import com.esferalia.aon.gwt.payroll.shared.HasStartAndEndDate;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Result;

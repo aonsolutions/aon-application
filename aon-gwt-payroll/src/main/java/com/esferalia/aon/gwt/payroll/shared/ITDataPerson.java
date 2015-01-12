@@ -3,6 +3,8 @@ package com.esferalia.aon.gwt.payroll.shared;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.gwt.common.shared.HasDescription;
+
 public class ITDataPerson implements Serializable, Comparable {
 
 
