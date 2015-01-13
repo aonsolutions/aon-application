@@ -193,6 +193,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		"ANTICIPO_ATRASOS", PORCENTAJE_IRPF,  					//  
 		
 		"BASE_CGC", "BASE_CGP", "BASE_CGC_E", "BASE_CGP_E", 	// internals
+		"BASE_ESTR", "BASE_NESTR", "TOTAL_DEVENGADO",			// internals
 		"ECSS", "DIAS_IT", "DIAS_ENFERMEDAD_COMUN_4_15", 		// internals
 		"DIAS_MATERNIDAD", "DIAS_ENFERMEDAD_PROFESIONAL",		// internals
 		"DIAS_ENFERMEDAD_COMUN_16_20", 							// internals
