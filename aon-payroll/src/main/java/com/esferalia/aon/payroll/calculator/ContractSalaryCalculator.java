@@ -389,6 +389,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 			salaryBuilder.setItBase(quoteCalculator.getItBase());
 
 			salaryBuilder.setIrpfBase(taxCalculator.getIrpfBase());
+			salaryBuilder.setMoneyIrpfBase(taxCalculator.getMoneyIrpfBase());
 			salaryBuilder.setInkindIrpfBase(taxCalculator.getInKindIrpfBase());
 			expressionContext.setVariable(IRPF_BASE,
 					taxCalculator.getIrpfBase(), irpfDate, irpfDate);

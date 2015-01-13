@@ -271,6 +271,13 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 		if (irpfBase != null)
 			insertMoreSalary = insertMoreSalary.set(SALARY.IRPF_BASE, irpfBase);
 	}
+	
+	@Override
+	public void setMoneyIrpfBase(Double moneyIrpfBase) {
+		if (moneyIrpfBase != null)
+			insertMoreSalary = insertMoreSalary.set(SALARY.MONEY_IRPF_BASE,
+					moneyIrpfBase);
+	}
 
 	@Override
 	public void setInkindIrpfBase(Double inkindIrpfBase) {

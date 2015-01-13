@@ -39,6 +39,9 @@ public abstract class TaxCalculator {
 		return inKindIrpfBase;
 	}
 		
+	public double getMoneyIrpfBase() {
+		return irpfBase - inKindIrpfBase;
+	}
 	
 	
 	public abstract double tax(IContractPayment payment, Date start, Date end, 

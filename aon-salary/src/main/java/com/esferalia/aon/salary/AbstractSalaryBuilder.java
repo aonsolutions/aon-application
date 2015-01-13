@@ -136,6 +136,10 @@ public abstract class AbstractSalaryBuilder implements ISalaryBuilder {
 	}
 	
 	@Override
+	public void setMoneyIrpfBase(Double inkindIrpfBase) {
+	}
+	
+	@Override
 	public void setInkindIrpfBase(Double inkindIrpfBase) {
 	}
 

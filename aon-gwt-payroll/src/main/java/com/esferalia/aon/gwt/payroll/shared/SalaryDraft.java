@@ -94,6 +94,8 @@ public class SalaryDraft extends SalaryPreview {
 	private Double irpfBase;
 	private Double dbIrpfBase;
 	private Double inkindIrpfBase;
+	private Double moneyIrpfBase;
+	private Double dbMoneyIrpfBase;
 	private Double dbInkindIrpfBase;
 	private Double hExtraBase;
 	private Double dbHExtraBase;
@@ -474,6 +476,14 @@ public class SalaryDraft extends SalaryPreview {
 	public void setInkindIrpfBase(Double inkindIrpfBase) {
 		this.inkindIrpfBase = inkindIrpfBase;
 	}
+	
+	public Double getMoneyIrpfBase() {
+		return moneyIrpfBase;
+	}
+	
+	public void setMoneyIrpfBase(Double moneyIrpfBase) {
+		this.moneyIrpfBase = moneyIrpfBase;
+	}
 
 	public Double getProrationBase() {
 		return prorationBase;
@@ -542,7 +552,15 @@ public class SalaryDraft extends SalaryPreview {
 	public Double getDbInkindIrpfBase() {
 		return dbInkindIrpfBase;
 	}
-
+	
+	public Double getDbMoneyIrpfBase() {
+		return dbMoneyIrpfBase;
+	}
+	
+	public void setDbMoneyIrpfBase(Double dbMoneyIrpfBase) {
+		this.dbMoneyIrpfBase = dbMoneyIrpfBase;
+	}
+	
 	public void setDbInkindIrpfBase(Double dbInkindIrpfBase) {
 		this.dbInkindIrpfBase = dbInkindIrpfBase;
 	}
