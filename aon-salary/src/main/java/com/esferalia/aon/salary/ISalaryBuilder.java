@@ -76,6 +76,8 @@ public interface ISalaryBuilder {
 
 	public void setIrpfBase(Double irpfBase);
 
+	public void setMoneyIrpfBase(Double moneyIrpfBase);
+
 	public void setInkindIrpfBase(Double inkindIrpfBase);
 
 	public void setHExtraBase(Double hExtraBase);

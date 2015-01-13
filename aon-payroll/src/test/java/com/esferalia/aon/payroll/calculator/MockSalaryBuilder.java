@@ -177,6 +177,12 @@ public class MockSalaryBuilder implements ISalaryBuilder {
 		// TODO Auto-generated method stub
 
 	}
+	
+	@Override
+	public void setMoneyIrpfBase(Double moneyIrpfBase) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	@Override
 	public void setInkindIrpfBase(Double inkindIrpfBase) {

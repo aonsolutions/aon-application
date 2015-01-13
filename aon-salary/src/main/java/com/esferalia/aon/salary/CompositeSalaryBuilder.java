@@ -190,7 +190,13 @@ public class CompositeSalaryBuilder<T extends ISalaryBuilder> implements
 		for (ISalaryBuilder builder : builders)
 			builder.setInkindIrpfBase(inkindIrpfBase);
 	}
-
+	
+	@Override
+	public void setMoneyIrpfBase(Double moneyIrpfBase) {
+		for (ISalaryBuilder builder : builders)
+			builder.setMoneyIrpfBase(moneyIrpfBase);
+	}
+	
 	@Override
 	public void setHExtraBase(Double hExtraBase) {
 		for (ISalaryBuilder builder : builders)

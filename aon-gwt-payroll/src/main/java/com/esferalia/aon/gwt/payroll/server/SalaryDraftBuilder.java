@@ -334,6 +334,11 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 	public void setInkindIrpfBase(Double inkindIrpfBase) {
 		salaryDraft.setInkindIrpfBase(inkindIrpfBase);
 	}
+	
+	@Override
+	public void setMoneyIrpfBase(Double moneyIrpfBase) {
+		salaryDraft.setMoneyIrpfBase(moneyIrpfBase);
+	}
 
 	@Override
 	public void setHExtraBase(Double hExtraBase) {

@@ -181,6 +181,11 @@ public abstract class AbstractSQLSalaryBuilder implements ISalaryBuilder {
 	public void setInkindIrpfBase(Double inkindIrpfBase) {
 		salary.setInkindIrpfBase(inkindIrpfBase);
 	}
+	
+	@Override
+	public void setMoneyIrpfBase(Double moneyIrpfBase) {
+		salary.setMoneyIrpfBase(moneyIrpfBase);
+	}
 
 	@Override
 	public void setHExtraBase(Double hExtraBase) {

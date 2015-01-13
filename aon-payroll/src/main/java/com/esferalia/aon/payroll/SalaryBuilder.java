@@ -167,6 +167,11 @@ public class SalaryBuilder implements ISalaryBuilder {
 	}
 	
 	@Override
+	public void setMoneyIrpfBase(Double moneyIrpfBase) {
+		this.salary.setMoneyIrpfBase(moneyIrpfBase);
+	}
+	
+	@Override
 	public void setInkindIrpfBase(Double inkindIrpfBase) {
 		this.salary.setInkindIrpfBase(inkindIrpfBase);
 	}
