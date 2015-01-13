@@ -883,6 +883,7 @@
                       <require>cairo</require>
                       <require>libGL</require>
                       <require>libGLU</require>
+                      <require>libXinerama</require>
                       <require>libreoffice4.3</require>
                       <require>libreoffice4.3-ure</require>
                       <require>libobasis4.3-base</require>
