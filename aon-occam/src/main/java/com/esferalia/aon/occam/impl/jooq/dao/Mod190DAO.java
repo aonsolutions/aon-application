@@ -908,6 +908,8 @@ public class Mod190DAO {
 			Byte disabilityLevel = record.getDisabilityLevel();
 			if (disabilityLevel != null) {
 				disabilityLevel = (byte) (disabilityLevel + 1);
+			} else {
+				disabilityLevel = (byte) 0;
 			}
 			irpfData.setDisability(disabilityLevel);
 			irpfData.setContract((byte) (record.getContractType() + 1));
