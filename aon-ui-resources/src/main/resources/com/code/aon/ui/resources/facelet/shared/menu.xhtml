@@ -25,7 +25,10 @@
 					location="right" itemSeparator="line">
 					<aon:componentGroup
 						family="javax.faces.Command,org.richfaces.DropDownMenu"
-						method="#{selectedMenu.updateCommandsToReset}">						
+						method="#{selectedMenu.updateCommandsToReset}">		
+						<aon:componentGroupMethod
+							family="org.richfaces.DropDownMenu"
+							method="#{actionDenied.renderedMenuItem}" />
 						<aon:if test="#{aonConfiguration.bean.alarm.showPending}">
 							<aon:commandLink id="pendingAlarms"
 								title="#{alarm.pendingAlarmTitle}"
@@ -59,11 +62,7 @@
 									action="alarm_list" actionListener="#{alarm.onInit}" 
 									iconClass="aon-icon-alarm" />
 							</aon:if>	
-							<aon:componentGroup
-								family="org.richfaces.DropDownMenu"
-								method="#{actionDenied.renderedMenuItem}">
-				                <ui:insert name="beforeHelpMenuContent"/>
-							</aon:componentGroup>
+			                <ui:insert name="beforeHelpMenuContent"/>
 			                <aon:menuGroup
 			                	rendered="#{!aonConfiguration.properties.hideMenuChooseLanguage}"
 			                	value="#{bundle.aon_chooseLocale}">

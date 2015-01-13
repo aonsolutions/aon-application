@@ -8,6 +8,8 @@
 
 	<aon:valueParam name="pojoName" default="#{controller.pojoShortName}"/>
 	<aon:valueParam name="registry" default="#{controller.to.registry}"/>
+	<aon:valueParam name="skipId" default="#{false}"/>
+	<aon:valueParam name="skipRegistryType" default="#{false}"/>
 
 	<aon:if test="#{!skipId or !skipRegistryType}">
 		<aon:if test="#{!skipId}">

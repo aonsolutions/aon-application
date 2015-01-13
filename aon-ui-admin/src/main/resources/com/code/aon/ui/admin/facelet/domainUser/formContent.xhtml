@@ -119,11 +119,12 @@
 						<aon:panelGroup>
 							<aon:selectBooleanCheckbox id="User_showFavorites"
 								reRender="userInitActionDiv"
-								disabled="#{domainUser.to.initAction != null}"
+								disabled="#{!domainUser.showFavoritesEnabled}"
 								value="#{domainUser.showFavorites}">
 							</aon:selectBooleanCheckbox>
 							<aon:outputLabel for="User_showFavorites"
-								value="#{bundle.admin_user_show_favorites}" />
+								value="#{bundle.admin_user_show_favorites}"	
+								style="#{(domainUser.showFavoritesEnabled)?'':'color: graytext;'}" />
 						</aon:panelGroup>
 					</h:panelGrid>														
 				</aon:if>			

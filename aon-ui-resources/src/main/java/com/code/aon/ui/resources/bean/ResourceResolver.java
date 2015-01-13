@@ -55,7 +55,7 @@ public class ResourceResolver implements Serializable {
 			if (! StringUtils.isBlank(version) ) {
 				this.resourceURIPreffix += "/" + version;
 			}			
-			LOGGER.info( "Resources URI preffix: {}", this.resourceURIPreffix );
+			LOGGER.debug( "Resources URI preffix: {}", this.resourceURIPreffix );
 		}
 		return resourceURIPreffix;
 	}

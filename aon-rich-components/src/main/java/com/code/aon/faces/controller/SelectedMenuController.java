@@ -1,6 +1,5 @@
 package com.code.aon.faces.controller;
 
-import static com.code.aon.faces.controller.IRichConstants.SELECTED_MENU_ATTRIBUTE;
 import static com.code.aon.faces.controller.IRichConstants.SELECTED_MENU_CONTROLLER_NAME;
 
 import java.io.Serializable;
@@ -9,7 +8,6 @@ import javax.el.ExpressionFactory;
 import javax.el.MethodExpression;
 import javax.faces.component.UICommand;
 import javax.faces.component.UIComponent;
-import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ActionListener;
@@ -31,24 +29,20 @@ public class SelectedMenuController implements Serializable {
 	
 	private static final String ON_MENU_RESET = "onMenuReset";
 	
-	private String getLastMenuAction() {
-		UIViewRoot root = FacesContext.getCurrentInstance().getViewRoot();
-		return (String) root.getAttributes().get( SELECTED_MENU_ATTRIBUTE );
-	}
+	private String lastMenuAction;
 	
 	public void onMenuReset( ActionEvent event ) {
 		setLastMenuAction(null);
 	}
 
-	public void setLastMenuAction(String lastAction) {
-		UIViewRoot root = FacesContext.getCurrentInstance().getViewRoot();
-		if ( lastAction == null ) {
-			root.getAttributes().remove( SELECTED_MENU_ATTRIBUTE );
-		} else {
-			root.getAttributes().put( SELECTED_MENU_ATTRIBUTE, lastAction );
-		}
+	private String getLastMenuAction() {
+		return lastMenuAction;
 	}
-	
+
+	public void setLastMenuAction(String lastMenuAction) {
+		this.lastMenuAction = lastMenuAction;
+	}
+
 	private void addActionListener( UICommand command, String action ) {
 		FacesContext ctx = FacesContext.getCurrentInstance();
         ExpressionFactory f = ctx.getApplication().getExpressionFactory();

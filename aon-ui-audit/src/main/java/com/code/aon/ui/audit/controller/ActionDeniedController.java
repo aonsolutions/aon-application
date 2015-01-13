@@ -231,7 +231,7 @@ public class ActionDeniedController implements Serializable {
 	}
 
 	public void renderedMenuItem( UIComponent component, UIComponent parent ) {
-		if ( component.isRendered() ) {
+		if ( component.isRendered() && (UICommand.class.isAssignableFrom(component.getClass())) ) {
 			String action = getAction( (UICommand) component );
 			if ( getManager().isDenied(action) ) {
 				component.setRendered(false);

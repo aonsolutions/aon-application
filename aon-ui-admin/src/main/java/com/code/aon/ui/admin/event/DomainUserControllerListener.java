@@ -134,10 +134,11 @@ public class DomainUserControllerListener extends ControllerAdapter {
 	}	
 		
 	private void afterGetInitAction( DomainUserController duc ) {
-		if ( FAVORITES.equals(duc.getDomainUser().getInitAction()) ) {
+		boolean showFavorites = FAVORITES.equals(duc.getDomainUser().getInitAction());
+		duc.setShowFavorites(showFavorites);
+		if ( showFavorites  ) {
 			duc.getDomainUser().setInitAction(null);
-			duc.setShowFavorites(true);
-		}
+		} 
 	}
 
 	private void beforeUpdteInitAction( DomainUserController duc ) {

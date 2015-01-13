@@ -402,4 +402,12 @@ public class DomainUserController extends BasicController {
 		this.showFavorites = showFavorites;
 	}
 	
+	public boolean isShowFavoritesEnabled() throws ManagerBeanException {
+		if ( ! showFavorites ) {
+			User user = (User) getTo();
+			return StringUtils.isBlank(user.getInitAction());			
+		}
+		return true;
+	}
+	
 }
