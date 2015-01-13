@@ -33,6 +33,10 @@
 		text-align: right;
 	}
 	
+	.errorLabel {
+		text-align: center;
+	}
+	
 	.info {
 		
 	}
@@ -86,7 +90,9 @@
 			</g:row>
 			<g:row>
 				<g:customCell>
-					<g:Label ui:field="warnLabel"/>
+					<g:InlineLabel styleName="aon-icon-warn aon-icon-commandButton" 
+					ui:field="warnLabel" visible="false"
+					title="Compruebe los datos introducidos."></g:InlineLabel>
 				</g:customCell>
 				<g:customCell styleName="{style.field}">
 					<g:CheckBox ui:field="especifico"

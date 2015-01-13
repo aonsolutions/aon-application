@@ -166,13 +166,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	class PasteEmployeeCommand implements ScheduledCommand,
 			EmployeePopupCopy.Listener {
 
-		public PasteEmployeeCommand() {
-			paste = new EmployeePopupCopy();
-			paste.addListener(this);
-		}
-
 		@Override
 		public void execute() {
+			paste = new EmployeePopupCopy();
+			paste.addListener(this);
 			setEmployeePaste(singlenton.employeeContextMenu.getEmployeeCopy());
 			setMapAvaiableEmployees(singlenton.avaiableEmployees);
 			showPopUpPanel();

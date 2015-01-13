@@ -8,24 +8,27 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
+import com.google.gwt.user.datepicker.client.DatePicker;
 
 public class EmployeePopupCopy extends CustomDialog {
 
@@ -49,13 +52,10 @@ public class EmployeePopupCopy extends CustomDialog {
 	@UiField
 	CheckBox especifico;
 	@UiField
-	Label warnLabel;
-	
-	private Employee originalEmployee;
+	InlineLabel warnLabel;
 	
 	private Employee employee;
 	
-	private final String CAMPO_OBLIGATORIO = "Campo obligatorio";
 	private final String separator = " - ";
 	private String document;
 	
@@ -75,9 +75,9 @@ public class EmployeePopupCopy extends CustomDialog {
 		
 		this.especifico.setValue(true);
 		this.startDate.setFormat(new DateBox.DefaultFormat(AON.DATE_FORMAT));
-		//this.startDate.getTextBox().setReadOnly(true);
+		this.startDate.getTextBox().setReadOnly(true);
 		this.endDate.setFormat(new DateBox.DefaultFormat(AON.DATE_FORMAT));
-		//this.endDate.getTextBox().setReadOnly(true);
+		this.endDate.getTextBox().setReadOnly(true);
 
 		this.listeners = new ArrayList<Listener>();
 
@@ -118,41 +118,27 @@ public class EmployeePopupCopy extends CustomDialog {
 
 	// -------------------------------------------------------UiHandlers
 
-/*	@UiHandler("acceptButton")
-	void onAcceptButtonClick(ClickEvent event) {
-		for (Listener listener : listeners)
-			listener.onAcceptButtonClickButton(event);
-	}
-*/
 	@UiHandler("acceptButton")
 	void onAcceptButtonClick(ClickEvent event) {
+
 		if(startDate.getValue() == null) {
-			startDate.setStyleName(AON.AON_ICON_WARN);
-			startDate.setTitle(CAMPO_OBLIGATORIO);
+			startDate.setFocus(true);
 			return;
 		}
-		
-		if ( endDate.getValue() != null && startDate.getValue().after(endDate.getValue())) {
-			warnLabel.setStyleName(AON.AON_ICON_WARN + "" + AON.AON_ICON_CMD_BUTTON);
-			warnLabel.setTitle("Rango de fechas no correcto");
-			return;
-			
-		}
-/*		
-		if ( startDate.getValue().after(endDate.getValue())) {
-			warnLabel.setStyleName(AON.AON_ICON_WARN + "" + AON.AON_ICON_CMD_BUTTON);
-			warnLabel.setTitle("Rango de fechas no correcto");
+
+		if(checkDates(getStartDate(), getEndDate())) {
+			warnLabel.setVisible(true);
 			return;
 		}
-*/		
+
 		Employee employee = new Employee();
 		employee.setDocument(getDocument());
-		employee.setStartDate(getStartDateWidget().getValue());
-		employee.setEndDate(getEndDateWidget().getValue());
+		employee.setStartDate(getStartDate());
+		employee.setEndDate(getEndDate());
 		
 		for (Listener listener : listeners)
 			listener.onAcceptClick(employee, getEspecificoValue());
-		
+
 	}
 
 	@UiHandler("cancelButton")
@@ -194,12 +180,12 @@ public class EmployeePopupCopy extends CustomDialog {
 		initSuggestBox(map);
 	}
 
-	public DateBox getStartDateWidget() {
-		return startDate;
+	public Date getStartDate() {
+		return startDate.getValue();
 	}
 
-	public DateBox getEndDateWidget() {
-		return endDate;
+	public Date getEndDate() {
+		return endDate.getValue();
 	}
 
 	public Button getAcceptButton() {
@@ -218,30 +204,21 @@ public class EmployeePopupCopy extends CustomDialog {
 		listeners.remove(listener);
 	}
 	
-	public void duplicateEmployee(Employee selectedEmployee) {
-		
-		String fullName = selectedEmployee.getFullname();
-		String document = selectedEmployee.getDocument();
-		
-		suggest.getValueBox().setText(fullName.concat(separator).concat(document));
-		suggest.getValueBox().setReadOnly(true);
+	private boolean checkDates (Date start, Date end) {
+		return DateUtils.isAfterOrEquals(start, end);
 	}
-	
 	
 
 	// --------------------------------------------------------------------
 
 	@Override
 	public void center() {
-		startDate.setValue(null);
-		endDate.setValue(null);
 		super.center();
 	}
 
 	@Override
 	public void show() {
-		startDate.setValue(null);
-		endDate.setValue(null);
 		super.show();
 	}
+
 }
