@@ -327,8 +327,10 @@ public class Model190Detail2014 extends ResizeComposite {
 		Mod190Key keyEnum = Mod190Key.values()[key.getSelectedIndex()];
 		String subk = ((key.getSubkey().getSelectedIndex() == -1) ? null : key
 				.getSubkey().getValue(key.getSubkey().getSelectedIndex()));
-		if (Mod190Key.A == keyEnum || Mod190Key.C == keyEnum
+		if (Mod190Key.A == keyEnum 
+				|| Mod190Key.C == keyEnum
 				|| Mod190Key.D == keyEnum
+				|| (Mod190Key.E == keyEnum && "01".equals(subk))
 				|| (Mod190Key.B == keyEnum && "01".equals(subk))
 				|| (Mod190Key.B == keyEnum && "02".equals(subk))) {
 			additionalDataPanel.setVisible(true);
