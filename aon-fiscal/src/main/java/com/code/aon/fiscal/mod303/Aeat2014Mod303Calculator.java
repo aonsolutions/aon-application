@@ -182,7 +182,7 @@ public class Aeat2014Mod303Calculator extends FiscalModelDetailCalculator implem
 				
 				double j2 = mod303.ensureAmount( Mod303Key.CAC2_J);
 				double k2 = mod303.ensureAmount( Mod303Key.CAC2_K);
-				double l2 = CommonUtil.round( ((c2 - d2) * j2 / 200) + k2);
+				double l2 = CommonUtil.round( ((c2 - d2) * j2 / 100) + k2);
 				mod303.getDetail( Mod303Key.CAC2_L ).setAmount( l2 );
 				
 				mod303.getDetail( Mod303Key.CAC2_M ).setAmount( l2>i2?l2:i2 );
