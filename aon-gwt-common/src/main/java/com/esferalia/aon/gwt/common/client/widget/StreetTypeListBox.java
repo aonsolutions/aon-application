@@ -8,8 +8,9 @@ public class StreetTypeListBox extends ListBox {
 
 	public StreetTypeListBox() {
 		setWidth("120px");
+		this.addItem( "-", "" );
 		for (StreetType p : StreetType.values()) {
-			this.addItem( p.getDescription());	
+			this.addItem( p.getDescription(), p.getIneCode());	
 		}
 	}
 	
