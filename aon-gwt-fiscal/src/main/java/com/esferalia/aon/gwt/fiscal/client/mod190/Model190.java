@@ -21,6 +21,8 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.mod190.Model190Detail2014.ICallBack;
 import com.esferalia.aon.gwt.fiscal.client.widget.EnterpriseSuggestBox;
+import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
+import com.esferalia.aon.occam.api.model.fiscal.IrpfResult;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.google.gwt.cell.client.AbstractCell;
@@ -455,6 +457,8 @@ public class Model190 extends MainEntryPoint {
 		final Mod190Detail perceptor = new Mod190Detail();
 		perceptor.setId(newKey);
 		perceptor.setKey("A");
+		perceptor.setIrpfData(new IrpfData());
+		perceptor.setIrpfResult(new IrpfResult());
 		currentMod190.getDetails().add(perceptor);
 		perceptorPanel.setDetail(perceptor);
 		detailList.setRowCount(detailList.getRowCount() + 1);
