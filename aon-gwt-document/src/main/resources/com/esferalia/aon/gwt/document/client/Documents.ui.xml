@@ -207,8 +207,8 @@ background-color:#D4CFC7;
 	font-size:15px !important;
 }
 .gwt-PopupPanel{
-	top:40% !important;
-	left:40% !important;
+	top:20% !important;
+	left:35% !important;
 }
 
 .gwt-DialogBox{
@@ -278,6 +278,12 @@ background-color:#D4CFC7;
 									ServiConvenios
 								</g:Button>
 							</g:AbsolutePanel>
+							<g:AbsolutePanel styleName="{style.vpanel}">
+								<g:Button styleName="{style.aon-editDataTable-buttonWest} aon-icon-version"
+									ui:field="loteButton">
+									Lote
+								</g:Button>
+							</g:AbsolutePanel>
 							<g:HorizontalPanel>
 								<g:DisclosurePanel ui:field="dpanel" styleName="gwt-DisclosurePanel">
 						
@@ -330,7 +336,7 @@ background-color:#D4CFC7;
 			<g:DockLayoutPanel unit="EM">
 				<g:north size="2">
 					<g:FlowPanel styleName="aon-finding-title-toolbar">
-						<g:HorizontalPanel>
+						<g:HorizontalPanel ui:field="gestionDocs" visible="true">
 							<g:HTMLPanel styleName="aon-finding-title">
 								<g:HTMLPanel styleName="aon-finding-title-internal">
 									<g:Label styleName="aon-outputText">Documentos</g:Label>
@@ -355,6 +361,8 @@ background-color:#D4CFC7;
 										text="Borrar" />
 								</g:HTMLPanel>
 							</g:HorizontalPanel>
+							
+							
 							<g:HorizontalPanel styleName="{style.aon-aux-right}">
 								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 									<g:Button ui:field="categories" visible="false" styleName='aon-finding-toolbar-item aon-icon-category'
@@ -364,6 +372,27 @@ background-color:#D4CFC7;
 									<g:Button ui:field="tags" visible="false" styleName='aon-finding-toolbar-item aon-icon-tag'
 										text="Etiquetas" />
 								</g:HTMLPanel>
+							</g:HorizontalPanel>
+						</g:HorizontalPanel>
+						<g:HorizontalPanel visible="false" ui:field="gestionLote" >
+							<g:HTMLPanel styleName="aon-finding-title">
+								<g:HTMLPanel styleName="aon-finding-title-internal">
+									<g:Label styleName="aon-outputText">Gestión de Lote</g:Label>
+								</g:HTMLPanel>
+							</g:HTMLPanel>
+							<g:HTMLPanel styleName="aon-finding-subtitle">
+								<g:HTMLPanel styleName="aon-finding-aubtitle-internal">
+									<g:Label styleName="aon-outputText" text=" " />
+							</g:HTMLPanel>								</g:HTMLPanel>
+							<g:HorizontalPanel styleName="aon-finding-toolbar">
+								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+									<g:Button ui:field="send" visible="false" styleName='aon-finding-toolbar-item aon-icon-webmail2'
+										text="Enviar Email" />
+								</g:HTMLPanel>
+								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+									<g:Button ui:field="clean" visible="false" styleName='aon-finding-toolbar-item aon-icon-rubber'
+										text="Limpiar" />
+								</g:HTMLPanel>								
 							</g:HorizontalPanel>
 						</g:HorizontalPanel>
 					</g:FlowPanel>

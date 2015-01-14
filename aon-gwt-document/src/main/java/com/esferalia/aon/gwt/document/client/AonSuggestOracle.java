@@ -14,9 +14,15 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 public class AonSuggestOracle extends SuggestOracle {
 	List<String> list = new Vector<String>();
 
+	
+	
 	@Override
 	public void requestSuggestions(Request request, Callback callback) {
 		String query = request.getQuery();
+		if(query.contains(",") && query.contains("@")) {
+			Integer pos = query.lastIndexOf(",");
+			query = query.substring(pos+1);
+		}
 		Integer limit = request.getLimit();
 		//Window.alert(query + " - " + Integer.toString(limit));
 		List<String> words = new Vector<String>();
@@ -35,11 +41,10 @@ public class AonSuggestOracle extends SuggestOracle {
 
 	    // Convert candidates to suggestions.
 	    List<MultiWordSuggestion> suggestions =
-	        convertToFormattedSuggestions(query, words);
+	        convertToFormattedSuggestions(query, words,request.getQuery());
 
 	    Response response = new Response(suggestions);
 	    response.setMoreSuggestionsCount(numberTruncated);
-
 	    callback.onSuggestionsReady(request, response);
 	}
 
@@ -48,7 +53,7 @@ public class AonSuggestOracle extends SuggestOracle {
 	}
 	
 	 private List<MultiWordSuggestion> convertToFormattedSuggestions(String query,
-		      List<String> candidates) {
+		      List<String> candidates, String query2) {
 		    List<MultiWordSuggestion> suggestions = new ArrayList<MultiWordSuggestion>();
 	        SafeHtmlBuilder accum = new SafeHtmlBuilder();
 
@@ -75,7 +80,13 @@ public class AonSuggestOracle extends SuggestOracle {
 		          accum.appendEscaped(part3);
 
 		      }*/
-		      MultiWordSuggestion suggestion = new MultiWordSuggestion(candidate,candidate);//accum.toSafeHtml().asString());
+		      MultiWordSuggestion suggestion;
+		      if(!query.equals(query2)){
+		    	  Integer pos = query2.lastIndexOf(',');
+		    	  String s = query2.substring(0,pos+1)+candidate;
+		    	  suggestion = new MultiWordSuggestion(s,candidate);//accum.toSafeHtml().asString());
+		      }
+		      else suggestion = new MultiWordSuggestion(candidate,candidate);//accum.toSafeHtml().asString());
 		      suggestions.add(suggestion);
 		    }
 		    return suggestions;

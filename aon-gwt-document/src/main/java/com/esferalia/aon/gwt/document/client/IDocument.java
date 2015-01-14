@@ -8,11 +8,15 @@ import java.util.Vector;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.document.jooq.DBConsults;
 import com.esferalia.aon.gwt.document.shared.Category;
+import com.esferalia.aon.gwt.document.shared.ContactList;
 import com.esferalia.aon.gwt.document.shared.Document;
 import com.esferalia.aon.gwt.document.shared.Domain;
+import com.esferalia.aon.gwt.document.shared.Emessage;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
 import com.esferalia.aon.gwt.document.shared.FilterUtil;
 import com.esferalia.aon.gwt.document.shared.Lists;
+import com.esferalia.aon.gwt.document.shared.MailAccount;
+import com.esferalia.aon.gwt.document.shared.MailAccountList;
 import com.esferalia.aon.gwt.document.shared.SearchInfo;
 import com.esferalia.aon.gwt.document.shared.Tag;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
@@ -87,4 +91,18 @@ public interface IDocument extends RemoteService{
 	public void editCategory(String name, Integer categoryId);
 
 	public void deleteCategory(Integer categoryId);
+	
+	public Vector<FileInfo> addToLote(FileInfo fi);
+	
+	public Vector<FileInfo> getLote();
+	
+	public void resetLote();
+	public MailAccountList getMailAccounts();
+	
+	public void sendEmail(MailAccount ma, Emessage em);
+	
+	public void sendGmail(MailAccount ma, Emessage em);
+	
+	public  ContactList getContacts();
+	
 }

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Vector;
 
 import javax.faces.FacesException;
 import javax.faces.context.FacesContext;
@@ -230,6 +231,15 @@ public class MailConfigController implements Serializable {
 
 	public List<SelectItem> getMailAccounts() {
 		return mailAccounts;
+	}
+	
+	public List<IMailAccount> getIMailAccounts(){
+		Vector<IMailAccount> vector = new Vector<IMailAccount>();
+		for( SelectItem item : getMailAccounts() ) {
+			IMailAccount account = (IMailAccount) item.getValue();
+			vector.add(account);
+		}
+		return vector;
 	}
 
 	public void updateMailAccountList() {

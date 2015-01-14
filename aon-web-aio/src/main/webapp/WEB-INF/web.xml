@@ -243,6 +243,15 @@
 	</servlet-mapping>
 	
 	<servlet>
+		<servlet-name>MultipleUploadFiles</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.document.server.MultipleUploadFilesServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>MultipleUploadFiles</servlet-name>
+		<url-pattern>/aon_gwt_document/gwt_multiple_upload</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
 		<servlet-name>DownloadFiles</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.document.server.DownloadFilesServlet</servlet-class>
 	</servlet>

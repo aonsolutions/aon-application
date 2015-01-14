@@ -256,6 +256,10 @@ public class MessageController implements IWebMailConstants, Serializable {
 		showTemplates = true;
 	}
 
+	public void initNewMsgFileList(){
+		newMsgFileList = new ArrayList<AonFile>();
+	}
+	
 	/**
 	 * @return the recipientsTo
 	 */

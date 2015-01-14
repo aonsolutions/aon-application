@@ -1,9 +1,41 @@
 package com.esferalia.aon.gwt.document.client;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.Date;
+import java.util.Enumeration;
 import java.util.Vector;
 
+import javax.activation.DataHandler;
+import javax.mail.Address;
+import javax.mail.BodyPart;
+import javax.mail.Flags;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.Message.RecipientType;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMultipart;
+
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.AonFile;
+import com.code.aon.webmail.IMailAccount;
+import com.code.aon.webmail.ISignature;
+import com.code.aon.webmail.WebmailException;
+import com.code.aon.webmail.WebmailUtil;
+import com.code.aon.webmail.bean.AonMessage;
+import com.code.aon.webmail.bean.AonMessageUtils;
+import com.code.aon.webmail.bean.AonServer;
+import com.code.aon.webmail.enumeration.ConnectionSecurity;
 import com.esferalia.aon.google.sql.AbstractSQL.Domain;
+import com.esferalia.aon.gwt.document.shared.Contact;
+import com.esferalia.aon.gwt.document.shared.ContactList;
+import com.esferalia.aon.gwt.document.shared.MailAccount;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle;
@@ -67,6 +99,30 @@ public class Utils {
 		return oracleSons;
 	}
 
+	static AonSuggestOracle createOracleContact(ContactList cl) {
+		AonSuggestOracle oracleSons = new AonSuggestOracle();
+
+		for (Contact c : cl.getList()) {
+			oracleSons.add(c.getEmail());
+			//oracleSons.add(c.getDisplayName()+" <"+c.getEmail()+">");
+		}
+		return oracleSons;
+	}
+
+	/*static String getOracleStringContact(String s){
+		String aux="";
+		if(s.length()>1){
+			Integer pos = s.indexOf('<');
+			Integer pos2 = s.indexOf('>');
+			aux = s.substring(pos+1,pos2);
+			String s2 = s.substring(pos2);
+			String aux2 = getOracleStringContact(s2);
+		
+		}
+		
+		return aux;
+	}*/
+	
 	static String getOracleString(String s){
 		String aux;
 		Integer pos = s.lastIndexOf('(');
@@ -156,6 +212,417 @@ public class Utils {
 			}
 		
 	}
+	
+	static MailAccount mailAccount;
+	/*
+	public static IMailAccount getIMailAccount(MailAccount ma) {
+		mailAccount = ma;
+		return new IMailAccount() {
+			
+			@Override
+			public void setISignature(ISignature signature) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void setDefaultAccount(boolean defaultAccount) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public boolean isOutgoingVerification() {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+			@Override
+			public boolean isIMAP() {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+			@Override
+			public boolean isEnterpriseAccount() {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+			@Override
+			public boolean isDefaultAccount() {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+			@Override
+			public String getTrashFolder() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public String getSpamFolder() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public String getSentFolder() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public String getReplyToMail() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public String getProtocol() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public String getPasswordString() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public ConnectionSecurity getOutgoingSecurity() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public int getOutgoingPort() {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+			
+			@Override
+			public String getOutgoingHost() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public String getName() {
+				return mailAccount.getName();
+			}
+			
+			@Override
+			public String getMailUsername() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public ConnectionSecurity getIncomingSecurity() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public int getIncomingPort() {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+			
+			@Override
+			public String getIncomingHost() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public ISignature getISignature() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public String getEmail() {
+				return mailAccount.getEmail();
+			}
+			
+			@Override
+			public String getDraftFolder() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public String getDisplayName() {
+				return mailAccount.getName();
+			}
+		};
+	}
+	
+	public static AonMessage getAonMessage(AonServer server, MailAccount ma) {
+		mailAccount = ma;
+		Message message = new Message() {
+			
+			@Override
+			public void writeTo(OutputStream arg0) throws IOException,
+					MessagingException {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void setText(String arg0) throws MessagingException {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void setHeader(String arg0, String arg1) throws MessagingException {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void setFileName(String arg0) throws MessagingException {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void setDisposition(String arg0) throws MessagingException {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void setDescription(String arg0) throws MessagingException {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void setDataHandler(DataHandler arg0) throws MessagingException {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void setContent(Object arg0, String arg1) throws MessagingException {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void setContent(Multipart arg0) throws MessagingException {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void removeHeader(String arg0) throws MessagingException {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public boolean isMimeType(String arg0) throws MessagingException {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+			@Override
+			public int getSize() throws MessagingException {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+			
+			@Override
+			public Enumeration getNonMatchingHeaders(String[] arg0)
+					throws MessagingException {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public Enumeration getMatchingHeaders(String[] arg0)
+					throws MessagingException {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public int getLineCount() throws MessagingException {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+			
+			@Override
+			public InputStream getInputStream() throws IOException, MessagingException {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public String[] getHeader(String arg0) throws MessagingException {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public String getFileName() throws MessagingException {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public String getDisposition() throws MessagingException {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public String getDescription() throws MessagingException {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public DataHandler getDataHandler() throws MessagingException {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public String getContentType() throws MessagingException {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public Object getContent() throws IOException, MessagingException {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public Enumeration getAllHeaders() throws MessagingException {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public void addHeader(String arg0, String arg1) throws MessagingException {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void setSubject(String arg0) throws MessagingException {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void setSentDate(Date arg0) throws MessagingException {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void setRecipients(RecipientType arg0, Address[] arg1)
+					throws MessagingException {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void setFrom(Address arg0) throws MessagingException {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void setFrom() throws MessagingException {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void setFlags(Flags arg0, boolean arg1) throws MessagingException {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void saveChanges() throws MessagingException {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public Message reply(boolean arg0) throws MessagingException {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public String getSubject() throws MessagingException {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public Date getSentDate() throws MessagingException {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public Address[] getRecipients(RecipientType arg0)
+					throws MessagingException {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public Date getReceivedDate() throws MessagingException {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public Address[] getFrom() throws MessagingException {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public Flags getFlags() throws MessagingException {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public void addRecipients(RecipientType arg0, Address[] arg1)
+					throws MessagingException {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void addFrom(Address[] arg0) throws MessagingException {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+		AonMessage am = new AonMessage(message);
+		return am;
+	}
+	
+	*/
 	public static void main(String[] args) {
 		String s = "ARISTIZABAL GARCIA, ROBINSON ( robinson-novus.aibanez.net)";
 		System.out.println(s);

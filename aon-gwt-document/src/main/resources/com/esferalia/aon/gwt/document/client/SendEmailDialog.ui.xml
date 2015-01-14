@@ -1,0 +1,87 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:es3='urn:import:com.google.gwt.user.client.ui'
+	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
+	
+	<ui:Style>
+
+		.form {
+			padding: 10px; 		
+		}
+
+		.label {
+			margin-top:10x;
+			font-weight: bold;
+			padding: 1px 0.5em;
+			white-space: nowrap;
+			background-color: #F2F2F2;
+		}
+
+		.labeltop {
+			margin-top:10x;
+			font-weight: bold;
+			padding: 1px 0.5em;
+			vertical-align: top;			
+			white-space: nowrap;
+			background-color: #F2F2F2;
+		}
+
+		.field {
+			padding: 1px 0.5em;
+		}
+		
+		.buttons {
+			padding-top: 10px; 		
+			text-align: right;
+		}
+
+		.info {
+		}
+
+		.warn {
+		}
+
+		.error {
+		}
+
+		.messages {
+			padding-left: 0.5em;
+			padding-bottom: 10px; 		
+		}
+		.form textarea {
+			resize: none;
+		}
+		
+		@external .gwt-RichTextArea;
+		
+		.gwt-RichTextArea{
+			border:0px !important;	
+		}
+		
+
+	</ui:Style>
+	<g:HTMLPanel styleName="{style.form}">
+	
+		<!-- Menu con opciones de correo (Enviar)  -->
+		<div class="aon-toolbar">
+			<g:HorizontalPanel ui:field="header" styleName="aon-finding-toolbar-item-group">
+				<!-- g:Button ui:field="sendGmailButton" styleName="aon-icon-google-gmail aon-finding-toolbar-item" text="Enviar"></g:Button>			
+				<g:Button ui:field="sendMailButton" styleName="aon-icon-accept aon-finding-toolbar-item" text="Enviar"></g:Button-->
+			</g:HorizontalPanel>
+		</div>
+		
+		<!-- Tabla información de envío (de, para, cc, bcc, asunto & adjuntar ficheros) -->
+		<div>
+			<g:FlexTable ui:field="grid">
+			
+			</g:FlexTable>
+		</div>
+		<div style="padding-top:10px"></div>
+		<div style="border:1px solid #BBB;" >
+			<g:FlexTable ui:field="textEditor">
+			
+			</g:FlexTable>		
+		</div>
+	</g:HTMLPanel>
+
+</ui:UiBinder>

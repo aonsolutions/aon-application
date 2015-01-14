@@ -4,6 +4,8 @@ package com.esferalia.aon.gwt.document.shared;
 import java.util.Date;
 import java.util.Vector;
 
+import com.code.aon.common.IAttachment;
+import com.code.aon.common.enumeration.MimeType;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.view.client.ProvidesKey;
 
@@ -56,6 +58,7 @@ import com.google.gwt.view.client.ProvidesKey;
 		private Integer domainId;
 		private String domainDescription;
 		private byte[] data;
+		private String mimeString;
 		
 		public FileInfo() {
 			// TODO Apéndice de constructor generado automáticamente
@@ -294,7 +297,18 @@ import com.google.gwt.view.client.ProvidesKey;
 		public void setIsGdocs(Boolean isGdocs) {
 			this.isGdocs = isGdocs;
 		}
+
+		public String getMimeString() {
+			return mimeString;
+		}
+
+		public void setMimeString(String mimeString) {
+			this.mimeString = mimeString;
+		}
+
 		
+
+
 		
 
 	}

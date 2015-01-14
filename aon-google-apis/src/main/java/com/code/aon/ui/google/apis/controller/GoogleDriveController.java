@@ -16,6 +16,7 @@ import com.code.aon.AonVersion;
 import com.code.aon.google.apis.DriveFile;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
+import com.code.aon.google.apis.sessionInfo.GoogleUser;
 import com.code.aon.google.apis.sessionInfo.SessionInfo;
 import com.code.aon.ui.util.AonUtil;
 import com.google.api.services.drive.Drive;
@@ -37,9 +38,12 @@ public class GoogleDriveController implements Serializable {
 	
 	public static Drive dconnection;
 	
+	public static GoogleUser uconnection;
+	
 	public Drive getClientSession(){
 		Drive drive=null;
 		
+		GoogleUser user = null;
 		FacesContext ctx = FacesContext.getCurrentInstance();
 		ExternalContext ec = ctx.getExternalContext();
 		Object session=((HttpSession) ec.getSession(false)).getAttribute("Oauth2callback.email");
@@ -49,8 +53,10 @@ public class GoogleDriveController implements Serializable {
 		String username=AonUtil.getAuthPrincipal().getShortName();
 		if (SessionInfo.table.containsKey(domain) && SessionInfo.table.get(domain).getUsers().containsKey(username)){
 			drive= SessionInfo.table.get(domain).getUsers().get(username).getGoogleUsers().get(email).getDrive();
+			user = SessionInfo.table.get(domain).getUsers().get(username).getGoogleUsers().get(email);
 		}
 		dconnection= drive;
+		uconnection = user;
 		return drive;
 	}
 	

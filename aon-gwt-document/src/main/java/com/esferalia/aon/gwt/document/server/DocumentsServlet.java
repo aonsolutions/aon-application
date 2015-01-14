@@ -5,10 +5,12 @@ import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.sql.Connection;
@@ -24,7 +26,11 @@ import java.util.TreeMap;
 import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
+import javax.mail.BodyPart;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -34,26 +40,41 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.AonFile;
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveFile;
 import com.code.aon.google.apis.DriveUtils;
+import com.code.aon.google.apis.GmailUtils;
 import com.code.aon.google.apis.drive.ShareFiles;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.google.apis.controller.GoogleDriveController;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.IWebMailConstants;
+import com.code.aon.ui.webmail.controller.MailConfigController;
+import com.code.aon.ui.webmail.controller.MessageController;
+import com.code.aon.webmail.IMailAccount;
+import com.code.aon.webmail.WebmailException;
+import com.code.aon.webmail.WebmailUtil;
+import com.code.aon.webmail.bean.AonMessage;
+import com.code.aon.webmail.bean.AonServer;
 import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.document.client.IDocument;
 import com.esferalia.aon.gwt.document.client.Utils;
 import com.esferalia.aon.gwt.document.jooq.DBConsults;
+import com.esferalia.aon.gwt.document.jooq.SendEmailDialogJooq;
 import com.esferalia.aon.gwt.document.shared.Category;
+import com.esferalia.aon.gwt.document.shared.ContactList;
 import com.esferalia.aon.gwt.document.shared.Document;
 import com.esferalia.aon.gwt.document.shared.Domain;
+import com.esferalia.aon.gwt.document.shared.Emessage;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
 import com.esferalia.aon.gwt.document.shared.FilterUtil;
 import com.esferalia.aon.gwt.document.shared.Lists;
+import com.esferalia.aon.gwt.document.shared.MailAccount;
+import com.esferalia.aon.gwt.document.shared.MailAccountList;
 import com.esferalia.aon.gwt.document.shared.SearchInfo;
 import com.esferalia.aon.gwt.document.shared.Tag;
 import com.esferalia.aon.gwt.document.shared.Tags;
@@ -65,6 +86,7 @@ import com.google.api.services.drive.model.About;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.ParentReference;
+import com.google.api.services.gmail.Gmail;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.sun.pdfview.PDFFile;
 import com.sun.pdfview.PDFPage;
@@ -321,7 +343,18 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 
 	}
 	public static byte[] out;
+	public static Vector<FileInfo> outs = new Vector<FileInfo>();
 	
+	public static Vector<FileInfo> getOuts(){
+		return outs;
+	}
+	public static void setOuts(Vector<FileInfo> outs2){
+		outs = outs2;
+	}
+	
+	public static void addOuts(FileInfo fi){
+		outs.add(fi);
+	}
 	
 	public static byte[] getOut() {
 		return out;
@@ -951,6 +984,7 @@ public Tag newTag(String name) {
 	t.setIsSon(false);
 	t.setDomain(dom);
 	t.setName(name);
+	
 	return t;
 }
 
@@ -1014,6 +1048,303 @@ public void deleteCategory(Integer categoryId) {
 	} catch (SQLException e) {
 		e.printStackTrace();
 	}
+}
 
+Vector<FileInfo> batch = new Vector<FileInfo>();
+public Vector<FileInfo> getLote(){
+	return batch;
+}
+
+public void resetLote(){
+	batch = new Vector<FileInfo>();
+}
+
+public Vector<FileInfo> addToLote(FileInfo fi) {
+	batch.add(fi);
+	return batch;
+	/*String domain  = AonUtil.getDomainName();
+	BatchDocument bd = (BatchDocument) AonUtil.getRegisteredBean(BATCH_DOCUMENT_CONTROLLER_NAME);
+	RegistryAttachment attach = null;
+	try {
+		attach = DBConsults.getRegistryAttachment(fi.getFileId(), domain);
+		if(attach.getDriveId() != null){ 
+			DomainGserviceaccount g = DatabaseSync.getServiceAccount(AonUtil.getDomainName());
+			Drive d = DriveUtils.serviceInitialize(g);
+			File f = d.files().get(attach.getDriveId()).execute();
+			InputStream in = DriveUtils.downloadFile(d, f);
+			byte[] b=IOUtils.toByteArray(in);
+			attach.setData(b);
+		}
+		else {
+			ViewerUtils.RAttach rattach = ViewerUtils.getRAttach(fi.getFileId());
+			byte[] b = rattach.bytes;				
+			attach.setData(b);
+		}
+	} catch (AonConnectionException e) {
+		e.printStackTrace();
+	} catch (SQLException e) {
+		e.printStackTrace();
+	} catch (KeyStoreException e) {
+		e.printStackTrace();
+	} catch (IOException e) {
+		e.printStackTrace();
+	} catch (GeneralSecurityException e) {
+		e.printStackTrace();
+	}
+	
+	if(attach!= null) bd.addToBatch((IAttachment) attach );*/
+}
+
+//-------------------- Enviar Email
+
+public MailAccountList getMailAccounts() {
+	String domain = AonUtil.getDomainName();
+	Integer user_id=AonUtil.getAuthPrincipal().getUserId();
+	Integer userDomainId = AonUtil.getAuthPrincipal().getUserDomainId();
+
+	MailAccountList mal = new MailAccountList();
+	try {
+		mal = SendEmailDialogJooq.getMailAccounts(domain, user_id,userDomainId);
+	} catch (SQLException e) {
+		e.printStackTrace();
+	}
+	mal.setContactList(getContacts());
+	return mal;
+}
+
+	public void sendEmail(MailAccount ma, Emessage em) {
+		// IMailAccount ima = Utils.getIMailAccount(ma);
+		String domain = AonUtil.getDomainName();
+			try {
+				initFacesContext();
+				MailConfigController mcg = (MailConfigController) AonUtil
+						.getRegisteredBean(IWebMailConstants.BEAN_MAIL_CONFIG);
+
+				IMailAccount ima2 = mcg.getDefaultMailAccount(true);
+				List<IMailAccount> imas = mcg.getIMailAccounts();
+				for (IMailAccount iMailAccount : imas) {
+					if (ma.getEmail().equals(iMailAccount.getEmail())) {
+						ima2 = iMailAccount;
+					}
+				}
+				System.out.println(ima2.getDisplayName());
+				AonServer server = new AonServer(ima2);
+
+				MessageController mc = new MessageController();
+				mc.setRecipientsBcc(em.getRecipientsBcc());
+				mc.setRecipientsCc(em.getRecipientsCc());
+				mc.setRecipientsTo(em.getRecipientsTo());
+				mc.setContent(em.getContent());
+				mc.setSenderMailAccount(ima2);
+				mc.setSubject(em.getSubject());
+
+				Vector<FileInfo> files = getOuts();
+
+				ZipOutputStream zos;
+				try {
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					zos = new ZipOutputStream(baos);
+					for (FileInfo fi : em.getFiles()) {
+						if (fi.getDriveId() != null) {
+							Drive d = null;
+							if (fi.getIsDrive()) {
+								d = GoogleDriveController.dconnection;
+							} else {
+								DomainGserviceaccount g;
+								try {
+									g = DatabaseSync.getServiceAccount(domain);
+									d = DriveUtils.serviceInitialize(g);
+								} catch (SQLException e) {
+									e.printStackTrace();
+								} catch (KeyStoreException e) {
+									e.printStackTrace();
+								} catch (GeneralSecurityException e) {
+									e.printStackTrace();
+								}
+							}
+							com.google.api.services.drive.model.File f = d
+									.files().get(fi.getDriveId()).execute();
+							InputStream in = DriveUtils.downloadFile(d, f);
+							byte[] b = com.code.aon.google.apis.Utils
+									.InputStreamToByte(in);
+							fi.setData(b);
+						} else if ((Integer) fi.getFileId() != null) {
+							try {
+								com.code.aon.google.apis.FileInfo fi2 = DBConsults
+										.getDataAndName(fi.getFileId(), domain);
+								fi.setData(fi2.getData());
+							} catch (SQLException e) {
+								e.printStackTrace();
+							}
+						}
+
+						zos.putNextEntry(new ZipEntry(fi.getTitle()
+								+ "."
+								+ MimeType.values()[fi.getMimetype()]
+										.getExtension()));
+						zos.write(fi.getData());
+						zos.closeEntry();
+					}
+					zos.close();
+					FileInfo fileInfo = new FileInfo();
+					fileInfo.setData(baos.toByteArray());
+					fileInfo.setTitle("lote.zip");
+					fileInfo.setMimetype((byte) MimeType.MIME_ZIP.ordinal());
+					files.add(fileInfo);
+				} catch (FileNotFoundException e1) {
+					e1.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+				mc.initNewMsgFileList();
+				for (FileInfo fi : files) {
+					AonFile aonFile = new AonFile();
+					java.io.File file = new java.io.File("/tmp/"
+							+ fi.getTitle());
+					try {
+						org.apache.commons.io.FileUtils.writeByteArrayToFile(
+								file, fi.getData());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					aonFile.setFile(file);
+					aonFile.setData(fi.getData());
+					aonFile.setFileName(fi.getTitle());
+					aonFile.setMimeType(MimeType.get(fi.getMimeString()));
+					mc.addAttachment(aonFile);
+				}
+
+				try {
+					AonMessage sentMessage = mc.compoundMessage(server);// Utils.getAonMessage(server,ma);
+					server.sendMessage(sentMessage);
+				} catch (WebmailException e) {
+					e.printStackTrace();
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				} catch (MessagingException e) {
+					e.printStackTrace();
+				}
+			} finally {
+				releaseFacesContext();
+			}
+		
+	}
+	
+	public void sendGmail(MailAccount ma, Emessage em) {
+		String domain = AonUtil.getDomainName();
+		Gmail gmail = GoogleDriveController.uconnection.getGmail();
+
+		Vector<FileInfo> files = getOuts();
+
+		ZipOutputStream zos;
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			zos = new ZipOutputStream(baos);
+			for (FileInfo fi : em.getFiles()) {
+				if (fi.getDriveId() != null) {
+					Drive d = null;
+					if (fi.getIsDrive()) {
+						d = GoogleDriveController.dconnection;
+					} else {
+						DomainGserviceaccount g;
+						try {
+							g = DatabaseSync.getServiceAccount(domain);
+							d = DriveUtils.serviceInitialize(g);
+						} catch (SQLException e) {
+							e.printStackTrace();
+						} catch (KeyStoreException e) {
+							e.printStackTrace();
+						} catch (GeneralSecurityException e) {
+							e.printStackTrace();
+						}
+					}
+					com.google.api.services.drive.model.File f = d.files()
+							.get(fi.getDriveId()).execute();
+					InputStream in = DriveUtils.downloadFile(d, f);
+					byte[] b = com.code.aon.google.apis.Utils
+							.InputStreamToByte(in);
+					fi.setData(b);
+				} else if ((Integer) fi.getFileId() != null) {
+					try {
+						com.code.aon.google.apis.FileInfo fi2 = DBConsults
+								.getDataAndName(fi.getFileId(), domain);
+						fi.setData(fi2.getData());
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+
+				zos.putNextEntry(new ZipEntry(fi.getTitle()
+						+ "."
+						+ MimeType.values()[fi.getMimetype()]
+								.getExtension()));
+				zos.write(fi.getData());
+				zos.closeEntry();
+			}
+			zos.close();
+			FileInfo fileInfo = new FileInfo();
+			fileInfo.setData(baos.toByteArray());
+			fileInfo.setTitle("lote.zip");
+			fileInfo.setMimetype((byte) MimeType.MIME_ZIP.ordinal());
+			files.add(fileInfo);
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Vector<BodyPart> bodyParts = new Vector<BodyPart>();
+		for (FileInfo fi : files) {
+			AonFile aonFile = new AonFile();
+			java.io.File file = new java.io.File("/tmp/" + fi.getTitle());
+			try {
+				org.apache.commons.io.FileUtils.writeByteArrayToFile(file,
+						fi.getData());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			aonFile.setFile(file);
+			aonFile.setData(fi.getData());
+			aonFile.setFileName(fi.getTitle());
+			aonFile.setMimeType(MimeType.get(fi.getMimeString()));
+			BodyPart bodyPart = null;
+			try {
+				bodyPart = WebmailUtil.getBodyPart(aonFile);
+			} catch (MessagingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			bodyParts.add(bodyPart);
+		}
+		try {
+			MimeMessage email = GmailUtils.createEmailWithAttachments(
+					em.getRecipientsTo(), ma.getEmail(), em.getSubject(),
+					em.getContent(), bodyParts);
+			GmailUtils.sendMessage(gmail, "me", email); 
+
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+	}
+
+public  ContactList getContacts() {	
+	String domain = AonUtil.getDomainName();
+	Integer user_id=AonUtil.getAuthPrincipal().getUserId();
+	Integer userDomainId = AonUtil.getAuthPrincipal().getUserDomainId();
+
+	ContactList cl = new ContactList();
+	try {
+		cl = DBConsults.getContacts(user_id, domain, userDomainId);
+	} catch (AonConnectionException e) {
+		e.printStackTrace();
+	} catch (SQLException e) {
+		e.printStackTrace();
+	}
+	return cl;
 }
 }

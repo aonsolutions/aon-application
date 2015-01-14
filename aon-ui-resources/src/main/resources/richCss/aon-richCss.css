@@ -3036,6 +3036,10 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	background:transparent url(images/aon-icon/aon-icon-google-task.png) scroll left center no-repeat;	
  }
  
+  .aon-icon-google-gmail{
+	background:transparent url(images/aon-icon/aon-icon-google-gmail.png) scroll left center no-repeat;	
+ }
+ 
      .aon-icon-google-console2{
 	background:transparent url(images/aon-icon/aon-icon-google-console2.png) scroll left center no-repeat;	
  }
@@ -3107,6 +3111,23 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
  }
  .aon-icon-zoom-minus{
 	background:transparent url(images/aon-icon-big/aon-icon-zoom-minus.png) scroll left center no-repeat;	
+ }
+ 
+ .aon-icon-cancel2{
+ 	background:transparent url(images/aon-icon/aon-icon-cancel2.gif) scroll left center no-repeat;
+ }
+ 
+ .aon-gwt-upload{
+ 	height:12px;
+	width:12px;
+	border:0;
+	cursor:pointer;
+	padding-left:14px;
+	margin-left:1px;
+ }
+ .aon-green{
+ 	color:green !important;
+ 	margin-left: 11px;
  }
  	.aon-tree-item{
  		padding-left:20px;

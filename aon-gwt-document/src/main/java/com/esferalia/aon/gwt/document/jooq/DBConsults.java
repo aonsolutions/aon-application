@@ -8,10 +8,14 @@ import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
+import static com.esferalia.aon.jooq.tables.Contact.CONTACT;
+import static com.esferalia.aon.jooq.tables.ContactData.CONTACT_DATA;
+import static com.esferalia.aon.jooq.tables.ContactDetail.CONTACT_DETAIL;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Vector;
 
 import org.apache.commons.io.FileUtils;
@@ -20,6 +24,7 @@ import org.jooq.DSLContext;
 import org.jooq.Record1;
 import org.jooq.Record11;
 import org.jooq.Record14;
+import org.jooq.Record16;
 import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Record7;
@@ -27,13 +32,19 @@ import org.jooq.Result;
 import org.jooq.impl.DSL;
 
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.jooq.JooqSettings;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.product.enumeration.AttachmentType;
+import com.code.aon.registry.Registry;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.master.RegistryAttachmentDB;
 import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.CategoryList;
+import com.esferalia.aon.gwt.document.shared.Contact;
+import com.esferalia.aon.gwt.document.shared.ContactList;
 import com.esferalia.aon.gwt.document.shared.Document;
 import com.esferalia.aon.gwt.document.shared.Domain;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
@@ -81,6 +92,16 @@ public class DBConsults {
 				DSLContext dslContext = DSL.using(connection,
 						JooqSettings.getDefaultSettings());
 				
+				Condition c;
+
+				if(userDomainId!= domainId){
+
+					c=(RATTACH.SCOPE.isNotNull().or(RATTACH.SCOPE.isNull()));
+					
+				}
+				else
+					c = RATTACH.SCOPE.isNull();
+				
 				Byte sh = (byte)RegistryAttachmentType.CORPORATE_IDENTITY.ordinal();//5;
 				//rattach domain + parent domain + scope not null
 				Result<Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer>> username = dslContext
@@ -119,7 +140,7 @@ public class DBConsults {
 						.from(RATTACH)
 						.join(DOMAIN)
 						.on(RATTACH.DOMAIN.eq(DOMAIN.ID))
-						.where(RATTACH.TYPE.eq(sh).and((RATTACH.SCOPE.isNull().and(RATTACH.DOMAIN.eq(domainId)))))
+						.where(RATTACH.TYPE.eq(sh).and((c.and(RATTACH.DOMAIN.eq(domainId)))))
 						.fetch();
 
 				// sons domain
@@ -1090,4 +1111,88 @@ public class DBConsults {
 				connection.close();
 		}	
 	}
+	
+	public static com.code.aon.registry.RegistryAttachment getRegistryAttachment(int id, String domain)
+			throws AonConnectionException, SQLException {
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+
+			Record16<Date, Integer, Timestamp, String, String, Integer, String, String, Integer, Byte, Timestamp, String, Integer, Integer, Byte, Byte> rattach = dslContext.select(RATTACH.ATTACH_DATE, RATTACH.CATEGORY,
+															RATTACH.CREATION_DATE, RATTACH.CREATION_USER, RATTACH.DESCRIPTION, 
+															RATTACH.DOMAIN, RATTACH.DPARENT_ID, RATTACH.DRIVE_ID, RATTACH.ID, 
+															RATTACH.MIMETYPE, RATTACH.MODIFICATION_DATE, RATTACH.MODIFICATION_USER, 
+															RATTACH.REGISTRY, RATTACH.SCOPE,RATTACH.SECURITY_LEVEL, RATTACH.TYPE)
+					.from(RATTACH).where(RATTACH.ID.eq(id)).fetchOne();
+			com.code.aon.registry.RegistryAttachment attach = new com.code.aon.registry.RegistryAttachment();
+			
+			attach.setAttachDate(rattach.value1());
+			com.code.aon.registry.Category c = new com.code.aon.registry.Category();
+			c.setId(rattach.value2());
+			attach.setCategory(c);
+			attach.setCreationDate(rattach.value3());
+			attach.setCreationUser(rattach.value4());
+			attach.setDescription(rattach.value5());
+			attach.setDomain(rattach.value6());
+			attach.setDparentId(rattach.value7());
+			attach.setDriveId(rattach.value8());
+			attach.setId(rattach.value9());
+			attach.setMimeType(MimeType.values()[rattach.value10()]);
+			attach.setModificationDate(rattach.value11());
+			attach.setModificationUser(rattach.value12());
+			com.code.aon.registry.Registry r = new Registry();
+			r.setId(rattach.value13());
+			attach.setRegistry(r);
+			com.code.aon.config.Scope s = new com.code.aon.config.Scope();
+			s.setId(rattach.value14());
+			attach.setScope(s);
+			attach.setSecurityLevel(SecurityLevel.values()[rattach.value15()]);
+			attach.setRegistryAttachmentType(RegistryAttachmentType.values()[rattach.value16()]);
+			
+			return attach;
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+
+	}
+	public static ContactList getContacts(int user_id, String domain,Integer domainId)
+			throws AonConnectionException, SQLException {
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+
+			Result<Record3<Integer, String, String>> result = dslContext.select(CONTACT.ID, CONTACT.DISPLAYNAME, CONTACT_DATA.EMAIL)
+														.from(CONTACT).join(CONTACT_DATA).on(CONTACT.CONTACT_DATA.eq(CONTACT_DATA.ID))
+														.where(CONTACT.USER_ID.eq(user_id).and(CONTACT.DOMAIN.eq(domainId))).fetch();
+			
+			Vector<Contact> v = new Vector<Contact>();
+			result.stream().forEach(r->{
+				Contact c = new Contact();
+				c.setId(r.value1());
+				c.setDisplayName(r.value2());
+				c.setEmail(r.value3());
+				c.setUser_id(user_id);
+				v.add(c);
+			});
+			ContactList cl = new ContactList();
+			cl.setList(v);
+			return cl;
+			
+		
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+
+	}
+	
 }

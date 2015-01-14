@@ -6,11 +6,15 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.document.shared.Category;
+import com.esferalia.aon.gwt.document.shared.ContactList;
 import com.esferalia.aon.gwt.document.shared.Document;
 import com.esferalia.aon.gwt.document.shared.Domain;
+import com.esferalia.aon.gwt.document.shared.Emessage;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
 import com.esferalia.aon.gwt.document.shared.FilterUtil;
 import com.esferalia.aon.gwt.document.shared.Lists;
+import com.esferalia.aon.gwt.document.shared.MailAccount;
+import com.esferalia.aon.gwt.document.shared.MailAccountList;
 import com.esferalia.aon.gwt.document.shared.SearchInfo;
 import com.esferalia.aon.gwt.document.shared.Tag;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
@@ -88,6 +92,20 @@ public interface IDocumentAsync {
 			AsyncCallback<Void> callback);
 
 	void deleteCategory(Integer categoryId, AsyncCallback<Void> callback);
+
+	void addToLote(FileInfo fi, AsyncCallback<Vector<FileInfo>> callback);
+
+	void getLote(AsyncCallback<Vector<FileInfo>> callback);
+
+	void resetLote(AsyncCallback<Void> callback);
+
+	void getMailAccounts(AsyncCallback<MailAccountList> callback);
+
+	void sendEmail(MailAccount ma, Emessage em, AsyncCallback<Void> callback);
+
+	void getContacts(AsyncCallback<ContactList> callback);
+
+	void sendGmail(MailAccount ma, Emessage em, AsyncCallback<Void> callback);
 
 
 }
