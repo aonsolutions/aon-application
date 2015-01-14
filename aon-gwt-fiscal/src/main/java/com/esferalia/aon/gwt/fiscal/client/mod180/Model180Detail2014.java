@@ -131,7 +131,7 @@ public class Model180Detail2014 extends ResizeComposite {
 			}
 		cadasdralReference.setValue(detail.getCadasdralReference() );
 		StreetType st = StreetType.getForIneCode(detail.getStreetType());
-		streetType.setSelectedIndex(st==null?0:st.ordinal());
+		streetType.setSelectedIndex(st==null?0:(st.ordinal()+1));
 		streetName.setValue(detail.getStreetName() );
 		numberType.setValue(detail.getNumberType() );
 		number.setValue(detail.getNumber() );
@@ -233,7 +233,7 @@ public class Model180Detail2014 extends ResizeComposite {
 	}
 	@UiHandler("streetType")
 	void onChangeStreetType(ChangeEvent event) {
-		detail.setStreetType(StreetType.values()[streetType.getSelectedIndex()].getIneCode());
+		detail.setStreetType(streetType.getValue(streetType.getSelectedIndex()));
 		detail.setDirty(true);
 	}
 	@UiHandler("streetName")
