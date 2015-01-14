@@ -12,10 +12,12 @@ import java.security.PrivateKey;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.Vector;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
+import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Session;
@@ -81,7 +83,6 @@ public class GmailUtils {
 	      throws MessagingException, IOException {
 	    Message message = createMessageWithEmail(email);
 	    message = service.users().messages().send(userId, message).execute();
-
 	    System.out.println("Message id: " + message.getId());
 	    System.out.println(message.toPrettyString());
 	  }
@@ -155,7 +156,7 @@ public class GmailUtils {
 	    email.setSubject(subject);
 
 	    MimeBodyPart mimeBodyPart = new MimeBodyPart();
-	    mimeBodyPart.setContent(bodyText, "text/plain");
+	    mimeBodyPart.setContent(bodyText, "text/html");
 	    mimeBodyPart.setHeader("Content-Type", "text/plain; charset=\"UTF-8\"");
 
 	    Multipart multipart = new MimeMultipart();
@@ -177,6 +178,37 @@ public class GmailUtils {
 
 	    return email;
 	  }
+	  
+	  public static MimeMessage createEmailWithAttachments(String to, String from, String subject,
+		      String bodyText, Vector<BodyPart> bodyParts) throws MessagingException, IOException {
+		    Properties props = new Properties();
+		    Session session = Session.getDefaultInstance(props, null);
+
+		    MimeMessage email = new MimeMessage(session);
+		    InternetAddress tAddress = new InternetAddress(to);
+		    InternetAddress fAddress = new InternetAddress(from);
+
+		    email.setFrom(fAddress);
+		    email.addRecipient(javax.mail.Message.RecipientType.TO, tAddress);
+		    email.setSubject(subject);
+
+		    MimeBodyPart mimeBodyPart = new MimeBodyPart();
+		    mimeBodyPart.setContent(bodyText, "text/html");
+		    mimeBodyPart.setHeader("Content-Type", "text/html; charset=\"UTF-8\"");
+
+		    Multipart multipart = new MimeMultipart();
+		    multipart.addBodyPart(mimeBodyPart);
+
+		    bodyParts.stream().forEach(b->{try {
+				multipart.addBodyPart(b);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}});
+
+		    email.setContent(multipart);
+
+		    return email;
+		  }
 	  
 	  public static void send(Gmail gmail, String to, String subject, String body) throws SQLException, KeyStoreException, IOException, GeneralSecurityException, MessagingException{
 		 	

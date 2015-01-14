@@ -1,9 +1,5 @@
 package com.esferalia.aon.gwt.document.client;
 
-import java.util.List;
-import java.util.TreeMap;
-import java.util.Vector;
-
 import gwtupload.client.IFileInput.FileInputType;
 import gwtupload.client.IUploadStatus.Status;
 import gwtupload.client.IUploader;
@@ -13,7 +9,9 @@ import gwtupload.client.IUploader.OnStartUploaderHandler;
 import gwtupload.client.IUploader.OnStatusChangedHandler;
 import gwtupload.client.SingleUploader;
 
-import com.code.aon.common.enumeration.MimeType;
+import java.util.List;
+import java.util.TreeMap;
+
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.Dialog;
@@ -31,7 +29,6 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -54,7 +51,6 @@ import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
-import com.google.gwt.view.client.ListDataProvider;
 
 public abstract class DocumentsDialog extends CustomDialog {
 
@@ -617,7 +613,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 	private void delete2(Dialog dialog) {
 		String name = "";
 		if(dialog.getTag() != null) name = "la etiqueta "+dialog.getTag().getName();
-		else if(dialog.getCat() != null) name = "la categoría "+dialog.getCat().getName();
+		else if(dialog.getCat() != null) name = "la categor\u00eda "+dialog.getCat().getName();
 		label.setText("Est\u00e1s seguro de eliminar "+name);
 	}
 	
@@ -891,12 +887,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 		}	
 	}
 	
-	
-	
-	
-	//-------------------- Gets & Sets
-	
-	
+
 	//--------------------Gets & Sets
 	
 	public FlexTable getGrid() {

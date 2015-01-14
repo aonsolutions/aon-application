@@ -31,6 +31,7 @@ import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.servlet.auth.oauth2.AbstractAuthorizationCodeCallbackServlet;
 import com.google.api.services.drive.Drive;
+import com.google.api.services.gmail.Gmail;
 import com.google.api.services.oauth2.Oauth2;
 import com.google.api.services.tasks.Tasks;
 
@@ -81,6 +82,9 @@ public class GoogleAuthorizationCodeCallbackServlet extends
 		Tasks tasks = new Tasks.Builder(getHttpTransport(), getJsonFactory(),
 				credential).setApplicationName("AON SOLUTIONS").build();
 
+		Gmail gmail = new Gmail.Builder(getHttpTransport(), getJsonFactory(),
+				credential).setApplicationName("AON SOLUTIONS").build();
+		
 		String email = oauth2.userinfo().v2().me().get().execute().getEmail();
 		System.out.println("EMAIL = " + email);
 
@@ -91,7 +95,8 @@ public class GoogleAuthorizationCodeCallbackServlet extends
 
 				GoogleUser gu = new GoogleUser();
 				gu.setDrive(drive);
-				gu.setGmail(email);
+				gu.setEmail(email);
+				gu.setGmail(gmail);
 				gu.setOAuth2(oauth2);
 				gu.setTasks(tasks);
 				gu.setState(statepass);

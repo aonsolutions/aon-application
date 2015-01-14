@@ -18,6 +18,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.drive.DriveScopes;
+import com.google.api.services.gmail.GmailScopes;
 import com.google.api.services.oauth2.Oauth2Scopes;
 import com.google.api.services.tasks.TasksScopes;
 
@@ -52,7 +53,7 @@ public class GoogleAuthorizationServletUtils {
 	public static AuthorizationCodeFlow newFlow() throws IOException {
 		return new GoogleAuthorizationCodeFlow.Builder(new NetHttpTransport(),
 				JSON_FACTORY, getClientCredential(),
-				Arrays.asList (DriveScopes.DRIVE,DriveScopes.DRIVE_APPDATA, Oauth2Scopes.USERINFO_EMAIL, TasksScopes.TASKS))
+				Arrays.asList (DriveScopes.DRIVE,DriveScopes.DRIVE_APPDATA, Oauth2Scopes.USERINFO_EMAIL, TasksScopes.TASKS, GmailScopes.MAIL_GOOGLE_COM, GmailScopes.GMAIL_COMPOSE, GmailScopes.GMAIL_MODIFY,GmailScopes.GMAIL_READONLY))
 					.setAccessType("online")
 					.setApprovalPrompt("auto")
 					.build();
