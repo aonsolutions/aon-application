@@ -360,10 +360,16 @@ background-color:#D4CFC7;
 									<g:Button ui:field="delFile" visible="false" styleName='aon-finding-toolbar-item aon-icon-delete'
 										text="Borrar" />
 								</g:HTMLPanel>
+								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+									<g:Button ui:field="optionFile" visible="false" styleName='aon-finding-toolbar-item aon-icon-option'
+										text="Opciones" />
+								</g:HTMLPanel>
+								
 							</g:HorizontalPanel>
 							
 							
-							<g:HorizontalPanel styleName="{style.aon-aux-right}">
+							<g:HorizontalPanel ui:field="prueba2" styleName="{style.aon-aux-right}">
+								
 								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 									<g:Button ui:field="categories" visible="false" styleName='aon-finding-toolbar-item aon-icon-category'
 										text="Categorías" />

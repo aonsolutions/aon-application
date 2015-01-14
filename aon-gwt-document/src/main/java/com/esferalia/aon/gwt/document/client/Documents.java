@@ -275,10 +275,7 @@ public class Documents extends Composite implements EntryPoint {
 					}
 
 					@Override
-					protected void onNext() {
-						// TODO Auto-generated method stub
-						
-					}
+					protected void onNext() {}
 				};
 			
 				popup2.setGlassEnabled(true);
@@ -335,10 +332,7 @@ public class Documents extends Composite implements EntryPoint {
 					}
 
 					@Override
-					protected void onNext() {
-						// TODO Auto-generated method stub
-						
-					}
+					protected void onNext() {}
 				};
 			
 				popup2.setGlassEnabled(true);
@@ -418,7 +412,10 @@ public class Documents extends Composite implements EntryPoint {
 	 * 
 	 * @UiField RangeLabelPager rangeLabelPager;
 	 */
-
+	
+	
+	@UiField(provided = true) HorizontalPanel prueba2;
+	
 	@UiField SimplePanel sp;
 	
 	@UiField Button upDrive;
@@ -454,6 +451,8 @@ public class Documents extends Composite implements EntryPoint {
 	@UiField Button editFile;
 	
 	@UiField Button delFile;
+	
+	@UiField Button optionFile;
 	
 	@UiField Button reset;
 	
@@ -549,7 +548,7 @@ public class Documents extends Composite implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 		stack1 = new StackLayoutPanel(Unit.EM);
-	
+		prueba2 = new HorizontalPanel();
 		//treepanel = new ScrollPanel();
 		//DisclosureImages di = new DisclosureImages();
 		//dpanel = new DisclosurePanel(di.getClosed(), di.getOpen(), "Categor\u00edas");
@@ -605,6 +604,7 @@ public class Documents extends Composite implements EntryPoint {
 						gestionDocs.setVisible(true);
 						editFile.setVisible(false);
 						delFile.setVisible(false);
+						optionFile.setVisible(false);
 						SearchInfo si = new SearchInfo();
 						si.setCategory(c.getName());
 						idoc.searchFile2(si, docs.getEfiles(),
@@ -665,6 +665,8 @@ public class Documents extends Composite implements EntryPoint {
 						gestionDocs.setVisible(true);
 						editFile.setVisible(false);
 						delFile.setVisible(false);
+						optionFile.setVisible(false);
+
 						SearchInfo si = new SearchInfo();
 						Vector<String> v = new Vector<String>();
 						v.add(t.getName());
@@ -780,10 +782,12 @@ public class Documents extends Composite implements EntryPoint {
 			    	if(!isServiconvenios && !isLote && !object.getIsParent() && documentManager){
 						editFile.setVisible(true);
 						delFile.setVisible(true);
+						optionFile.setVisible(true);
 					}
 			    	else{
 			    		editFile.setVisible(false);
 						delFile.setVisible(false);
+						optionFile.setVisible(false);
 			    	}
 			   
 				}
@@ -797,10 +801,12 @@ public class Documents extends Composite implements EntryPoint {
 			    	if(!isServiconvenios && !isLote && !object.getIsParent() && documentManager){
 						editFile.setVisible(true);
 						delFile.setVisible(true);
+						optionFile.setVisible(true);
 					}
 			    	else{
 			    		editFile.setVisible(false);
 						delFile.setVisible(false);
+						optionFile.setVisible(false);
 			    	}
 				}
 				
@@ -1128,10 +1134,7 @@ public class Documents extends Composite implements EntryPoint {
 					vertical = new VerticalPanel();				
 				}
 				@Override
-				protected void onNext() {
-					// TODO Auto-generated method stub
-					
-				}
+				protected void onNext() {}
 			};
 
 		}
@@ -1152,16 +1155,37 @@ public class Documents extends Composite implements EntryPoint {
 				}
 
 				@Override
-				protected void onNext() {
-					// TODO Auto-generated method stub
-					
-				}
+				protected void onNext() {}
 			};
 		}
 		popup2.setGlassEnabled(true);
 		popup2.show();
 	}
 
+	@UiHandler("optionFile")
+	void option(ClickEvent event){
+		//TODO
+		FileInfo object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
+    	DocumentContextMenu contextMenu = new DocumentContextMenu(object ,isLote || isServiconvenios || object.getIsParent() || !documentManager);
+    	NativeEvent nativeEvent = event.getNativeEvent();
+			if(nativeEvent.getClientY()>590){
+					if(nativeEvent.getClientX()>994)
+						contextMenu.setPopupPosition(nativeEvent.getClientX()-120,
+							nativeEvent.getClientY()-140);
+					else contextMenu.setPopupPosition(nativeEvent.getClientX(),
+							nativeEvent.getClientY()-140);
+				}
+				else{
+					if(nativeEvent.getClientX()>994)
+						contextMenu.setPopupPosition(nativeEvent.getClientX()-120,
+							nativeEvent.getClientY());
+					else contextMenu.setPopupPosition(nativeEvent.getClientX(),
+							nativeEvent.getClientY());
+				}
+    	
+    	contextMenu.show();
+	}
+	
 	@UiHandler("delFile")
 	void del(ClickEvent event){
 		removeFile();
@@ -1239,10 +1263,7 @@ public class Documents extends Composite implements EntryPoint {
 			}
 
 			@Override
-			protected void onNext() {
-				// TODO Auto-generated method stub
-				
-			}
+			protected void onNext() {}
 		};
 
 	}
@@ -1260,10 +1281,7 @@ public class Documents extends Composite implements EntryPoint {
 					hide();					
 				}
 				@Override
-				protected void onNext() {
-					// TODO Auto-generated method stub
-					
-				}
+				protected void onNext() {}
 			};
 		}
 		popup2.setGlassEnabled(true);
@@ -1322,10 +1340,7 @@ public class Documents extends Composite implements EntryPoint {
 				}
 
 				@Override
-				protected void onNext() {
-					// TODO Auto-generated method stub
-					
-				}
+				protected void onNext() {}
 			};
 
 		}
@@ -1834,6 +1849,8 @@ public class Documents extends Composite implements EntryPoint {
 		gestionDocs.setVisible(true);
 		editFile.setVisible(false);
 		delFile.setVisible(false);
+		optionFile.setVisible(false);
+
 		search();
 //		html.setVisible(false);
 //		filterButton.setVisible(false);
@@ -1846,6 +1863,7 @@ public class Documents extends Composite implements EntryPoint {
 	void XXXXX(ClickEvent event) {
 		editFile.setVisible(false);
 		delFile.setVisible(false);
+		optionFile.setVisible(false);
 		String searchStr = searchBox.getText();
 		Vector<FileInfo> vaux = new Vector<FileInfo>();
 		if(isServiconvenios) vaux = docs.getServiconvenios();
@@ -1932,6 +1950,7 @@ public class Documents extends Composite implements EntryPoint {
 							gestionDocs.setVisible(true);
 							editFile.setVisible(false);
 							delFile.setVisible(false);
+							optionFile.setVisible(false);
 							SearchInfo si = new SearchInfo();
 							si.setCategory(s);
 							idoc.searchFile2(si, docs.getEfiles(),
@@ -1994,6 +2013,7 @@ public class Documents extends Composite implements EntryPoint {
 						gestionDocs.setVisible(true);
 						editFile.setVisible(false);
 						delFile.setVisible(false);
+						optionFile.setVisible(false);
 						SearchInfo si = new SearchInfo();
 						Vector<String> v = new Vector<String>();
 						v.add(s);
@@ -2056,6 +2076,7 @@ public class Documents extends Composite implements EntryPoint {
 		gestionDocs.setVisible(true);
 		editFile.setVisible(false);
 		delFile.setVisible(false);
+		optionFile.setVisible(false);
 		html.setVisible(false);
 		filterButton.setVisible(false);
 		if(docs.getEfiles()==null){
@@ -2098,6 +2119,7 @@ public class Documents extends Composite implements EntryPoint {
 		gestionDocs.setVisible(true);
 		editFile.setVisible(false);
 		delFile.setVisible(false);
+		optionFile.setVisible(false);
 		isServiconvenios= true;
 		isLote = false;
 		html.setVisible(false);
@@ -2170,7 +2192,7 @@ public class Documents extends Composite implements EntryPoint {
 			nameColumn.setFieldUpdater(new FieldUpdater<FileInfo, String>() {
 				@Override
 				public void update(int index, FileInfo object, String value) {
-					
+					getAsHTMl(object,dataGrid.getKeyboardSelectedRow());
 				}
 				
 			});
@@ -2269,7 +2291,7 @@ public class Documents extends Composite implements EntryPoint {
 		/** Size Column **/
 		Column<FileInfo, String> sizeColumn = getSizeColumn(sortHandler);
 		dataGrid.getColumnSortList().push(sizeColumn);
-		dataGrid.addColumn(sizeColumn, "Tama\u00f1o("+getTotalSize()+")");
+		dataGrid.addColumn(sizeColumn, "Tama\u00f1o");//("+getTotalSize()+")");
 		dataGrid.setColumnWidth(sizeColumn, 13, Unit.PCT);
 
 		/** Tag Column **/
@@ -2279,9 +2301,14 @@ public class Documents extends Composite implements EntryPoint {
 		dataGrid.setColumnWidth(tagColumn, 16, Unit.PCT);
 
 		/** Download Column **/
-		Column<FileInfo,String> downloadColumn = getDownloadColumn();
-		dataGrid.addColumn(downloadColumn, "Archivo("+dataProvider.getList().size()+")");
+		/*Column<FileInfo,String> downloadColumn = getDownloadColumn();
+		dataGrid.addColumn(downloadColumn, "Archivo");//("+dataProvider.getList().size()+")");
 		dataGrid.setColumnWidth(downloadColumn, 10, Unit.PCT);
+		*/
+		String s = getTotalSize()+" / "+dataProvider.getList().size()+" Archivos";
+		Label label = new Label(s);
+		label.setStyleName("aon-bold aon-padding-top-3px");
+		prueba2.add(label);
 	}
 	Vector<TreeDriveInfo> vtree;
 	
@@ -2490,10 +2517,7 @@ public class Documents extends Composite implements EntryPoint {
 			}
 
 			@Override
-			protected void onNext() {
-				// TODO Auto-generated method stub
-				
-			}
+			protected void onNext() {}
 		};
 		popup2.setGlassEnabled(true);
 		popup2.show();
@@ -2535,10 +2559,7 @@ public class Documents extends Composite implements EntryPoint {
 			}
 
 			@Override
-			protected void onNext() {
-				// TODO Auto-generated method stub
-				
-			}
+			protected void onNext() {}
 		};
 		popup2.setGlassEnabled(true);
 		popup2.show();
@@ -2562,10 +2583,7 @@ public class Documents extends Composite implements EntryPoint {
 			}
 
 			@Override
-			protected void onNext() {
-				// TODO Auto-generated method stub
-				
-			}
+			protected void onNext() {}
 		};
 		popup2.setGlassEnabled(true);
 		popup2.setAnimationEnabled(false);
@@ -2858,6 +2876,7 @@ public class Documents extends Composite implements EntryPoint {
 		gestionDocs.setVisible(true);
 		editFile.setVisible(false);
 		delFile.setVisible(false);
+		optionFile.setVisible(false);
 		html.setVisible(false);
 		filterButton.setVisible(false);
 		if(getSons().size()==1){
@@ -2916,10 +2935,7 @@ public class Documents extends Composite implements EntryPoint {
 				hide();
 			}
 			@Override
-			protected void onNext() {
-				// TODO Auto-generated method stub
-				
-			}
+			protected void onNext() {}
 		
 		};
 		popup2.setGlassEnabled(true);
@@ -3029,7 +3045,7 @@ public class Documents extends Composite implements EntryPoint {
 	}
 	
 	private void updateDatagridColumns(){
-		dataGrid.removeColumn(6);
+		/*dataGrid.removeColumn(6);
 		dataGrid.removeColumn(5);
 		dataGrid.removeColumn(4);
 		
@@ -3044,6 +3060,10 @@ public class Documents extends Composite implements EntryPoint {
 		
 		dataGrid.addColumn(getDownloadColumn(), "Archivo("+dataProvider.getList().size()+")");
 		dataGrid.setColumnWidth(getDownloadColumn(), 10, Unit.PCT);
+	*/
+		String s = getTotalSize()+" / "+dataProvider.getList().size()+" Archivos";
+		Label l = (Label)prueba2.getWidget(2);
+		l.setText(s);
 	}
 	
 	 public static String byteCountToDisplaySize(long size) {
@@ -3122,6 +3142,7 @@ public class Documents extends Composite implements EntryPoint {
 										gestionDocs.setVisible(true);
 										editFile.setVisible(false);
 										delFile.setVisible(false);
+										optionFile.setVisible(false);
 										SearchInfo si = new SearchInfo();
 										Vector<String> v = new Vector<String>();
 										v.add(s);
@@ -3227,6 +3248,7 @@ public class Documents extends Composite implements EntryPoint {
 										gestionDocs.setVisible(true);
 										editFile.setVisible(false);
 										delFile.setVisible(false);
+										optionFile.setVisible(false);
 										SearchInfo si = new SearchInfo();
 										si.setCategory(s);
 										idoc.searchFile2(si, docs.getEfiles(),
@@ -3384,10 +3406,7 @@ public class Documents extends Composite implements EntryPoint {
 			}
 
 			@Override
-			protected void onNext() {
-				// TODO Auto-generated method stub
-				
-			}
+			protected void onNext() {}
 		};
 		popup.setGlassEnabled(true);
 		popup.show();
@@ -3488,10 +3507,7 @@ public class Documents extends Composite implements EntryPoint {
 			}
 
 			@Override
-			protected void onNext() {
-				// TODO Auto-generated method stub
-				
-			}
+			protected void onNext() {}
 		};
 		popup.setGlassEnabled(true);
 		popup.show();
@@ -3545,10 +3561,7 @@ public class Documents extends Composite implements EntryPoint {
 			}
 
 			@Override
-			protected void onNext() {
-				// TODO Auto-generated method stub
-				
-			}
+			protected void onNext() {}
 		};
 		popup.setGlassEnabled(true);
 		popup.show();
@@ -3619,10 +3632,7 @@ public class Documents extends Composite implements EntryPoint {
 			}
 
 			@Override
-			protected void onNext() {
-				// TODO Auto-generated method stub
-				
-			}
+			protected void onNext() {}
 		};
 		popup.setGlassEnabled(true);
 		popup.show();
@@ -3639,10 +3649,7 @@ public class Documents extends Composite implements EntryPoint {
 				}
 				
 				@Override
-				public void onFailure(Throwable caught) {
-					// TODO Auto-generated method stub
-					
-				}
+				public void onFailure(Throwable caught) {}
 			});
 			//bd.addToBatch(new  );
 	}
@@ -3659,10 +3666,7 @@ public class Documents extends Composite implements EntryPoint {
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void onFailure(Throwable caught) {}
 		});
 	}
 	
@@ -3674,6 +3678,7 @@ public class Documents extends Composite implements EntryPoint {
 		send.setVisible(true);
 		editFile.setVisible(false);
 		delFile.setVisible(false);
+		optionFile.setVisible(false);
 		isLote= true;
 		isServiconvenios = false;
 		html.setVisible(false);
