@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.InlineHTML;
 
@@ -9,11 +12,16 @@ public class ValueInlineHTML extends InlineHTML implements ValueLabel {
 	
 	private int changeDisplayMillis = DEFAULT_CHANGE_DISPLAY_MILLIS;
 	private String changeDisplayStyleName;
+	private SafeHtml htmlNull ;
+	
 
 	@Override
 	public void setText(String text) {
 		resetStyleName();
-		super.setText(text);
+		if ( text == null )
+			super.setHTML(htmlNull);
+		else
+			super.setText(text);
 	}
 	
 	@Override
@@ -31,7 +39,10 @@ public class ValueInlineHTML extends InlineHTML implements ValueLabel {
 					}
 				}.schedule(changeDisplayMillis);
 		}
-
+	}
+	
+	public void setHtmlNull(String htmlNull) {
+		this.htmlNull = SafeHtmlUtils.fromSafeConstant(htmlNull);
 	}
 
 	public void setChangeDisplayStyleName(String styleName) {
