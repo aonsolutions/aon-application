@@ -32,6 +32,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -43,14 +44,21 @@ public class Agreements extends ResizeComposite {
 
 	private static final Images IMAGES = GWT.create(Images.class);
 
-	private static final ImageResource RESOURCES[][][] = {
-			{ { IMAGES.agreement(), IMAGES.agreement_warn() },
-					{ IMAGES.agreement_error(), IMAGES.agreement_error() } },
-			{
-					{ IMAGES.agreement_changed(),
-							IMAGES.agreement_changed_warn() },
-					{ IMAGES.agreement_changed_error(),
-							IMAGES.agreement_changed_error() } } };
+	private static final ImageResource RESOURCES[][][] = 
+		{{{ IMAGES.agreement(), 
+			IMAGES.agreement_warn() 
+		},{ 
+			IMAGES.agreement_error(), 
+			IMAGES.agreement_error()
+		}},
+		{{
+			IMAGES.agreement_changed(),
+			IMAGES.agreement_changed_warn() 
+		},
+		{ 
+			IMAGES.agreement_changed_error(),
+			IMAGES.agreement_changed_error() 
+		}}};
 
 	interface Listener {
 		void onAgreementSelected(Agreement agreement);
@@ -168,7 +176,6 @@ public class Agreements extends ResizeComposite {
 		TreeItem selectedItem = event.getSelectedItem();
 		Agreement agreement = (Agreement) selectedItem.getUserObject();
 		fireAgreementSelected(agreement);
-
 	}
 
 	// -------------------------------------------------------------- Protected
@@ -212,6 +219,23 @@ public class Agreements extends ResizeComposite {
 		return selectedItem != null ? (Agreement) selectedItem.getUserObject()
 				: null;
 	}
+	
+	class AgreementContextMenu extends ContextMenu {
+		
+		MenuItem pasteItem;
+		
+		public AgreementContextMenu() {
+			
+/*			addItem("Nuevo", new NewAgreementCommand(), AON.AON_ICON_RESET, 
+					AON.AON_ICON_CMD_BUTTON);
+			addItem("Copiar", new CopyAgreementCommand(), AON.AON_ICON_COPY, 
+					AON.AON_ICON_CMD_BUTTON);
+			addItem("Borrar", new DeleteAgreementCommand(), AON.AON_ICON_DELETE, 
+					AON.AON_ICON_CMD_BUTTON);
+*/		}
+	}
+	
+	
 
 	private void initContextMenu() {
 

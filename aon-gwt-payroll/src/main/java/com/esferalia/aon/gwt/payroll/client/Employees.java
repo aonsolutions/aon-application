@@ -167,7 +167,6 @@ public class Employees extends ResizeComposite implements
 	private EmployeesServiceAsync employeesService;
 	private StatisticsServiceAsync statisticsService;
 
-	private Map<String, String> employeesDomain;
 
 	private boolean formers = true;
 	private boolean endDate = true;
@@ -244,7 +243,6 @@ public class Employees extends ResizeComposite implements
 
 					@Override
 					public void onSuccess(Map<String, String> result) {
-						Employees.this.employeesDomain = result;
 						Employees.this.onAvaiableEmployees(result);
 					}
 				});
