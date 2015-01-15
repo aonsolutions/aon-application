@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class Activity implements Serializable {
 	
 	private Integer id;
+	private Integer cnae2009;
 	private String description;
 	
 	
@@ -14,6 +15,14 @@ public class Activity implements Serializable {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+	
+	public Integer getCnae2009() {
+		return cnae2009;
+	}
+	
+	public void setCnae2009(Integer cnae2009) {
+		this.cnae2009 = cnae2009;
 	}
 	
 	public String getDescription() {
