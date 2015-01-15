@@ -440,8 +440,9 @@ public class MOD303Writer {
 		sr.setAct1IndTemp(mod303.getEnsuredAmount(Mod303Key.CAC1_Z));
 		sr.setAct1Porce(mod303.getEnsuredAmount(Mod303Key.CAC1_E));
 		sr.setAct1IngCta(mod303.getEnsuredAmount(Mod303Key.CAC1_F));
-		double g = CommonUtil.round(mod303.getEnsuredAmount(Mod303Key.CAC1_G0) + mod303.getEnsuredAmount(Mod303Key.CAC1_G));
-		sr.setAct1CuotaSop4T(g);
+		double g1 = CommonUtil.round(mod303.getEnsuredAmount(Mod303Key.CAC1_G0) 
+				+ mod303.getEnsuredAmount(Mod303Key.CAC1_G));
+		sr.setAct1CuotaSop4T(g1);
 		sr.setAct1IndTemp4T(mod303.getEnsuredAmount(Mod303Key.CAC1_H));
 		sr.setAct1Resultado4T(mod303.getEnsuredAmount(Mod303Key.CAC1_I));
 		sr.setAct1PorCuoMin4T(mod303.getEnsuredAmount(Mod303Key.CAC1_J));
@@ -482,7 +483,9 @@ public class MOD303Writer {
 		sr.setAct2IndTemp(mod303.getEnsuredAmount(Mod303Key.CAC2_Z));
 		sr.setAct2Porce(mod303.getEnsuredAmount(Mod303Key.CAC2_E));
 		sr.setAct2IngCta(mod303.getEnsuredAmount(Mod303Key.CAC2_F));
-		sr.setAct2CuotaSop4T(mod303.getEnsuredAmount(Mod303Key.CAC2_G));
+		double g2 = CommonUtil.round(mod303.getEnsuredAmount(Mod303Key.CAC2_G0) 
+				+ mod303.getEnsuredAmount(Mod303Key.CAC2_G));
+		sr.setAct2CuotaSop4T(g2);
 		sr.setAct2IndTemp4T(mod303.getEnsuredAmount(Mod303Key.CAC2_H));
 		sr.setAct2Resultado4T(mod303.getEnsuredAmount(Mod303Key.CAC2_I));
 		sr.setAct2PorCuoMin4T(mod303.getEnsuredAmount(Mod303Key.CAC2_J));
