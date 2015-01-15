@@ -758,7 +758,7 @@ public class Mod390DAO {
 	
 	@FunctionalInterface
 	static interface ISimplifiedRegimeFiller {
-		void fill(SimplifedRegimeContext src,Mod390 mod390);
+		boolean fill(SimplifedRegimeContext src,Mod390 mod390);
 	}
 
 	static enum SimplifiedRegimeFiller {
@@ -766,50 +766,56 @@ public class Mod390DAO {
 				(src,mod390) -> {
 					String code = AonStringUtils.trim(AonStringUtils.substringBefore(src.getDescription(), "-"));					
 					mod390.getFarmerRegime1().setCodigo(code);
+					return true;
 								}), 
-		CAG1_V1  (Mod303Key.CAG1_V1 , (src,mod390) -> (mod390.getFarmerRegime1().setIncomes(src.getAmount()))),
-		CAG1_V2  (Mod303Key.CAG1_V2 , (src,mod390) -> (mod390.getFarmerRegime1().setQuotaIndex(src.getAmount()))),
-		CAG1_V3  (Mod303Key.CAG1_V3 , (src,mod390) -> (mod390.getFarmerRegime1().setAccrualQuota(src.getAmount()))),
-		CAG1_V6  (Mod303Key.CAG1_V6 , (src,mod390) -> (mod390.getFarmerRegime1().setInputQuotas(src.getAmount()))),
+		CAG1_V1  (Mod303Key.CAG1_V1 , (src,mod390) -> {mod390.getFarmerRegime1().setIncomes(src.getAmount());return true;}),
+		CAG1_V2  (Mod303Key.CAG1_V2 , (src,mod390) -> {mod390.getFarmerRegime1().setQuotaIndex(src.getAmount());return true;}),
+		CAG1_V3  (Mod303Key.CAG1_V3 , (src,mod390) -> {mod390.getFarmerRegime1().setAccrualQuota(src.getAmount());return true;}),
+		CAG1_V6  (Mod303Key.CAG1_V6 , (src,mod390) -> {mod390.getFarmerRegime1().setInputQuotas(src.getAmount());return true;}),
 		CAG1_V7  (Mod303Key.CAG1_V7 , (src,mod390) -> {
 				mod390.getFarmerRegime1().setQuota(src.getAmount());
 				mod390.setBox75( AonMathUtils.round(mod390.getBox75() + src.getAmount()));
+				return true;
 													}),
 		CAG2     (Mod303Key.CAG2    , 
 				(src,mod390) -> {
 					String code = AonStringUtils.trim(AonStringUtils.substringBefore(src.getDescription(), "-"));					
 					mod390.getFarmerRegime2().setCodigo(code);
+					return true;
 								}),
-		CAG2_V1  (Mod303Key.CAG2_V1 , (src,mod390) -> (mod390.getFarmerRegime2().setIncomes(src.getAmount()))),
-		CAG2_V2  (Mod303Key.CAG2_V2 , (src,mod390) -> (mod390.getFarmerRegime2().setQuotaIndex(src.getAmount()))),
-		CAG2_V3  (Mod303Key.CAG2_V3 , (src,mod390) -> (mod390.getFarmerRegime2().setAccrualQuota(src.getAmount()))),
-		CAG2_V6  (Mod303Key.CAG2_V6 , (src,mod390) -> (mod390.getFarmerRegime2().setInputQuotas(src.getAmount()))),
+		CAG2_V1  (Mod303Key.CAG2_V1 , (src,mod390) -> {mod390.getFarmerRegime2().setIncomes(src.getAmount());return true;}),
+		CAG2_V2  (Mod303Key.CAG2_V2 , (src,mod390) -> {mod390.getFarmerRegime2().setQuotaIndex(src.getAmount());return true;}),
+		CAG2_V3  (Mod303Key.CAG2_V3 , (src,mod390) -> {mod390.getFarmerRegime2().setAccrualQuota(src.getAmount());return true;}),
+		CAG2_V6  (Mod303Key.CAG2_V6 , (src,mod390) -> {mod390.getFarmerRegime2().setInputQuotas(src.getAmount());return true;}),
 		CAG2_V7  (Mod303Key.CAG2_V7 , (src,mod390) -> {
 				mod390.getFarmerRegime2().setQuota(src.getAmount());
 				mod390.setBox75( AonMathUtils.round(mod390.getBox75() + src.getAmount()));
+				return true;
 												}),
 		CAC1     (Mod303Key.CAC1    , 
 				(src,mod390) -> {
 					String code = AonStringUtils.trim(AonStringUtils.substringBefore(src.getDescription(), "-"));					
 					mod390.getSimpRegime1().setEpigrafe(code);
+					return true;
 								}),
-		CAC1_M1U (Mod303Key.CAC1_M1U, (src,mod390) -> (mod390.getSimpRegime1().setUnit1(src.getAmount()))),
-		CAC1_M1I (Mod303Key.CAC1_M1I, (src,mod390) -> (mod390.getSimpRegime1().setAmount1(src.getAmount()))),
-		CAC1_M2U (Mod303Key.CAC1_M2U, (src,mod390) -> (mod390.getSimpRegime1().setUnit2(src.getAmount()))),
-		CAC1_M2I (Mod303Key.CAC1_M2I, (src,mod390) -> (mod390.getSimpRegime1().setAmount2(src.getAmount()))),
-		CAC1_M3U (Mod303Key.CAC1_M3U, (src,mod390) -> (mod390.getSimpRegime1().setUnit3(src.getAmount()))),
-		CAC1_M3I (Mod303Key.CAC1_M3I, (src,mod390) -> (mod390.getSimpRegime1().setAmount3(src.getAmount()))),
-		CAC1_M4U (Mod303Key.CAC1_M4U, (src,mod390) -> (mod390.getSimpRegime1().setUnit4(src.getAmount()))),
-		CAC1_M4I (Mod303Key.CAC1_M4I, (src,mod390) -> (mod390.getSimpRegime1().setAmount4(src.getAmount()))),
-		CAC1_M5U (Mod303Key.CAC1_M5U, (src,mod390) -> (mod390.getSimpRegime1().setUnit5(src.getAmount()))),
-		CAC1_M5I (Mod303Key.CAC1_M5I, (src,mod390) -> (mod390.getSimpRegime1().setAmount5(src.getAmount()))),
-		CAC1_M6U (Mod303Key.CAC1_M6U, (src,mod390) -> (mod390.getSimpRegime1().setUnit6(src.getAmount()))),
-		CAC1_M6I (Mod303Key.CAC1_M6I, (src,mod390) -> (mod390.getSimpRegime1().setAmount6(src.getAmount()))),
-		CAC1_M7U (Mod303Key.CAC1_M7U, (src,mod390) -> (mod390.getSimpRegime1().setUnit7(src.getAmount()))),
-		CAC1_M7I (Mod303Key.CAC1_M7I, (src,mod390) -> (mod390.getSimpRegime1().setAmount7(src.getAmount()))),
+		CAC1_M1U (Mod303Key.CAC1_M1U, (src,mod390) -> {mod390.getSimpRegime1().setUnit1(src.getAmount());return true;}),
+		CAC1_M1I (Mod303Key.CAC1_M1I, (src,mod390) -> {mod390.getSimpRegime1().setAmount1(src.getAmount());return true;}),
+		CAC1_M2U (Mod303Key.CAC1_M2U, (src,mod390) -> {mod390.getSimpRegime1().setUnit2(src.getAmount());return true;}),
+		CAC1_M2I (Mod303Key.CAC1_M2I, (src,mod390) -> {mod390.getSimpRegime1().setAmount2(src.getAmount());return true;}),
+		CAC1_M3U (Mod303Key.CAC1_M3U, (src,mod390) -> {mod390.getSimpRegime1().setUnit3(src.getAmount());return true;}),
+		CAC1_M3I (Mod303Key.CAC1_M3I, (src,mod390) -> {mod390.getSimpRegime1().setAmount3(src.getAmount());return true;}),
+		CAC1_M4U (Mod303Key.CAC1_M4U, (src,mod390) -> {mod390.getSimpRegime1().setUnit4(src.getAmount());return true;}),
+		CAC1_M4I (Mod303Key.CAC1_M4I, (src,mod390) -> {mod390.getSimpRegime1().setAmount4(src.getAmount());return true;}),
+		CAC1_M5U (Mod303Key.CAC1_M5U, (src,mod390) -> {mod390.getSimpRegime1().setUnit5(src.getAmount());return true;}),
+		CAC1_M5I (Mod303Key.CAC1_M5I, (src,mod390) -> {mod390.getSimpRegime1().setAmount5(src.getAmount());return true;}),
+		CAC1_M6U (Mod303Key.CAC1_M6U, (src,mod390) -> {mod390.getSimpRegime1().setUnit6(src.getAmount());return true;}),
+		CAC1_M6I (Mod303Key.CAC1_M6I, (src,mod390) -> {mod390.getSimpRegime1().setAmount6(src.getAmount());return true;}),
+		CAC1_M7U (Mod303Key.CAC1_M7U, (src,mod390) -> {mod390.getSimpRegime1().setUnit7(src.getAmount());return true;}),
+		CAC1_M7I (Mod303Key.CAC1_M7I, (src,mod390) -> {mod390.getSimpRegime1().setAmount7(src.getAmount());return true;}),
 		CAC1_C   (Mod303Key.CAC1_C  , (src,mod390) -> {
 				mod390.getSimpRegime1().setBoxC(src.getAmount());
 				mod390.setBox74( AonMathUtils.round(mod390.getBox74() + src.getAmount()));
+				return true;
 													}),
 		CAC1_D   (Mod303Key.CAC1_D  , null),
 		CAC1_Z   (Mod303Key.CAC1_Z  , null),
@@ -817,39 +823,43 @@ public class Mod390DAO {
 		CAC1_ZD  (Mod303Key.CAC1_ZD , null),
 		CAC1_E   (Mod303Key.CAC1_E  , null),
 		CAC1_F   (Mod303Key.CAC1_F  , null),
-		CAC1_G0  (Mod303Key.CAC1_G0 , (src,mod390) -> (mod390.getSimpRegime1().setBoxD(AonMathUtils.round(mod390.getSimpRegime1().getBoxD() + src.getAmount())))),
-		CAC1_G   (Mod303Key.CAC1_G  , (src,mod390) -> (mod390.getSimpRegime1().setBoxD(AonMathUtils.round(mod390.getSimpRegime1().getBoxD() + src.getAmount())))),
-		CAC1_H   (Mod303Key.CAC1_H  , (src,mod390) -> (mod390.getSimpRegime1().setBoxE(src.getAmount()))),
+		CAC1_G0  (Mod303Key.CAC1_G0 , (src,mod390) -> {mod390.getSimpRegime1().setBoxD(
+				AonMathUtils.round(mod390.getSimpRegime1().getBoxD() + src.getAmount()));return true;}),
+		CAC1_G   (Mod303Key.CAC1_G  , (src,mod390) -> {mod390.getSimpRegime1().setBoxD(
+				AonMathUtils.round(mod390.getSimpRegime1().getBoxD() + src.getAmount()));return true;}),
+		CAC1_H   (Mod303Key.CAC1_H  , (src,mod390) -> {mod390.getSimpRegime1().setBoxE(src.getAmount());return true;}),
 		CAC1_HA  (Mod303Key.CAC1_HA , null),
 		CAC1_HD  (Mod303Key.CAC1_HD , null),
 		CAC1_HT  (Mod303Key.CAC1_HT , null),
-		CAC1_I   (Mod303Key.CAC1_I  , (src,mod390) -> (mod390.getSimpRegime1().setBoxF(src.getAmount()))),
-		CAC1_J   (Mod303Key.CAC1_J  , (src,mod390) -> (mod390.getSimpRegime1().setBoxG(src.getAmount()))),
+		CAC1_I   (Mod303Key.CAC1_I  , (src,mod390) -> {mod390.getSimpRegime1().setBoxF(src.getAmount());return true;}),
+		CAC1_J   (Mod303Key.CAC1_J  , (src,mod390) -> {mod390.getSimpRegime1().setBoxG(src.getAmount());return true;}),
 		CAC1_K   (Mod303Key.CAC1_K  , null),
-		CAC1_L   (Mod303Key.CAC1_L  , (src,mod390) -> (mod390.getSimpRegime1().setBoxI(src.getAmount()))),
-		CAC1_M   (Mod303Key.CAC1_M  , (src,mod390) -> (mod390.getSimpRegime1().setBoxJ(src.getAmount()))),
+		CAC1_L   (Mod303Key.CAC1_L  , (src,mod390) -> {mod390.getSimpRegime1().setBoxI(src.getAmount());return true;}),
+		CAC1_M   (Mod303Key.CAC1_M  , (src,mod390) -> {mod390.getSimpRegime1().setBoxJ(src.getAmount());return true;}),
 		CAC2     (Mod303Key.CAC2    , 
 				(src,mod390) -> {
 					String code = AonStringUtils.trim(AonStringUtils.substringBefore(src.getDescription(), "-"));					
 					mod390.getSimpRegime2().setEpigrafe(code);
+					return true;
 								}),
-		CAC2_M1U (Mod303Key.CAC2_M1U, (src,mod390) -> (mod390.getSimpRegime2().setUnit1(src.getAmount()))),
-		CAC2_M1I (Mod303Key.CAC2_M1I, (src,mod390) -> (mod390.getSimpRegime2().setAmount1(src.getAmount()))),
-		CAC2_M2U (Mod303Key.CAC2_M2U, (src,mod390) -> (mod390.getSimpRegime2().setUnit2(src.getAmount()))),
-		CAC2_M2I (Mod303Key.CAC2_M2I, (src,mod390) -> (mod390.getSimpRegime2().setAmount2(src.getAmount()))),
-		CAC2_M3U (Mod303Key.CAC2_M3U, (src,mod390) -> (mod390.getSimpRegime2().setUnit3(src.getAmount()))),
-		CAC2_M3I (Mod303Key.CAC2_M3I, (src,mod390) -> (mod390.getSimpRegime2().setAmount3(src.getAmount()))),
-		CAC2_M4U (Mod303Key.CAC2_M4U, (src,mod390) -> (mod390.getSimpRegime2().setUnit4(src.getAmount()))),
-		CAC2_M4I (Mod303Key.CAC2_M4I, (src,mod390) -> (mod390.getSimpRegime2().setAmount4(src.getAmount()))),
-		CAC2_M5U (Mod303Key.CAC2_M5U, (src,mod390) -> (mod390.getSimpRegime2().setUnit5(src.getAmount()))),
-		CAC2_M5I (Mod303Key.CAC2_M5I, (src,mod390) -> (mod390.getSimpRegime2().setAmount5(src.getAmount()))),
-		CAC2_M6U (Mod303Key.CAC2_M6U, (src,mod390) -> (mod390.getSimpRegime2().setUnit6(src.getAmount()))),
-		CAC2_M6I (Mod303Key.CAC2_M6I, (src,mod390) -> (mod390.getSimpRegime2().setAmount6(src.getAmount()))),
-		CAC2_M7U (Mod303Key.CAC2_M7U, (src,mod390) -> (mod390.getSimpRegime2().setUnit7(src.getAmount()))),
-		CAC2_M7I (Mod303Key.CAC2_M7I, (src,mod390) -> (mod390.getSimpRegime2().setAmount7(src.getAmount()))),
+		CAC2_M1U (Mod303Key.CAC2_M1U, (src,mod390) -> {mod390.getSimpRegime2().setUnit1(src.getAmount());return true;}),
+		CAC2_M1I (Mod303Key.CAC2_M1I, (src,mod390) -> {mod390.getSimpRegime2().setAmount1(src.getAmount());return true;}),
+		CAC2_M2U (Mod303Key.CAC2_M2U, (src,mod390) -> {mod390.getSimpRegime2().setUnit2(src.getAmount());return true;}),
+		CAC2_M2I (Mod303Key.CAC2_M2I, (src,mod390) -> {mod390.getSimpRegime2().setAmount2(src.getAmount());return true;}),
+		CAC2_M3U (Mod303Key.CAC2_M3U, (src,mod390) -> {mod390.getSimpRegime2().setUnit3(src.getAmount());return true;}),
+		CAC2_M3I (Mod303Key.CAC2_M3I, (src,mod390) -> {mod390.getSimpRegime2().setAmount3(src.getAmount());return true;}),
+		CAC2_M4U (Mod303Key.CAC2_M4U, (src,mod390) -> {mod390.getSimpRegime2().setUnit4(src.getAmount());return true;}),
+		CAC2_M4I (Mod303Key.CAC2_M4I, (src,mod390) -> {mod390.getSimpRegime2().setAmount4(src.getAmount());return true;}),
+		CAC2_M5U (Mod303Key.CAC2_M5U, (src,mod390) -> {mod390.getSimpRegime2().setUnit5(src.getAmount());return true;}),
+		CAC2_M5I (Mod303Key.CAC2_M5I, (src,mod390) -> {mod390.getSimpRegime2().setAmount5(src.getAmount());return true;}),
+		CAC2_M6U (Mod303Key.CAC2_M6U, (src,mod390) -> {mod390.getSimpRegime2().setUnit6(src.getAmount());return true;}),
+		CAC2_M6I (Mod303Key.CAC2_M6I, (src,mod390) -> {mod390.getSimpRegime2().setAmount6(src.getAmount());return true;}),
+		CAC2_M7U (Mod303Key.CAC2_M7U, (src,mod390) -> {mod390.getSimpRegime2().setUnit7(src.getAmount());return true;}),
+		CAC2_M7I (Mod303Key.CAC2_M7I, (src,mod390) -> {mod390.getSimpRegime2().setAmount7(src.getAmount());return true;}),
 		CAC2_C   (Mod303Key.CAC2_C  , (src,mod390) ->	{
 				mod390.getSimpRegime2().setBoxC(src.getAmount());
 				mod390.setBox74( AonMathUtils.round(mod390.getBox74() + src.getAmount()));
+				return true;
 														}),
 		CAC2_D   (Mod303Key.CAC2_D  , null),
 		CAC2_Z   (Mod303Key.CAC2_Z  , null),
@@ -858,25 +868,27 @@ public class Mod390DAO {
 		CAC2_E   (Mod303Key.CAC2_E  , null),
 		CAC2_F   (Mod303Key.CAC2_F  , null),
 		
-		CAC2_G0   (Mod303Key.CAC2_G0 , (src,mod390) -> (mod390.getSimpRegime2().setBoxD(AonMathUtils.round(mod390.getSimpRegime2().getBoxD() + src.getAmount())))),
-		CAC2_G   (Mod303Key.CAC2_G  , (src,mod390) -> (mod390.getSimpRegime2().setBoxD(AonMathUtils.round(mod390.getSimpRegime2().getBoxD() + src.getAmount())))),
-		CAC2_H   (Mod303Key.CAC2_H  , (src,mod390) -> (mod390.getSimpRegime2().setBoxE(src.getAmount()))),
+		CAC2_G0  (Mod303Key.CAC2_G0 , (src,mod390) -> {mod390.getSimpRegime2().setBoxD(
+				AonMathUtils.round(mod390.getSimpRegime2().getBoxD() + src.getAmount()));return true;}),
+		CAC2_G   (Mod303Key.CAC2_G  , (src,mod390) -> {mod390.getSimpRegime2().setBoxD(
+				AonMathUtils.round(mod390.getSimpRegime2().getBoxD() + src.getAmount()));return true;}),
+		CAC2_H   (Mod303Key.CAC2_H  , (src,mod390) -> {mod390.getSimpRegime2().setBoxE(src.getAmount());return true;}),
 		CAC2_HA  (Mod303Key.CAC2_HA , null),
 		CAC2_HD  (Mod303Key.CAC2_HD , null),
 		CAC2_HT  (Mod303Key.CAC2_HT , null),
-		CAC2_I   (Mod303Key.CAC2_I  , (src,mod390) -> (mod390.getSimpRegime2().setBoxF(src.getAmount()))),
-		CAC2_J	 (Mod303Key.CAC2_J  , (src,mod390) -> (mod390.getSimpRegime2().setBoxG(src.getAmount()))),
+		CAC2_I   (Mod303Key.CAC2_I  , (src,mod390) -> {mod390.getSimpRegime2().setBoxF(src.getAmount());return true;}),
+		CAC2_J	 (Mod303Key.CAC2_J  , (src,mod390) -> {mod390.getSimpRegime2().setBoxG(src.getAmount());return true;}),
 		CAC2_K   (Mod303Key.CAC2_K  , null),
-		CAC2_L   (Mod303Key.CAC2_L  , (src,mod390) -> (mod390.getSimpRegime2().setBoxI(src.getAmount()))),
-		CAC2_M   (Mod303Key.CAC2_M  , (src,mod390) -> (mod390.getSimpRegime2().setBoxJ(src.getAmount()))),
-		C51      (Mod303Key.C51     , (src,mod390) -> (mod390.setBox76(src.getAmount()))),
-		C52      (Mod303Key.C52     , (src,mod390) -> (mod390.setBox78(src.getAmount()))),
-		C53      (Mod303Key.C53     , (src,mod390) -> (mod390.setBox77(src.getAmount()))),
-		C54      (Mod303Key.C54     , (src,mod390) -> (mod390.setBox79(src.getAmount()))),
-		C55      (Mod303Key.C55     , (src,mod390) -> (mod390.setBox80(src.getAmount()))),
-		C56      (Mod303Key.C56     , (src,mod390) -> (mod390.setBox81(src.getAmount()))),
-		C57      (Mod303Key.C57     , (src,mod390) -> (mod390.setBox82(src.getAmount()))),
-		C58      (Mod303Key.C58     , (src,mod390) -> (mod390.setBox83(src.getAmount()))),
+		CAC2_L   (Mod303Key.CAC2_L  , (src,mod390) -> {mod390.getSimpRegime2().setBoxI(src.getAmount());return true;}),
+		CAC2_M   (Mod303Key.CAC2_M  , (src,mod390) -> {mod390.getSimpRegime2().setBoxJ(src.getAmount());return true;}),
+		C51      (Mod303Key.C51     , (src,mod390) -> {mod390.setBox76(src.getAmount());return true;}),
+		C52      (Mod303Key.C52     , (src,mod390) -> {mod390.setBox78(src.getAmount());return true;}),
+		C53      (Mod303Key.C53     , (src,mod390) -> {mod390.setBox77(src.getAmount());return true;}),
+		C54      (Mod303Key.C54     , (src,mod390) -> {mod390.setBox79(src.getAmount());return true;}),
+		C55      (Mod303Key.C55     , (src,mod390) -> {mod390.setBox80(src.getAmount());return true;}),
+		C56      (Mod303Key.C56     , (src,mod390) -> {mod390.setBox81(src.getAmount());return true;}),
+		C57      (Mod303Key.C57     , (src,mod390) -> {mod390.setBox82(src.getAmount());return true;}),
+		C58      (Mod303Key.C58     , (src,mod390) -> {mod390.setBox83(src.getAmount());return true;}),
 		;
 		
 		private Mod303Key key;
