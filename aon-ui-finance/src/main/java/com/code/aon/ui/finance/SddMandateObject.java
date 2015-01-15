@@ -52,7 +52,7 @@ public class SddMandateObject implements ITransferObject, ICollectionProvider, S
 
 	public void setRecurrentPayment(Boolean recurrentPayment) {
 		this.recurrentPayment = recurrentPayment;
-		this.oneOffPayment = !this.recurrentPayment;
+		this.oneOffPayment = this.recurrentPayment!=null?!this.recurrentPayment:null;
 	}
 
 	public Boolean getOneOffPayment() {
