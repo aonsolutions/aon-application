@@ -80,5 +80,8 @@ public interface ICommonConstants {
 	String STATUS_FAILED_NAME = "aon-status-failed";
 
 	String AON_AIO_APPLICATION = "aon-aio";
+
+	int TIRANT_EXTERNAL_APP = 1;
+	int DEH_ONLINE_EXTERNAL_APP = 4;	
 	
 }

@@ -10,6 +10,14 @@
 	<aon:div styleClass="aon-portlet">
 		<aon:div styleClass="aon-portlet-title">
 			<aon:outputText value="#{bundle.config_domain_module}" styleClass="aon-bold aon-icon aon-icon-company"/>
+			<aon:div styleClass="aon-portlet-title-buttons" style="width: auto;">
+				<aon:commandLink id="domainBooking"
+					actionListener="#{domainBooking.onInit}" action="domainBooking_list">
+					<aon:outputText value="#{bundle.config_domain_booking}"
+						style="padding-bottom: 1px;padding-top: 1px;"
+						styleClass="aon-portlet-title-text aon-icon aon-button-goto"/>
+				</aon:commandLink>
+			</aon:div>			
 		</aon:div>
 		<aon:div styleClass="aon-portlet-body aon-box-outstanding2">
 			<ui:include src="/com/code/aon/ui/config/facelet/domain/selection_listContent.xhtml" />

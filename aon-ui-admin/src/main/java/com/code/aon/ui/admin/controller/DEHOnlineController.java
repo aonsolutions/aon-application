@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.util.AppParamUtil;
+import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.util.AonUtil;
 
 public class DEHOnlineController {
@@ -21,7 +22,7 @@ public class DEHOnlineController {
 
 	public boolean isShowConfiguration() {
 		int value = AppParamUtil.getValueAsInt(AppParam.AON_EXTERNAL_APPLICATIONS);
-		return (value & IAdminConstants.DEH_ONLINE_EXTERNAL_APP) != 0;
+		return (value & ICommonConstants.DEH_ONLINE_EXTERNAL_APP) != 0;
 	}	
 	
 	private void reset() {

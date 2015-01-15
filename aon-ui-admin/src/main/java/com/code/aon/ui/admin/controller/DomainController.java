@@ -784,19 +784,19 @@ public class DomainController extends BasicController {
 	}
 	
 	public boolean isDehOnline() {
-		return getExternalApplicationsValue(IAdminConstants.DEH_ONLINE_EXTERNAL_APP);
+		return getExternalApplicationsValue(ICommonConstants.DEH_ONLINE_EXTERNAL_APP);
 	}
 
 	public void setDehOnline(boolean value) {
-		setExternalApplicationsValue(IAdminConstants.DEH_ONLINE_EXTERNAL_APP, value);
+		setExternalApplicationsValue(ICommonConstants.DEH_ONLINE_EXTERNAL_APP, value);
 	}
 
 	public boolean isTirant() {
-		return getExternalApplicationsValue(IAdminConstants.TIRANT_EXTERNAL_APP);
+		return getExternalApplicationsValue(ICommonConstants.TIRANT_EXTERNAL_APP);
 	}
 
 	public void setTirant(boolean value) {
-		setExternalApplicationsValue(IAdminConstants.TIRANT_EXTERNAL_APP, value);
+		setExternalApplicationsValue(ICommonConstants.TIRANT_EXTERNAL_APP, value);
 	}	
 	
 	public int getProductDetailLevel() {

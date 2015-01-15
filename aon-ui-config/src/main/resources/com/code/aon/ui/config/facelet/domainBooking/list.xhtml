@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="domainBookingList">
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{bundle.config_domain_booking}" />
+				<ui:param name="toolbarDescription" value="" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-width-all aon-text-right aon-margin-bottom">
+					<aon:outputLabel for="Domains_showInactive"
+						value="#{bundle.admin_domain_show_inactive}" />
+					<aon:selectBooleanCheckbox id="Domains_showInactive"
+						value="#{domainBooking.showInactive}" >
+						<a4j:support 
+							event="onclick"
+							reRender="domainBookingList"
+							actionListener="#{domainBooking.onChangeShowInactive}"
+							requestDelay="500"
+							ajaxSingle="true"
+							ignoreDupResponses="true"
+							limitToList="true"/>						
+					</aon:selectBooleanCheckbox>
+				</aon:div>			
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{domainBooking}" />
+					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+					<ui:param name="skipSelectButton" value="#{true}" />					
+					<ui:define name="columns">
+				
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_name}" />
+							</f:facet>							
+							<aon:outputText value="#{to.description}"
+								style="#{(!to.active)?'color:red;font-style:italic;':''}"/>
+							<f:facet name="footer">
+								<aon:div style="float:right">
+									<aon:outputText	styleClass="aon-italic"
+										value="#{bundle.config_domain_booking_total}" />
+								</aon:div>
+							</f:facet>
+						</aon:column>
+				
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_type}" />
+							</f:facet>							
+							<aon:outputText value="#{to.type}" />
+							<aon:div styleClass="aon-margin-left" layout="inline">
+								<aon:outputText value="&#160;"
+									rendered="#{to.enableHeredity}"
+									title="#{bundle.aon_domian_enableHeredity}"
+									styleClass="aon-icon2 aon-icon-index" />														
+								<aon:outputText value="&#160;"
+									rendered="#{!to.enableHeredity}"
+									title="#{bundle.aon_domian_disableHeredity}"
+									styleClass="aon-icon2 aon-icon-disableHeredity" />
+							</aon:div>																
+						</aon:column>
+						
+						<aon:column styleClass="aon-text-center aon-nowrap aon-width-60 ">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_module_document}" />
+							</f:facet>							
+							<aon:outputText value="#{to.maxTotalDocumentSize}" />
+						</aon:column>
+										
+						<aon:column styleClass="aon-text-center aon-width-40 aon-nowrap">
+							<f:facet name="header">
+								<aon:outputText style="text-transform: none;"
+									value="#{bundle.aon_module_aonOne}" />
+							</f:facet>							
+							<aon:outputText rendered="#{!to.aonOne}" value="-" />
+							<aon:outputText rendered="#{to.aonOne}"
+								style="#{(to.activeUsers!=to.maxDefinedUsers)?'color:red;':''}"
+								value="#{to.activeUsers} / #{to.maxDefinedUsers}" />
+							<f:facet name="footer">
+								<aon:div style="float:right">
+									<aon:outputText	styleClass="aon-italic"
+										value="#{controller.totalOneUsers}" />
+								</aon:div>
+							</f:facet>																					
+						</aon:column>
+						<aon:column styleClass="aon-text-center aon-width-40 aon-nowrap">
+							<f:facet name="header">
+								<aon:outputText style="text-transform: none;"
+									 value="#{bundle.admin_domain_aonAIO}" />
+							</f:facet>							
+							<aon:outputText rendered="#{to.aonOne}" value="-" />
+							<aon:outputText rendered="#{!to.aonOne}"
+								style="#{(to.activeUsers!=to.maxDefinedUsers)?'color:red;':''}"
+								value="#{to.activeUsers} / #{to.maxDefinedUsers}" />
+							<f:facet name="footer">
+								<aon:div style="float:right">
+									<aon:outputText	styleClass="aon-italic"
+										value="#{controller.totalAiOUsers}" />
+								</aon:div>
+							</f:facet>															
+						</aon:column>
+						<aon:column styleClass="aon-editDataTable-iconColumn aon-text-center">
+							<f:facet name="header">
+								<aon:outputText value="Portal" />
+							</f:facet>						
+							<aon:outputText rendered="#{!to.portal}" value="-" />
+							<aon:outputText value="&#160;"
+								rendered="#{to.portal}" styleClass="aon-icon-check-black"
+								style="padding-left:12px" />	
+							<f:facet name="footer">
+								<aon:div style="float:right">
+									<aon:outputText	styleClass="aon-italic"
+										value="#{controller.totalPortals}" />
+								</aon:div>
+							</f:facet>									
+						</aon:column>
+						<aon:column styleClass="aon-editDataTable-iconColumn aon-text-center">
+							<f:facet name="header">
+								<aon:outputText value="DEH" />
+							</f:facet>						
+							<aon:outputText rendered="#{!to.dehOnline}" value="-" />
+							<aon:outputText value="&#160;"
+								rendered="#{to.dehOnline}"
+								styleClass="aon-icon-check-black"
+								style="padding-left:12px" />	
+							<aon:div rendered="#{to.dehOnline and !to.dehOnlineConfigured}"
+								styleClass="aon-margin-left aon-margin-right" layout="inline" >
+								<aon:outputText value="&#160;" styleClass="aon-icon-warning"
+									style="padding-left:12px" />
+								<rich:toolTip value="#{bundle.admin_domain_dehOnline_warning}" />
+							</aon:div>												
+							<f:facet name="footer">
+								<aon:div style="float:right">
+									<aon:outputText	styleClass="aon-italic"
+										value="#{controller.totalDEHOnlines}" />
+								</aon:div>
+							</f:facet>
+						</aon:column>
+						<aon:column styleClass="aon-editDataTable-iconColumn aon-text-center">
+							<f:facet name="header">
+								<aon:outputText value="Tirant" />
+							</f:facet>						
+							<aon:outputText rendered="#{!to.tirant}" value="-" />
+							<aon:outputText value="&#160;"
+								rendered="#{to.tirant}" styleClass="aon-icon-check-black"
+								style="padding-left:12px" />	 
+							<f:facet name="footer">
+								<aon:div style="float:right">
+									<aon:outputText	styleClass="aon-italic"
+										value="#{controller.totalTirants}" />
+								</aon:div>
+							</f:facet>
+						</aon:column>
+
+					</ui:define>
+				</ui:decorate>
+			</aon:div>
+
+		</aon:form>
+	</ui:define>
+</ui:composition>

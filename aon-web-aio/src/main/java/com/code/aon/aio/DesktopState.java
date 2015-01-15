@@ -573,12 +573,12 @@ public class DesktopState implements Serializable {
 	private void initExternalApplications( User user, DomainSwitcher ds ) {
 		int domainValue = AppParamUtil.getValueAsInt(AppParam.AON_EXTERNAL_APPLICATIONS);
 		if (! ds.isDomainManagementAvailable() ) {
-			this.showDehOnline = (domainValue & IAdminConstants.DEH_ONLINE_EXTERNAL_APP) != 0;
+			this.showDehOnline = (domainValue & ICommonConstants.DEH_ONLINE_EXTERNAL_APP) != 0;
 		}
-		this.showTirant = (domainValue & IAdminConstants.TIRANT_EXTERNAL_APP) != 0;
+		this.showTirant = (domainValue & ICommonConstants.TIRANT_EXTERNAL_APP) != 0;
 		if ( ! this.showTirant && ds.isParentDomainUserInChildDomain() ) {
 			int userValue = AppParamUtil.getValueAsInt(AppParam.AON_EXTERNAL_APPLICATIONS, user.getDomain());
-			this.showTirant = (userValue & IAdminConstants.TIRANT_EXTERNAL_APP) != 0;
+			this.showTirant = (userValue & ICommonConstants.TIRANT_EXTERNAL_APP) != 0;
 		}
 	}	
 	
