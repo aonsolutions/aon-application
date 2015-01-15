@@ -380,13 +380,8 @@ public class Model390 extends MainEntryPoint {
 		}
 	}
 
-	private void select(Mod390 m390) {
-		mod390 = m390;
-		onLinkPage0(null);
-		enterprise = m390.getEnterprise();
-		domain = m390.getDomain();
-		year.setValue(Integer.toString(m390.getYear()));
-		enterpriseSuggest.setValue(m390.getDocument(), m390.getEnterpriseName());
+	private void refreshPages(Mod390 m390) {
+		
 		page0.setValue(m390);
 		page3.setValue(m390);
 		page4.setValue(m390);
@@ -399,6 +394,16 @@ public class Model390 extends MainEntryPoint {
 		page11.setValue(m390);
 		page12.setValue(m390);
 		page13.setValue(m390);
+	}
+	
+	private void select(Mod390 m390) {
+		mod390 = m390;
+		onLinkPage0(null);
+		enterprise = m390.getEnterprise();
+		domain = m390.getDomain();
+		year.setValue(Integer.toString(m390.getYear()));
+		enterpriseSuggest.setValue(m390.getDocument(), m390.getEnterpriseName());
+		refreshPages(m390);
 		// Toolbar states
 		deleteButton.setVisible(mod390.getId() != null);
 		newButton.setVisible(mod390.getId() != null);
@@ -648,7 +653,7 @@ public class Model390 extends MainEntryPoint {
 		clearLinks();
 		applySelectedStyle(linkPage7);
 		pagesPanel.showWidget(pagesPanel.getWidgetIndex(panel7));
-		page7.refresh();
+		page7.refreshFields();
 	}
 
 	@UiHandler("linkPage8")
@@ -656,7 +661,7 @@ public class Model390 extends MainEntryPoint {
 		clearLinks();
 		applySelectedStyle(linkPage8);
 		pagesPanel.showWidget(pagesPanel.getWidgetIndex(panel8));
-		page8.refresh();
+		page8.refreshFields();
 	}
 
 	@UiHandler("linkPage9")
@@ -671,6 +676,7 @@ public class Model390 extends MainEntryPoint {
 		clearLinks();
 		applySelectedStyle(linkPage10);
 		pagesPanel.showWidget(pagesPanel.getWidgetIndex(panel10));
+		page10.refreshFields();
 	}
 
 	@UiHandler("linkPage11")
