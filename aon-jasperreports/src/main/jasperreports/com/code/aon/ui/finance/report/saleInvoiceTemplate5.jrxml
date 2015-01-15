@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="821"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -717,7 +717,7 @@
 										<font size="8" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$R{aon_invoice_delivery} + ": " +  $F{sourceTo}.getReferenceCode() +
-$R{report_from} + $F{sourceTo}.getDate() +
+$R{report_from} + new SimpleDateFormat("dd/MM/yyyy").format($F{sourceTo}.getDate()) +
 ($F{invoice}.getRegistry().getId().equals($V{deliveryCustomer}.getId())?"":
 "("+$V{deliveryCustomer}.getRegistry().getFullName()+")")]]></textFieldExpression>
 								</textField>
@@ -754,7 +754,7 @@ $R{report_from} + $F{sourceTo}.getDate() +
 									<textElement verticalAlignment="Middle" markup="html">
 										<font size="8"/>
 									</textElement>
-									<textFieldExpression><![CDATA[(($F{item}!=null && $F{item}.getProduct()!=null)?($R{aon_id} + ": " + $F{item}.getProduct().getCode()):"") +
+									<textFieldExpression><![CDATA[(($F{item}!=null && $F{item}.getProduct()!=null)?($R{aon_id} + ": " + $F{item}.getProduct().getCode() + " "):"") +
 ($V{deliveryReference}!=null?($R{aon_invoice_sales} + ": " + $V{deliveryReference}):"") +
 ((($F{item}!=null && $F{item}.getProduct()!=null) || $V{deliveryReference}!=null)?"<br>":"")+
 $F{description}]]></textFieldExpression>
