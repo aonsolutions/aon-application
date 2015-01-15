@@ -39,7 +39,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
-import com.code.aon.ui.audit.DeprecatedVisibilityManager;
 import com.code.aon.ui.audit.IVisibilityManager;
 import com.code.aon.ui.audit.OptionGroup;
 import com.code.aon.ui.audit.VisibilityManager;
@@ -81,11 +80,7 @@ public class ActionDeniedController implements Serializable {
 	}
 	
 	public void init() {
-		if ( VisibilityManager.isDeprecatedBookingInfo() ) {
-			this.manager = new DeprecatedVisibilityManager();
-		} else {
-			this.manager = new VisibilityManager();
-		}
+		this.manager = new VisibilityManager();
 		initEnabledManagedBeans();
 	}
 	
