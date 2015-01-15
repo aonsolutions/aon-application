@@ -202,7 +202,6 @@ public class Mod303 implements IFiscalDeclaration, IMod303Declaration, Serializa
 								ensureDetail(Mod303Key.C86).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
 							}
 						}
-						g = CommonUtil.round(g + (c * 1 / 100));
 						detail = getDetail(Mod303Key.getKeyWithValue(Mod303Key.ACTIVITIES_PREFIX + ac + "G") );
 						if (detail == null) {
 							detail = new FiscalModelDetail();

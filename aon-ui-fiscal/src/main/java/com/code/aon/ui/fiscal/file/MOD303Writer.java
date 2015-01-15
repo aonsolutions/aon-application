@@ -440,7 +440,8 @@ public class MOD303Writer {
 		sr.setAct1IndTemp(mod303.getEnsuredAmount(Mod303Key.CAC1_Z));
 		sr.setAct1Porce(mod303.getEnsuredAmount(Mod303Key.CAC1_E));
 		sr.setAct1IngCta(mod303.getEnsuredAmount(Mod303Key.CAC1_F));
-		sr.setAct1CuotaSop4T(mod303.getEnsuredAmount(Mod303Key.CAC1_G));
+		double g = CommonUtil.round(mod303.getEnsuredAmount(Mod303Key.CAC1_G0) + mod303.getEnsuredAmount(Mod303Key.CAC1_G));
+		sr.setAct1CuotaSop4T(g);
 		sr.setAct1IndTemp4T(mod303.getEnsuredAmount(Mod303Key.CAC1_H));
 		sr.setAct1Resultado4T(mod303.getEnsuredAmount(Mod303Key.CAC1_I));
 		sr.setAct1PorCuoMin4T(mod303.getEnsuredAmount(Mod303Key.CAC1_J));
