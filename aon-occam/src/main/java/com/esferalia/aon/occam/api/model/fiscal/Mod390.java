@@ -1519,6 +1519,24 @@ public class Mod390 implements Serializable {
 		Mod390Detail k36 = calculate(Mod390DetailKey.K36, K36_FORMULA);
 		Mod390Detail k37 = ensure(Mod390DetailKey.K37);
 		k37.setQuota( AonMathUtils.round(k13.getQuota() - k36.getQuota()));
+		box74 = AonMathUtils.round(getSimpRegime1().getBoxJ() + getSimpRegime2().getBoxJ());
+		box75 = AonMathUtils.round(
+				  getFarmerRegime1().getQuota()
+				+ getFarmerRegime2().getQuota()
+				+ getFarmerRegime3().getQuota()				
+				+ getFarmerRegime4().getQuota()				
+				+ getFarmerRegime5().getQuota()				
+				);
+		box79 = AonMathUtils.round(box74 + box75 + box76 + box77 + box78 );
+		box82 = AonMathUtils.round(box80 + box81);
+		box83 = AonMathUtils.round(box79 - box82);
+		box84 = AonMathUtils.round(k37.getQuota() + box83);
+		box86 = AonMathUtils.round(box84 - box85);
+		box92 = AonMathUtils.round(box84 * box87 / 100);
+		box94 = AonMathUtils.round(box92 - box93);
+		box108 =  AonMathUtils.round(box99+box103+box104+box105
+				+box110+box112+box100+box101+box102+box227
+				+box228-box106-box107);
 	}
 	
 	public Mod390Detail ensure(Mod390DetailKey key) {

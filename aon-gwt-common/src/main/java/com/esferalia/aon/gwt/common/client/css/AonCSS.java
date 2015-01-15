@@ -319,5 +319,15 @@ public interface AonCSS extends  CssResource {
 	
 	@ClassName("groupHeaderCell")
 	String groupHeaderCell();
+	
+	@ClassName("aon-fiscal-table")
+	String aonFiscalTable();
+	
+	@ClassName("aon-info-message-block")
+	String aonInfoMessageBlock();
+
+	@ClassName("aon-warn-message-block")
+	String aonWarnMessageBlock();
+
 }
 

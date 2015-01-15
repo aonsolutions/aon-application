@@ -2,10 +2,10 @@ package com.esferalia.aon.gwt.fiscal.client.mod390;
 
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
-import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390DetailKey;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -76,40 +76,62 @@ public class Page8 extends ResizeComposite implements RequiresResize {
 	
 	@UiHandler("box87")
 	void onChangeBox87 (ChangeEvent event) {
-		if (box87.getDoubleValue() < 0) {
-			box84.setValue(0);	
-		}
-		if (box87.getDoubleValue() > 100) {
-			box84.setValue(100);
-		}
-		refresh();
+		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
+			@Override
+			public void execute() {
+				if (box87.isValidValue()) {
+					if (box87.getDoubleValue() < 0) {
+						box84.setValue(0);	
+					}
+					if (box87.getDoubleValue() > 100) {
+						box84.setValue(100);
+					}
+					refresh();
+				}
+			}
+		});
 	}
 	
 	@UiHandler("box93")
 	void onChangeBox93 (ChangeEvent event) {
-		refresh();
+		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
+			@Override
+			public void execute() {
+				if (box93.isValidValue()) {
+					refresh();
+				}
+			}
+		});
 	}
 
-	public void refresh() {
-		double k37 = mod390.ensure(Mod390DetailKey.K37).getQuota();
-		box84.setValue(AonUtil.round(k37 + mod390.getBox83()));
-		box92.setValue(AonUtil.round(box84.getDoubleValue() * box87.getDoubleValue() / 100));
-		box94.setValue(AonUtil.round(box92.getDoubleValue() - box93.getDoubleValue()));
-	}
+//	public void refresh() {
+//		double k37 = mod390.ensure(Mod390DetailKey.K37).getQuota();
+//		box84.setValue(AonUtil.round(k37 + mod390.getBox83()));
+//		box92.setValue(AonUtil.round(box84.getDoubleValue() * box87.getDoubleValue() / 100));
+//		box94.setValue(AonUtil.round(box92.getDoubleValue() - box93.getDoubleValue()));
+//	}
 
 	public void setValue(Mod390 m390) {
 		this.mod390 = m390;
-		box84.setValue(m390.getBox84());
-		box87.setValue(m390.getBox87());
-		box88.setValue(m390.getBox88());
-		box89.setValue(m390.getBox89());
-		box90.setValue(m390.getBox90());
-		box91.setValue(m390.getBox91());
-		box92.setValue(m390.getBox92());
-		box93.setValue(m390.getBox93());
-		box94.setValue(m390.getBox94());
+		refreshFields();
 	}
-
+	private void refresh() {
+		populate(mod390);
+		mod390.calculate();
+		refreshFields();
+	}
+	void refreshFields() {
+		box84.setValue(this.mod390.getBox84());
+		box87.setValue(this.mod390.getBox87());
+		box88.setValue(this.mod390.getBox88());
+		box89.setValue(this.mod390.getBox89());
+		box90.setValue(this.mod390.getBox90());
+		box91.setValue(this.mod390.getBox91());
+		box92.setValue(this.mod390.getBox92());
+		box93.setValue(this.mod390.getBox93());
+		box94.setValue(this.mod390.getBox94());
+	}
+	
 	public void populate(Mod390 mod390) {
 		mod390.setBox84(box84.getDoubleValue());
 		mod390.setBox87(box87.getDoubleValue());
