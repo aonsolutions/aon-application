@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod390;
 
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Mod390CallBack;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -18,6 +19,8 @@ public class Page11 extends ResizeComposite implements RequiresResize {
 	private static final Page7Binder page7Binder = GWT
 			.create(Page7Binder.class);
 
+	Mod390CallBack callback;
+	
 	@UiField
 	DoubleTextBox box230;
 	
@@ -67,4 +70,8 @@ public class Page11 extends ResizeComposite implements RequiresResize {
 		mod390.setBox523(box523.getDoubleValue());
 	}
 	
+	public void setCallback(Mod390CallBack callback) {
+		this.callback = callback;
+	}
+
 }

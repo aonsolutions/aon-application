@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod390;
 
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Mod390CallBack;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390DetailKey;
@@ -26,6 +27,8 @@ public class Page10 extends ResizeComposite implements RequiresResize {
 
 	private Mod390 mod390;
 
+	Mod390CallBack callback;
+	
 	@UiField
 	DoubleTextBox box99;
 	
@@ -111,7 +114,20 @@ public class Page10 extends ResizeComposite implements RequiresResize {
 
 	public void setValue(Mod390 m390) {
 		this.mod390 = m390;
-		refreshFields();
+		box99.setValue(this.mod390.getBox99());
+		box103.setValue(this.mod390.getBox103());
+		box104.setValue(this.mod390.getBox104());
+		box105.setValue(this.mod390.getBox105());
+		box110.setValue(this.mod390.getBox110());
+		box112.setValue(this.mod390.getBox112());
+		box100.setValue(this.mod390.getBox100());
+		box101.setValue(this.mod390.getBox101());
+		box102.setValue(this.mod390.getBox102());
+		box227.setValue(this.mod390.getBox227());
+		box228.setValue(this.mod390.getBox228());
+		box106.setValue(this.mod390.getBox106());
+		box107.setValue(this.mod390.getBox107());
+		box108.setValue(this.mod390.getBox108());
 	}
 
 	public void populate(Mod390 mod390) {
@@ -137,33 +153,15 @@ public class Page10 extends ResizeComposite implements RequiresResize {
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
-				refresh();
+				callback.calculateAndRefresh();
 			}
 		});
 	}
 
+	public void setCallback(Mod390CallBack callback) {
+		this.callback = callback;
+	}
 	
-	void refreshFields() {
-		box99.setValue(this.mod390.getBox99());
-		box103.setValue(this.mod390.getBox103());
-		box104.setValue(this.mod390.getBox104());
-		box105.setValue(this.mod390.getBox105());
-		box110.setValue(this.mod390.getBox110());
-		box112.setValue(this.mod390.getBox112());
-		box100.setValue(this.mod390.getBox100());
-		box101.setValue(this.mod390.getBox101());
-		box102.setValue(this.mod390.getBox102());
-		box227.setValue(this.mod390.getBox227());
-		box228.setValue(this.mod390.getBox228());
-		box106.setValue(this.mod390.getBox106());
-		box107.setValue(this.mod390.getBox107());
-		box108.setValue(this.mod390.getBox108());
-	}
-	private void refresh() {
-		populate(mod390);
-		this.mod390.calculate();
-		refreshFields();
-	}
 	
 //	private void refresh() {
 //		box108.setValue( 

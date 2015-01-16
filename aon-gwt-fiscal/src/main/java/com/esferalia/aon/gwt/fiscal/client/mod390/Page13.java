@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390;
 
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Mod390CallBack;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -16,6 +17,8 @@ public class Page13 extends ResizeComposite implements RequiresResize {
 	private static final Page7Binder page7Binder = GWT
 			.create(Page7Binder.class);
 
+	Mod390CallBack callback;
+
 	public Page13() {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 
@@ -30,7 +33,10 @@ public class Page13 extends ResizeComposite implements RequiresResize {
 
 	public void populate(Mod390 mod390) {
 		// TODO Auto-generated method stub
-		
+	}
+	
+	public void setCallback(Mod390CallBack callback) {
+		this.callback = callback;
 	}
 	
 }

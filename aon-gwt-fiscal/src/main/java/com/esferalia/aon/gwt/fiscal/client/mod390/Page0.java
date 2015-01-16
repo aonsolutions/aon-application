@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod390;
 
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Mod390CallBack;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -17,6 +18,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class Page0 extends ResizeComposite {
 
+	Mod390CallBack callback;
+	
 	@UiField
 	DeckPanel page0Panel;
 	@UiField
@@ -161,5 +164,9 @@ public class Page0 extends ResizeComposite {
 			groupDocument.setValue(null);
 			groupDeclarations.setValue(false);
 		}
+	}
+
+	public void setCallback(Mod390CallBack callback) {
+		this.callback = callback;
 	}
 }
