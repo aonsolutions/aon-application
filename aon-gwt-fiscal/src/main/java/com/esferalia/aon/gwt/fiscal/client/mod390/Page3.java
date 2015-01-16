@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod390;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Mod390CallBack;
 import com.esferalia.aon.gwt.fiscal.client.widget.ActivityPanel;
 import com.esferalia.aon.gwt.fiscal.client.widget.ActivityPanel.SelectionCallBack;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
@@ -28,6 +29,8 @@ public class Page3 extends ResizeComposite {
 	private static final Page3Binder page3Binder = GWT
 			.create(Page3Binder.class);
 
+	Mod390CallBack callback;
+	
 	@UiField
 	Button mainActivityButton;
 	@UiField
@@ -105,7 +108,7 @@ public class Page3 extends ResizeComposite {
 
 	@UiField
 	TextBox mergedDeclarationName;
-	
+
 	
 	public Page3() {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
@@ -387,4 +390,9 @@ public class Page3 extends ResizeComposite {
 		mod390.setMergedDeclarationDocument(mergedDeclarationDocument.getValue());
 		mod390.setMergedDeclarationName(mergedDeclarationName.getValue());
 	}
+
+	public void setCallback(Mod390CallBack callback) {
+		this.callback = callback;
+	}
+
 }

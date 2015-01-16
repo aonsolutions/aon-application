@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod390;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Mod390CallBack;
 import com.esferalia.aon.gwt.fiscal.client.widget.SimplifiedRegimePanel;
 import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
@@ -27,6 +28,8 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 	
 	private static final Page6Binder page6Binder = GWT
 			.create(Page6Binder.class);
+
+	Mod390CallBack callback;
 
 	@UiField
 	SimplifiedRegimePanel activity1;
@@ -402,4 +405,7 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 		}
 	}
 	
+	public void setCallback(Mod390CallBack callback) {
+		this.callback = callback;
+	}
 }

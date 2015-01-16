@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod390;
 
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Mod390CallBack;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -24,6 +25,8 @@ public class Page8 extends ResizeComposite implements RequiresResize {
 
 	private Mod390 mod390;
 	
+	Mod390CallBack callback;
+
 	@UiField
 	DoubleTextBox box84;
 	@UiField
@@ -86,7 +89,7 @@ public class Page8 extends ResizeComposite implements RequiresResize {
 					if (box87.getDoubleValue() > 100) {
 						box84.setValue(100);
 					}
-					refresh();
+					callback.calculateAndRefresh();
 				}
 			}
 		});
@@ -98,29 +101,14 @@ public class Page8 extends ResizeComposite implements RequiresResize {
 			@Override
 			public void execute() {
 				if (box93.isValidValue()) {
-					refresh();
+					callback.calculateAndRefresh();
 				}
 			}
 		});
 	}
 
-//	public void refresh() {
-//		double k37 = mod390.ensure(Mod390DetailKey.K37).getQuota();
-//		box84.setValue(AonUtil.round(k37 + mod390.getBox83()));
-//		box92.setValue(AonUtil.round(box84.getDoubleValue() * box87.getDoubleValue() / 100));
-//		box94.setValue(AonUtil.round(box92.getDoubleValue() - box93.getDoubleValue()));
-//	}
-
 	public void setValue(Mod390 m390) {
 		this.mod390 = m390;
-		refreshFields();
-	}
-	private void refresh() {
-		populate(mod390);
-		mod390.calculate();
-		refreshFields();
-	}
-	void refreshFields() {
 		box84.setValue(this.mod390.getBox84());
 		box87.setValue(this.mod390.getBox87());
 		box88.setValue(this.mod390.getBox88());
@@ -131,7 +119,7 @@ public class Page8 extends ResizeComposite implements RequiresResize {
 		box93.setValue(this.mod390.getBox93());
 		box94.setValue(this.mod390.getBox94());
 	}
-	
+
 	public void populate(Mod390 mod390) {
 		mod390.setBox84(box84.getDoubleValue());
 		mod390.setBox87(box87.getDoubleValue());
@@ -144,4 +132,7 @@ public class Page8 extends ResizeComposite implements RequiresResize {
 		mod390.setBox94(box94.getDoubleValue());
 	}
 	
+	public void setCallback(Mod390CallBack callback) {
+		this.callback = callback;
+	}
 }

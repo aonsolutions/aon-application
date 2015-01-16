@@ -5,6 +5,7 @@ import java.util.EnumMap;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Mod390CallBack;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390DetailKey;
@@ -65,7 +66,9 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 	
 	@UiField(provided = true)
 	FlexTable table;
-
+	
+	Mod390CallBack callback;
+	
 	private Mod390 mod390;
 	
 	private EnumMap<Mod390DetailKey, Mod390DetailFields> map; 
@@ -228,7 +231,7 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 												if  (percent != 0.0 && fields.getDetail().getQuota() == 0) {
 													fields.setQuota( AonUtil.round( fields.getTaxableBase().getDoubleValue() * percent / 100) );
 												}
-											mod390.calculate();
+											callback.calculateAndRefresh();
 											refreshMap(mod390,fields.detail.getKey());
 										}
 									}
@@ -280,7 +283,7 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 								public void onChange(ChangeEvent event) {
 									if (fields.getQuota().isValidValue()) {
 										fields.getDetail().setQuota(fields.getQuota().getDoubleValue());
-										mod390.calculate();
+										callback.calculateAndRefresh();
 										refreshMap(mod390,fields.detail.getKey());
 									}
 								}
@@ -305,5 +308,9 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 				}
 			}
 		}
+	}
+
+	public void setCallback(Mod390CallBack callback) {
+		this.callback = callback;
 	}
 }
