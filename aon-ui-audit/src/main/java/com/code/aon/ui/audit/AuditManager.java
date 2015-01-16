@@ -174,7 +174,11 @@ public class AuditManager implements IAuditConstants {
 		return bean.getCount(criteria) > 0;
 	}	
 	
-	public static void removeAction( Integer id ) {
+	public static void removeAction( Action action ) {
+		removeAction(action.getId(), action.getName());
+	}
+	
+	public static void removeAction( Integer id, String actionName ) {
 		try {
 			FormUtil.remove(ActionFavorite.class, id, true, IEntityAlias.ACTION_FAVORITE_ACTION_ID);
 			FormUtil.remove(ActionDenied.class, id, true, IEntityAlias.ACTION_DENIED_ACTION_ID);
@@ -182,9 +186,9 @@ public class AuditManager implements IAuditConstants {
 			FormUtil.remove(ActionEntry.class, id, true, IEntityAlias.ACTION_ENTRY_ACTION_ID);
 			IManagerBean bean = BeanManager.getManagerBean(Action.class);
 			bean.remove(id);
-			LOGGER.warn( "Action not in menu, removed: {}", id );
+			LOGGER.warn( "Action not in menu, removed: {} ({})", id, actionName );
 		} catch ( Throwable th ) {
-			LOGGER.error( "Error deleting action {}. " + th.getMessage(), th );
+			LOGGER.error( "Error deleting action "+ id + ". " + th.getMessage(), th );
 		}
 	}
 	

@@ -86,7 +86,7 @@ public class ActionMoreUsedController extends DataScrollerState implements IAudi
 							list.add( ams );
 						}
 					} else {
-						AuditManager.removeAction( (Integer) array[1] );
+						AuditManager.removeAction( (Integer) array[1], actionName );
 					}
 		        }	        	
 	        }

@@ -148,10 +148,12 @@ public abstract class BasicVisibilityManager implements Serializable, IVisibilit
 			for( Map.Entry<String,? extends IAction> entry : deniedActions.entrySet() ) {
 				String action = entry.getKey();
 				ApplicationOption option = options.get(action);
-				if ( (option != null) && !isDeniedOption(deniedModules, option) ) {
-					list.add(option);	
+				if ( option != null ) {
+					if ( !isDeniedOption(deniedModules, option) ) {
+						list.add(option);	
+					}	
 				} else {
-					AuditManager.removeAction(entry.getValue().getAction().getId());
+					AuditManager.removeAction(entry.getValue().getAction());
 				}
 			}
 		}

@@ -158,12 +158,12 @@ public class ActionFavoriteController implements IAuditConstants, Serializable {
 					ActionFavorite af = (ActionFavorite) to;
 					String action = af.getAction().getName();
 					ApplicationOption option = options.get(action);
-					if ( (option != null) && (!getDeniedController().getManager().isDenied(option)) ) {
-						if ( option.isRendered() ) {
+					if ( option != null ) {
+						if ( option.isRendered() && (!getDeniedController().getManager().isDenied(option)) ) {
 							this.favorites.add(option);	
 						}
 					} else {
-						AuditManager.removeAction(af.getAction().getId());
+						AuditManager.removeAction(af.getAction());
 					}
 				}
 			}
