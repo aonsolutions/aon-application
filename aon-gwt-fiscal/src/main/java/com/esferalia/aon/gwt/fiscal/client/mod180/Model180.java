@@ -505,8 +505,7 @@ public class Model180 extends MainEntryPoint {
 
 	class Mod180DetailDataProvider extends AsyncDataProvider<Mod180Detail> {
 
-		public Mod180DetailDataProvider(
-				ProvidesKey<Mod180Detail> detailProvidesKey) {
+		public Mod180DetailDataProvider(ProvidesKey<Mod180Detail> detailProvidesKey) {
 			super(detailProvidesKey);
 		}
 
@@ -520,6 +519,7 @@ public class Model180 extends MainEntryPoint {
 					updateRowData(0, currentMod180.getDetails());
 					detailList.setPageSize(currentMod180.getDetails().size());
 					selectInList(0);
+					perceptorPanel.setDetail(detailModel.getSelectedObject());
 				}
 			}
 		}
@@ -534,6 +534,12 @@ public class Model180 extends MainEntryPoint {
 
 	@UiHandler("generateFileButton")
 	void onGenerateFileButtonClick(ClickEvent event) {
+		Window.alert(
+				  "Se va a proceder a la generaci\u00F3n de un fichero\n"
+				+ "con los datos de la declaraci\u00F3n, para su \n"
+				+ "presentaci\u00F3n en Hacienda.\n\n"
+				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
+				+ "El fichero se genera a partir de los datos guardados.");
 		diskForm.setAction(GWT.getHostPageBaseURL()
 				+ "/aon_gwt_fiscal/Model180File");
 		mod180Hidden.setValue(String.valueOf(currentMod180.getId()));
@@ -544,6 +550,12 @@ public class Model180 extends MainEntryPoint {
 
 	@UiHandler("printButton")
 	void onPrintButtonClick(ClickEvent event) {
+		Window.alert(
+				  "Se va a proceder a la validaci\u00F3n en los servidores de la \n"
+				+ "Agencia Tributaria. En el caso de validaci\u00F3n correcta,la Agencia \n"
+				+ "Tributaria devolver\u00E1 un documento PDF borrador con la declarai\u00F3n\n\n"
+				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
+				+ "La petici\u00F3n se genera a partir de los datos guardados.");
 		diskForm.setAction(GWT.getHostPageBaseURL()
 				+ "/aon_gwt_fiscal/Model180Print");
 		mod180Hidden.setValue(String.valueOf(currentMod180.getId()));

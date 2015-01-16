@@ -803,21 +803,23 @@ public class Mod190DAO {
 		Date firstDay = AonDateUtils.getYearFirstDay(mod190.getYear());
 		Date lastDay = AonDateUtils.getYearLastDay(mod190.getYear());
 
-		Field<BigDecimal> moneyIrpfBase = DSL.sum(SALARY.MONEY_IRPF_BASE).as(
-				SALARY.MONEY_IRPF_BASE.getName());
-		Field<BigDecimal> inKindIrpfBase = DSL.sum(SALARY.INKIND_IRPF_BASE).as(
-				SALARY.INKIND_IRPF_BASE.getName());
-		Field<BigDecimal> irpfBase = DSL.sum(SALARY.IRPF_BASE).as(
-				SALARY.IRPF_BASE.getName());
-		Field<BigDecimal> totalIrpf = DSL.sum(SALARY.TOTAL_IRPF).as(
-				SALARY.TOTAL_IRPF.getName());
-		Field<Integer> birthYear = DSL.year(PERSON.BIRTH_DATE).as(
-				PERSON.BIRTH_DATE.getName());
+		Field<BigDecimal> moneyIrpfBase = DSL.sum(SALARY.MONEY_IRPF_BASE)
+				.as(SALARY.MONEY_IRPF_BASE.getName());
+		Field<BigDecimal> inKindIrpfBase = DSL.sum(SALARY.INKIND_IRPF_BASE)
+				.as(SALARY.INKIND_IRPF_BASE.getName());
+		Field<BigDecimal> irpfBase = DSL.sum(SALARY.IRPF_BASE)
+				.as(SALARY.IRPF_BASE.getName());
+		Field<BigDecimal> totalIrpf = DSL.sum(SALARY.TOTAL_IRPF)
+				.as(SALARY.TOTAL_IRPF.getName());
+		Field<BigDecimal> socialSecurityContributions = DSL.sum(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS)
+				.as(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS.getName());
+		Field<Integer> birthYear = DSL.year(PERSON.BIRTH_DATE)
+				.as(PERSON.BIRTH_DATE.getName());
 
 		ctx.getDslContext()
 				.select(SALARY.EMPLOYEE_DOCUMENT, SALARY.EMPLOYEE_NAME,
 						moneyIrpfBase, inKindIrpfBase, irpfBase, totalIrpf,
-						PERSON.REGISTRY, birthYear)
+						socialSecurityContributions,PERSON.REGISTRY, birthYear)
 				.from(SALARY)
 				.join(CONTRACT)
 				.on(SALARY.CONTRACT.equal(CONTRACT.ID))
@@ -825,11 +827,9 @@ public class Mod190DAO {
 				.on(CONTRACT.WORKPLACE.equal(WORKPLACE.ID))
 				.join(PERSON)
 				.on(PERSON.REGISTRY.equal(CONTRACT.PERSON))
-				.where(SALARY.ISSUE_DATE.between(AonDateUtils.toSql(firstDay),
-						AonDateUtils.toSql(lastDay)))
+				.where(SALARY.ISSUE_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
 				.and(WORKPLACE.ENTERPRISE.equal(mod190.getEnterprise()))
-				.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190
-						.getAdministration()))
+				.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration()))
 				.groupBy(SALARY.EMPLOYEE_DOCUMENT)
 				.fetch()
 				.stream()
@@ -838,25 +838,16 @@ public class Mod190DAO {
 							Mod190Detail detail = new Mod190Detail();
 							detail.setDomain(mod190.getDomain());
 							detail.setMod190(mod190.getId());
-							detail.setDocument(salaryData
-									.getValue(SALARY.EMPLOYEE_DOCUMENT));
-							detail.setName(salaryData
-									.getValue(SALARY.EMPLOYEE_NAME));
+							detail.setDocument(salaryData.getValue(SALARY.EMPLOYEE_DOCUMENT));
+							detail.setName(salaryData.getValue(SALARY.EMPLOYEE_NAME));
 							detail.setKey(Mod190Key.A.getValue());
-							detail.setPerception(salaryData.getValue(
-									moneyIrpfBase).doubleValue());
-							detail.setInKindPerception(salaryData.getValue(
-									inKindIrpfBase).doubleValue());
-							detail.setRetention(salaryData.getValue(totalIrpf)
-									.doubleValue());
-							detail.setIrpfData(getLastIrpfDataByPerson(ctx,
-									salaryData.getValue(PERSON.REGISTRY),
-									firstDay, lastDay));
-							detail.getIrpfData().setBirthYear(
-									salaryData.getValue(birthYear));
-							detail.setIrpfResult(getLastIrpfResultByPerson(ctx,
-									salaryData.getValue(PERSON.REGISTRY),
-									firstDay, lastDay));
+							detail.setPerception(salaryData.getValue(moneyIrpfBase).doubleValue());
+							detail.setInKindPerception(salaryData.getValue(inKindIrpfBase).doubleValue());
+							detail.setRetention(salaryData.getValue(totalIrpf).doubleValue());
+							detail.setIrpfData(getLastIrpfDataByPerson(ctx,salaryData.getValue(PERSON.REGISTRY),firstDay, lastDay));
+							detail.getIrpfData().setBirthYear(salaryData.getValue(birthYear));
+							detail.setIrpfResult(getLastIrpfResultByPerson(ctx,salaryData.getValue(PERSON.REGISTRY),firstDay, lastDay));
+							detail.getIrpfResult().setDeducibleExpense(salaryData.getValue( socialSecurityContributions).doubleValue());
 							ctx.getDslContext()
 									.select(GEOZONE.CODE)
 									.from(RADDRESS)
