@@ -16,6 +16,7 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.esferalia.aon.google.sql.AbstractSQL.Rattach;
 
@@ -163,18 +164,21 @@ public class Utils{
 	
 	public static Boolean isGmail(String email) throws NamingException{
 		  
-		int pos= email.indexOf("@");
+		Integer pos= email.indexOf("@");
 		String username = email.substring(0, pos);
 		String hostname = email.substring(pos+1);
 		Attribute attr = doLookup(hostname);
-
 		int i=0;
 		if (attr!=null){
 			while(i<attr.size()){
+				
 				String a = (String) attr.get(i);
-				if (a.contains("google.com") || a.contains("googlemail.com")){
+				if(StringUtils.containsIgnoreCase(a, "google.com") || StringUtils.containsIgnoreCase(a, "googlemail.com")){
 					return true;
 				}
+				/*if (a.contains("google.com") || a.contains("googlemail.com")){
+					return true;
+				}*/
 				i++;
 			}
 		}
@@ -192,4 +196,6 @@ public class Utils{
 	    Attribute attr = attrs.get( "MX" );
 	   return attr;
 	  }
+	  
+	 
 }

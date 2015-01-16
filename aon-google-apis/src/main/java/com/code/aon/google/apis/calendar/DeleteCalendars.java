@@ -29,37 +29,26 @@ import com.google.api.services.calendar.model.CalendarListEntry;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
 
-public class DeleteEvents {
+public class DeleteCalendars {
 
-	public static void deleteEvent(Calendar calendar, String domain) throws IOException, NumberFormatException, AonConnectionException, SQLException{
-		
-		for (String eventId : values) {
-			Event e = calendar.events().get(calId, eventId).execute();
-			if(commercial.equals("all")|| (e.getExtendedProperties().getPrivate().get("AonId")!= null && esta(DBConsults.getCommercial(domain,Integer.valueOf(e.getExtendedProperties().getPrivate().get("AonId")))))){	
-				CalendarUtils.removeEvent(calendar,calId, eventId);
-				View.delete(e);
-			}
-		}
-		
+	
+	public static void deleteCalendarsAll(Calendar calendar , String domain) {
+
 	}
 	
-	public static void deleteEventsAll(Calendar calendar, String domain) throws IOException, NumberFormatException, AonConnectionException, SQLException{
 
-		com.google.api.services.calendar.model.CalendarList cl = CalendarUtils.getCalendars();
-		
-		for (CalendarListEntry cal : cl.getItems()) {
-			Events e = CalendarUtils.getEvents(cal.getId());
+	public static void deleteCalendar(Calendar calendar , String domain) {
 
-			for (Event event : e.getItems()) {
-				if(commercial.equals("all")|| (event.getExtendedProperties().getPrivate().get("AonId")!= null && esta(DBConsults.getCommercial(domain,Integer.valueOf(event.getExtendedProperties().getPrivate().get("AonId")))))){	
-					CalendarUtils.removeEvent(calendar, cal.getId(), event.getId());
-					View.delete(event);
+		for (String calendarId : values) {
+				try {
+					CalendarUtils.removeCalendar(calendarId);
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-			}
+			
 		}
-	
-	
 	}
+
 	
 	public static boolean esta(Vector<String> aux){
 		for (String string : aux) {
@@ -78,11 +67,11 @@ public class DeleteEvents {
 		
 	
 			if(action.equals("all")){
-				deleteEventsAll(calendar, domain);
+				deleteCalendarsAll(calendar, domain);
 			}
 			else if(action.equals("id")){
-				
-				deleteEvent(calendar, domain);
+			
+				deleteCalendar(calendar, domain);
 			}
 			else{
 				View.error2();

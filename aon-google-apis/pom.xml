@@ -279,6 +279,7 @@
 											<include>com.google.http-client:google-http-client:1.18.0-rc</include>
 											<include>com.google.http-client:google-http-client-jackson2:1.18.0-rc</include>
 											<include>com.google.apis:google-api-services-drive:v2-rev102-1.17.0-rc</include>
+											<include>com.google.apis:google-api-services-calendar:v3-rev44-1.15.0-rc</include>									
 											<include>com.google.oauth-client:google-oauth-client:1.18.0-rc</include>
 											<include>com.google.apis:google-api-services-oauth2:v2-rev47-1.16.0-rc</include>
 
@@ -312,6 +313,12 @@
 											<location>src/main/scripts</location>
 											<includes>
 												<include>aon-rattach.sh</include>
+											</includes>
+										</source>
+										<source>
+											<location>src/main/scripts</location>
+											<includes>
+												<include>aon-google-calendar.sh</include>
 											</includes>
 										</source>
 									</sources>
