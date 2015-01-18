@@ -39,8 +39,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AEATIVA2013toMod390 {
 
-	private static final DateFormat DATE_FORMAT = new SimpleDateFormat(
-			"dd/MM/yyyy");
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 
 	public static void populate(Mod390 mod390, AEATIVA2013 iva)
 			throws ParseException {
@@ -148,7 +147,7 @@ public class AEATIVA2013toMod390 {
 				// lg.setNotaryDate(trj.getFechaPoder());
 				String fec = trj.getFechaPoder();
 				
-				lg.setNotaryDate(fec == null ? null : DATE_FORMAT.parse(fec));
+				lg.setNotaryDate(AonStringUtils.isBlank(fec)? null : DATE_FORMAT.parse(fec));
 
 				if (i == 1) {
 					mod390.setLegalRepr1(lg);

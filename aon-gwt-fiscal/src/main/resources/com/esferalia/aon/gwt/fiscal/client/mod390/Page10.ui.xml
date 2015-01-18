@@ -29,6 +29,18 @@
 
 			<tr>
 				<td>
+					<g:Label text="{msg.box653Msg}" />
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="653" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box653" styleName="aon-inputText aon-text-right"/>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
 					<g:Label text="{msg.box103Msg}" />
 				</td>
 				<td class="{aonResources.css.aonTextCenter}">

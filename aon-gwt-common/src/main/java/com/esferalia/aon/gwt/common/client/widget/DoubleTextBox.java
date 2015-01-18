@@ -4,6 +4,8 @@ package com.esferalia.aon.gwt.common.client.widget;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
@@ -53,17 +55,22 @@ public class DoubleTextBox extends TextBox {
 		addFocusHandler(new FocusHandler() {
 			@Override
 			public void onFocus(FocusEvent event) {
-				if ( !isEmpty( getValue() ) ) {
-					resetStyleName();
-					removeStyleName(AON_RESOURCES.css().aonTextRight() );
-					Number value = null;
-					try {
-						value = FMT.parse(getValue()); 
-					} catch (NumberFormatException e) {
-						// Nothing. Value is ready for edit.
-					} 
-					DoubleTextBox.this.setValue( value == null ? null : value.toString(), false );
-				} 
+				Scheduler.get().scheduleDeferred( new ScheduledCommand() {
+					@Override
+					public void execute() {
+						if ( !isEmpty( getValue() ) ) {
+							resetStyleName();
+							removeStyleName(AON_RESOURCES.css().aonTextRight() );
+							Number value = null;
+							try {
+								value = FMT.parse(getValue()); 
+							} catch (NumberFormatException e) {
+								// Nothing. Value is ready for edit.
+							} 
+							DoubleTextBox.this.setValue( value == null ? null : value.toString(), false );
+						} 
+					}
+				});
 			}
 			
 		});

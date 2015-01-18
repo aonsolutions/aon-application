@@ -99,6 +99,53 @@
 				</td>
 			</tr>
 		</table>
+		
+		<g:Label text="{msg.accrualRegimeOperations}" styleName="{aonResources.css.aonPageHeader} {aonResources.css.aonMarginTop}"/>
+
+		<table class="{aonResources.css.aonFiscalTable}">
+			<colgroup>
+				<col style="width: auto;" />
+				<col style="width: 40px;" />
+				<col style="width: 120px;"/>
+				<col style="width: 40px;" />
+				<col style="width: 120px;"/>
+			</colgroup>
+			<tr>
+				<td>
+					<g:Label text="{msg.accrualRegimeOutputMsg}" />
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="654" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box654" styleName="aon-inputText aon-text-right"/>
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="655" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box655" styleName="aon-inputText aon-text-right"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="{msg.accrualRegimeInputMsg}" />
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="656" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box656" styleName="aon-inputText aon-text-right"/>
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="657" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box657" styleName="aon-inputText aon-text-right"/>
+				</td>
+			</tr>
+		</table>
+		
 	</g:HTMLPanel>
 	
 </ui:UiBinder>
