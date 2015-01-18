@@ -4,6 +4,8 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.FsModel390.FS_MODEL390;
 import static com.esferalia.aon.jooq.tables.FsModelDetail.FS_MODEL_DETAIL;
+import static com.esferalia.aon.jooq.tables.FsVat.FS_VAT;
+import static com.esferalia.aon.jooq.tables.FsVatDeclaration.FS_VAT_DECLARATION;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
@@ -34,6 +36,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod390.FarmerRegimeActivity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390DetailKey;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.SimpliedRegimeActivity;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
@@ -67,6 +70,7 @@ public class Mod390DAO {
 		private boolean service;
 		private InvoiceTransactionType transaction;
 		private boolean investment;
+		private boolean accrualRegime;
 		private boolean surcharge;
 		private double percentage;
 		private VatDeductionType vatDeductionType;
@@ -103,6 +107,12 @@ public class Mod390DAO {
 		}
 		public boolean isSurcharge() {
 			return surcharge;
+		}
+		public boolean isAccrualRegime() {
+			return accrualRegime;
+		}
+		public void setAccrualRegime(boolean accrualRegime) {
+			this.accrualRegime = accrualRegime;
 		}
 		public void setSurcharge(boolean surcharge) {
 			this.surcharge = surcharge;
@@ -324,6 +334,7 @@ public class Mod390DAO {
 		 ,K37	 (Mod390DetailKey.K37, null)
 		 
 		 ,B099	 (Mod390DetailKey.B099, (vc -> (vc.isNationalSales() && !vc.isRectification() && !vc.isSurcharge())))
+		 ,B653	 (Mod390DetailKey.B653, (vc -> (vc.isSales() && vc.isAccrualRegime() )))
 		 ,B103	 (Mod390DetailKey.B103, (vc -> (vc.isIntracommunitySales() && !vc.isWithoutRightDeductionType())))
 		 ,B104	 (Mod390DetailKey.B104, (vc -> (vc.isSales() && !vc.isWithoutRightDeductionType() && (vc.isExtracommunity() || vc.isCanCeuMel()) )))
 		 ,B105	 (Mod390DetailKey.B105, (vc -> (vc.isSales() && !vc.isNational() && vc.isWithoutRightDeductionType())))
@@ -384,13 +395,11 @@ public class Mod390DAO {
 				mod390.setFirstSurname(AonStringUtils.trim(AonStringUtils.substringAfter(tmpName, " ")));
 			}
 		}
-		fillGeneralRegimeData(ctx, mod390);
-		try {
-			fillSimplifedRegimeData(ctx, mod390);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			throw t;
+		fillSimplifedRegimeData(ctx, mod390);
+		if (!mod390.isSimplifiedRegime()) {
+			fillGeneralRegimeData(ctx, mod390);
 		}
+		fillDeclarationResults(ctx, mod390);
 		mod390.calculate();
 		return mod390;	
 	}
@@ -464,9 +473,11 @@ public class Mod390DAO {
 					AEATIVA2014toMod390.populate(mod390, iva);
 				}
 			} catch (JAXBException e1) {
-				throw new AonCoreException("XML PROBLEM");
+				e1.printStackTrace();
+				throw new AonCoreException("XML PROBLEM",e1);
 			} catch (ParseException e) {
-				throw new AonCoreException("XML PROBLEM");
+				e.printStackTrace();
+				throw new AonCoreException("XML PROBLEM",e);
 			}
 		}
 	}
@@ -627,6 +638,7 @@ public class Mod390DAO {
 				,INVOICE.SERVICE
 				,INVOICE.TRANSACTION
 				,INVOICE.INVESTMENT
+				,INVOICE.VAT_ACCRUAL_PAYMENT
 				,INVOICE_TAX.PERCENTAGE
 				,INVOICE_TAX.SURCHARGE
 				,INVOICE_TAX.VAT_DEDUCTION_TYPE
@@ -644,6 +656,7 @@ public class Mod390DAO {
 						,INVOICE.SERVICE
 						,INVOICE.TRANSACTION
 						,INVOICE.INVESTMENT
+						,INVOICE.VAT_ACCRUAL_PAYMENT
 						,INVOICE_TAX.PERCENTAGE
 						,INVOICE_TAX.SURCHARGE
 						,INVOICE_TAX.VAT_DEDUCTION_TYPE)
@@ -657,6 +670,7 @@ public class Mod390DAO {
 							vc.setService(record.getValue(INVOICE.SERVICE) == 1);
 							vc.setTransaction(InvoiceTransactionType.values()[record.getValue(INVOICE.TRANSACTION)]);
 							vc.setInvestment(record.getValue(INVOICE.INVESTMENT) == 1);
+							vc.setAccrualRegime( record.getValue(INVOICE.VAT_ACCRUAL_PAYMENT) == 1);
 							double surchargePercent = record.getValue(INVOICE_TAX.SURCHARGE).doubleValue();
 							boolean surcharge = (surchargePercent > 0); 
 							vc.setSurcharge(surcharge);
@@ -688,11 +702,23 @@ public class Mod390DAO {
 										else if (percentage == 1.75) surchargeKey = Mod390DetailKey.K10_175;
 										if (surchargeKey != null) {
 											detail = map.get(key);
-											if (detail == null) detail = new Mod390Detail();
+											if (detail == null) {
+												detail = new Mod390Detail();
+												map.put(key, detail );
+											}
 											detail.setKey(surchargeKey);
 											detail.setPercent(surchargePercent);
-											detail.setQuota( AonMathUtils.round(detail.getQuota()  + surchargeQuota));
-											detail.setTaxableBase( AonMathUtils.round( detail.getTaxableBase() + taxableBase));
+											detail.setQuota(AonMathUtils.round(detail.getQuota()  + surchargeQuota));
+											detail.setTaxableBase( AonMathUtils.round( detail.getTaxableBase() + taxableBase) );
+											
+											detail = map.get(Mod390DetailKey.B102);
+											if (detail == null) {
+												detail = new Mod390Detail();
+												map.put(key, detail );
+											}
+											detail.setKey(Mod390DetailKey.B102);
+											detail.setQuota( AonMathUtils.round(detail.getQuota()  + surchargeQuota) );
+											detail.setTaxableBase( AonMathUtils.round( detail.getTaxableBase() + taxableBase) );
 										}
 									}
 								}
@@ -914,7 +940,6 @@ public class Mod390DAO {
 		
 	}	
 	
-	
 	private static Mod390 fillSimplifedRegimeData(AONContext ctx, Mod390 mod390) {
 		mod390.setSimpRegime1(new SimpliedRegimeActivity());
 		mod390.setSimpRegime2(new SimpliedRegimeActivity());
@@ -941,90 +966,36 @@ public class Mod390DAO {
 			Mod303Key key = Mod303Key.getKeyWithValue(type);
 			SimplifedRegimeContext src = new SimplifedRegimeContext(key, description, amount);
 			SimplifiedRegimeFiller.fill(src,mod390);
-/*			
-			if (key != null && (key.isActivity() || key.isFarmer())) {
-				final String epigraph  = AonStringUtils.trim(AonStringUtils.substringBefore(description, "-"));
-				ctx.getDslContext().select(FS_ACTIVITY_INFO.INFO_KEY 
-						,FS_ACTIVITY_INFO.TYPE 
-						,FS_ACTIVITY_INFO.LINE  
-						,FS_ACTIVITY_INFO.VALUE
-						,FS_ACTIVITY_INFO.BASE 
-						,FS_ACTIVITY.FARMER)
-					.from(FS_ACTIVITY)
-					.join(FS_ACTIVITY_INFO).on(FS_ACTIVITY.ID.equal(FS_ACTIVITY_INFO.FS_ACTIVITY))
-					.where(FS_ACTIVITY.DOMAIN.equal(mod390.getDomain()))
-					.and(FS_ACTIVITY.YEAR.equal(mod390.getYear()))
-					.and(FS_ACTIVITY.EPIGRAPH.equal(epigraph))
-					.and(
-						   (FS_ACTIVITY_INFO.INFO_KEY.like("M%").and(FS_ACTIVITY_INFO.TYPE.equal((byte) 1)))
-						.or(FS_ACTIVITY_INFO.INFO_KEY.like("X%").and(FS_ACTIVITY_INFO.TYPE.equal((byte) 6)))
-						.or(FS_ACTIVITY_INFO.INFO_KEY.like("Y%").and(FS_ACTIVITY_INFO.TYPE.equal((byte) 7)))
-					).fetch()
-					.stream()
-					.forEach( record2 -> {
-						
-						
-						
-						
-						boolean farmer = AonEnumUtils.getBoolean( record2.getValue(FS_ACTIVITY.FARMER));
-						int line = record2.getValue( FS_ACTIVITY_INFO.LINE );
-						String strValue = record2.getValue(FS_ACTIVITY_INFO.VALUE);
-						double value = 0.0;
-						try {
-							value = Double.parseDouble(strValue);
-						} catch (NumberFormatException e) {
-							// Nothing, zero as double.
-						}
-						double base = record2.getValue(FS_ACTIVITY_INFO.BASE);
-						String infoKey = record2.getValue(FS_ACTIVITY_INFO.INFO_KEY);
-						Byte infoType = record2.getValue(FS_ACTIVITY_INFO.TYPE);
-						if (!farmer) {
-							SimpliedRegimeActivity act =  new SimpliedRegimeActivity();
-							act.setEpigrafe(epigraph);
-							if (infoType == 6 ) {	// M311_DETAIL
-								if ("X00".equals(infoKey)) act.setBoxC(value);
-								else if ("X01".equals(infoKey)) act.setBoxC(value);
-								else if ("X05".equals(infoKey)) act.setBoxD(value);
-								else if ("X06".equals(infoKey)) act.setBoxE(value);
-								else if ("X07".equals(infoKey)) act.setBoxF(value);
-								else if ("X08".equals(infoKey)) act.setBoxG(value);
-								else if ("X09".equals(infoKey)) act.setBoxH(value);
-								else if ("X10".equals(infoKey)) act.setBoxI(value);
-								else if ("X11".equals(infoKey)) act.setBoxJ(value);
-							} else {
-								System.out.println(infoKey + " - " +  line + " - " + base + " - " + value);
-								act.setUnit(line,value);
-								act.setAmount(line,base);
-							}
-							if (mod390.getSimpRegime1() == null) {
-								mod390.setSimpRegime1(act);
-							} else if (mod390.getSimpRegime2() == null) {
-								mod390.setSimpRegime2(act);
-							}
-						} else {
-							FarmerRegimeActivity act =  new FarmerRegimeActivity();
-							act.setCodigo(epigraph);
-							if ("Y01".equals(infoKey)) act.setIncomes(value); 
-							else if ("Y02".equals(infoKey)) act.setQuotaIndex(value);
-							else if ("Y03".equals(infoKey)) act.setAccrualQuota(value);
-							else if ("Y07".equals(infoKey)) act.setInputQuotas(value);
-							else if ("Y08".equals(infoKey)) act.setQuota(value);
-							
-							if (mod390.getFarmerRegime1() == null) {
-								mod390.setFarmerRegime1(act);
-							} else if (mod390.getFarmerRegime2() == null) {
-								mod390.setFarmerRegime2(act);
-							}
-						}
-						
-					});
-				}
-*/
 			}
 		);
 		return mod390;
 	}
 	
-
+	private static void fillDeclarationResults(AONContext ctx, Mod390 mod390) {
+		ctx.getDslContext().select(FS_VAT.PERIOD,FS_VAT.TAX_REFUND_REGISTRY
+				,FS_VAT_DECLARATION.DEPOSIT,FS_VAT_DECLARATION.PAY_BACK,FS_VAT_DECLARATION.COMPENSATE)
+				.from(FS_VAT)
+				.join(FS_VAT_DECLARATION).on(FS_VAT.ID.equal(FS_VAT_DECLARATION.FS_VAT))
+				.where(FS_VAT.DOMAIN.equal(mod390.getDomain()))
+				.and(FS_VAT.YEAR.equal(mod390.getYear()))
+				.and(FS_VAT_DECLARATION.ADMINISTRATION.equal((byte) Administration.COMMON_TERRITORY.ordinal()))
+				.fetch()
+				.stream()
+				.forEach( record -> {
+					Period period = Period.values()[record.getValue(FS_VAT.PERIOD)];
+					boolean taxRefundRegistry = record.getValue(FS_VAT.TAX_REFUND_REGISTRY) == 1;
+					mod390.setBox95( AonMathUtils.round(mod390.getBox95() + record.getValue(FS_VAT_DECLARATION.DEPOSIT)));
+					if ( taxRefundRegistry ) {
+						mod390.setBox96( AonMathUtils.round(mod390.getBox96() + record.getValue(FS_VAT_DECLARATION.PAY_BACK)));
+						mod390.setTaxRefund(true);
+					}
+					// Last Period
+					if (period == Period.M12 || period == Period.T4) {
+						mod390.setBox97( record.getValue(FS_VAT_DECLARATION.COMPENSATE));
+						if ( taxRefundRegistry ) {
+							mod390.setBox98( record.getValue(FS_VAT_DECLARATION.PAY_BACK));
+						}
+					}
+				});
+	}
 }
- 

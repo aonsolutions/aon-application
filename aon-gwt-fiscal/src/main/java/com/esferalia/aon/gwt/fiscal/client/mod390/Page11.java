@@ -42,6 +42,18 @@ public class Page11 extends ResizeComposite implements RequiresResize {
 	@UiField
 	DoubleTextBox box523;
 
+	@UiField
+	DoubleTextBox box654;
+	
+	@UiField
+	DoubleTextBox box655;
+	
+	@UiField
+	DoubleTextBox box656;
+	
+	@UiField
+	DoubleTextBox box657;
+
 	public Page11() {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		Model390.RESOURCES.css().ensureInjected();
@@ -58,6 +70,10 @@ public class Page11 extends ResizeComposite implements RequiresResize {
 		box111.setValue(m390.getBox111());
 		box113.setValue(m390.getBox113());
 		box523.setValue(m390.getBox523());
+		box654.setValue(m390.getBox654());
+		box655.setValue(m390.getBox655());
+		box656.setValue(m390.getBox656());
+		box657.setValue(m390.getBox657());
 	}
 
 	public void populate(Mod390 mod390) {
@@ -68,6 +84,10 @@ public class Page11 extends ResizeComposite implements RequiresResize {
 		mod390.setBox111(box111.getDoubleValue());
 		mod390.setBox113(box113.getDoubleValue());
 		mod390.setBox523(box523.getDoubleValue());
+		mod390.setBox654(box654.getDoubleValue());
+		mod390.setBox655(box655.getDoubleValue());
+		mod390.setBox656(box656.getDoubleValue());
+		mod390.setBox657(box657.getDoubleValue());
 	}
 	
 	public void setCallback(Mod390CallBack callback) {

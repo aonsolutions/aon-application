@@ -83,12 +83,7 @@ public class Page8 extends ResizeComposite implements RequiresResize {
 			@Override
 			public void execute() {
 				if (box87.isValidValue()) {
-					if (box87.getDoubleValue() < 0) {
-						box84.setValue(0);	
-					}
-					if (box87.getDoubleValue() > 100) {
-						box84.setValue(100);
-					}
+					mod390.setBox87(box87.getDoubleValue());
 					callback.calculateAndRefresh();
 				}
 			}
@@ -101,6 +96,7 @@ public class Page8 extends ResizeComposite implements RequiresResize {
 			@Override
 			public void execute() {
 				if (box93.isValidValue()) {
+					mod390.setBox93(box93.getDoubleValue());
 					callback.calculateAndRefresh();
 				}
 			}

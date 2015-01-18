@@ -712,8 +712,18 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Vol\u00FAmen de operaciones")
 	String operationsVolume();
 
+	@DefaultMessage("Exclusivamente para aquellos sujetos pasivos acogidos al r\u00E9gimen "
+			+ "especial del criterio de caja y para aquellos que sean destinatarios de "
+			+ "operaciones afectadas por el mismo")
+	String accrualRegimeOperations();
+
 	@DefaultMessage("Operaciones en r\u00E9gimen general")
 	String box99Msg();
+
+	@DefaultMessage("Operaciones a las que habi\u00E9ndoles aplicado el r\u00E9gimen especial "
+			+ "del criterio de caja hubieran resultado devengadas conforme a la regla general "
+			+ "de devengo contenida en el art.75 LIVA")
+	String box653Msg();
 
 	@DefaultMessage("Entregas intracomunitarias exentas")
 	String box103Msg();
@@ -777,7 +787,18 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Servicios localizados en el territorio de aplicaci\u00F3n del impuesto por inversi\u00F3n de sujeto pasivo")
 	String box523Msg();
-
+	
+	@DefaultMessage("Importes de las entregas de bienes y prestaciones de servicios a las que"
+			+ "habi\u00E9ndoles sido aplicado el r\u00E9gimen especial del criterio de caja "
+			+ "hubieran	resultado devengadas conforme a la regla general de devengo contenida "
+			+ "en el art. 75 LIVA")
+	String accrualRegimeOutputMsg();
+	
+	@DefaultMessage("Importe de las adquisiciones de bienes y servicios a las que sea de"
+			+ "aplicaci\u00F3n o afecte el r\u00E9gimen especial del criterio de caja "
+			+ "conforme a la regla general de devengo contenida en el art. 75 LIVA")
+	String accrualRegimeInputMsg();
+	
 	@DefaultMessage("Prorratas")
 	String prorrata();
 

@@ -570,6 +570,7 @@ public class Mod390 implements Serializable {
 		 ,K37	 (65,    0.00, null, false, true)
 		 
 		 ,B099	 (99,    0.00, null)
+		 ,B653	 (653,   0.00, null)
 		 ,B103	 (103,   0.00, null)
 		 ,B104	 (104,   0.00, null)
 		 ,B105	 (105,   0.00, null)
@@ -795,6 +796,7 @@ public class Mod390 implements Serializable {
 	private double box525;
 	private double box526;
 	private double box99;
+	private double box653;
 	private double box103;
 	private double box104;
 	private double box105;
@@ -815,7 +817,11 @@ public class Mod390 implements Serializable {
 	private double box111;
 	private double box113;
 	private double box523;
-
+	private double box654;
+	private double box655;
+	private double box656;
+	private double box657;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -1309,6 +1315,12 @@ public class Mod390 implements Serializable {
 	public void setBox99(double box99) {
 		this.box99 = box99;
 	}
+	public double getBox653() {
+		return box653;
+	}
+	public void setBox653(double box653) {
+		this.box653 = box653;
+	}
 	public double getBox103() {
 		return box103;
 	}
@@ -1429,6 +1441,31 @@ public class Mod390 implements Serializable {
 	public void setBox523(double box523) {
 		this.box523 = box523;
 	}
+	public double getBox654() {
+		return box654;
+	}
+	public void setBox654(double box654) {
+		this.box654 = box654;
+	}
+	public double getBox655() {
+		return box655;
+	}
+	public void setBox655(double box655) {
+		this.box655 = box655;
+	}
+	public double getBox656() {
+		return box656;
+	}
+	public void setBox656(double box656) {
+		this.box656 = box656;
+	}
+	public double getBox657() {
+		return box657;
+	}
+	public void setBox657(double box657) {
+		this.box657 = box657;
+	}
+
 	private static final Mod390DetailKey[] K09_FORMULA = new Mod390DetailKey[]{ Mod390DetailKey.K00_04
 				,Mod390DetailKey.K00_08,Mod390DetailKey.K00_10,Mod390DetailKey.K00_18
 				,Mod390DetailKey.K00_21,Mod390DetailKey.K01_04,Mod390DetailKey.K01_08
@@ -1505,36 +1542,45 @@ public class Mod390 implements Serializable {
 		Mod390DetailKey.K29, Mod390DetailKey.K31 };
 
 	public void calculate() {
-		calculate(Mod390DetailKey.K09, K09_FORMULA);
-		Mod390Detail k13 = calculate(Mod390DetailKey.K13, K13_FORMULA);
-		calculate(Mod390DetailKey.K15, K15_FORMULA);
-		calculate(Mod390DetailKey.K17, K17_FORMULA);
-		calculate(Mod390DetailKey.K19, K19_FORMULA);
-		calculate(Mod390DetailKey.K23, K21_FORMULA);
-		calculate(Mod390DetailKey.K23, K23_FORMULA);
-		calculate(Mod390DetailKey.K25, K25_FORMULA);
-		calculate(Mod390DetailKey.K27, K27_FORMULA);
-		calculate(Mod390DetailKey.K29, K29_FORMULA);
-		calculate(Mod390DetailKey.K31, K31_FORMULA);
-		Mod390Detail k36 = calculate(Mod390DetailKey.K36, K36_FORMULA);
-		Mod390Detail k37 = ensure(Mod390DetailKey.K37);
-		k37.setQuota( AonMathUtils.round(k13.getQuota() - k36.getQuota()));
-		box74 = AonMathUtils.round(getSimpRegime1().getBoxJ() + getSimpRegime2().getBoxJ());
-		box75 = AonMathUtils.round(
-				  getFarmerRegime1().getQuota()
-				+ getFarmerRegime2().getQuota()
-				+ getFarmerRegime3().getQuota()				
-				+ getFarmerRegime4().getQuota()				
-				+ getFarmerRegime5().getQuota()				
-				);
-		box79 = AonMathUtils.round(box74 + box75 + box76 + box77 + box78 );
-		box82 = AonMathUtils.round(box80 + box81);
-		box83 = AonMathUtils.round(box79 - box82);
-		box84 = AonMathUtils.round(k37.getQuota() + box83);
+		double k37Quota = 0;
+		if (!isSimplifiedRegime()) {
+			calculate(Mod390DetailKey.K09, K09_FORMULA);
+			Mod390Detail k13 = calculate(Mod390DetailKey.K13, K13_FORMULA);
+			calculate(Mod390DetailKey.K15, K15_FORMULA);
+			calculate(Mod390DetailKey.K17, K17_FORMULA);
+			calculate(Mod390DetailKey.K19, K19_FORMULA);
+			calculate(Mod390DetailKey.K23, K21_FORMULA);
+			calculate(Mod390DetailKey.K23, K23_FORMULA);
+			calculate(Mod390DetailKey.K25, K25_FORMULA);
+			calculate(Mod390DetailKey.K27, K27_FORMULA);
+			calculate(Mod390DetailKey.K29, K29_FORMULA);
+			calculate(Mod390DetailKey.K31, K31_FORMULA);
+			Mod390Detail k36 = calculate(Mod390DetailKey.K36, K36_FORMULA);
+			Mod390Detail k37 = ensure(Mod390DetailKey.K37);
+			k37Quota = AonMathUtils.round(k13.getQuota() - k36.getQuota());
+			k37.setQuota( k37Quota );
+		}
+		if (isSimplifiedRegime()) {
+			box74 = AonMathUtils.round(getSimpRegime1().getBoxJ() + getSimpRegime2().getBoxJ());
+			box75 = AonMathUtils.round(
+					getFarmerRegime1().getQuota()
+					+ getFarmerRegime2().getQuota()
+					+ getFarmerRegime3().getQuota()				
+					+ getFarmerRegime4().getQuota()				
+					+ getFarmerRegime5().getQuota()				
+					);
+			box79 = AonMathUtils.round(box74 + box75 + box76 + box77 + box78 );
+			box82 = AonMathUtils.round(box80 + box81);
+			box83 = AonMathUtils.round(box79 - box82);
+		} else {
+			box74 = 0;
+			box75 = 0;
+		}
+		box84 = AonMathUtils.round(k37Quota + box83);
 		box86 = AonMathUtils.round(box84 - box85);
 		box92 = AonMathUtils.round(box84 * box87 / 100);
 		box94 = AonMathUtils.round(box92 - box93);
-		box108 =  AonMathUtils.round(box99+box103+box104+box105
+		box108 =  AonMathUtils.round(box99+box653+box103+box104+box105
 				+box110+box112+box100+box101+box102+box227
 				+box228-box106-box107);
 	}
