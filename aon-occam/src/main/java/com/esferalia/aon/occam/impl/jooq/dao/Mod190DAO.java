@@ -845,7 +845,8 @@ public class Mod190DAO {
 							detail.setInKindPerception(salaryData.getValue(inKindIrpfBase).doubleValue());
 							detail.setRetention(salaryData.getValue(totalIrpf).doubleValue());
 							detail.setIrpfData(getLastIrpfDataByPerson(ctx,salaryData.getValue(PERSON.REGISTRY),firstDay, lastDay));
-							detail.getIrpfData().setBirthYear(salaryData.getValue(birthYear));
+							Integer birthData = salaryData.getValue(birthYear);
+							detail.getIrpfData().setBirthYear(birthData==null?0:birthData);
 							detail.setIrpfResult(getLastIrpfResultByPerson(ctx,salaryData.getValue(PERSON.REGISTRY),firstDay, lastDay));
 							detail.getIrpfResult().setDeducibleExpense(salaryData.getValue( socialSecurityContributions).doubleValue());
 							ctx.getDslContext()
