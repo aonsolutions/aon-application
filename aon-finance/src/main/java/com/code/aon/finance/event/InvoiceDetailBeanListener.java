@@ -185,15 +185,16 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 				surcharge = (tax.isVat()) ? invoiceDetail.getSurchargePercent() : 0;
 				surchargeQuota = (tax.isVat()) ? invoiceDetail.getSurchargeQuota() : 0;
 			} else {
-				RegistryTax rTax = invoice.getRegistry().getTax(tax.getId(), invoice.getIssueDate());
-				if (rTax != null) {
-					tax.setPercentage(rTax.getPercentage());
-					tax.setSurcharge(rTax.getSurcharge());
-				} else {
+				//RegistryTax rTax = invoice.getRegistry().getTax(tax.getId(), invoice.getIssueDate());
+				//RegistryTax rTax = null;
+				//if (rTax != null) {
+					//tax.setPercentage(rTax.getPercentage());
+					//tax.setSurcharge(rTax.getSurcharge());
+				//} else {
 					if (invoice.getIssueDate().before(tax.getStartDate())) {
 						tax = obtainTax(tax.getId(), invoice.getIssueDate());
 					}
-				}
+				//}
 				percentage = tax.getPercentage();
 				if (invoice.isSurcharge()) {
 					surcharge = tax.getSurcharge();
