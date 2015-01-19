@@ -25,6 +25,7 @@ public class Dialog {
 	String searchDomain;
 	Boolean multiple;
 	Integer num;
+	Boolean confidentialUser;
  	
 	public Dialog(String type,String title,String cancelButtonName,Boolean isCancelButton,String acceptButtonName,Boolean isAcceptButton,Boolean son){
 		this.type = type;
@@ -186,6 +187,14 @@ public class Dialog {
 
 	public void setNum(Integer num) {
 		this.num = num;
+	}
+
+	public Boolean getConfidentialUser() {
+		return confidentialUser;
+	}
+
+	public void setConfidentialUser(Boolean confidentialUser) {
+		this.confidentialUser = confidentialUser;
 	}
 
 

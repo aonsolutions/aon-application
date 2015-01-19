@@ -126,13 +126,16 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		AonServletUtils.releaseFacesContext();
 	}
 	Boolean confidential;
-	public Boolean initAux(){
+	public Vector<Boolean> initAux(){
 		try{initFacesContext();
+		Vector<Boolean> v = new Vector<Boolean>();
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		domainId = ds.getDomainId();
 		confidential = AonUtil.getRoleManager().isConfidentiality();
 		Boolean documentManager = AonUtil.getRoleManager().isDocumentManager();
-		return documentManager;
+		v.add(documentManager);
+		v.add(confidential);
+		return v;
 		}
 		finally{releaseFacesContext();}
 	}
@@ -367,7 +370,10 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	}
 
 	public Boolean newFile(FileInfo fi) {
-		if (getMimetype()!=null
+		Vector<FileInfo> files = getOuts();
+		if(files.size()>1 && !fi.getDomain().equals("false"))
+			return true;
+		if (files.size()>0
 				&& !fi.getTitle().equals("") && !fi.getDomain().equals("false")) {
 		
 			return true;
@@ -376,81 +382,115 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 
 	}
 	
-	public FileInfo insertFile(FileInfo fi){
-		Date date = null;
-		if (fi.getDate() != null)
-			date = new Date(fi.getDate().getYear(),
-					fi.getDate().getMonth(), fi.getDate().getDate());
-
-		/*initFacesContext();
-		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-		Integer domainId2 = ds.getDomainId();*/
-		String domain = AonUtil.getDomainName();
-		try {
-			domain= DBConsults.getDomain(domain, domainId);
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-		}
-		// Integer registry = AdminUtil.getCompanyId(fi.getDomainId());
-		com.code.aon.google.apis.FileInfo fileInfo = new com.code.aon.google.apis.FileInfo();
-		fileInfo.setAonType("registry");
-		if (fi.getCategory() != -1)
-			fileInfo.setCategory(fi.getCategory());
-		else fileInfo.setCategory(null);
-		fileInfo.setDateSql(date);
-		fileInfo.setMimetype((byte) MimeType.get(getMimetype()).ordinal());
-		fileInfo.setTitle(fi.getTitle());
-		fileInfo.setType((short)RegistryAttachmentType.CORPORATE_IDENTITY.ordinal());// TODO tipo correcto!!
-		if (fi.getScope().getId() != -1)
-			fileInfo.setScopeId(fi.getScope().getId());
-		else fileInfo.setScopeId(null);
-		Byte conf;
-		if (fi.getConfidential())
-			conf = 1;
-		else
-			conf = 0;
-		fileInfo.setSecurityLevel(conf);
-		if (!fi.getDomain().equals("")){
-			domain = fi.getDomain();
-		}
-		
-			
-		try {
-			Integer domainId = DBConsults.getDomainId(domain, domain);
-			fileInfo.setDomainId(domainId);
-			fileInfo.setSize((Integer) getSize());
-			Integer id = DBConsults.insertFile(domain, fileInfo);
-			DBConsults.insertTagsFile(id, fi.getTags(), domain, domainId);
-			byte[] b = getOut();//.toByteArray();
-			fileInfo.setFileId(id);
-			fileInfo.setData(b);
-			DomainGserviceaccount g = DatabaseSync
-					.getServiceAccount(domain);
-			if (g.getClientId()!=null){
-				Drive d = DriveUtils.serviceInitialize(g);
-				String[] types = { RegistryAttachmentType.CORPORATE_IDENTITY.toString() };// TODO
-				DriveUtils.types = types;
-				DriveUtils.sync2(d, fileInfo, domain);
+	public Vector<FileInfo> insertFile(FileInfo fi) {
+		Vector<FileInfo> files = getOuts();
+		Vector<FileInfo> vector = new Vector<FileInfo>();
+		for (FileInfo f : files) {
+			Date date = null;
+			if (fi.getDate() != null){
+				date = new Date(fi.getDate().getYear(),
+						fi.getDate().getMonth(), fi.getDate().getDate());
+				f.setDate(fi.getDate());
 			}
-			else DBConsults.insertFileData(domain, id, b );
-			//insertFile(d, fileInfo,b);//DriveUtils.insertFile(d, fileInfo, new Vector<ParentReference>(), new Vector<String>(), domain);
-			fi = DBConsults.getFile(domain, id);
-			if(fi.getDomain()==null) fi.setDomain(domain);
+			/*
+			 * initFacesContext(); DomainSwitcher ds = (DomainSwitcher)
+			 * AonUtil.getRegisteredBean(DOMAIN_SWITCHER); Integer domainId2 =
+			 * ds.getDomainId();
+			 */
+			String domain = AonUtil.getDomainName();
+			try {
+				domain = DBConsults.getDomain(domain, domainId);
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			// Integer registry = AdminUtil.getCompanyId(fi.getDomainId());
+			com.code.aon.google.apis.FileInfo fileInfo = new com.code.aon.google.apis.FileInfo();
+			fileInfo.setAonType("registry");
+			if (fi.getCategory() != -1){
+				fileInfo.setCategory(fi.getCategory());
+				//f.setCategory(fi.getCategory());
+				//f.setCategoryStr(fi.getCategoryStr());
+			}
+			else
+				fileInfo.setCategory(null);
+			fileInfo.setDateSql(date);
+			//f.setDateSql(date);
+			fileInfo.setMimetype((byte) MimeType.get(f.getMimeString()).ordinal());
+			//f.setMimetype((byte) MimeType.get(f.getMimeString()).ordinal());
+			if(files.size()<=1 && fi.getTitle()!=null){ 
+				fileInfo.setTitle(fi.getTitle());
+				//f.setTitle(fi.getTitle());
+			}
+			else fileInfo.setTitle(f.getTitle());
+			fileInfo.setType((short) RegistryAttachmentType.CORPORATE_IDENTITY
+					.ordinal());
+			//f.setType((short) RegistryAttachmentType.CORPORATE_IDENTITY
+					//.ordinal());
+			if (fi.getScope().getId() != -1){
+				fileInfo.setScopeId(fi.getScope().getId());
+				//f.setScope(fi.getScope());
+			}
+			else
+				fileInfo.setScopeId(null);
+			Byte conf;
+			if (fi.getConfidential())
+				conf = 1;
+			else
+				conf = 0;
+			fileInfo.setSecurityLevel(conf);
+			//f.setConfidential(fi.getConfidential());
+			if (!fi.getDomain().equals("")) {
+				domain = fi.getDomain();
+			}
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (KeyStoreException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (GeneralSecurityException e) {
-			e.printStackTrace();
-		} catch (AonConnectionException e) {
-			e.printStackTrace();
-		} catch (NamingException e) {
-			e.printStackTrace();
+			try {
+				Integer domainId = DBConsults.getDomainId(domain, domain);
+				fileInfo.setDomainId(domainId);
+				//f.setDomain(domain);
+				//f.setDomainId(domainId);
+				fileInfo.setSize((Integer) f.getSize());
+				//f.setSizeStr(FileUtils.byteCountToDisplaySize(f.getSize()!=null?f.getSize():0));
+				Integer id = DBConsults.insertFile(domain, fileInfo);
+				//f.setTags(fi.getTags());
+				DBConsults.insertTagsFile(id, fi.getTags(), domain, domainId);
+				byte[] b = f.getData();// .toByteArray();
+				fileInfo.setFileId(id);
+				fileInfo.setData(b);
+				DomainGserviceaccount g = DatabaseSync
+						.getServiceAccount(domain);
+				if (g.getClientId() != null) {
+					Drive d = DriveUtils.serviceInitialize(g);
+					String[] types = { RegistryAttachmentType.CORPORATE_IDENTITY
+							.toString() };// TODO
+					DriveUtils.types = types;
+					DriveUtils.sync2(d, fileInfo, domain);
+				} else
+					DBConsults.insertFileData(domain, id, b);
+				// insertFile(d, fileInfo,b);//DriveUtils.insertFile(d,
+				// fileInfo, new Vector<ParentReference>(), new
+				// Vector<String>(), domain);
+				
+				FileInfo fil = DBConsults.getFile(domain, id);
+				if (fil.getDomain() == null)
+					fil.setDomain(domain);
+				vector.add(fil);
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (KeyStoreException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (GeneralSecurityException e) {
+				e.printStackTrace();
+			} catch (AonConnectionException e) {
+				e.printStackTrace();
+			} catch (NamingException e) {
+				e.printStackTrace();
+			}
 		}
-		return fi;
+		setOuts(new Vector<FileInfo>());
+		return vector;
 	}
 	
 	public Boolean check(){
@@ -1433,5 +1473,99 @@ public static void setDown(Vector<FileInfo> down) {
 	DocumentsServlet.down = down;
 }
 
+public Vector<FileInfo> insertFileMultiple(FileInfo fi) {
+	Vector<FileInfo> files = getOuts();
+	for(FileInfo f : files){
+	Date date = null;
+	if (fi.getDate() != null)
+		date = new Date(fi.getDate().getYear(),
+				fi.getDate().getMonth(), fi.getDate().getDate());
+
+
+	String domain = AonUtil.getDomainName();
+	try {
+		domain= DBConsults.getDomain(domain, domainId);
+	} catch (SQLException e1) {
+		e1.printStackTrace();
+	}
+	// Integer registry = AdminUtil.getCompanyId(fi.getDomainId());
+	com.code.aon.google.apis.FileInfo fileInfo = new com.code.aon.google.apis.FileInfo();
+	fileInfo.setAonType("registry");
+	if (fi.getCategory() != -1){
+		fileInfo.setCategory(fi.getCategory());
+		f.setCategory(fi.getCategory());
+		f.setCategoryStr(fi.getCategoryStr());
+	}
+	else fileInfo.setCategory(null);
+	
+	fileInfo.setDateSql(date);
+	f.setDateSql(date);
+	f.setDate(fi.getDate());
+	f.setDateStr(fi.getDateStr());
+	
+	fileInfo.setMimetype(f.getMimetype());
+	f.setIcon(Utils.icon(MimeType.values()[f.getMimetype()].getName()));
+	fileInfo.setTitle(f.getTitle());
+	
+	fileInfo.setType((short)RegistryAttachmentType.CORPORATE_IDENTITY.ordinal());// TODO tipo correcto!!
+	f.setType((short)RegistryAttachmentType.CORPORATE_IDENTITY.ordinal());
+	if (fi.getScope().getId() != -1){
+		fileInfo.setScopeId(fi.getScope().getId());
+		f.setScope(fi.getScope());
+	}
+	else fileInfo.setScopeId(null);
+	
+	Byte conf;
+	if (fi.getConfidential())
+		conf = 1;
+	else
+		conf = 0;
+	fileInfo.setSecurityLevel(conf);
+	f.setConfidential(fi.getConfidential());
+	if (!fi.getDomain().equals("")){
+		domain = fi.getDomain();
+	
+	}
+	f.setDomain(domain);
+		
+	try {
+		Integer domainId = DBConsults.getDomainId(domain, domain);
+		fileInfo.setDomainId(domainId);
+		fileInfo.setSize(f.getSize());
+		Integer id = DBConsults.insertFile(domain, fileInfo);
+		f.setFileId(id);
+		DBConsults.insertTagsFile(id, fi.getTags(), domain, domainId);
+		byte[] b = f.getData();//.toByteArray();
+		fileInfo.setFileId(id);
+		fileInfo.setData(b);
+		DomainGserviceaccount g = DatabaseSync
+				.getServiceAccount(domain);
+		if (g.getClientId()!=null){
+			Drive d = DriveUtils.serviceInitialize(g);
+			String[] types = { RegistryAttachmentType.CORPORATE_IDENTITY.toString() };// TODO
+			DriveUtils.types = types;
+			DriveUtils.sync2(d, fileInfo, domain);
+		}
+		else DBConsults.insertFileData(domain, id, b );
+		//insertFile(d, fileInfo,b);//DriveUtils.insertFile(d, fileInfo, new Vector<ParentReference>(), new Vector<String>(), domain);
+		fi = DBConsults.getFile(domain, id);
+		if(fi.getDomain()==null) fi.setDomain(domain);
+
+	} catch (SQLException e) {
+		e.printStackTrace();
+	} catch (KeyStoreException e) {
+		e.printStackTrace();
+	} catch (IOException e) {
+		e.printStackTrace();
+	} catch (GeneralSecurityException e) {
+		e.printStackTrace();
+	} catch (AonConnectionException e) {
+		e.printStackTrace();
+	} catch (NamingException e) {
+		e.printStackTrace();
+	}
+	}
+	return files;
+}
 
 }

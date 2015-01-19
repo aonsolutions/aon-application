@@ -32,9 +32,15 @@ public class MultipleUploadFilesServlet extends  UploadAction{
 	    for (FileItem item : sessionFiles) {
 	    	System.out.println(item.isFormField());
 	      if (false == item.isFormField()) {
-	    	 
+	    	  String name = item.getName();
+	    	  if(name.contains(".")){
+	    		  Integer pos = name.lastIndexOf(".");
+	    		  name = name.substring(0,pos);
+	    	  }
 	    	  FileInfo fi = new FileInfo();
-	    	  fi.setTitle(item.getName());
+	    	  fi.setTitle(name);
+	    	  Long size = item.getSize();
+	          fi.setSize(size.intValue());
 	    	  fi.setData(item.get());
 	    	  fi.setMimeString(item.getContentType());
 	    	  DocumentsServlet.addOuts(fi);

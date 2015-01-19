@@ -2,6 +2,8 @@ package com.esferalia.aon.gwt.document.client;
 
 import gwtupload.client.IUploader;
 import gwtupload.client.IUploader.OnCancelUploaderHandler;
+import gwtupload.client.IUploader.OnFinishUploaderHandler;
+import gwtupload.client.MultiUploader;
 import gwtupload.client.SingleUploader;
 
 import java.util.Comparator;
@@ -34,8 +36,8 @@ import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.cell.client.TextCell;
-import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -215,9 +217,11 @@ public class Documents extends Composite implements EntryPoint {
 				downloadItem = addItem("Descargar",downloadCommand,
 						"aon-icon-mail-save",AON.AON_ICON_CMD_BUTTON);
 				downloadItem.setEnabled(true);
-				infoItem = addItem("Detalles",infoCommand,
-						"aon-icon-info",AON.AON_ICON_CMD_BUTTON);
-				infoItem.setEnabled(true);
+				if(selFiles.size() < 1){
+					infoItem = addItem("Detalles",infoCommand,
+							"aon-icon-info",AON.AON_ICON_CMD_BUTTON);
+					infoItem.setEnabled(true);
+				}
 			}
 			else{
 				viewItem = addItem("Visualizar",viewCommand,
@@ -471,7 +475,9 @@ public class Documents extends Composite implements EntryPoint {
 	@UiField Button serviConveniosButton;
 	
 	@UiField Button loteButton;
-
+	
+	@UiField HorizontalPanel ftoolbar;
+	
 	@UiField Button newFile;
 
 	@UiField Button editFile;
@@ -505,14 +511,18 @@ public class Documents extends Composite implements EntryPoint {
 
 	Boolean gConnection;
 	Boolean documentManager;
+	Boolean confidentialUser;
 	Vector<FileInfo> selFiles;
 	
 	private void init() {
-		idoc.initAux(new AsyncCallback<Boolean>() {
+		idoc.initAux(new AsyncCallback<Vector<Boolean>>() {
 			@Override
-			public void onSuccess(Boolean result) {
-				documentManager = result;
-
+			public void onSuccess(Vector<Boolean> result) {
+				documentManager = result.get(0);
+				confidentialUser = result.get(1);
+				if(!documentManager){
+					// desactivar lotebutton
+				}
 				getSons();
 				if(docs.getEfiles()==null||docs.getEfiles().isEmpty()){
 					idoc.getAllFiles(new AsyncCallback<Document>() {
@@ -988,8 +998,14 @@ public class Documents extends Composite implements EntryPoint {
 		// rangeLabelPager.setDisplay(dataGrid);
 		// Add the outer panel to the RootLayoutPanel, so that it will be
 		// displayed.
+
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
+		if(!documentManager){
+			loteButton.setVisible(false);
+			newFile.setVisible(false);
+			ftoolbar.setVisible(false);
+		}
 		if(gConnection){
 			stack1.getHeaderWidget(1).setVisible(true);
 			stack1.getWidget(1).setVisible(true);
@@ -1514,24 +1530,32 @@ public class Documents extends Composite implements EntryPoint {
 		d.setUpload(up);
 		d.setNextButtonName("Guardar & Continuar");
 		d.setIsNextButton(true);
+		d.setConfidentialUser(confidentialUser);
 		popup2 = new DocumentsDialog(d){ 
 			
 			@Override
 			protected void onAccept() {				
 	//upload.getForm().submit();
+				Integer auxNum = 1;
 				FileInfo fi = new  FileInfo();
             	// Descripción - Description
-            	TextBox tb = (TextBox)grid.getWidget(1, 1);
-            	fi.setTitle(tb.getText());
+				if(num <= 1){
+					TextBox tb = (TextBox)grid.getWidget(1, 1);
+            		fi.setTitle(tb.getText());
+            		auxNum = 0;
+				}
             	// Confidencial - Confidential
-            	CheckBox cb = (CheckBox)grid.getWidget(3, 1);
-            	fi.setConfidential(cb.getValue());
+				if(confidentialUser){
+					CheckBox cb = (CheckBox)grid.getWidget(3-auxNum, 1);
+            		fi.setConfidential(cb.getValue());
+				}
+				else fi.setConfidential(false);
             	// Fecha - Date
-            	DateBox db = (DateBox)grid.getWidget(4, 1);
+            	DateBox db = (DateBox)grid.getWidget(4-auxNum, 1);
             	fi.setDate(db.getValue());
             	// Categoria - Category
             	fi.setCategory(-1);
-            	ListBox lb1 = (ListBox)grid.getWidget(5, 1);
+            	ListBox lb1 = (ListBox)grid.getWidget(5-auxNum, 1);
             	for (Category c : lists.getCategoryList().getList()) {
             		String s1 = lb1.getItemText(lb1.getSelectedIndex());
             		if(s1.substring(0, 1).equals(Character.toString((char)9650)))
@@ -1550,7 +1574,7 @@ public class Documents extends Composite implements EntryPoint {
 				}
             	// Ambito - Scope
             	fi.setScope(new Scope(-1));
-            	ListBox lb3 = (ListBox)grid.getWidget(7, 1);
+            	ListBox lb3 = (ListBox)grid.getWidget(7-auxNum, 1);
             	for (Scope s : lists.getScopeList().getList()) {
             		String s3 = lb3.getItemText(lb3.getSelectedIndex());
             		if(s3.substring(0, 1).equals(Character.toString((char)9650)))
@@ -1571,7 +1595,7 @@ public class Documents extends Composite implements EntryPoint {
             	// Etiquetas - Tags
             	Vector<Tag> tags = new Vector<Tag>();
 
-            	VerticalPanel vp = (VerticalPanel)grid.getWidget(6, 1);
+            	VerticalPanel vp = (VerticalPanel)grid.getWidget(6-auxNum, 1);
 
             	for(Integer i = 0 ;i<vp.getWidgetCount();i++){
             		HorizontalPanel hp = (HorizontalPanel)vp.getWidget(i);
@@ -1596,7 +1620,6 @@ public class Documents extends Composite implements EntryPoint {
             	fi.setTags(tags);
             	SuggestBox sb = (SuggestBox)grid.getWidget(0, 1);
             	// Dominio - Domain
-            	Window.alert("debug1");
             	if (getSons().size()!=1){
             		if(!esta(Utils.getOracleString(sb.getText()))){
             			fi.setDomain("false"); 
@@ -1611,51 +1634,55 @@ public class Documents extends Composite implements EntryPoint {
 					public void onSuccess(Boolean result) {
 						if(result){
 							hide();
-							idoc.insertFile(finsert, new AsyncCallback<FileInfo>() {
+							idoc.insertFile(finsert, new AsyncCallback<Vector<FileInfo>>() {
 
 								@Override
 								public void onFailure(Throwable caught) {}
 								
 								@Override
-								public void onSuccess(FileInfo result) {
+								public void onSuccess(Vector<FileInfo> result) {
 									Vector<FileInfo> aux = new Vector<FileInfo>();
 									for (FileInfo f : docs.getFiles()) {
 										aux.add(f);		
 									}
-									aux.add(result);
+
+									aux.addAll(result);
 									docs.setFiles(aux);
 									Integer index=0;
+
 									while(docs.getFilter().get(index).getIsParent()){
 										index++;
 									}
-									if(result.getDomain().equals(docs.getFilter().get(index).getDomain())){
+									if(result.get(0).getDomain().equals(docs.getFilter().get(index).getDomain())){
+
 										aux = new Vector<FileInfo>();
 										for (FileInfo f : docs.getEfiles()) {
 											aux.add(f);		
 										}
-										aux.add(result);
+										aux.addAll(result);
 										docs.setEfiles(aux);
 
 								
 										if(html.isVisible()){
 											Integer i = 0;
 
-											while(i<result.getTags().size() && !html.getText().equals(result.getTags().get(i).getName())){
+											while(i<result.get(0).getTags().size() && !html.getText().equals(result.get(0).getTags().get(i).getName())){
 												i++;
 											}
-											if(!html.isVisible() || (html.isVisible() && (html.getText().equals(result.getCategoryStr()) || result.getTags().size()>i))){
+											if(!html.isVisible() || (html.isVisible() && (html.getText().equals(result.get(0).getCategoryStr()) || result.get(0).getTags().size()>i))){
 												aux= new Vector<FileInfo>();
 												for (FileInfo f : docs.getFilter()) {
 													aux.add(f);
 												}
-												aux.add(result);
+												aux.addAll(result);
 												docs.setFilter(aux);
 												aux= new Vector<FileInfo>();
 												for (FileInfo f : dataProvider.getList()) {
 													aux.add(f);
 													dataGrid.getSelectionModel().setSelected(f, false);
 												}
-												aux.add(result);
+												aux.addAll(result);
+
 												dataProvider = new ListDataProvider<FileInfo>(aux);
 												dataProvider.addDataDisplay(dataGrid); 
 												updateDatagridColumns();
@@ -1667,7 +1694,7 @@ public class Documents extends Composite implements EntryPoint {
 											for (FileInfo f : docs.getFilter()) {
 												aux.add(f);
 											}
-											aux.add(result);
+											aux.addAll(result);
 											docs.setFilter(aux);
 											aux= new Vector<FileInfo>();
 											for (FileInfo f : dataProvider.getList()) {
@@ -1675,7 +1702,8 @@ public class Documents extends Composite implements EntryPoint {
 												dataGrid.getSelectionModel().setSelected(f, false);
 
 											}
-											aux.add(result);
+
+											aux.addAll(result);
 											dataProvider = new ListDataProvider<FileInfo>(aux);
 											dataProvider.addDataDisplay(dataGrid); 
 											updateDatagridColumns();
@@ -1736,23 +1764,27 @@ public class Documents extends Composite implements EntryPoint {
 
 			@Override
 			protected void onNext() {
+				Integer auxNum = 1;
 				FileInfo fi = new  FileInfo();
             	// Descripción - Description
-
-            	TextBox tb = (TextBox)grid.getWidget(1, 1);
-            	fi.setTitle(tb.getText());
-            
-
+				if(num <= 1){
+					TextBox tb = (TextBox)grid.getWidget(1, 1);
+            		fi.setTitle(tb.getText());
+            		auxNum = 0;
+				}
             	// Confidencial - Confidential
-            	CheckBox cb = (CheckBox)grid.getWidget(3, 1);
-            	fi.setConfidential(cb.getValue());
+				if(confidentialUser){
+					CheckBox cb = (CheckBox)grid.getWidget(3-auxNum, 1);
+            		fi.setConfidential(cb.getValue());
+				}
+				else fi.setConfidential(false);
             	// Fecha - Date
-            	DateBox db = (DateBox)grid.getWidget(4, 1);
+            	DateBox db = (DateBox)grid.getWidget(4-auxNum, 1);
             	fi.setDate(db.getValue());
             	// Categoria - Category
             	String categoryString="";
             	fi.setCategory(-1);
-            	ListBox lb1 = (ListBox)grid.getWidget(5, 1);
+            	ListBox lb1 = (ListBox)grid.getWidget(5-auxNum, 1);
             	for (Category c : lists.getCategoryList().getList()) {
             		String s1 = lb1.getItemText(lb1.getSelectedIndex());
             		if(s1.substring(0, 1).equals(Character.toString((char)9650)))
@@ -1776,7 +1808,7 @@ public class Documents extends Composite implements EntryPoint {
             	// Ambito - Scope
             	String scopeString = "";
             	fi.setScope(new Scope(-1));
-            	ListBox lb3 = (ListBox)grid.getWidget(7, 1);
+            	ListBox lb3 = (ListBox)grid.getWidget(7-auxNum, 1);
             	for (Scope s : lists.getScopeList().getList()) {
             		String s3 = lb3.getItemText(lb3.getSelectedIndex());
             		if(s3.substring(0, 1).equals(Character.toString((char)9650)))
@@ -1800,7 +1832,7 @@ public class Documents extends Composite implements EntryPoint {
             	// Etiquetas - Tags
             	Vector<Tag> tags = new Vector<Tag>();
 
-            	VerticalPanel vp = (VerticalPanel)grid.getWidget(6, 1);
+            	VerticalPanel vp = (VerticalPanel)grid.getWidget(6-auxNum, 1);
             	Vector<String> tagsString = new Vector<String>();
             	for(Integer i = 0 ;i<vp.getWidgetCount();i++){
             		HorizontalPanel hp = (HorizontalPanel)vp.getWidget(i);
@@ -1837,16 +1869,129 @@ public class Documents extends Composite implements EntryPoint {
 				}
             	else fi.setDomain("");
             	
-            	final SingleUploader upload = newUploader(null,GWT.getModuleBaseURL());
-                upload.addOnCancelUploadHandler(new OnCancelUploaderHandler() {
-                	
+            	if(auxNum == 1){
+					Label l1 = (Label) grid.getWidget(1, 0);
+					Label l3 = (Label) grid.getWidget(3, 0);
+					Widget w3 = grid.getWidget(3, 1);					
+					Label l4 = (Label) grid.getWidget(4, 0);
+					Widget w4 = grid.getWidget(4, 1);
+					Label l5 = (Label) grid.getWidget(5, 0);
+					Widget w5 = grid.getWidget(5, 1);
+					Label l6 = (Label) grid.getWidget(6, 0);
+					Widget w6 = grid.getWidget(6, 1);
+					
+					if(confidentialUser){
+						Label l2 = (Label) grid.getWidget(2, 0);
+						Widget w2 = grid.getWidget(2, 1);
+						grid.setWidget(3, 0, l2);
+						grid.setWidget(3, 1, w2);
+					}
+					
+					grid.setWidget(1, 0, new Label("Descripci\u00f3n"));
+					
+					grid.setWidget(2, 0, l1);
+
+					grid.setWidget(4, 0, l3);
+					grid.setWidget(4, 1, w3);
+					
+					grid.setWidget(5, 0, l4);
+					grid.setWidget(5, 1, w4);
+					
+					grid.setWidget(6, 0, l5);
+					grid.setWidget(6, 1, w5);
+					
+					grid.setWidget(7, 0, l6);
+					grid.setWidget(7, 1, w6);
+					grid.getCellFormatter().setStyleName(7, 0,
+							"aon-panelGrid-odd");
+					grid.getCellFormatter().setStyleName(7, 1,
+							"aon-panelGrid-even");
+            	}
+            	MultiUploader mupload = new MultiUploader();
+        		num = 0;
+        		mupload.setAutoSubmit(true);
+                mupload.setServletPath( url + "/gwt_multiple_upload");
+                
+                mupload.setMaximumFiles(5);
+
+                mupload.setTitle("multipleUploadFormElement");
+        		mupload.addOnFinishUploadHandler(new OnFinishUploaderHandler() {
+        			
         			@Override
-        			public void onCancel(IUploader uploader) {
-        				final SingleUploader upload3 = newUploader(null,GWT.getModuleBaseURL()) ;
-        				grid.setWidget(2, 1, upload3);
+        			public void onFinish(IUploader uploader) {
+        				
+        				num ++;
+        				if(num > 1){
+        					//grid.getWidget(1, 0).setVisible(false);
+        					//grid.getWidget(1, 1).setVisible(false);
+        					grid.removeRow(1);
+
+        				}
+        				
         			}
         		});
-                grid.setWidget(2, 1, upload);
+        		
+        		mupload.addOnCancelUploadHandler(new OnCancelUploaderHandler() {
+        			
+        			@Override
+        			public void onCancel(IUploader uploader) {
+        				num--;
+        				if(num == 1){
+        					Label l1 = (Label) grid.getWidget(1, 0);
+        					Widget w1 = grid.getWidget(1, 1);
+        					
+        					Label l3 = (Label) grid.getWidget(3, 0);
+        					Widget w3 = grid.getWidget(3, 1);					
+        					Label l4 = (Label) grid.getWidget(4, 0);
+        					Widget w4 = grid.getWidget(4, 1);
+        					Label l5 = (Label) grid.getWidget(5, 0);
+        					Widget w5 = grid.getWidget(5, 1);
+        					Label l6 = (Label) grid.getWidget(6, 0);
+        					Widget w6 = grid.getWidget(6, 1);
+        				
+        					if(confidentialUser){
+        						Label l2 = (Label) grid.getWidget(2, 0);
+            					Widget w2 = grid.getWidget(2, 1);
+            					grid.setWidget(3, 0, l2);
+            					grid.setWidget(3, 1, w2);
+        					}
+        					
+        					final TextBox tb1 = new TextBox();tb1.setStyleName("aon-inputText");
+        					tb1.addChangeHandler(new ChangeHandler() {
+        						@Override
+        						public void onChange(ChangeEvent event) {
+        							tb1.setStyleName("aon-inputText");
+        						}
+        					});
+        					grid.setWidget(1, 0, new Label("Descripci\u00f3n"));
+        					grid.setWidget(1, 1, tb1);
+        					
+        					grid.setWidget(2, 0, l1);
+        					grid.setWidget(2, 1, w1);
+        					
+
+        					
+        					grid.setWidget(4, 0, l3);
+        					grid.setWidget(4, 1, w3);
+        					
+        					grid.setWidget(5, 0, l4);
+        					grid.setWidget(5, 1, w4);
+        					
+        					grid.setWidget(6, 0, l5);
+        					grid.setWidget(6, 1, w5);
+        					
+        					grid.setWidget(7, 0, l6);
+        					grid.setWidget(7, 1, w6);
+        					
+        					grid.getCellFormatter().setStyleName(7, 0,
+        							"aon-panelGrid-odd");
+        					grid.getCellFormatter().setStyleName(7, 1,
+        							"aon-panelGrid-even");
+        				}
+        			}
+        		});
+        		
+                grid.setWidget(2, 1, mupload);
                 
                 final TextBox tb1 = new TextBox();tb1.setStyleName("aon-inputText");
         		tb1.addChangeHandler(new ChangeHandler() {
@@ -1877,44 +2022,44 @@ public class Documents extends Composite implements EntryPoint {
 					@Override
 					public void onSuccess(Boolean result) {
 						if(result){
-							idoc.insertFile(finsert, new AsyncCallback<FileInfo>() {
+							idoc.insertFile(finsert, new AsyncCallback<Vector<FileInfo>>() {
 
 								@Override
 								public void onFailure(Throwable caught) {}
 								
 								@Override
-								public void onSuccess(FileInfo result) {
+								public void onSuccess(Vector<FileInfo> result) {
 									Vector<FileInfo> aux = new Vector<FileInfo>();
 									for (FileInfo f : docs.getFiles()) {
 										aux.add(f);		
 									}
-									aux.add(result);
+									aux.addAll(result);
 									docs.setFiles(aux);
 									Integer index=0;
 									while(docs.getFilter().get(index).getIsParent()){
 										index++;
 									}
-									if(result.getDomain().equals(docs.getFilter().get(index).getDomain())){
+									if(result.get(0).getDomain().equals(docs.getFilter().get(index).getDomain())){
 										aux = new Vector<FileInfo>();
 										for (FileInfo f : docs.getEfiles()) {
 											aux.add(f);		
 										}
-										aux.add(result);
+										aux.addAll(result);
 										docs.setEfiles(aux);
 
 								
 										if(html.isVisible()){
 											Integer i = 0;
 
-											while(i<result.getTags().size() && !html.getText().equals(result.getTags().get(i).getName())){
+											while(i<result.get(0).getTags().size() && !html.getText().equals(result.get(0).getTags().get(i).getName())){
 												i++;
 											}
-											if(!html.isVisible() || (html.isVisible() && (html.getText().equals(result.getCategoryStr()) || result.getTags().size()>i))){
+											if(!html.isVisible() || (html.isVisible() && (html.getText().equals(result.get(0).getCategoryStr()) || result.get(0).getTags().size()>i))){
 												aux= new Vector<FileInfo>();
 												for (FileInfo f : docs.getFilter()) {
 													aux.add(f);
 												}
-												aux.add(result);
+												aux.addAll(result);
 												docs.setFilter(aux);
 												aux= new Vector<FileInfo>();
 												for (FileInfo f : dataProvider.getList()) {
@@ -1922,7 +2067,7 @@ public class Documents extends Composite implements EntryPoint {
 													dataGrid.getSelectionModel().setSelected(f, false);
 
 												}
-												aux.add(result);
+												aux.addAll(result);
 												dataProvider = new ListDataProvider<FileInfo>(aux);
 												dataProvider.addDataDisplay(dataGrid); 
 												updateDatagridColumns();
@@ -1934,14 +2079,14 @@ public class Documents extends Composite implements EntryPoint {
 											for (FileInfo f : docs.getFilter()) {
 												aux.add(f);
 											}
-											aux.add(result);
+											aux.addAll(result);
 											docs.setFilter(aux);
 											aux= new Vector<FileInfo>();
 											for (FileInfo f : dataProvider.getList()) {
 												aux.add(f);
 												dataGrid.getSelectionModel().setSelected(f, false);
 											}
-											aux.add(result);
+											aux.addAll(result);
 											dataProvider = new ListDataProvider<FileInfo>(aux);
 											dataProvider.addDataDisplay(dataGrid); 
 											updateDatagridColumns();
@@ -2293,6 +2438,8 @@ public class Documents extends Composite implements EntryPoint {
 	}
 
 	Boolean isServiconvenios=false;
+	Boolean conf;
+	
 	@UiHandler("serviConveniosButton")
 	void getServiConveniosAttach(ClickEvent event) {
 		gestionLote.setVisible(false);
@@ -2467,41 +2614,65 @@ public class Documents extends Composite implements EntryPoint {
 		dataGrid.setColumnWidth(dateColumn, 13, Unit.PCT);
 		
 		/** Confidential Column **/
-		Column<FileInfo, Boolean> confColumn = new Column<FileInfo, Boolean>(new CheckboxCell(){
-			@Override
-			public void onBrowserEvent(
-					com.google.gwt.cell.client.Cell.Context context,
-					Element parent, Boolean value, NativeEvent event,
-					ValueUpdater<Boolean> valueUpdater) {
+		if(confidentialUser){
+			Column<FileInfo,SafeHtml> confColumn2 = new Column<FileInfo, SafeHtml>(new SafeHtmlCell()){
+		
+				@Override
+				public SafeHtml getValue(FileInfo object) {
+					conf = object.getConfidential();
+					SafeHtml sh  =new SafeHtml() {
+						Boolean confidential = conf;
+						@Override
+						public String asString() {
+							String s;
+							if(confidential){
+								s = "<span class='aon-icon-check-black'  style='padding-left:16px'> &nbsp;</span>";
+							}
+							else {
+								s = "<span style='padding-left:6px'> - </span>";
+							}
+							return s;
+						}
+					};
+				
+					return sh;
+				}
+			};
+			/*Column<FileInfo, Boolean> confColumn = new Column<FileInfo, Boolean>(new CheckboxCell(){
+				@Override
+				public void onBrowserEvent(
+						com.google.gwt.cell.client.Cell.Context context,
+						Element parent, Boolean value, NativeEvent event,
+						ValueUpdater<Boolean> valueUpdater) {
 
-			}
+				}
 			
-			@Override
-			public boolean isEditing(
-					com.google.gwt.cell.client.Cell.Context context,
-					Element parent, Boolean value) {
-				return false;
-			}
-			
-		}){
-			@Override
-			public Boolean getValue(FileInfo object) {
-				return object.getConfidential();
-			}
-			
-		};
+				@Override
+				public boolean isEditing(
+						com.google.gwt.cell.client.Cell.Context context,
+						Element parent, Boolean value) {
+					return false;
+				}
+				
+			}){
+				@Override
+				public Boolean getValue(FileInfo object) {
+					return object.getConfidential();
+				}
+				
+			};*/
 		
 		
-	SafeHtml sh = new SafeHtml() {
+			SafeHtml sh = new SafeHtml() {
 		
-		@Override
-		public String asString() {
-			return "<span class='aon-icon-confidential' style='padding-left:15px' title='Confidencial'>&nbsp;</span>";
+				@Override
+				public String asString() {
+					return "<span class='aon-icon-confidential' style='padding-left:15px' title='Confidencial'>&nbsp;</span>";
+				}
+			};
+			dataGrid.addColumn(confColumn2,sh);
+			dataGrid.setColumnWidth(confColumn2, 5 , Unit.PCT);
 		}
-	};
-		dataGrid.addColumn(confColumn,sh);
-		dataGrid.setColumnWidth(confColumn, 5 , Unit.PCT);
-		
 		/** Size Column **/
 		Column<FileInfo, String> sizeColumn = getSizeColumn(sortHandler);
 		dataGrid.getColumnSortList().push(sizeColumn);
@@ -2583,6 +2754,7 @@ public class Documents extends Composite implements EntryPoint {
 		d.setSons(getSons());
 		d.setSearchDomain(searchDomain);
 		d.setIsNextButton(false);
+		d.setConfidentialUser(confidentialUser);
 		popup2 = new DocumentsDialog(d) {
 			
 			@Override
@@ -2617,8 +2789,17 @@ public class Documents extends Composite implements EntryPoint {
 				else
 					si.setName(tb1.getText());
 
-				CheckBox cb = (CheckBox) grid.getWidget(2, 1);
-				si.setConfidential(cb.getValue());
+				ListBox lbc = (ListBox) grid.getWidget(2, 1);
+				for(Integer i = 0; i <lbc.getItemCount();i++){
+					if (lbc.isItemSelected(i)) {
+						if(lbc.getValue(i).equals("Si")) 
+							si.setConfidential(true);
+						else if(lbc.getValue(i).equals("No"))
+							si.setConfidential(false);
+						else si.setConfidential(null);
+
+					}
+				}
 
 				DateBox tb2 = (DateBox) grid.getWidget(3, 1);
 				if ("".equals(tb2.getTextBox().getText()))
@@ -4086,4 +4267,6 @@ public class Documents extends Composite implements EntryPoint {
 		});
 		
 	}
+	
+	
 }

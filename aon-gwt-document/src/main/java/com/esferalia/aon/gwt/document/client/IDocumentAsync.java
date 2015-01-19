@@ -50,7 +50,7 @@ public interface IDocumentAsync {
 
 	void myDrive(String id, AsyncCallback<Vector<TreeDriveInfo>> callback);
 
-	void insertFile(FileInfo fi, AsyncCallback<FileInfo> callback);
+	void insertFile(FileInfo fi, AsyncCallback<Vector<FileInfo>> callback);
 
 	void share(String email, Vector<FileInfo> fvector,
 			AsyncCallback<Void> callback);
@@ -81,7 +81,7 @@ public interface IDocumentAsync {
 	void shareMydrive(String email, Vector<FileInfo> fvector,
 			AsyncCallback<Void> callback);
 
-	void initAux(AsyncCallback<Boolean> callback);
+	void initAux(AsyncCallback<Vector<Boolean>> callback);
 
 	void newTag(String name, AsyncCallback<Tag> callback);
 
@@ -112,6 +112,9 @@ public interface IDocumentAsync {
 	void sendGmail(MailAccount ma, Emessage em, AsyncCallback<Void> callback);
 
 	void downloadMultiple(Vector<FileInfo> fvector, AsyncCallback<Void> callback);
+
+	void insertFileMultiple(FileInfo fi,
+			AsyncCallback<Vector<FileInfo>> callback);
 
 
 }

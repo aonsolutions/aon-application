@@ -54,7 +54,7 @@ public interface IDocument extends RemoteService{
 	
 	public Vector<TreeDriveInfo> myDrive(String id);
 	
-	public FileInfo insertFile(FileInfo fi);
+	public Vector<FileInfo> insertFile(FileInfo fi);
 	
 	public void share(String email,Vector<FileInfo> fvector); 
 	
@@ -78,7 +78,7 @@ public interface IDocument extends RemoteService{
 	
 	public void shareMydrive(String email, Vector<FileInfo> fvector);
 	
-	public Boolean initAux();
+	public Vector<Boolean> initAux();
 	
 	public Tag newTag(String name);
 
@@ -106,4 +106,6 @@ public interface IDocument extends RemoteService{
 	public  ContactList getContacts();
 	
 	public void downloadMultiple(Vector<FileInfo> fvector);
+	
+	public Vector<FileInfo> insertFileMultiple(FileInfo fi);
 }

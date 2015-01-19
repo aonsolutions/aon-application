@@ -347,7 +347,7 @@ background-color:#D4CFC7;
 									<g:Label styleName="aon-outputText" text=" " />
 								</g:HTMLPanel>
 							</g:HTMLPanel>
-							<g:HorizontalPanel styleName="aon-finding-toolbar">
+							<g:HorizontalPanel  ui:field="ftoolbar" styleName="aon-finding-toolbar">
 								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 									<g:Button ui:field="newFile" visible="true" styleName='aon-finding-toolbar-item aon-icon-new'
 										text="Nuevo" />
@@ -364,6 +364,7 @@ background-color:#D4CFC7;
 									<g:Button ui:field="optionFile" visible="false" styleName='aon-finding-toolbar-item aon-icon-option'
 										text="Opciones" />
 								</g:HTMLPanel>
+							
 								
 							</g:HorizontalPanel>
 							

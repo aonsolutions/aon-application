@@ -174,7 +174,12 @@ public enum MimeType implements IResourceable {
     /**
      * RSS file MIME Type.
      */
-    MIME_RSS ("application/rss+xml", "rss");
+    MIME_RSS ("application/rss+xml", "rss"),
+    
+    /**
+     * Without extension file MIME Type
+     */
+    MIME_OCTECT_STREAM ("application/octet-stream","");
     
     /**
      * Messages key prefix. 

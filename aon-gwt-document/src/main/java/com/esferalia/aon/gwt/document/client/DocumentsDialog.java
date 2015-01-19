@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.document.client;
 import gwtupload.client.IFileInput.FileInputType;
 import gwtupload.client.IUploadStatus.Status;
 import gwtupload.client.IUploader;
+import gwtupload.client.MultiUploader;
 import gwtupload.client.IUploader.OnCancelUploaderHandler;
 import gwtupload.client.IUploader.OnFinishUploaderHandler;
 import gwtupload.client.IUploader.OnStartUploaderHandler;
@@ -29,6 +30,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -75,7 +77,11 @@ public abstract class DocumentsDialog extends CustomDialog {
 	String n;
 	Boolean son1;
 	String domainSon;
+	Integer num;
+	Boolean confidentialUserDialog = null;
 	public DocumentsDialog(Dialog dialog) {
+		if(dialog.getConfidentialUser()!= null) confidentialUserDialog = dialog.getConfidentialUser();
+		num = 0;
 		tree();
 		if(dialog.getTag() != null){tag = dialog.getTag();n=tag.getName();}
 		if(dialog.getCat() != null){cat = dialog.getCat();n=cat.getName();}
@@ -174,6 +180,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 	VerticalPanel vertical;
 	String url;
 	
+	
 	private void newFile(Dialog dialog) {
 		url = dialog.getBaseUrl();
 		ListBox lb1 = new ListBox();
@@ -211,7 +218,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 		}
 		lb2.addChangeHandler(OneHandler2());
 
-		final SingleUploader upload = newUploader(dialog.getUpload(),dialog.getBaseUrl());
+		/*final SingleUploader upload = newUploader(dialog.getUpload(),dialog.getBaseUrl());
         upload.addOnCancelUploadHandler(new OnCancelUploaderHandler() {
         	
 			@Override
@@ -220,9 +227,92 @@ public abstract class DocumentsDialog extends CustomDialog {
 					grid.setWidget(2, 1, upload3);
 
 			}
+		});*/
+        
+        MultiUploader mupload = new MultiUploader();
+		
+		mupload.setAutoSubmit(true);
+        mupload.setServletPath( dialog.getBaseUrl() + "/gwt_multiple_upload");
+        
+        mupload.setMaximumFiles(5);
+
+        mupload.setTitle("multipleUploadFormElement");
+		mupload.addOnFinishUploadHandler(new OnFinishUploaderHandler() {
+			
+			@Override
+			public void onFinish(IUploader uploader) {
+				
+				num ++;
+				if(num > 1){
+					//grid.getWidget(1, 0).setVisible(false);
+					//grid.getWidget(1, 1).setVisible(false);
+					grid.removeRow(1);
+
+				}
+				
+			}
 		});
 		
-
+		mupload.addOnCancelUploadHandler(new OnCancelUploaderHandler() {
+			
+			@Override
+			public void onCancel(IUploader uploader) {
+				num--;
+				if(num == 1){
+					Label l1 = (Label) grid.getWidget(1, 0);
+					Widget w1 = grid.getWidget(1, 1);
+				
+					Label l3 = (Label) grid.getWidget(3, 0);
+					Widget w3 = grid.getWidget(3, 1);					
+					Label l4 = (Label) grid.getWidget(4, 0);
+					Widget w4 = grid.getWidget(4, 1);
+					Label l5 = (Label) grid.getWidget(5, 0);
+					Widget w5 = grid.getWidget(5, 1);
+					Label l6 = (Label) grid.getWidget(6, 0);
+					Widget w6 = grid.getWidget(6, 1);
+				
+					
+					if(confidentialUserDialog){
+						Label l2 = (Label) grid.getWidget(2, 0);
+    					Widget w2 = grid.getWidget(2, 1);
+    					grid.setWidget(3, 0, l2);
+    					grid.setWidget(3, 1, w2);
+					}
+					
+					final TextBox tb1 = new TextBox();tb1.setStyleName("aon-inputText");
+					tb1.addChangeHandler(new ChangeHandler() {
+						@Override
+						public void onChange(ChangeEvent event) {
+							tb1.setStyleName("aon-inputText");
+						}
+					});
+					grid.setWidget(1, 0, new Label("Descripci\u00f3n"));
+					grid.setWidget(1, 1, tb1);
+					
+					grid.setWidget(2, 0, l1);
+					grid.setWidget(2, 1, w1);
+					
+					
+					grid.setWidget(4, 0, l3);
+					grid.setWidget(4, 1, w3);
+					
+					grid.setWidget(5, 0, l4);
+					grid.setWidget(5, 1, w4);
+					
+					grid.setWidget(6, 0, l5);
+					grid.setWidget(6, 1, w5);
+					
+					grid.setWidget(7, 0, l6);
+					grid.setWidget(7, 1, w6);
+					
+					grid.getCellFormatter().setStyleName(7, 0,
+							"aon-panelGrid-odd");
+					grid.getCellFormatter().setStyleName(7, 1,
+							"aon-panelGrid-even");
+				}
+			}
+		});
+		
 		grid.setStyleName("aon-panelGrid");
 		grid.setWidth("400px");
 		grid.setBorderWidth(1);
@@ -287,12 +377,12 @@ public abstract class DocumentsDialog extends CustomDialog {
 		grid.setWidget(1, 1, tb1);
 
 		grid.setWidget(2, 0, new Label("Archivo"));
-		grid.setWidget(2, 1, upload);
-
-		CheckBox checkBox = new CheckBox();
-		grid.setWidget(3, 0, new Label("Confidencial"));
-		grid.setWidget(3, 1, checkBox);
-
+		grid.setWidget(2, 1, mupload);
+		if(confidentialUserDialog){
+			CheckBox checkBox = new CheckBox();
+			grid.setWidget(3, 0, new Label("Confidencial"));
+			grid.setWidget(3, 1, checkBox);
+		}
 	    DateTimeFormat dateFormat = DateTimeFormat.getMediumDateFormat();
 	    DateBox dateBox = new DateBox();
 	    dateBox.setStyleName("aon-inputText");
@@ -766,10 +856,14 @@ public abstract class DocumentsDialog extends CustomDialog {
 		tb1.setStyleName("aon-inputText");
 		grid.setWidget(1, 0, new Label("Descripci\u00f3n"));
 		grid.setWidget(1, 1, tb1);
-
-		grid.setWidget(2, 0, new Label("Confidencial"));
-		grid.setWidget(2, 1, new CheckBox());
-
+		if(confidentialUserDialog){
+			ListBox lbc = new ListBox();
+			lbc.addItem("-");
+			lbc.addItem("Si");
+			lbc.addItem("No");
+			grid.setWidget(2, 0, new Label("Confidencial"));
+			grid.setWidget(2, 1, lbc);
+		}
 		DateTimeFormat dateFormat = DateTimeFormat.getMediumDateFormat();
 		DateBox dateBox = new DateBox();
 		dateBox.setStyleName("aon-inputText");
