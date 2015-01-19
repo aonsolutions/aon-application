@@ -42,9 +42,9 @@ public interface IDocument extends RemoteService{
 	
 	public Vector<Domain> getSons();
 	
-	public void removeFile(FileInfo fi);
+	public void removeFile(Vector<FileInfo> fvector);
 	
-	public FileInfo editFile(FileInfo fi);
+	public Vector<FileInfo> editFile(FileInfo fi, Vector<FileInfo> fvector);
 	
 	public Boolean newFile(FileInfo fi);
 
@@ -56,7 +56,7 @@ public interface IDocument extends RemoteService{
 	
 	public FileInfo insertFile(FileInfo fi);
 	
-	public void share(String email,String driveId); 
+	public void share(String email,Vector<FileInfo> fvector); 
 	
 	public Vector<FileInfo> eSearchFile(Vector<FileInfo> v,String s);
 
@@ -74,9 +74,9 @@ public interface IDocument extends RemoteService{
 	
 	public void upload(FileInfo fi,String parentId);
 	
-	public void deleteMydrive(FileInfo fi);
+	public void deleteMydrive(Vector<FileInfo> fvector);
 	
-	public void shareMydrive(String email, String driveId);
+	public void shareMydrive(String email, Vector<FileInfo> fvector);
 	
 	public Boolean initAux();
 	
@@ -92,7 +92,7 @@ public interface IDocument extends RemoteService{
 
 	public void deleteCategory(Integer categoryId);
 	
-	public Vector<FileInfo> addToLote(FileInfo fi);
+	public Vector<FileInfo> addToLote(Vector<FileInfo> fvector);
 	
 	public Vector<FileInfo> getLote();
 	
@@ -105,4 +105,5 @@ public interface IDocument extends RemoteService{
 	
 	public  ContactList getContacts();
 	
+	public void downloadMultiple(Vector<FileInfo> fvector);
 }

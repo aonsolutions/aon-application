@@ -774,6 +774,10 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	}
 
 	public void onGenerateFinances(ActionEvent event) {
+		generateFinances(true);
+	}
+
+	private void generateFinances(boolean forceRemoveManual) {
 		try {
 			InvoiceFinanceController invoiceFinanceController = (InvoiceFinanceController)FormUtil.getController(invoiceFinanceControllerName);
 			List<ITransferObject> financeList = invoiceFinanceController.getManagerBean().getList(invoiceFinanceController.getCriteria());
@@ -781,7 +785,9 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 				Finance finance = (Finance)ito;
 				if (finance.isPending()) {
 					if (!finance.isAdvance()) {
-						invoiceFinanceController.getManagerBean().remove(finance);
+						if (!finance.isManual() || forceRemoveManual || !getInvoice().getRegistry().equals(finance.getRegistry())) {
+							invoiceFinanceController.getManagerBean().remove(finance);
+						}
 					} else if (!getInvoice().getRegistry().equals(finance.getRegistry())) {
 						invoiceFinanceController.excludeAdvance(finance);
 					}
@@ -804,7 +810,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		if (getFinanceGenerationMode() == 0) {
 			try {
 				if (getInvoice().getRegistry().getPayMethod() != null) {
-					onGenerateFinances(null);
+					generateFinances(false);
 				} else {
 					InvoiceFinanceController invoiceFinanceController = (InvoiceFinanceController)FormUtil.getController(invoiceFinanceControllerName);
 					List<ITransferObject> financeList = invoiceFinanceController.getManagerBean().getList(invoiceFinanceController.getCriteria());

@@ -9,11 +9,9 @@ import org.apache.commons.lang.ObjectUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.audit.enumeration.Module;
-import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.User;
 import com.code.aon.config.enumeration.DomainType;
-import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.util.AonUtil;
 
@@ -21,27 +19,25 @@ public class VisibilityManager extends BasicVisibilityManager {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 		
-	public static boolean isDeprecatedBookingInfo() {
-		boolean value = AppParamUtil.getValueAsBoolean(AppParam.AON_DEPRECATED_BOOKING_INFO);
-		return value;
-	}	
-	
 	@Override
 	public Set<Module> getEnabledModules( User user, boolean addExtraModules ) {
 		Set<Module> enabledModules = new HashSet<Module>();
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		Integer domainId = ds.getDomainId();
+		boolean userOfParentDomain = false;
 		if ( user != null ) {
 			Integer parentDomainId = AdminUtil.getParentDomain(domainId);
-			boolean userOfParentDomain = ObjectUtils.equals(user.getDomain(), parentDomainId);
+			userOfParentDomain = ObjectUtils.equals(user.getDomain(), parentDomainId);
 			if ( userOfParentDomain ) {
 				enabledModules.addAll( getEnabledModuleList(false, true) );
 			}
 		}
 		Set<Module> domainModules = getEnabledModuleList(true, false);
+		boolean addConfiguration = true;
 		if ( domainModules.contains(Module.AON_ONE) ) {
 			domainModules.clear();
 			domainModules.add(Module.AON_ONE);
+			addConfiguration = userOfParentDomain;
 		}
 		enabledModules.addAll( domainModules );
 		if ( ds.getType() == DomainType.ACADEMY ) {
@@ -62,7 +58,9 @@ public class VisibilityManager extends BasicVisibilityManager {
 			enabledModules.add(Module.GROUPWARE);
 			enabledModules.add(Module.POS);
 		}
-		enabledModules.add(Module.CONFIGURATION);
+		if ( addConfiguration ) {
+			enabledModules.add(Module.CONFIGURATION);	
+		}
 		if ( enabledModules.contains(Module.PAYROLL) ) {
 			enabledModules.remove(Module.PAYROLL_PORTAL);
 		}

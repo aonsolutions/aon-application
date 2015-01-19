@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod390;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Mod390CallBack;
 import com.esferalia.aon.gwt.fiscal.client.widget.SimplifiedRegimePanel;
 import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
@@ -28,105 +29,107 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 	private static final Page6Binder page6Binder = GWT
 			.create(Page6Binder.class);
 
-	//@UiField
+	Mod390CallBack callback;
+
+	@UiField
 	SimplifiedRegimePanel activity1;
 
-	//@UiField
+	@UiField
 	SimplifiedRegimePanel activity2;
 
-	//@UiField
+	@UiField
 	TextBox f01A;
-	//@UiField
+	@UiField
 	DoubleTextBox f01B;
-	//@UiField
+	@UiField
 	DoubleTextBox f01C;
-	//@UiField
+	@UiField
 	DoubleTextBox f01D;
-	//@UiField
+	@UiField
 	DoubleTextBox f01E;
-	//@UiField
+	@UiField
 	DoubleTextBox f01K;
 	
-	//@UiField
+	@UiField
 	TextBox f02A;
-	//@UiField
+	@UiField
 	DoubleTextBox f02B;
-	//@UiField
+	@UiField
 	DoubleTextBox f02C;
-	//@UiField
+	@UiField
 	DoubleTextBox f02D;
-	//@UiField
+	@UiField
 	DoubleTextBox f02E;
-	//@UiField
+	@UiField
 	DoubleTextBox f02K;
 
-	//@UiField
+	@UiField
 	TextBox f03A;
-	//@UiField
+	@UiField
 	DoubleTextBox f03B;
-	//@UiField
+	@UiField
 	DoubleTextBox f03C;
-	//@UiField
+	@UiField
 	DoubleTextBox f03D;
-	//@UiField
+	@UiField
 	DoubleTextBox f03E;
-	//@UiField
+	@UiField
 	DoubleTextBox f03K;
 
-	//@UiField
+	@UiField
 	TextBox f04A;
-	//@UiField
+	@UiField
 	DoubleTextBox f04B;
-	//@UiField
+	@UiField
 	DoubleTextBox f04C;
-	//@UiField
+	@UiField
 	DoubleTextBox f04D;
-	//@UiField
+	@UiField
 	DoubleTextBox f04E;
-	//@UiField
+	@UiField
 	DoubleTextBox f04K;
 
-	//@UiField
+	@UiField
 	TextBox f05A;
-	//@UiField
+	@UiField
 	DoubleTextBox f05B;
-	//@UiField
+	@UiField
 	DoubleTextBox f05C;
-	//@UiField
+	@UiField
 	DoubleTextBox f05D;
-	//@UiField
+	@UiField
 	DoubleTextBox f05E;
-	//@UiField
+	@UiField
 	DoubleTextBox f05K;
 
-	//@UiField
+	@UiField
 	DoubleTextBox box74;
 	
-	//@UiField
+	@UiField
 	DoubleTextBox box75;
 
-	//@UiField
+	@UiField
 	DoubleTextBox box76;
 	
-	//@UiField
+	@UiField
 	DoubleTextBox box77;
 	
-	//@UiField
+	@UiField
 	DoubleTextBox box78;
 	
-	//@UiField
+	@UiField
 	DoubleTextBox box79;
 	
-	//@UiField
+	@UiField
 	DoubleTextBox box80;
 	
-	//@UiField
+	@UiField
 	DoubleTextBox box81;
 	
-	//@UiField
+	@UiField
 	DoubleTextBox box82;
 
-	//@UiField
+	@UiField
 	DoubleTextBox box83;
 	
 	public Page6() {
@@ -135,8 +138,6 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 
 		Widget ui = page6Binder.createAndBindUi(this);
 		initWidget(ui);
-	}
-/*		
 		box74.setEnabled(false);
 		box75.setEnabled(false);
 		box79.setEnabled(false);
@@ -153,7 +154,8 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 		f03C.setVisibleLength(5);
 		f04C.setVisibleLength(5);
 		f05C.setVisibleLength(5);
-/*
+	}
+
 	public void setValue(Mod390 m390) {
 		SimpliedRegimeActivity regime = m390.getSimpRegime1();
 		if (regime != null) {
@@ -403,11 +405,7 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 		}
 	}
 	
-*/
-	public void setValue(Mod390 m390) {
-		
-	}
-	public void populate(Mod390 mod390) {
-		
+	public void setCallback(Mod390CallBack callback) {
+		this.callback = callback;
 	}
 }

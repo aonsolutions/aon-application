@@ -799,7 +799,7 @@ public class SQLMod390 {
 			SQLUtils.closeQuietly(stmt);
 		}
 	}
-*/
+
 	public static ArrayList<Mod311Results> getMod311Results(int domain, int year,
 			Connection conn) throws AonSQLException  {
 		
@@ -939,6 +939,6 @@ public class SQLMod390 {
 			SQLUtils.closeQuietly(stmt1);
 		}
 	}
-	
+*/	
 }
  

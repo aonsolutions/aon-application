@@ -135,7 +135,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 			case "upload": uploadFile(dialog);break;
 			case "edit": editFile(dialog);break;
 			case "edit2": edit2();break;
-			case "delete": deleteFile(dialog.getFileInfo().getTitle());break;
+			case "delete": deleteFile(dialog);break;
 			case "delete2": delete2(dialog);break;
 			case "search": searchFile(dialog);break;
 			case "info": infoFile(dialog.getFileInfo());break;
@@ -452,18 +452,19 @@ public abstract class DocumentsDialog extends CustomDialog {
 		grid.setWidth("400px");
 		grid.setBorderWidth(1);
 		grid.setCellSpacing(0);
-
-		TextBox tb1 = new TextBox();tb1.setStyleName("aon-inputText");
-		grid.setWidget(0, 0, new Label("Descripci\u00f3n"));
-		tb1.setText(fi.getTitle());
-		grid.setWidget(0, 1, tb1);
-
-		grid.setWidget(1, 0, new Label("Archivo"));
-		grid.setWidget(1, 1, upload);
 		
+		if(!dialog.getMultiple()){
+			TextBox tb1 = new TextBox();tb1.setStyleName("aon-inputText");
+			grid.setWidget(0, 0, new Label("Descripci\u00f3n"));
+			tb1.setText(fi.getTitle());
+			grid.setWidget(0, 1, tb1);
+
+			grid.setWidget(1, 0, new Label("Archivo"));
+			grid.setWidget(1, 1, upload);
+		}
 		CheckBox checkBox = new CheckBox();
 		grid.setWidget(2, 0, new Label("Confidencial"));
-		checkBox.setValue(fi.getConfidential());
+		if(!dialog.getMultiple()) checkBox.setValue(fi.getConfidential());
 		grid.setWidget(2, 1, checkBox);
 		
 	    DateTimeFormat dateFormat = DateTimeFormat.getMediumDateFormat();
@@ -472,17 +473,19 @@ public abstract class DocumentsDialog extends CustomDialog {
 	    dateBox.setFormat(new DateBox.DefaultFormat(dateFormat));
 	    dateBox.getDatePicker().setYearArrowsVisible(true);
 		grid.setWidget(3, 0, new Label("Fecha"));
-		dateBox.setValue(fi.getDate());
+		if(!dialog.getMultiple()) dateBox.setValue(fi.getDate());
 		grid.setWidget(3, 1, dateBox);
 
 		grid.setWidget(4, 0, new Label("Categor\u00eda"));
-		for (int i = 0; i<lb1.getItemCount();i++) {
-			String s1 = lb1.getItemText(i);
-			if(s1.substring(0,1).equals(Character.toString((char)9650)) || s1.substring(0,1).equals(Character.toString((char)9660))){
-				s1 = s1.substring(1);
-			}
-			if(s1.equals(fi.getCategoryStr())){
-				lb1.setItemSelected(i, true);
+		if(!dialog.getMultiple()){
+			for (int i = 0; i<lb1.getItemCount();i++) {
+				String s1 = lb1.getItemText(i);
+				if(s1.substring(0,1).equals(Character.toString((char)9650)) || s1.substring(0,1).equals(Character.toString((char)9660))){
+					s1 = s1.substring(1);
+				}
+				if(s1.equals(fi.getCategoryStr())){
+					lb1.setItemSelected(i, true);
+				}
 			}
 		}
 		grid.setWidget(4, 1, lb1);
@@ -492,13 +495,15 @@ public abstract class DocumentsDialog extends CustomDialog {
 			HorizontalPanel hp = new HorizontalPanel();
 			
 			grid.setWidget(5, 0, new Label("Etiqueta"));
-			for (int i = 0; i<lb2.getItemCount();i++) {
-				String s2 = lb2.getItemText(i);
-				if(s2.substring(0,1).equals(Character.toString((char)9650)) || s2.substring(0,1).equals(Character.toString((char)9660))){
-					s2 = s2.substring(1);
-				}
-				if(s2.equals(fi.getTagsStr())){
-					lb2.setItemSelected(i, true);
+			if(!dialog.getMultiple()){
+				for (int i = 0; i<lb2.getItemCount();i++) {
+					String s2 = lb2.getItemText(i);
+					if(s2.substring(0,1).equals(Character.toString((char)9650)) || s2.substring(0,1).equals(Character.toString((char)9660))){
+						s2 = s2.substring(1);
+					}
+					if(s2.equals(fi.getTagsStr())){
+						lb2.setItemSelected(i, true);
+					}
 				}
 			}
 			hp.add(lb2);
@@ -506,8 +511,10 @@ public abstract class DocumentsDialog extends CustomDialog {
 			grid.setWidget(5, 1, vp);	
 		}
 		else{
-			Integer size = fi.getTags().size();
-			
+			Integer size;
+			if(!dialog.getMultiple())
+				size = fi.getTags().size();
+			else size = 1;
 			if(size>1){
 				vertical= new VerticalPanel();
 				ListBox[] lbs = new ListBox[size];
@@ -561,13 +568,15 @@ public abstract class DocumentsDialog extends CustomDialog {
 				vertical= new VerticalPanel();
 
 				h2 = new HorizontalPanel();
-				
-				for (int i = 0; i<lb2.getItemCount();i++) {
-					String s2 = lb2.getItemText(i);
-					if(s2.substring(0,1).equals(Character.toString((char)9650))||s2.substring(0,1).equals(Character.toString((char)9660)))
-						s2 = s2.substring(1);
-					if(s2.equals(fi.getTagsStr())){
-						lb2.setItemSelected(i, true);
+				if(!dialog.getMultiple()){
+
+					for (int i = 0; i<lb2.getItemCount();i++) {
+						String s2 = lb2.getItemText(i);
+						if(s2.substring(0,1).equals(Character.toString((char)9650))||s2.substring(0,1).equals(Character.toString((char)9660)))
+							s2 = s2.substring(1);
+						if(s2.equals(fi.getTagsStr())){
+							lb2.setItemSelected(i, true);
+						}
 					}
 				}
 				h2.add(lb2);
@@ -585,15 +594,18 @@ public abstract class DocumentsDialog extends CustomDialog {
 		
 		grid.setWidget(6, 0, new Label("\u00c1mbito"));
 		if(fi.getScope()!=null){
-		for (int i = 0; i<lb3.getItemCount();i++) {
-			String s3 = lb3.getItemText(i);
-			if(s3.substring(0,1).equals(Character.toString((char)9650)) || s3.substring(0,1).equals(Character.toString((char)9660))){
-				s3 = s3.substring(1);
+			if(!dialog.getMultiple()){
+
+				for (int i = 0; i<lb3.getItemCount();i++) {
+					String s3 = lb3.getItemText(i);
+					if(s3.substring(0,1).equals(Character.toString((char)9650)) || s3.substring(0,1).equals(Character.toString((char)9660))){
+						s3 = s3.substring(1);
+					}
+					if(s3.equals(fi.getScope().getName())){
+						lb3.setItemSelected(i, true);
+					}
+				}
 			}
-			if(s3.equals(fi.getScope().getName())){
-				lb3.setItemSelected(i, true);
-			}
-		}
 		}
 		grid.setWidget(6, 1, lb3);
 
@@ -617,8 +629,10 @@ public abstract class DocumentsDialog extends CustomDialog {
 		label.setText("Est\u00e1s seguro de eliminar "+name);
 	}
 	
-	private void deleteFile(String name) {
-		label.setText("Est\u00e1s seguro de eliminar el archivo "+name);
+	private void deleteFile(Dialog dialog) {
+		if(dialog.getMultiple())
+			label.setText("Est\u00e1s seguro de eliminar los "+dialog.getNum().toString()+" archivos ");
+		else label.setText("Est\u00e1s seguro de eliminar el archivo "+dialog.getFileInfo().getTitle());
 	}
 	
 	private void alert(Dialog dialog){

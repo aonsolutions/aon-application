@@ -116,15 +116,17 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 							return catalogueItem.getPrice();
 						}
 
-						criteria = new Criteria();
-						criteria.addEqualExpression(cCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_CATALOGUE_ID), tCatalogue.getCatalogue().getId());
-						criteria.addEqualExpression(cCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_CATEGORY_ID), calc.getItem().getProduct().getCategory().getId());
-						criteria.addLessThanOrEqualExpression(cCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_QUANTITY), calc.getQuantity());
-						criteria.addOrder(cCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_QUANTITY), false);
-						for (ITransferObject itr : cCategoryBean.getList(criteria, 0, 1)) {
-							CatalogueCategory catalogueCategory = (CatalogueCategory)itr;
-							calc.getDiscountExpression().setDiscountExpr(Double.toString(catalogueCategory.getDiscount()));
-							return 0;
+						if (calc.getItem().getProduct().getCategory() != null && calc.getItem().getProduct().getCategory().getId() != null) {
+							criteria = new Criteria();
+							criteria.addEqualExpression(cCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_CATALOGUE_ID), tCatalogue.getCatalogue().getId());
+							criteria.addEqualExpression(cCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_CATEGORY_ID), calc.getItem().getProduct().getCategory().getId());
+							criteria.addLessThanOrEqualExpression(cCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_QUANTITY), calc.getQuantity());
+							criteria.addOrder(cCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_QUANTITY), false);
+							for (ITransferObject itr : cCategoryBean.getList(criteria, 0, 1)) {
+								CatalogueCategory catalogueCategory = (CatalogueCategory)itr;
+								calc.getDiscountExpression().setDiscountExpr(Double.toString(catalogueCategory.getDiscount()));
+								return 0;
+							}
 						}
 					}
 

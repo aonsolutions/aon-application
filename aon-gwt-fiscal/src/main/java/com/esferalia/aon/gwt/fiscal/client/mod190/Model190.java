@@ -21,6 +21,8 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.mod190.Model190Detail2014.ICallBack;
 import com.esferalia.aon.gwt.fiscal.client.widget.EnterpriseSuggestBox;
+import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
+import com.esferalia.aon.occam.api.model.fiscal.IrpfResult;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.google.gwt.cell.client.AbstractCell;
@@ -455,6 +457,8 @@ public class Model190 extends MainEntryPoint {
 		final Mod190Detail perceptor = new Mod190Detail();
 		perceptor.setId(newKey);
 		perceptor.setKey("A");
+		perceptor.setIrpfData(new IrpfData());
+		perceptor.setIrpfResult(new IrpfResult());
 		currentMod190.getDetails().add(perceptor);
 		perceptorPanel.setDetail(perceptor);
 		detailList.setRowCount(detailList.getRowCount() + 1);
@@ -517,6 +521,7 @@ public class Model190 extends MainEntryPoint {
 					updateRowData(0, currentMod190.getDetails());
 					detailList.setPageSize(currentMod190.getDetails().size());
 					selectInList(0);
+					perceptorPanel.setDetail(detailModel.getSelectedObject());
 				}
 			}
 		}
@@ -529,6 +534,12 @@ public class Model190 extends MainEntryPoint {
 
 	@UiHandler("generateFileButton")
 	void onGenerateFileButtonClick(ClickEvent event) {
+		Window.alert(
+				  "Se va a proceder a la generaci\u00F3n de un fichero\n"
+				+ "con los datos de la declaraci\u00F3n, para su \n"
+				+ "presentaci\u00F3n en Hacienda.\n\n"
+				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
+				+ "El fichero se genera a partir de los datos guardados.");
 		diskForm.setAction(GWT.getHostPageBaseURL() +"/aon_gwt_fiscal/Model190File");
 		mod190Hidden.setValue( String.valueOf(currentMod190.getId()) );
 		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
@@ -538,6 +549,12 @@ public class Model190 extends MainEntryPoint {
 
 	@UiHandler("printButton")
 	void onPrintButtonClick(ClickEvent event) {
+		Window.alert(
+				  "Se va a proceder a la validaci\u00F3n en los servidores de la \n"
+				+ "Agencia Tributaria. En el caso de validaci\u00F3n correcta,la Agencia \n"
+				+ "Tributaria devolver\u00E1 un documento PDF borrador con la declarai\u00F3n\n\n"
+				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
+				+ "La petici\u00F3n se genera a partir de los datos guardados.");
 		diskForm.setAction(GWT.getHostPageBaseURL() +"/aon_gwt_fiscal/Model190Print");
 		mod190Hidden.setValue( String.valueOf(currentMod190.getId()) );
 		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));

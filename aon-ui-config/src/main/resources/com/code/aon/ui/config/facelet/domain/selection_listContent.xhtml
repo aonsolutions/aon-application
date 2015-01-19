@@ -49,35 +49,10 @@
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.aon_name}" />
 					</f:facet>							
-					<aon:outputText value="#{to.description}" />
+					<aon:outputText value="#{to.description}"
+						style="#{(!to.active)?'color:red;font-style:italic;':''}"/>					
 				</aon:column>
-				<aon:column styleClass="aon-text-center aon-width-40 aon-nowrap">
-					<f:facet name="header">
-						<aon:outputText style="text-transform: none;"
-							value="One" />
-					</f:facet>							
-					<aon:outputText rendered="#{!to.aonOne}" value="-" />
-					<aon:outputText rendered="#{to.aonOne}"
-						value="#{to.activeUsers} / #{to.maxDefinedUsers}" />
-				</aon:column>
-				<aon:column styleClass="aon-text-center aon-width-40 aon-nowrap">
-					<f:facet name="header">
-						<aon:outputText style="text-transform: none;"
-							 value="AiO" />
-					</f:facet>							
-					<aon:outputText rendered="#{to.aonOne}" value="-" />
-					<aon:outputText rendered="#{!to.aonOne}"
-						value="#{to.activeUsers} / #{to.maxDefinedUsers}" />
-				</aon:column>
-				<aon:column styleClass="aon-editDataTable-iconColumn aon-text-center">
-					<f:facet name="header">
-						<aon:outputText value="Portal" />
-					</f:facet>						
-					<aon:outputText rendered="#{!to.portal}" value="-" />
-					<aon:outputText value="&#160;"
-						rendered="#{to.portal}" styleClass="aon-icon-check-black"
-						style="padding-left:12px" />				
-				</aon:column>
+
 				<aon:column styleClass="aon-width-40">
 					<aon:outputText value="&#160;"
 						rendered="#{to.enableHeredity}"

@@ -74,17 +74,17 @@
 								<g:CheckBox ui:field="inKind" text="{msg.inKind}"/>
 							</td>
 							<td>
-								<aon:DoubleTextBox ui:field="perception" styleName="aon-inputText"/>
+								<aon:DoubleTextBox ui:field="perception" styleName="aon-inputText aon-text-right"/>
 							</td>
 							<td>
-								<aon:DoubleTextBox ui:field="percent" styleName="aon-inputText"/>
+								<aon:DoubleTextBox ui:field="percent" styleName="aon-inputText  aon-text-right"/>
 							</td>
 							<td>
-								<aon:DoubleTextBox ui:field="retention" styleName="aon-inputText"/>
+								<aon:DoubleTextBox ui:field="retention" styleName="aon-inputText  aon-text-right"/>
 							</td>
 							<td>
 								<aon:IntegerTextBox maxLength="4"
-									visibleLength="4" ui:field="accrualYear" styleName="aon-inputText"/>
+									visibleLength="4" ui:field="accrualYear" styleName="aon-inputText  aon-text-right"/>
 							</td>
 						</tr>
 					</table>
@@ -110,7 +110,7 @@
 								<g:ListBox ui:field="location" styleName="aon-inputText"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="cadasdralReference" maxLength="20" visibleLength="20" styleName="aon-inputText"/>
+								<g:TextBox ui:field="cadasdralReference" maxLength="20" visibleLength="23" styleName="aon-inputText"/>
 							</td>
 						</tr>
 					</table>

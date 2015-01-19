@@ -83,12 +83,22 @@ public class FiscalImpl implements IFiscal {
 	
 	@Override
 	public ArrayList<Mod390> getMod390s(AONContext ctx, int domain) {
-		return Mod390DAO.getByDomain(ctx, domain);
+		try {
+			return Mod390DAO.getByDomain(ctx, domain);
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
+		}
 	}
 
 	@Override
 	public Mod390 getMod390(AONContext ctx, Integer id) {
-		return Mod390DAO.getById(ctx, id);
+		try {
+			return Mod390DAO.getById(ctx, id);
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
+		}
 	}
 
 	@Override
@@ -98,7 +108,12 @@ public class FiscalImpl implements IFiscal {
 	
 	@Override
 	public Mod390 initializeMod390(AONContext ctx, int year) {
-		return Mod390DAO.initialize(ctx, year);
+		try {
+			return Mod390DAO.initialize(ctx, year);
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
+		}
 	}
 
 	@Override
@@ -115,7 +130,12 @@ public class FiscalImpl implements IFiscal {
 
 	@Override
 	public ArrayList<Mod390Detail> getMod390Details(AONContext ctx, Mod390 mod390) {
-		return Mod390DAO.getMod390Details(ctx, mod390);
+		try {
+			return Mod390DAO.getMod390Details(ctx, mod390);
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
+		}
 	}
 
 }

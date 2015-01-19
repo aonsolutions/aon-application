@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.12.0
+# Version: 8.13.0
 # Created by: girazu
-# Creation Date: 22/12/2014 18:00
+# Creation Date: 16/01/2015 13:15
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -50,6 +50,8 @@ CREATE TABLE `domain` (
   `modification_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de modificacion',
   `modification_date` datetime default NULL COMMENT 'Fecha de modificacion',
   `expirationDate` date default NULL COMMENT 'Fecha de Expiracion del Dominio',
+  `lastAccess_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de ultimo acceso',
+  `lastAccess_date` datetime default NULL COMMENT 'Fecha de ultimo acceso',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `IDX_UNQ_DOMAIN_NAME` (`name`),
   KEY `IDX_DOMAIN_PARENT` (`parent`),
@@ -1031,6 +1033,7 @@ CREATE TABLE `finance` (
   `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad del Vencimiento',
   `remarks` text collate latin1_spanish_ci COMMENT 'Observaciones del Vencimiento',
   `scope` int(4) NOT NULL default '1' COMMENT 'Ambito del Vencimiento',
+  `manual` tinyint(1) default '0' COMMENT 'Indica si el Vencimiento es manual',
   `advance` tinyint(1) default '0' COMMENT 'Indica si el Vencimiento es un anticipo',
   `payroll` tinyint(1) default '0' COMMENT 'Indica si el Vencimiento es de Nominas',
   `prepayment` tinyint(1) default '0' COMMENT 'Indica si el Vencimiento es un Suplido',
@@ -1208,6 +1211,7 @@ CREATE TABLE `user` (
   `pageLimit` int(4) default NULL COMMENT 'Limite de filas en pantalla del Usuario',
   `linesPageLimit` int(4) default NULL COMMENT 'Limite de filas en pantalla en lineas del Usuario',
   `initAction` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Nombre la acicón de inicio del Usuario',
+  `lastAccess` datetime default NULL COMMENT 'Fecha del ultimo acceso del Usuario',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `IDX_UNQ_USER_DOMAIN_LOGIN` (`domain`,`login`),
   KEY `IDX_USER_ENTERPRISE` (`enterprise`),
@@ -7742,7 +7746,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.12.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.13.0');
 
 COMMIT;
 

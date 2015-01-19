@@ -23,6 +23,8 @@ public class Dialog {
 	Tag tag;
 	Category cat;
 	String searchDomain;
+	Boolean multiple;
+	Integer num;
  	
 	public Dialog(String type,String title,String cancelButtonName,Boolean isCancelButton,String acceptButtonName,Boolean isAcceptButton,Boolean son){
 		this.type = type;
@@ -168,6 +170,22 @@ public class Dialog {
 
 	public void setIsNextButton(Boolean isNextButton) {
 		this.isNextButton = isNextButton;
+	}
+
+	public Boolean getMultiple() {
+		return multiple;
+	}
+
+	public void setMultiple(Boolean multiple) {
+		this.multiple = multiple;
+	}
+
+	public Integer getNum() {
+		return num;
+	}
+
+	public void setNum(Integer num) {
+		this.num = num;
 	}
 
 

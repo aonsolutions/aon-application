@@ -15,13 +15,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.Domain;
 import com.code.aon.config.enumeration.DomainType;
-import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.ast.Expression;
@@ -144,20 +141,13 @@ public class DomainsController extends BasicController {
 		rdc.setDomainDisabled(true);
 		setModel(null);
 	}
-
-	private boolean isAdminDomain() throws ManagerBeanException {
-		AuthPrincipal principal = AonUtil.getAuthPrincipal();
-		IManagerBean bean = BeanManager.getManagerBean(Domain.class);
-		Domain domain = (Domain) bean.get(principal.getDomainId());
-		return domain.getType()==DomainType.ADMIN;
-	}
 	
 	public void onSelectChildDomain( ActionEvent event) throws ManagerBeanException {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		if ( ds.getModel().isRowAvailable() ) {
 			DomainData domainData = (DomainData) ds.getModel().getRowData();
 			ds.select(domainData.getId(), domainData.getDescription());
-			if ( isAdminDomain() ) {
+			if ( ds.isAdminDomain() ) {
 				setConfigurationMenu();
 			}
 		}
@@ -166,7 +156,7 @@ public class DomainsController extends BasicController {
 	public void onParentDomain(ActionEvent event) throws ManagerBeanException {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		ds.select(ds.getParentDomain(), null);
-		if ( isAdminDomain() ) {
+		if ( ds.isAdminDomain() ) {
 			setConfigurationMenu();
 		}
 	}

@@ -2,9 +2,7 @@ package com.code.aon.ui.config.controller;
 
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-import static com.esferalia.aon.jooq.tables.DomainApplicationModule.DOMAIN_APPLICATION_MODULE;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
-import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.io.Serializable;
 import java.net.IDN;
@@ -22,7 +20,6 @@ import javax.faces.model.DataModel;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -33,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
-import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -231,12 +227,12 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		return scopes;
 	}
 
-	private Condition getDomainCondition() {
+	public Condition getDomainCondition( boolean showInactive ) {
 		Condition condition = DOMAIN.PARENT.eq(getParentDomain());
 		Condition expirationCondition = DOMAIN.EXPIRATIONDATE.isNull().or(
 				DOMAIN.EXPIRATIONDATE.gt(DSL.currentDate()));
 		condition = condition.and(expirationCondition);
-		if (!isShowInactive()) {
+		if (!showInactive) {
 			condition = condition.and(DOMAIN.ACTIVE.eq((byte) 1));
 		}
 		if (!isAdminDomain()) {
@@ -251,34 +247,6 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	}
 
 	private void fillDomainData(AONContext ctx, DomainData data) {
-		String portalValue = ctx
-				.getDslContext()
-				.select(APP_PARAM.VALUE)
-				.from(APP_PARAM)
-				.where(APP_PARAM.DOMAIN.eq(data.getId()).and(
-						APP_PARAM.NAME.eq(AppParam.AON_PORTAL.getValue())))
-				.fetchOne(0, String.class);
-		if (!StringUtils.isEmpty(portalValue)) {
-			data.setPortal(NumberUtils.toInt(portalValue) > 0);
-		}
-		int activeUsers = ctx
-				.getDslContext()
-				.selectCount()
-				.from(USER)
-				.where(USER.DOMAIN.eq(data.getId())
-						.and(USER.ACTIVE.eq((byte) 1))
-						.and(USER.ENTERPRISE.isNull())).fetchOne(0, int.class);
-		data.setActiveUsers(activeUsers);
-		int aonOneModule = ctx
-				.getDslContext()
-				.selectCount()
-				.from(DOMAIN_APPLICATION_MODULE)
-				.where(DOMAIN_APPLICATION_MODULE.DOMAIN.eq(data.getId()).and(
-						DOMAIN_APPLICATION_MODULE.MODULE
-								.eq((byte) Module.AON_ONE.ordinal())))
-				.fetchOne(0, int.class);
-		data.setAonOne(aonOneModule > 0);
-
 		Record2<byte[], Byte> logo = ctx
 				.getDslContext()
 				.select(RATTACH.DATA, RATTACH.MIMETYPE)
@@ -312,8 +280,8 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 			domains = ctx
 					.getDslContext()
 					.select(DOMAIN.ID, DOMAIN.NAME, DOMAIN.DESCRIPTION,
-							DOMAIN.MAXDEFINEDUSERS, DOMAIN.ENABLEHEREDITY)
-					.from(DOMAIN).where(getDomainCondition())
+							DOMAIN.ACTIVE, DOMAIN.ENABLEHEREDITY)
+					.from(DOMAIN).where(getDomainCondition(isShowInactive()))
 					.orderBy(DOMAIN.DESCRIPTION).fetch().into(DomainData.class);
 
 			for (DomainData data : domains) {
@@ -334,7 +302,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 			AONContext ctx = AONContext.getAONContext(getDomainNameURL(),
 					domainId);
 			int count = ctx.getDslContext().selectCount().from(DOMAIN)
-					.where(getDomainCondition()).fetchOne(0, int.class);
+					.where(getDomainCondition(isShowInactive())).fetchOne(0, int.class);
 			ctx.finalize();
 			return count;
 		}
@@ -491,5 +459,5 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	public void setPage(int page) {
 		this.page = page;
 	}
-
+	
 }

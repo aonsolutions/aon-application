@@ -35,6 +35,17 @@ public class CompanySaleInvoiceFooterController extends LinesController {
 		}
 		return text;
 	}
+	
+	public String getGtaDefaultText() {
+		try {
+			return obtainGtaLOPD();
+		} catch (ManagerBeanException e) {
+			String msg = "Se ha producido un error de lectura. Vuelva a intentarlo pasados unos segundos.";
+			LOGGER.error(msg, e);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		}
+	}
 
 	public void setText(String text) {
 		this.text = text;
@@ -67,30 +78,34 @@ public class CompanySaleInvoiceFooterController extends LinesController {
 	}
 	
 	private void createGtaLOPD() {
-		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 		try {
-			RegistryAddress address = controller.obtainAddress();
-			Company company = controller.obtainCompany();
-			StringBuffer buffer = new StringBuffer();
-			buffer.append(AonUtil.getMessage(ICommonMessages.GTA_FOOTER_TEXT_1)).append(" ");
-			buffer.append(company.getName()).append(" ");
-			buffer.append(AonUtil.getMessage(ICommonMessages.GTA_FOOTER_TEXT_2)).append("\n");
-			buffer.append(AonUtil.getMessage(ICommonMessages.TAS_LEGAL_TEXT_1)).append(" ");
-			buffer.append(company.getName()).append(" ");
-			buffer.append(AonUtil.getMessage(ICommonMessages.TAS_LEGAL_TEXT_2)).append(" ");
-			buffer.append(company.getName()).append(", ");
-			buffer.append(address.getFullAddress()).append(" - ");
-			buffer.append(address.getZip()).append(" ");
-			buffer.append(address.getCity());
-			buffer.append(" (").append(address.getGeozone().getName()).append(") ");
-			buffer.append(AonUtil.getMessage(ICommonMessages.TAS_LEGAL_TEXT_3));
-			setText(buffer.toString());
+			setText(obtainGtaLOPD());
 		} catch (ManagerBeanException e) {
 			String msg = "Se ha producido un error de lectura. Vuelva a intentarlo pasados unos segundos.";
 			LOGGER.error(msg, e);
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
 		}
+	}
+
+	private String obtainGtaLOPD() throws ManagerBeanException {
+		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		RegistryAddress address = controller.obtainAddress();
+		Company company = controller.obtainCompany();
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(AonUtil.getMessage(ICommonMessages.GTA_FOOTER_TEXT_1)).append(" ");
+		buffer.append(company.getName()).append(" ");
+		buffer.append(AonUtil.getMessage(ICommonMessages.GTA_FOOTER_TEXT_2)).append("\n");
+		buffer.append(AonUtil.getMessage(ICommonMessages.TAS_LEGAL_TEXT_1)).append(" ");
+		buffer.append(company.getName()).append(" ");
+		buffer.append(AonUtil.getMessage(ICommonMessages.TAS_LEGAL_TEXT_2)).append(" ");
+		buffer.append(company.getName()).append(", ");
+		buffer.append(address.getFullAddress()).append(" - ");
+		buffer.append(address.getZip()).append(" ");
+		buffer.append(address.getCity());
+		buffer.append(" (").append(address.getGeozone().getName()).append(") ");
+		buffer.append(AonUtil.getMessage(ICommonMessages.TAS_LEGAL_TEXT_3));
+		return buffer.toString();
 	}
 	
 }

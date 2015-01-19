@@ -36,6 +36,7 @@ import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.admin.DomainInfo;
 import com.code.aon.ui.admin.event.DomainSearchListener;
+import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
@@ -216,7 +217,7 @@ public class DomainPrintController extends BasicController {
 			Domain domain = (Domain) getSelectedTO();
 			Integer value = AppParamUtil.getValueAsInteger(AppParam.AON_EXTERNAL_APPLICATIONS, domain.getId());
 			value = (value != null) ? value : 0;
-			return (value & IAdminConstants.TIRANT_EXTERNAL_APP) != 0;
+			return (value & ICommonConstants.TIRANT_EXTERNAL_APP) != 0;
 		}
 		return false;				
 	}
@@ -227,7 +228,7 @@ public class DomainPrintController extends BasicController {
 			if (! domain.isDomainManagement() ) {
 				Integer value = AppParamUtil.getValueAsInteger(AppParam.AON_EXTERNAL_APPLICATIONS, domain.getId());
 				value = (value != null) ? value : 0;
-				return (value & IAdminConstants.DEH_ONLINE_EXTERNAL_APP) != 0;
+				return (value & ICommonConstants.DEH_ONLINE_EXTERNAL_APP) != 0;
 			}
 		}
 		return false;				

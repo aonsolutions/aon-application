@@ -501,7 +501,6 @@ public class CalendarUtils {
 		
 		// ATTENDEES
 		String email = getSellerEmail(commercialTracking,key);
-		email=email;
 		try {
 			if (email!=null && Utils.isGmail(email)){
 				
@@ -896,7 +895,8 @@ public static void synchronize2() throws IOException, SQLException, AonConnectio
 	public static void main(String[] args) throws GeneralSecurityException,
 			IOException, ServletException, SQLException, AonConnectionException, NamingException {
 		String domain = "energilandia.aibanez.net";
-/* ELIMINAR TODOS LOS CALENDARIOS!
+	//	synchronize(domain);
+ /*ELIMINAR TODOS LOS CALENDARIOS!
 		DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
 		serviceInitialize(g);
 		showCalendars();
@@ -914,8 +914,8 @@ public static void synchronize2() throws IOException, SQLException, AonConnectio
 			a++;
 		}
 	
-		
-	*/	
+		*/
+	
 		
 		synchronize2();
 	}

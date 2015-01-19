@@ -42,6 +42,7 @@ import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class MOD303Writer {
 	
@@ -439,7 +440,9 @@ public class MOD303Writer {
 		sr.setAct1IndTemp(mod303.getEnsuredAmount(Mod303Key.CAC1_Z));
 		sr.setAct1Porce(mod303.getEnsuredAmount(Mod303Key.CAC1_E));
 		sr.setAct1IngCta(mod303.getEnsuredAmount(Mod303Key.CAC1_F));
-		sr.setAct1CuotaSop4T(mod303.getEnsuredAmount(Mod303Key.CAC1_G));
+		double g1 = CommonUtil.round(mod303.getEnsuredAmount(Mod303Key.CAC1_G0) 
+				+ mod303.getEnsuredAmount(Mod303Key.CAC1_G));
+		sr.setAct1CuotaSop4T(g1);
 		sr.setAct1IndTemp4T(mod303.getEnsuredAmount(Mod303Key.CAC1_H));
 		sr.setAct1Resultado4T(mod303.getEnsuredAmount(Mod303Key.CAC1_I));
 		sr.setAct1PorCuoMin4T(mod303.getEnsuredAmount(Mod303Key.CAC1_J));
@@ -480,7 +483,9 @@ public class MOD303Writer {
 		sr.setAct2IndTemp(mod303.getEnsuredAmount(Mod303Key.CAC2_Z));
 		sr.setAct2Porce(mod303.getEnsuredAmount(Mod303Key.CAC2_E));
 		sr.setAct2IngCta(mod303.getEnsuredAmount(Mod303Key.CAC2_F));
-		sr.setAct2CuotaSop4T(mod303.getEnsuredAmount(Mod303Key.CAC2_G));
+		double g2 = CommonUtil.round(mod303.getEnsuredAmount(Mod303Key.CAC2_G0) 
+				+ mod303.getEnsuredAmount(Mod303Key.CAC2_G));
+		sr.setAct2CuotaSop4T(g2);
 		sr.setAct2IndTemp4T(mod303.getEnsuredAmount(Mod303Key.CAC2_H));
 		sr.setAct2Resultado4T(mod303.getEnsuredAmount(Mod303Key.CAC2_I));
 		sr.setAct2PorCuoMin4T(mod303.getEnsuredAmount(Mod303Key.CAC2_J));
@@ -527,22 +532,35 @@ public class MOD303Writer {
 		String k6 = mod303.ensureDetail(Mod303Key.IAC_06).getDescription();
 		declaration.setIae6Key(StringUtils.isBlank(k6)?0:Integer.parseInt(k6) );
 		
-		declaration.setIae1Epigraph(mod303.ensureDetail(Mod303Key.IAE_01).getDescription());
-		declaration.setIae2Epigraph(mod303.ensureDetail(Mod303Key.IAE_02).getDescription());
-		declaration.setIae3Epigraph(mod303.ensureDetail(Mod303Key.IAE_03).getDescription());
-		declaration.setIae4Epigraph(mod303.ensureDetail(Mod303Key.IAE_04).getDescription());
-		declaration.setIae5Epigraph(mod303.ensureDetail(Mod303Key.IAE_05).getDescription());
-		declaration.setIae6Epigraph(mod303.ensureDetail(Mod303Key.IAE_06).getDescription());
+		String epi1 = mod303.ensureDetail(Mod303Key.IAE_01).getDescription();
+		String epi2 = mod303.ensureDetail(Mod303Key.IAE_02).getDescription();
+		String epi3 = mod303.ensureDetail(Mod303Key.IAE_03).getDescription();
+		String epi4 = mod303.ensureDetail(Mod303Key.IAE_04).getDescription();
+		String epi5 = mod303.ensureDetail(Mod303Key.IAE_05).getDescription();
+		String epi6 = mod303.ensureDetail(Mod303Key.IAE_06).getDescription();
+		declaration.setIae1Epigraph(epi1);
+		declaration.setIae2Epigraph(epi2);
+		declaration.setIae3Epigraph(epi3);
+		declaration.setIae4Epigraph(epi4);
+		declaration.setIae5Epigraph(epi5);
+		declaration.setIae6Epigraph(epi6);
 		
-		declaration.setC80(mod303.getEnsuredAmount(Mod303Key.C80));
-		declaration.setC81(mod303.getEnsuredAmount(Mod303Key.C81));
-		declaration.setC82(mod303.getEnsuredAmount(Mod303Key.C82));
-		declaration.setC83(mod303.getEnsuredAmount(Mod303Key.C83));
-		declaration.setC84(mod303.getEnsuredAmount(Mod303Key.C84));
-		declaration.setC85(mod303.getEnsuredAmount(Mod303Key.C85));
-		declaration.setC86(mod303.getEnsuredAmount(Mod303Key.C86));
-		declaration.setC87(mod303.getEnsuredAmount(Mod303Key.C87));
-		declaration.setC88(mod303.getEnsuredAmount(Mod303Key.C88));
+		if (AonStringUtils.isNotBlank(epi1)
+		 || AonStringUtils.isNotBlank(epi2)
+		 || AonStringUtils.isNotBlank(epi3)
+		 || AonStringUtils.isNotBlank(epi4)
+		 || AonStringUtils.isNotBlank(epi5)
+		 || AonStringUtils.isNotBlank(epi6)) {
+			declaration.setC80(mod303.getEnsuredAmount(Mod303Key.C80));
+			declaration.setC81(mod303.getEnsuredAmount(Mod303Key.C81));
+			declaration.setC82(mod303.getEnsuredAmount(Mod303Key.C82));
+			declaration.setC83(mod303.getEnsuredAmount(Mod303Key.C83));
+			declaration.setC84(mod303.getEnsuredAmount(Mod303Key.C84));
+			declaration.setC85(mod303.getEnsuredAmount(Mod303Key.C85));
+			declaration.setC86(mod303.getEnsuredAmount(Mod303Key.C86));
+			declaration.setC87(mod303.getEnsuredAmount(Mod303Key.C87));
+			declaration.setC88(mod303.getEnsuredAmount(Mod303Key.C88));
+		}
 		
 	}
 	

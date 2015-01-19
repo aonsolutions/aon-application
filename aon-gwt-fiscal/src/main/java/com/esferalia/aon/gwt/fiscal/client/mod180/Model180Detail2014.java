@@ -123,15 +123,18 @@ public class Model180Detail2014 extends ResizeComposite {
 		retention.setValue(detail.getRetention());
 		percent.setValue(detail.getPercent());
 		inKind.setValue(detail.isInKind());
-		if (detail.getLocation() != null)
+		if (detail.getLocation() != null) {
 			try {
 				location.setSelectedIndex( Integer.parseInt(detail.getLocation()) );
 			} catch (NumberFormatException e) {
 				location.setSelectedIndex( 0 );
 			}
+		} else {
+			location.setSelectedIndex( 0 );
+		}
 		cadasdralReference.setValue(detail.getCadasdralReference() );
 		StreetType st = StreetType.getForIneCode(detail.getStreetType());
-		streetType.setSelectedIndex(st==null?0:st.ordinal());
+		streetType.setSelectedIndex(st==null?0:(st.ordinal()+1));
 		streetName.setValue(detail.getStreetName() );
 		numberType.setValue(detail.getNumberType() );
 		number.setValue(detail.getNumber() );
@@ -145,12 +148,15 @@ public class Model180Detail2014 extends ResizeComposite {
 		city.setValue(detail.getCity() );
 		town.setValue(detail.getTown() );
 		townCode.setValue(detail.getTownCode() );
-		if (detail.getProvinceCode() != null)
+		if (detail.getProvinceCode() != null) {
 			try {
 				provinceCode.setSelectedIndex( Integer.parseInt(detail.getProvinceCode()) );
 			} catch (NumberFormatException e) {
 				provinceCode.setSelectedIndex( 0 );
 			}
+		} else {
+			provinceCode.setSelectedIndex( 0 );
+		}
 		zip.setValue(detail.getZip() );
 		
 		restoreDeletedButton.setVisible(detail.isDeleted());
@@ -233,7 +239,7 @@ public class Model180Detail2014 extends ResizeComposite {
 	}
 	@UiHandler("streetType")
 	void onChangeStreetType(ChangeEvent event) {
-		detail.setStreetType(StreetType.values()[streetType.getSelectedIndex()].getIneCode());
+		detail.setStreetType(streetType.getValue(streetType.getSelectedIndex()));
 		detail.setDirty(true);
 	}
 	@UiHandler("streetName")

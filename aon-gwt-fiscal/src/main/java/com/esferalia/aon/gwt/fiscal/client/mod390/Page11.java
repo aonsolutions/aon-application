@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod390;
 
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Mod390CallBack;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -18,6 +19,8 @@ public class Page11 extends ResizeComposite implements RequiresResize {
 	private static final Page7Binder page7Binder = GWT
 			.create(Page7Binder.class);
 
+	Mod390CallBack callback;
+	
 	@UiField
 	DoubleTextBox box230;
 	
@@ -39,6 +42,18 @@ public class Page11 extends ResizeComposite implements RequiresResize {
 	@UiField
 	DoubleTextBox box523;
 
+	@UiField
+	DoubleTextBox box654;
+	
+	@UiField
+	DoubleTextBox box655;
+	
+	@UiField
+	DoubleTextBox box656;
+	
+	@UiField
+	DoubleTextBox box657;
+
 	public Page11() {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		Model390.RESOURCES.css().ensureInjected();
@@ -55,6 +70,10 @@ public class Page11 extends ResizeComposite implements RequiresResize {
 		box111.setValue(m390.getBox111());
 		box113.setValue(m390.getBox113());
 		box523.setValue(m390.getBox523());
+		box654.setValue(m390.getBox654());
+		box655.setValue(m390.getBox655());
+		box656.setValue(m390.getBox656());
+		box657.setValue(m390.getBox657());
 	}
 
 	public void populate(Mod390 mod390) {
@@ -65,6 +84,14 @@ public class Page11 extends ResizeComposite implements RequiresResize {
 		mod390.setBox111(box111.getDoubleValue());
 		mod390.setBox113(box113.getDoubleValue());
 		mod390.setBox523(box523.getDoubleValue());
+		mod390.setBox654(box654.getDoubleValue());
+		mod390.setBox655(box655.getDoubleValue());
+		mod390.setBox656(box656.getDoubleValue());
+		mod390.setBox657(box657.getDoubleValue());
 	}
 	
+	public void setCallback(Mod390CallBack callback) {
+		this.callback = callback;
+	}
+
 }

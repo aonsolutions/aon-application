@@ -39,7 +39,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
-import com.code.aon.ui.audit.DeprecatedVisibilityManager;
 import com.code.aon.ui.audit.IVisibilityManager;
 import com.code.aon.ui.audit.OptionGroup;
 import com.code.aon.ui.audit.VisibilityManager;
@@ -81,11 +80,7 @@ public class ActionDeniedController implements Serializable {
 	}
 	
 	public void init() {
-		if ( VisibilityManager.isDeprecatedBookingInfo() ) {
-			this.manager = new DeprecatedVisibilityManager();
-		} else {
-			this.manager = new VisibilityManager();
-		}
+		this.manager = new VisibilityManager();
 		initEnabledManagedBeans();
 	}
 	
@@ -193,6 +188,28 @@ public class ActionDeniedController implements Serializable {
 			initEdit( (User) event.getNewValue() );
 		}
 	}
+
+	private List<ApplicationOption> sort( List<ApplicationOption> list ) {
+		List<ApplicationOption> sorted = new ArrayList<ApplicationOption>();
+		Map<ApplicationCategory,List<ApplicationOption>> map = new HashMap<ApplicationCategory, List<ApplicationOption>>();
+		for( ApplicationOption option : list ) {
+			ApplicationCategory category = option.getGroup().getCategory();
+			List<ApplicationOption> options = map.get(category);
+			if ( options == null ) {
+				options = new ArrayList<ApplicationOption>();
+				map.put(category, options);
+			}
+			options.add(option);
+		}
+		for( ApplicationCategory category : getOptionController().getCategories(true) ) {
+			List<ApplicationOption> options = map.get(category);
+			if ( (options != null) && !options.isEmpty() ) {
+				Collections.sort(options);
+				sorted.addAll(options);
+			}
+		}
+		return sorted;
+	}
 	
 	public void initEdit( User user ) {
 		setUser(user);
@@ -202,6 +219,7 @@ public class ActionDeniedController implements Serializable {
 		List<ApplicationOption> profileDeniedOptions = getManager().getOptions( profileDeniedActions, deniedModules );
 		this.selected = getManager().getOptions( this.deniedActions, deniedModules );
 		this.selected.removeAll(profileDeniedOptions);
+		this.selected = sort(this.selected);
 		List<ApplicationCategory> categories = getCategories(deniedModules);
 		this.options = new ArrayList<ApplicationOption>( getOptions(categories, true) );
 		this.options.removeAll(profileDeniedOptions);

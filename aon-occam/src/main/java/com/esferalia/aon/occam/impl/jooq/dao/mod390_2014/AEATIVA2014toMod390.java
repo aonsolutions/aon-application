@@ -159,7 +159,7 @@ public class AEATIVA2014toMod390 {
 				lg.setNotary(trj.getNotaria());
 
 				String fec = trj.getFechaPoder();
-				lg.setNotaryDate(fec == null ? null : DATE_FORMAT.parse(fec));
+				lg.setNotaryDate(AonStringUtils.isBlank(fec)? null : DATE_FORMAT.parse(fec));
 
 				if (i == 1) {
 					mod390.setLegalRepr1(lg);
@@ -527,6 +527,14 @@ public class AEATIVA2014toMod390 {
 				mod390.setBox82(ensureBigDecimal(ivaDed.getSumaDeducciones()));
 			}
 			mod390.setBox83(ensureBigDecimal(reg.getResRegimenSimplificado()));
+		} else {
+			mod390.setSimpRegime1(new SimpliedRegimeActivity());
+			mod390.setSimpRegime2(new SimpliedRegimeActivity());
+			mod390.setFarmerRegime1(new FarmerRegimeActivity());
+			mod390.setFarmerRegime2(new FarmerRegimeActivity());
+			mod390.setFarmerRegime3(new FarmerRegimeActivity());
+			mod390.setFarmerRegime4(new FarmerRegimeActivity());
+			mod390.setFarmerRegime5(new FarmerRegimeActivity());
 		}
 
 		Administraciones adm = iva.getAdministraciones();
@@ -576,6 +584,7 @@ public class AEATIVA2014toMod390 {
 		VolOperaciones vol = iva.getVolOperaciones();
 		if (vol != null) {
 			mod390.setBox99(ensureBigDecimal(vol.getOpRegGeneral()));
+			mod390.setBox653(ensureBigDecimal(vol.getOpRegEspCriterioCaja()));
 			mod390.setBox103(ensureBigDecimal(vol
 					.getEntregasIntracomunitariasExentas()));
 			mod390.setBox104(ensureBigDecimal(vol
@@ -605,6 +614,14 @@ public class AEATIVA2014toMod390 {
 			mod390.setBox111(ensureBigDecimal(op.getOpSujetas()));
 			mod390.setBox113(ensureBigDecimal(op.getEntregasInteriores()));
 			mod390.setBox523(ensureBigDecimal(op.getServInversionSP()));
+			if (op.getEntregasCriterioCajaBase() != null && op.getEntregasCriterioCajaBase().getTipoX() != null) {
+				mod390.setBox654(ensureBigDecimal(op.getEntregasCriterioCajaBase().getTipoX().getBI()));
+				mod390.setBox655(ensureBigDecimal(op.getEntregasCriterioCajaBase().getTipoX().getCuota()));
+			}
+			if (op.getAdqCriterioCajaBase() != null && op.getAdqCriterioCajaBase().getTipoX() != null) {
+				mod390.setBox656(ensureBigDecimal(op.getAdqCriterioCajaBase().getTipoX().getBI()));
+				mod390.setBox657(ensureBigDecimal(op.getAdqCriterioCajaBase().getTipoX().getCuota()));
+			}
 		}
 
 		// TODO

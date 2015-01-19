@@ -37,11 +37,12 @@ public interface IDocumentAsync {
 
 	void getSons(AsyncCallback<Vector<Domain>> callback);
 
-	void removeFile(FileInfo fi, AsyncCallback<Void> callback);
+	void removeFile(Vector<FileInfo> fvector, AsyncCallback<Void> callback);
 
 	void newFile(FileInfo fi, AsyncCallback<Boolean> callback);
 
-	void editFile(FileInfo fi, AsyncCallback<FileInfo> callback);
+	void editFile(FileInfo fi, Vector<FileInfo> fvector,
+			AsyncCallback<Vector<FileInfo>> callback);
 
 	void check(AsyncCallback<Boolean> callback);
 
@@ -51,7 +52,8 @@ public interface IDocumentAsync {
 
 	void insertFile(FileInfo fi, AsyncCallback<FileInfo> callback);
 
-	void share(String email,String driveId, AsyncCallback<Void> callback);
+	void share(String email, Vector<FileInfo> fvector,
+			AsyncCallback<Void> callback);
 
 	void eSearchFile(Vector<FileInfo> v, String s,
 			AsyncCallback<Vector<FileInfo>> callback);
@@ -74,9 +76,10 @@ public interface IDocumentAsync {
 
 	void upload(FileInfo fi, String parentId, AsyncCallback<Void> callback);
 
-	void deleteMydrive(FileInfo fi, AsyncCallback<Void> callback);
+	void deleteMydrive(Vector<FileInfo> fvector, AsyncCallback<Void> callback);
 
-	void shareMydrive(String email, String driveId, AsyncCallback<Void> callback);
+	void shareMydrive(String email, Vector<FileInfo> fvector,
+			AsyncCallback<Void> callback);
 
 	void initAux(AsyncCallback<Boolean> callback);
 
@@ -93,7 +96,8 @@ public interface IDocumentAsync {
 
 	void deleteCategory(Integer categoryId, AsyncCallback<Void> callback);
 
-	void addToLote(FileInfo fi, AsyncCallback<Vector<FileInfo>> callback);
+	void addToLote(Vector<FileInfo> fvector,
+			AsyncCallback<Vector<FileInfo>> callback);
 
 	void getLote(AsyncCallback<Vector<FileInfo>> callback);
 
@@ -106,6 +110,8 @@ public interface IDocumentAsync {
 	void getContacts(AsyncCallback<ContactList> callback);
 
 	void sendGmail(MailAccount ma, Emessage em, AsyncCallback<Void> callback);
+
+	void downloadMultiple(Vector<FileInfo> fvector, AsyncCallback<Void> callback);
 
 
 }

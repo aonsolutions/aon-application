@@ -69,7 +69,7 @@ public class Model390 extends MainEntryPoint {
 			return mod390 == null ? null : mod390.getId();
 		}
 	};
-
+	
 	interface Model390Binder extends UiBinder<Widget, Model390> {
 	}
 
@@ -85,7 +85,19 @@ public class Model390 extends MainEntryPoint {
 	protected static final NumberFormat FMT = NumberFormat.getFormat( MSG.decimalPattern(), MSG.currencyCode());
 
 	private static final Integer DEFAULT_YEAR = 2014;
+	
 
+	class Mod390CallBack {
+		void calculateAndRefresh() {
+			mod390.calculate();
+			page7.setValue(mod390);
+			page8.setValue(mod390);
+			page10.setValue(mod390);
+		}
+	}
+
+	Mod390CallBack callback = new Mod390CallBack();
+	
 	@UiField
 	Label simplifiedRegime;
 
@@ -270,6 +282,18 @@ public class Model390 extends MainEntryPoint {
 		formFlowPanel.add(domainNameHidden);
 		formContainer.add(diskForm);
 		
+		page0.setCallback( callback );
+		page3.setCallback( callback );
+		page4.setCallback( callback );
+		page5.setCallback( callback );
+		page6.setCallback( callback );
+		page7.setCallback( callback );
+		page8.setCallback( callback );
+		page9.setCallback( callback );
+		page10.setCallback( callback );
+		page11.setCallback( callback );
+		page12.setCallback( callback );
+		page13.setCallback( callback );
 
 		// Add the outer panel to the RootLayoutPanel, so that it will be
 		// displayed.
@@ -380,13 +404,7 @@ public class Model390 extends MainEntryPoint {
 		}
 	}
 
-	private void select(Mod390 m390) {
-		mod390 = m390;
-		onLinkPage0(null);
-		enterprise = m390.getEnterprise();
-		domain = m390.getDomain();
-		year.setValue(Integer.toString(m390.getYear()));
-		enterpriseSuggest.setValue(m390.getDocument(), m390.getEnterpriseName());
+	private void refreshPages(Mod390 m390) {
 		page0.setValue(m390);
 		page3.setValue(m390);
 		page4.setValue(m390);
@@ -399,6 +417,16 @@ public class Model390 extends MainEntryPoint {
 		page11.setValue(m390);
 		page12.setValue(m390);
 		page13.setValue(m390);
+	}
+	
+	private void select(Mod390 m390) {
+		mod390 = m390;
+		onLinkPage0(null);
+		enterprise = m390.getEnterprise();
+		domain = m390.getDomain();
+		year.setValue(Integer.toString(m390.getYear()));
+		enterpriseSuggest.setValue(m390.getDocument(), m390.getEnterpriseName());
+		refreshPages(m390);
 		// Toolbar states
 		deleteButton.setVisible(mod390.getId() != null);
 		newButton.setVisible(mod390.getId() != null);
@@ -432,8 +460,7 @@ public class Model390 extends MainEntryPoint {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						DialogMessages.alertErrorWidget(MSG
-								.unableToReadMod190(caught.getMessage()));
+						DialogMessages.alertErrorWidget(MSG.unableToReadMod190(caught.getMessage()));
 					}
 				});
 	}
@@ -648,7 +675,6 @@ public class Model390 extends MainEntryPoint {
 		clearLinks();
 		applySelectedStyle(linkPage7);
 		pagesPanel.showWidget(pagesPanel.getWidgetIndex(panel7));
-		page7.refresh();
 	}
 
 	@UiHandler("linkPage8")
@@ -656,7 +682,6 @@ public class Model390 extends MainEntryPoint {
 		clearLinks();
 		applySelectedStyle(linkPage8);
 		pagesPanel.showWidget(pagesPanel.getWidgetIndex(panel8));
-		page8.refresh();
 	}
 
 	@UiHandler("linkPage9")

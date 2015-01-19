@@ -202,7 +202,6 @@ public class Mod303 implements IFiscalDeclaration, IMod303Declaration, Serializa
 								ensureDetail(Mod303Key.C86).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
 							}
 						}
-						g = CommonUtil.round(g + (c * 1 / 100));
 						detail = getDetail(Mod303Key.getKeyWithValue(Mod303Key.ACTIVITIES_PREFIX + ac + "G") );
 						if (detail == null) {
 							detail = new FiscalModelDetail();
@@ -385,8 +384,13 @@ public class Mod303 implements IFiscalDeclaration, IMod303Declaration, Serializa
 			SummaryProviderParameters params = new SummaryProviderParameters(domainName);
 			params.setAccountExpression( "70*|71*|72*|73*|75*|76*|77*|78*|79*" );
 			params.setAccountLevel(5);
-			params.setFromDate(getHeader().getPeriod().getStartDate(getHeader().getYear()));
-			params.setToDate(getHeader().getPeriod().getDueDate(getHeader().getYear()));
+			if (!isLastPeriod()){
+				params.setFromDate(getHeader().getPeriod().getStartDate(getHeader().getYear()));
+				params.setToDate(getHeader().getPeriod().getDueDate(getHeader().getYear()));
+			} else {
+				params.setFromDate(CommonUtil.getYearFirstDay(getHeader().getYear()));
+				params.setToDate(CommonUtil.getYearLastDay(getHeader().getYear()));
+			}
 			SummaryCollection sc = sp.getSummaryCollection(conn,params,false);
 			v1 = CommonUtil.round(sc.getOpeningCredit() + sc.getCredit() - sc.getOpeningDebit() - sc.getDebit());
 		} catch (AonConnectionException e) {
@@ -427,16 +431,32 @@ public class Mod303 implements IFiscalDeclaration, IMod303Declaration, Serializa
 			detail.setAccumulatedAmount(v5);
 			addDetail(detail);
 		} else {
+			Date fromDate = CommonUtil.getYearFirstDay(fiscalModel.getYear() );
+			Date toDate = CommonUtil.getYearLastDay(fiscalModel.getYear() );
+			VatTaxManager taxManager = new VatTaxManager( domainName );
+			List<VatTaxDetail> vatDetails = taxManager.getVatTax(fiscalModel.getDomain(),fromDate, toDate );
+			double v6 = 0.0;
+			for (VatTaxDetail vatDetail : vatDetails) {
+				if (vatDetail.getKey() == VatTaxKey.B1
+				  || vatDetail.getKey() == VatTaxKey.B3
+				  || vatDetail.getKey() == VatTaxKey.C1
+				  || vatDetail.getKey() == VatTaxKey.D1
+				  || vatDetail.getKey() == VatTaxKey.D3) {
+					v6 = v6 + vatDetail.getQuotaAccumulated(); 
+				}
+			}
+			v6 = CommonUtil.round(v6 + (v3 * 1 / 100));
 			detail = new FiscalModelDetail();
 	    	detail.setFiscalModel(getHeader());
 			detail.setType(Mod303Key.FARMING_ACTIVITIES_PREFIX + ag + "V6");
-			detail.setAccumulatedAmount(0);
+			detail.setAccumulatedAmount(v6);
 			addDetail(detail);
 			
 			detail = new FiscalModelDetail();
 	    	detail.setFiscalModel(getHeader());
 			detail.setType(Mod303Key.FARMING_ACTIVITIES_PREFIX + ag + "V7");
-			detail.setAccumulatedAmount(0);
+			double v7 = CommonUtil.round(v3 -  v6 );
+			detail.setAccumulatedAmount(v7);
 			addDetail(detail);
 		}
 		

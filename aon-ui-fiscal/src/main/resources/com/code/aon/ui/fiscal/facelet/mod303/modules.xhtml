@@ -167,6 +167,11 @@
 					 	ajaxSingle="true" actionListener="#{controller.onChangeHD}"/>
 				</aon:inputText>
 			
+				<aon:outputText value="#{controller.modG0Key}" />
+				<aon:outputText value="#{controller.modG0.amount}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+
 				<aon:outputText value="#{controller.modGKey}" />
 				<aon:inputText value="#{controller.modG.accumulatedAmount}"
 					 required="true" size="8">

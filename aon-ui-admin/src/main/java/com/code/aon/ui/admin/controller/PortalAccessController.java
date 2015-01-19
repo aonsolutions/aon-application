@@ -219,6 +219,7 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 		if ( isNevv ) {
 			duc.resetPassword( user );
 		}
+		user.setActive(true);
 		IManagerBean bean = BeanManager.getManagerBean(User.class);
 		bean.insertOrUpdate(this.user);
 		if ( isNevv ) {

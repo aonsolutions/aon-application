@@ -65,10 +65,8 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.admin.BookingInfo;
-import com.code.aon.ui.admin.DeprecatedBookingInfo;
 import com.code.aon.ui.admin.DomainInfo;
 import com.code.aon.ui.admin.IBookingInfo;
-import com.code.aon.ui.audit.VisibilityManager;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.audit.controller.IAuditConstants;
 import com.code.aon.ui.common.ICommonConstants;
@@ -184,13 +182,8 @@ public class DomainController extends BasicController {
 	
 	private void initBookingInfo() {
 		try {
-			if ( VisibilityManager.isDeprecatedBookingInfo() ) {
-				this.bookingInfo = new DeprecatedBookingInfo(getDomain(), getParentDomain());
-				this.bookingInfo.init();				
-			} else {
-				this.bookingInfo = new BookingInfo(getDomain(), getParentDomain());
-				this.bookingInfo.init();								
-			}
+			this.bookingInfo = new BookingInfo(getDomain(), getParentDomain());
+			this.bookingInfo.init();								
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
 		}				
@@ -784,19 +777,19 @@ public class DomainController extends BasicController {
 	}
 	
 	public boolean isDehOnline() {
-		return getExternalApplicationsValue(IAdminConstants.DEH_ONLINE_EXTERNAL_APP);
+		return getExternalApplicationsValue(ICommonConstants.DEH_ONLINE_EXTERNAL_APP);
 	}
 
 	public void setDehOnline(boolean value) {
-		setExternalApplicationsValue(IAdminConstants.DEH_ONLINE_EXTERNAL_APP, value);
+		setExternalApplicationsValue(ICommonConstants.DEH_ONLINE_EXTERNAL_APP, value);
 	}
 
 	public boolean isTirant() {
-		return getExternalApplicationsValue(IAdminConstants.TIRANT_EXTERNAL_APP);
+		return getExternalApplicationsValue(ICommonConstants.TIRANT_EXTERNAL_APP);
 	}
 
 	public void setTirant(boolean value) {
-		setExternalApplicationsValue(IAdminConstants.TIRANT_EXTERNAL_APP, value);
+		setExternalApplicationsValue(ICommonConstants.TIRANT_EXTERNAL_APP, value);
 	}	
 	
 	public int getProductDetailLevel() {
@@ -808,7 +801,7 @@ public class DomainController extends BasicController {
 	}
 	
 	public String action() {
-		return VisibilityManager.isDeprecatedBookingInfo() ? "adminDomain_form_deprecated" : "adminDomain_form";
+		return "adminDomain_form";
 	}
 	
 	private static class ParentDomainFilter extends ControllerAdapter {

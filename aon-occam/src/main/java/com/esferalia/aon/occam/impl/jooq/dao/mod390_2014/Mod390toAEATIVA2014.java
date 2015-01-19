@@ -21,6 +21,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.DatIdent;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.Devengo;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.LiqAnual;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.OpEspecificas;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.OpEspecificas.AdqCriterioCajaBase;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.OpEspecificas.EntregasCriterioCajaBase;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegSimplificado;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.ResLiquidaciones;
@@ -960,6 +962,9 @@ public class Mod390toAEATIVA2014 {
 		if (mod390.getBox99()>0) {
 			vol.setOpRegGeneral(ensureBigDecimal(mod390.getBox99()));
 		}
+		if (mod390.getBox653()>0) {
+			vol.setOpRegEspCriterioCaja(ensureBigDecimal(mod390.getBox653()));
+		}
 		if (mod390.getBox103()>0) {
 			vol.setEntregasIntracomunitariasExentas(ensureBigDecimal(mod390.getBox103()));
 		}
@@ -1022,6 +1027,20 @@ public class Mod390toAEATIVA2014 {
 		}
 		if (mod390.getBox523()>0) {
 			op.setServInversionSP(ensureBigDecimal(mod390.getBox523()));
+		}
+		if (mod390.getBox654()>0 || mod390.getBox655()>0) {
+			EntregasCriterioCajaBase eccj =  new EntregasCriterioCajaBase();
+			eccj.setTipoX(new TipoBaseImponibleYCuota());
+			eccj.getTipoX().setBI(ensureBigDecimal(mod390.getBox654()));
+			eccj.getTipoX().setCuota(ensureBigDecimal(mod390.getBox655()));
+			op.setEntregasCriterioCajaBase(eccj);
+		}
+		if (mod390.getBox656()>0 || mod390.getBox657()>0) {
+			AdqCriterioCajaBase accj =  new AdqCriterioCajaBase();
+			accj.setTipoX(new TipoBaseImponibleYCuota());
+			accj.getTipoX().setBI(ensureBigDecimal(mod390.getBox656()));
+			accj.getTipoX().setCuota(ensureBigDecimal(mod390.getBox657()));
+			op.setAdqCriterioCajaBase(accj);
 		}
 		return op;
 	}

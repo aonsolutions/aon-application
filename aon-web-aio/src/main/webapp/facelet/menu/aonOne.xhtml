@@ -112,11 +112,6 @@
 											actionListener="#{undeductibleInvoice.onEditSearch}"
 											value="#{bundle.finance_undeductible_invoice_management_module}" />
 									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="expenseItem-aonOne" 
-											action="expenseItem-aonOne" 
-											value="#{bundle.aon_expenses}" />
-									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
 						</aon:if>
@@ -248,7 +243,14 @@
 											action="productTag_form-aonOne"
 											actionListener="#{productTag.onCancel}"
 											value="#{bundle.product_tag_module}" />
-									</aon:div>																		
+									</aon:div>		
+								</aon:if>
+								<aon:if test="#{aonRole.purchaseOperator}">								
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="expenseItem-aonOne" 
+											action="expenseItem-aonOne" 
+											value="#{bundle.aon_expenses}" />
+									</aon:div>
 								</aon:if>
 							</aon:div>
 						</aon:panelGrid>
@@ -289,7 +291,12 @@
 										<aon:commandLink id="segment_form-aonOne"
 											action="segment_form-aonOne"
 											value="#{bundle.registry_segment_module}" />
-									</aon:div>									
+									</aon:div>				
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="bankConcept-aonOne"
+											action="bankConcept-aonOne"
+											value="#{bundle.finance_bank_concept_module}" />
+									</aon:div>														
 								</aon:div>
 							</aon:panelGrid>
 						</aon:if>
@@ -303,14 +310,18 @@
 								<aon:outputText value="#{bundle.finance_conecta_module}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
+								<aon:if test="#{bankStatement.availableRegistryBanks > 0}">
+									<aon:div styleClass="aon-direct-access-list">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="bankStatement-aonOne"
+												action="bankStatement_search-aonOne"
+												actionListener="#{bankStatement.onEditSearch}"
+												value="#{bundle.finance_bank_statement_module}"/>
+										</aon:div>
+									</aon:div>
+								</aon:if>																
 								<aon:if test="#{aonRole.config}">
 									<aon:if test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="aonLoader-aonOne"
-												action="aonLoader_form-aonOne"
-												actionListener="#{aonLoader.onStart}"
-												value="#{bundle.aon_loader_module}" />
-										</aon:div>
 										<aon:if test="#{aonRole.accountingOperator}">
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="invoiceExporter-aonOne"
@@ -334,19 +345,26 @@
 														target="#{exporter.backAction}" />
 												</aon:commandLink>
 											</aon:div>
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="fbatchExporter-aonOne"
+													action="#{exporter.initialAction}"
+													actionListener="#{exporter.onInit}"
+													value="#{bundle.fbatch_account_export_module}">
+													<aon:actionListener
+														method="#{fbatchExporter.onEditSearch}" />
+													<f:setPropertyActionListener value="fbatchExporter_search"
+														target="#{exporter.backAction}" />
+												</aon:commandLink>
+											</aon:div>											
 										</aon:if>
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="aonLoader-aonOne"
+												action="aonLoader_form-aonOne"
+												actionListener="#{aonLoader.onStart}"
+												value="#{bundle.aon_loader_module}" />
+										</aon:div>										
 									</aon:if>
 								</aon:if>
-								<aon:if test="#{bankStatement.availableRegistryBanks > 0}">
-									<aon:div styleClass="aon-direct-access-list">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="bankStatement-aonOne"
-												action="bankStatement_search-aonOne"
-												actionListener="#{bankStatement.onEditSearch}"
-												value="#{bundle.finance_bank_statement_module}"/>
-										</aon:div>
-									</aon:div>
-								</aon:if>									
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>					
@@ -383,7 +401,7 @@
 						<aon:if test="#{aonRole.accountingOperator}">					
 							<aon:panelGrid id="group_taxes_aonOne"
 								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-icon-utilities aon-direct-access-panel">
+								headerClass="aon-icon-aeat aon-direct-access-panel">
 								<f:facet name="header">
 									<aon:outputText value="#{bundle.config_tax_module}" />
 								</f:facet>

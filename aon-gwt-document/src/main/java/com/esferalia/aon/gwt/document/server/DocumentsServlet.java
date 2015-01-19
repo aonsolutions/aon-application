@@ -320,25 +320,27 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		return lists;
 	}
 	
-	public void removeFile(FileInfo fi){
+	public void removeFile(Vector<FileInfo> fvector){
 
 		String domain = AonUtil.getDomainName();
-		try {
-			DBConsults.removeFile(domain, fi.getFileId());
-			if(fi.getDriveId()!=null){
-				DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
-				Drive d = DriveUtils.serviceInitialize(g);
-				d.files().delete(fi.getDriveId()).execute();
-			}
+		for(FileInfo fi : fvector){
+			try {
+				DBConsults.removeFile(domain, fi.getFileId());
+				if(fi.getDriveId()!=null){
+					DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
+					Drive d = DriveUtils.serviceInitialize(g);
+					d.files().delete(fi.getDriveId()).execute();
+				}
 			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (KeyStoreException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (GeneralSecurityException e) {
-			e.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (KeyStoreException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (GeneralSecurityException e) {
+				e.printStackTrace();
+			}
 		}
 
 	}
@@ -457,64 +459,120 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		
 	}
 	
-	public FileInfo editFile(FileInfo fi){
+	public Vector<FileInfo> editFile(FileInfo fi,Vector<FileInfo> fvector){
 		String domain = AonUtil.getDomainName();
 		//Integer registry = AdminUtil.getCompanyId(fi.getDomainId());
 		com.code.aon.google.apis.FileInfo fileInfo = new com.code.aon.google.apis.FileInfo();
-		fileInfo.setFileId(fi.getFileId());
-		fileInfo.setAonType("registry");
-		if(fi.getCategory()!=null)fileInfo.setCategory(fi.getCategory());
-		if(fi.getDate() != null){
-			fileInfo.setDate(fi.getDate());
-			Date date = null;
-			if (fi.getDate() != null)
-			date = new Date(fi.getDate().getYear(),
-					fi.getDate().getMonth(), fi.getDate().getDate());
-			fileInfo.setDateSql(date);
-		}
-		if(getMimetype()!=null){
-			fileInfo.setMimetype((byte)MimeType.get(getMimetype()).ordinal());
-			fi.setMimetype((byte)MimeType.get(getMimetype()).ordinal());
-			fi.setIcon(Utils.icon(getMimetype()));
-
-		}
-		
-		else fileInfo.setMimetype(fi.getMimetype());
-		fileInfo.setTitle(fi.getTitle());
-		if(fi.getScope() != null)fileInfo.setScopeId(fi.getScope().getId());
-		Byte conf;if(fi.getConfidential())conf=1; else conf=0;
-		fileInfo.setSecurityLevel(conf);
-
-		try {
-			DBConsults.updateFile(domain, fileInfo,fi.getTags(),domainId);
-			
-			if(getMimetype()!=null){
-				//InputStream file = getFile();
-				byte[] b = getOut();//.toByteArray();
-				fileInfo.setData(b);
-				DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
-				if(g.getClientId()!=null){
-					Drive d = DriveUtils.serviceInitialize(g);
-					DriveUtils.sync2(d, fileInfo, domain);
+		if(fvector != null){
+			for(FileInfo f : fvector){
+				fileInfo.setFileId(f.getFileId());
+				fileInfo.setAonType("registry");
+				if(fi.getCategory()!=null){
+					fileInfo.setCategory(fi.getCategory());
+					f.setCategory(fi.getCategory());	
+					f.setCategoryStr(fi.getCategoryStr());
 				}
-				else{
-					DBConsults.insertFileData(domain, fileInfo.getFileId(), b );
+				else fileInfo.setCategory(f.getCategory());
+				if(fi.getDate() != null){
+					fileInfo.setDate(fi.getDate());
+					Date date = null;
+					if (fi.getDate() != null)
+					date = new Date(fi.getDate().getYear(),
+							fi.getDate().getMonth(), fi.getDate().getDate());
+					fileInfo.setDateSql(date);
+					
+					f.setDate(fi.getDate());
+					f.setDateSql(fi.getDateSql());
+					f.setDateStr(fi.getDateStr());
+				}else{
+					fileInfo.setDate(f.getDate());
+					Date date = null;
+					if(f.getDate()!= null)
+						date = new Date(f.getDate().getYear(),
+							f.getDate().getMonth(), f.getDate().getDate());
+					fileInfo.setDateSql(date);
 				}
+				if(fi.getScope() != null){
+					fileInfo.setScopeId(fi.getScope().getId());
+					f.setScope(fi.getScope());
+				}
+				else fileInfo.setScopeId(f.getScope().getId());
+				Byte conf;if(fi.getConfidential())conf=1; else conf=0;
+				fileInfo.setSecurityLevel(conf);
+				f.setConfidential(fi.getConfidential());
+				fileInfo.setMimetype(f.getMimetype());
+				fileInfo.setTitle(f.getTitle());
+				Vector<Tag> tags;
+				if(fi.getTags().size()>0){
+					tags= fi.getTags();
+					f.setTagsStr(fi.getTagsStr());
+				}
+				else tags = f.getTags();
+				try {
+					DBConsults.updateFile(domain, fileInfo,tags,domainId);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (KeyStoreException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (GeneralSecurityException e) {
-			e.printStackTrace();
-		} catch (AonConnectionException e) {
-			e.printStackTrace();
-		} catch (NamingException e) {
-			e.printStackTrace();
+		}else{
+			fileInfo.setFileId(fi.getFileId());
+			fileInfo.setAonType("registry");
+			if(fi.getCategory()!=null)fileInfo.setCategory(fi.getCategory());
+			if(fi.getDate() != null){
+				fileInfo.setDate(fi.getDate());
+				Date date = null;
+				if (fi.getDate() != null)
+				date = new Date(fi.getDate().getYear(),
+						fi.getDate().getMonth(), fi.getDate().getDate());
+				fileInfo.setDateSql(date);
+			}
+			if(getMimetype()!=null){
+				fileInfo.setMimetype((byte)MimeType.get(getMimetype()).ordinal());
+				fi.setMimetype((byte)MimeType.get(getMimetype()).ordinal());
+				fi.setIcon(Utils.icon(getMimetype()));
+
+			}
+		
+			else fileInfo.setMimetype(fi.getMimetype());
+			fileInfo.setTitle(fi.getTitle());
+			if(fi.getScope() != null)fileInfo.setScopeId(fi.getScope().getId());
+			Byte conf;if(fi.getConfidential())conf=1; else conf=0;
+			fileInfo.setSecurityLevel(conf);
+
+			try {
+				DBConsults.updateFile(domain, fileInfo,fi.getTags(),domainId);
+			
+				if(getMimetype()!=null){
+					//InputStream file = getFile();
+					byte[] b = getOut();//.toByteArray();
+					fileInfo.setData(b);
+					DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
+					if(g.getClientId()!=null){
+						Drive d = DriveUtils.serviceInitialize(g);
+						DriveUtils.sync2(d, fileInfo, domain);
+					}
+					else{
+						DBConsults.insertFileData(domain, fileInfo.getFileId(), b );
+					}
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (KeyStoreException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (GeneralSecurityException e) {
+				e.printStackTrace();
+			} catch (AonConnectionException e) {
+				e.printStackTrace();
+			} catch (NamingException e) {
+				e.printStackTrace();
+			}
+			fvector = new Vector<FileInfo>();
+			fvector.add(fi);
 		}
-		return fi;
+		return fvector;
 		
 	}
 	
@@ -695,41 +753,53 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		}
 	}
 	
-	public void deleteMydrive(FileInfo fi){
+	public void deleteMydrive(Vector<FileInfo> fvector){
 		Drive drive = GoogleDriveController.dconnection;
-		try {
-			DriveUtils.deleteFile(drive, fi.getDriveId());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void shareMydrive(String email, String driveId){
-		Drive drive = GoogleDriveController.dconnection;
-		try {
-			ShareFiles.setPermission(drive, driveId, email);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void share(String email, String driveId) {
-		String domain = AonUtil.getDomainName();
-		if (driveId != null) {
+		for(FileInfo fi : fvector){
 			try {
-				DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
-				Drive d = DriveUtils.serviceInitialize(g);
-				ShareFiles.setPermission(d, driveId, email);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			} catch (KeyStoreException e) {
-				e.printStackTrace();
+				DriveUtils.deleteFile(drive, fi.getDriveId());
 			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (GeneralSecurityException e) {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public void shareMydrive(String email, Vector<FileInfo> fvector){
+
+		Drive drive = GoogleDriveController.dconnection;
+		for(FileInfo f: fvector){
+			try {
+				ShareFiles.setPermission(drive, f.getDriveId(), email);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void share(String email, Vector<FileInfo> fvector) {
+		String domain = AonUtil.getDomainName();
+		DomainGserviceaccount g;
+		Drive d = null;
+		try {
+			g = DatabaseSync.getServiceAccount(domain);
+			d = DriveUtils.serviceInitialize(g);
+		} catch (SQLException | IOException | GeneralSecurityException e1) {
+			e1.printStackTrace();
+		}
+		for(FileInfo f : fvector){
+			if (f.getDriveId() != null) {
+				try {
+					ShareFiles.setPermission(d, f.getDriveId(), email);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			else{
+				// dbn badago! Drive-ra igo ta banatu!
+			}
+			
+		}
+		
 	}
 	public Vector<FileInfo> eSearchFile(Vector<FileInfo> v,String str) {
 		Vector<FileInfo> aux = new Vector<FileInfo>();//=  filesGwt.stream().filter(d -> d.getDomain().equalsIgnoreCase(domain));
@@ -1059,8 +1129,8 @@ public void resetLote(){
 	batch = new Vector<FileInfo>();
 }
 
-public Vector<FileInfo> addToLote(FileInfo fi) {
-	batch.add(fi);
+public Vector<FileInfo> addToLote(Vector<FileInfo> fvector) {
+	batch.addAll(fvector);
 	return batch;
 	/*String domain  = AonUtil.getDomainName();
 	BatchDocument bd = (BatchDocument) AonUtil.getRegisteredBean(BATCH_DOCUMENT_CONTROLLER_NAME);
@@ -1347,4 +1417,21 @@ public  ContactList getContacts() {
 	}
 	return cl;
 }
+
+public static Vector<FileInfo> down;
+
+public void downloadMultiple(Vector<FileInfo> fvector){
+	setDown(fvector);
+
+}
+
+public static Vector<FileInfo> getDown() {
+	return down;
+}
+
+public static void setDown(Vector<FileInfo> down) {
+	DocumentsServlet.down = down;
+}
+
+
 }

@@ -11,11 +11,13 @@
 		<aon:div styleClass="aon-portlet-title">
 			<aon:div styleClass="aon-portlet-title-buttons">
 				<aon:commandLink id="note-reset" actionListener="#{note.onReset}" action="note_form">
-						<aon:outputText value="&#160;"  styleClass="aon-icon-portlet aon-icon-new"/>
+						<aon:outputText value="&#160;" styleClass="aon-icon-portlet aon-icon-new"/>
 				</aon:commandLink>
 			</aon:div>
 			<aon:commandLink id="note-search" actionListener="#{note.onSearch}" action="note_list">
-				<aon:outputText value="#{bundle.aon_notes}" styleClass="aon-portlet-title-text aon-icon aon-icon-notes"/>
+				<aon:outputText value="#{bundle.aon_notes}"
+					style="padding-bottom: 1px;padding-top: 1px;"
+					styleClass="aon-portlet-title-text aon-icon aon-icon-notes"/>
 			</aon:commandLink>	
 		</aon:div>
 		<aon:div styleClass="aon-portlet-body aon-box-outstanding2">

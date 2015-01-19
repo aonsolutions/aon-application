@@ -971,6 +971,7 @@
                         <username>tomcat</username>
                         <groupname>tomcat</groupname>
                         <directoryIncluded>false</directoryIncluded>
+			<configuration>noreplace</configuration>
                         <sources>
                           <source>
                             <includes>

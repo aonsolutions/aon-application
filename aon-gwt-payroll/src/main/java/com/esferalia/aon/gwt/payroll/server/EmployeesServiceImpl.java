@@ -2570,6 +2570,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				activity.setId(rs.getInt(EnterpriseActivityColumns.ID));
 				activity.setDescription(rs
 						.getString(EnterpriseActivityColumns.DESCRIPTION));
+				activity.setCnae2009(rs.getInt(EnterpriseActivityColumns.CNAE2009));
 
 				activities.add(activity);
 			}

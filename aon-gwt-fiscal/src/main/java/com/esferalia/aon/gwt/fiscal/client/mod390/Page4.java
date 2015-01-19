@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Mod390CallBack;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Address;
@@ -25,6 +26,8 @@ public class Page4 extends ResizeComposite {
 
 	private static final Page4Binder page4Binder = GWT
 			.create(Page4Binder.class);
+
+	Mod390CallBack callback;
 
 	@UiField
 	DocumentTextBox rdocument;
@@ -200,6 +203,10 @@ public class Page4 extends ResizeComposite {
 			legalRepr.setNotaryDate(notaryDate3.getValue());
 			mod390.setLegalRepr3(legalRepr);
 		}
+	}
+	
+	public void setCallback(Mod390CallBack callback) {
+		this.callback = callback;
 	}
 
 }

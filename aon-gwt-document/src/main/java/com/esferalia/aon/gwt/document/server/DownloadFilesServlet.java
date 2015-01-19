@@ -1,13 +1,18 @@
 package com.esferalia.aon.gwt.document.server;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.sql.SQLException;
+import java.util.Vector;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -39,11 +44,73 @@ public class DownloadFilesServlet extends HttpServlet {
         String fileId = p_request.getParameter("file_id");
         String mtype = p_request.getParameter("mimetype");
         String isDrive = p_request.getParameter("isdrive");
+        String multiple = p_request.getParameter("ismultiple");
         String domain = AonUtil.getDomainName();
         Integer m = Integer.parseInt(mtype);
         String mimetype = MimeType.values()[m].getName();
         FileInfo fi=null;
-        if (driveId != ""){
+        if(multiple.equals("true")){
+        	Vector<com.esferalia.aon.gwt.document.shared.FileInfo> fvector = DocumentsServlet.getDown();
+        	ZipOutputStream zos;
+        	try {
+        		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        		zos = new ZipOutputStream(baos);
+        		for (com.esferalia.aon.gwt.document.shared.FileInfo fi2 : fvector) {
+        			if (fi2.getDriveId() != null) {
+        				Drive d = null;
+        				if (fi2.getIsDrive()) {
+        					d = GoogleDriveController.dconnection;
+        				} else {
+        					DomainGserviceaccount g;
+        					try {
+        						g = DatabaseSync.getServiceAccount(domain);
+        						d = DriveUtils.serviceInitialize(g);
+        					} catch (SQLException e) {
+        						e.printStackTrace();
+        					} catch (KeyStoreException e) {
+        						e.printStackTrace();
+        					} catch (GeneralSecurityException e) {
+        						e.printStackTrace();
+        					}
+        				}
+        				com.google.api.services.drive.model.File f = d.files()
+        						.get(fi2.getDriveId()).execute();
+        				InputStream in = DriveUtils.downloadFile(d, f);
+        				byte[] b = com.code.aon.google.apis.Utils
+        						.InputStreamToByte(in);
+        				fi2.setData(b);
+        			} else if ((Integer) fi2.getFileId() != null) {
+        				try {
+        					com.code.aon.google.apis.FileInfo fi3 = DBConsults
+        							.getDataAndName(fi2.getFileId(), domain);
+        					fi2.setData(fi3.getData());
+        				} catch (SQLException e) {
+        					e.printStackTrace();
+        				}
+        			}
+
+        			zos.putNextEntry(new ZipEntry(fi2.getTitle()
+        					+ "."
+        					+ MimeType.values()[fi2.getMimetype()]
+        							.getExtension()));
+        			zos.write(fi2.getData());
+        			zos.closeEntry();
+        		}
+        		zos.close();
+        		fi = new FileInfo();
+        		fi.setData(baos.toByteArray());
+        		fi.setTitle("descarga");
+        		fi.setMimetype((byte) MimeType.MIME_ZIP.ordinal());	
+        		m=MimeType.MIME_ZIP.ordinal();
+        		mimetype = MimeType.values()[fi.getMimetype()].getName();
+        	}catch (FileNotFoundException e1) {
+        		e1.printStackTrace();
+        	} catch (IOException e) {
+        		e.printStackTrace();
+        	}
+        	
+        }
+        else if (driveId != ""){
         	Drive d = null;
         	if(isDrive.equals("true")){
         		d = GoogleDriveController.dconnection;

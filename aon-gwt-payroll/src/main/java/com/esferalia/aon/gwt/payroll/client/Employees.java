@@ -275,7 +275,9 @@ public class Employees extends ResizeComposite implements
 	}
 
 	public void onEnterprise(Enterprise enterprise) {
-		tree.clear();
+		
+		clearEnterprise(enterprise);
+		
 		List<Workplace> workplaces = enterprise.getWorkplaces();
 
 		final TreeItem enterpriseItem = new TreeItem(imageItemHTML(
@@ -461,6 +463,16 @@ public class Employees extends ResizeComposite implements
 
 		initViewButton();
 
+	}
+
+	public void clearEnterprise(Enterprise enterprise) {
+		for(int i = 0; i < tree.getItemCount(); i++) {
+			TreeItem treeItem = tree.getItem(i);
+			if ( enterprise.equals(treeItem.getUserObject())){
+				tree.removeItem(treeItem);
+				return;
+			}
+		}
 	}
 
 	// From OpenHandler<TreeItem>
