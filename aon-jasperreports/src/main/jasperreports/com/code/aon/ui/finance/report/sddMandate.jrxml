@@ -2,9 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="saleInvoice" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="99"/>
+	<property name="ireport.y" value="55"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -64,7 +64,7 @@
 				</graphicElement>
 			</rectangle>
 			<rectangle>
-				<reportElement x="22" y="318" width="492" height="344"/>
+				<reportElement x="22" y="304" width="492" height="344"/>
 				<graphicElement>
 					<pen lineWidth="0.5"/>
 				</graphicElement>
@@ -89,6 +89,14 @@
 			</line>
 			<line>
 				<reportElement key="line-9" positionType="FixRelativeToBottom" x="535" y="2" width="1" height="799" forecolor="#999999"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement key="line-9" positionType="FixRelativeToBottom" x="548" y="242" width="15" height="62" forecolor="#999999">
+					<printWhenExpression><![CDATA[false]]></printWhenExpression>
+				</reportElement>
 				<graphicElement>
 					<pen lineWidth="0.75"/>
 				</graphicElement>
@@ -119,7 +127,7 @@
 				</graphicElement>
 			</line>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-53" positionType="Float" x="220" y="47" width="284" height="15"/>
+				<reportElement key="textField-53" x="202" y="47" width="302" height="15"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -132,7 +140,7 @@
 				<textFieldExpression><![CDATA["Orden de domiciliación de adeudo directo SEPA"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-53" positionType="Float" x="220" y="62" width="284" height="15"/>
+				<reportElement key="textField-53" x="202" y="62" width="302" height="15"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -277,7 +285,7 @@
 				<textFieldExpression><![CDATA["A cumplimentar por el deudor"]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement key="line-9" positionType="FixRelativeToBottom" x="553" y="0" width="15" height="140" forecolor="#999999">
+				<reportElement key="line-9" positionType="FixRelativeToBottom" x="553" y="0" width="15" height="150" forecolor="#999999">
 					<printWhenExpression><![CDATA[false]]></printWhenExpression>
 				</reportElement>
 				<graphicElement>
@@ -285,7 +293,7 @@
 				</graphicElement>
 			</line>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="35" y="18" width="192" height="9"/>
+				<reportElement key="textField-53" x="35" y="19" width="192" height="9"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -298,7 +306,7 @@
 				<textFieldExpression><![CDATA["Mandate reference"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="35" y="6" width="167" height="12"/>
+				<reportElement key="textField-53" x="35" y="7" width="185" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -311,7 +319,7 @@
 				<textFieldExpression><![CDATA["Referencia de la orden de domiciliación:"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="35" y="27" width="110" height="12"/>
+				<reportElement key="textField-53" x="35" y="28" width="120" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -324,7 +332,7 @@
 				<textFieldExpression><![CDATA["Identificador del acreedor:"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="35" y="39" width="192" height="9"/>
+				<reportElement key="textField-53" x="35" y="40" width="192" height="9"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -337,7 +345,7 @@
 				<textFieldExpression><![CDATA["Creditor Identifier"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="35" y="72" width="45" height="12"/>
+				<reportElement key="textField-53" x="35" y="73" width="50" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -350,7 +358,7 @@
 				<textFieldExpression><![CDATA["Dirección / "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="35" y="48" width="95" height="12"/>
+				<reportElement key="textField-53" x="35" y="49" width="105" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -363,7 +371,7 @@
 				<textFieldExpression><![CDATA["Nombre del acreedor / "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="35" y="120" width="30" height="12"/>
+				<reportElement key="textField-53" x="35" y="121" width="30" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -376,7 +384,7 @@
 				<textFieldExpression><![CDATA["País / "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="35" y="96" width="155" height="12"/>
+				<reportElement key="textField-53" x="35" y="97" width="170" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -389,7 +397,7 @@
 				<textFieldExpression><![CDATA["Código postal - Población - Provincia / "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="190" y="96" width="229" height="12"/>
+				<reportElement key="textField-53" x="205" y="97" width="214" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -402,7 +410,7 @@
 				<textFieldExpression><![CDATA["Postal Code - City - Town"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="65" y="120" width="354" height="12"/>
+				<reportElement key="textField-53" x="65" y="121" width="354" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -415,7 +423,7 @@
 				<textFieldExpression><![CDATA["Country"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="130" y="48" width="289" height="12"/>
+				<reportElement key="textField-53" x="140" y="49" width="279" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -428,7 +436,7 @@
 				<textFieldExpression><![CDATA["Creditor´s name"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="80" y="72" width="339" height="12"/>
+				<reportElement key="textField-53" x="85" y="73" width="334" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -441,7 +449,7 @@
 				<textFieldExpression><![CDATA["Address"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="202" y="6" width="302" height="12" forecolor="#003366"/>
+				<reportElement key="textField-53" x="220" y="7" width="284" height="12" forecolor="#003366"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -454,7 +462,7 @@
 				<textFieldExpression><![CDATA[$F{reference}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="145" y="27" width="359" height="12" forecolor="#003366"/>
+				<reportElement key="textField-53" x="155" y="28" width="349" height="12" forecolor="#003366"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -469,7 +477,7 @@
 + $P{company}.getDocument()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="35" y="60" width="469" height="12" forecolor="#003366"/>
+				<reportElement key="textField-53" x="35" y="61" width="469" height="12" forecolor="#003366"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -482,7 +490,7 @@
 				<textFieldExpression><![CDATA[$P{company}.getName()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="35" y="84" width="469" height="12" forecolor="#003366"/>
+				<reportElement key="textField-53" x="35" y="85" width="469" height="12" forecolor="#003366"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -495,7 +503,7 @@
 				<textFieldExpression><![CDATA[$P{address}.getFullAddress()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="35" y="108" width="469" height="12" forecolor="#003366"/>
+				<reportElement key="textField-53" x="35" y="109" width="469" height="12" forecolor="#003366"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -510,7 +518,7 @@
 + "(" + $P{address}.getGeozone().getName() + ")"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="35" y="132" width="469" height="12" forecolor="#003366"/>
+				<reportElement key="textField-53" x="35" y="133" width="469" height="12" forecolor="#003366"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -523,7 +531,7 @@
 				<textFieldExpression><![CDATA[$P{address}.getRegistry().getNationality().getName($P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="35" y="227" width="97" height="12"/>
+				<reportElement key="textField-53" x="35" y="227" width="110" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -549,7 +557,7 @@
 				<textFieldExpression><![CDATA["(titular/es de la cuenta de cargo)"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="132" y="227" width="287" height="12"/>
+				<reportElement key="textField-53" x="145" y="227" width="274" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -562,7 +570,7 @@
 				<textFieldExpression><![CDATA["Debtor’s name"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="35" y="265" width="92" height="12"/>
+				<reportElement key="textField-53" x="35" y="265" width="100" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -601,7 +609,7 @@
 				<textFieldExpression><![CDATA[$F{registry}.getDefaultAddress().getFullAddress()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="127" y="265" width="292" height="12"/>
+				<reportElement key="textField-53" x="135" y="265" width="284" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -614,7 +622,7 @@
 				<textFieldExpression><![CDATA["Address of the debtor"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="35" y="294" width="155" height="12"/>
+				<reportElement key="textField-53" x="35" y="294" width="170" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -627,7 +635,7 @@
 				<textFieldExpression><![CDATA["Código postal - Población - Provincia / "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="190" y="294" width="229" height="12"/>
+				<reportElement key="textField-53" x="205" y="294" width="214" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -655,7 +663,7 @@
 + "(" + $F{registry}.getDefaultAddress().getGeozone().getName() + ")"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="35" y="323" width="73" height="12"/>
+				<reportElement key="textField-53" x="35" y="323" width="80" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -668,7 +676,7 @@
 				<textFieldExpression><![CDATA["País del deudor / "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="108" y="323" width="311" height="12"/>
+				<reportElement key="textField-53" x="115" y="323" width="304" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -694,7 +702,7 @@
 				<textFieldExpression><![CDATA[$F{registry}.getNationality().getName($P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="35" y="352" width="45" height="12"/>
+				<reportElement key="textField-53" x="35" y="352" width="47" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -707,7 +715,7 @@
 				<textFieldExpression><![CDATA["Swift BIC / "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="80" y="352" width="339" height="12"/>
+				<reportElement key="textField-53" x="82" y="352" width="337" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -733,7 +741,7 @@
 				<textFieldExpression><![CDATA[$F{registry}.getPayMethod().getBic()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="35" y="396" width="110" height="12"/>
+				<reportElement key="textField-53" x="35" y="396" width="125" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -746,7 +754,7 @@
 				<textFieldExpression><![CDATA["Número de cuenta - IBAN / "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="145" y="396" width="205" height="12"/>
+				<reportElement key="textField-53" x="160" y="396" width="190" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -772,7 +780,7 @@
 				<textFieldExpression><![CDATA[$F{registry}.getPayMethod().getBankAccount().toString()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="35" y="527" width="78" height="12"/>
+				<reportElement key="textField-53" x="35" y="527" width="85" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -798,7 +806,7 @@
 				<textFieldExpression><![CDATA["Signature of the debtor"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="113" y="527" width="391" height="12"/>
+				<reportElement key="textField-53" x="120" y="527" width="384" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -811,7 +819,7 @@
 				<textFieldExpression><![CDATA[]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-53" x="118" y="478" width="386" height="12" forecolor="#003366"/>
+				<reportElement key="textField-53" x="125" y="478" width="379" height="12" forecolor="#003366"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -828,7 +836,7 @@
 " de " + new SimpleDateFormat("yyyy").format($F{signDate})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="35" y="478" width="83" height="12"/>
+				<reportElement key="textField-53" x="35" y="478" width="90" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1035,6 +1043,14 @@
 				</textElement>
 				<textFieldExpression><![CDATA[""]]></textFieldExpression>
 			</textField>
+			<line>
+				<reportElement key="line-9" positionType="FixRelativeToBottom" x="553" y="150" width="15" height="62" forecolor="#999999">
+					<printWhenExpression><![CDATA[false]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
 		</band>
 	</detail>
 </jasperReport>
