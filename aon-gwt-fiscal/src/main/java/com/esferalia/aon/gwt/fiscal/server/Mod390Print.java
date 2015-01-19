@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.fiscal.server;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -72,26 +71,27 @@ public class Mod390Print extends HttpServlet {
 			String fileName, byte[] content) throws IOException,
 			KeyManagementException, NoSuchAlgorithmException {
 
-		FileReader fis = new FileReader("/tmp/Mod390_2013_MARIALUISA.390");
-		byte[] o = IOUtils.toByteArray(fis, "ISO-8859-1");
-		String encodedFile0 = URLEncoder.encode(new String(o), "ISO-8859-1");
+		String encodedFile0 = URLEncoder.encode(new String(content), "ISO-8859-1");
 
 		String fileString = new String(content);
 		fileString = fileString.replace("\n", "");
 		fileString = fileString.replace("\r", "");
 		String encodedFile = URLEncoder.encode(fileString, "ISO-8859-1");
 
-		String urlParameters = "HID=INF3390A" + "&IDI=ES"
+		String urlParameters = "HID=INF4390A" 
+				+ "&IDI=ES"
 				+ "&LEV=000000000000"
-				+
-				// TODO MAL!!
-				"&F01=" + encodedFile0 + "&ANA=INE" + "&XFI=" + encodedFile
-				+ "&FIN=" + "&MOD=390" + "&PRG=PTLINK1N" + "&EJF=2013";
+				+ "&F01=" + encodedFile0 
+				+ "&ANA=" + "CAP" 
+				+ "&XFI=" + encodedFile
+				+ "&FIN=" 
+				+ "&MOD=390" 
+				+ "&PRG=PTLINK5N" 
+				+ "&EJF=2014";
 
-		// PRODUCCION
-		String request = "https://www2.agenciatributaria.gob.es/es13/l/zi21zilk0021";
-
-		// PRUEBAS String request = "https://www6.aeat.es/es13/l/zi21zilk0021";
+		// PRODUCCION String request = "https://www2.agenciatributaria.gob.es/es13/l/zi21zilk0021";
+		// PRUEBAS 
+		String request = "https://www6.aeat.es/es13/l/zi21zilk0021";
 
 		URL url = new URL(request);
 
@@ -101,8 +101,7 @@ public class Mod390Print extends HttpServlet {
 				new SecureRandom());
 		SSLContext.setDefault(ctx);
 
-		HttpsURLConnection connection = (HttpsURLConnection) url
-				.openConnection();
+		HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 		connection.setHostnameVerifier(new HostnameVerifier() {
 
 			@Override
@@ -129,8 +128,7 @@ public class Mod390Print extends HttpServlet {
 		DataInputStream input = new DataInputStream(connection.getInputStream());
 
 		// resp.setContentType(MimeType.MIME_PDF.getName()); //
-		resp.setHeader("Content-disposition", "attachment; filename=\""
-				+ fileName + ".pdf\";");
+		resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "\";");
 		IOUtils.copy(input, resp.getOutputStream());
 		resp.flushBuffer();
 		connection.disconnect();

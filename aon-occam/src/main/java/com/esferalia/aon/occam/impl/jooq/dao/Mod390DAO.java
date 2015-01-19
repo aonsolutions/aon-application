@@ -65,6 +65,7 @@ public class Mod390DAO {
 	}
 
 	public static class VatContext {
+		
 		private InvoiceType invoiceType;
 		private RectificationType rectificationType;
 		private boolean service;
@@ -73,6 +74,7 @@ public class Mod390DAO {
 		private boolean accrualRegime;
 		private boolean surcharge;
 		private double percentage;
+		private double surchargePercent;
 		private VatDeductionType vatDeductionType;
 		
 		public InvoiceType getInvoiceType() {
@@ -108,14 +110,20 @@ public class Mod390DAO {
 		public boolean isSurcharge() {
 			return surcharge;
 		}
+		public void setSurcharge(boolean surcharge) {
+			this.surcharge = surcharge;
+		}
+		public double getSurchargePercent() {
+			return surchargePercent;
+		}
+		public void setSurchargePercent(double surchargePercent) {
+			this.surchargePercent = surchargePercent;
+		}
 		public boolean isAccrualRegime() {
 			return accrualRegime;
 		}
 		public void setAccrualRegime(boolean accrualRegime) {
 			this.accrualRegime = accrualRegime;
-		}
-		public void setSurcharge(boolean surcharge) {
-			this.surcharge = surcharge;
 		}
 		public double getPercentage() {
 			return percentage;
@@ -235,13 +243,13 @@ public class Mod390DAO {
 		 ,K07	 (Mod390DetailKey.K07	, (vc -> (vc.isNationalSales() && vc.isRectification())))
 		 ,K08	 (Mod390DetailKey.K08	, null)
 		 ,K09	 (Mod390DetailKey.K09	, null)
-		 ,K10_05 (Mod390DetailKey.K10_05, null)
-		 ,K10_1  (Mod390DetailKey.K10_1 , null)
-		 ,K10_14 (Mod390DetailKey.K10_14, null)
-		 ,K10_4  (Mod390DetailKey.K10_4 , null)
-		 ,K10_52 (Mod390DetailKey.K10_52, null)
-		 ,K10_175(Mod390DetailKey.K10_175,null)
-		 ,K11	 (Mod390DetailKey.K11	, null)
+		 ,K10_05 (Mod390DetailKey.K10_05, (vc -> (vc.isSurcharge() && !vc.isRectification() && vc.isNationalSales() && vc.getSurchargePercent() == 0.5)))
+		 ,K10_1  (Mod390DetailKey.K10_1 , (vc -> (vc.isSurcharge() && !vc.isRectification() && vc.isNationalSales() && vc.getSurchargePercent() == 1)))
+		 ,K10_14 (Mod390DetailKey.K10_14, (vc -> (vc.isSurcharge() && !vc.isRectification() && vc.isNationalSales() && vc.getSurchargePercent() == 1.4)))
+		 ,K10_4  (Mod390DetailKey.K10_4 , (vc -> (vc.isSurcharge() && !vc.isRectification() && vc.isNationalSales() && vc.getSurchargePercent() == 4)))
+		 ,K10_52 (Mod390DetailKey.K10_52, (vc -> (vc.isSurcharge() && !vc.isRectification() && vc.isNationalSales() && vc.getSurchargePercent() == 5.2)))
+		 ,K10_175(Mod390DetailKey.K10_175,(vc -> (vc.isSurcharge() && !vc.isRectification() && vc.isNationalSales() && vc.getSurchargePercent() == 1.75)))
+		 ,K11	 (Mod390DetailKey.K11	, (vc -> (vc.isSurcharge() &&  vc.isRectification() && vc.isNationalSales()))) 
 		 ,K12	 (Mod390DetailKey.K12	, null)
 		 ,K13	 (Mod390DetailKey.K13	, null)
 		 
@@ -333,7 +341,7 @@ public class Mod390DAO {
 		 ,K36	 (Mod390DetailKey.K36, null)
 		 ,K37	 (Mod390DetailKey.K37, null)
 		 
-		 ,B099	 (Mod390DetailKey.B099, (vc -> (vc.isNationalSales() && !vc.isRectification() && !vc.isSurcharge())))
+		 ,B099	 (Mod390DetailKey.B099, (vc -> (vc.isNationalSales() && !vc.isRectification())))
 		 ,B653	 (Mod390DetailKey.B653, (vc -> (vc.isSales() && vc.isAccrualRegime() )))
 		 ,B103	 (Mod390DetailKey.B103, (vc -> (vc.isIntracommunitySales() && !vc.isWithoutRightDeductionType())))
 		 ,B104	 (Mod390DetailKey.B104, (vc -> (vc.isSales() && !vc.isWithoutRightDeductionType() && (vc.isExtracommunity() || vc.isCanCeuMel()) )))
@@ -342,7 +350,7 @@ public class Mod390DAO {
 		 ,B112	 (Mod390DetailKey.B112, null)
 		 ,B100	 (Mod390DetailKey.B100, null)
 		 ,B101	 (Mod390DetailKey.B101, null)
-		 ,B102	 (Mod390DetailKey.B102, (vc -> (vc.isNationalSales() && vc.isRectification() && vc.isSurcharge())))
+		 ,B102	 (Mod390DetailKey.B102, (vc -> (vc.isNationalSales() && vc.isSurcharge())))
 		 ,B227	 (Mod390DetailKey.B227, null)
 		 ,B228	 (Mod390DetailKey.B228, null)
 		 ,B106	 (Mod390DetailKey.B106, null)
@@ -633,12 +641,12 @@ public class Mod390DAO {
 			}
 		}
 		
+		// Se buscan las facturas que tengan IVA y no sean de criterio de caja. 
 		ctx.getDslContext().select(INVOICE.TYPE
 				,INVOICE.RECTIFICATION_TYPE
 				,INVOICE.SERVICE
 				,INVOICE.TRANSACTION
 				,INVOICE.INVESTMENT
-				,INVOICE.VAT_ACCRUAL_PAYMENT
 				,INVOICE_TAX.PERCENTAGE
 				,INVOICE_TAX.SURCHARGE
 				,INVOICE_TAX.VAT_DEDUCTION_TYPE
@@ -651,12 +659,12 @@ public class Mod390DAO {
 				.where(INVOICE_TAX.DOMAIN.equal(mod390.getDomain()))
 				.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
 				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
+				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 0))	// No Criterio de Caja.
 				.groupBy(INVOICE.TYPE
 						,INVOICE.RECTIFICATION_TYPE
 						,INVOICE.SERVICE
 						,INVOICE.TRANSACTION
 						,INVOICE.INVESTMENT
-						,INVOICE.VAT_ACCRUAL_PAYMENT
 						,INVOICE_TAX.PERCENTAGE
 						,INVOICE_TAX.SURCHARGE
 						,INVOICE_TAX.VAT_DEDUCTION_TYPE)
@@ -670,8 +678,9 @@ public class Mod390DAO {
 							vc.setService(record.getValue(INVOICE.SERVICE) == 1);
 							vc.setTransaction(InvoiceTransactionType.values()[record.getValue(INVOICE.TRANSACTION)]);
 							vc.setInvestment(record.getValue(INVOICE.INVESTMENT) == 1);
-							vc.setAccrualRegime( record.getValue(INVOICE.VAT_ACCRUAL_PAYMENT) == 1);
+							vc.setAccrualRegime(false);
 							double surchargePercent = record.getValue(INVOICE_TAX.SURCHARGE).doubleValue();
+							vc.setSurchargePercent(surchargePercent);
 							boolean surcharge = (surchargePercent > 0); 
 							vc.setSurcharge(surcharge);
 							double percentage = record.getValue(INVOICE_TAX.PERCENTAGE); 
@@ -679,6 +688,7 @@ public class Mod390DAO {
 							vc.setVatDeductionType(VatDeductionType.values()[record.getValue(INVOICE_TAX.VAT_DEDUCTION_TYPE)]);
 							double taxableBase = record.getValue(sumBase).doubleValue();
 							double quota = record.getValue(sumQuotaOp).doubleValue();
+							double surchargeQuota = record.getValue(sumSurchargeQuotaOp).doubleValue();
 							Mod390DetailKey[] keys = DetailKey.getKeys(vc);			
 							if (keys != null) {
 								for (Mod390DetailKey key : keys) {
@@ -689,10 +699,11 @@ public class Mod390DAO {
 									}
 									detail.setKey(key);
 									detail.setPercent(percentage);
-									detail.setQuota( AonMathUtils.round(detail.getQuota()  + quota));
+									double q = key.isSurcharge()?surchargeQuota:quota; 
+									detail.setQuota( AonMathUtils.round(detail.getQuota()  + q));
 									detail.setTaxableBase( AonMathUtils.round( detail.getTaxableBase() + taxableBase));
+/*
 									if (vc.isSurcharge() && vc.isNationalSales()) {
-										double surchargeQuota = record.getValue(sumSurchargeQuotaOp).doubleValue();
 										Mod390DetailKey surchargeKey = null;
 										if (percentage == 0.5) surchargeKey = Mod390DetailKey.K10_05;
 										else if (percentage == 1) surchargeKey = Mod390DetailKey.K10_1;
@@ -721,6 +732,7 @@ public class Mod390DAO {
 											detail.setTaxableBase( AonMathUtils.round( detail.getTaxableBase() + taxableBase) );
 										}
 									}
+*/
 								}
 							}
 						}

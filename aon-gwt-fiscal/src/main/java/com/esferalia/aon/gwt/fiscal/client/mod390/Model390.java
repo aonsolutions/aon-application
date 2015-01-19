@@ -197,8 +197,8 @@ public class Model390 extends MainEntryPoint {
 	Button cancelButton;
 	@UiField
 	Button generateFileButton;
-	// @UiField
-	// Button printButton;
+	@UiField
+	Button printButton;
 
 	@UiField
 	IntegerTextBox year;
@@ -433,7 +433,7 @@ public class Model390 extends MainEntryPoint {
 		cancelButton.setVisible(table.getRowCount() > 0);
 		saveButton.setVisible(true);
 		generateFileButton.setVisible(mod390.getId() != null);
-		// printButton.setVisible(mod390.getId() != null);
+		printButton.setVisible(mod390.getId() != null);
 		simplifiedRegime.setVisible(mod390.isSimplifiedRegime());
 	}
 
@@ -454,7 +454,7 @@ public class Model390 extends MainEntryPoint {
 							deleteButton.setVisible(false);
 							newButton.setVisible(true);
 							generateFileButton.setVisible(false);
-							// printButton.setVisible(false);
+							printButton.setVisible(false);
 						}
 					}
 
@@ -616,13 +616,14 @@ public class Model390 extends MainEntryPoint {
 		diskForm.submit();
 	}
 
-	// @UiHandler("printButton")
-	// void onPrintButtonClick(ClickEvent event) {
-	// diskForm.setAction(GWT.getHostPageBaseURL()
-	// + "/aon_gwt_fiscal/Model390Print");
-	// mod390Hidden.setValue(String.valueOf(mod390.getId()));
-	// diskForm.submit();
-	// }
+	@UiHandler("printButton")
+	void onPrintButtonClick(ClickEvent event) {
+		diskForm.setAction(GWT.getHostPageBaseURL()	+ "/aon_gwt_fiscal/Model390Print");
+		mod390Hidden.setValue(String.valueOf(mod390.getId()));
+		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
+		domainNameHidden.setValue(getCurrentDomainName());
+		diskForm.submit();
+	}
 
 	private void clearLinks() {
 		Panel[] panels = new Panel[] { linkPage0, linkPage3,
