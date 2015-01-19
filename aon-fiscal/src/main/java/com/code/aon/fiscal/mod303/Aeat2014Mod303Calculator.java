@@ -20,6 +20,45 @@ public class Aeat2014Mod303Calculator extends FiscalModelDetailCalculator implem
 	@Override
 	public void calculate(Mod303 mod303) throws AonException {
 		calculateDetails(mod303.getDetails());
+
+		if (mod303.isLastPeriod()) {
+			if (mod303.getDetail(Mod303Key.CAG1) != null) {
+				double g1 = mod303.ensureAmount( Mod303Key.CAG1_V1);
+				double g2 = mod303.ensureAmount( Mod303Key.CAG1_V2);
+				double g3 = CommonUtil.round(g1 * g2);
+				mod303.getDetail( Mod303Key.CAG1_V3).setAmount( g3 );
+				double g6 = mod303.ensureAmount( Mod303Key.CAG1_V6);
+				double g7 = CommonUtil.round(g3 - g6);
+				mod303.getDetail( Mod303Key.CAG1_V7).setAmount( g7 );	
+			}
+			if (mod303.getDetail(Mod303Key.CAG2) != null) {
+				double g1 = mod303.ensureAmount( Mod303Key.CAG2_V1);
+				double g2 = mod303.ensureAmount( Mod303Key.CAG2_V2);
+				double g3 = CommonUtil.round(g1 * g2);
+				mod303.getDetail( Mod303Key.CAG2_V3).setAmount( g3 );
+				double g6 = mod303.ensureAmount( Mod303Key.CAG2_V6);
+				double g7 = CommonUtil.round(g3 - g6);
+				mod303.getDetail( Mod303Key.CAG2_V7).setAmount( g7 );	
+			}
+			if (mod303.getDetail(Mod303Key.CAG3) != null) {
+				double g1 = mod303.ensureAmount( Mod303Key.CAG3_V1);
+				double g2 = mod303.ensureAmount( Mod303Key.CAG3_V2);
+				double g3 = CommonUtil.round(g1 * g2);
+				mod303.getDetail( Mod303Key.CAG3_V3).setAmount( g3 );
+				double g6 = mod303.ensureAmount( Mod303Key.CAG3_V6);
+				double g7 = CommonUtil.round(g3 - g6);
+				mod303.getDetail( Mod303Key.CAG3_V7).setAmount( g7 );	
+			}
+			if (mod303.getDetail(Mod303Key.CAG4) != null) {
+				double g1 = mod303.ensureAmount( Mod303Key.CAG4_V1);
+				double g2 = mod303.ensureAmount( Mod303Key.CAG4_V2);
+				double g3 = CommonUtil.round(g1 * g2);
+				mod303.getDetail( Mod303Key.CAG4_V3).setAmount( g3 );
+				double g6 = mod303.ensureAmount( Mod303Key.CAG4_V6);
+				double g7 = CommonUtil.round(g3 - g6);
+				mod303.getDetail( Mod303Key.CAG4_V7).setAmount( g7 );	
+			}
+		}
 		
 		if (mod303.getDetail(Mod303Key.CAC1) != null) {
 			if (!mod303.isLastPeriod()) {
