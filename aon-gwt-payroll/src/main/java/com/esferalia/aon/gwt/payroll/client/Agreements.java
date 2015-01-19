@@ -4,122 +4,154 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
-import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safecss.shared.SafeStyles;
-import com.google.gwt.safecss.shared.SafeStylesBuilder;
-import com.google.gwt.safecss.shared.SafeStylesUtils;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeUri;
-import com.google.gwt.safehtml.shared.UriUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.MenuBar;
-import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Agreements extends ResizeComposite {
-
-	private static final Images IMAGES = GWT.create(Images.class);
-
-	private static final ImageResource RESOURCES[][][] = 
-		{{{ IMAGES.agreement(), 
-			IMAGES.agreement_warn() 
-		},{ 
-			IMAGES.agreement_error(), 
-			IMAGES.agreement_error()
-		}},
-		{{
-			IMAGES.agreement_changed(),
-			IMAGES.agreement_changed_warn() 
-		},
-		{ 
-			IMAGES.agreement_changed_error(),
-			IMAGES.agreement_changed_error() 
-		}}};
+public class Agreements extends ResizeComposite implements
+		AgreementsTree.Listener {
 
 	interface Listener {
+
+		void onAgreementCtrlC(Agreement agreement);
+
+		void onAgreementCtrlV(Agreement agreement);
+
+		void onAgreementSupr(Agreement agreement);
+
+		void onAgreementContextMenu(Agreement agreement, ContextMenuEvent event);
+
 		void onAgreementSelected(Agreement agreement);
+		
 	}
+
+	private static final Images IMAGES = GWT.create(Images.class);
 
 	interface Binder extends UiBinder<Widget, Agreements> {
 	}
 
 	private static final Binder BINDER = GWT.create(Binder.class);
 
-	private static int newsIdCounter = -1;
+	@UiField
+	AgreementsTree agreementsTree;
 
-	@UiField
-	Tree tree;
-	@UiField
-	ScrollPanel scrollPanel;
-	@UiField
-	Button newButton;
-	@UiField
-	Button viewButton;
-	@UiField
-	Button collapseAllButton;
-
+	private static Integer newsIdCounter = 0;
 	private Integer domain;
 	private List<Listener> listeners;
-	private EnterprisesServiceAsync enterprisesService;
 
 	public Agreements() {
-		listeners = new LinkedList<Listener>();
+
 		initWidget(BINDER.createAndBindUi(this));
 
-		// Create a remote service proxy to talk to the server-side Enterprises
-		// service.
-		EnterprisesServiceAsync enterprisesServiceRaw = GWT
-				.create(EnterprisesService.class);
-		enterprisesService = new EnterprisesServiceAsyncDecorator(
-				enterprisesServiceRaw);
+		this.listeners = new LinkedList<Listener>();
+		agreementsTree.addListener(this);
 
-		enterprisesService.getDomain(new AsyncCallback<Integer>() {
+		agreementsTree.getEnterpriseService().getDomain(
+				new AsyncCallback<Integer>() {
 
-			@Override
-			public void onSuccess(Integer result) {
-				Agreements.this.domain = result;
-				getAgreements();
-			}
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert(caught.getMessage());
+					}
 
-			@Override
-			public void onFailure(Throwable caught) {
-			}
-		});
-
-		initContextMenu();
+					@Override
+					public void onSuccess(Integer result) {
+						Agreements.this.domain = result;
+						getAgreements();
+					}
+				});
 	}
 
-	private void getAgreements() {
-		enterprisesService.getAgreements(0, 100,
+	public AgreementsTree getAgreementsTree() {
+		return agreementsTree;
+	}
+
+	public void reloadAgreements() {
+		getAgreements();
+	}
+
+	public void addListener(Listener listener) {
+		listeners.add(listener);
+	}
+
+	public void removeListener(Listener listener) {
+		listeners.remove(listener);
+	}
+	
+	public Integer getDomain() {
+		return this.domain;
+	}
+
+	// -------------------------------------------------------- Private methods
+
+	private void fireAgreementSelected(Agreement agreement) {
+		for (Listener listener : listeners)
+			listener.onAgreementSelected(agreement);
+	}
+
+	private synchronized Agreement newAgreement() {
+		Agreement agreement = new Agreement();
+		int newId = newsIdCounter--;
+		agreement.setId(newsIdCounter);
+		agreement.setDescription("CONVENIO NO GUARDADO " + -newId);
+		agreement.setDomain(getDomain());
+
+		return agreement;
+
+	}
+
+	@Override
+	public boolean evaluateId(Agreement agreement) {
+		return agreement.getId() > 0;
+	}
+
+	@Override
+	public void onAgreementCtrlC(Agreement agreement) {
+		for (Listener listener : listeners)
+			listener.onAgreementCtrlC(agreement);
+	}
+
+	@Override
+	public void onAgreementCtrlV(Agreement agreement) {
+		for (Listener listener : listeners)
+			listener.onAgreementCtrlV(agreement);
+	}
+
+	@Override
+	public void onAgreementSupr(Agreement agreement) {
+		for (Listener listener : listeners)
+			listener.onAgreementSupr(agreement);
+	}
+	
+	@Override
+	public void onTreeItemSelected(SelectionEvent<TreeItem> event) {
+		TreeItem selectedItem = event.getSelectedItem();
+		Object object = selectedItem.getUserObject();
+		
+		if(object instanceof Agreement)
+			fireAgreementSelected((Agreement) object);
+	}
+
+	@Override
+	public void getAgreements() {
+		agreementsTree.clearTree();
+		agreementsTree.getEnterpriseService().getAgreements(0, 100,
 				new AsyncCallback<List<Agreement>>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub
 						Window.alert(caught.getMessage());
 					}
 
@@ -129,7 +161,8 @@ public class Agreements extends ResizeComposite {
 						for (int i = 0; i < agreements.size(); i++) {
 
 							Agreement agreement = agreements.get(i);
-							addAgreementItem(agreement);
+							if (evaluateId(agreement))
+								addAgreementItem(agreement);
 
 							if (agreement.isRedefined()) {
 								if (item2Select == -1)
@@ -142,51 +175,15 @@ public class Agreements extends ResizeComposite {
 
 						}
 						// Select the first one.
-						if (tree.getItemCount() > 0)
-							tree.setSelectedItem(
-									tree.getItem(Math.max(item2Select, 0)),
-									true);
+						if (agreementsTree.getTree().getItemCount() > 0)
+							agreementsTree.getTree().setSelectedItem(
+									agreementsTree.getTree().getItem(
+											Math.max(item2Select, 0)), true);
 					}
 
 				});
 	}
-
-	public Integer getDomain() {
-		return domain;
-	}
-
-	public void addListener(Listener listener) {
-		listeners.add(listener);
-	}
-
-	public void removeListener(Listener listener) {
-		listeners.remove(listener);
-	}
-
-	// ------------------------------------------------------------- UiHandlers
-
-	@UiHandler("newButton")
-	void onNewButtonClicked(ClickEvent event) {
-		Agreement agreement = newAgreement();
-		tree.setSelectedItem(addAgreementItem(agreement));
-	}
-
-	@UiHandler("tree")
-	void onTreeItemSelected(SelectionEvent<TreeItem> event) {
-		TreeItem selectedItem = event.getSelectedItem();
-		Agreement agreement = (Agreement) selectedItem.getUserObject();
-		fireAgreementSelected(agreement);
-	}
-
-	// -------------------------------------------------------------- Protected
-	// methods
-
-	TreeItem getSelectedItem() {
-		return tree.getSelectedItem();
-	}
-
-	// -------------------------------------------------------- Private methods
-
+	
 	private TreeItem addAgreementItem(Agreement agreement) {
 		String description = agreement.getDescription();
 		if (agreement.isRedefined()) {
@@ -194,241 +191,26 @@ public class Agreements extends ResizeComposite {
 		}
 
 		List<ImageResource> marks = new ArrayList<ImageResource>();
-		if ( NumberUtils.notEquals(domain, agreement.getDomain()))
+		if (NumberUtils.notEquals(domain, agreement.getDomain()))
 			marks.add(IMAGES.parent());
 
-		TreeItem treeItem = new TreeItem(imageItemSafeHtml(description,
-				getImageResource(agreement),
+		TreeItem treeItem = new TreeItem(AgreementsTree.imageItemSafeHtml(description,
+				AgreementsTree.getImageResource(agreement),
 				marks.toArray(new ImageResource[marks.size()])));
 
 		treeItem.setUserObject(agreement);
 
-		tree.addItem(treeItem);
+		agreementsTree.getTree().addItem(treeItem);
 
 		return treeItem;
-
 	}
 
-	private void fireAgreementSelected(Agreement agreement) {
+
+	@Override
+	public void onAgreementContextMenu(Agreement agreement,
+			ContextMenuEvent event) {
 		for (Listener listener : listeners)
-			listener.onAgreementSelected(agreement);
-	}
-
-	private Agreement getSelectedAgreement() {
-		TreeItem selectedItem = tree.getSelectedItem();
-		return selectedItem != null ? (Agreement) selectedItem.getUserObject()
-				: null;
-	}
-	
-	class AgreementContextMenu extends ContextMenu {
-		
-		MenuItem pasteItem;
-		
-		public AgreementContextMenu() {
-			
-/*			addItem("Nuevo", new NewAgreementCommand(), AON.AON_ICON_RESET, 
-					AON.AON_ICON_CMD_BUTTON);
-			addItem("Copiar", new CopyAgreementCommand(), AON.AON_ICON_COPY, 
-					AON.AON_ICON_CMD_BUTTON);
-			addItem("Borrar", new DeleteAgreementCommand(), AON.AON_ICON_DELETE, 
-					AON.AON_ICON_CMD_BUTTON);
-*/		}
-	}
-	
-	
-
-	private void initContextMenu() {
-
-		class AgreementContextMenu extends ContextMenu {
-
-			ScheduledCommand newCommand = new ScheduledCommand() {
-				public void execute() {
-					Agreement agreement = Agreements.this.newAgreement();
-					Agreements.this.tree
-							.setSelectedItem(addAgreementItem(agreement));
-				};
-			};
-			ScheduledCommand copyCommand = new ScheduledCommand() {
-				public void execute() {
-				};
-			};
-			ScheduledCommand pasteCommand = new ScheduledCommand() {
-				public void execute() {
-				};
-			};
-			ScheduledCommand deleteCommand = new ScheduledCommand() {
-				public void execute() {
-					deleteAgreement(getSelectedAgreement());
-				};
-			};
-
-			private MenuItem pasteItem;
-			private MenuItem deleteItem;
-
-			public AgreementContextMenu() {
-
-				addItem("Nuevo", newCommand, AON.AON_ICON_RESET,
-						AON.AON_ICON_CMD_BUTTON);
-				addSeparator();
-				addItem("Copiar", copyCommand, AON.AON_ICON_COPY,
-						AON.AON_ICON_CMD_BUTTON);
-				pasteItem = addItem("Pegar", pasteCommand,
-						AON.AON_ICON_CLIPBOARD, AON.AON_ICON_CMD_BUTTON);
-				pasteItem.setEnabled(false);
-				deleteItem = addItem("Borrar", deleteCommand,
-						AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
-				deleteItem.setEnabled(false);
-
-			}
-
-			@Override
-			public void show() {
-				sync();
-				super.show();
-			}
-
-			private void sync() {
-				Agreement agreement = Agreements.this.getSelectedAgreement();
-				deleteItem.setEnabled(agreement.canDelete());
-			}
-
-		}
-		;
-
-		final AgreementContextMenu contextMenu = new AgreementContextMenu();
-
-		ContextMenuHandler contextMenuHandler = new ContextMenuHandler() {
-			@Override
-			public void onContextMenu(ContextMenuEvent event) {
-				// stop the browser from opening the context menu
-				event.preventDefault();
-				event.stopPropagation();
-
-				NativeEvent nativeEvent = event.getNativeEvent();
-				contextMenu.setPopupPosition(nativeEvent.getClientX(),
-						nativeEvent.getClientY());
-				contextMenu.show();
-			}
-
-		};
-
-		tree.addDomHandler(contextMenuHandler, ContextMenuEvent.getType());
-
-	}
-
-	private void deleteAgreement(Agreement agreement) {
-		deleteTreeItem(getSelectedItem());
-	}
-
-	private void deleteTreeItem(TreeItem treeItem) {
-		tree.removeItem(treeItem);
-	}
-
-	private Agreement pasteAgreement(Agreement agreement) {
-		return null;
-	}
-
-	// ------------------------------------------------------------------------
-	public static ImageResource getImageResource(boolean changes,
-			boolean errors, boolean warns) {
-		return RESOURCES[changes ? 1 : 0][errors ? 1 : 0][warns ? 1 : 0];
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Generates SafeHtml for a tree item with an attached icon.
-	 */
-	static SafeHtml imageItemSafeHtml(ImageResource imageProto, String title) {
-		SafeHtmlBuilder builder = new SafeHtmlBuilder();
-		builder.append(AbstractImagePrototype.create(imageProto).getSafeHtml());
-		if (title != null)
-			builder.appendEscaped(" " + title);
-		return builder.toSafeHtml();
-	}
-
-	static SafeHtml imageItemSafeHtml(String title, ImageResource imageProto,
-			ImageResource... imageMarks) {
-		SafeHtmlBuilder builder = new SafeHtmlBuilder();
-
-		List<SafeUri> uris = new ArrayList<SafeUri>();
-		uris.add(imageProto.getSafeUri());
-		for (ImageResource imageMark : imageMarks)
-			uris.add(imageMark.getSafeUri());
-
-		builder.append(OverlayImagesImpl.getSafeHtml(imageProto.getLeft(),
-				imageProto.getTop(), imageProto.getWidth(),
-				imageProto.getHeight(), uris.toArray(new SafeUri[uris.size()])));
-
-		if (title != null)
-			builder.appendEscaped(" " + title);
-		return builder.toSafeHtml();
-	}
-
-	private synchronized Agreement newAgreement() {
-		Agreement agreement = new Agreement();
-		int newId = newsIdCounter--;
-		agreement.setId(newId);
-		agreement.setDescription("CONVENIO NO GUARDADO " + -newId);
-		agreement.setDomain(getDomain());
-		return agreement;
-	}
-	// ------------------------------------------------------------------------
-
-
-	private static ImageResource getImageResource(Agreement agreement) {
-		return RESOURCES[0][0][agreement.hasLevelsWithoutCategories() ? 1 : 0];
-	}
-
-	public static class OverlayImagesImpl {
-
-		interface Template extends SafeHtmlTemplates {
-			@SafeHtmlTemplates.Template("<img onload='this.__gwtLastUnhandledEvent=\"load\";' src='{0}' "
-					+ "style='{1}' border='0'>")
-			SafeHtml image(SafeUri clearImage, SafeStyles style);
-		}
-
-		interface DraggableTemplate extends SafeHtmlTemplates {
-			@SafeHtmlTemplates.Template("<img onload='this.__gwtLastUnhandledEvent=\"load\";' src='{0}' "
-					+ "style='{1}' border='0' draggable='true'>")
-			SafeHtml image(SafeUri clearImage, SafeStyles style);
-		}
-
-		private static final SafeUri CLEARIMAGE = UriUtils
-				.fromTrustedString(GWT.getModuleBaseURL() + "clear.cache.gif");
-		private static final Template TEMPLATE = GWT.create(Template.class);
-		private static final DraggableTemplate DRAGGABLE_TEMPLATE = GWT
-				.create(DraggableTemplate.class);
-
-		public static SafeHtml getSafeHtml(int left, int top, int width,
-				int height, SafeUri... uris) {
-			return getSafeHtml(left, top, width, height, false, uris);
-		}
-
-		public static SafeHtml getSafeHtml(int left, int top, int width,
-				int height, boolean isDraggable, SafeUri... uris) {
-
-			StringBuffer background = new StringBuffer();
-			for (SafeUri uri : uris) {
-				if (background.length()>0)
-					background.append(", ");
-				background.append("url(" + uri.asString() + ") " + "no-repeat "
-						+ (-left + "px ") + (-top + "px") );
-			}
-
-			SafeStylesBuilder builder = new SafeStylesBuilder();
-
-			builder.width(width, Unit.PX).height(height, Unit.PX)
-					.trustedNameAndValue("background", background.toString());
-
-			if (!isDraggable) {
-				return TEMPLATE.image(CLEARIMAGE, SafeStylesUtils
-						.fromTrustedString(builder.toSafeStyles().asString()));
-			} else {
-				return DRAGGABLE_TEMPLATE.image(CLEARIMAGE, SafeStylesUtils
-						.fromTrustedString(builder.toSafeStyles().asString()));
-			}
-		}
+			listener.onAgreementContextMenu(agreement, event);
 
 	}
 

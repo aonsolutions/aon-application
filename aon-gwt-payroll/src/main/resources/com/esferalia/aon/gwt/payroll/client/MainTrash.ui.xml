@@ -1,0 +1,114 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.payroll.client'>
+
+
+	<!-- GIFs needed for ie6 work arounds. Can't use <ui:image>, it makes PNGs -->
+	<ui:data field='configgroupIe6Data' src='configgroup_ie6.gif' />
+
+	<ui:style>
+	.button-align {
+		float: right;
+	}
+	
+	.legend-icon {
+		margin-top: 3px;
+	}
+	
+	.stackHeader {
+		padding: .7em .5em .7em .6em;
+	}
+	
+	@sprite .agreementIcon {
+		gwt-image: 'agreementgroup';
+		float: left;
+		padding-left: 5px;
+	}
+	
+	@sprite .employeesIcon {
+		gwt-image: 'employeesgroup';
+		float: left;
+	}
+	</ui:style>
+
+	<ui:image field='agreementgroup' src='agreementgroup.png' />
+	<ui:image field='employeesgroup' src='employeesgroup.png' />
+
+	<g:SplitLayoutPanel ui:field="splitLayoutPanel">
+		<g:west size='275'>
+
+			<g:StackLayoutPanel unit='EM'>
+
+				<g:stack ui:field="agreementStack">
+					<g:header size='3'>
+						<div class='{style.stackHeader}'>
+							<div class='{style.agreementIcon}' />
+							CONVENIOS
+						</div>
+					</g:header>
+					<g:DockLayoutPanel>
+						<g:north size="26">
+							<g:FlowPanel styleName="gwt-MenuBar-horizontal"
+								ui:field="buttonBar">
+								<g:HTMLPanel styleName="{style.legend-icon}">
+									<g:Button ui:field='deleteAgreementButton'
+										styleName='aon-editDataTable-button aon-icon-deletetrash {style.button-align}'
+										title="Eliminar definitivamente el convenio seleccionado" enabled="false" />
+
+									<g:Button ui:field='restoreAgreementButton'
+										styleName='aon-editDataTable-button aon-icon-cancel {style.button-align}'
+										title="Restaurar convenio" enabled="false" />
+
+									<g:Button ui:field='clearAgreementButton'
+										styleName='aon-editDataTable-button aon-icon-cleartrash {style.button-align}'
+										title="Vaciar papelera de convenios" />
+								</g:HTMLPanel>
+							</g:FlowPanel>
+						</g:north>
+						<g:center>
+							<aon:AgreementsTree ui:field='agreementsTree' />
+						</g:center>
+					</g:DockLayoutPanel>
+
+				</g:stack>
+
+				<!--<g:stack ui:field="employeesStack">
+					<g:header size='3'>
+						<div class='{style.stackHeader}'>
+							<div class='{style.employeesIcon}' />
+							EMPLEADOS
+						</div>
+					</g:header>
+					<g:DockLayoutPanel>
+						<g:north size="26">
+							<g:HTMLPanel styleName="{style.legend-icon}">
+								<g:Button ui:field='deleteEmployeeButton'
+									styleName='aon-editDataTable-button aon-icon-deletetrash {style.button-align}'
+									title="Eliminar definitivamente el empleado seleccionado" enabled="false" />
+
+								<g:Button ui:field='restoreEmployeeButton'
+									styleName='aon-editDataTable-button aon-icon-cancel {style.button-align}'
+									title="Restaurar empleado" enabled="false" />
+
+								<g:Button ui:field='clearEmployeeButton'
+									styleName='aon-editDataTable-button aon-icon-cleartrash {style.button-align}'
+									title="Vaciar papelera de empleados" />
+							</g:HTMLPanel>
+						</g:north>
+						<g:center>
+							<aon:Employees ui:field='employees' extended="true"
+								formers="false" />
+						</g:center>
+					</g:DockLayoutPanel>
+				</g:stack -->
+			</g:StackLayoutPanel>
+		</g:west>
+		<g:center>
+			<g:SimpleLayoutPanel>
+				<aon:AgreementDraft ui:field="agreementDraft" />
+			</g:SimpleLayoutPanel>
+		</g:center>
+
+
+	</g:SplitLayoutPanel>
+
+</ui:UiBinder>

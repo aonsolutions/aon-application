@@ -1,17 +1,18 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
 import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
+import static com.esferalia.aon.jooq.tables.AgreementData.AGREEMENT_DATA;
 import static com.esferalia.aon.jooq.tables.AgreementExtra.AGREEMENT_EXTRA;
+import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
+import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 import static com.esferalia.aon.payroll.calculator.jooq.JooqCommon.getDefaultSettings;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,23 +20,18 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.jooq.AggregateFunction;
-import org.jooq.Cursor;
 import org.jooq.DSLContext;
 import org.jooq.Identity;
-import org.jooq.Record2;
 import org.jooq.Result;
-import org.jooq.conf.Settings;
+import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
+import com.esferalia.aon.jooq.tables.PayrollWorkplace;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
-import com.esferalia.aon.payroll.sql.SQLConstants;
-import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelCategoryColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelColumns;
 
 public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
@@ -249,6 +245,69 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		}
 		return agreements;
 	}
+	
+	private static final String SET_FOREIGN_KEY_CHECKS_0 = "SET FOREIGN_KEY_CHECKS=0;";
+	private static final String SET_FOREIGN_KEY_CHECKS_1 = "SET FOREIGN_KEY_CHECKS=1;";
+	
+	public static void updateAgreementId(Connection conn, Integer domainId, Agreement agreement) {
+		
+		try {			
+			
+			Statement sOpen = conn.createStatement();
+			sOpen.execute(SET_FOREIGN_KEY_CHECKS_0);
+			System.out.println("Claves referenciales deshabilitadas");
+			sOpen.close();
+			
+			// -----------------------------
+			
+			DSLContext dslContext = DSL.using(conn, SQLDialect.MYSQL, 
+					getDefaultSettings());
+			
+			//@formatter:off
+			
+			dslContext.update(AGREEMENT_DATA)
+			.set(AGREEMENT_DATA.AGREEMENT, -(agreement.getId()))
+			.where(AGREEMENT_DATA.AGREEMENT.eq(agreement.getId())
+					.and(AGREEMENT_DATA.DOMAIN.eq(domainId))).execute();
+			
+			dslContext.update(AGREEMENT_LEVEL)
+			.set(AGREEMENT_LEVEL.AGREEMENT, -(agreement.getId()))
+			.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreement.getId())
+					.and(AGREEMENT_LEVEL.DOMAIN.eq(domainId))).execute();
+			
+			dslContext.update(AGREEMENT_PAYMENT)
+			.set(AGREEMENT_PAYMENT.AGREEMENT, -(agreement.getId()))
+			.where(AGREEMENT_PAYMENT.AGREEMENT.eq(agreement.getId())
+					.and(AGREEMENT_PAYMENT.DOMAIN.eq(domainId))).execute();
+			
+			dslContext.update(PAYROLL_WORKPLACE)
+			.set(PAYROLL_WORKPLACE.AGREEMENT, -(agreement.getId()))
+			.where(PAYROLL_WORKPLACE.AGREEMENT.eq(agreement.getId())
+					.and(PAYROLL_WORKPLACE.DOMAIN.eq(domainId))).execute();
+			
+			dslContext.update(AGREEMENT)
+					  .set(AGREEMENT.ID, -(agreement.getId()))
+					  .where(AGREEMENT.DOMAIN.eq(domainId)
+							 .and(AGREEMENT.ID.eq(agreement.getId())))
+					  .execute();
+			//@formatter:on
+
+			
+			// -----------------------------
+			
+			Statement sClose = conn.createStatement();
+			sClose.execute(SET_FOREIGN_KEY_CHECKS_1);
+			System.out.println("Claves referenciales habilitadas");
+			sClose.close();
+			
+		} catch (SQLException ex) {
+			throw new IllegalArgumentException();
+		} catch (Exception ex) {
+			throw new IllegalArgumentException();
+		} 
+	}
+	
+	
 
 	// ------------------------------------------------------------------------
 

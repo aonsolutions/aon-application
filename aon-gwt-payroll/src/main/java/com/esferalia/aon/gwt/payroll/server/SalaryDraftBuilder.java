@@ -49,7 +49,6 @@ import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
-import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVariable;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
@@ -335,7 +334,6 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		salaryDraft.setInkindIrpfBase(inkindIrpfBase);
 	}
 	
-	@Override
 	public void setMoneyIrpfBase(Double moneyIrpfBase) {
 		salaryDraft.setMoneyIrpfBase(moneyIrpfBase);
 	}

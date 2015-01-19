@@ -4,6 +4,7 @@ public interface Constants {
 
 	public static final String IS_GPS_PARAM = "isGPS";
 
+	public static final String MAIN_TRASH_ENTRY_POINT = "MainTrash";
 	public static final String MAIN_SYSTEM_ENTRY_POINT = "MainSystem";
 	public static final String MAIN_AGREEMENT_ENTRY_POINT = "MainAgreement";
 	public static final String MAIN_CALCULATOR_ENTRY_POINT = "MainCalculator";

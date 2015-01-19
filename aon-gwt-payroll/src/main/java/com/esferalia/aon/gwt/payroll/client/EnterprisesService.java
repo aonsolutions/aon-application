@@ -27,6 +27,13 @@ public interface EnterprisesService extends RemoteService {
 	Payment savePaymentConcept(Payment payment);
 
 	Deduction saveDeductionConcept(Deduction deduction);
+	
+	/**
+	 * 
+	 * @param agreement
+	 * @param value: if value > 0 move to Agreements. Else, move to Trash
+	 */	
+	void updateAgreementId(Agreement agreement);
 
 	void deleteBonusConcept(Bonus bonus);
 
@@ -45,5 +52,6 @@ public interface EnterprisesService extends RemoteService {
 	List<Deduction> getDeductionConcepts(int offset, int limit) ;
 	
 	List<Cost> getEnterprisesCosts(List<Integer> enterpriseIds); 
+	
 	
 }

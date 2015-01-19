@@ -533,11 +533,10 @@ public class Employees extends ResizeComposite implements
 	@Override
 	public void onKeyDown(KeyDownEvent event) {
 		int keyCode = event.getNativeKeyCode();
-		int charCode = event.getNativeEvent().getCharCode();
 		Object object = tree.getSelectedItem().getUserObject();
 
 		if ((event.isControlKeyDown() && keyCode == KeyCodes.KEY_C)
-				&& (keyCode == KeyCodes.KEY_C) && (object instanceof Employee)) {
+				&& (object instanceof Employee)) {
 			onEmployeeCopy((Employee) object);
 		} else if (event.getNativeEvent().getCtrlKey()
 				&& keyCode == KeyCodes.KEY_V && object instanceof Workplace) {

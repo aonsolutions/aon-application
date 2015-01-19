@@ -88,6 +88,7 @@ import com.esferalia.aon.gwt.payroll.client.EmployeesService;
 import com.esferalia.aon.gwt.payroll.client.StatisticsService;
 import com.esferalia.aon.gwt.payroll.jooq.JooqDeductions;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
+import com.esferalia.aon.gwt.payroll.jooq.JooqITData;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayments;
 import com.esferalia.aon.gwt.payroll.server.PayrollServletUtils.SalaryFilter;
 import com.esferalia.aon.gwt.payroll.server.PayrollServletUtils.SiteFilter;
@@ -105,6 +106,8 @@ import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
+import com.esferalia.aon.gwt.payroll.shared.ITPerson;
+import com.esferalia.aon.gwt.payroll.shared.ITService;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfData;
 import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfRegularization;
@@ -260,8 +263,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			conn = getConnection();
 			ArrayList<Enterprise> enterprises = new ArrayList<Enterprise>();
 			for (int i = 0; i < registryIDs.length; i++) {
-				Enterprise enterprise = getEnterprise(registryIDs[i], userID, conn);
-				if ( enterprise != null ) {
+				Enterprise enterprise = getEnterprise(registryIDs[i], userID,
+						conn);
+				if (enterprise != null) {
 					enterprises.add(enterprise);
 				}
 			}
@@ -868,17 +872,18 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			releaseFacesContext();
 		}
 	}
-	
+
 	@Override
 	public Map<String, String> getAvaiableEmployees()
 			throws IllegalArgumentException {
-		
+
 		Connection conn = null;
 		try {
 			initFacesContext();
 			conn = getConnection();
 			disableAutoCommit(conn);
-			return JooqEmployees.getAvaiableEmployees(conn, getDomainID(), getParentDomainID());
+			return JooqEmployees.getAvaiableEmployees(conn, getDomainID(),
+					getParentDomainID());
 		} catch (SQLException ex) {
 			rollback(conn);
 			ex.printStackTrace();
@@ -893,27 +898,27 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 			releaseFacesContext();
 		}
-		
+
 	}
-	
+
 	@Override
-	public Employee pasteContract(int workplaceId, int contractId, String document,
-			Date startDate, Date endDate, boolean check)
+	public Employee pasteContract(int workplaceId, int contractId,
+			String document, Date startDate, Date endDate, boolean check)
 			throws IllegalArgumentException {
-		
+
 		Connection conn = null;
 		try {
-			
+
 			initFacesContext();
 			conn = getConnection();
 			disableAutoCommit(conn);
-			Employee employee = JooqEmployees.paste(conn, getDomainID(), 
-					workplaceId, contractId, document, 
-					startDate, endDate, check);
+			Employee employee = JooqEmployees.paste(conn, getDomainID(),
+					workplaceId, contractId, document, startDate, endDate,
+					check);
 			commit(conn);
 
 			return employee;
-			
+
 		} catch (SQLException ex) {
 			rollback(conn);
 			ex.printStackTrace();
@@ -1416,7 +1421,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			initFacesContext();
 			conn = getConnection();
-
+			ITService person = JooqITData.getWorkplaceITData(conn, workplaceId);
 			return SQLITData.getWorplaceItTData(conn, workplaceId);
 
 		} catch (SQLException e) {
@@ -2625,8 +2630,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			groups(rs, enterpriseHandler, workplaceHandler);
 
 			Enterprise enterprise = enterpriseHandler.getEnterprise();
-			
-			if ( enterprise == null ) 
+
+			if (enterprise == null)
 				return null;
 
 			List<Activity> activities = getEnterpriseActivities(connection,
@@ -3499,9 +3504,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 						String variableName, String message, Date start,
 						Date end) {
 				}
+
 				@Override
-				public void onRedefinedImplicit(String name, ITimedVariable<?> redefined,
-						ITimedVariable<?> implicit) {
+				public void onRedefinedImplicit(String name,
+						ITimedVariable<?> redefined, ITimedVariable<?> implicit) {
 				}
 
 			}

@@ -720,7 +720,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					AON.AON_ICON_TASK_START, AON.AON_ICON_CMD_BUTTON);
 			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME,
 					AON.AON_ICON_CMD_BUTTON);
-
 		}
 
 		public void setEmployee(Employee employee) {

@@ -1,0 +1,37 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:style>
+	.newButton {
+		float: right;
+	}
+	
+	.legend-icon {
+		margin-top: 3px;
+	}
+	</ui:style>
+
+			<g:FlowPanel styleName="gwt-MenuBar-horizontal"
+				ui:field="buttonBar">
+				<g:HTMLPanel styleName="{style.legend-icon}">
+					<g:Button styleName="gwt-MenuItem aon-icon-view" ui:field="viewButton" />
+					
+					<g:Button ui:field='pasteButton'
+						styleName='aon-editDataTable-button aon-icon-paste {style.newButton}'
+						title="Pegar" />
+					
+					<g:Button ui:field='copyButton'
+						styleName='aon-editDataTable-button aon-icon-copy {style.newButton}'
+						title="Copiar" />
+					
+					<g:Button ui:field='draftButton'
+						styleName='aon-editDataTable-button aon-icon-draft {style.newButton}'
+						title="Enviar convenio a la papelera" />
+					
+					<g:Button ui:field='newButton'
+						styleName='aon-editDataTable-button aon-icon-reset {style.newButton}'
+						title="Nuevo convenio" />
+				</g:HTMLPanel>
+			</g:FlowPanel>
+</ui:UiBinder> 

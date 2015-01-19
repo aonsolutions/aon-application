@@ -46,6 +46,10 @@ public class MainEntryPoint implements EntryPoint {
 				.equalsIgnoreCase(Constants.MAIN_AGREEMENT_ENTRY_POINT)) {
 			MainAgreement mainAgreement = new MainAgreement();
 			mainAgreement.onModuleLoad();
+		}else if (entryPoint
+				.equalsIgnoreCase(Constants.MAIN_TRASH_ENTRY_POINT)) {
+			MainTrash mainTrash = new MainTrash();
+			mainTrash.onModuleLoad();
 		}
 
 	}

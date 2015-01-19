@@ -52,8 +52,7 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 @SuppressWarnings("serial")
 public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		EnterprisesService {
-	
-	
+
 	@Override
 	public Integer getDomain() {
 		try {
@@ -125,8 +124,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 			Integer domainID = getDomainID();
 
-			if (payment.getId() != null
-					&& domainID.equals(payment.getDomain())) {
+			if (payment.getId() != null && domainID.equals(payment.getDomain())) {
 				updatePaymentConcept(connection, payment);
 			} else {
 				int paymentID = insertPaymentConcept(connection, payment,
@@ -284,8 +282,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer domainID = getDomainID();
 			Integer parentDomainID = getParentDomainID();
 
-			return JooqAgreement.getAgreements(connection, offset, limit, domainID,
-					parentDomainID);
+			return JooqAgreement.getAgreements(connection, offset, limit,
+					domainID, parentDomainID);
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -298,6 +296,28 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			}
 			releaseFacesContext();
 		}
+	}
+
+	@Override
+	public void updateAgreementId(Agreement agreement) {
+		Connection connection = null;
+		try {
+			initFacesContext();
+			connection = AonServletUtils.getConnection();
+			Integer domainID = getDomain();
+			JooqAgreement.updateAgreementId(connection, domainID, agreement);
+		} catch(SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+
 	}
 
 	@Override
@@ -359,8 +379,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer domainID = getDomainID();
 			Integer parentDomainID = getParentDomainID();
 
-			return JooqPayments.getPaymentConcepts(connection, offset, limit, domainID,
-					parentDomainID);
+			return JooqPayments.getPaymentConcepts(connection, offset, limit,
+					domainID, parentDomainID);
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -401,11 +421,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Payment payment) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
-			stmt = connection.prepareStatement("DELETE "
-					+ " WHERE " + PaymentConceptColumns.ID + " = ? "
-					);
-			//@formatter:on
+			// @formatter:off
+			stmt = connection.prepareStatement("DELETE " + " WHERE "
+					+ PaymentConceptColumns.ID + " = ? ");
+			// @formatter:on
 
 			stmt.setInt(1, payment.getId());
 
@@ -421,7 +440,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Payment payment) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
+			// @formatter:off
 			stmt = connection.prepareStatement("UPDATE "
 					+ SQLConstants.PAYMENT_CONCEPT + " SET "
 					+ PaymentConceptColumns.CODE + " = ? "
@@ -430,9 +449,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					+ PaymentConceptColumns.EXPRESSION + " = ? "
 					+ PaymentConceptColumns.IRPF_EXPRESSION + " = ? "
 					+ PaymentConceptColumns.QUOTE_EXPRESSION + " = ? "
-					+ " WHERE " + PaymentConceptColumns.ID + " = ? "
-					);
-			//@formatter:on
+					+ " WHERE " + PaymentConceptColumns.ID + " = ? ");
+			// @formatter:on
 
 			stmt.setString(1, payment.getName());
 
@@ -462,7 +480,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
+			// @formatter:off
 			stmt = connection.prepareStatement("INSERT INTO "
 					+ SQLConstants.PAYMENT_CONCEPT + " ( "
 					+ PaymentConceptColumns.CODE + ", "
@@ -471,10 +489,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					+ PaymentConceptColumns.EXPRESSION + ", "
 					+ PaymentConceptColumns.IRPF_EXPRESSION + ", "
 					+ PaymentConceptColumns.QUOTE_EXPRESSION + ", "
-					+ PaymentConceptColumns.DOMAIN 
-					+ " VALUES ( ?,?,?,?,?,?,? ) "
-					, new String[] { PaymentConceptColumns.ID } );
-			//@formatter:on
+					+ PaymentConceptColumns.DOMAIN
+					+ " VALUES ( ?,?,?,?,?,?,? ) ",
+					new String[] { PaymentConceptColumns.ID });
+			// @formatter:on
 
 			stmt.setString(1, payment.getName());
 
@@ -507,14 +525,13 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer oldConceptID, Integer newConceptID) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
+			// @formatter:off
 			stmt = connection.prepareStatement("UPDATE "
 					+ SQLConstants.SYSTEM_PAYMENT + " SET "
 					+ SystemPaymentColumns.PAYMENT_CONCEPT + " = ? "
 					+ " WHERE " + SystemPaymentColumns.DOMAIN + " = ? "
-					+ " AND " + SystemPaymentColumns.PAYMENT_CONCEPT + " = ? "
-					);
-			//@formatter:on
+					+ " AND " + SystemPaymentColumns.PAYMENT_CONCEPT + " = ? ");
+			// @formatter:on
 
 			stmt.setInt(1, newConceptID);
 			stmt.setInt(2, domainID);
@@ -523,14 +540,14 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			stmt.executeUpdate();
 			stmt.close();
 
-			//@formatter:off
+			// @formatter:off
 			stmt = connection.prepareStatement("UPDATE "
 					+ SQLConstants.AGREEMENT_PAYMENT + " SET "
 					+ AgreementPaymentColumns.PAYMENT_CONCEPT + " = ? "
 					+ " WHERE " + AgreementPaymentColumns.DOMAIN + " = ? "
-					+ " AND " + AgreementPaymentColumns.PAYMENT_CONCEPT + " = ? "
-					);
-			//@formatter:on
+					+ " AND " + AgreementPaymentColumns.PAYMENT_CONCEPT
+					+ " = ? ");
+			// @formatter:on
 
 			stmt.setInt(1, newConceptID);
 			stmt.setInt(2, domainID);
@@ -539,14 +556,14 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			stmt.executeUpdate();
 			stmt.close();
 
-			//@formatter:off
+			// @formatter:off
 			stmt = connection.prepareStatement("UPDATE "
 					+ SQLConstants.CONTRACT_PAYMENT + " SET "
 					+ ContractPaymentColumns.PAYMENT_CONCEPT + " = ? "
 					+ " WHERE " + ContractPaymentColumns.DOMAIN + " = ? "
-					+ " AND " + ContractPaymentColumns.PAYMENT_CONCEPT + " = ? "
-					);
-			//@formatter:on
+					+ " AND " + ContractPaymentColumns.PAYMENT_CONCEPT
+					+ " = ? ");
+			// @formatter:on
 
 			stmt.setInt(1, newConceptID);
 			stmt.setInt(2, domainID);
@@ -564,11 +581,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Deduction deduction) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
-			stmt = connection.prepareStatement("DELETE "
-					+ " WHERE " + DeductionConceptColumns.ID + " = ? "
-					);
-			//@formatter:on
+			// @formatter:off
+			stmt = connection.prepareStatement("DELETE " + " WHERE "
+					+ DeductionConceptColumns.ID + " = ? ");
+			// @formatter:on
 
 			stmt.setInt(1, deduction.getId());
 
@@ -584,16 +600,15 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Deduction deduction) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
+			// @formatter:off
 			stmt = connection.prepareStatement("UPDATE "
 					+ SQLConstants.DEDUCTION_CONCEPT + " SET "
 					+ DeductionConceptColumns.CODE + " = ? "
 					+ DeductionConceptColumns.TYPE + " = ? "
 					+ DeductionConceptColumns.DESCRIPTION + " = ? "
-					+ DeductionConceptColumns.EXPRESSION + " = ? "
-					+ " WHERE " + DeductionConceptColumns.ID + " = ? "
-					);
-			//@formatter:on
+					+ DeductionConceptColumns.EXPRESSION + " = ? " + " WHERE "
+					+ DeductionConceptColumns.ID + " = ? ");
+			// @formatter:on
 
 			stmt.setString(1, deduction.getName());
 
@@ -620,17 +635,17 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
-			stmt = connection.prepareStatement("INSERT INTO "
-					+ SQLConstants.DEDUCTION_CONCEPT + " ( "
-					+ DeductionConceptColumns.CODE + ", "
-					+ DeductionConceptColumns.TYPE + ", "
-					+ DeductionConceptColumns.DESCRIPTION + ", "
-					+ DeductionConceptColumns.EXPRESSION + ", "
-					+ DeductionConceptColumns.DOMAIN 
-					+ " VALUES ( ?,?,?,?,? ) "
-					, new String[] { DeductionConceptColumns.ID } );
-			//@formatter:on
+			// @formatter:off
+			stmt = connection.prepareStatement(
+					"INSERT INTO " + SQLConstants.DEDUCTION_CONCEPT + " ( "
+							+ DeductionConceptColumns.CODE + ", "
+							+ DeductionConceptColumns.TYPE + ", "
+							+ DeductionConceptColumns.DESCRIPTION + ", "
+							+ DeductionConceptColumns.EXPRESSION + ", "
+							+ DeductionConceptColumns.DOMAIN
+							+ " VALUES ( ?,?,?,?,? ) ",
+					new String[] { DeductionConceptColumns.ID });
+			// @formatter:on
 
 			stmt.setString(1, deduction.getName());
 
@@ -661,14 +676,14 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
+			// @formatter:off
 			stmt = connection.prepareStatement("UPDATE "
-					+ SQLConstants.SYSTEM_DEDUCTION+ " SET "
+					+ SQLConstants.SYSTEM_DEDUCTION + " SET "
 					+ SystemDeductionColumns.DEDUCTION_CONCEPT + " = ? "
 					+ " WHERE " + SystemDeductionColumns.DOMAIN + " = ? "
-					+ " AND " + SystemDeductionColumns.DEDUCTION_CONCEPT + " = ? "
-					);
-			//@formatter:on
+					+ " AND " + SystemDeductionColumns.DEDUCTION_CONCEPT
+					+ " = ? ");
+			// @formatter:on
 
 			stmt.setInt(1, newConceptID);
 			stmt.setInt(2, domainID);
@@ -677,14 +692,14 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			stmt.executeUpdate();
 			stmt.close();
 
-			//@formatter:off
+			// @formatter:off
 			stmt = connection.prepareStatement("UPDATE "
 					+ SQLConstants.CONTRACT_DEDUCTION + " SET "
 					+ ContractDeductionColumns.DEDUCTION_CONCEPT + " = ? "
 					+ " WHERE " + ContractDeductionColumns.DOMAIN + " = ? "
-					+ " AND " + ContractDeductionColumns.DEDUCTION_CONCEPT + " = ? "
-					);
-			//@formatter:on
+					+ " AND " + ContractDeductionColumns.DEDUCTION_CONCEPT
+					+ " = ? ");
+			// @formatter:on
 
 			stmt.setInt(1, newConceptID);
 			stmt.setInt(2, domainID);
@@ -702,11 +717,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
-			stmt = connection.prepareStatement("DELETE "
-					+ " WHERE " + BonusConceptColumns.ID + " = ? "
-					);
-			//@formatter:on
+			// @formatter:off
+			stmt = connection.prepareStatement("DELETE " + " WHERE "
+					+ BonusConceptColumns.ID + " = ? ");
+			// @formatter:on
 
 			stmt.setInt(1, bonus.getId());
 
@@ -722,15 +736,14 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
+			// @formatter:off
 			stmt = connection.prepareStatement("UPDATE "
 					+ SQLConstants.BONUS_CONCEPT + " SET "
 					+ BonusConceptColumns.TYPE + " = ? "
 					+ BonusConceptColumns.DESCRIPTION + " = ? "
-					+ BonusConceptColumns.EXPRESSION + " = ? "
-					+ " WHERE " + BonusConceptColumns.ID + " = ? "
-					);
-			//@formatter:on
+					+ BonusConceptColumns.EXPRESSION + " = ? " + " WHERE "
+					+ BonusConceptColumns.ID + " = ? ");
+			// @formatter:on
 
 			Bonus.Type type = bonus.getType();
 			if (type != null)
@@ -755,16 +768,15 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
+			// @formatter:off
 			stmt = connection.prepareStatement("INSERT INTO "
 					+ SQLConstants.BONUS_CONCEPT + " ( "
 					+ BonusConceptColumns.TYPE + ", "
 					+ BonusConceptColumns.DESCRIPTION + ", "
 					+ BonusConceptColumns.EXPRESSION + ", "
-					+ BonusConceptColumns.DOMAIN 
-					+ " VALUES ( ?,?,?,? ) "
-					, new String[] { DeductionConceptColumns.ID } );
-			//@formatter:on
+					+ BonusConceptColumns.DOMAIN + " VALUES ( ?,?,?,? ) ",
+					new String[] { DeductionConceptColumns.ID });
+			// @formatter:on
 
 			Bonus.Type type = bonus.getType();
 			if (type != null)
@@ -792,14 +804,13 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer oldConceptID, Integer newConceptID) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
+			// @formatter:off
 			stmt = connection.prepareStatement("UPDATE "
 					+ SQLConstants.CONTRACT_BONUS + " SET "
-					+ ContractBonusColumns.BONUS_CONCEPT + " = ? "
-					+ " WHERE " + ContractBonusColumns.DOMAIN + " = ? "
-					+ " AND " + ContractBonusColumns.BONUS_CONCEPT + " = ? "
-					);
-			//@formatter:on
+					+ ContractBonusColumns.BONUS_CONCEPT + " = ? " + " WHERE "
+					+ ContractBonusColumns.DOMAIN + " = ? " + " AND "
+					+ ContractBonusColumns.BONUS_CONCEPT + " = ? ");
+			// @formatter:on
 
 			stmt.setInt(1, newConceptID);
 			stmt.setInt(2, domainID);
@@ -818,7 +829,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
+			// @formatter:off
 			stmt = connection.prepareStatement("SELECT * FROM "
 					+ SQLConstants.ENTERPRISE + ", " + SQLConstants.REGISTRY
 					+ ", " + SQLConstants.DOMAIN + " WHERE "
@@ -829,10 +840,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					+ "." + DomainColumns.ID + " AND ( " + SQLConstants.DOMAIN
 					+ "." + DomainColumns.ID + " = ? " + " OR "
 					+ SQLConstants.DOMAIN + "." + DomainColumns.PARENT
-					+ " = ? " + ")"
-					+ " ORDER BY " + SQLConstants.REGISTRY + "." + RegistryColumns.NAME
-					+ " LIMIT ?, ?");
-			//@formatter:on
+					+ " = ? " + ")" + " ORDER BY " + SQLConstants.REGISTRY
+					+ "." + RegistryColumns.NAME + " LIMIT ?, ?");
+			// @formatter:on
 
 			stmt.setInt(1, domainId);
 			stmt.setInt(2, domainId);
@@ -869,15 +879,20 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
-			stmt = connection.prepareStatement("SELECT *" + 
-					" FROM " + SQLConstants.BONUS_CONCEPT+ 
-					" WHERE " + BonusConceptColumns.DOMAIN + " =  ? " + 
-					" OR " + BonusConceptColumns.DOMAIN + " = ? " + 
-					(parentDomainID != null ? " OR " + BonusConceptColumns.DOMAIN + " = ? " : "") +
-					" ORDER BY " + BonusConceptColumns.DESCRIPTION 
-					);
-			//@formatter:on
+			// @formatter:off
+			stmt = connection.prepareStatement("SELECT *"
+					+ " FROM "
+					+ SQLConstants.BONUS_CONCEPT
+					+ " WHERE "
+					+ BonusConceptColumns.DOMAIN
+					+ " =  ? "
+					+ " OR "
+					+ BonusConceptColumns.DOMAIN
+					+ " = ? "
+					+ (parentDomainID != null ? " OR "
+							+ BonusConceptColumns.DOMAIN + " = ? " : "")
+					+ " ORDER BY " + BonusConceptColumns.DESCRIPTION);
+			// @formatter:on
 
 			stmt.setInt(1, domainID);
 			stmt.setInt(2, SQLPayrollConstants.DOMAIN_ZERO);
@@ -914,22 +929,26 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-
 	private static List<Deduction> getDeductionConcepts(Connection connection,
 			int offset, int limit, Integer domainID, Integer parentDomainID)
 			throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
-			stmt = connection.prepareStatement("SELECT *" + 
-					" FROM " + SQLConstants.DEDUCTION_CONCEPT+ 
-					" WHERE " + DeductionConceptColumns.DOMAIN + " =  ? " + 
-					" OR " + DeductionConceptColumns.DOMAIN + " = ? " + 
-					(parentDomainID != null ? " OR " + DeductionConceptColumns.DOMAIN + " = ? " : "") +
-					" ORDER BY " + DeductionConceptColumns.DESCRIPTION 
-					);
-			//@formatter:on
+			// @formatter:off
+			stmt = connection.prepareStatement("SELECT *"
+					+ " FROM "
+					+ SQLConstants.DEDUCTION_CONCEPT
+					+ " WHERE "
+					+ DeductionConceptColumns.DOMAIN
+					+ " =  ? "
+					+ " OR "
+					+ DeductionConceptColumns.DOMAIN
+					+ " = ? "
+					+ (parentDomainID != null ? " OR "
+							+ DeductionConceptColumns.DOMAIN + " = ? " : "")
+					+ " ORDER BY " + DeductionConceptColumns.DESCRIPTION);
+			// @formatter:on
 
 			stmt.setInt(1, domainID);
 			stmt.setInt(2, SQLPayrollConstants.DOMAIN_ZERO);
@@ -943,8 +962,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				Deduction deduction = new Deduction();
 
 				deduction.setId(rs.getInt(DeductionConceptColumns.ID));
-				deduction
-						.setDomain(rs.getInt(DeductionConceptColumns.DOMAIN));
+				deduction.setDomain(rs.getInt(DeductionConceptColumns.DOMAIN));
 				deduction.setName(rs.getString(DeductionConceptColumns.CODE));
 				deduction.setDescription(rs
 						.getString(DeductionConceptColumns.DESCRIPTION));
@@ -986,19 +1004,68 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 			// We asume that one enterprise one domain. This way SELECT it's
 			// more clear.
-			//@formatter:off
-			String sql = "SELECT" 
-					+ " MONTH(" + SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + monthCol 
-					+ ", YEAR(" + SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + yearCol
-					+ ", COUNT( IF(" + SALARY + "." + SalaryColumns.TYPE + "= ? " +",1,NULL)) " +  salariesCol
-					+ ", COUNT( IF(" + SALARY + "." + SalaryColumns.TYPE + "= ? " +",1,NULL)) " +  extrasCol
-					+ ", COUNT( IF(" + SALARY + "." + SalaryColumns.TYPE + "= ? " +",1,NULL)) " +  settlesCol
-					+ ", COUNT( IF(" + SALARY + "." + SalaryColumns.TYPE + "= ? " +",1,NULL)) " +  delaysCol
-					+ " FROM " + ENTERPRISE + ", " + SALARY   
-					+ " WHERE " + ENTERPRISE + "." + EnterpriseColumns.DOMAIN + " = " + SALARY + "." + SalaryColumns.DOMAIN 
-					+ ( enterpriseIds.size() == 0 ? "" : " AND " + ENTERPRISE + "." + EnterpriseColumns.REGISTRY + " IN ( " + StringUtils.reduce(Collections.nCopies(enterpriseIds.size(), "?"), ", ") + " )")
+			// @formatter:off
+			String sql = "SELECT" + " MONTH("
+					+ SALARY
+					+ "."
+					+ SalaryColumns.CHARGE_DATE
+					+ ") "
+					+ monthCol
+					+ ", YEAR("
+					+ SALARY
+					+ "."
+					+ SalaryColumns.CHARGE_DATE
+					+ ") "
+					+ yearCol
+					+ ", COUNT( IF("
+					+ SALARY
+					+ "."
+					+ SalaryColumns.TYPE
+					+ "= ? "
+					+ ",1,NULL)) "
+					+ salariesCol
+					+ ", COUNT( IF("
+					+ SALARY
+					+ "."
+					+ SalaryColumns.TYPE
+					+ "= ? "
+					+ ",1,NULL)) "
+					+ extrasCol
+					+ ", COUNT( IF("
+					+ SALARY
+					+ "."
+					+ SalaryColumns.TYPE
+					+ "= ? "
+					+ ",1,NULL)) "
+					+ settlesCol
+					+ ", COUNT( IF("
+					+ SALARY
+					+ "."
+					+ SalaryColumns.TYPE
+					+ "= ? "
+					+ ",1,NULL)) "
+					+ delaysCol
+					+ " FROM "
+					+ ENTERPRISE
+					+ ", "
+					+ SALARY
+					+ " WHERE "
+					+ ENTERPRISE
+					+ "."
+					+ EnterpriseColumns.DOMAIN
+					+ " = "
+					+ SALARY
+					+ "."
+					+ SalaryColumns.DOMAIN
+					+ (enterpriseIds.size() == 0 ? "" : " AND "
+							+ ENTERPRISE
+							+ "."
+							+ EnterpriseColumns.REGISTRY
+							+ " IN ( "
+							+ StringUtils.reduce(Collections.nCopies(
+									enterpriseIds.size(), "?"), ", ") + " )")
 					+ " GROUP BY 1, 2" + " ORDER BY 2 , 1 ASC ";
-			//@formatter:on
+			// @formatter:on
 
 			stmt = connection.prepareStatement(sql);
 			int parameterIndex = 1;
@@ -1049,6 +1116,5 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 	}
-	
 
 }

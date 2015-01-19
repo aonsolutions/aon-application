@@ -402,6 +402,16 @@
 	background-position: left center;
 }
 
+@sprite .aon-icon-cleartrash {
+	gwt-image: 'aonIconClearTrash';
+	background-position: left center;
+}
+
+@sprite .aon-icon-deletetrash {
+	gwt-image: 'aonIconDeleteTrash';
+	background-position: left center;
+}
+
 @sprite .aon-icon-view {
 	float: right;
 	gwt-image: 'view';

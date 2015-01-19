@@ -140,4 +140,13 @@ public class EnterprisesServiceAsyncDecorator implements
 				new AsyncCallbackWrapper<List<Cost>>(callback));
 	}
 
+	@Override
+	public void updateAgreementId(Agreement agreement, 
+			AsyncCallback<Void> callback) {
+		AON.start();
+		enterprisesServiceAsync.updateAgreementId(agreement, 
+				new AsyncCallbackWrapper<Void>(callback));
+		
+	}
+
 }
