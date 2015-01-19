@@ -1007,8 +1007,8 @@ public class DashboardController implements Serializable {
 			for (Record3<Integer, String, String> record3 : category) {
 				if (categories.containsKey(record3.value1())){
 					DashboardDocs a = categories.get(record3.value1());
-
-					if (a.getsize()>0){
+					
+					if (a.getsize()>=0){
 						types.add(a);	
 						free= free - a.getsize();
 					}
