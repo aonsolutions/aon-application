@@ -780,9 +780,9 @@ public class Model390 extends MainEntryPoint {
 			if (AonStringUtils.isEmpty(m390.getFirstSurname())) {
 				throw new IllegalArgumentException("Para personas f\u00EDsicas, el primer apellido es obligatorio (Apartado 0)");
 			}
-			if (AonStringUtils.isEmpty(m390.getSecondSurname())) {
-				throw new IllegalArgumentException("Para personas f\u00EDsicas, el segundo apellido es obligatorio (Apartado 0)");
-			}
+//			if (AonStringUtils.isEmpty(m390.getSecondSurname())) {
+//				throw new IllegalArgumentException("Para personas f\u00EDsicas, el segundo apellido es obligatorio (Apartado 0)");
+//			}
 		} else {
 			if (AonStringUtils.isEmpty(m390.getName())) {
 				throw new IllegalArgumentException("No se ha indicado el nombre del declarante. (Apartado 0)");
