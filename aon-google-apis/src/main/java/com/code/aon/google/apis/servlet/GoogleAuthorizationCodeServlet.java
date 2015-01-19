@@ -3,6 +3,8 @@ package com.code.aon.google.apis.servlet;
 
 import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.getAuth2CallbackUri;
 import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.getPrincipalShortName;
+import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.getScheme;
+import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.getServerPort;
 import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.newFlow;
 
 import java.io.IOException;
@@ -43,7 +45,8 @@ public class GoogleAuthorizationCodeServlet extends
 	protected String getRedirectUri(HttpServletRequest req)
 			throws ServletException, IOException {
 		String key = req.getServerName();
-		String action= req.getScheme()+"://"+key+":"+req.getServerPort()+req.getContextPath()+"/j_security_check"; 
+		Integer port = getServerPort(req);
+		String action= getScheme(req)+"://"+key+ ( port != null ? ":" + port: "" )+req.getContextPath()+"/j_security_check"; 
 		name=key;
 		act=action;
 		if (!SessionInfo.table.containsKey(key)){
