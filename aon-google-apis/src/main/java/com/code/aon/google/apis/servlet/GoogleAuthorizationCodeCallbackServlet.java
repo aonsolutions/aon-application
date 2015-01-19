@@ -4,9 +4,12 @@ import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.g
 import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.getHttpTransport;
 import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.getJsonFactory;
 import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.getPrincipalShortName;
+import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.getScheme;
+import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.getServerPort;
 import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.newFlow;
 
 import java.io.IOException;
+import java.rmi.server.ServerNotActiveException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,6 +18,7 @@ import java.sql.SQLException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
@@ -30,6 +34,7 @@ import com.code.aon.pool.ConnectionInfo;
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.servlet.auth.oauth2.AbstractAuthorizationCodeCallbackServlet;
+import com.google.api.client.http.GenericUrl;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.oauth2.Oauth2;
@@ -59,17 +64,57 @@ public class GoogleAuthorizationCodeCallbackServlet extends
 		String username = getUserName(email, key);
 		return username;
 	}
+	
+	@Override
+	protected void service(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		
+		String reqServerName = req.getServerName();
+		String authServerName = req.getParameter("state").substring(0, req.getParameter("state").indexOf("&"));
+
+		if (!reqServerName.equalsIgnoreCase(authServerName)) {
+			
+			String redirect = getAuth2CallbackUri(req, authServerName) + "?" + req.getQueryString() ;
+			resp.sendRedirect(redirect);
+			return;
+		}
+
+		HttpServletRequestWrapper redirectReq = new HttpServletRequestWrapper(
+				req) {
+			@Override
+			public StringBuffer getRequestURL() {
+				String serverName = req.getServerName();
+
+				return new StringBuffer(
+						super.getRequestURL()
+								.toString()
+								.replaceFirst(serverName.substring(0,
+												serverName.indexOf('.')),
+										"oauth2callback"));
+			}
+			
+			@Override
+			public String getServerName() {
+				return "oauth2callback" + req.getServerName().substring(req.getServerName().indexOf('.'));
+			}
+		};
+
+		super.service(redirectReq, resp);
+	}
+	
 
 	@Override
 	protected void onSuccess(HttpServletRequest req, HttpServletResponse resp,
 			Credential credential) throws ServletException, IOException {
+		
+		int pos = req.getParameter("state").indexOf("&");
+		String key = req.getParameter("state").substring(0, pos);
+		String statepass = req.getParameter("state").substring(pos + 1);
+
 
 		super.onSuccess(req, resp, credential);
 
 		String username = null;
-		int pos = req.getParameter("state").indexOf("&");
-		String key = req.getParameter("state").substring(0, pos);
-		String statepass = req.getParameter("state").substring(pos + 1);
 
 		Oauth2 oauth2 = new Oauth2.Builder(getHttpTransport(),
 				getJsonFactory(), credential).setApplicationName(
@@ -84,7 +129,7 @@ public class GoogleAuthorizationCodeCallbackServlet extends
 
 		Gmail gmail = new Gmail.Builder(getHttpTransport(), getJsonFactory(),
 				credential).setApplicationName("AON SOLUTIONS").build();
-		
+
 		String email = oauth2.userinfo().v2().me().get().execute().getEmail();
 		System.out.println("EMAIL = " + email);
 
@@ -119,10 +164,11 @@ public class GoogleAuthorizationCodeCallbackServlet extends
 
 				if (!SessionInfo.table.get(key).getUsers()
 						.containsKey(username)) {
-					SessionInfo.table.get(key).getUsers().put(username, su);
+					SessionInfo.table.get(key).getUsers()
+							.put(username, su);
 				} else {
-					SessionInfo.table.get(key).getUsers().get(username)
-							.getGoogleUsers().put(email, gu);
+					SessionInfo.table.get(key).getUsers()
+							.get(username).getGoogleUsers().put(email, gu);
 				}
 			}
 
@@ -140,16 +186,26 @@ public class GoogleAuthorizationCodeCallbackServlet extends
 						+ Utils.PasswordGenerator.NUMEROS, 10);
 
 		credential.getClientAuthentication().toString();
-	/*	RequestDispatcher dispatcher = getServletContext()
-				.getRequestDispatcher("/login/popupclose.jsp");
-		req.setAttribute("name", key);
-		req.setAttribute("act", SessionInfo.table.get(key).getAction());
-		req.setAttribute("username", getUsername(email, statepass));
-		req.setAttribute("password", getPassword());
-*/
-		resp.sendRedirect(req.getRequestURL().append("?")
-				.append("name="+key+"&act="+SessionInfo.table.get(key).getAction()+"&username="+ getUsername(email, statepass)+"&password="+getPassword()).toString()
-				.replace(req.getServerName(), key).replace(req.getServletPath(), "/LoginPopupClose/&"+email));
+		/*
+		 * RequestDispatcher dispatcher = getServletContext()
+		 * .getRequestDispatcher("/login/popupclose.jsp");
+		 * req.setAttribute("name", key); req.setAttribute("act",
+		 * SessionInfo.table.get(key).getAction()); req.setAttribute("username",
+		 * getUsername(email, statepass)); req.setAttribute("password",
+		 * getPassword());
+		 */
+		
+		Integer port = getServerPort(req);
+		GenericUrl url = new GenericUrl(getScheme(req) + "://" + key
+				+ (port != null ? ":" + port : "" )+ req.getContextPath()
+				+ "/LoginPopupClose/&" + email +
+				"?" + "name=" + key 
+				+ "&act=" + SessionInfo.table.get(key).getAction()
+				+ "&username=" + getUsername(email, statepass)
+				+ "&password=" + getPassword().toString()				
+		);
+		
+		resp.sendRedirect(url.build());
 
 	}
 
