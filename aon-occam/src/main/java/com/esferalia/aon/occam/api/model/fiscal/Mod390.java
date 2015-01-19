@@ -619,6 +619,16 @@ public class Mod390 implements Serializable {
 		public boolean isReadonly() {
 			return readonly;
 		}
+		public boolean isSurcharge() {
+			return (this == K10_05
+				|| this == K10_1
+				|| this == K10_14
+				|| this == K10_4
+				|| this == K10_52
+				|| this == K10_175
+				|| this == K11
+				|| this == B102);
+		}
 	}
 
 	public static enum Mod390DetailKeyGroup implements Serializable {
