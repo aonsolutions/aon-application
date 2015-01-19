@@ -1957,6 +1957,7 @@ public class Documents extends Composite implements EntryPoint {
         					}
         					
         					final TextBox tb1 = new TextBox();tb1.setStyleName("aon-inputText");
+        					tb1.setWidth("100%");
         					tb1.addChangeHandler(new ChangeHandler() {
         						@Override
         						public void onChange(ChangeEvent event) {
@@ -1994,6 +1995,7 @@ public class Documents extends Composite implements EntryPoint {
                 grid.setWidget(2, 1, mupload);
                 
                 final TextBox tb1 = new TextBox();tb1.setStyleName("aon-inputText");
+                tb1.setWidth("100%");
         		tb1.addChangeHandler(new ChangeHandler() {
         			@Override
         			public void onChange(ChangeEvent event) {

@@ -280,6 +280,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 					}
 					
 					final TextBox tb1 = new TextBox();tb1.setStyleName("aon-inputText");
+					tb1.setWidth("100%");
 					tb1.addChangeHandler(new ChangeHandler() {
 						@Override
 						public void onChange(ChangeEvent event) {
@@ -363,10 +364,12 @@ public abstract class DocumentsDialog extends CustomDialog {
 		});
 		
 		tb0.setStyleName("aon-inputText");
+		tb0.setWidth("100%");
 		grid.setWidget(0, 0, new Label("Empresa"));
 		grid.setWidget(0, 1, tb0);
 		}
 		final TextBox tb1 = new TextBox();tb1.setStyleName("aon-inputText");
+		tb1.setWidth("100%");
 		tb1.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -445,6 +448,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 		grid.setCellSpacing(0);
 		
 		final TextBox tb1 = new TextBox();tb1.setStyleName("aon-inputText");
+		tb1.setWidth("100%");
 		tb1.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -545,6 +549,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 		
 		if(!dialog.getMultiple()){
 			TextBox tb1 = new TextBox();tb1.setStyleName("aon-inputText");
+			tb1.setWidth("100%");
 			grid.setWidget(0, 0, new Label("Descripci\u00f3n"));
 			tb1.setText(fi.getTitle());
 			grid.setWidget(0, 1, tb1);
@@ -849,11 +854,13 @@ public abstract class DocumentsDialog extends CustomDialog {
 			
 		});
 		tb0.setStyleName("aon-inputText");
+		tb0.setWidth("100%");
 		grid.setWidget(0, 0, new Label("Empresa"));
 		grid.setWidget(0, 1, tb0);
 		}
 		TextBox tb1 = new TextBox();
 		tb1.setStyleName("aon-inputText");
+		tb1.setWidth("100%");
 		grid.setWidget(1, 0, new Label("Descripci\u00f3n"));
 		grid.setWidget(1, 1, tb1);
 		if(confidentialUserDialog){
@@ -979,6 +986,7 @@ public abstract class DocumentsDialog extends CustomDialog {
 		grid.setCellSpacing(0);
 		TextBox email = new TextBox();
 		email.setStyleName("aon-inputText");
+		email.setWidth("100%");
 		grid.setWidget(0, 0, new Label("Email"));
 		grid.setWidget(0, 1, email);
 		
