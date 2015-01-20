@@ -86,7 +86,7 @@ public class Mod390Print extends HttpServlet {
 				+ "&XFI=" + encodedFile
 				+ "&FIN=" 
 				+ "&MOD=390" 
-				+ "&PRG=PTLINK5N" 
+				+ "&PRG=PTLINK5N"
 				+ "&EJF=2014";
 
 		// PRODUCCION String request = "https://www2.agenciatributaria.gob.es/es13/l/zi21zilk0021";
@@ -94,7 +94,6 @@ public class Mod390Print extends HttpServlet {
 		String request = "https://www6.aeat.es/es13/l/zi21zilk0021";
 
 		URL url = new URL(request);
-
 		SSLContext ctx = SSLContext.getInstance("TLS");
 		ctx.init(new KeyManager[0],
 				new TrustManager[] { new DefaultTrustManager() },
@@ -103,7 +102,6 @@ public class Mod390Print extends HttpServlet {
 
 		HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 		connection.setHostnameVerifier(new HostnameVerifier() {
-
 			@Override
 			public boolean verify(String arg0, SSLSession arg1) {
 				return true;
@@ -113,11 +111,9 @@ public class Mod390Print extends HttpServlet {
 		connection.setDoInput(true);
 		connection.setInstanceFollowRedirects(false);
 		connection.setRequestMethod("POST");
-		connection.setRequestProperty("Content-Type",
-				"application/x-www-form-urlencoded");
+		connection.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
 		connection.setRequestProperty("charset", "ISO-8859-1");
-		connection.setRequestProperty("Content-Length",
-				"" + Integer.toString(urlParameters.getBytes().length));
+		connection.setRequestProperty("Content-Length","" + Integer.toString(urlParameters.getBytes().length));
 		connection.setUseCaches(false);
 
 		DataOutputStream wr = new DataOutputStream(connection.getOutputStream());

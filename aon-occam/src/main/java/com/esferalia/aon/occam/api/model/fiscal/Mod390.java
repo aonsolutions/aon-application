@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Map;
 
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -712,6 +713,52 @@ public class Mod390 implements Serializable {
 			return keys;
 		}
 	}
+	
+	public static class Prorrata implements Serializable {
+		private String activity;
+		private String cnae;
+		private double amount;
+		private double amountWithRight;
+		private double percent;
+		private String type;
+		
+		public String getActivity() {
+			return activity;
+		}
+		public void setActivity(String activity) {
+			this.activity = activity;
+		}
+		public String getCnae() {
+			return cnae;
+		}
+		public void setCnae(String cnae) {
+			this.cnae = cnae;
+		}
+		public double getAmount() {
+			return amount;
+		}
+		public void setAmount(double amount) {
+			this.amount = amount;
+		}
+		public double getAmountWithRight() {
+			return amountWithRight;
+		}
+		public void setAmountWithRight(double amountWithRight) {
+			this.amountWithRight = amountWithRight;
+		}
+		public double getPercent() {
+			return percent;
+		}
+		public void setPercent(double percent) {
+			this.percent = percent;
+		}
+		public String getType() {
+			return type;
+		}
+		public void setType(String type) {
+			this.type = type;
+		}
+	}
 
 	private Integer id;
 	private int domain;
@@ -833,6 +880,8 @@ public class Mod390 implements Serializable {
 	private double box655;
 	private double box656;
 	private double box657;
+	
+	private ArrayList<Prorrata> prorratas = new ArrayList<Mod390.Prorrata>();
 	
 	public Integer getId() {
 		return id;
@@ -1476,6 +1525,12 @@ public class Mod390 implements Serializable {
 	}
 	public void setBox657(double box657) {
 		this.box657 = box657;
+	}
+	public ArrayList<Prorrata> getProrratas() {
+		return prorratas;
+	}
+	public void setProrratas(ArrayList<Prorrata> prorratas) {
+		this.prorratas = prorratas;
 	}
 
 	private static final Mod390DetailKey[] K09_FORMULA = new Mod390DetailKey[]{ Mod390DetailKey.K00_04

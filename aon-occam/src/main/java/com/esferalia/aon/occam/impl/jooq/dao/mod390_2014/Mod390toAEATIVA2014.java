@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod390.Address;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.FarmerRegimeActivity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390DetailKey;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390.Prorrata;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.SimpliedRegimeActivity;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.Administraciones;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.DatEstadisticos;
@@ -21,8 +22,10 @@ import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.DatIdent;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.Devengo;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.LiqAnual;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.OpEspecificas;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.Prorratas;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.OpEspecificas.AdqCriterioCajaBase;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.OpEspecificas.EntregasCriterioCajaBase;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.Prorratas.Pro;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegGeneral;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegSimplificado;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.ResLiquidaciones;
@@ -139,8 +142,25 @@ public class Mod390toAEATIVA2014 {
 		iva.setVolOperaciones(getVolOperaciones(mod390));
 		iva.setOpEspecificas(getOpEspecificas(mod390));
 		
-		// TODO
-		// iva.prorratas
+		// PRORRATAS
+		if (mod390.getProrratas() != null && mod390.getProrratas().size() > 0) {
+			Prorratas prorratas = new Prorratas();
+			for (Prorrata pro : mod390.getProrratas()) {
+				if (AonStringUtils.isNotBlank( pro.getCnae())) {
+					Pro p = new Pro();
+					p.setActividad(  pro.getActivity()  );
+					p.setCNAE( pro.getCnae() );
+					p.setImpOper( ensureBigDecimal( pro.getAmount() ) );
+					p.setImpOperConDrchoDed( ensureBigDecimal( pro.getAmountWithRight() ));
+					p.setPorc( ensureBigDecimal( pro.getPercent() ));
+					p.setTipo( pro.getType() );
+					prorratas.getPro().add(p);	
+				}
+			}
+			if (!prorratas.getPro().isEmpty())
+				iva.setProrratas(prorratas);
+		}
+
 		// TODO
 		// iva.ivaDeducibleGrupo1
 		// TODO
