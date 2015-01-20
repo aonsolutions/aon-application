@@ -583,7 +583,9 @@ public class Mod390 implements Serializable {
 		 ,B228	 (228,   0.00, null)
 		 ,B106	 (106,   0.00, null)
 		 ,B107	 (107,   0.00, null)
-		 ,B108	 (108,   0.00, null)
+		 ,B108	 (108,   0.00, null) 
+		 ,B654	 (654,   0.00, null)
+		 ,B656	 (654,   0.00, null)
 		 ;
 		 
 		private int box;

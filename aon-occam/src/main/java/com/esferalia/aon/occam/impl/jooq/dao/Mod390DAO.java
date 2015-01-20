@@ -1,6 +1,8 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
+import static com.esferalia.aon.jooq.tables.FinanceTracking.FINANCE_TRACKING;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.FsModel390.FS_MODEL390;
 import static com.esferalia.aon.jooq.tables.FsModelDetail.FS_MODEL_DETAIL;
@@ -622,11 +624,12 @@ public class Mod390DAO {
 		Field<BigDecimal> sumBase = DSL.sum(INVOICE_DETAIL.TAXABLE_BASE).as(INVOICE_DETAIL.TAXABLE_BASE.getName());
 		
 		Field<Double> invoiceTaxQuota = DSL.round( (INVOICE_DETAIL.TAXABLE_BASE.mul(INVOICE_TAX.PERCENTAGE)).div(100), 2);
-		Field<BigDecimal> sumQuotaOp = DSL.sum(DSL.decode()
+		Field<Double> invoiceTaxQuotaDecode = DSL.decode()
 				.when(INVOICE_TAX.QUOTA.notEqual(0.0),INVOICE_TAX.QUOTA)
-				.when(INVOICE_TAX.QUOTA.equal(0.0), invoiceTaxQuota));		
+				.when(INVOICE_TAX.QUOTA.equal(0.0), invoiceTaxQuota);
+		Field<BigDecimal> sumQuotaOp = DSL.sum(invoiceTaxQuotaDecode);		
 
-		Field<Double> invoiceSurchargeQuota = DSL.round( (INVOICE_DETAIL.TAXABLE_BASE.mul(INVOICE_TAX.SURCHARGE)).div(100), 2);
+		Field<Double> invoiceSurchargeQuota = DSL.round( (INVOICE_DETAIL.TAXABLE_BASE.mul(INVOICE_TAX.SURCHARGE)).div(100), 4);
 		Field<BigDecimal> sumSurchargeQuotaOp = DSL.sum(DSL.decode()
 				.when(INVOICE_TAX.SURCHARGE_QUOTA.notEqual(0.0),INVOICE_TAX.SURCHARGE_QUOTA)
 				.when(INVOICE_TAX.SURCHARGE_QUOTA.equal(0.0), invoiceSurchargeQuota));		
@@ -702,66 +705,161 @@ public class Mod390DAO {
 									double q = key.isSurcharge()?surchargeQuota:quota; 
 									detail.setQuota( AonMathUtils.round(detail.getQuota()  + q));
 									detail.setTaxableBase( AonMathUtils.round( detail.getTaxableBase() + taxableBase));
-/*
-									if (vc.isSurcharge() && vc.isNationalSales()) {
-										Mod390DetailKey surchargeKey = null;
-										if (percentage == 0.5) surchargeKey = Mod390DetailKey.K10_05;
-										else if (percentage == 1) surchargeKey = Mod390DetailKey.K10_1;
-										else if (percentage == 1.4) surchargeKey = Mod390DetailKey.K10_14;
-										else if (percentage == 4) surchargeKey = Mod390DetailKey.K10_4;
-										else if (percentage == 5.2) surchargeKey = Mod390DetailKey.K10_52;
-										else if (percentage == 1.75) surchargeKey = Mod390DetailKey.K10_175;
-										if (surchargeKey != null) {
-											detail = map.get(key);
-											if (detail == null) {
-												detail = new Mod390Detail();
-												map.put(key, detail );
-											}
-											detail.setKey(surchargeKey);
-											detail.setPercent(surchargePercent);
-											detail.setQuota(AonMathUtils.round(detail.getQuota()  + surchargeQuota));
-											detail.setTaxableBase( AonMathUtils.round( detail.getTaxableBase() + taxableBase) );
-											
-											detail = map.get(Mod390DetailKey.B102);
-											if (detail == null) {
-												detail = new Mod390Detail();
-												map.put(key, detail );
-											}
-											detail.setKey(Mod390DetailKey.B102);
-											detail.setQuota( AonMathUtils.round(detail.getQuota()  + surchargeQuota) );
-											detail.setTaxableBase( AonMathUtils.round( detail.getTaxableBase() + taxableBase) );
-										}
-									}
-*/
 								}
 							}
 						}
 				);
+		
+		Field<Double> financeTrackingAmountDecode = DSL.decode()
+				.when(FINANCE_TRACKING.TYPE.equal((byte) 0), FINANCE_TRACKING.AMOUNT.mul(-1))
+				.otherwise(FINANCE_TRACKING.AMOUNT);
+		
+		ctx.getDslContext().select(INVOICE_TAX.ID
+				,INVOICE.TYPE
+				,INVOICE.RECTIFICATION_TYPE
+				,INVOICE.SERVICE
+				,INVOICE.TRANSACTION
+				,INVOICE.INVESTMENT
+				,INVOICE_TAX.PERCENTAGE
+				,INVOICE_TAX.SURCHARGE
+				,INVOICE_TAX.VAT_DEDUCTION_TYPE
+				,INVOICE.TAXABLE_BASE
+				,INVOICE.VAT_QUOTA
+				,INVOICE.RETENTION_QUOTA
+				,INVOICE.TOTAL
+				,INVOICE_TAX.BASE
+				,invoiceTaxQuotaDecode
+				,sumSurchargeQuotaOp
+				,financeTrackingAmountDecode)
+				.from(FINANCE_TRACKING)
+				.join(FINANCE).on(FINANCE_TRACKING.FINANCE.equal(FINANCE.ID))
+				.join(INVOICE).on(FINANCE.INVOICE.equal(INVOICE.ID))
+				.join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
+				.join(INVOICE_TAX).on(INVOICE_DETAIL.ID.equal(INVOICE_TAX.INVOICE_DETAIL))
+				.where(FINANCE_TRACKING.DOMAIN.equal(mod390.getDomain()))
+				.and(FINANCE_TRACKING.TRACKING_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
+				.and(FINANCE_TRACKING.TYPE.in((byte)1, (byte)2))
+				.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
+				// Lo anterior al 2014 no interesa. Ese dia empezo la aplicación del regimen de caja.
+				.and(INVOICE.TAX_DATE.greaterOrEqual( AonDateUtils.toSql(AonDateUtils.getYearFirstDay(2014))))  
+				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	// No Criterio de Caja.
+				.groupBy(INVOICE_TAX.ID
+						,INVOICE_TAX.PERCENTAGE
+						,INVOICE_TAX.SURCHARGE
+						,INVOICE_TAX.VAT_DEDUCTION_TYPE)
+				.fetch()
+				.stream()
+				.forEach(
+						record -> {
+							VatContext vc = new VatContext();
+							vc.setInvoiceType(InvoiceType.values()[record.getValue(INVOICE.TYPE)]);
+							vc.setRectificationType(RectificationType.values()[record.getValue(INVOICE.RECTIFICATION_TYPE)]);
+							vc.setService(record.getValue(INVOICE.SERVICE) == 1);
+							vc.setTransaction(InvoiceTransactionType.values()[record.getValue(INVOICE.TRANSACTION)]);
+							vc.setInvestment(record.getValue(INVOICE.INVESTMENT) == 1);
+							vc.setAccrualRegime(true);
+							
+							double surchargePercent = record.getValue(INVOICE_TAX.SURCHARGE).doubleValue();
+							vc.setSurchargePercent(surchargePercent);
+							boolean surcharge = (surchargePercent > 0);
+							vc.setSurcharge(surcharge);
+							
+							double taxableBase = record.getValue(INVOICE_TAX.BASE);
+							double quota = record.getValue(invoiceTaxQuotaDecode);
+							double surchargeQuota = record.getValue(sumSurchargeQuotaOp).doubleValue();
+							double percentage = record.getValue(INVOICE_TAX.PERCENTAGE); 
+							vc.setPercentage(percentage);
+							double invoiceBase = record.getValue(INVOICE.TAXABLE_BASE);
+							double invoiceVat  = record.getValue(INVOICE.VAT_QUOTA);
+							double invoiceRetention = record.getValue(INVOICE.RETENTION_QUOTA);
+							double invoiceTotal = record.getValue(INVOICE.TOTAL);
+							double financeAmount = record.getValue(financeTrackingAmountDecode);
+							
+							invoiceTotal = AonMathUtils.round(invoiceBase + invoiceVat - invoiceRetention);
+							taxableBase = AonMathUtils.round(financeAmount * taxableBase / invoiceTotal,4);
+							quota = AonMathUtils.round(taxableBase * percentage / 100);
+							vc.setVatDeductionType(VatDeductionType.values()[record.getValue(INVOICE_TAX.VAT_DEDUCTION_TYPE)]);
+
+							Mod390DetailKey[] keys = DetailKey.getKeys(vc);			
+							if (keys != null) {
+								for (Mod390DetailKey key : keys) {
+									Mod390Detail detail = map.get(key);
+									if (detail == null) {
+										detail = new Mod390Detail();
+										map.put(key, detail );
+									}
+									detail.setKey(key);
+									detail.setPercent(percentage);
+									double q = key.isSurcharge()?surchargeQuota:quota; 
+									detail.setQuota( AonMathUtils.round(detail.getQuota()  + q));
+									detail.setTaxableBase( AonMathUtils.round( detail.getTaxableBase() + taxableBase));
+								}
+							}
+						}
+				);
+
+			ctx.getDslContext().select(INVOICE.TYPE
+					,DSL.sum(INVOICE.TAXABLE_BASE)
+					,DSL.sum(INVOICE.VAT_QUOTA))
+					.from(INVOICE)
+					.where(INVOICE.DOMAIN.equal(mod390.getDomain()))
+					.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
+					.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	// No Criterio de Caja.
+					.groupBy(INVOICE.TYPE)
+					.having(DSL.sum(INVOICE.VAT_QUOTA).greaterThan( new BigDecimal(0)) )
+					.fetch()
+					.stream()
+					.forEach(
+							record -> {
+								InvoiceType type = InvoiceType.values()[record.getValue(INVOICE.TYPE)];
+								Mod390DetailKey key = type==InvoiceType.SALES?Mod390DetailKey.B654:Mod390DetailKey.B656;
+								Mod390Detail detail = map.get(key);
+								if (detail == null) {
+									detail = new Mod390Detail();
+									map.put(key, detail );
+								}
+								detail.setKey(key);
+								double tb = AonMathUtils.round( record.getValue(DSL.sum(INVOICE.TAXABLE_BASE)).doubleValue());
+								detail.setTaxableBase(tb);
+								double quota = AonMathUtils.round(record.getValue(DSL.sum(INVOICE.VAT_QUOTA)).doubleValue());
+								detail.setQuota(quota);
+								}
+					);
 		return new ArrayList<Mod390Detail>(map.values());
 	}
 	
 	private static Mod390 fillGeneralRegimeData(AONContext ctx, Mod390 mod390) {
-		EnumMap<Mod390.Mod390DetailKey, Mod390.Mod390Detail> map = new EnumMap<Mod390.Mod390DetailKey, Mod390.Mod390Detail>(Mod390.Mod390DetailKey.class);
-		for (Mod390Detail detail : getMod390Details(ctx, mod390)) {
-			map.put(detail.getKey(), detail); 
+		try {
+			EnumMap<Mod390.Mod390DetailKey, Mod390.Mod390Detail> map = new EnumMap<Mod390.Mod390DetailKey, Mod390.Mod390Detail>(Mod390.Mod390DetailKey.class);
+			for (Mod390Detail detail : getMod390Details(ctx, mod390)) {
+				map.put(detail.getKey(), detail); 
+			}
+			mod390.setGeneralRegime(map);
+			mod390.setBox99(map.get(Mod390DetailKey.B099).getTaxableBase());
+			mod390.setBox100(map.get(Mod390DetailKey.B100).getTaxableBase());
+			mod390.setBox101(map.get(Mod390DetailKey.B101).getTaxableBase());
+			mod390.setBox102(map.get(Mod390DetailKey.B102).getTaxableBase());
+			mod390.setBox103(map.get(Mod390DetailKey.B103).getTaxableBase());
+			mod390.setBox104(map.get(Mod390DetailKey.B104).getTaxableBase());
+			mod390.setBox105(map.get(Mod390DetailKey.B105).getTaxableBase());
+			mod390.setBox106(map.get(Mod390DetailKey.B106).getTaxableBase());
+			mod390.setBox107(map.get(Mod390DetailKey.B107).getTaxableBase());
+			mod390.setBox108(map.get(Mod390DetailKey.B108).getTaxableBase());
+			mod390.setBox110(map.get(Mod390DetailKey.B110).getTaxableBase());
+			mod390.setBox112(map.get(Mod390DetailKey.B112).getTaxableBase());
+			mod390.setBox227(map.get(Mod390DetailKey.B227).getTaxableBase());
+			mod390.setBox228(map.get(Mod390DetailKey.B228).getTaxableBase());
+			mod390.setBox654(map.get(Mod390DetailKey.B654).getTaxableBase());
+			mod390.setBox655(map.get(Mod390DetailKey.B654).getQuota());
+			mod390.setAccrualRegime( ( map.get(Mod390DetailKey.B654).getTaxableBase()  != 0 || map.get(Mod390DetailKey.B654).getQuota() != 0 ) );
+			mod390.setBox656(map.get(Mod390DetailKey.B656).getTaxableBase());
+			mod390.setBox657(map.get(Mod390DetailKey.B656).getQuota());
+			mod390.setAccrualRegimeTarget((map.get(Mod390DetailKey.B656).getTaxableBase()  != 0 || map.get(Mod390DetailKey.B656).getQuota() != 0 ));	
+			return mod390;
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t; 
 		}
-		mod390.setGeneralRegime(map);
-		mod390.setBox99(map.get(Mod390DetailKey.B099).getTaxableBase());
-		mod390.setBox100(map.get(Mod390DetailKey.B100).getTaxableBase());
-		mod390.setBox101(map.get(Mod390DetailKey.B101).getTaxableBase());
-		mod390.setBox102(map.get(Mod390DetailKey.B102).getTaxableBase());
-		mod390.setBox103(map.get(Mod390DetailKey.B103).getTaxableBase());
-		mod390.setBox104(map.get(Mod390DetailKey.B104).getTaxableBase());
-		mod390.setBox105(map.get(Mod390DetailKey.B105).getTaxableBase());
-		mod390.setBox106(map.get(Mod390DetailKey.B106).getTaxableBase());
-		mod390.setBox107(map.get(Mod390DetailKey.B107).getTaxableBase());
-		mod390.setBox108(map.get(Mod390DetailKey.B108).getTaxableBase());
-		mod390.setBox110(map.get(Mod390DetailKey.B110).getTaxableBase());
-		mod390.setBox112(map.get(Mod390DetailKey.B112).getTaxableBase());
-		mod390.setBox227(map.get(Mod390DetailKey.B227).getTaxableBase());
-		mod390.setBox228(map.get(Mod390DetailKey.B228).getTaxableBase());
-		
-		return mod390;
 	}
 
 	static class SimplifedRegimeContext {
