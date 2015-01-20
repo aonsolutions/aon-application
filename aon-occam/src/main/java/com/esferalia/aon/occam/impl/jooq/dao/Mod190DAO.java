@@ -19,6 +19,7 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.jooq.BatchBindStep;
 import org.jooq.Field;
@@ -878,7 +879,7 @@ public class Mod190DAO {
 	private static IrpfData getLastIrpfDataByPerson(AONContext ctx, int person,
 			Date fromDate, Date toDate) {
 		ctx.checkRead();
-		IrpfDataRecord record = ctx
+		List<IrpfDataRecord> list = ctx
 				.getDslContext()
 				.select(IRPF_DATA.fields())
 				.from(IRPF_DATA)
@@ -889,13 +890,20 @@ public class Mod190DAO {
 								AonDateUtils.toSql(fromDate),
 								AonDateUtils.toSql(toDate))))
 				.and(CONTRACT.PERSON.equal(person))
-				.orderBy(IRPF_DATA.END_DATE.desc())
-				.fetchOneInto(IrpfDataRecord.class);
+				.orderBy(IRPF_DATA.END_DATE.desc(),IRPF_DATA.START_DATE.asc())
+				.fetchInto(IrpfDataRecord.class);
 		IrpfData irpfData = new IrpfData();
-		if (record != null) {
+		System.out.println("" + person + " ---> " + list.size());
+		if (list != null && list.size() > 0) { 
+			IrpfDataRecord record = list.get(0);
 			irpfData.setCeutaMelilla(AonEnumUtils.getBoolean(record
 					.getCeutaMelilla()));
-			irpfData.setFamilySituation(record.getFamilySituation());
+			Byte familySituation = record.getFamilySituation();
+			if (familySituation != null) {
+				irpfData.setFamilySituation(familySituation);
+			} else {
+				familySituation = (byte) 0;
+			}
 			irpfData.setSpouseDocument(record.getSpouseDocument());
 			Byte disabilityLevel = record.getDisabilityLevel();
 			if (disabilityLevel != null) {
