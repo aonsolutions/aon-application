@@ -176,6 +176,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("{0} - {1} de \u00BF?")
 	String unexactPagerData(int start, int end);
 
+	@DefaultMessage("Tipo")
+	String type();
+	
 	@DefaultMessage("Empresa")
 	String enterprise();
 
@@ -1348,7 +1351,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("En efectivo")
 	String cash();
 	
-	@DefaultMessage("Domicialición")
+	@DefaultMessage("Domicialici\u00F3n")
 	String directDebit();
 	
 	@DefaultMessage("I.B.A.N.")
@@ -1357,5 +1360,10 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Fecha I.R.N.R.")
 	String irnrDate();
 
-	
+	@DefaultMessage("Importe total de las operaciones")
+	String operationsAmount();
+
+	@DefaultMessage("Importe de las operaciones con derecho a deducci\u00F3n")
+	String operationsAmountWithRight();
+
 }

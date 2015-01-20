@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod390.Address;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.FarmerRegimeActivity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390DetailKey;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390.Prorrata;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.SimpliedRegimeActivity;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.Administraciones;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.DatEstadisticos;
@@ -22,6 +23,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.DatIdent;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.Devengo;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.LiqAnual;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.OpEspecificas;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.Prorratas;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.Prorratas.Pro;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.RegSimplificado;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.ResLiquidaciones;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.VolOperaciones;
@@ -623,9 +626,22 @@ public class AEATIVA2014toMod390 {
 				mod390.setBox657(ensureBigDecimal(op.getAdqCriterioCajaBase().getTipoX().getCuota()));
 			}
 		}
-
-		// TODO
-		// iva.prorratas
+		
+		// PRORRATAS
+		Prorratas prorratas = iva.getProrratas();
+		if (prorratas != null ) {
+			for (Pro pro : prorratas.getPro()) {
+				Prorrata pr = new Prorrata();
+				pr.setActivity( pro.getActividad() );
+				pr.setCnae( pro.getCNAE() );
+				pr.setAmount( ensureBigDecimal( pro.getImpOper() ) );
+				pr.setAmountWithRight( ensureBigDecimal( pro.getImpOperConDrchoDed() ));
+				pr.setPercent( ensureBigDecimal( pro.getPorc() ));
+				pr.setType( pro.getTipo() );
+				mod390.getProrratas().add(pr);
+			}
+		}
+		
 		// TODO
 		// iva.ivaDeducibleGrupo1
 		// TODO

@@ -8,7 +8,6 @@ import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
 import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
-import com.esferalia.aon.gwt.common.client.widget.IntegerTextBox;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
@@ -55,6 +54,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.ProvidesKey;
@@ -201,7 +201,7 @@ public class Model390 extends MainEntryPoint {
 	Button printButton;
 
 	@UiField
-	IntegerTextBox year;
+	TextBox year;
 	@UiField
 	EnterpriseSuggestBox enterpriseSuggest;
 
@@ -268,7 +268,7 @@ public class Model390 extends MainEntryPoint {
 		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
 		
 		domain = getCurrentDomain();
-		year.setValue( DEFAULT_YEAR );
+		year.setValue( DEFAULT_YEAR.toString() );
 		
 		diskForm = new FormPanel("_blank");
 		diskForm.setMethod(FormPanel.METHOD_POST);
@@ -522,7 +522,13 @@ public class Model390 extends MainEntryPoint {
 	@UiHandler("newButton")
 	void onNewButtonClick(ClickEvent event) {
 		cleanErrorMessage();
-		fiscalService.initializeMod390(getCurrentDomainName(),domain, year.getIntValue(),
+		int numYear = 0;
+		try {
+			numYear = Integer.parseInt( year.getValue() );
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException(MSG.unableToParseYear());
+		}
+		fiscalService.initializeMod390(getCurrentDomainName(),domain, numYear,
 				new AsyncCallback<Mod390>() {
 			@Override
 			public void onSuccess(Mod390 mod390) {
@@ -561,11 +567,11 @@ public class Model390 extends MainEntryPoint {
 	@UiHandler("year")
 	void onChangeYear(ChangeEvent event) {
 		if (Window.confirm("El ejercicio ha cambiado, desea recalcular los datos?")) {
-			try {
-				mod390.setYear(Integer.parseInt(year.getValue()));
-			} catch (NumberFormatException e) {
-				throw new IllegalArgumentException(MSG.unableToParseYear());
-			}
+//			try {
+//				mod390.setYear(Integer.parseInt(year.getValue()));
+//			} catch (NumberFormatException e) {
+//				throw new IllegalArgumentException(MSG.unableToParseYear());
+//			}
 			onNewButtonClick(null);
 		};
 	}

@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class Mod180Detail implements Serializable {
 
 	private Integer id;

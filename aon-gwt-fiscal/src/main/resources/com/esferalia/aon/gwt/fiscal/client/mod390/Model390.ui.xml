@@ -79,7 +79,7 @@
 										<g:Label text="{msg.fiscalYear}" />
 									</td>
 									<td class="aon-panelGrid-even">
-										<aon:IntegerTextBox maxLength="4" visibleLength="4" ui:field="year" styleName="aon-inputText"/>
+										<g:TextBox maxLength="4" visibleLength="4" ui:field="year" styleName="aon-inputText"/>
 									</td>   
 									<td class="aon-panelGrid-odd">
 										<g:Label text="{msg.deponentData}" />

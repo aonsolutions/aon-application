@@ -88,7 +88,11 @@ public class CnaePanel extends CustomDialog {
 		setWidget(ui);
 
 	}
-
+	
+	public void setCallback(SelectionCallBack callback) {
+		this.callback = callback;
+	}
+	
 	@Override
 	public void onClose() {
 		this.hide();
