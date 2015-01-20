@@ -174,43 +174,43 @@ public class Mod390toAEATIVA2014 {
 	private static RegSimplificado getRegSimplificado(Mod390 mod390) {
 		RegSimplificado reg = null;
 		boolean something = false;
-		if (mod390.getSimpRegime1() != null) {
+		if (mod390.getSimpRegime1() != null && AonStringUtils.isNotBlank( mod390.getSimpRegime2().getEpigrafe())) {
 			Actividad actividad = getActividad(mod390.getSimpRegime1());
 			reg = new RegSimplificado();
 			reg.getActividad().add(actividad);
 			something = true;
 		}
-		if (mod390.getSimpRegime2() != null) {
+		if (mod390.getSimpRegime2() != null && AonStringUtils.isNotBlank( mod390.getSimpRegime2().getEpigrafe())) {
 			Actividad actividad = getActividad(mod390.getSimpRegime2());
 			reg = reg==null?new RegSimplificado():reg;
 			reg.getActividad().add(actividad);
 			something = true;
 		}
-		if (mod390.getFarmerRegime1() != null) {
+		if (mod390.getFarmerRegime1() != null && AonStringUtils.isNotBlank( mod390.getFarmerRegime1().getCodigo()) ) {
 			ActAgricGanadForest act = getActAgricGanadForest(mod390.getFarmerRegime1());
 			reg = reg==null?new RegSimplificado():reg;
 			reg.getActAgricGanadForest().add(act);
 			something = true;
 		}
-		if (mod390.getFarmerRegime2() != null) {
+		if (mod390.getFarmerRegime2() != null && AonStringUtils.isNotBlank( mod390.getFarmerRegime2().getCodigo())) {
 			ActAgricGanadForest act = getActAgricGanadForest(mod390.getFarmerRegime2());
 			reg = reg==null?new RegSimplificado():reg;
 			reg.getActAgricGanadForest().add(act);
 			something = true;
 		}
-		if (mod390.getFarmerRegime3() != null) {
+		if (mod390.getFarmerRegime3() != null && AonStringUtils.isNotBlank( mod390.getFarmerRegime3().getCodigo())) {
 			ActAgricGanadForest act = getActAgricGanadForest(mod390.getFarmerRegime3());
 			reg = reg==null?new RegSimplificado():reg;
 			reg.getActAgricGanadForest().add(act);
 			something = true;
 		}
-		if (mod390.getFarmerRegime4() != null) {
+		if (mod390.getFarmerRegime4() != null && AonStringUtils.isNotBlank( mod390.getFarmerRegime4().getCodigo())) {
 			ActAgricGanadForest act = getActAgricGanadForest(mod390.getFarmerRegime4());
 			reg = reg==null?new RegSimplificado():reg;
 			reg.getActAgricGanadForest().add(act);
 			something = true;
 		}
-		if (mod390.getFarmerRegime5() != null) {
+		if (mod390.getFarmerRegime5() != null && AonStringUtils.isNotBlank( mod390.getFarmerRegime5().getCodigo())) {
 			ActAgricGanadForest act = getActAgricGanadForest(mod390.getFarmerRegime5());
 			reg = reg==null?new RegSimplificado():reg;
 			reg.getActAgricGanadForest().add(act);
