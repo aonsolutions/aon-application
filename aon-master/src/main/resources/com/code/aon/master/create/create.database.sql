@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.13.0
+# Version: 8.13.1
 # Created by: girazu
-# Creation Date: 16/01/2015 13:15
+# Creation Date: 21/01/2015 13:00
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -450,6 +450,10 @@ CREATE TABLE `account_period` (
   `initiation_date` date NOT NULL COMMENT 'Fecha de inicio del Ejercicio',
   `deadline` date NOT NULL COMMENT 'Fecha final del Ejercicio',
   `status` tinyint(2) default '0' COMMENT 'Estado del Ejercicio',
+  `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime default NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime default NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `IDX_UNQ_ACCOUNT_PERIOD_DOMAIN_NAME` (`domain`,`name`),
   KEY `IDX_ACCOUNT_PERIOD_DOMAIN` (`domain`),
@@ -707,6 +711,10 @@ CREATE TABLE `tax` (
   `withholding_type` tinyint(2) default '0' COMMENT 'Tipo de retencion',
   `sales_account` int(4) default NULL COMMENT 'Identificador de la Cuenta Contable de Ventas',
   `purchase_account` int(4) default NULL COMMENT 'Identificador de la Cuenta Contable de Compras',
+  `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime default NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime default NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY  (`id`),
   KEY `IDX_TAX_DOMAIN` (`domain`),
   KEY `IDX_TAX_ACCOUNT_SALES` (`sales_account`),
@@ -7511,6 +7519,10 @@ CREATE TABLE `tax_detail` (
   `end_date` date default NULL COMMENT 'Fecha de fin de vigencia',
   `value` double(15,3) default NULL COMMENT 'Porcentaje de recargo',
   `surcharge` double(15,3) default NULL COMMENT 'Porcentaje de recargo de equivalencia',
+  `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime default NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime default NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY  (`id`),
   KEY `IDX_TAX_DETAIL_TAX` (`tax`),
   KEY `IDX_TAX_DETAIL_DOMAIN` (`domain`),
@@ -7746,7 +7758,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.13.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.13.1');
 
 COMMIT;
 

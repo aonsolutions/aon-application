@@ -17,60 +17,60 @@
 			</ui:include>
 			
 			<aon:div styleClass="aon-scroll-area">
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-				<ui:param name="controller" value="#{tax}" />
-
-				<ui:define name="columns">
-					<aon:column alias="Tax.name"
-						styleClass="aon-editDataTable-textColumn aon-width-auto">
-						<f:facet name="header">
-							<aon:outputLabel value="#{bundle.aon_description}" />
-						</f:facet>
-						<aon:outputText value="#{to.name}" />
-					</aon:column>
-
-					<aon:column alias="Tax.type"
-						styleClass="aon-editDataTable-textColumn aon-width-250">
-						<f:facet name="header">
-							<aon:outputLabel value="#{bundle.config_tax}" />
-						</f:facet>
-						<aon:div>
-							<aon:outputText value="#{to.type}" />
-							<aon:outputText value=" - " rendered="#{to.vat or to.retention}" />
-							<aon:outputText value="#{to.vatDeductionType}" rendered="#{to.vat}" />
-							<aon:outputText value="#{to.withholdingType}" rendered="#{to.retention}" />
-						</aon:div>
-					</aon:column>
-
-					<aon:column alias="Tax.percentage"
-						styleClass="aon-editDataTable-numberColumn aon-width-100">
-						<f:facet name="header">
-							<aon:outputLabel value="#{bundle.aon_percentage}" />
-						</f:facet>
-						<aon:outputText value="#{to.percentage}" />
-					</aon:column>
-
-					<aon:column alias="Tax.surcharge"
-						styleClass="aon-editDataTable-numberColumn aon-width-100">
-						<f:facet name="header">
-							<aon:outputLabel value="#{bundle.aon_surcharge}" />
-						</f:facet>
-						<aon:outputText value="#{to.surcharge}" />
-					</aon:column>
-
-					<aon:column alias="Tax.startDate"
-						styleClass="aon-editDataTable-textColumn aon-width-100">
-						<f:facet name="header">
-							<aon:outputLabel value="#{bundle.aon_date_from}" />
-						</f:facet>
-						<aon:outputText value="#{to.startDate}" >
-							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-								timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>
-					</aon:column>
-					
-				</ui:define>
-			</ui:decorate>
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{tax}" />
+	
+					<ui:define name="columns">
+						<aon:column alias="Tax.name"
+							styleClass="aon-editDataTable-textColumn aon-width-auto">
+							<f:facet name="header">
+								<aon:outputLabel value="#{bundle.aon_description}" />
+							</f:facet>
+							<aon:outputText value="#{to.name}" />
+						</aon:column>
+	
+						<aon:column alias="Tax.type"
+							styleClass="aon-editDataTable-textColumn aon-width-250">
+							<f:facet name="header">
+								<aon:outputLabel value="#{bundle.config_tax}" />
+							</f:facet>
+							<aon:div>
+								<aon:outputText value="#{to.type}" />
+								<aon:outputText value=" - " rendered="#{to.vat or to.retention}" />
+								<aon:outputText value="#{to.vatDeductionType}" rendered="#{to.vat}" />
+								<aon:outputText value="#{to.withholdingType}" rendered="#{to.retention}" />
+							</aon:div>
+						</aon:column>
+	
+						<aon:column alias="Tax.percentage"
+							styleClass="aon-editDataTable-numberColumn aon-width-100">
+							<f:facet name="header">
+								<aon:outputLabel value="#{bundle.aon_percentage}" />
+							</f:facet>
+							<aon:outputText value="#{to.percentage}" />
+						</aon:column>
+	
+						<aon:column alias="Tax.surcharge"
+							styleClass="aon-editDataTable-numberColumn aon-width-100">
+							<f:facet name="header">
+								<aon:outputLabel value="#{bundle.aon_surcharge}" />
+							</f:facet>
+							<aon:outputText value="#{to.surcharge}" />
+						</aon:column>
+	
+						<aon:column alias="Tax.startDate"
+							styleClass="aon-editDataTable-textColumn aon-width-100">
+							<f:facet name="header">
+								<aon:outputLabel value="#{bundle.aon_date_from}" />
+							</f:facet>
+							<aon:outputText value="#{to.startDate}" >
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+						
+					</ui:define>
+				</ui:decorate>
 			</aon:div>
 			
 		</aon:form>

@@ -6,13 +6,14 @@ import javax.persistence.Transient;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.annotations.Heritable;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.config.enumeration.TaxType;
 import com.esferalia.aon.entity.master.TaxDB;
 
 @Entity
 @Table(name="tax")
 @Heritable
-public class Tax extends TaxDB {
+public class Tax extends TaxDB implements IAuditable {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 

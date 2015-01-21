@@ -371,7 +371,7 @@
 	<!--  **** TAX ****	-->
 	<managed-bean>
 		<managed-bean-name>tax</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController 
+		<managed-bean-class>com.code.aon.ui.config.controller.TaxController 
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
