@@ -10,8 +10,10 @@ import java.util.Date;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.mail.Address;
 
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -25,6 +27,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.util.AdminUtil;
+import com.code.aon.company.Company;
 import com.code.aon.config.Application;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Domain;
@@ -43,6 +46,10 @@ import com.code.aon.master.IConstants;
 import com.code.aon.master.VersionManager;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.ui.admin.DomainInfo;
+import com.code.aon.ui.admin.DomainInfoType;
+import com.code.aon.ui.admin.IBookingInfo;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
@@ -53,6 +60,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.registry.controller.DocumentManager;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.webmail.WebmailException;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class NewDomainController implements Serializable {
@@ -261,8 +269,9 @@ public class NewDomainController implements Serializable {
 		validateUserPassword(getPassword());
 		
 		try {			
+			Integer newDomain = null;
 			if ( isLoadDefaultValuesEnabled() ) {
-				Integer newDomain = createDomain(domainFinalName);
+				newDomain = createDomain(domainFinalName);
 				if (! isEnableHeredity() ) {
 					insertScript(newDomain,domainFinalName,IConstants.INSERT_DOMAIN_DEFAULTS_SCRIPT);	
 				}
@@ -271,10 +280,11 @@ public class NewDomainController implements Serializable {
 				}
 				copyCustomizeId(newDomain);
 			} else {
-				duplicateDomain(domainFinalName);
+				newDomain = duplicateDomain(domainFinalName);
 			}
 			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-			ds.setModel(null);			
+			ds.setModel(null);
+			saveHistory(newDomain);			
 		} catch (Throwable e) {
 			LOGGER.error(">>>> onSave: ", e);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -353,21 +363,23 @@ public class NewDomainController implements Serializable {
 		}
 	}
 	
-	private void duplicateDomain(String name) throws AonConnectionException, AonSQLException, ManagerBeanException {
+	private Integer duplicateDomain(String name) throws AonConnectionException, AonSQLException, ManagerBeanException {
 		Connection connection = null;
+		Integer newDomainId = null;
 		try {			
 			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			AonDomainDuplicate add = new AonDomainDuplicate(connection);
 			add.setDescription(getDomainDescription());
 			add.setOwner(getOwner());
 			Integer parent = (getParentDomain() != null) ? getParentDomain().getId() : null;
-			Integer newDomainId = add.execute(getTemplateDomain().getId(), parent, name);
+			newDomainId = add.execute(getTemplateDomain().getId(), parent, name);
 			if ( newDomainId != null ) {
 				updateDomain( newDomainId );
 			}
 		} finally {
 			DbUtils.closeQuietly(connection);
-		}		
+		}	
+		return newDomainId;
 	}
 	
 	public IControllerListener getTemplateDomainFilter() {
@@ -383,6 +395,26 @@ public class NewDomainController implements Serializable {
 
 	public void onChangedEnableHeredity( ActionEvent event ) {
 		setLoadDefaultValuesEnabled(true);
+	}
+	
+	private void saveHistory( Integer domainId ) throws ManagerBeanException, IOException, WebmailException {
+		if ( domainId != null ) {
+			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
+			Domain domain = (Domain) bean.get(domainId);
+			IBookingInfo bookingInfo = DomainController.getBookingInfo(domain);
+			DomainInfo di = DomainInfo.getDomainInfo(domain, bookingInfo);
+			di.setInfoType(DomainInfoType.INSERT);
+			Company company = DomainController.getAdminCompany();
+			if ( company != null ) {
+				DomainController.saveHistory(di, company, RegistryAttachmentType.DOMAIN_INSERT_HISTORY);
+			}
+			Address[] emails = DomainController.getNotificationEmails(domainId);
+			if (! ArrayUtils.isEmpty(emails) ) {
+				String subject = AonUtil.getMessage(ICommonMessages.DOMAIN_INSERT_EMAIL_SUBJECT, domain.getName());
+				String content = DomainController.getEmailContent(domain, di, ICommonMessages.DOMAIN_INSERT_EMAIL_BODY);
+				DomainController.sendNotificationEmail(emails, subject, content, null);
+			}
+		}
 	}
 	
 	private static class TemplateDomainFilter extends ControllerAdapter {

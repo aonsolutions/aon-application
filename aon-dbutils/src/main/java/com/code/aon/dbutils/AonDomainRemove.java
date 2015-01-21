@@ -44,7 +44,8 @@ public class AonDomainRemove implements Constants {
 		}		
 	}
 
-	public void execute(Integer domain) throws AonSQLException {
+	public boolean execute(Integer domain) throws AonSQLException {
+		boolean domainDeleted = false;
 		try {
 			LOGGER.info("Database {}, domain {}", connection.getMetaData().getURL(), domain);
 			DomainInfo domainInfo = TableUtil.getDomainInfo(connection, domain);
@@ -60,6 +61,7 @@ public class AonDomainRemove implements Constants {
             String statement = "DELETE FROM domain WHERE id = " + domain;
             int rows = TableUtil.executeUpdate( connection, statement );
             LOGGER.info("Deleting DOMAIN table {} rows", rows);
+            domainDeleted = (rows == 1);
             
             connection.commit();
 
@@ -77,6 +79,7 @@ public class AonDomainRemove implements Constants {
 			TableUtil.executeStatement(connection, SET_FOREIGN_KEY_CHECKS_1);
 			LOGGER.debug("Claves refereciales habilitadas");
 		}
+		return domainDeleted;
 	}
 	
 	public static void main(String[] arguments) {

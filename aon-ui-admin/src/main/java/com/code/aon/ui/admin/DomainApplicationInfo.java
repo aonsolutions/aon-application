@@ -8,6 +8,9 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.audit.DomainApplicationModule;
 import com.code.aon.audit.enumeration.Module;
 import com.code.aon.AonVersion;
@@ -24,6 +27,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class DomainApplicationInfo implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+
+	private final static Logger LOGGER = LoggerFactory.getLogger(DomainApplicationInfo.class);
 	
 	private boolean checked;
 	
@@ -149,6 +154,7 @@ public class DomainApplicationInfo implements Serializable {
 	public static DomainApplication getDomainApplication( Domain domain, Application application ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(DomainApplication.class);
 		Criteria criteria = new Criteria();
+		criteria.setSkipDomainFilter(true);
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_APPLICATION_ID), application.getId());
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_DOMAIN), domain.getId());
 		List<ITransferObject> list = bean.getList(criteria);
@@ -161,11 +167,18 @@ public class DomainApplicationInfo implements Serializable {
 	private static DomainApplicationModule getDomainApplicationModule( Module module, DomainApplication da ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(DomainApplicationModule.class);
 		Criteria criteria = new Criteria();
+		criteria.setSkipDomainFilter(true);
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_MODULE_DOMAIN_APPLICATION_ID), da.getId());
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_MODULE_MODULE), module);
 		List<ITransferObject> list = bean.getList(criteria);
 		if (! list.isEmpty() ) {
-			return (DomainApplicationModule) list.get(0);
+			DomainApplicationModule dam = (DomainApplicationModule) list.get(0);
+			for( int i=1; i < list.size(); i++ ) {
+				DomainApplicationModule dam2 = (DomainApplicationModule) list.get(i);
+				LOGGER.info( "Removing duplicate domain_application_module({}) for module {}", dam2.getId(), dam2.getModule() );
+				bean.remove(list.get(i));
+			}
+			return dam;
 		}
 		return null;		
 	}

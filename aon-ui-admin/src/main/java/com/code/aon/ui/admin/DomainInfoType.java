@@ -1,31 +1,21 @@
-package com.code.aon.registry.enumeration;
+package com.code.aon.ui.admin;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import com.code.aon.common.enumeration.IResourceable;
+import com.code.aon.ui.util.AonUtil;
 
-public enum RegistryAttachmentType implements IResourceable {
-
-	LOGO,
-	ADDITIONAL_IMAGE,
-	BANNER,
-	CORPORATE_IDENTITY,
-	DIGITAL_CERTIFICATE,
-	DOCUMENT,
-	FISCAL_TEMPLATES,
-	FISCAL_REPORTS,
-	SIGNATURE,
-	INVOICE_FOOTER_TEXT,
-	MARKETING_TEMPLATE,
-	ENTERPRISE_CONTRACT_CLAUSES,
-	DOMAIN_BOOK_HISTORY,
-	DOMAIN_INSERT_HISTORY,
-	DOMAIN_REMOVE_HISTORY;
+public enum DomainInfoType implements IResourceable {
 	
+	INSERT,
+	
+	MODIFICATION,
+	
+	REMOVE;
 	
     /** Message key prefix. */
-    private static final String MSG_KEY_PREFIX = "aon_enum_registry_attachment_type_";
+    private static final String MSG_KEY_PREFIX = "aon_enum_domain_info_type_";
 
     /**
      * Returns a <code>String</code> with the transalation <code>Locale</code>
@@ -38,5 +28,10 @@ public enum RegistryAttachmentType implements IResourceable {
     public String getName(Locale locale) {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
+    }	
+
+    public String getName() {
+    	return getName(AonUtil.getCurrentLocale());
     }
+    
 }

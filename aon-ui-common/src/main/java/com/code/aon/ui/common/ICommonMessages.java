@@ -213,13 +213,18 @@ public interface ICommonMessages {
 	String DOMAIN_MODULES = "admin_modules";
 	String WRONG_EMAIL = "admin_wrong_email";
 	String WRONG_EMAILS = "admin_wrong_emails";
+	String DOMAIN_INSERT_EMAIL_SUBJECT = "admin_domain_insert_email_subject";
+	String DOMAIN_INSERT_EMAIL_BODY = "admin_domain_insert_email_body";
+	String DOMAIN_REMOVE_EMAIL_SUBJECT = "admin_domain_remove_email_subject";
+	String DOMAIN_REMOVE_EMAIL_BODY = "admin_domain_remove_email_body";
 	String DOMAIN_EMAIL_SUBJECT = "admin_domain_email_subject";
 	String DOMAIN_EMAIL_BODY_1 = "admin_domain_email_body_1";
 	String DOMAIN_EMAIL_BODY_2 = "admin_domain_email_body_2";
 	String DOMAIN_EMAIL_BODY_3 = "admin_domain_email_body_3";
 	String DOMAIN_EMAIL_BODY_4 = "admin_domain_email_body_4";
 	String DOMAIN_EMAIL_BODY_5 = "admin_domain_email_body_5";
-	String DOMAIN_EMAIL_BODY_FOOTER = "admin_domain_email_body_footer";
+	String DOMAIN_EMAIL_BODY_FOOTER_1 = "admin_domain_email_body_footer_1";
+	String DOMAIN_EMAIL_BODY_FOOTER_2 = "admin_domain_email_body_footer_2";
 	String BACKUP_START = "admin_backup_start";
 	String SYSTEM = "admin_system";
 	String ADMIN_BACKUP_ERROR = "admin_backup_error";
@@ -231,6 +236,9 @@ public interface ICommonMessages {
 	String ADMIN_GLOBAL_PORTAL = "admin_global_portal";
 	String EXTERNAL_TIRANT = "aon_external_tirant";
 	String EXTERNAL_DEH_ONLINE = "aon_external_dehOnline";
+	String REMOVE_DOMAIN_ERROR = "admin_remove_domain_error";
+	String AON_ONE = "aon_module_aonOne";
+	String AON_AIO = "admin_domain_aonAIO";
 	
 	String AUDIT_LEVEL = "audit_audit_level";	
 	

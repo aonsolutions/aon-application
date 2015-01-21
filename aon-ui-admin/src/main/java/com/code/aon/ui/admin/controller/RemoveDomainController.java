@@ -7,7 +7,9 @@ import java.sql.Connection;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.mail.Address;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,12 +17,18 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.company.Company;
 import com.code.aon.config.Domain;
 import com.code.aon.dbutils.AonDomainRemove;
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.ui.admin.DomainInfo;
+import com.code.aon.ui.admin.DomainInfoType;
+import com.code.aon.ui.admin.IBookingInfo;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -78,12 +86,12 @@ public class RemoveDomainController implements Serializable {
 		setDomainDisabled(false);
 	}
 	
-	private void removeDomain( String domainName, Integer domain) throws AonConnectionException, AonSQLException {
+	private boolean removeDomain( String domainName, Integer domain) throws AonConnectionException, AonSQLException {
 		Connection connection = null;
 		try {			
 			connection = DatabaseUtil.getConnection(domainName);				
 			AonDomainRemove adr = new AonDomainRemove(connection);
-			adr.execute(domain);
+			return adr.execute(domain);
 		} finally {
 			DatabaseUtil.closeQuietly(connection);
 		}
@@ -93,13 +101,30 @@ public class RemoveDomainController implements Serializable {
 		NewDomainController.validateUserPassword(getPassword());
 		
 		try {			
-			removeDomain(domain.getName(),domain.getId());
+			Address[] emails = DomainController.getNotificationEmails(domain.getId());
+			IBookingInfo bookingInfo = DomainController.getBookingInfo(domain);
+			DomainInfo di = DomainInfo.getDomainInfo(domain, bookingInfo);
+			di.setInfoType(DomainInfoType.REMOVE);
+			boolean domainDeleted = removeDomain(domain.getName(),domain.getId());
+			if ( domainDeleted ) {
+				Company company = DomainController.getAdminCompany();
+				if ( company != null ) {
+					DomainController.saveHistory(di, company, RegistryAttachmentType.DOMAIN_REMOVE_HISTORY);
+				}
+				if (! ArrayUtils.isEmpty(emails) ) {
+					String subject = AonUtil.getMessage(ICommonMessages.DOMAIN_REMOVE_EMAIL_SUBJECT, domain.getName());
+					String content = DomainController.getEmailContent(domain, di, ICommonMessages.DOMAIN_REMOVE_EMAIL_BODY);
+					DomainController.sendNotificationEmail(emails, subject, content, null);
+				}				
+			} else {
+				AonUtil.addErrorMessageFromBundle(ICommonMessages.REMOVE_DOMAIN_ERROR, domain.getName(), "");
+			}
 			onInit(event);
 			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 			ds.setModel(null);			
 		} catch (Throwable e) {
 			LOGGER.error(">>>> onRemove: ", e);
-			AonUtil.addErrorMessage(e.getMessage());
+			AonUtil.addErrorMessageFromBundle(ICommonMessages.REMOVE_DOMAIN_ERROR, domain.getName(), e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}

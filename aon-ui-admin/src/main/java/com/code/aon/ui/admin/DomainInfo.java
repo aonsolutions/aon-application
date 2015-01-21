@@ -26,8 +26,13 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.audit.enumeration.Module;
+import com.code.aon.common.enumeration.AppParam;
+import com.code.aon.config.Domain;
 import com.code.aon.config.enumeration.DomainType;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.registry.controller.DocumentManager;
 import com.code.aon.ui.util.AonUtil;
@@ -58,6 +63,16 @@ public class DomainInfo implements Serializable {
 	
 	private static final String DEH_ONLINE = "dehOnline";
 	
+	private static final String NAME = "name";
+	
+	private static final String PARENT = "parent";
+	
+	private String name;
+	
+	private DomainInfoType infoType;
+	
+	private String parent;
+	
 	private DomainType type;
 	
 	private String user;
@@ -80,6 +95,7 @@ public class DomainInfo implements Serializable {
 	
 	public DomainInfo() {
 		type = DomainType.ENTERPRISE;
+		infoType = DomainInfoType.MODIFICATION;
 		numberOfUsers = 0;
 		maxTotalDocumentSize = DocumentManager.MINIMUM_MAX_TOTAL_DOCUMENT_SIZE;
 		bookinModules = Collections.emptyList();
@@ -96,6 +112,14 @@ public class DomainInfo implements Serializable {
 			LOGGER.error(e.getMessage(), e);
 		}
 		this.user = properties.getProperty(USER);
+		String nameValue = properties.getProperty(NAME);
+		if (! StringUtils.isEmpty(nameValue) ) {
+			this.name = StringUtils.trimToNull(nameValue);
+		}
+		String parentValue = properties.getProperty(PARENT);
+		if (! StringUtils.isEmpty(parentValue) ) {
+			this.parent = StringUtils.trimToNull(parentValue);
+		}
 		String typeValue = properties.getProperty(TYPE);
 		if (! StringUtils.isEmpty(typeValue) ) {
 			this.type = DomainType.valueOf(typeValue);
@@ -242,6 +266,30 @@ public class DomainInfo implements Serializable {
 		this.dehOnline = dehOnline;
 	}
 	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getParent() {
+		return parent;
+	}
+
+	public void setParent(String parent) {
+		this.parent = parent;
+	}
+	
+	public void setInfoType(DomainInfoType infoType) {
+		this.infoType = infoType;
+	}
+
+	public DomainInfoType getInfoType() {
+		return infoType;
+	}
+
 	private void diff( StringBuffer sb, String message, boolean newValue ) {
 		diff( sb, message, newValue ? "+" : "-" );
 	}	
@@ -306,9 +354,15 @@ public class DomainInfo implements Serializable {
 	
 	public byte[] getData() {
 		Properties properties = new Properties();
+		if (! StringUtils.isEmpty(name) ) {
+			properties.setProperty(NAME, name);	
+		}
+		if (! StringUtils.isEmpty(parent) ) {
+			properties.setProperty(PARENT, parent);	
+		}
 		if ( type != null ) {
 			properties.setProperty(TYPE, type.toString());	
-		}
+		}		
 		if ( numberOfUsers != null ) {
 			properties.setProperty(NUMBER_OF_USERS, numberOfUsers.toString());	
 		}
@@ -344,17 +398,49 @@ public class DomainInfo implements Serializable {
 
 	public static DomainInfo getDomainInfo( RegistryAttachment ra ) {
 		DomainInfo di = new DomainInfo(ra.getData());
-		if (! StringUtils.isEmpty(ra.getDescription()) ) {
-			try {
-				di.setDate(DomainInfo.DATE_FORMAT.parse(ra.getDescription()));
-			} catch (ParseException e) {
-				LOGGER.error(e.getMessage(), e);
+		if ( ra.getCreationDate() != null ) {
+			di.setDate( ra.getCreationDate() );
+		} else {
+			if ( NumberUtils.isDigits(ra.getDescription()) ) {
+				try {
+					di.setDate(DomainInfo.DATE_FORMAT.parse(ra.getDescription()));
+				} catch (ParseException e) {
+					LOGGER.error(e.getMessage(), e);
+				}				
 			}
 		}
 		if ( di.getDate() == null ) {
 			di.setDate(ra.getAttachDate());	
 		}
+		if ( ra.getRegistryAttachmentType() == RegistryAttachmentType.DOMAIN_INSERT_HISTORY ) {
+			di.setInfoType(DomainInfoType.INSERT);
+		} else if ( ra.getRegistryAttachmentType() == RegistryAttachmentType.DOMAIN_REMOVE_HISTORY ) {
+			di.setInfoType(DomainInfoType.REMOVE);
+		}
 		return di;
 	}
+	
+	public static DomainInfo getDomainInfo( Domain domain, IBookingInfo bookingInfo ) {
+		DomainInfo di = new DomainInfo();
+		di.setUser(AonUtil.getAuthPrincipal().getShortName());
+		di.setName(domain.getName());
+		Domain parent = domain.getParent();
+		if ( parent != null && parent.getId() != null ) {
+			di.setParent(parent.getName());
+		}
+		di.setType(domain.getType());
+		di.setNumberOfUsers(domain.getMaxDefinedUsers());
+		di.setMaxTotalDocumentSize(domain.getMaxTotalDocumentSize());
+		di.setDomainManagement(domain.isDomainManagement());
+		di.setBookingModules(bookingInfo.getBookingModules());
+		di.setDisplayModules(bookingInfo.getDisplayModules());
+		int value = AppParamUtil.getValueAsInt(AppParam.AON_EXTERNAL_APPLICATIONS, domain.getId());
+		boolean tirant = (value & ICommonConstants.TIRANT_EXTERNAL_APP) != 0;
+		di.setTirant(tirant);
+		boolean dehOnline = !domain.isDomainManagement() && ((value & ICommonConstants.DEH_ONLINE_EXTERNAL_APP) != 0);		
+		di.setDehOnline(dehOnline);
+		return di;
+	}
+	
 	
 }

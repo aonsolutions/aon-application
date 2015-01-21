@@ -1,12 +1,14 @@
 package com.code.aon.ui.admin.controller;
 
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
+import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static javax.faces.application.FacesMessage.SEVERITY_ERROR;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -71,7 +73,6 @@ import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.audit.controller.IAuditConstants;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.ICommonMessages;
-import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.config.controller.DomainSwitcher;
@@ -91,6 +92,7 @@ import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.db.MailAccount;
 import com.code.aon.webmail.enumeration.ConnectionSecurity;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AONContext;
 
 public class DomainController extends BasicController {
 
@@ -165,13 +167,13 @@ public class DomainController extends BasicController {
 		try {
 			select(event, DomainManager.getCurrentDomain());
 			initDomainApplication();
-			initBookingInfo();
+			this.bookingInfo = getBookingInfo(getDomain());
 			initOEM();
 			initProductDetailLevel();
 			initHistory(getCompany().getId());
 			initExternalApplications();
 			updateDocumental();
-			this.currentDomainInfo = getDomainInfo();
+			this.currentDomainInfo = DomainInfo.getDomainInfo(getDomain(), bookingInfo);
 			if ( this.historyState.getDirectModel().getRowCount() == 0 ) {
 				saveHistory(this.currentDomainInfo);
 			}
@@ -180,14 +182,20 @@ public class DomainController extends BasicController {
 		}				
 	}
 	
-	private void initBookingInfo() {
+	public static IBookingInfo getBookingInfo( Domain domain ) {
 		try {
-			this.bookingInfo = new BookingInfo(getDomain(), getParentDomain());
-			this.bookingInfo.init();								
+			Domain parent = null;
+			if ( domain.getParent() != null && domain.getParent().getId() != null ) {
+				parent = domain.getParent();
+			}
+			IBookingInfo bookingInfo = new BookingInfo(domain, parent);
+			bookingInfo.init();
+			return bookingInfo;
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
-		}				
-	}
+		}			
+		return null;
+	}	
 
 	private void initDomainApplication() {
 		this.domainApplication = null;
@@ -423,22 +431,7 @@ public class DomainController extends BasicController {
 		return this.OEMDomainFilter;
 	}
 	
-	private DomainInfo getDomainInfo() {
-		Domain domain = getDomain();
-		DomainInfo di = new DomainInfo();
-		di.setUser(AonUtil.getAuthPrincipal().getShortName());
-		di.setType(domain.getType());
-		di.setNumberOfUsers(domain.getMaxDefinedUsers());
-		di.setMaxTotalDocumentSize(domain.getMaxTotalDocumentSize());
-		di.setDomainManagement(domain.isDomainManagement());
-		di.setBookingModules(bookingInfo.getBookingModules());
-		di.setDisplayModules(bookingInfo.getDisplayModules());
-		di.setTirant(isTirant());
-		di.setDehOnline(isDehOnline());
-		return di;
-	}
-	
-	private EmailSender getEmailSender() throws UnsupportedEncodingException {
+	public static EmailSender getEmailSender() throws UnsupportedEncodingException {
 		MailAccount mailAccount = new MailAccount();
 		mailAccount.setEmail("admin@aonSolutions.es");
 		mailAccount.setMailUsername("admin@aonSolutions.es");
@@ -459,8 +452,7 @@ public class DomainController extends BasicController {
 		body.append( "</head><body>" );
 		
 		body.append( AonUtil.getMessage(ICommonMessages.COMPANY_EMAIL_BODY_HEADER) );
-		LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(ICommonConstants.LOGGED_USER_CONTROLLER_NAME);
-		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_1, loggedUser.getLoggedUserName(), domain.getName()) );
+		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_1, di.getUser(), domain.getName()) );
 		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_2, StringEscapeUtils.escapeHtml(domain.getDescription())) );
 		if ( domain.getParent() != null && domain.getParent().getId() != null ) {
 			String parent = StringEscapeUtils.escapeHtml(domain.getParent().getDescription());
@@ -471,8 +463,14 @@ public class DomainController extends BasicController {
 		String size = FileUtils.byteCountToDisplaySize(di.getMaxTotalDocumentSize()*FileUtils.ONE_MB);
 		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_4, type, di.getNumberOfUsers(), size ) );
 		String multiDomain = di.isDomainManagement() ? AonUtil.getMessage(ICommonMessages.YES) : AonUtil.getMessage(ICommonMessages.NO);
-		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_5, multiDomain, di.getBookingModules().size()) );
-		if (! di.getBookingModules().isEmpty() ) {
+		String tirant = di.isTirant() ? AonUtil.getMessage(ICommonMessages.YES) : AonUtil.getMessage(ICommonMessages.NO);
+		String dehOnline = di.isDehOnline() ? AonUtil.getMessage(ICommonMessages.YES) : AonUtil.getMessage(ICommonMessages.NO);
+		String booking = String.valueOf(di.getBookingModules().size());
+		if ( di.getType() == DomainType.ENTERPRISE ) {
+			booking = AonUtil.getMessage( di.getBookingModules().contains(Module.AON_ONE) ? ICommonMessages.AON_ONE : ICommonMessages.AON_AIO ); 
+		}
+		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_5, multiDomain, tirant, dehOnline, booking) );
+		if (! di.getBookingModules().isEmpty() && (di.getType() != DomainType.ENTERPRISE) ) {
 			body.append( "<ul>" );
 			for( Module module : di.getBookingModules() ) {
 				String name = StringEscapeUtils.escapeHtml(module.getName(locale));
@@ -480,12 +478,30 @@ public class DomainController extends BasicController {
 			}
 			body.append( "</ul>" );
 		}
-		
-		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_FOOTER) );
+		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_FOOTER_1) );
+		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_FOOTER_2) );
 		body.append( "</body>" );
 		return body.toString();
 	}	
 
+	public static String getEmailContent( Domain domain, DomainInfo di, String bodyMessage ) {
+		StringBuffer body = new StringBuffer();
+		body.append( "<html><head>" );
+		body.append( "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />" );
+		body.append( "</head><body>" );
+		
+		body.append( AonUtil.getMessage(ICommonMessages.COMPANY_EMAIL_BODY_HEADER) );
+		body.append( AonUtil.getMessage(bodyMessage, di.getName(), di.getUser()) );
+		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_2, StringEscapeUtils.escapeHtml(domain.getDescription())) );
+		if ( domain.getParent() != null && domain.getParent().getId() != null ) {
+			String parent = StringEscapeUtils.escapeHtml(domain.getParent().getDescription());
+			body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_3, parent) );
+		}
+		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_FOOTER_2) );
+		body.append( "</body>" );
+		return body.toString();
+	}		
+	
 	private AonFile getDiffFile( DomainInfo di1, DomainInfo di2 ) throws IOException {
 		String diff = di1.getDifferences(di2);
 		if (! StringUtils.isEmpty(diff) ) {
@@ -511,7 +527,7 @@ public class DomainController extends BasicController {
 		}
 	}
 	
-	private AonFile getTermsOfServiceFile() throws IOException {
+	public static AonFile getTermsOfServiceFile() throws IOException {
 		File file = File.createTempFile( LEGAL_WARNING_NAME, "." + MimeType.MIME_PDF.getExtension() );
 		FileUtils.writeByteArrayToFile(file, getTermsOfServiceData());
 		AonFile aonFile = new AonFile();
@@ -521,27 +537,31 @@ public class DomainController extends BasicController {
 		return aonFile;
 	}	
 	
+	public static void sendNotificationEmail( Address[] emails, String subject, String content, AonFile diffFile ) throws IOException, WebmailException {
+		LOGGER.info( "Notication emails: {}", ArrayUtils.toString(emails) );
+		EmailSender sender = DomainController.getEmailSender();
+		AonMessage message = sender.createMessage(subject);
+		message.setRecipientsBcc(emails);
+		AonFile termsOfServiceFile = DomainController.getTermsOfServiceFile();
+		sender.addMessageContent(message, content, MimeType.MIME_HTML, diffFile, termsOfServiceFile);
+		sender.sendMessage(message);
+		termsOfServiceFile.clean();
+	}
+	
 	public void updateDomainInfo() throws IOException, WebmailException, ManagerBeanException {
-		DomainInfo di = getDomainInfo(); 
+		DomainInfo di = DomainInfo.getDomainInfo(getDomain(), bookingInfo); 
 		AonFile diffFile = getDiffFile(this.currentDomainInfo, di);
 		if ( diffFile != null ) {
 			Domain domain = getDomain();
 			AuthPrincipal principal = AonUtil.getAuthPrincipal();
 			updateDomain(domain, principal);
 			saveHistory(di);
-			Address[] emails = getNotificationEmails();
+			Address[] emails = getNotificationEmails(getDomain().getId());
 			if (! ArrayUtils.isEmpty(emails) ) {
-				LOGGER.info( "Notication emails: {}", ArrayUtils.toString(emails) );
-				EmailSender sender = getEmailSender();
 				String subject = AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_SUBJECT, domain.getName());
-				AonMessage message = sender.createMessage(subject);
-				message.setRecipientsBcc(emails);
 				String content = getEmailContent(domain, di);
-				AonFile termsOfServiceFile = getTermsOfServiceFile();
-				sender.addMessageContent(message, content, MimeType.MIME_HTML, diffFile, termsOfServiceFile);
-				sender.sendMessage(message);
+				sendNotificationEmail(emails, subject, content, diffFile);
 				diffFile.clean();
-				termsOfServiceFile.clean();
 			}
 			reloadModuleConfiguration(principal);
 			initHistory(getCompany().getId());
@@ -582,7 +602,7 @@ public class DomainController extends BasicController {
 		}
 	}			
 	
-	private InternetAddress getEmail( String email, String displayName ) {
+	private static InternetAddress getEmail( String email, String displayName ) {
 		InternetAddress address = null;
 		if ( EmailValidator.getInstance().isValid(email) ) {
 			try {
@@ -600,7 +620,7 @@ public class DomainController extends BasicController {
 		return address;
 	}
 	
-	private  List<InternetAddress> getOwnerEmails( Integer domainId ) throws ManagerBeanException {
+	private static List<InternetAddress> getOwnerEmails( Integer domainId ) throws ManagerBeanException {
 		List<InternetAddress> list = new LinkedList<InternetAddress>();
 		IManagerBean bean = BeanManager.getManagerBean(Domain.class);
 		Domain domain = (Domain) bean.get(domainId);
@@ -623,7 +643,7 @@ public class DomainController extends BasicController {
 		return list;
 	}
 
-	private List<InternetAddress> getUserEmails() throws ManagerBeanException {
+	private static List<InternetAddress> getUserEmails() throws ManagerBeanException {
 		List<InternetAddress> list = new LinkedList<InternetAddress>();
 		User user = UserUtils.getInstance().getLoggedUser();
 		IManagerBean bean = BeanManager.getManagerBean(MailAccount.class);
@@ -641,7 +661,7 @@ public class DomainController extends BasicController {
 		return list;
 	}
 
-	private List<InternetAddress> getCompanyEmail( Integer domainId ) throws ManagerBeanException {
+	private static List<InternetAddress> getCompanyEmail( Integer domainId ) throws ManagerBeanException {
 		List<InternetAddress> list = new LinkedList<InternetAddress>();
 		Integer companyId = AdminUtil.getCompanyId(domainId);
 		if ( companyId != null ) {
@@ -661,7 +681,7 @@ public class DomainController extends BasicController {
 		return list;
 	}
 	
-	private Address[] getNotificationEmails() {
+	public static Address[] getNotificationEmails( Integer domainId ) {
 		Set<Address> emails = new HashSet<Address>();
 		try {
 			Integer adminId = AdminUtil.getAdminDomain();
@@ -669,8 +689,8 @@ public class DomainController extends BasicController {
 				emails.addAll(getCompanyEmail(adminId));
 				emails.addAll(getOwnerEmails(adminId));
 			}
-			emails.addAll(getOwnerEmails(DomainManager.getCurrentDomain()));
-			Integer parentDomainId = DomainManager.getDomainProvider().getParentDomain(); 
+			emails.addAll(getOwnerEmails(domainId));
+			Integer parentDomainId = AdminUtil.getParentDomain(domainId); 
 			if ( parentDomainId != null ) {
 				emails.addAll(getOwnerEmails(parentDomainId));
 			}
@@ -688,6 +708,18 @@ public class DomainController extends BasicController {
 	private Company getCompany() {
 		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
 		return companyController.obtainCompany();		
+	}
+
+	public static Company getAdminCompany() throws ManagerBeanException {
+		Integer adminId = AdminUtil.getAdminDomain();
+		if ( adminId != null ) {
+			Integer companyId = AdminUtil.getCompanyId(adminId);
+			if ( companyId != null ) {
+				IManagerBean bean = BeanManager.getManagerBean(Company.class);
+				return (Company) bean.get(companyId);
+			}
+		}
+		return null;
 	}
 	
 	public void initHistory( Integer companyId ) throws ManagerBeanException {
@@ -707,16 +739,28 @@ public class DomainController extends BasicController {
 	}
 	
 	private void saveHistory( DomainInfo di ) throws ManagerBeanException {
-		RegistryAttachment ra = new RegistryAttachment();
-		ra.setRegistry(getCompany());
-		ra.setAttachDate(new Date());
-		String description = DomainInfo.DATE_FORMAT.format(ra.getAttachDate());
-		ra.setDescription(description);
-		ra.setRegistryAttachmentType(RegistryAttachmentType.DOMAIN_BOOK_HISTORY);
-		ra.setData(di.getData());
-		ra.setMimeType(MimeType.MIME_TXT);
-		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
-		bean.insert(ra);
+		saveHistory(di, getCompany(), RegistryAttachmentType.DOMAIN_BOOK_HISTORY);
+	}
+	
+	public static void saveHistory( DomainInfo di, Company company, RegistryAttachmentType type ) throws ManagerBeanException {
+		Date now = new Date();
+		String description = di.getName();
+		if ( type == RegistryAttachmentType.DOMAIN_BOOK_HISTORY ) {
+			description = DomainInfo.DATE_FORMAT.format(now);	
+		}
+		AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), company.getDomain());
+		ctx.getDslContext().insertInto(RATTACH)
+				.set(RATTACH.DOMAIN, company.getDomain())
+				.set(RATTACH.REGISTRY, company.getId())
+				.set(RATTACH.ATTACH_DATE, new java.sql.Date(now.getTime()))
+				.set(RATTACH.TYPE, (byte) type.ordinal())
+				.set(RATTACH.MIMETYPE, (byte) MimeType.MIME_TXT.ordinal())
+				.set(RATTACH.DESCRIPTION, description)
+				.set(RATTACH.DATA, di.getData())
+				.set(RATTACH.CREATION_USER, di.getUser())
+				.set(RATTACH.CREATION_DATE, new Timestamp(now.getTime()))
+				.execute();
+		ctx.finalize();		
 	}
 	
 	public DataScrollerState getHistoryState() {
@@ -741,7 +785,7 @@ public class DomainController extends BasicController {
 		return diff;
 	}
 	
-	private byte[] getTermsOfServiceData() {
+	private static byte[] getTermsOfServiceData() {
 		InputStream in = null;
 		byte[] data = null;
 		try {

@@ -9,44 +9,41 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="domainPrintForm">
+		<aon:form id="domainHistoryList">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{bundle.admin_domains}" />
+				<ui:param name="toolbarTitle" value="#{bundle.admin_domain_history}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_toolbar_search}" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="clear"
 						value="#{bundle.aon_clear}" 
-						actionListener="#{domainSearch.onClear}"
+						actionListener="#{domainHistory.onClear}"
 						styleClass="aon-finding-toolbar-item aon-icon-rubber" />
-					<aon:commandButton id="history"
-						value="#{bundle.admin_domain_history}" 
-						action="domainHistory_list"
-						actionListener="#{domainHistory.onInit}"
-						styleClass="aon-finding-toolbar-item aon-icon-info" />
+					<aon:commandButton value="#{bundle.aon_back}"
+						action="domainPrint_search"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_cancel}" />
 				</ui:define>
 			</ui:decorate>		
 			
 			<aon:div styleClass="aon-scroll-area">
 				<ui:include
-					src="/com/code/aon/ui/admin/facelet/domainPrint/searchContent.xhtml" />			
-				
-				<aon:if test="#{domainSearch.showList}">
-				
-					<aon:methodParam name="rowSelectorAction" value="home" />				
+					src="/com/code/aon/ui/admin/facelet/domainPrint/domainHistorySearch.xhtml" />
+					
+				<aon:if test="#{domainHistory.showList}">
+						
 					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-						<ui:param name="controller" value="#{domainPrint}" />
-						<ui:param name="rowSelectorReRender" value="aonHeader,aonContent" />
+						<ui:param name="controller" value="#{domainHistory}" />
 						<ui:param name="skipSelectButton" value="#{true}" />
 						<ui:define name="columns">
 							<ui:include
-								src="/com/code/aon/ui/admin/facelet/domainPrint/listContent.xhtml" />
+								src="/com/code/aon/ui/admin/facelet/adminDomain/historyList.xhtml" >
+								<ui:param name="showModificationColumns" value="#{false}"/>
+							</ui:include>
 						</ui:define>
 					</ui:decorate>
-
 				</aon:if>
 			</aon:div>
 
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{domainLookup}" />
 	</ui:define>
 </ui:composition>

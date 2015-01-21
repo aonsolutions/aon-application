@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<aon:valueParam name="showModificationColumns" default="#{true}"/>
+
+	<c:if test="#{!showModificationColumns}">
+		<aon:column styleClass="aon-editDataTable-iconColumn">
+			<f:facet name="header">
+				<aon:outputText value="&#160;" />
+			</f:facet>
+			<aon:outputText value="&#160;"
+				title="#{to.infoType.name}"
+				rendered="#{to.infoType == 'INSERT'}"
+				style="padding-left:15px;" styleClass="aon-icon-new"/>
+			<aon:outputText value="&#160;"
+				title="#{to.infoType.name}"
+				rendered="#{to.infoType == 'REMOVE'}"
+				style="padding-left:15px;" styleClass="aon-icon-delete"/>
+		</aon:column>	
+	</c:if>	
+
+	<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-110" >
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_date}" />
+		</f:facet>							
+		<aon:outputText	value="#{to.date}" >
+			<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>
+	</aon:column>
+	
+	<aon:column styleClass="aon-editDataTable-textColumn aon-width-80" >
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_login_user}" />
+		</f:facet>							
+		<aon:outputText	value="#{to.user}" />
+	</aon:column>
+
+	<c:if test="#{!showModificationColumns}">
+		<aon:column styleClass="aon-editDataTable-textColumn" >
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_name}" />
+			</f:facet>							
+			<aon:outputText value="#{to.name}" />
+		</aon:column>
+		
+		<aon:column styleClass="aon-editDataTable-textColumn" >
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.admin_domain_parent}" />
+			</f:facet>							
+			<aon:outputText value="#{to.parent}" />
+		</aon:column>
+	</c:if>
+	
+	<aon:column styleClass="aon-editDataTable-textColumn aon-width-80" >
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_type}" />
+		</f:facet>							
+		<aon:outputText value="#{to.type}" />
+	</aon:column>
+	
+	<aon:column styleClass="aon-editDataTable-iconColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.admin_domain_domainManagement}" />
+		</f:facet>
+		<aon:outputText value="&#160;"
+			styleClass="aon-icon #{(to.domainManagement)?'aon-icon-checked':'aon-icon-check'}" />							
+	</aon:column>	
+		
+	<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.admin_users}" />
+		</f:facet>							
+		<aon:outputText value="#{to.numberOfUsers}" />
+	</aon:column>
+	
+	<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_module_document} (MB)" />
+		</f:facet>							
+		<aon:outputText value="#{to.maxTotalDocumentSize}" />
+	</aon:column>
+	
+	<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.admin_modules}" />
+		</f:facet>							
+		<aon:outputText value="#{to.moduleList}" />
+		<aon:div styleClass="aon-margin-left" layout="inline"
+			rendered="#{to.tirant}" >
+			<h:graphicImage title="#{bundle.aon_external_tirant}"
+				url="#{aonResource.resolve['/images/icon-tirant-asesores.png']}" />
+		</aon:div>								
+		<aon:div styleClass="aon-margin-left" layout="inline"
+			rendered="#{to.dehOnline}" >								
+			<h:graphicImage title="#{bundle.aon_external_dehOnline}"
+				url="#{aonResource.resolve['/images/icon-deh-online.png']}" />						
+		</aon:div>																						
+	</aon:column>		
+	
+	<c:if test="#{showModificationColumns}">
+		<aon:column styleClass="aon-editDataTable-iconColumn">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_changes}" />
+			</f:facet>
+			<aon:div rendered="#{toIndex != (adminDomain.historyState.model.rowCount-1)}">
+				<aon:outputText value="&#160;"
+					style="padding-left:15px;" styleClass="aon-icon-comment"/>
+				<rich:toolTip value="#{adminDomain.currentDiff}"
+					styleClass="aon-width-450" />						
+			</aon:div>													
+		</aon:column>	
+	</c:if>	
+
+</ui:composition>

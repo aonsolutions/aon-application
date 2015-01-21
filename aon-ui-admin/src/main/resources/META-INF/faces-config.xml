@@ -126,6 +126,17 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		
 	</managed-bean>
+	
+	<!-- ************* DOMAIN HISTORY ***************** -->
+	<managed-bean>
+		<managed-bean-name>domainHistory</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.admin.controller.DomainHistoryController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>domainHistory</value>
+		</managed-property>								
+	</managed-bean>	
 		
 	<!-- ************* DOMAIN ***************** -->
 	<managed-bean>
@@ -561,6 +572,10 @@
 		<navigation-case>
 			<from-outcome>domainPrint_history</from-outcome>
 			<to-view-id>/com/code/aon/ui/admin/facelet/domainPrint/history.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>domainHistory_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/admin/facelet/domainPrint/domainHistory.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>		
 		
