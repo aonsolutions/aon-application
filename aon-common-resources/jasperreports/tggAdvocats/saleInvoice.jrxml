@@ -54,8 +54,12 @@
 			<initialValueExpression><![CDATA[$F{base}+$F{taxQuota}]]></initialValueExpression>
 		</variable>
 		<variable name="totalAmount" class="java.lang.Double">
-			<variableExpression><![CDATA[$V{invoiceTotal}+$P{prepaymentTotal}-$P{advanceTotal}]]></variableExpression>
-			<initialValueExpression><![CDATA[$V{invoiceTotal}+$P{prepaymentTotal}-$P{advanceTotal}]]></initialValueExpression>
+			<variableExpression><![CDATA[$V{invoiceTotal} +
+($P{prepaymentTotal}!=null?$P{prepaymentTotal}:0.0) -
+($P{advanceTotal}!=null?$P{advanceTotal}:0.0)]]></variableExpression>
+			<initialValueExpression><![CDATA[$V{invoiceTotal} +
+($P{prepaymentTotal}!=null?$P{prepaymentTotal}:0.0) -
+($P{advanceTotal}!=null?$P{advanceTotal}:0.0)]]></initialValueExpression>
 		</variable>
 	</subDataset>
 	<subDataset name="finances">
@@ -963,7 +967,7 @@
 									<font fontName="SansSerif" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{base}-$P{expensesTotal}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{base} - ($P{expensesTotal}!=null?$P{expensesTotal}:0)]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -1173,7 +1177,7 @@
 					</jr:column>
 					<jr:column width="80">
 						<jr:columnHeader height="20" rowSpan="1">
-							<textField isBlankWhenNull="false">
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 								<reportElement key="textField-50" x="0" y="0" width="80" height="20"/>
 								<box rightPadding="2">
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1186,8 +1190,8 @@
 									<paragraph lineSpacing="Single"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$R{account_total}.toUpperCase() + " " +
-($V{totalAmount}>=0?$R{fiscal_deposit}.toUpperCase():"") +
-($V{totalAmount}<0?$R{fiscal_pay_back}.toUpperCase():"") +
+(($V{totalAmount}!=null && $V{totalAmount}>=0)?$R{fiscal_deposit}.toUpperCase():"") +
+(($V{totalAmount}!=null && $V{totalAmount}<0)?$R{fiscal_pay_back}.toUpperCase():"") +
 (false?$R{fiscal_compensate}.toUpperCase():"")]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>

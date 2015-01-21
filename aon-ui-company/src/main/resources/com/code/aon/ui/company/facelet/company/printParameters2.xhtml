@@ -8,11 +8,6 @@
 	xmlns:a4j="http://richfaces.org/a4j" >
 
 	<aon:if test="#{aonConfiguration.bean.company.showSaleInvoiceReportParams}">
-		<aon:outputLabel for="Company_print_logo"
-			value="#{bundle.company_print_logo}" />
-		<aon:selectBooleanCheckbox id="Company_print_logo"
-			value="#{company.printLogo}" />
-			
 		<aon:outputLabel for="Company_print_name"
 			value="#{bundle.company_print_name}" />
 		<aon:selectOneMenu id="Company_print_name"

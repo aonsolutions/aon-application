@@ -134,6 +134,8 @@ public enum AppParam {
 
 	APP_SMART_CARD_PARAM,
 	
+	REPORT_invoicePrint,
+	
 	REPORT_saleInvoice,
 	
 	WEBINFO_FTP_PASSWORD,

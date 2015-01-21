@@ -15,6 +15,7 @@
 			<ui:define name="toolbarContent">
 				<aon:commandButton id="save"
 					value="#{bundle.aon_save}"
+					reRender="globalConfigPrintParametersForm"
 					styleClass="aon-finding-toolbar-item aon-icon-accept"
 					accesskey="#{bundle.aon_key_save}" >
 					<aon:actionListener method="#{company.accept}" />
@@ -27,65 +28,93 @@
 			<aon:panelGrid columns="2" style="width:350px">
 				<ui:include
 					src="/com/code/aon/ui/company/facelet/company/printParameters1.xhtml" />
-				<ui:include
-					src="/com/code/aon/ui/company/facelet/company/printParameters2.xhtml" />
 			</aon:panelGrid>
 			
-			<aon:panel>
-				<f:facet name="header">
-					<aon:outputLabel value="#{bundle.finance_sale_invoice_management_module}" />
-				</f:facet>
-				<aon:panelGrid columns="2" style="width:350px">
-					<aon:outputLabel for="Sale_invoice_template"
-						value="#{bundle.company_saleInvoice_template}" />
-					<aon:if test="#{!company.customReportTemplate}">
-						<aon:selectOneMenu id="Sale_invoice_template"
-							value="#{company.saleInvoiceTemplate}" >
-							<f:selectItems value="#{companyCollections.saleInvoiceTemplates}" />
-							<a4j:support event="onchange" reRender="saleInvoice_footer-panel" ajaxSingle="#{true}" />
-						</aon:selectOneMenu>
+			<aon:div id="SaleInvoice-params-panel">
+				<aon:panel>
+					<f:facet name="header">
+						<aon:outputLabel value="#{bundle.finance_sale_invoice_management_module}" />
+					</f:facet>
+					
+					<aon:if test="#{aonRole.sysAdmin}">
+						<aon:panel style="width:350px;">
+							<f:facet name="header">
+								<aon:div style="margin: -15px 0 0 5px; background-color: white; display: inline;">
+									<aon:selectBooleanCheckbox id="Sale_invoice_customReportTemplate"
+										value="#{company.customReportTemplate}" 
+										reRender="SaleInvoice-params-panel"/>
+									<aon:outputLabel for="Sale_invoice_customReportTemplate"
+										value="#{bundle.company_custom_template}" />
+								</aon:div>
+							</f:facet>
+							<aon:div style="white-space: nowrap;"
+								rendered="#{company.customReportTemplate}">
+								<aon:outputText value="Directorio de la plantilla: " />
+								<aon:selectOneMenu value="#{company.customSaleInvoiceTemplateName}"
+									disabled="#{!company.customReportTemplate}">
+									<f:selectItem itemLabel=" - " itemValue="#{null}" />
+									<f:selectItems value="#{company.customSaleInvoiceTemplateNames}" />
+								</aon:selectOneMenu>
+							</aon:div>
+						</aon:panel>
 					</aon:if>
-					<aon:if test="#{company.customReportTemplate}">
-						<aon:outputText id="Company_invoice_template"
-							value="#{bundle.company_custom_template}" />
-					</aon:if>
-					<aon:outputLabel for="Sale_invoice_discountInPrice"
-						value="#{bundle.company_invoice_discountInPrice}" />
-					<aon:selectBooleanCheckbox id="Sale_invoice_discountInPrice"
-						value="#{company.printDiscountPriceApplied}" />
-				</aon:panelGrid>
-			</aon:panel>
-			
-			<aon:panel id="saleInvoice_footer-panel">
-				<f:facet name="header">
-					<aon:div style="margin: -15px 0 0 5px; background-color: white; display: inline;">
-						<aon:selectBooleanCheckbox id="Company_print_saleInvoice_footer"
-							value="#{company.printSaleInvoiceFooter}" >
-							<a4j:support event="onclick" reRender="saleInvoice_footer-panel" ajaxSingle="#{true}" />
-						</aon:selectBooleanCheckbox>
-						<aon:outputLabel for="Company_print_saleInvoice_footer"
-							value="#{bundle.company_saleInvoice_footer_text}" />
+					
+					<aon:panelGrid columns="2" style="width:350px;">
+						<aon:outputLabel for="Sale_invoice_template"
+							value="#{bundle.company_saleInvoice_template}" />
+						<aon:div>
+							<aon:if test="#{!company.customReportTemplate}">
+								<aon:selectOneMenu id="Sale_invoice_template"
+									value="#{company.saleInvoiceTemplate}" >
+									<f:selectItems value="#{companyCollections.saleInvoiceTemplates}" />
+									<a4j:support event="onchange" reRender="saleInvoice_footer-panel" ajaxSingle="#{true}" />
+								</aon:selectOneMenu>
+							</aon:if>
+							<aon:if test="#{company.customReportTemplate}">
+								<aon:outputText id="Company_invoice_template"
+									value="#{bundle.company_custom_template}" />
+							</aon:if>
+						</aon:div>
+						<ui:include src="/com/code/aon/ui/company/facelet/company/printParameters2.xhtml" />
+						
+						<aon:outputLabel for="Sale_invoice_discountInPrice"
+							value="#{bundle.company_invoice_discountInPrice}" />
+						<aon:selectBooleanCheckbox id="Sale_invoice_discountInPrice"
+							value="#{company.printDiscountPriceApplied}" />
+					</aon:panelGrid>
+				</aon:panel>
+				
+				<aon:panel id="saleInvoice_footer-panel">
+					<f:facet name="header">
+						<aon:div style="margin: -15px 0 0 5px; background-color: white; display: inline;">
+							<aon:selectBooleanCheckbox id="Company_print_saleInvoice_footer"
+								value="#{company.printSaleInvoiceFooter}" >
+								<a4j:support event="onclick" reRender="saleInvoice_footer-panel" ajaxSingle="#{true}" />
+							</aon:selectBooleanCheckbox>
+							<aon:outputLabel for="Company_print_saleInvoice_footer"
+								value="#{bundle.company_saleInvoice_footer_text}" />
+						</aon:div>
+					</f:facet>
+					<aon:panelGrid columns="2" rendered="#{company.printSaleInvoiceFooter}" 
+						columnClasses="aon-panelGrid-even aon-noborder, aon-panelGrid-even aon-noborder aon-vertical-align-top" >
+						<aon:inputTextarea id="SaleInvoice_footer_text"
+							cols="150" rows="6"
+							value="#{companySaleInvoiceFooter.text}"/>
+						<aon:commandButton id="saleInvoice_footer_text-importLOPD"
+							title="#{bundle.company_create_LOPD_text}"
+							value="LOPD" reRender="saleInvoice_footer-panel"
+							actionListener="#{companySaleInvoiceFooter.createLOPD}"
+							styleClass="aon-finding-toolbar-item aon-icon-sincronize" />
+					</aon:panelGrid>
+					<aon:div rendered="#{!company.printSaleInvoiceFooter 
+						and companySaleInvoiceFooter.garageDomainType
+						and companySaleInvoiceFooter.garageSaleInvoiceTemplate}" >
+						<aon:outputText value="#{bundle.gta_footer_text_default}: " styleClass="aon-italic aon-underline" />
+						<br />
+						<aon:outputText value="#{companySaleInvoiceFooter.gtaDefaultText}" styleClass="aon-italic" />
 					</aon:div>
-				</f:facet>
-				<aon:panelGrid columns="2" rendered="#{company.printSaleInvoiceFooter}" 
-					columnClasses="aon-panelGrid-even aon-noborder, aon-panelGrid-even aon-noborder aon-vertical-align-top" >
-					<aon:inputTextarea id="SaleInvoice_footer_text"
-						cols="150" rows="6"
-						value="#{companySaleInvoiceFooter.text}"/>
-					<aon:commandButton id="saleInvoice_footer_text-importLOPD"
-						title="#{bundle.company_create_LOPD_text}"
-						value="LOPD" reRender="saleInvoice_footer-panel"
-						actionListener="#{companySaleInvoiceFooter.createLOPD}"
-						styleClass="aon-finding-toolbar-item aon-icon-sincronize" />
-				</aon:panelGrid>
-				<aon:div rendered="#{!company.printSaleInvoiceFooter 
-					and companySaleInvoiceFooter.garageDomainType
-					and companySaleInvoiceFooter.garageSaleInvoiceTemplate}" >
-					<aon:outputText value="#{bundle.gta_footer_text_default}: " styleClass="aon-italic aon-underline" />
-					<br />
-					<aon:outputText value="#{companySaleInvoiceFooter.gtaDefaultText}" styleClass="aon-italic" />
-				</aon:div>
-			</aon:panel>
+				</aon:panel>
+			</aon:div>
 			
 			<aon:panel>
 				<f:facet name="header">

@@ -52,7 +52,9 @@ public class SddMandateObject implements ITransferObject, ICollectionProvider, S
 
 	public void setRecurrentPayment(Boolean recurrentPayment) {
 		this.recurrentPayment = recurrentPayment;
-		this.oneOffPayment = this.recurrentPayment!=null && this.recurrentPayment?!this.recurrentPayment:null;
+		if(this.recurrentPayment!=null && this.recurrentPayment){
+			this.oneOffPayment = !this.recurrentPayment;
+		}
 	}
 
 	public Boolean getOneOffPayment() {
@@ -61,7 +63,9 @@ public class SddMandateObject implements ITransferObject, ICollectionProvider, S
 
 	public void setOneOffPayment(Boolean oneOffPayment) {
 		this.oneOffPayment = oneOffPayment;
-		this.recurrentPayment = this.oneOffPayment!=null && this.oneOffPayment?!this.oneOffPayment:null;
+		if(this.oneOffPayment!=null && this.oneOffPayment){
+			this.recurrentPayment = !this.oneOffPayment;
+		}
 	}
 
 	@Override

@@ -17,6 +17,7 @@ import static com.code.aon.ui.company.controller.ICompanyConstants.SALE_INVOICE_
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
@@ -31,6 +32,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +47,7 @@ import com.code.aon.company.Company;
 import com.code.aon.company.enumeration.FinancePaymentTemplate;
 import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.company.enumeration.SaleInvoiceTemplate;
+import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Scope;
 import com.code.aon.config.UserScope;
 import com.code.aon.config.enumeration.DomainType;
@@ -120,7 +123,9 @@ public class CompanyParentController extends BasicController implements ICompany
 	private boolean printRecordData;
 	
 	private SaleInvoiceTemplate saleInvoiceTemplate;
-
+	
+	private ApplicationParameter customSaleInvoiceTemplateParam;
+	
 	private boolean printDiscountPriceApplied;
 	
 	private boolean printLogo;
@@ -725,6 +730,43 @@ public class CompanyParentController extends BasicController implements ICompany
 		return saleInvoiceTemplate==null?INVOICE_PRINT_REPORT_KEY:saleInvoiceTemplate.getValue().replaceFirst(SALE_INVOICE_REPORT_KEY, INVOICE_PRINT_REPORT_KEY);
 	}
 	
+	public ApplicationParameter getCustomSaleInvoiceTemplateParam() {
+		if(customSaleInvoiceTemplateParam==null){
+			customSaleInvoiceTemplateParam = new ApplicationParameter();
+			customSaleInvoiceTemplateParam.setName(AppParam.REPORT_saleInvoice.getValue());
+			customSaleInvoiceTemplateParam.setSystemParameter(false);
+		}
+		return customSaleInvoiceTemplateParam;
+	}
+
+	public void setCustomSaleInvoiceTemplateParam(
+			ApplicationParameter customSaleInvoiceTemplateParam) {
+		this.customSaleInvoiceTemplateParam = customSaleInvoiceTemplateParam;
+	}
+
+	public String getCustomSaleInvoiceTemplateName() {
+		return getCustomSaleInvoiceTemplateParam().getValue();
+	}
+	
+	public void setCustomSaleInvoiceTemplateName(
+			String customSaleInvoiceTemplateName) {
+		getCustomSaleInvoiceTemplateParam().setValue(customSaleInvoiceTemplateName);
+	}
+	
+	public List<SelectItem> getCustomSaleInvoiceTemplateNames(){
+		String REPORT_PATH = "/home/COMMON-RESOURCES/aon-report";
+		File customDirectory = new File( REPORT_PATH );
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		if ( customDirectory.exists() && customDirectory.canRead() ) {
+			for(File file: customDirectory.listFiles()){
+				if(file.isDirectory()){
+					list.add(new SelectItem(file.getName(), file.getName()));
+				}
+			}
+		}
+		return list;
+	}
+
 	public boolean isPrintDiscountPriceApplied() {
 		return printDiscountPriceApplied;
 	}
@@ -869,13 +911,8 @@ public class CompanyParentController extends BasicController implements ICompany
 	}
 	
 	public void searchCustomReportTemplate() throws ManagerBeanException {
-		String invoiceTemplateParam = AppParamUtil.getValue(APP_SALE_INVOICE_TEMPLATE_PARAM);
-		if( invoiceTemplateParam!=null && SaleInvoiceTemplate.getEnumByValue(invoiceTemplateParam)!=SaleInvoiceTemplate.DEFAULT ){
-			setCustomReportTemplate(false);
-		} else {
-			String customInvoiceReportKey = AppParamUtil.getValue(AppParam.REPORT_saleInvoice);
-			setCustomReportTemplate(customInvoiceReportKey != null);
-		}
+		customSaleInvoiceTemplateParam = AppParamUtil.getParameter(AppParam.REPORT_saleInvoice);
+		setCustomReportTemplate( customSaleInvoiceTemplateParam!=null && StringUtils.isNotBlank(customSaleInvoiceTemplateParam.getValue()) );
 	}
 
 	private ReportPrintOption getReportPrintOptionValue(AppParam appParam) {
