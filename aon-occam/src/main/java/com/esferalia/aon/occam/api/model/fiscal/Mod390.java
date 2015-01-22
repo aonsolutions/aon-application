@@ -1601,14 +1601,14 @@ public class Mod390 implements Serializable {
 		Mod390DetailKey.K30_04, Mod390DetailKey.K30_07,
 		Mod390DetailKey.K30_08, Mod390DetailKey.K30_10,
 		Mod390DetailKey.K30_16, Mod390DetailKey.K30_18,
-		Mod390DetailKey.K30_21, Mod390DetailKey.K32,
-		Mod390DetailKey.K33,    Mod390DetailKey.K33_I,
-		Mod390DetailKey.K34,    Mod390DetailKey.K35 };	
+		Mod390DetailKey.K30_21};	
 
 	private static final Mod390DetailKey[] K36_FORMULA = { Mod390DetailKey.K15,
 		Mod390DetailKey.K17, Mod390DetailKey.K19, Mod390DetailKey.K21,
 		Mod390DetailKey.K23, Mod390DetailKey.K25, Mod390DetailKey.K27,
-		Mod390DetailKey.K29, Mod390DetailKey.K31 };
+		Mod390DetailKey.K29, Mod390DetailKey.K31, Mod390DetailKey.K32,
+		Mod390DetailKey.K33, Mod390DetailKey.K33_I,
+		Mod390DetailKey.K34, Mod390DetailKey.K35};
 
 	public void calculate() {
 		double k37Quota = 0;
