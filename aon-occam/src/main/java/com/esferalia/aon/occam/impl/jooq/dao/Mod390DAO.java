@@ -1078,6 +1078,11 @@ public class Mod390DAO {
 		C56      (Mod303Key.C56     , (src,mod390) -> {mod390.setBox81(src.getAmount());return true;}),
 		C57      (Mod303Key.C57     , (src,mod390) -> {mod390.setBox82(src.getAmount());return true;}),
 		C58      (Mod303Key.C58     , (src,mod390) -> {mod390.setBox83(src.getAmount());return true;}),
+		C71      (Mod303Key.C71     , (src,mod390) -> {
+										mod390.setBox97((src.getAmount() < 0)?AonMathUtils.round(mod390.getBox95() + src.getAmount()):0.0);
+										return true;
+													}),
+		PBK      (Mod303Key.PBK     , (src,mod390) -> {mod390.setBox98( AonMathUtils.round(mod390.getBox95() + src.getAmount()) );return true;}),
 		;
 		
 		private Mod303Key key;
@@ -1161,6 +1166,26 @@ public class Mod390DAO {
 	}
 	
 	private static void fillSimplifiedDeclarationResults(AONContext ctx, Mod390 mod390) {
-		// TODO
+		mod390.setBox97( AonMathUtils.round(mod390.getBox97() * -1));
+		mod390.setBox98( AonMathUtils.round(mod390.getBox98() * -1));
+		if (mod390.getBox98() > 0) {
+			mod390.setBox97( 0 ); 	
+		}
+		Record1<BigDecimal> record = ctx.getDslContext()
+			.select(DSL.sum(FS_MODEL_DETAIL.AMOUNT))
+			.from(FS_MODEL)
+			.join(FS_MODEL_DETAIL).on(FS_MODEL.ID.equal(FS_MODEL_DETAIL.FS_MODEL))
+			.where(FS_MODEL.DOMAIN.equal(mod390.getDomain()))
+			.and(FS_MODEL.YEAR.equal(mod390.getYear()))
+			.and(FS_MODEL_DETAIL.AMOUNT.greaterThan(0.0))
+			.and(FS_MODEL.MODEL.equal("303"))
+			.and(FS_MODEL_DETAIL.TYPE.equal("303-71"))
+			.fetchOne();
+		if (record != null) {
+			BigDecimal quota = record.getValue(DSL.sum(FS_MODEL_DETAIL.AMOUNT)); 
+			if (quota != null) {
+				mod390.setBox95( quota.doubleValue());
+			}
+		}
 	}
 }
