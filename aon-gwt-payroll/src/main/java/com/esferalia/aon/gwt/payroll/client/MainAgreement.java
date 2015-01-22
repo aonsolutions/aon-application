@@ -10,7 +10,6 @@ import java.util.SortedSet;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
-import com.esferalia.aon.gwt.common.client.widget.OptionsToolbar;
 import com.esferalia.aon.gwt.common.shared.CollectionUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.Agreements.Listener;
@@ -18,9 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -40,7 +37,7 @@ interface EditionListener {
 }
 
 public class MainAgreement extends MainEntryPoint implements Listener,
-		OptionsToolbar.Listener, EditionListener {
+		EditionListener, Agreements.Toolbar {
 	
 
 	
@@ -76,6 +73,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 		@Override
 		public void execute() {
+			MainAgreement.this.agreements.addNewItemTree(null);
 		}
 	}
 	
@@ -170,9 +168,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	@UiField
 	AgreementDraft agreementDraft;
 
-	@UiField
-	OptionsToolbar toolbar;
-
 	private Map<Integer, AgreementDraftObject> agreementDrafts;
 	
 	private Agreement agreement;
@@ -201,7 +196,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		this.editionsListener = new LinkedList<EditionListener>();
 		this.agreement = null;
 		this.contextMenu = new AgreementContextMenu();
-		this.toolbar.addListener(this);
+		this.agreements.addToolbar(this);
 		this.agreements.addListener(this);
 		this.agreementDrafts = new HashMap<Integer, AgreementDraftObject>();
 		
@@ -257,31 +252,27 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	}
 
 	@Override
-	public void onNewButtonClick(ClickEvent event) {
-		//Window.alert("onNew(..");
+	public void onNewAgreement(Agreement agreement) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
-	public void onPasteButtonClick(ClickEvent event) {
-		for(EditionListener listener : editionsListener)
-			listener.onAgreementCopy(agreement);
-	}
-
-	@Override
-	public void onCopyButtonClick(ClickEvent event) {
-		for(EditionListener listener : editionsListener)
-			listener.onAgreementPaste(agreement);
-	}
-
-	@Override
-	public void onDraftButtonClick(ClickEvent event) {
+	public void onMoveToTrash(Agreement agreement) {
 		for(EditionListener listener : editionsListener)
 			listener.onAgreementDelete(agreement);
 	}
 
 	@Override
-	public void onViewButtonClick(ClickEvent event) {
-		
+	public void onCopyAgreement(Agreement agreement) {
+		for(EditionListener listener : editionsListener)
+			listener.onAgreementPaste(agreement);
+	}
+
+	@Override
+	public void onPasteAgreement(Agreement agreement) {
+		for(EditionListener listener : editionsListener)
+			listener.onAgreementCopy(agreement);
 	}
 
 	@Override
@@ -339,7 +330,5 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		});
 	}	
 	//--------------------------------------------- private methods
-
-	
 
 }

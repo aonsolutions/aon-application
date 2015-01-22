@@ -16,6 +16,7 @@ public class Agreement implements Serializable, HasId<Integer>, HasDomain<Intege
 	private int employees;
 	
 	private boolean levelsWithoutCategories;
+	private boolean hasContracts;
 
 	@Override
 	public Integer getId() {
@@ -66,6 +67,14 @@ public class Agreement implements Serializable, HasId<Integer>, HasDomain<Intege
 
 	public void setLevelsWithoutCategories(boolean levelWithoutCategories) {
 		this.levelsWithoutCategories = levelWithoutCategories;
+	}
+	
+	public void setHasContract(boolean hasContract) {
+		this.hasContracts = hasContract;
+	}
+	
+	public boolean getHasContract() {
+		return this.hasContracts;
 	}
 	
 	// ----------------------------------------------------------------------

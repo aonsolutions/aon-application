@@ -62,6 +62,8 @@ public class AON {
 	public static final String AON_DATA_TABLE_CELL_HIGHLIGHT_TOP = "aon-dataTable-cell-highlight-top";
 	public static final String AON_BOLD = "aon-bold";
 	public static final String AON_BLACK = "aon-black";
+	public static final String AON_RED = "aon-red";
+	public static final String AON_GREEN = "aon-green";
 	public static final String AON_WIDTH_ALL = "aon-width-all";
 	public static final String AON_WIDTH_HALF = "aon-width-half";
 	public static final String AON_TEXT_RIGHT = "aon-text-right";

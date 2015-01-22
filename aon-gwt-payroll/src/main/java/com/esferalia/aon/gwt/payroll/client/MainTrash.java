@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.css.images.Images;
@@ -33,33 +34,13 @@ interface Listener {
 	void onDeleteAction(Agreement agreement);
 
 	void onRestoreAction(Agreement agreement);
+	
+	void onSelectionTreeItem();
 
 }
 
 public class MainTrash extends MainEntryPoint implements
 		AgreementsTree.Listener, Listener {
-
-	static class DraftObjectListener implements UndoManager.Listener {
-
-		private TreeItem treeItem;
-		private AgreementDraftObject draftObject;
-
-		public DraftObjectListener(TreeItem treeItem,
-				AgreementDraftObject draftObject) {
-			this.treeItem = treeItem;
-			this.draftObject = draftObject;
-		}
-
-		@Override
-		public void onChange(UndoManager undoManager) {
-			ImageResource resource = AgreementsTree.getImageResource(
-					draftObject.canUndo(), draftObject.hasErrors(),
-					draftObject.hasWarnings());
-			treeItem.setHTML(AgreementsTree.imageItemSafeHtml(resource,
-					draftObject.getDescription()));
-		}
-
-	}
 
 	static interface Binder extends UiBinder<Widget, MainTrash> {
 	}
@@ -189,13 +170,6 @@ public class MainTrash extends MainEntryPoint implements
 
 	}
 
-	@Override
-	public void onDeleteAction(Agreement agreement) {
-		Window.alert("Voy a borrar a " + agreement.getDescription()
-				+ " con id " + agreement.getId());
-
-	}
-
 	private boolean getTreeCount() {
 		return agreementsTree.getTree().getItemCount() > 0;
 	}
@@ -218,6 +192,23 @@ public class MainTrash extends MainEntryPoint implements
 					}
 				});
 	}
+	
+	@Override
+	public void onDeleteAction(Agreement agreement) {
+		agreementsTree.getEnterpriseService().deleteAgreement(agreement, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert(caught.getMessage());				
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				MainTrash.this.getAgreements();				
+			}
+		});
+	}
+
 
 	// ---------------------------------------------------- Agreements.Listener
 
@@ -258,29 +249,26 @@ public class MainTrash extends MainEntryPoint implements
 
 						}
 						// Select the first one.
-						if (agreementsTree.getTree().getItemCount() > 0)
+						if ( getTreeCount() ) {							
 							agreementsTree.getTree().setSelectedItem(
 									agreementsTree.getTree().getItem(
 											Math.max(item2Select, 0)), true);
-						
-
-						MainTrash.this.enabledButtons(agreementsTree.getTree()
-								.getItemCount());
-
+							Agreement agreement = (Agreement) agreementsTree
+									.getSelectedItem().getUserObject();
+							agreementSelected(agreement);
+						}
 					}
 				});
 	}
 
-	private void enabledButtons(Integer count) {
-		clearAgreementButton.setEnabled(count > 0);
-		deleteAgreementButton.setEnabled(count > 0);
-		restoreAgreementButton.setEnabled(count > 0);
-	}
-
 	private TreeItem addAgreementItem(Agreement agreement) {
+		String title = "";
+		String style = AON.AON_GREEN;
 		String description = agreement.getDescription();
-		if (agreement.isRedefined()) {
-			description = "*" + description;
+		if (agreement.getHasContract()) {
+			title = "Imposible eliminar definitivamente. "
+					+ "Convenio con contratos asociados";
+			style = AON.AON_RED + " " + AON.AON_ICON_CMD_BUTTON;
 		}
 
 		List<ImageResource> marks = new ArrayList<ImageResource>();
@@ -290,7 +278,8 @@ public class MainTrash extends MainEntryPoint implements
 		TreeItem treeItem = new TreeItem(AgreementsTree.imageItemSafeHtml(
 				description, AgreementsTree.getImageResource(agreement),
 				marks.toArray(new ImageResource[marks.size()])));
-
+		treeItem.setStyleName(style);
+		treeItem.setTitle(title);
 		treeItem.setUserObject(agreement);
 
 		agreementsTree.getTree().addItem(treeItem);
@@ -307,14 +296,24 @@ public class MainTrash extends MainEntryPoint implements
 			agreementSelected((Agreement) object);
 
 	}
+	
+	@Override
+	public void onSelectionTreeItem() {
+		// TODO Auto-generated method stub
+		
+	}
 
 	private void agreementSelected(Agreement agreement) {
+		
 		this.agreement = agreement;
-
+		this.restoreAgreementButton.setEnabled(true);
+		this.deleteAgreementButton.setEnabled(!agreement.getHasContract());
+		
 		AgreementDraftObject agreementDraftObject = agreementDrafts
 				.get(agreement.getId());
 		if (agreementDraftObject == null) {
-			com.esferalia.aon.gwt.payroll.shared.AgreementDraft draft = new com.esferalia.aon.gwt.payroll.shared.AgreementDraft();
+			com.esferalia.aon.gwt.payroll.shared.AgreementDraft draft = 
+					new com.esferalia.aon.gwt.payroll.shared.AgreementDraft();
 
 			draft.setId(agreement.getId());
 			draft.setDomain(agreement.getDomain());
@@ -325,12 +324,10 @@ public class MainTrash extends MainEntryPoint implements
 
 			agreementDraftObject = new AgreementDraftObject(getDomain(), draft,
 					agreementsTree.getEmployeesService());
-			agreementDrafts.put(agreement.getId(), agreementDraftObject);
+			agreementDrafts.put(agreement.getId(), agreementDraftObject);			
 
-			TreeItem treeItem = agreementsTree.getSelectedItem();
-
-			agreementDraftObject.addListener(new DraftObjectListener(treeItem,
-					agreementDraftObject));
+			//agreementDraftObject.addListener(new DraftObjectListener(treeItem,
+					//agreementDraftObject));
 
 			agreementsTree.getEmployeesService().getChanges(agreement,
 					new AgreementChangesCallback(agreementDraftObject));
@@ -339,7 +336,8 @@ public class MainTrash extends MainEntryPoint implements
 		else {
 			agreementDraft.setAgreementDraftObject(agreementDraftObject);
 		}
-
+		
+		agreementDraft.disableEdition();
 	}
 
 	@Override
@@ -356,7 +354,7 @@ public class MainTrash extends MainEntryPoint implements
 
 	@Override
 	public void onAgreementSupr(Agreement agreement) {
-
+		
 	}
 
 	@Override
@@ -365,5 +363,4 @@ public class MainTrash extends MainEntryPoint implements
 		// TODO Auto-generated method stub
 
 	}
-
 }

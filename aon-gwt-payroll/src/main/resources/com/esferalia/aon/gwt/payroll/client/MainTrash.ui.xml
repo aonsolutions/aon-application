@@ -42,7 +42,7 @@
 					<g:header size='3'>
 						<div class='{style.stackHeader}'>
 							<div class='{style.agreementIcon}' />
-							CONVENIOS
+							PAPELERA CONVENIOS
 						</div>
 					</g:header>
 					<g:DockLayoutPanel>

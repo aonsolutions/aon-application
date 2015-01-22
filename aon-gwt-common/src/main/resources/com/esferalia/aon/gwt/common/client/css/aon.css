@@ -574,6 +574,14 @@ input:disabled + label{
 .aon-black {
 	color: black;
 }
+
+.aon-red {
+	color: #E65F3E;
+}
+
+.aon-green {
+	color: #679934;
+}
 .aon-comboBoxPopup {
 	padding: 0px;
 	background-color: #FBEDB6;

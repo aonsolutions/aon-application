@@ -40,6 +40,8 @@ public interface EnterprisesService extends RemoteService {
 	void deletePaymentConcept(Payment payment);
 
 	void deleteDeductionConcept(Deduction deduction);
+	
+	void deleteAgreement(Agreement agreement);
 
 	List<Agreement> getAgreements(int offset, int limit) ;
 

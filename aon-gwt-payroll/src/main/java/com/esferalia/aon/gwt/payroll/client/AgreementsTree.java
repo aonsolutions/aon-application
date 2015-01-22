@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
@@ -49,8 +50,6 @@ public class AgreementsTree extends Composite implements KeyDownHandler, Context
 		void onTreeItemSelected(SelectionEvent<TreeItem> event);
 		
 		void onAgreementContextMenu(Agreement agreement, ContextMenuEvent event);
-		
-		
 		
 		void getAgreements();
 	}
@@ -221,7 +220,7 @@ public class AgreementsTree extends Composite implements KeyDownHandler, Context
 			builder.appendEscaped(" " + title);
 		return builder.toSafeHtml();
 	}
-
+	
 	static SafeHtml imageItemSafeHtml(String title, ImageResource imageProto,
 			ImageResource... imageMarks) {
 		SafeHtmlBuilder builder = new SafeHtmlBuilder();
@@ -237,6 +236,7 @@ public class AgreementsTree extends Composite implements KeyDownHandler, Context
 
 		if (title != null)
 			builder.appendEscaped(" " + title);
+		
 		return builder.toSafeHtml();
 	}
 	

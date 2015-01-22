@@ -35,9 +35,6 @@
 					</g:header>
 					
 					<g:DockLayoutPanel>
-						<g:north size="26">
-							<common:OptionsToolbar ui:field="toolbar" />
-						</g:north>
 						<g:center>
 							<aon:Agreements ui:field='agreements' />	
 						</g:center>

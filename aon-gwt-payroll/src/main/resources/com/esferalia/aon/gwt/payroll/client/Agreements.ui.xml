@@ -14,9 +14,13 @@
 		field="res" />
 
 	<g:DockLayoutPanel unit='PX'>
+		<g:north size="26">
+			<common:OptionsToolbar ui:field="toolbar" />
+		</g:north>
+
 		<g:center>
 			<employee:AgreementsTree ui:field="agreementsTree" />
 		</g:center>
+		
 	</g:DockLayoutPanel>
-
 </ui:UiBinder>

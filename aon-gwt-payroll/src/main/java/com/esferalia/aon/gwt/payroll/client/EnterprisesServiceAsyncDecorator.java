@@ -82,6 +82,14 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.deletePaymentConcept(payment,
 				new AsyncCallbackWrapper<Void>(callback));
 	}
+	
+	@Override
+	public void deleteAgreement(Agreement agreement,
+			AsyncCallback<Void> callback) {
+		AON.start();
+		enterprisesServiceAsync.deleteAgreement(agreement,  
+				new AsyncCallbackWrapper<Void>(callback));
+	}
 
 	@Override
 	public void saveDeductionConcept(Deduction deduction,

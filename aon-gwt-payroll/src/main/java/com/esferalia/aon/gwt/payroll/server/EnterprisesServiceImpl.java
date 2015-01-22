@@ -242,6 +242,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
+		} catch (RuntimeException e) {
+			
 		} finally {
 			if (connection != null) {
 				try {
@@ -249,6 +251,27 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
+		}
+	}
+	
+	@Override
+	public void deleteAgreement(Agreement agreement) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection();
+			Integer domain = getDomain();
+			JooqAgreement.deleteAgreement(connection, domain, agreement);
+
+		} catch(SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
 		}
 	}
 

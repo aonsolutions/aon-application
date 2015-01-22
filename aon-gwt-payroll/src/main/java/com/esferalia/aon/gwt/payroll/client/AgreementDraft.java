@@ -77,15 +77,19 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
+import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuBar;
@@ -1030,7 +1034,7 @@ public class AgreementDraft extends ResizeComposite implements
 		}
 		super.onResize();
 	}
-
+		
 	public void setAgreementDraftObject(
 			AgreementDraftObject agreementDraftObject) {
 		if (this.agreementDraftObject != null) {
@@ -2958,5 +2962,30 @@ public class AgreementDraft extends ResizeComposite implements
 		for (int col = 0; col < table.getCellCount(row); col++)
 			fomatter.addStyleName(row, col, style);
 	}
-
+	
+	public void disableEdition() {
+		disable(false, deckPanel);
+		disable(false, draftScrollPane);
+		disable(false, printPreviewPanel);
+		disable(false, salaryTable);
+		disable(false, paymentsTable);
+		disable(false, extrasTable);
+	}
+	
+	private void disable(boolean enable, Widget widget) {
+		
+		if(widget instanceof HasWidgets) {
+			Iterator<Widget> iterator = ((HasWidgets)widget).iterator();
+			while(iterator.hasNext()) {
+				Widget next = iterator.next();
+				disable(enable, next);
+				if(next instanceof FocusWidget) {					
+					((FocusWidget) next).setEnabled(false);
+				}
+				if(next instanceof TextBox) {					
+					((TextBox) next).setReadOnly(true);
+				}
+			}
+		}
+	}
 }
