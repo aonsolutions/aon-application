@@ -112,7 +112,9 @@ public class Mod390toAEATIVA2014 {
 			tipf.setNIF(mod390.getDocument());
 			tipf.setNombre(toUppercase(mod390.getName()));
 			tipf.setApe1(toUppercase(mod390.getFirstSurname()));
-			tipf.setApe2(toUppercase(mod390.getSecondSurname()));;
+			if (AonStringUtils.isNotBlank(toUppercase(mod390.getSecondSurname()))) {
+				tipf.setApe2(toUppercase(mod390.getSecondSurname()));
+			}
 			tp.setIdent(tipf);
 			datIdent.setPersFisica(tp);
 		}
