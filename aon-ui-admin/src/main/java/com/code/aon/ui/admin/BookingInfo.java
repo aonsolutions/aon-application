@@ -16,15 +16,18 @@ import org.apache.commons.io.FileUtils;
 import com.code.aon.AonVersion;
 import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.Domain;
 import com.code.aon.config.enumeration.DomainType;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ui.admin.controller.DomainController;
 import com.code.aon.ui.audit.AuditManager;
+import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.registry.controller.DocumentManager;
 import com.code.aon.ui.util.AonUtil;
 
-public class BookingInfo implements Serializable, IBookingInfo {
+public class BookingInfo implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -39,6 +42,8 @@ public class BookingInfo implements Serializable, IBookingInfo {
 	private List<DomainModuleInfo> displayModules;
 	
 	private DomainModuleInfo documental;
+	
+	private int externalApplications;
 	
 	public BookingInfo(Domain domain, Domain parentDomain) {
 		this.domain = domain;
@@ -67,7 +72,6 @@ public class BookingInfo implements Serializable, IBookingInfo {
 		}				
 	}
 
-	@Override
 	public void init() throws ManagerBeanException {
 		this.aioInfo = DomainApplicationInfo.getApplicationInfos(getDomain(), AON_AIO_APPLICATION);
 		setRendered(aioInfo.getApplicationModules(), false);
@@ -77,7 +81,17 @@ public class BookingInfo implements Serializable, IBookingInfo {
 		setRendered(this.displayModules, true);
 		updateModules(this.aioInfo, AonUtil.getRoleManager().isSysAdmin());
 		resetUnusedModules();
+		initExternalApplications();
 	}
+	
+	private void initExternalApplications() {
+		externalApplications = AppParamUtil.getValueAsInt(AppParam.AON_EXTERNAL_APPLICATIONS, getDomain().getId());
+		boolean tirant = isTirant();
+		boolean dehOnline = !getDomain().isDomainManagement() && isDehOnline();
+		externalApplications = 0;
+		setTirant(tirant);
+		setDehOnline(dehOnline);
+	}	
 		
 	public List<DomainModuleInfo> getBookingModules() {
 		return bookingModules;
@@ -87,8 +101,8 @@ public class BookingInfo implements Serializable, IBookingInfo {
 		return displayModules;
 	}
 	
-	@Override
 	public void save() throws ManagerBeanException {
+		saveExternalApplications();
 		if ( isAonOne() ) {
 			updateAonOneModules();
 		}
@@ -99,6 +113,18 @@ public class BookingInfo implements Serializable, IBookingInfo {
 		}
 		init();
 	}	
+	
+	private void saveExternalApplications() {
+		if ( externalApplications != 0 ) {
+			AppParamUtil.insertParameter(AppParam.AON_EXTERNAL_APPLICATIONS, externalApplications);	
+		} else {
+			AppParamUtil.removeParameter(AppParam.AON_EXTERNAL_APPLICATIONS);
+		}
+		if (! isDehOnline() ) {
+			AppParamUtil.removeParameter(AppParam.AON_DEH_ONLINE_USER);
+			AppParamUtil.removeParameter(AppParam.AON_DEH_ONLINE_PASSWORD);			
+		}
+	}		
 	
 	public boolean isShowDisplayModules() {
 		if ( ((getDomain().getType() == DomainType.CONSULTANCY) && getDomain().isDomainManagement()) || isAonOne() ) {
@@ -251,7 +277,35 @@ public class BookingInfo implements Serializable, IBookingInfo {
 			}
 		}
 		this.aioInfo.sortApplicationModules(list);
-																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																return list;
+		return list;
 	}
+	
+	private boolean getExternalApplicationsValue(int bitwise) {
+		return (externalApplications & bitwise) != 0;
+	}
+
+	private void setExternalApplicationsValue(int bitwise, boolean value) {
+		if ( value ) {
+			this.externalApplications |= bitwise;	
+		} else {
+			this.externalApplications &= (~bitwise);
+		}
+	}
+	
+	public boolean isDehOnline() {
+		return getExternalApplicationsValue(ICommonConstants.DEH_ONLINE_EXTERNAL_APP);
+	}
+
+	public void setDehOnline(boolean value) {
+		setExternalApplicationsValue(ICommonConstants.DEH_ONLINE_EXTERNAL_APP, value);
+	}
+
+	public boolean isTirant() {
+		return getExternalApplicationsValue(ICommonConstants.TIRANT_EXTERNAL_APP);
+	}
+
+	public void setTirant(boolean value) {
+		setExternalApplicationsValue(ICommonConstants.TIRANT_EXTERNAL_APP, value);
+	}		
 	
 }

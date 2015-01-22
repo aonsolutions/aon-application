@@ -68,10 +68,8 @@ import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.admin.BookingInfo;
 import com.code.aon.ui.admin.DomainInfo;
-import com.code.aon.ui.admin.IBookingInfo;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.audit.controller.IAuditConstants;
-import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.company.controller.CompanyController;
@@ -132,11 +130,9 @@ public class DomainController extends BasicController {
 	
 	private DataScrollerState historyState;
 	
-	private int externalApplications;
-	
 	private int productDetailLevel;
 	
-	private IBookingInfo bookingInfo;
+	private BookingInfo bookingInfo;
 
 	private AdminMainController getAdmin() {
 		return (AdminMainController) AonUtil.getRegisteredBean(IAdminConstants.ADMIN_CONTROLLER_NAME);
@@ -154,7 +150,7 @@ public class DomainController extends BasicController {
 		return null;
 	}
 
-	public IBookingInfo getBookingInfo() {
+	public BookingInfo getBookingInfo() {
 		return bookingInfo;
 	}
 	
@@ -171,7 +167,6 @@ public class DomainController extends BasicController {
 			initOEM();
 			initProductDetailLevel();
 			initHistory(getCompany().getId());
-			initExternalApplications();
 			updateDocumental();
 			this.currentDomainInfo = DomainInfo.getDomainInfo(getDomain(), bookingInfo);
 			if ( this.historyState.getDirectModel().getRowCount() == 0 ) {
@@ -182,13 +177,13 @@ public class DomainController extends BasicController {
 		}				
 	}
 	
-	public static IBookingInfo getBookingInfo( Domain domain ) {
+	public static BookingInfo getBookingInfo( Domain domain ) {
 		try {
 			Domain parent = null;
 			if ( domain.getParent() != null && domain.getParent().getId() != null ) {
 				parent = domain.getParent();
 			}
-			IBookingInfo bookingInfo = new BookingInfo(domain, parent);
+			BookingInfo bookingInfo = new BookingInfo(domain, parent);
 			bookingInfo.init();
 			return bookingInfo;
 		} catch (ManagerBeanException e) {
@@ -269,15 +264,6 @@ public class DomainController extends BasicController {
 		this.productDetailLevel = (value != null) ? value : 0;
 	}
 	
-	public void initExternalApplications() {
-		externalApplications = AppParamUtil.getValueAsInt(AppParam.AON_EXTERNAL_APPLICATIONS);
-		boolean tirant = isTirant();
-		boolean dehOnline = !getDomain().isDomainManagement() && isDehOnline();
-		externalApplications = 0;
-		setTirant(tirant);
-		setDehOnline(dehOnline);
-	}
-	
 	private void saveOEMDomain( AppParam appParam, Domain domain) throws ManagerBeanException {
 		String id = null;
 		if ( domain != null && domain.getId() != null ) {
@@ -305,18 +291,6 @@ public class DomainController extends BasicController {
 			AppParamUtil.insertParameter(AppParam.AON_PRODUCT_DETAIL_LEVEL, this.productDetailLevel );	
 		} else {
 			AppParamUtil.removeParameter(AppParam.AON_PRODUCT_DETAIL_LEVEL);
-		}
-	}	
-	
-	public void saveExternalApplications() {
-		if ( externalApplications != 0 ) {
-			AppParamUtil.insertParameter(AppParam.AON_EXTERNAL_APPLICATIONS, externalApplications);	
-		} else {
-			AppParamUtil.removeParameter(AppParam.AON_EXTERNAL_APPLICATIONS);
-		}
-		if (! isDehOnline() ) {
-			AppParamUtil.removeParameter(AppParam.AON_DEH_ONLINE_USER);
-			AppParamUtil.removeParameter(AppParam.AON_DEH_ONLINE_PASSWORD);			
 		}
 	}	
 	
@@ -808,44 +782,12 @@ public class DomainController extends BasicController {
 		DownloadUtil.downloadAttachment(attach);
 	}
 	
-	private boolean getExternalApplicationsValue(int bitwise) {
-		return (externalApplications & bitwise) != 0;
-	}
-
-	private void setExternalApplicationsValue(int bitwise, boolean value) {
-		if ( value ) {
-			this.externalApplications |= bitwise;	
-		} else {
-			this.externalApplications &= (~bitwise);
-		}
-	}
-	
-	public boolean isDehOnline() {
-		return getExternalApplicationsValue(ICommonConstants.DEH_ONLINE_EXTERNAL_APP);
-	}
-
-	public void setDehOnline(boolean value) {
-		setExternalApplicationsValue(ICommonConstants.DEH_ONLINE_EXTERNAL_APP, value);
-	}
-
-	public boolean isTirant() {
-		return getExternalApplicationsValue(ICommonConstants.TIRANT_EXTERNAL_APP);
-	}
-
-	public void setTirant(boolean value) {
-		setExternalApplicationsValue(ICommonConstants.TIRANT_EXTERNAL_APP, value);
-	}	
-	
 	public int getProductDetailLevel() {
 		return productDetailLevel;
 	}
 
 	public void setProductDetailLevel(int productDetailLevel) {
 		this.productDetailLevel = productDetailLevel;
-	}
-	
-	public String action() {
-		return "adminDomain_form";
 	}
 	
 	private static class ParentDomainFilter extends ControllerAdapter {

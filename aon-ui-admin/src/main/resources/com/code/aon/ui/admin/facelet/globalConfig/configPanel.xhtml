@@ -276,7 +276,7 @@
 						<aon:if test="#{aonRole.sysAdmin or (!domainSwitcher.disableDomainManagement)}">
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="adminDomain"
-									action="#{adminDomain.action}"
+									action="adminDomain_form"
 									actionListener="#{adminDomain.onInit}"
 									value="#{bundle.admin_domain_management}" />
 							</aon:div>

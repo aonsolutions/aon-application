@@ -19,8 +19,8 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.AonException;
 import com.code.aon.AonVersion;
+import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -47,9 +47,9 @@ import com.code.aon.master.VersionManager;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.ui.admin.BookingInfo;
 import com.code.aon.ui.admin.DomainInfo;
 import com.code.aon.ui.admin.DomainInfoType;
-import com.code.aon.ui.admin.IBookingInfo;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
@@ -401,7 +401,7 @@ public class NewDomainController implements Serializable {
 		if ( domainId != null ) {
 			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
 			Domain domain = (Domain) bean.get(domainId);
-			IBookingInfo bookingInfo = DomainController.getBookingInfo(domain);
+			BookingInfo bookingInfo = DomainController.getBookingInfo(domain);
 			DomainInfo di = DomainInfo.getDomainInfo(domain, bookingInfo);
 			di.setInfoType(DomainInfoType.INSERT);
 			Company company = DomainController.getAdminCompany();

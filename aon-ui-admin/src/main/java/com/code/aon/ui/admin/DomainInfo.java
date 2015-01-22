@@ -26,13 +26,10 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.audit.enumeration.Module;
-import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.Domain;
 import com.code.aon.config.enumeration.DomainType;
-import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
-import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.registry.controller.DocumentManager;
 import com.code.aon.ui.util.AonUtil;
@@ -420,7 +417,7 @@ public class DomainInfo implements Serializable {
 		return di;
 	}
 	
-	public static DomainInfo getDomainInfo( Domain domain, IBookingInfo bookingInfo ) {
+	public static DomainInfo getDomainInfo( Domain domain, BookingInfo bookingInfo ) {
 		DomainInfo di = new DomainInfo();
 		di.setUser(AonUtil.getAuthPrincipal().getShortName());
 		di.setName(domain.getName());
@@ -434,11 +431,8 @@ public class DomainInfo implements Serializable {
 		di.setDomainManagement(domain.isDomainManagement());
 		di.setBookingModules(bookingInfo.getBookingModules());
 		di.setDisplayModules(bookingInfo.getDisplayModules());
-		int value = AppParamUtil.getValueAsInt(AppParam.AON_EXTERNAL_APPLICATIONS, domain.getId());
-		boolean tirant = (value & ICommonConstants.TIRANT_EXTERNAL_APP) != 0;
-		di.setTirant(tirant);
-		boolean dehOnline = !domain.isDomainManagement() && ((value & ICommonConstants.DEH_ONLINE_EXTERNAL_APP) != 0);		
-		di.setDehOnline(dehOnline);
+		di.setTirant(bookingInfo.isTirant());
+		di.setDehOnline(bookingInfo.isDehOnline());
 		return di;
 	}
 	

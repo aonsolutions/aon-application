@@ -25,9 +25,9 @@ import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.ui.admin.BookingInfo;
 import com.code.aon.ui.admin.DomainInfo;
 import com.code.aon.ui.admin.DomainInfoType;
-import com.code.aon.ui.admin.IBookingInfo;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.form.IController;
@@ -102,7 +102,7 @@ public class RemoveDomainController implements Serializable {
 		
 		try {			
 			Address[] emails = DomainController.getNotificationEmails(domain.getId());
-			IBookingInfo bookingInfo = DomainController.getBookingInfo(domain);
+			BookingInfo bookingInfo = DomainController.getBookingInfo(domain);
 			DomainInfo di = DomainInfo.getDomainInfo(domain, bookingInfo);
 			di.setInfoType(DomainInfoType.REMOVE);
 			boolean domainDeleted = removeDomain(domain.getName(),domain.getId());

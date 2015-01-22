@@ -22,7 +22,7 @@
 						<aon:commandButton id="contract"
 							title="#{bundle.aon_key_save_accelerator}"
 							value="#{bundle.admin_domain_contract}"
-							action="#{adminDomain.action}" actionListener="#{adminDomain.accept}"
+							action="adminDomain_form" actionListener="#{adminDomain.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}" />						
 					</aon:if>						
@@ -262,13 +262,13 @@
 						value="#{bundle.aon_external_applications}" />
 					<aon:div>
 						<aon:selectBooleanCheckbox id="ExternalApplication_Tirant"
-							value="#{adminDomain.tirant}">
+							value="#{adminDomain.bookingInfo.tirant}">
 						</aon:selectBooleanCheckbox>
 						<aon:outputLabel for="ExternalApplication_Tirant"
 							value="#{bundle.aon_external_tirant}" />						
 						<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 							<aon:selectBooleanCheckbox id="ExternalApplication_DEHOnline"
-								value="#{adminDomain.dehOnline}">
+								value="#{adminDomain.bookingInfo.dehOnline}">
 							</aon:selectBooleanCheckbox>
 							<aon:outputLabel for="ExternalApplication_DEHOnline"
 								value="#{bundle.aon_external_dehOnline}" />

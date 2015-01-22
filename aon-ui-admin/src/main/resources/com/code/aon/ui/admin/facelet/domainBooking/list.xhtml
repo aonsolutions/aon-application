@@ -16,6 +16,7 @@
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
+
 				<aon:div styleClass="aon-width-all aon-text-right aon-margin-bottom">
 					<aon:outputLabel for="Domains_showInactive"
 						value="#{bundle.admin_domain_show_inactive}" />
@@ -31,6 +32,72 @@
 							limitToList="true"/>						
 					</aon:selectBooleanCheckbox>
 				</aon:div>			
+				
+				<aon:div styleClass="aon-margin-bottom">
+					<aon:panelCollapsible expanded="false" label="#{bundle.admin_domain_management}" >
+						<aon:div styleClass="aon-margin-top">
+						
+							<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+								<ui:param name="controller" value="#{domainBooking.parentState}" />
+								<ui:param name="showDataScroller" value="#{false}" />
+								<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+								<ui:param name="skipSelectButton" value="#{true}" />					
+								<ui:define name="columns">
+								
+									<aon:column styleClass="aon-editDataTable-textColumn">
+										<f:facet name="header">
+											<aon:outputText value="#{bundle.aon_name}" />
+										</f:facet>							
+										<aon:outputText value="#{to.description}"/>
+									</aon:column>
+								
+									<aon:column styleClass="aon-editDataTable-textColumn">
+										<f:facet name="header">
+											<aon:outputText value="#{bundle.admin_modules_booked}" />
+										</f:facet>							
+										<aon:outputText value="#{domainBooking.bookingModuleList}"/>
+									</aon:column>
+									
+									<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+										<f:facet name="header">
+											<aon:outputText value="#{bundle.aon_type}" />
+										</f:facet>							
+										<aon:outputText value="#{to.type}" />
+									</aon:column>
+									
+									<aon:column styleClass="aon-text-center aon-width-40 aon-nowrap">
+										<f:facet name="header">
+											<aon:outputText value="#{bundle.admin_users}" />
+										</f:facet>							
+										<aon:outputText
+											style="#{(domainUser.numberOfActiveUsers!=to.maxDefinedUsers)?'color:red;':''}"
+											value="#{domainUser.numberOfActiveUsers} / #{to.maxDefinedUsers}" />											
+									</aon:column>		
+									
+									<aon:column styleClass="aon-text-center aon-nowrap aon-width-60 ">
+										<f:facet name="header">
+											<aon:outputText value="#{bundle.aon_module_document}" />
+										</f:facet>							
+										<aon:outputText value="#{domainBooking.maxTotalDocumentSize}" />
+									</aon:column>
+																
+									<aon:column styleClass="aon-editDataTable-iconColumn aon-text-center">
+										<f:facet name="header">
+											<aon:outputText value="Tirant" />
+										</f:facet>						
+										<aon:outputText rendered="#{!domainBooking.bookingInfo.tirant}" value="-" />
+										<aon:outputText value="&#160;"
+											rendered="#{domainBooking.bookingInfo.tirant}"
+											styleClass="aon-icon-check-black"
+											style="padding-left:12px" />	 
+									</aon:column>
+								
+								</ui:define>
+							</ui:decorate>						
+						</aon:div>				
+					</aon:panelCollapsible>
+				</aon:div>
+			
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{domainBooking}" />
 					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />

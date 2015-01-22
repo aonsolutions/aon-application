@@ -24,7 +24,6 @@ public class DomainControllerListener extends ControllerAdapter {
 			dc.updateDomainApplication();
 			dc.saveOEM();
 			dc.saveProductDetailLevel();
-			dc.saveExternalApplications();
 			dc.updateDomainInfo();
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
