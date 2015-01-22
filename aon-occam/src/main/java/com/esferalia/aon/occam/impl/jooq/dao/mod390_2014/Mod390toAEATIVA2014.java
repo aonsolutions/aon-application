@@ -174,7 +174,7 @@ public class Mod390toAEATIVA2014 {
 	private static RegSimplificado getRegSimplificado(Mod390 mod390) {
 		RegSimplificado reg = null;
 		boolean something = false;
-		if (mod390.getSimpRegime1() != null && AonStringUtils.isNotBlank( mod390.getSimpRegime2().getEpigrafe())) {
+		if (mod390.getSimpRegime1() != null && AonStringUtils.isNotBlank( mod390.getSimpRegime1().getEpigrafe())) {
 			Actividad actividad = getActividad(mod390.getSimpRegime1());
 			reg = new RegSimplificado();
 			reg.getActividad().add(actividad);

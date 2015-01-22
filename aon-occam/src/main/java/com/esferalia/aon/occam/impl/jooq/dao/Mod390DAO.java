@@ -406,9 +406,7 @@ public class Mod390DAO {
 			}
 		}
 		fillSimplifedRegimeData(ctx, mod390);
-		if (!mod390.isSimplifiedRegime()) {
-			fillGeneralRegimeData(ctx, mod390);
-		}
+		fillGeneralRegimeData(ctx, mod390);
 		fillDeclarationResults(ctx, mod390);
 		mod390.calculate();
 		return mod390;	
@@ -830,11 +828,11 @@ public class Mod390DAO {
 	
 	private static Mod390 fillGeneralRegimeData(AONContext ctx, Mod390 mod390) {
 		try {
-			EnumMap<Mod390.Mod390DetailKey, Mod390.Mod390Detail> map = new EnumMap<Mod390.Mod390DetailKey, Mod390.Mod390Detail>(Mod390.Mod390DetailKey.class);
+			EnumMap<Mod390DetailKey, Mod390Detail> map = new EnumMap<Mod390DetailKey, Mod390Detail>(Mod390DetailKey.class);
+			Mod390Detail det = null;
 			for (Mod390Detail detail : getMod390Details(ctx, mod390)) {
 				map.put(detail.getKey(), detail); 
 			}
-			mod390.setGeneralRegime(map);
 			mod390.setBox99(map.get(Mod390DetailKey.B099).getTaxableBase());
 			mod390.setBox100(map.get(Mod390DetailKey.B100).getTaxableBase());
 			mod390.setBox101(map.get(Mod390DetailKey.B101).getTaxableBase());
@@ -854,7 +852,20 @@ public class Mod390DAO {
 			mod390.setAccrualRegime( ( map.get(Mod390DetailKey.B654).getTaxableBase()  != 0 || map.get(Mod390DetailKey.B654).getQuota() != 0 ) );
 			mod390.setBox656(map.get(Mod390DetailKey.B656).getTaxableBase());
 			mod390.setBox657(map.get(Mod390DetailKey.B656).getQuota());
-			mod390.setAccrualRegimeTarget((map.get(Mod390DetailKey.B656).getTaxableBase()  != 0 || map.get(Mod390DetailKey.B656).getQuota() != 0 ));	
+			mod390.setAccrualRegimeTarget((map.get(Mod390DetailKey.B656).getTaxableBase()  != 0 || map.get(Mod390DetailKey.B656).getQuota() != 0 ));
+
+			if (mod390.isSimplifiedRegime()) {
+				map = new EnumMap<Mod390DetailKey, Mod390Detail>(Mod390DetailKey.class);
+				for (Mod390DetailKey key : Mod390DetailKey.values() ) {
+					if (key.accept(mod390.getYear())) {
+						det = new Mod390Detail();
+						det.setKey(key);
+						det.setPercent(key.getPercent());
+						map.put(key, det);
+					}
+				}
+			} 
+			mod390.setGeneralRegime(map);
 			return mod390;
 		} catch (Throwable t) {
 			t.printStackTrace();
@@ -1102,9 +1113,7 @@ public class Mod390DAO {
 					// Last Period
 					if (period == Period.M12 || period == Period.T4) {
 						mod390.setBox97( record.getValue(FS_VAT_DECLARATION.COMPENSATE));
-						if ( taxRefundRegistry ) {
-							mod390.setBox98( record.getValue(FS_VAT_DECLARATION.PAY_BACK));
-						}
+						mod390.setBox98( record.getValue(FS_VAT_DECLARATION.PAY_BACK));
 					}
 				});
 	}

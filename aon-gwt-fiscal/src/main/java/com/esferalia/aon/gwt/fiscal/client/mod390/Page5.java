@@ -72,7 +72,7 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 	private Mod390 mod390;
 	
 	private EnumMap<Mod390DetailKey, Mod390DetailFields> map; 
-	
+					
 	public Page5() {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		Model390.RESOURCES.css().ensureInjected();
@@ -100,17 +100,19 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 	}
 
 	public void refreshMap(Mod390 mod390, Mod390DetailKey eventSource) {
-		for (Mod390DetailKey key : mod390.getGeneralRegime().keySet()) {
-			Mod390Detail detail = mod390.getGeneralRegime().get(key);
-			Mod390DetailFields fields = map.get(key);
-			if (fields == null) {
-				fields = new Mod390DetailFields(detail);
-				map.put(key,fields);	
-			} 
-			fields.setDetail(detail);
-			if (eventSource != key) {
-				fields.setTaxableBase(detail.getTaxableBase());
-				fields.setQuota(detail.getQuota());
+		if (mod390.getGeneralRegime() != null) {
+			for (Mod390DetailKey key : mod390.getGeneralRegime().keySet()) {
+				Mod390Detail detail = mod390.getGeneralRegime().get(key);
+				Mod390DetailFields fields = map.get(key);
+				if (fields == null) {
+					fields = new Mod390DetailFields(detail);
+					map.put(key,fields);	
+				} 
+				fields.setDetail(detail);
+				if (eventSource != key) {
+					fields.setTaxableBase(detail.getTaxableBase());
+					fields.setQuota(detail.getQuota());
+				}
 			}
 		}
 	}
