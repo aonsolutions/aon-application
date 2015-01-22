@@ -121,10 +121,12 @@ public class PosClosingController implements IFinanceConstants, Serializable {
 	}
 
 	public void onConfirmClose(ActionEvent event) {
-		if (getPosShift().getEndTime() == null && PosUtils.isPosShiftImbalance(getPosShift())) {
+		if (!getPosShift().isClosed() && !getPosShift().getPos().isInvoiceable() && PosUtils.isPosShiftImbalance(getPosShift())) {
 			setShowConfirmWindow(true);
-		} else {
+		} else if (!getPosShift().isClosed()) {
 			onClose(event);
+		} else {
+			onSave(event);
 		}
 	}
 
@@ -140,26 +142,25 @@ public class PosClosingController implements IFinanceConstants, Serializable {
 	}
 
 	public void onClose(ActionEvent event) {
-		if (getPosShift().getEndTime() == null && validateClosing(getPosShift().getPos(), getPosShift().getShift())) {
-			getPosShift().setEndTime(new Date());
-		}
-
 		try {
 			String ticketInfo = AonUtil.getMessage(TICKET) + " " + 
 									AonUtil.getMessage(DATE_FROM) + ": " + getFromTicket() + " " + 
 									AonUtil.getMessage(DATE_TO) + ": " + getToTicket();
-			if (getPosShift().getPos().isInvoiceable()) {
-				getPosShift().setRemarks(ticketInfo + "\n" + getPosShift().getRemarks());
+			if (!getPosShift().isClosed() && validateClosing(getPosShift().getPos(), getPosShift().getShift())) {
+				getPosShift().setEndTime(new Date());
+				if (getPosShift().getPos().isInvoiceable()) {
+					getPosShift().setRemarks(ticketInfo + "\n" + getPosShift().getRemarks());
+				}
+				onSave(event);
+
+				if (getPosShift().getPos().isInvoiceable()) {
+	                PosInvoicing posInvoicing = new PosInvoicing();
+	                Invoice invoice = posInvoicing.completeInvoice(getPosShift(), ticketInfo);
+	
+	        		AccountEntryInvoiceWriter entryWriter = new AccountEntryInvoiceWriter();
+	        		entryWriter.recordAndUpdateInvoice(invoice);
+	            }
 			}
-			setPosShift((PosShift)BeanManager.getManagerBean(PosShift.class).insertOrUpdate(getPosShift()));
-
-			if (getPosShift().getPos().isInvoiceable()) {
-                PosInvoicing posInvoicing = new PosInvoicing();
-                Invoice invoice = posInvoicing.completeInvoice(getPosShift(), ticketInfo);
-
-        		AccountEntryInvoiceWriter entryWriter = new AccountEntryInvoiceWriter();
-        		entryWriter.recordAndUpdateInvoice(invoice);
-            }
 		} catch (ManagerBeanException ex) {
 			String msg = "Error en el proceso de Cierre de Caja. " + ex.getMessage();
 			AonUtil.addErrorMessage(msg);
@@ -175,6 +176,16 @@ public class PosClosingController implements IFinanceConstants, Serializable {
 		}
 
 		return true;
+	}
+
+	public void onSave(ActionEvent event) {
+		try {
+			setPosShift((PosShift)BeanManager.getManagerBean(PosShift.class).insertOrUpdate(getPosShift()));
+		} catch (ManagerBeanException ex) {
+			String msg = "Error en el proceso de Cierre de Caja. " + ex.getMessage();
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 	}
 
 
