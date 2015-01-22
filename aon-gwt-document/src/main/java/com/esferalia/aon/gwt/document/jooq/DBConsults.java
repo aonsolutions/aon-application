@@ -708,20 +708,31 @@ public class DBConsults {
 					}
 					if (record.value5() != null) {
 						fi.setDate(record.value5());
-					}
+						String dateStr = fi.getDate().toString();
+						Integer pos = dateStr.indexOf("-");
+						Integer pos2 = dateStr.substring(pos+1).indexOf("-");
+						String aux = dateStr.substring(pos2+pos+2)+"-"+dateStr.substring(pos+1, pos2+pos+1)+"-"+dateStr.substring(0,pos);
+						fi.setDateStr(aux);
+					} else fi.setDateStr("-");
 					if (record.value6() != null) {
 						fi.setDriveId(record.value6());
 					}
 					if (record.value7() != null) {
 						fi.setCategory(record.value7());
 					}
-					
+					Tags tags = getTags(domain , fi.getFileId());
 					fi.setSize(0);
 					fi.setSizeStr(FileUtils.byteCountToDisplaySize(fi.getSize()!=null?fi.getSize():0));
 					if(record.value7() != null) fi.setCategoryStr(dslContext.select(CATEGORY.NAME).from(CATEGORY).where(CATEGORY.ID.eq((record.value7()))).fetch().get(0).value1());
 					else fi.setCategoryStr("-");
 					
 					fi.setIcon(getmType(fi));
+					
+					fi.setTags(tags.getTags().getList());
+					if(tags.getTagsStr()!=null)fi.setTagsStr(tags.getTagsStr()); else fi.setTagsStr("-");
+					
+					fi.setConfidential(false);
+
 					vector.add(fi);
 					filesGwt.add(fi);
 				}

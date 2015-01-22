@@ -2459,11 +2459,11 @@ public class Documents extends Composite implements EntryPoint {
 			@Override
 			public void onSuccess(Vector<FileInfo> result) {
 				docs.setServiconvenios(result);
-				for(FileInfo f : dataProvider.getList()){
-					dataGrid.getSelectionModel().setSelected(f, false);
-				}
 
-				dataProvider = new ListDataProvider<FileInfo>(docs.getServiconvenios());
+				/*for(FileInfo f : dataProvider.getList()){
+					dataGrid.getSelectionModel().setSelected(f, false);
+				}*/
+				dataProvider = new ListDataProvider<FileInfo>(result);
 				dataProvider.addDataDisplay(dataGrid);
 				updateDatagridColumns();
 				dataGrid.redraw();
