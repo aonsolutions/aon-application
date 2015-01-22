@@ -32,7 +32,7 @@ public class InvoiceDetailByDeliveryPrinter {
 
 	public Double getPrepaymentsTotal(Integer invoiceId, boolean productTypeOrder) {
 		Double total = null;
-		Collection<InvoiceDetail> collection = getCollection(invoiceId, productTypeOrder, true);
+		Collection<InvoiceDetail> collection = getCollection(invoiceId, productTypeOrder, true, null, null);
 		if(!collection.isEmpty()){
 			total = 0.0;
 			for(InvoiceDetail detail: collection){
@@ -71,7 +71,7 @@ public class InvoiceDetailByDeliveryPrinter {
 	}
 	
 	public Collection<InvoiceDetail> getCollection(Integer invoiceId, boolean productTypeOrder, Boolean searchPrepayments) {
-		return getCollection(invoiceId, productTypeOrder, searchPrepayments, true, null);
+		return getCollection(invoiceId, productTypeOrder, searchPrepayments, null, null);
 	}
 	
 	public Collection<InvoiceDetail> getCollection(Integer invoiceId, boolean productTypeOrder, Boolean searchPrepayments, Boolean searchIncrease) {
@@ -79,7 +79,7 @@ public class InvoiceDetailByDeliveryPrinter {
 	}
 
 	public Collection<InvoiceDetail> getCollection(Integer invoiceId, boolean productTypeOrder, Boolean searchPrepayments, ProductType type) {
-		return getCollection(invoiceId, productTypeOrder, searchPrepayments, true, type);
+		return getCollection(invoiceId, productTypeOrder, searchPrepayments, null, type);
 	}
 	
 	public Collection<InvoiceDetail> getCollection(Integer invoiceId, boolean productTypeOrder, Boolean searchPrepayments, Boolean searchIncrease, ProductType type) {
