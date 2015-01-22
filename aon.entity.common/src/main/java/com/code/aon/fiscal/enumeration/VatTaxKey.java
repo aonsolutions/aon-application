@@ -90,6 +90,8 @@ public enum VatTaxKey implements IResourceable, IStringEnum   {
 	OI	("OI"	,true	,false	,false	,false	,false	,false	,false	,null,null),
 	// Prestaciones intracomunitarias de servicios localizadas fuera del territorio de aplicación del impuesto
 	PS	("PS"	,true	,false	,false	,false	,false	,false	,false	,null,null),
+	// Importe de entregas de bienes de inversion.
+	EBI	("EBI"	,true	,false	,false	,false	,false	,false	,false	,null,null),
 	// Importe de entregas de bienes y servicios Rég. Caja
 	XO	("XO"	,true	,false	,true	,true	,false	,false	,false	,null,null),
 	// Importe de adquisiciones de bienes y servicios Rég. Caja

@@ -275,8 +275,9 @@ public class Mod303 implements IFiscalDeclaration, IMod303Declaration, Serializa
 					}
 					if (vatDetail.getKey() == VatTaxKey.A1) {
 						ensureDetail(Mod303Key.C86).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
-						System.out.println(vatDetail.getTaxableBaseAccumulated() + " -- " +
-								getDetail( Mod303Key.C86 ).getAccumulatedAmount());
+					}
+					if (vatDetail.getKey() == VatTaxKey.EBI) {	// Ventas de inversion
+						ensureDetail(Mod303Key.C87).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
 					}
 				}
 				detail = getDetail(Mod303Key.getKeyWithValue(Mod303Key.ACTIVITIES_PREFIX + ac + "G") );

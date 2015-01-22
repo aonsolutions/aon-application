@@ -358,7 +358,7 @@ public class Mod390DAO {
 		 ,B227	 (Mod390DetailKey.B227, null)
 		 ,B228	 (Mod390DetailKey.B228, null)
 		 ,B106	 (Mod390DetailKey.B106, null)
-		 ,B107	 (Mod390DetailKey.B107, null)
+		 ,B107	 (Mod390DetailKey.B107, (vc -> (vc.isNationalSales() && vc.isInvestment())))
 		 ,B108	 (Mod390DetailKey.B108, null)
 		 ;
 		 
@@ -862,8 +862,13 @@ public class Mod390DAO {
 			for (Mod390Detail detail : getMod390Details(ctx, mod390)) {
 				map.put(detail.getKey(), detail); 
 			}
-			mod390.setBox99(map.get(Mod390DetailKey.B099).getTaxableBase());
-			mod390.setBox100(map.get(Mod390DetailKey.B100).getTaxableBase());
+			if (!mod390.isSimplifiedRegime()) {
+				mod390.setBox99(map.get(Mod390DetailKey.B099).getTaxableBase());
+				mod390.setBox100(0.0);
+			} else {
+				mod390.setBox99(0.0);
+				mod390.setBox100(map.get(Mod390DetailKey.B099).getTaxableBase());
+			}
 			mod390.setBox101(map.get(Mod390DetailKey.B101).getTaxableBase());
 			mod390.setBox102(map.get(Mod390DetailKey.B102).getTaxableBase());
 			mod390.setBox103(map.get(Mod390DetailKey.B103).getTaxableBase());
