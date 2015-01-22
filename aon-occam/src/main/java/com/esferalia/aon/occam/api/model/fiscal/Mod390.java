@@ -562,7 +562,7 @@ public class Mod390 implements Serializable {
 		 ,K31	 (598,   0.00, null, true, true)
 		 
 		 ,K32	 (61,    0.00, null)
-		 
+		 	 
 		 ,K33	 (62,    0.00, null)
 		 ,K33_I	 (652,   0.00, null)
 		 ,K34	 (63,    0.00, null, false, false)
@@ -1601,7 +1601,9 @@ public class Mod390 implements Serializable {
 		Mod390DetailKey.K30_04, Mod390DetailKey.K30_07,
 		Mod390DetailKey.K30_08, Mod390DetailKey.K30_10,
 		Mod390DetailKey.K30_16, Mod390DetailKey.K30_18,
-		Mod390DetailKey.K30_21 };	
+		Mod390DetailKey.K30_21, Mod390DetailKey.K32,
+		Mod390DetailKey.K33,    Mod390DetailKey.K33_I,
+		Mod390DetailKey.K34,    Mod390DetailKey.K35 };	
 
 	private static final Mod390DetailKey[] K36_FORMULA = { Mod390DetailKey.K15,
 		Mod390DetailKey.K17, Mod390DetailKey.K19, Mod390DetailKey.K21,

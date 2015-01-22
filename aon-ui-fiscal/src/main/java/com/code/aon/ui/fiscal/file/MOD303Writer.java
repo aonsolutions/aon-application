@@ -286,6 +286,8 @@ public class MOD303Writer {
 			gr.setDeductionRestificationQuota( quota );
 		} else if (key == VatTaxKey.RI) {
 			gr.setInvestmentNormalization( quota );
+		} else if (key == VatTaxKey.RP) {
+			gr.setProrataNormalization( quota );
 		} else if (key == VatTaxKey.FT) {
 			gr.setDeductTotal( quota );
 		} else if (key == VatTaxKey.DF) {
