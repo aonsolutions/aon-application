@@ -69,6 +69,8 @@
 		<module>aon-admin</module>
 		<module>aon-ui-admin</module>
 		<module>aon-google-apis</module>
+		<module>aon-amazon-apis</module>
+		
 
 		<!-- ENTITY -->
 		<module>aon-carrier</module>
