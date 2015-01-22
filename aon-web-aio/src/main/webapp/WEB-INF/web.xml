@@ -215,11 +215,29 @@
 	<!-- SignIn with Amazon Servlet -->
 	<servlet>
 		<servlet-name>OAuth2AmazonServlet</servlet-name>
-		<servlet-class>com.code.aon.amazon.apis.servlet.AmazonCodeServlet</servlet-class>
+		<servlet-class>com.code.aon.amazon.apis.servlet.AmazonAuthorizationCodeServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>OAuth2AmazonServlet</servlet-name>
 		<url-pattern>/amazonoauth2/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>OAuth2AmazonCallbackServlet</servlet-name>
+		<servlet-class>com.code.aon.amazon.apis.servlet.AmazonAuthorizationCodeCallbackServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>OAuth2AmazonCallbackServlet</servlet-name>
+		<url-pattern>/amazonoauth2callback/*</url-pattern>
+	</servlet-mapping>
+	
+		<servlet>
+		<servlet-name>AmazonLoginCallbackServlet</servlet-name>
+		<servlet-class>com.code.aon.amazon.apis.servlet.AmazonLoginCallbackServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AmazonLoginCallbackServlet</servlet-name>
+		<url-pattern>/amazonLoginPopupClose/*</url-pattern>
 	</servlet-mapping>
 	
 	<!-- Aon GWT Document -->
@@ -300,12 +318,12 @@
 	
 	
 	<servlet>
-		<servlet-name>LoginCallbackServlet</servlet-name>
+		<servlet-name>GoogleLoginCallbackServlet</servlet-name>
 		<servlet-class>com.code.aon.google.apis.servlet.GoogleLoginCallbackServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>LoginCallbackServlet</servlet-name>
-		<url-pattern>/LoginPopupClose/*</url-pattern>
+		<servlet-name>GoogleLoginCallbackServlet</servlet-name>
+		<url-pattern>/googleLoginPopupClose/*</url-pattern>
 	</servlet-mapping>
 	
 	

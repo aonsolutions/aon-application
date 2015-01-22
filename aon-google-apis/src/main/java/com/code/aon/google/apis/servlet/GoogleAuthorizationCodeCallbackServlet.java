@@ -9,19 +9,15 @@ import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.g
 import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.newFlow;
 
 import java.io.IOException;
-import java.rmi.server.ServerNotActiveException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.sessionInfo.GoogleUser;
@@ -198,7 +194,7 @@ public class GoogleAuthorizationCodeCallbackServlet extends
 		Integer port = getServerPort(req);
 		GenericUrl url = new GenericUrl(getScheme(req) + "://" + key
 				+ (port != null ? ":" + port : "" )+ req.getContextPath()
-				+ "/LoginPopupClose/&" + email +
+				+ "/googleLoginPopupClose/&" + email +
 				"?" + "name=" + key 
 				+ "&act=" + SessionInfo.table.get(key).getAction()
 				+ "&username=" + getUsername(email, statepass)

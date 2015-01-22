@@ -1,28 +1,18 @@
-package com.code.aon.google.apis.servlet;
+package com.code.aon.amazon.apis.servlet;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
-import java.util.Arrays;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
-import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.services.drive.DriveScopes;
-import com.google.api.services.gmail.GmailScopes;
-import com.google.api.services.oauth2.Oauth2Scopes;
-import com.google.api.services.tasks.TasksScopes;
 
-public class GoogleAuthorizationServletUtils {
+public class AmazonAuthorizationServletUtils {
 
 	/** Global instance of the HTTP transport. */
 	private static String PROXY_PORT = "proxyPort";
@@ -34,7 +24,8 @@ public class GoogleAuthorizationServletUtils {
 	/** Global instance of the HTTP transport. */
 	private static HttpTransport HTTP_TRANSPORT = null;
 
-	private static GoogleClientSecrets CLIENT_SECRETS = null;
+	private static String CLIENT_ID = "amzn1.application-oa2-client.b27c3e5b31c14c02b5b11a581eb73610";
+	private static String CLIENT_SECRET = "10ef6439ec80baebd61cbfcdc0eb63b1776d35207791286b33ef424f6e5045bb";
 
 	public static JsonFactory getJsonFactory() {
 		return JSON_FACTORY;
@@ -51,25 +42,13 @@ public class GoogleAuthorizationServletUtils {
 		return HTTP_TRANSPORT;
 	}
 
-	public static AuthorizationCodeFlow newFlow() throws IOException {
-		return new GoogleAuthorizationCodeFlow.Builder(new NetHttpTransport(),
-				JSON_FACTORY, getClientCredential(), Arrays.asList(
-						DriveScopes.DRIVE, DriveScopes.DRIVE_APPDATA,
-						Oauth2Scopes.USERINFO_EMAIL, TasksScopes.TASKS,
-						GmailScopes.MAIL_GOOGLE_COM, GmailScopes.GMAIL_COMPOSE,
-						GmailScopes.GMAIL_MODIFY, GmailScopes.GMAIL_READONLY))
-				.setAccessType("online").setApprovalPrompt("auto").build();
 
+	public static String getClientId() throws IOException {
+		return CLIENT_ID;
 	}
-
-	public static GoogleClientSecrets getClientCredential() throws IOException {
-		if (CLIENT_SECRETS == null) {
-			CLIENT_SECRETS = GoogleClientSecrets.load(
-					JSON_FACTORY,
-					new InputStreamReader(GoogleAuthorizationCodeServlet.class
-							.getResourceAsStream("/client_secrets.json")));
-		}
-		return CLIENT_SECRETS;
+	
+	public static String getClientCredential() throws IOException {
+		return CLIENT_SECRET;
 	}
 
 	public static String getAuth2CallbackUri(HttpServletRequest req)
@@ -83,7 +62,7 @@ public class GoogleAuthorizationServletUtils {
 		Integer port = getServerPort(req);
 		GenericUrl url = new GenericUrl(getScheme(req) + "://" + domain
 				+ (port != null ? ":" + port : "" )+ req.getContextPath()
-				+ "/oauth2callback");
+				+ "/amazonoauth2callback");
 		return url.build();
 	}
 
@@ -93,7 +72,7 @@ public class GoogleAuthorizationServletUtils {
 	}
 
 	public static String getScheme(HttpServletRequest req) {
-		return System.getProperty(PROXY_SCHEME, req.getScheme());
+		return System.getProperty(PROXY_SCHEME, "https");//req.getScheme());
 	}
 	
 	public static Integer getServerPort(HttpServletRequest req) {
@@ -104,7 +83,7 @@ public class GoogleAuthorizationServletUtils {
 		if ( scheme.equals("https") && port.equals("443")) 
 			return  null;
 		
-		return Integer.decode(port);
+		return null;//Integer.decode(port);
 	}
 
 }

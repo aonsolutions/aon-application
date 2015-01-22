@@ -31,6 +31,8 @@ public class OpenIDLoginModule extends LoginModule {
 	
 	private String domain ;
 
+	private Boolean isGoogle = false;
+	private Boolean isAmazon = false;
 	
 	@Override
 	public void initialize(Subject subject, CallbackHandler callbackHandler,
@@ -52,7 +54,15 @@ public class OpenIDLoginModule extends LoginModule {
 			HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();
 			String pass = (String) request.getSession().getAttribute("Oauth2callback.state");
 			
-			if(!emailAux.substring(pos+1).equals(pass)){
+			String emailPass = emailAux.substring(pos+1);
+			if(emailPass.contains("$")){
+				Integer pos2 = emailPass.indexOf("$");
+				emailPass = emailPass.substring(pos2+1);
+				isAmazon = true;
+			}
+			else isGoogle = true;
+			
+			if(!emailPass.equals(pass)){
 				throw new AuthenticationLoginException( "aon_login_err_7", email);
 
 			}
@@ -66,7 +76,9 @@ public class OpenIDLoginModule extends LoginModule {
 			
 			
 			request.getSession().setAttribute("Oauth2callback.email", email);
-			request.getSession().setAttribute("isGoogle", true);
+			request.getSession().setAttribute("isGoogle", isGoogle);
+			request.getSession().setAttribute("isAmazon", isAmazon);
+
 		
 		}
 		

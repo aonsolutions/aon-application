@@ -1,4 +1,4 @@
-package com.code.aon.google.apis.servlet;
+package com.code.aon.amazon.apis.servlet;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -12,14 +12,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.code.aon.google.apis.Utils;
-import com.code.aon.google.apis.sessionInfo.SessionInfo;
+import com.code.aon.amazon.apis.Utils;
+import com.code.aon.amazon.apis.sessionInfo.SessionInfo;
 import com.code.aon.jaas.auth.spi.db.Domain;
 import com.code.aon.jaas.auth.spi.db.Util;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.pool.ConnectionInfo;
 
-public class GoogleLoginCallbackServlet extends HttpServlet {
+public class AmazonLoginCallbackServlet extends HttpServlet {
 	/**
 	 * 
 	 */
@@ -70,7 +70,7 @@ public class GoogleLoginCallbackServlet extends HttpServlet {
 		}
 		String statepass="";
 		if (username !=  null)
-			statepass = SessionInfo.table.get(key).getUsers().get(username).getGoogleUsers().get(email).getState();
+			statepass = SessionInfo.table.get(key).getUsers().get(username).getAmazonUsers().get(email).getState();
 		
 		
 		RequestDispatcher dispatcher = getServletContext()
