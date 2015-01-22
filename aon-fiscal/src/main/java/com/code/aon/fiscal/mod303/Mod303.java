@@ -165,100 +165,6 @@ public class Mod303 implements IFiscalDeclaration, IMod303Declaration, Serializa
 					detail.setAccumulatedAmount( c );
 					addDetail(detail);
 					
-					if (isLastPeriod()) {
-						Date fromDate = CommonUtil.getYearFirstDay(fiscalModel.getYear() );
-						Date toDate = CommonUtil.getYearLastDay(fiscalModel.getYear() );
-						VatTaxManager taxManager = new VatTaxManager( domainName );
-						List<VatTaxDetail> vatDetails = taxManager.getVatTax(fiscalModel.getDomain(),fromDate, toDate );
-						double g = 0.0;
-						for (VatTaxDetail vatDetail : vatDetails) {
-							if (vatDetail.getKey() == VatTaxKey.B1
-							  || vatDetail.getKey() == VatTaxKey.B3
-							  || vatDetail.getKey() == VatTaxKey.C1
-							  || vatDetail.getKey() == VatTaxKey.D1
-							  || vatDetail.getKey() == VatTaxKey.D3) {
-								g = g + vatDetail.getQuotaAccumulated(); 
-							}
-							if (vatDetail.getKey() == VatTaxKey.EI || vatDetail.getKey() == VatTaxKey.PS) { 
-								ensureDetail(Mod303Key.C59).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
-								ensureDetail(Mod303Key.C82).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
-							}
-							if (vatDetail.getKey() == VatTaxKey.EX1 || vatDetail.getKey() == VatTaxKey.EX2) {
-								ensureDetail(Mod303Key.C60).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
-								ensureDetail(Mod303Key.C82).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
-							}
-							if (vatDetail.getKey() == VatTaxKey.XO) {
-								ensureDetail(Mod303Key.C62).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
-								ensureDetail(Mod303Key.C63).addAccumulatedAmount(vatDetail.getQuotaAccumulated());
-							}
-							if (vatDetail.getKey() == VatTaxKey.XI) {
-								ensureDetail(Mod303Key.C74).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
-								ensureDetail(Mod303Key.C75).addAccumulatedAmount(vatDetail.getQuotaAccumulated());
-							}
-							if (vatDetail.getKey() == VatTaxKey.OS) {
-								ensureDetail(Mod303Key.C83).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
-							}
-							if (vatDetail.getKey() == VatTaxKey.A1) {
-								ensureDetail(Mod303Key.C86).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
-							}
-						}
-						detail = getDetail(Mod303Key.getKeyWithValue(Mod303Key.ACTIVITIES_PREFIX + ac + "G") );
-						if (detail == null) {
-							detail = new FiscalModelDetail();
-							detail.setFiscalModel(getHeader());
-							detail.setType(Mod303Key.ACTIVITIES_PREFIX + ac + "G");
-						}
-						detail.setAccumulatedAmount( g );
-						addDetail(detail);
-
-						detail = getDetail(Mod303Key.getKeyWithValue(Mod303Key.ACTIVITIES_PREFIX + ac + "I") );
-						if (detail == null) {
-							detail = new FiscalModelDetail();
-							detail.setFiscalModel(getHeader());
-							detail.setType(Mod303Key.ACTIVITIES_PREFIX + ac + "I");
-						}
-						detail.setAccumulatedAmount( 0.0 );
-						addDetail(detail);
-						
-						Modules modules = new Modules();
-						detail = new FiscalModelDetail();
-				    	detail.setFiscalModel(getHeader());
-						detail.setType(Mod303Key.ACTIVITIES_PREFIX + ac + "J");
-						try {
-							detail.setAccumulatedAmount(modules.getCuotaMin(fa.getEpigraph()));
-						} catch (AonException e) {
-							detail.setAccumulatedAmount(0.0);
-						}
-						addDetail(detail);
-
-						detail = getDetail(Mod303Key.getKeyWithValue(Mod303Key.ACTIVITIES_PREFIX + ac + "K") );
-						if (detail == null) {
-							detail = new FiscalModelDetail();
-							detail.setFiscalModel(getHeader());
-							detail.setType(Mod303Key.ACTIVITIES_PREFIX + ac + "K");
-						}
-						detail.setAccumulatedAmount( 0.0 );
-						addDetail(detail);
-
-						detail = getDetail(Mod303Key.getKeyWithValue(Mod303Key.ACTIVITIES_PREFIX + ac + "L") );
-						if (detail == null) {
-							detail = new FiscalModelDetail();
-							detail.setFiscalModel(getHeader());
-							detail.setType(Mod303Key.ACTIVITIES_PREFIX + ac + "L");
-						}
-						detail.setAccumulatedAmount( 0.0 );
-						addDetail(detail);
-
-						detail = getDetail(Mod303Key.getKeyWithValue(Mod303Key.ACTIVITIES_PREFIX + ac + "M") );
-						if (detail == null) {
-							detail = new FiscalModelDetail();
-							detail.setFiscalModel(getHeader());
-							detail.setType(Mod303Key.ACTIVITIES_PREFIX + ac + "M");
-						}
-						detail.setAccumulatedAmount( 0.0 );
-						addDetail(detail);
-}
-					
 					moduleNumber++;	
 				} else {
 					if (info.getType() == FiscalActivityInfoType.VAT_INFO) {
@@ -334,6 +240,101 @@ public class Mod303 implements IFiscalDeclaration, IMod303Declaration, Serializa
 					}
 				}
 			}			
+			if (isLastPeriod()) {
+				Date fromDate = CommonUtil.getYearFirstDay(fiscalModel.getYear() );
+				Date toDate = CommonUtil.getYearLastDay(fiscalModel.getYear() );
+				VatTaxManager taxManager = new VatTaxManager( domainName );
+				List<VatTaxDetail> vatDetails = taxManager.getVatTax(fiscalModel.getDomain(),fromDate, toDate );
+				double g = 0.0;
+				for (VatTaxDetail vatDetail : vatDetails) {
+					if (vatDetail.getKey() == VatTaxKey.B1
+					  || vatDetail.getKey() == VatTaxKey.B3
+					  || vatDetail.getKey() == VatTaxKey.C1
+					  || vatDetail.getKey() == VatTaxKey.D1
+					  || vatDetail.getKey() == VatTaxKey.D3) {
+						g = g + vatDetail.getQuotaAccumulated(); 
+					}
+					if (vatDetail.getKey() == VatTaxKey.EI || vatDetail.getKey() == VatTaxKey.PS) { 
+						ensureDetail(Mod303Key.C59).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
+						ensureDetail(Mod303Key.C82).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
+					}
+					if (vatDetail.getKey() == VatTaxKey.EX1 || vatDetail.getKey() == VatTaxKey.EX2) {
+						ensureDetail(Mod303Key.C60).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
+						ensureDetail(Mod303Key.C82).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
+					}
+					if (vatDetail.getKey() == VatTaxKey.XO) {
+						ensureDetail(Mod303Key.C62).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
+						ensureDetail(Mod303Key.C63).addAccumulatedAmount(vatDetail.getQuotaAccumulated());
+					}
+					if (vatDetail.getKey() == VatTaxKey.XI) {
+						ensureDetail(Mod303Key.C74).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
+						ensureDetail(Mod303Key.C75).addAccumulatedAmount(vatDetail.getQuotaAccumulated());
+					}
+					if (vatDetail.getKey() == VatTaxKey.OS) {
+						ensureDetail(Mod303Key.C83).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
+					}
+					if (vatDetail.getKey() == VatTaxKey.A1) {
+						ensureDetail(Mod303Key.C86).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
+						System.out.println(vatDetail.getTaxableBaseAccumulated() + " -- " +
+								getDetail( Mod303Key.C86 ).getAccumulatedAmount());
+					}
+				}
+				detail = getDetail(Mod303Key.getKeyWithValue(Mod303Key.ACTIVITIES_PREFIX + ac + "G") );
+				if (detail == null) {
+					detail = new FiscalModelDetail();
+					detail.setFiscalModel(getHeader());
+					detail.setType(Mod303Key.ACTIVITIES_PREFIX + ac + "G");
+				}
+				detail.setAccumulatedAmount( g );
+				addDetail(detail);
+
+				detail = getDetail(Mod303Key.getKeyWithValue(Mod303Key.ACTIVITIES_PREFIX + ac + "I") );
+				if (detail == null) {
+					detail = new FiscalModelDetail();
+					detail.setFiscalModel(getHeader());
+					detail.setType(Mod303Key.ACTIVITIES_PREFIX + ac + "I");
+				}
+				detail.setAccumulatedAmount( 0.0 );
+				addDetail(detail);
+				
+				Modules modules = new Modules();
+				detail = new FiscalModelDetail();
+		    	detail.setFiscalModel(getHeader());
+				detail.setType(Mod303Key.ACTIVITIES_PREFIX + ac + "J");
+				try {
+					detail.setAccumulatedAmount(modules.getCuotaMin(fa.getEpigraph()));
+				} catch (AonException e) {
+					detail.setAccumulatedAmount(0.0);
+				}
+				addDetail(detail);
+
+				detail = getDetail(Mod303Key.getKeyWithValue(Mod303Key.ACTIVITIES_PREFIX + ac + "K") );
+				if (detail == null) {
+					detail = new FiscalModelDetail();
+					detail.setFiscalModel(getHeader());
+					detail.setType(Mod303Key.ACTIVITIES_PREFIX + ac + "K");
+				}
+				detail.setAccumulatedAmount( 0.0 );
+				addDetail(detail);
+
+				detail = getDetail(Mod303Key.getKeyWithValue(Mod303Key.ACTIVITIES_PREFIX + ac + "L") );
+				if (detail == null) {
+					detail = new FiscalModelDetail();
+					detail.setFiscalModel(getHeader());
+					detail.setType(Mod303Key.ACTIVITIES_PREFIX + ac + "L");
+				}
+				detail.setAccumulatedAmount( 0.0 );
+				addDetail(detail);
+
+				detail = getDetail(Mod303Key.getKeyWithValue(Mod303Key.ACTIVITIES_PREFIX + ac + "M") );
+				if (detail == null) {
+					detail = new FiscalModelDetail();
+					detail.setFiscalModel(getHeader());
+					detail.setType(Mod303Key.ACTIVITIES_PREFIX + ac + "M");
+				}
+				detail.setAccumulatedAmount( 0.0 );
+				addDetail(detail);
+			}
 		}
 	}
     
