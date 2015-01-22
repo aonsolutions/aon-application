@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.FsModel390.FS_MODEL390;
 import static com.esferalia.aon.jooq.tables.FsModelDetail.FS_MODEL_DETAIL;
 import static com.esferalia.aon.jooq.tables.FsVat.FS_VAT;
+import static com.esferalia.aon.jooq.tables.FsVatDetail.FS_VAT_DETAIL;
 import static com.esferalia.aon.jooq.tables.FsVatDeclaration.FS_VAT_DECLARATION;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
@@ -28,6 +29,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.jooq.Field;
+import org.jooq.Record1;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.FsModel390Record;
@@ -407,7 +409,11 @@ public class Mod390DAO {
 		}
 		fillSimplifedRegimeData(ctx, mod390);
 		fillGeneralRegimeData(ctx, mod390);
-		fillDeclarationResults(ctx, mod390);
+		if (mod390.isSimplifiedRegime()) {
+			fillSimplifiedDeclarationResults(ctx, mod390);
+		} else {
+			fillGeneralDeclarationResults(ctx, mod390);
+		}
 		mod390.calculate();
 		return mod390;	
 	}
@@ -823,6 +829,29 @@ public class Mod390DAO {
 								detail.setQuota(quota);
 								}
 					);
+			
+			// Cálculo de la Regularizacion por aplicacion del porcentaje definitivo de prorrata 
+			Record1<BigDecimal> record = ctx.getDslContext()
+				.select(DSL.sum(FS_VAT_DETAIL.QUOTA))
+				.from(FS_VAT_DETAIL)
+				.join(FS_VAT).on(FS_VAT.ID.equal(FS_VAT_DETAIL.FS_VAT))
+				.where(FS_VAT.DOMAIN.equal(mod390.getDomain()))
+				.and(FS_VAT.YEAR.equal(mod390.getYear()))
+				.and(FS_VAT_DETAIL.VAT_KEY.equal("RP"))
+				.fetchOne();
+			if (record != null) {
+				BigDecimal quota = record.getValue(DSL.sum(FS_VAT_DETAIL.QUOTA));
+				if (quota != null) {
+					Mod390Detail detail = map.get(Mod390DetailKey.K35);
+					if (detail == null) {
+						detail = new Mod390Detail();
+						map.put(Mod390DetailKey.K35, detail );
+					}
+					detail.setKey(Mod390DetailKey.K35);
+					detail.setQuota(quota.doubleValue());
+				}
+			}
+				
 		return new ArrayList<Mod390Detail>(map.values());
 	}
 	
@@ -854,6 +883,12 @@ public class Mod390DAO {
 			mod390.setBox657(map.get(Mod390DetailKey.B656).getQuota());
 			mod390.setAccrualRegimeTarget((map.get(Mod390DetailKey.B656).getTaxableBase()  != 0 || map.get(Mod390DetailKey.B656).getQuota() != 0 ));
 
+			// ----------------------------------------------------------------------------
+			// En el caso de que el declarante este acogido al regimen simplificado
+			// Se utiliza toda la funcionalidad del regimen general (lectura de facturas)
+			// para rellenar los campos anteriores , del 99 al 657. Sin embargo la 
+			// página 5 del modelo, o sea la del regimen general debe ir vacia, por lo 
+			// que se incializa el mapa.
 			if (mod390.isSimplifiedRegime()) {
 				map = new EnumMap<Mod390DetailKey, Mod390Detail>(Mod390DetailKey.class);
 				for (Mod390DetailKey key : Mod390DetailKey.values() ) {
@@ -864,7 +899,9 @@ public class Mod390DAO {
 						map.put(key, det);
 					}
 				}
-			} 
+			}
+			// ----------------------------------------------------------------------------
+			
 			mod390.setGeneralRegime(map);
 			return mod390;
 		} catch (Throwable t) {
@@ -1092,7 +1129,7 @@ public class Mod390DAO {
 		return mod390;
 	}
 	
-	private static void fillDeclarationResults(AONContext ctx, Mod390 mod390) {
+	private static void fillGeneralDeclarationResults(AONContext ctx, Mod390 mod390) {
 		ctx.getDslContext().select(FS_VAT.PERIOD,FS_VAT.TAX_REFUND_REGISTRY
 				,FS_VAT_DECLARATION.DEPOSIT,FS_VAT_DECLARATION.PAY_BACK,FS_VAT_DECLARATION.COMPENSATE)
 				.from(FS_VAT)
@@ -1116,5 +1153,9 @@ public class Mod390DAO {
 						mod390.setBox98( record.getValue(FS_VAT_DECLARATION.PAY_BACK));
 					}
 				});
+	}
+	
+	private static void fillSimplifiedDeclarationResults(AONContext ctx, Mod390 mod390) {
+		// TODO
 	}
 }
