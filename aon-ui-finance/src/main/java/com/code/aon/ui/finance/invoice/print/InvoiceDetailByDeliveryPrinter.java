@@ -41,6 +41,18 @@ public class InvoiceDetailByDeliveryPrinter {
 		}
 		return total!=null?total:null;
 	}
+
+	public Double getIncreaseTotal(Integer invoiceId, boolean productTypeOrder) {
+		Double total = null;
+		Collection<InvoiceDetail> collection = getCollection(invoiceId, productTypeOrder, false, true, null);
+		if(!collection.isEmpty()){
+			total = 0.0;
+			for(InvoiceDetail detail: collection){
+				total += detail.getTaxableBase();
+			}
+		}
+		return total!=null?total:null;
+	}
 	
 	public Double getTotalCommercialProduct(Integer invoiceId) {
 		Double total = null;
@@ -59,10 +71,18 @@ public class InvoiceDetailByDeliveryPrinter {
 	}
 	
 	public Collection<InvoiceDetail> getCollection(Integer invoiceId, boolean productTypeOrder, Boolean searchPrepayments) {
-		return getCollection(invoiceId, productTypeOrder, searchPrepayments, null);
+		return getCollection(invoiceId, productTypeOrder, searchPrepayments, true, null);
 	}
 	
+	public Collection<InvoiceDetail> getCollection(Integer invoiceId, boolean productTypeOrder, Boolean searchPrepayments, Boolean searchIncrease) {
+		return getCollection(invoiceId, productTypeOrder, searchPrepayments, searchIncrease, null);
+	}
+
 	public Collection<InvoiceDetail> getCollection(Integer invoiceId, boolean productTypeOrder, Boolean searchPrepayments, ProductType type) {
+		return getCollection(invoiceId, productTypeOrder, searchPrepayments, true, type);
+	}
+	
+	public Collection<InvoiceDetail> getCollection(Integer invoiceId, boolean productTypeOrder, Boolean searchPrepayments, Boolean searchIncrease, ProductType type) {
 		List<InvoiceDetail> invoiceDetailList = new LinkedList<InvoiceDetail>();
 		Map<Integer, List<InvoiceDetail>> deliveryMap = new HashMap<Integer, List<InvoiceDetail>>();
 		try {
@@ -71,6 +91,11 @@ public class InvoiceDetailByDeliveryPrinter {
 			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoiceId);
 			if (searchPrepayments!=null) {
 				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_PREPAYMENT), searchPrepayments);
+			}
+			if (searchIncrease!=null && searchIncrease) {
+				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ITEM_PRODUCT_TYPE), ProductType.INCREASE);
+			} else if (searchIncrease!=null && !searchIncrease) {
+				criteria.addNotEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ITEM_PRODUCT_TYPE), ProductType.INCREASE);
 			}
 			if (productTypeOrder) {
 				criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ITEM_PRODUCT_TYPE));
