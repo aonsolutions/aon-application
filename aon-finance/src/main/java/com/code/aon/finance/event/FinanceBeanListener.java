@@ -16,24 +16,30 @@ public class FinanceBeanListener extends ManagerBeanListenerAdapter {
 	@Override
 	public void beanInserted(ManagerBeanEvent evt) throws ManagerBeanException {
 		Finance finance = (Finance) evt.getTo();
-		if (finance.getInvoice() != null && finance.getInvoice().getPosShift() != null && finance.getInvoice().getPosShift().getId() != null) {
-			checkPosShift(finance.getInvoice().getPosShift());
+		if (!finance.isSkipCheckPosShift()) {
+			if (finance.getInvoice() != null && finance.getInvoice().getPosShift() != null && finance.getInvoice().getPosShift().getId() != null) {
+				checkPosShift(finance.getInvoice().getPosShift());
+			}
 		}
 	}
 
 	@Override
 	public void beanUpdated(ManagerBeanEvent evt) throws ManagerBeanException {
 		Finance finance = (Finance) evt.getTo();
-		if (finance.getInvoice() != null && finance.getInvoice().getPosShift() != null && finance.getInvoice().getPosShift().getId() != null) {
-			checkPosShift(finance.getInvoice().getPosShift());
+		if (!finance.isSkipCheckPosShift()) {
+			if (finance.getInvoice() != null && finance.getInvoice().getPosShift() != null && finance.getInvoice().getPosShift().getId() != null) {
+				checkPosShift(finance.getInvoice().getPosShift());
+			}
 		}
 	}
 
 	@Override
 	public void beanRemoved(ManagerBeanEvent evt) throws ManagerBeanException {
 		Finance finance = (Finance) evt.getTo();
-		if (finance.getInvoice() != null && finance.getInvoice().getPosShift() != null && finance.getInvoice().getPosShift().getId() != null) {
-			checkPosShift(finance.getInvoice().getPosShift());
+		if (!finance.isSkipCheckPosShift()) {
+			if (finance.getInvoice() != null && finance.getInvoice().getPosShift() != null && finance.getInvoice().getPosShift().getId() != null) {
+				checkPosShift(finance.getInvoice().getPosShift());
+			}
 		}
 	}
 

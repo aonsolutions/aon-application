@@ -37,9 +37,11 @@ public class Finance extends FinanceDB implements IBankAccountContainer, IScopab
 	private static final Logger LOGGER = LoggerFactory.getLogger(Finance.class.getName());
 
 	private RegistryDocument registryFullDocument;
+	private boolean skipCheckPosShift;
 
     public Finance() {
 		setDueDate(new Date());
+		setSkipCheckPosShift(false);
 	}
     
 	public void setAmount(double amount) {
@@ -67,6 +69,14 @@ public class Finance extends FinanceDB implements IBankAccountContainer, IScopab
 	@Transient
 	public boolean isRegistryDocumentValidable() {
 		return getRegistryFullDocument().isValidable();
+	}
+
+	@Transient
+	public boolean isSkipCheckPosShift() {
+		return skipCheckPosShift;
+	}
+	public void setSkipCheckPosShift(boolean skipCheckPosShift) {
+		this.skipCheckPosShift = skipCheckPosShift;
 	}
 
 	@Transient

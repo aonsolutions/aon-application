@@ -215,6 +215,7 @@ public class PosInvoicing {
 			} else {
 				finance.setAmount(posShiftCount.getAmount());
 			}
+			finance.setSkipCheckPosShift(true);
 
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 			financeBean.insert(finance);
