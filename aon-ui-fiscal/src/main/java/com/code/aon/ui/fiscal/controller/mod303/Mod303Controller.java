@@ -319,8 +319,18 @@ public class Mod303Controller extends FiscalModelController {
 	}
 	
 	public void onShowFinalizePanel(ActionEvent event) {
-		setPayBack(false);
+		setPayBack(true);
 		super.onShowFinalizePanel(event);
+	}
+	public void onReopen(ActionEvent event) {
+		boolean payBack = isPayBack();
+		try {
+			setPayBack(true);
+			super.onReopen(event);
+		} catch (Throwable t) {
+			setPayBack(payBack);
+			throw t;
+		}
 	}
 	
 	protected boolean mustCreateFinance(FiscalModel to) {
