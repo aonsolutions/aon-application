@@ -1767,6 +1767,10 @@
 					<value>invoice.id</value>
 				</map-entry>
 				<map-entry>
+					<key>registry</key>
+					<value>invoice.registry</value>
+				</map-entry>
+				<map-entry>
 					<key>issueDate</key>
 					<value>invoice.issueDate</value>
 				</map-entry>
@@ -2193,6 +2197,10 @@
 				<map-entry>
 					<key>id</key>
 					<value>invoice.id</value>
+				</map-entry>
+				<map-entry>
+					<key>registry</key>
+					<value>invoice.registry</value>
 				</map-entry>
 				<map-entry>
 					<key>issueDate</key>
@@ -2623,6 +2631,10 @@
 					<value>invoice.id</value>
 				</map-entry>
 				<map-entry>
+					<key>registry</key>
+					<value>invoice.registry</value>
+				</map-entry>
+				<map-entry>
 					<key>issueDate</key>
 					<value>invoice.issueDate</value>
 				</map-entry>
@@ -3041,6 +3053,10 @@
 				<map-entry>
 					<key>id</key>
 					<value>invoice.id</value>
+				</map-entry>
+				<map-entry>
+					<key>registry</key>
+					<value>invoice.registry</value>
 				</map-entry>
 				<map-entry>
 					<key>issueDate</key>
@@ -3467,6 +3483,10 @@
 				<map-entry>
 					<key>id</key>
 					<value>invoice.id</value>
+				</map-entry>
+				<map-entry>
+					<key>registry</key>
+					<value>invoice.registry</value>
 				</map-entry>
 				<map-entry>
 					<key>issueDate</key>

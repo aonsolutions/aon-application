@@ -25,6 +25,7 @@ import com.code.aon.finance.invoicing.remover.InvoiceRemoverFactory;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
+import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryTax;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -185,19 +186,20 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 				surcharge = (tax.isVat()) ? invoiceDetail.getSurchargePercent() : 0;
 				surchargeQuota = (tax.isVat()) ? invoiceDetail.getSurchargeQuota() : 0;
 			} else {
-				//RegistryTax rTax = invoice.getRegistry().getTax(tax.getId(), invoice.getIssueDate());
-				//RegistryTax rTax = null;
-				//if (rTax != null) {
-					//tax.setPercentage(rTax.getPercentage());
-					//tax.setSurcharge(rTax.getSurcharge());
-				//} else {
+				RegistryTax rTax = obtainRegistryTax(invoice.getRegistry(), tax.getId(), invoice.getIssueDate());
+				if (rTax != null) {
+					percentage = rTax.getPercentage();
+					if (invoice.isSurcharge()) {
+						surcharge = rTax.getSurcharge();
+					}
+				} else {
 					if (invoice.getIssueDate().before(tax.getStartDate())) {
 						tax = obtainTax(tax.getId(), invoice.getIssueDate());
 					}
-				//}
-				percentage = tax.getPercentage();
-				if (invoice.isSurcharge()) {
-					surcharge = tax.getSurcharge();
+					percentage = tax.getPercentage();
+					if (invoice.isSurcharge()) {
+						surcharge = tax.getSurcharge();
+					}
 				}
 			}
 		}
@@ -208,6 +210,13 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 		invoiceTax.setSurchargeQuota(surchargeQuota);
 
 		return invoiceTax;
+	}
+
+	private RegistryTax obtainRegistryTax(Registry registry, Integer taxId, Date date) throws ManagerBeanException {
+		if (registry != null && registry.getId() != null && taxId != null) {
+			return registry.getTax(taxId, date);
+		}
+		return null;
 	}
 
 	private Tax obtainTax(Integer taxId, Date date) throws ManagerBeanException {
