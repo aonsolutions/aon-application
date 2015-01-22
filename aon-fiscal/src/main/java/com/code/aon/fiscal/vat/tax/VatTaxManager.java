@@ -331,9 +331,17 @@ public class VatTaxManager implements Serializable {
 		if (invoiceType == InvoiceType.SALES) {
 			if (transaction == InvoiceTransactionType.NATIONAL) {
 				if (rectification) {
-					return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A5)};	
+					if (investment) {
+						return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A5), new VatTaxKeyEx(VatTaxKey.EBI)};	
+					} else {
+						return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A5)};
+					}
 				} else {
-					return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A1,percent)};	
+					if (investment) {
+						return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A1,percent), new VatTaxKeyEx(VatTaxKey.EBI)};	
+					} else {
+						return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A1,percent)};
+					}
 				}
 			} else {
 				if (!service) {
