@@ -293,7 +293,7 @@ public class Mod303Controller extends FiscalModelController {
 	protected void accept() {
 		FiscalModelDetail detail = getDeclaration().getDetail(Mod303Key.PBK );
 		if (detail != null) {
-			detail.setAccumulatedAmount((isPayBack())?getDeclaration().getResult():0.0);
+			detail.setAccumulatedAmount((isPayBack() && getDeclaration().getResult() < 0)?getDeclaration().getResult():0.0);
 		}
 		detail = getDeclaration().getDetail(Mod303Key.CAG1_V2);
 		if (detail != null) {
