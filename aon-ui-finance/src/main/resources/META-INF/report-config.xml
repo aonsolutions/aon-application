@@ -258,6 +258,7 @@
 			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
+			<param id="printDiscountPriceApplied" value="#{company.isPrintDiscountPriceApplied}" />
 		</params>
 	</report>
 	<report id="saleInvoiceTemplate6" description="Fee Invoice's Report Template6">
@@ -281,6 +282,7 @@
 			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
+			<param id="printDiscountPriceApplied" value="#{company.isPrintDiscountPriceApplied}" />
 		</params>
 	</report>
 	<report id="saleInvoiceGta" description="Fee Invoice's Report GTA">

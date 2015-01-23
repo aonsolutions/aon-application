@@ -8,6 +8,7 @@
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
+	<import value="com.code.aon.product.enumeration.ProductType"/>
 	<subDataset name="Table Dataset 1"/>
 	<subDataset name="invoiceDetailDS">
 		<field name="description" class="java.lang.String"/>
@@ -65,6 +66,9 @@
 	</variable>
 	<variable name="prepaymentTotal" class="java.lang.Double" resetType="None">
 		<variableExpression><![CDATA[$P{invoiceDetailPrinter}.getPrepaymentsTotal($F{id}, false)]]></variableExpression>
+	</variable>
+	<variable name="increaseTotal" class="java.lang.Double" resetType="None">
+		<variableExpression><![CDATA[$P{invoiceDetailPrinter}.getIncreaseTotal($F{id}, false)]]></variableExpression>
 	</variable>
 	<group name="invoiceGroup" isStartNewPage="true" isReprintHeaderOnEachPage="true">
 		<groupExpression><![CDATA[$F{id}]]></groupExpression>
@@ -408,9 +412,9 @@
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="128" splitType="Stretch">
+		<band height="170" splitType="Stretch">
 			<subreport isUsingCache="true">
-				<reportElement key="subreport-2" positionType="Float" x="145" y="96" width="245" height="14">
+				<reportElement key="subreport-2" positionType="Float" x="145" y="138" width="245" height="14">
 					<printWhenExpression><![CDATA[new Boolean($F{lines}.size()>0)]]></printWhenExpression>
 				</reportElement>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
@@ -423,11 +427,11 @@
 				<subreportParameter name="printDiscountPriceApplied">
 					<subreportParameterExpression><![CDATA[$P{printDiscountPriceApplied}]]></subreportParameterExpression>
 				</subreportParameter>
-				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(false)))]]></dataSourceExpression>
+				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(false), new Boolean(false)))]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{nestedReports}.get("invoiceDetail")]]></subreportExpression>
 			</subreport>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-43" positionType="Float" mode="Opaque" x="479" y="96" width="75" height="14" forecolor="#FFFFFF" backcolor="#000000"/>
+				<reportElement key="textField-43" positionType="Float" mode="Opaque" x="479" y="138" width="75" height="14" forecolor="#FFFFFF" backcolor="#000000"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -440,7 +444,7 @@
 				<textFieldExpression><![CDATA[$R{invoice_total}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField-44" positionType="Float" x="479" y="110" width="62" height="14"/>
+				<reportElement key="textField-44" positionType="Float" x="479" y="152" width="62" height="14"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -483,7 +487,7 @@
 				<textFieldExpression><![CDATA[$R{aon_comment} + ":"]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-44" positionType="Float" x="541" y="110" width="13" height="14"/>
+				<reportElement key="textField-44" positionType="Float" x="541" y="152" width="13" height="14"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -540,6 +544,20 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$R{finance_invoice_vat_accrual_payment_message}]]></textFieldExpression>
 			</textField>
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-1" positionType="Float" x="71" y="99" width="483" height="29" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$V{increaseTotal}!=null]]></printWhenExpression>
+				</reportElement>
+				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
+				<subreportParameter name="printDiscountPriceApplied">
+					<subreportParameterExpression><![CDATA[$P{printDiscountPriceApplied}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="isIncreaseType">
+					<subreportParameterExpression><![CDATA[new Boolean(true)]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(false), new Boolean(true), ProductType.INCREASE))]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{nestedReports}.get("invoiceDetail")]]></subreportExpression>
+			</subreport>
 		</band>
 		<band height="86">
 			<textField pattern="" isBlankWhenNull="true">
