@@ -95,6 +95,7 @@ public class Mod303Manager extends FiscalModelManager {
 			VatTaxManager taxManager = new VatTaxManager(getDomainName());
 			List<VatTaxDetail> vatDetails = taxManager.getVatTax(fiscalModel.getDomain(),fromDate, toDate );
 			double c51 = 0.0;
+			double c52 = 0.0;
 			double c53 = 0.0;
 			double c55 = 0.0;
 			double cuotasSoportadas = 0.0;
@@ -120,6 +121,10 @@ public class Mod303Manager extends FiscalModelManager {
 				  || vatDetail.getKey() == VatTaxKey.D3) {
 					cuotasSoportadas = cuotasSoportadas + vatDetail.getQuotaAccumulated(); 
 				}
+				if (vatDetail.getKey() == VatTaxKey.EBI) {
+					c52 = c52 + vatDetail.getQuotaAccumulated();
+				}
+				
 			}
 			if (mod303.isLastPeriod()) {
 				double c49 = getPreviousAmount(conn, SELECT_49, fiscalModel, Mod303Key.C71);
@@ -127,6 +132,7 @@ public class Mod303Manager extends FiscalModelManager {
 			}
 			mod303.ensureDetail( Mod303Key.C65).addAccumulatedAmount(100.0);
 			mod303.ensureDetail( Mod303Key.C51).addAccumulatedAmount(CommonUtil.round(c51));
+			mod303.ensureDetail( Mod303Key.C52).addAccumulatedAmount(CommonUtil.round(c52));
 			mod303.ensureDetail( Mod303Key.C53).addAccumulatedAmount(CommonUtil.round(c53));
 			mod303.ensureDetail( Mod303Key.C55).addAccumulatedAmount(CommonUtil.round(c55));
 			double c67 = getPreviousAmount(conn, SELECT_67, fiscalModel, Mod303Key.C71);
