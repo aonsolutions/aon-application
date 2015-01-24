@@ -7,8 +7,8 @@ import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.FsModel390.FS_MODEL390;
 import static com.esferalia.aon.jooq.tables.FsModelDetail.FS_MODEL_DETAIL;
 import static com.esferalia.aon.jooq.tables.FsVat.FS_VAT;
-import static com.esferalia.aon.jooq.tables.FsVatDetail.FS_VAT_DETAIL;
 import static com.esferalia.aon.jooq.tables.FsVatDeclaration.FS_VAT_DECLARATION;
+import static com.esferalia.aon.jooq.tables.FsVatDetail.FS_VAT_DETAIL;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
@@ -55,6 +55,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014toMod390;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.Mod390toAEATIVA2014;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.mutable.MutableDouble;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -648,6 +649,21 @@ public class Mod390DAO {
 			}
 		}
 		
+		final MutableDouble mutProrrata = new MutableDouble();
+		ctx.getDslContext()
+				.select(FS_VAT.PRORATA)
+				.from(FS_VAT)
+				.where(FS_VAT.DOMAIN.equal(mod390.getDomain()))
+				.and(FS_VAT.YEAR.equal(mod390.getYear()))
+				.fetch()
+				.stream()
+				.forEach( record -> {
+						mutProrrata.setValue( record.getValue(FS_VAT.PRORATA) );
+					}
+				);
+		double prorrata = AonMathUtils.round( mutProrrata.doubleValue() / 100);
+		boolean mustApplyProrrata = (prorrata != AonMathUtils.round(0.00));		
+		
 		// Se buscan las facturas que tengan IVA y no sean de criterio de caja. 
 		ctx.getDslContext().select(INVOICE.TYPE
 				,INVOICE.RECTIFICATION_TYPE
@@ -706,7 +722,10 @@ public class Mod390DAO {
 									}
 									detail.setKey(key);
 									detail.setPercent(percentage);
-									double q = key.isSurcharge()?surchargeQuota:quota; 
+									double q = key.isSurcharge()?surchargeQuota:quota;
+									if ( mustApplyProrrata &&  key.isProrrataEnabled() ) {
+										q = AonMathUtils.round(q * prorrata);
+									}
 									detail.setQuota( AonMathUtils.round(detail.getQuota()  + q));
 									detail.setTaxableBase( AonMathUtils.round( detail.getTaxableBase() + taxableBase));
 								}
@@ -794,7 +813,10 @@ public class Mod390DAO {
 									}
 									detail.setKey(key);
 									detail.setPercent(percentage);
-									double q = key.isSurcharge()?surchargeQuota:quota; 
+									double q = key.isSurcharge()?surchargeQuota:quota;
+									if ( mustApplyProrrata &&  key.isProrrataEnabled() ) {
+										q = AonMathUtils.round(q * prorrata);
+									}
 									detail.setQuota( AonMathUtils.round(detail.getQuota()  + q));
 									detail.setTaxableBase( AonMathUtils.round( detail.getTaxableBase() + taxableBase));
 								}
