@@ -9,6 +9,14 @@
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/mod190/gwt.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+
+	<!-- =================== Mod193 ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_mod193</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/mod193/gwt.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	
 	<!-- =================== Mod180 ========================== -->
 	<navigation-rule>

@@ -28,6 +28,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Modelo 190")
 	String mod190();
 
+	@DefaultMessage("Modelo 193")
+	String mod193();
+
 	@DefaultMessage("Modelo 180")
 	String mod180();
 
@@ -70,6 +73,21 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("No se pudo encontrar el perceptor seleccionado. Causa: \n {0}")
 	String unableToFindMod190Detail(String field);
+
+	@DefaultMessage("No se pudieron leer las declaraciones del modelo 193. Causa: \n {0}")
+	String unableToReadMod193(String cause);
+
+	@DefaultMessage("No se pudo guardar la declaraci\u00F3n del modelo 193. Causa: \n {0}")
+	String unableToSaveMod193(String cause);
+
+	@DefaultMessage("No se pudo borrar la declaraci\u00F3n del modelo 193. Causa: \n {0}")
+	String unableToDeleteMod193(String message);
+
+	@DefaultMessage("No se pudo encontrar la declaraci\u00F3n seleccionada.")
+	String unableToFindMod193();
+
+	@DefaultMessage("No se pudo encontrar el perceptor seleccionado. Causa: \n {0}")
+	String unableToFindMod193Detail(String field);
 
 	@DefaultMessage("No se pudieron leer las declaraciones del modelo 180. Causa: \n {0}")
 	String unableToReadMod180(String cause);
@@ -142,6 +160,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Imprimir via AEAT")
 	String printViaAeat();
 
+	@DefaultMessage("Pendiente")
+	String pending();
+	
 	@DefaultMessage("Error")
 	String error();
 
@@ -1365,5 +1386,52 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Importe de las operaciones con derecho a deducci\u00F3n")
 	String operationsAmountWithRight();
-
+	
+	@DefaultMessage("Datos de la operaci\u00F3n")
+	String operationData();
+	
+	@DefaultMessage("Naturaleza")
+	String nature();
+	
+	@DefaultMessage("Pago a un intermediario")
+	String intermediaryPayment();
+	
+	@DefaultMessage("Clave c\u00F3digo")
+	String keyCode();
+	
+	@DefaultMessage("C\u00F3digo emisor")
+	String issuingCode();
+	
+	@DefaultMessage("C\u00F3digo cuenta valores / N\u00FAmero operaci\u00F3n pr\u00E9stamo")
+	String ccv();
+	
+	@DefaultMessage("Pago")
+	String payment();
+	
+	@DefaultMessage("Tipo C\u00F3digo")
+	String codeType();
+	
+	@DefaultMessage("Importe de percepciones/remuneraci\u00F3n al prestamista")
+	String lenderAmount();
+	
+	@DefaultMessage("Reducciones")
+	String reductions();
+	
+	@DefaultMessage("Base de retenciones e ingresos a cuenta")
+	String retentionBase();
+	
+	@DefaultMessage("Retenciones e ingresos a cuenta")
+	String retentionAccount();
+	
+	@DefaultMessage("Fecha de inicio del pr\u00E9stamo")
+	String loanStart();
+	
+	@DefaultMessage("Fecha de Vto. del pr\u00E9stamo")
+	String loanDueStart();
+	
+	@DefaultMessage("Compensaciones")
+	String compensations();
+	
+	@DefaultMessage("Garant\u00EDas")
+	String guarantee();
 }

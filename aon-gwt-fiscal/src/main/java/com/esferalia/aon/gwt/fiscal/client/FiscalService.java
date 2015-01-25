@@ -8,6 +8,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod193;
+import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
@@ -39,6 +41,14 @@ public interface FiscalService extends RemoteService {
 	Mod190 getMod190(String domainName, int domain,Integer id) throws AonCoreException;
 	Mod190Detail getMod190Detail(String domainName, int domain,Integer id) throws AonSQLException;
 	Mod190 initializeMod190(String domainName, Integer domain, Integer year);
+
+	// ---------------------------------------------------------------MODELO 193
+	void deleteMod193(String domainName, int domain,Mod193 mod193) throws AonCoreException;
+	Mod193 saveMod193(String domainName, int domain,Mod193 mod193) throws AonCoreException;
+	ArrayList<Mod193> getMod193s(String domainName, int domain) throws AonCoreException;
+	Mod193 getMod193(String domainName, int domain,Integer id) throws AonCoreException;
+	Mod193Detail getMod193Detail(String domainName, int domain,Integer id) throws AonSQLException;
+	Mod193 initializeMod193(String domainName, Integer domain, Integer year);
 
 	// ---------------------------------------------------------------MODELO 180
 	void deleteMod180(String domainName, int domain,Mod180 mod180) throws AonCoreException;

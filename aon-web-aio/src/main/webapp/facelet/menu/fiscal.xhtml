@@ -177,15 +177,15 @@
 													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_131_module}" />
 												</aon:commandLink>
 											</aon:if>
-
-											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-												<aon:commandLink id="gwt_mod200"
-													action="gwt_mod200"
-													title="#{bundle.fiscal_model_200_module}">
-													<aon:outputText styleClass="aon-fiscal-link-box" value="200"/>
-													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_200_module} - 2013" />
-												</aon:commandLink>
-											</aon:if>
+											
+											<aon:commandLink id="gwt_mod193"
+												action="gwt_mod193"
+												title="#{bundle.fiscal_model_193_module}">
+												<aon:outputText styleClass="aon-fiscal-link-box" value="193" />
+												<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
+													style="margin-left: 5px; padding-left: 20px;" 
+													value="#{bundle.fiscal_model_193_module}" />
+											</aon:commandLink>
 												
 											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 												<aon:commandLink id="mod310-OLD" 
@@ -195,8 +195,18 @@
 													<aon:outputText styleClass="aon-fiscal-link-box" value="310" style="text-decoration: line-through;"/>
 													<aon:outputText styleClass="aon-fiscal-link-label" value="(Antes de 2014) #{bundle.fiscal_model_310_module}"/>
 												</aon:commandLink>
-												<aon:outputText value="&#160;"/>
+											</aon:if>
 												
+											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+												<aon:commandLink id="gwt_mod200"
+													action="gwt_mod200"
+													title="#{bundle.fiscal_model_200_module}">
+													<aon:outputText styleClass="aon-fiscal-link-box" value="200"/>
+													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_200_module} - 2013" />
+												</aon:commandLink>
+											</aon:if>
+
+											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 												<aon:commandLink id="mod311" 
 													action="mod311_search"
 													actionListener="#{mod311.onEditSearch}"

@@ -1,0 +1,221 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:m193='urn:import:com.esferalia.aon.gwt.fiscal.client.mod193'>
+	
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+	
+	<ui:style>
+		.group-label {
+			font-size: 0.9em;
+			font-weight: bold;
+		}
+	</ui:style>
+
+	<g:ScrollPanel styleName="aon-scroll-area">
+		<g:HTMLPanel>
+			<g:FlowPanel height="20px"
+				styleName="aon-finding-title-toolbar aon-width-all gwt-MenuBar-horizontal aon-margin-top">
+				<g:Button ui:field='deleteDetailButton'
+					styleName='aon-finding-toolbar-item aon-icon-delete' text="{msg.deleteAction}" />
+				<g:Button ui:field='restoreDeletedButton'
+					styleName='aon-finding-toolbar-item aon-icon-refresh' text="{msg.restoreAction}" />
+			</g:FlowPanel>
+			<g:HTMLPanel>
+			 	<div class="{aonResources.css.aonGroup}">
+					<div class="{aonResources.css.aonGroupTitle}">
+						<g:InlineLabel text="{msg.perceptionData}" />
+					</div>
+					<div class="{aonResources.css.aonGroupBody}">
+						<table>
+							<tr>
+								<td>
+								</td>
+								<td class="{aonResources.css.aonTableLabel}">
+									<g:Label text="{msg.receiverDocument}" />
+								</td>
+								<td class="{aonResources.css.aonTableLabel}">
+									<g:Label text="{msg.representativeDocument}" />
+								</td>
+								<td class="{aonResources.css.aonTableLabel}">
+									<g:Label text="{msg.fullName}" />
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:CheckBox ui:field="pending" text="{msg.pending}" />
+								</td>
+								<td>
+									<aon:DocumentTextBox ui:field="receiverDocument" styleName="aon-inputText"/>
+								</td>
+								<td>
+									<aon:DocumentTextBox ui:field="representativeDocument" styleName="aon-inputText"/>
+								</td>
+								<td>
+									<g:TextBox maxLength="40" visibleLength="40" ui:field="fullName" styleName="aon-inputText"/>
+								</td>
+							</tr>
+						</table>
+						<g:HTMLPanel ui:field="additionalDataPanel">
+						 	<div class="{aonResources.css.aonGroup}">
+								<div class="{aonResources.css.aonGroupTitle}">
+									<g:InlineLabel text="{msg.operationData}" />
+								</div>
+								<div class="{aonResources.css.aonGroupBody}">
+									<table>
+										<tr>
+											<td class="{aonResources.css.aonTableLabel}">
+												<g:InlineLabel text="{msg.key}" />
+											</td>
+											<td class="{aonResources.css.aonTableLabel}">
+												<g:InlineLabel text="{msg.nature}" />
+											</td>
+											
+											<td></td>
+											
+											<td class="{aonResources.css.aonTableLabel}">
+												<g:InlineLabel text="{msg.province}" />
+											</td>	
+											<td class="{aonResources.css.aonTableLabel}">
+												<g:InlineLabel text="{msg.keyCode}" />
+											</td>	
+											<td class="{aonResources.css.aonTableLabel}">
+												<g:InlineLabel text="{msg.issuingCode}" />
+											</td>	
+											<td class="{aonResources.css.aonTableLabel}">
+												<g:InlineLabel text="{msg.accrualYear}" />
+											</td>	
+										</tr>
+										<tr>
+											<td>
+												<m193:Model193Detail2014.KeyListBox ui:field="key" styleName="aon-inputText"/>
+											</td>
+											<td>
+												<g:ListBox ui:field="nature" styleName="aon-inputText"/>
+											</td>
+											<td>
+												<g:CheckBox ui:field="intermediaryPayment" text="{msg.intermediaryPayment}"/>
+											</td>
+											<td>
+												<aon:ProvinceListBox ui:field="province" />
+											</td>
+											<td>
+												<g:ListBox ui:field="keyCode" styleName="aon-inputText"/>
+											</td>
+											<td>
+												<g:TextBox maxLength="12" visibleLength="14" ui:field="issuingCode" styleName="aon-inputText"/>
+											</td>
+											<td>
+												<aon:IntegerTextBox maxLength="4" visibleLength="4" ui:field="accrualYear" styleName="aon-inputText"/>
+											</td>
+										</tr>
+									</table>
+											
+									<table>
+										<tr>
+											<td class="{aonResources.css.aonTableLabel}">
+												<g:InlineLabel text="{msg.payment}" />
+											</td>	
+											<td class="{aonResources.css.aonTableLabel}">
+												<g:InlineLabel text="{msg.codeType}" />
+											</td>	
+											<td class="{aonResources.css.aonTableLabel}">
+												<g:InlineLabel text="{msg.ccv}" />
+											</td>	
+											<td class="{aonResources.css.aonTableLabel}">
+											</td>	
+											<td class="{aonResources.css.aonTableLabel}">
+												<g:InlineLabel text="{msg.lenderAmount}" />
+											</td>	
+											<td class="{aonResources.css.aonTableLabel}">
+												<g:InlineLabel text="{msg.reductions}" />
+											</td>	
+										</tr>
+										<tr>
+											<td>
+												<g:ListBox ui:field="payment" styleName="aon-inputText"/>
+											</td>
+											<td>
+												<g:ListBox ui:field="codeType" styleName="aon-inputText"/>
+											</td>
+											<td>
+												<g:TextBox maxLength="12" visibleLength="14" ui:field="accountCode" styleName="aon-inputText"/>
+											</td>
+											<td>
+												<g:CheckBox ui:field="inKind" text="{msg.inKind}"/>
+											</td>
+											<td>
+												<aon:DoubleTextBox ui:field="lenderAmount" styleName="aon-inputText"/>
+											</td>
+											<td>
+												<aon:DoubleTextBox ui:field="reduction" styleName="aon-inputText"/>
+											</td>
+										</tr>
+									</table>
+
+									<table>
+										<tr>
+											<td class="{aonResources.css.aonTableLabel}">
+												<g:InlineLabel text="{msg.retentionBase}" />
+											</td>	
+											<td class="{aonResources.css.aonTableLabel}">
+												<g:InlineLabel text="{msg.percent}" />
+											</td>	
+											<td class="{aonResources.css.aonTableLabel}">
+												<g:InlineLabel text="{msg.retentionAccount}" />
+											</td>	
+										</tr>
+										<tr>
+											<td>
+												<aon:DoubleTextBox ui:field="retentionBase" styleName="aon-inputText"/>
+											</td>
+											<td>
+												<aon:DoubleTextBox ui:field="percent" styleName="aon-inputText"/>
+											</td>
+											<td>
+												<aon:DoubleTextBox ui:field="retention" styleName="aon-inputText"/>
+											</td>
+										</tr>
+									</table>
+		
+									<table>
+										<tr>
+											<td class="{aonResources.css.aonTableLabel}">
+												<g:InlineLabel text="{msg.loanStart}" />
+											</td>	
+											<td class="{aonResources.css.aonTableLabel}">
+												<g:InlineLabel text="{msg.loanDueStart}" />
+											</td>	
+											<td class="{aonResources.css.aonTableLabel}">
+												<g:InlineLabel text="{msg.compensations}" />
+											</td>	
+												<g:InlineLabel text="{msg.guarantee}" />
+											<td class="{aonResources.css.aonTableLabel}">
+											</td>	
+										</tr>
+										<tr>
+											<td>
+												<aon:DateBoxEx  ui:field="loanStartDate" styleName="aon-inputText"/>
+											</td>
+											<td>
+												<aon:DateBoxEx  ui:field="loanDueDate" styleName="aon-inputText"/>
+											</td>
+											<td>
+												<aon:DoubleTextBox ui:field="compensation" styleName="aon-inputText"/>
+											</td>
+											<td>
+												<aon:DoubleTextBox ui:field="guarantee" styleName="aon-inputText"/>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</div>
+						</g:HTMLPanel>
+					</div>
+				</div>
+			</g:HTMLPanel>
+		</g:HTMLPanel>
+	</g:ScrollPanel>
+</ui:UiBinder>

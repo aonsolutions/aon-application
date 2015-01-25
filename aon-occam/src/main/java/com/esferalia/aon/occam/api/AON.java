@@ -18,6 +18,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod193;
+import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
@@ -282,6 +284,61 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId);
 			return getFiscal().getMod190Detail(ctx,id);
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
+	// ----------------------------------MODELO 193
+	public static ArrayList<Mod193> getMod193s(String domainName, int domainId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			return getFiscal().getMod193s(ctx,domainId);
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
+	public static Mod193 getMod193(String domainName, int domainId,Integer id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			return getFiscal().getMod193(ctx,id);
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
+	public static Mod193 initializeMod193(String domainName, int domainId,Integer year) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			return getFiscal().initializeMod193(ctx, year);
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
+	public static Mod193 saveMod193(String domainName, int domainId,Mod193 mod193) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			return getFiscal().saveMod193(ctx, mod193);
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
+	public static void deleteMod193(String domainName, int domainId,Mod193 mod193) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			getFiscal().deleteMod193(ctx, mod193);
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
+	public static Mod193Detail getMod193Detail(String domainName, int domainId,Integer id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			return getFiscal().getMod193Detail(ctx,id);
 		} finally {
 			if (ctx != null) ctx.close();	
 		}

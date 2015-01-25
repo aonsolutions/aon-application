@@ -9,6 +9,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod193;
+import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
@@ -86,6 +88,54 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		AON.start();
 		fiscalServiceAsync.getMod190Detail(domainName, domain, id,
 				new AsyncCallbackWrapper<Mod190Detail>(callback));
+	}
+
+	// ---------------------------------------------------------------MODELO 193
+	@Override
+	public void deleteMod193(String domainName, int domain, Mod193 mod193,
+			AsyncCallback<Void> callback) {
+		AON.start();
+		fiscalServiceAsync.deleteMod193(domainName, domain, mod193,
+				new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void saveMod193(String domainName, int domain, Mod193 mod193,
+			AsyncCallback<Mod193> callback) {
+		AON.start();
+		fiscalServiceAsync.saveMod193(domainName, domain, mod193,
+				new AsyncCallbackWrapper<Mod193>(callback));
+	}
+
+	@Override
+	public void getMod193s(String domainName, int domain,
+			AsyncCallback<ArrayList<Mod193>> callback) {
+		AON.start();
+		fiscalServiceAsync.getMod193s(domainName, domain,
+				new AsyncCallbackWrapper<ArrayList<Mod193>>(callback));
+	}
+	@Override
+	public void initializeMod193(String domainName, Integer domain,
+			Integer year, AsyncCallback<Mod193> callback) {
+		AON.start();
+		fiscalServiceAsync.initializeMod193(domainName, domain, year, 
+				new AsyncCallbackWrapper<Mod193>(callback));
+	}
+
+	@Override
+	public void getMod193(String domainName, int domain, Integer id,
+			AsyncCallback<Mod193> callback) {
+		AON.start();
+		fiscalServiceAsync.getMod193(domainName, domain, id,
+				new AsyncCallbackWrapper<Mod193>(callback));
+	}
+
+	@Override
+	public void getMod193Detail(String domainName, int domain, Integer id,
+			AsyncCallback<Mod193Detail> callback) {
+		AON.start();
+		fiscalServiceAsync.getMod193Detail(domainName, domain, id,
+				new AsyncCallbackWrapper<Mod193Detail>(callback));
 	}
 
 	// ---------------------------------------------------------------MODELO 180

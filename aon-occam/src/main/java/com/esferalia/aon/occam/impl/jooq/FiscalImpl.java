@@ -8,14 +8,18 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod193;
+import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod180DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod190DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.Mod193DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod390DAO;
 
 public class FiscalImpl implements IFiscal {
 
+	// ----------------------------------------------------------- [MODELO 180]
 	@Override
 	public ArrayList<Mod180> getMod180s(AONContext ctx, int domain) {
 		return Mod180DAO.getByDomain(ctx, domain);
@@ -49,6 +53,7 @@ public class FiscalImpl implements IFiscal {
 	}
 
 
+	// ----------------------------------------------------------- [MODELO 190]
 	@Override
 	public ArrayList<Mod190> getMod190s(AONContext ctx, int domain) {
 		return Mod190DAO.getByDomain(ctx, domain);
@@ -73,7 +78,6 @@ public class FiscalImpl implements IFiscal {
 	public void deleteMod190(AONContext ctx, Mod190 mod190) {
 		ctx.getDslContext().transaction(
 				configuration -> Mod190DAO.delete(ctx, mod190));
-
 	}
 
 	@Override
@@ -81,6 +85,38 @@ public class FiscalImpl implements IFiscal {
 		return Mod190DAO.getDetail(ctx, id);
 	}
 	
+	// ----------------------------------------------------------- [MODELO 193]
+	@Override
+	public ArrayList<Mod193> getMod193s(AONContext ctx, int domain) {
+		return Mod193DAO.getByDomain(ctx, domain);
+	}
+
+	@Override
+	public Mod193 getMod193(AONContext ctx, Integer id) {
+		return Mod193DAO.getById(ctx, id);
+	}
+
+	@Override
+	public Mod193 initializeMod193(AONContext ctx, int year) {
+		return Mod193DAO.initialize(ctx, year);
+	}
+	@Override
+	public Mod193 saveMod193(AONContext ctx, Mod193 mod193) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod193DAO.save(ctx, mod193));
+	}
+
+	@Override
+	public void deleteMod193(AONContext ctx, Mod193 mod193) {
+		ctx.getDslContext().transaction(
+				configuration -> Mod193DAO.delete(ctx, mod193));
+	}
+
+	@Override
+	public Mod193Detail getMod193Detail(AONContext ctx, Integer id) {
+		return Mod193DAO.getDetail(ctx, id);
+	}
+	// ----------------------------------------------------------- [MODELO 390]
 	@Override
 	public ArrayList<Mod390> getMod390s(AONContext ctx, int domain) {
 		try {
