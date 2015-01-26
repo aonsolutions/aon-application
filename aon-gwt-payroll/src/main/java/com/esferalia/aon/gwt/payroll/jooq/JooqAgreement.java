@@ -26,19 +26,14 @@ import org.jooq.Cursor;
 import org.jooq.DSLContext;
 import org.jooq.Identity;
 import org.jooq.Record;
-import org.jooq.Record1;
 import org.jooq.Result;
 import org.jooq.SQLDialect;
-import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
-import com.esferalia.aon.jooq.tables.AgreementLevelCategory;
-import com.esferalia.aon.jooq.tables.Contract;
-import com.esferalia.aon.jooq.tables.PayrollWorkplace;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 
 public class JooqAgreement extends org.jooq.impl.AbstractKeys {
@@ -336,34 +331,32 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			dslContext
 					.update(AGREEMENT_DATA)
 					.set(AGREEMENT_DATA.AGREEMENT, -(agreement.getId()))
-					.where(AGREEMENT_DATA.AGREEMENT.eq(agreement.getId()).and(
-							AGREEMENT_DATA.DOMAIN.eq(domainId))).execute();
+					.where(AGREEMENT_DATA.AGREEMENT.eq(agreement.getId()))
+					.execute();
 
 			dslContext
 					.update(AGREEMENT_LEVEL)
 					.set(AGREEMENT_LEVEL.AGREEMENT, -(agreement.getId()))
-					.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreement.getId()).and(
-							AGREEMENT_LEVEL.DOMAIN.eq(domainId))).execute();
+					.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreement.getId()))
+					.execute();
 
 			dslContext
 					.update(AGREEMENT_PAYMENT)
 					.set(AGREEMENT_PAYMENT.AGREEMENT, -(agreement.getId()))
-					.where(AGREEMENT_PAYMENT.AGREEMENT.eq(agreement.getId())
-							.and(AGREEMENT_PAYMENT.DOMAIN.eq(domainId)))
+					.where(AGREEMENT_PAYMENT.AGREEMENT.eq(agreement.getId()))
 					.execute();
 
 			dslContext
 					.update(PAYROLL_WORKPLACE)
 					.set(PAYROLL_WORKPLACE.AGREEMENT, -(agreement.getId()))
-					.where(PAYROLL_WORKPLACE.AGREEMENT.eq(agreement.getId())
-							.and(PAYROLL_WORKPLACE.DOMAIN.eq(domainId)))
+					.where(PAYROLL_WORKPLACE.AGREEMENT.eq(agreement.getId()))
 					.execute();
 
 			dslContext
 					.update(AGREEMENT)
 					.set(AGREEMENT.ID, -(agreement.getId()))
-					.where(AGREEMENT.DOMAIN.eq(domainId).and(
-							AGREEMENT.ID.eq(agreement.getId()))).execute();
+					.where(AGREEMENT.ID.eq(agreement.getId()))
+					.execute();
 			// @formatter:on
 
 			// -----------------------------
