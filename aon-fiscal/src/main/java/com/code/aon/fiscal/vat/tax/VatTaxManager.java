@@ -52,7 +52,7 @@ public class VatTaxManager implements Serializable {
 	private static String QUOTA = "quota";
 	private static String SURCHARGE_QUOTA = "surcharge_quota"; 
 	private static String DEDUCTIBLE_QUOTA = "deductible_quota";
-//	private static String WITHHOLDING_FARMER = "withholding_farmer";
+	private static String WITHHOLDING_FARMER = "withholding_farmer";
 //	private static String VAT_ACCRUAL_PAYMENT = "vat_accrual_payment";
 	private static String FINANCE_AMOUNT = "finance_amount";
 	private static String INVOICE_TOTAL = "invoice_total";
@@ -327,6 +327,7 @@ public class VatTaxManager implements Serializable {
 		VatDeductionType vatDeductionType = VatDeductionType.values()[rs.getInt(VAT_DEDUCTION_TYPE)];
 		InvoiceTransactionType transaction = InvoiceTransactionType.values()[rs.getInt(TRANSACTION)];
 		boolean investment = rs.getBoolean(INVESTMENT);
+		boolean farmerRegime = rs.getBoolean(WITHHOLDING_FARMER);
 
 		if (invoiceType == InvoiceType.SALES) {
 			if (transaction == InvoiceTransactionType.NATIONAL) {
@@ -371,9 +372,15 @@ public class VatTaxManager implements Serializable {
 		} else if (invoiceType == InvoiceType.PURCHASE) {
 			
 			if (transaction == InvoiceTransactionType.NATIONAL) {
-				return investment?
-					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B2),new VatTaxKeyEx(VatTaxKey.BI,percent)}:
-					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B1),new VatTaxKeyEx(VatTaxKey.CP,percent)};
+				if (farmerRegime) {
+					return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.ET),new VatTaxKeyEx(VatTaxKey.CP,percent)};
+				} else {
+					if (investment) {
+						return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B2),new VatTaxKeyEx(VatTaxKey.BI,percent)}; 
+					} else {
+						return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B1),new VatTaxKeyEx(VatTaxKey.CP,percent)};
+					}
+				}
 			}
 			if (transaction == InvoiceTransactionType.OTHER_ISP) {
 				return investment?
@@ -548,6 +555,7 @@ public class VatTaxManager implements Serializable {
 		stmt.append(	",it.vat_deduction_type " + VAT_DEDUCTION_TYPE);
 		stmt.append(	",i.transaction "+ TRANSACTION);
 		stmt.append(	",i.investment " + INVESTMENT);
+		stmt.append(	",i.withholding_farmer " + WITHHOLDING_FARMER);
 		stmt.append(	",SUM( i.taxable_base)" + INVOICE_BASE);
 		stmt.append(	",SUM( i.vat_quota)" + INVOICE_VAT);
 		stmt.append(	",SUM( i.retention_quota)" + INVOICE_RETENTION);
@@ -574,6 +582,7 @@ public class VatTaxManager implements Serializable {
 		stmt.append(	"," + VAT_DEDUCTION_TYPE);
 		stmt.append(	"," + TRANSACTION);
 		stmt.append(	"," + INVESTMENT);
+		stmt.append(	"," + WITHHOLDING_FARMER);
 		return stmt.toString();
 	}
 	

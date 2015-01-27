@@ -81,6 +81,7 @@ public class Mod390DAO {
 		private double percentage;
 		private double surchargePercent;
 		private VatDeductionType vatDeductionType;
+		private boolean farmerRegime;
 		
 		public InvoiceType getInvoiceType() {
 			return invoiceType;
@@ -141,6 +142,12 @@ public class Mod390DAO {
 		}
 		public void setVatDeductionType(VatDeductionType vatDeductionType) {
 			this.vatDeductionType = vatDeductionType;
+		}
+		public boolean isFarmerRegime() {
+			return farmerRegime;
+		}
+		public void setFarmerRegime(boolean farmerRegime) {
+			this.farmerRegime = farmerRegime;
 		}
 		public boolean isRectification() {
 			return (rectificationType == RectificationType.SPECIAL_RECTIFIER);
@@ -258,13 +265,13 @@ public class Mod390DAO {
 		 ,K12	 (Mod390DetailKey.K12	, null)
 		 ,K13	 (Mod390DetailKey.K13	, null)
 		 
-		 ,K14_04 (Mod390DetailKey.K14_04, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && vc.getPercentage() == 4))) 
-		 ,K14_07 (Mod390DetailKey.K14_07, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && vc.getPercentage() == 7))) 
-		 ,K14_08 (Mod390DetailKey.K14_08, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && vc.getPercentage() == 8))) 
-		 ,K14_10 (Mod390DetailKey.K14_10, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && vc.getPercentage() == 10))) 
-		 ,K14_16 (Mod390DetailKey.K14_16, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && vc.getPercentage() == 16)))
-		 ,K14_18 (Mod390DetailKey.K14_18, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && vc.getPercentage() == 18)))
-		 ,K14_21 (Mod390DetailKey.K14_21, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && vc.getPercentage() == 21))) 
+		 ,K14_04 (Mod390DetailKey.K14_04, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 4))) 
+		 ,K14_07 (Mod390DetailKey.K14_07, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 7))) 
+		 ,K14_08 (Mod390DetailKey.K14_08, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 8))) 
+		 ,K14_10 (Mod390DetailKey.K14_10, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 10))) 
+		 ,K14_16 (Mod390DetailKey.K14_16, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 16)))
+		 ,K14_18 (Mod390DetailKey.K14_18, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 18)))
+		 ,K14_21 (Mod390DetailKey.K14_21, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 21))) 
 		 ,K15	 (Mod390DetailKey.K15	, null)
 		 
 		 ,K16_04 (Mod390DetailKey.K16_04, null)
@@ -276,13 +283,13 @@ public class Mod390DAO {
 		 ,K16_21 (Mod390DetailKey.K16_21, null)
 		 ,K17	 (Mod390DetailKey.K17	, null)
 		 
-		 ,K18_04 (Mod390DetailKey.K18_04, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && vc.getPercentage() ==  4)))
-		 ,K18_07 (Mod390DetailKey.K18_07, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && vc.getPercentage() ==  7)))
-		 ,K18_08 (Mod390DetailKey.K18_08, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && vc.getPercentage() ==  8)))
-		 ,K18_10 (Mod390DetailKey.K18_10, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && vc.getPercentage() == 10))) 
-		 ,K18_16 (Mod390DetailKey.K18_16, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && vc.getPercentage() == 16))) 
-		 ,K18_18 (Mod390DetailKey.K18_18, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && vc.getPercentage() == 18))) 
-		 ,K18_21 (Mod390DetailKey.K18_21, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && vc.getPercentage() == 21)))
+		 ,K18_04 (Mod390DetailKey.K18_04, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  4)))
+		 ,K18_07 (Mod390DetailKey.K18_07, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  7)))
+		 ,K18_08 (Mod390DetailKey.K18_08, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  8)))
+		 ,K18_10 (Mod390DetailKey.K18_10, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 10))) 
+		 ,K18_16 (Mod390DetailKey.K18_16, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 16))) 
+		 ,K18_18 (Mod390DetailKey.K18_18, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 18))) 
+		 ,K18_21 (Mod390DetailKey.K18_21, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 21)))
 		 ,K19	 (Mod390DetailKey.K19	, null)
 		 
 		 ,K20_04 (Mod390DetailKey.K20_04, null)
@@ -294,52 +301,53 @@ public class Mod390DAO {
 		 ,K20_21 (Mod390DetailKey.K20_21, null)
 		 ,K21	 (Mod390DetailKey.K21	, null)
 		 
-		 ,K22_04 (Mod390DetailKey.K22_04, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && vc.getPercentage() == 4)))
-		 ,K22_07 (Mod390DetailKey.K22_07, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && vc.getPercentage() == 4)))
-		 ,K22_08 (Mod390DetailKey.K22_08, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && vc.getPercentage() == 4)))
-		 ,K22_10 (Mod390DetailKey.K22_10, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && vc.getPercentage() == 4)))
-		 ,K22_16 (Mod390DetailKey.K22_16, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && vc.getPercentage() == 4)))
-		 ,K22_18 (Mod390DetailKey.K22_18, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && vc.getPercentage() == 4)))
-		 ,K22_21 (Mod390DetailKey.K22_21, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && vc.getPercentage() == 4)))
+		 ,K22_04 (Mod390DetailKey.K22_04, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 4)))
+		 ,K22_07 (Mod390DetailKey.K22_07, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 4)))
+		 ,K22_08 (Mod390DetailKey.K22_08, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 4)))
+		 ,K22_10 (Mod390DetailKey.K22_10, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 4)))
+		 ,K22_16 (Mod390DetailKey.K22_16, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 4)))
+		 ,K22_18 (Mod390DetailKey.K22_18, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 4)))
+		 ,K22_21 (Mod390DetailKey.K22_21, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 4)))
 		 ,K23	 (Mod390DetailKey.K23	, null)
 		 
-		 ,K24_04 (Mod390DetailKey.K24_04, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() == 4)))
-		 ,K24_07 (Mod390DetailKey.K24_07, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() == 7)))
-		 ,K24_08 (Mod390DetailKey.K24_08, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() == 8)))
-		 ,K24_10 (Mod390DetailKey.K24_10, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() == 10)))
-		 ,K24_16 (Mod390DetailKey.K24_16, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() == 16)))
-		 ,K24_18 (Mod390DetailKey.K24_18, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() == 18)))
-		 ,K24_21 (Mod390DetailKey.K24_21, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() == 21)))
+		 ,K24_04 (Mod390DetailKey.K24_04, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 4)))
+		 ,K24_07 (Mod390DetailKey.K24_07, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 7)))
+		 ,K24_08 (Mod390DetailKey.K24_08, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 8)))
+		 ,K24_10 (Mod390DetailKey.K24_10, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 10)))
+		 ,K24_16 (Mod390DetailKey.K24_16, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 16)))
+		 ,K24_18 (Mod390DetailKey.K24_18, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 18)))
+		 ,K24_21 (Mod390DetailKey.K24_21, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 21)))
 		 ,K25	 (Mod390DetailKey.K25	, null)
 		 
-		 ,K26_04 (Mod390DetailKey.K26_04, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && vc.getPercentage() ==  4)))
-		 ,K26_07 (Mod390DetailKey.K26_07, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && vc.getPercentage() ==  7)))
-		 ,K26_08 (Mod390DetailKey.K26_08, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && vc.getPercentage() ==  8)))
-		 ,K26_10 (Mod390DetailKey.K26_10, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && vc.getPercentage() ==  10)))
-		 ,K26_16 (Mod390DetailKey.K26_16, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && vc.getPercentage() ==  16)))
-		 ,K26_18 (Mod390DetailKey.K26_18, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && vc.getPercentage() ==  18)))
-		 ,K26_21 (Mod390DetailKey.K26_21, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && vc.getPercentage() ==  21)))
+		 ,K26_04 (Mod390DetailKey.K26_04, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  4)))
+		 ,K26_07 (Mod390DetailKey.K26_07, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  7)))
+		 ,K26_08 (Mod390DetailKey.K26_08, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  8)))
+		 ,K26_10 (Mod390DetailKey.K26_10, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  10)))
+		 ,K26_16 (Mod390DetailKey.K26_16, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  16)))
+		 ,K26_18 (Mod390DetailKey.K26_18, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  18)))
+		 ,K26_21 (Mod390DetailKey.K26_21, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  21)))
 		 ,K27	 (Mod390DetailKey.K27	, null)
 		 
-		 ,K28_04 (Mod390DetailKey.K28_04, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() ==  4)))
-		 ,K28_07 (Mod390DetailKey.K28_07, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() ==  7))) 
-		 ,K28_08 (Mod390DetailKey.K28_08, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() ==  8))) 
-		 ,K28_10 (Mod390DetailKey.K28_10, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() ==  10))) 
-		 ,K28_16 (Mod390DetailKey.K28_16, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() ==  16))) 
-		 ,K28_18 (Mod390DetailKey.K28_18, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() ==  18))) 
-		 ,K28_21 (Mod390DetailKey.K28_21, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && vc.getPercentage() ==  21))) 
+		 ,K28_04 (Mod390DetailKey.K28_04, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  4)))
+		 ,K28_07 (Mod390DetailKey.K28_07, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  7))) 
+		 ,K28_08 (Mod390DetailKey.K28_08, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  8))) 
+		 ,K28_10 (Mod390DetailKey.K28_10, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  10))) 
+		 ,K28_16 (Mod390DetailKey.K28_16, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  16))) 
+		 ,K28_18 (Mod390DetailKey.K28_18, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  18))) 
+		 ,K28_21 (Mod390DetailKey.K28_21, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  21))) 
 		 ,K29	 (Mod390DetailKey.K29   , null)
 		 
-		 ,K30_04 (Mod390DetailKey.K30_04, (vc -> (vc.isIntracommunityExpenses() && !vc.isInvestment() && vc.getPercentage() ==  4)))
-		 ,K30_07 (Mod390DetailKey.K30_07, (vc -> (vc.isIntracommunityExpenses() && !vc.isInvestment() && vc.getPercentage() ==  7)))
-		 ,K30_08 (Mod390DetailKey.K30_08, (vc -> (vc.isIntracommunityExpenses() && !vc.isInvestment() && vc.getPercentage() ==  8)))
-		 ,K30_10 (Mod390DetailKey.K30_10, (vc -> (vc.isIntracommunityExpenses() && !vc.isInvestment() && vc.getPercentage() ==  10)))
-		 ,K30_16 (Mod390DetailKey.K30_16, (vc -> (vc.isIntracommunityExpenses() && !vc.isInvestment() && vc.getPercentage() ==  16)))
-		 ,K30_18 (Mod390DetailKey.K30_18, (vc -> (vc.isIntracommunityExpenses() && !vc.isInvestment() && vc.getPercentage() ==  18)))
-		 ,K30_21 (Mod390DetailKey.K30_21, (vc -> (vc.isIntracommunityExpenses() && !vc.isInvestment() && vc.getPercentage() ==  21)))
+		 ,K30_04 (Mod390DetailKey.K30_04, (vc -> (vc.isIntracommunityExpenses() && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  4)))
+		 ,K30_07 (Mod390DetailKey.K30_07, (vc -> (vc.isIntracommunityExpenses() && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  7)))
+		 ,K30_08 (Mod390DetailKey.K30_08, (vc -> (vc.isIntracommunityExpenses() && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  8)))
+		 ,K30_10 (Mod390DetailKey.K30_10, (vc -> (vc.isIntracommunityExpenses() && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  10)))
+		 ,K30_16 (Mod390DetailKey.K30_16, (vc -> (vc.isIntracommunityExpenses() && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  16)))
+		 ,K30_18 (Mod390DetailKey.K30_18, (vc -> (vc.isIntracommunityExpenses() && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  18)))
+		 ,K30_21 (Mod390DetailKey.K30_21, (vc -> (vc.isIntracommunityExpenses() && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  21)))
 		 ,K31	 (Mod390DetailKey.K31   , null)
 		 
-		 ,K32	 (Mod390DetailKey.K32, null)
+		 ,K32	 (Mod390DetailKey.K32   , (vc -> ((vc.isPurchase() || vc.isExpenses()) && vc.isFarmerRegime())))
+		 
 		 ,K33	 (Mod390DetailKey.K33, null)
 		 ,K34	 (Mod390DetailKey.K34, null)
 		 ,K35	 (Mod390DetailKey.K35, null)
@@ -670,6 +678,7 @@ public class Mod390DAO {
 				,INVOICE.SERVICE
 				,INVOICE.TRANSACTION
 				,INVOICE.INVESTMENT
+				,INVOICE.WITHHOLDING_FARMER
 				,INVOICE_TAX.PERCENTAGE
 				,INVOICE_TAX.SURCHARGE
 				,INVOICE_TAX.VAT_DEDUCTION_TYPE
@@ -688,6 +697,7 @@ public class Mod390DAO {
 						,INVOICE.SERVICE
 						,INVOICE.TRANSACTION
 						,INVOICE.INVESTMENT
+						,INVOICE.WITHHOLDING_FARMER
 						,INVOICE_TAX.PERCENTAGE
 						,INVOICE_TAX.SURCHARGE
 						,INVOICE_TAX.VAT_DEDUCTION_TYPE)
@@ -702,6 +712,7 @@ public class Mod390DAO {
 							vc.setTransaction(InvoiceTransactionType.values()[record.getValue(INVOICE.TRANSACTION)]);
 							vc.setInvestment(record.getValue(INVOICE.INVESTMENT) == 1);
 							vc.setAccrualRegime(false);
+							vc.setFarmerRegime(record.getValue(INVOICE.WITHHOLDING_FARMER) == 1);
 							double surchargePercent = record.getValue(INVOICE_TAX.SURCHARGE).doubleValue();
 							vc.setSurchargePercent(surchargePercent);
 							boolean surcharge = (surchargePercent > 0); 
@@ -743,6 +754,7 @@ public class Mod390DAO {
 				,INVOICE.SERVICE
 				,INVOICE.TRANSACTION
 				,INVOICE.INVESTMENT
+				,INVOICE.WITHHOLDING_FARMER
 				,INVOICE_TAX.PERCENTAGE
 				,INVOICE_TAX.SURCHARGE
 				,INVOICE_TAX.VAT_DEDUCTION_TYPE
@@ -781,6 +793,7 @@ public class Mod390DAO {
 							vc.setTransaction(InvoiceTransactionType.values()[record.getValue(INVOICE.TRANSACTION)]);
 							vc.setInvestment(record.getValue(INVOICE.INVESTMENT) == 1);
 							vc.setAccrualRegime(true);
+							vc.setFarmerRegime(record.getValue(INVOICE.WITHHOLDING_FARMER) == 1);
 							
 							double surchargePercent = record.getValue(INVOICE_TAX.SURCHARGE).doubleValue();
 							vc.setSurchargePercent(surchargePercent);
@@ -980,7 +993,7 @@ public class Mod390DAO {
 					return true;
 								}), 
 		CAG1_V1  (Mod303Key.CAG1_V1 , (src,mod390) -> {mod390.getFarmerRegime1().setIncomes(src.getAmount());return true;}),
-		CAG1_V2  (Mod303Key.CAG1_V2 , (src,mod390) -> {mod390.getFarmerRegime1().setQuotaIndex(src.getAmount());return true;}),
+		CAG1_V2  (Mod303Key.CAG1_V2 , (src,mod390) -> {mod390.getFarmerRegime1().setQuotaIndex( AonMathUtils.round(src.getAmount() / 10000 ,5));return true;}),
 		CAG1_V3  (Mod303Key.CAG1_V3 , (src,mod390) -> {mod390.getFarmerRegime1().setAccrualQuota(src.getAmount());return true;}),
 		CAG1_V6  (Mod303Key.CAG1_V6 , (src,mod390) -> {mod390.getFarmerRegime1().setInputQuotas(src.getAmount());return true;}),
 		CAG1_V7  (Mod303Key.CAG1_V7 , (src,mod390) -> {
@@ -995,7 +1008,7 @@ public class Mod390DAO {
 					return true;
 								}),
 		CAG2_V1  (Mod303Key.CAG2_V1 , (src,mod390) -> {mod390.getFarmerRegime2().setIncomes(src.getAmount());return true;}),
-		CAG2_V2  (Mod303Key.CAG2_V2 , (src,mod390) -> {mod390.getFarmerRegime2().setQuotaIndex(src.getAmount());return true;}),
+		CAG2_V2  (Mod303Key.CAG2_V2 , (src,mod390) -> {mod390.getFarmerRegime2().setQuotaIndex(AonMathUtils.round(src.getAmount() / 10000 ,5));return true;}),
 		CAG2_V3  (Mod303Key.CAG2_V3 , (src,mod390) -> {mod390.getFarmerRegime2().setAccrualQuota(src.getAmount());return true;}),
 		CAG2_V6  (Mod303Key.CAG2_V6 , (src,mod390) -> {mod390.getFarmerRegime2().setInputQuotas(src.getAmount());return true;}),
 		CAG2_V7  (Mod303Key.CAG2_V7 , (src,mod390) -> {
