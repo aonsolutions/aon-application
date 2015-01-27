@@ -72,7 +72,7 @@ public class AmazonAuthorizationServletUtils {
 	}
 
 	public static String getScheme(HttpServletRequest req) {
-		return System.getProperty(PROXY_SCHEME, "https");//req.getScheme());
+		return System.getProperty(PROXY_SCHEME, req.getScheme());
 	}
 	
 	public static Integer getServerPort(HttpServletRequest req) {
