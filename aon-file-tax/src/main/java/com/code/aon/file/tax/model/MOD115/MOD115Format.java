@@ -9,10 +9,14 @@ public enum MOD115Format {
 			,Administration.ALAVA
 			,MimeType.MIME_XML
 			,Alava2011MOD115Factory.class),
-	ALAVA_2014(2014
+	NAVARRA_2014(2014
 			,Administration.NAVARRA
 			,MimeType.MIME_TXT
 			,Navarra2014MOD115Factory.class),
+	AEAT_2015(2015
+			,Administration.COMMON_TERRITORY
+			,MimeType.MIME_TXT
+			,Aeat2015MOD115Factory.class),
 	AEAT_2011(2011
 			,Administration.COMMON_TERRITORY
 			,MimeType.MIME_TXT
@@ -43,7 +47,6 @@ public enum MOD115Format {
 	public Class<? extends IMOD115Factory> getFactory() {
 		return factory;
 	}
-	
 	
 	public synchronized static MOD115Format getFormat(Administration administration, int year) {
 		MOD115Format format = null;

@@ -82,7 +82,10 @@ public class MOD115Writer implements IFinanceConstants{
 		int year = fiscalModel.getYear();
 		declaration.setYear(year);
 		Administration admon = fiscalModel.getAdministration();
-		declaration.setPeriod(fiscalModel.getPeriod().getName(admon)); 
+		declaration.setPeriod(fiscalModel.getPeriod().getName(admon));
+		declaration.setComplementary(fiscalModel.isComplementary());
+		declaration.setReplacement( fiscalModel.isReplacement() );
+		declaration.setReplacedNumber( fiscalModel.getReplacedNumber() );
 		Date date = new Date();
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
@@ -124,7 +127,7 @@ public class MOD115Writer implements IFinanceConstants{
 		declaration.setContactCellular( fiscalModel.getContactCellular() );
 		declaration.setContactMail( fiscalModel.getContactEmail() );
 
-		if (fiscalModel.getAdministration() == Administration.COMMON_TERRITORY) {
+		if (fiscalModel.getYear() < 2015 && fiscalModel.getAdministration() == Administration.COMMON_TERRITORY) {
 			declaration.setAdministrationCode(fiscalModel.getAdmonAeat());
 			if (StringUtils.isEmpty(declaration.getAdministrationCode())) {
 				throw new ManagerBeanException("No se ha indicado el Código de Administración.");
@@ -157,6 +160,7 @@ public class MOD115Writer implements IFinanceConstants{
 			declaration.setPayInCash("X");
 			declaration.setPayInAccount(" ");
 			declaration.setCcc("");
+			declaration.setIban("");
 			declaration.setPayMethod("0");
 			Finance finance = fiscalModel.getFinance();
 			if (finance != null) {
@@ -170,6 +174,7 @@ public class MOD115Writer implements IFinanceConstants{
 						declaration.setPayInCash(" ");
 						declaration.setPayInAccount("D");
 						declaration.setCcc(finance.getBankAccount().getBban());
+						declaration.setIban(finance.getBankAccount().getIban());
 						declaration.setDeclarationType("U");
 					}
 				}
