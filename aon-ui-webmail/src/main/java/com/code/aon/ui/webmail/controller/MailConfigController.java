@@ -179,7 +179,7 @@ public class MailConfigController implements Serializable {
 		} catch (MessagingException e) {
 			LOGGER.error( e.getMessage(), e );
 		} finally {
-			server.disconnect();
+			server.close();
 		}
 	}
 

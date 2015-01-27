@@ -5,6 +5,8 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
+	<aon:valueParam name="innerToolbar" default="#{false}"/>
+
 	<ui:include src="/com/code/aon/ui/webmail/facelet/util/listInnerToolbar.xhtml" >
 		<ui:param name="toolbarTitle" value="#{mailConfig.mailAccountTitle}" />
 		<ui:param name="skipSearchButton" value="#{true}" />

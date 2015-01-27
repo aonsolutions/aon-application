@@ -37,6 +37,7 @@ import com.code.aon.ui.purchase.controller.IPurchaseConstants;
 import com.code.aon.ui.purchase.controller.PurchaseReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
+import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonMessage;
 
 public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseConstants {
@@ -121,11 +122,7 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseCons
 		return AonUtil.getMessage(PURCHASE_EMAIL_BODY); 
 	}
 	
-	public void sendPurchase( Purchase purchase, String subject, String content ) {
-		sendPurchase( purchase, null, null, null, subject, content );
-	}
-	
-	public void sendPurchase( Purchase purchase, List<String> moreRecipients, String recipientsCc, String recipientsBcc, String subject, String content ) {
+	public void sendPurchase( int index, Purchase purchase, List<String> moreRecipients, String recipientsCc, String recipientsBcc, String subject, String content ) {
 		LogPanelController logger = LogPanelController.getInstance();
 		AonFile file = null;
 		AonFile xml = null;
@@ -150,13 +147,17 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseCons
 				getEmailSender().sendMessage(aonMessage);
 				
 				String text = AonUtil.getMessage(PURCHASE_SEND_EMAIL);
-				String message = MessageFormat.format(text, purchase.getReferenceCode(), purchase.getSupplier().getRegistry().getFullName(), ArrayUtils.toString(emails) );
+				String message = MessageFormat.format(text, purchase.getReferenceCode(), purchase.getSupplier().getRegistry().getFullName(), ArrayUtils.toString(emails), index );
 				logger.info( message );
 			}
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th);
+			String errorMessage = th.getMessage();
+			if ( (th.getCause() != null) && (th instanceof WebmailException) ) {
+				errorMessage = th.getCause().getMessage();
+			}
 			String text = AonUtil.getMessage(PURCHASE_SEND_EMAIL_ERROR);
-			String message = MessageFormat.format(text, purchase.getReferenceCode() );
+			String message = MessageFormat.format(text, purchase.getReferenceCode(), index, errorMessage );
 			logger.error( message + "<br />" + th.getMessage() + "<br />" + th.getCause() );
 		} finally {
 			if ( file != null ) {

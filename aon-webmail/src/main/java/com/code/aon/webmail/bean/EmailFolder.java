@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.mail.Folder;
 import javax.mail.MessagingException;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,19 +70,19 @@ public class EmailFolder implements Serializable {
     }
     
     public boolean isDraftFolder() {
-    	return getServer().getDraftFolderName().equals(this.fullName);	
+    	return StringUtils.equals(getServer().getDraftFolderName(), this.fullName);    	
     }
 
     public boolean isSentFolder() {
-    	return getServer().getSentFolderName().equals(this.fullName);	
+    	return StringUtils.equals(getServer().getSentFolderName(), this.fullName);    	
     }
 
     public boolean isSpamFolder() {
-    	return getServer().getSpamFolderName().equals(this.fullName);	
+    	return StringUtils.equals(getServer().getSpamFolderName(), this.fullName);
     }
 
     public boolean isTrashFolder() {
-    	return getServer().getTrashFolderName().equals(this.fullName);	
+    	return StringUtils.equals(getServer().getTrashFolderName(), this.fullName);
     }
 	
 }

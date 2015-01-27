@@ -171,10 +171,11 @@ public class EmailCommunicationController implements IMarketingConstants, Serial
 	public void send(ActionEvent event) {
     	LogPanelController logger = LogPanelController.getInstance();
 		MessageController messageController = (MessageController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
+		AonServer server = new AonServer(messageController.getSenderMailAccount());
+		server.setNumberOfMessagesPerTransport(10);
     	try {
     		CommunicationCenterController ccc = getCommunicationController();
     		updateMessageContent(messageController);
-    		AonServer server = new AonServer(messageController.getSenderMailAccount());
     		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
     		Criteria criteria = ccc.getPendingTargetsCriteria(bean);
     		criteria.addOrder("ActionTarget.target.registry.name");
@@ -185,11 +186,15 @@ public class EmailCommunicationController implements IMarketingConstants, Serial
         		int count = ccc.getNumberOfTargetsInEmail();
         		int offset = 0;
         		do {
-        			List<ActionTarget> list = getActionTargetList(bean, ids, offset, count);
-        			if (! list.isEmpty() ) {
-        				logResult( list, offset, sendEmail(server, list) );
+        			if ( logger.isActivePoll() ) {
+            			List<ActionTarget> list = getActionTargetList(bean, ids, offset, count);
+            			if (! list.isEmpty() ) {
+            				logResult( list, offset, sendEmail(server, list) );
+            			}
+        				offset += count;        			        				
+        			} else {
+        				break;
         			}
-    				offset += count;        			
         		} while ( offset < ids.size() );
     		}
 		} catch (Throwable e) {
@@ -197,6 +202,7 @@ public class EmailCommunicationController implements IMarketingConstants, Serial
 			logger.error( e.getMessage() );
 			throw new AbortProcessingException(e.getMessage(), e);
 		} finally {
+			server.close();
 			messageController.finishMessage();
 			logger.info( AonUtil.getMessage(ICommonMessages.SEND_EMAIL_FINISH) );			
 		}

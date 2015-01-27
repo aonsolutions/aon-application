@@ -36,10 +36,13 @@ import com.code.aon.facturae.FacturaeWriter;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.ui.finance.util.FinanceEmailUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.IMailAccount;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoicePrintController extends InvoiceController implements IFinanceConstants {
 	
@@ -81,29 +84,39 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 			}
 		}		
 	}	
-	
+
+	@SuppressWarnings("unchecked")
 	public void onSendInvoicesByEmail( ActionEvent event ) {
+		LogPanelController logger = LogPanelController.getInstance();		
 		InvoiceController controller = (InvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
 		FinanceEmailUtil emailUtil = controller.getEmailController();
 		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
+		messageController.setShowNewMessageWindow(false);
 		String subject = messageController.getSubject();
 		String content = messageController.getContent();
 		IMailAccount account = messageController.getSenderMailAccount();
 		try {
 			emailUtil.changeMailAccount(account);
-			List<ITransferObject> list = getManagerBean().getList(getCriteria());
-			for( ITransferObject to : list ) {
-				emailUtil.sendInvoice( (Invoice) to, subject, content, messageController.isSaveSent()  );	
-			}
+			emailUtil.setNumberOfMessagesPerTransport(10);
+    		String idAlias = getManagerBean().getFieldName(IEntityAlias.INVOICE_ID);
+    		ProjectionList pl = new ProjectionList(Projection.property(idAlias));
+    		List<Integer> ids = getManagerBean().getList(pl, getCriteria());
+    		for( int i = 0; i < ids.size(); i++ ) {
+				if ( logger.isActivePoll() ) {
+	    			Invoice invoice = (Invoice) getManagerBean().get(ids.get(i));
+	    			emailUtil.sendInvoice( i+1, invoice, subject, content, messageController.isSaveSent()  );
+				} else {
+					break;
+				}    			
+    		}
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th);
 			AonUtil.addErrorMessage(th.getMessage());
 			throw new AbortProcessingException(th.getMessage(), th);
 		} finally {
-			LogPanelController logger = LogPanelController.getInstance();
+			emailUtil.close();
 			logger.info( AonUtil.getMessage(FINANCE_INVOICE_SEND_EMAIL_FNINISH) );
 			logger.finish();
-			messageController.setShowNewMessageWindow(false);
 		}
 	}	
 	

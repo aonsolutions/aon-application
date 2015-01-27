@@ -8,6 +8,7 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,7 +92,7 @@ public class MailAccountDBController extends MailDBController implements IMailAc
 
 	public void onProtocolChanged( ActionEvent event ) {
 		MailAccount mailAccount = (MailAccount) getTo();
-		if ( mailAccount.getProtocol() == null ) {
+		if (! isProtocolDefinied() ) {
 			mailAccount.setIncomingHost(null);
 			mailAccount.setIncomingPort(0);
 			mailAccount.setIncomingSecurity(ConnectionSecurity.NONE);
@@ -108,6 +109,11 @@ public class MailAccountDBController extends MailDBController implements IMailAc
 			mailAccount.setTrashFolder(null);
 			mailAccount.setSpamFolder(null);
 		}
+	}
+
+	public boolean isProtocolDefinied() {
+		MailAccount mailAccount = (MailAccount) getTo();
+		return !StringUtils.isEmpty(mailAccount.getProtocol());
 	}
 	
 }

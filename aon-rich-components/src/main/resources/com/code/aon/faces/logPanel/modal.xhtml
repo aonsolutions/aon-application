@@ -27,7 +27,7 @@
 				</aon:div>
 			</f:facet>
 	        <f:facet name="controls">
-				<aon:commandButton styleClass="aon-popupWindow-close"
+				<aon:commandButton styleClass="aon-popupWindow-close" eventsQueue="logPanelQueue"
 					action="#{closeButtonAction}" actionListener="#{logPanel.onCloseWindow}" immediate="true"
 					reRender="aonStatus,logPanel_poll,logPanel_content#{(closeButtonReRender != null)?',':''}#{closeButtonReRender}">
 					<aon:if test="#{closeLogPanelAtionListener != null}">									

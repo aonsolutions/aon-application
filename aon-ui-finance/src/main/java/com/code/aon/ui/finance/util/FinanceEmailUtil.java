@@ -44,6 +44,7 @@ import com.code.aon.ui.finance.controller.InvoiceController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
+import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonMessage;
 
 public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConstants {
@@ -160,7 +161,7 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 		return aonFile;
 	}
 	
-	public void sendInvoice( Invoice invoice, String subject, String content, boolean saveSent ) {
+	public void sendInvoice( int index, Invoice invoice, String subject, String content, boolean saveSent ) {
 		LogPanelController logger = LogPanelController.getInstance();
 		AonFile file = null;
 		AonFile xml = null;
@@ -181,13 +182,17 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 					getEmailSender().storeMessage(aonMessage);
 				}
 				String text = AonUtil.getMessage(FINANCE_INVOICE_SEND_EMAIL);
-				String message = MessageFormat.format(text, invoice.getReferenceCode(), invoice.getRegistryName(), ArrayUtils.toString(emails) );
+				String message = MessageFormat.format(text, invoice.getReferenceCode(), invoice.getRegistryName(), ArrayUtils.toString(emails), index );
 				logger.info( message );
 			}
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th);
-			String text = AonUtil.getMessage(FINANCE_INVOICE_SEND_EMAIL_ERROR);
-			String message = MessageFormat.format(text, invoice.getReferenceCode(), invoice.getRegistryName() );
+			String errorMessage = th.getMessage();
+			if ( (th.getCause() != null) && (th instanceof WebmailException) ) {
+				errorMessage = th.getCause().getMessage();
+			}
+			String text = AonUtil.getMessage(FINANCE_INVOICE_SEND_EMAIL_ERROR );
+			String message = MessageFormat.format(text, invoice.getReferenceCode(), invoice.getRegistryName(), errorMessage, index );
 			logger.error( message );
 		} finally {
 			if ( file != null ) {

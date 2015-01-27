@@ -1,12 +1,13 @@
 package com.code.aon.webmail.bean;
 
-import static javax.mail.Folder.HOLDS_MESSAGES;
 import static javax.mail.Folder.READ_WRITE;
 
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 import javax.activation.CommandMap;
 import javax.activation.MailcapCommandMap;
@@ -40,20 +41,37 @@ public class AonServer implements IMailConstants, Serializable {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AonServer.class);
 	
+	private static final String BUNDLE_RESOURCE = "com.code.aon.common.i18n.messages";
+	
+	private static final String NO_OUTGOING_HOST = "webmail_send_error_no_outgoinHost";
+	
+	private static final String SEND_FAILED = "webmail_send_error_failed";
+	
+	private static final String SEND_ERROR = "webmail_send_error";
+	
+	private static final String SEND_UNEXPECTED_ERROR = "webmail_send_error_unexpected";
+	
 	private Properties properties;
 
     private transient Store store;
 
     private transient Session session;
+    
+    private transient Transport transport;
 
     private IMailAccount account;
     
     private boolean quotaAware;
     
+    private int numberOfMessagesToSend;
+    
+    private int numberOfMessagesPerTransport;
+    
     /** Creates a new instance of Server */
     public AonServer(IMailAccount account){
-        setAccount( account );
+        this.account = account;
         this.properties = calculateProperties( account );
+        this.numberOfMessagesPerTransport = 1;
     }
     
     public Session getSession() {
@@ -120,7 +138,7 @@ public class AonServer implements IMailConstants, Serializable {
     	return StringUtils.contains(store, IMAP);
     }
     
-    private static String getStoreProtocol( IMailAccount account ) {
+    private String getStoreProtocol( IMailAccount account ) {
     	String store = IMAP;
         if (! StringUtils.isEmpty(account.getProtocol())) {
         	store = account.getProtocol();
@@ -131,7 +149,7 @@ public class AonServer implements IMailConstants, Serializable {
         return store;
     }
     
-    private static void setIncomingProperties( IMailAccount account, Properties values ) {
+    private void setIncomingProperties( IMailAccount account, Properties values ) {
     	String store = getStoreProtocol(account);
         String prefix = MAIL_PREFIX + store;
         if (account.getIncomingSecurity() == ConnectionSecurity.SSL) {
@@ -151,7 +169,7 @@ public class AonServer implements IMailConstants, Serializable {
         setTimeout(values, prefix);
     }
 
-    private static String getTransportProtocol( IMailAccount account ) {
+    private String getTransportProtocol( IMailAccount account ) {
     	String transport = SMTP;
         if (account.getOutgoingSecurity() == ConnectionSecurity.SSL) {
         	transport = SMTPS;
@@ -159,7 +177,7 @@ public class AonServer implements IMailConstants, Serializable {
         return transport;
     }
     
-    private static void setOutcomingProperties( IMailAccount account, Properties values ) {
+    private void setOutcomingProperties( IMailAccount account, Properties values ) {
     	String transport = getTransportProtocol(account);
         String prefix = MAIL_PREFIX + transport;
         if (account.getOutgoingSecurity() == ConnectionSecurity.SSL) {
@@ -169,7 +187,7 @@ public class AonServer implements IMailConstants, Serializable {
         } else if (account.getOutgoingSecurity() == ConnectionSecurity.TLS) {
         	values.put(prefix + STARTTLS_ENABLE, Boolean.TRUE.toString());
         }
-        setTimeout(values, prefix);
+        // setTimeout(values, prefix);
         if (account.isOutgoingVerification()) {
         	values.put(prefix + AUTH, Boolean.TRUE.toString());
         } else {
@@ -178,7 +196,7 @@ public class AonServer implements IMailConstants, Serializable {
         values.setProperty(MAIL_TRANSPORT_PROTOCOL, transport);
     }
     
-    private static Properties calculateProperties( IMailAccount account ) {
+    private Properties calculateProperties( IMailAccount account ) {
         Properties values = new Properties();
         if ( account.getProtocol() != null ) {
             setIncomingProperties(account, values);	
@@ -189,7 +207,7 @@ public class AonServer implements IMailConstants, Serializable {
     	return values;
     }
     
-    private static void setTimeout( Properties properties, String prefix ) {
+    private void setTimeout( Properties properties, String prefix ) {
     	properties.setProperty(prefix + TIMEOUT, DEFAULT_TIMEOUT);
     	properties.setProperty(prefix + CONNECTION_TIMEOUT, DEFAULT_TIMEOUT);
     }
@@ -212,13 +230,10 @@ public class AonServer implements IMailConstants, Serializable {
     /**
      * Closes the connection incoming mail server.
      */
-    public void disconnect() {
-    	try {
-    		this.store.close();
-    		this.store = null;
-    	} catch (MessagingException e) {
-    		LOGGER.error("Messaging Exception on disconnect method",e);
-    	}
+    public void close() {
+   		closeQuietly(this.store);
+   		this.store = null;
+   		closeTransport();
     }
 
     public void ensureConnection() throws MessagingException {
@@ -290,44 +305,62 @@ public class AonServer implements IMailConstants, Serializable {
     	sendMessage(message.getMessage());
     }
 
-    private static Transport getTransport( Session session, IMailAccount account ) throws MessagingException {
-        Transport transport = session.getTransport();
-        if (account.isOutgoingVerification()) {
-            transport.connect(
-            		account.getOutgoingHost(),
-            		account.getOutgoingPort(),
-            		account.getMailUsername(),
-            		account.getPasswordString());
-        } else {
-            transport.connect(
-            		account.getOutgoingHost(),
-            		account.getOutgoingPort(),
-                    null, null);
-        }
+    private Transport getTransport() throws MessagingException {
+    	if ( (this.transport != null) && !this.transport.isConnected() ) {
+			LOGGER.warn("Transport not connected");
+    		closeTransport();
+    	}
+    	if ( this.transport == null ) {
+            this.transport = getSession().getTransport();
+            this.numberOfMessagesToSend = this.numberOfMessagesPerTransport;
+            if (account.isOutgoingVerification()) {
+                transport.connect(
+                		account.getOutgoingHost(),
+                		account.getOutgoingPort(),
+                		account.getMailUsername(),
+                		account.getPasswordString());
+            } else {
+                transport.connect(
+                		account.getOutgoingHost(),
+                		account.getOutgoingPort(),
+                        null, null);
+            }    		
+    	}
         return transport;
     }
     
     private void sendMessage(Message message) throws WebmailException {
+    	if ( StringUtils.isEmpty(account.getOutgoingHost()) ) {
+    		throw new WebmailException( getMessage(NO_OUTGOING_HOST, account.getName()) );
+    	}
     	Transport transport = null;
         try {
             if ( message!=null && message.getFrom()!=null ) {
                 CommandMap.setDefaultCommandMap(new MailcapCommandMap());
-            	transport = getTransport(getSession(), account);
+            	transport = getTransport();
                 message.setSentDate(new Date());
                 message.setHeader(X_MAILER, WEBMAIL_MAILER);
+                message.saveChanges();
+                LOGGER.info( "Sending email from {} to {}", message.getFrom(), message.getAllRecipients() );                
                 transport.sendMessage(message,
                         message.getAllRecipients());
+                this.numberOfMessagesToSend--;
             } else {
             	LOGGER.error("Could not send message, null message");
             }
         } catch (SendFailedException e) {
-        	throw new WebmailException( "Message send failed", e );
+        	this.numberOfMessagesToSend = 0;
+        	throw new WebmailException( getMessage(SEND_FAILED, e.getMessage()), e );
         } catch (MessagingException e) {
-        	throw new WebmailException( "Message was not sent correctly", e );
+        	this.numberOfMessagesToSend = 0;
+        	throw new WebmailException( getMessage(SEND_ERROR, e.getMessage()), e );
         } catch (Throwable e) {
-        	throw new WebmailException( "Unexpected error sending the message", e );        	
+        	this.numberOfMessagesToSend = 0;
+        	throw new WebmailException( getMessage(SEND_UNEXPECTED_ERROR, e.getMessage()), e );       	
         } finally {
-        	closeQuietly(transport);
+        	if ( this.numberOfMessagesToSend < 1 ) {
+        		closeTransport();
+        	}
         }
     }
 
@@ -337,42 +370,21 @@ public class AonServer implements IMailConstants, Serializable {
 	public IMailAccount getAccount() {
 		return account;
 	}
-    
-	public void setAccount(IMailAccount account) {
-		this.account = account;
-	}
-	
-	public void createBasicFolders() throws MessagingException {
-		if ( isIMAP() ) {
-			if (!getRoot().getFolder(getSentFolderName()).exists()){
-				createAonFolder(null, getSentFolderName(), HOLDS_MESSAGES);
-			}
-			if (!getRoot().getFolder(getTrashFolderName()).exists()){
-				createAonFolder(null, getTrashFolderName(), HOLDS_MESSAGES);
-			}
-			if (!getRoot().getFolder(getDraftFolderName()).exists()){
-				createAonFolder(null, getDraftFolderName(), HOLDS_MESSAGES);
-			}
-			if (!getRoot().getFolder(getSpamFolderName()).exists()) {
-				createAonFolder(null, getSpamFolderName(), HOLDS_MESSAGES);
-			}			
-		}
-	}
 	
 	public String getSentFolderName() {
-		return StringUtils.defaultIfEmpty(account.getSentFolder(), SENT_FOLDER_NAME);
+		return StringUtils.trimToNull(account.getSentFolder());
 	}
 
 	public String getDraftFolderName() {
-		return StringUtils.defaultIfEmpty(account.getDraftFolder(), DRAFT_FOLDER_NAME);
+		return StringUtils.trimToNull(account.getDraftFolder());
 	}
 	
 	public String getTrashFolderName() {
-		return StringUtils.defaultIfEmpty(account.getTrashFolder(), TRASH_FOLDER_NAME);
+		return StringUtils.trimToNull(account.getTrashFolder());
 	}
 
 	public String getSpamFolderName() {
-		return StringUtils.defaultIfEmpty(account.getSpamFolder(), SPAM_FOLDER_NAME);
+		return StringUtils.trimToNull(account.getSpamFolder());
 	}
 	
     public void importMessage( byte[] data, AonFolder destinationFolder ) throws MessagingException {
@@ -388,7 +400,7 @@ public class AonServer implements IMailConstants, Serializable {
         return message;
     }    
 	
-    public static void closeQuietly( Service service ) {
+    private void closeQuietly( Service service ) {
     	if ( service!=null && service.isConnected() ) {
     		try {
 				service.close();
@@ -397,31 +409,24 @@ public class AonServer implements IMailConstants, Serializable {
 			}
     	}
     }
-    
-    public static boolean test( IMailAccount account, boolean receive, boolean send ) {
-    	boolean ok = true;
-        Store store = null;
-        Transport transport = null;
-        try {
-        	Properties properties = calculateProperties( account );
-            Session session = Session.getInstance(properties);
-        	if ( receive ) {
-    	        store = session.getStore();
-    	        store.connect(account.getMailUsername(),account.getPasswordString());
-    	        ok = store.isConnected();
-        	}
-        	if ( ok && send ) {
-        		transport = getTransport(session, account);
-        		ok = transport.isConnected();
-        	}
-        } catch ( Throwable th ) {
-        	LOGGER.error( "Error testing " + account, th );
-        	ok = false;
-        } finally {
-        	closeQuietly(store);
-        	closeQuietly(transport);
-        }
-    	return ok;
+
+    private String getMessage(String messageKey, Object ... arguments ) {
+    	ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_RESOURCE);
+    	String value = bundle.getString(messageKey);
+    	if ( arguments.length > 0 ) {
+    		MessageFormat mf = new MessageFormat( value );
+    		value = mf.format( arguments );
+    	}
+    	return value;
     }
+
+    private void closeTransport() {
+    	closeQuietly(transport);
+    	this.transport = null;    	
+    }
+
+	public void setNumberOfMessagesPerTransport(int numberOfMessagesPerTransport) {
+		this.numberOfMessagesPerTransport = numberOfMessagesPerTransport;
+	}
     
-}
+}	

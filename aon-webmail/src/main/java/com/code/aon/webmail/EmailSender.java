@@ -101,11 +101,11 @@ public class EmailSender implements Serializable {
 	}
 
 	public void storeMessage( AonMessage aonMessage ) throws WebmailException {
-		if ( server.isIMAP() ) {
+		String folderName = server.getSentFolderName();
+		if ( (folderName != null) && server.isIMAP() ) {
 	    	Message[] messages = new Message[]{aonMessage.getMessage()};
 			try {
 				messages[0].setFlag(Flag.SEEN, true);
-				String folderName = server.getSentFolderName();
 				AonFolder folder = server.getAonFolder(folderName);
 				folder.open(Folder.READ_WRITE);
 		    	Folder desfFolder = folder.getFolder();
@@ -116,6 +116,14 @@ public class EmailSender implements Serializable {
 				throw new WebmailException( e.getMessage(), e );
 			}
 		}
+	}
+
+	public void setNumberOfMessagesPerTransport(int numberOfMessagesPerTransport) {
+		server.setNumberOfMessagesPerTransport(numberOfMessagesPerTransport);
+	}
+	
+	public void close() {
+		server.close();
 	}
 	
 }

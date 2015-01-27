@@ -1,16 +1,15 @@
 package com.code.aon.ui.finance.controller;
 
-import static com.code.aon.faces.controller.IRichConstants.LOG_PANEL_CONTROLLER_NAME;
-import static com.code.aon.ui.common.ICommonMessages.NOT_MAIL_ACCOUNT;
-import static com.code.aon.ui.common.ICommonMessages.NOT_MAIL_ACCOUNTS;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_SDD_MANDATE;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_SDD_MANDATE_EMAIL_BODY;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_SDD_MANDATE_EMAIL_SENDED_TO;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_SDD_MANDATE_LIST_NAME;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_SDD_MANDATE_SEND_EMAIL_FINISH;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_SDD_MANDATE_SEND_EMAIL_KO;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_SDD_MANDATE_SEND_EMAIL_OK;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_SDD_MANDATE_SEND_EMAIL_PROCESS_INIT;
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_SDD_MANDATE;
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_SDD_MANDATE_LIST_NAME;
+import static com.code.aon.ui.common.ICommonMessages.NOT_MAIL_ACCOUNT;
+import static com.code.aon.ui.common.ICommonMessages.NOT_MAIL_ACCOUNTS;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
@@ -316,14 +315,15 @@ public class SddMandateController extends CustomerListController {
 		
 	public void sendAllByEmail(ActionEvent event){
 		CompanyEmailUtil emailUtil = new CompanyEmailUtil();
+		emailUtil.setNumberOfMessagesPerTransport(10);
 		LogPanelController logger = LogPanelController.getInstance();
 		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
+		messageController.setShowNewMessageWindow(false);
 		try {
 			logger.info( AonUtil.getMessage(FINANCE_SDD_MANDATE_SEND_EMAIL_PROCESS_INIT, this.getCheckedCustomers().size()) );
-			LogPanelController logPanel = (LogPanelController) AonUtil.getRegisteredBean(LOG_PANEL_CONTROLLER_NAME);
 			int unknownError=0;
 			for( Customer customer : this.getCheckedCustomers() ) {
-				if ( logPanel.isActivePoll() ) {
+				if ( logger.isActivePoll() ) {
 						AonFile file = null;
 						try {
 							String[] emails = obtainEmails(customer);
@@ -368,9 +368,9 @@ public class SddMandateController extends CustomerListController {
 			String message_finish_ko = MessageFormat.format(text_finish_ko, (logger.getErrors().size()-unknownError));
 			logger.info( message_finish_ko );
 		} finally {
+			emailUtil.close();
 			logger.info( AonUtil.getMessage(FINANCE_SDD_MANDATE_SEND_EMAIL_FINISH) );
 			logger.finish();
-			messageController.setShowNewMessageWindow(false);
 		}
 	}
 	private Address[] getEmailAddresses( String[] emails, String name ) throws UnsupportedEncodingException, AddressException {

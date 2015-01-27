@@ -14,6 +14,8 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.faces.event.AbortProcessingException;
 import javax.mail.Address;
@@ -127,12 +129,12 @@ public class CompanyEmailUtil implements Serializable {
 		}
 		List<ITransferObject> list = bean.getList(criteria);
 		if (! list.isEmpty() ) {
-			String[] emails = new String[list.size()];
+			Set<String> emails = new TreeSet<String>();
 			for( int i = 0; i < list.size(); i++ ) {
 				RegistryMedia rm = (RegistryMedia) list.get(i);
-				emails[i] = rm.getValue();
+				emails.add( rm.getValue() );
 			}
-			return emails;
+			return emails.toArray(new String[emails.size()]);
 		}
 		return null;
 	}	
@@ -208,5 +210,19 @@ public class CompanyEmailUtil implements Serializable {
 		out.close();
 		return aonFile;
 	}		
+	
+	public void setNumberOfMessagesPerTransport(int numberOfMessagesPerTransport) {
+		if ( sender != null ) {
+			sender.setNumberOfMessagesPerTransport(numberOfMessagesPerTransport);
+		}
+	}
+	
+	
+	public void close() {
+		if ( sender != null ) {
+			sender.close();
+			sender.setNumberOfMessagesPerTransport(1);
+		}
+	}
 	
 }

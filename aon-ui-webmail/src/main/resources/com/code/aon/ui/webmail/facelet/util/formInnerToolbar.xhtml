@@ -4,6 +4,8 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
+	<aon:valueParam name="innerToolbar" default="#{false}"/>
+
 	<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
 		<aon:if test="#{innerToolbar}" >
 			<ui:param name="skipToolbarTitle" value="true" />

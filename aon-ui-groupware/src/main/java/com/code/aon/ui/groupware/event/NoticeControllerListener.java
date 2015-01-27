@@ -8,8 +8,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import org.slf4j.Logger;
@@ -165,7 +163,6 @@ public class NoticeControllerListener extends ControllerAdapter {
 			MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
 			IMailAccount mailAccount = mailConfig.getDefaultMailAccount(false);			
 			AonServer server = new AonServer(mailAccount);
-			server.createBasicFolders();
 			InternetAddress iafrom = new InternetAddress(from, username);
 			AonMessage aonMessage = server.createAonMessage(iafrom);
 			aonMessage.setSender(iafrom);
@@ -173,11 +170,7 @@ public class NoticeControllerListener extends ControllerAdapter {
 			aonMessage.setSubject(subject);
 			aonMessage.setContent(content);
 			server.sendMessage(aonMessage);
-		} catch (AddressException e) {
-			LOGGER.error(e.getMessage(), e);
 		} catch (UnsupportedEncodingException e) {
-			LOGGER.error(e.getMessage(), e);
-		} catch (MessagingException e) {
 			LOGGER.error(e.getMessage(), e);
 		} catch (WebmailException e) {
 			LOGGER.error(e.getMessage(), e);

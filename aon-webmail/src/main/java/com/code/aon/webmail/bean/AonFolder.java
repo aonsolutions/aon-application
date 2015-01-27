@@ -252,19 +252,19 @@ public class AonFolder extends AonMessageSortableList {
     }
     
     public boolean isDraftFolder() {
-    	return getServer().getDraftFolderName().equals( getFolder().getFullName() );	
+    	return StringUtils.equals(getServer().getDraftFolderName(), getFolder().getFullName());
     }
 
     public boolean isSentFolder() {
-    	return getServer().getSentFolderName().equals( getFolder().getFullName() );	
+    	return StringUtils.equals(getServer().getSentFolderName(), getFolder().getFullName());    	
     }
 
     public boolean isSpamFolder() {
-    	return getServer().getSpamFolderName().equals( getFolder().getFullName() );	
+    	return StringUtils.equals(getServer().getSpamFolderName(), getFolder().getFullName());    	
     }
 
     public boolean isTrashFolder() {
-    	return getServer().getTrashFolderName().equals( getFolder().getFullName() );	
+    	return StringUtils.equals(getServer().getTrashFolderName(), getFolder().getFullName());    	
     }
     
     //**************************************************************

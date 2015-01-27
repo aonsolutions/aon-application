@@ -130,12 +130,12 @@ public class MessageController implements IWebMailConstants, Serializable {
 	//***************************************************************
 	
 	private void storeMessage( AonServer server, AonMessage aonMessage, boolean draft ) {
-		if ( isSaveSent() && server.isIMAP() ) {
+		String folderName = draft ? server.getDraftFolderName() : server.getSentFolderName();
+		if ( isSaveSent() && (folderName != null) && server.isIMAP() ) {
 	    	Message[] messages = new Message[1];
 			messages[0] = aonMessage.getMessage();
 			try {
 				messages[0].setFlag(Flag.SEEN, true);
-				String folderName = draft ? server.getDraftFolderName() : server.getSentFolderName();
 				AonFolder folder = server.getAonFolder(folderName);
 				folder.open(Folder.READ_WRITE);
 		    	Folder desfFolder = folder.getFolder();
@@ -171,12 +171,12 @@ public class MessageController implements IWebMailConstants, Serializable {
 			if ( sentMessage != null ) {
 	    		storeMessage(server, sentMessage, true);  		
 			}
-			throw new WebmailException(th);
+			throw new WebmailException(th.getMessage(), th);
 		}
     	try {	
    			storeMessage(server, sentMessage, false);
 		} catch (Throwable th) {
-			throw new WebmailException(th);
+			throw new WebmailException(th.getMessage(), th);
 		}
     }    
 
@@ -535,7 +535,8 @@ public class MessageController implements IWebMailConstants, Serializable {
 	}	
 	
 	public boolean isShowSaveSent() {
-		return getSenderMailAccount()!=null && IMAP.equals(getSenderMailAccount().getProtocol());
+		return getSenderMailAccount()!=null && IMAP.equals(getSenderMailAccount().getProtocol())
+				&& !StringUtils.isBlank(getSenderMailAccount().getSentFolder());
 	}
 	
 	public boolean isSaveSent() {
