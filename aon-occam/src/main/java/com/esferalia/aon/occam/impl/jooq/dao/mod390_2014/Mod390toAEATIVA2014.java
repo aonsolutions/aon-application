@@ -152,8 +152,12 @@ public class Mod390toAEATIVA2014 {
 					Pro p = new Pro();
 					p.setActividad(  pro.getActivity()  );
 					p.setCNAE( pro.getCnae() );
-					p.setImpOper( ensureBigDecimal( pro.getAmount() ) );
-					p.setImpOperConDrchoDed( ensureBigDecimal( pro.getAmountWithRight() ));
+					if (pro.getAmount() != 0.0) {
+						p.setImpOper( ensureBigDecimal( pro.getAmount() ) );
+					}
+					if (pro.getAmountWithRight() != 0.0) {
+						p.setImpOperConDrchoDed( ensureBigDecimal( pro.getAmountWithRight() ));
+					}
 					p.setPorc( ensureBigDecimal( pro.getPercent() ));
 					p.setTipo( pro.getType() );
 					prorratas.getPro().add(p);	
@@ -220,14 +224,15 @@ public class Mod390toAEATIVA2014 {
 		}
 		if (something) {
 			IvaDevengado ivaDev = new IvaDevengado();
-			ivaDev.setSumaCuotasNoAgric(ensureBigDecimal(mod390.getBox74()));
+			if ( mod390.getBox74() != 0.00 ) {
+				ivaDev.setSumaCuotasNoAgric(ensureBigDecimal(mod390.getBox74()));
+			}
 			ivaDev.setSumaCuotasAgric(ensureBigDecimal(mod390.getBox75()));
 			ivaDev.setAdqIntracomunitarias(ensureBigDecimal(mod390.getBox76()));
 			ivaDev.setInversionSujetoPasivo(ensureBigDecimal(mod390.getBox77()));
 			ivaDev.setEntregasActivosFijos(ensureBigDecimal(mod390.getBox78()));
 			ivaDev.setTotalCuota(ensureBigDecimal(mod390.getBox79()));
 			reg.setIvaDevengado(ivaDev);
-			
 			IvaDeducible ivaDed = new IvaDeducible();
 			ivaDed.setIVASoportadoAdqActivosFijos(ensureBigDecimal(mod390.getBox80()));
 			ivaDed.setRegBienesInversion(ensureBigDecimal(mod390.getBox81()));
@@ -242,10 +247,16 @@ public class Mod390toAEATIVA2014 {
 	private static ActAgricGanadForest getActAgricGanadForest(FarmerRegimeActivity ac) {
 		ActAgricGanadForest act = new ActAgricGanadForest();
 		act.setCodigo(ac.getCodigo() );
-		act.setVolIngresos(ensureBigDecimal( ac.getIncomes()));
+		if (ac.getIncomes() != 0.0) {
+			act.setVolIngresos(ensureBigDecimal( ac.getIncomes()));
+		}
 		act.setIndCuota(ensureBigDecimal( ac.getQuotaIndex(),4));
-		act.setCuotaDevengada(ensureBigDecimal( ac.getAccrualQuota()));
-		act.setCuotasSoportadas(ensureBigDecimal( ac.getInputQuotas()));
+		if (ac.getAccrualQuota() != 0.0) {
+			act.setCuotaDevengada(ensureBigDecimal( ac.getAccrualQuota()));
+		}
+		if (ac.getInputQuotas() != 0.0) {
+			act.setCuotasSoportadas(ensureBigDecimal( ac.getInputQuotas()));
+		}
 		act.setCuotaRegSimplificado(ensureBigDecimal( ac.getQuota()));
 		return act;
 	}
@@ -304,14 +315,24 @@ public class Mod390toAEATIVA2014 {
 			modulo.setImporte( ensureBigDecimal(sr.getAmount7()));
 			modulos.add(modulo);
 		}
-		actividad.setCuotaDevengada(ensureBigDecimal(sr.getBoxC()));
-		actividad.setCuotaSoportada(ensureBigDecimal(sr.getBoxD()));
+		if ( sr.getBoxC() != 0.00 ) {
+			actividad.setCuotaDevengada(ensureBigDecimal(sr.getBoxC()));
+		}
+		if ( sr.getBoxD() != 0.00 ) {
+			actividad.setCuotaSoportada(ensureBigDecimal(sr.getBoxD()));
+		}
 		actividad.setIndiceCorrector(ensureBigDecimal(sr.getBoxE()));
 		actividad.setResultado(ensureBigDecimal(sr.getBoxF()));
 		actividad.setPorcCuotaMinima(ensureBigDecimal(sr.getBoxG()));
-		actividad.setDevCuotaSopOtrosPaises(ensureBigDecimal(sr.getBoxH()));
-		actividad.setCuotaMinima(ensureBigDecimal(sr.getBoxI()));
-		actividad.setCuotaRegSimplificado(ensureBigDecimal(sr.getBoxJ()));
+		if ( sr.getBoxD() != 0.00 ) {
+			actividad.setDevCuotaSopOtrosPaises(ensureBigDecimal(sr.getBoxH()));
+		}
+		if ( sr.getBoxI() != 0.00 ) {
+			actividad.setCuotaMinima(ensureBigDecimal(sr.getBoxI()));
+		}
+		if ( sr.getBoxJ() != 0.00 ) {
+			actividad.setCuotaRegSimplificado(ensureBigDecimal(sr.getBoxJ()));
+		}
 		return actividad;
 	}
 
@@ -927,7 +948,9 @@ public class Mod390toAEATIVA2014 {
 			}
 			adm.setSumResultados(ensureBigDecimal(mod390.getBox84()));
 			adm.setResTerrComun(ensureBigDecimal(mod390.getBox92()));
-			adm.setComCuotasEjercicioAnteriorTerrComun(ensureBigDecimal(mod390.getBox93()));
+			if (mod390.getBox93() != 0.0) {
+				adm.setComCuotasEjercicioAnteriorTerrComun(ensureBigDecimal(mod390.getBox93()));
+			}
 			adm.setResLiqAnualTerrComun(ensureBigDecimal(mod390.getBox94()));
 			return adm;
 		}
