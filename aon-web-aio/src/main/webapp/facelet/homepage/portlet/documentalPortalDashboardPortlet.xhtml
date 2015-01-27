@@ -8,6 +8,8 @@
 	xmlns:f="http://java.sun.com/jsf/core">
 
 	<aon:div styleClass="aon-portlet aon-width-half" style="display: inline-block;">
+		<ui:include
+			src="/com/esferalia/aon/gwt/document/facelet/silent_documents.xhtml" />
 		<script type="text/javascript"
 			src="http://www.google.com/jsapi?callback=__gwt_AjaxLoader_onLoad"></script>
 		<script type="text/javascript">
@@ -56,7 +58,12 @@
 					<script type='text/javascript'>
 					google.load("visualization", "1", {'callback' : 'drawTable' ,'packages':["table"], 'language': 'en'});
       			
-      				function drawTable() {
+					var recentsFiles = []; 
+    				<c:forEach var="recent" items="#{dashboard.recentsFiles}">
+    					recentsFiles[recentsFiles.length] = {fileId:#{recent.id}, driveId:"#{recent.driveId}", mimetype:#{recent.mimetype}, icon:"#{recent.icon}", title:"#{recent.name}" };
+					</c:forEach>
+
+					function drawTable() {
         				var data = new google.visualization.DataTable();
         				data.addColumn('string', '#{bundle.doc_date}');
         				data.addColumn('string', '#{bundle.aon_name}');
@@ -68,26 +75,27 @@
         				data.addRow(['Alice', 3, true]);
         				data.addRow(['Bob',   4,  true]);
 						-->
-						
-        				<c:forEach var="recent" items="#{dashboard.recentsFiles}">		
-						
-							data.addRow(['#{recent.date}',
-							             "&lt;span class=\"#{recent.icon}\" style=\"padding-left: 20px;\" &gt;  &lt;/span&gt;#{recent.name}",
-						             	'#{recent.category}',
-						             	'#{recent.sizeString}']);											
+						<c:set var="count" value="0" scope="page" />						
+        				<c:forEach var="recent" items="#{dashboard.recentsFiles}" >
+
+        					data.addRow(['&lt;span style="cursor:pointer;" onclick="preview(${count},recentsFiles)" &gt; #{recent.date} &lt;/span&gt;',
+							            "&lt;div style=\"cursor:pointer; text-align:left; \" onclick=\"preview(${count},recentsFiles)\" &gt; &lt;span class=\"#{recent.icon}\" style=\"padding-left: 20px;\" &gt;  &lt;/span&gt;#{recent.name} &lt;/div&gt;",
+						             	'&lt;span style="cursor:pointer;" onclick="preview(${count},recentsFiles)" &gt; #{recent.category}&lt;/span&gt;',
+						             	'&lt;span style="cursor:pointer;" onclick="preview(${count},recentsFiles)" &gt; #{recent.sizeString}&lt;/span&gt;']);
+        					<c:set var="count" value="${count + 1}" scope="page"/>
 						</c:forEach>
 						
 						var cssClasses = {headerRow: 'aon-chart-table-header', headerCell:'aon-chart-table-header-cell'};
+
+						var divRecentFiles = document.getElementById('aonContent:mainForm:table_div-recent_files');
 						
         				var options = {
         						showRowNumber: false,
         						allowHtml: true,
-        						'cssClassNames':cssClasses
+        						cssClassNames:cssClasses
 						      };
-        				var table = new google.visualization.Table(document.getElementById('aonContent:mainForm:table_div-recent_files'));
+        				var table = new google.visualization.Table(divRecentFiles);
            				table.draw(data, options);
-           				
-           				
            				// Every time the table fires the "select" event, it should call your
            				// selectHandler() function.
            				

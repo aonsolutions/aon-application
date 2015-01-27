@@ -12,6 +12,7 @@ public class DashboardRecentFiles implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
+	Integer id;
 	String name;
 	String type;
 	String category;
@@ -19,11 +20,14 @@ public class DashboardRecentFiles implements Serializable {
 	long size;
 	String sizeString;
 	String icon;
+	byte mimetype;
+	String driveId;
 	
 	public DashboardRecentFiles(){
 		//Constructor
 	}
-	public DashboardRecentFiles(String name, String type , String  category , long size, String date) {
+	public DashboardRecentFiles(Integer id, String name, String type , String  category , long size, String date) {
+		this.id = id;
 		this.type = type;
 		this.name = name;
 		this.size = size;
@@ -32,14 +36,37 @@ public class DashboardRecentFiles implements Serializable {
 		
 	}
 	
+	public Integer getId() {
+		return id;
+	}
+	
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	
 	public void settype(String type) {
 		this.type = type;
 	}
 	public void setname(String name) {
 		this.name = name;
-		
-		
 	}
+
+	public String getDriveId() {
+		return driveId;
+	}
+	
+	public void setDriveId(String driveId) {
+		this.driveId = driveId;
+	}
+	
+	public byte getMimetype() {
+		return mimetype;
+	}
+	
+	public void setMimetype(byte mimetype) {
+		this.mimetype = mimetype;
+	}
+	
 	public void setsize(long size) {
 		this.size = size;
 	}

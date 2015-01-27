@@ -207,8 +207,8 @@ background-color:#D4CFC7;
 	font-size:15px !important;
 }
 .gwt-PopupPanel{
-	top:20% !important;
-	left:35% !important;
+	top:20% ;
+	left:35% ;
 }
 
 .gwt-DialogBox{

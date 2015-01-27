@@ -1,11 +1,13 @@
 package com.esferalia.aon.gwt.document.client;
 
+import static com.esferalia.aon.gwt.common.client.AONEntryPoint.getParameter;
 import gwtupload.client.IUploader;
 import gwtupload.client.IUploader.OnCancelUploaderHandler;
 import gwtupload.client.IUploader.OnFinishUploaderHandler;
 import gwtupload.client.MultiUploader;
 import gwtupload.client.SingleUploader;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +18,8 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.widget.Viewer;
+import com.esferalia.aon.gwt.document.jooq.DBConsults;
 import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.CategoryList;
 import com.esferalia.aon.gwt.document.shared.Dialog;
@@ -40,6 +44,8 @@ import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
@@ -56,10 +62,6 @@ import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.http.client.URL;
@@ -114,6 +116,9 @@ import com.google.gwt.view.client.SelectionModel;
 
 public class Documents extends Composite implements EntryPoint {
 
+	private static final String SILENT = "silent";
+	private static final int DEFAULT_ZOOM = 130;
+
 	class DocumentContextMenu extends ContextMenu {
 
 		ScheduledCommand viewCommand = new ScheduledCommand() {
@@ -123,7 +128,8 @@ public class Documents extends Composite implements EntryPoint {
 				FileInfo object;
 				if(selFiles.size() == 1) object = selFiles.get(0);
 				else object= dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
-				getAsHTMl(object,dataGrid.getKeyboardSelectedRow(),selFiles.size()>1);
+				
+				getAsHTMl(object,dataGrid.getKeyboardSelectedRow(),selFiles.size()>1 ? selFiles : dataProvider.getList() );
 			};
 		};		
 
@@ -585,17 +591,16 @@ public class Documents extends Composite implements EntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
-		stack1 = new StackLayoutPanel(Unit.EM);
-		prueba2 = new HorizontalPanel();
-		//treepanel = new ScrollPanel();
-		//DisclosureImages di = new DisclosureImages();
-		//dpanel = new DisclosurePanel(di.getClosed(), di.getOpen(), "Categor\u00edas");
-		//epanel = new DisclosurePanel(di.getClosed(), di.getOpen(), "Etiquetas");
-	
 		
-
+		boolean silent = Boolean.parseBoolean(getParameter(GWT.getModuleName(), SILENT));
 		
-
+		if ( ! silent ){
+			stack1 = new StackLayoutPanel(Unit.EM);
+			prueba2 = new HorizontalPanel();
+		}
+		else {
+			exportPreview(this);
+		}
 	}
 	Category cAux;
 	Tag tAux;
@@ -2555,7 +2560,7 @@ public class Documents extends Composite implements EntryPoint {
 			nameColumn.setFieldUpdater(new FieldUpdater<FileInfo, String>() {
 				@Override
 				public void update(int index, FileInfo object, String value) {
-					getAsHTMl(object,dataGrid.getKeyboardSelectedRow(),false);
+					getAsHTMl(object,dataGrid.getKeyboardSelectedRow(),dataProvider.getList());
 				}
 				
 			});
@@ -3179,139 +3184,113 @@ public class Documents extends Composite implements EntryPoint {
 		updateDatagridColumns();
 		dataGrid.redraw();
 	}
-	Viewer viewer;
-	List<FileInfo> viewList;
+	
 
-	private  void getAsHTMl(FileInfo object, Integer num,Boolean multiple) {
-		if(multiple) viewList = selFiles;
-		else viewList = dataProvider.getList();
-		viewer = new Viewer(viewList,num,object,100){
+	private  void getAsHTMl(final FileInfo fileInfo, final Integer index, final List<FileInfo> viewList) {
+		
+		//viewList = multiple ? selFiles : dataProvider.getList();
+		
+		final Viewer viewer = new Viewer(DEFAULT_ZOOM){
+			
+			int viewerIndex = index;
+			FileInfo viewerFileInfo = fileInfo;
+			
+			@Override
+			protected void onNext() {
+				viewerFileInfo = viewList.get(++viewerIndex);
+				setPrevEnabled(true);
+				setNextEnabled(viewerIndex < (viewList.size() - 1));
+				onChange();
+			}
+			
+			@Override
+			protected void onPrev() {
+				viewerFileInfo = viewList.get(--viewerIndex);
+				setNextEnabled(true);
+				setPrevEnabled(viewerIndex > 0);
+				onChange();
+			}
+			
 			@Override
 			protected void onDownload() {
-				download(fileInfo,false);
+				download(viewerFileInfo,false);
 			}
 			@Override
 			protected void onPrint() {	
-				print(fileInfo);
+				print(viewerFileInfo);
 			}
 			@Override
 			protected void onShare() {
-				share(fileInfo,false);
+				share(viewerFileInfo,false);
 			};
 			@Override
 			protected void onChange() {
-				title.setText(fileInfo.getTitle());
-				title.addStyleName(fileInfo.getIcon());
-				idoc.getAsHTML(fileInfo, 100 , new AsyncCallback<String>() {
+				showLoad();
+				setTitle(viewerFileInfo.getTitle(), viewerFileInfo.getIcon());
+				idoc.getAsHTML(viewerFileInfo, DEFAULT_ZOOM , new AsyncCallback<String>() {
 					@Override
 					public void onSuccess(String result) {
-						viewer.container.setHTML(result);
-						viewer.show();
+						hideLoad();
+						setHTML(result);
+						show();
 					}
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						hideLoad();
+					}
 				});
 			}
 			@Override
-			protected void onZoomPlus() {					
-				idoc.getAsHTML(fileInfo, zoom , new AsyncCallback<String>() {
+			protected void onZoomPlus(int zoom) {					
+				showLoad();
+				idoc.getAsHTML(viewerFileInfo, zoom , new AsyncCallback<String>() {
 					@Override
 					public void onSuccess(String result) {
-						viewer.container.setHTML(result);	
+						hideLoad();
+						setHTML(result);	
 					}
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						hideLoad();
+					}
 				});
 			}
 			@Override
-			protected void onZoomMinus() {	
-				idoc.getAsHTML(fileInfo, zoom , new AsyncCallback<String>() {
+			protected void onZoomMinus(int zoom) {	
+				showLoad();
+				idoc.getAsHTML(viewerFileInfo, zoom , new AsyncCallback<String>() {
 					@Override
 					public void onSuccess(String result) {
-						viewer.container.setHTML(result);	
+						hideLoad();
+						setHTML(result);	
 					}
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						hideLoad();
+					}
 				});
 			}
+			
 		};
-		viewer.auxiliar.addBitlessDomHandler(new MouseOverHandler() {
-			
-			@Override
-			public void onMouseOver(MouseOverEvent event) {
-				viewer.menu.setVisible(true);
-				if(viewer.num < viewList.size()-1) viewer.next.setVisible(true);
-				if(viewer.num != 0)viewer.prev.setVisible(true);
-			}
-		}, MouseOverEvent.getType());
 		
-		viewer.auxiliar.addBitlessDomHandler(new MouseOutHandler() {
-			
-			@Override
-			public void onMouseOut(MouseOutEvent event) {
-				if(event.getClientY()>60){
-					viewer.menu.setVisible(false);
-					viewer.next.setVisible(false);
-					viewer.prev.setVisible(false);
-				}
-			}
-		}, MouseOutEvent.getType());
 		
-		viewer.auxiliar2.addBitlessDomHandler(new MouseOverHandler() {
-			
-			@Override
-			public void onMouseOver(MouseOverEvent event) {
-				viewer.menu.setVisible(true);
-				if(viewer.num < viewList.size()-1) viewer.next.setVisible(true);
-				if(viewer.num != 0)viewer.prev.setVisible(true);			}
-		}, MouseOverEvent.getType());
-		
-		viewer.auxiliar2.addBitlessDomHandler(new MouseOutHandler() {
-			
-			@Override
-			public void onMouseOut(MouseOutEvent event) {
-				if(event.getClientX()>150){
-					viewer.menu.setVisible(false);
-					viewer.next.setVisible(false);
-					viewer.prev.setVisible(false);
-				}
-			}
-		}, MouseOutEvent.getType());
-		
-		viewer.auxiliar3.addBitlessDomHandler(new MouseOverHandler() {
-			
-			@Override
-			public void onMouseOver(MouseOverEvent event) {
-				
-				viewer.menu.setVisible(true);
-				if(viewer.num < viewList.size()-1) viewer.next.setVisible(true);
-				if(viewer.num != 0)viewer.prev.setVisible(true);			}
-		}, MouseOverEvent.getType());
-		
-		viewer.auxiliar3.addBitlessDomHandler(new MouseOutHandler() {
-			
-			@Override
-			public void onMouseOut(MouseOutEvent event) {		
-				if(event.getClientX()<Window.getClientWidth()-150){	
-					viewer.menu.setVisible(false);
-					viewer.next.setVisible(false);
-					viewer.prev.setVisible(false);
-				}
-			}
-		}, MouseOutEvent.getType());
-		
-		viewer.title.setText(object.getTitle());
-		viewer.title.addStyleName(object.getIcon());
-		if(viewer.num.equals(viewer.list.size()-1))viewer.next.setVisible(false);
-		if(viewer.num.equals(0)) viewer.prev.setVisible(false);
+		viewer.setTitle(fileInfo.getTitle(), fileInfo.getIcon());
+		viewer.setPrevEnabled(index > 0);
+		viewer.setNextEnabled(index < (viewList.size() -1 ));
 		viewer.show();
-		idoc.getAsHTML(object, 100 , new AsyncCallback<String>() {
+		viewer.showLoad();
+		
+		idoc.getAsHTML(fileInfo, DEFAULT_ZOOM , new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
-				viewer.container.setHTML(result);	
+				viewer.hideLoad();
+				viewer.setHTML(result);	
 			}
 			@Override
-			public void onFailure(Throwable caught) {}
+			public void onFailure(Throwable caught) {
+				viewer.hideLoad();
+				
+			}
 		});
 	}
 	
@@ -4269,6 +4248,31 @@ public class Documents extends Composite implements EntryPoint {
 		});
 		
 	}
+	
+	// ------------------------------------------------------------------------
+	
+	public void preview( int index, JsFileInfo [] files){
+		List<FileInfo> viewList = new ArrayList<FileInfo>(files.length);
+		for (int i = 0; i < files.length; i++) {
+			FileInfo fileInfo = new FileInfo();
+			JsFileInfo jsFileInfo = files[i];
+			fileInfo.setTitle(jsFileInfo.getTitle());
+			fileInfo.setIcon(jsFileInfo.getIcon());
+			fileInfo.setFileId(jsFileInfo.getFileId());
+			fileInfo.setDriveId(jsFileInfo.getDriveId());
+			fileInfo.setMimetype(jsFileInfo.getMimetype());
+			viewList.add(fileInfo);
+		}
+		getAsHTMl(viewList.get(index), index, viewList);
+	}
+
+
+	public static native void exportPreview(Documents thiz) /*-{
+    	$wnd.preview = function(index, files) {
+    		thiz.@com.esferalia.aon.gwt.document.client.Documents::preview(*)(index, files);
+    	}
+	}-*/;
+	
 	
 	
 }

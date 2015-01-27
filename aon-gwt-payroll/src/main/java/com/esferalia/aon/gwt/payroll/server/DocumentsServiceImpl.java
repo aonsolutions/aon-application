@@ -183,7 +183,7 @@ public class DocumentsServiceImpl extends AonRemoteServiceServlet implements Doc
 				double height = pdfPage.getBBox().getHeight() * zoom / 100 ;
 				
 				// TODO : aon_gwt_employee ???
-				printStream.printf("<div class='page' style='width:%dpx;height:%dpx;'   ><img src='openDocument2Image/%d.png?%s=%d&%s=%d'></img> </div>",
+				printStream.printf("<div class='page page-shadow' style='width:%dpx;height:%dpx;'   ><img src='openDocument2Image/%d.png?%s=%d&%s=%d'></img> </div>",
 						(long)width,
 						(long)height,
 						doc.getId(),
@@ -207,7 +207,7 @@ public class DocumentsServiceImpl extends AonRemoteServiceServlet implements Doc
 			MimeType mimeType = MimeType.get(doc.getMimeType());
 			
 			// TODO : aon_gwt_employee ???
-			printStream.printf("<div class='page'  ><img src='rattach/%d.%s'></img> </div>",
+			printStream.printf("<div class='page page-shadow'  ><img src='rattach/%d.%s'></img> </div>",
 					doc.getId(),
 					mimeType.getExtension());
 		}

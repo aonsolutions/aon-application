@@ -45,6 +45,7 @@ import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Record6;
 import org.jooq.Record8;
+import org.jooq.Record9;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 import org.slf4j.Logger;
@@ -1284,19 +1285,20 @@ public class DashboardController implements Serializable {
 				DSLContext dslContext = DSL.using(connection,
 						JooqSettings.getDefaultSettings());
 				
-				Result<Record8<Byte, Integer, String, java.sql.Date, String, Integer, String, Byte>> data ;
+				Result<Record9<Byte, Integer, String, java.sql.Date, String, Integer, String, Byte, Integer>> data ;
 				data =  dslContext
-						.selectDistinct(RATTACH.TYPE,RATTACH.CATEGORY,RATTACH.DESCRIPTION,RATTACH.ATTACH_DATE,RATTACH.DRIVE_ID, RATTACH.DATA.length(),RATTACH.DPARENT_ID,RATTACH.MIMETYPE)
+						.selectDistinct(RATTACH.TYPE,RATTACH.CATEGORY,RATTACH.DESCRIPTION,RATTACH.ATTACH_DATE,RATTACH.DRIVE_ID, RATTACH.DATA.length(),RATTACH.DPARENT_ID,RATTACH.MIMETYPE,RATTACH.ID)
 						.from(RATTACH)
 						.where(getAttachmentCondition())					
 						.orderBy(RATTACH.ATTACH_DATE.desc()).limit(10).fetch();
 				
 				recentFiles = new Vector<DashboardRecentFiles>();
 				int j=0;
-				for (Record8<Byte, Integer, String, java.sql.Date, String, Integer, String, Byte> record : data) {
+				for (Record9<Byte, Integer, String, java.sql.Date, String, Integer, String, Byte,Integer> record : data) {
 					if (record.value6() != null
 							|| (record.value6() == null && record.value5() != null)) {
 						DashboardRecentFiles drc = new DashboardRecentFiles();
+						drc.setId(record.value9());
 						String typeName = "-";
 						if (record.value1() != null)
 							typeName = RegistryAttachmentType.values()[record
@@ -1317,6 +1319,7 @@ public class DashboardController implements Serializable {
 							drc.setcategory(category);
 
 							String driveId = record.value5();
+							drc.setDriveId(driveId);
 							if (driveId != null) {
 								Integer size = Integer
 										.parseInt(record.value7());
@@ -1339,6 +1342,7 @@ public class DashboardController implements Serializable {
 								drc.setIcon(record.value8().intValue());
 							else
 								drc.setIcon(-1);
+							drc.setMimetype(record.value8());
 							recentFiles.add(drc);
 							j++;
 						}

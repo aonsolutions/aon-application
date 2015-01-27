@@ -8,9 +8,15 @@
 	xmlns:f="http://java.sun.com/jsf/core">
 
 	<aon:div styleClass="aon-portlet">
+		<ui:include
+			src="/com/esferalia/aon/gwt/document/facelet/silent_documents.xhtml" />
 		<script type="text/javascript"
 			src="http://www.google.com/jsapi?callback=__gwt_AjaxLoader_onLoad"></script>
-	<script type="text/javascript">
+
+		<ui:include
+			src="/com/esferalia/aon/gwt/document/facelet/silent_documents.xhtml" />
+
+		<script type="text/javascript">
 			window.onload= function{
 				var aux =  "#{dashboard.initialize}"
 			}
@@ -27,22 +33,25 @@
 				columnClasses="aon-width-half,aon-width-half">
 
 				<!-- Container 1 Payrolls Informations by Colors -->
-					
-				<aon:div id="documentalGraphContainer" style="width: 98%; height: 200px; border:solid #BBB 1px; text-align: center; margin-left: 5px;;padding-top: 5px;">
-					
+
+				<aon:div id="documentalGraphContainer"
+					style="width: 98%; height: 200px; border:solid #BBB 1px; text-align: center; margin-left: 5px;;padding-top: 5px;">
+
 					<aon:div styleClass="aon-bold">
 						<aon:outputText value="#{bundle.documental_portal}" />
 						<aon:selectOneMenu id="Dashboard_documentalPeriod"
 							style="border: none;" value="#{dashboard.graficSelection}">
 							<a4j:support event="onchange"
 								actionListener="#{dashboard.onGraficSelectionChanged}"
-								reRender="documentalGraphContainer,messageList" ajaxSingle="true" />
+								reRender="documentalGraphContainer,messageList"
+								ajaxSingle="true" />
 							<f:selectItems value="#{dashboard.graficSelections}" />
 						</aon:selectOneMenu>
 					</aon:div>
-					<aon:div id="documental_chart_div" style="width: 100%; height: 180px;" /> 
-					
-					
+					<aon:div id="documental_chart_div"
+						style="width: 100%; height: 180px;" />
+
+
 					<aon:if test="#{dashboard.pieChart}">
 						<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
@@ -55,11 +64,6 @@
 								data.addColumn('number', '#{bundle.doc_file}');
   								data.addColumn({type:'string', role:'tooltip','p': {'html': true}});
 
-								<!--data.addRow(['Eat',2]),
-								data.addRow(['Commute',  2]);
-								data.addRow(['Watch TV', 2]);
-								data.addRow(['Sleep',    7]);
-								-->
 								<c:forEach var="doc" items="#{dashboard.typesCat}">//#{dashboard.types}		
 									
 								//	data.addRow(['#{doc.type}',
@@ -77,7 +81,7 @@
 								chart.draw(data, options);
 							}
 							</script>
-							</aon:if>
+					</aon:if>
 					<aon:if test="#{dashboard.columnChart}">
 						<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 						<script type="text/javascript">
@@ -108,12 +112,12 @@
 
 							}
     					</script>
-    				</aon:if>
-    					
+					</aon:if>
+
 					<aon:if test="#{dashboard.bubbleChart}">
 
 						<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    					<script type="text/javascript">
+						<script type="text/javascript">
     					
 						google.load("visualization", "1", {'callback' : 'drawSeriesChart' ,'packages':["corechart"], 'language': 'en'});
 
@@ -167,24 +171,25 @@
     						}   					 	
 							</script>
 					</aon:if>
-									
-									
-					
-						</aon:div>
-					
+
+
+
+				</aon:div>
+
 				<!--  CONTAINER 2 -->
 
 				<aon:div id="recentsFileGraphContainer"
 					style="width: 98%; height: 200px; border:solid #BBB 1px; text-align: center; margin-left: 5px;padding-top: 5px;">
 					<aon:div styleClass="aon-bold">
-						<aon:commandLink 
-								id="gwtDocuments2"
-								action="gwt_documents"><!-- #{bundle.aon_documents}"-->
-						<span class="aon-outputText aon-icon-documental-docs" style="padding-left:20px;color: #4b4b4b !important;">Documental - Archivos recientes</span>
-						<!--  aon:outputText value="#{bundle.recent_files}" /-->
+						<aon:commandLink id="gwtDocuments2" action="gwt_documents">
+							<!-- #{bundle.aon_documents}"-->
+							<span class="aon-outputText aon-icon-documental-docs"
+								style="padding-left: 20px; color: #4b4b4b !important;">Documental
+								- Archivos recientes</span>
+							<!--  aon:outputText value="#{bundle.recent_files}" /-->
 						</aon:commandLink>
-						
-						
+
+
 						<!-- <aon:selectOneMenu id="Dashboard_recentsFilePeriod"
 							style="border: none;" value="#{dashboard.salaryYear}">
 							<a4j:support event="onchange"
@@ -203,7 +208,12 @@
 					<script type='text/javascript'>
 					google.load("visualization", "1", {'callback' : 'drawTable' ,'packages':["table"], 'language': 'en'});
       			
-      				function drawTable() {
+					var recentsFiles = []; 
+    				<c:forEach var="recent" items="#{dashboard.recentsFiles}">
+    					recentsFiles[recentsFiles.length] = {fileId:#{recent.id}, driveId:"#{recent.driveId}", mimetype:#{recent.mimetype}, icon:"#{recent.icon}", title:"#{recent.name}" };
+					</c:forEach>
+
+					function drawTable() {
         				var data = new google.visualization.DataTable();
         				data.addColumn('string', '#{bundle.doc_date}');
         				data.addColumn('string', '#{bundle.aon_name}');
@@ -216,12 +226,14 @@
         				data.addRow(['Bob',   4,  true]);
 						-->
 						
+						<c:set var="count" value="0" scope="page" />						
         				<c:forEach var="recent" items="#{dashboard.recentsFiles}">		
 						
-							data.addRow(['#{recent.date}',
-							             "&lt;span class=\"#{recent.icon}\" style=\"padding-left: 20px;\" &gt;  &lt;/span&gt;#{recent.name}",
-						             	'#{recent.category}',
-						             	'#{recent.sizeString}']);											
+	    					data.addRow(['&lt;span style="cursor:pointer;" onclick="preview(${count},recentsFiles)" &gt; #{recent.date} &lt;/span&gt;',
+								            "&lt;div style=\"cursor:pointer; text-align:left; \" onclick=\"preview(${count},recentsFiles)\" &gt; &lt;span class=\"#{recent.icon}\" style=\"padding-left: 20px;\" &gt;  &lt;/span&gt;#{recent.name} &lt;/div&gt;",
+							             	'&lt;span style="cursor:pointer;" onclick="preview(${count},recentsFiles)" &gt; #{recent.category}&lt;/span&gt;',
+							             	'&lt;span style="cursor:pointer;" onclick="preview(${count},recentsFiles)" &gt; #{recent.sizeString}&lt;/span&gt;']);
+	     					<c:set var="count" value="${count + 1}" scope="page"/>
 						</c:forEach>
         				
 						var cssClasses = {headerRow: 'aon-chart-table-header', headerCell:'aon-chart-table-header-cell'};
@@ -246,8 +258,8 @@
            				}*/
       				}
     				</script>
-					</aon:div>
-					</aon:panelGrid>
 				</aon:div>
+			</aon:panelGrid>
 		</aon:div>
+	</aon:div>
 </ui:composition>

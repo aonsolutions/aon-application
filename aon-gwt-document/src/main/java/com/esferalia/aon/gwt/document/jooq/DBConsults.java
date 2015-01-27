@@ -324,8 +324,12 @@ public class DBConsults {
 	
 	public static String getmType(
 			FileInfo fi2) {
-		if (fi2.getMimetype() != null) {
-			MimeType t = MimeType.values()[fi2.getMimetype()];
+		return getmType(fi2.getMimetype());
+	}
+	public static String getmType(
+			Byte mimetype) {
+		if (mimetype != null) {
+			MimeType t = MimeType.values()[mimetype];
 			if (MimeType.MIME_PDF.getName().equals(t.getName())) {
 				return "aon-icon-google-drive-pdf-sinfondo";
 			} else if (MimeType.MIME_JPEG.getName().equals(t.getName())
