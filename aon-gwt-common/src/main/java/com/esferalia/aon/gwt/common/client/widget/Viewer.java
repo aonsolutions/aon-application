@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.common.client.widget;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
@@ -77,8 +79,11 @@ public abstract class Viewer extends PopupPanel {
 		Window.addResizeHandler(new ResizeHandler() {
 			@Override
 			public void onResize(ResizeEvent event) {
-				if ( Viewer.this.isShowing()) 
-					Viewer.this.scrollPanel.setHeight(Window.getClientHeight() + "px");
+				if ( Viewer.this.isShowing()){ 
+					Viewer.this.setPopupPosition(Document.get().getScrollLeft(),
+							Document.get().getScrollTop());
+					Viewer.this.scrollPanel.setHeight(Window.getClientHeight()  + "px");
+				}
 					
 			}
 		});
@@ -116,8 +121,17 @@ public abstract class Viewer extends PopupPanel {
 
 	@Override
 	public void show() {
+		unloadScrollBars();
 		this.scrollPanel.setHeight(Window.getClientHeight() + "px");
+		setPopupPosition(Document.get().getScrollLeft(),
+				Document.get().getScrollTop());
 		super.show();
+	}
+	
+	@Override
+	public void hide() {
+		reloadScrollBars();
+		super.hide();
 	}
 
 	// ------------------------------------------------------------------------
@@ -263,5 +277,18 @@ public abstract class Viewer extends PopupPanel {
 		return true;
 	}
 	// ------------------------------------------------------------------------
+	
+	private static void reloadScrollBars() {
+		Document.get().getDocumentElement().getStyle().setOverflow(Overflow.AUTO);
+		Document.get().getBody().setPropertyString("scroll", "yes");
+	}
+
+	private static void unloadScrollBars() {
+		Document.get().getDocumentElement().getStyle().setOverflow(Overflow.HIDDEN);
+		Document.get().getBody().setPropertyString("scroll", "no");
+	}
+
+
+	
 
 }

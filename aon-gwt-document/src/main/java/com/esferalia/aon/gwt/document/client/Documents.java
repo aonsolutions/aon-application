@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.Viewer;
+import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.document.jooq.DBConsults;
 import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.CategoryList;
@@ -599,6 +600,9 @@ public class Documents extends Composite implements EntryPoint {
 			prueba2 = new HorizontalPanel();
 		}
 		else {
+			// Inject rich styles.
+			GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
+			GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 			exportPreview(this);
 		}
 	}
@@ -4259,8 +4263,8 @@ public class Documents extends Composite implements EntryPoint {
 			fileInfo.setTitle(jsFileInfo.getTitle());
 			fileInfo.setIcon(jsFileInfo.getIcon());
 			fileInfo.setFileId(jsFileInfo.getFileId());
-			fileInfo.setDriveId(jsFileInfo.getDriveId());
 			fileInfo.setMimetype(jsFileInfo.getMimetype());
+			fileInfo.setDriveId(jsFileInfo.getDriveId());
 			viewList.add(fileInfo);
 		}
 		getAsHTMl(viewList.get(index), index, viewList);
