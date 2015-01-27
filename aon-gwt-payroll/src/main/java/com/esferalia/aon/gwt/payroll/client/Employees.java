@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.SortedSet;
 
 import com.esferalia.aon.gwt.common.client.css.images.Images;
+import com.esferalia.aon.gwt.common.client.widget.OptionsToolbar;
 import com.esferalia.aon.gwt.common.shared.CollectionUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
@@ -74,7 +75,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class Employees extends ResizeComposite implements
 		OpenHandler<TreeItem>, SelectionHandler<TreeItem>, ScrollHandler,
-		ContextMenuHandler, KeyDownHandler, LoadHandler {
+		ContextMenuHandler, KeyDownHandler, LoadHandler, OptionsToolbar.Listener {
 
 	interface Listener {
 
@@ -157,16 +158,19 @@ public class Employees extends ResizeComposite implements
 	Tree tree;
 	@UiField
 	ScrollPanel scrollPanel;
+	
 	@UiField
-	Button viewButton;
-	@UiField
-	Button collapseAllButton;
+	OptionsToolbar toolbar;
+
+	//@UiField
+	//Button viewButton;
+	//@UiField
+	//Button collapseAllButton;
 
 	private Images images;
 	private List<Listener> listeners;
 	private EmployeesServiceAsync employeesService;
 	private StatisticsServiceAsync statisticsService;
-
 
 	private boolean formers = true;
 	private boolean endDate = true;
@@ -186,7 +190,6 @@ public class Employees extends ResizeComposite implements
 	public Employees() {
 
 		images = GWT.create(Images.class);
-
 		listeners = new LinkedList<Employees.Listener>();
 		employeeCentinels = new LinkedList<TreeItem>();
 
@@ -198,19 +201,13 @@ public class Employees extends ResizeComposite implements
 				employeesServiceRaw);
 
 		initWidget(binder.createAndBindUi(this));
-
+		
 		tree.addOpenHandler(this);
 		tree.addSelectionHandler(this);
 		tree.addDomHandler(this, ContextMenuEvent.getType());
 		tree.addKeyDownHandler(this);
-
-		collapseAllButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				collapse();
-			}
-		});
-
+		
+		toolbar.addListener(this);
 		//employeesService.getEnterprise(this);
 
 		employeesService.getEnterprises(new AsyncCallback<Enterprise[]>() {
@@ -461,7 +458,7 @@ public class Employees extends ResizeComposite implements
 
 		scrollPanel.scrollToLeft();
 
-		initViewButton();
+		initViewButton(toolbar.getViewButton());
 
 	}
 
@@ -586,41 +583,6 @@ public class Employees extends ResizeComposite implements
 			}
 		}
 	}
-
-/*	public void load() {
-		tree.clear();
-		employeesService.getEnterprises(new AsyncCallback<Enterprise[]>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert(caught.getLocalizedMessage());
-			}
-
-			@Override
-			public void onSuccess(Enterprise[] enterprises) {
-				for (Enterprise enterprise : enterprises)
-					Employees.this.onEnterprise(enterprise);
-			}
-
-		});
-
-		scrollPanel.addScrollHandler(this);
-
-		for (TreeItem employeeItem : employeeCentinels) {
-
-			if (elementInViewport(employeeItem.getElement())) {
-
-				final int limit = getEmployeeLimit();
-
-				final TreeItem workplaceItem = employeeItem.getParentItem();
-
-				loadEmployees(workplaceItem, limit);
-
-				employeeCentinels.remove(employeeItem);
-			}
-		}
-
-	}*/
 
 	@Override
 	public void onContextMenu(ContextMenuEvent event) {
@@ -1266,6 +1228,9 @@ public class Employees extends ResizeComposite implements
 		
 
 		for (Employee employee : employees) {
+			
+			if(employee.getId() < 0)
+				continue;
 
 			boolean current = isActive(employee);
 
@@ -1381,7 +1346,7 @@ public class Employees extends ResizeComposite implements
 		return builder.toSafeHtml();
 	}
 
-	private void initViewButton() {
+	private void initViewButton(final Button viewButton) {
 		viewButton.addClickHandler(new ClickHandler() {
 
 			private PopupPanel popup = new PopupPanel();
@@ -1499,6 +1464,7 @@ public class Employees extends ResizeComposite implements
 
 			@Override
 			public void onClick(ClickEvent event) {
+				
 				int left = viewButton.getAbsoluteLeft();
 				int top = viewButton.getAbsoluteTop()
 						+ viewButton.getOffsetHeight();
@@ -1746,8 +1712,41 @@ public class Employees extends ResizeComposite implements
 
 	@Override
 	public void onLoad(LoadEvent event) {
-		// TODO Auto-generated method stub
+		
+	}
 
+	@Override
+	public void onNewButtonClick(ClickEvent event) {
+				
+	}
+
+	@Override
+	public void onPasteButtonClick(ClickEvent event) {
+		Object object = tree.getSelectedItem().getUserObject();
+		
+		if(object instanceof Workplace)
+			onEmployeePaste((Workplace) object);
+	}
+
+	@Override
+	public void onCopyButtonClick(ClickEvent event) {
+		
+		Object object = tree.getSelectedItem().getUserObject();
+		
+		if(object instanceof Employee)
+			onEmployeeCopy((Employee) object);
+	}
+
+	@Override
+	public void onDraftButtonClick(ClickEvent event) {
+		Object object = tree.getSelectedItem().getUserObject();
+		if(object instanceof Employee)
+			onSuprPressed((Employee) object);
+	}
+
+	@Override
+	public void onCollapseAllButtonClick(ClickEvent event) {
+		collapse();
 	}
 
 }

@@ -23,8 +23,8 @@ public class OptionsToolbar extends Composite {
 		void onCopyButtonClick(ClickEvent event);
 		
 		void onDraftButtonClick(ClickEvent event);
-		
-		void onViewButtonClick(ClickEvent event);
+				
+		void onCollapseAllButtonClick(ClickEvent event);
 	}
 	
 	private static EditOptionsTooltbarUiBinder uiBinder = GWT
@@ -44,6 +44,8 @@ public class OptionsToolbar extends Composite {
 	Button draftButton;
 	@UiField
 	Button newButton;
+	@UiField
+	Button collapseAllButton;
 	
 	private List<Listener> listeners;
 
@@ -51,12 +53,6 @@ public class OptionsToolbar extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		this.listeners = new ArrayList<Listener>();
-	}
-	
-	@UiHandler("viewButton")
-	void onClickViewButton(ClickEvent event) {
-		for(Listener listener : listeners)
-			listener.onViewButtonClick(event);
 	}
 	
 	@UiHandler("newButton")
@@ -82,7 +78,16 @@ public class OptionsToolbar extends Composite {
 		for(Listener listener : listeners)
 			listener.onDraftButtonClick(event);
 	}
-
+	
+	@UiHandler("collapseAllButton")
+	void onClickCollapseAllButton(ClickEvent event) {
+		for(Listener listener : listeners)
+			listener.onCollapseAllButtonClick(event);
+	}
+	
+	public Button getViewButton() {
+		return this.viewButton;
+	}
 	
 	public void addListener(Listener listener) {
 		listeners.add(listener);

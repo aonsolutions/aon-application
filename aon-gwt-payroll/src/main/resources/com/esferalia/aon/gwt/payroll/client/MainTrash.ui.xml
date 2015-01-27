@@ -42,7 +42,7 @@
 					<g:header size='3'>
 						<div class='{style.stackHeader}'>
 							<div class='{style.agreementIcon}' />
-							PAPELERA CONVENIOS
+							CONVENIOS
 						</div>
 					</g:header>
 					<g:DockLayoutPanel>
@@ -52,7 +52,8 @@
 								<g:HTMLPanel styleName="{style.legend-icon}">
 									<g:Button ui:field='deleteAgreementButton'
 										styleName='aon-editDataTable-button aon-icon-deletetrash {style.button-align}'
-										title="Eliminar definitivamente el convenio seleccionado" enabled="false" />
+										title="Eliminar definitivamente el convenio seleccionado"
+										enabled="false" />
 
 									<g:Button ui:field='restoreAgreementButton'
 										styleName='aon-editDataTable-button aon-icon-cancel {style.button-align}'
@@ -71,40 +72,41 @@
 
 				</g:stack>
 
-				<!--<g:stack ui:field="employeesStack">
+				<g:stack ui:field="employeesStack">
 					<g:header size='3'>
 						<div class='{style.stackHeader}'>
 							<div class='{style.employeesIcon}' />
-							EMPLEADOS
+							CONTRATOS
 						</div>
 					</g:header>
 					<g:DockLayoutPanel>
 						<g:north size="26">
-							<g:HTMLPanel styleName="{style.legend-icon}">
-								<g:Button ui:field='deleteEmployeeButton'
-									styleName='aon-editDataTable-button aon-icon-deletetrash {style.button-align}'
-									title="Eliminar definitivamente el empleado seleccionado" enabled="false" />
+							<g:FlowPanel styleName="gwt-MenuBar-horizontal">
+								<g:HTMLPanel styleName="{style.legend-icon}">
+									<g:Button ui:field='deleteEmployeeButton'
+										styleName='aon-editDataTable-button aon-icon-deletetrash {style.button-align}'
+										title="Eliminar definitivamente el empleado seleccionado"/>
 
-								<g:Button ui:field='restoreEmployeeButton'
-									styleName='aon-editDataTable-button aon-icon-cancel {style.button-align}'
-									title="Restaurar empleado" enabled="false" />
+									<g:Button ui:field='restoreEmployeeButton'
+										styleName='aon-editDataTable-button aon-icon-cancel {style.button-align}'
+										title="Restaurar empleado"/>
 
-								<g:Button ui:field='clearEmployeeButton'
-									styleName='aon-editDataTable-button aon-icon-cleartrash {style.button-align}'
-									title="Vaciar papelera de empleados" />
-							</g:HTMLPanel>
+									<g:Button ui:field='clearEmployeeButton'
+										styleName='aon-editDataTable-button aon-icon-cleartrash {style.button-align}'
+										title="Vaciar papelera de empleados" />
+								</g:HTMLPanel>
+							</g:FlowPanel>
 						</g:north>
 						<g:center>
-							<aon:Employees ui:field='employees' extended="true"
-								formers="false" />
+							<aon:EmployeesTrashTree ui:field="employeeTrash" />
 						</g:center>
 					</g:DockLayoutPanel>
-				</g:stack -->
+				</g:stack>
 			</g:StackLayoutPanel>
 		</g:west>
 		<g:center>
 			<g:SimpleLayoutPanel>
-				<aon:AgreementDraft ui:field="agreementDraft" />
+				<aon:DetailPanel ui:field="detailPanel" /> 
 			</g:SimpleLayoutPanel>
 		</g:center>
 

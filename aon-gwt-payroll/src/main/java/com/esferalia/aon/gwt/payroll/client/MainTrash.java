@@ -1,20 +1,21 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.css.images.Images;
-import com.esferalia.aon.gwt.common.shared.CollectionUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.Employee;
+import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
@@ -26,21 +27,26 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FocusWidget;
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
 interface Listener {
 
-	void onDeleteAction(Agreement agreement);
+	void onDeleteAgreementAction(Agreement agreement);
 
-	void onRestoreAction(Agreement agreement);
+	void onRestoreAgreementAction(Agreement agreement);
 	
-	void onSelectionTreeItem();
+	void onDeleteEmployeeAction(Employee employee);
+	
+	void onRestoreEmployeeAction(Employee employee);
 
 }
 
 public class MainTrash extends MainEntryPoint implements
-		AgreementsTree.Listener, Listener {
+		AgreementsTree.Listener, Listener, EmployeesTrashTree.Listener {
 
 	static interface Binder extends UiBinder<Widget, MainTrash> {
 	}
@@ -49,38 +55,6 @@ public class MainTrash extends MainEntryPoint implements
 
 	private static final Binder binder = GWT.create(Binder.class);
 
-	class AgreementChangesCallback implements AsyncCallback<SortedSet<Date>> {
-
-		AgreementDraftObject agreementDraftObject;
-
-		public AgreementChangesCallback(
-				AgreementDraftObject agreementDraftObject) {
-			this.agreementDraftObject = agreementDraftObject;
-		}
-
-		@Override
-		public void onFailure(Throwable caught) {
-			// TODO Auto-generated method stub
-			MainTrash.this.agreementDraft
-					.setAgreementDraftObject(agreementDraftObject);
-		}
-
-		@Override
-		public void onSuccess(SortedSet<Date> result) {
-			// TODO Auto-generated method stub
-			if (!CollectionUtils.isEmpty(result)) {
-				Date lastChange = result.last();
-				agreementDraftObject.setStartDate(DateUtils
-						.getFirstDayOfMonth(lastChange));
-				agreementDraftObject.setEndDate(DateUtils
-						.getLastDayOfMonth(lastChange));
-			}
-
-			MainTrash.this.agreementDraft
-					.setAgreementDraftObject(agreementDraftObject);
-
-		}
-	}
 
 	@UiField
 	Button deleteAgreementButton;
@@ -88,13 +62,23 @@ public class MainTrash extends MainEntryPoint implements
 	Button restoreAgreementButton;
 	@UiField
 	Button clearAgreementButton;
+	@UiField
+	Button clearEmployeeButton;
+	@UiField
+	Button deleteEmployeeButton;
+	@UiField
+	Button restoreEmployeeButton;
+	@UiField
+	DetailPanel detailPanel;
+	@UiField
+	EmployeesTrashTree employeeTrash;	
 
 	@UiField
-	AgreementsTree agreementsTree;
-
-	@UiField
-	AgreementDraft agreementDraft;
-
+	AgreementsTree agreementsTree;	
+	
+	private Employee employee;
+	private AgreementDraft agreementDraft;
+	private JSF jsf;
 	private Integer domain;
 	private Agreement agreement;
 	private List<Listener> listeners;
@@ -120,7 +104,11 @@ public class MainTrash extends MainEntryPoint implements
 
 		this.listeners = new ArrayList<Listener>();
 		this.agreementsTree.addListener(this);
+		this.employeeTrash.addListener(this);
+		this.employee = null;
 		this.agreement = null;
+		this.agreementDraft = new AgreementDraft();
+		this.jsf = new JSF();
 		this.agreementDrafts = new HashMap<Integer, AgreementDraftObject>();
 
 		addListener(this);
@@ -136,9 +124,30 @@ public class MainTrash extends MainEntryPoint implements
 					@Override
 					public void onSuccess(Integer result) {
 						MainTrash.this.domain = result;
-						getAgreements();
+						MainTrash.this.getAgreements();
 					}
 				});
+		
+		loadEnterprises();
+	}
+	
+	private void loadEnterprises() {
+		employeeTrash.clear();
+		employeeTrash.getEmployeesService().getEnterprises(
+				new AsyncCallback<Enterprise[]>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert(caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(Enterprise[] enterprises) {
+						for(Enterprise enterprise : enterprises)
+							onEnterprise(enterprise);
+					}
+				});
+		
 	}
 
 	public void addListener(Listener listener) {
@@ -156,26 +165,42 @@ public class MainTrash extends MainEntryPoint implements
 	@UiHandler("deleteAgreementButton")
 	void onDeleteClickButton(ClickEvent event) {
 		for (Listener listener : listeners)
-			listener.onDeleteAction(agreement);
+			listener.onDeleteAgreementAction(agreement);
 	}
 
 	@UiHandler("restoreAgreementButton")
 	void onRestoreClickButton(ClickEvent event) {
 		for (Listener listener : listeners)
-			listener.onRestoreAction(agreement);
+			listener.onRestoreAgreementAction(agreement);
 	}
 
 	@UiHandler("clearAgreementButton")
 	void onClearClickButton(ClickEvent event) {
 
 	}
+	
+	@UiHandler("deleteEmployeeButton")
+	void onDeleteEmployeeButton(ClickEvent event) {
+		if(this.employee != null)
+			for(Listener listener : listeners)
+				listener.onDeleteEmployeeAction(this.employee);
+	}
+	
+	@UiHandler("restoreEmployeeButton")
+	void onRestoreEmployeeButton(ClickEvent event) {
+		if(this.employee != null)
+			for(Listener listener : listeners)
+				listener.onRestoreEmployeeAction(this.employee);
+	
+	}
+
 
 	private boolean getTreeCount() {
 		return agreementsTree.getTree().getItemCount() > 0;
 	}
 
 	@Override
-	public void onRestoreAction(Agreement agreement) {
+	public void onRestoreAgreementAction(Agreement agreement) {
 
 		agreementsTree.getEnterpriseService().updateAgreementId(agreement,
 				new AsyncCallback<Void>() {
@@ -188,27 +213,103 @@ public class MainTrash extends MainEntryPoint implements
 
 					@Override
 					public void onSuccess(Void result) {
-						getAgreements();
+						MainTrash.this.detailPanel.setWidget(null);
+						MainTrash.this.getAgreements();
 					}
 				});
 	}
 	
 	@Override
-	public void onDeleteAction(Agreement agreement) {
-		agreementsTree.getEnterpriseService().deleteAgreement(agreement, new AsyncCallback<Void>() {
+	public void onDeleteAgreementAction(Agreement agreement) {
+		
+		if(Window.confirm("\u00BFDesea eliminar definitivamente el convenio "
+					+ agreement.getDescription() + "\u003F")) {
+			agreementsTree.getEnterpriseService().deleteAgreement(agreement, new AsyncCallback<Void>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert(caught.getMessage());				
+				}
+
+				@Override
+				public void onSuccess(Void result) {
+					MainTrash.this.detailPanel.setWidget(null);
+					MainTrash.this.getAgreements();				
+				}
+			});
+			
+		}
+	}
+	
+	@Override
+	public void onDeleteEmployeeAction(Employee employee) {
+		
+		if(Window.confirm("\u00BFDesea eliminar a "
+					+ employee.getFullname() + "\u003F")) {
+			
+			employeeTrash.getEmployeesService().deleteContract(employee, 
+					new AsyncCallback<Void>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert(caught.getMessage());			
+				}
+
+				@Override
+				public void onSuccess(Void result) {
+					MainTrash.this.detailPanel.setWidget(null);
+					MainTrash.this.loadEnterprises();			
+				}
+			});
+			
+		}
+		
+	}
+	
+	@Override
+	public void onRestoreEmployeeAction(Employee employee) {
+		
+		employeeTrash.getEmployeesService().moveContractId(employee, new AsyncCallback<Void>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				Window.alert(caught.getMessage());				
+				Window.alert(caught.getMessage());
 			}
 
 			@Override
 			public void onSuccess(Void result) {
-				MainTrash.this.getAgreements();				
+				MainTrash.this.detailPanel.setWidget(null);
+				MainTrash.this.loadEnterprises();
+			}
+		});
+		
+	}
+	
+	private void onEnterprise(Enterprise enterprise) {
+		
+		List<Workplace> workplaces = enterprise.getWorkplaces();
+		
+		for(Workplace workplace : workplaces)
+			onWorkplace(workplace.getId());
+	}
+	
+	private void onWorkplace(int workplaceId) {
+		
+		employeeTrash.getEmployeesService().getTrashEmployees(workplaceId, 
+				new AsyncCallback<List<Employee>>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert(caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(List<Employee> employees) {
+				for(Employee employee : employees)
+					employeeTrash.addEmployeeItem(employee);
 			}
 		});
 	}
-
 
 	// ---------------------------------------------------- Agreements.Listener
 
@@ -266,7 +367,7 @@ public class MainTrash extends MainEntryPoint implements
 		String style = AON.AON_GREEN;
 		String description = agreement.getDescription();
 		if (agreement.getHasContract()) {
-			title = "Imposible eliminar definitivamente. "
+			title = "Imposible eliminar. "
 					+ "Convenio con contratos asociados";
 			style = AON.AON_RED + " " + AON.AON_ICON_CMD_BUTTON;
 		}
@@ -296,18 +397,14 @@ public class MainTrash extends MainEntryPoint implements
 			agreementSelected((Agreement) object);
 
 	}
-	
-	@Override
-	public void onSelectionTreeItem() {
-		// TODO Auto-generated method stub
-		
-	}
 
-	private void agreementSelected(Agreement agreement) {
+	private void agreementSelected(Agreement agreement) {		
 		
 		this.agreement = agreement;
 		this.restoreAgreementButton.setEnabled(true);
 		this.deleteAgreementButton.setEnabled(!agreement.getHasContract());
+		
+		detailPanel.setWidget(agreementDraft);
 		
 		AgreementDraftObject agreementDraftObject = agreementDrafts
 				.get(agreement.getId());
@@ -325,18 +422,11 @@ public class MainTrash extends MainEntryPoint implements
 			agreementDraftObject = new AgreementDraftObject(getDomain(), draft,
 					agreementsTree.getEmployeesService());
 			agreementDrafts.put(agreement.getId(), agreementDraftObject);			
-
-			//agreementDraftObject.addListener(new DraftObjectListener(treeItem,
-					//agreementDraftObject));
-
-			agreementsTree.getEmployeesService().getChanges(agreement,
-					new AgreementChangesCallback(agreementDraftObject));
-
+	
 		} // end-if: Not exists, create it then...
 		else {
 			agreementDraft.setAgreementDraftObject(agreementDraftObject);
 		}
-		
 		agreementDraft.disableEdition();
 	}
 
@@ -362,5 +452,37 @@ public class MainTrash extends MainEntryPoint implements
 			ContextMenuEvent event) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	@Override
+	public void onSuprKeyDown(Employee employee) {
+		
+		
+	}
+	
+	@Override
+	public void onEmployeeItemSelected(Employee employee) {
+		this.employee = employee;
+		
+		detailPanel.setWidget(jsf);
+		jsf.employeeSelected(employee.getId());
+		disable(false, detailPanel);
+	}
+	
+	protected void disable(boolean enable, Widget widget) {
+		
+		if(widget instanceof HasWidgets) {
+			Iterator<Widget> iterator = ((HasWidgets)widget).iterator();
+			while(iterator.hasNext()) {
+				Widget next = iterator.next();
+				disable(enable, next);
+				if(next instanceof FocusWidget) {					
+					((FocusWidget) next).setEnabled(false);
+				}
+				if(next instanceof TextBox) {					
+					((TextBox) next).setReadOnly(true);
+				}
+			}
+		}
 	}
 }

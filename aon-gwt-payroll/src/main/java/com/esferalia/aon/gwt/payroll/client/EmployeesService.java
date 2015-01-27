@@ -23,6 +23,7 @@ import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -117,6 +118,9 @@ public interface EmployeesService extends RemoteService, StatisticsService,
 
 	List<Employee> getEmployees(int workplaceId, Date endDate, String pattern,
 			int offset, int limit) throws IllegalArgumentException;
+	
+	List<Employee> getTrashEmployees(int workplaceId) 
+			throws IllegalArgumentException;
 
 	void saveEvents(Events events, Date startDate, Date endDate)
 			throws IllegalArgumentException;
@@ -138,6 +142,7 @@ public interface EmployeesService extends RemoteService, StatisticsService,
 	Employee pasteContract (int workplaceId, int contractId, String document, Date startDate, 
 			Date endDate, boolean check) throws IllegalArgumentException;
 	
+	void moveContractId(Employee employee) throws IllegalArgumentException;
 	
 	void deleteContract(Employee employee)
 			throws IllegalArgumentException;

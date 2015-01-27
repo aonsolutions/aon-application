@@ -129,6 +129,9 @@ public interface EmployeesServiceAsync extends StatisticsServiceAsync,
 	void getEmployees(int workplaceId, Date endDate, String pattern,
 			int offset, int limit, AsyncCallback<List<Employee>> callback)
 			throws IllegalArgumentException;
+	
+	void getTrashEmployees(int workplaceId, AsyncCallback<List<Employee>> callback) 
+			throws IllegalArgumentException;
 
 	void saveEvents(Events events, Date startDate, Date endDate,
 			AsyncCallback<Void> callback) throws IllegalArgumentException;
@@ -153,6 +156,9 @@ public interface EmployeesServiceAsync extends StatisticsServiceAsync,
 
 	void pasteContract(int workplaceId, int contractId, String document, Date startDate, 
 			Date endDate, boolean check, AsyncCallback<Employee> callback)
+			throws IllegalArgumentException;
+	
+	void moveContractId(Employee employee, AsyncCallback<Void> callback) 
 			throws IllegalArgumentException;
 
 	void deleteContract(Employee employee, AsyncCallback<Void> callback)

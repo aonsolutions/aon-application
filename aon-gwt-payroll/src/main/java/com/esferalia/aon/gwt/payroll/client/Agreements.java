@@ -238,13 +238,6 @@ public class Agreements extends ResizeComposite implements
 	}
 
 	@Override
-	public void onViewButtonClick(ClickEvent event) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
 	public void onAgreementCtrlC(Agreement agreement) {
 		for(Toolbar toolbar : toolbars)
 			toolbar.onAgreementCtrlC(agreement);
@@ -277,6 +270,12 @@ public class Agreements extends ResizeComposite implements
 		for (Listener listener : listeners)
 			listener.onAgreementContextMenu(agreement, event);
 
+	}
+	
+	@Override
+	public void onCollapseAllButtonClick(ClickEvent event) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

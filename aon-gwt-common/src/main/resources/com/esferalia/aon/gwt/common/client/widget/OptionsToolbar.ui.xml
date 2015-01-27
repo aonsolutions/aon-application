@@ -15,6 +15,7 @@
 			<g:FlowPanel styleName="gwt-MenuBar-horizontal"
 				ui:field="buttonBar">
 				<g:HTMLPanel styleName="{style.legend-icon}">
+				
 					<g:Button styleName="gwt-MenuItem aon-icon-view" ui:field="viewButton" />
 					
 					<g:Button ui:field='pasteButton'
@@ -27,11 +28,14 @@
 					
 					<g:Button ui:field='draftButton'
 						styleName='aon-editDataTable-button aon-icon-draft {style.newButton}'
-						title="Enviar convenio a la papelera" />
+						title="Enviar a la papelera" />
 					
 					<g:Button ui:field='newButton'
 						styleName='aon-editDataTable-button aon-icon-reset {style.newButton}'
-						title="Nuevo convenio" />
+						title="Nuevo" />
+						
+					<g:Button styleName="gwt-MenuItem aon-icon-collpaseAll" ui:field="collapseAllButton" />
+					
 				</g:HTMLPanel>
 			</g:FlowPanel>
 </ui:UiBinder> 

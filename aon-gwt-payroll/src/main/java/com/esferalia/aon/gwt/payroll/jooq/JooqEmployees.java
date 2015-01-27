@@ -38,6 +38,7 @@ import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -161,6 +162,88 @@ public class JooqEmployees {
 			if (cursor != null)
 				cursor.close();
 		}
+	}
+	
+	public static List<Employee> getTrashEmployees(Connection conn, int workplaceId) {
+		return getTrashEmployees(DSL.using(
+				conn, getDefaultSettings()), 
+				workplaceId);
+	}
+	
+	private static List<Employee> getTrashEmployees(DSLContext context, int workplaceId) {
+		
+		Cursor<Record> cursor = null;
+		
+		try {
+			// @formatter:off
+			SelectConditionStep<Record> select = context
+					.select()
+					.from(CONTRACT.join(PERSON).on(
+							CONTRACT.PERSON.eq(PERSON.REGISTRY)))
+					.leftOuterJoin(
+							AGREEMENT_LEVEL_CATEGORY.join(
+									AGREEMENT_LEVEL.join(AGREEMENT).on(
+											AGREEMENT_LEVEL.AGREEMENT
+													.eq(AGREEMENT.ID))).on(
+									AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL
+											.eq(AGREEMENT_LEVEL.ID)))
+					.on(CONTRACT.AGREEMENT_LEVEL_CATEGORY
+							.eq(AGREEMENT_LEVEL_CATEGORY.ID))
+					.where(CONTRACT.WORKPLACE.eq(workplaceId))
+					.and(CONTRACT.ID.lessThan(0));
+
+			cursor = select
+					.orderBy(PERSON.FIRST_SURNAME.asc(),
+							PERSON.SECOND_SURNAME.asc(), PERSON.NAME.asc(),
+							CONTRACT.START_DATE.desc())
+					.fetchLazy();
+			// @formatter:on
+
+			List<Employee> employees = new LinkedList<Employee>();
+
+			for (Record record : cursor) {
+				Employee employee = new Employee();
+
+				employee.setId(record.getValue(CONTRACT.ID));
+				employee.setStartDate(record.getValue(CONTRACT.START_DATE));
+				employee.setEndDate(record.getValue(CONTRACT.END_DATE));
+
+				employee.setPerson(record.getValue(PERSON.REGISTRY));
+				employee.setName(record.getValue(PERSON.NAME));
+				employee.setFirstSurname(record.getValue(PERSON.FIRST_SURNAME));
+				employee.setSecondSurName(record
+						.getValue(PERSON.SECOND_SURNAME));
+				Integer categoryId = record
+						.getValue(AGREEMENT_LEVEL_CATEGORY.ID);
+				if (categoryId != null) {
+					Category category = new Category();
+					category.setId(categoryId);
+					category.setLevelId(record.getValue(AGREEMENT_LEVEL.ID));
+					category.setLevel(record
+							.getValue(AGREEMENT_LEVEL.DESCRIPTION));
+					category.setDescription(record
+							.getValue(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION));
+
+					Agreement agreement = new Agreement();
+					agreement.setId(record.getValue(AGREEMENT.ID));
+					agreement.setDescription(record
+							.getValue(AGREEMENT.DESCRIPTION));
+
+					category.setAgreement(agreement);
+					employee.setCategory(category);
+				}
+
+				employees.add(employee);
+
+			}
+
+			return employees;
+
+		} finally {
+			if (cursor != null)
+				cursor.close();
+		}
+
 	}
 
 	public static Map<String, String> getAvaiableEmployees(Connection conn,
@@ -570,6 +653,102 @@ public class JooqEmployees {
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
+		}
+	}
+
+	private static final String SET_FOREIGN_KEY_CHECKS_0 = "SET FOREIGN_KEY_CHECKS=0;";
+	private static final String SET_FOREIGN_KEY_CHECKS_1 = "SET FOREIGN_KEY_CHECKS=1;";
+
+	public static void moveContractId(Connection conn, Integer personId) {
+
+		try {
+			Statement sOpen = conn.createStatement();
+			sOpen.execute(SET_FOREIGN_KEY_CHECKS_0);
+			System.out.println("Claves referenciales desactivadas");
+
+			// ------------------------------------------------------
+
+			DSLContext dslContext = DSL.using(conn, SQLDialect.MYSQL,
+					getDefaultSettings());
+
+			dslContext.update(IRPF_DATA).set(IRPF_DATA.CONTRACT, -(personId))
+					.where(IRPF_DATA.CONTRACT.eq(personId)).execute();
+
+			dslContext.update(IRPF_REGULARIZATION)
+					.set(IRPF_REGULARIZATION.CONTRACT, -(personId))
+					.where(IRPF_REGULARIZATION.CONTRACT.eq(personId)).execute();
+
+			dslContext.update(IRPF_RESULT)
+					.set(IRPF_RESULT.CONTRACT, -(personId))
+					.where(IRPF_RESULT.CONTRACT.eq(personId)).execute();
+
+			dslContext.update(SALARY).set(SALARY.CONTRACT, -(personId))
+					.where(SALARY.CONTRACT.eq(personId)).execute();
+
+			dslContext.update(CERTIFICA2_BATCH_DETAIL)
+					.set(CERTIFICA2_BATCH_DETAIL.CONTRACT, -(personId))
+					.where(CERTIFICA2_BATCH_DETAIL.CONTRACT.eq(personId))
+					.execute();
+
+			dslContext.update(CONTRACT_LEAVE)
+					.set(CONTRACT_LEAVE.CONTRACT, -(personId))
+					.where(CONTRACT_LEAVE.CONTRACT.eq(personId)).execute();
+
+			dslContext.update(CONTRACT_ATTACH)
+					.set(CONTRACT_ATTACH.CONTRACT, -(personId))
+					.where(CONTRACT_ATTACH.CONTRACT.eq(personId)).execute();
+
+			dslContext.update(CONTRACT_BATCH_DETAIL)
+					.set(CONTRACT_BATCH_DETAIL.CONTRACT, -(personId))
+					.where(CONTRACT_BATCH_DETAIL.CONTRACT.eq(personId))
+					.execute();
+
+			dslContext.update(CONTRACT_BONUS)
+					.set(CONTRACT_BONUS.CONTRACT, -(personId))
+					.where(CONTRACT_BONUS.CONTRACT.eq(personId)).execute();
+
+			dslContext.update(CONTRACT_CALENDAR_EVENT)
+					.set(CONTRACT_CALENDAR_EVENT.CONTRACT, -(personId))
+					.where(CONTRACT_CALENDAR_EVENT.CONTRACT.eq(personId))
+					.execute();
+
+			dslContext.update(CONTRACT_CLAUSE)
+					.set(CONTRACT_CLAUSE.CONTRACT, -(personId))
+					.where(CONTRACT_CLAUSE.CONTRACT.eq(personId)).execute();
+
+			dslContext.update(CONTRACT_DATA)
+					.set(CONTRACT_DATA.CONTRACT, -(personId))
+					.where(CONTRACT_DATA.CONTRACT.eq(personId)).execute();
+
+			dslContext.update(CONTRACT_DEDUCTION)
+					.set(CONTRACT_DEDUCTION.CONTRACT, -(personId))
+					.where(CONTRACT_DEDUCTION.CONTRACT.eq(personId)).execute();
+
+			dslContext.update(CONTRACT_EMBARGO)
+					.set(CONTRACT_EMBARGO.CONTRACT, -(personId))
+					.where(CONTRACT_EMBARGO.CONTRACT.eq(personId)).execute();
+
+			dslContext.update(CONTRACT_INFO)
+					.set(CONTRACT_INFO.CONTRACT, -(personId))
+					.where(CONTRACT_INFO.CONTRACT.eq(personId)).execute();
+
+			dslContext.update(CONTRACT_PAYMENT)
+					.set(CONTRACT_PAYMENT.CONTRACT, -(personId))
+					.where(CONTRACT_PAYMENT.CONTRACT.eq(personId)).execute();
+
+			dslContext.update(CONTRACT).set(CONTRACT.ID, -(personId))
+					.where(CONTRACT.ID.eq(personId)).execute();
+
+			// ------------------------------------------------------
+
+			Statement sClose = conn.createStatement();
+			sClose.execute(SET_FOREIGN_KEY_CHECKS_1);
+			System.out.println("Claves referenciales activadas");
+
+		} catch (SQLException ex) {
+			throw new IllegalArgumentException();
+		} catch (Exception ex) {
+			throw new IllegalArgumentException();
 		}
 	}
 

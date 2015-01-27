@@ -480,7 +480,7 @@ public class AgreementDraftObject {
 						agreementDraft = savedAgreementDraft;
 						undoManager.discardAll();
 						agreementDraft.clearDrafts();
-
+						
 						calculate(callback);
 
 					}

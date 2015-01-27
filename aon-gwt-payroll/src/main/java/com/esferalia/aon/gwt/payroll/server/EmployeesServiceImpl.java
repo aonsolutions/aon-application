@@ -375,6 +375,27 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			releaseFacesContext();
 		}
 	}
+	
+	@Override
+	public List<Employee> getTrashEmployees(int workplaceId)
+			throws IllegalArgumentException {
+		Connection conn = null;
+		try {
+			initFacesContext();
+			conn = getConnection();
+			return JooqEmployees.getTrashEmployees(conn, workplaceId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+	}
 
 	@Override
 	public List<Cost> getWorkplaceCosts(int workplaceId)
@@ -931,6 +952,33 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			releaseFacesContext();
 		}
 
+	}
+	
+	@Override
+	public void moveContractId(Employee employee)
+			throws IllegalArgumentException {
+		Connection conn = null;
+		
+		try {
+			initFacesContext();
+			conn = getConnection();
+			disableAutoCommit(conn);
+			JooqEmployees.moveContractId(conn, employee.getId());
+			commit(conn);
+		} catch (SQLException ex) {
+			rollback(conn);
+			ex.printStackTrace();
+			throw new IllegalArgumentException(ex);
+		} finally {
+			enableAutoCommit(conn);
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException ex) {
+				}
+			}
+			releaseFacesContext();
+		}
 	}
 
 	@Override

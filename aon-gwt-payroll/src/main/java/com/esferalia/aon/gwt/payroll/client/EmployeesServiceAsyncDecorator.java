@@ -194,6 +194,15 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 				offset, limit, new AsyncCallbackWrapper<List<Employee>>(
 						callback));
 	}
+	
+	@Override
+	public void getTrashEmployees(int workplaceId,
+			AsyncCallback<List<Employee>> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getTrashEmployees(workplaceId, 
+				new AsyncCallbackWrapper<List<Employee>>(callback));
+	}
 
 	@Override
 	public void saveSalaryDraft(SalaryDraft salaryDraft,
@@ -201,7 +210,6 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 		AON.start();
 		employeesServiceAsync.saveSalaryDraft(salaryDraft,
 				new AsyncCallbackWrapper<Void>(callback));
-
 	}
 
 	@Override
@@ -401,6 +409,14 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 		AON.start();
 		employeesServiceAsync.pasteContract(workplaceId, contractId, document, startDate, endDate, check, 
 				new AsyncCallbackWrapper<Employee>(callback));
+	}
+	
+	@Override
+	public void moveContractId(Employee employee, AsyncCallback<Void> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.moveContractId(employee, 
+				new AsyncCallbackWrapper<Void>(callback));
 	}
 	
 	@Override

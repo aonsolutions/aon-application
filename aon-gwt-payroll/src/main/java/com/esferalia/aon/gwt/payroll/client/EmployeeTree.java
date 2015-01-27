@@ -226,34 +226,27 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	class DeleteEmployeeCommand implements ScheduledCommand {
 
 		@Override
-		public void execute() {
-			if (getConfirmDeleteContract())
-				deleteContract(singlenton.employee, null);
-
-		}
-
-		private boolean getConfirmDeleteContract() {
-			return Window.confirm("\u00BFDesea eliminar a "
-					+ employee.getFullname() + "\u003F");
+		public void execute() {			
+			deleteContract(singlenton.employee, null);
 		}
 
 		private void deleteContract(Employee employee,
 				final AsyncCallback<Void> callback) {
-
-			employees.getEmployeesService().deleteContract(employee,
+			
+			employees.getEmployeesService().moveContractId(employee, 
 					new AsyncCallback<Void>() {
 
-						@Override
-						public void onFailure(Throwable caught) {
-							callback.onFailure(caught);
-						}
+				@Override
+				public void onFailure(Throwable caught) {
+					callback.onFailure(caught);
+				}
 
-						@Override
-						public void onSuccess(Void result) {
-							employees.onEnterprise(enterprise);
-							callback.onSuccess(result);
-						}
-					});
+				@Override
+				public void onSuccess(Void result) {
+					employees.onEnterprise(enterprise);
+					callback.onSuccess(result);
+				}
+			});
 		}
 
 	}
