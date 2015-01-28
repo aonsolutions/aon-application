@@ -327,7 +327,9 @@ public class VatTaxManager implements Serializable {
 		VatDeductionType vatDeductionType = VatDeductionType.values()[rs.getInt(VAT_DEDUCTION_TYPE)];
 		InvoiceTransactionType transaction = InvoiceTransactionType.values()[rs.getInt(TRANSACTION)];
 		boolean investment = rs.getBoolean(INVESTMENT);
+		
 		boolean farmerRegime = rs.getBoolean(WITHHOLDING_FARMER);
+		
 
 		if (invoiceType == InvoiceType.SALES) {
 			if (transaction == InvoiceTransactionType.NATIONAL) {
@@ -598,6 +600,7 @@ public class VatTaxManager implements Serializable {
 		stmt.append(	",it.vat_deduction_type " + VAT_DEDUCTION_TYPE);
 		stmt.append(	",i.transaction "+ TRANSACTION);
 		stmt.append(	",i.investment " + INVESTMENT);
+		stmt.append(	",i.withholding_farmer " + WITHHOLDING_FARMER);
 		stmt.append(	",i.taxable_base " + INVOICE_BASE);
 		stmt.append(	",i.vat_quota " + INVOICE_VAT);
 		stmt.append(	",i.retention_quota " + INVOICE_RETENTION);
@@ -621,8 +624,6 @@ public class VatTaxManager implements Serializable {
 		stmt.append(	" AND i.vat_accrual_payment = 1");	// Criterio de Caja.
 		stmt.append(	" AND i.status >= ? ");
 		stmt.append(" GROUP BY it.id,"+PERCENTAGE +","+ SURCHARGE_PERCENT+","+VAT_DEDUCTION_TYPE);
-		
-		System.out.println( stmt.toString() );
 		return stmt.toString();
 	}
 	
