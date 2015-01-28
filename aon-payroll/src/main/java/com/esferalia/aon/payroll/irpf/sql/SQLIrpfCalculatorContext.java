@@ -19,8 +19,6 @@ import java.util.NoSuchElementException;
 import com.code.aon.common.AonException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.company.Enterprise;
-import com.code.aon.company.WorkPlace;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.DelegateCollection;
@@ -34,14 +32,15 @@ import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractIrpfCalculatorContext;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.SimpleContractPayment;
+import com.esferalia.aon.payroll.calculator.TaxCalculator;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.IrpfDataAscendantsColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.IrpfDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.IrpfDataDescendientsColumns;
@@ -303,7 +302,15 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 						continue; // this payment hasn't started yet.
 
 					SimpleContractPayment copy = new SimpleContractPayment(
-							payment);
+							payment) {
+						@Override
+						public String getIrpfExpression() {
+
+							return super.getMonth() == null ? super
+									.getIrpfExpression() : String.format(
+									"(%s)/12", super.getIrpfExpression());
+						}
+					};
 					copy.setStartDate(Period.max(paymentStart,
 							period.getStart()));
 					// sets payment period closest to 'period'.
