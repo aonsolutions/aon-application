@@ -38,6 +38,7 @@ import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.sql.AbstractSQL.ISalaryDeduction;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
@@ -157,7 +158,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		List<IDeduction> dbDeductions;
 		dbDeductions = new ArrayList<IDeduction>(dbSalary.getDeductionS());
 		for (Deduction deduction : salaryDraft.getDeductions()) {
-			List<IDeduction> dbCounterParts = getDbItemCounterParts(
+			List<IDeduction> dbCounterParts = getDbDeductionCounterParts(
 					dbDeductions, deduction);
 			if (dbCounterParts.size() == 0)
 				continue;
@@ -885,6 +886,22 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 
 		return fullMatchDbItems.size() > 0 ? fullMatchDbItems
 				: nameMatchDbItems;
+	}
+
+	private static <T extends ISalaryItem<DeductionType>> List<T> getDbDeductionCounterParts(
+			Collection<T> dbDeductions, Item<?> deduction) {
+		List<T> matchDbItems = getDbItemCounterParts(dbDeductions, deduction);
+		if ( matchDbItems.size() > 0 )
+			return matchDbItems;
+
+		List<T> typeMatchDbItems = new LinkedList<T>();
+		for (T dbDeduction : dbDeductions)
+			if ( deduction.getType() != null && dbDeduction.getType() != null )
+				if (deduction.getType().ordinal() == dbDeduction.getType().ordinal())
+					typeMatchDbItems.add(dbDeduction);
+
+		return typeMatchDbItems;
+		
 	}
 
 	private static boolean equals(Enum<?> type1, Enum<?> type2) {
