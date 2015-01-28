@@ -324,7 +324,7 @@ public class Mod390toAEATIVA2014 {
 		actividad.setIndiceCorrector(ensureBigDecimal(sr.getBoxE()));
 		actividad.setResultado(ensureBigDecimal(sr.getBoxF()));
 		actividad.setPorcCuotaMinima(ensureBigDecimal(sr.getBoxG()));
-		if ( sr.getBoxD() != 0.00 ) {
+		if ( sr.getBoxH() != 0.00 ) {
 			actividad.setDevCuotaSopOtrosPaises(ensureBigDecimal(sr.getBoxH()));
 		}
 		if ( sr.getBoxI() != 0.00 ) {
