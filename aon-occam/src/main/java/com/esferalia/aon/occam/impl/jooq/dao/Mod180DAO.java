@@ -377,8 +377,7 @@ public class Mod180DAO {
 		Field<Double> maxPercent = DSL.max(INVOICE_TAX.PERCENTAGE).as(INVOICE_TAX.PERCENTAGE.getName());
 		Field<BigDecimal> quotaOp = DSL.sum(DSL.decode()
 				.when(INVOICE_TAX.QUOTA.notEqual(0.0), INVOICE_TAX.QUOTA)
-				.when(INVOICE_TAX.QUOTA.equal(0.0), invoiceTaxSum)
-				.as(INVOICE_TAX.QUOTA.getName()));
+				.when(INVOICE_TAX.QUOTA.equal(0.0), invoiceTaxSum));
 		ctx.getDslContext().select(
 			INVOICE.RDOCUMENT
 			,INVOICE.RNAME
