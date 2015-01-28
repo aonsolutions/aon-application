@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.AgreementData.AGREEMENT_DATA;
 import static com.esferalia.aon.jooq.tables.AgreementExtra.AGREEMENT_EXTRA;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
+import static com.esferalia.aon.jooq.tables.AgreementLevelData.AGREEMENT_LEVEL_DATA;
 import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
@@ -26,8 +27,10 @@ import org.jooq.Cursor;
 import org.jooq.DSLContext;
 import org.jooq.Identity;
 import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.Result;
 import org.jooq.SQLDialect;
+import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
@@ -281,15 +284,26 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		DSLContext dslContext = DSL.using(conn, SQLDialect.MYSQL,
 				getDefaultSettings());
 
+		SelectConditionStep<Record1<Integer>> agreementLevelId = dslContext
+				.select(AGREEMENT_LEVEL.ID).from(AGREEMENT_LEVEL)
+				.where(AGREEMENT_LEVEL.AGREEMENT.in(agreement.getId()));
+
 		dslContext
 				.delete(AGREEMENT_LEVEL_CATEGORY)
-				.where(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL.in(dslContext
-						.select(AGREEMENT_LEVEL.ID).from(AGREEMENT_LEVEL)
-						.where(AGREEMENT_LEVEL.AGREEMENT.in(agreement.getId()))))
-				.execute();
+				.where(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL
+						.in(agreementLevelId)).execute();
+
+		dslContext
+				.delete(AGREEMENT_LEVEL_DATA)
+				.where(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL
+						.in(agreementLevelId)).execute();
 
 		dslContext.delete(AGREEMENT_LEVEL)
 				.where(AGREEMENT_LEVEL.AGREEMENT.in(agreement.getId()))
+				.execute();
+
+		dslContext.delete(AGREEMENT_EXTRA)
+				.where(AGREEMENT_EXTRA.AGREEMENT.in(agreement.getId()))
 				.execute();
 
 		dslContext.delete(AGREEMENT_DATA)
@@ -328,35 +342,87 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
 			// @formatter:off
 
+			SelectConditionStep<Record1<Integer>> agreementLevelId = dslContext
+					.select(AGREEMENT_LEVEL.ID).from(AGREEMENT_LEVEL)
+					.where(AGREEMENT_LEVEL.AGREEMENT.in(agreement.getId()));
+
+			SelectConditionStep<Record1<Integer>> agreementLevelCategoryId = dslContext
+					.select(AGREEMENT_LEVEL_CATEGORY.ID)
+					.from(AGREEMENT_LEVEL_CATEGORY)
+					.where(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL
+							.in(agreementLevelId));
+
+			dslContext.update(AGREEMENT)
+					.set(AGREEMENT.ID, AGREEMENT.ID.mul(-1))
+					.where(AGREEMENT.ID.eq(agreement.getId())).execute();
+
 			dslContext
 					.update(AGREEMENT_DATA)
-					.set(AGREEMENT_DATA.AGREEMENT, -(agreement.getId()))
+					.set(AGREEMENT_DATA.ID, AGREEMENT_DATA.ID.mul(-1))
+					.set(AGREEMENT_DATA.AGREEMENT,
+							AGREEMENT_DATA.AGREEMENT.mul(-1))
 					.where(AGREEMENT_DATA.AGREEMENT.eq(agreement.getId()))
 					.execute();
 
 			dslContext
-					.update(AGREEMENT_LEVEL)
+					.update(AGREEMENT_EXTRA)
+					.set(AGREEMENT_EXTRA.ID, AGREEMENT_EXTRA.ID.mul(-1))
+					.set(AGREEMENT_EXTRA.AGREEMENT,
+							AGREEMENT_EXTRA.AGREEMENT.mul(-1))
+							
+					.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, 
+							(AGREEMENT_EXTRA.AGREEMENT_PAYMENT != null) 
+							? AGREEMENT_EXTRA.AGREEMENT_PAYMENT.mul(-1) 
+							: AGREEMENT_EXTRA.AGREEMENT_PAYMENT)
+							
+					.where(AGREEMENT_EXTRA.AGREEMENT.eq(agreement.getId()))
+					.execute();
+
+			dslContext
+					.update(CONTRACT)
+					.set(CONTRACT.AGREEMENT_LEVEL_CATEGORY, 
+							(CONTRACT.AGREEMENT_LEVEL_CATEGORY != null) 
+							? CONTRACT.AGREEMENT_LEVEL_CATEGORY.mul(-1) 
+							: CONTRACT.AGREEMENT_LEVEL_CATEGORY)
+							
+					.where(CONTRACT.AGREEMENT_LEVEL_CATEGORY.in(agreementLevelCategoryId)).execute();
+
+			dslContext
+					.update(AGREEMENT_LEVEL_CATEGORY)
+					.set(AGREEMENT_LEVEL_CATEGORY.ID,
+							AGREEMENT_LEVEL_CATEGORY.ID.mul(-1))
+					.set(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL,
+							AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL.mul(-1))
+					.where(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL
+							.in(agreementLevelId)).execute();
+
+			dslContext
+					.update(AGREEMENT_LEVEL_DATA)
+					.set(AGREEMENT_LEVEL_DATA.ID,
+							AGREEMENT_LEVEL_DATA.ID.mul(-1))
+					.set(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL,
+							AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL.mul(-1))
+					.where(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL
+							.in(agreementLevelId)).execute();
+
+			dslContext.update(AGREEMENT_LEVEL)
+					.set(AGREEMENT_LEVEL.ID, AGREEMENT_LEVEL.ID.mul(-1))
 					.set(AGREEMENT_LEVEL.AGREEMENT, -(agreement.getId()))
 					.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreement.getId()))
 					.execute();
 
-			dslContext
-					.update(AGREEMENT_PAYMENT)
+			dslContext.update(AGREEMENT_PAYMENT)
+					.set(AGREEMENT_PAYMENT.ID, AGREEMENT_PAYMENT.ID.mul(-1))
 					.set(AGREEMENT_PAYMENT.AGREEMENT, -(agreement.getId()))
 					.where(AGREEMENT_PAYMENT.AGREEMENT.eq(agreement.getId()))
 					.execute();
 
-			dslContext
-					.update(PAYROLL_WORKPLACE)
-					.set(PAYROLL_WORKPLACE.AGREEMENT, -(agreement.getId()))
+			dslContext.update(PAYROLL_WORKPLACE)
+					.set(PAYROLL_WORKPLACE.ID, PAYROLL_WORKPLACE.ID.mul(-1))
+					.set(PAYROLL_WORKPLACE.AGREEMENT, PAYROLL_WORKPLACE.AGREEMENT.mul(-1))
 					.where(PAYROLL_WORKPLACE.AGREEMENT.eq(agreement.getId()))
 					.execute();
 
-			dslContext
-					.update(AGREEMENT)
-					.set(AGREEMENT.ID, -(agreement.getId()))
-					.where(AGREEMENT.ID.eq(agreement.getId()))
-					.execute();
 			// @formatter:on
 
 			// -----------------------------
