@@ -60,9 +60,9 @@
       			
 					var recentsFiles = []; 
     				<c:forEach var="recent" items="#{dashboard.recentsFiles}">
-    					recentsFiles[recentsFiles.length] = {fileId:#{recent.id}, driveId: #{(empty recent.driveId)  ? 'null' : '"' +recent.driveId +'"'}, mimetype:#{recent.mimetype}, icon:"#{recent.icon}", title:"#{recent.name}" };
+    					recentsFiles[recentsFiles.length] = {fileId:#{recent.id}, driveId:#{(empty recent.driveId)  ? 'null' : "\"".concat(recent.driveId).concat("\"")}, mimetype:#{recent.mimetype}, icon:"#{recent.icon}", title:"#{recent.name}" };
 					</c:forEach>
-
+					
 					function drawTable() {
         				var data = new google.visualization.DataTable();
         				data.addColumn('string', '#{bundle.doc_date}');
@@ -78,7 +78,7 @@
 						<c:set var="count" value="0" scope="page" />						
         				<c:forEach var="recent" items="#{dashboard.recentsFiles}" >
 
-    					data.addRow(['&lt;div style="cursor:pointer;" onclick="preview(${count},recentsFiles)" &gt; #{recent.date != null ? recent.date : "&amp;nbsp;"  } &lt;/div&gt;',
+    						data.addRow(['&lt;div style="cursor:pointer;" onclick="preview(${count},recentsFiles)" &gt; #{recent.date != null ? recent.date : "&amp;nbsp;"  } &lt;/div&gt;',
 							            "&lt;div style=\"cursor:pointer; text-align:left; \" onclick=\"preview(${count},recentsFiles)\" &gt; &lt;span class=\"#{recent.icon}\" style=\"padding-left: 20px;\" &gt;  &lt;/span&gt;#{recent.name} &lt;/div&gt;",
 						             	'&lt;div style="cursor:pointer;" onclick="preview(${count},recentsFiles)" &gt; #{( empty recent.category ) ? "&amp;nbsp;"  : recent.category }&lt;/div&gt;',
 						             	'&lt;div style="cursor:pointer;" onclick="preview(${count},recentsFiles)" &gt; #{( empty recent.sizeString ) ? "&amp;nbsp;" : recent.sizeString }&lt;/div&gt;']);

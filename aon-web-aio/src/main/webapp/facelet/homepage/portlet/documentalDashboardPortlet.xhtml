@@ -210,7 +210,7 @@
       			
 					var recentsFiles = []; 
     				<c:forEach var="recent" items="#{dashboard.recentsFiles}">
-    					recentsFiles[recentsFiles.length] = {fileId:#{recent.id}, driveId:#{(empty recent.driveId)  ? 'null' : '"' +recent.driveId +'"'}, mimetype:#{recent.mimetype}, icon:"#{recent.icon}", title:"#{recent.name}" };
+    					recentsFiles[recentsFiles.length] = {fileId:#{recent.id}, driveId:#{(empty recent.driveId)  ? 'null' : "\"".concat(recent.driveId).concat("\"")}, mimetype:#{recent.mimetype}, icon:"#{recent.icon}", title:"#{recent.name}" };
 					</c:forEach>
 
 					function drawTable() {
