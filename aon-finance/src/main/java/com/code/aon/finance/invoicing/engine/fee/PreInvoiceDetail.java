@@ -11,10 +11,13 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tax;
 import com.code.aon.config.TaxDetail;
+import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryTax;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class PreInvoiceDetail extends InvoiceDetail {
@@ -52,36 +55,36 @@ public class PreInvoiceDetail extends InvoiceDetail {
 	}
 	
 	private void addTax(InvoiceDetail detail, Tax tax) throws ManagerBeanException {
-		if (detail.getInvoice().getIssueDate().before(tax.getStartDate())) {
-			tax = obtainTax(tax.getId(),detail.getInvoice().getIssueDate());
-		}
+		Invoice invoice = detail.getInvoice();
 		InvoiceTax invoiceTax = new InvoiceTax();
 		invoiceTax.setInvoiceDetail(detail);
 		invoiceTax.setTaxType(tax.getType());
 		invoiceTax.setBase(detail.getTaxableBase());
-		invoiceTax.setPercentage(tax.getPercentage());
-		invoiceTax.setSurcharge((detail.getInvoice().isSurcharge()) ? tax.getSurcharge() : 0.0);
+		invoiceTax.setPercentage(getTaxPercentage(tax, invoice.getRegistry(), invoice.getIssueDate(), false));
+		invoiceTax.setSurcharge((detail.getInvoice().isSurcharge()) ? getTaxPercentage(tax, invoice.getRegistry(), invoice.getIssueDate(), true) : 0.0);
 		this.taxList.add(invoiceTax);
 	}
 	
-	private Tax obtainTax(Integer id, Date date) throws ManagerBeanException {
-		IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
-    	Criteria criteria = new Criteria();
-    	criteria.addEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_TAX_ID),id);
-    	criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_START_DATE), date);
-    	criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_END_DATE), date);
-    	for (ITransferObject ito : taxDetailBean.getList(criteria)) {
-    		TaxDetail taxDetail = (TaxDetail)ito;
-    		Tax tax = new Tax();
-    		tax.setId(taxDetail.getTax().getId());
-    		tax.setPercentage(taxDetail.getValue());
-    		tax.setSurcharge(taxDetail.getSurcharge());
-    		tax.setType(taxDetail.getTax().getType());
-    		return tax;
-    	}
-		return null;
+	private double getTaxPercentage(Tax tax, Registry registry, Date date, boolean surcharge) throws ManagerBeanException {
+		RegistryTax rTax = registry.getTax(tax.getId(), date);
+		if (rTax != null) {
+			return (!surcharge) ? rTax.getPercentage() : rTax.getSurcharge();
+		} else {
+			if (date.before(tax.getStartDate())) {
+				IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
+		    	Criteria criteria = new Criteria();
+		    	criteria.addEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_TAX_ID), tax.getId());
+		    	criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_START_DATE), date);
+		    	criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_END_DATE), date);
+		    	for (ITransferObject ito : taxDetailBean.getList(criteria)) {
+		    		TaxDetail taxDetail = (TaxDetail)ito;
+		    		return (!surcharge) ? taxDetail.getValue() : taxDetail.getSurcharge();
+		    	}
+			}
+		}
+		return (!surcharge) ? tax.getPercentage() : tax.getSurcharge();
 	}
-	
+
 	public List<TaxBreakDown> getTaxBreakDowns() {
 		List<TaxBreakDown> taxBreakDowns = new LinkedList<TaxBreakDown>();
 		for (ITransferObject ito : taxList) {

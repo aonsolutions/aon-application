@@ -1,5 +1,7 @@
 package com.code.aon.finance.event;
 
+import java.util.Date;
+
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -16,6 +18,7 @@ import com.code.aon.finance.InvoiceTax;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryTax;
 import com.code.aon.tas.ProjectTas;
 import com.code.aon.tas.enumeration.ProjectStatus;
@@ -90,51 +93,63 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 				for (ITransferObject itr : invoiceTaxBean.getList(criteria)) {
 					InvoiceTax invoiceTax = (InvoiceTax)itr;
 					Tax tax = invoiceTax.isVat() ? invoiceDetail.getItem().getVat() : invoiceDetail.getItem().getRetention();
-					Tax newTax = getDetailNewTax(invoice, tax);
-					if (invoiceTax.getPercentage() != newTax.getPercentage()) {
-						invoiceTax.setQuota(CommonUtil.round(invoiceTax.getBase() * newTax.getPercentage() / 100));
-						invoiceTax.setPercentage(newTax.getPercentage());
-					}
-					if (invoice.isSurcharge() && invoiceTax.getSurcharge() != newTax.getSurcharge()) {
-						invoiceTax.setSurchargeQuota(CommonUtil.round(invoiceTax.getBase() * newTax.getSurcharge() / 100));
-						invoiceTax.setSurcharge(newTax.getSurcharge());
-					}
-					if (invoiceTax.getVatDeductionType() != newTax.getVatDeductionType()) {
-						invoiceTax.setVatDeductionType(newTax.getVatDeductionType());
-					}
-					if (invoiceTax.getWithholdingType() != newTax.getWithholdingType()) {
-						invoiceTax.setWithholdingType(newTax.getWithholdingType());
-					}
-					invoiceTaxBean.update(invoiceTax);
+					updateDetailTax(invoice, invoiceTax, tax);
 				}
 			}
 		}
 	}
 
-	private Tax getDetailNewTax(Invoice invoice, Tax tax) throws ManagerBeanException {
-		RegistryTax rTax = invoice.getRegistry().getTax(tax.getId(), invoice.getIssueDate());
+	private void updateDetailTax(Invoice invoice, InvoiceTax invoiceTax, Tax tax) throws ManagerBeanException {
+		boolean updateTax = false;
+		double newPercent = getTaxPercentage(tax, invoice.getRegistry(), invoice.getIssueDate(), false);
+		if (invoiceTax.getPercentage() != newPercent) {
+			invoiceTax.setQuota(CommonUtil.round(invoiceTax.getBase() * newPercent / 100));
+			invoiceTax.setPercentage(newPercent);
+			updateTax = true;
+		}
+		if (invoice.isSurcharge()) {
+			double newSurcharge = getTaxPercentage(tax, invoice.getRegistry(), invoice.getIssueDate(), true);
+			if (invoiceTax.getSurcharge() != newSurcharge) {
+				invoiceTax.setSurchargeQuota(CommonUtil.round(invoiceTax.getBase() * newSurcharge / 100));
+				invoiceTax.setSurcharge(newSurcharge);
+				updateTax = true;
+			}
+		}
+		if (invoiceTax.isVat()) {
+			if (invoiceTax.getVatDeductionType() != tax.getVatDeductionType()) {
+				invoiceTax.setVatDeductionType(tax.getVatDeductionType());
+				updateTax = true;
+			}
+		} else if (invoiceTax.isRetention()) {
+			if (invoiceTax.getWithholdingType() != tax.getWithholdingType()) {
+				invoiceTax.setWithholdingType(tax.getWithholdingType());
+				updateTax = true;
+			}
+		}
+		
+		if (updateTax) {
+			BeanManager.getManagerBean(InvoiceTax.class).update(invoiceTax);
+		}
+	}
+
+	private double getTaxPercentage(Tax tax, Registry registry, Date date, boolean surcharge) throws ManagerBeanException {
+		RegistryTax rTax = registry.getTax(tax.getId(), date);
 		if (rTax != null) {
-			Tax newTax = rTax.getTax();
-			newTax.setPercentage(rTax.getPercentage());
-			newTax.setSurcharge(rTax.getSurcharge());
-			return newTax;
+			return (!surcharge) ? rTax.getPercentage() : rTax.getSurcharge();
 		} else {
-			if (invoice.getIssueDate().before(tax.getStartDate())) {
+			if (date.before(tax.getStartDate())) {
 				IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
 		    	Criteria criteria = new Criteria();
 		    	criteria.addEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_TAX_ID), tax.getId());
-		    	criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_START_DATE), invoice.getIssueDate());
-		    	criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_END_DATE), invoice.getIssueDate());
+		    	criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_START_DATE), date);
+		    	criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_END_DATE), date);
 		    	for (ITransferObject ito : taxDetailBean.getList(criteria)) {
 		    		TaxDetail taxDetail = (TaxDetail)ito;
-		    		Tax newTax = taxDetail.getTax();
-		    		newTax.setPercentage(taxDetail.getValue());
-		    		newTax.setSurcharge(taxDetail.getSurcharge());
-		    		return newTax;
+		    		return (!surcharge) ? taxDetail.getValue() : taxDetail.getSurcharge();
 		    	}
 			}
 		}
-		return tax;
+		return (!surcharge) ? tax.getPercentage() : tax.getSurcharge();
 	}
 
 	private void updateTotals(Invoice invoice) throws ManagerBeanException {

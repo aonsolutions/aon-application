@@ -194,11 +194,18 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 					}
 				} else {
 					if (invoice.getIssueDate().before(tax.getStartDate())) {
-						tax = obtainTax(tax.getId(), invoice.getIssueDate());
-					}
-					percentage = tax.getPercentage();
-					if (invoice.isSurcharge()) {
-						surcharge = tax.getSurcharge();
+						TaxDetail taxDetail = obtainTax(tax.getId(), invoice.getIssueDate());
+						if (taxDetail != null) {
+							percentage = taxDetail.getValue();
+							if (invoice.isSurcharge()) {
+								surcharge = taxDetail.getSurcharge();
+							}
+						}
+					} else {
+						percentage = tax.getPercentage();
+						if (invoice.isSurcharge()) {
+							surcharge = tax.getSurcharge();
+						}
 					}
 				}
 			}
@@ -219,18 +226,14 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 		return null;
 	}
 
-	private Tax obtainTax(Integer taxId, Date date) throws ManagerBeanException {
+	private TaxDetail obtainTax(Integer taxId, Date date) throws ManagerBeanException {
 		IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
     	Criteria criteria = new Criteria();
     	criteria.addEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_TAX_ID), taxId);
     	criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_START_DATE), date);
     	criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_END_DATE), date);
     	for (ITransferObject ito : taxDetailBean.getList(criteria)) {
-    		TaxDetail taxDetail = (TaxDetail)ito;
-    		Tax tax = taxDetail.getTax();
-    		tax.setPercentage(taxDetail.getValue());
-    		tax.setSurcharge(taxDetail.getSurcharge());
-    		return tax;
+    		return (TaxDetail)ito;
     	}
 		return null;
 	}

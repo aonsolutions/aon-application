@@ -273,20 +273,25 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 		double percent = 0;
 		double surcharge = 0;
 		try {
-			RegistryTax rTax = registry.getTax(tax.getId(), valueDate);
+			RegistryTax rTax = obtainRegistryTax(registry, tax.getId(), valueDate);
 			if (rTax != null) {
-				tax.setPercentage(rTax.getPercentage());
-				tax.setSurcharge(rTax.getSurcharge());
+				percent = rTax.getPercentage();
+				surcharge = rTax.getSurcharge();
 			} else {
 				if (valueDate.before(tax.getStartDate())) {
-					tax = obtainTax(tax, valueDate);
+					TaxDetail taxDetail = obtainTax(tax.getId(), valueDate);
+					if (taxDetail != null) {
+			    		percent = taxDetail.getValue();
+			    		surcharge = taxDetail.getSurcharge();
+					}
+				} else {
+					percent = tax.getPercentage();
+					surcharge = tax.getSurcharge();
 				}
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error obtaining tax info", e);
 		}
-		percent = tax.getPercentage();
-		surcharge = tax.getSurcharge();
 
 		TaxBreakDown taxBreakDown = new TaxBreakDown();
 		taxBreakDown.setTaxType(tax.getType());
@@ -296,19 +301,23 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 		return taxBreakDown;
 	}
 
-	private Tax obtainTax(Tax tax, Date date) throws ManagerBeanException {
+	private RegistryTax obtainRegistryTax(Registry registry, Integer taxId, Date date) throws ManagerBeanException {
+		if (registry != null && registry.getId() != null && taxId != null) {
+			return registry.getTax(taxId, date);
+		}
+		return null;
+	}
+
+	private TaxDetail obtainTax(Integer taxId, Date date) throws ManagerBeanException {
 		IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_TAX_ID), tax.getId());
+		criteria.addEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_TAX_ID), taxId);
 		criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_START_DATE), date);
 		criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_END_DATE), date);
 		for (ITransferObject ito : taxDetailBean.getList(criteria)) {
-    		TaxDetail taxDetail = (TaxDetail)ito;
-    		tax = taxDetail.getTax();
-    		tax.setPercentage(taxDetail.getValue());
-    		tax.setSurcharge(taxDetail.getSurcharge());
+    		return (TaxDetail)ito;
 		}
-		return tax;
+		return null;
 	}
 
 	protected double obtainQuota(double base, double percentage) {
