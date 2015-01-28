@@ -705,8 +705,31 @@ public class Mod190DAO {
 				(INVOICE_TAX.BASE.mul(INVOICE_TAX.PERCENTAGE)).div(100), 2);
 		Field<BigDecimal> quotaOp = DSL.sum(DSL.decode()
 				.when(INVOICE_TAX.QUOTA.notEqual(0.0), INVOICE_TAX.QUOTA)
-				.when(INVOICE_TAX.QUOTA.equal(0.0), invoiceTaxSum)
-				.as(INVOICE_TAX.QUOTA.getName()));
+				.when(INVOICE_TAX.QUOTA.equal(0.0), invoiceTaxSum));
+		System.out.println(
+		ctx.getDslContext()
+		.select(INVOICE.RDOCUMENT, INVOICE.RNAME,
+				INVOICE_TAX.WITHHOLDING_TYPE, minRegistry, sumBase,
+				quotaOp)
+		.from(INVOICE)
+		.join(INVOICE_DETAIL)
+		.on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
+		.join(INVOICE_TAX)
+		.on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
+		.where(INVOICE.DOMAIN.equal(mod190.getDomain()))
+		.and(INVOICE.TYPE.notEqual((byte) 1))
+		// No Ventas
+		.and(INVOICE_TAX.TAX_TYPE.equal((byte) 2))
+		// IRPF
+		.and(INVOICE_TAX.WITHHOLDING_TYPE.in((byte) 0, (byte) 3,
+				(byte) 4))
+		// IRPF de Alquiler
+		.and(INVOICE.ISSUE_DATE.between(AonDateUtils.toSql(firstDay),
+				AonDateUtils.toSql(lastDay)))
+		.groupBy(INVOICE.RDOCUMENT, INVOICE.RNAME,
+				INVOICE_TAX.WITHHOLDING_TYPE)
+			.toString());
+		
 		ctx.getDslContext()
 				.select(INVOICE.RDOCUMENT, INVOICE.RNAME,
 						INVOICE_TAX.WITHHOLDING_TYPE, minRegistry, sumBase,
