@@ -3,6 +3,8 @@
 # Created by: rtrepiana
 # Creation Date: 29/01/2015
 
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+
 BEGIN;
 
 UPDATE geozone_irpf SET end_date = '2015-12-31' WHERE end_date= '2014-12-31' AND geozone_code = '01';
@@ -209,3 +211,4 @@ UPDATE `db_version` SET `version_number` = '8.13.3';
 
 COMMIT;
 
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
