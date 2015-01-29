@@ -9,7 +9,7 @@ UPDATE geozone_irpf SET end_date = '2015-12-31' WHERE end_date= '2014-12-31' AND
 UPDATE geozone_irpf SET end_date = '2015-12-31' WHERE end_date= '2014-12-31' AND geozone_code = '20';
 UPDATE geozone_irpf SET end_date = '2015-12-31' WHERE end_date= '2014-12-31' AND geozone_code = '48';
 
-INSERT INTO `holiday` 
+INSERT INTO `holiday_detail` 
 (`domain`, `holiday`, `date`, `description`) VALUES
 ( 0, 21, '2015-01-01', 'Fiesta de Año Nuevo'),
 ( 0, 21, '2015-12-25', 'Natividad del Señor'),
