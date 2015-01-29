@@ -20,6 +20,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -362,13 +364,13 @@ public class MainTrash extends MainEntryPoint implements
 				});
 	}
 
-	private TreeItem addAgreementItem(Agreement agreement) {
-		String title = "";
+	private TreeItem addAgreementItem(Agreement agreement) {		
 		String style = AON.AON_GREEN;
 		String description = agreement.getDescription();
+		String title = "El convenio '" + description + "' puede eliminarse definitivamente.";
 		if (agreement.getHasContract()) {
-			title = "Imposible eliminar. "
-					+ "Convenio con contratos asociados";
+			title = "Imposible eliminar '" +description + "'. " 
+					+ "Convenio asociado a contratos";
 			style = AON.AON_RED + " " + AON.AON_ICON_CMD_BUTTON;
 		}
 

@@ -19,6 +19,9 @@ import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.ContractLeaveDetail.CONTRACT_LEAVE_DETAIL;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
+import static com.esferalia.aon.jooq.tables.ContrataBatchDetail.CONTRATA_BATCH_DETAIL;
+import static com.esferalia.aon.jooq.tables.FsModel190.FS_MODEL190;
+import static com.esferalia.aon.jooq.tables.FsModel190Detail.FS_MODEL190_DETAIL;
 import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
 import static com.esferalia.aon.jooq.tables.IrpfDataAscendants.IRPF_DATA_ASCENDANTS;
 import static com.esferalia.aon.jooq.tables.IrpfDataDescendients.IRPF_DATA_DESCENDIENTS;
@@ -62,6 +65,9 @@ import com.esferalia.aon.gwt.payroll.shared.Category;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.jooq.tables.Contract;
 import com.esferalia.aon.jooq.tables.ContractInfo;
+import com.esferalia.aon.jooq.tables.ContrataBatchDetail;
+import com.esferalia.aon.jooq.tables.FsModel190;
+import com.esferalia.aon.jooq.tables.FsModel190Detail;
 import com.esferalia.aon.jooq.tables.Person;
 import com.esferalia.aon.jooq.tables.records.ContractBonusRecord;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
@@ -163,17 +169,18 @@ public class JooqEmployees {
 				cursor.close();
 		}
 	}
-	
-	public static List<Employee> getTrashEmployees(Connection conn, int workplaceId) {
-		return getTrashEmployees(DSL.using(
-				conn, getDefaultSettings()), 
+
+	public static List<Employee> getTrashEmployees(Connection conn,
+			int workplaceId) {
+		return getTrashEmployees(DSL.using(conn, getDefaultSettings()),
 				workplaceId);
 	}
-	
-	private static List<Employee> getTrashEmployees(DSLContext context, int workplaceId) {
-		
+
+	private static List<Employee> getTrashEmployees(DSLContext context,
+			int workplaceId) {
+
 		Cursor<Record> cursor = null;
-		
+
 		try {
 			// @formatter:off
 			SelectConditionStep<Record> select = context
@@ -192,11 +199,9 @@ public class JooqEmployees {
 					.where(CONTRACT.WORKPLACE.eq(workplaceId))
 					.and(CONTRACT.ID.lessThan(0));
 
-			cursor = select
-					.orderBy(PERSON.FIRST_SURNAME.asc(),
-							PERSON.SECOND_SURNAME.asc(), PERSON.NAME.asc(),
-							CONTRACT.START_DATE.desc())
-					.fetchLazy();
+			cursor = select.orderBy(PERSON.FIRST_SURNAME.asc(),
+					PERSON.SECOND_SURNAME.asc(), PERSON.NAME.asc(),
+					CONTRACT.START_DATE.desc()).fetchLazy();
 			// @formatter:on
 
 			List<Employee> employees = new LinkedList<Employee>();
@@ -659,7 +664,7 @@ public class JooqEmployees {
 	private static final String SET_FOREIGN_KEY_CHECKS_0 = "SET FOREIGN_KEY_CHECKS=0;";
 	private static final String SET_FOREIGN_KEY_CHECKS_1 = "SET FOREIGN_KEY_CHECKS=1;";
 
-	public static void moveContractId(Connection conn, Integer personId) {
+	public static void moveContractId(Connection conn, final Integer personId) {
 
 		try {
 			Statement sOpen = conn.createStatement();
@@ -671,72 +676,229 @@ public class JooqEmployees {
 			DSLContext dslContext = DSL.using(conn, SQLDialect.MYSQL,
 					getDefaultSettings());
 
-			dslContext.update(IRPF_DATA).set(IRPF_DATA.CONTRACT, -(personId))
-					.where(IRPF_DATA.CONTRACT.eq(personId)).execute();
-
-			dslContext.update(IRPF_REGULARIZATION)
-					.set(IRPF_REGULARIZATION.CONTRACT, -(personId))
-					.where(IRPF_REGULARIZATION.CONTRACT.eq(personId)).execute();
-
-			dslContext.update(IRPF_RESULT)
-					.set(IRPF_RESULT.CONTRACT, -(personId))
-					.where(IRPF_RESULT.CONTRACT.eq(personId)).execute();
-
-			dslContext.update(SALARY).set(SALARY.CONTRACT, -(personId))
-					.where(SALARY.CONTRACT.eq(personId)).execute();
-
-			dslContext.update(CERTIFICA2_BATCH_DETAIL)
-					.set(CERTIFICA2_BATCH_DETAIL.CONTRACT, -(personId))
+			dslContext
+					.update(CERTIFICA2_BATCH_DETAIL)
+					.set(CERTIFICA2_BATCH_DETAIL.ID,
+							CERTIFICA2_BATCH_DETAIL.ID.mul(-1))
+					.set(CERTIFICA2_BATCH_DETAIL.CONTRACT,
+							CERTIFICA2_BATCH_DETAIL.CONTRACT.mul(-1))
 					.where(CERTIFICA2_BATCH_DETAIL.CONTRACT.eq(personId))
 					.execute();
 
-			dslContext.update(CONTRACT_LEAVE)
-					.set(CONTRACT_LEAVE.CONTRACT, -(personId))
-					.where(CONTRACT_LEAVE.CONTRACT.eq(personId)).execute();
-
-			dslContext.update(CONTRACT_ATTACH)
-					.set(CONTRACT_ATTACH.CONTRACT, -(personId))
+			dslContext
+					.update(CONTRACT_ATTACH)
+					.set(CONTRACT_ATTACH.ID, CONTRACT_ATTACH.ID.mul(-1))
+					.set(CONTRACT_ATTACH.CONTRACT,
+							CONTRACT_ATTACH.CONTRACT.mul(-1))
 					.where(CONTRACT_ATTACH.CONTRACT.eq(personId)).execute();
 
-			dslContext.update(CONTRACT_BATCH_DETAIL)
-					.set(CONTRACT_BATCH_DETAIL.CONTRACT, -(personId))
+			dslContext
+					.update(CONTRACT_BATCH_DETAIL)
+					.set(CONTRACT_BATCH_DETAIL.ID,
+							CONTRACT_BATCH_DETAIL.ID.mul(-1))
+					.set(CONTRACT_BATCH_DETAIL.CONTRACT,
+							CONTRACT_BATCH_DETAIL.CONTRACT.mul(-1))
 					.where(CONTRACT_BATCH_DETAIL.CONTRACT.eq(personId))
 					.execute();
 
-			dslContext.update(CONTRACT_BONUS)
-					.set(CONTRACT_BONUS.CONTRACT, -(personId))
+			dslContext
+					.update(CONTRACT_BONUS)
+					.set(CONTRACT_BONUS.ID, CONTRACT_BONUS.ID.mul(-1))
+					.set(CONTRACT_BONUS.CONTRACT,
+							CONTRACT_BONUS.CONTRACT.mul(-1))
 					.where(CONTRACT_BONUS.CONTRACT.eq(personId)).execute();
 
-			dslContext.update(CONTRACT_CALENDAR_EVENT)
-					.set(CONTRACT_CALENDAR_EVENT.CONTRACT, -(personId))
+			dslContext
+					.update(CONTRACT_CALENDAR_EVENT)
+					.set(CONTRACT_CALENDAR_EVENT.ID,
+							CONTRACT_CALENDAR_EVENT.ID.mul(-1))
+					.set(CONTRACT_CALENDAR_EVENT.CONTRACT,
+							CONTRACT_CALENDAR_EVENT.CONTRACT.mul(-1))
 					.where(CONTRACT_CALENDAR_EVENT.CONTRACT.eq(personId))
 					.execute();
 
-			dslContext.update(CONTRACT_CLAUSE)
-					.set(CONTRACT_CLAUSE.CONTRACT, -(personId))
+			dslContext
+					.update(CONTRACT_CLAUSE)
+					.set(CONTRACT_CLAUSE.ID, CONTRACT_CLAUSE.ID.mul(-1))
+
+					.set(CONTRACT_CLAUSE.CONTRACT,
+							(CONTRACT_CLAUSE.CONTRACT != null) ? CONTRACT_CLAUSE.CONTRACT
+									.mul(-1) : CONTRACT_CLAUSE.CONTRACT)
+
 					.where(CONTRACT_CLAUSE.CONTRACT.eq(personId)).execute();
 
-			dslContext.update(CONTRACT_DATA)
-					.set(CONTRACT_DATA.CONTRACT, -(personId))
+			dslContext
+					.update(CONTRACT_DATA)
+					.set(CONTRACT_DATA.ID, CONTRACT_DATA.ID.mul(-1))
+					.set(CONTRACT_DATA.CONTRACT, CONTRACT_DATA.CONTRACT.mul(-1))
 					.where(CONTRACT_DATA.CONTRACT.eq(personId)).execute();
 
-			dslContext.update(CONTRACT_DEDUCTION)
-					.set(CONTRACT_DEDUCTION.CONTRACT, -(personId))
+			dslContext
+					.update(CONTRACT_DEDUCTION)
+					.set(CONTRACT_DEDUCTION.ID, CONTRACT_DEDUCTION.ID.mul(-1))
+					.set(CONTRACT_DEDUCTION.CONTRACT,
+							CONTRACT_DEDUCTION.CONTRACT.mul(-1))
 					.where(CONTRACT_DEDUCTION.CONTRACT.eq(personId)).execute();
 
-			dslContext.update(CONTRACT_EMBARGO)
-					.set(CONTRACT_EMBARGO.CONTRACT, -(personId))
+			// ------------------------------------------- SALARY TABLES
+
+			SelectConditionStep<Record1<Integer>> salaryId = dslContext
+					.select(SALARY.ID).from(SALARY)
+					.where(SALARY.CONTRACT.eq(personId));
+
+			dslContext.update(SALARY_BONUS)
+					.set(SALARY_BONUS.ID, SALARY_BONUS.ID.mul(-1))
+					.set(SALARY_BONUS.SALARY, SALARY_BONUS.SALARY.mul(-1))
+					.where(SALARY_BONUS.SALARY.in(salaryId)).execute();
+
+			dslContext.update(SALARY_COST)
+					.set(SALARY_COST.ID, SALARY_COST.ID.mul(-1))
+					.set(SALARY_COST.SALARY, SALARY_COST.SALARY.mul(-1))
+					.where(SALARY_COST.SALARY.in(salaryId)).execute();
+
+			dslContext.update(SALARY_DATA)
+					.set(SALARY_DATA.ID, SALARY_DATA.ID.mul(-1))
+					.set(SALARY_DATA.SALARY, SALARY_DATA.SALARY.mul(-1))
+					.where(SALARY_DATA.SALARY.in(salaryId)).execute();
+
+			dslContext
+					.update(SALARY_DEDUCTION)
+					.set(SALARY_DEDUCTION.ID, SALARY_DEDUCTION.ID.mul(-1))
+					.set(SALARY_DEDUCTION.SALARY,
+							SALARY_DEDUCTION.SALARY.mul(-1))
+					.where(SALARY_DEDUCTION.SALARY.in(salaryId)).execute();
+
+			dslContext.update(SALARY_EMBARGO)
+					.set(SALARY_EMBARGO.ID, SALARY_EMBARGO.ID.mul(-1))
+					.set(SALARY_EMBARGO.SALARY, SALARY_EMBARGO.SALARY.mul(-1))
+					.where(SALARY_EMBARGO.SALARY.in(salaryId)).execute();
+
+			dslContext.update(SALARY_PAYMENT)
+					.set(SALARY_PAYMENT.ID, SALARY_PAYMENT.ID.mul(-1))
+					.set(SALARY_PAYMENT.SALARY, SALARY_PAYMENT.SALARY.mul(-1))
+					.where(SALARY_PAYMENT.SALARY.in(salaryId)).execute();
+
+			dslContext.update(SALARY).set(SALARY.ID, SALARY.ID.mul(-1))
+					.set(SALARY.CONTRACT, SALARY.CONTRACT.mul(-1))
+					.where(SALARY.CONTRACT.eq(personId)).execute();
+
+			// -----------------------------------------------------------
+
+			dslContext
+					.update(CONTRACT_EMBARGO)
+					.set(CONTRACT_EMBARGO.ID, CONTRACT_EMBARGO.ID.mul(-1))
+					.set(CONTRACT_EMBARGO.CONTRACT,
+							CONTRACT_EMBARGO.CONTRACT.mul(-1))
 					.where(CONTRACT_EMBARGO.CONTRACT.eq(personId)).execute();
 
-			dslContext.update(CONTRACT_INFO)
-					.set(CONTRACT_INFO.CONTRACT, -(personId))
+			dslContext
+					.update(CONTRACT_INFO)
+					.set(CONTRACT_INFO.ID, CONTRACT_INFO.ID.mul(-1))
+
+					.set(CONTRACT_INFO.CONTRACT,
+							(CONTRACT_INFO.CONTRACT != null) ? CONTRACT_INFO.CONTRACT
+									.mul(-1) : CONTRACT_INFO.CONTRACT)
+
 					.where(CONTRACT_INFO.CONTRACT.eq(personId)).execute();
 
-			dslContext.update(CONTRACT_PAYMENT)
-					.set(CONTRACT_PAYMENT.CONTRACT, -(personId))
+			SelectConditionStep<Record1<Integer>> contractLeaveId = dslContext
+					.select(CONTRACT_LEAVE.ID).from(CONTRACT_LEAVE)
+					.where(CONTRACT_LEAVE.CONTRACT.eq(personId));
+
+			SelectConditionStep<Record1<Integer>> contractLeaveDetailId = dslContext
+					.select(CONTRACT_LEAVE_DETAIL.ID)
+					.from(CONTRACT_LEAVE_DETAIL)
+					.where(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE
+							.eq(contractLeaveId));
+
+			dslContext
+					.update(LEAVE_BATCH_DETAIL)
+					.set(LEAVE_BATCH_DETAIL.ID, LEAVE_BATCH_DETAIL.ID.mul(-1))
+					.set(LEAVE_BATCH_DETAIL.CONTRACT_LEAVE_DETAIL,
+							LEAVE_BATCH_DETAIL.CONTRACT_LEAVE_DETAIL.mul(-1))
+					.where(LEAVE_BATCH_DETAIL.CONTRACT_LEAVE_DETAIL
+							.in(contractLeaveDetailId)).execute();
+
+			dslContext
+					.update(CONTRACT_LEAVE_DETAIL)
+					.set(CONTRACT_LEAVE_DETAIL.ID,
+							CONTRACT_LEAVE_DETAIL.ID.mul(-1))
+					.set(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE,
+							CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.mul(-1))
+					.where(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE
+							.in(contractLeaveId)).execute();
+
+			dslContext
+					.update(CONTRACT_LEAVE)
+					.set(CONTRACT_LEAVE.ID, CONTRACT_LEAVE.ID.mul(-1))
+					.set(CONTRACT_LEAVE.CONTRACT,
+							CONTRACT_LEAVE.CONTRACT.mul(-1))
+					.where(CONTRACT_LEAVE.CONTRACT.eq(personId)).execute();
+
+			dslContext
+					.update(CONTRACT_PAYMENT)
+					.set(CONTRACT_PAYMENT.ID, CONTRACT_PAYMENT.ID.mul(-1))
+					.set(CONTRACT_PAYMENT.CONTRACT,
+							CONTRACT_PAYMENT.CONTRACT.mul(-1))
 					.where(CONTRACT_PAYMENT.CONTRACT.eq(personId)).execute();
 
-			dslContext.update(CONTRACT).set(CONTRACT.ID, -(personId))
+			dslContext
+					.update(CONTRATA_BATCH_DETAIL)
+					.set(CONTRATA_BATCH_DETAIL.ID,
+							CONTRATA_BATCH_DETAIL.ID.mul(-1))
+					.set(CONTRATA_BATCH_DETAIL.CONTRACT,
+							CONTRATA_BATCH_DETAIL.CONTRACT.mul(-1))
+					.where(CONTRATA_BATCH_DETAIL.CONTRACT.eq(personId))
+					.execute();
+
+			dslContext
+					.update(FS_MODEL190_DETAIL)
+					.set(FS_MODEL190_DETAIL.ID, FS_MODEL190_DETAIL.ID.mul(-1))
+					.set(FS_MODEL190_DETAIL.CONTRACT,
+							FS_MODEL190_DETAIL.CONTRACT.mul(-1))
+					.where(FS_MODEL190_DETAIL.CONTRACT.eq(personId.byteValue()))
+					.execute();
+
+			SelectConditionStep<Record1<Integer>> irpfDataId = dslContext
+					.select(IRPF_DATA.ID).from(IRPF_DATA)
+					.where(IRPF_DATA.CONTRACT.eq(personId));
+
+			dslContext
+					.update(IRPF_DATA_ASCENDANTS)
+					.set(IRPF_DATA_ASCENDANTS.ID,
+							IRPF_DATA_ASCENDANTS.ID.mul(-1))
+					.set(IRPF_DATA_ASCENDANTS.IRPF_DATA,
+							IRPF_DATA_ASCENDANTS.IRPF_DATA.mul(-1))
+					.where(IRPF_DATA_ASCENDANTS.IRPF_DATA.in(irpfDataId))
+					.execute();
+
+			dslContext
+					.update(IRPF_DATA_DESCENDIENTS)
+					.set(IRPF_DATA_DESCENDIENTS.ID,
+							IRPF_DATA_DESCENDIENTS.ID.mul(-1))
+					.set(IRPF_DATA_DESCENDIENTS.IRPF_DATA,
+							IRPF_DATA_DESCENDIENTS.IRPF_DATA.mul(-1))
+					.where(IRPF_DATA_DESCENDIENTS.IRPF_DATA.in(irpfDataId))
+					.execute();
+
+			dslContext.update(IRPF_DATA)
+					.set(IRPF_DATA.ID, IRPF_DATA.ID.mul(-1))
+					.set(IRPF_DATA.CONTRACT, IRPF_DATA.CONTRACT.mul(-1))
+					.where(IRPF_DATA.CONTRACT.eq(personId)).execute();
+
+			dslContext
+					.update(IRPF_REGULARIZATION)
+					.set(IRPF_REGULARIZATION.ID, IRPF_REGULARIZATION.ID.mul(-1))
+					.set(IRPF_REGULARIZATION.CONTRACT,
+							IRPF_REGULARIZATION.CONTRACT.mul(-1))
+					.where(IRPF_REGULARIZATION.CONTRACT.eq(personId)).execute();
+
+			dslContext.update(IRPF_RESULT)
+					.set(IRPF_RESULT.ID, IRPF_RESULT.ID.mul(-1))
+					.set(IRPF_RESULT.CONTRACT, IRPF_RESULT.CONTRACT.mul(-1))
+					.where(IRPF_RESULT.CONTRACT.eq(personId)).execute();
+
+			dslContext.update(CONTRACT).set(CONTRACT.ID, CONTRACT.ID.mul(-1))
 					.where(CONTRACT.ID.eq(personId)).execute();
 
 			// ------------------------------------------------------
@@ -757,7 +919,7 @@ public class JooqEmployees {
 
 		DSLContext create = DSL.using(conn, SQLDialect.MYSQL,
 				getDefaultSettings());
-
+		
 		// ----------------------------------IRPF-------------------------------------------
 
 		SelectConditionStep<Record1<Integer>> irpfSelect = create
@@ -848,22 +1010,29 @@ public class JooqEmployees {
 
 		create.delete(CONTRACT_BATCH_DETAIL)
 				.where(CONTRACT_BATCH_DETAIL.CONTRACT.in(personIds)).execute();
+		
 		create.delete(CONTRACT_BATCH)
 				.where(CONTRACT_BATCH.ID.in(batchDetailSelect)).execute();
 
 		create.delete(CONTRACT_BONUS)
 				.where(CONTRACT_BONUS.CONTRACT.in(personIds)).execute();
+		
 		create.delete(CONTRACT_CALENDAR_EVENT)
 				.where(CONTRACT_CALENDAR_EVENT.CONTRACT.in(personIds))
 				.execute();
+		
 		create.delete(CONTRACT_CLAUSE)
 				.where(CONTRACT_CLAUSE.CONTRACT.in(personIds)).execute();
+		
 		create.delete(CONTRACT_DATA)
 				.where(CONTRACT_DATA.CONTRACT.in(personIds)).execute();
+		
 		create.delete(CONTRACT_DEDUCTION)
 				.where(CONTRACT_DEDUCTION.CONTRACT.in(personIds)).execute();
+		
 		create.delete(CONTRACT_EMBARGO)
 				.where(CONTRACT_EMBARGO.CONTRACT.in(personIds)).execute();
+		
 		create.delete(CONTRACT_INFO)
 				.where(CONTRACT_INFO.CONTRACT.in(personIds)).execute();
 

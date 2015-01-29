@@ -56,7 +56,6 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		} else {
 			updateAgreementPayment(dslContext, payment);
 		}
-
 	}
 
 	public static void removePayment(Connection conn, Payment payment)
@@ -407,7 +406,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
 			dslContext.update(AGREEMENT_LEVEL)
 					.set(AGREEMENT_LEVEL.ID, AGREEMENT_LEVEL.ID.mul(-1))
-					.set(AGREEMENT_LEVEL.AGREEMENT, -(agreement.getId()))
+					.set(AGREEMENT_LEVEL.AGREEMENT, AGREEMENT_LEVEL.AGREEMENT.mul(-1))
 					.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreement.getId()))
 					.execute();
 

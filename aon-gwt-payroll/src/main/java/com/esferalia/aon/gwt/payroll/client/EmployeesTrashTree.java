@@ -10,6 +10,8 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -36,7 +38,10 @@ public class EmployeesTrashTree extends Composite implements KeyDownHandler {
 
 	interface EmployeesTrashTreeUiBinder extends
 			UiBinder<Widget, EmployeesTrashTree> {
-	}	
+	}
+	
+	private static final DateTimeFormat END_DATE_FORMAT = DateTimeFormat
+			.getFormat(PredefinedFormat.DATE_SHORT);
 
 	@UiField
 	Tree tree;
@@ -106,10 +111,17 @@ public class EmployeesTrashTree extends Composite implements KeyDownHandler {
 			listener.onSuprKeyDown(employee);
 	}
 	
-	public void addEmployeeItem(Employee employee) {		
+	public void addEmployeeItem(Employee employee) {
+		
+		StringBuffer text = new StringBuffer(employee.getFullname());
+		if (employee.getEndDate() != null) {
+			text.append(" (");
+			text.append(END_DATE_FORMAT.format(employee.getEndDate()));
+			text.append(")");
+		}
 				
 		final TreeItem item = new TreeItem(imageItemHTML(images.oldemployee(), 
-				employee.getFullname()));		
+				text.toString()));		
 		item.setUserObject(employee);		
 		tree.addItem(item);		
 	}
@@ -117,17 +129,6 @@ public class EmployeesTrashTree extends Composite implements KeyDownHandler {
 	public void removeEmployeeItem(Employee employee) {
 		
 	}
-
-	/**
-	 * A helper method to simplify adding tree items that have attached images.
-	 * {@link #addImageItem(TreeItem, String, childs, ImageResource) code}
-	 * 
-	 */
-	private TreeItem addImageItem(String title, ImageResource imageProto) {
-		TreeItem item = new TreeItem(imageItemHTML(imageProto, title));
-		return item;
-	}
-
 	/**
 	 * Generates HTML for a tree item with an attached icon.
 	 */
