@@ -202,9 +202,9 @@ INSERT INTO `holiday_detail`
 ( 0, 92, '2015-01-29', 'San Valero');
 
 INSERT INTO system_data 
-( name	, expression, start_date	, end_date	, read_only	, comments ) 
+( domain, name	, expression, start_date	, end_date	, read_only	, comments ) 
 VALUES 
-('SMI'	, '648.60'	, '2015-01-01'	, NULL		, 0			, 'Salario mínimo interprofesional' );
+( 0		,'SMI'	, '648.60'	, '2015-01-01'	, NULL		, 0			, 'Salario mínimo interprofesional' );
 
 
 UPDATE `db_version` SET `version_number` = '8.13.3';
