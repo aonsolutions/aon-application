@@ -134,12 +134,19 @@ public class Aeat2014Mod303Calculator extends FiscalModelDetailCalculator implem
 				
 				double d1 = mod303.ensureAmount( Mod303Key.CAC1_D);
 				double g1 = mod303.ensureAmount( Mod303Key.CAC1_G);
-				double i1 = CommonUtil.round( (c1 - d1 - g01 - g1));
+				double h1 = mod303.ensureAmount( Mod303Key.CAC1_H);
+				double i1 = CommonUtil.round( ((c1 - d1 - g01 - g1)));
+				if (h1 != 0) {
+					i1 = CommonUtil.round( i1 * h1 );
+				}
 				mod303.getDetail( Mod303Key.CAC1_I ).setAmount( i1 );
 				
 				double j1 = mod303.ensureAmount( Mod303Key.CAC1_J);
 				double k1 = mod303.ensureAmount( Mod303Key.CAC1_K);
 				double l1 = CommonUtil.round( ((c1 - d1) * j1 / 100) + k1);
+				if (h1 != 0) {
+					l1 = CommonUtil.round( l1 * h1 );
+				}
 				mod303.getDetail( Mod303Key.CAC1_L ).setAmount( l1 );
 				
 				mod303.getDetail( Mod303Key.CAC1_M ).setAmount( l1>i1?l1:i1 );
@@ -206,12 +213,19 @@ public class Aeat2014Mod303Calculator extends FiscalModelDetailCalculator implem
 				mod303.ensureDetail( Mod303Key.CAC2_G0 ).setAmount( g02 );
 				double d2 = mod303.ensureAmount( Mod303Key.CAC2_D);
 				double g2 = mod303.ensureAmount( Mod303Key.CAC2_G);
+				double h2 = mod303.ensureAmount( Mod303Key.CAC2_H);
 				double i2 = CommonUtil.round( (c2 - d2 - g02 - g2));
+				if (h2 != 0) {
+					i2 = CommonUtil.round( i2 * h2 );
+				}
 				mod303.getDetail( Mod303Key.CAC2_I ).setAmount( i2 );
 				
 				double j2 = mod303.ensureAmount( Mod303Key.CAC2_J);
 				double k2 = mod303.ensureAmount( Mod303Key.CAC2_K);
 				double l2 = CommonUtil.round( ((c2 - d2) * j2 / 100) + k2);
+				if (h2 != 0) {
+					l2 = CommonUtil.round( l2 * h2 );
+				}
 				mod303.getDetail( Mod303Key.CAC2_L ).setAmount( l2 );
 				
 				mod303.getDetail( Mod303Key.CAC2_M ).setAmount( l2>i2?l2:i2 );
