@@ -170,7 +170,8 @@ public class DomainController extends BasicController {
 			updateDocumental();
 			this.currentDomainInfo = DomainInfo.getDomainInfo(getDomain(), bookingInfo);
 			if ( this.historyState.getDirectModel().getRowCount() == 0 ) {
-				saveHistory(this.currentDomainInfo);
+				this.currentDomainInfo.setAutoUpdate(true);
+				saveHistory(this.currentDomainInfo, getCompany());
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
@@ -184,7 +185,12 @@ public class DomainController extends BasicController {
 				parent = domain.getParent();
 			}
 			BookingInfo bookingInfo = new BookingInfo(domain, parent);
-			bookingInfo.init();
+			boolean updated = bookingInfo.init();
+			if ( updated ) {
+				DomainInfo di = DomainInfo.getDomainInfo(domain, bookingInfo);
+				di.setAutoUpdate(true);
+				saveHistory(di, getCompany(domain.getId()));
+			}
 			return bookingInfo;
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
@@ -529,7 +535,7 @@ public class DomainController extends BasicController {
 			Domain domain = getDomain();
 			AuthPrincipal principal = AonUtil.getAuthPrincipal();
 			updateDomain(domain, principal);
-			saveHistory(di);
+			saveHistory(di, getCompany());
 			Address[] emails = getNotificationEmails(getDomain().getId());
 			if (! ArrayUtils.isEmpty(emails) ) {
 				String subject = AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_SUBJECT, domain.getName());
@@ -687,11 +693,16 @@ public class DomainController extends BasicController {
 	public static Company getAdminCompany() throws ManagerBeanException {
 		Integer adminId = AdminUtil.getAdminDomain();
 		if ( adminId != null ) {
-			Integer companyId = AdminUtil.getCompanyId(adminId);
-			if ( companyId != null ) {
-				IManagerBean bean = BeanManager.getManagerBean(Company.class);
-				return (Company) bean.get(companyId);
-			}
+			return getCompany(adminId);
+		}
+		return null;
+	}
+
+	private static Company getCompany( Integer domainId ) throws ManagerBeanException {
+		Integer companyId = AdminUtil.getCompanyId(domainId);
+		if ( companyId != null ) {
+			IManagerBean bean = BeanManager.getManagerBean(Company.class);
+			return (Company) bean.get(companyId);
 		}
 		return null;
 	}
@@ -712,8 +723,8 @@ public class DomainController extends BasicController {
 		this.historyState = new DataScrollerState(new SerializableListDataModel(list), "history");
 	}
 	
-	private void saveHistory( DomainInfo di ) throws ManagerBeanException {
-		saveHistory(di, getCompany(), RegistryAttachmentType.DOMAIN_BOOK_HISTORY);
+	private static void saveHistory( DomainInfo di, Company company ) throws ManagerBeanException {
+		saveHistory(di, company, RegistryAttachmentType.DOMAIN_BOOK_HISTORY);
 	}
 	
 	public static void saveHistory( DomainInfo di, Company company, RegistryAttachmentType type ) throws ManagerBeanException {

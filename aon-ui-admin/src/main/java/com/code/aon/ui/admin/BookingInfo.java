@@ -12,6 +12,8 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.audit.enumeration.Module;
@@ -30,6 +32,8 @@ import com.code.aon.ui.util.AonUtil;
 public class BookingInfo implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(BookingInfo.class);
 
 	private Domain domain;
 	
@@ -58,30 +62,22 @@ public class BookingInfo implements Serializable {
 		return parentDomain;
 	}
 	
-	private void setRendered( List<DomainModuleInfo> modulesInfos, boolean value ) {
-		for ( DomainModuleInfo dmi : modulesInfos ) {
-			dmi.setRendered(value);
-		}				
-	}
-	
 	private void resetUnusedModules() {
+		List<DomainModuleInfo> modules = new LinkedList<DomainModuleInfo>(this.bookingModules);
+		modules.addAll(this.displayModules);
 		for ( DomainModuleInfo dmi : aioInfo.getApplicationModules() ) {
-			if(! dmi.isRendered() ) {
+			if(! modules.contains(dmi) ) {
 				dmi.setChecked(false);	
 			}
 		}				
 	}
 
-	public void init() throws ManagerBeanException {
-		this.aioInfo = DomainApplicationInfo.getApplicationInfos(getDomain(), AON_AIO_APPLICATION);
-		setRendered(aioInfo.getApplicationModules(), false);
-		this.bookingModules = calculateBookingModules();
-		setRendered(this.bookingModules, true);
-		this.displayModules = calculateDisplayModules();
-		setRendered(this.displayModules, true);
-		updateModules(this.aioInfo, AonUtil.getRoleManager().isSysAdmin());
-		resetUnusedModules();
+	public boolean init() throws ManagerBeanException {
 		initExternalApplications();
+		this.aioInfo = DomainApplicationInfo.getApplicationInfos(getDomain(), AON_AIO_APPLICATION);
+		this.bookingModules = calculateBookingModules();
+		this.displayModules = calculateDisplayModules();
+		return updateModules();
 	}
 	
 	private void initExternalApplications() {
@@ -95,6 +91,16 @@ public class BookingInfo implements Serializable {
 		
 	public List<DomainModuleInfo> getBookingModules() {
 		return bookingModules;
+	}
+
+	public List<DomainModuleInfo> getSelectableBookingModules() {
+		List<DomainModuleInfo> list = new LinkedList<DomainModuleInfo>();
+		for( DomainModuleInfo dim : bookingModules ) {
+			if ( dim.isRendered() ) {
+				list.add(dim);
+			}
+		}
+		return list;
 	}
 	
 	public List<DomainModuleInfo> getDisplayModules() {
@@ -145,7 +151,7 @@ public class BookingInfo implements Serializable {
 		return aioInfo;
 	}
 
-	private DomainModuleInfo getDocumental() {
+	public DomainModuleInfo getDocumental() {
 		return documental;
 	}
 	
@@ -170,10 +176,14 @@ public class BookingInfo implements Serializable {
 		}
 	}
 	
-	private void updateModules( DomainApplicationInfo appInfo, boolean sysAdmin ) throws ManagerBeanException {
+	private boolean updateModules() throws ManagerBeanException {
 		convertToNewCofiguration();
-		appInfo.updateApplicationModules();
 		this.documental = this.aioInfo.getModuleInfo(Module.DOCUMENT);
+		if ( getDomain().getType() == DomainType.ENTERPRISE ) {
+			updateEnterpriseModules();	
+		}
+		resetUnusedModules();
+		return this.aioInfo.updateApplicationModules();
 	}	
 
 	private void convertToNewCofiguration() throws ManagerBeanException {
@@ -192,7 +202,9 @@ public class BookingInfo implements Serializable {
 	
 	private void updateAonOneModules() {
 		for( DomainModuleInfo dmi : aioInfo.getApplicationModules() ) {
-			dmi.setChecked(false);
+			if ( dmi.getModule() != Module.DOCUMENT ) {
+				dmi.setChecked(false);	
+			}
 		}
 		DomainModuleInfo aonOneModule = aioInfo.getModuleInfo(Module.AON_ONE);
 		aonOneModule.setChecked(true);		
@@ -220,16 +232,27 @@ public class BookingInfo implements Serializable {
 				list.add(aioInfo.getModuleInfo(Module.PAYROLL));
 				break;
 			case ENTERPRISE:
-				list.add(aioInfo.getModuleInfo(Module.AON_ONE));
+				DomainModuleInfo aonOne = aioInfo.getModuleInfo(Module.AON_ONE);
+				list.add(aonOne);
+				aonOne.setRendered(false);
 				break;
 			case GARAGE:
-				aioInfo.getModuleInfo(Module.GARAGE).setChecked(true);
+				DomainModuleInfo garage = aioInfo.getModuleInfo(Module.GARAGE); 
+				list.add(garage);
+				garage.setRendered(false);
+				garage.setChecked(true);
 				break;
 			case ACADEMY:
-				aioInfo.getModuleInfo(Module.ACADEMY).setChecked(true);
+				DomainModuleInfo academy = aioInfo.getModuleInfo(Module.ACADEMY); 
+				list.add(academy);
+				academy.setRendered(false);
+				academy.setChecked(true);
 				break;
 			case HOTEL:
-				aioInfo.getModuleInfo(Module.HOTEL).setChecked(true);
+				DomainModuleInfo hotel = aioInfo.getModuleInfo(Module.HOTEL); 
+				list.add(hotel);
+				hotel.setRendered(false);
+				hotel.setChecked(true);
 				break;
 		}
 		this.aioInfo.sortApplicationModules(list);
@@ -262,20 +285,6 @@ public class BookingInfo implements Serializable {
 		if ( getDomain().getType() == DomainType.GENERIC ) {
 			list.add(aioInfo.getModuleInfo(Module.INFOWEB));
 		}
-		if ( getParentDomain() != null ) {
-			Integer parentDomainId = getParentDomain().getId();
-			Integer applicationId = aioInfo.getApplication().getId();
-			DomainModuleInfo fiscal = aioInfo.getModuleInfo(Module.FISCAL);
-			if ( !this.bookingModules.contains(fiscal) &&
-				AuditManager.hasModule(parentDomainId, applicationId, Module.FISCAL) ) {
-				list.add(aioInfo.getModuleInfo(Module.FISCAL));
-			}
-			DomainModuleInfo payroll = aioInfo.getModuleInfo(Module.PAYROLL);
-			if ( !this.bookingModules.contains(payroll) &&
-					AuditManager.hasModule(parentDomainId, applicationId, Module.PAYROLL) ) {
-				list.add(aioInfo.getModuleInfo(Module.PAYROLL));
-			}
-		}
 		this.aioInfo.sortApplicationModules(list);
 		return list;
 	}
@@ -307,5 +316,51 @@ public class BookingInfo implements Serializable {
 	public void setTirant(boolean value) {
 		setExternalApplicationsValue(ICommonConstants.TIRANT_EXTERNAL_APP, value);
 	}		
+
+	private void updateEnterpriseModules() throws ManagerBeanException {
+		if ( isAonOne() ) {
+			this.bookingModules.clear();
+			this.bookingModules.add(aioInfo.getModuleInfo(Module.AON_ONE));
+			this.bookingModules.add(this.documental);
+			this.displayModules.remove(this.documental);
+		} else {
+			this.bookingModules.clear();
+			this.bookingModules.add(aioInfo.getModuleInfo(Module.AON_ONE));
+			if ( getParentDomain() != null ) {
+				Integer parentDomainId = getParentDomain().getId();
+				Integer applicationId = aioInfo.getApplication().getId();
+				boolean parentUser = !getDomain().getId().equals(AonUtil.getAuthPrincipal().getDomainId());				
+				DomainModuleInfo fiscal = aioInfo.getModuleInfo(Module.FISCAL);
+				if ( AuditManager.hasModule(parentDomainId, applicationId, Module.FISCAL) ) {
+					this.bookingModules.add(fiscal);
+					fiscal.setDisabled(!parentUser);
+				}
+				DomainModuleInfo payroll = aioInfo.getModuleInfo(Module.PAYROLL);
+				if ( AuditManager.hasModule(parentDomainId, applicationId, Module.PAYROLL) ) {
+					this.bookingModules.add(payroll);
+					payroll.setDisabled(!parentUser);
+				}
+				DomainModuleInfo accounting = aioInfo.getModuleInfo(Module.ACCOUNTING);
+				if ( AuditManager.hasModule(parentDomainId, applicationId, Module.ACCOUNTING) ) {
+					this.bookingModules.add(accounting);
+					accounting.setDisabled(!parentUser);
+					this.displayModules.remove(accounting);
+				}
+			}			
+			if (! this.displayModules.contains(this.documental) ) {
+				this.displayModules.add(this.documental);
+			}
+		}
+		this.aioInfo.sortApplicationModules(this.bookingModules);
+		this.aioInfo.sortApplicationModules(this.displayModules);
+	}
+	
+	public void onAonOneChanged( ActionEvent event ) {
+		try {
+			updateEnterpriseModules();
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+	}
 	
 }

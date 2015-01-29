@@ -85,13 +85,15 @@ public class DomainModuleInfo implements Serializable {
 		this.description = description;
 	}
 	
-	public void remove() throws ManagerBeanException {
+	public boolean remove() throws ManagerBeanException {
 		if ( this.applicationModule != null ) {
 			IManagerBean damBean = BeanManager.getManagerBean(DomainApplicationModule.class);			
 			damBean.remove(this.applicationModule);	
 			LOGGER.info( "Removed: {}", this.applicationModule );
 			setApplicationModule(null);
+			return true;
 		}			
+		return false;
 	}
 	
 	private boolean insert( DomainApplication domainApplication ) throws ManagerBeanException {
@@ -110,11 +112,11 @@ public class DomainModuleInfo implements Serializable {
 	}	
 	
 	public boolean update( DomainApplication domainApplication ) throws ManagerBeanException {
-		boolean updated = true;
+		boolean updated = false;
 		if ( isChecked() ) {
 			updated = insert(domainApplication);
 		} else {
-			remove();
+			updated = remove();
 		}
 		return updated;
 	}

@@ -127,8 +127,8 @@ public class DomainApplicationInfo implements Serializable {
 		return updated;
 	}
 	
-	public void updateApplicationModules() throws ManagerBeanException {
-		updateApplicationModules(getApplicationModules());
+	public boolean updateApplicationModules() throws ManagerBeanException {
+		return updateApplicationModules(getApplicationModules());
 	}
 
 	public void unregister() throws ManagerBeanException {

@@ -229,22 +229,26 @@
 							value="#{documentManager.usedSpaceMessage}" />
 					</h:panelGrid>
 					
-					<aon:if test="#{fn:length(adminDomain.bookingInfo.bookingModules) &gt; 0}">
+					<aon:if test="#{(adminDomain.to.type == 'ENTERPRISE') or (fn:length(adminDomain.bookingInfo.selectableBookingModules) &gt; 0)}">
 						<aon:outputLabel value="#{bundle.admin_modules_booked}" />
-						<aon:div>
+						<h:panelGrid id="bookedModulesDiv" columns="2"
+							cellpadding="0" cellspacing="0">
 							<aon:if test="#{adminDomain.to.type == 'ENTERPRISE'}">
-								<aon:selectOneRadio id="Domain_aonOne" 
+								<aon:selectOneRadio id="Domain_aonOne"
+									styleClass="aon-margin-right" 
 									value="#{adminDomain.bookingInfo.aonOne}" >
 									<f:selectItem itemLabel="#{bundle.admin_domain_aonAIO}" itemValue="#{false}" />
 									<f:selectItem itemLabel="#{bundle.aon_module_aonOne}" itemValue="#{true}" />
 									<a4j:support event="onchange" ajaxSingle="true"
-										reRender="adminDomainToolbar" />
-								</aon:selectOneRadio>							
+										actionListener="#{adminDomain.bookingInfo.onAonOneChanged}"
+										reRender="adminDomainToolbar,bookedModulesDiv" />
+								</aon:selectOneRadio>		
 							</aon:if>
-							<aon:if test="#{adminDomain.to.type != 'ENTERPRISE'}">
+							<aon:panelGroup>
 								<a4j:repeat var="appModule"
-									value="#{adminDomain.bookingInfo.bookingModules}">
+									value="#{adminDomain.bookingInfo.selectableBookingModules}">
 									<aon:selectBooleanCheckbox
+										disabled="#{appModule.disabled}"
 										value="#{appModule.checked}" >
 										<a4j:support event="onchange" ajaxSingle="true"
 											rendered="#{appModule.module == 'DOCUMENT'}"
@@ -252,10 +256,11 @@
 											reRender="Domain_maxTotalDocumentSize" />
 									</aon:selectBooleanCheckbox>								
 									<aon:outputText styleClass="aon-italic aon-margin-right"
+										style="#{(appModule.disabled)?'color: graytext;':''}"
 										value="#{appModule.description}" />
 								</a4j:repeat>
-							</aon:if>
-						</aon:div>	
+							</aon:panelGroup>
+						</h:panelGrid>	
 					</aon:if>
 
 					<aon:outputLabel for="Domain_externalApplications"

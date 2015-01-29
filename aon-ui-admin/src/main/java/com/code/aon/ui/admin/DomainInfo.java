@@ -64,6 +64,8 @@ public class DomainInfo implements Serializable {
 	
 	private static final String PARENT = "parent";
 	
+	private static final String AUTO_UPDATE = "autoUpdate";
+	
 	private String name;
 	
 	private DomainInfoType infoType;
@@ -89,6 +91,8 @@ public class DomainInfo implements Serializable {
 	private boolean tirant;
 	
 	private boolean dehOnline;
+	
+	private boolean autoUpdate;
 	
 	public DomainInfo() {
 		type = DomainType.ENTERPRISE;
@@ -155,6 +159,10 @@ public class DomainInfo implements Serializable {
 		if ( BooleanUtils.toBoolean(dehOnlineValue) ) {
 			this.dehOnline = true;
 		}		
+		String autoUpdateValue = properties.getProperty(AUTO_UPDATE);
+		if ( BooleanUtils.toBoolean(autoUpdateValue) ) {
+			this.autoUpdate = true;
+		}		
 	}
 
 	public DomainType getType() {
@@ -201,7 +209,13 @@ public class DomainInfo implements Serializable {
 		Set<String> modules = new TreeSet<String>();
 		Locale locale = AonUtil.getCurrentLocale();
 		for( Module module : this.bookinModules ) {
-			modules.add( module.getName(locale) );
+			String name = null;
+			if ( isDomainManagement() && (module == Module.PAYROLL_PORTAL) ) {
+				name = AonUtil.getMessage(ICommonMessages.ADMIN_GLOBAL_PORTAL);
+			} else {
+				name = module.getName(locale);
+			}
+			modules.add( name );
 		}
 		for( Module module : this.displayModules ) {
 			modules.add( module.getName(locale) );
@@ -225,6 +239,10 @@ public class DomainInfo implements Serializable {
 	
 	public void setBookingModules(List<DomainModuleInfo> moduleInfos) {
 		this.bookinModules = getModules(moduleInfos);
+	}
+	
+	public List<Module> getDisplayModules() {
+		return displayModules;
 	}
 
 	public void setDisplayModules(List<DomainModuleInfo> moduleInfos) {
@@ -285,6 +303,14 @@ public class DomainInfo implements Serializable {
 
 	public DomainInfoType getInfoType() {
 		return infoType;
+	}
+	
+	public boolean isAutoUpdate() {
+		return autoUpdate;
+	}
+
+	public void setAutoUpdate(boolean autoUpdate) {
+		this.autoUpdate = autoUpdate;
 	}
 
 	private void diff( StringBuffer sb, String message, boolean newValue ) {
@@ -383,6 +409,9 @@ public class DomainInfo implements Serializable {
 		}
 		if ( dehOnline ) {
 			properties.setProperty(DEH_ONLINE, Boolean.TRUE.toString());
+		}
+		if ( autoUpdate ) {
+			properties.setProperty(AUTO_UPDATE, Boolean.TRUE.toString());
 		}
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try {
