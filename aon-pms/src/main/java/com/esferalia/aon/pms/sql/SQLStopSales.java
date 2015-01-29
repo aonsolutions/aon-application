@@ -48,7 +48,7 @@ public class SQLStopSales implements ISQLConstants {
 		PreparedStatement stopSalesStmt = null;
 		ResultSet stopSalesRs = null;
 		try {
-			stopSalesStmt = connection.prepareStatement(SELECT_BASIC_STOP_SALES + obtainWhereClause(id, items, tariffs));
+			stopSalesStmt = connection.prepareStatement(SELECT_BASIC_STOP_SALES + obtainWhereClause(id, items, tariffs, false));
 			SQLUtils.setInt(stopSalesStmt, 1, DomainManager.getCurrentDomain());
 			SQLUtils.setInt(stopSalesStmt, 2, hotel.getId());
 			SQLUtils.setDate(stopSalesStmt, 3, startDate);
@@ -101,7 +101,7 @@ public class SQLStopSales implements ISQLConstants {
 		PreparedStatement stopSalesStmt = null;
 		ResultSet stopSalesRs = null;
 		try {
-			stopSalesStmt = connection.prepareStatement(SELECT_BASIC_STOP_SALES + obtainWhereClause(null, item, tariff));
+			stopSalesStmt = connection.prepareStatement(SELECT_BASIC_STOP_SALES + obtainWhereClause(null, item, tariff, true));
 			SQLUtils.setInt(stopSalesStmt, 1, DomainManager.getCurrentDomain());
 			SQLUtils.setInt(stopSalesStmt, 2, hotel.getId());
 			SQLUtils.setDate(stopSalesStmt, 3, fromDate);
@@ -116,6 +116,7 @@ public class SQLStopSales implements ISQLConstants {
 					}
 				}
 			}
+			SQLUtils.closeQuietly(stopSalesRs);
 
 			if (stopSalesDateList.size() > 0) {
 				if (agency == null || agency.getId() == null) {
@@ -140,22 +141,26 @@ public class SQLStopSales implements ISQLConstants {
 		}
 	}
 
-	private static String obtainWhereClause(Integer id, Item item, Tariff tariff) {
+	private static String obtainWhereClause(Integer id, Item item, Tariff tariff, boolean includeAll) {
 		String items = (item != null && item.getId() != null) ? item.getId().toString() : null;
 		String tariffs = (tariff != null && tariff.getId() != null) ? tariff.getId().toString() : null;
-		return obtainWhereClause(id, items, tariffs);
+		return obtainWhereClause(id, items, tariffs, includeAll);
 	}
 
-	private static String obtainWhereClause(Integer id, String items, String tariffs) {
+	private static String obtainWhereClause(Integer id, String items, String tariffs, boolean includeAll) {
 		StringBuffer where = new StringBuffer();
 		if (id != null) {
 			where.append(" AND SS.id != " + id);
 		}
 		if (StringUtils.isNotBlank(items)) {
 			where.append(" AND (SSI.item IN (" + items + ") OR SSI.item IS NULL)");
+		} else if (includeAll) {
+			where.append(" AND SSI.item IS NULL");
 		}
 		if (StringUtils.isNotBlank(tariffs)) {
 			where.append(" AND (SST.tariff IN (" + tariffs + ") OR SST.tariff IS NULL)");
+		} else if (includeAll) {
+			where.append(" AND SST.tariff IS NULL");
 		}
 		return where.toString();
 	}

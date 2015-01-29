@@ -31,6 +31,7 @@ import com.esferalia.aon.pms.ReservationRequest;
 import com.esferalia.aon.pms.ReservationRequestRoom;
 import com.esferalia.aon.pms.reservation.AvailableRoomStay;
 import com.esferalia.aon.pms.reservation.ReservationRequestManager;
+import com.esferalia.aon.pms.reservation.ReservationUtils;
 import com.esferalia.aon.pms.sql.SQLStopSales;
 import com.esferalia.aon.pms.sql.SQLUtils;
 import com.esferalia.aon.ui.pms.util.PmsUtils;
@@ -157,6 +158,7 @@ public class ReservationRequestRoomController extends LinesController implements
 	}
 
 	public void sendBookingQuery(ActionEvent event) throws ManagerBeanException {
+		ReservationUtils reservationUtils = new ReservationUtils();
 		if (getModel().isRowAvailable()) {
 			ReservationRequestController requestController = (ReservationRequestController)getMasterController();
 			ReservationRequest request = (ReservationRequest)requestController.getTo();
@@ -165,38 +167,42 @@ public class ReservationRequestRoomController extends LinesController implements
 			AvailableRoomStay availableRoomStay = getAvailableRoomStayList().get(Integer.parseInt(ec.getRequestParameterMap().get("availableRoomStayIndex")));
 			requestRoom.setReservationRequest(request);
 			requestRoom.setTariffCode(availableRoomStay.getTariffCode());
-			if (!mustStopSale(requestRoom)) {
-				request.setRequestCounter(request.getRequestCounter() + 1);
-				requestController.setSkipResetAvailabilityMap(true);
-				requestController.accept(event);
-				requestController.setSkipResetAvailabilityMap(false);
-
-				ReservationRequestManager manager = new ReservationRequestManager();
-				availableRoomStay = manager.processBookingRequest(requestRoom, requestController.getRequestGuest(), availableRoomStay);
-				if (!availableRoomStay.isError()) {
-					requestRoom.setCrsCode(availableRoomStay.getReservationId());
-					requestRoom.setTariffCode(availableRoomStay.getTariffCode());
-					requestRoom.setTariffDescription(availableRoomStay.getTariffDescription());
-					requestRoom.setInventoryCode(availableRoomStay.getInventoryCode());
-					requestRoom.setRoomCode(availableRoomStay.getRoomCode());
-					requestRoom.setRoomDescription(availableRoomStay.getRoomDescription());
-					requestRoom.setMealPlan(availableRoomStay.getMealPlan());
-					requestRoom.setDailyPrice(availableRoomStay.getDailyPrice());
-					requestRoom.setTotalPrice(availableRoomStay.getTotalPrice());
-					requestRoom.setCancelPenalty(availableRoomStay.getCancelPenalty());
-					getManagerBean().update(requestRoom);
-
-					request.setActive(false);
+			if (reservationUtils.obtainTariff(requestRoom.getTariffCode()) != null) {
+				if (!mustStopSale(requestRoom)) {
+					request.setRequestCounter(request.getRequestCounter() + 1);
 					requestController.setSkipResetAvailabilityMap(true);
 					requestController.accept(event);
 					requestController.setSkipResetAvailabilityMap(false);
 
-					getAvailableRoomStayMap().remove(requestRoom.getId());
+					ReservationRequestManager manager = new ReservationRequestManager();
+					availableRoomStay = manager.processBookingRequest(requestRoom, requestController.getRequestGuest(), availableRoomStay);
+					if (!availableRoomStay.isError()) {
+						requestRoom.setCrsCode(availableRoomStay.getReservationId());
+						requestRoom.setTariffCode(availableRoomStay.getTariffCode());
+						requestRoom.setTariffDescription(availableRoomStay.getTariffDescription());
+						requestRoom.setInventoryCode(availableRoomStay.getInventoryCode());
+						requestRoom.setRoomCode(availableRoomStay.getRoomCode());
+						requestRoom.setRoomDescription(availableRoomStay.getRoomDescription());
+						requestRoom.setMealPlan(availableRoomStay.getMealPlan());
+						requestRoom.setDailyPrice(availableRoomStay.getDailyPrice());
+						requestRoom.setTotalPrice(availableRoomStay.getTotalPrice());
+						requestRoom.setCancelPenalty(availableRoomStay.getCancelPenalty());
+						getManagerBean().update(requestRoom);
 
-					//manager.processNewReservation(requestRoom);
+						request.setActive(false);
+						requestController.setSkipResetAvailabilityMap(true);
+						requestController.accept(event);
+						requestController.setSkipResetAvailabilityMap(false);
+
+						getAvailableRoomStayMap().remove(requestRoom.getId());
+
+						//manager.processNewReservation(requestRoom);
+					}
+				} else {
+					AonUtil.addErrorMessage("Hay un Paro de Ventas definido para el Hotel en ese periodo y condiciones.");
 				}
 			} else {
-				AonUtil.addErrorMessage("Hay un Paro de Ventas definido para el Hotel en ese periodo y condiciones.");
+				AonUtil.addErrorMessage("La Tarifa no existe en el PMS. Contactar con el Administrador del Sistema.");
 			}
 		}
 	}
