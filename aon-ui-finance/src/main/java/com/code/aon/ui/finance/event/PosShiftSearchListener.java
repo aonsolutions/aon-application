@@ -145,7 +145,6 @@ public class PosShiftSearchListener extends ControllerSearchListener {
 		}
 		if (!AonUtil.getRoleManager().isConfig() && !AonUtil.getRoleManager().isSaleOperator()) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.POS_SHIFT_USERNAME), UserUtils.getInstance().getLoggedUser().getLogin());
-			criteria.addNotNullExpression(getFieldName(IEntityAlias.POS_SHIFT_END_TIME));
 		}
 		if (getStartTimeFrom() != null) {
 			criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.POS_SHIFT_START_TIME), getStartTimeFrom());
