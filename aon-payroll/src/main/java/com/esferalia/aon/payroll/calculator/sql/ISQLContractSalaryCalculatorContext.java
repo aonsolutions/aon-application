@@ -44,6 +44,9 @@ public interface ISQLContractSalaryCalculatorContext extends
 			add(new Order(
 					ExpressionUtilities.getIdentifierExpression("end_date"),
 					false));
+			add(new Order(
+					ExpressionUtilities.getIdentifierExpression("start_date"),
+					false));
 		}
 	};
 
@@ -56,6 +59,9 @@ public interface ISQLContractSalaryCalculatorContext extends
 					true));
 			add(new Order(
 					ExpressionUtilities.getIdentifierExpression("end_date"),
+					true));
+			add(new Order(
+					ExpressionUtilities.getIdentifierExpression("start_date"),
 					true));
 		}
 	};

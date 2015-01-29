@@ -216,9 +216,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	private static final Map<Object, Object> JR_HTML_EXPORTER_PARAMS = new HashMap<Object, Object>() {
 		{
-			put(JRHtmlExporterParameter.HTML_HEADER, "<div class='page' >");
+			put(JRHtmlExporterParameter.HTML_HEADER,
+					"<div class='page page-shadow' >");
 			put(JRHtmlExporterParameter.BETWEEN_PAGES_HTML,
-					"</div><div class='page' >");
+					"</div><div class='page page-shadow' >");
 			put(JRHtmlExporterParameter.HTML_FOOTER, "</div>");
 		}
 	};
@@ -375,7 +376,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			releaseFacesContext();
 		}
 	}
-	
+
 	@Override
 	public List<Employee> getTrashEmployees(int workplaceId)
 			throws IllegalArgumentException {
@@ -953,12 +954,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 
 	}
-	
+
 	@Override
 	public void moveContractId(Employee employee)
 			throws IllegalArgumentException {
 		Connection conn = null;
-		
+
 		try {
 			initFacesContext();
 			conn = getConnection();
@@ -2614,7 +2615,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				activity.setId(rs.getInt(EnterpriseActivityColumns.ID));
 				activity.setDescription(rs
 						.getString(EnterpriseActivityColumns.DESCRIPTION));
-				activity.setCnae2009(rs.getInt(EnterpriseActivityColumns.CNAE2009));
+				activity.setCnae2009(rs
+						.getInt(EnterpriseActivityColumns.CNAE2009));
 
 				activities.add(activity);
 			}
@@ -4311,7 +4313,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			conn = getConnection();
 
 			SQLSystemExpressionContextFactory systemCtxFactory = new SQLSystemExpressionContextFactory(
-					conn, start, end);
+					conn, start, end, ISQLContractSalaryCalculatorContext.NEWER);
 
 			Supplier<ExpressionContext> systemCtxSupplier = () -> systemCtxFactory
 					.create(new CCCContextKey(null, null));

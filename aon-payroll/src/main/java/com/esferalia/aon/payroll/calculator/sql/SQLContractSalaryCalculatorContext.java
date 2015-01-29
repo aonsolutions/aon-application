@@ -801,7 +801,7 @@ public class SQLContractSalaryCalculatorContext extends
 
 		cccExpressionContexts = new LRUCache<CCCContextKey, ExpressionContext>(
 				CACHE_SIZE, new SQLSystemExpressionContextFactory(connection,
-						this.startDate, this.endDate));
+						this.startDate, this.endDate, order));
 
 		agreementContextFactory = new SQLAgreementContextFactory(connection,
 				this::getCCCExpressionContext, this.startDate, this.endDate,
@@ -2495,6 +2495,7 @@ public class SQLContractSalaryCalculatorContext extends
 				try {
 					return getIrpf();
 				} catch (Throwable t) {
+					t.printStackTrace();
 					// TODO : Sure?
 					return 0.00;
 				}

@@ -1,5 +1,6 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
+import static com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.orderBy;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_END;
@@ -10,12 +11,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLType;
 import java.sql.Types;
 import java.util.Calendar;
 import java.util.Date;
 
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.ql.OrderByList;
 import com.esferalia.aon.payroll.calculator.AonConstants;
 import com.esferalia.aon.payroll.calculator.AonFunctions;
 import com.esferalia.aon.payroll.calculator.ContextFunctions;
@@ -36,7 +37,8 @@ public class SQLSystemExpressionContextFactory implements
 	private static final String SYSTEM_DATA_SQL = "SELECT * "
 			+ " FROM `system_data`" + " WHERE start_date <= ? "
 			+ " AND ( end_date IS NULL " + " OR end_date >= ? )"
-			+ " AND domain IN (0,?,?) ORDER BY domain DESC ";
+			+ " AND domain IN (0,?,?) "
+			+ " ORDER BY domain DESC ";
 
 	private static Long getYearDays(Date startDate, Date endDate) {
 		Date startDay = CommonUtil.getYearFirstDay(startDate);
@@ -75,12 +77,13 @@ public class SQLSystemExpressionContextFactory implements
 	}
 
 	private static void loadSystemData(Connection connection, Date startDate,
-			Date endDate, ExpressionContext expressionCtx, CCCContextKey key)
+			Date endDate, ExpressionContext expressionCtx, CCCContextKey key, OrderByList order)
 			throws SQLException, ExpressionException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
-			stmt = connection.prepareStatement(SYSTEM_DATA_SQL);
+			String sql = orderBy(SYSTEM_DATA_SQL, order);
+			stmt = connection.prepareStatement(sql);
 			stmt.setDate(1, new java.sql.Date(endDate.getTime()));
 			stmt.setDate(2, new java.sql.Date(startDate.getTime()));
 			
@@ -124,7 +127,7 @@ public class SQLSystemExpressionContextFactory implements
 	}
 
 	private static ExpressionContext newSystemCtx(Connection connection,
-			Date startDate, Date endDate, CCCContextKey cccCtxKey) {
+			Date startDate, Date endDate, CCCContextKey cccCtxKey, OrderByList order) {
 		ExpressionContext systemExpressionContext = new ExpressionContext();
 
 		AonConstants.load(systemExpressionContext, startDate, endDate);
@@ -152,7 +155,7 @@ public class SQLSystemExpressionContextFactory implements
 
 		try {
 			loadSystemData(connection, startDate, endDate,
-					systemExpressionContext, cccCtxKey);
+					systemExpressionContext, cccCtxKey, order);
 		} catch (ExpressionException | SQLException e) {
 			// TODO:
 		}
@@ -162,12 +165,14 @@ public class SQLSystemExpressionContextFactory implements
 	private Date endDate;
 	private Date startDate;
 	private Connection connection;
+	private OrderByList order;
 
 	public SQLSystemExpressionContextFactory(Connection connection,
-			Date startDate, Date endDate) {
+			Date startDate, Date endDate, OrderByList order) {
 		this.connection = connection;
 		this.startDate = startDate;
 		this.endDate = endDate;
+		this.order = order;
 	}
 
 	// ------------------------------------------------------------------------
@@ -175,6 +180,6 @@ public class SQLSystemExpressionContextFactory implements
 
 	@Override
 	public ExpressionContext create(CCCContextKey key) {
-		return newSystemCtx(connection, startDate, endDate, key);
+		return newSystemCtx(connection, startDate, endDate, key, order);
 	}
 }
