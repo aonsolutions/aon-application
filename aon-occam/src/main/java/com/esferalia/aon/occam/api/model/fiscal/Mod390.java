@@ -10,7 +10,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 @SuppressWarnings("serial")
 public class Mod390 implements Serializable {
 
-	private static final String LEGAL_ENTITY_PATTERN = "^[0-9|X|Y|Z].*";
+	private static final String LEGAL_ENTITY_PATTERN = "^[0-9|E|J|X|Y|Z].*";
 
 	public static class Activity implements Serializable {
 
