@@ -125,10 +125,12 @@ public class Mod390toAEATIVA2014 {
 		
 		iva.setDevengo(getDevengo(mod390));
 		iva.setDatEstadisticos(getStatisticalData(mod390));
-		if ( mod390.isLegalEntity() ) {
-			iva.getRepresentanteJuridica().addAll( getRepresentanteJuridica(mod390) );
-		} else {
+		if (!mod390.isLegalEntity() 
+				|| AonStringUtils.startsWith(mod390.getDocument(),"E") 
+				|| AonStringUtils.startsWith(mod390.getDocument(),"J")) {
 			iva.setRepresentanteFisica( getRepresentanteFisica(mod390) );
+		} else {
+			iva.getRepresentanteJuridica().addAll( getRepresentanteJuridica(mod390) );
 		}
 		iva.setRegGeneral(getRegGeneral(mod390));
 		
