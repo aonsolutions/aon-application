@@ -111,8 +111,12 @@ public class SQLContractExtraCalculatorContext extends
 		for (IContractPayment p : super.getContractPayments())
 			if (!StringUtils.isBlank(p.getName())
 					&& p.getSalaryType() == SalaryType.SALARY) {
-				ctx.addLazyExpression(new SimpleContractPayment(p),
+				ctx.addPullExpression(new SimpleContractPayment(p),
+						p.getStartDate(), p.getEndDate(), Double.class);
+/*
+ 				ctx.addLazyExpression(new SimpleContractPayment(p),
 						p.getStartDate(), p.getEndDate());
+*/
 			}
 
 	}
