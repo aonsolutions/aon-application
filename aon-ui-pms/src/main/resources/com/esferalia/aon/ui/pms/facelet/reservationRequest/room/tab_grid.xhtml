@@ -326,7 +326,7 @@
 							action="#{controller.getReservationPage}"
 							reRender="aonContent">
 						</aon:commandLink>
-					</aon:div>
+					</aon:div>  
 				</aon:column>
 
 				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
@@ -342,11 +342,11 @@
 						<aon:confirmButton id="reservationCancel" immediate="true" 
 							styleClass="aon-editDataTable-button aon-icon-exclude aon-nowrap"
 							title="#{bundle.pms_to_cancel_reservation}"
-							rendered="#{reservationData.reservation.active and reservationData.reservation.noCheck}" 
+							rendered="#{reservationData.reservation.active}" 
 							confirmTitle="#{bundle.aon_confirm_title}"
 							confirmMessage="#{bundle.pms_to_cancel_reservation_confirm}"
 							confirmActionListener="#{controller.onCancelRoomReservation}" />
-					</aon:div>
+					</aon:div>  
 				</aon:column>
 
 			</rich:subTable>
