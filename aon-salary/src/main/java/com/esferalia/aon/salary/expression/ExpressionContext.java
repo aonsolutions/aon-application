@@ -155,7 +155,7 @@ public class ExpressionContext {
 		public T getValue() {
 			return getValue(getPeriod());
 		}
-		
+
 		@Override
 		public T getValue(Period period) {
 			IExpression expression = getExpression();
@@ -401,10 +401,9 @@ public class ExpressionContext {
 		return (T) variables.get(name.toString(), new Period(start, end));
 	}
 
-	public void add(ExpressionContext ctx){
+	public void add(ExpressionContext ctx) {
 		variables.putAll(ctx.variables);
 	}
-	
 
 	public List<ITimedResult<Object>> addExpression(IExpression expression,
 			Date start, Date end) throws ExpressionException {
@@ -457,6 +456,46 @@ public class ExpressionContext {
 
 	}
 
+	public <V> void addPullExpression(IExpression expression, Date start,
+			Date end, Class<V> toType) throws ExpressionException {
+		String script = expression.getExpression();
+
+		Set<String> inputs = null;
+
+		if (StringUtils.isBlank(script))
+			inputs = Collections.emptySet();
+		else
+			inputs = getVarNames(script);
+
+		List<PeriodMap> bindings = variables.getBindings(inputs, start, end);
+		for (PeriodMap periodMap : bindings) {
+			putVariable(expression.getName(), new ITimedVariable<V>() {
+
+				Period period = periodMap.getPeriod();
+
+				@Override
+				public Period getPeriod() {
+					return period;
+				}
+
+				@Override
+				public V getValue(Period period) {
+					List<ITimedResult<V>> results;
+					try {
+						results = ExpressionContext.this.eval(
+								expression.getExpression(), period.getStart(),
+								period.getEnd(), toType);
+						return results.size() > 0 ? results.get(0).getValue()
+								: null;
+					} catch (ExpressionException e) {
+						throw new ExpressionExceptionWrapper(e);
+					}
+				}
+			});
+		}
+
+	}
+
 	public List<ITimedResult<Object>> eval(String script, Date start, Date end)
 			throws ExpressionException {
 		return eval(script, start, end, Object.class);
@@ -467,8 +506,8 @@ public class ExpressionContext {
 			UndefinedVariablesException {
 		if (script == null) {
 			ITimedResult<T> result = (new TimedResult<T>((T) null, new Period(
-					start, end), Collections
-					.<String, ITimedVariable<?>> emptyMap()));
+					start, end),
+					Collections.<String, ITimedVariable<?>> emptyMap()));
 			return Collections.singletonList(result);
 		}
 		Set<String> inputs = getVarNames(script);
