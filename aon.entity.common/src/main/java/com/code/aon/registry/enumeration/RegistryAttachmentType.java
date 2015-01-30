@@ -21,7 +21,8 @@ public enum RegistryAttachmentType implements IResourceable {
 	ENTERPRISE_CONTRACT_CLAUSES,
 	DOMAIN_BOOK_HISTORY,
 	DOMAIN_INSERT_HISTORY,
-	DOMAIN_REMOVE_HISTORY;
+	DOMAIN_REMOVE_HISTORY,
+	AON_TEMPLATES;
 	
 	
     /** Message key prefix. */

@@ -126,6 +126,10 @@
 		<servlet-name>Resource Servlet</servlet-name>
 		<url-pattern>/aon_gwt_document/*</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Resource Servlet</servlet-name>
+		<url-pattern>/aon_gwt_template/*</url-pattern>
+	</servlet-mapping>
 	<servlet>
 		<servlet-name>Employees Servlet</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.payroll.server.EmployeesServiceImpl</servlet-class>
@@ -238,6 +242,26 @@
 	<servlet-mapping>
 		<servlet-name>AmazonLoginCallbackServlet</servlet-name>
 		<url-pattern>/amazonLoginPopupClose/*</url-pattern>
+	</servlet-mapping>
+	
+	<!--  Aon GWT Template -->
+	
+	<servlet>
+		<servlet-name>TemplateGwtServlet</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.template.server.TemplatesServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>TemplateGwtServlet</servlet-name>
+		<url-pattern>/aon_gwt_template/gwt_template</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>DownloadTemplates</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.template.server.DownloadTemplatesServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DownloadTemplates</servlet-name>
+		<url-pattern>/aon_gwt_template/gwt_download/*</url-pattern>
 	</servlet-mapping>
 	
 	<!-- Aon GWT Document -->

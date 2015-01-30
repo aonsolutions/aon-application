@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.code.aon</groupId>
     <artifactId>aon.parent</artifactId>
-    <version>8.14-SNAPSHOT</version>
+    <version>8.13-SNAPSHOT</version>
   </parent>
   <artifactId>aon-aio</artifactId>
   <packaging>war</packaging>
@@ -241,6 +241,13 @@
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.gwt.document</artifactId>
+			<version>${project.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+				
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.gwt.template</artifactId>
 			<version>${project.version}</version>
 			<scope>runtime</scope>
 		</dependency>

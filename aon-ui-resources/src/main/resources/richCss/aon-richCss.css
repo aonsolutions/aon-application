@@ -1427,6 +1427,11 @@ color:#000;
 	padding:1px 0.5em 1px 0.5em;
 }
 
+.aon-panelGrid-aux{
+	border: 1px solid #FFF;
+	width: 50px;
+}
+
 /*
 .aon-panelGrid{
 	border-collapse:collapse;

@@ -150,6 +150,7 @@
 		<module>aon-gwt-payroll</module>
 		<module>aon-gwt-fiscal</module>
 		<module>aon-gwt-document</module>
+		<module>aon-gwt-template</module>
 
 		<!-- GENERATED -->
 		<module>aon-audabridge-api</module>
