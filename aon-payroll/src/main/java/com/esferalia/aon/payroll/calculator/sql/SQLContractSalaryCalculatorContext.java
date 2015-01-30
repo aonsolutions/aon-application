@@ -442,7 +442,7 @@ public class SQLContractSalaryCalculatorContext extends
 								parentDays + leaveParentDays, type,
 								dailyRegBase, exprCtx);
 					}
-
+					
 					if (dailyRegBase != null) {
 						exprCtx.putVariable(ContextVariable.REGULATORY_BASE,
 								new TimedObject<Double>(dailyRegBase,
@@ -454,6 +454,56 @@ public class SQLContractSalaryCalculatorContext extends
 								ContextVariable.IT_START));
 						exprCtx.addLazyExpression(exp, leaveStart, leaveEnd);
 					}
+
+					
+					type.accept(new LeaveTypeVisitor<Void>() {
+
+						@Override
+						public Void visitCommonDisease(LeaveType leaveType) {
+							exprCtx.setVariable(ContextVariable.COMMON_DISEASE_DAYS,
+									0, guarenteeStart, guarenteeEnd);
+							return null;
+						}
+
+						@Override
+						public Void visitOcupationalDisease(LeaveType leaveType) {
+							exprCtx.setVariable(ContextVariable.OCCUPATIONAL_DISEASE_DAYS,
+									0, guarenteeStart, guarenteeEnd);
+							return null;
+						}
+
+						@Override
+						public Void visitMaternity(LeaveType leaveType) {
+							exprCtx.setVariable(ContextVariable.MATERNITY_DAYS,
+									0, guarenteeStart, guarenteeEnd);
+							return null;
+						}
+
+						@Override
+						public Void visitPaternity(LeaveType leaveType) {
+							exprCtx.setVariable(ContextVariable.PATERNITY_DAYS,
+									0, guarenteeStart, guarenteeEnd);
+							return null;
+						}
+
+						@Override
+						public Void visitPregnacyRisk(LeaveType leaveType) {
+							return null;
+						}
+
+						@Override
+						public Void visitBreastFeedingRisk(LeaveType leaveType) {
+							return null;
+						}
+
+						@Override
+						public Void visitNonOcupationalDisease(
+								LeaveType leaveType) {
+							return visitCommonDisease(leaveType);
+						}
+						
+					});
+					
 
 				}
 			};
