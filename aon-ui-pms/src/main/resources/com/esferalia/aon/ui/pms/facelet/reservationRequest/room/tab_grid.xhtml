@@ -318,19 +318,35 @@
 					</f:facet>
 					<aon:div>
 						<aon:outputText value="#{reservationData.crsCode}" />
-						<aon:commandLink id="reservationLink"
+						<aon:commandLink id="reservationLink" immediate="true"
 							styleClass="aon-button-goto" style="padding-right: 20px;" 
-							value="&#160;" immediate="true"
-							rendered="#{!empty reservationData.crsCode and !reservationRequest.agencyUser}" 
+							value="&#160;" title="#{bundle.aon_go}"
+							rendered="#{reservationData.reservation != null and reservationData.reservation.id != null and !reservationRequest.agencyUser}" 
 							actionListener="#{controller.onLoadRoomReservation}"
 							action="#{controller.getReservationPage}"
 							reRender="aonContent">
 						</aon:commandLink>
-					</aon:div>  
+					</aon:div>
 				</aon:column>
 
 				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
-					<aon:outputText value="&#160;" />
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_status}" />
+					</f:facet>
+					<aon:div styleClass="#{(reservationData.reservation.cancelled or reservationData.reservation.blocked) ? 
+											('aon-label-error') : ((reservationData.reservation.invoiced) ?
+												('aon-label-info') : (''))}" 
+							rendered="#{reservationData.reservation != null and reservationData.reservation.id != null}">
+						<aon:outputText value="#{reservationData.reservation.status}"
+							styleClass="aon-margin-right" /> 
+						<aon:confirmButton id="reservationCancel" immediate="true" 
+							styleClass="aon-editDataTable-button aon-icon-exclude aon-nowrap"
+							title="#{bundle.pms_to_cancel_reservation}"
+							rendered="#{reservationData.reservation.active and reservationData.reservation.noCheck}" 
+							confirmTitle="#{bundle.aon_confirm_title}"
+							confirmMessage="#{bundle.pms_to_cancel_reservation_confirm}"
+							confirmActionListener="#{controller.onCancelRoomReservation}" />
+					</aon:div>
 				</aon:column>
 
 			</rich:subTable>
