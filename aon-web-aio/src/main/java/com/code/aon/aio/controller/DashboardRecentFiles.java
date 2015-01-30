@@ -20,7 +20,7 @@ public class DashboardRecentFiles implements Serializable {
 	long size;
 	String sizeString;
 	String icon;
-	byte mimetype;
+	Byte mimetype;
 	String driveId;
 	
 	public DashboardRecentFiles(){
@@ -59,11 +59,11 @@ public class DashboardRecentFiles implements Serializable {
 		this.driveId = driveId;
 	}
 	
-	public byte getMimetype() {
+	public Byte getMimetype() {
 		return mimetype;
 	}
 	
-	public void setMimetype(byte mimetype) {
+	public void setMimetype(Byte mimetype) {
 		this.mimetype = mimetype;
 	}
 	
