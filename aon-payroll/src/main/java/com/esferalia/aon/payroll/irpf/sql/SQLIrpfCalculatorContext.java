@@ -364,9 +364,9 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		// ------------------------------------------------- Ascendiente methods
 
 		@Override
-		public int getAñoNacimiento() {
+		public Integer getAñoNacimiento() {
 			try {
-				return rs.getInt(IrpfDataAscendantsColumns.BIRTH_YEAR);
+				return (Integer) rs.getObject(IrpfDataAscendantsColumns.BIRTH_YEAR);
 			} catch (SQLException e) {
 				return rethrow(e);
 			}
@@ -423,18 +423,17 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		// ------------------------------------------------ Descendiente methods
 
 		@Override
-		public int getAñoNacimiento() {
+		public Integer getAñoNacimiento() {
 			try {
-				return rs.getInt(IrpfDataDescendientsColumns.BIRTH_YEAR);
+				return (Integer)rs.getObject(IrpfDataDescendientsColumns.BIRTH_YEAR);
 			} catch (SQLException e) {
 				return rethrow(e);
 			}
 		}
 
 		@Override
-		public int getAñoAdopcion() {
-			// TODO Auto-generated method stub
-			return 0;
+		public Integer getAñoAdopcion() {
+			return null;
 		}
 
 		@Override
