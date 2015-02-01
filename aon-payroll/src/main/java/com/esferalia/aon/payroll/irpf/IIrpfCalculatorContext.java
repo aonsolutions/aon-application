@@ -119,7 +119,7 @@ public interface IIrpfCalculatorContext {
 
 		}
 
-		int getAñoNacimiento();
+		Integer getAñoNacimiento();
 
 		Convivencia getConvivecia();
 
@@ -135,9 +135,9 @@ public interface IIrpfCalculatorContext {
 	}
 
 	static interface Descendiente {
-		int getAñoNacimiento();
+		Integer getAñoNacimiento();
 
-		int getAñoAdopcion();
+		Integer getAñoAdopcion();
 
 		boolean getComputadoEntero();
 
