@@ -70,6 +70,7 @@
 		<module>aon-ui-admin</module>
 		<module>aon-google-apis</module>
 		<module>aon-amazon-apis</module>
+		<module>aon-aeat</module>
 		
 
 		<!-- ENTITY -->
