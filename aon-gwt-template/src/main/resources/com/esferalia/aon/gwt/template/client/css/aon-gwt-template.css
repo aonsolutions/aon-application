@@ -1,0 +1,41 @@
+@external .*;
+
+/* Templates */
+
+.aondockLayoutPanel-template {
+	overflow: visible !important;
+}
+
+.aon_dataGrid-template {
+	top: 1em !important;
+	left: 1em !important;
+	right: 1em !important;
+	border-top: 1px solid #BBB !important;
+}
+
+/* TemplatesDialog */
+
+.form-template {
+	padding: 10px; 		
+}
+		
+.buttons-template {
+	padding-top: 10px; 		
+	text-align: right;
+	border: 0;
+}
+
+.form-template textarea {
+	resize: none;
+}
+
+.aon-popup-aux-template{
+	border: 1px solid #BBB;	
+	background-color: white;
+}
+
+.aon-check-template{
+	color: red;	
+}
+
+}

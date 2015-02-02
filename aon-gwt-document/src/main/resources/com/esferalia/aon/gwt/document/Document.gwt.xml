@@ -6,6 +6,8 @@
 	
 	<inherits name='com.esferalia.aon.gwt.common.Common'/>
 	
+	<inherits name="com.google.gwt.resources.Resources" />
+	
 	<!--inherits name='com.smartgwt.SmartGwt'/-->
 	
 	<inherits name='com.google.gwt.user.theme.clean.Clean' />

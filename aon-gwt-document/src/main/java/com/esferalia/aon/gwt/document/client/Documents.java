@@ -19,8 +19,7 @@ import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.Viewer;
-import com.esferalia.aon.gwt.common.shared.StringUtils;
-import com.esferalia.aon.gwt.document.jooq.DBConsults;
+import com.esferalia.aon.gwt.document.client.css.AonGwtDocumentResources;
 import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.CategoryList;
 import com.esferalia.aon.gwt.document.shared.Dialog;
@@ -45,8 +44,6 @@ import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
@@ -429,8 +426,6 @@ public class Documents extends Composite implements EntryPoint {
 		@Source("com/esferalia/aon/gwt/document/client/datagrid.css")
 		Style dataGridStyle();
 	}
-
-
 	
 	public Documents() {
 		init();
@@ -522,6 +517,7 @@ public class Documents extends Composite implements EntryPoint {
 	Vector<FileInfo> selFiles;
 	
 	private void init() {
+
 		idoc.initAux(new AsyncCallback<Vector<Boolean>>() {
 			@Override
 			public void onSuccess(Vector<Boolean> result) {
@@ -603,6 +599,8 @@ public class Documents extends Composite implements EntryPoint {
 			// Inject rich styles.
 			GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 			GWT.<AonResources> create(AonResources.class).css().ensureInjected();
+			GWT.<AonGwtDocumentResources>create(AonGwtDocumentResources.class).css().ensureInjected();
+
 			exportPreview(this);
 		}
 	}
@@ -989,17 +987,12 @@ public class Documents extends Composite implements EntryPoint {
 				DefaultSelectionEventManager.<FileInfo> createCheckboxManager());
 		dataGrid.setSelectionModel(selectionModel);
 		
-
-		
 		initTableColumns(selectionModel, sortHandler);
-		
-		
-		
-
 		
 		// Inject rich styles.
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
+		GWT.<AonGwtDocumentResources> create(AonGwtDocumentResources.class).css().ensureInjected();
 
 		// Create the UI defined in DSIImportForm.ui.xml.
 		Widget ui = binder.createAndBindUi(this);

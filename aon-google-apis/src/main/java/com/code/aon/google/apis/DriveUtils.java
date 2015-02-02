@@ -4,7 +4,6 @@ import static com.code.aon.google.apis.DatabaseSync.getDomains;
 import static com.code.aon.google.apis.jooq.DBConsults.getCategory;
 import static com.code.aon.google.apis.jooq.DBConsults.getCategoryName;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
@@ -18,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.jdo.identity.ByteIdentity;
 import javax.mail.MessagingException;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
@@ -58,7 +56,6 @@ import com.google.api.client.http.FileContent;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.InputStreamContent;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;

@@ -42,7 +42,6 @@ import com.esferalia.aon.google.sql.SQLConstants.TaskColumns;
 import com.esferalia.aon.google.sql.SQLConstants.UserColumns;
 import com.esferalia.aon.google.sql.SQLConstants.UserScopeColumns;
 import com.esferalia.aon.google.sql.SQLConstants.UserWorkgroupColumns;
-import com.google.api.client.util.IOUtils;
 
 
 /**

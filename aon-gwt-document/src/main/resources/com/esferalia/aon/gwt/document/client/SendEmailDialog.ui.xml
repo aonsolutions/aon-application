@@ -5,52 +5,6 @@
 	
 	<ui:Style>
 
-		.form {
-			padding: 10px; 		
-		}
-
-		.label {
-			margin-top:10x;
-			font-weight: bold;
-			padding: 1px 0.5em;
-			white-space: nowrap;
-			background-color: #F2F2F2;
-		}
-
-		.labeltop {
-			margin-top:10x;
-			font-weight: bold;
-			padding: 1px 0.5em;
-			vertical-align: top;			
-			white-space: nowrap;
-			background-color: #F2F2F2;
-		}
-
-		.field {
-			padding: 1px 0.5em;
-		}
-		
-		.buttons {
-			padding-top: 10px; 		
-			text-align: right;
-		}
-
-		.info {
-		}
-
-		.warn {
-		}
-
-		.error {
-		}
-
-		.messages {
-			padding-left: 0.5em;
-			padding-bottom: 10px; 		
-		}
-		.form textarea {
-			resize: none;
-		}
 		
 		@external .gwt-RichTextArea;
 		
@@ -60,7 +14,7 @@
 		
 
 	</ui:Style>
-	<g:HTMLPanel styleName="{style.form}">
+	<g:HTMLPanel styleName="form-document">
 	
 		<!-- Menu con opciones de correo (Enviar)  -->
 		<div class="aon-toolbar">

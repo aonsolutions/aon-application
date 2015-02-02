@@ -10,123 +10,7 @@
 
 	<ui:style>
 
-	.editor{
-	border:0px !important;
-
-	}
-	.cellTable {
-		border-bottom: 1px solid #ccc;
-		text-align: left;
-		margin-bottom: 4px;
-	}
 	
-	.stackHeader {
-		padding: .4em .5em .3em 2em;
-		
-	}
-
-	.aon-filter{
-		border-radius: 5px 5px 5px 5px;
-		-moz-border-radius: 5px 5px 5px 5px;
-		-webkit-border-radius: 5px 5px 5px 5px;
-		border: 1px solid #BBB;
-		background-color:#fbfcc2;
-		width: 50px;
-	}
-	
-	.aon-filter2{
-		padding-left: 20px;
-	}
-
-	.aon-icon-google-search2 {
-		background: transparent url(aon-icon-google-search.png) scroll left center no-repeat;
-	}
-	
-	.aon-panelGrid-search-info-internal2{
-	background:transparent url(images/aon-icon/aon-icon-search-title-item.png) scroll left 8px no-repeat;
-	padding-left:15px;
-	font-weight:bold;
-	margin-left:5px;
-	}
-	
-	.aon-search-box{
-		width: 100%;
-		margin-left:5px;
-		padding:3px 3px 3px 3px;
- 		border:solid 1px #DEDEDE;
- 		font-size: 16px;
-		height:16px;
-	}
-	
-	.aon-search-box2{
-		width: 100%;
-		margin-left:5px;
-		padding:3px 3px 3px 3px;
- 		border:solid 1px #DEDEDE;
- 		font-size: 16px;
-		height:16px;
-	}
-	
-	.aon-search-box-popup{
-		border:solid 1px #DEDEDE;
-		background: #FFF;
-	
-	}
-	
-	.aon-search-box-popup .item {
-		text-align: center;
-	}
-	
-	.aon-search-box-popup .item-selected {
-  		background: #D5E2FF;	
-	}
-	
-	.aon-border{
-		border:0 !important;
-	}
-
-.hpanel{
-	top:5px !important;
-	background-color: #f6f5e3;
-	border:#d8d37a 1px solid;	
-	width:100%;
-	
-}
-
-.searchPanel{
-	bottom:0.5em !important;
-	border-bottom:1px solid #D8D27A !important;
-}
-
-.vpanel{
-	border:0px !important;
-	margin-left:5px !important;
-}
-
-    .scrollable {
-      height: 100%;
-      width:100%;
-      border: 1px solid #ccc;
-      text-align: left;
-    }
-	
-	.stackBorder {
-		border-left: 1px solid #BBB;
-		border-top: 1px solid #BBB;
-		border-bottom:1px solid #BBB;
-		border-right: 0px !important;
-	}
-	.aon-editDataTable-buttonWest{
-		min-height: 22px;
-		border: 0;
-		cursor: pointer;
-		padding-left: 15px;
-		padding-top: 0px;
-		padding-bottom: 0px;
-		padding-right: 0px;
-		background-color: transparent;
-		margin-right: 5px;
-	}	
 
 @external .gwt-SplitLayoutPanel-HDragger;
 @external .gwt-SplitLayoutPanel-VDragger;
@@ -203,12 +87,9 @@ background-color:#D4CFC7;
    background: none repeat scroll 0% 0% #EBEBEF !important;
 }
 
-.button-west{
-	font-size:15px !important;
-}
 .gwt-PopupPanel{
-	top:20% ;
-	left:35% ;
+	top:20% !important;
+	left:35% !important;
 }
 
 .gwt-DialogBox{
@@ -216,38 +97,8 @@ background-color:#D4CFC7;
 	left:40% !important;
 }
 
-.aon-gwt-panelGrid table{
-	border-collapse:collapse;
-}
 
-.aon-vertical-popup{
-	padding-bottom: 5px;
-}
-
-.aon-gwt-panelGrid col:first-child{
-	border:#c4c4c4 1px solid;
-	font-weight:bold;
-	background-color:#f2f2f2;
-	white-space: nowrap;
-	padding:1px 0.5em 1px 0.5em;
-	vertical-align:top;
-}
-
-.aon-gwt-panelGrid col:nth-child{
-	border:#c4c4c4 1px solid;
-	padding:2px 5px 2px 2px;
-	padding:1px 0.5em 1px 0.5em;
-}
-.aon-aux-up{
-	margin-left:7px;
-	}
-	
-.aon-aux-right{
-	position: absolute;
-	right: 0px;
-}
 	</ui:style>
-
 
 	<g:SplitLayoutPanel ui:field="splitLayoutPanel"
 		styleName="{style.gwt-SplitLayoutPanel}">
@@ -258,28 +109,28 @@ background-color:#D4CFC7;
 				<g:stack>
 					<g:header size='3'>
 
-						<div class='{style.stackHeader} aon-documental-docs'>
+						<div class='stackHeader-document aon-documental-docs'>
 							Documentos
 						</div>
 					</g:header>
-					<g:ScrollPanel styleName="{style.stackBorder}">
+					<g:ScrollPanel styleName="stackBorder-document">
 					<g:AbsolutePanel>
 
-						<g:VerticalPanel styleName="{style.vpanel}">
-							<g:AbsolutePanel styleName="{style.vpanel}">
-								<g:Button styleName="{style.aon-editDataTable-buttonWest} aon-icon-attach-file"
+						<g:VerticalPanel styleName="vpanel-document">
+							<g:AbsolutePanel styleName="vpanel-document">
+								<g:Button styleName="aon-editDataTable-buttonWest-document aon-icon-attach-file"
 									ui:field="allButton">
 									Todos
 								</g:Button>
 							</g:AbsolutePanel>
-							<g:AbsolutePanel styleName="{style.vpanel}">
-								<g:Button styleName="{style.aon-editDataTable-buttonWest} aon-icon-serviconvenios"
+							<g:AbsolutePanel styleName="vpanel-document">
+								<g:Button styleName="aon-editDataTable-buttonWest-document aon-icon-serviconvenios"
 									ui:field="serviConveniosButton">
 									ServiConvenios
 								</g:Button>
 							</g:AbsolutePanel>
-							<g:AbsolutePanel styleName="{style.vpanel}">
-								<g:Button styleName="{style.aon-editDataTable-buttonWest} aon-icon-version"
+							<g:AbsolutePanel styleName="vpanel-document">
+								<g:Button styleName="aon-editDataTable-buttonWest-document aon-icon-version"
 									ui:field="loteButton">
 									Lote
 								</g:Button>
@@ -288,14 +139,14 @@ background-color:#D4CFC7;
 								<g:DisclosurePanel ui:field="dpanel" styleName="gwt-DisclosurePanel">
 						
 								</g:DisclosurePanel>
-								<g:Button ui:field="catButton" styleName="aon-editDataTable-button aon-lookupButton-new-disabled {style.aon-aux-right}" title="Nueva Categoria"></g:Button>
+								<g:Button ui:field="catButton" styleName="aon-editDataTable-button aon-lookupButton-new-disabled aon-aux-right" title="Nueva Categoria"></g:Button>
 							
 							</g:HorizontalPanel>
 							<g:HorizontalPanel>
 								<g:DisclosurePanel ui:field="epanel" styleName="gwt-DisclosurePanel">
 
 								</g:DisclosurePanel>
-								<g:Button ui:field="tagButton" styleName="aon-editDataTable-button aon-lookupButton-new-disabled {style.aon-aux-right}" title="Nueva Etiqueta"></g:Button>
+								<g:Button ui:field="tagButton" styleName="aon-editDataTable-button aon-lookupButton-new-disabled aon-aux-right" title="Nueva Etiqueta"></g:Button>
 							</g:HorizontalPanel>
 						</g:VerticalPanel>
 					</g:AbsolutePanel>
@@ -303,20 +154,20 @@ background-color:#D4CFC7;
 				</g:stack>
 				<g:stack>
 					<g:header size='3'>
-						<div class='{style.stackHeader} aon-google-drive'>
+						<div class='stackHeader-document aon-google-drive'>
 							
 							    Mi Drive
 	
 						</div>
 					</g:header>
-					<g:ScrollPanel styleName="{style.stackBorder}">
+					<g:ScrollPanel styleName="stackBorder-document">
 					<g:AbsolutePanel>
 						<!-- g:ScrollPanel ui:field="treepanel" width="100%" height="100%">
 						    
 						    
 						</g:ScrollPanel-->
-						<g:VerticalPanel styleName="{style.vpanel}">
-							<g:Button ui:field="upDrive" styleName="{style.aon-aux-up} {style.aon-editDataTable-buttonWest} aon-icon-new" text="Subir"></g:Button>
+						<g:VerticalPanel styleName="vpanel-document">
+							<g:Button ui:field="upDrive" styleName="aon-aux-up aon-editDataTable-buttonWest-document aon-icon-new" text="Subir"></g:Button>
 							<g:SimplePanel ui:field="sp">
 								
 							</g:SimplePanel>
@@ -369,7 +220,8 @@ background-color:#D4CFC7;
 							</g:HorizontalPanel>
 							
 							
-							<g:HorizontalPanel ui:field="prueba2" styleName="{style.aon-aux-right}">
+							
+							<g:HorizontalPanel ui:field="prueba2" styleName="aon-aux-right">
 								
 								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 									<g:Button ui:field="categories" visible="false" styleName='aon-finding-toolbar-item aon-icon-category'
@@ -411,7 +263,7 @@ background-color:#D4CFC7;
 
 						<g:north size="8">
 
-							<g:HTMLPanel  styleName="aon-panelGrid-search {style.searchPanel}">
+							<g:HTMLPanel  styleName="aon-panelGrid-search searchPanel-document">
 								<div class="aon-panelGrid-search-info">
 									<span class="aon-panelGrid-search-info-internal">Filtrar:</span>
 								<g:InlineHTML ui:field="html" visible="false">
@@ -454,18 +306,18 @@ background-color:#D4CFC7;
 								<table class="aon-panelGrid">
 									<tr>
 										<td>
-											<span class="{style.aon-panelGrid-search-info-internal2}">Nombre:</span>
+											<span class="aon-panelGrid-search-info-internal2-document">Nombre:</span>
 										</td>
 										<td style="width:600px">
-											<g:TextBox ui:field="searchBox" styleName="{style.aon-search-box}">
+											<g:TextBox ui:field="searchBox" styleName="aon-search-box-document">
 											</g:TextBox>
 										</td>
 										<td>
-											<span class="{style.aon-panelGrid-search-info-internal2}">Empresa:</span>
+											<span class="aon-panelGrid-search-info-internal2-document">Empresa:</span>
 										</td>
 										<td style="width:350px;">
-											<g:SuggestBox ui:field="enterpriseSearchBox" styleName="{style.aon-search-box2}"
-													autoSelectEnabled="true" popupStyleName="{style.aon-search-box-popup}">
+											<g:SuggestBox ui:field="enterpriseSearchBox" styleName="aon-search-box2-document"
+													autoSelectEnabled="true" popupStyleName="aon-search-box-popup-document">
 											</g:SuggestBox>
 										</td>    
 										<td style="padding-left:20px;"><g:Button ui:field="reset" visible="true" styleName="aon-editDataTable-button aon-icon-home"></g:Button></td>

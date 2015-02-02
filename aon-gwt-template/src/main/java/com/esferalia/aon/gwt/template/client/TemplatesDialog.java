@@ -13,6 +13,10 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -21,7 +25,9 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class TemplatesDialog extends CustomDialog {
@@ -40,6 +46,8 @@ public abstract class TemplatesDialog extends CustomDialog {
 	Integer column = 1;
 	HandlerRegistration handler;
 	TemplateInfo ti;
+	Dialog d;
+	
 	
 	public TemplatesDialog(Dialog dialog) {
 		setCaption(dialog.getTitle());
@@ -47,17 +55,22 @@ public abstract class TemplatesDialog extends CustomDialog {
 		flex_table = new FlexTable();
 		ti = dialog.getTemplateInfo();
 		build(dialog);
-		
+		d = dialog;
 
 		setWidget(binder.createAndBindUi(this));
 		
 		accept_button.setText(dialog.getAccept());
 		accept_button.setVisible(dialog.getBoolAccept());
 		accept_button.addClickHandler(new ClickHandler() {
+			Dialog dialog = d;
 			@Override
 			public void onClick(ClickEvent event) {
-				//TODO CHECK DATOS
-				onAccept();
+				if(productCheck() || dialog.getType().equals("delete"))
+					onAccept();
+				else {
+					label.setText("*Faltan columnas por a\u00f1adir");
+					label.setStyleName("aon-check-template");
+				}
 			}
 		});
 
@@ -99,7 +112,7 @@ public abstract class TemplatesDialog extends CustomDialog {
 		label.setText("Est\u00e1s seguro de eliminar la plantilla " + name);
 	}
 	
-	
+	PopupPanel popup;
 	public void flexTable() {
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
@@ -116,7 +129,34 @@ public abstract class TemplatesDialog extends CustomDialog {
 		lb.addItem("Producto");
 		flex_table.setWidget(1, 0, new Label("Tipo"));
 		flex_table.setWidget(1, 1, lb);
-		flex_table.setWidget(1, 2, new Label(""));
+		Button info = new Button("");
+		info.setStyleName("aon-finding-toolbar-item aon-icon-info");
+		info.addMouseOverHandler(new MouseOverHandler() {
+			@Override
+			public void onMouseOver(MouseOverEvent event) {
+				VerticalPanel vp = new VerticalPanel();
+				vp.add(new Label("  Columnas Obligatorias:"));
+				vp.add(new Label("     Nombre"));
+				vp.add(new Label("     C\u00f3digo"));
+				vp.add(new Label("     Precio Coste"));
+				vp.add(new Label("     Precio Venta Base"));
+			
+				popup = new PopupPanel();
+				popup.setWidget(vp);
+				popup.setStyleName("aon-popup-aux-template");
+				popup.setPopupPosition(event.getNativeEvent().getClientX(),event.getNativeEvent().getClientY());
+				popup.show();
+			}
+		});
+		info.addMouseOutHandler(new MouseOutHandler() {
+			
+			@Override
+			public void onMouseOut(MouseOutEvent event) {
+				popup.hide();
+			}
+		});
+		
+		flex_table.setWidget(1, 2, info);
 
 		ListBox lb2 = new ListBox();
 		for(Integer k = 0;k< list_box.getItemCount();k++){
@@ -171,7 +211,34 @@ public abstract class TemplatesDialog extends CustomDialog {
 		}
 		flex_table.setWidget(1, 0, new Label("Tipo"));
 		flex_table.setWidget(1, 1, lb);
-		flex_table.setWidget(1, 2, new Label(""));
+		Button info = new Button("");
+		info.setStyleName("aon-finding-toolbar-item aon-icon-info");
+		info.addMouseOverHandler(new MouseOverHandler() {
+			@Override
+			public void onMouseOver(MouseOverEvent event) {
+				VerticalPanel vp = new VerticalPanel();
+				vp.add(new Label("  Columnas Obligatorias:"));
+				vp.add(new Label("     Nombre"));
+				vp.add(new Label("     C\u00f3digo"));
+				vp.add(new Label("     Precio Coste"));
+				vp.add(new Label("     Precio Venta Base"));
+			
+				popup = new PopupPanel();
+				popup.setWidget(vp);
+				popup.setStyleName("aon-popup-aux-template");
+				popup.setPopupPosition(event.getNativeEvent().getClientX(),event.getNativeEvent().getClientY());
+				popup.show();
+			}
+		});
+		info.addMouseOutHandler(new MouseOutHandler() {
+			
+			@Override
+			public void onMouseOut(MouseOutEvent event) {
+				popup.hide();
+			}
+		});
+		
+		flex_table.setWidget(1, 2, info);
 
 		for(Integer j = 0; j< ti.getColumns().size();j++){
 			column = j+1;
@@ -195,7 +262,7 @@ public abstract class TemplatesDialog extends CustomDialog {
 				if(column <max-1){
 					handler = lb2.addChangeHandler(changeHandler());
 					HorizontalPanel hp = new HorizontalPanel();
-					if(j==1){
+					if(j!=0){
 					Button b = new Button("");
 						b.setStyleName("aon-finding-toolbar-item aon-search-minus");
 						b.addClickHandler(removeClickHandler());
@@ -262,7 +329,7 @@ public abstract class TemplatesDialog extends CustomDialog {
 				
 				handler = l.addChangeHandler(changeHandler());
 				HorizontalPanel h = new HorizontalPanel();
-				if(flex_table.getRowCount()>2){
+				if(flex_table.getRowCount()>3){
 					Button b = new Button("");
 					b.setStyleName("aon-finding-toolbar-item aon-search-minus");
 					b.addClickHandler(removeClickHandler());
@@ -340,7 +407,6 @@ public abstract class TemplatesDialog extends CustomDialog {
 	
 	ListBox list_box;
 	Integer max;
-	//TODO REAL LISTBOX
 	private void listBox(){
 		Vector<String> v = productList();
 		list_box = new ListBox();
@@ -356,7 +422,7 @@ public abstract class TemplatesDialog extends CustomDialog {
 		Vector<String> v = productList();
 		list_box_edit = new ListBox();
 		for(String s : v){
-			list_box.addItem(s);
+			list_box_edit.addItem(s);
 		}
 	}
 	
@@ -379,5 +445,26 @@ public abstract class TemplatesDialog extends CustomDialog {
 		v.add("Descripci\u00f3n");
 		return v;
 		
+	}
+	
+	private Boolean productCheck() {
+		Integer num = 0;
+		for(Integer i = 2; i< flex_table.getRowCount();i++){
+			ListBox l = (ListBox) flex_table.getWidget(i, 1);
+			if(esta(l.getItemText(l.getSelectedIndex()))){
+				num++;
+			}
+		}
+		return num == 4;
+	}
+	
+	private Boolean esta(String s) {
+		switch (s) {
+		case "Nombre": return true;
+		case "C\u00f3digo" : return true;
+		case "Precio Coste" : return true;
+		case "Precio Venta Base" : return true;
+		}
+		return false;
 	}
 }

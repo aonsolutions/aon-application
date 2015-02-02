@@ -1,8 +1,6 @@
 package com.code.aon.google.apis.calendar;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.sql.SQLException;
@@ -20,14 +18,9 @@ import org.apache.commons.cli.PosixParser;
 
 import com.code.aon.google.apis.CalendarUtils;
 import com.code.aon.google.apis.DatabaseSync;
-import com.code.aon.google.apis.calendar.View;
-import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.pool.AonConnectionException;
 import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
 import com.google.api.services.calendar.Calendar;
-import com.google.api.services.calendar.model.CalendarListEntry;
-import com.google.api.services.calendar.model.Event;
-import com.google.api.services.calendar.model.Events;
 
 public class DeleteCalendars {
 

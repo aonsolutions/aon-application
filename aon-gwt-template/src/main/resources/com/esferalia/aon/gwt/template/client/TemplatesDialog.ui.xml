@@ -5,22 +5,10 @@
 	
 	<ui:Style>
 
-		.form-template {
-			padding: 10px; 		
-		}
-		
-		.buttons-template {
-			padding-top: 10px; 		
-			text-align: right;
-			border: 0;
-		}
 
-		.form-template textarea {
-			resize: none;
-		}
 
 	</ui:Style>
-	<g:HTMLPanel styleName="{style.form-template}">
+	<g:HTMLPanel styleName="form-template">
 		<div>
 		<g:Label ui:field="label">
 		</g:Label>
@@ -30,7 +18,7 @@
 			
 		</g:FlexTable>
 		</div>
-		<div class="{style.buttons-template}">
+		<div class="buttons-template">
 			<g:Button ui:field="cancel_button"></g:Button>
 			<g:Button ui:field="accept_button"></g:Button>
 		</div>

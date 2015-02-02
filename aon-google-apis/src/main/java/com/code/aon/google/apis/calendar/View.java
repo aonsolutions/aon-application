@@ -3,7 +3,6 @@ package com.code.aon.google.apis.calendar;
 import com.google.api.services.calendar.model.Calendar;
 import com.google.api.services.calendar.model.CalendarListEntry;
 import com.google.api.services.calendar.model.Event;
-import com.google.api.services.drive.model.File;
 
 public class View {
 

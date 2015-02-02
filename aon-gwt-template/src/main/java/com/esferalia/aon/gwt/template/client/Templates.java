@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.template.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.template.shared.Dialog;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
@@ -230,7 +231,8 @@ public class Templates extends Composite implements EntryPoint {
 		
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();		
-
+		GWT.<AonGwtTemplateResources> create(AonGwtTemplateResources.class).css().ensureInjected();		
+		
 		Widget ui = binder.createAndBindUi(this);
 		
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");

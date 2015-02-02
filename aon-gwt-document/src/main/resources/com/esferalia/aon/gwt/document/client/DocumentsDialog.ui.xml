@@ -5,55 +5,8 @@
 	
 	<ui:Style>
 
-		.form {
-			padding: 10px; 		
-		}
-
-		.label {
-			margin-top:10x;
-			font-weight: bold;
-			padding: 1px 0.5em;
-			white-space: nowrap;
-			background-color: #F2F2F2;
-		}
-
-		.labeltop {
-			margin-top:10x;
-			font-weight: bold;
-			padding: 1px 0.5em;
-			vertical-align: top;			
-			white-space: nowrap;
-			background-color: #F2F2F2;
-		}
-
-		.field {
-			padding: 1px 0.5em;
-		}
-		
-		.buttons {
-			padding-top: 10px; 		
-			text-align: right;
-		}
-
-		.info {
-		}
-
-		.warn {
-		}
-
-		.error {
-		}
-
-		.messages {
-			padding-left: 0.5em;
-			padding-bottom: 10px; 		
-		}
-		.form textarea {
-			resize: none;
-		}
-
 	</ui:Style>
-	<g:HTMLPanel styleName="{style.form}">
+	<g:HTMLPanel styleName="form-document">
 		<div>
 		<g:Label ui:field="label">
 		</g:Label>
@@ -63,7 +16,7 @@
 			
 		</g:FlexTable>
 		</div>
-		<div class="{style.buttons}">
+		<div class="buttons-document">
 			<g:Button ui:field="cancelButton"></g:Button>
 			<g:Button ui:field="acceptButton"></g:Button>
 			<g:Button ui:field="nextButton"></g:Button>

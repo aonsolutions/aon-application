@@ -58,15 +58,6 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
-		tl.getList().stream().forEach(r -> {
-			System.out.println("Nombre: "+r.getName());
-			System.out.println("Tipo: "+r.getType());
-			r.getColumns().stream().forEach(s ->{
-				System.out.println("Columna: "+ s);
-			});
-		});
-		
 		return tl;
 	}
 	

@@ -1,6 +1,7 @@
 package com.code.aon.google.apis.jooq;
 
 import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
+import static com.esferalia.aon.jooq.tables.CommercialTracking.COMMERCIAL_TRACKING;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractAttach.CONTRACT_ATTACH;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
@@ -13,16 +14,13 @@ import static com.esferalia.aon.jooq.tables.OfferAttach.OFFER_ATTACH;
 import static com.esferalia.aon.jooq.tables.PayrollBatchAttach.PAYROLL_BATCH_ATTACH;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.ProjectAttach.PROJECT_ATTACH;
+import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
+import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.SepeBatchAttach.SEPE_BATCH_ATTACH;
 import static com.esferalia.aon.jooq.tables.User.USER;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-import static com.esferalia.aon.jooq.tables.CommercialTracking.COMMERCIAL_TRACKING;
-import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
-import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Vector;
@@ -35,7 +33,6 @@ import org.jooq.Record5;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.FileInfo;
 import com.code.aon.pool.AonConnectionException;
@@ -199,7 +196,7 @@ public class DBConsults {
 				.from(RATTACH)
 				.where(RATTACH.DRIVE_ID.eq(drive_id)).fetch();
 			
-			dslContext.delete(RATTACH_TAG)
+			if(data.get(0).value1()!= null) dslContext.delete(RATTACH_TAG)
 				.where(RATTACH_TAG.RATTACH.eq(data.get(0).value1())).execute();
 		} finally {
 			if (connection != null)

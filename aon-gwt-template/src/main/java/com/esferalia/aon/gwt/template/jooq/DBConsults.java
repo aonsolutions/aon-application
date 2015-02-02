@@ -38,8 +38,8 @@ public class DBConsults {
 				Result<Record4<Integer, String, Byte, String>> record = dslContext
 						.select(RATTACH.ID, RATTACH.DESCRIPTION,
 								RATTACH.MIMETYPE, RATTACH.DRIVE_ID)
-						.from(RATTACH)
-						.where(RATTACH.DOMAIN.eq(domainId).and(RATTACH.TYPE.eq((byte)15)))
+						.from(RATTACH).join(DOMAIN).on(DOMAIN.ID.eq(RATTACH.DOMAIN))
+						.where(RATTACH.TYPE.eq((byte)15).and(RATTACH.DOMAIN.eq(domainId).or(DOMAIN.PARENT.eq(domainId))))
 						.fetch();
 				
 				Vector<TemplateInfo> v = new Vector<TemplateInfo>();

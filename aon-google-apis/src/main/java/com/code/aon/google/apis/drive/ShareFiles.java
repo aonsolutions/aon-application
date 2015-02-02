@@ -5,7 +5,6 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.sql.SQLException;
 import java.util.Map;
-import java.util.Vector;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;

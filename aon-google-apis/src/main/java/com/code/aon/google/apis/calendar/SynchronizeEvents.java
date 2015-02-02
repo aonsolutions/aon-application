@@ -17,7 +17,6 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
 import com.code.aon.google.apis.CalendarUtils;
-import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.pool.AonConnectionException;
 
 public class SynchronizeEvents {
