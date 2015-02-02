@@ -6,12 +6,11 @@ import javax.persistence.Transient;
 
 import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.master.SalaryCostDB;
-import com.esferalia.aon.salary.ISalaryItem;
-import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.esferalia.aon.salary.deduction.IDeduction;
 
 @Entity
 @Table(name="salary_cost")
-public class SalaryCost extends SalaryCostDB implements ISalaryItem<DeductionType>{
+public class SalaryCost extends SalaryCostDB implements IDeduction {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -19,6 +18,12 @@ public class SalaryCost extends SalaryCostDB implements ISalaryItem<DeductionTyp
 	@Transient
 	public String getName() {
 		return getCostConcept();
+	}
+
+	@Transient
+	@Override
+	public String getExpression() {
+		return String.valueOf(this.getAmount());
 	}
 		
 }

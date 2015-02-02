@@ -28,6 +28,7 @@ public class Payments implements Serializable {
 	private SpecialBonuses specialBonuses;
 	private MovingCompensation movingCompensation;
 	private OvertimeHours overtimeHours;
+	private NoEstructuralOvertimeHours noEstructuralOvertimeHours;
 	private OtherNonWages otherNonWages;
 
 	public Payments() {
@@ -71,6 +72,19 @@ public class Payments implements Serializable {
 	}
 	public void addOvertimeHours(IPayment p) {
 		getOvertimeHours().addPayment(p);
+	}
+
+	public NoEstructuralOvertimeHours getNoEstructuralOvertimeHours() {
+		if (noEstructuralOvertimeHours == null) {
+			setNoEstructuralOvertimeHours( new NoEstructuralOvertimeHours() );
+		}
+		return noEstructuralOvertimeHours;
+	}
+	public void setNoEstructuralOvertimeHours(NoEstructuralOvertimeHours p) {
+		this.noEstructuralOvertimeHours = p;
+	}
+	public void addNoEstructuralOvertimeHours(IPayment p) {
+		getNoEstructuralOvertimeHours().addPayment(p);
 	}
 
 	public SpecialBonuses getSpecialBonuses() {

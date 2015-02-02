@@ -76,13 +76,7 @@ public class SalaryPaymentsFactory implements IPaymentsFactory {
 			return;
 		}
 
-		if (sp.getType() == PaymentType.STRUCTURAL_HOURS) {
-			payments.addOvertimeHours(sp);
-			return;
-		} else if (sp.getType() == PaymentType.NON_STRUCTURAL_HOURS) {
-			payments.addOvertimeHours(sp);
-			return;
-		} else if (sp.getType() == PaymentType.MOVING_COMPENSATION) {
+		if (sp.getType() == PaymentType.MOVING_COMPENSATION) {
 			payments.addMovingCompensation(sp);
 			return;
 		}
@@ -106,9 +100,13 @@ public class SalaryPaymentsFactory implements IPaymentsFactory {
 						ContextVariable.BASE_SALARY)) {
 			payments.addBaseSalary(sp);
 			return;
+		} else if (value == 2) {
+			payments.addNoEstructuralOvertimeHours(sp);
+		} else if (value == 3) {
+			payments.addOvertimeHours(sp);
+		} else {
+			payments.addSalarySupplements(sp);
 		}
-
-		payments.addSalarySupplements(sp);
 
 	}
 

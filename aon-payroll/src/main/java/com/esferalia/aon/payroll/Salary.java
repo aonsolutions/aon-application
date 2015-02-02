@@ -27,6 +27,11 @@ import com.esferalia.aon.entity.master.SalaryDB;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.cost.Costs;
+import com.esferalia.aon.salary.cost.CostsFactoryContext;
+import com.esferalia.aon.salary.cost.CostsFactoryManager;
+import com.esferalia.aon.salary.cost.ICostsFactory;
+import com.esferalia.aon.salary.cost.ICostsFactoryContext;
 import com.esferalia.aon.salary.deduction.Deductions;
 import com.esferalia.aon.salary.deduction.DeductionsFactoryContext;
 import com.esferalia.aon.salary.deduction.DeductionsFactoryManager;
@@ -49,6 +54,9 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 		DeductionsFactoryManager dedManager = DeductionsFactoryManager
 				.getInstance();
 		dedManager.addFactory(new SalaryDeductionsFactory());
+		CostsFactoryManager costManager = CostsFactoryManager
+				.getInstance();
+		costManager.addFactory(new SalaryCostsFactory());
 	}
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
@@ -67,10 +75,13 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 	// OTHERS
 	private IDeductionsFactoryContext dedContext;
 	private IPaymentsFactoryContext payContext;
+	private ICostsFactoryContext costContext;
 	@Transient
 	private Payments payments;
 	@Transient
 	private Deductions deductions;
+	@Transient
+	private Costs costs;
 
 	@Formula("month(issue_date)")
 	public int getIssueMonth() {
@@ -233,6 +244,23 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 		this.deductions = deductions;
 	}
 
+	@Transient
+	@Override
+	public Costs getEnterpriseCosts() throws SalaryException {
+		if (costs == null) {
+			CostsFactoryManager manager = CostsFactoryManager
+					.getInstance();
+			ICostsFactory factory = manager
+					.getFactory(getCostsFactoryContext());
+			setEnterpriseCosts(factory.getCosts(getCostsFactoryContext()));
+		}
+		return costs;
+	}
+	
+	public void setEnterpriseCosts(Costs costs) throws SalaryException {
+		this.costs = costs;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Transient
 	public Collection<SalaryCost> getCosts() throws SalaryException {
@@ -382,5 +410,15 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 			payContext = pfc;
 		}
 		return payContext;
+	}
+
+	@Transient
+	public ICostsFactoryContext getCostsFactoryContext() {
+		if (costContext == null) {
+			CostsFactoryContext cfc = new CostsFactoryContext();
+			cfc.setSalaryProxy(this);
+			costContext = cfc;
+		}
+		return costContext;
 	}
 }

@@ -85,7 +85,11 @@ public class Deductions implements Serializable {
 		put(DeductionType.OTHER, d);
 	}
 
-	private void put(DeductionType type, IDeduction d) {
+	protected IDeduction get(DeductionType type) {
+		return map.get(type);
+	}
+
+	protected void put(DeductionType type, IDeduction d) {
 		map.put(type,d);
 	}
 
