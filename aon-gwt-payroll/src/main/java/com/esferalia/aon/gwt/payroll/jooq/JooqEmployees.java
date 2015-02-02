@@ -360,13 +360,15 @@ public class JooqEmployees {
 		}
 	}
 
-	private static Employee getDataEmployee(DSLContext create, String document,
+	private static Employee getDataEmployee(DSLContext create, Integer domain, String document,
 			Date startDate, Date endDate) {
 
 		// @formatter:off
 		Record person = create.select().from(Person.PERSON).join(REGISTRY)
 				.on(PERSON.REGISTRY.eq(REGISTRY.ID))
-				.where(REGISTRY.DOCUMENT.eq(document)).fetchOne();
+				.where(REGISTRY.DOCUMENT.eq(document))
+				.and(PERSON.DOMAIN.eq(domain))
+				.fetchOne();
 		// @formatter:on
 
 		Employee employee = new Employee();
@@ -390,7 +392,7 @@ public class JooqEmployees {
 		DSLContext create = DSL.using(conn, SQLDialect.MYSQL,
 				getDefaultSettings());
 
-		Employee employee = getDataEmployee(create, document, startDate,
+		Employee employee = getDataEmployee(create, domain, document, startDate,
 				endDate);
 
 		int newContractId = insert2Contract(create, domain, contractId, workplaceId,
