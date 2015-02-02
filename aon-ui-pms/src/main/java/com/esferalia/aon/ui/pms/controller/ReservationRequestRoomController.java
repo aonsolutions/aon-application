@@ -205,7 +205,7 @@ public class ReservationRequestRoomController extends LinesController implements
 		if (getModel().isRowAvailable()) {
 			ReservationRequestRoom room = (ReservationRequestRoom)this.getModel().getRowData();
 			if (room.getReservation() != null && room.getReservation().getId() != null) {
-				BasicController reservationController = (BasicController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_CONTROLLER_NAME);
+				BasicController reservationController = (BasicController)AonUtil.getRegisteredBean(RESERVATION_CONTROLLER_NAME);
 				reservationController.onLoad(event, room.getReservation().getId(), RESERVATION_REQUEST_FORM_NAME, null);
 			} else {
 				String msg = "La Reserva no se encuentra disponible en este momento.";
@@ -220,6 +220,7 @@ public class ReservationRequestRoomController extends LinesController implements
 		if (getModel().isRowAvailable()) {
 			ReservationRequestRoom room = (ReservationRequestRoom)this.getModel().getRowData();
 			page = (room.getReservation() != null && room.getReservation().getId() != null) ? RESERVATION_FORM_NAME : "";
+			room.setReservation(null);
 		}
 		return page;
 	}
@@ -228,10 +229,10 @@ public class ReservationRequestRoomController extends LinesController implements
 		if (getModel().isRowAvailable()) {
 			ReservationRequestRoom room = (ReservationRequestRoom)this.getModel().getRowData();
 			if (room.getReservation() != null && room.getReservation().getId() != null) {
-				ProjectReservationController controller = (ProjectReservationController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_CONTROLLER_NAME);
-				controller.load(event, room.getReservation().getId());
-				controller.setConfirmNoShow(false);
-				controller.onCancelReservation(event);
+				ProjectReservationController reservationController = (ProjectReservationController)AonUtil.getRegisteredBean(RESERVATION_CONTROLLER_NAME);
+				reservationController.load(event, room.getReservation().getId());
+				reservationController.setConfirmNoShow(false);
+				reservationController.onCancelReservation(event);
 			} else {
 				String msg = "La Reserva no se encuentra disponible en este momento.";
 				AonUtil.addErrorMessage(msg);
