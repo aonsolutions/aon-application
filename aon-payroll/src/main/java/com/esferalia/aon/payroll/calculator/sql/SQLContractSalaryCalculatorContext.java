@@ -2544,9 +2544,10 @@ public class SQLContractSalaryCalculatorContext extends
 			public Double create() {
 				try {
 					return getIrpf();
-				} catch (Throwable t) {
+				} catch (ExpressionExceptionWrapper e ) {
+					throw e ;
+				}  catch (Throwable t) {
 					t.printStackTrace();
-					// TODO : Sure?
 					return 0.00;
 				}
 			}

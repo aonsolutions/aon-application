@@ -47,6 +47,7 @@ import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemoveVariableError;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVariable;
 import com.esferalia.aon.salary.expression.ExpressionException;
@@ -839,7 +840,6 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 	private Double resolveDeduction(ExpressionContext ctx,
 			IContractDeduction d, Date start, Date end)
 			throws ExpressionException {
-
 		List<ITimedResult<Double>> results = ctx.addExpression(d, start, end,
 				Double.class);
 
