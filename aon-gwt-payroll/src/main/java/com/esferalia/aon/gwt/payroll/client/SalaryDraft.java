@@ -49,6 +49,7 @@ import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.Visibility;
+import com.google.gwt.dom.client.Style.WhiteSpace;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -453,14 +454,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			try {
 				int value = Integer.valueOf(variable.getValue().toString());
 				if (value != 30 && value != lastDay)
-					textListBox.addItem(variable.getValue().toString(), 
+					textListBox.addItem(variable.getValue().toString(),
 							variable.getValue().toString());
-			} 
-			catch ( Exception e ){
-				
+			} catch (Exception e) {
+
 			}
-			
-			
+
 			return textListBox;
 		}
 
@@ -2528,7 +2527,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			headButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 
 			eventsTable.setWidget(row, 0, headButton);
+
 			eventsTable.setText(row, 1, event.getMessage());
+			eventsTable.getCellFormatter().getElement(row, 1).getStyle()
+			.setWhiteSpace(WhiteSpace.NORMAL);
+			eventsTable.getCellFormatter().getElement(row, 1).getStyle()
+			.setProperty("maxWidth", 55, Unit.EM);
 
 			String styles[] = eventStyles.get(event.getType());
 
@@ -2543,8 +2547,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			if (itemButton != null) {
 				eventsTable.setWidget(row, 2, itemButton);
 				itemButton.setValue(true, true); // down
-			}
-			else {
+			} else {
 				eventsTable.setHTML(row, 2, "&nbsp;");
 			}
 
@@ -2560,6 +2563,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			for (int col = 0; col < eventsTable.getCellCount(row); col++)
 				eventsTable.getCellFormatter().addStyleName(row, col,
 						"aon-panelGrid-odd");
+
+
 			row++;
 		}
 

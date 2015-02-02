@@ -637,7 +637,15 @@ public class IrpfCalculator {
 			} catch (IrpfCalculateException e) {
 				AEATRetencionesError2015 error = e
 						.getAEATRetencionesError2015();
+				
+				for (com.esferalia.aon.aeat.jaxb.TipoErrorGeneral tipoErrorGeneral : error
+						.getErrorGeneral())
+					throw new ExpressionExceptionWrapper(new CheckException(
+							tipoErrorGeneral.getDescripcion()));
+
+				
 				List<TipoRetenedorError2015> retenedores = error.getRetenedor();
+
 				String message = null;
 				TipoRetenedorError2015 retenedor = retenedores.get(0);
 				List<TipoRetenidoError2015> retenidos = retenedor.getRetenido();

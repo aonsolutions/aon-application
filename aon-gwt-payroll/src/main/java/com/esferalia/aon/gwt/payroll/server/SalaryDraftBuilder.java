@@ -602,7 +602,12 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 
 	@Override
 	public void onCheckError(IContractDeduction deduction, String message) {
-		// TODO Auto-generated method stub
+		DeductionEvent deductionEvent = new DeductionEvent();
+		deductionEvent.setMessage(message);
+		deductionEvent.setType(Event.Type.WARNING);
+		deductionEvent.setDeduction(newDeduction(deduction));
+
+		salaryDraft.addDeductionEevent(deductionEvent);
 
 	}
 
