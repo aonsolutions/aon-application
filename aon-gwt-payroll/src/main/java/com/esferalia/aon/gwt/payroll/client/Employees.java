@@ -57,6 +57,7 @@ import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.storage.client.Storage;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Command;
@@ -152,7 +153,7 @@ public class Employees extends ResizeComposite implements
 																// statci ???
 
 	private static final DateTimeFormat END_DATE_FORMAT = DateTimeFormat
-			.getFormat(PredefinedFormat.DATE_SHORT);
+			.getFormat(PredefinedFormat.DATE_SHORT); 
 
 	@UiField
 	Tree tree;
@@ -179,7 +180,9 @@ public class Employees extends ResizeComposite implements
 
 	private Date fromDate = null;
 	private String namePattern = null;
-
+	
+	private Storage storage;
+	
 	/**
 	 * The last scroll position.
 	 */
@@ -227,8 +230,6 @@ public class Employees extends ResizeComposite implements
 
 		scrollPanel.addScrollHandler(this);
 
-		//load();
-
 		employeesService
 				.getAvaiableEmployees(new AsyncCallback<Map<String, String>>() {
 
@@ -243,7 +244,6 @@ public class Employees extends ResizeComposite implements
 						Employees.this.onAvaiableEmployees(result);
 					}
 				});
-
 	}
 
 	public boolean isExtended() {
@@ -1748,5 +1748,4 @@ public class Employees extends ResizeComposite implements
 	public void onCollapseAllButtonClick(ClickEvent event) {
 		collapse();
 	}
-
 }

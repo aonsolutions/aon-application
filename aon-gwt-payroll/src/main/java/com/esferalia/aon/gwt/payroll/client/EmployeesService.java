@@ -115,6 +115,8 @@ public interface EmployeesService extends RemoteService, StatisticsService,
 
 	String getSalaryPreviewReceiptHTML(SalaryPreview salaryPreview, int zoom)
 			throws IllegalArgumentException;
+	
+	void insertPerson(Employee employee) throws IllegalArgumentException;
 
 	List<Employee> getEmployees(int workplaceId, Date endDate, String pattern,
 			int offset, int limit) throws IllegalArgumentException;

@@ -163,6 +163,9 @@ public interface EmployeesServiceAsync extends StatisticsServiceAsync,
 
 	void deleteContract(Employee employee, AsyncCallback<Void> callback)
 			throws IllegalArgumentException;
+	
+	void insertPerson(Employee employee, AsyncCallback<Void> callback) 
+			throws IllegalArgumentException;
 
 	void getAvaiableEmployees(AsyncCallback<Map<String, String>> callback)
 			throws IllegalArgumentException;

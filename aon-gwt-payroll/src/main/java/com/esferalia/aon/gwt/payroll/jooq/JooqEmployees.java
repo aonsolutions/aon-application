@@ -20,7 +20,6 @@ import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.ContractLeaveDetail.CONTRACT_LEAVE_DETAIL;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.ContrataBatchDetail.CONTRATA_BATCH_DETAIL;
-import static com.esferalia.aon.jooq.tables.FsModel190.FS_MODEL190;
 import static com.esferalia.aon.jooq.tables.FsModel190Detail.FS_MODEL190_DETAIL;
 import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
 import static com.esferalia.aon.jooq.tables.IrpfDataAscendants.IRPF_DATA_ASCENDANTS;
@@ -64,10 +63,6 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Category;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.jooq.tables.Contract;
-import com.esferalia.aon.jooq.tables.ContractInfo;
-import com.esferalia.aon.jooq.tables.ContrataBatchDetail;
-import com.esferalia.aon.jooq.tables.FsModel190;
-import com.esferalia.aon.jooq.tables.FsModel190Detail;
 import com.esferalia.aon.jooq.tables.Person;
 import com.esferalia.aon.jooq.tables.records.ContractBonusRecord;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
@@ -79,6 +74,66 @@ import com.esferalia.aon.jooq.tables.records.ContractRecord;
 public class JooqEmployees {
 
 	private static Settings SETTINGS = null;
+
+	public static void insert2Person(Connection connection, Integer domain,
+			String document) {
+
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+
+		try {
+
+			Record person = dslContext.select().from(REGISTRY)
+					.rightOuterJoin(PERSON)
+					.on(PERSON.REGISTRY.eq(REGISTRY.ID))
+					.where(REGISTRY.DOCUMENT.eq(document))
+					.fetchOne();
+			
+			
+
+			if (person != null) {
+
+				int registryId = dslContext
+						.insertInto(REGISTRY)
+						.set(REGISTRY.DOMAIN, domain)
+						.set(REGISTRY.DOCUMENT,
+								person.getValue(REGISTRY.DOCUMENT))
+						.set(REGISTRY.DOCUMENT_TYPE,
+								person.getValue(REGISTRY.DOCUMENT_TYPE))
+						.set(REGISTRY.DOCUMENT_COUNTRY,
+								person.getValue(REGISTRY.DOCUMENT_COUNTRY))
+						.set(REGISTRY.NAME, person.getValue(REGISTRY.NAME))
+						.set(REGISTRY.ALIAS, person.getValue(REGISTRY.ALIAS))
+						.set(REGISTRY.TYPE, person.getValue(REGISTRY.TYPE))
+						.set(REGISTRY.NATIONALITY,
+								person.getValue(REGISTRY.NATIONALITY))
+						.set(REGISTRY.SECURITY_LEVEL,
+								person.getValue(REGISTRY.SECURITY_LEVEL))
+						.returning(REGISTRY.ID).fetchOne().getId();
+
+				dslContext
+						.insertInto(PERSON)
+						.set(PERSON.REGISTRY, registryId)
+						.set(PERSON.DOMAIN, domain)
+						.set(PERSON.BIRTH_DATE,
+								person.getValue(PERSON.BIRTH_DATE))
+						.set(PERSON.GENDER, person.getValue(PERSON.GENDER))
+						.set(PERSON.MARITAL_STATUS,
+								person.getValue(PERSON.MARITAL_STATUS))
+						.set(PERSON.SOCIAL_SECURITY_NUM,
+								person.getValue(PERSON.SOCIAL_SECURITY_NUM))
+						.set(PERSON.NAME, person.getValue(PERSON.NAME))
+						.set(PERSON.FIRST_SURNAME,
+								person.getValue(PERSON.FIRST_SURNAME))
+						.set(PERSON.SECOND_SURNAME,
+								person.getValue(PERSON.SECOND_SURNAME))
+						.execute();
+
+			}
+
+		} catch (Exception ex) {
+			throw new IllegalArgumentException();
+		}
+	}
 
 	public static List<Employee> getEmployees(Connection connection,
 			Integer workplaceId, Date endDate, String pattern, int offset,
@@ -98,6 +153,8 @@ public class JooqEmployees {
 					.select()
 					.from(CONTRACT.join(PERSON).on(
 							CONTRACT.PERSON.eq(PERSON.REGISTRY)))
+					.leftOuterJoin(REGISTRY)
+					.on(REGISTRY.ID.eq(PERSON.REGISTRY))
 					.leftOuterJoin(
 							AGREEMENT_LEVEL_CATEGORY.join(
 									AGREEMENT_LEVEL.join(AGREEMENT).on(
@@ -138,6 +195,7 @@ public class JooqEmployees {
 				employee.setFirstSurname(record.getValue(PERSON.FIRST_SURNAME));
 				employee.setSecondSurName(record
 						.getValue(PERSON.SECOND_SURNAME));
+				employee.setDocument(record.getValue(REGISTRY.DOCUMENT));
 				Integer categoryId = record
 						.getValue(AGREEMENT_LEVEL_CATEGORY.ID);
 				if (categoryId != null) {
@@ -919,7 +977,7 @@ public class JooqEmployees {
 
 		DSLContext create = DSL.using(conn, SQLDialect.MYSQL,
 				getDefaultSettings());
-		
+
 		// ----------------------------------IRPF-------------------------------------------
 
 		SelectConditionStep<Record1<Integer>> irpfSelect = create
@@ -1010,29 +1068,29 @@ public class JooqEmployees {
 
 		create.delete(CONTRACT_BATCH_DETAIL)
 				.where(CONTRACT_BATCH_DETAIL.CONTRACT.in(personIds)).execute();
-		
+
 		create.delete(CONTRACT_BATCH)
 				.where(CONTRACT_BATCH.ID.in(batchDetailSelect)).execute();
 
 		create.delete(CONTRACT_BONUS)
 				.where(CONTRACT_BONUS.CONTRACT.in(personIds)).execute();
-		
+
 		create.delete(CONTRACT_CALENDAR_EVENT)
 				.where(CONTRACT_CALENDAR_EVENT.CONTRACT.in(personIds))
 				.execute();
-		
+
 		create.delete(CONTRACT_CLAUSE)
 				.where(CONTRACT_CLAUSE.CONTRACT.in(personIds)).execute();
-		
+
 		create.delete(CONTRACT_DATA)
 				.where(CONTRACT_DATA.CONTRACT.in(personIds)).execute();
-		
+
 		create.delete(CONTRACT_DEDUCTION)
 				.where(CONTRACT_DEDUCTION.CONTRACT.in(personIds)).execute();
-		
+
 		create.delete(CONTRACT_EMBARGO)
 				.where(CONTRACT_EMBARGO.CONTRACT.in(personIds)).execute();
-		
+
 		create.delete(CONTRACT_INFO)
 				.where(CONTRACT_INFO.CONTRACT.in(personIds)).execute();
 

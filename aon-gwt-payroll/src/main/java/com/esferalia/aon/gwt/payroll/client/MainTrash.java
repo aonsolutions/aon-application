@@ -20,8 +20,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -462,29 +460,15 @@ public class MainTrash extends MainEntryPoint implements
 		
 	}
 	
+	public void disablePopup() {
+		
+	}
+	
 	@Override
 	public void onEmployeeItemSelected(Employee employee) {
 		this.employee = employee;
 		
 		detailPanel.setWidget(jsf);
 		jsf.employeeSelected(employee.getId());
-		disable(false, detailPanel);
-	}
-	
-	protected void disable(boolean enable, Widget widget) {
-		
-		if(widget instanceof HasWidgets) {
-			Iterator<Widget> iterator = ((HasWidgets)widget).iterator();
-			while(iterator.hasNext()) {
-				Widget next = iterator.next();
-				disable(enable, next);
-				if(next instanceof FocusWidget) {					
-					((FocusWidget) next).setEnabled(false);
-				}
-				if(next instanceof TextBox) {					
-					((TextBox) next).setReadOnly(true);
-				}
-			}
-		}
 	}
 }

@@ -353,6 +353,29 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			releaseFacesContext();
 		}
 	}
+	
+	@Override
+	public void insertPerson(Employee employee) throws IllegalArgumentException {
+		Connection conn = null;
+		try {
+			initFacesContext();
+			conn = getConnection();
+			JooqEmployees.insert2Person(conn, getDomainID(), 
+					employee.getDocument());
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+
+		
+	}
 
 	@Override
 	public List<Employee> getEmployees(int workplaceId, Date fromDate,

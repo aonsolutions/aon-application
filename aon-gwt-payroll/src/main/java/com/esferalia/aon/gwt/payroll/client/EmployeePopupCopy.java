@@ -20,6 +20,7 @@ import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -96,7 +97,8 @@ public class EmployeePopupCopy extends CustomDialog {
 	// -------------------------------------------------------Private Methods
 	
 	private final void initSuggestBox(Map<String, String> map) {
-		names.clear();
+		
+		names.clear();		
 		Iterator<String> iterator = map.keySet().iterator();
 		while (iterator.hasNext()) {
 			String document = iterator.next();

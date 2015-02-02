@@ -11,6 +11,8 @@
 	
 	<inherits name='com.esferalia.aon.gwt.codemirror.CodeMirror'/>
 	
+	<inherits name="com.google.gwt.json.JSON" />
+	
 	<!-- stylesheets eclipse them -->
 	<stylesheet src="codemirror/theme/eclipse.css"/>
 	<!-- stylesheets aon them -->

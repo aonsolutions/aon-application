@@ -39,6 +39,7 @@ import com.esferalia.aon.gwt.payroll.shared.ShareService;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
@@ -50,6 +51,11 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.json.client.JSONNumber;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
+import com.google.gwt.storage.client.Storage;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -72,6 +78,7 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
+
 public class EmployeeTree implements EntryPoint, Employees.Listener,
 		MetaData.Listener, Cost.Listener, Salary.Listener {
 
@@ -145,7 +152,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		@Override
 		public void execute() {
-			employeeCopy = employee;
+			setEmployeeCopy(singlenton.employee);
+			storage.removeItem(EMPLOYEE);
+			String item = employee2Json(employee);
+			storage.setItem(EMPLOYEE, item);
 			setPasteItemVisible(true);
 		}
 
@@ -169,12 +179,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		public void execute() {
 			paste = new EmployeePopupCopy();
 			paste.addListener(this);
-			setEmployeePaste(singlenton.employeeContextMenu.getEmployeeCopy());
-			setMapAvaiableEmployees(singlenton.avaiableEmployees);
-			showPopUpPanel();
+			Employee aux = singlenton.employeeContextMenu.getEmployeeCopy();
+			if(singlenton.avaiableEmployees.containsKey(aux.getDocument()) == false)
+				existPerson(aux);
+			else
+				showPopUpPanel();
 		}
 
 		private void showPopUpPanel() {
+			setEmployeePaste(singlenton.employeeContextMenu.getEmployeeCopy());
+			setMapAvaiableEmployees(singlenton.avaiableEmployees);
 			paste.showPopUpPanel();
 		}
 
@@ -185,27 +199,28 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					.getId();
 			String document = pasteEmployee.getDocument();
 			Date startDate = pasteEmployee.getStartDate();
-			Date endDate = (pasteEmployee.getEndDate() != null) ? pasteEmployee.getEndDate() : null;  
+			Date endDate = (pasteEmployee.getEndDate() != null) ? pasteEmployee
+					.getEndDate() : null;
 
 			pasteContract(workplaceId, contractId, document, startDate,
 					endDate, value, null);
 			paste.hide();
 		}
 
-		private void setEmployeePaste(Employee employee) {
+		private void setEmployeePaste(Employee employee) {			
 			paste.setEmployee(employee);
 		}
 
-		private void setMapAvaiableEmployees(Map<String, String> map) {
+		private void setMapAvaiableEmployees(Map<String, String> map) {	
 			paste.setMapAvaiableEmployees(map);
 		}
-		
+
 		private void pasteContract(int workplaceId, int contractId,
 				String document, Date startDate, Date endDate, boolean check,
 				final AsyncCallback<Employee> callback) {
 
-			employees.getEmployeesService().pasteContract(workplaceId, contractId,
-					document, startDate, endDate, check,
+			employees.getEmployeesService().pasteContract(workplaceId,
+					contractId, document, startDate, endDate, check,
 					new AsyncCallback<Employee>() {
 
 						@Override
@@ -220,33 +235,57 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 						}
 					});
 		}
+		
+		private void existPerson(final Employee employee) {	
+			
+			if(Window.confirm(employee.getFullname() + 
+					" no se encuentra en el dominio. \u00BFDesea insertar "
+					+ "el registro ahora\u003F")) {
+				
+				singlenton.employees.getEmployeesService().insertPerson(employee, new AsyncCallback<Void>() {
 
+					@Override
+					public void onFailure(Throwable caught) {
+						onFailure(caught);
+					}
+
+					@Override
+					public void onSuccess(Void result) {
+						singlenton.avaiableEmployees.put(employee.getDocument(), 
+								employee.getFullname());
+						PasteEmployeeCommand.this.showPopUpPanel();
+						onSuccess(result);	
+						
+					}
+				});
+			}
+		}
 	}
 
 	class DeleteEmployeeCommand implements ScheduledCommand {
 
 		@Override
-		public void execute() {			
+		public void execute() {
 			deleteContract(singlenton.employee, null);
 		}
 
 		private void deleteContract(Employee employee,
 				final AsyncCallback<Void> callback) {
-			
-			employees.getEmployeesService().moveContractId(employee, 
+
+			employees.getEmployeesService().moveContractId(employee,
 					new AsyncCallback<Void>() {
 
-				@Override
-				public void onFailure(Throwable caught) {
-					callback.onFailure(caught);
-				}
+						@Override
+						public void onFailure(Throwable caught) {
+							callback.onFailure(caught);
+						}
 
-				@Override
-				public void onSuccess(Void result) {
-					employees.onEnterprise(enterprise);
-					callback.onSuccess(result);
-				}
-			});
+						@Override
+						public void onSuccess(Void result) {
+							employees.onEnterprise(enterprise);
+							callback.onSuccess(result);
+						}
+					});
 		}
 
 	}
@@ -650,6 +689,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		private void showPastePanel() {
 			pasteCmd.showPopUpPanel();
 		}
+		
+		public void pasteContract () {
+			pasteCmd.execute();
+		}
 	}
 
 	class EnterpriseContextMenu extends ContextMenu {
@@ -730,6 +773,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		public void deleteContract() {
 			deleteCmd.execute();
 		}
+		
 	}
 
 	abstract class AsyncEmployeeProvider extends AsyncDataProvider<Employee> {
@@ -778,7 +822,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 
 	private static final Binder binder = GWT.create(Binder.class);
-
+	
+	private static final String EMPLOYEE = "C-EMPLOYEE";
+	
 	@UiField
 	Employees employees;
 	@UiField
@@ -828,7 +874,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	private MenuItem pasteItem;
 
-	private Map<String, String> domainNames;
+	
+
+	private Storage storage;
 
 	/**
 	 * This method constructs the application user interface by instantiating
@@ -856,6 +904,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		// RootPanel root = RootPanel.get("rootPanel");
 		root.add(ui);
+		
+		//LocalStorage Items
+		storage = Storage.getLocalStorageIfSupported();
+		
 		jsf = new JSF();
 		cost = new Cost();
 		irpf = new Irpf();
@@ -887,12 +939,19 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		shareResultsGrid = new ShareResultsGrid();
 		shareResultsProvider = new ListDataProvider<JsShareResult>();
-		shareResultsProvider.addDataDisplay(shareResultsGrid);
-
-		domainNames = new HashMap<String, String>();
+		shareResultsProvider.addDataDisplay(shareResultsGrid);		
 
 		singlenton = this;
-
+		
+		if(storage.getItem(EMPLOYEE) != null) {			
+			String item = storage.getItem(EMPLOYEE).toString();			
+			Employee aux = JSON2Employee(item);
+			
+			if(aux != null) {
+				employeeContextMenu.setCopyEmployee(aux);
+				this.pasteItem.setVisible(true);
+			}
+		}
 		export2JS();
 
 	}
@@ -1106,16 +1165,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	@Override
 	public void onEmployeeCopy(Employee employee) {
 		singlenton.employeeContextMenu.setCopyEmployee(employee);
+		storage.removeItem(EMPLOYEE);
+		storage.setItem(EMPLOYEE, employee2Json(employee));
 		pasteItem.setVisible(true);
 	}
 
 	@Override
 	public void onEmployeePaste(Workplace workplace) {
-		Employee employee = singlenton.employeeContextMenu.getEmployeeCopy();
-		singlenton.workplaceContextMenu.setEmployee(employee);
-		singlenton.workplaceContextMenu
-				.setMapAvaiableEmployees(singlenton.avaiableEmployees);
-		singlenton.workplaceContextMenu.showPastePanel();
+		
+		singlenton.workplaceContextMenu.pasteContract();
+		
 	}
 
 	@Override
@@ -1395,4 +1454,102 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		$wnd.enterpriseCalc = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::enterpriseCalc());
 	}-*/;
 
+	private static String employee2Json(Employee employee) {
+
+		JSONObject json = new JSONObject();
+		try {
+
+			json.put("id", new JSONNumber(employee.getId()));
+			json.put("name", new JSONString(employee.getName()));
+			json.put("first", new JSONString(employee.getFirstSurname()));
+			
+			json.put("startDate", new JSONString(employee.getStartDate()					
+					.toString()));
+			
+			if(employee.getSecondSurName() != null)
+				json.put("second", new JSONString(employee.getSecondSurName()));
+			
+			if (employee.getEndDate() != null)
+				json.put("endDate", new JSONString(employee.getEndDate()
+						.toString()));
+			
+			//Si Document es nulo se va a la BD a por el campo
+			if(employee.getDocument() != null)
+				json.put("document", new JSONString(employee.getDocument()));			
+			
+			if(employee.getSocialSecurity() != null)
+				json.put("ss", new JSONString(employee.getSocialSecurity()));
+					
+			return json.toString();
+
+		} catch (Exception ex) {			
+			ex.printStackTrace();
+			return null;
+		}
+	}
+	
+	private static Employee JSON2Employee(String jsonEmployee) {
+		
+		try {
+			
+			JSONObject json = new JSONObject(parseJson(jsonEmployee));
+			
+			String id = json.get("id").toString();			
+			String name = json.get("name").toString().replaceAll("\"", "");			
+			String firstSurname = json.get("first").toString().replaceAll("\"", "");
+			
+			String secondSurname = null;
+			if(json.get("second") != null)
+				secondSurname = json.get("second").toString().replaceAll("\"", "");
+			
+			String start = json.get("startDate").toString().replaceAll("\"", "");			
+			Date startDate = getDate(start);		
+			
+			Date endDate = null;
+			if(json.get("endDate") != null) {
+				String end = json.get("endDate").toString().replaceAll("\"", "");
+				endDate = getDate(end);
+			}
+			
+			String document = "";
+			if(json.get("document") != null)			
+				document = json.get("document").toString().replaceAll("\"", "");
+			
+			String ss = null;
+			if(json.get("ss") != null)
+				ss = json.get("ss").toString().replaceAll("\"", "");
+			
+			Employee employee = new Employee();			
+			employee.setId(Integer.parseInt(id));			
+			employee.setName(name);			
+			employee.setFirstSurname(firstSurname);			
+			employee.setSecondSurName(secondSurname);			
+			employee.setStartDate(startDate);
+			employee.setEndDate(endDate);
+			employee.setDocument(document);
+			employee.setSocialSecurity(ss);
+			
+			return employee;
+			
+			
+		} catch (Exception ex) {
+			ex.printStackTrace(); 
+			return null;
+		}
+		
+	}
+	
+	private static Date getDate(String date) {
+		return DateTimeFormat.getFormat("yyyy-MM-dd").parse(date);
+	}
+	
+	private static <T extends JavaScriptObject> T parseJson(String json) {
+		return JsonUtils.safeEval(json);
+	}
+	
+	private boolean personExistInDomain(String document) {
+		return singlenton.avaiableEmployees.containsKey(document);
+	}
+
+	
 }
