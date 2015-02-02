@@ -51,6 +51,7 @@ import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.controller.DEHOnlineController;
 import com.code.aon.ui.admin.controller.IAdminConstants;
+import com.code.aon.ui.admin.controller.PortalAccessController;
 import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.BasicOption;
@@ -262,7 +263,7 @@ public class DesktopState implements Serializable {
 					return true;
 				}
 			}
-			if ( (ds.getDomainId()==user.getDomain()) && (portalValue != 0) ) {
+			if ( (ds.getDomainId()==user.getDomain()) && PortalAccessController.isPortalActive(portalValue) ) {
 				return true;
 			}
 		}

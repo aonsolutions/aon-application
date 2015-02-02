@@ -90,7 +90,8 @@ public class DomainBookingController extends DataScrollerState {
 	private void fillDomainData(AONContext ctx, DomainBookingData data) {
 		String portalValue = getAppParamenter(ctx, data, AppParam.AON_PORTAL);
 		if (!StringUtils.isEmpty(portalValue)) {
-			data.setPortal(NumberUtils.toInt(portalValue) > 0);
+			int value = NumberUtils.toInt(portalValue);
+			data.setPortal(PortalAccessController.isPortalActive(value));
 		}
 		String externalApplicationsValue = getAppParamenter(ctx, data, AppParam.AON_EXTERNAL_APPLICATIONS);
 		if (!StringUtils.isEmpty(externalApplicationsValue)) {

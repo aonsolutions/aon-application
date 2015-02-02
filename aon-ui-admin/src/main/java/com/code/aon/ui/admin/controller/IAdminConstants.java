@@ -44,5 +44,6 @@ public interface IAdminConstants {
 	int PAYROLL_PORTAL = 8;
 	int ACCOUNTING_PORTAL = 16;
 	int ACTIVE_PORTAL = 32;
+	int INACTIVE_PORTAL = 64;
 	
 }

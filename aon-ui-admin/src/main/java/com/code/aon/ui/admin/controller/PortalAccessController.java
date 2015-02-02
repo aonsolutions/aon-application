@@ -118,9 +118,12 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 		return null;
 	}
 	
+	public static boolean isPortalActive( int value ) {
+		return (value != 0) && ((value & IAdminConstants.INACTIVE_PORTAL) == 0);
+	}
+	
 	public void onInit( ActionEvent event ) {
 		try {		
-			setActive(false);
 			this.portalValue = AppParamUtil.getValueAsInt(AppParam.AON_PORTAL);
 			this.user = getPortalUser();
 			if ( this.user == null ) {
@@ -131,7 +134,7 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 					setPayrollPortal(true);
 				}
 			}
-			setActive(this.portalValue != 0);
+			setActive(isPortalActive(this.portalValue));
 			calculateAvalilableOptions();
 			getIdCheck().setOldValue( getUser().getLogin() );
 		} catch (ManagerBeanException e) {
@@ -190,16 +193,16 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 	}
 	
 	public void accept( ActionEvent event ) {
-		try {
+		try {			
 			if ( isActive() ) {
-				AppParamUtil.insertParameter(AppParam.AON_PORTAL, portalValue);
 		        updateUser();	
 			} else {
-				AppParamUtil.removeParameter(AppParam.AON_PORTAL);
 				if (this.user.getId() != null) {
-					removeUser();
+					disableUser();
 				}
 			}
+			setPortalValue(!isActive(), IAdminConstants.INACTIVE_PORTAL);
+			AppParamUtil.insertParameter(AppParam.AON_PORTAL, portalValue);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> accept",e);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -236,18 +239,10 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 		getIdCheck().setOldValue( getUser().getLogin() );
 	}
 	
-	private void removeUser() {
-		DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(IAdminConstants.DOMAIN_USER_CONTROLLER_NAME);
-		try {		
-			duc.removeUserReferences(user.getId());
-			duc.getManagerBean().remove(user);
-			resetTo();
-			getIdCheck().setOldValue( getUser().getLogin() );
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> onRemove",e);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		}	
+	private void disableUser() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(User.class);
+		user.setActive(false);
+		bean.update(user);
 	}	
 	
 	private void resetTo() throws ManagerBeanException {
