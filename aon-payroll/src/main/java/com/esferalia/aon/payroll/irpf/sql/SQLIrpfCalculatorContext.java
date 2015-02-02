@@ -693,8 +693,8 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			return SituacionFamiliar.TRES;
 		}
 		try {
-			int ordinal = irpfDataRs.getInt(IrpfDataColumns.FAMILY_SITUATION);
-			return getByOrdinal(ordinal, SituacionFamiliar.class);
+			Integer ordinal = ( Integer ) irpfDataRs.getObject(IrpfDataColumns.FAMILY_SITUATION);
+			return ordinal == null ? SituacionFamiliar.TRES : getByOrdinal(ordinal, SituacionFamiliar.class);
 		} catch (SQLException e) {
 			return rethrow(e);
 		}
