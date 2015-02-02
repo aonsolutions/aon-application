@@ -75,7 +75,7 @@ public class JooqEmployees {
 
 	private static Settings SETTINGS = null;
 
-	public static void insert2Person(Connection connection, Integer domain,
+	public static void insert2Person(Connection connection, Integer domain, Integer registry,
 			String document) {
 
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
@@ -86,6 +86,7 @@ public class JooqEmployees {
 					.rightOuterJoin(PERSON)
 					.on(PERSON.REGISTRY.eq(REGISTRY.ID))
 					.where(REGISTRY.DOCUMENT.eq(document))
+					.and(PERSON.REGISTRY.eq(registry))
 					.fetchOne();
 			
 			
@@ -392,22 +393,22 @@ public class JooqEmployees {
 		Employee employee = getDataEmployee(create, document, startDate,
 				endDate);
 
-		int newContractId = insert2Contract(create, contractId, workplaceId,
+		int newContractId = insert2Contract(create, domain, contractId, workplaceId,
 				employee);
-		insert2ContractBonus(create, contractId, newContractId, startDate,
+		insert2ContractBonus(create, domain, contractId, newContractId, startDate,
 				endDate);
-		insert2ContractData(create, contractId, newContractId, startDate,
+		insert2ContractData(create, domain, contractId, newContractId, startDate,
 				endDate);
-		insert2ContractInfo(create, contractId, newContractId, startDate,
+		insert2ContractInfo(create, domain, contractId, newContractId, startDate,
 				endDate);
 
 		if (check) {
 			/**
 			 * ContractDeduction ContractPayment
 			 */
-			insert2ContractDeduction(create, contractId, newContractId,
+			insert2ContractDeduction(create, domain, contractId, newContractId,
 					startDate, endDate);
-			insert2ContractPayment(create, contractId, newContractId,
+			insert2ContractPayment(create, domain, contractId, newContractId,
 					startDate, endDate);
 
 		}
@@ -418,7 +419,7 @@ public class JooqEmployees {
 
 	}
 
-	protected static int insert2Contract(DSLContext create, int contractId,
+	protected static int insert2Contract(DSLContext create, Integer domain, int contractId,
 			int workplaceId, Employee employee) throws SQLException {
 
 		// @formatter:off
@@ -461,7 +462,7 @@ public class JooqEmployees {
 		InsertSetMoreStep<ContractRecord> insertContract = create
 				.insertInto(CONTRACT)
 
-				.set(CONTRACT.DOMAIN, contractRecord.getValue(CONTRACT.DOMAIN))
+				.set(CONTRACT.DOMAIN, domain)
 				.set(CONTRACT.PERSON, employee.getPerson())
 				.set(CONTRACT.WORKPLACE, workplaceId)
 				.set(CONTRACT.ENTERPRISE_CCC,
@@ -503,7 +504,7 @@ public class JooqEmployees {
 		return newContractId;
 	}
 
-	protected static void insert2ContractBonus(DSLContext create,
+	protected static void insert2ContractBonus(DSLContext create, Integer domain,
 			int oldContractId, int newContractId, Date startDate, Date endDate)
 			throws SQLException {
 
@@ -521,7 +522,7 @@ public class JooqEmployees {
 				insert = create
 						.insertInto(CONTRACT_BONUS)
 
-						.set(CONTRACT_BONUS.DOMAIN, bonus.getDomain())
+						.set(CONTRACT_BONUS.DOMAIN, domain)
 						.set(CONTRACT_BONUS.CONTRACT, newContractId)
 						.set(CONTRACT_BONUS.DESCRIPTION, bonus.getDescription())
 						.set(CONTRACT_BONUS.EXPRESSION, bonus.getExpression())
@@ -537,7 +538,7 @@ public class JooqEmployees {
 		}
 	}
 
-	protected static void insert2ContractData(DSLContext create,
+	protected static void insert2ContractData(DSLContext create, Integer domain,
 			int contractId, int newContractId, Date startDate, Date endDate)
 			throws SQLException {
 
@@ -555,7 +556,7 @@ public class JooqEmployees {
 
 				insert = create
 						.insertInto(CONTRACT_DATA)
-						.set(CONTRACT_DATA.DOMAIN, contractData.getDomain())
+						.set(CONTRACT_DATA.DOMAIN, domain)
 						.set(CONTRACT_DATA.NAME, contractData.getName())
 						.set(CONTRACT_DATA.CONTRACT, newContractId)
 						.set(CONTRACT_DATA.EXPRESSION,
@@ -572,7 +573,7 @@ public class JooqEmployees {
 		}
 	}
 
-	protected static void insert2ContractInfo(DSLContext create,
+	protected static void insert2ContractInfo(DSLContext create, Integer domain,
 			int contractId, int newContractId, Date startDate, Date endDate) {
 
 		InsertSetMoreStep<ContractInfoRecord> insert;
@@ -587,7 +588,7 @@ public class JooqEmployees {
 
 				insert = create
 						.insertInto(CONTRACT_INFO)
-						.set(CONTRACT_INFO.DOMAIN, info.getDomain())
+						.set(CONTRACT_INFO.DOMAIN, domain)
 						.set(CONTRACT_INFO.CONTRACT, newContractId)
 						.set(CONTRACT_INFO.NAME,
 								info.getValue(CONTRACT_INFO.NAME))
@@ -615,7 +616,7 @@ public class JooqEmployees {
 
 	}
 
-	protected static void insert2ContractDeduction(DSLContext create,
+	protected static void insert2ContractDeduction(DSLContext create, Integer domain,
 			int contractId, int newContractId, Date startDate, Date endDate)
 			throws SQLException {
 
@@ -635,7 +636,7 @@ public class JooqEmployees {
 				insert = create
 						.insertInto(CONTRACT_DEDUCTION)
 
-						.set(CONTRACT_DEDUCTION.DOMAIN, deduction.getDomain())
+						.set(CONTRACT_DEDUCTION.DOMAIN, domain)
 						.set(CONTRACT_DEDUCTION.TYPE, deduction.getType())
 						.set(CONTRACT_DEDUCTION.DEDUCTION_CONCEPT,
 								deduction.getDeductionConcept())
@@ -658,7 +659,7 @@ public class JooqEmployees {
 		}
 	}
 
-	protected static void insert2ContractPayment(DSLContext create,
+	protected static void insert2ContractPayment(DSLContext create, Integer domain,
 			int contractId, int newContractId, Date startDate, Date endDate)
 			throws SQLException {
 
@@ -677,7 +678,7 @@ public class JooqEmployees {
 				insert = create
 						.insertInto(CONTRACT_PAYMENT)
 
-						.set(CONTRACT_PAYMENT.DOMAIN, payment.getDomain())
+						.set(CONTRACT_PAYMENT.DOMAIN, domain)
 						.set(CONTRACT_PAYMENT.TYPE, payment.getType())
 						.set(CONTRACT_PAYMENT.CONTRACT, newContractId)
 						.set(CONTRACT_PAYMENT.PAYMENT_CONCEPT,

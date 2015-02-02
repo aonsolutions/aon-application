@@ -360,7 +360,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			initFacesContext();
 			conn = getConnection();
-			JooqEmployees.insert2Person(conn, getDomainID(), 
+			JooqEmployees.insert2Person(conn, getDomainID(), employee.getPerson(), 
 					employee.getDocument());
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);

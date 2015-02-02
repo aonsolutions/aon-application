@@ -152,8 +152,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		@Override
 		public void execute() {
-			setEmployeeCopy(singlenton.employee);
-			storage.removeItem(EMPLOYEE);
+			setEmployeeCopy(singlenton.employee);			
 			String item = employee2Json(employee);
 			storage.setItem(EMPLOYEE, item);
 			setPasteItemVisible(true);
@@ -240,13 +239,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			
 			if(Window.confirm(employee.getFullname() + 
 					" no se encuentra en el dominio. \u00BFDesea insertar "
-					+ "el registro ahora\u003F")) {
+					+ "el registro\u003F")) {
 				
 				singlenton.employees.getEmployeesService().insertPerson(employee, new AsyncCallback<Void>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						onFailure(caught);
+						
 					}
 
 					@Override
@@ -254,8 +253,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 						singlenton.avaiableEmployees.put(employee.getDocument(), 
 								employee.getFullname());
 						PasteEmployeeCommand.this.showPopUpPanel();
-						onSuccess(result);	
-						
 					}
 				});
 			}
@@ -1164,8 +1161,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	@Override
 	public void onEmployeeCopy(Employee employee) {
-		singlenton.employeeContextMenu.setCopyEmployee(employee);
-		storage.removeItem(EMPLOYEE);
+		singlenton.employeeContextMenu.setCopyEmployee(employee);		
 		storage.setItem(EMPLOYEE, employee2Json(employee));
 		pasteItem.setVisible(true);
 	}
@@ -1460,6 +1456,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		try {
 
 			json.put("id", new JSONNumber(employee.getId()));
+			json.put("person", new JSONNumber(employee.getPerson()));
 			json.put("name", new JSONString(employee.getName()));
 			json.put("first", new JSONString(employee.getFirstSurname()));
 			
@@ -1478,7 +1475,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 				json.put("document", new JSONString(employee.getDocument()));			
 			
 			if(employee.getSocialSecurity() != null)
-				json.put("ss", new JSONString(employee.getSocialSecurity()));
+				json.put("ss", new JSONString(employee.getSocialSecurity()));		
 					
 			return json.toString();
 
@@ -1494,7 +1491,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			
 			JSONObject json = new JSONObject(parseJson(jsonEmployee));
 			
-			String id = json.get("id").toString();			
+			String id = json.get("id").toString();
+			String person = json.get("person").toString().replaceAll("\"", "");
 			String name = json.get("name").toString().replaceAll("\"", "");			
 			String firstSurname = json.get("first").toString().replaceAll("\"", "");
 			
@@ -1515,9 +1513,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			if(json.get("document") != null)			
 				document = json.get("document").toString().replaceAll("\"", "");
 			
-			String ss = null;
+			String ss = "";
 			if(json.get("ss") != null)
 				ss = json.get("ss").toString().replaceAll("\"", "");
+			
+			
 			
 			Employee employee = new Employee();			
 			employee.setId(Integer.parseInt(id));			
@@ -1527,6 +1527,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			employee.setStartDate(startDate);
 			employee.setEndDate(endDate);
 			employee.setDocument(document);
+			employee.setPerson(Integer.parseInt(person));
 			employee.setSocialSecurity(ss);
 			
 			return employee;
