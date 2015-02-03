@@ -25,6 +25,7 @@ public interface EnterprisesServiceAsync {
 	void deleteDeductionConcept(Deduction deduction, AsyncCallback<Void> callback);
 	void deleteAgreement(Agreement agreement, AsyncCallback<Void> callback);
 	void updateAgreementId(Agreement agreement, AsyncCallback<Void> callback);
+	void copyAgreement(Agreement agreement, AsyncCallback<Agreement> callback);
 	void getAgreements(int offset , int limit, AsyncCallback<List<Agreement>> callback);
 	void getEnterprises(int offset , int limit, AsyncCallback<List<Enterprise>> callback);
 	void getEnterprisesCosts(List<Integer> enterpriseIds, AsyncCallback<List<Cost>> callback);

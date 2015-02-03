@@ -19,8 +19,10 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.storage.client.Storage;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -104,14 +106,13 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	
 	class AgreementContextMenu extends ContextMenu {
 		
-		MenuItem newItem = null;
-		MenuItem copyItem = null;
-		MenuItem deleteItem = null;
-		MenuItem pasteItem = null;
+		private Agreement agreementCopy = null;
+		private MenuItem pasteItem = null;
+		private MenuItem copyItem = null;
 		
 		public AgreementContextMenu() {
 			
-			newItem = addItem("Nuevo", new NewAgreementCommand(), 
+			addItem("Nuevo", new NewAgreementCommand(), 
 					AON.AON_ICON_RESET, AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
 			copyItem = addItem("Copiar", new CopyAgreementCommand(), 
@@ -119,8 +120,30 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			pasteItem = addItem("Pegar", new PasteAgreementCommand(), 
 					AON.AON_ICON_PASTE, AON.AON_ICON_CMD_BUTTON);
 			pasteItem.setVisible(false);
-			deleteItem = addItem("Eliminar", new DeleteAgreementCommand(), 
+			addItem("Eliminar", new DeleteAgreementCommand(), 
 					AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON); 
+		}
+		
+		public void setAgreementCopy(Agreement agreement) {
+			this.agreementCopy = agreement;
+		}
+		
+		public Agreement getAgreementCopy() {
+			return this.agreementCopy;
+		}
+		
+		public void setVisiblePasteItem(boolean visible) {
+			this.pasteItem.setVisible(visible);
+		}
+		
+		public void setVisibleCopyItem(Integer id) {
+			this.copyItem.setEnabled(true);
+			this.copyItem.setTitle("");
+
+			if ( id < 0) {
+				this.copyItem.setEnabled(false);
+				this.copyItem.setTitle("No es posible copiar un convenio no guardado.");
+			}
 		}
 	}
 
@@ -159,6 +182,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		}
 	}
 	
+	private static final String AGREEMENT = "c-agreement";
+	
 	/*
 	 * @UiField MetaData metaData;
 	 */
@@ -167,6 +192,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 	@UiField
 	AgreementDraft agreementDraft;
+	
+	private Storage storage;
 
 	private Map<Integer, AgreementDraftObject> agreementDrafts;
 	
@@ -187,6 +214,9 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = binder.createAndBindUi(this);
+		
+		// LocalStorage getItems
+		this.storage = Storage.getLocalStorageIfSupported();
 
 		// Add the outer panel to the RootLayoutPanel, so that it will be
 		// displayed.
@@ -201,6 +231,14 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		this.agreementDrafts = new HashMap<Integer, AgreementDraftObject>();
 		
 		addEditionOptions(this);
+		
+		if(storage.getItem(AGREEMENT) != null) {
+			Integer id = Integer.parseInt(storage.getItem(AGREEMENT).toString());
+			Agreement agreement = new Agreement();
+			agreement.setId(id);
+			contextMenu.setAgreementCopy(agreement);
+			contextMenu.setVisible(true);
+		}		
 
 	}
 
@@ -209,7 +247,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	@Override
 	public void onAgreementSelected(Agreement agreement) {
 
-		this.agreement = agreement;
+		this.agreement = agreement;		
+		this.contextMenu.setVisibleCopyItem(agreement.getId());
 
 		AgreementDraftObject agreementDraftObject = agreementDrafts
 				.get(agreement.getId());
@@ -303,14 +342,34 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	}
 
 	@Override
-	public void onAgreementCopy(Agreement agreement) {
-		//Window.alert("onCopy(..");
+	public void onAgreementCopy(Agreement agreement) {	
 		
+		contextMenu.setAgreementCopy(agreement);
+		contextMenu.setVisiblePasteItem(true);
+		
+		storage.setItem(AGREEMENT, new String(agreement.getId().toString()));
 	}
 
 	@Override
 	public void onAgreementPaste(Agreement agreement) {
-		//Window.alert("onPaste(..");
+		
+		agreement = contextMenu.getAgreementCopy();
+		
+		if(agreement != null) {
+			agreements.getAgreementsTree().getEnterpriseService().copyAgreement(agreement, new AsyncCallback<Agreement>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert("Sucede algo");
+					
+				}
+
+				@Override
+				public void onSuccess(Agreement result) {
+					agreements.reloadAgreements();			
+				}
+			});
+		}
 	}
 
 	@Override
@@ -329,6 +388,5 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			}
 		});
 	}	
-	//--------------------------------------------- private methods
 
 }

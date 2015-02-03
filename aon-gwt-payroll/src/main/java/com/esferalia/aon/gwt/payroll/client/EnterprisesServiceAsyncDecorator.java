@@ -156,5 +156,13 @@ public class EnterprisesServiceAsyncDecorator implements
 				new AsyncCallbackWrapper<Void>(callback));
 		
 	}
+	
+	@Override
+	public void copyAgreement(Agreement agreement,
+			AsyncCallback<Agreement> callback) {
+		AON.start();
+		enterprisesServiceAsync.copyAgreement(agreement, 
+				new AsyncCallbackWrapper<Agreement>(callback));
+	}
 
 }

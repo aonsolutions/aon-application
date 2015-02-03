@@ -42,6 +42,8 @@ public interface EnterprisesService extends RemoteService {
 	void deleteDeductionConcept(Deduction deduction);
 	
 	void deleteAgreement(Agreement agreement);
+	
+	Agreement copyAgreement(Agreement agreement);
 
 	List<Agreement> getAgreements(int offset, int limit) ;
 

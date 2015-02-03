@@ -340,7 +340,27 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			}
 			releaseFacesContext();
 		}
-
+	}
+	
+	@Override
+	public Agreement copyAgreement(Agreement agreement) {
+		
+		Connection connection = null;
+		try {
+			initFacesContext();
+			connection = AonServletUtils.getConnection();						
+			return JooqAgreement.copyAgreement(connection, getDomain(), agreement.getId());
+		} catch(SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
 	}
 
 	@Override

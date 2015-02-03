@@ -60,7 +60,7 @@ public class Agreements extends ResizeComposite implements
 	@UiField
 	AgreementsTree agreementsTree;
 
-	private static Integer newsIdCounter = 0;
+	private static Integer newsIdCounter = 0;	
 	private Integer domain;
 	private List<Listener> listeners;
 	private List<Toolbar> toolbars;
@@ -217,14 +217,26 @@ public class Agreements extends ResizeComposite implements
 
 	@Override
 	public void onPasteButtonClick(ClickEvent event) {
-		// TODO Auto-generated method stub
+		Object object = getAgreementsTree().getTree().getSelectedItem().getUserObject();
 		
+		if(object instanceof Agreement) {
+			for(Toolbar toolbar : toolbars)
+				toolbar.onAgreementCtrlV((Agreement) object);
+		}
 	}
 
 	@Override
 	public void onCopyButtonClick(ClickEvent event) {
-		// TODO Auto-generated method stub
+		Object object = getAgreementsTree().getTree().getSelectedItem().getUserObject();
 		
+		if(object instanceof Agreement) {
+			Agreement agreement = (Agreement) object;
+			
+			if(agreement.getId() > 0) {
+				for(Toolbar toolbar : toolbars)
+					toolbar.onAgreementCtrlC((Agreement) object);
+			}
+		}
 	}
 
 	@Override
@@ -234,13 +246,14 @@ public class Agreements extends ResizeComposite implements
 			for(Toolbar toolbar : toolbars)
 				toolbar.onMoveToTrash((Agreement) object);
 		}
-		
 	}
 
 	@Override
 	public void onAgreementCtrlC(Agreement agreement) {
-		for(Toolbar toolbar : toolbars)
-			toolbar.onAgreementCtrlC(agreement);
+		if(agreement.getId() > 0) {
+			for(Toolbar toolbar : toolbars)
+				toolbar.onAgreementCtrlC(agreement);
+		}
 	}
 
 	@Override
@@ -277,5 +290,7 @@ public class Agreements extends ResizeComposite implements
 		// TODO Auto-generated method stub
 		
 	}
+	
+	
 
 }

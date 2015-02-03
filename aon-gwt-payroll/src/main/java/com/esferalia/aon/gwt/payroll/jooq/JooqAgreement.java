@@ -26,6 +26,7 @@ import org.jooq.AggregateFunction;
 import org.jooq.Cursor;
 import org.jooq.DSLContext;
 import org.jooq.Identity;
+import org.jooq.InsertSetMoreStep;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Result;
@@ -37,7 +38,14 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
+import com.esferalia.aon.jooq.tables.records.AgreementDataRecord;
+import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
+import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
+import com.esferalia.aon.jooq.tables.records.AgreementLevelDataRecord;
+import com.esferalia.aon.jooq.tables.records.AgreementLevelRecord;
+import com.esferalia.aon.jooq.tables.records.AgreementPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
+import com.esferalia.aon.jooq.tables.records.PayrollWorkplaceRecord;
 
 public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
@@ -437,6 +445,258 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			throw new IllegalArgumentException();
 		}
 	}
+	
+	public static Agreement copyAgreement(Connection conn, Integer domain, Integer id) {
+		return copyAgreement(DSL.using(conn, getDefaultSettings()), domain, id);
+	}
+	
+	private static Agreement copyAgreement(DSLContext dslContext, Integer domain, Integer id) {
+		
+		try {
+			// @formatter:off			
+			Record agreementRecord = dslContext
+					.selectFrom(AGREEMENT)
+					.where(AGREEMENT.ID.eq(id))
+					.fetchOne();
+			// @formatter:on
+			
+			int newAgreementId = dslContext.insertInto(AGREEMENT)
+					.set(AGREEMENT.DOMAIN, domain)
+					.set(AGREEMENT.CALENDAR, agreementRecord.getValue(AGREEMENT.CALENDAR))
+					.set(AGREEMENT.DESCRIPTION, "COPIA DE " 
+									+ agreementRecord.getValue(AGREEMENT.DESCRIPTION))
+					.returning(AGREEMENT.ID).fetchOne().getId();
+			
+			Agreement agreement = new Agreement();
+			agreement.setId(newAgreementId);
+			agreement.setDescription("COPIA + " + agreementRecord.getValue(AGREEMENT.DESCRIPTION));
+			agreement.setDomain(domain);
+			agreement.setHasContract(false);
+			
+			copy2AgreementData(dslContext, id, newAgreementId, domain);
+			copy2AgreementLevel(dslContext, id, newAgreementId, domain);
+			copy2AgreementPayment(dslContext, id, newAgreementId, domain);
+			
+			return agreement;
+			
+			
+			
+		} catch ( Exception ex) {
+			throw new IllegalArgumentException();
+		}
+	}
+	
+	private static void copy2AgreementData(DSLContext dslContext, Integer oldAgreementId, Integer newAgreementId, Integer domain) 
+			throws Exception {
+		
+		InsertSetMoreStep<AgreementDataRecord> insert = null;
+		
+		// @formatter:off
+		List<AgreementDataRecord> agreementDataRecord = dslContext
+				.selectFrom(AGREEMENT_DATA)
+				.where(AGREEMENT_DATA.AGREEMENT
+						.eq(oldAgreementId))
+				.fetchInto(AGREEMENT_DATA);
+		// @formatter:on
+		
+		if(agreementDataRecord != null) {
+
+			for(AgreementDataRecord record : agreementDataRecord) {
+		
+				insert = dslContext.insertInto(AGREEMENT_DATA)
+						.set(AGREEMENT_DATA.DOMAIN, domain)
+						.set(AGREEMENT_DATA.NAME, record.getValue(AGREEMENT_DATA.NAME))
+						.set(AGREEMENT_DATA.AGREEMENT, newAgreementId)
+						.set(AGREEMENT_DATA.EXPRESSION, record.getValue(AGREEMENT_DATA.EXPRESSION))
+						.set(AGREEMENT_DATA.START_DATE, record.getValue(AGREEMENT_DATA.START_DATE))
+						.set(AGREEMENT_DATA.END_DATE, record.getValue(AGREEMENT_DATA.END_DATE));
+				
+				insert.execute();
+			}
+		}
+	}
+	
+	private static void copy2AgreementLevel(DSLContext dslContext, Integer oldAgreementId, Integer newAgreementId, Integer domain) 
+			throws Exception {
+		InsertSetMoreStep<AgreementLevelRecord> insert = null;
+		
+		// @formatter:off
+		List<AgreementLevelRecord> agreementLevelRecord = dslContext
+				.selectFrom(AGREEMENT_LEVEL)
+				.where(AGREEMENT_LEVEL.AGREEMENT
+						.eq(oldAgreementId))
+				.fetchInto(AGREEMENT_LEVEL);
+		
+		if(agreementLevelRecord != null) {
+			
+			for(AgreementLevelRecord record : agreementLevelRecord) {
+				
+				insert = dslContext.insertInto(AGREEMENT_LEVEL)
+						.set(AGREEMENT_LEVEL.DOMAIN, domain)
+						.set(AGREEMENT_LEVEL.AGREEMENT, newAgreementId)
+						.set(AGREEMENT_LEVEL.DESCRIPTION, record.getValue(AGREEMENT_LEVEL.DESCRIPTION));
+				
+				int newLevelId = insert.returning(AGREEMENT_LEVEL.ID).fetchOne().getId();				
+				int oldLevelId = record.getValue(AGREEMENT_LEVEL.ID);
+				
+				copy2AgreementLevelInner(dslContext, domain, oldLevelId, newLevelId);
+				
+			}
+		}
+	}
+	
+	private static void copy2AgreementLevelInner(DSLContext dslContext, Integer domain, 
+			Integer oldLevelId, Integer newLevelId) throws Exception {
+		
+		InsertSetMoreStep<AgreementLevelDataRecord> insertLevelData = null;
+		InsertSetMoreStep<AgreementLevelCategoryRecord> insertLevelCategory = null;
+		
+		List<AgreementLevelDataRecord> selectLevelData = dslContext
+				.selectFrom(AGREEMENT_LEVEL_DATA)
+				.where(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL
+						.eq(oldLevelId))
+				.fetchInto(AGREEMENT_LEVEL_DATA);
+		
+		if(selectLevelData != null) {
+			
+			for(AgreementLevelDataRecord record : selectLevelData) {
+				
+				insertLevelData = dslContext.insertInto(AGREEMENT_LEVEL_DATA)
+						.set(AGREEMENT_LEVEL_DATA.DOMAIN, domain)
+						.set(AGREEMENT_LEVEL_DATA.NAME, record.getValue(AGREEMENT_LEVEL_DATA.NAME))
+						.set(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL, newLevelId)
+						.set(AGREEMENT_LEVEL_DATA.EXPRESSION, record.getValue(AGREEMENT_LEVEL_DATA.EXPRESSION))
+						.set(AGREEMENT_LEVEL_DATA.START_DATE, record.getValue(AGREEMENT_LEVEL_DATA.START_DATE))
+						.set(AGREEMENT_LEVEL_DATA.END_DATE, record.getValue(AGREEMENT_LEVEL_DATA.END_DATE));
+				
+				insertLevelData.execute();
+			}
+		}
+		
+		List<AgreementLevelCategoryRecord> selectLevelCategory = dslContext
+				.selectFrom(AGREEMENT_LEVEL_CATEGORY)
+				.where(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL
+						.eq(oldLevelId))
+				.fetchInto(AGREEMENT_LEVEL_CATEGORY);
+		
+		if(selectLevelCategory != null) {
+			
+			for (AgreementLevelCategoryRecord record : selectLevelCategory) {
+				
+				insertLevelCategory = dslContext.insertInto(AGREEMENT_LEVEL_CATEGORY)
+						.set(AGREEMENT_LEVEL_CATEGORY.DOMAIN, domain)
+						.set(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL, newLevelId)
+						.set(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION, record.getValue(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION));
+						
+				insertLevelCategory.execute();
+			}
+		}
+	}
+
+	private static void copy2AgreementPayment(DSLContext dslContext, Integer oldAgreementId, 
+			Integer newAgreementId, Integer domain) throws Exception {
+		
+		InsertSetMoreStep<AgreementPaymentRecord> insertPayment = null;
+
+		// @formatter:off
+		List<AgreementPaymentRecord> agreementPaymentRecord = dslContext
+				.selectFrom(AGREEMENT_PAYMENT)
+				.where(AGREEMENT_PAYMENT.AGREEMENT
+						.eq(oldAgreementId))
+				.fetchInto(AGREEMENT_PAYMENT);
+		// @formatter:on
+		
+		if(agreementPaymentRecord != null) {
+			
+			for(AgreementPaymentRecord record : agreementPaymentRecord) {
+				
+				insertPayment = dslContext.insertInto(AGREEMENT_PAYMENT)
+					.set(AGREEMENT_PAYMENT.DOMAIN, domain)
+					.set(AGREEMENT_PAYMENT.AGREEMENT, newAgreementId)
+					.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, record.getValue(AGREEMENT_PAYMENT.PAYMENT_CONCEPT))
+					.set(AGREEMENT_PAYMENT.TYPE, record.getValue(AGREEMENT_PAYMENT.TYPE))
+					.set(AGREEMENT_PAYMENT.EXPRESSION, record.getValue(AGREEMENT_PAYMENT.EXPRESSION))
+					.set(AGREEMENT_PAYMENT.DESCRIPTION, record.getValue(AGREEMENT_PAYMENT.DESCRIPTION))
+					.set(AGREEMENT_PAYMENT.START_DATE, record.getValue(AGREEMENT_PAYMENT.START_DATE))
+					.set(AGREEMENT_PAYMENT.END_DATE, record.getValue(AGREEMENT_PAYMENT.END_DATE))
+					.set(AGREEMENT_PAYMENT.MONTH, record.getValue(AGREEMENT_PAYMENT.MONTH))
+					.set(AGREEMENT_PAYMENT.SALARY_TYPE, record.getValue(AGREEMENT_PAYMENT.SALARY_TYPE))
+					.set(AGREEMENT_PAYMENT.DESCRIPTION_DECORABLE, record.getValue(AGREEMENT_PAYMENT.DESCRIPTION_DECORABLE))
+					.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, record.getValue(AGREEMENT_PAYMENT.IRPF_EXPRESSION))
+					.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, record.getValue(AGREEMENT_PAYMENT.QUOTE_EXPRESSION));
+				
+				int newPaymentId = insertPayment.returning(AGREEMENT_PAYMENT.ID).fetchOne().getId();
+				int oldPaymentId = record.getValue(AGREEMENT_PAYMENT.ID);
+				
+				insert2AgreementExtra(dslContext, domain, oldAgreementId, newAgreementId, oldPaymentId, newPaymentId);
+			}
+		}
+	}
+	
+
+	private static void insert2AgreementExtra(DSLContext dslContext, Integer domain, Integer oldAgreementId, 
+			Integer newAgreementId, Integer oldPaymentId, Integer newPaymentId) throws Exception {
+		
+		InsertSetMoreStep<AgreementExtraRecord> insertExtra = null;
+
+		// @formatter:off
+		List<AgreementExtraRecord> agreementExtraRecord = dslContext
+				.selectFrom(AGREEMENT_EXTRA)
+				.where(AGREEMENT_EXTRA.AGREEMENT
+						.eq(oldAgreementId))
+						.and(AGREEMENT_EXTRA.AGREEMENT_PAYMENT.eq(oldPaymentId))
+				.fetchInto(AGREEMENT_EXTRA);
+		// @formatter:on
+		
+		if(agreementExtraRecord != null) {
+			
+			for(AgreementExtraRecord record : agreementExtraRecord) {
+				
+				insertExtra = dslContext.insertInto(AGREEMENT_EXTRA)
+					.set(AGREEMENT_EXTRA.DOMAIN, domain)
+					.set(AGREEMENT_EXTRA.AGREEMENT, newAgreementId)
+					.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, newPaymentId)
+					.set(AGREEMENT_EXTRA.START_DATE, record.getValue(AGREEMENT_EXTRA.START_DATE))
+					.set(AGREEMENT_EXTRA.END_DATE, record.getValue(AGREEMENT_PAYMENT.EXPRESSION))
+					.set(AGREEMENT_EXTRA.ISSUE_DATE, record.getValue(AGREEMENT_EXTRA.ISSUE_DATE));
+				
+				insertExtra.execute();
+			}
+		}
+
+		
+	}
+
+	
+	private static void insert2PayrollWorkplace(DSLContext dslContext, Integer id, Integer domain) 
+			throws Exception {
+		
+		InsertSetMoreStep<PayrollWorkplaceRecord> insertPayroll = null;
+		
+		// @formatter:off
+		List<PayrollWorkplaceRecord> payrollWorkplaceRecord = dslContext
+				.selectFrom(PAYROLL_WORKPLACE)
+				.where(PAYROLL_WORKPLACE.AGREEMENT
+						.eq(id))
+				.fetchInto(PAYROLL_WORKPLACE);
+		// @formatter:on
+		
+		if(payrollWorkplaceRecord != null) {
+			
+			for(PayrollWorkplaceRecord record : payrollWorkplaceRecord) {
+				
+				insertPayroll = dslContext.insertInto(PAYROLL_WORKPLACE)
+						.set(PAYROLL_WORKPLACE.DOMAIN, domain)
+						.set(PAYROLL_WORKPLACE.WORKPLACE, record.getValue(PAYROLL_WORKPLACE.WORKPLACE))
+						.set(PAYROLL_WORKPLACE.AGREEMENT, id)
+						.set(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY, record.getValue(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY))
+						.set(PAYROLL_WORKPLACE.CALENDAR, record.getValue(PAYROLL_WORKPLACE.CALENDAR));						
+					
+				insertPayroll.execute();
+			}
+		}
+	}
+
 
 	// ------------------------------------------------------------------------
 
