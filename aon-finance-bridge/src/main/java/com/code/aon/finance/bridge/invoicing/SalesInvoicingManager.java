@@ -62,7 +62,7 @@ public class SalesInvoicingManager {
 		Invoice invoice = createInvoice(sales, series, number, issueDate);
 		createInvoiceDetails(invoice, sales);
 		double invoiceTotal = getPriceStrategy().getTotalPrice(invoice, invoice);
-		if (invoiceTotal > 0) {
+		if (invoiceTotal != 0) {
 			if (sales.getPayMethod() != null && sales.getPayMethod().getId() != null) {
 				getFinanceGenerator().generateFinances(invoice, sales, invoiceTotal, true);
 			} else {

@@ -45,7 +45,7 @@ public class PurchaseInvoicingManager {
 		Invoice invoice = createInvoice(purchase, referenceCode, issueDate);
 		createInvoiceDetails(invoice, purchase);
 		double invoiceTotal = getPriceStrategy().getTotalPrice(invoice, invoice);
-		if (invoiceTotal > 0) {
+		if (invoiceTotal != 0) {
 			if (purchase.getPayMethod() != null && purchase.getPayMethod().getId() != null) {
 				getFinanceGenerator().generateFinances(invoice, purchase, invoiceTotal, true);
 			} else {
