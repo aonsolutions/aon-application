@@ -255,7 +255,6 @@ public class Payments implements Serializable {
 	 */
 	public Collection<IPayment> getCollection() {
 		List<IPayment> list = new LinkedList<IPayment>();
-		IPayment p;
 
 		if(!getBaseSalary().getValues().isEmpty()){
 			for(IPayment payment: getBaseSalary().getValues()){
@@ -272,9 +271,10 @@ public class Payments implements Serializable {
 				list.add(payment);
 			}
 		}
-		p = map.get(PaymentType.NON_STRUCTURAL_HOURS);
-		if (p != null) {
-			list.add(map.get(PaymentType.NON_STRUCTURAL_HOURS));
+		if(!getNoEstructuralOvertimeHours().getValues().isEmpty()){
+			for(IPayment payment: getNoEstructuralOvertimeHours().getValues()){
+				list.add(payment);
+			}
 		}
 		if(!getSpecialBonuses().getValues().isEmpty()){
 			for(IPayment payment: getSpecialBonuses().getValues()){

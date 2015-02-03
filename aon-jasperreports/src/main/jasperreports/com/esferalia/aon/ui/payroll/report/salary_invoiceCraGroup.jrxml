@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salary_invoiceCraGroup" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="00dee464-72a2-4446-88fb-95a6f2abb002">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="104"/>
 	<property name="ireport.y" value="507"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
 	<import value="com.code.aon.common.util.CommonUtil"/>
@@ -1147,6 +1147,7 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 				<box leftPadding="2">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement/>
 				<text><![CDATA[Devengos]]></text>
@@ -1156,6 +1157,7 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 				<box rightPadding="10">
 					<leftPen lineWidth="0.5" lineColor="#000000"/>
 					<bottomPen lineWidth="0.5" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{totalPayment} == 0.00 ? null : $V{totalPayment}]]></textFieldExpression>
@@ -1263,7 +1265,7 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 				<reportElement uuid="ab8472d5-b138-4c14-bc2c-5b98ae3f483d" style="title" x="8" y="24" width="90" height="10"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement/>
@@ -1482,7 +1484,7 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 			<staticText>
 				<reportElement uuid="64e060a4-f117-4976-943c-f3a549ab2a3c" style="title" x="184" y="156" width="86" height="10"/>
 				<box leftPadding="2">
-					<topPen lineWidth="0.25"/>
+					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
@@ -1497,7 +1499,7 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement/>
-				<text><![CDATA[3. Horas Extras]]></text>
+				<text><![CDATA[3. Horas Extra]]></text>
 			</staticText>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement uuid="376c8348-dd29-40da-8fd6-d406086c2dad" style="text" x="8" y="210" width="90" height="12" forecolor="#000000"/>
@@ -1548,7 +1550,7 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement/>
-				<text><![CDATA[Estruc. / Fuerza Mayor]]></text>
+				<text><![CDATA[Estruc./Fuerza Mayor]]></text>
 			</staticText>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement uuid="9eed24ba-af2a-4659-ad89-0df5f80f8b68" style="text" x="98" y="166" width="86" height="12" forecolor="#000000"/>

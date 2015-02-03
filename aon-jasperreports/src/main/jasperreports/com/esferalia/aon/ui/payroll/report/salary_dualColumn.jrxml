@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salary_dualColumn" columnCount="2" pageWidth="595" pageHeight="842" columnWidth="277" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2219f940-1d11-45db-a72b-ad1a7427b049">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="528"/>
+	<property name="ireport.x" value="172"/>
+	<property name="ireport.y" value="0"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
 	<import value="com.code.aon.common.util.CommonUtil"/>
 	<import value="com.esferalia.aon.salary.enumeration.DeductionType"/>
@@ -275,42 +275,42 @@ $F{salary}.getDeductions().getIrpf().getAmount()-$V{irpfInKind})]]></variableExp
 				<textFieldExpression><![CDATA[$F{salary}.getEmployeeDocument()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="e0890497-97b7-41e9-a874-dca2f9cd9e09" style="label" x="281" y="47" width="185" height="13"/>
+				<reportElement uuid="e0890497-97b7-41e9-a874-dca2f9cd9e09" style="label" x="281" y="47" width="130" height="13"/>
 				<textElement/>
-				<text><![CDATA[Número de afiliciación a la Seguridad Social:]]></text>
+				<text><![CDATA[Núm. Afil. Seguridad Social:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="44b61462-0169-4e77-8543-67a46beaebcb" style="label" x="466" y="47" width="86" height="13"/>
+				<reportElement uuid="44b61462-0169-4e77-8543-67a46beaebcb" style="label" x="411" y="47" width="141" height="13"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$F{salary}.getSocialSecurityNumber()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="fac8f252-cf62-4875-b56b-1f1f58a19c1b" style="label" x="281" y="60" width="92" height="13"/>
+				<reportElement uuid="fac8f252-cf62-4875-b56b-1f1f58a19c1b" style="label" x="281" y="60" width="98" height="13"/>
 				<textElement/>
 				<text><![CDATA[Grupo profesional:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="63e2b7d5-97be-4b0d-8978-c5f61972cd4f" style="label" x="373" y="60" width="179" height="13"/>
+				<reportElement uuid="63e2b7d5-97be-4b0d-8978-c5f61972cd4f" style="label" x="379" y="60" width="173" height="13"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$F{salary}.getCategory()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="0174da34-d0d4-4247-b510-bc86d25fcbdb" style="label" x="281" y="73" width="92" height="13"/>
+				<reportElement uuid="0174da34-d0d4-4247-b510-bc86d25fcbdb" style="label" x="281" y="73" width="98" height="13"/>
 				<textElement/>
 				<text><![CDATA[Grupo de cotización:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="85a8e84b-619e-40ce-84a5-3a739e311d8a" style="label" x="373" y="73" width="30" height="13"/>
+				<reportElement uuid="85a8e84b-619e-40ce-84a5-3a739e311d8a" style="label" x="379" y="73" width="24" height="13"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$F{salary}.getQuoteGroup()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="7cea1788-b6f9-437d-a1e6-93e3832fe9e9" style="label" x="403" y="73" width="84" height="13"/>
+				<reportElement uuid="7cea1788-b6f9-437d-a1e6-93e3832fe9e9" style="label" x="403" y="73" width="88" height="13"/>
 				<textElement/>
 				<text><![CDATA[Fecha Antigüedad:]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement uuid="afe6206f-fe10-452e-9721-a5f9246540c6" style="label" x="487" y="73" width="65" height="13"/>
+				<reportElement uuid="afe6206f-fe10-452e-9721-a5f9246540c6" style="label" x="491" y="73" width="61" height="13"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$F{salary}.getContract().getSeniorityDate()]]></textFieldExpression>
 			</textField>
@@ -981,7 +981,9 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 			</staticText>
 			<staticText>
 				<reportElement uuid="5b5681d0-1a5a-4455-9ec7-502f3402729d" style="title1" x="7" y="110" width="541" height="26"/>
-				<textElement/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
 				<text><![CDATA[DETERMINACIÓN DE LAS BASES DE COTIZACIÓN A LA SEGURIDAD SOCIAL Y CONCEPTOS DE RECAUDACIÓN CONJUNTA Y DE LA BASE SUJETA A RETENCIÓN DEL IRPF Y APORTACIÓN DE LA EMPRESA]]></text>
 			</staticText>
 			<staticText>
