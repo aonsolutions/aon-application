@@ -3824,6 +3824,61 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 
 			@Override
+			protected ISalaryCalculatorContext getPaymentCalculatorContext(
+					Connection conn, Date startDate, Date endDate,
+					Date issueDate, Criteria criteria, final double x) {
+				try {
+					SQLContractSalaryCalculatorContext sqlContractSalaryCalculatorCtx = new SQLContractSalaryCalculatorContext(
+							conn, startDate, endDate, issueDate, criteria) {
+
+						@Override
+						public Object gross(double liquid)
+								throws ExpressionException, SQLException {
+							return x;
+						}
+
+						@Override
+						protected ISQLContractSalaryCalculatorContext getNoItCalculatorContext(
+								Connection conn, Date startDate, Date endDate,
+								Date issueDate, Criteria criteria, int start,
+								int end) {
+							ISQLContractSalaryCalculatorContext draftCtx;
+							try {
+								SQLNoItContractSalaryCalculatorContext sqlCtx = new SQLNoItContractSalaryCalculatorContext(
+										conn, startDate, endDate, issueDate,
+										criteria, start, end);
+								draftCtx = new SQLSalaryDraftCalculatorContext(
+										draft, sqlCtx);
+								draftCtx.next();
+								return draftCtx;
+							} catch (ExpressionException e) {
+								throw new ExpressionExceptionWrapper(e);
+							} catch (SQLException e) {
+								throw new ExpressionExceptionWrapper(
+										new ExpressionException(e));
+							}
+						}
+
+					};
+					SQLSalaryDraftCalculatorContext sqlDraftSalaryCalculatorCtx = new SQLSalaryDraftCalculatorContext(
+							draft, sqlContractSalaryCalculatorCtx);
+
+					sqlDraftSalaryCalculatorCtx
+							.setListener(SalaryCalculatorContextImpl.this
+									.getListener());
+
+					sqlDraftSalaryCalculatorCtx.next();
+					return sqlDraftSalaryCalculatorCtx;
+
+				} catch (ExpressionException e) {
+					throw new ExpressionExceptionWrapper(e);
+				} catch (SQLException e) {
+					throw new ExpressionExceptionWrapper(
+							new ExpressionException(e));
+				}
+			}
+
+			@Override
 			protected ISalaryCalculatorContext getLiquidCalculatorContext(
 					Connection conn, Date startDate, Date endDate,
 					Date issueDate, Criteria criteria, final double x) {
