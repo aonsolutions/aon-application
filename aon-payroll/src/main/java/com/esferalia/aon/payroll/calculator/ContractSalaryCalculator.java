@@ -420,17 +420,15 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 			if (cgpBase != null && maternityBase != null)
 				expressionContext.setVariable(CGP_BASE,
 						cgpBase - maternityBase, start, end);
-			Double nonStructuralBase = quoteCalculator
-					.getNonStructuralBase();
+			Double nonStructuralBase = quoteCalculator.getNonStructuralBase();
 			salaryBuilder.setNonHExtraBase(nonStructuralBase);
-			if ( nonStructuralBase != null  ) 
+			if (nonStructuralBase != null)
 				expressionContext.setVariable(NON_STRUCTURAL_OVERTIME_BASE,
 						nonStructuralBase, start, end);
 
-			Double structuralBase = quoteCalculator
-					.getStructuralBase();
+			Double structuralBase = quoteCalculator.getStructuralBase();
 			salaryBuilder.setHExtraBase(structuralBase);
-			if ( structuralBase != null  ) 
+			if (structuralBase != null)
 				expressionContext.setVariable(STRUCTURAL_OVERTIME_BASE,
 						structuralBase, start, end);
 
@@ -637,14 +635,13 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 					// TODO: Something ??? It's really necessary...
 				} catch (IllegalArgumentException e) {
 					// costStart > costEnd, ignore .
+				} catch (UndefinedVariablesException e) {
+				} catch (ExpressionException e) {
+					throw new SalaryException(e.getMessage(), e);
 				}
 
 			}
 
-		} catch (UndefinedVariablesException e) {
-
-		} catch (ExpressionException e) {
-			throw new SalaryException(e.getMessage(), e);
 		} catch (AonException e) {
 			throw new SalaryException(e.getMessage(), e);
 		}

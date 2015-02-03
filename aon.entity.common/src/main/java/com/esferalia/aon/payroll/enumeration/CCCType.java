@@ -25,7 +25,9 @@ public enum CCCType implements IResourceable {
 	
 	FELLOWS,
 	
-	HOME_EMPLOYEES;
+	HOME_EMPLOYEES,
+	
+	AGRICULTURAL;
     
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_ccc_type_";
