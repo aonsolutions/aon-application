@@ -106,8 +106,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	
 	class AgreementContextMenu extends ContextMenu {
 		
-		private Agreement agreementCopy = null;
-		private MenuItem pasteItem = null;
+		private Agreement agreementCopy = null;		
 		private MenuItem copyItem = null;
 		
 		public AgreementContextMenu() {
@@ -117,9 +116,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			addSeparator();
 			copyItem = addItem("Copiar", new CopyAgreementCommand(), 
 					AON.AON_ICON_COPY, AON.AON_ICON_CMD_BUTTON);
-			pasteItem = addItem("Pegar", new PasteAgreementCommand(), 
-					AON.AON_ICON_PASTE, AON.AON_ICON_CMD_BUTTON);
-			pasteItem.setVisible(false);
 			addItem("Eliminar", new DeleteAgreementCommand(), 
 					AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON); 
 		}
@@ -130,10 +126,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		
 		public Agreement getAgreementCopy() {
 			return this.agreementCopy;
-		}
-		
-		public void setVisiblePasteItem(boolean visible) {
-			this.pasteItem.setVisible(visible);
 		}
 		
 		public void setVisibleCopyItem(Integer id) {
@@ -344,8 +336,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	@Override
 	public void onAgreementCopy(Agreement agreement) {	
 		
-		contextMenu.setAgreementCopy(agreement);
-		contextMenu.setVisiblePasteItem(true);
+		contextMenu.setAgreementCopy(agreement);	
 		
 		storage.setItem(AGREEMENT, new String(agreement.getId().toString()));
 	}
