@@ -18,7 +18,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
-import com.code.aon.company.Company;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.file.format.output.FileOutput;
@@ -30,26 +29,12 @@ import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.enumeration.Mod123Key;
 import com.code.aon.ql.Criteria;
-import com.code.aon.registry.enumeration.DocumentType;
-import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class MOD123Writer implements IFinanceConstants{
 	
-	private Company getCompany(int domain) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(Company.class);
-		Criteria c  = new Criteria();
-		c.addEqualExpression("Company.domain", domain);
-		c.setSkipDomainFilter(true);
-		List<ITransferObject> list = bean.getList(c);
-		if (list != null && list.size() > 0 ){
-			return (Company) list.get(0);
-		}
-		throw new ManagerBeanException("No puedo encontrar 'Company' para el dominio " + domain);
-	}
-
 	public FileOutput createMOD123(List<FiscalModel> fiscalModels,MOD123Format format) throws ManagerBeanException {
 		List<Declaration> declarations = new LinkedList<Declaration>();
 		for (FiscalModel fiscalModel : fiscalModels) {
@@ -74,14 +59,16 @@ public class MOD123Writer implements IFinanceConstants{
 	private Declaration getDeclaration(FiscalModel fiscalModel) throws ManagerBeanException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
 		Declaration declaration = new  Declaration();
-		Company company = getCompany(fiscalModel.getDomain());
 		declaration.setPerson((fiscalModel.getDocument().matches("[0-9|K|L|M|X|Y|Z].*")));
 		declaration.setStartPeriod(0);
 		declaration.setEndPeriod(0);
 		int year = fiscalModel.getYear();
-		declaration.setYear(year); 
+		declaration.setYear(year);
 		Administration admon = fiscalModel.getAdministration();
 		declaration.setPeriod(fiscalModel.getPeriod().getName(admon)); 
+		declaration.setComplementary(fiscalModel.isComplementary());
+		declaration.setReplacement( fiscalModel.isReplacement() );
+		declaration.setReplacedNumber( fiscalModel.getReplacedNumber() );
 		Date date = new Date();
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
@@ -127,7 +114,7 @@ public class MOD123Writer implements IFinanceConstants{
 		declaration.setContactCellular( fiscalModel.getContactCellular() );
 		declaration.setContactMail( fiscalModel.getContactEmail() );
 
-		if (fiscalModel.getAdministration() == Administration.COMMON_TERRITORY) {
+		if (fiscalModel.getYear() < 2015 && fiscalModel.getAdministration() == Administration.COMMON_TERRITORY) {
 			declaration.setAdministrationCode(fiscalModel.getAdmonAeat());
 			if (StringUtils.isEmpty(declaration.getAdministrationCode())) {
 				throw new ManagerBeanException("No se ha indicado el Código de Administración.");
@@ -153,6 +140,7 @@ public class MOD123Writer implements IFinanceConstants{
 		} else {
 			declaration.setDeclarationType("I");
 			declaration.setCcc("");
+			declaration.setIban("");
 			Finance finance = fiscalModel.getFinance();
 			if (finance != null) {
 				if (finance.getPayMethod() != null) {
@@ -163,6 +151,7 @@ public class MOD123Writer implements IFinanceConstants{
 						declaration.setPayMethod("1");
 						declaration.setPayment("3");
 						declaration.setCcc(finance.getBankAccount().getBban());
+						declaration.setIban(finance.getBankAccount().getIban());
 						declaration.setDeclarationType("U");
 					} else {
 						declaration.setPayment("1");
@@ -174,25 +163,4 @@ public class MOD123Writer implements IFinanceConstants{
 		return declaration;
 	}
 
-	
-	public static void main(String[] args) {
-		System.out.println( "A0165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
-		System.out.println( "10165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
-		System.out.println( "20165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
-		System.out.println( "30165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
-		System.out.println( "40165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
-		System.out.println( "50165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
-		System.out.println( "60165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
-		System.out.println( "70165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
-		System.out.println( "80165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
-		System.out.println( "90165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
-		System.out.println( "K0165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
-		System.out.println( "L0165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
-		System.out.println( "M165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
-		System.out.println( "X0165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
-		System.out.println( "Y0165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
-		System.out.println( "Z0165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
-		System.out.println( "B0165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
-		
-	} 
 }

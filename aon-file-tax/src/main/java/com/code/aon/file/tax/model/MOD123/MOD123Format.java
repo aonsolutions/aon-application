@@ -13,6 +13,10 @@ public enum MOD123Format {
 			,Administration.NAVARRA
 			,MimeType.MIME_TXT
 			,Navarra2014MOD123Factory.class),
+	AEAT_2015(2015
+			,Administration.COMMON_TERRITORY
+			,MimeType.MIME_TXT
+			,Aeat2015MOD123Factory.class),
 	AEAT_2011(2011
 			,Administration.COMMON_TERRITORY
 			,MimeType.MIME_TXT

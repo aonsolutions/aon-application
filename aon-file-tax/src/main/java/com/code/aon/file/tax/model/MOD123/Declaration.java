@@ -21,10 +21,7 @@ public class Declaration {
 	private boolean replacement;
 	private boolean complementary;
 	private String navarraModel;
-	
-	private String complementaryCode;
 	private String replacedNumber;
-	
 	private boolean person;
 	private String document;
 	private Integer startPeriod;
@@ -51,6 +48,7 @@ public class Declaration {
 	
 	private String payment;
 	private String ccc;
+	private String iban;
 	private String payMethod;
 	
 	private Map<String,Double> boxes = new HashMap<String, Double>();
@@ -128,10 +126,7 @@ public class Declaration {
 		this.complementary = complementary;
 	}
 	public String getComplementaryCode() {
-		return complementaryCode;
-	}
-	public void setComplementaryCode(String complementaryCode) {
-		this.complementaryCode = complementaryCode;
+		 return (isComplementary())?"X":"";
 	}
 	public String getNavarraDeclType() {
 		if (isReplacement()) return "S";
@@ -143,6 +138,9 @@ public class Declaration {
 	}
 	public void setReplacedNumber(String replacedNumber) {
 		this.replacedNumber = replacedNumber;
+	}
+	public void setReplacedNumber(Integer replacedNumber) {
+		this.replacedNumber = (replacedNumber == null)?"":Integer.toString(replacedNumber);
 	}
 	public boolean isPerson() {
 		return person;
@@ -299,6 +297,12 @@ public class Declaration {
 	public void setCcc(String ccc) {
 		this.ccc = ccc;
 	}
+	public String getIban() {
+		return iban;
+	}
+	public void setIban(String iban) {
+		this.iban = iban;
+	}
 	public Map<String, Double> getBoxes() {
 		return boxes;
 	}
@@ -318,7 +322,6 @@ public class Declaration {
 	public void changeInvalidCharacters() {
 		setAdministrationCode(changeInvalidCharacters(getAdministrationCode()));
 		setCurrentLetterMonth(changeInvalidCharacters(getCurrentLetterMonth()));
-		setComplementaryCode(changeInvalidCharacters(getComplementaryCode()));
 		setReplacedNumber(changeInvalidCharacters(getReplacedNumber()));
 		setDocument(changeInvalidCharacters(getDocument()));
 		setName(changeInvalidCharacters(getName()));

@@ -18,7 +18,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
-import com.code.aon.company.Company;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.file.format.output.FileOutput;
@@ -30,26 +29,12 @@ import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.enumeration.Mod115Key;
 import com.code.aon.ql.Criteria;
-import com.code.aon.registry.enumeration.DocumentType;
-import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class MOD115Writer implements IFinanceConstants{
 	
-	private Company getCompany(int domain) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(Company.class);
-		Criteria c  = new Criteria();
-		c.addEqualExpression("Company.domain", domain);
-		c.setSkipDomainFilter(true);
-		List<ITransferObject> list = bean.getList(c);
-		if (list != null && list.size() > 0 ){
-			return (Company) list.get(0);
-		}
-		throw new ManagerBeanException("No puedo encontrar 'Company' para el dominio " + domain);
-	}
-
 	public FileOutput createMOD115(List<FiscalModel> fiscalModels,MOD115Format format) throws ManagerBeanException {
 		List<Declaration> declarations = new LinkedList<Declaration>();
 		for (FiscalModel fiscalModel : fiscalModels) {
@@ -74,9 +59,7 @@ public class MOD115Writer implements IFinanceConstants{
 	private Declaration getDeclaration(FiscalModel fiscalModel) throws ManagerBeanException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
 		Declaration declaration = new  Declaration();
-		Company company = getCompany(fiscalModel.getDomain());
-		declaration.setPerson(company.getRegistry().getType() == RegistryType.NATURAL 
-				|| company.getDocumentType() != DocumentType.CIF);
+		declaration.setPerson((fiscalModel.getDocument().matches("[0-9|K|L|M|X|Y|Z].*")));
 		declaration.setStartPeriod(0);
 		declaration.setEndPeriod(0);
 		int year = fiscalModel.getYear();
