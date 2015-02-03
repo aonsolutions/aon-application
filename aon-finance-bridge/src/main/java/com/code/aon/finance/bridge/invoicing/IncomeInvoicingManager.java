@@ -1,11 +1,17 @@
 package com.code.aon.finance.bridge.invoicing;
 
 import java.util.Date;
-import java.util.Iterator;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceSource;
@@ -22,8 +28,9 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class IncomeInvoicingManager {
 
-	private IPriceStrategy priceStrategy;
+	private static final Logger LOGGER = LoggerFactory.getLogger(IncomeInvoicingManager.class.getName());
 
+	private IPriceStrategy priceStrategy;
 	private FinanceGenerator financeGenerator;
 
 	public IPriceStrategy getPriceStrategy() {
@@ -41,25 +48,45 @@ public class IncomeInvoicingManager {
 	}
 
 	public Invoice invoice(Income income, String referenceCode, Date issueDate) throws ManagerBeanException {
-		updateIncomeStatus(income);
-		Invoice invoice = createInvoice(income, referenceCode, issueDate);
-		createInvoiceDetails(invoice, income);
-		double invoiceTotal = getPriceStrategy().getTotalPrice(invoice, invoice);
-		if (invoiceTotal > 0) {
-			if (income.getPayMethod() != null && income.getPayMethod().getId() != null) {
-				getFinanceGenerator().generateFinances(invoice, income, invoiceTotal, true);
-			} else {
-				getFinanceGenerator().generateFinances(invoice, invoiceTotal, true);
-			}
-		}
-		return invoice;
-	}
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		try {
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
 
-	private void updateIncomeStatus(Income income) throws ManagerBeanException {
-		IManagerBean incomeBean = BeanManager.getManagerBean(Income.class);
-		income.setStatus(IncomeStatus.INVOICED);
-		incomeBean.restoreNullSubPOJOs(income);
-		incomeBean.update(income);
+			HibernateUtil.beginTransaction(sessionName);
+
+			Invoice invoice = createInvoice(income, referenceCode, issueDate);
+			createInvoiceDetails(invoice, income);
+			double invoiceTotal = getPriceStrategy().getTotalPrice(invoice, invoice);
+			if (invoiceTotal > 0) {
+				if (income.getPayMethod() != null && income.getPayMethod().getId() != null) {
+					getFinanceGenerator().generateFinances(invoice, income, invoiceTotal, true);
+				} else {
+					getFinanceGenerator().generateFinances(invoice, invoiceTotal, true);
+				}
+			}
+			updateIncomeStatus(sessionName, income);
+
+			HibernateUtil.getSession(sessionName).flush();
+			HibernateUtil.commitTransaction(sessionName);
+
+			return invoice;
+		} catch (Exception e) {
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+				String msg = "Unable to rollback transaction!";
+				LOGGER.error(msg,daoe);
+			}
+			LOGGER.error(e.getMessage());
+			throw new ManagerBeanException(e.getMessage(), e);
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		}
 	}
 
 	private Invoice createInvoice(Income income, String referenceCode, Date issueDate) throws ManagerBeanException {
@@ -80,22 +107,24 @@ public class IncomeInvoicingManager {
 		invoice.setScope(income.getScope());
 
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		invoiceBean.restoreNullSubPOJOs(invoice);
 		return (Invoice)invoiceBean.insert(invoice);
 	}
 
 	private void createInvoiceDetails(Invoice invoice, Income income) throws ManagerBeanException {
+		int line = 0;
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_INCOME_ID), income.getId());
 		criteria.addOrder(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_LINE));
-		Iterator<?> iterator = incomeDetailBean.getList(criteria).iterator();
-		while (iterator.hasNext()) {
-			IncomeDetail incomeDetail = (IncomeDetail)iterator.next();
+		List<ITransferObject> incomeDetailList = incomeDetailBean.getList(criteria);
+		for (ITransferObject ito : incomeDetailList) {
+			IncomeDetail incomeDetail = (IncomeDetail)ito;
 			InvoiceDetail invoiceDetail = new InvoiceDetail();
 			invoiceDetail.setInvoice(invoice);
 			invoiceDetail.setProject(incomeDetail.getProject());
-			invoiceDetail.setLine(incomeDetail.getLine());
+			invoiceDetail.setLine(++line);
 			invoiceDetail.setItem(incomeDetail.getItem());
 			invoiceDetail.setDescription(incomeDetail.getDescription());
 			invoiceDetail.setQuantity(incomeDetail.getQuantity());
@@ -105,8 +134,18 @@ public class IncomeInvoicingManager {
 			invoiceDetail.setSource(InvoiceSource.INCOME);
 			invoiceDetail.setSourceId(incomeDetail.getId());
 			invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
+			invoiceDetail.getInvoice().setUpdateEnabled(line == incomeDetailList.size());
+			invoiceDetailBean.restoreNullSubPOJOs(invoiceDetail);
 			invoiceDetailBean.insert(invoiceDetail);
 		}
+	}
+
+	private void updateIncomeStatus(String sessionName, Income income) throws ManagerBeanException {
+		IManagerBean incomeBean = BeanManager.getManagerBean(Income.class);
+		income.setStatus(IncomeStatus.INVOICED);
+		incomeBean.restoreNullSubPOJOs(income);
+		income = (Income)HibernateUtil.getSession(sessionName).merge(income);	
+		income = (Income)incomeBean.update(income);
 	}
 
 }

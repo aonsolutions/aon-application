@@ -1,11 +1,17 @@
 package com.code.aon.finance.bridge.invoicing;
 
 import java.util.Date;
-import java.util.Iterator;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
@@ -23,8 +29,9 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class DeliveryInvoicingManager {
 
-	private IPriceStrategy priceStrategy;
+	private static final Logger LOGGER = LoggerFactory.getLogger(DeliveryInvoicingManager.class.getName());
 
+	private IPriceStrategy priceStrategy;
 	private FinanceGenerator financeGenerator;
 
 	public IPriceStrategy getPriceStrategy() {
@@ -42,25 +49,46 @@ public class DeliveryInvoicingManager {
 	}
 
 	public Invoice invoice(Delivery delivery, String series, int number, Date issueDate) throws ManagerBeanException {
-		updateDeliveryStatus(delivery);
-		Invoice invoice = createInvoice(delivery, series, number, issueDate);
-		createInvoiceDetails(invoice, delivery);
-		double invoiceTotal = getPriceStrategy().getTotalPrice(invoice, invoice);
-		if (invoiceTotal > 0) {
-			if (delivery.getPayMethod() != null && delivery.getPayMethod().getId() != null) {
-				getFinanceGenerator().generateFinances(invoice, delivery, invoiceTotal, true);
-			} else {
-				getFinanceGenerator().generateFinances(invoice, invoiceTotal, true);
-			}
-		}
-		return invoice;
-	}
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		try {
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
 
-	private void updateDeliveryStatus(Delivery delivery) throws ManagerBeanException {
-		IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
-		delivery.setStatus(DeliveryStatus.INVOICED);
-		deliveryBean.restoreNullSubPOJOs(delivery);
-		deliveryBean.update(delivery);
+			HibernateUtil.beginTransaction(sessionName);
+
+			Invoice invoice = createInvoice(delivery, series, number, issueDate);
+			createInvoiceDetails(invoice, delivery);
+			double invoiceTotal = getPriceStrategy().getTotalPrice(invoice, invoice);
+			if (invoiceTotal > 0) {
+				if (delivery.getPayMethod() != null && delivery.getPayMethod().getId() != null) {
+					getFinanceGenerator().generateFinances(invoice, delivery, invoiceTotal, true);
+				} else {
+					getFinanceGenerator().generateFinances(invoice, invoiceTotal, true);
+				}
+			}
+			updateDeliveryStatus(sessionName, delivery);
+
+			HibernateUtil.getSession(sessionName).flush();
+			HibernateUtil.commitTransaction(sessionName);
+
+			return invoice;
+		} catch (Exception e) {
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+				String msg = "Unable to rollback transaction!";
+				LOGGER.error(msg,daoe);
+			}
+			LOGGER.error(e.getMessage());
+			throw new ManagerBeanException(e.getMessage(), e);
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		}
+
 	}
 
 	private Invoice createInvoice(Delivery delivery, String series, int number, Date issueDate) throws ManagerBeanException {
@@ -82,6 +110,7 @@ public class DeliveryInvoicingManager {
 		invoice.setScope(delivery.getScope());
 
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		invoiceBean.restoreNullSubPOJOs(invoice);
 		return (Invoice)invoiceBean.insert(invoice);
 	}
 
@@ -92,18 +121,19 @@ public class DeliveryInvoicingManager {
 	}
 
 	private void createInvoiceDetails(Invoice invoice, Delivery delivery) throws ManagerBeanException {
+		int line = 0;
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_DELIVERY_ID), delivery.getId());
 		criteria.addOrder(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_LINE));
-		Iterator<?> iterator = deliveryDetailBean.getList(criteria).iterator();
-		while (iterator.hasNext()) {
-			DeliveryDetail deliveryDetail = (DeliveryDetail)iterator.next();
+		List<ITransferObject> deliveryDetailList = deliveryDetailBean.getList(criteria);
+		for (ITransferObject ito : deliveryDetailList) {
+			DeliveryDetail deliveryDetail = (DeliveryDetail)ito;
 			InvoiceDetail invoiceDetail = new InvoiceDetail();
 			invoiceDetail.setInvoice(invoice);
 			invoiceDetail.setProject(delivery.getProject());
-			invoiceDetail.setLine(deliveryDetail.getLine());
+			invoiceDetail.setLine(++line);
 			invoiceDetail.setItem(deliveryDetail.getItem());
 			invoiceDetail.setDescription(deliveryDetail.getDescription());
 			invoiceDetail.setQuantity(deliveryDetail.getQuantity());
@@ -113,8 +143,18 @@ public class DeliveryInvoicingManager {
 			invoiceDetail.setSource(InvoiceSource.DELIVERY);
 			invoiceDetail.setSourceId(deliveryDetail.getId());
 			invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
+			invoiceDetail.getInvoice().setUpdateEnabled(line == deliveryDetailList.size());
+			invoiceDetailBean.restoreNullSubPOJOs(invoiceDetail);
 			invoiceDetailBean.insert(invoiceDetail);
 		}
+	}
+
+	private void updateDeliveryStatus(String sessionName, Delivery delivery) throws ManagerBeanException {
+		IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
+		delivery.setStatus(DeliveryStatus.INVOICED);
+		deliveryBean.restoreNullSubPOJOs(delivery);
+		delivery = (Delivery)HibernateUtil.getSession(sessionName).merge(delivery);	
+		delivery = (Delivery)deliveryBean.update(delivery);
 	}
 
 }

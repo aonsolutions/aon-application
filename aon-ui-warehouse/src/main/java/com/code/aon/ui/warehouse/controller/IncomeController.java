@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
@@ -525,22 +526,21 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		setPurchaseTransferManager(null);
 	}
 
-	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {
+	public void onInvoiceShow(ActionEvent event) {
 		setInvoiceRefCode(null);
 		setInvoiceDate(new Date());
 	}
 
-	public void onInvoice(ActionEvent event) throws ManagerBeanException {
+	public void onInvoice(ActionEvent event) {
 		Income to = (Income)this.getTo();
-		IncomeInvoicingManager invoicingManager = new IncomeInvoicingManager();
-		Invoice invoice = invoicingManager.invoice(to, getInvoiceRefCode(), getInvoiceDate());
-
-		IController invoiceController = FormUtil.getController(PURCHASE_INVOICE_CONTROLLER_NAME);
-		invoiceController.onEditSearch(event);
-		invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IEntityAlias.INVOICE_ID), invoice.getId());
-		invoiceController.onSearch(event);
-		invoiceController.getModel().setRowIndex(0);
-		invoiceController.onSelect(event);
+		try {
+			IncomeInvoicingManager invoicingManager = new IncomeInvoicingManager();
+			invoicingManager.invoice(to, getInvoiceRefCode(), getInvoiceDate());
+			onLoadInvoice(event);
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
+		}
 	}
 
 	public void onLoadInvoice(ActionEvent event) throws ManagerBeanException {

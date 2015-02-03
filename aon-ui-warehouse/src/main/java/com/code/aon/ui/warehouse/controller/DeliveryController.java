@@ -524,7 +524,7 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	}
 
 	public void onInvoiceSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		if ( getSaleInvoiceController().isNumberEditable() ) {			
+		if (getSaleInvoiceController().isNumberEditable()) {			
 			updateInvoiceNumber((String)event.getNewValue());	
 		}
 	}
@@ -539,21 +539,21 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 
 	public void onInvoice(ActionEvent event) throws ManagerBeanException {
 		Delivery to = (Delivery)this.getTo();
-        if ( StringUtils.isBlank(getInvoiceSeries()) ) {
+        if (StringUtils.isBlank(getInvoiceSeries())) {
         	setInvoiceSeries(null);
         }
-        if(getInvoiceNumber() == 0) {
+        if (getInvoiceNumber() == 0) {
         	updateInvoiceNumber(getInvoiceSeries());
 		}															
-		DeliveryInvoicingManager invoicingManager = new DeliveryInvoicingManager();
-		Invoice invoice = invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
 
-		IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
-		invoiceController.onEditSearch(event);
-		invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IEntityAlias.INVOICE_ID), invoice.getId());
-		invoiceController.onSearch(event);
-		invoiceController.getModel().setRowIndex(0);
-		invoiceController.onSelect(event);
+		try {
+	        DeliveryInvoicingManager invoicingManager = new DeliveryInvoicingManager();
+			invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
+			onLoadInvoice(event);
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
+		}
 	}
 
 	public void onSendByEmail( ActionEvent event ) {
