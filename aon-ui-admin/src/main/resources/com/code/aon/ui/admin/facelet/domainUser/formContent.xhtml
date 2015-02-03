@@ -137,7 +137,7 @@
 						value="#{domainUser.to.active}" />
 				</aon:if>
 
-				<aon:if test="#{aonRole.sysAdmin}" >						
+				<aon:if test="#{aonRole.sysAdmin or (domainSwitcher.type == 'ADMIN')}" >						
 					<aon:outputLabel for="User_passwordExpiration"
 						value="#{bundle.admin_password_expiration}" />
 					<aon:selectInputDate id="User_passwordExpiration" 

@@ -150,6 +150,7 @@ public interface ICommonMessages {
 	String TYPE = "aon_type";
 	String UNITS = "aon_units";
 	String USER_PASSWORD_INVALID = "aon_login_err_0";
+	String USER_INVALID = "aon_login_err_1";
 	String USED_SPACE_MESSAGE = "aon_used_space_message";
 	String VAT = "aon_vat";
 	String VAT_QUOTA = "aon_vat_quota";

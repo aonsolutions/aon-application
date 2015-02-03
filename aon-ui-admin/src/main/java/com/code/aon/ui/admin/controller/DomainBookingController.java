@@ -9,7 +9,6 @@ import static com.esferalia.aon.jooq.tables.User.USER;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 

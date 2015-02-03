@@ -39,7 +39,7 @@
 			</aon:panelGroup>
 	    	<aon:panelGroup>
 				<aon:dataPaginator for="#{dataTable}"  
-					fastStep="5" paginator="true" action="#{action}"
+					fastStep="5" paginator="true"
 					paginatorMaxPages="5" rendered="#{(pageSize > 0) and (rowCount > pageSize)}"
 					ajaxSingle="true" oncomplete="#{oncomplete}" page="#{page}"
 					fastControls="#{((rowCount > 0) and ((rowCount/pageSize) >= 10))?'show':'hide'}"

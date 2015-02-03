@@ -14,6 +14,8 @@ public class AonNavigationHandler extends NavigationHandler {
 
 	private NavigationHandler _base;
 	
+	public static final String ACTION_SKIP_PREFFIX = "skipME-";
+	
 	/**
 	 * Instantiates a new aon navigation handler.
 	 *
@@ -39,7 +41,8 @@ public class AonNavigationHandler extends NavigationHandler {
 	
 	@Override
 	public void handleNavigation(FacesContext fc, String fromAction, String outcome) {
-		if (! StringUtils.isEmpty(outcome) ) {
+		
+		if (! (StringUtils.isEmpty(outcome) || StringUtils.startsWith(outcome, ACTION_SKIP_PREFFIX)) ) {
 			process(fc, fromAction, outcome);
 			AonUtil.getConfigurationController().setCurrentAction(outcome);			
 			outcome = strip(outcome);

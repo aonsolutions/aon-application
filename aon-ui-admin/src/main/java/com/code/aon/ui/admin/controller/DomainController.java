@@ -100,7 +100,9 @@ public class DomainController extends BasicController {
 	
 	private static final String LEGAL_WARNING_FILE = LEGAL_WARNING_NAME + "." + MimeType.MIME_PDF.getExtension();
 	
-	private static final String LEGAL_WARNING_PATH = AdminMainController.PROPERTIES_PATH + LEGAL_WARNING_FILE;
+	private static final String PROPERTIES_PATH = "/com/code/aon/ui/admin/";
+	
+	private static final String LEGAL_WARNING_PATH = PROPERTIES_PATH + LEGAL_WARNING_FILE;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainController.class);
 	

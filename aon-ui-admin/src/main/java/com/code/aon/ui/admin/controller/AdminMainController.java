@@ -1,51 +1,49 @@
 package com.code.aon.ui.admin.controller;
 
+import static com.esferalia.aon.jooq.tables.User.USER;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 
-import java.io.File;
 import java.io.Serializable;
-import java.util.Properties;
 
 import javax.faces.event.ActionEvent;
+
+import org.apache.commons.lang.StringUtils;
+import org.jooq.Condition;
+import org.jooq.impl.DSL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AdminUtil;
-import com.code.aon.common.util.PropertiesUtil;
 import com.code.aon.config.User;
+import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.ui.common.ICommonMessages;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.ContactDBController;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MailAccountDBController;
 import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.SignatureDBController;
+import com.esferalia.aon.jooq.tables.records.UserRecord;
+import com.esferalia.aon.occam.api.AONContext;
 
 public class AdminMainController implements IAdminConstants, Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-	public static final String PROPERTIES_PATH = "/com/code/aon/ui/admin/";
+	private final static Logger LOGGER = LoggerFactory.getLogger(AdminMainController.class);
 	
-	private static final String DEFAULT_PROPERTIES = PROPERTIES_PATH + "default.config.properties";
-	
-	private static final File MANAGER_PROPERTIES = new File( "/home/COMMON-RESOURCES/aon-admin/config.properties" );
-
 	private String _user;
 
 	private String _password;
 	
-	private Properties properties;
-	
 	private boolean termsOfServiceAccepted;
 	
-	public AdminMainController() {
-		this.properties = PropertiesUtil.getProperties(MANAGER_PROPERTIES, DEFAULT_PROPERTIES);
-	}
-	
-	public Properties getProperties() {
-		return properties;
-	}
+	private String advancedModeBackAction;
 	
 	public String getUser() {
 		return _user;
@@ -75,14 +73,47 @@ public class AdminMainController implements IAdminConstants, Serializable {
 		termsOfServiceAccepted = AonUtil.getRoleManager().isSysAdmin();
 	}
 	
+	public void onInitAdvancedMode(ActionEvent event) {
+		this.advancedModeBackAction = AonUtil.getConfigurationController().getCurrentAction(); 
+	}
+	
+	public String advancedModeBackAction() {
+		return AonUtil.getRoleManager().isSysAdmin() ? advancedModeBackAction : null;
+	}
+	
+	private UserRecord getAdminDomainUser() {
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+		AONContext ctx = AONContext.getAONContext(ds.getDomainNameURL(), ds.getDomainId());
+		Condition expirationCondition = USER.PASSWORDEXPIRATION.isNull()
+				.or(USER.PASSWORDEXPIRATION.gt(DSL.currentDate()));		
+		UserRecord user = null;
+		try {
+			user = ctx.getDslContext()
+				.select().from(USER).join(DOMAIN).onKey()
+				.where(USER.ACTIVE.eq((byte)1)
+						.and(expirationCondition)
+						.and(USER.LOGIN.eq(getUser()))
+						.and(DOMAIN.TYPE.eq((byte) DomainType.ADMIN.ordinal())) )
+				.fetchAny().into(UserRecord.class);
+		} catch ( Throwable th ) {
+			LOGGER.debug( th.getMessage(), th );
+		} finally {
+			ctx.finalize();	
+		}
+		return user;
+	}
+	
 	public void onAccept(ActionEvent event) {
 		String crypted = AdminUtil.encodeSHA(_password);
-		String amUser = getProperties().getProperty(ADVANCED_MODE_USER); 
-		String amPassword = getProperties().getProperty(ADVANCED_MODE_PASSWORD);
-		if (amUser.equals(_user) && amPassword.equals(crypted)) {
-			AonUtil.getRoleManager().setSysAdmin();
+		UserRecord user = getAdminDomainUser();
+		if ( user != null ) {
+			if ( StringUtils.equals(crypted, user.getPassword()) ) {
+				AonUtil.getRoleManager().setSysAdmin();
+			} else {
+				AonUtil.addErrorMessageFromBundle(ICommonMessages.USER_PASSWORD_INVALID, _user);
+			}			
 		} else {
-			AonUtil.addErrorMessageFromBundle(ICommonMessages.USER_PASSWORD_INVALID, _user);
+			AonUtil.addErrorMessageFromBundle(ICommonMessages.USER_INVALID, _user);
 		}
 		_user = null;
 		_password = null;

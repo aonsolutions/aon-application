@@ -147,8 +147,9 @@
 			iconClass="aon-icon-favorite"
 			actionListener="#{actionFavorite.onInit}"
 			value="#{bundle.aon_favorites_management}" />
-		<aon:if test="#{!aonRole.sysAdmin}">
+		<aon:if test="#{!aonRole.sysAdmin and (domainSwitcher.type != 'ADMIN')}">
 			<aon:menuItem id="advancedMode" action="advancedMode"
+				actionListener="#{adminMain.onInitAdvancedMode}"
 				rendered="#{!aonConfiguration.properties.hideMenuAdvancedMode}"
 				value="#{bundle.admin_advanced_mode}" />
 		</aon:if>

@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.net.DummyHandler;
 import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
 import com.code.aon.faces.component.richfaces.IRichFacesTags;
+import com.code.aon.ui.common.AonNavigationHandler;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.FaceletException;
@@ -101,7 +102,8 @@ public class FaceletUtil {
 	public static ValueExpression getMethodEmptyExpression(FaceletContext ctx, String name, Class type, Class[] paramTypes ) {
         ExpressionFactory f = ctx.getExpressionFactory();
         ValueExpression ve = f.createValueExpression( ctx, "", Object.class );
-        MethodExpression me = f.createMethodExpression(ctx, name, type, paramTypes );
+        String _name = AonNavigationHandler.ACTION_SKIP_PREFFIX + name;
+        MethodExpression me = f.createMethodExpression(ctx, _name, type, paramTypes );
         return new MethodValueExpression( ve, me );
 	}
 

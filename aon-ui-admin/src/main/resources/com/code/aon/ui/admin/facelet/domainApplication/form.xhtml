@@ -49,11 +49,6 @@
 					
 				</aon:panelGrid>
 
-				<ui:include src="/com/code/aon/ui/admin/facelet/adminMain/termsOfService.xhtml" >
-					<ui:param name="controller" value="#{domainApplication}" />
-					<ui:param name="termsOfServiceURL" value="#{adminMain.properties.newDomainApplicationURL}" />
-				</ui:include>
-									
 				<aon:if test="#{!domainApplication.nevv}">
 					<aon:panelTabSet selectedTab="#{domainApplication.selectedTab}">
 						<aon:panelTab name="users"
