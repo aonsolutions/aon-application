@@ -347,12 +347,12 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		agreement = contextMenu.getAgreementCopy();
 		
 		if(agreement != null) {
-			agreements.getAgreementsTree().getEnterpriseService().copyAgreement(agreement, new AsyncCallback<Agreement>() {
+			agreements.getAgreementsTree().getEnterpriseService().copyAgreement(agreement, 
+					new AsyncCallback<Agreement>() {
 
 				@Override
 				public void onFailure(Throwable caught) {
-					Window.alert("Sucede algo");
-					
+					Window.alert("No ha sido posible realizar la copia completa");					
 				}
 
 				@Override

@@ -657,7 +657,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 					.set(AGREEMENT_EXTRA.AGREEMENT, newAgreementId)
 					.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, newPaymentId)
 					.set(AGREEMENT_EXTRA.START_DATE, record.getValue(AGREEMENT_EXTRA.START_DATE))
-					.set(AGREEMENT_EXTRA.END_DATE, record.getValue(AGREEMENT_PAYMENT.EXPRESSION))
+					.set(AGREEMENT_EXTRA.END_DATE, record.getValue(AGREEMENT_EXTRA.END_DATE))
 					.set(AGREEMENT_EXTRA.ISSUE_DATE, record.getValue(AGREEMENT_EXTRA.ISSUE_DATE));
 				
 				insertExtra.execute();
