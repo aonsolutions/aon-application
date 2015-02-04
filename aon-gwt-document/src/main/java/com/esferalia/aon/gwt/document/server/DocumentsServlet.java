@@ -330,7 +330,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			try {
 				DBConsults.removeFile(domain, fi.getFileId());
 				if(fi.getDriveId()!=null){
-					DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
+					DomainGserviceaccount g = DatabaseSync.getServiceAccount(fi.getDomainId());
 					Drive d = DriveUtils.serviceInitialize(g);
 					d.files().delete(fi.getDriveId()).execute();
 				}
@@ -587,7 +587,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 					//InputStream file = getFile();
 					byte[] b = getOut();//.toByteArray();
 					fileInfo.setData(b);
-					DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
+					DomainGserviceaccount g = DatabaseSync.getServiceAccount(fi.getDomainId());
 					if(g.getClientId()!=null){
 						Drive d = DriveUtils.serviceInitialize(g);
 						DriveUtils.sync2(d, fileInfo, domain);
@@ -912,7 +912,7 @@ private IDocument2HtmlConverter getDocument2HtmlConverter(FileInfo document) {
 			PrintStream printStream = new PrintStream(os);
 			InputStream in = null;
 			if(doc.getDriveId() != null){ 
-				DomainGserviceaccount g = DatabaseSync.getServiceAccount(AonUtil.getDomainName());
+				DomainGserviceaccount g = DatabaseSync.getServiceAccount(doc.getDomainId());
 				Drive d = DriveUtils.serviceInitialize(g);
 				File f = d.files().get(doc.getDriveId()).execute();
 				in = DriveUtils.downloadFile(d, f);
@@ -1262,7 +1262,7 @@ public MailAccountList getMailAccounts() {
 							} else {
 								DomainGserviceaccount g;
 								try {
-									g = DatabaseSync.getServiceAccount(domain);
+									g = DatabaseSync.getServiceAccount(fi.getDomainId());
 									d = DriveUtils.serviceInitialize(g);
 								} catch (SQLException e) {
 									e.printStackTrace();
@@ -1359,7 +1359,7 @@ public MailAccountList getMailAccounts() {
 					} else {
 						DomainGserviceaccount g;
 						try {
-							g = DatabaseSync.getServiceAccount(domain);
+							g = DatabaseSync.getServiceAccount(fi.getDomainId());
 							d = DriveUtils.serviceInitialize(g);
 						} catch (SQLException e) {
 							e.printStackTrace();

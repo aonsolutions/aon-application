@@ -31,6 +31,7 @@ public class ViewerUtils {
 		byte[] bytes;
 		MimeType mimeType;
 		String driveId;
+		Integer domainId;
 	}
 	
 	protected static RAttach getRAttach(Integer id)
@@ -60,7 +61,7 @@ public class ViewerUtils {
 			if(rattach.driveId == null) rattach.bytes = blob.getBytes(1, (int) blob.length());
 			rattach.mimeType = OpenDocumentConverterServlet.mimeTypeOf(rs
 					.getInt(RattachColumns.MIMETYPE));
-
+			rattach.domainId = rs.getInt(RattachColumns.DOMAIN);
 			return rattach;
 
 		} finally {

@@ -45,6 +45,8 @@ public class DownloadFilesServlet extends HttpServlet {
         String mtype = p_request.getParameter("mimetype");
         String isDrive = p_request.getParameter("isdrive");
         String multiple = p_request.getParameter("ismultiple");
+        String domainId =  p_request.getParameter("domain_id");
+        Integer domainID = Integer.parseInt(domainId);
         String domain = AonUtil.getDomainName();
         Integer m = Integer.parseInt(mtype);
         String mimetype = MimeType.values()[m].getName();
@@ -63,7 +65,7 @@ public class DownloadFilesServlet extends HttpServlet {
         				} else {
         					DomainGserviceaccount g;
         					try {
-        						g = DatabaseSync.getServiceAccount(domain);
+        						g = DatabaseSync.getServiceAccount(domainID);
         						d = DriveUtils.serviceInitialize(g);
         					} catch (SQLException e) {
         						e.printStackTrace();
@@ -118,7 +120,7 @@ public class DownloadFilesServlet extends HttpServlet {
         	else{
         		DomainGserviceaccount g;
 				try {
-					g = DatabaseSync.getServiceAccount(domain);
+					g = DatabaseSync.getServiceAccount(domainID);
 					d = DriveUtils.serviceInitialize(g);
 				} catch (SQLException e) {
 					e.printStackTrace();

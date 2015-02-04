@@ -51,6 +51,8 @@ public class PdfPrintServlet extends HttpServlet{
         String driveId = p_request.getParameter("drive_id");
         String fileId = p_request.getParameter("file_id");
         String mtype = p_request.getParameter("mimetype");
+        String domainId = p_request.getParameter("domain_id");
+        Integer domainID = Integer.parseInt(domainId);
         String domain = AonUtil.getDomainName();
         Integer m = Integer.parseInt(mtype);
         MimeType mt = MimeType.values()[m];
@@ -60,7 +62,7 @@ public class PdfPrintServlet extends HttpServlet{
 			DomainGserviceaccount g;
 			Drive d = null;
 			try {
-				g = DatabaseSync.getServiceAccount(domain);
+				g = DatabaseSync.getServiceAccount(domainID);
 				d = DriveUtils.serviceInitialize(g);
 			} catch (SQLException e) {
 				// TODO Bloque catch generado automáticamente

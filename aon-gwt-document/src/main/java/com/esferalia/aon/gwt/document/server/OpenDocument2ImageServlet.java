@@ -111,7 +111,7 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
         		d = GoogleDriveController.dconnection;
         	}
         	else{
-        		DomainGserviceaccount g = DatabaseSync.getServiceAccount(AonUtil.getDomainName());
+        		DomainGserviceaccount g = DatabaseSync.getServiceAccount(doc.getDomainId());
         		d = DriveUtils.serviceInitialize(g);
         	}
 			com.google.api.services.drive.model.File f = d.files().get(doc.getDriveId()).execute();
