@@ -202,6 +202,15 @@
 										value="#{bundle.aon_external_dehOnline}" />
 								</aon:div>
 							</aon:if>						
+							<aon:if test="#{aonRole.sysAdmin}">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="marketplaceParameters" 
+										reRender="configPanelBar,configContent"
+										action="globalConfig_form"
+										actionListener="#{salesAppParam.onInit}"
+										value="#{bundle.sales_marketplace_module}" />
+								</aon:div>
+							</aon:if>						
 						</aon:div>			
 					</rich:panelBarItem>
 				</aon:if>

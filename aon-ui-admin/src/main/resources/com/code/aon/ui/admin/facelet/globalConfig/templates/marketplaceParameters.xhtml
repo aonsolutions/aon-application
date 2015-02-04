@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:form id="globalConfigDehOnlineParametersForm">
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+			<ui:param name="toolbarTitle" value="#{bundle.sales_marketplace_module}" />
+			<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+			<ui:define name="toolbarContent">
+				<aon:commandButton id="save"
+					value="#{bundle.aon_save}"
+					actionListener="#{salesAppParam.accept}"
+					styleClass="aon-finding-toolbar-item aon-icon-accept"
+					accesskey="#{bundle.aon_key_save}" />
+			</ui:define>				
+		</ui:decorate>
+	
+		<aon:div styleClass="aon-scroll-area">
+			<aon:div id="Sales_marketplace_amazon-panel">
+				<aon:panel>
+					<f:facet name="header">
+						<aon:div style="margin: -15px 0 0 5px; background-color: white; display: inline;">
+							<aon:selectBooleanCheckbox id="Sales_marketplace_amazon"
+								value="#{salesAppParam.amazonEnabled}" 
+								reRender="Sales_marketplace_amazon-panel"/>
+							<aon:outputLabel for="Sales_marketplace_amazon"
+								value="#{bundle.sales_marketplace_amazon}" />
+							<aon:commandButton id="amazonMarketplaceParams-loadDefault-top"
+								title="#{bundle.admin_new_domain_defaults}"
+								value="&#160;" reRender="Sales_marketplace_amazon-panel"
+								rendered="#{salesAppParam.activeAmazonMarketPlace}"
+								actionListener="#{salesAppParam.onLoadDefaultAmazonValues}"
+								styleClass="aon-finding-toolbar-item aon-noborder aon-icon-sincronize" />
+						</aon:div>
+					</f:facet>
+					<aon:div style="white-space: nowrap;"
+						rendered="#{salesAppParam.activeAmazonMarketPlace}" >
+						<aon:panelGrid columns="2" styleClass="aon-width-all">
+							<aon:outputText value="#{bundle.sales_amazon_product_prefix}" />
+							<aon:inputText value="#{salesAppParam.amazonSalesProductName['prefix']}" />
+
+							<aon:outputText value="#{bundle.sales_amazon_product_suffix}" />
+							<aon:inputText value="#{salesAppParam.amazonSalesProductName['suffix']}" />
+							
+							<aon:outputText value="#{bundle.sales_amazon_sales_channel} - DE" />
+							<aon:div>
+								<aon:outputText value="Amazon: " styleClass="aon-italic" />
+								<aon:inputText value="#{salesAppParam.salesChannelMap['DE']}" />
+								<aon:outputText value="Aon: " styleClass="aon-italic aon-margin-left" />
+								<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
+									<ui:param name="lookupTo" value="#{salesAppParam.sellerMap['DE']}" />
+									<ui:param name="skipNewButton" value="#{true}" />
+									<ui:param name="skipLabel" value="#{true}" />
+									<ui:param name="lookupSuffix" value="DE" />
+								</ui:include>
+							</aon:div>
+
+							<aon:outputText value="#{bundle.sales_amazon_sales_channel} - ES" />
+							<aon:div>
+								<aon:outputText value="Amazon: " styleClass="aon-italic" />
+								<aon:inputText value="#{salesAppParam.salesChannelMap['ES']}" />
+								<aon:outputText value="Aon: " styleClass="aon-italic aon-margin-left" />
+								<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
+									<ui:param name="lookupTo" value="#{salesAppParam.sellerMap['ES']}" />
+									<ui:param name="skipNewButton" value="#{true}" />
+									<ui:param name="skipLabel" value="#{true}" />
+									<ui:param name="lookupSuffix" value="ES" />
+								</ui:include>
+							</aon:div>
+
+							<aon:outputText value="#{bundle.sales_amazon_sales_channel} - FR" />
+							<aon:div>
+								<aon:outputText value="Amazon: " styleClass="aon-italic" />
+								<aon:inputText value="#{salesAppParam.salesChannelMap['FR']}" />
+								<aon:outputText value="Aon: " styleClass="aon-italic aon-margin-left" />
+								<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
+									<ui:param name="lookupTo" value="#{salesAppParam.sellerMap['FR']}" />
+									<ui:param name="skipNewButton" value="#{true}" />
+									<ui:param name="skipLabel" value="#{true}" />
+									<ui:param name="lookupSuffix" value="FR" />
+								</ui:include>
+							</aon:div>
+
+							<aon:outputText value="#{bundle.sales_amazon_sales_channel} - IT" />
+							<aon:div>
+								<aon:outputText value="Amazon: " styleClass="aon-italic" />
+								<aon:inputText value="#{salesAppParam.salesChannelMap['IT']}" />
+								<aon:outputText value="Aon: " styleClass="aon-italic aon-margin-left" />
+								<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
+									<ui:param name="lookupTo" value="#{salesAppParam.sellerMap['IT']}" />
+									<ui:param name="skipNewButton" value="#{true}" />
+									<ui:param name="skipLabel" value="#{true}" />
+									<ui:param name="lookupSuffix" value="IT" />
+								</ui:include>
+							</aon:div>
+
+							<aon:outputText value="#{bundle.sales_amazon_sales_channel} - UK" />
+							<aon:div>
+								<aon:outputText value="Amazon: " styleClass="aon-italic" />
+								<aon:inputText value="#{salesAppParam.salesChannelMap['UK']}" />
+								<aon:outputText value="Aon: " styleClass="aon-italic aon-margin-left" />
+								<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
+									<ui:param name="lookupTo" value="#{salesAppParam.sellerMap['UK']}" />
+									<ui:param name="skipNewButton" value="#{true}" />
+									<ui:param name="skipLabel" value="#{true}" />
+									<ui:param name="lookupSuffix" value="UK" />
+								</ui:include>
+							</aon:div>
+						</aon:panelGrid>
+					</aon:div>
+				</aon:panel>
+			</aon:div>
+		</aon:div>
+
+	</aon:form>
+	
+	<aon:lookupButtonPopup lookup="#{sellerLookup}" />
+
+</ui:composition>

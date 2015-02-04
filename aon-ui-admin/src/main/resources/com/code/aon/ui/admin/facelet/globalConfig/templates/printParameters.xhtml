@@ -95,17 +95,18 @@
 								value="#{bundle.company_saleInvoice_footer_text}" />
 						</aon:div>
 					</f:facet>
-					<aon:panelGrid columns="2" rendered="#{company.printSaleInvoiceFooter}" 
-						columnClasses="aon-panelGrid-even aon-noborder, aon-panelGrid-even aon-noborder aon-vertical-align-top" >
+					<h:panelGrid columns="1" rendered="#{company.printSaleInvoiceFooter}">
 						<aon:inputTextarea id="SaleInvoice_footer_text"
 							cols="150" rows="6"
 							value="#{companySaleInvoiceFooter.text}"/>
-						<aon:commandButton id="saleInvoice_footer_text-importLOPD"
-							title="#{bundle.company_create_LOPD_text}"
-							value="LOPD" reRender="saleInvoice_footer-panel"
-							actionListener="#{companySaleInvoiceFooter.createLOPD}"
-							styleClass="aon-finding-toolbar-item aon-icon-sincronize" />
-					</aon:panelGrid>
+						<aon:div styleClass="aon-width-all aon-text-right">
+							<aon:commandButton id="saleInvoice_footer_text-importLOPD"
+								title="#{bundle.company_create_LOPD_text}"
+								value="Generar texto L.O.P.D. (Ley Orgánica 15/1999)" reRender="saleInvoice_footer-panel"
+								actionListener="#{companySaleInvoiceFooter.createLOPD}"
+								styleClass="aon-commandButton" />
+						</aon:div>
+					</h:panelGrid>
 					<aon:div rendered="#{!company.printSaleInvoiceFooter 
 						and companySaleInvoiceFooter.garageDomainType
 						and companySaleInvoiceFooter.garageSaleInvoiceTemplate}" >
