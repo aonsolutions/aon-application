@@ -352,7 +352,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 				@Override
 				public void onFailure(Throwable caught) {
-					Window.alert("No ha sido posible realizar la copia completa");					
+					Window.alert("Oopss. Estamos corrigiendolo.");
 				}
 
 				@Override

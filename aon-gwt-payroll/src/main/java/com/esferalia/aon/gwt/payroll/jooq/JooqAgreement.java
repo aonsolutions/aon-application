@@ -460,18 +460,25 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 					.fetchOne();
 			// @formatter:on
 			
+			// EL CAMPO DESCRIPTION DE AGREEMENT TIENE UN MAX DE 64 CARACTERES. 
+			//COMPRUEBO QUE AL ADD 'COPIA DE' NO SE PASE.
+			// EVITO OTRO QUEBRADERO DE CABEZA....
+			
+			int lenght = agreementRecord.field(AGREEMENT.DESCRIPTION).getDataType().length();			
+			String aux = "COPIA DE " + agreementRecord.getValue(AGREEMENT.DESCRIPTION);			
+			String description = (aux.length() > lenght) ? aux.substring(0, lenght) : aux;
+			
 			int newAgreementId = dslContext.insertInto(AGREEMENT)
 					.set(AGREEMENT.DOMAIN, domain)
 					.set(AGREEMENT.CALENDAR, agreementRecord.getValue(AGREEMENT.CALENDAR))
-					.set(AGREEMENT.DESCRIPTION, "COPIA DE " 
-									+ agreementRecord.getValue(AGREEMENT.DESCRIPTION))
+					.set(AGREEMENT.DESCRIPTION, description)
 					.returning(AGREEMENT.ID).fetchOne().getId();
 			
 			Agreement agreement = new Agreement();
 			agreement.setId(newAgreementId);
-			agreement.setDescription("COPIA + " + agreementRecord.getValue(AGREEMENT.DESCRIPTION));
+			agreement.setDescription(description);
 			agreement.setDomain(domain);
-			agreement.setHasContract(false);
+			agreement.setHasContract(false);			
 			
 			copy2AgreementData(dslContext, id, newAgreementId, domain);
 			copy2AgreementLevel(dslContext, id, newAgreementId, domain);
@@ -486,8 +493,8 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		}
 	}
 	
-	private static void copy2AgreementData(DSLContext dslContext, Integer oldAgreementId, Integer newAgreementId, Integer domain) 
-			throws Exception {
+	private static void copy2AgreementData(DSLContext dslContext, Integer oldAgreementId, 
+			Integer newAgreementId, Integer domain) throws Exception {
 		
 		InsertSetMoreStep<AgreementDataRecord> insert = null;
 		
@@ -516,8 +523,8 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		}
 	}
 	
-	private static void copy2AgreementLevel(DSLContext dslContext, Integer oldAgreementId, Integer newAgreementId, Integer domain) 
-			throws Exception {
+	private static void copy2AgreementLevel(DSLContext dslContext, 
+			Integer oldAgreementId, Integer newAgreementId, Integer domain) throws Exception {
 		InsertSetMoreStep<AgreementLevelRecord> insert = null;
 		
 		// @formatter:off
@@ -638,7 +645,15 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			Integer newAgreementId, Integer oldPaymentId, Integer newPaymentId) throws Exception {
 		
 		InsertSetMoreStep<AgreementExtraRecord> insertExtra = null;
+		
+		// @formatter:off
+//		List<AgreementExtraRecord> agreementExtraRecord = dslContext
+//				.selectFrom(AGREEMENT_EXTRA)
+//				.where(AGREEMENT_EXTRA.AGREEMENT_PAYMENT.eq(oldPaymentId))
+//				.fetchInto(AGREEMENT_EXTRA);
+		// @formatter:on
 
+		
 		// @formatter:off
 		List<AgreementExtraRecord> agreementExtraRecord = dslContext
 				.selectFrom(AGREEMENT_EXTRA)
@@ -646,7 +661,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 						.eq(oldAgreementId))
 						.and(AGREEMENT_EXTRA.AGREEMENT_PAYMENT.eq(oldPaymentId))
 				.fetchInto(AGREEMENT_EXTRA);
-		// @formatter:on
+	// @formatter:on
 		
 		if(agreementExtraRecord != null) {
 			
@@ -663,8 +678,6 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				insertExtra.execute();
 			}
 		}
-
-		
 	}
 
 	
