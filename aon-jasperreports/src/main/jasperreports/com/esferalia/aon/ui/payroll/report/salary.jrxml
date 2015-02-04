@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salaryx" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7705eda3-9c23-4304-ad87-aeb921515614">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="68"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
 	<import value="com.code.aon.common.util.CommonUtil"/>
@@ -122,7 +122,9 @@
 				</staticText>
 				<textField isBlankWhenNull="true">
 					<reportElement uuid="74bd141f-8000-469c-bda7-f1ab9ec1fb77" style="label" x="49" y="2" width="227" height="13"/>
-					<textElement/>
+					<textElement>
+						<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$F{salary}.getEnterpriseName()]]></textFieldExpression>
 				</textField>
 				<staticText>
@@ -166,7 +168,9 @@
 				</staticText>
 				<textField isBlankWhenNull="true">
 					<reportElement uuid="58b790b5-cede-484d-b8c7-47e038c4d534" style="label" x="59" y="2" width="217" height="13"/>
-					<textElement/>
+					<textElement>
+						<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$F{salary}.getEmployeeName()]]></textFieldExpression>
 				</textField>
 				<staticText>
@@ -205,9 +209,19 @@
 					<text><![CDATA[Grupo de cotización :]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement uuid="444fa074-6c60-4ecb-8816-9eb3243ad6db" style="label" x="102" y="54" width="174" height="13"/>
+					<reportElement uuid="444fa074-6c60-4ecb-8816-9eb3243ad6db" style="label" x="102" y="54" width="24" height="13"/>
 					<textElement/>
 					<textFieldExpression><![CDATA[$F{salary}.getQuoteGroup()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="8b6d380e-4ce1-46dd-92fe-1148ba82de3d" style="label" x="126" y="54" width="88" height="13"/>
+					<textElement/>
+					<text><![CDATA[Fecha Antigüedad:]]></text>
+				</staticText>
+				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement uuid="52211097-8b1b-4518-ae08-fe024d7b96ec" style="label" x="215" y="54" width="61" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{salary}.getContract().getSeniorityDate()]]></textFieldExpression>
 				</textField>
 			</frame>
 			<frame>

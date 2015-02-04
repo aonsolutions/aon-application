@@ -1041,7 +1041,7 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 				<textFieldExpression><![CDATA[$F{salary}.getCommonBase() == 0.00 ? "" : $F{salary}.getCommonBase()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="5de1c8bd-0c07-4ebd-8337-5a4c46565433" style="title2_dotts" x="92" y="191" width="456" height="13"/>
+				<reportElement uuid="5de1c8bd-0c07-4ebd-8337-5a4c46565433" style="title2_dotts" x="92" y="191" width="336" height="13"/>
 				<box leftPadding="5">
 					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
 				</box>
@@ -1059,7 +1059,7 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 				<textFieldExpression><![CDATA[$F{salary}.getProfessionalBase()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="8d50c692-5d12-4291-a08c-229d3fbb16f6" style="title2_dotts" x="92" y="256" width="456" height="13"/>
+				<reportElement uuid="8d50c692-5d12-4291-a08c-229d3fbb16f6" style="title2_dotts" x="92" y="256" width="336" height="13"/>
 				<box leftPadding="5">
 					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
 				</box>
@@ -1078,7 +1078,7 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 + ($F{salary}.getOvertimeBase() != 0.00?$F{salary}.getOvertimeBase():0.00)]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="f0141e95-49c0-47c7-8d5e-842a539c90c0" style="title2_dotts" x="92" y="295" width="456" height="13"/>
+				<reportElement uuid="f0141e95-49c0-47c7-8d5e-842a539c90c0" style="title2_dotts" x="92" y="295" width="336" height="13"/>
 				<box leftPadding="5">
 					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
 				</box>
