@@ -736,7 +736,7 @@ public class DBConsults {
 					if(tags.getTagsStr()!=null)fi.setTagsStr(tags.getTagsStr()); else fi.setTagsStr("-");
 					
 					fi.setConfidential(false);
-
+					fi.setDomainId(0);
 					vector.add(fi);
 					filesGwt.add(fi);
 				}

@@ -2723,7 +2723,8 @@ public class Documents extends Composite implements EntryPoint {
                 	+ "&drive_id=" +URL.encode(driveId)
                 	+ "&mimetype=" +object.getMimetype()
                 	+ "&isdrive=" +object.getIsDrive()
-					+ "&ismultiple="+multiple;
+					+ "&ismultiple="+multiple
+					+ "&domain_id="+object.getDomainId();
 			Window.open( fileDownloadURL, "_blank",null);//"status=0,toolbar=0,menubar=0,location=0");
 		}
 		
@@ -2749,7 +2750,8 @@ public class Documents extends Composite implements EntryPoint {
 		String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_print/"
                 + "?file_id=" + Integer.toString(object.getFileId())
                 + "&drive_id=" +URL.encode(driveId)
-                + "&mimetype=" +object.getMimetype();
+                + "&mimetype=" +object.getMimetype()
+                + "&domain_id="+object.getDomainId();
 		PrintWindow.open(fileDownloadURL, "_blank", null);
 	}
 	

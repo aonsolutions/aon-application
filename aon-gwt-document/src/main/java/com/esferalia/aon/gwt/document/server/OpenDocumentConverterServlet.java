@@ -77,7 +77,7 @@ public class OpenDocumentConverterServlet extends HttpServlet {
 			if ( rattach.mimeType == mimeType ) {
 				byte[] b = null;
 				if(rattach.driveId != null){
-					DomainGserviceaccount g = DatabaseSync.getServiceAccount(AonUtil.getDomainName());
+					DomainGserviceaccount g = DatabaseSync.getServiceAccount(rattach.domainId);
 					Drive d;
 					try {
 						d = DriveUtils.serviceInitialize(g);
