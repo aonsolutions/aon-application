@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.template.client;
 
+import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -16,5 +17,7 @@ public interface ITemplateAsync {
 	void editTemplate(TemplateInfo ti, AsyncCallback<Void> callback);
 
 	void deleteTemplate(TemplateInfo ti, AsyncCallback<Void> callback);
+
+	void insertProducts(TemplateInfo ti, AsyncCallback<Error> callback);
 
 }

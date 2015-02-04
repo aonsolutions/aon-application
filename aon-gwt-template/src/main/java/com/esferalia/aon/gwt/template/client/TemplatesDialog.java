@@ -3,11 +3,20 @@ package com.esferalia.aon.gwt.template.client;
 
 
 
+import gwtupload.client.IFileInput.FileInputType;
+import gwtupload.client.IUploadStatus.Status;
+import gwtupload.client.IUploader;
+import gwtupload.client.IUploader.OnFinishUploaderHandler;
+import gwtupload.client.IUploader.OnStartUploaderHandler;
+import gwtupload.client.IUploader.OnStatusChangedHandler;
+import gwtupload.client.SingleUploader;
+
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.template.shared.Dialog;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
+import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -22,6 +31,10 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FormHandler;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormSubmitEvent;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -47,10 +60,11 @@ public abstract class TemplatesDialog extends CustomDialog {
 	HandlerRegistration handler;
 	TemplateInfo ti;
 	Dialog d;
-	
+	TemplateList tlist;
 	
 	public TemplatesDialog(Dialog dialog) {
 		setCaption(dialog.getTitle());
+		if(dialog.getTemplateList()!= null) tlist = dialog.getTemplateList();
 		label = new Label();
 		flex_table = new FlexTable();
 		ti = dialog.getTemplateInfo();
@@ -65,7 +79,7 @@ public abstract class TemplatesDialog extends CustomDialog {
 			Dialog dialog = d;
 			@Override
 			public void onClick(ClickEvent event) {
-				if(productCheck() || dialog.getType().equals("delete"))
+				if(productCheck() || dialog.getType().equals("delete") || dialog.getType().equals("import"))
 					onAccept();
 				else {
 					label.setText("*Faltan columnas por a\u00f1adir");
@@ -89,6 +103,7 @@ public abstract class TemplatesDialog extends CustomDialog {
 		case "new": newTemplate();break;
 		case "edit": editTemplate(dialog);break;
 		case "delete": deleteTemplate(dialog.getTemplateInfo().getName());break;
+		case "import": importProduct(dialog.getUrl(),dialog.getTemplateList());break;
 		default:
 			break;
 	}
@@ -112,6 +127,37 @@ public abstract class TemplatesDialog extends CustomDialog {
 		label.setText("Est\u00e1s seguro de eliminar la plantilla " + name);
 	}
 	
+	private void importProduct(String url,TemplateList templates) {
+		flex_table.setStyleName("aon-panelGrid");
+		flex_table.setWidth("400px");
+		flex_table.setBorderWidth(1);
+		flex_table.setCellSpacing(0);
+		
+		ListBox lb = new ListBox();
+		lb.addItem("-");
+		for(TemplateInfo ti : templates.getList()){
+			lb.addItem(ti.getName());
+		}
+		flex_table.setWidget(0, 0, new Label("Plantilla"));
+		flex_table.setWidget(0, 1, lb);
+		
+		SingleUploader upload = newUploader(null, url);
+		flex_table.setWidget(1, 0, new Label("Archivo"));
+		flex_table.setWidget(1, 1, upload);
+		
+		for (int i = 0; i < flex_table.getRowCount(); i++) {
+			for (int j = 0; j < flex_table.getCellCount(i); j++) {
+				if ((j % 2) == 0) {
+					flex_table.getCellFormatter().setStyleName(i, j,
+							"aon-panelGrid-odd");
+				} else {
+					flex_table.getCellFormatter().setStyleName(i, j,
+							"aon-panelGrid-even");
+				}
+			}
+		}
+	}
+	
 	PopupPanel popup;
 	public void flexTable() {
 		flex_table.setStyleName("aon-panelGrid");
@@ -130,7 +176,7 @@ public abstract class TemplatesDialog extends CustomDialog {
 		flex_table.setWidget(1, 0, new Label("Tipo"));
 		flex_table.setWidget(1, 1, lb);
 		Button info = new Button("");
-		info.setStyleName("aon-finding-toolbar-item aon-icon-info");
+		info.setStyleName("aon-finding-toolbar-item-template aon-icon-info");
 		info.addMouseOverHandler(new MouseOverHandler() {
 			@Override
 			public void onMouseOver(MouseOverEvent event) {
@@ -212,7 +258,7 @@ public abstract class TemplatesDialog extends CustomDialog {
 		flex_table.setWidget(1, 0, new Label("Tipo"));
 		flex_table.setWidget(1, 1, lb);
 		Button info = new Button("");
-		info.setStyleName("aon-finding-toolbar-item aon-icon-info");
+		info.setStyleName("aon-finding-toolbar-item-template aon-icon-info");
 		info.addMouseOverHandler(new MouseOverHandler() {
 			@Override
 			public void onMouseOver(MouseOverEvent event) {
@@ -264,12 +310,12 @@ public abstract class TemplatesDialog extends CustomDialog {
 					HorizontalPanel hp = new HorizontalPanel();
 					if(j!=0){
 					Button b = new Button("");
-						b.setStyleName("aon-finding-toolbar-item aon-search-minus");
+						b.setStyleName("aon-finding-toolbar-item-template aon-search-minus");
 						b.addClickHandler(removeClickHandler());
 						hp.add(b);
 					}
 					Button b2 = new Button("");
-					b2.setStyleName("aon-finding-toolbar-item aon-search-add");
+					b2.setStyleName("aon-finding-toolbar-item-template aon-search-add");
 					b2.addClickHandler(addClickHandler());
 					hp.add(b2);
 					flex_table.setWidget(j+2, 2,hp);
@@ -277,7 +323,7 @@ public abstract class TemplatesDialog extends CustomDialog {
 				}
 				else{
 					Button b = new Button("");
-					b.setStyleName("aon-finding-toolbar-item aon-search-minus");
+					b.setStyleName("aon-finding-toolbar-item-template aon-search-minus");
 					b.addClickHandler(removeClickHandler());
 					flex_table.setWidget(j+2, 2,b);
 				}
@@ -331,12 +377,12 @@ public abstract class TemplatesDialog extends CustomDialog {
 				HorizontalPanel h = new HorizontalPanel();
 				if(flex_table.getRowCount()>3){
 					Button b = new Button("");
-					b.setStyleName("aon-finding-toolbar-item aon-search-minus");
+					b.setStyleName("aon-finding-toolbar-item-template aon-search-minus");
 					b.addClickHandler(removeClickHandler());
 					h.add(b);
 				}
 				Button b2 = new Button("");
-				b2.setStyleName("aon-finding-toolbar-item aon-search-add");
+				b2.setStyleName("aon-finding-toolbar-item-template aon-search-add");
 				b2.addClickHandler(addClickHandler());
 				h.add(b2);
 				
@@ -387,7 +433,7 @@ public abstract class TemplatesDialog extends CustomDialog {
 
 			column++;
 			Button b = new Button("");
-			b.setStyleName("aon-finding-toolbar-item aon-search-minus");
+			b.setStyleName("aon-finding-toolbar-item-template aon-search-minus");
 			b.addClickHandler(removeClickHandler());
 		
 			flex_table.setWidget(column+1, 0, new Label("Columna" + " " + Integer.toString(column)));
@@ -440,6 +486,7 @@ public abstract class TemplatesDialog extends CustomDialog {
 		v.add("IRPF");
 		v.add("Inventoriable");
 		v.add("Producto Compuesto");
+		v.add("Precio Composici\u00f3n");
 		v.add("Estado");
 		v.add("C\u00f3digo de Barras");
 		v.add("Descripci\u00f3n");
@@ -466,5 +513,75 @@ public abstract class TemplatesDialog extends CustomDialog {
 		case "Precio Venta Base" : return true;
 		}
 		return false;
+	}
+	
+	long progress = 10;
+	public  SingleUploader newUploader(SingleUploader up,String url){
+		final SingleUploader upload;
+       	if(up==null){
+       		 upload=  new SingleUploader(FileInputType.BROWSER_INPUT.with(FileInputType.LABEL.getInstance()));
+       	}
+       	else{
+       		 upload = up;
+       	}
+       	upload.setAutoSubmit(true);
+        upload.setServletPath(url + "/gwt_upload");
+        
+        upload.getForm().getWidget().getElement().getChild(1).removeFromParent();
+        upload.getForm().setAction(url + "/gwt_upload");
+        upload.getForm().setEncoding(FormPanel.ENCODING_MULTIPART);
+        upload.getForm().setMethod(FormPanel.METHOD_POST);
+        upload.setTitle("uploadFormElement");
+        upload.avoidEmptyFiles(true);
+     
+        upload.addOnStatusChangedHandler(new OnStatusChangedHandler() {
+		
+			@Override
+			public void onStatusChanged(IUploader uploader) {
+				if(upload.getStatus() != Status.SUCCESS){
+			
+					upload.getStatusWidget().setProgress(progress, 100);
+			
+				}
+				else{
+					upload.getStatusWidget().setProgress(100, 100);
+				}	
+				progress=progress+20;
+				//upload.addStatusBar(uploader.getStatusWidget());
+			}
+		});
+
+        upload.addOnStartUploadHandler(new OnStartUploaderHandler() {
+			
+			@Override
+			public void onStart(IUploader uploader) {
+				upload.getStatusWidget().setVisible(true);
+				//Window.alert("start");
+			}
+		});
+        
+        upload.addOnFinishUploadHandler(new OnFinishUploaderHandler() {
+			
+			@Override
+			public void onFinish(IUploader uploader) {
+				upload.getStatusWidget().setProgress(100, 100);
+				//Window.alert("finish");
+				upload.getStatusWidget().setStatus(Status.DONE);
+				upload.getStatusWidget().setVisible(true);
+				progress = 0;		
+			}
+		});
+        upload.getForm().addFormHandler(new FormHandler() {
+			
+			@Override
+			public void onSubmitComplete(FormSubmitCompleteEvent event) {
+				upload.getForm().getWidget().getElement().getChild(0).removeFromParent();
+			}
+			
+			@Override
+			public void onSubmit(FormSubmitEvent event) {}
+		});
+        
+        return upload;
 	}
 }

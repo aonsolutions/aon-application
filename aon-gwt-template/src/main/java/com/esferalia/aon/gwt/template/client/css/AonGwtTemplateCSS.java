@@ -22,4 +22,8 @@ public interface AonGwtTemplateCSS extends CssResource{
 	
 	@ClassName("aon-check-template")
 	String aonCheckTemplate();
+	
+	@ClassName("aon-finding-toolbar-item-template")
+	String aonFindingToolbarItemTemplate();
+	
 }

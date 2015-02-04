@@ -2,6 +2,8 @@ package com.esferalia.aon.gwt.template.client;
 
 
 
+import static com.esferalia.aon.gwt.common.client.AONEntryPoint.getParameter;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
@@ -58,6 +60,8 @@ import com.google.gwt.view.client.SingleSelectionModel;
 
 public class Templates extends Composite implements EntryPoint {
 
+	private static final String SILENT = "silent";
+	
 	class DocumentContextMenu extends ContextMenu {
 
 		ScheduledCommand viewCommand = new ScheduledCommand() {
@@ -167,7 +171,15 @@ public class Templates extends Composite implements EntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
-	
+		boolean silent = Boolean.parseBoolean(getParameter(GWT.getModuleName(), SILENT));
+		
+		if (silent){
+			GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
+			GWT.<AonResources> create(AonResources.class).css().ensureInjected();
+			GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
+
+			exportPreview(this);
+		}
 	}
 	
 	public void Load() {
@@ -461,6 +473,53 @@ public class Templates extends Composite implements EntryPoint {
 		popup.show();
 	}
 	
+	private void importProduct(){
+		Dialog d = new Dialog("Importar Productos","Importar",true,"Cancelar",true,"import");
+		d.setUrl(GWT.getModuleBaseURL());
+		d.setTemplateList(template_list);
+		TemplatesDialog popup = new TemplatesDialog(d) {
+			
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+			
+			@Override
+			protected void onAccept() {
+				ListBox lb = (ListBox) flex_table.getWidget(0, 1);
+				String template = lb.getItemText(lb.getSelectedIndex());
+				TemplateInfo ti = new TemplateInfo();
+				
+				
+				//TODO AÑADIR TODOS LOS ATRIBUTOS
+				for(TemplateInfo t : tlist.getList()) {
+					if(t.getName().equals(template)){
+						ti = t;
+					}
+				}
+				item.insertProducts(ti, new AsyncCallback<com.esferalia.aon.gwt.template.shared.Error>() {
+					
+					@Override
+					public void onSuccess(com.esferalia.aon.gwt.template.shared.Error result) {
+						if(result.getError()){
+							Window.alert(result.getTextError());
+							//hide();
+						}
+						else{
+							Window.alert(result.getTextError());
+							//label!!
+						}
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
+				
+			}
+		};
+		popup.setGlassEnabled(true);
+		popup.show();
+	}
 
 	
 //------------------------------ ui handlers
@@ -513,5 +572,20 @@ public class Templates extends Composite implements EntryPoint {
 		popup.setGlassEnabled(true);
 		popup.show();
 	}
+	
+	
+	// ------------------------------------------------------------------------
+	
+	public void preview(){
+
+		importProduct();
+	}
+
+
+	public static native void exportPreview(Templates thiz) /*-{
+    	$wnd.preview = function() {
+    		thiz.@com.esferalia.aon.gwt.template.client.Templates::preview(*)();
+    	}
+	}-*/;
 }
 

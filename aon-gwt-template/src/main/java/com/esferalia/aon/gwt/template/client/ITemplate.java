@@ -18,5 +18,7 @@ public interface ITemplate extends RemoteService{
 	public void editTemplate(TemplateInfo ti);
 	
 	public void deleteTemplate(TemplateInfo ti);
+	
+	public com.esferalia.aon.gwt.template.shared.Error insertProducts(TemplateInfo ti);
 
 }

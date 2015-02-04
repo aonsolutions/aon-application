@@ -9,7 +9,8 @@ public class Dialog {
 	Boolean boolCancel;
 	String type;
 	TemplateInfo templateInfo;
-	
+	String url;
+	TemplateList templateList;
 	public Dialog() {
 	
 	}
@@ -68,6 +69,22 @@ public class Dialog {
 
 	public void setTemplateInfo(TemplateInfo templateInfo) {
 		this.templateInfo = templateInfo;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public TemplateList getTemplateList() {
+		return templateList;
+	}
+
+	public void setTemplateList(TemplateList templateList) {
+		this.templateList = templateList;
 	}
 	
 	

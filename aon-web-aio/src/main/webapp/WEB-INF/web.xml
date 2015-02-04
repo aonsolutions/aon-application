@@ -264,6 +264,15 @@
 		<url-pattern>/aon_gwt_template/gwt_download/*</url-pattern>
 	</servlet-mapping>
 	
+	<servlet>
+		<servlet-name>UploadProducts</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.template.server.UploadProductsServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UploadProducts</servlet-name>
+		<url-pattern>/aon_gwt_template/gwt_upload</url-pattern>
+	</servlet-mapping>
+	
 	<!-- Aon GWT Document -->
 	
 	<servlet>

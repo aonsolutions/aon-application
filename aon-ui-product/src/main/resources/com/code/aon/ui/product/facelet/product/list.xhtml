@@ -29,6 +29,12 @@
 						<f:param name="reportKey" value="productList" />
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
+					<ui:include
+						src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
+					<aon:commandLink id="product-import" value="Importar"
+						onclick="preview()"
+						styleClass="aon-finding-toolbar-item aon-icon-google-drive-excel">
+					</aon:commandLink>
 				</ui:define>
 			</ui:decorate>
 			

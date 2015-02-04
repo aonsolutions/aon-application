@@ -3,6 +3,10 @@ package com.esferalia.aon.gwt.template.jooq;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
+import static com.esferalia.aon.jooq.tables.Tax.TAX;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.ProductTag.PRODUCT_TAG;
 
 import java.io.File;
 import java.sql.Connection;
@@ -11,13 +15,17 @@ import java.util.Vector;
 
 import org.jooq.DSLContext;
 import org.jooq.Record1;
+import org.jooq.Record2;
+import org.jooq.Record3;
 import org.jooq.Record4;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.config.Tax;
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.jooq.JooqSettings;
+import com.esferalia.aon.gwt.template.server.ProductInfo;
 import com.esferalia.aon.gwt.template.server.Utils;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
@@ -31,7 +39,7 @@ public class DBConsults {
 			Connection connection = null;
 			try {
 				connection = DatabaseSync.getConnection(domain);
-
+				
 				DSLContext dslContext = DSL.using(connection,
 						JooqSettings.getDefaultSettings());
 				
@@ -78,7 +86,8 @@ public class DBConsults {
 				return tl;
 			}finally {
 				if (connection != null)
-					connection.close();
+					connection.close();	
+
 			}
 		
 	}
@@ -155,6 +164,103 @@ public class DBConsults {
 			dslContext.update(RATTACH).set(RATTACH.DESCRIPTION,ti.getName())
 									.set(RATTACH.DATA,b)
 							.where(RATTACH.ID.eq(ti.getId())).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static Vector<Tax> getIVA(String domain, Integer domainId) throws SQLException {
+		Vector<Tax> v = new Vector<Tax>();
+		Connection connection = null;
+		try {
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			Result<Record3<Integer,String,Double>> data = dslContext.select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
+					.from(TAX)
+					.where(TAX.DOMAIN.eq(domainId).and(TAX.TAX_TYPE.eq((byte)1))).fetch();
+			
+			data.stream().forEach(r -> {
+				Tax tax = new Tax();
+				tax.setId(r.value1());
+				tax.setName(r.value2());
+				tax.setPercentage(r.value3());
+				v.add(tax);
+			});
+			return v;			
+		}finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static Vector<Tax> getRetentions(String domain, Integer domainId) throws SQLException {
+		Vector<Tax> v = new Vector<Tax>();
+		Connection connection = null;
+		try {
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			Result<Record3<Integer,String,Double>> data = dslContext.select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
+					.from(TAX)
+					.where(TAX.DOMAIN.eq(domainId).and(TAX.TAX_TYPE.eq((byte)2))).fetch();
+			
+			data.stream().forEach(r -> {
+				Tax tax = new Tax();
+				tax.setId(r.value1());
+				tax.setName(r.value2());
+				tax.setPercentage(r.value3());
+				v.add(tax);
+			});
+			return v;			
+		}finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static void insertProducts(String domain, Integer domainId,Vector<ProductInfo> products) throws SQLException {
+		Connection connection = null;
+		try {
+			connection = DatabaseSync.getConnection(domain);
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			for(ProductInfo r : products){
+						//TODO INSERT PRODUCT TAG 
+				
+				//TODO INSERT PRODUCT
+				Byte inventoriable;
+				if (r.getProduct().isInventoriable()) inventoriable = 1;
+				else inventoriable = 0;
+				
+				Byte composition;
+				if (r.getProduct().isComposition()) composition = 1;
+				else composition = 0;
+				
+				Byte compositionPrice;
+				if (r.getProduct().isCompositionPrice()) compositionPrice = 1;
+				else compositionPrice = 0;
+				
+				Integer brandId;
+				if(r.getProduct().getBrand()!=null) brandId = r.getProduct().getBrand().getId();
+				else brandId = null;
+				
+				Integer categoryId;
+				if(r.getProduct().getBrand()!=null) categoryId = r.getProduct().getCategory().getId();
+				else categoryId = null;
+				
+				Integer productId = dslContext.insertInto(PRODUCT, PRODUCT.DOMAIN,PRODUCT.NAME,PRODUCT.CODE,PRODUCT.BRAND,PRODUCT.CATEGORY,PRODUCT.INVENTORIABLE,PRODUCT.STATUS,PRODUCT.VAT,PRODUCT.RETENTION,PRODUCT.TYPE,PRODUCT.COMPOSITION,PRODUCT.COMPOSITION_PRICE,PRODUCT.SALES_ACCOUNT,PRODUCT.PURCHASE_ACCOUNT)
+						.values(domainId,r.getProduct().getName(),r.getProduct().getCode(),brandId,categoryId, inventoriable,(byte) r.getProduct().getStatus().ordinal(),r.getProduct().getVat().getId(),r.getProduct().getRetention().getId(),(byte) r.getProduct().getType().ordinal(),composition,compositionPrice,null,null).returning(PRODUCT.ID).fetchOne().getId();
+				
+				//TODO INSERT ITEM
+				Integer itemId = dslContext.insertInto(ITEM, ITEM.DOMAIN,ITEM.PRODUCT, ITEM.DESCRIPTION, ITEM.PRICE, ITEM.STATUS, ITEM.EXPENSES_PERCENT, ITEM.EXPENSES_FIXED, ITEM.PROFIT_PERCENT, ITEM.PURCHASE_PRICE, ITEM.INTERNET, ITEM.BARCODE)
+						.values(domainId,productId,r.getItem().getDescription(),r.getItem().getPrice(),null,r.getItem().getExpensesPercent(),r.getItem().getExpensesFixed(),r.getItem().getProfitPercent(),r.getItem().getPurchasePrice(),(byte) 0,r.getItem().getBarcode()).returning(ITEM.ID).fetchOne().getId();
+			}
 		} finally {
 			if (connection != null)
 				connection.close();
