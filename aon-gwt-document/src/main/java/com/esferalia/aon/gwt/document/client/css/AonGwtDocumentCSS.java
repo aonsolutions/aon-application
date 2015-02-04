@@ -98,5 +98,8 @@ public interface AonGwtDocumentCSS extends CssResource{
 
 	@ClassName("messages-document")
 	String messagesDocument();
+	
+	@ClassName("gwt-PopupPanel-document")
+	String gwtPopupPanelDocument();
 
 }
