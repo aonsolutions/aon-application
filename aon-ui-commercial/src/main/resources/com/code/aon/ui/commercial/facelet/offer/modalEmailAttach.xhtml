@@ -101,14 +101,16 @@
 											
 											<aon:outputLabel for="sddMandate_paymentType-all"
 												value="#{bundle.finance_sddMandate_paymentType}" />
-											<aon:selectOneRadio id="sddMandate_paymentType-all" layout="pageDirection"
+											<aon:selectOneMenu id="sddMandate_paymentType-all" layout="pageDirection"
 												disabled="#{!offer.includeEmailSddMandateReport}"
 												value="#{offer.sddMandate.recurrentPayment}">
+												<f:selectItem  itemValue="#{null}" 
+													itemLabel="#{bundle.aon_unknown}" />
 												<f:selectItem  itemValue="#{true}" 
 													itemLabel="#{bundle.finance_sddMandate_recurrent}" />
 												<f:selectItem itemValue="#{false}" 
 													itemLabel="#{bundle.finance_sddMandate_oneOff}" />
-											</aon:selectOneRadio>
+											</aon:selectOneMenu>
 									     </aon:panelGrid>
 									</aon:panel>
 									
