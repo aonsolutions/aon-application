@@ -223,15 +223,6 @@
 	}
 
 	
-	@external .gwt-PopupPanel;
-	.gwt-PopupPanel {
-		width: 100% !important;
-		border: none !important;
-		padding: 0px !important;
-		background: none !important;
-		overflow:hidden !important;
-	}
-	
 	@external .page;
 	.page {
 		background: white;

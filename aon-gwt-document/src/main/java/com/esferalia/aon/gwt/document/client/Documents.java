@@ -311,7 +311,7 @@ public class Documents extends Composite implements EntryPoint {
 					@Override
 					protected void onNext() {}
 				};
-			
+				popup2.addStyleName("gwt-PopupPanel-document");
 				popup2.setGlassEnabled(true);
 				popup2.show();
 			}
@@ -368,7 +368,7 @@ public class Documents extends Composite implements EntryPoint {
 					@Override
 					protected void onNext() {}
 				};
-			
+				popup2.addStyleName("gwt-PopupPanel-document");
 				popup2.setGlassEnabled(true);
 				popup2.show();			}
 			else{
@@ -1283,6 +1283,7 @@ public class Documents extends Composite implements EntryPoint {
 				protected void onNext() {}
 			};
 		}
+		popup2.addStyleName("gwt-PopupPanel-document");
 		popup2.setGlassEnabled(true);
 		popup2.show();
 	}
@@ -1464,6 +1465,7 @@ public class Documents extends Composite implements EntryPoint {
 				protected void onNext() {}
 			};
 		}
+		popup2.addStyleName("gwt-PopupPanel-document");
 		popup2.setGlassEnabled(true);
 		popup2.show();
 	
@@ -2144,6 +2146,7 @@ public class Documents extends Composite implements EntryPoint {
 			}
 		};
 		}
+		popup2.addStyleName("gwt-PopupPanel-document");
 		popup2.setGlassEnabled(true);
 		popup2.show();
 	
@@ -2948,6 +2951,7 @@ public class Documents extends Composite implements EntryPoint {
 			@Override
 			protected void onNext() {}
 		};
+		popup2.addStyleName("gwt-PopupPanel-document");
 		popup2.setGlassEnabled(true);
 		popup2.show();
 
@@ -2997,6 +3001,7 @@ public class Documents extends Composite implements EntryPoint {
 			@Override
 			protected void onNext() {}
 		};
+		popup2.addStyleName("gwt-PopupPanel-document");
 		popup2.setGlassEnabled(true);
 		popup2.show();
 	}
@@ -3021,6 +3026,7 @@ public class Documents extends Composite implements EntryPoint {
 			@Override
 			protected void onNext() {}
 		};
+		popup2.addStyleName("gwt-PopupPanel-document");
 		popup2.setGlassEnabled(true);
 		popup2.setAnimationEnabled(false);
 		popup2.setModal(false);
@@ -3368,6 +3374,7 @@ public class Documents extends Composite implements EntryPoint {
 			protected void onNext() {}
 		
 		};
+		popup2.addStyleName("gwt-PopupPanel-document");
 		popup2.setGlassEnabled(true);
 		popup2.setAnimationEnabled(false);
 		popup2.setModal(false);
@@ -3850,6 +3857,7 @@ public class Documents extends Composite implements EntryPoint {
 			@Override
 			protected void onNext() {}
 		};
+		popup.addStyleName("gwt-PopupPanel-document");
 		popup.setGlassEnabled(true);
 		popup.show();
 	}
@@ -3951,6 +3959,7 @@ public class Documents extends Composite implements EntryPoint {
 			@Override
 			protected void onNext() {}
 		};
+		popup.addStyleName("gwt-PopupPanel-document");
 		popup.setGlassEnabled(true);
 		popup.show();
 	
@@ -4007,6 +4016,7 @@ public class Documents extends Composite implements EntryPoint {
 			@Override
 			protected void onNext() {}
 		};
+		popup.addStyleName("gwt-PopupPanel-document");
 		popup.setGlassEnabled(true);
 		popup.show();
 	}
@@ -4079,6 +4089,7 @@ public class Documents extends Composite implements EntryPoint {
 			@Override
 			protected void onNext() {}
 		};
+		popup.addStyleName("gwt-PopupPanel-document");
 		popup.setGlassEnabled(true);
 		popup.show();
 		 

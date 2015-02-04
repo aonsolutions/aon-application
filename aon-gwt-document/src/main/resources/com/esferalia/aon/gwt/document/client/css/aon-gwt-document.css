@@ -197,3 +197,8 @@
 .form-document textarea {
 	resize: none;		
 }
+
+.gwt-PopupPanel-document{
+	top:20% !important;
+	left:35% !important;
+}

@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.common.client.widget;
 
+import com.esferalia.aon.gwt.common.client.css.ViewerResources;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Overflow;
@@ -57,8 +58,9 @@ public abstract class Viewer extends PopupPanel {
 	public Viewer(Integer zoom) {
 		super(true, true);
 		this.zoom = zoom;
+		GWT.<ViewerResources> create(ViewerResources.class).css().ensureInjected();		
 		setWidget(binder.createAndBindUi(this));
-
+		addStyleName("gwt-PopupPanel-viewer");
 		eraser = new Timer() {
 			@Override
 			public void run() {
@@ -92,7 +94,6 @@ public abstract class Viewer extends PopupPanel {
 
 	@Override
 	public void onBrowserEvent(Event event) {
-		// TODO Auto-generated method stub
 		super.onBrowserEvent(event);
 	}
 
