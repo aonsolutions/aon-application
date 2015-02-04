@@ -24,6 +24,8 @@ import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.GeozoneIrpf;
@@ -35,10 +37,6 @@ public class GeozoneIrpfController implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-	private final static Integer ARABA_ID = 1;
-	private final static Integer BIZKAIA_ID = 48;
-	private final static Integer GIPUZKOA_ID = 20;
-	private final static Integer NAFARROA_ID = 31;
 	private final static String ARABA_CODE = "01";
 	private final static String BIZKAIA_CODE = "48";
 	private final static String GIPUZKOA_CODE = "20";
@@ -200,8 +198,10 @@ public class GeozoneIrpfController implements Serializable {
 		IManagerBean bean = BeanManager.getManagerBean(GeozoneIrpfDescendant.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF_GEOZONE_CODE), irpf.getGeozoneCode());
-		criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF_START_DATE), getPeriodStartDate(irpf.getYear()));
-		criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF_END_DATE), getPeriodEndDate(irpf.getYear()));
+		criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF_START_DATE), getPeriodEndDate(irpf.getYear()));
+		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF_END_DATE), getPeriodStartDate(irpf.getYear()));
+		Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF_END_DATE));
+		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
 		criteria.addOrder(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF_AMOUNT));
 		criteria.addOrder(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_DESCENDANT_DESCENDANT));
 		List<ITransferObject> descList = bean.getList(criteria);
@@ -231,8 +231,10 @@ public class GeozoneIrpfController implements Serializable {
 		IManagerBean bean = BeanManager.getManagerBean(GeozoneIrpfHandicap.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF_GEOZONE_CODE), irpf.getGeozoneCode());
-		criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF_START_DATE), getPeriodStartDate(irpf.getYear()));
-		criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF_END_DATE), getPeriodEndDate(irpf.getYear()));
+		criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF_START_DATE), getPeriodEndDate(irpf.getYear()));
+		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF_END_DATE), getPeriodStartDate(irpf.getYear()));
+		Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF_END_DATE));
+		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
 		criteria.addOrder(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF_AMOUNT));
 		criteria.addOrder(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_HANDICAP_HANDICAP));
 		List<ITransferObject> handicapList = bean.getList(criteria);
@@ -259,29 +261,21 @@ public class GeozoneIrpfController implements Serializable {
 	
 	private Object getPeriodEndDate(Integer year) {
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.YEAR, year);
-		calendar.set(Calendar.MONTH, Calendar.DECEMBER);
-		calendar.set(Calendar.DAY_OF_MONTH, calendar.getMaximum(Calendar.DAY_OF_MONTH));
+		calendar.set(year, Calendar.DECEMBER, calendar.getMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
 		return calendar.getTime();
 	}
 	private Object getPeriodStartDate(Integer year) {
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.YEAR, year);
-		calendar.set(Calendar.MONTH, Calendar.JANUARY);
-		calendar.set(Calendar.DAY_OF_MONTH, calendar.getMinimum(Calendar.DAY_OF_MONTH));
+		calendar.set(year, Calendar.JANUARY, calendar.getMinimum(Calendar.DAY_OF_MONTH), 0, 0, 0);
 		return calendar.getTime();
 	}
 	private void completeCriteria(Criteria criteria) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(GeozoneIrpf.class);
 		if(getYear()!=null){
 			Calendar startCal = Calendar.getInstance();
-			startCal.set(Calendar.YEAR, getYear());
-			startCal.set(Calendar.MONTH, Calendar.JANUARY);
-			startCal.set(Calendar.DAY_OF_MONTH, 1);
+			startCal.set(getYear(), Calendar.JANUARY, 1, 0, 0, 0);
 			Calendar endCal = Calendar.getInstance();
-			endCal.set(Calendar.YEAR, getYear());
-			endCal.set(Calendar.MONTH, Calendar.DECEMBER);
-			endCal.set(Calendar.DAY_OF_MONTH, 31);
+			endCal.set(getYear(), Calendar.DECEMBER, 31, 23, 59, 59);
 			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_START_DATE), startCal.getTime());
 			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_END_DATE), endCal.getTime());
 		}
