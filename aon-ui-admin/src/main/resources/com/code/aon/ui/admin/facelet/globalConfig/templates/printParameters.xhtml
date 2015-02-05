@@ -75,12 +75,9 @@
 									value="#{bundle.company_custom_template}" />
 							</aon:if>
 						</aon:div>
+						
 						<ui:include src="/com/code/aon/ui/company/facelet/company/printParameters2.xhtml" />
 						
-						<aon:outputLabel for="Sale_invoice_discountInPrice"
-							value="#{bundle.company_invoice_discountInPrice}" />
-						<aon:selectBooleanCheckbox id="Sale_invoice_discountInPrice"
-							value="#{company.printDiscountPriceApplied}" />
 					</aon:panelGrid>
 				</aon:panel>
 				

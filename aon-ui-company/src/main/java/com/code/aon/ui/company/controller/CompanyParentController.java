@@ -8,7 +8,9 @@ import static com.code.aon.common.enumeration.AppParam.APP_PRINT_INTERNET_DATA_P
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_LOGO_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_NAME_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_NIF_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_PRODUCT_CODE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_RECORD_DATA_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_REFERENCE_CODE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_S_INVOICE_FOOTER_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_SMART_CARD_PARAM;
@@ -129,6 +131,10 @@ public class CompanyParentController extends BasicController implements ICompany
 	private boolean printDiscountPriceApplied;
 	
 	private boolean printLogo;
+
+	private boolean printProductCode;
+	
+	private boolean printReferenceCode;
 	
 	private ReportPrintOption printName;
 	
@@ -783,6 +789,22 @@ public class CompanyParentController extends BasicController implements ICompany
 		this.printLogo = printLogo;
 	}
 
+	public boolean isPrintProductCode() {
+		return printProductCode;
+	}
+
+	public void setPrintProductCode(boolean printProductCode) {
+		this.printProductCode = printProductCode;
+	}
+
+	public boolean isPrintReferenceCode() {
+		return printReferenceCode;
+	}
+
+	public void setPrintReferenceCode(boolean printReferenceCode) {
+		this.printReferenceCode = printReferenceCode;
+	}
+
 	public ReportPrintOption getPrintName() {
 		return printName;
 	}
@@ -884,6 +906,14 @@ public class CompanyParentController extends BasicController implements ICompany
 	
 	public boolean obtainPrintLogo() throws ManagerBeanException {
 		return AppParamUtil.getValueAsBoolean(APP_PRINT_LOGO_PARAM);
+	}
+	
+	public boolean obtainPrintReferenceCode() throws ManagerBeanException {
+		return AppParamUtil.getValueAsBoolean(APP_PRINT_REFERENCE_CODE_PARAM);
+	}
+	
+	public boolean obtainPrintProductCode() throws ManagerBeanException {
+		return AppParamUtil.getValueAsBoolean(APP_PRINT_PRODUCT_CODE_PARAM);
 	}
 	
 	public ReportPrintOption obtainPrintName() throws ManagerBeanException {

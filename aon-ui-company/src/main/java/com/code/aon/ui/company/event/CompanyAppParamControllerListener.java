@@ -7,7 +7,9 @@ import static com.code.aon.common.enumeration.AppParam.APP_PRINT_INTERNET_DATA_P
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_LOGO_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_NAME_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_NIF_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_REFERENCE_CODE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_RECORD_DATA_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_PRODUCT_CODE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_S_INVOICE_FOOTER_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_SMART_CARD_PARAM;
@@ -40,6 +42,8 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 			companyController.setSaleInvoiceTemplate(companyController.obtainSaleInvoiceTemplate());
 			companyController.setPrintDiscountPriceApplied(companyController.obtainPrintDiscountPriceApplied());
 			companyController.setPrintLogo(companyController.obtainPrintLogo());
+			companyController.setPrintReferenceCode(companyController.obtainPrintReferenceCode());
+			companyController.setPrintProductCode(companyController.obtainPrintProductCode());
 			companyController.setPrintName(companyController.obtainPrintName());
 			companyController.setPrintNif(companyController.obtainPrintNif());
 			companyController.setPrintAddress(companyController.obtainPrintAddress());
@@ -93,6 +97,8 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 		AppParamUtil.insertParameter(APP_PRINT_RECORD_DATA_PARAM, companyController.isPrintRecordData());
 		AppParamUtil.insertParameter(AppParam.APP_PRINT_DISCOUNT_PRICE_APPLIED, companyController.isPrintDiscountPriceApplied());
 		AppParamUtil.insertParameter(APP_PRINT_LOGO_PARAM, companyController.isPrintLogo());
+		AppParamUtil.insertParameter(APP_PRINT_REFERENCE_CODE_PARAM, companyController.isPrintReferenceCode());
+		AppParamUtil.insertParameter(APP_PRINT_PRODUCT_CODE_PARAM, companyController.isPrintProductCode());
 		updateParam(APP_PRINT_NAME_PARAM, companyController.getPrintName());
 		updateParam(APP_PRINT_NIF_PARAM, companyController.getPrintNif());
 		updateParam(APP_PRINT_ADDRESS_PARAM, companyController.getPrintAddress());
