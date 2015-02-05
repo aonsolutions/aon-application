@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CompositePayment;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
+import com.esferalia.aon.gwt.payroll.shared.InvalidVariable;
 import com.esferalia.aon.gwt.payroll.shared.Item;
 import com.esferalia.aon.gwt.payroll.shared.ItemComparator;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -516,8 +517,17 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 
 	@Override
 	public void onInvalidData(String variableName, String message) {
-		// TODO Auto-generated method stub
+		
+		InvalidVariable invalidVariable = new InvalidVariable();
 
+		invalidVariable.setName(variableName);
+		invalidVariable.setImplicit(isImplicit(invalidVariable.getName()));
+		invalidVariable.setEndDate(salaryDraft.getStartDate());
+		invalidVariable.setStartDate(salaryDraft.getEndDate());
+		invalidVariable.setScope(Scope.SYSTEM);
+
+		salaryDraft.addUndefinedVariable(invalidVariable);
+		
 	}
 
 	@Override
@@ -682,7 +692,6 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 	public void onInvalidData(IContractBonus bonus, String variableName,
 			String message) {
 		// TODO Auto-generated method stub
-
 	}
 
 	// -------------------------------------------------------------------------

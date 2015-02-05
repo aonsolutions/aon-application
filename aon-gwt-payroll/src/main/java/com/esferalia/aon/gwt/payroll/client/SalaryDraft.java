@@ -491,6 +491,38 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	}
 
+	static class StringsListBoxFactory implements
+			VariableEditorFactory<TextListBox> {
+
+		private String name;
+		private String values[];
+
+		public StringsListBoxFactory(String name, String... values) {
+			this.name = name;
+			this.values = values;
+		}
+
+		@Override
+		public boolean accept(Variable variable) {
+			return name.equals(variable.getName());
+		}
+
+		@Override
+		public TextListBox create(Variable variable) {
+			TextListBox textListBox = new TextListBox(){
+				@Override
+				public void setValue(String value) {
+					super.setValue(value.replaceAll("^[\"'](.*)[\"']$", "$1"));
+				}
+				
+			};
+			for (String value : values)
+				textListBox.addItem(value);
+			return textListBox;
+		}
+
+	}
+
 	static class DismissalFactory implements VariableEditorFactory<TextListBox> {
 
 		private String name;
@@ -2530,9 +2562,9 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 			eventsTable.setText(row, 1, event.getMessage());
 			eventsTable.getCellFormatter().getElement(row, 1).getStyle()
-			.setWhiteSpace(WhiteSpace.NORMAL);
+					.setWhiteSpace(WhiteSpace.NORMAL);
 			eventsTable.getCellFormatter().getElement(row, 1).getStyle()
-			.setProperty("maxWidth", 55, Unit.EM);
+					.setProperty("maxWidth", 55, Unit.EM);
 
 			String styles[] = eventStyles.get(event.getType());
 
@@ -2563,7 +2595,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			for (int col = 0; col < eventsTable.getCellCount(row); col++)
 				eventsTable.getCellFormatter().addStyleName(row, col,
 						"aon-panelGrid-odd");
-
 
 			row++;
 		}
@@ -4108,6 +4139,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			new DateEditorFactory("FECHA_PREAVISO"),
 			new EnumNameListBoxFactory<Employee.Occupation>("OCUPACION", Employee.Occupation.class), 
 			new DismissalFactory("CAUSA_INDEMNIZACION"), 
+			new StringsListBoxFactory("GRUPO_COTIZACION", new String [] {"01","02","03","04","05","06","07","08","09","10","11"}), 
 			new BooleanEditorFactory(),
 			new DefaultEditorFactory() };
 	//@formatter:on

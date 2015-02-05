@@ -86,6 +86,7 @@ INSERT INTO system_data
 
 INSERT INTO system_data 
 ( domain, name				, expression	, start_date	, end_date		, read_only , comments )  VALUES 
+(-107	, 'COTIZACION_MENSUAL'		, 'true'	, '2014-01-01'	, NULL			, 1		, NULL ),
 (-107	, 'BASE_CGC_MIN_MES'		, ' ["01":1051.50, "02":872.10, "03":758.70, "04":753.00, "05":753.00, "06":753.00, "07":753.00, "08":753.00, "09":753.00, "10":753.00, "11":753.00][GRUPO_COTIZACION] * ( DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30 )'			
 							,'2014-01-01'	, NULL	, 1	, NULL ),
 (-107	, 'BASE_CGC_MIN_DIA'		, ' ["01":45.72, "02":37.92, "03":32.99, "04":32.74, "05":32.74, "06":32.74, "07":32.74, "08":32.74, "09":32.74, "10":32.74, "11":32.74][GRUPO_COTIZACION]  * JORNADAS_REALES'			
@@ -130,13 +131,13 @@ INSERT INTO system_data
 (-107	, 'REDUCCION_CGC_E_01'		, '8.10'	, '2014-01-01'	, NULL			, 1		, NULL ),
 (-107	, 'REDUCCION_CGC_E_02'		, 'COTIZACION_MENSUAL ? ((BASE_CGC <= 986.70) ? 6.50 : ((BASE_CGC <= 2595.60) ? (6.50 * ( 1 + (BASE_CGC - 986.70)/ BASE_CGC * 2.52 * 6.15 / 6.50)) : 0.00)) : ((BASE_CGC / JORNADAS_REALES <= 42.90) ? 6.50 : ((BASE_CGC / JORNADAS_REALES <= 112.85 )? (6.50 * ( 1 + (BASE_CGC / JORNADAS_REALES - 42.90) / ( BASE_CGC / JORNADAS_REALES ) * 2.52 * 6.15 / 6.50)) : 0.00))'	
 							, '2014-01-01'	, NULL			, 1		, NULL ),
-(-107	, 'PORCENTAJE_CGC_E'		, '(GRUPO_COTIZACION == "01") ? (23.260 - REDUCCION_CGC_E_01) : (16.85 - REDUCCION_CGC_E_02))'	
+(-107	, 'PORCENTAJE_CGC_E'		, '(GRUPO_COTIZACION == "01") ? (23.260 - REDUCCION_CGC_E_01) : (16.85 - REDUCCION_CGC_E_02)'	
 							, '2014-01-01'	, NULL			, 1		, NULL )
 ;
 
 INSERT INTO `system_cost` 
 (`domain`	, `start_date`	, `end_date`	, `description`	, `expression`	, `type`, `code`) VALUES 
-(-107	 	, '2014-01-01'	,NULL		,''		,'_CUOTA=(( BASE_CGC_E=( BASE_CGC + ( isdef BASE_MTNAD ? BASE_MTNAD : 0.00 ) ) ) * PORCENTAJE_CGC_E/100); (GRUPO_COTIZACION == "01") ? (COTIZACION_MENSUAL ? MIN(_CUOTA,279.00): MIN(_CUOTA, 12.13 * JORNADAS_REALES)) : (COTIZACION_MENSUAL ? MAX(_CUOTA,60.15): MAX(_CUOTA,2.62 * JORNADAS_REALES))'
+(-107	 	, '2014-01-01'	,NULL		,''		,'_CUOTA=(( BASE_CGC_E=( BASE_CGC + ( isdef BASE_MTNAD ? BASE_MTNAD : 0.00 ) ) ) * PORCENTAJE_CGC_E/100); (GRUPO_COTIZACION == "01") ? (COTIZACION_MENSUAL ? MIN(_CUOTA,279.00): MIN(_CUOTA, 12.13 * JORNADAS_REALES)) : (COTIZACION_MENSUAL ? MAX(_CUOTA,60.25): MAX(_CUOTA,2.62 * JORNADAS_REALES))'
 										,0	,'CGC_E')
 ;
 
@@ -192,6 +193,11 @@ INSERT INTO `system_cost`
 (-107	 	, '2014-01-01'	,NULL		,'I.T, R.E y R.L, MATERNIDAD y PATERNIDAD'		
 								,'( COTIZACION_MENSUAL ? 30 - ( DIAS_MES - DIAS_IT) : DIAS_IT ) * BASE_REGULADORA * ( INDEFINIDO ? ((GRUPO_COTIZACION == "01") ? 15.50 : 2.75): PORCENTAJE_CGC_E )'
 										, 0	, 'ATEP_E')
+;
+
+INSERT INTO `system_cost` 
+(`domain`	, `start_date`	,`end_date`	,`description`	, `expression`	, `type`, `code`) VALUES 
+(-107	 	, '2014-01-01'	,NULL		,''		,'REMOVE()'		, 0	, 'ATEP_E')
 ;
 
 # PESTACIONES
