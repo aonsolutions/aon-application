@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -43,6 +44,8 @@ public interface EnterprisesService extends RemoteService {
 	
 	void deleteAgreement(Agreement agreement);
 	
+	void moveAgreement2Parent(Agreement agreement);
+	
 	Agreement copyAgreement(Agreement agreement);
 
 	List<Agreement> getAgreements(int offset, int limit) ;
@@ -56,6 +59,8 @@ public interface EnterprisesService extends RemoteService {
 	List<Deduction> getDeductionConcepts(int offset, int limit) ;
 	
 	List<Cost> getEnterprisesCosts(List<Integer> enterpriseIds); 
+	
+	Integer getParentDomain();
 	
 	
 }

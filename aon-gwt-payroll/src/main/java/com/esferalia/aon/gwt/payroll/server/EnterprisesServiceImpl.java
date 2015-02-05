@@ -1159,5 +1159,36 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 	}
-
+	
+	@Override
+	public void moveAgreement2Parent(Agreement agreement) {
+		Connection connection = null;
+		try {
+			initFacesContext();
+			connection = AonServletUtils.getConnection();
+			Integer parentDomainID = getParentDomainID();
+			JooqAgreement.moveAgreement2ParentDomain(connection, parentDomainID, agreement.getId());
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+	
+	}
+	
+	@Override
+	public Integer getParentDomain() {		
+		try {
+			initFacesContext();
+			return getParentDomainID();
+		} finally {
+			releaseFacesContext();
+		}
+	}
 }

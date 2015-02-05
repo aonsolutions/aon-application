@@ -38,7 +38,7 @@ public class OptionsToolbar extends Composite {
 	Button viewButton;
 	@UiField
 	Button pasteButton;
-	@UiField
+	@UiField	
 	Button copyButton;
 	@UiField
 	Button draftButton;

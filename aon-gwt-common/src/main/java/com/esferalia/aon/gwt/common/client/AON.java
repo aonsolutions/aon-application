@@ -81,6 +81,7 @@ public class AON {
 	public static final String AON_ICON_DRAFT = "aon-icon-draft";
 	public static final String AON_ICON_CLEAR_TRASH = "aon-icon-cleartrash";
 	public static final String AON_ICON_PASTE = "aon-icon-paste";
+	public static final String AON_ICON_MOVE_UP = "aon-icon-moveUp";
 	public static final String AON_ICON_INE = "aon-icon-ine";
 	public static final String AON_ICON_AET = AON_CSS.aonIconAeat();// "aon-icon-aet";
 	public static final String AON_ICON_BLANK = "aon-icon-blank";

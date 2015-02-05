@@ -209,7 +209,7 @@ public class Agreements extends ResizeComposite implements
 	public boolean evaluateId(Agreement agreement) {
 		return agreement.getId() > 0;
 	}
-
+	
 	@Override
 	public void onNewButtonClick(ClickEvent event) {
 		addNewItemTree(null);

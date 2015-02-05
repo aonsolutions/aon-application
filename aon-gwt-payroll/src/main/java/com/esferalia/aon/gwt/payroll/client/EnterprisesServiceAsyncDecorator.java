@@ -164,5 +164,20 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.copyAgreement(agreement, 
 				new AsyncCallbackWrapper<Agreement>(callback));
 	}
+	
+	@Override
+	public void moveAgreement2Parent(Agreement agreement,
+			AsyncCallback<Void> callback) {
+		AON.start();
+		enterprisesServiceAsync.moveAgreement2Parent(agreement, new 
+				AsyncCallbackWrapper<Void>(callback));
+	}
 
+	@Override
+	public void getParentDomain(AsyncCallback<Integer> callback) {
+		AON.start();
+		enterprisesServiceAsync.getParentDomain(new 
+				AsyncCallbackWrapper<Integer>(callback));
+		
+	}
 }

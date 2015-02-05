@@ -197,6 +197,11 @@
 	gwt-image: "aonIconDelete";
 }
 
+@sprite .aon-icon-moveUp {
+	width: auto;
+	gwt-image: "aonIconMoveUp";
+}
+
 @sprite .aon-icon-draft {
 	width: auto;
 	gwt-image: "aonIconDraft";

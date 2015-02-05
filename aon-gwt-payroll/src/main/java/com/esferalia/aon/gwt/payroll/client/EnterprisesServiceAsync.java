@@ -32,5 +32,7 @@ public interface EnterprisesServiceAsync {
 	void getBonusConcepts(int offset , int limit, AsyncCallback<List<Bonus>> callback);
 	void getPaymentConcepts(int offset , int limit, AsyncCallback<List<Payment>> callback);
 	void getDeductionConcepts(int offset , int limit, AsyncCallback<List<Deduction>> callback);
+	void moveAgreement2Parent(Agreement agreement, AsyncCallback<Void> callback);
+	void getParentDomain(AsyncCallback<Integer> callback);
 
 }

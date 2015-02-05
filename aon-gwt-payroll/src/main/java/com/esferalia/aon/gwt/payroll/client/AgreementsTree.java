@@ -175,7 +175,6 @@ public class AgreementsTree extends Composite implements KeyDownHandler, Context
 		return selectedItem != null ? (Agreement) selectedItem.getUserObject()
 				: null;
 	}
-
 	
 	private void fireAgreements() {
 		for (Listener listener : listeners)

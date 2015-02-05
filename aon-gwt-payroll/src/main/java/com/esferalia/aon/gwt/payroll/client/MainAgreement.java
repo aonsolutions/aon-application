@@ -104,10 +104,41 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		}
 	}
 	
+	class MoveAgreementCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			
+			if(Window.confirm("\u00BFDesea subir el convenio seleccionado al dominio padre\u003F")) {
+				moveAgreement2Parent(MainAgreement.this.agreement);
+			}
+		}
+		
+		private void moveAgreement2Parent(Agreement agreement) {
+			
+			MainAgreement.this.agreements.getAgreementsTree().getEnterpriseService()
+				.moveAgreement2Parent(agreement, new AsyncCallback<Void>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert("Ooopsss ...." + caught.getMessage()) ;
+				}
+
+				@Override
+				public void onSuccess(Void result) {
+					Window.alert("Convenio movido correctamente");
+					MainAgreement.this.agreements.reloadAgreements();
+				}
+			});
+		}
+		
+	}
+	
 	class AgreementContextMenu extends ContextMenu {
 		
 		private Agreement agreementCopy = null;		
 		private MenuItem copyItem = null;
+		private MenuItem moveItem = null;
 		
 		public AgreementContextMenu() {
 			
@@ -117,7 +148,12 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			copyItem = addItem("Copiar", new CopyAgreementCommand(), 
 					AON.AON_ICON_COPY, AON.AON_ICON_CMD_BUTTON);
 			addItem("Eliminar", new DeleteAgreementCommand(), 
-					AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON); 
+					AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);			
+			moveItem = addItem("Mover a..", new MoveAgreementCommand(), 
+					AON.AON_ICON_MOVE_UP, AON.AON_ICON_CMD_BUTTON);
+			moveItem.setTitle("Mover convenio al dominio padre");
+			moveItem.setVisible(false);
+
 		}
 		
 		public void setAgreementCopy(Agreement agreement) {
@@ -134,8 +170,13 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 			if ( id < 0) {
 				this.copyItem.setEnabled(false);
-				this.copyItem.setTitle("No es posible copiar un convenio no guardado.");
+				this.copyItem.setTitle("No es posible copiar "
+						+ "un convenio no guardado.");
 			}
+		}
+		
+		public void setVisibleMoveItem(boolean visible) {
+			this.moveItem.setVisible(visible);
 		}
 	}
 
@@ -185,10 +226,9 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	@UiField
 	AgreementDraft agreementDraft;
 	
+	private Integer parentDomain;	
 	private Storage storage;
-
-	private Map<Integer, AgreementDraftObject> agreementDrafts;
-	
+	private Map<Integer, AgreementDraftObject> agreementDrafts;	
 	private Agreement agreement;
 	private AgreementContextMenu contextMenu;
 	
@@ -217,6 +257,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		
 		this.editionsListener = new LinkedList<EditionListener>();
 		this.agreement = null;
+		this.parentDomain = null;
 		this.contextMenu = new AgreementContextMenu();
 		this.agreements.addToolbar(this);
 		this.agreements.addListener(this);
@@ -230,8 +271,20 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			agreement.setId(id);
 			contextMenu.setAgreementCopy(agreement);
 			contextMenu.setVisible(true);
-		}		
+		}	
+		
+		agreements.getAgreementsTree().getEnterpriseService().getParentDomain(new AsyncCallback<Integer>() {
 
+			@Override
+			public void onFailure(Throwable caught) {
+				
+			}
+
+			@Override
+			public void onSuccess(Integer parentDomain) {
+				MainAgreement.this.parentDomain = parentDomain;				
+			}
+		});
 	}
 
 	// ---------------------------------------------------- Agreements.Listener
@@ -240,7 +293,10 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	public void onAgreementSelected(Agreement agreement) {
 
 		this.agreement = agreement;		
-		this.contextMenu.setVisibleCopyItem(agreement.getId());
+		this.contextMenu.setVisibleCopyItem(agreement.getId());		
+		
+		this.contextMenu.setVisibleMoveItem( (parentDomain != null) && 
+				parentDomain.intValue() != agreement.getDomain().intValue());
 
 		AgreementDraftObject agreementDraftObject = agreementDrafts
 				.get(agreement.getId());
