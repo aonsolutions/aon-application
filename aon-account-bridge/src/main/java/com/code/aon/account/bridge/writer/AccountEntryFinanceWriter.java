@@ -235,6 +235,7 @@ public class AccountEntryFinanceWriter implements Serializable {
 			AccountEntryFinanceBatch accountEntryFinanceBatch = (AccountEntryFinanceBatch)iterator.next();
 			accountEntryFinanceBatchBean.remove(accountEntryFinanceBatch);
 			if (removeAccountEntry) {
+				getAccountingUtil().checkPeriod(accountEntryFinanceBatch.getAccountEntry());
 				removeAccountEntryDetails(accountEntryFinanceBatch.getAccountEntry());
 				removeAccountEntry(accountEntryFinanceBatch.getAccountEntry());
 			}
@@ -697,6 +698,7 @@ public class AccountEntryFinanceWriter implements Serializable {
 			AccountEntryFinanceTracking accountEntryFinanceTracking = (AccountEntryFinanceTracking)iterator.next();
 			accountEntryFinanceTrackingBean.remove(accountEntryFinanceTracking);
 			if (removeAccountEntry) {
+				getAccountingUtil().checkPeriod(accountEntryFinanceTracking.getAccountEntry());
 				removeAccountEntryDetails(accountEntryFinanceTracking.getAccountEntry());
 				removeAccountEntry(accountEntryFinanceTracking.getAccountEntry());
 			}
@@ -766,6 +768,7 @@ public class AccountEntryFinanceWriter implements Serializable {
 			AccountEntryBankStatement accountEntryBankStatement= (AccountEntryBankStatement)iterator.next();
 			accountEntryBankStatementBean.remove(accountEntryBankStatement);
 			if (removeAccountEntry) {
+				getAccountingUtil().checkPeriod(accountEntryBankStatement.getAccountEntry());
 				removeAccountEntryDetails(accountEntryBankStatement.getAccountEntry());
 				removeAccountEntry(accountEntryBankStatement.getAccountEntry());
 			}
@@ -833,8 +836,7 @@ public class AccountEntryFinanceWriter implements Serializable {
 	}
 
 	private void removeAccountEntry(AccountEntry accountEntry) throws ManagerBeanException {
-		IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
-		accountEntryBean.remove(accountEntry);
+		BeanManager.getManagerBean(AccountEntry.class).remove(accountEntry);
 	}
 
 }

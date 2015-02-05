@@ -56,7 +56,7 @@
 						<aon:menuItem id="finances"
 							value="#{bundle.aon_key_finance_description}"
 							title="#{bundle.aon_key_finance_accelerator}"
-							rendered="#{saleInvoice.toInvoiceTotalPrice != 0 and (!saleInvoice.recorded or saleInvoiceFinance.model.rowCount == 0)}"
+							rendered="#{saleInvoice.toInvoiceTotalPrice != 0 and (!saleInvoice.recorded or saleInvoiceFinance.allPending)}"
 							iconClass="aon-icon-tree"
 							actionListener="#{saleInvoice.onGenerateFinances}"
 							accesskey="#{bundle.aon_key_finance}">

@@ -1,8 +1,6 @@
 package com.code.aon.ui.finance.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_TRACKING_FRACTIONED;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_TRACKING_GROUPED;
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_TRACKING_SETTLED;
 import static com.code.aon.ui.common.ICommonMessages.PAYMENT_INVALID_AMOUNT_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.PAYMENT_NOT_MATCH_AMOUNT_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.PAYMENT_PAY_METHOD_UNDEFINED_ERROR;
@@ -21,9 +19,8 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
-import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
-import com.code.aon.accounting.AccountEntry;
 import com.code.aon.AonVersion;
+import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -42,6 +39,7 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.Invoice;
+import com.code.aon.finance.bridge.invoicing.FinanceTrackingManager;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.enumeration.InvoiceType;
@@ -56,7 +54,6 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
-import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
@@ -232,7 +229,7 @@ public class FinanceController extends FinanceListController implements IFinance
 	}
 
 	public AccountEntryFinanceWriter getWriter() {
-		if(writer == null){
+		if (writer == null){
 			writer = new AccountEntryFinanceWriter();
 		}
 		return writer;
@@ -510,6 +507,30 @@ public class FinanceController extends FinanceListController implements IFinance
 		return null;
 	}
 
+	public void onFinancePayment(ActionEvent event) throws ManagerBeanException {
+		Finance finance = (Finance)this.getTo();
+		if (getPaymentAmount() == 0) {
+			AonUtil.addErrorMessageFromBundle(PAYMENT_INVALID_AMOUNT_ERROR);
+			throw new AbortProcessingException();
+		}
+
+		double financeAmount = finance.getTotalAmount();
+		try {
+			FinanceTrackingManager trackingManager = new FinanceTrackingManager(finance);
+			trackingManager.pay(getPaymentAmount(), getPaymentRegistryBank(), getPaymentPayMethodTypeDetail(), getPaymentDate(), isPaymentRecordable());
+
+			if (getPaymentAmount() != financeAmount) {
+				AonUtil.addWarningMessageFromBundle(PAYMENT_NOT_MATCH_AMOUNT_ERROR);
+			}
+
+			FinanceTrackingController financeTrackingController = (FinanceTrackingController)FormUtil.getController(FINANCE_TRACKING_CONTROLLER_NAME);
+			financeTrackingController.onSearch(null);
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
+		}
+	}
+
 	public void onFinanceReturnShow(ActionEvent event) throws ManagerBeanException {
 		Finance finance = (Finance)getTo();
 		setReturnDate(new Date());
@@ -582,105 +603,37 @@ public class FinanceController extends FinanceListController implements IFinance
 		}
 	}
 
-	public void onFinancePayment(ActionEvent event) throws ManagerBeanException {
-		Finance finance = (Finance)this.getTo();
-		if (getPaymentAmount() == 0) {
-			AonUtil.addErrorMessageFromBundle(PAYMENT_INVALID_AMOUNT_ERROR);
-			throw new AbortProcessingException();
-		}
-		if (getPaymentAmount() != finance.getTotalAmount()) {
-			double amount = finance.getTotalAmount();
-
-			finance.setAmount(CommonUtil.round(getPaymentAmount() - finance.getExpenses()));
-			String message = AonUtil.getMessage(FINANCE_TRACKING_FRACTIONED, 1, 2);
-			FinanceTrackingWriter.addFinanceTracking(finance, new Date(), FinanceTrackingType.FRACTIONED, message, amount);
-
-			Finance fraction = getFinanceGenerator().duplicateFinance(finance, CommonUtil.round(amount - getPaymentAmount()));
-			message = AonUtil.getMessage(FINANCE_TRACKING_FRACTIONED, 2, 2);
-			FinanceTrackingWriter.addFinanceTracking(fraction, new Date(), FinanceTrackingType.FRACTIONED, message, amount);
-
-			AonUtil.addWarningMessageFromBundle(PAYMENT_NOT_MATCH_AMOUNT_ERROR);
-		}
-		finance.setFinanceStatus(FinanceStatus.PAID);
-		super.accept(null);
-
-		AccountEntry entry = null;
-		String message = null;
-		if (isPaymentRecordable()) {
-			entry = getWriter().recordFinance(finance, getPaymentRegistryBank(), getPaymentPayMethodTypeDetail(), getPaymentDate());
-			message = AonUtil.getMessage(ICommonMessages.TRACKING_RECORDED) + " " + entry.getId();
-		}
-
-		message = (message!=null) ? message : AonUtil.getMessage(ICommonMessages.PENDING);
-		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, getPaymentDate(), FinanceTrackingType.PAID, message, 
-				getPaymentRegistryBank(), getPaymentPayMethodTypeDetail(), finance.getTotalAmount(), isPaymentRecordable());
-
-		if (isPaymentRecordable()) {
-			getWriter().insertAccountEntryFinanceTracking(entry, tracking);
-		}
-
-		FinanceTrackingController financeTrackingController = (FinanceTrackingController)FormUtil.getController(FINANCE_TRACKING_CONTROLLER_NAME);
-		financeTrackingController.onSearch(null);
-	}
-
 	public void onFinanceReturn(ActionEvent event) throws ManagerBeanException {
-		setReturnRegistryBank((getReturnDeposit()==0) ? getReturnRegistryBank() : null);
-		setReturnPayMethodTypeDetail((getReturnDeposit()!=0) ? getReturnPayMethodTypeDetail() : null);
-
 		Finance finance = (Finance)this.getTo();
-		finance.setExpenses(getReturnExpenses());
-		finance.setFinanceStatus(FinanceStatus.RETURNED);
-		super.accept(null);
-		returnFinanceBatchDetail(finance);
+		try {
+			setReturnRegistryBank((getReturnDeposit()==0) ? getReturnRegistryBank() : null);
+			setReturnPayMethodTypeDetail((getReturnDeposit()!=0) ? getReturnPayMethodTypeDetail() : null);
 
-		AccountEntry entry = null;
-		String message = null;
-		if (isReturnRecordable()) {
-			entry = getWriter().returnFinance(finance, getReturnRegistryBank(), getReturnPayMethodTypeDetail(), getReturnDate());
-			message = AonUtil.getMessage(ICommonMessages.TRACKING_RECORDED) + " " + entry.getId();
-		}
+			FinanceTrackingManager trackingManager = new FinanceTrackingManager(finance);
+			trackingManager.returnPay(getReturnExpenses(), getReturnRegistryBank(), getReturnPayMethodTypeDetail(), getReturnDate(), isReturnRecordable());
 
-		message = (message!=null) ? message : AonUtil.getMessage(ICommonMessages.PENDING);
-		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, getReturnDate(), FinanceTrackingType.RETURNED, message,
-				getReturnRegistryBank(), getReturnPayMethodTypeDetail(), finance.getTotalAmount(), isReturnRecordable());
-
-		if (isReturnRecordable()) {
-			getWriter().insertAccountEntryFinanceTracking(entry, tracking);
-		}
-
-		FinanceTrackingController financeTrackingController = (FinanceTrackingController)FormUtil.getController(FINANCE_TRACKING_CONTROLLER_NAME);
-		financeTrackingController.onSearch(null);
-	}
-
-	private void returnFinanceBatchDetail(Finance finance) throws ManagerBeanException {
-		IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IEntityAlias.FINANCE_BATCH_DETAIL_FINANCE_ID), finance.getId());
-		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IEntityAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.PAID);
-		Iterator<?> iterator = fBatchDetailBean.getList(criteria).iterator();
-		while (iterator.hasNext()) {
-			FinanceBatchDetail detail = (FinanceBatchDetail)iterator.next();
-			detail.setStatus(FinanceStatus.RETURNED);
-			fBatchDetailBean.update(detail);
+			FinanceTrackingController financeTrackingController = (FinanceTrackingController)FormUtil.getController(FINANCE_TRACKING_CONTROLLER_NAME);
+			financeTrackingController.onSearch(null);
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
 	}
 
 	public void onSettleFinance(ActionEvent event) throws ManagerBeanException {
 		Finance finance = (Finance)this.getTo();
-		finance.setFinanceStatus(FinanceStatus.SETTLED);
-		super.accept(null);
+		try {
+			FinanceTrackingManager trackingManager = new FinanceTrackingManager(finance);
+			trackingManager.settle();
 
-		String message = AonUtil.getMessage(FINANCE_TRACKING_SETTLED);
-		createFinanceTracking(finance, message);
-
-		FinanceTrackingController financeTrackingController = (FinanceTrackingController)FormUtil.getController(FINANCE_TRACKING_CONTROLLER_NAME);
-		financeTrackingController.onSearch(null);
+			FinanceTrackingController financeTrackingController = (FinanceTrackingController)FormUtil.getController(FINANCE_TRACKING_CONTROLLER_NAME);
+			financeTrackingController.onSearch(null);
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
+		}
 	}
 	
-	public void createFinanceTracking(Finance finance, String message){
-		FinanceTrackingWriter.addFinanceTracking(finance, new Date(), FinanceTrackingType.SETTLED, message);
-	}
-
 	public List<?> getOrderedList() {
 		return orderedList;
 	}
@@ -824,7 +777,7 @@ public class FinanceController extends FinanceListController implements IFinance
 			finance.setFinanceStatus(FinanceStatus.SETTLED);
 			financeBean.update(finance);
 			String message = AonUtil.getMessage(FINANCE_TRACKING_GROUPED);
-			createFinanceTracking(finance, message);
+			FinanceTrackingWriter.addFinanceTracking(finance, new Date(), FinanceTrackingType.SETTLED, message);
 			financeGroup.setAmount(financeGroup.getAmount()+finance.getAmount());
 		}
 	}

@@ -22,6 +22,7 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.FinanceTracking;
+import com.code.aon.finance.bridge.invoicing.FinanceTrackingManager;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
@@ -49,7 +50,7 @@ public class FinanceTrackingController extends LinesController implements IFinan
 	public String getTrackingDescription() throws ManagerBeanException {
 		String description = null;
 		if (getModel().isRowAvailable()) {
-			FinanceTracking tracking = (FinanceTracking)this.getModel().getRowData();
+			FinanceTracking tracking = (FinanceTracking)getModel().getRowData();
 			if (tracking.getType() == FinanceTrackingType.PAID || tracking.getType() == FinanceTrackingType.RETURNED) {
 				description = obtainPaymentDescription(tracking);
 			} else {
@@ -70,13 +71,21 @@ public class FinanceTrackingController extends LinesController implements IFinan
 	}
 
 	public void recordTracking(ActionEvent event) throws ManagerBeanException {
-		FinanceTracking tracking = (FinanceTracking)this.getModel().getRowData();
-		getWriter().recordFinanceTracking(tracking);
+		try {
+			if (getModel().isRowAvailable()) {
+				FinanceTracking tracking = (FinanceTracking)getModel().getRowData();
+				FinanceTrackingManager trackingManager = new FinanceTrackingManager(tracking.getFinance());
+				trackingManager.recordTracking(tracking);
+			}
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
+		}
 	}
 
 	public boolean isUndoable() throws ManagerBeanException{
 		if (getModel().isRowAvailable()) {
-			FinanceTracking tracking = (FinanceTracking)this.getModel().getRowData();
+			FinanceTracking tracking = (FinanceTracking)getModel().getRowData();
 			if (tracking.getBankStatementLink() != null && tracking.getBankStatementLink().getId() != null) {
 				return false;
 			}
@@ -111,18 +120,21 @@ public class FinanceTrackingController extends LinesController implements IFinan
 	}
 
 	public void undoTracking(ActionEvent event) throws ManagerBeanException {
-		FinanceTracking tracking = (FinanceTracking)this.getModel().getRowData();
-		undoTracking(tracking);
+		try {
+			if (getModel().isRowAvailable()) {
+				FinanceTracking tracking = (FinanceTracking)getModel().getRowData();
+				FinanceTrackingManager trackingManager = new FinanceTrackingManager(tracking.getFinance());
+				trackingManager.removeTracking(tracking);
 
-		this.onSearch(null);
+				updateFinanceStatus(tracking);
+				onSearch(null);
+			}
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
+		}
 	}
 	
-	public void undoTracking(FinanceTracking tracking) throws ManagerBeanException {
-		getWriter().removeAccountEntryFinanceTracking(tracking);
-		updateFinanceStatus(tracking);
-		getManagerBean().remove(tracking);
-	}
-
 	private void updateFinanceStatus(FinanceTracking tracking) throws ManagerBeanException {
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		if (tracking.getType().equals(FinanceTrackingType.RETURNED)) {
@@ -168,7 +180,7 @@ public class FinanceTrackingController extends LinesController implements IFinan
 
 	public void onLoadFinanceBatch(ActionEvent event) throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
-			FinanceTracking tracking = (FinanceTracking)this.getModel().getRowData();
+			FinanceTracking tracking = (FinanceTracking)getModel().getRowData();
 			FinanceBatch fBatch = obtainFinanceBatch(tracking);
 			if (fBatch != null) {
 				FBatchController fBatchController = (FBatchController) AonUtil.getRegisteredBean(FINANCE_BATCH_CONTROLLER_NAME);
@@ -197,7 +209,7 @@ public class FinanceTrackingController extends LinesController implements IFinan
 
 	public void onLoadBankStatement(ActionEvent event) throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
-			BankStatement statement = ((FinanceTracking)this.getModel().getRowData()).getBankStatementLink().getBankStatement();
+			BankStatement statement = ((FinanceTracking)getModel().getRowData()).getBankStatementLink().getBankStatement();
 			BankStatementController statementController = (BankStatementController) AonUtil.getRegisteredBean(BANK_STATEMENT_CONTROLLER_NAME);
 			statementController.onLoad(event, statement, FINANCE_FORM_NAME, FINANCE_TRACKING_CONTROLLER_NAME + ".onBackTracking");
 		}
@@ -205,7 +217,7 @@ public class FinanceTrackingController extends LinesController implements IFinan
 	
 	public void onLoadFinanceGroup(ActionEvent event) throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
-			currentTracking = (FinanceTracking)this.getModel().getRowData();
+			currentTracking = (FinanceTracking)getModel().getRowData();
 			FinanceController financeController = (FinanceController) AonUtil.getRegisteredBean(FINANCE_CONTROLLER_NAME);
 			financeController.onLoad(event, currentTracking.getFinance().getFinanceGroup().getId(), FINANCE_FORM_NAME, FINANCE_TRACKING_CONTROLLER_NAME + ".onBackGroupTracking");
 		}
@@ -234,7 +246,7 @@ public class FinanceTrackingController extends LinesController implements IFinan
 	public boolean isRecorded() {
 		try {
 			if (getModel().isRowAvailable()) {
-				FinanceTracking to = (FinanceTracking) this.getModel().getRowData();
+				FinanceTracking to = (FinanceTracking) getModel().getRowData();
 				IManagerBean bean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_ID), to.getId());
@@ -250,7 +262,7 @@ public class FinanceTrackingController extends LinesController implements IFinan
 	public void onViewAccountEntry(ActionEvent event) {
 		try {
 			BasicController entryController = (BasicController) FormUtil.getController(IFinanceConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
-			FinanceTracking to = (FinanceTracking) this.getModel().getRowData();
+			FinanceTracking to = (FinanceTracking) getModel().getRowData();
 			IManagerBean bean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
 			Criteria c = new Criteria();
 			c.addEqualExpression(bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_ID), to.getId());

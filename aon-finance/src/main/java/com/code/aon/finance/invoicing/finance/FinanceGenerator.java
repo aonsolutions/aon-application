@@ -139,7 +139,10 @@ public class FinanceGenerator implements Serializable {
 		newFinance.setFinanceStatus(FinanceStatus.PENDING);
 		newFinance.setSecurityLevel(finance.getSecurityLevel());
 		newFinance.setScope(finance.getScope());
+		newFinance.setManual(finance.isManual());
+		newFinance.setAdvance(finance.isAdvance());
 		newFinance.setPayroll(finance.isPayroll());
+		newFinance.setPrepayment(finance.isPrepayment());
 		return (Finance)financeBean.insert(newFinance);
 	}
 

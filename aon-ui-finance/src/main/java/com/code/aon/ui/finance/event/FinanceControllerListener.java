@@ -27,6 +27,8 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.BankAccount;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.enumeration.FinanceStatus;
+import com.code.aon.finance.enumeration.FinanceTrackingType;
+import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
@@ -190,7 +192,6 @@ public class FinanceControllerListener extends ControllerAdapter {
 	}
 	
 	private void updateGroupedFinances(ControllerEvent event, Finance financeGroup) {
-		FinanceController financeController = (FinanceController)event.getController();
 		FinanceGroupListController groupListController = (FinanceGroupListController) AonUtil.getRegisteredBean(IFinanceConstants.FINANCE_GROUP_LIST_CONTROLLER_NAME);
 		
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
@@ -208,7 +209,7 @@ public class FinanceControllerListener extends ControllerAdapter {
 				finance.setFinanceStatus(FinanceStatus.SETTLED);
 				financeBean.update(finance);
 				String message = AonUtil.getMessage(FINANCE_TRACKING_GROUPED);
-				financeController.createFinanceTracking(finance, message);
+				FinanceTrackingWriter.addFinanceTracking(finance, new Date(), FinanceTrackingType.SETTLED, message);
 			}
 
 			HibernateUtil.getSession(sessionName).flush();

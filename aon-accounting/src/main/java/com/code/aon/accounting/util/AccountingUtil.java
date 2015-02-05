@@ -131,6 +131,19 @@ public class AccountingUtil implements Serializable {
 		return period;
 	}
 
+	public void checkPeriod(AccountEntry accountEntry) throws ManagerBeanException {
+		Period period = accountEntry.getAccountPeriod();
+		if (period.getStatus() == AccountPeriodStatus.CLOSED) {
+			throw new ManagerBeanException("No se puede eliminar el apunte de un ejercicio cerrado (" + period.getName() + ").");
+		}
+		if (period.getStatus() == AccountPeriodStatus.INACTIVE) {
+			throw new ManagerBeanException("No se puede eliminar el apunte de un ejercicio inactivo (" + period.getName() + ").");
+		}
+		if (period.getStatus() == AccountPeriodStatus.OPERATING) {
+			throw new ManagerBeanException("No se puede eliminar el apunte, pues ya se ha hecho el asiento de explotación en el ejercicio (" + period.getName() + ").");
+		}
+	}
+	
 	public boolean existsEntry(Period period, AccountEntryType accountEntryType, SecurityLevel securityLevel, Integer accountEntryId) throws ManagerBeanException {
 		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 		Criteria criteria = new Criteria();
