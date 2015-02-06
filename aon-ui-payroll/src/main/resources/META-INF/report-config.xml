@@ -99,12 +99,20 @@
 	<!--  
 		TEMPLATES DE IMPRESION DEL IRPF 
 	-->
+	<report id="irpf" description="IRPF report ">
+		<template path="/com/esferalia/aon/ui/payroll/report/aeatRetencionesSalida.jasper" />
+		<collection provider="#{irpfResult}" forceRefresh="true" />
+		<params>
+		</params>
+	</report>
+
 	<report id="irpf2013" description="IRPF 2013 report ">
 		<template path="/com/esferalia/aon/ui/payroll/report/aeatRetencionesSalida2013.jasper" />
 		<collection provider="#{irpfResult}" forceRefresh="true" />
 		<params>
 		</params>
 	</report>
+
 
 	<!--  
 		TEMPLATES DE IMPRESION DEL BORRADOR DE LA NOMINA 
