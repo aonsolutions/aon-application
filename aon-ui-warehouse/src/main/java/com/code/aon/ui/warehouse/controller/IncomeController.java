@@ -509,18 +509,11 @@ public class IncomeController extends BasicController implements IWarehouseConst
 			confirmPurchaseTrasfer(event);
 		}
 	}
-	
-	public void confirmPurchaseTrasfer(ActionEvent event) throws ManagerBeanException{
+
+	public void confirmPurchaseTrasfer(ActionEvent event) throws ManagerBeanException {
 		try {
-			Iterator<PurchaseDetail> iterator = getPurchaseTransferManager().getCheckedDetails().iterator();
-			while (iterator.hasNext()) {
-				PurchaseDetail purchaseDetail = iterator.next();
-				if ((purchaseDetail.getPendingQuantity() > 0 && purchaseDetail.getTransfered() >= 0) 
-						|| (purchaseDetail.getPendingQuantity() < 0 && purchaseDetail.getTransfered() <= 0)) {
-					IncomeManager incomeManager = new IncomeManager();
-					incomeManager.transferIncomeDetail((Income)this.getTo(), purchaseDetail, getWarehouse());
-				}
-			}
+			IncomeManager incomeManager = new IncomeManager();
+			incomeManager.transferIncomeDetails((Income)this.getTo(), getPurchaseTransferManager().getCheckedDetails(), getWarehouse());
 
 			refresh(null);
 			IController detailController = FormUtil.getController(INCOME_DETAIL_CONTROLLER_NAME);

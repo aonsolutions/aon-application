@@ -2,6 +2,7 @@ package com.code.aon.sales.bridge;
 
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -15,6 +16,7 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.project.Project;
+import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.sales.Sales;
@@ -23,6 +25,7 @@ import com.code.aon.sales.enumeration.SalesDetailStatus;
 import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
+import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -137,7 +140,7 @@ public class DeliveryManager {
 		}
 	}
 
-	public DeliveryDetail transferDeliveryDetail(Delivery delivery, SalesDetail salesDetail, Warehouse warehouse) throws ManagerBeanException {
+	public void transferDeliveryDetails(Delivery delivery, List<SalesDetail> salesDetailList, Warehouse warehouse) throws ManagerBeanException {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();
@@ -147,47 +150,14 @@ public class DeliveryManager {
 
 			HibernateUtil.beginTransaction(sessionName);
 
-			IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
-			DeliveryDetail deliveryDetail = new DeliveryDetail();
-			deliveryDetail.setDelivery(delivery);
-			deliveryDetail.setLine(calculateNextLine(delivery));
-			deliveryDetail.setItem(salesDetail.getItem());
-			deliveryDetail.setDescription(salesDetail.getDescription());
-			deliveryDetail.setWarehouse(warehouse);
-			deliveryDetail.setQuantity(salesDetail.getTransfered());
-			deliveryDetail.setPrice(salesDetail.getPrice());
-			deliveryDetail.setDiscountExpression(salesDetail.getDiscountExpression());
-			deliveryDetail.setSalesDetail(salesDetail);
-			deliveryDetailBean.restoreNullSubPOJOs(deliveryDetail);
-			deliveryDetail = (DeliveryDetail)deliveryDetailBean.insert(deliveryDetail);
-
-			Project salesProject = salesDetail.getSales().getProject();
-			if ((delivery.getProject() == null || delivery.getProject().getId() == null) && salesProject != null && salesProject.getId() != null ) {
-				IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
-				delivery.setProject(salesProject);
-				deliveryBean.restoreNullSubPOJOs(delivery);
-				delivery = (Delivery)HibernateUtil.getSession(sessionName).merge(delivery);	
-				delivery = (Delivery)deliveryBean.update(delivery);
-			}
-
-			IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
-			salesDetail.setDelivered(CommonUtil.round(salesDetail.getDelivered() + salesDetail.getTransfered(), 3));
-			salesDetail.setStatus((salesDetail.getPendingQuantity() > 0) ? SalesDetailStatus.PARTIAL_SETTLED : SalesDetailStatus.SETTLED);
-			salesDetailBean.restoreNullSubPOJOs(salesDetail);
-			salesDetail = (SalesDetail)HibernateUtil.getSession(sessionName).merge(salesDetail);	
-			salesDetailBean.update(salesDetail);
-
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_ID), salesDetail.getSales().getId());
-			criteria.addNotEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_STATUS), SalesDetailStatus.SETTLED);
-			if (salesDetailBean.getCount(criteria) == 0) {
-				updateSalesStatus(sessionName, salesDetail.getSales());
+			for (SalesDetail salesDetail : salesDetailList) {
+				if (salesDetail.getTransfered() > 0) {
+					transferDeliveryDetail(sessionName, delivery, salesDetail, warehouse);
+				}
 			}
 
 			HibernateUtil.getSession(sessionName).flush();
 			HibernateUtil.commitTransaction(sessionName);
-			
-			return deliveryDetail;
 		} catch (Exception e) {
 			try {
 				HibernateUtil.rollbackTransaction(sessionName);
@@ -202,6 +172,48 @@ public class DeliveryManager {
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
+		
+	}
+
+	private DeliveryDetail transferDeliveryDetail(String sessionName, Delivery delivery, SalesDetail salesDetail, Warehouse warehouse) throws ManagerBeanException {
+		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
+		DeliveryDetail deliveryDetail = new DeliveryDetail();
+		deliveryDetail.setDelivery(delivery);
+		deliveryDetail.setLine(calculateNextLine(delivery));
+		deliveryDetail.setItem(salesDetail.getItem());
+		deliveryDetail.setDescription(salesDetail.getDescription());
+		deliveryDetail.setWarehouse(warehouse);
+		deliveryDetail.setQuantity(salesDetail.getTransfered());
+		deliveryDetail.setPrice(salesDetail.getPrice());
+		deliveryDetail.setDiscountExpression(salesDetail.getDiscountExpression());
+		deliveryDetail.setSalesDetail(salesDetail);
+		deliveryDetailBean.restoreNullSubPOJOs(deliveryDetail);
+		deliveryDetail = (DeliveryDetail)deliveryDetailBean.insert(deliveryDetail);
+
+		Project salesProject = salesDetail.getSales().getProject();
+		if ((delivery.getProject() == null || delivery.getProject().getId() == null) && salesProject != null && salesProject.getId() != null ) {
+			IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
+			delivery.setProject(salesProject);
+			deliveryBean.restoreNullSubPOJOs(delivery);
+			delivery = (Delivery)HibernateUtil.getSession(sessionName).merge(delivery);	
+			delivery = (Delivery)deliveryBean.update(delivery);
+		}
+
+		IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
+		salesDetail.setDelivered(CommonUtil.round(salesDetail.getDelivered() + salesDetail.getTransfered(), 3));
+		salesDetail.setStatus((salesDetail.getPendingQuantity() > 0) ? SalesDetailStatus.PARTIAL_SETTLED : SalesDetailStatus.SETTLED);
+		salesDetailBean.restoreNullSubPOJOs(salesDetail);
+		salesDetail = (SalesDetail)HibernateUtil.getSession(sessionName).merge(salesDetail);	
+		salesDetailBean.update(salesDetail);
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_ID), salesDetail.getSales().getId());
+		criteria.addNotEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_STATUS), SalesDetailStatus.SETTLED);
+		if (salesDetailBean.getCount(criteria) == 0) {
+			updateSalesStatus(sessionName, salesDetail.getSales());
+		}
+
+		return deliveryDetail;
 	}
 
 	private	Integer calculateNextLine(Delivery delivery) throws ManagerBeanException {

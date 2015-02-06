@@ -496,14 +496,8 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 
 	public void onSalesTransfer(ActionEvent event) {
 		try {
-			Iterator<SalesDetail> iterator = getSalesTransferManager().getCheckedDetails().iterator();
-			while (iterator.hasNext()) {
-				SalesDetail salesDetail = iterator.next();
-				if (salesDetail.getTransfered() > 0) {
-					DeliveryManager deliveryManager = new DeliveryManager();
-					deliveryManager.transferDeliveryDetail((Delivery)this.getTo(), salesDetail, getWarehouse());
-				}
-			}
+			DeliveryManager deliveryManager = new DeliveryManager();
+			deliveryManager.transferDeliveryDetails((Delivery)this.getTo(), getSalesTransferManager().getCheckedDetails(), getWarehouse());
 
 			refresh(null);
 			IController detailController = FormUtil.getController(DELIVERY_DETAIL_CONTROLLER_NAME);

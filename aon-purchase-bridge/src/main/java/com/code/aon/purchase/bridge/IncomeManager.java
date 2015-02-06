@@ -2,6 +2,7 @@ package com.code.aon.purchase.bridge;
 
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,7 +123,7 @@ public class IncomeManager {
 		}
 	}
 
-	public IncomeDetail transferIncomeDetail(Income income, PurchaseDetail purchaseDetail, Warehouse warehouse) throws ManagerBeanException {
+	public void transferIncomeDetails(Income income, List<PurchaseDetail> purchaseDetailList, Warehouse warehouse) throws ManagerBeanException {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();
@@ -132,54 +133,15 @@ public class IncomeManager {
 
 			HibernateUtil.beginTransaction(sessionName);
 
-			Double transferQuantity = purchaseDetail.getTransfered();
-			boolean forcePendingQuantityCancel = purchaseDetail.isForcePendingQuantityCancel();
-
-			IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
-			IncomeDetail incomeDetail = new IncomeDetail();
-			incomeDetail.setIncome(income);
-			incomeDetail.setLine(calculateNextLine(income));
-			incomeDetail.setItem(purchaseDetail.getItem());
-			incomeDetail.setDescription(purchaseDetail.getDescription());
-			incomeDetail.setWarehouse(warehouse);
-			incomeDetail.setQuantity(purchaseDetail.getTransfered());
-			incomeDetail.setPrice(purchaseDetail.getPrice());
-			incomeDetail.setDiscountExpression(purchaseDetail.getDiscountExpression());
-			incomeDetail.setPurchaseDetail(purchaseDetail);
-			if (transferQuantity != 0) {
-				incomeDetailBean.restoreNullSubPOJOs(incomeDetail);
-				incomeDetail = (IncomeDetail)incomeDetailBean.insert(incomeDetail);
-			}
-
-			Project purchaseProject = purchaseDetail.getPurchase().getProject();
-			if ((income.getProject() == null || income.getProject().getId() == null) && purchaseProject != null && purchaseProject.getId() != null ) {
-				IManagerBean incomeBean = BeanManager.getManagerBean(Income.class);
-				income.setProject(purchaseProject);
-				incomeBean.restoreNullSubPOJOs(income);
-				income = (Income)HibernateUtil.getSession(sessionName).merge(income);	
-				income = (Income)incomeBean.update(income);
-			}
-
-			IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
-			purchaseDetail = (PurchaseDetail) purchaseDetailBean.get(purchaseDetail.getId());
-			purchaseDetail.setForcePendingQuantityCancel(forcePendingQuantityCancel);
-			purchaseDetail.setDelivered(CommonUtil.round(purchaseDetail.getDelivered() + transferQuantity, 3));
-			purchaseDetail.setStatus((purchaseDetail.getPendingQuantity() > 0) ? PurchaseDetailStatus.PARTIAL_SETTLED : PurchaseDetailStatus.SETTLED);
-			purchaseDetailBean.restoreNullSubPOJOs(purchaseDetail);
-			purchaseDetail = (PurchaseDetail)HibernateUtil.getSession(sessionName).merge(purchaseDetail);	
-			purchaseDetailBean.update(purchaseDetail);
-
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_ID), purchaseDetail.getPurchase().getId());
-			criteria.addNotEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_STATUS), PurchaseDetailStatus.SETTLED);
-			if (purchaseDetailBean.getCount(criteria) == 0) {
-				updatePurchaseStatus(sessionName, purchaseDetail.getPurchase());
+			for (PurchaseDetail purchaseDetail : purchaseDetailList) {
+				if ((purchaseDetail.getPendingQuantity() > 0 && purchaseDetail.getTransfered() >= 0) 
+						|| (purchaseDetail.getPendingQuantity() < 0 && purchaseDetail.getTransfered() <= 0)) {
+					transferIncomeDetail(sessionName, income, purchaseDetail, warehouse);
+				}
 			}
 
 			HibernateUtil.getSession(sessionName).flush();
 			HibernateUtil.commitTransaction(sessionName);
-			
-			return incomeDetail;
 		} catch (Exception e) {
 			try {
 				HibernateUtil.rollbackTransaction(sessionName);
@@ -194,6 +156,54 @@ public class IncomeManager {
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
+	}
+
+	private IncomeDetail transferIncomeDetail(String sessionName, Income income, PurchaseDetail purchaseDetail, Warehouse warehouse) throws ManagerBeanException {
+		Double transferQuantity = purchaseDetail.getTransfered();
+		boolean forcePendingQuantityCancel = purchaseDetail.isForcePendingQuantityCancel();
+
+		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
+		IncomeDetail incomeDetail = new IncomeDetail();
+		incomeDetail.setIncome(income);
+		incomeDetail.setLine(calculateNextLine(income));
+		incomeDetail.setItem(purchaseDetail.getItem());
+		incomeDetail.setDescription(purchaseDetail.getDescription());
+		incomeDetail.setWarehouse(warehouse);
+		incomeDetail.setQuantity(purchaseDetail.getTransfered());
+		incomeDetail.setPrice(purchaseDetail.getPrice());
+		incomeDetail.setDiscountExpression(purchaseDetail.getDiscountExpression());
+		incomeDetail.setPurchaseDetail(purchaseDetail);
+		if (transferQuantity != 0) {
+			incomeDetailBean.restoreNullSubPOJOs(incomeDetail);
+			incomeDetail = (IncomeDetail)incomeDetailBean.insert(incomeDetail);
+		}
+
+		Project purchaseProject = purchaseDetail.getPurchase().getProject();
+		if ((income.getProject() == null || income.getProject().getId() == null) && purchaseProject != null && purchaseProject.getId() != null ) {
+			IManagerBean incomeBean = BeanManager.getManagerBean(Income.class);
+			income.setProject(purchaseProject);
+			incomeBean.restoreNullSubPOJOs(income);
+			income = (Income)HibernateUtil.getSession(sessionName).merge(income);	
+			income = (Income)incomeBean.update(income);
+		}
+
+		IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
+		purchaseDetail = (PurchaseDetail) purchaseDetailBean.get(purchaseDetail.getId());
+		purchaseDetail.setForcePendingQuantityCancel(forcePendingQuantityCancel);
+		purchaseDetail.setDelivered(CommonUtil.round(purchaseDetail.getDelivered() + transferQuantity, 3));
+		purchaseDetail.setStatus((purchaseDetail.getPendingQuantity() > 0) ? PurchaseDetailStatus.PARTIAL_SETTLED : PurchaseDetailStatus.SETTLED);
+		purchaseDetailBean.restoreNullSubPOJOs(purchaseDetail);
+		purchaseDetail = (PurchaseDetail)HibernateUtil.getSession(sessionName).merge(purchaseDetail);	
+		purchaseDetailBean.update(purchaseDetail);
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_ID), purchaseDetail.getPurchase().getId());
+		criteria.addNotEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_STATUS), PurchaseDetailStatus.SETTLED);
+		if (purchaseDetailBean.getCount(criteria) == 0) {
+			updatePurchaseStatus(sessionName, purchaseDetail.getPurchase());
+		}
+
+		return incomeDetail;
 	}
 
 	private	Integer calculateNextLine(Income income) throws ManagerBeanException {
