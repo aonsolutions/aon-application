@@ -513,7 +513,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-			String irpfReport = "irpf2013";
+			String irpfReport = "irpf";
 			reportManager.execute(out, irpfReport, parameters);
 
 			return out.toString();
@@ -1184,7 +1184,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			reportManager.setCollectionProvider(provider);
 
 			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
-			reportManager.execute(reportOut, "irpf2013");
+			reportManager.execute(reportOut, "irpf");
 
 			byte reportByteArray[] = reportOut.toByteArray();
 
@@ -2008,7 +2008,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-			String irpfReport = "irpf2013";
+			String irpfReport = "irpf";
 			reportManager.execute(out, irpfReport, parameters);
 
 			return out.toString();

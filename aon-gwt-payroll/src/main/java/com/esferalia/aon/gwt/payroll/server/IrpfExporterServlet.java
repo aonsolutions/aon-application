@@ -82,7 +82,7 @@ public class IrpfExporterServlet extends HttpServlet {
 			resp.setContentType(MimeType.getByExtension(extension).getName());
 
 			OutputStream os = resp.getOutputStream();
-			reportManager.execute(os, "irpf2013");
+			reportManager.execute(os, "irpf");
 			os.close();
 
 		} catch (ReportException e) {
