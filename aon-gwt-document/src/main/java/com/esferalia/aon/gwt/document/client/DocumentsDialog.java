@@ -249,6 +249,15 @@ public abstract class DocumentsDialog extends CustomDialog {
 					grid.removeRow(1);
 
 				}
+				else{
+					
+					String s = uploader.getFileInput().getFilenames().get(0);
+					Integer pos = s.lastIndexOf(".");
+					TextBox tb = (TextBox) grid.getWidget(1, 1);
+					if(tb.getText().equals("")){
+						tb.setText(s.substring(0, pos));
+					}
+				}
 				
 			}
 		});

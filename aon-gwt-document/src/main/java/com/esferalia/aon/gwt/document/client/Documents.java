@@ -1540,24 +1540,29 @@ public class Documents extends Composite implements EntryPoint {
 			@Override
 			protected void onAccept() {				
 	//upload.getForm().submit();
+	            
 				Integer auxNum = 1;
 				FileInfo fi = new  FileInfo();
             	// Descripción - Description
+	            
 				if(num <= 1){
 					TextBox tb = (TextBox)grid.getWidget(1, 1);
             		fi.setTitle(tb.getText());
             		auxNum = 0;
 				}
             	// Confidencial - Confidential
+	            
 				if(confidentialUser){
 					CheckBox cb = (CheckBox)grid.getWidget(3-auxNum, 1);
             		fi.setConfidential(cb.getValue());
 				}
 				else fi.setConfidential(false);
             	// Fecha - Date
+	            
             	DateBox db = (DateBox)grid.getWidget(4-auxNum, 1);
             	fi.setDate(db.getValue());
             	// Categoria - Category
+                
             	fi.setCategory(-1);
             	ListBox lb1 = (ListBox)grid.getWidget(5-auxNum, 1);
             	for (Category c : lists.getCategoryList().getList()) {
@@ -1577,6 +1582,7 @@ public class Documents extends Composite implements EntryPoint {
 					}
 				}
             	// Ambito - Scope
+                
             	fi.setScope(new Scope(-1));
             	ListBox lb3 = (ListBox)grid.getWidget(7-auxNum, 1);
             	for (Scope s : lists.getScopeList().getList()) {
@@ -1597,6 +1603,7 @@ public class Documents extends Composite implements EntryPoint {
 				}
             	
             	// Etiquetas - Tags
+                
             	Vector<Tag> tags = new Vector<Tag>();
 
             	VerticalPanel vp = (VerticalPanel)grid.getWidget(6-auxNum, 1);
@@ -1622,9 +1629,12 @@ public class Documents extends Composite implements EntryPoint {
     				}
             	}
             	fi.setTags(tags);
-            	SuggestBox sb = (SuggestBox)grid.getWidget(0, 1);
+            	
+            	
             	// Dominio - Domain
+                
             	if (getSons().size()!=1){
+            		SuggestBox sb = (SuggestBox)grid.getWidget(0, 1);
             		if(!esta(Utils.getOracleString(sb.getText()))){
             			fi.setDomain("false"); 
             		}

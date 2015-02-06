@@ -305,14 +305,16 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		Integer domainId = ds.getDomainId();*/
 		String domain = AonUtil.getDomainName();
 		Integer user_id=AonUtil.getAuthPrincipal().getUserId();
+		Integer userDomainId = AonUtil.getAuthPrincipal().getUserDomainId();
+
 		Lists lists= new Lists();
 		
 		try {
 			domain = DBConsults.getDomain(domain, domainId);
 			lists.setCategoryList(DBConsults.getCategoryList(domain));
 			lists.setCategoryListSon(DBConsults.getCategoryListSon(domain));
-			lists.setScopeList(DBConsults.getScopeList(domain,user_id));
-			lists.setScopeListSon(DBConsults.getScopeListSon(domain,user_id));
+			lists.setScopeList(DBConsults.getScopeList(domain,domainId,user_id,userDomainId));
+			lists.setScopeListSon(DBConsults.getScopeListSon(domain,domainId,user_id,userDomainId));
 			lists.setTagList(DBConsults.getTagList(domain));
 			lists.setTagListSon(DBConsults.getTagListSon(domain));
 		} catch (SQLException e) {

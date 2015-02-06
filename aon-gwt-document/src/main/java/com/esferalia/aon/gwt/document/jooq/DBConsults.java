@@ -403,7 +403,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static ScopeList getScopeList(String domain,Integer user_id) throws SQLException{
+	public static ScopeList getScopeList(String domain,Integer domainId, Integer user_id, Integer userDomainId) throws SQLException{
 		Connection connection = null;
 		try {
 			ScopeList sl = new ScopeList();
@@ -412,13 +412,19 @@ public class DBConsults {
 
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
-
-			Result<Record2<String, Integer>> scope = dslContext.select(SCOPE.DESCRIPTION, SCOPE.ID)
-					.from(SCOPE).join(DOMAIN)
-					.on(SCOPE.DOMAIN.eq(DOMAIN.ID)).join(USER_SCOPE)
+		
+			Result<Record2<String, Integer>> scope;
+			if(userDomainId.equals(domainId)){
+				scope = dslContext.select(SCOPE.DESCRIPTION, SCOPE.ID)
+					.from(SCOPE).join(USER_SCOPE)
 					.on(USER_SCOPE.SCOPE.eq(SCOPE.ID))
-					.where(DOMAIN.NAME.eq(domain).and(USER_SCOPE.USER_ID.eq(user_id))).fetch();
-			
+					.where(SCOPE.DOMAIN.eq(domainId).and(USER_SCOPE.USER_ID.eq(user_id))).fetch();
+			}
+			else{
+				scope = dslContext.select(SCOPE.DESCRIPTION, SCOPE.ID)
+						.from(SCOPE)
+						.where(SCOPE.DOMAIN.eq(domainId)).fetch();
+			}
 			Vector<Scope> vector = new Vector<Scope>();
 			for (Record2<String, Integer> record : scope) {
 				Scope s = new Scope();
@@ -435,7 +441,7 @@ public class DBConsults {
 					.from(SCOPE).join(DOMAIN)
 					.on(SCOPE.DOMAIN.eq(DOMAIN.PARENT)).join(USER_SCOPE)
 					.on(USER_SCOPE.SCOPE.eq(SCOPE.ID))
-					.where(DOMAIN.NAME.eq(domain).and(USER_SCOPE.USER_ID.eq(user_id))).fetch();
+					.where(DOMAIN.ID.eq(domainId).and(USER_SCOPE.USER_ID.eq(user_id))).fetch();
 			
 			for (Record2<String, Integer> record : scopeParent) {
 				Scope s = new Scope();
@@ -458,7 +464,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static ScopeList getScopeListSon(String domain, Integer user_id) throws SQLException{
+	public static ScopeList getScopeListSon(String domain,Integer domainId, Integer user_id, Integer userDomainId) throws SQLException{
 		Connection connection = null;
 		try {
 			ScopeList sl = new ScopeList();
@@ -470,9 +476,7 @@ public class DBConsults {
 		Result<Record3<String, Integer, String>> scopeSon = dslContext.select(SCOPE.DESCRIPTION,SCOPE.ID,DOMAIN.NAME)
 				.from(SCOPE).join(DOMAIN)
 				.on(SCOPE.DOMAIN.eq(DOMAIN.ID))
-				.where(DOMAIN.PARENT.eq(dslContext.select(DOMAIN.ID)
-						.from(DOMAIN)
-						.where(DOMAIN.NAME.eq(domain)))).orderBy(SCOPE.DESCRIPTION).fetch();
+				.where(DOMAIN.PARENT.eq(domainId)).orderBy(SCOPE.DESCRIPTION).fetch();
 		Vector<Scope> vector = new Vector<Scope>();
 		for (Record3<String, Integer, String> record : scopeSon) {
 			Scope s = new Scope();
