@@ -9,6 +9,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.annotations.Heritable;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
@@ -16,6 +17,7 @@ import com.esferalia.aon.entity.master.AmortizationTypeDB;
 
 @Entity
 @Table(name="amortization_type")
+@Heritable
 public class AmortizationType extends AmortizationTypeDB {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
