@@ -11,34 +11,39 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Calendar;
 
 import org.jooq.Cursor;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
-import org.jooq.Record4;
+import org.jooq.Record1;
+import org.jooq.Record3;
 import org.jooq.Result;
+import org.jooq.SelectConditionStep;
 import org.jooq.SortOrder;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.Domain;
-import com.esferalia.aon.jooq.tables.GeozoneIrpfDescendant;
-import com.esferalia.aon.jooq.tables.Rattach;
-
 public class JooqGeozoneIrpf extends org.jooq.impl.AbstractKeys {
 
-	private static final org.jooq.ForeignKey<com.esferalia.aon.jooq.tables.records.GeozoneIrpfHandicapRecord, com.esferalia.aon.jooq.tables.records.GeozoneIrpfRecord> FK_GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF = org.jooq.impl.AbstractKeys.createForeignKey(com.esferalia.aon.jooq.Keys.KEY_GEOZONE_IRPF_PRIMARY, com.esferalia.aon.jooq.tables.GeozoneIrpfHandicap.GEOZONE_IRPF_HANDICAP, com.esferalia.aon.jooq.tables.GeozoneIrpfHandicap.GEOZONE_IRPF_HANDICAP.GEOZONE_IRPF);
-	private static final org.jooq.ForeignKey<com.esferalia.aon.jooq.tables.records.GeozoneIrpfDescendantRecord, com.esferalia.aon.jooq.tables.records.GeozoneIrpfRecord> FK_GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF = org.jooq.impl.AbstractKeys.createForeignKey(com.esferalia.aon.jooq.Keys.KEY_GEOZONE_IRPF_PRIMARY, com.esferalia.aon.jooq.tables.GeozoneIrpfDescendant.GEOZONE_IRPF_DESCENDANT, com.esferalia.aon.jooq.tables.GeozoneIrpfDescendant.GEOZONE_IRPF_DESCENDANT.GEOZONE_IRPF);
+	private static final org.jooq.ForeignKey<com.esferalia.aon.jooq.tables.records.GeozoneIrpfHandicapRecord, com.esferalia.aon.jooq.tables.records.GeozoneIrpfRecord> FK_GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF = org.jooq.impl.AbstractKeys
+			.createForeignKey(
+					com.esferalia.aon.jooq.Keys.KEY_GEOZONE_IRPF_PRIMARY,
+					com.esferalia.aon.jooq.tables.GeozoneIrpfHandicap.GEOZONE_IRPF_HANDICAP,
+					com.esferalia.aon.jooq.tables.GeozoneIrpfHandicap.GEOZONE_IRPF_HANDICAP.GEOZONE_IRPF);
+	private static final org.jooq.ForeignKey<com.esferalia.aon.jooq.tables.records.GeozoneIrpfDescendantRecord, com.esferalia.aon.jooq.tables.records.GeozoneIrpfRecord> FK_GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF = org.jooq.impl.AbstractKeys
+			.createForeignKey(
+					com.esferalia.aon.jooq.Keys.KEY_GEOZONE_IRPF_PRIMARY,
+					com.esferalia.aon.jooq.tables.GeozoneIrpfDescendant.GEOZONE_IRPF_DESCENDANT,
+					com.esferalia.aon.jooq.tables.GeozoneIrpfDescendant.GEOZONE_IRPF_DESCENDANT.GEOZONE_IRPF);
 
-	public static double getPercent(Connection conn, String geozone_code,
+	public static Double getPercent(Connection conn, String geozone_code,
 			double amount, int descendants, int handicap, Date date) {
 		return getPercent(DSL.using(conn, getDefaultSettings()), geozone_code,
 				amount, (byte) descendants, (byte) handicap, date);
 	}
 
-	public static double getPercent(Connection conn, String geozone_code,
+	public static Double getPercent(Connection conn, String geozone_code,
 			double amount, byte descendants, byte handicap, Date date) {
 		return getPercent(DSL.using(conn, getDefaultSettings()), geozone_code,
 				amount, descendants, handicap, date);
@@ -46,58 +51,55 @@ public class JooqGeozoneIrpf extends org.jooq.impl.AbstractKeys {
 
 	// ------------------------------------------------------------------------
 
-	private static double getPercent(DSLContext dslContext,
+	private static Double getPercent(DSLContext dslContext,
 			String geozone_code, double amount, byte descendants,
 			byte handicap, Date date) {
-
-		GeozoneIrpfDescendant MIN_GEOZONE_IRPF_DESCENDANT = new GeozoneIrpfDescendant(
-				"max_geaozone_irpf_descendant");
-
-		Field<Double> MIN_PERCENT = DSL
-				.min(MIN_GEOZONE_IRPF_DESCENDANT.PERCENT);
+		
+		SelectConditionStep<Record1<Byte>> availDescendant = dslContext
+				.select(DSL.least(DSL.abs(descendants),DSL.max(GEOZONE_IRPF_DESCENDANT.DESCENDANT)))
+				.from(GEOZONE_IRPF_DESCENDANT)
+				.where(GEOZONE_IRPF_DESCENDANT.GEOZONE_IRPF.eq(GEOZONE_IRPF.ID))
+				;
+		
 		//@formatter:off
-		Result<Record4<Double, Double, Double, Double >> result = dslContext.select(
+		Result<Record3<Double, Double, Double>> result = dslContext.select(
 				GEOZONE_IRPF.AMOUNT
 				,GEOZONE_IRPF_DESCENDANT.PERCENT
 				,GEOZONE_IRPF_HANDICAP.PERCENT 
-				,MIN_PERCENT 
 				)
 		.from(GEOZONE_IRPF)
+		.join(GEOZONE_IRPF_DESCENDANT).onKey(FK_GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF)
 		.leftOuterJoin(GEOZONE_IRPF_HANDICAP).onKey(FK_GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF)
-		.leftOuterJoin(GEOZONE_IRPF_DESCENDANT).onKey(FK_GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF)
-		.leftOuterJoin(MIN_GEOZONE_IRPF_DESCENDANT).onKey(FK_GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF)
 		.where(GEOZONE_IRPF.AMOUNT.lessOrEqual(amount))
 		.and(GEOZONE_IRPF.START_DATE.lessOrEqual(date)
 		.and(GEOZONE_IRPF.END_DATE.isNull()
 				.or(GEOZONE_IRPF.END_DATE.greaterOrEqual(date))))
 		.and(GEOZONE_IRPF.GEOZONE_CODE.eq(geozone_code))
-		.and(GEOZONE_IRPF_HANDICAP.HANDICAP.eq(handicap))
-		.and(GEOZONE_IRPF_DESCENDANT.DESCENDANT.eq(descendants))
-		.groupBy(GEOZONE_IRPF.AMOUNT, GEOZONE_IRPF_DESCENDANT.PERCENT, GEOZONE_IRPF_HANDICAP.PERCENT)
+		.and(GEOZONE_IRPF_HANDICAP.HANDICAP.eq((byte)(handicap -1))
+				.or(GEOZONE_IRPF_HANDICAP.HANDICAP.isNull()))
+		.and(GEOZONE_IRPF_DESCENDANT.DESCENDANT.eq(availDescendant))
 		.orderBy(GEOZONE_IRPF.AMOUNT.sort(SortOrder.DESC))
 		.fetch();
 		//@formatter:on
 
-		for (Record4<Double, Double, Double, Double> record : result) {
+
+		Double percent = null;
+
+		for (Record3<Double, Double, Double> record : result) {
 			Double handicap_percent = record
 					.getValue(GEOZONE_IRPF_HANDICAP.PERCENT);
 			Double descendat_percent = record
 					.getValue(GEOZONE_IRPF_DESCENDANT.PERCENT);
-			Double min_descendat_percent = record.getValue(MIN_PERCENT);
 
-			double percent = 0.00;
-			if (handicap_percent != null)
-				percent += handicap_percent;
+			if (descendat_percent != null && percent == null)
+				percent = descendat_percent;
 
-			if (descendat_percent != null)
-				percent += descendat_percent;
-			else if (min_descendat_percent != null)
-				percent += min_descendat_percent;
+			if (handicap_percent != null && percent != null)
+				return (percent - handicap_percent);
 
-			return percent;
 		}
 
-		return 0;
+		return percent;
 
 	}
 

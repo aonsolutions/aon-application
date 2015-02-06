@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -162,7 +163,6 @@ public class IrpfCalculator {
 		irpfData.setMovingDate(ctx.getMovilidadGeografica() ? new Date() : null);
 		irpfData.setDisabilityLevel(toDisabilityLevel(ctx.getDiscapacidad()));
 		irpfOutcome.setIrpfData(irpfData);
-
 		// DATOS ECONOMICOS
 		irpfResult.setAnnualRemuneration(toDouble(retenidoSalida2013
 				.getRetribAnuales()));
@@ -637,13 +637,12 @@ public class IrpfCalculator {
 			} catch (IrpfCalculateException e) {
 				AEATRetencionesError2015 error = e
 						.getAEATRetencionesError2015();
-				
+
 				for (com.esferalia.aon.aeat.jaxb.TipoErrorGeneral tipoErrorGeneral : error
 						.getErrorGeneral())
 					throw new ExpressionExceptionWrapper(new CheckException(
 							tipoErrorGeneral.getDescripcion()));
 
-				
 				List<TipoRetenedorError2015> retenedores = error.getRetenedor();
 
 				String message = null;
@@ -795,6 +794,7 @@ public class IrpfCalculator {
 			TipoRetenidoSalida2013 retenidoSalida = new TipoRetenidoSalida2013();
 			retenidoSalida.setTipoRetencion(BigDecimal.valueOf(percent));
 			retenidoSalida.setComunidadAutonoma(geozone);
+			retenidoSalida.setRetribAnuales(retribAnuales);
 
 			ArrayList<TipoRetenidoSalida2013> retenidosSalida = new ArrayList<TipoRetenidoSalida2013>(
 					1);
@@ -832,13 +832,47 @@ public class IrpfCalculator {
 
 			SQLIrpfCalculatorContext sqlCtx = (SQLIrpfCalculatorContext) ctx;
 
-			double percent = JooqGeozoneIrpf.getPercent(sqlCtx.getConnection(),
+			Double percent = JooqGeozoneIrpf.getPercent(sqlCtx.getConnection(),
 					geozone, amount, descendants, handicap, new java.sql.Date(
 							sqlCtx.getChargeDate().getTime()));
+			if (percent == null)
+				throw new ExpressionExceptionWrapper(new CheckException(
+						String.format("Imposible encontrar un porcentaje de retenci\u00f3n en las tablas de  %s ( %s descendientes, %s )",
+								administration.getName(new Locale("es")), 
+								descendants > 0 ? String.valueOf(descendants) : "sin",
+								new String [] {
+										"sin discapacidad", 
+										"discapacidad >= 33% y < 65%",
+										"discapacidad >= 33% y < 65%, movilidad reducida",
+										"discapacidad > 65%"}[handicap])) );
 
 			TipoRetenidoSalida2015 retenidoSalida = new TipoRetenidoSalida2015();
 			retenidoSalida.setTipoRetencion(BigDecimal.valueOf(percent));
 			retenidoSalida.setComunidadAutonoma(geozone);
+
+			// Mainly DEBUG INFO
+			retenidoSalida.setRetribAnuales(retribAnuales);
+			retenidoSalida.setCotizaciones(ctx.getGastosAnuales());
+			retenidoSalida.setBaseRetencion(retribAnuales);
+			com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015.Descendientes.ComputoDescendientes computoDescendientes = new com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015.Descendientes.ComputoDescendientes();
+			if (descendants >= 1)
+				computoDescendientes
+						.setHijo1(com.esferalia.aon.aeat.jaxb.TipoComputo.POR_ENTERO);
+			if (descendants >= 2)
+				computoDescendientes
+						.setHijo2(com.esferalia.aon.aeat.jaxb.TipoComputo.POR_ENTERO);
+			if (descendants >= 3)
+				computoDescendientes
+						.setHijo3(com.esferalia.aon.aeat.jaxb.TipoComputo.POR_ENTERO);
+			if (descendants >= 4) {
+				com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015.Descendientes.ComputoDescendientes.CuartoySucesivos cuartoySucesivos = new com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015.Descendientes.ComputoDescendientes.CuartoySucesivos();
+				cuartoySucesivos.setTotal((byte) (descendants - 3));
+				cuartoySucesivos.setPorEntero((byte) (descendants - 3));
+				computoDescendientes.setCuartoySucesivos(cuartoySucesivos);
+			}
+			com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015.Descendientes descendientes15 = new com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015.Descendientes();
+			descendientes15.setComputoDescendientes(computoDescendientes);
+			retenidoSalida.setDescendientes(descendientes15);
 
 			TipoRetenedorSalida2015 retenedorSalida2015 = new TipoRetenedorSalida2015();
 			List<TipoRetenidoSalida2015> retenidosSalida = retenedorSalida2015
@@ -852,7 +886,6 @@ public class IrpfCalculator {
 
 			return aeatRetencionesSalida;
 		}
-
 	}
 
 }
