@@ -140,7 +140,7 @@
 		<field name="negotiableDocument" class="java.lang.Boolean"/>
 		<field name="financeStatus" class="com.code.aon.finance.enumeration.FinanceStatus"/>
 		<filterExpression><![CDATA[$F{bankAccount}!=null &&
-$F{financeStatus}==!com.code.aon.finance.enumeration.FinanceStatus.PENDING]]></filterExpression>
+$F{financeStatus}!=com.code.aon.finance.enumeration.FinanceStatus.PENDING]]></filterExpression>
 	</subDataset>
 	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
 	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
