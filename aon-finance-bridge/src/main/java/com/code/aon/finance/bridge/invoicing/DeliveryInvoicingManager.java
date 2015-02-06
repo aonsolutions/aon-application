@@ -19,6 +19,11 @@ import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.finance.invoicing.ProgressionInvoicingFeedBack;
+import com.code.aon.finance.invoicing.engine.IInvoicingEngine;
+import com.code.aon.finance.invoicing.engine.InvoicingEngineFactory;
+import com.code.aon.finance.invoicing.engine.delivery.DeliveryInvoicingDAO;
+import com.code.aon.finance.invoicing.engine.delivery.DeliveryInvoicingEngine;
 import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
@@ -146,6 +151,69 @@ public class DeliveryInvoicingManager {
 			invoiceDetail.getInvoice().setUpdateEnabled(line == deliveryDetailList.size());
 			invoiceDetailBean.restoreNullSubPOJOs(invoiceDetail);
 			invoiceDetailBean.insert(invoiceDetail);
+		}
+	}
+
+	public void transferDeliveries(Invoice invoice, List<Delivery> deliveryList, List<ITransferObject> invoicedDeliveryList) throws ManagerBeanException {
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		try {
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
+
+			HibernateUtil.beginTransaction(sessionName);
+
+			for (ITransferObject ito : invoicedDeliveryList) {
+				Delivery delivery = (Delivery)ito;
+				if (!deliveryList.contains(delivery)) {
+					removeInvoicedDelivery(invoice, delivery);
+				}
+				deliveryList.remove(delivery);
+			}
+
+			InvoicingEngineFactory.register(InvoicingEngineFactory.DELIVERY_ENGINE_KEY, new DeliveryInvoicingEngine());
+			IInvoicingEngine engine = InvoicingEngineFactory.getInvoicingEngine(InvoicingEngineFactory.DELIVERY_ENGINE_KEY);
+			engine.setInvoicingDAO(new DeliveryInvoicingDAO());
+			engine.setInvoicingFeedBack(new ProgressionInvoicingFeedBack());
+			engine.setHibernateSession(HibernateUtil.getSession(sessionName));
+			((DeliveryInvoicingEngine)engine).invoiceDeliveryList(invoice, deliveryList);
+
+			HibernateUtil.getSession(sessionName).flush();
+			HibernateUtil.commitTransaction(sessionName);
+		} catch (Exception e) {
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+				String msg = "Unable to rollback transaction!";
+				LOGGER.error(msg,daoe);
+			}
+			LOGGER.error(e.getMessage());
+			throw new ManagerBeanException(e.getMessage(),e);
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		}
+	}
+
+	private void removeInvoicedDelivery(Invoice invoice, Delivery delivery) throws ManagerBeanException {
+		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_DELIVERY_ID), delivery.getId());
+		List<ITransferObject> deliveryDetailList = deliveryDetailBean.getList(criteria);
+		for (ITransferObject ito : deliveryDetailList) {
+			DeliveryDetail deliveryDetail = (DeliveryDetail)ito;
+			criteria = new Criteria();
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.DELIVERY);
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE_ID), deliveryDetail.getId());
+			if (invoiceDetailBean.getList(criteria).iterator().hasNext()) {
+				InvoiceDetail invoiceDetail = (InvoiceDetail)invoiceDetailBean.getList(criteria).iterator().next();
+				invoiceDetail.setUpdateEnabled(deliveryDetailList.indexOf(deliveryDetail) == (deliveryDetailList.size() - 1));
+				invoiceDetailBean.remove(invoiceDetail);
+			}
 		}
 	}
 

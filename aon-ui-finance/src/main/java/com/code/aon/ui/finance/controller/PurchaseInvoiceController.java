@@ -1,9 +1,9 @@
 package com.code.aon.ui.finance.controller;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
@@ -19,13 +19,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.bridge.invoicing.IncomeInvoicingManager;
 import com.code.aon.finance.enumeration.InvoiceSource;
-import com.code.aon.finance.invoicing.InvoicingException;
-import com.code.aon.finance.invoicing.ProgressionInvoicingFeedBack;
-import com.code.aon.finance.invoicing.engine.IInvoicingEngine;
-import com.code.aon.finance.invoicing.engine.InvoicingEngineFactory;
-import com.code.aon.finance.invoicing.engine.income.IncomeInvoicingDAO;
-import com.code.aon.finance.invoicing.engine.income.IncomeInvoicingEngine;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -172,49 +167,17 @@ public class PurchaseInvoiceController extends InvoiceController {
 	}
 
 	public void onIncomeTransfer(ActionEvent event) throws ManagerBeanException {
-		List<ITransferObject> list = getIncomeTransferManager().getInvoicedIncomeList();
-		for (ITransferObject to : list ) {
-			Income income = (Income) to;
-			if (!getIncomeTransferManager().getCheckedIncome().contains(income)) {
-				removeInvoicedIncome(income);
-			}
-			getIncomeTransferManager().getCheckedIncome().remove(income);
-		}
-
-		InvoicingEngineFactory.register(InvoicingEngineFactory.INCOME_ENGINE_KEY, new IncomeInvoicingEngine());
 		try {
-			IInvoicingEngine engine = InvoicingEngineFactory.getInvoicingEngine(InvoicingEngineFactory.INCOME_ENGINE_KEY);
-			engine.setInvoicingDAO(new IncomeInvoicingDAO());
-			engine.setInvoicingFeedBack(new ProgressionInvoicingFeedBack());
-			((IncomeInvoicingEngine)engine).invoiceIncomeList(getInvoice(), getIncomeTransferManager().getCheckedIncome());
-		} catch (InvoicingException e) {
-			throw new ManagerBeanException(e.getMessage(), e);
-		}
+			IncomeInvoicingManager invoicingManager = new IncomeInvoicingManager();
+			invoicingManager.transferIncomes(getInvoice(), getIncomeTransferManager().getCheckedIncome(), getIncomeTransferManager().getInvoicedIncomeList());
 
-		refresh(null);
-		IController detailController = FormUtil.getController(PURCHASE_INVOICE_DETAIL_CONTROLLER_NAME);
-		detailController.onSearch(null);
-	}
-
-	private void removeInvoicedIncome(Income income) throws ManagerBeanException {
-		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_INCOME_ID), income.getId());
-		Iterator<?> iterator = incomeDetailBean.getList(criteria).iterator();
-		while (iterator.hasNext()) {
-			IncomeDetail incomeDetail = (IncomeDetail)iterator.next();
-			criteria = new Criteria();
-			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), getInvoice().getId());
-			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.INCOME);
-			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE_ID), incomeDetail.getId());
-			if (invoiceDetailBean.getList(criteria).iterator().hasNext()) {
-				InvoiceDetail invoiceDetail = (InvoiceDetail)invoiceDetailBean.getList(criteria).iterator().next();
-				invoiceDetail.setUpdateEnabled(!iterator.hasNext());
-				invoiceDetailBean.remove(invoiceDetail);
-			}
+			refresh(null);
+			IController detailController = FormUtil.getController(PURCHASE_INVOICE_DETAIL_CONTROLLER_NAME);
+			detailController.onSearch(null);
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
-		iterator = null;
 	}
 
 	@Override

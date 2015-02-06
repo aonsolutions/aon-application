@@ -17,6 +17,11 @@ import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.finance.invoicing.ProgressionInvoicingFeedBack;
+import com.code.aon.finance.invoicing.engine.IInvoicingEngine;
+import com.code.aon.finance.invoicing.engine.InvoicingEngineFactory;
+import com.code.aon.finance.invoicing.engine.income.IncomeInvoicingDAO;
+import com.code.aon.finance.invoicing.engine.income.IncomeInvoicingEngine;
 import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
@@ -137,6 +142,69 @@ public class IncomeInvoicingManager {
 			invoiceDetail.getInvoice().setUpdateEnabled(line == incomeDetailList.size());
 			invoiceDetailBean.restoreNullSubPOJOs(invoiceDetail);
 			invoiceDetailBean.insert(invoiceDetail);
+		}
+	}
+
+	public void transferIncomes(Invoice invoice, List<Income> incomeList, List<ITransferObject> invoicedIncomeList) throws ManagerBeanException {
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		try {
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
+
+			HibernateUtil.beginTransaction(sessionName);
+
+			for (ITransferObject ito : invoicedIncomeList) {
+				Income income = (Income)ito;
+				if (!incomeList.contains(income)) {
+					removeInvoicedIncome(invoice, income);
+				}
+				incomeList.remove(income);
+			}
+
+			InvoicingEngineFactory.register(InvoicingEngineFactory.INCOME_ENGINE_KEY, new IncomeInvoicingEngine());
+			IInvoicingEngine engine = InvoicingEngineFactory.getInvoicingEngine(InvoicingEngineFactory.INCOME_ENGINE_KEY);
+			engine.setInvoicingDAO(new IncomeInvoicingDAO());
+			engine.setInvoicingFeedBack(new ProgressionInvoicingFeedBack());
+			engine.setHibernateSession(HibernateUtil.getSession(sessionName));
+			((IncomeInvoicingEngine)engine).invoiceIncomeList(invoice, incomeList);
+
+			HibernateUtil.getSession(sessionName).flush();
+			HibernateUtil.commitTransaction(sessionName);
+		} catch (Exception e) {
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+				String msg = "Unable to rollback transaction!";
+				LOGGER.error(msg,daoe);
+			}
+			LOGGER.error(e.getMessage());
+			throw new ManagerBeanException(e.getMessage(),e);
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		}
+	}
+
+	private void removeInvoicedIncome(Invoice invoice, Income income) throws ManagerBeanException {
+		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_INCOME_ID), income.getId());
+		List<ITransferObject> incomeDetailList = incomeDetailBean.getList(criteria);
+		for (ITransferObject ito : incomeDetailList) {
+			IncomeDetail incomeDetail = (IncomeDetail)ito;
+			criteria = new Criteria();
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.INCOME);
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE_ID), incomeDetail.getId());
+			if (invoiceDetailBean.getList(criteria).iterator().hasNext()) {
+				InvoiceDetail invoiceDetail = (InvoiceDetail)invoiceDetailBean.getList(criteria).iterator().next();
+				invoiceDetail.setUpdateEnabled(incomeDetailList.indexOf(incomeDetail) == (incomeDetailList.size() - 1));
+				invoiceDetailBean.remove(invoiceDetail);
+			}
 		}
 	}
 

@@ -205,8 +205,8 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine, Serializable {
 			if (breakInvoice(delivery, previousDelivery)) {
 				if (invoice != null) {
 					if (invoiceDetail != null) {
-						invoiceDetail = (InvoiceDetail)getHibernateSession().merge(invoiceDetail);
 						invoiceDetail.getInvoice().setUpdateEnabled(true);
+						invoiceDetail = (InvoiceDetail)getHibernateSession().merge(invoiceDetail);
 						BeanManager.getManagerBean(InvoiceDetail.class).update(invoiceDetail);
 					}
 					invoice = (Invoice)getHibernateSession().merge(invoice);
@@ -235,7 +235,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine, Serializable {
 
 			List<?> deliveryDetailList = delivery.getOrderedDetailList();
 			if (deliveryDetailList.size() > 0) {
-				invoiceDetail = createInvoiceDetails(deliveryDetailList, invoice);
+				invoiceDetail = createInvoiceDetails(deliveryDetailList, invoice, false);
 				if (invoiceDetail != null) {
 					delivery = (Delivery)getHibernateSession().merge(delivery);
 					getInvoicingDAO().updateSource(delivery, null);
@@ -251,8 +251,8 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine, Serializable {
 
 		if (invoice != null) {
 			if (invoiceDetail != null) {
-				invoiceDetail = (InvoiceDetail)getHibernateSession().merge(invoiceDetail);
 				invoiceDetail.getInvoice().setUpdateEnabled(true);
+				invoiceDetail = (InvoiceDetail)getHibernateSession().merge(invoiceDetail);
 				BeanManager.getManagerBean(InvoiceDetail.class).update(invoiceDetail);
 			}
 			invoice = (Invoice)getHibernateSession().merge(invoice);
@@ -356,7 +356,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine, Serializable {
 		return confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL;
 	}
 
-	private InvoiceDetail createInvoiceDetails(List<?> deliveryDetailList, Invoice invoice) throws ManagerBeanException {
+	private InvoiceDetail createInvoiceDetails(List<?> deliveryDetailList, Invoice invoice, boolean updateEnabled) throws ManagerBeanException {
 		InvoiceDetail invoiceDetail = null;
 		for (Object obj : deliveryDetailList) {
 			DeliveryDetail deliveryDetail = (DeliveryDetail)obj;
@@ -372,7 +372,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine, Serializable {
 			invoiceDetail.setSource(InvoiceSource.DELIVERY);
 			invoiceDetail.setSourceId(deliveryDetail.getId());
 			invoiceDetail.setWorkPlace(deliveryDetail.getDelivery().getWorkPlace());
-			invoiceDetail.getInvoice().setUpdateEnabled(false);
+			invoiceDetail.getInvoice().setUpdateEnabled(updateEnabled && (deliveryDetailList.indexOf(deliveryDetail) == (deliveryDetailList.size() - 1)));
 
 			getInvoicingDAO().insertInvoiceDetail(invoiceDetail);
 			getInvoicingFeedBack().addMessage("\t \t" + "InvoiceDetail: " + invoiceDetail.getDescription() + " price= " + invoiceDetail.getTaxableBase());
@@ -381,22 +381,16 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine, Serializable {
 	}
 
 	public void invoiceDeliveryList(Invoice invoice, List<Delivery> deliveryList) throws ManagerBeanException {
-		InvoiceDetail invoiceDetail = null;
 		detailLine = calculateMaxLine(invoice);
 		for (Delivery delivery : deliveryList) {
 			List<?> deliveryDetailList = delivery.getOrderedDetailList();
 			if (deliveryDetailList.size() > 0) {
-				invoiceDetail = createInvoiceDetails(deliveryDetailList, invoice);
+				InvoiceDetail invoiceDetail = createInvoiceDetails(deliveryDetailList, invoice, true);
 				if (invoiceDetail != null) {
+					delivery = (Delivery)getHibernateSession().merge(delivery);
 					getInvoicingDAO().updateSource(delivery, null);
 				}
 			}
-		}
-
-		if (invoiceDetail != null) {
-			//invoiceDetail = (InvoiceDetail)getHibernateSession().merge(invoiceDetail); Comentado hasta que no se haga transaccional la importacion desde Factura.
-			invoiceDetail.getInvoice().setUpdateEnabled(true);
-			BeanManager.getManagerBean(InvoiceDetail.class).update(invoiceDetail);
 		}
 	}
 

@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
@@ -22,15 +23,10 @@ import com.code.aon.customer.Customer;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.bridge.invoicing.DeliveryInvoicingManager;
 import com.code.aon.finance.enumeration.InvoiceAttachmentType;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceType;
-import com.code.aon.finance.invoicing.InvoicingException;
-import com.code.aon.finance.invoicing.ProgressionInvoicingFeedBack;
-import com.code.aon.finance.invoicing.engine.IInvoicingEngine;
-import com.code.aon.finance.invoicing.engine.InvoicingEngineFactory;
-import com.code.aon.finance.invoicing.engine.delivery.DeliveryInvoicingDAO;
-import com.code.aon.finance.invoicing.engine.delivery.DeliveryInvoicingEngine;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryPayMethod;
@@ -216,47 +212,16 @@ public class SaleInvoiceController extends InvoiceController {
 	}
 
 	public void onDeliveryTransfer(ActionEvent event) throws ManagerBeanException {
-		Iterator<ITransferObject> iterator = getDeliveryTransferManager().getInvoicedDeliveryList().iterator();
-		while (iterator.hasNext()) {
-			Delivery delivery = (Delivery)iterator.next();
-			if (!getDeliveryTransferManager().getCheckedDelivery().contains(delivery)) {
-				removeInvoicedDelivery(delivery);
-			}
-			getDeliveryTransferManager().getCheckedDelivery().remove(delivery);
-		}
-
-		InvoicingEngineFactory.register(InvoicingEngineFactory.DELIVERY_ENGINE_KEY, new DeliveryInvoicingEngine());
 		try {
-			IInvoicingEngine engine = InvoicingEngineFactory.getInvoicingEngine(InvoicingEngineFactory.DELIVERY_ENGINE_KEY);
-			engine.setInvoicingDAO(new DeliveryInvoicingDAO());
-			engine.setInvoicingFeedBack(new ProgressionInvoicingFeedBack());
-			((DeliveryInvoicingEngine)engine).invoiceDeliveryList(getInvoice(), getDeliveryTransferManager().getCheckedDelivery());
-		} catch (InvoicingException e) {
-			throw new ManagerBeanException(e.getMessage(), e);
-		}
+			DeliveryInvoicingManager invoicingManager = new DeliveryInvoicingManager();
+			invoicingManager.transferDeliveries(getInvoice(), getDeliveryTransferManager().getCheckedDelivery(), getDeliveryTransferManager().getInvoicedDeliveryList());
 
-		refresh(null);
-		IController detailController = FormUtil.getController(SALE_INVOICE_DETAIL_CONTROLLER_NAME);
-		detailController.onSearch(null);
-	}
-
-	private void removeInvoicedDelivery(Delivery delivery) throws ManagerBeanException {
-		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_DELIVERY_ID), delivery.getId());
-		Iterator<?> iterator = deliveryDetailBean.getList(criteria).iterator();
-		while (iterator.hasNext()) {
-			DeliveryDetail deliveryDetail = (DeliveryDetail)iterator.next();
-			criteria = new Criteria();
-			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), getInvoice().getId());
-			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.DELIVERY);
-			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE_ID), deliveryDetail.getId());
-			if (invoiceDetailBean.getList(criteria).iterator().hasNext()) {
-				InvoiceDetail invoiceDetail = (InvoiceDetail)invoiceDetailBean.getList(criteria).iterator().next();
-				invoiceDetail.setUpdateEnabled(!iterator.hasNext());
-				invoiceDetailBean.remove(invoiceDetail);
-			}
+			refresh(null);
+			IController detailController = FormUtil.getController(SALE_INVOICE_DETAIL_CONTROLLER_NAME);
+			detailController.onSearch(null);
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
 	}
 
