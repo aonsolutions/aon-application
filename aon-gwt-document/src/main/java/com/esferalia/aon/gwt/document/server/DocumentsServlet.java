@@ -509,6 +509,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			for(FileInfo f : fvector){
 				fileInfo.setFileId(f.getFileId());
 				fileInfo.setAonType("registry");
+				fileInfo.setType((short)RegistryAttachmentType.CORPORATE_IDENTITY.ordinal());
 				if(fi.getCategory()!=null){
 					fileInfo.setCategory(fi.getCategory());
 					f.setCategory(fi.getCategory());	
@@ -560,6 +561,8 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		}else{
 			fileInfo.setFileId(fi.getFileId());
 			fileInfo.setAonType("registry");
+			fileInfo.setDriveId(fi.getDriveId());
+			fileInfo.setType((short)RegistryAttachmentType.CORPORATE_IDENTITY.ordinal());
 			if(fi.getCategory()!=null)fileInfo.setCategory(fi.getCategory());
 			if(fi.getDate() != null){
 				fileInfo.setDate(fi.getDate());
@@ -592,6 +595,9 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 					DomainGserviceaccount g = DatabaseSync.getServiceAccount(fi.getDomainId());
 					if(g.getClientId()!=null){
 						Drive d = DriveUtils.serviceInitialize(g);
+						String[] types = { RegistryAttachmentType.CORPORATE_IDENTITY
+								.toString() };// TODO
+						DriveUtils.types = types;
 						DriveUtils.sync2(d, fileInfo, domain);
 					}
 					else{
