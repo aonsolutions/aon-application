@@ -529,33 +529,33 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 
 	public void onIncome(ActionEvent event) throws ManagerBeanException {
 		Purchase to = (Purchase)this.getTo();
-		IncomeManager incomeManager = new IncomeManager();
-		Income income = incomeManager.purchaseIncome(to, getIncomeReferenceCode(), getIncomeDate(), getIncomeWarehouse());
+		try {
+			IncomeManager incomeManager = new IncomeManager();
+			Income income = incomeManager.purchaseIncome(to, getIncomeReferenceCode(), getIncomeDate(), getIncomeWarehouse());
 
-		IController incomeController = FormUtil.getController(INCOME_CONTROLLER_NAME);
-		incomeController.onEditSearch(event);
-		incomeController.getCriteria().addEqualExpression(incomeController.getFieldName(IEntityAlias.INCOME_ID), income.getId());
-		incomeController.onSearch(event);
-		incomeController.getModel().setRowIndex(0);
-		incomeController.onSelect(event);
+			BasicController incomeController = (BasicController)AonUtil.getRegisteredBean(INCOME_CONTROLLER_NAME);
+			incomeController.onLoad(event, income.getId(), PURCHASE_FORM_NAME, PURCHASE_CONTROLLER_NAME + ".refresh");		
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
+		}
 	}
 
-	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {
+	public void onInvoiceShow(ActionEvent event) {
 		setInvoiceRefCode(null);
 		setInvoiceDate(new Date());
 	}
 
 	public void onInvoice(ActionEvent event) throws ManagerBeanException {
 		Purchase to = (Purchase)this.getTo();
-		PurchaseInvoicingManager invoicingManager = new PurchaseInvoicingManager();
-		Invoice invoice = invoicingManager.invoice(to, getInvoiceRefCode(), getInvoiceDate());
-
-		IController invoiceController = FormUtil.getController(PURCHASE_INVOICE_CONTROLLER_NAME);
-		invoiceController.onEditSearch(event);
-		invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IEntityAlias.INVOICE_ID), invoice.getId());
-		invoiceController.onSearch(event);
-		invoiceController.getModel().setRowIndex(0);
-		invoiceController.onSelect(event);
+		try {
+			PurchaseInvoicingManager invoicingManager = new PurchaseInvoicingManager();
+			invoicingManager.invoice(to, getInvoiceRefCode(), getInvoiceDate());
+			onLoadInvoice(event);
+		} catch (Throwable ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
+		}
 	}
 	
 	public String getDescription(ITransferObject parent) {

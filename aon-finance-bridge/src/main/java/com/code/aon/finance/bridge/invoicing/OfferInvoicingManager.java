@@ -1,7 +1,11 @@
 package com.code.aon.finance.bridge.invoicing;
 
 import java.util.Date;
-import java.util.Iterator;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
@@ -9,7 +13,10 @@ import com.code.aon.commercial.enumeration.OfferDetailStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
@@ -26,10 +33,10 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class OfferInvoicingManager {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(SalesInvoicingManager.class.getName());
+
 	private SalesBridgeUtil salesBridgeUtil;
-
 	private IPriceStrategy priceStrategy;
-
 	private FinanceGenerator financeGenerator;
 
 	public SalesBridgeUtil getSalesBridgeUtil() {
@@ -54,25 +61,45 @@ public class OfferInvoicingManager {
 	}
 
 	public Invoice invoice(Offer offer, String series, int number, Date issueDate) throws ManagerBeanException {
-		updateOfferStatus(offer);
-		Invoice invoice = createInvoice(offer, series, number, issueDate);
-		createInvoiceDetails(invoice, offer);
-		double invoiceTotal = getPriceStrategy().getTotalPrice(invoice, invoice);
-		if (invoiceTotal != 0) {
-			if (offer.getPayMethod() != null && offer.getPayMethod().getId() != null) {
-				getFinanceGenerator().generateFinances(invoice, offer, invoiceTotal, true);
-			} else {
-				getFinanceGenerator().generateFinances(invoice, invoiceTotal, true);
-			}
-		}
-		return invoice;
-	}
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		try {
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
 
-	private void updateOfferStatus(Offer offer) throws ManagerBeanException {
-		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
-		offer.setStatus(OfferStatus.INVOICED);
-		offerBean.restoreNullSubPOJOs(offer);
-		offerBean.update(offer);
+			HibernateUtil.beginTransaction(sessionName);
+
+			Invoice invoice = createInvoice(offer, series, number, issueDate);
+			createInvoiceDetails(sessionName, invoice, offer);
+			double invoiceTotal = getPriceStrategy().getTotalPrice(invoice, invoice);
+			if (invoiceTotal != 0) {
+				if (offer.getPayMethod() != null && offer.getPayMethod().getId() != null) {
+					getFinanceGenerator().generateFinances(invoice, offer, invoiceTotal, true);
+				} else {
+					getFinanceGenerator().generateFinances(invoice, invoiceTotal, true);
+				}
+			}
+			updateOfferStatus(sessionName, offer);
+
+			HibernateUtil.getSession(sessionName).flush();
+			HibernateUtil.commitTransaction(sessionName);
+
+			return invoice;
+		} catch (Exception e) {
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+				String msg = "Unable to rollback transaction!";
+				LOGGER.error(msg,daoe);
+			}
+			LOGGER.error(e.getMessage());
+			throw new ManagerBeanException(e.getMessage(), e);
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		}
 	}
 
 	private Invoice createInvoice(Offer offer, String series, int number, Date issueDate) throws ManagerBeanException {
@@ -80,7 +107,7 @@ public class OfferInvoicingManager {
 
 		Invoice invoice = new Invoice();
 		invoice.setProject(offer.getProject());
-		invoice.setSeries(series);
+		invoice.setSeries(StringUtils.isNotBlank(series) ? series : null);
 		invoice.setNumber((number > 0) ? number : obtainMaxNumber(series));
 		invoice.setRegistry(customer.getRegistry());
 		invoice.setRegistryDocument(customer.getRegistry().getDocument());
@@ -96,6 +123,7 @@ public class OfferInvoicingManager {
 		invoice.setScope(offer.getScope());
 
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		invoiceBean.restoreNullSubPOJOs(invoice);
 		return (Invoice)invoiceBean.insert(invoice);
 	}
 
@@ -105,20 +133,21 @@ public class OfferInvoicingManager {
     	return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
 	}
 
-	private void createInvoiceDetails(Invoice invoice, Offer offer) throws ManagerBeanException {
+	private void createInvoiceDetails(String sessionName, Invoice invoice, Offer offer) throws ManagerBeanException {
+		int line = 0;
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ID), offer.getId());
 		criteria.addNotNullExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_ITEM_ID));
 		criteria.addOrder(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_LINE));
-		Iterator<?> iterator = offerDetailBean.getList(criteria).iterator();
-		while (iterator.hasNext()) {
-			OfferDetail offerDetail = (OfferDetail)iterator.next();
+		List<ITransferObject> offerDetailList = offerDetailBean.getList(criteria);
+		for (ITransferObject ito : offerDetailList) {
+			OfferDetail offerDetail = (OfferDetail)ito;
 			InvoiceDetail invoiceDetail = new InvoiceDetail();
 			invoiceDetail.setInvoice(invoice);
 			invoiceDetail.setProject(offer.getProject());
-			invoiceDetail.setLine(offerDetail.getLine());
+			invoiceDetail.setLine(++line);
 			invoiceDetail.setItem(offerDetail.getItem());
 			invoiceDetail.setDescription(offerDetail.getDescription());
 			invoiceDetail.setQuantity(offerDetail.getQuantity());
@@ -128,11 +157,23 @@ public class OfferInvoicingManager {
 			invoiceDetail.setSource(InvoiceSource.OFFER);
 			invoiceDetail.setSourceId(offerDetail.getId());
 			invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
+			invoiceDetail.getInvoice().setUpdateEnabled(line == offerDetailList.size());
+			invoiceDetailBean.restoreNullSubPOJOs(invoiceDetail);
 			invoiceDetailBean.insert(invoiceDetail);
 
 			offerDetail.setStatus(OfferDetailStatus.ON_INVOICE);
+			offerDetailBean.restoreNullSubPOJOs(offerDetail);
+			offerDetail = (OfferDetail)HibernateUtil.getSession(sessionName).merge(offerDetail);	
 			offerDetailBean.update(offerDetail);
 		}
+	}
+
+	private void updateOfferStatus(String sessionName, Offer offer) throws ManagerBeanException {
+		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
+		offer.setStatus(OfferStatus.INVOICED);
+		offerBean.restoreNullSubPOJOs(offer);
+		offer = (Offer)HibernateUtil.getSession(sessionName).merge(offer);	
+		offerBean.update(offer);
 	}
 
 }

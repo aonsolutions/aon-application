@@ -3,6 +3,7 @@ package com.code.aon.finance.bridge.invoicing;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,13 +89,12 @@ public class DeliveryInvoicingManager {
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
-
 	}
 
 	private Invoice createInvoice(Delivery delivery, String series, int number, Date issueDate) throws ManagerBeanException {
 		Invoice invoice = new Invoice();
 		invoice.setProject(delivery.getProject());
-		invoice.setSeries(series);
+		invoice.setSeries(StringUtils.isNotBlank(series) ? series : null);
 		invoice.setNumber((number > 0) ? number : obtainMaxNumber(series));
 		invoice.setRegistry(delivery.getCustomer().getRegistry());
 		invoice.setRegistryDocument(delivery.getCustomer().getRegistry().getDocument());

@@ -59,8 +59,6 @@ import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.SaleInvoiceController;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.sales.util.PurchaseGeneratorManager;
 import com.code.aon.ui.sales.util.SalesEmailUtil;
@@ -593,27 +591,16 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	}
 
 	public void onDelivery(ActionEvent event) {
+		Sales to = (Sales)this.getTo();
 		try {
-			Sales to = (Sales)this.getTo();
-	        if ( StringUtils.isBlank(getDeliverySeries()) ) {
-	        	setDeliverySeries(null);
-	        }			
-	        if(getDeliveryNumber() == 0) {
-	        	updateDeliveryNumber(getDeliverySeries());
-			}					
 			DeliveryManager deliveryManager = new DeliveryManager();
 			Delivery delivery = deliveryManager.salesDelivery(to, getDeliverySeries(), getDeliveryNumber(), getDeliveryDate(), getDeliveryWarehouse());
 
-			IController deliveryController = FormUtil.getController(DELIVERY_CONTROLLER_NAME);
-			deliveryController.onEditSearch(event);
-			deliveryController.getCriteria().addEqualExpression(deliveryController.getFieldName(IEntityAlias.DELIVERY_ID), delivery.getId());
-			deliveryController.onSearch(event);
-			deliveryController.getModel().setRowIndex(0);
-			deliveryController.onSelect(event);
-		} catch (ManagerBeanException e) {
-			String msg = "No se pudo grabar el albar�n. (" + e.getMessage()+ ")";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
+			BasicController deliveryController = (BasicController)AonUtil.getRegisteredBean(DELIVERY_CONTROLLER_NAME);
+			deliveryController.onLoad(event, delivery.getId(), SALES_FORM_NAME, SALES_CONTROLLER_NAME + ".refresh");		
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
 	}
 

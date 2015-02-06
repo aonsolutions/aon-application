@@ -494,19 +494,24 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		}
 	}
 
-	public void onSalesTransfer(ActionEvent event) throws ManagerBeanException {
-		Iterator<SalesDetail> iterator = getSalesTransferManager().getCheckedDetails().iterator();
-		while (iterator.hasNext()) {
-			SalesDetail salesDetail = iterator.next();
-			if (salesDetail.getTransfered() > 0) {
-				DeliveryManager deliveryManager = new DeliveryManager();
-				deliveryManager.transferDeliveryDetail((Delivery)this.getTo(), salesDetail, getWarehouse());
+	public void onSalesTransfer(ActionEvent event) {
+		try {
+			Iterator<SalesDetail> iterator = getSalesTransferManager().getCheckedDetails().iterator();
+			while (iterator.hasNext()) {
+				SalesDetail salesDetail = iterator.next();
+				if (salesDetail.getTransfered() > 0) {
+					DeliveryManager deliveryManager = new DeliveryManager();
+					deliveryManager.transferDeliveryDetail((Delivery)this.getTo(), salesDetail, getWarehouse());
+				}
 			}
-		}
 
-		refresh(null);
-		IController detailController = FormUtil.getController(DELIVERY_DETAIL_CONTROLLER_NAME);
-		detailController.onSearch(null);
+			refresh(null);
+			IController detailController = FormUtil.getController(DELIVERY_DETAIL_CONTROLLER_NAME);
+			detailController.onSearch(null);
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
+		}
 	}
 	
 	private SaleInvoiceController getSaleInvoiceController() {
@@ -539,13 +544,6 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 
 	public void onInvoice(ActionEvent event) throws ManagerBeanException {
 		Delivery to = (Delivery)this.getTo();
-        if (StringUtils.isBlank(getInvoiceSeries())) {
-        	setInvoiceSeries(null);
-        }
-        if (getInvoiceNumber() == 0) {
-        	updateInvoiceNumber(getInvoiceSeries());
-		}															
-
 		try {
 	        DeliveryInvoicingManager invoicingManager = new DeliveryInvoicingManager();
 			invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());

@@ -3,6 +3,7 @@ package com.code.aon.sales.bridge;
 import java.util.Date;
 import java.util.Iterator;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,9 +51,9 @@ public class SalesManager {
 
 			HibernateUtil.beginTransaction(sessionName);
 			
-			updateOfferStatus(offer);
 			Sales sales = createSales(offer, series, number, issueDate);
-			createSalesDetails(sales, offer);
+			createSalesDetails(sessionName, sales, offer);
+			updateOfferStatus(sessionName, offer);
 
 			HibernateUtil.getSession(sessionName).flush();
 			HibernateUtil.commitTransaction(sessionName);
@@ -74,19 +75,12 @@ public class SalesManager {
 		}
 	}
 
-	private void updateOfferStatus(Offer offer) throws ManagerBeanException {
-		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
-		offer.setStatus(OfferStatus.APPROVED);
-		offerBean.restoreNullSubPOJOs(offer);
-		offerBean.update(offer);
-	}
-
 	private Sales createSales(Offer offer, String series, int number, Date issueDate) throws ManagerBeanException {
 		Customer customer = getSalesBridgeUtil().obtainCustomer(offer);
 
 		Sales sales = new Sales();
 		sales.setProject(offer.getProject());
-		sales.setSeries(series);
+		sales.setSeries(StringUtils.isNotBlank(series) ? series : null);
 		sales.setNumber((number > 0) ? number : obtainMaxNumber(series));
 		sales.setCustomer(customer);
 		sales.setShippingAddress(offer.getAddress());
@@ -108,6 +102,7 @@ public class SalesManager {
 		sales.setBic(offer.getBic());
 
 		IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
+		salesBean.restoreNullSubPOJOs(sales);
 		return (Sales)salesBean.insert(sales);
 	}
 
@@ -115,7 +110,7 @@ public class SalesManager {
     	return SeriesNumberUtil.obtainNumber(seriesId, "Sales");
 	}
 
-	private void createSalesDetails(Sales sales, Offer offer) throws ManagerBeanException {
+	private void createSalesDetails(String sessionName, Sales sales, Offer offer) throws ManagerBeanException {
 		int line = 0;
 
 		IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
@@ -138,12 +133,23 @@ public class SalesManager {
 				salesDetail.setDiscountExpression(offerDetail.getDiscountExpression());
 				salesDetail.setStatus(SalesDetailStatus.PENDING);
 				salesDetail.setOfferDetail(offerDetail);
+				salesDetailBean.restoreNullSubPOJOs(salesDetail);
 				salesDetailBean.insert(salesDetail);
 			}
 
 			offerDetail.setStatus(OfferDetailStatus.ON_SALE);
+			offerDetailBean.restoreNullSubPOJOs(offerDetail);
+			offerDetail = (OfferDetail)HibernateUtil.getSession(sessionName).merge(offerDetail);	
 			offerDetailBean.update(offerDetail);
 		}
+	}
+
+	private void updateOfferStatus(String sessionName, Offer offer) throws ManagerBeanException {
+		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
+		offer.setStatus(OfferStatus.APPROVED);
+		offerBean.restoreNullSubPOJOs(offer);
+		offer = (Offer)HibernateUtil.getSession(sessionName).merge(offer);	
+		offerBean.update(offer);
 	}
 
 }

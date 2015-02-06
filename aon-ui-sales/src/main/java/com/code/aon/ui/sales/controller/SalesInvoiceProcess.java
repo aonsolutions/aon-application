@@ -15,20 +15,19 @@ public class SalesInvoiceProcess implements ILongProcess {
 	public SalesInvoiceProcess(SalesController salesController) {
 		this.salesController = salesController;
 	}
-	
+
 	@Override
 	public void execute() {
-		salesController.setInvoiceId(null);
+		Sales to = (Sales)salesController.getTo();
 		try {
-			Sales to = (Sales) salesController.getTo();
 			SalesInvoicingManager invoicingManager = new SalesInvoicingManager();
 			invoicingManager.setProgression(salesController.getProgressionState());
 			Invoice invoice = invoicingManager.invoice(to, salesController.getInvoiceSeries(), salesController.getInvoiceNumber(), salesController.getInvoiceDate());
 			salesController.setInvoiceId(invoice.getId());
 			salesController.getProgressionState().setProgressionCurrentValue(FINISH_VALUE);
-		} catch (Throwable e) {
-			String msg = "No se pudo grabar la factura. (" + e.getMessage()+ ")";
-			salesController.getProgressionState().setProgressionErrorMessage(msg);
+		} catch (Throwable ex) {
+			salesController.setInvoiceId(null);
+			salesController.getProgressionState().setProgressionErrorMessage(ex.getMessage());
 			salesController.getProgressionState().setProgressionCurrentValue(IProgression.ERROR_VALUE);
 		}
 	}

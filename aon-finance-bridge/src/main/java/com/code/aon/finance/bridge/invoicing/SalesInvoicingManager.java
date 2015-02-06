@@ -4,12 +4,16 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.IProgression;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
@@ -27,21 +31,11 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class SalesInvoicingManager {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(SalesInvoicingManager.class.getName());
+
 	private IPriceStrategy priceStrategy;
-
 	private FinanceGenerator financeGenerator;
-	
 	private IProgression progression;
-	
-	public void setProgression(IProgression progression) {
-		this.progression = progression;
-	}
-
-	private void updateProgress( int current, int total ) {
-		if ( this.progression != null ) {
-			this.progression.setProgressionCurrentValue(Math.round((current * 100.0)/total));
-		}
-	}
 	
 	public IPriceStrategy getPriceStrategy() {
 		if (priceStrategy == null) {
@@ -57,32 +51,62 @@ public class SalesInvoicingManager {
 		return financeGenerator;
 	}
 
-	public Invoice invoice(Sales sales, String series, int number, Date issueDate) throws ManagerBeanException {
-		updateSalesStatus(sales);
-		Invoice invoice = createInvoice(sales, series, number, issueDate);
-		createInvoiceDetails(invoice, sales);
-		double invoiceTotal = getPriceStrategy().getTotalPrice(invoice, invoice);
-		if (invoiceTotal != 0) {
-			if (sales.getPayMethod() != null && sales.getPayMethod().getId() != null) {
-				getFinanceGenerator().generateFinances(invoice, sales, invoiceTotal, true);
-			} else {
-				getFinanceGenerator().generateFinances(invoice, invoiceTotal, true);
-			}
-		}
-		return invoice;
+	public void setProgression(IProgression progression) {
+		this.progression = progression;
 	}
 
-	private void updateSalesStatus(Sales sales) throws ManagerBeanException {
-		IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
-		sales.setStatus(SalesStatus.INVOICED);
-		salesBean.restoreNullSubPOJOs(sales);
-		salesBean.update(sales);
+	private void updateProgress( int current, int total ) {
+		if (this.progression != null) {
+			this.progression.setProgressionCurrentValue(Math.round((current * 100.0)/total));
+		}
+	}
+	
+	public Invoice invoice(Sales sales, String series, int number, Date issueDate) throws ManagerBeanException {
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		try {
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
+
+			HibernateUtil.beginTransaction(sessionName);
+
+			Invoice invoice = createInvoice(sales, series, number, issueDate);
+			createInvoiceDetails(invoice, sales);
+			double invoiceTotal = getPriceStrategy().getTotalPrice(invoice, invoice);
+			if (invoiceTotal != 0) {
+				if (sales.getPayMethod() != null && sales.getPayMethod().getId() != null) {
+					getFinanceGenerator().generateFinances(invoice, sales, invoiceTotal, true);
+				} else {
+					getFinanceGenerator().generateFinances(invoice, invoiceTotal, true);
+				}
+			}
+			updateSalesStatus(sessionName, sales);
+
+			HibernateUtil.getSession(sessionName).flush();
+			HibernateUtil.commitTransaction(sessionName);
+
+			return invoice;
+		} catch (Exception e) {
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+				String msg = "Unable to rollback transaction!";
+				LOGGER.error(msg,daoe);
+			}
+			LOGGER.error(e.getMessage());
+			throw new ManagerBeanException(e.getMessage(), e);
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		}
 	}
 
 	private Invoice createInvoice(Sales sales, String series, int number, Date issueDate) throws ManagerBeanException {
 		Invoice invoice = new Invoice();
 		invoice.setProject(sales.getProject());
-		invoice.setSeries(series);
+		invoice.setSeries(StringUtils.isNotBlank(series) ? series : null);
 		invoice.setNumber((number > 0) ? number : obtainMaxNumber(series));
 		invoice.setRegistry(sales.getCustomer().getRegistry());
 		invoice.setRegistryDocument(sales.getCustomer().getRegistry().getDocument());
@@ -96,9 +120,10 @@ public class SalesInvoicingManager {
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setType(InvoiceType.SALES);
 		invoice.setScope(sales.getScope());
-		invoice.setComments(StringUtils.isNotBlank(sales.getPurchaseReference())?"Ref. compra: "+sales.getPurchaseReference():null);
+		invoice.setComments(StringUtils.isNotBlank(sales.getPurchaseReference()) ? "Ref. compra: " + sales.getPurchaseReference() : null);
 
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		invoiceBean.restoreNullSubPOJOs(invoice);
 		return (Invoice)invoiceBean.insert(invoice);
 	}
 
@@ -109,18 +134,19 @@ public class SalesInvoicingManager {
 	}
 
 	private void createInvoiceDetails(Invoice invoice, Sales sales) throws ManagerBeanException {
+		int line = 0;
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_ID), sales.getId());
 		criteria.addOrder(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_LINE));
-		List<ITransferObject> list = salesDetailBean.getList(criteria);
-		for( int i = 0; i < list.size(); i++ ) {
-			SalesDetail salesDetail = (SalesDetail) list.get(i);
+		List<ITransferObject> salesDetailList = salesDetailBean.getList(criteria);
+		for (ITransferObject ito : salesDetailList) {
+			SalesDetail salesDetail = (SalesDetail)ito;
 			InvoiceDetail invoiceDetail = new InvoiceDetail();
 			invoiceDetail.setInvoice(invoice);
 			invoiceDetail.setProject(sales.getProject());
-			invoiceDetail.setLine(salesDetail.getLine());
+			invoiceDetail.setLine(++line);
 			invoiceDetail.setItem(salesDetail.getItem());
 			invoiceDetail.setDescription(salesDetail.getDescription());
 			invoiceDetail.setQuantity(salesDetail.getQuantity());
@@ -130,9 +156,19 @@ public class SalesInvoicingManager {
 			invoiceDetail.setSource(InvoiceSource.SALES);
 			invoiceDetail.setSourceId(salesDetail.getId());
 			invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
+			invoiceDetail.getInvoice().setUpdateEnabled(line == salesDetailList.size());
+			invoiceDetailBean.restoreNullSubPOJOs(invoiceDetail);
 			invoiceDetailBean.insert(invoiceDetail);
-			updateProgress(i+1, list.size());
+			updateProgress(line, salesDetailList.size());
 		}
+	}
+
+	private void updateSalesStatus(String sessionName, Sales sales) throws ManagerBeanException {
+		IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
+		sales.setStatus(SalesStatus.INVOICED);
+		salesBean.restoreNullSubPOJOs(sales);
+		sales = (Sales)HibernateUtil.getSession(sessionName).merge(sales);	
+		salesBean.update(sales);
 	}
 
 }

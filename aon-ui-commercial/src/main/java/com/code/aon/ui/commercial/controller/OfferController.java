@@ -16,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferAttachment;
 import com.code.aon.commercial.OfferDetail;
@@ -23,7 +24,6 @@ import com.code.aon.commercial.Target;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.commercial.enumeration.OfferType;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
@@ -725,26 +725,16 @@ public class OfferController extends HeaderObjectController implements ISignatur
 	}
 	
 	public void onSales(ActionEvent event) {
+		Offer to = getOffer();
 		try {
-			Offer to = getOffer();
-	        if ( StringUtils.isBlank(getSalesSeries()) ) {
-	        	setSalesSeries(null);
-	        }			
-	        if(getSalesNumber() == 0) {
-	        	updateSalesNumber(getSalesSeries());
-			}								
 			SalesManager salesManager = new SalesManager();
 			Sales sales = salesManager.salesOrder(to, getSalesSeries(), getSalesNumber(), getSalesDate());
-			IController salesController = FormUtil.getController(SALES_CONTROLLER_NAME);
-			salesController.onEditSearch(event);
-			salesController.getCriteria().addEqualExpression(salesController.getFieldName(IEntityAlias.SALES_ID), sales.getId());
-			salesController.onSearch(event);
-			salesController.getModel().setRowIndex(0);
-			salesController.onSelect(event);
-		} catch (ManagerBeanException e) {
-			String msg = "No se pudo grabar el pedido. (" + e.getMessage()+ ")";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
+
+			BasicController salesController = (BasicController)AonUtil.getRegisteredBean(SALES_CONTROLLER_NAME);
+			salesController.onLoad(event, sales.getId(), NAVIGATION_OFFER_FORM, OFFER_CONTROLLER_NAME + ".refresh");		
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
 	}
 
@@ -776,28 +766,15 @@ public class OfferController extends HeaderObjectController implements ISignatur
 		setInvoiceNumber(getSaleInvoiceController().obtainMaxNumber(seriesId));
 	}
 
-	public void onInvoice(ActionEvent event)  {
+	public void onInvoice(ActionEvent event) {
+		Offer to = getOffer();
 		try {
-			Offer to = getOffer();
-	        if ( StringUtils.isBlank(getInvoiceSeries()) ) {
-	        	setInvoiceSeries(null);
-	        }			
-	        if(getInvoiceNumber() == 0) {
-	        	updateInvoiceNumber(getInvoiceSeries());
-			}													
 			OfferInvoicingManager invoicingManager = new OfferInvoicingManager();
-			Invoice invoice = invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
-
-			IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
-			invoiceController.onEditSearch(event);
-			invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IEntityAlias.INVOICE_ID), invoice.getId());
-			invoiceController.onSearch(event);
-			invoiceController.getModel().setRowIndex(0);
-			invoiceController.onSelect(event);
-		} catch (ManagerBeanException e) {
-			String msg = "No se pudo generar la factura. (" + e.getMessage()+ ")";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
+			invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
+			onLoadInvoice(event);
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
 	}
 

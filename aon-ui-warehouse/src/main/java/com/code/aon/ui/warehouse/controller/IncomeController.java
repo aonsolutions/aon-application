@@ -503,7 +503,7 @@ public class IncomeController extends BasicController implements IWarehouseConst
 	}
 	
 	public void onPurchaseTransfer(ActionEvent event) throws ManagerBeanException {
-		if(checkConfirmWindowShow()){
+		if (checkConfirmWindowShow()) {
 			setShowConfirmWindow(true);
 		} else {
 			confirmPurchaseTrasfer(event);
@@ -511,19 +511,27 @@ public class IncomeController extends BasicController implements IWarehouseConst
 	}
 	
 	public void confirmPurchaseTrasfer(ActionEvent event) throws ManagerBeanException{
-		Iterator<PurchaseDetail> iterator = getPurchaseTransferManager().getCheckedDetails().iterator();
-		while (iterator.hasNext()) {
-			PurchaseDetail purchaseDetail = iterator.next();
-			if ((purchaseDetail.getPendingQuantity() > 0 && purchaseDetail.getTransfered() >= 0)
-					|| (purchaseDetail.getPendingQuantity() < 0 && purchaseDetail.getTransfered() <= 0)) {
-				IncomeManager incomeManager = new IncomeManager();
-				incomeManager.transferIncomeDetail((Income)this.getTo(), purchaseDetail, getWarehouse());
+		try {
+			Iterator<PurchaseDetail> iterator = getPurchaseTransferManager().getCheckedDetails().iterator();
+			while (iterator.hasNext()) {
+				PurchaseDetail purchaseDetail = iterator.next();
+				if ((purchaseDetail.getPendingQuantity() > 0 && purchaseDetail.getTransfered() >= 0) 
+						|| (purchaseDetail.getPendingQuantity() < 0 && purchaseDetail.getTransfered() <= 0)) {
+					IncomeManager incomeManager = new IncomeManager();
+					incomeManager.transferIncomeDetail((Income)this.getTo(), purchaseDetail, getWarehouse());
+				}
 			}
+
+			refresh(null);
+			IController detailController = FormUtil.getController(INCOME_DETAIL_CONTROLLER_NAME);
+			detailController.onSearch(null);
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
+		} finally {
+			setShowPurchaseTransferWindow(false);
+			setPurchaseTransferManager(null);
 		}
-		IController detailController = FormUtil.getController(INCOME_DETAIL_CONTROLLER_NAME);
-		detailController.onSearch(null);
-		setShowPurchaseTransferWindow(false);
-		setPurchaseTransferManager(null);
 	}
 
 	public void onInvoiceShow(ActionEvent event) {
