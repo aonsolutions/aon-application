@@ -16,7 +16,6 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.project.Project;
-import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.sales.Sales;
@@ -25,7 +24,6 @@ import com.code.aon.sales.enumeration.SalesDetailStatus;
 import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
-import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -140,7 +138,7 @@ public class DeliveryManager {
 		}
 	}
 
-	public void transferDeliveryDetails(Delivery delivery, List<SalesDetail> salesDetailList, Warehouse warehouse) throws ManagerBeanException {
+	public void transferSalesDetails(Delivery delivery, List<SalesDetail> salesDetailList, Warehouse warehouse) throws ManagerBeanException {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();
@@ -152,7 +150,7 @@ public class DeliveryManager {
 
 			for (SalesDetail salesDetail : salesDetailList) {
 				if (salesDetail.getTransfered() > 0) {
-					transferDeliveryDetail(sessionName, delivery, salesDetail, warehouse);
+					transferSalesDetail(sessionName, delivery, salesDetail, warehouse);
 				}
 			}
 
@@ -172,10 +170,9 @@ public class DeliveryManager {
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
-		
 	}
 
-	private DeliveryDetail transferDeliveryDetail(String sessionName, Delivery delivery, SalesDetail salesDetail, Warehouse warehouse) throws ManagerBeanException {
+	private DeliveryDetail transferSalesDetail(String sessionName, Delivery delivery, SalesDetail salesDetail, Warehouse warehouse) throws ManagerBeanException {
 		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 		DeliveryDetail deliveryDetail = new DeliveryDetail();
 		deliveryDetail.setDelivery(delivery);

@@ -123,7 +123,7 @@ public class IncomeManager {
 		}
 	}
 
-	public void transferIncomeDetails(Income income, List<PurchaseDetail> purchaseDetailList, Warehouse warehouse) throws ManagerBeanException {
+	public void transferPurchaseDetails(Income income, List<PurchaseDetail> purchaseDetailList, Warehouse warehouse) throws ManagerBeanException {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();
@@ -136,7 +136,7 @@ public class IncomeManager {
 			for (PurchaseDetail purchaseDetail : purchaseDetailList) {
 				if ((purchaseDetail.getPendingQuantity() > 0 && purchaseDetail.getTransfered() >= 0) 
 						|| (purchaseDetail.getPendingQuantity() < 0 && purchaseDetail.getTransfered() <= 0)) {
-					transferIncomeDetail(sessionName, income, purchaseDetail, warehouse);
+					transferPurchaseDetail(sessionName, income, purchaseDetail, warehouse);
 				}
 			}
 
@@ -158,7 +158,7 @@ public class IncomeManager {
 		}
 	}
 
-	private IncomeDetail transferIncomeDetail(String sessionName, Income income, PurchaseDetail purchaseDetail, Warehouse warehouse) throws ManagerBeanException {
+	private IncomeDetail transferPurchaseDetail(String sessionName, Income income, PurchaseDetail purchaseDetail, Warehouse warehouse) throws ManagerBeanException {
 		Double transferQuantity = purchaseDetail.getTransfered();
 		boolean forcePendingQuantityCancel = purchaseDetail.isForcePendingQuantityCancel();
 

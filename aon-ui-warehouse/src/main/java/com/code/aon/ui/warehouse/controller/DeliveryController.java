@@ -44,7 +44,6 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.sales.Sales;
-import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.bridge.DeliveryManager;
 import com.code.aon.sales.bridge.SalesTransferManager;
 import com.code.aon.sales.enumeration.SalesStatus;
@@ -497,7 +496,7 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	public void onSalesTransfer(ActionEvent event) {
 		try {
 			DeliveryManager deliveryManager = new DeliveryManager();
-			deliveryManager.transferDeliveryDetails((Delivery)this.getTo(), getSalesTransferManager().getCheckedDetails(), getWarehouse());
+			deliveryManager.transferSalesDetails((Delivery)this.getTo(), getSalesTransferManager().getCheckedDetails(), getWarehouse());
 
 			refresh(null);
 			IController detailController = FormUtil.getController(DELIVERY_DETAIL_CONTROLLER_NAME);

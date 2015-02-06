@@ -513,7 +513,7 @@ public class IncomeController extends BasicController implements IWarehouseConst
 	public void confirmPurchaseTrasfer(ActionEvent event) throws ManagerBeanException {
 		try {
 			IncomeManager incomeManager = new IncomeManager();
-			incomeManager.transferIncomeDetails((Income)this.getTo(), getPurchaseTransferManager().getCheckedDetails(), getWarehouse());
+			incomeManager.transferPurchaseDetails((Income)this.getTo(), getPurchaseTransferManager().getCheckedDetails(), getWarehouse());
 
 			refresh(null);
 			IController detailController = FormUtil.getController(INCOME_DETAIL_CONTROLLER_NAME);
