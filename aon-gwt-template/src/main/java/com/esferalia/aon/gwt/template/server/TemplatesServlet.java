@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
@@ -213,8 +214,9 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 				}
                 	 
                  
+                
                  if(i == 0){//Primera fila del fichero Excel.
-                	 if(ti.getColumns().get(j) == null || !ti.getColumns().get(j).equalsIgnoreCase(cell.getStringCellValue())){
+                	 if(ti.getColumns().size()<=j ||ti.getColumns().get(j) == null || !ti.getColumns().get(j).equalsIgnoreCase(cell.getStringCellValue())){
                 		 // El archivo no es compatible con la plantilla
              			error.setError(false);
              			error.setTextError("*El archivo importado no es compatible con la plantilla seleccionada.");
@@ -222,12 +224,39 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
                 	 } 
                  }
                  else{
+                	 if(j!= cell.getColumnIndex()){
+                		 if(ti.getColumns().get(j).equals("Nombre") || ti.getColumns().get(j).equals("C\u00f3digo") || ti.getColumns().get(j).equals("Precio Coste") || ti.getColumns().get(j).equals("Precio Venta Base")){
+                			Integer fila = i+1;
+                			Integer columna = j+1;
+                			textError= textError + "*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n";
+                	 	}
+                		 j++;
+                	 }
+                	 
                 	 pi = check(ti.getColumns().get(j),o,pi,cell.getCellType());
                 	 if(pi == null){
-                		 textError="*Fila "+i+", Columna "+j+" : Dato Incorrecto \n";
+             			Integer fila = i+1;
+             			Integer columna = j+1;
+                		textError= textError + "*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n";
+                		pi = newProduct();
+                	 	
                 	 }
                  }
                  j++;
+             }
+             if(j != ti.getColumns().size()){
+            	 if(i == 0){
+            		 error.setError(false);
+            		 error.setTextError("*El archivo importado no es compatible con la plantilla seleccionada.");
+            		 return error;
+            	 }
+            	 else{
+            		 if(ti.getColumns().get(j).equals("Nombre") || ti.getColumns().get(j).equals("C\u00f3digo") || ti.getColumns().get(j).equals("Precio Coste") || ti.getColumns().get(j).equals("Precio Venta Base")){
+            			Integer fila = i+1;
+          				Integer columna = j+1;
+          				textError= textError + "*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n";
+            		 }
+            	 }
              }
              // AÑADIR A PI ITEM --> %BENEFICIO SOBRE COSTE, %BENEFICIO SOBRE COMPRA Y PVP
              pi.getItem().setProfitPercent(0);
@@ -253,6 +282,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			error.setError(false);
  			error.setTextError(textError);
 		}
+		System.out.println(error.getTextError());
+		
 		return error;
 	}
 	
@@ -268,17 +299,16 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		String domain = AonUtil.getDomainName();
 		switch (template) {
 		case "Nombre": 
-			if(type.equals(Cell.CELL_TYPE_STRING))
+			if(type.equals(Cell.CELL_TYPE_STRING) && !value.equals(""))
 				product.getProduct().setName((String) value);
 			else return null;
 			break;
 		case "C\u00f3digo" : 
-			if(type.equals(Cell.CELL_TYPE_STRING))
+			if(type.equals(Cell.CELL_TYPE_STRING) && !value.equals(""))
 				product.getProduct().setCode((String) value);
 			else return null;
 			break; 
 		case "Precio Coste" : 
-			//TODO 
 			if(type.equals(Cell.CELL_TYPE_NUMERIC))
 				product.getItem().setExpensesFixed((double) value);
 			else return null;
@@ -290,43 +320,89 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			break; 
 		case "Categor\u00eda" :
 			if(type.equals(Cell.CELL_TYPE_STRING)){
-				ProductCategory category = new ProductCategory();
-				category.setName((String)value);
-				product.getProduct().setCategory(category);
+				String strAux = (String) value;
+				Vector<ProductCategory> v = null;
+				try {
+					v = DBConsults.getCategories(domain, domainId);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				Boolean b = true;
+				for(ProductCategory pc : v){
+					if(strAux.equalsIgnoreCase(pc.getName())){
+						product.getProduct().setCategory(pc);
+						b= false;
+					}
+				}
+				if(b) return null;
 			}
-			else return null;
+			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break; 
 		case "Marca" : 
 			if(type.equals(Cell.CELL_TYPE_STRING)){
-				Brand brand = new Brand();
-				brand.setName((String) value);
-				product.getProduct().setBrand(brand);
+				String strAux = (String) value;
+				Vector<Brand> v = null;
+				try {
+					v = DBConsults.getBrands(domain, domainId);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				Boolean b = true;
+				for(Brand brand : v){
+					if(strAux.equalsIgnoreCase(brand.getName())){
+						product.getProduct().setBrand(brand);
+						b= false;
+					}
+				}
+				if(b) return null;
 			}
-			else return null;
+			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break; 
 		case "Etiqueta" : 
 			//TODO product.getProduct().setTags(tags);
+			if(type.equals(Cell.CELL_TYPE_STRING)){
+				Vector<ProductTag> tags = null;
+				try {
+					tags = DBConsults.getTags(domain, domainId);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				Vector<String> strings = tags((String)value);
+				Set<ProductTag> tags2 = new HashSet<ProductTag>();
+				for(ProductTag tag : tags){
+					for(String s : strings){
+						if(s.equalsIgnoreCase(tag.getTag().getName())){
+							tags2.add(tag);
+						}
+					}
+				}
+				if(!tags2.isEmpty())
+					product.getProduct().setTags(tags2);
+				else return null;
+			}
+			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break; 
 		case "Tipo":
 			String t;
-			if(type.equals(Cell.CELL_TYPE_STRING))
+			if(type.equals(Cell.CELL_TYPE_STRING)){
 				t = (String) value;
-			else return null;
-			if (t.equalsIgnoreCase(COMMERCIAL_PRODUCT))
-				product.getProduct().setType(ProductType.COMMERCIAL_PRODUCT);
-			else if(t.equalsIgnoreCase(SERVICE))
-				product.getProduct().setType(ProductType.SERVICE);
-			else if(t.equalsIgnoreCase(EXTERNAL_WORK))
-				product.getProduct().setType(ProductType.EXTERNAL_WORK);
-			else if(t.equalsIgnoreCase(LABOUR))
-				product.getProduct().setType(ProductType.LABOUR);
-			else if(t.equalsIgnoreCase(EXPENSE))
-				product.getProduct().setType(ProductType.EXPENSE);
-			else if(t.equalsIgnoreCase(INCREASE))
-				product.getProduct().setType(ProductType.INCREASE);
-			else if(t.equalsIgnoreCase(PREPAYMENT))
-				product.getProduct().setType(ProductType.PREPAYMENT);
-			else return null;
+				if (t.equalsIgnoreCase(COMMERCIAL_PRODUCT))
+					product.getProduct().setType(ProductType.COMMERCIAL_PRODUCT);
+				else if(t.equalsIgnoreCase(SERVICE))
+					product.getProduct().setType(ProductType.SERVICE);
+				else if(t.equalsIgnoreCase(EXTERNAL_WORK))
+					product.getProduct().setType(ProductType.EXTERNAL_WORK);
+				else if(t.equalsIgnoreCase(LABOUR))
+					product.getProduct().setType(ProductType.LABOUR);
+				else if(t.equalsIgnoreCase(EXPENSE))
+					product.getProduct().setType(ProductType.EXPENSE);
+				else if(t.equalsIgnoreCase(INCREASE))
+					product.getProduct().setType(ProductType.INCREASE);
+				else if(t.equalsIgnoreCase(PREPAYMENT))
+					product.getProduct().setType(ProductType.PREPAYMENT);
+				else return null;
+			}
+			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break; 
 		case "IVA" : 
 			Tax vat = new Tax();
@@ -339,22 +415,28 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			switch (type) {
 			case Cell.CELL_TYPE_STRING:
 				String s = (String) value;
+				Boolean b = true;
 				for(Tax tax : vats){
 					if(s.equalsIgnoreCase((tax.getName()))){
 						vat = tax;
+						b = false;
 					}
-					else return null;
 				}
+				if(b) return null;
 				break;
 			case Cell.CELL_TYPE_NUMERIC:
-				Float f = (Float) value;
+				Double f = (Double) value;
+				Boolean b2 = true;
 				for(Tax tax : vats){
 					if(f.equals(tax.getPercentage())){
 						vat = tax;
+						b2 = false;
 					}
-					else return null;
 				}
+				if(b2) return null;
 				break;
+			case Cell.CELL_TYPE_BLANK:
+				return product;
 			default:
 				return null;
 			}
@@ -371,22 +453,28 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			switch (type) {
 			case Cell.CELL_TYPE_STRING:
 				String s = (String) value;
+				Boolean b3 = true;
 				for(Tax tax : retentions){
 					if(s.equalsIgnoreCase((tax.getName()))){
 						retention = tax;
+						b3 = false;
 					}
-					else return null;
 				}
+				if(b3) return null;
 				break;
 			case Cell.CELL_TYPE_NUMERIC:
 				Float f = (Float) value;
+				Boolean b4 = true;
 				for(Tax tax : retentions){
 					if(f.equals(tax.getPercentage())){
 						retention = tax;
+						b4 = false;
 					}
-					else return null;
 				}
+				if(b4) return null;
 				break;
+			case Cell.CELL_TYPE_BLANK:
+				return product;
 			default:
 				return null;
 			}
@@ -406,6 +494,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			case Cell.CELL_TYPE_BOOLEAN:
 				bool = (Boolean) value;
 				break;
+			case Cell.CELL_TYPE_BLANK:
+				return product;
 			default:
 				return null;
 			}
@@ -425,6 +515,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			case Cell.CELL_TYPE_BOOLEAN:
 				bool2 = (Boolean) value;
 				break;
+			case Cell.CELL_TYPE_BLANK:
+				return product;
 			default:
 				return null;
 			}
@@ -444,6 +536,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			case Cell.CELL_TYPE_BOOLEAN:
 				bool3 = (Boolean) value;
 				break;
+			case Cell.CELL_TYPE_BLANK:
+				return product;
 			default:
 				return null;
 			}
@@ -472,6 +566,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 				if(b) status = ProductStatus.ACTIVE;
 				else status = ProductStatus.DISCONTINUED;
 				break;
+			case Cell.CELL_TYPE_BLANK:
+				return product;
 			default:
 				return null;
 			}
@@ -480,12 +576,27 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		case "C\u00f3digo de Barras" : 
 			if(type.equals(Cell.CELL_TYPE_STRING))
 				product.getItem().setBarcode((String) value);
-			else return null;
+			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break; 
 		case "Descripci\u00f3n" :
 			if(type.equals(Cell.CELL_TYPE_STRING))
 				product.getItem().setDescription((String)value);
-			else return null;
+			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
+			break;
+		case "Detalle 1":
+			if(type.equals(Cell.CELL_TYPE_STRING))
+				product.getItem().setDetail((String)value);
+			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
+			break;
+		case "Detalle 2":
+			if(type.equals(Cell.CELL_TYPE_STRING))
+				product.getItem().setDetail2((String)value);
+			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
+			break;
+		case "Detalle 3":
+			if(type.equals(Cell.CELL_TYPE_STRING))
+				product.getItem().setDetail3((String)value);
+			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break;
 		default:
 			break;
@@ -542,8 +653,32 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		// description (item)
 		i.setDescription(null);
 		
+		// detail
+		i.setDetail("");
+		
+		// detail2
+		i.setDetail2("");
+		
+		// detail3
+		i.setDetail3("");
+		
 		pi.setItem(i);
 		pi.setProduct(p);
 		return pi;
+	}
+	
+	private Vector<String> tags(String s) {
+		Vector<String> v = new Vector<String>();
+
+		if(!s.contains(",")){
+			if(!s.equals(""))
+				v.add(s);
+			return v;
+		}
+		Integer pos = s.indexOf(",");
+		v = tags(s.substring(pos+1));
+		v.add(s.substring(0, pos));
+		
+		return v;
 	}
 }

@@ -490,6 +490,9 @@ public abstract class TemplatesDialog extends CustomDialog {
 		v.add("Estado");
 		v.add("C\u00f3digo de Barras");
 		v.add("Descripci\u00f3n");
+		v.add("Detalle 1");
+		v.add("Detalle 2");
+		v.add("Detalle 3");
 		return v;
 		
 	}

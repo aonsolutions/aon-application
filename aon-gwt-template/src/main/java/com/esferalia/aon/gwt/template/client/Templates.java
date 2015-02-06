@@ -486,6 +486,7 @@ public class Templates extends Composite implements EntryPoint {
 			
 			@Override
 			protected void onAccept() {
+			
 				ListBox lb = (ListBox) flex_table.getWidget(0, 1);
 				String template = lb.getItemText(lb.getSelectedIndex());
 				TemplateInfo ti = new TemplateInfo();
@@ -502,10 +503,12 @@ public class Templates extends Composite implements EntryPoint {
 					@Override
 					public void onSuccess(com.esferalia.aon.gwt.template.shared.Error result) {
 						if(result.getError()){
+							hide();
 							Window.alert(result.getTextError());
-							//hide();
+							
 						}
 						else{
+							hide();
 							Window.alert(result.getTextError());
 							//label!!
 						}
@@ -514,7 +517,6 @@ public class Templates extends Composite implements EntryPoint {
 					@Override
 					public void onFailure(Throwable caught) {}
 				});
-				
 			}
 		};
 		popup.setGlassEnabled(true);
