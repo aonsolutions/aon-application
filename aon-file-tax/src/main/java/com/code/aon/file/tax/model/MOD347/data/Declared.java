@@ -22,6 +22,12 @@ public class Declared {
 	private double cashAmount;
 	private Integer cashYear;
 	
+	private String operatorNif;
+	private boolean vatAccrual = false;
+	private boolean isp = false;
+	private boolean depositRegime = false;
+	private double vatAccrualAmount;
+	
 	private boolean insurance = false;
 	private boolean renting = false;
 	
@@ -157,6 +163,37 @@ public class Declared {
 	}
 	public void setCashYear(Integer cashYear) {
 		this.cashYear = cashYear;
+	}
+	
+	public String getOperatorNif() {
+		return operatorNif;
+	}
+	public void setOperatorNif(String operatorNif) {
+		this.operatorNif = operatorNif;
+	}
+	public String getVatAccrual() {
+		return vatAccrual?"X":"";
+	}
+	public void setVatAccrual(boolean vatAccrual) {
+		this.vatAccrual = vatAccrual;
+	}
+	public String getIsp() {
+		return isp?"X":"";
+	}
+	public void setIsp(boolean isp) {
+		this.isp = isp;
+	}
+	public String getDepositRegime() {
+		return depositRegime?"X":"";
+	}
+	public void setDepositRegime(boolean depositRegime) {
+		this.depositRegime = depositRegime;
+	}
+	public double getVatAccrualAmount() {
+		return vatAccrualAmount;
+	}
+	public void setVatAccrualAmount(double vatAccrualAmount) {
+		this.vatAccrualAmount = vatAccrualAmount;
 	}
 	public String toString(){
 		String description = "Reg. Declarado ";

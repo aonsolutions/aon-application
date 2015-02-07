@@ -13,7 +13,13 @@ import com.code.aon.common.enumeration.IStringEnum;
 public enum Mod347Type implements IResourceable, IStringEnum  {
 
 	A("A"),
-	B("B");
+	B("B"),
+	C("C"),
+	D("D"),
+	E("E"),
+	F("F"),
+	G("G")
+	;
 
 	private String value;
 	

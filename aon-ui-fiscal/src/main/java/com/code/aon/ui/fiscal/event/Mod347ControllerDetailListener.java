@@ -1,9 +1,12 @@
 package com.code.aon.ui.fiscal.event;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.fiscal.Mod347Detail;
 import com.code.aon.fiscal.enumeration.Mod347Type;
@@ -20,7 +23,18 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class Mod347ControllerDetailListener extends ControllerAdapter {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-	
+	@Override
+	public void afterBeanReset(ControllerEvent event)
+			throws ControllerListenerException {
+		IController c = event.getController();
+		Mod347Detail detail = (Mod347Detail) c.getTo();
+		detail.setFirstQuarterAmount(0.0);
+		detail.setSecondQuarterAmount(0.0);
+		detail.setThirdQuarterAmount(0.0);
+		detail.setFourthQuarterAmount(0.0);
+		detail.setAmount(0.0);
+		detail.setCountry(Country.ES);
+	}
 	@Override
 	public void beforeBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
@@ -55,35 +69,37 @@ public class Mod347ControllerDetailListener extends ControllerAdapter {
 	}
 
 	private void check(Mod347Detail detail) throws ControllerListenerException {
-		double sum = CommonUtil.round(detail.getFirstQuarterAmount()
-				+ detail.getSecondQuarterAmount()
-				+ detail.getThirdQuarterAmount()
-				+ detail.getFourthQuarterAmount());
-		double amount = detail.getAmount();
-		if (sum != amount) {
-			throw new ControllerListenerException(
-					"La suma de las cantidades trimestrales no coincide con el total anual");
+		if (!detail.isVatAccrual()) {
+			double sum = CommonUtil.round(detail.getFirstQuarterAmount()
+					+ detail.getSecondQuarterAmount()
+					+ detail.getThirdQuarterAmount()
+					+ detail.getFourthQuarterAmount());
+			double amount = detail.getAmount();
+			if (sum != amount) {
+				throw new ControllerListenerException(
+						"La suma de las cantidades trimestrales no coincide con el total anual");
+			}
+	
+			sum = CommonUtil.round(detail.getAssetFirstQuarterAmount()
+					+ detail.getAssetSecondQuarterAmount()
+					+ detail.getAssetThirdQuarterAmount()
+					+ detail.getAssetFourthQuarterAmount());
+			amount = detail.getAssetAmount();
+			if (sum != amount) {
+				throw new ControllerListenerException(
+						"La suma de las cantidades trimestrales "
+								+ "de las operaciones de inmuebles sujetas a IVA no coincide con el total anual correspondiente.");
+			}
 		}
-
-		sum = CommonUtil.round(detail.getAssetFirstQuarterAmount()
-				+ detail.getAssetSecondQuarterAmount()
-				+ detail.getAssetThirdQuarterAmount()
-				+ detail.getAssetFourthQuarterAmount());
-		amount = detail.getAssetAmount();
-		if (sum != amount) {
-			throw new ControllerListenerException(
-					"La suma de las cantidades trimestrales "
-							+ "de las operaciones de inmuebles sujetas a IVA no coincide con el total anual correspondiente.");
+		if (StringUtils.isNotBlank(detail.getDocument())) {
+			RegistryDocument rd = new RegistryDocument(detail.getDocument());
+			if (!rd.isValid()) {
+				AonUtil.addInfoMessage("Los datos se han guardado aunque el NIF/DNI "
+						+ detail.getDocument()
+						+ " no es válido. "
+						+ "Recuerde modificar el dato antes de generar el fichero para Hacienda.");
+			}
 		}
-
-		RegistryDocument rd = new RegistryDocument(detail.getDocument());
-		if (!rd.isValid()) {
-			AonUtil.addInfoMessage("Los datos se han guardado aunque el NIF/DNI "
-					+ detail.getDocument()
-					+ " no es válido. "
-					+ "Recuerde modificar el dato antes de generar el fichero para Hacienda.");
-		}
-
 	}
 
 	private void checkRental(Mod347Detail detail)

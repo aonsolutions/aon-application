@@ -132,7 +132,7 @@ public class MOD347Writer implements IFinanceConstants{
 			}
 			
 			if (StringUtils.isNotBlank(fiscalParams.getContactPerson())) {
-				deponent.setRelName(fiscalParams.getContactPerson() );	
+				deponent.setRelName(FileTaxUtil.changeInvalidCharacters(fiscalParams.getContactPerson()));	
 			} else {
 				deponent.setRelName(getCompany().getName());	
 			}
@@ -244,6 +244,12 @@ public class MOD347Writer implements IFinanceConstants{
 				dec.setAssetFourthQuarterAmount( detail.getAssetFourthQuarterAmount() );
 				dec.setCashAmount( detail.getCashAmount() );
 				dec.setCashYear( detail.getCashYear() );
+				dec.setOperatorNif(detail.getOperatorNif());
+				dec.setVatAccrual(detail.isVatAccrual());
+				dec.setIsp(detail.isIsp());
+				dec.setDepositRegime(detail.isDepositRegime());
+				dec.setVatAccrualAmount(detail.getVatAccrualAmount());
+
 				deponent.getDeclareds().add(dec);
 			}
 		}

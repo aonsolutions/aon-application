@@ -25,6 +25,11 @@ public class Mod347DetailController extends LinesController {
 		setExtraInfoPanelVisible(false);
 	}
 
+	public void onNewExtraInfoPanel(ActionEvent event) {
+		super.onReset(event);
+		setExtraInfoPanelVisible(true);
+	}
+
 	public void onShowExtraInfoPanel(ActionEvent event) {
 		super.onSelect(event);
 		setExtraInfoPanelVisible(true);
@@ -40,13 +45,25 @@ public class Mod347DetailController extends LinesController {
 		onHideExtraInfoPanel(event);
 	}
 
+	public void onRemoveExtraInfoPanel(ActionEvent event) {
+		super.onRemove(event);
+		onHideExtraInfoPanel(event);
+	}
+
 	public void onChangeAssetAmount(ActionEvent event) {
 		Mod347Detail detail = (Mod347Detail) getTo();
-		detail.setAssetAmount(CommonUtil.round(detail
-				.getAssetFirstQuarterAmount()
-				+ detail.getAssetSecondQuarterAmount()
-				+ detail.getAssetThirdQuarterAmount()
-				+ detail.getAssetFourthQuarterAmount()));
+		if (!detail.isVatAccrual()) {
+			detail.setAmount(CommonUtil.round(detail
+					.getFirstQuarterAmount()
+					+ detail.getSecondQuarterAmount()
+					+ detail.getThirdQuarterAmount()
+					+ detail.getFourthQuarterAmount()));
+			detail.setAssetAmount(CommonUtil.round(detail
+					.getAssetFirstQuarterAmount()
+					+ detail.getAssetSecondQuarterAmount()
+					+ detail.getAssetThirdQuarterAmount()
+					+ detail.getAssetFourthQuarterAmount()));
+		}
 	}
 
 }

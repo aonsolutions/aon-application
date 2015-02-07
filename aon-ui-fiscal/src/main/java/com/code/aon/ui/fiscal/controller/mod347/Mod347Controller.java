@@ -5,8 +5,10 @@ import static com.code.aon.ui.common.ICommonMessages.FINANCE_BATCH_DISK_ERROR;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -17,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.AonException;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
@@ -31,6 +34,7 @@ import com.code.aon.fiscal.mod347.Mod347Parameters;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.fiscal.aeat.AeatUtils;
 import com.code.aon.ui.fiscal.controller.FiscalParametersController;
 import com.code.aon.ui.fiscal.controller.IFiscalModelController;
 import com.code.aon.ui.fiscal.file.MOD347Writer;
@@ -145,10 +149,46 @@ public class Mod347Controller extends BasicController implements IFiscalModelCon
 		mod347.setStatus(Mod347Status.FINISHED);
 		accept(event);
 	}
+	
+	
 	public void onReopen(ActionEvent event){
 		Mod347 mod347 = (Mod347) getTo();
 		mod347.setStatus(Mod347Status.PENDING);
 		accept(event);
+	}
+	
+	public String aeatReport(){
+		Mod347 mod347 = (Mod347) getTo();
+		try {
+			if (getFileOutput() == null) {
+				onCreateDisk(null);
+			}
+			InputStream input = getFileOutput().getFile() != null
+					?new FileInputStream(getFileOutput().getFile())
+					:new ByteArrayInputStream(getFileOutput().getContent());
+
+			FacesContext faces = FacesContext.getCurrentInstance();
+            HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
+            String fileName = getAutomaticFileName();
+            response.setHeader("Content-disposition", "attachment; filename=\""+fileName+"\";");
+			AeatUtils.printMod347(mod347.getYear(),					
+					input,response.getOutputStream());					
+	        response.flushBuffer();
+	        faces.responseComplete();
+		} catch (FileNotFoundException e) {
+			AonUtil.addErrorMessage(e.getMessage()); 
+			throw new AbortProcessingException(e.getMessage(),e);
+		} catch (UnsupportedEncodingException e) {
+			AonUtil.addErrorMessage(e.getMessage()); 
+			throw new AbortProcessingException(e.getMessage(),e);
+		} catch (IOException e) {
+			AonUtil.addErrorMessage(e.getMessage()); 
+			throw new AbortProcessingException(e.getMessage(),e);
+		} catch (AonException e) {
+			AonUtil.addErrorMessage(e.getMessage()); 
+			throw new AbortProcessingException(e.getMessage(),e);
+		}
+		return null;
 	}
 	
 	@Override
