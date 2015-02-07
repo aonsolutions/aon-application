@@ -189,13 +189,16 @@ public class AeatUtils {
 			String fileString = new String(o);
 			fileString = fileString.replace("\n", "");
 			fileString = fileString.replace("\r", "");
+			String hid = year>=2015?"INV5303A":"INV4303A";
+			String prg = year>=2015?"PTLINK6F":"PTLINK1T";
+			
 			String urlParameters =
-					"HID=INV4303A" 
+					"HID="+hid
 					+ "&IDI=ES"
 					+ "&LEV=000000000000"
 					+ "&FIC="+URLEncoder.encode(fileString, "ISO-8859-1")
 					+ "&RUT="
-					+ "&PRG=PTLINK1T"
+					+ "&PRG="+prg
 					+ "&FIN="
 					+ "&EJF="+year
 					+ "&MOD=303";
