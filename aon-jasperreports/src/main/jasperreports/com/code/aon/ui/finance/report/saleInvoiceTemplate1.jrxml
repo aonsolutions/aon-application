@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="48"/>
+	<property name="ireport.y" value="219"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -314,8 +314,8 @@ $P{company}.getWeb().getValue() + " - " + $P{company}.getEmail().getValue()
 				</textElement>
 				<textFieldExpression><![CDATA[$F{comments}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement uuid="c1136c3d-9df5-4783-b2b1-d55b71872aa9" key="textField-54" positionType="Float" x="21" y="503" width="66" height="15">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c1136c3d-9df5-4783-b2b1-d55b71872aa9" key="textField-54" positionType="Float" x="21" y="503" width="66" height="15" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[new Boolean($F{comments} != null && !"".equals($F{comments}))]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -424,7 +424,13 @@ $P{company}.getWeb().getValue() + " - " + $P{company}.getEmail().getValue()
 			<componentElement>
 				<reportElement uuid="0352b315-8de6-4018-9f53-169b0ddea6c3" key="detail" positionType="Float" x="21" y="171" width="489" height="31"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="detail" uuid="9ec0663e-63a4-4f36-ae8b-8f359a212129">
+					<datasetRun subDataset="detail" uuid="ff31ac8d-7717-476b-aa7e-aa8d7e446ba3">
+						<datasetParameter name="printProductCode">
+							<datasetParameterExpression><![CDATA[$P{printProductCode}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="printReferenceCode">
+							<datasetParameterExpression><![CDATA[$P{printReferenceCode}]]></datasetParameterExpression>
+						</datasetParameter>
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(false), new Boolean(false)))]]></dataSourceExpression>
 					</datasetRun>
 					<jr:column width="367" uuid="21da8e27-845d-4ac0-b3bd-3c6d3130c7ad">
@@ -760,8 +766,8 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 				</textElement>
 				<textFieldExpression><![CDATA[" €"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement uuid="377116f7-820d-4987-a206-356e63b6e748" key="textField-54" positionType="Float" x="21" y="488" width="66" height="15">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="377116f7-820d-4987-a206-356e63b6e748" key="textField-54" positionType="Float" x="21" y="488" width="66" height="15" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -1071,7 +1077,7 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 				</graphicElement>
 			</line>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="e979ddbf-1533-4664-b79a-964e7dfc065e" key="textField-56" positionType="FixRelativeToBottom" x="21" y="38" width="489" height="10"/>
+				<reportElement uuid="e979ddbf-1533-4664-b79a-964e7dfc065e" key="textField-56" positionType="FixRelativeToBottom" x="21" y="38" width="489" height="10" isRemoveLineWhenBlank="true"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1090,7 +1096,7 @@ $P{address}.getFullAddress()
 : "")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="a6bd1d77-599d-44b4-b7e3-a7861161282c" key="textField-56" positionType="FixRelativeToBottom" x="21" y="25" width="489" height="10"/>
+				<reportElement uuid="a6bd1d77-599d-44b4-b7e3-a7861161282c" key="textField-56" positionType="FixRelativeToBottom" x="21" y="25" width="489" height="10" isRemoveLineWhenBlank="true"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1109,7 +1115,7 @@ $P{address}.getFullAddress()
     : "")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="d127d4d4-cb3a-42da-a789-20903ad09666" key="textField-56" positionType="FixRelativeToBottom" x="21" y="48" width="489" height="10"/>
+				<reportElement uuid="d127d4d4-cb3a-42da-a789-20903ad09666" key="textField-56" positionType="FixRelativeToBottom" x="21" y="48" width="489" height="10" isRemoveLineWhenBlank="true"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

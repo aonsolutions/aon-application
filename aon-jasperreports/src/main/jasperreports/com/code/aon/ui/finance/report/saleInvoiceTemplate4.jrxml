@@ -738,7 +738,13 @@
 			<componentElement>
 				<reportElement uuid="f89c7b02-5ec7-47d2-98a4-c2bf5f2856c5" key="detail" positionType="Float" mode="Opaque" x="21" y="217" width="489" height="15" backcolor="#F0F0F0"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="detail" uuid="3df7b8af-5e5a-4449-8c8e-d613b0375a93">
+					<datasetRun subDataset="detail" uuid="8f94f923-21f0-45ad-94f4-ac60a27d8ca5">
+						<datasetParameter name="printProductCode">
+							<datasetParameterExpression><![CDATA[$P{printProductCode}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="printReferenceCode">
+							<datasetParameterExpression><![CDATA[$P{printReferenceCode}]]></datasetParameterExpression>
+						</datasetParameter>
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(false), new Boolean(false)))]]></dataSourceExpression>
 					</datasetRun>
 					<jr:column width="372" uuid="7b54d30c-32bd-4376-921d-278ad3147adb">
