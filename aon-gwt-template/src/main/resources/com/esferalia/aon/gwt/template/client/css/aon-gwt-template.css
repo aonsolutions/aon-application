@@ -53,4 +53,9 @@
 	height: 16px;
 }
 
+.gwt-PopupPanel-template{
+	top:20% !important;
+	left:35% !important;
+}
+
 }

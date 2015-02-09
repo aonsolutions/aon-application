@@ -108,4 +108,6 @@ public interface IDocument extends RemoteService{
 	public void downloadMultiple(Vector<FileInfo> fvector);
 	
 	public Vector<FileInfo> insertFileMultiple(FileInfo fi);
+	
+	public void copyLink(FileInfo doc);
 }

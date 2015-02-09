@@ -60,6 +60,8 @@ import com.google.gwt.view.client.ProvidesKey;
 		private byte[] data;
 		private String mimeString;
 		
+		private String md5;
+		
 		public FileInfo() {
 			// TODO Apéndice de constructor generado automáticamente
 		}
@@ -304,6 +306,14 @@ import com.google.gwt.view.client.ProvidesKey;
 
 		public void setMimeString(String mimeString) {
 			this.mimeString = mimeString;
+		}
+
+		public String getMd5() {
+			return md5;
+		}
+
+		public void setMd5(String md5) {
+			this.md5 = md5;
 		}
 
 		

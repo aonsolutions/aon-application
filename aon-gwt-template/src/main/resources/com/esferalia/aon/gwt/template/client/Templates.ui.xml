@@ -10,7 +10,6 @@
 	<ui:style>
 
 		@external .gwt-MenuBarPopup;
-		@external .gwt-PopupPanel;
 
 		.gwt-MenuBarPopup {
     		margin: 0px !important;
@@ -19,11 +18,7 @@
     		padding: 4px 0px !important;
     		box-shadow: 2px 2px 5px 1px #EBEBEF !important;
 		}
-		
-		.gwt-PopupPanel{
-			top:20% !important;
-			left:35% !important;
-		}
+	
 	</ui:style>
 	
 	

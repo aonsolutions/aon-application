@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -64,12 +65,16 @@ public class OpenDocumentConverterServlet extends HttpServlet {
 
 			String requestURI = req.getRequestURI();
 			String extension = AonServletUtils.getExtn(requestURI);
-			String rattachIdStr = AonServletUtils.getWithoutExtn(requestURI);
-			int rattachId = Integer.parseInt(rattachIdStr);
+			String md5 = AonServletUtils.getWithoutExtn(requestURI);
+			//int rattachId = Integer.parseInt(rattachIdStr);
+			Map<String, String[]> params = req.getParameterMap();
+			Integer id = null;
+			if(params.containsKey("id"))
+				 id = Integer.parseInt(req.getParameter("id"));
 
 			MimeType mimeType = MimeType.getByExtension(extension);
 			
-			ViewerUtils.RAttach rattach = ViewerUtils.getRAttach(rattachId);
+			ViewerUtils.RAttach rattach = ViewerUtils.getRAttach(id);
 			
 			resp.setContentType(mimeType.getName());
 			OutputStream os = resp.getOutputStream();
@@ -95,14 +100,14 @@ public class OpenDocumentConverterServlet extends HttpServlet {
 			} else { 
 				String tmpDir = System.getProperty("java.io.tmpdir");
 				File inputFile = 
-						new File(tmpDir, rattachId + "." + rattach.mimeType.getExtension() ); 
+						new File(tmpDir, md5 + "." + rattach.mimeType.getExtension() ); 
 				FileOutputStream inputFileOs = 
 						new FileOutputStream(inputFile);
 				inputFileOs.write(rattach.bytes);
 				inputFileOs.close();
 				
 				File outputFile = 
-						new File(tmpDir, rattachId + "." + mimeType.getExtension() ); 
+						new File(tmpDir, md5 + "." + mimeType.getExtension() ); 
 				convert(inputFile, outputFile);
 				InputStream outputFileIs = 
 						new FileInputStream(outputFile);

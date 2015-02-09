@@ -7,6 +7,9 @@ import gwtupload.client.IUploader.OnFinishUploaderHandler;
 import gwtupload.client.MultiUploader;
 import gwtupload.client.SingleUploader;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -171,6 +174,28 @@ public class Documents extends Composite implements EntryPoint {
 			};
 		};
 		
+
+		ScheduledCommand copyLinkCommand = new ScheduledCommand() {
+			public void execute() {
+
+				FileInfo object;
+				if(selFiles.size() == 1) object = selFiles.get(0);
+				else object= dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
+				idoc.copyLink(object, new AsyncCallback<Void>() {
+					
+					@Override
+					public void onSuccess(Void result) {
+						
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
+				
+				
+			};
+		};
+		
 		ScheduledCommand shareCommand = new ScheduledCommand() {
 			public void execute() {
 
@@ -193,6 +218,7 @@ public class Documents extends Composite implements EntryPoint {
 		private MenuItem editItem;
 		private MenuItem removeItem;
 		private MenuItem batchItem;
+		private MenuItem copyLinkItem;
 		private MenuItem shareItem;
 		private MenuItem downloadItem;
 		private MenuItem infoItem;
@@ -244,6 +270,8 @@ public class Documents extends Composite implements EntryPoint {
 					batchItem.setEnabled(true);
 				}
 				addSeparator();
+				copyLinkItem = addItem("Copiar Link",copyLinkCommand,
+						"aon-icon-copy",AON.AON_ICON_CMD_BUTTON);
 				shareItem = addItem("Compartir",shareCommand,
 						"aon-icon-google-drive",AON.AON_ICON_CMD_BUTTON);
 				shareItem.setEnabled(true);
@@ -2579,6 +2607,38 @@ public class Documents extends Composite implements EntryPoint {
 
 		dataGrid.setColumnWidth(nameColumn, 30, Unit.PCT);
 
+		/** Scope Column **/
+		Column<FileInfo, String> scopeColumn = new Column<FileInfo, String>(
+				new TextCell()) {
+			@Override
+			public String getValue(FileInfo object) {
+				if(object.getScope() ==  null)
+					return "-";
+				return object.getScope().getName();
+			}
+		};
+		scopeColumn.setSortable(true); 
+		 sortHandler.setComparator(scopeColumn,new Comparator<FileInfo>() {
+			
+			@Override
+			public int compare(FileInfo o1, FileInfo o2) {
+				String a;String b;
+				if(o1.getScope() == null)
+					a = "-";
+				else a = o1.getScope().getName();
+				if(o2.getScope() == null)
+					b = "-";
+				else b = o2.getScope().getName();
+				return a.compareTo(b);
+			}
+		});
+
+		dataGrid.getColumnSortList().push(scopeColumn);
+		
+		dataGrid.addColumn(scopeColumn, "\u00c1mbito");
+
+		dataGrid.setColumnWidth(scopeColumn, 16, Unit.PCT);
+		
 		/** Category Column **/
 		Column<FileInfo, String> categoryColumn = new Column<FileInfo, String>(
 				new TextCell()) {

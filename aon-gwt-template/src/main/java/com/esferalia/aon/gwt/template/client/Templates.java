@@ -438,6 +438,7 @@ public class Templates extends Composite implements EntryPoint {
 				});
 			}
 		};
+		popup.addStyleName("gwt-PopupPanel-template");
 		popup.setGlassEnabled(true);
 		popup.show();
 	}
@@ -469,6 +470,7 @@ public class Templates extends Composite implements EntryPoint {
 				});
 			}
 		};
+		popup.addStyleName("gwt-PopupPanel-template");
 		popup.setGlassEnabled(true);
 		popup.show();
 	}
@@ -519,6 +521,7 @@ public class Templates extends Composite implements EntryPoint {
 				});
 			}
 		};
+		popup.addStyleName("gwt-PopupPanel-template");
 		popup.setGlassEnabled(true);
 		popup.show();
 	}
@@ -571,6 +574,7 @@ public class Templates extends Composite implements EntryPoint {
 				
 			}
 		};
+		popup.addStyleName("gwt-PopupPanel-template");
 		popup.setGlassEnabled(true);
 		popup.show();
 	}

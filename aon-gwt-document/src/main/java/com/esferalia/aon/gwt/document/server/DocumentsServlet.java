@@ -3,6 +3,9 @@ package com.esferalia.aon.gwt.document.server;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -65,6 +68,7 @@ import com.esferalia.aon.gwt.document.client.IDocument;
 import com.esferalia.aon.gwt.document.client.Utils;
 import com.esferalia.aon.gwt.document.jooq.DBConsults;
 import com.esferalia.aon.gwt.document.jooq.SendEmailDialogJooq;
+import com.esferalia.aon.gwt.document.server.OpenDocument2ImageServlet.CheckSum;
 import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.ContactList;
 import com.esferalia.aon.gwt.document.shared.Document;
@@ -861,6 +865,11 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	//-------------------- Visualizar Archivo
 
 	public String getAsHTML(FileInfo doc, int zoom) {
+		
+
+		doc = setmd5(doc);
+	
+		
 		IDocument2HtmlConverter converter = 
 				getDocument2HtmlConverter(doc);
 		try {
@@ -873,8 +882,63 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			throw new IllegalArgumentException(e);
 		}
 	}
+	public void copyLink(FileInfo doc){
+		doc = setmd5(doc);
+		String md5 =doc.getMd5();
+		String link = "http://novus.aibanez.net/aon-aio/aonDocuments/"+ doc.getFileId() +"-"+ md5;
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		StringSelection data = new StringSelection(link);
+		clipboard.setContents(data, data);
+	}
+	public FileInfo setmd5(FileInfo doc){
+		ViewerUtils.RAttach rattach = null;
+		try {
+			rattach = ViewerUtils.getRAttach(doc.getFileId());
+		} catch (SQLException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		doc.setDriveId(rattach.driveId);
+		doc.setDomainId(rattach.domainId);
+		if(doc.getDriveId()!= null){
+        	Drive d = null;
+        	if(doc.getIsDrive()){
+        		d = GoogleDriveController.dconnection;
+        	}
+        	else{
+        		DomainGserviceaccount g = null;
+        		try {
+					g = DatabaseSync.getServiceAccount(doc.getDomainId());
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				try {
+					d = DriveUtils.serviceInitialize(g);
+				} catch (IOException | GeneralSecurityException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        	}
+			com.google.api.services.drive.model.File f = null;
+			try {
+				f = d.files().get(doc.getDriveId()).execute();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			doc.setMd5(f.getMd5Checksum());
+			
+		}
+		else {
+			byte[] b = rattach.bytes;
+			doc.setMd5(CheckSum.getMD5Checksum(b));
+		}
+		return doc;
+	}
 	
-private IDocument2HtmlConverter getDocument2HtmlConverter(FileInfo document) {
+	
+	private IDocument2HtmlConverter getDocument2HtmlConverter(FileInfo document) {
 		
 		MimeType mimeType = MimeType.values()[document.getMimetype()];
 		return DOC2HTML_CONVERTERS.get(mimeType);
@@ -969,14 +1033,15 @@ private static class OpenDocument2HtmlConverter implements IDocument2HtmlConvert
 				double width =  pdfPage.getBBox().getWidth() * zoom / 100 ;
 				double height = pdfPage.getBBox().getHeight() * zoom / 100 ;
 				
-				printStream.printf("<div class='page' style='width:%dpx;height:%dpx;'   ><img src='openDocument2Image/%d.png?%s=%d&%s=%d'></img> </div>",
+				printStream.printf("<div class='page' style='width:%dpx;height:%dpx;'   ><img src='openDocument2Image/%s.png?%s=%d&%s=%d&id=%d'></img> </div>",
 						(long)width,
 						(long)height,
-						doc.getFileId(),
+						doc.getMd5(),
 						OpenDocument2ImageServlet.PAGE_PARAM,
 						page,
 						OpenDocument2ImageServlet.ZOOM_PARAM,
-						zoom);
+						zoom,
+						doc.getFileId());
 			}		
 		}
 
@@ -1007,9 +1072,10 @@ private static class Image2HtmlConverter implements IDocument2HtmlConverter {
 		
 		MimeType mimeType = MimeType.values()[doc.getMimetype()];
 		
-		printStream.printf("<div class='page'  ><img src='openDocumentConverter/%d.%s'></img> </div>",
-				doc.getFileId(),
-				mimeType.getExtension());
+		printStream.printf("<div class='page'  ><img src='openDocumentConverter/%s.%s?id=%d'></img> </div>",
+				doc.getMd5(),
+				mimeType.getExtension(),
+				doc.getFileId());
 	}
 }
 private abstract static class Document2HtmlConverter implements IDocument2HtmlConverter{
