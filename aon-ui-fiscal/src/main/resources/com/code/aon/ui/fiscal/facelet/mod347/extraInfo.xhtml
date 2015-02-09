@@ -63,12 +63,14 @@
 									reRender="mod347_operatorNif" size="9"/>
 								<aon:div id="mod347_operatorNif">
 									<aon:selectOneMenu id="mod347_detail_intracommunityCountry"
-										disabled="#{mod347Detail.to.document != null and mod347Detail.to.document != ''}" 
+										disabled="#{mod347Detail.to.document != null and mod347Detail.to.document != ''}"
+										reRender="mod347_detail_document" ajaxSingle="true" 
 										value="#{mod347Detail.to.intracommunityCountry}">
 										<f:selectItem value="#{null}" itemLabel="-"/>
 										<f:selectItems value="#{commonCollections.europeanUnionCountries}" />
 									</aon:selectOneMenu>
-									<aon:inputText id="mod347_intracommunityDocument" 
+									<aon:inputText id="mod347_intracommunityDocument"
+										reRender="mod347_detail_document" ajaxSingle="true" 
 										disabled="#{mod347Detail.to.document != null and mod347Detail.to.document != ''}"
 										value="#{mod347Detail.to.intracommunityDocument}" size="15" maxlength="15"/>
 								</aon:div>

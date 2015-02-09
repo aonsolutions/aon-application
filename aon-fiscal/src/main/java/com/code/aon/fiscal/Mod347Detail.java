@@ -25,7 +25,7 @@ public class Mod347Detail extends Mod347DetailDB {
 		return StringUtils.isBlank(c)?null:Country.valueOf(c);
 	}
 	public void setIntracommunityCountry(Country intracommunityCountry) {
-		setOperatorNif((intracommunityCountry==null?"":intracommunityCountry.getValue()) + getIntracommunityDocument()); 
+		setOperatorNif((intracommunityCountry==null?"  ":intracommunityCountry.getValue()) + getIntracommunityDocument()); 
 	}
 	@Transient
 	public String getIntracommunityDocument() {
