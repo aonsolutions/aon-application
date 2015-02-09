@@ -117,7 +117,8 @@
 													actionListener="#{mod115.onEditSearch}"
 													title="#{bundle.fiscal_model_115_module}" >
 													<aon:outputText styleClass="aon-fiscal-link-box" value="115" />
-													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_115_module}" />
+													<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
+													style="margin-left: 5px; padding-left: 20px;" value="#{bundle.fiscal_model_115_module}" />
 												</aon:commandLink>
 <!-- 												
 											</aon:if>
@@ -138,7 +139,8 @@
 													actionListener="#{mod123.onEditSearch}"
 													title="#{bundle.fiscal_model_123_module}">
 													<aon:outputText styleClass="aon-fiscal-link-box" value="123" />
-													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_123_module}" />
+													<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
+													style="margin-left: 5px; padding-left: 20px;" value="#{bundle.fiscal_model_123_module}" />
 												</aon:commandLink>
 											</aon:if>
 
@@ -184,9 +186,7 @@
 												action="gwt_mod193"
 												title="#{bundle.fiscal_model_193_module}">
 												<aon:outputText styleClass="aon-fiscal-link-box" value="193" />
-												<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-													style="margin-left: 5px; padding-left: 20px;" 
-													value="#{bundle.fiscal_model_193_module}" />
+												<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_193_module}" />
 											</aon:commandLink>
 												
 											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
