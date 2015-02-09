@@ -1,13 +1,17 @@
 package com.code.aon.ui.audit;
 
+import static com.esferalia.aon.jooq.tables.Action.ACTION;
+import static com.esferalia.aon.jooq.tables.ActionEntry.ACTION_ENTRY;
+import static com.esferalia.aon.jooq.tables.DomainApplication.DOMAIN_APPLICATION;
+import static com.esferalia.aon.jooq.tables.Session.SESSION;
+
+import java.sql.Timestamp;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.hibernate.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,68 +21,78 @@ import com.code.aon.audit.ActionEntry;
 import com.code.aon.audit.ActionFavorite;
 import com.code.aon.audit.DomainApplicationModule;
 import com.code.aon.audit.ProfileActionDenied;
-import com.code.aon.audit.Session;
 import com.code.aon.audit.enumeration.AuditLevel;
 import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Application;
-import com.code.aon.config.DomainApplication;
-import com.code.aon.config.User;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.audit.controller.ApplicationOptionController;
 import com.code.aon.ui.audit.controller.IAuditConstants;
+import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.jooq.tables.records.ActionRecord;
+import com.esferalia.aon.jooq.tables.records.SessionRecord;
+import com.esferalia.aon.occam.api.AONContext;
 
 public class AuditManager implements IAuditConstants {
 	
 	/** Obtiene un logger apropiado. */
 	private final static Logger LOGGER = LoggerFactory.getLogger(AuditManager.class);
 	
-	public static final String AUDIT_SESSION_PROPERTY = "com.code.aon.audit.session";	
+	public static final String AUDIT_SESSION_PROPERTY = "com.code.aon.audit.sessionId";	
+	
+	public static final String AUDIT_DOMAIN_PROPERTY = "com.code.aon.audit.domainId";
 	
 	public static final String AUDIT_LEVEL_PROPERTY = "com.code.aon.audit.level";
-	
-	public static final String AUDIT_SESSION_MANAGER_BEAN = "com.code.aon.audit.session.managerBean";
 	
 	public static Application getApplication( AuthPrincipal principal ) throws ManagerBeanException {
 		IManagerBean applicationBean = BeanManager.getManagerBean(Application.class);
 		return (Application) applicationBean.get(principal.getApplicationId());
 	}
 	
-	private static User getUser( Integer userId ) {
-		String sessionFactoryName = HibernateUtil.getSessionFactoryName(User.class.getName());
-		User user = (User) HibernateUtil.getSession(sessionFactoryName).get(User.class, userId);
-		HibernateUtil.closeSession(sessionFactoryName, false);
-		return user;
-	}
-	
-	private static void insertSession( HttpSession httpSession, Session session, AuditLevel level ) throws ManagerBeanException {
-		IManagerBean sessionBean = BeanManager.getManagerBean(Session.class);
-		sessionBean.insert( session );
-		LOGGER.info( "Session inserted {}", session );
-		httpSession.setAttribute( AuditManager.AUDIT_LEVEL_PROPERTY, level );
-		httpSession.setAttribute( AuditManager.AUDIT_SESSION_PROPERTY, session );
-		httpSession.setAttribute( AuditManager.AUDIT_SESSION_MANAGER_BEAN, sessionBean );
+	private static void insertSession( HttpSession httpSession, SessionRecord session, AuditLevel level ) {
+		AONContext ctx = getContext(httpSession, session.getDomain());
+		try {
+			SessionRecord _session = ctx.getDslContext()
+					.insertInto(SESSION).set(session).returning(SESSION.ID).fetchOne();
+			if ( _session != null ) {
+				LOGGER.info( "Session inserted {}", _session.getId() );		
+				httpSession.setAttribute( AuditManager.AUDIT_SESSION_PROPERTY, _session.getId() );
+				httpSession.setAttribute( AuditManager.AUDIT_DOMAIN_PROPERTY, session.getDomain() );
+			}
+		} catch ( Throwable th ) {
+			LOGGER.error(th.getMessage(), th);
+		} finally {
+			ctx.finalize();
+		}
 	}
 
-	public static void closeLoginAudit( HttpSession httpSession ) throws ManagerBeanException {
-		Session session = AuditManager.getSession(httpSession);
-		if ( session != null ) {
-			IManagerBean sessionBean = (IManagerBean) httpSession.getAttribute( AuditManager.AUDIT_SESSION_MANAGER_BEAN );
-			session.setEndDate( new Date() );
-			sessionBean.update( session );
-			LOGGER.info( "Session finished {}", session.getId() );
-			httpSession.removeAttribute( AuditManager.AUDIT_LEVEL_PROPERTY );
-			httpSession.removeAttribute( AuditManager.AUDIT_SESSION_PROPERTY );
-			httpSession.removeAttribute( AuditManager.AUDIT_SESSION_MANAGER_BEAN );
+	public static void closeLoginAudit( HttpSession httpSession ) {
+		Integer sessionId = AuditManager.getSessionId(httpSession);
+		if ( sessionId != null ) {
+			LOGGER.info( "Session finished {}", sessionId );
+			AONContext ctx = getContext(httpSession, getDomainId(httpSession));
+			try {
+				ctx.getDslContext().update(SESSION)
+				.set(SESSION.ENDDATE, new java.sql.Timestamp(new Date().getTime()) )
+				.where(SESSION.ID.eq(sessionId))
+				.execute();	
+			} catch ( Throwable th ) {
+				LOGGER.error(th.getMessage(), th);
+			} finally {
+				ctx.finalize();
+			}
 		}
+		httpSession.removeAttribute( AuditManager.AUDIT_LEVEL_PROPERTY );
+		httpSession.removeAttribute( AuditManager.AUDIT_SESSION_PROPERTY );
+		httpSession.removeAttribute( AuditManager.AUDIT_DOMAIN_PROPERTY );
 	}
 	
 	private static boolean isMenuAction( String name ) {
@@ -107,31 +121,64 @@ public class AuditManager implements IAuditConstants {
 		return action;
 	}	
 	
-	public static void createActionEntry( Session session, Action action ) throws ManagerBeanException {
-		ActionEntry ae = new ActionEntry();
-		ae.setSession( session );
-		ae.setAction(action);
-		ae.setExecutionDate( new Date() );
-		ae.setDomain( session.getDomain() );
-		IManagerBean actionEntryBean = BeanManager.getManagerBean(ActionEntry.class);
-		actionEntryBean.insert( ae );
-		LOGGER.debug( "ActionEntry inserted {}", ae );
+	public  static Integer getActionId( String name, Integer domainId, Integer applicationId ) {
+		Integer actionId = null;
+		AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), domainId);
+		try {
+			actionId = ctx.getDslContext()
+					.select(ACTION.ID)
+					.from(ACTION)
+					.where(ACTION.APPLICATION.eq(applicationId).and(
+							ACTION.NAME.eq(name)))
+					.fetchOne(0, Integer.class);	
+			if ( actionId == null ) {
+				ActionRecord action = ctx.getDslContext().insertInto(ACTION)
+					.set(ACTION.NAME, name)
+					.set(ACTION.APPLICATION, applicationId)
+					.set(ACTION.MENU, (byte) (isMenuAction(name) ? 1 : 0) )
+					.returning(ACTION.ID).fetchOne();
+				actionId = (action != null) ? action.getId() : null;
+			}
+		} catch ( Throwable th ) {
+			LOGGER.error(th.getMessage(), th);
+		} finally {
+			ctx.finalize();	
+		}				
+		return actionId;
+	}	
+	
+	public static void createActionEntry( Integer sessionId, Integer domainId, Integer actionId ) {
+		AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), domainId);
+		try {
+			ctx.getDslContext().insertInto(ACTION_ENTRY)
+				.set(ACTION_ENTRY.SESSION_ID, sessionId)
+				.set(ACTION_ENTRY.ACTION_ID, actionId)
+				.set(ACTION_ENTRY.EXECUTIONDATE, new java.sql.Timestamp(new Date().getTime()) )
+				.set(ACTION_ENTRY.DOMAIN, domainId)
+				.execute();			
+		} catch ( Throwable th ) {
+			LOGGER.error(th.getMessage(), th);
+		} finally {
+			ctx.finalize();	
+		}				
 	}
 
-	private static AuditLevel getAuditLevel( Application application, int domain ) throws ManagerBeanException {
+	private static AuditLevel getAuditLevel( Integer applicationId, int domain ) {
 		AuditLevel level = AuditLevel.NONE;
-		String sessionFactoryName = HibernateUtil.getSessionFactoryName(User.class.getName());
-		String q = "SELECT dp FROM DomainApplication dp  "
-			+ " WHERE dp.application = " + application.getId()
-			+ " AND dp.domain = " + domain;
-		Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(q);
-		List<?> queryList = query.list();
-		Iterator<?> iterator = queryList.iterator();
-		if (iterator.hasNext()) {
-			DomainApplication dp = (DomainApplication) iterator.next();
-			level = dp.getAuditLevel();
-		}
-		HibernateUtil.closeSession(sessionFactoryName, false);
+		AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), domain);
+		try {
+			byte value = ctx.getDslContext()
+					.select(DOMAIN_APPLICATION.AUDIT_LEVEL)
+					.from(DOMAIN_APPLICATION)
+					.where(DOMAIN_APPLICATION.APPLICATION.eq(applicationId).and(
+							DOMAIN_APPLICATION.DOMAIN.eq(domain)))
+					.fetchOne(0, Byte.class);
+			level = AuditLevel.values()[value];
+		} catch ( Throwable th ) {
+			LOGGER.error(th.getMessage(), th);
+		} finally {
+			ctx.finalize();	
+		}				
 		return level;
 	}	
 	
@@ -139,25 +186,21 @@ public class AuditManager implements IAuditConstants {
 		try {
 			LOGGER.info( "Domain {}", domain );
 			LOGGER.info( "Principal {}", principal );
-			Application application = AuditManager.getApplication(principal);
-			LOGGER.info( "Application {}", application );
-			User user = AuditManager.getUser( principal.getUserId() );
-			if ( user != null ) {
-				LOGGER.info( "User {}", user );		
-				AuditLevel level = AuditManager.getAuditLevel(application, domain );
-				if ( level != AuditLevel.NONE ) {
-					Session session = new Session();
-					session.setDomain( domain );
-					session.setApplication( application );
-					session.setUser( user );
-					session.setSessionId( httpSession.getId() );
-					session.setStartDate( new Date(httpSession.getCreationTime()) );
-					session.setRemoteAddress( request.getRemoteAddr() );
-					session.setRemoteHost( request.getRemoteHost() );
-					insertSession( httpSession, session, level );				
-				}
-			} else {
-				LOGGER.error( "User {} not found", principal.getShortName() );
+			Integer applicationId = principal.getApplicationId();
+			LOGGER.info( "Application {}", applicationId );
+			LOGGER.info( "User {}", principal.getUserId() );		
+			AuditLevel level = AuditManager.getAuditLevel(applicationId, domain );
+			httpSession.setAttribute( AuditManager.AUDIT_LEVEL_PROPERTY, level );			
+			if ( level != AuditLevel.NONE ) {
+				SessionRecord session = new SessionRecord();
+				session.setDomain( domain );
+				session.setApplication( applicationId );
+				session.setUserId( principal.getUserId() );
+				session.setSessionId( httpSession.getId() );
+				session.setStartdate( new Timestamp(httpSession.getCreationTime()) );
+				session.setRemoteAddress( request.getRemoteAddr() );
+				session.setRemoteHost( request.getRemoteHost() );
+				insertSession( httpSession, session, level );				
 			}
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error login audit", th );
@@ -191,15 +234,34 @@ public class AuditManager implements IAuditConstants {
 			LOGGER.error( "Error deleting action "+ id + ". " + th.getMessage(), th );
 		}
 	}
+
+	public static AuditLevel getAuditLevel( HttpSession httpSession ) {
+		return (AuditLevel) httpSession.getAttribute( AuditManager.AUDIT_LEVEL_PROPERTY );
+	}
 	
-	public static Session getSession( HttpSession httpSession ) {
-		Session session = (Session) httpSession.getAttribute( AuditManager.AUDIT_SESSION_PROPERTY );
-		if ( session != null ) {
-			if (! session.getSessionId().equals(httpSession.getId()) ) {
-				LOGGER.warn( "Session id changed, stored {}, current {}", session.getSessionId(), httpSession.getId());
-			}
-		}		
-		return session;
+	public static Integer getSessionId( HttpSession httpSession ) {
+		return (Integer) httpSession.getAttribute( AuditManager.AUDIT_SESSION_PROPERTY );
+	}
+
+	public static Integer getDomainId( HttpSession httpSession ) {
+		return (Integer) httpSession.getAttribute( AuditManager.AUDIT_DOMAIN_PROPERTY );
+	}
+	
+	public static AuthPrincipal getAuthPrincipal( HttpSession httpSession ) {
+		AuthPrincipal principal = AonUtil.getAuthPrincipal();
+		if ( principal == null ) {
+			principal = (AuthPrincipal) httpSession.getAttribute(ICommonConstants.PRINCIPAL_SESSION_PROPERTY);
+		}			
+		return principal;
+	}
+	
+	private static AONContext getContext( HttpSession httpSession, Integer domainId ) {
+		AONContext ctx = null;
+		AuthPrincipal principal = getAuthPrincipal(httpSession);
+		if ( principal != null ) {
+			ctx = AONContext.getAONContext(principal.getDomain(), domainId);
+		}
+		return ctx;
 	}
 	
 }

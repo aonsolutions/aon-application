@@ -4,6 +4,8 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
+	
+	<aon:valueParam name="skipEditSelectedTo" default="#{false}" />
 
 	<aon:dataTable id="#{dataTableId}" var="to" rowKeyVar="toIndex" sortMode="#{sortMode}"
 		value="#{dataModel}" rows="#{rows}" rendered="#{showDataTable}"
@@ -11,16 +13,17 @@
 
 		<aon:rowSelector id="#{dataTableId}-select" reRender="#{rowSelectorReRender}"
 			actionListener="#{rowSelectorActionListener}" action="#{rowSelectorAction}"
-			toggleOnClick="#{rowSelectorToggleOnClick}" immediate="#{rowSelectorImmediate}"
+			toggleOnClick="#{rowSelectorToggleOnClick and !skipEditSelectedTo}" immediate="#{rowSelectorImmediate}"
 			focus="#{(focusOnSelect != null)?(focusOnSelect):''}"/>
 
 		<aon:if test="#{!skipSelectButton}">
 			<aon:column styleClass="aon-editDataTable-iconColumn">
 				<aon:commandLink id="#{dataTableId}-selectButton" 
-					styleClass="aon-icon2 #{(skipEditSelectedTo)?'aon-icon-shield':'aon-icon-rowSelector'}"
+					styleClass="aon-icon16 #{(skipEditSelectedTo)?('aon-icon-shield'):('aon-icon-rowSelector')}"
 					title="#{(skipEditSelectedTo)?(bundle.aon_inherited_row):(bundle.aon_selectMsg)}"
 					value="&#160;" immediate="true" ajaxSingle="true" requestDelay="100"
 					action="#{rowSelectorAction}"
+					disabled="#{skipEditSelectedTo}" disabledStyleClass=""
 					actionListener="#{rowSelectorActionListener}"
 					onkeyup="#{dataTableId}KeyUp(this)"
 					onfocus="disableRowSelector();#{dataTableId}SelectRow(this)"

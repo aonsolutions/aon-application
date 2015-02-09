@@ -5,6 +5,7 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_CONTROLLER_
 import static com.code.aon.ui.admin.controller.IAdminConstants.GENERAL_SCOPE;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,7 @@ import com.code.aon.ui.admin.controller.DomainUserController;
 import com.code.aon.ui.admin.controller.IAdminConstants;
 import com.code.aon.ui.admin.controller.UserScopeController;
 import com.code.aon.ui.admin.controller.UserWorkGroupController;
+import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.audit.controller.IAuditConstants;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -119,8 +121,8 @@ public class DomainUserControllerListener extends ControllerAdapter {
 
 	private void updateDeniedOptions( User user ) {
 		ActionDeniedController denied = (ActionDeniedController) AonUtil.getRegisteredBean(IAuditConstants.ACTION_DENIED_CONTROLLER_NAME);
-		denied.initEdit(user);
-		denied.updateActionList();
+		Map<String, ApplicationCategory> deniedModules = denied.initEdit(user);
+		denied.updateActionList(deniedModules);		
 	}	
 
 	private void updateScopes( User user ) {

@@ -1,15 +1,26 @@
 package com.code.aon.ui.common.controller;
 
+import static com.esferalia.aon.jooq.tables.User.USER;
+
 import java.io.Serializable;
+import java.sql.Timestamp;
+import java.util.Date;
+
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.occam.api.AONContext;
 
 /**
  * The Class LoggedUser.
@@ -21,6 +32,8 @@ public class LoggedUser implements Serializable {
 	private static final String USER_CLASS = "com.code.aon.config.User";
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(LoggedUser.class);
 	
 	/** The logged. */
 	private boolean logged;
@@ -39,6 +52,7 @@ public class LoggedUser implements Serializable {
 		if ( principal != null ) {
 			this.logged = true;
 			initVariables(principal);
+			updateLastAccess(principal);
 		}
 	}
 		
@@ -75,7 +89,33 @@ public class LoggedUser implements Serializable {
 			HibernateUtil.closeSession(sessionFactoryName, false);
 		}
     }
+    
+    private Timestamp getSessionCreatedTimestamp() {
+    	Timestamp result = null;
+    	FacesContext context = FacesContext.getCurrentInstance();
+    	HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
+    	if ( session != null ) {
+    		result = new Timestamp(session.getCreationTime());
+    	} else {
+    		result = new Timestamp(new Date().getTime());
+    	}
+    	return result;
+    }
 
+	private void updateLastAccess( AuthPrincipal principal ) {
+		AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), DomainManager.getCurrentDomain());
+		try {
+			ctx.getDslContext().update(USER)
+			.set(USER.LASTACCESS, getSessionCreatedTimestamp() )
+			.where(USER.ID.eq(principal.getUserId()))
+			.execute();	
+		} catch ( Throwable th ) {
+			LOGGER.error(th.getMessage(), th);
+		} finally {
+			ctx.finalize();	
+		}				
+	}
+    
     /**
      * Checks if is logged.
      *

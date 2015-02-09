@@ -290,7 +290,7 @@
 									value="#{bundle.admin_domain_management}" />
 							</aon:div>
 						</aon:if>
-						<aon:if test="#{domainSwitcher.parentDomainUserInChildDomain and globalConfig.portalRegistered}">
+						<aon:if test="#{(aonRole.sysAdmin or domainSwitcher.parentDomainUserInChildDomain) and globalConfig.portalRegistered}">
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="portalAccess"
 									action="portalAccess_form"

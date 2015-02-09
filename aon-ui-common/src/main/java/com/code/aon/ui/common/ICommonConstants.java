@@ -84,4 +84,6 @@ public interface ICommonConstants {
 	int TIRANT_EXTERNAL_APP = 1;
 	int DEH_ONLINE_EXTERNAL_APP = 4;	
 	
+	String PRINCIPAL_SESSION_PROPERTY = "com.code.aon.jaas.session";
+	
 }

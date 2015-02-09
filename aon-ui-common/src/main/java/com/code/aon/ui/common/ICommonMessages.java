@@ -240,6 +240,7 @@ public interface ICommonMessages {
 	String REMOVE_DOMAIN_ERROR = "admin_remove_domain_error";
 	String AON_ONE = "aon_module_aonOne";
 	String AON_AIO = "admin_domain_aonAIO";
+	String PAYER_DOMAIN = "admin_domain_payer";
 	
 	String AUDIT_LEVEL = "audit_audit_level";	
 	

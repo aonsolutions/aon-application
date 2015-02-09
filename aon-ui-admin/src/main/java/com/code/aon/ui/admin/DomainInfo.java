@@ -66,11 +66,15 @@ public class DomainInfo implements Serializable {
 	
 	private static final String AUTO_UPDATE = "autoUpdate";
 	
+	private static final String PAYER = "payer";
+	
 	private String name;
 	
 	private DomainInfoType infoType;
 	
 	private String parent;
+	
+	private String payer;
 	
 	private DomainType type;
 	
@@ -120,6 +124,10 @@ public class DomainInfo implements Serializable {
 		String parentValue = properties.getProperty(PARENT);
 		if (! StringUtils.isEmpty(parentValue) ) {
 			this.parent = StringUtils.trimToNull(parentValue);
+		}
+		String payerValue = properties.getProperty(PAYER);
+		if (! StringUtils.isEmpty(payerValue) ) {
+			this.payer = StringUtils.trimToNull(payerValue);
 		}
 		String typeValue = properties.getProperty(TYPE);
 		if (! StringUtils.isEmpty(typeValue) ) {
@@ -312,6 +320,14 @@ public class DomainInfo implements Serializable {
 	public void setAutoUpdate(boolean autoUpdate) {
 		this.autoUpdate = autoUpdate;
 	}
+	
+	public String getPayer() {
+		return payer;
+	}
+
+	public void setPayer(String payer) {
+		this.payer = payer;
+	}
 
 	private void diff( StringBuffer sb, String message, boolean newValue ) {
 		diff( sb, message, newValue ? "+" : "-" );
@@ -372,6 +388,9 @@ public class DomainInfo implements Serializable {
 		if ( isDehOnline() != di.isDehOnline() ) {
 			diff( sb, ICommonMessages.EXTERNAL_DEH_ONLINE, di.isDehOnline() );
 		}
+		if (! StringUtils.equals(getPayer(), di.getPayer()) ) {
+			diff( sb, ICommonMessages.PAYER_DOMAIN, (di.getPayer()!=null?di.getPayer():"-") );
+		}
 		return sb.toString();
 	}
 	
@@ -382,6 +401,9 @@ public class DomainInfo implements Serializable {
 		}
 		if (! StringUtils.isEmpty(parent) ) {
 			properties.setProperty(PARENT, parent);	
+		}
+		if (! StringUtils.isEmpty(payer) ) {
+			properties.setProperty(PAYER, payer);	
 		}
 		if ( type != null ) {
 			properties.setProperty(TYPE, type.toString());	
@@ -453,6 +475,10 @@ public class DomainInfo implements Serializable {
 		Domain parent = domain.getParent();
 		if ( parent != null && parent.getId() != null ) {
 			di.setParent(parent.getName());
+		}
+		Domain payer = bookingInfo.getPayerDomain();
+		if ( payer != null && payer.getId() != null ) {
+			di.setPayer(payer.getName());
 		}
 		di.setType(domain.getType());
 		di.setNumberOfUsers(domain.getMaxDefinedUsers());

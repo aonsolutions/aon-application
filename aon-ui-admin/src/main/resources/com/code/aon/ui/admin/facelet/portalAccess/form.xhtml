@@ -35,19 +35,20 @@
 						<aon:div>
 							<aon:selectBooleanCheckbox id="PortalAccess_active"
 								reRender="portalAccessOptionsDiv,portalAccessUserDiv"
-								value="#{portalAccess.active}" />
+								value="#{portalAccess.info.active}" />
 							<aon:outputLabel for="PortalAccess_payrollPortal"
-								rendered="#{portalAccess.showPayrollPortal and !portalAccess.showInfo and portalAccess.active}"
+								rendered="#{portalAccess.info.showPayrollPortal and
+									!portalAccess.info.showInfo and portalAccess.info.active}"
 								value="#{bundle.menu_integral}" />
 						</aon:div>
 						<aon:div>
-							<aon:div rendered="#{portalAccess.active}">
+							<aon:div rendered="#{portalAccess.info.active}">
 							
 								<aon:div styleClass="aon-margin-top" >
 									<aon:selectOneRadio id="Domain_aonOne" 
 										layout="pageDirection"
-										rendered="#{portalAccess.showPayrollPortal and portalAccess.showInfo}"
-										value="#{portalAccess.payrollPortal}" >
+										rendered="#{portalAccess.info.showPayrollPortal and portalAccess.info.showInfo}"
+										value="#{portalAccess.info.payrollPortal}" >
 										<f:selectItem itemLabel="#{bundle.menu_integral}" itemValue="#{true}" />
 										<f:selectItem itemLabel="#{bundle.admin_portal_show}:" itemValue="#{false}" />
 										<a4j:support event="onchange" ajaxSingle="true"
@@ -56,47 +57,47 @@
 									</aon:selectOneRadio>
 								</aon:div>					
 														
-								<aon:div rendered="#{portalAccess.showInfo}"
+								<aon:div rendered="#{portalAccess.info.showInfo}"
 									style="margin-left:2em;">														
-									<aon:if test="#{portalAccess.showFiscalInfo}">			
+									<aon:if test="#{portalAccess.info.showFiscalInfo}">			
 										<aon:selectBooleanCheckbox id="PortalAccess_fiscalInfo"
-											disabled="#{portalAccess.payrollPortal}"
+											disabled="#{portalAccess.info.payrollPortal}"
 											actionListener="#{portalAccess.onInfoChanged}"
-											value="#{portalAccess.fiscalInfo}">
+											value="#{portalAccess.info.fiscalInfo}">
 										</aon:selectBooleanCheckbox>
 										<aon:outputLabel for="PortalAccess_fiscalInfo"
 											value="#{bundle.admin_portal_fiscal_info}"
-											style="#{(portalAccess.payrollPortal)?'color: graytext;':''}" />
+											style="#{(portalAccess.info.payrollPortal)?'color: graytext;':''}" />
 									</aon:if>							
-									<aon:if test="#{portalAccess.showAccountingInfo}">			
+									<aon:if test="#{portalAccess.info.showAccountingInfo}">			
 										<aon:selectBooleanCheckbox id="PortalAccess_accountingInfo"
-											disabled="#{portalAccess.payrollPortal}"
+											disabled="#{portalAccess.info.payrollPortal}"
 											actionListener="#{portalAccess.onInfoChanged}"
-											value="#{portalAccess.accountingInfo}">
+											value="#{portalAccess.info.accountingInfo}">
 										</aon:selectBooleanCheckbox>
 										<aon:outputLabel for="PortalAccess_accountingInfo"
 											value="#{bundle.admin_portal_accounting_info}"
-											style="#{(portalAccess.payrollPortal)?'color: graytext;':''}" />
+											style="#{(portalAccess.info.payrollPortal)?'color: graytext;':''}" />
 									</aon:if>							
-									<aon:if test="#{portalAccess.showPayrollInfo}">
+									<aon:if test="#{portalAccess.info.showPayrollInfo}">
 										<aon:selectBooleanCheckbox id="PortalAccess_payrollInfo"
-											disabled="#{portalAccess.payrollPortal}"
+											disabled="#{portalAccess.info.payrollPortal}"
 											actionListener="#{portalAccess.onInfoChanged}"
-											value="#{portalAccess.payrollInfo}">
+											value="#{portalAccess.info.payrollInfo}">
 										</aon:selectBooleanCheckbox>
 										<aon:outputLabel for="PortalAccess_payrollInfo"
 											value="#{bundle.admin_portal_payroll_info}"
-											style="#{(portalAccess.payrollPortal)?'color: graytext;':''}" />
+											style="#{(portalAccess.info.payrollPortal)?'color: graytext;':''}" />
 									</aon:if>							
-									<aon:if test="#{portalAccess.showDocumentalInfo}">
+									<aon:if test="#{portalAccess.info.showDocumentalInfo}">
 										<aon:selectBooleanCheckbox id="PortalAccess_documentalInfo"
-											disabled="#{portalAccess.payrollPortal}"
+											disabled="#{portalAccess.info.payrollPortal}"
 											actionListener="#{portalAccess.onInfoChanged}"
-											value="#{portalAccess.documentalInfo}">
+											value="#{portalAccess.info.documentalInfo}">
 										</aon:selectBooleanCheckbox>
 										<aon:outputLabel for="PortalAccess_documentalInfo"
 											value="#{bundle.admin_portal_documental_info}"
-											style="#{(portalAccess.payrollPortal)?'color: graytext;':''}" />
+											style="#{(portalAccess.info.payrollPortal)?'color: graytext;':''}" />
 									</aon:if>
 								</aon:div>				
 
@@ -109,7 +110,7 @@
 			<aon:div styleClass="aon-scroll-area">
 	
 				<aon:div id="portalAccessUserDiv">
-					<aon:panel rendered="#{portalAccess.active}">
+					<aon:panel rendered="#{portalAccess.info.active}">
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_login_user}" />
 						</f:facet>

@@ -25,12 +25,19 @@
 				<aon:inputText id="Domain_name" size="80"
 					value="#{domainSearch.name}" />
 
-				<aon:outputLabel value="#{bundle.admin_domain_parent}" for="Domain_id"/>
+				<aon:outputLabel value="#{bundle.admin_domain_parent}" for="Domain_id-Parent"/>
 				<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml" >
 					<ui:param name="lookupTo" value="#{domainSearch.parent}" />
 					<ui:param name="skipLabel" value="#{true}" />
 					<ui:param name="lookupSuffix" value="-Parent" />
 					<ui:param name="lookupControllerListener" value="#{domainPrint.domainFilter}" />
+				</ui:include>
+
+				<aon:outputLabel value="#{bundle.admin_domain_payer}" for="Domain_id-Payer"/>
+				<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml" >
+					<ui:param name="lookupTo" value="#{domainSearch.payer}" />
+					<ui:param name="skipLabel" value="#{true}" />
+					<ui:param name="lookupSuffix" value="-Payer" />
 				</ui:include>
 				
 				<aon:outputLabel for="Domain_type"
@@ -57,7 +64,15 @@
 							</aon:div>						
 						</a4j:repeat>
 					</a4j:region>
-				</aon:div>								
+				</aon:div>					
+				
+				<aon:outputLabel for="Domain_module"
+					value="#{bundle.admin_modules}" />
+				<aon:selectOneMenu id="Domain_module"
+					value="#{domainSearch.module}">
+					<f:selectItem itemLabel="-" value="#{null}"/>
+					<f:selectItems value="#{auditCollections.modules}" />
+				</aon:selectOneMenu>
 				
 				<aon:outputLabel value="#{bundle.aon_creation_date}" />
 				<aon:div>
@@ -112,6 +127,25 @@
 						value="#{bundle.aon_date_to}:" />
 					<aon:selectInputDate id="Domain_expirationDate-To"
 						value="#{domainSearch.expirationDate[1]}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
+				</aon:div>	
+				
+				<aon:outputLabel value="#{bundle.aon_lastAccess_date}" />
+				<aon:div>
+					<aon:outputLabel for="Domain_lastAccessDate-From"
+						styleClass="aon-form-date-label aon-padding-right" 
+						value="#{bundle.aon_date_from}:" />
+					<aon:selectInputDate id="Domain_lastAccessDate-From"
+						value="#{domainSearch.lastAccessDate[0]}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
+			
+					<aon:outputLabel for="Domain_lastAccessDate-To"
+						styleClass="aon-form-date-label aon-padding-right" 
+						value="#{bundle.aon_date_to}:" />
+					<aon:selectInputDate id="Domain_lastAccessDate-To"
+						value="#{domainSearch.lastAccessDate[1]}"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}" />
 				</aon:div>	

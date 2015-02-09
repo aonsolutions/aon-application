@@ -144,7 +144,13 @@
 						value="#{domainUser.to.passwordExpiration}"
 						timeZone="#{timeZoneController.timeZone}" inputSize="20"
 						popupDateFormat="#{bundle.aon_timestamp2_pattern}"/>
-				</aon:if>								
+				</aon:if>	
+				
+				<aon:outputText value="#{bundle.aon_lastAccess_date}" />
+				<aon:outputText value="#{domainUser.to.lastAccess}" >
+					<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
 			
 			</aon:panelGrid>
 			

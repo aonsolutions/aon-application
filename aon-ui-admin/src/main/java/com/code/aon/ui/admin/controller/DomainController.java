@@ -135,6 +135,8 @@ public class DomainController extends BasicController {
 	private int productDetailLevel;
 	
 	private BookingInfo bookingInfo;
+	
+	private IControllerListener payerDomainFilter;
 
 	private AdminMainController getAdmin() {
 		return (AdminMainController) AonUtil.getRegisteredBean(IAdminConstants.ADMIN_CONTROLLER_NAME);
@@ -260,14 +262,14 @@ public class DomainController extends BasicController {
 		return domain;
 	}
 
-	public void initOEM() throws ManagerBeanException {
+	private void initOEM() throws ManagerBeanException {
 		String oemValue = AppParamUtil.getValue(AppParam.AON_CUSTOMIZE_OEM);
 		this.OEM = StringUtils.equals(oemValue, Boolean.TRUE.toString());
 		this.OEMDomain = getOEMDomain(AppParam.AON_CUSTOMIZE_ID);
 		this.heritableOEMDomain = getOEMDomain(AppParam.AON_CUSTOMIZE_HERITABLE_ID);
 	}
 
-	public void initProductDetailLevel() {
+	private void initProductDetailLevel() {
 		Integer value = AppParamUtil.getValueAsInteger(AppParam.AON_PRODUCT_DETAIL_LEVEL);
 		this.productDetailLevel = (value != null) ? value : 0;
 	}
@@ -383,7 +385,7 @@ public class DomainController extends BasicController {
 		this.heritableOEMDomain = heritableOEMDomain;
 	}
 
-	public void updateDocumental() throws ManagerBeanException {
+	private void updateDocumental() throws ManagerBeanException {
 		DocumentManager.updateLimits(getDomain());
 	}
 
@@ -439,6 +441,10 @@ public class DomainController extends BasicController {
 		if ( domain.getParent() != null && domain.getParent().getId() != null ) {
 			String parent = StringEscapeUtils.escapeHtml(domain.getParent().getDescription());
 			body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_3, parent) );
+		}
+		if (! StringUtils.isEmpty(di.getPayer()) ) {
+			body.append( AonUtil.getMessage(ICommonMessages.PAYER_DOMAIN) ).append(": ");
+			body.append( di.getPayer() ).append("<br/>");
 		}
 		Locale locale = AonUtil.getCurrentLocale();
 		String type = StringEscapeUtils.escapeHtml(di.getType().getName(locale));
@@ -729,25 +735,30 @@ public class DomainController extends BasicController {
 		saveHistory(di, company, RegistryAttachmentType.DOMAIN_BOOK_HISTORY);
 	}
 	
-	public static void saveHistory( DomainInfo di, Company company, RegistryAttachmentType type ) throws ManagerBeanException {
+	public static void saveHistory( DomainInfo di, Company company, RegistryAttachmentType type ) {
 		Date now = new Date();
 		String description = di.getName();
 		if ( type == RegistryAttachmentType.DOMAIN_BOOK_HISTORY ) {
 			description = DomainInfo.DATE_FORMAT.format(now);	
 		}
 		AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), company.getDomain());
-		ctx.getDslContext().insertInto(RATTACH)
-				.set(RATTACH.DOMAIN, company.getDomain())
-				.set(RATTACH.REGISTRY, company.getId())
-				.set(RATTACH.ATTACH_DATE, new java.sql.Date(now.getTime()))
-				.set(RATTACH.TYPE, (byte) type.ordinal())
-				.set(RATTACH.MIMETYPE, (byte) MimeType.MIME_TXT.ordinal())
-				.set(RATTACH.DESCRIPTION, description)
-				.set(RATTACH.DATA, di.getData())
-				.set(RATTACH.CREATION_USER, di.getUser())
-				.set(RATTACH.CREATION_DATE, new Timestamp(now.getTime()))
-				.execute();
-		ctx.finalize();		
+		try {
+			ctx.getDslContext().insertInto(RATTACH)
+			.set(RATTACH.DOMAIN, company.getDomain())
+			.set(RATTACH.REGISTRY, company.getId())
+			.set(RATTACH.ATTACH_DATE, new java.sql.Date(now.getTime()))
+			.set(RATTACH.TYPE, (byte) type.ordinal())
+			.set(RATTACH.MIMETYPE, (byte) MimeType.MIME_TXT.ordinal())
+			.set(RATTACH.DESCRIPTION, description)
+			.set(RATTACH.DATA, di.getData())
+			.set(RATTACH.CREATION_USER, di.getUser())
+			.set(RATTACH.CREATION_DATE, new Timestamp(now.getTime()))
+			.execute();			
+		} catch ( Throwable th ) {
+			LOGGER.error(th.getMessage(), th);
+		} finally {
+			ctx.finalize();	
+		}		
 	}
 	
 	public DataScrollerState getHistoryState() {
@@ -803,6 +814,13 @@ public class DomainController extends BasicController {
 		this.productDetailLevel = productDetailLevel;
 	}
 	
+	public IControllerListener getPayerDomainFilter() {
+		if ( this.payerDomainFilter == null ) {
+			this.payerDomainFilter = new PayerDomainFilter(getDomain(), getParentDomain());
+		}
+		return this.payerDomainFilter;
+	}	
+	
 	private static class ParentDomainFilter extends ControllerAdapter {
 		
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
@@ -852,5 +870,36 @@ public class DomainController extends BasicController {
 		}
 
 	}
+
+	private static class PayerDomainFilter extends ControllerAdapter {
 		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
+		private Domain domain;
+		
+		private Domain parentDomain;
+		
+		public PayerDomainFilter(Domain domain, Domain parentDomain) {
+			this.domain = domain;
+			this.parentDomain = parentDomain;
+		}
+
+		@Override
+		public void beforeModelInitialized(ControllerEvent event)
+				throws ControllerListenerException {
+			IController controller = event.getController();
+			try {					
+				controller.getCriteria().setSkipDomainFilter(true);
+				Integer skipDomainId = (parentDomain != null) ? parentDomain.getId() : domain.getId();
+				String idAlias = controller.getFieldName(IEntityAlias.DOMAIN_ID);
+				controller.getCriteria().addNotEqualExpression(idAlias, skipDomainId);
+				String type = controller.getFieldName(IEntityAlias.DOMAIN_TYPE);
+				controller.getCriteria().addNotEqualExpression(type, DomainType.ADMIN);
+			} catch (ManagerBeanException e) {
+				LOGGER.error("Error filtering offer", e);
+			}
+		}
+		
+	}
+	
 }

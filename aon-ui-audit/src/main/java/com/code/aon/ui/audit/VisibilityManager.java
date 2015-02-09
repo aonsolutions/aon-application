@@ -2,6 +2,7 @@ package com.code.aon.ui.audit;
 
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,15 +40,19 @@ public class VisibilityManager extends BasicVisibilityManager {
 		Set<Module> enabledModules = new HashSet<Module>();
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		Integer domainId = ds.getDomainId();
-		Integer parentDomainId = AdminUtil.getParentDomain(domainId);		
+		Integer parentDomainId = AdminUtil.getParentDomain(domainId);
+		Set<Module> parentDomainModules = Collections.emptySet();
+		if ( parentDomainId != null ) {
+			parentDomainModules = getEnabledModuleList(parentDomainId);
+		}
 		boolean userOfParentDomain = false;
 		if ( user != null ) {
 			userOfParentDomain = ObjectUtils.equals(user.getDomain(), parentDomainId);
 			if ( userOfParentDomain ) {
-				enabledModules.addAll( getEnabledModuleList(false, true) );
+				enabledModules.addAll( parentDomainModules );
 			}
 		}
-		Set<Module> domainModules = getEnabledModuleList(true, false);
+		Set<Module> domainModules = getEnabledModuleList(domainId);
 		boolean addConfiguration = true;
 		if ( domainModules.contains(Module.AON_ONE) ) {
 			boolean addDocumental = domainModules.contains(Module.DOCUMENT);
@@ -59,6 +64,9 @@ public class VisibilityManager extends BasicVisibilityManager {
 			addConfiguration = userOfParentDomain;
 		}
 		enabledModules.addAll( domainModules );
+		enabledModules.remove(Module.PAYROLL_PORTAL);
+		enabledModules.remove(Module.CONTRATA);
+		enabledModules.remove(Module.DOCUMENT_PORTAL);		
 		if ( ds.getType() == DomainType.ACADEMY ) {
 			enabledModules.add(Module.ACADEMY);
 		}
@@ -76,11 +84,16 @@ public class VisibilityManager extends BasicVisibilityManager {
 			enabledModules.add(Module.WAREHOUSE);
 			enabledModules.add(Module.GROUPWARE);
 			enabledModules.add(Module.POS);
+			if ( parentDomainModules.contains(Module.PAYROLL_PORTAL) ) {
+				enabledModules.add(Module.PAYROLL_PORTAL);
+				enabledModules.add(Module.DOCUMENT);
+			}
 		}
 		if ( addConfiguration ) {
 			enabledModules.add(Module.CONFIGURATION);	
 		}
-		if ( (user != null) && (ObjectUtils.equals(user.getDomain(), domainId)) && (DomainType.ENTERPRISE == ds.getType()) ) {
+		if ( (user != null) && (DomainType.ENTERPRISE == ds.getType()) &&
+			(parentDomainId != null) && (ObjectUtils.equals(user.getDomain(), domainId)) ) {
 			if (! hasModule(parentDomainId, Module.FISCAL) ) {
 				enabledModules.remove(Module.FISCAL);
 			}
@@ -88,11 +101,6 @@ public class VisibilityManager extends BasicVisibilityManager {
 				enabledModules.remove(Module.PAYROLL);
 			}
 		}
-		if ( enabledModules.contains(Module.PAYROLL) ) {
-			enabledModules.remove(Module.PAYROLL_PORTAL);
-		}
-		enabledModules.remove(Module.CONTRATA);
-		enabledModules.remove(Module.DOCUMENT_PORTAL);
 		return enabledModules;		
 	}
 

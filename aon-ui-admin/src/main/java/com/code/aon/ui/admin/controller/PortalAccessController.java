@@ -1,7 +1,5 @@
 package com.code.aon.ui.admin.controller;
 
-import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -19,26 +17,21 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.AonVersion;
 import com.code.aon.admin.ApplicationUserProfile;
 import com.code.aon.admin.Profile;
-import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.domain.DomainManager;
-import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationUser;
 import com.code.aon.config.DomainApplication;
 import com.code.aon.config.User;
-import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.admin.PortalInfo;
 import com.code.aon.ui.admin.util.UserIdCheckUtil;
-import com.code.aon.ui.audit.AuditManager;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
-import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -62,17 +55,7 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 	
 	private String confirmPassword;	
 	
-	private int portalValue;
-	
-	private boolean showAccountingInfo;
-	
-	private boolean showFiscalInfo;
-	
-	private boolean showPayrollInfo;
-	
-	private boolean showDocumentalInfo;
-	
-	private boolean showPayrollPortal;
+	private PortalInfo info;
 	
 	private boolean showChangePasswordWindow;
 	
@@ -118,62 +101,25 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 		return null;
 	}
 	
-	public static boolean isPortalActive( int value ) {
-		return (value != 0) && ((value & IAdminConstants.INACTIVE_PORTAL) == 0);
-	}
-	
 	public void onInit( ActionEvent event ) {
 		try {		
-			this.portalValue = AppParamUtil.getValueAsInt(AppParam.AON_PORTAL);
+			this.info = new PortalInfo();
 			this.user = getPortalUser();
 			if ( this.user == null ) {
 				resetTo();
 			} else {
 				updateScopes();
 				if ( StringUtils.isNotEmpty(this.user.getInitAction()) ) {
-					setPayrollPortal(true);
+					this.info.setPayrollPortal(true);
 				}
 			}
-			setActive(isPortalActive(this.portalValue));
-			calculateAvalilableOptions();
+			this.info.init();
 			getIdCheck().setOldValue( getUser().getLogin() );
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onInit",e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
-	}
-	
-	private void calculateAvalilableOptions() {
-		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-		Integer parentDomainId = ds.getParentDomainId();
-		Integer domainId = DomainManager.getCurrentDomain();
-		Integer appId = AonUtil.getAuthPrincipal().getApplicationId();
-		try {
-			this.showAccountingInfo = AuditManager.hasModule(parentDomainId, appId, Module.ACCOUNTING);
-			if (! this.showAccountingInfo ) {
-				setAccountingInfo(false);
-			}
-			this.showFiscalInfo = AuditManager.hasModule(parentDomainId, appId, Module.FISCAL);
-			if (! this.showFiscalInfo ) {
-				setFiscalInfo(false);
-			}
-			this.showPayrollInfo = AuditManager.hasModule(parentDomainId, appId, Module.PAYROLL);
-			if (! this.showPayrollInfo ) {
-				setPayrollInfo(false);
-			}
-			this.showDocumentalInfo = AuditManager.hasModule(parentDomainId, appId, Module.DOCUMENT);
-			if (! this.showDocumentalInfo ) {
-				setDocumentalInfo(false);
-			}
-			this.showPayrollPortal = AuditManager.hasModule(parentDomainId, appId, Module.PAYROLL_PORTAL) ||
-					AuditManager.hasModule(domainId, appId, Module.PAYROLL_PORTAL);
-			if (! this.showPayrollPortal ) {
-				setPayrollPortal(false);
-			}
-		} catch (Throwable e) {
-			LOGGER.error(e.getMessage(), e);
-		}							
 	}
 
 	public void onChangePassword( ActionEvent event ) {
@@ -194,15 +140,14 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 	
 	public void accept( ActionEvent event ) {
 		try {			
-			if ( isActive() ) {
+			if ( info.isActive() ) {
 		        updateUser();	
 			} else {
 				if (this.user.getId() != null) {
 					disableUser();
 				}
 			}
-			setPortalValue(!isActive(), IAdminConstants.INACTIVE_PORTAL);
-			AppParamUtil.insertParameter(AppParam.AON_PORTAL, portalValue);
+			info.update();
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> accept",e);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -212,7 +157,7 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 	
 	private void updateUser() throws ManagerBeanException {
 		boolean isNevv = ( this.user.getId() == null );
-		if ( isPayrollPortal() ) {
+		if ( this.info.isPayrollPortal() ) {
 			this.user.setInitAction(PAYROLL_PORTAL_OPTION);	
 		} else { 
 			this.user.setInitAction(null);
@@ -320,121 +265,33 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 			ApplicationUserProfile aup = (ApplicationUserProfile) to;
 			if ( aup.getProfile().equals(payrollPortalProfile) ) {
 				profileExists = true;
-				if (! (isPayrollPortal() || isPayrollInfo()) ) {
+				if (! (this.info.isPayrollPortal() || this.info.isPayrollInfo()) ) {
 					bean.remove(aup);
 					return;
 				}
 				break;
 			}
 		}
-		if (! profileExists && (isPayrollPortal() || isPayrollInfo())) {
+		if (! profileExists && (this.info.isPayrollPortal() || this.info.isPayrollInfo())) {
 			ApplicationUserProfile aup = new ApplicationUserProfile();
 			aup.setApplicationUser(appUser);
 			aup.setProfile(payrollPortalProfile);
 			bean.insert(aup);
 		}
 	}
-
-	public boolean isActive() {
-		return getPortalValue(IAdminConstants.ACTIVE_PORTAL);
-	}
-
-	public void setActive(boolean active) {
-		setPortalValue(active, IAdminConstants.ACTIVE_PORTAL);
-	}
-
-	private boolean getPortalValue(int bitwise) {
-		return (portalValue & bitwise) != 0;
-	}
-
-	private void setPortalValue(boolean value, int bitwise) {
-		if ( value ) {
-			this.portalValue |= bitwise;	
-		} else {
-			this.portalValue &= (~bitwise);
-		}
-	}
-	
-	public boolean isAccountingInfo() {
-		return getPortalValue(IAdminConstants.ACCOUNTING_PORTAL);
-	}
-		
-	public void setAccountingInfo(boolean fiscalInfo) {
-		setPortalValue(fiscalInfo, IAdminConstants.ACCOUNTING_PORTAL);
-	}	
-	
-	public boolean isShowAccountingInfo() {
-		return this.showAccountingInfo;
-	}
-
-	public boolean isFiscalInfo() {
-		return getPortalValue(IAdminConstants.FISCAL_INFO_PORTAL);
-	}
-		
-	public void setFiscalInfo(boolean fiscalInfo) {
-		setPortalValue(fiscalInfo, IAdminConstants.FISCAL_INFO_PORTAL);
-	}
-
-	public boolean isShowFiscalInfo() {
-		return this.showFiscalInfo;
-	}
-	
-	public boolean isPayrollInfo() {
-		return getPortalValue(IAdminConstants.PAYROLL_INFO_PORTAL);
-	}
-
-	public void setPayrollInfo(boolean payrollInfo) {
-		setPortalValue(payrollInfo, IAdminConstants.PAYROLL_INFO_PORTAL);
-	}
-	
-	public boolean isShowPayrollInfo() {
-		return this.showPayrollInfo;
-	}	
-
-	public boolean isDocumentalInfo() {
-		return getPortalValue(IAdminConstants.DOCUMENTAL_INFO_PORTAL);
-	}
-
-	public void setDocumentalInfo(boolean documentalInfo) {
-		setPortalValue(documentalInfo, IAdminConstants.DOCUMENTAL_INFO_PORTAL);
-	}
-
-	public boolean isShowDocumentalInfo() {
-		return this.showDocumentalInfo;
-	}	
-
-	public boolean isShowInfo() {
-		return isShowDocumentalInfo() || isShowFiscalInfo() || isShowPayrollInfo() || isShowAccountingInfo();
-	}
-	
-	public boolean isInfoEnabled() {
-		return isDocumentalInfo() || isFiscalInfo() || isPayrollInfo() || isAccountingInfo();
-	}
-	
-	public boolean isPayrollPortal() {
-		return getPortalValue(IAdminConstants.PAYROLL_PORTAL);
-	}
-
-	public void setPayrollPortal(boolean payrollPortal) {
-		setPortalValue(payrollPortal, IAdminConstants.PAYROLL_PORTAL);
-	}
-
-	public boolean isShowPayrollPortal() {
-		return this.showPayrollPortal;
-	}
 	
 	public void onInfoChanged( ActionEvent event ) {
-		if ( isInfoEnabled() && isShowPayrollPortal() ) {
-			setPayrollPortal(false);
+		if ( this.info.isInfoEnabled() && this.info.isShowPayrollPortal() ) {
+			this.info.setPayrollPortal(false);
 		}
 	}	
 	
 	public void onPayrollPortalChanged( ActionEvent event ) {
-		if ( isPayrollPortal() && isShowInfo() ) {
-			setFiscalInfo(false);
-			setDocumentalInfo(false);
-			setPayrollInfo(false);
-			setAccountingInfo(false);
+		if ( this.info.isPayrollPortal() && this.info.isShowInfo() ) {
+			this.info.setFiscalInfo(false);
+			this.info.setDocumentalInfo(false);
+			this.info.setPayrollInfo(false);
+			this.info.setAccountingInfo(false);
 		}
 	}
 
@@ -460,6 +317,10 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 
 	public void setShowChangePasswordWindow(boolean showChangePasswordWindow) {
 		this.showChangePasswordWindow = showChangePasswordWindow;
+	}
+
+	public PortalInfo getInfo() {
+		return info;
 	}
 	
 }

@@ -359,6 +359,10 @@ color:#000;
 	margin: 0;
 	padding-left:20px;
 	}
+.aon-icon16{
+	margin: 0;
+	padding: 1px 0 1px 20px;
+	}
 .aon-icon-right{  /* coloca el icono a la derecha del texto*/
 	padding-right:20px;margin-right:10px;
 	background-position:right center !important;

@@ -34,7 +34,7 @@
 					<ui:param name="controller" value="#{domainUser}" />
 					<ui:define name="columns">
 
-						<aon:column styleClass="aon-editDataTable-textColumn"
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"
 							alias="User.login" >
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_login_user}" />
@@ -42,7 +42,7 @@
 							<aon:outputText value="#{to.login}"/>
 						</aon:column>
 
-						<aon:column styleClass="aon-editDataTable-textColumn"
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-200"
 							alias="User.name" >
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_name}" />
@@ -57,6 +57,17 @@
 							<aon:outputText value="#{controller.profileList}"/>
 						</aon:column>
 
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-130"
+							alias="User.lastAccess" >
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.admin_domain_lastAccess}" />
+							</f:facet>							
+							<aon:outputText value="#{to.lastAccess}" >
+								<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>	
+	
 						<aon:column styleClass="aon-width-50 aon-editDataTable-textColumn"
 							alias="User.active" >
 							<f:facet name="header">

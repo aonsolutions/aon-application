@@ -173,6 +173,16 @@
 						</ui:include>
 					</aon:if>
 					
+					<aon:if test="#{aonRole.sysAdmin or (adminDomain.bookingInfo.payerDomain.id != null)}" >
+						<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{adminDomain.bookingInfo.payerDomain}" />
+							<ui:param name="lookupLabel" value="#{bundle.admin_domain_payer}" />
+							<ui:param name="lookupSuffix" value="-Payer" />
+							<ui:param name="lookupDisabled" value="#{!aonRole.sysAdmin}" />
+							<ui:param name="lookupControllerListener" value="#{adminDomain.payerDomainFilter}" />
+						</ui:include>					
+					</aon:if>
+					
 				</aon:panelGrid>
 								
 				<aon:div styleClass="aon-form-group-title aon-margin-top">

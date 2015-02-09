@@ -38,6 +38,25 @@
 						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
 						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
 					</aon:selectOneMenu>
+					
+					<aon:outputText value="#{bundle.admin_domain_lastAccess}" />
+					<aon:div>
+						<aon:outputLabel for="User_lastAccess-From" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_from}:" />
+						<aon:selectInputDate id="User_lastAccess-From"
+							valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}">
+						</aon:selectInputDate>
+				
+						<aon:outputLabel for="User_lastAccess-To" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_to}:" />
+						<aon:selectInputDate id="User_lastAccess-To"
+							valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}">
+						</aon:selectInputDate>
+					</aon:div>						
 
 					<aon:if test="#{aonRole.sysAdmin}" >
 						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >

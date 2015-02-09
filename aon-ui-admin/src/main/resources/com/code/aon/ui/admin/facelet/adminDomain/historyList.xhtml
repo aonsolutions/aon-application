@@ -63,6 +63,12 @@
 			<aon:outputText value="#{bundle.aon_type}" />
 		</f:facet>							
 		<aon:outputText value="#{to.type}" />
+		<aon:div styleClass="aon-margin-left" layout="inline">
+			<aon:outputText value="&#160;"
+				rendered="#{to.payer != null}"
+				title="#{bundle.admin_domain_payer}: #{to.payer}"
+				styleClass="aon-icon16 aon-icon-moneybag" />
+		</aon:div>																												
 	</aon:column>
 	
 	<aon:column styleClass="aon-editDataTable-iconColumn">

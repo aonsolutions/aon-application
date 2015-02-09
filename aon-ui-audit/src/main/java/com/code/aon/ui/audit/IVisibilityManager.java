@@ -40,4 +40,6 @@ public interface IVisibilityManager {
 	
 	void enableOnly( String[] categories, String[] groups, String ... disableOptionIds );
 	
+	void enableCategories( String[] categories );
+	
 }

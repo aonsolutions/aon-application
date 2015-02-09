@@ -27,6 +27,8 @@ public class DomainBookingData extends DomainData {
 	
 	private long maxTotalDocumentSize;
 	
+	private String payerDomain;
+	
 	public DomainBookingData(Integer id, String name, String description, boolean active, boolean enableHeredity,
 			int maxDefinedUsers, Byte type, int maxTotalDocumentSize ) {
 		super( id, name, description, active, enableHeredity );
@@ -104,6 +106,14 @@ public class DomainBookingData extends DomainData {
 
 	public String getMaxTotalDocumentSize() {
 		return FileUtils.byteCountToDisplaySize(maxTotalDocumentSize);
+	}
+
+	public String getPayerDomain() {
+		return payerDomain;
+	}
+
+	public void setPayerDomain(String payerDomain) {
+		this.payerDomain = payerDomain;
 	}
 
 }

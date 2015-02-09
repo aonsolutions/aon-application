@@ -34,7 +34,7 @@
 				</aon:div>			
 				
 				<aon:div styleClass="aon-margin-bottom">
-					<aon:panelCollapsible expanded="false" label="#{bundle.admin_domain_management}" >
+					<aon:panelCollapsible label="#{bundle.admin_domain_management}" >
 						<aon:div styleClass="aon-margin-top">
 						
 							<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
@@ -63,6 +63,12 @@
 											<aon:outputText value="#{bundle.aon_type}" />
 										</f:facet>							
 										<aon:outputText value="#{to.type}" />
+										<aon:div styleClass="aon-margin-left" layout="inline">
+											<aon:outputText value="&#160;"
+												rendered="#{domainBooking.bookingInfo.payerDomain.id != null}"
+												title="#{bundle.admin_domain_payer}: #{domainBooking.bookingInfo.payerDomain.description}"
+												styleClass="aon-icon16 aon-icon-moneybag" />
+										</aon:div>																										
 									</aon:column>
 									
 									<aon:column styleClass="aon-text-center aon-width-40 aon-nowrap">
@@ -132,6 +138,10 @@
 									rendered="#{!to.enableHeredity}"
 									title="#{bundle.aon_domian_disableHeredity}"
 									styleClass="aon-icon2 aon-icon-disableHeredity" />
+								<aon:outputText value="&#160;"
+									rendered="#{to.payerDomain != null}"
+									title="#{bundle.admin_domain_payer}: #{to.payerDomain}"
+									styleClass="aon-icon16 aon-icon-moneybag" />
 							</aon:div>																
 						</aon:column>
 						

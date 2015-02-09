@@ -29,12 +29,9 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.audit.controller.ApplicationOptionController;
 import com.code.aon.ui.common.role.IAonRole;
 import com.code.aon.ui.config.util.UserUtils;
@@ -243,32 +240,17 @@ public abstract class BasicVisibilityManager implements Serializable, IVisibilit
 		return null;
 	}	
 	
-	protected Set<Module> getEnabledModuleList( boolean fromDomain, boolean fromParent ) {
+	protected Set<Module> getEnabledModuleList( Integer domainId ) {
 		Set<Module> enabledModules = new HashSet<Module>();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(DomainApplicationModule.class);
 			Criteria criteria = new Criteria();
 			Integer appId = getApplicationId(); 
-			Integer domainId = DomainManager.getCurrentDomain();
-			String alias = bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_MODULE_DOMAIN_APPLICATION_ID);
-			Expression expression = null;
-			if ( fromDomain ) {
-				Integer domainApplication = AdminUtil.getDomainApplication(domainId, appId);
-				expression = ExpressionUtilities.getEqualExpression(alias, domainApplication);				
-			}
-			if ( fromParent ) {
-		    	Integer parentDomainId = AdminUtil.getParentDomain(domainId);
-		    	if ( parentDomainId != null ) {
-		    		Integer domainApplication = AdminUtil.getDomainApplication(parentDomainId, appId);
-		    		if ( domainApplication != null ) {
-			    		Expression expr2 = ExpressionUtilities.getEqualExpression(alias, domainApplication);
-			    		expression = ExpressionUtilities.getOrExpression(expression, expr2);
-						criteria.setSkipDomainFilter(true);			    		
-		    		}
-		    	}							
-			}
-			if ( expression != null ) {
-				criteria.addExpression(expression);	
+			Integer domainApplication = AdminUtil.getDomainApplication(domainId, appId);
+			if ( domainApplication != null ) {
+				String alias = bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_MODULE_DOMAIN_APPLICATION_ID);
+				criteria.addEqualExpression(alias, domainApplication);
+				criteria.setSkipDomainFilter(true);				
 			}
 			for( ITransferObject to : bean.getList(criteria) ) {
 				DomainApplicationModule dam = (DomainApplicationModule) to;
@@ -326,6 +308,13 @@ public abstract class BasicVisibilityManager implements Serializable, IVisibilit
 				getDeniedActionsMap().put(option.getAction(), option);
 			}
 		}
-	}	
+	}
+
+	@Override
+	public void enableCategories(String[] categories) {
+		for( String category : categories ) {
+			getDeniedModulesMap().remove(category);
+		}
+	}
 	
 }

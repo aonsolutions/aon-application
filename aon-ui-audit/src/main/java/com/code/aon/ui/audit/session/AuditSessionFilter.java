@@ -11,18 +11,12 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.code.aon.audit.Session;
+import com.code.aon.audit.enumeration.AuditLevel;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.audit.AuditManager;
 
 public class AuditSessionFilter implements Filter {
 	
-	/** Obtiene un logger apropiado. */
-	private final static Logger LOGGER = LoggerFactory.getLogger(AuditSessionFilter.class);
-
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 	}
@@ -43,11 +37,9 @@ public class AuditSessionFilter implements Filter {
 			HttpSession httpSession = request.getSession(false);
 
 			if ( httpSession != null) {
-				Session session = AuditManager.getSession(httpSession);
-				if ( session == null ) {
+				AuditLevel auditLevel = AuditManager.getAuditLevel(httpSession);
+				if ( auditLevel == null ) {
 					insertLoginAudit(httpSession, request );
-				} else {
-					LOGGER.info( "Session already exists {}", session );
 				}
 			}
 		}

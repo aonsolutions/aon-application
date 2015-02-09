@@ -17,6 +17,8 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.audit.enumeration.Module;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.Domain;
@@ -49,6 +51,8 @@ public class BookingInfo implements Serializable {
 	
 	private int externalApplications;
 	
+	private Domain payerDomain;
+	
 	public BookingInfo(Domain domain, Domain parentDomain) {
 		this.domain = domain;
 		this.parentDomain = parentDomain;
@@ -74,6 +78,7 @@ public class BookingInfo implements Serializable {
 
 	public boolean init() throws ManagerBeanException {
 		initExternalApplications();
+		initPayerDomain();
 		this.aioInfo = DomainApplicationInfo.getApplicationInfos(getDomain(), AON_AIO_APPLICATION);
 		this.bookingModules = calculateBookingModules();
 		this.displayModules = calculateDisplayModules();
@@ -87,6 +92,18 @@ public class BookingInfo implements Serializable {
 		externalApplications = 0;
 		setTirant(tirant);
 		setDehOnline(dehOnline);
+	}	
+	
+	private void initPayerDomain() throws ManagerBeanException {
+		this.payerDomain = null;
+		IManagerBean bean = BeanManager.getManagerBean(Domain.class);
+		Integer id = AppParamUtil.getValueAsInteger(AppParam.AON_DOMAIN_PAYER);
+		if ( id != null ) {
+			this.payerDomain = (Domain) bean.get(id);
+		}
+		if ( this.payerDomain == null ) {
+			this.payerDomain = (Domain) bean.createNewTo();
+		}
 	}	
 		
 	public List<DomainModuleInfo> getBookingModules() {
@@ -109,6 +126,7 @@ public class BookingInfo implements Serializable {
 	
 	public void save() throws ManagerBeanException {
 		saveExternalApplications();
+		savePayerDomain();
 		if ( isAonOne() ) {
 			updateAonOneModules();
 		}
@@ -120,6 +138,15 @@ public class BookingInfo implements Serializable {
 		init();
 	}	
 	
+	private void savePayerDomain() throws ManagerBeanException {
+		if ( (this.payerDomain != null) && (this.payerDomain.getId() != null) ) {
+			String id = String.valueOf(this.payerDomain.getId());
+			AppParamUtil.insertParameter(AppParam.AON_DOMAIN_PAYER, id );			
+		} else {
+			AppParamUtil.removeParameter(AppParam.AON_DOMAIN_PAYER);
+		}
+	}	
+		
 	private void saveExternalApplications() {
 		if ( externalApplications != 0 ) {
 			AppParamUtil.insertParameter(AppParam.AON_EXTERNAL_APPLICATIONS, externalApplications);	
@@ -317,6 +344,14 @@ public class BookingInfo implements Serializable {
 		setExternalApplicationsValue(ICommonConstants.TIRANT_EXTERNAL_APP, value);
 	}		
 
+	public Domain getPayerDomain() {
+		return payerDomain;
+	}
+
+	public void setPayerDomain(Domain payerDomain) {
+		this.payerDomain = payerDomain;
+	}
+		
 	private void updateEnterpriseModules() throws ManagerBeanException {
 		if ( isAonOne() ) {
 			this.bookingModules.clear();

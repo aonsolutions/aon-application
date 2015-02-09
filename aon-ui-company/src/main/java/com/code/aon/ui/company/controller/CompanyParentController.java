@@ -22,6 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,6 +51,7 @@ import com.code.aon.company.enumeration.FinancePaymentTemplate;
 import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.company.enumeration.SaleInvoiceTemplate;
 import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.Domain;
 import com.code.aon.config.Scope;
 import com.code.aon.config.UserScope;
 import com.code.aon.config.enumeration.DomainType;
@@ -1041,5 +1043,17 @@ public class CompanyParentController extends BasicController implements ICompany
 		}
 		return scopes;
 	}	
+
+	public String getLastAccessUser() throws ManagerBeanException {
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+		Domain domain = (Domain) BeanManager.getManagerBean(Domain.class).get(ds.getDomainId());
+		return domain.getLastAccessUser();
+	}
+
+	public Date getLastAccessDate() throws ManagerBeanException {
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+		Domain domain = (Domain) BeanManager.getManagerBean(Domain.class).get(ds.getDomainId());
+		return domain.getLastAccessDate();
+	}
 	
 }

@@ -7,9 +7,8 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.audit.Action;
-import com.code.aon.audit.Session;
 import com.code.aon.audit.enumeration.AuditLevel;
+import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.common.AonNavigationHandler;
 
 public class AuditNavigationHandler extends AonNavigationHandler {
@@ -23,11 +22,13 @@ public class AuditNavigationHandler extends AonNavigationHandler {
 	
 	private void insertActionEntry( HttpSession httpSession, String name ) {
 		if ( isActionExecutionAuditEnabled(httpSession) ) {		
-			Session session = AuditManager.getSession(httpSession);
-			if ( session != null ) {		
+			Integer sessionId = AuditManager.getSessionId(httpSession);
+			if ( sessionId != null ) {		
 				try {
-					Action action = AuditManager.getAction( name, session.getApplication() );
-					AuditManager.createActionEntry(session, action);
+					AuthPrincipal principal = AuditManager.getAuthPrincipal(httpSession);
+					Integer domainId = AuditManager.getDomainId(httpSession);
+					Integer actionId = AuditManager.getActionId( name, domainId, principal.getApplicationId() );
+					AuditManager.createActionEntry(sessionId, domainId, actionId);
 				} catch ( Throwable th ) {
 					LOGGER.error( "Error in insert action execution", th );
 				}

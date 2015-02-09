@@ -10,7 +10,6 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.AonVersion;
 import com.code.aon.audit.Action;
 import com.code.aon.audit.ActionEntry;
-import com.code.aon.audit.Session;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -67,10 +66,7 @@ public class AuditSessionSearchListener extends ControllerSearchListenerEx {
 		FacesContext ctx = FacesContext.getCurrentInstance();
 		HttpSession httpSession = (HttpSession) ctx.getExternalContext().getSession(false);
 		if ( httpSession != null ) {
-			Session session = AuditManager.getSession(httpSession);
-			if ( session != null ) {		
-				return session.getId();
-			}
+			return AuditManager.getSessionId(httpSession);
 		}
 		return null;
 	}

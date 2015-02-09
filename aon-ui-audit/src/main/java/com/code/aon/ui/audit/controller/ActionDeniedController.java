@@ -211,7 +211,7 @@ public class ActionDeniedController implements Serializable {
 		return sorted;
 	}
 	
-	public void initEdit( User user ) {
+	public Map<String, ApplicationCategory> initEdit( User user ) {
 		setUser(user);
 		this.deniedActions = getManager().getUserDeniedActions(user);
 		Map<String, ApplicationCategory> deniedModules = getManager().getDeniedModules(user, true);
@@ -223,7 +223,8 @@ public class ActionDeniedController implements Serializable {
 		List<ApplicationCategory> categories = getCategories(deniedModules);
 		this.options = new ArrayList<ApplicationOption>( getOptions(categories, true) );
 		this.options.removeAll(profileDeniedOptions);
-		this.options.removeAll(this.selected);		
+		this.options.removeAll(this.selected);
+		return deniedModules;
 	}
 	
 	private String getAction( UICommand command ) {
@@ -372,7 +373,7 @@ public class ActionDeniedController implements Serializable {
 		return moduleEnabled;
 	}
 	
-	public void updateActionList() {
+	public void updateActionList( Map<String, ApplicationCategory> deniedModules ) {
 		actionList = new LinkedList<SelectItem>();
 		for( ApplicationOption option : getOptions() ) {
 			String name = StringUtils.abbreviate(option.getDescription(), 60) + " (" + option.getGroup().getCategory().getDescription() + ")";
@@ -380,7 +381,7 @@ public class ActionDeniedController implements Serializable {
 			actionList.add(item);
 		}
 		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
-		for( ApplicationCategory category : adc.getCategories() ) {
+		for( ApplicationCategory category : adc.getCategories(deniedModules) ) {
 			if ( category.isRendered() ) {
 				String name = category.getDescription() + " (" + AonUtil.getMessage(MENU) + ")";
 				SelectItem item = new SelectItem(category.getAction(), name);

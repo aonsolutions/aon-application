@@ -4,6 +4,7 @@ import static com.code.aon.ui.admin.controller.DomainUserController.FAVORITES;
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
 import java.io.Serializable;
 import java.io.StringWriter;
@@ -11,6 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -49,9 +51,9 @@ import com.code.aon.groupware.enumeration.TaskStatus;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.admin.PortalInfo;
 import com.code.aon.ui.admin.controller.DEHOnlineController;
 import com.code.aon.ui.admin.controller.IAdminConstants;
-import com.code.aon.ui.admin.controller.PortalAccessController;
 import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.BasicOption;
@@ -79,6 +81,7 @@ import com.code.aon.ui.tas.controller.ITasConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.warehouse.controller.IWarehouseConstants;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AONContext;
 
 public class DesktopState implements Serializable {
 
@@ -97,7 +100,7 @@ public class DesktopState implements Serializable {
     private boolean adminDomain;
     private boolean supportEnabled;
     private boolean patchInitAction;
-    private int portalValue;
+    private PortalInfo portalInfo;
     private boolean userWithPortalView;
     private boolean showFavorites;
     private boolean showTirant;
@@ -122,6 +125,7 @@ public class DesktopState implements Serializable {
 		initSupport();
 		initExternalApplications(user, ds);
 		checkSerialization();
+		updateLastAccess(user, ds);
 	}
 
     private void initCompany() {
@@ -242,7 +246,7 @@ public class DesktopState implements Serializable {
 
 	private boolean isPayrollPortal( User user ) {
 		if (user.getInitAction()!=null) {
-			if ((this.portalValue & IAdminConstants.PAYROLL_PORTAL) != 0) {
+			if ( this.portalInfo.isPayrollPortal() ) {
 				return true;
 			}
 			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
@@ -254,19 +258,22 @@ public class DesktopState implements Serializable {
 		return false;
 	}
 	
-	private boolean isPortalActive( User user, DomainSwitcher ds ) {
-		if ( ds.isChildDomain() ) {
+	private boolean calculatePortalActive( User user, DomainSwitcher ds ) {
+		this.portalInfo = new PortalInfo();
+		if ( ds.isChildDomain() && (ds.getDomainId()==user.getDomain()) ) {
+			this.portalInfo.init();
 			if ( user.getEnterprise() != null ) {
 				if (user.getInitAction()!=null) {
 					return true;	
-				} else if (portalValue != 0) {
+				} else if ( this.portalInfo.isActive() ) {
 					return true;
 				}
 			}
-			if ( (ds.getDomainId()==user.getDomain()) && PortalAccessController.isPortalActive(portalValue) ) {
+			if ( this.portalInfo.isActive() ) {
 				return true;
 			}
 		}
+		this.portalInfo.reset();
 		return false;
 	}
 	
@@ -282,9 +289,10 @@ public class DesktopState implements Serializable {
 	}
 	
 	private void initPortal( User user, DomainSwitcher ds ) {
-		portalValue = AppParamUtil.getValueAsInt(AppParam.AON_PORTAL);
-		if ( isPortalActive(user, ds) ) {
+		if ( calculatePortalActive(user, ds) ) {
 			this.userWithPortalView = user.getEnterprise() == null;
+			String[] enableCategories = getPortalEnabledCategories(user);
+			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
 			if (! this.userWithPortalView ) {
 				this.portalUser = true;
 				AonUtil.setBeanValue(IGroupWareConstants.ALARM_CONTROLLER_NAME, IGroupWareConstants.SHOW_PENDING, Boolean.FALSE);
@@ -296,15 +304,17 @@ public class DesktopState implements Serializable {
 				properties.put( ICommonConstants.HIDE_MENU_ADVANCED_MODE, Boolean.TRUE );
 				properties.put( ICommonConstants.HIDE_MENU_WEB_MAP, Boolean.TRUE );
 				properties.put( ICommonConstants.HIDE_MENU_HELP, Boolean.TRUE );
-				ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
 				if ( isPayrollPortal(user) ) {
 					properties.put( ICommonConstants.HIDE_MENU_HOME, Boolean.TRUE );
 					properties.put( ICommonConstants.HIDE_MENU_ABOUT, Boolean.TRUE );
 				}
-				adc.getManager().enableOnly(getPortalEnabledCategories(user), new String[0], IAuditConstants.USER_PROFILE_ACTION, IAuditConstants.BATCH_DOCUMENT_ACTION);				
+				adc.getManager().enableOnly(enableCategories, new String[0], IAuditConstants.USER_PROFILE_ACTION, IAuditConstants.BATCH_DOCUMENT_ACTION);				
+			} else {
+				if (! adc.isDeniedModule(Module.PAYROLL.getName()) ) {
+					enableCategories = (String[]) ArrayUtils.removeElement(enableCategories, Module.PAYROLL_PORTAL.getName());
+				}
+				adc.getManager().enableCategories(enableCategories);
 			}
-		} else {
-			portalValue = 0;
 		}
 	}
 
@@ -494,10 +504,6 @@ public class DesktopState implements Serializable {
 			parser.checkSerialization();
 		}	
 	}
-	
-	public int getPortalValue() {
-		return this.portalValue;
-	}
 
 	public boolean isPayrollEnabled() {
 		if ( AonUtil.getRoleManager().isPayroll() ) {
@@ -532,7 +538,7 @@ public class DesktopState implements Serializable {
 	}
 
 	public boolean isAccountingInfoVisibleForPortal() {
-		if ( (this.portalValue & IAdminConstants.ACCOUNTING_PORTAL) != 0 ) {
+		if ( this.portalInfo.isAccountingInfo() ) {
 			if ( this.userWithPortalView ) {
 				return isAccoutingEnabled();
 			}
@@ -542,7 +548,7 @@ public class DesktopState implements Serializable {
 	}
 	
 	public boolean isFiscalInfoVisibleForPortal() {
-		if ( (this.portalValue & IAdminConstants.FISCAL_INFO_PORTAL) != 0 ) {
+		if ( this.portalInfo.isFiscalInfo() ) {
 			if ( this.userWithPortalView ) {
 				return isFiscalEnabled();
 			}
@@ -552,9 +558,9 @@ public class DesktopState implements Serializable {
 	}
 	
 	public boolean isPayrollInfoVisibleForPortal() {
-		if ( (this.portalValue & IAdminConstants.PAYROLL_INFO_PORTAL) != 0 ) {
+		if ( this.portalInfo.isPayrollInfo() ) {
 			if ( this.userWithPortalView ) {
-				return isPayrollEnabled();
+				return AonUtil.getRoleManager().isPayroll();
 			}
 			return true;
 		}
@@ -562,7 +568,7 @@ public class DesktopState implements Serializable {
 	}
 	
 	public boolean isDocumentalInfoVisibleForPortal() {
-		if ( (this.portalValue & IAdminConstants.DOCUMENTAL_INFO_PORTAL) != 0 ) {
+		if ( this.portalInfo.isDocumentalInfo() ) {
 			if ( this.userWithPortalView ) {
 				return isDocumentalEnabled();
 			}
@@ -635,6 +641,25 @@ public class DesktopState implements Serializable {
 
 	public void setShowFavorites(boolean showFavorites) {
 		this.showFavorites = showFavorites;
+	}
+	
+	private void updateLastAccess( User user, DomainSwitcher ds ) {
+		boolean adminDomainUser = DomainSwitcher.getDomainType(user.getDomain()) == DomainType.ADMIN;
+		if ( this.adminDomain || !adminDomainUser ) {
+			AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), ds.getDomainId());
+			Timestamp now = new java.sql.Timestamp(new Date().getTime());
+			try {
+				ctx.getDslContext().update(DOMAIN)
+				.set(DOMAIN.LASTACCESS_DATE, now )
+				.set(DOMAIN.LASTACCESS_USER, user.getLogin() )
+				.where(DOMAIN.ID.eq(ds.getDomainId()))
+				.execute();	
+			} catch ( Throwable th ) {
+				LOGGER.error(th.getMessage(), th);
+			} finally {
+				ctx.finalize();	
+			}							
+		}
 	}
 	
 }

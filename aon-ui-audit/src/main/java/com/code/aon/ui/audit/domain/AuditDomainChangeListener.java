@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
-import com.code.aon.audit.Session;
+import com.code.aon.audit.enumeration.AuditLevel;
 import com.code.aon.common.domain.DomainEvent;
 import com.code.aon.common.domain.IDomainChangeListener;
 import com.code.aon.jaas.auth.AuthPrincipal;
@@ -58,12 +58,10 @@ public class AuditDomainChangeListener implements IDomainChangeListener, Seriali
 			HttpSession httpSession = request.getSession(false);
 
 			if ( httpSession != null) {
-				Session session = AuditManager.getSession(httpSession);
-				if ( session == null ) {
+				AuditLevel auditLevel = AuditManager.getAuditLevel(httpSession);
+				if ( auditLevel == null ) {
 					AuthPrincipal principal = AonUtil.getAuthPrincipal();
 					AuditManager.insertLoginAudit(httpSession, request, event.getNewDomain(), principal );
-				} else {
-					LOGGER.info( "Session already exists {}", session );
 				}
 			}
 		}

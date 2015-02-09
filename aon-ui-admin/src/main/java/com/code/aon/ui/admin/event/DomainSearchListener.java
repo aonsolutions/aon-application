@@ -13,12 +13,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
+import com.code.aon.audit.DomainApplicationModule;
+import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
+import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Domain;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.admin.controller.DomainPrintController;
 import com.code.aon.ui.form.event.ControllerSearchListenerEx;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -32,6 +40,7 @@ public class DomainSearchListener extends ControllerSearchListenerEx {
 	private String name;
 	private String description;
 	private Domain parent;
+	private Domain payer;
 	private List<DomainType> types;
 	private Boolean active;
 	private Boolean enableHeredity;
@@ -39,6 +48,8 @@ public class DomainSearchListener extends ControllerSearchListenerEx {
 	private Date[] creationDate;
 	private Date[] modificationDate;	
 	private Date[] expirationDate;
+	private Date[] lastAccessDate;
+	private Module module;
 	private boolean showList;
 
 	public boolean isShowList() {
@@ -136,6 +147,14 @@ public class DomainSearchListener extends ControllerSearchListenerEx {
 	public void setExpirationDate(Date[] expirationDate) {
 		this.expirationDate = expirationDate;
 	}
+	
+	public Date[] getLastAccessDate() {
+		return lastAccessDate;
+	}
+
+	public void setLastAccessDate(Date[] lastAccessDate) {
+		this.lastAccessDate = lastAccessDate;
+	}
 
 	public Domain getParent() {
 		return parent;
@@ -143,6 +162,22 @@ public class DomainSearchListener extends ControllerSearchListenerEx {
 
 	public void setParent(Domain parent) {
 		this.parent = parent;
+	}
+
+	public Domain getPayer() {
+		return payer;
+	}
+
+	public void setPayer(Domain payer) {
+		this.payer = payer;
+	}
+
+	public Module getModule() {
+		return module;
+	}
+
+	public void setModule(Module module) {
+		this.module = module;
 	}
 
 	public void onClear(ActionEvent event) {
@@ -159,10 +194,13 @@ public class DomainSearchListener extends ControllerSearchListenerEx {
 		setCreationDate(new Date[2]);
 		setModificationDate(new Date[2]);
 		setExpirationDate(new Date[2]);
+		setLastAccessDate(new Date[2]);
+		setModule(null);
 		setShowList(false);
 		try {
 			IManagerBean domainBean = BeanManager.getManagerBean(Domain.class);
 			setParent((Domain) domainBean.createNewTo());
+			setPayer((Domain) domainBean.createNewTo());
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 		}		
@@ -195,9 +233,16 @@ public class DomainSearchListener extends ControllerSearchListenerEx {
 		if ( getParent() != null && getParent().getId() != null) {
 			criteria.addEqualExpression( getFieldName(IEntityAlias.DOMAIN_PARENT_ID), getParent().getId());			
 		}
+		if ( getPayer() != null && getPayer().getId() != null) {
+			addPayerSubQuery( module, criteria );			
+		}
 		addDateRange(criteria, getFieldName(IEntityAlias.DOMAIN_CREATION_DATE), getCreationDate());
 		addDateRange(criteria, getFieldName(IEntityAlias.DOMAIN_EXPIRATION_DATE), getExpirationDate());
+		addDateRange(criteria, getFieldName(IEntityAlias.DOMAIN_LAST_ACCESS_DATE), getLastAccessDate());
 		addModificationDateRange(criteria, getFieldName(IEntityAlias.DOMAIN_MODIFICATION_DATE));
+		if ( module != null ) {
+			addModuleSubQuery( module, criteria );
+		}
 		setShowList(true);
 	}	
 
@@ -227,6 +272,27 @@ public class DomainSearchListener extends ControllerSearchListenerEx {
 				criteria.addLessThanOrEqualExpression(alias, dates[1]);	
 			}			
 		}
+	}
+	
+	public void addModuleSubQuery(Module module, Criteria criteria) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(DomainApplicationModule.class);			
+		Criteria subCriteria = new Criteria();
+		subCriteria.addEqualExpression(bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_MODULE_MODULE), module);
+		String idAlias = bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_MODULE_DOMAIN);
+		ProjectionList pl = new ProjectionList( Projection.property(idAlias) );
+		Expression exp = ExpressionUtilities.getSubQueryExpression(DomainApplicationModule.class, subCriteria, pl);
+		criteria.addInExpression(getFieldName(IEntityAlias.DOMAIN_ID), exp);			
+	}
+
+	public void addPayerSubQuery(Module module, Criteria criteria) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ApplicationParameter.class);			
+		Criteria subCriteria = new Criteria();
+		subCriteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), AppParam.AON_DOMAIN_PAYER.getValue());
+		subCriteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_VALUE), getPayer().getId().toString());
+		String idAlias = bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_DOMAIN);
+		ProjectionList pl = new ProjectionList( Projection.property(idAlias) );
+		Expression exp = ExpressionUtilities.getSubQueryExpression(ApplicationParameter.class, subCriteria, pl);
+		criteria.addInExpression(getFieldName(IEntityAlias.DOMAIN_ID), exp);			
 	}
 	
 }

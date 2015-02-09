@@ -35,12 +35,18 @@
 		</aon:div>			
 	</aon:column>	
 	
-	<aon:column styleClass="aon-editDataTable-textColumn aon-width-140"
+	<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-140"
 		alias="Domain.type" >
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_type}" />
 		</f:facet>							
 		<aon:outputText value="#{to.type}" />
+		<aon:outputText
+			rendered="#{(to.type == 'ENTERPRISE') and controller.currentDomainOne}"
+			value=" - #{bundle.aon_module_aonOne}" />
+		<aon:outputText
+			rendered="#{(to.type == 'ENTERPRISE') and (!controller.currentDomainOne)}"
+			value=" - #{bundle.admin_domain_aonAIO}" />
 		<rich:toolTip styleClass="aon-width-200" rendered="#{to.parent != null}" >				
 			<aon:outputText value="#{to.parent.description}" />
 		</rich:toolTip>		
@@ -48,15 +54,19 @@
 			<aon:outputText value="&#160;"
 				rendered="#{to.domainManagement}"
 				title="#{bundle.admin_domain_domainManagement}"
-				styleClass="aon-icon2 aon-icon-tree-root" />
+				style="padding-left: 12px;" styleClass="aon-icon-tree-root" />
 			<aon:outputText value="&#160;"
 				rendered="#{(to.parent != null) and to.enableHeredity}"
 				title="#{bundle.aon_domian_enableHeredity}"
-				styleClass="aon-icon2 aon-icon-index" />														
+				style="padding-left: 12px;" styleClass="aon-icon-index" />														
 			<aon:outputText value="&#160;"
 				rendered="#{(to.parent != null) and (!to.enableHeredity)}"
 				title="#{bundle.aon_domian_disableHeredity}"
-				styleClass="aon-icon2 aon-icon-disableHeredity" />																	
+				style="padding-left: 12px;" styleClass="aon-icon-disableHeredity" />
+			<aon:outputText value="&#160;"
+				rendered="#{controller.payer != null}"
+				title="#{bundle.admin_domain_payer}: #{controller.payer}"
+				style="margin-left: 0.7em;" styleClass="aon-icon16 aon-icon-moneybag" />																				
 		</aon:div>																
 	</aon:column>
 	
@@ -110,6 +120,28 @@
 			</aon:outputText>
 		</rich:toolTip>
 	</aon:column>
+	
+	<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap"
+		alias="Domain.lastAccessDate" >
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.admin_domain_access}" />
+		</f:facet>							
+		<aon:outputText rendered="#{to.modificationDate != null}"
+			value="#{to.lastAccessDate}" >
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>
+		<rich:toolTip styleClass="aon-width-200" 
+			rendered="#{(to.lastAccessUser != null) or (to.lastAccessDate != null)}" >
+			<aon:outputText rendered="#{to.lastAccessUser != null}"
+				value="#{to.lastAccessUser} / " />
+			<aon:outputText rendered="#{to.lastAccessDate != null}"
+				value="#{to.lastAccessDate}" >
+				<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+		</rich:toolTip>
+	</aon:column>	
 
 	<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap">
 		<f:facet name="header">

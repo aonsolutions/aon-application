@@ -5,6 +5,7 @@ import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -27,6 +28,7 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
+import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
@@ -49,8 +51,8 @@ public class AuditSessionController extends BasicController {
 	public void onInit( ActionEvent event ) {
 		ActionDeniedController denied = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
 		User user = UserUtils.getInstance().getLoggedUser();		
-		denied.initEdit(user);
-		denied.updateActionList();		
+		Map<String, ApplicationCategory> deniedModules = denied.initEdit(user);
+		denied.updateActionList(deniedModules);		
 	}
 	
 	private DomainApplication getDomainApplication() {

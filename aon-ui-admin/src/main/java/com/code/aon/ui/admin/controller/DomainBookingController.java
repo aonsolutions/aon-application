@@ -31,6 +31,7 @@ import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.Domain;
 import com.code.aon.ui.admin.BookingInfo;
 import com.code.aon.ui.admin.DomainModuleInfo;
+import com.code.aon.ui.admin.PortalInfo;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.config.DomainBookingData;
@@ -87,10 +88,19 @@ public class DomainBookingController extends DataScrollerState {
 	}
 	
 	private void fillDomainData(AONContext ctx, DomainBookingData data) {
+		String payerDomainId = getAppParamenter(ctx, data, AppParam.AON_DOMAIN_PAYER);
+		if (!StringUtils.isEmpty(payerDomainId)) {
+			int domainId = NumberUtils.toInt(payerDomainId);
+			String description = ctx.getDslContext()
+					.select(DOMAIN.DESCRIPTION)
+					.from(DOMAIN).where(DOMAIN.ID.eq(domainId))
+					.fetchOne(0, String.class);
+			data.setPayerDomain(description);
+		}
 		String portalValue = getAppParamenter(ctx, data, AppParam.AON_PORTAL);
 		if (!StringUtils.isEmpty(portalValue)) {
 			int value = NumberUtils.toInt(portalValue);
-			data.setPortal(PortalAccessController.isPortalActive(value));
+			data.setPortal(PortalInfo.isPortalActive(value));
 		}
 		String externalApplicationsValue = getAppParamenter(ctx, data, AppParam.AON_EXTERNAL_APPLICATIONS);
 		if (!StringUtils.isEmpty(externalApplicationsValue)) {

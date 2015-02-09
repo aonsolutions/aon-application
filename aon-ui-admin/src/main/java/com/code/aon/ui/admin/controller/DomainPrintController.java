@@ -36,6 +36,7 @@ import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.admin.DomainInfo;
 import com.code.aon.ui.admin.event.DomainSearchListener;
+import com.code.aon.ui.audit.AuditManager;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.form.BasicController;
@@ -89,6 +90,17 @@ public class DomainPrintController extends BasicController {
 		}
 		return 0;
 	}
+	
+	public boolean isCurrentDomainOne() throws ManagerBeanException {
+		if ( getModel().isRowAvailable() ) {
+			Domain domain = (Domain) getSelectedTO();
+			if ( domain.getType() == DomainType.ENTERPRISE ) {
+				Integer appId = AonUtil.getAuthPrincipal().getApplicationId();
+				return AuditManager.hasModule(domain.getId(), appId, Module.AON_ONE);
+			}
+		}
+		return false;
+	}
 
 	public String getCurrentDomainModuleList() throws ManagerBeanException {
 		if ( getModel().isRowAvailable() ) {
@@ -107,13 +119,15 @@ public class DomainPrintController extends BasicController {
 					Locale locale = AonUtil.getCurrentLocale();
 					for( ITransferObject to : list ) {
 						DomainApplicationModule dam = (DomainApplicationModule) to;
-						String name = null;
-						if ( domain.isDomainManagement() && (dam.getModule() == Module.PAYROLL_PORTAL) ) {
-							name = AonUtil.getMessage(ICommonMessages.ADMIN_GLOBAL_PORTAL);
-						} else {
-							name = dam.getModule().getName(locale);
+						if ( dam.getModule() != Module.AON_ONE ) {
+							String name = null;
+							if ( domain.isDomainManagement() && (dam.getModule() == Module.PAYROLL_PORTAL) ) {
+								name = AonUtil.getMessage(ICommonMessages.ADMIN_GLOBAL_PORTAL);
+							} else {
+								name = dam.getModule().getName(locale);
+							}
+							modules.add( name );							
 						}
-						modules.add( name );
 					}
 					return StringUtils.join(modules, ", ");					
 				}			
@@ -210,6 +224,20 @@ public class DomainPrintController extends BasicController {
 			DomainController controller = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
 			controller.initHistory(companyId);
 		}
+	}
+
+	public String getPayer() throws ManagerBeanException {
+		if ( getModel().isRowAvailable() ) {
+			Domain domain = (Domain) getSelectedTO();
+			Integer value = AppParamUtil.getValueAsInteger(AppParam.AON_DOMAIN_PAYER, domain.getId());
+			if ( value != null ) {
+				Domain payer = (Domain) getManagerBean().get(value);
+				if ( payer != null ) {
+					return payer.getDescription();
+				}
+			}
+		}
+		return null;				
 	}
 	
 	public boolean isCurrentTirant() throws ManagerBeanException {

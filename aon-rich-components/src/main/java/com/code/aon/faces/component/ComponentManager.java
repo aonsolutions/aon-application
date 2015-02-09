@@ -96,14 +96,16 @@ public class ComponentManager {
 	}
 	
 	private void updateDisabledStyleClass(Tag tag, FaceletContext ctx, UIComponent c) {
-		String disabledClass = getDisabledStyleClass(tag, ctx, c);
 		TagAttribute disabled = FaceletUtil.getAttribute(tag, HTML.DISABLED_ATTR);
-		if ( disabled != null && ! StringUtils.isBlank(disabledClass) ) {
-			if ( FaceletUtil.getBoolean(ctx,disabled) ) {
-				FaceletUtil.addStyleClass(ctx.getFacesContext(), c, getInputStyleClass(c), disabledClass);
-			} else {
-				String styleClass = StringUtils.substringBeforeLast(disabledClass, "-disabled");
-				FaceletUtil.replaceStyleClass(ctx.getFacesContext(), c, getInputStyleClass(c), disabledClass, styleClass);
+		if ( disabled != null ) {
+			String disabledClass = getDisabledStyleClass(tag, ctx, c);
+			if ( ! StringUtils.isBlank(disabledClass) ) {
+				if ( FaceletUtil.getBoolean(ctx,disabled) ) {
+					FaceletUtil.addStyleClass(ctx.getFacesContext(), c, getInputStyleClass(c), disabledClass);
+				} else {
+					String styleClass = StringUtils.substringBeforeLast(disabledClass, "-disabled");
+					FaceletUtil.replaceStyleClass(ctx.getFacesContext(), c, getInputStyleClass(c), disabledClass, styleClass);
+				}
 			}
 		}
 	}		
