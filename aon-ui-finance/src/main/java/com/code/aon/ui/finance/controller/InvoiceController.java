@@ -779,6 +779,9 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			}
 			refresh(null);
 			invoiceDetailController.onSearch(null);
+
+			autoGenerateIncreases();
+			autoGenerateFinances();
 		}
 	}
 
