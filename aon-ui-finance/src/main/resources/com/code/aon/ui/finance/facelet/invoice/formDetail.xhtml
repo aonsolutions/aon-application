@@ -23,7 +23,7 @@
 					<ui:param name="skipResetButton" value="#{invoiceController.readOnly}" />
 					<ui:param name="skipLineEdition" value="#{true}" />
 					<ui:param name="rowSelectorReRender" value="menuExt" />
-					<ui:param name="resetButtonReRender" value="menuExt" />
+					<ui:param name="resetButtonReRender" value="aonContent" />
 					<ui:param name="newCancelButtonReRender" value="menuExt" />
 					<ui:param name="cancelButtonReRender" value="menuExt" />
 					<ui:param name="newSaveButtonReRender" value="menuExt,Invoice_total,financeContainer" />
@@ -37,7 +37,7 @@
 							immediate="true" ajaxSingle="true" requestDelay="100"
 							rendered="#{!invoiceController.readOnly and detailController.editable}"
 							actionListener="#{detailController.onSelect}"
-							reRender="menuExt"
+							reRender="aonContent"
 							onkeyup="#{dataTableId}KeyUp(this)"
 							onfocus="#{dataTableId}SelectRow(this)"
 							onblur="#{dataTableId}DeselectRow(this)"

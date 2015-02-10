@@ -1,5 +1,7 @@
 package com.code.aon.ui.finance.event;
 
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_ALREADY_RECORDED_ERROR;
+
 import java.util.Date;
 import java.util.List;
 
@@ -27,10 +29,22 @@ import com.code.aon.ui.finance.controller.InvoiceFinanceController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
 public class InvoiceFinanceControllerListener extends ControllerAdapter {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+
+	@Override
+	public void beforeBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		InvoiceFinanceController controller = (InvoiceFinanceController)event.getController();
+		InvoiceController invoiceController = (InvoiceController)controller.getMasterController();
+		Invoice invoice = invoiceController.getInvoice();
+		if (!invoice.isRecorded() && invoiceController.checkRecorded(invoice)) {
+			invoiceController.refreshEntireInvoice();
+			throw new ControllerListenerException(AonUtil.getMessage(FINANCE_INVOICE_ALREADY_RECORDED_ERROR));
+		}
+	}
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
@@ -63,6 +77,17 @@ public class InvoiceFinanceControllerListener extends ControllerAdapter {
 			financeController.setShowBankManualInput(false);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void beforeBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		InvoiceFinanceController controller = (InvoiceFinanceController)event.getController();
+		InvoiceController invoiceController = (InvoiceController)controller.getMasterController();
+		Invoice invoice = invoiceController.getInvoice();
+		if (!invoice.isRecorded() && invoiceController.checkRecorded(invoice)) {
+			invoiceController.refreshEntireInvoice();
+			throw new ControllerListenerException(AonUtil.getMessage(FINANCE_INVOICE_ALREADY_RECORDED_ERROR));
 		}
 	}
 

@@ -1,5 +1,7 @@
 package com.code.aon.ui.finance.event;
 
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_ALREADY_RECORDED_ERROR;
+
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
@@ -12,6 +14,7 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
 public class InvoiceControllerListener extends ControllerAdapter {
 	
@@ -60,7 +63,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 			throw new ControllerListenerException(e.getMessage());
 		}
 	}
-	
+
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		InvoiceController invoiceController = (InvoiceController)this.getController();
@@ -69,7 +72,17 @@ public class InvoiceControllerListener extends ControllerAdapter {
 		invoiceController.setSavedProject(invoice.getProject());
 		invoiceController.setShowProjectLookup(true);
 	}
-	
+
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		InvoiceController invoiceController = (InvoiceController)this.getController();
+		Invoice invoice = (Invoice)invoiceController.getTo();
+		if (!invoice.isRecorded() && invoiceController.checkRecorded(invoice)) {
+			invoiceController.refreshEntireInvoice();
+			throw new ControllerListenerException(AonUtil.getMessage(FINANCE_INVOICE_ALREADY_RECORDED_ERROR));
+		}
+	}
+
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		InvoiceController invoiceController = (InvoiceController)this.getController();

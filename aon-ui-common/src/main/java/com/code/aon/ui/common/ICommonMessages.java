@@ -304,6 +304,7 @@ public interface ICommonMessages {
 	String NO_INVOICE_KEY = "finance_invoicing_no_invoice";
 	String FINANCE_INVOICE_EMAIL_SUBJECT = "finance_invoice_email_subject";
 	String FINANCE_EINVOICE_EMAIL_SUBJECT = "finance_einvoice_email_subject";
+	String FINANCE_INVOICE_ALREADY_RECORDED_ERROR = "finance_invoice_already_recorded_error";
 	String FINANCE_INVOICE_EMAIL_BODY = "finance_invoice_email_body";
 	String FINANCE_INVOICE_WITHOUT_EMAIL = "finance_invoice_without_email";
 	String FINANCE_INVOICE_SEND_EMAIL = "finance_invoice_send_email";

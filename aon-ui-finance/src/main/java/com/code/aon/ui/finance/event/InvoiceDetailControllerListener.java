@@ -1,5 +1,7 @@
 package com.code.aon.ui.finance.event;
 
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_ALREADY_RECORDED_ERROR;
+
 import java.util.List;
 
 import javax.faces.model.SelectItem;
@@ -30,6 +32,17 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
+	public void beforeBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
+		InvoiceController invoiceController = (InvoiceController)controller.getMasterController();
+		Invoice invoice = controller.getInvoice();
+		if (!invoice.isRecorded() && invoiceController.checkRecorded(invoice)) {
+			invoiceController.refreshEntireInvoice();
+			throw new ControllerListenerException(AonUtil.getMessage(FINANCE_INVOICE_ALREADY_RECORDED_ERROR));
+		}
+	}
+
+	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
 		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
@@ -44,6 +57,17 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 			fillPosWorkPlace(event, invoiceDetail);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void beforeBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
+		InvoiceController invoiceController = (InvoiceController)controller.getMasterController();
+		Invoice invoice = controller.getInvoice();
+		if (!invoice.isRecorded() && invoiceController.checkRecorded(invoice)) {
+			invoiceController.refreshEntireInvoice();
+			throw new ControllerListenerException(AonUtil.getMessage(FINANCE_INVOICE_ALREADY_RECORDED_ERROR));
 		}
 	}
 

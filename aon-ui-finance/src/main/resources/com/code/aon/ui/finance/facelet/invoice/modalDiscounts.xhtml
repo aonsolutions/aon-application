@@ -39,7 +39,7 @@
 										<aon:commandButton id="discounts-accept"
 											value="#{bundle.aon_accept}"
 											styleClass="aon-finding-toolbar-item aon-icon-accept"
-											actionListener="#{invoiceController.applyDiscounts}"
+											actionListener="#{invoiceController.onApplyDiscounts}"
 											reRender="showDiscountsWindow,#{modalReRender}"
 											onclick="Richfaces.showModalPanel('waitProccess')" 
 								     		oncomplete="Richfaces.hideModalPanel('waitProccess')">

@@ -56,7 +56,8 @@
 							value="#{bundle.finance_invoice_apply_discounts}"
 							rendered="#{!purchaseInvoice.readOnly}"
 							iconClass="aon-icon-percentage"
-							reRender="showDiscountsWindow">
+							actionListener="#{purchaseInvoice.onApplyDiscountsShow}"
+							reRender="aonContent">
 							<f:setPropertyActionListener target="#{purchaseInvoice.showDiscountsWindow}"
 								value="#{true}" />
 							<f:setPropertyActionListener target="#{purchaseInvoice.discountExpression}"

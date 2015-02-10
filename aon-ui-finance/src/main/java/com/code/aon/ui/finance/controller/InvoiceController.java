@@ -4,6 +4,7 @@ import static com.code.aon.ui.common.ICommonMessages.CALCULATE_FINANCES_AMOUNT_E
 import static com.code.aon.ui.common.ICommonMessages.CALCULATE_INVOICE_QUANTITY_ERROR_KEY;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_DUPLICATE_EXPENSE_INVOICE_WARNING;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_DUPLICATE_PURCHASE_INVOICE_WARNING;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_ALREADY_RECORDED_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_OPERATION_NOT_ALLOWED_PERIOD_EXCEEDED_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_UNRECORD_INVOICE_WARNING;
 import static com.code.aon.ui.common.ICommonMessages.GENERATE_FINANCES_ERROR_KEY;
@@ -26,6 +27,9 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Hibernate;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +45,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.finance.Finance;
@@ -584,6 +589,19 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		super.accept(event);
 	}
 
+	public void refreshEntireInvoice() {
+		try {
+			refresh(null);
+			IController invoiceDetailController = FormUtil.getController(invoiceDetailControllerName);
+			invoiceDetailController.onSearch(null);
+			IController invoiceFinanceController = FormUtil.getController(invoiceFinanceControllerName);
+			invoiceFinanceController.onSearch(null);
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
+		}
+	}
+
 	@Override
 	protected Criteria getSeriesCriteria() {
     	Criteria criteria = new Criteria();
@@ -727,8 +745,28 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		return (invoiceDetailBean.getCount(criteria) > 0);
 	}
 
-	public void applyDiscounts(ActionEvent event) throws ManagerBeanException {
-		List<ITransferObject> detailList = getInvoice().getDetailList();
+	public void onApplyDiscountsShow(ActionEvent event) throws ManagerBeanException {
+		Invoice invoice = getInvoice();
+		if (!invoice.isRecorded() && checkRecorded(invoice)) {
+			refreshEntireInvoice();
+			String message = AonUtil.addErrorMessageFromBundle(FINANCE_INVOICE_ALREADY_RECORDED_ERROR);
+			throw new AbortProcessingException(message);
+		}
+	}
+
+	public void onApplyDiscounts(ActionEvent event) throws ManagerBeanException {
+		Invoice invoice = getInvoice();
+		if (!invoice.isRecorded() && checkRecorded(invoice)) {
+			refreshEntireInvoice();
+			String message = AonUtil.addErrorMessageFromBundle(FINANCE_INVOICE_ALREADY_RECORDED_ERROR);
+			throw new AbortProcessingException(message);
+		}
+
+		applyDiscounts(invoice);
+	}
+
+	private void applyDiscounts(Invoice invoice) throws ManagerBeanException {
+		List<ITransferObject> detailList = invoice.getDetailList();
 		if (detailList.size() > 0) {
 			IController invoiceDetailController = FormUtil.getController(invoiceDetailControllerName);
 			for (ITransferObject ito : detailList) {
@@ -774,6 +812,13 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	}
 
 	public void onGenerateFinances(ActionEvent event) {
+		Invoice invoice = getInvoice();
+		if (!invoice.isRecorded() && checkRecorded(invoice)) {
+			refreshEntireInvoice();
+			String message = AonUtil.addErrorMessageFromBundle(FINANCE_INVOICE_ALREADY_RECORDED_ERROR);
+			throw new AbortProcessingException(message);
+		}
+
 		generateFinances(true);
 	}
 
@@ -846,7 +891,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		return CommonUtil.round(getToInvoiceTotalPrice() - getToInvoiceFinanceTotal());
 	}
 
-	public void onRecordInvoice(ActionEvent event) throws ManagerBeanException{
+	public void onRecordInvoice(ActionEvent event) throws ManagerBeanException {
 		double invoiceTotal = getToInvoiceTotalPrice();
 		double financeTotal = getToInvoiceFinanceTotal();
 		if (financeTotal != 0 && invoiceTotal != financeTotal) {
@@ -854,6 +899,11 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			throw new AbortProcessingException(message);
 		}
 		Invoice invoice = (Invoice)BeanManager.getManagerBean(Invoice.class).get(getInvoice().getId());
+		if (checkRecorded(invoice)) {
+			refreshEntireInvoice();
+			String message = AonUtil.addErrorMessageFromBundle(FINANCE_INVOICE_ALREADY_RECORDED_ERROR);
+			throw new AbortProcessingException(message);
+		}
 		if (invoice.isInvestment() && !isAmortizationForm()) {
 			String message = AonUtil.addErrorMessageFromBundle(UNABLE_RECORD_NO_AMORTIZATION_ERROR_KEY);
 			throw new AbortProcessingException(message);
@@ -895,11 +945,11 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		}
 	}
 
-	public void onUnrecordInvoice(ActionEvent event) throws ManagerBeanException{
+	public void onUnrecordInvoice(ActionEvent event) throws ManagerBeanException {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
-		Invoice invoice = getInvoice();
+		Invoice invoice = (Invoice)BeanManager.getManagerBean(Invoice.class).get(getInvoice().getId());
 		if (!FinanceUtil.isValidLimitDate(invoice)) {
 			String message = AonUtil.addErrorMessageFromBundle(FINANCE_OPERATION_NOT_ALLOWED_PERIOD_EXCEEDED_ERROR);
 			throw new AbortProcessingException(message);
@@ -939,6 +989,17 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 
 			refresh(event);
 		}
+	}
+
+	public boolean checkRecorded(Invoice invoice) {
+		String select = "SELECT invoice.id id " +
+    					"FROM invoice as invoice " +
+    					"WHERE " + DomainManager.getSQLWhereClause("invoice.domain") + " " +
+    					"AND invoice.id = " + invoice.getId() + " " +
+    					"AND status = 1";
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+		SQLQuery query = session.createSQLQuery(select);
+        return !query.addScalar("id", Hibernate.INTEGER).list().isEmpty();
 	}
 
 	public Integer getAccountEntryId() throws ManagerBeanException {
