@@ -317,6 +317,7 @@ public class ReservationInvoicing implements IReservationConstants {
 				criteria.addExpression(noDepositOrDamageExpr);
 			}
 		}
+		criteria.addOrder(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ITEM_PRODUCT_TYPE));
 		criteria.addOrder(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE));
 		criteria.addOrder(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_ROOM_DETAIL_ID));
 		List<ITransferObject> reservationServiceDetailList = reservationServiceDetailBean.getList(criteria);

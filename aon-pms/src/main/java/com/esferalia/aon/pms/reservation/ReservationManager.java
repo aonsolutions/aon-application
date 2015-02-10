@@ -66,6 +66,8 @@ import com.esferalia.aon.pms.sql.SQLUtils;
 
 public class ReservationManager implements IReservationConstants {
 
+	private static String FIRST_ROOM = "00";
+
 	private ReservationUtils reservationUtils;
 	private IPriceStrategy priceStrategy;
 	private String xmlData;
@@ -192,6 +194,7 @@ public class ReservationManager implements IReservationConstants {
 	}
 
 	private void createReservation(HotelReservationType reservationType, POSType posType, ProjectReservation reservation) throws ReservationException {
+		boolean isNewReservation = reservation.getId() == null;
 		String reservationCrsCode = findReservationId(reservationType.getResGlobalInfo(), SIRIUS);
 		try {
 			Hotel hotel = getReservationUtils().obtainHotel(reservationType.getRoomStays().getRoomStayArray(0).getBasicPropertyInfo().getHotelCode());
@@ -278,8 +281,7 @@ public class ReservationManager implements IReservationConstants {
 			createReservationRoom(reservationType, reservation);
 			createReservationService(reservationType, reservation);
 		} catch (Exception ex) {
-			String actionType = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), ACTION, TYPE);
-			if (actionType.equals(ADD_RESERVATION) && reservation.getId() != null) {
+			if (isNewReservation && reservation.getId() != null) {
 				try {
 					removeReservationAttach(reservation);
 					removeReservationService(reservation);
@@ -396,6 +398,11 @@ public class ReservationManager implements IReservationConstants {
 					int roomChildren = (j==0) ? totalChildren - (children * (roomUnits - 1)) : children;
 					ProjectReservationRoom reservationRoom = insertReservationRoom(reservation, stay, roomAdults, roomChildren);
 
+					if (!roomServicesMap.containsKey(FIRST_ROOM)) {
+						List<Integer> roomList = new LinkedList<Integer>();
+						roomList.add(reservationRoom.getId());
+						roomServicesMap.put(FIRST_ROOM, roomList);
+					}
 					if (stay.getServiceRPHs() != null) {
 						for (int k=0; k<stay.getServiceRPHs().sizeOfServiceRPHArray(); k++) {
 							List<Integer> roomList = roomServicesMap.get(stay.getServiceRPHs().getServiceRPHArray(k).getRPH());
@@ -455,18 +462,24 @@ public class ReservationManager implements IReservationConstants {
 		}
 
 		if (calculateTaxData) {
-			totalTaxableBase = CommonUtil.round(totalTaxableBase);
 			if (reservation.getTotal() >= totalTaxableBase) {
 				reservation.setTaxableBase(totalTaxableBase);
-				reservation.setVatQuota(CommonUtil.round(reservation.getTotal() - reservation.getTaxableBase() - reservation.getOtherTaxQuota()));
 			} else {
 				throw new ReservationException("Reservation Total is not correct", reservation.getCrsCode(), 197);
 			}
 		} else {
-			if (reservation.getTaxableBase() != totalTaxableBase) {
+			if (reservation.getTaxableBase() != CommonUtil.round(totalTaxableBase)) {
 				throw new ReservationException("Reservation Taxable Base does not match the sum of Services Taxable Bases", reservation.getCrsCode(), 197);
 			}
 		}
+
+		double autoDiscount = getReservationUtils().getAutoDiscountValue(reservation.getAgency());
+		if (autoDiscount > 0) {
+			createAutoDiscountService(autoDiscount, reservation);
+		}
+
+		reservation.setTaxableBase(CommonUtil.round(reservation.getTaxableBase()));
+		reservation.setVatQuota(CommonUtil.round(reservation.getTotal() - reservation.getTaxableBase() - reservation.getOtherTaxQuota()));
 		reservation = (ProjectReservation)BeanManager.getManagerBean(ProjectReservation.class).update(reservation);
 	}
 
@@ -503,6 +516,29 @@ public class ReservationManager implements IReservationConstants {
 		return !DateUtils.isSameDay(serviceDate, reservationEndDate) && serviceDate.before(reservationEndDate);
 	}
 
+	private void createAutoDiscountService(double autoDiscount, ProjectReservation reservation) throws ManagerBeanException {
+		Item item = getReservationUtils().obtainAutoDiscountItem();
+		if (item != null) {
+			String serviceRPH = "01";
+			for (String key : roomServicesMap.keySet()) {
+				if (Integer.parseInt(key) >= Integer.parseInt(serviceRPH)) {
+					serviceRPH = StringUtils.leftPad(Integer.toString(Integer.parseInt(key) + 1), 2, "0") ;
+				}
+			}
+			roomServicesMap.put(serviceRPH, roomServicesMap.get(FIRST_ROOM));
+			String serviceInventaryCode = item.getProduct().getCode();
+			ProjectReservationService reservationService = insertReservationService(reservation, serviceRPH, serviceInventaryCode, item);
+
+			Date date = DateUtils.truncate(reservation.getStartDate(), Calendar.DATE);
+			double total = CommonUtil.round(reservation.getTotal() * autoDiscount / 100);
+			calculateTaxData = true;
+			ProjectReservationServiceDetail reservationServiceDetail = insertReservationServiceDetail(reservationService, date, -1, total);
+
+			reservation.setTaxableBase(CommonUtil.round(reservation.getTaxableBase() - reservationServiceDetail.getPrice()));
+			reservation.setTotal(CommonUtil.round(reservation.getTotal() - total));
+		}
+	}
+
 	private ProjectReservationRoom insertReservationRoom(ProjectReservation reservation, RoomStay stay, int adults, int children) 
 			throws ManagerBeanException, ReservationException {
 		ProjectReservationRoom reservationRoom = new ProjectReservationRoom();
@@ -535,15 +571,20 @@ public class ReservationManager implements IReservationConstants {
 	}
 
 	private ProjectReservationService insertReservationService(ProjectReservation reservation, Service service, Item item) throws ManagerBeanException {
+		return insertReservationService(reservation, service.getServiceRPH(), service.getServiceInventoryCode(), item);
+	}
+
+	private ProjectReservationService insertReservationService(ProjectReservation reservation, String serviceRPH, String serviceInventoryCode, Item item) 
+			throws ManagerBeanException {
 		ProjectReservationService reservationService = new ProjectReservationService();
 		reservationService.setProjectReservation(reservation);
 		reservationService.setDomain(getReservationUtils().getDomain());
-		reservationService.setServiceIndex(Integer.parseInt(service.getServiceRPH()));
-		reservationService.setServiceCode(service.getServiceInventoryCode());
+		reservationService.setServiceIndex(Integer.parseInt(serviceRPH));
+		reservationService.setServiceCode(serviceInventoryCode);
 		reservationService.setItem(item);
 		reservationService.setDescription(item.getProduct().getName());
-		if (roomServicesMap.containsKey(service.getServiceRPH())) {
-			List<Integer> roomList = roomServicesMap.get(service.getServiceRPH());
+		if (roomServicesMap.containsKey(serviceRPH)) {
+			List<Integer> roomList = roomServicesMap.get(serviceRPH);
 			if (roomList.size() > 0) {
 				reservationService.setProjectReservationRoom(roomList.get(0));
 				roomList.remove(0);

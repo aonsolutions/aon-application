@@ -13,6 +13,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.opentravel.ota.x2003.x05.AmountType;
 import org.opentravel.ota.x2003.x05.CommentType.Comment;
@@ -963,6 +964,35 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 			return rAddInfo != null && rAddInfo.getValue().equalsIgnoreCase(YES);
 		}
 		return false;
+	}
+
+	public double getAutoDiscountValue(Customer agency) throws ManagerBeanException {
+		double autoDiscount = 0;
+		if (agency != null && agency.getId() != null) {
+			IManagerBean rAddInfoBean = BeanManager.getManagerBean(RegistryAddInfo.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_REGISTRY_ID), agency.getRegistry().getId());
+			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), AUTO_DISCOUNT);
+			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_DOMAIN), domain);
+			for (ITransferObject ito : rAddInfoBean.getList(criteria)) {
+				RegistryAddInfo rAddInfo = (RegistryAddInfo)ito;
+				autoDiscount = NumberUtils.toDouble(rAddInfo.getValue(), 0);
+				if (autoDiscount > 0) {
+					break;
+				}
+			}
+		}
+		return autoDiscount;
+	}
+
+	public Item obtainAutoDiscountItem() throws ManagerBeanException {
+		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), AUTO_DISCOUNT_ITEM);
+		for (ITransferObject ito : appParamBean.getList(criteria)) {
+			return obtainItem(((ApplicationParameter)ito).getValue());
+		}
+		return null;
 	}
 
 }
