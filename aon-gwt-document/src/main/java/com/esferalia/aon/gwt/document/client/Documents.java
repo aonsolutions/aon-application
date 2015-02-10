@@ -247,7 +247,7 @@ public class Documents extends Composite implements EntryPoint {
 				downloadItem = addItem("Descargar",downloadCommand,
 						"aon-icon-mail-save",AON.AON_ICON_CMD_BUTTON);
 				downloadItem.setEnabled(true);
-				if(selFiles.size() < 1){
+				if(selFiles.size() <= 1){
 					infoItem = addItem("Detalles",infoCommand,
 							"aon-icon-info",AON.AON_ICON_CMD_BUTTON);
 					infoItem.setEnabled(true);
@@ -270,15 +270,19 @@ public class Documents extends Composite implements EntryPoint {
 					batchItem.setEnabled(true);
 				}
 				addSeparator();
-				copyLinkItem = addItem("Copiar Link",copyLinkCommand,
-						"aon-icon-copy",AON.AON_ICON_CMD_BUTTON);
+				if(selFiles.size() <= 1){
+					copyLinkItem = addItem("Copiar Link",copyLinkCommand,
+							"aon-icon-copy",AON.AON_ICON_CMD_BUTTON);
+					copyLinkItem.setEnabled(true);
+				}
 				shareItem = addItem("Compartir",shareCommand,
 						"aon-icon-google-drive",AON.AON_ICON_CMD_BUTTON);
 				shareItem.setEnabled(true);
 				downloadItem = addItem("Descargar",downloadCommand,
 						"aon-icon-mail-save",AON.AON_ICON_CMD_BUTTON);
 				downloadItem.setEnabled(true);
-				if(selFiles.size() < 1){
+				if(selFiles.size() <= 1){
+					addSeparator();
 					infoItem = addItem("Detalles",infoCommand,
 							"aon-icon-info",AON.AON_ICON_CMD_BUTTON);
 					infoItem.setEnabled(true);
@@ -895,6 +899,18 @@ public class Documents extends Composite implements EntryPoint {
 			    	
 			    		if(!dataGrid.getSelectionModel().isSelected(object))
 			    			dataGrid.getSelectionModel().setSelected(object, true);
+			    	}
+			    	else{
+			    		Integer aux=0;
+			    		for(Integer i = 0; i< dataProvider.getList().size();i++){
+			    			if(dataGrid.getSelectionModel().isSelected(dataProvider.getList().get(i)))
+			    				aux++;
+			    		}
+			    		if(aux.equals(1) && dataGrid.getSelectionModel().isSelected(object)){
+			    			editFile.setVisible(false);
+							delFile.setVisible(false);
+							optionFile.setVisible(false);
+			    		}		
 			    	}
 			    	isCheck = false;
 			    }
