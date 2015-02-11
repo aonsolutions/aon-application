@@ -78,12 +78,12 @@ public class CommonCollections implements Serializable {
     		Locale locale = AonUtil.getCurrentLocale();
     		europeanUnionCountries = new LinkedList<SelectItem>();
     		Country[] europeanUnion = new Country[] {
-    				Country.DE,Country.AT,Country.BE,Country.BG,Country.CY,
-    				Country.DK,Country.SI,Country.EE,Country.FI,Country.FR,
-    				Country.GR,Country.GB,Country.NL,Country.HU,Country.IT,
-    				Country.IE,Country.LV,Country.LT,Country.LU,Country.MT,
-    				Country.PL,Country.PT,Country.CZ,Country.SK,Country.RO,
-    				Country.SE
+    				Country.DE,Country.AT,Country.BE,Country.BG,Country.HR,
+    				Country.CY,Country.DK,Country.SI,Country.EE,Country.FI,
+    				Country.FR,Country.GR,Country.GB,Country.NL,Country.HU,
+    				Country.IT,Country.IE,Country.LV,Country.LT,Country.LU,
+    				Country.MT,Country.PL,Country.PT,Country.CZ,Country.SK,
+    				Country.RO,Country.SE
     		};
     		for( Country country : europeanUnion ) {
 	            String name = country.getName(locale); 

@@ -228,6 +228,9 @@ public class MOD347Writer implements IFinanceConstants{
 				if (Country.ES == detail.getCountry()) {
 					dec.setCountry("  ");		
 				} else {
+					if (Country.GR == detail.getCountry()) {
+						dec.setCountry("EL");	
+					}
 					dec.setProvince(99);		
 				}
 				dec.setQuantity(detail.getAmount());

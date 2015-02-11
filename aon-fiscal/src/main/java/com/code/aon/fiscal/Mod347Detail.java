@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.fiscal.enumeration.Mod347Type;
+import com.code.aon.registry.RegistryDocument;
 import com.esferalia.aon.entity.master.Mod347DetailDB;
 
 @Entity
@@ -105,5 +106,47 @@ public class Mod347Detail extends Mod347DetailDB {
 	public boolean isTypeG() {
 		return getType() == Mod347Type.G;
 	}
+	@Transient
+	public boolean isDocumentValid() {
+		if (getCountry() == Country.ES) {
+			RegistryDocument rd = new RegistryDocument(getDocument());
+			return rd.isValid();
+		} else {
+			Country country = getIntracommunityCountry();
+			String doc = getIntracommunityDocument();
+			int len = StringUtils.length(doc); 
+			return (   
+					(( Country.AT == country) && StringUtils.isAlphanumeric(doc) && len==9 )
+				||  (( Country.BE == country) && StringUtils.isNumeric(doc) 	 && (len==9 || len==10 )) 
+				||  (( Country.BG == country) && StringUtils.isNumeric(doc) 	 && (len==9 || len==10)) 
+				||  (( Country.CY == country) && StringUtils.isAlphanumeric(doc) && len==9 ) 
+				||  (( Country.CZ == country) && StringUtils.isNumeric(doc) 	 && (len==8 || len == 9 || len == 10 )) 
+				||  (( Country.DE == country) && StringUtils.isNumeric(doc) 	 && len==9 ) 
+				||  (( Country.DK == country) && StringUtils.isNumeric(doc) 	 && len==8 )
+				||  (( Country.EE == country) && StringUtils.isNumeric(doc) 	 && len==9 )
+				||  (( Country.GR == country) && StringUtils.isNumeric(doc) 	 && len==9 )
+				||  (( Country.FI == country) && StringUtils.isNumeric(doc) 	 && len==8 )
+				||  (( Country.FR == country) && StringUtils.isAlphanumeric(doc) && len==11 )
+				||  (( Country.GB == country) && StringUtils.isAlphanumeric(doc) && (len==5 || len == 9 || len == 12) ) 
+				||  (( Country.HR == country) && StringUtils.isNumeric(doc) 	 && len==11 ) 
+				||  (( Country.HU == country) && StringUtils.isNumeric(doc) 	 && len==8 )
+				||  (( Country.IE == country) && StringUtils.isAlphanumeric(doc) && (len==8 || len==9) )
+				||  (( Country.IT == country) && StringUtils.isNumeric(doc) 	 && len==11 )
+				||  (( Country.LT == country) && StringUtils.isNumeric(doc) 	 && (len==9 || len == 12) )
+				||  (( Country.LU == country) && StringUtils.isNumeric(doc) 	 && len==8 )
+				||  (( Country.LV == country) && StringUtils.isNumeric(doc) 	 && len==11 ) 
+				||  (( Country.MT == country) && StringUtils.isNumeric(doc) 	 && len==8 ) 
+				||  (( Country.NL == country) && StringUtils.isAlphanumeric(doc) && len==12 ) 
+				||  (( Country.PL == country) && StringUtils.isNumeric(doc) 	 && len==10 ) 
+				||  (( Country.PT == country) && StringUtils.isNumeric(doc) 	 && len==9 ) 
+				||  (( Country.RO == country) && StringUtils.isNumeric(doc) 	 && (len>=2 && len<=10)) 
+				||  (( Country.SE == country) && StringUtils.isNumeric(doc) 	 && len==12 )
+				||  (( Country.SI == country) && StringUtils.isNumeric(doc) 	 && len==8 ) 
+				||  (( Country.SK == country) && StringUtils.isNumeric(doc) 	 && (len==9 || len == 10) ) 
+				 );
+		}
+		
+	}
+	
 	
 }

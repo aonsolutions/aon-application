@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.enumeration.Country;
 import com.code.aon.file.format.model.Fd0Exception;
 import com.code.aon.file.tax.model.MOD349.data.Operator;
 
@@ -62,8 +63,9 @@ public class CheckOperator extends Check {
 			||  ( "GB".equals(country) && StringUtils.isAlphanumeric(doc) 	&& (len==5 || len == 9 || len == 12) ) 
 			||  ( "NL".equals(country) && StringUtils.isAlphanumeric(doc) 	&& len==12 ) 
 			||  ( "HU".equals(country) && StringUtils.isNumeric(doc) 		&& len==8 ) 
+			||  ( "HR".equals(country) && StringUtils.isNumeric(doc) 	 && len==11 ) 
 			||  ( "IT".equals(country) && StringUtils.isNumeric(doc) 		&& len==11 ) 
-			||  ( "IE".equals(country) && StringUtils.isAlphanumeric(doc) 	&& len==8 ) 
+			||  ( "IE".equals(country) && StringUtils.isAlphanumeric(doc) 	&& (len==8 || len==9) ) 
 			||  ( "LV".equals(country) && StringUtils.isNumeric(doc) 		&& len==11 ) 
 			||  ( "LT".equals(country) && StringUtils.isNumeric(doc) 		&& (len==9 || len == 12) ) 
 			||  ( "LU".equals(country) && StringUtils.isNumeric(doc) 		&& len==8 ) 

@@ -13,8 +13,6 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.file.format.core.DiskRegisterLoader;
 import com.code.aon.file.format.model.AbstractFileFiller;
 import com.code.aon.file.format.model.Fd0Exception;
-import com.code.aon.file.tax.model.MOD347.check.CheckDeclared;
-import com.code.aon.file.tax.model.MOD347.check.CheckDeponent;
 import com.code.aon.file.tax.model.MOD347.data.Asset;
 import com.code.aon.file.tax.model.MOD347.data.Declared;
 import com.code.aon.file.tax.model.MOD347.data.Deponent;
@@ -58,18 +56,11 @@ public class MOD347  extends AbstractFileFiller{
 			Map<String,Object> properties = new HashMap<String,Object>();
 			properties.put(MOD347.DEPONENT, deponent);
 			
-			if (CheckDeponent.parse(deponent,exceptions)==false) {
-				throw new Fd0Exception( "ERROR: ",deponent.toString());
-			}
-			
 			createLine("Declarante",properties);
 
 			for (Declared declared: deponent.getDeclareds()){
 				properties.put(MOD347.DECLARED, declared);
 				try{
-					if (CheckDeclared.parse(declared,exceptions)==false) {
-						throw new Fd0Exception( "ERROR: ",declared.toString());
-					}
 					createLine("Declarado",properties);
 				} catch (Exception ex) {
 					if ( ex instanceof Fd0Exception ) {

@@ -30,37 +30,68 @@ public class Deponent {
 		}
 		return c002;
 	}
-	
 	public int getNumVentas() {
-		int c001 = 0;
-		for (Declared r: getDeclareds()) {
-			c001 += ("B".equals(r.getKey()))?1:0;
-		}
-		return c001;
+		return getNumB();
 	}
-
 	public double getImporteVentas() {
-		double c002 = 0;
-		for (Declared r: getDeclareds()) {
-			c002 += ("B".equals(r.getKey()))?r.getQuantity():0;
-		}
-		return c002;
+		return getImporteB();
 	}
-
 	public int getNumCompras() {
+		return getNumA();
+	}
+	public double getImporteCompras() {
+		return getImporteA();
+	}
+	
+	public int getNum(String key) {
 		int c001 = 0;
 		for (Declared r: getDeclareds()) {
-			c001 += ("A".equals(r.getKey()))?1:0;
+			c001 += (key.equals(r.getKey()))?1:0;
 		}
 		return c001;
 	}
-
-	public double getImporteCompras() {
+	
+	public double getImporte(String key) {
 		double c002 = 0;
 		for (Declared r: getDeclareds()) {
-			c002 += ("A".equals(r.getKey()))?r.getQuantity():0;
+			c002 += (key.equals(r.getKey()))?r.getQuantity():0;
 		}
 		return c002;
+	}
+
+	public int getNumA() {
+		return getNum("A");
+	}
+	public double getImporteA() {
+		return getImporte("A");
+	}
+
+	public int getNumB() {
+		return getNum("B");
+	}
+	public double getImporteB() {
+		return getImporte("B");
+	}
+
+	public int getNumC() {
+		return getNum("C");
+	}
+	public double getImporteC() {
+		return getImporte("C");
+	}
+
+	public int getNumD() {
+		return getNum("D");
+	}
+	public double getImporteD() {
+		return getImporte("D");
+	}
+
+	public int getNumE() {
+		return getNum("E");
+	}
+	public double getImporteE() {
+		return getImporte("E");
 	}
 
 	public double getC003() {

@@ -114,7 +114,9 @@ public class Mod347Manager {
 					detail = new Mod347Detail();
 					detail.setMod347(mod347);
 					detail.setType(key);
-					detail.setDocument(document);
+					if (StringUtils.length(name) > 64) {
+						name = StringUtils.substring(name, 0, 63);
+					}
 					detail.setName(name);
 					detail.setVatAccrual(vatAccrualPayment);
 					Country cou = null;
@@ -123,7 +125,11 @@ public class Mod347Manager {
 					}
 					detail.setCountry( cou );
 					Province province = null;
-					if (cou == Country.ES) {
+					if (cou == null || cou == Country.ES) {
+						if (StringUtils.length(detail.getDocument()) > 9) {
+							detail.setDocument( StringUtils.substring(detail.getDocument(), 0,9));
+						}
+						detail.setDocument(document);
 						ps1.setInt(1,registry);
 						rs1 = ps1.executeQuery();
 						if (rs1.next()) {
@@ -140,6 +146,7 @@ public class Mod347Manager {
 						rs1.close();
 					} else {
 						province = Province.NO_RESIDENTE;
+						detail.setOperatorNif(cou.getValue() + document);
 					}
 					detail.setSheet("D");
 					detail.setProvince( province );
@@ -153,7 +160,7 @@ public class Mod347Manager {
 				double amount = base + quota + surchargeQuota;
 				if (!vatAccrualPayment) {
 					c.setTime(date);
-					int quarter = (c.get(Calendar.MONTH) % 3);
+					int quarter = (c.get(Calendar.MONTH) / 3);
 					if (quarter == 0) {
 						detail.setFirstQuarterAmount(CommonUtil.round(detail.getFirstQuarterAmount() + amount));
 					} else if (quarter == 1) {

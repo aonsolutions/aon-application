@@ -37,9 +37,9 @@ public enum MOD347Format {
 			,"/com/code/aon/file/tax/model/MOD347/xml/2011_GIPUZKOA_Declared.xml"
 			,"/com/code/aon/file/tax/model/MOD347/xml/2011_GIPUZKOA_Asset.xml"),
 	GIPUZKOA_2014(2014,Administration.GIPUZKOA
-			,"/com/code/aon/file/tax/model/MOD347/xml/2014_AEAT_Deponent.xml"
-			,"/com/code/aon/file/tax/model/MOD347/xml/2014_AEAT_Declared.xml"
-			,"/com/code/aon/file/tax/model/MOD347/xml/2014_AEAT_Asset.xml"),
+			,"/com/code/aon/file/tax/model/MOD347/xml/2014_GIPUZKOA_Deponent.xml"
+			,"/com/code/aon/file/tax/model/MOD347/xml/2014_GIPUZKOA_Declared.xml"
+			,"/com/code/aon/file/tax/model/MOD347/xml/2014_GIPUZKOA_Asset.xml"),
 	NAVARRA_2010(2010,Administration.NAVARRA
 			,"/com/code/aon/file/tax/model/MOD347/xml/2010_NAVARRA_Deponent.xml"
 			,"/com/code/aon/file/tax/model/MOD347/xml/2010_NAVARRA_Declared.xml"
