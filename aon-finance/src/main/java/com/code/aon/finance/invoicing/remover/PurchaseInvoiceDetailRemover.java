@@ -35,8 +35,10 @@ public class PurchaseInvoiceDetailRemover implements IInvoiceDetailRemover {
 
 				IManagerBean purchaseBean = BeanManager.getManagerBean(Purchase.class);
 				Purchase purchase = purchaseDetail.getPurchase();
-				purchase.setStatus(PurchaseStatus.PENDING);
-				purchaseBean.update(purchase);
+				if (purchase.getStatus() != PurchaseStatus.PENDING) {
+					purchase.setStatus(PurchaseStatus.PENDING);
+					purchaseBean.update(purchase);
+				}
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error removing Details", e);

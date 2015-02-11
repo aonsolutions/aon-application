@@ -31,8 +31,10 @@ public class IncomeInvoiceDetailRemover implements IInvoiceDetailRemover {
 
 				IManagerBean incomeBean = BeanManager.getManagerBean(Income.class);
 				Income income = incomeDetail.getIncome();
-				income.setStatus(IncomeStatus.PENDING);
-				incomeBean.update(income);
+				if (income.getStatus() != IncomeStatus.PENDING) {
+					income.setStatus(IncomeStatus.PENDING);
+					incomeBean.update(income);
+				}
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error removing Details", e);

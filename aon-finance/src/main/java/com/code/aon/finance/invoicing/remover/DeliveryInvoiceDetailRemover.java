@@ -31,8 +31,10 @@ public class DeliveryInvoiceDetailRemover implements IInvoiceDetailRemover {
 
 				IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
 				Delivery delivery = deliveryDetail.getDelivery();
-				delivery.setStatus(DeliveryStatus.PENDING);
-				deliveryBean.update(delivery);
+				if (delivery.getStatus() != DeliveryStatus.PENDING) {
+					delivery.setStatus(DeliveryStatus.PENDING);
+					deliveryBean.update(delivery);
+				}
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error removing Details", e);

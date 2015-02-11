@@ -177,9 +177,8 @@ public class SalesTransferManager implements Serializable {
 		salesChecks = new ArrayList<Sales>();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void checkAllSales(ActionEvent event) {
-		Iterator iterator = salesList.iterator();
+		Iterator<?> iterator = salesList.iterator();
 		while (iterator.hasNext()) {
 			Sales sales = (Sales)iterator.next();
 			setSalesRowChecked(sales, true);
@@ -242,9 +241,8 @@ public class SalesTransferManager implements Serializable {
 		detailChecks = new ArrayList<SalesDetail>();
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void checkAllDetails(List<ITransferObject> salesDetailList) {
-		Iterator iterator = salesDetailList.iterator();
+		Iterator<?> iterator = salesDetailList.iterator();
 		while (iterator.hasNext()) {
 			SalesDetail detail = (SalesDetail)iterator.next();
 			if (!detailChecks.contains(detail)) {
@@ -254,9 +252,8 @@ public class SalesTransferManager implements Serializable {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void checkNoneDetails(List<ITransferObject> salesDetailList) {
-		Iterator iterator = salesDetailList.iterator();
+		Iterator<?> iterator = salesDetailList.iterator();
 		while (iterator.hasNext()) {
 			SalesDetail detail = (SalesDetail)iterator.next();
 			if (detailChecks.contains(detail)) {

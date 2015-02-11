@@ -23,10 +23,15 @@ import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.finance.invoicing.remover.IInvoiceDetailRemover;
 import com.code.aon.finance.invoicing.remover.InvoiceRemoverFactory;
 import com.code.aon.product.enumeration.ProductType;
+import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryTax;
+import com.code.aon.tas.ProjectTas;
+import com.code.aon.tas.enumeration.ProjectStatus;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
@@ -36,6 +41,10 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	@Override
 	public void beanInserted(ManagerBeanEvent evt) throws ManagerBeanException {
 		InvoiceDetail detail = (InvoiceDetail)evt.getTo();
+		if (detail.getInvoice().isSales()) {
+			updateProjectStatus(detail.getProject(), ProjectStatus.CLOSED);
+		}
+
 		if (InvoiceType.UNDEDUCTIBLE != detail.getInvoice().getType() && !detail.isPrepayment() && detail.getItem() != null) {
 			InvoiceTax detailVat = getInvoiceTax(detail, detail.getItem().getProduct().getVat(), null);
 			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
@@ -80,6 +89,10 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	@Override
 	public void beanUpdated(ManagerBeanEvent evt) throws ManagerBeanException {
 		InvoiceDetail detail = (InvoiceDetail)evt.getTo();
+		if (detail.getInvoice().isSales()) {
+			updateProjectStatus(detail.getProject(), ProjectStatus.CLOSED);
+		}
+
 		if (detail.isUpdateEnabled()) {
 			if (InvoiceType.UNDEDUCTIBLE != detail.getInvoice().getType() && !detail.isPrepayment() && detail.getItem() != null) {
 				InvoiceTax detailVat = getInvoiceTax(detail, detail.getItem().getProduct().getVat(), null);
@@ -125,6 +138,10 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	@Override
 	public void beanRemoved(ManagerBeanEvent evt) throws ManagerBeanException {
 		InvoiceDetail detail = (InvoiceDetail)evt.getTo();
+		if (detail.getInvoice().isSales()) {
+			updateProjectStatus(detail.getProject(), ProjectStatus.PENDING);
+		}
+
 		try {
 			IInvoiceDetailRemover remover = InvoiceRemoverFactory.getInvoiceDetailRemover(detail.getSource());
 			remover.removeDetail(detail);
@@ -236,6 +253,32 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
     		return (TaxDetail)ito;
     	}
 		return null;
+	}
+
+	private void updateProjectStatus(Project project, ProjectStatus status) throws ManagerBeanException {
+		if (project != null && project.isTas()) {
+			IManagerBean projectTasBean = BeanManager.getManagerBean(ProjectTas.class);
+			ProjectTas projectTas = (ProjectTas)projectTasBean.get(project.getId());
+			if (projectTas != null && projectTas.getStatus() != status) {
+				boolean updateProjectStatus = true;
+				if (status == ProjectStatus.PENDING) {
+					IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+					Criteria criteria = new Criteria();
+					String alias = invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_PROJECT_ID);
+					Expression invoiceProjectExpr = ExpressionUtilities.getEqualExpression(alias, project.getId());
+					alias = invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_PROJECT_ID);
+					Expression detailProjectExpr = ExpressionUtilities.getEqualExpression(alias, project.getId());
+					criteria.addExpression(ExpressionUtilities.getOrExpression(invoiceProjectExpr, detailProjectExpr));
+					if (invoiceDetailBean.getCount(criteria) > 0) {
+						updateProjectStatus = false;
+					}
+				}
+				if (updateProjectStatus) {
+					projectTas.setStatus(status);
+					projectTasBean.update(projectTas);
+				}
+			}
+		}
 	}
 
 	private void updateInvoiceTotals(Invoice invoice, boolean skipServiceProcess) throws ManagerBeanException {

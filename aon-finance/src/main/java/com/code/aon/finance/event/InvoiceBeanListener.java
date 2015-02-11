@@ -18,6 +18,8 @@ import com.code.aon.finance.InvoiceTax;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryTax;
 import com.code.aon.tas.ProjectTas;
@@ -32,7 +34,7 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 	public void beanInserted(ManagerBeanEvent evt) throws ManagerBeanException {
 		Invoice invoice = (Invoice) evt.getTo();
 		if (invoice.isSales()) {
-			modifyProjectStatus(((Invoice)evt.getTo()).getProject(), ProjectStatus.CLOSED);
+			updateProjectStatus(((Invoice)evt.getTo()).getProject(), ProjectStatus.CLOSED);
 		}
 	}
 
@@ -40,7 +42,7 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 	public void beanUpdated(ManagerBeanEvent evt) throws ManagerBeanException {
 		Invoice invoice = (Invoice) evt.getTo();
 		if (invoice.isSales()) {
-			modifyProjectStatus(((Invoice)evt.getTo()).getProject(), ProjectStatus.CLOSED);
+			updateProjectStatus(((Invoice)evt.getTo()).getProject(), ProjectStatus.CLOSED);
 		}
 
 		if (invoice.isUpdateEnabled()) {
@@ -56,17 +58,32 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 	public void beanRemoved(ManagerBeanEvent evt) throws ManagerBeanException {
 		Invoice invoice = (Invoice) evt.getTo();
 		if (invoice.isSales()) {
-			modifyProjectStatus(((Invoice)evt.getTo()).getProject(), ProjectStatus.PENDING);
+			updateProjectStatus(((Invoice)evt.getTo()).getProject(), ProjectStatus.PENDING);
 		}
 	}
 
-	private void modifyProjectStatus(Project project, ProjectStatus status) throws ManagerBeanException {
+	private void updateProjectStatus(Project project, ProjectStatus status) throws ManagerBeanException {
 		if (project != null && project.isTas()) {
 			IManagerBean projectTasBean = BeanManager.getManagerBean(ProjectTas.class);
 			ProjectTas projectTas = (ProjectTas)projectTasBean.get(project.getId());
 			if (projectTas != null && projectTas.getStatus() != status) {
-				projectTas.setStatus(status);
-				projectTasBean.update(projectTas);
+				boolean updateProjectStatus = true;
+				if (status == ProjectStatus.PENDING) {
+					IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+					Criteria criteria = new Criteria();
+					String alias = invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_PROJECT_ID);
+					Expression invoiceProjectExpr = ExpressionUtilities.getEqualExpression(alias, project.getId());
+					alias = invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_PROJECT_ID);
+					Expression detailProjectExpr = ExpressionUtilities.getEqualExpression(alias, project.getId());
+					criteria.addExpression(ExpressionUtilities.getOrExpression(invoiceProjectExpr, detailProjectExpr));
+					if (invoiceDetailBean.getCount(criteria) > 0) {
+						updateProjectStatus = false;
+					}
+				}
+				if (updateProjectStatus) {
+					projectTas.setStatus(status);
+					projectTasBean.update(projectTas);
+				}
 			}
 		}
 	}

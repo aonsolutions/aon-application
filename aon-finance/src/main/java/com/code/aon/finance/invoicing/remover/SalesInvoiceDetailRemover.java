@@ -35,8 +35,10 @@ public class SalesInvoiceDetailRemover implements IInvoiceDetailRemover {
 
 				IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
 				Sales sales = salesDetail.getSales();
-				sales.setStatus(SalesStatus.PENDING);
-				salesBean.update(sales);
+				if (sales.getStatus() != SalesStatus.PENDING) {
+					sales.setStatus(SalesStatus.PENDING);
+					salesBean.update(sales);
+				}
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error removing Details", e);
