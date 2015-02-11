@@ -27,7 +27,7 @@
 							value="#{bundle.aon_key_finance_description}"
 							title="#{bundle.aon_key_finance_accelerator}"
 							actionListener="#{undeductibleInvoice.onGenerateFinances}"
-							rendered="#{undeductibleInvoice.toInvoiceTotalPrice != 0 and (!undeductibleInvoice.recorded or undeductibleInvoiceFinance.model.rowCount == 0)}"
+							rendered="#{undeductibleInvoice.toInvoiceTotalPrice != 0 and (!undeductibleInvoice.recorded or undeductibleInvoiceFinance.allPending)}"
 							iconClass="aon-icon-tree"
 							accesskey="#{bundle.aon_key_finance}">
 							<f:setPropertyActionListener target="#{undeductibleInvoice.backActionListener}"

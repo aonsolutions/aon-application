@@ -67,7 +67,7 @@
 							value="#{bundle.aon_key_finance_description}"
 							title="#{bundle.aon_key_finance_accelerator}"
 							actionListener="#{purchaseInvoice.onGenerateFinances}"
-							rendered="#{purchaseInvoice.toInvoiceTotalPrice != 0 and (!purchaseInvoice.recorded or purchaseInvoiceFinance.model.rowCount == 0)}"
+							rendered="#{purchaseInvoice.toInvoiceTotalPrice != 0 and (!purchaseInvoice.recorded or purchaseInvoiceFinance.allPending)}"
 							iconClass="aon-icon-tree"
 							accesskey="#{bundle.aon_key_finance}">
 							<f:setPropertyActionListener target="#{purchaseInvoice.backActionListener}"
