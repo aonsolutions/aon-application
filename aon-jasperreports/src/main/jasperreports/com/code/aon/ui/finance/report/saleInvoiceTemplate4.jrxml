@@ -12,7 +12,7 @@
 	<style name="table1" mode="Opaque" backcolor="#CCCCCC">
 		<paragraph lineSpacing="Single"/>
 	</style>
-	<subDataset name="detail" uuid="b6d87951-1160-4874-afd0-10de6cbb4575">
+	<subDataset name="detail" scriptletClass="com.code.aon.ui.finance.util.print.SaleInvoiceReportScriptlet" uuid="b6d87951-1160-4874-afd0-10de6cbb4575">
 		<parameter name="printProductCode" class="java.lang.Boolean"/>
 		<parameter name="printReferenceCode" class="java.lang.Boolean"/>
 		<field name="description" class="java.lang.String"/>
@@ -24,6 +24,7 @@
 		<field name="sourceTo" class="com.code.aon.common.IHeaderObject"/>
 		<field name="item" class="com.code.aon.product.Item"/>
 		<field name="deliverySource" class="java.lang.Boolean"/>
+		<field name="id" class="java.lang.Integer"/>
 		<variable name="invoiceTotal" class="java.lang.Double" calculation="Sum">
 			<variableExpression><![CDATA[$F{taxableBase}]]></variableExpression>
 		</variable>
@@ -32,6 +33,10 @@
 (((com.code.aon.warehouse.Delivery)$F{sourceTo}).getReferenceCode()):null]]></variableExpression>
 			<initialValueExpression><![CDATA[($F{deliverySource} && $F{sourceTo} != null)?
 (((com.code.aon.warehouse.Delivery)$F{sourceTo}).getReferenceCode()):null]]></initialValueExpression>
+		</variable>
+		<variable name="lineDescription" class="java.lang.String" resetType="None">
+			<variableExpression><![CDATA[]]></variableExpression>
+			<initialValueExpression><![CDATA[]]></initialValueExpression>
 		</variable>
 		<group name="deliveryGroup">
 			<groupExpression><![CDATA[$F{sourceTo}.getReferenceCode()]]></groupExpression>
@@ -761,10 +766,7 @@
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement verticalAlignment="Middle" markup="html"/>
-								<textFieldExpression><![CDATA[(($P{printProductCode} && $F{item}!=null && $F{item}.getProduct()!=null)?($R{aon_id} + ": " + $F{item}.getProduct().getCode()):"") + " " +
-($P{printReferenceCode} && $V{deliveryReference}!=null?($R{aon_invoice_sales} + ": " + $V{deliveryReference}):"") + " " +
-(((($P{printProductCode} && $F{item}!=null && $F{item}.getProduct()!=null) || ($P{printReferenceCode} && $V{deliveryReference}!=null) ) )?"<br>":"") +
-$F{description}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$V{lineDescription}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>

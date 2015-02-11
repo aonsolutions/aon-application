@@ -9,7 +9,7 @@
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<import value="com.code.aon.product.enumeration.ProductType"/>
-	<subDataset name="detail" uuid="8477062c-7931-4fec-b109-59b92635182f">
+	<subDataset name="detail" scriptletClass="com.code.aon.ui.finance.util.print.SaleInvoiceReportScriptlet" uuid="8477062c-7931-4fec-b109-59b92635182f">
 		<parameter name="printDiscountPriceApplied" class="java.lang.Boolean"/>
 		<parameter name="isDeliverySource" class="java.lang.String">
 			<defaultValueExpression><![CDATA[$F{deliverySource} && $F{sourceTo} != null]]></defaultValueExpression>
@@ -26,6 +26,7 @@
 		<field name="deliverySource" class="java.lang.Boolean"/>
 		<field name="invoice" class="com.code.aon.finance.Invoice"/>
 		<field name="item" class="com.code.aon.product.Item"/>
+		<field name="id" class="java.lang.Integer"/>
 		<variable name="invoiceTotal" class="java.lang.Double" calculation="Sum">
 			<variableExpression><![CDATA[$F{taxableBase}]]></variableExpression>
 		</variable>
@@ -44,6 +45,10 @@
 (((com.code.aon.warehouse.Delivery)$F{sourceTo}).getReferenceCode()):null]]></variableExpression>
 			<initialValueExpression><![CDATA[($F{deliverySource} && $F{sourceTo} != null)?
 (((com.code.aon.warehouse.Delivery)$F{sourceTo}).getReferenceCode()):null]]></initialValueExpression>
+		</variable>
+		<variable name="lineDescription" class="java.lang.String" resetType="None">
+			<variableExpression><![CDATA[]]></variableExpression>
+			<initialValueExpression><![CDATA[]]></initialValueExpression>
 		</variable>
 		<group name="deliveryGroup">
 			<groupExpression><![CDATA[$F{sourceTo}.getReferenceCode()]]></groupExpression>
@@ -768,10 +773,7 @@ $R{report_from} + " " + new SimpleDateFormat("dd/MM/yyyy").format($F{sourceTo}.g
 									<textElement verticalAlignment="Middle" markup="html">
 										<font size="8"/>
 									</textElement>
-									<textFieldExpression><![CDATA[(($P{printProductCode} && $F{item}!=null && $F{item}.getProduct()!=null)?($R{aon_id} + ": " + $F{item}.getProduct().getCode()):"") + " " +
-($P{printReferenceCode} && $V{deliveryReference}!=null?($R{aon_invoice_sales} + ": " + $V{deliveryReference}):"") + " " +
-(((($P{printProductCode} && $F{item}!=null && $F{item}.getProduct()!=null) || ($P{printReferenceCode} && $V{deliveryReference}!=null) ) )?"<br>":"") +
-$F{description}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[$V{lineDescription}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>

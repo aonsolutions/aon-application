@@ -2,12 +2,13 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="invoiceDetail" pageWidth="483" pageHeight="842" columnWidth="483" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="42170be3-5b77-42df-a2e7-6915fec30163">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
+	<scriptlet name="InvoiceScriptlet" class="com.code.aon.ui.finance.util.print.SaleInvoiceReportScriptlet"/>
 	<parameter name="printDiscountPriceApplied" class="java.lang.Boolean"/>
 	<parameter name="isIncreaseType" class="java.lang.Boolean"/>
 	<parameter name="printReferenceCode" class="java.lang.Boolean"/>
@@ -19,8 +20,10 @@
 	<field name="taxableBase" class="java.lang.Double"/>
 	<field name="sourceTo" class="com.code.aon.common.IHeaderObject"/>
 	<field name="deliverySource" class="java.lang.Boolean"/>
+	<field name="purchaseSource" class="java.lang.Boolean"/>
 	<field name="invoice" class="com.code.aon.finance.Invoice"/>
 	<field name="item" class="com.code.aon.product.Item"/>
+	<field name="id" class="java.lang.Integer"/>
 	<variable name="printDiscountPriceApplied" class="java.lang.Boolean">
 		<variableExpression><![CDATA[$P{printDiscountPriceApplied}!=null?$P{printDiscountPriceApplied}:false]]></variableExpression>
 		<initialValueExpression><![CDATA[$P{printDiscountPriceApplied}!=null?$P{printDiscountPriceApplied}:false]]></initialValueExpression>
@@ -37,13 +40,17 @@
 		<initialValueExpression><![CDATA[($F{deliverySource} && $F{sourceTo} != null)?
 (((com.code.aon.warehouse.Delivery)$F{sourceTo}).getReferenceCode()):null]]></initialValueExpression>
 	</variable>
+	<variable name="lineDescription" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
 	<group name="deliveryGroup">
 		<groupExpression><![CDATA[$F{sourceTo}.getReferenceCode()]]></groupExpression>
 		<groupHeader>
 			<band height="16">
 				<printWhenExpression><![CDATA[$F{deliverySource} && $F{sourceTo} != null]]></printWhenExpression>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement uuid="55e03207-daaf-44cc-a391-4d1a78562696" key="textField-1" x="0" y="0" width="100" height="14">
+					<reportElement uuid="55e03207-daaf-44cc-a391-4d1a78562696" key="textField-1" x="0" y="2" width="100" height="14">
 						<printWhenExpression><![CDATA[$F{deliverySource} && $F{sourceTo} != null]]></printWhenExpression>
 					</reportElement>
 					<box leftPadding="5" rightPadding="5">
@@ -58,7 +65,7 @@
 					<textFieldExpression><![CDATA[$R{aon_invoice_delivery} + ": " + $F{sourceTo}.getReferenceCode()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-					<reportElement uuid="a1a77de7-9360-41eb-8800-939de17823fd" key="textField-1" positionType="Float" x="116" y="0" width="60" height="14">
+					<reportElement uuid="a1a77de7-9360-41eb-8800-939de17823fd" key="textField-1" positionType="Float" x="116" y="2" width="60" height="14">
 						<printWhenExpression><![CDATA[$F{deliverySource} && $F{sourceTo} != null]]></printWhenExpression>
 					</reportElement>
 					<box leftPadding="0" rightPadding="0">
@@ -73,7 +80,7 @@
 					<textFieldExpression><![CDATA[$F{sourceTo}.getDate()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-					<reportElement uuid="7a10af95-ecd0-411e-9458-fd8d5d101dd2" key="textField-1" positionType="Float" x="176" y="0" width="307" height="14">
+					<reportElement uuid="7a10af95-ecd0-411e-9458-fd8d5d101dd2" key="textField-1" positionType="Float" x="176" y="2" width="307" height="14">
 						<printWhenExpression><![CDATA[$F{deliverySource} && $F{sourceTo} != null]]></printWhenExpression>
 					</reportElement>
 					<box leftPadding="0" rightPadding="0">
@@ -89,7 +96,7 @@
 "("+$V{deliveryCustomer}.getRegistry().getFullName()+")"]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-					<reportElement uuid="7a74d330-8093-47b4-9354-c588b49e7fef" key="textField-1" positionType="Float" x="100" y="0" width="16" height="14">
+					<reportElement uuid="7a74d330-8093-47b4-9354-c588b49e7fef" key="textField-1" positionType="Float" x="100" y="2" width="16" height="14">
 						<printWhenExpression><![CDATA[$F{deliverySource} && $F{sourceTo} != null]]></printWhenExpression>
 					</reportElement>
 					<box leftPadding="0" rightPadding="0">
@@ -200,10 +207,7 @@
 				<textElement verticalAlignment="Middle" markup="html">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[(($P{printProductCode} && $F{item}!=null && $F{item}.getProduct()!=null)?($R{aon_id} + ": " + $F{item}.getProduct().getCode()):"") + " " +
-($P{printReferenceCode} && $V{deliveryReference}!=null?($R{aon_invoice_sales} + ": " + $V{deliveryReference}):"") + " " +
-(((($P{printProductCode} && $F{item}!=null && $F{item}.getProduct()!=null) || ($P{printReferenceCode} && $V{deliveryReference}!=null) ) )?"<br>":"") +
-$F{description}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{lineDescription}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00 %" isBlankWhenNull="true">
 				<reportElement uuid="d5b1a81d-54c2-4347-8d67-2f8509007105" key="textField-4" x="374" y="0" width="35" height="14">

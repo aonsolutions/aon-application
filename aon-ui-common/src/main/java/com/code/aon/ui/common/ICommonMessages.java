@@ -94,6 +94,7 @@ public interface ICommonMessages {
 	String PROFIT = "aon_profit";
 	String PURCHASES = "aon_purchases";
 	String QUANTITY_PATTERN = "aon_quantity_pattern";
+	String REFERENCE = "aon_reference";
 	String REFERENCE_ACTION_TARGET = "aon_reference_action_target";
 	String REFERENCE_OFFER = "aon_reference_offer";
 	String REFERENCE_PROJECT_COMMERCIAL = "aon_reference_project_commercial";
