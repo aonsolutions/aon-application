@@ -27,7 +27,6 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.supplier.util.SupplierValidationManager;
@@ -172,8 +171,10 @@ public class PurchaseInvoiceController extends InvoiceController {
 			invoicingManager.transferIncomes(getInvoice(), getIncomeTransferManager().getCheckedIncome(), getIncomeTransferManager().getInvoicedIncomeList());
 
 			refresh(null);
-			IController detailController = FormUtil.getController(PURCHASE_INVOICE_DETAIL_CONTROLLER_NAME);
-			detailController.onSearch(null);
+			FormUtil.getController(PURCHASE_INVOICE_DETAIL_CONTROLLER_NAME).onSearch(null);
+
+			autoGenerateIncreases();
+			autoGenerateFinances();
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);

@@ -36,7 +36,6 @@ import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
@@ -217,8 +216,10 @@ public class SaleInvoiceController extends InvoiceController {
 			invoicingManager.transferDeliveries(getInvoice(), getDeliveryTransferManager().getCheckedDelivery(), getDeliveryTransferManager().getInvoicedDeliveryList());
 
 			refresh(null);
-			IController detailController = FormUtil.getController(SALE_INVOICE_DETAIL_CONTROLLER_NAME);
-			detailController.onSearch(null);
+			FormUtil.getController(SALE_INVOICE_DETAIL_CONTROLLER_NAME).onSearch(null);
+
+			autoGenerateIncreases();
+			autoGenerateFinances();
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);
