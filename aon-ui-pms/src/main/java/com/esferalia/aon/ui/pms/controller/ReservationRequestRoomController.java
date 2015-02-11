@@ -15,12 +15,19 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ReservationRequest;
 import com.esferalia.aon.pms.ReservationRequestRoom;
 import com.esferalia.aon.pms.reservation.AvailableRoomStay;
@@ -31,10 +38,18 @@ import com.esferalia.aon.pms.sql.SQLUtils;
 import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class ReservationRequestRoomController extends LinesController implements IPmsConstants {
-	
+
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
+	private ReservationUtils reservationUtils;
 	private Map<Integer,List<AvailableRoomStay>> availableRoomStayMap;
+
+	public ReservationUtils getReservationUtils() {
+		if (reservationUtils == null) {
+			reservationUtils = new ReservationUtils();
+		}
+		return reservationUtils;
+	}
 
 	public Map<Integer,List<AvailableRoomStay>> getAvailableRoomStayMap() {
 		if (availableRoomStayMap == null) {
@@ -52,6 +67,39 @@ public class ReservationRequestRoomController extends LinesController implements
 
 	public List<SelectItem> getHotelRoomItems() throws ManagerBeanException {
 		return PmsUtils.getHotelRoomItems(((ReservationRequest)getMasterController().getTo()).getHotel());
+	}
+
+	public boolean isAgreedPriceVisible() throws ManagerBeanException {
+		if (isBestPriceDiscountItemDefined()) {
+			ReservationRequest request = (ReservationRequest)getMasterController().getTo();
+			IManagerBean requestRoomBean = BeanManager.getManagerBean(ReservationRequestRoom.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(requestRoomBean.getFieldName(IEntityAlias.RESERVATION_REQUEST_ROOM_RESERVATION_REQUEST_ID), request.getId());
+			String alias = requestRoomBean.getFieldName(IEntityAlias.RESERVATION_REQUEST_ROOM_CRS_CODE);
+			Expression nullCrsCode = ExpressionUtilities.getNullExpression(alias);
+			alias = requestRoomBean.getFieldName(IEntityAlias.RESERVATION_REQUEST_ROOM_AGREED_PRICE);
+			Expression agreedPrice = ExpressionUtilities.getGreaterThanExpression(alias, Double.valueOf(0));
+			criteria.addExpression(ExpressionUtilities.getOrExpression(nullCrsCode, agreedPrice));
+			for (ITransferObject ito : requestRoomBean.getList(criteria)) {
+				ReservationRequestRoom requestRoom = (ReservationRequestRoom)ito;
+				if (requestRoom.getAgreedPrice() > 0 || isAgreedPriceEditable(requestRoom)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public boolean isAgreedPriceEditable() throws ManagerBeanException {
+		return isAgreedPriceEditable((ReservationRequestRoom)getTo());
+	}
+
+	public boolean isAgreedPriceEditable(ReservationRequestRoom requestRoom) throws ManagerBeanException {
+		return (StringUtils.isEmpty(requestRoom.getCrsCode()) && AonUtil.getRoleManager().isCommercialOperator());
+	}
+
+	private boolean isBestPriceDiscountItemDefined() throws ManagerBeanException {
+		return (getReservationUtils().obtainBestPriceDiscountItem() != null);
 	}
 
 	private boolean isStopSalesDefined(ReservationRequest request) {
@@ -152,7 +200,6 @@ public class ReservationRequestRoomController extends LinesController implements
 	}
 
 	public void sendBookingQuery(ActionEvent event) throws ManagerBeanException {
-		ReservationUtils reservationUtils = new ReservationUtils();
 		if (getModel().isRowAvailable()) {
 			ReservationRequestController requestController = (ReservationRequestController)getMasterController();
 			ReservationRequest request = (ReservationRequest)requestController.getTo();
@@ -161,7 +208,7 @@ public class ReservationRequestRoomController extends LinesController implements
 			AvailableRoomStay availableRoomStay = getAvailableRoomStayList().get(Integer.parseInt(ec.getRequestParameterMap().get("availableRoomStayIndex")));
 			requestRoom.setReservationRequest(request);
 			requestRoom.setTariffCode(availableRoomStay.getTariffCode());
-			if (reservationUtils.obtainTariff(requestRoom.getTariffCode()) != null) {
+			if (getReservationUtils().obtainTariff(requestRoom.getTariffCode()) != null) {
 				if (!mustStopSale(requestRoom)) {
 					request.setRequestCounter(request.getRequestCounter() + 1);
 					requestController.setSkipResetAvailabilityMap(true);

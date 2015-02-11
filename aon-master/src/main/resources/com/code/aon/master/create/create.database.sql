@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.13.2
+# Version: 8.15.0
 # Created by: girazu
-# Creation Date: 28/01/2015 09:55
+# Creation Date: 10/02/2015 17:50
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -6811,6 +6811,7 @@ CREATE TABLE `reservation_request_room` (
   `meal_plan` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Tipo de regimen',
   `daily_price` double(15,2) default '0.00' COMMENT 'Importe Diario',
   `total_price` double(15,2) default '0.00' COMMENT 'Importe Total',
+  `agreed_price` double(15,2) default '0.00' COMMENT 'Importe Pactado',
   `cancel_penalty` varchar(256) collate latin1_spanish_ci default NULL COMMENT 'Penalizaciones por cancelacion',
   `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime default NULL COMMENT 'Fecha de creacion',
@@ -7840,7 +7841,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.13.5');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.15.0');
 
 COMMIT;
 

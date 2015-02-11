@@ -473,6 +473,11 @@ public class ReservationManager implements IReservationConstants {
 			}
 		}
 
+		double agreedPrice = getReservationUtils().getAgreedPriceValue(reservation.getCrsCode());
+		if (agreedPrice > 0) {
+			createAgreedPriceDiscountService(agreedPrice, reservation);
+		}
+
 		double autoDiscount = getReservationUtils().getAutoDiscountValue(reservation.getAgency());
 		if (autoDiscount > 0) {
 			createAutoDiscountService(autoDiscount, reservation);
@@ -514,6 +519,29 @@ public class ReservationManager implements IReservationConstants {
 
 	private boolean isServiceDateValid(Date serviceDate, Date reservationEndDate) {
 		return !DateUtils.isSameDay(serviceDate, reservationEndDate) && serviceDate.before(reservationEndDate);
+	}
+
+	private void createAgreedPriceDiscountService(double agreedPrice, ProjectReservation reservation) throws ManagerBeanException {
+		Item item = getReservationUtils().obtainBestPriceDiscountItem();
+		if (item != null) {
+			String serviceRPH = "01";
+			for (String key : roomServicesMap.keySet()) {
+				if (Integer.parseInt(key) >= Integer.parseInt(serviceRPH)) {
+					serviceRPH = StringUtils.leftPad(Integer.toString(Integer.parseInt(key) + 1), 2, "0") ;
+				}
+			}
+			roomServicesMap.put(serviceRPH, roomServicesMap.get(FIRST_ROOM));
+			String serviceInventaryCode = item.getProduct().getCode();
+			ProjectReservationService reservationService = insertReservationService(reservation, serviceRPH, serviceInventaryCode, item);
+
+			Date date = DateUtils.truncate(reservation.getStartDate(), Calendar.DATE);
+			double total = CommonUtil.round(reservation.getTotal() - agreedPrice);
+			calculateTaxData = true;
+			ProjectReservationServiceDetail reservationServiceDetail = insertReservationServiceDetail(reservationService, date, -1, total);
+
+			reservation.setTaxableBase(CommonUtil.round(reservation.getTaxableBase() - reservationServiceDetail.getPrice()));
+			reservation.setTotal(CommonUtil.round(reservation.getTotal() - total));
+		}
 	}
 
 	private void createAutoDiscountService(double autoDiscount, ProjectReservation reservation) throws ManagerBeanException {

@@ -91,6 +91,29 @@
 				</f:facet>
 			</aon:column>
 
+			<aon:if test="#{controller.agreedPriceVisible}">
+				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+					<f:facet name="header">
+						<aon:outputLabel for="ReservationRequestRoom_agreedPrice" value="#{bundle.pms_agreed_price}" />
+					</f:facet>
+					<aon:outputText value="#{to.agreedPrice}" rendered="#{formList or !controller.agreedPriceEditable}">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+					<aon:inputText id="ReservationRequestRoom_agreedPrice" 
+						value="#{controller.to.agreedPrice}" rendered="#{formEdit and controller.agreedPriceEditable}"
+						required="true" size="5">
+						<f:validateDoubleRange minimum = "0" />
+					</aon:inputText>
+					<f:facet name="footer">
+						<aon:inputText id="ReservationRequestRoom_agreedPrice-New" 
+							value="#{controller.to.agreedPrice}" rendered="#{formNew and controller.agreedPriceEditable}"
+							required="true" size="5">
+							<f:validateDoubleRange minimum = "0" />
+						</aon:inputText>
+					</f:facet>
+				</aon:column>
+			</aon:if>
+
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 				<f:facet name="header">
 					<aon:outputLabel for="ReservationRequestRoom_adults" value="#{bundle.pms_adults}" />
@@ -190,7 +213,8 @@
 						rendered="#{availableRoomStay.error}" />
 				</aon:column>
 
-				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
+				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column"
+					colspan="#{(controller.agreedPriceVisible) ? '2' : '1'}">
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.pms_room_type}" />
 					</f:facet>
@@ -281,7 +305,8 @@
 					<aon:outputText value="#{reservationData.mealPlan}" />
 				</aon:column>
 
-				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
+				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column"
+					colspan="#{(controller.agreedPriceVisible) ? '2' : '1'}">
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.pms_room_type}" />
 					</f:facet>

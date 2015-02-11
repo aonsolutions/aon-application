@@ -61,6 +61,7 @@ import com.esferalia.aon.pms.ProjectReservationRoomDetail;
 import com.esferalia.aon.pms.ProjectReservationService;
 import com.esferalia.aon.pms.ProjectReservationServiceDetail;
 import com.esferalia.aon.pms.ReservationRequest;
+import com.esferalia.aon.pms.ReservationRequestRoom;
 import com.esferalia.aon.pms.Room;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationDivertStatus;
@@ -964,6 +965,28 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 			return rAddInfo != null && rAddInfo.getValue().equalsIgnoreCase(YES);
 		}
 		return false;
+	}
+
+	public double getAgreedPriceValue(String crsCode) throws ManagerBeanException {
+		IManagerBean requestRoomBean = BeanManager.getManagerBean(ReservationRequestRoom.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(requestRoomBean.getFieldName(IEntityAlias.RESERVATION_REQUEST_ROOM_CRS_CODE), crsCode);
+		criteria.addGreaterThanExpression(requestRoomBean.getFieldName(IEntityAlias.RESERVATION_REQUEST_ROOM_AGREED_PRICE), Double.valueOf(0));
+		for (ITransferObject ito : requestRoomBean.getList(criteria)) {
+			ReservationRequestRoom requestRoom = (ReservationRequestRoom)ito;
+			return requestRoom.getAgreedPrice();
+		}
+		return 0;
+	}
+
+	public Item obtainBestPriceDiscountItem() throws ManagerBeanException {
+		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), BEST_PRICE_DISCOUNT_ITEM);
+		for (ITransferObject ito : appParamBean.getList(criteria)) {
+			return obtainItem(((ApplicationParameter)ito).getValue());
+		}
+		return null;
 	}
 
 	public double getAutoDiscountValue(Customer agency) throws ManagerBeanException {
