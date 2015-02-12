@@ -187,10 +187,10 @@ public class FinanceTrackingManager {
 		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IEntityAlias.FINANCE_BATCH_DETAIL_FINANCE_ID), finance.getId());
 		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IEntityAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.PAID);
 		for (ITransferObject ito : fBatchDetailBean.getList(criteria)) {
-			FinanceBatchDetail detail = (FinanceBatchDetail)ito;
-			detail.setStatus(FinanceStatus.RETURNED);
-			finance = (Finance)HibernateUtil.getSession(sessionName).merge(finance);	
-			fBatchDetailBean.update(detail);
+			FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)ito;
+			fBatchDetail.setStatus(FinanceStatus.RETURNED);
+			fBatchDetail = (FinanceBatchDetail)HibernateUtil.getSession(sessionName).merge(fBatchDetail);
+			fBatchDetailBean.update(fBatchDetail);
 		}
 	}
 
