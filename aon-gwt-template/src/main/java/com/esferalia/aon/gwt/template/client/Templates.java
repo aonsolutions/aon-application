@@ -102,22 +102,24 @@ public class Templates extends Composite implements EntryPoint {
 		private MenuItem removeItem;
 		private MenuItem downloadItem;
 		
-		public DocumentContextMenu(){
-
-			/*viewItem = addItem("Visualizar",viewCommand,
-					"aon-icon-open-popup",AON.AON_ICON_CMD_BUTTON);
-			viewItem.setEnabled(true);
-			addSeparator();*/
-			editItem = addItem("Editar", editCommand,
-					"aon-icon-edit", AON.AON_ICON_CMD_BUTTON);
-			editItem.setEnabled(true);
-			removeItem = addItem("Borrar", removeCommand,
-					AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
-			removeItem.setEnabled(true);
-			addSeparator();
-			downloadItem = addItem("Descargar",downloadCommand,
-					"aon-icon-google-drive-excel",AON.AON_ICON_CMD_BUTTON);
-			downloadItem.setEnabled(true);	
+		public DocumentContextMenu(TemplateInfo object){
+			if(!object.getIsParent()){
+				/*viewItem = addItem("Visualizar",viewCommand,
+						"aon-icon-open-popup",AON.AON_ICON_CMD_BUTTON);
+				viewItem.setEnabled(true);
+				addSeparator();*/
+			
+				editItem = addItem("Editar", editCommand,
+						"aon-icon-edit", AON.AON_ICON_CMD_BUTTON);
+				editItem.setEnabled(true);
+				removeItem = addItem("Borrar", removeCommand,
+						AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
+				removeItem.setEnabled(true);
+				addSeparator();
+				downloadItem = addItem("Descargar",downloadCommand,
+						"aon-icon-google-drive-excel",AON.AON_ICON_CMD_BUTTON);
+				downloadItem.setEnabled(true);
+			}
 		}
 
 		@Override
@@ -241,7 +243,7 @@ public class Templates extends Composite implements EntryPoint {
 				    dataGrid.setKeyboardSelectedRow(relRow, subrow, true); 
    					NativeEvent nativeEvent = event.getNativeEvent();
 
-			    	DocumentContextMenu contextMenu = new DocumentContextMenu();
+			    	DocumentContextMenu contextMenu = new DocumentContextMenu(dataProvider.getList().get(dataGrid.getKeyboardSelectedRow()));
    					if(nativeEvent.getClientY()>590){
    						if(nativeEvent.getClientX()>994)
    							contextMenu.setPopupPosition(nativeEvent.getClientX()-120,
@@ -349,9 +351,21 @@ public class Templates extends Composite implements EntryPoint {
 		/** Name Column **/
 		Column<TemplateInfo, String> nameColumn = new Column<TemplateInfo, String>(
 				new TextCell()) {
-
+			
+			@Override
+			public void render(Context context, TemplateInfo object,
+					SafeHtmlBuilder sb) {
+				if(object.getIsParent()){
+					sb.appendHtmlConstant("<span style= 'padding-right: 5px;'>"+object.getName()+"</span><span title='Documento heredado' class='aon-editDataTable-button aon-icon-shield'>&nbsp;</span>");
+				}
+				else {
+					sb.appendHtmlConstant("<span>"+object.getName()+"</span>");
+				}
+			}
+			
 			@Override
 			public String getValue(TemplateInfo object) {
+
 				return object.getName();
 			}
 		
@@ -669,9 +683,14 @@ public class Templates extends Composite implements EntryPoint {
 				item.newTemplate(ti, new AsyncCallback<TemplateInfo>() {
 					@Override
 					public void onSuccess(TemplateInfo result) {
+						
+
+						Window.alert(Integer.toString(dataProvider.getList().size()));
 						template_list.getList().add(result);
 						addDataDisplay(dataGrid);
 						dataGrid.redraw();
+						Window.alert(Integer.toString(dataProvider.getList().size()));
+				
 					}
 					
 					@Override

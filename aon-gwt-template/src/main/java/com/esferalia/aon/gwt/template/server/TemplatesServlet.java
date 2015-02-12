@@ -120,6 +120,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		try {
 			Integer id = DBConsults.insertTemplate(domain, ti, b,domainId);
 			ti.setId(id);
+			ti.setIsParent(false);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

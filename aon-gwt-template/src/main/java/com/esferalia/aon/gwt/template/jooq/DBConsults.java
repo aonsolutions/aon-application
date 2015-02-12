@@ -99,6 +99,7 @@ public class DBConsults {
 					}
 					ti.setColumns(aux.getColumns());
 					ti.setType(aux.getType());
+					ti.setIsParent(false);
 					v.add(ti);
 				});
 				
@@ -130,6 +131,7 @@ public class DBConsults {
 					}
 					ti.setColumns(aux.getColumns());
 					ti.setType(aux.getType());
+					ti.setIsParent(true);
 					v.add(ti);
 				});
 				
@@ -154,7 +156,7 @@ public class DBConsults {
 			
 			Result<Record1<Integer>> reg = dslContext.select(ENTERPRISE.REGISTRY)
 				.from(ENTERPRISE.join(DOMAIN).on(ENTERPRISE.DOMAIN.eq(DOMAIN.ID)))
-				.where(DOMAIN.NAME.eq(domain)).fetch();
+				.where(DOMAIN.ID.eq(domainId)).fetch();
 			
 						
 			return dslContext.insertInto(RATTACH,RATTACH.REGISTRY,RATTACH.DOMAIN,RATTACH.CATEGORY,RATTACH.MIMETYPE,RATTACH.DESCRIPTION,RATTACH.TYPE,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.ATTACH_DATE,RATTACH.DATA,RATTACH.DRIVE_ID,RATTACH.DPARENT_ID)

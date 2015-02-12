@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.template.shared;
 
-public class Dialog {
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public class Dialog implements IsSerializable{
 	
 	String title;
 	String accept;

@@ -16,6 +16,8 @@ public class TemplateInfo implements IsSerializable{
 	Integer mimetype;
 	String driveId;
 	
+	Boolean isParent;
+	
 	public static final ProvidesKey<TemplateInfo> PROVIDES_KEY = new ProvidesKey<TemplateInfo>() {
 		@Override
 		public Object getKey(TemplateInfo templateInfo) {
@@ -71,6 +73,12 @@ public class TemplateInfo implements IsSerializable{
 	}
 	public void setDriveId(String driveId) {
 		this.driveId = driveId;
+	}
+	public Boolean getIsParent() {
+		return isParent;
+	}
+	public void setIsParent(Boolean isParent) {
+		this.isParent = isParent;
 	}
 	
 	
