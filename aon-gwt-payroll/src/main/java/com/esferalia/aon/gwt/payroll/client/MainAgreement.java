@@ -426,7 +426,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 			@Override
 			public void onFailure(Throwable caught) {
-				onFailure(caught);
+				Window.alert("No ha sido posible enviar el Convenio a la papelera.");
 			}
 
 			@Override

@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.common.client;
 
 import com.esferalia.aon.gwt.common.client.css.AonCSS;
+import com.esferalia.aon.gwt.common.client.css.AonCalendarResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;

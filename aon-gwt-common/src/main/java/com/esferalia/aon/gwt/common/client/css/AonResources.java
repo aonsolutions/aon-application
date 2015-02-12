@@ -11,6 +11,10 @@ public interface AonResources extends ClientBundle, Images {
 	@CssResource.NotStrict
 	AonCSS css();
 	
+	@Source("aonCalendar.css")
+	@CssResource.NotStrict
+	AonCalendarResources aonCalendar();
+	
 	@Source("aonDataGrid.css")
 	@CssResource.NotStrict
 	AonDataGrid aonDataGrid();

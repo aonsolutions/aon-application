@@ -1,0 +1,84 @@
+
+/*
+* Calendar widget style.
+* @author: amtzdelagos
+*/
+
+.aonCalendar .gwt-DatePicker {
+	border: transparent !important;
+	cursor: default;
+}
+
+.aonCalendar .datePickerPreviousButton {
+	visibility: hidden;
+}
+
+.aonCalendar .datePickerNextButton {
+	visibility: hidden;
+}
+
+.aonCalendar .datePickerMonthSelector {
+    padding: 1px 0 5px;
+    width: 100%;
+	background-color: #ffffff;
+}
+
+.aonCalendar .datePickerDays, td.datePickerMonth, .datePickerNextButton, .datePickerPreviousButton {
+    color: #000;
+    font-family: Arial,Verdana,sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+}
+.aonCalendar .datePickerPreviousButton, .datePickerNextButton, .datePickerPreviousYearButton, .datePickerNextYearButton {
+    cursor: pointer;
+    line-height: 1em;
+    outline: medium none;
+    padding: 0 4px;
+}
+
+.aonCalendar .datePickerDays, td.datePickerMonth, .datePickerNextButton, .datePickerPreviousButton {
+    color: #000;
+    font-family: Arial,Verdana,sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+}
+.aonCalendar td.datePickerMonth, td.datePickerYear {
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.aonCalendar .datePickerWeekdayLabel {
+    background: none repeat scroll 0 0 #f1eee9;
+    color: #000;
+    font-weight: normal;
+}
+.aonCalendar .datePickerDay, .datePickerWeekdayLabel, .datePickerWeekendLabel {
+    border-bottom: 1px solid #ededed;
+    border-right: 1px solid #ededed;
+}
+
+.aonCalendar .datePickerWeekendLabel {
+    background: none repeat scroll 0 0 #f1eee9;
+    color: red;
+    font-weight: normal;
+}
+
+.aonCalendar .datePickerDayIsFiller {
+    color: #a0a0a0;
+    visibility: hidden;
+}
+.aonCalendar .datePickerDay {
+    cursor: pointer;
+    padding: 4px 7px;
+	font-family: Arial,Verdana,sans-serif;
+    font-size: 12px;
+    font-weight: normal;
+}
+
+.aonCalendar .datePickerDay, .datePickerWeekdayLabel, .datePickerWeekendLabel {
+    border-bottom: 1px solid #ededed;
+    border-right: 1px solid #ededed;
+    outline: medium none;
+    text-align: center;
+}

@@ -76,7 +76,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class Employees extends ResizeComposite implements
 		OpenHandler<TreeItem>, SelectionHandler<TreeItem>, ScrollHandler,
-		ContextMenuHandler, KeyDownHandler, LoadHandler, OptionsToolbar.Listener {
+		ContextMenuHandler, KeyDownHandler, LoadHandler,
+		OptionsToolbar.Listener {
 
 	interface Listener {
 
@@ -91,6 +92,8 @@ public class Employees extends ResizeComposite implements
 		void onWorkplaceSelected(Workplace workplace);
 
 		void onCostsSelected(CostDocuments docs);
+
+		void onCalendarSelected(CalendarDraftObject calendar);
 
 		void onIrpfsSelected(IrpfDocuments docs);
 
@@ -146,32 +149,28 @@ public class Employees extends ResizeComposite implements
 
 	private static final int WORKPLACE_COSTS_INDEX = 0;
 	private static final int WORKPLACE_SALARIES_INDEX = 1;
-	private static final int WORKPLACE_STATISTICS_INDEX = 2;
-	private static final int WORKPLACE_PARTSIT_INDEX = 3;
+	private static final int WORKPLACE_CALENDAR_INDEX = 2;
+	private static final int WORKPLACE_STATISTICS_INDEX = 3;
+	private static final int WORKPLACE_PARTSIT_INDEX = 4;
+
 	private static final int EMPLOYEE_SALARIES_INDEX = 0;
 	private static final int EMPLOYEE_IRPFOUTCOMES_INDEX = 2; // TODO : It's not
 																// statci ???
 
 	private static final DateTimeFormat END_DATE_FORMAT = DateTimeFormat
-			.getFormat(PredefinedFormat.DATE_SHORT); 
+			.getFormat(PredefinedFormat.DATE_SHORT);
 
 	@UiField
 	Tree tree;
 	@UiField
 	ScrollPanel scrollPanel;
-	
+
 	@UiField
 	OptionsToolbar toolbar;
-
-	//@UiField
-	//Button viewButton;
-	//@UiField
-	//Button collapseAllButton;
 
 	private Images images;
 	private List<Listener> listeners;
 	private EmployeesServiceAsync employeesService;
-	private StatisticsServiceAsync statisticsService;
 
 	private boolean formers = true;
 	private boolean endDate = true;
@@ -180,9 +179,9 @@ public class Employees extends ResizeComposite implements
 
 	private Date fromDate = null;
 	private String namePattern = null;
-	
+
 	private Storage storage;
-	
+
 	/**
 	 * The last scroll position.
 	 */
@@ -204,14 +203,14 @@ public class Employees extends ResizeComposite implements
 				employeesServiceRaw);
 
 		initWidget(binder.createAndBindUi(this));
-		
+
 		tree.addOpenHandler(this);
 		tree.addSelectionHandler(this);
 		tree.addDomHandler(this, ContextMenuEvent.getType());
 		tree.addKeyDownHandler(this);
-		
+
 		toolbar.addListener(this);
-		//employeesService.getEnterprise(this);
+		// employeesService.getEnterprise(this);
 
 		employeesService.getEnterprises(new AsyncCallback<Enterprise[]>() {
 
@@ -272,9 +271,9 @@ public class Employees extends ResizeComposite implements
 	}
 
 	public void onEnterprise(Enterprise enterprise) {
-		
+
 		clearEnterprise(enterprise);
-		
+
 		List<Workplace> workplaces = enterprise.getWorkplaces();
 
 		final TreeItem enterpriseItem = new TreeItem(imageItemHTML(
@@ -315,13 +314,16 @@ public class Employees extends ResizeComposite implements
 
 			addImageItem(workplaceItem, "Costes", images.costs());
 			addImageItem(workplaceItem, "N\u00F3minas", images.salaries());
+			addImageItem(workplaceItem, "Calendario", images.laboralCalendar())
+					.setUserObject(
+							new CalendarDraftObject(workplace.getId(),
+									employeesService));
 			addImageItem(workplaceItem, "Estad\u00EDsticas",
 					images.statistics());
 			addImageItem(workplaceItem, "Partes IT", images.itDatas())
 					.setUserObject(
 							new ITDataObject(workplace.getId(),
 									employeesService));
-
 			if (extended) {
 				final TreeItem eventsItem = addImageItem(workplaceItem,
 						"Incidencias", images.data());
@@ -463,9 +465,9 @@ public class Employees extends ResizeComposite implements
 	}
 
 	public void clearEnterprise(Enterprise enterprise) {
-		for(int i = 0; i < tree.getItemCount(); i++) {
+		for (int i = 0; i < tree.getItemCount(); i++) {
 			TreeItem treeItem = tree.getItem(i);
-			if ( enterprise.equals(treeItem.getUserObject())){
+			if (enterprise.equals(treeItem.getUserObject())) {
 				tree.removeItem(treeItem);
 				return;
 			}
@@ -526,6 +528,8 @@ public class Employees extends ResizeComposite implements
 			onStatisticsSelected((Statistics) userObject);
 		} else if (userObject instanceof ITDataObject) {
 			onITDataSelected((ITDataObject) userObject);
+		} else if (userObject instanceof CalendarDraftObject) {
+			onCalendarSelected((CalendarDraftObject) userObject);
 		} else if (userObject instanceof SalaryDocuments) {
 			onSalaryDocumentsSelected(item);
 		} else if (userObject instanceof ISpinnable<?>) {
@@ -553,7 +557,7 @@ public class Employees extends ResizeComposite implements
 		} else if (event.getNativeEvent().getCtrlKey()
 				&& keyCode == KeyCodes.KEY_X && object instanceof Employee) {
 			onCtrlXPressed((Employee) object);
-			
+
 		} else if (keyCode == KeyCodes.KEY_DELETE && object instanceof Employee) {
 			onSuprPressed((Employee) object);
 		}
@@ -829,6 +833,9 @@ public class Employees extends ResizeComposite implements
 					});
 		} // end-if: Costs of this workplace haven't been loaded yet.
 
+		final TreeItem calendarItem = workplaceItem
+				.getChild(WORKPLACE_CALENDAR_INDEX);
+
 		final TreeItem statisticsItem = workplaceItem
 				.getChild(WORKPLACE_STATISTICS_INDEX);
 
@@ -960,6 +967,11 @@ public class Employees extends ResizeComposite implements
 		for (Listener listener : listeners) {
 			listener.onReportsSelected(reports);
 		}
+	}
+	
+	private void onCalendarSelected(CalendarDraftObject calendar) {
+		for(Listener listener : listeners)
+			listener.onCalendarSelected(calendar);
 	}
 
 	private void onStatisticsSelected(Statistics stats) {
@@ -1208,28 +1220,23 @@ public class Employees extends ResizeComposite implements
 			listener.onAgreementDraftSelected(agreementDraftObject);
 		}
 	}
-	
-	public void addEmployee (TreeItem workplaceItem,
-			Employees employee, int limit) {
-		
+
+	public void addEmployee(TreeItem workplaceItem, Employees employee,
+			int limit) {
+
 		List<Employees> employees = new ArrayList<Employees>();
 		employees.add(employee);
-		
-		
-		
-		
+
 	}
-	
 
 	private void loadEmployess(TreeItem workplaceItem,
 			List<Employee> employees, int limit) {
 
 		int added = 0;
-		
 
 		for (Employee employee : employees) {
-			
-			if(employee.getId() < 0)
+
+			if (employee.getId() < 0)
 				continue;
 
 			boolean current = isActive(employee);
@@ -1464,7 +1471,7 @@ public class Employees extends ResizeComposite implements
 
 			@Override
 			public void onClick(ClickEvent event) {
-				
+
 				int left = viewButton.getAbsoluteLeft();
 				int top = viewButton.getAbsoluteTop()
 						+ viewButton.getOffsetHeight();
@@ -1563,7 +1570,7 @@ public class Employees extends ResizeComposite implements
 	}
 
 	private int getEmployeesOffset() {
-		return extended ? 6 : 4;
+		return extended ? 7 : 5;
 	}
 
 	/**
@@ -1712,35 +1719,35 @@ public class Employees extends ResizeComposite implements
 
 	@Override
 	public void onLoad(LoadEvent event) {
-		
+
 	}
 
 	@Override
 	public void onNewButtonClick(ClickEvent event) {
-				
+
 	}
 
 	@Override
 	public void onPasteButtonClick(ClickEvent event) {
 		Object object = tree.getSelectedItem().getUserObject();
-		
-		if(object instanceof Workplace)
+
+		if (object instanceof Workplace)
 			onEmployeePaste((Workplace) object);
 	}
 
 	@Override
 	public void onCopyButtonClick(ClickEvent event) {
-		
+
 		Object object = tree.getSelectedItem().getUserObject();
-		
-		if(object instanceof Employee)
+
+		if (object instanceof Employee)
 			onEmployeeCopy((Employee) object);
 	}
 
 	@Override
 	public void onDraftButtonClick(ClickEvent event) {
 		Object object = tree.getSelectedItem().getUserObject();
-		if(object instanceof Employee)
+		if (object instanceof Employee)
 			onSuprPressed((Employee) object);
 	}
 

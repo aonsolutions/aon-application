@@ -14,7 +14,6 @@ import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -50,6 +49,7 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	private Reports reports;
 	private Statistics stats;
 	private ITEditor it;
+	private CalendarDraft calendar;
 	private Documents documents;
 	
 	
@@ -79,6 +79,7 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		salary = new Salary();
 		reports = new Reports();
 		stats = new Statistics();
+		calendar = new CalendarDraft();
 		it = new ITEditor(){
 			@Override
 			protected void showContractActiveTooltip(Tooltip tooltip,
@@ -152,6 +153,13 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		detailPanel.setWidget(it);
 		it.setITEditor(dataObject);		
 	}
+	
+
+	@Override
+	public void onCalendarSelected(CalendarDraftObject calendarObject) {
+		detailPanel.setWidget(calendar);
+	}
+
 	
 	@Override
 	public void onSalariesSelected(SalariesDocuments docs) {

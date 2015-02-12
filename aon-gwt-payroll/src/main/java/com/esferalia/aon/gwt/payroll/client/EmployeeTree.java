@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.TextCell;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.widget.Calendar;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
@@ -844,6 +845,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private Statistics stats;
 	private Reports reports;
 	private ITEditor it;
+	private CalendarDraft calendar;
 	private SalaryDraft salaryDraft;
 	private SalaryPreview salaryPreview;
 	private EventsDraft eventsDraft;
@@ -912,6 +914,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		stats = new Statistics();
 		reports = new Reports();
 		it = new ITEditor();
+		calendar = new CalendarDraft();
 		documents = new Documents();
 		eventsDraft = new EventsDraft();
 		salaryDraft = new SalaryDraft();
@@ -1068,11 +1071,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		reports.setReportsObject(reportsObject);
 
 	}
-
+	
 	@Override
 	public void onStatisticsSelected(
 			com.esferalia.aon.gwt.payroll.shared.Statistics statistics) {
-
 		employeeDetail.setWidget(stats);
 		stats.setStatistics(statistics);
 	}
@@ -1081,6 +1083,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	public void onITDataSelected(ITDataObject dataObject) {
 		employeeDetail.setWidget(it);
 		it.setITEditor(dataObject);
+	}
+	
+	@Override
+	public void onCalendarSelected(CalendarDraftObject calendarDraftObject) {		
+		employeeDetail.setWidget(calendar);
+		calendar.setCalendarDraftObject(calendarDraftObject);
 	}
 
 	@Override

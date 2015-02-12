@@ -444,7 +444,11 @@ public class MainTrash extends MainEntryPoint implements
 
 	@Override
 	public void onAgreementSupr(Agreement agreement) {
-		
+		if( ! agreement.getHasContract() ) {
+			for(Listener listener : listeners)
+				listener.onDeleteAgreementAction(agreement);	
+			
+		}
 	}
 
 	@Override
