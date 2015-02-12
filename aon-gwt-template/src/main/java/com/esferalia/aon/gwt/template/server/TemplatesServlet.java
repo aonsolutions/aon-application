@@ -8,7 +8,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
@@ -19,6 +18,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -238,8 +238,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
              			Integer fila = i+1;
              			Integer columna = j+1;
                 		textError= textError + "*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n";
-                		pi = newProduct();
-                	 	
+                		pi = newProduct();	
                 	 }
                  }
                  j++;
@@ -259,10 +258,15 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
             	 }
              }
              // AÑADIR A PI ITEM --> %BENEFICIO SOBRE COSTE, %BENEFICIO SOBRE COMPRA Y PVP
-             pi.getItem().setProfitPercent(0);
-             pi.getItem().setExpensesPercent(0);
-             pi.getItem().setPrice(0);
-             if(i>0) products.add(pi);
+           
+             //pi.getItem().setExpensesPercent(0);
+             //pi.getItem().setPrice(0);
+            // checkPrices();
+             if(i>0){ 
+            	  double profitPercent =((pi.getItem().getPrice()-pi.getItem().getPurchasePrice())/pi.getItem().getPurchasePrice())*100.00;
+                  pi.getItem().setProfitPercent(profitPercent);
+            	 products.add(pi);
+             }
              i++;
 		 }
 		
@@ -310,12 +314,12 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			break; 
 		case "Precio Coste" : 
 			if(type.equals(Cell.CELL_TYPE_NUMERIC))
-				product.getItem().setExpensesFixed((double) value);
+				product.getItem().setPurchasePrice((double) value);
 			else return null;
 			break; 
 		case "Precio Venta Base" :
 			if(type.equals(Cell.CELL_TYPE_NUMERIC))
-				product.getItem().setPurchasePrice((double) value);
+				product.getItem().setPrice((double) value);
 			else return null;
 			break; 
 		case "Categor\u00eda" :
@@ -463,7 +467,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 				if(b3) return null;
 				break;
 			case Cell.CELL_TYPE_NUMERIC:
-				Float f = (Float) value;
+				Double f = (Double) value;
 				Boolean b4 = true;
 				for(Tax tax : retentions){
 					if(f.equals(tax.getPercentage())){
@@ -485,11 +489,17 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			switch (type) {
 			case Cell.CELL_TYPE_STRING:
 				String string = (String) value;
-				bool = string.equalsIgnoreCase("si") || string.equalsIgnoreCase("yes") || string.equalsIgnoreCase("true");
+				if(string.equalsIgnoreCase("si") || string.equalsIgnoreCase("yes") || string.equalsIgnoreCase("true"))
+					bool = true;
+				else if( string.equalsIgnoreCase("no") || string.equalsIgnoreCase("false"))
+					bool = false;
+				else return null;
 				break;
 			case Cell.CELL_TYPE_NUMERIC:
-				Integer num = (Integer) value;
-				bool = num.equals(1);
+				Double num = (Double) value;
+				if(num.equals(1.0)) bool = true;
+				else if(num.equals(0.0)) bool = false;
+				else return null;
 				break;
 			case Cell.CELL_TYPE_BOOLEAN:
 				bool = (Boolean) value;
@@ -505,12 +515,18 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			Boolean bool2 = false;
 			switch (type) {
 			case Cell.CELL_TYPE_STRING:
-				String str = (String) value;
-				bool2 = str.equalsIgnoreCase("si") || str.equalsIgnoreCase("yes") || str.equalsIgnoreCase("true");
+				String string = (String) value;
+				if(string.equalsIgnoreCase("si") || string.equalsIgnoreCase("yes") || string.equalsIgnoreCase("true"))
+					bool2 = true;
+				else if( string.equalsIgnoreCase("no") || string.equalsIgnoreCase("false"))
+					bool2 = false;
+				else return null;
 				break;
 			case Cell.CELL_TYPE_NUMERIC:
-				Integer num = (Integer) value;
-				bool2 = num.equals(1);
+				Double num = (Double) value;
+				if(num.equals(1.0)) bool2 = true;
+				else if(num.equals(0.0)) bool2 = false;
+				else return null;
 				break;
 			case Cell.CELL_TYPE_BOOLEAN:
 				bool2 = (Boolean) value;
@@ -526,12 +542,18 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			Boolean bool3 = false;
 			switch (type) {
 			case Cell.CELL_TYPE_STRING:
-				String str = (String) value;
-				bool3 = str.equalsIgnoreCase("si") || str.equalsIgnoreCase("yes") || str.equalsIgnoreCase("true");
+				String string = (String) value;
+				if(string.equalsIgnoreCase("si") || string.equalsIgnoreCase("yes") || string.equalsIgnoreCase("true"))
+					bool3 = true;
+				else if( string.equalsIgnoreCase("no") || string.equalsIgnoreCase("false"))
+					bool3 = false;
+				else return null;
 				break;
 			case Cell.CELL_TYPE_NUMERIC:
-				Integer num = (Integer) value;
-				bool3 = num.equals(1); 
+				Double num = (Double) value;
+				if(num.equals(1.0)) bool3 = true;
+				else if(num.equals(0.0)) bool3 = false;
+				else return null; 
 				break;
 			case Cell.CELL_TYPE_BOOLEAN:
 				bool3 = (Boolean) value;
@@ -556,8 +578,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 				else return null;
 				break;
 			case Cell.CELL_TYPE_NUMERIC:
-				Integer num = (Integer) value;
-				if(num.equals(1))
+				Double num = (Double) value;
+				if(num.equals(1.0))
 					status = ProductStatus.ACTIVE;
 				else status = ProductStatus.DISCONTINUED;
 				break;
@@ -680,5 +702,25 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		v.add(s.substring(0, pos));
 		
 		return v;
+	}
+	
+	public Vector<TemplateInfo> searchNameTemplate(String searchStr, Vector<TemplateInfo> templates){
+		Vector<TemplateInfo> vector = new Vector<TemplateInfo>();
+		for (TemplateInfo templateInfo : templates) {
+			if(StringUtils.containsIgnoreCase(templateInfo.getName(), searchStr)){
+				vector.add(templateInfo);
+			}
+		}
+		return vector;
+	}
+	
+	public Vector<TemplateInfo> searchTypeTemplate(String searchStr, Vector<TemplateInfo> templates){
+		Vector<TemplateInfo> vector = new Vector<TemplateInfo>();
+		for (TemplateInfo templateInfo : templates) {
+			if(StringUtils.containsIgnoreCase(templateInfo.getType(), searchStr)){
+				vector.add(templateInfo);
+			}
+		}
+		return vector;
 	}
 }

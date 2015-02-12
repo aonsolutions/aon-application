@@ -26,9 +26,13 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -138,6 +142,11 @@ public class Templates extends Composite implements EntryPoint {
 	
 	@UiField(provided = true) DataGrid<TemplateInfo> dataGrid; 
 	@UiField Button new_button;
+	@UiField(provided = true) TextBox nameSearchBox;
+	@UiField(provided = true) TextBox typeSearchBox;
+	@UiField Button nameSearchButton;
+	@UiField Button typeSearchButton;
+	
 	//@UiField(provided = true)  FlexTable flex_table;
 	
 	Integer column = 1;
@@ -183,6 +192,44 @@ public class Templates extends Composite implements EntryPoint {
 	}
 	
 	public void Load() {
+		nameSearchBox = new TextBox();
+		nameSearchBox.addBitlessDomHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				nameSearchButton.click();
+			}
+		}, ChangeEvent.getType());
+		
+		nameSearchBox.addKeyUpHandler(new KeyUpHandler() {
+		
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if(!Utils.isNotAlpKey(event.getNativeEvent().getKeyCode())){
+					nameSearchButton.click();
+				}
+			}
+		});
+		
+		typeSearchBox = new TextBox();
+		typeSearchBox.addBitlessDomHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				typeSearchButton.click();
+			}
+		}, ChangeEvent.getType());
+		
+		typeSearchBox.addKeyUpHandler(new KeyUpHandler() {
+		
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if(!Utils.isNotAlpKey(event.getNativeEvent().getKeyCode())){
+					typeSearchButton.click();
+				}
+			}
+		});
+		
 		
 		DefaultKeyboardSelectionHandler<TemplateInfo> selHandler = new DefaultKeyboardSelectionHandler<TemplateInfo>(dataGrid){
 			@Override
@@ -504,16 +551,26 @@ public class Templates extends Composite implements EntryPoint {
 					
 					@Override
 					public void onSuccess(com.esferalia.aon.gwt.template.shared.Error result) {
-						if(result.getError()){
+					
 							hide();
-							Window.alert(result.getTextError());
+							Dialog d2 = new Dialog("Importar Productos","Aceptar",true,"Cancelar",false,"importResponse");
+							d2.setError(result);
+							TemplatesDialog popup2 = new TemplatesDialog(d2){
+
+								@Override
+								protected void onAccept() {
+									hide();										
+								}
+
+								@Override
+								protected void onCancel() {
+									hide();
+								}
 							
-						}
-						else{
-							hide();
-							Window.alert(result.getTextError());
-							//label!!
-						}
+							};
+							popup2.addStyleName("gwt-PopupPanel-template");
+							popup2.setGlassEnabled(true);
+							popup2.show();						
 					}
 					
 					@Override
@@ -528,6 +585,56 @@ public class Templates extends Composite implements EntryPoint {
 
 	
 //------------------------------ ui handlers
+	
+	@UiHandler("nameSearchButton")
+	void namesbutton(ClickEvent event) {
+		typeSearchBox.setText("");
+		String searchStr = nameSearchBox.getText();
+		Vector<TemplateInfo> vaux = new Vector<TemplateInfo>();
+		vaux.addAll(template_list.getList());
+		//dataProvider.getList().stream().forEach(f-> vaux.add(f));
+ 		
+		item.searchNameTemplate(searchStr, vaux,
+				new AsyncCallback<Vector<TemplateInfo>>() {
+
+					@Override
+					public void onSuccess(Vector<TemplateInfo> result) {
+						dataProvider = new ListDataProvider<TemplateInfo>(result);
+						dataProvider.addDataDisplay(dataGrid);
+						dataGrid.redraw();
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+
+					}
+				});
+	}
+	
+	@UiHandler("typeSearchButton")
+	void typesbutton(ClickEvent event) {
+		nameSearchBox.setText("");
+		String searchStr = typeSearchBox.getText();
+		Vector<TemplateInfo> vaux = new Vector<TemplateInfo>();
+		vaux.addAll(template_list.getList());
+		//dataProvider.getList().stream().forEach(f-> vaux.add(f));
+ 		
+		item.searchTypeTemplate(searchStr, vaux,
+				new AsyncCallback<Vector<TemplateInfo>>() {
+
+					@Override
+					public void onSuccess(Vector<TemplateInfo> result) {
+						dataProvider = new ListDataProvider<TemplateInfo>(result);
+						dataProvider.addDataDisplay(dataGrid);
+						dataGrid.redraw();
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+
+					}
+				});
+	}
 	
 	@UiHandler("new_button")
 	void newButton(ClickEvent event){

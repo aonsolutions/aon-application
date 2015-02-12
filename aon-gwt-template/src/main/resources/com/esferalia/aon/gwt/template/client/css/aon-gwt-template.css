@@ -7,11 +7,12 @@
 }
 
 .aon_dataGrid-template {
-	top: 1em !important;
 	left: 1em !important;
 	right: 1em !important;
 	border-top: 1px solid #BBB !important;
 }
+
+
 
 /* TemplatesDialog */
 
@@ -57,5 +58,27 @@
 	top:20% !important;
 	left:35% !important;
 }
+.searchPanel-template {
+	left: 1em !important;
+	right: 1em !important;
+	bottom: 0.5em !important;
+	border-bottom: 1px solid #D8D27A !important;
+}
 
+.aon-panelGrid-search-info-internal2-template {
+	background: transparent
+		url(images/aon-icon/aon-icon-search-title-item.png) scroll left 8px
+		no-repeat;
+	padding-left: 15px;
+	font-weight: bold;/* SendEmailDialog */
+	margin-left: 5px;
+}
+
+.aon-search-box-template {
+	width: 100%;
+	margin-left: 5px;
+	padding: 3px 3px 3px 3px;
+	border: solid 1px #DEDEDE;
+	font-size: 16px;
+	height: 16px;
 }

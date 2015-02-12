@@ -15,6 +15,7 @@ import java.util.Vector;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.template.shared.Dialog;
+import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.google.gwt.core.shared.GWT;
@@ -79,7 +80,7 @@ public abstract class TemplatesDialog extends CustomDialog {
 			Dialog dialog = d;
 			@Override
 			public void onClick(ClickEvent event) {
-				if(productCheck() || dialog.getType().equals("delete") || dialog.getType().equals("import"))
+				if(productCheck() || dialog.getType().equals("delete") || dialog.getType().equals("import") || dialog.getType().equals("importResponse"))
 					onAccept();
 				else {
 					label.setText("*Faltan columnas por a\u00f1adir");
@@ -104,6 +105,7 @@ public abstract class TemplatesDialog extends CustomDialog {
 		case "edit": editTemplate(dialog);break;
 		case "delete": deleteTemplate(dialog.getTemplateInfo().getName());break;
 		case "import": importProduct(dialog.getUrl(),dialog.getTemplateList());break;
+		case "importResponse": importResponse(dialog.getError());break;
 		default:
 			break;
 	}
@@ -125,6 +127,14 @@ public abstract class TemplatesDialog extends CustomDialog {
 	
 	private void deleteTemplate(String name) {
 		label.setText("Est\u00e1s seguro de eliminar la plantilla " + name);
+	}
+	
+	private void importResponse(Error error){
+		if(!error.getError()){
+			label.setText(error.getTextError());
+			label.setStyleName("aon-check-template");
+		}
+		else label.setText("Se ha importado correctamente");
 	}
 	
 	private void importProduct(String url,TemplateList templates) {

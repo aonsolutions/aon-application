@@ -29,4 +29,15 @@ public interface AonGwtTemplateCSS extends CssResource{
 	@ClassName("gwt-PopupPanel-template")
 	String gwtPopupPanelTemplate();
 	
+	@ClassName("searchPanel-template")
+	String searchPanelTemplate();
+	
+	@ClassName("aon-panelGrid-search-info-internal2-template")
+	String aonPanelGridSearchInfoInternal2Template();
+
+	@ClassName("aon-search-box-template")
+	String aonSearchBoxTemplate();
+
+
+	
 }

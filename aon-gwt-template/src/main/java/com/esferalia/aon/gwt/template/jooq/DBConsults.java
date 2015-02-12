@@ -53,11 +53,21 @@ public class DBConsults {
 				DSLContext dslContext = DSL.using(connection,
 						JooqSettings.getDefaultSettings());
 				
+				
+				// DOMAIN + DOMAIN SON
 				Result<Record4<Integer, String, Byte, String>> record = dslContext
 						.select(RATTACH.ID, RATTACH.DESCRIPTION,
 								RATTACH.MIMETYPE, RATTACH.DRIVE_ID)
 						.from(RATTACH).join(DOMAIN).on(DOMAIN.ID.eq(RATTACH.DOMAIN))
 						.where(RATTACH.TYPE.eq((byte)15).and(RATTACH.DOMAIN.eq(domainId).or(DOMAIN.PARENT.eq(domainId))))
+						.fetch();
+				
+				// DOMAIN PARENT
+				Result<Record4<Integer, String, Byte, String>> recordParent = dslContext
+						.select(RATTACH.ID, RATTACH.DESCRIPTION,
+								RATTACH.MIMETYPE, RATTACH.DRIVE_ID)
+						.from(RATTACH).join(DOMAIN).on(DOMAIN.PARENT.eq(RATTACH.DOMAIN))
+						.where(RATTACH.TYPE.eq((byte)15).and(DOMAIN.ID.eq(domainId)))
 						.fetch();
 				
 				Vector<TemplateInfo> v = new Vector<TemplateInfo>();
@@ -91,6 +101,38 @@ public class DBConsults {
 					ti.setType(aux.getType());
 					v.add(ti);
 				});
+				
+				recordParent.stream().forEach(r -> {
+					TemplateInfo ti = new TemplateInfo();
+					ti.setId(r.value1());
+					ti.setName(r.value2());
+					ti.setMimetype(r.value3().intValue());
+					File f ;
+					if(r.value4()!=null){
+						ti.setDriveId(r.value4());
+						//TODO GET FILE TO DRIVE SERVICE ACCOUNT!!!
+						f = null;
+					}
+					else{
+						f = new File("/tmp/"+ti.getName()+".xml"); 
+						byte[] b = getXml(dslContext,ti.getId());
+						try {
+							org.apache.commons.io.FileUtils.writeByteArrayToFile(f,b);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					TemplateInfo aux = null;
+					try {
+						aux = Utils.readxml(f);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					ti.setColumns(aux.getColumns());
+					ti.setType(aux.getType());
+					v.add(ti);
+				});
+				
 				TemplateList tl = new TemplateList();
 				tl.setList(v);
 				return tl;
@@ -193,7 +235,31 @@ public class DBConsults {
 					.from(TAX)
 					.where(TAX.DOMAIN.eq(domainId).and(TAX.TAX_TYPE.eq((byte)1))).fetch();
 			
+			Result<Record3<Integer,String,Double>> dataSon = dslContext.select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
+					.from(TAX).join(DOMAIN).on(TAX.DOMAIN.eq(DOMAIN.ID))
+					.where(DOMAIN.PARENT.eq(domainId).and(TAX.TAX_TYPE.eq((byte)1))).fetch();
+			
+			Result<Record3<Integer,String,Double>> dataParent = dslContext.select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
+					.from(TAX).join(DOMAIN).on(TAX.DOMAIN.eq(DOMAIN.PARENT))
+					.where(DOMAIN.ID.eq(domainId).and(TAX.TAX_TYPE.eq((byte)1))).fetch();
+			
 			data.stream().forEach(r -> {
+				Tax tax = new Tax();
+				tax.setId(r.value1());
+				tax.setName(r.value2());
+				tax.setPercentage(r.value3());
+				v.add(tax);
+			});
+			
+			dataSon.stream().forEach(r -> {
+				Tax tax = new Tax();
+				tax.setId(r.value1());
+				tax.setName(r.value2());
+				tax.setPercentage(r.value3());
+				v.add(tax);
+			});
+			
+			dataParent.stream().forEach(r -> {
 				Tax tax = new Tax();
 				tax.setId(r.value1());
 				tax.setName(r.value2());
@@ -220,7 +286,31 @@ public class DBConsults {
 					.from(TAX)
 					.where(TAX.DOMAIN.eq(domainId).and(TAX.TAX_TYPE.eq((byte)2))).fetch();
 			
+			Result<Record3<Integer,String,Double>> dataSon = dslContext.select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
+					.from(TAX).join(DOMAIN).on(TAX.DOMAIN.eq(DOMAIN.ID))
+					.where(DOMAIN.PARENT.eq(domainId).and(TAX.TAX_TYPE.eq((byte)2))).fetch();
+			
+			Result<Record3<Integer,String,Double>> dataParent = dslContext.select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
+					.from(TAX).join(DOMAIN).on(TAX.DOMAIN.eq(DOMAIN.PARENT))
+					.where(DOMAIN.ID.eq(domainId).and(TAX.TAX_TYPE.eq((byte)2))).fetch();
+			
 			data.stream().forEach(r -> {
+				Tax tax = new Tax();
+				tax.setId(r.value1());
+				tax.setName(r.value2());
+				tax.setPercentage(r.value3());
+				v.add(tax);
+			});
+			
+			dataSon.stream().forEach(r -> {
+				Tax tax = new Tax();
+				tax.setId(r.value1());
+				tax.setName(r.value2());
+				tax.setPercentage(r.value3());
+				v.add(tax);
+			});
+			
+			dataParent.stream().forEach(r -> {
 				Tax tax = new Tax();
 				tax.setId(r.value1());
 				tax.setName(r.value2());
@@ -330,8 +420,8 @@ public class DBConsults {
 					}
 				}
 				if(!bool){
-					itemId = dslContext.insertInto(ITEM, ITEM.DOMAIN,ITEM.PRODUCT, ITEM.DESCRIPTION, ITEM.PRICE, ITEM.STATUS, ITEM.EXPENSES_PERCENT, ITEM.EXPENSES_FIXED, ITEM.PROFIT_PERCENT, ITEM.PURCHASE_PRICE, ITEM.INTERNET, ITEM.BARCODE)
-							.values(domainId,productId,r.getItem().getDescription(),r.getItem().getPrice(),null,r.getItem().getExpensesPercent(),r.getItem().getExpensesFixed(),r.getItem().getProfitPercent(),r.getItem().getPurchasePrice(),(byte) 0,r.getItem().getBarcode()).returning(ITEM.ID).fetchOne().getId();
+					itemId = dslContext.insertInto(ITEM, ITEM.DOMAIN,ITEM.PRODUCT, ITEM.DESCRIPTION, ITEM.PRICE, ITEM.STATUS, ITEM.EXPENSES_PERCENT, ITEM.EXPENSES_FIXED, ITEM.PROFIT_PERCENT, ITEM.PURCHASE_PRICE, ITEM.INTERNET, ITEM.BARCODE, ITEM.DETAIL,ITEM.DETAIL2,ITEM.DETAIL3)
+							.values(domainId,productId,r.getItem().getDescription(),r.getItem().getPrice(),null,r.getItem().getExpensesPercent(),r.getItem().getExpensesFixed(),r.getItem().getProfitPercent(),r.getItem().getPurchasePrice(),(byte) 0,r.getItem().getBarcode(),r.getItem().getDetail(),r.getItem().getDetail2(),r.getItem().getDetail3()).returning(ITEM.ID).fetchOne().getId();
 				}
 			}
 		} finally {
@@ -353,9 +443,35 @@ public class DBConsults {
 				.from(PCATEGORY)
 				.where(PCATEGORY.DOMAIN.eq(domainId)).fetch();
 			
+			Result<Record5<Integer, String, String, String, String>> dataSon = dslContext.select(PCATEGORY.ID,PCATEGORY.NAME,PCATEGORY.DETAIL,PCATEGORY.DETAIL2,PCATEGORY.DETAIL3)
+					.from(PCATEGORY).join(DOMAIN).on(PCATEGORY.DOMAIN.eq(DOMAIN.ID))
+					.where(DOMAIN.PARENT.eq(domainId)).fetch();
+			
+			Result<Record5<Integer, String, String, String, String>> dataParent = dslContext.select(PCATEGORY.ID,PCATEGORY.NAME,PCATEGORY.DETAIL,PCATEGORY.DETAIL2,PCATEGORY.DETAIL3)
+					.from(PCATEGORY).join(DOMAIN).on(PCATEGORY.DOMAIN.eq(DOMAIN.PARENT))
+					.where(DOMAIN.ID.eq(domainId)).fetch();
+			
 			Vector<ProductCategory> v = new Vector<ProductCategory>();
 			
 			for(Record5<Integer, String, String, String, String> r : data){
+				ProductCategory pc = new ProductCategory();
+				pc.setId(r.value1());
+				pc.setName(r.value2());
+				if(r.value3() != null) pc.setDetail(r.value3());
+				if(r.value4() != null) pc.setDetail2(r.value4());
+				if(r.value5() != null) pc.setDetail3(r.value5());
+				v.add(pc);
+			}
+			for(Record5<Integer, String, String, String, String> r : dataSon){
+				ProductCategory pc = new ProductCategory();
+				pc.setId(r.value1());
+				pc.setName(r.value2());
+				if(r.value3() != null) pc.setDetail(r.value3());
+				if(r.value4() != null) pc.setDetail2(r.value4());
+				if(r.value5() != null) pc.setDetail3(r.value5());
+				v.add(pc);
+			}
+			for(Record5<Integer, String, String, String, String> r : dataParent){
 				ProductCategory pc = new ProductCategory();
 				pc.setId(r.value1());
 				pc.setName(r.value2());
@@ -383,9 +499,33 @@ public class DBConsults {
 				.from(BRAND)
 				.where(BRAND.DOMAIN.eq(domainId)).fetch();
 			
+			Result<Record2<Integer, String>> dataSon = dslContext.select(BRAND.ID,BRAND.NAME)
+					.from(BRAND).join(DOMAIN).on(BRAND.DOMAIN.eq(DOMAIN.ID))
+					.where(DOMAIN.PARENT.eq(domainId)).fetch();
+			
+			Result<Record2<Integer, String>> dataParent = dslContext.select(BRAND.ID,BRAND.NAME)
+					.from(BRAND).join(DOMAIN).on(BRAND.DOMAIN.eq(DOMAIN.PARENT))
+					.where(DOMAIN.ID.eq(domainId)).fetch();
+			
 			Vector<Brand> v = new Vector<Brand>();
 			
 			for(Record2<Integer, String> r : data){
+				Brand brand = new Brand();
+				brand.setId(r.value1());
+				brand.setName(r.value2());
+				
+				v.add(brand);
+			}
+
+			for(Record2<Integer, String> r : dataSon){
+				Brand brand = new Brand();
+				brand.setId(r.value1());
+				brand.setName(r.value2());
+				
+				v.add(brand);
+			}
+
+			for(Record2<Integer, String> r : dataParent){
 				Brand brand = new Brand();
 				brand.setId(r.value1());
 				brand.setName(r.value2());
@@ -411,6 +551,13 @@ public class DBConsults {
 				.from(TAG)
 				.where(TAG.DOMAIN.eq(domainId)).fetch();
 		
+			Result<Record2< Integer, String>> dataSon = dslContext.select(TAG.ID,TAG.NAME)
+					.from(TAG).join(DOMAIN).on(TAG.DOMAIN.eq(DOMAIN.ID))
+					.where(DOMAIN.PARENT.eq(domainId)).fetch();
+			
+			Result<Record2< Integer, String>> dataParent = dslContext.select(TAG.ID,TAG.NAME)
+					.from(TAG).join(DOMAIN).on(TAG.DOMAIN.eq(DOMAIN.PARENT))
+					.where(DOMAIN.ID.eq(domainId)).fetch();
 			
 			Vector<ProductTag> v = new Vector<ProductTag>();
 			
@@ -422,6 +569,23 @@ public class DBConsults {
 				tag.setTag(tag1);
 				v.add(tag);
 			}
+			for(Record2<Integer, String> r : dataSon){
+				ProductTag tag = new ProductTag();
+				Tag tag1 = new Tag();
+				tag1.setId(r.value1());
+				tag1.setName(r.value2());
+				tag.setTag(tag1);
+				v.add(tag);
+			}
+			for(Record2<Integer, String> r : dataParent){
+				ProductTag tag = new ProductTag();
+				Tag tag1 = new Tag();
+				tag1.setId(r.value1());
+				tag1.setName(r.value2());
+				tag.setTag(tag1);
+				v.add(tag);
+			}
+			
 			return v;
 			
 		} finally {

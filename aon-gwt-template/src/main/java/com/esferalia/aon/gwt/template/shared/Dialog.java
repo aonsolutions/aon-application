@@ -11,6 +11,7 @@ public class Dialog {
 	TemplateInfo templateInfo;
 	String url;
 	TemplateList templateList;
+	Error error;
 	public Dialog() {
 	
 	}
@@ -85,6 +86,14 @@ public class Dialog {
 
 	public void setTemplateList(TemplateList templateList) {
 		this.templateList = templateList;
+	}
+
+	public Error getError() {
+		return error;
+	}
+
+	public void setError(Error error) {
+		this.error = error;
 	}
 	
 	

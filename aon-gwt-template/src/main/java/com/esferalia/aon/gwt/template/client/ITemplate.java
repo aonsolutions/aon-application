@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.template.client;
 
+import java.util.Vector;
+
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -21,4 +23,8 @@ public interface ITemplate extends RemoteService{
 	
 	public com.esferalia.aon.gwt.template.shared.Error insertProducts(TemplateInfo ti);
 
+	public Vector<TemplateInfo> searchTypeTemplate(String searchStr, Vector<TemplateInfo> templates);
+	
+	public Vector<TemplateInfo> searchNameTemplate(String searchStr, Vector<TemplateInfo> templates);
+	
 }

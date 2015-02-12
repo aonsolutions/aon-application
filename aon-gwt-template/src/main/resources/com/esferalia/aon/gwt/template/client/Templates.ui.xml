@@ -48,9 +48,47 @@
 				</g:FlowPanel>
 			</g:north>
 			<g:center >
-				<c:DataGrid ui:field='dataGrid' visible="true" styleName="aon_dataGrid-template">
+				<g:DockLayoutPanel unit="EM">
+					<!-- Search & Options -->
+					<g:north size="8">
+						<g:HTMLPanel  styleName="aon-panelGrid-search searchPanel-template">
+							<div class="aon-panelGrid-search-info">
+								<span class="aon-panelGrid-search-info-internal">Filtrar:</span>
+							<g:InlineHTML  visible="false">			
+							</g:InlineHTML>
+							</div>
+							<table class="aon-panelGrid">
+								<tr>
+									<td>
+										<span class="aon-panelGrid-search-info-internal2-template">Nombre:</span>
+									</td>
+									<td style="width:550px">
+										<g:TextBox ui:field="nameSearchBox"  styleName="aon-search-box-template">
+										</g:TextBox>
+									</td>
+									<td>
+										<span class="aon-panelGrid-search-info-internal2-template">Tipo:</span>
+									</td>
+									<td style="width:550px">
+										<g:TextBox ui:field="typeSearchBox" styleName="aon-search-box-template">
+										</g:TextBox>
+									</td>
+									<td><g:Button ui:field="nameSearchButton" visible="false" styleName="aon-editDataTable-button"> </g:Button> 
+									</td>
+									<td><g:Button ui:field="typeSearchButton" visible="false" styleName="aon-editDataTable-button"> </g:Button> 
+									</td>
+									
+								</tr>
+							</table>
+						</g:HTMLPanel>
+					</g:north>
+					<g:center>
+						<c:DataGrid ui:field='dataGrid' visible="true" styleName="aon_dataGrid-template">
 							    
-				</c:DataGrid>		
+						</c:DataGrid>		
+					</g:center>
+
+				</g:DockLayoutPanel>
 			</g:center>
 		</g:DockLayoutPanel>
 		</g:center>
