@@ -202,6 +202,16 @@ public class CompanyDocumentServlet extends HttpServlet {
 		try {
 			IAttachment attachment = getAttachment(req);
 			if ( attachment != null ) {
+				
+				/*RequestDispatcher dispatcher = getServletContext()
+							.getRequestDispatcher("/login/documentsViewer2.jsp");
+					req.setAttribute("id", attachment.getId());
+					req.setAttribute("mimetype",attachment.getMimeType().ordinal());
+					req.setAttribute("icon", "");
+					req.setAttribute("name", attachment.getDescription());
+					dispatcher.forward(req, res); 
+				*/
+				
 				MimeType type = DownloadUtil.resolveMimeType(attachment);
 				String name = getName(attachment, type);
 				out = DownloadUtil.initDownload(res, name, type, attachment.getSize());

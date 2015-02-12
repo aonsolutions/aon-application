@@ -181,7 +181,7 @@ public class Documents extends Composite implements EntryPoint {
 				FileInfo object;
 				if(selFiles.size() == 1) object = selFiles.get(0);
 				else object= dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
-				idoc.copyLink(object, new AsyncCallback<Void>() {
+				idoc.copyLink(object,GWT.getModuleBaseURL(), new AsyncCallback<Void>() {
 					
 					@Override
 					public void onSuccess(Void result) {

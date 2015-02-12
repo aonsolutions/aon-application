@@ -116,7 +116,7 @@ public interface IDocumentAsync {
 	void insertFileMultiple(FileInfo fi,
 			AsyncCallback<Vector<FileInfo>> callback);
 
-	void copyLink(FileInfo doc, AsyncCallback<Void> callback);
+	void copyLink(FileInfo doc, String l, AsyncCallback<Void> callback);
 
 
 

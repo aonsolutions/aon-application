@@ -90,6 +90,7 @@ import com.google.api.services.drive.model.About;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.ParentReference;
+import com.google.api.services.drive.model.Permission;
 import com.google.api.services.gmail.Gmail;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.sun.pdfview.PDFFile;
@@ -882,10 +883,58 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			throw new IllegalArgumentException(e);
 		}
 	}
-	public void copyLink(FileInfo doc){
-		doc = setmd5(doc);
-		String md5 =doc.getMd5();
-		String link = "http://novus.aibanez.net/aon-aio/aonDocuments/"+ doc.getFileId() +"-"+ md5;
+	public void copyLink(FileInfo doc,String l){
+		String link;
+		if(doc.getDriveId()!=null){
+			Drive d = null;
+        	if(doc.getIsDrive()){
+        		d = GoogleDriveController.dconnection;
+        	}
+        	else{
+        		DomainGserviceaccount g = null;
+        		try {
+					g = DatabaseSync.getServiceAccount(doc.getDomainId());
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				try {
+					d = DriveUtils.serviceInitialize(g);
+				} catch (IOException | GeneralSecurityException e) {
+					e.printStackTrace();
+				}
+        	}
+			com.google.api.services.drive.model.File f = null;
+			try {
+				f = d.files().get(doc.getDriveId()).execute();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		
+			Permission p = new Permission();
+			p.setValue(doc.getDomain());
+			p.setType("anyone");// user || group || domain || anyone
+			p.setRole("reader");// owner || reader || writer || commenter
+			try {
+				d.permissions().insert(f.getId(), p)
+						.setSendNotificationEmails(false).execute();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			link = f.getAlternateLink();
+		}
+		else{
+			doc = setmd5(doc);
+			String md5 =doc.getMd5();
+			if(l.contains("aon_gwt_document")){
+				Integer pos = l.lastIndexOf("/");
+				Integer pos2 = l.substring(0, pos).lastIndexOf("/");
+				l = l.substring(0,pos2);
+			}
+			link = l+"/aonDocuments/"+ doc.getFileId() +"-"+ md5;
+
+			//link = l+"/aonDocumentsViewer/"+ "?file_id="+ doc.getFileId();
+		}
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		StringSelection data = new StringSelection(link);
 		clipboard.setContents(data, data);
