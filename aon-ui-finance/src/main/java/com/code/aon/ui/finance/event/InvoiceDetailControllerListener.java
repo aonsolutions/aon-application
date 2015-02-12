@@ -85,7 +85,9 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
 		try {
 			invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
-			invoiceDetail.setTaxableBase(controller.getTaxableBase());
+			if (invoiceDetail.getInvoice().isSales() || invoiceDetail.getInvoice().isPurchase()) {
+				invoiceDetail.setTaxableBase(controller.getTaxableBase());
+			}
 			if (invoiceDetail.getWorkPlace() == null || invoiceDetail.getWorkPlace().getId() == null) {
 				fillPosWorkPlace(event, invoiceDetail);
 			}
@@ -110,7 +112,9 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
 		try {
 			invoiceDetail.getInvoice().setStatus(controller.getInvoice().getStatus());
-			invoiceDetail.setTaxableBase(controller.getTaxableBase());
+			if (invoiceDetail.getInvoice().isSales() || invoiceDetail.getInvoice().isPurchase()) {
+				invoiceDetail.setTaxableBase(controller.getTaxableBase());
+			}
 			if (invoiceDetail.getWorkPlace() == null || invoiceDetail.getWorkPlace().getId() == null) {
 				fillPosWorkPlace(event, invoiceDetail);
 			}

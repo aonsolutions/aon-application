@@ -73,6 +73,7 @@ public class ExpenseInvoiceDetailControllerListener extends InvoiceDetailControl
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		super.beforeBeanAdded(event);
 		beforeSaveExpenseDetail((ExpenseInvoiceDetailController)event.getController());
 	}
 
@@ -84,6 +85,7 @@ public class ExpenseInvoiceDetailControllerListener extends InvoiceDetailControl
 
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		super.beforeBeanUpdated(event);
 		beforeSaveExpenseDetail((ExpenseInvoiceDetailController)event.getController());
 	}
 
