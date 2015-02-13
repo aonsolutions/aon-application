@@ -510,8 +510,8 @@ public class SQLContractSalaryCalculatorContext extends
 		}
 
 		@Override
-		public Object liquid(double liquid) throws ExpressionException,
-				SQLException, SalaryException {
+		public Object liquid(double liquid, Date start, Date end)
+				throws ExpressionException, SQLException, SalaryException {
 			throw new UndefinedContextVariablesException(
 					ContextVariable.TOTAL_LIQUID);
 		}
@@ -1715,34 +1715,16 @@ public class SQLContractSalaryCalculatorContext extends
 		}
 	}
 
-	public Object gross(double gross) throws ExpressionException, SQLException,
-			SalaryException {
-		return paymentImpl(gross, 0.005); // grossImpl(gross);
-	}
-
-	public Object grossImpl(double gross) throws ExpressionException,
-			SQLException, SalaryException {
-		Double totalPayment = getVariable(ContextVariable.TOTAL_PAYMENT,
-				Double.class);
-		if (totalPayment == null)
-			throw new UndefinedTotalPaymentException();
-
-		Double totalGross = getVariable("__GROSS", Double.class);
-		if (totalGross == null) {
-			totalGross = gross;
-		} else {
-			totalGross += gross;
-		}
-
-		addVariable("__GROSS", totalGross);
-
-		return totalGross - totalPayment;
-	}
-
-	public Object paymentImpl(double payment, double accuracy)
+	public Object gross(double gross, Date start, Date end)
 			throws ExpressionException, SQLException, SalaryException {
+		return paymentImpl(gross, 0.005, start, end);
+	}
+
+	public Object paymentImpl(double payment, double accuracy, Date start,
+			Date end) throws ExpressionException, SQLException, SalaryException {
 		try {
-			return solvePayment(new PegasusSolver(accuracy), payment);
+			return solvePayment(new PegasusSolver(accuracy), payment, start,
+					end);
 		} catch (Throwable t) {
 			t.printStackTrace();
 			return 0.00;
@@ -1750,18 +1732,16 @@ public class SQLContractSalaryCalculatorContext extends
 
 	}
 
-	public Object liquid(double liquid) throws ExpressionException,
-			SQLException, SalaryException {
-
-		return liquidImpl(liquid, 0.005);
+	public Object liquid(double liquid, Date start, Date end)
+			throws ExpressionException, SQLException, SalaryException {
+		return liquidImpl(liquid, 0.005, start, end);
 	}
 
-	public Object liquidImpl(double liquid, double accuracy)
-			throws ExpressionException, SQLException, SalaryException {
+	public Object liquidImpl(double liquid, double accuracy, Date start,
+			Date end) throws ExpressionException, SQLException, SalaryException {
 		try {
-			return solveLiquid(new PegasusSolver(accuracy), liquid);
+			return solveLiquid(new PegasusSolver(accuracy), liquid, start, end);
 		} catch (Throwable t) {
-			t.printStackTrace();
 			return 0.00;
 		}
 	}
@@ -1851,7 +1831,8 @@ public class SQLContractSalaryCalculatorContext extends
 		return 0.00;
 	}
 
-	protected double solveLiquid(UnivariateSolver solver, final double liquid) {
+	protected double solveLiquid(UnivariateSolver solver, final double liquid,
+			Date start, Date end) {
 
 		final Criteria contractCriteria = new Criteria();
 		contractCriteria.addExpression(criteria.getExpression());
@@ -1864,22 +1845,22 @@ public class SQLContractSalaryCalculatorContext extends
 			public double value(double x) {
 				try {
 					ISalaryCalculatorContext ctx = getLiquidCalculatorContext(
-							connection, startDate, endDate, issueDate,
+							connection, start, end, issueDate,
 							contractCriteria, x);
 					ContractSalaryCalculator calculator = new ContractSalaryCalculator();
 					calculator.setSalaryBuilder(new SalaryBuilder());
-
-					ISalary salary = calculator.calculate(ctx);
-
+					
 					// TODO: Warning a bit tricky.
 					ExpressionContext expressionCtx = SQLContractSalaryCalculatorContext.this
 							.getExpressionContext();
-					expressionCtx.putVariable(
-							ContextVariable.IRPF_PERCENT,
-							ctx.getExpressionContext().getVariable(
-									ContextVariable.IRPF_PERCENT, startDate,
-									endDate));
+					((SQLContractSalaryCalculatorContext) ctx)
+							.setListener(irpf -> expressionCtx.setVariable(
+									ContextVariable.IRPF_PERCENT, irpf
+											.getIrpfResult().getIrpf(), start,
+									end));
 
+					ISalary salary = calculator.calculate(ctx);
+					
 					return liquid - salary.getTotalLiquid();
 				} catch (SalaryException e) {
 					throw new RuntimeException(e);
@@ -1891,8 +1872,8 @@ public class SQLContractSalaryCalculatorContext extends
 		return result;
 	}
 
-	protected double solvePayment(UnivariateSolver solver, final double payment) {
-
+	protected double solvePayment(UnivariateSolver solver,
+			final double payment, Date start, Date end) {
 		final Criteria contractCriteria = new Criteria();
 		contractCriteria.addExpression(criteria.getExpression());
 		contractCriteria.addEqualExpression(SQLConstants.CONTRACT + "."
@@ -1904,17 +1885,11 @@ public class SQLContractSalaryCalculatorContext extends
 			public double value(double x) {
 				try {
 					ISalaryCalculatorContext ctx = getPaymentCalculatorContext(
-							connection, startDate, endDate, issueDate,
-							contractCriteria, x);
+							connection, start, end, end, contractCriteria, x);
 					ContractSalaryCalculator calculator = new ContractSalaryCalculator();
 					calculator.setSalaryBuilder(new SalaryBuilder());
 
 					ISalary salary = calculator.calculate(ctx);
-
-					System.out.println(x + " = " + payment + " - "
-							+ salary.getTotalPayment() + ", "
-							+ (payment - salary.getTotalPayment()));
-
 					return payment - salary.getTotalPayment();
 				} catch (SalaryException e) {
 					throw new RuntimeException(e);
@@ -1922,7 +1897,6 @@ public class SQLContractSalaryCalculatorContext extends
 			}
 
 		}, -20 * payment, 20 * payment, 0);
-
 		return result;
 	}
 
@@ -1951,8 +1925,8 @@ public class SQLContractSalaryCalculatorContext extends
 					endDate, issueDate, criteria) {
 
 				@Override
-				public Object liquid(double liquid) throws ExpressionException,
-						SQLException {
+				public Object liquid(double liquid, Date start, Date end)
+						throws ExpressionException, SQLException {
 					return x;
 				}
 
@@ -1991,8 +1965,15 @@ public class SQLContractSalaryCalculatorContext extends
 								startDate, endDate,
 								new SQLContractSalaryCalculatorContext(conn,
 										startDate, endDate, endDate, criteria) {
+
 									@Override
-									public Object liquid(double liquid)
+									protected double getIrpf() {
+										return 0.00;
+									};
+
+									@Override
+									public Object liquid(double liquid,
+											Date start, Date end)
 											throws ExpressionException,
 											SQLException {
 										return x;
@@ -2051,8 +2032,13 @@ public class SQLContractSalaryCalculatorContext extends
 					endDate, issueDate, criteria) {
 
 				@Override
-				public Object gross(double gross) throws ExpressionException,
-						SQLException {
+				protected double getIrpf() {
+					return 0.00;
+				}
+
+				@Override
+				public Object gross(double gross, Date start, Date end)
+						throws ExpressionException, SQLException {
 					return x;
 				}
 
@@ -2216,7 +2202,56 @@ public class SQLContractSalaryCalculatorContext extends
 
 		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
 				connection, monthStart, monthEnd, monthEnd, contractCriteria) {
-			// TODO : skip leaves
+			@Override
+			protected double getIrpf() {
+				return 0.00;
+				// TODO: sure
+			}
+
+			@Override
+			protected double getDaySalary() throws ExpressionException,
+					SQLException, SalaryException {
+				throw new CheckException(
+						"Imposible calcular el salario regulador de la indemnizaci\u00F3n por despido");
+			}
+
+			@Override
+			public Collection<IContractBonus> getContractBonus()
+					throws AonException {
+				return Collections.emptyList();
+			}
+
+			@Override
+			public Collection<IContractCost> getContractCosts()
+					throws AonException {
+				return Collections.emptyList();
+			}
+
+			@Override
+			public Collection<IContractEmbargo> getContractEmbargos()
+					throws AonException {
+				return Collections.emptyList();
+			}
+
+			@Override
+			public Collection<IContractDeduction> getContractDeductions()
+					throws AonException {
+				return Collections.emptyList();
+			}
+
+			@Override
+			public void loadContractLeave(Integer id, Date leaveStart,
+					Date leaveEnd, long parentDays, LeaveType type,
+					Double dailyRegBase, ExpressionContext exprCtx)
+					throws ExpressionException {
+			}
+
+			@Override
+			public void loadContractLeave(Integer id, Date leaveStart,
+					Date leaveEnd, long parentDays, LeaveType type,
+					String dailyRegBase, ExpressionContext exprCtx)
+					throws ExpressionException {
+			}
 		};
 
 		ctx.next();
@@ -2902,21 +2937,6 @@ public class SQLContractSalaryCalculatorContext extends
 					}
 				});
 
-		this.implicitExpressionContext.putVariable("SALARIO_DIA",
-				new LazyTimedExpressionVariable<Double>("SALARIO_DIA",
-						ExpressionScope.CONTRACT) {
-					@Override
-					public Double create() {
-						try {
-							return getDaySalary();
-						} catch (Exception e) {
-							throw new ExpressionExceptionWrapper(
-									new InvalidVariables(e.getMessage(),
-											getName()));
-						}
-					}
-				});
-
 		this.implicitExpressionContext.putVariable("SALARIO_VARIABLE_DIA",
 				new LazyTimedExpressionVariable<Double>("SALARIO_VARIABLE_DIA",
 						ExpressionScope.CONTRACT) {
@@ -2925,6 +2945,24 @@ public class SQLContractSalaryCalculatorContext extends
 						return getDayVarSalary();
 					}
 				});
+
+		// TODO: Sure ???
+		if (getSalaryType() == SalaryType.SETTLE)
+			this.implicitExpressionContext.putVariable("SALARIO_DIA",
+					new LazyTimedExpressionVariable<Double>("SALARIO_DIA",
+							ExpressionScope.CONTRACT) {
+						@Override
+						public Double create() {
+							try {
+								return getDaySalary();
+							} catch (Exception e) {
+								throw new ExpressionExceptionWrapper(
+										new InvalidVariables(e.getMessage(),
+												getName()));
+							}
+						}
+					});
+
 		/*
 		 * this.implicitExpressionContext.addVariable(COMPENSATION_DAYS, new
 		 * LazyTimedVariable<Double>() {
@@ -2941,20 +2979,23 @@ public class SQLContractSalaryCalculatorContext extends
 		this.contractExpressionContext.setVariable(SELF, this, startDate,
 				endDate);
 
+		// TODO: at implicitExpressionContext ?
 		loadExpression(this.contractExpressionContext, BR,
 				"def(x){ SELF.br(x)};", this.startDate, this.endDate);
-		loadContractLeave(this.contractExpressionContext);
-		loadContractData(this.contractExpressionContext);
-		loadPersonData(this.contractExpressionContext);
-
-		loadExpression(this.contractExpressionContext, GROSS,
-				"def(x){ SELF.gross(x)};", this.startDate, this.endDate);
-		loadExpression(this.contractExpressionContext, LIQUID,
-				"def(x){ SELF.liquid(x)};", this.startDate, this.endDate);
+		loadExpression(this.contractExpressionContext, GROSS, String.format(
+				"def(x){ %s.gross(x, %s, %s )};", SELF, START, END),
+				this.startDate, this.endDate);
+		loadExpression(this.contractExpressionContext, LIQUID, String.format(
+				"def(x){ %s.liquid(x, %s, %s )};", SELF, START, END),
+				this.startDate, this.endDate);
 		loadExpression(this.contractExpressionContext, SYSTEM,
 				"def(x){ SELF.system(x)};", this.startDate, this.endDate);
 		loadExpression(this.contractExpressionContext, AGREEMENT,
 				"def(x){ SELF.agreement(x)};", this.startDate, this.endDate);
+
+		loadContractLeave(this.contractExpressionContext);
+		loadContractData(this.contractExpressionContext);
+		loadPersonData(this.contractExpressionContext);
 
 		try {
 			Method guarantee = SQLContractSalaryCalculatorContext.class
