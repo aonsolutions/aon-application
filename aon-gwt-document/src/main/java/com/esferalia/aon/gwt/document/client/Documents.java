@@ -4336,6 +4336,7 @@ public class Documents extends Composite implements EntryPoint {
 					protected void onCancel() {
 						hide();
 					}};
+				sed.addStyleName("gwt-PopupPanel-document");
 				sed.setGlassEnabled(true);
 				sed.show();					}
 			
