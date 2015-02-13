@@ -1,26 +1,23 @@
-package com.esferalia.aon.payroll.calculator;
+package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 
-import org.apache.commons.lang.time.DateUtils;
-import org.junit.AfterClass;
 import org.junit.Test;
 
-import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Agreement;
 import com.esferalia.aon.occam.api.model.Payment;
 import com.esferalia.aon.occam.api.model.type.PaymentType;
-import com.esferalia.aon.payroll.calculator.sql.AgreementKey;
-import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory;
+import com.esferalia.aon.payroll.calculator.DomainPayments;
+import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.ISystemPayment;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
