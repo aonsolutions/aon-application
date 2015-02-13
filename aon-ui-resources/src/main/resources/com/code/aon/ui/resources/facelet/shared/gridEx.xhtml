@@ -58,7 +58,7 @@
 					<aon:div rendered="#{formList}" layout="none">
 						<ui:insert name="endFormListContent"/>				
 					</aon:div>
-					<aon:div rendered="#{formEdit}">			
+					<aon:div rendered="#{formEdit}" layout="none">			
 						<ui:insert name="beforeEditLineButtons"/>
 	
 						<aon:if test="#{!skipSaveButton}">		
@@ -89,9 +89,11 @@
 								styleClass="aon-editDataTable-button aon-icon-delete"
 								accesskey="#{bundle.aon_key_remove_line}" />
 						</aon:if>
+
+						<ui:insert name="afterEditLineButtons"/>
 					</aon:div>
 					<f:facet name="footer">
-						<aon:div>
+						<aon:div layout="none">
 							<ui:insert name="beforeNewLineButtons"/>
 	
 							<aon:outputText rendered="#{!formNew}" value="&#160;" />
@@ -116,6 +118,8 @@
 									styleClass="aon-editDataTable-button aon-icon-cancel"
 									accesskey="#{bundle.aon_key_cancel_line}" />
 							</aon:if>
+
+							<ui:insert name="afterNewLineButtons"/>
 						</aon:div>
 					</f:facet>
 				</aon:column>

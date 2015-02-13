@@ -17,13 +17,10 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
@@ -71,31 +68,21 @@ public class ReservationRequestRoomController extends LinesController implements
 
 	public boolean isAgreedPriceVisible() throws ManagerBeanException {
 		if (isBestPriceDiscountItemDefined()) {
+			if (isAgreedPriceEditable()) {
+				return true;
+			}
 			ReservationRequest request = (ReservationRequest)getMasterController().getTo();
 			IManagerBean requestRoomBean = BeanManager.getManagerBean(ReservationRequestRoom.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(requestRoomBean.getFieldName(IEntityAlias.RESERVATION_REQUEST_ROOM_RESERVATION_REQUEST_ID), request.getId());
-			String alias = requestRoomBean.getFieldName(IEntityAlias.RESERVATION_REQUEST_ROOM_CRS_CODE);
-			Expression nullCrsCode = ExpressionUtilities.getNullExpression(alias);
-			alias = requestRoomBean.getFieldName(IEntityAlias.RESERVATION_REQUEST_ROOM_AGREED_PRICE);
-			Expression agreedPrice = ExpressionUtilities.getGreaterThanExpression(alias, Double.valueOf(0));
-			criteria.addExpression(ExpressionUtilities.getOrExpression(nullCrsCode, agreedPrice));
-			for (ITransferObject ito : requestRoomBean.getList(criteria)) {
-				ReservationRequestRoom requestRoom = (ReservationRequestRoom)ito;
-				if (requestRoom.getAgreedPrice() > 0 || isAgreedPriceEditable(requestRoom)) {
-					return true;
-				}
-			}
+			criteria.addGreaterThanExpression(requestRoomBean.getFieldName(IEntityAlias.RESERVATION_REQUEST_ROOM_AGREED_PRICE), Double.valueOf(0));
+			return requestRoomBean.getCount(criteria) > 0;
 		}
 		return false;
 	}
 
 	public boolean isAgreedPriceEditable() throws ManagerBeanException {
-		return isAgreedPriceEditable((ReservationRequestRoom)getTo());
-	}
-
-	public boolean isAgreedPriceEditable(ReservationRequestRoom requestRoom) throws ManagerBeanException {
-		return (StringUtils.isEmpty(requestRoom.getCrsCode()) && AonUtil.getRoleManager().isCommercialOperator());
+		return AonUtil.getRoleManager().isCommercialOperator();
 	}
 
 	private boolean isBestPriceDiscountItemDefined() throws ManagerBeanException {
