@@ -683,14 +683,9 @@ public class Templates extends Composite implements EntryPoint {
 				item.newTemplate(ti, new AsyncCallback<TemplateInfo>() {
 					@Override
 					public void onSuccess(TemplateInfo result) {
-						
-
-						Window.alert(Integer.toString(dataProvider.getList().size()));
 						template_list.getList().add(result);
 						addDataDisplay(dataGrid);
-						dataGrid.redraw();
-						Window.alert(Integer.toString(dataProvider.getList().size()));
-				
+						dataGrid.redraw();				
 					}
 					
 					@Override
