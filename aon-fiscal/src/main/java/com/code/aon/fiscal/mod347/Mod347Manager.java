@@ -126,10 +126,11 @@ public class Mod347Manager {
 					detail.setCountry( cou );
 					Province province = null;
 					if (cou == null || cou == Country.ES) {
-						if (StringUtils.length(detail.getDocument()) > 9) {
-							detail.setDocument( StringUtils.substring(detail.getDocument(), 0,9));
+						if (StringUtils.length(document) > 9) {
+							detail.setDocument( StringUtils.substring(document, 0,9));
+						} else {
+							detail.setDocument(document);
 						}
-						detail.setDocument(document);
 						ps1.setInt(1,registry);
 						rs1 = ps1.executeQuery();
 						if (rs1.next()) {
