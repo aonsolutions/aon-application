@@ -696,7 +696,7 @@ public class DBConsults {
 								RATTACH.MIMETYPE, RATTACH.TYPE,
 								RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY)
 						.from(RATTACH)
-						.where(RATTACH.DOMAIN.eq(0))
+						.where(RATTACH.DOMAIN.eq(0).and(RATTACH.ID.lessThan(0)))
 						.fetch();
 
 				for (Record7<Integer, String, Byte, Byte, Date, String, Integer> record : username) {
