@@ -149,7 +149,7 @@ public class FinanceTrackingManager {
 			}
 			returnFinanceBatchDetail(sessionName);
 
-			updateFinanceStatus(sessionName, FinanceStatus.PAID);
+			updateFinanceStatus(sessionName, FinanceStatus.RETURNED);
 
 			HibernateUtil.getSession(sessionName).flush();
 			HibernateUtil.commitTransaction(sessionName);
