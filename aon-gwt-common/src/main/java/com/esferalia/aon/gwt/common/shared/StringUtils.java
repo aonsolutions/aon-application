@@ -1,9 +1,7 @@
 package com.esferalia.aon.gwt.common.shared;
 
-import java.text.Collator;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Locale;
 
 
 public class StringUtils {
@@ -205,24 +203,10 @@ public class StringUtils {
 	}
 	
 	 public static boolean containsIgnoreCase(String str, String searchStr) {
-	    	Locale locale = new Locale("es_ES");
-			Collator c = Collator.getInstance(locale);
-			c.setStrength(Collator.PRIMARY);
-	        if (str == null || searchStr == null) {
-	            return false;
-	        }
-	        int len = searchStr.length();
-	        int max = str.length() - len;
-	        for (int i = 0; i <= max; i++) {
-	        	
-	        	if (c.compare(str.substring(i, i+len), searchStr) == 0)
-	        		return true;
-	            
-	        }
-	        return false;
+		return str.toLowerCase().contains(searchStr.toLowerCase());
 	}
 
 	 public static Boolean contains(String str, String searchStr){
-		 return org.apache.commons.lang.StringUtils.contains(str, searchStr);
+		return str.contains(searchStr);
 	 }
 }
