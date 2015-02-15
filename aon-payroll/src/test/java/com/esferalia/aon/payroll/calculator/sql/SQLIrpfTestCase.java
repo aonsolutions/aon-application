@@ -1,5 +1,10 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
+import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
+import static com.esferalia.aon.jooq.tables.AgreementExtra.AGREEMENT_EXTRA;
+import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
+import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
+import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractDeduction.CONTRACT_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
@@ -15,13 +20,16 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAYMENT;
+import static com.esferalia.aon.salary.enumeration.SalaryType.EXTRA;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.DAY_OF_YEAR;
+import static java.util.Calendar.YEAR;
 import static junit.framework.Assert.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.function.Consumer;
 
@@ -29,6 +37,7 @@ import org.jooq.Configuration;
 import org.jooq.TransactionalCallable;
 import org.junit.Test;
 
+import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.person.enumeration.Gender;
@@ -37,6 +46,11 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
+import com.esferalia.aon.jooq.tables.AgreementExtra;
+import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
+import com.esferalia.aon.jooq.tables.records.AgreementLevelRecord;
+import com.esferalia.aon.jooq.tables.records.AgreementPaymentRecord;
+import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
@@ -166,10 +180,56 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			);
 
 	}
+	
+	
+
+	@Test
+	public void testExtras() throws ExpressionException, SQLException {
+		
+		Consumer<IrpfResult> asserts = 
+				result -> {
+					int month = result.getEffectiveDate().getMonth();
+					assertEquals(
+							CommonUtil.round(
+									1000.00 +
+									( month < 07 ? 1000.00 : 0.00) 
+									, 3),
+							result.getAnnualRemuneration());
+				};
+		asserts = asserts.andThen(
+				result -> {
+					int month = result.getEffectiveDate().getMonth();
+					assertEquals(
+							CommonUtil.round(
+									1000.00 * (12-month) * 0.15,3), 
+							result.getDeducciblesExpenses());
+				});
+		
+		test(asserts, 
+				new String[]{
+				},
+				new String[]{
+				"BASE_CGC * 0.10",
+				"BASE_CGP * 0.05",
+				"BASE_ESTR * 0.10",
+				"BASE_NESTR * 0.20",
+				"BASE_IRPF * PORCENTAJE_IRPF"
+				},
+				new Extra []{
+					new  Extra(){{this.expression="1000.00 * DIAS_TRABAJADOS / DIAS_MES"; this.month=Month.DECEMBER; this.start="01/12"; this.end="31/12"; this.issue="15/12";}},
+					new  Extra(){{this.expression="1000.00 * DIAS_TRABAJADOS / DIAS_MES"; this.month=Month.JULY; this.start="01/07 -1"; this.end="30/06"; this.issue="01/07";}},
+				}
+				);
+	}
 
 	// ------------------------------------------------------------------------
 
 	private void test(Consumer<IrpfResult> c, String [] payments, String [] deductions)
+			throws ExpressionException, SQLException {
+		test(c, payments, deductions, new Extra []{});
+	}
+	
+	private void test(Consumer<IrpfResult> c, String [] payments, String [] deductions, Extra extras [])
 			throws ExpressionException, SQLException {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection, "", 0);
@@ -207,8 +267,102 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 
 		ctx.getIrpf();
 	}
+	
+	protected static class Extra {
+		Month month;
+		String start;
+		String end;
+		String issue;
+		String expression;
+	}
+	
+	protected AgreementLevelCategoryRecord newAgreement(AONContext aonContext, Extra ...extras ){
+		return aonContext.getDslContext().transactionResult(
+				new TransactionalCallable<AgreementLevelCategoryRecord>() {
+					@Override
+					public AgreementLevelCategoryRecord run(Configuration arg0)
+							throws Exception {
+						// Add a domain, with a generated ID
+						DomainRecord domain = aonContext
+								.getDslContext()
+								.insertInto(DOMAIN)
+								.set(DOMAIN.NAME,
+										String.valueOf(System
+												.currentTimeMillis()))
+								.set(DOMAIN.OWNER, "")
+								.set(DOMAIN.DESCRIPTION, "").returning()
+								.fetchOne();
+						
+						AgreementRecord agreement = aonContext.getDslContext()
+								.insertInto(AGREEMENT)
+								.set(AGREEMENT.DOMAIN, domain.getId())
+								.set(AGREEMENT.DESCRIPTION, "")
+								.returning()
+								.fetchOne();
+						
+						AgreementLevelRecord level = aonContext.getDslContext()
+								.insertInto(AGREEMENT_LEVEL)
+								.set(AGREEMENT_LEVEL.DOMAIN, domain.getId())
+								.set(AGREEMENT_LEVEL.AGREEMENT, agreement.getId())
+								.set(AGREEMENT_LEVEL.DESCRIPTION, "")
+								.returning()
+								.fetchOne();
+						
+						AgreementLevelCategoryRecord category = aonContext.getDslContext()
+								.insertInto(AGREEMENT_LEVEL_CATEGORY)
+								.set(AGREEMENT_LEVEL_CATEGORY.DOMAIN, domain.getId())
+								.set(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION, "")
+								.set(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL, level.getId())
+								.returning()
+								.fetchOne();
+						
+						Calendar calendar = Calendar.getInstance();
+						// Be care that the first day of the year has value 1.
+						calendar.set(DAY_OF_YEAR, 1);
+						calendar.add(YEAR, -2);
+						Date startDate = new Date(calendar.getTimeInMillis());
 
-	private ContractRecord newContract(AONContext aonContext,
+						for (Extra extra : extras) {
+							AgreementPaymentRecord payment = 
+							aonContext.getDslContext()
+							.insertInto(AGREEMENT_PAYMENT)
+							.set(AGREEMENT_PAYMENT.DOMAIN,
+									domain.getId())
+							.set(AGREEMENT_PAYMENT.AGREEMENT,
+									agreement.getId())
+							.set(AGREEMENT_PAYMENT.MONTH, (byte)extra.month.ordinal())
+							.set(AGREEMENT_PAYMENT.START_DATE, startDate)
+							.set(AGREEMENT_PAYMENT.EXPRESSION, extra.expression)
+							.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION,PAYMENT.getName())
+							.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION,PAYMENT.getName())
+							.set(AGREEMENT_PAYMENT.DESCRIPTION, extra.expression)
+							.set(AGREEMENT_PAYMENT.SALARY_TYPE,(byte) EXTRA.ordinal())
+							.returning()
+							.fetchOne();
+							
+							aonContext.getDslContext()
+							.insertInto(AGREEMENT_EXTRA)
+							.set(AGREEMENT_EXTRA.DOMAIN,
+									domain.getId())
+							.set(AGREEMENT_EXTRA.AGREEMENT,
+									agreement.getId())
+							.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT,
+									payment.getId())
+							.set(AGREEMENT_EXTRA.START_DATE,
+									extra.start)
+							.set(AGREEMENT_EXTRA.END_DATE,
+									extra.end)
+							.set(AGREEMENT_EXTRA.ISSUE_DATE,
+									extra.issue)
+							.returning()
+							.fetchOne();
+						}
+						return category;
+					}
+				});
+	}
+	
+	protected ContractRecord newContract(AONContext aonContext,
 			String [] payments, String ...deductions ) {
 		return aonContext.getDslContext().transactionResult(
 				new TransactionalCallable<ContractRecord>() {
