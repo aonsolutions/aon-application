@@ -24,6 +24,7 @@ import com.code.aon.account.IAccount;
 import com.code.aon.account.bridge.AccountEntryFinanceBatch;
 import com.code.aon.account.bridge.AccountEntryFinanceTracking;
 import com.code.aon.account.bridge.AccountEntryInvoice;
+import com.code.aon.account.bridge.InvoiceDetailAccount;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.common.BeanManager;
@@ -43,6 +44,7 @@ import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
+import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.ITaxInfo;
@@ -140,7 +142,7 @@ public abstract class BasicExporter implements Serializable {
 	public void init( Invoice invoice ) throws ManagerBeanException, IOException {
 		initBasic(invoice);
 		this.accountEntries = obtainAccountEntries(invoice);
-		this.taxBreakDowns = obtainTaxBreakDowns();		
+		this.taxBreakDowns = obtainTaxBreakDowns(invoice, invoice);		
 		this.invoiceExport = true;
 	}
 	
@@ -467,10 +469,10 @@ public abstract class BasicExporter implements Serializable {
 		return priceStrategy;
 	}	
 	
-	private List<TaxBreakDown> obtainTaxBreakDowns() {
+	private List<TaxBreakDown> obtainTaxBreakDowns(ICalculableContainer icc, ITaxInfo iti) {
 		List<TaxBreakDown> list = new LinkedList<TaxBreakDown>();
-		for( TaxBreakDown tbd : getPriceStrategy().getTaxBreakDowns(invoice, invoice) ) {
-			if ( tbd.getBase() > 0 ) {
+		for( TaxBreakDown tbd : getPriceStrategy().getTaxBreakDowns(icc, iti) ) {
+			if ( tbd.getBase() != 0 ) {
 				list.add(tbd);
 			}
 		}		
@@ -499,6 +501,36 @@ public abstract class BasicExporter implements Serializable {
 	private boolean isRelated( AccountEntryDetail aed, TaxBreakDown tbd ) {
 		double amount = (aed.getCredit() != 0) ? aed.getCredit() : aed.getDebit();
 		return amount == tbd.getBase();
+	}
+	
+	private List<InvoiceDetail> getInvoiceDetail( AccountEntryDetail aed ) throws ManagerBeanException {
+		List<InvoiceDetail> details = new LinkedList<>();
+		IManagerBean bean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
+		Criteria criteria = new Criteria();
+		String accountId = bean.getFieldName(IEntityAlias.INVOICE_DETAIL_ACCOUNT_ACCOUNT_ID);
+		criteria.addEqualExpression(accountId, aed.getAccount().getId());
+		String invoiceId = bean.getFieldName(IEntityAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_INVOICE_ID); 
+		criteria.addEqualExpression(invoiceId, getInvoice().getId()); 
+		List<ITransferObject> list = bean.getList(criteria);
+		if ( list != null ) {
+			for( ITransferObject to : list ) {
+				InvoiceDetailAccount ida = (InvoiceDetailAccount) to;
+				if (! details.contains(ida.getInvoiceDetail()) ) {
+					details.add( ida.getInvoiceDetail() );	
+				}
+			}
+		}
+		return details;
+	}
+	
+	protected List<TaxBreakDown> getInvoiceTaxes( AccountEntryDetail aed ) throws ManagerBeanException {
+		List<InvoiceDetail> details = getInvoiceDetail(aed);
+		if (! details.isEmpty() ) {
+			InvoiceCalculableContainer icc = new InvoiceCalculableContainer(invoice, details);
+			InvoiceTaxInfo iti = new InvoiceTaxInfo(invoice);
+			return obtainTaxBreakDowns(icc, iti);
+		}
+		return Collections.emptyList();
 	}
 	
 	protected List<TaxBreakDown> getTaxes( AccountEntryDetail aed ) {

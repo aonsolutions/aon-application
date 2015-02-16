@@ -15,10 +15,10 @@ import java.util.Map;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -278,11 +278,11 @@ public class A3Writer extends BasicExporter {
 			if ( tbd.getTaxType() == TaxType.VAT ) {
 				taxQuota = tbd.getTaxQuota();
 				taxPercent = tbd.getTaxPercent();
-				vatIncluded = true;
+				vatIncluded = (taxQuota != 0);
 			} else if ( tbd.getTaxType() == TaxType.RETENTION ) {
 				retentionQuota = tbd.getTaxQuota();
 				retentionPercent = tbd.getTaxPercent();
-				retentionIncluded = true;
+				retentionIncluded = (retentionQuota != 0);
 			}
 			if ( tbd.getSurchargeQuota()!=0 || tbd.getSurchargePercent() != 0 ) {
 				surchargeQuota = tbd.getSurchargeQuota();
@@ -313,8 +313,9 @@ public class A3Writer extends BasicExporter {
 		Arrays.fill(getLine(), 115, 172, (byte) ' ');
 	}
 	
-	private void writeDetailWithTaxes( List<TaxBreakDown> taxList, boolean last ) throws IOException {
+	private void writeDetailWithTaxes( AccountEntryDetail aed, boolean last ) throws IOException, ManagerBeanException {
 		boolean lineWritten = false;
+		List<TaxBreakDown> taxList = getInvoiceTaxes(aed);
 		while (! taxList.isEmpty() ) {
 			List<TaxBreakDown> list = new LinkedList<TaxBreakDown>();
 			TaxBreakDown tbd = getNextTax(taxList);
@@ -333,7 +334,7 @@ public class A3Writer extends BasicExporter {
 			// Subtipo de factura (01 a 07)
 			setString( getSubtipoDeFactura(tbd.getVatDeductionType()), 99, 2);					
 			// Base imponible
-			// setNumber( tbd.getBase(), 101, 14);			
+			setNumber( tbd.getBase(), 101, 14);			
 			writeLine();
 			lineWritten = true;
 		}
@@ -341,8 +342,8 @@ public class A3Writer extends BasicExporter {
 			writeLine();
 		}
 	}
-	
-	private void writeDetail( AccountEntry accountEntry, AccountEntryDetail aed ) throws IOException {
+
+	private void writeDetail( AccountEntry accountEntry, AccountEntryDetail aed ) throws IOException, ManagerBeanException {
 		initLine();
 		boolean last = getDetails().isEmpty();
 		// Fecha del apunte
@@ -366,11 +367,7 @@ public class A3Writer extends BasicExporter {
 		setNumber( amount, 101, 14);
 		// Impreso
 		setString( getImpreso(), 172, 2);
-		if ( last ) {
-			writeDetailWithTaxes(getTaxBreakDowns(), last);
-		} else {
-			writeDetailWithTaxes(getTaxes(aed), last);
-		}
+		writeDetailWithTaxes(aed, last);
 	}	
 	
 	private String getTipo( Finance finance ) {
