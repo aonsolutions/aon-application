@@ -82,7 +82,7 @@ public class ReservationRequestRoomController extends LinesController implements
 	}
 
 	public boolean isAgreedPriceEditable() throws ManagerBeanException {
-		return AonUtil.getRoleManager().isCommercialOperator();
+		return AonUtil.getRoleManager().isAuditor();
 	}
 
 	private boolean isBestPriceDiscountItemDefined() throws ManagerBeanException {
