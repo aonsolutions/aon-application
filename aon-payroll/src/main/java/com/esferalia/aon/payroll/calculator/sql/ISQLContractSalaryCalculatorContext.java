@@ -9,6 +9,7 @@ import com.code.aon.ql.Order;
 import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
+import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 
@@ -27,7 +28,14 @@ public interface ISQLContractSalaryCalculatorContext extends
 
 	Object getObject(String table, String column);
 
+	double getIrpf() ;
+
+	Object liquid(double liquid, Date start, Date end) 
+			throws ExpressionException, SQLException, SalaryException;
+
 	boolean next() throws SQLException, ExpressionException;
+	
+	
 	/*
 	ISalaryCalculatorContext getLiquidCalculatorContext(
 			Connection conn, Date startDate, Date endDate, Date issueDate,

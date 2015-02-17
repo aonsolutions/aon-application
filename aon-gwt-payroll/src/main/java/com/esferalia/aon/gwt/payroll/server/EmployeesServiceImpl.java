@@ -3789,7 +3789,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 							conn, startDate, endDate, endDate, criteria) {
 
 						@Override
-						protected double getIrpf() {
+						public double getIrpf() {
 							return 0.00;
 						}
 
@@ -3837,7 +3837,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 							conn, startDate, endDate, issueDate, criteria) {
 						
 						@Override
-						protected double getIrpf() {
+						public double getIrpf() {
 							return 0.00;
 						}
 						
@@ -3958,7 +3958,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 										criteria) {
 
 									@Override
-									protected double getIrpf() {
+									public double getIrpf() {
 										return 0.00;
 									}
 

@@ -30,6 +30,7 @@ import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalaryProxy;
+import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
@@ -303,6 +304,17 @@ public class SQLExtraSalaryCalculatorContext implements
 	@Override
 	public void setListener(IListener listener) {
 		ctx.setListener(listener);
+	}
+
+	@Override
+	public double getIrpf() {
+		return ctx.getIrpf();
+	}
+	
+	@Override
+	public Object liquid(double liquid, Date start, Date end)
+			throws ExpressionException, SQLException, SalaryException {
+		return ctx.liquid(liquid, start, end);
 	}
 	// ------------------------------------------------------------------------
 	

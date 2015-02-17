@@ -1742,7 +1742,7 @@ public class SQLContractSalaryCalculatorContext extends
 		try {
 			return solveLiquid(new PegasusSolver(accuracy), liquid, start, end);
 		} catch (Throwable t) {
-			return 0.00;
+			throw new CheckException(t.getMessage());
 		}
 	}
 
@@ -1849,7 +1849,7 @@ public class SQLContractSalaryCalculatorContext extends
 							contractCriteria, x);
 					ContractSalaryCalculator calculator = new ContractSalaryCalculator();
 					calculator.setSalaryBuilder(new SalaryBuilder());
-					
+
 					// TODO: Warning a bit tricky.
 					ExpressionContext expressionCtx = SQLContractSalaryCalculatorContext.this
 							.getExpressionContext();
@@ -1868,7 +1868,9 @@ public class SQLContractSalaryCalculatorContext extends
 			}
 
 		}, -20 * liquid, 20 * liquid, 0);
-
+		
+		
+		
 		return result;
 	}
 
@@ -1967,7 +1969,7 @@ public class SQLContractSalaryCalculatorContext extends
 										startDate, endDate, endDate, criteria) {
 
 									@Override
-									protected double getIrpf() {
+									public double getIrpf() {
 										return 0.00;
 									};
 
@@ -2000,9 +2002,11 @@ public class SQLContractSalaryCalculatorContext extends
 								return "LINUX FOUNDATION";
 							}
 
+							@Override
 							public int getAñoNacimiento() {
 								return 1969;
 							};
+
 
 						};
 					} catch (SQLException e) {
@@ -2032,7 +2036,7 @@ public class SQLContractSalaryCalculatorContext extends
 					endDate, issueDate, criteria) {
 
 				@Override
-				protected double getIrpf() {
+				public double getIrpf() {
 					return 0.00;
 				}
 
@@ -2118,6 +2122,30 @@ public class SQLContractSalaryCalculatorContext extends
 				Object.class);
 	}
 
+	@Override
+	public double getIrpf() {
+		Calendar endCalendar = Calendar.getInstance();
+		endCalendar.setTime(startDate);
+		endCalendar.set(Calendar.DAY_OF_YEAR,
+				endCalendar.getActualMaximum(Calendar.DAY_OF_YEAR));
+		Date endYear = endCalendar.getTime();
+
+		Criteria contractCriteria = new Criteria();
+		contractCriteria.addExpression(criteria.getExpression());
+		contractCriteria.addEqualExpression(SQLConstants.CONTRACT + "."
+				+ ContractColumns.ID, getId());
+
+		IIrpfCalculatorContext irpfCalculatorContext = getIrpfCalculatorContext(
+				connection, startDate, endYear, contractCriteria);
+
+		IrpfOutcome irpfOutcome = IrpfCalculator
+				.calculateIrpf(irpfCalculatorContext);
+
+		onIrpf(irpfOutcome);
+
+		return irpfOutcome.getIrpfResult().getIrpf();
+	}
+
 	protected IIrpfCalculatorContext getIrpfCalculatorContext(Connection conn,
 			Date startDate, Date endDate, Criteria criteria) {
 		try {
@@ -2156,29 +2184,6 @@ public class SQLContractSalaryCalculatorContext extends
 
 	}
 
-	protected double getIrpf() {
-		Calendar endCalendar = Calendar.getInstance();
-		endCalendar.setTime(startDate);
-		endCalendar.set(Calendar.DAY_OF_YEAR,
-				endCalendar.getActualMaximum(Calendar.DAY_OF_YEAR));
-		Date endYear = endCalendar.getTime();
-
-		Criteria contractCriteria = new Criteria();
-		contractCriteria.addExpression(criteria.getExpression());
-		contractCriteria.addEqualExpression(SQLConstants.CONTRACT + "."
-				+ ContractColumns.ID, getId());
-
-		IIrpfCalculatorContext irpfCalculatorContext = getIrpfCalculatorContext(
-				connection, startDate, endYear, contractCriteria);
-
-		IrpfOutcome irpfOutcome = IrpfCalculator
-				.calculateIrpf(irpfCalculatorContext);
-
-		onIrpf(irpfOutcome);
-
-		return irpfOutcome.getIrpfResult().getIrpf();
-	}
-
 	protected double getDayVarSalary() {
 		return 0.00;
 
@@ -2203,7 +2208,7 @@ public class SQLContractSalaryCalculatorContext extends
 		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
 				connection, monthStart, monthEnd, monthEnd, contractCriteria) {
 			@Override
-			protected double getIrpf() {
+			public double getIrpf() {
 				return 0.00;
 				// TODO: sure
 			}
@@ -2700,9 +2705,8 @@ public class SQLContractSalaryCalculatorContext extends
 					return getIrpf();
 				} catch (ExpressionExceptionWrapper e) {
 					throw e;
-				} catch (Throwable t) {
-					t.printStackTrace();
-					return 0.00;
+				} catch (Throwable throwable) {
+					throw throwable;
 				}
 			}
 		};

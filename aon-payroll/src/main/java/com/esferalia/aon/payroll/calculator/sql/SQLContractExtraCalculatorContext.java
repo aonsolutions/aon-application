@@ -41,7 +41,7 @@ public class SQLContractExtraCalculatorContext extends
 	public SQLContractExtraCalculatorContext(Connection connection,
 			Date startDate, Date endDate, Date issueDate, Criteria criteria)
 			throws SQLException, ExpressionException {
-		super(connection, startDate, endDate, issueDate, criteria);
+		super(connection, startDate, endDate, issueDate, issueDate, criteria);
 	}
 
 	public SQLContractExtraCalculatorContext(Connection connection,
@@ -71,9 +71,9 @@ public class SQLContractExtraCalculatorContext extends
 
 		addSalaryContractPayments();
 
-		int chargeMonth = getChargeMonth();
+		int issueMonth = getIssueMonth();
 		Collection<IContractPayment> extraPayments = new FilterCollection<IContractPayment>(
-				new ExtraPaymentFilter(chargeMonth),
+				new ExtraPaymentFilter(issueMonth),
 				super.getContractPayments());
 		return extraPayments;
 	}
@@ -93,10 +93,11 @@ public class SQLContractExtraCalculatorContext extends
 
 	// -------------------------------------------------------------------------
 
-	private int getChargeMonth() {
-		Date chargeDate = getChargeDate();
-		return CommonUtil.getMonth(chargeDate);
+	private int getIssueMonth() {
+		Date issueDate = getIssueDate();
+		return CommonUtil.getMonth(issueDate);
 	}
+
 
 	private void addSalaryContractPayments() throws ExpressionException,
 			AonException {
@@ -106,10 +107,6 @@ public class SQLContractExtraCalculatorContext extends
 					&& p.getSalaryType() == SalaryType.SALARY) {
 				ctx.addPullExpression(new SimpleContractPayment(p),
 						p.getStartDate(), p.getEndDate(), Double.class);
-				/*
-				 * ctx.addLazyExpression(new SimpleContractPayment(p),
-				 * p.getStartDate(), p.getEndDate());
-				 */
 			}
 
 	}

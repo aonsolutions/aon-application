@@ -5,6 +5,7 @@ import java.util.Date;
 
 import com.esferalia.aon.payroll.calculator.DelegateContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
+import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 
 class DelegateSQLContractSalaryCalculatorContext<T extends ISQLContractSalaryCalculatorContext> extends DelegateContractSalaryCalculatorContext<ISQLContractSalaryCalculatorContext>
@@ -49,6 +50,18 @@ implements ISQLContractSalaryCalculatorContext {
 	public boolean next() throws SQLException, ExpressionException {
 		return ctx.next();
 	}
+	
+	@Override
+	public double getIrpf() {
+		return ctx.getIrpf();
+	}
+
+	@Override
+	public Object liquid(double liquid, Date start, Date end)
+			throws ExpressionException, SQLException, SalaryException {
+		return ctx.liquid(liquid, start, end);
+	}
+	
 	
 	
 }

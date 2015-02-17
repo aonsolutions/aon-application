@@ -88,17 +88,17 @@ public abstract class TaxCalculator {
 
 		@Override
 		public double tax(IContractPayment contractPayment, Date start, Date end,
-				Date charge, final double amount) throws AonException {
+				Date issue, final double amount) throws AonException {
 			
 			SalaryType salaryType = contractPayment.getSalaryType();
 			if ( salaryType != context.getSalaryType() ) {
 				throw new NotNowException();
 			}
 			
-			Month salaryMonth =  getMonth(charge);
+			Month issueMonth =  getMonth(issue);
 			Month paymentMonth = contractPayment.getMonth();
 			
-			if ( paymentMonth != null && paymentMonth != salaryMonth ) {
+			if ( paymentMonth != null && paymentMonth != issueMonth ) {
 				throw new NotNowException();
 			}
 			

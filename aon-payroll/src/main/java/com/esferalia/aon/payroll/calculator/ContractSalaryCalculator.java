@@ -127,6 +127,72 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 	}
 
+	public static class  Listener implements IListener{
+
+		@Override
+		public void onCheckError(String message) {}
+
+		@Override
+		public void onInvalidData(String variableName, String message) {
+		}
+
+		@Override
+		public void onCompileError(String variableName, String message) {}
+
+		@Override
+		public void onRemove(IContractDeduction payment) {}
+
+		@Override
+		public void onRemove(IContractPayment payment) {}
+
+		@Override
+		public void onCheckError(IContractPayment payment, String message) {}
+
+		@Override
+		public void onCompileError(IContractPayment payment, String message) {}
+
+		@Override
+		public void onUndefinedData(IContractPayment payment,
+				RemovedExpressionVariable<?> var) {}
+
+		@Override
+		public void onInvalidData(IContractPayment payment,
+				String variableName, String message) {}
+
+		@Override
+		public void onUndefinedData(IContractPayment payment,
+				String variableName, String message) {}
+
+		@Override
+		public void onCheckError(IContractDeduction deduction, String message) {}
+
+		@Override
+		public void onCompileError(IContractDeduction deduction, String message) {}
+
+		@Override
+		public void onUndefinedData(IContractDeduction deduction,
+				RemovedExpressionVariable<?> var) {}
+
+		@Override
+		public void onInvalidData(IContractDeduction deduction,
+				String variableName, String message) {}
+
+		@Override
+		public void onUndefinedData(IContractDeduction deduction,
+				String variableName, String message) {}
+
+		@Override
+		public void onCheckError(IContractBonus bonus, String message) {}
+
+		@Override
+		public void onCompileError(IContractBonus bonus, String message) {}
+
+		@Override
+		public void onInvalidData(IContractBonus bonus, String variableName,
+				String message) {}
+
+	}
+
 	private static class UndefPayment extends SimpleContractPayment {
 
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
@@ -274,7 +340,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 			TaxCalculator taxCalculator = getTaxCalculator(ctx);
 
-			Date chargeDate = ctx.getChargeDate();
+			Date issueDate = ctx.getIssueDate();
 
 			Set<String> paymentsVars = new HashSet<String>();
 			LinkedList<UndefPayment> undefPayments = new LinkedList<UndefPayment>();
@@ -286,7 +352,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 			HashSet<String> alreadyDefined = new HashSet<String>();
 			for (IContractPayment contractPayment : contractPayments) {
 				try {
-					resolvePayment(contractPayment, start, end, chargeDate,
+					resolvePayment(contractPayment, start, end, issueDate,
 							expressionContext, taxCalculator, quoteCalculator);
 					alreadyDefined.add(contractPayment.getName());
 				} catch (UndefinedTotalPaymentException e) {
@@ -329,7 +395,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 			while (undefPayments.size() > 0) {
 				UndefPayment undefPayment = undefPayments.pop();
 				try {
-					resolvePayment(undefPayment, start, end, chargeDate,
+					resolvePayment(undefPayment, start, end, issueDate,
 							expressionContext, taxCalculator, quoteCalculator);
 				} catch (UndefinedTotalPaymentException e) {
 					undefTotalPayments.add(undefPayment);
@@ -371,7 +437,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 			for (UndefPayment undefTotalPayment : undefTotalPayments) {
 				try {
-					resolvePayment(undefTotalPayment, start, end, chargeDate,
+					resolvePayment(undefTotalPayment, start, end, issueDate,
 							expressionContext, taxCalculator, quoteCalculator);
 				} catch (UndefinedVariablesException e) {
 					onUndefinedData(undefTotalPayment, e.getMessage(),
@@ -718,7 +784,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 	// ---------------------------------------------------------------- Private
 
 	private void resolvePayment(IContractPayment contractPayment, Date start,
-			Date end, Date chargeDate, ExpressionContext expressionContext,
+			Date end, Date issueDate, ExpressionContext expressionContext,
 			TaxCalculator taxCalculator, QuoteCalculator quoteCalculator)
 			throws AonException {
 		Date paymentStart = Period.max(contractPayment.getStartDate(), start);
@@ -781,7 +847,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 				try {
 					Double tax = taxCalculator.tax(contractPayment,
-							resultStart, resultEnd, chargeDate, resultValue);
+							resultStart, resultEnd, issueDate, resultValue);
 					String description = null;
 					try {
 						description = expressionContext.evalTemplate(

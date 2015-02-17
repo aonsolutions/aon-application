@@ -29,9 +29,10 @@ import static junit.framework.Assert.assertEquals;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.function.Consumer;
+
+import junit.framework.Assert;
 
 import org.jooq.Configuration;
 import org.jooq.TransactionalCallable;
@@ -46,7 +47,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
-import com.esferalia.aon.jooq.tables.AgreementExtra;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementPaymentRecord;
@@ -66,6 +66,7 @@ import com.esferalia.aon.payroll.IrpfResult;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -95,6 +96,8 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		}
 
 	}
+	
+	// ------------------------------------------------------------------------
 
 	@Test
 	public void testSimple() throws ExpressionException, SQLException {
@@ -184,26 +187,29 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 	
 
 	@Test
-	public void testExtras() throws ExpressionException, SQLException {
+	public void testSimpleExtras() throws ExpressionException, SQLException {
 		
 		Consumer<IrpfResult> asserts = 
 				result -> {
 					int month = result.getEffectiveDate().getMonth();
+					
 					assertEquals(
 							CommonUtil.round(
 									1000.00 +
-									( month < 07 ? 1000.00 : 0.00) 
+									( month < 07 ? 1000.00/2 : 0.00) 
 									, 3),
 							result.getAnnualRemuneration());
 				};
+		
 		asserts = asserts.andThen(
 				result -> {
 					int month = result.getEffectiveDate().getMonth();
 					assertEquals(
 							CommonUtil.round(
-									1000.00 * (12-month) * 0.15,3), 
+									(1000.00 * 2 / 12 ) * 0.15 * (12 - month),3), 
 							result.getDeducciblesExpenses());
 				});
+		
 		
 		test(asserts, 
 				new String[]{
@@ -213,7 +219,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				"BASE_CGP * 0.05",
 				"BASE_ESTR * 0.10",
 				"BASE_NESTR * 0.20",
-				"BASE_IRPF * PORCENTAJE_IRPF"
+				"BASE_IRPF * PORCENTAJE_IRPF/100"
 				},
 				new Extra []{
 					new  Extra(){{this.expression="1000.00 * DIAS_TRABAJADOS / DIAS_MES"; this.month=Month.DECEMBER; this.start="01/12"; this.end="31/12"; this.issue="15/12";}},
@@ -221,6 +227,85 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				}
 				);
 	}
+
+	@Test
+	public void testPaymentExtras() throws ExpressionException, SQLException {
+		
+		Consumer<IrpfResult> asserts = 
+				result -> {
+					int month = result.getEffectiveDate().getMonth();
+					
+					assertEquals(
+							CommonUtil.round(
+									1000.00 *
+									( 12 -month) 
+									, 3)+
+							CommonUtil.round(
+									1000.00 +
+									( month < 07 ? 1000.00/2 : 0.00) 
+									, 3)
+							,
+							result.getAnnualRemuneration());
+				};
+		asserts = asserts.andThen(
+				result -> {
+					int month = result.getEffectiveDate().getMonth();
+					assertEquals(
+							CommonUtil.round(
+									(1000.00 ) * 0.15 * (12 - month),3)+							
+							CommonUtil.round(
+									(1000.00 * 2 / 12 ) * 0.15 * (12 - month),3), 
+							result.getDeducciblesExpenses());
+				});
+		
+		test(asserts, 
+				new String[]{
+				"BRUTO(1000.00 * DIAS_TRABAJADOS / DIAS_MES )",
+				},
+				new String[]{
+				"BASE_CGC * 0.10",
+				"BASE_CGP * 0.05",
+				"BASE_ESTR * 0.10",
+				"BASE_NESTR * 0.20",
+				"BASE_IRPF * PORCENTAJE_IRPF/100"
+				},
+				new Extra []{
+					new  Extra(){{this.expression="P_0"; this.month=Month.DECEMBER; this.start="01/12"; this.end="31/12"; this.issue="15/12";}},
+					new  Extra(){{this.expression="P_0"; this.month=Month.JULY; this.start="01/07 -1"; this.end="30/06"; this.issue="01/07";}},
+				}
+				);
+	}
+
+	@Test
+	public void testLiquidExtras() throws ExpressionException, SQLException {
+		
+		Consumer<IrpfResult> asserts = 
+				result -> {
+					Assert.fail();
+				};
+		
+		try {
+			test(asserts, 
+					new String[]{
+					"NETO(1000.00 * DIAS_TRABAJADOS / DIAS_MES )",
+					},
+					new String[]{
+					"BASE_CGC * 0.10",
+					"BASE_CGP * 0.05",
+					"BASE_ESTR * 0.10",
+					"BASE_NESTR * 0.20",
+					"BASE_IRPF * PORCENTAJE_IRPF/100"
+					},
+					new Extra []{
+						new  Extra(){{this.expression="P_0"; this.month=Month.DECEMBER; this.start="01/12"; this.end="31/12"; this.issue="15/12";}},
+						new  Extra(){{this.expression="P_0"; this.month=Month.JULY; this.start="01/07 -1"; this.end="30/06"; this.issue="01/07";}},
+					}
+					);
+		} catch ( RuntimeException e ) {
+			
+		}
+	}
+
 
 	// ------------------------------------------------------------------------
 
@@ -234,8 +319,12 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection, "", 0);
 
+		AgreementLevelCategoryRecord category = null;
+		if ( extras!= null && extras.length > 0 )
+			category = newAgreement(aonContext, extras);
+		
 		ContractRecord contract = newContract(aonContext, payments ,
-				deductions);
+				deductions, category);
 
 		Calendar calendar = Calendar.getInstance();
 		// Be care that the first day of the month has value 1.
@@ -331,12 +420,13 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 							.set(AGREEMENT_PAYMENT.AGREEMENT,
 									agreement.getId())
 							.set(AGREEMENT_PAYMENT.MONTH, (byte)extra.month.ordinal())
+							.set(AGREEMENT_PAYMENT.TYPE, (byte)PaymentType.CRA_0004.ordinal())
 							.set(AGREEMENT_PAYMENT.START_DATE, startDate)
 							.set(AGREEMENT_PAYMENT.EXPRESSION, extra.expression)
-							.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION,PAYMENT.getName())
-							.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION,PAYMENT.getName())
 							.set(AGREEMENT_PAYMENT.DESCRIPTION, extra.expression)
+							.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION,PAYMENT.getName())
 							.set(AGREEMENT_PAYMENT.SALARY_TYPE,(byte) EXTRA.ordinal())
+							.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION,String.format("%s/12",PAYMENT.getName()))
 							.returning()
 							.fetchOne();
 							
@@ -363,7 +453,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 	}
 	
 	protected ContractRecord newContract(AONContext aonContext,
-			String [] payments, String ...deductions ) {
+			String [] payments, String [] deductions, AgreementLevelCategoryRecord category  ) {
 		return aonContext.getDslContext().transactionResult(
 				new TransactionalCallable<ContractRecord>() {
 					@Override
@@ -497,6 +587,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 								.set(CONTRACT.START_DATE, startDate)
 								.set(CONTRACT.ENTERPRISE_CCC, enterpriseCcc.getId())
 								.set(CONTRACT.ENTERPRISE_ACTIVITY, enterpriseActivity.getId())
+								.set(CONTRACT.AGREEMENT_LEVEL_CATEGORY ,category!= null ? category.getId(): null )
 								.returning().fetchOne();
 
 						for (int i = 0; i < payments.length; i++) {

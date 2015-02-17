@@ -1,5 +1,9 @@
 package com.esferalia.aon.payroll.irpf.sql;
 
+import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
+import static com.esferalia.aon.jooq.tables.AgreementExtra.AGREEMENT_EXTRA;
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.payroll.AgreementExtra.parseAgreementDate;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_PERCENT;
 
 import java.math.BigDecimal;
@@ -19,12 +23,14 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Stack;
 
+import org.jooq.Result;
+import org.jooq.impl.DSL;
+
 import com.code.aon.common.AonException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.ql.Criteria;
-import com.esferalia.aon.payroll.IrpfOutcome;
-import com.esferalia.aon.payroll.IrpfResult;
+import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
@@ -33,11 +39,12 @@ import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractIrpfCalculatorContext;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
-import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.payroll.calculator.SimpleContractDeduction;
 import com.esferalia.aon.payroll.calculator.SimpleContractPayment;
+import com.esferalia.aon.payroll.calculator.jooq.JooqCommon;
 import com.esferalia.aon.payroll.calculator.sql.FilterCollection;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
@@ -51,12 +58,10 @@ import com.esferalia.aon.payroll.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
 import com.esferalia.aon.salary.ISalary;
-import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
-import com.esferalia.aon.salary.calculator.ISalaryCalculator;
+import com.esferalia.aon.salary.expression.CheckException;
+import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.salary.expression.IExpression;
-import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 
 public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
@@ -89,8 +94,45 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			+ SQLConstants.IRPF_DATA_ASCENDANTS + " WHERE "
 			+ IrpfDataAscendantsColumns.IRPF_DATA + " = ? ";
 
+	public static class IrpfSQLContractExtraCalculatorContext extends
+			SQLContractExtraCalculatorContext {
+		public IrpfSQLContractExtraCalculatorContext(Connection connection,
+				Date startDate, Date endDate, Date issueDate, Criteria criteria)
+				throws SQLException, ExpressionException {
+			super(connection, startDate, endDate, issueDate, criteria);
+		}
+		
+		@Override
+		public double getIrpf() {
+			return 0.00;
+		}
+		
+		@Override
+		public Object liquid(double liquid, Date start, Date end)
+				throws ExpressionException, SQLException, SalaryException {
+			throw new ExpressionException("Lo sentimos no soportamos la funcionalidad NETO en extras si esta activado el c\u00E1lculo autom\u00E1tico de IRPF.");
+		}
+		
+		
+		public Collection<IContractEmbargo> getContractEmbargos()
+				throws AonException {
+			return Collections.emptyList();
+		}
+
+		@Override
+		public Collection<IContractCost> getContractCosts()
+				throws AonException {
+			return Collections.emptyList();
+		}
+		@Override
+		public Collection<IContractDeduction> getContractDeductions()
+				throws AonException {
+			return Collections.emptyList();
+		}
+	}
+
 	private static class CustomSQLContractCalculatorContext extends
-			DelegateSQLContractSalaryCalculatorContext {
+			DelegateSQLContractSalaryCalculatorContext<ISQLContractSalaryCalculatorContext> {
 
 		private Collection<IContractPayment> payments;
 		private Collection<IContractDeduction> deductions;
@@ -262,8 +304,10 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 					new FilterCollection.Filter<IContractDeduction>() {
 						@Override
 						public boolean accept(IContractDeduction deduction) {
-							return period.intersects(new Period(deduction
-									.getStartDate(), deduction.getEndDate()));
+							return deduction.getType().isSsDeduction()
+									&& period.intersects(new Period(deduction
+											.getStartDate(), deduction
+											.getEndDate()));
 						}
 					}, super.getContractDeductions());
 		}
@@ -278,7 +322,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			return next;
 		}
 
-		public Double getIrpf() {
+		public Double getIrpfPercent() {
 			return getExpressionContext().getVariable(
 					ContextVariable.IRPF_PERCENT, getStartDate(), getEndDate(),
 					Double.class);
@@ -493,12 +537,13 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		this(conn, startDate, endDate, new SQLContractSalaryCalculatorContext(
 				conn, startDate, endDate, endDate, criteria) {
 			@Override
-			protected double getIrpf() {
+			public double getIrpf() {
 				return 0.00;
 			}
 		});
 	}
 
+	
 	public SQLIrpfCalculatorContext(Connection conn, Date startDate,
 			Date endDate, ISQLContractSalaryCalculatorContext ctx)
 			throws ExpressionException, SQLException {
@@ -946,6 +991,11 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			return rethrow(e);
 		}
 	}
+	
+	protected IrpfSQLContractExtraCalculatorContext getExtraContext(Date startDate,  Date endDate, Date issueDate, Criteria criteria) throws ExpressionException, SQLException{
+		return new IrpfSQLContractExtraCalculatorContext(connection, startDate,
+				endDate, issueDate, criteria);		
+	}
 
 	// --------------------------------------------------------- Private methods
 
@@ -974,7 +1024,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			return;
 		SALARIES.get()
 				.stream()
-				.filter(salary -> salary.getEndDate().before(startDate))
+				.filter(salary -> salary.getIssueDate().before(startDate))
 				.forEach(
 						salary -> {
 							irpfBase += salary.getIrpfBase();
@@ -1019,7 +1069,8 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	// Thread local variable containing each thread's IRPFs
 	private static final ThreadLocal<Stack<ISalary>> SALARIES = new ThreadLocal<Stack<ISalary>>();
 
-	private void nextSalary() throws SalaryException {
+	private void nextSalary() throws SalaryException, ExpressionException,
+			SQLException {
 
 		nextIrpfBase = 0.00;
 		nextSocialSecurityContributons = 0.00;
@@ -1037,10 +1088,10 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			irpfCtx.getExpressionContext().setVariable(ContextVariable.END,
 					irpfCtx.getEndDate(), irpfCtx.getStartDate(),
 					irpfCtx.getEndDate());
-
+			
 			ISalary salary = calculator.calculate(irpfCtx);
 
-			Double irpf = irpfCtx.getIrpf();
+			Double irpf = irpfCtx.getIrpfPercent();
 			if (irpf != null && irpf > 0.00) {
 				SALARIES.set(salaries);
 				salaries.add(salary);
@@ -1054,10 +1105,68 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 					.getSocialSecurityContributions();
 
 		}
+		
+		for (ISQLContractSalaryCalculatorContext extraCtx : getExtraContexts()) {
+			extraCtx.next();
+			
+			ISalary salary = calculator.calculate(extraCtx);
+
+			Double irpf = extraCtx.getExpressionContext().getVariable(
+					IRPF_PERCENT, extraCtx.getStartDate(),
+					extraCtx.getEndDate(), Double.class);
+
+			if (irpf != null && irpf > 0.00) {
+				SALARIES.set(salaries);
+				salaries.add(salary);
+				// TODO : Safe cast , generic in SalaryBuilder.
+				((Salary) salary).setTotalIrpf(irpf / 100
+						* salary.getIrpfBase());
+			} 
+
+			nextIrpfBase += salary.getIrpfBase();
+		}
+
 
 		salaries.clear();
 	}
 
+	private Collection<ISQLContractSalaryCalculatorContext> getExtraContexts()
+			throws ExpressionException, SQLException {
+		Integer agreement = (Integer) ctx.getObject(AGREEMENT.getName(),
+				AGREEMENT.ID.getName());
+
+		Result<AgreementExtraRecord> result = DSL
+				.using(connection, JooqCommon.getDefaultSettings()).select()
+				.from(AGREEMENT_EXTRA)
+				.where(AGREEMENT_EXTRA.AGREEMENT.eq(agreement))
+				.fetchInto(AGREEMENT_EXTRA);
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(), ctx.getId());
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(ctx.getStartDate());
+		int year = calendar.get(Calendar.YEAR);
+
+		List<ISQLContractSalaryCalculatorContext> ctxs = new ArrayList<ISQLContractSalaryCalculatorContext>();
+
+		for (AgreementExtraRecord agreementExtraRecord : result) {
+			Date startDate = parseAgreementDate(
+					agreementExtraRecord.getStartDate(), year);
+			Date endDate = parseAgreementDate(
+					agreementExtraRecord.getEndDate(), year);
+			Date issueDate = parseAgreementDate(
+					agreementExtraRecord.getIssueDate(), year);
+
+			ctxs.add(getExtraContext(startDate, endDate, issueDate, criteria));
+		}
+		return ctxs;
+	}
+	
+	
+	
+	// ------------------------------------------------------------------------
 	private static BigDecimal round(BigDecimal value) {
 		return value != null && value.doubleValue() != 0.00 ? value.setScale(
 				SCALE, RoundingMode.HALF_UP) : null;
@@ -1083,10 +1192,5 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		throw new RuntimeException(e.getMessage());
 	}
 
-	private static int getMonth(Date date) {
-		Calendar c = Calendar.getInstance();
-		c.setTime(date);
-		return c.get(Calendar.MONTH);
-	}
 
 }
