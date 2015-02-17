@@ -50,8 +50,11 @@ import com.code.aon.ql.Projection;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddInfo;
+import com.code.aon.registry.RegistryMedia;
+import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.seller.Seller;
 import com.code.aon.seller.enumeration.SellerStatus;
+import com.code.aon.webmail.db.MailAccount;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
@@ -445,9 +448,9 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 	    	criteria.addEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_TAX_ID), tax.getId());
 	    	criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_START_DATE), date);
 	    	criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_END_DATE), date);
-	    	for (ITransferObject ito : taxDetailBean.getList(criteria)) {
-	    		TaxDetail taxDetail = (TaxDetail)ito;
-	    		return taxDetail.getValue();
+	    	List<ITransferObject> taxDetailList = taxDetailBean.getList(criteria);
+	    	if (taxDetailList.size() > 0) {
+	    		return ((TaxDetail)taxDetailList.get(0)).getValue();
 	    	}
 		}
     	return tax.getPercentage();
@@ -458,8 +461,9 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_CODE), hotelCode);
-		for (ITransferObject ito : hotelBean.getList(criteria)) {
-			return (Hotel)ito;
+		List<ITransferObject> hotelList = hotelBean.getList(criteria);
+		if (hotelList.size() > 0) {
+			return (Hotel)hotelList.get(0);
 		}
 
 		throw new ReservationException("Invalid Hotel: " + hotelCode, 361);
@@ -1014,6 +1018,32 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), AUTO_DISCOUNT_ITEM);
 		for (ITransferObject ito : appParamBean.getList(criteria)) {
 			return obtainItem(((ApplicationParameter)ito).getValue());
+		}
+		return null;
+	}
+
+	public MailAccount obtainCompanyMailAccount() throws ManagerBeanException {
+		IManagerBean mailAccountBean = BeanManager.getManagerBean(MailAccount.class);
+		Criteria criteria = new Criteria();
+		criteria.addNullExpression(mailAccountBean.getFieldName(IEntityAlias.MAIL_ACCOUNT_USER));
+		List<ITransferObject> mailAccountList = mailAccountBean.getList(criteria);
+		if (mailAccountList.size() > 0) {
+			return (MailAccount)mailAccountList.get(0);
+		}
+		return null;							
+	}
+
+	public String obtainAgencyAdministrativeEmail(Customer agency) throws ManagerBeanException {
+		if (agency != null && agency.getId() != null) {
+			IManagerBean rMediaBean = BeanManager.getManagerBean(RegistryMedia.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID), agency.getId());
+			criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE), MediaType.EMAIL);
+			criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_ADMINISTRATIVE), Boolean.TRUE);
+			List<ITransferObject> rMediaList = rMediaBean.getList(criteria);
+			if (rMediaList.size() > 0) {
+				return ((RegistryMedia)rMediaList.get(0)).getValue();
+			}
 		}
 		return null;
 	}
