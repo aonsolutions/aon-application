@@ -63,7 +63,6 @@ import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonServer;
 import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.document.client.IDocument;
 import com.esferalia.aon.gwt.document.client.Utils;
 import com.esferalia.aon.gwt.document.jooq.DBConsults;
@@ -85,6 +84,7 @@ import com.esferalia.aon.gwt.document.shared.Tags;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.RattachColumns;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.About;
 import com.google.api.services.drive.model.File;
@@ -193,7 +193,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	public Vector<FileInfo> searchFile(String searchStr, Vector<FileInfo> files){
 		Vector<FileInfo> vector = new Vector<FileInfo>();
 		for (FileInfo fileInfo : files) {
-			if(StringUtils.containsIgnoreCase(fileInfo.getTitle(), searchStr)){
+			if(AonStringUtils.containsIgnoreCase2(fileInfo.getTitle(), searchStr)){
 				vector.add(fileInfo);
 			}
 		}
@@ -229,7 +229,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	
 	public Boolean filter(SearchInfo si,FileInfo fi){
 		if(si.getName() != null){
-			if(!StringUtils.contains(fi.getTitle(), si.getName())){
+			if(!AonStringUtils.contains(fi.getTitle(), si.getName())){
 				return false;
 			}
 		}
