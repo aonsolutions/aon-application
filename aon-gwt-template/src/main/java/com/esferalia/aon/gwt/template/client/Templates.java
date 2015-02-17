@@ -189,7 +189,8 @@ public class Templates extends Composite implements EntryPoint {
 			GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 			GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 
-			exportPreview(this);
+			exportProduct(this);
+			exportStock(this);
 		}
 	}
 	
@@ -537,7 +538,7 @@ public class Templates extends Composite implements EntryPoint {
 	}
 	
 	private void importProduct(){
-		Dialog d = new Dialog("Importar Productos","Importar",true,"Cancelar",true,"import");
+		Dialog d = new Dialog("Importar Productos","Importar",true,"Cancelar",true,"importProduct");
 		d.setUrl(GWT.getModuleBaseURL());
 		d.setTemplateList(template_list);
 		TemplatesDialog popup = new TemplatesDialog(d) {
@@ -557,7 +558,7 @@ public class Templates extends Composite implements EntryPoint {
 				
 				//TODO AÑADIR TODOS LOS ATRIBUTOS
 				for(TemplateInfo t : tlist.getList()) {
-					if(t.getName().equals(template)){
+					if(t.getName().equals(template) && t.getType().equals("Producto")){
 						ti = t;
 					}
 				}
@@ -597,7 +598,66 @@ public class Templates extends Composite implements EntryPoint {
 		popup.show();
 	}
 
-	
+	private void importStock(){
+		Dialog d = new Dialog("Importar Stock","Importar",true,"Cancelar",true,"importStock");
+		d.setUrl(GWT.getModuleBaseURL());
+		d.setTemplateList(template_list);
+		TemplatesDialog popup = new TemplatesDialog(d) {
+			
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+			
+			@Override
+			protected void onAccept() {
+			
+				ListBox lb = (ListBox) flex_table.getWidget(0, 1);
+				String template = lb.getItemText(lb.getSelectedIndex());
+				TemplateInfo ti = new TemplateInfo();
+				
+				
+				//TODO AÑADIR TODOS LOS ATRIBUTOS
+				for(TemplateInfo t : tlist.getList()) {
+					if(t.getName().equals(template) && t.getType().equals("Stock")){
+						ti = t;
+					}
+				}
+				item.insertStock(ti, new AsyncCallback<com.esferalia.aon.gwt.template.shared.Error>() {
+					
+					@Override
+					public void onSuccess(com.esferalia.aon.gwt.template.shared.Error result) {
+					
+							hide();
+							Dialog d2 = new Dialog("Importar Stock","Aceptar",true,"Cancelar",false,"importResponse");
+							d2.setError(result);
+							TemplatesDialog popup2 = new TemplatesDialog(d2){
+
+								@Override
+								protected void onAccept() {
+									hide();										
+								}
+
+								@Override
+								protected void onCancel() {
+									hide();
+								}
+							
+							};
+							popup2.addStyleName("gwt-PopupPanel-template");
+							popup2.setGlassEnabled(true);
+							popup2.show();						
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
+			}
+		};
+		popup.addStyleName("gwt-PopupPanel-template");
+		popup.setGlassEnabled(true);
+		popup.show();
+	}
 //------------------------------ ui handlers
 	
 	@UiHandler("nameSearchButton")
@@ -703,16 +763,25 @@ public class Templates extends Composite implements EntryPoint {
 	
 	// ------------------------------------------------------------------------
 	
-	public void preview(){
-
-		importProduct();
+	public void product(){
+			importProduct();
 	}
 
-
-	public static native void exportPreview(Templates thiz) /*-{
-    	$wnd.preview = function() {
-    		thiz.@com.esferalia.aon.gwt.template.client.Templates::preview(*)();
+	public static native void exportProduct(Templates thiz) /*-{
+    	$wnd.product = function() {
+    		thiz.@com.esferalia.aon.gwt.template.client.Templates::product(*)();
     	}
 	}-*/;
+	
+	public void stock(){
+		importStock();
+	}
+	
+	public static native void exportStock(Templates thiz) /*-{
+		$wnd.stock = function() {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::stock(*)();
+		}
+	}-*/;
+
 }
 

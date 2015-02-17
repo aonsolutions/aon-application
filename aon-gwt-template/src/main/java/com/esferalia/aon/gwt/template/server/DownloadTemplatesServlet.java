@@ -16,8 +16,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Color;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -98,10 +102,18 @@ public class DownloadTemplatesServlet extends HttpServlet {
         FileOutputStream archivo = new FileOutputStream(archivoXLS);
         Sheet hoja = libro.createSheet("Plantilla 1");
         Row fila = hoja.createRow(0);
-     
+        
+        
+        CellStyle style = libro.createCellStyle();
+        Font font = libro.createFont();
+        font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        style.setFont(font);
+        style.setAlignment(CellStyle.ALIGN_CENTER);
+        
         for(Integer i = 0; i< aux.getColumns().size(); i++){
         	Cell celda = fila.createCell(i);
         	celda.setCellValue(aux.getColumns().get(i));
+        	celda.setCellStyle(style);
         }
         
         libro.write(archivo);        

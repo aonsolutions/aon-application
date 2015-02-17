@@ -42,6 +42,12 @@
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="stockList" />
 					</aon:htmlCommandLink>
+					<ui:include
+						src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
+					<aon:commandLink id="stock-import" value="Importar"
+						onclick="stock()"
+						styleClass="aon-finding-toolbar-item aon-icon-google-drive-excel">
+					</aon:commandLink>
 				</ui:define>				
 				
 			</ui:decorate>

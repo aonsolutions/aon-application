@@ -1,21 +1,31 @@
 package com.esferalia.aon.gwt.template.jooq;
 
+import static com.esferalia.aon.jooq.tables.Brand.BRAND;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
-import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
-import static com.esferalia.aon.jooq.tables.Tax.TAX;
-import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
-import static com.esferalia.aon.jooq.tables.ProductTag.PRODUCT_TAG;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
-import static com.esferalia.aon.jooq.tables.Brand.BRAND;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.ProductTag.PRODUCT_TAG;
+import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
+import static com.esferalia.aon.jooq.tables.Tax.TAX;
+import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
+import static com.esferalia.aon.jooq.tables.WarehouseTransfer.WAREHOUSE_TRANSFER;
+import static com.esferalia.aon.jooq.tables.WarehouseTransferDetail.WAREHOUSE_TRANSFER_DETAIL;
+import static com.esferalia.aon.jooq.tables.Stock.STOCK;
+import static com.esferalia.aon.jooq.tables.Series.SERIES;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+
 
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Vector;
+
+import javax.validation.constraints.Max;
 
 import org.jooq.DSLContext;
 import org.jooq.Record1;
@@ -27,16 +37,18 @@ import org.jooq.Result;
 import org.jooq.impl.DSL;
 
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.config.Series;
 import com.code.aon.config.Tag;
 import com.code.aon.config.Tax;
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.jooq.JooqSettings;
 import com.code.aon.product.Brand;
-import com.code.aon.product.Item;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.product.ProductTag;
 import com.esferalia.aon.gwt.template.server.ProductInfo;
+import com.esferalia.aon.gwt.template.server.StockInfo;
 import com.esferalia.aon.gwt.template.server.Utils;
+import com.esferalia.aon.gwt.template.server.Warehouse;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
 
@@ -595,4 +607,166 @@ public class DBConsults {
 			connection.close();
 		}
 	}
+	public static void insertStock(String domain, Integer domainId,Vector<StockInfo> stock) throws SQLException {
+		Connection connection = null;
+		try {
+			connection = DatabaseSync.getConnection(domain);
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			for(StockInfo s :stock){
+				Result<Record1< Integer>> data = dslContext.select(ITEM.ID)
+					.from(ITEM)
+					.where(ITEM.BARCODE.eq(s.getProduct())).fetch();
+				
+				if(data.isEmpty()){
+					data = dslContext.select(ITEM.ID)
+							.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+							.where(PRODUCT.CODE.eq(s.getProduct())).fetch();
+				}
+				if(!data.isEmpty()){
+					Integer itemId = data.get(0).value1();
+					Result<Record1<Double>> data2 = dslContext.select(STOCK.QUANTITY)
+						.from(STOCK)
+						.where(STOCK.ITEM.eq(itemId).and(STOCK.WAREHOUSE.eq(s.getTargetWarehouse().getId()))).fetch();
+					Double quantity;
+					if(data2.isEmpty())
+						quantity = 0.0;
+					else 
+						quantity = data2.get(0).value1();
+					
+					Date d = new Date();
+					Timestamp t = new Timestamp(d.getTime());
+			
+					Result<Record1<Integer>> n = dslContext.select(DSL.max(WAREHOUSE_TRANSFER.NUMBER))
+						.from(WAREHOUSE_TRANSFER)
+						.where(WAREHOUSE_TRANSFER.DOMAIN.eq(domainId).and(WAREHOUSE_TRANSFER.SERIES.eq(s.getSeries().getCode()))).fetch();
+					Integer max = n.get(0).value1(); //get max number (domain, serie)
+					
+					Integer next = max++;
+					
+					Integer transferId = dslContext.insertInto(WAREHOUSE_TRANSFER,WAREHOUSE_TRANSFER.DOMAIN, WAREHOUSE_TRANSFER.SERIES,WAREHOUSE_TRANSFER.NUMBER, WAREHOUSE_TRANSFER.COMMENTS, WAREHOUSE_TRANSFER.ISSUE_TIME, WAREHOUSE_TRANSFER.SOURCE_WAREHOUSE, WAREHOUSE_TRANSFER.TARGET_WAREHOUSE)
+							.values(domainId,s.getSeries().getCode(),next,s.getComments(),t,null,s.getTargetWarehouse().getId()).returning(WAREHOUSE_TRANSFER.ID).fetchOne().getId();
+
+					dslContext.insertInto(WAREHOUSE_TRANSFER_DETAIL, WAREHOUSE_TRANSFER_DETAIL.DOMAIN, WAREHOUSE_TRANSFER_DETAIL.ITEM, WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER, WAREHOUSE_TRANSFER_DETAIL.QUANTITY)
+							.values(domainId,itemId,transferId,s.getQuantity()-quantity).execute();
+					if(data2.isEmpty())
+						dslContext.insertInto(STOCK, STOCK.DOMAIN, STOCK.WAREHOUSE, STOCK.ITEM, STOCK.QUANTITY)
+								.values(domainId, s.getTargetWarehouse().getId(), itemId, s.getQuantity());
+					else dslContext.update(STOCK)
+							.set(STOCK.QUANTITY,s.getQuantity())
+							.where(STOCK.ITEM.eq(itemId).and(STOCK.WAREHOUSE.eq(s.getTargetWarehouse().getId()))).execute();
+					
+				}
+			}
+			
+		}finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	
+	public static Boolean isItem(String domain, Integer domainId, String p) throws SQLException{
+		Connection connection = null;
+		try {
+			connection = DatabaseSync.getConnection(domain);
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			Result<Record1< Integer>> data = dslContext.select(ITEM.ID)
+					.from(ITEM)
+					.where(ITEM.BARCODE.eq(p)).fetch();
+				
+			if(data.isEmpty()){
+				data = dslContext.select(ITEM.ID)
+						.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+						.where(PRODUCT.CODE.eq(p)).fetch();
+			}
+			return !data.isEmpty();
+			
+		}finally {
+			if (connection != null)
+				connection.close();
+			}
+		
+	}
+	public static Vector<Warehouse> getWarehouse(String domain,Integer domainId) throws SQLException{
+		Connection connection = null;
+		try {
+			connection = DatabaseSync.getConnection(domain);
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			Result<Record3< Integer, String,Integer>> data = dslContext.select(WAREHOUSE.ID,WAREHOUSE.NAME,WAREHOUSE.WORKPLACE)
+				.from(WAREHOUSE)
+				.where(WAREHOUSE.DOMAIN.eq(domainId)).fetch();
+			
+			Vector<Warehouse> v = new Vector<Warehouse>();
+			
+			for(Record3<Integer, String,Integer> r : data){
+				Warehouse w = new Warehouse();
+				w.setDomainId(domainId);
+				w.setId(r.value1());
+				w.setName(r.value2());
+				w.setWorkplace(0);//
+				v.add(w);
+			}
+			return v;
+
+		} finally {
+		if (connection != null)
+			connection.close();
+		}
+	}
+	
+	public static Vector<Series> getSeries(String domain,Integer domainId) throws SQLException{
+		Connection connection = null;
+		try {
+			connection = DatabaseSync.getConnection(domain);
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			Result<Record3< Integer, String,String>> data = dslContext.select(SERIES.ID,SERIES.CODE,SERIES.DESCRIPTION)
+				.from(SERIES)
+				.where(SERIES.DOMAIN.eq(domainId)).fetch();
+			
+			Vector<Series> v = new Vector<Series>();
+			
+			for(Record3<Integer, String,String> r : data){
+				Series s = new Series();
+				s.setId(r.value1());
+				s.setCode(r.value2());
+				s.setDescription(r.value3());
+				v.add(s);
+			}
+			return v;
+
+		} finally {
+		if (connection != null)
+			connection.close();
+		}
+	}
+	
+	public static Boolean checkSeries(String domain, Integer domainId,Series s, Warehouse w) throws SQLException{
+		Connection connection = null;
+		try {
+			connection = DatabaseSync.getConnection(domain);
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			Result<Record1< Integer>> data = dslContext.select(SERIES.ID)
+				.from(WAREHOUSE)
+					.join(WORKPLACE).on(WAREHOUSE.WORKPLACE.eq(WORKPLACE.ID))
+					.join(SERIES).on(SERIES.SCOPE.eq(WORKPLACE.SCOPE))
+				.where(SERIES.ID.eq(s.getId()).and(WAREHOUSE.ID.eq(w.getId()))).fetch();
+			
+			return !data.isEmpty();
+
+		} finally {
+		if (connection != null)
+			connection.close();
+		}
+	}
+
 }

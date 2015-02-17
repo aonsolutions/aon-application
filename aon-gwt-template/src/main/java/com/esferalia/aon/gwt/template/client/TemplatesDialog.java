@@ -80,7 +80,7 @@ public abstract class TemplatesDialog extends CustomDialog {
 			Dialog dialog = d;
 			@Override
 			public void onClick(ClickEvent event) {
-				if(productCheck() || dialog.getType().equals("delete") || dialog.getType().equals("import") || dialog.getType().equals("importResponse"))
+				if(stockCheck() || productCheck() || dialog.getType().equals("delete") || dialog.getType().contains("import"))
 					onAccept();
 				else {
 					label.setText("*Faltan columnas por a\u00f1adir");
@@ -104,7 +104,8 @@ public abstract class TemplatesDialog extends CustomDialog {
 		case "new": newTemplate();break;
 		case "edit": editTemplate(dialog);break;
 		case "delete": deleteTemplate(dialog.getTemplateInfo().getName());break;
-		case "import": importProduct(dialog.getUrl(),dialog.getTemplateList());break;
+		case "importProduct": importProduct(dialog.getUrl(),dialog.getTemplateList());break;
+		case "importStock": importStock(dialog.getUrl(),dialog.getTemplateList());break;
 		case "importResponse": importResponse(dialog.getError());break;
 		default:
 			break;
@@ -115,13 +116,12 @@ public abstract class TemplatesDialog extends CustomDialog {
 	protected abstract void onCancel();
 
 	private void newTemplate() {
-		listBox();
 		flexTable();
 	}
 	
 	private void editTemplate(Dialog dialog) {
-		listBox();
-		listBoxEdit();
+
+		
 		flexTableEdit();
 	}
 	
@@ -146,7 +146,40 @@ public abstract class TemplatesDialog extends CustomDialog {
 		ListBox lb = new ListBox();
 		lb.addItem("-");
 		for(TemplateInfo ti : templates.getList()){
-			lb.addItem(ti.getName());
+			if(ti.getType().equals("Producto"))
+				lb.addItem(ti.getName());
+		}
+		flex_table.setWidget(0, 0, new Label("Plantilla"));
+		flex_table.setWidget(0, 1, lb);
+		
+		SingleUploader upload = newUploader(null, url);
+		flex_table.setWidget(1, 0, new Label("Archivo"));
+		flex_table.setWidget(1, 1, upload);
+		
+		for (int i = 0; i < flex_table.getRowCount(); i++) {
+			for (int j = 0; j < flex_table.getCellCount(i); j++) {
+				if ((j % 2) == 0) {
+					flex_table.getCellFormatter().setStyleName(i, j,
+							"aon-panelGrid-odd");
+				} else {
+					flex_table.getCellFormatter().setStyleName(i, j,
+							"aon-panelGrid-even");
+				}
+			}
+		}
+	}
+	
+	private void importStock(String url,TemplateList templates) {
+		flex_table.setStyleName("aon-panelGrid");
+		flex_table.setWidth("400px");
+		flex_table.setBorderWidth(1);
+		flex_table.setCellSpacing(0);
+		
+		ListBox lb = new ListBox();
+		lb.addItem("-");
+		for(TemplateInfo ti : templates.getList()){
+			if(ti.getType().equals("Stock"))
+				lb.addItem(ti.getName());
 		}
 		flex_table.setWidget(0, 0, new Label("Plantilla"));
 		flex_table.setWidget(0, 1, lb);
@@ -169,6 +202,7 @@ public abstract class TemplatesDialog extends CustomDialog {
 	}
 	
 	PopupPanel popup;
+	ListBox lbaux;
 	public void flexTable() {
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
@@ -182,21 +216,78 @@ public abstract class TemplatesDialog extends CustomDialog {
 		flex_table.setWidget(0, 2, new Label(""));
 		
 		ListBox lb = new ListBox();
+		lb.addItem("-");
 		lb.addItem("Producto");
+		lb.addItem("Stock");
+		lbaux = lb;
+		lb.addChangeHandler(new ChangeHandler() {
+			ListBox lb = lbaux;
+			@Override
+			public void onChange(ChangeEvent event) {
+				column = 1;
+				if(lb.getItemText(lb.getSelectedIndex()).equals("Producto")){
+					for(Integer i = flex_table.getRowCount(); i>2;i--){
+						flex_table.removeRow(i-1);
+					}
+					listBox("Producto");
+					
+					ListBox lb2 = new ListBox();
+					for(Integer k = 0;k< list_box.getItemCount();k++){
+						lb2.addItem(list_box.getItemText(k));
+					}
+				
+					handler = lb2.addChangeHandler(changeHandler());
+					
+					flex_table.setWidget(2, 0, new Label("Columna" + " " + Integer.toString(column)));
+					flex_table.setWidget(2, 1, lb2);
+					flex_table.setWidget(2, 2, new Label(""));
+				}
+				else if(lb.getItemText(lb.getSelectedIndex()).equals("Stock")){
+					for(Integer i = flex_table.getRowCount(); i>2;i--){
+						flex_table.removeRow(i-1);
+					}
+					listBox("Stock");
+					ListBox lb2 = new ListBox();
+					for(Integer k = 0;k< list_box.getItemCount();k++){
+						lb2.addItem(list_box.getItemText(k));
+					}
+				
+					handler = lb2.addChangeHandler(changeHandler());
+					
+					flex_table.setWidget(2, 0, new Label("Columna" + " " + Integer.toString(column)));
+					flex_table.setWidget(2, 1, lb2);
+					flex_table.setWidget(2, 2, new Label(""));
+				}
+				flex_table.getCellFormatter().setStyleName(2, 0,
+						"aon-panelGrid-odd");
+				flex_table.getCellFormatter().setStyleName(2, 1,
+						"aon-panelGrid-even");
+				flex_table.getCellFormatter().setStyleName(2, 2,
+						"aon-panelGrid-aux");	
+			}
+		});
 		flex_table.setWidget(1, 0, new Label("Tipo"));
 		flex_table.setWidget(1, 1, lb);
 		Button info = new Button("");
 		info.setStyleName("aon-finding-toolbar-item-template aon-icon-info");
 		info.addMouseOverHandler(new MouseOverHandler() {
+			ListBox lb = lbaux;
 			@Override
 			public void onMouseOver(MouseOverEvent event) {
 				VerticalPanel vp = new VerticalPanel();
-				vp.add(new Label("  Columnas Obligatorias:"));
-				vp.add(new Label("     Nombre"));
-				vp.add(new Label("     C\u00f3digo"));
-				vp.add(new Label("     Precio Coste"));
-				vp.add(new Label("     Precio Venta Base"));
-			
+				if(lb.getItemText(lb.getSelectedIndex()).equals("Producto")){
+					vp.add(new Label("Columnas Obligatorias:"));
+					vp.add(new Label("Nombre"));
+					vp.add(new Label("C\u00f3digo"));
+					vp.add(new Label("Precio Coste"));
+					vp.add(new Label("Precio Venta Base"));
+				}
+				else if(lb.getItemText(lb.getSelectedIndex()).equals("Stock")){
+					vp.add(new Label("Columnas Obligatorias:"));
+					vp.add(new Label("Product"));
+					vp.add(new Label("Almac\u00e9n Destino"));
+					vp.add(new Label("Cantidad"));
+				}
 				popup = new PopupPanel();
 				popup.setWidget(vp);
 				popup.setStyleName("aon-popup-aux-template");
@@ -214,16 +305,7 @@ public abstract class TemplatesDialog extends CustomDialog {
 		
 		flex_table.setWidget(1, 2, info);
 
-		ListBox lb2 = new ListBox();
-		for(Integer k = 0;k< list_box.getItemCount();k++){
-			lb2.addItem(list_box.getItemText(k));
-		}
-	
-		handler = lb2.addChangeHandler(changeHandler());
 		
-		flex_table.setWidget(2, 0, new Label("Columna" + " " + Integer.toString(column)));
-		flex_table.setWidget(2, 1, lb2);
-		flex_table.setWidget(2, 2, new Label(""));
 		
 
 		for (int i = 0; i < flex_table.getRowCount(); i++) {
@@ -241,8 +323,7 @@ public abstract class TemplatesDialog extends CustomDialog {
 				"aon-panelGrid-aux");	
 		flex_table.getCellFormatter().setStyleName(1, 2,
 				"aon-panelGrid-aux");	
-		flex_table.getCellFormatter().setStyleName(2, 2,
-				"aon-panelGrid-aux");	
+
 	}
 	
 	public void flexTableEdit() {
@@ -250,35 +331,45 @@ public abstract class TemplatesDialog extends CustomDialog {
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
 		flex_table.setCellSpacing(0);
-		
 		TextBox tb = new TextBox();
 		tb.setStyleName("aon-inputText");
 		tb.setText(ti.getName());
 		flex_table.setWidget(0, 0, new Label("Nombre"));
 		flex_table.setWidget(0, 1, tb);
 		flex_table.setWidget(0, 2, new Label(""));
-		
 		ListBox lb = new ListBox();
+		lb.addItem("-");
 		lb.addItem("Producto");
+		lb.addItem("Stock");
 		for(Integer i = 0;i< lb.getItemCount();i++){
 			if(lb.getItemText(i).equals(ti.getType())){
 				lb.setSelectedIndex(i);
 			}
 		}
+		lb.setEnabled(false);
 		flex_table.setWidget(1, 0, new Label("Tipo"));
 		flex_table.setWidget(1, 1, lb);
 		Button info = new Button("");
 		info.setStyleName("aon-finding-toolbar-item-template aon-icon-info");
+		lbaux = lb;
 		info.addMouseOverHandler(new MouseOverHandler() {
+			ListBox lb = lbaux;
 			@Override
 			public void onMouseOver(MouseOverEvent event) {
 				VerticalPanel vp = new VerticalPanel();
-				vp.add(new Label("  Columnas Obligatorias:"));
-				vp.add(new Label("     Nombre"));
-				vp.add(new Label("     C\u00f3digo"));
-				vp.add(new Label("     Precio Coste"));
-				vp.add(new Label("     Precio Venta Base"));
-			
+				if(lb.getItemText(lb.getSelectedIndex()).equals("Producto")){
+					vp.add(new Label("Columnas Obligatorias:"));
+					vp.add(new Label("Nombre"));
+					vp.add(new Label("C\u00f3digo"));
+					vp.add(new Label("Precio Coste"));
+					vp.add(new Label("Precio Venta Base"));
+				}
+				else if(lb.getItemText(lb.getSelectedIndex()).equals("Stock")){
+					vp.add(new Label("Columnas Obligatorias:"));
+					vp.add(new Label("Product"));
+					vp.add(new Label("Almac\u00e9n Destino"));
+					vp.add(new Label("Cantidad"));
+				}
 				popup = new PopupPanel();
 				popup.setWidget(vp);
 				popup.setStyleName("aon-popup-aux-template");
@@ -293,9 +384,10 @@ public abstract class TemplatesDialog extends CustomDialog {
 				popup.hide();
 			}
 		});
-		
 		flex_table.setWidget(1, 2, info);
-
+		listBox(ti.getType());
+		listBoxEdit(ti.getType());
+		Integer cont = 0;
 		for(Integer j = 0; j< ti.getColumns().size();j++){
 			column = j+1;
 			ListBox lb2 = new ListBox();
@@ -304,13 +396,23 @@ public abstract class TemplatesDialog extends CustomDialog {
 				lb2.addItem(list_box_edit.getItemText(k));
 				if(lb2.getItemText(k).equals(ti.getColumns().get(j))){
 					lb2.setSelectedIndex(k);
+					cont++;
+					if(cont < ti.getColumns().size())list_box.removeItem(k+1);
+					
 					num = k;
 				}
 			}
+			/*for(Integer h = 0;h<list_box.getItemCount();h++){
+				String s = lb2.getItemText(lb2.getSelectedIndex());
+				if(list_box.getItemText(h).equals(s)){
+					list_box.removeItem(h);
+				}
+			}*/
 			if(num!=null) list_box_edit.removeItem(num);
 			flex_table.setWidget(j+2, 0, new Label("Columna" + " " + Integer.toString(j+1)));
 			flex_table.setWidget(j+2, 1, lb2);
 			if(j != ti.getColumns().size()-1){
+
 				flex_table.setWidget(j+2, 2, new Label(""));
 				lb2.setEnabled(false);
 			}
@@ -319,7 +421,7 @@ public abstract class TemplatesDialog extends CustomDialog {
 					handler = lb2.addChangeHandler(changeHandler());
 					HorizontalPanel hp = new HorizontalPanel();
 					if(j!=0){
-					Button b = new Button("");
+						Button b = new Button("");
 						b.setStyleName("aon-finding-toolbar-item-template aon-search-minus");
 						b.addClickHandler(removeClickHandler());
 						hp.add(b);
@@ -339,7 +441,6 @@ public abstract class TemplatesDialog extends CustomDialog {
 				}
 			}
 		}
-		
 		
 
 		for (int i = 0; i < flex_table.getRowCount(); i++) {
@@ -463,8 +564,12 @@ public abstract class TemplatesDialog extends CustomDialog {
 	
 	ListBox list_box;
 	Integer max;
-	private void listBox(){
-		Vector<String> v = productList();
+	private void listBox(String type){
+		Vector<String> v = new Vector<String>();
+		if(type.equals("Producto"))
+			v = productList();
+		else if(type.equals("Stock"))
+			v = stockList();
 		list_box = new ListBox();
 		list_box.addItem("-");
 		for(String s : v){
@@ -474,14 +579,33 @@ public abstract class TemplatesDialog extends CustomDialog {
 	}
 	
 	ListBox list_box_edit;
-	private void listBoxEdit(){
-		Vector<String> v = productList();
+	private void listBoxEdit(String type){
+		Vector<String> v = new Vector<String>();
+		if(type.equals("Producto"))
+			v = productList();
+		else if(type.equals("Stock"))
+			v = stockList();
 		list_box_edit = new ListBox();
 		for(String s : v){
 			list_box_edit.addItem(s);
 		}
 	}
 	
+	private Vector<String> stockList(){
+		Vector<String> v = new Vector<String>();
+		v.add("Producto");
+		v.add("Series");
+		//v.add("Numero");
+		//v.add("Almac\u00e9n Origen");
+		v.add("Almac\u00e9n Destino");
+		v.add("Cantidad");
+		v.add("Detalle 1");
+		v.add("Detalle 2");
+		v.add("Detalle 3");
+		v.add("Comentarios");
+		
+		return v;
+	}
 	private Vector<String> productList(){
 		Vector<String> v = new Vector<String>();
 		v.add("Nombre");
@@ -511,19 +635,38 @@ public abstract class TemplatesDialog extends CustomDialog {
 		Integer num = 0;
 		for(Integer i = 2; i< flex_table.getRowCount();i++){
 			ListBox l = (ListBox) flex_table.getWidget(i, 1);
-			if(esta(l.getItemText(l.getSelectedIndex()))){
+			if(estaProduct(l.getItemText(l.getSelectedIndex()))){
 				num++;
 			}
 		}
 		return num == 4;
 	}
 	
-	private Boolean esta(String s) {
+	private Boolean estaProduct(String s) {
 		switch (s) {
 		case "Nombre": return true;
 		case "C\u00f3digo" : return true;
 		case "Precio Coste" : return true;
 		case "Precio Venta Base" : return true;
+		}
+		return false;
+	}
+	
+	private Boolean stockCheck() {
+		Integer num = 0;
+		for(Integer i = 2; i< flex_table.getRowCount();i++){
+			ListBox l = (ListBox) flex_table.getWidget(i, 1);
+			if(estaStock(l.getItemText(l.getSelectedIndex()))){
+				num++;
+			}
+		}
+		return num == 3;
+	}
+	private Boolean estaStock(String s) {
+		switch (s) {
+		case "Producto": return true;
+		case "Almac\u00e9n Destino" : return true;
+		case "Cantidad" : return true;
 		}
 		return false;
 	}
