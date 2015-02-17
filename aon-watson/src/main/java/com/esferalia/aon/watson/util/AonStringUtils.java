@@ -16,7 +16,6 @@ package com.esferalia.aon.watson.util;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -1331,47 +1330,6 @@ public class AonStringUtils {
 		return false;
 	}
 
-	/**
-	 * <p>
-	 * Checks if CharSequence contains a search CharSequence irrespective of
-	 * case, handling {@code null}. Case-insensitivity is defined as by
-	 * {@link String#equalsIgnoreCase(String)}.
-	 *
-	 * <p>
-	 * A {@code null} CharSequence will return {@code false}.
-	 * </p>
-	 *
-	 * <pre>
-	 * StringUtils.contains(null, *) = false
-	 * StringUtils.contains(*, null) = false
-	 * StringUtils.contains("", "") = true
-	 * StringUtils.contains("abc", "") = true
-	 * StringUtils.contains("abc", "a") = true
-	 * StringUtils.contains("ábc", "a") = true
-	 * StringUtils.contains("abc", "z") = false
-	 * StringUtils.contains("abc", "A") = true
-	 * StringUtils.contains("ábc", "A") = true
-	 * StringUtils.contains("abc", "Z") = false
-	 * </pre>
-	 * @param str
-	 * @param searchStr
-	 * @return
-	 */
-	public static boolean containsIgnoreCase2(String str, String searchStr) {
-	    Locale locale = new Locale("es_ES");
-		Collator c = Collator.getInstance(locale);
-		c.setStrength(Collator.PRIMARY);
-        if (str == null || searchStr == null) {
-            return false;
-        }
-        int len = searchStr.length();
-	    int max = str.length() - len;
-	    for (int i = 0; i <= max; i++) {   	
-	    	if (c.compare(str.substring(i, i+len), searchStr) == 0)
-	    		return true;  
-	    }
-	    return false;
-	}
 
 	// IndexOfAny chars
 	// -----------------------------------------------------------------------

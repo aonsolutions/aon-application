@@ -21,6 +21,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.Collator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -193,7 +194,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	public Vector<FileInfo> searchFile(String searchStr, Vector<FileInfo> files){
 		Vector<FileInfo> vector = new Vector<FileInfo>();
 		for (FileInfo fileInfo : files) {
-			if(AonStringUtils.containsIgnoreCase2(fileInfo.getTitle(), searchStr)){
+			if(containsIgnoreCase2(fileInfo.getTitle(), searchStr)){
 				vector.add(fileInfo);
 			}
 		}
@@ -1690,5 +1691,47 @@ public Vector<FileInfo> insertFileMultiple(FileInfo fi) {
 	}
 	return files;
 }
+// ----------------------------------------------------------------------------
+	/**
+	 * <p>
+	 * Checks if CharSequence contains a search CharSequence irrespective of
+	 * case, handling {@code null}. Case-insensitivity is defined as by
+	 * {@link String#equalsIgnoreCase(String)}.
+	 *
+	 * <p>
+	 * A {@code null} CharSequence will return {@code false}.
+	 * </p>
+	 *
+	 * <pre>
+	 * StringUtils.contains(null, *) = false
+	 * StringUtils.contains(*, null) = false
+	 * StringUtils.contains("", "") = true
+	 * StringUtils.contains("abc", "") = true
+	 * StringUtils.contains("abc", "a") = true
+	 * StringUtils.contains("ábc", "a") = true
+	 * StringUtils.contains("abc", "z") = false
+	 * StringUtils.contains("abc", "A") = true
+	 * StringUtils.contains("ábc", "A") = true
+	 * StringUtils.contains("abc", "Z") = false
+	 * </pre>
+	 * @param str
+	 * @param searchStr
+	 * @return
+	 */
+	public static boolean containsIgnoreCase2(String str, String searchStr) {
+	    Locale locale = new Locale("es_ES");
+		Collator c = Collator.getInstance(locale);
+		c.setStrength(Collator.PRIMARY);
+	    if (str == null || searchStr == null) {
+	        return false;
+	    }
+	    int len = searchStr.length();
+	    int max = str.length() - len;
+	    for (int i = 0; i <= max; i++) {   	
+	    	if (c.compare(str.substring(i, i+len), searchStr) == 0)
+	    		return true;  
+	    }
+	    return false;
+	}
 
 }
