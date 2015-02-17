@@ -45,6 +45,13 @@ try {
 	if (du.isUpdatable()) {
 		throw new com.code.aon.pool.AonConnectionException("La base de datos necesita ser actualizada. <br/> Versión actual de la BD: " + du.getCurrentVersion());
 	}
+	HttpSession session = request.getSession(false);
+	if ( session != null ) {
+		boolean loginServletFail = "true".equals(session.getAttribute("loginServletFail"));
+		if ( loginServletFail ) {
+			throw new com.code.aon.pool.AonConnectionException(commonBundle.getString("aon_login_err"));
+		}		
+	}
 %>	
 <body id="aon-body" onload="document.getElementById('j_username').focus();">
 	<div class="aon-login">

@@ -8,6 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.catalina.Manager;
 import org.apache.catalina.Session;
@@ -18,6 +19,8 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.AonVersion;
 
 public class LoginServlet extends HttpServlet {
+
+	private static final String LOGIN_SERVLET_FAIL_ATTRIBUTE = "loginServletFail";
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
@@ -64,11 +67,21 @@ public class LoginServlet extends HttpServlet {
 					session.setPrincipal(principal);
 				}
 			}
-			if ( principal != null ) {
-				httpResponse.setHeader("p3p", "CP=\"NOI ADM DEV COM NAV OUR STP\"");
-				httpResponse.sendRedirect("index.jsp");
-			} else {
+			boolean sessionUpdated = false;
+			if ( session instanceof HttpSession ) {
+				HttpSession httpSession = (HttpSession) session;
+				if ( principal == null ) {
+					httpSession.setAttribute(LOGIN_SERVLET_FAIL_ATTRIBUTE, Boolean.TRUE.toString());
+				} else {
+					httpSession.removeAttribute(LOGIN_SERVLET_FAIL_ATTRIBUTE);
+				}
+				sessionUpdated =true;
+			}
+			if ( (principal == null) && (!sessionUpdated) ) {
 				httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			} else {
+				httpResponse.setHeader("p3p", "CP=\"NOI ADM DEV COM NAV OUR STP\"");
+				httpResponse.sendRedirect("index.jsp");				
 			}
 		} else {
 			httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);			
