@@ -10,6 +10,8 @@ ALTER TABLE `profile_module_denied` MODIFY `domain` int(4) default NULL COMMENT 
 
 INSERT INTO `profile` (`name`,`application`) VALUES ('Portal Laboral', 28);
 
+INSERT IGNORE INTO `application_role` (`id`, `application`, `role`) VALUES (218, 28, 2);
+
 SET @PROFILE_ID = (SELECT LAST_INSERT_ID());
 
 INSERT INTO `profile_role` (`profile`,`application_role`) VALUES (@PROFILE_ID, 218);
