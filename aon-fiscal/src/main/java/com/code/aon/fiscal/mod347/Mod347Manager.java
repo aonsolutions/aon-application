@@ -64,7 +64,9 @@ public class Mod347Manager {
 			.append(" INNER JOIN invoice_detail id ON (id.invoice = i.id) ")
 			.append(" INNER JOIN invoice_tax it ON it.invoice_detail = id.id ")
 			.append(" WHERE i.domain = ? ")
-			.append(" AND i.tax_date BETWEEN ? AND ? ")
+			.append(" AND ")
+			.append(params.isTaxDateEnabled()?"i.tax_date":"i.issue_date")
+			.append(" BETWEEN ? AND ? ")
 			.append(" AND it.tax_type = 1 ");
 		appendConditions(params, buf);
 		buf.append(" GROUP BY ").append(INVOICE_ID_ALIAS);
