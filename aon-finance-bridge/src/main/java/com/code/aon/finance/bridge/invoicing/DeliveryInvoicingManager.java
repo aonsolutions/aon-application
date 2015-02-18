@@ -69,7 +69,7 @@ public class DeliveryInvoicingManager {
 			double invoiceTotal = getPriceStrategy().getTotalPrice(invoice, invoice);
 			if (invoiceTotal != 0) {
 				if (delivery.getPayMethod() != null && delivery.getPayMethod().getId() != null) {
-					getFinanceGenerator().generateFinances(invoice, delivery, invoiceTotal, true);
+					getFinanceGenerator().generateFinances(invoice, delivery, invoiceTotal, true, true);
 				} else {
 					getFinanceGenerator().generateFinances(invoice, invoiceTotal, true);
 				}

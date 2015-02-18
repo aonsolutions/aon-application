@@ -67,7 +67,7 @@ public class IncomeInvoicingManager {
 			double invoiceTotal = getPriceStrategy().getTotalPrice(invoice, invoice);
 			if (invoiceTotal != 0) {
 				if (income.getPayMethod() != null && income.getPayMethod().getId() != null) {
-					getFinanceGenerator().generateFinances(invoice, income, invoiceTotal, true);
+					getFinanceGenerator().generateFinances(invoice, income, invoiceTotal, true, true);
 				} else {
 					getFinanceGenerator().generateFinances(invoice, invoiceTotal, true);
 				}
