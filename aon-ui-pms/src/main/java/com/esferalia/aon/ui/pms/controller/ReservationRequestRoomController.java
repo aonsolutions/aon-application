@@ -224,7 +224,7 @@ public class ReservationRequestRoomController extends LinesController implements
 
 						getAvailableRoomStayMap().remove(requestRoom.getId());
 
-						//manager.processNewReservation(requestRoom);
+						manager.processNewReservation(requestRoom);
 					}
 				} else {
 					AonUtil.addErrorMessage("Hay un Paro de Ventas definido para el Hotel en ese periodo y condiciones.");

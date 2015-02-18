@@ -148,17 +148,19 @@ public class ReservationManager implements IReservationConstants {
 		if (reservation != null) {
 			if (reservation.isActive() || reservation.isBlocked() || reservation.isCancelled()) {
 				try {
-					if (isReservationRoomAssigned(reservation)) {
-						removeReservationRoomDetail(reservation, true);
+					boolean skipModification = (reservation.isSourceRequest() && reservation.isActive());
+					if (!skipModification) {
+						if (isReservationRoomAssigned(reservation)) {
+							removeReservationRoomDetail(reservation, true);
+						}
+						removeReservationService(reservation);
+						removeReservationRoom(reservation);
+						removeReservationGuest(reservation);
+						createReservation(reservationType, posType, reservation);
 					}
-					removeReservationService(reservation);
-					removeReservationRoom(reservation);
-					removeReservationGuest(reservation);
 				} catch (ManagerBeanException ex) {
 					throw new ReservationException("Unknown error: " + ex.getMessage(), reservation.getCrsCode(), 1);
 				}
-
-				createReservation(reservationType, posType, reservation);
 				return reservation;
 			} else {
 				throw new ReservationException("Reservation already invoiced, can not be modified", reservation.getCrsCode(), 255);

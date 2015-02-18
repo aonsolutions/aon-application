@@ -102,7 +102,7 @@
 				styleClass="aon-margin-right aon-italic" rendered="#{reservation.reservationPermission.crsCodeVisible}" />
 			<aon:div rendered="#{reservation.reservationPermission.crsCodeVisible}" style="display:inline;">
 				<aon:outputText id="ProjectReservation_crsCode" value="#{reservation.to.crsCode}" 
-					styleClass="aon-bold" />
+					styleClass="aon-bold" style="#{(reservation.to.sourceRequest) ? 'color:red' : ''}" />
 			</aon:div>
 		</aon:div>
 	</aon:panelGrid>

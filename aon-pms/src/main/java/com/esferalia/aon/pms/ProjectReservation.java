@@ -39,6 +39,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.ProjectReservationDB;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
+import com.esferalia.aon.pms.enumeration.ReservationSource;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
 
@@ -177,6 +178,19 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	@Transient
 	public boolean isInvoiced() {
 		return getStatus() == ReservationStatus.INVOICED;
+	}
+
+	@Transient
+	public boolean isSourceManual() {
+		return getSource() == ReservationSource.MANUAL;
+	}
+	@Transient
+	public boolean isSourceCrs() {
+		return getSource() == ReservationSource.CRS;
+	}
+	@Transient
+	public boolean isSourceRequest() {
+		return getSource() == ReservationSource.REQUEST;
 	}
 
 	@Transient
