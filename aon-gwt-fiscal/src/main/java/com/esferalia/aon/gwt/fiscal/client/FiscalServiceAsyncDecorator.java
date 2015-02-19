@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.gwt.fiscal.shared.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
@@ -185,6 +186,46 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		AON.start();
 		fiscalServiceAsync.getMod180Detail(domainName, domainId, id,
 				new AsyncCallbackWrapper<Mod180Detail>(callback));
+	}
+
+	// ---------------------------------------------------------------MODELO 184
+	@Override
+	public void deleteMod184(String domainName, int domain, Mod184 mod184,
+			AsyncCallback<Void> callback) {
+		AON.start();
+		fiscalServiceAsync.deleteMod184(domainName, domain, mod184,
+				new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void saveMod184(String domainName, int domain, Mod184 mod184,
+			AsyncCallback<Mod184> callback) {
+		AON.start();
+		fiscalServiceAsync.saveMod184(domainName, domain, mod184,
+				new AsyncCallbackWrapper<Mod184>(callback));
+	}
+
+	@Override
+	public void getMod184s(String domainName, int domain,
+			AsyncCallback<ArrayList<Mod184>> callback) {
+		AON.start();
+		fiscalServiceAsync.getMod184s(domainName, domain,
+				new AsyncCallbackWrapper<ArrayList<Mod184>>(callback));
+	}
+	@Override
+	public void initializeMod184(String domainName, Integer domain,
+			Integer year, AsyncCallback<Mod184> callback) {
+		AON.start();
+		fiscalServiceAsync.initializeMod184(domainName, domain, year, 
+				new AsyncCallbackWrapper<Mod184>(callback));
+	}
+
+	@Override
+	public void getMod184(String domainName, int domain, Integer id,
+			AsyncCallback<Mod184> callback) {
+		AON.start();
+		fiscalServiceAsync.getMod184(domainName, domain, id,
+				new AsyncCallbackWrapper<Mod184>(callback));
 	}
 
 	// ---------------------------------------------------------------MODELO 390

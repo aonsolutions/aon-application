@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
@@ -37,6 +38,13 @@ public interface IFiscal {
 	public void deleteMod193(AONContext ctx,Mod193 mod193);
 	public Mod193Detail getMod193Detail(AONContext ctx,Integer id);
 	
+	// 				   		  MOD184
+	public ArrayList<Mod184> getMod184s(AONContext ctx,int domain);
+	public Mod184 getMod184(AONContext ctx,Integer id);
+	public Mod184 initializeMod184(AONContext ctx, int year);
+	public Mod184 saveMod184(AONContext ctx,Mod184 mod184);
+	public void deleteMod184(AONContext ctx,Mod184 mod184);
+
 	// 				   		  MOD390
 	public ArrayList<Mod390> getMod390s(AONContext ctx,int domain);
 	public Mod390 getMod390(AONContext ctx,Integer id);

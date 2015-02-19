@@ -3,6 +3,10 @@
 @def fiscalBackgroundColor #DDDDDD;	
 @def fiscalSelectedBackgroundColor #BBBBBB;	
 
+.aon-scroll-area{	
+	padding:8px 1.5em 1.5em 1.5em;
+}
+
 .aon-width-all {
 	width: 100%;
 }

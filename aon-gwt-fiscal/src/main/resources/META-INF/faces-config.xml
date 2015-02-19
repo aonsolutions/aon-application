@@ -26,6 +26,14 @@
 		</navigation-case>
 	</navigation-rule>
 
+	<!-- =================== Mod184 ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_mod184</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/mod184/gwt.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
 	<!-- =================== Mod390 ========================== -->
 	<navigation-rule>
 		<navigation-case>

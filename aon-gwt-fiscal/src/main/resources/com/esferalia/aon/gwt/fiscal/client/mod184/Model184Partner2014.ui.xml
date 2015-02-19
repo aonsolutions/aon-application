@@ -1,0 +1,150 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:m184='urn:import:com.esferalia.aon.gwt.fiscal.client.mod184'>
+	
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+	
+	<g:VerticalPanel styleName="aon-width-all">
+		<g:FlowPanel height="20px"
+			styleName="aon-finding-title-toolbar aon-width-all gwt-MenuBar-horizontal aon-margin-top">
+			<g:Button ui:field='deleteDetailButton'
+				styleName='aon-finding-toolbar-item aon-icon-delete' text="{msg.deleteAction}" />
+			<g:Button ui:field='restoreDeletedButton'
+				styleName='aon-finding-toolbar-item aon-icon-refresh' text="{msg.restoreAction}" />
+		</g:FlowPanel>
+		<g:HTMLPanel>
+		 	<div class="{aonResources.css.aonGroup}">
+				<div class="{aonResources.css.aonGroupTitle}">
+					<g:InlineLabel text="{msg.entityPartners}" />
+				</div>
+				<div class="{aonResources.css.aonGroupBody}">
+					<table>
+						<tr>
+							<td>
+								<g:InlineLabel text="{msg.key}" />
+							</td>
+							<td>
+								<g:InlineLabel text="{msg.subkey}" />
+							</td>
+							<td>
+								<g:InlineLabel text="{msg.partType}" />
+							</td>
+							<td>
+								<g:InlineLabel text="{msg.province}" />
+							</td>
+							<td>
+								<g:InlineLabel text="{msg.country}" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<m184:Model184Partner2014.PartnerKeyListBox ui:field="key" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:ListBox ui:field="subKey" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:ListBox ui:field="partType" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<aon:ProvinceListBox ui:field="province" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<aon:CountryListBox ui:field="country" styleName="aon-inputText"/>
+							</td>
+							
+						</tr>
+					</table>
+
+
+
+					<table>
+						<tr>
+							<td>
+								<g:InlineLabel text="{msg.document}" />
+							</td>
+							<td>
+								<g:InlineLabel text="{msg.representativeDocument}" />
+							</td>
+							<td>
+								<g:InlineLabel text="{msg.name}" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<aon:DocumentTextBox ui:field="document" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<aon:DocumentTextBox ui:field="representativeDocument" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="name" maxLength="40" visibleLength="30" styleName="aon-inputText"/>
+							</td>
+						</tr>
+					</table>
+
+					<table>
+						<tr>
+							<td>
+								<g:InlineLabel text="{msg.memberEndOfYear}" />
+							</td>
+							<td>
+								<g:InlineLabel text="{msg.memberDays}" />
+							</td>
+						</tr>
+						<tr>
+							<td class="{aonResources.css.aonTextCenter}">
+								<g:CheckBox ui:field="memberEndOfYear" />
+							</td>
+							<td>
+								<g:TextBox ui:field="memberDays" styleName="aon-inputText" maxLength="3" visibleLength="4" />
+							</td>
+						</tr>
+					</table>
+
+					<table>
+						<tr>
+							<td>
+								<g:InlineLabel text="{msg.partPercent}" />
+							</td>
+							<td>
+								<g:InlineLabel text="{msg.amount}" />
+							</td>
+							<td>
+								<g:InlineLabel text="{msg.reduction}" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<aon:DoubleTextBox ui:field="partPercent" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<aon:DoubleTextBox ui:field="amount" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<aon:DoubleTextBox ui:field="reduction" styleName="aon-inputText"/>
+							</td>
+						</tr>
+					</table>
+
+					<table>
+						<tr>
+							<td>
+								<g:InlineLabel text="{msg.address}" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:TextBox ui:field="address" maxLength="40" visibleLength="40" styleName="aon-inputText"/>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</g:HTMLPanel>
+	</g:VerticalPanel>
+	
+</ui:UiBinder>

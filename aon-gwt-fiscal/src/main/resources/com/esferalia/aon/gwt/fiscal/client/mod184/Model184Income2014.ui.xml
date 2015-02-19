@@ -1,0 +1,184 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:m184='urn:import:com.esferalia.aon.gwt.fiscal.client.mod184'>
+	
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+	
+	<g:VerticalPanel styleName="aon-width-all">
+		<g:FlowPanel height="20px"
+			styleName="aon-finding-title-toolbar aon-width-all gwt-MenuBar-horizontal aon-margin-top">
+			<g:Button ui:field='deleteDetailButton'
+				styleName='aon-finding-toolbar-item aon-icon-delete' text="{msg.deleteAction}" />
+			<g:Button ui:field='restoreDeletedButton'
+				styleName='aon-finding-toolbar-item aon-icon-refresh' text="{msg.restoreAction}" />
+		</g:FlowPanel>
+		<g:HTMLPanel>
+		 	<div class="{aonResources.css.aonGroup}">
+				<div class="{aonResources.css.aonGroupTitle}">
+					<g:InlineLabel text="{msg.entityIncomes}" />
+				</div>
+				<div class="{aonResources.css.aonGroupBody}">
+					<table>
+						<tr>
+							<td>
+								<g:InlineLabel text="{msg.key}" />
+							</td>
+							<td>
+								<g:InlineLabel text="{msg.subkey}" />
+							</td>
+							<td>
+								<g:InlineLabel text="{msg.country}" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<m184:Model184Income2014.IncomeKeyListBox ui:field="key" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:ListBox ui:field="subKey" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<aon:CountryListBox ui:field="country" styleName="aon-inputText"/>
+							</td>
+						</tr>
+					</table>
+
+					<table>
+						<tr>
+							<td>
+								<g:InlineLabel text="{msg.granteeDocument}" />
+							</td>
+							<td>
+								<g:InlineLabel text="{msg.granteeName}" />
+							</td>
+							<td>
+								<g:InlineLabel text="{msg.adqDate}" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<aon:DocumentTextBox ui:field="granteeDocument" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="granteeName" maxLength="20" visibleLength="20" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<aon:DateBoxEx ui:field="adqDate" styleName="aon-inputText"/>
+							</td>
+						</tr>
+					</table>
+
+					<table>
+						<tr>
+							<td>
+								<g:InlineLabel text="{msg.activityType}" />
+							</td>
+							<td>
+								<g:InlineLabel text="{msg.epigraph}" />
+							</td>
+							<td>
+								<g:InlineLabel text="{msg.regime}" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:ListBox ui:field="activityType" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="epigraph" styleName="aon-inputText" maxLength="3" visibleLength="3"/>
+							</td>
+							<td>
+								<g:ListBox ui:field="regime" styleName="aon-inputText"/>
+							</td>
+						</tr>
+					</table>
+
+					<table>
+						<tr>
+							<td>
+								<g:InlineLabel text="{msg.accountingResult}" />
+							</td>
+							<td>
+								<g:InlineLabel text="{msg.expenses}" />
+							</td>
+							<td>
+								<g:InlineLabel text="{msg.netYield}" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<aon:DoubleTextBox ui:field="accountingResult" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<aon:DoubleTextBox ui:field="expenses" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<aon:DoubleTextBox ui:field="netYield" styleName="aon-inputText"/>
+							</td>
+						</tr>
+					</table>
+
+					<table>
+						<tr>
+							<td>
+								<g:InlineLabel text="{msg.reductionPercent}" />
+							</td>
+							<td>
+								<g:InlineLabel text="{msg.deductionRightRent}" />
+							</td>
+							<td>
+								<g:InlineLabel text="{msg.result}" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<aon:DoubleTextBox ui:field="reductionPercent" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<aon:DoubleTextBox ui:field="deductionRightRent" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<aon:DoubleTextBox ui:field="result" styleName="aon-inputText"/>
+							</td>
+						</tr>
+					</table>
+
+					<table>
+						<tr>
+							<td>
+								<g:InlineLabel text="{msg.adjustDecrease}" />
+							</td>
+							<td>
+								<g:InlineLabel text="{msg.adjustIncrease}" />
+							</td>
+							<td>
+								<g:InlineLabel text="{msg.deductionBase}" />
+							</td>
+							<td>
+								<g:InlineLabel text="{msg.retentionAccountDeposit}" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<aon:DoubleTextBox ui:field="decrease" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<aon:DoubleTextBox ui:field="increase" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<aon:DoubleTextBox ui:field="deductionBase" styleName="aon-inputText"/>
+							</td>
+							<td>
+								<aon:DoubleTextBox ui:field="retention" styleName="aon-inputText"/>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</g:HTMLPanel>
+	</g:VerticalPanel>
+	
+</ui:UiBinder>

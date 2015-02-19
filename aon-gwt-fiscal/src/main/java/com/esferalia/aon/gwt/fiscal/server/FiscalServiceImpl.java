@@ -20,6 +20,7 @@ import com.esferalia.aon.gwt.fiscal.sql.SQLEnterprise;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
@@ -205,6 +206,33 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	@Override
 	public Mod180Detail getMod180Detail(String domainName, int domain, Integer id) {
 		return AON.getMod180Detail(domainName, domain, id);
+	}
+
+	// ---------------------------------------------------------------MODELO 184
+	@Override
+	public Mod184 initializeMod184(String domainName, Integer domain,Integer year) {
+		return AON.initializeMod184(domainName, domain, year);
+	}
+	
+	@Override
+	public ArrayList<Mod184> getMod184s(String domainName, int domain) {
+		return AON.getMod184s(domainName, domain);
+	}
+
+	@Override
+	public void deleteMod184(String domainName, int domain, Mod184 mod184) {
+		AON.deleteMod184(domainName, domain, mod184);
+	}
+
+	@Override
+	public Mod184 saveMod184(String domainName, int domain,Mod184 mod184) {
+		return AON.saveMod184(domainName, domain, mod184);
+	}
+
+
+	@Override
+	public Mod184 getMod184(String domainName, int domain, Integer id) {
+		return AON.getMod184(domainName, domain, id);
 	}
 
 	// ---------------------------------------------------------------MODELO 390

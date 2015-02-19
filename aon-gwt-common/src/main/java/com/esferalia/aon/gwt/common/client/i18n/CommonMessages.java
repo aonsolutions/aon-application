@@ -34,6 +34,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Modelo 180")
 	String mod180();
 
+	@DefaultMessage("Modelo 184")
+	String mod184();
+
 	@DefaultMessage("Modelo 390")
 	String mod390();
 	
@@ -103,6 +106,21 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("No se pudo encontrar el perceptor seleccionado. Causa: \n {0}")
 	String unableToFindMod180Detail(String field);
+
+	@DefaultMessage("No se pudieron leer las declaraciones del modelo 184. Causa: \n {0}")
+	String unableToReadMod184(String cause);
+
+	@DefaultMessage("No se pudo guardar la declaraci\u00F3n del modelo 184. Causa: \n {0}")
+	String unableToSaveMod184(String cause);
+
+	@DefaultMessage("No se pudo borrar la declaraci\u00F3n del modelo 184. Causa: \n {0}")
+	String unableToDeleteMod184(String message);
+
+	@DefaultMessage("No se pudo encontrar la declaraci\u00F3n seleccionada.")
+	String unableToFindMod184();
+
+	@DefaultMessage("No se pudo encontrar el perceptor seleccionado. Causa: \n {0}")
+	String unableToFindMod184Detail(String field);
 
 	@DefaultMessage("No existe un perceptor con c\u00F3digo {0}")
 	String unableToFindPerceptor(Integer id);
@@ -427,6 +445,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Provincia")
 	String province();
+
+	@DefaultMessage("Pa\u00EDs")
+	String country();
 
 	@DefaultMessage("Ceu.Mel.")
 	String ceutaMelillaAbbrv();
@@ -996,6 +1017,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Domicilio fiscal")
 	String fiscalAddress();
+	
+	@DefaultMessage("Direcci\u00F3n")
+	String address();
 
 	@DefaultMessage("Valor nominal")
 	String nominalValue();
@@ -1434,4 +1458,88 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Garant\u00EDas")
 	String guarantee();
+
+	@DefaultMessage("Rentas obtenidas por la entidad")
+	String entityIncomes();
+	
+	@DefaultMessage("Socios, herederos, comuneros o part\u00EDcipes")
+	String entityPartners();
+	
+	
+	@DefaultMessage("R\u00E9gimen de determinaci\u00F3n de rendimientos")
+	String regime();
+	
+	@DefaultMessage("Tipo de actividad")
+	String activityType();
+	
+	@DefaultMessage("NIF persona o entidad cesionaria")
+	String granteeDocument();
+	
+	@DefaultMessage("Denominaci\u00F3n/Raz\u00F3n social de la entidad cesionaria")
+	String granteeName();
+	
+	@DefaultMessage("Fecha adquisici\u00F3n acci\u00F3n/participaci\u00F3n")
+	String adqDate();
+	
+	@DefaultMessage("Ajustes: Aumentos")
+	String adjustIncrease();
+	
+	@DefaultMessage("Ajustes: Disminuciones")
+	String adjustDecrease();
+	
+	@DefaultMessage("Resultado contable")
+	String accountingResult();
+	
+	@DefaultMessage("Gastos")
+	String expenses();
+	
+	@DefaultMessage("Renta atribuible / Rend. Neto atribuible")
+	String netYield();
+	
+	@DefaultMessage("Porc. Reducci\u00F3n")
+	String reductionPercent();
+	
+	@DefaultMessage("Renta atrib. con drcho. deducci\u00F3n")
+	String deductionRightRent();
+	
+	@DefaultMessage("Ganancias / P\u00E9rdidas")
+	String result();
+	
+	@DefaultMessage("Base de la deducci\u00F3n / Importe")
+	String deductionBase();
+	
+	@DefaultMessage("Retenciones e ingresos a cuenta")
+	String retentionAccountDeposit();
+	
+	@DefaultMessage("Reducci\u00F3n")
+	String reduction();
+	@DefaultMessage("Porcentaje de participaci\u00F3n")
+	String partPercent();
+	@DefaultMessage("N\u00FAmero d\u00EDas miembro")
+	String memberDays();
+	@DefaultMessage("Miembro a 31 diciembre")
+	String memberEndOfYear();
+	@DefaultMessage("Clave tipo de part\u00EDcipe")
+	String partType();
+	
+	@DefaultMessage("Entidades en r\u00E9gimen de atribuci\u00F3n de rentas constituidas en Espa\u00F1a.")
+	String localEntities();
+	@DefaultMessage("Tipo de entidad")
+	String entityType();
+	@DefaultMessage("Entidades en r\u00E9gimen de atribuci\u00F3n de rentas constituidas en el extranjero")
+	String foreignEntities();
+	@DefaultMessage("Objeto")
+	String object();
+	@DefaultMessage("Porcentaje de renta atribuible a miembros residentes")
+	String residentPercent();
+	@DefaultMessage("Tributaci\u00F3n en r\u00E9gimen del impuesto sobre sociedades")
+	String isTax();
+	@DefaultMessage("Importe neto de la cifra de negocios")
+	String netAmount();
+	@DefaultMessage("NIF del representante")
+	String lrDocument();
+	@DefaultMessage("Apellidos y nombre o raz\u00F3n social del representante")
+	String lrName();
+	
+	
 }

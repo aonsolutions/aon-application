@@ -4,6 +4,9 @@ import com.google.gwt.resources.client.CssResource;
 
 public interface AonCSS extends  CssResource {
 	
+	@ClassName("aon-scroll-area")
+	String aonScrollArea();
+	
 	@ClassName("aon-width-all")
 	String aonWidthAll();
 

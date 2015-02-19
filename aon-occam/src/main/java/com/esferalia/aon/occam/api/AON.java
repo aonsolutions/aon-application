@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
@@ -343,6 +344,54 @@ public class AON {
 			if (ctx != null) ctx.close();	
 		}
 	}
+	
+	// ----------------------------------MODELO 184
+	public static ArrayList<Mod184> getMod184s(String domainName, int domainId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			return getFiscal().getMod184s(ctx,domainId);
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
+	public static Mod184 getMod184(String domainName, int domainId,Integer id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			return getFiscal().getMod184(ctx,id);
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
+	public static Mod184 initializeMod184(String domainName, int domainId,Integer year) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			return getFiscal().initializeMod184(ctx, year);
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
+	public static Mod184 saveMod184(String domainName, int domainId,Mod184 mod184) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			return getFiscal().saveMod184(ctx, mod184);
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
+	public static void deleteMod184(String domainName, int domainId,Mod184 mod184) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			getFiscal().deleteMod184(ctx, mod184);
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
+
 	// ----------------------------------MODELO 390
 	public static ArrayList<Mod390> getMod390s(String domainName, int domainId) {
 		AONContext ctx = null;

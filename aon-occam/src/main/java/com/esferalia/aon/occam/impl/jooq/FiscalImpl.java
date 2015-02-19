@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IFiscal;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
@@ -13,6 +14,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod180DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.Mod184DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod190DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod193DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod390DAO;
@@ -116,6 +118,33 @@ public class FiscalImpl implements IFiscal {
 	public Mod193Detail getMod193Detail(AONContext ctx, Integer id) {
 		return Mod193DAO.getDetail(ctx, id);
 	}
+	// ----------------------------------------------------------- [MODELO 184]
+	@Override
+	public ArrayList<Mod184> getMod184s(AONContext ctx, int domain) {
+		return Mod184DAO.getByDomain(ctx, domain);
+	}
+
+	@Override
+	public Mod184 getMod184(AONContext ctx, Integer id) {
+		return Mod184DAO.getById(ctx, id);
+	}
+
+	@Override
+	public Mod184 initializeMod184(AONContext ctx, int year) {
+		return Mod184DAO.initialize(ctx, year);
+	}
+	@Override
+	public Mod184 saveMod184(AONContext ctx, Mod184 mod184) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod184DAO.save(ctx, mod184));
+	}
+
+	@Override
+	public void deleteMod184(AONContext ctx, Mod184 mod184) {
+		ctx.getDslContext().transaction(
+				configuration -> Mod184DAO.delete(ctx, mod184));
+	}
+
 	// ----------------------------------------------------------- [MODELO 390]
 	@Override
 	public ArrayList<Mod390> getMod390s(AONContext ctx, int domain) {
