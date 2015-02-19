@@ -1192,7 +1192,7 @@ public class SQLContractSalaryCalculatorContext extends
 	public IListener getListener() {
 		return listener;
 	}
-
+	@Override
 	public void setListener(IListener listener) {
 		this.listener = listener;
 	}
@@ -1856,7 +1856,7 @@ public class SQLContractSalaryCalculatorContext extends
 					// TODO: Warning a bit tricky.
 					ExpressionContext expressionCtx = SQLContractSalaryCalculatorContext.this
 							.getExpressionContext();
-					((SQLContractSalaryCalculatorContext) ctx)
+					((ISQLContractSalaryCalculatorContext) ctx)
 							.setListener(irpf -> expressionCtx.setVariable(
 									ContextVariable.IRPF_PERCENT, irpf
 											.getIrpfResult().getIrpf(), start,
