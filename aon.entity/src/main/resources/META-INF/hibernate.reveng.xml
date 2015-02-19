@@ -33,6 +33,8 @@
    	<table-filter match-name="booking" exclude="true" />
    	<table-filter match-name="fs_model180" exclude="true" />
 	<table-filter match-name="fs_model180_detail" exclude="true" />
+   	<table-filter match-name="fs_model184" exclude="true" />
+	<table-filter match-name="fs_model184_detail" exclude="true" />
    	<table-filter match-name="fs_model190" exclude="true" />
 	<table-filter match-name="fs_model190_detail" exclude="true" />
    	<table-filter match-name="fs_model193" exclude="true" />
