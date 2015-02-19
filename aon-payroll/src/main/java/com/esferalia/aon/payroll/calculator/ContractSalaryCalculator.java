@@ -55,6 +55,7 @@ import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.RemoveException;
@@ -572,6 +573,8 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 				} catch (InvalidVariables e) {
 					onInvalidData(contractDeduction, e.getMessage(),
 							e.getVariables());
+				} catch (InterruptedException e) {
+					throw e; // Not catch 
 				} catch (CheckException e) {
 					onCheckError(contractDeduction, e.getMessage());
 				} catch (RemoveVariableError e) {
@@ -879,6 +882,8 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 			onRemove(contractPayment);
 		} catch (InvalidVariables e) {
 			onInvalidData(contractPayment, e.getMessage(), e.getVariables());
+		} catch (InterruptedException e) {
+			throw e; // Not catch 
 		} catch (CheckException e) {
 			onCheckError(contractPayment, e.getMessage());
 		} catch (RemoveVariableError e) {
