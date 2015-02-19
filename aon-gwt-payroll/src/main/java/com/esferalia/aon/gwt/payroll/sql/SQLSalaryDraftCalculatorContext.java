@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.payroll.server.SalaryDraftCalculatorContext;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
+import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 
@@ -53,11 +54,21 @@ public class SQLSalaryDraftCalculatorContext extends
 		return ctx.getInt(table, column);
 	}
 	
+	@Override
 	public Object getObject(String table, String column) {
 		return ctx.getObject(table, column);
 	}
 	
+	@Override
+	public double getIrpf() {
+		return ctx.getIrpf();
+	}
 	
+	@Override
+	public Object liquid(double liquid, Date start, Date end)
+			throws ExpressionException, SQLException, SalaryException {
+		return ctx.liquid(liquid, start, end);
+	}
 	
 	@Override
 	public boolean next() throws SQLException, ExpressionException {

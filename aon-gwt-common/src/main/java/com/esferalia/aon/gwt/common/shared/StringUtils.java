@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.common.shared;
 import java.util.Arrays;
 import java.util.Collection;
 
+
 public class StringUtils {
 
 	public static boolean isEmpty(String str) {
@@ -200,6 +201,12 @@ public class StringUtils {
 		buffer.append(str.substring(endIndex));
 		return null;
 	}
+	
+	 public static boolean containsIgnoreCase(String str, String searchStr) {
+		return str.toLowerCase().contains(searchStr.toLowerCase());
+	}
 
-
+	 public static Boolean contains(String str, String searchStr){
+		return str.contains(searchStr);
+	 }
 }

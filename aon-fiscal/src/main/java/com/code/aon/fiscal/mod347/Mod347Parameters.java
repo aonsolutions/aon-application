@@ -22,6 +22,8 @@ public class Mod347Parameters implements Serializable {
 	private boolean excludeInputExtracommunitaryServices;
 	private boolean excludeInputIntracommunitaryServices;
 	private boolean excludeInputNationalZero;
+	private boolean excludeMod180Declared;
+	private boolean excludeMod190Declared;
 	private boolean groupedByNIF;
 	private String domainName;
 	
@@ -41,7 +43,9 @@ public class Mod347Parameters implements Serializable {
 		setExcludeInputExtracommunitaryServices(false);
 		setExcludeInputIntracommunitaryServices(false);
 		setExcludeInputNationalZero(true);
-		setGroupedByNIF(false);
+		setExcludeMod180Declared(true);
+		setExcludeMod190Declared(true);
+		setGroupedByNIF(true);
 	}
 	
 	public String getDomainName() {
@@ -128,5 +132,21 @@ public class Mod347Parameters implements Serializable {
 	}
 	public void setGroupedByNIF(boolean gropupedByNIF) {
 		this.groupedByNIF = gropupedByNIF;
+	}
+
+	public boolean isExcludeMod180Declared() {
+		return excludeMod180Declared;
+	}
+
+	public void setExcludeMod180Declared(boolean excludeMod180Declared) {
+		this.excludeMod180Declared = excludeMod180Declared;
+	}
+
+	public boolean isExcludeMod190Declared() {
+		return excludeMod190Declared;
+	}
+
+	public void setExcludeMod190Declared(boolean excludeMod190Declared) {
+		this.excludeMod190Declared = excludeMod190Declared;
 	}
 }

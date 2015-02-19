@@ -48,23 +48,23 @@ public class FinanceControllerListener extends ControllerAdapter {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
+	private boolean refreshTotalAmount;
+
 	@Override
 	public void afterModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		FinanceController controller = (FinanceController)event.getController();
 		try {
-			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);	
 			Criteria criteria = new Criteria();
-			String idAlias = financeBean.getFieldName(IEntityAlias.FINANCE_ID);
-			ProjectionList idPL = new ProjectionList(Projection.property(idAlias));
-			Expression exp = ExpressionUtilities.getSubQueryExpression(Finance.class, controller.getCriteria(), idPL);
-			criteria.addInExpression(idAlias, exp);
-			Projection amountProjection = Projection.sum(financeBean.getFieldName(IEntityAlias.FINANCE_AMOUNT));
-			Projection expensesProjection = Projection.sum(financeBean.getFieldName(IEntityAlias.FINANCE_EXPENSES));
-			ProjectionList pl = new ProjectionList(amountProjection, expensesProjection);
-			Object[] result = (Object[]) financeBean.getUniqueResult(pl, criteria);
-			Double amount = CommonUtil.round(result[0]==null?0:(Double)result[0]);
-			Double expenses = result[1]==null?0:(Double) result[1];
-			controller.setTotalFinanceAmount(amount + expenses);
+			ProjectionList idProjectionList = new ProjectionList(Projection.property(controller.getFieldName(IEntityAlias.FINANCE_ID)));
+			Expression idExpression = ExpressionUtilities.getSubQueryExpression(Finance.class, controller.getCriteria(), idProjectionList);
+			criteria.addInExpression(controller.getFieldName(IEntityAlias.FINANCE_ID), idExpression);
+			Projection amountProjection = Projection.sum(controller.getFieldName(IEntityAlias.FINANCE_AMOUNT));
+			Projection expensesProjection = Projection.sum(controller.getFieldName(IEntityAlias.FINANCE_EXPENSES));
+			ProjectionList totalProjectionList = new ProjectionList(amountProjection, expensesProjection);
+			Object[] result = (Object[])controller.getManagerBean().getUniqueResult(totalProjectionList, criteria);
+			Double amount = (result[0] == null) ? 0 : (Double)result[0];
+			Double expenses = (result[1] == null) ? 0 : (Double) result[1];
+			controller.setTotalFinanceAmount(CommonUtil.round(amount + expenses));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}		
@@ -133,31 +133,43 @@ public class FinanceControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		Finance finance = (Finance)event.getController().getTo();
-		if (!finance.isManual()) {
-			Date dueDate = finance.getDueDate();
-			Integer payMethod = (finance.getPayMethod() != null) ? finance.getPayMethod().getId() : null;
-			String bankAccount = (finance.getBankAccount() != null) ? finance.getBankAccount().getIban() : null;
-			Double amount = finance.getAmount();
+		Date dueDate = finance.getDueDate();
+		Integer payMethod = (finance.getPayMethod() != null) ? finance.getPayMethod().getId() : null;
+		String bankAccount = (finance.getBankAccount() != null) ? finance.getBankAccount().getIban() : null;
+		Double amount = finance.getAmount();
+		Double expenses = finance.getExpenses();
 
-			String select = "SELECT finance.due_date dueDate, finance.pay_method payMethod, " +
-	    						"finance.bank_account bankAccount, finance.amount amount " +
-	    						"FROM finance as finance " +
-	    						"WHERE finance.id = " + finance.getId();
-			Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
-			SQLQuery query = session.createSQLQuery(select);
-	        List<?> list = query.addScalar("dueDate", Hibernate.DATE).addScalar("payMethod", Hibernate.INTEGER).
-	        				addScalar("bankAccount", Hibernate.STRING).addScalar("amount", Hibernate.DOUBLE).list();
-	        if (!list.isEmpty()) {
-	        	Object[] obj = (Object[])list.get(0);
-	            Date savedDueDate = (Date)obj[0];
-	            Integer savedPayMethod = (Integer)obj[1];
-	            String savedBankAccount = (String)obj[2];
-	            Double savedAmount = (Double)obj[3];
+		String select = "SELECT finance.due_date dueDate, finance.pay_method payMethod, finance.bank_account bankAccount, " +
+							"finance.amount amount, finance.expenses expenses " +
+    						"FROM finance as finance " +
+    						"WHERE finance.id = " + finance.getId();
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+		SQLQuery query = session.createSQLQuery(select);
+        List<?> list = query.addScalar("dueDate", Hibernate.DATE).addScalar("payMethod", Hibernate.INTEGER).addScalar("bankAccount", Hibernate.STRING).
+        					addScalar("amount", Hibernate.DOUBLE).addScalar("expenses", Hibernate.DOUBLE).list();
+        if (!list.isEmpty()) {
+        	Object[] obj = (Object[])list.get(0);
+            Date savedDueDate = (Date)obj[0];
+            Integer savedPayMethod = (Integer)obj[1];
+            String savedBankAccount = (String)obj[2];
+            Double savedAmount = (Double)obj[3];
+            Double savedExpenses = (Double)obj[4];
+			if (!finance.isManual()) {
 	            if (!ObjectUtils.equals(savedDueDate, dueDate) || !ObjectUtils.equals(savedPayMethod, payMethod) ||
-	            		!ObjectUtils.equals(savedBankAccount, bankAccount) || !ObjectUtils.equals(savedAmount, amount)) {
+	            		!ObjectUtils.equals(savedBankAccount, bankAccount) || !ObjectUtils.equals(savedAmount, amount) ||
+	            		!ObjectUtils.equals(savedExpenses, expenses)) {
 	            	finance.setManual(true);
 	            }
 	        }
+            refreshTotalAmount = (!ObjectUtils.equals(savedAmount, amount) || !ObjectUtils.equals(savedExpenses, expenses));
+		}
+	}
+
+	@Override
+	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		if (refreshTotalAmount) {
+			afterModelInitialized(event);
+			refreshTotalAmount = false;
 		}
 	}
 

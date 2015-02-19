@@ -75,7 +75,7 @@ public class IncomeInvoicingDAO implements IInvoicingDAO, Serializable {
 		double amount = getPriceStrategy().getTotalPrice(invoice, invoice);
 		if (amount != 0.0) {
 			if (payMethod.getPayment() != null && payMethod.getPayment().getId() != null) {
-				getFinanceGenerator().generateFinances(invoice, payMethod, amount, true);
+				getFinanceGenerator().generateFinances(invoice, payMethod, amount, true, true);
 			} else {
 				getFinanceGenerator().generateFinances(invoice, amount, true);
 			}

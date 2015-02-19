@@ -167,7 +167,7 @@
 								</aon:div>
 								<aon:outputText value="&#160;" />									
 								<aon:outputText value="&#160;" />
-								
+<!-- 								
 								<aon:outputText value="&#160;" />
 								<aon:div>
 									<aon:div>
@@ -178,6 +178,26 @@
 									<aon:div>
 										<aon:outputText style="margin-left: 20px;" 
 											value="#{bundle.fiscal_mod347_grouped_by_nif_bis}" />
+									</aon:div>
+								</aon:div>
+ 								-->
+								<aon:outputText value="&#160;" />
+								<aon:div>
+									<aon:div>
+										<aon:selectBooleanCheckbox id="mod347_excludeMod180Declared"  
+											value="#{mod347.params.excludeMod180Declared}"/>
+										<aon:outputLabel for="mod347_excludeMod180Declared" value="#{bundle.fiscal_mod347_mod180}" />
+									</aon:div>
+								</aon:div>
+								<aon:outputText value="&#160;" />									
+								<aon:outputText value="&#160;" />
+								
+								<aon:outputText value="&#160;" />
+								<aon:div>
+									<aon:div>
+										<aon:selectBooleanCheckbox id="mod347_excludeMod190Declared"  
+											value="#{mod347.params.excludeMod190Declared}"/>
+										<aon:outputLabel for="mod347_excludeMod190Declared" value="#{bundle.fiscal_mod347_mod190}" />
 									</aon:div>
 								</aon:div>
 								<aon:outputText value="&#160;" />									

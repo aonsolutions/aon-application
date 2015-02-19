@@ -373,6 +373,7 @@
 				<value>#{targetMediaListener}</value>
 				<value>#{targetAddressListener}</value>
 				<value>#{targetScopeListener}</value>
+				<value>#{targetObservationListener}</value>
 				<value>#{targetRPayMethodChildListener}</value>
 				<value>#{targetRBankChildListener}</value>
 				<value>#{targetNoteChildListener}</value>
@@ -436,6 +437,12 @@
 			<property-name>aliasName</property-name>
 			<value>Target_scope_id</value>
 		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>targetObservationListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.commercial.event.TargetObservationListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
 	<managed-bean>
@@ -609,6 +616,13 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ****** Target Observation ******** -->
+	<managed-bean>
+		<managed-bean-name>targetObservation</managed-bean-name>
+		<managed-bean-class> com.code.aon.ui.registry.controller.RegistryObservationController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!--  **** TARGET ADDRESS **** -->
 
 	<managed-bean>
@@ -1271,6 +1285,7 @@
 				<value>#{targetSearch}</value>
 				<value>#{targetForm}</value>
 				<value>#{targetScopeListener}</value>
+				<value>#{targetObservationListener}</value>				
 			</list-entries>
 		</managed-property>				
 	</managed-bean>

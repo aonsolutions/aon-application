@@ -1,4 +1,4 @@
-package com.esferalia.aon.payroll.calculator;
+package com.esferalia.aon.payroll.calculator.sql;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -24,7 +24,7 @@ public abstract class AbstractSQLTestCase {
 	}
 
 	private static String getDbName(){
-		return System.getProperty("dbName", "aon-master");
+		return System.getProperty("dbName", "aon_reveng");
 	}
 
 	private static String getDbUser(){

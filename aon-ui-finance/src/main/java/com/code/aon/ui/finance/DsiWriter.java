@@ -59,8 +59,6 @@ public class DsiWriter extends BasicExporter {
 	
 	private Map<Integer,List<Object[]>> accountMap;
 	
-	private Map<AccountEntryDetail,List<TaxBreakDown>> taxMap;
-	
 	private Set<String> exportedAccounts;
 	
 	private int line;
@@ -253,6 +251,20 @@ public class DsiWriter extends BasicExporter {
 		}
 		return result;
 	}		
+	
+	private List<TaxBreakDown> getVats( AccountEntryDetail aed ) {
+		List<TaxBreakDown> list = new LinkedList<TaxBreakDown>();
+		try {
+			for( TaxBreakDown tbd : getInvoiceTaxes(aed) ) {
+				if ( tbd.isVat() ) {
+					list.add(tbd);
+				}
+			}
+		} catch ( ManagerBeanException e ) {
+			LOGGER.error( e.getMessage(), e );
+		}
+		return list;
+	}
 
 	private void appendDetails( Object[] data, int amountIndex, int vatIndex ) throws IOException {
 		int amountCount = 0;
@@ -265,7 +277,7 @@ public class DsiWriter extends BasicExporter {
 				// Cuenta importes (12)
 				data[amountIndex+amountCount++] = getString(aed.getAccount().getCode(), 12);				
 			}
-			List<TaxBreakDown> vats = this.taxMap.get(aed);
+			List<TaxBreakDown> vats = getVats(aed);
 			if ( vats != null ) {
 				int line = 0;
 				boolean retention = (getRetentionTax() != null);
@@ -586,40 +598,6 @@ public class DsiWriter extends BasicExporter {
 		}
 	}
 	
-	private List<TaxBreakDown> getVats( AccountEntryDetail aed, List<TaxBreakDown> vats ) {
-		List<TaxBreakDown> list = new LinkedList<TaxBreakDown>();
-		double amount = (aed.getCredit() != 0) ? aed.getCredit() : aed.getDebit();
-		for ( TaxBreakDown tax : vats ) {
-			if ( amount == tax.getBase() ) {
-				list.add(tax);
-			}
-		}
-		return list;
-	}
-	
-	private void initTaxMap() {
-		this.taxMap = new HashMap<AccountEntryDetail, List<TaxBreakDown>>();
-		List<TaxBreakDown> vats = new LinkedList<TaxBreakDown>();
-		for ( TaxBreakDown tax : getTaxBreakDowns() ) {
-			if ( tax.isVat() ) {
-				vats.add(tax);
-			}
-		}
-		for( int i = 0; i < getDetails().size(); i++ ) {
-			List<TaxBreakDown> list = null;
-			AccountEntryDetail aed = getDetails().get(i);
-			if ( i+1 == getDetails().size() ) {
-				list = new LinkedList<TaxBreakDown>(vats);
-			} else if (! vats.isEmpty() ) {
-				list = getVats(aed, vats);
-			}
-			if ( (list!=null) && (!list.isEmpty()) ) {
-				this.taxMap.put(aed, list);
-				vats.removeAll(list);
-			}
-		}			
-	}
-	
 	@Override
 	public void write( AccountEntry accountEntry ) throws IOException, ManagerBeanException {
 		this.line = 1;
@@ -635,7 +613,6 @@ public class DsiWriter extends BasicExporter {
 				appendEntryDetail( accountEntry, aed );
 			}			
 		} else {
-			initTaxMap();
 			writeInvoice(accountEntry);	
 		}
 	}

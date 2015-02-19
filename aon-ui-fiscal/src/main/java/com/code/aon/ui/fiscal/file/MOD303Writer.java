@@ -248,8 +248,6 @@ public class MOD303Writer {
 				bd.setDeductibleQuota( CommonUtil.round(bd.getDeductibleQuota() + old.getDeductibleQuota()) ); 
 			}
 			gr.getOutputVatInvPasive().put(mapKey, bd);
-			double d = declaration.getNonTaxableTotal();
-			declaration.setNonTaxableTotal( d + taxableBase );
 		} else if (key == VatTaxKey.A5) {
 			gr.setBaseModifications( taxableBase );
 			gr.setQuotaModifications( quota );

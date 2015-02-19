@@ -21,7 +21,17 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 	public static interface NotFoundHandler {
 		List<ITimedVariable<?>> get(String var);
 	}
-
+	
+	private static class NoopNotFoundHandler implements NotFoundHandler{
+		
+		private static NoopNotFoundHandler INSTANCE = new NoopNotFoundHandler();
+		
+		@Override
+		public List<ITimedVariable<?>> get(String var) {
+			return Collections.emptyList();
+		}
+	}
+	
 	public static class NotFoundVariableError extends Error {
 
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
@@ -133,6 +143,11 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 
 	}
 
+	public Variables() {
+		this(NoopNotFoundHandler.INSTANCE);
+	}
+
+
 	public Variables(NotFoundHandler notFoundHandler) {
 		this.vars = new HashMap<String, List<ITimedVariable<?>>>();
 		this.notFoundHandler = notFoundHandler;
@@ -140,9 +155,6 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 
 	public void clear() {
 		vars.clear();
-	}
-
-	private Variables() {
 	}
 
 	public Variables(Variables variables, NotFoundHandler notFoundHandler) {

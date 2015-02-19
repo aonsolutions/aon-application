@@ -91,29 +91,6 @@
 				</f:facet>
 			</aon:column>
 
-			<aon:if test="#{controller.agreedPriceVisible}">
-				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
-					<f:facet name="header">
-						<aon:outputLabel for="ReservationRequestRoom_agreedPrice" value="#{bundle.pms_agreed_price}" />
-					</f:facet>
-					<aon:outputText value="#{to.agreedPrice}" rendered="#{formList or !controller.agreedPriceEditable}">
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:outputText>
-					<aon:inputText id="ReservationRequestRoom_agreedPrice" 
-						value="#{controller.to.agreedPrice}" rendered="#{formEdit and controller.agreedPriceEditable}"
-						required="true" size="5">
-						<f:validateDoubleRange minimum = "0" />
-					</aon:inputText>
-					<f:facet name="footer">
-						<aon:inputText id="ReservationRequestRoom_agreedPrice-New" 
-							value="#{controller.to.agreedPrice}" rendered="#{formNew and controller.agreedPriceEditable}"
-							required="true" size="5">
-							<f:validateDoubleRange minimum = "0" />
-						</aon:inputText>
-					</f:facet>
-				</aon:column>
-			</aon:if>
-
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 				<f:facet name="header">
 					<aon:outputLabel for="ReservationRequestRoom_adults" value="#{bundle.pms_adults}" />
@@ -162,6 +139,29 @@
 						required="true" size="2" maxlength="3" />
 				</f:facet>
 			</aon:column>
+
+			<aon:if test="#{controller.agreedPriceVisible}">
+				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+					<f:facet name="header">
+						<aon:outputLabel for="ReservationRequestRoom_agreedPrice" value="#{bundle.pms_agreed_price}" />
+					</f:facet>
+					<aon:outputText value="#{to.agreedPrice}" rendered="#{formList or !controller.agreedPriceEditable}">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+					<aon:inputText id="ReservationRequestRoom_agreedPrice" 
+						value="#{controller.to.agreedPrice}" rendered="#{formEdit and controller.agreedPriceEditable}"
+						required="true" size="5">
+						<f:validateDoubleRange minimum = "0" />
+					</aon:inputText>
+					<f:facet name="footer">
+						<aon:inputText id="ReservationRequestRoom_agreedPrice-New" 
+							value="#{controller.to.agreedPrice}" rendered="#{formNew and controller.agreedPriceEditable}"
+							required="true" size="5">
+							<f:validateDoubleRange minimum = "0" />
+						</aon:inputText>
+					</f:facet>
+				</aon:column>
+			</aon:if>
 		</ui:define>
 
 		<ui:define name="endFormListContent">
@@ -178,106 +178,9 @@
 					<ui:param name="auditableTO" value="#{to}" />
 				</ui:include>
 			</aon:div>
-			<rich:subTable id="availableRoomStayTable"
-				value="#{controller.availableRoomStayList}" var="availableRoomStay"
-				rendered="#{controller.idInAvailableRoomStayMap}"
-				headerClass="aon-editDataTable-textColumn aon-subTable-column aon-subTable-column-green-header aon-italic aon-bold"
-				rowClasses="aon-subTable-column-green"
-				onRowMouseOver="onDataTableOver(this,'aon-table-row-selected','aon-subTable-column-green-selected');"
-				onRowMouseOut="onDataTableOut(this,'aon-table-row-selected');">
-
-				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
-					<aon:outputText value="&#160;" />
-				</aon:column>
-
-				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.report_tariff}" />
-					</f:facet>
-					<aon:outputText value="#{availableRoomStay.tariffCode}"
-						 style="#{(availableRoomStay.roomCode == to.item.product.code) ? 'color: #2152A5;' : ''}" />
-					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto"
-						rendered="#{!availableRoomStay.error}">
-						<aon:outputText value="#{availableRoomStay.tariffDescription}" />
-					</rich:toolTip>
-				</aon:column>
-
-				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.pms_regime}" />
-					</f:facet>
-					<aon:outputText value="#{availableRoomStay.mealPlan}" 
-						 style="#{(availableRoomStay.roomCode == to.item.product.code) ? 'color: #2152A5;' : ''}"
-						 rendered="#{!availableRoomStay.error}" />
-					<aon:outputText value="ERROR" style="color: red;"
-						rendered="#{availableRoomStay.error}" />
-				</aon:column>
-
-				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column"
-					colspan="#{(controller.agreedPriceVisible) ? '2' : '1'}">
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.pms_room_type}" />
-					</f:facet>
-					<aon:outputText value="#{availableRoomStay.roomCode} - #{availableRoomStay.roomDescription}" 
-						 style="#{(availableRoomStay.roomCode == to.item.product.code) ? 'color: #2152A5;' : ''}"
-						 rendered="#{!availableRoomStay.error}" />
-					<aon:outputText value="&#160;" styleClass="aon-icon-info aon-noborder aon-margin-left aon-padding-left"
-						rendered="#{!availableRoomStay.error and !empty availableRoomStay.cancelPenalty}" />
-					<rich:toolTip showEvent="onclick" hideEvent="onmouseout" direction="auto"
-						rendered="#{!availableRoomStay.error and !empty availableRoomStay.cancelPenalty}">
-						<aon:outputText value="#{availableRoomStay.cancelPenalty}" />
-					</rich:toolTip>
-					<aon:outputText value="#{availableRoomStay.errorMessage}" style="color: red;"
-						rendered="#{availableRoomStay.error}" />
-				</aon:column>
-
-				<aon:column styleClass="aon-editDataTable-numberColumn aon-bold aon-subTable-column">
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.aon_price} #{bundle.aon_day}" />
-					</f:facet>
-					<aon:outputText value="#{availableRoomStay.dailyPrice}"
-						 style="#{(availableRoomStay.roomCode == to.item.product.code) ? 'color: #2152A5;' : ''}">
-						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-					</aon:outputText>
-				</aon:column>
-
-				<aon:column styleClass="aon-editDataTable-numberColumn aon-bold aon-subTable-column">
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.aon_price} #{bundle.aon_total}" />
-					</f:facet>
-					<aon:outputText value="#{availableRoomStay.totalPrice}"
-						 style="#{(availableRoomStay.roomCode == to.item.product.code) ? 'color: #2152A5;' : ''}">
-						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-					</aon:outputText>
-				</aon:column>
-
-				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.asset_filter_availability}" />
-					</f:facet>
-					<aon:outputText value="#{availableRoomStay.availability}"
-						 style="#{(availableRoomStay.roomCode == to.item.product.code) ? 'color: #2152A5;' : ''}" />
-				</aon:column>
-
-				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
-					<aon:commandLink id="requestRoom-bookingButton"
-						value="#{bundle.pms_to_book}" 
-						styleClass="aon-italic" style="#{(availableRoomStay.roomCode == to.item.product.code) ? 'color: #2152A5;' : ''}"
-						rendered="#{!availableRoomStay.error and !availableRoomStay.tariffStopSales and availableRoomStay.availability >= to.units}"
-						actionListener="#{controller.sendBookingQuery}"
-						reRender="aonContent"
-						onclick="Richfaces.showModalPanel('waitProccess')"
-						oncomplete="Richfaces.hideModalPanel('waitProccess')">
-						<f:param name="availableRoomStayIndex" value="#{availableRoomStay.index}"/>
-					</aon:commandLink>
-					<aon:outputText value="#{bundle.pms_no_availability_abbrv}" style="color: red;"
-						rendered="#{!availableRoomStay.error and !availableRoomStay.tariffStopSales and to.units > availableRoomStay.availability}" />
-					<aon:outputText value="#{bundle.pms_stop_sales_abbrv}" style="color: red;"
-						rendered="#{!availableRoomStay.error and availableRoomStay.tariffStopSales}" />
-				</aon:column>
-
-			</rich:subTable>
-
+			<ui:include	src="/com/esferalia/aon/ui/pms/facelet/reservationRequest/room/availableRoomStay.xhtml">
+				<ui:param name="roomStaySuffix" value="-List" />
+			</ui:include>
 			<rich:subTable id="reservationDataTable"
 				value="#{to}" var="reservationData"
 				rendered="#{!empty to.crsCode}"
@@ -319,6 +222,23 @@
 					</rich:toolTip>
 				</aon:column>
 
+				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_reservation} #{bundle.pms_crs}" />
+					</f:facet>
+					<aon:div>
+						<aon:outputText value="#{reservationData.crsCode}" />
+						<aon:commandLink id="reservationLink" immediate="true"
+							styleClass="aon-button-goto" style="padding-right: 20px;" 
+							value="&#160;" title="#{bundle.aon_go}"
+							rendered="#{!empty reservationData.crsCode and !reservationRequest.agencyUser}" 
+							actionListener="#{controller.onLoadRoomReservation}"
+							action="#{controller.getReservationPage}"
+							reRender="aonContent">
+						</aon:commandLink>
+					</aon:div>  
+				</aon:column>
+
 				<aon:column styleClass="aon-editDataTable-numberColumn aon-bold aon-subTable-column">
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.aon_price} #{bundle.aon_day}" />
@@ -335,23 +255,6 @@
 					<aon:outputText value="#{reservationData.totalPrice}">
 						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 					</aon:outputText>
-				</aon:column>
-
-				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.aon_reservation} #{bundle.pms_crs}" />
-					</f:facet>
-					<aon:div>
-						<aon:outputText value="#{reservationData.crsCode}" />
-						<aon:commandLink id="reservationLink" immediate="true"
-							styleClass="aon-button-goto" style="padding-right: 20px;" 
-							value="&#160;" title="#{bundle.aon_go}"
-							rendered="#{!empty reservationData.crsCode and !reservationRequest.agencyUser}" 
-							actionListener="#{controller.onLoadRoomReservation}"
-							action="#{controller.getReservationPage}"
-							reRender="aonContent">
-						</aon:commandLink>
-					</aon:div>  
 				</aon:column>
 
 				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
@@ -375,6 +278,12 @@
 				</aon:column>
 
 			</rich:subTable>
+		</ui:define>
+
+		<ui:define name="afterEditLineButtons">
+			<ui:include	src="/com/esferalia/aon/ui/pms/facelet/reservationRequest/room/availableRoomStay.xhtml">
+				<ui:param name="roomStaySuffix" value="-Edit" />
+			</ui:include>
 		</ui:define>
 
 	</ui:decorate>

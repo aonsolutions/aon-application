@@ -18,13 +18,13 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.config.Series;
 import com.code.aon.config.Tax;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.product.Brand;
@@ -42,6 +42,7 @@ import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 
@@ -146,6 +147,282 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		}
 	}
 	
+	//-------------------- IMPORTAR STOCK
+	
+	public com.esferalia.aon.gwt.template.shared.Error insertStock(TemplateInfo ti) {
+		com.esferalia.aon.gwt.template.shared.Error error = new Error();
+		if(!getMimetype().equals(MimeType.MIME_MS_EXCEL.getName())
+			&& !getMimetype().equals(MimeType.MIME_MS_EXCEL_2007.getName())){
+			//El archivo no es un fichero Excel.
+			error.setError(false);
+			error.setTextError("*El archivo importado no es de tipo excel.");
+			return error;
+		}
+		byte[] data = getOut();
+		
+		File aux = new File("/tmp/products.xls");
+		try {
+			org.apache.commons.io.FileUtils.writeByteArrayToFile(aux, data);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		FileInputStream excel = null;
+		try {
+			excel = new FileInputStream(aux);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		HSSFWorkbook workbook= null;
+		try {
+			workbook = new HSSFWorkbook(excel);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		HSSFSheet sheet = workbook.getSheetAt(0);
+
+		Iterator<Row> rowIterator = sheet.iterator();
+		Integer i = 0;
+		String textError = "";
+		Vector<StockInfo> stock = new Vector<StockInfo>();
+		while(rowIterator.hasNext()) {
+			 Row row = rowIterator.next();
+			 Iterator<Cell> cellIterator = row.cellIterator();
+			 StockInfo si = newStock();
+			 Integer j = 0;
+             while(cellIterator.hasNext()) {
+                Cell cell = cellIterator.next();
+                Object o = null ;
+                switch (cell.getCellType()) {
+				case Cell.CELL_TYPE_BLANK:
+					//
+					break;
+				case Cell.CELL_TYPE_BOOLEAN: 
+					o = cell.getBooleanCellValue();
+					break;
+				case Cell.CELL_TYPE_ERROR:
+					o = cell.getErrorCellValue();
+					break;
+				case Cell.CELL_TYPE_FORMULA:
+					//
+					break; // AÑADIR A PI ITEM --> %BENEFICIO SOBRE COSTE, %BENEFICIO SOBRE COMPRA Y PVP
+			           
+		             //pi.getItem().setExpensesPercent(0);
+		             //pi.getItem().setPrice(0);
+		            // checkPrices();
+				case Cell.CELL_TYPE_NUMERIC:
+					o = cell.getNumericCellValue();
+					break;
+				case Cell.CELL_TYPE_STRING:
+					o = cell.getStringCellValue();
+					break;
+				default:
+					break;
+				}
+                if(i == 0){//Primera fila del fichero Excel.
+                	if(ti.getColumns().size()<=j || ti.getColumns().get(j) == null || !ti.getColumns().get(j).equalsIgnoreCase(cell.getStringCellValue())){
+                		 // El archivo no es compatible con la plantilla
+             			error.setError(false);
+             			error.setTextError("*El archivo importado no es compatible con la plantilla seleccionada.");
+             			return error;
+                	} 
+                }
+                else{
+                	if(j!= cell.getColumnIndex()){
+                		 if(ti.getColumns().get(j).equals("Producto") || ti.getColumns().get(j).equals("Almac\u00e9n Destino") || ti.getColumns().get(j).equals("Cantidad")){
+                			Integer fila = i+1;
+                			Integer columna = j+1;
+                			textError= textError + "*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n";
+                	 	}
+                		 j++;
+                	 }
+                	 
+                	 si = check(ti.getColumns().get(j),o,si,cell.getCellType());
+                	 if(si == null){
+             			Integer fila = i+1;
+             			Integer columna = j+1;
+                		textError= textError + "*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n";
+                		si = newStock();	
+                	 }
+                 }
+                 j++;
+             }
+             
+             if(j != ti.getColumns().size()){
+            	 if(i == 0){
+            		 error.setError(false);
+            		 error.setTextError("*El archivo importado no es compatible con la plantilla seleccionada.");
+            		 return error;
+            	 }
+            	 else{
+            		 if(ti.getColumns().get(j).equals("Producto") || ti.getColumns().get(j).equals("Almac\u00e9n Destino") || ti.getColumns().get(j).equals("Cantidad")){
+            			Integer fila = i+1;
+          				Integer columna = j+1;
+          				textError= textError + "*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n";
+            		 }
+            	 }
+             }
+            
+             if(i>0){ 
+            	 Boolean b = false;
+            	 String domain = AonUtil.getDomainName();
+            	 try {
+					b = DBConsults.checkSeries(domain,domainId,si.getSeries(),si.getTargetWarehouse());
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+            	if(!b){
+            		Integer fila = i+1;
+            		textError=textError +"*Fila "+fila+" : La serie y el almacén no concuerdan.";
+            	}
+            	stock.add(si);
+             }
+             i++;
+		 }
+		
+		if(textError.equals("")){
+			error.setError(true);
+			error.setTextError("");
+			String domain = AonUtil.getDomainName();
+			try {
+				DBConsults.insertStock(domain,domainId,stock);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+	        //insertar STOCK en base de datos.!!
+		}
+		else{
+			//Alguna de las filas contiene datos erroneos.
+			error.setError(false);
+ 			error.setTextError(textError);
+		}
+		return error;
+	}
+	
+	private StockInfo check(String template, Object value,StockInfo stock, Integer type) {
+		String domain = AonUtil.getDomainName();
+		
+		switch (template) {
+		case "Producto": case "Product": 
+			if(type.equals(Cell.CELL_TYPE_STRING) && !value.equals("")){
+				Boolean b = false;
+				try {
+					b = DBConsults.isItem(domain, domainId, (String) value);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				if(b) stock.setProduct((String) value);
+				else return null;
+			}
+			else return null;
+			break;
+		case "Series":
+			if(type.equals(Cell.CELL_TYPE_STRING)){
+				String strAux=(String) value;
+				Vector<Series> v = null;
+				try{
+					v=DBConsults.getSeries(domain, domainId);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}		
+				Boolean b = true;
+				for(Series s : v){
+					if(strAux.equalsIgnoreCase(s.getCode())){
+						stock.setSeries(s);
+						b=false;
+					}
+				}
+				if(b) return null;
+			}
+			else return null;
+			break;
+		case "Almac\u00e9n Destino":
+			if(type.equals(Cell.CELL_TYPE_STRING)){
+				String strAux = (String) value;
+				Vector<Warehouse> v = null;
+				try {
+					v = DBConsults.getWarehouse(domain, domainId);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				Boolean b = true;
+				for(Warehouse whouse : v){
+					if(strAux.equalsIgnoreCase(whouse.getName())){
+						stock.setTargetWarehouse(whouse);
+						b= false;
+					}
+				}
+				if(b) return null;
+			}
+			else return null;
+			break;
+		/*case "Almac\u00e9n Origen":
+			if(type.equals(Cell.CELL_TYPE_STRING)){
+				String strAux = (String) value;
+				Vector<Warehouse> v = null;
+				try {
+					v = DBConsults.getWarehouse(domain, domainId);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				Boolean b = true;
+				for(Warehouse whouse : v){
+					if(strAux.equalsIgnoreCase(whouse.getName())){
+						stock.setSourceWarehouse(whouse);
+						b= false;
+					}
+				}
+				if(b) return null;
+			}
+			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
+			break;*/
+		case "Cantidad": case "Quantity":
+			if(type.equals(Cell.CELL_TYPE_NUMERIC)){
+				Double n = (Double) value;
+				stock.setQuantity(n);
+			}
+			else return null;
+			break;
+		case "Detalle 1": case "Detail 1":
+			if(type.equals(Cell.CELL_TYPE_STRING))
+				stock.setDetail((String)value);
+			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
+			break;
+		case "Detalle 2": case "Detail 2":
+			if(type.equals(Cell.CELL_TYPE_STRING))
+				stock.setDetail2((String)value);
+			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
+			break;
+		case "Detalle 3": case "Detail 3":
+			if(type.equals(Cell.CELL_TYPE_STRING))
+				stock.setDetail3((String)value);
+			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
+			break;
+		case "Comentarios": case "Comments":
+			if(type.equals(Cell.CELL_TYPE_STRING))
+				stock.setComments((String)value);
+			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
+			break;
+		default:
+			break;
+		}
+		
+		return stock;
+	}
+	
+	private StockInfo newStock(){
+		StockInfo stock = new StockInfo();
+		
+		stock.setDetail("");
+		stock.setDetail2("");
+		stock.setDetail3("");
+		stock.setComments("");
+		stock.setSourceWarehouse(null);
+		return stock;
+	}
+	
+	//-------------------- IMPORTAR PRODUCTOS
+	
 	public com.esferalia.aon.gwt.template.shared.Error insertProducts(TemplateInfo ti) {
 		//Archivo Excel
 		com.esferalia.aon.gwt.template.shared.Error error = new Error();
@@ -153,7 +430,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			&& !getMimetype().equals(MimeType.MIME_MS_EXCEL_2007.getName())){
 			//El archivo no es un fichero Excel.
 			error.setError(false);
-			error.setTextError("*El archivo importado nos es de tipo excel.");
+			error.setTextError("*El archivo importado no es de tipo excel.");
 			return error;
 		}
 		byte[] data = getOut();
@@ -364,7 +641,6 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break; 
 		case "Etiqueta" : 
-			//TODO product.getProduct().setTags(tags);
 			if(type.equals(Cell.CELL_TYPE_STRING)){
 				Vector<ProductTag> tags = null;
 				try {
@@ -624,7 +900,6 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		default:
 			break;
 		}
-		//TODO 
 		
 		return product;
 	}
@@ -708,7 +983,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	public Vector<TemplateInfo> searchNameTemplate(String searchStr, Vector<TemplateInfo> templates){
 		Vector<TemplateInfo> vector = new Vector<TemplateInfo>();
 		for (TemplateInfo templateInfo : templates) {
-			if(StringUtils.containsIgnoreCase(templateInfo.getName(), searchStr)){
+			if(AonStringUtils.containsIgnoreCase(templateInfo.getName(), searchStr)){
 				vector.add(templateInfo);
 			}
 		}
@@ -718,7 +993,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	public Vector<TemplateInfo> searchTypeTemplate(String searchStr, Vector<TemplateInfo> templates){
 		Vector<TemplateInfo> vector = new Vector<TemplateInfo>();
 		for (TemplateInfo templateInfo : templates) {
-			if(StringUtils.containsIgnoreCase(templateInfo.getType(), searchStr)){
+			if(AonStringUtils.containsIgnoreCase(templateInfo.getType(), searchStr)){
 				vector.add(templateInfo);
 			}
 		}

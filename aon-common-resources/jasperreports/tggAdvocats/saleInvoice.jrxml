@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="144"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -557,7 +557,7 @@
 		<band height="366">
 			<componentElement>
 				<reportElement uuid="99b367aa-943e-42de-bada-af5fa3811f0b" key="detail" positionType="Float" x="22" y="21" width="490" height="20"/>
-				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="AllSectionsNoDetail">
 					<datasetRun subDataset="detailServices" uuid="7dcce31f-873c-4979-ace8-c8f5c584f13d">
 						<datasetParameter name="totalBase">
 							<datasetParameterExpression><![CDATA[$V{invoiceTotal}]]></datasetParameterExpression>
@@ -567,7 +567,7 @@
 					<jr:column width="330" uuid="e924f589-e5a5-4578-9d50-d00f93662bc3">
 						<jr:columnHeader height="20" rowSpan="1">
 							<box>
-								<leftPen lineWidth="0.25"/>
+								<leftPen lineWidth="0.5"/>
 							</box>
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 								<reportElement uuid="f619c04c-c615-44c1-8df3-d0f0aec974ee" key="textField-23" mode="Transparent" x="0" y="0" width="330" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -783,7 +783,7 @@
 					<jr:column width="330" uuid="e2412acb-2699-4567-aaf8-3b36695dd1ec">
 						<jr:columnHeader height="20" rowSpan="1">
 							<box>
-								<leftPen lineWidth="0.25"/>
+								<leftPen lineWidth="0.5"/>
 							</box>
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 								<reportElement uuid="a97b0981-1f54-477d-8661-ec9efcab0fce" key="textField-23" positionType="Float" mode="Transparent" x="0" y="0" width="330" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -862,7 +862,7 @@
 					<jr:column width="80" uuid="c07731eb-8a01-4be0-b8c2-a79b4b6b343a">
 						<jr:columnHeader height="20" rowSpan="1">
 							<box>
-								<rightPen lineWidth="0.25"/>
+								<rightPen lineWidth="0.5"/>
 							</box>
 						</jr:columnHeader>
 						<jr:detailCell height="20" rowSpan="1">
@@ -882,7 +882,7 @@
 					<jr:column width="330" uuid="b27b39ab-7563-4075-bc9d-57498a05abe4">
 						<jr:columnHeader height="20" rowSpan="1">
 							<box>
-								<leftPen lineWidth="0.25"/>
+								<leftPen lineWidth="0.5"/>
 							</box>
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 								<reportElement uuid="d669424a-4132-4605-b395-1c7428c06917" key="textField-23" positionType="Float" mode="Transparent" x="0" y="0" width="330" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -935,7 +935,7 @@
 					<jr:column width="80" uuid="f037e620-fc61-4cb1-b296-8469405c66aa">
 						<jr:columnHeader height="20" rowSpan="1">
 							<box>
-								<rightPen lineWidth="0.25"/>
+								<rightPen lineWidth="0.5"/>
 							</box>
 						</jr:columnHeader>
 						<jr:detailCell height="20" rowSpan="1">

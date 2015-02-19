@@ -27,4 +27,5 @@ public interface ITemplate extends RemoteService{
 	
 	public Vector<TemplateInfo> searchNameTemplate(String searchStr, Vector<TemplateInfo> templates);
 	
+	public com.esferalia.aon.gwt.template.shared.Error insertStock(TemplateInfo ti);
 }

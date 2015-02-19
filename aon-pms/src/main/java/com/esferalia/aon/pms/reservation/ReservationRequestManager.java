@@ -52,6 +52,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.Tariff;
 import com.code.aon.customer.Customer;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
@@ -625,7 +626,9 @@ public class ReservationRequestManager implements IReservationConstants {
 	}
 
 	private void createReservation(ReservationRequestRoom requestRoom, ProjectReservation reservation, Hotel hotel) throws ManagerBeanException {
-		reservation.setDomain(hotel.getDomain());
+		Tariff roomTariff = getReservationUtils().obtainTariff(requestRoom.getTariffCode());
+		Item serviceItem = getReservationUtils().obtainServiceItem(requestRoom.getItem(), requestRoom.getInventoryCode(), requestRoom.getMealPlan());
+
 		reservation.setHotel(hotel);
 		reservation.setHotelReservation(hotel);
 		reservation.setCode(requestRoom.getReservationRequest().getCode());
@@ -633,7 +636,7 @@ public class ReservationRequestManager implements IReservationConstants {
 		reservation.setEndDate(requestRoom.getReservationRequest().getEndDate());
 		reservation.setStartTime(DateUtils.addHours(reservation.getStartDate(), 14));
 		reservation.setEndTime(DateUtils.addHours(reservation.getEndDate(), 12));
-		reservation.setSeller(getReservationUtils().obtainCrsSeller());
+		reservation.setSeller(getReservationUtils().obtainRequestSeller());
 		reservation.setAgency(requestRoom.getReservationRequest().getAgency());
 		reservation.setAgencyCommissionPercent(0);
 		reservation.setAgencyCommissionAmount(0);
@@ -643,7 +646,7 @@ public class ReservationRequestManager implements IReservationConstants {
 		reservation.setDiscountAmount(0);
 		reservation.setBookingHolder(requestRoom.getReservationRequest().getBookingHolder());
 		reservation.setVatPercent(getReservationUtils().getTaxPercentage(requestRoom.getItem().getVat(), requestRoom.getReservationRequest().getStartDate()));
-		reservation.setTotal(CommonUtil.round(requestRoom.getTotalPrice()));
+		reservation.setTotal((requestRoom.getAgreedPrice() == 0) ? CommonUtil.round(requestRoom.getTotalPrice()) : CommonUtil.round(requestRoom.getAgreedPrice()));
 		reservation.setTaxableBase(CommonUtil.round(reservation.getTotal() * (1 - reservation.getVatPercent() / 100)));
 		reservation.setVatQuota(CommonUtil.round(reservation.getTotal() - reservation.getTaxableBase()));
 		reservation.setOtherTaxQuota(0);
@@ -651,17 +654,26 @@ public class ReservationRequestManager implements IReservationConstants {
 		reservation.setSource(ReservationSource.REQUEST);
 		reservation.setCrsCode(requestRoom.getCrsCode());
 		reservation.setCheckStatus(ReservationCheckStatus.NO_CHECK);
-		reservation.setStatus(ReservationStatus.ACTIVE);
+		reservation.setStatus((reservation.isAgencyHolder() || roomTariff == null || serviceItem == null) ? ReservationStatus.BLOCKED : ReservationStatus.ACTIVE);
 
 		getReservationUtils().fillProject(reservation);
 		reservation.getProject().setDomain(hotel.getDomain());
 		reservation.setDomain(hotel.getDomain());
 
 		IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
+		reservationBean.restoreNullSubPOJOs(reservation);
 		reservation = (ProjectReservation)reservationBean.insert(reservation);
 
 		createReservationGuest(requestRoom.getReservationRequest(), reservation);
-		createReservationRoom(requestRoom, reservation);
+		createReservationRoom(requestRoom, reservation, roomTariff, serviceItem);
+
+		Criteria criteria = new Criteria();
+		criteria.addNotEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ID), reservation.getId());
+		criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CRS_CODE), reservation.getCrsCode());
+		if (reservationBean.getCount(criteria) > 0) {
+			reservation.setStatus(ReservationStatus.CANCELLED);
+			reservation = (ProjectReservation)reservationBean.update(reservation);
+		}
 	}
 
 	private void createReservationGuest(ReservationRequest request, ProjectReservation reservation) throws ManagerBeanException {
@@ -679,7 +691,7 @@ public class ReservationRequestManager implements IReservationConstants {
 			reservationGuest.setDomain(reservation.getDomain());
 			reservationGuest.setGuestIndex(requestGuest.getGuestIndex());
 			reservationGuest.setSurname(requestGuest.getSurname());
-			reservationGuest.setSurname(requestGuest.getName());
+			reservationGuest.setName(requestGuest.getName());
 			reservationGuest.setEmail(requestGuest.getEmail());
 			reservationGuest.setPhone(requestGuest.getPhone());
 			reservationGuest.setAddress(requestGuest.getAddress());
@@ -696,8 +708,14 @@ public class ReservationRequestManager implements IReservationConstants {
 		}
 	}
 
-	private void createReservationRoom(ReservationRequestRoom requestRoom, ProjectReservation reservation) throws ManagerBeanException {
-		Item serviceItem = getReservationUtils().obtainServiceItem(requestRoom.getItem(), requestRoom.getInventoryCode(), requestRoom.getMealPlan());
+	private void createReservationRoom(ReservationRequestRoom requestRoom, ProjectReservation reservation, Tariff roomTariff, Item serviceItem) 
+			throws ManagerBeanException {
+		if (roomTariff == null) {
+			roomTariff = getReservationUtils().obtainDefaultTariff();
+		}
+		if (serviceItem == null) {
+			serviceItem = getReservationUtils().obtainDefaultServiceItem();
+		}
 		double reservationBase = CommonUtil.round(reservation.getTotal() * (1 - reservation.getVatPercent() / 100), 4);
 		double serviceBase = CommonUtil.round(reservationBase / requestRoom.getUnits(), 4);
 
@@ -709,7 +727,7 @@ public class ReservationRequestManager implements IReservationConstants {
 			reservationRoom.setRoomIndex(1);
 			reservationRoom.setRoomCode(requestRoom.getRoomCode());
 			reservationRoom.setItem(requestRoom.getItem());
-			reservationRoom.setTariff(getReservationUtils().obtainTariff(requestRoom.getTariffCode()));
+			reservationRoom.setTariff(roomTariff);
 			reservationRoom.setAdults(requestRoom.getAdults());
 			reservationRoom.setChildren(requestRoom.getChildren() + requestRoom.getBabies());
 			reservationRoom = (ProjectReservationRoom)reservationRoomBean.insert(reservationRoom);
@@ -721,7 +739,8 @@ public class ReservationRequestManager implements IReservationConstants {
 		}
 	}
 
-	private void createReservationService(ProjectReservationRoom reservationRoom, String serviceCode, Item serviceItem, double serviceBase) throws ManagerBeanException {
+	private void createReservationService(ProjectReservationRoom reservationRoom, String serviceCode, Item serviceItem, double serviceBase) 
+			throws ManagerBeanException {
 		ProjectReservationService reservationService = new ProjectReservationService();
 		reservationService.setProjectReservation(reservationRoom.getProjectReservation());
 		reservationService.setDomain(reservationRoom.getDomain());

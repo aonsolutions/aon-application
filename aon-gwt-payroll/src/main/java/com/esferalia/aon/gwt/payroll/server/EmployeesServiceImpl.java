@@ -60,6 +60,7 @@ import org.mvel2.CompileException;
 import org.mvel2.ast.Function;
 import org.mvel2.util.MethodStub;
 
+import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
@@ -137,6 +138,10 @@ import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.IContractBonus;
+import com.esferalia.aon.payroll.calculator.IContractCost;
+import com.esferalia.aon.payroll.calculator.IContractDeduction;
+import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
@@ -3811,7 +3816,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 							conn, startDate, endDate, endDate, criteria) {
 
 						@Override
-						protected double getIrpf() {
+						public double getIrpf() {
 							return 0.00;
 						}
 
@@ -3857,9 +3862,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				try {
 					SQLContractSalaryCalculatorContext sqlContractSalaryCalculatorCtx = new SQLContractSalaryCalculatorContext(
 							conn, startDate, endDate, issueDate, criteria) {
-
+						
 						@Override
-						public Object gross(double liquid)
+						public double getIrpf() {
+							return 0.00;
+						}
+						
+						@Override
+						public Object gross(double liquid, Date start, Date end)
 								throws ExpressionException, SQLException {
 							return x;
 						}
@@ -3886,6 +3896,30 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 							}
 						}
 
+						@Override
+						public Collection<IContractDeduction> getContractDeductions()
+								throws AonException {
+							return Collections.emptyList();
+						}
+
+						@Override
+						public Collection<IContractEmbargo> getContractEmbargos()
+								throws AonException {
+							return Collections.emptyList();
+						}
+
+						@Override
+						public Collection<IContractBonus> getContractBonus()
+								throws AonException {
+							return Collections.emptyList();
+						}
+
+						@Override
+						public Collection<IContractCost> getContractCosts()
+								throws AonException {
+							return Collections.emptyList();
+						}
+						
 					};
 					SQLSalaryDraftCalculatorContext sqlDraftSalaryCalculatorCtx = new SQLSalaryDraftCalculatorContext(
 							draft, sqlContractSalaryCalculatorCtx);
@@ -3914,7 +3948,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 							conn, startDate, endDate, issueDate, criteria) {
 
 						@Override
-						public Object liquid(double liquid)
+						public Object liquid(double liquid, Date start, Date end)
 								throws ExpressionException, SQLException {
 							return x;
 						}
@@ -3951,12 +3985,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 										criteria) {
 
 									@Override
-									protected double getIrpf() {
+									public double getIrpf() {
 										return 0.00;
 									}
 
 									@Override
-									public Object liquid(double liquid)
+									public Object liquid(double liquid, Date start, Date end)
 											throws ExpressionException,
 											SQLException {
 										return x;

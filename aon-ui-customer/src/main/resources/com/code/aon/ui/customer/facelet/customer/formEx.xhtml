@@ -134,9 +134,11 @@
 							value="#{bundle.registry_observation}" />
 						<aon:inputTextarea id="Observation" cols="120" rows="3"
 							value="#{customerObservation.observation.comments}" />
+
 					</aon:panelGrid>
 
 					<aon:panelTabSet id="customerTab" selectedTab="#{customer.selectedTab}">
+
 						<aon:panelTab id="address"	label="#{bundle.registry_address_module}">
 							<ui:include	src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
 								<ui:param name="controller" value="#{customerAddress}" />

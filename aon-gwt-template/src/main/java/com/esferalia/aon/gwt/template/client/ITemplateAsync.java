@@ -28,4 +28,6 @@ public interface ITemplateAsync {
 	void searchNameTemplate(String searchStr, Vector<TemplateInfo> templates,
 			AsyncCallback<Vector<TemplateInfo>> callback);
 
+	void insertStock(TemplateInfo ti, AsyncCallback<Error> callback);
+
 }

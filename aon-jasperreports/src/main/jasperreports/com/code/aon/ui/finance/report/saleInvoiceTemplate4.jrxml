@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="96"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -12,7 +12,7 @@
 	<style name="table1" mode="Opaque" backcolor="#CCCCCC">
 		<paragraph lineSpacing="Single"/>
 	</style>
-	<subDataset name="detail" scriptletClass="com.code.aon.ui.finance.util.print.SaleInvoiceReportScriptlet" uuid="b6d87951-1160-4874-afd0-10de6cbb4575">
+	<subDataset name="detail" scriptletClass="com.code.aon.ui.finance.util.print.InvoiceDetailReportScriptlet" uuid="b6d87951-1160-4874-afd0-10de6cbb4575">
 		<parameter name="printProductCode" class="java.lang.Boolean"/>
 		<parameter name="printReferenceCode" class="java.lang.Boolean"/>
 		<field name="description" class="java.lang.String"/>
@@ -64,28 +64,45 @@
 		<field name="amount" class="java.lang.Double"/>
 		<field name="negotiableDocument" class="java.lang.Boolean"/>
 	</subDataset>
+	<scriptlet name="invoiceReportScriptlet" class="com.code.aon.ui.finance.util.print.InvoiceReportScriptlet"/>
 	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
 	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
 	<parameter name="logoImageFile" class="java.io.InputStream"/>
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
 	<parameter name="nestedReports" class="java.util.Map"/>
+	<parameter name="invoiceDetailPrinter" class="com.code.aon.ui.finance.invoice.print.InvoiceDetailByDeliveryPrinter"/>
 	<parameter name="phone" class="com.code.aon.registry.RegistryMedia" isForPrompting="false"/>
 	<parameter name="fax" class="com.code.aon.registry.RegistryMedia" isForPrompting="false"/>
 	<parameter name="email" class="com.code.aon.registry.RegistryMedia" isForPrompting="false"/>
 	<parameter name="web" class="com.code.aon.registry.RegistryMedia" isForPrompting="false"/>
 	<parameter name="address" class="com.code.aon.registry.RegistryAddress" isForPrompting="false"/>
-	<parameter name="printHeader" class="java.lang.Boolean" isForPrompting="false"/>
-	<parameter name="printRecordData" class="java.lang.Boolean" isForPrompting="false"/>
-	<parameter name="recordData" class="com.code.aon.registry.RecordData" isForPrompting="false"/>
-	<parameter name="printLogo" class="java.lang.Boolean" isForPrompting="false"/>
-	<parameter name="printName" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false"/>
-	<parameter name="printNif" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false"/>
-	<parameter name="printAddress" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false"/>
-	<parameter name="printInternetData" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false"/>
-	<parameter name="invoiceFooterText" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="invoiceDetailPrinter" class="com.code.aon.ui.finance.invoice.print.InvoiceDetailByDeliveryPrinter"/>
-	<parameter name="printProductCode" class="java.lang.Boolean"/>
-	<parameter name="printReferenceCode" class="java.lang.Boolean"/>
+	<parameter name="printHeader" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintHeader()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printRecordData" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintRecordData()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printLogo" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintLogo()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printName" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getPrintName()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printNif" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getPrintNif()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printAddress" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getPrintAddress()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printInternetData" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getPrintInternetData()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="invoiceFooterText" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getInvoiceFooterText()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printDiscountPriceApplied" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintDiscountPriceApplied()]]></defaultValueExpression>
+	</parameter>
 	<field name="series" class="java.lang.String"/>
 	<field name="number" class="java.lang.Integer"/>
 	<field name="registryName" class="java.lang.String"/>
@@ -137,22 +154,7 @@
 					<font size="7"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{printName}.name().equals( "LEFT_SIDE" ) ? $P{company}.getName() : "")
-+ (new Boolean($P{printName}.name().equals( "LEFT_SIDE" ) && $P{printRecordData} && $P{recordData}!=null) ? ", " : "")
-+ ( new Boolean($P{printRecordData} && $P{recordData}!=null) ?
-    ($P{recordData}.getRegistration().isEmpty()?"":$P{recordData}.getRegistration())
-    + ($P{recordData}.getVolume().isEmpty()?"":", Tomo " + $P{recordData}.getVolume())
-    + ($P{recordData}.getSection().isEmpty()?"":", Sección " + $P{recordData}.getSection())
-    + ($P{recordData}.getPage().isEmpty()?"":", Folio " + $P{recordData}.getPage())
-    + ($P{recordData}.getSheet().isEmpty()?"":", Hoja " + $P{recordData}.getSheet())
-    + ($P{recordData}.getRecordDate()!=null?" con fecha " + new SimpleDateFormat("dd/MM/yyyy").format($P{recordData}.getRecordDate()):"")
-    : "")
-+ (new Boolean(($P{printName}.name().equals( "LEFT_SIDE" ) || $P{printRecordData} && $P{recordData}!=null) && $P{printNif}.name().equals( "LEFT_SIDE" )) ? ", " : "")
-+ ($P{printNif}.name().equals( "LEFT_SIDE" ) ?
-    $R{aon_company_document} + ": "
-    +$P{company}.getDocumentCountry() + "-"
-    +$P{company}.getDocument()
-    : "")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getLeftSideText()]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement uuid="82fa9e22-6523-46bc-ae17-9d8d80e9ecc8" key="line-5" x="-25" y="241" width="4" height="1"/>
@@ -188,7 +190,7 @@
 			</image>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="33ef3639-f48a-49c7-9ab9-794b52a1068d" key="textField-56" x="209" y="65" width="123" height="12">
-					<printWhenExpression><![CDATA[$P{printInternetData}.name().equals( "HEADER" )]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{printHeader} && $P{printInternetData}.name().equals( "HEADER" )]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -287,7 +289,7 @@
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="3b21d944-8804-4fd8-b97c-d4485e772310" key="textField-56" x="209" y="53" width="123" height="12">
-					<printWhenExpression><![CDATA[$P{printInternetData}.name().equals( "HEADER" )]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{printHeader} && $P{printInternetData}.name().equals( "HEADER" )]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -743,13 +745,7 @@
 			<componentElement>
 				<reportElement uuid="f89c7b02-5ec7-47d2-98a4-c2bf5f2856c5" key="detail" positionType="Float" mode="Opaque" x="21" y="217" width="489" height="15" backcolor="#F0F0F0"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="detail" uuid="8f94f923-21f0-45ad-94f4-ac60a27d8ca5">
-						<datasetParameter name="printProductCode">
-							<datasetParameterExpression><![CDATA[$P{printProductCode}]]></datasetParameterExpression>
-						</datasetParameter>
-						<datasetParameter name="printReferenceCode">
-							<datasetParameterExpression><![CDATA[$P{printReferenceCode}]]></datasetParameterExpression>
-						</datasetParameter>
+					<datasetRun subDataset="detail" uuid="b6ecb9bd-1214-4316-a053-d8668fce6fbe">
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(false), new Boolean(false)))]]></dataSourceExpression>
 					</datasetRun>
 					<jr:column width="372" uuid="7b54d30c-32bd-4376-921d-278ad3147adb">
@@ -765,7 +761,7 @@
 									<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
-								<textElement verticalAlignment="Middle" markup="html"/>
+								<textElement verticalAlignment="Middle" markup="none"/>
 								<textFieldExpression><![CDATA[$V{lineDescription}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>

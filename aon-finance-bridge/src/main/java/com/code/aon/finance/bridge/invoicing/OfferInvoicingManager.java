@@ -75,7 +75,7 @@ public class OfferInvoicingManager {
 			double invoiceTotal = getPriceStrategy().getTotalPrice(invoice, invoice);
 			if (invoiceTotal != 0) {
 				if (offer.getPayMethod() != null && offer.getPayMethod().getId() != null) {
-					getFinanceGenerator().generateFinances(invoice, offer, invoiceTotal, true);
+					getFinanceGenerator().generateFinances(invoice, offer, invoiceTotal, true, true);
 				} else {
 					getFinanceGenerator().generateFinances(invoice, invoiceTotal, true);
 				}

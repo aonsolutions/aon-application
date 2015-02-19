@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.DATE_PATTERN;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_OPERATION_NOT_ALLOWED_PERIOD_EXCEEDED_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.TIMESTAMP_PATTERN;
 import static com.code.aon.ui.common.ICommonMessages.TIME_2_PATTERN;
@@ -19,6 +20,8 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.SelectItem;
+import javax.mail.Address;
+import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -28,6 +31,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Scope;
@@ -54,6 +58,9 @@ import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.webmail.EmailSender;
+import com.code.aon.webmail.bean.AonMessage;
+import com.code.aon.webmail.db.MailAccount;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
@@ -579,6 +586,67 @@ public class ProjectReservationController extends BasicController implements IPm
     	reservationRoomController.onSearch(event);
 		IController reservationServiceController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_SERVICE_CONTROLLER_NAME);
     	reservationServiceController.onSearch(event);
+
+		if (isConfirmNoShow() && reservation.isAgencyHolder()) {
+			sendAgencyNoShowEmail(reservation);
+		}
+	}
+
+	private void sendAgencyNoShowEmail(ProjectReservation reservation) throws ManagerBeanException {
+		String agencyEmail = getReservationUtils().obtainAgencyAdministrativeEmail(reservation.getAgency());
+		if (agencyEmail != null) {
+			MailAccount companyMailAccount = getReservationUtils().obtainCompanyMailAccount();
+			if (companyMailAccount != null) {
+				try {
+					Address companyMailAddress = new InternetAddress(companyMailAccount.getEmail(), companyMailAccount.getDisplayName());
+					EmailSender mailSender = new EmailSender(companyMailAddress, companyMailAccount);
+					AonMessage message = mailSender.createMessage(createAgencyNoShowEmailSubject(reservation));
+					message.setRecipientsTo(agencyEmail);
+					if (StringUtils.isNotBlank(reservation.getHotelReservation().getEmail())) {
+						message.setRecipientsCc(reservation.getHotelReservation().getEmail());
+					}
+					mailSender.addMessageContent(message, createAgencyNoShowEmailMessage(reservation), MimeType.MIME_TXT);
+					mailSender.sendMessage(message);
+				} catch (Exception ex) {
+					setShowConfirmWindow(false);
+					setConfirmNoShow(false);
+					String msg = "Error al enviar email con la notificación del No Show a la Agencia.";
+					AonUtil.addErrorMessage(msg);
+					throw new AbortProcessingException(msg);
+				}
+			}
+		}
+	}
+
+	private String createAgencyNoShowEmailSubject(ProjectReservation reservation) {
+		StringBuffer message = new StringBuffer();
+		message.append("NO SHOW - ");
+		message.append(reservation.getCode() + " - ");
+		message.append(StringUtils.substring(reservation.getHotelReservation().getWorkPlace().getDescription(), 0, 30));
+		return message.toString();
+	}
+
+	private String createAgencyNoShowEmailMessage(ProjectReservation reservation) throws ManagerBeanException {
+		DateFormat formatter = new SimpleDateFormat(AonUtil.getMessage(DATE_PATTERN));
+		StringBuffer message = new StringBuffer();
+		message.append("Le informamos que la Reserva indicada a continuación ha sido marcada como No Show en el Hotel.");
+		message.append("\n");
+		message.append("Please note that the Booking indicated below has been marked as No Show at the Hotel.");
+		message.append("\n");
+		message.append("\n");
+		message.append("Hotel: " + reservation.getHotelReservation().getWorkPlace().getDescription());
+		message.append("\n");
+		message.append("Reserva/Booking: " + reservation.getId());
+		message.append("\n");
+		message.append("Localizador/Code: " + reservation.getCode());
+		message.append("\n");
+		message.append("Fecha Entrada/Start Date: " + formatter.format(reservation.getStartDate()));
+		message.append("\n");
+		message.append("Fecha Salida/End Date: " + formatter.format(reservation.getEndDate()));
+		message.append("\n");
+		message.append("Huésped/Guest: " + reservation.getGuestFullName());
+		message.append("\n");
+		return message.toString();
 	}
 
 	public void checkMultipleReservation() throws ManagerBeanException {

@@ -21,6 +21,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.Collator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -40,7 +41,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
@@ -85,6 +85,7 @@ import com.esferalia.aon.gwt.document.shared.Tags;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.RattachColumns;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.About;
 import com.google.api.services.drive.model.File;
@@ -193,7 +194,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	public Vector<FileInfo> searchFile(String searchStr, Vector<FileInfo> files){
 		Vector<FileInfo> vector = new Vector<FileInfo>();
 		for (FileInfo fileInfo : files) {
-			if(StringUtils.containsIgnoreCase(fileInfo.getTitle(), searchStr)){
+			if(containsIgnoreCase2(fileInfo.getTitle(), searchStr)){
 				vector.add(fileInfo);
 			}
 		}
@@ -229,7 +230,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	
 	public Boolean filter(SearchInfo si,FileInfo fi){
 		if(si.getName() != null){
-			if(!StringUtils.contains(fi.getTitle(), si.getName())){
+			if(!AonStringUtils.contains(fi.getTitle(), si.getName())){
 				return false;
 			}
 		}
@@ -1690,5 +1691,47 @@ public Vector<FileInfo> insertFileMultiple(FileInfo fi) {
 	}
 	return files;
 }
+// ----------------------------------------------------------------------------
+	/**
+	 * <p>
+	 * Checks if CharSequence contains a search CharSequence irrespective of
+	 * case, handling {@code null}. Case-insensitivity is defined as by
+	 * {@link String#equalsIgnoreCase(String)}.
+	 *
+	 * <p>
+	 * A {@code null} CharSequence will return {@code false}.
+	 * </p>
+	 *
+	 * <pre>
+	 * StringUtils.contains(null, *) = false
+	 * StringUtils.contains(*, null) = false
+	 * StringUtils.contains("", "") = true
+	 * StringUtils.contains("abc", "") = true
+	 * StringUtils.contains("abc", "a") = true
+	 * StringUtils.contains("ábc", "a") = true
+	 * StringUtils.contains("abc", "z") = false
+	 * StringUtils.contains("abc", "A") = true
+	 * StringUtils.contains("ábc", "A") = true
+	 * StringUtils.contains("abc", "Z") = false
+	 * </pre>
+	 * @param str
+	 * @param searchStr
+	 * @return
+	 */
+	public static boolean containsIgnoreCase2(String str, String searchStr) {
+	    Locale locale = new Locale("es_ES");
+		Collator c = Collator.getInstance(locale);
+		c.setStrength(Collator.PRIMARY);
+	    if (str == null || searchStr == null) {
+	        return false;
+	    }
+	    int len = searchStr.length();
+	    int max = str.length() - len;
+	    for (int i = 0; i <= max; i++) {   	
+	    	if (c.compare(str.substring(i, i+len), searchStr) == 0)
+	    		return true;  
+	    }
+	    return false;
+	}
 
 }

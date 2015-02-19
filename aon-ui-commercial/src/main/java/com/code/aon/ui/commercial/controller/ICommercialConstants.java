@@ -23,6 +23,7 @@ public interface ICommercialConstants {
 	String OFFER_SEARCH_LISTENER_NAME = "offerSearch";
 	String OFFER_TERM_GENERAL_CONTROLLER_NAME ="offerTermGeneral";
 	String TARGET_CONTROLLER_NAME = "target";
+	String TARGET_OBSERVATION_CONTROLLER_NAME = "targetObservation";
 	String TARGET_MEDIA_CONTROLLER_NAME = "targetMedia";
 	String TARGET_ADDRESS_CONTROLLER_NAME = "targetAddress";
 	String TARGET_ITEM_CONTROLLER_NAME = "targetItem";

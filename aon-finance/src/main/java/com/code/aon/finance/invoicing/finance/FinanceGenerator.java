@@ -95,23 +95,23 @@ public class FinanceGenerator implements Serializable {
 		return financeList;
 	}
 	
-	public List<Finance> generateFinances(Invoice invoice, IPayMethod payMethod, double totalPrice, boolean insert) throws ManagerBeanException{
+	public List<Finance> generateFinances(Invoice invoice, IPayMethod payMethod, double totalPrice, boolean manual, boolean insert) throws ManagerBeanException{
 		List<Finance> financeList = new LinkedList<Finance>();
 		Date date = invoice.getIssueDate();
 		if ((payMethod == null) || (payMethod.getNumberOfPayments() == 1)) {
 			date = (payMethod == null) ? date : calculatePaymentDate(payMethod.getDaysToFirstPayment(), payMethod.getPaymentDaysArray(), date);
-			financeList.add(createFinance(invoice, date, payMethod, totalPrice));
+			financeList.add(createFinance(invoice, date, payMethod, totalPrice, manual));
 		} else {
 			double paymentPrice = CommonUtil.round((totalPrice / payMethod.getNumberOfPayments()));
 			date = calculatePaymentDate(payMethod.getDaysToFirstPayment(), payMethod.getPaymentDaysArray(), date);
-			financeList.add(createFinance(invoice, date, payMethod, paymentPrice));
+			financeList.add(createFinance(invoice, date, payMethod, paymentPrice, manual));
 			for(int i=2; i<=payMethod.getNumberOfPayments()-1; i++) {
 				date = calculatePaymentDate(payMethod.getDaysBetweenPayments(), payMethod.getPaymentDaysArray(), date);
-				financeList.add(createFinance(invoice, date, payMethod, paymentPrice));
+				financeList.add(createFinance(invoice, date, payMethod, paymentPrice, manual));
 			}
 			paymentPrice = CommonUtil.round(totalPrice - (paymentPrice * (payMethod.getNumberOfPayments() - 1)));
 			date = calculatePaymentDate(payMethod.getDaysBetweenPayments(), payMethod.getPaymentDaysArray(), date);
-			financeList.add(createFinance(invoice, date, payMethod, paymentPrice));
+			financeList.add(createFinance(invoice, date, payMethod, paymentPrice, manual));
 		}
 		if (insert) {
 			insertFinances(financeList);
@@ -178,12 +178,14 @@ public class FinanceGenerator implements Serializable {
 		return createFinance(invoice, date, payMethod, totalPrice, bankAccount, bankAlias, bic);
 	}
 
-	private Finance createFinance(Invoice invoice, Date date, IPayMethod pMethod, double totalPrice) {
+	private Finance createFinance(Invoice invoice, Date date, IPayMethod pMethod, double totalPrice, boolean manual) {
 		PayMethod payMethod = (pMethod==null) ? null : pMethod.getPayment();
 		BankAccount bankAccount = (pMethod==null) ? null : pMethod.getBankAccount();
 		String bankAlias = (pMethod==null) ? null : pMethod.getBankAlias();
 		String bic = (pMethod==null) ? null : pMethod.getBic();
-		return createFinance(invoice, date, payMethod, totalPrice, bankAccount, bankAlias, bic);
+		Finance finance = createFinance(invoice, date, payMethod, totalPrice, bankAccount, bankAlias, bic);
+		finance.setManual(manual);
+		return finance;
 	}
 
 	public Finance createFinance(Invoice invoice, Date date, PayMethod payMethod, double totalPrice, BankAccount bankAccount, String bankAlias, String bic) {

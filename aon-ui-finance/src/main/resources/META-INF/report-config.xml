@@ -97,17 +97,7 @@
 			<param id="address" value="#{company.obtainAddress}" />
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}" />
-			<param id="printLogo" value="#{company.isPrintLogo}" />
-			<param id="printName" value="#{company.getPrintName}" />
-			<param id="printNif" value="#{company.getPrintNif}" />
-			<param id="printAddress" value="#{company.getPrintAddress}" />
-			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
-			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
-			<param id="printReferenceCode" value="#{company.isPrintReferenceCode}" />
-			<param id="printProductCode" value="#{company.isPrintProductCode}" />
 		</params>
 		<nested-report report="invoiceDetailDefault"/>
 		<nested-report report="invoiceTaxBreakDown"/>
@@ -148,17 +138,7 @@
 			<param id="address" value="#{company.obtainAddress}" />
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}" />
-			<param id="printLogo" value="#{company.isPrintLogo}" />
-			<param id="printName" value="#{company.getPrintName}" />
-			<param id="printNif" value="#{company.getPrintNif}" />
-			<param id="printAddress" value="#{company.getPrintAddress}" />
-			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
-			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
-			<param id="printReferenceCode" value="#{company.isPrintReferenceCode}" />
-			<param id="printProductCode" value="#{company.isPrintProductCode}" />
 		</params>
 	</report>
 	<report id="saleInvoiceTemplate2" description="Fee Invoice's Report Template2">
@@ -173,18 +153,7 @@
 			<param id="address" value="#{company.obtainAddress}" />
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}" />
-			<param id="printLogo" value="#{company.isPrintLogo}" />
-			<param id="printName" value="#{company.getPrintName}" />
-			<param id="printNif" value="#{company.getPrintNif}" />
-			<param id="printAddress" value="#{company.getPrintAddress}" />
-			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
-			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
-			<param id="printDiscountPriceApplied" value="#{company.isPrintDiscountPriceApplied}" />
-			<param id="printReferenceCode" value="#{company.isPrintReferenceCode}" />
-			<param id="printProductCode" value="#{company.isPrintProductCode}" />
 		</params>
 		<nested-report report="invoiceDetail"/>
 		<nested-report report="invoiceTaxBreakDown"/>
@@ -203,18 +172,7 @@
 			<param id="address" value="#{company.obtainAddress}" />
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}" />
-			<param id="printLogo" value="#{company.isPrintLogo}" />
-			<param id="printName" value="#{company.getPrintName}" />
-			<param id="printNif" value="#{company.getPrintNif}" />
-			<param id="printAddress" value="#{company.getPrintAddress}" />
-			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
-			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
-			<param id="printDiscountPriceApplied" value="#{company.isPrintDiscountPriceApplied}" />
-			<param id="printReferenceCode" value="#{company.isPrintReferenceCode}" />
-			<param id="printProductCode" value="#{company.isPrintProductCode}" />
 		</params>
 		<nested-report report="invoiceDetail"/>
 		<nested-report report="invoiceTaxBreakDown"/>
@@ -233,17 +191,7 @@
 			<param id="address" value="#{company.obtainAddress}" />
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}" />
-			<param id="printLogo" value="#{company.isPrintLogo}" />
-			<param id="printName" value="#{company.getPrintName}" />
-			<param id="printNif" value="#{company.getPrintNif}" />
-			<param id="printAddress" value="#{company.getPrintAddress}" />
-			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
-			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
-			<param id="printReferenceCode" value="#{company.isPrintReferenceCode}" />
-			<param id="printProductCode" value="#{company.isPrintProductCode}" />
 		</params>
 	</report>
 	<report id="saleInvoiceTemplate5" description="Fee Invoice's Report Template5">
@@ -258,18 +206,7 @@
 			<param id="address" value="#{company.obtainAddress}" />
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}" />
-			<param id="printLogo" value="#{company.isPrintLogo}" />
-			<param id="printName" value="#{company.getPrintName}" />
-			<param id="printNif" value="#{company.getPrintNif}" />
-			<param id="printAddress" value="#{company.getPrintAddress}" />
-			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
-			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
-			<param id="printDiscountPriceApplied" value="#{company.isPrintDiscountPriceApplied}" />
-			<param id="printReferenceCode" value="#{company.isPrintReferenceCode}" />
-			<param id="printProductCode" value="#{company.isPrintProductCode}" />
 		</params>
 	</report>
 	<report id="saleInvoiceTemplate6" description="Fee Invoice's Report Template6">
@@ -284,18 +221,7 @@
 			<param id="address" value="#{company.obtainAddress}" />
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}" />
-			<param id="printLogo" value="#{company.isPrintLogo}" />
-			<param id="printName" value="#{company.getPrintName}" />
-			<param id="printNif" value="#{company.getPrintNif}" />
-			<param id="printAddress" value="#{company.getPrintAddress}" />
-			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
-			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
-			<param id="printDiscountPriceApplied" value="#{company.isPrintDiscountPriceApplied}" />
-			<param id="printReferenceCode" value="#{company.isPrintReferenceCode}" />
-			<param id="printProductCode" value="#{company.isPrintProductCode}" />
 		</params>
 	</report>
 	<report id="saleInvoiceGta" description="Fee Invoice's Report GTA">
@@ -479,16 +405,7 @@
 			<param id="address" value="#{company.obtainAddress}" />
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}" />
-			<param id="printLogo" value="#{company.isPrintLogo}" />
-			<param id="printName" value="#{company.getPrintName}" />
-			<param id="printNif" value="#{company.getPrintNif}" />
-			<param id="printAddress" value="#{company.getPrintAddress}" />
-			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
-			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
-			<param id="printDiscountPriceApplied" value="#{company.isPrintDiscountPriceApplied}" />
 		</params>
 		<nested-report report="invoiceDetailDefault"/>
 		<nested-report report="invoiceTaxBreakDown"/>
@@ -508,15 +425,7 @@
 			<param id="address" value="#{company.obtainAddress}" />
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}" />
-			<param id="printLogo" value="#{company.isPrintLogo}" />
-			<param id="printName" value="#{company.getPrintName}" />
-			<param id="printNif" value="#{company.getPrintNif}" />
-			<param id="printAddress" value="#{company.getPrintAddress}" />
-			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
-			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
 		</params>
 	</report>
 	<report id="invoicePrintTemplate2" description="Invoice's Report Template2">
@@ -532,16 +441,7 @@
 			<param id="address" value="#{company.obtainAddress}" />
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}" />
-			<param id="printLogo" value="#{company.isPrintLogo}" />
-			<param id="printName" value="#{company.getPrintName}" />
-			<param id="printNif" value="#{company.getPrintNif}" />
-			<param id="printAddress" value="#{company.getPrintAddress}" />
-			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
-			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
-			<param id="printDiscountPriceApplied" value="#{company.isPrintDiscountPriceApplied}" />
 		</params>
 		<nested-report report="invoiceDetail"/>
 		<nested-report report="invoiceTaxBreakDown"/>
@@ -561,16 +461,7 @@
 			<param id="address" value="#{company.obtainAddress}" />
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}" />
-			<param id="printLogo" value="#{company.isPrintLogo}" />
-			<param id="printName" value="#{company.getPrintName}" />
-			<param id="printNif" value="#{company.getPrintNif}" />
-			<param id="printAddress" value="#{company.getPrintAddress}" />
-			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
-			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
-			<param id="printDiscountPriceApplied" value="#{company.isPrintDiscountPriceApplied}" />
 		</params>
 		<nested-report report="invoiceDetail"/>
 		<nested-report report="invoiceTaxBreakDown"/>
@@ -590,15 +481,7 @@
 			<param id="address" value="#{company.obtainAddress}" />
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}" />
-			<param id="printLogo" value="#{company.isPrintLogo}" />
-			<param id="printName" value="#{company.getPrintName}" />
-			<param id="printNif" value="#{company.getPrintNif}" />
-			<param id="printAddress" value="#{company.getPrintAddress}" />
-			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
-			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
 		</params>
 	</report>
 	<report id="invoicePrintTemplate5" description="Invoice's Report Template5">
@@ -614,15 +497,7 @@
 			<param id="address" value="#{company.obtainAddress}" />
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}" />
-			<param id="printLogo" value="#{company.isPrintLogo}" />
-			<param id="printName" value="#{company.getPrintName}" />
-			<param id="printNif" value="#{company.getPrintNif}" />
-			<param id="printAddress" value="#{company.getPrintAddress}" />
-			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
-			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
 		</params>
 	</report>
 	<report id="invoicePrintTemplate6" description="Invoice's Report Template6">
@@ -638,15 +513,7 @@
 			<param id="address" value="#{company.obtainAddress}" />
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}" />
-			<param id="printLogo" value="#{company.isPrintLogo}" />
-			<param id="printName" value="#{company.getPrintName}" />
-			<param id="printNif" value="#{company.getPrintNif}" />
-			<param id="printAddress" value="#{company.getPrintAddress}" />
-			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
-			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
 		</params>
 	</report>
 	<report id="invoicePrintGta" description="Invoice's Report">
