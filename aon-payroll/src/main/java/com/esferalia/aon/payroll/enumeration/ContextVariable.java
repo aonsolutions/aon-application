@@ -78,6 +78,8 @@ public enum ContextVariable implements IResourceable{
 	FRIDAY_HOURS("HORAS_VIERNES", VariableType.DOUBLE),
 	SATURDAY_HOURS("HORAS_SABADO", VariableType.DOUBLE),
 	SUNDAY_HOURS("HORAS_DOMINGO", VariableType.DOUBLE),
+	AGREEMENT_HOURS("HORAS_CONVENIO", VariableType.DOUBLE),
+	WORKED_HOURS("HORAS_TRABAJADAS", VariableType.DOUBLE),
 
 	NIGHT("NOCTURNO", VariableType.BOOLEAN, false),
 	//NIGHT_HOURS("HORAS_NOCHE", VariableType.INTEGER, false),
@@ -138,7 +140,8 @@ public enum ContextVariable implements IResourceable{
 	QUOTE_PECULIARITY_COLLECTIVE("COLECT_PECULIAR_COTIZACION", VariableType.INTEGER, false),
 	CONTRACT_END_CODE("COD_FIN_CONTRATO", VariableType.INTEGER, false),
 	CONTRACT_END_DESC("DESC_FIN_CONTRATO", VariableType.STRING, false),
-	
+	PARTIAL_FACTOR("COEFICIENTE_PARCIALIDAD", VariableType.STRING, false),
+
 	// Bajas, Incapacidad Temporal
 	MATERNITY("MTNAD", VariableType.BOOLEAN),
 	QUOTE_IT("COTIZACION_IT", VariableType.QUOTE_IT_DROP),
@@ -218,7 +221,8 @@ public enum ContextVariable implements IResourceable{
 	CONDITIONS_CHANGE("CAMBIO_CONDICIONES", VariableType.UNKNOWN),
 	
 	PREST_IT("PREST_IT", VariableType.DOUBLE)
-
+	
+	
 
 	;
 	

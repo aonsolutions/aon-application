@@ -388,6 +388,10 @@ public class ExpressionContext {
 		return variables.getVariable(name.toString(), new Period(start, end));
 	}
 
+	public List<Period> getPeriods(Object name) {
+		return variables.getPeriods(name.toString());
+	}
+
 	public <T> List<ITimedVariable<T>> getVariables(Object name) {
 		return variables.getVariables(name.toString());
 	}

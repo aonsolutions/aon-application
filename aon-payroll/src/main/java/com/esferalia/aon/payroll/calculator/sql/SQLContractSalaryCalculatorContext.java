@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll.calculator.sql;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ACTUAL_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGREEMENT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGREEMENT_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ASSIMILATED;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_AGE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_DAYS;
@@ -29,6 +30,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MALE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MORE_THAN_65;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY;
@@ -48,6 +50,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_WEEKS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_YEARS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.parse;
+import static java.lang.String.format;
 
 import java.lang.reflect.Method;
 import java.sql.Connection;
@@ -151,6 +154,7 @@ import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.TimedObject;
@@ -1726,8 +1730,7 @@ public class SQLContractSalaryCalculatorContext extends
 			return solvePayment(new PegasusSolver(accuracy), payment, start,
 					end);
 		} catch (Throwable t) {
-			t.printStackTrace();
-			return 0.00;
+			throw new CheckException(t.getMessage());
 		}
 
 	}
@@ -1860,7 +1863,7 @@ public class SQLContractSalaryCalculatorContext extends
 									end));
 
 					ISalary salary = calculator.calculate(ctx);
-					
+
 					return liquid - salary.getTotalLiquid();
 				} catch (SalaryException e) {
 					throw new RuntimeException(e);
@@ -1868,9 +1871,7 @@ public class SQLContractSalaryCalculatorContext extends
 			}
 
 		}, -20 * liquid, 20 * liquid, 0);
-		
-		
-		
+
 		return result;
 	}
 
@@ -1930,6 +1931,14 @@ public class SQLContractSalaryCalculatorContext extends
 				public Object liquid(double liquid, Date start, Date end)
 						throws ExpressionException, SQLException {
 					return x;
+				}
+
+				@Override
+				public Object gross(double gross, Date start, Date end)
+						throws ExpressionException, SQLException,
+						SalaryException {
+					throw new InterruptedException(
+							String.format("Lo sentimos. La funci\u00F3n NETO es incompatible con la funci\u00F3n BRUTO. Elija una de las dos. :-("));
 				}
 
 				@Override
@@ -2007,7 +2016,6 @@ public class SQLContractSalaryCalculatorContext extends
 								return 1969;
 							};
 
-
 						};
 					} catch (SQLException e) {
 						throw new ExpressionExceptionWrapper(
@@ -2044,6 +2052,14 @@ public class SQLContractSalaryCalculatorContext extends
 				public Object gross(double gross, Date start, Date end)
 						throws ExpressionException, SQLException {
 					return x;
+				}
+				
+				@Override
+				public Object liquid(double liquid, Date start, Date end)
+						throws ExpressionException, SQLException,
+						SalaryException {
+					throw new InterruptedException(
+							String.format("Lo sentimos. La funci\u00F3n BRUTO es incompatible con la funci\u00F3n NETO. Elija una de las dos. :-("));
 				}
 
 				@Override
@@ -2345,7 +2361,9 @@ public class SQLContractSalaryCalculatorContext extends
 
 	private double getWorkDays(Period p) {
 
-		Long availableDays = getAvailableDays(p.getStart(), p.getEnd());
+		Long availableDays = getAvailableDays(
+				Period.max(p.getStart(), contractStartDate),
+				Period.min(p.getEnd(), contractEndDate));
 
 		Long leaveDays = getLeaveDays(p);
 
@@ -2603,6 +2621,11 @@ public class SQLContractSalaryCalculatorContext extends
 				this.contractStartDate, this.contractEndDate);
 	}
 
+	private boolean containsVariable(Object name, Period p) {
+		return this.contractExpressionContext.containsVariable(name,
+				p.getStart(), p.getEnd());
+	}
+
 	protected double getGuarenteed() {
 		double guarenteed = 0.00;
 
@@ -2666,13 +2689,6 @@ public class SQLContractSalaryCalculatorContext extends
 			@Override
 			public Date getValue(Period p) {
 				return p.getEnd();
-			}
-		};
-
-		ActiveTimedVariable<Double> workedDays = new ActiveTimedVariable<Double>() {
-			@Override
-			public Double getValue(Period p) {
-				return getWorkDays(p);
 			}
 		};
 
@@ -2805,11 +2821,7 @@ public class SQLContractSalaryCalculatorContext extends
 		this.implicitExpressionContext.putVariable(START, start);
 		this.implicitExpressionContext.putVariable(END, end);
 
-		this.implicitExpressionContext.putVariable(WORKED_DAYS, workedDays);
-
 		this.implicitExpressionContext.putVariable(WORKED_WEEKS, workedWeeks);
-
-		this.implicitExpressionContext.putVariable(QUOTE_DAYS, workedDays);
 
 		this.implicitExpressionContext.putVariable(SALARY_DAYS, salaryDays);
 
@@ -3025,7 +3037,109 @@ public class SQLContractSalaryCalculatorContext extends
 						}
 					});
 		}
+		// --------------------------------------------------------------------
+		// WEEK_HOURS, WORKED_DAYS and so on. These variables
+		//
+		loadWorkedDaysStuff(contractExpressionContext);
+	}
 
+	private void loadWorkedDaysStuff(ExpressionContext ctx)
+			throws ExpressionException {
+		if (!containsVariable(WEEK_HOURS)) {
+			ExpressionImpl expression = new ExpressionImpl();
+			expression.setName(WEEK_HOURS.getName());
+			expression.setExpression(format("%s + %s + %s + %s + %s + %s + %s",
+					ContextVariable.MONDAY_HOURS,
+					ContextVariable.TUESDAY_HOURS,
+					ContextVariable.WEDNESDAY_HOURS,
+					ContextVariable.THURSDAY_HOURS,
+					ContextVariable.FRIDAY_HOURS,
+					ContextVariable.SATURDAY_HOURS,
+					ContextVariable.SUNDAY_HOURS));
+			expression.setScope(ExpressionScope.APPLICATION);
+			ctx.addExpression(expression, this.startDate, this.endDate);
+		}
+
+		List<Period> weekHours = ctx.getPeriods(WEEK_HOURS);
+		List<Period> agreeementHours = ctx.getPeriods(AGREEMENT_HOURS);
+		// List<Period> partialFactor = ctx.getPeriods(PARTIAL_FACTOR);
+		List<Period> contract = Collections.singletonList(new Period(
+				contractStartDate, contractEndDate));
+
+		List<Period> intersects = Period.intersect(weekHours, agreeementHours);
+		intersects = Period.intersect(intersects, contract);
+
+		for (Period period : intersects) {
+
+			if (!containsVariable(PARTIAL_FACTOR, period)) {
+				ITimedVariable<Double> partial_factor = new ITimedVariable<Double>() {
+					@Override
+					public Period getPeriod() {
+						return period;
+					}
+
+					@Override
+					public Double getValue(Period p) {
+						try {
+							if (!isFullTime())
+								return getContexVariable(p, WEEK_HOURS)
+										/ getContexVariable(p, AGREEMENT_HOURS);
+						} catch (ExpressionExceptionWrapper e) {
+						}
+						return 1.00;
+					}
+
+					private double getContexVariable(Period p,
+							ContextVariable var) {
+						ITimedVariable<?> agreementHours = ctx.getVariable(var,
+								p.getStart(), p.getEnd());
+						if (agreementHours == null)
+							throw new ExpressionExceptionWrapper(
+									new UndefinedContextVariablesException(var));
+						return ((Number) agreementHours.getValue(p))
+								.doubleValue();
+					}
+				};
+
+				ctx.putVariable(PARTIAL_FACTOR, partial_factor);
+			}
+
+			if (!containsVariable(WORKED_DAYS, period)) {
+				ITimedVariable<Double> workedDays = new ITimedVariable<Double>() {
+					@Override
+					public Period getPeriod() {
+						return period;
+					}
+
+					@Override
+					public Double getValue(Period p) {
+						double workDays = getWorkDays(p);
+						try {
+							if (!isFullTime()) {
+								return workDays
+										* getContexVariable(p, PARTIAL_FACTOR);
+							}
+						} catch (ExpressionExceptionWrapper e) {
+						}
+						return workDays;
+					}
+
+					private double getContexVariable(Period p,
+							ContextVariable var) {
+						ITimedVariable<?> agreementHours = ctx.getVariable(var,
+								p.getStart(), p.getEnd());
+						if (agreementHours == null)
+							throw new ExpressionExceptionWrapper(
+									new UndefinedContextVariablesException(var));
+						return ((Number) agreementHours.getValue(p))
+								.doubleValue();
+					}
+				};
+				ctx.putVariable(WORKED_DAYS, workedDays);
+				ctx.putVariable(QUOTE_DAYS, workedDays);
+			}
+
+		}
 	}
 
 	/*
