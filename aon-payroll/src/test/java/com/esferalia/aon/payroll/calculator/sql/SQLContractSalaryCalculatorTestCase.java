@@ -81,7 +81,7 @@ public class SQLContractSalaryCalculatorTestCase extends
 
 		ISalary salary = calculator.calculate(ctx);
 		
-		Assert.assertEquals(1500, salary.getTotalPayment());
+		Assert.assertEquals(1500.00, salary.getTotalPayment());
 		
 	}
 
