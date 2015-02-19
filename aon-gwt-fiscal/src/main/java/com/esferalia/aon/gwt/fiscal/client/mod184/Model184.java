@@ -411,7 +411,7 @@ public class Model184 extends MainEntryPoint {
 			if (value.isDirty() || value.isDeleted()) {
 				sb.appendHtmlConstant("'>");
 			}
-			String newLabel = MSG.newPerceptor() + " (" + (value.getId() * (-1)) + ")";
+			String newLabel = MSG.newIncome() + " (" + (value.getId() * (-1)) + ")";
 			sb.appendEscaped(AonStringUtils.isBlank(value.getKey()) 
 					? newLabel
 					: value.getKey() + (AonStringUtils.isBlank(value.getSubKey())?"":("-" + value.getSubKey())));
@@ -441,7 +441,7 @@ public class Model184 extends MainEntryPoint {
 			if (value.isDirty() || value.isDeleted()) {
 				sb.appendHtmlConstant("'>");
 			}
-			String newLabel = MSG.newPerceptor() + " (" + (value.getId() * (-1)) + ")";
+			String newLabel = MSG.newIncome() + " (" + (value.getId() * (-1)) + ")";
 			sb.appendEscaped(AonStringUtils.isBlank(value.getName()) ? newLabel: value.getName());
 			
 			if (value.isDirty() || value.isDeleted()) {
@@ -502,9 +502,7 @@ public class Model184 extends MainEntryPoint {
 		replacementPanel.setVisible(currentMod184.isReplacement());
 		
 		incomesList.setVisibleRangeAndClearData(incomesList.getVisibleRange(),true);
-		if (incomesList != null && incomesList.getRowCount() > 0) {
-			partnersList.setVisibleRangeAndClearData(incomesList.getVisibleRange(),true);
-		}
+		partnersList.setVisibleRangeAndClearData(partnersList.getVisibleRange(),true);
 	}
 
 	@UiHandler("table")

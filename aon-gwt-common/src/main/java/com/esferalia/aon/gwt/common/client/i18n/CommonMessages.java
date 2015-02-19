@@ -401,6 +401,12 @@ public interface CommonMessages extends Messages {
 
 	// -------------------------------------------------------------- Model 190
 
+	@DefaultMessage("Nueva renta")
+	String newIncome();
+
+	@DefaultMessage("Nuevo socio")
+	String newPartner();
+
 	@DefaultMessage("Nuevo perceptor")
 	String newPerceptor();
 

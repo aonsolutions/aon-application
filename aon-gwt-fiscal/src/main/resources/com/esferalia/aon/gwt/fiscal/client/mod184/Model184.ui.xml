@@ -258,7 +258,7 @@
 									<g:west size="300">
 										<g:HTMLPanel styleName="aon-scroll-area">
 											<div class="{aonResources.css.aonTextRight}">
-												<g:Button ui:field='newIncomeButton' title="{msg.newPerceptor}"
+												<g:Button ui:field='newIncomeButton' title="{msg.newIncome}"
 													styleName='{style.newDetailButton} aon-icon-reset' />
 											</div>
 											<aon:ShowMorePagerPanel addStyleNames="{style.scrollable}" ui:field="incomesPagerPanel" />
@@ -280,7 +280,7 @@
 									<g:west size="300">
 										<g:HTMLPanel styleName="aon-scroll-area">
 											<div class="{aonResources.css.aonTextRight}">
-												<g:Button ui:field='newPartnerButton' title="{msg.newPerceptor}"
+												<g:Button ui:field='newPartnerButton' title="{msg.newPartner}"
 													styleName='{style.newDetailButton} aon-icon-reset' />
 											</div>
 											<aon:ShowMorePagerPanel addStyleNames="{style.scrollable}" ui:field="partnersPagerPanel" />
