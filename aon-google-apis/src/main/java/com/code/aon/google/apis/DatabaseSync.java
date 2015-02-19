@@ -1838,7 +1838,7 @@ public static Vector<String> getPersonEmails(int id, String key) throws SQLExcep
 
 	
 	
-	public static void delDriveId(String driveId, String domain ) throws SQLException, AonConnectionException {
+	public static void delDriveId(String driveId, String domain, Integer id) throws SQLException, AonConnectionException {
 		
 		Connection connection = null;
 		PreparedStatement stmt = null;
@@ -1846,13 +1846,13 @@ public static Vector<String> getPersonEmails(int id, String key) throws SQLExcep
 			
 			String sql = "UPDATE " + SQLConstants.RATTACH
 					+" SET "+RattachColumns.DRIVE_ID + "= NULL "
-					+ "WHERE "+RattachColumns.DRIVE_ID+" = ?";
+					+ "WHERE "+RattachColumns.ID+" = ?";
 
 			
 			
 			connection = getConnection(domain);
 			stmt = connection.prepareStatement(sql);
-			stmt.setString(1, driveId);
+			stmt.setInt(1, id);
 			
 
 

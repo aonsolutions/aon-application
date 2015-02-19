@@ -1143,16 +1143,16 @@ public class DriveUtils implements IBlobManager {
 		}
 	}
 
-	public static void deleteDriveId(String driveId, String domain)
+	public static void deleteDriveId(String driveId, String domain, Integer id)
 			throws SQLException {
 		DatabaseSync.deleteDriveID(driveId, domain);
-		DBConsults.deleteDriveIdContractAttach(domain, driveId);
-		DBConsults.deleteDriveIdIattach(domain, driveId);
-		DBConsults.deleteDriveIdInvoiceAttach(domain, driveId);
-		DBConsults.deleteDriveIdOfferAttach(domain, driveId);
-		DBConsults.deleteDriveIdPayrollAttach(domain, driveId);
-		DBConsults.deleteDriveIdProjectAttach(domain, driveId);
-		DBConsults.deleteDriveIdSepeAttach(domain, driveId);
+		DBConsults.deleteDriveIdContractAttach(domain, driveId, id);
+		DBConsults.deleteDriveIdIattach(domain, driveId, id);
+		DBConsults.deleteDriveIdInvoiceAttach(domain, driveId, id);
+		DBConsults.deleteDriveIdOfferAttach(domain, driveId, id);
+		DBConsults.deleteDriveIdPayrollAttach(domain, driveId, id);
+		DBConsults.deleteDriveIdProjectAttach(domain, driveId, id);
+		DBConsults.deleteDriveIdSepeAttach(domain, driveId, id);
 	}
 
 	/**********************

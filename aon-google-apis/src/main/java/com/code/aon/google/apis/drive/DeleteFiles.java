@@ -39,14 +39,14 @@ public class DeleteFiles {
 				if(property.getKey().equals("aontype"))
 					aonType = property.getValue();
 			}
-			if (aonType.equals("registry")) DatabaseSync.delDriveId(f.getId(), domain);
-			if (aonType.equals("contract")) DBConsults.deleteDriveIdContractAttach(domain, f.getId());
-			if (aonType.equals("item")) DBConsults.deleteDriveIdIattach(domain, f.getId());
-			if (aonType.equals("invoice")) DBConsults.deleteDriveIdInvoiceAttach(domain, f.getId());
-			if (aonType.equals("offer")) DBConsults.deleteDriveIdOfferAttach(domain, f.getId());
-			if (aonType.equals("payroll")) DBConsults.deleteDriveIdPayrollAttach(domain, f.getId());
-			if (aonType.equals("project")) DBConsults.deleteDriveIdProjectAttach(domain, f.getId());
-			if (aonType.equals("sepe")) DBConsults.deleteDriveIdSepeAttach(domain, f.getId());
+			if (aonType.equals("registry")) DatabaseSync.delDriveId(f.getId(), domain, id);
+			if (aonType.equals("contract")) DBConsults.deleteDriveIdContractAttach(domain, f.getId(), id);
+			if (aonType.equals("item")) DBConsults.deleteDriveIdIattach(domain, f.getId(), id);
+			if (aonType.equals("invoice")) DBConsults.deleteDriveIdInvoiceAttach(domain, f.getId(), id);
+			if (aonType.equals("offer")) DBConsults.deleteDriveIdOfferAttach(domain, f.getId(), id);
+			if (aonType.equals("payroll")) DBConsults.deleteDriveIdPayrollAttach(domain, f.getId(), id);
+			if (aonType.equals("project")) DBConsults.deleteDriveIdProjectAttach(domain, f.getId(), id);
+			if (aonType.equals("sepe")) DBConsults.deleteDriveIdSepeAttach(domain, f.getId(), id);
 		}
 	}
 	
@@ -59,16 +59,16 @@ public class DeleteFiles {
 					aonType = property.getValue();
 			}
 			if (aonType.equals("registry")){
-				DBConsults.deleteRAttachTags(domain, f.getId());
-				DBConsults.deleteFileRAttach(domain, f.getId());
+				DBConsults.deleteRAttachTags(domain, f.getId(), id);
+				DBConsults.deleteFileRAttach(domain, f.getId(), id);
 			}
-			if (aonType.equals("contract")) DBConsults.deleteFileContractAttach(domain, f.getId());
-			if (aonType.equals("item")) DBConsults.deleteFileIAttach(domain, f.getId());
-			if (aonType.equals("invoice")) DBConsults.deleteFileInvoiceAttach(domain, f.getId());
-			if (aonType.equals("offer")) DBConsults.deleteFileOfferAttach(domain, f.getId());
-			if (aonType.equals("payroll")) DBConsults.deleteFilePayrollAttach(domain, f.getId());
-			if (aonType.equals("project")) DBConsults.deleteFileProjectAttach(domain, f.getId());
-			if (aonType.equals("sepe")) DBConsults.deleteFileSepeAttach(domain, f.getId());
+			if (aonType.equals("contract")) DBConsults.deleteFileContractAttach(domain, f.getId(), id);
+			if (aonType.equals("item")) DBConsults.deleteFileIAttach(domain, f.getId(), id);
+			if (aonType.equals("invoice")) DBConsults.deleteFileInvoiceAttach(domain, f.getId(), id);
+			if (aonType.equals("offer")) DBConsults.deleteFileOfferAttach(domain, f.getId(), id);
+			if (aonType.equals("payroll")) DBConsults.deleteFilePayrollAttach(domain, f.getId(), id);
+			if (aonType.equals("project")) DBConsults.deleteFileProjectAttach(domain, f.getId(), id);
+			if (aonType.equals("sepe")) DBConsults.deleteFileSepeAttach(domain, f.getId(), id);
 		}
 	}
 		
@@ -184,7 +184,8 @@ public class DeleteFiles {
 	private static String values[];
 	private static String out = "normally";
 	private static String remove = "normally";
-
+	private static Integer id;
+ 
 	private static void parse(String args[]) {
 		CommandLineParser parser = new PosixParser();
 		HelpFormatter helpFormatter = new HelpFormatter();
@@ -238,6 +239,13 @@ public class DeleteFiles {
 		OptionBuilder.withValueSeparator(',');
 		Option removeOption = OptionBuilder.create("r");
 
+		OptionBuilder.isRequired(false);
+		OptionBuilder.hasArg(true);
+		OptionBuilder
+				.withDescription("id bd");
+		OptionBuilder.withValueSeparator(',');
+		Option idOption = OptionBuilder.create("id");
+
 		options.addOption(helpOption);
 		options.addOption(outOption);
 		options.addOption(domainOption);
@@ -245,7 +253,7 @@ public class DeleteFiles {
 		options.addOption(valueOption);
 		options.addOption(actionOption);
 		options.addOption(removeOption);
-
+		options.addOption(idOption);
 
 		try {
 			CommandLine line = parser.parse(options, args);
@@ -274,6 +282,10 @@ public class DeleteFiles {
 			String removeaux = line.getOptionValue("r");
 			if (removeaux != null)
 				remove = removeaux;
+			
+			String idaux = line.getOptionValue("id");
+			if (idaux != null)
+				id = Integer.parseInt(idaux);
 			
 		} catch (ParseException e) {
 			helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX,

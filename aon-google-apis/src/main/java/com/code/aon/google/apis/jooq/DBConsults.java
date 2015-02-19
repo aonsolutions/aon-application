@@ -166,7 +166,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static void deleteFileRAttach(String domain, String driveId) throws SQLException{
+	public static void deleteFileRAttach(String domain, String driveId, Integer id) throws SQLException{
 		Connection connection = null;
 		try {
 
@@ -176,14 +176,14 @@ public class DBConsults {
 					JooqSettings.getDefaultSettings());
 			
 			dslContext.delete(RATTACH)
-				.where(RATTACH.DRIVE_ID.eq(driveId)).execute();
+				.where(RATTACH.ID.eq(id)).execute();
 		} finally {
 			if (connection != null)
 				connection.close();
 		}
 	}
 	
-	public static void deleteRAttachTags(String domain,String drive_id) throws SQLException {
+	public static void deleteRAttachTags(String domain,String drive_id, Integer id) throws SQLException {
 		Connection connection = null;
 		try {
 
@@ -192,12 +192,12 @@ public class DBConsults {
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
 			
-			Result<Record1<Integer>> data =dslContext.select(RATTACH.ID)
+			/*Result<Record1<Integer>> data =dslContext.select(RATTACH.ID)
 				.from(RATTACH)
 				.where(RATTACH.DRIVE_ID.eq(drive_id)).fetch();
-			
-			if(data.get(0).value1()!= null) dslContext.delete(RATTACH_TAG)
-				.where(RATTACH_TAG.RATTACH.eq(data.get(0).value1())).execute();
+			*/
+			dslContext.delete(RATTACH_TAG)
+				.where(RATTACH_TAG.RATTACH.eq(id)).execute();
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -328,7 +328,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static void deleteDriveIdContractAttach(String domain,String id) throws SQLException{
+	public static void deleteDriveIdContractAttach(String domain,String id, Integer fileId) throws SQLException{
 		Connection connection = null;
 		try {
 
@@ -336,7 +336,7 @@ public class DBConsults {
 
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
-			String sql = "UPDATE contract_attach SET driveId = NULL WHERE driveId = "+id+";";
+			String sql = "UPDATE contract_attach SET driveId = NULL WHERE id = "+fileId+";";
 			dslContext.fetch(sql);
 		} finally {
 			if (connection != null)
@@ -381,7 +381,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static void deleteFileContractAttach(String domain, String driveId) throws SQLException{
+	public static void deleteFileContractAttach(String domain, String driveId, Integer id) throws SQLException{
 		Connection connection = null;
 		try {
 
@@ -391,7 +391,7 @@ public class DBConsults {
 					JooqSettings.getDefaultSettings());
 			
 			dslContext.delete(CONTRACT_ATTACH)
-				.where(CONTRACT_ATTACH.DRIVEID.eq(driveId)).execute();
+				.where(CONTRACT_ATTACH.ID.eq(id)).execute();
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -490,7 +490,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static void deleteDriveIdIattach(String domain,String id) throws SQLException{
+	public static void deleteDriveIdIattach(String domain,String id, Integer fileId) throws SQLException{
 		Connection connection = null;
 		try {
 
@@ -498,7 +498,7 @@ public class DBConsults {
 
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
-			String sql = "UPDATE iattach SET driveId = NULL WHERE driveId = "+id+";";
+			String sql = "UPDATE iattach SET driveId = NULL WHERE id = "+fileId+";";
 			dslContext.fetch(sql);
 		} finally {
 			if (connection != null)
@@ -543,7 +543,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static void deleteFileIAttach(String domain, String driveId) throws SQLException{
+	public static void deleteFileIAttach(String domain, String driveId, Integer id) throws SQLException{
 		Connection connection = null;
 		try {
 
@@ -553,7 +553,7 @@ public class DBConsults {
 					JooqSettings.getDefaultSettings());
 			
 			dslContext.delete(IATTACH)
-				.where(IATTACH.DRIVEID.eq(driveId)).execute();
+				.where(IATTACH.ID.eq(id)).execute();
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -686,7 +686,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static void deleteDriveIdInvoiceAttach(String domain,String id) throws SQLException{
+	public static void deleteDriveIdInvoiceAttach(String domain,String id, Integer fileId) throws SQLException{
 		Connection connection = null;
 		try {
 
@@ -694,7 +694,7 @@ public class DBConsults {
 
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
-			String sql = "UPDATE invoice_attach SET driveId = NULL WHERE driveId = "+id+";";
+			String sql = "UPDATE invoice_attach SET driveId = NULL WHERE id = "+fileId+";";
 			dslContext.fetch(sql);
 		} finally {
 			if (connection != null)
@@ -739,7 +739,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static void deleteFileInvoiceAttach(String domain, String driveId) throws SQLException{
+	public static void deleteFileInvoiceAttach(String domain, String driveId, Integer id) throws SQLException{
 		Connection connection = null;
 		try {
 
@@ -749,7 +749,7 @@ public class DBConsults {
 					JooqSettings.getDefaultSettings());
 			
 			dslContext.delete(INVOICE_ATTACH)
-				.where(INVOICE_ATTACH.DRIVEID.eq(driveId)).execute();
+				.where(INVOICE_ATTACH.ID.eq(id)).execute();
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -847,7 +847,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static void deleteDriveIdOfferAttach(String domain,String id) throws SQLException{
+	public static void deleteDriveIdOfferAttach(String domain,String id, Integer fileId) throws SQLException{
 		Connection connection = null;
 		try {
 
@@ -855,7 +855,7 @@ public class DBConsults {
 
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
-			String sql = "UPDATE offer_attach SET driveId = NULL WHERE driveId = "+id+";";
+			String sql = "UPDATE offer_attach SET driveId = NULL WHERE id = "+fileId+";";
 			dslContext.fetch(sql);
 		} finally {
 			if (connection != null)
@@ -900,7 +900,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static void deleteFileOfferAttach(String domain, String driveId) throws SQLException{
+	public static void deleteFileOfferAttach(String domain, String driveId, Integer id) throws SQLException{
 		Connection connection = null;
 		try {
 
@@ -910,7 +910,7 @@ public class DBConsults {
 					JooqSettings.getDefaultSettings());
 			
 			dslContext.delete(OFFER_ATTACH)
-				.where(OFFER_ATTACH.DRIVEID.eq(driveId)).execute();
+				.where(OFFER_ATTACH.ID.eq(id)).execute();
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -1013,7 +1013,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static void deleteDriveIdPayrollAttach(String domain,String id) throws SQLException{
+	public static void deleteDriveIdPayrollAttach(String domain,String id, Integer fileId) throws SQLException{
 		Connection connection = null;
 		try {
 
@@ -1022,7 +1022,7 @@ public class DBConsults {
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
 			
-			String sql = "UPDATE payroll_batch_attach SET driveId = NULL WHERE driveId = "+id+";";
+			String sql = "UPDATE payroll_batch_attach SET driveId = NULL WHERE id = "+fileId+";";
 			dslContext.fetch(sql);
 			
 		} finally {
@@ -1068,7 +1068,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static void deleteFilePayrollAttach(String domain,String driveId) throws SQLException{
+	public static void deleteFilePayrollAttach(String domain,String driveId, Integer id) throws SQLException{
 		Connection connection = null;
 		try {
 
@@ -1078,7 +1078,7 @@ public class DBConsults {
 					JooqSettings.getDefaultSettings());
 			
 			dslContext.delete(PAYROLL_BATCH_ATTACH)
-				.where(PAYROLL_BATCH_ATTACH.DRIVEID.eq(driveId)).execute();
+				.where(PAYROLL_BATCH_ATTACH.ID.eq(id)).execute();
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -1212,7 +1212,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static void deleteDriveIdProjectAttach(String domain,String id) throws SQLException{
+	public static void deleteDriveIdProjectAttach(String domain,String id, Integer fileId) throws SQLException{
 		Connection connection = null;
 		try {
 
@@ -1220,7 +1220,7 @@ public class DBConsults {
 
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
-			String sql = "UPDATE project_attach SET driveId = NULL WHERE driveId = "+id+";";
+			String sql = "UPDATE project_attach SET driveId = NULL WHERE id = "+fileId+";";
 			dslContext.fetch(sql);
 		} finally {
 			if (connection != null)
@@ -1265,7 +1265,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static void deleteFileProjectAttach(String domain, String driveId) throws SQLException{
+	public static void deleteFileProjectAttach(String domain, String driveId, Integer id) throws SQLException{
 		Connection connection = null;
 		try {
 
@@ -1275,7 +1275,7 @@ public class DBConsults {
 					JooqSettings.getDefaultSettings());
 			
 			dslContext.delete(PROJECT_ATTACH)
-				.where(PROJECT_ATTACH.DRIVEID.eq(driveId)).execute();
+				.where(PROJECT_ATTACH.ID.eq(id)).execute();
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -1375,7 +1375,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static void deleteDriveIdSepeAttach(String domain,String id) throws SQLException{
+	public static void deleteDriveIdSepeAttach(String domain,String id, Integer fileId) throws SQLException{
 		Connection connection = null;
 		try {
 
@@ -1383,7 +1383,7 @@ public class DBConsults {
 
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
-			String sql = "UPDATE sepe_batch_attach SET driveId = NULL WHERE driveId = "+id+";";
+			String sql = "UPDATE sepe_batch_attach SET driveId = NULL WHERE id = "+fileId+";";
 			dslContext.fetch(sql);
 		} finally {
 			if (connection != null)
@@ -1428,7 +1428,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static void deleteFileSepeAttach(String domain, String driveId) throws SQLException{
+	public static void deleteFileSepeAttach(String domain, String driveId, Integer id) throws SQLException{
 		Connection connection = null;
 		try {
 
@@ -1438,7 +1438,7 @@ public class DBConsults {
 					JooqSettings.getDefaultSettings());
 			
 			dslContext.delete(SEPE_BATCH_ATTACH)
-				.where(SEPE_BATCH_ATTACH.DRIVEID.eq(driveId)).execute();
+				.where(SEPE_BATCH_ATTACH.ID.eq(id)).execute();
 		} finally {
 			if (connection != null)
 				connection.close();
