@@ -207,6 +207,7 @@ import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -3875,6 +3876,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 						}
 
 						@Override
+						public Object liquid(double liquid, Date start, Date end)
+								throws ExpressionException, SQLException,
+								SalaryException {
+							throw new InterruptedException(
+									String.format("Lo sentimos. La funci\u00F3n BRUTO es incompatible con la funci\u00F3n NETO. Elija una de las dos. :-("));
+						}
+
+						@Override
 						protected ISQLContractSalaryCalculatorContext getNoItCalculatorContext(
 								Connection conn, Date startDate, Date endDate,
 								Date issueDate, Criteria criteria, int start,
@@ -3951,6 +3960,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 						public Object liquid(double liquid, Date start, Date end)
 								throws ExpressionException, SQLException {
 							return x;
+						}
+
+						@Override
+						public Object gross(double gross, Date start, Date end)
+								throws ExpressionException, SQLException,
+								SalaryException {
+							throw new InterruptedException(
+									String.format("Lo sentimos. La funci\u00F3n NETO es incompatible con la funci\u00F3n BRUTO. Elija una de las dos. :-("));
 						}
 
 						@Override
