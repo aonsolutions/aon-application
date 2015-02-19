@@ -6,4 +6,13 @@ public interface AonCalendarCSS extends CssResource {
 	@ClassName("aonCalendar")
 	String aonCalendar();
 	
+	@ClassName("statalHoliday")
+	String statalHoliday();
+	
+	@ClassName("autonomiHoliday")
+	String autonomiHoliday();
+	
+	@ClassName("localHoliday")
+	String localHoliday();
+
 }

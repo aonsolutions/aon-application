@@ -1185,7 +1185,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public Integer getParentDomain() {		
 		try {
-			initFacesContext();
+			initFacesContext();			
 			return getParentDomainID();
 		} finally {
 			releaseFacesContext();

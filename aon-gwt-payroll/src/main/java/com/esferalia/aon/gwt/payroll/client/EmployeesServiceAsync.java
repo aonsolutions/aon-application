@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 
+import com.esferalia.aon.gwt.common.client.widget.Calendar;
 import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
@@ -15,6 +16,7 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
+import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
@@ -168,5 +170,8 @@ public interface EmployeesServiceAsync extends StatisticsServiceAsync,
 			throws IllegalArgumentException;
 
 	void getAvaiableEmployees(AsyncCallback<Map<String, String>> callback)
+			throws IllegalArgumentException;
+	
+	void getStatalHolidays(int workplaceId, AsyncCallback<HolidayDraft> callback) 
 			throws IllegalArgumentException;
 }

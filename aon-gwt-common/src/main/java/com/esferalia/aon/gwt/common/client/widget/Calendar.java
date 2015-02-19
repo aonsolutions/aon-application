@@ -1,9 +1,11 @@
 package com.esferalia.aon.gwt.common.client.widget;
 
 import java.util.Date;
+import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.css.AonCalendarCSS;
 import com.esferalia.aon.gwt.common.client.css.AonCalendarResources;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.ResizeComposite;
@@ -15,6 +17,10 @@ public class Calendar extends ResizeComposite {
 	private static AonCalendarCSS CALENDAR_CSS = GWT.<AonCalendarResources> create(AonCalendarResources.class)
 			.calendar();
 	private int cols;
+	
+	private Map<Date, String> statalHolidays;
+	private Map<Date, String> autonomiHolidays;
+	private Map<Date, String> localHolidays;
 
 	private Date firstDate;
 	private Date lastDate;
@@ -25,14 +31,26 @@ public class Calendar extends ResizeComposite {
 
 	private FlexTable table;
 
-	public Calendar(int cols) {
+	public Calendar(int cols) {		
 		this.cols = cols;
 		table = new FlexTable();
 		CALENDAR_CSS.ensureInjected();
 		table.setStylePrimaryName( CALENDAR_CSS.aonCalendar() );
 		initWidget(table);
 	}
-
+	
+	public void setStatalHolidays(Map<Date, String> dates) {
+		this.statalHolidays = dates;
+	}
+	
+	public void setAutonomiHolidays(Map<Date, String> autonomiHolidays) {
+		this.autonomiHolidays = autonomiHolidays;
+	}
+	
+	public void setLocalHolidays(Map<Date, String> localHolidays) {
+		this.localHolidays = localHolidays;
+	}
+	
 	public void setFirstDate(Date firstDate) {
 		this.firstDate = firstDate;
 		if (isAttached())
@@ -57,17 +75,50 @@ public class Calendar extends ResizeComposite {
 				table.insertRow(row);
 			table.insertCell(row, col);
 
-			DatePicker datePicker = new DatePicker();
+			final DatePicker datePicker = new DatePicker();			
 			datePicker.getStyleOfDate(date);			
 			datePicker.setVisibleYearCount(1);
 			datePicker.setCurrentMonth(date);
-			datePicker.setYearAndMonthDropdownVisible(false);
-
+			datePicker.setYearAndMonthDropdownVisible(false);			
 			datePicker.setYearArrowsVisible(false);
+			
+			if(statalHolidays != null)
+				setStatalHoliday(datePicker, datePicker.getFirstDate(), datePicker.getLastDate());
+			
+			if(autonomiHolidays != null)
+				setAutonomiHoliday(datePicker, datePicker.getFirstDate(), datePicker.getLastDate());
+			
+			if(localHolidays != null)
+				setLocalHoliday(datePicker, datePicker.getFirstDate(), datePicker.getLastDate());
+
 			table.setWidget(row, col, datePicker);
-			CalendarUtil.addMonthsToDate(date, 1);
+			CalendarUtil.addMonthsToDate(date, 1);			
 			row += ++col / cols;
-			col = col % cols;
+			col = col % cols;		
+		}		
+	}
+	
+	private void setStatalHoliday ( final DatePicker datePicker, Date first, Date last) {
+		
+		for ( Date date : statalHolidays.keySet() ) {
+			if(DateUtils.isBeforeOrEquals(date, last) && DateUtils.isAfterOrEquals(date, first))
+				datePicker.addStyleToDates(CALENDAR_CSS.statalHoliday(), date);
+		}
+	}
+	
+	private void setAutonomiHoliday ( final DatePicker datePicker, Date first, Date last) {
+		
+		for ( Date date : autonomiHolidays.keySet() ) {
+			if(DateUtils.isBeforeOrEquals(date, last) && DateUtils.isAfterOrEquals(date, first))
+				datePicker.addStyleToDates(CALENDAR_CSS.autonomiHoliday(), date);
+		}
+	}
+	
+	private void setLocalHoliday ( final DatePicker datePicker, Date first, Date last) {
+		
+		for ( Date date : localHolidays.keySet() ) {
+			if(DateUtils.isBeforeOrEquals(date, last) && DateUtils.isAfterOrEquals(date, first))
+				datePicker.addStyleToDates(CALENDAR_CSS.localHoliday(), date);
 		}
 	}
 
@@ -78,3 +129,4 @@ public class Calendar extends ResizeComposite {
 		super.onAttach();
 	}
 }
+

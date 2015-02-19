@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 
-import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
@@ -16,6 +15,7 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
+import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
@@ -23,7 +23,6 @@ import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -152,6 +151,9 @@ public interface EmployeesService extends RemoteService, StatisticsService,
 	void delete(Salary salaries[]) throws IllegalArgumentException;
 	
 	Map<String, String> getAvaiableEmployees() 
+			throws IllegalArgumentException;
+	
+	HolidayDraft getStatalHolidays(int workplaceId) 
 			throws IllegalArgumentException;
 
 }

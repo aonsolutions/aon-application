@@ -69,6 +69,15 @@ public class DateUtils {
 			return false; // a != null
 		return a.after(b) || a.equals(b);
 	}
+	
+	public static boolean isBeforeOrEquals(Date a, Date b) {
+		if (a == null)
+			return false;
+		if (b == null)
+			return true;
+		
+		return a.before(b) || a.equals(b);
+	}
 
 	public static Date after(Date a, Date b) {
 		if (a == null)

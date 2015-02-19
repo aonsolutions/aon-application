@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.SortedSet;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.Calendar;
 import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
@@ -20,6 +21,7 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
+import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
 import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
@@ -69,7 +71,7 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 		employeesServiceAsync.getAvailablePayments(employeeId,
 				new AsyncCallbackWrapper<List<Payment>>(callback));
 	}
-	
+
 	@Override
 	public void getAvailableDeductions(int employeeId,
 			AsyncCallback<List<Deduction>> callback)
@@ -185,12 +187,13 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 		employeesServiceAsync.getSalaryPreviewReceiptHTML(salaryPreview, zoom,
 				new AsyncCallbackWrapper<String>(callback));
 	}
-	
+
 	@Override
 	public void insertPerson(Employee employee, AsyncCallback<Void> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.insertPerson(employee, new AsyncCallbackWrapper<Void>(callback));
+		employeesServiceAsync.insertPerson(employee,
+				new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	public void getEmployees(int workplaceId, Date endDate, String pattern,
@@ -201,13 +204,13 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 				offset, limit, new AsyncCallbackWrapper<List<Employee>>(
 						callback));
 	}
-	
+
 	@Override
 	public void getTrashEmployees(int workplaceId,
 			AsyncCallback<List<Employee>> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getTrashEmployees(workplaceId, 
+		employeesServiceAsync.getTrashEmployees(workplaceId,
 				new AsyncCallbackWrapper<List<Employee>>(callback));
 	}
 
@@ -398,50 +401,53 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 		employeesServiceAsync.getChanges(agreement,
 				new AsyncCallbackWrapper<SortedSet<Date>>(callback));
 	}
-	
+
 	@Override
-	public void saveITDataPerson(Map<Integer, LinkedHashMap<Integer, ITDataPerson>> inserts, 
-			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> deletes, 
+	public void saveITDataPerson(
+			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> inserts,
+			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> deletes,
 			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> updates,
 			AsyncCallback<ITData> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.saveITDataPerson(inserts, deletes, updates, 
-				new AsyncCallbackWrapper<ITData>(callback));		
+		employeesServiceAsync.saveITDataPerson(inserts, deletes, updates,
+				new AsyncCallbackWrapper<ITData>(callback));
 	}
-	
+
 	@Override
-	public void pasteContract(int workplaceId, int contractId, String document, Date startDate,
-			Date endDate, boolean check, AsyncCallback<Employee> callback)
-			throws IllegalArgumentException {
+	public void pasteContract(int workplaceId, int contractId, String document,
+			Date startDate, Date endDate, boolean check,
+			AsyncCallback<Employee> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.pasteContract(workplaceId, contractId, document, startDate, endDate, check, 
-				new AsyncCallbackWrapper<Employee>(callback));
+		employeesServiceAsync.pasteContract(workplaceId, contractId, document,
+				startDate, endDate, check, new AsyncCallbackWrapper<Employee>(
+						callback));
 	}
-	
+
 	@Override
 	public void moveContractId(Employee employee, AsyncCallback<Void> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.moveContractId(employee, 
+		employeesServiceAsync.moveContractId(employee,
 				new AsyncCallbackWrapper<Void>(callback));
 	}
-	
+
 	@Override
 	public void deleteContract(Employee employee, AsyncCallback<Void> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.deleteContract(employee, 
-				new AsyncCallbackWrapper<Void>(callback));			
+		employeesServiceAsync.deleteContract(employee,
+				new AsyncCallbackWrapper<Void>(callback));
 	}
-	
+
 	@Override
-	public void getAvaiableEmployees(
-			AsyncCallback<Map<String, String>> callback)
+	public void getAvaiableEmployees(AsyncCallback<Map<String, String>> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getAvaiableEmployees( 
-				new AsyncCallbackWrapper<Map<String,String>>(callback));
+		employeesServiceAsync
+				.getAvaiableEmployees(new AsyncCallbackWrapper<Map<String, String>>(
+						callback));
 	}
+
 	// ------------------------------------------------- GPSReportsServiceAsync
 	@Override
 	public void getA3Report(Date month, int[] workplaces,
@@ -465,5 +471,13 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 		AON.start();
 		employeesServiceAsync.getHolidayReport(start, end, workplaces,
 				new AsyncCallbackWrapper<ReportData>(callback));
+	}
+
+	@Override
+	public void getStatalHolidays(int workplaceId,
+			AsyncCallback<HolidayDraft> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getStatalHolidays(workplaceId,
+				new AsyncCallbackWrapper<HolidayDraft>(callback));
 	}
 }

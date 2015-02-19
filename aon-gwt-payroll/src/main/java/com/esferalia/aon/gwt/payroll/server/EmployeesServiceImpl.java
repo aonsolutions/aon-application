@@ -86,6 +86,7 @@ import com.esferalia.aon.gwt.common.shared.EvalWarning;
 import com.esferalia.aon.gwt.common.shared.UnknownVariablesWarning;
 import com.esferalia.aon.gwt.payroll.client.EmployeesService;
 import com.esferalia.aon.gwt.payroll.client.StatisticsService;
+import com.esferalia.aon.gwt.payroll.jooq.JooqCalendar;
 import com.esferalia.aon.gwt.payroll.jooq.JooqDeductions;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayments;
@@ -103,6 +104,7 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
+import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
 import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
@@ -420,6 +422,32 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			releaseFacesContext();
 		}
 	}
+	
+	
+	@Override
+	public HolidayDraft getStatalHolidays(
+			int workplaceId) throws IllegalArgumentException {
+		
+		Connection conn = null;
+		try {
+			initFacesContext();
+			conn = getConnection();
+			return JooqCalendar.getCalendar(conn, workplaceId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+
+		
+	}
+
 
 	@Override
 	public List<Cost> getWorkplaceCosts(int workplaceId)
@@ -1718,7 +1746,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 			releaseFacesContext();
 		}
-
 	}
 
 	// -------------------------------------------------------- Private methods

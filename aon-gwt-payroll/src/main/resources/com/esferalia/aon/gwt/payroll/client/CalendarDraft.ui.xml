@@ -2,13 +2,74 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
-	<ui:style>
+	<ui:style type='com.esferalia.aon.gwt.payroll.client.CalendarDraft.Style'>
+
+	.disclosure-panel {
+		border-left: hidden;
+		margin-left: 0px;
+		padding: 4px 0 4px 8px;
+	}
+	
+	.year {
+		font-size: 50px;
+		color: #FF704D;
+		padding-left: 60px;
+		padding-top: 6px;
+	}
+	
+	.legend {
+		margin-top: 5px;
+		margin-left: auto;
+		margin-right: auto;
+		margin-bottom: 15px;
+	}
+	
+	.legend-icon {
+		height: 15px;
+		width: 15px;
+		border-radius: 20px;
+	}
+	
+	.legend-caption {
+		margin-top: 10px;
+		margin-left: 6px;
+		margin-right: 16px;
+		margin-bottom: 10px;
+	}
+	
+	.typeHoliday {
+		font: bold 90% fantasy;
+	}
+	
+	.month {
+		font: bold 90% Tahoma;
+		margin-left: 5px;
+		padding-top: 10px;
+		
+	}
+	
+	.holiday {
+		font: italic 90% Georgia Arial Tahoma;
+    	margin-left: 5px;
+    	margin-top: 5px;
+	}
+	.statal {
+		background-color: #FFB2B2;
+	}
+	.autonomic {
+		background-color: #99C2FF
+	}
+
+	.local {
+		background-color: #B2FFB2;
+	}
+	
 	</ui:style>
 
 	<g:HTMLPanel>
 
 		<g:DockLayoutPanel unit="PX" ui:field="mainPanel">
-			<g:north size="72">
+			<g:north size="30">
 				<g:FlowPanel>
 					<g:FlowPanel styleName="aon-finding-title-toolbar">
 						<g:HorizontalPanel>
@@ -22,13 +83,18 @@
 									<g:Label styleName="aon-outputText"></g:Label>
 								</g:HTMLPanel>
 							</g:HTMLPanel>
-							<g:HorizontalPanel styleName="aon-finding-toolbar">
-								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-									<g:ListBox ui:field='dateListBox' styleName='' />
+							<g:HTMLPanel styleName="aon-finding-subtitle">
+								<g:HTMLPanel styleName="aon-finding-subtitle-internal">
+									<g:ListBox ui:field="yearList" /> 
 								</g:HTMLPanel>
-							</g:HorizontalPanel>
+							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:FlowPanel>
+				</g:FlowPanel>
+			</g:north>
+			<g:north size="72">
+				<g:FlowPanel>
+					<g:Label styleName="{style.year}"> 2015 </g:Label>
 				</g:FlowPanel>
 			</g:north>
 			<g:center>
@@ -36,7 +102,11 @@
 					<g:SimplePanel ui:field="calendarPanel" />
 				</g:ScrollPanel>
 			</g:center>
+			<g:east size="172">
+			<g:ScrollPanel>
+			<g:VerticalPanel ui:field="legendVerticalPanel" styleName="{style.legend}"  />
+			</g:ScrollPanel>
+			</g:east>
 		</g:DockLayoutPanel>
-
 	</g:HTMLPanel>
 </ui:UiBinder> 

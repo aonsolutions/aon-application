@@ -49,7 +49,7 @@
 }
 
 .aonCalendar .datePickerWeekdayLabel {
-    background: none repeat scroll 0 0 #f1eee9;
+    background: none repeat scroll 0 0 #ffffff;
     color: #000;
     font-weight: normal;
 }
@@ -59,7 +59,7 @@
 }
 
 .aonCalendar .datePickerWeekendLabel {
-    background: none repeat scroll 0 0 #f1eee9;
+    background: none repeat scroll 0 0 #ffffff;
     color: red;
     font-weight: normal;
 }
@@ -81,4 +81,27 @@
     border-right: 1px solid #ededed;
     outline: medium none;
     text-align: center;
+}
+
+.aonCalendar .datePickerDayIsToday {
+    background: none repeat scroll 0 0 #ffc266;
+    border-radius: 25px;
+}
+.aonCalendar .statalHoliday {
+	background: none repeat scroll 0 0 #FFB2B2;
+	border-radius: 25px;
+	color: #FF3300;
+}
+
+.aonCalendar .autonomiHoliday {
+	background: none repeat scroll 0 0 #99C2FF;
+	border-radius: 25px;
+	color: #005CE6;
+}
+
+.aonCalenndar .localHoliday {
+	background: none repeat scroll 0 0 	#B2FFB2;
+	border-radius: 25px;
+	color: #009900;
+	
 }
