@@ -21,6 +21,8 @@ public class AonSQLFile {
 	private final static String COMMENT0 = "//";
 	private final static String COMMENT1 = "#";
 
+	private final static String DEFAULT_SEPARATOR = ";";
+	private final static String DELIMITER = "#DELIMITER";
 	private final static String USE_STATEMENT = "USE";
 	private final static String CREATE_DATABASE_STATEMENT = "CREATE DATABASE";
 	
@@ -32,7 +34,7 @@ public class AonSQLFile {
 
 	private AonSQLFile(Reader reader) {
 		this.reader = new LineNumberReader(reader);
-		separator = ";";
+		separator = DEFAULT_SEPARATOR;
 	}
 	
 	public AonSQLFile(InputStream input) {
@@ -87,14 +89,27 @@ public class AonSQLFile {
 			StringBuffer stmt = new StringBuffer();
 			while (ready()) {
 				String line = reader.readLine();
-				setLineNumber( reader.getLineNumber());
-				line = StringUtils.trim(line);
-				if (!StringUtils.isEmpty(line) && !line.startsWith(COMMENT0) && !line.startsWith(COMMENT1)) {
-					stmt.append(line);
-					if (line.endsWith(separator)) {
-						break;
+				
+				if (line.startsWith(DELIMITER)) {
+					// Si en la línea aparecen los metacaracters #DELIMITER $$, a 
+					// partir de ese momento se tomaraá el nuevo separador, en esta caso $$.
+					// Se ignora la linea
+					separator = StringUtils.trim(StringUtils.substringAfter(line, ESP));		
+				} else if (line.startsWith(COMMENT1 + separator)) {
+					// Si en la línea aparecen los metacaracters #$$ a 
+					// partir de ese momento se restaura el separador por defecto.
+					// Se ignora la linea
+					separator = DEFAULT_SEPARATOR;		
+				} else {
+					setLineNumber( reader.getLineNumber());
+					line = StringUtils.trim(line);
+					if (!StringUtils.isEmpty(line) && !line.startsWith(COMMENT0) && !line.startsWith(COMMENT1)) {
+						stmt.append(line);
+						if (line.endsWith(separator)) {
+							break;
+						}
+						stmt.append(ESP);
 					}
-					stmt.append(ESP);
 				}
 			}
 			String statement = StringUtils.trimToNull(stmt.toString());
