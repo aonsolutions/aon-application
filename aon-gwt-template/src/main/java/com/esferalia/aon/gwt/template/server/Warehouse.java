@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.template.server;
 
-public class Warehouse {
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public class Warehouse implements IsSerializable{
 	String name;
 	Integer workplace;
 	Integer id;

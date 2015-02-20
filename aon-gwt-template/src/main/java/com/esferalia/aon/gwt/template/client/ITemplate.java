@@ -17,7 +17,7 @@ public interface ITemplate extends RemoteService{
 	
 	public TemplateInfo newTemplate(TemplateInfo ti );
 	
-	public void editTemplate(TemplateInfo ti);
+	public TemplateInfo editTemplate(TemplateInfo ti);
 	
 	public void deleteTemplate(TemplateInfo ti);
 	

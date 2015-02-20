@@ -1,8 +1,9 @@
 package com.esferalia.aon.gwt.template.server;
 
 import com.code.aon.config.Series;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class StockInfo {
+public class StockInfo implements IsSerializable{
 	
 	String product;
 	Series series;

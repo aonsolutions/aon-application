@@ -16,7 +16,7 @@ public interface ITemplateAsync {
 
 	void initAux(AsyncCallback<Void> callback);
 
-	void editTemplate(TemplateInfo ti, AsyncCallback<Void> callback);
+	void editTemplate(TemplateInfo ti, AsyncCallback<TemplateInfo> callback);
 
 	void deleteTemplate(TemplateInfo ti, AsyncCallback<Void> callback);
 

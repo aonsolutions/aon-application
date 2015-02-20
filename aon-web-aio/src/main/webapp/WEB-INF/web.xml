@@ -265,6 +265,24 @@
 	</servlet-mapping>
 	
 	<servlet>
+		<servlet-name>DownloadTemplatesProduct</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.template.server.DownloadProductServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DownloadTemplatesProduct</servlet-name>
+		<url-pattern>/aon_gwt_template/gwt_download_product/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>DownloadTemplatesStock</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.template.server.DownloadStockServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DownloadTemplatesStock</servlet-name>
+		<url-pattern>/aon_gwt_template/gwt_download_stock/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
 		<servlet-name>UploadProducts</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.template.server.UploadProductsServlet</servlet-class>
 	</servlet>

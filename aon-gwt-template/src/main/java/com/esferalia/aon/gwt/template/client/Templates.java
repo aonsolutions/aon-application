@@ -191,6 +191,8 @@ public class Templates extends Composite implements EntryPoint {
 
 			exportProduct(this);
 			exportStock(this);
+			exportProductx(this);
+			exportStockx(this);
 		}
 	}
 	
@@ -462,8 +464,12 @@ public class Templates extends Composite implements EntryPoint {
 			@Override
 			protected void onAccept() {
 				hide();
-				TemplateInfo ti2 = new TemplateInfo();
-				ti2.setId(ti.getId());
+				Integer aux = dataGrid.getKeyboardSelectedRow();
+				Window.alert(aux+"");
+				
+				TemplateInfo ti2 = dataProvider.getList().get(aux);
+				
+				
 				TextBox tb = (TextBox) flex_table.getWidget(0, 1);
 				ti2.setName(tb.getText());
 
@@ -479,18 +485,14 @@ public class Templates extends Composite implements EntryPoint {
 					i++;
 				}
 				ti2.setColumns(v);
+				Window.alert(ti2.getColumns().size()+"");
 				ti =  ti2;
-				item.editTemplate(ti2, new AsyncCallback<Void>() {
-					TemplateInfo templateInfo = ti;
+				Window.alert(ti2.getName() +" - "+ ti2.getType());
+				item.editTemplate(ti2, new AsyncCallback<TemplateInfo>() {
 					@Override
-					public void onSuccess(Void result) {
-						Integer index = 0;
-						for(TemplateInfo t  :template_list.getList()){
-							if(t.getId().equals(templateInfo.getId())){
-								template_list.getList().set(index, templateInfo);
-							}
-							index++;
-						}
+					public void onSuccess(TemplateInfo result) { 
+						Integer index = dataGrid.getKeyboardSelectedRow();
+						template_list.getList().set(index, result);
 						addDataDisplay(dataGrid);
 						dataGrid.redraw();
 					}
@@ -598,6 +600,46 @@ public class Templates extends Composite implements EntryPoint {
 		popup.show();
 	}
 
+	private void exportProducts(){
+		Dialog d = new Dialog("Exportar Productos","Descargar",true,"Cancelar",true,"exportProduct");
+		d.setUrl(GWT.getModuleBaseURL());
+		d.setTemplateList(template_list);
+		TemplatesDialog popup = new TemplatesDialog(d) {
+			
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+			
+			@Override
+			protected void onAccept() {
+
+				ListBox lb = (ListBox) flex_table.getWidget(0, 1);
+				String template = lb.getItemText(lb.getSelectedIndex());
+				TemplateInfo ti = new TemplateInfo();
+				
+				for(TemplateInfo t : tlist.getList()) {
+					if(t.getName().equals(template) && t.getType().equals("Producto")){
+						ti = t;
+					}
+				}
+				String driveId="";
+				if(ti.getDriveId()!=null)driveId= ti.getDriveId();
+				String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_product/"
+		            	+ "?id=" + Integer.toString(ti.getId())
+		            	+ "&drive_id=" +URL.encode(driveId)
+		            	+ "&name=" +URL.encode(ti.getName()
+		            	+ "&domain_id=" + ti.getDomainId());
+				Window.open( fileDownloadURL, "_blank",null);
+				hide();
+				// llamar  servlet de descarga para krear excel con todos losproductos
+			}
+		};
+		popup.addStyleName("gwt-PopupPanel-template");
+		popup.setGlassEnabled(true);
+		popup.show();
+	}
+	
 	private void importStock(){
 		Dialog d = new Dialog("Importar Stock","Importar",true,"Cancelar",true,"importStock");
 		d.setUrl(GWT.getModuleBaseURL());
@@ -658,7 +700,48 @@ public class Templates extends Composite implements EntryPoint {
 		popup.setGlassEnabled(true);
 		popup.show();
 	}
-//------------------------------ ui handlers
+
+	private void exportStocks(){
+		Dialog d = new Dialog("Exportar Stock","Descargar",true,"Cancelar",true,"exportStock");
+		d.setUrl(GWT.getModuleBaseURL());
+		d.setTemplateList(template_list);
+		TemplatesDialog popup = new TemplatesDialog(d) {
+			
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+			
+			@Override
+			protected void onAccept() {
+
+				ListBox lb = (ListBox) flex_table.getWidget(0, 1);
+				String template = lb.getItemText(lb.getSelectedIndex());
+				TemplateInfo ti = new TemplateInfo();
+				
+				for(TemplateInfo t : tlist.getList()) {
+					if(t.getName().equals(template) && t.getType().equals("Stock")){
+						ti = t;
+					}
+				}
+				String driveId="";
+				if(ti.getDriveId()!=null)driveId= ti.getDriveId();
+				String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_stock/"
+		            	+ "?id=" + Integer.toString(ti.getId())
+		            	+ "&drive_id=" +URL.encode(driveId)
+		            	+ "&name=" +URL.encode(ti.getName()
+		            	+ "&domain_id=" + ti.getDomainId());
+				Window.open( fileDownloadURL, "_blank",null);
+				hide();
+				// llamar  servlet de descarga para krear excel con todos losproductos
+			}
+		};	
+		popup.addStyleName("gwt-PopupPanel-template");
+		popup.setGlassEnabled(true);
+		popup.show();
+	}
+	
+	//------------------------------ ui handlers
 	
 	@UiHandler("nameSearchButton")
 	void namesbutton(ClickEvent event) {
@@ -773,6 +856,16 @@ public class Templates extends Composite implements EntryPoint {
     	}
 	}-*/;
 	
+	public void productx(){
+		exportProducts();
+	}
+
+	public static native void exportProductx(Templates thiz) /*-{
+		$wnd.productx = function() {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::productx(*)();
+		}
+	}-*/;
+	
 	public void stock(){
 		importStock();
 	}
@@ -783,5 +876,14 @@ public class Templates extends Composite implements EntryPoint {
 		}
 	}-*/;
 
+	public void stockx(){
+		exportStocks();
+	}
+	
+	public static native void exportStockx(Templates thiz) /*-{
+		$wnd.stockx = function() {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::stockx(*)();
+		}
+	}-*/;
 }
 

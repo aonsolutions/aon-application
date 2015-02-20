@@ -2225,7 +2225,7 @@ color:#000;
  	text-transform:uppercase; 	
  	font-size:0.8em;
  	font-weight:bold;
- 	padding:1px 5px 1px 16px;
+ 	padding:1px 5px 1.5px 16px;
  	margin:0 0 0 5px;
  	border:0;
  	border-right:#808080 1px solid;
@@ -3130,6 +3130,14 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
  
  .aon-icon-cancel2{
  	background:transparent url(images/aon-icon/aon-icon-cancel2.gif) scroll left center no-repeat;
+ }
+ 
+  .aon-icon-import-excel-trans{
+ 	background:transparent url(images/aon-icon/aon-icon-import-excel-trans.png) scroll left center no-repeat;
+ }
+ 
+   .aon-icon-export-excel-trans{
+ 	background:transparent url(images/aon-icon/aon-icon-export-excel-trans.png) scroll left center no-repeat;
  }
  
  .aon-gwt-upload{

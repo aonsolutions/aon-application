@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.Collator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
@@ -128,7 +129,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		return ti;
 	}
 	
-	public void editTemplate(TemplateInfo ti){
+	public TemplateInfo editTemplate(TemplateInfo ti){
 		String domain = AonUtil.getDomainName();
 		byte[] b = Utils.newXmlFile(ti);
 		try {
@@ -136,6 +137,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return ti;
 	}
 
 	public void deleteTemplate(TemplateInfo ti){
@@ -229,7 +231,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
                 }
                 else{
                 	if(j!= cell.getColumnIndex()){
-                		 if(ti.getColumns().get(j).equals("Producto") || ti.getColumns().get(j).equals("Almac\u00e9n Destino") || ti.getColumns().get(j).equals("Cantidad")){
+                		 if(ti.getColumns().get(j).equals("Producto") || ti.getColumns().get(j).equals("Almac\u00e9n Destino") || ti.getColumns().get(j).equals("Cantidad") || ti.getColumns().get(j).equals("Series")){
                 			Integer fila = i+1;
                 			Integer columna = j+1;
                 			textError= textError + "*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n";
@@ -264,13 +266,15 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
              }
             
              if(i>0){ 
-            	 Boolean b = false;
-            	 String domain = AonUtil.getDomainName();
-            	 try {
-					b = DBConsults.checkSeries(domain,domainId,si.getSeries(),si.getTargetWarehouse());
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+            	Boolean b = true;
+            	String domain = AonUtil.getDomainName();
+            	if(si.getSeries() != null && si.getTargetWarehouse() !=null){
+            		try {
+            		 	b = DBConsults.checkSeries(domain,domainId,si.getSeries(),si.getTargetWarehouse());
+            	 	} catch (SQLException e) {
+            	 		e.printStackTrace();
+					}
+            	}
             	if(!b){
             		Integer fila = i+1;
             		textError=textError +"*Fila "+fila+" : La serie y el almacén no concuerdan.";
@@ -983,7 +987,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	public Vector<TemplateInfo> searchNameTemplate(String searchStr, Vector<TemplateInfo> templates){
 		Vector<TemplateInfo> vector = new Vector<TemplateInfo>();
 		for (TemplateInfo templateInfo : templates) {
-			if(AonStringUtils.containsIgnoreCase(templateInfo.getName(), searchStr)){
+			if(containsIgnoreCase2(templateInfo.getName(), searchStr)){
 				vector.add(templateInfo);
 			}
 		}
@@ -993,10 +997,52 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	public Vector<TemplateInfo> searchTypeTemplate(String searchStr, Vector<TemplateInfo> templates){
 		Vector<TemplateInfo> vector = new Vector<TemplateInfo>();
 		for (TemplateInfo templateInfo : templates) {
-			if(AonStringUtils.containsIgnoreCase(templateInfo.getType(), searchStr)){
+			if(containsIgnoreCase2(templateInfo.getType(), searchStr)){
 				vector.add(templateInfo);
 			}
 		}
 		return vector;
+	}
+	
+	/**
+	 * <p>
+	 * Checks if CharSequence contains a search CharSequence irrespective of
+	 * case, handling {@code null}. Case-insensitivity is defined as by
+	 * {@link String#equalsIgnoreCase(String)}.
+	 *
+	 * <p>
+	 * A {@code null} CharSequence will return {@code false}.
+	 * </p>
+	 *
+	 * <pre>
+	 * StringUtils.contains(null, *) = false
+	 * StringUtils.contains(*, null) = false
+	 * StringUtils.contains("", "") = true
+	 * StringUtils.contains("abc", "") = true
+	 * StringUtils.contains("abc", "a") = true
+	 * StringUtils.contains("ábc", "a") = true
+	 * StringUtils.contains("abc", "z") = false
+	 * StringUtils.contains("abc", "A") = true
+	 * StringUtils.contains("ábc", "A") = true
+	 * StringUtils.contains("abc", "Z") = false
+	 * </pre>
+	 * @param str
+	 * @param searchStr
+	 * @return
+	 */
+	public static boolean containsIgnoreCase2(String str, String searchStr) {
+	    Locale locale = new Locale("es_ES");
+		Collator c = Collator.getInstance(locale);
+		c.setStrength(Collator.PRIMARY);
+	    if (str == null || searchStr == null) {
+	        return false;
+	    }
+	    int len = searchStr.length();
+	    int max = str.length() - len;
+	    for (int i = 0; i <= max; i++) {   	
+	    	if (c.compare(str.substring(i, i+len), searchStr) == 0)
+	    		return true;  
+	    }
+	    return false;
 	}
 }

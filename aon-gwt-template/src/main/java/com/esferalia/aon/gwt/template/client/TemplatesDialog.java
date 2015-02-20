@@ -80,7 +80,8 @@ public abstract class TemplatesDialog extends CustomDialog {
 			Dialog dialog = d;
 			@Override
 			public void onClick(ClickEvent event) {
-				if(stockCheck() || productCheck() || dialog.getType().equals("delete") || dialog.getType().contains("import"))
+				if(stockCheck() || productCheck() || dialog.getType().equals("delete") || dialog.getType().contains("import") 
+						|| dialog.getType().contains("export"))
 					onAccept();
 				else {
 					label.setText("*Faltan columnas por a\u00f1adir");
@@ -107,6 +108,8 @@ public abstract class TemplatesDialog extends CustomDialog {
 		case "importProduct": importProduct(dialog.getUrl(),dialog.getTemplateList());break;
 		case "importStock": importStock(dialog.getUrl(),dialog.getTemplateList());break;
 		case "importResponse": importResponse(dialog.getError());break;
+		case "exportProduct": exportProduct(dialog.getTemplateList());break;
+		case "exportStock": exportStock(dialog.getTemplateList());break;
 		default:
 			break;
 	}
@@ -135,6 +138,64 @@ public abstract class TemplatesDialog extends CustomDialog {
 			label.setStyleName("aon-check-template");
 		}
 		else label.setText("Se ha importado correctamente");
+	}
+	
+	private void exportProduct(TemplateList templates){
+		//TODO 
+		flex_table.setStyleName("aon-panelGrid");
+		flex_table.setWidth("400px");
+		flex_table.setBorderWidth(1);
+		flex_table.setCellSpacing(0);
+		
+		ListBox lb = new ListBox();
+		lb.addItem("-");
+		for(TemplateInfo ti : templates.getList()){
+			if(ti.getType().equals("Producto"))
+				lb.addItem(ti.getName());
+		}
+		flex_table.setWidget(0, 0, new Label("Plantilla"));
+		flex_table.setWidget(0, 1, lb);
+		
+		for (int i = 0; i < flex_table.getRowCount(); i++) {
+			for (int j = 0; j < flex_table.getCellCount(i); j++) {
+				if ((j % 2) == 0) {
+					flex_table.getCellFormatter().setStyleName(i, j,
+							"aon-panelGrid-odd");
+				} else {
+					flex_table.getCellFormatter().setStyleName(i, j,
+							"aon-panelGrid-even");
+				}
+			}
+		}
+	}
+	
+	private void exportStock(TemplateList templates){
+		//TODO 
+		flex_table.setStyleName("aon-panelGrid");
+		flex_table.setWidth("400px");
+		flex_table.setBorderWidth(1);
+		flex_table.setCellSpacing(0);
+		
+		ListBox lb = new ListBox();
+		lb.addItem("-");
+		for(TemplateInfo ti : templates.getList()){
+			if(ti.getType().equals("Stock"))
+				lb.addItem(ti.getName());
+		}
+		flex_table.setWidget(0, 0, new Label("Plantilla"));
+		flex_table.setWidget(0, 1, lb);
+		
+		for (int i = 0; i < flex_table.getRowCount(); i++) {
+			for (int j = 0; j < flex_table.getCellCount(i); j++) {
+				if ((j % 2) == 0) {
+					flex_table.getCellFormatter().setStyleName(i, j,
+							"aon-panelGrid-odd");
+				} else {
+					flex_table.getCellFormatter().setStyleName(i, j,
+							"aon-panelGrid-even");
+				}
+			}
+		}
 	}
 	
 	private void importProduct(String url,TemplateList templates) {
