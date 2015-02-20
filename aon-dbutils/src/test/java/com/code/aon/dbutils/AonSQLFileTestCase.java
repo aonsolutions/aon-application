@@ -11,9 +11,10 @@ public class AonSQLFileTestCase {
 		InputStream input = AonSQLFileTestCase.class.getClassLoader().getResourceAsStream(
 				"com/code/aon/dbutils/create_procedure.sql");
 		AonSQLFile aonSQLFile = new AonSQLFile(input);
-		aonSQLFile.getStatement();
+		while( aonSQLFile.ready() ) {
+			System.out.println(aonSQLFile.getStatement());
+		}
 		org.junit.Assert.assertEquals(false, aonSQLFile.ready());
 	}
 	
-
 }

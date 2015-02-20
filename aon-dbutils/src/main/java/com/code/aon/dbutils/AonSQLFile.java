@@ -22,7 +22,7 @@ public class AonSQLFile {
 	private final static String COMMENT1 = "#";
 
 	private final static String DEFAULT_SEPARATOR = ";";
-	private final static String DELIMITER = "#DELIMITER";
+	private final static String DELIMITER = "DELIMITER";
 	private final static String USE_STATEMENT = "USE";
 	private final static String CREATE_DATABASE_STATEMENT = "CREATE DATABASE";
 	
@@ -91,23 +91,24 @@ public class AonSQLFile {
 				String line = reader.readLine();
 				
 				if (line.startsWith(DELIMITER)) {
-					// Si en la línea aparecen los metacaracters #DELIMITER $$, a 
+					// Si en la línea aparecen los metacaracters DELIMITER $$, a 
 					// partir de ese momento se tomaraá el nuevo separador, en esta caso $$.
-					// Se ignora la linea
+					//
+					// *** Se ignora la linea ****
+					//
 					separator = StringUtils.trim(StringUtils.substringAfter(line, ESP));		
-				} else if (line.startsWith(COMMENT1 + separator)) {
-					// Si en la línea aparecen los metacaracters #$$ a 
-					// partir de ese momento se restaura el separador por defecto.
-					// Se ignora la linea
-					separator = DEFAULT_SEPARATOR;		
 				} else {
 					setLineNumber( reader.getLineNumber());
 					line = StringUtils.trim(line);
 					if (!StringUtils.isEmpty(line) && !line.startsWith(COMMENT0) && !line.startsWith(COMMENT1)) {
-						stmt.append(line);
-						if (line.endsWith(separator)) {
-							break;
+						boolean sentenceEnds = line.endsWith(separator);
+						if (sentenceEnds) {
+							line = StringUtils.removeEnd(line, separator);
 						}
+						stmt.append(line);
+						if (sentenceEnds) {
+							break;
+						} 
 						stmt.append(ESP);
 					}
 				}
