@@ -1,6 +1,7 @@
 package com.code.aon.google.apis.drive;
 
 import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.Property;
 
 public class View {
 
@@ -10,6 +11,11 @@ public class View {
 		System.out.println("   --> MIME TYPE:"+f.getMimeType());
 		System.out.println("   --> SIZE:"+f.getFileSize());
 		System.out.println("   --> LINK:"+f.getAlternateLink());
+		for(Property p : f.getProperties()){
+			if(p.getKey().equals("fileId")){
+				System.out.println("   --> DB-ID:"+p.getValue());
+			}
+		}
 		System.out.println("");
 	}
 	
@@ -45,5 +51,8 @@ public class View {
         System.out.println("ERROR: No se ha especificado el email.");
     }
 
+    public static void error5(){
+    	System.out.println("ERROR:No se dispone del identificador del archivo en Base de Datos");
+    }
     
 }

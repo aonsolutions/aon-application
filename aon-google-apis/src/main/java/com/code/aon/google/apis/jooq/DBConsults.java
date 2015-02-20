@@ -34,6 +34,7 @@ import org.jooq.Result;
 import org.jooq.impl.DSL;
 
 import com.code.aon.google.apis.DatabaseSync;
+import com.code.aon.google.apis.DriveData;
 import com.code.aon.google.apis.FileInfo;
 import com.code.aon.pool.AonConnectionException;
 
@@ -146,9 +147,56 @@ public class DBConsults {
 
 	}
 
-	/**************************** ATTACHS *****************************/
+	/**************************** ATTACHS 
+	 * @throws SQLException *****************************/
 	//REGISTRY ATTACH
-	public static void insertBlobRAttach(byte[] bs,String domain,String driveId) throws SQLException{
+	public static Vector<FileInfo> getRAttachFilesInDrive(String domain,Vector<FileInfo> attachs) throws SQLException{
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			Result<Record5<Integer, Byte, String, Byte, String>> RAttach = dslContext
+					.select(RATTACH.ID,
+							RATTACH.MIMETYPE,
+							RATTACH.DESCRIPTION,
+							RATTACH.TYPE,RATTACH.DRIVE_ID)
+					.from(RATTACH)
+					.join(DOMAIN)
+					.on(RATTACH.DOMAIN.eq(DOMAIN.ID))
+					.join(DOMAIN_GSERVICEACCOUNT)
+					.on(DOMAIN_GSERVICEACCOUNT.DOMAIN.eq(DOMAIN.ID).or(
+							DOMAIN.PARENT.eq(DOMAIN_GSERVICEACCOUNT.DOMAIN)))
+					.where(DOMAIN.NAME
+							.eq(domain)
+							.or(DOMAIN.PARENT.in(dslContext.select(DOMAIN.ID)
+									.from(DOMAIN).where(DOMAIN.NAME.eq(domain)))))
+					.and(RATTACH.DATA.isNull())
+					.fetch();
+			
+			for (Record5<Integer, Byte, String, Byte, String> record5 : RAttach) {
+				FileInfo fileInfo = new FileInfo();
+				fileInfo.setAonType("registry");
+				fileInfo.setFileId(record5.value1());
+				fileInfo.setMimetype(record5.value2());
+				fileInfo.setTitle(record5.value3());
+				fileInfo.setType(record5.value4());
+				fileInfo.setCategory(-2);
+				fileInfo.setDriveId(record5.value5());
+				attachs.add(fileInfo);
+			}
+			return attachs;
+			
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static void insertBlobRAttach(byte[] bs,String domain,String driveId, Integer id) throws SQLException{
 		Connection connection = null;
 		try {
 
@@ -159,7 +207,7 @@ public class DBConsults {
 			
 			dslContext.update(RATTACH)
 			.set(RATTACH.DATA,bs)
-			.where(RATTACH.DRIVE_ID.eq(driveId)).execute();
+			.where(RATTACH.ID.eq(id)).execute();
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -198,6 +246,27 @@ public class DBConsults {
 			*/
 			dslContext.delete(RATTACH_TAG)
 				.where(RATTACH_TAG.RATTACH.eq(id)).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static String getRAttachDriveID(String domain, Integer id) throws SQLException{
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			Result<Record1<String>> data =dslContext.select(RATTACH.DRIVE_ID)
+				.from(RATTACH)
+				.where(RATTACH.ID.eq(id)).fetch();
+		
+			if(data.get(0).value1()!=null) return data.get(0).value1();
+			else return "";
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -363,7 +432,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static void insertBlobContractAttach(byte[] bs,String domain,String driveId) throws SQLException{
+	public static void insertBlobContractAttach(byte[] bs,String domain,String driveId, Integer  id) throws SQLException{
 		Connection connection = null;
 		try {
 
@@ -374,7 +443,7 @@ public class DBConsults {
 			
 			dslContext.update(CONTRACT_ATTACH)
 			.set(CONTRACT_ATTACH.DATA,bs)
-			.where(CONTRACT_ATTACH.DRIVEID.eq(driveId)).execute();
+			.where(CONTRACT_ATTACH.ID.eq(id)).execute();
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -398,6 +467,26 @@ public class DBConsults {
 		}
 	}
 	
+	public static String getContractAttachDriveID(String domain, Integer id) throws SQLException{
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			Result<Record1<String>> data =dslContext.select(CONTRACT_ATTACH.DRIVEID)
+				.from(CONTRACT_ATTACH)
+				.where(CONTRACT_ATTACH.ID.eq(id)).fetch();
+		
+			if(data.get(0).value1()!=null) return data.get(0).value1();
+			else return "";
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
 	//ITEM ATTACH
 	public static Vector<FileInfo> getIattach(String domain,
 			Vector<FileInfo> attachs) throws AonConnectionException,
@@ -525,7 +614,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static void insertBlobIAttach(byte[] bs,String domain,String driveId) throws SQLException{
+	public static void insertBlobIAttach(byte[] bs,String domain,String driveId, Integer id) throws SQLException{
 		Connection connection = null;
 		try {
 
@@ -536,7 +625,7 @@ public class DBConsults {
 			
 			dslContext.update(IATTACH)
 			.set(IATTACH.DATA,bs)
-			.where(IATTACH.DRIVEID.eq(driveId)).execute();
+			.where(IATTACH.ID.eq(id)).execute();
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -554,6 +643,27 @@ public class DBConsults {
 			
 			dslContext.delete(IATTACH)
 				.where(IATTACH.ID.eq(id)).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static String getIAttachDriveID(String domain, Integer id) throws SQLException{
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			Result<Record1<String>> data =dslContext.select(IATTACH.DRIVEID)
+				.from(IATTACH)
+				.where(IATTACH.ID.eq(id)).fetch();
+		
+			if(data.get(0).value1()!=null) return data.get(0).value1();
+			else return "";
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -721,7 +831,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static void insertBlobInvoiceAttach(byte[] bs,String domain,String driveId) throws SQLException{
+	public static void insertBlobInvoiceAttach(byte[] bs,String domain,String driveId, Integer id) throws SQLException{
 		Connection connection = null;
 		try {
 
@@ -732,7 +842,7 @@ public class DBConsults {
 			
 			dslContext.update(INVOICE_ATTACH)
 			.set(INVOICE_ATTACH.DATA,bs)
-			.where(INVOICE_ATTACH.DRIVEID.eq(driveId)).execute();
+			.where(INVOICE_ATTACH.ID.eq(id)).execute();
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -750,6 +860,27 @@ public class DBConsults {
 			
 			dslContext.delete(INVOICE_ATTACH)
 				.where(INVOICE_ATTACH.ID.eq(id)).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static String getInvoiceAttachDriveID(String domain, Integer id) throws SQLException{
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			Result<Record1<String>> data =dslContext.select(INVOICE_ATTACH.DRIVEID)
+				.from(INVOICE_ATTACH)
+				.where(INVOICE_ATTACH.ID.eq(id)).fetch();
+		
+			if(data.get(0).value1()!=null) return data.get(0).value1();
+			else return "";
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -882,7 +1013,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static void insertBlobOfferAttach(byte[] bs,String domain,String driveId) throws SQLException{
+	public static void insertBlobOfferAttach(byte[] bs,String domain,String driveId, Integer id) throws SQLException{
 		Connection connection = null;
 		try {
 
@@ -893,7 +1024,7 @@ public class DBConsults {
 			
 			dslContext.update(OFFER_ATTACH)
 			.set(OFFER_ATTACH.DATA,bs)
-			.where(OFFER_ATTACH.DRIVEID.eq(driveId)).execute();
+			.where(OFFER_ATTACH.ID.eq(id)).execute();
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -911,6 +1042,27 @@ public class DBConsults {
 			
 			dslContext.delete(OFFER_ATTACH)
 				.where(OFFER_ATTACH.ID.eq(id)).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static String getOfferAttachDriveID(String domain, Integer id) throws SQLException{
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			Result<Record1<String>> data =dslContext.select(OFFER_ATTACH.DRIVEID)
+				.from(OFFER_ATTACH)
+				.where(OFFER_ATTACH.ID.eq(id)).fetch();
+		
+			if(data.get(0).value1()!=null) return data.get(0).value1();
+			else return "";
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -1050,7 +1202,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static void insertBlobPayrollAttach(byte[] bs,String domain,String driveId) throws SQLException{
+	public static void insertBlobPayrollAttach(byte[] bs,String domain,String driveId, Integer id) throws SQLException{
 		Connection connection = null;
 		try {
 
@@ -1061,7 +1213,7 @@ public class DBConsults {
 			
 			dslContext.update(PAYROLL_BATCH_ATTACH)
 			.set(PAYROLL_BATCH_ATTACH.DATA,bs)
-			.where(PAYROLL_BATCH_ATTACH.DRIVEID.eq(driveId)).execute();
+			.where(PAYROLL_BATCH_ATTACH.ID.eq(id)).execute();
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -1079,6 +1231,27 @@ public class DBConsults {
 			
 			dslContext.delete(PAYROLL_BATCH_ATTACH)
 				.where(PAYROLL_BATCH_ATTACH.ID.eq(id)).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static String getPayrollAttachDriveID(String domain, Integer id) throws SQLException{
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			Result<Record1<String>> data =dslContext.select(PAYROLL_BATCH_ATTACH.DRIVEID)
+				.from(PAYROLL_BATCH_ATTACH)
+				.where(PAYROLL_BATCH_ATTACH.ID.eq(id)).fetch();
+		
+			if(data.get(0).value1()!=null) return data.get(0).value1();
+			else return "";
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -1247,7 +1420,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static void insertBlobProjectAttach(byte[] bs,String domain,String driveId) throws SQLException{
+	public static void insertBlobProjectAttach(byte[] bs,String domain,String driveId, Integer id) throws SQLException{
 		Connection connection = null;
 		try {
 
@@ -1258,7 +1431,7 @@ public class DBConsults {
 			
 			dslContext.update(PROJECT_ATTACH)
 			.set(PROJECT_ATTACH.DATA,bs)
-			.where(PROJECT_ATTACH.DRIVEID.eq(driveId)).execute();
+			.where(PROJECT_ATTACH.ID.eq(id)).execute();
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -1276,6 +1449,27 @@ public class DBConsults {
 			
 			dslContext.delete(PROJECT_ATTACH)
 				.where(PROJECT_ATTACH.ID.eq(id)).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static String getProjectAttachDriveID(String domain, Integer id) throws SQLException{
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			Result<Record1<String>> data =dslContext.select(PROJECT_ATTACH.DRIVEID)
+				.from(PROJECT_ATTACH)
+				.where(PROJECT_ATTACH.ID.eq(id)).fetch();
+		
+			if(data.get(0).value1()!=null) return data.get(0).value1();
+			else return "";
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -1410,10 +1604,10 @@ public class DBConsults {
 		}
 	}
 	
-	public static void insertBlobSepeAttach(byte[] bs,String domain,String driveId) throws SQLException{
+	public static void insertBlobSepeAttach(byte[] bs,String domain,String driveId, Integer id) throws SQLException{
 		Connection connection = null;
 		try {
-
+			
 			connection = DatabaseSync.getConnection(domain);
 
 			DSLContext dslContext = DSL.using(connection,
@@ -1421,7 +1615,7 @@ public class DBConsults {
 			
 			dslContext.update(SEPE_BATCH_ATTACH)
 			.set(SEPE_BATCH_ATTACH.DATA,bs)
-			.where(SEPE_BATCH_ATTACH.DRIVEID.eq(driveId)).execute();
+			.where(SEPE_BATCH_ATTACH.ID.eq(id)).execute();
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -1439,6 +1633,27 @@ public class DBConsults {
 			
 			dslContext.delete(SEPE_BATCH_ATTACH)
 				.where(SEPE_BATCH_ATTACH.ID.eq(id)).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static String getSepeAttachDriveID(String domain, Integer id) throws SQLException{
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			Result<Record1<String>> data =dslContext.select(SEPE_BATCH_ATTACH.DRIVEID)
+				.from(SEPE_BATCH_ATTACH)
+				.where(SEPE_BATCH_ATTACH.ID.eq(id)).fetch();
+		
+			if(data.get(0).value1()!=null) return data.get(0).value1();
+			else return "";
 		} finally {
 			if (connection != null)
 				connection.close();

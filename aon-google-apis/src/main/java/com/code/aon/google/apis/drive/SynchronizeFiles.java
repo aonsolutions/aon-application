@@ -33,6 +33,10 @@ import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.Drive.Properties;
+import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.Property;
+import com.google.api.services.drive.model.PropertyList;
 
 public class SynchronizeFiles {
 
@@ -49,10 +53,86 @@ public class SynchronizeFiles {
 
 		for (String key : domains.keySet()) {
 			// recorre todos los dominios de la BD
-			synchronizeSF(key);
+			if(action.equalsIgnoreCase("updateId"))
+				updateSF(key);
+			else synchronizeSF(key);
 		}
 	}
 
+	public static void updateSF(String domain) throws SQLException, AonConnectionException, IOException, GeneralSecurityException{
+		DriveData dd = getAttachsUpdateSF(domain);
+		if (dd.getGservice().getClientId() != null && dd.getAttachs() != null
+				&& dd.getAttachs().size() > 0) {
+			Drive drive = null;
+			try {
+				drive = DriveUtils.serviceInitialize(dd.getGservice());
+			} catch (IOException e) {
+				LOGGER.error("I/O Error connecting to Drive: {}",
+						e.getMessage());
+				throw e;
+			} catch (GeneralSecurityException e) {
+				LOGGER.error("Security Error connecting to Drive: {}",
+						e.getMessage());
+				throw e;
+			}
+			LOGGER.info("Connected to Drive: {}, {}.", domain, dd.getGservice()
+					.getEmailAddress());
+
+			for (int j = 0; j < dd.getAttachs().size(); j++) {
+				FileInfo attach = dd.getAttachs().get(j);
+				if (attach.getAonType().equals("registry")) {
+					byte data[] = DatabaseSync.getFileData(attach.getFileId(),
+							domain);
+
+					Vector<String> emails = DatabaseSync.getEmails(
+							attach.getFileId(), domain);
+					Vector<String> pemails = DatabaseSync.getPersonEmails(
+							attach.getFileId(), domain);
+					emails.addAll(pemails);
+					attach.setEmails(emails);
+					attach.setData(data);
+				} else if (attach.getAonType().equals("contract")) {
+					attach = DBConsults.getDataContractAttach(domain, attach);
+					attach = DBConsults.getEmailsContractAttach(domain, attach);
+				} else if (attach.getAonType().equals("item")) {
+					attach = DBConsults.getDataIattach(domain, attach);
+				} else if (attach.getAonType().equals("invoice")) {
+					attach = DBConsults.getDataInvoiceAttach(domain, attach);
+					attach = DBConsults.getEmailsInvoiceAttach(domain, attach);
+				} else if (attach.getAonType().equals("offer")) {
+					attach = DBConsults.getDataOfferAttach(domain, attach);
+				} else if (attach.getAonType().equals("payroll")) {
+					attach = DBConsults.getDataPayrollAttach(domain, attach);
+				} else if (attach.getAonType().equals("project")) {
+					attach = DBConsults.getDataProjectAttach(domain, attach);
+					attach = DBConsults.getEmailsProjectAttach(domain, attach);
+				} else if (attach.getAonType().equals("sepe")) {
+					attach = DBConsults.getDataSepeAttach(domain, attach);
+				}
+				if(attach.getDriveId()!= null){
+					PropertyList ps = drive.properties().list(attach.getDriveId()).execute();
+					Boolean b = false;
+					for(Property p : ps.getItems()){
+						if(!p.getKey().equals("fileId")){
+							b = true;
+						}
+					}
+					if(b){
+						Property property5 = new Property();
+						property5.setValue(Integer.toString(attach.getFileId()));
+						property5.setKey("fileId");
+						
+						drive.properties().insert(attach.getDriveId(), property5).execute();
+					}
+				}
+				
+			}
+		} else if (dd.getGservice().getClientId() == null)
+			LOGGER.info("No service account found for domain: '{}'", domain);
+		else if (dd.getAttachs() == null || dd.getAttachs().size() == 0)
+			LOGGER.info("No documents/files found for domain: '{}'", domain);
+		
+	}
 	public static void synchronizeSF(String domain) throws SQLException,
 			AonConnectionException, IOException, KeyStoreException,
 			GeneralSecurityException, NamingException {
@@ -189,6 +269,65 @@ public class SynchronizeFiles {
 
 		return dd;
 	}
+	
+	public static DriveData getAttachsUpdateSF(String domain)
+			throws SQLException, AonConnectionException {
+		HashMap<String, String> map = new HashMap<String, String>();
+		for (String s : types) {
+			try {
+				Enum.valueOf(RegistryAttachmentType.class, s);
+				map.put("registry", "registry");
+			} catch (IllegalArgumentException e) {
+				map.put(s, s);
+			}
+		}
+
+		DriveData dd = new DriveData();
+		dd.setDomain(domain);
+		dd.setGservice(DatabaseSync.getServiceAccount(domain));
+		dd.setAttachs(new Vector<FileInfo>());
+
+		// REGISTRY ATTACHins
+		if (map.containsKey("registry")) {
+			dd.setAttachs(DBConsults.getRAttachFilesInDrive(domain, dd.getAttachs()));
+		}
+
+		// CONTRACT ATTACH
+		if (map.containsKey("contract")) {
+			dd.setAttachs(DBConsults.getContractAttach(domain, dd.getAttachs()));
+		}
+
+		// ITEM ATTACH
+		if (map.containsKey("item")) {
+			dd.setAttachs(DBConsults.getIattach(domain, dd.getAttachs()));
+		}
+
+		// INVOICE ATTACH
+		if (map.containsKey("invoice")) {
+			dd.setAttachs(DBConsults.getInvoiceAttach(domain, dd.getAttachs()));
+		}
+
+		// OFFER ATTACH
+		if (map.containsKey("offer")) {
+			dd.setAttachs(DBConsults.getOfferAttach(domain, dd.getAttachs()));
+		}
+
+		// PAYROLL ATTACH
+		if (map.containsKey("payroll")) {
+			dd.setAttachs(DBConsults.getPayrollAttach(domain, dd.getAttachs()));
+		}
+
+		// PROJECT ATTACH
+		if (map.containsKey("project")) {
+			dd.setAttachs(DBConsults.getProjectAttach(domain, dd.getAttachs()));
+		}
+
+		// SEPE ATTACH
+		if (map.containsKey("sepe"))
+			dd.setAttachs(DBConsults.getSepeAttach(domain, dd.getAttachs()));
+
+		return dd;
+	}
 
 	public static void main(String[] args) throws IOException, SQLException,
 			AonConnectionException, GeneralSecurityException, NamingException {
@@ -204,7 +343,9 @@ public class SynchronizeFiles {
 			synchronizeSF();
 		} else {
 			for (String string : domains) {
-				synchronizeSF(string);
+				if(action.equals("updateId"))
+					updateSF(string);
+				else synchronizeSF(string);
 			}
 		}
 	}

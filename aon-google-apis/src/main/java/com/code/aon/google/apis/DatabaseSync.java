@@ -1541,10 +1541,10 @@ public static void addTaskId(String taskId,int id, String domain) throws SQLExce
 					+ " FROM (" + SQLConstants.RATTACH +" AS RA inner join "+SQLConstants.DOMAIN+" AS D ON RA."+RattachColumns.DOMAIN+" = D."+DomainColumns.ID
 					+ ") inner join "+SQLConstants.DOMAIN_GSERVICEACCOUNT+" AS G ON (G."+DomainGserviceaccountColumns.DOMAIN+" = D."+DomainColumns.ID+" OR D."
 					+ DomainColumns.PARENT + " = G."+ DomainGserviceaccountColumns.DOMAIN + ") " 
-					+ " WHERE RA."+RattachColumns.DATA + "IS NOT NULL "
-					+ " AND D."+ DomainColumns.NAME + " = ? OR D."+DomainColumns.PARENT+ " IN(SELECT "+DomainColumns.ID
+					+ " WHERE RA."+RattachColumns.DATA + " IS NOT NULL "
+					+ " AND (D."+ DomainColumns.NAME + " = ? OR D."+DomainColumns.PARENT+ " IN(SELECT "+DomainColumns.ID
 																							+" FROM "+SQLConstants.DOMAIN
-																							+" WHERE "+DomainColumns.NAME+" = ?)" ;
+																							+" WHERE "+DomainColumns.NAME+" = ?))" ;
 																
 			
 			connection = getConnection(key);

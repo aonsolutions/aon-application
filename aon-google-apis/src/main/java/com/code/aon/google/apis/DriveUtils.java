@@ -494,11 +494,18 @@ public class DriveUtils implements IBlobManager {
 		property4.setValue(fileInfo.getAonType());
 		property4.setKey("aontype");
 		
+		Property property5 = new Property();
+		property5.setValue(Integer.toString(fileInfo.getFileId()));
+		property5.setKey("fileId");
+		
 		List<Property> properties = new ArrayList<Property>(4);
 		properties.add(property1);
 		properties.add(property2);
 		properties.add(property3);
 		properties.add(property4);
+		properties.add(property5);
+		
+		
 		
 		return properties;
 

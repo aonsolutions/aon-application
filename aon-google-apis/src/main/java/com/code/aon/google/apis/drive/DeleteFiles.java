@@ -31,7 +31,7 @@ import com.google.api.services.drive.model.Property;
 
 public class DeleteFiles {
 
-	private static void deleteDriveIds(File f, String domain)
+	private static void deleteDriveIds(File f, String domain, Integer id)
 			throws SQLException, AonConnectionException {
 		String aonType = null;
 		if(f.getProperties() != null){
@@ -50,59 +50,113 @@ public class DeleteFiles {
 		}
 	}
 	
-	private static void deleteFileBD(File f, String domain)
+	private static void deleteFileBD(File f, String domain, Integer id)
 			throws SQLException, AonConnectionException {
 		String aonType = null;
+		
 		if(f.getProperties() != null){
 			for (Property property : f.getProperties()) {
 				if(property.getKey().equals("aontype"))
 					aonType = property.getValue();
 			}
 			if (aonType.equals("registry")){
-				DBConsults.deleteRAttachTags(domain, f.getId(), id);
-				DBConsults.deleteFileRAttach(domain, f.getId(), id);
+				String driveid = DBConsults.getRAttachDriveID(domain, id);
+				if(driveid.equals(f.getId())){
+					DBConsults.deleteRAttachTags(domain, f.getId(), id);
+					DBConsults.deleteFileRAttach(domain, f.getId(), id);
+				}
 			}
-			if (aonType.equals("contract")) DBConsults.deleteFileContractAttach(domain, f.getId(), id);
-			if (aonType.equals("item")) DBConsults.deleteFileIAttach(domain, f.getId(), id);
-			if (aonType.equals("invoice")) DBConsults.deleteFileInvoiceAttach(domain, f.getId(), id);
-			if (aonType.equals("offer")) DBConsults.deleteFileOfferAttach(domain, f.getId(), id);
-			if (aonType.equals("payroll")) DBConsults.deleteFilePayrollAttach(domain, f.getId(), id);
-			if (aonType.equals("project")) DBConsults.deleteFileProjectAttach(domain, f.getId(), id);
-			if (aonType.equals("sepe")) DBConsults.deleteFileSepeAttach(domain, f.getId(), id);
+			if (aonType.equals("contract")) {
+				String driveid = DBConsults.getContractAttachDriveID(domain, id);
+				if(driveid.equals(f.getId())){
+					DBConsults.deleteFileContractAttach(domain, f.getId(), id);
+				}
+			}
+			if (aonType.equals("item")) {
+				String driveid = DBConsults.getIAttachDriveID(domain, id);
+				if(driveid.equals(f.getId())){
+					DBConsults.deleteFileIAttach(domain, f.getId(), id);
+				}
+			}
+			if (aonType.equals("invoice")) {
+				String driveid = DBConsults.getInvoiceAttachDriveID(domain, id);
+				if(driveid.equals(f.getId())){
+					DBConsults.deleteFileInvoiceAttach(domain, f.getId(), id);
+				}
+			}
+			if (aonType.equals("offer")) {
+				String driveid = DBConsults.getOfferAttachDriveID(domain, id);
+				if(driveid.equals(f.getId())){
+					DBConsults.deleteFileOfferAttach(domain, f.getId(), id);
+				}
+			}
+			if (aonType.equals("payroll")) {
+				String driveid = DBConsults.getPayrollAttachDriveID(domain, id);
+				if(driveid.equals(f.getId())){
+					DBConsults.deleteFilePayrollAttach(domain, f.getId(), id);
+				}
+			}
+			if (aonType.equals("project")) {
+				String driveid = DBConsults.getProjectAttachDriveID(domain, id);
+				if(driveid.equals(f.getId())){
+					DBConsults.deleteFileProjectAttach(domain, f.getId(), id);
+				}
+			}
+			if (aonType.equals("sepe")) {
+				String driveid = DBConsults.getSepeAttachDriveID(domain, id);
+				if(driveid.equals(f.getId())){
+					DBConsults.deleteFileSepeAttach(domain, f.getId(), id);
+				}
+			}
 		}
 	}
 		
-	private static void insertBlobs(byte[] data, String driveId, String domain)
+	private static void insertBlobs(byte[] data, String driveId, String domain, Integer id)
 			throws SQLException, AonConnectionException {
-		DBConsults.insertBlobRAttach(data, domain, driveId);
-		DBConsults.insertBlobContractAttach(data, domain, driveId);
-		DBConsults.insertBlobIAttach(data, domain, driveId);
-		DBConsults.insertBlobInvoiceAttach(data, domain, driveId);
-		DBConsults.insertBlobOfferAttach(data, domain, driveId);
-		DBConsults.insertBlobPayrollAttach(data, domain, driveId);
-		DBConsults.insertBlobProjectAttach(data, domain, driveId);
-		DBConsults.insertBlobSepeAttach(data, domain, driveId);
+		DBConsults.insertBlobRAttach(data, domain, driveId, id);
+		DBConsults.insertBlobContractAttach(data, domain, driveId, id);
+		DBConsults.insertBlobIAttach(data, domain, driveId, id);
+		DBConsults.insertBlobInvoiceAttach(data, domain, driveId, id);
+		DBConsults.insertBlobOfferAttach(data, domain, driveId, id);
+		DBConsults.insertBlobPayrollAttach(data, domain, driveId, id);
+		DBConsults.insertBlobProjectAttach(data, domain, driveId, id);
+		DBConsults.insertBlobSepeAttach(data, domain, driveId, id);
 	}
 
 	public static void deleteFile(Drive drive, File f, String domain)
 			throws IOException, SQLException, AonConnectionException {
-		if(remove.equals("force")){
-			if(!f.getMimeType().equals("application/vnd.google-apps.folder")){
-				deleteFileBD(f, domain);
+		Integer idAux = -1;
+		if(id == -1){
+			if(f.getProperties() != null){
+				for (Property property : f.getProperties()) {
+					if(property.getKey().equals("fileId")){
+						String fileId = property.getValue();
+						id = Integer.parseInt(fileId);
+					}
+				
+				}
 			}
-			drive.files().delete(f.getId()).execute();
 		}
-		else{
-			if(!f.getMimeType().equals("application/vnd.google-apps.folder")){
-				InputStream data = DriveUtils.downloadFile(drive, f);
-				insertBlobs(Utils.InputStreamToByte(data), f.getId(), domain);
+		else idAux = id; 
+		if(idAux != -1){
+			if(remove.equals("force")){
+				if(!f.getMimeType().equals("application/vnd.google-apps.folder")){
+					deleteFileBD(f, domain, idAux);
+				}
+				drive.files().delete(f.getId()).execute();
 			}
-			drive.files().delete(f.getId()).execute();
+			else{
+				if(!f.getMimeType().equals("application/vnd.google-apps.folder")){
+					InputStream data = DriveUtils.downloadFile(drive, f);
+					insertBlobs(Utils.InputStreamToByte(data), f.getId(), domain, idAux);
+				}
+				drive.files().delete(f.getId()).execute();
 		
-			if(!f.getMimeType().equals("application/vnd.google-apps.folder")) deleteDriveIds(f, domain);
-			
+				if(!f.getMimeType().equals("application/vnd.google-apps.folder")) deleteDriveIds(f, domain, idAux);
+			}
+			View.delete(f);
 		}
-		View.delete(f);
+		else View.error5();
 	}
 
 	public static void deleteFilesId(Drive drive, String domain)
