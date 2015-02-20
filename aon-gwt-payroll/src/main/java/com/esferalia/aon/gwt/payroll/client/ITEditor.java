@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,6 +40,7 @@ import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -169,6 +171,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 				int mouseClientX = event.getClientX();
 				int mouseClientY = event.getClientY();								
 				cadenaTooltip = getLogicalName(el, mouseClientX, mouseClientY);
+				
 				if (cadenaTooltip == null)
 					return;
 
@@ -673,9 +676,30 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 
 	private int posCell; // vR
 	private int posColumn; // uR
+	
+	private static <T extends JavaScriptObject> T parseJson(String json) {
+		return JsonUtils.safeEval(json);
+	}
+
 
 	private void getPosStatusEmployee(String element) {
-
+		
+		JSONObject json = new JSONObject(parseJson(cadenaTooltip));
+		String values = json.get("data").toString();		
+		JSONObject datas = new JSONObject(parseJson(values));
+		
+		Iterator<String> iterator = datas.keySet().iterator();
+		
+		String column = iterator.next();
+		posColumn = Integer.parseInt(datas.get(column).toString());
+		
+		String cell = iterator.next();
+		posCell = Integer.parseInt(datas.get(cell).toString());
+		
+/*		while ( iterator.hasNext() ) {
+			Window.alert(iterator.next());
+		}
+		
 		int auxX = element.indexOf("uO\":") + 4;
 		int auxY = element.indexOf("sO\":") - 2;
 
@@ -684,7 +708,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 		auxX = element.indexOf("sO\":") + 4;
 		auxY = element.indexOf("}}");
 
-		posCell = Integer.parseInt(element.substring(auxX, auxY));
+		posCell = Integer.parseInt(element.substring(auxX, auxY));*/
 
 	}
 
@@ -692,7 +716,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 
 		String cadena = pElement;
 		getPosStatusEmployee(pElement);
-		if (cadena.contains("\"uO\":") && cadena.contains("\"sO\":")
+		if (cadena.contains("{\"type\":\"bar\"")
 				&& data.isActive(posColumn, posCell) == false) {			
 			return true;
 		} else {
@@ -852,7 +876,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 			if (cadenaTooltip.contains("axis")) {
 				// Click sobre el Mes. De momento no hago nada
 			}
-			if (cadenaTooltip.contains("\"uO\":")) {
+			if (cadenaTooltip.contains("{\"type\":\"bar\"")) {
 				// Click en tipo de contrato
 				tratarContrato(cadenaTooltip, mouseClientX, mouseClientY);
 			}
@@ -1430,13 +1454,5 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 			return false;
 		return true;
 	}
-	
-	
-	/*public static void main(String[] args) {
-		
-		String json = "\"{\"type\":\"bar\",\"data\":{\"VL\":0,\"UL\":1}}\"";
-		
-	}*/
-	
 	
 }
