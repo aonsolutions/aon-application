@@ -457,9 +457,10 @@ public class ContractController extends BasicController {
 	
 	public boolean isShowDisabilityIndicator(){
 		if(this.getParams().getContractCode()!=null){
-			return this.getParams().getContractCode() == ContractCode.C130.getValue() || this.getParams().getContractCode() == ContractCode.C230.getValue()
-					|| this.getParams().getContractCode() == ContractCode.C330.getValue() || this.getParams().getContractCode() == ContractCode.C430.getValue()
-					|| this.getParams().getContractCode() == ContractCode.C530.getValue();
+			String[] disabilityCodes = { ContractCode.C130.getValue(),
+					ContractCode.C230.getValue(), ContractCode.C330.getValue(),
+					ContractCode.C430.getValue(), ContractCode.C530.getValue() };
+			return ArrayUtils.contains(disabilityCodes, this.getParams().getContractCode());			
 		}
 		return false;
 	}

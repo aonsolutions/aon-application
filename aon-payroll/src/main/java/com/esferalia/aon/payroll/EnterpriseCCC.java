@@ -8,6 +8,9 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.master.EnterpriseCCCDB;
+import com.esferalia.aon.payroll.enumeration.CCCType;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.payroll.enumeration.contrata.TCHRGCOT;
 
 @Entity
 @Table(name="enterprise_ccc")
@@ -59,6 +62,15 @@ public class EnterpriseCCC extends EnterpriseCCCDB {
 	    } else {
 	    	return sTempNumOriginal + iDC.toString();
 	    }
+	}
+	
+	@Transient
+	public String getQuoteRegimeCode(){
+		if(this.getType()==CCCType.AGRICULTURAL){
+			return TCHRGCOT.TCHRGCOT_0163.getCode();
+		} else {
+			return this.getActivity().getQuoteRegimeCode();
+		}
 	}
 
 }

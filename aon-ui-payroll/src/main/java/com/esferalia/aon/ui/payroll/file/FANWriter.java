@@ -1233,11 +1233,17 @@ public class FANWriter implements Serializable {
 		String o = SEPEUtils.getInstance().getContractInfoMap(contract, false, true).get(ContractVariable.DISABILITY_INDICATOR.getValue());
 		return o!=null && !o.isEmpty()?o:null;
 	}
+	/**
+	 * MODALIDAD DE COTIZACION
+		J Cotización Jornadas Reales
+		G Cotización Sistema General
+		obligatorio para reg. 0613 
+	 */
 	private String getQuoteMode(Contract contract) {
-		// TODO getQuoteMode
-//		J Cotización Jornadas Reales
-//		G Cotización Sistema General
-		//obligatorio para reg. 0613 
+		if(contract.getEnterpriseCCC().getType()==CCCType.AGRICULTURAL){
+			String o = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.REAL_DAYS.getName());
+			return o!=null && !o.isEmpty()?"J":"G";
+		}
 		return null;
 	}
 	private String getContractOccupation(Contract contract) {
@@ -1376,18 +1382,27 @@ public class FANWriter implements Serializable {
 		Integer itDays = getItDays(contract);
 		ContractCode code = getContractCode(contract);
 		if(code==null || code.getValue().startsWith("1") || code.getValue().startsWith("4")){
-			if(itDays!=null && itDays>0){
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(getStartDate());
-				return cal.getActualMaximum(Calendar.DAY_OF_MONTH)-itDays; 
-			}
-			if( getStartDate().before(contract.getStartDate()) 
-					|| (contract.getEndDate()!=null && getEndDate().after(contract.getEndDate())) ){
-				Date start = getStartDate().before(contract.getStartDate())?contract.getStartDate():getStartDate();
-				Date end = (contract.getEndDate()!=null && getEndDate().after(contract.getEndDate()))?contract.getEndDate():getEndDate();
-				return (int) getAvailableDays(start, end);
+			if(contract.getEnterpriseCCC().getType()==CCCType.AGRICULTURAL){
+				String o = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.REAL_DAYS.getName());
+				Integer realDays = 0;
+				if(o!=null && NumberUtils.isNumber(o)){
+					realDays = Integer.parseInt(o);
+				}
+				return realDays;
 			} else {
-				return 30;
+				if(itDays!=null && itDays>0){
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(getStartDate());
+					return cal.getActualMaximum(Calendar.DAY_OF_MONTH)-itDays; 
+				}
+				if( getStartDate().before(contract.getStartDate()) 
+						|| (contract.getEndDate()!=null && getEndDate().after(contract.getEndDate())) ){
+					Date start = getStartDate().before(contract.getStartDate())?contract.getStartDate():getStartDate();
+					Date end = (contract.getEndDate()!=null && getEndDate().after(contract.getEndDate()))?contract.getEndDate():getEndDate();
+					return (int) getAvailableDays(start, end);
+				} else {
+					return 30;
+				}
 			}
 		} else {
 			String weekHours = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.WEEK_HOURS.getName());
@@ -1756,6 +1771,13 @@ public class FANWriter implements Serializable {
 		amount += (emp.getEdt().containsKey("EDTCA57")?emp.getEdtSegment("EDTCA57").getImporte():0);
 		amount -= (emp.getEdt().containsKey("EDTCA60")&&emp.getEdtSegment("EDTCA60").getImporte()!=null?emp.getEdtSegment("EDTCA60").getImporte():0);
 		amount -= (emp.getEdt().containsKey("EDTCD24")?emp.getEdtSegment("EDTCD24").getImporte():0);
+		
+		// RegimeType == Agricultural
+		amount += (emp.getEdt().containsKey("EDTCA51")&&emp.getEdtSegment("EDTCA51").getImporte()!=null?emp.getEdtSegment("EDTCA51").getImporte():0); 
+		amount += (emp.getEdt().containsKey("EDTCA52")&&emp.getEdtSegment("EDTCA52").getImporte()!=null?emp.getEdtSegment("EDTCA52").getImporte():0); 
+		amount += (emp.getEdt().containsKey("EDTCA53")&&emp.getEdtSegment("EDTCA53").getImporte()!=null?emp.getEdtSegment("EDTCA53").getImporte():0); 
+		amount -= (emp.getEdt().containsKey("EDTCD30")?emp.getEdtSegment("EDTCD30").getImporte():0);
+		
 		EDT edt = emp.getEdtSegment("EDTTT30");
 		edt.setTipoElemento("TT");
 		edt.setClave(30);
@@ -1800,6 +1822,10 @@ public class FANWriter implements Serializable {
 		amount -= (emp.getEdt().containsKey("EDTCA22")?emp.getEdtSegment("EDTCA22").getImporte():0);
 		amount += (emp.getEdt().containsKey("EDTBA10")?emp.getEdtSegment("EDTBA10").getImporte():0);
 		amount += (emp.getEdt().containsKey("EDTBA11")?emp.getEdtSegment("EDTBA11").getImporte():0);
+		
+		// RegimeType == Agricultural
+		amount -= (emp.getEdt().containsKey("EDTCD29")?emp.getEdtSegment("EDTCD29").getImporte():0);
+		
 		
 		EDT edt = emp.getEdtSegment("EDTTT10");
 		edt.setTipoElemento("TT");
@@ -2416,11 +2442,41 @@ public class FANWriter implements Serializable {
 		}
 	}
 		
+	/**
+	 * 30 Reducciones. SEA Desempleo Sistema Especial Agrario
+	 * @param emp
+	 */
 	private void createEDTCd30Segment(EMP emp) { 
-		// TODO 30 Reducciones. SEA Desempleo Sistema Especial Agrario
+		Integer amount = 0;
+		for(TRA tra: emp.getTrabajadores()){
+			for(DAT dat: tra.getDat()){
+				amount += dat.getEdl().containsKey("CD30")?dat.getEdlSegment("CD30").getImporte():0;
+			}
+		}
+		if(amount != 0){
+			EDT edt = emp.getEdtSegment("EDTCD30");
+			edt.setTipoElemento("CD");
+			edt.setClave(30);
+			edt.setImporte(amount);	
+		}
 	}
+	/**
+	 * 29 Reducciones SEA. Contingencias comunes Sistema Especial Agrario
+	 * @param emp
+	 */
 	private void createEDTCd29Segment(EMP emp) {
-		// TODO 29 Reducciones SEA. Contingencias comunes Sistema Especial Agrario 
+		Integer amount = 0;
+		for(TRA tra: emp.getTrabajadores()){
+			for(DAT dat: tra.getDat()){
+				amount += dat.getEdl().containsKey("CD29")?dat.getEdlSegment("CD29").getImporte():0;
+			}
+		}
+		if(amount != 0){
+			EDT edt = emp.getEdtSegment("EDTCD29");
+			edt.setTipoElemento("CD");
+			edt.setClave(29);
+			edt.setImporte(amount);	
+		}
 	}
 	/**
 	 *  28 Bonificación por ERE 
