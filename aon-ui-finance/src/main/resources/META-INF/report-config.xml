@@ -98,6 +98,15 @@
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
+			<!-- Params for custom templates -->
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}" />
+			<param id="printLogo" value="#{company.isPrintLogo}" />
+			<param id="printName" value="#{company.getPrintName}" />
+			<param id="printNif" value="#{company.getPrintNif}" />
+			<param id="printAddress" value="#{company.getPrintAddress}" />
+			<param id="printInternetData" value="#{company.getPrintInternetData}" />
+			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
 		</params>
 		<nested-report report="invoiceDetailDefault"/>
 		<nested-report report="invoiceTaxBreakDown"/>
