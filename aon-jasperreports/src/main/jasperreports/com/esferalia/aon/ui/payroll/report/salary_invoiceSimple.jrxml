@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salary_invoiceSimple" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3e1549ae-83d3-4d0d-86dd-406ce868a0b5">
-	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="122"/>
-	<property name="ireport.y" value="527"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="47"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
 	<import value="com.code.aon.common.util.CommonUtil"/>
 	<import value="com.esferalia.aon.salary.enumeration.DeductionType"/>
@@ -521,7 +521,7 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="237" splitType="Stretch">
+		<band height="195" splitType="Stretch">
 			<componentElement>
 				<reportElement uuid="f8a2e22a-79bf-4bc5-8585-e583208dfbf3" key="payment_table" style="table" positionType="Float" mode="Transparent" x="8" y="13" width="540" height="13" isRemoveLineWhenBlank="true"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
