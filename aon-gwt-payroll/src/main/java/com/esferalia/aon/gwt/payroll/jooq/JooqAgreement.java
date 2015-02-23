@@ -61,20 +61,20 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		dslContext.update(AGREEMENT_EXTRA)
 				.set(AGREEMENT_EXTRA.DOMAIN, parentDomain)
 				.where(AGREEMENT_EXTRA.AGREEMENT.eq(id)).execute();
-
+		
 		dslContext
 				.update(AGREEMENT_LEVEL_DATA)
 				.set(AGREEMENT_LEVEL_DATA.DOMAIN, parentDomain)
 				.where(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL.in(dslContext
 						.select(AGREEMENT_LEVEL.ID).from(AGREEMENT_LEVEL)
-						.where(AGREEMENT_LEVEL.ID.eq(id)))).execute();
+						.where(AGREEMENT_LEVEL.AGREEMENT.eq(id)))).execute();
 
 		dslContext
 				.update(AGREEMENT_LEVEL_CATEGORY)
 				.set(AGREEMENT_LEVEL_CATEGORY.DOMAIN, parentDomain)
 				.where(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL.in(dslContext
 						.select(AGREEMENT_LEVEL.ID).from(AGREEMENT_LEVEL)
-						.where(AGREEMENT_LEVEL.ID.eq(id)))).execute();
+						.where(AGREEMENT_LEVEL.AGREEMENT.eq(id)))).execute();
 
 		dslContext.update(AGREEMENT_LEVEL)
 				.set(AGREEMENT_LEVEL.DOMAIN, parentDomain)
