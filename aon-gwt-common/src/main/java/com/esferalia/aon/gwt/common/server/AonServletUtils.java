@@ -15,16 +15,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
 import com.code.aon.pool.AonConnectionException;
-import com.code.aon.ui.util.AonUtil;
 
 public class AonServletUtils {
 
 	public static Connection getConnection() throws SQLException {
 		try {
-			String domainName = AonUtil.getDomainName();
-			Connection connection = DatabaseUtil.getConnection(domainName);
-			return connection;
+			HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();
+			if (request != null) {
+				AuthPrincipal principal = (AuthPrincipal) request.getUserPrincipal();
+				if ( principal != null ) {
+					String domainName = principal.getDomain();
+					Connection connection = DatabaseUtil.getConnection(domainName);
+					return connection;
+				}
+			}
+			return null;
 		} catch (AonConnectionException e) {
 			throw new SQLException(e.getMessage(), e);
 		}
