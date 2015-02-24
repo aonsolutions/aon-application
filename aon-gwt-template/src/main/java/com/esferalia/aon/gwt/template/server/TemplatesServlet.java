@@ -152,12 +152,14 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	//-------------------- IMPORTAR STOCK
 	
 	public com.esferalia.aon.gwt.template.shared.Error insertStock(TemplateInfo ti) {
+		Vector<String> verror = new Vector<String>();
 		com.esferalia.aon.gwt.template.shared.Error error = new Error();
 		if(!getMimetype().equals(MimeType.MIME_MS_EXCEL.getName())
 			&& !getMimetype().equals(MimeType.MIME_MS_EXCEL_2007.getName())){
 			//El archivo no es un fichero Excel.
 			error.setError(false);
-			error.setTextError("*El archivo importado no es de tipo excel.");
+			verror.add("*El archivo importado no es de tipo excel.");
+			error.setTextError(verror);
 			return error;
 		}
 		byte[] data = getOut();
@@ -225,7 +227,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
                 	if(ti.getColumns().size()<=j || ti.getColumns().get(j) == null || !ti.getColumns().get(j).equalsIgnoreCase(cell.getStringCellValue())){
                 		 // El archivo no es compatible con la plantilla
              			error.setError(false);
-             			error.setTextError("*El archivo importado no es compatible con la plantilla seleccionada.");
+             			verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
+             			error.setTextError(verror);
              			return error;
                 	} 
                 }
@@ -253,13 +256,15 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
              if(j != ti.getColumns().size()){
             	 if(i == 0){
             		 error.setError(false);
-            		 error.setTextError("*El archivo importado no es compatible con la plantilla seleccionada.");
+            		 verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
+            		 error.setTextError(verror);
             		 return error;
             	 }
             	 else{
             		 if(ti.getColumns().get(j).equals("Producto") || ti.getColumns().get(j).equals("Almac\u00e9n Destino") || ti.getColumns().get(j).equals("Cantidad")){
             			Integer fila = i+1;
           				Integer columna = j+1;
+          				verror.add("*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n");
           				textError= textError + "*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n";
             		 }
             	 }
@@ -277,6 +282,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
             	}
             	if(!b){
             		Integer fila = i+1;
+            		verror.add("*Fila "+fila+" : La serie y el almacén no concuerdan.");
             		textError=textError +"*Fila "+fila+" : La serie y el almacén no concuerdan.";
             	}
             	stock.add(si);
@@ -286,7 +292,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		
 		if(textError.equals("")){
 			error.setError(true);
-			error.setTextError("");
+			verror.add("");
+			error.setTextError(verror);
 			String domain = AonUtil.getDomainName();
 			try {
 				DBConsults.insertStock(domain,domainId,stock);
@@ -298,7 +305,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		else{
 			//Alguna de las filas contiene datos erroneos.
 			error.setError(false);
- 			error.setTextError(textError);
+ 			error.setTextError(verror);
 		}
 		return error;
 	}
@@ -429,12 +436,14 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	
 	public com.esferalia.aon.gwt.template.shared.Error insertProducts(TemplateInfo ti) {
 		//Archivo Excel
+		Vector<String> verror = new Vector<String>();
 		com.esferalia.aon.gwt.template.shared.Error error = new Error();
 		if(!getMimetype().equals(MimeType.MIME_MS_EXCEL.getName())
 			&& !getMimetype().equals(MimeType.MIME_MS_EXCEL_2007.getName())){
 			//El archivo no es un fichero Excel.
 			error.setError(false);
-			error.setTextError("*El archivo importado no es de tipo excel.");
+			verror.add("*El archivo importado no es de tipo excel.");
+			error.setTextError(verror);
 			return error;
 		}
 		byte[] data = getOut();
@@ -501,7 +510,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
                 	 if(ti.getColumns().size()<=j ||ti.getColumns().get(j) == null || !ti.getColumns().get(j).equalsIgnoreCase(cell.getStringCellValue())){
                 		 // El archivo no es compatible con la plantilla
              			error.setError(false);
-             			error.setTextError("*El archivo importado no es compatible con la plantilla seleccionada.");
+             			verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
+             			error.setTextError(verror);
              			return error;
                 	 } 
                  }
@@ -510,6 +520,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
                 		 if(ti.getColumns().get(j).equals("Nombre") || ti.getColumns().get(j).equals("C\u00f3digo") || ti.getColumns().get(j).equals("Precio Coste") || ti.getColumns().get(j).equals("Precio Venta Base")){
                 			Integer fila = i+1;
                 			Integer columna = j+1;
+                			verror.add("*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n");
                 			textError= textError + "*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n";
                 	 	}
                 		 j++;
@@ -519,6 +530,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
                 	 if(pi == null){
              			Integer fila = i+1;
              			Integer columna = j+1;
+             			verror.add("*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n");
                 		textError= textError + "*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n";
                 		pi = newProduct();	
                 	 }
@@ -528,13 +540,15 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
              if(j != ti.getColumns().size()){
             	 if(i == 0){
             		 error.setError(false);
-            		 error.setTextError("*El archivo importado no es compatible con la plantilla seleccionada.");
+            		 verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
+            		 error.setTextError(verror);
             		 return error;
             	 }
             	 else{
             		 if(ti.getColumns().get(j).equals("Nombre") || ti.getColumns().get(j).equals("C\u00f3digo") || ti.getColumns().get(j).equals("Precio Coste") || ti.getColumns().get(j).equals("Precio Venta Base")){
             			Integer fila = i+1;
           				Integer columna = j+1;
+          				verror.add("*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n");
           				textError= textError + "*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n";
             		 }
             	 }
@@ -545,16 +559,19 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
              //pi.getItem().setPrice(0);
             // checkPrices();
              if(i>0){ 
-            	  double profitPercent =((pi.getItem().getPrice()-pi.getItem().getPurchasePrice())/pi.getItem().getPurchasePrice())*100.00;
-                  pi.getItem().setProfitPercent(profitPercent);
-            	 products.add(pi);
+            	 if(textError.equals("")){ 	
+            		 double profitPercent =((pi.getItem().getPrice()-pi.getItem().getPurchasePrice())/pi.getItem().getPurchasePrice())*100.00;
+            		 pi.getItem().setProfitPercent(profitPercent);
+            		 products.add(pi);
+            	 }
              }
              i++;
 		 }
 		
 		if(textError.equals("")){
 			error.setError(true);
-			error.setTextError("");
+			verror.add("");
+			error.setTextError(verror);
 			String domain = AonUtil.getDomainName();
 			try {
 				DBConsults.insertProducts(domain,domainId,products);
@@ -566,7 +583,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		else{
 			//Alguna de las filas contiene datos erroneos.
 			error.setError(false);
- 			error.setTextError(textError);
+ 			error.setTextError(verror);
 		}
 		System.out.println(error.getTextError());
 		

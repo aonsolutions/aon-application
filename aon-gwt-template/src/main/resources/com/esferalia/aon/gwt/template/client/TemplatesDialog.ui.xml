@@ -8,11 +8,20 @@
 
 
 	</ui:Style>
+	
 	<g:HTMLPanel styleName="form-template">
+			
+		<div>
+			<g:VerticalPanel ui:field='vp'>
+
+			</g:VerticalPanel>
+		</div>
 		<div>
 		<g:Label ui:field="label">
 		</g:Label>
 		</div>
+		
+		
 		<div>
 		<g:FlexTable ui:field="flex_table">
 			

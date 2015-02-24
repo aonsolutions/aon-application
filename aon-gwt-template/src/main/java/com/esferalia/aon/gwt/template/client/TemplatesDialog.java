@@ -56,6 +56,7 @@ public abstract class TemplatesDialog extends CustomDialog {
 	@UiField(provided = true) Label label;
 	@UiField Button accept_button;
 	@UiField Button cancel_button;
+	@UiField(provided = true) VerticalPanel vp;
 	
 	Integer column = 1;
 	HandlerRegistration handler;
@@ -68,6 +69,7 @@ public abstract class TemplatesDialog extends CustomDialog {
 		if(dialog.getTemplateList()!= null) tlist = dialog.getTemplateList();
 		label = new Label();
 		flex_table = new FlexTable();
+		vp = new VerticalPanel();
 		ti = dialog.getTemplateInfo();
 		build(dialog);
 		d = dialog;
@@ -133,9 +135,18 @@ public abstract class TemplatesDialog extends CustomDialog {
 	}
 	
 	private void importResponse(Error error){
+		
 		if(!error.getError()){
-			label.setText(error.getTextError());
-			label.setStyleName("aon-check-template");
+			for(String s : error.getTextError()){
+				if(vp.getWidgetCount()< 10){
+					Label l = new Label(s);
+					l.setStyleName("aon-check-template");
+					vp.add(l);
+				}
+					
+			}
+			//label.setText(error.getTextError());
+	
 		}
 		else label.setText("Se ha importado correctamente");
 	}

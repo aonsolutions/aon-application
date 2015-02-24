@@ -101,6 +101,27 @@ public class Templates extends Composite implements EntryPoint {
 		private MenuItem editItem;
 		private MenuItem removeItem;
 		private MenuItem downloadItem;
+		private Integer heigth;
+		private Integer width;
+
+		
+		public Integer getHeigth() {
+			heigth = 74;
+			return heigth;
+		}
+
+		public void setHeigth(Integer heigth) {
+			this.heigth = heigth;
+		}
+
+		public Integer getWidth() {
+			width = 117;
+			return width;
+		}
+
+		public void setWidth(Integer width) {
+			this.width = width;
+		}
 		
 		public DocumentContextMenu(TemplateInfo object){
 			if(!object.getIsParent()){
@@ -247,16 +268,20 @@ public class Templates extends Composite implements EntryPoint {
    					NativeEvent nativeEvent = event.getNativeEvent();
 
 			    	DocumentContextMenu contextMenu = new DocumentContextMenu(dataProvider.getList().get(dataGrid.getKeyboardSelectedRow()));
-   					if(nativeEvent.getClientY()>590){
+
+			    	Integer heigth = contextMenu.getHeigth();
+			    	Integer width = contextMenu.getWidth();
+			    	
+			    	if(nativeEvent.getClientY()>590){
    						if(nativeEvent.getClientX()>994)
-   							contextMenu.setPopupPosition(nativeEvent.getClientX()-120,
-   								nativeEvent.getClientY()-140);
+   							contextMenu.setPopupPosition(nativeEvent.getClientX()-width,
+   								nativeEvent.getClientY()-heigth);
    						else contextMenu.setPopupPosition(nativeEvent.getClientX(),
-   								nativeEvent.getClientY()-140);
+   								nativeEvent.getClientY()-heigth);
    					}
    					else{
    						if(nativeEvent.getClientX()>994)
-   							contextMenu.setPopupPosition(nativeEvent.getClientX()-120,
+   							contextMenu.setPopupPosition(nativeEvent.getClientX()-width,
    								nativeEvent.getClientY());
    						else contextMenu.setPopupPosition(nativeEvent.getClientX(),
    								nativeEvent.getClientY());
@@ -465,7 +490,6 @@ public class Templates extends Composite implements EntryPoint {
 			protected void onAccept() {
 				hide();
 				Integer aux = dataGrid.getKeyboardSelectedRow();
-				Window.alert(aux+"");
 				
 				TemplateInfo ti2 = dataProvider.getList().get(aux);
 				
@@ -485,7 +509,6 @@ public class Templates extends Composite implements EntryPoint {
 					i++;
 				}
 				ti2.setColumns(v);
-				Window.alert(ti2.getColumns().size()+"");
 				ti =  ti2;
 				Window.alert(ti2.getName() +" - "+ ti2.getType());
 				item.editTemplate(ti2, new AsyncCallback<TemplateInfo>() {

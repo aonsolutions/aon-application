@@ -1,21 +1,23 @@
 package com.esferalia.aon.gwt.template.shared;
 
+import java.util.Vector;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class Error implements IsSerializable{
 
 	Boolean error;
-	String textError;
+	Vector<String> textError;
 	public Boolean getError() {
 		return error;
 	}
 	public void setError(Boolean error) {
 		this.error = error;
 	}
-	public String getTextError() {
+	public Vector<String> getTextError() {
 		return textError;
 	}
-	public void setTextError(String textError) {
+	public void setTextError(Vector<String> textError) {
 		this.textError = textError;
 	}
 	
