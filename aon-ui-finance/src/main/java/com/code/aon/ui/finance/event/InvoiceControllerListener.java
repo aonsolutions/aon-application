@@ -23,7 +23,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 	@Override
 	public void afterModelInitialized(ControllerEvent event)throws ControllerListenerException {
 		InvoiceController controller = (InvoiceController)event.getController();
-		controller.setTotalInvoiceAmount(null);
+		controller.resetListTotals();
 	}
 
 	@Override
@@ -90,6 +90,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 			invoiceController.linkProject(invoiceController.getInvoice(), true);
 			invoiceController.autoGenerateIncreases();
 			invoiceController.autoGenerateFinances();
+			invoiceController.resetListTotals();
 
 			IController invoiceDetailController = FormUtil.getController(invoiceController.getInvoiceDetailControllerName());
 			invoiceDetailController.onSearch(null);

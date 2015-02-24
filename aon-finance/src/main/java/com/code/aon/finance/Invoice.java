@@ -356,32 +356,30 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 	}
 
 	@Transient
-	public FinanceStatus getInvoiceFinanceStatus() throws ManagerBeanException {
+	public boolean isFinanceContainer() throws ManagerBeanException {
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), getId());
-		List<ITransferObject> financeList = financeBean.getList(criteria);
-		for (ITransferObject ito : financeList) {
-			Finance finance = (Finance)ito;
-			if (!finance.isPaid() && !finance.isSettled()) {
-				return FinanceStatus.PENDING;
-			}
-		}
-		return (financeList.size() == 0) ? null : FinanceStatus.PAID;
+		return (financeBean.getCount(criteria) > 0);
 	}
 
 	@Transient
-	public boolean isAllFinancePending() throws ManagerBeanException{
+	public boolean isAllFinancePaid() throws ManagerBeanException {
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), getId());
-		for (ITransferObject ito : financeBean.getList(criteria)) {
-			Finance finance = (Finance)ito;
-			if (!finance.isPending()) {
-				return false;
-			}
-		}
-		return true;
+		criteria.addNotEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PAID);
+		criteria.addNotEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_FINANCE_STATUS), FinanceStatus.SETTLED);
+		return (financeBean.getCount(criteria) == 0);
+	}
+
+	@Transient
+	public boolean isAllFinancePending() throws ManagerBeanException {
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), getId());
+		criteria.addNotEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);
+		return (financeBean.getCount(criteria) == 0);
 	}
 
 	@Transient
@@ -393,7 +391,7 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 		for (ITransferObject ito : financeBean.getList(criteria)) {
 			Finance finance = (Finance)ito;
 			if (payMethodName == null) {
-				payMethodName = (finance.getPayMethod() != null) ? finance.getPayMethod().getName() : null;
+				payMethodName = (finance.getPayMethod() != null) ? finance.getPayMethod().getName() : "SIN ESPECIFICAR";
 			}
 			if (finance.getPayMethod() != null && !finance.getPayMethod().getName().equals(payMethodName)) {
 				return "MULTIPLE";

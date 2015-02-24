@@ -1,164 +1,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:c="http://java.sun.com/jstl/core"
-	template="/facelet/templates/aon.ui.content.xhtml">
+	xmlns:h="http://java.sun.com/jsf/html">
 
-	<ui:define name="content">
-		<aon:form id="expenseInvoiceList">
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{bundle.finance_expense_invoice_management_module}" />
-				<ui:param name="controller" value="#{expenseInvoice}" />
+	<ui:include src="/com/code/aon/ui/finance/facelet/invoice/listContent.xhtml">
+		<ui:param name="toolbarTitle" value="#{bundle.finance_expense_invoice_management_module}" />
+		<ui:param name="controller" value="#{expenseInvoice}" />
+		<ui:param name="registryLabel" value="#{bundle.aon_creditor}" />
+		<ui:param name="reportName" value="expenseInvoiceList" />
+		<ui:param name="isUndeductible" value="#{false}" />
+		<ui:param name="showRetention" value="#{true}" />
+	</ui:include>
 
-				<ui:define name="additionalToolbarContent">
-					<aon:htmlCommandLink id="expenseInvoiceList-excel-report"
-						value="&#160;" target="_blank" action="#{report.onExecute}"
-						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
-						<f:param name="reportKey" value="expenseInvoiceList" />
-						<f:param name="outputFormat" value="MS Excel" />
-					</aon:htmlCommandLink>							
-					<aon:htmlCommandLink id="expenseInvoiceList-report"
-						value="#{bundle.aon_listing}" target="_blank" action="#{report.onExecute}" 
-						styleClass="aon-finding-toolbar-item aon-icon-pdf"
-						accesskey="#{bundle.aon_key_print}">
-						<f:param name="reportKey" value="expenseInvoiceList" />
-					</aon:htmlCommandLink>
-				</ui:define>
-
-			</ui:decorate>
-
-			<aon:div styleClass="aon-scroll-area">
-				<aon:div styleClass="aon-width-all aon-text-right">
-					<aon:selectBooleanCheckbox ajaxSingle="true"
-						reRender="expenseInvoiceList"
-						value="#{expenseInvoice.showPaymentDataInListView}"/>
-					<aon:outputText value="#{bundle.finance_invoice_show_payment_data}"/>
-				</aon:div>
-				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-					<ui:param name="controller" value="#{expenseInvoice}" />
-					<ui:define name="columns">
-						<aon:column alias="Invoice.issueDate"
-							styleClass="aon-editDataTable-textColumn aon-width-80">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_date}" />
-							</f:facet>
-							<aon:outputText value="#{to.issueDate}">
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-						</aon:column>
-	
-						<aon:column alias="Invoice.referenceCode"
-							styleClass="aon-editDataTable-textColumn aon-width-120">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_invoice_number}" />
-							</f:facet>
-							<aon:outputText value="#{to.referenceCode}" />
-						</aon:column>
-	
-						<aon:column alias="Invoice.series,Invoice.number"
-							styleClass="aon-editDataTable-textColumn aon-width-80">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_document_number}" />
-							</f:facet>
-							<aon:outputText value="#{to.documentNumber}" />
-						</aon:column>
-					
-						<aon:column alias="Invoice.registryName"
-							styleClass="aon-editDataTable-textColumn aon-width-auto">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_creditor}" />
-							</f:facet>
-							<aon:outputText value="#{to.registryName}">
-								<aon:abbreviateConverter maxWidth="40" />
-							</aon:outputText>
-						</aon:column>
-	
-						<aon:column alias="Invoice.registryDocument"
-							styleClass="aon-editDataTable-textColumn aon-width-80">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_company_document}" />
-							</f:facet>
-							<aon:outputText value="#{to.registryDocument}" />
-						</aon:column>
-	
-						<aon:column alias="Invoice.status"
-							styleClass="aon-editDataTable-textColumn aon-width-80"
-							style="font-size: 0.9em;">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_status}" />
-							</f:facet>
-							<aon:outputText value="#{to.status}" />
-						</aon:column>
-	
-						<aon:if test="#{controller.showPaymentDataInListView}">
-							<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"
-								style="font-size: 0.9em;">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.finance_payMethod}" />
-								</f:facet>
-								<aon:outputText value="#{to.payMethod}">
-									<aon:abbreviateConverter maxWidth="15" />
-								</aon:outputText>
-							</aon:column>
-		
-							<aon:column styleClass="aon-editDataTable-textColumn aon-width-80"
-								style="font-size: 0.9em;">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.finance_checking_finance_status_abbrv}" />
-								</f:facet>
-								<aon:outputText value="#{to.invoiceFinanceStatus}" />
-							</aon:column>
-						</aon:if>
-		
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_total}" />
-							</f:facet>
-							<aon:outputText value="#{to.total}">
-								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-							</aon:outputText>
-							<f:facet name="footer">
-								<aon:div id="totalAmountContainer" style="float:right">
-									<aon:commandLink immediate="true" 
-										reRender="totalAmountContainer"
-										value="#{bundle.stat_total}"
-										styleClass="aon-dataTable-link aon-nowrap"
-										rendered="#{controller.totalInvoiceAmount == null}"
-										actionListener="#{controller.getSelectionTotalAmount}"/>									
-									<aon:outputText	rendered="#{controller.totalInvoiceAmount != null}"
-										style="text-align:right" value="#{controller.totalInvoiceAmount}" >
-										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-									</aon:outputText>
-								</aon:div>
-							</f:facet>							
-						</aon:column>
-
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-60">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_status}" />
-							</f:facet>
-							<aon:if test="#{company.EInvoice}">								
-								<aon:outputText value="&#160;" rendered="#{to.signed}"
-									title="#{bundle.sign_signed}"
-									styleClass="aon-icon aon-icon-signed" />
-								<aon:outputText value="&#160;" rendered="#{!to.signed}"
-									title="#{bundle.sign_sign_pending}"
-									styleClass="aon-icon aon-icon-unsigned" />
-							</aon:if>								
-							<aon:outputText value="&#160;" rendered="#{to.attachmentAvailable}"
-								title="#{bundle.aon_documents}"
-								styleClass="aon-icon aon-icon-payroll" />
-						</aon:column>
-						
-					</ui:define>
-				</ui:decorate>			
-
-			</aon:div>
-		</aon:form>
-	</ui:define>
 </ui:composition>

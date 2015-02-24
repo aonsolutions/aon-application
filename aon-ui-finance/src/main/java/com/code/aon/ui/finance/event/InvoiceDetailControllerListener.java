@@ -104,6 +104,7 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 		InvoiceController invoiceController = (InvoiceController)detailController.getMasterController();
 		invoiceController.autoGenerateIncreases();
 		invoiceController.autoGenerateFinances();
+		invoiceController.resetListTotals();
 	}
 
 	@Override
@@ -132,6 +133,7 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 		InvoiceController invoiceController = (InvoiceController)detailController.getMasterController();
 		invoiceController.autoGenerateIncreases();
 		invoiceController.autoGenerateFinances();
+		invoiceController.resetListTotals();
 	}
 
 	@Override
@@ -156,6 +158,7 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 		InvoiceController invoiceController = (InvoiceController)detailController.getMasterController();
 		invoiceController.autoGenerateIncreases();
 		invoiceController.autoGenerateFinances();
+		invoiceController.resetListTotals();
 	}
 
 	private	Integer calculateNextLine(Invoice invoice) throws ManagerBeanException {

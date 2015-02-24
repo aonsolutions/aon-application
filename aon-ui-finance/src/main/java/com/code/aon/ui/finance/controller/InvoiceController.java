@@ -67,8 +67,6 @@ import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.IAddress;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.RegistryAddress;
@@ -119,7 +117,6 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	private boolean showFiscalInformationWindow;
 	private boolean showAmortizationWindow;
 	private boolean showRectificationWindow;
-	private boolean showPaymentDataInListView;
 	private String rectificationSeries;
 	private int rectificationNumber;
 	private boolean rectificationNumberEditable;
@@ -128,7 +125,12 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	private boolean rectificationSettleFinance;
 	private boolean showDiscountsWindow;
 	private String discountExpression;
-	private Double totalInvoiceAmount;
+	private boolean showPaymentDataInListView;
+	private boolean showTotalBreakdownInListView;
+	private Double listTaxableBase;
+	private Double listVatQuota;
+	private Double listRetentionQuota;
+	private Double listTotal;
 	private FinanceEmailUtil emailController;
 	
 	public InvoiceController() {
@@ -273,14 +275,6 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			ProjectCollectionsController projectColls = (ProjectCollectionsController)AonUtil.getRegisteredBean(IProjectConstants.PROJECT_COLLECTIONS_CONTROLLER_NAME);
 			projects.addAll(projectColls.getProjects(registryId));
 		}
-	}
-
-	public boolean isShowPaymentDataInListView() {
-		return showPaymentDataInListView;
-	}
-
-	public void setShowPaymentDataInListView(boolean showPaymentDataInListView) {
-		this.showPaymentDataInListView = showPaymentDataInListView;
 	}
 
 	public boolean isShowRegistryDataWindow() {
@@ -575,12 +569,58 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		this.discountExpression = StringUtils.trimToNull(discountExpression);
 	}
 
-	public Double getTotalInvoiceAmount() {
-		return totalInvoiceAmount;
+	public boolean isShowPaymentDataInListView() {
+		return showPaymentDataInListView;
 	}
 
-	public void setTotalInvoiceAmount(Double totalInvoiceAmount) {
-		this.totalInvoiceAmount = totalInvoiceAmount;
+	public void setShowPaymentDataInListView(boolean showPaymentDataInListView) {
+		this.showPaymentDataInListView = showPaymentDataInListView;
+		if (showPaymentDataInListView) {
+			setShowTotalBreakdownInListView(false);
+		}
+	}
+
+	public boolean isShowTotalBreakdownInListView() {
+		return showTotalBreakdownInListView;
+	}
+
+	public void setShowTotalBreakdownInListView(boolean showTotalBreakdownInListView) {
+		this.showTotalBreakdownInListView = showTotalBreakdownInListView;
+		if (showTotalBreakdownInListView) {
+			setShowPaymentDataInListView(false);
+		}
+	}
+
+	public Double getListTaxableBase() {
+		return listTaxableBase;
+	}
+
+	public void setListTaxableBase(Double listTaxableBase) {
+		this.listTaxableBase = listTaxableBase;
+	}
+	
+	public Double getListVatQuota() {
+		return listVatQuota;
+	}
+
+	public void setListVatQuota(Double listVatQuota) {
+		this.listVatQuota = listVatQuota;
+	}
+	
+	public Double getListRetentionQuota() {
+		return listRetentionQuota;
+	}
+
+	public void setListRetentionQuota(Double listRetentionQuota) {
+		this.listRetentionQuota = listRetentionQuota;
+	}
+	
+	public Double getListTotal() {
+		return listTotal;
+	}
+
+	public void setListTotal(Double listTotal) {
+		this.listTotal = listTotal;
 	}
 	
 	public void acceptInvoice(ActionEvent event) {
@@ -782,6 +822,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 
 			autoGenerateIncreases();
 			autoGenerateFinances();
+			resetListTotals();
 		}
 	}
 
@@ -1296,29 +1337,38 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		}
 		
 	}
-	
+
 	public boolean isAmoritizationNavigationDisabled() {
-		return ( getBackAction() != null);
+		return (getBackAction() != null);
 	}
-	
-	public void getSelectionTotalAmount(ActionEvent event) {
+
+	public void resetListTotals() {
+		setListTaxableBase(null);
+		setListVatQuota(null);
+		setListRetentionQuota(null);
+		setListTotal(null);
+	}
+
+	public void obtainListTotals(ActionEvent event) {
 		try {	
-			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);			
-			Criteria criteria = new Criteria();
-			String idAlias = invoiceBean.getFieldName(IEntityAlias.INVOICE_ID);
-			ProjectionList pl = new ProjectionList( Projection.property(idAlias) );
-			Expression exp = ExpressionUtilities.getSubQueryExpression(Invoice.class, getCriteria(), pl);
-			criteria.addInExpression(idAlias, exp);
-			Projection amountProjection = Projection.sum(invoiceBean.getFieldName(IEntityAlias.INVOICE_TOTAL));
-			Double amount = (Double)invoiceBean.getUniqueResult(amountProjection, criteria);
-			setTotalInvoiceAmount(CommonUtil.round(amount==null?0:amount));
+			Projection basePrjn = Projection.sum(getFieldName(IEntityAlias.INVOICE_TAXABLE_BASE));
+			Projection vatPrjn = Projection.sum(getFieldName(IEntityAlias.INVOICE_VAT_QUOTA));
+			Projection retPrjn = Projection.sum(getFieldName(IEntityAlias.INVOICE_RETENTION_QUOTA));
+			Projection totalPrjn = Projection.sum(getFieldName(IEntityAlias.INVOICE_TOTAL));
+			ProjectionList totalsPrjnList = new ProjectionList(basePrjn, vatPrjn, retPrjn, totalPrjn);
+			Object[] result = (Object[])getManagerBean().getUniqueResult(totalsPrjnList, getCriteria());
+
+			setListTaxableBase((result[0] == null) ? 0 : CommonUtil.round((Double)result[0]));
+			setListVatQuota((result[1] == null) ? 0 : CommonUtil.round((Double)result[1]));
+			setListRetentionQuota((result[2] == null) ? 0 : CommonUtil.round((Double)result[2]));
+			setListTotal((result[3] == null) ? 0 : CommonUtil.round((Double)result[3]));
 		} catch (ManagerBeanException e) {
-			String message = "Imposible obtener el total";
+			String message = "Imposible obtener el Total";
 			AonUtil.addErrorMessage(message);
 			throw new AbortProcessingException(message);
 		}		
 	}
-	
+
 	public void onViewAccountEntry(ActionEvent event) {
 		try {
 			BasicController entryController = (BasicController)FormUtil.getController(IFinanceConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);

@@ -175,6 +175,7 @@ public class PurchaseInvoiceController extends InvoiceController {
 
 			autoGenerateIncreases();
 			autoGenerateFinances();
+			resetListTotals();
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);

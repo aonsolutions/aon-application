@@ -955,16 +955,18 @@ public class CompanyParentController extends BasicController implements ICompany
 		return null;
 	}
 
-	/**
-	 * Checks if is e invoice.
-	 * 
-	 * @return true, if is e invoice
-	 */
 	public boolean isEInvoice() {
 		if(this.getTo() == null){
 			this.onLoad(false);
 		}
-		return ( (Company) getTo()).isEInvoice();
+		return ((Company) getTo()).isEInvoice();
+	}
+
+	public boolean isWithholding() {
+		if(this.getTo() == null){
+			this.onLoad(false);
+		}
+		return ((Company) getTo()).isWithholding();
 	}
 
 	public void onChangeDocument(ActionEvent event) {
