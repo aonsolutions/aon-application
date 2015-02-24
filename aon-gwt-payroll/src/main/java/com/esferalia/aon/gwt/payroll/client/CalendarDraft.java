@@ -14,6 +14,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -63,6 +64,8 @@ public class CalendarDraft extends Composite {
 	}
 
 	@UiField
+	DockLayoutPanel mainPanel;
+	@UiField
 	Style style;
 	@UiField
 	ScrollPanel scrollPanel;
@@ -82,8 +85,9 @@ public class CalendarDraft extends Composite {
 				.setOverflow(Overflow.VISIBLE);
 		scrollPanel.getParent().getElement().getStyle()
 				.setPosition(Position.STATIC);
-		scrollPanel.getWidget().getElement().getStyle()
-				.setOverflowX(Overflow.HIDDEN);
+/*		scrollPanel.getWidget().getElement().getStyle()
+				.setOverflowX(Overflow.HIDDEN);*/
+		
 	}
 
 	public void setCalendarDraftObject(CalendarDraftObject calendarDraftObject) {
