@@ -614,19 +614,19 @@ public class CalendarUtils {
 	 * @return Devuelve -1 si no esta en la lista, y la posicion de la lista
 	 * si está en la lista.
 	 */
-	public static int searchEvents(Events events, int dato, int n) {
-
+	public static int searchEvents(Events events, Integer dato, Integer n) {
+		String datoStr= dato.toString();
 		int centro;
 		int inf = 0;
 		int sup = n - 1;
 		System.out.println("tamañoo!!! : "+n);
 		while (n!=0 && inf <= sup) {
 			centro = (sup + inf) / 2;
-			if (Integer.valueOf(events.getItems().get(centro).getExtendedProperties()
-					.getPrivate().get("aonId"))== dato) {
+			if (events.getItems().get(centro).getExtendedProperties()
+					.getPrivate().get("aonId").equals(datoStr)) {
 				return centro;
-			} else if (dato < Integer.valueOf(events.getItems().get(centro).getExtendedProperties()
-					.getPrivate().get("aonId"))) {
+			} else if (datoStr.compareTo(events.getItems().get(centro).getExtendedProperties()
+					.getPrivate().get("aonId"))<0) {
 				sup = centro - 1;
 			} else{
 				inf = centro + 1;

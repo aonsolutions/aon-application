@@ -19,6 +19,7 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.google.apis.*;
+import com.code.aon.google.apis.jooq.DBCalendar;
 import com.esferalia.aon.google.sql.AbstractSQL.Domain;
 import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
 import com.google.api.services.calendar.model.Calendar;
@@ -121,7 +122,7 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 			if (g.getClientId() != null){
 				CalendarUtils.serviceInitialize(g);
 				CommercialTracking tracking = getCommercialTracking(event);
-				Domain company = DatabaseSync.getDomainName(tracking.getId(),domain);			
+				Domain company = DBCalendar.getDomain(domain,tracking.getDomain());			
 				CalendarList calendars = CalendarUtils.Quicksort.calendarsSort(CalendarUtils.getCalendars());
 				int i=CalendarUtils.searchCalendars(calendars, company.getName(), calendars.getItems().size() );
 				Events events=CalendarUtils.Quicksort.eventsSort(CalendarUtils.getEvents(calendars.getItems().get(i).getId()));
@@ -129,9 +130,6 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 				CalendarUtils.removeEvent(calendars.getItems().get(i).getId(), events.getItems().get(j).getId());
 			}
 		} catch (SQLException e) {
-			// TODO Bloque catch generado automáticamente
-			e.printStackTrace();
-		} catch (AonConnectionException e) {
 			// TODO Bloque catch generado automáticamente
 			e.printStackTrace();
 		} catch (IOException e) {
