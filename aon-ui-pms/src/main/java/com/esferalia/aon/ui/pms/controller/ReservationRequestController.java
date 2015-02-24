@@ -25,6 +25,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.ReservationRequest;
 import com.esferalia.aon.pms.ReservationRequestGuest;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
+import com.esferalia.aon.pms.reservation.ReservationRequestManager;
 import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class ReservationRequestController extends BasicController implements IPmsConstants, IAuditableController {
@@ -162,6 +163,20 @@ public class ReservationRequestController extends BasicController implements IPm
 				request.setCompany((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
 			}
 		}
+	}
+
+	public String getRatePlans() throws ManagerBeanException {
+		ReservationRequest request = (ReservationRequest)getTo();
+		ReservationRequestManager manager = new ReservationRequestManager();
+		String ratePlans = manager.getRatePlansList(request);
+		return (ratePlans != null) ? ratePlans : "-";
+	}
+
+	public String getPromoCode() throws ManagerBeanException {
+		ReservationRequest request = (ReservationRequest)getTo();
+		ReservationRequestManager manager = new ReservationRequestManager();
+		String promoCode = manager.getPromoCodeProfile(request);
+		return (promoCode != null) ? promoCode : "-";
 	}
 
 	@Override

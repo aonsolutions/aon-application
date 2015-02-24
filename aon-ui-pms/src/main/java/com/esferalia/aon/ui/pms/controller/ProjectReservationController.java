@@ -31,6 +31,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
@@ -111,6 +112,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	public ReservationUtils getReservationUtils() {
 		if (reservationUtils == null) {
 			reservationUtils = new ReservationUtils();
+			reservationUtils.setDomain(DomainManager.getCurrentDomain());
 		}
 		return reservationUtils;
 	}

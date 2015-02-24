@@ -8,6 +8,7 @@ import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.ui.common.role.BasicRoleManager;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
@@ -54,6 +55,7 @@ public class ProjectReservationPermission implements Serializable {
 	private ReservationUtils getReservationUtils() {
 		if (reservationUtils == null) {
 			reservationUtils = new ReservationUtils();
+			reservationUtils.setDomain(DomainManager.getCurrentDomain());
 		}
 		return reservationUtils;
 	}

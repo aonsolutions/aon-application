@@ -42,6 +42,7 @@ import noNamespace.RoomInformationsDocument.RoomInformations.RoomInformation;
 import noNamespace.RoomStaysDocument.RoomStays;
 import noNamespace.RoomStaysDocument.RoomStays.RoomStay;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.w3c.dom.Document;
@@ -51,6 +52,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tariff;
 import com.code.aon.customer.Customer;
@@ -79,6 +81,7 @@ public class ReservationRequestManager implements IReservationConstants {
 	public ReservationUtils getReservationUtils() {
 		if (reservationUtils == null) {
 			reservationUtils = new ReservationUtils();
+			reservationUtils.setDomain(DomainManager.getCurrentDomain());
 		}
 		return reservationUtils;
 	}
@@ -91,8 +94,6 @@ public class ReservationRequestManager implements IReservationConstants {
 	}
 
 	public List<AvailableRoomStay> processAvailabilityQuery(ReservationRequestRoom requestRoom) {
-		getReservationUtils().init();
-		getReservationUtils().setDomain(requestRoom.getReservationRequest().getHotel().getDomain());
 		try {
 			List<AvailableRoomStay> availableRoomStayList = new LinkedList<AvailableRoomStay>();
 			String pagingKey = null;
@@ -153,7 +154,7 @@ public class ReservationRequestManager implements IReservationConstants {
 
 		int rateRPH = 0;
 		RatePlans ratePlans = RatePlans.Factory.newInstance();
-		for (ITransferObject ito : getRequestRatePlans(request)) {
+		for (ITransferObject ito : getRatePlans(request)) {
 			RegistryAddInfo rAddInfo = (RegistryAddInfo)ito;
 			ratePlans.addNewRatePlan();
 			ratePlans.getRatePlanArray(ratePlans.sizeOfRatePlanArray()-1).setRatePlanRPH(new BigInteger(Integer.toString(++rateRPH)));
@@ -201,24 +202,26 @@ public class ReservationRequestManager implements IReservationConstants {
 		return document.toString();
 	}
 
-	private String getPromoCodeProfile(ReservationRequest request) throws ManagerBeanException {
+	public String getPromoCodeProfile(ReservationRequest request) throws ManagerBeanException {
 		Date today = DateUtils.truncate(new Date(), Calendar.DATE);
 		String profileId = null;
-		for (String profileTmp : getReservationUtils().obtainCustomerCodes(request.getAgency(), PROMO_CODE + "_" + request.getHotel().getCode())) {
-			if (profileTmp.contains("|")) {
-				String[] patterns = {"ddMMyyyy", "dd/MM/yyyy"};
-				try {
-					String period = profileTmp.substring(profileTmp.indexOf("|") + 1);
-					Date startPeriod = DateUtils.parseDateStrictly(period.substring(0, period.indexOf("-")), patterns);
-					Date endPeriod = DateUtils.parseDateStrictly(period.substring(period.indexOf("-") + 1), patterns);
-					if (!today.before(startPeriod) && !today.after(endPeriod)) {
-						profileId = profileTmp.substring(0, profileTmp.indexOf("|"));
-						break;
+		if (StringUtils.isNotEmpty(request.getHotel().getCode())) {
+			for (String profileTmp : getReservationUtils().obtainCustomerCodes(request.getAgency(), PROMO_CODE + "_" + request.getHotel().getCode())) {
+				if (profileTmp.contains("|")) {
+					String[] patterns = {"ddMMyyyy", "dd/MM/yyyy"};
+					try {
+						String period = profileTmp.substring(profileTmp.indexOf("|") + 1);
+						Date startPeriod = DateUtils.parseDateStrictly(period.substring(0, period.indexOf("-")), patterns);
+						Date endPeriod = DateUtils.parseDateStrictly(period.substring(period.indexOf("-") + 1), patterns);
+						if (!today.before(startPeriod) && !today.after(endPeriod)) {
+							profileId = profileTmp.substring(0, profileTmp.indexOf("|"));
+							break;
+						}
+					} catch (Exception ex) {
 					}
-				} catch (Exception ex) {
+				} else if (profileId == null) {
+					profileId = profileTmp;
 				}
-			} else if (profileId == null) {
-				profileId = profileTmp;
 			}
 		}
 
@@ -244,7 +247,7 @@ public class ReservationRequestManager implements IReservationConstants {
 		return profileId;
 	}
 
-	private List<ITransferObject> getRequestRatePlans(ReservationRequest request) throws ManagerBeanException {
+	private List<ITransferObject> getRatePlans(ReservationRequest request) throws ManagerBeanException {
 		Customer customer = (request.isGuestHolder()) ? request.getHotel().getCustomer() : (request.isAgencyHolder()) ? request.getAgency() : request.getCompany();
 		IManagerBean rAddInfoBean = BeanManager.getManagerBean(RegistryAddInfo.class);
 		Criteria criteria = new Criteria();
@@ -262,6 +265,15 @@ public class ReservationRequestManager implements IReservationConstants {
 		criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), RATE_PLAN);
 		criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_DOMAIN), getReservationUtils().getDomain());
 		return rAddInfoBean.getList(criteria);
+	}
+
+	public String getRatePlansList(ReservationRequest request) throws ManagerBeanException {
+		List<String> ratePlansList = new LinkedList<String>();
+		for (ITransferObject ito : getRatePlans(request)) {
+			RegistryAddInfo rAddInfo = (RegistryAddInfo)ito;
+			ratePlansList.add(rAddInfo.getValue());
+		}
+		return (ratePlansList.size() > 0) ? ArrayUtils.toString(ratePlansList) : null;
 	}
 
 	private String sendAvailabilityQuery(String message, List<AvailableRoomStay> availableRoomStayList) {
@@ -364,8 +376,6 @@ public class ReservationRequestManager implements IReservationConstants {
 
 
 	public AvailableRoomStay processBookingRequest(ReservationRequestRoom requestRoom, ReservationRequestGuest requestGuest, AvailableRoomStay availableRoomStay) {
-		getReservationUtils().init();
-		getReservationUtils().setDomain(requestRoom.getReservationRequest().getHotel().getDomain());
 		try {
 			return sendBookingQuery(createBookingMessage(requestRoom, requestGuest, availableRoomStay), availableRoomStay);
 		} catch (Exception ex) {
@@ -556,8 +566,6 @@ public class ReservationRequestManager implements IReservationConstants {
 
 
 	public boolean processBookingCancelRequest(ProjectReservation reservation) {
-		getReservationUtils().init();
-		getReservationUtils().setDomain(reservation.getHotel().getDomain());
 		try {
 			return sendBookingCancelQuery(createBookingCancelMessage(reservation));
 		} catch (Exception ex) {
@@ -621,14 +629,14 @@ public class ReservationRequestManager implements IReservationConstants {
 
 
 	public void processNewReservation(ReservationRequestRoom requestRoom) throws ManagerBeanException {
-		ProjectReservation reservation = new ProjectReservation();
-		createReservation(requestRoom, reservation, requestRoom.getReservationRequest().getHotel());
+		createReservation(requestRoom, requestRoom.getReservationRequest().getHotel());
 	}
 
-	private void createReservation(ReservationRequestRoom requestRoom, ProjectReservation reservation, Hotel hotel) throws ManagerBeanException {
+	private void createReservation(ReservationRequestRoom requestRoom, Hotel hotel) throws ManagerBeanException {
 		Tariff roomTariff = getReservationUtils().obtainTariff(requestRoom.getTariffCode());
 		Item serviceItem = getReservationUtils().obtainServiceItem(requestRoom.getItem(), requestRoom.getInventoryCode(), requestRoom.getMealPlan());
 
+		ProjectReservation reservation = new ProjectReservation();
 		reservation.setHotel(hotel);
 		reservation.setHotelReservation(hotel);
 		reservation.setCode(requestRoom.getReservationRequest().getCode());

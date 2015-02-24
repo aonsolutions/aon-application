@@ -18,6 +18,7 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.ql.Criteria;
@@ -44,6 +45,7 @@ public class ReservationRequestRoomController extends LinesController implements
 	public ReservationUtils getReservationUtils() {
 		if (reservationUtils == null) {
 			reservationUtils = new ReservationUtils();
+			reservationUtils.setDomain(DomainManager.getCurrentDomain());
 		}
 		return reservationUtils;
 	}

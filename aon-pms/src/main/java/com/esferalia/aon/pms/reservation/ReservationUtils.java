@@ -352,7 +352,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 			reservationServiceDetailBean.update(reservationServiceDetail);
 		}
     }
-    
+
     public void removeProjectReservationServiceDetails(ProjectReservationService reservationService) throws ManagerBeanException {
 		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
 		Criteria criteria = new Criteria();
@@ -667,6 +667,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), UNDEFINED_ROOM_ITEM);
+		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_DOMAIN), domain);
 		List<ITransferObject> appParamList = appParamBean.getList(criteria);
 		if (appParamList.size() > 0) {
 			return obtainRoomItem(((ApplicationParameter)appParamList.get(0)).getValue());
@@ -698,8 +699,9 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		} else {
 			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_DETAIL), mealPlan);
 			criteria.addEqualExpression("Item.compositions.compositionItem.id", roomItem.getId());
+			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_DETAIL), mealPlan);
+			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_DOMAIN), domain);
 			List<ITransferObject> itemList = itemBean.getList(criteria);
 			if (itemList.size() > 0) {
 				return (Item)itemList.get(0);
@@ -720,6 +722,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), UNDEFINED_SERVICE_ITEM);
+		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_DOMAIN), domain);
 		List<ITransferObject> appParamList = appParamBean.getList(criteria);
 		if (appParamList.size() > 0) {
 			return obtainServiceItem(((ApplicationParameter)appParamList.get(0)).getValue());
@@ -731,6 +734,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CODE), itemCode);
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_DOMAIN), domain);
 		List<ITransferObject> itemList = itemBean.getList(criteria);
 		if (itemList.size() > 0) {
 			return (Item)itemList.get(0);
@@ -748,6 +752,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 			criteria.addEqualExpression(itemAddInfoBean.getFieldName(IEntityAlias.ITEM_ADD_INFO_VALUE), value);
 		}
 		criteria.addEqualExpression(itemAddInfoBean.getFieldName(IEntityAlias.ITEM_ADD_INFO_ATTRIBUTE), attribute);
+		criteria.addEqualExpression(itemAddInfoBean.getFieldName(IEntityAlias.ITEM_ADD_INFO_DOMAIN), domain);
 		List<ITransferObject> itemAddInfoList = itemAddInfoBean.getList(criteria);
 		if (itemAddInfoList.size() > 0) {
 			return (ItemAddInfo)itemAddInfoList.get(0);
@@ -812,6 +817,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 				IManagerBean tariffBean = BeanManager.getManagerBean(Tariff.class);
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(tariffBean.getFieldName(IEntityAlias.TARIFF_CODE), tariffCode);
+				criteria.addEqualExpression(tariffBean.getFieldName(IEntityAlias.TARIFF_DOMAIN), domain);
 				List<ITransferObject> tariffList = tariffBean.getList(criteria);
 				if (tariffList.size() > 0) {
 					return (Tariff)tariffList.get(0);
@@ -831,6 +837,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 			criteria.addEqualExpression(tariffAddInfoBean.getFieldName(IEntityAlias.TARIFF_ADD_INFO_VALUE), value);
 		}
 		criteria.addEqualExpression(tariffAddInfoBean.getFieldName(IEntityAlias.TARIFF_ADD_INFO_ATTRIBUTE), attribute);
+		criteria.addEqualExpression(tariffAddInfoBean.getFieldName(IEntityAlias.TARIFF_ADD_INFO_DOMAIN), domain);
 		List<ITransferObject> tariffAddInfoList = tariffAddInfoBean.getList(criteria);
 		if (tariffAddInfoList.size() > 0) {
 			return (TariffAddInfo)tariffAddInfoList.get(0);
@@ -842,6 +849,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), UNDEFINED_TARIFF);
+		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_DOMAIN), domain);
 		List<ITransferObject> appParamList = appParamBean.getList(criteria);
 		if (appParamList.size() > 0) {
 			return obtainTariff(((ApplicationParameter)appParamList.get(0)).getValue());
@@ -931,6 +939,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), urlParam);
+		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_DOMAIN), domain);
 		List<ITransferObject> appParamList = appParamBean.getList(criteria);
 		if (appParamList.size() > 0) {
 			return ((ApplicationParameter)appParamList.get(0)).getValue();
@@ -942,6 +951,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), RESERVATION_REQUEST_AUTO_SELLER);
+		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_DOMAIN), domain);
 		for (ITransferObject ito : appParamBean.getList(criteria)) {
 			String crsId = ((ApplicationParameter)ito).getValue();
 			if (StringUtils.isNotEmpty(crsId)) {
@@ -968,7 +978,6 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_REGISTRY_ID), agency.getRegistry().getId());
 			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), AGENCY_COMMISSION);
-			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_DOMAIN), domain);
 			RegistryAddInfo rAddInfo = null;
 			for (ITransferObject ito : rAddInfoBean.getList(criteria)) {
 				rAddInfo = (RegistryAddInfo)ito;
@@ -995,6 +1004,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), BEST_PRICE_DISCOUNT_ITEM);
+		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_DOMAIN), domain);
 		List<ITransferObject> appParamList = appParamBean.getList(criteria);
 		if (appParamList.size() > 0) {
 			return obtainItem(((ApplicationParameter)appParamList.get(0)).getValue());
@@ -1009,7 +1019,6 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_REGISTRY_ID), agency.getRegistry().getId());
 			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), AUTO_DISCOUNT);
-			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_DOMAIN), domain);
 			for (ITransferObject ito : rAddInfoBean.getList(criteria)) {
 				RegistryAddInfo rAddInfo = (RegistryAddInfo)ito;
 				autoDiscount = NumberUtils.toDouble(rAddInfo.getValue(), 0);
@@ -1025,6 +1034,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), AUTO_DISCOUNT_ITEM);
+		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_DOMAIN), domain);
 		List<ITransferObject> appParamList = appParamBean.getList(criteria);
 		if (appParamList.size() > 0) {
 			return obtainItem(((ApplicationParameter)appParamList.get(0)).getValue());
@@ -1036,6 +1046,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		IManagerBean mailAccountBean = BeanManager.getManagerBean(MailAccount.class);
 		Criteria criteria = new Criteria();
 		criteria.addNullExpression(mailAccountBean.getFieldName(IEntityAlias.MAIL_ACCOUNT_USER));
+		criteria.addEqualExpression(mailAccountBean.getFieldName(IEntityAlias.MAIL_ACCOUNT_DOMAIN), domain);
 		List<ITransferObject> mailAccountList = mailAccountBean.getList(criteria);
 		if (mailAccountList.size() > 0) {
 			return (MailAccount)mailAccountList.get(0);

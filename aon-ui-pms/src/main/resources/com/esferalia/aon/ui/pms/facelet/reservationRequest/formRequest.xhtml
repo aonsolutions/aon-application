@@ -73,35 +73,47 @@
 	</aon:panelGrid>
 
 	<aon:outputLabel for="ReservationRequest_endDate" value="#{bundle.report_checkout}" />
-	<aon:outputText	value="#{reservationRequest.to.endDate}" styleClass="aon-bold"
-		rendered="#{!reservationRequest.to.active}">
-		<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-			timeZone="#{timeZoneController.timeZoneId}" />
-	</aon:outputText>
-	<aon:selectInputDate id="ReservationRequest_endDate" value="#{reservationRequest.to.endDate}" 
-		required="true" rendered="#{reservationRequest.to.active}"
-		timeZone="#{timeZoneController.timeZone}"
-		popupDateFormat="#{bundle.aon_date_pattern}">
-		<a4j:support ajaxSingle="true" event="oninputchange"
-			actionListener="#{reservationRequest.onEndDateChanged}"
-			reRender="ReservationRequest_nights,ReservationRequest_endDate"
-			focus="ReservationRequest_bookingHolder" />
-		<a4j:support ajaxSingle="true" event="onchanged"
-			actionListener="#{reservationRequest.onEndDateChanged}"
-			reRender="ReservationRequest_nights,ReservationRequest_endDate"
-			focus="ReservationRequest_bookingHolder" />
-	</aon:selectInputDate>
+	<aon:panelGrid columns="2" columnClasses="aon-width-130, aon-width-auto">
+		<aon:outputText	value="#{reservationRequest.to.endDate}" styleClass="aon-bold"
+			rendered="#{!reservationRequest.to.active}">
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>
+		<aon:selectInputDate id="ReservationRequest_endDate" value="#{reservationRequest.to.endDate}" 
+			required="true" rendered="#{reservationRequest.to.active}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}">
+			<a4j:support ajaxSingle="true" event="oninputchange"
+				actionListener="#{reservationRequest.onEndDateChanged}"
+				reRender="ReservationRequest_nights,ReservationRequest_endDate"
+				focus="ReservationRequest_bookingHolder" />
+			<a4j:support ajaxSingle="true" event="onchanged"
+				actionListener="#{reservationRequest.onEndDateChanged}"
+				reRender="ReservationRequest_nights,ReservationRequest_endDate"
+				focus="ReservationRequest_bookingHolder" />
+		</aon:selectInputDate>
+		<aon:div rendered="#{!reservationRequest.nevv}">
+			<aon:outputLabel value="#{bundle.pms_rate_plans}:" styleClass="aon-margin-right aon-italic" />
+			<aon:outputText value="#{reservationRequest.ratePlans}" styleClass="aon-bold" />
+		</aon:div>
+	</aon:panelGrid>
 
 	<aon:if test="#{aonRole.commercialOperator and !reservationRequest.agencyUser}">
 		<aon:outputLabel for="ReservationRequest_bookingHolder" value="#{bundle.pms_reservation_holder}" />
-		<aon:outputText value="#{reservationRequest.to.bookingHolder}" styleClass="aon-bold" 
-			rendered="#{!reservationRequest.to.active or !aonRole.commercialOperator or reservationRequest.agencyUser}" />
-		<aon:selectOneMenu id="ReservationRequest_bookingHolder" value="#{reservationRequest.to.bookingHolder}" 
-			required="true" rendered="#{reservationRequest.to.active and aonRole.commercialOperator and !reservationRequest.agencyUser}"
-			valueChangeListener="#{reservationRequest.onHolderChanged}"
-			reRender="BookingHolderLabelDiv,BookingHolderContentDiv">
-			<f:selectItems value="#{pmsCollections.bookingHolders}" />
-		</aon:selectOneMenu>
+		<aon:panelGrid columns="2" columnClasses="aon-width-130, aon-width-auto">
+			<aon:outputText value="#{reservationRequest.to.bookingHolder}" styleClass="aon-bold" 
+				rendered="#{!reservationRequest.to.active or !aonRole.commercialOperator or reservationRequest.agencyUser}" />
+			<aon:selectOneMenu id="ReservationRequest_bookingHolder" value="#{reservationRequest.to.bookingHolder}" 
+				required="true" rendered="#{reservationRequest.to.active and aonRole.commercialOperator and !reservationRequest.agencyUser}"
+				valueChangeListener="#{reservationRequest.onHolderChanged}"
+				reRender="BookingHolderLabelDiv,BookingHolderContentDiv">
+				<f:selectItems value="#{pmsCollections.bookingHolders}" />
+			</aon:selectOneMenu>
+			<aon:div rendered="#{!reservationRequest.nevv and reservationRequest.to.agencyHolder}">
+				<aon:outputLabel value="#{bundle.pms_promo_code}:" styleClass="aon-margin-right aon-italic" />
+				<aon:outputText value="#{reservationRequest.promoCode}" styleClass="aon-bold" />
+			</aon:div>
+		</aon:panelGrid>
 	</aon:if>
 
 	<aon:if test="#{aonRole.commercialOperator or reservationRequest.agencyUser}">
