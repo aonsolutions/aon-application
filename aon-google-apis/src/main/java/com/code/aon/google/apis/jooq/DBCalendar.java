@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 import org.jooq.DSLContext;
 import org.jooq.Record2;
+import org.jooq.Record3;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
@@ -34,6 +35,34 @@ public class DBCalendar {
 				domain.setName(data.get(0).value1());
 			if(data.get(0).value2()!= null)
 				domain.setDescription(data.get(0).value2());
+						
+			return domain;
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static Domain getDomain(String domainCon) throws SQLException{
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domainCon);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			Result<Record3<Integer, String, String>> data = dslContext.select(DOMAIN.ID, DOMAIN.NAME, DOMAIN.DESCRIPTION)
+				.from(DOMAIN)
+				.where(DOMAIN.NAME.eq(domainCon))
+				.fetch();
+
+			Domain domain = new Domain();
+			if(data.get(0).value1()!= null)
+			domain.setId(data.get(0).value1());
+			if(data.get(0).value2()!= null)
+				domain.setName(data.get(0).value2());
+			if(data.get(0).value3()!= null)
+				domain.setDescription(data.get(0).value3());
 						
 			return domain;
 		} finally {

@@ -18,9 +18,11 @@ import org.apache.commons.cli.PosixParser;
 
 import com.code.aon.google.apis.CalendarUtils;
 import com.code.aon.google.apis.DatabaseSync;
+import com.code.aon.google.apis.jooq.DBCalendar;
 import com.code.aon.google.apis.jooq.DBConsults;
+import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.pool.AonConnectionException;
-import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
+import com.esferalia.aon.google.sql.AbstractSQL.Domain;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.CalendarListEntry;
 import com.google.api.services.calendar.model.Event;
@@ -68,11 +70,11 @@ public class DeleteEvents {
 	
 
 	public static void act(String domain) throws KeyStoreException, IOException, GeneralSecurityException, SQLException, AonConnectionException{
-		DomainGserviceaccount d = DatabaseSync.getServiceAccount(domain);
-		View.domain(domain);
-		if (d.getClientId()!= null){
-			Calendar calendar = CalendarUtils.serviceInitialize(d);
-		
+		Domain d = DBCalendar.getDomain(domain);
+		DomainGserviceaccount g = DBConsults.getServiceAccount(domain, d.getId());		View.domain(domain);
+		if (g.getClientId()!= null){
+			Calendar calendar = CalendarUtils.serviceInitialize(g);
+			
 	
 			if(action.equals("all")){
 				deleteEventsAll(calendar, domain);

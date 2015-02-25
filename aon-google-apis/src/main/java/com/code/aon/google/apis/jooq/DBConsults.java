@@ -22,24 +22,69 @@ import static com.esferalia.aon.jooq.tables.SepeBatchAttach.SEPE_BATCH_ATTACH;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 
 import org.jooq.DSLContext;
 import org.jooq.Record1;
+import org.jooq.Record10;
 import org.jooq.Record3;
 import org.jooq.Record4;
 import org.jooq.Record5;
+import org.jooq.Record9;
 import org.jooq.Result;
+import org.jooq.TableField;
 import org.jooq.impl.DSL;
 
 import com.code.aon.google.apis.DatabaseSync;
-import com.code.aon.google.apis.DriveData;
 import com.code.aon.google.apis.FileInfo;
 import com.code.aon.pool.AonConnectionException;
+import com.esferalia.aon.google.sql.SQLConstants;
+
 
 public class DBConsults {
+	
+	
+	public static DomainGserviceaccount getServiceAccount(String domain, Integer domainId) throws SQLException{
+		Connection connection = null;
+		try {
+			connection = DatabaseSync.getConnection(domain);
 
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+
+			Result<Record10<String, byte[], String, Integer, String, Double, byte[], String, Double, String>> data = dslContext
+					.select(DOMAIN_GSERVICEACCOUNT.CLIENT_ID, DOMAIN_GSERVICEACCOUNT.CLIENT_SECRET
+							, DOMAIN.NAME , DOMAIN_GSERVICEACCOUNT.DOMAIN
+							, DOMAIN_GSERVICEACCOUNT.EMAIL_ADDRESS, DOMAIN_GSERVICEACCOUNT.LIMIT
+							, DOMAIN_GSERVICEACCOUNT.PRIVATE_KEY, DOMAIN_GSERVICEACCOUNT.PUBLIC_KEY
+							, DOMAIN_GSERVICEACCOUNT.SIZE, DOMAIN_GSERVICEACCOUNT.GOOGLE_ACCOUNT)
+					.from(DOMAIN_GSERVICEACCOUNT)
+						.join(DOMAIN).on(DOMAIN.ID.eq(DOMAIN_GSERVICEACCOUNT.DOMAIN).or(DOMAIN.PARENT.eq(DOMAIN_GSERVICEACCOUNT.DOMAIN)))
+					.where(DOMAIN.ID.eq(domainId).or(DOMAIN.ID.eq(0)))
+					.fetch();
+			
+			Integer size = data.size();
+
+			DomainGserviceaccount dgserviceaccount = new DomainGserviceaccount();
+			for(Record10<String, byte[], String, Integer, String, Double, byte[], String, Double, String> r : data){
+				if(size == 1 && r.value4() == 0) 
+					dgserviceaccount = new DomainGserviceaccount(r);
+				if(size == 2 && r.value4() != 0)
+					dgserviceaccount = new DomainGserviceaccount(r);
+				if(size == 3 && r.value4() == domainId)
+					dgserviceaccount = new DomainGserviceaccount(r);	
+			};
+			
+			return dgserviceaccount;
+		}finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
 	private String getUserName(String email, String domain)
 			throws AonConnectionException, SQLException {
 		Connection connection = null;

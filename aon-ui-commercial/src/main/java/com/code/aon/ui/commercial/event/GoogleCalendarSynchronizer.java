@@ -6,10 +6,14 @@ import java.security.GeneralSecurityException;
 import java.sql.SQLException;
 
 import javax.naming.NamingException;
-import javax.servlet.ServletException;
 
 import com.code.aon.AonVersion;
 import com.code.aon.commercial.CommercialTracking;
+import com.code.aon.google.apis.CalendarUtils;
+import com.code.aon.google.apis.DatabaseSync;
+import com.code.aon.google.apis.jooq.DBCalendar;
+import com.code.aon.google.apis.jooq.DBConsults;
+import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ui.commercial.controller.CommercialTrackingController;
 import com.code.aon.ui.config.controller.ConfigConstants;
@@ -18,10 +22,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.google.apis.*;
-import com.code.aon.google.apis.jooq.DBCalendar;
 import com.esferalia.aon.google.sql.AbstractSQL.Domain;
-import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
 import com.google.api.services.calendar.model.Calendar;
 import com.google.api.services.calendar.model.CalendarList;
 import com.google.api.services.calendar.model.Events;
@@ -38,11 +39,12 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 		String domain= AonUtil.getDomainName();
 		
 		try {
-			DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
+			CommercialTracking tracking = getCommercialTracking(event);
+			Domain company = DBCalendar.getDomain(domain,tracking.getDomain());
+			DomainGserviceaccount g = DBConsults.getServiceAccount(domain, company.getId());
 			if (g.getClientId() != null){
 				CalendarUtils.serviceInitialize(g);
-				CommercialTracking tracking = getCommercialTracking(event);
-				Domain company = DatabaseSync.getDomainName(tracking.getId(),domain);
+				
 				CalendarList calendars = CalendarUtils.Quicksort.calendarsSort(CalendarUtils.getCalendars());
 				int i=CalendarUtils.searchCalendars(calendars, company.getName(), calendars.getItems().size() );
 				Events events=CalendarUtils.Quicksort.eventsSort(CalendarUtils.getEvents(calendars.getItems().get(i).getId()));
@@ -51,16 +53,12 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 			}
 			
 		} catch (SQLException e) {
-			// TODO Bloque catch generado automáticamente
 			e.printStackTrace();
 		} catch (AonConnectionException e) {
-			// TODO Bloque catch generado automáticamente
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Bloque catch generado automáticamente
 			e.printStackTrace();
 		} catch (GeneralSecurityException e) {
-			// TODO Bloque catch generado automáticamente
 			e.printStackTrace();
 		}
 		
@@ -69,20 +67,20 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 	@Override
 	public void afterBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
-		// TODO Apéndice de método generado automáticamente
-		super.afterBeanAdded(event);
+		
 		String domain=AonUtil.getDomainName();
 		try {
 			
-			DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
+			CommercialTracking tracking = getCommercialTracking(event);
+			Domain company = DBCalendar.getDomain(domain,tracking.getDomain());
+			DomainGserviceaccount g = DBConsults.getServiceAccount(domain, company.getId());
 			if (g.getClientId() != null){
 				CalendarUtils.serviceInitialize(g);
-				CommercialTracking tracking = getCommercialTracking(event);
-				Domain company = DatabaseSync.getDomainName(tracking.getId(),domain);
+
 				CalendarList calendars = CalendarUtils.Quicksort.calendarsSort(CalendarUtils.getCalendars());
 				int i=CalendarUtils.searchCalendars(calendars, company.getName(), calendars.getItems().size() );
 				if(i==-1){
-					Calendar calendar =CalendarUtils.newCalendar(domain);
+					Calendar calendar =CalendarUtils.newCalendar(company);
 					CalendarUtils.addEvent(calendar.getId(), CalendarUtils.newEvent(DatabaseSync.getCommercialTrackingOne(tracking.getId(), domain),domain));
 
 				}
@@ -91,19 +89,14 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 				}
 			}
 		} catch (SQLException e) {
-			// TODO Bloque catch generado automáticamente
 			e.printStackTrace();
 		} catch (AonConnectionException e) {
-			// TODO Bloque catch generado automáticamente
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Bloque catch generado automáticamente
 			e.printStackTrace();
 		} catch (GeneralSecurityException e) {
-			// TODO Bloque catch generado automáticamente
 			e.printStackTrace();
 		} catch (NamingException e) {
-			// TODO Bloque catch generado automáticamente
 			e.printStackTrace();
 		}
 		
@@ -112,17 +105,15 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 	@Override
 	public void afterBeanRemoved(ControllerEvent event)
 			throws ControllerListenerException {
-		// TODO Apéndice de método generado automáticamente
-
-		super.afterBeanRemoved(event);
+		
 		String domain=AonUtil.getDomainName();
 		try {
 			
-			DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
+			CommercialTracking tracking = getCommercialTracking(event);
+			Domain company = DBCalendar.getDomain(domain,tracking.getDomain());
+			DomainGserviceaccount g = DBConsults.getServiceAccount(domain, company.getId());
 			if (g.getClientId() != null){
-				CalendarUtils.serviceInitialize(g);
-				CommercialTracking tracking = getCommercialTracking(event);
-				Domain company = DBCalendar.getDomain(domain,tracking.getDomain());			
+				CalendarUtils.serviceInitialize(g);	
 				CalendarList calendars = CalendarUtils.Quicksort.calendarsSort(CalendarUtils.getCalendars());
 				int i=CalendarUtils.searchCalendars(calendars, company.getName(), calendars.getItems().size() );
 				Events events=CalendarUtils.Quicksort.eventsSort(CalendarUtils.getEvents(calendars.getItems().get(i).getId()));
@@ -130,13 +121,10 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 				CalendarUtils.removeEvent(calendars.getItems().get(i).getId(), events.getItems().get(j).getId());
 			}
 		} catch (SQLException e) {
-			// TODO Bloque catch generado automáticamente
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Bloque catch generado automáticamente
 			e.printStackTrace();
 		} catch (GeneralSecurityException e) {
-			// TODO Bloque catch generado automáticamente
 			e.printStackTrace();
 		}
 	}

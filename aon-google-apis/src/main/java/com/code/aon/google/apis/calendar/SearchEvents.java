@@ -20,10 +20,11 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
 import com.code.aon.google.apis.CalendarUtils;
-import com.code.aon.google.apis.DatabaseSync;
+import com.code.aon.google.apis.jooq.DBCalendar;
 import com.code.aon.google.apis.jooq.DBConsults;
+import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.pool.AonConnectionException;
-import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
+import com.esferalia.aon.google.sql.AbstractSQL.Domain;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.CalendarList;
 import com.google.api.services.calendar.model.CalendarListEntry;
@@ -93,7 +94,8 @@ public class SearchEvents {
 		return events;
 	}
 	public static Events act(String domain) throws IOException, KeyStoreException, GeneralSecurityException, SQLException, NumberFormatException, AonConnectionException {
-		DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
+		Domain d = DBCalendar.getDomain(domain);
+		DomainGserviceaccount g = DBConsults.getServiceAccount(domain, d.getId());
 		Calendar calendar = CalendarUtils.serviceInitialize(g);
 		View.domain(domain);
 		Events events = null;

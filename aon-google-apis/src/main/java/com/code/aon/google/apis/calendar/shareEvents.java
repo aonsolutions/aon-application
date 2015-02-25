@@ -18,11 +18,12 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
 import com.code.aon.google.apis.CalendarUtils;
-import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.Utils;
+import com.code.aon.google.apis.jooq.DBCalendar;
 import com.code.aon.google.apis.jooq.DBConsults;
+import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.pool.AonConnectionException;
-import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
+import com.esferalia.aon.google.sql.AbstractSQL.Domain;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.AclRule;
 import com.google.api.services.calendar.model.AclRule.Scope;
@@ -33,8 +34,8 @@ public class shareEvents {
 
 	public static void act(String domain) throws IOException, NamingException, NumberFormatException, KeyStoreException, GeneralSecurityException, SQLException, AonConnectionException {
 		// TODO Apéndice de método generado automáticamente
-		DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
-		Calendar calendar = CalendarUtils.serviceInitialize(g);
+		Domain d = DBCalendar.getDomain(domain);
+		DomainGserviceaccount g = DBConsults.getServiceAccount(domain, d.getId());		Calendar calendar = CalendarUtils.serviceInitialize(g);
 		View.domain(domain);
 		for (String email : emails) {
 			SearchEvents.commercial = commercial;

@@ -16,6 +16,7 @@ import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.g
 import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.getPrincipalShortName;
 import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.newFlow;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
@@ -39,12 +40,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import com.code.aon.google.apis.drive.SearchFiles;
+import com.code.aon.google.apis.jooq.DBCalendar;
 import com.code.aon.google.apis.jooq.DBConsults;
+import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.pool.AonConnectionException;
 import com.esferalia.aon.google.sql.AbstractSQL.CommercialActivity;
 import com.esferalia.aon.google.sql.AbstractSQL.CommercialTracking;
 import com.esferalia.aon.google.sql.AbstractSQL.Domain;
-import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
 import com.esferalia.aon.google.sql.AbstractSQL.Project;
 import com.esferalia.aon.google.sql.AbstractSQL.Registry;
 import com.google.api.client.auth.oauth2.Credential;
@@ -242,23 +244,33 @@ public class CalendarUtils {
 	
 	
 	public static com.google.api.services.calendar.Calendar serviceInitialize(DomainGserviceaccount g) throws KeyStoreException, IOException, GeneralSecurityException, SQLException{
-		
-		
 		final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
 		final JsonFactory JSON_FACTORY = new JacksonFactory();
 		final String SERVICE_ACCOUNT_ID = g.getEmailAddress();
-
-		InputStream keyStream = g.getPrivateKey();
+		
+		InputStream keyStream = new ByteArrayInputStream(g.getPrivateKey());
 		PrivateKey serviceAccountPrivateKey = SecurityUtils.loadPrivateKeyFromKeyStore(SecurityUtils.getPkcs12KeyStore(), keyStream, "notasecret",
 		          "privatekey", "notasecret");
-		
-		GoogleCredential credential = new GoogleCredential.Builder()
+		String googleAccount = g.getGoogleAccount();
+		GoogleCredential credential;
+		if(googleAccount != null)
+			credential = new GoogleCredential.Builder()
 				.setTransport(HTTP_TRANSPORT)
 				.setJsonFactory(JSON_FACTORY)
 				.setServiceAccountId(SERVICE_ACCOUNT_ID)
 				.setServiceAccountScopes(
 						Collections.singletonList(CalendarScopes.CALENDAR))
-				.setServiceAccountPrivateKey(serviceAccountPrivateKey).build();
+				.setServiceAccountPrivateKey(serviceAccountPrivateKey)
+				.setServiceAccountUser(googleAccount)
+				.build();
+		else credential = new GoogleCredential.Builder()
+				.setTransport(HTTP_TRANSPORT)
+				.setJsonFactory(JSON_FACTORY)
+				.setServiceAccountId(SERVICE_ACCOUNT_ID)
+				.setServiceAccountScopes(
+						Collections.singletonList(CalendarScopes.CALENDAR))
+				.setServiceAccountPrivateKey(serviceAccountPrivateKey)
+				.build();
 		
 		client = new com.google.api.services.calendar.Calendar.Builder(
 				HTTP_TRANSPORT, JSON_FACTORY, credential )
@@ -357,6 +369,7 @@ public class CalendarUtils {
 			rule.setScope(scope);
 			AclRule createdRule = client.acl().insert(result.getId(), rule).execute();
 			System.out.println(createdRule.getId());
+			
 		}	
 		View.display(result);
 		return result;
@@ -372,7 +385,7 @@ public class CalendarUtils {
 	 * @throws IOException
 	 * @throws NamingException 
 	 */
-	public static Calendar newCalendar( String key) throws SQLException, AonConnectionException, IOException, NamingException{
+	public static Calendar newCalendar(String key) throws SQLException, AonConnectionException, IOException, NamingException{
 		
 		Domain company = getDomain1(key);
 		String email= getEnterpriseEmail(company.getId(),key);
@@ -381,6 +394,14 @@ public class CalendarUtils {
 		entry.setDescription(company.getDescription());
 		return addCalendar(entry, email);
 	}
+	public static Calendar newCalendar(Domain domain) throws SQLException, AonConnectionException, IOException, NamingException{
+		String email= getEnterpriseEmail(domain.getId(),domain.getName());
+		Calendar entry = new Calendar();
+		entry.setSummary(domain.getName());
+		entry.setDescription(domain.getDescription());
+		return addCalendar(entry, email);
+	}
+	
 	
 	/**
 	 * updateCalendar(Calendar calendar), Modifica un calendario especificado
@@ -565,11 +586,14 @@ public class CalendarUtils {
 			throws IOException {
 		View.header("Add Event");
 		View.display(event);
-		Event result = client.events().insert(calendarId, event)
+		Event result = client.events().insert(calendarId, event).setSendNotifications(true)
 				.execute();
 		View.display(result);
 		return result;
+		
 	}
+	
+	
 
 	/**
 	 * (String calendarId, Event event), Modifica un evento dado del calendario de
@@ -658,8 +682,9 @@ public class CalendarUtils {
 public static void synchronize(String key) throws IOException, SQLException, AonConnectionException, KeyStoreException, GeneralSecurityException, NamingException {
 		
 				Vector<CommercialTracking> eventsBD= getCommercialTrackingKey(key);// Obtiene todos los eventos(CommercialTracking) de la BD
-			
-				DomainGserviceaccount g = DatabaseSync.getServiceAccount(key);
+				Domain d = DBCalendar.getDomain(key);
+				DomainGserviceaccount g = DBConsults.getServiceAccount(key, d.getId());
+						//DatabaseSync.getServiceAccount(key);
 				if(g.getClientId()!=null){
 					serviceInitialize(g);
 					CalendarList calendars = Quicksort.calendarsSort(getCalendars());		
@@ -712,7 +737,9 @@ public static void synchronize(String key) throws IOException, SQLException, Aon
 			Vector<Domain> companies = getDomain(key);//Obtiene todos los dominios del dominio padre
 			Map<Integer,Vector<CommercialTracking>> map= getCommercialTrackingAll(key);// Obtiene todos los eventos(CommercialTracking) de la BD
 			for(int j=0;j<companies.size();j++){
-				DomainGserviceaccount g = DatabaseSync.getServiceAccount(companies.get(j).getName());
+				Domain d = DBCalendar.getDomain(key);
+				DomainGserviceaccount g = DBConsults.getServiceAccount(key, d.getId());
+						//DatabaseSync.getServiceAccount(companies.get(j).getName());
 				System.out.println(companies.get(j).getName()+" : "+g.getClientId());
 				if(g.getClientId()!=null){
 					serviceInitialize(g);
@@ -776,8 +803,9 @@ public static void synchronize2() throws IOException, SQLException, AonConnectio
 		}
 		for(String key : domains2) { // recorre todos los dominios de la BD
 				Vector<CommercialTracking> eventsBD= getCommercialTrackingKey(key);// Obtiene todos los eventos(CommercialTracking) de la BD
-			
-				DomainGserviceaccount g = DatabaseSync.getServiceAccount(key);
+				Domain d = DBCalendar.getDomain(key);
+				DomainGserviceaccount g = DBConsults.getServiceAccount(key, d.getId());
+						//DatabaseSync.getServiceAccount(key);
 				if(g.getClientId()!=null){
 					serviceInitialize(g);
 					CalendarList calendars = Quicksort.calendarsSort(getCalendars());		
