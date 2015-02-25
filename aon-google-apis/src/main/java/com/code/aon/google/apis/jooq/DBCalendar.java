@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import org.jooq.DSLContext;
 import org.jooq.Record2;
 import org.jooq.Record3;
+import org.jooq.Record4;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
@@ -51,7 +52,7 @@ public class DBCalendar {
 
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
-			Result<Record3<Integer, String, String>> data = dslContext.select(DOMAIN.ID, DOMAIN.NAME, DOMAIN.DESCRIPTION)
+			Result<Record4<Integer, String, String, Byte>> data = dslContext.select(DOMAIN.ID, DOMAIN.NAME, DOMAIN.DESCRIPTION, DOMAIN.TYPE)
 				.from(DOMAIN)
 				.where(DOMAIN.NAME.eq(domainCon))
 				.fetch();
@@ -63,7 +64,9 @@ public class DBCalendar {
 				domain.setName(data.get(0).value2());
 			if(data.get(0).value3()!= null)
 				domain.setDescription(data.get(0).value3());
-						
+			if(data.get(0).value4() != null){
+				domain.setType(data.get(0).value4().shortValue());
+			}
 			return domain;
 		} finally {
 			if (connection != null)

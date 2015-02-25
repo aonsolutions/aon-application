@@ -61,7 +61,7 @@ public class ServiceAccountController extends BasicController {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return d.getId()!= null && d.getId() == 0;
+		return d.getId()!= null && d.getType()==5;
 	}	
 	
 	public void initialize2(ActionEvent event){
