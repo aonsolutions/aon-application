@@ -77,7 +77,7 @@
         				data.addColumn('string', '#{bundle.client_id}');
         				data.addColumn('string', '#{bundle.sa_size}');
         				data.addColumn('string', '#{bundle.limit}');
-
+						data.addColumn('string', 'Cuenta Google')
 						
       					var data2 = new google.visualization.DataTable();
         				data2.addColumn('string', 'email');
@@ -89,7 +89,8 @@
 							data.addRow(['#{account.domain}',
 						             '#{account.client_id}',
 					             	'#{account.sizestr}',
-					             	'#{account.limitstr}']);	
+					             	'#{account.limitstr}',
+					             	'#{account.google_account}']);	
 						
 							data2.addRow(['#{account.email_address}',
 							             '#{account.public_key}',
@@ -118,11 +119,13 @@
            					var email = data2.getValue(table.getSelection()[0].row, 0);
            					var public_key = data2.getValue(table.getSelection()[0].row, 1);
            					var limite = data2.getValue(table.getSelection()[0].row, 2);
+           					var google_account = data.getValue(table.getSelection()[0].row,4)
     						document.getElementById('aonContent:googleForm:domain_hidden').value = domain;
     						document.getElementById('aonContent:googleForm:client_id_hidden').value = client_id;
     						document.getElementById('aonContent:googleForm:limit_hidden').value = limite;
     						document.getElementById('aonContent:googleForm:public_key_hidden').value = public_key;
     						document.getElementById('aonContent:googleForm:email_hidden').value = email;
+    						document.getElementById('aonContent:googleForm:google_account_hidden').value = google_account;
     						document.getElementById('aonContent:googleForm:tracking-editgoogle').click();
     				
            				}
@@ -147,6 +150,9 @@
 			
 			<aon:inputText id="client_id_hidden" size="90" required="false"
 							value="#{serviceAccount.client_id}" />
+			
+			<aon:inputText id="google_account_hidden" size="90" required="false"
+							value="#{serviceAccount.google_account}" />
 			
 			<aon:commandButton  name="formedit" id="tracking-editgoogle" 
 				action="adminGoogle_formSA"/>

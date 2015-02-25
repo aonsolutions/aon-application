@@ -18,6 +18,7 @@ import org.jooq.DSLContext;
 import org.jooq.Record1;
 import org.jooq.Record5;
 import org.jooq.Record7;
+import org.jooq.Record8;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 import org.richfaces.event.UploadEvent;
@@ -29,9 +30,11 @@ import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveFile;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
+import com.code.aon.google.apis.jooq.DBCalendar;
 import com.code.aon.google.apis.jooq.JooqSettings;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.google.sql.AbstractSQL.Domain;
 import com.esferalia.aon.jooq.tables.DomainGserviceaccount;
 import com.google.api.services.drive.Drive;
 
@@ -47,11 +50,18 @@ public class ServiceAccountController extends BasicController {
 	String size;
 	String limit;
 	String public_key;
+	String google_account;
 	byte[] data;
 	
 	public Boolean getConsole(){
 		String domain = AonUtil.getDomainName();
-		return domain.contains("console-pro");
+		Domain d = new Domain();
+		try {
+			d = DBCalendar.getDomain(domain);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return d.getId()!= null && d.getId() == 0;
 	}	
 	
 	public void initialize2(ActionEvent event){
@@ -62,6 +72,7 @@ public class ServiceAccountController extends BasicController {
 		 size="";
 		 limit="";
 		 public_key="";
+		 google_account="";
 		
 	}
 	
@@ -75,20 +86,20 @@ public class ServiceAccountController extends BasicController {
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
 
-			Result<Record7<String, String, Double, Double, String, String, byte[]>> data;
+			Result<Record8<String, String, Double, Double, String, String, byte[], String>> data;
 			data = dslContext
-					.selectDistinct(DOMAIN_GSERVICEACCOUNT.CLIENT_ID,
-							DOMAIN_GSERVICEACCOUNT.EMAIL_ADDRESS,
-							DOMAIN_GSERVICEACCOUNT.SIZE,
-							DOMAIN_GSERVICEACCOUNT.LIMIT, DOMAIN.NAME ,DOMAIN_GSERVICEACCOUNT.PUBLIC_KEY,DOMAIN_GSERVICEACCOUNT.PRIVATE_KEY)
+					.selectDistinct(DOMAIN_GSERVICEACCOUNT.CLIENT_ID, DOMAIN_GSERVICEACCOUNT.EMAIL_ADDRESS,
+							DOMAIN_GSERVICEACCOUNT.SIZE, DOMAIN_GSERVICEACCOUNT.LIMIT, 
+							DOMAIN.NAME ,DOMAIN_GSERVICEACCOUNT.PUBLIC_KEY,
+							DOMAIN_GSERVICEACCOUNT.PRIVATE_KEY, DOMAIN_GSERVICEACCOUNT.GOOGLE_ACCOUNT)
 					.from(DOMAIN_GSERVICEACCOUNT).join(DOMAIN)
 					.on(DOMAIN.ID.eq(DOMAIN_GSERVICEACCOUNT.DOMAIN))
 					.where(DOMAIN_GSERVICEACCOUNT.CLIENT_ID.eq(client_id))
 					.fetch();
 			ServiceAccount aux = new ServiceAccount();
-			for (Record7<String, String, Double, Double, String, String, byte[]> record : data) {
+			for (Record8<String, String, Double, Double, String, String, byte[], String> record : data) {
 				ServiceAccount sa = new ServiceAccount("", "", "", "", "",
-						"", null);
+						"", null, "");
 				if (record.value1() != null){
 					sa.setClient_id(record.value1());
 				}
@@ -110,6 +121,10 @@ public class ServiceAccountController extends BasicController {
 				if (record.value7() != null){
 					sa.setData(record.value7());
 				}
+				if(record.value8() != null){
+					sa.setGoogle_account(record.value8());
+				}
+				else sa.setGoogle_account("-");
 				aux = sa;
 				
 			}
@@ -162,19 +177,20 @@ public class ServiceAccountController extends BasicController {
 				DSLContext dslContext = DSL.using(connection,
 						JooqSettings.getDefaultSettings());
 
-				Result<Record7<String, String, Double, Double, String, String, byte[]>> data;
+				Result<Record8<String, String, Double, Double, String, String, byte[], String>> data;
 				data = dslContext
 						.selectDistinct(DOMAIN_GSERVICEACCOUNT.CLIENT_ID,
 								DOMAIN_GSERVICEACCOUNT.EMAIL_ADDRESS,
 								DOMAIN_GSERVICEACCOUNT.SIZE,
-								DOMAIN_GSERVICEACCOUNT.LIMIT, DOMAIN.NAME,DOMAIN_GSERVICEACCOUNT.PUBLIC_KEY,DOMAIN_GSERVICEACCOUNT.PRIVATE_KEY)
+								DOMAIN_GSERVICEACCOUNT.LIMIT, DOMAIN.NAME,DOMAIN_GSERVICEACCOUNT.PUBLIC_KEY,DOMAIN_GSERVICEACCOUNT.PRIVATE_KEY
+								,DOMAIN_GSERVICEACCOUNT.GOOGLE_ACCOUNT)
 						.from(DOMAIN_GSERVICEACCOUNT).join(DOMAIN)
 						.on(DOMAIN.ID.eq(DOMAIN_GSERVICEACCOUNT.DOMAIN))
 						.fetch();
 				int i=0;
-				for (Record7<String, String, Double, Double, String, String, byte[]> record : data) {
+				for (Record8<String, String, Double, Double, String, String, byte[], String> record : data) {
 					ServiceAccount sa = new ServiceAccount("", "", "", "", "",
-							"", null);
+							"", null, "");
 					if (record.value1() != null){
 						sa.setClient_id(record.value1());
 					}
@@ -195,6 +211,9 @@ public class ServiceAccountController extends BasicController {
 					}
 					if (record.value7() != null){
 						sa.setData(record.value7());
+					}
+					if(record.value8() != null){
+						sa.setGoogle_account(record.value8());
 					}
 					vector.add(sa);
 					
@@ -257,6 +276,7 @@ public class ServiceAccountController extends BasicController {
 					.set(DOMAIN_GSERVICEACCOUNT.PUBLIC_KEY, getPublic_key())
 					.set(DOMAIN_GSERVICEACCOUNT.PRIVATE_KEY, aux)
 					.set(DOMAIN_GSERVICEACCOUNT.LIMIT, (double) Integer.parseInt(getLimit()))
+					.set(DOMAIN_GSERVICEACCOUNT.GOOGLE_ACCOUNT, getGoogle_account())
 					.execute();
 
 		} finally {
@@ -275,7 +295,7 @@ public class ServiceAccountController extends BasicController {
 		limit = sa.getLimit();
 		public_key =  sa.getPublic_key();
 		data = sa.getData();
-		
+		google_account = sa.getGoogle_account();
 	}
 	
 	
@@ -299,9 +319,10 @@ public class ServiceAccountController extends BasicController {
 							DOMAIN_GSERVICEACCOUNT.EMAIL_ADDRESS,
 							DOMAIN_GSERVICEACCOUNT.LIMIT,
 							DOMAIN_GSERVICEACCOUNT.PRIVATE_KEY,
-							DOMAIN_GSERVICEACCOUNT.PUBLIC_KEY)
+							DOMAIN_GSERVICEACCOUNT.PUBLIC_KEY,
+							DOMAIN_GSERVICEACCOUNT.GOOGLE_ACCOUNT)
 					.values(getClient_id(), domain_id, getEmail_address(), (double) Integer.parseInt(getLimit()),
-							getData(),getPublic_key()).execute();
+							getData(),getPublic_key(),getGoogle_account()).execute();
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -349,7 +370,7 @@ public class ServiceAccountController extends BasicController {
 	
 	public void onUpload(ActionEvent event) {
 		System.out.println("onUpload");
-		upload = new ServiceAccount(getClient_id(), getDomain(), getEmail_address(), getSize(), getLimit(), getPublic_key(), getData());
+		upload = new ServiceAccount(getClient_id(), getDomain(), getEmail_address(), getSize(), getLimit(), getPublic_key(), getData(),getGoogle_account());
 
 	}
 	
@@ -411,4 +432,14 @@ public class ServiceAccountController extends BasicController {
 	public void setLimit(Long limit) {
 		this.limit = FileUtils.byteCountToDisplaySize(limit);
 	}
+
+	public String getGoogle_account() {
+		return google_account;
+	}
+
+	public void setGoogle_account(String google_account) {
+		this.google_account = google_account;
+	}
+	
+	
 }
