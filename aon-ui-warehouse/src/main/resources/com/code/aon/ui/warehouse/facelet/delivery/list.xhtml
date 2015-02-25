@@ -58,16 +58,8 @@
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{delivery}" />
 					<ui:define name="columns">
-						<aon:column alias="Delivery.series,Delivery.number"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
-							</f:facet>
-							<aon:outputText value="#{to.referenceCode}" />
-						</aon:column>
-
 						<aon:column alias="Delivery.issueTime"
-							styleClass="aon-editDataTable-textColumn">
+							styleClass="aon-editDataTable-textColumn aon-width-100">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_date}" />
 							</f:facet>
@@ -77,8 +69,16 @@
 							</aon:outputText>
 						</aon:column>
 
+						<aon:column alias="Delivery.series,Delivery.number"
+							styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-120">
+							<f:facet name="header">
+								<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
+							</f:facet>
+							<aon:outputText value="#{to.referenceCode}" />
+						</aon:column>
+
 						<aon:column alias="Delivery.customer.registry.name"
-							styleClass="aon-editDataTable-textColumn">
+							styleClass="aon-editDataTable-textColumn aon-width-auto">
 							<f:facet name="header">
 								<h:outputText value="#{bundle.aon_customer}" />
 							</f:facet>
@@ -88,39 +88,62 @@
 						</aon:column>
 
 						<aon:column alias="Delivery.customer.registry.document"
-							styleClass="aon-editDataTable-textColumn">
+							styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-120">
 							<f:facet name="header">
 								<h:outputText value="#{bundle.aon_company_document}" />
 							</f:facet>
 							<aon:outputText value="#{to.customer.registry.document}" />
 						</aon:column>
 
-						<aon:column alias="Delivery.status"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_status}" />
-							</f:facet>
-							<aon:outputText value="#{to.status}" />
-							<f:facet name="footer">
-								<aon:outputText value="#{bundle.aon_total}" />
-							</f:facet>
-						</aon:column>
+						<aon:if test="#{companyCollections.workPlacesCount > 1}">
+							<aon:column alias="Income.workPlace.description"
+								styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-120">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.purchase_workplace}" />
+								</f:facet>
+								<aon:outputText value="#{to.workPlace.description}" />
+							</aon:column>
+						</aon:if>
 
-						<aon:column styleClass="aon-editDataTable-numberColumn">
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_total}" />
 							</f:facet>
-							<aon:outputText value="#{delivery.deliveryTotalPrice}">
+							<aon:outputText value="#{controller.deliveryTotalPrice}">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
 							<f:facet name="footer">
-								<aon:div style="float:right">
-									<aon:outputText style="text-align:right" value="#{delivery.deliveriesTotalAmount}" >
+								<aon:div id="listTotalDiv" styleClass="aon-text-right"
+									rendered="#{controller.rowCount &lt; 500}">
+									<aon:commandLink id="showTotals" immediate="true" 
+										styleClass="aon-dataTable-link aon-nowrap aon-bold"
+										value="#{bundle.aon_total_sum}"
+										rendered="#{controller.listTotal == null}"
+										actionListener="#{controller.obtainListTotals}"									
+										reRender="listTotalDiv" />
+									<aon:outputText	styleClass="aon-bold" 
+										value="#{controller.listTotal}"
+										rendered="#{controller.listTotal != null}">
 										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 									</aon:outputText>
 								</aon:div>
 							</f:facet>
 						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-iconColumn aon-width-20 aon-text-center">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_invoice_abbr}" />
+							</f:facet>
+							<aon:outputText title="#{bundle.finance_invoiced}"
+								styleClass="aon-editDataTable-button aon-icon-check-black aon-nowrap aon-margin-left"
+								value="&#160;"
+								rendered="#{to.invoiced}" />
+							<aon:outputText title="#{bundle.aon_pending}"
+								styleClass="aon-text-center"
+								value="-"
+								rendered="#{!to.invoiced}" />
+						</aon:column>
+
 					</ui:define>
 				</ui:decorate>
 

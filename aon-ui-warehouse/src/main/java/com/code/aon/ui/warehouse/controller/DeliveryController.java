@@ -86,30 +86,15 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	private String invoiceSeries;
 	private int invoiceNumber;
 	private Date invoiceDate;
-	private WarehouseEmailUtil emailUtil;
 	private String selectedTab;
 	private boolean shippingAlternativeAddress;
 	private boolean showAuditInfoWindow;
+	private Double listTotal;
+	private WarehouseEmailUtil emailUtil;
 	
     public DeliveryController() {
     	this.emailUtil = new WarehouseEmailUtil();
     }
-
-	public boolean isShippingAlternativeAddress() {
-		return shippingAlternativeAddress;
-	}
-
-	public void setShippingAlternativeAddress(boolean shippingAlternativeAddress) {
-		this.shippingAlternativeAddress = shippingAlternativeAddress;
-	}
-
-	public String getSelectedTab() {
-		return selectedTab;
-	}
-
-	public void setSelectedTab(String selectedTab) {
-		this.selectedTab = selectedTab;
-	}
 
 	public List<SelectItem> getAddresses() {
 		return addresses;
@@ -211,13 +196,36 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		this.invoiceDate = invoiceDate;
 	}
 	
-	public Double getDeliveriesTotalAmount() throws ManagerBeanException {
-		double deliveriesTotalAmount = 0.0; 
-		for(ITransferObject to: this.getWrappedList()){
-			Delivery d = (Delivery) to;
-			deliveriesTotalAmount += getDeliveryTotalPrice(d);
-		}
-		return deliveriesTotalAmount;
+	public String getSelectedTab() {
+		return selectedTab;
+	}
+
+	public void setSelectedTab(String selectedTab) {
+		this.selectedTab = selectedTab;
+	}
+
+	public boolean isShippingAlternativeAddress() {
+		return shippingAlternativeAddress;
+	}
+
+	public void setShippingAlternativeAddress(boolean shippingAlternativeAddress) {
+		this.shippingAlternativeAddress = shippingAlternativeAddress;
+	}
+
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
+	}
+	
+	public Double getListTotal() {
+		return listTotal;
+	}
+
+	public void setListTotal(Double listTotal) {
+		this.listTotal = listTotal;
 	}
 
 	public boolean isCustomerReadOnly() {
@@ -455,6 +463,20 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		return 0;
 	}
 
+	public void obtainListTotals(ActionEvent event) {
+		double listTotal = 0.0; 
+		try {	
+			for (ITransferObject ito : getManagerBean().getList(getCriteria())) {
+				listTotal += getDeliveryTotalPrice((Delivery)ito);
+			}
+		} catch (ManagerBeanException e) {
+			String message = "Imposible obtener el Total";
+			AonUtil.addErrorMessage(message);
+			throw new AbortProcessingException(message);
+		}		
+		setListTotal(listTotal);
+	}
+
 	public void onSalesTransferShow(ActionEvent event) throws ManagerBeanException {
 		Delivery to = (Delivery)this.getTo();
 
@@ -614,14 +636,4 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		return ccc.getDeliverySeriesIds();
 	}
 
-	@Override
-	public boolean isShowAuditInfoWindow() {
-		return showAuditInfoWindow;
-	}
-
-	@Override
-	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
-		this.showAuditInfoWindow = showAuditInfoWindow;
-	}
-	
 }

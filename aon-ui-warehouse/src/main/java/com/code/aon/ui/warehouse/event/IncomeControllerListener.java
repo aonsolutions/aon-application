@@ -26,6 +26,12 @@ public class IncomeControllerListener extends ControllerAdapter implements IWare
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
+	public void afterModelInitialized(ControllerEvent event) throws ControllerListenerException {
+		IncomeController controller = (IncomeController)event.getController();
+		controller.setListTotal(null);
+	}
+
+	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		CompanyCollectionsController companyColls = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
 		IncomeController controller = (IncomeController)event.getController();
@@ -90,6 +96,7 @@ public class IncomeControllerListener extends ControllerAdapter implements IWare
 			IController incomeDetailController = FormUtil.getController(INCOME_DETAIL_CONTROLLER_NAME);
 			incomeDetailController.onSearch(null);
 		}
+		incomeController.setListTotal(null);
 	}
 
 }

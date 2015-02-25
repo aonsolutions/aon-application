@@ -10,10 +10,9 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
-import com.code.aon.AonVersion;
-
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -75,22 +74,8 @@ public class IncomeController extends BasicController implements IWarehouseConst
 	private boolean showConfirmWindow;
 	private boolean showPurchaseFilterWindow;
 	private boolean showAuditInfoWindow;	
-	
-	public boolean isShowConfirmWindow() {
-		return showConfirmWindow;
-	}
-	public void setShowConfirmWindow(boolean showConfirmWindow) {
-		this.showConfirmWindow = showConfirmWindow;
-	}
+	private Double listTotal;
 
-    public boolean isShowPurchaseFilterWindow() {
-		return showPurchaseFilterWindow;
-	}
-
-    public void setShowPurchaseFilterWindow(boolean showPurchaseFilterWindow) {
-		this.showPurchaseFilterWindow = showPurchaseFilterWindow;
-	}
-	
     public List<SelectItem> getAddresses() {
 		return addresses;
 	}
@@ -189,6 +174,37 @@ public class IncomeController extends BasicController implements IWarehouseConst
 
 	public void setInvoiceDate(Date invoiceDate) {
 		this.invoiceDate = invoiceDate;
+	}
+
+	public boolean isShowConfirmWindow() {
+		return showConfirmWindow;
+	}
+	public void setShowConfirmWindow(boolean showConfirmWindow) {
+		this.showConfirmWindow = showConfirmWindow;
+	}
+
+    public boolean isShowPurchaseFilterWindow() {
+		return showPurchaseFilterWindow;
+	}
+
+    public void setShowPurchaseFilterWindow(boolean showPurchaseFilterWindow) {
+		this.showPurchaseFilterWindow = showPurchaseFilterWindow;
+	}
+	
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
+	}
+	
+	public Double getListTotal() {
+		return listTotal;
+	}
+
+	public void setListTotal(Double listTotal) {
+		this.listTotal = listTotal;
 	}
 
 	public boolean isPending(){
@@ -415,6 +431,20 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		return 0;
 	}
 
+	public void obtainListTotals(ActionEvent event) {
+		double listTotal = 0.0; 
+		try {	
+			for (ITransferObject ito : getManagerBean().getList(getCriteria())) {
+				listTotal += getIncomeTotalPrice((Income)ito);
+			}
+		} catch (ManagerBeanException e) {
+			String message = "Imposible obtener el Total";
+			AonUtil.addErrorMessage(message);
+			throw new AbortProcessingException(message);
+		}		
+		setListTotal(listTotal);
+	}
+
 	public void onPurchaseTransferShow(ActionEvent event) throws ManagerBeanException {
 		getPurchaseTransferManager().setFilterParams(null);
 		loadPurchaseTransferModel();
@@ -552,14 +582,4 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		}
 	}
 
-	@Override
-	public boolean isShowAuditInfoWindow() {
-		return showAuditInfoWindow;
-	}
-
-	@Override
-	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
-		this.showAuditInfoWindow = showAuditInfoWindow;
-	}
-	
 }

@@ -27,7 +27,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.audit.IAuditable;
-import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.IBankAccountContainer;
 import com.code.aon.config.IPayMethod;
 import com.code.aon.config.IScopable;
@@ -38,6 +37,7 @@ import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.tas.ProjectTas;
+import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.DeliveryDB;
 
@@ -115,13 +115,8 @@ public class Delivery extends DeliveryDB implements IHeaderObject, ICalculableCo
     }
 
 	@Transient
-	public boolean isConfidential() {
-		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
-	}
-
-	@Transient
-	public void setConfidential(boolean confidential) {
-		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
+	public boolean isInvoiced() {
+		return getStatus() == DeliveryStatus.INVOICED;
 	}
 
 	@Transient

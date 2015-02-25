@@ -255,6 +255,13 @@ public class CompanyCollectionsController implements Serializable {
 	public void setWorkPlace(WorkPlace workPlace) {
 	}
 
+	public int getWorkPlacesCount() throws ManagerBeanException {
+		IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_ACTIVE), true);
+		return workPlaceBean.getCount(criteria);
+	}
+	
 	public List<SelectItem> getCurrentUserWorkPlaces() throws ManagerBeanException {
 		List<SelectItem> workPlaces = new LinkedList<SelectItem>();
     	for(ITransferObject to: getCurrentUserWorkPlaceList()){

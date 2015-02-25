@@ -119,8 +119,8 @@
 									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 								</aon:outputText>
 								<f:facet name="footer">
-									<aon:div id="listTaxableBaseDiv" style="float:right">
-										<aon:outputText	styleClass="aon-text-right aon-bold" 
+									<aon:div id="listTaxableBaseDiv" styleClass="aon-text-right">
+										<aon:outputText	styleClass="aon-bold" 
 											value="#{controller.listTaxableBase}"
 											rendered="#{controller.listTaxableBase != null}">
 											<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
@@ -137,8 +137,8 @@
 									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 								</aon:outputText>
 								<f:facet name="footer">
-									<aon:div id="listVatQuotaDiv" style="float:right">
-										<aon:outputText	styleClass="aon-text-right aon-bold" 
+									<aon:div id="listVatQuotaDiv" styleClass="aon-text-right">
+										<aon:outputText	styleClass="aon-bold" 
 											value="#{controller.listVatQuota}"
 											rendered="#{controller.listVatQuota != null}">
 											<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
@@ -156,8 +156,8 @@
 										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 									</aon:outputText>
 									<f:facet name="footer">
-										<aon:div id="listRetentionQuotaDiv" style="float:right">
-											<aon:outputText	styleClass="aon-text-right aon-bold" 
+										<aon:div id="listRetentionQuotaDiv" styleClass="aon-text-right">
+											<aon:outputText	styleClass="aon-bold" 
 												value="#{controller.listRetentionQuota}"
 												rendered="#{controller.listRetentionQuota != null}">
 												<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
@@ -176,14 +176,14 @@
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
 							<f:facet name="footer">
-								<aon:div id="listTotalDiv" style="float:right">
+								<aon:div id="listTotalDiv" styleClass="aon-text-right">
 									<aon:commandLink id="showTotals" immediate="true" 
 										styleClass="aon-dataTable-link aon-nowrap aon-bold"
 										value="#{bundle.aon_total_sum}"
 										rendered="#{controller.listTotal == null}"
 										actionListener="#{controller.obtainListTotals}"									
 										reRender="listTaxableBaseDiv,listVatQuotaDiv,listRetentionQuotaDiv,listTotalDiv" />
-									<aon:outputText	styleClass="aon-text-right aon-bold" 
+									<aon:outputText	styleClass="aon-bold" 
 										value="#{controller.listTotal}"
 										rendered="#{controller.listTotal != null}">
 										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />

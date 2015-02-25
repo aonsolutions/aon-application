@@ -33,6 +33,7 @@ import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
+import com.code.aon.warehouse.enumeration.IncomeStatus;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.IncomeDB;
 
@@ -94,6 +95,11 @@ public class Income extends IncomeDB implements IHeaderObject, ICalculableContai
     public int[] getPaymentDaysArray() {
     	return paymentDaysArray;
     }
+
+	@Transient
+	public boolean isInvoiced() {
+		return getStatus() == IncomeStatus.INVOICED;
+	}
 
 	@Transient
 	public List<ITransferObject> getDetailList() {

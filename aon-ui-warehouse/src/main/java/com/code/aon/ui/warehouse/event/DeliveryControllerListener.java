@@ -28,6 +28,12 @@ public class DeliveryControllerListener extends ControllerAdapter implements IWa
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
+	public void afterModelInitialized(ControllerEvent event) throws ControllerListenerException {
+		DeliveryController controller = (DeliveryController)event.getController();
+		controller.setListTotal(null);
+	}
+
+	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		CompanyCollectionsController companyColls = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
 		DeliveryController controller = (DeliveryController)event.getController();
@@ -85,7 +91,13 @@ public class DeliveryControllerListener extends ControllerAdapter implements IWa
 		}
 		controller.setShippingAlternativeAddress(controller.isShippingAlternativeAddressDefined());
 	}
-	
+
+	@Override
+	public void afterBeanUpdated(ControllerEvent event)	throws ControllerListenerException {
+		DeliveryController controller = (DeliveryController)event.getController();
+		controller.setListTotal(null);
+	}
+
 	private void emptyShippingAlternativeAddress(Delivery delivery) {
 		delivery.setShippingAlternativeAddress(null);
 		delivery.setShippingAlternativeAddress2(null);
