@@ -554,9 +554,6 @@ public class ReservationRequestManager implements IReservationConstants {
 					}
 				}
 			} else {
-System.out.println("***** BEGIN BOOKING RESPONSE *****");
-System.out.println(message.toString());
-System.out.println("***** END BOOKING RESPONSE *****");
 				availableRoomStay.setReservationId(operation.getReservation().getConfirmationID());
 				BookingRules bookingRules = operation.getReservation().getBookingRules();
 				if (bookingRules.getCancelPenalties() != null && bookingRules.getCancelPenalties().sizeOfCancelPenaltyArray() > 0) {
