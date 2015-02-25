@@ -693,19 +693,22 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 	}
 
 	public Item obtainServiceItem(Item roomItem, String serviceCode, String mealPlan) throws ManagerBeanException {
-		Item item = obtainServiceItem(serviceCode);
+		Item item = obtainServiceItemComposition(roomItem, mealPlan);
 		if (item != null) {
 			return item;
-		} else {
-			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression("Item.compositions.compositionItem.id", roomItem.getId());
-			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_DETAIL), mealPlan);
-			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_DOMAIN), domain);
-			List<ITransferObject> itemList = itemBean.getList(criteria);
-			if (itemList.size() > 0) {
-				return (Item)itemList.get(0);
-			}
+		}
+		return obtainServiceItem(serviceCode);
+	}
+
+	private Item obtainServiceItemComposition(Item roomItem, String mealPlan) throws ManagerBeanException {
+		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression("Item.compositions.compositionItem.id", roomItem.getId());
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_DETAIL), mealPlan);
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_DOMAIN), domain);
+		List<ITransferObject> itemList = itemBean.getList(criteria);
+		if (itemList.size() > 0) {
+			return (Item)itemList.get(0);
 		}
 		return null;
 	}
