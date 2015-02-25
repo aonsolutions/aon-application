@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.gwt.fiscal.shared.Enterprise;
+import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -26,7 +27,7 @@ public interface FiscalService extends RemoteService {
 
 	// ------------------------------------------------------- FISCAL PARAMETERS
 
-	// FiscalParameters getFiscalParameters(int domain) throws AonSQLException;
+	FiscalParameters getFiscalParameters(String domainName, int domain) throws AonSQLException;
 
 	// -------------------------------------------------------------- ENTERPRISE
 	ArrayList<Enterprise> getEnterprises(int domain, String query)

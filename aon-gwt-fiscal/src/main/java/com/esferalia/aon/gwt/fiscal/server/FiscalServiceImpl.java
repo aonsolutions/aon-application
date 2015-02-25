@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.shared.Enterprise;
 import com.esferalia.aon.gwt.fiscal.sql.SQLEnterprise;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -42,22 +43,11 @@ import com.esferalia.aon.occam.api.model.type.Activities.TypeActivity;
 @WebServlet(name = "Fiscal Servlet", urlPatterns = { "/aon_gwt_fiscal/Fiscal" })
 public class FiscalServiceImpl extends AonRemoteServiceServlet implements FiscalService {
 
-//	// ------------------------------------------------------- FISCAL PARAMETERS
-//	@Override
-//	public FiscalParameters getFiscalParameters(int domain) throws AonSQLException {
-//		Connection conn = null;
-//		FiscalParameters fiscalParams = null;
-//		try {
-//			conn = getConnection();
-//			DSLContext dsl = DSL.using(conn, AccountingUtil.getDefaultSettings());
-//			fiscalParams = SQLAppParams.getFiscalParameters(dsl,domain);
-//			return fiscalParams;
-//		} catch (Throwable e) {
-//			throw new AonSQLException(e);
-//		} finally {
-//			SQLUtils.closeQuietly(conn);
-//		}
-//	}
+	// ------------------------------------------------------- FISCAL PARAMETERS
+	@Override
+	public FiscalParameters getFiscalParameters(String domainName,int domain) throws AonSQLException {
+		return AON.getFiscalParameters(domainName, domain);
+	}
 
 	// -------------------------------------------------------------- ENTERPRISE
 	@Override

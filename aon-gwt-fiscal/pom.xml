@@ -73,29 +73,23 @@
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate</artifactId>
+					<groupId>asm</groupId>
+					<artifactId>asm</artifactId>
 				</exclusion>
-		   </exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.fiscal</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-			<exclusions>
 				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate</artifactId>
+					<groupId>asm</groupId>
+					<artifactId>asm-attrs</artifactId>
 				</exclusion>
 		   </exclusions>
 		</dependency>
+		
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.accounting.mining</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.accounting.mining</artifactId>
@@ -104,19 +98,6 @@
 			<classifier>sources</classifier>
 		</dependency>
 		
-		<dependency>
-			<groupId>com.esferalia.aon</groupId>
-			<artifactId>aon.entity</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate</artifactId>
-				</exclusion>
-		   </exclusions>
-		</dependency>
-
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.gwt.common</artifactId>

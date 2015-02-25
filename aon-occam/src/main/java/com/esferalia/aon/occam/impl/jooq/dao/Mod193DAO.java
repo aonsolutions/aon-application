@@ -524,7 +524,7 @@ public class Mod193DAO {
 
 	public static Mod193 initialize(AONContext ctx, int year) {
 		Mod193 mod193 = new Mod193();
-		FiscalParameters params = AppParamDAO.getFiscalParameters(ctx,year);
+		FiscalParameters params = AppParamDAO.getFiscalParameters(ctx);
 		mod193.setEnterprise(params.getCompany());
 		mod193.setDomain(ctx.getDomainId());
 		mod193.setDocument(params.getDocument());

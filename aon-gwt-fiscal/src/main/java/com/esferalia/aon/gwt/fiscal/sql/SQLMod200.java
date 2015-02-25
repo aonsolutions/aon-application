@@ -12,9 +12,9 @@ import java.util.Map;
 
 import org.jooq.DSLContext;
 import org.jooq.Result;
+import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
-import com.code.aon.accounting.util.AccountingUtil;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.gwt.common.shared.Secretary;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.DoubleVariable;
@@ -29,9 +29,20 @@ import com.esferalia.aon.occam.api.model.CompanyParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 
 public class SQLMod200 {
+
+	private static Settings SETTINGS = null;
+
+	public static Settings getDefaultSettings() {
+		if (SETTINGS == null) {
+			SETTINGS = new Settings();
+			SETTINGS.setRenderSchema(false);
+		}
+		return SETTINGS;
+	}
+	
 	
 	public static Mod200 save(Connection conn, Mod200 mod200) throws AonSQLException {
-		DSLContext dsl = DSL.using(conn, AccountingUtil.getDefaultSettings());
+		DSLContext dsl = DSL.using(conn, SQLMod200.getDefaultSettings());
 		if (mod200.getId() == null) {
 			return insert(conn, dsl, mod200);
 		} else {
@@ -40,7 +51,7 @@ public class SQLMod200 {
 	}
 
 	public static void delete(Connection conn, Mod200 mod200) throws AonSQLException {
-		DSLContext dsl = DSL.using(conn, AccountingUtil.getDefaultSettings());
+		DSLContext dsl = DSL.using(conn, SQLMod200.getDefaultSettings());
 		deleteRegistry(conn, dsl, mod200);
 		deleteDetail(conn, dsl, mod200);
 		dsl.delete(FS_MODEL200)
@@ -237,7 +248,7 @@ public class SQLMod200 {
 	}
 
 	public static Mod200 getById(int id, Connection conn) {
-		DSLContext dsl = DSL.using(conn, AccountingUtil.getDefaultSettings());
+		DSLContext dsl = DSL.using(conn, SQLMod200.getDefaultSettings());
 		FsModel200Record record = dsl
 				.selectFrom(FS_MODEL200)
 				.where(FS_MODEL200.ID.equal(id))
@@ -256,7 +267,7 @@ public class SQLMod200 {
 	}
 
 	public static Mod200 get(Connection conn, int domain, int year) {
-		DSLContext dsl = DSL.using(conn, AccountingUtil.getDefaultSettings());
+		DSLContext dsl = DSL.using(conn, SQLMod200.getDefaultSettings());
 		FsModel200Record record = dsl
 				.selectFrom(FS_MODEL200)
 				.where(FS_MODEL200.DOMAIN.equal(domain))

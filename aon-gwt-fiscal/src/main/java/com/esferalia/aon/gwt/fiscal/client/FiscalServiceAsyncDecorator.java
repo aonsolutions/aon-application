@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.gwt.fiscal.shared.Enterprise;
+import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -25,6 +26,13 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		this.fiscalServiceAsync = mod190ServiceAsync;
 	}
 
+	// -------------------------------------------------------------- PARAMS
+	@Override
+	public void getFiscalParameters(String domainName,int domain, AsyncCallback<FiscalParameters> callback) {
+		AON.start();
+		fiscalServiceAsync.getFiscalParameters(domainName,domain, 
+				new AsyncCallbackWrapper<FiscalParameters>(callback));
+	}
 	// -------------------------------------------------------------- ENTERPRISE
 	@Override
 	public void getEnterprises(int domain, String query,
@@ -276,5 +284,6 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		fiscalServiceAsync.initializeMod390(domainName, domain, year, 
 				new AsyncCallbackWrapper<Mod390>(callback));
 	}
+
 
 }

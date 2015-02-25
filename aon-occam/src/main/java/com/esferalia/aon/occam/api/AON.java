@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.Agreement;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
@@ -59,6 +60,15 @@ public class AON {
 	// ********************************************
 
 	// --------------------- APPLICATION PARAMETERS
+	public static FiscalParameters getFiscalParameters(String domainName, int domainId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			return getCommon().getFiscalParameters(ctx);
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
 	public static ApplicationParameter fetchApplicationParameter(
 			AONContext ctx, AppParam param) {
 		return getCommon().fetchOne(ctx, param);

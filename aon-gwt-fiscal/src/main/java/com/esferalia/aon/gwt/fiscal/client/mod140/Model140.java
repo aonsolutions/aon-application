@@ -1,0 +1,166 @@
+package com.esferalia.aon.gwt.fiscal.client.mod140;
+
+import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.css.AonDataGrid;
+import com.esferalia.aon.gwt.common.client.css.AonResources;
+import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
+import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.fiscal.client.FiscalService;
+import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.cellview.client.DataGrid;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
+
+public class Model140 extends MainEntryPoint {
+
+	static FiscalServiceAsync fiscalService;
+	
+	final static CommonMessages MSG = GWT.create(CommonMessages.class);
+	final static AonResources AON_RESOURCES = GWT.create(AonResources.class);
+	final static DataGrid.Resources DATA_GRID_STYLE = GWT.create(AonDataGrid.class);
+	
+	interface Model140Binder extends UiBinder<Widget, Model140> {
+	}
+
+	private static final Model140Binder MODEL_140_BINDER = GWT
+			.create(Model140Binder.class);
+
+	@UiField
+	SplitLayoutPanel splitLayoutPanel;
+	@UiField
+	ResultsPanel resultsPanel;
+	@UiField
+	MinimizePanel footPanel;
+	@UiField
+	Panel formContainer;
+
+	private int domain;
+	private int enterprise;
+
+	@UiField
+	FormPanel diskForm;
+	@UiField
+	TextBox epigraph; 
+	@UiField
+	DateBoxEx fromDate;
+	@UiField
+	DateBoxEx toDate;
+	
+	@UiField
+	Button generateFileButton;
+	
+	
+	@UiField
+	Hidden domainId;
+	@UiField
+	Hidden domainName;
+
+	@Override
+	public void onModuleLoad() {
+		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
+		AON_RESOURCES.css().ensureInjected();
+
+		FiscalServiceAsync mod180ServiceRaw = GWT.create(FiscalService.class);
+		fiscalService = new FiscalServiceAsyncDecorator(mod180ServiceRaw);
+
+		Widget ui = MODEL_140_BINDER.createAndBindUi(this);
+		
+
+		epigraph.setName("epigraph"); 
+		fromDate.getTextBox().setName("fromDate");
+		toDate.getTextBox().setName("toDate");
+		domainId.setName("domainId");
+		domainName.setName("domainName");
+		
+		// Add the outer panel to the RootLayoutPanel, so that it will be
+		// displayed.
+		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		root.add(ui);
+	}
+
+	public static native String getCurrentDomainName()
+	/*-{
+		return $wnd.getCurrentDomainName();
+	}-*/;
+
+	public static native int getCurrentDomain()
+	/*-{
+		return $wnd.getCurrentDomain();
+	}-*/;
+
+	// -------------------------------------------------------------- UiHandler
+
+	@UiHandler("generateFileButton")
+	void onGenerateFileButtonClick(ClickEvent event) {
+		diskForm.setMethod(FormPanel.METHOD_POST);
+		diskForm.setAction(GWT.getHostPageBaseURL() + "aon_gwt_fiscal/Model140File");
+		diskForm.setEncoding(FormPanel.ENCODING_URLENCODED);
+		
+		domainId.setValue(String.valueOf(getCurrentDomain()));
+		domainName.setValue(getCurrentDomainName());
+		diskForm.submit();
+	}
+
+	@UiHandler("footPanel")
+	void onFootMinimize(MinimizeEvent event) {
+		closeFootPanel();
+	}
+	@UiHandler("footPanel")
+	void onFootMaximize(MinimizeEvent event) {
+	}
+
+	private void closeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 0);
+	}
+
+	private void maximizeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 0);
+	}
+	
+	private void showResultsPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 5);
+	}
+
+	private boolean isResultsPanelVisible() {
+		return splitLayoutPanel.getWidgetSize(footPanel) > 0;
+	}
+	
+	private void cleanErrorMessage() {
+		resultsPanel.clearFlowPanel();
+		closeFootPanel();
+	}
+
+	private void showErrorMessage(String msg) {
+		showResultsPanel();
+		addErrorMessage(msg);
+	}
+
+	private void addErrorMessage(String msg) {
+		SimplePanel panel = new SimplePanel();
+		Label label = new Label(msg);
+		label.addStyleName("aon-icon-errorwarning");
+		label.addStyleName("aon-message-error");
+		label.addStyleName("aon-icon");
+		panel.add(label);
+		resultsPanel.setWidget(panel);
+	}
+}

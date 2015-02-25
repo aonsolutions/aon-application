@@ -25,6 +25,12 @@ public interface CommonMessages extends Messages {
 	String currencyCode();
 
 	// ---------------------------------------------------------------- Modulos
+	@DefaultMessage("Modelo 140")
+	String mod140();
+	
+	@DefaultMessage("Libro-registro de operaciones econ\u00F3micas")
+	String mod140Description();
+
 	@DefaultMessage("Modelo 190")
 	String mod190();
 
@@ -1547,5 +1553,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Apellidos y nombre o raz\u00F3n social del representante")
 	String lrName();
 	
+	@DefaultMessage("Valor incorrecto en el campo \"Ep\u00EDgrafe\"")
+	String incorrectEpigraph();
 	
 }

@@ -129,7 +129,7 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 		mod200.setBalanceType( BalanceType.ABREVIADO );
 		mod200.setPygType(BalanceType.ABREVIADO );
 		
-		FiscalParameters fiscalParameters = AppParamDAO.getFiscalParameters(ctx, mod200.getDomain());
+		FiscalParameters fiscalParameters = AppParamDAO.getFiscalParameters(ctx);
 		
 		mod200.setEnterprise(fiscalParameters.getCompany());
 		mod200.setEnterpriseDocument(fiscalParameters.getDocument());

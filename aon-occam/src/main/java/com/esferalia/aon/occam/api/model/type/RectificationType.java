@@ -8,4 +8,5 @@ public enum RectificationType implements Serializable {
 	NORMAL_RECTIFIER,
 	SPECIAL_RECTIFIER,
 	RECTIFIED;
+	
 }

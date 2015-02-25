@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
+import com.esferalia.aon.gwt.fiscal.client.mod140.Model140;
 import com.esferalia.aon.gwt.fiscal.client.mod180.Model180;
 import com.esferalia.aon.gwt.fiscal.client.mod184.Model184;
 import com.esferalia.aon.gwt.fiscal.client.mod190.Model190;
@@ -12,6 +13,7 @@ import com.google.gwt.core.client.GWT;
 public class MainEntryPoint implements EntryPoint {
 
 	private static final String ENTRY_POINT_PARAM = "entryPoint";
+	private static final String FS_MOD140_ENTRY_POINT = "Model140";
 	private static final String FS_MOD190_ENTRY_POINT = "Model190";
 	private static final String FS_MOD193_ENTRY_POINT = "Model193";
 	private static final String FS_MOD180_ENTRY_POINT = "Model180";	
@@ -22,6 +24,10 @@ public class MainEntryPoint implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 		String entryPoint = getParameter(GWT.getModuleName(), ENTRY_POINT_PARAM);
+		if ( entryPoint.equalsIgnoreCase(FS_MOD140_ENTRY_POINT)) {
+			Model140 model140 = new Model140();
+			model140.onModuleLoad();
+		}
 		if ( entryPoint.equalsIgnoreCase(FS_MOD190_ENTRY_POINT)) {
 			Model190 model190 = new Model190();
 			model190.onModuleLoad();

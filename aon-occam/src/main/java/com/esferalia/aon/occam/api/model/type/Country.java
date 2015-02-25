@@ -2,7 +2,10 @@ package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum Country implements Serializable {
+	
 	 AL("ALBANIA","AL","ALB",8)
 	,DE("ALEMANIA","DE","DEU",276)
 	,AD("ANDORRA","AD","AND",20)
@@ -274,5 +277,26 @@ public enum Country implements Serializable {
 	}
 	public int getIsoCode() {
 		return isoCode;
+	}
+
+	public boolean isIntracommunityCountry() {
+		return this == DE || this == AT || this == BE || this == BG
+				|| this == HR || this == CY || this == DK || this == SI
+				|| this == EE || this == FI || this == FR || this == GR
+				|| this == GB || this == NL || this == HU || this == IT
+				|| this == IE || this == LV || this == LT || this == LU
+				|| this == MT || this == PL || this == PT || this == CZ
+				|| this == SK || this == RO || this == SE;
+	}
+
+	public static Country safeValueOf( String iso2 ) {
+		if (AonStringUtils.isBlank(iso2)) {
+			return null;
+		}
+		try {
+			return Country.valueOf(iso2);
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
 	}
 }	

@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client;
 import java.util.ArrayList;
 
 import com.esferalia.aon.gwt.fiscal.shared.Enterprise;
+import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -16,6 +17,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface FiscalServiceAsync {
+	// -------------------------------------------------------------- PARAMS
+	void getFiscalParameters(String domainName,int domain,AsyncCallback<FiscalParameters> callback);
 
 	// -------------------------------------------------------------- ENTERPRISE
 	void getEnterprises(int domain, String query,

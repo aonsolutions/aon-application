@@ -428,7 +428,7 @@ public class Mod180DAO {
 
 	public static Mod180 initialize(AONContext ctx, int year) {
 		Mod180 mod180 = new Mod180();
-		FiscalParameters params = AppParamDAO.getFiscalParameters(ctx, year);
+		FiscalParameters params = AppParamDAO.getFiscalParameters(ctx);
 		mod180.setEnterprise(params.getCompany());
 		mod180.setDomain(ctx.getDomainId());
 		mod180.setDocument(params.getDocument());

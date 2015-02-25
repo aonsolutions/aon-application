@@ -101,8 +101,7 @@ public class AppParamDAO {
 		return app;
 	}
 
-	public static FiscalParameters getFiscalParameters(AONContext ctx,
-			int year) {
+	public static FiscalParameters getFiscalParameters(AONContext ctx) {
 		FiscalParameters params = new FiscalParameters();
 		ctx.getDslContext()
 				.select(APP_PARAM.NAME, APP_PARAM.VALUE)

@@ -399,7 +399,7 @@ public class Mod390DAO {
 
 	public static Mod390 initialize(AONContext ctx, int year) {
 		Mod390 mod390 = new Mod390();
-		FiscalParameters params = AppParamDAO.getFiscalParameters(ctx,year);
+		FiscalParameters params = AppParamDAO.getFiscalParameters(ctx);
 		mod390.setEnterprise(params.getCompany());
 		mod390.setDomain(ctx.getDomainId());
 		mod390.setDocument(params.getDocument());
