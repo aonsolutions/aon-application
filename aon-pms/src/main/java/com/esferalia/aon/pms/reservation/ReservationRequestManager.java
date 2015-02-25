@@ -724,7 +724,7 @@ public class ReservationRequestManager implements IReservationConstants {
 		if (serviceItem == null) {
 			serviceItem = getReservationUtils().obtainDefaultServiceItem();
 		}
-		double reservationBase = CommonUtil.round(reservation.getTotal() * (1 - reservation.getVatPercent() / 100), 4);
+		double reservationBase = CommonUtil.round(reservation.getTotal() / (1 + reservation.getVatPercent() / 100), 4);
 		double serviceBase = CommonUtil.round(reservationBase / requestRoom.getUnits(), 4);
 
 		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
