@@ -726,10 +726,11 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <dependency>
-      <groupId>org.apache.poi</groupId>
-      <artifactId>poi</artifactId>
-      <version>3.7</version>
+    
+	<dependency>
+	  <groupId>org.apache.poi</groupId>
+	  <artifactId>poi-ooxml</artifactId>
+	  <version>3.11</version>
       <exclusions>
         <exclusion>
           <artifactId>commons-logging</artifactId>
@@ -741,6 +742,7 @@
         </exclusion>
       </exclusions>
     </dependency>
+    
     <dependency>
       <groupId>org.richfaces.framework</groupId>
       <artifactId>richfaces-api</artifactId>

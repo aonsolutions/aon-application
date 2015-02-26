@@ -285,6 +285,14 @@
 												actionListener="#{aonLoader.onStart}"
 												value="#{bundle.aon_loader_module}" />
 										</aon:div>
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="gwt_invoiceReport"
+												action="gwt_invoiceReport"
+												title="#{bundle.invoice_list_report}">
+												<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
+												style="margin-left: 5px; padding-left: 20px;" value="#{bundle.invoice_list_report}" />
+											</aon:commandLink>
+										</aon:div>
 										<aon:if test="#{aonRole.accountingOperator}">
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="invoiceExporter"

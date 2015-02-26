@@ -26,10 +26,15 @@ public class Invoice implements Serializable {
 	private Date taxDate;
 	private RectificationType rectificationType;
 	private Integer rectificationInvoice;
+	private Integer registry;
 	private String registryDocument;
 	private DocumentType registryDocumentType;
 	private Country registryDocumentCountry;
 	private String registryName;
+	private String registryTown;
+	private String registryZIP;
+	private String registryProvinceCode;
+	private String registryProvince;
 	private InvoiceType type;
 	private InvoiceTransactionType transaction;
 	private boolean recorded;
@@ -109,6 +114,12 @@ public class Invoice implements Serializable {
 	public void setRectificationInvoice(Integer rectificationInvoice) {
 		this.rectificationInvoice = rectificationInvoice;
 	}
+	public Integer getRegistry() {
+		return registry;
+	}
+	public void setRegistry(Integer registry) {
+		this.registry = registry;
+	}
 	public String getRegistryDocument() {
 		return registryDocument;
 	}
@@ -132,6 +143,30 @@ public class Invoice implements Serializable {
 	}
 	public void setRegistryName(String registryName) {
 		this.registryName = registryName;
+	}
+	public String getRegistryTown() {
+		return registryTown;
+	}
+	public void setRegistryTown(String registryTown) {
+		this.registryTown = registryTown;
+	}
+	public String getRegistryZIP() {
+		return registryZIP;
+	}
+	public void setRegistryZIP(String registryZIP) {
+		this.registryZIP = registryZIP;
+	}
+	public String getRegistryProvinceCode() {
+		return registryProvinceCode;
+	}
+	public void setRegistryProvinceCode(String registryProvinceCode) {
+		this.registryProvinceCode = registryProvinceCode;
+	}
+	public String getRegistryProvince() {
+		return registryProvince;
+	}
+	public void setRegistryProvince(String registryProvince) {
+		this.registryProvince = registryProvince;
 	}
 	public InvoiceType getType() {
 		return type;

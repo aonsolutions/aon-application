@@ -4,12 +4,23 @@ import java.io.Serializable;
 
 public enum DocumentType implements Serializable {
 	
-	NIF,
-	CIF,
-	NIE,
-	PASSPORT,
-	WORK_PERMIT,
-	COMMUNITY_CARD,
-	OTHER;
+	NIF("NIF")
+	,CIF("CIF")
+	,NIE("NIE")
+	,PASSPORT("Pasp.")
+	,WORK_PERMIT("P.T.")
+	,COMMUNITY_CARD("T.C.")
+	,OTHER("Otr.")
+	;
 
+	private String description;
+	
+	private DocumentType(String description) {
+		this.description = description;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+	
 }

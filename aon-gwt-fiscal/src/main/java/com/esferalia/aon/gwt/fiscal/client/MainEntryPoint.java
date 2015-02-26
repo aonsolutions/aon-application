@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
+import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceReport;
 import com.esferalia.aon.gwt.fiscal.client.mod140.Model140;
 import com.esferalia.aon.gwt.fiscal.client.mod180.Model180;
 import com.esferalia.aon.gwt.fiscal.client.mod184.Model184;
@@ -20,6 +21,8 @@ public class MainEntryPoint implements EntryPoint {
 	private static final String FS_MOD184_ENTRY_POINT = "Model184";
 	private static final String FS_MOD390_ENTRY_POINT = "Model390";
 	private static final String FS_MOD200_ENTRY_POINT = "Model200";
+	
+	private static final String FS_INVOICE_REPORT_ENTRY_POINT = "InvoiceReport";
 
 	@Override
 	public void onModuleLoad() {
@@ -27,30 +30,27 @@ public class MainEntryPoint implements EntryPoint {
 		if ( entryPoint.equalsIgnoreCase(FS_MOD140_ENTRY_POINT)) {
 			Model140 model140 = new Model140();
 			model140.onModuleLoad();
-		}
-		if ( entryPoint.equalsIgnoreCase(FS_MOD190_ENTRY_POINT)) {
+		} else if ( entryPoint.equalsIgnoreCase(FS_MOD190_ENTRY_POINT)) {
 			Model190 model190 = new Model190();
 			model190.onModuleLoad();
-		}
-		if ( entryPoint.equalsIgnoreCase(FS_MOD193_ENTRY_POINT)) {
+		} else if ( entryPoint.equalsIgnoreCase(FS_MOD193_ENTRY_POINT)) {
 			Model193 model193 = new Model193();
 			model193.onModuleLoad();
-		}
-		if ( entryPoint.equalsIgnoreCase(FS_MOD180_ENTRY_POINT)) {
+		} else if ( entryPoint.equalsIgnoreCase(FS_MOD180_ENTRY_POINT)) {
 			Model180 model180 = new Model180();
 			model180.onModuleLoad();
-		}
-		if ( entryPoint.equalsIgnoreCase(FS_MOD184_ENTRY_POINT)) {
+		} else if ( entryPoint.equalsIgnoreCase(FS_MOD184_ENTRY_POINT)) {
 			Model184 model184 = new Model184();
 			model184.onModuleLoad();
-		}
-		if ( entryPoint.equalsIgnoreCase(FS_MOD390_ENTRY_POINT)) {
+		} else if ( entryPoint.equalsIgnoreCase(FS_MOD390_ENTRY_POINT)) {
 			Model390 model390 = new Model390();
 			model390.onModuleLoad();
-		}
-		if ( entryPoint.equalsIgnoreCase(FS_MOD200_ENTRY_POINT)) {
+		} else if ( entryPoint.equalsIgnoreCase(FS_MOD200_ENTRY_POINT)) {
 			Model200 model200 = new Model200();
 			model200.onModuleLoad();
+		} else if ( entryPoint.equalsIgnoreCase(FS_INVOICE_REPORT_ENTRY_POINT)) {
+			InvoiceReport invoiceReport = new InvoiceReport();
+			invoiceReport.onModuleLoad();
 		}
 
 	}

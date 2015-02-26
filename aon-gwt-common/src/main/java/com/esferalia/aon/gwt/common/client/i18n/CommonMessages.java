@@ -1556,4 +1556,28 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Valor incorrecto en el campo \"Ep\u00EDgrafe\"")
 	String incorrectEpigraph();
 	
+	@DefaultMessage("Listado de facturas")
+	String invoiceReport();
+
+	@DefaultMessage("Filtro")
+	String filter();
+
+	@DefaultMessage("Fecha de emisi\u00F3n")
+	String issueDate();
+	
+	@DefaultMessage("Tipo de factura")
+	String invoiceType();
+	
+	@DefaultMessage("Ventas")
+	String sales();
+	
+	@DefaultMessage("Compras")
+	String purchases();
+	
+	@DefaultMessage("Gastos no deducibles")
+	String undeductibleExpenses();
+	
+	@DefaultMessage("Exportar")
+	String export();
+	
 }

@@ -4,9 +4,18 @@ import java.io.Serializable;
 
 public enum InvoiceType implements Serializable  {
 
-	PURCHASE,
-	SALES,
-	EXPENSES,
-	UNDEDUCTIBLE;
+	PURCHASE("Compras"),
+	SALES("Ventas"),
+	EXPENSES("Gastos"),
+	UNDEDUCTIBLE("Gt.NO Ded");
 
+	private String description;
+	
+	private InvoiceType(String description) {
+		this.description = description;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
 }
