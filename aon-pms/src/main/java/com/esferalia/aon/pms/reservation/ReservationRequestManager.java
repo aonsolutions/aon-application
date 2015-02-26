@@ -662,7 +662,7 @@ public class ReservationRequestManager implements IReservationConstants {
 		reservation.setSource(ReservationSource.REQUEST);
 		reservation.setCrsCode(requestRoom.getCrsCode());
 		reservation.setCheckStatus(ReservationCheckStatus.NO_CHECK);
-		reservation.setStatus((reservation.isAgencyHolder() || roomTariff == null || serviceItem == null) ? ReservationStatus.BLOCKED : ReservationStatus.ACTIVE);
+		reservation.setStatus(ReservationStatus.BLOCKED);
 
 		getReservationUtils().fillProject(reservation);
 		reservation.getProject().setDomain(hotel.getDomain());
