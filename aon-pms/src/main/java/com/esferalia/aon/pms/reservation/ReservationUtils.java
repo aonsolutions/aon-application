@@ -67,6 +67,7 @@ import com.esferalia.aon.pms.ReservationRequest;
 import com.esferalia.aon.pms.ReservationRequestRoom;
 import com.esferalia.aon.pms.Room;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
+import com.esferalia.aon.pms.enumeration.MealPlan;
 import com.esferalia.aon.pms.enumeration.ReservationDivertStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 
@@ -700,28 +701,30 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		return obtainServiceItem(serviceCode);
 	}
 
-	private Item obtainServiceItemComposition(Item roomItem, String mealPlan) throws ManagerBeanException {
-		if (StringUtils.isNotBlank(mealPlan)) {
-			//Corregir esta kotxinada
-			if (mealPlan.equals("H/D")) {
-				mealPlan = "AD";
-			} else if (mealPlan.equals("M/P")) {
-				mealPlan = "MP";
-			} else if (mealPlan.equals("P/CP")) {
-				mealPlan = "PC";
+	private Item obtainServiceItemComposition(Item roomItem, String mealPlanValue) throws ManagerBeanException {
+		if (StringUtils.isNotBlank(mealPlanValue)) {
+			MealPlan mealPlan = null;
+			for (MealPlan mealPlanTmp : MealPlan.values()) {
+				if (mealPlanTmp.getValue().equals(mealPlanValue) || mealPlanTmp.getCrsValue().equals(mealPlanValue)) {
+					mealPlan = mealPlanTmp;
+					break;
+				}
 			}
-			//Corregir esta kotxinada
 
-			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression("Item.compositions.compositionItem.id", roomItem.getId());
-			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_DETAIL), mealPlan);
-			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_DOMAIN), domain);
-			List<ITransferObject> itemList = itemBean.getList(criteria);
-			if (itemList.size() > 0) {
-				return (Item)itemList.get(0);
-			} else if (mealPlan.equals("AL")) {
-				return roomItem;
+			if (mealPlan != null) {
+				if (mealPlan != MealPlan.SA) {
+					IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression("Item.compositions.compositionItem.id", roomItem.getId());
+					criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_DETAIL), mealPlan.getValue());
+					criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_DOMAIN), domain);
+					List<ITransferObject> itemList = itemBean.getList(criteria);
+					if (itemList.size() > 0) {
+						return (Item)itemList.get(0);
+					}
+				} else {
+					return roomItem;
+				}
 			}
 		}
 		return null;
