@@ -25,7 +25,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.audit.IAuditable;
-import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.IBankAccountContainer;
 import com.code.aon.config.IPayMethod;
 import com.code.aon.config.IScopable;
@@ -102,25 +101,31 @@ public class Purchase extends PurchaseDB implements IHeaderObject, ICalculableCo
     }
 
     @Transient
-	public boolean isConfidential() {
-		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
-	}
-
-	@Transient
-	public void setConfidential(boolean confidential) {
-		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
-	}
-
-    @Transient
 	public boolean isItemReturn() {
 		return getDocumentType()==PurchaseDocumentType.ITEM_RETURN;
 	}
 
 	@Transient
-	public boolean isServed() {
-		return getStatus() == PurchaseStatus.SERVED;
+	public boolean isPending() {
+		return (PurchaseStatus.PENDING == getStatus());
 	}
-	
+	@Transient
+	public boolean isServed() {
+		return (PurchaseStatus.SERVED == getStatus());
+	}
+	@Transient
+	public boolean isClosed() {
+		return (PurchaseStatus.CLOSED == getStatus());
+	}
+	@Transient
+	public boolean isBlocked() {
+		return (PurchaseStatus.BLOCKED == getStatus());
+	}
+	@Transient
+	public boolean isInvoiced() {
+		return (PurchaseStatus.INVOICED == getStatus());
+	}
+
 	@Transient
 	public List<ITransferObject> getDetailList() {
 		try {

@@ -6,16 +6,8 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:column alias="Offer.series,Offer.number"
-		styleClass="aon-editDataTable-textColumn">
-		<f:facet name="header">
-			<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
-		</f:facet>
-		<aon:outputText value="#{to.referenceCode}" />
-	</aon:column>
-	
 	<aon:column alias="Offer.issueDate"
-		styleClass="aon-editDataTable-textColumn">
+		styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-100">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_date}" />
 		</f:facet>
@@ -25,8 +17,16 @@
 		</aon:outputText>
 	</aon:column>
 	
+	<aon:column alias="Offer.series,Offer.number"
+		styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-120">
+		<f:facet name="header">
+			<h:outputText value="#{bundle.aon_offer_number}" />
+		</f:facet>
+		<aon:outputText value="#{to.referenceCode}" />
+	</aon:column>
+	
 	<aon:column alias="Offer.target.registry.name"
-		styleClass="aon-editDataTable-textColumn">
+		styleClass="aon-editDataTable-textColumn aon-width-auto">
 		<f:facet name="header">
 			<h:outputText value="#{bundle.aon_target}" />
 		</f:facet>
@@ -36,19 +36,11 @@
 	</aon:column>
 	
 	<aon:column alias="Offer.target.registry.document"
-		styleClass="aon-editDataTable-textColumn">
+		styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-120">
 		<f:facet name="header">
-			<h:outputText value="#{bundle.aon_document}" />
+			<h:outputText value="#{bundle.aon_company_document}" />
 		</f:facet>
 		<aon:outputText value="#{to.target.registry.document}" />
 	</aon:column>
 	
-	<aon:column alias="Offer.status"
-		styleClass="aon-editDataTable-textColumn">
-		<f:facet name="header">
-			<aon:outputText value="#{bundle.aon_status}" />
-		</f:facet>
-		<aon:outputText value="#{to.status}" />
-	</aon:column>
-
 </ui:composition>

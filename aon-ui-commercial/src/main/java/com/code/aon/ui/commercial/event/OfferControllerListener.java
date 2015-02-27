@@ -4,12 +4,12 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
+import com.code.aon.AonVersion;
 import com.code.aon.commercial.CommercialTerm;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferTerm;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.commercial.enumeration.OfferType;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -32,6 +32,12 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class OfferControllerListener extends ControllerAdapter implements ICommercialConstants {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+
+	@Override
+	public void afterModelInitialized(ControllerEvent event) throws ControllerListenerException {
+		OfferController controller = (OfferController)event.getController();
+		controller.setListTotal(null);
+	}
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
@@ -98,6 +104,12 @@ public class OfferControllerListener extends ControllerAdapter implements IComme
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}
+	}
+
+	@Override
+	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		OfferController controller = (OfferController)event.getController();
+		controller.setListTotal(null);
 	}
 
 }

@@ -58,7 +58,8 @@
 						</aon:column>
 						
 						
-						<ui:include src="/com/code/aon/ui/sales/facelet/sales/listColumns.xhtml" >
+						<ui:include src="/com/code/aon/ui/sales/facelet/sales/list_content.xhtml" >
+							<ui:param name="controller" value="#{orderServer}" />
 							<ui:param name="itemReturnInRed" value="#{true}" />
 						</ui:include>
 					</ui:define>

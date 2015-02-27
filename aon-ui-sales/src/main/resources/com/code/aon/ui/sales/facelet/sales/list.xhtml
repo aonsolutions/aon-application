@@ -58,7 +58,11 @@
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{sales}" />
 					<ui:define name="columns">
-						<ui:include src="/com/code/aon/ui/sales/facelet/sales/listColumns.xhtml" />
+
+						<ui:include src="/com/code/aon/ui/sales/facelet/sales/list_content.xhtml">
+							<ui:param name="controller" value="#{sales}" />
+						</ui:include>
+
 					</ui:define>
 				</ui:decorate>
 

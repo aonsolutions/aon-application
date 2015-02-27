@@ -93,56 +93,17 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 	private boolean showInvoiceWindow;
 	private String invoiceRefCode;
 	private Date invoiceDate;
-	private Double purchasesTotalAmount;
+	private boolean showAuditInfoWindow;
+	private Double listTotal;
 	private PurchaseEmailUtil emailUtil;
 	private boolean shippingAlternativeAddress;
 	private boolean showShipmentWindow;
 	private Purchase returnSourcePurchase;
 	
 	private List<String> moreRecipients;
-	
 	private List<IEmailControllerListener> emailControllerListenerClasses;
 	
-	private boolean showAuditInfoWindow;
-
-	public boolean isShippingAlternativeAddress() {
-		return shippingAlternativeAddress;
-	}
-
-	public void setShippingAlternativeAddress(boolean shippingAlternativeAddress) {
-		this.shippingAlternativeAddress = shippingAlternativeAddress;
-	}
-	
-	public boolean isShowShipmentWindow() {
-		return showShipmentWindow;
-	}
-
-	public void setShowShipmentWindow(boolean showShipmentWindow) {
-		this.showShipmentWindow = showShipmentWindow;
-	}
-
-	public List<IEmailControllerListener> getEmailControllerListenerClasses() {
-		return emailControllerListenerClasses;
-	}
-
-	public void setEmailControllerListenerClasses(
-			List<IEmailControllerListener> emailControllerListenerClasses) {
-		this.emailControllerListenerClasses = emailControllerListenerClasses;
-	}
-
-	@Override
-	public List<String> getMoreRecipients() {
-		if(moreRecipients==null){
-			moreRecipients = new ArrayList<String>();
-		}
-		return moreRecipients;
-	}
-
-	public void setMoreRecipients(List<String> moreRecipients) {
-		this.moreRecipients = moreRecipients;
-	}
-	
-    public PurchaseController() {
+	public PurchaseController() {
     	this.emailUtil = new PurchaseEmailUtil();
     }
 
@@ -251,29 +212,59 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 		this.invoiceDate = invoiceDate;
 	}
 	
-	public Double getPurchasesTotalAmount() {
-		return purchasesTotalAmount;
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
 	}
 
-	public void setPurchasesTotalAmount(Double purchasesTotalAmount) {
-		this.purchasesTotalAmount = purchasesTotalAmount;
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
 	}
 	
-	public void getSelectionTotalAmount(ActionEvent event) {
-		try {	
-			IManagerBean purchaseBean = BeanManager.getManagerBean(Purchase.class);
-			List<ITransferObject> list = purchaseBean.getList(getCriteria());
-			purchasesTotalAmount = 0.0;
-			for(ITransferObject to: list){
-				purchasesTotalAmount += getPurchaseTotalPrice((Purchase) to);
-			}
-		} catch (ManagerBeanException e) {
-			String message = "Imposible obtener el total";
-			AonUtil.addErrorMessage(message);
-			throw new AbortProcessingException(message);
-		}		
+	public Double getListTotal() {
+		return listTotal;
+	}
+
+	public void setListTotal(Double listTotal) {
+		this.listTotal = listTotal;
 	}
 	
+	public boolean isShippingAlternativeAddress() {
+		return shippingAlternativeAddress;
+	}
+
+	public void setShippingAlternativeAddress(boolean shippingAlternativeAddress) {
+		this.shippingAlternativeAddress = shippingAlternativeAddress;
+	}
+	
+	public boolean isShowShipmentWindow() {
+		return showShipmentWindow;
+	}
+
+	public void setShowShipmentWindow(boolean showShipmentWindow) {
+		this.showShipmentWindow = showShipmentWindow;
+	}
+
+	@Override
+	public List<String> getMoreRecipients() {
+		if(moreRecipients==null){
+			moreRecipients = new ArrayList<String>();
+		}
+		return moreRecipients;
+	}
+
+	public void setMoreRecipients(List<String> moreRecipients) {
+		this.moreRecipients = moreRecipients;
+	}
+	
+	public List<IEmailControllerListener> getEmailControllerListenerClasses() {
+		return emailControllerListenerClasses;
+	}
+
+	public void setEmailControllerListenerClasses(
+			List<IEmailControllerListener> emailControllerListenerClasses) {
+		this.emailControllerListenerClasses = emailControllerListenerClasses;
+	}
+
 	public boolean isInIncome() throws ManagerBeanException {
 		Purchase purchase = (Purchase)this.getTo();
 		return isInIncome(purchase);
@@ -481,6 +472,20 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 			AonUtil.addErrorMessage("Se ha producido un error al obtener la cantidad total de unidades");
 		}
 		return 0;
+	}
+
+	public void obtainListTotals(ActionEvent event) {
+		double listTotal = 0.0; 
+		try {	
+			for (ITransferObject ito : getManagerBean().getList(getCriteria())) {
+				listTotal += getPurchaseTotalPrice((Purchase)ito);
+			}
+		} catch (ManagerBeanException e) {
+			String message = "Imposible obtener el Total";
+			AonUtil.addErrorMessage(message);
+			throw new AbortProcessingException(message);
+		}		
+		setListTotal(listTotal);
 	}
 
 	public void onPending(ActionEvent event) {
@@ -733,14 +738,4 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 		return ccc.getSalesSeriesIds();
 	}
 
-	@Override
-	public boolean isShowAuditInfoWindow() {
-		return showAuditInfoWindow;
-	}
-
-	@Override
-	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
-		this.showAuditInfoWindow = showAuditInfoWindow;
-	}
-	
 }

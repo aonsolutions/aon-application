@@ -890,6 +890,9 @@ color:#000;
 .aon-icon-task{
 	background:transparent url(images/aon-main-menu/aon-icon-task.png) no-repeat scroll center left;
 }
+.aon-icon-task-checked{
+	background:transparent url(images/aon-icon/aon-icon-task.gif) no-repeat scroll center left;
+}
 .aon-icon-task-assume{
 	background:transparent url(images/aon-icon/aon-icon-task-assume.png) scroll left center no-repeat;
 	}

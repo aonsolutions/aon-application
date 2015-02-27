@@ -25,7 +25,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.audit.IAuditable;
-import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.IBankAccountContainer;
 import com.code.aon.config.IPayMethod;
 import com.code.aon.config.IScopable;
@@ -34,6 +33,7 @@ import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.sales.enumeration.DocumentType;
+import com.code.aon.sales.enumeration.SalesStatus;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.SalesDB;
 
@@ -101,20 +101,31 @@ public class Sales extends SalesDB implements IHeaderObject, ICalculableContaine
     }
 
 	@Transient
-	public boolean isConfidential() {
-		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
-	}
-
-	@Transient
-	public void setConfidential(boolean confidential) {
-		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
-	}
-	
-	@Transient
 	public boolean isItemReturn() {
 		return getDocumentType()==DocumentType.ITEM_RETURN;
 	}
 	
+	@Transient
+	public boolean isPending() {
+		return (SalesStatus.PENDING == getStatus());
+	}
+	@Transient
+	public boolean isServed() {
+		return (SalesStatus.SERVED == getStatus());
+	}
+	@Transient
+	public boolean isClosed() {
+		return (SalesStatus.CLOSED == getStatus());
+	}
+	@Transient
+	public boolean isBlocked() {
+		return (SalesStatus.BLOCKED == getStatus());
+	}
+	@Transient
+	public boolean isInvoiced() {
+		return (SalesStatus.INVOICED == getStatus());
+	}
+
 	@Transient
 	public List<ITransferObject> getDetailList() {
 		try {

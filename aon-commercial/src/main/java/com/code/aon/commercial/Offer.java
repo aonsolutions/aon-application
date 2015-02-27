@@ -18,15 +18,15 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.commercial.enumeration.OfferType;
 import com.code.aon.AonVersion;
+import com.code.aon.commercial.enumeration.OfferStatus;
+import com.code.aon.commercial.enumeration.OfferType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IHeaderObject;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.audit.IAuditable;
-import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.IBankAccountContainer;
 import com.code.aon.config.IPayMethod;
 import com.code.aon.config.IScopable;
@@ -124,15 +124,6 @@ public class Offer extends OfferDB implements IHeaderObject, ICalculableContaine
     }
 
 	@Transient
-	public boolean isConfidential() {
-		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
-	}
-	@Transient
-	public void setConfidential(boolean confidential) {
-		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
-	}
-
-	@Transient
 	public List<ITransferObject> getDetailList() {
 		try {
 			IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
@@ -164,6 +155,27 @@ public class Offer extends OfferDB implements IHeaderObject, ICalculableContaine
 	@Transient
 	public boolean isAudatexOffer() {
 		return (OfferType.AUDATEX == getType());
+	}
+
+	@Transient
+	public boolean isPending() {
+		return (OfferStatus.PENDING == getStatus());
+	}
+	@Transient
+	public boolean isApproved() {
+		return (OfferStatus.APPROVED == getStatus());
+	}
+	@Transient
+	public boolean isRefused() {
+		return (OfferStatus.REFUSED == getStatus());
+	}
+	@Transient
+	public boolean isBlocked() {
+		return (OfferStatus.BLOCKED == getStatus());
+	}
+	@Transient
+	public boolean isInvoiced() {
+		return (OfferStatus.INVOICED == getStatus());
 	}
 
 }

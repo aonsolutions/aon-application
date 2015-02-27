@@ -84,8 +84,8 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private IPriceStrategy priceStrategy;
 	private RegistryValidationManager vm;
 	private PurchaseGeneratorManager purchaseGenerator;
-	private boolean showDeliveryWindow;
 	private boolean showPurchaseWindow;
+	private boolean showDeliveryWindow;
 	private String deliverySeries;
 	private int deliveryNumber;
 	private Date deliveryDate;
@@ -94,42 +94,18 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private String invoiceSeries;
 	private int invoiceNumber;
 	private Date invoiceDate;
-	private Double salesTotalAmount;
-	private SalesEmailUtil emailUtil;
 	private String selectedTab;
+	private boolean showAuditInfoWindow;
+	private Double listTotal;
+	private SalesEmailUtil emailUtil;
 	private boolean shippingAlternativeAddress;
 	private boolean showShipmentWindow;
 	private ProgressionState progressionState;
 	private Integer invoiceId;
-	private boolean showAuditInfoWindow;
 	
     public SalesController() {
     	this.emailUtil = new SalesEmailUtil();
     }
-
-	public boolean isShippingAlternativeAddress() {
-		return shippingAlternativeAddress;
-	}
-
-	public void setShippingAlternativeAddress(boolean shippingAlternativeAddress) {
-		this.shippingAlternativeAddress = shippingAlternativeAddress;
-	}
-
-	public boolean isShowShipmentWindow() {
-		return showShipmentWindow;
-	}
-
-	public void setShowShipmentWindow(boolean showShipmentWindow) {
-		this.showShipmentWindow = showShipmentWindow;
-	}
-
-	public String getSelectedTab() {
-		return selectedTab;
-	}
-
-	public void setSelectedTab(String selectedTab) {
-		this.selectedTab = selectedTab;
-	}
 
 	public List<SelectItem> getAddresses() {
 		return addresses;
@@ -180,14 +156,6 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		this.purchaseGenerator = purchaseGenerator;
 	}
 
-	public boolean isShowDeliveryWindow() {
-		return showDeliveryWindow;
-	}
-
-	public void setShowDeliveryWindow(boolean value) {
-		this.showDeliveryWindow = value;
-	}
-	
 	public boolean isShowPurchaseWindow() {
 		return showPurchaseWindow;
 	}
@@ -196,6 +164,14 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		this.showPurchaseWindow = showPurchaseWindow;
 	}
 
+	public boolean isShowDeliveryWindow() {
+		return showDeliveryWindow;
+	}
+
+	public void setShowDeliveryWindow(boolean value) {
+		this.showDeliveryWindow = value;
+	}
+	
 	public String getDeliverySeries() {
 		return deliverySeries;
 	}
@@ -260,27 +236,56 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		this.invoiceDate = invoiceDate;
 	}
 	
-	public Double getSalesTotalAmount() {
-		return salesTotalAmount;
+	public String getSelectedTab() {
+		return selectedTab;
 	}
 
-	public void setSalesTotalAmount(Double salesTotalAmount) {
-		this.salesTotalAmount = salesTotalAmount;
+	public void setSelectedTab(String selectedTab) {
+		this.selectedTab = selectedTab;
+	}
+
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
 	}
 	
-	public void getSelectionTotalAmount(ActionEvent event) {
-		try {	
-			IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
-			List<ITransferObject> list = salesBean.getList(getCriteria());
-			salesTotalAmount = 0.0;
-			for(ITransferObject to: list){
-				salesTotalAmount += getSalesTotalPrice((Sales) to);
-			}
-		} catch (ManagerBeanException e) {
-			String message = "Imposible obtener el total";
-			AonUtil.addErrorMessage(message);
-			throw new AbortProcessingException(message);
-		}		
+	public Double getListTotal() {
+		return listTotal;
+	}
+
+	public void setListTotal(Double listTotal) {
+		this.listTotal = listTotal;
+	}
+	
+	public boolean isShippingAlternativeAddress() {
+		return shippingAlternativeAddress;
+	}
+
+	public void setShippingAlternativeAddress(boolean shippingAlternativeAddress) {
+		this.shippingAlternativeAddress = shippingAlternativeAddress;
+	}
+
+	public boolean isShowShipmentWindow() {
+		return showShipmentWindow;
+	}
+
+	public void setShowShipmentWindow(boolean showShipmentWindow) {
+		this.showShipmentWindow = showShipmentWindow;
+	}
+
+	public ProgressionState getProgressionState() {
+		return progressionState;
+	}
+
+	public void setProgressionState(ProgressionState progressionState) {
+		this.progressionState = progressionState;
+	}
+	
+	public Integer getInvoiceId() {
+		return invoiceId;
 	}
 
 	public boolean isCustomerReadOnly() throws ManagerBeanException {
@@ -520,6 +525,20 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 			AonUtil.addErrorMessage("Se ha producido un error al obtener la cantidad total de unidades");
 		}
 		return 0;
+	}
+
+	public void obtainListTotals(ActionEvent event) {
+		double listTotal = 0.0; 
+		try {	
+			for (ITransferObject ito : getManagerBean().getList(getCriteria())) {
+				listTotal += getSalesTotalPrice((Sales)ito);
+			}
+		} catch (ManagerBeanException e) {
+			String message = "Imposible obtener el Total";
+			AonUtil.addErrorMessage(message);
+			throw new AbortProcessingException(message);
+		}		
+		setListTotal(listTotal);
 	}
 
 	public void onPending(ActionEvent event) {
@@ -766,14 +785,6 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		return ccc.getSalesSeriesIds();
 	}
 	
-	public ProgressionState getProgressionState() {
-		return progressionState;
-	}
-
-	public void setProgressionState(ProgressionState progressionState) {
-		this.progressionState = progressionState;
-	}
-	
 	public String invoiceAction() {
 		return (getInvoiceId() != null) ? IFinanceConstants.SALE_INVOICE_FORM_NAME : null;
 	}
@@ -793,10 +804,6 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		getProgressionState().finish();
 	}
 	
-	public Integer getInvoiceId() {
-		return invoiceId;
-	}
-
 	public void setInvoiceId(Integer invoiceId) {
 		this.invoiceId = invoiceId;
 	}
@@ -808,14 +815,4 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		thread.start();		
 	}
 
-	@Override
-	public boolean isShowAuditInfoWindow() {
-		return showAuditInfoWindow;
-	}
-
-	@Override
-	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
-		this.showAuditInfoWindow = showAuditInfoWindow;
-	}
-	
 }

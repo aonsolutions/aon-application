@@ -31,7 +31,7 @@ public class PurchaseControllerListener extends ControllerAdapter implements IPu
 	@Override
 	public void afterModelInitialized(ControllerEvent event)throws ControllerListenerException {
 		PurchaseController controller = (PurchaseController) event.getController();
-		controller.setPurchasesTotalAmount(null);
+		controller.setListTotal(null);
 	}
 	
 	@Override
@@ -105,6 +105,7 @@ public class PurchaseControllerListener extends ControllerAdapter implements IPu
 			IController purchaseDetailController = FormUtil.getController(PURCHASE_DETAIL_CONTROLLER_NAME);
 			purchaseDetailController.onSearch(null);
 		}
+		purchaseController.setListTotal(null);
 	}
 	
 	private void emptyShippingAlternativeAddress(Purchase purchase) {

@@ -87,10 +87,10 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	private int invoiceNumber;
 	private Date invoiceDate;
 	private String selectedTab;
-	private boolean shippingAlternativeAddress;
 	private boolean showAuditInfoWindow;
 	private Double listTotal;
 	private WarehouseEmailUtil emailUtil;
+	private boolean shippingAlternativeAddress;
 	
     public DeliveryController() {
     	this.emailUtil = new WarehouseEmailUtil();
@@ -204,14 +204,6 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		this.selectedTab = selectedTab;
 	}
 
-	public boolean isShippingAlternativeAddress() {
-		return shippingAlternativeAddress;
-	}
-
-	public void setShippingAlternativeAddress(boolean shippingAlternativeAddress) {
-		this.shippingAlternativeAddress = shippingAlternativeAddress;
-	}
-
 	public boolean isShowAuditInfoWindow() {
 		return showAuditInfoWindow;
 	}
@@ -226,6 +218,14 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 
 	public void setListTotal(Double listTotal) {
 		this.listTotal = listTotal;
+	}
+
+	public boolean isShippingAlternativeAddress() {
+		return shippingAlternativeAddress;
+	}
+
+	public void setShippingAlternativeAddress(boolean shippingAlternativeAddress) {
+		this.shippingAlternativeAddress = shippingAlternativeAddress;
 	}
 
 	public boolean isCustomerReadOnly() {

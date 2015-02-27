@@ -31,7 +31,7 @@ public class SalesControllerListener extends ControllerAdapter implements ISales
 	@Override
 	public void afterModelInitialized(ControllerEvent event)throws ControllerListenerException {
 		SalesController controller = (SalesController) event.getController();
-		controller.setSalesTotalAmount(null);
+		controller.setListTotal(null);
 	}
 	
 	@Override
@@ -95,6 +95,12 @@ public class SalesControllerListener extends ControllerAdapter implements ISales
 			emptyShippingAlternativeAddress((Sales)controller.getTo());
 		}
 		controller.setShippingAlternativeAddress(controller.isShippingAlternativeAddressDefined());
+	}
+
+	@Override
+	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		SalesController controller = (SalesController) event.getController();
+		controller.setListTotal(null);
 	}
 
 	private void emptyShippingAlternativeAddress(Sales sales) {

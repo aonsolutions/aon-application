@@ -90,7 +90,6 @@ public class OfferController extends HeaderObjectController implements ISignatur
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(OfferController.class.getName());
 	
-	private String selectedTab;
 	private List<SelectItem> addresses;
 	private List<SelectItem> projects;
 	private Boolean defaultPayMethod;
@@ -113,8 +112,10 @@ public class OfferController extends HeaderObjectController implements ISignatur
 	private int projectTasNumber;
 	private Date projectTasDate;
 	private TasItem projectTasItem;
-	private CommercialEmailUtil emailUtil;
+	private String selectedTab;
 	private boolean showAuditInfoWindow;
+	private Double listTotal;
+	private CommercialEmailUtil emailUtil;
 	private boolean showEmailOptionWindow;
 	private boolean includeEmailOfferAttach;
 	private boolean includeEmailOfferReport;
@@ -125,45 +126,6 @@ public class OfferController extends HeaderObjectController implements ISignatur
 		this.emailUtil = new CommercialEmailUtil();
 	}
 	
-	public boolean isIncludeEmailOfferAttach() {
-		return includeEmailOfferAttach;
-	}
-
-	public void setIncludeEmailOfferAttach(boolean includeEmailOfferAttach) {
-		this.includeEmailOfferAttach = includeEmailOfferAttach;
-	}
-
-	public boolean isIncludeEmailOfferReport() {
-		return includeEmailOfferReport;
-	}
-
-	public void setIncludeEmailOfferReport(boolean includeEmailOfferReport) {
-		this.includeEmailOfferReport = includeEmailOfferReport;
-	}
-
-	public boolean isIncludeEmailSddMandateReport() {
-		return includeEmailSddMandateReport;
-	}
-
-	public void setIncludeEmailSddMandateReport(boolean includeEmailSddMandateReport) {
-		this.includeEmailSddMandateReport = includeEmailSddMandateReport;
-	}
-	public SddMandateObject getSddMandate() {
-		return sddMandate;
-	}
-
-	public void setSddMandate(SddMandateObject sddMandate) {
-		this.sddMandate = sddMandate;
-	}
-
-	public String getSelectedTab() {
-		return selectedTab;
-	}
-
-	public void setSelectedTab(String selectedTab) {
-		this.selectedTab = selectedTab;
-	}
-
 	public List<SelectItem> getAddresses() {
 		return addresses;
 	}
@@ -342,6 +304,30 @@ public class OfferController extends HeaderObjectController implements ISignatur
 		this.projectTasItem = projectTasItem;
 	}
 
+	public String getSelectedTab() {
+		return selectedTab;
+	}
+
+	public void setSelectedTab(String selectedTab) {
+		this.selectedTab = selectedTab;
+	}
+
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
+	}
+	
+	public Double getListTotal() {
+		return listTotal;
+	}
+
+	public void setListTotal(Double listTotal) {
+		this.listTotal = listTotal;
+	}
+
 	public boolean isShowEmailOptionWindow() {
 		return showEmailOptionWindow;
 	}
@@ -350,17 +336,40 @@ public class OfferController extends HeaderObjectController implements ISignatur
 		this.showEmailOptionWindow = showEmailOptionWindow;
 	}
 
+	public boolean isIncludeEmailOfferAttach() {
+		return includeEmailOfferAttach;
+	}
+
+	public void setIncludeEmailOfferAttach(boolean includeEmailOfferAttach) {
+		this.includeEmailOfferAttach = includeEmailOfferAttach;
+	}
+
+	public boolean isIncludeEmailOfferReport() {
+		return includeEmailOfferReport;
+	}
+
+	public void setIncludeEmailOfferReport(boolean includeEmailOfferReport) {
+		this.includeEmailOfferReport = includeEmailOfferReport;
+	}
+
+	public boolean isIncludeEmailSddMandateReport() {
+		return includeEmailSddMandateReport;
+	}
+
+	public void setIncludeEmailSddMandateReport(boolean includeEmailSddMandateReport) {
+		this.includeEmailSddMandateReport = includeEmailSddMandateReport;
+	}
+
+	public SddMandateObject getSddMandate() {
+		return sddMandate;
+	}
+
+	public void setSddMandate(SddMandateObject sddMandate) {
+		this.sddMandate = sddMandate;
+	}
+
 	private Offer getOffer() {
 		return (Offer) this.getTo();
-	}
-	
-	public Double getOffersTotalAmount() throws ManagerBeanException {
-		double offersTotalAmount = 0.0; 
-		for(ITransferObject to: this.getWrappedList()){
-			Offer o = (Offer) to;
-			offersTotalAmount += getOfferTotalPrice(o);
-		}
-		return offersTotalAmount;
 	}
 	
 	public boolean isReadOnly() {
@@ -604,6 +613,20 @@ public class OfferController extends HeaderObjectController implements ISignatur
 	
 	public double getOfferTotalPrice(Offer offer) throws ManagerBeanException {
 		return getPriceStrategy().getTotalPrice(offer, offer.getTarget());
+	}
+
+	public void obtainListTotals(ActionEvent event) {
+		double listTotal = 0.0; 
+		try {	
+			for (ITransferObject ito : getManagerBean().getList(getCriteria())) {
+				listTotal += getOfferTotalPrice((Offer)ito);
+			}
+		} catch (ManagerBeanException e) {
+			String message = "Imposible obtener el Total";
+			AonUtil.addErrorMessage(message);
+			throw new AbortProcessingException(message);
+		}		
+		setListTotal(listTotal);
 	}
 
 	public void onVersion(ActionEvent event) throws ManagerBeanException {
@@ -1030,14 +1053,4 @@ public class OfferController extends HeaderObjectController implements ISignatur
 		return ccc.getOfferSeriesIds();
 	}
 
-	@Override
-	public boolean isShowAuditInfoWindow() {
-		return showAuditInfoWindow;
-	}
-
-	@Override
-	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
-		this.showAuditInfoWindow = showAuditInfoWindow;
-	}
-	
 }
