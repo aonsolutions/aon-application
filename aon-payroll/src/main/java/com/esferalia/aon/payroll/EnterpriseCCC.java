@@ -9,7 +9,6 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.master.EnterpriseCCCDB;
 import com.esferalia.aon.payroll.enumeration.CCCType;
-import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.enumeration.contrata.TCHRGCOT;
 
 @Entity
@@ -21,7 +20,7 @@ public class EnterpriseCCC extends EnterpriseCCCDB {
 	@Transient
 	public String getFullCcc(){
 		if(this.getActivity()!=null && this.getActivity().getQuoteRegimeCode()!=null){
-			return this.getActivity().getQuoteRegimeCode() + this.getCcc();
+			return this.getQuoteRegimeCode() + this.getCcc();
 		}
 		return this.getCcc();
 	}

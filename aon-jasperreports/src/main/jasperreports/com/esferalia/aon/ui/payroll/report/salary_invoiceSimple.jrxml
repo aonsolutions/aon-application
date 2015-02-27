@@ -112,6 +112,15 @@
 		<variableExpression><![CDATA[new java.text.DecimalFormat("#,##0.00")]]></variableExpression>
 		<initialValueExpression><![CDATA[new java.text.DecimalFormat("#,##0.00")]]></initialValueExpression>
 	</variable>
+	<group name="salary" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{salary}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
 	<background>
 		<band height="802">
 			<line>
@@ -283,7 +292,7 @@
 					<rightPen lineWidth="0.5" lineColor="#000000"/>
 				</box>
 				<textElement/>
-				<textFieldExpression><![CDATA[$F{salary}.getCcc()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{salary}.getContract().getEnterpriseCCC().getFullCcc()]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="8bdf5d66-9a9b-4412-8635-b7bd1d872f58" style="title" x="281" y="39" width="274" height="11"/>
