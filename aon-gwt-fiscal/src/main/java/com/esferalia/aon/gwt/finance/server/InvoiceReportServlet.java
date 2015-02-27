@@ -55,11 +55,11 @@ public class InvoiceReportServlet extends HttpServlet {
 			if (AonStringUtils.isNotBlank(fromDateParam)){
 				fromDate = DATE_FORMAT.parse(fromDateParam);
 			}
-			Date toDate = null;
 			
+			Date toDate = null;
 			String toDateParam = req.getParameter("toDate");
 			if (AonStringUtils.isNotBlank(toDateParam)){
-				fromDate = DATE_FORMAT.parse(toDateParam);
+				toDate = DATE_FORMAT.parse(toDateParam);
 			}
 			
 					
