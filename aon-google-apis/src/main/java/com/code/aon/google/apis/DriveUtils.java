@@ -4,6 +4,7 @@ import static com.code.aon.google.apis.DatabaseSync.getDomains;
 import static com.code.aon.google.apis.jooq.DBConsults.getCategory;
 import static com.code.aon.google.apis.jooq.DBConsults.getCategoryName;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
@@ -45,10 +46,12 @@ import com.code.aon.common.IBlobObject;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.google.apis.drive.SearchFiles;
 import com.code.aon.google.apis.jooq.DBConsults;
+import com.code.aon.google.apis.jooq.DBDrive;
+import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
+import com.esferalia.aon.google.sql.AbstractSQL.Domain;
 import com.esferalia.aon.google.sql.AbstractSQL.Rattach;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.ByteArrayContent;
@@ -192,7 +195,7 @@ public class DriveUtils implements IBlobManager {
 		// TODO Apéndice de método generado automáticamente
 		return DRIVEUTILS;
 	}
-
+	
 	public static Drive serviceInitialize(DomainGserviceaccount d)
 			throws KeyStoreException, IOException, GeneralSecurityException {
 
@@ -200,19 +203,33 @@ public class DriveUtils implements IBlobManager {
 		final JsonFactory JSON_FACTORY = new JacksonFactory();
 		final String SERVICE_ACCOUNT_ID = d.getEmailAddress();
 
-		InputStream keyStream = d.getPrivateKey();
+		InputStream keyStream = new ByteArrayInputStream(d.getPrivateKey());
 		PrivateKey serviceAccountPrivateKey = SecurityUtils
 				.loadPrivateKeyFromKeyStore(SecurityUtils.getPkcs12KeyStore(),
 						keyStream, "notasecret", "privatekey", "notasecret");
-
-		GoogleCredential credential = new GoogleCredential.Builder()
+		String googleAccount = d.getGoogleAccount();
+		GoogleCredential credential;
+		if(googleAccount != null){
+			credential = new GoogleCredential.Builder()
 				.setTransport(HTTP_TRANSPORT)
 				.setJsonFactory(JSON_FACTORY)
 				.setServiceAccountId(SERVICE_ACCOUNT_ID)
 				.setServiceAccountScopes(
 						java.util.Collections.singletonList(DriveScopes.DRIVE))
-				.setServiceAccountPrivateKey(serviceAccountPrivateKey).build();
-
+				.setServiceAccountPrivateKey(serviceAccountPrivateKey)
+				.setServiceAccountUser(googleAccount)
+				.build();
+		}
+		else{
+			credential = new GoogleCredential.Builder()
+			.setTransport(HTTP_TRANSPORT)
+			.setJsonFactory(JSON_FACTORY)
+			.setServiceAccountId(SERVICE_ACCOUNT_ID)
+			.setServiceAccountScopes(
+					java.util.Collections.singletonList(DriveScopes.DRIVE))
+			.setServiceAccountPrivateKey(serviceAccountPrivateKey)
+			.build();
+		}
 		client = new com.google.api.services.drive.Drive.Builder(
 				HTTP_TRANSPORT, JSON_FACTORY, credential).setApplicationName(
 				"AON SOLUTIONS").build();
@@ -671,6 +688,7 @@ public class DriveUtils implements IBlobManager {
 
 	public static File updateFile(FileInfo fileInfo) throws IOException {
 		File file = getFile(fileInfo.getDriveId());
+		file.setMimeType(MimeType.values()[fileInfo.getMimetype()].getName());
 		file.setModifiedDate(new DateTime(new Date()));
 
 		// File's content.
@@ -971,7 +989,9 @@ public class DriveUtils implements IBlobManager {
 	public static void synchronize(Integer id, String domain)
 			throws SQLException, AonConnectionException, IOException,
 			KeyStoreException, GeneralSecurityException {
-		Drive drive = serviceInitialize(DatabaseSync.getServiceAccount(domain));
+		Domain d = DBConsults.getDomain(domain);
+		DomainGserviceaccount g = DBConsults.getServiceAccount(domain, d.getId());
+		Drive drive = serviceInitialize(g);
 		Rattach rattach = DatabaseSync.getFile(id, domain);
 
 		// sync(drive,rattach,domain);
@@ -1072,12 +1092,15 @@ public class DriveUtils implements IBlobManager {
 
 	public static DriveData getAttachs(String domain) throws SQLException,
 			AonConnectionException {
-		DriveData dd = new DriveData();
-
+		DriveData dd = new DriveData();dd.setAttachs(new Vector<FileInfo>());
+		Domain d = DBConsults.getDomain(domain);
+		DomainGserviceaccount g = DBConsults.getServiceAccount(domain, d.getId());
+		dd.setGservice(g);
 		dd.setDomain(domain);
 		// de momento solo se sincroniza con Rattach
 		// REGISTRY ATTACH
-		dd = DatabaseSync.getDomainFiles(domain);
+		Vector<FileInfo> rattach = DBDrive.getRAttach(domain, dd.getAttachs());
+		dd.setAttachs(rattach);
 		/*
 		 * //CONTRACT ATTACH dd.setAttachs(DBConsults.getContractAttach(domain,
 		 * dd.getAttachs()));
@@ -1186,7 +1209,9 @@ public class DriveUtils implements IBlobManager {
 			IOException, ServletException, SQLException,
 			AonConnectionException, NamingException {
 
-		parse(args);
+		
+	
+		//parse(args);
 		/*
 		 * 
 		 * if (domains==null || domains.length==0 ||
@@ -1196,12 +1221,44 @@ public class DriveUtils implements IBlobManager {
 
 		// Rattach rattach = null;
 
-		String domain = "novus.aibanez.net";
+		/*String domain = "procom-global4.aibanez.net";
+		
+		Domain d = DBCalendar.getDomain(domain, 1017);
+		
+		com.code.aon.google.apis.jooq.DomainGserviceaccount gserviceaccount = DBConsults.getServiceAccount(domain, d.getId());
+		Drive drive = serviceInitialize(gserviceaccount);
+		
+		Vector<FileInfo> r = DBConsults.getRattach(domain);
+		FileInfo f = r.get(3);
+		byte data []  = DatabaseSync.getFileData(
+				f.getFileId(), domain);
+		f.setData(data);
+		short type = f.getMimetype();
+		MimeType t = MimeType.values()[type];
+		File file = new File();
+
+		file.setShared(true);
+		file.setTitle(f.getTitle());
+		file.setMimeType(t.getName());
+		
+		file.setModifiedDate(new DateTime(new Date()));
+		file.setProperties(setProperties(drive, f, domain));
+
+		ByteArrayContent  mediaContent = new ByteArrayContent (
+				file.getMimeType(), f.getData());
+
+			file = drive.files().insert(file, mediaContent).execute();
+
+			
+			System.out.println("200 OK");
+		 */
+		
+		
 		// synchronize(domain);
 
-		DriveData dd = DatabaseSync.getDomainFiles(domain);
+		//DriveData dd = DatabaseSync.getDomainFiles(domain);
 
-		Drive drive = serviceInitialize(dd.getGservice());
+		//Drive drive = serviceInitialize(dd.getGservice());
 
 		/*
 		 * FileList fl = drive.files().list().execute(); for (File file :
@@ -1217,7 +1274,7 @@ public class DriveUtils implements IBlobManager {
 		 * Vector<String>(), rattach);
 		 */
 
-		deleteAll(drive, domain);
+		//deleteAll(drive, domain);
 
 		/**
 		 * FileList fl = searchFiles(drive, "'aon'"); for (File f :
@@ -1301,7 +1358,8 @@ public class DriveUtils implements IBlobManager {
 		if (driveId != null) {
 
 			try {
-				sa = DatabaseSync.getServiceAccount(domain);
+				Domain d =DBConsults.getDomain(domain);
+				sa = DBConsults.getServiceAccount(domain, d.getId());
 			} catch (SQLException e) {
 				LOGGER.error(e.getMessage(), e);
 			}
@@ -1356,7 +1414,8 @@ public class DriveUtils implements IBlobManager {
 		String domain = AonUtil.getDomainName();
 		DomainGserviceaccount sa = null;
 		try {
-			sa = DatabaseSync.getServiceAccount(domain);
+			Domain d = DBConsults.getDomain(domain);
+			sa = DBConsults.getServiceAccount(domain, d.getId());
 		} catch (SQLException e) {
 			LOGGER.error(e.getMessage(), e);			
 		}
@@ -1412,7 +1471,8 @@ public class DriveUtils implements IBlobManager {
 
 		if ( blobObject.getId() != null ) {
 			try {
-				sa = DatabaseSync.getServiceAccount(domain);
+				Domain d = DBConsults.getDomain(domain);
+				sa = DBConsults.getServiceAccount(domain, d.getId());
 			} catch (SQLException e) {
 				LOGGER.error(e.getMessage(), e);
 			}
@@ -1444,8 +1504,9 @@ public class DriveUtils implements IBlobManager {
 	
 	public static long totalSize(String domain) throws IOException,
 			SQLException, KeyStoreException, GeneralSecurityException {
-		DomainGserviceaccount d = DatabaseSync.getServiceAccount(domain);
-		Drive drive = serviceInitialize(d);
+		Domain d = DBConsults.getDomain(domain);
+		DomainGserviceaccount g = DBConsults.getServiceAccount(domain,d.getId());
+		Drive drive = serviceInitialize(g);
 		long size = 0;
 		FileList fl = SearchFiles
 				.searchFilesProperties(drive, "domain", domain);
@@ -1454,4 +1515,5 @@ public class DriveUtils implements IBlobManager {
 		}
 		return size;
 	}
+	
 }

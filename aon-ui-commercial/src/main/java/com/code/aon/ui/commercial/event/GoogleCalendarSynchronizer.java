@@ -11,7 +11,6 @@ import com.code.aon.AonVersion;
 import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.google.apis.CalendarUtils;
 import com.code.aon.google.apis.DatabaseSync;
-import com.code.aon.google.apis.jooq.DBCalendar;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.pool.AonConnectionException;
@@ -40,7 +39,7 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 		
 		try {
 			CommercialTracking tracking = getCommercialTracking(event);
-			Domain company = DBCalendar.getDomain(domain,tracking.getDomain());
+			Domain company = DBConsults.getDomain(domain,tracking.getDomain());
 			DomainGserviceaccount g = DBConsults.getServiceAccount(domain, company.getId());
 			if (g.getClientId() != null){
 				CalendarUtils.serviceInitialize(g);
@@ -72,7 +71,7 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 		try {
 			
 			CommercialTracking tracking = getCommercialTracking(event);
-			Domain company = DBCalendar.getDomain(domain,tracking.getDomain());
+			Domain company = DBConsults.getDomain(domain,tracking.getDomain());
 			DomainGserviceaccount g = DBConsults.getServiceAccount(domain, company.getId());
 			if (g.getClientId() != null){
 				CalendarUtils.serviceInitialize(g);
@@ -110,7 +109,7 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 		try {
 			
 			CommercialTracking tracking = getCommercialTracking(event);
-			Domain company = DBCalendar.getDomain(domain,tracking.getDomain());
+			Domain company = DBConsults.getDomain(domain,tracking.getDomain());
 			DomainGserviceaccount g = DBConsults.getServiceAccount(domain, company.getId());
 			if (g.getClientId() != null){
 				CalendarUtils.serviceInitialize(g);	

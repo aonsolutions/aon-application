@@ -30,11 +30,11 @@ import com.code.aon.google.apis.DriveData;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.FileInfo;
 import com.code.aon.google.apis.jooq.DBConsults;
+import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.esferalia.aon.google.sql.AbstractSQL.Domain;
 import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.Drive.Properties;
-import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.Property;
 import com.google.api.services.drive.model.PropertyList;
 
@@ -225,7 +225,9 @@ public class SynchronizeFiles {
 
 		DriveData dd = new DriveData();
 		dd.setDomain(domain);
-		dd.setGservice(DatabaseSync.getServiceAccount(domain));
+		Domain d = DBConsults.getDomain(domain);
+		DomainGserviceaccount g = DBConsults.getServiceAccount(domain, d.getId());
+		dd.setGservice(g);
 		dd.setAttachs(new Vector<FileInfo>());
 
 		// REGISTRY ATTACHins
@@ -284,7 +286,9 @@ public class SynchronizeFiles {
 
 		DriveData dd = new DriveData();
 		dd.setDomain(domain);
-		dd.setGservice(DatabaseSync.getServiceAccount(domain));
+		Domain d = DBConsults.getDomain(domain);
+		DomainGserviceaccount g = DBConsults.getServiceAccount(domain, d.getId());
+		dd.setGservice(g);
 		dd.setAttachs(new Vector<FileInfo>());
 
 		// REGISTRY ATTACHins

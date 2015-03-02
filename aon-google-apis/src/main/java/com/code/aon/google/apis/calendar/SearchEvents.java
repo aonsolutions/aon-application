@@ -20,7 +20,6 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
 import com.code.aon.google.apis.CalendarUtils;
-import com.code.aon.google.apis.jooq.DBCalendar;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.pool.AonConnectionException;
@@ -94,7 +93,7 @@ public class SearchEvents {
 		return events;
 	}
 	public static Events act(String domain) throws IOException, KeyStoreException, GeneralSecurityException, SQLException, NumberFormatException, AonConnectionException {
-		Domain d = DBCalendar.getDomain(domain);
+		Domain d = DBConsults.getDomain(domain);
 		DomainGserviceaccount g = DBConsults.getServiceAccount(domain, d.getId());
 		Calendar calendar = CalendarUtils.serviceInitialize(g);
 		View.domain(domain);

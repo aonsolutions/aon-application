@@ -40,7 +40,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import com.code.aon.google.apis.drive.SearchFiles;
-import com.code.aon.google.apis.jooq.DBCalendar;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.pool.AonConnectionException;
@@ -261,7 +260,7 @@ public class CalendarUtils {
 				.setServiceAccountScopes(
 						Collections.singletonList(CalendarScopes.CALENDAR))
 				.setServiceAccountPrivateKey(serviceAccountPrivateKey)
-				.setServiceAccountUser(googleAccount)
+				.setServiceAccountUser("gps@aonsolutions.net")
 				.build();
 		else credential = new GoogleCredential.Builder()
 				.setTransport(HTTP_TRANSPORT)
@@ -682,7 +681,7 @@ public class CalendarUtils {
 public static void synchronize(String key) throws IOException, SQLException, AonConnectionException, KeyStoreException, GeneralSecurityException, NamingException {
 		
 				Vector<CommercialTracking> eventsBD= getCommercialTrackingKey(key);// Obtiene todos los eventos(CommercialTracking) de la BD
-				Domain d = DBCalendar.getDomain(key);
+				Domain d = DBConsults.getDomain(key);
 				DomainGserviceaccount g = DBConsults.getServiceAccount(key, d.getId());
 						//DatabaseSync.getServiceAccount(key);
 				if(g.getClientId()!=null){
@@ -737,7 +736,7 @@ public static void synchronize(String key) throws IOException, SQLException, Aon
 			Vector<Domain> companies = getDomain(key);//Obtiene todos los dominios del dominio padre
 			Map<Integer,Vector<CommercialTracking>> map= getCommercialTrackingAll(key);// Obtiene todos los eventos(CommercialTracking) de la BD
 			for(int j=0;j<companies.size();j++){
-				Domain d = DBCalendar.getDomain(key);
+				Domain d = DBConsults.getDomain(key);
 				DomainGserviceaccount g = DBConsults.getServiceAccount(key, d.getId());
 						//DatabaseSync.getServiceAccount(companies.get(j).getName());
 				System.out.println(companies.get(j).getName()+" : "+g.getClientId());
@@ -803,7 +802,7 @@ public static void synchronize2() throws IOException, SQLException, AonConnectio
 		}
 		for(String key : domains2) { // recorre todos los dominios de la BD
 				Vector<CommercialTracking> eventsBD= getCommercialTrackingKey(key);// Obtiene todos los eventos(CommercialTracking) de la BD
-				Domain d = DBCalendar.getDomain(key);
+				Domain d = DBConsults.getDomain(key);
 				DomainGserviceaccount g = DBConsults.getServiceAccount(key, d.getId());
 						//DatabaseSync.getServiceAccount(key);
 				if(g.getClientId()!=null){

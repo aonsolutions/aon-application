@@ -17,8 +17,10 @@ import org.apache.commons.cli.PosixParser;
 
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
+import com.code.aon.google.apis.jooq.DBConsults;
+import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.pool.AonConnectionException;
-import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
+import com.esferalia.aon.google.sql.AbstractSQL.Domain;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
@@ -42,8 +44,10 @@ public class ShareFiles {
     }
     
     private static void act(String domain) throws IOException, SQLException, KeyStoreException, GeneralSecurityException {
-    	DomainGserviceaccount d = DatabaseSync.getServiceAccount(domain);
-		Drive drive = DriveUtils.serviceInitialize(d);
+    	
+    	Domain d = DBConsults.getDomain(domain);
+    	DomainGserviceaccount g = DBConsults.getServiceAccount(domain,d.getId());
+		Drive drive = DriveUtils.serviceInitialize(g);
 		View.domain(domain);
     	
     	if (action.equals("all")){

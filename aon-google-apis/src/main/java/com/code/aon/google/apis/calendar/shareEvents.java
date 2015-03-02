@@ -19,7 +19,6 @@ import org.apache.commons.cli.PosixParser;
 
 import com.code.aon.google.apis.CalendarUtils;
 import com.code.aon.google.apis.Utils;
-import com.code.aon.google.apis.jooq.DBCalendar;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.pool.AonConnectionException;
@@ -34,7 +33,7 @@ public class shareEvents {
 
 	public static void act(String domain) throws IOException, NamingException, NumberFormatException, KeyStoreException, GeneralSecurityException, SQLException, AonConnectionException {
 		// TODO Apéndice de método generado automáticamente
-		Domain d = DBCalendar.getDomain(domain);
+		Domain d = DBConsults.getDomain(domain);
 		DomainGserviceaccount g = DBConsults.getServiceAccount(domain, d.getId());		Calendar calendar = CalendarUtils.serviceInitialize(g);
 		View.domain(domain);
 		for (String email : emails) {

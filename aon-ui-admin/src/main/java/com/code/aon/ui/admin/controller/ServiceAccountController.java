@@ -1,23 +1,18 @@
 package com.code.aon.ui.admin.controller;
 
-import static com.esferalia.aon.jooq.tables.DomainGserviceaccount.DOMAIN_GSERVICEACCOUNT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.DomainGserviceaccount.DOMAIN_GSERVICEACCOUNT;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Vector;
 
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.poi.hssf.util.HSSFColor.SEA_GREEN;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
-import org.jooq.Record5;
-import org.jooq.Record7;
 import org.jooq.Record8;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
@@ -27,16 +22,12 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.google.apis.DatabaseSync;
-import com.code.aon.google.apis.DriveFile;
-import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
-import com.code.aon.google.apis.jooq.DBCalendar;
+import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.google.apis.jooq.JooqSettings;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.google.sql.AbstractSQL.Domain;
-import com.esferalia.aon.jooq.tables.DomainGserviceaccount;
-import com.google.api.services.drive.Drive;
 
 public class ServiceAccountController extends BasicController {
 
@@ -57,7 +48,7 @@ public class ServiceAccountController extends BasicController {
 		String domain = AonUtil.getDomainName();
 		Domain d = new Domain();
 		try {
-			d = DBCalendar.getDomain(domain);
+			d = DBConsults.getDomain(domain);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

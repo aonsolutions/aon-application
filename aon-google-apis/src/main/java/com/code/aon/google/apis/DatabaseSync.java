@@ -1594,7 +1594,7 @@ public static void addTaskId(String taskId,int id, String domain) throws SQLExce
 			}
 			
 			
-			DriveData dd=new DriveData(dgserviceaccount, attachs);
+			DriveData dd=new DriveData(new com.code.aon.google.apis.jooq.DomainGserviceaccount(), attachs);
 			return dd;
 			
 		} finally {

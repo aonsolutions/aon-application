@@ -20,8 +20,9 @@ import org.apache.commons.cli.PosixParser;
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.jooq.DBConsults;
+import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.pool.AonConnectionException;
-import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
+import com.esferalia.aon.google.sql.AbstractSQL.Domain;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
@@ -60,6 +61,16 @@ public class SearchFiles {
 		return fl;
 	}
 	
+	public static FileList searchFilesTitleEqual(Drive drive, String searcher) throws IOException{
+		FileList fl = drive.files().list().setQ("title = '"+searcher+"'").execute();
+		return fl;
+	}
+	
+	public static FileList searchFilesTitleAndParent(Drive drive, String searcher, String parent) throws IOException{
+		FileList fl = drive.files().list().setQ("'"+parent+"' in parents and title = '"+searcher+"'").execute();
+		return fl;
+	}
+	
 	public static FileList searchFilesTitleAndTypes(Drive drive, String searcher) throws IOException{
 		String type1 = types[0];
 		FileList fl= new FileList();
@@ -75,6 +86,14 @@ public class SearchFiles {
 		return fl;
 	}
 	
+	public static FileList searchFilesMimetypeAndTitle(Drive drive, String searcher1, String searcher2) throws IOException{
+		
+		FileList fl = drive.files().list().setQ("mimetype = '"+searcher1+"' and title = '"+searcher2+"'").execute();
+		System.out.println(fl);
+		return fl;
+		
+	}
+
 	public static FileList searchFilesMimetype(Drive drive, String searcher) throws IOException{
 		
 		FileList fl = drive.files().list().setQ("mimetype contains '"+searcher+"'").execute();
@@ -130,10 +149,10 @@ public class SearchFiles {
 	
 	private static void act(String domain) throws SQLException, KeyStoreException, IOException, GeneralSecurityException{
 
-
-		DomainGserviceaccount d = DatabaseSync.getServiceAccount(domain);
-		if(d.getClientId()!=null){
-			Drive drive = DriveUtils.serviceInitialize(d);
+		Domain d = DBConsults.getDomain(domain);
+		DomainGserviceaccount g = DBConsults.getServiceAccount(domain,d.getId());
+		if(g.getClientId()!=null){
+			Drive drive = DriveUtils.serviceInitialize(g);
 
 			FileList fl = new FileList();
 			View.domain(domain);

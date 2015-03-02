@@ -44,9 +44,15 @@ case $1 in
     ;;
   delete) 
     $JAVA -classpath $CLASSPATH com.code.aon.google.apis.drive.DeleteFiles "${@:2}" 
-    ;;
+    ;;  
   search) 
     $JAVA -classpath $CLASSPATH com.code.aon.google.apis.drive.SearchFiles "${@:2}"
+    ;;	
+  cp)
+    $JAVA -classpath $CLASSPATH com.code.aon.google.apis.drive.CopyFiles "${@:2}"
+    ;;
+  rm)
+    $JAVA -classpath $CLASSPATH com.code.aon.google.apis.drive.RemoveFiles "${@:2}"
     ;;
   *) 
     [[ -n $1 ]] && echo "Unknown subcommand: '$1'"
