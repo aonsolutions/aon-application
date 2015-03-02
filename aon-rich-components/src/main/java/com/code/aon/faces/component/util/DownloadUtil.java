@@ -30,7 +30,9 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.MimeResolver;
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
-import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
+import com.code.aon.google.apis.jooq.DBConsults;
+import com.code.aon.google.apis.jooq.DomainGserviceaccount;
+import com.code.aon.ui.util.AonUtil;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 
@@ -59,8 +61,9 @@ public class DownloadUtil {
 		if (attach.getDriveId() != null) {
 			InputStream in = null;
 			try {
-				DomainGserviceaccount googleAccount = DatabaseSync
-						.getServiceAccount(attach.getDomain());
+				String domain = AonUtil.getDomainName();
+				DomainGserviceaccount googleAccount = DBConsults
+						.getServiceAccount(domain,attach.getDomain());
 				Drive drive = DriveUtils.serviceInitialize(googleAccount);
 				File file = DriveUtils.getFile(attach.getDriveId());
 				in = DriveUtils.downloadFile(drive, file);
