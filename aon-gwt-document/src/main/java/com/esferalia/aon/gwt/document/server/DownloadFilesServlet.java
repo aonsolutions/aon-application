@@ -59,10 +59,10 @@ public class DownloadFilesServlet extends HttpServlet {
         		for (com.esferalia.aon.gwt.document.shared.FileInfo fi2 : fvector) {
         			if (fi2.getDriveId() != null) {
         				Drive d = null;
+        				DomainGserviceaccount g = null;
         				if (fi2.getIsDrive()) {
         					d = GoogleDriveController.dconnection;
         				} else {
-        					DomainGserviceaccount g;
         					try {
         						g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain, domainID);
         						d = DriveUtils.serviceInitialize(g);
@@ -74,8 +74,14 @@ public class DownloadFilesServlet extends HttpServlet {
         						e.printStackTrace();
         					}
         				}
-        				com.google.api.services.drive.model.File f = d.files()
-        						.get(fi2.getDriveId()).execute();
+        				com.google.api.services.drive.model.File f = null;
+						try {
+							f = DriveUtils.getFile(d, fi2.getDriveId());
+							if(f.getDescription().equals("OLDRIVE"))
+								d = DriveUtils.serviceInitializeOld(g);
+						} catch (SQLException | GeneralSecurityException e) {
+							e.printStackTrace();
+						}
         				InputStream in = DriveUtils.downloadFile(d, f);
         				byte[] b = com.code.aon.google.apis.Utils
         						.InputStreamToByte(in);
@@ -129,7 +135,13 @@ public class DownloadFilesServlet extends HttpServlet {
 					e.printStackTrace();
 				}
         	}
-			com.google.api.services.drive.model.File f = d.files().get(driveId).execute();
+			com.google.api.services.drive.model.File f = null;
+			try {
+				f = DriveUtils.getFile(d, driveId);
+			} catch (SQLException | GeneralSecurityException e) {
+				e.printStackTrace();
+			}
+
 			InputStream in = DriveUtils.downloadFile(d, f);
 			fi = new FileInfo();
 			byte[] b = Utils.InputStreamToByte(in);

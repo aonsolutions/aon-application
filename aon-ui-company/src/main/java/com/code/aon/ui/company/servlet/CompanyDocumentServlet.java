@@ -85,7 +85,9 @@ public class CompanyDocumentServlet extends HttpServlet {
 			DomainGserviceaccount g = DBConsults.getServiceAccount(domainName,d.getId());
 			
 			drive = DriveUtils.serviceInitialize(g);
-			f = DriveUtils.getFile(driveId);
+			f = DriveUtils.getFile(drive, driveId);
+			if(f.getDescription().equals("OLDRIVE"))
+				drive = DriveUtils.serviceInitializeOld(g);
 		} catch (Throwable e) {
 			LOGGER.error( "Error getting drive file for " + driveId, e);
 		}

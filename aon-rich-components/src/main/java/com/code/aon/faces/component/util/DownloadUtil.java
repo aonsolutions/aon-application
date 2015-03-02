@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.MimeResolver;
-import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.google.apis.jooq.DomainGserviceaccount;
@@ -65,7 +64,9 @@ public class DownloadUtil {
 				DomainGserviceaccount googleAccount = DBConsults
 						.getServiceAccount(domain,attach.getDomain());
 				Drive drive = DriveUtils.serviceInitialize(googleAccount);
-				File file = DriveUtils.getFile(attach.getDriveId());
+				File file = DriveUtils.getFile(drive, attach.getDriveId());
+				if(file.getDescription().equals("OLDRIVE"))
+					drive = DriveUtils.serviceInitializeOld(googleAccount);
 				in = DriveUtils.downloadFile(drive, file);
 				data = IOUtils.toByteArray(in);
 			} catch (KeyStoreException e) {

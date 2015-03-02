@@ -8,10 +8,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
-import java.sql.Blob;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
@@ -27,15 +23,12 @@ import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
 import org.artofsolving.jodconverter.office.OfficeManager;
 
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.payroll.sql.SQLConstants;
-import com.esferalia.aon.payroll.sql.SQLConstants.RattachColumns;
 import com.google.api.services.drive.Drive;
 
 public class OpenDocumentConverterServlet extends HttpServlet {
@@ -88,7 +81,9 @@ public class OpenDocumentConverterServlet extends HttpServlet {
 					Drive d;
 					try {
 						d = DriveUtils.serviceInitialize(g);
-						com.google.api.services.drive.model.File f = d.files().get(rattach.driveId).execute();
+						com.google.api.services.drive.model.File f = DriveUtils.getFile(d, rattach.driveId);
+						if(f.getDescription().equals("OLDRIVE"))
+							d = DriveUtils.serviceInitializeOld(g);
 						InputStream in = DriveUtils.downloadFile(d, f);
 						b = Utils.InputStreamToByte(in);
 					} catch (KeyStoreException e) {

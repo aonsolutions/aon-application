@@ -58,7 +58,7 @@ public class DownloadStockServlet extends HttpServlet {
         if (driveId != ""){
         	Drive d = null;
         	
-        	DomainGserviceaccount g;
+        	DomainGserviceaccount g = null;
 			try {
 				g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain,domainId);
 				d = DriveUtils.serviceInitialize(g);
@@ -70,7 +70,14 @@ public class DownloadStockServlet extends HttpServlet {
 				e.printStackTrace();
 			}
         	
-			com.google.api.services.drive.model.File f = d.files().get(driveId).execute();
+			com.google.api.services.drive.model.File f = null;
+			try {
+				f = DriveUtils.getFile(d, driveId);
+				if(f.getDescription().equals("OLDRIVE"))
+					d = DriveUtils.serviceInitializeOld(g);
+			} catch (SQLException | GeneralSecurityException e) {
+				e.printStackTrace();
+			}
 			InputStream in = DriveUtils.downloadFile(d, f);
 			b = Utils.InputStreamToByte(in);
         	

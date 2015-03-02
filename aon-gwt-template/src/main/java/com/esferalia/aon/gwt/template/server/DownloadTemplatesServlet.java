@@ -53,7 +53,7 @@ public class DownloadTemplatesServlet extends HttpServlet {
         if (driveId != ""){
         	Drive d = null;
         	
-        	DomainGserviceaccount g;
+        	DomainGserviceaccount g = null;
 			try {
 				Domain dom = com.code.aon.google.apis.jooq.DBConsults.getDomain(domain);
 				g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain,dom.getId());
@@ -66,7 +66,14 @@ public class DownloadTemplatesServlet extends HttpServlet {
 				e.printStackTrace();
 			}
         	
-			com.google.api.services.drive.model.File f = d.files().get(driveId).execute();
+			com.google.api.services.drive.model.File f = null;
+			try {
+				f = DriveUtils.getFile(d, driveId);
+				if(f.getDescription().equals("OLDRIVE"))
+					d = DriveUtils.serviceInitializeOld(g);
+			} catch (SQLException | GeneralSecurityException e) {
+				e.printStackTrace();
+			}
 			InputStream in = DriveUtils.downloadFile(d, f);
 			b = Utils.InputStreamToByte(in);
         	

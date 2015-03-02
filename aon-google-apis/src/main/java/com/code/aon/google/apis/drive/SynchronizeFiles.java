@@ -30,6 +30,7 @@ import com.code.aon.google.apis.DriveData;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.FileInfo;
 import com.code.aon.google.apis.jooq.DBConsults;
+import com.code.aon.google.apis.jooq.DBDrive;
 import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
@@ -229,10 +230,11 @@ public class SynchronizeFiles {
 		DomainGserviceaccount g = DBConsults.getServiceAccount(domain, d.getId());
 		dd.setGservice(g);
 		dd.setAttachs(new Vector<FileInfo>());
-
+		
 		// REGISTRY ATTACHins
 		if (map.containsKey("registry")) {
-			dd = DatabaseSync.getDomainFiles(domain);
+			//dd = DatabaseSync.getDomainFiles(domain);
+			dd.setAttachs(DBDrive.getRAttach(domain, dd.getAttachs()));
 		}
 
 		// CONTRACT ATTACH

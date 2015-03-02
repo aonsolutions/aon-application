@@ -40,6 +40,7 @@ import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.registry.controller.event.DomainLoookupListener;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 
 public class CorporateIdentityController extends RegistryAttachController implements ICorporateIdentityController {
@@ -164,8 +165,10 @@ public class CorporateIdentityController extends RegistryAttachController implem
 		if ( (ra.getDriveId() != null) && (ra.getMD5() == null) ) {
 			String domain = AonUtil.getDomainName();
 			DomainGserviceaccount d = DBConsults.getServiceAccount(domain,ra.getDomain());
-			DriveUtils.serviceInitialize(d);
-			File f = DriveUtils.getFile(ra.getDriveId());
+			Drive drive = DriveUtils.serviceInitialize(d);
+			File f = DriveUtils.getFile(drive,ra.getDriveId());
+			if(f.getDescription().equals("OLDRIVE"))
+				drive = DriveUtils.serviceInitializeOld(d);
 			ra.setMD5(f.getMd5Checksum());
 		}
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);

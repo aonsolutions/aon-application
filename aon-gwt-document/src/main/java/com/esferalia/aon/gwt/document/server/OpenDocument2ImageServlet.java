@@ -180,14 +180,17 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 		MimeType mimetype = MimeType.values()[doc.getMimetype()];
 		if(doc.getDriveId()!= null){
         	Drive d = null;
+        	DomainGserviceaccount g = null;
         	if(doc.getIsDrive()){
         		d = GoogleDriveController.dconnection;
         	}
         	else{
-        		DomainGserviceaccount g = DBConsults.getServiceAccount(doc.getDomain(),doc.getDomainId());
+        		g = DBConsults.getServiceAccount(doc.getDomain(),doc.getDomainId());
         		d = DriveUtils.serviceInitialize(g);
         	}
-			com.google.api.services.drive.model.File f = d.files().get(doc.getDriveId()).execute();
+			com.google.api.services.drive.model.File f = DriveUtils.getFile(d, doc.getDriveId());
+			if(f.getDescription().equals("OLDRIVE"))
+				d = DriveUtils.serviceInitializeOld(g);
 			InputStream in = DriveUtils.downloadFile(d, f);
 			b = Utils.InputStreamToByte(in);
 			

@@ -890,11 +890,11 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		String link;
 		if(doc.getDriveId()!=null){
 			Drive d = null;
+			DomainGserviceaccount g = null;
         	if(doc.getIsDrive()){
         		d = GoogleDriveController.dconnection;
         	}
         	else{
-        		DomainGserviceaccount g = null;
         		try {
 					g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(doc.getDomain(),doc.getDomainId());
 				} catch (SQLException e) {
@@ -908,8 +908,10 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
         	}
 			com.google.api.services.drive.model.File f = null;
 			try {
-				f = d.files().get(doc.getDriveId()).execute();
-			} catch (IOException e) {
+				f = DriveUtils.getFile(d, doc.getDriveId());
+				if(f.getTitle().equals("OLDRIVE"))
+					d = DriveUtils.serviceInitializeOld(g);
+			} catch (IOException | SQLException | GeneralSecurityException e) {
 				e.printStackTrace();
 			}
 		
@@ -918,10 +920,14 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			p.setType("anyone");// user || group || domain || anyone
 			p.setRole("reader");// owner || reader || writer || commenter
 			try {
-				d.permissions().insert(f.getId(), p)
-						.setSendNotificationEmails(false).execute();
+				d.permissions().insert(f.getId(), p).execute();
 			} catch (IOException e) {
-				e.printStackTrace();
+				try {
+					d = DriveUtils.serviceInitializeOld(g);
+					d.permissions().insert(f.getId(), p).execute();
+				} catch (IOException | GeneralSecurityException e1) {
+					e1.printStackTrace();
+				}
 			}
 			
 			link = f.getAlternateLink();
