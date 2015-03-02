@@ -142,7 +142,7 @@ public class ShareServlet extends HttpServlet implements ShareService {
 				}
 					
 				
-				com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount domainGserviceaccount = 
+				com.code.aon.google.apis.jooq.DomainGserviceaccount domainGserviceaccount = 
 						getDomainGserviceaccount(dslContext, salary.getDomain());
 				
 				reportManager.setCollectionProvider(new SalaryProvider(salary
@@ -435,16 +435,16 @@ public class ShareServlet extends HttpServlet implements ShareService {
 		return ret;
 	}
 	
-	private static com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount getDomainGserviceaccount(DSLContext dslContext, int domain) {
+	private static com.code.aon.google.apis.jooq.DomainGserviceaccount getDomainGserviceaccount(DSLContext dslContext, int domain) {
 		DomainGserviceaccountRecord record =
 				dslContext.selectFrom(DOMAIN_GSERVICEACCOUNT).where(DOMAIN_GSERVICEACCOUNT.DOMAIN.eq(domain)).fetchOne();
-		com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount domainGserviceaccount = new  com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount();
+		com.code.aon.google.apis.jooq.DomainGserviceaccount domainGserviceaccount = new  com.code.aon.google.apis.jooq.DomainGserviceaccount();
 		
 		domainGserviceaccount.setClientId(record.getClientId());
 		domainGserviceaccount.setPublicKey(record.getPublicKey());
 		domainGserviceaccount.setEmailAddress(record.getEmailAddress());
-		domainGserviceaccount.setPrivateKey(new ByteArrayInputStream(record.getPrivateKey()));
-		domainGserviceaccount.setClientSecret(new ByteArrayInputStream(record.getClientSecret()));
+		domainGserviceaccount.setPrivateKey(record.getPrivateKey());
+		domainGserviceaccount.setClientSecret(record.getClientSecret());
 		
 		return domainGserviceaccount;
 	}
