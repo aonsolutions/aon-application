@@ -38,6 +38,13 @@ public interface AonGwtTemplateCSS extends CssResource{
 	@ClassName("aon-search-box-template")
 	String aonSearchBoxTemplate();
 
-
+	@ClassName("aon-info-content-template")
+	String aonInfoContentTemplate();
 	
+	@ClassName("aon-info-title-template")
+	String aonInfoTitleTemplate();
+	
+	@ClassName("aon-info-rest-template")
+	String aonInfoRestTemplate();
+		
 }

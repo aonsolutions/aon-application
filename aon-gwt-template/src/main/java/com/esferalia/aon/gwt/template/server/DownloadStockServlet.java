@@ -29,8 +29,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
+import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.google.api.services.drive.Drive;
@@ -60,7 +60,7 @@ public class DownloadStockServlet extends HttpServlet {
         	
         	DomainGserviceaccount g;
 			try {
-				g = DatabaseSync.getServiceAccount(domain);
+				g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain,domainId);
 				d = DriveUtils.serviceInitialize(g);
 			} catch (SQLException e) {
 				e.printStackTrace();

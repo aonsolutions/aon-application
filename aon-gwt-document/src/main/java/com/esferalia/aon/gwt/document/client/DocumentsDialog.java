@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.TreeMap;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.CustomDialogB;
 import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.Dialog;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
@@ -54,7 +55,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 
-public abstract class DocumentsDialog extends CustomDialog {
+public abstract class DocumentsDialog extends CustomDialogB {
 
 	interface Binder extends UiBinder<Widget, DocumentsDialog>{
 		

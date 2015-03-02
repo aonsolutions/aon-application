@@ -30,8 +30,10 @@ import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
+import com.code.aon.google.apis.jooq.DBConsults;
+import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
+import com.esferalia.aon.google.sql.AbstractSQL.Domain;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 
@@ -79,8 +81,10 @@ public class CompanyDocumentServlet extends HttpServlet {
 		File f = null;
 		byte[] data = null;
 		try {
-			DomainGserviceaccount d = DatabaseSync.getServiceAccount(domainName);
-			drive = DriveUtils.serviceInitialize(d);
+			Domain d = DBConsults.getDomain(domainName);
+			DomainGserviceaccount g = DBConsults.getServiceAccount(domainName,d.getId());
+			
+			drive = DriveUtils.serviceInitialize(g);
 			f = DriveUtils.getFile(driveId);
 		} catch (Throwable e) {
 			LOGGER.error( "Error getting drive file for " + driveId, e);
