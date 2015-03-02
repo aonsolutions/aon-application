@@ -8,6 +8,7 @@ public interface ICustomerConstants {
 	
 	String CUSTOMER_CONTROLLER_NAME = "customer";
 	String CUSTOMER_OBSERVATION_CONTROLLER_NAME = "customerObservation";
+	String CUSTOMER_FACE_CONTROLLER_NAME = "customerFACe";
 	String CUSTOMER_SEARCH_LISTENER_NAME = "customerSearch";
 	
 	String INVOICING_GROUP_CONTROLLER_NAME = "invoicingGroup";

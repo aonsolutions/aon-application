@@ -53,6 +53,7 @@
 				<value>#{customerAddInfoListener}</value>
 				<value>#{customerDirStaffListener}</value>
 				<value>#{customerRAttachChildListener}</value>
+				<value>#{customerFACeListener}</value>
 			</list-entries>
 		</managed-property>
 		<managed-property>
@@ -86,6 +87,12 @@
 	<managed-bean>
 		<managed-bean-name>customerObservationListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.customer.event.CustomerObservationListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>customerFACeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.customer.event.CustomerFACeControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
@@ -1185,6 +1192,13 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>		
+
+	<!-- **************** CUSTOMER FACe  *************** -->
+	<managed-bean>
+		<managed-bean-name>customerFACe</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.customer.controller.CustomerFACeController</managed-bean-class>		
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 
 	<!-- **************** INVOICING GROUP  *************** -->
 	<managed-bean>

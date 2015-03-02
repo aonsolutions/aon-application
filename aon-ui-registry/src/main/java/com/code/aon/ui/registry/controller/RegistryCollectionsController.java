@@ -182,7 +182,7 @@ public class RegistryCollectionsController implements Serializable {
 			Locale locale = AonUtil.getCurrentLocale();
 			noteTypes = new LinkedList<SelectItem>();
 			for( NoteType type : NoteType.values() ) {
-				if (type.compareTo(NoteType.OBSERVATION)!=0){
+				if ((type != NoteType.OBSERVATION) && (type != NoteType.OBSERVATION)) {
 					String name = type.getName(locale);
 					SelectItem item = new SelectItem(type, name);
 					noteTypes.add(item);

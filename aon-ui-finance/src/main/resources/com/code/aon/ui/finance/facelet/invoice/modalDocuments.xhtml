@@ -44,12 +44,15 @@
 							</ui:define>
 							<ui:define name="additionalColumns" >
 								<aon:column sortable="#{sortColumns}" alias="#{controller.pojoShortName}.type"
-									styleClass="aon-editDataTable-textColumn aon-width-80">
+									styleClass="aon-editDataTable-textColumn aon-width-100">
 									<f:facet name="header">
 										<aon:outputLabel for="#{controller.beanName}_type"
 											value="#{bundle.aon_type}" />
 									</f:facet>
 									<aon:outputText value="#{to.type}" />
+									<aon:outputText rendered="#{to.type == 'INVOICE'}" 
+										styleClass="aon-uppercase"
+										value=" (#{to.mimeType.extension})" />
 									<f:facet name="footer">
 										<aon:selectOneMenu id="#{controller.beanName}_type"
 											rendered="#{formNew}" value="#{controller.to.type}">

@@ -19,7 +19,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -120,23 +119,6 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 		}
 	}	
 	
-	private byte[] getData( FacturaeWriter fw, Invoice invoice ) {
-		byte[] data = null;
-		File invoiceFile = null;
-		try {
-			invoiceFile = File.createTempFile("facturae ("+invoice.getId() + ")", FacturaeWriter.FACTURAE_EXTENSION );
-			String filePath = invoiceFile.getAbsolutePath();
-			String fileName = FilenameUtils.getFullPath(filePath) + FilenameUtils.getBaseName(filePath);
-			fw.serialize(invoice, fileName);
-			data = FileUtils.readFileToByteArray(invoiceFile);
-		} catch (Throwable e) {
-			LOGGER.error(e.getMessage(), e);
-		} finally {
-			FileUtils.deleteQuietly(invoiceFile);	
-		}
-		return data;
-	}
-
     private File getZipFile() throws IOException, ManagerBeanException {
     	File file = File.createTempFile( "invoices", "." + MimeType.MIME_ZIP.getExtension());
 		OutputStream fileOut = new BufferedOutputStream( new FileOutputStream(file) );
@@ -144,7 +126,7 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 		FacturaeWriter fw = new FacturaeWriter(AonUtil.getCurrentLocale());
 		for( ITransferObject to : getManagerBean().getList(getCriteria()) ) {
 			Invoice invoice = (Invoice) to;
-			byte[] data = getData(fw, invoice);
+			byte[] data = InvoiceController.getFacturaeData(fw, invoice);
 			if (! ArrayUtils.isEmpty(data) ) {
 				String name = "facturae " + StringUtils.replace(invoice.getReferenceCode(), "/", "-") + "." + MimeType.MIME_XML.getExtension();
 	            zipOut.putNextEntry(new ZipEntry(name));

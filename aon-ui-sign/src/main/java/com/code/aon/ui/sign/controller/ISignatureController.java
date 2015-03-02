@@ -3,6 +3,7 @@ package com.code.aon.ui.sign.controller;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ui.form.IController;
 
 public interface ISignatureController extends IController {
@@ -11,7 +12,7 @@ public interface ISignatureController extends IController {
 	
 	void setSigned( ITransferObject to, boolean value );
 
-	IAttachment newAttachment( ITransferObject parent );
+	IAttachment newAttachment( ITransferObject parent, MimeType type );
 	
 	String getDescription( ITransferObject parent );
 	
@@ -23,6 +24,6 @@ public interface ISignatureController extends IController {
 	
 	IAttachment generateReportAttachment( ITransferObject to );
 	
-	IAttachment getUnsignedAttachment( ITransferObject to );
+	IAttachment getUnsignedAttachment( ITransferObject to, MimeType type );
 	
 }

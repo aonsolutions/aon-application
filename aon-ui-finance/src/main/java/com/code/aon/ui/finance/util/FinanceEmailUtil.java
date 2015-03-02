@@ -1,6 +1,5 @@
 package com.code.aon.ui.finance.util;
 
-import static com.code.aon.ui.common.ICommonMessages.FACTURAE_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_EINVOICE_EMAIL_SUBJECT;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_EMAIL_BODY;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_EMAIL_SUBJECT;
@@ -21,20 +20,18 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
-import com.code.aon.common.AonException;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.faces.controller.LogPanelController;
-import com.code.aon.facturae.FacturaeWriter;
+import com.code.aon.facturae.FACeUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
@@ -69,7 +66,9 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 		String[] emails = getAdministrativeEmails(invoice.getRegistry());
 		initMessageController(messageController, emails, getEmailBody(invoice));
 		messageController.setSubject( getEmailSubject(invoice) );
-		messageController.addAttachment( getInvoiceFile(attach, invoice) );
+		if ( attach != null ) {
+			messageController.addAttachment( getInvoiceFile(attach, invoice) );	
+		}
 		if ( facturae ) {
 			AonFile xml = getInvoiceXml(invoice);
 			if ( xml != null ) {
@@ -111,19 +110,31 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 		return getInvoiceFile(attach, invoice);
 	}
 	
-	public AonFile getInvoiceFile( IAttachment attach, Invoice invoice ) throws IOException {
-		String fileName = attach.getDescription();
-		if ( StringUtils.isEmpty(fileName) ) {
-			InvoiceController controller = (InvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
-			fileName = controller.getDescription( invoice );
+	private AonFile getInvoiceFile( IAttachment attach, Invoice invoice, String fileName, String extension ) throws IOException {
+		String _fileName = fileName;
+		if ( StringUtils.isEmpty(_fileName) ) {
+			if ( StringUtils.isEmpty(attach.getDescription()) ) {
+				InvoiceController controller = (InvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
+				_fileName = controller.getDescription( invoice );
+			} else {
+				_fileName = attach.getDescription();
+			}
 		}
-		File file = File.createTempFile( fileName, ".pdf" );
+		String _extension = extension;
+		if ( StringUtils.isEmpty(_extension) ) {
+			_extension = attach.getMimeType().getExtension();	
+		}
+		File file = File.createTempFile( _fileName, "." + _extension );
 		FileUtils.writeByteArrayToFile(file, attach.getData());
 		AonFile aonFile = new AonFile();
 		aonFile.setFile(file);	
-		aonFile.setFileName( fileName + ".pdf" );
-		aonFile.setMimeType(MimeType.MIME_PDF);
+		aonFile.setFileName( _fileName + "." + _extension );
+		aonFile.setMimeType(attach.getMimeType());
 		return aonFile;
+	}
+	
+	private AonFile getInvoiceFile( IAttachment attach, Invoice invoice ) throws IOException {
+		return getInvoiceFile(attach, invoice, null, null);
 	}
 	
 	public AonFile getSddMandateReport(SddMandateObject sddMandateObject) throws ReportException, IOException {
@@ -141,24 +152,11 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 		return aonFile;
 	}
 
-	public AonFile getInvoiceXml( Invoice invoice ) throws IOException {
-		File file = File.createTempFile( "facturae", FacturaeWriter.FACTURAE_EXTENSION );
-		FacturaeWriter fw = new FacturaeWriter(AonUtil.getCurrentLocale());
-		String filePath = file.getAbsolutePath();
-		String fileName = FilenameUtils.getFullPath(filePath) + FilenameUtils.getBaseName(filePath);
-		AonFile aonFile = null;
-		try {
-			fw.serialize(invoice, fileName);
-			aonFile = new AonFile();
-			aonFile.setFile(file);
-			aonFile.setFileName( "facturae.xml" );
-			aonFile.setMimeType(MimeType.MIME_XML);
-		} catch (AonException e) {
-			LOGGER.error( e.getMessage(), e );
-			AonUtil.addErrorMessageFromBundle(FACTURAE_ERROR, invoice.getReferenceCode());			
-			FileUtils.deleteQuietly(file);
-		}
-		return aonFile;
+	private AonFile getInvoiceXml( Invoice invoice ) throws IOException, ManagerBeanException {
+		InvoiceController controller = (InvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
+		IAttachment attach = controller.getInvoiceFacturae(invoice);
+		String extension = FACeUtil.isDefined(invoice) ? MimeType.MIME_XSIG.getExtension() : MimeType.MIME_XML.getExtension();
+		return getInvoiceFile(attach, invoice, "facturae", extension);
 	}
 	
 	public void sendInvoice( int index, Invoice invoice, String subject, String content, boolean saveSent ) {
@@ -176,7 +174,9 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 				String _subject = formatEmailSubject(invoice, subject);
 				String _content = formatEmailBody(invoice, content );
 				file = getInvoiceFile(invoice);
-				xml = getInvoiceXml(invoice);
+				if ( InvoiceController.isIncludeFacturae(invoice) ) {
+					xml = getInvoiceXml(invoice);	
+				}
 				AonMessage aonMessage = getEmailSender().sendMessage(recipients, _subject, _content, MimeType.MIME_HTML, file, xml );
 				if ( saveSent ) {
 					getEmailSender().storeMessage(aonMessage);

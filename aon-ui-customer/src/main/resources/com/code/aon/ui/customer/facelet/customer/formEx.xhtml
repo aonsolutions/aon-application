@@ -6,6 +6,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -79,10 +80,28 @@
 						<aon:if test="#{company.EInvoice}">
 							<aon:outputLabel for="Customer_eInvoice"
 								value="#{bundle.customer_eInvoice}" />
-							<aon:selectOneRadio id="Customer_eInvoice" value="#{customer.to.EInvoice}">
-								<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
-								<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
-							</aon:selectOneRadio>
+							<aon:div id="customerEInvoiceDiv">
+								<h:panelGrid columns="2" cellpadding="0" cellspacing="0">
+									<aon:selectOneRadio id="Customer_eInvoice" value="#{customer.to.EInvoice}">
+										<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
+										<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
+										<a4j:support event="onchange" ajaxSingle="true"
+											reRender="customerEInvoiceDiv,customerTab" />								
+									</aon:selectOneRadio>
+									<aon:panelGroup rendered="#{customer.to.EInvoice}">
+										<aon:div styleClass="aon-margin-left">
+											<aon:selectBooleanCheckbox
+												value="#{customerFACe.enabled}" >
+												<a4j:support event="onchange" ajaxSingle="true"
+													actionListener="#{customerFACe.onEnabledChanged}"
+													reRender="customerEInvoiceDiv,customerTab" />
+											</aon:selectBooleanCheckbox>								
+											<aon:outputText styleClass="aon-italic"
+												value="#{bundle.finance_face}" />
+										</aon:div>
+									</aon:panelGroup>								
+								</h:panelGrid>
+							</aon:div>
 						</aon:if>
 	
 						<aon:if test="#{!customer.nevv and customer.to.invoicingGroup.id != null}">
@@ -328,6 +347,14 @@
 								</aon:panelTab>
 							</aon:if>
 						</aon:if>
+						
+						<aon:if test="#{customerFACe.enabled}">
+							<aon:panelTab id="customerFACe" label="#{bundle.finance_face}">
+								<ui:include src="/com/code/aon/ui/customer/facelet/customer/formFACe.xhtml" >
+									<ui:param name="controller" value="#{customer}" />
+								</ui:include>
+ 							</aon:panelTab>
+						</aon:if>						
 
 					</aon:panelTabSet>
 				</aon:if>

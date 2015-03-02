@@ -32,6 +32,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.facturae.FacturaeSigner;
+import com.code.aon.facturae.KeyStoreData;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.registry.RegistryAttachment;
@@ -41,6 +43,7 @@ import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.watson.error.AonCoreException;
 
 public class CertificateController implements Serializable {
 	
@@ -302,15 +305,40 @@ public class CertificateController implements Serializable {
 		return companyController.isSmartCard() || getCertificateCount()>0;
 	}
 	
-	public byte[] getSignedFileData( byte[] in, boolean visible ) throws SinaduraCoreException, IOException {
-		DocumentIFace document = DocumentFactory.buildPDFDocument( in );
-		document.setTSURL( DEFAULT_TSA_URL );
-		InputStream imageIS = SignerController.class.getResourceAsStream(SIGN_IMAGE_PATH);
-		byte[] imageData = IOUtils.toByteArray( imageIS );
+	private KeyStoreData getKeyStoreData() throws AonCoreException {
+		return new KeyStoreData(getSignStore().getKeySore(),
+				getCertificado().getAlias(), getCertificado().getPassword().toCharArray());
+	}
+	
+	public void signAttachment( IAttachment attachment ) throws AonCoreException {
+		byte[] signedData = null;
+		MimeType type = attachment.getMimeType();
+		if ( type == MimeType.MIME_PDF ) {
+			signedData = getSignedFileData( attachment.getData() );
+			attachment.setMimeType(MimeType.MIME_SIGNED_PDF);
+		} else if ( (type == MimeType.MIME_XML) || (type == MimeType.MIME_XSIG) ) {
+			FacturaeSigner signer = new FacturaeSigner();
+			signedData = signer.sign(getKeyStoreData(), attachment.getData());
+			attachment.setMimeType(MimeType.MIME_XSIG);
+		}
+		attachment.setData( signedData );
+	}
+	
+	private byte[] getSignedFileData( byte[] in ) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		document.firmar( getSignStore(), getCertificado(), out, visible, 
-				companyController.obtainCompany().getAlias(), companyController.getMainAddress().getCity(), imageData,
-				305, 745, 405, 795 );		
+		try {
+			DocumentIFace document = DocumentFactory.buildPDFDocument( in );
+			document.setTSURL( DEFAULT_TSA_URL );
+			InputStream imageIS = SignerController.class.getResourceAsStream(SIGN_IMAGE_PATH);
+			byte[] imageData = IOUtils.toByteArray( imageIS );
+			document.firmar( getSignStore(), getCertificado(), out, true, 
+					companyController.obtainCompany().getAlias(), companyController.getMainAddress().getCity(), imageData,
+					305, 745, 405, 795 );
+		} catch ( IOException e ) {
+			throw new AonCoreException(e.getMessage(), e);
+		} catch (SinaduraCoreException e) {
+			throw new AonCoreException(e.getMessage(), e);
+		}
 		return out.toByteArray();		
 	}	
 	

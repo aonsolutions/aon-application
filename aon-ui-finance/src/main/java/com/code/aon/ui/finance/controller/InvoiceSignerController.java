@@ -17,6 +17,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.finance.Invoice;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.sign.controller.CertificateController;
@@ -88,6 +89,13 @@ public class InvoiceSignerController extends BasicController implements IFinance
 		return this.checks.isEmpty();
 	}
 	
+	private boolean isSignFacturae( Invoice invoice, SignerController signer ) throws ManagerBeanException {
+		if ( InvoiceController.isIncludeFacturae(invoice) ) {
+			return ! signer.hasSignedFacturae(invoice.getId());
+		}
+		return false;
+	}
+	
 	public void onSignSelected(ActionEvent event){
 		CertificateController cc = (CertificateController) AonUtil.getRegisteredBean(ISignConstants.CERTIFICATE_CONTROLLER);
 		if (! cc.resolveCertificado() ) {
@@ -106,12 +114,23 @@ public class InvoiceSignerController extends BasicController implements IFinance
 				Integer id = iter.next();
 				try {
 					Invoice invoice = (Invoice) getManagerBean().get(id);
+					IAttachment attachPDF = null;
+					IAttachment attachXML = null;
 					if (! invoice.isSigned() ) {
-						IAttachment attach = signer.getReport(invoice);
-						
+						attachPDF = signer.getReport(invoice);
+					}
+					if ( isSignFacturae(invoice, signer) ) {
+						attachXML = signer.getSignatureController().getUnsignedAttachment(invoice, MimeType.MIME_XML);
+					}
+					if ( (attachPDF != null) || (attachXML != null) ) {	
 						HibernateUtil.beginTransaction(sessionName);
 						
-						signer.sign(invoice, attach.getDescription(), attach.getData(), true);
+						if ( attachPDF != null ) {
+							signer.sign(invoice, attachPDF, true);	
+						}
+						if ( attachXML != null ) {
+							signer.sign(invoice, attachXML, true);
+						}
 
 						HibernateUtil.getSession(sessionName).flush();					
 						HibernateUtil.commitTransaction(sessionName);

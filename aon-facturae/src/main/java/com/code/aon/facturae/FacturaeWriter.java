@@ -272,14 +272,18 @@ public class FacturaeWriter {
 		return individualType;
 	}
 
-	private RecordData getRecordData(Registry registry) throws ManagerBeanException{
-		IManagerBean bean = BeanManager.getManagerBean(RecordData.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.RECORD_DATA_REGISTRY_ID), registry.getId());
-		List<ITransferObject> list = bean.getList(criteria);
-		if(! list.isEmpty()) {
-			return (RecordData) list.get(0);
-		}
+	private RecordData getRecordData(Registry registry) {
+	    try {
+			IManagerBean bean = BeanManager.getManagerBean(RecordData.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.RECORD_DATA_REGISTRY_ID), registry.getId());
+			List<ITransferObject> list = bean.getList(criteria);
+			if(! list.isEmpty()) {
+				return (RecordData) list.get(0);
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}	
 		return null;
 	}	
 	
@@ -345,6 +349,51 @@ public class FacturaeWriter {
 		return FinanceUtil.getEnterprise(invoiceDetail);
 	}
 	
+	private AdministrativeCentresType getFACeAdministrativeCentres() throws ManagerBeanException {
+		AdministrativeCentresType centres = new AdministrativeCentresType();
+		addAdministrativeCentre( centres,
+				FACeUtil.FACE_FISCAL_CENTRE_CODE,
+				FACeUtil.FACE_FISCAL_ROLE_TYPE_CODE,
+				FACeUtil.FACE_FISCAL_ADDRESS,
+				FACeUtil.FACE_FISCAL_DESCRIPTION);
+		addAdministrativeCentre( centres,
+				FACeUtil.FACE_RECEPTOR_CENTRE_CODE,
+				FACeUtil.FACE_RECEPTOR_ROLE_TYPE_CODE,
+				FACeUtil.FACE_RECEPTOR_ADDRESS,
+				FACeUtil.FACE_RECEPTOR_DESCRIPTION);
+		addAdministrativeCentre( centres,
+				FACeUtil.FACE_PAGADOR_CENTRE_CODE,
+				FACeUtil.FACE_PAGADOR_ROLE_TYPE_CODE,
+				FACeUtil.FACE_PAGADOR_ADDRESS,
+				FACeUtil.FACE_PAGADOR_DESCRIPTION);
+		addAdministrativeCentre( centres,
+				FACeUtil.FACE_COMPRADOR_CENTRE_CODE,
+				FACeUtil.FACE_COMPRADOR_ROLE_TYPE_CODE,
+				FACeUtil.FACE_COMPRADOR_ADDRESS,
+				FACeUtil.FACE_COMPRADOR_DESCRIPTION);
+		return centres;		
+	}
+
+	private void addAdministrativeCentre( AdministrativeCentresType centres,
+			String centreCodeKey, String roleTypeCode, String addressKey,
+			String centreDescription ) throws ManagerBeanException {
+		String centreCode = FACeUtil.getValue(centreCodeKey, invoice);
+		if (! StringUtils.isEmpty(centreCode) ) {
+			AdministrativeCentreType centre = new AdministrativeCentreType();
+			centre.setCentreCode( centreCode );
+			centre.setRoleTypeCode( roleTypeCode );
+			RegistryAddress address = FACeUtil.getAddress(addressKey, invoice);
+			CountryType country = getCountry(address.getGeozone());
+			if ( CountryType.ESP.equals(country) ) {
+				centre.setAddressInSpain( getAddress(address, country) );	
+			} else {
+				centre.setOverseasAddress( getOverseasAddress(address, country) );
+			}
+			centre.setCentreDescription(centreDescription);
+			centres.getAdministrativeCentre().add(centre);
+		}
+	}
+	
 	private AdministrativeCentreType getAdministrativeCentre( WorkPlace workPlace ) throws ManagerBeanException {
 		AdministrativeCentreType centre = new AdministrativeCentreType();
 		centre.setCentreCode( String.valueOf(workPlace.getId()) );
@@ -380,7 +429,12 @@ public class FacturaeWriter {
 			address = registry.getDefaultAddress();
 		}
 		String tradeName = registry.getAlias();
-		return getBusinessType(registry, name, tradeName, document, address);
+		BusinessType registryParty = getBusinessType(registry, name, tradeName, document, address);
+		if ( FACeUtil.isDefined(invoice) ) {
+			AdministrativeCentresType centres = getFACeAdministrativeCentres();
+			registryParty.setAdministrativeCentres(centres);			
+		}
+		return registryParty;
 	}
 	
 	private PartiesType getParties() throws ManagerBeanException {
