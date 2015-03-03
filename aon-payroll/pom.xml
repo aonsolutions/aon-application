@@ -35,6 +35,18 @@
 	</build>
 	<dependencies>
 		
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.watson</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.occam</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
 		<!-- We must remove this as soon as possible.-->  
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
@@ -42,7 +54,12 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.entity.common</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.master.jooq</artifactId>
@@ -154,18 +171,6 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>5.0.8</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.esferalia.aon</groupId>
-			<artifactId>aon.occam</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.esferalia.aon</groupId>
-			<artifactId>aon.watson</artifactId>
-			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

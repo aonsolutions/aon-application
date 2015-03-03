@@ -62,7 +62,6 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.parse;
 import static com.esferalia.aon.salary.expression.ExpressionContext.getCurrentBindings;
 import static com.esferalia.aon.watson.util.AonDateUtils.add;
 import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
-import static java.lang.String.format;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
 
@@ -96,7 +95,6 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.solvers.PegasusSolver;
 import org.apache.commons.math3.analysis.solvers.UnivariateSolver;
-import org.jooq.impl.DSL;
 import org.mvel2.util.MethodStub;
 
 import com.code.aon.AonVersion;
@@ -111,7 +109,6 @@ import com.esferalia.aon.calendar.enumeration.DayType;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.IrpfOutcome;
-import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.AbstractContractSalaryCalculatorContext;
@@ -375,37 +372,42 @@ public class SQLContractSalaryCalculatorContext extends
 		public Integer getAgreementLevelId() {
 			return agreementLevelId;
 		}
-		
+
 		@Override
 		public boolean equals(Object obj) {
-			return obj instanceof AgreementContextKey 
-				&& AonUtils.equals(domain, ((AgreementContextKey)obj).domain) 
-				&& AonUtils.equals(agreementId,((AgreementContextKey)obj).agreementId)
-				&& AonUtils.equals(agreementLevelId,((AgreementContextKey)obj).agreementLevelId)
-				;
+			return obj instanceof AgreementContextKey
+					&& AonUtils.equals(domain,
+							((AgreementContextKey) obj).domain)
+					&& AonUtils.equals(agreementId,
+							((AgreementContextKey) obj).agreementId)
+					&& AonUtils.equals(agreementLevelId,
+							((AgreementContextKey) obj).agreementLevelId);
 		}
-		
+
 		@Override
 		public int hashCode() {
-			return AonUtils.hashCode(domain) 
-					+ AonUtils.hashCode(agreementId) 
-					+ AonUtils.hashCode(agreementLevelId) ;
+			return AonUtils.hashCode(domain) + AonUtils.hashCode(agreementId)
+					+ AonUtils.hashCode(agreementLevelId);
 		}
 
 	}
 
-	public static class CCCContextKey extends Pair<CCCType, SSRegimeType> {
-
+	public static class CCCContextKey  {
+		
+		private CCCType cccType;
+		private SSRegimeType ssRegime;
+		
 		public CCCContextKey(CCCType cccType, SSRegimeType ssRegime) {
-			super(cccType, ssRegime);
+			this.cccType = cccType;
+			this.ssRegime = ssRegime;
 		}
 
 		public CCCType getCCC() {
-			return getFirst();
+			return cccType;
 		};
 
 		public SSRegimeType getSSRegime() {
-			return getSecond();
+			return ssRegime;
 		};
 
 	}
@@ -579,8 +581,9 @@ public class SQLContractSalaryCalculatorContext extends
 	}
 
 	/**
-	 * Clase base para implementar variables pesadas con evaluación perezosa.
-	 * Las clases hijas únicamente deberán implementar el método 'V getValue()'.
+	 * Clase base para implementar variables pesadas con evaluaci\F3n perezosa.
+	 * Las clases hijas \FAnicamente deber\E1n implementar el m\E9todo 'V
+	 * getValue()'.
 	 * 
 	 * @author rtrepiana
 	 * 
@@ -990,7 +993,7 @@ public class SQLContractSalaryCalculatorContext extends
 
 	@Override
 	public String getEnterpriseAddress() {
-		/* TODO Añadir la tabla y columnas a las constantes. */
+		/* TODO A\F1adir la tabla y columnas a las constantes. */
 
 		String streetType = getString(SQLConstants.RADDRESS,
 				SQLConstants.RaddressColumns.STREET_TYPE);
@@ -2351,7 +2354,7 @@ public class SQLContractSalaryCalculatorContext extends
 
 		return type == DayType.WORKING_DAY || type == DayType.CONTINUOUS_TIME
 				|| type == DayType.OTHER; // TODO: Estos tipos de dias son un
-											// cachondeo ¿ OTHER,
+											// cachondeo \BF OTHER,
 											// CONTINUOUS_TIME ?
 	}
 
@@ -2414,10 +2417,11 @@ public class SQLContractSalaryCalculatorContext extends
 
 		Long leaveDays = getLeaveDays(p);
 
-
-		double workedDays = availableDays - leaveDays ;
-		workedDays -= getCurrentBindings().get(ERE_DAYS, obj->((Number)obj).doubleValue(), 0.00);
-		workedDays -= getCurrentBindings().get(STRIKE_DAYS, obj->((Number)obj).doubleValue(), 0.00);
+		double workedDays = availableDays - leaveDays;
+		workedDays -= getCurrentBindings().get(ERE_DAYS,
+				obj -> ((Number) obj).doubleValue(), 0.00);
+		workedDays -= getCurrentBindings().get(STRIKE_DAYS,
+				obj -> ((Number) obj).doubleValue(), 0.00);
 
 		double monthDays = getMax(p.getStart(), DAY_OF_MONTH);
 		double ctxMonthDays = getContexVariable(ctx, p, MONTH_DAYS);
@@ -2482,38 +2486,40 @@ public class SQLContractSalaryCalculatorContext extends
 
 	public Object br(Date date) throws ExpressionException, SQLException,
 			SalaryException {
-		
+
 		int contractId = getId();
-		
+
 		Date prevMonth = addMonth2Date(date, -1);
 
-		Stream<com.esferalia.aon.occam.api.model.Salary> salaries = 
-		AON.getSalaries(new AONContext(connection), p-> 
-			p.getIsSalaryProperty().eq(true)
-			.and(p.getContractProperty().eq(contractId))
-			.and(p.getStartDateProperty().le(prevMonth))
-			.and(p.getEndDateProperty().ge(prevMonth))
-		);
+		Stream<com.esferalia.aon.occam.api.model.Salary> salaries = AON
+				.getSalaries(
+						new AONContext(connection),
+						p -> p.getIsSalaryProperty().eq(true)
+								.and(p.getContractProperty().eq(contractId))
+								.and(p.getStartDateProperty().le(prevMonth))
+								.and(p.getEndDateProperty().ge(prevMonth)));
 		double br = salaries
-			.collect(Collectors.summingDouble(s->
-			s.getCommonContingenciesBase() / (
-			s.getSalaryDays() 
-			* s.getContextData(MONTH_DAYS.getName(), Collectors.summingDouble( Double::parseDouble))
-			/ AonDateUtils.getMax(s.getStartDate(), DAY_OF_MONTH))
-			)
-		);
+				.collect(Collectors.summingDouble(s -> s
+						.getCommonContingenciesBase()
+						/ (s.getSalaryDays()
+								* s.getContextData(
+										MONTH_DAYS.getName(),
+										Collectors
+												.summingDouble(Double::parseDouble)) / AonDateUtils
+									.getMax(s.getStartDate(), DAY_OF_MONTH))));
 		salaries.close();
-		if ( br > 0.00 )
+		if (br > 0.00)
 			return br;
-		
+
 		// If no salaries are present, the result is 0.
-		
+
 		SQLNoItContractSalaryCalculatorContext ctx = (SQLNoItContractSalaryCalculatorContext) getNoItSalary(
 				connection, date, SalaryType.SALARY, contractId);
-		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder())
-				.calculate(ctx);
+		Salary salary = new ContractSalaryCalculator<Salary>(
+				new SalaryBuilder()).calculate(ctx);
 
-		return salary.getCommonBase() / ctx.getVariable(QUOTE_DAYS, Double.class);
+		return salary.getCommonBase()
+				/ ctx.getVariable(QUOTE_DAYS, Double.class);
 
 	}
 
@@ -2564,12 +2570,12 @@ public class SQLContractSalaryCalculatorContext extends
 		Double salaryDays = getVariable(SALARY_DAYS, Double.class);
 
 		return salaryDays == null ? null : Math.ceil(salaryDays
-				* weekHours.doubleValue() / 7); // TODO : ¿ Se redondean las
+				* weekHours.doubleValue() / 7); // TODO : \BF Se redondean las
 												// horas hacia arriba ?
 	}
 
 	private boolean isIndefinite() {
-		String tc2 = getCurrentBindings().get(TC2, obj->obj.toString());
+		String tc2 = getCurrentBindings().get(TC2, obj -> obj.toString());
 		if (tc2 == null) {
 			throw new ExpressionExceptionWrapper(
 					new UndefinedVariablesException(TC2.getName()));
@@ -2578,7 +2584,7 @@ public class SQLContractSalaryCalculatorContext extends
 	}
 
 	private boolean isFullTime() {
-		String tc2 = getCurrentBindings().get(TC2, obj->obj.toString());
+		String tc2 = getCurrentBindings().get(TC2, obj -> obj.toString());
 		if (tc2 == null) {
 			throw new ExpressionExceptionWrapper(
 					new UndefinedVariablesException(TC2.getName()));
@@ -2680,7 +2686,7 @@ public class SQLContractSalaryCalculatorContext extends
 	}
 
 	/*
-	 * Inicializa el contexto dentro del cual se calcularán ejecutarán las
+	 * Inicializa el contexto dentro del cual se calcular\E1n ejecutar\E1n las
 	 * percepciones y deducciones de trabajador.
 	 */
 	protected void initContractExpressionCtx() throws SQLException,
@@ -3047,24 +3053,18 @@ public class SQLContractSalaryCalculatorContext extends
 	private void loadDaysContextVariables(ExpressionContext ctx)
 			throws ExpressionException {
 
-
 		if (!containsVariable(WEEK_HOURS)) {
 
-			List<Period> contract = getMonths(contractStartDate, contractEndDate);
-			ContextVariable [] week_days = {
-					MONDAY_HOURS,
-					TUESDAY_HOURS,
-					WEDNESDAY_HOURS,
-					THURSDAY_HOURS,
-					FRIDAY_HOURS,
-					SATURDAY_HOURS,
-					SUNDAY_HOURS};
+			List<Period> contract = getMonths(contractStartDate,
+					contractEndDate);
+			ContextVariable[] week_days = { MONDAY_HOURS, TUESDAY_HOURS,
+					WEDNESDAY_HOURS, THURSDAY_HOURS, FRIDAY_HOURS,
+					SATURDAY_HOURS, SUNDAY_HOURS };
 
 			List<Period> intersects = Arrays.stream(week_days)
-			.map(var-> ctx.getPeriods(var))
-			.filter(periods-> periods != null && !periods.isEmpty())
-			.reduce(contract, (a,b)->Period.intersect(a, b))
-			;
+					.map(var -> ctx.getPeriods(var))
+					.filter(periods -> periods != null && !periods.isEmpty())
+					.reduce(contract, (a, b) -> Period.intersect(a, b));
 			for (Period period : intersects) {
 				ITimedVariable<Double> weeks_hours = new ITimedVariable<Double>() {
 					@Override
@@ -3075,23 +3075,31 @@ public class SQLContractSalaryCalculatorContext extends
 					@Override
 					public Double getValue(Period p) {
 						return Arrays
-						.stream(week_days)
-						.collect(Collectors.summingDouble((var ->getCurrentBindings().get(var, obj->((Number)obj).doubleValue(), 
-								Arrays.asList(SATURDAY_HOURS,SUNDAY_HOURS).contains(var) ? 0.00: DEFAULT_DAY_HOURS ))))
-						;
+								.stream(week_days)
+								.collect(
+										Collectors
+												.summingDouble((var -> getCurrentBindings()
+														.get(var,
+																obj -> ((Number) obj)
+																		.doubleValue(),
+																Arrays.asList(
+																		SATURDAY_HOURS,
+																		SUNDAY_HOURS)
+																		.contains(
+																				var) ? 0.00
+																		: DEFAULT_DAY_HOURS))));
 					}
 
 				};
 
 				ctx.putVariable(WEEK_HOURS, weeks_hours);
 			}
-			
+
 		}
 
 		List<Period> contract = getMonths(contractStartDate, contractEndDate);
 		List<Period> weekHours = ctx.getPeriods(WEEK_HOURS);
 		List<Period> agreeementHours = ctx.getPeriods(AGREEMENT_HOURS);
-
 
 		List<Period> intersects = Period.intersect(weekHours, agreeementHours);
 		intersects = Period.intersect(intersects, contract);
@@ -3109,8 +3117,14 @@ public class SQLContractSalaryCalculatorContext extends
 					public Double getValue(Period p) {
 						try {
 							if (!isFullTime())
-								return getCurrentBindings().get(WEEK_HOURS, obj->((Number)obj).doubleValue(), DEFAULT_AGRREEMENT_HOURS) 
-										/ getCurrentBindings().get(AGREEMENT_HOURS, obj->((Number)obj).doubleValue(), DEFAULT_AGRREEMENT_HOURS); 
+								return getCurrentBindings().get(WEEK_HOURS,
+										obj -> ((Number) obj).doubleValue(),
+										DEFAULT_AGRREEMENT_HOURS)
+										/ getCurrentBindings().get(
+												AGREEMENT_HOURS,
+												obj -> ((Number) obj)
+														.doubleValue(),
+												DEFAULT_AGRREEMENT_HOURS);
 						} catch (ExpressionExceptionWrapper e) {
 						}
 						return 1.00;
@@ -3134,7 +3148,10 @@ public class SQLContractSalaryCalculatorContext extends
 						try {
 							if (!isFullTime()) {
 								return workDays
-										* getCurrentBindings().get(PARTIAL_FACTOR, obj->((Number)obj).doubleValue(), 1.00 );
+										* getCurrentBindings().get(
+												PARTIAL_FACTOR,
+												obj -> ((Number) obj)
+														.doubleValue(), 1.00);
 							}
 						} catch (ExpressionExceptionWrapper e) {
 						}
@@ -3188,25 +3205,10 @@ public class SQLContractSalaryCalculatorContext extends
 		return ((Number) agreementHours.getValue(p)).doubleValue();
 	}
 
-	private  <T> T  getContextVariable(ExpressionContext ctx, Period p,
-			ContextVariable var, T identity, BinaryOperator<T> op) {
-		return ctx.getVariables(var, p.getStart(),p.getEnd())
-				.stream()
-				.map(v -> (T) v.getValue(v.getPeriod()))
-				.collect(Collectors.reducing(identity, op));
-	}
-
-	private  double getContextVariable(ExpressionContext ctx, Period p,
-			ContextVariable var, double identity) {
-		return ctx.getVariables(var, p.getStart(),p.getEnd())
-				.stream()
-				.map(v -> ((Number) v.getValue(v.getPeriod())).doubleValue())
-				.collect(Collectors.reducing(identity, (x,y) -> x + y ));
-	}
 	/*
 	 * Carga, ejecuta los datos del contrato 'contract_data' para este periodo.
 	 * Ejecuta porque al valor de una variable no tiene porque ser un literal,
-	 * puede ser una expresión ej : '15 / 100' o 'DIAS_TRABAJADOS * 0.01'
+	 * puede ser una expresi\F3n ej : '15 / 100' o 'DIAS_TRABAJADOS * 0.01'
 	 */
 	private void loadContractData(ExpressionContext ctx) throws SQLException {
 		loadContractData(ctx, contractStartDate, contractEndDate);
@@ -3226,14 +3228,14 @@ public class SQLContractSalaryCalculatorContext extends
 			ctx.addExpression(expr, start, end);
 		} catch (Exception ignore) {
 			ignore.printStackTrace();
-			// TODO: ¿ Que hacemos con esta excepcion ?
+			// TODO: \BF Que hacemos con esta excepcion ?
 		}
 	}
 
 	/*
 	 * Carga, ejecuta los datos del contrato 'contract_data' para este periodo.
 	 * Ejecuta porque al valor de una variable no tiene porque ser un literal,
-	 * puede ser una expresión ej : '15 / 100' o 'DIAS_TRABAJADOS * 0.01'
+	 * puede ser una expresi\F3n ej : '15 / 100' o 'DIAS_TRABAJADOS * 0.01'
 	 */
 	private void loadContractData(ExpressionContext ctx, Date startDate,
 			Date endDate) throws SQLException {
@@ -3262,7 +3264,7 @@ public class SQLContractSalaryCalculatorContext extends
 				} catch (CheckException e) {
 
 				} catch (Exception e) {
-					// TODO: ¿ Que hacemos con esta excepcion ?
+					// TODO: \BF Que hacemos con esta excepcion ?
 				}
 			}
 
@@ -3463,14 +3465,14 @@ public class SQLContractSalaryCalculatorContext extends
 			@Override
 			public Collection<IContractCost> getContractCosts()
 					throws AonException {
-				// TODO Apéndice de método generado automáticamente
+				// TODO Ap\E9ndice de m\E9todo generado autom\E1ticamente
 				return Collections.emptyList();
 			}
 
 			@Override
 			public Collection<IContractBonus> getContractBonus()
 					throws AonException {
-				// TODO Apéndice de método generado automáticamente
+				// TODO Ap\E9ndice de m\E9todo generado autom\E1ticamente
 				return Collections.emptyList();
 			}
 		};
@@ -3493,44 +3495,44 @@ public class SQLContractSalaryCalculatorContext extends
 
 			@Override
 			public Double visitCommonDisease(LeaveType leaveType) {
-				// TODO Apéndice de método generado automáticamente
+				// TODO Ap\E9ndice de m\E9todo generado autom\E1ticamente
 
 				return null;
 			}
 
 			@Override
 			public Double visitOcupationalDisease(LeaveType leaveType) {
-				// TODO Apéndice de método generado automáticamente
+				// TODO Ap\E9ndice de m\E9todo generado autom\E1ticamente
 				return null;
 			}
 
 			@Override
 			public Double visitMaternity(LeaveType leaveType) {
-				// TODO Apéndice de método generado automáticamente
+				// TODO Ap\E9ndice de m\E9todo generado autom\E1ticamente
 				return null;
 			}
 
 			@Override
 			public Double visitPaternity(LeaveType leaveType) {
-				// TODO Apéndice de método generado automáticamente
+				// TODO Ap\E9ndice de m\E9todo generado autom\E1ticamente
 				return null;
 			}
 
 			@Override
 			public Double visitPregnacyRisk(LeaveType leaveType) {
-				// TODO Apéndice de método generado automáticamente
+				// TODO Ap\E9ndice de m\E9todo generado autom\E1ticamente
 				return null;
 			}
 
 			@Override
 			public Double visitBreastFeedingRisk(LeaveType leaveType) {
-				// TODO Apéndice de método generado automáticamente
+				// TODO Ap\E9ndice de m\E9todo generado autom\E1ticamente
 				return null;
 			}
 
 			@Override
 			public Double visitNonOcupationalDisease(LeaveType leaveType) {
-				// TODO Apéndice de método generado automáticamente
+				// TODO Ap\E9ndice de m\E9todo generado autom\E1ticamente
 				return null;
 			}
 
