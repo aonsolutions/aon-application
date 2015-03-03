@@ -1,9 +1,11 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
+import static com.esferalia.aon.jooq.tables.AgreementData.AGREEMENT_DATA;
 import static com.esferalia.aon.jooq.tables.AgreementExtra.AGREEMENT_EXTRA;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
+import static com.esferalia.aon.jooq.tables.AgreementLevelData.AGREEMENT_LEVEL_DATA;
 import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
@@ -49,7 +51,8 @@ import com.code.aon.person.enumeration.MaritalStatus;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
-import com.esferalia.aon.jooq.tables.ContractData;
+import com.esferalia.aon.jooq.tables.AgreementData;
+import com.esferalia.aon.jooq.tables.AgreementLevelData;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementPaymentRecord;
@@ -108,53 +111,6 @@ public abstract class AbstractSQLTestCase {
 		return new Date(calendar.getTimeInMillis());
 	}
 
-	protected static Date getFirstDayOfYear(Date date) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		calendar.set(DAY_OF_YEAR, 1);
-		return new Date(calendar.getTimeInMillis());
-	}
-
-	protected static Date getLastDayOfYear(Date date) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		calendar.set(DAY_OF_YEAR, calendar.getActualMaximum(DAY_OF_YEAR));
-		return new Date(calendar.getTimeInMillis());
-	}
-
-	protected static Date getFirstDayOfMonth() {
-		Calendar calendar = Calendar.getInstance();
-		calendar = DateUtils.truncate(calendar, DAY_OF_MONTH);
-		calendar.set(DAY_OF_MONTH, 1);
-		return new Date(calendar.getTimeInMillis());
-	}
-
-	protected static Date getLastDayOfMonth() {
-		Calendar calendar = Calendar.getInstance();
-		calendar = DateUtils.truncate(calendar, DAY_OF_MONTH);
-		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(DAY_OF_MONTH));
-		return new Date(calendar.getTimeInMillis());
-	}
-
-	protected static Date getFirstDayOfMonth(Date date) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		calendar.set(DAY_OF_MONTH, 1);
-		return new Date(calendar.getTimeInMillis());
-	}
-
-	protected static Date getLastDayOfMonth(Date date) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(DAY_OF_MONTH));
-		return new Date(calendar.getTimeInMillis());
-	}
-
-	protected static int get(Date date, int field) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		return calendar.get(field);
-	}
 
 	protected static Date addMonths(Date date, int value) {
 		return add(date, MONTH, value);
@@ -206,7 +162,12 @@ public abstract class AbstractSQLTestCase {
 	}
 
 	protected final AgreementLevelCategoryRecord newAgreement(AONContext aonContext,
-			Extra... extras) {
+			Extra extras []) {
+		return newAgreement(aonContext, extras, Collections.emptyMap());
+	}
+	
+	protected final AgreementLevelCategoryRecord newAgreement(AONContext aonContext,
+			Extra extras [], Map<String, String> datas) {
 		return aonContext.getDslContext().transactionResult(
 				new TransactionalCallable<AgreementLevelCategoryRecord>() {
 					@Override
@@ -295,19 +256,29 @@ public abstract class AbstractSQLTestCase {
 									.set(AGREEMENT_EXTRA.ISSUE_DATE,
 											extra.issue).returning().fetchOne();
 						}
+						for (Map.Entry<String, String> data : datas.entrySet()) {
+							aonContext.getDslContext().insertInto(AGREEMENT_DATA)
+									.set(AGREEMENT_DATA.DOMAIN, domain.getId())
+									.set(AGREEMENT_DATA.AGREEMENT, agreement.getId())
+									.set(AGREEMENT_DATA.START_DATE, startDate)
+									.set(AGREEMENT_DATA.NAME, data.getKey())
+									.set(AGREEMENT_DATA.EXPRESSION, data.getValue()).execute();
+
+						}
 						return category;
 					}
 				});
+	}
+
+	protected final ContractRecord newContract(AONContext aonContext, Date startDate, Map<String, String> data, AgreementLevelCategoryRecord category) {
+		return newContract(aonContext, startDate, data, new String[0],
+				new String[0], category);
 	}
 
 	protected final ContractRecord newContract(AONContext aonContext, Date startDate,
 			Map<String, String> data) {
 		return newContract(aonContext, startDate, data, new String[0],
 				new String[0], null);
-	}
-
-	protected int getDayOfMonth(Date date) {
-		return get(date, DAY_OF_MONTH);
 	}
 
 	protected final ContractRecord newContract(AONContext aonContext,
@@ -551,4 +522,31 @@ public abstract class AbstractSQLTestCase {
 		}
 	}
 
+	protected final void addData(AONContext aonContext, AgreementLevelCategoryRecord category,
+			Date startDate, Date endDate, Map<String, String> datas) {
+		for (Map.Entry<String, String> data : datas.entrySet()) {
+			aonContext.getDslContext().insertInto(AGREEMENT_LEVEL_DATA)
+					.set(AGREEMENT_LEVEL_DATA.DOMAIN, category.getDomain())
+					.set(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL, category.getAgreementLevel())
+					.set(AGREEMENT_LEVEL_DATA.START_DATE, startDate)
+					.set(AGREEMENT_LEVEL_DATA.END_DATE, endDate)
+					.set(AGREEMENT_LEVEL_DATA.NAME, data.getKey())
+					.set(AGREEMENT_LEVEL_DATA.EXPRESSION, data.getValue()).execute();
+
+		}
+	}
+
+	protected final void addData(AONContext aonContext, Integer domain, AgreementLevelCategoryRecord category,
+			Date startDate, Date endDate, Map<String, String> datas) {
+		for (Map.Entry<String, String> data : datas.entrySet()) {
+			aonContext.getDslContext().insertInto(AGREEMENT_LEVEL_DATA)
+					.set(AGREEMENT_LEVEL_DATA.DOMAIN, domain)
+					.set(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL, category.getAgreementLevel())
+					.set(AGREEMENT_LEVEL_DATA.START_DATE, startDate)
+					.set(AGREEMENT_LEVEL_DATA.END_DATE, endDate)
+					.set(AGREEMENT_LEVEL_DATA.NAME, data.getKey())
+					.set(AGREEMENT_LEVEL_DATA.EXPRESSION, data.getValue()).execute();
+
+		}
+	}
 }

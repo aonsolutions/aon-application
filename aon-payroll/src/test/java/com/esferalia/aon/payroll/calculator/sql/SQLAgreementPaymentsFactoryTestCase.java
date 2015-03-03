@@ -26,7 +26,7 @@ public class SQLAgreementPaymentsFactoryTestCase extends AbstractSQLTestCase {
 	@Test
 	public void testCreate() throws SQLException {
 		Connection connection = getConnection();
-		AONContext aonContext = new AONContext(connection, "", 0);
+		AONContext aonContext = new AONContext(connection);
 		
 		int parentId = (int)System.currentTimeMillis()/1000;
 		int overrideId = parentId +1;
