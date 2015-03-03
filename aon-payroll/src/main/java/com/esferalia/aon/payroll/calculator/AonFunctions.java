@@ -27,6 +27,12 @@ public class AonFunctions {
 		throw new UndefinedVariablesException(var);
 	}
 	
+	@Variable(ContextVariable.TRACE)
+	public static final Object trace(String format, Object obj) {
+		System.out.printf(format, obj);
+		return obj;
+	}
+
 	// ------------------------------------------------------------------------
 	// 
 	// ------------------------------------------------------------------------
