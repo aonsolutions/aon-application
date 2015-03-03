@@ -13,7 +13,7 @@
 					(finance.payment) ? (bundle.aon_creditor) : (bundle.finance_debtor)}" />
 
 	<aon:column alias="Finance.dueDate"
-		styleClass="aon-editDataTable-textColumn">
+		styleClass="aon-editDataTable-textColumn aon-width-80">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.finance_finance_date_abbrv}" />
 		</f:facet>
@@ -24,7 +24,7 @@
 	</aon:column>
 
 	<aon:column alias="Finance.invoice&lt;referenceCode"
-		styleClass="aon-editDataTable-textColumn">
+		styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-130">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_document_number}" />
 		</f:facet>
@@ -32,7 +32,7 @@
 	</aon:column>
 
 	<aon:column alias="Finance.invoice&lt;issueDate"
-		styleClass="aon-editDataTable-textColumn">
+		styleClass="aon-editDataTable-textColumn aon-width-80">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.finance_invoice_date_abbrv}" />
 		</f:facet>
@@ -43,40 +43,31 @@
 	</aon:column>
 
 	<aon:column alias="Finance.registryName"
-		styleClass="aon-editDataTable-textColumn">
+		styleClass="aon-editDataTable-textColumn aon-width-auto">
 		<f:facet name="header">
 			<aon:outputText	value="#{financeRegistryLabel}" />
 		</f:facet>
-		<aon:outputText value="#{to.registryName}" />
+		<aon:outputText value="#{to.registryName}">
+			<aon:abbreviateConverter maxWidth="50" />
+		</aon:outputText>
 	</aon:column>
 
 	<aon:column alias="Finance.registryDocument"
-		styleClass="aon-editDataTable-textColumn">
+		styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-80">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_company_document}" />
 		</f:facet>
 		<aon:outputText value="#{to.registryDocument}" />
 	</aon:column>
 
-	<aon:column alias="Finance.financeStatus"
-		styleClass="aon-editDataTable-textColumn">
-		<f:facet name="header">
-			<aon:outputText value="#{bundle.aon_status}" />
-		</f:facet>
-		<aon:outputText value="#{to.financeStatus}" />
-		<aon:if test="#{!skipTotalFinanceAmount}">
-			<f:facet name="footer">
-				<aon:outputText value="#{bundle.stat_total}" />
-			</f:facet>
-		</aon:if>
-	</aon:column>
-
 	<aon:column alias="Finance.payMethod.name"
-		styleClass="aon-editDataTable-textColumn">
+		styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-120">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.finance_payMethod}" />
 		</f:facet>
-		<aon:outputText value="#{to.payMethod.name}" />
+		<aon:outputText value="#{to.payMethod.name}">
+			<aon:abbreviateConverter maxWidth="20" />
+		</aon:outputText>
 	</aon:column>
 
 	<aon:column styleClass="aon-editDataTable-numberColumn">
@@ -88,13 +79,48 @@
 		</aon:outputText>
 		<aon:if test="#{!skipTotalFinanceAmount}">
 			<f:facet name="footer">
-				<aon:div style="float:right">
-					<aon:outputText style="text-align:right" value="#{finance.totalFinanceAmount}" >
+				<aon:div id="listTotalDiv" styleClass="aon-text-right">
+					<aon:commandLink id="showTotals" immediate="true" 
+						styleClass="aon-dataTable-link aon-nowrap aon-bold"
+						value="#{bundle.aon_total_sum}"
+						rendered="#{controller.listTotal == null}"
+						actionListener="#{controller.obtainListTotals}"									
+						reRender="listTotalDiv" />
+					<aon:outputText	styleClass="aon-bold" 
+						value="#{controller.listTotal}"
+						rendered="#{controller.listTotal != null}">
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:outputText>
 				</aon:div>
 			</f:facet>
 		</aon:if>
+	</aon:column>
+
+	<aon:column alias="Finance.financeStatus"
+		styleClass="aon-editDataTable-iconColumn aon-width-20 aon-text-center">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_status_abrv}" />
+		</f:facet>
+		<aon:outputText title="#{bundle.aon_pending}"
+			styleClass="aon-text-center"
+			value="-"
+			rendered="#{to.pending}" />
+		<aon:outputText title="#{bundle.aon_batched}"
+			styleClass="aon-editDataTable-button aon-icon-task-checked aon-nowrap aon-margin-left"
+			value="&#160;"
+			rendered="#{to.batched}" />
+		<aon:outputText title="#{bundle.aon_returned}"
+			styleClass="aon-editDataTable-button aon-icon-exclude aon-nowrap aon-margin-left"
+			value="&#160;"
+			rendered="#{to.returned}" />
+		<aon:outputText title="#{bundle.aon_paid}"
+			styleClass="aon-editDataTable-button aon-icon-check-black aon-nowrap aon-margin-left"
+			value="&#160;"
+			rendered="#{to.paid}" />
+		<aon:outputText title="#{bundle.finance_tracking_settled}"
+			styleClass="aon-editDataTable-button aon-icon-close aon-nowrap aon-margin-left"
+			value="&#160;"
+			rendered="#{to.settled}" />
 	</aon:column>
 
 </ui:composition>

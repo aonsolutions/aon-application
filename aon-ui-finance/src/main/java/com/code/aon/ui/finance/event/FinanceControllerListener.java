@@ -23,17 +23,12 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.BankAccount;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.Projection;
-import com.code.aon.ql.ProjectionList;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.finance.controller.FinanceController;
 import com.code.aon.ui.finance.controller.FinanceGroupListController;
@@ -42,7 +37,6 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.entity.IEntityAlias;
 
 public class FinanceControllerListener extends ControllerAdapter {
 	
@@ -53,21 +47,7 @@ public class FinanceControllerListener extends ControllerAdapter {
 	@Override
 	public void afterModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		FinanceController controller = (FinanceController)event.getController();
-		try {
-			Criteria criteria = new Criteria();
-			ProjectionList idProjectionList = new ProjectionList(Projection.property(controller.getFieldName(IEntityAlias.FINANCE_ID)));
-			Expression idExpression = ExpressionUtilities.getSubQueryExpression(Finance.class, controller.getCriteria(), idProjectionList);
-			criteria.addInExpression(controller.getFieldName(IEntityAlias.FINANCE_ID), idExpression);
-			Projection amountProjection = Projection.sum(controller.getFieldName(IEntityAlias.FINANCE_AMOUNT));
-			Projection expensesProjection = Projection.sum(controller.getFieldName(IEntityAlias.FINANCE_EXPENSES));
-			ProjectionList totalProjectionList = new ProjectionList(amountProjection, expensesProjection);
-			Object[] result = (Object[])controller.getManagerBean().getUniqueResult(totalProjectionList, criteria);
-			Double amount = (result[0] == null) ? 0 : (Double)result[0];
-			Double expenses = (result[1] == null) ? 0 : (Double) result[1];
-			controller.setTotalFinanceAmount(CommonUtil.round(amount + expenses));
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException(e.getMessage(), e);
-		}		
+		controller.setListTotal(null);
 	}
 
 	@Override
@@ -168,8 +148,8 @@ public class FinanceControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		if (refreshTotalAmount) {
-			afterModelInitialized(event);
-			refreshTotalAmount = false;
+			FinanceController controller = (FinanceController)event.getController();
+			controller.setListTotal(null);
 		}
 	}
 
@@ -182,7 +162,7 @@ public class FinanceControllerListener extends ControllerAdapter {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
 	}
-	
+
 	private boolean isFinanceGroup(Finance finance) throws ManagerBeanException {
 		if( finance.getInvoice()==null || finance.getInvoice().getId()==null){
 			if( containsGroupedFinances(finance) ){
