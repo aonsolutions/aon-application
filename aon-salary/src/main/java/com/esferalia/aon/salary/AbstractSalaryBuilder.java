@@ -9,10 +9,10 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 
-public abstract class AbstractSalaryBuilder implements ISalaryBuilder {
+public abstract class AbstractSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 
 	@Override
-	public ISalary getSalary() {
+	public T getSalary() {
 
 		return null;
 	}
@@ -225,8 +225,6 @@ public abstract class AbstractSalaryBuilder implements ISalaryBuilder {
 	@Override
 	public void addZeroEmbargo(Integer id, IDeduction embargo,
 			Map<String, ITimedVariable<?>> context) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	@Override

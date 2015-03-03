@@ -13,13 +13,13 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 
-public class SalaryBuilder implements ISalaryBuilder {
+public class SalaryBuilder implements ISalaryBuilder<Salary> {
 
 	protected Salary salary;
 	private ISalaryBuilderListener listener;
 
 	@Override
-	public ISalary getSalary() {
+	public Salary getSalary() {
 		return this.salary;
 	}
 
@@ -346,6 +346,8 @@ public class SalaryBuilder implements ISalaryBuilder {
 	public ISalaryBuilderListener getListener() {
 		return listener;
 	}
+	
+	// ------------------------------------------------------------------------
 
 	private ContractEmbargo getContractEmbargo(Integer id) {
 		ContractEmbargo contractEmbargo = new ContractEmbargo();
@@ -353,4 +355,5 @@ public class SalaryBuilder implements ISalaryBuilder {
 		contractEmbargo.setContract(salary.getContract());
 		return contractEmbargo;
 	}
+	
 }

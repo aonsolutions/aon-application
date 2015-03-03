@@ -361,15 +361,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			releaseFacesContext();
 		}
 	}
-	
+
 	@Override
 	public void insertPerson(Employee employee) throws IllegalArgumentException {
 		Connection conn = null;
 		try {
 			initFacesContext();
 			conn = getConnection();
-			JooqEmployees.insert2Person(conn, getDomainID(), employee.getPerson(), 
-					employee.getDocument());
+			JooqEmployees.insert2Person(conn, getDomainID(),
+					employee.getPerson(), employee.getDocument());
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
@@ -382,7 +382,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			releaseFacesContext();
 		}
 
-		
 	}
 
 	@Override
@@ -428,12 +427,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			releaseFacesContext();
 		}
 	}
-	
-	
+
 	@Override
-	public HolidayDraft getStatalHolidays(
-			int workplaceId) throws IllegalArgumentException {
-		
+	public HolidayDraft getStatalHolidays(int workplaceId)
+			throws IllegalArgumentException {
+
 		Connection conn = null;
 		try {
 			initFacesContext();
@@ -451,9 +449,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			releaseFacesContext();
 		}
 
-		
 	}
-
 
 	@Override
 	public List<Cost> getWorkplaceCosts(int workplaceId)
@@ -3071,7 +3067,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(conn);
 		jooqSalaryBuilder.setListener(new SalaryBuilderListener());
 		SalaryDraftBuilder salaryDraftBuilder = new SalaryDraftBuilder(draft);
-		CompositeSalaryBuilder<ISalaryBuilder> compositeSalaryBuilder = new CompositeSalaryBuilder<ISalaryBuilder>(
+		CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>> compositeSalaryBuilder = new CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>>(
 				salaryDraftBuilder, jooqSalaryBuilder);
 
 		boolean autocommit = false;
@@ -3095,10 +3091,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
-	private static <T extends ISalaryBuilder, L extends SalaryDraftBuilder> void calculate(
+	private static <T extends ISalaryBuilder<ISalary>, L extends SalaryDraftBuilder> void calculate(
 			SalaryDraft draft, T salaryBuilder, L draftBuilder) {
 
-		ContractSalaryCalculator calculator = new ContractSalaryCalculator();
+		ContractSalaryCalculator<ISalary> calculator = new ContractSalaryCalculator<ISalary>();
 
 		calculator.setSalaryBuilder(salaryBuilder);
 		calculator.setListener(draftBuilder);
@@ -3863,12 +3859,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				try {
 					SQLContractSalaryCalculatorContext sqlContractSalaryCalculatorCtx = new SQLContractSalaryCalculatorContext(
 							conn, startDate, endDate, issueDate, criteria) {
-						
+
 						@Override
 						public double getIrpf() {
 							return 0.00;
 						}
-						
+
 						@Override
 						public Object gross(double liquid, Date start, Date end)
 								throws ExpressionException, SQLException {
@@ -3928,7 +3924,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 								throws AonException {
 							return Collections.emptyList();
 						}
-						
+
 					};
 					SQLSalaryDraftCalculatorContext sqlDraftSalaryCalculatorCtx = new SQLSalaryDraftCalculatorContext(
 							draft, sqlContractSalaryCalculatorCtx);
@@ -4007,7 +4003,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 									}
 
 									@Override
-									public Object liquid(double liquid, Date start, Date end)
+									public Object liquid(double liquid,
+											Date start, Date end)
 											throws ExpressionException,
 											SQLException {
 										return x;

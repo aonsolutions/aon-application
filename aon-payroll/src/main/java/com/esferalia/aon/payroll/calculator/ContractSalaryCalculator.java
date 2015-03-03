@@ -3,9 +3,6 @@ package com.esferalia.aon.payroll.calculator;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ALL;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMBARGO_LEFT;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMBARGO_LIMIT;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMBARGO_MAX;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMBARGO_PAID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMPLOYEE_QUOTA;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ENTERPRISE_QUOTA;
@@ -22,23 +19,16 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Locale;
 import java.util.Set;
-
-import javax.xml.stream.events.StartDocument;
-
-import net.sf.cglib.transform.impl.AddDelegateTransformer;
 
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
 import org.mvel2.MVEL;
-import org.mvel2.util.MethodStub;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.calculator.TaxCalculator.NotNowException;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
@@ -47,12 +37,9 @@ import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
-import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemoveVariableError;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVariable;
 import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.salary.expression.ExpressionImpl;
-import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InterruptedException;
@@ -61,7 +48,7 @@ import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 
-public class ContractSalaryCalculator implements ISalaryCalculator {
+public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalculator<T> {
 
 	private static final String PAYMENT_VARIABLE = "CONCEPTO";
 	private static final String BUILDER_VARIABLE = "BUILDER";
@@ -128,69 +115,86 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 	}
 
-	public static class  Listener implements IListener{
+	public static class Listener implements IListener {
 
 		@Override
-		public void onCheckError(String message) {}
+		public void onCheckError(String message) {
+		}
 
 		@Override
 		public void onInvalidData(String variableName, String message) {
 		}
 
 		@Override
-		public void onCompileError(String variableName, String message) {}
+		public void onCompileError(String variableName, String message) {
+		}
 
 		@Override
-		public void onRemove(IContractDeduction payment) {}
+		public void onRemove(IContractDeduction payment) {
+		}
 
 		@Override
-		public void onRemove(IContractPayment payment) {}
+		public void onRemove(IContractPayment payment) {
+		}
 
 		@Override
-		public void onCheckError(IContractPayment payment, String message) {}
+		public void onCheckError(IContractPayment payment, String message) {
+		}
 
 		@Override
-		public void onCompileError(IContractPayment payment, String message) {}
+		public void onCompileError(IContractPayment payment, String message) {
+		}
 
 		@Override
 		public void onUndefinedData(IContractPayment payment,
-				RemovedExpressionVariable<?> var) {}
+				RemovedExpressionVariable<?> var) {
+		}
 
 		@Override
 		public void onInvalidData(IContractPayment payment,
-				String variableName, String message) {}
+				String variableName, String message) {
+		}
 
 		@Override
 		public void onUndefinedData(IContractPayment payment,
-				String variableName, String message) {}
+				String variableName, String message) {
+		}
 
 		@Override
-		public void onCheckError(IContractDeduction deduction, String message) {}
+		public void onCheckError(IContractDeduction deduction, String message) {
+		}
 
 		@Override
-		public void onCompileError(IContractDeduction deduction, String message) {}
+		public void onCompileError(IContractDeduction deduction, String message) {
+		}
 
 		@Override
 		public void onUndefinedData(IContractDeduction deduction,
-				RemovedExpressionVariable<?> var) {}
+				RemovedExpressionVariable<?> var) {
+		}
 
 		@Override
 		public void onInvalidData(IContractDeduction deduction,
-				String variableName, String message) {}
+				String variableName, String message) {
+		}
 
 		@Override
 		public void onUndefinedData(IContractDeduction deduction,
-				String variableName, String message) {}
+				String variableName, String message) {
+		}
 
 		@Override
-		public void onCheckError(IContractBonus bonus, String message) {}
+		public void onCheckError(IContractBonus bonus, String message) {
+		}
 
 		@Override
-		public void onCompileError(IContractBonus bonus, String message) {}
+		public void onCompileError(IContractBonus bonus, String message) {
+		}
 
 		@Override
 		public void onInvalidData(IContractBonus bonus, String variableName,
-				String message) {}
+				String message) {
+		}
 
 	}
 
@@ -227,7 +231,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 			return true;
 		}
 
-		void onUndefinedData(ContractSalaryCalculator calculator) {
+		void onUndefinedData(ContractSalaryCalculator<?> calculator) {
 			calculator.onUndefinedData(this, exception.getMessage(),
 					exception.getVariableNames());
 		}
@@ -235,13 +239,21 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 	}
 
 	private IListener listener;
-	private ISalaryBuilder salaryBuilder;
-
+	private ISalaryBuilder<T> salaryBuilder;
+	
+	public ContractSalaryCalculator() {
+	}
+	
+	public ContractSalaryCalculator(ISalaryBuilder<T> salaryBuilder) {
+		this.salaryBuilder = salaryBuilder;
+	}
+	
 	public void setListener(IListener listener) {
 		this.listener = listener;
 	}
-
-	public void setSalaryBuilder(ISalaryBuilder salaryBuilder) {
+	
+	@Override
+	public void setSalaryBuilder(ISalaryBuilder<T> salaryBuilder) {
 		this.salaryBuilder = salaryBuilder;
 	}
 
@@ -256,7 +268,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 	}
 
 	@Override
-	public ISalary calculate(ISalaryCalculatorContext ctx)
+	public T calculate(ISalaryCalculatorContext ctx)
 			throws SalaryException {
 		IContractSalaryCalculatorContext contractSalaryCalculatorContext = (IContractSalaryCalculatorContext) ctx;
 
@@ -294,6 +306,8 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 		salaryBuilder.setTotalLiquid(totalPayment - totalDeduction
 				- totalEmbargos);
 
+		//salaryBuilder.setTimeUnits(getTimeUnits(contractSalaryCalculatorContext, start, end));
+
 		return salaryBuilder.getSalary();
 	}
 
@@ -321,9 +335,8 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 		salaryBuilder.setStartDate(ctx.getStartDate());
 		salaryBuilder.setEndDate(ctx.getEndDate());
 		salaryBuilder.setChargeDate(ctx.getChargeDate());
-		long days = CommonUtil.getDaysBetweenDates(ctx.getStartDate(),
-				ctx.getEndDate()) + 1;
-		salaryBuilder.setTimeUnits((int) days);
+		long days = CommonUtil.getDaysBetweenDates(ctx.getStartDate(),ctx.getEndDate()) + 1;
+		 salaryBuilder.setTimeUnits((int) days);
 		salaryBuilder.setType(ctx.getSalaryType());
 
 	}
@@ -574,7 +587,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 					onInvalidData(contractDeduction, e.getMessage(),
 							e.getVariables());
 				} catch (InterruptedException e) {
-					throw e; // Not catch 
+					throw e; // Not catch
 				} catch (CheckException e) {
 					onCheckError(contractDeduction, e.getMessage());
 				} catch (RemoveVariableError e) {
@@ -802,7 +815,6 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 			expressionContext.setVariable(PAYMENT_VARIABLE,
 					new PaymentVariable(contractPayment), paymentStart,
 					paymentEnd);
-
 			List<ITimedResult<Double>> results = expressionContext.eval(
 					contractPayment.getExpression(), paymentStart, paymentEnd,
 					Double.class);
@@ -813,7 +825,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 				Double resultDouble = result.getValue();
 				double resultValue = resultDouble != null ? resultDouble : 0.00;
-
+				
 				if (!StringUtils.isEmpty(name)) {
 					Date valueStart = resultStart;
 					List<ITimedVariable<Number>> prevs = expressionContext
@@ -883,7 +895,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 		} catch (InvalidVariables e) {
 			onInvalidData(contractPayment, e.getMessage(), e.getVariables());
 		} catch (InterruptedException e) {
-			throw e; // Not catch 
+			throw e; // Not catch
 		} catch (CheckException e) {
 			onCheckError(contractPayment, e.getMessage());
 		} catch (RemoveVariableError e) {
@@ -995,12 +1007,6 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 			for (int i = 0; i < variableNames.length; i++) {
 				listener.onInvalidData(bonus, variableNames[i], message);
 			}
-		}
-	}
-
-	private void onRemove(IContractDeduction deduction) {
-		if (listener != null) {
-			listener.onRemove(deduction);
 		}
 	}
 

@@ -228,7 +228,7 @@ public class PayrollServletUtils extends AonServletUtils {
 				conn = getConnection();
 
 				SalaryBuilder salaryBuilder = new SalaryBuilder();
-				ContractSalaryCalculator calculator = new ContractSalaryCalculator();
+				ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
 				calculator.setSalaryBuilder(salaryBuilder);
 
 				List<Salary> allSalaries = new ArrayList<Salary>();
@@ -245,7 +245,7 @@ public class PayrollServletUtils extends AonServletUtils {
 
 					while (ctx.next())
 						if (!find(salaries, ctx)) {
-							Salary salary = (Salary) calculator.calculate(ctx);
+							Salary salary = calculator.calculate(ctx);
 
 							salary.setIssueYear(0);
 							salary.setContract(getContract(ctx.getId()));

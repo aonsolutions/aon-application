@@ -2,7 +2,6 @@ package com.esferalia.aon.payroll.calculator.test;
 
 import static org.junit.Assert.assertEquals;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,8 +9,9 @@ import java.util.Map;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
 import com.esferalia.aon.salary.AbstractSalaryBuilder;
+import com.esferalia.aon.salary.ISalary;
 
-public abstract class AbstractSQLSalaryBuilderTester extends AbstractSalaryBuilder {
+public abstract class AbstractSQLSalaryBuilderTester<T extends ISalary> extends AbstractSalaryBuilder<T> {
 	
 	private String enterpriseDocument;
 	private String employeeDocument;

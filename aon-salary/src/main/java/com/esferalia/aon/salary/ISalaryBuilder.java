@@ -9,9 +9,9 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 
-public interface ISalaryBuilder {
+public interface ISalaryBuilder<T extends ISalary>  {
 
-	public ISalary getSalary();
+	public T getSalary();
 
 	public void createNewSalary();
 

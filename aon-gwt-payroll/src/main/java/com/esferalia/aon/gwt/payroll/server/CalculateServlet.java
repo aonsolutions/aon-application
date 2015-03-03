@@ -39,6 +39,7 @@ import com.code.aon.ql.ast.RelationalExpression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.shared.CalculateService;
+import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
@@ -71,7 +72,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 	private static class SalaryBBuilder {
 
-		public static interface ISalaryBuilderExtended extends ISalaryBuilder {
+		public static interface ISalaryBuilderExtended<T extends ISalary> extends ISalaryBuilder<T> {
 
 			public void start() throws SalaryException;
 
@@ -82,11 +83,11 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 		}
 
-		static class CompositeSalaryBuilderExtended extends
-				CompositeSalaryBuilder<ISalaryBuilderExtended> implements
-				ISalaryBuilderExtended {
+		static class CompositeSalaryBuilderExtended<T extends ISalary>  extends
+				CompositeSalaryBuilder<T,ISalaryBuilderExtended<T>> implements
+				ISalaryBuilderExtended<T> {
 			public CompositeSalaryBuilderExtended(
-					ISalaryBuilderExtended... builders) {
+					ISalaryBuilderExtended<T>... builders) {
 				super(builders);
 			}
 
@@ -94,26 +95,26 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 			@Override
 			public void start() throws SalaryException {
-				for (ISalaryBuilderExtended builder : getBuilders())
+				for (ISalaryBuilderExtended<T> builder : getBuilders())
 					builder.start();
 			}
 
 			@Override
 			public void finish() throws SalaryException {
-				for (ISalaryBuilderExtended builder : getBuilders())
+				for (ISalaryBuilderExtended<T> builder : getBuilders())
 					builder.finish();
 			}
 
 			@Override
 			public void counterpart(ISalaryExtended salary)
 					throws SalaryException {
-				for (ISalaryBuilderExtended builder : getBuilders())
+				for (ISalaryBuilderExtended<T> builder : getBuilders())
 					builder.counterpart(salary);
 			}
 		}
 
 		static class SalaryBuilderExtended extends SalaryBuilder implements
-				ISalaryBuilderExtended {
+				ISalaryBuilderExtended<Salary> {
 
 			// ----------------------------------------------------------------
 			@Override
@@ -132,7 +133,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 		}
 
 		static class JooqSalarySaver extends JooqSalaryBuilder implements
-				ISalaryBuilderExtended {
+				ISalaryBuilderExtended<ISalary> {
 
 			private boolean autoCommit;
 			private Connection connection;
@@ -240,8 +241,8 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 		private boolean overwrite;
 		private Connection connection;
 
-		public ISalaryBuilderExtended build() throws SQLException {
-			List<ISalaryBuilderExtended> builders = new ArrayList<ISalaryBuilderExtended>();
+		public ISalaryBuilderExtended<?> build() throws SQLException {
+			List<ISalaryBuilderExtended<?>> builders = new ArrayList<ISalaryBuilderExtended<?>>();
 
 			builders.add(new SalaryBuilderExtended());
 
@@ -479,12 +480,12 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 	private static void doJson(ISQLContractSalaryCalculatorContext sqlCtx,
 			Iterator<ISalaryExtended> others,
-			SalaryBBuilder.ISalaryBuilderExtended salaryBuilder, PrintStream os)
+			SalaryBBuilder.ISalaryBuilderExtended<ISalary> salaryBuilder, PrintStream os)
 			throws IOException {
 
 		try {
 
-			ContractSalaryCalculator calculator = new ContractSalaryCalculator();
+			ContractSalaryCalculator<ISalary> calculator = new ContractSalaryCalculator<ISalary>();
 
 			calculator.setSalaryBuilder(salaryBuilder);
 

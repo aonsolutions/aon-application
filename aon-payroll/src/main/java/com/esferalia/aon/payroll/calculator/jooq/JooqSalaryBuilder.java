@@ -62,7 +62,7 @@ import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.Variables;
 import com.esferalia.aon.salary.payment.IPayment;
 
-public class JooqSalaryBuilder implements ISalaryBuilder {
+public class JooqSalaryBuilder implements ISalaryBuilder<ISalary> {
 
 	private static List<String> ALREADY_AT_SALARY = null;
 
@@ -104,6 +104,7 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 		if (variables.size() > 0) {
 			addVariables(variables);
 			variables.clear();
+			addVariables(variables);
 		}
 
 		InsertSetStep<SalaryRecord> insertSalary = insertMoreSalary == null ? dslContext
@@ -473,6 +474,7 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 	}
 
 	public int execute() {
+		addVariables(variables);
 		int salaries = 0;
 		if (insertMoreSalary != null)
 			salaries = insertMoreSalary.execute();
@@ -530,8 +532,9 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 
 	private void putContext(Map<String, ITimedVariable<?>> ctx) {
 		for (Map.Entry<String, ITimedVariable<?>> entry : ctx.entrySet())
-			if (filter(entry))
+			if (filter(entry)) {
 				variables.put(entry.getKey(), entry.getValue());
+			}
 	}
 
 	private void addVariables(Variables vars) {
@@ -573,7 +576,7 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 	// ------------------------------------------------------------------------
 
 	private static java.sql.Date toSqlDate(Date date) {
-		return new java.sql.Date(date.getTime());
+		return date == null ? null : new java.sql.Date(date.getTime());
 	}
 
 	private boolean filter(String name, ITimedVariable<?> var) {
@@ -634,65 +637,5 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 
 	// ------------------------------------------------------------------------
 
-	public static void main(String[] args) throws Exception {
-
-		if (true)
-			return;
-
-		Class.forName("com.mysql.jdbc.Driver");
-		Connection connection = DriverManager
-				.getConnection(
-						"jdbc:mysql://127.0.0.1:3306/pro-aonsolutions-net?autoReconnect=true",
-						"aon", "40n");
-
-		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(connection);
-
-		ContractSalaryCalculator calculator = new ContractSalaryCalculator();
-		calculator.setSalaryBuilder(jooqSalaryBuilder);
-
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.DATE, 1);
-		Date startDate = calendar.getTime();
-
-		calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DATE));
-		Date endDate = calendar.getTime();
-
-		long start = System.currentTimeMillis();
-		SQLContractSalaryCalculatorContext sqlContractSalaryCalculatorContext = new SQLContractSalaryCalculatorContext(
-				connection, startDate, endDate, endDate, null) {
-			@Override
-			protected String getMainSql(Object... args) {
-				return super.getMainSql(args) + " ORDER BY "
-						+ ENTERPRISE_REGISTRY + ".id, workplace.id, "
-						+ SQLContractSalaryCalculatorContext.PERSON_REGISTRY
-						+ ".id";
-			}
-		};
-		/*
-		 * System.out .println(DSL.using(connection)
-		 * .select(WORKPLACE.ENTERPRISE, WORKPLACE.ID, CONTRACT.ID)
-		 * .from(SALARY) .join(CONTRACT) .onKey() .join(WORKPLACE) .onKey()
-		 * .where(SALARY.TYPE.eq( (byte) SalaryType.SALARY.ordinal()).and(
-		 * SALARY.START_DATE.between(toSqlDate(startDate), toSqlDate(endDate))))
-		 * .getSQL(ParamType.INLINED));
-		 */
-		while (sqlContractSalaryCalculatorContext.next()) {
-
-			calculator.calculate(sqlContractSalaryCalculatorContext);
-		}
-
-		// System.out.println(jooqSalaryBuilder.getSQL());
-		long start2 = System.currentTimeMillis();
-		connection.setAutoCommit(false);
-		jooqSalaryBuilder.execute();
-		connection.rollback();
-		long end = System.currentTimeMillis();
-
-		System.out.println((start2 - start) / 1000 + "secs");
-		System.out.println((end - start2) / 1000 + "secs");
-
-		sqlContractSalaryCalculatorContext.close();
-
-	}
 
 }

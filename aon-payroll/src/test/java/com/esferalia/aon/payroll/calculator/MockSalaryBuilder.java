@@ -12,12 +12,12 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 
-public class MockSalaryBuilder implements ISalaryBuilder {
+public class MockSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 
 	private Double totalPayment;
 	
 	@Override
-	public ISalary getSalary() {
+	public T getSalary() {
 		// TODO Auto-generated method stub
 		return null;
 	}
