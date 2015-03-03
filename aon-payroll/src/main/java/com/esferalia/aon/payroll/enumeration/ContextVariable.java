@@ -55,6 +55,8 @@ public enum ContextVariable implements IResourceable{
 	OCCUPATIONAL_DISEASE_DAYS("DIAS_ENFERMEDAD_PROFESIONAL", VariableType.INTEGER, false),
 	PAYMENTS("NUM_PAGAS", VariableType.INTEGER, false),
 	REAL_DAYS("DIAS_REALES", VariableType.INTEGER, false),
+	STRIKE_DAYS("DIAS_HUELGA", VariableType.INTEGER, false),
+	ERE_DAYS("DIAS_ERE", VariableType.INTEGER, false),
 
 	//ADVANCE_NOTICE_DATE("FECHA_PREAVISO", VariableType.DATE, false),
 	//ADVANCE_NOTICE_DAYS("DIAS_PREAVISO", VariableType.INTEGER, false),
@@ -202,6 +204,7 @@ public enum ContextVariable implements IResourceable{
 	SIX("SEXENIO", VariableType.UNKNOWN, true ),
 	SEVEN("SEPTENIO", VariableType.UNKNOWN, true ),
 	UNDEFINED("UNDEFINED", VariableType.UNKNOWN ),
+	TRACE("TRACE", VariableType.UNKNOWN ),
 	
 	OLD("ANTIGÜEDAD", VariableType.DOUBLE ),
 	EXCESS("EXCESO", VariableType.DOUBLE ),
@@ -250,6 +253,7 @@ public enum ContextVariable implements IResourceable{
 	public static final String OLDD = "ANTIGUEDAD";
 	public static final String BASE_SALARY = "SALARIO_BASE";
 	public static final String GUARENTEE_IT = "GARANTIZADO_IT";
+	
 	
 	
 	public static final  DateFormat DATE_FORMAT =  new SimpleDateFormat("dd/MM/yyyy");

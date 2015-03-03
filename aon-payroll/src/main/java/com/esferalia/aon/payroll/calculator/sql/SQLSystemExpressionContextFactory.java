@@ -46,8 +46,9 @@ import com.esferalia.aon.salary.expression.Period;
 public class SQLSystemExpressionContextFactory implements
 		LRUCacheFactory<CCCContextKey, ExpressionContext> {
 
-	private static final int DEFAULT_DAY_HOURS = 8;
-	private static final int DEFAULT_AGRREEMENT_HOURS = 40;
+	public static final double DEFAULT_DAY_HOURS = 8;
+	public static final double DEFAULT_AGRREEMENT_HOURS = 40;
+	
 	private static final String SYSTEM_DATA_SQL = "SELECT * "
 			+ " FROM `system_data`" + " WHERE start_date <= ? "
 			+ " AND ( end_date IS NULL " + " OR end_date >= ? )"

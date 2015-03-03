@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Function;
 
 import com.code.aon.AonVersion;
 
@@ -141,6 +142,44 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 			return read;
 		}
 
+
+		public <T> T get(Object key, Function<Object,T> mapper, T def) {
+			return get(key.toString(), mapper, def);	
+		}
+
+		public <T> T get(String key, Function<Object,T> mapper, T def) {
+			ITimedVariable<?> var = Variables.this.getVariable(key,
+					period);
+			
+			if ( var == null )
+				var = new TimedObject<T>(def, period);
+			
+			Object value = var.getValue(period);
+			if ( value == null )
+				var = new TimedObject<T>(def, period);
+			
+			read.put(key, var);
+			return mapper.apply(value);
+		}
+		
+		public <T> T get(Object key, Function<Object,T> mapper) {
+			return get(key.toString(), mapper);
+		}
+		
+		public <T> T get(String key, Function<Object,T> mapper) {
+			ITimedVariable<?> var = Variables.this.getVariable(key,
+					period);
+			
+			if ( var == null )
+				return null;
+			
+			Object value = var.getValue(period);
+			if ( value == null )
+				return null;
+			
+			read.put(key, var);
+			return mapper.apply(value);
+		}
 	}
 
 	public Variables() {
@@ -205,7 +244,7 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 				// Fix NEXT value
 				if (position + 1 < values.size()) {
 					ITimedVariable<?> next = values.get(position + 1);
-					if (intersects(var, next)) {
+					while (intersects(var, next)) {
 						Date start = var.getPeriod().getEnd();
 						Date end = next.getPeriod().getEnd();
 						if (Period.compare(start, end) >= 0) {
@@ -219,6 +258,12 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 							values.set(position + 1, wrapNext);
 						} // La nueva variable sobreescribe parcialmente el
 							// antiguo valor.
+						
+						if ( values.size() <= (position +1) )
+							break;
+						
+						next = values.get(position + 1);
+
 					}
 				}
 
