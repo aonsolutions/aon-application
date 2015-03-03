@@ -143,6 +143,11 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 	// ********************** DATA ***************************
 	// *******************************************************
 	@Transient
+	public String getSalaryData(String name) {
+		return getSalaryData(name,String.class);
+	}
+
+	@Transient
 	public <T> T getSalaryData(String name, Class<T> type) {
 		for (SalaryData salaryData : salaryDatas) {
 			if ( name.equals(salaryData.getName()) )
