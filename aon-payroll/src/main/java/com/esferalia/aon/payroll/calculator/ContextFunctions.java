@@ -328,7 +328,7 @@ public class ContextFunctions {
 
 	private static double getDouble(ExpressionContext context,
 			ContextVariable var) {
-		Object value = context.getCurrentBindings().get(var.getName());
+		Object value = ExpressionContext.getCurrentBindings().get(var.getName());
 		return value == null ? 0.00 : ((Number)value).doubleValue();
 	}
 

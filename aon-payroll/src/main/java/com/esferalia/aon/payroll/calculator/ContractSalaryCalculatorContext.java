@@ -12,6 +12,7 @@ import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractDelayCalculatorContext;
@@ -97,7 +98,7 @@ public class ContractSalaryCalculatorContext extends
 	// ------------------------------------------
 	@Override
 	public ISalary getSalary() throws SalaryException {
-		ISalaryCalculator sc = new ContractSalaryCalculator();
+		ISalaryCalculator<Salary> sc = new ContractSalaryCalculator<Salary>();
 		sc.setSalaryBuilder(new SalaryBuilder());
 		ISalary salary = sc.calculate(this.ctx);
 		return salary;

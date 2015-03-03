@@ -204,27 +204,5 @@ public class SQLAgreementSalaryCalculatorContext extends
 	
 	// ------------------------------------------------------------------------
 
-	public static void main(String[] args) throws Exception {
-		Class.forName("org.gjt.mm.mysql.Driver");
-
-		Connection c = DriverManager.getConnection(
-				"jdbc:mysql://127.0.0.1:3306/tadc055-toledoas-com", "aon",
-				"40n");
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.DAY_OF_MONTH,1);
-		Date startDate = calendar.getTime();
-		
-		calendar.set(Calendar.DAY_OF_MONTH,calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-		Date endDate = calendar.getTime();
-		
-		SQLAgreementSalaryCalculatorContext ctx = 
-				new SQLAgreementSalaryCalculatorContext(c, startDate, endDate, 1);
-		ContractSalaryCalculator calculator = new ContractSalaryCalculator();
-		calculator.setSalaryBuilder(new SalaryBuilder());
-		while ( ctx.next() ) {
-			ISalary salary = calculator.calculate(ctx);
-		}
-		ctx.close();
-	}
 
 }
