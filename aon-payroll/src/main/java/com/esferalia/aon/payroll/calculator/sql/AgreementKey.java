@@ -1,5 +1,7 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
+import com.esferalia.aon.watson.util.AonUtils;
+
 public class AgreementKey {
 	
 	private Integer id;
@@ -20,5 +22,16 @@ public class AgreementKey {
 		return domain;
 	}
 	
-
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof AgreementKey 
+			&& AonUtils.equals(domain, ((AgreementKey)obj).domain) 
+			&& AonUtils.equals(id,((AgreementKey)obj).id)
+			;
+	}
+	
+	@Override
+	public int hashCode() {
+		return AonUtils.hashCode(domain) + AonUtils.hashCode(id);
+	}
 }

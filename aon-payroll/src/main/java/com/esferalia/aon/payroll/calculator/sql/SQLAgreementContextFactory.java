@@ -38,12 +38,20 @@ public class SQLAgreementContextFactory implements
 			+ " AND ( end_date IS NULL " + " OR end_date >= ? )";
 	// @formatter:on
 
+	// @formatter:off
+	private static final String IS_AGREEMENT_DOMAIN_SQL = "SELECT * "
+			+ " FROM `agreement`" 
+			+ " WHERE `domain` = ? "
+			+ " AND `id` = ? " ;
+	// @formatter:on
+
 	private Date endDate;
 	private Date startDate;
 
 	private PreparedStatement dataStmts[];
 	private PreparedStatement agreementDataStmt;
 	private PreparedStatement agreementLevelDataStmt;
+	private PreparedStatement isAgreementDomainStmt;
 
 	private LRUCache<AgreementKey, ExpressionContext> agreementDataCache;
 
@@ -77,6 +85,7 @@ public class SQLAgreementContextFactory implements
 
 	public ExpressionContext create(AgreementKey agreementKey) {
 		try {
+			
 			ExpressionContext expressionCtx = new ExpressionContext(
 					systemExpressionContextSupplier.get());
 
@@ -99,10 +108,15 @@ public class SQLAgreementContextFactory implements
 		} // LRUCache<K,V> as LinkedHasMap accepts null keys and/or values.
 
 		try {
-			ExpressionContext allContext = agreementDataCache
-					.get(new AgreementKey(key.getAgreementId(), key.getDomain()));
-			ExpressionContext levelCtx = new ExpressionContext(allContext);
-
+			//@formatter:off
+			AgreementKey agreementKey = new AgreementKey(key.getAgreementId(), key.getDomain());
+			ExpressionContext levelCtx = 
+					isAgreementDomain(agreementKey) ? 
+					new ExpressionContext(agreementDataCache.get(agreementKey)) : 
+					new ExpressionContext(); 
+			//@formatter:on
+					
+					
 			agreementLevelDataStmt.setInt(1, key.getDomain());
 			agreementLevelDataStmt.setInt(2, key.getAgreementLevelId());
 			loadData(agreementLevelDataStmt, levelCtx);
@@ -157,10 +171,23 @@ public class SQLAgreementContextFactory implements
 				rs.close();
 		}
 	}
+	
+	private boolean isAgreementDomain(AgreementKey key) throws SQLException {
+		ResultSet rs = null;
+		try {
+			isAgreementDomainStmt.setInt(1, key.getDomain());
+			isAgreementDomainStmt.setInt(2, key.getId());
+			rs = isAgreementDomainStmt.executeQuery();
+			return rs.next();
+		} finally {
+			if ( rs != null)
+				rs.close();
+		}
+	}
 
 	private void initAgreementStmt(Connection connection, Date startDate,
 			Date endDate, OrderByList orderByList) throws SQLException {
-		dataStmts = new PreparedStatement[2];
+		dataStmts = new PreparedStatement[3];
 
 		String agreementDataSql = SQLContractSalaryCalculatorContext.orderBy(
 				AGREEMENT_DATA_SQL, orderByList);
@@ -178,6 +205,10 @@ public class SQLAgreementContextFactory implements
 		agreementLevelDataStmt.setDate(4,
 				new java.sql.Date(startDate.getTime()));
 		dataStmts[1] = agreementLevelDataStmt;
+
+		isAgreementDomainStmt = connection
+				.prepareStatement(IS_AGREEMENT_DOMAIN_SQL);
+		dataStmts[2] = isAgreementDomainStmt;
 	}
 
 	private Long getMonthDays(Date startDate, Date endDate) {
