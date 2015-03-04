@@ -211,7 +211,7 @@
 	<pageHeader>
 		<band height="278">
 			<image scaleImage="RetainShape" hAlign="Left" vAlign="Bottom" isUsingCache="true" onErrorType="Blank">
-				<reportElement uuid="c8d35aa1-b0dc-40d1-9a43-d6b030210a68" key="image-1" positionType="Float" mode="Opaque" x="0" y="1" width="206" height="128" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement uuid="c8d35aa1-b0dc-40d1-9a43-d6b030210a68" key="image-1" positionType="Float" mode="Opaque" x="12" y="13" width="186" height="112" forecolor="#000000" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[$P{printHeader} && $P{printLogo}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -371,9 +371,7 @@
 								<bottomPen lineWidth="0.0"/>
 							</box>
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-								<reportElement uuid="a0690cb7-94cd-46d9-956e-375298f74a2c" key="textField-1" positionType="Float" x="0" y="0" width="336" height="29" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
-									<printWhenExpression><![CDATA[$V{isService}]]></printWhenExpression>
-								</reportElement>
+								<reportElement uuid="a0690cb7-94cd-46d9-956e-375298f74a2c" key="textField-1" positionType="Float" x="0" y="0" width="336" height="29" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 								<box leftPadding="5" rightPadding="5">
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -395,9 +393,7 @@
 								<rightPen lineWidth="0.0"/>
 							</box>
 							<textField pattern="#,##0.00" isBlankWhenNull="true">
-								<reportElement uuid="ca49b9fc-922d-492f-8fa0-04f83f73d00d" key="textField-5" positionType="Float" x="0" y="0" width="105" height="29" isRemoveLineWhenBlank="true">
-									<printWhenExpression><![CDATA[$V{isService}]]></printWhenExpression>
-								</reportElement>
+								<reportElement uuid="ca49b9fc-922d-492f-8fa0-04f83f73d00d" key="textField-5" positionType="Float" x="0" y="0" width="105" height="29" isRemoveLineWhenBlank="true"/>
 								<box leftPadding="0" rightPadding="2">
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -410,9 +406,7 @@
 								<textFieldExpression><![CDATA[$F{taxableBase}]]></textFieldExpression>
 							</textField>
 							<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
-								<reportElement uuid="7dbcacd1-be76-46dc-bebe-6e42a7d97f7b" key="textField-44" positionType="Float" x="105" y="0" width="15" height="29" isRemoveLineWhenBlank="true">
-									<printWhenExpression><![CDATA[$V{isService}]]></printWhenExpression>
-								</reportElement>
+								<reportElement uuid="7dbcacd1-be76-46dc-bebe-6e42a7d97f7b" key="textField-44" positionType="Float" x="105" y="0" width="15" height="29" isRemoveLineWhenBlank="true"/>
 								<box rightPadding="4">
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -437,15 +431,15 @@
 		</band>
 	</columnFooter>
 	<pageFooter>
-		<band height="170">
+		<band height="195">
 			<line>
-				<reportElement uuid="a9e2d1da-4281-4edb-9896-7f0f598f9267" key="line-9" x="0" y="86" width="535" height="1" forecolor="#999999"/>
+				<reportElement uuid="a9e2d1da-4281-4edb-9896-7f0f598f9267" key="line-9" x="0" y="87" width="535" height="1" forecolor="#999999"/>
 				<graphicElement>
 					<pen lineWidth="0.5" lineColor="#000000"/>
 				</graphicElement>
 			</line>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="89505370-7c51-4e6c-8245-2ef7d37ff643" key="textField-56" x="0" y="116" width="186" height="50" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="89505370-7c51-4e6c-8245-2ef7d37ff643" key="textField-56" x="0" y="130" width="186" height="65" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<box topPadding="5" leftPadding="0">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -453,21 +447,20 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="SansSerif" size="7" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{company}.getDocument() + "\n"
-    + $P{address}.getFullAddress() + " - "
+    + $P{address}.getFullAddress() + "\n"
     + ($P{address}.getZip()==null?"":$P{address}.getZip() + " ")
     + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ")
     + "(" + $P{address}.getGeozone().getName() + ")" + "\n"
-    + "T: " + $P{phone}.getValue()
+    + ($P{phone}==null || "".equals($P{phone}.getValue())?"":"T: " + $P{phone}.getValue())
     + ($P{fax}==null || "".equals($P{fax}.getValue())?"":" - F: " + $P{fax}.getValue())
     + "\n" + $P{company}.getEmail().getValue()
-    + "\n" + $P{company}.getWeb().getValue()
-   ]]></textFieldExpression>
+    + "\n" + $P{company}.getWeb().getValue()]]></textFieldExpression>
 			</textField>
 			<componentElement>
-				<reportElement uuid="f09be932-9ee1-49d5-9a6e-517c79dc6898" key="finances" x="265" y="0" width="270" height="60" isRemoveLineWhenBlank="true"/>
+				<reportElement uuid="f09be932-9ee1-49d5-9a6e-517c79dc6898" key="finances" x="265" y="1" width="270" height="60" isRemoveLineWhenBlank="true"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="tax" uuid="607963da-6bec-46dc-97e3-c5220f471f41">
 						<datasetParameter name="prepaymentTotal">
@@ -621,7 +614,7 @@
 				</jr:table>
 			</componentElement>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="ed5475e5-3c12-4387-b1d2-9b50255442ac" key="textField-56" x="0" y="101" width="186" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="ed5475e5-3c12-4387-b1d2-9b50255442ac" key="textField-56" x="0" y="110" width="186" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<box topPadding="5" leftPadding="0">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -629,7 +622,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="SansSerif" size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{company}.getName()]]></textFieldExpression>
 			</textField>
