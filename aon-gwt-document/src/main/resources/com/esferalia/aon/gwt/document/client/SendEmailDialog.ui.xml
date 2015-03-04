@@ -15,10 +15,16 @@
 
 	</ui:Style>
 	<g:HTMLPanel styleName="form-document">
-	
+		<div>
+			<g:VerticalPanel ui:field="vp"></g:VerticalPanel>
+		</div>
 		<!-- Menu con opciones de correo (Enviar)  -->
+		<div>
+		
+		<g:AbsolutePanel ui:field="mailpanel">
+		<g:HTMLPanel>
 		<div class="aon-toolbar">
-			<g:HorizontalPanel ui:field="header" styleName="aon-finding-toolbar-item-group">
+			<g:HorizontalPanel ui:field="header" styleName=" aon-finding-toolbar-item-group">
 				<!-- g:Button ui:field="sendGmailButton" styleName="aon-icon-google-gmail aon-finding-toolbar-item" text="Enviar"></g:Button>			
 				<g:Button ui:field="sendMailButton" styleName="aon-icon-accept aon-finding-toolbar-item" text="Enviar"></g:Button-->
 			</g:HorizontalPanel>
@@ -26,16 +32,21 @@
 		
 		<!-- Tabla información de envío (de, para, cc, bcc, asunto & adjuntar ficheros) -->
 		<div>
-			<g:FlexTable ui:field="grid">
+			<g:FlexTable ui:field="grid" visible="true">
 			
 			</g:FlexTable>
 		</div>
 		<div style="padding-top:10px"></div>
 		<div style="border:1px solid #BBB;" >
-			<g:FlexTable ui:field="textEditor">
+			<g:FlexTable ui:field="textEditor" visible="true">
 			
 			</g:FlexTable>		
 		</div>
+		</g:HTMLPanel>
+		</g:AbsolutePanel>
+		
+		</div>
+
 	</g:HTMLPanel>
 
 </ui:UiBinder>

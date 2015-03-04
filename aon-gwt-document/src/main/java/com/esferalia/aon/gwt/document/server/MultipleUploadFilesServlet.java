@@ -3,7 +3,10 @@ package com.esferalia.aon.gwt.document.server;
 import gwtupload.server.UploadAction;
 import gwtupload.server.exceptions.UploadActionException;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -44,14 +47,12 @@ public class MultipleUploadFilesServlet extends  UploadAction{
 	    	  fi.setData(item.get());
 	    	  fi.setMimeString(item.getContentType());
 	    	  DocumentsServlet.addOuts(fi);
-	        
-	        
 	      }
 	    }
 	    
 	    /// Remove files from session because we have a copy of them
 	    super.removeSessionFileItems(request);
-	    
+
 	    /// Send your customized message to the client.
 	    return response;
 	  }

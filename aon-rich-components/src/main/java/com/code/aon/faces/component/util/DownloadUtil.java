@@ -64,7 +64,7 @@ public class DownloadUtil {
 				DomainGserviceaccount googleAccount = DBConsults
 						.getServiceAccount(domain,attach.getDomain());
 				Drive drive = DriveUtils.serviceInitialize(googleAccount);
-				File file = DriveUtils.getFile(drive, attach.getDriveId());
+				File file = DriveUtils.getFile(drive, attach.getDriveId(),attach.getId());
 				if(file.getDescription().equals("OLDRIVE"))
 					drive = DriveUtils.serviceInitializeOld(googleAccount);
 				in = DriveUtils.downloadFile(drive, file);

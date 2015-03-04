@@ -51,6 +51,7 @@ public class PdfPrintServlet extends HttpServlet{
         String domain = AonUtil.getDomainName();
         Integer m = Integer.parseInt(mtype);
         MimeType mt = MimeType.values()[m];
+        Integer idFile = Integer.parseInt(fileId);
         String mimetype = MimeType.values()[m].getName();
         FileInfo fi=null;
         if (driveId != ""){
@@ -69,7 +70,7 @@ public class PdfPrintServlet extends HttpServlet{
 			
 			com.google.api.services.drive.model.File f = null;
 			try {
-				f = DriveUtils.getFile(d, driveId);
+				f = DriveUtils.getFile(d, driveId,idFile );
 				if(f.getDescription().equals("OLDRIVE"))
 					d = DriveUtils.serviceInitializeOld(g);
 			} catch (SQLException | GeneralSecurityException e) {

@@ -96,13 +96,6 @@ public interface IDocumentAsync {
 
 	void deleteCategory(Integer categoryId, AsyncCallback<Void> callback);
 
-	void addToLote(Vector<FileInfo> fvector,
-			AsyncCallback<Vector<FileInfo>> callback);
-
-	void getLote(AsyncCallback<Vector<FileInfo>> callback);
-
-	void resetLote(AsyncCallback<Void> callback);
-
 	void getMailAccounts(AsyncCallback<MailAccountList> callback);
 
 	void sendEmail(MailAccount ma, Emessage em, AsyncCallback<Void> callback);
@@ -116,7 +109,7 @@ public interface IDocumentAsync {
 	void insertFileMultiple(FileInfo fi,
 			AsyncCallback<Vector<FileInfo>> callback);
 
-	void copyLink(FileInfo doc, String l, AsyncCallback<Void> callback);
+	void copyLink(FileInfo doc, String l, AsyncCallback<String> callback);
 
 
 

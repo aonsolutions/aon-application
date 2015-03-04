@@ -81,8 +81,8 @@ public class OpenDocumentConverterServlet extends HttpServlet {
 					Drive d;
 					try {
 						d = DriveUtils.serviceInitialize(g);
-						com.google.api.services.drive.model.File f = DriveUtils.getFile(d, rattach.driveId);
-						if(f.getDescription().equals("OLDRIVE"))
+						com.google.api.services.drive.model.File f = DriveUtils.getFile(d, rattach.driveId,null);
+						if(f.getDescription() != null && f.getDescription().equals("OLDRIVE"))
 							d = DriveUtils.serviceInitializeOld(g);
 						InputStream in = DriveUtils.downloadFile(d, f);
 						b = Utils.InputStreamToByte(in);

@@ -166,7 +166,7 @@ public class CorporateIdentityController extends RegistryAttachController implem
 			String domain = AonUtil.getDomainName();
 			DomainGserviceaccount d = DBConsults.getServiceAccount(domain,ra.getDomain());
 			Drive drive = DriveUtils.serviceInitialize(d);
-			File f = DriveUtils.getFile(drive,ra.getDriveId());
+			File f = DriveUtils.getFile(drive,ra.getDriveId(),ra.getId());
 			if(f.getDescription().equals("OLDRIVE"))
 				drive = DriveUtils.serviceInitializeOld(d);
 			ra.setMD5(f.getMd5Checksum());

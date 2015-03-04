@@ -188,8 +188,8 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
         		g = DBConsults.getServiceAccount(doc.getDomain(),doc.getDomainId());
         		d = DriveUtils.serviceInitialize(g);
         	}
-			com.google.api.services.drive.model.File f = DriveUtils.getFile(d, doc.getDriveId());
-			if(f.getDescription().equals("OLDRIVE"))
+			com.google.api.services.drive.model.File f = DriveUtils.getFile(d, doc.getDriveId(),doc.getFileId());
+			if(f.getDescription() != null && f.getDescription().equals("OLDRIVE"))
 				d = DriveUtils.serviceInitializeOld(g);
 			InputStream in = DriveUtils.downloadFile(d, f);
 			b = Utils.InputStreamToByte(in);

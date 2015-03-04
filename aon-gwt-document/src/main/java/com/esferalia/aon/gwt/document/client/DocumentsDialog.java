@@ -946,6 +946,20 @@ public abstract class DocumentsDialog extends CustomDialogB {
 			grid.setWidget(3, 0, new Label("Mime Type"));
 			//if(object.getMimetype() != null)grid.setWidget(3, 1, new Label(MimeType.values()[object.getMimetype()].getExtension().toString()));
 			/*else*/ grid.setWidget(3, 1, new Label("-"));
+			
+			grid.setWidget(4, 0, new Label("Enlace"));
+			grid.setWidget(4, 1, new Label(""));
+			
+			idoc.copyLink(object, url, new AsyncCallback<String>() {
+				
+				@Override
+				public void onSuccess(String result) {
+					grid.setWidget(4, 1, new Label(result));
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {}
+			});
 		}
 		else{
 
@@ -974,6 +988,21 @@ public abstract class DocumentsDialog extends CustomDialogB {
 			grid.setWidget(7, 0, new Label("Mime Type"));
 			//if(object.getMimetype() != null)grid.setWidget(7, 1, new Label(MimeType.values()[object.getMimetype()].getExtension().toString()));
 			/*else*/ grid.setWidget(7, 1, new Label("-"));
+			
+			grid.setWidget(8, 0, new Label("Enlace"));
+			grid.setWidget(8, 1, new Label(""));
+
+			idoc.copyLink(object, url, new AsyncCallback<String>() {
+				
+				@Override
+				public void onSuccess(String result) {
+					grid.setWidget(8, 1, new Label(result));
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {}
+			});
+			
 		}	
 		for (int i = 0; i < grid.getRowCount(); i++) {
 			for (int j = 0; j < grid.getCellCount(i); j++) {
