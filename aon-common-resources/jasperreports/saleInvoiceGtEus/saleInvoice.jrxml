@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="saleInvoice" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="saleInvoice" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="2498f0a1-c41e-43c0-9cf8-138c49b666d2">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.2100000000000009"/>
@@ -70,7 +70,7 @@
 	<background>
 		<band height="802" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-42" x="-15" y="47" width="9" height="703">
+				<reportElement uuid="2fff443b-2681-4092-bce1-fa1db87dd709" key="textField-42" x="-15" y="47" width="9" height="703">
 					<printWhenExpression><![CDATA[$P{printRecordData}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -92,16 +92,16 @@
 + " - CIF:" + $P{company}.getDocument() + "."]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement key="line-5" x="-25" y="241" width="4" height="1"/>
+				<reportElement uuid="08f88b40-2c5d-47bc-9dad-725a2ebf28a9" key="line-5" x="-25" y="241" width="4" height="1"/>
 			</line>
 			<line>
-				<reportElement key="line-6" x="553" y="241" width="4" height="1"/>
+				<reportElement uuid="e9636f0e-0b2f-46d9-9d3d-6ec44f016e35" key="line-6" x="553" y="241" width="4" height="1"/>
 			</line>
 			<line>
-				<reportElement key="line-7" x="-25" y="539" width="4" height="1"/>
+				<reportElement uuid="67bbb800-6b14-4fe0-916c-04d10d7d9ab2" key="line-7" x="-25" y="539" width="4" height="1"/>
 			</line>
 			<line>
-				<reportElement key="line-8" x="553" y="539" width="4" height="1"/>
+				<reportElement uuid="8be12acd-b111-4193-a829-97ab2f22be32" key="line-8" x="553" y="539" width="4" height="1"/>
 			</line>
 		</band>
 	</background>
@@ -111,7 +111,7 @@
 	<pageHeader>
 		<band height="80" splitType="Stretch">
 			<image scaleImage="RetainShape" hAlign="Left" vAlign="Top" isUsingCache="true" onErrorType="Blank">
-				<reportElement key="image-1" positionType="Float" mode="Opaque" x="5" y="0" width="229" height="75" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement uuid="c48a04f7-ec4d-48d6-a690-405d437c7a76" key="image-1" positionType="Float" mode="Opaque" x="5" y="0" width="225" height="75" forecolor="#000000" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -124,7 +124,7 @@
 				<imageExpression><![CDATA[$P{logoImageFile}]]></imageExpression>
 			</image>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-47" x="455" y="6" width="78" height="13"/>
+				<reportElement uuid="462683ca-f089-4489-9614-8088d3936ab4" key="textField-47" x="457" y="6" width="78" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -137,7 +137,7 @@
 				<textFieldExpression><![CDATA[($F{referenceCode}!= null && !"".equals($F{referenceCode})?$F{referenceCode} :"")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-48" x="379" y="6" width="76" height="13"/>
+				<reportElement uuid="fd28c85f-eb48-49c0-a50f-c63efae14221" key="textField-48" x="381" y="6" width="76" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -150,7 +150,7 @@
 				<textFieldExpression><![CDATA["Zenbakia / Nº:"]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
-				<reportElement key="textField-49" x="455" y="19" width="78" height="13"/>
+				<reportElement uuid="3d850e91-3e77-4671-9b37-28424ee0372e" key="textField-49" x="457" y="19" width="78" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -163,7 +163,7 @@
 				<textFieldExpression><![CDATA[$F{issueDate}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-50" x="379" y="19" width="76" height="13"/>
+				<reportElement uuid="3e5594d0-fd9d-4e2e-81c5-e381eb6ab788" key="textField-50" x="381" y="19" width="76" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -176,7 +176,7 @@
 				<textFieldExpression><![CDATA["Data / "+$R{aon_date} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-51" x="455" y="32" width="78" height="13"/>
+				<reportElement uuid="d17f7b8f-f41a-4811-ba1f-068774c44e9a" key="textField-51" x="457" y="32" width="78" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -189,7 +189,7 @@
 				<textFieldExpression><![CDATA[$F{registryDocument}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-52" x="379" y="32" width="76" height="13"/>
+				<reportElement uuid="7f25f6bf-05f9-4b06-a9f6-9ec98a3f9bc0" key="textField-52" x="381" y="32" width="76" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -202,7 +202,7 @@
 				<textFieldExpression><![CDATA["I.F.Z. / "+$R{aon_company_document} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-55" x="234" y="6" width="145" height="20"/>
+				<reportElement uuid="91ad5091-dc2b-4302-b6f2-de2063eaa5ac" key="textField-55" x="230" y="6" width="151" height="20"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -215,7 +215,7 @@
 				<textFieldExpression><![CDATA["FAKTURA/"+$R{finance_invoice}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-55" x="234" y="26" width="145" height="20"/>
+				<reportElement uuid="63f8aab3-cdac-4603-80a1-a27cd5ef04dd" key="textField-55" x="230" y="26" width="151" height="20"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -235,7 +235,7 @@
 	<detail>
 		<band height="240" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-34" x="274" y="0" width="246" height="16"/>
+				<reportElement uuid="f923b3d7-bcdf-4368-bb83-0797f880e9c5" key="textField-34" x="274" y="0" width="246" height="16"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -248,7 +248,7 @@
 				<textFieldExpression><![CDATA[$F{registryName}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-23" x="5" y="0" width="246" height="16">
+				<reportElement uuid="214fdc6f-a384-4124-999c-548911c916f6" key="textField-23" x="5" y="0" width="246" height="16">
 					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -263,7 +263,7 @@
 				<textFieldExpression><![CDATA[$P{company}.getName()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-24" x="5" y="55" width="246" height="15">
+				<reportElement uuid="a3eaf7fd-a448-45cc-8ca7-6752f2e833d0" key="textField-24" x="5" y="55" width="246" height="15">
 					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -278,7 +278,7 @@
 				<textFieldExpression><![CDATA[$R{aon_telephone} + ": " + $P{phone}.getValue() + ($P{fax}==null?"":" - " + $R{aon_fax} + ": " + $P{fax}.getValue())]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-25" x="5" y="40" width="246" height="15">
+				<reportElement uuid="03a86bb7-dd3e-4acd-a460-01d52a21b07b" key="textField-25" x="5" y="40" width="246" height="15">
 					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -293,7 +293,7 @@
 				<textFieldExpression><![CDATA[($P{address}.getZip()==null?"":$P{address}.getZip() + " ") + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ") + "(" + $P{address}.getGeozone().getName() + ")"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-26" x="5" y="25" width="246" height="15">
+				<reportElement uuid="89e99b3c-f2c5-4668-8724-4ce0128caa5d" key="textField-26" x="5" y="25" width="246" height="15">
 					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -308,7 +308,7 @@
 				<textFieldExpression><![CDATA[$P{address}.getFullAddress()]]></textFieldExpression>
 			</textField>
 			<subreport isUsingCache="true">
-				<reportElement key="subreport-2" positionType="Float" x="160" y="173" width="245" height="14">
+				<reportElement uuid="f582c6ef-2a10-4616-a0ca-1bd935e47e59" key="subreport-2" positionType="Float" x="160" y="173" width="245" height="14">
 					<printWhenExpression><![CDATA[new Boolean($F{lines}.size()>0)]]></printWhenExpression>
 				</reportElement>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
@@ -316,13 +316,13 @@
 				<subreportExpression><![CDATA[$P{nestedReports}.get("invoiceTaxBreakDown")]]></subreportExpression>
 			</subreport>
 			<subreport isUsingCache="true">
-				<reportElement key="subreport-1" positionType="Float" x="0" y="138" width="535" height="29"/>
+				<reportElement uuid="73dd51c3-af92-4f3d-8c43-05323a227b79" key="subreport-1" positionType="Float" x="0" y="138" width="535" height="29"/>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, true))]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{nestedReports}.get("invoiceDetailDefault")]]></subreportExpression>
 			</subreport>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-35" x="274" y="25" width="246" height="15"/>
+				<reportElement uuid="2fcea194-cc75-4bd3-8134-741e71f48a14" key="textField-35" x="274" y="25" width="246" height="15"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -335,7 +335,7 @@
 				<textFieldExpression><![CDATA[$F{address}.getFullAddress()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-36" x="274" y="40" width="246" height="15"/>
+				<reportElement uuid="641df181-4390-4187-bd8f-044e3b5ba572" key="textField-36" x="274" y="40" width="246" height="15"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -348,7 +348,7 @@
 				<textFieldExpression><![CDATA[($F{address}.getZip()==null?"":$F{address}.getZip() + " ") + ($F{address}.getCity()==null?"":$F{address}.getCity())]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-37" x="274" y="55" width="246" height="15"/>
+				<reportElement uuid="a160964d-e8d6-4d09-80a3-3259352affe7" key="textField-37" x="274" y="55" width="246" height="15"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -361,7 +361,7 @@
 				<textFieldExpression><![CDATA[$F{address}.getGeozone().getName()]]></textFieldExpression>
 			</textField>
 			<subreport isUsingCache="true">
-				<reportElement key="subreport-3" positionType="Float" x="0" y="210" width="535" height="29">
+				<reportElement uuid="b50aad43-d2f9-49b6-a93c-1f69f01c584f" key="subreport-3" positionType="Float" x="0" y="210" width="535" height="29">
 					<printWhenExpression><![CDATA[new Boolean($F{finances}.size() > 0)]]></printWhenExpression>
 				</reportElement>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
@@ -369,7 +369,7 @@
 				<subreportExpression><![CDATA[$P{nestedReports}.get("invoiceFinancesDefault")]]></subreportExpression>
 			</subreport>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-43" positionType="Float" mode="Opaque" x="460" y="173" width="75" height="14" forecolor="#FFFFFF" backcolor="#000000"/>
+				<reportElement uuid="c247f305-8a84-4067-b82b-47fcc3dea2bf" key="textField-43" positionType="Float" mode="Opaque" x="460" y="173" width="75" height="14" forecolor="#FFFFFF" backcolor="#000000"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -382,7 +382,7 @@
 				<textFieldExpression><![CDATA["Guztira/"+$R{invoice_total}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField-44" positionType="Float" x="460" y="187" width="62" height="14"/>
+				<reportElement uuid="c0097ee3-9039-4caa-baba-f39ae47fbdc1" key="textField-44" positionType="Float" x="460" y="187" width="62" height="14"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -395,7 +395,7 @@
 				<textFieldExpression><![CDATA[new Double($P{PriceStrategy}.getTotalPrice((com.code.aon.product.strategy.ICalculableContainer)$V{currentInvoice}, (com.code.aon.registry.ITaxInfo)$V{currentInvoice}))]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-53" positionType="Float" x="105" y="96" width="430" height="15" isRemoveLineWhenBlank="true">
+				<reportElement uuid="9102865e-87f1-42a0-837d-3f9d36c91d8e" key="textField-53" positionType="Float" x="110" y="96" width="425" height="15" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[($F{registry}.getPhone()!=null || $F{registry}.getCellular()!=null || $F{registry}.getFax()!=null)]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -410,7 +410,7 @@
 				<textFieldExpression><![CDATA[($V{registryPhone}==null?"":"t: "+$V{registryPhone}.getValue()+" ")+($V{registryCellular}==null?"":"m: "+$V{registryCellular}.getValue()+" ")+($V{registryFax}==null?"":"f: "+$V{registryFax}.getValue()+" ")+($V{registryEmail}==null?"":"e: "+$V{registryEmail}.getValue())]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-54" positionType="Float" x="0" y="96" width="105" height="15">
+				<reportElement uuid="349f0922-82f4-4cc2-bb3f-cd913494a27a" key="textField-54" positionType="Float" x="0" y="96" width="110" height="15">
 					<printWhenExpression><![CDATA[($F{registry}.getPhone()!=null || $F{registry}.getCellular()!=null || $F{registry}.getFax()!=null)]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -425,7 +425,7 @@
 				<textFieldExpression><![CDATA["Kontaktua/"+$R{aon_contact} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-56" x="5" y="70" width="246" height="15">
+				<reportElement uuid="ed10b413-ab00-4719-8c07-aeeab88bbd43" key="textField-56" x="5" y="70" width="246" height="15">
 					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -440,7 +440,7 @@
 				<textFieldExpression><![CDATA[$R{aon_company_document} + ": " + $P{company}.getDocument()]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-44" positionType="Float" x="522" y="187" width="13" height="14"/>
+				<reportElement uuid="39d4deed-5863-4576-a953-e798b164611b" key="textField-44" positionType="Float" x="522" y="187" width="13" height="14"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -453,7 +453,7 @@
 				<textFieldExpression><![CDATA["€"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-54" positionType="Float" x="0" y="111" width="105" height="15">
+				<reportElement uuid="91144918-25cc-4590-8aa7-2f22ab94e547" key="textField-54" positionType="Float" x="0" y="111" width="110" height="15">
 					<printWhenExpression><![CDATA[new Boolean($V{comments} != null && !"".equals($V{comments}))]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -468,7 +468,7 @@
 				<textFieldExpression><![CDATA["Azalpena/"+$R{aon_comment} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-53" positionType="Float" x="105" y="111" width="430" height="15" isRemoveLineWhenBlank="true">
+				<reportElement uuid="8794648b-82ce-493d-b280-8edb5be59168" key="textField-53" positionType="Float" x="110" y="111" width="425" height="15" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[new Boolean($V{comments} != null && !"".equals($V{comments}))]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -490,14 +490,14 @@
 	<pageFooter>
 		<band height="1" splitType="Stretch">
 			<line>
-				<reportElement key="line-9" positionType="Float" x="3" y="0" width="530" height="1"/>
+				<reportElement uuid="b2214cf1-23cb-4a5d-8ecc-f42a1b1e4b80" key="line-9" positionType="Float" x="3" y="0" width="530" height="1"/>
 			</line>
 		</band>
 	</pageFooter>
 	<lastPageFooter>
 		<band height="98">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-53" x="0" y="1" width="535" height="14" isRemoveLineWhenBlank="true"/>
+				<reportElement uuid="cb47cce2-588c-4c0b-b308-cb8880dc3630" key="textField-53" x="0" y="1" width="535" height="14" isRemoveLineWhenBlank="true"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -510,7 +510,7 @@
 				<textFieldExpression><![CDATA["Tailerraren zigilua eta sinadura / "+$R{tas_company_signature}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-53" x="5" y="18" width="395" height="80" isRemoveLineWhenBlank="true"/>
+				<reportElement uuid="ff49d20e-5d51-4f10-934c-5320433b8f17" key="textField-53" x="5" y="18" width="395" height="80" isRemoveLineWhenBlank="true"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -523,13 +523,13 @@
 				<textFieldExpression><![CDATA[$R{gta_footer_text_1} + " " + $P{company}.getName() + " " + $R{gta_footer_text_2} + "\n" + $R{tas_legal_text_1} + " " + $P{company}.getName() + " " + $R{tas_legal_text_2} + " " + $P{company}.getName() + ", " + $P{address}.getFullAddress() + " - " + $P{address}.getZip() + " " + $P{address}.getCity() + " (" + $P{address}.getGeozone().getName() + ") " + $R{tas_legal_text_3}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement key="line-9" positionType="Float" x="2" y="15" width="530" height="1"/>
+				<reportElement uuid="104d3eeb-2048-4c04-b93d-d621fb95f49c" key="line-9" positionType="Float" x="2" y="15" width="530" height="1"/>
 			</line>
 			<rectangle>
-				<reportElement x="411" y="15" width="121" height="75"/>
+				<reportElement uuid="46babd05-8f56-46e8-abf1-33b8b0b1fb01" x="411" y="15" width="121" height="75"/>
 			</rectangle>
 			<textField>
-				<reportElement x="430" y="65" width="85" height="25"/>
+				<reportElement uuid="9d2d44aa-a923-4e6b-8323-357c727aecc7" x="430" y="65" width="85" height="25"/>
 				<textElement textAlignment="Center" markup="none">
 					<font size="8"/>
 				</textElement>

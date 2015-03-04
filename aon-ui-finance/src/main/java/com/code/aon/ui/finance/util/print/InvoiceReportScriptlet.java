@@ -70,41 +70,56 @@ public class InvoiceReportScriptlet extends JRDefaultScriptlet implements Serial
 	}
 	
 	public String getLeftSideText(){
+		return getLeftSideText(true);
+	}
+	
+	public String getLeftSideText(boolean printDirStaff){
+		return getCompanyRegistrationText(ReportPrintOption.LEFT_SIDE, printDirStaff);
+	}
+	
+	public String getFooterSideText(boolean printDirStaff){
+		return getCompanyRegistrationText(ReportPrintOption.FOOTER, printDirStaff);
+	}
+	
+	private String getCompanyRegistrationText(ReportPrintOption printOption, boolean printDirStaff){
 		StringBuilder builder = new StringBuilder("");
-		if(getPrintName()!=null && getPrintName()==ReportPrintOption.LEFT_SIDE){
+		if(getPrintName()!=null && getPrintName()==printOption){
 			builder.append(getCompanyController().obtainCompany().getName());
 		}
-		try {
-			RecordData recordData = getCompanyController().getCompanyRecordData();
-			if( isPrintRecordData() && recordData!=null){			
-				if(StringUtils.isNotBlank(recordData.getRegistration())){
-					builder.append(builder.length()>0?", ":"");
-					builder.append(recordData.getRegistration());
+		if(printDirStaff){
+			try {
+				RecordData recordData = getCompanyController().getCompanyRecordData();
+				if( isPrintRecordData() && recordData!=null){			
+					if(StringUtils.isNotBlank(recordData.getRegistration())){
+						builder.append(builder.length()>0?", ":"");
+						builder.append(recordData.getRegistration());
+					}
+					if(StringUtils.isNotBlank(recordData.getVolume())){
+						builder.append(builder.length()>0?", ":"");
+						builder.append("Tomo ").append(recordData.getVolume());
+					}
+					if(StringUtils.isNotBlank(recordData.getSection())){
+						builder.append(builder.length()>0?", ":"");
+						builder.append("Sección ").append(recordData.getSection());
+					}
+					if(StringUtils.isNotBlank(recordData.getPage())){
+						builder.append(builder.length()>0?", ":"");
+						builder.append("Folio ").append(recordData.getPage());
+					}
+					if(StringUtils.isNotBlank(recordData.getSheet())){
+						builder.append(builder.length()>0?", ":"");
+						builder.append("Hoja ").append(recordData.getSheet());
+					}
+					if(recordData.getRecordDate()!=null){
+						builder.append("con fecha ").append(new SimpleDateFormat("dd/MM/yyyy").format(recordData.getRecordDate()));
+					}
 				}
-				if(StringUtils.isNotBlank(recordData.getVolume())){
-					builder.append(builder.length()>0?", ":"");
-					builder.append("Tomo ").append(recordData.getVolume());
-				}
-				if(StringUtils.isNotBlank(recordData.getSection())){
-					builder.append(builder.length()>0?", ":"");
-					builder.append("Sección ").append(recordData.getSection());
-				}
-				if(StringUtils.isNotBlank(recordData.getPage())){
-					builder.append(builder.length()>0?", ":"");
-					builder.append("Folio ").append(recordData.getPage());
-				}
-				if(StringUtils.isNotBlank(recordData.getSheet())){
-					builder.append(builder.length()>0?", ":"");
-					builder.append("Hoja ").append(recordData.getSheet());
-				}
-				if(recordData.getRecordDate()!=null){
-					builder.append("con fecha ").append(new SimpleDateFormat("dd/MM/yyyy").format(recordData.getRecordDate()));
-				}
+			} catch (ManagerBeanException e) {
+				LOGGER.error("ERROR - No se ha podido obtener los datos registrales de la empresa [Imprimiendo factura de venta]");
+				return "";
 			}
-		} catch (ManagerBeanException e) {
-			LOGGER.error("ERROR - No se ha podido obtener los datos registrales de la empresa [Imprimiendo factura de venta]");
 		}
-		if(getPrintNif()!=null && getPrintNif()==ReportPrintOption.LEFT_SIDE){
+		if(getPrintNif()!=null && getPrintNif()==printOption){
 			builder.append(builder.length()>0?", ":"");
 			builder.append(AonUtil.getMessage(ICommonMessages.COMPANY_DOCUMENT)).append(": ");
 			builder.append(getCompanyController().obtainCompany().getDocumentCountry()).append("-");

@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="144"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -619,7 +619,7 @@
 				</graphicElement>
 			</rectangle>
 			<componentElement>
-				<reportElement uuid="4b684d0e-9cc8-496a-951a-e452a59e9181" key="finances" positionType="Float" x="21" y="451" width="489" height="60"/>
+				<reportElement uuid="4b684d0e-9cc8-496a-951a-e452a59e9181" key="finances" positionType="Float" x="21" y="451" width="489" height="60" isRemoveLineWhenBlank="true"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="finances" uuid="b97b6893-349b-46fe-905b-6b928f92447f">
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{finances})]]></dataSourceExpression>
@@ -804,7 +804,7 @@
 				</jr:table>
 			</componentElement>
 			<componentElement>
-				<reportElement uuid="fad76291-d6c6-414f-bd64-984517bc1f5b" key="tax" positionType="Float" x="213" y="337" width="297" height="15"/>
+				<reportElement uuid="fad76291-d6c6-414f-bd64-984517bc1f5b" key="tax" positionType="Float" x="213" y="337" width="297" height="15" isRemoveLineWhenBlank="true"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="tax" uuid="7331f5f2-ff74-4bed-a50d-4dc5dfe177b9">
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{PriceStrategy}.getTaxBreakDowns($V{currentInvoice}, $V{currentInvoice}))]]></dataSourceExpression>

@@ -21,6 +21,8 @@ public enum SaleInvoiceTemplate implements IResourceable {
 	
 	CLASSIC_02("saleInvoiceTemplate6"),
 	
+	CLASSIC_PROF_01("saleInvoiceTemplate7"),
+	
 	GTA("saleInvoiceGta"),
 	
 	HOTEL("saleInvoiceHotel")
