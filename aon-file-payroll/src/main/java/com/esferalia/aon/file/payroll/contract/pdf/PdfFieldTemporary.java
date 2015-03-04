@@ -119,6 +119,7 @@ public enum PdfFieldTemporary implements IContractFieldName{
 	PARTIALLY_TIME_JOB_DISTRIB(Boolean.TRUE),
 	START_DATE,
 	END_DATE,
+	END_DATE_TEXT(Boolean.TRUE),
 	TRIAL_DURATION(Boolean.TRUE),
 	GREATER_DURATION_AGREEMENT_COL(Boolean.TRUE,Boolean.TRUE),
 	SALARY_AMOUNT(Boolean.TRUE),

@@ -281,7 +281,9 @@ public class TemporaryModel extends AbstractContractModel {
 			if(contract.getEndDate()!=null){
 				setPdfFieldValue(PdfFieldTemporary.END_DATE.getValue(), dateFormatter.format(contract.getEndDate()));
 			} else if(ArrayUtils.contains(optionalEndDateCodes, code.getValue())) {
-				setPdfFieldValue(PdfFieldTemporary.END_DATE.getValue(), "fin de obra");
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldTemporary.END_DATE_TEXT.toString()))){
+					setPdfFieldValue(PdfFieldTemporary.END_DATE.getValue(), getContractInfoMap(contract).get(PdfFieldTemporary.END_DATE_TEXT.toString()));
+				}
 			}
 			
 			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldTemporary.TRIAL_DURATION.toString()))){
