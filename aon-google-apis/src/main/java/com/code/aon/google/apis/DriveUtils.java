@@ -334,10 +334,10 @@ public class DriveUtils implements IBlobManager {
 	public static File principal(Drive drive, String domain, FileInfo fileInfo)
 			throws IOException, AonConnectionException, SQLException,
 			NamingException, KeyStoreException, GeneralSecurityException {
-		
+		System.out.println("start about");
 		About about = drive.about().get().execute();
 		String rootId = about.getRootFolderId();
-		
+		System.out.println("finish about");
 		Vector<String> emails = new Vector<String>();
 		Vector<ParentReference> parents = new Vector<ParentReference>();
 		// fileInfo.getEmails().add("aibanezdegau004@gmail.com");
@@ -960,7 +960,7 @@ public class DriveUtils implements IBlobManager {
 	public static boolean sync2(Drive drive, FileInfo fileInfo, String domain)
 			throws SQLException, AonConnectionException, IOException,
 			NamingException, KeyStoreException, GeneralSecurityException {
-
+		System.out.println("sincronizar "+ fileInfo.getTitle());
 		if (fileInfo.getAonType().equals("project")
 				|| fileInfo.getAonType().equals("offer")
 				|| checkTypes(fileInfo.getType())) {

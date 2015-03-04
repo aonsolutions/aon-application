@@ -141,7 +141,7 @@ public class SynchronizeFiles {
 		// get iattachs, get contract attachs,.... y añadir a DriveData
 		DriveData dd = getAttachsSF(domain);
 		// long max= 100000;
-
+		
 		// if (max >= dd.getGservice().getSize()){
 
 		// Rattach
@@ -275,6 +275,7 @@ public class SynchronizeFiles {
 		if (map.containsKey("sepe"))
 			dd.setAttachs(DBConsults.getSepeAttach(domain, dd.getAttachs()));
 
+		System.out.println("Fin de busqueda en Bd");
 		return dd;
 	}
 	
