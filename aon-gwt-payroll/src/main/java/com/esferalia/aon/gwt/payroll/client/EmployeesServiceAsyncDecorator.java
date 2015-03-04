@@ -39,7 +39,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * @author rtrepiana
  * 
  */
-public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
+public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync,
+		CalendarServiceAsync {
 
 	private EmployeesServiceAsync employeesServiceAsync;
 
@@ -474,10 +475,21 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 	}
 
 	@Override
-	public void getStatalHolidays(int workplaceId,
-			AsyncCallback<HolidayDraft> callback) throws IllegalArgumentException {
+	public void getCalendar(int workplaceId,
+			AsyncCallback<List<HolidayDraft>> callback)
+			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getStatalHolidays(workplaceId,
-				new AsyncCallbackWrapper<HolidayDraft>(callback));
+		employeesServiceAsync.getCalendar(workplaceId,
+				new AsyncCallbackWrapper<List<HolidayDraft>>(callback));
+	}
+
+	@Override
+	public void getHolidayDescription(AsyncCallback<List<String>> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync
+				.getHolidayDescription(new AsyncCallbackWrapper<List<String>>(
+						callback));
+
 	}
 }

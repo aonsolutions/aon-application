@@ -13,81 +13,41 @@ public class HolidayDraft implements Serializable {
 	 */
 	private static final long serialVersionUID = 1325839155341913285L;
 	
-	private Map<Date, String> localHolidays;	
-	private Map<Date, String> autonomiHolidays;	
-	private Map<Date, String> statalHolidays;
-	private Map<Date, String> enterpriseHolidays;
 	
-	private String localTitle;
-	private String autonomiTitle;
-	private String statalTitle;
-	private String enterpriseTitle;
+	private Integer id;
+	private String description;
+	
+	private Map<Date, String> holidays;
 	
 	public HolidayDraft() {
-		localHolidays = new LinkedHashMap<Date, String>();
-		autonomiHolidays = new LinkedHashMap<Date, String>();
-		statalHolidays = new LinkedHashMap<Date, String>();
 		
-		this.enterpriseTitle = new String("Propios Empresa");
+		this.holidays = new LinkedHashMap<Date, String>();
 	}
 	
-	public void setLocalTitle(String title) {
-		this.localTitle = title;
+	public void setId(Integer id) {
+		this.id = id;
 	}
 	
-	public void setAutonomiTitle(String title) {
-		this.autonomiTitle = title;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
-	public void setStatalTitle(String title) {
-		this.statalTitle = title;
+	public void addHoliday(Date date, String description) {
+		holidays.put(date, description);
 	}
 	
-	public void addLocalHoliday(Map<Date, String> map) {
-		this.localHolidays.putAll(map);
+	public Integer getId() {
+		return this.id;
 	}
 	
-	public void addAutonomiHolidays(Map<Date, String> map) {
-		this.autonomiHolidays.putAll(map);
+	public String getDescription() {
+		return this.description;
 	}
 	
-	public void addStatalHoliday(Map<Date, String> map) {
-		this.statalHolidays.putAll(map);
+	public Map<Date, String> getHolidaysMap() {
+		return Collections.unmodifiableMap(holidays);
 	}
 	
-	public void addEnterpriseHoliday(Map<Date, String> map) {
-		this.enterpriseHolidays.putAll(map);
-	}
 	
-	public String getLocalTitle() {
-		return localTitle;
-	}
 	
-	public String getAutonomiTitle() {
-		return autonomiTitle;
-	}
-	
-	public String getStatalTitle() {
-		return statalTitle;
-	}
-	
-	public String getEnterpriseTitle() {
-		return enterpriseTitle;
-	}
-	
-	public Map<Date, String> getLocalHolidays() {
-		return Collections.unmodifiableMap(localHolidays);
-	}
-	
-	public Map<Date, String> getAutonomicHolidays() {
-		return Collections.unmodifiableMap(autonomiHolidays);
-	}
-	
-	public Map<Date, String> getStatalHolidays() {
-		return Collections.unmodifiableMap(statalHolidays);
-	}
-	
-	public Map<Date, String> getEnterpriseHolidays() {
-		return Collections.unmodifiableMap(enterpriseHolidays);
-	}
 }

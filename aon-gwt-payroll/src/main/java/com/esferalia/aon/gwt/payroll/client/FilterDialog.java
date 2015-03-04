@@ -22,7 +22,9 @@ public abstract class FilterDialog extends CustomDialog {
 	}
 	private static final Binder binder = GWT.create(Binder.class);
 	
-	
+	@UiField Label filterLabel;
+	@UiField Label nameLabel;
+	@UiField Label dateLabel;
 	
 	@UiField TextBox nameTextBox;
 	@UiField DateBox fromDateBox;
@@ -45,7 +47,7 @@ public abstract class FilterDialog extends CustomDialog {
 				hide();
 				onAccept();
 			}
-		});
+		});		
 		
 		cancelButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -54,9 +56,23 @@ public abstract class FilterDialog extends CustomDialog {
 				
 			}
 		});
+		
+		nameTextBox.setFocus(true);
 	}
 	
 	protected abstract void onAccept();
+	
+	public void setFilterLabel(String text) {
+		filterLabel.setText(text);
+	}
+	
+	public void setNameLabel(String text) {
+		nameLabel.setText(text);
+	}
+	
+	public void setDateLabel(String text) {
+		dateLabel.setText(text);
+	}
 	
 	public void setName(String text) {
 		nameTextBox.setText(text);
@@ -79,6 +95,7 @@ public abstract class FilterDialog extends CustomDialog {
 		fromDatePatternLabel.setText(dateTimeFormat.getPattern());
 	}
 	
-	
-	
+	public void setVisibleDatePatternLabel(boolean bool) {
+		fromDatePatternLabel.setVisible(bool);
+	}
 }

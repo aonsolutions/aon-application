@@ -1,4 +1,4 @@
-
+	
 /*
 * Calendar widget style.
 * @author: amtzdelagos
@@ -99,9 +99,32 @@
 	color: #005CE6;
 }
 
-.aonCalenndar .localHoliday {
+.aonCalendar .localHoliday {
 	background: none repeat scroll 0 0 	#B2FFB2;
 	border-radius: 25px;
 	color: #009900;
-	
+}
+
+.aonCalendar .myHoliday_1 {
+	background: none repeat scroll 0 0 	#E6CCFF;
+	border-radius: 25px;
+	color: #A37ACC;
+}
+
+.aonCalendar .myHoliday_2 {
+	background: none repeat scroll 0 0 	#E6CCFF;
+	border-radius: 25px;
+	color: #A37ACC;
+}
+
+.aonCalendar .myHoliday_3 {
+	background: none repeat scroll 0 0 	#E6CCFF;
+	border-radius: 25px;
+	color: #A37ACC;
+}
+
+.aonCalendar .myHoliday_4 {
+	background: none repeat scroll 0 0 	#E6CCFF;
+	border-radius: 25px;
+	color: #A37ACC;
 }

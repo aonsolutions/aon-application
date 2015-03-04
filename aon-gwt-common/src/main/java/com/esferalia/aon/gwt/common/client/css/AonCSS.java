@@ -249,6 +249,9 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-icon-view")
 	String aonIconView();
 	
+	@ClassName("aon-normal-icon-view")
+	String aonNormalIconView();
+
 	@ClassName("aon-icon-paste")
 	String aonIconPaste();
 	

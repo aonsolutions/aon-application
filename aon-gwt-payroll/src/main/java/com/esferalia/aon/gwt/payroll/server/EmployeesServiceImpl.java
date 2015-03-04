@@ -85,6 +85,7 @@ import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.common.shared.EvalSyntaxErrorException;
 import com.esferalia.aon.gwt.common.shared.EvalWarning;
 import com.esferalia.aon.gwt.common.shared.UnknownVariablesWarning;
+import com.esferalia.aon.gwt.payroll.client.CalendarService;
 import com.esferalia.aon.gwt.payroll.client.EmployeesService;
 import com.esferalia.aon.gwt.payroll.client.StatisticsService;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCalendar;
@@ -218,7 +219,7 @@ import com.esferalia.aon.ui.payroll.controller.salary.SalaryExpenseController;
  */
 @SuppressWarnings("serial")
 public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
-		EmployeesService, StatisticsService {
+		EmployeesService, StatisticsService, CalendarService {
 
 	public static final String REMOVE = "REMOVE()";
 
@@ -361,15 +362,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			releaseFacesContext();
 		}
 	}
-	
+
 	@Override
 	public void insertPerson(Employee employee) throws IllegalArgumentException {
 		Connection conn = null;
 		try {
 			initFacesContext();
 			conn = getConnection();
-			JooqEmployees.insert2Person(conn, getDomainID(), employee.getPerson(), 
-					employee.getDocument());
+			JooqEmployees.insert2Person(conn, getDomainID(),
+					employee.getPerson(), employee.getDocument());
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
@@ -382,7 +383,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			releaseFacesContext();
 		}
 
-		
 	}
 
 	@Override
@@ -429,11 +429,33 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 	
-	
 	@Override
-	public HolidayDraft getStatalHolidays(
-			int workplaceId) throws IllegalArgumentException {
+	public List<String> getHolidayDescription() 
+			throws IllegalArgumentException {
 		
+		Connection conn = null;
+		try {
+			initFacesContext();
+			conn = getConnection();
+			return JooqCalendar.getHolidayDescription(conn);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+
+	}
+
+	@Override
+	public List<HolidayDraft> getCalendar(int workplaceId)
+			throws IllegalArgumentException {
+
 		Connection conn = null;
 		try {
 			initFacesContext();
@@ -450,10 +472,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 			releaseFacesContext();
 		}
-
-		
 	}
-
 
 	@Override
 	public List<Cost> getWorkplaceCosts(int workplaceId)
@@ -3863,12 +3882,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				try {
 					SQLContractSalaryCalculatorContext sqlContractSalaryCalculatorCtx = new SQLContractSalaryCalculatorContext(
 							conn, startDate, endDate, issueDate, criteria) {
-						
+
 						@Override
 						public double getIrpf() {
 							return 0.00;
 						}
-						
+
 						@Override
 						public Object gross(double liquid, Date start, Date end)
 								throws ExpressionException, SQLException {
@@ -3928,7 +3947,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 								throws AonException {
 							return Collections.emptyList();
 						}
-						
+
 					};
 					SQLSalaryDraftCalculatorContext sqlDraftSalaryCalculatorCtx = new SQLSalaryDraftCalculatorContext(
 							draft, sqlContractSalaryCalculatorCtx);
@@ -4007,7 +4026,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 									}
 
 									@Override
-									public Object liquid(double liquid, Date start, Date end)
+									public Object liquid(double liquid,
+											Date start, Date end)
 											throws ExpressionException,
 											SQLException {
 										return x;

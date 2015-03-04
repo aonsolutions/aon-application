@@ -2,21 +2,27 @@ package com.esferalia.aon.gwt.common.client.widget;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.css.AonCalendarCSS;
 import com.esferalia.aon.gwt.common.client.css.AonCalendarResources;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.event.dom.client.DoubleClickEvent;
+import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
+import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarModel;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 import com.google.gwt.user.datepicker.client.DatePicker;
@@ -24,7 +30,7 @@ import com.google.gwt.user.datepicker.client.DefaultCalendarView;
 import com.google.gwt.user.datepicker.client.MonthSelector;
 
 public class Calendar extends ResizeComposite implements
-		ValueChangeHandler<Date> {
+		ValueChangeHandler<Date>  {
 
 	public interface Listener {
 
@@ -36,10 +42,6 @@ public class Calendar extends ResizeComposite implements
 			.<AonCalendarResources> create(AonCalendarResources.class)
 			.calendar();
 	private int cols;
-
-	private Map<Date, String> statalHolidays;
-	private Map<Date, String> autonomiHolidays;
-	private Map<Date, String> localHolidays;
 
 	private Date firstDate;
 	private Date lastDate;
@@ -67,18 +69,6 @@ public class Calendar extends ResizeComposite implements
 
 	public void removeListener(Listener listener) {
 		listeners.remove(listener);
-	}
-
-	public void setStatalHolidays(Map<Date, String> dates) {
-		this.statalHolidays = dates;
-	}
-
-	public void setAutonomiHolidays(Map<Date, String> autonomiHolidays) {
-		this.autonomiHolidays = autonomiHolidays;
-	}
-
-	public void setLocalHolidays(Map<Date, String> localHolidays) {
-		this.localHolidays = localHolidays;
 	}
 
 	public void setFirstDate(Date firstDate) {
@@ -111,19 +101,7 @@ public class Calendar extends ResizeComposite implements
 			datePicker.setCurrentMonth(date);
 			datePicker.setYearAndMonthDropdownVisible(false);
 			datePicker.setYearArrowsVisible(false);
-			datePicker.addValueChangeHandler(this);
-			if (statalHolidays != null)
-				setStatalHoliday(datePicker, datePicker.getFirstDate(),
-						datePicker.getLastDate());
-
-			if (autonomiHolidays != null)
-				setAutonomiHoliday(datePicker, datePicker.getFirstDate(),
-						datePicker.getLastDate());
-
-			if (localHolidays != null)
-				setLocalHoliday(datePicker, datePicker.getFirstDate(),
-						datePicker.getLastDate());
-
+			datePicker.addValueChangeHandler(this);			
 			table.setWidget(row, col, datePicker);
 			CalendarUtil.addMonthsToDate(date, 1);
 			row += ++col / cols;
@@ -131,41 +109,37 @@ public class Calendar extends ResizeComposite implements
 		}
 	}
 
+	public void addStyle2Date(Date date, String style) {
+		setStyle(style, date);
+	}
+
+	private void setStyle(String style, Date date) {
+		Iterator<Widget> iterator = ((HasWidgets) table).iterator();
+		
+		while (iterator.hasNext()) {
+			Widget widget = iterator.next();
+			if (widget instanceof CustomDatePicker) {
+				CustomDatePicker datePicker = (CustomDatePicker) widget;
+				if(isCustomDatePicker(datePicker, date)) {
+					datePicker.addStyleToDates(style, date);
+				}
+			}
+		}
+	}
+
+	private boolean isCustomDatePicker(CustomDatePicker datePicker, Date date) {
+
+		Date first = datePicker.getFirstDate();
+		Date last = datePicker.getLastDate();
+
+		return DateUtils.isBeforeOrEquals(date, last)
+				&& DateUtils.isAfterOrEquals(date, first);
+	}
+
 	@Override
-	public void onValueChange(ValueChangeEvent<Date> event) {
+	public void onValueChange(ValueChangeEvent<Date> event) {		
 		for (Listener listener : listeners)
 			listener.onValueChangeEvent(event);
-	}
-
-	private void setStatalHoliday(final DatePicker datePicker, Date first,
-			Date last) {
-
-		for (Date date : statalHolidays.keySet()) {
-			if (DateUtils.isBeforeOrEquals(date, last)
-					&& DateUtils.isAfterOrEquals(date, first))
-				datePicker.addStyleToDates(CALENDAR_CSS.statalHoliday(), date);
-		}
-	}
-
-	private void setAutonomiHoliday(final DatePicker datePicker, Date first,
-			Date last) {
-
-		for (Date date : autonomiHolidays.keySet()) {
-			if (DateUtils.isBeforeOrEquals(date, last)
-					&& DateUtils.isAfterOrEquals(date, first))
-				datePicker
-						.addStyleToDates(CALENDAR_CSS.autonomiHoliday(), date);
-		}
-	}
-
-	private void setLocalHoliday(final DatePicker datePicker, Date first,
-			Date last) {
-
-		for (Date date : localHolidays.keySet()) {
-			if (DateUtils.isBeforeOrEquals(date, last)
-					&& DateUtils.isAfterOrEquals(date, first))
-				datePicker.addStyleToDates(CALENDAR_CSS.localHoliday(), date);
-		}
 	}
 
 	// -------------------------------------------------------------------------
@@ -220,13 +194,14 @@ public class Calendar extends ResizeComposite implements
 		@Override
 		protected void refresh() {
 			Date date = getModel().getCurrentMonth();
-			String name = DateTimeFormat.getFormat("d-MMMM-yy").format(date).split("-")[1];			
+			String name = DateTimeFormat.getFormat("d-MMMM-yy").format(date)
+					.split("-")[1];
 			grid.setText(0, monthColumn, firstCharToUpper(name));
 		}
-		
+
 		@Override
 		protected void setup() {
-			
+
 			// Set up grid.
 			grid = new Grid(1, 5);
 			grid.setWidget(0, previousYearColumn, backwardsYear);

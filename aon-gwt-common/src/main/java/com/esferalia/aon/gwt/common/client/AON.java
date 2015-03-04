@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.common.client;
 
 import com.esferalia.aon.gwt.common.client.css.AonCSS;
+import com.esferalia.aon.gwt.common.client.css.AonCalendarCSS;
 import com.esferalia.aon.gwt.common.client.css.AonCalendarResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.google.gwt.core.client.GWT;
@@ -22,6 +23,9 @@ public class AON {
 	// ------------------------------------------------------------------------
 	public static AonCSS AON_CSS = GWT.<AonResources> create(
 			AonResources.class).css();
+	
+	public static AonCalendarCSS Calendar_CSS = GWT.<AonCalendarResources> create(
+			AonCalendarResources.class).calendar();
 	
 	public static void start() {
 		show(CONNECTION_STATUS_START);
@@ -141,6 +145,14 @@ public class AON {
 	public static final String AON_ICON_REDO = AON_CSS.aonIconRedo(); //"aon-icon-redo";
 	public static final String AON_ICON_UNDO = AON_CSS.aonIconUndo(); //"aon-icon-undo";
 	public static final String AON_ICON_VIEW = AON_CSS.aonIconView(); //"aon-icon-view";
+	
+	public static final String AON_CALENDAR_STATAL_HOLIDAY = Calendar_CSS.statalHoliday();
+	public static final String AON_CALENDAR_AUTONOMI_HOLIDAY = Calendar_CSS.autonomiHoliday();
+	public static final String AON_CALENDAR_LOCAL_HOLIDAY = Calendar_CSS.localHoliday();
+	public static final String AON_CALENDAR_MyHOLIDAY_1 = Calendar_CSS.myHoliday_1();
+	public static final String AON_CALENDAR_MyHOLIDAY_2 = Calendar_CSS.myHoliday_2();
+	public static final String AON_CALENDAR_MyHOLIDAY_3 = Calendar_CSS.myHoliday_3();
+	public static final String AON_CALENDAR_MyHOLIDAY_4 = Calendar_CSS.myHoliday_4();
 	
 
 	

@@ -426,6 +426,14 @@
 	gwt-image: 'view';
 }
 
+@sprite .aon-normal-icon-view {	
+	gwt-image: 'view';
+	padding-left: inherit;
+	width: 105px;
+	background-position: right;
+}
+
+
 @sprite .aon-icon-minimize {
 	float: right;
 	gwt-image: 'minimize';

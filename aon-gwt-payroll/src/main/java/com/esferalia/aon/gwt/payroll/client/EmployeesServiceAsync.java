@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 
-import com.esferalia.aon.gwt.common.client.widget.Calendar;
 import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
@@ -16,7 +15,6 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
-import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
@@ -30,7 +28,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * The async counterpart of <code>EmployeesService</code>.
  */
 public interface EmployeesServiceAsync extends StatisticsServiceAsync,
-		GPSReportsServiceAsync {
+		CalendarServiceAsync, GPSReportsServiceAsync {
 	void getEnterprise(AsyncCallback<Enterprise> callback)
 			throws IllegalArgumentException;
 
@@ -131,8 +129,9 @@ public interface EmployeesServiceAsync extends StatisticsServiceAsync,
 	void getEmployees(int workplaceId, Date endDate, String pattern,
 			int offset, int limit, AsyncCallback<List<Employee>> callback)
 			throws IllegalArgumentException;
-	
-	void getTrashEmployees(int workplaceId, AsyncCallback<List<Employee>> callback) 
+
+	void getTrashEmployees(int workplaceId,
+			AsyncCallback<List<Employee>> callback)
 			throws IllegalArgumentException;
 
 	void saveEvents(Events events, Date startDate, Date endDate,
@@ -156,22 +155,19 @@ public interface EmployeesServiceAsync extends StatisticsServiceAsync,
 	void getChanges(Agreement agreement, AsyncCallback<SortedSet<Date>> callback)
 			throws IllegalArgumentException;
 
-	void pasteContract(int workplaceId, int contractId, String document, Date startDate, 
-			Date endDate, boolean check, AsyncCallback<Employee> callback)
-			throws IllegalArgumentException;
-	
-	void moveContractId(Employee employee, AsyncCallback<Void> callback) 
+	void pasteContract(int workplaceId, int contractId, String document,
+			Date startDate, Date endDate, boolean check,
+			AsyncCallback<Employee> callback) throws IllegalArgumentException;
+
+	void moveContractId(Employee employee, AsyncCallback<Void> callback)
 			throws IllegalArgumentException;
 
 	void deleteContract(Employee employee, AsyncCallback<Void> callback)
 			throws IllegalArgumentException;
-	
-	void insertPerson(Employee employee, AsyncCallback<Void> callback) 
+
+	void insertPerson(Employee employee, AsyncCallback<Void> callback)
 			throws IllegalArgumentException;
 
 	void getAvaiableEmployees(AsyncCallback<Map<String, String>> callback)
-			throws IllegalArgumentException;
-	
-	void getStatalHolidays(int workplaceId, AsyncCallback<HolidayDraft> callback) 
 			throws IllegalArgumentException;
 }

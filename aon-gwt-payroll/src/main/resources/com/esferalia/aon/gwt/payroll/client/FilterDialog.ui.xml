@@ -56,16 +56,16 @@
 	<g:HTMLPanel styleName="{style.form}">
 		
 		<div class="{style.messages}" >
-			<g:Label styleName="{style.info}">Filtrar los empleados a visualizar:</g:Label>
+			<g:Label styleName="{style.info}" ui:field="filterLabel">Filtrar los empleados a visualizar:</g:Label>
 		</div>
 
 		<g:Grid width="100%" >
 			<g:row>
-				<g:customCell styleName="{style.label}" ><g:Label text="Nombre" /></g:customCell>
+				<g:customCell styleName="{style.label}" ><g:Label text="Nombre" ui:field="nameLabel" /></g:customCell>
 				<g:customCell styleName="{style.field}"><g:TextBox width="100%" ui:field="nameTextBox"/></g:customCell>
 			</g:row>
 			<g:row>
-				<g:customCell styleName="{style.label}" ><g:Label text="Fecha Desde" /></g:customCell>
+				<g:customCell styleName="{style.label}" ><g:Label text="Fecha Desde" ui:field="dateLabel" /></g:customCell>
 				<g:customCell styleName="{style.field}" ><datepicker:DateBox width="50%" ui:field="fromDateBox"/></g:customCell>
 			</g:row>
 			<g:row>

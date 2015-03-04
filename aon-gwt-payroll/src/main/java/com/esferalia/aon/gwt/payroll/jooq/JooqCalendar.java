@@ -6,10 +6,10 @@ import static com.esferalia.aon.jooq.tables.HolidayDetail.HOLIDAY_DETAIL;
 import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -24,86 +24,87 @@ public class JooqCalendar {
 
 	private static Settings SETTINGS = null;
 
-	public static HolidayDraft getCalendar(Connection conn, Integer workplaceId) 
+	public static List<String> getHolidayDescription(Connection conn)
 			throws IllegalArgumentException {
+
+		DSLContext dslContext = DSL.using(conn, getDefaultSettings());
+
+		List<HolidayRecord> result = dslContext.selectFrom(HOLIDAY)
+				.where(HOLIDAY.DOMAIN.eq(0)).orderBy(HOLIDAY.DESCRIPTION.asc())
+				.fetchInto(HOLIDAY);
+
+		List<String> list = new ArrayList<String>();
+
+		if (result != null) {
+
+			for (HolidayRecord item : result) {
+				String description = item.getValue(HOLIDAY.DESCRIPTION);
+				list.add(description);
+			}
+		}
+
+		return list;
+
+	}
+
+	public static List<HolidayDraft> getCalendar(Connection conn,
+			Integer workplaceId) throws IllegalArgumentException {
 		return getCalendar(DSL.using(conn, getDefaultSettings()), workplaceId);
 	}
 
-	private static HolidayDraft getCalendar(DSLContext dslContext,
+	private static List<HolidayDraft> getCalendar(DSLContext dslContext,
 			Integer workplaceId) throws IllegalArgumentException {
 
 		Record record = dslContext.select().from(PAYROLL_WORKPLACE)
 				.join(CALENDAR).on(PAYROLL_WORKPLACE.CALENDAR.eq(CALENDAR.ID))
 				.where(PAYROLL_WORKPLACE.WORKPLACE.eq(workplaceId)).fetchOne();
 
-		HolidayDraft draft = new HolidayDraft();
+		List<HolidayDraft> holidays = new LinkedList<HolidayDraft>();
 
 		if (record != null) {
 
-			if (record.getValue(PAYROLL_WORKPLACE.CALENDAR) != null) {
-				int holiday = record.getValue(CALENDAR.HOLIDAY);
-				loadHolidayDraft(dslContext, draft, holiday);
+			Integer calendar = record.getValue(PAYROLL_WORKPLACE.CALENDAR);
+
+			if (calendar != null) {
+
+				Integer holiday = record.getValue(CALENDAR.HOLIDAY);
+
+				while (holiday != null)
+					holiday = loadHoliday(dslContext, holidays, holiday);
+
 			}
 		}
 
-		return draft;
-
+		return holidays;
 	}
 
-	private static void loadHolidayDraft(DSLContext dslContext,
-			HolidayDraft holidayDraft, Integer holiday) throws IllegalArgumentException {
+	private static Integer loadHoliday(DSLContext dslContext,
+			List<HolidayDraft> holidays, Integer holiday) {
 
 		HolidayRecord record = dslContext.selectFrom(HOLIDAY)
 				.where(HOLIDAY.ID.eq(holiday)).fetchOne();
 
-		Integer auxHoliday = record.getValue(HOLIDAY.HOLIDAY_);
-		
-		if (auxHoliday == null) {
-			// *** FIESTAS ESTATALES ***
-			int holidayId = record.getValue(HOLIDAY.ID);
-			Map<Date, String> statalHolidays = loadMapHolidays(dslContext,
-					holidayId);
-			holidayDraft.addStatalHoliday(statalHolidays);
-			holidayDraft.setStatalTitle(record
-					.getValue(HOLIDAY_DETAIL.DESCRIPTION));
-		}
+		Integer id = record.getValue(HOLIDAY.ID);
 
+		HolidayDraft draft = new HolidayDraft();
+		draft.setId(id);
+		draft.setDescription(record.getValue(HOLIDAY.DESCRIPTION));
 
-		else if (auxHoliday != 21) {
-			// *** FIESTAS LOCALES ***
-			int holidayId = record.getValue(HOLIDAY.ID);
-			Map<Date, String> localHolidays = loadMapHolidays(dslContext,
-					holidayId);
-			holidayDraft.addLocalHoliday(localHolidays);
-			holidayDraft.setLocalTitle(record
-					.getValue(HOLIDAY_DETAIL.DESCRIPTION));
+		loadHolidayDetail(dslContext, id, draft);
 
-			loadHolidayDraft(dslContext, holidayDraft, auxHoliday);
-		}
+		holidays.add(draft);
 
-		else if (auxHoliday == 21) {
-			// *** FIESTAS AUTONOMICAS ***
-			int holidayId = record.getValue(HOLIDAY.ID);
-			Map<Date, String> autonomiHolidays = loadMapHolidays(dslContext,
-					holidayId);
-			holidayDraft.addAutonomiHolidays(autonomiHolidays);
-			holidayDraft.setAutonomiTitle(record
-					.getValue(HOLIDAY_DETAIL.DESCRIPTION));
-
-			loadHolidayDraft(dslContext, holidayDraft, auxHoliday);
-		}
+		return record.getValue(HOLIDAY.HOLIDAY_);
 	}
 
-	private static Map<Date, String> loadMapHolidays(DSLContext dslContext,
-			Integer holiday) throws IllegalArgumentException {
+	private static void loadHolidayDetail(DSLContext dslContext,
+			Integer holiday, HolidayDraft draft) {
 
 		List<HolidayDetailRecord> result = dslContext
 				.selectFrom(HOLIDAY_DETAIL)
 				.where(HOLIDAY_DETAIL.HOLIDAY.eq(holiday))
 				.and(HOLIDAY_DETAIL.DATE.like("%2015%"))
-				.fetchInto(HOLIDAY_DETAIL);
-
-		Map<Date, String> map = new LinkedHashMap<Date, String>();
+				.orderBy(HOLIDAY_DETAIL.DATE.asc()).fetchInto(HOLIDAY_DETAIL);
 
 		if (result != null) {
 
@@ -113,11 +114,10 @@ public class JooqCalendar {
 				String description = record
 						.getValue(HOLIDAY_DETAIL.DESCRIPTION);
 
-				map.put(date, description);
+				draft.addHoliday(date, description);
 			}
 		}
 
-		return map;
 	}
 
 	protected static Settings getDefaultSettings() {
@@ -127,5 +127,4 @@ public class JooqCalendar {
 		}
 		return SETTINGS;
 	}
-
 }

@@ -15,7 +15,6 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
-import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
@@ -30,8 +29,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * The client side stub for the RPC service.
  */
 @RemoteServiceRelativePath("employees")
-public interface EmployeesService extends RemoteService, StatisticsService,
-		GPSReportsService {
+public interface EmployeesService extends RemoteService, CalendarService,
+		StatisticsService, GPSReportsService {
 	Enterprise getEnterprise() throws IllegalArgumentException;
 
 	Enterprise[] getEnterprises() throws IllegalArgumentException;
@@ -114,13 +113,13 @@ public interface EmployeesService extends RemoteService, StatisticsService,
 
 	String getSalaryPreviewReceiptHTML(SalaryPreview salaryPreview, int zoom)
 			throws IllegalArgumentException;
-	
+
 	void insertPerson(Employee employee) throws IllegalArgumentException;
 
 	List<Employee> getEmployees(int workplaceId, Date endDate, String pattern,
 			int offset, int limit) throws IllegalArgumentException;
-	
-	List<Employee> getTrashEmployees(int workplaceId) 
+
+	List<Employee> getTrashEmployees(int workplaceId)
 			throws IllegalArgumentException;
 
 	void saveEvents(Events events, Date startDate, Date endDate)
@@ -139,21 +138,17 @@ public interface EmployeesService extends RemoteService, StatisticsService,
 
 	SortedSet<Date> getChanges(Agreement agreement)
 			throws IllegalArgumentException;
-	
-	Employee pasteContract (int workplaceId, int contractId, String document, Date startDate, 
-			Date endDate, boolean check) throws IllegalArgumentException;
-	
-	void moveContractId(Employee employee) throws IllegalArgumentException;
-	
-	void deleteContract(Employee employee)
+
+	Employee pasteContract(int workplaceId, int contractId, String document,
+			Date startDate, Date endDate, boolean check)
 			throws IllegalArgumentException;
 
+	void moveContractId(Employee employee) throws IllegalArgumentException;
+
+	void deleteContract(Employee employee) throws IllegalArgumentException;
+
 	void delete(Salary salaries[]) throws IllegalArgumentException;
-	
-	Map<String, String> getAvaiableEmployees() 
-			throws IllegalArgumentException;
-	
-	HolidayDraft getStatalHolidays(int workplaceId) 
-			throws IllegalArgumentException;
+
+	Map<String, String> getAvaiableEmployees() throws IllegalArgumentException;
 
 }

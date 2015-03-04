@@ -3,7 +3,6 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
 	<ui:style type='com.esferalia.aon.gwt.payroll.client.CalendarDraft.Style'>
-
 	.disclosure-panel {
 		border-left: hidden;
 		margin-left: 0px;
@@ -11,10 +10,10 @@
 	}
 	
 	.year {
-		font-size: 50px;
+		font-size: 55px;
 		color: #FF704D;
-		padding-left: 60px;
-		padding-top: 6px;
+		padding-left: 35px;
+		padding-top: 2px;
 	}
 	
 	.legend {
@@ -38,56 +37,106 @@
 	}
 	
 	.typeHoliday {
-		font: bold 90% fantasy;
+		font: bold 90% Verdana;
 	}
 	
 	.month {
 		font: bold 90% Tahoma;
 		margin-left: 5px;
 		padding-top: 10px;
-		
 	}
 	
 	.holiday {
 		font: italic 90% Georgia Arial Tahoma;
-    	margin-left: 5px;
-    	margin-top: 5px;
+		margin-left: 5px;
+		margin-top: 5px;
 	}
+	
 	.statal {
 		background-color: #FFB2B2;
 	}
+	
 	.autonomic {
-		background-color: #99C2FF
+		background-color: #99C2FF;
 	}
-
+	
 	.local {
 		background-color: #B2FFB2;
 	}
 	
+	.other {
+		background-color: #E6CCFF;
+	}
 	</ui:style>
 
 	<g:HTMLPanel>
 
 		<g:DockLayoutPanel unit="PX" ui:field="mainPanel">
-			<g:north size="30">
+			<g:north size="55">
+
 				<g:FlowPanel>
-					<g:FlowPanel styleName="aon-finding-title-toolbar">
+
+					<!--g:MenuBar>
+						<g:MenuItem text="Archivo">
+							<g:MenuBar vertical="true">
+								<g:MenuItem styleName="gwt-MenuItem aon-icon-new"
+									ui:field="newCalendarMenuItem" text="Nuevo" />
+								<g:MenuItem styleName="gwt-MenuItemSeparator">
+									<div class="menuSeparatorInner"></div>
+								</g:MenuItem>
+								<g:MenuItem styleName="gwt-MenuItem aon-icon-save"
+									ui:field="saveMenuItem" text="Guardar" />
+								<g:MenuItem styleName="gwt-MenuItem aon-icon-google-drive"
+									ui:field="publishMenuItem" text="Publicar..." />
+								<g:MenuItem styleName="gwt-MenuItem aon-icon-pdf"
+									ui:field="printMenuItem" text="Imprimir..." />
+							</g:MenuBar>
+						</g:MenuItem>
+						<g:MenuItem text="Edici&oacute;n">
+							<g:MenuBar vertical="true">
+								<g:MenuItem styleName="gwt-MenuItem aon-icon-undo"
+									ui:field="undoMenuItem" text="Deshacer" />
+								<g:MenuItem styleName="gwt-MenuItem aon-icon-redo"
+									ui:field="redoMenuItem" text="Rehacer" />
+							</g:MenuBar>
+						</g:MenuItem>
+						<g:MenuItem text="Gesti&oacute;n">
+							<g:MenuBar vertical="true">
+								<g:MenuItem styleName="gwt-MenuItem aon-icon-task"
+									ui:field="addEventMenuItem" text="Añadir..." />
+							</g:MenuBar>
+						</g:MenuItem>
+					</g:MenuBar -->
+					<!--g:FlowPanel styleName="aon-finding-title-toolbar" -->
+					<g:FlowPanel styleName="gwt-MenuBar-horizontal">
 						<g:HorizontalPanel>
 							<g:HTMLPanel styleName="aon-finding-title">
 								<g:HTMLPanel styleName="aon-finding-title-internal">
 									<g:Label styleName="aon-outputText">Calendario Laboral</g:Label>
 								</g:HTMLPanel>
 							</g:HTMLPanel>
+
 							<g:HTMLPanel styleName="aon-finding-subtitle">
 								<g:HTMLPanel styleName="aon-finding-subtitle-internal">
-									<g:Label styleName="aon-outputText"></g:Label>
+									<g:ListBox ui:field="yearList" />
 								</g:HTMLPanel>
 							</g:HTMLPanel>
+
 							<g:HTMLPanel styleName="aon-finding-subtitle">
 								<g:HTMLPanel styleName="aon-finding-subtitle-internal">
-									<g:ListBox ui:field="yearList" /> 
+									<g:ListBox ui:field="holidayList" enabled="false" />
 								</g:HTMLPanel>
 							</g:HTMLPanel>
+
+							<g:HorizontalPanel styleName="aon-finding-toolbar">
+								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+									<g:Button ui:field='addEvent'
+										styleName='aon-finding-toolbar-item aon-icon-task' text="Añadir Festivo" enabled="false" />
+									<g:Button ui:field='addCalendar'
+										styleName='aon-finding-toolbar-item aon-icon-save' text="Guardar" enabled="false" />
+										
+								</g:HTMLPanel>
+							</g:HorizontalPanel>
 						</g:HorizontalPanel>
 					</g:FlowPanel>
 				</g:FlowPanel>
@@ -103,9 +152,10 @@
 				</g:ScrollPanel>
 			</g:center>
 			<g:east size="172">
-			<g:ScrollPanel>
-			<g:VerticalPanel ui:field="legendVerticalPanel" styleName="{style.legend}"  />
-			</g:ScrollPanel>
+				<g:ScrollPanel>
+					<g:VerticalPanel ui:field="legendVerticalPanel"
+						styleName="{style.legend}" />
+				</g:ScrollPanel>
 			</g:east>
 		</g:DockLayoutPanel>
 	</g:HTMLPanel>
