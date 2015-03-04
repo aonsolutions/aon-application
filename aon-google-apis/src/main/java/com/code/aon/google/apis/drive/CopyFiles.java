@@ -188,29 +188,32 @@ public class CopyFiles {
 		FileList fileList = oldDrive.files().list().execute();
 		for(File file : fileList.getItems()){
 			String driveId = file.getId();
-			String domain = oldDrive.properties().get(driveId, "domain").execute().getValue();
-			String aonType = oldDrive.properties().get(driveId, "aontype").execute().getValue();
+			FileList fl = SearchFiles.searchFilesProperties(newDrive, "oldDriveId", driveId);
+			if(fl.getItems().size() == 0){
+				String domain = oldDrive.properties().get(driveId, "domain").execute().getValue();
+				String aonType = oldDrive.properties().get(driveId, "aontype").execute().getValue();
 
-			try {
-				FileList domainFolders = SearchFiles.searchFilesTitleEqual(newDrive, domain);
-				File domainFolder;
-				if(domainFolders.getItems().size()>0){
-					domainFolder = domainFolders.getItems().get(0);
-				}
-				else domainFolder = createFolder(newDrive, domain, rootId);
+				try {
+					FileList domainFolders = SearchFiles.searchFilesTitleEqual(newDrive, domain);
+					File domainFolder;
+					if(domainFolders.getItems().size()>0){
+						domainFolder = domainFolders.getItems().get(0);
+					}
+					else domainFolder = createFolder(newDrive, domain, rootId);
 				
-				FileList typeFolders = SearchFiles.searchFilesTitleAndParent(newDrive,  aonType,domainFolder.getId());
-				File typeFolder;
-				if(typeFolders.getItems().size()>0){
-					typeFolder = typeFolders.getItems().get(0);
-				}
-				else typeFolder = createFolder(newDrive, aonType, domainFolder.getId());
+					FileList typeFolders = SearchFiles.searchFilesTitleAndParent(newDrive,  aonType,domainFolder.getId());
+					File typeFolder;
+					if(typeFolders.getItems().size()>0){
+						typeFolder = typeFolders.getItems().get(0);
+					}
+					else typeFolder = createFolder(newDrive, aonType, domainFolder.getId());
 				
-				PropertyList p = oldDrive.properties().list(file.getId()).execute();
-				File f = insertFile(oldDrive, newDrive, file, p, typeFolder.getId());
-				View.file(f,driveId);
-			} catch (Exception e) {
-				e.printStackTrace();
+					PropertyList p = oldDrive.properties().list(file.getId()).execute();
+					File f = insertFile(oldDrive, newDrive, file, p, typeFolder.getId());
+					View.file(f,driveId);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}

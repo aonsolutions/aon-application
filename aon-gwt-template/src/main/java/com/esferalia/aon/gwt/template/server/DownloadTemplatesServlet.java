@@ -47,7 +47,7 @@ public class DownloadTemplatesServlet extends HttpServlet {
         String name = p_request.getParameter("name");
 
         String domain = AonUtil.getDomainName();
-        
+        Integer idFile = Integer.parseInt(fileId);
         byte[] b = null ;
         
         if (driveId != ""){
@@ -68,7 +68,7 @@ public class DownloadTemplatesServlet extends HttpServlet {
         	
 			com.google.api.services.drive.model.File f = null;
 			try {
-				f = DriveUtils.getFile(d, driveId);
+				f = DriveUtils.getFile(d, driveId, idFile);
 				if(f.getDescription().equals("OLDRIVE"))
 					d = DriveUtils.serviceInitializeOld(g);
 			} catch (SQLException | GeneralSecurityException e) {

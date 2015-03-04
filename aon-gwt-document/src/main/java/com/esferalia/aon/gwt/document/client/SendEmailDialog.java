@@ -4,7 +4,7 @@ import gwtupload.client.MultiUploader;
 
 import java.util.Vector;
 
-import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.CustomDialogB;
 import com.esferalia.aon.gwt.document.client.richtexttoolbar.RichTextToolbar;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
 import com.esferalia.aon.gwt.document.shared.MailAccount;
@@ -16,8 +16,11 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -27,7 +30,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class SendEmailDialog extends CustomDialog  {
+public abstract class SendEmailDialog extends CustomDialogB  {
 
 	interface Binder extends UiBinder<Widget, SendEmailDialog>{
 		
@@ -41,39 +44,67 @@ public abstract class SendEmailDialog extends CustomDialog  {
 //	@UiField Button sendMailButton;
 	//@UiField Button sendGmailButton;
 	@UiField HorizontalPanel header;
-	
+	@UiField(provided = true) VerticalPanel vp;
+	@UiField(provided = true) AbsolutePanel mailpanel;
 	MailAccount ma;
 
 	public SendEmailDialog(MailAccountList mal, Vector<FileInfo> lote,String url,Boolean isGoogle) {
-		
+		vp = new VerticalPanel();
 		grid = new FlexTable();
 		textEditor = new FlexTable();
-		setCaption("Nuevo Correo");
-		table(mal,url);
-		editor(mal);
-		
-		setWidget(binder.createAndBindUi(this));
-		
-		if(isGoogle){
-			Button sendGmailButton = new Button("Enviar");
-			sendGmailButton.setStyleName("aon-icon-google-gmail aon-finding-toolbar-item");
-			sendGmailButton.addClickHandler(new ClickHandler() {
+		if(mal.getList().size()==0){
+			mailpanel = new AbsolutePanel();
+			mailpanel.setVisible(false);
+			mailpanel.setStyleName("aon-menuItem-no-iconClass");
+			grid.setVisible(false);
+			textEditor.setVisible(false);
+			setCaption("ERROR");
+			Label label = new Label("*Error: No tiene una cuenta de correo asociada.");
+			label.setStyleName("aon-check-document");
+			Button cancel = new Button("Aceptar");
+			cancel.setStyleName("aon-check-button-document");
+			cancel.addClickHandler(new ClickHandler() {
+				
 				@Override
 				public void onClick(ClickEvent event) {
-					onAccept("gmail");
+					onCancel();
 				}
 			});
-			header.add(sendGmailButton);
+			
+			vp.add(label);
+			vp.add(cancel);
+			vp.setCellHorizontalAlignment(cancel,HasAlignment.ALIGN_RIGHT );
+			setWidget(binder.createAndBindUi(this));
+
 		}
-		Button sendMailButton = new Button("Enviar");
-		sendMailButton.setStyleName("aon-icon-accept aon-finding-toolbar-item");
-		sendMailButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onAccept("mail");
+		else{
+			mailpanel = new AbsolutePanel();
+			mailpanel.setVisible(true);
+			setCaption("Nuevo Correo");
+			table(mal,url);
+			editor(mal);
+			setWidget(binder.createAndBindUi(this));
+			if(isGoogle){
+				Button sendGmailButton = new Button("Enviar");
+				sendGmailButton.setStyleName("aon-icon-google-gmail aon-finding-toolbar-item");
+				sendGmailButton.addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						onAccept("gmail");
+					}
+				});
+				header.add(sendGmailButton);
 			}
-		});
-		header.add(sendMailButton);
+			Button sendMailButton = new Button("Enviar");
+			sendMailButton.setStyleName("aon-icon-accept aon-finding-toolbar-item");
+			sendMailButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					onAccept("mail");
+				}
+			});
+			header.add(sendMailButton);
+		}
 	}
 
 	protected abstract void onAccept(String s);
@@ -81,16 +112,19 @@ public abstract class SendEmailDialog extends CustomDialog  {
 	protected abstract void onCancel();
 	
 	private void editor(MailAccountList mal) {
+
 			RichTextArea area = new RichTextArea();
-		    area.setSize("100%", "14em");
+
+			area.setSize("100%", "14em");
 			ListBox lb = (ListBox) grid.getWidget(0,1);
-			
+
+
 			area.setHTML("<div>&nbsp;</div>"+mal.getList().get(lb.getSelectedIndex()).getSignature());
+
 			ma = mal.getList().get(lb.getSelectedIndex());
 		    RichTextToolbar toolbar = new RichTextToolbar(area);
 		    new RichTextToolbar(area);
 		    toolbar.setWidth("100%");
-
 		    textEditor.setWidth("400px");
 		    textEditor.setCellSpacing(0);
 		    textEditor.setWidget(0, 0, toolbar);

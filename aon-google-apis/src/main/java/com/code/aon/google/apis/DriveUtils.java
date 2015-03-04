@@ -192,7 +192,6 @@ public class DriveUtils implements IBlobManager {
 	private static Drive client;
 
 	public static DriveUtils getInstace() {
-		// TODO Apéndice de método generado automáticamente
 		return DRIVEUTILS;
 	}
 	
@@ -609,13 +608,16 @@ public class DriveUtils implements IBlobManager {
 		return drive.files().list().execute();
 	}
 
-	public static File getFile(Drive drive, String fileId) throws IOException, SQLException, KeyStoreException, GeneralSecurityException {
+	public static File getFile(Drive drive, String fileId, Integer id) throws IOException, SQLException, KeyStoreException, GeneralSecurityException {
 		File f = null;
 		
 		FileList fileList =SearchFiles.searchFilesProperties(drive, "oldDriveId",fileId);
 		if(fileList.getItems().size()>0){
 			f = fileList.getItems().get(0);
 			//TODO update bd with new driveId.
+			if(id != null)
+				DBDrive.updateDriveId(f,id);
+			
 		} else
 			try {
 				f = drive.files().get(fileId).execute();
@@ -758,7 +760,7 @@ public class DriveUtils implements IBlobManager {
 	public static File updateFile(FileInfo fileInfo) throws IOException, KeyStoreException, GeneralSecurityException, SQLException {
 		File file = null;
 		try {
-			file = getFile(client, fileInfo.getDriveId());
+			file = getFile(client, fileInfo.getDriveId(),fileInfo.getFileId());
 			if(file.getDescription().equals("OLDRIVE")){
 				String domain = AonUtil.getDomainName();
 				Domain d  = DBConsults.getDomain(domain);
@@ -946,7 +948,7 @@ public class DriveUtils implements IBlobManager {
 		if (rattach.getDriveId() == null) {
 			file = principal(drive, domain, fileInfo);
 		} else {
-			File fileAux = getFile(drive,rattach.getDriveId());
+			File fileAux = getFile(drive,rattach.getDriveId(),fileInfo.getFileId());
 			if (!fileAux.getMd5Checksum().equals(
 					CheckSum.getMD5Checksum(rattach.getData()))) {
 				file = updateFile(new FileInfo());
@@ -990,7 +992,7 @@ public class DriveUtils implements IBlobManager {
 					return false;
 				}
 
-				File fileAux = getFile(drive,fileInfo.getDriveId());
+				File fileAux = getFile(drive,fileInfo.getDriveId(),fileInfo.getFileId());
 				
 				if(fileAux.getDescription().equals("OLDRIVE")){
 					Domain d = DBConsults.getDomain(domain);
@@ -1048,7 +1050,7 @@ public class DriveUtils implements IBlobManager {
 			 {
 		File file = null;
 		try {
-			file = getFile(drive, fileInfo.getDriveId());
+			file = getFile(drive, fileInfo.getDriveId(), fileInfo.getFileId());
 			if(file.getDescription().equals("OLDRIVE")){
 				String domain = AonUtil.getDomainName();
 				Domain d = DBConsults.getDomain(domain);
@@ -1468,7 +1470,6 @@ public class DriveUtils implements IBlobManager {
 	public byte[] getBlob(IBlobObject blobObject, String property) {
 		String domain = AonUtil.getDomainName();
 		DomainGserviceaccount sa = null;
-
 		String driveId = (String) blobObject.getReference(property);
 		if (driveId != null) {
 
@@ -1496,7 +1497,7 @@ public class DriveUtils implements IBlobManager {
 			try {
 				File file = null;
 				try {
-					file = getFile(drive, driveId);
+					file = getFile(drive, driveId,null);
 					if(file.getDescription().equals("OLDRIVE"))
 						drive = DriveUtils.serviceInitializeOld(sa);
 				} catch (SQLException | GeneralSecurityException e) {

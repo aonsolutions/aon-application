@@ -91,12 +91,7 @@ public interface IDocument extends RemoteService{
 	public void editCategory(String name, Integer categoryId);
 
 	public void deleteCategory(Integer categoryId);
-	
-	public Vector<FileInfo> addToLote(Vector<FileInfo> fvector);
-	
-	public Vector<FileInfo> getLote();
-	
-	public void resetLote();
+
 	public MailAccountList getMailAccounts();
 	
 	public void sendEmail(MailAccount ma, Emessage em);
@@ -109,7 +104,7 @@ public interface IDocument extends RemoteService{
 	
 	public Vector<FileInfo> insertFileMultiple(FileInfo fi);
 	
-	public void copyLink(FileInfo doc,String l);
+	public String copyLink(FileInfo doc,String l);
 	
 	
 }

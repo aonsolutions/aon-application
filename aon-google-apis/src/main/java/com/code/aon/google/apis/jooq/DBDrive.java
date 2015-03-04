@@ -35,6 +35,7 @@ import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveData;
 import com.code.aon.google.apis.FileInfo;
 import com.code.aon.pool.AonConnectionException;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.google.sql.SQLConstants;
 import com.esferalia.aon.google.sql.AbstractSQL.Domain;
 import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
@@ -42,8 +43,74 @@ import com.esferalia.aon.google.sql.AbstractSQL.Rattach;
 import com.esferalia.aon.google.sql.SQLConstants.DomainColumns;
 import com.esferalia.aon.google.sql.SQLConstants.DomainGserviceaccountColumns;
 import com.esferalia.aon.google.sql.SQLConstants.RattachColumns;
+import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.Property;
 
 public class DBDrive {
+	
+	public static void updateDriveId(File f, Integer id) throws SQLException{
+		String domain = AonUtil.getDomainName();
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			String aonType = "";
+			for (Property p : f.getProperties()) {
+				if(p.getKey().equals("aontype"))
+					aonType = p.getValue();
+			}
+			switch (aonType) {
+			case "registry":	
+				dslContext.update(RATTACH)
+					.set(RATTACH.DRIVE_ID, f.getId())
+					.where(RATTACH.ID.eq(id)).execute();
+				break;
+			case "contract":
+				dslContext.update(CONTRACT_ATTACH)
+				.set(CONTRACT_ATTACH.DRIVEID, f.getId())
+				.where(CONTRACT_ATTACH.ID.eq(id)).execute();
+				break;
+			case "item":
+				dslContext.update(IATTACH)
+				.set(IATTACH.DRIVEID, f.getId())
+				.where(IATTACH.ID.eq(id)).execute();
+				break;
+			case "invoice":
+				dslContext.update(INVOICE_ATTACH)
+				.set(INVOICE_ATTACH.DRIVEID, f.getId())
+				.where(INVOICE_ATTACH.ID.eq(id)).execute();
+				break;
+			case "offer":
+				dslContext.update(OFFER_ATTACH)
+				.set(OFFER_ATTACH.DRIVEID, f.getId())
+				.where(OFFER_ATTACH.ID.eq(id)).execute();
+				break;
+			case "payroll":
+				dslContext.update(PAYROLL_BATCH_ATTACH)
+				.set(PAYROLL_BATCH_ATTACH.DRIVEID, f.getId())
+				.where(PAYROLL_BATCH_ATTACH.ID.eq(id)).execute();
+				break;
+			case "project":
+				dslContext.update(PROJECT_ATTACH)
+				.set(PROJECT_ATTACH.DRIVEID, f.getId())
+				.where(PROJECT_ATTACH.ID.eq(id)).execute();
+				break;
+			case "sepe":
+				dslContext.update(SEPE_BATCH_ATTACH)
+				.set(SEPE_BATCH_ATTACH.DRIVEID, f.getId())
+				.where(SEPE_BATCH_ATTACH.ID.eq(id)).execute();
+				break;
+			default:
+				break;
+			}
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
 	
 	//REGISTRY ATTACH
 		public static Vector<FileInfo> getRAttach(String domain,
@@ -214,7 +281,7 @@ public class DBDrive {
 			}
 		}
 		
-		//CONTRACT ATTACH
+	//CONTRACT ATTACH
 		public static Vector<FileInfo> getContractAttach(String domain,
 				Vector<FileInfo> attachs) throws AonConnectionException,
 				SQLException {
@@ -428,7 +495,8 @@ public class DBDrive {
 					connection.close();
 			}
 		}
-		//ITEM ATTACH
+	
+	//ITEM ATTACH
 		public static Vector<FileInfo> getIattach(String domain,
 				Vector<FileInfo> attachs) throws AonConnectionException,
 				SQLException {
@@ -611,7 +679,7 @@ public class DBDrive {
 			}
 		}
 		
-		//INVOICE ATTACH
+	//INVOICE ATTACH
 		public static Vector<FileInfo> getInvoiceAttach(String domain,
 				Vector<FileInfo> attachs) throws AonConnectionException,
 				SQLException {
@@ -828,7 +896,7 @@ public class DBDrive {
 			}
 		}
 		
-		//OFFER ATTACH
+	//OFFER ATTACH
 		public static Vector<FileInfo> getOfferAttach(String domain,
 				Vector<FileInfo> attachs) throws AonConnectionException,
 				SQLException {
@@ -1010,7 +1078,7 @@ public class DBDrive {
 			}
 		}
 		
-		//PAYROLL BATCH ATTACH
+	//PAYROLL BATCH ATTACH
 		public static Vector<FileInfo> getPayrollAttach(String domain,
 				Vector<FileInfo> attachs) throws AonConnectionException,
 				SQLException {
@@ -1199,7 +1267,7 @@ public class DBDrive {
 			}
 		}
 		
-		//PROJECT ATTACH
+	//PROJECT ATTACH
 		public static Vector<FileInfo> getProjectAttach(String domain,
 				Vector<FileInfo> attachs) throws AonConnectionException,
 				SQLException {

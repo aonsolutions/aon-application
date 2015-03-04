@@ -49,6 +49,7 @@ public class DownloadFilesServlet extends HttpServlet {
         String domain = AonUtil.getDomainName();
         Integer m = Integer.parseInt(mtype);
         String mimetype = MimeType.values()[m].getName();
+        Integer idFile = Integer.parseInt(fileId);
         FileInfo fi=null;
         if(multiple.equals("true")){
         	Vector<com.esferalia.aon.gwt.document.shared.FileInfo> fvector = DocumentsServlet.getDown();
@@ -76,7 +77,7 @@ public class DownloadFilesServlet extends HttpServlet {
         				}
         				com.google.api.services.drive.model.File f = null;
 						try {
-							f = DriveUtils.getFile(d, fi2.getDriveId());
+							f = DriveUtils.getFile(d, fi2.getDriveId(), fi2.getFileId());
 							if(f.getDescription().equals("OLDRIVE"))
 								d = DriveUtils.serviceInitializeOld(g);
 						} catch (SQLException | GeneralSecurityException e) {
@@ -137,7 +138,7 @@ public class DownloadFilesServlet extends HttpServlet {
         	}
 			com.google.api.services.drive.model.File f = null;
 			try {
-				f = DriveUtils.getFile(d, driveId);
+				f = DriveUtils.getFile(d, driveId, idFile);
 			} catch (SQLException | GeneralSecurityException e) {
 				e.printStackTrace();
 			}

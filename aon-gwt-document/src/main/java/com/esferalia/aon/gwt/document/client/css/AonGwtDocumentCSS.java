@@ -102,4 +102,11 @@ public interface AonGwtDocumentCSS extends CssResource{
 	@ClassName("gwt-PopupPanel-document")
 	String gwtPopupPanelDocument();
 
+	@ClassName("aon-check-document")
+	String aonCheckDocument();
+	
+	@ClassName("aon-check-button-document")
+	String aonCheckButtonDocument();
+	
+	
 }

@@ -47,6 +47,8 @@ import com.code.aon.common.util.AonFile;
 import com.code.aon.google.apis.DriveFile;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.GmailUtils;
+import com.code.aon.google.apis.UrlShortenerUtils;
+import com.code.aon.google.apis.drive.SearchFiles;
 import com.code.aon.google.apis.drive.ShareFiles;
 import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.pool.AonConnectionException;
@@ -91,7 +93,9 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.ParentReference;
 import com.google.api.services.drive.model.Permission;
+import com.google.api.services.drive.model.Property;
 import com.google.api.services.gmail.Gmail;
+import com.google.api.services.urlshortener.Urlshortener;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.sun.pdfview.PDFFile;
 import com.sun.pdfview.PDFPage;
@@ -851,7 +855,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 				}
 			}
 			else{
-				// dbn badago! Drive-ra igo ta banatu!
+				//TODO  dbn badago! Drive-ra igo ta banatu!
 			}
 			
 		}
@@ -886,20 +890,27 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			throw new IllegalArgumentException(e);
 		}
 	}
-	public void copyLink(FileInfo doc,String l){
+	public String copyLink(FileInfo doc,String l){
 		String link;
+		Urlshortener u = null;
+		DomainGserviceaccount g = null;
+		try {
+			g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(doc.getDomain(),doc.getDomainId());
+			try {
+				u = UrlShortenerUtils.serviceInitialize(g);
+			} catch (IOException | GeneralSecurityException e) {
+				e.printStackTrace();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
 		if(doc.getDriveId()!=null){
 			Drive d = null;
-			DomainGserviceaccount g = null;
         	if(doc.getIsDrive()){
         		d = GoogleDriveController.dconnection;
         	}
         	else{
-        		try {
-					g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(doc.getDomain(),doc.getDomainId());
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
 				try {
 					d = DriveUtils.serviceInitialize(g);
 				} catch (IOException | GeneralSecurityException e) {
@@ -908,7 +919,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
         	}
 			com.google.api.services.drive.model.File f = null;
 			try {
-				f = DriveUtils.getFile(d, doc.getDriveId());
+				f = DriveUtils.getFile(d, doc.getDriveId(),doc.getFileId());
 				if(f.getTitle().equals("OLDRIVE"))
 					d = DriveUtils.serviceInitializeOld(g);
 			} catch (IOException | SQLException | GeneralSecurityException e) {
@@ -929,8 +940,23 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 					e1.printStackTrace();
 				}
 			}
+			link= f.getAlternateLink();
+			Property property;
+			try {
+				property = d.properties().get(f.getId(), "shortUrl").execute();
+				link = property.getValue();
+			} catch (IOException e) {
+				Property property1 = new Property();
+				property1.setKey("shortUrl");
+				try {
+					property1.setValue(UrlShortenerUtils.getShortUrl(u, f.getAlternateLink()));
+					property = d.properties().insert(f.getId(), property1).execute();
+					link = property.getValue();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
 			
-			link = f.getAlternateLink();
 		}
 		else{
 			doc = setmd5(doc);
@@ -941,12 +967,19 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 				l = l.substring(0,pos2);
 			}
 			link = l+"/aonDocuments/"+ doc.getFileId() +"-"+ md5;
+			try {
+				link = UrlShortenerUtils.getShortUrl(u, l+"/aonDocuments/"+ doc.getFileId() +"-"+ md5);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 
 			//link = l+"/aonDocumentsViewer/"+ "?file_id="+ doc.getFileId();
 		}
-		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-		StringSelection data = new StringSelection(link);
-		clipboard.setContents(data, data);
+		//Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		//StringSelection data = new StringSelection(link);
+		//clipboard.setContents(data, data);
+		
+		return link;
 	}
 	public FileInfo setmd5(FileInfo doc){
 		ViewerUtils.RAttach rattach = null;
@@ -958,17 +991,24 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		}
 		doc.setDriveId(rattach.driveId);
 		doc.setDomainId(rattach.domainId);
+		com.esferalia.aon.google.sql.AbstractSQL.Domain dom = null;
+		try {
+			dom = com.code.aon.google.apis.jooq.DBConsults.getDomain(AonUtil.getDomainName(), rattach.domainId);
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		doc.setDomain(dom.getName());
 		if(doc.getDriveId()!= null){
         	Drive d = null;
+        	DomainGserviceaccount g = null;
         	if(doc.getIsDrive()){
         		d = GoogleDriveController.dconnection;
         	}
         	else{
-        		DomainGserviceaccount g = null;
+        		
         		try {
 					g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(doc.getDomain(), doc.getDomainId());
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				try {
@@ -980,9 +1020,8 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
         	}
 			com.google.api.services.drive.model.File f = null;
 			try {
-				f = d.files().get(doc.getDriveId()).execute();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				f = DriveUtils.getFile(d, doc.getDriveId(),doc.getFileId());
+			} catch (IOException | SQLException | GeneralSecurityException e) {
 				e.printStackTrace();
 			}
 			doc.setMd5(f.getMd5Checksum());
@@ -1044,7 +1083,8 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			if(doc.getDriveId() != null){ 
 				DomainGserviceaccount g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(doc.getDomain(), doc.getDomainId());
 				Drive d = DriveUtils.serviceInitialize(g);
-				File f = d.files().get(doc.getDriveId()).execute();
+				File f = DriveUtils.getFile(d, doc.getDriveId(), doc.getFileId());//d.files().get(doc.getDriveId()).execute();
+				
 				in = DriveUtils.downloadFile(d, f);
 			}
 			else {
@@ -1292,51 +1332,6 @@ public void deleteCategory(Integer categoryId) {
 	}
 }
 
-Vector<FileInfo> batch = new Vector<FileInfo>();
-public Vector<FileInfo> getLote(){
-	return batch;
-}
-
-public void resetLote(){
-	batch = new Vector<FileInfo>();
-}
-
-public Vector<FileInfo> addToLote(Vector<FileInfo> fvector) {
-	batch.addAll(fvector);
-	return batch;
-	/*String domain  = AonUtil.getDomainName();
-	BatchDocument bd = (BatchDocument) AonUtil.getRegisteredBean(BATCH_DOCUMENT_CONTROLLER_NAME);
-	RegistryAttachment attach = null;
-	try {
-		attach = DBConsults.getRegistryAttachment(fi.getFileId(), domain);
-		if(attach.getDriveId() != null){ 
-			DomainGserviceaccount g = DatabaseSync.getServiceAccount(AonUtil.getDomainName());
-			Drive d = DriveUtils.serviceInitialize(g);
-			File f = d.files().get(attach.getDriveId()).execute();
-			InputStream in = DriveUtils.downloadFile(d, f);
-			byte[] b=IOUtils.toByteArray(in);
-			attach.setData(b);
-		}
-		else {
-			ViewerUtils.RAttach rattach = ViewerUtils.getRAttach(fi.getFileId());
-			byte[] b = rattach.bytes;				
-			attach.setData(b);
-		}
-	} catch (AonConnectionException e) {
-		e.printStackTrace();
-	} catch (SQLException e) {
-		e.printStackTrace();
-	} catch (KeyStoreException e) {
-		e.printStackTrace();
-	} catch (IOException e) {
-		e.printStackTrace();
-	} catch (GeneralSecurityException e) {
-		e.printStackTrace();
-	}
-	
-	if(attach!= null) bd.addToBatch((IAttachment) attach );*/
-}
-
 //-------------------- Enviar Email
 
 public MailAccountList getMailAccounts() {
@@ -1470,7 +1465,8 @@ public MailAccountList getMailAccounts() {
 			} finally {
 				releaseFacesContext();
 			}
-		
+			setOuts(new Vector<FileInfo>());
+
 	}
 	
 	public void sendGmail(MailAccount ma, Emessage em) {
@@ -1501,8 +1497,12 @@ public MailAccountList getMailAccounts() {
 							e.printStackTrace();
 						}
 					}
-					com.google.api.services.drive.model.File f = d.files()
-							.get(fi.getDriveId()).execute();
+					com.google.api.services.drive.model.File f= null;
+					try {
+						f = DriveUtils.getFile(d, fi.getDriveId(), fi.getFileId());
+					} catch (SQLException | GeneralSecurityException e) {
+						e.printStackTrace();
+					}
 					InputStream in = DriveUtils.downloadFile(d, f);
 					byte[] b = com.code.aon.google.apis.Utils
 							.InputStreamToByte(in);
@@ -1571,7 +1571,8 @@ public MailAccountList getMailAccounts() {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	
+		setOuts(new Vector<FileInfo>());
+
 	}
 
 public  ContactList getContacts() {	
@@ -1696,6 +1697,7 @@ public Vector<FileInfo> insertFileMultiple(FileInfo fi) {
 		e.printStackTrace();
 	}
 	}
+	setOuts(new Vector<FileInfo>());
 	return files;
 }
 // ----------------------------------------------------------------------------

@@ -181,11 +181,10 @@ public class Documents extends Composite implements EntryPoint {
 				FileInfo object;
 				if(selFiles.size() == 1) object = selFiles.get(0);
 				else object= dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
-				idoc.copyLink(object,GWT.getModuleBaseURL(), new AsyncCallback<Void>() {
+				idoc.copyLink(object,GWT.getModuleBaseURL(), new AsyncCallback<String>() {
 					
 					@Override
-					public void onSuccess(Void result) {
-						
+					public void onSuccess(String result) {
 					}
 					
 					@Override
@@ -327,9 +326,10 @@ public class Documents extends Composite implements EntryPoint {
 				}
 				addSeparator();
 				if(selFiles.size() <= 1){
-					copyLinkItem = addItem("Copiar Link",copyLinkCommand,
+					/*copyLinkItem = addItem("Copiar Link",copyLinkCommand,
 							"aon-icon-copy",AON.AON_ICON_CMD_BUTTON);
 					copyLinkItem.setEnabled(true);number++;copyBool = true;
+					*/
 				}
 				shareItem = addItem("Compartir",shareCommand,
 						"aon-icon-google-drive",AON.AON_ICON_CMD_BUTTON);
@@ -671,7 +671,6 @@ public class Documents extends Composite implements EntryPoint {
 				Window.alert(caught.toString());
 			}
 		});
-		getlot();
 	}
 	
 	@Override
@@ -4250,34 +4249,15 @@ public class Documents extends Composite implements EntryPoint {
 			Vector<FileInfo> fvector = new Vector<FileInfo>();
 			if(multiple) fvector = selFiles;
 			else fvector.add(fi);
-			idoc.addToLote(fvector, new AsyncCallback<Vector<FileInfo>>() {
-				
-				@Override
-				public void onSuccess(Vector<FileInfo> result) {
-					lote = result;
-				}
-				
-				@Override
-				public void onFailure(Throwable caught) {}
-			});
+			lote.addAll(fvector);
+			
 			//bd.addToBatch(new  );
 	}
 	
 	Boolean isLote = false;
-	Vector<FileInfo> lote ;
+	Vector<FileInfo> lote = new Vector<FileInfo>();
 	
-	private void getlot() {
-		idoc.getLote(new AsyncCallback<Vector<FileInfo>>() {
-			
-			@Override
-			public void onSuccess(Vector<FileInfo> result) {
-				lote= result;
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {}
-		});
-	}
+
 	
 	@UiHandler("loteButton")
 	void lote(ClickEvent event) {
@@ -4292,25 +4272,15 @@ public class Documents extends Composite implements EntryPoint {
 		isServiconvenios = false;
 		html.setVisible(false);
 		filterButton.setVisible(false);
-		idoc.getLote(new AsyncCallback<Vector<FileInfo>>() {
+
+		for(FileInfo f : dataProvider.getList()){
+			dataGrid.getSelectionModel().setSelected(f, false);
+		}
+		dataProvider = new ListDataProvider<FileInfo>(lote);
+		dataProvider.addDataDisplay(dataGrid);
+		updateDatagridColumns();
+		dataGrid.redraw();
 			
-			@Override
-			public void onSuccess(Vector<FileInfo> result) {
-				lote = result;
-				for(FileInfo f : dataProvider.getList()){
-					dataGrid.getSelectionModel().setSelected(f, false);
-				}
-				dataProvider = new ListDataProvider<FileInfo>(result);
-				dataProvider.addDataDisplay(dataGrid);
-				updateDatagridColumns();
-				dataGrid.redraw();
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				
-			}
-		});
 	
 	}
 	
@@ -4326,12 +4296,6 @@ public class Documents extends Composite implements EntryPoint {
 	
 	@UiHandler("clean")
 	void cleanLote(ClickEvent event) {
-		idoc.resetLote(new AsyncCallback<Void>() {		
-			@Override
-			public void onSuccess(Void result) {}	
-			@Override
-			public void onFailure(Throwable caught) {}
-		});
 		lote = new Vector<FileInfo>();
 		for(FileInfo f : dataProvider.getList()){
 			dataGrid.getSelectionModel().setSelected(f, false);
@@ -4399,7 +4363,6 @@ public class Documents extends Composite implements EntryPoint {
 						hide();
 					}
 				};
-				Window.alert("alala");
 				sed.addStyleName("gwt-PopupPanel-document");
 				sed.setGlassEnabled(true);
 				sed.show();					

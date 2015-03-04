@@ -203,3 +203,12 @@
 	left:35% !important;
 	padding:0 !important;
 }
+
+
+.aon-check-document{
+	color: red;	
+}
+
+.aon-check-button-document{
+	padding-right: 0px;	
+}

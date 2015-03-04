@@ -95,6 +95,11 @@
 			<version>v3-rev44-1.15.0-rc</version>
 		</dependency>
 		<dependency>
+      		<groupId>com.google.apis</groupId>
+      		<artifactId>google-api-services-urlshortener</artifactId>
+      		<version>v1-rev39-1.19.1</version>
+    	</dependency>
+		<dependency>
 			<groupId>com.google.apis</groupId>
 			<artifactId>google-api-services-drive</artifactId>
 			<version>v2-rev102-1.17.0-rc</version>

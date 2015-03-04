@@ -52,6 +52,7 @@ public class DownloadProductServlet extends HttpServlet {
         String domain_id = p_request.getParameter("domain_id");
         Integer domainId = Integer.parseInt(domain_id);
         String domain = AonUtil.getDomainName();
+        Integer idFile = Integer.parseInt(fileId);
         
         byte[] b = null ;
         
@@ -72,7 +73,7 @@ public class DownloadProductServlet extends HttpServlet {
         	
 			com.google.api.services.drive.model.File f = null;
 			try {
-				f = DriveUtils.getFile(d, driveId);
+				f = DriveUtils.getFile(d, driveId, idFile);
 				if(f.getDescription().equals("OLDRIVE"))
 					d = DriveUtils.serviceInitializeOld(g);
 			} catch (SQLException | GeneralSecurityException e) {
