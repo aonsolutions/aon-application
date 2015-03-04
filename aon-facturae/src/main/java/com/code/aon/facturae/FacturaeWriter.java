@@ -240,26 +240,42 @@ public class FacturaeWriter {
 		ContactDetailsType contactDetails = new ContactDetailsType();
 		RegistryMedia phone = getRegistryMedia(registry, MediaType.FIXED_PHONE);
 		if ( phone != null ) {
-			contactDetails.setTelephone( phone.getValue() );
+			contactDetails.setTelephone(Util.toTextMax15Type(phone.getValue()) );
 		}
 		RegistryMedia fax = getRegistryMedia(registry, MediaType.FAX);
 		if ( fax != null ) {
-			contactDetails.setTeleFax( fax.getValue() );
+			contactDetails.setTeleFax(Util.toTextMax15Type(fax.getValue()) );
 		}
 		RegistryMedia email = getRegistryMedia(registry, MediaType.EMAIL);
 		if ( email != null ) {
-			contactDetails.setElectronicMail( email.getValue() );
+			contactDetails.setElectronicMail(Util.toTextMax60Type(email.getValue()) );
 		}
 		RegistryMedia web = getRegistryMedia(registry, MediaType.WEB);
 		if ( web != null ) {
-			contactDetails.setWebAddress( web.getValue() );
+			contactDetails.setWebAddress(Util.toTextMax60Type(web.getValue()) );
 		}
 		return contactDetails;
 	}
 	
+	private String[] getNameSplited( String name ) {
+		String[] splits = new String[2];
+		String _name = StringUtils.trimToNull(name);
+		int index = StringUtils.lastIndexOf(_name, " ");
+		if ( index != -1 ) {
+			splits[0] = StringUtils.substring(_name, 0, index);
+			splits[1] = StringUtils.substring(_name, index+1);
+		} else {
+			splits[0] = StringUtils.defaultIfEmpty(_name, "...");
+			splits[1] = "...";			
+		}
+		return splits;
+	}
+	
 	private IndividualType getIndividual( Registry registry, String name, IAddress address ) throws ManagerBeanException {
 		IndividualType individualType = new IndividualType();
-		individualType.setName( Util.toTextMax40Type(name) );
+		String[] nameSplited = getNameSplited(name);
+		individualType.setName( Util.toTextMax40Type(nameSplited[0]) );
+		individualType.setFirstSurname( Util.toTextMax40Type(nameSplited[1]) );
 		if ( address != null ) {
 			CountryType country = getCountry(address.getGeozone());
 			if ( CountryType.ESP.equals(country) ) {
@@ -289,19 +305,19 @@ public class FacturaeWriter {
 	
 	private RegistrationDataType getRegistrationData( RecordData recordData ) {
 		RegistrationDataType registrationData = new RegistrationDataType();
-		registrationData.setRegisterOfCompaniesLocation( StringUtils.left(recordData.getDescription(), 20) );
-		registrationData.setSheet( recordData.getSheet() );
-		registrationData.setFolio( recordData.getPage() );
-		registrationData.setSection( recordData.getSection() );
-		registrationData.setVolume( recordData.getVolume() );
-		registrationData.setAdditionalRegistrationData( StringUtils.left(recordData.getNotary(), 20) );
+		registrationData.setRegisterOfCompaniesLocation( Util.toTextMax20Type(recordData.getDescription()) );
+		registrationData.setSheet( Util.toTextMax20Type(recordData.getSheet()) );
+		registrationData.setFolio( Util.toTextMax20Type(recordData.getPage()) );
+		registrationData.setSection( Util.toTextMax20Type(recordData.getSection()) );
+		registrationData.setVolume( Util.toTextMax20Type(recordData.getVolume()) );
+		registrationData.setAdditionalRegistrationData( Util.toTextMax20Type(recordData.getNotary()) );
 		return registrationData;
 	}
 	
 	private LegalEntityType getLegalEntity( Registry registry, String name, String tradeName, IAddress address ) throws ManagerBeanException {
 		LegalEntityType legalEntityType = new LegalEntityType();
-		legalEntityType.setCorporateName(name);
-		legalEntityType.setTradeName(tradeName);
+		legalEntityType.setCorporateName(Util.toTextMax80Type(name));
+		legalEntityType.setTradeName(Util.toTextMax40Type(tradeName));
 		RecordData recordData = getRecordData(registry);
 		if ( recordData != null ) {
 			legalEntityType.setRegistrationData( getRegistrationData(recordData) );
@@ -324,9 +340,9 @@ public class FacturaeWriter {
 		PersonTypeCodeType personType = getPersonTypeCode(registry);
 		taxIdentification.setPersonTypeCode( personType );
 		taxIdentification.setResidenceTypeCode( getResidenceTypeCode(registry) );
-		taxIdentification.setTaxIdentificationNumber( document );
+		taxIdentification.setTaxIdentificationNumber( Util.toTextMax30Type(document) );
 		party.setTaxIdentification(taxIdentification);
-		party.setPartyIdentification( String.valueOf(registry.getId()) );
+		party.setPartyIdentification( Util.toTextMax10Type(String.valueOf(registry.getId())) );
 		if ( personType == PersonTypeCodeType.F ) {
 			party.setIndividual( getIndividual(registry, name, address) );
 		} else {
@@ -468,8 +484,8 @@ public class FacturaeWriter {
 	
 	private InvoiceHeaderType getInvoiceHeader() {
 		InvoiceHeaderType invoiceHeader = new InvoiceHeaderType();
-		invoiceHeader.setInvoiceNumber( String.valueOf(invoice.getNumber()) );
-		invoiceHeader.setInvoiceSeriesCode( String.valueOf(invoice.getSeries()) );
+		invoiceHeader.setInvoiceNumber(Util.toTextMax20Type(String.valueOf(invoice.getNumber())) );
+		invoiceHeader.setInvoiceSeriesCode(Util.toTextMax20Type(String.valueOf(invoice.getSeries())));
 		// Factura Completa
 		invoiceHeader.setInvoiceDocumentType( InvoiceDocumentTypeType.FC );
 		// Original
@@ -653,8 +669,11 @@ public class FacturaeWriter {
 	}
 
 	private PaymentMeans getPaymentMeans( PayMethod payMethod ) {
-		PaymentMeans paymentMeans = PaymentMeans.getPaymentMeans(payMethod.getType());
-		return (paymentMeans != null) ? paymentMeans : PaymentMeans.ESPECIALES;
+		PaymentMeans paymentMeans = null;
+		if ( payMethod != null ) {
+			paymentMeans = PaymentMeans.getPaymentMeans(payMethod.getType());	
+		}
+		return (paymentMeans != null) ? paymentMeans : PaymentMeans.AL_CONTADO;
 	}
 	
 	private InstallmentType getInstallment( Finance finance ) {
@@ -662,10 +681,8 @@ public class FacturaeWriter {
 		installment.setInstallmentDueDate( Util.toXMLCalendar(finance.getDueDate()) );
 		installment.setInstallmentAmount( finance.getAmount() );
 		PaymentMeans paymentMeans = null;
-		if ( finance.getPayMethod() != null ) {
-			paymentMeans = getPaymentMeans( finance.getPayMethod() );
-			installment.setPaymentMeans( paymentMeans.getValue() );			
-		}
+		paymentMeans = getPaymentMeans( finance.getPayMethod() );
+		installment.setPaymentMeans( paymentMeans.getValue() );			
 		if ( finance.getBankAccount() != null ) {
 			AccountType account = new AccountType();
 			account.setIBAN( finance.getBankAccount().toString() );

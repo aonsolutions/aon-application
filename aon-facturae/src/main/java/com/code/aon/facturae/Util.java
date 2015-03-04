@@ -25,7 +25,7 @@ public class Util {
 		StringBuffer id = new StringBuffer( enterprise.getRegistry().getDocument() );
 		id.append( String.valueOf(invoice.getNumber()) );
 		id.append( invoice.getSeries() );
-		return id.toString();
+		return toTextMax70Type(id.toString());
 	}
 	
 	public static XMLGregorianCalendar toXMLCalendar( Date date ) {
@@ -64,27 +64,43 @@ public class Util {
 	}
 
 	public static String toTextMax10Type( String value ) {
-		return StringUtils.substring(value, 0, 10);
+		return StringUtils.left(value, 10);
+	}
+
+	public static String toTextMax15Type( String value ) {
+		return StringUtils.left(value, 15);
 	}
 	
 	public static String toTextMax20Type( String value ) {
-		return StringUtils.substring(value, 0, 20);
+		return StringUtils.left(value, 20);
+	}
+
+	public static String toTextMax30Type( String value ) {
+		return StringUtils.left(value, 30);
 	}
 	
 	public static String toTextMax40Type( String value ) {
-		return StringUtils.substring(value, 0, 40);
+		return StringUtils.left(value, 40);
 	}
 
 	public static String toTextMax50Type( String value ) {
-		return StringUtils.substring(value, 0, 50);
+		return StringUtils.left(value, 50);
+	}
+
+	public static String toTextMax60Type( String value ) {
+		return StringUtils.left(value, 60);
+	}
+	
+	public static String toTextMax70Type( String value ) {
+		return StringUtils.left(value, 70);
 	}
 	
 	public static String toTextMax80Type( String value ) {
-		return StringUtils.substring(value, 0, 80);
+		return StringUtils.left(value, 80);
 	}
 
 	public static String toTextMax2500Type( String value ) {
-		return StringUtils.substring(value, 0, 2500);
+		return StringUtils.left(value, 2500);
 	}
 	
 }
