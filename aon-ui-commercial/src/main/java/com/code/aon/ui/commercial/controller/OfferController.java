@@ -30,6 +30,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
@@ -929,7 +930,7 @@ public class OfferController extends HeaderObjectController implements ISignatur
 	}
 
 	@Override
-	public IAttachment newAttachment(ITransferObject parent) {
+	public IAttachment newAttachment(ITransferObject parent, MimeType type) {
 		OfferAttachment attachment = new OfferAttachment();
 		attachment.setOffer((Offer) parent);
 		return attachment;
@@ -946,8 +947,11 @@ public class OfferController extends HeaderObjectController implements ISignatur
 	}
 
 	@Override
-	public IAttachment getUnsignedAttachment(ITransferObject to) {
-		return generateReportAttachment(to);
+	public IAttachment getUnsignedAttachment(ITransferObject to, MimeType mimeType) {
+		if ( mimeType == MimeType.MIME_PDF ) {
+			return generateReportAttachment(to);	
+		}
+		return null;
 	}
 
 	@Override

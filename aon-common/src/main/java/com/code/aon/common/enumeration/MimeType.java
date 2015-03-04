@@ -179,7 +179,13 @@ public enum MimeType implements IResourceable {
     /**
      * Without extension file MIME Type
      */
-    MIME_OCTECT_STREAM ("application/octet-stream","");
+    MIME_OCTECT_STREAM ("application/octet-stream",""),
+    
+    /**
+     * Signed Facturae file MIME Type.
+     */
+    MIME_XSIG ("text/xml", "xsig");
+
     
     /**
      * Messages key prefix. 

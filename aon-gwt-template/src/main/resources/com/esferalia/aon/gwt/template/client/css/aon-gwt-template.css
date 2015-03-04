@@ -57,6 +57,7 @@
 .gwt-PopupPanel-template{
 	top:20% !important;
 	left:35% !important;
+	padding:0 !important
 }
 .searchPanel-template {
 	left: 1em !important;
@@ -82,3 +83,19 @@
 	font-size: 16px;
 	height: 16px;
 }
+
+.aon-info-content-template{
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 10px;
+	padding-top: 5px;
+}
+
+.aon-info-title-template{
+	font-weight: bold;
+}
+
+.aon-info-rest-template{
+	padding-left: 20px;
+}
+

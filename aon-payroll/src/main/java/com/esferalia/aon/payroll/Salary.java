@@ -37,6 +37,7 @@ import com.esferalia.aon.salary.deduction.DeductionsFactoryContext;
 import com.esferalia.aon.salary.deduction.DeductionsFactoryManager;
 import com.esferalia.aon.salary.deduction.IDeductionsFactory;
 import com.esferalia.aon.salary.deduction.IDeductionsFactoryContext;
+import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.payment.IPaymentsFactory;
 import com.esferalia.aon.salary.payment.IPaymentsFactoryContext;
 import com.esferalia.aon.salary.payment.Payments;
@@ -143,9 +144,14 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 	// *******************************************************
 	@Transient
 	public String getSalaryData(String name) {
+		return getSalaryData(name,String.class);
+	}
+
+	@Transient
+	public <T> T getSalaryData(String name, Class<T> type) {
 		for (SalaryData salaryData : salaryDatas) {
 			if ( name.equals(salaryData.getName()) )
-				return salaryData.getExpression();
+				return ExpressionContext.eval(salaryData.getExpression(), type);
 		}
 		return null;
 	}

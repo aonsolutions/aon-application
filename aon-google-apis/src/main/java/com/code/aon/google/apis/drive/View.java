@@ -15,7 +15,17 @@ public class View {
 			if(p.getKey().equals("fileId")){
 				System.out.println("   --> DB-ID:"+p.getValue());
 			}
+			if(p.getKey().equals("oldDriveId")){
+				System.out.println("   --> OLD DRIVE ID: "+ p.getValue());
+			}
 		}
+		System.out.println("");
+	}
+	
+	public static void file(File f, String driveId){
+		System.out.println("> "+f.getTitle());
+		System.out.println("   --> ID:"+f.getId());
+		System.out.println("   --> OLD DRIVE ID: "+ driveId);
 		System.out.println("");
 	}
 	

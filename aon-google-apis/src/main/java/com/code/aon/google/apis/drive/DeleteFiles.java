@@ -22,8 +22,9 @@ import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DBConsults;
+import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.pool.AonConnectionException;
-import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
+import com.esferalia.aon.google.sql.AbstractSQL.Domain;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
@@ -187,9 +188,10 @@ public class DeleteFiles {
 	public static void act(String domain) throws KeyStoreException,
 			IOException, GeneralSecurityException, SQLException,
 			AonConnectionException {
-		DomainGserviceaccount d = DatabaseSync.getServiceAccount(domain);
-		if (d.getClientId() != null) {
-			Drive drive = DriveUtils.serviceInitialize(d);
+		Domain d = DBConsults.getDomain(domain);
+		DomainGserviceaccount g = DBConsults.getServiceAccount(domain, d.getId());
+		if (g.getClientId() != null) {
+			Drive drive = DriveUtils.serviceInitialize(g);
 			View.domain(domain);
 
 			if (action.equals("all")) {

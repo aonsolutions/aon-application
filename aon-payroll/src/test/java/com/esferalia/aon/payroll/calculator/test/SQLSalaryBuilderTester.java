@@ -27,7 +27,7 @@ import com.esferalia.aon.salary.payment.IPayment;
 
 
 
-public class SQLSalaryBuilderTester extends  AbstractSalaryBuilder {
+public class SQLSalaryBuilderTester<T extends ISalary> extends  AbstractSalaryBuilder<T> {
 
 	private static final String SALARY_SQL = "SELECT *"
 									+ " FROM " + SQLConstants.SALARY

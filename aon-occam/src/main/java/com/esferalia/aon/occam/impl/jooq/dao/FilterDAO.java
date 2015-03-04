@@ -1,0 +1,164 @@
+package com.esferalia.aon.occam.impl.jooq.dao;
+
+import java.util.Date;
+
+import org.jooq.Condition;
+import org.jooq.Field;
+
+import com.esferalia.aon.occam.api.model.Filter;
+
+public class FilterDAO implements Filter {
+	
+	public static class PropertyDAO<T> implements Property<T> {
+		
+		private Field<T> field;
+		
+		public PropertyDAO(Field<T> field) {
+			this.field = field;
+		}
+
+		@Override
+		public FilterDAO eq(T t) {
+			return new FilterDAO(field.eq(t));
+		}
+
+		@Override
+		public FilterDAO ne(T t) {
+			return new FilterDAO(field.ne(t));
+		}
+
+		@Override
+		public FilterDAO le(T t) {
+			return new FilterDAO(field.le(t));
+		}
+
+		@Override
+		public FilterDAO lt(T t) {
+			return new FilterDAO(field.lt(t));
+		}
+
+		@Override
+		public FilterDAO gt(T t) {
+			return new FilterDAO(field.gt(t));
+		}
+
+		@Override
+		public FilterDAO ge(T t) {
+			return new FilterDAO(field.ge(t));
+		}
+
+	}
+
+	public static class DatePropertyDAO implements Property<Date> {
+
+		private Field<java.sql.Date> field;
+		
+		public DatePropertyDAO(Field<java.sql.Date> field) {
+			this.field = field;
+		}
+
+		@Override
+		public FilterDAO eq(Date date) {
+			return new FilterDAO(field.eq(new java.sql.Date(date.getTime())));
+		}
+
+		@Override
+		public FilterDAO ne(Date date) {
+			return new FilterDAO(field.ne(new java.sql.Date(date.getTime())));
+		}
+
+		@Override
+		public FilterDAO le(Date date) {
+			return new FilterDAO(field.le(new java.sql.Date(date.getTime())));
+		}
+
+		@Override
+		public FilterDAO lt(Date date) {
+			return new FilterDAO(field.lt(new java.sql.Date(date.getTime())));
+		}
+
+		@Override
+		public FilterDAO gt(Date date) {
+			return new FilterDAO(field.gt(new java.sql.Date(date.getTime())));
+		}
+
+		@Override
+		public FilterDAO ge(Date date) {
+			return new FilterDAO(field.ge(new java.sql.Date(date.getTime())));
+		}
+
+		
+	}
+
+	public static class PropertyValueDAO<V> implements Property<Boolean> {
+		
+		private V value;
+		private Field<V> field;
+		
+		public PropertyValueDAO(Field<V> field, V value) {
+			this.value = value;
+			this.field = field;
+		}
+
+		@Override
+		public FilterDAO eq(Boolean t) {
+			return new FilterDAO( t ? field.eq(value) : field.ne(value));
+		}
+
+		@Override
+		public FilterDAO ne(Boolean t) {
+			return new FilterDAO( t ? field.ne(value) : field.ne(value));
+		}
+
+		@Override
+		public FilterDAO le(Boolean t) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public FilterDAO lt(Boolean t) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public FilterDAO gt(Boolean t) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public FilterDAO ge(Boolean t) {
+			throw new UnsupportedOperationException();
+		}
+
+		
+		
+	}
+
+	private Condition condition;
+	
+	public FilterDAO(Condition condition) {
+		this.condition = condition;
+	}
+
+	public Condition getCondition() {
+		return condition;
+	}
+
+	@Override
+	public Filter or(Filter filter) {
+		return new FilterDAO(condition.or(((FilterDAO)filter).condition));
+	}
+
+	@Override
+	public Filter and(Filter filter) {
+		return new FilterDAO(condition.and(((FilterDAO)filter).condition));
+	}
+	
+	@Override
+	public Filter not(Filter filter) {
+		return new FilterDAO(condition.not());
+	}
+	
+	
+
+}

@@ -222,7 +222,60 @@ public class Documents extends Composite implements EntryPoint {
 		private MenuItem shareItem;
 		private MenuItem downloadItem;
 		private MenuItem infoItem;
+		private Integer number = 0;
+		private Integer heigth;
+		private Integer width;
+		private Boolean loteBool = false;
+		private Boolean copyBool = false;
 
+		
+		public Integer getHeigth() {
+			switch (number) {
+			case 8:
+				heigth = 180;
+				break;
+			case 7: 
+				heigth = 160;
+				break;
+			case 6:
+				heigth = 140;
+				break;
+			case 3:
+				heigth = 74;
+				break;
+			case 2:
+				heigth = 54;
+				break;
+			default:
+				heigth = 0;
+				break;
+			}
+			return heigth;
+		}
+
+		public void setHeigth(Integer heigth) {
+			this.heigth = heigth;
+		}
+
+		public Integer getWidth() {
+			if(loteBool) width = 135;
+			else if(copyBool) width = 123;
+			else width = 117;
+			return width;
+		}
+
+		public void setWidth(Integer width) {
+			this.width = width;
+		}
+
+		public Integer getNumber(){
+			return number;
+		}
+	
+		public void setNumber(Integer number){
+			this.number = number;
+		}
+		 
 		public MenuItem getDownloadItem() {
 			return downloadItem;
 		}
@@ -243,49 +296,52 @@ public class Documents extends Composite implements EntryPoint {
 				viewItem = addItem("Visualizar",viewCommand,
 						"aon-icon-open-popup",AON.AON_ICON_CMD_BUTTON);
 				viewItem.setEnabled(true);
+				number++;
 				addSeparator();
 				downloadItem = addItem("Descargar",downloadCommand,
 						"aon-icon-mail-save",AON.AON_ICON_CMD_BUTTON);
 				downloadItem.setEnabled(true);
+				number++;
 				if(selFiles.size() <= 1){
 					infoItem = addItem("Detalles",infoCommand,
 							"aon-icon-info",AON.AON_ICON_CMD_BUTTON);
 					infoItem.setEnabled(true);
+					number++;
 				}
 			}
 			else{
 				viewItem = addItem("Visualizar",viewCommand,
 						"aon-icon-open-popup",AON.AON_ICON_CMD_BUTTON);
-				viewItem.setEnabled(true);
+				viewItem.setEnabled(true);number++;
 				addSeparator();
 				editItem = addItem("Editar", editCommand,
 						"aon-icon-edit", AON.AON_ICON_CMD_BUTTON);
-				editItem.setEnabled(true);
+				editItem.setEnabled(true);number++;
 				removeItem = addItem("Borrar", removeCommand,
 						AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
-				removeItem.setEnabled(true);
+				removeItem.setEnabled(true);number++;
 				if(!estaLote(object) && !lot){
 					batchItem = addItem("A\u00f1adir al Lote", batchCommand,
 							"aon-icon-version", AON.AON_ICON_CMD_BUTTON);
-					batchItem.setEnabled(true);
+					batchItem.setEnabled(true);number++;loteBool = true;
 				}
 				addSeparator();
 				if(selFiles.size() <= 1){
 					copyLinkItem = addItem("Copiar Link",copyLinkCommand,
 							"aon-icon-copy",AON.AON_ICON_CMD_BUTTON);
-					copyLinkItem.setEnabled(true);
+					copyLinkItem.setEnabled(true);number++;copyBool = true;
 				}
 				shareItem = addItem("Compartir",shareCommand,
 						"aon-icon-google-drive",AON.AON_ICON_CMD_BUTTON);
-				shareItem.setEnabled(true);
+				shareItem.setEnabled(true);number++;
 				downloadItem = addItem("Descargar",downloadCommand,
 						"aon-icon-mail-save",AON.AON_ICON_CMD_BUTTON);
-				downloadItem.setEnabled(true);
+				downloadItem.setEnabled(true);number++;
 				if(selFiles.size() <= 1){
 					addSeparator();
 					infoItem = addItem("Detalles",infoCommand,
 							"aon-icon-info",AON.AON_ICON_CMD_BUTTON);
-					infoItem.setEnabled(true);
+					infoItem.setEnabled(true);number++;
 				}
 			}
 		}
@@ -939,18 +995,24 @@ public class Documents extends Composite implements EntryPoint {
 							if(f.getIsParent()) par = true;
 						}
 					}
+					
 					if(selFiles.size() == 1) object = selFiles.get(0);
 			    	DocumentContextMenu contextMenu = new DocumentContextMenu(par,lot,object ,isLote || isServiconvenios || object.getIsParent() || !documentManager);
-   					if(nativeEvent.getClientY()>590){
+
+			    	Integer heigth = contextMenu.getHeigth();
+			    	Integer width = contextMenu.getWidth();
+
+			    	if(nativeEvent.getClientY()>590){
    						if(nativeEvent.getClientX()>994)
-   							contextMenu.setPopupPosition(nativeEvent.getClientX()-120,
-   								nativeEvent.getClientY()-140);
+   							contextMenu.setPopupPosition(nativeEvent.getClientX()-width,
+   								nativeEvent.getClientY()-heigth);
+   						
    						else contextMenu.setPopupPosition(nativeEvent.getClientX(),
-   								nativeEvent.getClientY()-140);
+   								nativeEvent.getClientY()-heigth);
    					}
    					else{
    						if(nativeEvent.getClientX()>994)
-   							contextMenu.setPopupPosition(nativeEvent.getClientX()-120,
+   							contextMenu.setPopupPosition(nativeEvent.getClientX()-width,
    								nativeEvent.getClientY());
    						else contextMenu.setPopupPosition(nativeEvent.getClientX(),
    								nativeEvent.getClientY());
@@ -4335,10 +4397,13 @@ public class Documents extends Composite implements EntryPoint {
 					@Override
 					protected void onCancel() {
 						hide();
-					}};
+					}
+				};
+				Window.alert("alala");
 				sed.addStyleName("gwt-PopupPanel-document");
 				sed.setGlassEnabled(true);
-				sed.show();					}
+				sed.show();					
+			}
 			
 			@Override
 			public void onFailure(Throwable caught) {}

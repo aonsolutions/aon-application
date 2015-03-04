@@ -433,6 +433,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	public List<String> getHolidayDescription() 
 			throws IllegalArgumentException {
 		
+
+	@Override
+	public HolidayDraft getStatalHolidays(int workplaceId)
+			throws IllegalArgumentException {
+
 		Connection conn = null;
 		try {
 			initFacesContext();
@@ -473,6 +478,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			releaseFacesContext();
 		}
 	}
+
 
 	@Override
 	public List<Cost> getWorkplaceCosts(int workplaceId)
@@ -3090,7 +3096,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(conn);
 		jooqSalaryBuilder.setListener(new SalaryBuilderListener());
 		SalaryDraftBuilder salaryDraftBuilder = new SalaryDraftBuilder(draft);
-		CompositeSalaryBuilder<ISalaryBuilder> compositeSalaryBuilder = new CompositeSalaryBuilder<ISalaryBuilder>(
+		CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>> compositeSalaryBuilder = new CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>>(
 				salaryDraftBuilder, jooqSalaryBuilder);
 
 		boolean autocommit = false;
@@ -3114,10 +3120,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
-	private static <T extends ISalaryBuilder, L extends SalaryDraftBuilder> void calculate(
+	private static <T extends ISalaryBuilder<ISalary>, L extends SalaryDraftBuilder> void calculate(
 			SalaryDraft draft, T salaryBuilder, L draftBuilder) {
 
-		ContractSalaryCalculator calculator = new ContractSalaryCalculator();
+		ContractSalaryCalculator<ISalary> calculator = new ContractSalaryCalculator<ISalary>();
 
 		calculator.setSalaryBuilder(salaryBuilder);
 		calculator.setListener(draftBuilder);

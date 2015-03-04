@@ -29,8 +29,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
+import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.google.api.services.drive.Drive;
@@ -58,9 +58,9 @@ public class DownloadStockServlet extends HttpServlet {
         if (driveId != ""){
         	Drive d = null;
         	
-        	DomainGserviceaccount g;
+        	DomainGserviceaccount g = null;
 			try {
-				g = DatabaseSync.getServiceAccount(domain);
+				g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain,domainId);
 				d = DriveUtils.serviceInitialize(g);
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -70,7 +70,14 @@ public class DownloadStockServlet extends HttpServlet {
 				e.printStackTrace();
 			}
         	
-			com.google.api.services.drive.model.File f = d.files().get(driveId).execute();
+			com.google.api.services.drive.model.File f = null;
+			try {
+				f = DriveUtils.getFile(d, driveId);
+				if(f.getDescription().equals("OLDRIVE"))
+					d = DriveUtils.serviceInitializeOld(g);
+			} catch (SQLException | GeneralSecurityException e) {
+				e.printStackTrace();
+			}
 			InputStream in = DriveUtils.downloadFile(d, f);
 			b = Utils.InputStreamToByte(in);
         	

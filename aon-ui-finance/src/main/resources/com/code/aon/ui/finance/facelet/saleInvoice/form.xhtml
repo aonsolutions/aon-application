@@ -40,6 +40,12 @@
 							actionListener="#{companySaleInvoiceFooter.onSearch}">
 							<f:param name="reportKey" value="#{company.saleInvoiceTemplateValue}" />
 						</aon:htmlCommandLink>
+						<aon:htmlCommandLink id="saleInvoice-facturae"
+							value="#{bundle.finance_facturae}" target="_blank" 
+							rendered="#{saleInvoice.downloadFacturae and saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
+							action="#{saleInvoiceSigner.onDownloadFacturae}"
+							styleClass="aon-finding-toolbar-item aon-icon-mail-save">
+						</aon:htmlCommandLink>
 					</ui:define>
 					<ui:define name="moreMenuContent">
 						<aon:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
@@ -115,6 +121,7 @@
 						<aon:menuItem id="documents"
 							value="#{bundle.aon_documents}"
 							iconClass="aon-icon-payroll"
+							actionListener="#{saleInvoiceAttach.onSearch}"
 							reRender="showDocumentWindow">
 							<f:setPropertyActionListener target="#{saleInvoice.showDocumentWindow}"
 								value="#{true}" />							

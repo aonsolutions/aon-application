@@ -4,12 +4,12 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
 
-public interface ISalaryCalculator{
+public interface ISalaryCalculator<T extends ISalary>{
 	
 
 	boolean accept(ISalaryCalculatorContext ctx);
-	void setSalaryBuilder(ISalaryBuilder salaryBuilder);
+	void setSalaryBuilder(ISalaryBuilder<T> salaryBuilder);
 	void initialize(ISalaryCalculatorContext ctx) throws SalaryException;
-	ISalary calculate(ISalaryCalculatorContext ctx) throws SalaryException;
+	T calculate(ISalaryCalculatorContext ctx) throws SalaryException;
 
 }

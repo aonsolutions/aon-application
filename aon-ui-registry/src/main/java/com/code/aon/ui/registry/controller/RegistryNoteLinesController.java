@@ -79,6 +79,7 @@ public class RegistryNoteLinesController extends LinesController {
 			customCriteria.addEqualExpression(this.getFieldName(IEntityAlias.REGISTRY_NOTE_NOTETYPE), getNoteType());
 		}
 		customCriteria.addNotEqualExpression(this.getFieldName(IEntityAlias.REGISTRY_NOTE_NOTETYPE), NoteType.OBSERVATION);
+		customCriteria.addNotEqualExpression(this.getFieldName(IEntityAlias.REGISTRY_NOTE_NOTETYPE), NoteType.FACTURAE);
 		IController controller = getMasterController();
 		Serializable pk = controller.getManagerBean().getId(controller.getTo());
 		customCriteria.addEqualExpression(this.getFieldName(IEntityAlias.REGISTRY_NOTE_REGISTRY_ID), pk );

@@ -29,6 +29,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
 import com.esferalia.aon.salary.AbstractSalaryBuilder;
+import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -362,7 +363,7 @@ public class SQLContractDelayCalculatorContext extends
 
 	}
 
-	private static class DelayPaymentBuilder extends AbstractSalaryBuilder {
+	private static class DelayPaymentBuilder<T extends ISalary> extends AbstractSalaryBuilder<T> {
 
 		private static final String SALARY_SQL = "SELECT *" + " FROM "
 				+ SQLConstants.SALARY + " WHERE " + SalaryColumns.CONTRACT

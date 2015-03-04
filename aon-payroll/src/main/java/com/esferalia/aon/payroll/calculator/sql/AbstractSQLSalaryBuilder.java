@@ -6,15 +6,15 @@ import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.payroll.sql.AbstractSQL;
+import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.bonus.IBonus;
 import com.esferalia.aon.salary.deduction.IDeduction;
-import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 
-public abstract class AbstractSQLSalaryBuilder implements ISalaryBuilder {
+public abstract class AbstractSQLSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 
 	protected AbstractSQL.Salary salary;
 	protected List<AbstractSQL.SalaryCost> salaryCosts;

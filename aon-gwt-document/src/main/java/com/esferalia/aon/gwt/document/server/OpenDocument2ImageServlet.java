@@ -30,16 +30,13 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 
-
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
+import com.code.aon.google.apis.jooq.DBConsults;
+import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.ui.google.apis.controller.GoogleDriveController;
-
-import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.gwt.document.server.ViewerUtils;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
 import com.google.api.services.drive.Drive;
 import com.sun.pdfview.PDFFile;
@@ -183,14 +180,17 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 		MimeType mimetype = MimeType.values()[doc.getMimetype()];
 		if(doc.getDriveId()!= null){
         	Drive d = null;
+        	DomainGserviceaccount g = null;
         	if(doc.getIsDrive()){
         		d = GoogleDriveController.dconnection;
         	}
         	else{
-        		DomainGserviceaccount g = DatabaseSync.getServiceAccount(doc.getDomainId());
+        		g = DBConsults.getServiceAccount(doc.getDomain(),doc.getDomainId());
         		d = DriveUtils.serviceInitialize(g);
         	}
-			com.google.api.services.drive.model.File f = d.files().get(doc.getDriveId()).execute();
+			com.google.api.services.drive.model.File f = DriveUtils.getFile(d, doc.getDriveId());
+			if(f.getDescription().equals("OLDRIVE"))
+				d = DriveUtils.serviceInitializeOld(g);
 			InputStream in = DriveUtils.downloadFile(d, f);
 			b = Utils.InputStreamToByte(in);
 			

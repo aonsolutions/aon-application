@@ -1,9 +1,10 @@
 package com.esferalia.aon.payroll.calculator;
 
+import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 
-public class OnlyPaymentContractSalaryCalculator extends
-		ContractSalaryCalculator {
+public class OnlyPaymentContractSalaryCalculator<T extends ISalary> extends
+		ContractSalaryCalculator<T> {
 	
 	@Override
 	protected Double fillCosts(IContractSalaryCalculatorContext ctx)

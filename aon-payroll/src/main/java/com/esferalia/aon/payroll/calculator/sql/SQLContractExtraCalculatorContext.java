@@ -2,6 +2,7 @@ package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -73,8 +74,7 @@ public class SQLContractExtraCalculatorContext extends
 
 		int issueMonth = getIssueMonth();
 		Collection<IContractPayment> extraPayments = new FilterCollection<IContractPayment>(
-				new ExtraPaymentFilter(issueMonth),
-				super.getContractPayments());
+				new ExtraPaymentFilter(issueMonth), super.getContractPayments());
 		return extraPayments;
 	}
 
@@ -98,7 +98,6 @@ public class SQLContractExtraCalculatorContext extends
 		return CommonUtil.getMonth(issueDate);
 	}
 
-
 	private void addSalaryContractPayments() throws ExpressionException,
 			AonException {
 		ExpressionContext ctx = super.getExpressionContext();
@@ -114,14 +113,23 @@ public class SQLContractExtraCalculatorContext extends
 	private void initMonthVariables(ExpressionContext ctx) {
 		List<ITimedVariable<?>> monthDaysList = ctx
 				.getTimedVariables(MONTH_DAYS.getName());
+
 		int months = monthDaysList.size();
+
 		for (ITimedVariable<?> monthDays : monthDaysList) {
 			Period month = monthDays.getPeriod();
-			Number days = (Number) monthDays.getValue(month);
-			ctx.setVariable(MONTH_DAYS, days.doubleValue() * months,
+			List<ITimedVariable<Object>> vars = ctx.getVariables(WORKED_DAYS,
 					month.getStart(), month.getEnd());
-			ctx.setVariable(PAY_DAYS, days.doubleValue() * months,
-					month.getStart(), month.getEnd());
+			for (ITimedVariable<Object> var : vars ) {
+				Number days = (Number) var.getValue(var.getPeriod());
+				ctx.setVariable(WORKED_DAYS, days.doubleValue() / months,
+						var.getPeriod().getStart(), var.getPeriod().getEnd());
+			}
+
+			// ctx.setVariable(MONTH_DAYS, days.doubleValue() * months,
+			// month.getStart(), month.getEnd());
+			// ctx.setVariable(PAY_DAYS, days.doubleValue() * months,
+			// month.getStart(), month.getEnd());
 		}
 
 	}

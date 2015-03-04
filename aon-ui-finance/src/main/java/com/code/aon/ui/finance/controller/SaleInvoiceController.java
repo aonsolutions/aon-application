@@ -249,5 +249,5 @@ public class SaleInvoiceController extends InvoiceController {
 		super.accept(event);
 		getInvoice().setSeries(series);
 	}
-	
+
 }

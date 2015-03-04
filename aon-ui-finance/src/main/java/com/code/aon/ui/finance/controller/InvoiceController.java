@@ -13,6 +13,7 @@ import static com.code.aon.ui.common.ICommonMessages.UNABLE_RECORD_INACCURACY_ER
 import static com.code.aon.ui.common.ICommonMessages.UNABLE_RECORD_NO_AMORTIZATION_ERROR_KEY;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,6 +26,8 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Hibernate;
@@ -46,8 +49,12 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.util.SeriesUtil;
+import com.code.aon.customer.Customer;
+import com.code.aon.facturae.FACeUtil;
+import com.code.aon.facturae.FacturaeWriter;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceAddress;
@@ -72,6 +79,8 @@ import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.controller.IAuditableController;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.HeaderObjectController;
@@ -1126,10 +1135,11 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	}
 
 	@Override
-	public IAttachment newAttachment(ITransferObject parent) {
+	public IAttachment newAttachment(ITransferObject parent, MimeType type) {
 		InvoiceAttachment attachment = new InvoiceAttachment();
 		attachment.setInvoice((Invoice) parent);
 		attachment.setType(InvoiceAttachmentType.INVOICE);
+		attachment.setMimeType(type);
 		return attachment;
 	}
 
@@ -1144,8 +1154,14 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	}
 	
 	@Override
-	public IAttachment getUnsignedAttachment(ITransferObject to) {
-		return generateReportAttachment(to);
+	public IAttachment getUnsignedAttachment(ITransferObject to, MimeType type) {
+		Invoice invoice = (Invoice) to;
+		if ( type == MimeType.MIME_PDF ) {
+			return generateReportAttachment(to);	
+		} else if ( type == MimeType.MIME_XML && isIncludeFacturae(invoice) ) {
+			return getUnsignedFacturae(to);	
+		}
+		return null;
 	}	
 	
 	@Override
@@ -1167,10 +1183,72 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		IAttachment attach = null;
 		if (invoice.isSigned()) {
 			attach = signer.getSignedAttachment(invoice.getId());
-		} else {
-			attach = getUnsignedAttachment(invoice);
+		}
+		if ( attach == null ) {
+			attach = getUnsignedAttachment(invoice, MimeType.MIME_PDF);
 		}
 		return attach;		
+	}
+
+	public static byte[] getFacturaeData( FacturaeWriter fw, Invoice invoice ) {
+		byte[] data = null;
+		File invoiceFile = null;
+		try {
+			invoiceFile = File.createTempFile("facturae ("+invoice.getId() + ")", FacturaeWriter.FACTURAE_EXTENSION );
+			String filePath = invoiceFile.getAbsolutePath();
+			String fileName = FilenameUtils.getFullPath(filePath) + FilenameUtils.getBaseName(filePath);
+			fw.serialize(invoice, fileName);
+			data = FileUtils.readFileToByteArray(invoiceFile);
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+		} finally {
+			FileUtils.deleteQuietly(invoiceFile);	
+		}
+		return data;
+	}
+	
+	private IAttachment getUnsignedFacturae( ITransferObject to ) {
+		Invoice invoice = (Invoice) to;
+		FacturaeWriter fw = new FacturaeWriter(AonUtil.getCurrentLocale());
+		byte[] data = getFacturaeData(fw, invoice);
+		MimeType type = FACeUtil.isDefined(invoice) ? MimeType.MIME_XSIG : MimeType.MIME_XML;
+		IAttachment attachment = newAttachment(invoice, type);
+		attachment.setData(data);
+		attachment.setDescription(getDescription(invoice));
+		return attachment;		
+	}		
+	
+	public IAttachment getInvoiceFacturae(Invoice invoice) throws ManagerBeanException {
+		SignerController signer = getSignerController();
+		IAttachment attach = null;
+		if (invoice.isSigned()) {
+			attach = signer.getSignedFacturae(invoice.getId());
+		}
+		if ( attach == null ) {
+			attach = getUnsignedAttachment(invoice, MimeType.MIME_XML);
+		}
+		return attach;		
+	}
+	
+	public static boolean isIncludeFacturae( Invoice invoice ) {
+		boolean include = false;
+		if ( invoice.getType() == InvoiceType.SALES ) {
+			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+			if ( companyController.isEInvoice() ) {
+				try {
+					IManagerBean bean = BeanManager.getManagerBean(Customer.class);
+					Customer customer = (Customer) bean.get(invoice.getRegistry().getId());
+					include = (customer != null) && customer.isEInvoice();
+				} catch (ManagerBeanException e) {
+					LOGGER.error(e.getMessage(), e);
+				}			
+			}			
+		}
+		return include;
+	}
+	
+	public boolean isDownloadFacturae() {
+		return isIncludeFacturae(getInvoice());
 	}
 	
 	public void onSendInvoiceByEmail(ActionEvent event) {
@@ -1181,7 +1259,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 				controller.onNewMessage(event);
 				Invoice invoice = getInvoice();
 				IAttachment attach = getInvoiceData(invoice);
-				emailController.initMessageController(controller, invoice, attach, true);
+				emailController.initMessageController(controller, invoice, attach, isIncludeFacturae(invoice));
 			} catch (Throwable th) {
 				LOGGER.error(th.getMessage(), th);
 				AonUtil.addErrorMessage(th.getMessage());

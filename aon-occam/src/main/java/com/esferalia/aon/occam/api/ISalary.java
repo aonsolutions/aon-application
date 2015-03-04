@@ -1,8 +1,16 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.Date;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
+import com.esferalia.aon.occam.api.model.SalaryFilter;
+import com.esferalia.aon.occam.api.model.SalaryProperties;
 
 public interface ISalary {
 
@@ -28,7 +36,12 @@ public interface ISalary {
 	 * 
 	 * @return La collección de apuntes generados.
 	 */
-	public SalaryAccountEntry getSalaryAccountEntry(AONContext ctx, Integer enterprise,
-			Date from, Date to, String concept, Integer registryBank);
+	public SalaryAccountEntry getSalaryAccountEntry(AONContext ctx,
+			Integer enterprise, Date from, Date to, String concept,
+			Integer registryBank);
+
+	public Stream<Salary> getSalaries(AONContext ctx,
+			SalaryFilter filter, Supplier<Salary> supplier);
+
 
 }

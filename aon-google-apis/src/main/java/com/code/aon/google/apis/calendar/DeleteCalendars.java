@@ -18,7 +18,6 @@ import org.apache.commons.cli.PosixParser;
 
 import com.code.aon.google.apis.CalendarUtils;
 import com.code.aon.google.apis.DatabaseSync;
-import com.code.aon.google.apis.jooq.DBCalendar;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.pool.AonConnectionException;
@@ -56,7 +55,7 @@ public class DeleteCalendars {
 	
 
 	public static void act(String domain) throws KeyStoreException, IOException, GeneralSecurityException, SQLException, AonConnectionException{
-		Domain d = DBCalendar.getDomain(domain);
+		Domain d = DBConsults.getDomain(domain);
 		DomainGserviceaccount g = DBConsults.getServiceAccount(domain, d.getId());
 				//DatabaseSync.getServiceAccount(domain);
 		View.domain(domain);

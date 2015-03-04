@@ -208,7 +208,7 @@
 							<aon:outputText rendered="#{task.parentDomain}" value="#{task.to.project.name}"/>
 							<aon:selectOneMenu id="Task_project" value="#{task.to.project}"
 								rendered="#{!task.parentDomain}"
-								disabled="#{task.allMembers or (!task.monitor and !task.nevv)}">
+								disabled="#{!task.monitor and !task.nevv}">
 								<f:selectItem itemLabel="-" value="#{null}"/>
 								<f:selectItems value="#{task.projects}" />
 								<a4j:support event="onchange"
@@ -224,7 +224,7 @@
 							<aon:selectOneMenu id="Task_activityType"
 								rendered="#{!task.parentDomain}"
 								value="#{task.to.activityType}"
-								disabled="#{task.allMembers or (!task.monitor and !task.nevv)}">
+								disabled="#{!task.monitor and !task.nevv}">
 								<f:selectItem itemLabel="-" value="#{null}"/>
 								<f:selectItems value="#{task.activityTypes}" />
 							</aon:selectOneMenu>

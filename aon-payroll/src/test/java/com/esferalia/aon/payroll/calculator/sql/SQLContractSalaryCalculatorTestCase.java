@@ -4,6 +4,8 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
+import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -16,12 +18,14 @@ import org.junit.Test;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.watson.util.AonDateUtils;
 
 /**
  * @author rtrepiana
@@ -34,7 +38,7 @@ public class SQLContractSalaryCalculatorTestCase extends
 	@Test
 	public void testLiquidAndPayment() throws ExpressionException, SQLException, SalaryException {
 		Connection connection = getConnection();
-		AONContext aonContext = new AONContext(connection, "", 0);
+		AONContext aonContext = new AONContext(connection);
 
 		
 		ContractRecord contract = newContract(aonContext, 
@@ -55,7 +59,7 @@ public class SQLContractSalaryCalculatorTestCase extends
 				);
 
 		
-		Date start = getFirstDayOfMonth();
+		Date start = getFirstDayOfMonth(getToday());
 		Date end = getLastDayOfMonth(start);
 		
 		
@@ -69,7 +73,7 @@ public class SQLContractSalaryCalculatorTestCase extends
 
 		ctx.next();
 		
-		ContractSalaryCalculator calculator = new ContractSalaryCalculator();
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		
 		calculator.setListener(new ContractSalaryCalculator.Listener(){

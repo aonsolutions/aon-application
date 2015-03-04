@@ -72,6 +72,7 @@ import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.jooq.DBConsults;
+import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.google.apis.jooq.JooqSettings;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
@@ -87,7 +88,7 @@ import com.code.aon.ui.fiscal.controller.FiscalParametersController;
 import com.code.aon.ui.fiscal.controller.IFiscalModelController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
+import com.esferalia.aon.google.sql.AbstractSQL.Domain;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
@@ -1273,7 +1274,8 @@ public class DashboardController implements Serializable {
 		if (recentFiles == null) {
 			Locale locale = AonUtil.getCurrentLocale();
 			String domain = AonUtil.getDomainName();
-			DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
+			Domain d = DBConsults.getDomain(domain);
+			DomainGserviceaccount g = DBConsults.getServiceAccount(domain, d.getId());
 			Drive drive = null;
 			if (g.getClientId()!= null) drive = DriveUtils.serviceInitialize(g);
 			Integer key = DomainManager.getCurrentDomain();
@@ -1423,7 +1425,8 @@ public class DashboardController implements Serializable {
 	}
 	public  void sizes() throws SQLException{
 		String domain = AonUtil.getDomainName();
-		DomainGserviceaccount dg = DatabaseSync.getServiceAccount(domain);
+		Domain d = DBConsults.getDomain(domain);
+		DomainGserviceaccount dg = DBConsults.getServiceAccount(domain, d.getId());
 		occupied = dg.getSize();
 		free = (long) (dg.getLimit() - occupied);
 		if (free <0) free=0;

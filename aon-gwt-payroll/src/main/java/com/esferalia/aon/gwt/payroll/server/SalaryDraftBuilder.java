@@ -59,7 +59,7 @@ import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.payment.IPayment;
 
-public class SalaryDraftBuilder implements ISalaryBuilder,
+public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 		ContractSalaryCalculator.IListener,
 		IContractSalaryCalculatorContext.IListener {
 

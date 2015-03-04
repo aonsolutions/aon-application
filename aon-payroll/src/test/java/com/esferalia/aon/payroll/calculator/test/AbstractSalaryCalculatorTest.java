@@ -12,6 +12,7 @@ import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
+import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
@@ -20,7 +21,7 @@ public abstract class AbstractSalaryCalculatorTest extends AbstractCalculatorTes
 	
 	
 	
-	protected static class ResultSetSalaryBuilderTester extends AbstractSQLSalaryBuilderTester {
+	protected static class ResultSetSalaryBuilderTester<T extends ISalary> extends AbstractSQLSalaryBuilderTester<T> {
 		
 		private ResultSet rs;
 		
@@ -58,10 +59,10 @@ public abstract class AbstractSalaryCalculatorTest extends AbstractCalculatorTes
 			
 			rs = stmt.executeQuery(sql);
 			
-			ContractSalaryCalculator calculator = 
-					new ContractSalaryCalculator();
-			ResultSetSalaryBuilderTester tester = 
-				new ResultSetSalaryBuilderTester(rs);
+			ContractSalaryCalculator<ISalary> calculator = 
+					new ContractSalaryCalculator<ISalary>();
+			ResultSetSalaryBuilderTester<ISalary> tester = 
+				new ResultSetSalaryBuilderTester<ISalary>(rs);
 			calculator.setSalaryBuilder(tester);
 			
 			int count = 0 ; 
@@ -124,7 +125,7 @@ public abstract class AbstractSalaryCalculatorTest extends AbstractCalculatorTes
 
 	
 
-	protected void calculate ( ResultSet rs, ContractSalaryCalculator calculator ) 
+	protected void calculate ( ResultSet rs, ContractSalaryCalculator<?> calculator ) 
 	throws SQLException, ExpressionException, SalaryException {
 		
 		int contract = rs.getInt(SalaryColumns.CONTRACT);

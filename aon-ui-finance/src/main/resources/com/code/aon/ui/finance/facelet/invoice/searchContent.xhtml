@@ -57,6 +57,16 @@
 						<f:selectItem itemLabel="-" value="#{null}" />		
 						<f:selectItems value="#{registryCollections.documentTypes}" />
 					</aon:selectOneMenu>
+					
+					<aon:if test="#{searchController.sales and company.EInvoice}">
+						<aon:outputLabel for="Invoice_registry_EInvoice"
+							value="#{bundle.customer_eInvoice}" />
+						<aon:selectOneRadio id="Invoice_registry_EInvoice"
+							value="#{searchController.customerEInvoice}">
+							<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+							<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+						</aon:selectOneRadio>				
+					</aon:if>					
  				</aon:panelGrid>
 			</aon:panel>
 			<aon:panel style="text-align:left;">

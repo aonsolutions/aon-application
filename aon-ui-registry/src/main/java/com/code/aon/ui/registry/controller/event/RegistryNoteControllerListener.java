@@ -21,6 +21,7 @@ public class RegistryNoteControllerListener extends ControllerAdapter {
 		try {
 			IController controller = event.getController();
 			controller.getCriteria().addNotEqualExpression(controller.getFieldName(IEntityAlias.REGISTRY_NOTE_NOTETYPE), NoteType.OBSERVATION);
+			controller.getCriteria().addNotEqualExpression(controller.getFieldName(IEntityAlias.REGISTRY_NOTE_NOTETYPE), NoteType.FACTURAE);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}

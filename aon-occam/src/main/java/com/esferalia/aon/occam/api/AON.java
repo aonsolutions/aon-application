@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.lambda.Seq;
@@ -14,7 +15,9 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.Agreement;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
+import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -470,5 +473,12 @@ public class AON {
 	// 
 	public static void saveAgreement(AONContext ctx, Agreement ...agreements) throws AonCoreException {
 		getAgreement().save(ctx, agreements);
+	}
+	
+	//
+	
+	public static Stream<Salary> getSalaries(AONContext ctx,
+			SalaryFilter filter) {
+		return getSalary().getSalaries(ctx, filter, Salary::new);
 	}
 }

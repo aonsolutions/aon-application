@@ -89,12 +89,15 @@ public class UndeductibleInvoiceController extends InvoiceController {
 	}
 	
 	@Override
-	public IAttachment getUnsignedAttachment(ITransferObject to) {
-		IAttachment attachment = generateReportAttachment(to);
-		if ( attachment == null ) {
-			attachment = super.generateReportAttachment(to);
+	public IAttachment getUnsignedAttachment(ITransferObject to, MimeType type) {
+		if ( type == MimeType.MIME_PDF ) {
+			IAttachment attachment = generateReportAttachment(to);
+			if ( attachment == null ) {
+				attachment = super.generateReportAttachment(to);
+			}
+			return attachment;
 		}
-		return attachment;
+		return super.getUnsignedAttachment(to, type);
 	}		
 
 	@Override

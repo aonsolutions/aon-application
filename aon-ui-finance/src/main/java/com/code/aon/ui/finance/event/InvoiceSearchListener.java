@@ -10,15 +10,21 @@ import org.apache.commons.lang.ArrayUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.PayMethod;
+import com.code.aon.customer.Customer;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.Item;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
@@ -38,6 +44,7 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 	private FinanceStatus[] financeStatuses;
 	private PayMethod[] payMethods;
 	private Seller seller;
+	private Boolean customerEInvoice;
 	
 	public String getDefaultType() {
 		return defaultType;
@@ -156,6 +163,14 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 		this.seller = seller;
 	}
 
+	public Boolean getCustomerEInvoice() {
+		return customerEInvoice;
+	}
+
+	public void setCustomerEInvoice(Boolean customerEInvoice) {
+		this.customerEInvoice = customerEInvoice;
+	}
+
 	@Override
 	protected void init() throws ManagerBeanException {
 		super.init();
@@ -165,6 +180,7 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 		setSeller((Seller)BeanManager.getManagerBean(Seller.class).createNewTo());
 		setFinanceStatuses(new FinanceStatus[0]);
 		setPayMethods(new PayMethod[]{EMPTY_PAYMETHOD});
+		setCustomerEInvoice(null);
 	}
 	
 	@Override
@@ -198,8 +214,21 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 			String payMethod = getController().resolveAlias("Invoice.finances.payMethod.id");
 			addEnumToCriteria(criteria, payMethod, getPayMethodsIds().toArray());
 		}
+		if ( getCustomerEInvoice() != null ) {
+			addCustomerEInvoiceSubQuery(criteria);
+		}		
 	}	
 
+	private void addCustomerEInvoiceSubQuery(Criteria criteria) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Customer.class);			
+		Criteria subCriteria = new Criteria();
+		subCriteria.addEqualExpression("Customer.EInvoice", getCustomerEInvoice());
+		String idAlias = bean.getFieldName(IEntityAlias.CUSTOMER_ID);
+		ProjectionList pl = new ProjectionList( Projection.property(idAlias) );
+		Expression exp = ExpressionUtilities.getSubQueryExpression(Customer.class, subCriteria, pl);
+		criteria.addInExpression(getFieldName(IEntityAlias.INVOICE_REGISTRY_ID), exp);			
+	}
+	
 	public void onAddPayMethod(ActionEvent event) {
 		this.payMethods = (PayMethod[]) ArrayUtils.add(this.payMethods, EMPTY_PAYMETHOD);
 	}

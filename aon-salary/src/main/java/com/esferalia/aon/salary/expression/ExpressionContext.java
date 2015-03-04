@@ -248,6 +248,10 @@ public class ExpressionContext {
 		return MVEL.eval(script);
 	}
 
+	public static <T> T eval(String script, Class<T> type) {
+		return MVEL.eval(script, type);
+	}
+
 	public static void analyze(String script) {
 		ParserContext ctx = new ParserContext();
 		MVEL.analysisCompile(script, ctx);

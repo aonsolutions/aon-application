@@ -609,8 +609,8 @@ public class SalaryDraftController extends BasicController implements ContractSa
 			}
 			
 			
-			ContractSalaryCalculator sc = 
-					new ContractSalaryCalculator();
+			ContractSalaryCalculator<Salary> sc = 
+					new ContractSalaryCalculator<Salary>();
 			sc.setSalaryBuilder(new SalaryBuilder(){
 				@Override
 				public void createNewSalary() {

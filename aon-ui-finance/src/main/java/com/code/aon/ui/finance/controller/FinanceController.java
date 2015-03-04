@@ -91,7 +91,7 @@ public class FinanceController extends FinanceListController implements IFinance
 	private boolean showFinancePaymentWindow;
 	private boolean showFinanceReturnWindow;
 	private List<SelectItem> payMethodTypeDetailList;
-	private Double totalFinanceAmount;
+	private Double listTotal;
 	private String invoiceViewer;
 	private boolean purchase;
 	private boolean showBankManualInput;
@@ -259,12 +259,12 @@ public class FinanceController extends FinanceListController implements IFinance
 		this.payMethodTypeDetailList = payMethodTypeDetailList;
 	}
 
-	public Double getTotalFinanceAmount() {
-		return totalFinanceAmount;
+	public Double getListTotal() {
+		return listTotal;
 	}
 
-	public void setTotalFinanceAmount(Double totalFinanceAmount) {
-		this.totalFinanceAmount = totalFinanceAmount;
+	public void setListTotal(Double listTotal) {
+		this.listTotal = listTotal;
 	}
 
 	public String getInvoiceViewer() {
@@ -683,6 +683,23 @@ public class FinanceController extends FinanceListController implements IFinance
 		criteria.addOrder(getManagerBean().getFieldName(IEntityAlias.FINANCE_DUE_DATE));
 		criteria.addOrder(getManagerBean().getFieldName(IEntityAlias.FINANCE_INVOICE_REFERENCE_CODE));
 		orderedList=getManagerBean().getList(criteria);
+	}
+
+	public void obtainListTotals(ActionEvent event) {
+		try {	
+			Projection amountPrjn = Projection.sum(getFieldName(IEntityAlias.FINANCE_AMOUNT));
+			Projection expensesPrjn = Projection.sum(getFieldName(IEntityAlias.FINANCE_EXPENSES));
+			ProjectionList totalsPrjnList = new ProjectionList(amountPrjn, expensesPrjn);
+			Object[] result = (Object[])getManagerBean().getUniqueResult(totalsPrjnList, getCriteria());
+			Double amount = (result[0] == null) ? 0 : (Double)result[0];
+			Double expenses = (result[1] == null) ? 0 : (Double) result[1];
+
+			setListTotal(CommonUtil.round(amount + expenses));
+		} catch (ManagerBeanException e) {
+			String message = "Imposible obtener el Total";
+			AonUtil.addErrorMessage(message);
+			throw new AbortProcessingException(message);
+		}		
 	}
 
 	public void onShowInvoice(ActionEvent event) throws ManagerBeanException {

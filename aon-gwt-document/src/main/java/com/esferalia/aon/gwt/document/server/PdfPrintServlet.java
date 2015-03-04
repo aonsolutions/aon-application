@@ -6,10 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileChannel.MapMode;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.sql.SQLException;
@@ -27,13 +23,12 @@ import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
 import org.artofsolving.jodconverter.office.OfficeManager;
 
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.FileInfo;
 import com.code.aon.google.apis.Utils;
+import com.code.aon.google.apis.jooq.DBConsults;
+import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
-import com.esferalia.aon.gwt.document.jooq.DBConsults;
 import com.google.api.services.drive.Drive;
 
 public class PdfPrintServlet extends HttpServlet{
@@ -59,23 +54,28 @@ public class PdfPrintServlet extends HttpServlet{
         String mimetype = MimeType.values()[m].getName();
         FileInfo fi=null;
         if (driveId != ""){
-			DomainGserviceaccount g;
+			DomainGserviceaccount g = null;
 			Drive d = null;
 			try {
-				g = DatabaseSync.getServiceAccount(domainID);
+				g = DBConsults.getServiceAccount(domain,domainID);
 				d = DriveUtils.serviceInitialize(g);
 			} catch (SQLException e) {
-				// TODO Bloque catch generado automáticamente
 				e.printStackTrace();
 			} catch (KeyStoreException e) {
-				// TODO Bloque catch generado automáticamente
 				e.printStackTrace();
 			} catch (GeneralSecurityException e) {
-				// TODO Bloque catch generado automáticamente
 				e.printStackTrace();
 			}
 			
-			com.google.api.services.drive.model.File f = d.files().get(driveId).execute();
+			com.google.api.services.drive.model.File f = null;
+			try {
+				f = DriveUtils.getFile(d, driveId);
+				if(f.getDescription().equals("OLDRIVE"))
+					d = DriveUtils.serviceInitializeOld(g);
+			} catch (SQLException | GeneralSecurityException e) {
+				e.printStackTrace();
+			}
+
 			InputStream in = DriveUtils.downloadFile(d, f);
 			fi = new FileInfo();
 			byte[] b = Utils.InputStreamToByte(in);
@@ -85,7 +85,7 @@ public class PdfPrintServlet extends HttpServlet{
         else if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);
             try {
-				fi = DBConsults.getDataAndName(id,domain);
+				fi = com.esferalia.aon.gwt.document.jooq.DBConsults.getDataAndName(id,domain);
 			} catch (SQLException e) {
 				// TODO Bloque catch generado automáticamente
 				e.printStackTrace();

@@ -44,11 +44,11 @@ import org.apache.commons.io.FileUtils;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
-import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveFile;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.GmailUtils;
 import com.code.aon.google.apis.drive.ShareFiles;
+import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.config.controller.DomainSwitcher;
@@ -62,7 +62,6 @@ import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.WebmailUtil;
 import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonServer;
-import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.document.client.IDocument;
 import com.esferalia.aon.gwt.document.client.Utils;
@@ -338,7 +337,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			try {
 				DBConsults.removeFile(domain, fi.getFileId());
 				if(fi.getDriveId()!=null){
-					DomainGserviceaccount g = DatabaseSync.getServiceAccount(fi.getDomainId());
+					DomainGserviceaccount g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain,domainId);
 					Drive d = DriveUtils.serviceInitialize(g);
 					d.files().delete(fi.getDriveId()).execute();
 				}
@@ -393,6 +392,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	public Vector<FileInfo> insertFile(FileInfo fi) {
 		Vector<FileInfo> files = getOuts();
 		Vector<FileInfo> vector = new Vector<FileInfo>();
+
 		for (FileInfo f : files) {
 			Date date = null;
 			if (fi.getDate() != null){
@@ -411,6 +411,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 			}
+
 			// Integer registry = AdminUtil.getCompanyId(fi.getDomainId());
 			com.code.aon.google.apis.FileInfo fileInfo = new com.code.aon.google.apis.FileInfo();
 			fileInfo.setAonType("registry");
@@ -464,8 +465,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 				byte[] b = f.getData();// .toByteArray();
 				fileInfo.setFileId(id);
 				fileInfo.setData(b);
-				DomainGserviceaccount g = DatabaseSync
-						.getServiceAccount(domain);
+				DomainGserviceaccount g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain, domainId);
 				if (g.getClientId() != null) {
 					Drive d = DriveUtils.serviceInitialize(g);
 					String[] types = { RegistryAttachmentType.CORPORATE_IDENTITY
@@ -481,6 +481,8 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 				FileInfo fil = DBConsults.getFile(domain, id);
 				if (fil.getDomain() == null)
 					fil.setDomain(domain);
+				if(fil.getDomainId() == null)
+					fil.setDomainId(domainId);
 				vector.add(fil);
 				
 			} catch (SQLException e) {
@@ -598,7 +600,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 					//InputStream file = getFile();
 					byte[] b = getOut();//.toByteArray();
 					fileInfo.setData(b);
-					DomainGserviceaccount g = DatabaseSync.getServiceAccount(fi.getDomainId());
+					DomainGserviceaccount g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain,domainId);
 					if(g.getClientId()!=null){
 						Drive d = DriveUtils.serviceInitialize(g);
 						String[] types = { RegistryAttachmentType.CORPORATE_IDENTITY
@@ -835,7 +837,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		DomainGserviceaccount g;
 		Drive d = null;
 		try {
-			g = DatabaseSync.getServiceAccount(domain);
+			g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain, domainId);
 			d = DriveUtils.serviceInitialize(g);
 		} catch (SQLException | IOException | GeneralSecurityException e1) {
 			e1.printStackTrace();
@@ -888,13 +890,13 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		String link;
 		if(doc.getDriveId()!=null){
 			Drive d = null;
+			DomainGserviceaccount g = null;
         	if(doc.getIsDrive()){
         		d = GoogleDriveController.dconnection;
         	}
         	else{
-        		DomainGserviceaccount g = null;
         		try {
-					g = DatabaseSync.getServiceAccount(doc.getDomainId());
+					g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(doc.getDomain(),doc.getDomainId());
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -906,8 +908,10 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
         	}
 			com.google.api.services.drive.model.File f = null;
 			try {
-				f = d.files().get(doc.getDriveId()).execute();
-			} catch (IOException e) {
+				f = DriveUtils.getFile(d, doc.getDriveId());
+				if(f.getTitle().equals("OLDRIVE"))
+					d = DriveUtils.serviceInitializeOld(g);
+			} catch (IOException | SQLException | GeneralSecurityException e) {
 				e.printStackTrace();
 			}
 		
@@ -916,10 +920,14 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			p.setType("anyone");// user || group || domain || anyone
 			p.setRole("reader");// owner || reader || writer || commenter
 			try {
-				d.permissions().insert(f.getId(), p)
-						.setSendNotificationEmails(false).execute();
+				d.permissions().insert(f.getId(), p).execute();
 			} catch (IOException e) {
-				e.printStackTrace();
+				try {
+					d = DriveUtils.serviceInitializeOld(g);
+					d.permissions().insert(f.getId(), p).execute();
+				} catch (IOException | GeneralSecurityException e1) {
+					e1.printStackTrace();
+				}
 			}
 			
 			link = f.getAlternateLink();
@@ -958,7 +966,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
         	else{
         		DomainGserviceaccount g = null;
         		try {
-					g = DatabaseSync.getServiceAccount(doc.getDomainId());
+					g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(doc.getDomain(), doc.getDomainId());
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -1034,7 +1042,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			PrintStream printStream = new PrintStream(os);
 			InputStream in = null;
 			if(doc.getDriveId() != null){ 
-				DomainGserviceaccount g = DatabaseSync.getServiceAccount(doc.getDomainId());
+				DomainGserviceaccount g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(doc.getDomain(), doc.getDomainId());
 				Drive d = DriveUtils.serviceInitialize(g);
 				File f = d.files().get(doc.getDriveId()).execute();
 				in = DriveUtils.downloadFile(d, f);
@@ -1386,7 +1394,7 @@ public MailAccountList getMailAccounts() {
 							} else {
 								DomainGserviceaccount g;
 								try {
-									g = DatabaseSync.getServiceAccount(fi.getDomainId());
+									g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(fi.getDomain(),fi.getDomainId());
 									d = DriveUtils.serviceInitialize(g);
 								} catch (SQLException e) {
 									e.printStackTrace();
@@ -1483,7 +1491,7 @@ public MailAccountList getMailAccounts() {
 					} else {
 						DomainGserviceaccount g;
 						try {
-							g = DatabaseSync.getServiceAccount(fi.getDomainId());
+							g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain, domainId);
 							d = DriveUtils.serviceInitialize(g);
 						} catch (SQLException e) {
 							e.printStackTrace();
@@ -1662,8 +1670,7 @@ public Vector<FileInfo> insertFileMultiple(FileInfo fi) {
 		byte[] b = f.getData();//.toByteArray();
 		fileInfo.setFileId(id);
 		fileInfo.setData(b);
-		DomainGserviceaccount g = DatabaseSync
-				.getServiceAccount(domain);
+		DomainGserviceaccount g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain,domainId);
 		if (g.getClientId()!=null){
 			Drive d = DriveUtils.serviceInitialize(g);
 			String[] types = { RegistryAttachmentType.CORPORATE_IDENTITY.toString() };// TODO
@@ -1733,5 +1740,4 @@ public Vector<FileInfo> insertFileMultiple(FileInfo fi) {
 	    }
 	    return false;
 	}
-
 }

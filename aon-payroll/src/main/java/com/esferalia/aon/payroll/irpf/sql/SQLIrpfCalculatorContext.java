@@ -1075,7 +1075,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		nextIrpfBase = 0.00;
 		nextSocialSecurityContributons = 0.00;
 
-		ContractSalaryCalculator calculator = new ContractSalaryCalculator();
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
 
 		SalaryBuilder builder = new SalaryBuilder();
 		calculator.setSalaryBuilder(builder);

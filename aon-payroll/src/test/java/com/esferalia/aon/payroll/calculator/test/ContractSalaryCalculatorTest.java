@@ -20,6 +20,7 @@ import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorCont
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.CustomerColumns;
+import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.Period;
@@ -37,11 +38,11 @@ public class ContractSalaryCalculatorTest extends AbstractCalculatorTest{
 	 */
 	public void testSalary() throws SQLException, ExpressionException, SalaryException, ParseException, com.code.aon.ql.util.ExpressionException {
 
-		SQLSalaryBuilderTester salaryBuilderTester = 
-			new SQLSalaryBuilderTester(connection);
+		SQLSalaryBuilderTester<ISalary> salaryBuilderTester = 
+			new SQLSalaryBuilderTester<ISalary>(connection);
 		
-		ContractSalaryCalculator calculator = 
-			new ContractSalaryCalculator();
+		ContractSalaryCalculator<ISalary> calculator = 
+			new ContractSalaryCalculator<ISalary>();
 		calculator.setSalaryBuilder(salaryBuilderTester);
 		
 		

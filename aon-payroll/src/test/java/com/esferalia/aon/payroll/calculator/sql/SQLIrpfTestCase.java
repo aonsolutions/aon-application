@@ -176,8 +176,8 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				"BASE_IRPF * PORCENTAJE_IRPF/100"
 				},
 				new Extra []{
-					new  Extra(){{this.expression="1000.00 * DIAS_TRABAJADOS / DIAS_MES"; this.month=Month.DECEMBER; this.start="01/12"; this.end="31/12"; this.issue="15/12";}},
-					new  Extra(){{this.expression="1000.00 * DIAS_TRABAJADOS / DIAS_MES"; this.month=Month.JULY; this.start="01/07 -1"; this.end="30/06"; this.issue="01/07";}},
+					new  Extra(){{this.expression="1000.00 * DIAS_TRABAJADOS / DIAS_MES "; this.month=Month.DECEMBER; this.start="01/01"; this.end="31/12"; this.issue="15/12";}},
+					new  Extra(){{this.expression="1000.00 * DIAS_TRABAJADOS / DIAS_MES "; this.month=Month.JULY; this.start="01/07 -1"; this.end="30/06"; this.issue="01/07";}},
 				}
 				);
 	}
@@ -271,7 +271,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 	private void test(Consumer<IrpfResult> c, String [] payments, String [] deductions, Extra extras [])
 			throws ExpressionException, SQLException {
 		Connection connection = getConnection();
-		AONContext aonContext = new AONContext(connection, "", 0);
+		AONContext aonContext = new AONContext(connection);
 
 		AgreementLevelCategoryRecord category = null;
 		if ( extras!= null && extras.length > 0 )

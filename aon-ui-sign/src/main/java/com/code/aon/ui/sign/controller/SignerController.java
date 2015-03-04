@@ -1,14 +1,11 @@
 package com.code.aon.ui.sign.controller;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-
-import net.esle.sinadura.core.firma.exceptions.SinaduraCoreException;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -24,9 +21,9 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.report.OutputFormat;
-import com.code.aon.report.ReportException;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.watson.error.AonCoreException;
 
 public class SignerController implements ISignConstants, Serializable {
 	
@@ -93,7 +90,7 @@ public class SignerController implements ISignConstants, Serializable {
 			reportManager.setCollectionProvider( new SingleCollectionProvider(to) );
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			reportManager.execute( out, report);
-			attachment = signatureController.newAttachment(to);
+			attachment = signatureController.newAttachment(to, MimeType.MIME_PDF);
 			attachment.setData(out.toByteArray());
 			attachment.setMimeType(getMimeType(outputFormat));
 			attachment.setDescription( signatureController.getDescription(to));
@@ -111,12 +108,34 @@ public class SignerController implements ISignConstants, Serializable {
 		criteria.addEqualExpression( type, MimeType.MIME_SIGNED_PDF );
 		String parentAlias = attachmentBean.getFieldName( signatureController.getAttachmentParentAlias() );
 		criteria.addEqualExpression( parentAlias, parentId );		
-		List<ITransferObject> list = attachmentBean.getList(criteria);
+		List<ITransferObject> list = attachmentBean.getList(criteria, 0, 1);
 		if (! list.isEmpty() ) {
 			return (IAttachment) list.get(0);
 		}
 		return null;
 	}	
+	
+	public IAttachment getSignedFacturae( Serializable parentId ) throws ManagerBeanException {
+		Criteria criteria = new Criteria();
+		String type = attachmentBean.getFieldName( signatureController.getAttachmentMimeTypeAlias() );
+		criteria.addEqualExpression( type, MimeType.MIME_XSIG );
+		String parentAlias = attachmentBean.getFieldName( signatureController.getAttachmentParentAlias() );
+		criteria.addEqualExpression( parentAlias, parentId );		
+		List<ITransferObject> list = attachmentBean.getList(criteria, 0, 1);
+		if (! list.isEmpty() ) {
+			return (IAttachment) list.get(0);
+		}
+		return null;
+	}	
+	
+	public boolean hasSignedFacturae( Serializable parentId ) throws ManagerBeanException {
+		Criteria criteria = new Criteria();
+		String type = attachmentBean.getFieldName( signatureController.getAttachmentMimeTypeAlias() );
+		criteria.addEqualExpression( type, MimeType.MIME_XSIG );
+		String parentAlias = attachmentBean.getFieldName( signatureController.getAttachmentParentAlias() );
+		criteria.addEqualExpression( parentAlias, parentId );		
+		return attachmentBean.getCount(criteria) > 0;
+	}		
 	
 	public String onReport() {
 		try {
@@ -125,8 +144,9 @@ public class SignerController implements ISignConstants, Serializable {
 			if ( signatureController.isSigned(to) ) {
 				Serializable id = signatureController.getManagerBean().getId(to);
 				attach = getSignedAttachment( id );
-			} else {
-				attach = signatureController.getUnsignedAttachment(to);
+			}
+			if ( attach == null) {
+				attach = signatureController.getUnsignedAttachment(to, MimeType.MIME_PDF);
 			}
 			if ( attach != null ) {
 				DownloadUtil.downloadAttachment(attach);
@@ -139,6 +159,28 @@ public class SignerController implements ISignConstants, Serializable {
 		return null;
 	}
 	
+	public String onDownloadFacturae() {
+		try {
+			ITransferObject to = signatureController.getTo();
+			IAttachment attach = null;
+			if ( signatureController.isSigned(to) ) {
+				Serializable id = signatureController.getManagerBean().getId(to);
+				attach = getSignedFacturae( id );
+			}
+			if ( attach == null) {
+				attach = signatureController.getUnsignedAttachment(to, MimeType.MIME_XML);
+			}
+			if ( attach != null ) {
+				DownloadUtil.downloadAttachment(attach);
+			}
+		} catch (Throwable e) {
+			LOGGER.error(">>>> onReport " + e.getMessage());
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}			
+		return null;
+	}	
+	
 	private void cancelSign( ITransferObject to ) throws ManagerBeanException {
 		this.cancelSign(to, false);
 	}
@@ -149,20 +191,15 @@ public class SignerController implements ISignConstants, Serializable {
 		if ( attachment != null ) {
 			attachmentBean.remove( attachment );
 		}
+		IAttachment facturae = getSignedFacturae( id );
+		if ( facturae != null ) {
+			attachmentBean.remove( facturae );
+		}
 		updateSigned(to, false, batch);
 	}
 
-	private void sign( ITransferObject to, IAttachment attach ) throws ManagerBeanException, SinaduraCoreException, ReportException, IOException {
-		this.sign(to, attach.getDescription(), attach.getData(), false);
-	}
-	
-	public void sign( ITransferObject to, String description, byte[] pdfData, boolean batch ) throws ManagerBeanException, SinaduraCoreException, ReportException, IOException { 
-		byte[] signedFileData = getCertificateController().getSignedFileData( pdfData, true );
-		
-		IAttachment attachment = signatureController.newAttachment(to);
-		attachment.setData( signedFileData );
-		attachment.setDescription( description );
-		attachment.setMimeType( MimeType.MIME_SIGNED_PDF );
+	public void sign( ITransferObject to, IAttachment attachment, boolean batch ) throws AonCoreException, ManagerBeanException {
+		getCertificateController().signAttachment(attachment);
 		updateSigned( to, attachment, batch );
 	}
 	
@@ -196,7 +233,11 @@ public class SignerController implements ISignConstants, Serializable {
 			if ( cc.isUsingSmartCard() ) {
 				updateSigned( to, cc.getAttachment(), false );
 			} else {
-				sign( to, signatureController.generateReportAttachment(to) );	
+				sign( to, signatureController.generateReportAttachment(to), false );	
+				IAttachment attach = signatureController.getUnsignedAttachment(to, MimeType.MIME_XML);
+				if ( attach != null ) {
+					sign( to, attach, false );
+				}
 			}
 		} catch (Throwable e) {
 			LOGGER.error(">>>> onSign " + e.getMessage());

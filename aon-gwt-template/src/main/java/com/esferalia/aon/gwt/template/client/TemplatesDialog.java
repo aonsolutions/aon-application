@@ -13,7 +13,7 @@ import gwtupload.client.SingleUploader;
 
 import java.util.Vector;
 
-import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.CustomDialogB;
 import com.esferalia.aon.gwt.template.shared.Dialog;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
@@ -44,7 +44,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class TemplatesDialog extends CustomDialog {
+public abstract class TemplatesDialog extends CustomDialogB {
 
 	interface Binder extends UiBinder<Widget, TemplatesDialog>{
 		
@@ -346,25 +346,42 @@ public abstract class TemplatesDialog extends CustomDialog {
 			ListBox lb = lbaux;
 			@Override
 			public void onMouseOver(MouseOverEvent event) {
+				Boolean b = true;
 				VerticalPanel vp = new VerticalPanel();
+				vp.addStyleName("aon-info-content-template");
 				if(lb.getItemText(lb.getSelectedIndex()).equals("Producto")){
-					vp.add(new Label("Columnas Obligatorias:"));
-					vp.add(new Label("Nombre"));
-					vp.add(new Label("C\u00f3digo"));
-					vp.add(new Label("Precio Coste"));
-					vp.add(new Label("Precio Venta Base"));
+					Label title = new Label("Columnas Obligatorias:");
+					title.addStyleName("aon-info-title-template");
+					vp.add(title);
+					Label r1 = new Label("Nombre");r1.addStyleName("aon-info-rest-template");
+					vp.add(r1);
+					Label r2 = new Label("C\u00f3digo");r2.addStyleName("aon-info-rest-template");
+					vp.add(r2);
+					Label r3 = new Label("Precio Coste");r3.addStyleName("aon-info-rest-template");
+					vp.add(r3);
+					Label r4 = new Label("Precio Venta Base");r4.addStyleName("aon-info-rest-template");
+					vp.add(r4);
+
 				}
 				else if(lb.getItemText(lb.getSelectedIndex()).equals("Stock")){
-					vp.add(new Label("Columnas Obligatorias:"));
-					vp.add(new Label("Product"));
-					vp.add(new Label("Almac\u00e9n Destino"));
-					vp.add(new Label("Cantidad"));
+					Label title = new Label("Columnas Obligatorias:");
+					title.addStyleName("aon-info-title-template");
+					vp.add(title);
+					Label r1 = new Label("Product");r1.addStyleName("aon-info-rest-template");
+					vp.add(r1);
+					Label r2 = new Label("Almac\u00e9n Destino");r2.addStyleName("aon-info-rest-template");
+					vp.add(r2);
+					Label r3 = new Label("Cantidad");r3.addStyleName("aon-info-rest-template");
+					vp.add(r3);
 				}
-				popup = new PopupPanel();
-				popup.setWidget(vp);
-				popup.setStyleName("aon-popup-aux-template");
-				popup.setPopupPosition(event.getNativeEvent().getClientX(),event.getNativeEvent().getClientY());
-				popup.show();
+				else b = false;
+				if(b){
+					popup = new PopupPanel();
+					popup.setWidget(vp);
+					popup.setStyleName("aon-popup-aux-template");
+					popup.setPopupPosition(event.getNativeEvent().getClientX(),event.getNativeEvent().getClientY());
+					popup.show();
+				}
 			}
 		});
 		info.addMouseOutHandler(new MouseOutHandler() {
