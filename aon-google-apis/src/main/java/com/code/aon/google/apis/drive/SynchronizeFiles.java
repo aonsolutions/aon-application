@@ -140,7 +140,6 @@ public class SynchronizeFiles {
 		// DriveData dd=DatabaseSync.getDomainFiles(domain);
 		// get iattachs, get contract attachs,.... y añadir a DriveData
 		DriveData dd = getAttachsSF(domain);
-
 		// long max= 100000;
 
 		// if (max >= dd.getGservice().getSize()){
@@ -223,11 +222,16 @@ public class SynchronizeFiles {
 				map.put(s, s);
 			}
 		}
-
+		System.out.println("Dominio :");
+		System.out.println("	--> name = "+ domain);
+		
 		DriveData dd = new DriveData();
 		dd.setDomain(domain);
 		Domain d = DBConsults.getDomain(domain);
+		System.out.println("	--> id = "+ d.getId());
 		DomainGserviceaccount g = DBConsults.getServiceAccount(domain, d.getId());
+		System.out.println();
+		System.out.println("Service Account: "+ g.getClientId());
 		dd.setGservice(g);
 		dd.setAttachs(new Vector<FileInfo>());
 		
@@ -289,6 +293,7 @@ public class SynchronizeFiles {
 		DriveData dd = new DriveData();
 		dd.setDomain(domain);
 		Domain d = DBConsults.getDomain(domain);
+		
 		DomainGserviceaccount g = DBConsults.getServiceAccount(domain, d.getId());
 		dd.setGservice(g);
 		dd.setAttachs(new Vector<FileInfo>());

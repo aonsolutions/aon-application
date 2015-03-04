@@ -185,7 +185,7 @@ public class CopyFiles {
 		About about = newDrive.about().get().execute();
 		String rootId = about.getRootFolderId();
 		
-		FileList fileList = oldDrive.files().list().execute();
+		FileList fileList = oldDrive.files().list().setMaxResults(1000).execute();
 		for(File file : fileList.getItems()){
 			String driveId = file.getId();
 			FileList fl = SearchFiles.searchFilesProperties(newDrive, "oldDriveId", driveId);
