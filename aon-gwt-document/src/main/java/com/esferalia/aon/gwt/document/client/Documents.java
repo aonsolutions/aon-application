@@ -7,9 +7,6 @@ import gwtupload.client.IUploader.OnFinishUploaderHandler;
 import gwtupload.client.MultiUploader;
 import gwtupload.client.SingleUploader;
 
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -3160,6 +3157,7 @@ public class Documents extends Composite implements EntryPoint {
 				"Salir", true,son);
 		d.setFileInfo(object);
 		d.setIsNextButton(false);
+		d.setBaseUrl(GWT.getModuleBaseURL());
 		popup2 = new DocumentsDialog(d) {
 
 			@Override

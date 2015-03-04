@@ -145,7 +145,7 @@ public abstract class DocumentsDialog extends CustomDialogB {
 			case "delete": deleteFile(dialog);break;
 			case "delete2": delete2(dialog);break;
 			case "search": searchFile(dialog);break;
-			case "info": infoFile(dialog.getFileInfo());break;
+			case "info": infoFile(dialog);break;
 			case "share": shareFile();break;
 			case "alert": alert(dialog);
 			default:
@@ -928,7 +928,8 @@ public abstract class DocumentsDialog extends CustomDialogB {
 	}
 	
 	
-	private void infoFile(FileInfo object) {
+	private void infoFile(Dialog dialog) {
+		FileInfo object = dialog.getFileInfo();
 		grid.setStyleName("aon-panelGrid");
 		grid.setWidth("300px");
 		grid.setBorderWidth(1);
@@ -950,7 +951,7 @@ public abstract class DocumentsDialog extends CustomDialogB {
 			grid.setWidget(4, 0, new Label("Enlace"));
 			grid.setWidget(4, 1, new Label(""));
 			
-			idoc.copyLink(object, url, new AsyncCallback<String>() {
+			idoc.copyLink(object, dialog.getBaseUrl(), new AsyncCallback<String>() {
 				
 				@Override
 				public void onSuccess(String result) {
@@ -992,7 +993,7 @@ public abstract class DocumentsDialog extends CustomDialogB {
 			grid.setWidget(8, 0, new Label("Enlace"));
 			grid.setWidget(8, 1, new Label(""));
 
-			idoc.copyLink(object, url, new AsyncCallback<String>() {
+			idoc.copyLink(object, dialog.getBaseUrl(), new AsyncCallback<String>() {
 				
 				@Override
 				public void onSuccess(String result) {
