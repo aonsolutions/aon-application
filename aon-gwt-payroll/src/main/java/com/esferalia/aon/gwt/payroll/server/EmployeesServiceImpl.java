@@ -432,11 +432,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public List<String> getHolidayDescription() 
 			throws IllegalArgumentException {
-		
-
-	@Override
-	public HolidayDraft getStatalHolidays(int workplaceId)
-			throws IllegalArgumentException {
 
 		Connection conn = null;
 		try {
