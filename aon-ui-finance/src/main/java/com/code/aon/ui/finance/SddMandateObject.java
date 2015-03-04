@@ -21,6 +21,7 @@ public class SddMandateObject implements ITransferObject, ICollectionProvider, S
 	private String reference;
 	private Boolean recurrentPayment;
 	private Boolean oneOffPayment;
+	private Boolean paymentType;
 
 	public Registry getRegistry() {
 		return registry;
@@ -65,6 +66,22 @@ public class SddMandateObject implements ITransferObject, ICollectionProvider, S
 		this.oneOffPayment = oneOffPayment;
 		if(this.oneOffPayment!=null && this.oneOffPayment){
 			this.recurrentPayment = !this.oneOffPayment;
+		}
+	}
+	
+	public Boolean getPaymentType() {
+		return paymentType;
+	}
+
+	public void setPaymentType(Boolean paymentType) {
+		this.paymentType = paymentType;
+		if(paymentType==null){
+			this.oneOffPayment = null;
+			this.recurrentPayment = null;
+		} else if(paymentType){
+			setRecurrentPayment(true);
+		} else{
+			setOneOffPayment(true);
 		}
 	}
 

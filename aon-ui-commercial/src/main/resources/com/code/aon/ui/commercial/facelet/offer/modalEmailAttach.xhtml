@@ -103,7 +103,7 @@
 												value="#{bundle.finance_sddMandate_paymentType}" />
 											<aon:selectOneMenu id="sddMandate_paymentType-all" layout="pageDirection"
 												disabled="#{!offer.includeEmailSddMandateReport}"
-												value="#{offer.sddMandate.recurrentPayment}">
+												value="#{offer.sddMandate.paymentType}">
 												<f:selectItem  itemValue="#{null}" 
 													itemLabel="#{bundle.aon_unknown}" />
 												<f:selectItem  itemValue="#{true}" 
