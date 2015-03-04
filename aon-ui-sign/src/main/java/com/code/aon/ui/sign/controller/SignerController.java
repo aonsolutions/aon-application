@@ -19,6 +19,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.SingleCollectionProvider;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.faces.component.util.DownloadUtil;
+import com.code.aon.facturae.FACeUtil;
+import com.code.aon.finance.Invoice;
 import com.code.aon.ql.Criteria;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.ui.report.controller.ReportManager;
@@ -118,7 +120,7 @@ public class SignerController implements ISignConstants, Serializable {
 	public IAttachment getSignedFacturae( Serializable parentId ) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
 		String type = attachmentBean.getFieldName( signatureController.getAttachmentMimeTypeAlias() );
-		criteria.addEqualExpression( type, MimeType.MIME_XSIG );
+		criteria.addEqualExpression( type, MimeType.MIME_SIGNED_FACTURAE );
 		String parentAlias = attachmentBean.getFieldName( signatureController.getAttachmentParentAlias() );
 		criteria.addEqualExpression( parentAlias, parentId );		
 		List<ITransferObject> list = attachmentBean.getList(criteria, 0, 1);
@@ -131,7 +133,7 @@ public class SignerController implements ISignConstants, Serializable {
 	public boolean hasSignedFacturae( Serializable parentId ) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
 		String type = attachmentBean.getFieldName( signatureController.getAttachmentMimeTypeAlias() );
-		criteria.addEqualExpression( type, MimeType.MIME_XSIG );
+		criteria.addEqualExpression( type, MimeType.MIME_SIGNED_FACTURAE );
 		String parentAlias = attachmentBean.getFieldName( signatureController.getAttachmentParentAlias() );
 		criteria.addEqualExpression( parentAlias, parentId );		
 		return attachmentBean.getCount(criteria) > 0;
@@ -159,6 +161,11 @@ public class SignerController implements ISignConstants, Serializable {
 		return null;
 	}
 	
+	private MimeType getFacturaeMimeType( ITransferObject to ) {
+		Invoice invoice = (Invoice) to;
+		return FACeUtil.isDefined(invoice) ? MimeType.MIME_XSIG : MimeType.MIME_XML;
+	}
+	
 	public String onDownloadFacturae() {
 		try {
 			ITransferObject to = signatureController.getTo();
@@ -171,7 +178,7 @@ public class SignerController implements ISignConstants, Serializable {
 				attach = signatureController.getUnsignedAttachment(to, MimeType.MIME_XML);
 			}
 			if ( attach != null ) {
-				DownloadUtil.downloadAttachment(attach);
+				DownloadUtil.downloadAttachment(attach, getFacturaeMimeType(to));
 			}
 		} catch (Throwable e) {
 			LOGGER.error(">>>> onReport " + e.getMessage());

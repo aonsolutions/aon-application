@@ -319,7 +319,7 @@ public class CertificateController implements Serializable {
 		} else if ( (type == MimeType.MIME_XML) || (type == MimeType.MIME_XSIG) ) {
 			FacturaeSigner signer = new FacturaeSigner();
 			signedData = signer.sign(getKeyStoreData(), attachment.getData());
-			attachment.setMimeType(MimeType.MIME_XSIG);
+			attachment.setMimeType(MimeType.MIME_SIGNED_FACTURAE);
 		}
 		attachment.setData( signedData );
 	}

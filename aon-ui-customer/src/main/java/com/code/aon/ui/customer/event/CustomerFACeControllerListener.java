@@ -17,25 +17,21 @@ public class CustomerFACeControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		Customer customer = ((Customer)event.getController().getTo());
-		if ( customer.isEInvoice() ) {
-			try {
-				recover(customer);
-			} catch (ManagerBeanException e) {
-				throw new ControllerListenerException(e);
-			}			
-		}
+		try {
+			recover(customer);
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e);
+		}			
 	}
 	
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		Customer customer = ((Customer)event.getController().getTo());
-		if ( customer.isEInvoice() ) {
-			try {
-				recover(customer);
-			} catch (ManagerBeanException e) {
-				throw new ControllerListenerException(e);
-			}			
-		}
+		try {
+			recover(customer);
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e);
+		}			
 	}
 	
 	@Override

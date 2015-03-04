@@ -20,18 +20,17 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.IAttachment;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.faces.controller.LogPanelController;
-import com.code.aon.facturae.FacturaeWriter;
+import com.code.aon.facturae.FACeUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
@@ -120,17 +119,18 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 	}	
 	
     private File getZipFile() throws IOException, ManagerBeanException {
+    	InvoiceController controller = (InvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
     	File file = File.createTempFile( "invoices", "." + MimeType.MIME_ZIP.getExtension());
 		OutputStream fileOut = new BufferedOutputStream( new FileOutputStream(file) );
 		ZipOutputStream zipOut = new ZipOutputStream(fileOut);
-		FacturaeWriter fw = new FacturaeWriter(AonUtil.getCurrentLocale());
 		for( ITransferObject to : getManagerBean().getList(getCriteria()) ) {
 			Invoice invoice = (Invoice) to;
-			byte[] data = InvoiceController.getFacturaeData(fw, invoice);
-			if (! ArrayUtils.isEmpty(data) ) {
-				String name = "facturae " + StringUtils.replace(invoice.getReferenceCode(), "/", "-") + "." + MimeType.MIME_XML.getExtension();
+			IAttachment attach = controller.getInvoiceFacturae(invoice);
+			if ( attach != null ) {
+				MimeType type = FACeUtil.isDefined(invoice) ? MimeType.MIME_XSIG : MimeType.MIME_XML;
+				String name = controller.getDescription(invoice) + "." + type.getExtension(); 
 	            zipOut.putNextEntry(new ZipEntry(name));
-	            zipOut.write(data);
+	            zipOut.write(attach.getData());
 	        	zipOut.closeEntry();				
 			}
 		}

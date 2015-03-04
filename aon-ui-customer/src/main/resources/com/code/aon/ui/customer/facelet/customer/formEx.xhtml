@@ -348,7 +348,7 @@
 							</aon:if>
 						</aon:if>
 						
-						<aon:if test="#{customerFACe.enabled}">
+						<aon:if test="#{customer.to.EInvoice and customerFACe.enabled}">
 							<aon:panelTab id="customerFACe" label="#{bundle.finance_face}">
 								<ui:include src="/com/code/aon/ui/customer/facelet/customer/formFACe.xhtml" >
 									<ui:param name="controller" value="#{customer}" />

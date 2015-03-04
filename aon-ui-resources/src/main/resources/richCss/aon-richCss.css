@@ -2175,12 +2175,12 @@ color:#000;
 .aon-popupWindow-content-internal{
 	}
 	
-.aon-timer{
+.aon-waitProcess{
 	background:transparent url(images/aon-content/aon-timer.gif) left center no-repeat;
 	height: 141px;
 	padding-left: 120px;
 }
-.aon-timer-internal {
+.aon-waitProcess-internal {
 	text-transform:uppercase;
 	font-weight:bold;
 	vertical-align:middle;

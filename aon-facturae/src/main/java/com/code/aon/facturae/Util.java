@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -28,14 +29,19 @@ public class Util {
 	}
 	
 	public static XMLGregorianCalendar toXMLCalendar( Date date ) {
+		XMLGregorianCalendar xgc = null;
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.setTime( date );
 		try {
-			return DatatypeFactory.newInstance().newXMLGregorianCalendar( calendar );
+			xgc = DatatypeFactory.newInstance().newXMLGregorianCalendar( calendar );
+			xgc.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
+			xgc.setTime(
+					DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED,
+					DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED);
 		} catch (DatatypeConfigurationException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
-		return null;
+		return xgc;
 	}
 	
 	public static AmountType getAmount( double value ) {
@@ -57,6 +63,10 @@ public class Util {
 		return StringUtils.leftPad( sb.toString(), 5, '0' );
 	}
 
+	public static String toTextMax10Type( String value ) {
+		return StringUtils.substring(value, 0, 10);
+	}
+	
 	public static String toTextMax20Type( String value ) {
 		return StringUtils.substring(value, 0, 20);
 	}
@@ -71,6 +81,10 @@ public class Util {
 	
 	public static String toTextMax80Type( String value ) {
 		return StringUtils.substring(value, 0, 80);
+	}
+
+	public static String toTextMax2500Type( String value ) {
+		return StringUtils.substring(value, 0, 2500);
 	}
 	
 }

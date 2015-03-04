@@ -380,7 +380,7 @@ public class FacturaeWriter {
 		String centreCode = FACeUtil.getValue(centreCodeKey, invoice);
 		if (! StringUtils.isEmpty(centreCode) ) {
 			AdministrativeCentreType centre = new AdministrativeCentreType();
-			centre.setCentreCode( centreCode );
+			centre.setCentreCode(Util.toTextMax10Type(centreCode));
 			centre.setRoleTypeCode( roleTypeCode );
 			RegistryAddress address = FACeUtil.getAddress(addressKey, invoice);
 			CountryType country = getCountry(address.getGeozone());
@@ -389,14 +389,14 @@ public class FacturaeWriter {
 			} else {
 				centre.setOverseasAddress( getOverseasAddress(address, country) );
 			}
-			centre.setCentreDescription(centreDescription);
+			centre.setCentreDescription(Util.toTextMax2500Type(centreDescription));
 			centres.getAdministrativeCentre().add(centre);
 		}
 	}
 	
 	private AdministrativeCentreType getAdministrativeCentre( WorkPlace workPlace ) throws ManagerBeanException {
 		AdministrativeCentreType centre = new AdministrativeCentreType();
-		centre.setCentreCode( String.valueOf(workPlace.getId()) );
+		centre.setCentreCode(Util.toTextMax10Type(String.valueOf(workPlace.getId())));
 		RegistryAddress address = workPlace.getAddress();
 		CountryType country = getCountry(address.getGeozone());
 		if ( CountryType.ESP.equals(country) ) {
@@ -626,8 +626,8 @@ public class FacturaeWriter {
 	
 	private InvoiceLineType getInvoiceLine( InvoiceDetail line, InvoiceType invoiceType ) {
 		InvoiceLineType invoiceLine = new InvoiceLineType();
-		invoiceLine.setIssuerTransactionReference( String.valueOf(line.getId()) );
-		invoiceLine.setItemDescription( line.getDescription() );
+		invoiceLine.setIssuerTransactionReference(Util.toTextMax20Type(String.valueOf(line.getId())) );
+		invoiceLine.setItemDescription(Util.toTextMax2500Type(line.getDescription()) );
 		invoiceLine.setQuantity( line.getQuantity() );
 		invoiceLine.setUnitPriceWithoutTax( line.getPrice() );
 		double totalCost = line.getQuantity() * line.getPrice();

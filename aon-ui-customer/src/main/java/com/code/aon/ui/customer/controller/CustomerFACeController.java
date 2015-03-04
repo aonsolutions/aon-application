@@ -12,6 +12,8 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
@@ -32,6 +34,8 @@ public class CustomerFACeController implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
+	private final static Logger LOGGER = LoggerFactory.getLogger(CustomerFACeController.class);
+	
 	private Map<String,RegistryNote> notes;
 	
 	private List<RegistryAddress> addresses;
@@ -41,39 +45,40 @@ public class CustomerFACeController implements Serializable {
 	private boolean enabled;
 	
 	public void onRecover( Customer customer ) throws ManagerBeanException {
-		this.addresses = getAddresses(customer);
-		updateCustomerAddresses();
 		init( customer );			
+		updateCustomerAddresses( customer );
 	}
 	
 	private void init( Customer customer ) throws ManagerBeanException {
 		this.notes = new HashMap<String, RegistryNote>();
-		for( String id : FACeUtil.FACE_CONSTANTS ) {
-			updateRegistryNote(id, customer);
+		for( String key : FACeUtil.FACE_CONSTANTS ) {
+			updateRegistryNote(key, customer);
 		}
 		setEnabled(FACeUtil.getRegistryNote(FACeUtil.FACE_ENABLED, customer.getId()) != null);
 	}
-
-	public void onClear( ActionEvent event ) throws ManagerBeanException {
-		for( RegistryNote note : this.notes.values() ) {
-			note.setComments(null);
-		}
+	
+	private void clear( Customer customer ) {
+		for( String key : FACeUtil.FACE_CONSTANTS ) {
+   			RegistryNote note = getEmptyNote(customer.getRegistry(), key);
+   	   		setNote(key, note);
+   		}
 	}
 	
-	public void onSave( ActionEvent event ) throws ManagerBeanException {
+	private void save() throws ManagerBeanException {
 		for( RegistryNote note : this.notes.values() ) {
 			saveRegistryNote(note);
 		}
 	}
 
 	public void onUpdate( Customer customer ) throws ManagerBeanException {
-		if ( isEnabled() ) {
+		if ( customer.isEInvoice() && isEnabled() ) {
 			RegistryNote note = FACeUtil.getRegistryNote(FACeUtil.FACE_ENABLED, customer.getId());
 			if ( note == null ) {
 				note = getEmptyNote(customer.getRegistry(), FACeUtil.FACE_ENABLED);
 				note.setComments(Boolean.TRUE.toString());
 				saveRegistryNote(note);
 			}
+			save();
 		} else {
 			onRemove(customer);
 		}
@@ -87,6 +92,7 @@ public class CustomerFACeController implements Serializable {
 		for( ITransferObject to : bean.getList(criteria) ) {
 			bean.remove(to);
 		}			
+		clear(customer);
 	}
 	
 	private RegistryNote getNote( String key ) {
@@ -222,23 +228,31 @@ public class CustomerFACeController implements Serializable {
 	}
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
-	private List<RegistryAddress> getAddresses( Customer customer ) throws ManagerBeanException {
-   		IManagerBean registryAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
-   		Criteria criteria = new Criteria();
-   		criteria.addEqualExpression(registryAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID), customer.getId());
-   		criteria.addOrder(registryAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_ADDRESS));
-   		return (List) registryAddressBean.getList(criteria);
+	private List<RegistryAddress> getAddresses( Customer customer ) {
+    	try {
+       		IManagerBean registryAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
+       		Criteria criteria = new Criteria();
+       		criteria.addEqualExpression(registryAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID), customer.getId());
+       		criteria.addOrder(registryAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_ADDRESS));
+       		return (List) registryAddressBean.getList(criteria);    		
+    	} catch ( ManagerBeanException e ) {
+    		LOGGER.error(e.getMessage(), e);
+    	}
+    	return null;
     }
     
     public List<SelectItem> getCustomerAddresses() {
     	return this.addressList;
     }
     	
-    private void updateCustomerAddresses() {
-    	this.addressList = new LinkedList<SelectItem>();
-   		for (RegistryAddress address : this.addresses) {
-			SelectItem item = new SelectItem(address, getLabel(address));
-			addressList.add(item);
+    private void updateCustomerAddresses( Customer customer ) {
+    	if ( isEnabled() ) {
+    		this.addresses = getAddresses(customer);
+        	this.addressList = new LinkedList<SelectItem>();
+       		for (RegistryAddress address : this.addresses) {
+    			SelectItem item = new SelectItem(address, getLabel(address));
+    			addressList.add(item);
+        	}    		
     	}
     }
 
@@ -254,7 +268,9 @@ public class CustomerFACeController implements Serializable {
 		if ( isEnabled() ) {
 			CustomerController cc = (CustomerController) AonUtil.getRegisteredBean(ICustomerConstants.CUSTOMER_CONTROLLER_NAME);
 			cc.setSelectedTab("customerFACe");
-		}
+			Customer customer = (Customer) cc.getTo();
+			updateCustomerAddresses(customer);
+		}					
 	}
 
 }

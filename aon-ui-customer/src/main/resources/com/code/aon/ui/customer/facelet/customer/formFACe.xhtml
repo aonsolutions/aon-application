@@ -7,24 +7,8 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-		<ui:param name="toolbarID" value="customerFACeToolbar" />
-		<ui:param name="innerToolbar" value="true" />
-		<ui:param name="skipToolbarTitle" value="true" />
-		<ui:param name="skipToolbarDescription" value="true" />		
-		<ui:define name="toolbarContent">
-			<aon:commandButton id="customerFACeSave"
-				value="#{bundle.aon_save}"
-				action="customer_form" actionListener="#{customerFACe.onSave}"
-				styleClass="aon-finding-toolbar-item aon-icon-accept" />
-			<aon:commandButton id="customerFACeClear"
-				value="#{bundle.aon_clear}" immediate="true"
-				action="customer_form" actionListener="#{customerFACe.onClear}"
-				styleClass="aon-finding-toolbar-item aon-icon-rubber" />				
-		</ui:define>
-	</ui:decorate>			
-
-	<aon:panelGrid columns="2" styleClass="aon-margin-top aon-width-all" >
+	<aon:panelGrid id="FACeGrid"
+		columns="2" styleClass="aon-margin-top aon-width-all" >
 
 		<aon:outputLabel for="Customer_FACe_Fiscal"
 			value="Oficina Contable" />

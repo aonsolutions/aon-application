@@ -92,10 +92,20 @@ public class DownloadUtil {
 	 * @param attach the attach
 	 */
 	public static void downloadAttachment(IAttachment attach) {
+		downloadAttachment(attach, attach.getMimeType());
+	}
+
+	/**
+	 * Download attachment.
+	 *
+	 * @param attach the attach
+	 * @param mimeType Mime type 
+	 */
+	public static void downloadAttachment(IAttachment attach, MimeType mimeType) {
 		byte[] data = getData(attach);
 		InputStream in = new ByteArrayInputStream(data);
 		long size = ArrayUtils.getLength(data);
-		downloadAttachment(attach.getDescription(), attach.getMimeType(), in, size);
+		downloadAttachment(attach.getDescription(), mimeType, in, size);
 	}
 	
 	/**
