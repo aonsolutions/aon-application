@@ -168,14 +168,14 @@ public class DBConsults {
 				if(size == 3 && r.value4() == domainId)
 					dgserviceaccount = new DomainGserviceaccount(r);	*/
 			};
-			for(Record10<String, byte[], String, Integer, String, Double, byte[], String, Double, String> r : data){
+			for(Record10<String, byte[], String, Integer, String, Double, byte[], String, Double, String> r : dataParent){
 				if(!b){
 					dgserviceaccount = new DomainGserviceaccount(r);
 					b= true;
 				}
 
 			};
-			for(Record10<String, byte[], String, Integer, String, Double, byte[], String, Double, String> r : data){
+			for(Record10<String, byte[], String, Integer, String, Double, byte[], String, Double, String> r : dataDefault){
 				if(!b){
 					dgserviceaccount = new DomainGserviceaccount(r);
 					b= true;
