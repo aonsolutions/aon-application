@@ -34,6 +34,7 @@ import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Record4;
 import org.jooq.Record5;
+import org.jooq.Record6;
 import org.jooq.Record9;
 import org.jooq.Result;
 import org.jooq.TableField;
@@ -120,20 +121,65 @@ public class DBConsults {
 							, DOMAIN_GSERVICEACCOUNT.PRIVATE_KEY, DOMAIN_GSERVICEACCOUNT.PUBLIC_KEY
 							, DOMAIN_GSERVICEACCOUNT.SIZE, DOMAIN_GSERVICEACCOUNT.GOOGLE_ACCOUNT)
 					.from(DOMAIN_GSERVICEACCOUNT)
+					.where(DOMAIN_GSERVICEACCOUNT.DOMAIN.eq(domainId))
+					.fetch();
+			
+			Result<Record10<String, byte[], String, Integer, String, Double, byte[], String, Double, String>> dataParent = dslContext
+					.select(DOMAIN_GSERVICEACCOUNT.CLIENT_ID, DOMAIN_GSERVICEACCOUNT.CLIENT_SECRET
+							, DOMAIN.NAME , DOMAIN_GSERVICEACCOUNT.DOMAIN
+							, DOMAIN_GSERVICEACCOUNT.EMAIL_ADDRESS, DOMAIN_GSERVICEACCOUNT.LIMIT
+							, DOMAIN_GSERVICEACCOUNT.PRIVATE_KEY, DOMAIN_GSERVICEACCOUNT.PUBLIC_KEY
+							, DOMAIN_GSERVICEACCOUNT.SIZE, DOMAIN_GSERVICEACCOUNT.GOOGLE_ACCOUNT)
+					.from(DOMAIN_GSERVICEACCOUNT).join(DOMAIN).on(DOMAIN.PARENT.eq(DOMAIN_GSERVICEACCOUNT.DOMAIN))
+					.where(DOMAIN.ID.eq(domainId))
+					.fetch();
+			
+			Result<Record10<String, byte[], String, Integer, String, Double, byte[], String, Double, String>> dataDefault = dslContext
+					.select(DOMAIN_GSERVICEACCOUNT.CLIENT_ID, DOMAIN_GSERVICEACCOUNT.CLIENT_SECRET
+							, DOMAIN.NAME , DOMAIN_GSERVICEACCOUNT.DOMAIN
+							, DOMAIN_GSERVICEACCOUNT.EMAIL_ADDRESS, DOMAIN_GSERVICEACCOUNT.LIMIT
+							, DOMAIN_GSERVICEACCOUNT.PRIVATE_KEY, DOMAIN_GSERVICEACCOUNT.PUBLIC_KEY
+							, DOMAIN_GSERVICEACCOUNT.SIZE, DOMAIN_GSERVICEACCOUNT.GOOGLE_ACCOUNT)
+					.from(DOMAIN_GSERVICEACCOUNT)
+					.where(DOMAIN_GSERVICEACCOUNT.DOMAIN.eq(0))
+					.fetch();
+			
+			/*Result<Record10<String, byte[], String, Integer, String, Double, byte[], String, Double, String>> data = dslContext
+					.select(DOMAIN_GSERVICEACCOUNT.CLIENT_ID, DOMAIN_GSERVICEACCOUNT.CLIENT_SECRET
+							, DOMAIN.NAME , DOMAIN_GSERVICEACCOUNT.DOMAIN
+							, DOMAIN_GSERVICEACCOUNT.EMAIL_ADDRESS, DOMAIN_GSERVICEACCOUNT.LIMIT
+							, DOMAIN_GSERVICEACCOUNT.PRIVATE_KEY, DOMAIN_GSERVICEACCOUNT.PUBLIC_KEY
+							, DOMAIN_GSERVICEACCOUNT.SIZE, DOMAIN_GSERVICEACCOUNT.GOOGLE_ACCOUNT)
+					.from(DOMAIN_GSERVICEACCOUNT)
 						.join(DOMAIN).on(DOMAIN.ID.eq(DOMAIN_GSERVICEACCOUNT.DOMAIN).or(DOMAIN.PARENT.eq(DOMAIN_GSERVICEACCOUNT.DOMAIN)))
 					.where(DOMAIN.ID.eq(domainId).or(DOMAIN.ID.eq(0)))
 					.fetch();
-			
+			*/
 			Integer size = data.size();
-
+			Boolean b = false;
 			DomainGserviceaccount dgserviceaccount = new DomainGserviceaccount();
 			for(Record10<String, byte[], String, Integer, String, Double, byte[], String, Double, String> r : data){
-				if(size == 1 && r.value4() == 0) 
+				dgserviceaccount = new DomainGserviceaccount(r);
+				b= true;
+				/*if(size == 1 && r.value4() == 0) 
 					dgserviceaccount = new DomainGserviceaccount(r);
 				if(size == 2 && r.value4() != 0)
 					dgserviceaccount = new DomainGserviceaccount(r);
 				if(size == 3 && r.value4() == domainId)
-					dgserviceaccount = new DomainGserviceaccount(r);	
+					dgserviceaccount = new DomainGserviceaccount(r);	*/
+			};
+			for(Record10<String, byte[], String, Integer, String, Double, byte[], String, Double, String> r : data){
+				if(!b){
+					dgserviceaccount = new DomainGserviceaccount(r);
+					b= true;
+				}
+
+			};
+			for(Record10<String, byte[], String, Integer, String, Double, byte[], String, Double, String> r : data){
+				if(!b){
+					dgserviceaccount = new DomainGserviceaccount(r);
+					b= true;
+				}
 			};
 			
 			return dgserviceaccount;
@@ -388,9 +434,10 @@ public class DBConsults {
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
 
-			Result<Record5<Integer, Byte, String, Byte, String>> contract_attach = dslContext
+			Result<Record6<Integer, Byte, String, Byte, String, Integer>> contract_attach = dslContext
 					.select(CONTRACT_ATTACH.ID, CONTRACT_ATTACH.MIMETYPE,
-							CONTRACT_ATTACH.DESCRIPTION, CONTRACT_ATTACH.TYPE,CONTRACT_ATTACH.DRIVEID)
+							CONTRACT_ATTACH.DESCRIPTION, CONTRACT_ATTACH.TYPE
+							,CONTRACT_ATTACH.DRIVEID, CONTRACT_ATTACH.DOMAIN)
 					.from(CONTRACT_ATTACH)
 					.join(DOMAIN)
 					.on(CONTRACT_ATTACH.DOMAIN.eq(DOMAIN.ID))
@@ -404,15 +451,18 @@ public class DBConsults {
 					.and(CONTRACT_ATTACH.DATA.isNotNull())
 					.fetch();
 
-			for (Record5<Integer, Byte, String, Byte, String> record5 : contract_attach) {
+			for (Record6<Integer, Byte, String, Byte, String, Integer> r : contract_attach) {
 				FileInfo fileInfo = new FileInfo();
 				fileInfo.setAonType("contract");
-				fileInfo.setFileId(record5.value1());
-				fileInfo.setMimetype(record5.value2());
-				fileInfo.setTitle(record5.value3());
-				fileInfo.setType(record5.value4());
+				fileInfo.setFileId(r.value1());
+				fileInfo.setMimetype(r.value2());
+				fileInfo.setTitle(r.value3());
+				fileInfo.setType(r.value4());
 				fileInfo.setCategory(-2);
-				fileInfo.setDriveId(record5.value5());
+				fileInfo.setDriveId(r.value5());
+				fileInfo.setDomainId(r.value6());
+				Domain d = DBConsults.getDomain(domain, r.value6());
+				fileInfo.setDomain(d.getName());
 				attachs.add(fileInfo);
 			}
 			return attachs;
@@ -602,9 +652,9 @@ public class DBConsults {
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
 
-			Result<Record5<Integer, Byte, String, Byte, String>> iattach = dslContext
+			Result<Record6<Integer, Byte, String, Byte, String, Integer>> attach = dslContext
 					.select(IATTACH.ID, IATTACH.MIMETYPE, IATTACH.DESCRIPTION,
-							IATTACH.TYPE,IATTACH.DRIVEID )
+							IATTACH.TYPE,IATTACH.DRIVEID, IATTACH.DOMAIN)
 					.from(IATTACH)
 					.join(DOMAIN)
 					.on(IATTACH.DOMAIN.eq(DOMAIN.ID))
@@ -618,15 +668,18 @@ public class DBConsults {
 					.and(IATTACH.DATA.isNotNull())
 					.fetch();
 
-			for (Record5<Integer, Byte, String, Byte, String> record5 : iattach) {
+			for (Record6<Integer, Byte, String, Byte, String, Integer> r : attach) {
 				FileInfo fileInfo = new FileInfo();
 				fileInfo.setAonType("item");
-				fileInfo.setFileId(record5.value1());
-				fileInfo.setMimetype(record5.value2());
-				fileInfo.setTitle(record5.value3());
-				fileInfo.setType(record5.value4());
+				fileInfo.setFileId(r.value1());
+				fileInfo.setMimetype(r.value2());
+				fileInfo.setTitle(r.value3());
+				fileInfo.setType(r.value4());
 				fileInfo.setCategory(-2);
-				fileInfo.setDriveId(record5.value5());
+				fileInfo.setDriveId(r.value5());
+				fileInfo.setDomainId(r.value6());
+				Domain d = DBConsults.getDomain(domain, r.value6());
+				fileInfo.setDomain(d.getName());
 				attachs.add(fileInfo);
 			}
 			return attachs;
@@ -785,9 +838,10 @@ public class DBConsults {
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
 
-			Result<Record5<Integer, Byte, String, Byte, String>> invoiceAttach = dslContext
+			Result<Record6<Integer, Byte, String, Byte, String, Integer>> attach = dslContext
 					.select(INVOICE_ATTACH.ID, INVOICE_ATTACH.MIMETYPE,
-							INVOICE_ATTACH.DESCRIPTION, INVOICE_ATTACH.TYPE,INVOICE_ATTACH.DRIVEID)
+							INVOICE_ATTACH.DESCRIPTION, INVOICE_ATTACH.TYPE
+							,INVOICE_ATTACH.DRIVEID, INVOICE_ATTACH.DOMAIN)
 					.from(INVOICE_ATTACH)
 					.join(DOMAIN)
 					.on(INVOICE_ATTACH.DOMAIN.eq(DOMAIN.ID))
@@ -801,16 +855,19 @@ public class DBConsults {
 					.and(INVOICE_ATTACH.DATA.isNotNull())
 					.fetch();
 
-			for (Record5<Integer, Byte, String, Byte, String> record5 : invoiceAttach) {
+			for (Record6<Integer, Byte, String, Byte, String, Integer> r : attach) {
 				FileInfo fileInfo = new FileInfo();
 				fileInfo.setAonType("invoice");
-				fileInfo.setFileId(record5.value1());
-				fileInfo.setMimetype(record5.value2());
-				fileInfo.setTitle(record5.value3());
-				if ( record5.value4() != null )
-					fileInfo.setType(record5.value4());
+				fileInfo.setFileId(r.value1());
+				fileInfo.setMimetype(r.value2());
+				fileInfo.setTitle(r.value3());
+				if ( r.value4() != null )
+					fileInfo.setType(r.value4());
 				fileInfo.setCategory(-2);
-				fileInfo.setDriveId(record5.value5());
+				fileInfo.setDriveId(r.value5());
+				fileInfo.setDomainId(r.value6());
+				Domain d = DBConsults.getDomain(domain, r.value6());
+				fileInfo.setDomain(d.getName());
 				attachs.add(fileInfo);
 			}
 			return attachs;
@@ -1002,9 +1059,10 @@ public class DBConsults {
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
 
-			Result<Record4<Integer, Byte, String, String>> offerAttach = dslContext
+			Result<Record5<Integer, Byte, String, String, Integer>> attach = dslContext
 					.select(OFFER_ATTACH.ID, OFFER_ATTACH.MIMETYPE,
-							OFFER_ATTACH.DESCRIPTION,OFFER_ATTACH.DRIVEID)
+							OFFER_ATTACH.DESCRIPTION,OFFER_ATTACH.DRIVEID
+							, OFFER_ATTACH.DOMAIN)
 					.from(OFFER_ATTACH)
 					.join(DOMAIN)
 					.on(OFFER_ATTACH.DOMAIN.eq(DOMAIN.ID))
@@ -1018,14 +1076,17 @@ public class DBConsults {
 					.and(OFFER_ATTACH.DATA.isNotNull())
 					.fetch();
 
-			for (Record4<Integer, Byte, String, String> record4 : offerAttach) {
+			for (Record5<Integer, Byte, String, String, Integer> r : attach) {
 				FileInfo fileInfo = new FileInfo();
 				fileInfo.setAonType("offer");
-				fileInfo.setFileId(record4.value1());
-				fileInfo.setMimetype(record4.value2());
-				fileInfo.setTitle(record4.value3());
+				fileInfo.setFileId(r.value1());
+				fileInfo.setMimetype(r.value2());
+				fileInfo.setTitle(r.value3());
 				fileInfo.setCategory(-2);
-				fileInfo.setDriveId(record4.value4());
+				fileInfo.setDriveId(r.value4());
+				fileInfo.setDomainId(r.value5());
+				Domain d = DBConsults.getDomain(domain, r.value5());
+				fileInfo.setDomain(d.getName());
 				attachs.add(fileInfo);
 			}
 			return attachs;
@@ -1184,11 +1245,12 @@ public class DBConsults {
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
 
-			Result<Record5<Integer, Byte, String, Byte, String>> payrollAttach = dslContext
+			Result<Record6<Integer, Byte, String, Byte, String, Integer>> attach = dslContext
 					.select(PAYROLL_BATCH_ATTACH.ID,
 							PAYROLL_BATCH_ATTACH.MIMETYPE,
 							PAYROLL_BATCH_ATTACH.DESCRIPTION,
-							PAYROLL_BATCH_ATTACH.TYPE,PAYROLL_BATCH_ATTACH.DRIVEID)
+							PAYROLL_BATCH_ATTACH.TYPE,PAYROLL_BATCH_ATTACH.DRIVEID
+							,PAYROLL_BATCH_ATTACH.DOMAIN)
 					.from(PAYROLL_BATCH_ATTACH)
 					.join(DOMAIN)
 					.on(PAYROLL_BATCH_ATTACH.DOMAIN.eq(DOMAIN.ID))
@@ -1202,16 +1264,19 @@ public class DBConsults {
 					.and(PAYROLL_BATCH_ATTACH.DATA.isNotNull())
 					.fetch();
 
-			for (Record5<Integer, Byte, String, Byte, String> record5 : payrollAttach) {
-				if (record5.value2()!=null){
+			for (Record6<Integer, Byte, String, Byte, String, Integer> r : attach) {
+				if (r.value2()!=null){
 				FileInfo fileInfo = new FileInfo();
 				fileInfo.setAonType("payroll");
-				fileInfo.setFileId(record5.value1());
-				fileInfo.setMimetype(record5.value2());
-				fileInfo.setTitle(record5.value3());
-				fileInfo.setType(record5.value4());
+				fileInfo.setFileId(r.value1());
+				fileInfo.setMimetype(r.value2());
+				fileInfo.setTitle(r.value3());
+				fileInfo.setType(r.value4());
 				fileInfo.setCategory(-2);
-				fileInfo.setDriveId(record5.value5());
+				fileInfo.setDriveId(r.value5());
+				fileInfo.setDomainId(r.value6());
+				Domain d = DBConsults.getDomain(domain, r.value6());
+				fileInfo.setDomain(d.getName());
 				attachs.add(fileInfo);
 				}
 			}
@@ -1373,9 +1438,9 @@ public class DBConsults {
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
 
-			Result<Record4<Integer, Byte, String, String>> projectAttach = dslContext
+			Result<Record5<Integer, Byte, String, String, Integer>> attach = dslContext
 					.select(PROJECT_ATTACH.ID, PROJECT_ATTACH.MIMETYPE,
-							PROJECT_ATTACH.DESCRIPTION,PROJECT_ATTACH.DRIVEID)
+							PROJECT_ATTACH.DESCRIPTION,PROJECT_ATTACH.DRIVEID, PROJECT_ATTACH.DOMAIN)
 					.from(PROJECT_ATTACH)
 					.join(DOMAIN)
 					.on(PROJECT_ATTACH.DOMAIN.eq(DOMAIN.ID))
@@ -1389,16 +1454,19 @@ public class DBConsults {
 					.and(PROJECT_ATTACH.DATA.isNotNull())
 					.fetch();
 
-			for (Record4<Integer, Byte, String, String> record4 : projectAttach) {
+			for (Record5<Integer, Byte, String, String, Integer> r : attach) {
 				FileInfo fileInfo = new FileInfo();
 				fileInfo.setAonType("project");
-				fileInfo.setFileId(record4.value1());
-				Byte mimeType = record4.value2();
+				fileInfo.setFileId(r.value1());
+				Byte mimeType = r.value2();
 				if ( mimeType != null )
 					fileInfo.setMimetype(mimeType);
-				fileInfo.setTitle(record4.value3());
+				fileInfo.setTitle(r.value3());
 				fileInfo.setCategory(-2);
-				fileInfo.setDriveId(record4.value4());
+				fileInfo.setDriveId(r.value4());
+				fileInfo.setDomainId(r.value5());
+				Domain d = DBConsults.getDomain(domain, r.value5());
+				fileInfo.setDomain(d.getName());
 				attachs.add(fileInfo);
 			}
 			return attachs;
@@ -1591,10 +1659,11 @@ public class DBConsults {
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
 
-			Result<Record5<Integer, Byte, String, Byte, String>> sepeAttach = dslContext
+			Result<Record6<Integer, Byte, String, Byte, String, Integer>> attach = dslContext
 					.select(SEPE_BATCH_ATTACH.ID, SEPE_BATCH_ATTACH.MIMETYPE,
 							SEPE_BATCH_ATTACH.DESCRIPTION,
-							SEPE_BATCH_ATTACH.TYPE ,SEPE_BATCH_ATTACH.DRIVEID )
+							SEPE_BATCH_ATTACH.TYPE ,SEPE_BATCH_ATTACH.DRIVEID 
+							, SEPE_BATCH_ATTACH.DOMAIN)
 					.from(SEPE_BATCH_ATTACH)
 					.join(DOMAIN)
 					.on(SEPE_BATCH_ATTACH.DOMAIN.eq(DOMAIN.ID))
@@ -1608,15 +1677,18 @@ public class DBConsults {
 					.and(SEPE_BATCH_ATTACH.DATA.isNotNull())
 					.fetch();
 
-			for (Record5<Integer, Byte, String, Byte, String> record5 : sepeAttach) {
+			for (Record6<Integer, Byte, String, Byte, String, Integer> r : attach) {
 				FileInfo fileInfo = new FileInfo();
 				fileInfo.setAonType("sepe");
-				fileInfo.setFileId(record5.value1());
-				fileInfo.setMimetype(record5.value2());
-				fileInfo.setTitle(record5.value3());
-				fileInfo.setType(record5.value4());
+				fileInfo.setFileId(r.value1());
+				fileInfo.setMimetype(r.value2());
+				fileInfo.setTitle(r.value3());
+				fileInfo.setType(r.value4());
 				fileInfo.setCategory(-2);
-				fileInfo.setDriveId(record5.value5());
+				fileInfo.setDriveId(r.value5());
+				fileInfo.setDomainId(r.value6());
+				Domain d = DBConsults.getDomain(domain, r.value6());
+				fileInfo.setDomain(d.getName());
 				attachs.add(fileInfo);
 			}
 			return attachs;
