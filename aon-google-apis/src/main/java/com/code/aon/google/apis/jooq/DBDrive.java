@@ -28,7 +28,10 @@ import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Record4;
 import org.jooq.Record5;
+import org.jooq.Record6;
+import org.jooq.Record7;
 import org.jooq.Result;
+import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
 import com.code.aon.google.apis.DatabaseSync;
@@ -113,6 +116,45 @@ public class DBDrive {
 	}
 	
 	//REGISTRY ATTACH
+		public static Vector<FileInfo> getDriveRAttach(String domain, Integer domainId) throws SQLException{
+			Connection connection = null;
+			try {
+
+				connection = DatabaseSync.getConnection(domain);
+
+				DSLContext dslContext = DSL.using(connection,
+						JooqSettings.getDefaultSettings());
+				Result<Record6<Integer, Byte, String, Byte, String, Integer>> attach = dslContext
+							.select(RATTACH.ID,RATTACH.MIMETYPE
+									,RATTACH.DESCRIPTION,RATTACH.TYPE
+									,RATTACH.DRIVE_ID,RATTACH.CATEGORY)
+							.from(RATTACH)
+							.where(RATTACH.DOMAIN.eq(domainId)).and(RATTACH.DRIVE_ID.isNotNull())
+							.fetch();
+				
+				Vector<FileInfo> attachs = new Vector<FileInfo>();
+				
+				for (Record6<Integer, Byte, String, Byte, String, Integer> r : attach) {
+					FileInfo fileInfo = new FileInfo();
+					fileInfo.setAonType("registry");
+					fileInfo.setFileId(r.value1());
+					fileInfo.setMimetype(r.value2());
+					fileInfo.setTitle(r.value3());
+					fileInfo.setType(r.value4());
+					fileInfo.setCategory(r.value6());
+					fileInfo.setDriveId(r.value5());
+					fileInfo.setDomainId(domainId);
+					fileInfo.setDomain(domain);
+					attachs.add(fileInfo);
+				}
+				
+				return attachs;
+			} finally {
+				if (connection != null)
+					connection.close();
+			}
+		}
+	
 		public static Vector<FileInfo> getRAttach(String domain,
 				Vector<FileInfo> attachs) throws SQLException{
 		
@@ -124,9 +166,10 @@ public class DBDrive {
 				DSLContext dslContext = DSL.using(connection,
 						JooqSettings.getDefaultSettings());
 
-				Result<Record5<Integer, Byte, String, Byte, String>> contract_attach = dslContext
+				Result<Record7<Integer, Byte, String, Byte, String, Integer, Integer>> contract_attach = dslContext
 						.select(RATTACH.ID, RATTACH.MIMETYPE,
-								RATTACH.DESCRIPTION, RATTACH.TYPE,RATTACH.DRIVE_ID)
+								RATTACH.DESCRIPTION, RATTACH.TYPE,RATTACH.DRIVE_ID
+								,RATTACH.CATEGORY,RATTACH.DOMAIN)
 						.from(RATTACH)
 						.join(DOMAIN)
 						.on(RATTACH.DOMAIN.eq(DOMAIN.ID))
@@ -140,16 +183,20 @@ public class DBDrive {
 						.and(RATTACH.DATA.isNotNull())
 						.fetch();
 
-				for (Record5<Integer, Byte, String, Byte, String> record5 : contract_attach) {
+				for (Record7<Integer, Byte, String, Byte, String, Integer, Integer> r : contract_attach) {
 					FileInfo fileInfo = new FileInfo();
 					fileInfo.setAonType("registry");
-					fileInfo.setFileId(record5.value1());
-					fileInfo.setMimetype(record5.value2());
-					fileInfo.setTitle(record5.value3());
-					fileInfo.setType(record5.value4());
-					fileInfo.setCategory(-2);
-					fileInfo.setDriveId(record5.value5());
+					fileInfo.setFileId(r.value1());
+					fileInfo.setMimetype(r.value2());
+					fileInfo.setTitle(r.value3());
+					fileInfo.setType(r.value4());
+					fileInfo.setCategory(r.value6());
+					fileInfo.setDriveId(r.value5());
+					fileInfo.setDomainId(r.value7());
+					Domain d = DBConsults.getDomain(domain, r.value7());
+					fileInfo.setDomain(d.getName());
 					attachs.add(fileInfo);
+					
 				}
 				return attachs;
 			} finally {
@@ -282,6 +329,45 @@ public class DBDrive {
 		}
 		
 	//CONTRACT ATTACH
+		public static Vector<FileInfo> getDriveContractAttach(String domain, Integer domainId) throws SQLException{
+			Connection connection = null;
+			try {
+
+				connection = DatabaseSync.getConnection(domain);
+
+				DSLContext dslContext = DSL.using(connection,
+						JooqSettings.getDefaultSettings());
+				Result<Record5<Integer, Byte, String, Byte, String>> attach = dslContext
+							.select(CONTRACT_ATTACH.ID,CONTRACT_ATTACH.MIMETYPE
+									,CONTRACT_ATTACH.DESCRIPTION,CONTRACT_ATTACH.TYPE
+									,CONTRACT_ATTACH.DRIVEID)
+							.from(CONTRACT_ATTACH)
+							.where(CONTRACT_ATTACH.DOMAIN.eq(domainId)).and(CONTRACT_ATTACH.DRIVEID.isNotNull())
+							.fetch();
+				
+				Vector<FileInfo> attachs = new Vector<FileInfo>();
+				
+				for (Record5<Integer, Byte, String, Byte, String> r : attach) {
+					FileInfo fileInfo = new FileInfo();
+					fileInfo.setAonType("contract");
+					fileInfo.setFileId(r.value1());
+					fileInfo.setMimetype(r.value2());
+					fileInfo.setTitle(r.value3());
+					fileInfo.setType(r.value4());
+					fileInfo.setCategory(-2);
+					fileInfo.setDriveId(r.value5());
+					fileInfo.setDomainId(domainId);
+					fileInfo.setDomain(domain);
+					attachs.add(fileInfo);
+				}
+				
+				return attachs;
+			} finally {
+				if (connection != null)
+					connection.close();
+			}
+		}
+		
 		public static Vector<FileInfo> getContractAttach(String domain,
 				Vector<FileInfo> attachs) throws AonConnectionException,
 				SQLException {
@@ -293,9 +379,10 @@ public class DBDrive {
 				DSLContext dslContext = DSL.using(connection,
 						JooqSettings.getDefaultSettings());
 
-				Result<Record5<Integer, Byte, String, Byte, String>> contract_attach = dslContext
+				Result<Record6<Integer, Byte, String, Byte, String, Integer>> contract_attach = dslContext
 						.select(CONTRACT_ATTACH.ID, CONTRACT_ATTACH.MIMETYPE,
-								CONTRACT_ATTACH.DESCRIPTION, CONTRACT_ATTACH.TYPE,CONTRACT_ATTACH.DRIVEID)
+								CONTRACT_ATTACH.DESCRIPTION, CONTRACT_ATTACH.TYPE
+								,CONTRACT_ATTACH.DRIVEID, CONTRACT_ATTACH.DOMAIN)
 						.from(CONTRACT_ATTACH)
 						.join(DOMAIN)
 						.on(CONTRACT_ATTACH.DOMAIN.eq(DOMAIN.ID))
@@ -309,15 +396,18 @@ public class DBDrive {
 						.and(CONTRACT_ATTACH.DATA.isNotNull())
 						.fetch();
 
-				for (Record5<Integer, Byte, String, Byte, String> record5 : contract_attach) {
+				for (Record6<Integer, Byte, String, Byte, String, Integer> r : contract_attach) {
 					FileInfo fileInfo = new FileInfo();
 					fileInfo.setAonType("contract");
-					fileInfo.setFileId(record5.value1());
-					fileInfo.setMimetype(record5.value2());
-					fileInfo.setTitle(record5.value3());
-					fileInfo.setType(record5.value4());
+					fileInfo.setFileId(r.value1());
+					fileInfo.setMimetype(r.value2());
+					fileInfo.setTitle(r.value3());
+					fileInfo.setType(r.value4());
 					fileInfo.setCategory(-2);
-					fileInfo.setDriveId(record5.value5());
+					fileInfo.setDriveId(r.value5());
+					fileInfo.setDomainId(r.value6());
+					Domain d = DBConsults.getDomain(domain, r.value6());
+					fileInfo.setDomain(d.getName());
 					attachs.add(fileInfo);
 				}
 				return attachs;
@@ -497,6 +587,45 @@ public class DBDrive {
 		}
 	
 	//ITEM ATTACH
+		public static Vector<FileInfo> getDriveIAttach(String domain, Integer domainId) throws SQLException{
+			Connection connection = null;
+			try {
+
+				connection = DatabaseSync.getConnection(domain);
+
+				DSLContext dslContext = DSL.using(connection,
+						JooqSettings.getDefaultSettings());
+				Result<Record5<Integer, Byte, String, Byte, String>> attach = dslContext
+							.select(IATTACH.ID,IATTACH.MIMETYPE
+									,IATTACH.DESCRIPTION,IATTACH.TYPE
+									,IATTACH.DRIVEID)
+							.from(IATTACH)
+							.where(IATTACH.DOMAIN.eq(domainId)).and(IATTACH.DRIVEID.isNotNull())
+							.fetch();
+				
+				Vector<FileInfo> attachs = new Vector<FileInfo>();
+				
+				for (Record5<Integer, Byte, String, Byte, String> r : attach) {
+					FileInfo fileInfo = new FileInfo();
+					fileInfo.setAonType("item");
+					fileInfo.setFileId(r.value1());
+					fileInfo.setMimetype(r.value2());
+					fileInfo.setTitle(r.value3());
+					fileInfo.setType(r.value4());
+					fileInfo.setCategory(-2);
+					fileInfo.setDriveId(r.value5());
+					fileInfo.setDomainId(domainId);
+					fileInfo.setDomain(domain);
+					attachs.add(fileInfo);
+				}
+				
+				return attachs;
+			} finally {
+				if (connection != null)
+					connection.close();
+			}
+		}
+		
 		public static Vector<FileInfo> getIattach(String domain,
 				Vector<FileInfo> attachs) throws AonConnectionException,
 				SQLException {
@@ -508,9 +637,9 @@ public class DBDrive {
 				DSLContext dslContext = DSL.using(connection,
 						JooqSettings.getDefaultSettings());
 
-				Result<Record5<Integer, Byte, String, Byte, String>> iattach = dslContext
+				Result<Record6<Integer, Byte, String, Byte, String, Integer>> attach = dslContext
 						.select(IATTACH.ID, IATTACH.MIMETYPE, IATTACH.DESCRIPTION,
-								IATTACH.TYPE,IATTACH.DRIVEID )
+								IATTACH.TYPE,IATTACH.DRIVEID, IATTACH.DOMAIN)
 						.from(IATTACH)
 						.join(DOMAIN)
 						.on(IATTACH.DOMAIN.eq(DOMAIN.ID))
@@ -524,15 +653,18 @@ public class DBDrive {
 						.and(IATTACH.DATA.isNotNull())
 						.fetch();
 
-				for (Record5<Integer, Byte, String, Byte, String> record5 : iattach) {
+				for (Record6<Integer, Byte, String, Byte, String, Integer> r : attach) {
 					FileInfo fileInfo = new FileInfo();
 					fileInfo.setAonType("item");
-					fileInfo.setFileId(record5.value1());
-					fileInfo.setMimetype(record5.value2());
-					fileInfo.setTitle(record5.value3());
-					fileInfo.setType(record5.value4());
+					fileInfo.setFileId(r.value1());
+					fileInfo.setMimetype(r.value2());
+					fileInfo.setTitle(r.value3());
+					fileInfo.setType(r.value4());
 					fileInfo.setCategory(-2);
-					fileInfo.setDriveId(record5.value5());
+					fileInfo.setDriveId(r.value5());
+					fileInfo.setDomainId(r.value6());
+					Domain d = DBConsults.getDomain(domain, r.value6());
+					fileInfo.setDomain(d.getName());
 					attachs.add(fileInfo);
 				}
 				return attachs;
@@ -680,6 +812,45 @@ public class DBDrive {
 		}
 		
 	//INVOICE ATTACH
+		public static Vector<FileInfo> getDriveInvoiceAttach(String domain, Integer domainId) throws SQLException{
+			Connection connection = null;
+			try {
+
+				connection = DatabaseSync.getConnection(domain);
+
+				DSLContext dslContext = DSL.using(connection,
+						JooqSettings.getDefaultSettings());
+				Result<Record5<Integer, Byte, String, Byte, String>> attach = dslContext
+							.select(INVOICE_ATTACH.ID,INVOICE_ATTACH.MIMETYPE
+									,INVOICE_ATTACH.DESCRIPTION,INVOICE_ATTACH.TYPE
+									,INVOICE_ATTACH.DRIVEID)
+							.from(INVOICE_ATTACH)
+							.where(INVOICE_ATTACH.DOMAIN.eq(domainId)).and(INVOICE_ATTACH.DRIVEID.isNotNull())
+							.fetch();
+				
+				Vector<FileInfo> attachs = new Vector<FileInfo>();
+				
+				for (Record5<Integer, Byte, String, Byte, String> r : attach) {
+					FileInfo fileInfo = new FileInfo();
+					fileInfo.setAonType("invoice");
+					fileInfo.setFileId(r.value1());
+					fileInfo.setMimetype(r.value2());
+					fileInfo.setTitle(r.value3());
+					fileInfo.setType(r.value4());
+					fileInfo.setCategory(-2);
+					fileInfo.setDriveId(r.value5());
+					fileInfo.setDomainId(domainId);
+					fileInfo.setDomain(domain);
+					attachs.add(fileInfo);
+				}
+				
+				return attachs;
+			} finally {
+				if (connection != null)
+					connection.close();
+			}
+		}
+		
 		public static Vector<FileInfo> getInvoiceAttach(String domain,
 				Vector<FileInfo> attachs) throws AonConnectionException,
 				SQLException {
@@ -691,9 +862,10 @@ public class DBDrive {
 				DSLContext dslContext = DSL.using(connection,
 						JooqSettings.getDefaultSettings());
 
-				Result<Record5<Integer, Byte, String, Byte, String>> invoiceAttach = dslContext
+				Result<Record6<Integer, Byte, String, Byte, String, Integer>> attach = dslContext
 						.select(INVOICE_ATTACH.ID, INVOICE_ATTACH.MIMETYPE,
-								INVOICE_ATTACH.DESCRIPTION, INVOICE_ATTACH.TYPE,INVOICE_ATTACH.DRIVEID)
+								INVOICE_ATTACH.DESCRIPTION, INVOICE_ATTACH.TYPE
+								,INVOICE_ATTACH.DRIVEID, INVOICE_ATTACH.DOMAIN)
 						.from(INVOICE_ATTACH)
 						.join(DOMAIN)
 						.on(INVOICE_ATTACH.DOMAIN.eq(DOMAIN.ID))
@@ -707,16 +879,19 @@ public class DBDrive {
 						.and(INVOICE_ATTACH.DATA.isNotNull())
 						.fetch();
 
-				for (Record5<Integer, Byte, String, Byte, String> record5 : invoiceAttach) {
+				for (Record6<Integer, Byte, String, Byte, String, Integer> r : attach) {
 					FileInfo fileInfo = new FileInfo();
 					fileInfo.setAonType("invoice");
-					fileInfo.setFileId(record5.value1());
-					fileInfo.setMimetype(record5.value2());
-					fileInfo.setTitle(record5.value3());
-					if ( record5.value4() != null )
-						fileInfo.setType(record5.value4());
+					fileInfo.setFileId(r.value1());
+					fileInfo.setMimetype(r.value2());
+					fileInfo.setTitle(r.value3());
+					if ( r.value4() != null )
+						fileInfo.setType(r.value4());
 					fileInfo.setCategory(-2);
-					fileInfo.setDriveId(record5.value5());
+					fileInfo.setDriveId(r.value5());
+					fileInfo.setDomainId(r.value6());
+					Domain d = DBConsults.getDomain(domain, r.value6());
+					fileInfo.setDomain(d.getName());
 					attachs.add(fileInfo);
 				}
 				return attachs;
@@ -897,6 +1072,44 @@ public class DBDrive {
 		}
 		
 	//OFFER ATTACH
+		public static Vector<FileInfo> getDriveOfferAttach(String domain, Integer domainId) throws SQLException{
+			Connection connection = null;
+			try {
+
+				connection = DatabaseSync.getConnection(domain);
+
+				DSLContext dslContext = DSL.using(connection,
+						JooqSettings.getDefaultSettings());
+				Result<Record4<Integer, Byte, String, String>> attach = dslContext
+							.select(OFFER_ATTACH.ID,OFFER_ATTACH.MIMETYPE
+									,OFFER_ATTACH.DESCRIPTION
+									,OFFER_ATTACH.DRIVEID)
+							.from(OFFER_ATTACH)
+							.where(OFFER_ATTACH.DOMAIN.eq(domainId)).and(OFFER_ATTACH.DRIVEID.isNotNull())
+							.fetch();
+				
+				Vector<FileInfo> attachs = new Vector<FileInfo>();
+				
+				for (Record4<Integer, Byte, String, String> r : attach) {
+					FileInfo fileInfo = new FileInfo();
+					fileInfo.setAonType("OFFER");
+					fileInfo.setFileId(r.value1());
+					fileInfo.setMimetype(r.value2());
+					fileInfo.setTitle(r.value3());
+					fileInfo.setCategory(-2);
+					fileInfo.setDriveId(r.value4());
+					fileInfo.setDomainId(domainId);
+					fileInfo.setDomain(domain);
+					attachs.add(fileInfo);
+				}
+				
+				return attachs;
+			} finally {
+				if (connection != null)
+					connection.close();
+			}
+		}
+		
 		public static Vector<FileInfo> getOfferAttach(String domain,
 				Vector<FileInfo> attachs) throws AonConnectionException,
 				SQLException {
@@ -908,9 +1121,10 @@ public class DBDrive {
 				DSLContext dslContext = DSL.using(connection,
 						JooqSettings.getDefaultSettings());
 
-				Result<Record4<Integer, Byte, String, String>> offerAttach = dslContext
+				Result<Record5<Integer, Byte, String, String, Integer>> attach = dslContext
 						.select(OFFER_ATTACH.ID, OFFER_ATTACH.MIMETYPE,
-								OFFER_ATTACH.DESCRIPTION,OFFER_ATTACH.DRIVEID)
+								OFFER_ATTACH.DESCRIPTION,OFFER_ATTACH.DRIVEID
+								, OFFER_ATTACH.DOMAIN)
 						.from(OFFER_ATTACH)
 						.join(DOMAIN)
 						.on(OFFER_ATTACH.DOMAIN.eq(DOMAIN.ID))
@@ -924,14 +1138,17 @@ public class DBDrive {
 						.and(OFFER_ATTACH.DATA.isNotNull())
 						.fetch();
 
-				for (Record4<Integer, Byte, String, String> record4 : offerAttach) {
+				for (Record5<Integer, Byte, String, String, Integer> r : attach) {
 					FileInfo fileInfo = new FileInfo();
 					fileInfo.setAonType("offer");
-					fileInfo.setFileId(record4.value1());
-					fileInfo.setMimetype(record4.value2());
-					fileInfo.setTitle(record4.value3());
+					fileInfo.setFileId(r.value1());
+					fileInfo.setMimetype(r.value2());
+					fileInfo.setTitle(r.value3());
 					fileInfo.setCategory(-2);
-					fileInfo.setDriveId(record4.value4());
+					fileInfo.setDriveId(r.value4());
+					fileInfo.setDomainId(r.value5());
+					Domain d = DBConsults.getDomain(domain, r.value5());
+					fileInfo.setDomain(d.getName());
 					attachs.add(fileInfo);
 				}
 				return attachs;
@@ -1079,6 +1296,46 @@ public class DBDrive {
 		}
 		
 	//PAYROLL BATCH ATTACH
+		
+		public static Vector<FileInfo> getDrivePayrollAttach(String domain, Integer domainId) throws SQLException{
+			Connection connection = null;
+			try {
+
+				connection = DatabaseSync.getConnection(domain);
+
+				DSLContext dslContext = DSL.using(connection,
+						JooqSettings.getDefaultSettings());
+				Result<Record5<Integer, Byte, String, Byte, String>> attach = dslContext
+							.select(PAYROLL_BATCH_ATTACH.ID,PAYROLL_BATCH_ATTACH.MIMETYPE
+									,PAYROLL_BATCH_ATTACH.DESCRIPTION,PAYROLL_BATCH_ATTACH.TYPE
+									,PAYROLL_BATCH_ATTACH.DRIVEID)
+							.from(PAYROLL_BATCH_ATTACH)
+							.where(PAYROLL_BATCH_ATTACH.DOMAIN.eq(domainId)).and(PAYROLL_BATCH_ATTACH.DRIVEID.isNotNull())
+							.fetch();
+				
+				Vector<FileInfo> attachs = new Vector<FileInfo>();
+				
+				for (Record5<Integer, Byte, String, Byte, String> r : attach) {
+					FileInfo fileInfo = new FileInfo();
+					fileInfo.setAonType("payroll");
+					fileInfo.setFileId(r.value1());
+					fileInfo.setMimetype(r.value2());
+					fileInfo.setTitle(r.value3());
+					fileInfo.setType(r.value4());
+					fileInfo.setCategory(-2);
+					fileInfo.setDriveId(r.value5());
+					fileInfo.setDomainId(domainId);
+					fileInfo.setDomain(domain);
+					attachs.add(fileInfo);
+				}
+				
+				return attachs;
+			} finally {
+				if (connection != null)
+					connection.close();
+			}
+		}
+		
 		public static Vector<FileInfo> getPayrollAttach(String domain,
 				Vector<FileInfo> attachs) throws AonConnectionException,
 				SQLException {
@@ -1090,11 +1347,12 @@ public class DBDrive {
 				DSLContext dslContext = DSL.using(connection,
 						JooqSettings.getDefaultSettings());
 
-				Result<Record5<Integer, Byte, String, Byte, String>> payrollAttach = dslContext
+				Result<Record6<Integer, Byte, String, Byte, String, Integer>> attach = dslContext
 						.select(PAYROLL_BATCH_ATTACH.ID,
 								PAYROLL_BATCH_ATTACH.MIMETYPE,
 								PAYROLL_BATCH_ATTACH.DESCRIPTION,
-								PAYROLL_BATCH_ATTACH.TYPE,PAYROLL_BATCH_ATTACH.DRIVEID)
+								PAYROLL_BATCH_ATTACH.TYPE,PAYROLL_BATCH_ATTACH.DRIVEID
+								,PAYROLL_BATCH_ATTACH.DOMAIN)
 						.from(PAYROLL_BATCH_ATTACH)
 						.join(DOMAIN)
 						.on(PAYROLL_BATCH_ATTACH.DOMAIN.eq(DOMAIN.ID))
@@ -1108,16 +1366,19 @@ public class DBDrive {
 						.and(PAYROLL_BATCH_ATTACH.DATA.isNotNull())
 						.fetch();
 
-				for (Record5<Integer, Byte, String, Byte, String> record5 : payrollAttach) {
-					if (record5.value2()!=null){
+				for (Record6<Integer, Byte, String, Byte, String, Integer> r : attach) {
+					if (r.value2()!=null){
 					FileInfo fileInfo = new FileInfo();
 					fileInfo.setAonType("payroll");
-					fileInfo.setFileId(record5.value1());
-					fileInfo.setMimetype(record5.value2());
-					fileInfo.setTitle(record5.value3());
-					fileInfo.setType(record5.value4());
+					fileInfo.setFileId(r.value1());
+					fileInfo.setMimetype(r.value2());
+					fileInfo.setTitle(r.value3());
+					fileInfo.setType(r.value4());
 					fileInfo.setCategory(-2);
-					fileInfo.setDriveId(record5.value5());
+					fileInfo.setDriveId(r.value5());
+					fileInfo.setDomainId(r.value6());
+					Domain d = DBConsults.getDomain(domain, r.value6());
+					fileInfo.setDomain(d.getName());
 					attachs.add(fileInfo);
 					}
 				}
@@ -1268,6 +1529,44 @@ public class DBDrive {
 		}
 		
 	//PROJECT ATTACH
+		public static Vector<FileInfo> getDriveProjectAttach(String domain, Integer domainId) throws SQLException{
+			Connection connection = null;
+			try {
+
+				connection = DatabaseSync.getConnection(domain);
+
+				DSLContext dslContext = DSL.using(connection,
+						JooqSettings.getDefaultSettings());
+				Result<Record4<Integer, Byte, String, String>> attach = dslContext
+							.select(PROJECT_ATTACH.ID,PROJECT_ATTACH.MIMETYPE
+									,PROJECT_ATTACH.DESCRIPTION
+									,PROJECT_ATTACH.DRIVEID)
+							.from(PROJECT_ATTACH)
+							.where(PROJECT_ATTACH.DOMAIN.eq(domainId)).and(PROJECT_ATTACH.DRIVEID.isNotNull())
+							.fetch();
+				
+				Vector<FileInfo> attachs = new Vector<FileInfo>();
+				
+				for (Record4<Integer, Byte, String, String> r : attach) {
+					FileInfo fileInfo = new FileInfo();
+					fileInfo.setAonType("project");
+					fileInfo.setFileId(r.value1());
+					fileInfo.setMimetype(r.value2());
+					fileInfo.setTitle(r.value3());
+					fileInfo.setCategory(-2);
+					fileInfo.setDriveId(r.value4());
+					fileInfo.setDomainId(domainId);
+					fileInfo.setDomain(domain);
+					attachs.add(fileInfo);
+				}
+				
+				return attachs;
+			} finally {
+				if (connection != null)
+					connection.close();
+			}
+		}
+		
 		public static Vector<FileInfo> getProjectAttach(String domain,
 				Vector<FileInfo> attachs) throws AonConnectionException,
 				SQLException {
@@ -1279,9 +1578,9 @@ public class DBDrive {
 				DSLContext dslContext = DSL.using(connection,
 						JooqSettings.getDefaultSettings());
 
-				Result<Record4<Integer, Byte, String, String>> projectAttach = dslContext
+				Result<Record5<Integer, Byte, String, String, Integer>> attach = dslContext
 						.select(PROJECT_ATTACH.ID, PROJECT_ATTACH.MIMETYPE,
-								PROJECT_ATTACH.DESCRIPTION,PROJECT_ATTACH.DRIVEID)
+								PROJECT_ATTACH.DESCRIPTION,PROJECT_ATTACH.DRIVEID, PROJECT_ATTACH.DOMAIN)
 						.from(PROJECT_ATTACH)
 						.join(DOMAIN)
 						.on(PROJECT_ATTACH.DOMAIN.eq(DOMAIN.ID))
@@ -1295,16 +1594,19 @@ public class DBDrive {
 						.and(PROJECT_ATTACH.DATA.isNotNull())
 						.fetch();
 
-				for (Record4<Integer, Byte, String, String> record4 : projectAttach) {
+				for (Record5<Integer, Byte, String, String, Integer> r : attach) {
 					FileInfo fileInfo = new FileInfo();
 					fileInfo.setAonType("project");
-					fileInfo.setFileId(record4.value1());
-					Byte mimeType = record4.value2();
+					fileInfo.setFileId(r.value1());
+					Byte mimeType = r.value2();
 					if ( mimeType != null )
 						fileInfo.setMimetype(mimeType);
-					fileInfo.setTitle(record4.value3());
+					fileInfo.setTitle(r.value3());
 					fileInfo.setCategory(-2);
-					fileInfo.setDriveId(record4.value4());
+					fileInfo.setDriveId(r.value4());
+					fileInfo.setDomainId(r.value5());
+					Domain d = DBConsults.getDomain(domain, r.value5());
+					fileInfo.setDomain(d.getName());
 					attachs.add(fileInfo);
 				}
 				return attachs;
@@ -1486,6 +1788,46 @@ public class DBDrive {
 		}
 		
 		//SEPE BATCH ATTACH
+		
+		public static Vector<FileInfo> getDriveSepeAttach(String domain, Integer domainId) throws SQLException{
+			Connection connection = null;
+			try {
+
+				connection = DatabaseSync.getConnection(domain);
+
+				DSLContext dslContext = DSL.using(connection,
+						JooqSettings.getDefaultSettings());
+				Result<Record5<Integer, Byte, String, Byte, String>> attach = dslContext
+							.select(SEPE_BATCH_ATTACH.ID,SEPE_BATCH_ATTACH.MIMETYPE
+									,SEPE_BATCH_ATTACH.DESCRIPTION,SEPE_BATCH_ATTACH.TYPE
+									,SEPE_BATCH_ATTACH.DRIVEID)
+							.from(SEPE_BATCH_ATTACH)
+							.where(SEPE_BATCH_ATTACH.DOMAIN.eq(domainId)).and(SEPE_BATCH_ATTACH.DRIVEID.isNotNull())
+							.fetch();
+				
+				Vector<FileInfo> attachs = new Vector<FileInfo>();
+				
+				for (Record5<Integer, Byte, String, Byte, String> r : attach) {
+					FileInfo fileInfo = new FileInfo();
+					fileInfo.setAonType("sepe");
+					fileInfo.setFileId(r.value1());
+					fileInfo.setMimetype(r.value2());
+					fileInfo.setTitle(r.value3());
+					fileInfo.setType(r.value4());
+					fileInfo.setCategory(-2);
+					fileInfo.setDriveId(r.value5());
+					fileInfo.setDomainId(domainId);
+					fileInfo.setDomain(domain);
+					attachs.add(fileInfo);
+				}
+				
+				return attachs;
+			} finally {
+				if (connection != null)
+					connection.close();
+			}
+		}
+		
 		public static Vector<FileInfo> getSepeAttach(String domain,
 				Vector<FileInfo> attachs) throws AonConnectionException,
 				SQLException {
@@ -1497,10 +1839,11 @@ public class DBDrive {
 				DSLContext dslContext = DSL.using(connection,
 						JooqSettings.getDefaultSettings());
 
-				Result<Record5<Integer, Byte, String, Byte, String>> sepeAttach = dslContext
+				Result<Record6<Integer, Byte, String, Byte, String, Integer>> attach = dslContext
 						.select(SEPE_BATCH_ATTACH.ID, SEPE_BATCH_ATTACH.MIMETYPE,
 								SEPE_BATCH_ATTACH.DESCRIPTION,
-								SEPE_BATCH_ATTACH.TYPE ,SEPE_BATCH_ATTACH.DRIVEID )
+								SEPE_BATCH_ATTACH.TYPE ,SEPE_BATCH_ATTACH.DRIVEID 
+								, SEPE_BATCH_ATTACH.DOMAIN)
 						.from(SEPE_BATCH_ATTACH)
 						.join(DOMAIN)
 						.on(SEPE_BATCH_ATTACH.DOMAIN.eq(DOMAIN.ID))
@@ -1514,15 +1857,18 @@ public class DBDrive {
 						.and(SEPE_BATCH_ATTACH.DATA.isNotNull())
 						.fetch();
 
-				for (Record5<Integer, Byte, String, Byte, String> record5 : sepeAttach) {
+				for (Record6<Integer, Byte, String, Byte, String, Integer> r : attach) {
 					FileInfo fileInfo = new FileInfo();
 					fileInfo.setAonType("sepe");
-					fileInfo.setFileId(record5.value1());
-					fileInfo.setMimetype(record5.value2());
-					fileInfo.setTitle(record5.value3());
-					fileInfo.setType(record5.value4());
+					fileInfo.setFileId(r.value1());
+					fileInfo.setMimetype(r.value2());
+					fileInfo.setTitle(r.value3());
+					fileInfo.setType(r.value4());
 					fileInfo.setCategory(-2);
-					fileInfo.setDriveId(record5.value5());
+					fileInfo.setDriveId(r.value5());
+					fileInfo.setDomainId(r.value6());
+					Domain d = DBConsults.getDomain(domain, r.value6());
+					fileInfo.setDomain(d.getName());
 					attachs.add(fileInfo);
 				}
 				return attachs;

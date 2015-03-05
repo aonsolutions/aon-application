@@ -188,11 +188,26 @@ public class CopyFiles {
 		FileList fileList = oldDrive.files().list().setMaxResults(1000).execute();
 		for(File file : fileList.getItems()){
 			String driveId = file.getId();
+			
+
 			FileList fl = SearchFiles.searchFilesProperties(newDrive, "oldDriveId", driveId);
 			if(fl.getItems().size() == 0){
-				String domain = oldDrive.properties().get(driveId, "domain").execute().getValue();
-				String aonType = oldDrive.properties().get(driveId, "aontype").execute().getValue();
-
+				
+				PropertyList l = oldDrive.properties().list(driveId).execute();
+				Boolean bdomain = false ,baontype = false;
+				for (Property p : l.getItems()) {
+					if(p.getKey().equals("domain")) bdomain = true;
+					if(p.getKey().equals("domain")) baontype = true;
+				}
+				
+				String domain;
+				if(bdomain)
+					domain = oldDrive.properties().get(driveId, "domain").execute().getValue();
+				else domain = "without.domain";
+				String aonType;
+				if(baontype)
+					aonType = oldDrive.properties().get(driveId, "aontype").execute().getValue();
+				else aonType = "without.type";
 				try {
 					FileList domainFolders = SearchFiles.searchFilesTitleEqual(newDrive, domain);
 					File domainFolder;

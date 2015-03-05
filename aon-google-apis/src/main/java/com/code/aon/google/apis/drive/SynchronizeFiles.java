@@ -208,7 +208,6 @@ public class SynchronizeFiles {
 			LOGGER.info("No service account found for domain: '{}'", domain);
 		else if (dd.getAttachs() == null || dd.getAttachs().size() == 0)
 			LOGGER.info("No documents/files found for domain: '{}'", domain);
-
 	}
 
 	public static DriveData getAttachsSF(String domain) throws SQLException,
@@ -243,37 +242,37 @@ public class SynchronizeFiles {
 
 		// CONTRACT ATTACH
 		if (map.containsKey("contract")) {
-			dd.setAttachs(DBConsults.getContractAttach(domain, dd.getAttachs()));
+			dd.setAttachs(DBDrive.getContractAttach(domain, dd.getAttachs()));
 		}
 
 		// ITEM ATTACH
 		if (map.containsKey("item")) {
-			dd.setAttachs(DBConsults.getIattach(domain, dd.getAttachs()));
+			dd.setAttachs(DBDrive.getIattach(domain, dd.getAttachs()));
 		}
 
 		// INVOICE ATTACH
 		if (map.containsKey("invoice")) {
-			dd.setAttachs(DBConsults.getInvoiceAttach(domain, dd.getAttachs()));
+			dd.setAttachs(DBDrive.getInvoiceAttach(domain, dd.getAttachs()));
 		}
 
 		// OFFER ATTACH
 		if (map.containsKey("offer")) {
-			dd.setAttachs(DBConsults.getOfferAttach(domain, dd.getAttachs()));
+			dd.setAttachs(DBDrive.getOfferAttach(domain, dd.getAttachs()));
 		}
 
 		// PAYROLL ATTACH
 		if (map.containsKey("payroll")) {
-			dd.setAttachs(DBConsults.getPayrollAttach(domain, dd.getAttachs()));
+			dd.setAttachs(DBDrive.getPayrollAttach(domain, dd.getAttachs()));
 		}
 
 		// PROJECT ATTACH
 		if (map.containsKey("project")) {
-			dd.setAttachs(DBConsults.getProjectAttach(domain, dd.getAttachs()));
+			dd.setAttachs(DBDrive.getProjectAttach(domain, dd.getAttachs()));
 		}
 
 		// SEPE ATTACH
 		if (map.containsKey("sepe"))
-			dd.setAttachs(DBConsults.getSepeAttach(domain, dd.getAttachs()));
+			dd.setAttachs(DBDrive.getSepeAttach(domain, dd.getAttachs()));
 
 		System.out.println("Fin de busqueda en Bd");
 		return dd;

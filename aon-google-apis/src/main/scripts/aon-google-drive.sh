@@ -54,6 +54,9 @@ case $1 in
   rm)
     $JAVA -classpath $CLASSPATH com.code.aon.google.apis.drive.RemoveFiles "${@:2}"
     ;;
+  sort)
+    $JAVA -classpath $CLASSPATH com.code.aon.google.apis.drive.SortFiles "${@:2}"
+    ;;
   *) 
     [[ -n $1 ]] && echo "Unknown subcommand: '$1'"
     echo "Type '$0 help' for usage."

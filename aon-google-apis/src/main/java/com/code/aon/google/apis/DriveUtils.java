@@ -352,12 +352,12 @@ public class DriveUtils implements IBlobManager {
 		 * 
 		 * }
 		 */
-		FileList domainFolders = SearchFiles.searchFilesTitleEqual(drive, domain);
+		FileList domainFolders = SearchFiles.searchFilesTitleEqual(drive, fileInfo.getDomain());
 		File domainFolder;
 		if(domainFolders.getItems().size()>0){
 			domainFolder = domainFolders.getItems().get(0);
 		}
-		else domainFolder = createFolder(drive, domain, rootId);
+		else domainFolder = createFolder(drive, fileInfo.getDomain(), rootId);
 		
 		FileList typeFolders = SearchFiles.searchFilesTitleAndParent(drive,  fileInfo.getAonType(),domainFolder.getId());
 		File typeFolder;
@@ -559,7 +559,7 @@ public class DriveUtils implements IBlobManager {
 		property2.setVisibility("PRIVATE");
 
 		Property property3 = new Property();
-		property3.setValue(domain);
+		property3.setValue(fileInfo.getDomain());
 		// property2.setEtag("type");
 		property3.setKey("domain");
 

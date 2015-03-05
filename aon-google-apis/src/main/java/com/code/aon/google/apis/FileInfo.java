@@ -52,6 +52,8 @@ public class FileInfo{
 	private String tag;
 	private Integer scopeId;
 	private Byte securityLevel;
+	
+	private String domain;
 	private Integer domainId;
 	private Integer size;
 	public FileInfo() {
@@ -204,8 +206,14 @@ public class FileInfo{
 	public void setSize(Integer size) {
 		this.size = size;
 	}
-	
-	
+
+	public String getDomain() {
+		return domain;
+	}
+
+	public void setDomain(String domain) {
+		this.domain = domain;
+	}
 	
 }
 
