@@ -124,7 +124,8 @@ public class DownloadUtil {
 
 	public static String getFileName( String fileName, MimeType type ) {
 		String extension = FilenameUtils.getExtension(fileName); 
-		if ( (type != null) && !StringUtils.equals(extension, type.getExtension()) ) {
+		if ( (type != null) && !StringUtils.isEmpty(type.getExtension()) &&
+				!StringUtils.equals(extension, type.getExtension()) ) {
 			return fileName + "." + type.getExtension();			
 		}
 		return fileName;
