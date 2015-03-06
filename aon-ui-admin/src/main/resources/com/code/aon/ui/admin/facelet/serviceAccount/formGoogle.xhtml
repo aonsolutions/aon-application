@@ -38,7 +38,9 @@
 				styleClass="aon-finding-toolbar-item aon-icon-reset"
 				value="#{bundle.aon_reset}"
 				accesskey="#{bundle.aon_key_new_line}" 
-				action="adminGoogle_formSA"/>
+				action="adminGoogle_formSA"
+				actionListener="#{serviceAccount.initialize2}"
+				/>
 				
 				<script>
 
@@ -159,7 +161,7 @@
 							value="#{serviceAccount.google_account}" />
 			
 			<aon:commandButton  name="formedit" id="tracking-editgoogle" 
-				action="adminGoogle_formSA"/>
+				action="adminGoogle_formSAEDIT"/>
 			
 			</aon:div>
 			<!-- ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >

@@ -245,7 +245,7 @@ public class ServiceAccountController extends BasicController {
 	}
 	
 	
-	public void updateAccount() throws SQLException {
+	public void updateAccount(ActionEvent event) throws SQLException {
 
 		String domain = AonUtil.getDomainName();
 		Connection connection = null;
@@ -261,14 +261,35 @@ public class ServiceAccountController extends BasicController {
 			byte[] aux = null;
 
 			dslContext.update(DOMAIN_GSERVICEACCOUNT)
-					.set(DOMAIN_GSERVICEACCOUNT.CLIENT_ID, getClient_id())
 					.set(DOMAIN_GSERVICEACCOUNT.DOMAIN, domain_id)
 					.set(DOMAIN_GSERVICEACCOUNT.EMAIL_ADDRESS, getEmail_address())
 					.set(DOMAIN_GSERVICEACCOUNT.PUBLIC_KEY, getPublic_key())
 					.set(DOMAIN_GSERVICEACCOUNT.PRIVATE_KEY, aux)
 					.set(DOMAIN_GSERVICEACCOUNT.LIMIT, (double) Integer.parseInt(getLimit()))
 					.set(DOMAIN_GSERVICEACCOUNT.GOOGLE_ACCOUNT, getGoogle_account())
+					.where(DOMAIN_GSERVICEACCOUNT.DOMAIN.eq(domain_id))
 					.execute();
+
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public void deleteAccount(ActionEvent event) throws SQLException {
+
+		String domain = AonUtil.getDomainName();
+		Connection connection = null;
+		try {
+			Integer domain_id = getDomainId(getDomain());
+			connection = DatabaseSync.getConnection(domain);
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+
+			dslContext.delete(DOMAIN_GSERVICEACCOUNT).where(DOMAIN_GSERVICEACCOUNT.DOMAIN.eq(domain_id)).execute();
 
 		} finally {
 			if (connection != null)
@@ -291,7 +312,7 @@ public class ServiceAccountController extends BasicController {
 	
 	
 	public void createAccount(ActionEvent event) throws SQLException {
-		if(aux_client_id == null){
+		
 		System.out.println("asdgasd");
 		String domain = AonUtil.getDomainName();
 		Connection connection = null;
@@ -318,8 +339,6 @@ public class ServiceAccountController extends BasicController {
 			if (connection != null)
 				connection.close();
 		}
-		}
-		else updateAccount();
 	}
 
 	public static void main(String[] args) throws SQLException {

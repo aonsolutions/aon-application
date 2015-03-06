@@ -557,13 +557,18 @@
 			<to-view-id>/com/code/aon/ui/admin/facelet/serviceAccount/formGoogle.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-		<navigation-rule>
+	<navigation-rule>
 		<navigation-case>
 			<from-outcome>adminGoogle_formSA</from-outcome>
 			<to-view-id>/com/code/aon/ui/admin/facelet/serviceAccount/formNew.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>adminGoogle_formSAEDIT</from-outcome>
+			<to-view-id>/com/code/aon/ui/admin/facelet/serviceAccount/formEdit.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	<!-- =================== Domain ================= -->
 	<navigation-rule>
 		<navigation-case>
