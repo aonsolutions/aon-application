@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core">
+	<script type="text/javascript">
+	//<![CDATA[
+	    __gwtStatsMillisMap = {};
+	    
+	    function hasStarted(event){
+	    	return event.evtGroup in __gwtStatsMillisMap;
+	    }
+	    
+	    function newIconEl(event){
+			var logIcon = document.createElement("span");
+			logIcon.style.paddingLeft = "0px";
+			logIcon.style.paddingRight = "22px";
+			logIcon.className = "aon-icon-expand";
+			return logIcon;
+	    }
+	    
+	    function newIndentEl(event){
+			var logIndent = document.createElement("span");
+			logIndent.style.paddingRight = "22px";
+			return logIndent;
+	    }
+
+	    function newTypeEl(event){
+			var logType = document.createElement("span");
+			logType.appendChild(document.createTextNode(event.type ));
+			logType.style.color = "black";
+			logType.style.paddingRight = "2em";
+			logType.style.fontWeight = "bold";
+			return logType;
+	    }
+	    
+	    function newTimeEl(event){
+			var logTime = document.createElement("span");
+			logTime.appendChild(document.createTextNode(event.millis - __gwtStatsMillisMap[event.evtGroup] +" ms"));
+			return logTime;
+	    }
+
+	    function newDescriptionEl(event){
+			var logDescription = document.createElement("span");
+			logDescription.appendChild(document.createTextNode(event.evtGroup ));
+			logDescription.style.color = "black";
+			logDescription.style.paddingRight = "2em";
+			logDescription.style.fontWeight = "bold";
+			logDescription.style.textTransform = "uppercase";
+			return logDescription;
+	    }
+	    
+	    function newSubSystemEl(event){
+			var logSubSystem = document.createElement("span");
+			logSubSystem.appendChild(document.createTextNode(event.subSystem));
+			logSubSystem.style.color = "blue";
+			logSubSystem.style.fontWeight = "bold";
+			logSubSystem.style.cssFloat = "right";
+			return logSubSystem;
+	    }
+
+	    function newLogLineEl(event){
+			var logLine = document.createElement("div");
+			logLine.style.padding = "2px 1em";
+			logLine.style.borderBottom = "1px solid #f2f2f2";
+			logLine.style.backgroundColor = "#f5f5f5";
+			logLine.className = event.evtGroup;
+			return logLine;	    	
+	    }
+
+	    function rootEventToHTML(event) {
+			// return some html representation of this event
+			var logLine = newLogLineEl(event);
+			logLine.id = event.evtGroup;
+			logLine.onclick=function(){
+				for ( el = logLine.nextElementSibling; 
+					el && el.className == logLine.className;
+					el = el.nextElementSibling){
+					el.style.display = el.style.display == "none" ? "": "none";					
+				} 
+				logLine.firstChild.className = logLine.firstChild.className == "aon-icon-expand" ? "aon-icon-collapse":"aon-icon-expand";
+			};
+			
+			logLine.appendChild(newIconEl(event));
+			logLine.appendChild(newDescriptionEl(event));
+			logLine.appendChild(newSubSystemEl(event));
+
+			__gwtStatsMillisMap[event.evtGroup] = event.millis;
+			
+			return logLine;
+		}                   
+
+	    function childEventToHTML(event) {
+			// return some html representation of this event
+			var logLine = newLogLineEl(event);
+			logLine.style.display = "none";
+
+			logLine.appendChild(newIndentEl(event));
+			logLine.appendChild(newDescriptionEl(event));
+			logLine.appendChild(newTypeEl(event));
+			logLine.appendChild(newTimeEl(event));
+
+			__gwtStatsMillisMap[event.evtGroup] = event.millis;
+			
+			return logLine;
+		}               
+	    
+	    function eventToHTML(event) {
+	    	return hasStarted(event) ? childEventToHTML(event) : rootEventToHTML(event);
+	    }
+
+	    function addEvent(eventsLogsEl, event) {
+	    	if ( hasStarted(event) ){
+	    		var el = document.getElementById(event.evtGroup).nextElementSibling;
+	    		while ( el && el.className == event.evtGroup )
+	    			el = el.nextElementSibling;
+	    		if ( el )
+	    			eventsLogsEl.insertBefore(childEventToHTML(event),el);
+	    		else
+		    		eventsLogsEl.appendChild(childEventToHTML(event));
+	    	}
+	    	else{
+	    		eventsLogsEl.appendChild(rootEventToHTML(event));
+	    	} 
+	    }
+	    
+	    window.__gwtStatsEvent = function(event) {
+		    var loggingDiv = document.getElementById('log');
+		    if (!loggingDiv) {
+		      // Our logging div is not yet attached to the DOM
+		      // Initialize a temporary buffer if needed
+		      this.buffer = (this.buffer) ? this.buffer : [];
+		      // log data here
+		      this.buffer.push(event);
+		    } else {
+		      if (this.buffer) {
+		      // We have some data that was reported before the div was connected
+		        for (var i = 0; i < buffer.length; i++) {
+		          // print it all to the div
+		          //loggingDiv.appendChild(eventToHTML(buffer[i]));
+		        	addEvent(loggingDiv,buffer[i]);
+		        }
+		        this.buffer = null;
+		      }
+		      // log the current event to the div
+		      //loggingDiv.appendChild(eventToHTML(event));
+	        	addEvent(loggingDiv,event);
+		    }
+		    // The collector function should indicate success
+		    return true;
+		}
+	    
+	//]]>
+	</script>
+	
+	<div>
+		<div id="log"  style="height:10em; overflow-y:scroll; " >
+		</div>
+		<div id="log-vdragger" class="gwt-SplitLayoutPanel-VDragger" style="height: 8px; " ></div>
+	</div>
+
+</ui:composition>
