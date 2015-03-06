@@ -7,10 +7,13 @@ public class Domain implements Serializable {
 
 	Integer id;
 	String name;
+	Integer parentId;
 	
 	boolean parent;
 	boolean child;
 	boolean standalone;
+	
+	boolean active;
 
 	public Integer getId() {
 		return id;
@@ -26,6 +29,14 @@ public class Domain implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Integer getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(Integer parentId) {
+		this.parentId = parentId;
 	}
 
 	public boolean isParent() {
@@ -52,5 +63,12 @@ public class Domain implements Serializable {
 		this.standalone = standalone;
 	}
 
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
 
 }

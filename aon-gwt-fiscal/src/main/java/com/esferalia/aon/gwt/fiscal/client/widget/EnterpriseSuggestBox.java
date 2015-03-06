@@ -7,7 +7,7 @@ import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
-import com.esferalia.aon.gwt.fiscal.shared.Enterprise;
+import com.esferalia.aon.occam.api.model.Enterprise;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -160,9 +160,12 @@ public class EnterpriseSuggestBox extends ResizeComposite implements
 		return document.addSelectionHandler(handler);
 	}
 	
-	public void setValue(String document, String name) {
-		this.document.setValue(document, true);
+	public void setValue(String document, String name, boolean fireEvents) {
+		this.document.setValue(document, fireEvents);
 		this.name.setValue(name);
+	}
+	public void setValue(String document, String name) {
+		this.setValue(document,name,true);
 	}
 
 	@UiHandler("document")

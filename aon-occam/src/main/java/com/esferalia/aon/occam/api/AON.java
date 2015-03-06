@@ -3,6 +3,9 @@ package com.esferalia.aon.occam.api;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -18,6 +21,8 @@ import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -27,16 +32,26 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
+import com.esferalia.aon.occam.api.model.management.OfferDetail;
+import com.esferalia.aon.occam.api.model.management.OfferFilter;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.AccountingImpl;
 import com.esferalia.aon.occam.impl.jooq.AgreementImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
+import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
 import com.esferalia.aon.occam.impl.jooq.FiscalImpl;
+import com.esferalia.aon.occam.impl.jooq.ManagementImpl;
 import com.esferalia.aon.occam.impl.jooq.SalaryImpl;
+import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 public class AON {
+
+	private static ISecurity getSecurity() {
+		return new SecurityImpl();
+	}
 
 	private static ICommon getCommon() {
 		return new CommonImpl();
@@ -54,8 +69,39 @@ public class AON {
 		return new FiscalImpl();
 	}
 
+	private static IFinance getFinance() {
+		return new FinanceImpl();
+	}
+
+	private static IManagement getManagement() {
+		return new ManagementImpl();
+	}
+
 	private static IAgreement getAgreement() {
 		return new AgreementImpl();
+	}
+
+	// ********************************************
+	// ******************************** SECURITY **
+	// ********************************************
+	public static User getUser(String domainName, int domainId, String login) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			return getSecurity().getUser(ctx,login);
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
+	public static Integer[] getUserScopes(String domainName, int domainId,
+			Integer userId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			return getSecurity().getUserScopes(ctx,userId);
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
 	}
 
 	// ********************************************
@@ -77,6 +123,25 @@ public class AON {
 		return getCommon().fetchOne(ctx, param);
 	}
 
+	// ------------------------------------ PRODUCT
+	public static List<String> getProductTags(String domainName, int domainId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			return getCommon().getProductTags(ctx);
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
+	public static Map<Integer,String[]> getProductTagMap(String domainName, int domainId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			return getCommon().getProductTagMap(ctx);
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
 	// ********************************************
 	// ****************************** ACCOUNTING **
 	// ********************************************
@@ -470,15 +535,45 @@ public class AON {
 		}
 	}
 	
-	// 
+	// ********************************************
+	// ********************************* FINANCE **
+	// ********************************************
+	public static void getInvoiceDetails(String domainName,Integer domainId,
+			Consumer<InvoiceDetail> action, InvoiceFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			getFinance().getInvoiceDetails(ctx, action, filter);
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
+	
+	// ********************************************
+	// ****************************** MANAGEMENT **
+	// ********************************************
+	public static void getOfferDetails(String domainName,Integer domainId,
+			Consumer<OfferDetail> action, OfferFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			getManagement().getOfferDetails(ctx, action, filter);
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
+
+	// ********************************************
+	// ********************************* PAYROLL **
+	// ********************************************
+
 	public static void saveAgreement(AONContext ctx, Agreement ...agreements) throws AonCoreException {
 		getAgreement().save(ctx, agreements);
 	}
-	
-	//
 	
 	public static Stream<Salary> getSalaries(AONContext ctx,
 			SalaryFilter filter) {
 		return getSalary().getSalaries(ctx, filter, Salary::new);
 	}
+	
 }

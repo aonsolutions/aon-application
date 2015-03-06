@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import org.jooq.Condition;
@@ -46,7 +47,22 @@ public class FilterDAO implements Filter {
 		public FilterDAO ge(T t) {
 			return new FilterDAO(field.ge(t));
 		}
+		
+		@Override
+		public Filter in(T[] t) {
+			return new FilterDAO(field.in(t));
+		}
 
+		@Override
+		public Filter isNull() {
+			return new FilterDAO(field.isNull());
+		}
+
+		@Override
+		public Filter isNotNull() {
+			return new FilterDAO(field.isNotNull());
+		}
+		
 	}
 
 	public static class DatePropertyDAO implements Property<Date> {
@@ -87,6 +103,20 @@ public class FilterDAO implements Filter {
 			return new FilterDAO(field.ge(new java.sql.Date(date.getTime())));
 		}
 
+		@Override
+		public Filter in(Date[] t) {
+			return new FilterDAO(field.in( Arrays.asList(t)));
+		}
+
+		@Override
+		public Filter isNull() {
+			return new FilterDAO(field.isNotNull());
+		}
+
+		@Override
+		public Filter isNotNull() {
+			return new FilterDAO(field.isNotNull());
+		}
 		
 	}
 
@@ -130,8 +160,20 @@ public class FilterDAO implements Filter {
 			throw new UnsupportedOperationException();
 		}
 
-		
-		
+		@Override
+		public Filter in(Boolean[] t) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Filter isNull() {
+			return new FilterDAO( field.isNull());
+		}
+
+		@Override
+		public Filter isNotNull() {
+			return new FilterDAO( field.isNotNull());
+		}
 	}
 
 	private Condition condition;

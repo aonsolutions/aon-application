@@ -35,6 +35,7 @@ public class Invoice implements Serializable {
 	private String registryZIP;
 	private String registryProvinceCode;
 	private String registryProvince;
+	private String scope;
 	private InvoiceType type;
 	private InvoiceTransactionType transaction;
 	private boolean recorded;
@@ -57,215 +58,257 @@ public class Invoice implements Serializable {
 	public Integer getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public Invoice setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 	public int getDomain() {
 		return domain;
 	}
-	public void setDomain(int domain) {
+	public Invoice setDomain(int domain) {
 		this.domain = domain;
+		return this;
 	}
 	public String getSeries() {
 		return series;
 	}
-	public void setSeries(String series) {
+	public Invoice setSeries(String series) {
 		this.series = series;
+		return this;
 	}
 	public int getNumber() {
 		return number;
 	}
-	public void setNumber(int number) {
+	public Invoice setNumber(int number) {
 		this.number = number;
+		return this;
 	}
 	public String getEpigraph() {
 		return epigraph;
 	}
-	public void setEpigraph(String epigraph) {
+	public Invoice setEpigraph(String epigraph) {
 		this.epigraph = epigraph;
+		return this;
 	}
 	public String getReferenceCode() {
 		return referenceCode;
 	}
-	public void setReferenceCode(String referenceCode) {
+	public Invoice setReferenceCode(String referenceCode) {
 		this.referenceCode = referenceCode;
+		return this;
 	}
 	public Date getIssueDate() {
 		return issueDate;
 	}
-	public void setIssueDate(Date issueDate) {
+	public Invoice setIssueDate(Date issueDate) {
 		this.issueDate = issueDate;
+		return this;
 	}
 	public Date getTaxDate() {
 		return taxDate;
 	}
-	public void setTaxDate(Date taxDate) {
+	public Invoice setTaxDate(Date taxDate) {
 		this.taxDate = taxDate;
+		return this;
 	}
 	public RectificationType getRectificationType() {
 		return rectificationType;
 	}
-	public void setRectificationType(RectificationType rectificationType) {
+	public Invoice setRectificationType(RectificationType rectificationType) {
 		this.rectificationType = rectificationType;
+		return this;
 	}
 	public Integer getRectificationInvoice() {
 		return rectificationInvoice;
 	}
-	public void setRectificationInvoice(Integer rectificationInvoice) {
+	public Invoice setRectificationInvoice(Integer rectificationInvoice) {
 		this.rectificationInvoice = rectificationInvoice;
+		return this;
 	}
 	public Integer getRegistry() {
 		return registry;
 	}
-	public void setRegistry(Integer registry) {
+	public Invoice setRegistry(Integer registry) {
 		this.registry = registry;
+		return this;
 	}
 	public String getRegistryDocument() {
 		return registryDocument;
 	}
-	public void setRegistryDocument(String registryDocument) {
+	public Invoice setRegistryDocument(String registryDocument) {
 		this.registryDocument = registryDocument;
+		return this;
 	}
 	public DocumentType getRegistryDocumentType() {
 		return registryDocumentType;
 	}
-	public void setRegistryDocumentType(DocumentType registryDocumentType) {
+	public Invoice setRegistryDocumentType(DocumentType registryDocumentType) {
 		this.registryDocumentType = registryDocumentType;
+		return this;
 	}
 	public Country getRegistryDocumentCountry() {
 		return registryDocumentCountry;
 	}
-	public void setRegistryDocumentCountry(Country registryDocumentCountry) {
+	public Invoice setRegistryDocumentCountry(Country registryDocumentCountry) {
 		this.registryDocumentCountry = registryDocumentCountry;
+		return this;
 	}
 	public String getRegistryName() {
 		return registryName;
 	}
-	public void setRegistryName(String registryName) {
+	public Invoice setRegistryName(String registryName) {
 		this.registryName = registryName;
+		return this;
 	}
 	public String getRegistryTown() {
 		return registryTown;
 	}
-	public void setRegistryTown(String registryTown) {
+	public Invoice setRegistryTown(String registryTown) {
 		this.registryTown = registryTown;
+		return this;
 	}
 	public String getRegistryZIP() {
 		return registryZIP;
 	}
-	public void setRegistryZIP(String registryZIP) {
+	public Invoice setRegistryZIP(String registryZIP) {
 		this.registryZIP = registryZIP;
+		return this;
 	}
 	public String getRegistryProvinceCode() {
 		return registryProvinceCode;
 	}
-	public void setRegistryProvinceCode(String registryProvinceCode) {
+	public Invoice setRegistryProvinceCode(String registryProvinceCode) {
 		this.registryProvinceCode = registryProvinceCode;
+		return this;
 	}
 	public String getRegistryProvince() {
 		return registryProvince;
 	}
-	public void setRegistryProvince(String registryProvince) {
+	public Invoice setRegistryProvince(String registryProvince) {
 		this.registryProvince = registryProvince;
+		return this;
+	}
+	public String getScope() {
+		return scope;
+	}
+	public Invoice setScope(String scope) {
+		this.scope = scope;
+		return this;
 	}
 	public InvoiceType getType() {
 		return type;
 	}
-	public void setType(InvoiceType type) {
+	public Invoice setType(InvoiceType type) {
 		this.type = type;
+		return this;
 	}
 	public InvoiceTransactionType getTransaction() {
 		return transaction;
 	}
-	public void setTransaction(InvoiceTransactionType transaction) {
+	public Invoice setTransaction(InvoiceTransactionType transaction) {
 		this.transaction = transaction;
+		return this;
 	}
 	public boolean isRecorded() {
 		return recorded;
 	}
-	public void setRecorded(boolean recorded) {
+	public Invoice setRecorded(boolean recorded) {
 		this.recorded = recorded;
+		return this;
 	}
 	public boolean isSurcharge() {
 		return surcharge;
 	}
-	public void setSurcharge(boolean surcharge) {
+	public Invoice setSurcharge(boolean surcharge) {
 		this.surcharge = surcharge;
+		return this;
 	}
 	public boolean isWithholding() {
 		return withholding;
 	}
-	public void setWithholding(boolean withholding) {
+	public Invoice setWithholding(boolean withholding) {
 		this.withholding = withholding;
+		return this;
 	}
 	public boolean isWithholdingFarmer() {
 		return withholdingFarmer;
 	}
-	public void setWithholdingFarmer(boolean withholdingFarmer) {
+	public Invoice setWithholdingFarmer(boolean withholdingFarmer) {
 		this.withholdingFarmer = withholdingFarmer;
+		return this;
 	}
 	public boolean isVatAccrualPayment() {
 		return vatAccrualPayment;
 	}
-	public void setVatAccrualPayment(boolean vatAccrualPayment) {
+	public Invoice setVatAccrualPayment(boolean vatAccrualPayment) {
 		this.vatAccrualPayment = vatAccrualPayment;
+		return this;
 	}
 	public boolean isInvestment() {
 		return investment;
 	}
-	public void setInvestment(boolean investment) {
+	public Invoice setInvestment(boolean investment) {
 		this.investment = investment;
+		return this;
 	}
 	public boolean isService() {
 		return service;
 	}
-	public void setService(boolean service) {
+	public Invoice setService(boolean service) {
 		this.service = service;
+		return this;
 	}
 	public boolean isAdvance() {
 		return advance;
 	}
-	public void setAdvance(boolean advance) {
+	public Invoice setAdvance(boolean advance) {
 		this.advance = advance;
+		return this;
 	}
 	public double getTaxableBase() {
 		return taxableBase;
 	}
-	public void setTaxableBase(double taxableBase) {
+	public Invoice setTaxableBase(double taxableBase) {
 		this.taxableBase = taxableBase;
+		return this;
 	}
 	public double getVatQuota() {
 		return vatQuota;
 	}
-	public void setVatQuota(double vatQuota) {
+	public Invoice setVatQuota(double vatQuota) {
 		this.vatQuota = vatQuota;
+		return this;
 	}
 	public double getRetentionQuota() {
 		return retentionQuota;
 	}
-	public void setRetentionQuota(double retentionQuota) {
+	public Invoice setRetentionQuota(double retentionQuota) {
 		this.retentionQuota = retentionQuota;
+		return this;
 	}
 	public double getTotal() {
 		return total;
 	}
-	public void setTotal(double total) {
+	public Invoice setTotal(double total) {
 		this.total = total;
+		return this;
 	}
 
 	public InvoiceWithholding getWithholdingData() {
 		return withholdingData;
 	}
-	public void setWithholdingData(InvoiceWithholding withholdingData) {
+	public Invoice setWithholdingData(InvoiceWithholding withholdingData) {
 		this.withholdingData = withholdingData;
+		return this;
 	}
 	
 	public List<InvoiceVAT> getInvoiceVATs() {
 		return invoiceVATs;
 	}
 	
-	public void setInvoiceVATs(List<InvoiceVAT> invoiceVATs) {
+	public Invoice setInvoiceVATs(List<InvoiceVAT> invoiceVATs) {
 		this.invoiceVATs = invoiceVATs;
+		return this;
 	}
 	
 	public String getDocumentNumber() {
@@ -277,7 +320,7 @@ public class Invoice implements Serializable {
 		return documentNumber;
 	}
 	
-	public void initialize() {
+	public Invoice initialize() {
 		this.id = null;
 		this.domain = 0;
 		this.series = null;
@@ -307,6 +350,7 @@ public class Invoice implements Serializable {
 		this.total = 0.0;
 		this.withholdingData = null;
 		this.invoiceVATs = null;
+		return this;
 	}
 	
 	public InvoiceVAT ensureInvoiceVAT(double percentage, double surcharge) {

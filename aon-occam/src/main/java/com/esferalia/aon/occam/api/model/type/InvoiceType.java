@@ -14,6 +14,10 @@ public enum InvoiceType implements Serializable  {
 	private InvoiceType(String description) {
 		this.description = description;
 	}
+
+	public byte value() {
+		return (byte) this.ordinal();
+	}
 	
 	public String getDescription() {
 		return description;

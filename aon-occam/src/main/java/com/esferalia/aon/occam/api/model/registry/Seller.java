@@ -28,80 +28,93 @@ public class Seller implements Serializable {
 	public Integer getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public Seller setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 	public int getDomain() {
 		return domain;
 	}
-	public void setDomain(int domain) {
+	public Seller setDomain(int domain) {
 		this.domain = domain;
+		return this;
 	}
 	public CommissionType getCommissionType() {
 		return commissionType;
 	}
-	public void setCommissionType(CommissionType commissionType) {
+	public Seller setCommissionType(CommissionType commissionType) {
 		this.commissionType = commissionType;
+		return this;
 	}
 	public DocumentType getRegistryDocumentType() {
 		return registryDocumentType;
 	}
-	public void setRegistryDocumentType(DocumentType registryDocumentType) {
+	public Seller setRegistryDocumentType(DocumentType registryDocumentType) {
 		this.registryDocumentType = registryDocumentType;
+		return this;
 	}
 	public Country getRegistryDocumentCountry() {
 		return registryDocumentCountry;
 	}
-	public void setRegistryDocumentCountry(Country registryDocumentCountry) {
+	public Seller setRegistryDocumentCountry(Country registryDocumentCountry) {
 		this.registryDocumentCountry = registryDocumentCountry;
+		return this;
 	}
 	public String getRegistryDocument() {
 		return registryDocument;
 	}
-	public void setRegistryDocument(String registryDocument) {
+	public Seller setRegistryDocument(String registryDocument) {
 		this.registryDocument = registryDocument;
+		return this;
 	}
 	public String getRegistryName() {
 		return registryName;
 	}
-	public void setRegistryName(String registryName) {
+	public Seller setRegistryName(String registryName) {
 		this.registryName = registryName;
+		return this;
 	}
 	public String getRegistryAlias() {
 		return registryAlias;
 	}
-	public void setRegistryAlias(String registryAlias) {
+	public Seller setRegistryAlias(String registryAlias) {
 		this.registryAlias = registryAlias;
+		return this;
 	}
 	public boolean isRegistryNaturalPerson() {
 		return registryNaturalPerson;
 	}
-	public void setRegistryNaturalPerson(boolean registryNaturalPerson) {
+	public Seller setRegistryNaturalPerson(boolean registryNaturalPerson) {
 		this.registryNaturalPerson = registryNaturalPerson;
+		return this;
 	}
 	public Country getRegistryNationality() {
 		return registryNationality;
 	}
-	public void setRegistryNationality(Country registryNationality) {
+	public Seller setRegistryNationality(Country registryNationality) {
 		this.registryNationality = registryNationality;
+		return this;
 	}
 	public boolean isRegistryConfidential() {
 		return registryConfidential;
 	}
-	public void setRegistryConfidential(boolean registryConfidential) {
+	public Seller setRegistryConfidential(boolean registryConfidential) {
 		this.registryConfidential = registryConfidential;
+		return this;
 	}
 	public String getScope() {
 		return scope;
 	}
-	public void setScope(String scope) {
+	public Seller setScope(String scope) {
 		this.scope = scope;
+		return this;
 	}
 	public boolean isActive() {
 		return active;
 	}
-	public void setActive(boolean active) {
+	public Seller setActive(boolean active) {
 		this.active = active;
+		return this;
 	}
 	
 }

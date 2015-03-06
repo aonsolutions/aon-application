@@ -10,6 +10,9 @@ public interface Filter {
 		Filter lt(T t);
 		Filter gt(T t);
 		Filter ge(T t);
+		Filter in(T[] t);
+		Filter isNull();
+		Filter isNotNull();
 	}
 	
 	

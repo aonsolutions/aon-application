@@ -3,7 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client;
 import java.util.ArrayList;
 
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
-import com.esferalia.aon.gwt.fiscal.shared.Enterprise;
+import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;

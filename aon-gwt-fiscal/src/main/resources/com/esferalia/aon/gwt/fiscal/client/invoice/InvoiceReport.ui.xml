@@ -48,13 +48,28 @@
 							<table class="aon-panelGrid aon-width-all">
 								<tr>
 									<td class="aon-panelGrid-odd aon-width-200">
-										<g:InlineLabel text="{msg.invoiceType}" />
+										<g:InlineLabel text="{msg.download}" />
 									</td>
 									<td class="aon-panelGrid-even aon-width-auto">
-										<g:CheckBox ui:field="sales" text="{msg.sales}"/>
-										<g:CheckBox ui:field="purchases" text="{msg.purchases}"/>
-										<g:CheckBox ui:field="expenses" text="{msg.expenses}"/>
-										<g:CheckBox ui:field="undeductibleExpenses" text="{msg.undeductibleExpenses}"/>
+										<g:ListBox ui:field="entity"/>
+									</td>
+								</tr>
+								<tr>
+									<td class="aon-panelGrid-odd aon-width-200">
+										<g:InlineLabel text="{msg.type}" />
+									</td>
+									<td class="aon-panelGrid-even aon-width-auto">
+										<g:CheckBox ui:field="invoiceTypeSales" text="{msg.sales}"/>
+										<g:CheckBox ui:field="invoiceTypePurchases" text="{msg.purchases}"/>
+										<g:CheckBox ui:field="invoiceTypeExpenses" text="{msg.expenses}"/>
+										<g:CheckBox ui:field="invoiceTypeUndeductible" text="{msg.undeductibleExpenses}"/>
+										
+										<g:CheckBox ui:field="offerStatusPending" text="{msg.pending}"/>
+										<g:CheckBox ui:field="offerStatusApproved" text="{msg.approved}"/>
+										<g:CheckBox ui:field="offerStatusRefused" text="{msg.refused}"/>
+										<g:CheckBox ui:field="offerStatusBlocked" text="{msg.blocked}"/>
+										<g:CheckBox ui:field="offerStatusInvoiced" text="{msg.invoiced}"/>
+
 									</td>
 								</tr>
 										

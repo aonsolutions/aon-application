@@ -1,0 +1,95 @@
+package com.esferalia.aon.occam.api.model.management;
+
+import java.io.Serializable;
+
+import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.type.OfferDetailStatus;
+
+public class OfferDetail implements Serializable {
+
+	private static final long serialVersionUID = 7597157186868662372L;
+	
+	private Integer id;
+	private int domain;
+	private Offer offer;
+	private Item item;
+	private short line;
+	private String description;
+	private double quantity;
+	private double price;
+	private String discountExpression;
+	private OfferDetailStatus status;
+	
+	public Integer getId() {
+		return id;
+	}
+	public OfferDetail setId(Integer id) {
+		this.id = id;
+		return this;
+	}
+	public int getDomain() {
+		return domain;
+	}
+	public OfferDetail setDomain(int domain) {
+		this.domain = domain;
+		return this;
+	}
+	public Offer getOffer() {
+		return offer;
+	}
+	public OfferDetail setOffer(Offer offer) {
+		this.offer = offer;
+		return this;
+	}
+	public Item getItem() {
+		return item;
+	}
+	public OfferDetail setItem(Item item) {
+		this.item = item;
+		return this;
+	}
+	public short getLine() {
+		return line;
+	}
+	public OfferDetail setLine(short line) {
+		this.line = line;
+		return this;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public OfferDetail setDescription(String description) {
+		this.description = description;
+		return this;
+	}
+	public double getQuantity() {
+		return quantity;
+	}
+	public OfferDetail setQuantity(double quantity) {
+		this.quantity = quantity;
+		return this;
+	}
+	public double getPrice() {
+		return price;
+	}
+	public OfferDetail setPrice(double price) {
+		this.price = price;
+		return this;
+	}
+	public String getDiscountExpression() {
+		return discountExpression;
+	}
+	public OfferDetail setDiscountExpression(String discountExpression) {
+		this.discountExpression = discountExpression;
+		return this;
+	}
+	public OfferDetailStatus getStatus() {
+		return status;
+	}
+	public OfferDetail setStatus(OfferDetailStatus status) {
+		this.status = status;
+		return this;
+	}
+	
+	
+}

@@ -15,7 +15,10 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.SelectElement;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -27,6 +30,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -57,16 +61,28 @@ public class InvoiceReport extends MainEntryPoint {
 	Panel formContainer;
 	
 	@UiField
-	CheckBox sales;
+	ListBox entity;
 
 	@UiField
-	CheckBox purchases;
+	CheckBox invoiceTypeSales;
+	@UiField
+	CheckBox invoiceTypePurchases;
+	@UiField
+	CheckBox invoiceTypeExpenses;
+	@UiField
+	CheckBox invoiceTypeUndeductible;
 	
 	@UiField
-	CheckBox expenses;
-	
+	CheckBox offerStatusPending;
 	@UiField
-	CheckBox undeductibleExpenses;
+	CheckBox offerStatusApproved;
+	@UiField
+	CheckBox offerStatusRefused;
+	@UiField
+	CheckBox offerStatusBlocked;
+	@UiField
+	CheckBox offerStatusInvoiced;
+	
 	
 	private int domain;
 	private int enterprise;
@@ -97,21 +113,49 @@ public class InvoiceReport extends MainEntryPoint {
 
 		Widget ui = INVOICE_REPORT_BINDER.createAndBindUi(this);
 		
+		entity.addItem( MSG.invoices() );
+		entity.addItem( MSG.offers() );
+		entity.addItem( MSG.purchaseOrders() );
+		entity.addItem( MSG.saleOrders() );
+		entity.addItem( MSG.incomes() );
+		entity.addItem( MSG.deliveries() );
+		
+		entity.setSelectedIndex(0);
+		onChangeEntity(null);
+		
+		SelectElement select = entity.getElement().cast();
+		select.getOptions().getItem(2).setDisabled(true);
+		select.getOptions().getItem(3).setDisabled(true);
+		select.getOptions().getItem(4).setDisabled(true);
+		select.getOptions().getItem(5).setDisabled(true);
 
-		fromDate.getTextBox().setName("fromDate");
-		toDate.getTextBox().setName("toDate");
-		domainId.setName("domainId");
-		domainName.setName("domainName");
-		sales.setName("sales");
-		purchases.setName("purchases");
-		expenses.setName("expenses");
-		undeductibleExpenses.setName("undeductibleExpenses");
+		fromDate.getTextBox().setName(IRequestParamsNames.FROM_DATE);
+		toDate.getTextBox().setName(IRequestParamsNames.TO_DATE);
+		domainId.setName(IRequestParamsNames.DOMAIN_ID);
+		domainName.setName(IRequestParamsNames.DOMAIN_NAME);
 		
-		sales.setValue(true);
-		purchases.setValue(true);
-		expenses.setValue(true);
-		undeductibleExpenses.setValue(true);
+		invoiceTypeSales.setName(IRequestParamsNames.INVOICE_TYPE_SALES);
+		invoiceTypePurchases.setName(IRequestParamsNames.INVOICE_TYPE_PURCHASES);
+		invoiceTypeExpenses.setName(IRequestParamsNames.INVOICE_TYPE_EXPENSES);
+		invoiceTypeUndeductible.setName(IRequestParamsNames.INVOICE_TYPE_UNDEDUCTIBLE);
 		
+		invoiceTypeSales.setValue(true);
+		invoiceTypePurchases.setValue(true);
+		invoiceTypeExpenses.setValue(true);
+		invoiceTypeUndeductible.setValue(true);
+		
+		offerStatusPending.setName(IRequestParamsNames.OFFER_STATUS_PENDING);
+		offerStatusApproved.setName(IRequestParamsNames.OFFER_STATUS_APPROVED);
+		offerStatusRefused.setName(IRequestParamsNames.OFFER_STATUS_REFUSED);
+		offerStatusBlocked.setName(IRequestParamsNames.OFFER_STATUS_BLOCKED);
+		offerStatusInvoiced.setName(IRequestParamsNames.OFFER_STATUS_INVOICED);
+		
+		offerStatusPending.setValue(true);
+		offerStatusApproved.setValue(true);
+		offerStatusRefused.setValue(true);
+		offerStatusBlocked.setValue(true);
+		offerStatusInvoiced.setValue(true);
+
 		Date date = new Date();
 		CalendarUtil.setToFirstDayOfMonth(date);
 		fromDate.setValue(date);
@@ -140,19 +184,46 @@ public class InvoiceReport extends MainEntryPoint {
 	}-*/;
 
 	// -------------------------------------------------------------- UiHandler
+	@UiHandler("entity")
+	void onChangeEntity(ChangeEvent event) {
+		boolean invoice = (entity.getSelectedIndex() == 0); 
+		boolean offer = (entity.getSelectedIndex() == 1);
+		
+		invoiceTypeSales.setVisible(invoice);
+		invoiceTypePurchases.setVisible(invoice);
+		invoiceTypeExpenses.setVisible(invoice);
+		invoiceTypeUndeductible.setVisible(invoice);
+		
+		offerStatusPending.setVisible(offer);
+		offerStatusApproved.setVisible(offer);
+		offerStatusRefused.setVisible(offer);
+		offerStatusBlocked.setVisible(offer);
+		offerStatusInvoiced.setVisible(offer);
+		
+	}
 
 	@UiHandler("generateFileButton")
 	void onGenerateFileButtonClick(ClickEvent event) {
-		if (!sales.getValue() && !purchases.getValue() 
-			&& !expenses.getValue() && !undeductibleExpenses.getValue()) {
-			Window.alert("Si no selecciona ning\u00FAn tipo de factura, no obtendr\u00E1 resultados.");
-		} else if (fromDate.getValue() != null && toDate.getValue() != null 
+		if (fromDate.getValue() != null && toDate.getValue() != null 
 				&& fromDate.getValue().after(toDate.getValue())) {
 			Window.alert("Si indica una fecha \"desde\" mayor que la fecha \"hasta\", no obtendr\u00E1 resultados.");
 		} else {
 			diskForm.setMethod(FormPanel.METHOD_POST);
-			diskForm.setAction(GWT.getHostPageBaseURL() + "aon_gwt_fiscal/InvoiceReport");
 			diskForm.setEncoding(FormPanel.ENCODING_URLENCODED);
+
+			if (entity.getSelectedIndex() == 0) {
+				diskForm.setAction(GWT.getHostPageBaseURL() + "aon_gwt_fiscal/InvoiceReport");	
+			} else if (entity.getSelectedIndex() == 1) {
+				diskForm.setAction(GWT.getHostPageBaseURL() + "aon_gwt_fiscal/OfferReport");
+			} else if (entity.getSelectedIndex() == 2) {
+				diskForm.setAction(GWT.getHostPageBaseURL() + "aon_gwt_fiscal/PurchaseOrderReport");
+			} else if (entity.getSelectedIndex() == 3) {
+				diskForm.setAction(GWT.getHostPageBaseURL() + "aon_gwt_fiscal/SaleOrderReport");
+			} else if (entity.getSelectedIndex() == 4) {
+				diskForm.setAction(GWT.getHostPageBaseURL() + "aon_gwt_fiscal/IncomeReport");
+			} else if (entity.getSelectedIndex() == 5) {
+				diskForm.setAction(GWT.getHostPageBaseURL() + "aon_gwt_fiscal/DeliveryReport");
+			}
 			
 			domainId.setValue(String.valueOf(getCurrentDomain()));
 			domainName.setValue(getCurrentDomainName());

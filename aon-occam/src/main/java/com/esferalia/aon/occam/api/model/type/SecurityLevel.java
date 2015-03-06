@@ -7,5 +7,9 @@ public enum SecurityLevel implements Serializable{
 
 	OFFICIAL,
 	CONFIDENTIAL;
+
+	public Byte value() {
+		return (byte) ordinal();
+	}
 	
 }

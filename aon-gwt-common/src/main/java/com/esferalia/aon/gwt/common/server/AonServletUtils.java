@@ -20,7 +20,17 @@ import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
 import com.code.aon.pool.AonConnectionException;
 
 public class AonServletUtils {
-
+	
+	public static AuthPrincipal getRequestPrincipal(HttpServletRequest request) {
+		return (AuthPrincipal) request.getUserPrincipal();
+	}
+	public static Integer getRequestDomain(HttpServletRequest request) {
+		return getRequestPrincipal(request).getDomainId();
+	}
+	public static String getRequestUser(HttpServletRequest request) {
+		return getRequestPrincipal(request).getShortName();
+	}
+	
 	public static Connection getConnection() throws SQLException {
 		try {
 			HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();

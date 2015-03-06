@@ -33,113 +33,128 @@ public class InvoiceDetail implements Serializable {
 	public Integer getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public InvoiceDetail setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 	public int getDomain() {
 		return domain;
 	}
-	public void setDomain(int domain) {
+	public InvoiceDetail setDomain(int domain) {
 		this.domain = domain;
+		return this;
 	}
 	public Invoice getInvoice() {
 		return invoice;
 	}
-	public void setInvoice(Invoice invoice) {
+	public InvoiceDetail setInvoice(Invoice invoice) {
 		this.invoice = invoice;
+		return this;
 	}
 	public Seller getSeller() {
 		return seller;
 	}
-	public void setSeller(Seller seller) {
+	public InvoiceDetail setSeller(Seller seller) {
 		this.seller = seller;
+		return this;
 	}
 	public String getProject() {
 		return project;
 	}
-	public void setProject(String project) {
+	public InvoiceDetail setProject(String project) {
 		this.project = project;
+		return this;
 	}
 	public String getWarehouse() {
 		return warehouse;
 	}
-	public void setWarehouse(String warehouse) {
+	public InvoiceDetail setWarehouse(String warehouse) {
 		this.warehouse = warehouse;
+		return this;
 	}
 	public String getWorkPlace() {
 		return workPlace;
 	}
-	public void setWorkPlace(String workPlace) {
+	public InvoiceDetail setWorkPlace(String workPlace) {
 		this.workPlace = workPlace;
+		return this;
 	}
 	public Item getItem() {
 		return item;
 	}
-	public void setItem(Item item) {
+	public InvoiceDetail setItem(Item item) {
 		this.item = item;
+		return this;
 	}
 	public short getLine() {
 		return line;
 	}
-	public void setLine(short line) {
+	public InvoiceDetail setLine(short line) {
 		this.line = line;
+		return this;
 	}
 	public String getDescription() {
 		return description;
 	}
-	public void setDescription(String description) {
+	public InvoiceDetail setDescription(String description) {
 		this.description = description;
+		return this;
 	}
 	public double getQuantity() {
 		return quantity;
 	}
-	public void setQuantity(double quantity) {
+	public InvoiceDetail setQuantity(double quantity) {
 		this.quantity = quantity;
+		return this;
 	}
 	public double getPrice() {
 		return price;
 	}
-	public void setPrice(double price) {
+	public InvoiceDetail setPrice(double price) {
 		this.price = price;
+		return this;
 	}
 	public String getDiscountExpression() {
 		return discountExpression;
 	}
-	public void setDiscountExpression(String discountExpression) {
+	public InvoiceDetail setDiscountExpression(String discountExpression) {
 		this.discountExpression = discountExpression;
+		return this;
 	}
 	public InvoiceSource getSource() {
 		return source;
 	}
-	public void setSource(InvoiceSource source) {
+	public InvoiceDetail setSource(InvoiceSource source) {
 		this.source = source;
+		return this;
 	}
 	public Integer getSourceId() {
 		return sourceId;
 	}
-	public void setSourceId(Integer sourceId) {
+	public InvoiceDetail setSourceId(Integer sourceId) {
 		this.sourceId = sourceId;
+		return this;
 	}
 	public double getTaxableBase() {
 		return taxableBase;
 	}
-	public void setTaxableBase(double taxableBase) {
+	public InvoiceDetail setTaxableBase(double taxableBase) {
 		this.taxableBase = taxableBase;
+		return this;
 	}
 	public double getTaxes() {
 		return taxes;
 	}
-	public void setTaxes(double taxes) {
+	public InvoiceDetail setTaxes(double taxes) {
 		this.taxes = taxes;
+		return this;
 	}
 	public boolean isPrepayment() {
 		return prepayment;
 	}
-	public void setPrepayment(boolean prepayment) {
+	public InvoiceDetail setPrepayment(boolean prepayment) {
 		this.prepayment = prepayment;
-	}
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+		return this;
 	}
 
 }

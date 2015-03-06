@@ -25,6 +25,9 @@ public interface CommonMessages extends Messages {
 	String currencyCode();
 
 	// ---------------------------------------------------------------- Modulos
+	@DefaultMessage("Integral fiscal")
+	String fiscalPanel();
+
 	@DefaultMessage("Modelo 140")
 	String mod140();
 	
@@ -65,6 +68,9 @@ public interface CommonMessages extends Messages {
 	String mod200Desc3();
 
 	// ---------------------------------------------------------------- Errores
+	@DefaultMessage("No ha sido posible mostrar los datos ({0}) ")
+	String unableToShowData(String message);
+	
 	@DefaultMessage("Valor num\u00E9rico no correcto ({0}) ")
 	String numericValueError(String value);
 
@@ -187,6 +193,18 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Pendiente")
 	String pending();
 	
+	@DefaultMessage("Aprobado")
+	String approved();
+	
+	@DefaultMessage("Rechazado")
+	String refused();
+	
+	@DefaultMessage("Bloqueado")
+	String blocked();
+
+	@DefaultMessage("Facturado")
+	String invoiced();
+
 	@DefaultMessage("Error")
 	String error();
 
@@ -203,6 +221,9 @@ public interface CommonMessages extends Messages {
 	String no();
 
 	// ---------------------------------------------------------Common Messages
+	@DefaultMessage("A\u00F1o")
+	String year();
+	
 	@DefaultMessage("Desde")
 	String from();
 
@@ -1580,4 +1601,24 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Exportar")
 	String export();
 	
+	@DefaultMessage("Cambio Empresa")
+	String enterpriseChange();
+	
+	@DefaultMessage("Descarga")
+	String download();
+
+	@DefaultMessage("Facturas")
+	String invoices();
+	@DefaultMessage("Presupuestos")
+	String offers();
+	@DefaultMessage("Pedidos de compra")
+	String purchaseOrders();
+	@DefaultMessage("Pedidos de venta")
+	String saleOrders();
+	@DefaultMessage("Albaranes de compra")
+	String incomes();
+	@DefaultMessage("Albaranes de venta")
+	String deliveries();
+	
+
 }

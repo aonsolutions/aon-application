@@ -41,164 +41,191 @@ public class Item implements Serializable {
 	public Integer getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public Item setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 	public int getDomain() {
 		return domain;
 	}
-	public void setDomain(int domain) {
+	public Item setDomain(int domain) {
 		this.domain = domain;
+		return this;
 	}
 	public Integer getProductId() {
 		return productId;
 	}
-	public void setProductId(Integer productId) {
+	public Item setProductId(Integer productId) {
 		this.productId = productId;
+		return this;
 	}
 	public Account getSalesAccount() {
 		return salesAccount;
 	}
-	public void setSalesAccount(Account salesAccount) {
+	public Item setSalesAccount(Account salesAccount) {
 		this.salesAccount = salesAccount;
+		return this;
 	}
 	public Account getPurchaseAccount() {
 		return purchaseAccount;
 	}
-	public void setPurchaseAccount(Account purchaseAccount) {
+	public Item setPurchaseAccount(Account purchaseAccount) {
 		this.purchaseAccount = purchaseAccount;
+		return this;
 	}
 	public Tax getVat() {
 		return vat;
 	}
-	public void setVat(Tax vat) {
+	public Item setVat(Tax vat) {
 		this.vat = vat;
+		return this;
 	}
 	public String getCategory() {
 		return category;
 	}
-	public void setCategory(String category) {
+	public Item setCategory(String category) {
 		this.category = category;
+		return this;
 	}
 	public Tax getRetention() {
 		return retention;
 	}
-	public void setRetention(Tax retention) {
+	public Item setRetention(Tax retention) {
 		this.retention = retention;
+		return this;
 	}
 	public String getBrand() {
 		return brand;
 	}
-	public void setBrand(String brand) {
+	public Item setBrand(String brand) {
 		this.brand = brand;
+		return this;
 	}
 	public String getName() {
 		return name;
 	}
-	public void setName(String name) {
+	public Item setName(String name) {
 		this.name = name;
+		return this;
 	}
 	public String getCode() {
 		return code;
 	}
-	public void setCode(String code) {
+	public Item setCode(String code) {
 		this.code = code;
+		return this;
 	}
 	public boolean isInventoriable() {
 		return inventoriable;
 	}
-	public void setInventoriable(boolean inventoriable) {
+	public Item setInventoriable(boolean inventoriable) {
 		this.inventoriable = inventoriable;
+		return this;
 	}
 	public ProductType getType() {
 		return type;
 	}
-	public void setType(ProductType type) {
+	public Item setType(ProductType type) {
 		this.type = type;
+		return this;
 	}
 	public boolean isComposition() {
 		return composition;
 	}
-	public void setComposition(boolean composition) {
+	public Item setComposition(boolean composition) {
 		this.composition = composition;
+		return this;
 	}
 	public boolean isCompositionPrice() {
 		return compositionPrice;
 	}
-	public void setCompositionPrice(boolean compositionPrice) {
+	public Item setCompositionPrice(boolean compositionPrice) {
 		this.compositionPrice = compositionPrice;
+		return this;
 	}
 	public String getDetail() {
 		return detail;
 	}
-	public void setDetail(String detail) {
+	public Item setDetail(String detail) {
 		this.detail = detail;
+		return this;
 	}
 	public String getDetail2() {
 		return detail2;
 	}
-	public void setDetail2(String detail2) {
+	public Item setDetail2(String detail2) {
 		this.detail2 = detail2;
+		return this;
 	}
 	public String getDetail3() {
 		return detail3;
 	}
-	public void setDetail3(String detail3) {
+	public Item setDetail3(String detail3) {
 		this.detail3 = detail3;
+		return this;
 	}
 	public String getDescription() {
 		return description;
 	}
-	public void setDescription(String description) {
+	public Item setDescription(String description) {
 		this.description = description;
+		return this;
 	}
 	public double getPrice() {
 		return price;
 	}
-	public void setPrice(double price) {
+	public Item setPrice(double price) {
 		this.price = price;
+		return this;
 	}
 	public boolean isActive() {
 		return active;
 	}
-	public void setActive(boolean active) {
+	public Item setActive(boolean active) {
 		this.active = active;
+		return this;
 	}
 	public double getExpensesPercent() {
 		return expensesPercent;
 	}
-	public void setExpensesPercent(double expensesPercent) {
+	public Item setExpensesPercent(double expensesPercent) {
 		this.expensesPercent = expensesPercent;
+		return this;
 	}
 	public double getExpensesFixed() {
 		return expensesFixed;
 	}
-	public void setExpensesFixed(double expensesFixed) {
+	public Item setExpensesFixed(double expensesFixed) {
 		this.expensesFixed = expensesFixed;
+		return this;
 	}
 	public double getProfitPercent() {
 		return profitPercent;
 	}
-	public void setProfitPercent(double profitPercent) {
+	public Item setProfitPercent(double profitPercent) {
 		this.profitPercent = profitPercent;
+		return this;
 	}
 	public double getPurchasePrice() {
 		return purchasePrice;
 	}
-	public void setPurchasePrice(double purchasePrice) {
+	public Item setPurchasePrice(double purchasePrice) {
 		this.purchasePrice = purchasePrice;
+		return this;
 	}
 	public boolean isInternet() {
 		return internet;
 	}
-	public void setInternet(boolean internet) {
+	public Item setInternet(boolean internet) {
 		this.internet = internet;
+		return this;
 	}
 	public String getBarcode() {
 		return barcode;
 	}
-	public void setBarcode(String barcode) {
+	public Item setBarcode(String barcode) {
 		this.barcode = barcode;
+		return this;
 	}
 
 	public String getFullName() {

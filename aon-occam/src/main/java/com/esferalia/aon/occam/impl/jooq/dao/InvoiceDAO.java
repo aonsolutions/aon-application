@@ -9,12 +9,12 @@ import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.io.OutputStream;
-import java.util.Collection;
-import java.util.LinkedList;
+import java.util.Date;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -26,29 +26,80 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
-import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
-
 
 public class InvoiceDAO {
 	
+	private static final InvoicePropertiesDAO INVOICE_PROPERTIES = new InvoicePropertiesDAO();
+	private static class InvoicePropertiesDAO implements InvoiceProperties {
+
+		private Condition[] getConditions(InvoiceFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null)
+				return new Condition[0];
+
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override
+		public Property<Integer> getIdProperty() {
+			return new FilterDAO.PropertyDAO<Integer>(INVOICE.ID);
+		}
+
+		@Override
+		public Property<Integer> getDomainProperty() {
+			return new FilterDAO.PropertyDAO<Integer>(INVOICE.DOMAIN);
+		}
+
+		@Override
+		public Property<Date> getStartIssueDateProperty() {
+			return new FilterDAO.DatePropertyDAO(INVOICE.ISSUE_DATE);
+		}
+
+		@Override
+		public Property<Date> getEndIssueDateProperty() {
+			return new FilterDAO.DatePropertyDAO(INVOICE.ISSUE_DATE);
+		}
+
+		@Override
+		public Property<Byte> getTypeProperty() {
+			return new FilterDAO.PropertyDAO<Byte>(INVOICE.TYPE);
+		}
+
+		@Override
+		public Property<Integer> getScopeProperty() {
+			return new FilterDAO.PropertyDAO<Integer>(INVOICE.SCOPE);
+		}
+
+		@Override
+		public Property<Byte> getConfidentialProperty() {
+			return new FilterDAO.PropertyDAO<Byte>(INVOICE.SECURITY_LEVEL);
+		}
+	}
+
 	private static final Registry SELLER_ALIAS = REGISTRY.as("seller");
-	
 	private static Result<Record> getFullInvoices(AONContext ctx, InvoiceFilter filter) {
 		ctx.checkRead();
+
+		// Field para que salgan ordenado primero 
+		// compras,gastos y gastos no .ded y luego ventas.
+		// En la select se complementa con invoice.type
 		Field<Integer> orderedType = DSL.decode()
 		   .when(INVOICE.TYPE.equal((byte) 0), 0)
 		   .when(INVOICE.TYPE.equal((byte) 1), 1)
 		   .when(INVOICE.TYPE.equal((byte) 2), 0)
 		   .when(INVOICE.TYPE.equal((byte) 3), 0);
+		
 		return ctx.getDslContext()
 			.select(
 				 INVOICE.ID
@@ -69,7 +120,7 @@ public class InvoiceDAO {
 				,GEOZONE.NAME
 				,RADDRESS.ZIP
 				,RADDRESS.CITY
-				
+				,SCOPE.DESCRIPTION
 				,PROJECT.NAME
 				,INVOICE_DETAIL.LINE
 				
@@ -98,6 +149,7 @@ public class InvoiceDAO {
 			.join(REGISTRY).on(REGISTRY.ID.equal(INVOICE.REGISTRY))
 			.leftOuterJoin(RADDRESS).on(RADDRESS.REGISTRY.equal(REGISTRY.ID).and(RADDRESS.TYPE.equal((byte) 0)))
 			.leftOuterJoin(GEOZONE).on(RADDRESS.GEOZONE.equal(GEOZONE.ID))
+			.leftOuterJoin(SCOPE).on(SCOPE.ID.equal(INVOICE.SCOPE))
 			.leftOuterJoin(PROJECT).on(PROJECT.ID.equal(INVOICE_DETAIL.PROJECT))
 			.leftOuterJoin(ITEM).on(ITEM.ID.equal(INVOICE_DETAIL.ITEM))
 			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
@@ -105,7 +157,7 @@ public class InvoiceDAO {
 			.leftOuterJoin(SELLER_ALIAS).on(SELLER_ALIAS.ID.equal(INVOICE_DETAIL.SELLER))
 			.leftOuterJoin(WAREHOUSE).on(WAREHOUSE.ID.equal(INVOICE_DETAIL.WAREHOUSE))
 			.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(INVOICE_DETAIL.WORKPLACE))
-			.where(getConditions(filter))
+			.where(INVOICE_PROPERTIES.getConditions(filter))
 			.orderBy(orderedType,INVOICE.TYPE,INVOICE.ISSUE_DATE,INVOICE.REFERENCE_CODE,INVOICE_DETAIL.LINE)
 			.fetch();
 		
@@ -122,11 +174,11 @@ public class InvoiceDAO {
 		getFullInvoices(ctx, filter).formatHTML(out);
 	}
 
-	public static void getInvoiceDetails(AONContext ctx, InvoiceFilter filter,
-			Consumer<InvoiceDetail> action) {
+	public static void getInvoiceDetails(AONContext ctx,
+			Consumer<InvoiceDetail> action, InvoiceFilter filter) {
 		getFullInvoices(ctx, filter)
 			.stream()
-			.map( new FullInvoiceDetailFiller())
+			.map(new FullInvoiceDetailFiller())
 			.forEach(action);
 	}
 	
@@ -134,86 +186,61 @@ public class InvoiceDAO {
 
 		@Override
 		public InvoiceDetail apply(Record record) {
-			InvoiceDetail detail = new InvoiceDetail(); 
-			Invoice invoice = new Invoice();
-			invoice.setId( record.getValue( INVOICE.ID ) );
-			invoice.setDomain(record.getValue( INVOICE.DOMAIN ));
-			invoice.setType(AonEnumUtils.enumValue(InvoiceType.class, record.getValue( INVOICE.TYPE )));
-			invoice.setSeries(record.getValue( INVOICE.SERIES ));
-			invoice.setNumber(record.getValue( INVOICE.NUMBER ));
-			invoice.setReferenceCode(record.getValue( INVOICE.REFERENCE_CODE ));
-			invoice.setIssueDate(record.getValue( INVOICE.ISSUE_DATE ));
-			invoice.setTaxDate(record.getValue( INVOICE.TAX_DATE ));
-			invoice.setRegistry(record.getValue(INVOICE.REGISTRY));
-			invoice.setRegistryDocument(record.getValue( INVOICE.RDOCUMENT ));
-			invoice.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class, record.getValue( INVOICE.RDOCUMENT_TYPE)));
-			invoice.setRegistryDocumentCountry(Country.safeValueOf(record.getValue( INVOICE.RDOCUMENT_COUNTRY )));
-			invoice.setRegistryName(record.getValue( INVOICE.RNAME ));
-			invoice.setRegistryProvinceCode(record.getValue( GEOZONE.CODE ));
-			invoice.setRegistryProvince(record.getValue( GEOZONE.NAME ));
-			invoice.setRegistryTown(record.getValue( RADDRESS.CITY ));
-			invoice.setRegistryZIP(record.getValue( RADDRESS.ZIP ));
-			
-			detail.setInvoice(invoice);
-			
-			detail.setProject( record.getValue( PROJECT.NAME ));
-			detail.setLine(record.getValue( INVOICE_DETAIL.LINE ));
-			detail.setDescription(record.getValue( INVOICE_DETAIL.DESCRIPTION ));
-			detail.setQuantity(record.getValue(INVOICE_DETAIL.QUANTITY));
-			detail.setPrice(record.getValue(INVOICE_DETAIL.PRICE));
-			detail.setDiscountExpression(record.getValue(INVOICE_DETAIL.DISCOUNT_EXPR));
-			detail.setTaxableBase(record.getValue(INVOICE_DETAIL.TAXABLE_BASE));
-			
-			if (record.getValue(INVOICE_DETAIL.ITEM) != null) {
-				Item item = new Item();
-				item.setId(record.getValue(INVOICE_DETAIL.ITEM));
-				item.setCategory( record.getValue( PCATEGORY.NAME ) );
-				item.setProductId( record.getValue( PRODUCT.ID ) );
-				item.setName( record.getValue( PRODUCT.NAME ) );
-				item.setCode(record.getValue( PRODUCT.CODE ) );
-				item.setDetail(record.getValue( ITEM.DETAIL ));
-				item.setDetail2(record.getValue( ITEM.DETAIL2 ));
-				item.setDetail3(record.getValue( ITEM.DETAIL3 ));
-				item.setDescription(record.getValue( ITEM.DESCRIPTION ));
-				detail.setItem(item);
-			}
-			
-			if (record.getValue(INVOICE_DETAIL.SELLER) != null) {
-				Seller seller = new Seller();
-				seller.setId( record.getValue(INVOICE_DETAIL.SELLER) );
-				seller.setRegistryName( record.getValue(SELLER_ALIAS.NAME) );
-				detail.setSeller(seller);	
-			}
-			
-			detail.setWorkPlace(record.getValue(WORKPLACE.DESCRIPTION));
-			detail.setWarehouse(record.getValue(WAREHOUSE.NAME));
-			
-			return detail;
+			return new InvoiceDetail()
+				.setInvoice(new Invoice()
+					.setId(record.getValue(INVOICE.ID))
+					.setDomain(record.getValue(INVOICE.DOMAIN))
+					.setType(
+							AonEnumUtils.enumValue(InvoiceType.class,
+									record.getValue(INVOICE.TYPE)))
+					.setSeries(record.getValue(INVOICE.SERIES))
+					.setNumber(record.getValue(INVOICE.NUMBER))
+					.setReferenceCode(record.getValue(INVOICE.REFERENCE_CODE))
+					.setIssueDate(record.getValue(INVOICE.ISSUE_DATE))
+					.setTaxDate(record.getValue(INVOICE.TAX_DATE))
+					.setRegistry(record.getValue(INVOICE.REGISTRY))
+					.setRegistryDocument(record.getValue(INVOICE.RDOCUMENT))
+					.setRegistryDocumentType(
+							AonEnumUtils.enumValue(DocumentType.class,
+									record.getValue(INVOICE.RDOCUMENT_TYPE)))
+					.setRegistryDocumentCountry(
+							Country.safeValueOf(record
+									.getValue(INVOICE.RDOCUMENT_COUNTRY)))
+					.setRegistryName(record.getValue(INVOICE.RNAME))
+					.setRegistryProvinceCode(record.getValue(GEOZONE.CODE))
+					.setRegistryProvince(record.getValue(GEOZONE.NAME))
+					.setRegistryTown(record.getValue(RADDRESS.CITY))
+					.setRegistryZIP(record.getValue(RADDRESS.ZIP))
+					.setScope(record.getValue(SCOPE.DESCRIPTION))						
+					)
+				.setProject( record.getValue( PROJECT.NAME ))
+				.setLine(record.getValue( INVOICE_DETAIL.LINE ))
+				.setDescription(record.getValue( INVOICE_DETAIL.DESCRIPTION ))
+				.setQuantity(record.getValue(INVOICE_DETAIL.QUANTITY))
+				.setPrice(record.getValue(INVOICE_DETAIL.PRICE))
+				.setDiscountExpression(record.getValue(INVOICE_DETAIL.DISCOUNT_EXPR))
+				.setTaxableBase(record.getValue(INVOICE_DETAIL.TAXABLE_BASE))
+				.setItem((record.getValue(INVOICE_DETAIL.ITEM) == null)
+					? null
+					: new Item()
+						.setId(record.getValue(INVOICE_DETAIL.ITEM))
+						.setCategory( record.getValue( PCATEGORY.NAME ) )
+						.setProductId( record.getValue( PRODUCT.ID ) )
+						.setName( record.getValue( PRODUCT.NAME ) )
+						.setCode(record.getValue( PRODUCT.CODE ) )
+						.setDetail(record.getValue( ITEM.DETAIL ))
+						.setDetail2(record.getValue( ITEM.DETAIL2 ))
+						.setDetail3(record.getValue( ITEM.DETAIL3 ))
+						.setDescription(record.getValue( ITEM.DESCRIPTION )))
+				.setSeller((record.getValue(INVOICE_DETAIL.SELLER) == null)
+					? null
+					: new Seller()
+					.setId( record.getValue(INVOICE_DETAIL.SELLER) )
+					.setRegistryName( record.getValue(SELLER_ALIAS.NAME) ))
+				.setWorkPlace(record.getValue(WORKPLACE.DESCRIPTION))
+				.setWarehouse(record.getValue(WAREHOUSE.NAME));
 		}
 		
 	}
 	
-	private static Collection<Condition> getConditions(InvoiceFilter filter) {
-		LinkedList<Condition> list = new LinkedList<Condition>();
-		list.add(INVOICE.DOMAIN.equal(filter.getDomain()));
-		if ( !filter.isPurchasesEnabled() ) {
-			list.add(INVOICE.TYPE.notEqual((byte) 0));
-		}
-		if ( !filter.isSalesEnabled() ) {
-			list.add(INVOICE.TYPE.notEqual((byte) 1));
-		}
-		if ( !filter.isExpensesEnabled() ) {
-			list.add(INVOICE.TYPE.notEqual((byte) 2));
-		}
-		if ( !filter.isUndeductibleExpensesEnabled() ) {
-			list.add(INVOICE.TYPE.notEqual((byte) 3));
-		}
-		if ( filter.getFromDate() != null) {
-			list.add(INVOICE.ISSUE_DATE.greaterOrEqual(AonDateUtils.toSql( filter.getFromDate())));	
-		}
-		if ( filter.getToDate() != null) {
-			list.add(INVOICE.ISSUE_DATE.lessOrEqual(AonDateUtils.toSql( filter.getToDate())));	
-		}
-		return list;
-	}
 }
