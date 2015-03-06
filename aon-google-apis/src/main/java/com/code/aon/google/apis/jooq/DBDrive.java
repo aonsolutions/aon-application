@@ -17,39 +17,425 @@ import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.SepeBatchAttach.SEPE_BATCH_ATTACH;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
-import org.jooq.Record2;
-import org.jooq.Record3;
 import org.jooq.Record4;
 import org.jooq.Record5;
 import org.jooq.Record6;
 import org.jooq.Record7;
 import org.jooq.Result;
-import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
 import com.code.aon.google.apis.DatabaseSync;
-import com.code.aon.google.apis.DriveData;
 import com.code.aon.google.apis.FileInfo;
 import com.code.aon.pool.AonConnectionException;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.google.sql.SQLConstants;
 import com.esferalia.aon.google.sql.AbstractSQL.Domain;
-import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
-import com.esferalia.aon.google.sql.AbstractSQL.Rattach;
-import com.esferalia.aon.google.sql.SQLConstants.DomainColumns;
-import com.esferalia.aon.google.sql.SQLConstants.DomainGserviceaccountColumns;
-import com.esferalia.aon.google.sql.SQLConstants.RattachColumns;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.Property;
 
 public class DBDrive {
+	
+	public static Vector<FileInfo> getRAttachLimit(String domain, Integer domainId, Vector<RegistryAttachmentType> rats) throws SQLException{
+		
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			Condition condition = RATTACH.TYPE.isNull().or(RATTACH.TYPE.isNotNull());
+			if(!rats.isEmpty()){
+				condition = RATTACH.TYPE.eq((byte)rats.get(0).ordinal());
+				for(RegistryAttachmentType rat : rats){
+					if(rats.get(0).ordinal()!= rat.ordinal())
+						condition = condition.or(RATTACH.TYPE.eq((byte)rat.ordinal()));
+				}
+			}
+			
+			Result<Record6<Integer, Byte, String, Byte, Integer, Integer>> attach = dslContext
+					.select(RATTACH.ID, RATTACH.MIMETYPE,
+							RATTACH.DESCRIPTION, RATTACH.TYPE
+							,RATTACH.CATEGORY,RATTACH.DOMAIN)
+					.from(RATTACH)
+					.where(RATTACH.DOMAIN.eq(domainId).or(RATTACH.DOMAIN.in(dslContext
+																	.select(DOMAIN.ID)
+																	.from(DOMAIN)
+																	.where(DOMAIN.PARENT.eq(domainId)))))
+							.and(RATTACH.DRIVE_ID.isNull()).and(condition).limit(10)
+					.fetch();
+	
+			Vector<FileInfo> attachs = new Vector<FileInfo>();
+			
+			attach.stream().forEach(r->{
+				FileInfo fileInfo = new FileInfo();
+				fileInfo.setAonType("registry");
+				fileInfo.setFileId(r.value1());
+				fileInfo.setMimetype(r.value2());
+				fileInfo.setTitle(r.value3());
+				if (r.value4()!=null) fileInfo.setType(r.value4());
+				else fileInfo.setType((short) -1);
+				fileInfo.setCategory(r.value5());
+				fileInfo.setDomainId(r.value6());
+				try { 
+					Domain d = DBConsults.getDomain(domain, r.value6());
+					fileInfo.setDomain(d.getName());
+					byte data[] = DatabaseSync.getFileData(fileInfo.getFileId(),
+							domain);
+					fileInfo.setData(data);
+					
+				} catch (Exception e) {e.printStackTrace();}
+				attachs.add(fileInfo);
+			});
+		
+			return attachs;
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static Vector<FileInfo> getContractAttachLimit(String domain, Integer domainId) throws SQLException{
+		
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+
+			Result<Record5<Integer, Byte, String, Byte, Integer>> attach = dslContext
+					.select(CONTRACT_ATTACH.ID, CONTRACT_ATTACH.MIMETYPE,
+							CONTRACT_ATTACH.DESCRIPTION, CONTRACT_ATTACH.TYPE
+							,CONTRACT_ATTACH.DOMAIN)
+					.from(CONTRACT_ATTACH)
+					.where(CONTRACT_ATTACH.DOMAIN.eq(domainId).or(CONTRACT_ATTACH.DOMAIN.in(dslContext
+																	.select(DOMAIN.ID)
+																	.from(DOMAIN)
+																	.where(DOMAIN.PARENT.eq(domainId)))))
+							.and(CONTRACT_ATTACH.DRIVEID.isNull()).limit(10)
+					.fetch();
+	
+			Vector<FileInfo> attachs = new Vector<FileInfo>();
+			
+			attach.stream().forEach(r->{
+				FileInfo fileInfo = new FileInfo();
+				fileInfo.setAonType("contract");
+				fileInfo.setFileId(r.value1());
+				fileInfo.setMimetype(r.value2());
+				fileInfo.setTitle(r.value3());
+				fileInfo.setType(r.value4());
+				fileInfo.setCategory(-2);
+				fileInfo.setDomainId(r.value5());
+				try { 
+					Domain d = DBConsults.getDomain(domain, r.value5());
+					fileInfo.setDomain(d.getName());
+					fileInfo = DBConsults.getDataContractAttach(domain, fileInfo);
+				} catch (Exception e) {e.printStackTrace();}
+				attachs.add(fileInfo);
+			});
+		
+			return attachs;
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static Vector<FileInfo> getIAttachLimit(String domain, Integer domainId) throws SQLException{
+		
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+
+			Result<Record5<Integer, Byte, String, Byte, Integer>> attach = dslContext
+					.select(IATTACH.ID, IATTACH.MIMETYPE,
+							IATTACH.DESCRIPTION, IATTACH.TYPE
+							,IATTACH.DOMAIN)
+					.from(IATTACH)
+					.where(IATTACH.DOMAIN.eq(domainId).or(IATTACH.DOMAIN.in(dslContext
+																	.select(DOMAIN.ID)
+																	.from(DOMAIN)
+																	.where(DOMAIN.PARENT.eq(domainId)))))
+							.and(IATTACH.DRIVEID.isNull()).limit(10)
+					.fetch();
+	
+			Vector<FileInfo> attachs = new Vector<FileInfo>();
+			
+			attach.stream().forEach(r->{
+				FileInfo fileInfo = new FileInfo();
+				fileInfo.setAonType("item");
+				fileInfo.setFileId(r.value1());
+				fileInfo.setMimetype(r.value2());
+				fileInfo.setTitle(r.value3());
+				fileInfo.setType(r.value4());
+				fileInfo.setCategory(-2);
+				fileInfo.setDomainId(r.value5());
+				try { 
+					Domain d = DBConsults.getDomain(domain, r.value5());
+					fileInfo.setDomain(d.getName());
+					fileInfo = DBConsults.getDataIattach(domain, fileInfo);
+				} catch (Exception e) {e.printStackTrace();}
+				attachs.add(fileInfo);
+			});
+		
+			return attachs;
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static Vector<FileInfo> getInvoiceAttachLimit(String domain, Integer domainId) throws SQLException{
+		
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+
+			Result<Record5<Integer, Byte, String, Byte, Integer>> attach = dslContext
+					.select(INVOICE_ATTACH.ID, INVOICE_ATTACH.MIMETYPE,
+							INVOICE_ATTACH.DESCRIPTION, INVOICE_ATTACH.TYPE
+							,INVOICE_ATTACH.DOMAIN)
+					.from(INVOICE_ATTACH)
+					.where(INVOICE_ATTACH.DOMAIN.eq(domainId).or(INVOICE_ATTACH.DOMAIN.in(dslContext
+																	.select(DOMAIN.ID)
+																	.from(DOMAIN)
+																	.where(DOMAIN.PARENT.eq(domainId)))))
+							.and(INVOICE_ATTACH.DRIVEID.isNull()).limit(10)
+					.fetch();
+	
+			Vector<FileInfo> attachs = new Vector<FileInfo>();
+			
+			attach.stream().forEach(r->{
+				FileInfo fileInfo = new FileInfo();
+				fileInfo.setAonType("invoice");
+				fileInfo.setFileId(r.value1());
+				fileInfo.setMimetype(r.value2());
+				fileInfo.setTitle(r.value3());
+				fileInfo.setType(r.value4());
+				fileInfo.setCategory(-2);
+				fileInfo.setDomainId(r.value5());
+				try { 
+					Domain d = DBConsults.getDomain(domain, r.value5());
+					fileInfo.setDomain(d.getName());
+					fileInfo = DBConsults.getDataInvoiceAttach(domain, fileInfo);
+				} catch (Exception e) {e.printStackTrace();}
+				attachs.add(fileInfo);
+			});
+		
+			return attachs;
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static Vector<FileInfo> getOfferAttachLimit(String domain, Integer domainId) throws SQLException{
+		
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+
+			Result<Record4<Integer, Byte, String, Integer>> attach = dslContext
+					.select(OFFER_ATTACH.ID, OFFER_ATTACH.MIMETYPE,
+							OFFER_ATTACH.DESCRIPTION,OFFER_ATTACH.DOMAIN)
+					.from(OFFER_ATTACH)
+					.where(OFFER_ATTACH.DOMAIN.eq(domainId).or(OFFER_ATTACH.DOMAIN.in(dslContext
+																	.select(DOMAIN.ID)
+																	.from(DOMAIN)
+																	.where(DOMAIN.PARENT.eq(domainId)))))
+							.and(OFFER_ATTACH.DRIVEID.isNull()).limit(10)
+					.fetch();
+	
+			Vector<FileInfo> attachs = new Vector<FileInfo>();
+			
+			attach.stream().forEach(r->{
+				FileInfo fileInfo = new FileInfo();
+				fileInfo.setAonType("offer");
+				fileInfo.setFileId(r.value1());
+				fileInfo.setMimetype(r.value2());
+				fileInfo.setTitle(r.value3());
+				fileInfo.setCategory(-2);
+				fileInfo.setDomainId(r.value4());
+				try { 
+					Domain d = DBConsults.getDomain(domain, r.value4());
+					fileInfo.setDomain(d.getName());
+					fileInfo = DBConsults.getDataOfferAttach(domain, fileInfo);
+				} catch (Exception e) {e.printStackTrace();}
+				attachs.add(fileInfo);
+			});
+		
+			return attachs;
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static Vector<FileInfo> getPayrollAttachLimit(String domain, Integer domainId) throws SQLException{
+		
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+
+			Result<Record5<Integer, Byte, String, Byte, Integer>> attach = dslContext
+					.select(PAYROLL_BATCH_ATTACH.ID, PAYROLL_BATCH_ATTACH.MIMETYPE,
+							PAYROLL_BATCH_ATTACH.DESCRIPTION, PAYROLL_BATCH_ATTACH.TYPE
+							,PAYROLL_BATCH_ATTACH.DOMAIN)
+					.from(PAYROLL_BATCH_ATTACH)
+					.where(PAYROLL_BATCH_ATTACH.DOMAIN.eq(domainId).or(PAYROLL_BATCH_ATTACH.DOMAIN.in(dslContext
+																	.select(DOMAIN.ID)
+																	.from(DOMAIN)
+																	.where(DOMAIN.PARENT.eq(domainId)))))
+							.and(PAYROLL_BATCH_ATTACH.DRIVEID.isNull()).limit(10)
+					.fetch();
+	
+			Vector<FileInfo> attachs = new Vector<FileInfo>();
+			
+			attach.stream().forEach(r->{
+				FileInfo fileInfo = new FileInfo();
+				fileInfo.setAonType("payroll");
+				fileInfo.setFileId(r.value1());
+				fileInfo.setMimetype(r.value2());
+				fileInfo.setTitle(r.value3());
+				fileInfo.setType(r.value4());
+				fileInfo.setCategory(-2);
+				fileInfo.setDomainId(r.value5());
+				try { 
+					Domain d = DBConsults.getDomain(domain, r.value5());
+					fileInfo.setDomain(d.getName());
+					fileInfo = DBConsults.getDataPayrollAttach(domain, fileInfo);
+				} catch (Exception e) {e.printStackTrace();}
+				attachs.add(fileInfo);
+			});
+		
+			return attachs;
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static Vector<FileInfo> getProjectAttachLimit(String domain, Integer domainId) throws SQLException{
+		
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+
+			Result<Record4<Integer, Byte, String, Integer>> attach = dslContext
+					.select(PROJECT_ATTACH.ID, PROJECT_ATTACH.MIMETYPE,
+							PROJECT_ATTACH.DESCRIPTION,PROJECT_ATTACH.DOMAIN)
+					.from(PROJECT_ATTACH)
+					.where(PROJECT_ATTACH.DOMAIN.eq(domainId).or(PROJECT_ATTACH.DOMAIN.in(dslContext
+																	.select(DOMAIN.ID)
+																	.from(DOMAIN)
+																	.where(DOMAIN.PARENT.eq(domainId)))))
+							.and(PROJECT_ATTACH.DRIVEID.isNull()).limit(10)
+					.fetch();
+	
+			Vector<FileInfo> attachs = new Vector<FileInfo>();
+			
+			attach.stream().forEach(r->{
+				FileInfo fileInfo = new FileInfo();
+				fileInfo.setAonType("project");
+				fileInfo.setFileId(r.value1());
+				fileInfo.setMimetype(r.value2());
+				fileInfo.setTitle(r.value3());
+				fileInfo.setCategory(-2);
+				fileInfo.setDomainId(r.value4());
+				try { 
+					Domain d = DBConsults.getDomain(domain, r.value4());
+					fileInfo.setDomain(d.getName());
+					fileInfo = DBConsults.getDataProjectAttach(domain, fileInfo);
+				} catch (Exception e) {e.printStackTrace();}
+				attachs.add(fileInfo);
+			});
+		
+			return attachs;
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static Vector<FileInfo> getSepeAttachLimit(String domain, Integer domainId) throws SQLException{
+		
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+
+			Result<Record5<Integer, Byte, String, Byte, Integer>> attach = dslContext
+					.select(SEPE_BATCH_ATTACH.ID, SEPE_BATCH_ATTACH.MIMETYPE,
+							SEPE_BATCH_ATTACH.DESCRIPTION,SEPE_BATCH_ATTACH.TYPE,
+							SEPE_BATCH_ATTACH.DOMAIN)
+					.from(SEPE_BATCH_ATTACH)
+					.where(SEPE_BATCH_ATTACH.DOMAIN.eq(domainId).or(SEPE_BATCH_ATTACH.DOMAIN.in(dslContext
+																	.select(DOMAIN.ID)
+																	.from(DOMAIN)
+																	.where(DOMAIN.PARENT.eq(domainId)))))
+							.and(SEPE_BATCH_ATTACH.DRIVEID.isNull()).limit(10)
+					.fetch();
+	
+			Vector<FileInfo> attachs = new Vector<FileInfo>();
+			
+			attach.stream().forEach(r->{
+				FileInfo fileInfo = new FileInfo();
+				fileInfo.setAonType("sepe");
+				fileInfo.setFileId(r.value1());
+				fileInfo.setMimetype(r.value2());
+				fileInfo.setTitle(r.value3());
+				fileInfo.setType(r.value4());
+				fileInfo.setCategory(-2);
+				fileInfo.setDomainId(r.value5());
+				try { 
+					Domain d = DBConsults.getDomain(domain, r.value5());
+					fileInfo.setDomain(d.getName());
+					fileInfo = DBConsults.getDataSepeAttach(domain, fileInfo);
+				} catch (Exception e) {e.printStackTrace();}
+				attachs.add(fileInfo);
+			});
+		
+			return attachs;
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	
+	
+	/**********************************************/
 	
 	public static void updateDriveId(File f, Integer id) throws SQLException{
 		String domain = AonUtil.getDomainName();

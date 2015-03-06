@@ -227,11 +227,13 @@ public class DriveUtils implements IBlobManager {
 	
 	public static Drive serviceInitialize(DomainGserviceaccount d)
 			throws KeyStoreException, IOException, GeneralSecurityException {
-
+		
 		final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
 		final JsonFactory JSON_FACTORY = new JacksonFactory();
 		final String SERVICE_ACCOUNT_ID = d.getEmailAddress();
-
+		
+		
+		
 		InputStream keyStream = new ByteArrayInputStream(d.getPrivateKey());
 		PrivateKey serviceAccountPrivateKey = SecurityUtils
 				.loadPrivateKeyFromKeyStore(SecurityUtils.getPkcs12KeyStore(),
@@ -334,10 +336,8 @@ public class DriveUtils implements IBlobManager {
 	public static File principal(Drive drive, String domain, FileInfo fileInfo)
 			throws IOException, AonConnectionException, SQLException,
 			NamingException, KeyStoreException, GeneralSecurityException {
-		System.out.println("start about");
 		About about = drive.about().get().execute();
 		String rootId = about.getRootFolderId();
-		System.out.println("finish about");
 		Vector<String> emails = new Vector<String>();
 		Vector<ParentReference> parents = new Vector<ParentReference>();
 		// fileInfo.getEmails().add("aibanezdegau004@gmail.com");
@@ -859,18 +859,23 @@ public class DriveUtils implements IBlobManager {
 
 	/*********************** Sincronizar BD a Google Drive ***************************/
 
-	public static boolean checkTypes(short fileType) {
-		boolean bool = false;
-		if (fileType != -1) {
-			String rat = RegistryAttachmentType.values()[fileType].toString();
+	public static boolean checkTypes(FileInfo file) {
+		if(file.getAonType().equals("registry")){
+			String rat;
+			if(file.getType() != -1) rat = RegistryAttachmentType.values()[file.getType()].toString();
+			else rat="";	
 			for (String type : types) {
-				if (rat.equals(type) && type != null) {
-					bool = true;
-				}
+					if (rat.equals(type) && type != null) {
+						return true;
+					}
+					if(type.equals("registry"))
+						return true;
 			}
 		}
-		if(types.length == 0) bool = true;
-		return bool;
+		else{
+			return true;
+		}
+		return false;
 	}
 
 	public static boolean checkType(Rattach rattach,
@@ -960,10 +965,7 @@ public class DriveUtils implements IBlobManager {
 	public static boolean sync2(Drive drive, FileInfo fileInfo, String domain)
 			throws SQLException, AonConnectionException, IOException,
 			NamingException, KeyStoreException, GeneralSecurityException {
-		System.out.println("sincronizar "+ fileInfo.getTitle());
-		if (fileInfo.getAonType().equals("project")
-				|| fileInfo.getAonType().equals("offer")
-				|| checkTypes(fileInfo.getType())) {
+		if (checkTypes(fileInfo)) {
 
 			if (fileInfo.getDriveId() == null) {
 				String type = fileInfo.getType() != -1 ? RegistryAttachmentType
@@ -1143,22 +1145,22 @@ public class DriveUtils implements IBlobManager {
 					attach.setEmails(emails);
 					attach.setData(data);
 				} else if (attach.getAonType().equals("contract")) {
-					attach = DBConsults.getDataContractAttach(domain, attach);
-					attach = DBConsults.getEmailsContractAttach(domain, attach);
+					attach = DBDrive.getDataContractAttach(domain, attach);
+					attach = DBDrive.getEmailsContractAttach(domain, attach);
 				} else if (attach.getAonType().equals("item")) {
-					attach = DBConsults.getDataIattach(domain, attach);
+					attach = DBDrive.getDataIattach(domain, attach);
 				} else if (attach.getAonType().equals("invoice")) {
-					attach = DBConsults.getDataInvoiceAttach(domain, attach);
-					attach = DBConsults.getEmailsInvoiceAttach(domain, attach);
+					attach = DBDrive.getDataInvoiceAttach(domain, attach);
+					attach = DBDrive.getEmailsInvoiceAttach(domain, attach);
 				} else if (attach.getAonType().equals("offer")) {
-					attach = DBConsults.getDataOfferAttach(domain, attach);
+					attach = DBDrive.getDataOfferAttach(domain, attach);
 				} else if (attach.getAonType().equals("payroll")) {
-					attach = DBConsults.getDataPayrollAttach(domain, attach);
+					attach = DBDrive.getDataPayrollAttach(domain, attach);
 				} else if (attach.getAonType().equals("project")) {
-					attach = DBConsults.getDataProjectAttach(domain, attach);
-					attach = DBConsults.getEmailsProjectAttach(domain, attach);
+					attach = DBDrive.getDataProjectAttach(domain, attach);
+					attach = DBDrive.getEmailsProjectAttach(domain, attach);
 				} else if (attach.getAonType().equals("sepe")) {
-					attach = DBConsults.getDataSepeAttach(domain, attach);
+					attach = DBDrive.getDataSepeAttach(domain, attach);
 				}
 
 				sync2(drive, attach, domain);
@@ -1526,6 +1528,14 @@ public class DriveUtils implements IBlobManager {
 			file.setTitle( ia.getDescription() );
 			file.setDriveId( ia.getDriveId() );
 			file.setMimetype( (byte) ia.getMimeType().ordinal() );
+			file.setDomainId(ia.getDomain());
+			Domain d = null;
+			try {
+				d = DBConsults.getDomain(AonUtil.getDomainName(), ia.getDomain());
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			file.setDomain(d.getName());
 		}
 		return file;
 	}
