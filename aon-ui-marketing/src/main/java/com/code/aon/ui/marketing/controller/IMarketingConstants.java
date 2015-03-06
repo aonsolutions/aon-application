@@ -21,6 +21,8 @@ public interface IMarketingConstants {
 	
 	String CAMPAIGN_ACTION_TARGET_CONTROLLER_NAME = "campaignActionTarget";
 	
+	String CAMPAIGN_ACTION_TARGET_SEARCH = "campaignActionTargetSearch";
+	
 	String COMMUNICATION_CENTER_CONTROLLER_NAME = "communicationCenter";
 	
 	String CAMPAIGN_CONTROLLER_NAME = "marketingCampaign";

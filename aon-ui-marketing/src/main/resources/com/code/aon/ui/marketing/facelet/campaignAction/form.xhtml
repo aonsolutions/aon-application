@@ -21,6 +21,7 @@
 				<ui:param name="skipSearchButton" value="true" />	
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="refresh"
+						actionListener="#{campaignActionTargetSearch.onFilter}"
 						value="#{bundle.aon_refresh}" immediate="true"
 						styleClass="aon-finding-toolbar-item aon-icon-refresh" />							
 					<aon:htmlCommandLink id="campaignActionReport-excel-hssf-report"

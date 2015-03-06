@@ -23,6 +23,7 @@
 						<aon:if test="#{aonConfiguration.bean.marketingCampaign.showPhoneActionMediaType}" >
 							<aon:if test="#{communicationCenter.action.mediaType  == 'PHONE'}" >
 								<aon:commandButton id="accept" value="#{bundle.marketing_survey}"
+									disabled="#{communicationCenter.emptySurvey}"
 									action="communicationCenter_response" actionListener="#{communicationCenter.onStartSurveyResponse}"
 									rendered="#{communicationCenter.surveySelected and communicationCenter.targetSelected}"
 									styleClass="aon-finding-toolbar-item aon-icon-accept"
@@ -65,7 +66,15 @@
 								value="#{bundle.webmail_newmail}"
 								styleClass="aon-finding-toolbar-item aon-icon-newMail" />
 						</aon:if>
-					</aon:if>						
+					</aon:if>			
+					<aon:commandButton id="back"
+						rendered="#{communicationCenter.backAction != null}"
+						title="#{bundle.aon_key_cancel_accelerator}"
+						value="#{bundle.aon_back}" immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						actionListener="#{communicationCenter.onBackActionListener}"
+						action="#{communicationCenter.backAction}"
+						accesskey="#{bundle.aon_key_cancel}" />								
 				</ui:define>
 			</ui:decorate>
 
@@ -114,13 +123,21 @@
 						</aon:if>					
 					
 						<aon:if test="#{communicationCenter.surveySelected and aonConfiguration.bean.marketingCampaign.showSurvey}" >
-							<ui:include src="/com/code/aon/ui/marketing/facelet/survey/lookup.xhtml" >
+							<ui:decorate template="/com/code/aon/ui/marketing/facelet/survey/lookup.xhtml" >
 								<ui:param name="lookupTo" value="#{communicationCenter.survey}" />
 								<ui:param name="lookupDisabled" value="#{true}" />
 								<ui:param name="goToBackAction" value="communicationCenter" />
 								<ui:param name="goToBackActionListener"
 									value="communicationCenter.onSurveyBackActionListener" />
-							</ui:include>					
+								<ui:define name="afterLookupContent">
+									<aon:div styleClass="aon-margin-left" layout="inline"
+										rendered="#{communicationCenter.emptySurvey}">
+										<aon:outputText value="&#160;" styleClass="aon-icon-warning"
+											style="padding-left:12px" />
+										<rich:toolTip value="#{bundle.marketing_survey_no_questions}" />
+									</aon:div>								
+								</ui:define>									
+							</ui:decorate>					
 						</aon:if>
 	
 						<aon:if test="#{communicationCenter.targetSelected}" >

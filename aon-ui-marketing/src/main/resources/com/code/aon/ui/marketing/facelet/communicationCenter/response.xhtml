@@ -26,20 +26,12 @@
 						action="#{communicationCenter.nextQuestionAction}" actionListener="#{communicationCenter.onNextQuestion}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 						accesskey="#{bundle.aon_key_cancel}"/>
-					<aon:if test="#{communicationCenter.actionSelected}">
-						<aon:commandButton id="finish" value="#{bundle.aon_finalice}"
-							reRender="aonStatus" immediate="true"
-							styleClass="aon-finding-toolbar-item aon-icon-exit" >
-							<rich:componentControl for="surveyFinishModalPanel"
-								operation="show" event="onclick" />						
-						</aon:commandButton>
-					</aon:if>
-					<aon:if test="#{!communicationCenter.actionSelected}">
-						<aon:commandButton id="finish" value="#{bundle.aon_finalice}"
-							action="#{communicationCenter.finishedAction}" immediate="true"					
-							styleClass="aon-finding-toolbar-item aon-icon-exit" >
-						</aon:commandButton>
-					</aon:if>
+					<aon:commandButton id="finish" value="#{bundle.aon_finalice}"
+						reRender="aonStatus" immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-exit" >
+						<rich:componentControl for="surveyFinishModalPanel"
+							operation="show" event="onclick" />						
+					</aon:commandButton>
 				</ui:define>
 			</ui:decorate>	
 

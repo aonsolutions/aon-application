@@ -75,8 +75,10 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.groupware.controller.AlarmController;
+import com.code.aon.ui.groupware.controller.IGroupWareConstants;
 import com.code.aon.ui.mailing.MailData;
 import com.code.aon.ui.mailing.MailingManager;
+import com.code.aon.ui.marketing.event.CampaignActionTargetSearchListener;
 import com.code.aon.ui.registry.controller.RegistryCollectionsController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
@@ -107,8 +109,6 @@ public class CommunicationCenterController extends DataScrollerState implements 
 	private SurveyResponseDetail response;
 	
 	private SurveyQuestion surveyQuestion;
-	
-	private String finishedAction;
 	
 	private String nextQuestionAction;
 	
@@ -147,6 +147,10 @@ public class CommunicationCenterController extends DataScrollerState implements 
 	private IControllerListener projectCommercialListener;
 	
 	private String newEmailAction;
+	
+	private String backAction;
+
+	private String backActionListener;
 	
 	public CommunicationCenterController() {
 		this.date = new Date();
@@ -338,7 +342,7 @@ public class CommunicationCenterController extends DataScrollerState implements 
 		setActionTarget(null);
 		setPendingTargets(0);
 		setNumberOfTargetsInEmail(1);
-		setFinishedAction(NAVIGATION_COMMUNICATION_CENTER);
+		resetBackProccess();
 	}
 	
 	public Question getQuestion() {
@@ -387,11 +391,12 @@ public class CommunicationCenterController extends DataScrollerState implements 
 		if ( surveyQuestion != null ) {
 			updateSurveyQuestion( surveyQuestion );			
 		} else {
-			this.nextQuestionAction = finishedAction();
+			this.nextQuestionAction = backAction();
 			if ( getActionTarget() != null ) {
 				getActionTarget().setStatus(ActionTargetStatus.FINISHED);
 				updateActionTarget(false);				
 			}
+			onBackActionListener(event);
 		}
 	}
 	
@@ -489,6 +494,14 @@ public class CommunicationCenterController extends DataScrollerState implements 
 		refreshQuestionValues( this.surveyQuestion );
 	}
 
+	public boolean isEmptySurvey() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(SurveyQuestion.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression( bean.getFieldName(IEntityAlias.SURVEY_QUESTION_SURVEY_ID), this.survey.getId() );
+		criteria.addNotEqualExpression("SurveyQuestion.question.type", QuestionType.INFO );
+		return bean.getCount(criteria) == 0;
+	}
+	
 	private SurveyQuestion getFirstSurveyQuestion() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(SurveyQuestion.class);
 		Criteria criteria = new Criteria();
@@ -588,7 +601,7 @@ public class CommunicationCenterController extends DataScrollerState implements 
 		this.mainAddress = getTargetAddress(id);
 	}
 	
-	private void blockActionTarget() throws ManagerBeanException {
+	private void resetUserActionTargets() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
 		Criteria criteria = new Criteria();
 		String userId = bean.getFieldName(IEntityAlias.ACTION_TARGET_USER_ID);
@@ -599,12 +612,17 @@ public class CommunicationCenterController extends DataScrollerState implements 
 			ActionTarget at = (ActionTarget) to;
 			at.setUser(null);
 			bean.update(at);
-		}
+		}		
+	}
+	
+	private void blockActionTarget() throws ManagerBeanException {
+		resetUserActionTargets();
 		getActionTarget().setUser(user);
-		bean.update(getActionTarget());
+		updateActionTarget(false);
 	}
 	
 	public void onNextActionTarget( ActionEvent event ) throws ManagerBeanException {
+		resetBackProccess();
 		updateActionTarget(true);
 		nextActionTarget(false);
 	}
@@ -724,6 +742,7 @@ public class CommunicationCenterController extends DataScrollerState implements 
 	
 	public void onFinishSurvey(ActionEvent event) throws ManagerBeanException {
 		updateActionTarget(false);
+		onBackActionListener(event);		
 	}
 
 	public void onMarketingActionBackActionListener( ActionEvent event ) {
@@ -737,6 +756,7 @@ public class CommunicationCenterController extends DataScrollerState implements 
 	}
 
 	public void onStartActionTarget( ActionEvent event ) {
+		resetBackProccess();
 		FacesContext context = FacesContext.getCurrentInstance();
 		String idValue = context.getExternalContext().getRequestParameterMap().get("actionTargetId");
 		try {				
@@ -753,9 +773,19 @@ public class CommunicationCenterController extends DataScrollerState implements 
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
 		}       
+		setBackAction(IMarketingConstants.CAMPAIGN_ACTION_CONTROLLER_NAME + IController.FORM_SUFFIX);
+		setBackActionListener(IMarketingConstants.COMMUNICATION_CENTER_CONTROLLER_NAME + ".onBackActionTarget");
+	}
+	
+	public void onBackActionTarget( ActionEvent event ) throws ManagerBeanException, ControllerListenerException {
+		resetUserActionTargets();
+		CampaignActionTargetSearchListener catsl = (CampaignActionTargetSearchListener)
+				AonUtil.getRegisteredBean(IMarketingConstants.CAMPAIGN_ACTION_TARGET_SEARCH);
+		catsl.onFilter(event);
 	}
 
 	public void onGoToActionTarget( ActionEvent event ) throws ManagerBeanException {
+		resetBackProccess();
 		IController controller = FormUtil.getController(ALARM_CONTROLLER_NAME);
 		Alarm alarm = (Alarm) controller.getTo();
 		try {				
@@ -768,6 +798,7 @@ public class CommunicationCenterController extends DataScrollerState implements 
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
 		}       
+		setBackAction(IGroupWareConstants.ALARM_CONTROLLER_NAME + IController.FORM_SUFFIX);
 	}	
 	
 	public void startActionTarget( ActionTarget at ) throws ManagerBeanException {
@@ -901,14 +932,6 @@ public class CommunicationCenterController extends DataScrollerState implements 
 		this.numberOfTargetsInEmail = numberOfTargetsInEmail;
 	}
 
-	public String finishedAction() {
-		return finishedAction;
-	}
-
-	public void setFinishedAction(String finishedAction) {
-		this.finishedAction = finishedAction;
-	}
-
 	public void onStartSurveyFromProject( ActionEvent event ) throws ManagerBeanException {
 		CommercialTrackingController ctc = (CommercialTrackingController) AonUtil.getRegisteredBean(COMMERCIAL_TRACKING_CONTROLLER_NAME);
 		CommercialTracking ct = (CommercialTracking) ctc.getTo();
@@ -917,7 +940,7 @@ public class CommunicationCenterController extends DataScrollerState implements 
 		setTarget(ct.getProject().getTarget());
 		setAction(null);
 		setActionTarget(null);
-		setFinishedAction(ctc.getSurveyReturnAction());
+		setBackAction(ctc.getSurveyReturnAction());
 		onStartSurveyResponse(event);
 	}
 
@@ -934,7 +957,39 @@ public class CommunicationCenterController extends DataScrollerState implements 
 		}
 		return this.projectCommercialListener;
 	}
+	
+	public String backAction() {
+		return (backAction != null) ? backAction : NAVIGATION_COMMUNICATION_CENTER;
+	}	
 
+	public String getBackAction() {
+		return backAction;
+	}
+
+	public void setBackAction(String backAction) {
+		this.backAction = StringUtils.trimToNull(backAction);
+	}
+
+	public String getBackActionListener() {
+		return backActionListener;
+	}
+
+	public void setBackActionListener(String expression) {
+		this.backActionListener = StringUtils.trimToNull(expression);
+	}	
+	
+	public void onBackActionListener(ActionEvent event) {
+		if (!StringUtils.isEmpty(this.backActionListener) ) {
+			String expression = "#{" + this.backActionListener + "}";
+			AonUtil.actionListener(expression, event);
+		}
+	}	
+	
+	private void resetBackProccess() {
+		setBackAction(null);
+		setBackActionListener(null);
+	}
+	
 	private static class ProjectCommercialFilter extends ControllerAdapter {
 
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
