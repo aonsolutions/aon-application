@@ -159,12 +159,7 @@ public class QuoteValuesController implements Serializable {
 			String expression = step.value2();
 			Map<String, Double> types = obtainUnemploymentEmployeeType(expression);
 			for(String key: types.keySet()){
-				try {
-					values.put(key, Double.valueOf(types.get(key)));
-				} catch (NumberFormatException e) {
-					AonUtil.addErrorMessage("No se reconoce el valor: " + types.get(key) );
-					LOGGER.error("No se reconoce el valor: " + types.get(key) );
-				}
+				putValue(values, key, types.get(key).toString());
 			}
 		}
 			
@@ -173,12 +168,7 @@ public class QuoteValuesController implements Serializable {
 			String expression = step.value2();
 			Map<String, Double> types = obtainUnemploymentEnterpriseType(expression);
 			for(String key: types.keySet()){
-				try {
-					values.put(key, types.get(key));
-				} catch (NumberFormatException e) {
-					AonUtil.addErrorMessage("No se reconoce el valor: " + types.get(key) );
-					LOGGER.error("No se reconoce el valor: " + types.get(key) );
-				}
+				putValue(values, key, types.get(key).toString());
 			}
 		}
 	}
@@ -201,8 +191,8 @@ public class QuoteValuesController implements Serializable {
 					putValue(values, "DESEMPL_TP", m.group(2));
 				}
 			} else {
-				AonUtil.addErrorMessage("No se reconoce el valor: " + expression);
-				LOGGER.error("No se reconoce el valor: " + expression);
+				AonUtil.addErrorMessage("Expresion incorrecta: " + expression);
+				LOGGER.error("Expresion incorrecta: " + expression);
 			}
 		}
 		return values;
@@ -225,8 +215,8 @@ public class QuoteValuesController implements Serializable {
 					putValue(values, "DESEMPL_TP_E", m.group(2));
 				}
 			} else {
-				AonUtil.addErrorMessage("No se reconoce el valor: " + expression);
-				LOGGER.error("No se reconoce el valor: " + expression);
+				AonUtil.addErrorMessage("Expresion incorrecta: " + expression);
+				LOGGER.error("Expresion incorrecta: " + expression);
 			}
 		}
 		return values;
@@ -235,19 +225,18 @@ public class QuoteValuesController implements Serializable {
 	private Map<String, Double> obtainBaseCgcMin(String expression) {
 		Map<String, Double> values = new HashMap<String, Double>();
 
-		String BASE_CGC_MIN_REGEX_01 = ".*\"01\".*(\\d{4}.\\d{2}).+(\\d.\\d{2}).*\"02\".*"; 
-		String BASE_CGC_MIN_REGEX_02 = ".*\"02\".*(\\d{3}.\\d{2}).+(\\d.\\d{2}).*\"03\".*"; 
-		String BASE_CGC_MIN_REGEX_03 = ".*\"03\".*(\\d{3}.\\d{2}).+(\\d.\\d{2}).*\"04\".*"; 
-		String BASE_CGC_MIN_REGEX_04 = ".*\"04\".*(\\d{3}.\\d{2}).+(\\d.\\d{2}).*\"05\".*"; 
-		String BASE_CGC_MIN_REGEX_05 = ".*\"05\".*(\\d{3}.\\d{2}).+(\\d.\\d{2}).*\"06\".*"; 
-		String BASE_CGC_MIN_REGEX_06 = ".*\"06\".*(\\d{3}.\\d{2}).+(\\d.\\d{2}).*\"07\".*"; 
-		String BASE_CGC_MIN_REGEX_07 = ".*\"07\".*(\\d{3}.\\d{2}).+(\\d.\\d{2}).*\"08\".*"; 
-		String BASE_CGC_MIN_REGEX_08 = ".*\"08\".*(\\d{2}.\\d{2}).+(\\d.\\d{2}).*\"09\".*"; 
-		String BASE_CGC_MIN_REGEX_09 = ".*\"09\".*(\\d{2}.\\d{2}).+(\\d.\\d{2}).*\"10\".*"; 
-		String BASE_CGC_MIN_REGEX_10 = ".*\"10\".*(\\d{2}.\\d{2}).+(\\d.\\d{2}).*\"11\".*"; 
-		String BASE_CGC_MIN_REGEX_11 = ".*\"11\".*(\\d{2}.\\d{2}).+(\\d.\\d{2}).*"; 
-
-		
+		String BASE_CGC_MIN_REGEX_01 = ".*\"01\".*(\\d{4}.\\d{2}).*(\\d.\\d{2}).*\"02\".*"; 
+		String BASE_CGC_MIN_REGEX_02 = ".*\"02\".*(\\d{3}.\\d{2}).*(\\d.\\d{2}).*\"03\".*"; 
+		String BASE_CGC_MIN_REGEX_03 = ".*\"03\".*(\\d{3}.\\d{2}).*(\\d.\\d{2}).*\"04\".*"; 
+		String BASE_CGC_MIN_REGEX_04 = ".*\"04\".*(\\d{3}.\\d{2}).*(\\d.\\d{2}).*\"05\".*"; 
+		String BASE_CGC_MIN_REGEX_05 = ".*\"05\".*(\\d{3}.\\d{2}).*(\\d.\\d{2}).*\"06\".*"; 
+		String BASE_CGC_MIN_REGEX_06 = ".*\"06\".*(\\d{3}.\\d{2}).*(\\d.\\d{2}).*\"07\".*"; 
+		String BASE_CGC_MIN_REGEX_07 = ".*\"07\".*(\\d{3}.\\d{2}).*(\\d.\\d{2}).*\"08\".*"; 
+		String BASE_CGC_MIN_REGEX_08 = ".*\"08\".*(\\d{2}.\\d{2}).*(\\d.\\d{2}).*\"09\".*"; 
+		String BASE_CGC_MIN_REGEX_09 = ".*\"09\".*(\\d{2}.\\d{2}).*(\\d.\\d{2}).*\"10\".*"; 
+		String BASE_CGC_MIN_REGEX_10 = ".*\"10\".*(\\d{2}.\\d{2}).*(\\d.\\d{2}).*\"11\".*"; 
+		String BASE_CGC_MIN_REGEX_11 = ".*\"11\".*(\\d{2}.\\d{2}).*(\\d.\\d{2}).*";
+				
 		putValue(values, expression, BASE_CGC_MIN_REGEX_01, "1_BASE_CGC_MIN", "1_BASE_CGC_MIN_PARTIAL");
 		putValue(values, expression, BASE_CGC_MIN_REGEX_02, "2_BASE_CGC_MIN", "2_BASE_CGC_MIN_PARTIAL");
 		putValue(values, expression, BASE_CGC_MIN_REGEX_03, "3_BASE_CGC_MIN", "3_BASE_CGC_MIN_PARTIAL");
@@ -309,44 +298,30 @@ public class QuoteValuesController implements Serializable {
 		try {
 			values.put(key, Double.valueOf(value));
 		} catch (NumberFormatException e) {
-			AonUtil.addErrorMessage("No se reconoce el valor: " + value);
-			LOGGER.error("No se reconoce el valor: " + value);
+			AonUtil.addErrorMessage("No se reconoce el valor: " + key);
+			LOGGER.error("No se reconoce el valor: " + key);
 		}
 	}
 	
 	private void putValue(Map<String, Double> values, String expression, String REGEX, String... keys) {
+		expression = expression.replace("\n",  "").replace("\r",  "").replace("\t",  "");
 		if(expression.matches(REGEX)){
 			Pattern BASE_CGC_MIN_PATTERN = Pattern.compile(REGEX); 
 			Matcher m = BASE_CGC_MIN_PATTERN.matcher(expression);
 			if(m.find()) {
 				if(keys.length>0){
-					try {
-						values.put(keys[0], Double.valueOf(m.group(1)));
-					} catch (NumberFormatException e) {
-						AonUtil.addErrorMessage("No se reconoce el valor: " + m.group(1));
-						LOGGER.error("No se reconoce el valor: " + m.group(1));
-					}
+					putValue(values, keys[0], (m.group(1)));
 				}
 				if(keys.length>1){
-					try {
-						values.put(keys[1], Double.valueOf(m.group(2)));
-					} catch (NumberFormatException e) {
-						AonUtil.addErrorMessage("No se reconoce el valor: " + m.group(2));
-						LOGGER.error("No se reconoce el valor: " + m.group(2));
-					}
+					putValue(values, keys[1], (m.group(2)));
 				}
 				if(keys.length>2){
-					try {
-						values.put(keys[2], Double.valueOf(m.group(3)));
-					} catch (NumberFormatException e) {
-						AonUtil.addErrorMessage("No se reconoce el valor: " + m.group(3));
-						LOGGER.error("No se reconoce el valor: " + m.group(3));
-					}
+					putValue(values, keys[2], (m.group(3)));
 				}
 			}
 		} else {
-			AonUtil.addErrorMessage("No se reconoce el valor: " + keys.toString());
-			LOGGER.error("No se reconoce el valor: " + keys.toString());
+			AonUtil.addErrorMessage("Expresion incorrecta: " + expression);
+			LOGGER.error("Expresion incorrecta: " + expression);
 		}
 	}
 	

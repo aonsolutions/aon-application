@@ -113,8 +113,8 @@ public class PayrollCodeTablesController extends SepeTablesController {
 		List<Enum<?>> list = new ArrayList<Enum<?>>();
 		for (SSCodeTables obj : SSCodeTables.values()) {
 			if ( StringUtils.isBlank(getTablesFilter()) 
-					|| StringUtils.containsIgnoreCase(obj.getCode(), getTablesFilter())  
-					|| StringUtils.containsIgnoreCase(obj.getDescription(), getTablesFilter()) ) {
+					|| StringUtils.containsIgnoreCase(obj.getCode(), getCleanValue(getTablesFilter()))  
+					|| StringUtils.containsIgnoreCase(getCleanValue(obj.getDescription()), getCleanValue(getTablesFilter())) ) {
 				list.add(obj);
 			}
 		}
@@ -136,8 +136,8 @@ public class PayrollCodeTablesController extends SepeTablesController {
 		for (Object obj : clazz.getEnumConstants()) {
 			IPayrollTablesEnum enumeration = (IPayrollTablesEnum) obj;
 			if ( StringUtils.isBlank(getCodesFilter()) 
-					|| StringUtils.containsIgnoreCase(enumeration.getCode(), getCodesFilter())  
-					|| StringUtils.containsIgnoreCase(enumeration.getDescription(), getCodesFilter()) ) {
+					|| StringUtils.containsIgnoreCase(enumeration.getCode(), getCleanValue(getCodesFilter()))  
+					|| StringUtils.containsIgnoreCase(getCleanValue(enumeration.getDescription()), getCleanValue(getCodesFilter())) ) {
 				if(!isActiveCodes() || (isActiveCodes() && enumeration.isActive())){
 					list.add(enumeration);	
 				}

@@ -3,14 +3,19 @@ package com.esferalia.aon.ui.payroll.controller;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
@@ -19,8 +24,10 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.EnterpriseData;
+import com.code.aon.company.enumeration.SalaryTemplate;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.FormUtil;
@@ -87,6 +94,7 @@ public class EnterpriseParamsController implements Serializable {
 		try {
 			loadParameters();
 			loadAgreementData();
+			loadOptionalSalaryTemplatesParam();
 		} catch (ManagerBeanException e) {
 			String msg = "Unable to load defaultParameters";
 			AonUtil.addErrorMessage(msg);
@@ -135,6 +143,7 @@ public class EnterpriseParamsController implements Serializable {
 		if(!DomainManager.isDomainManagementAvailable()){
 			getParameter(ICompanyConstants.REPORT_SALARY_DRAFT_PARAM).setExpression(getDraftTemplateName());
 		}
+		restoreOptionalTemplatesParam();
 	}
 	
 	private String getDraftTemplateName() throws ManagerBeanException {
@@ -204,5 +213,78 @@ public class EnterpriseParamsController implements Serializable {
 			}
 		}
 	}
+	
+	// **********************************
+	// OPTIONAL SALARY TEMPLATES
+	// **********************************
+	private SalaryTemplate[] enabledSalaryTemplates;
+	
+	private List<SelectItem> optionalSalaryTemplates;
+	
+	public SalaryTemplate[] getEnabledSalaryTemplates() {
+		return enabledSalaryTemplates;
+	}
+
+	public void setEnabledSalaryTemplates(SalaryTemplate[] enabledSalaryTemplates) {
+		this.enabledSalaryTemplates = enabledSalaryTemplates;
+	}
+	
+	public List<SelectItem> getOptionalSalaryTemplates(){
+		if (optionalSalaryTemplates == null) {
+			optionalSalaryTemplates = new LinkedList<SelectItem>();
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			SelectItem item = new SelectItem(SalaryTemplate.NOMINASTA, SalaryTemplate.NOMINASTA.getName(locale));
+			optionalSalaryTemplates.add(item);
+			item = new SelectItem(SalaryTemplate.NOMINASTA_CODINT, SalaryTemplate.NOMINASTA_CODINT.getName(locale));
+			optionalSalaryTemplates.add(item);
+			item = new SelectItem(SalaryTemplate.NOMINASTA_CONDDIAS, SalaryTemplate.NOMINASTA_CONDDIAS.getName(locale));
+			optionalSalaryTemplates.add(item);
+			item = new SelectItem(SalaryTemplate.NOMINASTA_LDH, SalaryTemplate.NOMINASTA_LDH.getName(locale));
+			optionalSalaryTemplates.add(item);
+			item = new SelectItem(SalaryTemplate.IDAZKIAK_ES, SalaryTemplate.IDAZKIAK_ES.getName(locale));
+			optionalSalaryTemplates.add(item);
+		}
+		return optionalSalaryTemplates;
+	}
+	
+	private void restoreOptionalTemplatesParam() throws ManagerBeanException{
+		EnterpriseData param = getParameter(AppParam.PAY_REPORT_additional_salary_PAY.getValue());
+		if(enabledSalaryTemplates!=null && enabledSalaryTemplates.length>0){
+			String value = "";
+			for(int i=0; i<enabledSalaryTemplates.length; i++){
+				value += enabledSalaryTemplates[i].getValue();
+				value += ";";
+			}
+			param.setExpression(value);
+		} else {
+			param.setExpression(null);
+		}
+	}
+
+	private void loadOptionalSalaryTemplatesParam() throws ManagerBeanException {
+		EnterpriseData param = getParameter(AppParam.PAY_REPORT_additional_salary_PAY.getValue());
+		String[] values = null;
+		if(param!=null && param.getExpression()!=null){
+			values = StringUtils.split(param.getExpression(), ";");
+		}
+		if(values!=null){
+			enabledSalaryTemplates = new SalaryTemplate[0];
+			for(String s: values){
+				if(s.equals(SalaryTemplate.NOMINASTA.getValue())){
+					enabledSalaryTemplates = (SalaryTemplate[]) ArrayUtils.add(enabledSalaryTemplates, SalaryTemplate.NOMINASTA);
+				} else if(s.equals(SalaryTemplate.NOMINASTA_CODINT.getValue())){
+					enabledSalaryTemplates = (SalaryTemplate[]) ArrayUtils.add(enabledSalaryTemplates, SalaryTemplate.NOMINASTA_CODINT);
+				} else if(s.equals(SalaryTemplate.NOMINASTA_CONDDIAS.getValue())){
+					enabledSalaryTemplates = (SalaryTemplate[]) ArrayUtils.add(enabledSalaryTemplates, SalaryTemplate.NOMINASTA_CONDDIAS);
+				} else if(s.equals(SalaryTemplate.NOMINASTA_LDH.getValue())){
+					enabledSalaryTemplates = (SalaryTemplate[]) ArrayUtils.add(enabledSalaryTemplates, SalaryTemplate.NOMINASTA_LDH);
+				} else if(s.equals(SalaryTemplate.IDAZKIAK_ES.getValue())){
+					enabledSalaryTemplates = (SalaryTemplate[]) ArrayUtils.add(enabledSalaryTemplates, SalaryTemplate.IDAZKIAK_ES);
+				}
+			}
+		}
+	}
+	
+	
 	
 }

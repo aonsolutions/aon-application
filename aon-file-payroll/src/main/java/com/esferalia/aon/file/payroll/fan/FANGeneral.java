@@ -5,6 +5,7 @@ import java.io.Serializable;
 import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.file.payroll.fan.data.DAT;
+import com.esferalia.aon.file.payroll.fan.data.EDL;
 import com.esferalia.aon.file.payroll.fan.data.EDT;
 import com.esferalia.aon.file.payroll.fan.data.EMP;
 import com.esferalia.aon.file.payroll.fan.data.TRA;
@@ -17,7 +18,530 @@ public class FANGeneral implements Serializable, IFanFactory {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	
+	// *********************************************
+	// *********************************************
+	// BASES TRABAJADOR
+	// *********************************************
+	// *********************************************
 	
+	/**
+	 * 0 Normal C. Comunes = AT y EP
+	 * 
+	 * @param salary
+	 * @param dat
+	 */
+	public void createEDLBa00Segment(Double commonBase, DAT dat) {
+		EDL edl = dat.getEdlSegment("BA00");
+		createEDLRecord(edl, "BA", 0, new Double(commonBase * 100).intValue());
+	}
+	
+	/**
+	 * 1 Contingencias comunes
+	 * 
+	 * @param salary
+	 * @param dat
+	 */
+	public void createEDLBa01Segment(Double commonBase, DAT dat) {
+		EDL edl = dat.getEdlSegment("BA01");
+		createEDLRecord(edl, "BA", 1, new Double(commonBase * 100).intValue());
+	}
+	
+	/**
+	 * 2 AT y EP
+	 * 
+	 * @param salary
+	 * @param dat
+	 */
+	public void createEDLBa02Segment(Double professionalBase, DAT dat) {
+		EDL edl = dat.getEdlSegment("BA02");
+		createEDLRecord(edl, "BA", 2, new Double(professionalBase * 100).intValue());
+	}
+	
+	public void createEDLBa05Segment() {
+		// TODO 5 Exceso del tope (Minería del Carbón)
+	}
+	
+	public void createEDLBa06Segment() {
+		// TODO 6 Importe percepciones Integras (Artistas.)
+	}
+	
+	public void createEDLBa07Segment() {
+		// 7 AT y EP sin horas extraordinarias
+		// No será de utilización para Régimen General de Artistas (0112), ni
+		// Régimen Especial de Minería del Carbón (0911).
+		// Baja a partir de 2002
+	}
+	
+	public void createEDLBa08Segment() {
+		// 8 Diferencia Bases (contingencias comunes y salario normalizado)
+		// Solo para liquidaciones anteriores al año 2002 del Régimen Especial
+		// de la Minería del Carbón (0911). Baja a partir de 2002
+	}
+	
+	public void createEDLBa09Segment() {
+		// TODO: 9 Horas complementarias No será de utilización para Régimen
+		// General de Artistas (0112)
+	}
+	
+	/**
+	 * 10 Horas extras estructurales / Causa de fuerza mayor desde 1/1/98 No
+	 * será de utilización para Régimen General de Artistas (0112), Régimen
+	 * Especial de Minería del Carbón (0911).
+	 * 
+	 * @param salary
+	 * @param dat
+	 */
+	public void createEDLBa10Segment(Double overtimeBase, DAT dat) {
+		if (
+//				salary.getContract().getRegimeType() != SSRegimeType.ARTIST
+//				&& salary.getContract().getRegimeType() != SSRegimeType.COAL_MINING
+//				&& 
+				overtimeBase != null
+				&& overtimeBase.compareTo(0.0d) > 0) {
+			EDL edl = dat.getEdlSegment("BA10");
+			createEDLRecord(edl, "BA", 10, new Double((overtimeBase) * 100).intValue());
+		}
+	}
+	
+	/**
+	 * 11 Horas extras no estructurales / Otras horas extras desde 1/1/98 No
+	 * será de utilización para Régimen General de Artistas (0112),), ni Régimen
+	 * Especial de Minería del Carbón (0911)
+	 * 
+	 * @param salary
+	 * @param dat
+	 */
+	public void createEDLBa11Segment(Double nonEstructuralOvertimeBase, DAT dat) {
+		if (
+//				salary.getContract().getRegimeType() != SSRegimeType.ARTIST
+//				&& salary.getContract().getRegimeType() != SSRegimeType.COAL_MINING
+//				&& 
+				nonEstructuralOvertimeBase != null
+				&& nonEstructuralOvertimeBase.compareTo(0.0d) > 0) {
+			EDL edl = dat.getEdlSegment("BA11");
+			createEDLRecord(edl, "BA", 11, new Double((nonEstructuralOvertimeBase) * 100).intValue());
+		}
+	}
+	
+	public void createEDLBa20Segment() {
+		// TODO 20 Base de cotización empresarial C.Comunes = AT y EP
+	}
+
+	public void createEDLBa21Segment() {
+		// 21 Base de cotización empresarial por contingencias comunes Base de
+		// cotización empresarial por desempleo y FOGASA
+		// (Baja a partir del 1 de enero de 2012) (Régimen Especial Agrario)
+	}
+	
+	public void createEDLBa22Segment() {
+		// TODO 22 Base de cotización empresarial por AT y EP y Otras
+		// Cotizaciones
+	}
+	
+	public void createEDLBa23Segment() {
+		// 23 Base de cotización tipo total desempleo y FOGASA. (Baja a partir
+		// del 1 de enero de 2012) (Régimen Especial Agrario)
+	}
+	
+	public void createEDLBa28Segment() {
+		// 28 Diferencia en bases (contingencias comunes y salario normalizado),
+		// cotización exclusivamente empresarial
+		// Solo para liquidaciones anteriores al año 2002 del Régimen Especial
+		// de la Minería del Carbón (0911). Baja a partir de 2002
+	}
+	
+	public void createEDLBa30Segment() {
+		// 30 Cotización por Jornadas Reales. (Baja a partir del 1 de enero de
+		// 2012) (Régimen Especial Agrario)
+	}
+	
+	public void createEDLBa31Segment() {
+		// 31 Contingencias comunes trajadores no fijos (Baja a partir del 1 de
+		// enero de 2009) (Régimen Especial Agrario)
+	}
+	
+	public void createEDLBa32Segment() {
+		// 32 Base de cotización Jornadas Reales en situación de IT por
+		// desempleo empresarial y FOGASA.
+		// (Baja a partir del 1 de enero de 2012) (Régimen Especial Agrario)
+	}
+	
+	public void createEDLBa33Segment() {
+		// 33 Base de cotización exclusiva de Otras Cotizaciones en situación de
+		// IT/maternidad/riesgo durante el embarazo.
+		// Trabajadores no fijos (Baja a partir del 1 de enero de 2009) (Régimen
+		// Especial Agrario)
+	}
+	
+	public void createEDLBa34Segment() {
+		// 34 Base de AT en vacaciones. (Baja a partir del 1 de enero de 2012)
+		// (Régimen Especial Agrario)
+	}
+	
+	public void createEDLBa35Segment() {
+		// 35 Base fija cotización trabajadores cuenta ajena extranjeros (Baja a
+		// partir del 1 de enero de 2009) (Régimen Especial Agrario)
+	}
+	
+	public void createEDLBa36Segment() {
+		// 36 Base exclusiva Desempleo/FOGASA tipo total. (Baja a partir del 1
+		// de enero de 2012) (Régimen Especial Agrario)
+	}
+	
+	public void createEDLBa37Segment() {
+		// 37 Cotización jornadas reales y FOGASA excluido desempleo(Baja a
+		// partir del 1 de enero de 2012). (Régimen Especial Agrario)
+	}
+	
+	public void createEDLBa38Segment() {
+		// 38 Cotización exclusivamente por FOGASA. (Baja a partir del 1 de
+		// enero de 2012) (Régimen Especial Agrario)
+	}
+	
+	public void createEDLBa41Segment() {
+		// 41 Contingencias Comunes y FOGASA, (Baja a partir del 1 de enero de
+		// 2012) (Régimen Especial Agrario)
+	}
+
+	public void createEDLBa42Segment() {
+		// TODO 42 Base exclusiva de AT y EP sin cotización de Otras
+		// Cotizaciones
+	}
+	
+	private void createEDLRecord(EDL edl, String type, Integer key, Integer amount) {
+		createEDLRecord(edl, type, key, 0, amount, " ", 0, autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), " ");
+	}
+	private void createEDLRecord(EDL edl, String type, Integer key, Integer element, Integer amount) {
+		createEDLRecord(edl, type, key, element, amount, " ", 0, autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), " ");
+	}
+	private void createEDLRecord(EDL edl, String type, Integer key, Integer amount, String sign) {
+		createEDLRecord(edl, type, key, 0, amount, " ", 0, autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), " ");
+	}
+	private void createEDLRecord(EDL edl, String type, Integer key, Integer element, Integer amount, String sign) {
+		createEDLRecord(edl, type, key, element, amount, sign, 0, autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), " ");
+	}
+	/**
+	Tipo de elementos de datos
+	Determina la naturaleza del elemento que siga a continuación, indicando:
+	BA Si se trata de una base. En este caso debe cumplimentarse el importe de la misma en el
+	subcampo correspondiente. Para BA09 (Base de horas complementarias), deberá indicarse en el
+	campo elemento, el nº de horas complementarias realizadas.
+	CD Si se trata de una compensación y/o deducción. En tal caso deben cumplimentarse días e importe.
+	
+	Clave. Tipo específico de base o compensación/deducción. Según tabla de Bases, si se trata de una base, o
+	según tabla compensaciones y/o deducciones si se trata de compensación y/o deducción. (Vercapítulo
+	Tabla T - 25 y T - 26
+	
+	Elemento. Indica el número de días a que se refiere la compensación o deducción, es decir, los días con derecho
+	a compensación, bonificación, subvención o reducción.
+	Necesariamente va ligado al tipo de elemento CD. A ceros en el caso de BA, excepto para BA09, que
+	es obligatorio, e indicará el nº de horas complementarias realizadas.
+	Obligatorio para Compensación/Deducción por formación teórica presencial CD10 o formación teórica
+	a distancia: CD11.
+	
+	Importe. Indica el importe de la base o de la compensación/deducción. Los importes se consignarán con dos
+	céntimos de euro, sin caracteres se
+	paradores de céntimos.
+	1360
+	
+	Signo del importe. Si es negativo aparece el carácter '-'. En campos positivos el carácter ' '.
+	Restricciones de uso. No se podrán consignar bases en negativo. Para los segmentos CD no se
+	admitirán signos negativos, excepto para liquidaciones L04.
+	 */
+	private void createEDLRecord(EDL edl, String type, Integer key, Integer element, Integer amount, String sign, Integer resolutionType, String resolutionDate, String startPeriod, String endPeriod, String resolutionReference) {
+		edl.setTipoElementoDatos(type);
+		edl.setClave(key);
+		edl.setElemento(element);
+		edl.setImporte(amount);
+		edl.setSigno(sign);
+		edl.setTipoResolucion(resolutionType);
+		edl.setFechaResolucion(resolutionDate);
+		edl.setInicioPeriodo(startPeriod);
+		edl.setFinPeriodo(endPeriod);
+		edl.setReferencia(resolutionReference);
+	}
+	
+	private String autoComplete(String value, int lenght, String completeValue, boolean leftSide) {
+		while( value.length() < lenght ){
+			value = leftSide ? (completeValue + value) : (value + completeValue);
+		}
+		return value;
+	}
+	
+	
+	// *********************************************
+	// *********************************************
+	// COMPENSACIONES - DEDUCCIONES TRABAJADOR
+	// *********************************************
+	// *********************************************
+	
+	/**
+	 *  1 IT enfermedad común y accidente no laboral 
+	 *  No es de aplicación en el Régimen General de Artistas (0112) y Régimen Especial Agrario (0613)
+	 * @param salary
+	 * @param dat
+	 */
+	public void createEDLCd01Segment(Double ecssAmount, DAT dat) {
+//		Double amount = (-1) * getECSSAmount(salary);
+		Double amount = (-1) * ecssAmount;
+		if (
+//				salary.getContract().getRegimeType() != SSRegimeType.ARTIST
+//				&& salary.getContract().getRegimeType() != SSRegimeType.AGRICULTURAL
+//				&& 
+				Double.compare(amount,0.0d)>0) {
+			EDL edl = dat.getEdlSegment("CD01");
+			createEDLRecord( edl, "CD", 1, new Double(CommonUtil.round(amount)*100).intValue());
+		}
+	}
+
+	/**
+	 *  3 IT por AT y EP 
+	 *  No es de aplicación en el Régimen General de Artistas (0112) y Régimen Especial Agrario (0613)
+	 * @param salary
+	 * @param dat
+	 */
+	public void createEDLCd03Segment(Double atepAmount, DAT dat) {
+//		Double amount = (-1) * getATEPAmount(salary);
+		Double amount = (-1) * atepAmount;
+		if (
+//				salary.getContract().getRegimeType() != SSRegimeType.ARTIST
+//				&& salary.getContract().getRegimeType() != SSRegimeType.AGRICULTURAL
+//				&& 
+				Double.compare(amount,0.0d)>0) {
+			EDL edl = dat.getEdlSegment("CD03");
+			createEDLRecord(edl, "CD", 3, new Double(CommonUtil.round(amount)*100).intValue());
+		}
+	}
+	
+	public void createEDLCd05Segment(DAT dat) {
+		// TODO 5 IT O.M. 3/4/73 Minería del Carbón
+	}
+	
+	/**
+	 *  6 Reducciones Contratos con derecho a reducción (casilla 209 de TC1)
+	 * @param salary
+	 * @param dat
+	 */
+	public void createEDLCd06Segment(Double bonusAmount, DAT dat) {
+		EDL edl = dat.getEdlSegment("CD06");
+		createEDLRecord(edl, "CD", 6, new Double(CommonUtil.round(bonusAmount)*100).intValue());
+	}
+	
+	/**
+	 *  7 Bonificaciones Contratos con derecho a bonificación/reducción (casilla 601 de TC1)
+	 * @param bonus
+	 * @param dat
+	 */
+	public void createEDLCd07Segment(Double bonusAmount, DAT dat) { 
+		EDL edl = dat.getEdlSegment("CD07");
+		createEDLRecord(edl, "CD", 7, new Double(CommonUtil.round(bonusAmount)*100).intValue());
+	}
+	
+	/**
+	 *  10 Bonificación por formación teórica presencial
+	 * @param salary
+	 * @param dat
+	 */
+	public void createEDLCd10Segment(Integer formationDays, Double bonusAmount, DAT dat) {
+		EDL edl = dat.getEdlSegment("CD10");
+//		Integer amount = new Double(CommonUtil.round((bonus).getAmount())*100).intValue();
+//		Integer days = obtainFormationDays(bonus.getSalary().getContract());
+		Integer amount = new Double(CommonUtil.round(bonusAmount)*100).intValue();
+		Integer days = formationDays;
+		createEDLRecord(edl, "CD", 10, days, amount);
+	}
+	
+	/** 
+	 *  11 Bonificación por formación teórica a distancia
+	 * @param salary
+	 * @param dat
+	 */
+	public void createEDLCd11Segment(Integer formationDays, Double bonusAmount, DAT dat) {
+		EDL edl = dat.getEdlSegment("CD11");
+//		Integer amount = new Double(CommonUtil.round((bonus).getAmount())*100).intValue();
+//		Integer days = obtainFormationDays(bonus.getSalary().getContract());
+		Integer amount = new Double(CommonUtil.round(bonusAmount)*100).intValue();
+		Integer days = formationDays;
+		createEDLRecord(edl, "CD", 11, days, amount);
+	}
+	
+	/**
+	 *  12 Bonificación por Ley 19/94 (Registro Canario) Régimen del Mar
+	 * @param salary
+	 * @param dat
+	 */
+	public void createEDLCd12Segment(Double bonusAmount, DAT dat) {
+//		if(bonus.getSalary().getContract().getRegimeType()==SSRegimeType.SEA_WORKERS){
+			EDL edl = dat.getEdlSegment("CD12");
+			createEDLRecord(edl, "CD", 12, new Double(CommonUtil.round(bonusAmount)*100).intValue());
+//		}
+	}
+	
+	/**
+	 *  13 Bonificación minusvalidos en Centros Especiales de Empleo
+	 * @param salary
+	 * @param dat
+	 */
+	public void createEDLCd13Segment(Double bonusAmount, DAT dat) {
+		EDL edl = dat.getEdlSegment("CD13");
+		createEDLRecord(edl, "CD", 13, new Double(CommonUtil.round(bonusAmount)*100).intValue());
+	}
+	
+	public void createEDLCd16Segment(DAT dat) {
+		// 16 Bonificación por trabajadores con 60 o más años (Baja a partir del 1 de agosto de 2012)
+	}
+	/**
+	 *  17 Reducción contingencias comunes excepto I.T. (R.D.L. 16/2001)
+	 * @param salary
+	 * @param dat
+	 */
+	public void createEDLCd17Segment(Double bonusAmount, DAT dat) {
+		EDL edl = dat.getEdlSegment("CD17");
+		createEDLRecord(edl, "CD", 17, new Double(CommonUtil.round(bonusAmount)*100).intValue());
+	}
+
+	public void createEDLCd18Segment(DAT dat) {
+		// 18 Reducción por Exención de desempleo (Baja a partir del 1 de enero de 2009) (Régimen Especial Agrario)
+	}
+	/**
+	 *  20 Bonificación Ceuta y Melilla (O. TAS/471/2004)
+	 * @param salary
+	 * @param dat
+	 */
+	public void createEDLCd20Segment(Double bonusAmount, DAT dat) {
+		EDL edl = dat.getEdlSegment("CD20");
+		createEDLRecord(edl, "CD", 20, new Double(CommonUtil.round(bonusAmount)*100).intValue());
+	}
+
+	public void createEDLCd21Segment(DAT dat) {
+		// 21 Bonificación Copa del America (R.D.L. 2146/2004) (Baja a partir del 1 de agosto de 2012)
+	}
+	
+	/**
+	 *  22 Bonificación Fom. Empleo Cuantía fija. Excepto Rég. Gral. Artistas (0112)
+	 * @param salary
+	 * @param dat
+	 */
+	public void createEDLCd22Segment(Integer bonusDays, Double bonusAmount, DAT dat) {
+//		if(bonus.getSalary().getContract().getRegimeType()!=SSRegimeType.ARTIST){
+			EDL edl = dat.getEdlSegment("CD22");
+//			Date bonusStart = bonus.getSalary().getStartDate();
+//			Date bonusEnd = bonus.getSalary().getEndDate();
+//			int bonusDays = 30;
+//			if(bonusStart.after(getStartDate()) || (bonusEnd!=null && bonusEnd.before(getEndDate())) ){
+//				bonusStart = bonusStart.before(getStartDate())?getStartDate():bonusStart;
+//				bonusEnd = (bonusEnd!=null && bonusEnd.after(getEndDate()))?getEndDate():bonusEnd;
+//				bonusDays = differenceBetweenDates(bonusStart, bonusEnd);
+//			}
+			dat.setDiasAlta(bonusDays);
+			createEDLRecord(edl, "CD", 22, bonusDays,new Double(CommonUtil.round(bonusAmount)*100).intValue());
+//		}
+	}
+	
+	/**
+	 *  23 Bonificación Sector Industrial Incentivado
+	 * @param salary
+	 * @param dat
+	 */
+	public void createEDLCd23Segment(Double bonusAmount, DAT dat) {
+		EDL edl = dat.getEdlSegment("CD23");
+		createEDLRecord(edl, "CD", 23, new Double(CommonUtil.round(bonusAmount)*100).intValue());
+	}
+	
+	public void createEDLCd24Segment(DAT dat) {
+		// 24 Bonificación I+D+I (Baja a partir del 1 de agosto de 2012) Régimen General
+	}
+
+	/**
+	 *  25 Exención de desempleo hijos<30años Autonomos
+	 * @param salary
+	 * @param dat
+	 */
+	public void createEDLCd25Segment(Double bonusAmount, DAT dat) {
+		EDL edl = dat.getEdlSegment("CD25");
+		createEDLRecord(edl, "CD", 25, new Double(CommonUtil.round(bonusAmount)*100).intValue());
+	}
+
+	public void createEDLCd26Segment(DAT dat) {
+		// 26 Reducciones REA Cuantía mensual (modalidad G y J) (Baja a partir del 1 de enero de 2012) Régimen Especial Agrario 
+	}
+	
+	public void createEDLCd27Segment(DAT dat) {
+		// 27 Reducciones REA "Jornadas reales" (Baja a partir del 1 de enero de 2012) Régimen Especial Agrario 
+	}
+
+	/**
+	 *  28 Bonificación por ERE 
+	 * @param salary
+	 * @param dat
+	 */
+	public void createEDLCd28Segment(Double bonusAmount, DAT dat) {
+		EDL edl = dat.getEdlSegment("CD28");
+		createEDLRecord(edl, "CD", 28, new Double(CommonUtil.round(bonusAmount)*100).intValue());
+	}
+	
+	/**
+	 *  29 Reducciones SEA. Contingencias comunes Sistema Especial Agrario 
+	 * @param salary
+	 * @param dat
+	 */
+	public void createEDLCd29Segment(Double cgcTotalEnterprise, Double cgcTotalEmployee, DAT dat) {
+//		if(bonus.getSalary().getContract().getRegimeType()==SSRegimeType.AGRICULTURAL){
+//			EDL edl = dat.getEdlSegment("CD29");
+//			createEDLRecord(edl, "CD", 29, new Double(CommonUtil.round((bonus).getAmount())*100).intValue());
+//		}
+		// se obtiene la cuota de la reduccion obteniendo la diferencia entre 1)la cuota calculada a partir de la base y el porcentaje correspondiente 
+		// y 2) la cuota ya calculada (la cual ya incluye la reduccion SEA).
+		
+		Double cgcBase = new Double(dat.getEdlSegment("BA01").getImporte()/100);
+		Double cgcPercent2015 = 17.30 + 4.70;
+		Double rectifiedCgcAmount = cgcBase * cgcPercent2015 / 100;
+		Double cgcAmount = null; 
+//		try {
+//			cgcAmount = obtainCGCTotalEnterprise(salary);
+//			cgcAmount += obtainCGCTotalEmployee(salary);
+//		} catch (AonConnectionException e) {
+//			cgcAmount = rectifiedCgcAmount;
+//		} catch (SQLException e) {
+//			cgcAmount = rectifiedCgcAmount;
+//		} 
+		cgcAmount = cgcTotalEnterprise;
+		cgcAmount += cgcTotalEmployee;
+		EDL edl = dat.getEdlSegment("CD29");
+		createEDLRecord(edl, "CD", 29, new Double(CommonUtil.round(rectifiedCgcAmount-cgcAmount)*100).intValue());
+	}
+
+	/**
+	 *  30 Reducciones. SEA Desempleo
+	 * @param salary
+	 * @param dat
+	 */
+	public void createEDLCd30Segment(DAT dat) {
+		// TODO
+//		if(bonus.getSalary().getContract().getRegimeType()==SSRegimeType.AGRICULTURAL){
+//			EDL edl = dat.getEdlSegment("CD30");
+//			createEDLRecord(edl, "CD", 30, new Double(CommonUtil.round((bonus).getAmount())*100).intValue());
+//		}
+	}
+	
+	/**
+	 * 31 Reducciones RDL-3/2014 
+	 * Sólo para Regimen General,Régimen Especial del Mar y Régimen Especial de la Minería del Carbón
+	 * 
+	 * @param bonus
+	 * @param emp
+	 */
+	public void createEDLCd31Segment(Double bonusAmount, DAT dat) {
+//		if(bonus.getSalary().getContract().getRegimeType()==SSRegimeType.GENERAL
+//			|| bonus.getSalary().getContract().getRegimeType()==SSRegimeType.SEA_WORKERS
+//			||  bonus.getSalary().getContract().getRegimeType()==SSRegimeType.COAL_MINING){
+			EDL edl = dat.getEdlSegment("CD31");
+			createEDLRecord(edl, "CD", 31, new Double(CommonUtil.round(bonusAmount)*100).intValue());
+//		}
+	}
+	
+	
+
 	// *********************************************
 	// *********************************************
 	// BASES TOTALES

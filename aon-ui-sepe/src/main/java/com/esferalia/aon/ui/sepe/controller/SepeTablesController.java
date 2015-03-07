@@ -174,9 +174,12 @@ public class SepeTablesController implements Serializable {
 	private void initContrataTablesModel(){
 		List<Enum<?>> list = new ArrayList<Enum<?>>();
 		for (ContrataCodeTables obj : ContrataCodeTables.values()) {
+			String cleanDesc = obj.getDescription().toLowerCase()
+					.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+					.replace("à", "a").replace("è", "e").replace("ì", "i").replace("ò", "o").replace("ù", "u");
 			if ( StringUtils.isBlank(getTablesFilter()) 
 					|| StringUtils.containsIgnoreCase(obj.getCode(), getTablesFilter())  
-					|| StringUtils.containsIgnoreCase(obj.getDescription(), getTablesFilter()) ) {
+					|| StringUtils.containsIgnoreCase(cleanDesc, getTablesFilter()) ) {
 				list.add(obj);
 			}
 		}
@@ -187,8 +190,8 @@ public class SepeTablesController implements Serializable {
 		List<Enum<?>> list = new ArrayList<Enum<?>>();
 		for (CertificadosCodeTables obj : CertificadosCodeTables.values()) {
 			if ( StringUtils.isBlank(getTablesFilter()) 
-					|| StringUtils.containsIgnoreCase(obj.getCode(), getTablesFilter())  
-					|| StringUtils.containsIgnoreCase(obj.getDescription(), getTablesFilter()) ) {
+					|| StringUtils.containsIgnoreCase(obj.getCode(), getCleanValue(getTablesFilter()))  
+					|| StringUtils.containsIgnoreCase(getCleanValue(obj.getDescription()), getCleanValue(getTablesFilter())) ) {
 				list.add(obj);
 			}
 		}
@@ -218,14 +221,21 @@ public class SepeTablesController implements Serializable {
 		for (Object obj : clazz.getEnumConstants()) {
 			IPayrollTablesEnum enumeration = (IPayrollTablesEnum) obj;
 			if ( StringUtils.isBlank(getCodesFilter()) 
-					|| StringUtils.containsIgnoreCase(enumeration.getCode(), getCodesFilter())  
-					|| StringUtils.containsIgnoreCase(enumeration.getDescription(), getCodesFilter()) ) {
+					|| StringUtils.containsIgnoreCase(enumeration.getCode(), getCleanValue(getCodesFilter()))  
+					|| StringUtils.containsIgnoreCase(getCleanValue(enumeration.getDescription()), getCleanValue(getCodesFilter())) ) {
 				if(!isActiveCodes() || (isActiveCodes() && enumeration.isActive())){
 					list.add(enumeration);	
 				}
 			}
 		}
 		setCodesModel(new SerializableListDataModel(list));
+	}
+	
+	protected String getCleanValue(String value){
+		return value.toLowerCase()
+				.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+				.replace("à", "a").replace("è", "e").replace("ì", "i").replace("ò", "o").replace("ù", "u")
+				.replace("ä", "a").replace("ë", "e").replace("ï", "i").replace("ö", "o").replace("ü", "u");
 	}
 	
 }

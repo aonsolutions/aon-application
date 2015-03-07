@@ -1,10 +1,91 @@
 package com.esferalia.aon.file.payroll.fan;
 
+import com.esferalia.aon.file.payroll.fan.data.DAT;
 import com.esferalia.aon.file.payroll.fan.data.EMP;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 
 public interface IFanFactory {
 
+	
+//	public void createEMPRecord(EnterpriseCCC ccc, EMP emp);
+//	
+//	// TRABAJADOR
+//	
+//	public void createDATSegments(EnterpriseCCC ccc, EMP emp);
+//	
+//	public void createEDLBaSegments(EnterpriseCCC ccc, EMP emp);
+//	
+//	public void createEDLCdSegments(EnterpriseCCC ccc, EMP emp);
+//	
+//	
+//	
+//	// TOTALES
+//	
+//	public void createEDTBaSegments(EnterpriseCCC ccc, EMP emp);
+//	
+//	public void createEDTCdSegments(EnterpriseCCC ccc, EMP emp);
+//	
+//	public void createEDTCaSegments(EnterpriseCCC ccc, EMP emp);
+//	
+//	public void createEDTTtSegments(EnterpriseCCC ccc, EMP emp);
+	
+	
+	// *********************************************
+	// TRABAJADOR
+	// *********************************************
+	
+	public void createEDLBa00Segment(Double commonBase, DAT dat);
+	public void createEDLBa01Segment(Double commonBase, DAT dat);
+	public void createEDLBa02Segment(Double professionalBase, DAT dat);
+	public void createEDLBa05Segment();
+	public void createEDLBa06Segment();
+	public void createEDLBa07Segment();
+	public void createEDLBa08Segment();
+	public void createEDLBa09Segment();
+	public void createEDLBa10Segment(Double overtimeBase, DAT dat);
+	public void createEDLBa11Segment(Double nonEstructuralOvertimeBase, DAT dat);
+	public void createEDLBa20Segment();
+	public void createEDLBa21Segment();
+	public void createEDLBa22Segment();
+	public void createEDLBa23Segment();
+	public void createEDLBa28Segment();
+	public void createEDLBa30Segment();
+	public void createEDLBa31Segment();
+	public void createEDLBa32Segment();
+	public void createEDLBa33Segment();
+	public void createEDLBa34Segment();
+	public void createEDLBa35Segment();	
+	public void createEDLBa36Segment();
+	public void createEDLBa37Segment();
+	public void createEDLBa38Segment();
+	public void createEDLBa41Segment();
+	public void createEDLBa42Segment();
+	
+	
+	public void createEDLCd01Segment(Double ecssAmount, DAT dat);
+	public void createEDLCd03Segment(Double atepAmount, DAT dat);
+	public void createEDLCd05Segment(DAT dat);
+	public void createEDLCd06Segment(Double bonusAmount, DAT dat);
+	public void createEDLCd07Segment(Double bonusAmount, DAT dat);
+	public void createEDLCd10Segment(Integer formationDays, Double bonusAmount, DAT dat);
+	public void createEDLCd11Segment(Integer formationDays, Double bonusAmount, DAT dat);
+	public void createEDLCd12Segment(Double bonusAmount, DAT dat);
+	public void createEDLCd13Segment(Double bonusAmount, DAT dat);
+	public void createEDLCd16Segment(DAT dat);
+	public void createEDLCd17Segment(Double bonusAmount, DAT dat);
+	public void createEDLCd18Segment(DAT dat);
+	public void createEDLCd20Segment(Double bonusAmount, DAT dat);
+	public void createEDLCd21Segment(DAT dat);
+	public void createEDLCd22Segment(Integer bonusDays, Double bonusAmount, DAT dat);
+	public void createEDLCd23Segment(Double bonusAmount, DAT dat);
+	public void createEDLCd24Segment(DAT dat);
+	public void createEDLCd25Segment(Double bonusAmonut, DAT dat);
+	public void createEDLCd26Segment(DAT dat);
+	public void createEDLCd27Segment(DAT dat);
+	public void createEDLCd28Segment(Double bonusAmount, DAT dat);
+	public void createEDLCd29Segment(Double cgcTotalEnterprise, Double cgcTotalEmployee, DAT dat);
+	public void createEDLCd30Segment(DAT dat);
+	public void createEDLCd31Segment(Double bonusAmount, DAT dat);
 	
 	
 	// *********************************************

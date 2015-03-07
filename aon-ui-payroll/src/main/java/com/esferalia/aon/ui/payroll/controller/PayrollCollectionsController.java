@@ -23,6 +23,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.enumeration.SalaryTemplate;
 import com.code.aon.registry.enumeration.StreetType;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.CNO;
@@ -59,7 +60,6 @@ import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
-import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.controller.SepeAppParamsController;
 
@@ -397,7 +397,22 @@ public class PayrollCollectionsController implements Serializable {
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot()
 				.getLocale();
 		LinkedList<SelectItem> ssRegimes = new LinkedList<SelectItem>();
-		ssRegimes.add(new SelectItem(SSRegimeType.GENERAL, SSRegimeType.GENERAL.getName(locale)));
+		ssRegimes.add(new SelectItem(SSRegimeType.GENERAL, SSRegimeType.GENERAL
+				.getName(locale)));
+		ssRegimes.add(new SelectItem(SSRegimeType.COAL_MINING,
+				SSRegimeType.COAL_MINING.getName(locale), null, true));
+		ssRegimes.add(new SelectItem(SSRegimeType.SEA_WORKERS,
+				SSRegimeType.SEA_WORKERS.getName(locale), null, true));
+//		ssRegimes.add(new SelectItem(SSRegimeType.AGRICULTURAL,
+//				 SSRegimeType.AGRICULTURAL.getName(locale), null, true));
+//		ssRegimes.add(new SelectItem(SSRegimeType.ARTIST, SSRegimeType.ARTIST
+//				.getName(locale), null, true));
+//		ssRegimes.add(new SelectItem(SSRegimeType.DOMESTIC_EMPLOYEES,
+//				SSRegimeType.DOMESTIC_EMPLOYEES.getName(locale), null, true));
+//		ssRegimes.add(new SelectItem(SSRegimeType.SELF_EMPLOYED,
+//				SSRegimeType.SELF_EMPLOYED.getName(locale), null, true));
+//		ssRegimes.add(new SelectItem(SSRegimeType.STUDENT_INSURANCE,
+//				SSRegimeType.STUDENT_INSURANCE.getName(locale), null, true));
 		return ssRegimes;
 	}
 	
@@ -809,40 +824,25 @@ public class PayrollCollectionsController implements Serializable {
 	}
 	
 	public List<SelectItem> getSalaryTemplates() {
-		if (salaryTemplates == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			salaryTemplates = new LinkedList<SelectItem>();
-			SelectItem item = new SelectItem(SalaryTemplate.DEFAULT.getValue(), SalaryTemplate.DEFAULT.getName(locale));
-			salaryTemplates.add(item);
-			item = new SelectItem(SalaryTemplate.STANDARD_DUAL_COLUMN.getValue(), SalaryTemplate.STANDARD_DUAL_COLUMN.getName(locale));
-			salaryTemplates.add(item);
-			item = new SelectItem(SalaryTemplate.INVOICE_SIMPLE.getValue(), SalaryTemplate.INVOICE_SIMPLE.getName(locale));
-			salaryTemplates.add(item);
-			item = new SelectItem(SalaryTemplate.INVOICE_CRA_GROUP.getValue(), SalaryTemplate.INVOICE_CRA_GROUP.getName(locale));
-			salaryTemplates.add(item);
-				
-			PayrollUtils utils = PayrollUtils.getInstance();
-			if(utils.getAdditionalSalaryTemplates()!=null){
-				for(String s: utils.getAdditionalSalaryTemplates()){
-					if(s.equals(SalaryTemplate.NOMINASTA.getValue())){
-						item = new SelectItem(SalaryTemplate.NOMINASTA.getValue(), SalaryTemplate.NOMINASTA.getName(locale));
-						salaryTemplates.add(item);
-					} else if(s.equals(SalaryTemplate.NOMINASTA_CODINT.getValue())){
-						item = new SelectItem(SalaryTemplate.NOMINASTA_CODINT.getValue(), SalaryTemplate.NOMINASTA_CODINT.getName(locale));
-						salaryTemplates.add(item);
-					} else if(s.equals(SalaryTemplate.NOMINASTA_CONDDIAS.getValue())){
-						item = new SelectItem(SalaryTemplate.NOMINASTA_CONDDIAS.getValue(), SalaryTemplate.NOMINASTA_CONDDIAS.getName(locale));
-						salaryTemplates.add(item);
-					} else if(s.equals(SalaryTemplate.NOMINASTA_LDH.getValue())){
-						item = new SelectItem(SalaryTemplate.NOMINASTA_LDH.getValue(), SalaryTemplate.NOMINASTA_LDH.getName(locale));
-						salaryTemplates.add(item);
-					} else if(s.equals(SalaryTemplate.IDAZKIAK_ES.getValue())){
-						item = new SelectItem(SalaryTemplate.IDAZKIAK_ES.getValue(), SalaryTemplate.IDAZKIAK_ES.getName(locale));
-						salaryTemplates.add(item);
-					}
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		salaryTemplates = new LinkedList<SelectItem>();
+		SelectItem item = new SelectItem(SalaryTemplate.DEFAULT.getValue(), SalaryTemplate.DEFAULT.getName(locale));
+		salaryTemplates.add(item);
+		item = new SelectItem(SalaryTemplate.STANDARD_DUAL_COLUMN.getValue(), SalaryTemplate.STANDARD_DUAL_COLUMN.getName(locale));
+		salaryTemplates.add(item);
+		item = new SelectItem(SalaryTemplate.INVOICE_SIMPLE.getValue(), SalaryTemplate.INVOICE_SIMPLE.getName(locale));
+		salaryTemplates.add(item);
+		item = new SelectItem(SalaryTemplate.INVOICE_CRA_GROUP.getValue(), SalaryTemplate.INVOICE_CRA_GROUP.getName(locale));
+		salaryTemplates.add(item);
+			
+		EnterpriseParamsController paramsController = (EnterpriseParamsController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_PARAMS_CONTROLLER_NAME);
+		if(paramsController.getEnabledSalaryTemplates()!=null){
+			for(SalaryTemplate template: paramsController.getEnabledSalaryTemplates()){
+				if(template!=null){
+					item = new SelectItem(template.getValue(), template.getName(locale));
+					salaryTemplates.add(item);
 				}
 			}
-				
 		}
 		return salaryTemplates;
 	}
