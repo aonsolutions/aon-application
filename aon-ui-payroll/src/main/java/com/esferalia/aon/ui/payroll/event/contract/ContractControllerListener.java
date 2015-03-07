@@ -107,7 +107,23 @@ public class ContractControllerListener extends ControllerAdapter{
 		controller.setEnterpriseCCCs(null);
 		controller.setParams(null);
 		controller.setContractUtils(null);
-		controller.setAgreement(controller.getContractUtils().obtainAgreement((Contract) controller.getTo()));
+		
+		try {
+			Contract contract = (Contract) controller.getTo();
+			if(contract.getAgreementLevelCategory()!=null 
+					&& contract.getAgreementLevelCategory().getLevel()!=null 
+					&& contract.getAgreementLevelCategory().getLevel().getAgreement()!=null 
+					&& contract.getAgreementLevelCategory().getLevel().getAgreement().getId()!=null){
+				controller.setAgreement(contract.getAgreementLevelCategory().getLevel().getAgreement());
+			} else {
+				controller.setAgreement((Agreement) BeanManager.getManagerBean(Agreement.class).createNewTo());
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error loading contract agreement";
+			LOGGER.error(msg);
+		}
+			
+		
 		try {
 			controller.getContractUtils().loadContractData((Contract) controller.getTo(), controller.getParams());
 			controller.getContractUtils().loadContractInfo((Contract) controller.getTo(), controller.getParams());

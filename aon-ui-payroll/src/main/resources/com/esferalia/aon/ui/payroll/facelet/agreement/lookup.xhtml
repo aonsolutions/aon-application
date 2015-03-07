@@ -4,7 +4,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:include src="/com/code/aon/ui/resources/facelet/shared/lookup.xhtml" >
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/lookup.xhtml" >
 		<ui:param name="lookupBean" value="#{agreementLookup}" />
 		<ui:param name="controller" value="#{agreement}" />
 		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.description}" />
@@ -13,6 +13,23 @@
 		<ui:param name="skipGoToButton" value="true" />
 		<ui:param name="lookupLabel" value="#{bundle.payroll_agreement}" />
 		<ui:param name="searchButtonTitle" value="#{bundle.payroll_agreement_selection}" />
-	</ui:include>
+
+		<ui:define name="beforeLookupContent" >
+			<aon:commandButton value="&#160;" title="Cargar convenio por defecto"
+				rendered="#{empty lookupTo.id}"
+				styleClass="aon-finding-toolbar-item aon-icon-file-exit aon-finding-toolbar-item-no-border aon-margin-left"
+				actionListener="#{contract.loadWorkplaceAgreement}" 
+				reRender="contractForm" ajaxSingle="true" />
+		</ui:define>
+		
+		<ui:define name="afterLookupContent" >
+			<aon:outputText rendered="#{not empty lookupTo and lookupTo.id lt 0}"
+				styleClass="aon-icon-wrong aon-padding-left aon-margin-right"
+				title="Convenio eliminado"
+				value="&#160;&#160;&#160;&#160;" />
+			<ui:insert name="afterLookupContent2"/>
+		</ui:define>
+		
+	</ui:decorate>
 
 </ui:composition>

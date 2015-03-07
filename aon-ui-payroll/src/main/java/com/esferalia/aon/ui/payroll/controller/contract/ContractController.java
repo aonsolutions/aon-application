@@ -697,7 +697,7 @@ public class ContractController extends BasicController {
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg,e);
 			}
-			if(getAgreement()==null || getAgreement().getId()==null){
+			if(this.isNevv() && (getAgreement()==null || getAgreement().getId()==null)){
 				loadWorkplaceAgreement(null);
 			}
 		}
