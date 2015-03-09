@@ -537,6 +537,7 @@ public class BankStatementController extends BasicController implements IFinance
 		LineNumberReader reader = new LineNumberReader(new InputStreamReader(getAonFile().openStream()));
 		String line = reader.readLine();
 		while (line != null) {
+			line = StringUtils.rightPad(line, 80);
 			String lineType = line.substring(0, 2);
 			if (lineType.equals("11")) {
 				RegistryBank registryBank = importAeb43Header(line);
