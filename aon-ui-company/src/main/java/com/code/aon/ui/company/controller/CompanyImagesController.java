@@ -2,10 +2,14 @@ package com.code.aon.ui.company.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.COMPANY_IMAGE_DUPLICATED_NAME;
 import static com.code.aon.ui.common.ICommonMessages.COMPANY_IMAGE_INVALID_CHARACTER;
+import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.GeneralSecurityException;
+import java.security.KeyStoreException;
+import java.sql.SQLException;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -15,6 +19,7 @@ import javax.faces.validator.ValidatorException;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,11 +28,17 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.ImageUtil;
+import com.code.aon.google.apis.DriveUtils;
+import com.code.aon.google.apis.jooq.DBConsults;
+import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.registry.controller.RegistryAttachController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.File;
 
 public class CompanyImagesController extends RegistryAttachController {
 
@@ -103,14 +114,25 @@ public class CompanyImagesController extends RegistryAttachController {
 	public void init( byte[] data ) {
 		reset();
 		if (! ArrayUtils.isEmpty(data) ) {
-			BufferedImage bImage = ImageUtil.getBufferedImage( data );
-			if ( bImage != null ) {
-				setWidth(bImage.getWidth());
-				setOriginalWidth(bImage.getWidth());
-				setHeight(bImage.getHeight());
-				setOriginalHeight(bImage.getHeight());
-			}			
+			try {
+				BufferedImage bImage = ImageUtil.getBufferedImage( data );
+				if ( bImage != null ) {
+					setWidth(bImage.getWidth());
+					setOriginalWidth(bImage.getWidth());
+					setHeight(bImage.getHeight());
+					setOriginalHeight(bImage.getHeight());
+				}							
+			} catch ( Throwable e ) {
+				LOGGER.error(e.getMessage(), e);
+			}
 		}				
+	}
+	
+	public boolean isImage() {
+		if ( (getAonFile() != null) && (getAonFile().getMimeType() != null) ) {
+			return StringUtils.startsWith(getAonFile().getMimeType().getName(), "image/");
+		}
+		return false;
 	}
 	
 	public void paint(OutputStream out, Object data) throws IOException {
@@ -186,5 +208,28 @@ public class CompanyImagesController extends RegistryAttachController {
 			}
 		}
 	}
+
+	public String getDownloadURL() throws ManagerBeanException, IOException, SQLException, KeyStoreException, GeneralSecurityException {
+		String url = null;
+		RegistryAttachment ra = (RegistryAttachment) getTo();
+		if ( (ra.getDriveId() != null) && (ra.getMD5() == null) ) {
+			String domain = AonUtil.getDomainName();
+			DomainGserviceaccount d = DBConsults.getServiceAccount(domain,ra.getDomain());
+			Drive drive = DriveUtils.serviceInitialize(d);
+			File f = DriveUtils.getFile(drive,ra.getDriveId(),ra.getId());
+			if ( "OLDRIVE".equals(f.getDescription()) ) {
+				drive = DriveUtils.serviceInitializeOld(d);	
+			}
+			ra.setMD5(f.getMd5Checksum());
+		}
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+		url = ds.getDomainURL() + ra.getDownloadURL();
+		return url;
+	}
 	
+	@Override
+	protected int getDefaultPageLimit() {
+		return AonUtil.getConfigurationController().getPageLimit();
+	}	
+		
 }

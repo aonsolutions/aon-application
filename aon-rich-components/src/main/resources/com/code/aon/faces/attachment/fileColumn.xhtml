@@ -6,6 +6,8 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
+	
+	<aon:valueParam name="skipFormNewDiv" default="#{false}"/>
 
 	<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-nowrap aon-width-120">
 		<f:facet name="header">
@@ -40,25 +42,27 @@
 			</a4j:region>
 			<ui:insert name="afterFileUploadContent"/>	
 		</aon:div>
-		<f:facet name="footer">
-			<aon:div id="#{controller.beanName}_attachFileNew">
-				<a4j:region>
-					<aon:fileUpload rendered="#{formNew}"
-						addControlLabel="#{bundle.aon_fileUpload_add}"
-						stopControlLabel="#{bundle.aon_fileUpload_stop}"
-						stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
-						uploadControlLabel="#{bundle.aon_fileUpload_upload}"
-						fileUploadListener="#{controller.fileUploaded}"
-						listWidth="110px" >
-						<f:facet name="label">
-							<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
-						</f:facet>																										
-						<a4j:support event="onuploadcomplete"
-							reRender="#{controller.beanName}_attachFileNew,#{controller.beanName}_description-New" />
-					</aon:fileUpload>
-				</a4j:region>
-			</aon:div>
-		</f:facet>														
+		<c:if test="#{!skipFormNewDiv}">
+			<f:facet name="footer">
+				<aon:div id="#{controller.beanName}_attachFileNew">
+					<a4j:region>
+						<aon:fileUpload rendered="#{formNew}"
+							addControlLabel="#{bundle.aon_fileUpload_add}"
+							stopControlLabel="#{bundle.aon_fileUpload_stop}"
+							stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+							uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+							fileUploadListener="#{controller.fileUploaded}"
+							listWidth="110px" >
+							<f:facet name="label">
+								<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+							</f:facet>																										
+							<a4j:support event="onuploadcomplete"
+								reRender="#{controller.beanName}_attachFileNew,#{controller.beanName}_description-New" />
+						</aon:fileUpload>
+					</a4j:region>
+				</aon:div>
+			</f:facet>		
+		</c:if>												
 	</aon:column>
 		
 </ui:composition>

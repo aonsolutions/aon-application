@@ -800,6 +800,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{companyImagesControllerListener}</value>
+				<value>#{companyImagesSearch}</value>
 			</list-entries>
 		</managed-property>		
 	</managed-bean>
@@ -811,6 +812,12 @@
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>companyImagesSearch</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.CorporateIdentitySearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
 
 	<!-- **** COMPANY DISPLAY **** -->
 	<managed-bean>
@@ -1287,9 +1294,17 @@
 			<to-view-id>/com/code/aon/ui/company/facelet/company/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>companyImages</from-outcome>
+			<from-outcome>companyImages_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/company/facelet/companyImages/form.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>companyImages_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/company/facelet/companyImages/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>companyImages_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/company/facelet/companyImages/search.xhtml</to-view-id>
+		</navigation-case>		
 		<navigation-case>
 			<from-outcome>companyCustomize</from-outcome>
 			<to-view-id>/com/code/aon/ui/company/facelet/companyCustomize/form.xhtml</to-view-id>

@@ -24,7 +24,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Domain;
 import com.code.aon.config.Scope;
-import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.google.apis.jooq.DomainGserviceaccount;
@@ -167,8 +166,9 @@ public class CorporateIdentityController extends RegistryAttachController implem
 			DomainGserviceaccount d = DBConsults.getServiceAccount(domain,ra.getDomain());
 			Drive drive = DriveUtils.serviceInitialize(d);
 			File f = DriveUtils.getFile(drive,ra.getDriveId(),ra.getId());
-			if(f.getDescription().equals("OLDRIVE"))
-				drive = DriveUtils.serviceInitializeOld(d);
+			if ( "OLDRIVE".equals(f.getDescription()) ) {
+				drive = DriveUtils.serviceInitializeOld(d);	
+			}
 			ra.setMD5(f.getMd5Checksum());
 		}
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);

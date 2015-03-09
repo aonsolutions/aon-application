@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="companyImagesList">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{bundle.company_images_module}" />
+				<ui:param name="controller" value="#{companyImages}" />
+				<ui:param name="skipResetButton" value="#{documentManager.freeSpace &lt; 1}" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{companyImages}" />
+					<ui:param name="showNote" value="#{false}" />
+					<ui:define name="columns">
+			
+						<aon:column alias="RegistryAttachment.description"
+							styleClass="aon-editDataTable-textColumn aon-nowrap">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_name}" />
+							</f:facet>
+							<aon:outputText value="#{to.description}" />
+						</aon:column>
+					
+						<aon:column alias="RegistryAttachment.size"
+							styleClass="aon-editDataTable-numberColumn aon-width-80">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_size}" />
+							</f:facet>
+							<aon:outputText value="#{to.sizeToDisplay}" />
+						</aon:column>
+							
+						<aon:column alias="RegistryAttachment.mimeType"
+							styleClass="aon-editDataTable-textColumn aon-width-120 aon-nowrap">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_type}" />
+							</f:facet>
+							<aon:outputText value="#{to.mimeType}"/>
+						</aon:column>
+							
+						<ui:decorate template="/com/code/aon/faces/attachment/fileColumn.xhtml">
+							<ui:param name="formList" value="#{true}" />
+							<ui:param name="skipFormNewDiv" value="#{true}" />
+						</ui:decorate>
+							
+					</ui:define>
+					<ui:define name="additionalDataTableContent" >
+						<aon:div styleClass="aon-margin-top" >
+							<aon:outputText style="#{documentManager.freeSpaceStyle}"
+								value="#{documentManager.freeSpaceMessage}" />
+						</aon:div>
+					</ui:define>					
+				</ui:decorate>
+			</aon:div>
+
+		</aon:form>
+	</ui:define>
+</ui:composition>

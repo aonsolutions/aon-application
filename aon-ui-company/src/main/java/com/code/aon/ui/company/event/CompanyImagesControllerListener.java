@@ -3,11 +3,14 @@ package com.code.aon.ui.company.event;
 import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.company.controller.CompanyImagesController;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.registry.controller.event.RegistryAttachControllerListener;
+import com.code.aon.ui.util.AonUtil;
 
 public class CompanyImagesControllerListener extends RegistryAttachControllerListener {
 	
@@ -33,8 +36,9 @@ public class CompanyImagesControllerListener extends RegistryAttachControllerLis
 	
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		super.beforeBeanAdded(event);
 		CompanyImagesController imagesController = (CompanyImagesController)event.getController();
+		checkImage(imagesController);
+		super.beforeBeanAdded(event);
 		RegistryAttachment attach = (RegistryAttachment)imagesController.getTo();
 		imagesController.init(attach.getData());
 		imagesController.update(attach);	
@@ -42,8 +46,9 @@ public class CompanyImagesControllerListener extends RegistryAttachControllerLis
 
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		super.beforeBeanUpdated(event);
 		CompanyImagesController imagesController = (CompanyImagesController)event.getController();
+		checkImage(imagesController);
+		super.beforeBeanUpdated(event);
 		RegistryAttachment attach = (RegistryAttachment)imagesController.getTo();
 		imagesController.update(attach);	
 	}
@@ -56,5 +61,12 @@ public class CompanyImagesControllerListener extends RegistryAttachControllerLis
 		imagesController.reset();
 		imagesController.setAonFile(new AonFile());
 	}	
+
+	private void checkImage( CompanyImagesController controller ) throws ControllerListenerException {
+		if ( AttachmentUtil.isUploaded(controller) && !controller.isImage() ) {
+			String message = AonUtil.getMessage(ICommonMessages.COMPANY_IMAGE_NOT_IMAGE);
+			throw new ControllerListenerException(message);
+		}
+	}
 	
 }

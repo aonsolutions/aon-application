@@ -157,10 +157,10 @@
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">																										
 										<aon:commandLink id="images-commercial" 
-											action="companyImages-commercial" 
-											actionListener="#{companyWebInfo.onInit}"
+											action="#{companyImages.initialAction}" 
+											actionListener="#{companyImages.onEditSearch}"
 											value="#{bundle.company_images_module}">
-											<aon:actionListener method="#{companyImages.onCancel}" />
+											<aon:actionListener method="#{companyImages.onSearch}" />
 										</aon:commandLink>
 									</aon:div>
 								</aon:div>							

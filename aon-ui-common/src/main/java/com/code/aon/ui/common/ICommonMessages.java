@@ -259,7 +259,8 @@ public interface ICommonMessages {
 	String COMPANY_EMAIL_BODY_HEADER = "company_email_body_header";
 	String COMPANY_EMAIL_BODY_FOOTER = "company_email_body_footer";
 	String COMPANY_SALE_INVOICE_FOOTER_TEXT = "company_saleInvoice_footer_text";
-	String COMPANY_SALE_INVOICE_FOOTER_LOPD = "company_saleInvoice_footer_LOPD";	
+	String COMPANY_SALE_INVOICE_FOOTER_LOPD = "company_saleInvoice_footer_LOPD";
+	String COMPANY_IMAGE_NOT_IMAGE = "company_image_not_image";
 	
 	String FTP_CONNECTING = "config_ftp_connecting";
 	String FTP_LOGIN = "config_ftp_login";
