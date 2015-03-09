@@ -1237,8 +1237,10 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			if ( companyController.isEInvoice() ) {
 				try {
 					IManagerBean bean = BeanManager.getManagerBean(Customer.class);
-					Customer customer = (Customer) bean.get(invoice.getRegistry().getId());
-					include = (customer != null) && customer.isEInvoice();
+					if ( (invoice.getRegistry()!= null) && (invoice.getRegistry().getId()!=null) ) {
+						Customer customer = (Customer) bean.get(invoice.getRegistry().getId());
+						include = (customer != null) && customer.isEInvoice();						
+					}
 				} catch (ManagerBeanException e) {
 					LOGGER.error(e.getMessage(), e);
 				}			
