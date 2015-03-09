@@ -13,7 +13,7 @@ import com.esferalia.aon.gwt.payroll.shared.Statistics;
 
 public class SQLStatistics {
 
-	private static String[] months;
+	private static String[] months = new String[12];
 
 	/**
 	 * Lleno el objeto de la clase Statistics llamando a metodos privados de la
@@ -29,7 +29,6 @@ public class SQLStatistics {
 			int enterpriseId) {
 		Statistics statistics = new Statistics();
 
-		months = new String[12];
 
 		try {
 
