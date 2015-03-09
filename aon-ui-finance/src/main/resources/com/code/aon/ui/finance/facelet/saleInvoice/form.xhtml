@@ -42,7 +42,7 @@
 						</aon:htmlCommandLink>
 						<aon:htmlCommandLink id="saleInvoice-facturae"
 							value="#{bundle.finance_facturae}" target="_blank" 
-							rendered="#{saleInvoice.downloadFacturae and saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
+							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null and saleInvoice.downloadFacturae}"
 							action="#{saleInvoiceSigner.onDownloadFacturae}"
 							styleClass="aon-finding-toolbar-item aon-icon-mail-save">
 						</aon:htmlCommandLink>
