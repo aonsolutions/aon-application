@@ -118,7 +118,7 @@ public class MetaData extends ResizeComposite {
 		addPaymentConcepts();
 		addDeductionConcepts();
 		initNewPopupMenu();
-		initContextMenu();
+		//initContextMenu();
 	}
 
 	public void addListener(Listener listener) {

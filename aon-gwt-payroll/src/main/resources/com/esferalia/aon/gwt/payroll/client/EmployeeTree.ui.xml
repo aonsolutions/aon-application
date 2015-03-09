@@ -5,9 +5,6 @@
 	xmlns:payroll='urn:import:com.esferalia.aon.gwt.payroll.client'
 	>
 
-	<!-- GIFs needed for ie6 work arounds. Can't use <ui:image>, it makes PNGs -->
-	<ui:data field='configgroupIe6Data' src='configgroup_ie6.gif' />
-	<ui:data field='employeesgroupIe6Data' src='employeesgroup_ie6.gif' />
 
 	<ui:style>
 	
@@ -15,26 +12,6 @@
 	  padding: .7em .5em .7em .6em;
 	  
 	}
-
-	 @if user.agent ie6 {
-	   @url employeesgroupIe6 employeesgroupIe6Data;
-
-	   .configIcon {
-	     background-image: configgroupIe6;
-	     width: 31px;
-	     height: 22px;
-	     float: left;
-	   }
-
-	   .employeesIcon {
-	     background-image: employeesgroupIe6;
-	     width: 31px;
-	     height: 22px;
-	     float: left;
-	   }
-
-	 } @else {
-	
 
 	@sprite .configIcon {
 	     gwt-image: 'configgroup';
@@ -45,16 +22,11 @@
 	     gwt-image: 'employeesgroup';
 	     float: left;
 	   }
-
-
-	 }
 	 
 	</ui:style>
 
 	<ui:image field='configgroup' src='configgroup.png' />
 	<ui:image field='employeesgroup' src='employeesgroup.png' />
-	<ui:image field='gradient' src='gradient_bg_dark.png'
-		repeatStyle='Horizontal' />
 
 
 	<g:SplitLayoutPanel ui:field="splitLayoutPanel">

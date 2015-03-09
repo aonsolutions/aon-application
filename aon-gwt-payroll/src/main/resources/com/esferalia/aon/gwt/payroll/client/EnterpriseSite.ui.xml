@@ -1,9 +1,6 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'>
 
-	<!-- GIFs needed for ie6 work arounds. Can't use <ui:image>, it makes PNGs -->
-	<ui:data field='employeesgroupIe6Data' src='employeesgroup_ie6.gif' />
-	<ui:data field='salariesgroupIe6Data' src='salariesgroup_ie6.gif' />
 
 	<ui:style>
 	
@@ -12,47 +9,20 @@
 	  
 	}
 
-	 @if user.agent ie6 {
-	   @url employeesgroupIe6 employeesgroupIe6Data;
-
-	   .employeesIcon {
-	     background-image: employeesgroupIe6;
-	     width: 31px;
-	     height: 22px;
+	@sprite .employeesIcon {
+	     gwt-image: 'employeesgroup';
 	     float: left;
 	   }
-
-	   @url salariesgroupIe6 salariesgroupIe6Data;
-
-	   .salariesIcon {
-	     background-image: salariesgroupIe6;
-	     width: 31px;
-	     height: 22px;
-	     float: left;
-	   }
-
-	 } @else {
 	
-		
-		@sprite .employeesIcon {
-		     gwt-image: 'employeesgroup';
-		     float: left;
-		   }
-		
-		@sprite .salariesIcon {
-		     gwt-image: 'salariesgroup';
-		     float: left;
-		   }
-
-
-	 }
+	@sprite .salariesIcon {
+	     gwt-image: 'salariesgroup';
+	     float: left;
+	   }
 	 
 	</ui:style>
 
 	<ui:image field='salariesgroup' src='salariesgroup.png' />
 	<ui:image field='employeesgroup' src='employeesgroup.png' />
-	<ui:image field='gradient' src='gradient_bg_dark.png'
-		repeatStyle='Horizontal' />
 
 
 	<g:SplitLayoutPanel ui:field="splitLayoutPanel">

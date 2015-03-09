@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.TextCell;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.metrics.StatsEventLogger;
 import com.esferalia.aon.gwt.common.client.widget.Calendar;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
@@ -179,7 +180,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		public void execute() {
 			paste = new EmployeePopupCopy();
 			paste.addListener(this);
-			Employee aux = singlenton.employeeContextMenu.getEmployeeCopy();
+			Employee aux = singlenton.getEmployeeContextMenu().getEmployeeCopy();
 			if(singlenton.avaiableEmployees.containsKey(aux.getDocument()) == false)
 				existPerson(aux);
 			else
@@ -187,7 +188,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		}
 
 		private void showPopUpPanel() {
-			setEmployeePaste(singlenton.employeeContextMenu.getEmployeeCopy());
+			setEmployeePaste(singlenton.getEmployeeContextMenu().getEmployeeCopy());
 			setMapAvaiableEmployees(singlenton.avaiableEmployees);
 			paste.showPopUpPanel();
 		}
@@ -195,7 +196,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		@Override
 		public void onAcceptClick(Employee pasteEmployee, boolean value) {
 			int workplaceId = workplace.getId();
-			int contractId = singlenton.employeeContextMenu.getEmployeeCopy()
+			int contractId = singlenton.getEmployeeContextMenu().getEmployeeCopy()
 					.getId();
 			String document = pasteEmployee.getDocument();
 			Date startDate = pasteEmployee.getStartDate();
@@ -845,7 +846,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private Statistics stats;
 	private Reports reports;
 	private ITEditor it;
-	private CalendarDraft calendar;
+	private CalendarDraft calendarDraft;
 	private SalaryDraft salaryDraft;
 	private SalaryPreview salaryPreview;
 	private EventsDraft eventsDraft;
@@ -882,16 +883,18 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	 * controls and hooking up event handler.
 	 */
 	public void onModuleLoad() {
-
+		logEvent("start");
 		// Inject rich styles.
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 		GWT.<MainEntryPoint.CodeMirrorResources> create(
 				MainEntryPoint.CodeMirrorResources.class).css()
 				.ensureInjected();
+		logEvent("richStylesInjected");
 
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = binder.createAndBindUi(this);
+		logEvent("uiCreatedAndBound");
 
 		// Get rid of scrollbars, and clear out the window's built-in margin,
 		// because we want to take advantage of the entire client area.
@@ -903,56 +906,28 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		// RootPanel root = RootPanel.get("rootPanel");
 		root.add(ui);
+		logEvent("addedToRootPanel");
 		
 		//LocalStorage Items
 		storage = Storage.getLocalStorageIfSupported();
 		
 		jsf = new JSF();
-		cost = new Cost();
-		irpf = new Irpf();
-		salary = new Salary();
-		stats = new Statistics();
-		reports = new Reports();
-		it = new ITEditor();
-		calendar = new CalendarDraft();
-		documents = new Documents();
-		eventsDraft = new EventsDraft();
-		salaryDraft = new SalaryDraft();
-		salaryPreview = new SalaryPreview();
-		categoryDraft = new CategoryDraft();
-		agreementDraft = new AgreementDraft();
-		bonusEditor = new BonusEditor();
-		paymentEditor = new PaymentEditor();
-		deductionEditor = new DeductionEditor();
+		logEvent("jsfWidgetCreated");
 
-		resultsPanel = new ResultsPanel();
 
 		employees.addListener(this);
 		metaData.addListener(this);
 
-		employeeContextMenu = new EmployeeContextMenu();
-		enterpriseContextMenu = new EnterpriseContextMenu();
-		workplaceContextMenu = new WorkplaceContextMenu();
-
-		cost.addListener(this);
-		salary.addListener(this);
-
+		resultsPanel = new ResultsPanel();
 		shareResultsGrid = new ShareResultsGrid();
 		shareResultsProvider = new ListDataProvider<JsShareResult>();
 		shareResultsProvider.addDataDisplay(shareResultsGrid);		
+		logEvent("resultsWidgetsCreated");
 
 		singlenton = this;
 		
-		if(storage.getItem(EMPLOYEE) != null) {			
-			String item = storage.getItem(EMPLOYEE).toString();			
-			Employee aux = JSON2Employee(item);
-			
-			if(aux != null) {
-				employeeContextMenu.setCopyEmployee(aux);
-				this.pasteItem.setVisible(true);
-			}
-		}
 		export2JS();
+		logEvent("end");
 
 	}
 
@@ -1047,129 +1022,129 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	@Override
 	public void onSalariesSelected(SalaryDocuments docs) {
-		employeeDetail.setWidget(salary);
-		salary.setSalaryDocuments(docs);
+		employeeDetail.setWidget(getSalary());
+		getSalary().setSalaryDocuments(docs);
 	}
 
 	@Override
 	public void onIrpfsSelected(IrpfDocuments docs) {
-		employeeDetail.setWidget(irpf);
-		irpf.setIrpfDocuments(docs);
+		employeeDetail.setWidget(getIrpf());
+		getIrpf().setIrpfDocuments(docs);
 	}
 
 	@Override
 	public void onCostsSelected(CostDocuments docs) {
-		cost.setTitle("Costes");
-		employeeDetail.setWidget(cost);
-		cost.setCostDocuments(docs);
+		getCost().setTitle("Costes");
+		employeeDetail.setWidget(getCost());
+		getCost().setCostDocuments(docs);
 
 	}
 
 	@Override
 	public void onReportsSelected(ReportsObject reportsObject) {
-		employeeDetail.setWidget(reports);
-		reports.setReportsObject(reportsObject);
+		employeeDetail.setWidget(getReports());
+		getReports().setReportsObject(reportsObject);
 
 	}
 	
 	@Override
 	public void onStatisticsSelected(
 			com.esferalia.aon.gwt.payroll.shared.Statistics statistics) {
-		employeeDetail.setWidget(stats);
-		stats.setStatistics(statistics);
+		employeeDetail.setWidget(getStats());
+		getStats().setStatistics(statistics);
 	}
 
 	@Override
 	public void onITDataSelected(ITDataObject dataObject) {
-		employeeDetail.setWidget(it);
-		it.setITEditor(dataObject);
+		employeeDetail.setWidget(getIt());
+		getIt().setITEditor(dataObject);
 	}
 	
 	@Override
 	public void onCalendarSelected(CalendarDraftObject calendarDraftObject) {		
-		employeeDetail.setWidget(calendar);
-		calendar.setCalendarDraftObject(calendarDraftObject);
+		employeeDetail.setWidget(getCalendarDraft());
+		getCalendarDraft().setCalendarDraftObject(calendarDraftObject);
 	}
 
 	@Override
 	public void onSalariesSelected(SalariesDocuments docs) {
-		cost.setTitle("N\u00F3minas");
-		employeeDetail.setWidget(cost);
-		cost.setCostDocuments(docs);
+		getCost().setTitle("N\u00F3minas");
+		employeeDetail.setWidget(getCost());
+		getCost().setCostDocuments(docs);
 	}
 
 	@Override
 	public void onDocumentsSelected(ISpinnable<IDocument> docs) {
-		employeeDetail.setWidget(documents);
-		documents.setDocuments(docs);
+		employeeDetail.setWidget(getDocuments());
+		getDocuments().setDocuments(docs);
 	}
 
 	@Override
 	public void onSalaryDraftSelected(SalaryDraftObject salaryDraftObject) {
-		employeeDetail.setWidget(salaryDraft);
-		salaryDraft.setSalaryDraftObject(salaryDraftObject);
+		employeeDetail.setWidget(getSalaryDraft());
+		getSalaryDraft().setSalaryDraftObject(salaryDraftObject);
 	}
 
 	@Override
 	public void onSalaryPreviewSelected(
 			SalaryPreviewDocument salaryPreviewDocument) {
-		employeeDetail.setWidget(salaryPreview);
-		salaryPreview.setSalaryPreviewDocument(salaryPreviewDocument);
+		employeeDetail.setWidget(getSalaryPreview());
+		getSalaryPreview().setSalaryPreviewDocument(salaryPreviewDocument);
 	}
 
 	@Override
 	public void onWorkplaceContextMenu(Workplace workplace,
 			ContextMenuEvent event) {
 		NativeEvent nativeEvent = event.getNativeEvent();
-		workplaceContextMenu.setPopupPosition(nativeEvent.getClientX(),
+		getWorkplaceContextMenu().setPopupPosition(nativeEvent.getClientX(),
 				nativeEvent.getClientY());
-		workplaceContextMenu.setWorkplace(workplace);
-		workplaceContextMenu.show();
+		getWorkplaceContextMenu().setWorkplace(workplace);
+		getWorkplaceContextMenu().show();
 	}
 
 	@Override
 	public void onEnterpriseContextMenu(Enterprise enterprise,
 			ContextMenuEvent event) {
 		NativeEvent nativeEvent = event.getNativeEvent();
-		enterpriseContextMenu.setPopupPosition(nativeEvent.getClientX(),
+		getEnterpriseContextMenu().setPopupPosition(nativeEvent.getClientX(),
 				nativeEvent.getClientY());
-		enterpriseContextMenu.setEnterprise(enterprise);
-		enterpriseContextMenu.show();
+		getEnterpriseContextMenu().setEnterprise(enterprise);
+		getEnterpriseContextMenu().show();
 
 	}
 
 	@Override
 	public void onEmployeeContextMenu(Employee employee, ContextMenuEvent event) {
 		NativeEvent nativeEvent = event.getNativeEvent();
-		employeeContextMenu.setPopupPosition(nativeEvent.getClientX(),
+		getEmployeeContextMenu().setPopupPosition(nativeEvent.getClientX(),
 				nativeEvent.getClientY());
-		employeeContextMenu.setEmployee(employee);
-		employeeContextMenu.show();
+		getEmployeeContextMenu().setEmployee(employee);
+		getEmployeeContextMenu().show();
 	}
 
 	@Override
 	public void onCategoryDraftSelected(CategoryDraftObject categoryDraftObject) {
-		employeeDetail.setWidget(categoryDraft);
-		categoryDraft.setCategoryDraftObject(categoryDraftObject);
+		employeeDetail.setWidget(getCategoryDraft());
+		getCategoryDraft().setCategoryDraftObject(categoryDraftObject);
 
 	}
 
 	@Override
 	public void onAgreementDraftSelected(
 			AgreementDraftObject agreementDraftObject) {
-		employeeDetail.setWidget(agreementDraft);
-		agreementDraft.setAgreementDraftObject(agreementDraftObject);
+		employeeDetail.setWidget(getAgreementDraft());
+		getAgreementDraft().setAgreementDraftObject(agreementDraftObject);
 	}
 
 	@Override
 	public void onEventsDraftSelected(EventsDraftObject eventsDraftObject) {
-		employeeDetail.setWidget(eventsDraft);
-		eventsDraft.setEventsDraftObject(eventsDraftObject);
+		employeeDetail.setWidget(getEventsDraft());
+		getEventsDraft().setEventsDraftObject(eventsDraftObject);
 	}
 
 	@Override
 	public void onEmployeeCopy(Employee employee) {
-		singlenton.employeeContextMenu.setCopyEmployee(employee);		
+		singlenton.getEmployeeContextMenu().setCopyEmployee(employee);		
 		storage.setItem(EMPLOYEE, employee2Json(employee));
 		pasteItem.setVisible(true);
 	}
@@ -1177,7 +1152,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	@Override
 	public void onEmployeePaste(Workplace workplace) {
 		
-		singlenton.workplaceContextMenu.pasteContract();
+		singlenton.getWorkplaceContextMenu().pasteContract();
 		
 	}
 
@@ -1189,27 +1164,27 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	@Override
 	public void onSuprPress(Employee employee) {
-		employeeContextMenu.deleteContract();
+		getEmployeeContextMenu().deleteContract();
 	}
 
 	// ---------------------------------------------- MetaData.Listener methods
 
 	@Override
 	public void onBonusConceptSelected(Bonus bonus) {
-		bonusEditor.setBonus(bonus);
-		employeeDetail.setWidget(bonusEditor);
+		getBonusEditor().setBonus(bonus);
+		employeeDetail.setWidget(getBonusEditor());
 	}
 
 	@Override
 	public void onPaymentConceptSelected(Payment payment) {
-		paymentEditor.setPayment(payment);
-		employeeDetail.setWidget(paymentEditor);
+		getPaymentEditor().setPayment(payment);
+		employeeDetail.setWidget(getPaymentEditor());
 	}
 
 	@Override
 	public void onDeductionConceptSelected(Deduction deduction) {
-		deductionEditor.setDeduction(deduction);
-		employeeDetail.setWidget(deductionEditor);
+		getDeductionEditor().setDeduction(deduction);
+		employeeDetail.setWidget(getDeductionEditor());
 	}
 
 	// ------------------------------------------------------- UiHandler methods
@@ -1242,6 +1217,135 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		EmployeeTree.this.footTabPanel.add(EmployeeTree.this.resultsPanel, tab);
 		EmployeeTree.this.splitLayoutPanel.setWidgetSize(
 				EmployeeTree.this.footPanel, Window.getClientHeight() / 4);
+	}
+	
+	private ITEditor getIt() {
+		if ( it == null )
+			it = new ITEditor();
+		return it;
+	}
+	
+	private Cost getCost() {
+		if ( cost == null )
+			(cost = new Cost()).addListener(this);
+			
+		return cost;
+	}
+	
+	private Irpf getIrpf() {
+		if ( irpf == null )
+			irpf = new Irpf();
+		return irpf;
+	}
+	
+	private Statistics getStats() {
+		if ( stats == null )
+			stats = new Statistics();
+		return stats;
+	}
+
+	private Reports getReports() {
+		if ( reports == null )
+			reports = new Reports();
+		return reports;
+	}
+	
+	public Salary getSalary() {
+		if ( salary == null )
+			(salary = new Salary()).addListener(this);
+		return salary;
+	}
+		
+	private Documents getDocuments() {
+		if ( documents == null )
+			documents = new Documents();
+		return documents;
+	}
+	
+	private BonusEditor getBonusEditor() {
+		if ( bonusEditor == null )
+			bonusEditor = new BonusEditor();
+		return bonusEditor;
+	}
+	
+	private PaymentEditor getPaymentEditor() {
+		if ( paymentEditor == null )
+			paymentEditor = new PaymentEditor();
+		return paymentEditor;
+	}
+	
+	private DeductionEditor getDeductionEditor() {
+		if ( deductionEditor == null )
+			deductionEditor = new DeductionEditor();
+		return deductionEditor;
+	}
+	
+	private SalaryPreview getSalaryPreview() {
+		if ( salaryPreview == null )
+			salaryPreview = new SalaryPreview();
+		return salaryPreview;
+	}
+	
+	public SalaryDraft getSalaryDraft() {
+		if ( salaryDraft == null )
+			salaryDraft = new SalaryDraft();
+		return salaryDraft;
+	}
+	
+	private AgreementDraft getAgreementDraft() {
+		if ( agreementDraft == null )
+			agreementDraft = new AgreementDraft();
+		return agreementDraft;
+	}
+	
+	private EventsDraft getEventsDraft() {
+		if ( eventsDraft == null )
+			eventsDraft = new EventsDraft();
+		return eventsDraft;
+	}
+	
+	private CategoryDraft getCategoryDraft() {
+		if ( categoryDraft == null )
+			categoryDraft = new CategoryDraft();
+		return categoryDraft;
+	}
+	
+	private CalendarDraft getCalendarDraft() {
+		if ( calendarDraft == null )
+			calendarDraft = new CalendarDraft();
+		return calendarDraft;
+	}
+	
+	private EmployeeContextMenu getEmployeeContextMenu() {
+		if ( employeeContextMenu == null ) {
+			employeeContextMenu = new EmployeeContextMenu();
+			Employee employee = getClipboardEmployee();
+			if ( employee != null ) {
+				employeeContextMenu.setCopyEmployee(employee);
+				this.pasteItem.setVisible(true);
+			}
+		}
+		return employeeContextMenu;
+	}
+	
+	private EnterpriseContextMenu getEnterpriseContextMenu() {
+		if ( enterpriseContextMenu == null )
+			enterpriseContextMenu = new EnterpriseContextMenu();
+		return enterpriseContextMenu;
+	}
+	
+	private WorkplaceContextMenu getWorkplaceContextMenu() {
+		if ( workplaceContextMenu == null )
+			workplaceContextMenu = new WorkplaceContextMenu();
+		return workplaceContextMenu;
+	}
+	
+	private Employee getClipboardEmployee(){
+		if(storage.getItem(EMPLOYEE) != null) {			
+			return JSON2Employee(storage.getItem(EMPLOYEE).toString());
+		}
+		return null;
+		
 	}
 
 	// --------------------------------------------------------- Private methods
@@ -1437,18 +1541,18 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 
 	private static void enterpriseCalc() {
-		singlenton.enterpriseContextMenu.setEnterprise(singlenton.enterprise);
-		singlenton.enterpriseContextMenu.calcCmd.execute();
+		singlenton.getEnterpriseContextMenu().setEnterprise(singlenton.enterprise);
+		singlenton.getEnterpriseContextMenu().calcCmd.execute();
 	}
 
 	private static void workplaceCalc() {
-		singlenton.workplaceContextMenu.setWorkplace(singlenton.workplace);
-		singlenton.workplaceContextMenu.calcCmd.execute();
+		singlenton.getWorkplaceContextMenu().setWorkplace(singlenton.workplace);
+		singlenton.getWorkplaceContextMenu().calcCmd.execute();
 	}
 
 	private static void employeeCalc() {
-		singlenton.employeeContextMenu.setEmployee(singlenton.employee);
-		singlenton.employeeContextMenu.calcCmd.execute();
+		singlenton.getEmployeeContextMenu().setEmployee(singlenton.employee);
+		singlenton.getEmployeeContextMenu().calcCmd.execute();
 	}
 
 	private static native void export2JS() /*-{
@@ -1559,6 +1663,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private boolean personExistInDomain(String document) {
 		return singlenton.avaiableEmployees.containsKey(document);
 	}
-
+	
+	private static void logEvent(String type){
+		StatsEventLogger.logEvent("aon", "EmployeeTree", type);
+	}
 	
 }

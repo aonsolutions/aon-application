@@ -2,8 +2,6 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.payroll.client'>
 
 
-	<!-- GIFs needed for ie6 work arounds. Can't use <ui:image>, it makes PNGs -->
-	<ui:data field='configgroupIe6Data' src='configgroup_ie6.gif' />
 
 	<ui:style>
 	.button-align {
