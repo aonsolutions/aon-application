@@ -101,11 +101,7 @@ public class JooqSalaryBuilder implements ISalaryBuilder<ISalary> {
 	@Override
 	public void createNewSalary() {
 
-		if (variables.size() > 0) {
-			addVariables(variables);
-			variables.clear();
-			addVariables(variables);
-		}
+		variables.clear();
 
 		InsertSetStep<SalaryRecord> insertSalary = insertMoreSalary == null ? dslContext
 				.insertInto(SALARY) : insertMoreSalary.newRecord();
@@ -474,7 +470,6 @@ public class JooqSalaryBuilder implements ISalaryBuilder<ISalary> {
 	}
 
 	public int execute() {
-		addVariables(variables);
 		int salaries = 0;
 		if (insertMoreSalary != null)
 			salaries = insertMoreSalary.execute();
@@ -532,16 +527,10 @@ public class JooqSalaryBuilder implements ISalaryBuilder<ISalary> {
 
 	private void putContext(Map<String, ITimedVariable<?>> ctx) {
 		for (Map.Entry<String, ITimedVariable<?>> entry : ctx.entrySet())
-			if (filter(entry)) {
-				variables.put(entry.getKey(), entry.getValue());
-			}
+			if (filter(entry))
+				addVariable(entry.getKey(), entry.getValue());
 	}
 
-	private void addVariables(Variables vars) {
-		for (String name : vars.varsSet())
-			for (ITimedVariable<?> var : vars.getValues(name))
-				addVariable(name, var);
-	}
 
 	private void addVariable(String name, ITimedVariable<?> variable) {
 		Period period = variable.getPeriod();
@@ -595,6 +584,12 @@ public class JooqSalaryBuilder implements ISalaryBuilder<ISalary> {
 
 		if (isAlreadyAtSalary(name))
 			return false;
+		
+		if ( variables.get(name, var.getPeriod()) != null )
+			return false;
+		
+		variables.put(name, var);
+		
 		return true;
 	}
 
