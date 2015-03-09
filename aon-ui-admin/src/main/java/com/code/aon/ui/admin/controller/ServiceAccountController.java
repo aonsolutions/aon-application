@@ -156,7 +156,7 @@ public class ServiceAccountController extends BasicController {
 	}
 	
 	public Vector<ServiceAccount> getAccounts() throws SQLException {
-		if (vector == null) {
+	
 			vector = new Vector<ServiceAccount>();
 
 			String domain = AonUtil.getDomainName();
@@ -214,9 +214,6 @@ public class ServiceAccountController extends BasicController {
 				if (connection != null)
 					connection.close();
 			}
-		}
-		return vector;
-
 	}
 
 	public Integer getDomainId(String dominio) throws SQLException {
@@ -258,18 +255,27 @@ public class ServiceAccountController extends BasicController {
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
 
-			byte[] aux = null;
-
-			dslContext.update(DOMAIN_GSERVICEACCOUNT)
+			
+			if(getData() != null)
+				dslContext.update(DOMAIN_GSERVICEACCOUNT)
 					.set(DOMAIN_GSERVICEACCOUNT.DOMAIN, domain_id)
 					.set(DOMAIN_GSERVICEACCOUNT.EMAIL_ADDRESS, getEmail_address())
 					.set(DOMAIN_GSERVICEACCOUNT.PUBLIC_KEY, getPublic_key())
-					.set(DOMAIN_GSERVICEACCOUNT.PRIVATE_KEY, aux)
+					.set(DOMAIN_GSERVICEACCOUNT.PRIVATE_KEY, getData())
 					.set(DOMAIN_GSERVICEACCOUNT.LIMIT, (double) Integer.parseInt(getLimit()))
 					.set(DOMAIN_GSERVICEACCOUNT.GOOGLE_ACCOUNT, getGoogle_account())
 					.where(DOMAIN_GSERVICEACCOUNT.DOMAIN.eq(domain_id))
 					.execute();
-
+			else{
+				dslContext.update(DOMAIN_GSERVICEACCOUNT)
+					.set(DOMAIN_GSERVICEACCOUNT.DOMAIN, domain_id)
+					.set(DOMAIN_GSERVICEACCOUNT.EMAIL_ADDRESS, getEmail_address())
+					.set(DOMAIN_GSERVICEACCOUNT.PUBLIC_KEY, getPublic_key())
+					.set(DOMAIN_GSERVICEACCOUNT.LIMIT, (double) Integer.parseInt(getLimit()))
+					.set(DOMAIN_GSERVICEACCOUNT.GOOGLE_ACCOUNT, getGoogle_account())
+					.where(DOMAIN_GSERVICEACCOUNT.DOMAIN.eq(domain_id))
+					.execute();
+			}
 		} finally {
 			if (connection != null)
 				connection.close();
