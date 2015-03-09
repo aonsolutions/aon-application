@@ -29,103 +29,163 @@ import com.google.api.services.calendar.model.Events;
 
 public class GoogleCalendarSynchronizer extends ControllerAdapter {
 	
+	public class UpdateThread extends Thread{
+		
+		private final ControllerEvent event;
+		private final String domain;
+		
+		public UpdateThread(ControllerEvent event, String domain) {
+			this.event = event;
+			this.domain = domain;
+		}
+		
+		@Override
+		public void run() {
+			try {
+				CommercialTracking tracking = getCommercialTracking(event);
+				Domain company = DBConsults.getDomain(domain,tracking.getDomain());
+				DomainGserviceaccount g = DBConsults.getServiceAccount(domain, company.getId());
+				if (g.getClientId() != null){
+					CalendarUtils.serviceInitialize(g);
+					
+					CalendarList calendars = CalendarUtils.Quicksort.calendarsSort(CalendarUtils.getCalendars());
+					int i=CalendarUtils.searchCalendars(calendars, company.getName(), calendars.getItems().size() );
+					Events events=CalendarUtils.Quicksort.eventsSort(CalendarUtils.getEvents(calendars.getItems().get(i).getId()));
+					int j=CalendarUtils.searchEvents(events, tracking.getId(), events.getItems().size());
+					CalendarUtils.modifyEvent(events.getItems().get(j).getId(),DatabaseSync.getCommercialTrackingOne(tracking.getId(), domain), calendars.getItems().get(i).getId(),domain);
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (AonConnectionException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (GeneralSecurityException e) {
+				e.printStackTrace();
+			}
+		}
+
+		public ControllerEvent getEvent() {
+			return event;
+		}
+
+
+	}
+	
+	public class AddThread extends Thread{
+		
+		private final ControllerEvent event;
+		private final String domain;
+		
+		public AddThread(ControllerEvent event, String domain) {
+			this.event = event;
+			this.domain = domain;
+		}
+		
+		@Override
+		public void run() {
+			try {
+				
+				CommercialTracking tracking = getCommercialTracking(event);
+				Domain company = DBConsults.getDomain(domain,tracking.getDomain());
+				DomainGserviceaccount g = DBConsults.getServiceAccount(domain, company.getId());
+				if (g.getClientId() != null){
+					CalendarUtils.serviceInitialize(g);
+
+					CalendarList calendars = CalendarUtils.Quicksort.calendarsSort(CalendarUtils.getCalendars());
+					int i=CalendarUtils.searchCalendars(calendars, company.getName(), calendars.getItems().size() );
+					if(i==-1){
+						Calendar calendar =CalendarUtils.newCalendar(company);
+						CalendarUtils.addEvent(calendar.getId(), CalendarUtils.newEvent(DatabaseSync.getCommercialTrackingOne(tracking.getId(), domain),domain));
+
+					}
+					else{
+						CalendarUtils.addEvent(calendars.getItems().get(i).getId(), CalendarUtils.newEvent(DatabaseSync.getCommercialTrackingOne(tracking.getId(), domain),domain));
+					}
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (AonConnectionException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (GeneralSecurityException e) {
+				e.printStackTrace();
+			} catch (NamingException e) {
+				e.printStackTrace();
+			}
+		}
+
+		public ControllerEvent getEvent() {
+			return event;
+		}
+	}
+	
+	public class RemoveThread extends Thread{
+	
+		private final ControllerEvent event;
+		private final String domain;
+		private final CommercialTracking tracking;
+	
+		public RemoveThread(ControllerEvent event, String domain, CommercialTracking tracking) {
+			this.event = event;
+			this.domain = domain;
+			this.tracking = tracking;
+		}
+	
+		@Override
+		public void run() {
+			try {
+				Domain company = DBConsults.getDomain(domain,tracking.getDomain());
+				DomainGserviceaccount g = DBConsults.getServiceAccount(domain, company.getId());
+				if (g.getClientId() != null){
+					CalendarUtils.serviceInitialize(g);	
+					CalendarList calendars = CalendarUtils.Quicksort.calendarsSort(CalendarUtils.getCalendars());
+					int i=CalendarUtils.searchCalendars(calendars, company.getName(), calendars.getItems().size() );
+					Events events=CalendarUtils.Quicksort.eventsSort(CalendarUtils.getEvents(calendars.getItems().get(i).getId()));
+					int j=CalendarUtils.searchEvents(events, tracking.getId(), events.getItems().size());
+					CalendarUtils.removeEvent(calendars.getItems().get(i).getId(), events.getItems().get(j).getId());
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (GeneralSecurityException e) {
+				e.printStackTrace();
+			}	
+		}
+
+		public ControllerEvent getEvent() {
+			return event;
+		}	
+	}
+
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
 	public void afterBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
-
 		String domain= AonUtil.getDomainName();
-		
-		try {
-			CommercialTracking tracking = getCommercialTracking(event);
-			Domain company = DBConsults.getDomain(domain,tracking.getDomain());
-			DomainGserviceaccount g = DBConsults.getServiceAccount(domain, company.getId());
-			if (g.getClientId() != null){
-				CalendarUtils.serviceInitialize(g);
-				
-				CalendarList calendars = CalendarUtils.Quicksort.calendarsSort(CalendarUtils.getCalendars());
-				int i=CalendarUtils.searchCalendars(calendars, company.getName(), calendars.getItems().size() );
-				Events events=CalendarUtils.Quicksort.eventsSort(CalendarUtils.getEvents(calendars.getItems().get(i).getId()));
-				int j=CalendarUtils.searchEvents(events, tracking.getId(), events.getItems().size());
-				CalendarUtils.modifyEvent(events.getItems().get(j).getId(),DatabaseSync.getCommercialTrackingOne(tracking.getId(), domain), calendars.getItems().get(i).getId(),domain);
-			}
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (AonConnectionException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (GeneralSecurityException e) {
-			e.printStackTrace();
-		}
-		
+		UpdateThread thread = new UpdateThread(event,domain);
+		thread.start();
 	}
 	
 	@Override
 	public void afterBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
-		
-		String domain=AonUtil.getDomainName();
-		try {
-			
-			CommercialTracking tracking = getCommercialTracking(event);
-			Domain company = DBConsults.getDomain(domain,tracking.getDomain());
-			DomainGserviceaccount g = DBConsults.getServiceAccount(domain, company.getId());
-			if (g.getClientId() != null){
-				CalendarUtils.serviceInitialize(g);
-
-				CalendarList calendars = CalendarUtils.Quicksort.calendarsSort(CalendarUtils.getCalendars());
-				int i=CalendarUtils.searchCalendars(calendars, company.getName(), calendars.getItems().size() );
-				if(i==-1){
-					Calendar calendar =CalendarUtils.newCalendar(company);
-					CalendarUtils.addEvent(calendar.getId(), CalendarUtils.newEvent(DatabaseSync.getCommercialTrackingOne(tracking.getId(), domain),domain));
-
-				}
-				else{
-					CalendarUtils.addEvent(calendars.getItems().get(i).getId(), CalendarUtils.newEvent(DatabaseSync.getCommercialTrackingOne(tracking.getId(), domain),domain));
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (AonConnectionException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (GeneralSecurityException e) {
-			e.printStackTrace();
-		} catch (NamingException e) {
-			e.printStackTrace();
-		}
-		
+		String domain= AonUtil.getDomainName();
+		AddThread thread = new AddThread(event,domain);
+		thread.start();
 	}
 	
 	@Override
 	public void afterBeanRemoved(ControllerEvent event)
 			throws ControllerListenerException {
-		
-		String domain=AonUtil.getDomainName();
-		try {
-			
-			CommercialTracking tracking = getCommercialTracking(event);
-			Domain company = DBConsults.getDomain(domain,tracking.getDomain());
-			DomainGserviceaccount g = DBConsults.getServiceAccount(domain, company.getId());
-			if (g.getClientId() != null){
-				CalendarUtils.serviceInitialize(g);	
-				CalendarList calendars = CalendarUtils.Quicksort.calendarsSort(CalendarUtils.getCalendars());
-				int i=CalendarUtils.searchCalendars(calendars, company.getName(), calendars.getItems().size() );
-				Events events=CalendarUtils.Quicksort.eventsSort(CalendarUtils.getEvents(calendars.getItems().get(i).getId()));
-				int j=CalendarUtils.searchEvents(events, tracking.getId(), events.getItems().size());
-				CalendarUtils.removeEvent(calendars.getItems().get(i).getId(), events.getItems().get(j).getId());
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (GeneralSecurityException e) {
-			e.printStackTrace();
-		}
+		String domain= AonUtil.getDomainName();
+		CommercialTracking tracking = getCommercialTracking(event);
+		RemoveThread thread = new RemoveThread(event,domain,tracking);
+		thread.start();
 	}
 	
 	Integer getDomainID() {

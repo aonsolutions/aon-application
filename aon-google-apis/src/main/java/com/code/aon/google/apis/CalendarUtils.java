@@ -260,7 +260,7 @@ public class CalendarUtils {
 				.setServiceAccountScopes(
 						Collections.singletonList(CalendarScopes.CALENDAR))
 				.setServiceAccountPrivateKey(serviceAccountPrivateKey)
-				.setServiceAccountUser("gps@aonsolutions.net")
+				.setServiceAccountUser(googleAccount)
 				.build();
 		else credential = new GoogleCredential.Builder()
 				.setTransport(HTTP_TRANSPORT)
