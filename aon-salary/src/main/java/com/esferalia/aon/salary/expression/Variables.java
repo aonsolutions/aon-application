@@ -138,8 +138,12 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 			super.finalize();
 		}
 
+		public void cleanRead() {
+			read.clear();
+		}
+
 		public Map<String, ITimedVariable<?>> getRead() {
-			return read;
+			return new HashMap<String, ITimedVariable<?>>(read);
 		}
 
 
