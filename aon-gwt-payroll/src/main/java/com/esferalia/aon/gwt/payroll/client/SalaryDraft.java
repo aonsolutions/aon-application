@@ -442,7 +442,13 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		@Override
 		public TextListBox create(Variable variable) {
-			TextListBox textListBox = new TextListBox();
+			TextListBox textListBox = new TextListBox(){
+				@Override
+				public String getValue() {
+					return getValue(getSelectedIndex()) ;
+				}
+				
+			};
 
 			int lastDay = DateUtils.getLastDayOfMonth(variable.getStartDate())
 					.getDate();
