@@ -2283,7 +2283,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				irpfData.setId(rs.getInt(IRPF_DATA + "." + IrpfDataColumns.ID));
 
 				IrpfResult irpfResult = new IrpfResult();
-				irpfResult.setId(rs.getInt(IRPF_RESULT + ".get"
+				irpfResult.setId(rs.getInt(IRPF_RESULT + "."
 						+ IrpfResultColumns.ID));
 
 				outcome.setIrpfData(irpfData);
