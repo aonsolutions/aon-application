@@ -496,10 +496,19 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		private String name;
 		private String values[];
+		private String labels[];
+
+
+		public StringsListBoxFactory(String name, String  values [], String  labels []) {
+			this.name = name;
+			this.values = values;
+			this.labels = labels;
+		}
 
 		public StringsListBoxFactory(String name, String... values) {
 			this.name = name;
 			this.values = values;
+			this.labels = values;
 		}
 
 		@Override
@@ -516,8 +525,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				}
 				
 			};
-			for (String value : values)
-				textListBox.addItem(value);
+			for (int i = 0; i < values.length ; i++)
+				textListBox.addItem(labels[i], values[i]);
 			return textListBox;
 		}
 
@@ -4140,10 +4149,69 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			new EnumNameListBoxFactory<Employee.Occupation>("OCUPACION", Employee.Occupation.class), 
 			new DismissalFactory("CAUSA_INDEMNIZACION"), 
 			new StringsListBoxFactory("GRUPO_COTIZACION", new String [] {"01","02","03","04","05","06","07","08","09","10","11"}), 
+			new StringsListBoxFactory("TC2", 
+					new String [] {
+					"100","109","130","139","150","189",
+					"200","209","230","239","250","289",
+					"300","309","330","339","350","389",
+					"401","402","403","408","410","418","420","421","430","441","450","452",
+					"501","502","503","508","510","518","520","530","540","541","550","552"
+					}, 
+					new String [] {
+					"100 Indefinido, Tiempo Completo, Ordinario",
+					"109 Indefinido, Tiempo Completo, Fomento Contrataci\u00F3n Indefinida",
+					"130 Indefinido, Tiempo Completo, Personas con Discapacidad",
+					"139 Indefinido, Tiempo Completo, Personas con Discapacidad",
+					"150 Indefinido, Tiempo Completo, Fomento Contrataci\u00F3n Indefinida",
+					"189 Indefinido, Tiempo Completo",
+					
+					"200 Indefinido, Tiempo Parcial, Ordinario",
+					"209 Indefinido, Tiempo Parcial, Fomento Contrataci\u00F3n Indefinida",
+					"230 Indefinido, Tiempo Parcial, Personas con Discapacidad",
+					"239 Indefinido, Tiempo Parcial, Personas con Discapacidad",
+					"250 Indefinido, Tiempo Parcial, Fomento Contrataci\u00F3n Indefinida",
+					"289 Indefinido, Tiempo Parcial",
+					
+					"300 Indefinido, Fijo Discontinuo",
+					"309 Indefinido, Fijo Discontinuo, Fomento Contrataci\u00F3n Indefinida",
+					"330 Indefinido, Fijo Discontinuo, Personas con Discapacidad",
+					"339 Indefinido, Fijo Discontinuo, Personas con Discapacidad",
+					"350 Indefinido, Fijo Discontinuo, Fomento Contrataci\u00F3n Indefinida",
+					"389 Indefinido, Fijo Discontinuo",
+					
+					"401 Duraci\u00F3 Determinada, Tiempo Completo, Obra o Servicio Determinado",
+					"402 Duraci\u00F3 Determinada, Tiempo Completo, Eventual Circunstancias de la producci\u00F3n",
+					"403 Duraci\u00F3 Determinada, Tiempo Completo, Inserci\u00F3",
+					"408 Temporal, Tiempo Completo",
+					"410 Duraci\u00F3 Determinada, Tiempo Completo, Interinidad",
+					"418 Duraci\u00F3 Determinada, Tiempo Completo, Interinidad",
+					"420 Temporal, Tiempo Completo, Pr\u00E1cticas",
+					"421 Temporal, Tiempo Completo, Formaci\u00F3n y Aprendizaje",
+					"430 Temporal, Tiempo Completo, Personas con Discapacidad",
+					"441 Temporal, Tiempo Completo, Relevo",
+					"450 Temporal, Tiempo Completo, Fomento Contrataci\u00F3n Indefinida",
+					"452 Temporal, Tiempo Completo, Empresas de Inserci\u00F3",
+					
+					"501 Duraci\u00F3 Determinada, Tiempo Parcial, Obra o Servicio Determinado",
+					"502 Duraci\u00F3 Determinada, Tiempo Parcial, Eventual Circunstancias de la producci\u00F3n",
+					"503 Duraci\u00F3 Determinada, Tiempo Parcial, Inserci\u00F3",
+					"508 Temporal, Tiempo Parcial",
+					"510 Duraci\u00F3 Determinada, Tiempo Parcial, Interinidad",
+					"518 Duraci\u00F3 Determinada, Tiempo Parcial, Interinidad",
+					"520 Temporal, Tiempo Parcial, Pr\u00E1cticas",
+					"530 Temporal, Tiempo Parcial, Personas con Discapacidad",
+					"540 Temporal, Tiempo Parcial, Jubilado Parcial",
+					"541 Temporal, Tiempo Parcial, Relevo",
+					"550 Temporal, Tiempo Parcial, Fomento Contrataci\u00F3n Indefinida",
+					"552 Temporal, Tiempo Parcial, Empresas de Inserci\u00F3"
+					}) ,
 			new BooleanEditorFactory(),
-			new DefaultEditorFactory() };
+			new DefaultEditorFactory()
+			};
 	//@formatter:on
 
+	
+	
 	private static void enable(TextBox textBox, boolean enabled) {
 
 		if (textBox.isEnabled() == enabled)
