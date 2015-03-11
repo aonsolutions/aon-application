@@ -8,24 +8,19 @@ import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.TextTransform;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.ValueBox;
 import com.ibm.icu.impl.duration.impl.DataRecord.EPluralization;
 
 /**
  * @author rtrepiana
  * 
  */
-public class ExpressionBox extends TextBox {
+public class ExpressionValueBox extends ValueTextBox {
 
 	private SpecialExpresion specialExpresion;
 
-	public ExpressionBox() {
+	public ExpressionValueBox() {
 		super();
-		setExpression(null);
-		getElement().getStyle().setTextTransform(TextTransform.UPPERCASE);
-	}
-
-	public ExpressionBox(Element element) {
-		super(element);
 		setExpression(null);
 		getElement().getStyle().setTextTransform(TextTransform.UPPERCASE);
 	}

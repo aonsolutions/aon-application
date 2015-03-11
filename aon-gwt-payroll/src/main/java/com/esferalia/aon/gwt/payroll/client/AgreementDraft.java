@@ -1624,7 +1624,7 @@ public class AgreementDraft extends ResizeComposite implements
 	private VariableEditor dumpVariable(int row, int col, Level level,
 			Variable var) {
 
-		TextBox expressionTextBox = new TextBox();
+		TextBox expressionTextBox = new ExpressionBox();
 		expressionTextBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 		expressionTextBox.addStyleName(AON.AON_TEXT_RIGHT);
 		if (var.isImpicit())
@@ -1665,7 +1665,7 @@ public class AgreementDraft extends ResizeComposite implements
 	private VariableEditor dumpUndefVariable(int row, int col, Level level,
 			String name) {
 
-		TextBox expressionTextBox = new TextBox();
+		TextBox expressionTextBox = new ExpressionBox();
 		expressionTextBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 		// yes we assume all variables are numeric.
 		expressionTextBox.addStyleName(AON.AON_TEXT_RIGHT);
@@ -1992,7 +1992,7 @@ public class AgreementDraft extends ResizeComposite implements
 		descriptionSuggest.getElement().getStyle().setWidth(98, Unit.PCT);
 		paymentsTable.setWidget(row, 2, descriptionSuggest);
 
-		TextBox expressionBox = new TextBox();
+		TextBox expressionBox = new ExpressionBox();
 		expressionBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 		expressionBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		expressionBox.addStyleName(AON.AON_TEXT_RIGHT);

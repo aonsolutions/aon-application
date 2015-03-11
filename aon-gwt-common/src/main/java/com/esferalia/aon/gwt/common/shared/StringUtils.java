@@ -40,6 +40,10 @@ public class StringUtils {
 		return true;
 	}
 
+	public static String uppercase(String str) {
+		return str == null ? null : str.toUpperCase();
+	}
+
 	public static String capitalize(String str) {
 		return capitalize(str, null);
 	}

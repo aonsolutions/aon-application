@@ -396,7 +396,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		@Override
 		public TextBox create(Variable variable) {
-			TextBox textBox = new TextBox();
+			TextBox textBox = new ExpressionBox();
 			textBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 			return textBox;
 		}
@@ -2695,7 +2695,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		newPaymentHandler.setOracle(paymentsOracle);
 		newPaymentHandler.setDescriptionBox(descriptionBox);
 
-		TextBox amountBox = new TextBox();
+		TextBox amountBox = new ExpressionBox();
 		amountBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		amountBox.addStyleName(AON.AON_TEXT_RIGHT);
 		amountBox.setVisible(false);
@@ -2733,7 +2733,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		paymentsTable.setHTML(row, 3, "&nbsp;");
 
-		TextBox amountBox = new TextBox();
+		TextBox amountBox = new ExpressionBox();
 		amountBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		amountBox.addStyleName(AON.AON_TEXT_RIGHT);
 		amountBox.setVisible(false);
@@ -3244,7 +3244,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		Panel valuePanel = new HorizontalPanel();
 		valuePanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
 
-		TextBox variableTextBox = new TextBox();
+		TextBox variableTextBox = new ExpressionBox();
 		variableTextBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 
 		variableChangeHandler.setEditor(editor);
@@ -3827,7 +3827,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	private Widget newIrpfPercentBox(final Deduction irpf, final Double percent) {
 
-		final TextBox irpfPercentTexTBox = new TextBox();
+		final TextBox irpfPercentTexTBox = new ExpressionBox();
 
 		class IrpfPercentHandler implements FocusHandler, BlurHandler,
 				ChangeHandler {
