@@ -64,10 +64,11 @@ public class FacturaeSigner {
 	}	
 	
 	public Document sign(KeyStoreData store, Document doc) throws AonCoreException {
+		int providerPos = -1;
 		Provider provider = store.getProvider();
 		try {
 			if (provider != null) {
-				Security.addProvider(provider);
+				providerPos = Security.addProvider(provider);
 			}
 			
             FirmaXML sxml = new FirmaXML();
@@ -93,9 +94,9 @@ public class FacturaeSigner {
         } catch (Throwable t) {
             throw new AonCoreException(t);
         } finally {
-        	if (provider != null) {
+        	if ( (provider != null) && (providerPos != -1) ) {
         		Security.removeProvider(provider.getName());
-        	}
+        	}       	
         }
 	}
 	
