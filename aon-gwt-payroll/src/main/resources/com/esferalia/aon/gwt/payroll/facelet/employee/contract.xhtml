@@ -76,6 +76,20 @@
 
 					<aon:div styleClass="aon-group">
 						<aon:div styleClass="aon-group-title">
+							<aon:outputText value="#{bundle.payroll_contract_data}" />
+						</aon:div>
+						<aon:div styleClass="aon-group-body">
+							<aon:div styleClass="aon-group-body-internal">
+								<ui:include
+									src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml">
+									<ui:param name="controller" value="#{contract}" />
+								</ui:include>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+
+					<aon:div styleClass="aon-group">
+						<aon:div styleClass="aon-group-title">
 							<aon:outputText value="#{bundle.payroll_person_data}" />
 						</aon:div>
 						<aon:div styleClass="aon-group-body">
@@ -88,19 +102,6 @@
 						</aon:div>
 					</aon:div>
 
-					<aon:div styleClass="aon-group">
-						<aon:div styleClass="aon-group-title">
-							<aon:outputText value="#{bundle.payroll_contract_data}" />
-						</aon:div>
-						<aon:div styleClass="aon-group-body">
-							<aon:div styleClass="aon-group-body-internal">
-								<ui:include
-									src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml">
-									<ui:param name="controller" value="#{contract}" />
-								</ui:include>
-							</aon:div>
-						</aon:div>
-					</aon:div>
 
 
 				</aon:panelGrid>
