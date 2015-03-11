@@ -163,8 +163,7 @@ public class BasicOption implements Serializable, IOption {
 	
 	public String getXml( String prefix ) {
 		String newId = prefix + getId();
-		String newXml = StringUtils.replace(getXml(), VALUE_PATTERN, getRawDescription());
-		return StringUtils.replace(newXml, ID_PATTERN, newId);
+		return StringUtils.replace(getXml(), ID_PATTERN, newId);
 	}
 
 	public String getInitActionXml( String prefix ) {

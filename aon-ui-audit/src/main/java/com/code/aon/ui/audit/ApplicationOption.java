@@ -1,8 +1,8 @@
 package com.code.aon.ui.audit;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import static com.code.aon.ui.audit.controller.MenuParser.FISCAL_STYLE_CLASS;
+import static com.code.aon.ui.audit.controller.MenuParser.STYLE_ATTRIBUTE;
+import static com.code.aon.ui.audit.controller.MenuParser.STYLE_CLASS_ATTRIBUTE;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -17,11 +17,7 @@ import com.code.aon.ui.audit.controller.MenuParser;
 public class ApplicationOption extends BasicOption implements Comparable<ApplicationOption> {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-
-	private static final DateFormat RECENT_DATE_FORMAT = new SimpleDateFormat("dd/MM/yy - HH:mm");
-		
-	private static final String ID_ATTRIBUTE_PATTERN = "id=\"" + ID_PATTERN + "\"";
-
+	
 	/** The group. */
 	private OptionGroup group;
 		
@@ -42,20 +38,19 @@ public class ApplicationOption extends BasicOption implements Comparable<Applica
 	public void setGroup(OptionGroup group) {
 		this.group = group;
 	}
+	
+	private String getAttribute( String attribute, String value ) {
+		return attribute + "=\"" + value + "\"";
+	}
 
 	public String getMenuItemXml( String prefix ) {
-		return StringUtils.replace(getXml(prefix), MenuParser.AON_COMMAND_LINK, MenuParser.AON_MENU_ITEM);
+		String xml = StringUtils.replace(getXml(prefix), MenuParser.AON_COMMAND_LINK, MenuParser.AON_MENU_ITEM);
+		xml = xml.replaceAll( getAttribute(STYLE_ATTRIBUTE, "([^\"])+"), "");
+		xml = xml.replace(getAttribute(STYLE_CLASS_ATTRIBUTE, FISCAL_STYLE_CLASS), getAttribute(STYLE_ATTRIBUTE, "margin-right: 1em;") );
+		xml = xml.replaceAll( getAttribute(STYLE_CLASS_ATTRIBUTE, "([^\"])+"), "");
+		return xml;
 	}
 	
-	public String getRecentXml( Date date ) {
-		String newValue = getRawDescription();
-		if ( date != null ) {
-			newValue = RECENT_DATE_FORMAT.format(date) + "&#160;&#160;&#160;" + newValue;
-		}
-		String xmlWithoutId = StringUtils.remove(getXml(), ID_ATTRIBUTE_PATTERN);
-		return StringUtils.replace(xmlWithoutId, VALUE_PATTERN, newValue);
-	}
-
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
@@ -76,5 +71,10 @@ public class ApplicationOption extends BasicOption implements Comparable<Applica
 	public int compareTo(ApplicationOption o) {
 		return getDescription().compareToIgnoreCase( o.getDescription() );
 	}
+	
+	public boolean isAddParentDiv() {
+		return ! StringUtils.contains(getXml(), FISCAL_STYLE_CLASS);
+	}
+	
 	
 }
