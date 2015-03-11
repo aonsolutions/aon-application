@@ -1427,8 +1427,16 @@ public class DashboardController implements Serializable {
 		String domain = AonUtil.getDomainName();
 		Domain d = DBConsults.getDomain(domain);
 		DomainGserviceaccount dg = DBConsults.getServiceAccount(domain, d.getId());
-		occupied = dg.getSize();
-		free = (long) (dg.getLimit() - occupied);
+		if(dg != null){
+			if(dg.getSize()!= null) occupied = dg.getSize();
+			else occupied = 0.0;
+			if(dg.getLimit() != null) free = (long) (dg.getLimit() - occupied);
+			else free= 10000;
+		}
+		else {
+			occupied = 0.0;
+			free= 10000;
+		}
 		if (free <0) free=0;
 	}
 	
