@@ -688,10 +688,10 @@ public class FANWriter implements Serializable {
 					} else if(bonusType==BonusType.LAW_19_94){
 						fanFactory.createEDLCd12Segment(bonus.getAmount(), dat);
 					} else if(bonusType==BonusType.DISTANCE_FORMATION){
-						Integer days = obtainFormationDays(bonus.getSalary().getContract());
+						Integer days = obtainFormationDays(bonus, BonusType.DISTANCE_FORMATION);
 						fanFactory.createEDLCd11Segment(days, bonus.getAmount(), dat);
 					} else if(bonusType==BonusType.CLASSROOM_FORMATION){
-						Integer days = obtainFormationDays(bonus.getSalary().getContract());
+						Integer days = obtainFormationDays(bonus, BonusType.CLASSROOM_FORMATION);
 						fanFactory.createEDLCd10Segment(days, bonus.getAmount(), dat);
 					} else if(bonusType==BonusType.ERE){
 						fanFactory.createEDLCd28Segment(bonus.getAmount(), dat);
@@ -1080,7 +1080,8 @@ public class FANWriter implements Serializable {
 			if(itDays!=null && itDays>0){
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(getStartDate());
-				return cal.getActualMaximum(Calendar.DAY_OF_MONTH)-itDays; 
+				int days = cal.getActualMaximum(Calendar.DAY_OF_MONTH)-itDays; 
+				return (days==0)?null:days;
 			}
 			if( getStartDate().before(contract.getStartDate()) 
 					|| (contract.getEndDate()!=null && getEndDate().after(contract.getEndDate())) ){
@@ -1110,7 +1111,8 @@ public class FANWriter implements Serializable {
 			}
 			
 			if(itDays!=null && itDays>0){
-				return Double.valueOf(CommonUtil.round((totalDays - itDays) * dayHours, 0)).intValue();
+				int days = Double.valueOf(CommonUtil.round((totalDays - itDays) * dayHours, 0)).intValue();
+				return (days==0)?null:days;
 			}
 			
 			return (totalDays * dayHours)<1?1:Double.valueOf(CommonUtil.round(totalDays * dayHours, 0)).intValue();
@@ -1139,11 +1141,21 @@ public class FANWriter implements Serializable {
 	
 	/**
 	 * numero de horas destinadas a formacion para las bonificaciones por formacion
+	 * 
+	 * Para la formacion teorica presencial - 8e hora/trabajador
+	 * Para la formacion teorica a distancia - 5e hora/trabajador
+	 *  
+	 * @param classroomFormation 
 	 * @return
 	 */
-	private Integer obtainFormationDays(Contract contract) {
-		// TODO how obtain formation hours count
-		return getContractDaysOrHours(contract);
+	private Integer obtainFormationDays(SalaryBonus bonus, BonusType bonusType) {
+		Integer days = 0;
+		if(bonusType==BonusType.CLASSROOM_FORMATION){
+			days = (int) Math.ceil(bonus.getAmount()/8);
+		} else if(bonusType==BonusType.DISTANCE_FORMATION){
+			days = (int) Math.ceil(bonus.getAmount()/5);
+		}
+		return days;
 	}
 	
 	/**
