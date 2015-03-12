@@ -51,9 +51,9 @@ public class GmailServlet extends HttpServlet {
     				.getRequestDispatcher("/login/baja.jsp");
     			req.setAttribute("email", req.getParameter("email"));
     			req.setAttribute("type", req.getParameter("type"));
-    			req.setAttribute("logo","http://"+domain+"/aon-aio/aonDocuments/company.logo");
-    			req.setAttribute("css", "http://"+domain + "/aon-aio/aonResource/com/code/aon/ui/resources/facelet/login/css/login-aon.css");
-    			req.setAttribute("favicon","http://"+domain + "/aon-aio/aonResource/8.18-SNAPSHOT/images/favicon.ico");
+    			req.setAttribute("logo","http://"+domain+"/aonDocuments/company.logo");
+    			req.setAttribute("css", "http://"+domain + "/aonResource/com/code/aon/ui/resources/facelet/login/css/login-aon.css");
+    			req.setAttribute("favicon","http://"+domain + "/aonResource/8.18-SNAPSHOT/images/favicon.ico");
     			dispatcher.forward(req, resp);
         }
         else{
