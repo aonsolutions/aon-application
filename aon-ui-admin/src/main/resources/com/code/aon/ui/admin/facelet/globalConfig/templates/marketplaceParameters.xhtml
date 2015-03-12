@@ -41,79 +41,54 @@
 					</f:facet>
 					<aon:div style="white-space: nowrap;"
 						rendered="#{salesAppParam.activeAmazonMarketPlace}" >
-						<aon:panelGrid columns="2" styleClass="aon-width-all">
+						<aon:panelGrid columns="2">
 							<aon:outputText value="#{bundle.sales_amazon_product_prefix}" />
 							<aon:inputText value="#{salesAppParam.amazonSalesProductName['prefix']}" />
 
 							<aon:outputText value="#{bundle.sales_amazon_product_suffix}" />
 							<aon:inputText value="#{salesAppParam.amazonSalesProductName['suffix']}" />
-							
-							<aon:outputText value="#{bundle.sales_amazon_sales_channel} - DE" />
-							<aon:div>
-								<aon:outputText value="Amazon: " styleClass="aon-italic" />
-								<aon:inputText value="#{salesAppParam.salesChannelMap['DE']}" />
-								<aon:outputText value="Aon: " styleClass="aon-italic aon-margin-left" />
-								<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
-									<ui:param name="lookupTo" value="#{salesAppParam.sellerMap['DE']}" />
-									<ui:param name="skipNewButton" value="#{true}" />
-									<ui:param name="skipLabel" value="#{true}" />
-									<ui:param name="lookupSuffix" value="DE" />
-								</ui:include>
-							</aon:div>
-
-							<aon:outputText value="#{bundle.sales_amazon_sales_channel} - ES" />
-							<aon:div>
-								<aon:outputText value="Amazon: " styleClass="aon-italic" />
-								<aon:inputText value="#{salesAppParam.salesChannelMap['ES']}" />
-								<aon:outputText value="Aon: " styleClass="aon-italic aon-margin-left" />
-								<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
-									<ui:param name="lookupTo" value="#{salesAppParam.sellerMap['ES']}" />
-									<ui:param name="skipNewButton" value="#{true}" />
-									<ui:param name="skipLabel" value="#{true}" />
-									<ui:param name="lookupSuffix" value="ES" />
-								</ui:include>
-							</aon:div>
-
-							<aon:outputText value="#{bundle.sales_amazon_sales_channel} - FR" />
-							<aon:div>
-								<aon:outputText value="Amazon: " styleClass="aon-italic" />
-								<aon:inputText value="#{salesAppParam.salesChannelMap['FR']}" />
-								<aon:outputText value="Aon: " styleClass="aon-italic aon-margin-left" />
-								<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
-									<ui:param name="lookupTo" value="#{salesAppParam.sellerMap['FR']}" />
-									<ui:param name="skipNewButton" value="#{true}" />
-									<ui:param name="skipLabel" value="#{true}" />
-									<ui:param name="lookupSuffix" value="FR" />
-								</ui:include>
-							</aon:div>
-
-							<aon:outputText value="#{bundle.sales_amazon_sales_channel} - IT" />
-							<aon:div>
-								<aon:outputText value="Amazon: " styleClass="aon-italic" />
-								<aon:inputText value="#{salesAppParam.salesChannelMap['IT']}" />
-								<aon:outputText value="Aon: " styleClass="aon-italic aon-margin-left" />
-								<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
-									<ui:param name="lookupTo" value="#{salesAppParam.sellerMap['IT']}" />
-									<ui:param name="skipNewButton" value="#{true}" />
-									<ui:param name="skipLabel" value="#{true}" />
-									<ui:param name="lookupSuffix" value="IT" />
-								</ui:include>
-							</aon:div>
-
-							<aon:outputText value="#{bundle.sales_amazon_sales_channel} - UK" />
-							<aon:div>
-								<aon:outputText value="Amazon: " styleClass="aon-italic" />
-								<aon:inputText value="#{salesAppParam.salesChannelMap['UK']}" />
-								<aon:outputText value="Aon: " styleClass="aon-italic aon-margin-left" />
-								<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
-									<ui:param name="lookupTo" value="#{salesAppParam.sellerMap['UK']}" />
-									<ui:param name="skipNewButton" value="#{true}" />
-									<ui:param name="skipLabel" value="#{true}" />
-									<ui:param name="lookupSuffix" value="UK" />
-								</ui:include>
-							</aon:div>
 						</aon:panelGrid>
 					</aon:div>
+					
+					<aon:div style="white-space: nowrap;"
+						rendered="#{salesAppParam.activeAmazonMarketPlace}" >
+						
+						<aon:panel>
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.sales_amazon_sales_channel}" />
+							</f:facet>
+							<aon:div id="salesChannelDiv">
+							
+								<aon:panelGrid columns="1" columnClasses="aon-panelGrid-even">
+									<c:forEach items="#{salesAppParam.amazonSalesChannels}" var="channelTo" varStatus="status" begin="0" step="1">
+										<aon:div>
+											<aon:outputText value="Amazon: " styleClass="aon-italic" />
+											<aon:inputText size="30" maxlenght="55" value="#{channelTo.name}" />
+											<aon:outputText value="Aon: " styleClass="aon-italic aon-margin-left" />
+											<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
+												<ui:param name="lookupTo" value="#{channelTo.seller}" />
+												<ui:param name="skipNewButton" value="#{true}" />
+												<ui:param name="skipGotoButton" value="#{true}" />
+												<ui:param name="skipLabel" value="#{true}" />
+												<ui:param name="lookupSuffix" value="#{status.index}" />
+											</ui:include>
+											<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
+												actionListener="#{salesAppParam.onRemoveAmazonSalesChannel}" reRender="salesChannelDiv"
+												rendered="#{!status.first or salesAppParam.amazonSalesChannelsSize &gt; 1}">					
+												<f:param name="index" value="#{status.index}" />
+											</aon:commandButton>
+											<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
+												actionListener="#{salesAppParam.onAddAmazonSalesChannel}" reRender="salesChannelDiv"
+												rendered="#{(status.index+1) == salesAppParam.amazonSalesChannelsSize}"/>					
+										</aon:div>
+									</c:forEach>
+								</aon:panelGrid>
+							
+							</aon:div>
+						</aon:panel>
+						
+					</aon:div>
+					
 				</aon:panel>
 			</aon:div>
 		</aon:div>

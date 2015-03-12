@@ -26,6 +26,18 @@ public class AppParamUtil {
 	private static final String DATE_PATTERN = "dd/MM/yyyy"; 
 
 	public static ApplicationParameter getParameter( AppParam ap, Integer domainId ) {
+		return getParameter(ap.getValue(), domainId);
+	}
+	
+	public static ApplicationParameter getParameter( AppParam ap ) {
+		return getParameter(ap, null);
+	}
+	
+	public static ApplicationParameter getParameter( String paramName ) {
+		return getParameter(paramName, null);
+	}
+	
+	public static ApplicationParameter getParameter( String paramName, Integer domainId) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ApplicationParameter.class);
 			Criteria criteria = new Criteria();
@@ -33,7 +45,7 @@ public class AppParamUtil {
 				criteria.addEqualExpression(bean.getFieldName(APPLICATION_PARAMETER_DOMAIN), domainId);
 				criteria.setSkipDomainFilter(true);
 			}
-			criteria.addEqualExpression(bean.getFieldName(APPLICATION_PARAMETER_NAME), ap.getValue());
+			criteria.addEqualExpression(bean.getFieldName(APPLICATION_PARAMETER_NAME), paramName);
 			List<ITransferObject> list = bean.getList(criteria, 0, 1);
 			if (! list.isEmpty() ) {
 				return (ApplicationParameter) list.get(0);
@@ -42,10 +54,6 @@ public class AppParamUtil {
 			LOGGER.error( e.getMessage(), e );
 		}
 		return null;
-	}
-	
-	public static ApplicationParameter getParameter( AppParam ap ) {
-		return getParameter(ap, null);
 	}
 	
 	public static ApplicationParameter insertParameter( ApplicationParameter ap ) {

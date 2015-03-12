@@ -68,7 +68,7 @@
 				</f:facet>
 			</aon:column>
 		</aon:if>
-		<aon:if test="#{showSalesData}">
+		<aon:if test="#{showSalesData!=null and showSalesData}">
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 				<f:facet name="header">
 					<aon:outputText	value="#{bundle.aon_customer}" />
@@ -83,7 +83,7 @@
 				</f:facet>
 			</aon:column>
 		</aon:if>
-		<aon:if test="#{showObservation}">
+		<aon:if test="#{showObservation!=null and showObservation}">
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 				<f:facet name="header">
 					<aon:outputText	value="#{bundle.aon_remark}" />
