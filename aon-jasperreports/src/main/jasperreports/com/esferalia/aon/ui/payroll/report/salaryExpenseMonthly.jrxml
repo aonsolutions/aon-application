@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salaryExpense" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="35" bottomMargin="42" isFloatColumnFooter="true" uuid="8d22d66a-4dd1-4590-ad84-0f4617639ba5">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="558"/>
+	<property name="ireport.x" value="605"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.data.JRMapArrayDataSource"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
@@ -79,10 +79,10 @@
 		<![CDATA[FROM Salary]]>
 	</queryString>
 	<field name="salary" class="com.esferalia.aon.payroll.Salary"/>
-	<variable name="subtotalIrpf" class="java.lang.Double" resetType="Group" resetGroup="workplace" calculation="Sum">
+	<variable name="subtotalIrpf" class="java.lang.Double" resetType="Group" resetGroup="person" calculation="Sum">
 		<variableExpression><![CDATA[$F{salary}.getDeductions().getIrpf().getAmount()]]></variableExpression>
 	</variable>
-	<variable name="subtotalOther" class="java.lang.Double" resetType="Group" resetGroup="workplace" calculation="Sum">
+	<variable name="subtotalOther" class="java.lang.Double" resetType="Group" resetGroup="person" calculation="Sum">
 		<variableExpression><![CDATA[($F{salary}.getDeductions().getAdvancePayment()==null?
 new Double(0.0):$F{salary}.getDeductions().getAdvancePayment().getAmount())
 +($F{salary}.getDeductions().getInKind()==null?
@@ -91,22 +91,22 @@ new Double(0.0):$F{salary}.getDeductions().getInKind().getAmount())
 new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableExpression>
 		<initialValueExpression><![CDATA[]]></initialValueExpression>
 	</variable>
-	<variable name="subtotalPayment" class="java.lang.Double" resetType="Group" resetGroup="workplace" calculation="Sum">
+	<variable name="subtotalPayment" class="java.lang.Double" resetType="Group" resetGroup="person" calculation="Sum">
 		<variableExpression><![CDATA[$F{salary}.getTotalPayment()]]></variableExpression>
 	</variable>
-	<variable name="subtotalSSEmployee" class="java.lang.Double" resetType="Group" resetGroup="workplace" calculation="Sum">
+	<variable name="subtotalSSEmployee" class="java.lang.Double" resetType="Group" resetGroup="person" calculation="Sum">
 		<variableExpression><![CDATA[$F{salary}.getDeductions().getSocialSecurityContributions()]]></variableExpression>
 	</variable>
-	<variable name="subtotalLiquid" class="java.lang.Double" resetType="Group" resetGroup="workplace" calculation="Sum">
+	<variable name="subtotalLiquid" class="java.lang.Double" resetType="Group" resetGroup="person" calculation="Sum">
 		<variableExpression><![CDATA[$F{salary}.getTotalLiquid()]]></variableExpression>
 	</variable>
-	<variable name="subtotalSSEnterprise" class="java.lang.Double" resetType="Group" resetGroup="workplace" calculation="Sum">
+	<variable name="subtotalSSEnterprise" class="java.lang.Double" resetType="Group" resetGroup="person" calculation="Sum">
 		<variableExpression><![CDATA[$F{salary}.getTotalEnterprise()]]></variableExpression>
 	</variable>
-	<variable name="subtotalExpense" class="java.lang.Double" resetType="Group" resetGroup="workplace" incrementType="Group" incrementGroup="workplace" calculation="Sum">
+	<variable name="subtotalExpense" class="java.lang.Double" resetType="Group" resetGroup="person" incrementType="Group" incrementGroup="person" calculation="Sum">
 		<variableExpression><![CDATA[$V{subtotalPayment}+$V{subtotalSSEnterprise}]]></variableExpression>
 	</variable>
-	<variable name="subtotalSS" class="java.lang.Double" resetType="Group" resetGroup="workplace" calculation="Sum">
+	<variable name="subtotalSS" class="java.lang.Double" resetType="Group" resetGroup="person" calculation="Sum">
 		<variableExpression><![CDATA[$F{salary}.getSocialSecurityContributions()
 +$F{salary}.getTotalEnterprise()]]></variableExpression>
 	</variable>
@@ -147,23 +147,12 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 	<variable name="logo" class="com.code.aon.registry.RegistryAttachment" resetType="Page">
 		<initialValueExpression><![CDATA[ReportUtils.getRAttach( $F{salary}.getContract().getWorkPlace().getEnterprise().getId(), RegistryAttachmentType.LOGO)]]></initialValueExpression>
 	</variable>
-	<group name="month">
-		<groupExpression><![CDATA[$F{salary}.getMonth()]]></groupExpression>
-		<groupHeader>
-			<band/>
-		</groupHeader>
-		<groupFooter>
-			<band>
-				<printWhenExpression><![CDATA[new Boolean($V{workplace_COUNT}>1)]]></printWhenExpression>
-			</band>
-		</groupFooter>
-	</group>
-	<group name="workplace">
-		<groupExpression><![CDATA[$F{salary}.getContract().getWorkPlace()]]></groupExpression>
+	<group name="person">
+		<groupExpression><![CDATA[$F{salary}.getContract().getPerson()]]></groupExpression>
 		<groupHeader>
 			<band height="14">
 				<textField isBlankWhenNull="true">
-					<reportElement uuid="192fca0b-2a06-45a1-a681-ddd9b35b689b" x="170" y="0" width="565" height="14"/>
+					<reportElement uuid="192fca0b-2a06-45a1-a681-ddd9b35b689b" x="287" y="0" width="448" height="14"/>
 					<box leftPadding="5"/>
 					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
@@ -171,7 +160,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<textFieldExpression><![CDATA[$F{salary}.getContract().getWorkPlace().getDescription()]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement uuid="636a4f73-42be-4ea0-b46f-e657bb4de9ab" x="80" y="0" width="90" height="14"/>
+					<reportElement uuid="636a4f73-42be-4ea0-b46f-e657bb4de9ab" x="170" y="0" width="117" height="14"/>
 					<box leftPadding="15"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
@@ -179,12 +168,12 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<textFieldExpression><![CDATA[$R{payroll_workplace}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement uuid="71a7cf18-d908-4cb7-b8b3-c57bf83171e0" x="0" y="0" width="80" height="14"/>
+					<reportElement uuid="71a7cf18-d908-4cb7-b8b3-c57bf83171e0" x="0" y="0" width="170" height="14"/>
 					<box leftPadding="5"/>
 					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{salary}.getMonth().getName( $P{REPORT_LOCALE} ) + ", " + $F{salary}.getYear()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getEmployeeName()]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -279,6 +268,15 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<textFieldExpression><![CDATA[$V{subtotalSS}]]></textFieldExpression>
 				</textField>
 			</band>
+		</groupFooter>
+	</group>
+	<group name="workplace">
+		<groupExpression><![CDATA[$F{salary}.getContract().getWorkPlace()]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band/>
 		</groupFooter>
 	</group>
 	<title>
@@ -529,7 +527,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{salary}.getEmployeeName()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getMonth().getName( $P{REPORT_LOCALE} ) + ", " + $F{salary}.getYear()]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement uuid="4c233f89-39a4-4ffc-8c89-aa99b4c9a29d" key="textField-8" style="employee" x="170" y="0" width="50" height="14"/>
