@@ -62,8 +62,10 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.parse;
 import static com.esferalia.aon.salary.expression.ExpressionContext.getCurrentBindings;
 import static com.esferalia.aon.watson.util.AonDateUtils.add;
 import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
+import static com.esferalia.aon.watson.util.AonUtils.ifnull;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
+import static java.util.stream.Collectors.summingDouble;
 
 import java.lang.reflect.Method;
 import java.sql.Connection;
@@ -2502,11 +2504,7 @@ public class SQLContractSalaryCalculatorContext extends
 				.collect(Collectors.summingDouble(s -> s
 						.getCommonContingenciesBase()
 						/ (s.getSalaryDays()
-								* s.getContextData(
-										MONTH_DAYS.getName(),
-										Collectors
-												.summingDouble(Double::parseDouble)) / AonDateUtils
-									.getMax(s.getStartDate(), DAY_OF_MONTH))));
+								* ifnull(s.getContextData( MONTH_DAYS.getName(),summingDouble(Double::parseDouble)),(double)getMax(s.getStartDate(), DAY_OF_MONTH)) / getMax(s.getStartDate(), DAY_OF_MONTH))));
 		salaries.close();
 		if (br > 0.00)
 			return br;
@@ -3160,6 +3158,8 @@ public class SQLContractSalaryCalculatorContext extends
 
 				};
 				ctx.putVariable(WORKED_DAYS, workedDays);
+			}
+			else {
 			}
 			if (!containsVariable(QUOTE_DAYS, period)) {
 				ITimedVariable<Double> quoteDays = new ITimedVariable<Double>() {

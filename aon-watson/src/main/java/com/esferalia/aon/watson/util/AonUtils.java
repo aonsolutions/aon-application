@@ -1,6 +1,17 @@
 package com.esferalia.aon.watson.util;
 
 public class AonUtils {
+	
+	
+	/**
+	 * 
+	 * @param t
+	 * @param def
+	 * @return
+	 */
+	public static <T> T ifnull(T t, T def){ 
+		return t != null ? t : def; 
+	}
 
 	/**
 	 * Compares two objects for equality, where either one or both objects may
@@ -43,5 +54,7 @@ public class AonUtils {
 	public static int hashCode(Object obj){
 		return obj == null ? 0 : obj.hashCode();
 	}
+	
+	
 
 }
