@@ -40,7 +40,8 @@ input, select, textarea {
 font: 1em "arial","lucida Grande","Trebuchet MS",sans-serif;
 }
 select {
-border: solid #808080 1px;
+  background: white;
+  border: solid #808080 1px;
 }
 input{
  }
