@@ -9,6 +9,10 @@ a, a:hover, a:visited {
     text-decoration: none;
 }
 
+select {
+  background: white;
+}
+
 
 /* Dialog boxes */
 .dialogTopLeftInner,.dialogMiddleLeftInner,.dialogBottomLeftInner,.dialogTopRightInner,.dialogMiddleRightInner,.dialogBottomRightInner
