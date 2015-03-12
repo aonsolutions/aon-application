@@ -2129,32 +2129,28 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		dbCgcBaseLabel.setText(format(salaryDraftObject.getDbCgcBase()));
 		setDbStyleName(dbCgcBaseLabel, cgcBaseLabel);
 		Double rawCgcBase = salaryDraftObject.getRawCgcBase();
-		if (!NumberUtils.equals(cgcBase, rawCgcBase)) {
-			setWarnStyles(
-					cgcBaseLabel,
-					true,
-					"La Base por Contingecias Comunes "
-							+ format(rawCgcBase)
-							+ "\u20A0 ha sido "
-							+ (rawCgcBase > cgcBase ? "limitada al m\u00e1ximo permitido"
-									: "ampliada al m\u00ednimo obligatorio"));
-		}
+		setWarnStyles(
+				cgcBaseLabel,
+				!NumberUtils.equals(cgcBase, rawCgcBase),
+				"La Base por Contingecias Comunes "
+						+ format(rawCgcBase)
+						+ "\u20A0 ha sido "
+						+ (rawCgcBase > cgcBase ? "limitada al m\u00e1ximo permitido"
+								: "ampliada al m\u00ednimo obligatorio"));
 
 		Double cgpBase = salaryDraftObject.getCgpBase();
 		cgpBaseLabel.setText(format(cgpBase), displayChanges);
 		dbCgpBaseLabel.setText(format(cgpBase));
 		setDbStyleName(dbCgpBaseLabel, cgpBaseLabel);
 		Double rawCgpBase = salaryDraftObject.getRawCgpBase();
-		if (!NumberUtils.equals(cgpBase, rawCgpBase)) {
-			setWarnStyles(
-					cgpBaseLabel,
-					true,
-					"La Base por Accidentes de Trabajo y Enfermedades Profesionales  "
-							+ format(rawCgpBase)
-							+ "\u20A0 ha sido "
-							+ (rawCgpBase > cgpBase ? "limitada al m\u00e1ximo permitido"
+		setWarnStyles(
+				cgpBaseLabel,
+				!NumberUtils.equals(cgpBase, rawCgpBase),
+				"La Base por Accidentes de Trabajo y Enfermedades Profesionales  "
+						+ format(rawCgpBase)
+						+ "\u20A0 ha sido "
+						+ (rawCgpBase > cgpBase ? "limitada al m\u00e1ximo permitido"
 									: "ampliada al m\u00ednimo obligatorio"));
-		}
 
 		irpfBaseLabel.setText(format(salaryDraftObject.getIrpfBase()),
 				displayChanges);
