@@ -19,16 +19,19 @@
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_history}" />
 		</f:facet>
-		<aon:div rendered="#{controller.currentHasModifications}"
-			onmouseover="disableRowSelector();" onmouseup="disableRowSelector();"
+		<aon:div onmouseover="disableRowSelector();" onmouseup="disableRowSelector();"
 			onmouseout="enableRowSelector();" >
-			<aon:outputText value="&#160;"
-				style="padding-left:15px;" styleClass="aon-icon-comment"/>
-			<rich:toolTip value="#{controller.currentModifications}"
-				styleClass="aon-width-450" />						
+			<aon:div layout="inline"
+				rendered="#{controller.currentModifications != null}">
+				<aon:outputText value="&#160;"
+					style="padding-left:15px;" styleClass="aon-icon-comment"/>
+				<rich:toolTip value="#{controller.currentModifications}"
+					styleClass="aon-width-450" />						
+			</aon:div>
 			<aon:commandLink id="goToDomainHistory"
+				title="#{bundle.admin_domain_history}"
 				styleClass="aon-button-goto" style="padding-right: 20px;padding-top: 2px;" 
-				value="&#160;" immediate="true"
+				value="&#160;" immediate="true" ajaxSingle="true"
 				action="domainPrint_history"
 				actionListener="#{controller.onGoToDomainHistory}">
 			</aon:commandLink>											
@@ -66,7 +69,17 @@
 			<aon:outputText value="&#160;"
 				rendered="#{controller.payer != null}"
 				title="#{bundle.admin_domain_payer}: #{controller.payer}"
-				style="margin-left: 0.7em;" styleClass="aon-icon16 aon-icon-moneybag" />																				
+				style="margin-left: 0.7em;" styleClass="aon-icon16 aon-icon-moneybag" />
+			<aon:div layout="inline" 
+				onmouseover="disableRowSelector();" onmouseup="disableRowSelector();"
+				onmouseout="enableRowSelector();" >
+				<aon:commandLink id="goToDomainBooking"
+					rendered="#{to.domainManagement}"
+					title="#{bundle.config_domain_booking}"
+					styleClass="aon-button-goto" style="padding-right: 20px;padding-top: 2px;" 
+					value="&#160;" immediate="true" ajaxSingle="true"
+					action="domainBooking_list" actionListener="#{controller.onGoToDomainBooking}" />
+			</aon:div>																																		
 		</aon:div>																
 	</aon:column>
 	

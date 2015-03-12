@@ -22,6 +22,8 @@ public interface IAdminConstants {
 	String GLOBAL_CONFIG_CONTROLLER_NAME = "globalConfig";
 	String PORTAL_ACCESS_CONTROLLER_NAME = "portalAccess";
 	String DEH_ONLINE_CONTROLLER_NAME = "dehOnline";
+	String DOMAIN_BOOKING_CONTROLLER_NAME = "domainBooking";
+	String DOMAIN_PRINT_CONTROLLER_NAME = "domainPrint";
 	
 	// Properties
 	String ADVANCED_MODE_USER = "advancedMode_user";

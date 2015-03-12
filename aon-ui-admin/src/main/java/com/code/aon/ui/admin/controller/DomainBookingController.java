@@ -61,7 +61,20 @@ public class DomainBookingController extends DataScrollerState {
 	
 	private boolean showInactive;
 	
+	private String backAction;
+	
 	public void onInit( ActionEvent event ) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
+			Domain domain  = (Domain) bean.get(DomainManager.getCurrentDomain());
+			init( domain );
+		} catch (ManagerBeanException e) {
+			LOGGER.error( e.getMessage(), e );
+		}			
+	}
+
+	public void init( Domain domain ) {
+		this.domain = domain;
 		initializeModel();
 		initBookingInfo();
 	}
@@ -142,16 +155,10 @@ public class DomainBookingController extends DataScrollerState {
 	}
 	
 	private void initBookingInfo() {
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
-			this.domain  = (Domain) bean.get(DomainManager.getCurrentDomain());
-			this.bookingInfo = DomainController.getBookingInfo(this.domain);
-			List<Domain> list = new LinkedList<Domain>();
-			list.add(domain);
-			this.parentState = new DataScrollerState(new SerializableListDataModel(list), "domainParent");			
-		} catch (ManagerBeanException e) {
-			LOGGER.error( e.getMessage(), e );
-		}			
+		this.bookingInfo = DomainController.getBookingInfo(this.domain);
+		List<Domain> list = new LinkedList<Domain>();
+		list.add(domain);
+		this.parentState = new DataScrollerState(new SerializableListDataModel(list), "domainParent");			
 	}
 	
 	private void initializeModel() {
@@ -162,8 +169,9 @@ public class DomainBookingController extends DataScrollerState {
 		this.totalDEHOnlines = 0;
 		this.totalTirants = 0;
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-		AONContext ctx = AONContext.getAONContext(ds.getDomainNameURL(), ds.getDomainId());
-		domains = getDomainBookingDatas(ctx, ds.getDomainCondition(isShowInactive()));
+		AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId());
+		Condition condition = ds.getDomainCondition(domain.getId(), isShowInactive());
+		domains = getDomainBookingDatas(ctx, condition);
 		for (DomainBookingData data : domains) {
 			fillDomainData(ctx, data);
 			if ( data.isAonOne() ) {
@@ -230,6 +238,18 @@ public class DomainBookingController extends DataScrollerState {
 			}
 		}
 		return StringUtils.join(modules, ", ");					
+	}
+
+	public String backAction() {
+		return backAction;
+	}
+
+	public void setBackAction(String backAction) {
+		this.backAction = backAction;
+	}	
+	
+	public boolean isShowBackButton() {
+		return ! StringUtils.isEmpty(backAction);
 	}	
 
 }

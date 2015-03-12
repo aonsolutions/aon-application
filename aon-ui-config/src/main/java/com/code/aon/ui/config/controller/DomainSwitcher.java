@@ -226,9 +226,13 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		HibernateUtil.closeSession(sessionFactoryName, false);
 		return scopes;
 	}
+	
+	private Condition getDomainCondition() {
+		return getDomainCondition(getParentDomain(), isShowInactive());		
+	}
 
-	public Condition getDomainCondition( boolean showInactive ) {
-		Condition condition = DOMAIN.PARENT.eq(getParentDomain());
+	public Condition getDomainCondition( Integer parentDomain, boolean showInactive ) {
+		Condition condition = DOMAIN.PARENT.eq(parentDomain);
 		Condition expirationCondition = DOMAIN.EXPIRATIONDATE.isNull().or(
 				DOMAIN.EXPIRATIONDATE.gt(DSL.currentDate()));
 		condition = condition.and(expirationCondition);
@@ -281,7 +285,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 					.getDslContext()
 					.select(DOMAIN.ID, DOMAIN.NAME, DOMAIN.DESCRIPTION,
 							DOMAIN.ACTIVE, DOMAIN.ENABLEHEREDITY)
-					.from(DOMAIN).where(getDomainCondition(isShowInactive()))
+					.from(DOMAIN).where(getDomainCondition())
 					.orderBy(DOMAIN.DESCRIPTION).fetch().into(DomainData.class);
 
 			for (DomainData data : domains) {
@@ -302,7 +306,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 			AONContext ctx = AONContext.getAONContext(getDomainNameURL(),
 					domainId);
 			int count = ctx.getDslContext().selectCount().from(DOMAIN)
-					.where(getDomainCondition(isShowInactive())).fetchOne(0, int.class);
+					.where(getDomainCondition()).fetchOne(0, int.class);
 			ctx.finalize();
 			return count;
 		}

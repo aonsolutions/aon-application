@@ -239,7 +239,7 @@ public class DomainSearchListener extends ControllerSearchListenerEx {
 		addDateRange(criteria, getFieldName(IEntityAlias.DOMAIN_CREATION_DATE), getCreationDate());
 		addDateRange(criteria, getFieldName(IEntityAlias.DOMAIN_EXPIRATION_DATE), getExpirationDate());
 		addDateRange(criteria, getFieldName(IEntityAlias.DOMAIN_LAST_ACCESS_DATE), getLastAccessDate());
-		addModificationDateRange(criteria, getFieldName(IEntityAlias.DOMAIN_MODIFICATION_DATE));
+		addDateRange(criteria, getFieldName(IEntityAlias.DOMAIN_MODIFICATION_DATE), getModificationDate());
 		if ( module != null ) {
 			addModuleSubQuery( module, criteria );
 		}
@@ -259,11 +259,7 @@ public class DomainSearchListener extends ControllerSearchListenerEx {
 		}
 	}	
 	
-	public void addModificationDateRange( Criteria criteria, String alias ) throws ManagerBeanException {
-		addDateRange(criteria, alias, getModificationDate());		
-	}
-	
-	private void addDateRange( Criteria criteria, String alias, Date[] dates ) {
+	public static void addDateRange( Criteria criteria, String alias, Date[] dates ) {
 		if ( ArrayUtils.getLength(dates) == 2 ) {
 			if ( dates[0] != null ) {
 				criteria.addGreaterThanOrEqualExpression(alias, dates[0]);	
