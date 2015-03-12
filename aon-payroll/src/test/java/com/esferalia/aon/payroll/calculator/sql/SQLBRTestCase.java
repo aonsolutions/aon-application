@@ -3,8 +3,10 @@ package com.esferalia.aon.payroll.calculator.sql;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.BR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
@@ -40,7 +42,7 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 
-public class SQLITTestCase extends AbstractSQLTestCase {
+public class SQLBRTestCase extends AbstractSQLTestCase {
 
 	private static final double DELTA = 0.000001;
 
@@ -97,11 +99,18 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 		// Same day of job start. Without salaries.
 		Assert.assertEquals(br, (Double) ctx.br(getToday()), DELTA);
+		
+		ctx.getExpressionContext()
+		.eval(String.format("%s(%s)", BR,SALARY_START.getName() ), startDate, endDate)
+		.stream().forEach(result->Assert.assertEquals(br, ((Number) result.getValue()).doubleValue(), DELTA) );
+
 
 		// Next month of job start. But without salaries.
 		Assert.assertEquals(br, (Double) ctx.br(addMonths(getToday(), 1)),
 				DELTA);
 
+		
+		
 		// Save a salry for first month
 		JooqSalaryBuilder salaryBuilder = new JooqSalaryBuilder(connection);
 		new ContractSalaryCalculator<ISalary>(salaryBuilder).calculate(ctx);
