@@ -325,7 +325,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		public Double getIrpfPercent() {
 			return getExpressionContext().getVariable(
 					ContextVariable.IRPF_PERCENT, getStartDate(), getEndDate(),
-					Double.class);
+					Number.class).doubleValue();
 		}
 
 		// --------------------------------------------------------------------
