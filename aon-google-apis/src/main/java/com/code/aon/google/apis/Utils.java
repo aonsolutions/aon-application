@@ -5,10 +5,17 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.GeneralSecurityException;
+import java.security.KeyStoreException;
+import java.sql.SQLException;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Vector;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
@@ -18,7 +25,15 @@ import javax.naming.directory.InitialDirContext;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.google.apis.jooq.DBCalendar;
+import com.code.aon.google.apis.jooq.DBConsults;
+import com.code.aon.google.apis.jooq.DomainGserviceaccount;
+import com.code.aon.pool.AonConnectionException;
+import com.esferalia.aon.google.sql.AbstractSQL.CommercialTracking;
+import com.esferalia.aon.google.sql.AbstractSQL.Domain;
 import com.esferalia.aon.google.sql.AbstractSQL.Rattach;
+import com.google.api.services.calendar.model.Event;
+import com.google.api.services.gmail.Gmail;
 
 
 public class Utils{
@@ -31,7 +46,7 @@ public class Utils{
 
 		public static final String MINUSCULAS = "abcdefghijklmnopqrstuvwxyz";
 
-		//public static final String ESPECIALES = "��";
+		//public static final String ESPECIALES = "ñÑ";
 
 		//
 		public static String getPinNumber() {
@@ -196,6 +211,153 @@ public class Utils{
 	    Attribute attr = attrs.get( "MX" );
 	   return attr;
 	  }
+	  
+	  
+	  public static String toDay(Integer i){
+			String day="";
+			
+			switch (i) {
+			case 1:
+				day = "Lun.";break;
+			case 2:
+				day = "Mar.";break;
+			case 3:
+				day = "Mie.";break;
+			case 4:
+				day = "Jue.";break;
+			case 5:
+				day = "Vie.";break;
+			case 6:
+				day = "Sab.";break;
+			case 7:
+				day = "Dom.";break;
+
+			default:
+				break;
+			}
+			return day;
+		}
+		
+		public static String toMonth(String month){
+			String month2="";
+			switch (month) {
+			case "01":
+				month2 = "Ene.";break;
+			case "02":
+				month2 = "Feb.";break;
+			case "03":
+				month2 = "Mar.";break;
+			case "04":
+				month2 = "Abr.";break;
+			case "05":
+				month2 = "May.";break;
+			case "06":
+				month2 = "Jun.";break;
+			case "07":
+				month2 = "Jul.";break;
+			case "08":
+				month2 = "Ago.";break;
+			case "09":
+				month2 = "Sep.";break;
+			case "10":
+				month2 = "Oct.";break;
+			case "11":
+				month2 = "Nov.";break;
+			case "12":
+				month2 = "Dic.";break;
+			default:
+				break;
+			}
+			return month2;
+		}
+		
+		public static void sendNotification(String domain,Event event, CommercialTracking ct) throws SQLException, KeyStoreException, IOException, GeneralSecurityException, MessagingException, AonConnectionException, NamingException{
+			Vector<String> emails = DBCalendar.getSellerEmails(ct ,domain);
+			String email = DBCalendar.getSellerEmail(ct, domain);
+			if(email != null){
+				String emls = "";
+				for(String e : emails){
+					if(!e.equals(email) && Utils.isGmail(e)){
+						String url = domain+ "/googleMail/"
+		                	+ "?registry=" + Integer.toString(ct.getSeller())
+		                	+ "&email=" + email
+		                	+ "&domain=" +domain
+		                	+ "&type=" + e;
+						emls = emls +"<p style=\"color: #888;padding-left:10px;\">"+e+" <a href=\""+url+"\"> cambiar </a></p>";
+					}
+				}
+				String url2 =  domain+ "/googleMail/"
+						+ "?registry=" + Integer.toString(ct.getSeller())
+						+ "&email=" + email
+						+ "&domain=" + domain
+						+ "&type=" + "baja";
+				Date dt = new Date(event.getStart().getDateTime().getValue());
+				Integer day2 = dt.getDay();
+				String date = event.getStart().getDateTime().toString();
+				String day = date.substring(8, 10);
+				String month = date.substring(5, 7);
+				String year = date. substring(0, 4);
+				String hour = date.substring(11,16);
+				String date3 = toDay(day2) + " "+day+" de "+toMonth(month)+", "+hour; 
+				
+				String date4 ="";
+				if(event.getEnd() != null){
+					Date dt2 = new Date(event.getEnd().getDateTime().getValue());
+					Integer day4 = dt2.getDay();
+					String date2 = event.getEnd().getDateTime().toString();
+					String day3 = date2.substring(8,10);
+					String month2 = date2.substring(5,7);
+					String year2 = date2.substring(0,4);
+					String hour2 = date2.substring(11,16);
+					date4 =" To "+ toDay(day4) + " "+day3+" de "+toMonth(month2)+", "+hour2; 
+				}	
+				String location = "-";
+				if(event.getLocation()!= null) location = event.getLocation();
+				String msg = 
+				"<div style='margin-left: -30px;'>"
+				+"<div style='margin: 7px 15px 14px 30px;line-height: 18px;font-size: 13px;box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.075);'>"
+				+"<table style='border: 1px solid #E5E5E5;table-layout: fixed;width: 100%;min-width: 625px;border-collapse: collapse;' cellpadding='0'>"
+				+"<tbody><tr><td style='width: 15%;vertical-align: top;padding: 21px;border: 1px solid #E5E5E5;background-color: #F6F6F6;'>"
+				
+					+"<div><img src=\"http://www.aonsolutions.es/wp-content/themes/aonsolutions/img/h_logo.gif\" width=\"100%\"></div>"
+					+"<div style='background: url(\"https://ssl.gstatic.com/ui/v1/icons/mail/smart_mail_conv_icons.png\") no-repeat scroll 0px 0px transparent;height: 80px;position: relative;width: 70px;'>"
+							+ "<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='color: #FFF;font-size: 11px;top: 75px;width: 70px;text-align: center;position: absolute;font-weight: bold;'>"+toDay(day2)+"</span></p>"
+							+ "&nbsp;&nbsp;&nbsp;&nbsp;<span style='color: #222;font-size: 200%;top: 100px;width: 70px;text-align: center;position: absolute;font-weight: bold;'>"+day+"</span>"
+							+ "<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='color: #222;font-size: 11px;top: 130px;width: 70px;text-align: center;position: absolute;font-weight: bold;'>"+toMonth(month)+"</span>"
+					+"</div></td>"
+					+"<td style='padding: 21px;vertical-align: top;'>"
+						+"<div style='color: #222;font-size: 140%;margin-bottom: 2px;'>"+event.getSummary()+"</div>"
+						+"<div style='color: #999;margin-bottom: 14px;'><a style='text-decoration: none;color: #15C;' href='"+event.getHtmlLink()+"' target='_blank'>Míralo en Google Calendar</a></div>"
+						+ "<table style='table-layout: fixed;border-collapse: collapse;'><tbody>"
+							+ "<tr><td style='padding-right: 10px;min-width: 48px;white-space: nowrap;padding-bottom: 6px;color: #999;padding-left: 0px;padding-top: 2px;vertical-align: top;'>Cuándo</td>"
+								+ "<td style='padding-left: 0px;padding-top: 2px;vertical-align: top;'>"+date3+date4+"</td></tr>"
+							+ "<tr><td style='padding-right: 10px;min-width: 48px;white-space: nowrap;padding-bottom: 6px;color: #999;padding-left: 0px;padding-top: 2px;vertical-align: top;'>Ubicación</td>"
+								+ "<td style='padding-left: 0px;padding-top: 2px;vertical-align: top;'>"+location+"</td></tr>"
+					+ "</tbody></table></td>"
+			
+				+"</tr></tbody></table>"
+
+				+"<p></p><table><tbody>"
+					+"<tr><td style=\"background-color: #F6F6F6;color: #888;border: 1px solid #CCC;font-family: Arial,sans-serif;font-size: 11px;  \">"
+						+"<p style=\"color: #888;padding-left:5px;\">Invitación de <a href=\"https://www.google.com/calendar/\" target=\"_blank\">Google Calendar</a></p>"
+						+"<p style=\"color: #888;padding-left:5px;\">Recibes este mensaje de correo electrónico en la dirección <a href=\"mailto:"+email+"\" target=\"_blank\">"+email+"</a> de la cuenta porque estás suscrito para recibir invitaciones del calendario "+domain+".</p>"
+						+"<p style=\"color: #888;padding-left:5px;\">Si deseas cambiar el correo electrónico con el que compartir los eventos comerciales de la aplicación elige una de las presentadas a continuación.Si no dispones de ninguno añade uno nuevo en la aplicación con el atributo comercial activo. </p>"
+						+emls
+						+"<p style=\"color: #888;padding-left:5px;\">Si deseas dejar de recibir estas notificaciones, pulsa <a href=\""+url2+"\" target=\"_blank\"> aquí</a>  para date de baja en servicio de Google Calendar de la aplciación.</p>"
+					+ "</tr></tbody></table>"
+					
+				+ "</div></div>"
+				;
+			
+				String msg2 = "<div> <b>hola</b>agagas</div>";
+				//String msg = "<div class='aHl'><div class='aRb'><div id=':10m'><table class='cf aU9' cellpadding='0'><tbody><tr><td class='aRi'><div class='aU5'><span class='aRh'>Mar.</span><span class='aRg'>10</span><span class='aRj'>Mar.</span></div></td><td style='width:52%' class='aU4'><div class='aRo'>adgafga</div><div class='aRn'><a class='e' href='http://www.google.com/calendar/render?action=VIEW&amp;eid=cXBpc3JjOHU1bW90c2x0OXYxaWQ4cXB0bmMgYWliYW5lekBhb25zb2x1dGlvbnMuZXM&amp;ctok=YWliYW5lekBhb25zb2x1dGlvbnMuZXM' target='_blank'>Míralo en Google Calendar</a></div><table class='cf aU2'><tbody><tr><td class='aRk'>Cuándo</td><td id=':10p' class='aU6'>mar 10 de Mar 12pm – jue 19 de Mar de 2015 12pm (CET)</td></tr><tr><td class='aRk'>Ubicación</td><td id=':yp' class='aU6'>sgsa</td></tr><tr><td class='aRk'>Participantes</td><td id=':yg' class='aU6'><span class='cD'>procom-glo<wbr>bal4.aiban<wbr>ez.net*</span></td></tr></tbody></table><div class='aRm'><span id=':11t'><div id=':ym' class='T-I J-J5-Ji aQ9 T-I-ax7 T-I-Js-IF L3' role='button' tabindex='0'>Sí</div><div id=':10l' class='T-I J-J5-Ji aQ9 T-I-ax7 T-I-Js-Gs T-I-Js-IF L3' role='button' tabindex='0'>Quizás</div><div id=':x5' class='T-I J-J5-Ji aQ9 T-I-ax7 T-I-Js-Gs L3' role='buttontabindex='0'>No</div></span></div></td><td class='aRc'><div class='aQ3'><div class='aRo'>Agenda</div><div class='aRn'>mar 10 de Mar de 2015</div><table id=':zs' class='cf aU2' style='table-layout:auto'><tbody><tr class='aU0'><td class='aQ5' colspan='2'><i>No hay eventos anteriores.</i></td></tr><tr class='aQ6'><td class='aQ4'>12pm</td><td class='aQ5'>adgafga</td></tr><tr class='aU1'><td class='aQ5' colspan='2'><i>No hay eventos posteriores.</i></td></tr></tbody></table></div></td></tr></tbody></table></div></div></div>";
+				Domain d = DBConsults.getDomain(domain);
+				DomainGserviceaccount g = DBConsults.getServiceAccount(domain, d.getId());Gmail service = GmailUtils.serviceInitialize(g);
+			
+					MimeMessage emailMessage = GmailUtils.createEmail(email, g.getGoogleAccount(), "Google Calendar", msg);
+					GmailUtils.sendMessage(service, g.getGoogleAccount(), emailMessage);
+			}
+		}
 	  
 	 
 }
