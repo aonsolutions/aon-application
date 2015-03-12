@@ -73,7 +73,10 @@ public enum Module implements IResourceable {
 	CONFIGURATION( "configuration" ),
 
     /** AON_ONE. */
-	AON_ONE( "aonOne" );
+	AON_ONE( "aonOne" ),
+
+    /** ECOMMERCE. */
+	ECOMMERCE( "eCommerce" );
 	
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_module_";

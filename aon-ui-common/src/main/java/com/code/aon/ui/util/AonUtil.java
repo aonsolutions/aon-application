@@ -599,7 +599,7 @@ public class AonUtil {
 
 			@Override
 			public int compare(SelectItem o1, SelectItem o2) {
-				return o1.getLabel().compareTo(o2.getLabel());
+				return o1.getLabel().compareToIgnoreCase(o2.getLabel());
 			}
     		
 		};
