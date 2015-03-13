@@ -233,7 +233,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	
 	public Boolean filter(SearchInfo si,FileInfo fi){
 		if(si.getName() != null){
-			if(!AonStringUtils.contains(fi.getTitle(), si.getName())){
+			if(!containsIgnoreCase2(fi.getTitle(), si.getName())){
 				return false;
 			}
 		}
