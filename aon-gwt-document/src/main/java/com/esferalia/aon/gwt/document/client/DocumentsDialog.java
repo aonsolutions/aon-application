@@ -26,6 +26,9 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -871,6 +874,15 @@ public abstract class DocumentsDialog extends CustomDialogB {
 		TextBox tb1 = new TextBox();
 		tb1.setStyleName("aon-inputText");
 		tb1.setWidth("100%");
+		tb1.addKeyUpHandler(new KeyUpHandler() {
+			
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if(event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER){
+					acceptButton.click();
+				}
+			}
+		});
 		grid.setWidget(1, 0, new Label("Descripci\u00f3n"));
 		grid.setWidget(1, 1, tb1);
 		if(confidentialUserDialog){
