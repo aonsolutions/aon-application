@@ -1113,7 +1113,8 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 			Double irpf = extraCtx.getExpressionContext().getVariable(
 					IRPF_PERCENT, extraCtx.getStartDate(),
-					extraCtx.getEndDate(), Double.class);
+					extraCtx.getEndDate(), Number.class)
+					.doubleValue();
 
 			if (irpf != null && irpf > 0.00) {
 				SALARIES.set(salaries);
