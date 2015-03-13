@@ -614,6 +614,7 @@ public class DriveUtils implements IBlobManager {
 		FileList fileList =SearchFiles.searchFilesProperties(drive, "oldDriveId",fileId);
 		if(fileList.getItems().size()>0){
 			f = fileList.getItems().get(0);
+			
 			//TODO update bd with new driveId.
 			if(id != null)
 				DBDrive.updateDriveId(f,id);
@@ -630,6 +631,7 @@ public class DriveUtils implements IBlobManager {
 				f = oldDrive.files().get(fileId).execute();
 				f.setDescription("OLDRIVE");
 			}
+		if(f.getDescription() == null) f.setDescription("");
 		return f;
 	}
 
