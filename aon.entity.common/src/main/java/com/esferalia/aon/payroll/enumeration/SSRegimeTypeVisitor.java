@@ -18,4 +18,7 @@ public interface  SSRegimeTypeVisitor<E> {
 
 	E visitArtistRegime(SSRegimeType ssRegimeType);
 
+	E visitIsfasRegime(SSRegimeType ssRegimeType);
+
+	E visitMufaceRegime(SSRegimeType ssRegimeType);
 }
