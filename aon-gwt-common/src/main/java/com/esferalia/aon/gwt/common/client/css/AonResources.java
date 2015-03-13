@@ -55,6 +55,9 @@ public interface AonResources extends ClientBundle, Images {
 	@Source("images/aon-icon-enterprise.png")
 	ImageResource aonIconEnterprise();
 	
+	@Source("images/data.png")
+	ImageResource aonIconCompanyData();
+	
 	@Source("images/aon-icon-list-data.png")
 	ImageResource aonListData();
 
@@ -73,6 +76,57 @@ public interface AonResources extends ClientBundle, Images {
 	@Source("images/curly-lt.png")
 	ImageResource aonCurlyLT();
 
+	@Source("images/aon-icon-m111.png")
+	ImageResource aonIconM111();
+
+	@Source("images/aon-icon-m115.png")
+	ImageResource aonIconM115();
+	
+	@Source("images/aon-icon-m123.png")
+	ImageResource aonIconM123();
+	
+	@Source("images/aon-icon-m130.png")
+	ImageResource aonIconM130();
+	
+	@Source("images/aon-icon-m131.png")
+	ImageResource aonIconM131();
+	
+	@Source("images/aon-icon-m140.png")
+	ImageResource aonIconM140();
+	
+	@Source("images/aon-icon-m180.png")
+	ImageResource aonIconM180();
+	
+	@Source("images/aon-icon-m184.png")
+	ImageResource aonIconM184();
+	
+	@Source("images/aon-icon-m190.png")
+	ImageResource aonIconM190();
+	
+	@Source("images/aon-icon-m193.png")
+	ImageResource aonIconM193();
+	
+	@Source("images/aon-icon-m200.png")
+	ImageResource aonIconM200();
+	
+	@Source("images/aon-icon-m303.png")
+	ImageResource aonIconM303();
+	
+	@Source("images/aon-icon-m340.png")
+	ImageResource aonIconM340();
+	
+	@Source("images/aon-icon-m347.png")
+	ImageResource aonIconM347();
+	
+	@Source("images/aon-icon-m349.png")
+	ImageResource aonIconM349();
+	
+	@Source("images/aon-icon-m390.png")
+	ImageResource aonIconM390();
+	
+	@Source("images/family.png")
+	ImageResource aonIconActivities();
+	
 	// ------------------------------------------------------------------------
 	
 		

@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.api.model.fiscal.format;
+package com.esferalia.aon.occam.server.fiscal.format;
 
 import java.io.IOException;
 import java.io.Serializable;

@@ -2,11 +2,11 @@ package com.esferalia.aon.gwt.fiscal.client.widget;
 
 import java.util.ArrayList;
 
+import com.esferalia.aon.gwt.common.client.CommonService;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
@@ -39,11 +39,12 @@ public class EnterpriseSuggestBox extends ResizeComposite implements
 	private static final EnterpriseSuggestBoxBinder enterpriseBinder = GWT
 			.create(EnterpriseSuggestBoxBinder.class);
 
-	private FiscalServiceAsync fiscalService;
+	private CommonServiceAsync commonService;
 	private final CommonMessages msg = GWT.create(CommonMessages.class);
 
 	Integer enterpriseId;
 	Integer domainId;
+	String domainName;
 	
 	@UiField(provided = true)
 	SuggestBox document;
@@ -69,8 +70,8 @@ public class EnterpriseSuggestBox extends ResizeComposite implements
 
 		// Create a remote service proxy to talk to the server-side Employees
 		// service.
-		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
 		EnterpriseSuggestOracle oracle = new EnterpriseSuggestOracle();
 		document = new SuggestBox(oracle);
 		document.setLimit(20);
@@ -82,16 +83,21 @@ public class EnterpriseSuggestBox extends ResizeComposite implements
 	/*-{
 		return $wnd.getCurrentDomain();
 	}-*/;
+	public static native String getCurrentDomainName()
+	/*-{
+		return $wnd.getCurrentDomainName();
+	}-*/;
 
 	class EnterpriseSuggestOracle extends MultiWordSuggestOracle {
 
 		@Override
 		public void requestSuggestions(final Request request,
 				final Callback callback) {
-
-			fiscalService.getEnterprises(getCurrentDomain(),
-					request.getQuery(),
-					new AsyncCallback<ArrayList<Enterprise>>() {
+			String query = '%' + request.getQuery() + '%';
+			commonService.getParentEnterprises(getCurrentDomainName()
+					,getCurrentDomain()
+					,query
+					,new AsyncCallback<ArrayList<Enterprise>>() {
 
 						public void onFailure(Throwable caught) {
 							Window.alert("Error while getting suggestions.");

@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.api.model.fiscal.format;
+package com.esferalia.aon.occam.server.fiscal.format;
 
 public interface IMod140Record {
 	public static final String MODEL = "140";

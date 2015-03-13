@@ -1,5 +1,10 @@
 package com.esferalia.aon.gwt.common.client;
 
+import java.util.ArrayList;
+
+import com.esferalia.aon.occam.api.model.Enterprise;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 
 public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 
@@ -7,6 +12,23 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 
 	public CommonServiceAsyncDecorator(CommonServiceAsync serviceAsync) {
 		this.serviceAsync = serviceAsync;
+	}
+
+	// -------------------------------------------------------------- PARAMS
+	@Override
+	public void getParentEnterprises(String domainName, int domain,
+			String query,AsyncCallback<ArrayList<Enterprise>> callback) {
+		AON.start();
+		serviceAsync.getParentEnterprises(domainName, domain, query,  
+				new AsyncCallbackWrapper<ArrayList<Enterprise>>(callback));
+	}
+
+	@Override
+	public void getEnterprise(String domainName, int domain, int id,
+			AsyncCallback<Enterprise> callback) {
+		AON.start();
+		serviceAsync.getEnterprise(domainName, domain, id,  
+				new AsyncCallbackWrapper<Enterprise>(callback));
 	}
 
 

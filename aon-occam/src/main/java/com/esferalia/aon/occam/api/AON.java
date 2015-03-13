@@ -17,12 +17,14 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.Agreement;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -45,6 +47,7 @@ import com.esferalia.aon.occam.impl.jooq.FiscalImpl;
 import com.esferalia.aon.occam.impl.jooq.ManagementImpl;
 import com.esferalia.aon.occam.impl.jooq.SalaryImpl;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
+import com.esferalia.aon.occam.impl.jooq.dao.FiscalActivityDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 public class AON {
@@ -121,6 +124,28 @@ public class AON {
 	public static ApplicationParameter fetchApplicationParameter(
 			AONContext ctx, AppParam param) {
 		return getCommon().fetchOne(ctx, param);
+	}
+
+	// --------------------------------- ENTERPRISE
+	public static ArrayList<Enterprise> getParentEnterprises(String domainName,
+			int domain, String query) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain);
+			return getCommon().getParentEnterprises(ctx, query);
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}	
+	
+	public static Enterprise getEnterprise(String domainName, int domain, int id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain);
+			return getCommon().getEnterprise(ctx, id);
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
 	}
 
 	// ------------------------------------ PRODUCT
@@ -257,6 +282,26 @@ public class AON {
 	// ********************************** FISCAL **
 	// ********************************************
 
+	// -------------------------- FISCAL ACTIVITIES
+	public static ArrayList<FiscalActivity> getFiscalActivities(String domainName, int domainId){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			return FiscalActivityDAO.getActivities(ctx, domainId);	
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
+	public static FiscalActivity getFiscalActivity(String domainName,
+			int domainId, int id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			return FiscalActivityDAO.getActivity(ctx, domainId,id);	
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
 	// ----------------------------------MODELO 180
 	public static ArrayList<Mod180> getMod180s(String domainName, int domainId) {
 		AONContext ctx = null;
@@ -575,5 +620,6 @@ public class AON {
 			SalaryFilter filter) {
 		return getSalary().getSalaries(ctx, filter, Salary::new);
 	}
+
 	
 }

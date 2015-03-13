@@ -1,0 +1,128 @@
+package com.esferalia.aon.gwt.fiscal.client.panel;
+
+import com.esferalia.aon.gwt.common.client.widget.FullDocument;
+import com.esferalia.aon.gwt.common.client.widget.MunicipalityListBox;
+import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
+import com.esferalia.aon.gwt.common.client.widget.StreetTypeListBox;
+import com.esferalia.aon.occam.api.model.Enterprise;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
+
+public class EnterpriseForm extends ResizeComposite {
+
+	interface EnterpriseFormBinder extends
+			UiBinder<Widget, EnterpriseForm> {
+	}
+
+	private static final EnterpriseFormBinder panelBinder = GWT
+			.create(EnterpriseFormBinder.class);
+	
+	String domainName;
+	int domainId;
+
+	@UiField
+	TextBox name;
+	@UiField
+	TextBox alias;
+	@UiField
+	FullDocument fullDocument;
+	
+	@UiField
+	StreetTypeListBox streetType;
+	@UiField
+	TextBox streetName;
+	@UiField
+	TextBox streetNumber;
+	@UiField
+	TextBox address2;
+	@UiField
+	TextBox address3;
+	@UiField
+	TextBox zip;
+	@UiField
+	ProvinceListBox province;
+	@UiField
+	MunicipalityListBox town;
+	@UiField
+	TextBox city;
+	@UiField
+	TextBox phone;
+	@UiField
+	TextBox fax;
+	@UiField
+	TextBox email;
+	@UiField
+	TextBox web;
+
+	public EnterpriseForm() {
+		
+		Widget ui = panelBinder.createAndBindUi(this);
+		initWidget(ui);
+		
+		name.setEnabled(false);
+		alias.setEnabled(false);
+		fullDocument.setEnabled(false);
+		streetType.setEnabled(false);
+		streetName.setEnabled(false);
+		streetNumber.setEnabled(false);
+		address2.setEnabled(false);
+		address3.setEnabled(false);
+		zip.setEnabled(false);
+		province.setEnabled(false);
+		town.setEnabled(false);
+		city.setEnabled(false);
+		phone.setEnabled(false);
+		fax.setEnabled(false);
+		email.setEnabled(false);
+		web.setEnabled(false);
+		
+	}
+
+	public void setDomainId(int domainId) {
+		this.domainId = domainId;
+	}
+	public void setDomainName(String domainName) {
+		this.domainName = domainName;
+	}
+	
+	public void setEnterprise(Enterprise enterprise) {
+		FiscalPanel.COMMON_SERVICE.getEnterprise(domainName, domainId, enterprise.getId()
+				,new AsyncCallback<Enterprise>() {
+
+					@Override
+					public void onSuccess(Enterprise result) {
+						populate(result);
+					}
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+					}
+		});
+	}
+	
+	private void populate(Enterprise enterprise) {
+		name.setValue(enterprise.getName());
+		alias.setValue(enterprise.getAlias());
+		fullDocument.setValue(enterprise.getDocumentType()
+				,enterprise.getDocumentCountry(),enterprise.getDocument());
+		streetType.setValue(enterprise.getStreetType());
+		streetName.setValue(enterprise.getAddress());
+		streetNumber.setValue(enterprise.getNumber());
+		address2.setValue(enterprise.getAddress2());
+		address3.setValue(enterprise.getAddress3());
+		zip.setValue(enterprise.getZip());
+		province.setValue(enterprise.getProvince());
+		//town.setValue(enterprise.getTown());
+		city.setValue(enterprise.getCity());
+		phone.setValue(enterprise.getPhone());
+		fax.setValue(enterprise.getFax());
+		email.setValue(enterprise.getEmail());
+		web.setValue(enterprise.getWeb());
+	}
+
+}

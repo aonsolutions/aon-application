@@ -1,24 +1,15 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.commit;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.disableAutoCommit;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.enableAutoCommit;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.rollback;
-
-import java.sql.Connection;
 import java.util.ArrayList;
 
 import javax.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
-import com.esferalia.aon.gwt.common.sql.SQLUtils;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.sql.SQLEnterprise;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -49,28 +40,16 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 		return AON.getFiscalParameters(domainName, domain);
 	}
 
-	// -------------------------------------------------------------- ENTERPRISE
+	// ------------------------------------------------------ FISCAL ACTIVITIES
 	@Override
-	public ArrayList<Enterprise> getEnterprises(int domain, String query)
-			throws AonSQLException {
-		Connection conn = null;
-		ArrayList<Enterprise> list = null;
-		try {
-			conn = getConnection();
-			disableAutoCommit(conn);
-			list = SQLEnterprise.getEnterprises(domain, query, conn);
-			commit(conn);
-			return list;
-		} catch (AonSQLException e) {
-			rollback(conn);
-			throw e;
-		} catch (Throwable e) {
-			rollback(conn);
-			throw new AonSQLException(e);
-		} finally {
-			enableAutoCommit(conn);
-			SQLUtils.closeQuietly(conn);
-		}
+	public ArrayList<FiscalActivity> getFiscalActivities(String domainName,
+			int domain) throws AonSQLException {
+		return AON.getFiscalActivities(domainName, domain);
+	}
+	@Override
+	public FiscalActivity getFiscalActivity(String domainName,
+			int domain,int id) throws AonSQLException {
+		return AON.getFiscalActivity(domainName, domain, id);
 	}
 
 	// -------------------------------------------------------------- ACTIVITIES

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
-import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -33,15 +33,22 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		fiscalServiceAsync.getFiscalParameters(domainName,domain, 
 				new AsyncCallbackWrapper<FiscalParameters>(callback));
 	}
-	// -------------------------------------------------------------- ENTERPRISE
-	@Override
-	public void getEnterprises(int domain, String query,
-			AsyncCallback<ArrayList<Enterprise>> callback) {
-		AON.start();
-		fiscalServiceAsync.getEnterprises(domain, query,
-				new AsyncCallbackWrapper<ArrayList<Enterprise>>(callback));
-	}
 
+	// ------------------------------------------------------- FISCAL ACTIVITIES
+	@Override
+	public void getFiscalActivities(String domainName, int domain,
+			AsyncCallback<ArrayList<FiscalActivity>> callback) {
+		AON.start();
+		fiscalServiceAsync.getFiscalActivities(domainName,domain, 
+				new AsyncCallbackWrapper<ArrayList<FiscalActivity>>(callback));
+	}
+	@Override
+	public void getFiscalActivity(String domainName, int domain, int id,
+			AsyncCallback<FiscalActivity> callback) {
+		AON.start();
+		fiscalServiceAsync.getFiscalActivity(domainName,domain,id, 
+				new AsyncCallbackWrapper<FiscalActivity>(callback));
+	}
 	// -------------------------------------------------------------- ACTIVITIES
 	@Override
 	public void getActivities(int activityGroup,
@@ -284,6 +291,5 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		fiscalServiceAsync.initializeMod390(domainName, domain, year, 
 				new AsyncCallbackWrapper<Mod390>(callback));
 	}
-
 
 }

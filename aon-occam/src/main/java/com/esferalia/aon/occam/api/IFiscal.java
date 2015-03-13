@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api;
 
 import java.util.ArrayList;
 
+import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -13,6 +14,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
 
 public interface IFiscal {
+	// 			   FISCAL ACTIVITIES
+	public ArrayList<FiscalActivity> getFiscalActivities(AONContext ctx,int domain);
 
 	// 				   		  MOD180
 	public ArrayList<Mod180> getMod180s(AONContext ctx,int domain);

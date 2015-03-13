@@ -17,4 +17,7 @@ public class ProvinceListBox extends ListBox {
 		}
 	}
 	
+	public void setValue( Province province) {
+		setSelectedIndex(province==null?0:province.ordinal());
+	}
 }

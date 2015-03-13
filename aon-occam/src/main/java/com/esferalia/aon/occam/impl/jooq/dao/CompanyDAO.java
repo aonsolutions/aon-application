@@ -1,24 +1,188 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
+import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
+import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.jooq.Condition;
+import org.jooq.Record;
 import org.jooq.Record3;
 import org.jooq.Record6;
+import org.jooq.Result;
 
+import com.esferalia.aon.jooq.tables.Rmedia;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.CompanyBank;
+import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.EnterpriseFilter;
+import com.esferalia.aon.occam.api.model.EnterpriseProperties;
+import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.Province;
+import com.esferalia.aon.occam.api.model.type.StreetType;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class CompanyDAO {
+
+	private static final EnterprisePropertiesDAO ENTERPRISE_PROPERTIES = new EnterprisePropertiesDAO();
+	private static class EnterprisePropertiesDAO implements EnterpriseProperties {
+
+		private Condition[] getConditions(EnterpriseFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null)
+				return new Condition[0];
+
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override
+		public Property<Integer> getIdProperty() {
+			return new FilterDAO.PropertyDAO<Integer>(ENTERPRISE.REGISTRY);
+		}
+
+		@Override
+		public Property<Integer> getDomainProperty() {
+			return new FilterDAO.PropertyDAO<Integer>(ENTERPRISE.DOMAIN);
+		}
+
+		@Override
+		public Property<Integer> getParentDomainProperty() {
+			return new FilterDAO.PropertyDAO<Integer>(DOMAIN.PARENT);
+		}
+
+		@Override
+		public Property<String> getNameProperty() {
+			return new FilterDAO.PropertyDAO<String>(REGISTRY.NAME);
+		}
+
+		@Override
+		public Property<String> getAliasProperty() {
+			return new FilterDAO.PropertyDAO<String>(REGISTRY.ALIAS);
+		}
+
+		@Override
+		public Property<String> getDocumentProperty() {
+			return new FilterDAO.PropertyDAO<String>(REGISTRY.DOCUMENT);
+		}
+
+	}
 	
+	private static Rmedia PHONE = RMEDIA.as("rmedia_phone"); 
+	private static Rmedia FAX = RMEDIA.as("rmedia_fax");
+	private static Rmedia EMAIL = RMEDIA.as("rmedia_email");
+	private static Rmedia WEB = RMEDIA.as("rmedia_web");
+	
+	public static ArrayList<Enterprise> getParentEnterprises(AONContext ctx,EnterpriseFilter filter) {
+		ArrayList<Enterprise> list = new ArrayList<Enterprise>();
+		ctx.getDslContext().select(
+				ENTERPRISE.REGISTRY
+				,ENTERPRISE.DOMAIN
+				,REGISTRY.DOCUMENT_TYPE
+				,REGISTRY.DOCUMENT_COUNTRY
+				,REGISTRY.DOCUMENT
+				,REGISTRY.NAME
+				,REGISTRY.ALIAS
+			)
+			.from(ENTERPRISE)
+			.join(REGISTRY).on(ENTERPRISE.REGISTRY.equal(REGISTRY.ID))
+			.join(DOMAIN).on(DOMAIN.ID.equal(ENTERPRISE.DOMAIN))
+			.leftOuterJoin(SCOPE).on(SCOPE.ID.equal(ENTERPRISE.SCOPE))
+			.where(ENTERPRISE_PROPERTIES.getConditions(filter))
+			.fetch()
+			.forEach( record -> list.add( new Enterprise()
+						.setId(record.getValue(ENTERPRISE.REGISTRY))
+						.setDomain(record.getValue(ENTERPRISE.DOMAIN))
+						.setDocumentType(AonEnumUtils.enumValue(DocumentType.class,record.getValue(REGISTRY.DOCUMENT_TYPE)))
+						.setDocumentCountry(Country.safeValueOf(record.getValue(REGISTRY.DOCUMENT_COUNTRY)))
+						.setDocument(record.getValue(REGISTRY.DOCUMENT))
+						.setName(record.getValue(REGISTRY.NAME))
+					)
+				);
+		return list;
+	}
+
+	public static Enterprise getEnterprise(AONContext ctx,int id) {
+		Enterprise enterprise = new Enterprise();
+		
+		Result<? extends Record> result = ctx.getDslContext().select(
+				ENTERPRISE.REGISTRY
+				,ENTERPRISE.DOMAIN
+				,REGISTRY.DOCUMENT_TYPE
+				,REGISTRY.DOCUMENT_COUNTRY
+				,REGISTRY.DOCUMENT
+				,REGISTRY.NAME
+				,REGISTRY.ALIAS
+				,RADDRESS.STREET_TYPE
+				,RADDRESS.ADDRESS
+				,RADDRESS.NUMBER
+				,RADDRESS.ADDRESS2
+				,RADDRESS.ADDRESS3
+				,RADDRESS.ZIP
+				,RADDRESS.MUNICIPALITY_CODE
+				,RADDRESS.CITY
+				,GEOZONE.CODE
+				,PHONE.VALUE
+				,FAX.VALUE
+				,EMAIL.VALUE
+				,WEB.VALUE
+			)
+			.from(ENTERPRISE)
+			.join(REGISTRY).on(ENTERPRISE.REGISTRY.equal(REGISTRY.ID))
+			.leftOuterJoin(RADDRESS).on(RADDRESS.REGISTRY.equal(REGISTRY.ID)
+					.and(RADDRESS.TYPE.equal((byte) 0)))
+			.leftOuterJoin(GEOZONE).on(RADDRESS.GEOZONE.equal(GEOZONE.ID))
+			.leftOuterJoin(PHONE).on(PHONE.REGISTRY.equal(REGISTRY.ID)
+					.and(PHONE.MEDIA.equal(MediaType.FIXED_PHONE.value())))
+			.leftOuterJoin(FAX).on(FAX.REGISTRY.equal(REGISTRY.ID)
+					.and(FAX.MEDIA.equal(MediaType.FAX.value())))
+			.leftOuterJoin(EMAIL).on(EMAIL.REGISTRY.equal(REGISTRY.ID)
+					.and(EMAIL.MEDIA.equal(MediaType.EMAIL.value())))
+			.leftOuterJoin(WEB).on(WEB.REGISTRY.equal(REGISTRY.ID)
+					.and(WEB.MEDIA.equal(MediaType.WEB.value())))
+			.where(ENTERPRISE.REGISTRY.equal(id))
+			.fetch();
+		if (result != null && result.size() > 0) {
+			Record record = result.get(0);
+			enterprise.setId(record.getValue(ENTERPRISE.REGISTRY))
+				.setDomain(record.getValue(ENTERPRISE.DOMAIN))
+				.setDocumentType(AonEnumUtils.enumValue(DocumentType.class,record.getValue(REGISTRY.DOCUMENT_TYPE)))
+				.setDocumentCountry(Country.safeValueOf(record.getValue(REGISTRY.DOCUMENT_COUNTRY)))
+				.setDocument(record.getValue(REGISTRY.DOCUMENT))
+				.setName(record.getValue(REGISTRY.NAME))
+				.setAlias(record.getValue(REGISTRY.ALIAS))
+				.setStreetType(StreetType.safeValueOf(record.getValue(RADDRESS.STREET_TYPE)))
+				.setAddress(record.getValue(RADDRESS.ADDRESS))
+				.setNumber(record.getValue(RADDRESS.NUMBER))
+				.setAddress2(record.getValue(RADDRESS.ADDRESS2))
+				.setAddress3(record.getValue(RADDRESS.ADDRESS3))
+				.setProvince(Province.safeValueOf(record.getValue(GEOZONE.CODE)))
+				.setZip(record.getValue(RADDRESS.ZIP))
+				.setTown(record.getValue(RADDRESS.MUNICIPALITY_CODE))
+				.setCity(record.getValue(RADDRESS.CITY))
+				.setPhone(record.getValue(PHONE.VALUE))
+				.setFax(record.getValue(FAX.VALUE))
+				.setEmail(record.getValue(EMAIL.VALUE))
+				.setWeb(record.getValue(WEB.VALUE))
+			;
+		}
+		return enterprise;
+	}
+
 	public static Company getCompany(AONContext ctx,int domain) {
 		Record3<Integer,String,String> record = 
 			ctx.getDslContext().select(COMPANY.REGISTRY,REGISTRY.DOCUMENT,REGISTRY.NAME)

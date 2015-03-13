@@ -7,9 +7,112 @@
 	padding:8px 1.5em 1.5em 1.5em;
 }
 
-.aon-width-all {
-	width: 100%;
+.aon-width-all{
+	width:100%;
 }
+.aon-width-half{
+	width:50%;
+}
+.aon-width-half-plus{
+	width:60%;
+}
+.aon-width-half-minus{
+	width:40%;
+}
+.aon-width-auto{
+	width:auto;
+}
+.aon-width-20{
+	width:20px;
+}
+.aon-width-30{
+	width:30px;
+}
+.aon-width-40{
+	width:40px;
+}
+.aon-width-50{
+	width:50px;
+}
+.aon-width-60{
+	width:60px;
+}
+.aon-width-70{
+	width:70px;
+}
+.aon-width-80{
+	width:80px;
+}
+.aon-width-100{
+	width:100px;
+}	
+.aon-width-105{
+	width:105px;
+}	
+.aon-width-110{
+	width:110px;
+}	
+.aon-width-120{
+	width:120px;
+}	
+.aon-width-130{
+	width:130px;
+}	
+.aon-width-140{
+	width:140px;
+}	
+.aon-width-150{
+	width:150px;
+}	
+.aon-width-160{
+	width:160px;
+}	
+.aon-width-170{
+	width:170px;
+}	
+.aon-width-180{
+	width:180px;
+}	
+.aon-width-190{
+	width:190px;
+}	
+.aon-width-200{
+	width:200px;
+}	
+.aon-width-210{
+	width:210px;
+}	
+.aon-width-220{
+	width:220px;
+}	
+.aon-width-230{
+	width:230px;
+}	
+.aon-width-240{
+	width:240px;
+}	
+.aon-width-250{
+	width:250px;
+}	
+.aon-width-300{
+	width:300px;
+}	
+.aon-width-350{
+	width:350px;
+}	
+.aon-width-400{
+	width:400px;
+}
+.aon-width-450{
+	width:450px;
+}	
+.aon-width-500{
+	width:500px;
+}	
+.aon-width-600{
+	width:600px;
+}	
+
 .aon-clickable {
 	cursor: pointer;
 }
@@ -283,6 +386,9 @@
 .aon-input-text-important {
 	border: 1px solid #808080 !important;
 	padding: 1px;
+}
+.aon-inputText {
+    border: 1px solid #808080;
 }
 @sprite .aon-icon-aeat{
 	width: auto;
@@ -814,3 +920,249 @@ input:disabled + label{
 	border: solid red 1px;
 	text-align: center;
 }
+
+@sprite .aon-icon-m111{
+	gwt-image: "aonIconM111";
+    color: #000000;
+    font-size: 0.9em;
+    height: auto;
+    overflow: hidden;
+    padding-left: 23px;
+    padding-right: 20px;
+    text-transform: uppercase;
+    width: auto;
+}
+@sprite .aon-icon-m115{
+	gwt-image: "aonIconM115";
+    color: #000000;
+    font-size: 0.9em;
+    height: auto;
+    overflow: hidden;
+    padding-left: 23px;
+    padding-right: 20px;
+    text-transform: uppercase;
+    width: auto;
+}
+@sprite .aon-icon-m123{
+	gwt-image: "aonIconM123";
+    color: #000000;
+    font-size: 0.9em;
+    height: auto;
+    overflow: hidden;
+    padding-left: 23px;
+    padding-right: 20px;
+    text-transform: uppercase;
+    width: auto;
+}
+@sprite .aon-icon-m130{
+	gwt-image: "aonIconM130";
+    color: #000000;
+    font-size: 0.9em;
+    height: auto;
+    overflow: hidden;
+    padding-left: 23px;
+    padding-right: 20px;
+    text-transform: uppercase;
+    width: auto;
+}
+@sprite .aon-icon-m131{
+	gwt-image: "aonIconM131";
+    color: #000000;
+    font-size: 0.9em;
+    height: auto;
+    overflow: hidden;
+    padding-left: 23px;
+    padding-right: 20px;
+    text-transform: uppercase;
+    width: auto;
+}
+@sprite .aon-icon-m140{
+	gwt-image: "aonIconM140";
+    color: #000000;
+    font-size: 0.9em;
+    height: auto;
+    overflow: hidden;
+    padding-left: 23px;
+    padding-right: 20px;
+    text-transform: uppercase;
+    width: auto;
+}
+@sprite .aon-icon-m180{
+	gwt-image: "aonIconM180";
+    color: #000000;
+    font-size: 0.9em;
+    height: auto;
+    overflow: hidden;
+    padding-left: 23px;
+    padding-right: 20px;
+    text-transform: uppercase;
+    width: auto;
+}
+@sprite .aon-icon-m184{
+	gwt-image: "aonIconM184";
+    color: #000000;
+    font-size: 0.9em;
+    height: auto;
+    overflow: hidden;
+    padding-left: 23px;
+    padding-right: 20px;
+    text-transform: uppercase;
+    width: auto;
+}
+@sprite .aon-icon-m190{
+	gwt-image: "aonIconM190";
+    color: #000000;
+    font-size: 0.9em;
+    height: auto;
+    overflow: hidden;
+    padding-left: 23px;
+    padding-right: 20px;
+    text-transform: uppercase;
+    width: auto;
+}
+@sprite .aon-icon-m193{
+	gwt-image: "aonIconM193";
+    color: #000000;
+    font-size: 0.9em;
+    height: auto;
+    overflow: hidden;
+    padding-left: 23px;
+    padding-right: 20px;
+    text-transform: uppercase;
+    width: auto;
+}
+@sprite .aon-icon-m200{
+	gwt-image: "aonIconM200";
+    color: #000000;
+    font-size: 0.9em;
+    height: auto;
+    overflow: hidden;
+    padding-left: 23px;
+    padding-right: 20px;
+    text-transform: uppercase;
+    width: auto;
+}
+@sprite .aon-icon-m303{
+	gwt-image: "aonIconM303";
+    color: #000000;
+    font-size: 0.9em;
+    height: auto;
+    overflow: hidden;
+    padding-left: 23px;
+    padding-right: 20px;
+    text-transform: uppercase;
+    width: auto;
+}
+@sprite .aon-icon-m340{
+	gwt-image: "aonIconM340";
+    color: #000000;
+    font-size: 0.9em;
+    height: auto;
+    overflow: hidden;
+    padding-left: 23px;
+    padding-right: 20px;
+    text-transform: uppercase;
+    width: auto;
+}
+@sprite .aon-icon-m347{
+	gwt-image: "aonIconM347";
+    color: #000000;
+    font-size: 0.9em;
+    height: auto;
+    overflow: hidden;
+    padding-left: 23px;
+    padding-right: 20px;
+    text-transform: uppercase;
+    width: auto;
+}
+@sprite .aon-icon-m349{
+	gwt-image: "aonIconM349";
+    color: #000000;
+    font-size: 0.9em;
+    height: auto;
+    overflow: hidden;
+    padding-left: 23px;
+    padding-right: 20px;
+    text-transform: uppercase;
+    width: auto;
+}
+@sprite .aon-icon-m390{
+	gwt-image: "aonIconM390";
+    color: #000000;
+    font-size: 0.9em;
+    height: auto;
+    overflow: hidden;
+    padding-left: 23px;
+    padding-right: 20px;
+    text-transform: uppercase;
+    width: auto;
+}
+
+@sprite .aon-icon-company {
+	gwt-image: "aonIconEnterprise";
+    color: #000000;
+    font-size: 0.9em;
+    height: auto;
+    overflow: hidden;
+    padding-left: 23px;
+    padding-right: 20px;
+    text-transform: uppercase;
+    width: auto;
+}
+
+@sprite .aon-icon-companyData {
+	gwt-image: "aonIconCompanyData";
+    color: #000000;
+    font-size: 0.9em;
+    height: auto;
+    overflow: hidden;
+    padding-left: 23px;
+    padding-right: 20px;
+    text-transform: uppercase;
+    width: auto;
+}
+
+@sprite .aon-icon-activities {
+	gwt-image: "aonIconActivities";
+    color: #000000;
+    font-size: 0.9em;
+    height: auto;
+    overflow: hidden;
+    padding-left: 23px;
+    padding-right: 20px;
+    text-transform: uppercase;
+    width: auto;
+}
+
+.aon-fiscal-enterprise-suggest {
+    background-color: #eee;
+    border: medium none;
+    font-size: 1.1em;
+    font-weight: bold;
+    padding: 2px 5px;
+    width: 400px;
+}
+
+.gwt-SuggestBoxPopup {
+	height: 300px;
+	width: 450px;
+	overflow: auto !important;
+}
+
+.aon-panelGrid{
+	border-collapse:collapse;
+}
+.aon-panelGrid-odd{
+	border:#c4c4c4 1px solid;
+	font-weight:bold;
+	background-color:#f2f2f2;
+	white-space: nowrap;
+	padding:1px 0.5em 1px 0.5em;
+	vertical-align:top;
+}
+.aon-panelGrid-even{
+	border:#c4c4c4 1px solid;
+	padding:2px 5px 2px 2px;
+	padding:1px 0.5em 1px 0.5em;
+}
+

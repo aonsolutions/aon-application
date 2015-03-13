@@ -62,6 +62,15 @@ public class FilterDAO implements Filter {
 		public Filter isNotNull() {
 			return new FilterDAO(field.isNotNull());
 		}
+
+		@Override
+		public Filter like(T t) {
+			if (t instanceof String) {
+				return new FilterDAO(field.like( (String) t));
+			} else {
+				throw new UnsupportedOperationException();				
+			}
+		}
 		
 	}
 
@@ -116,6 +125,10 @@ public class FilterDAO implements Filter {
 		@Override
 		public Filter isNotNull() {
 			return new FilterDAO(field.isNotNull());
+		}
+		@Override
+		public Filter like(Date date) {
+			throw new UnsupportedOperationException();				
 		}
 		
 	}
@@ -174,6 +187,12 @@ public class FilterDAO implements Filter {
 		public Filter isNotNull() {
 			return new FilterDAO( field.isNotNull());
 		}
+
+		@Override
+		public Filter like(Boolean t) {
+			throw new UnsupportedOperationException();				
+		}
+		
 	}
 
 	private Condition condition;

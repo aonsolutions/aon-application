@@ -14,6 +14,7 @@ public class DocumentTextBox extends TextBox {
 	public DocumentTextBox() {
 		setVisibleLength(9);
 		setMaxLength(9);
+		setStyleName(AON_RESOURCES.css().aonInputText());
 		addValueChangeHandler( new ValueChangeHandler<String>() {
 
 			@Override

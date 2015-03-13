@@ -1,0 +1,82 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:fiscal='urn:import:com.esferalia.aon.gwt.fiscal.client.widget'
+	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'>
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages"
+		field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
+		field="aonResources"></ui:with>
+
+	<g:HTMLPanel styleName="aon-scroll-area">
+		<div class="{aonResources.css.aonGroup}">
+			<div class="{aonResources.css.aonGroupTitle}">
+				<g:InlineLabel text="{msg.moduleActivities}" />
+			</div>
+			<div class="{aonResources.css.aonGroupBody}">
+				<table class="aon-panelGrid aon-width-all">
+					<tr>
+						<td class="aon-panelGrid-odd aon-width-100">
+							<g:InlineLabel text="{msg.year}" />
+						</td>
+						<td class="aon-panelGrid-even aon-width-100">
+							<g:TextBox ui:field="year" visibleLength="4" maxLength="4" 
+								styleName="{aonResources.css.aonInputText}"/>
+						</td>
+						<td class="aon-panelGrid-odd aon-width-100">
+							<g:InlineLabel text="{msg.epigraph}" />
+						</td>
+						<td class="aon-panelGrid-even aon-width-auto" colspan="4">
+							<g:TextBox ui:field="epigraph" visibleLength="7" maxLength="7"
+								enabled="false" styleName="{aonResources.css.aonInputText}"/>
+							<g:TextBox ui:field="description" visibleLength="50" maxLength="30"
+								enabled="false" styleName="{aonResources.css.aonInputText}"/>
+						</td>
+					</tr>
+					<tr>
+						<td class="aon-panelGrid-odd aon-width-100">
+							<g:InlineLabel text="{msg.maxPerson}" />
+						</td>
+						<td class="aon-panelGrid-even aon-width-100">
+							<g:TextBox ui:field="maxPerson" visibleLength="7" maxLength="7"  
+								styleName="{aonResources.css.aonInputText}"/>
+						</td>
+						<td class="aon-panelGrid-odd aon-width-100">
+							<g:InlineLabel text="{msg.maxImport}" />
+						</td>
+						<td class="aon-panelGrid-even aon-width-100">
+							<g:TextBox ui:field="maxImport" visibleLength="7" maxLength="7"  
+								styleName="{aonResources.css.aonInputText}"/>
+						</td>
+						<td class="aon-panelGrid-odd aon-width-100">
+							<g:InlineLabel text="{msg.vatPercent}" />
+						</td>
+						<td class="aon-panelGrid-even aon-width-auto">
+							<g:TextBox ui:field="vatPercent" visibleLength="7" maxLength="7"  
+								styleName="{aonResources.css.aonInputText}"/>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<g:TabPanel>
+			<g:Tab text="{msg.epigraphAdditionalInfo}">
+				<g:SimplePanel ui:field="infoContainer"/>
+			</g:Tab>
+			<g:Tab text="{msg.irpfModules}">
+				<g:HTMLPanel>
+					<g:SimplePanel ui:field="moduleIRPFContainer"/>
+					<g:SimplePanel ui:field="infoIRPFContainer"/>
+				</g:HTMLPanel>
+			</g:Tab>
+			<g:Tab text="{msg.vatModules}">
+				<g:HTMLPanel>
+					<g:SimplePanel ui:field="moduleIVAContainer"/>
+					<g:SimplePanel ui:field="infoIVAContainer"/>
+				</g:HTMLPanel>
+			</g:Tab>
+		</g:TabPanel>
+	</g:HTMLPanel>
+
+</ui:UiBinder>

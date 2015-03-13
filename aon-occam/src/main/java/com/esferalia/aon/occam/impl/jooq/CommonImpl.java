@@ -1,14 +1,17 @@
 package com.esferalia.aon.occam.impl.jooq;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.ICommon;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
 
 public class CommonImpl implements ICommon {
@@ -24,7 +27,23 @@ public class CommonImpl implements ICommon {
 	public FiscalParameters getFiscalParameters(AONContext ctx) {
 		return AppParamDAO.getFiscalParameters(ctx);
 	}
-
+	// ------------------ ENTERPRISE
+	@Override
+	public Enterprise getEnterprise(AONContext ctx, int id) {
+		return CompanyDAO.getEnterprise(ctx,id);
+	}
+	
+	@Override
+	public ArrayList<Enterprise> getParentEnterprises(AONContext ctx, String query) {
+		return CompanyDAO.getParentEnterprises(ctx
+			, p -> p.getParentDomainProperty().eq(ctx.getDomainId())
+				.and(
+					p.getNameProperty().like(query)
+					.or(p.getAliasProperty().like(query))
+					.or(p.getDocumentProperty().like(query))						
+					)
+			);
+	}
 	// ------------------ PRODUCT
 	@Override
 	public List<String> getProductTags(AONContext ctx) {
