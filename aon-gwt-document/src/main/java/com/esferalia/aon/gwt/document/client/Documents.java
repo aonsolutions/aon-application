@@ -60,6 +60,8 @@ import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.dom.client.ScrollEvent;
+import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.http.client.URL;
@@ -69,11 +71,15 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.AbstractHasData.DefaultKeyboardSelectionHandler;
+import com.google.gwt.user.cellview.client.AbstractPager;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
+//import com.esferalia.aon.gwt.document.client.DataGrid;
 import com.google.gwt.user.cellview.client.DataGrid;
+//import com.esferalia.aon.gwt.document.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.DataGrid.Style;
+import com.google.gwt.user.cellview.client.HasKeyboardPagingPolicy.KeyboardPagingPolicy;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -90,7 +96,9 @@ import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RichTextArea;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
@@ -108,6 +116,7 @@ import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
+import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.SelectionModel;
 //import org.eclipse.jetty.webapp.WebInfConfiguration;
 
@@ -117,6 +126,87 @@ public class Documents extends Composite implements EntryPoint {
 	private static final String SILENT = "silent";
 	private static final int DEFAULT_ZOOM = 130;
 
+	
+	/**
+	 * A scrolling pager that automatically increases the range every time the
+	 * scroll bar reaches the bottom.
+	 */
+	static class ShowMorePager extends AbstractPager {
+
+		/**
+		 * The default increment size.
+		 */
+		private static final int DEFAULT_INCREMENT = 20;
+
+		/**
+		 * The increment size.
+		 */
+		private int incrementSize = DEFAULT_INCREMENT;
+
+		/**
+		 * The last scroll position.
+		 */
+		private int lastScrollPos = 0;
+
+		/**
+		 * The scrollable panel.
+		 */
+		private final ScrollPanel scrollPanel;
+
+		/**
+		 * Construct a new {@link ShowMorePager}.
+		 */
+		public ShowMorePager(CustomDataGrid<?> dataGrid) {
+			setDisplay(dataGrid);
+
+			this.scrollPanel = (ScrollPanel) dataGrid.getScrollPanel();
+
+			// Handle scroll events.
+			scrollPanel.addScrollHandler(new ScrollHandler() {
+
+				@Override
+				public void onScroll(ScrollEvent event) {
+					// If scrolling up, ignore the event.
+					int oldScrollPos = ShowMorePager.this.lastScrollPos;
+					ShowMorePager.this.lastScrollPos = scrollPanel
+							.getVerticalScrollPosition();
+					if (oldScrollPos >= ShowMorePager.this.lastScrollPos) {
+						return;
+					}
+
+					int maxScrollTop = scrollPanel
+							.getMaximumVerticalScrollPosition();
+
+					if (ShowMorePager.this.lastScrollPos >= maxScrollTop) {
+						// We are near the end, so increase the page size.
+						int incrementSize = getIncrementSize();
+
+						Range range = getDisplay().getVisibleRange();
+						// We are near the end, so increase the page size.
+						int newPageSize = range.getLength() + incrementSize;
+						getDisplay().setVisibleRange(0, newPageSize);
+					}
+				}
+			});
+		}
+
+		/**
+		 * Get the number of rows by which the range is increased when the
+		 * scrollbar reaches the bottom.
+		 * 
+		 * @return the increment size
+		 */
+		int getIncrementSize() {
+			return incrementSize;
+		}
+
+		@Override
+		protected void onRangeOrRowCountChanged() {
+		}
+
+	}
+
+	
 	class DocumentContextMenu extends ContextMenu {
 
 		ScheduledCommand viewCommand = new ScheduledCommand() {
@@ -323,10 +413,12 @@ public class Documents extends Composite implements EntryPoint {
 				}
 				addSeparator();
 				if(selFiles.size() <= 1){
-					/*copyLinkItem = addItem("Copiar Link",copyLinkCommand,
-							"aon-icon-copy",AON.AON_ICON_CMD_BUTTON);
-					copyLinkItem.setEnabled(true);number++;copyBool = true;
-					*/
+					/*//Window.alert(JSDocuments.isIE()+"");
+					if(JSDocuments.isIE()){
+						copyLinkItem = addItem("Copiar Link",copyLinkCommand,
+								"aon-icon-copy",AON.AON_ICON_CMD_BUTTON);
+						copyLinkItem.setEnabled(true);number++;copyBool = true;
+					}*/
 				}
 				shareItem = addItem("Compartir",shareCommand,
 						"aon-icon-google-drive",AON.AON_ICON_CMD_BUTTON);
@@ -600,9 +692,12 @@ public class Documents extends Composite implements EntryPoint {
 	Boolean documentManager;
 	Boolean confidentialUser;
 	Vector<FileInfo> selFiles;
-	
+	ShowMorePager showMorePager;
 	private void init() {
-
+		pop = new PopupPanel();
+		pop.setStyleName("aon-outputConnectionStatus-start");
+		pop.setPopupPosition(25, 5);
+		pop.show();
 		idoc.initAux(new AsyncCallback<Vector<Boolean>>() {
 			@Override
 			public void onSuccess(Vector<Boolean> result) {
@@ -628,6 +723,7 @@ public class Documents extends Composite implements EntryPoint {
 
 							@Override
 							public void onSuccess(Lists result) {
+								pop.hide();
 								lists = result;
 								DisclosureImages di = new DisclosureImages();
 								dpanel = new DisclosurePanel(di.getClosed(), di.getOpen(), "Categor\u00edas");
@@ -1022,11 +1118,13 @@ public class Documents extends Composite implements EntryPoint {
 				
 			}
 		};
+	
 		
- 		dataGrid = new DataGrid<FileInfo>(Integer.MAX_VALUE, resources,
+ 		dataGrid = new CustomDataGrid<FileInfo>(30,
 				FileInfo.PROVIDES_KEY);
  		dataGrid.addHandler(selHandler, CellPreviewEvent.getType());
- 	
+ 		
+ 		
 		/*dataGrid.addBitlessDomHandler(new DragOverHandler() {
 			
 			@Override
@@ -1072,6 +1170,7 @@ public class Documents extends Composite implements EntryPoint {
 		*/
 		dataGrid.setWidth("100%");
 		
+		dataGrid.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
 		dataGrid.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 		dataGrid.setAutoHeaderRefreshDisabled(true);
 		dataGrid.setEmptyTableWidget(new Label("No hay ning\u00fan archivo."));
@@ -1090,6 +1189,8 @@ public class Documents extends Composite implements EntryPoint {
 		dataGrid.setSelectionModel(selectionModel);
 		
 		initTableColumns(selectionModel, sortHandler);
+		
+		showMorePager = new ShowMorePager((CustomDataGrid<FileInfo>) dataGrid);
 		
 		// Inject rich styles.
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
@@ -2558,9 +2659,13 @@ public class Documents extends Composite implements EntryPoint {
 
 	Boolean isServiconvenios=false;
 	Boolean conf;
-	
+	PopupPanel pop;
 	@UiHandler("serviConveniosButton")
 	void getServiConveniosAttach(ClickEvent event) {
+		pop = new PopupPanel();
+		pop.setStyleName("aon-outputConnectionStatus-start");
+		pop.setPopupPosition(25, 5);
+		pop.show();
 		gestionLote.setVisible(false);
 		gestionDocs.setVisible(true);
 		editFile.setVisible(false);
@@ -2575,6 +2680,7 @@ public class Documents extends Composite implements EntryPoint {
 			
 			@Override
 			public void onSuccess(Vector<FileInfo> result) {
+				pop.hide();
 				docs.setServiconvenios(result);
 
 				/*for(FileInfo f : dataProvider.getList()){
@@ -2594,15 +2700,20 @@ public class Documents extends Composite implements EntryPoint {
 			}
 		});}
 		else{
+			pop.hide();
 			for(FileInfo f : dataProvider.getList()){
 				dataGrid.getSelectionModel().setSelected(f, false);
 			}
 			dataProvider = new ListDataProvider<FileInfo>(docs.getServiconvenios());
 			dataProvider.addDataDisplay(dataGrid);
 			updateDatagridColumns();
+
+			
 			dataGrid.redraw();
 		}
+
 		docs.setFilter(docs.getServiconvenios());
+		
 	}
 	Boolean isCheck = false;
 	private void initTableColumns(
