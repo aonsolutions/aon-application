@@ -62,7 +62,20 @@ public enum SSRegimeType implements IResourceable{
 		public <E> E accept(SSRegimeTypeVisitor<E> visitor) {
 			return visitor.visitArtistRegime(this);
 		}
-	};
+	},
+	ISFAS{
+		@Override
+		public <E> E accept(SSRegimeTypeVisitor<E> visitor) {
+			return visitor.visitIsfasRegime(this);
+		}
+	},
+	MUFACE{
+		@Override
+		public <E> E accept(SSRegimeTypeVisitor<E> visitor) {
+			return visitor.visitMufaceRegime(this);
+		}
+	}
+	;
 
 	public abstract <E> E accept(SSRegimeTypeVisitor<E> visitor);
 	
