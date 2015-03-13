@@ -694,10 +694,12 @@ public class Documents extends Composite implements EntryPoint {
 	Vector<FileInfo> selFiles;
 	ShowMorePager showMorePager;
 	private void init() {
-		pop = new PopupPanel();
-		pop.setStyleName("aon-outputConnectionStatus-start");
-		pop.setPopupPosition(25, 5);
-		pop.show();
+		if(!Boolean.parseBoolean(getParameter(GWT.getModuleName(), SILENT))){
+			pop = new PopupPanel();
+			pop.setStyleName("aon-outputConnectionStatus-start");
+			pop.setPopupPosition(25, 5);
+			pop.show();
+		}
 		idoc.initAux(new AsyncCallback<Vector<Boolean>>() {
 			@Override
 			public void onSuccess(Vector<Boolean> result) {
