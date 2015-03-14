@@ -98,8 +98,8 @@ INSERT INTO `system_deduction`
 
 INSERT INTO `system_deduction` 
 (`domain`	,`type`	,`deduction_concept`	,`description`	,`description_decorable`,`expression`	,`start_date`	,`end_date`	,`month`) VALUES 
-("-9"		,10		,NULL		,"AdministraciÃ³n Civil del Estado (MUFACE)"	
-								,"0"			,"BASE_CGC * PORCENTAJE_ISFAS / 100.00"	
+("-9"		,10		,NULL		,"Administración Civil del Estado (MUFACE)"	
+								,"0"			,"BASE_CGC * PORCENTAJE_MUFACE / 100.00"	
 													,"2015-01-01"	,NULL		,NULL);
 
 INSERT INTO `system_deduction` 
