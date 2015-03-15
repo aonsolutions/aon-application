@@ -81,12 +81,12 @@ INSERT INTO system_data
 
 INSERT INTO system_data 
 ( domain, name			, expression	, start_date	, end_date	, read_only 	, comments )  VALUES 
-(-8	, 'BASE_CGP_MIN'	, 'BASE_CGC_MIN', '2015-01-01'	, NULL		, 1		, NULL )
+(-9	, 'BASE_CGP_MIN'	, 'BASE_CGC_MIN', '2015-01-01'	, NULL		, 1		, NULL )
 ;
 
 INSERT INTO system_data 
 ( domain, name			, expression	, start_date	, end_date	, read_only 	, comments )  VALUES 
-(-8	, 'BASE_CGP_MAX'	, 'BASE_CGC_MIN', '2015-01-01'	, NULL		, 1		, NULL )
+(-9	, 'BASE_CGP_MAX'	, 'BASE_CGC_MIN', '2015-01-01'	, NULL		, 1		, NULL )
 ;
 
 
