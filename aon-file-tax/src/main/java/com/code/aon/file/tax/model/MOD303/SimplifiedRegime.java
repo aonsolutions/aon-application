@@ -88,6 +88,8 @@ public class SimplifiedRegime {
 	private double regularizacion;
 	private double totalDeducible;
 	private double result;
+	private String indAux1;
+	private String indAux2;
 	
 	public int getAgr1Code() {
 		return agr1Code;
@@ -586,5 +588,17 @@ public class SimplifiedRegime {
 	}
 	public void setResult(double result) {
 		this.result = result;
+	}
+	public String getIndAux1() {
+		return indAux1;
+	}
+	public void setIndAux1(String indAux1) {
+		this.indAux1 = indAux1;
+	}
+	public String getIndAux2() {
+		return indAux2;
+	}
+	public void setIndAux2(String indAux2) {
+		this.indAux2 = indAux2;
 	}
 }

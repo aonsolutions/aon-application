@@ -96,6 +96,9 @@
 	
 	<field name="result"    value="bean"  bean="sr"    property="result"            format="DefNumeric"    pattern="S9(14)V99" />
 	
-	<field name="free1"     value=" "                                                        format="Alphabetic"    pattern="X(592)"     />
+	<field name="indAux1"  value="bean"  bean="sr"    property="indAux1"    format="AlphaNumeric"  pattern="X(1)" />
+	<field name="indAux2"  value="bean"  bean="sr"    property="indAux2"    format="AlphaNumeric"  pattern="X(1)" />
+	
+	<field name="free1"     value=" "                                                        format="Alphabetic"    pattern="X(590)"     />
 	<field name="free2"     value="&lt;/T30302>"                                             format="Alphabetic"    pattern="X(9)" />
 </register>
