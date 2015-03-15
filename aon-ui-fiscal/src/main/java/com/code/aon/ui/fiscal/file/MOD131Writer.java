@@ -162,6 +162,7 @@ public class MOD131Writer implements IFinanceConstants{
 		} else {
 			declaration.setDeclarationType("I");
 			declaration.setCcc("");
+			declaration.setIban("");
 			Finance finance = fiscalModel.getFinance();
 			if (finance != null) {
 				if (finance.getPayMethod() != null) {
@@ -171,6 +172,7 @@ public class MOD131Writer implements IFinanceConstants{
 						}
 						declaration.setPayment("3");
 						declaration.setCcc(finance.getBankAccount().getBban());
+						declaration.setIban(finance.getBankAccount().getIban());
 						declaration.setDeclarationType("U");
 					} else {
 						declaration.setPayment("1");
