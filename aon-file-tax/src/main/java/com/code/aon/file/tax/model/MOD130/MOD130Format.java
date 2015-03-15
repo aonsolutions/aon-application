@@ -5,6 +5,10 @@ import com.code.aon.config.enumeration.Administration;
 
 public enum MOD130Format {
 
+	AEAT_2015(2015
+			,Administration.COMMON_TERRITORY
+			,MimeType.MIME_TXT
+			,Aeat2015MOD130Factory.class),
 	AEAT_2011(2011
 			,Administration.COMMON_TERRITORY
 			,MimeType.MIME_TXT
