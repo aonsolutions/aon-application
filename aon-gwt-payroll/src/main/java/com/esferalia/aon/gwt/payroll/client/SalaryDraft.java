@@ -75,7 +75,6 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.HasDirection.Direction;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -163,6 +162,17 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			put("FOGASA_E", "Fondo de Garant\u00eda Salarial ( FOGASA )");
 
 		}
+	};
+
+	private static Deduction.Type SYSTEM_DEDUCTION [] = {
+		Deduction.Type.IRPF,
+		Deduction.Type.COMMON_CONTINGENCY,
+		Deduction.Type.PROFESSIONAL_CONTINGENCY,
+		Deduction.Type.UNEMPLOYMENT,
+		Deduction.Type.JOB_TRAINING,
+		Deduction.Type.STRUCTURAL_OVERTIME,
+		Deduction.Type.NON_STRUCTURAL_OVERTIME,
+		Deduction.Type.FOGASA
 	};
 
 	private static Map<Deduction.Type, String> DEDUCTION_DESCRIPTIONS = new HashMap<Deduction.Type, String>() {
@@ -2135,7 +2145,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				"La Base por Contingecias Comunes "
 						+ format(rawCgcBase)
 						+ "\u20A0 ha sido "
-						+ (rawCgcBase > cgcBase ? "limitada al m\u00e1ximo permitido"
+						+ ((NumberUtils.compare(rawCgcBase,cgcBase)>0) ? "limitada al m\u00e1ximo permitido"
 								: "ampliada al m\u00ednimo obligatorio"));
 
 		Double cgpBase = salaryDraftObject.getCgpBase();
@@ -2149,7 +2159,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				"La Base por Accidentes de Trabajo y Enfermedades Profesionales  "
 						+ format(rawCgpBase)
 						+ "\u20A0 ha sido "
-						+ (rawCgpBase > cgpBase ? "limitada al m\u00e1ximo permitido"
+						+ ((NumberUtils.compare(rawCgcBase,cgcBase)>0) ? "limitada al m\u00e1ximo permitido"
 									: "ampliada al m\u00ednimo obligatorio"));
 
 		irpfBaseLabel.setText(format(salaryDraftObject.getIrpfBase()),
@@ -2761,10 +2771,13 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		int row = paymentsTable.getRowCount();
 		for (Deduction deduction : deductions) {
 
-			String description = DEDUCTION_DESCRIPTIONS
-					.get(deduction.getType());
-			if (description != null) {
+			if (isSystemDeduction(deduction)) {
 
+				String description = DEDUCTION_DESCRIPTIONS
+						.get(deduction.getType());
+				if ( description == null )
+					description = deduction.getDescription(); 
+					
 				if (deduction.getAmount() != null) {
 					Double percent = getPercent(deduction, salaryDraftObject);
 					dumpSystemDeduction(deduction, percent, description, row++);
@@ -4031,6 +4044,13 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	}
 
 	// ------------------------------------------------------- Static 'Library'
+	
+	private static boolean isSystemDeduction(Deduction deduction){
+		for(Deduction.Type type : SYSTEM_DEDUCTION)
+			if ( type == deduction.getType() )
+				return true;
+		return false;
+	}
 
 	private static Double getDbPercent(Deduction deduction,
 			SalaryDraftObject draftObject) {
