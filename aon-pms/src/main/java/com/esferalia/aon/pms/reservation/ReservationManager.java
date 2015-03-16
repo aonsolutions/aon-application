@@ -150,6 +150,7 @@ public class ReservationManager implements IReservationConstants {
 				try {
 					boolean skipModification = (reservation.isSourceRequest() && reservation.isActive());
 					if (!skipModification) {
+						delay3s(reservation.getCreationDate());
 						if (isReservationRoomAssigned(reservation)) {
 							removeReservationRoomDetail(reservation, true);
 						}
@@ -658,6 +659,15 @@ public class ReservationManager implements IReservationConstants {
 		criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CRS_CODE), reservationCrsCode);
 		List<ITransferObject> reservationList = reservationBean.getList(criteria);
 		return (reservationList.size() > 0) ? (ProjectReservation)reservationList.get(0) : null;
+	}
+
+	private void delay3s(Date date) {
+		long timeToSleep = new Date().getTime() - date.getTime();
+		if (timeToSleep > 0 && timeToSleep < 3000) {
+			try {
+				Thread.sleep(timeToSleep);
+			} catch (InterruptedException e) {}
+		}
 	}
 
 	private boolean isReservationRoomAssigned(ProjectReservation reservation) throws ManagerBeanException {
