@@ -13,7 +13,7 @@ public class HolidayDraft implements Serializable {
 	 */
 	private static final long serialVersionUID = 1325839155341913285L;
 	
-	
+	private Integer domain;
 	private Integer id;
 	private String description;
 	
@@ -21,7 +21,11 @@ public class HolidayDraft implements Serializable {
 	
 	public HolidayDraft() {
 		
-		this.holidays = new LinkedHashMap<Date, String>();
+		holidays = new LinkedHashMap<Date, String>();
+	}
+	
+	public void setDomain(Integer domain) {
+		this.domain = domain;
 	}
 	
 	public void setId(Integer id) {
@@ -36,6 +40,14 @@ public class HolidayDraft implements Serializable {
 		holidays.put(date, description);
 	}
 	
+	public void setHolidayMap(Map<Date, String> map) {
+		holidays = map;
+	}
+	
+	public Integer getDomain() {
+		return this.domain;
+	}
+	
 	public Integer getId() {
 		return this.id;
 	}
@@ -47,7 +59,4 @@ public class HolidayDraft implements Serializable {
 	public Map<Date, String> getHolidaysMap() {
 		return Collections.unmodifiableMap(holidays);
 	}
-	
-	
-	
 }

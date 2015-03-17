@@ -56,8 +56,6 @@ public abstract class FilterDialog extends CustomDialog {
 				
 			}
 		});
-		
-		nameTextBox.setFocus(true);
 	}
 	
 	protected abstract void onAccept();
@@ -95,7 +93,23 @@ public abstract class FilterDialog extends CustomDialog {
 		fromDatePatternLabel.setText(dateTimeFormat.getPattern());
 	}
 	
+	public void setVisibleDateLabel(boolean bool) {
+		dateLabel.setVisible(bool);
+	}
+	
+	public void setVisibleDateBox(boolean bool) {
+		fromDateBox.setVisible(false);
+	}
+	
 	public void setVisibleDatePatternLabel(boolean bool) {
 		fromDatePatternLabel.setVisible(bool);
+	}
+	
+	public void setFocusOnNameTextBox(boolean focus) {
+		nameTextBox.setFocus(focus);
+	}
+	
+	public void setFocusOnDateBox(boolean focus) {
+		fromDateBox.setFocus(focus);
 	}
 }

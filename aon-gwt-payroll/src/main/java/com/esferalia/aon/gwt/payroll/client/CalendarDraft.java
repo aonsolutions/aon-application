@@ -6,18 +6,18 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.payroll.client.CalendarDraftObjectData.MyHolidayDraft;
 import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
@@ -36,8 +36,9 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+
 public class CalendarDraft extends Composite implements
-		CalendarDraftObject.Listener {
+		CalendarDraftObjectData.Listener {
 
 	interface Style extends CssResource {
 
@@ -95,127 +96,204 @@ public class CalendarDraft extends Composite implements
 	ListBox yearList;
 	@UiField
 	Button addEvent;
-	
-	private FilterDialog filterDialog;
-	private Date dateSeleted;
+	@UiField
+	Button saveButton;
 
-	private CalendarDraftObject calendarDraftObject;
+	private Date datePickerDateSelected;
+	private String nameValueListBoxSelected;
 
-	private static final DateTimeFormat END_DATE_FORMAT = DateTimeFormat
-			.getFormat(PredefinedFormat.DATE_SHORT);
+	private CalendarDraftObjectData calendarDraftObjectData;
 
 	public CalendarDraft() {
-		initWidget(uiBinder.createAndBindUi(this));
+		initWidget(uiBinder.createAndBindUi(this));		
+	}
 
+	// --------------------------------------------- UiHandlers
+
+	@UiHandler("calendarPanel")
+	void onCalendarPanelAttach(AttachEvent event) {
 		scrollPanel.getParent().getElement().getStyle()
 				.setOverflow(Overflow.VISIBLE);
 		scrollPanel.getParent().getElement().getStyle()
 				.setPosition(Position.STATIC);
-		
-		initAddEventButton(addEvent);
 	}
 
-	// --------------------------------------------- UiHandlers
+	@UiHandler("holidayList")
+	void onListChangeHandler(ChangeEvent event) {
+		if(holidayList.getSelectedIndex() > 0) {
+			saveButton.setEnabled(true);
+			loadCalendarPanel(holidayList.getSelectedValue(),
+					calendarDraftObjectData);
+		}
+	}
 	
-	private void initAddEventButton(final Button addEvent) {
+	@UiHandler("addEvent")
+	void onAddEventClick(ClickEvent event) {
 		
-		addEvent.addClickHandler(new ClickHandler() {
+		FilterDialog filterDialog = new FilterDialog() {
 			
 			{
-				filterDialog = new FilterDialog() {
-				
-					{
-						setCaption("Nuevo Festivo");
-						setFilterLabel("Datos de la festividad ...");
-						setNameLabel("Descripci\u00F3n");
-						setDateLabel("Fecha");
-						setDateTimeFormat(AON.DATE_FORMAT);
-						setVisibleDatePatternLabel(false);
-					}
-
-					@Override
-					protected void onAccept() {
-						// TODO Auto-generated method stub
-						
-					}
-				};
+				setCaption("Nuevo Festivo");
+				setFilterLabel("Datos de la festividad ...");
+				setNameLabel("Descripci\u00F3n");
+				setDateLabel("Fecha");
+				setDateTimeFormat(AON.DATE_FORMAT);
+				setVisibleDatePatternLabel(false);
 			}
+
 			
 			@Override
-			public void onClick(ClickEvent event) {
-				filterDialog.setDateFrom(getDateSelected());
-				filterDialog.center();
-				filterDialog.show();
+			protected void onAccept() {
+				
+				if (getName() != null && getDateFrom() != null) {
+					String name = getName();
+					Date date = getDateFrom();
+					calendarDraftObjectData.addHoliday(date, name);
+					initializeLegendPanel();
+				}
 			}
-		});
+		};
+		
+		filterDialog.setDateFrom(getDateSelected());
+		filterDialog.center();
+		filterDialog.show();
+		filterDialog.setFocusOnNameTextBox(true);
 	}
 	
+	@UiHandler("saveButton")
+	void onSaveButtonClick(ClickEvent event) {
+		calendarDraftObjectData.saveHolidayDraft(nameValueListBoxSelected, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				loadCalendarPanel(null, calendarDraftObjectData);
+			}
+		});
+		
+		
+	}
+
 	// --------------------------------------------- Listeners
 
 	@Override
 	public void onValueChangeEvent(ValueChangeEvent<Date> event) {
-		this.dateSeleted = event.getValue();
+		this.datePickerDateSelected = event.getValue();
+	}
+
+	@Override
+	public void onInsertHoliday() {
+		saveButton.setEnabled(!calendarDraftObjectData.insertIsEmpy());
 	}
 
 	// --------------------------------------------- ---------
 
-	public void setCalendarDraftObject(CalendarDraftObject calendarDraftObject) {
+	public void setCalendarDraftObject(String pattern,
+			CalendarDraftObjectData calendarDraftObjectData) {
 
-		calendarDraftObject.loadListBoxItems(new AsyncCallback<List<String>>() {
+		calendarDraftObjectData
+				.loadListBoxItems(new AsyncCallback<List<String>>() {
 
-			@Override
-			public void onFailure(Throwable caught) {
+					@Override
+					public void onFailure(Throwable caught) {
 
+					}
+
+					@Override
+					public void onSuccess(List<String> result) {
+						CalendarDraft.this.holidayList.addItem("-", "-");
+						for (String item : result)
+							CalendarDraft.this.addItem2DraftMap(item);
+					}
+				});
+
+		loadCalendarPanel(pattern, calendarDraftObjectData);
+	}
+
+	private void addItem2DraftMap(String item) {
+
+		int start = item.indexOf(" ");
+		String aux = item.substring(start + 1);
+
+		holidayList.addItem(aux, item);
+	}
+
+	private void loadCalendarPanel(String pattern,
+			CalendarDraftObjectData calendarDraftData) {
+
+		calendarDraftData.getHolidayCalendar(pattern,
+				new AsyncCallback<CalendarDraftObjectData>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert(caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(CalendarDraftObjectData result) {
+						CalendarDraft.this.calendarPanel.clear();
+						CalendarDraft.this.calendarDraftObjectData = result;
+						CalendarDraft.this.calendarPanel.add(result
+								.getCalendar());
+						CalendarDraft.this.calendarDraftObjectData
+								.addCalendarListener(CalendarDraft.this);
+						CalendarDraft.this.calendarDraftObjectData
+								.insertHolidays();
+						CalendarDraft.this.getItemLoadIndex();
+						CalendarDraft.this.initializeLegendPanel();
+					}
+				});
+	}
+
+	private void getItemLoadIndex() {
+		
+		nameValueListBoxSelected = "-";
+		
+		for (int x = 0; x < holidayList.getItemCount(); x++) {
+			if (holidayList.getValue(x).compareTo(
+					calendarDraftObjectData.getHolidayDescription()) == 0) {
+				holidayList.setItemSelected(x, true);
+				nameValueListBoxSelected = holidayList.getValue(x);
 			}
-
-			@Override
-			public void onSuccess(List<String> result) {
-				CalendarDraft.this.holidayList.addItem("-");
-				for (String item : result)
-					CalendarDraft.this.holidayList.addItem(item);
-			}
-		});
-
-		calendarDraftObject.load(new AsyncCallback<CalendarDraftObject>() {
-
-			@Override
-			public void onSuccess(CalendarDraftObject calendarDraftObject) {
-				CalendarDraft.this.calendarDraftObject = calendarDraftObject;
-				CalendarDraft.this.calendarDraftObject
-						.addListener(CalendarDraft.this);
-				CalendarDraft.this.calendarPanel.add(calendarDraftObject
-						.getCalendar());
-				CalendarDraft.this.calendarDraftObject.insertHolidays();
-				CalendarDraft.this.initializeLegendPanel();
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert(caught.getMessage());
-			}
-		});
+		}
 	}
 
 	private void initializeLegendPanel() {
 
-		List<HolidayDraft> list = calendarDraftObject.getListHolidayDraft();
-
+		List<HolidayDraft> list = calendarDraftObjectData.getListHolidayDraft();
 		ListIterator<HolidayDraft> iterator = list.listIterator(list.size());
-
+		legendVerticalPanel.clear();
 		int contador = 0;
 		while (iterator.hasPrevious()) {
 			HolidayDraft draft = iterator.previous();
-			legendVerticalPanel.add(addHolidaysLegend(draft.getDescription(),
-					draft.getHolidaysMap(),
+
+			legendVerticalPanel.add(addHolidaysLegend(false,
+					draft.getDescription(), draft.getHolidaysMap(),
+					getStyle(contador++)));
+		}
+
+		List<MyHolidayDraft> myDrafts = calendarDraftObjectData.getMyDrafts();
+		ListIterator<MyHolidayDraft> draftIterator = myDrafts.listIterator();
+
+		while (draftIterator.hasNext()) {
+			MyHolidayDraft draft = draftIterator.next();
+
+			legendVerticalPanel.add(addHolidaysLegend(true,
+					draft.getDescription(), draft.getGeneralMap(),
 					getStyle(contador++)));
 		}
 	}
 
-	private DisclosurePanel addHolidaysLegend(String title,
+	private DisclosurePanel addHolidaysLegend(boolean open, String title,
 			Map<Date, String> map, String pStyle) {
 
-		DisclosurePanel statalDisclosurePanel = createDisclosurePanel(title,
-				pStyle);
+		DisclosurePanel statalDisclosurePanel = createDisclosurePanel(open,
+				title, pStyle);
 		VerticalPanel vPanel = new VerticalPanel();
 
 		String auxMonth = "";
@@ -223,7 +301,7 @@ public class CalendarDraft extends Composite implements
 		for (Date key : map.keySet()) {
 
 			String descr = map.get(key);
-			String month = calendarDraftObject.getMonth(key.getMonth());
+			String month = calendarDraftObjectData.getMonth(key.getMonth());
 
 			if (!auxMonth.equals(month)) {
 				auxMonth = month;
@@ -242,7 +320,8 @@ public class CalendarDraft extends Composite implements
 		return statalDisclosurePanel;
 	}
 
-	private DisclosurePanel createDisclosurePanel(String title, String pStyle) {
+	private DisclosurePanel createDisclosurePanel(boolean open, String title,
+			String pStyle) {
 		DisclosurePanel disclosurePanel = new DisclosurePanel();
 		disclosurePanel.setStylePrimaryName(style.disclosurePanel());
 		disclosurePanel.setAnimationEnabled(true);
@@ -259,8 +338,7 @@ public class CalendarDraft extends Composite implements
 		headerPanel.add(holidayLabel);
 
 		disclosurePanel.setHeader(headerPanel);
-		disclosurePanel.setOpen(true);
-
+		disclosurePanel.setOpen(open);
 		return disclosurePanel;
 	}
 
@@ -270,23 +348,23 @@ public class CalendarDraft extends Composite implements
 	}
 
 	private Date getDateSelected() {
-		return this.dateSeleted;
+		return this.datePickerDateSelected;
 	}
-	
-	private static String getStyle (Integer contador) {
-		
+
+	private static String getStyle(Integer contador) {
+
 		switch (contador) {
 		case 0:
 			return style.statal();
 		case 1:
 			return style.autonomic();
-		case 2: 
+		case 2:
 			return style.local();
-		case 3: 
+		case 3:
 			return style.other();
-			
+
 		default:
-				return style.other();
+			return style.other();
 		}
 	}
 }

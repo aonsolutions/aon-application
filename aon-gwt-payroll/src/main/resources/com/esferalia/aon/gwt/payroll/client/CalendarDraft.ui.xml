@@ -47,7 +47,7 @@
 	}
 	
 	.holiday {
-		font: italic 90% Georgia Arial Tahoma;
+		font: 90% Verdana;
 		margin-left: 5px;
 		margin-top: 5px;
 	}
@@ -72,41 +72,41 @@
 	<g:HTMLPanel>
 
 		<g:DockLayoutPanel unit="PX" ui:field="mainPanel">
-			<g:north size="55">
+			<g:north size="60">
 
 				<g:FlowPanel>
 
-					<!--g:MenuBar>
-						<g:MenuItem text="Archivo">
+					<g:MenuBar>
+						<g:MenuItem text="Archivo" enabled="false">
 							<g:MenuBar vertical="true">
 								<g:MenuItem styleName="gwt-MenuItem aon-icon-new"
-									ui:field="newCalendarMenuItem" text="Nuevo" />
+									ui:field="newCalendarMenuItem" text="Nuevo" enabled="false" />
 								<g:MenuItem styleName="gwt-MenuItemSeparator">
 									<div class="menuSeparatorInner"></div>
 								</g:MenuItem>
 								<g:MenuItem styleName="gwt-MenuItem aon-icon-save"
-									ui:field="saveMenuItem" text="Guardar" />
+									ui:field="saveMenuItem" text="Guardar" enabled="false" />
 								<g:MenuItem styleName="gwt-MenuItem aon-icon-google-drive"
-									ui:field="publishMenuItem" text="Publicar..." />
+									ui:field="publishMenuItem" text="Publicar..." enabled="false" />
 								<g:MenuItem styleName="gwt-MenuItem aon-icon-pdf"
-									ui:field="printMenuItem" text="Imprimir..." />
+									ui:field="printMenuItem" text="Imprimir..." enabled="false" />
 							</g:MenuBar>
 						</g:MenuItem>
-						<g:MenuItem text="Edici&oacute;n">
+						<g:MenuItem text="Edici&oacute;n" enabled="false">
 							<g:MenuBar vertical="true">
 								<g:MenuItem styleName="gwt-MenuItem aon-icon-undo"
-									ui:field="undoMenuItem" text="Deshacer" />
+									ui:field="undoMenuItem" text="Deshacer" enabled="false" />
 								<g:MenuItem styleName="gwt-MenuItem aon-icon-redo"
-									ui:field="redoMenuItem" text="Rehacer" />
+									ui:field="redoMenuItem" text="Rehacer" enabled="false" />
 							</g:MenuBar>
 						</g:MenuItem>
-						<g:MenuItem text="Gesti&oacute;n">
+						<g:MenuItem text="Gesti&oacute;n" enabled="false">
 							<g:MenuBar vertical="true">
 								<g:MenuItem styleName="gwt-MenuItem aon-icon-task"
-									ui:field="addEventMenuItem" text="Añadir..." />
+									ui:field="addEventMenuItem" text="Añadir..." enabled="false" />
 							</g:MenuBar>
 						</g:MenuItem>
-					</g:MenuBar -->
+					</g:MenuBar>
 					<!--g:FlowPanel styleName="aon-finding-title-toolbar" -->
 					<g:FlowPanel styleName="gwt-MenuBar-horizontal">
 						<g:HorizontalPanel>
@@ -124,15 +124,16 @@
 
 							<g:HTMLPanel styleName="aon-finding-subtitle">
 								<g:HTMLPanel styleName="aon-finding-subtitle-internal">
-									<g:ListBox ui:field="holidayList" enabled="false" />
+									<g:InlineLabel text="Festivos" />
+									<g:ListBox ui:field="holidayList" />
 								</g:HTMLPanel>
 							</g:HTMLPanel>
 
 							<g:HorizontalPanel styleName="aon-finding-toolbar">
 								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 									<g:Button ui:field='addEvent'
-										styleName='aon-finding-toolbar-item aon-icon-task' text="Añadir Festivo" enabled="false" />
-									<g:Button ui:field='addCalendar'
+										styleName='aon-finding-toolbar-item aon-icon-task' text="Añadir Festivo" />
+									<g:Button ui:field='saveButton'
 										styleName='aon-finding-toolbar-item aon-icon-save' text="Guardar" enabled="false" />
 										
 								</g:HTMLPanel>

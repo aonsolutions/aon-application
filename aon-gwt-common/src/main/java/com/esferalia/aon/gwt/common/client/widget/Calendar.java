@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarModel;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
+import com.google.gwt.user.datepicker.client.CalendarView;
 import com.google.gwt.user.datepicker.client.DatePicker;
 import com.google.gwt.user.datepicker.client.DefaultCalendarView;
 import com.google.gwt.user.datepicker.client.MonthSelector;
@@ -101,7 +102,8 @@ public class Calendar extends ResizeComposite implements
 			datePicker.setCurrentMonth(date);
 			datePicker.setYearAndMonthDropdownVisible(false);
 			datePicker.setYearArrowsVisible(false);
-			datePicker.addValueChangeHandler(this);			
+			datePicker.addValueChangeHandler(this);
+			
 			table.setWidget(row, col, datePicker);
 			CalendarUtil.addMonthsToDate(date, 1);
 			row += ++col / cols;
@@ -120,7 +122,7 @@ public class Calendar extends ResizeComposite implements
 			Widget widget = iterator.next();
 			if (widget instanceof CustomDatePicker) {
 				CustomDatePicker datePicker = (CustomDatePicker) widget;
-				if(isCustomDatePicker(datePicker, date)) {
+				if(isCustomDatePicker(datePicker, date)) {					
 					datePicker.addStyleToDates(style, date);
 				}
 			}
@@ -232,5 +234,4 @@ public class Calendar extends ResizeComposite implements
 			return name;
 		}
 	}
-
 }

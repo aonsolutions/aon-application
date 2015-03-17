@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.SortedSet;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.Calendar;
 import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
@@ -475,11 +474,11 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync,
 	}
 
 	@Override
-	public void getCalendar(int workplaceId,
+	public void getCalendar(int workplaceId, String pattern,
 			AsyncCallback<List<HolidayDraft>> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getCalendar(workplaceId,
+		employeesServiceAsync.getCalendar(workplaceId, pattern,
 				new AsyncCallbackWrapper<List<HolidayDraft>>(callback));
 	}
 
@@ -490,6 +489,14 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync,
 		employeesServiceAsync
 				.getHolidayDescription(new AsyncCallbackWrapper<List<String>>(
 						callback));
+	}
 
+	@Override
+	public void saveHolidayList(int workplaceId, String holidayDescription,
+			String holidayListBox, Map<Date, String> map,
+			AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.saveHolidayList(workplaceId, holidayDescription,
+				holidayListBox, map, new AsyncCallbackWrapper<Void>(callback));
 	}
 }
