@@ -156,7 +156,7 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	
 
 	@Override
-	public void onCalendarSelected(CalendarDraftObject calendarObject) {
+	public void onCalendarSelected(CalendarDraftObjectData calendarObjectData) {
 		detailPanel.setWidget(calendar);
 	}
 

@@ -93,7 +93,7 @@ public class Employees extends ResizeComposite implements
 
 		void onCostsSelected(CostDocuments docs);
 
-		void onCalendarSelected(CalendarDraftObject calendar);
+		void onCalendarSelected(CalendarDraftObjectData calendar);
 
 		void onIrpfsSelected(IrpfDocuments docs);
 
@@ -316,7 +316,7 @@ public class Employees extends ResizeComposite implements
 			addImageItem(workplaceItem, "N\u00F3minas", images.salaries());
 			addImageItem(workplaceItem, "Calendario", images.laboralCalendar())
 					.setUserObject(
-							new CalendarDraftObject(workplace.getId(),
+							new CalendarDraftObjectData(workplace.getId(),
 									employeesService));
 			addImageItem(workplaceItem, "Estad\u00EDsticas",
 					images.statistics());
@@ -528,8 +528,8 @@ public class Employees extends ResizeComposite implements
 			onStatisticsSelected((Statistics) userObject);
 		} else if (userObject instanceof ITDataObject) {
 			onITDataSelected((ITDataObject) userObject);
-		} else if (userObject instanceof CalendarDraftObject) {
-			onCalendarSelected((CalendarDraftObject) userObject);
+		} else if (userObject instanceof CalendarDraftObjectData) {
+			onCalendarSelected((CalendarDraftObjectData) userObject);
 		} else if (userObject instanceof SalaryDocuments) {
 			onSalaryDocumentsSelected(item);
 		} else if (userObject instanceof ISpinnable<?>) {
@@ -969,7 +969,7 @@ public class Employees extends ResizeComposite implements
 		}
 	}
 	
-	private void onCalendarSelected(CalendarDraftObject calendar) {
+	private void onCalendarSelected(CalendarDraftObjectData calendar) {
 		for(Listener listener : listeners)
 			listener.onCalendarSelected(calendar);
 	}
