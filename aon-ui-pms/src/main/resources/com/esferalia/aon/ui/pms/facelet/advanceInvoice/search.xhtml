@@ -26,7 +26,6 @@
 					<aon:div>
 						<aon:selectBooleanCheckbox id="ProjectReservation_guestReservationSearch" 
 							value="#{advanceInvoiceSearch.guestReservationSearch}" />
-						</aon:selectBooleanCheckbox>
 						<aon:outputLabel for="ProjectReservation_guestReservationSearch"
 							value="#{bundle.pms_guest_reservation_search}"/>
 					</aon:div>
@@ -51,13 +50,13 @@
 						<aon:selectInputDate id="ProjectReservation_startDate-From"
 							valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
 							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
+							popupDateFormat="#{bundle.aon_date_pattern}" />
 						<aon:outputLabel for="ProjectReservation_startDate-To"
 							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
 						<aon:selectInputDate id="ProjectReservation_startDate-To"
 							valueChangeListener="#{controller.addLessThanOrEqualExpression}"
 							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
+							popupDateFormat="#{bundle.aon_date_pattern}" />
 					</aon:div>
 				
 					<aon:outputText value="#{bundle.report_checkout}" />
@@ -67,13 +66,13 @@
 						<aon:selectInputDate id="ProjectReservation_endDate-From"
 							valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
 							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
+							popupDateFormat="#{bundle.aon_date_pattern}" />
 						<aon:outputLabel for="ProjectReservation_endDate-To"
 							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
 						<aon:selectInputDate id="ProjectReservation_endDate-To"
 							valueChangeListener="#{controller.addLessThanOrEqualExpression}"
 							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
+							popupDateFormat="#{bundle.aon_date_pattern}" />
 					</aon:div>
 
 					<aon:outputLabel for="ProjectReservation_agency"
