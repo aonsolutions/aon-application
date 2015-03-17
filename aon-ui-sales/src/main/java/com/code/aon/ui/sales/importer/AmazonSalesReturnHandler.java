@@ -171,7 +171,8 @@ private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 			if(line.length>=sku_col){
 				String sku = line[sku_col].trim().toLowerCase();
 				String productName = line[productName_col].trim().toLowerCase();
-				sku = StringUtils.removeEnd(sku.toLowerCase(), "az");
+				sku = StringUtils.removeStart(sku.toLowerCase(), ImporterUtils.obtainAmazonSalesProductPrefix());
+				sku = StringUtils.removeEnd(sku.toLowerCase(), ImporterUtils.obtainAmazonSalesProductSuffix());
 				if(!items.containsKey(sku)){
 					items.put(sku, productName);
 				}
@@ -248,7 +249,8 @@ private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 					AmazonSalesDetail detail = new AmazonSalesDetail(); 
 					detail.setAmazonSales(amazonSales);
 					detail.setPurchaseReference(amazonOrderId);
-					detail.setSku(StringUtils.removeEnd(line[sku_col].toLowerCase(), "az"));
+					detail.setSku(StringUtils.removeStart(line[sku_col].toLowerCase(), ImporterUtils.obtainAmazonSalesProductPrefix()));
+					detail.setSku(StringUtils.removeEnd(line[sku_col].toLowerCase(), ImporterUtils.obtainAmazonSalesProductSuffix()));
 					detail.setQuantity(line[quantity_col]);
 					importedSalesDetailList.add(detail);
 				}

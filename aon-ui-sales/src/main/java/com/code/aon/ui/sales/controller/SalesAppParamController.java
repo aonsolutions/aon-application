@@ -2,10 +2,14 @@ package com.code.aon.ui.sales.controller;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
@@ -29,6 +33,8 @@ public class SalesAppParamController implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
+	private final String MARKET_SALES_CHANNEL_BASE_NAME = "MARKET_AMZ_SALES_CHANNEL_";
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(SalesAppParamController.class.getName());
 	
 	private ApplicationParameter activeMarketplace;
@@ -36,9 +42,24 @@ public class SalesAppParamController implements Serializable {
 	private boolean amazonEnabled;
 	
 	private Map<String, String> amazonSalesProductName;
-	private Map<String, String> salesChannelMap;
-	private Map<String, Seller> sellerMap;
 	
+
+	private List<AmazonSalesChannel> amazonSalesChannels;
+	
+	public List<AmazonSalesChannel> getAmazonSalesChannels() {
+		if (amazonSalesChannels == null) {
+			amazonSalesChannels = new LinkedList<SalesAppParamController.AmazonSalesChannel>();
+		}	
+		return amazonSalesChannels;
+	}
+
+	public void setAmazonSalesChannels(List<AmazonSalesChannel> amazonSalesChannels) {
+		this.amazonSalesChannels = amazonSalesChannels;
+	}
+	
+	public int getAmazonSalesChannelsSize() {
+		return amazonSalesChannels.size();
+	}
 	
 	public Map<String, String> getAmazonSalesProductName() {
 		return amazonSalesProductName;
@@ -46,22 +67,6 @@ public class SalesAppParamController implements Serializable {
 
 	public void setAmazonSalesProductName(Map<String, String> amazonSalesProductName) {
 		this.amazonSalesProductName = amazonSalesProductName;
-	}
-	
-	public Map<String, String> getSalesChannelMap() {
-		return salesChannelMap;
-	}
-
-	public void setSalesChannelMap(Map<String, String> salesChannelMap) {
-		this.salesChannelMap = salesChannelMap;
-	}
-
-	public Map<String, Seller> getSellerMap() {
-		return sellerMap;
-	}
-
-	public void setSellerMap(Map<String, Seller> sellerMap) {
-		this.sellerMap = sellerMap;
 	}
 
 	public boolean isAmazonEnabled() {
@@ -77,11 +82,27 @@ public class SalesAppParamController implements Serializable {
 	}
 	
 	public boolean isActiveMarketPlace(){
+		if(activeMarketplace==null){
+			loadAmazonMarketplaceParams();
+		}
 		return isActiveAmazonMarketPlace();
 	}
 	
 	public void onInit(ActionEvent event){
 		loadAmazonMarketplaceParams();
+	}
+	
+	public void onAddAmazonSalesChannel(ActionEvent event) throws ManagerBeanException {
+		this.amazonSalesChannels.add(new AmazonSalesChannel());
+	}
+
+	public void onRemoveAmazonSalesChannel(ActionEvent event) throws ManagerBeanException {
+        FacesContext context = FacesContext.getCurrentInstance();
+		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("index"));
+		this.amazonSalesChannels.remove(index);
+		if ( this.amazonSalesChannels.isEmpty() ) {
+			this.amazonSalesChannels.add(new AmazonSalesChannel());
+		}
 	}
 
 	public void accept(ActionEvent event){
@@ -98,17 +119,35 @@ public class SalesAppParamController implements Serializable {
 		
 		validateAmazonParams();
 		
-		acceptAmazonParams();
+		try {
+			saveAmazonSalesChannels();
+			loadAmazonSalesChannels();
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage());
+		}
+
 	}
 
-	public void onLoadDefaultAmazonValues(ActionEvent event){
+	public void onLoadDefaultAmazonValues(ActionEvent event) throws ManagerBeanException{
 		getAmazonSalesProductName().put("prefix", "az");
 		getAmazonSalesProductName().put("suffix", "az");
-		getSalesChannelMap().put("DE", "amazon.de");
-		getSalesChannelMap().put("ES", "amazon.es");
-		getSalesChannelMap().put("FR", "amazon.fr");
-		getSalesChannelMap().put("IT", "amazon.it");
-		getSalesChannelMap().put("UK", "amazon.co.uk");
+		
+		getAmazonSalesChannels().clear();
+		AmazonSalesChannel asc = new AmazonSalesChannel();
+		asc.setName("amazon.de");
+		getAmazonSalesChannels().add(asc);
+		asc = new AmazonSalesChannel();
+		asc.setName("amazon.es");
+		getAmazonSalesChannels().add(asc);
+		asc = new AmazonSalesChannel();
+		asc.setName("amazon.fr");
+		getAmazonSalesChannels().add(asc);
+		asc = new AmazonSalesChannel();
+		asc.setName("amazon.it");
+		getAmazonSalesChannels().add(asc);
+		asc = new AmazonSalesChannel();
+		asc.setName("amazon.co.uk");
+		getAmazonSalesChannels().add(asc);
 	}
 
 	private void loadAmazonMarketplaceParams() {
@@ -122,12 +161,13 @@ public class SalesAppParamController implements Serializable {
 		
 		loadAmazonProductName();
 		
-		loadAmazonSalesChannel();
-		
-		loadAmazonSeller();
+		try {
+			loadAmazonSalesChannels();
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage());
+		}
 		
 	}
-
 
 	public void validateAmazonParams() {
 		String STRING_REGEX = "^[^;]*$";
@@ -139,15 +179,14 @@ public class SalesAppParamController implements Serializable {
 				throw new AbortProcessingException("El nombre de producto indicado no es un valor válido.");
 			}
 		}
-		for(String value: salesChannelMap.values()){
-			m = Pattern.compile(STRING_REGEX).matcher(value);
+		for(AmazonSalesChannel asc: getAmazonSalesChannels()){
+			m = Pattern.compile(STRING_REGEX).matcher(asc.getName());
 			if(!m.find()) {
 				AonUtil.addErrorMessage("El nombre del canal de venta indicado no es un valor válido.");
 				throw new AbortProcessingException("El nombre del canal de venta indicado no es un valor válido.");
 			}
 		}
 	}
-	
 	
 	public void acceptAmazonParams() {
 		// prefix and suffix
@@ -157,28 +196,6 @@ public class SalesAppParamController implements Serializable {
 		builder.append("suffix=").append(this.amazonSalesProductName.get("suffix")).append(";");
 		amazonSalesProductName.setValue(builder.toString());
 		AppParamUtil.insertParameter(amazonSalesProductName);
-		
-		// sales channel
-		ApplicationParameter amazonSalesChannel = obtainParam(AppParam.SALES_AMAZON_SALES_CHANNEL);
-		builder.delete(0, builder.length());
-		builder.append("de=").append(salesChannelMap.get("DE")).append(";");
-		builder.append("es=").append(salesChannelMap.get("ES")).append(";");
-		builder.append("fr=").append(salesChannelMap.get("FR")).append(";");
-		builder.append("it=").append(salesChannelMap.get("IT")).append(";");
-		builder.append("uk=").append(salesChannelMap.get("UK")).append(";");
-		amazonSalesChannel.setValue(builder.toString());
-		AppParamUtil.insertParameter(amazonSalesChannel);
-		
-		// seller
-		ApplicationParameter sellerIds = obtainParam(AppParam.SALES_AMAZON_SELLER_IDS);
-		builder.delete(0, builder.length());
-		builder.append("de=").append(sellerMap.get("DE").getId()).append(";");
-		builder.append("es=").append(sellerMap.get("ES").getId()).append(";");
-		builder.append("fr=").append(sellerMap.get("FR").getId()).append(";");
-		builder.append("it=").append(sellerMap.get("IT").getId()).append(";");
-		builder.append("uk=").append(sellerMap.get("UK").getId()).append(";");
-		sellerIds.setValue(builder.toString());
-		AppParamUtil.insertParameter(sellerIds);
 	}
 		
 	private void loadAmazonProductName(){
@@ -206,53 +223,6 @@ public class SalesAppParamController implements Serializable {
 		}
 	}
 	
-	private void loadAmazonSalesChannel(){
-		String AMAZON_SALES_CHANNEL_REGEX = ".*de=([^;]*);es=([^;]*);fr=([^;]*);it=([^;]*);uk=([^;]*);.*";
-		ApplicationParameter _salesChannel = obtainParam(AppParam.SALES_AMAZON_SALES_CHANNEL);
-		salesChannelMap = new HashMap<String, String>();
-		if(_salesChannel!=null && _salesChannel.getValue()!=null){
-			if(_salesChannel.getValue().matches(AMAZON_SALES_CHANNEL_REGEX)){
-				Matcher m = Pattern.compile(AMAZON_SALES_CHANNEL_REGEX).matcher(_salesChannel.getValue());
-				if(m.find()) {
-					salesChannelMap.put("DE", m.group(1));
-					salesChannelMap.put("ES", m.group(2));
-					salesChannelMap.put("FR", m.group(3));
-					salesChannelMap.put("IT", m.group(4));
-					salesChannelMap.put("UK", m.group(5));
-				}
-			}
-		}
-	}
-	
-	private void loadAmazonSeller(){
-		try {
-			String AMAZON_SALES_CHANNEL_REGEX = ".*de=([^;]*);es=([^;]*);fr=([^;]*);it=([^;]*);uk=([^;]*);.*";
-			ApplicationParameter _seller = obtainParam(AppParam.SALES_AMAZON_SELLER_IDS);
-			sellerMap = new HashMap<String, Seller>();
-			String de = null, es = null, fr = null, it = null, uk = null;
-			if(_seller!=null && _seller.getValue()!=null){
-				if(_seller.getValue().matches(AMAZON_SALES_CHANNEL_REGEX)){
-					Matcher m = Pattern.compile(AMAZON_SALES_CHANNEL_REGEX).matcher(_seller.getValue());
-					if(m.find()) {
-						de = m.group(1);
-						es = m.group(2);
-						fr = m.group(3);
-						it = m.group(4);
-						uk = m.group(5);
-					}
-				}
-			}
-			sellerMap.put("DE", obtainSeller(de));
-			sellerMap.put("ES", obtainSeller(es));
-			sellerMap.put("FR", obtainSeller(fr));
-			sellerMap.put("IT", obtainSeller(it));
-			sellerMap.put("UK", obtainSeller(uk));
-		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage());
-			throw new AbortProcessingException(e.getMessage());
-		}
-	}
-	
 	private ApplicationParameter obtainParam(AppParam appParam){
 		ApplicationParameter param = AppParamUtil.getParameter(appParam);
 		if(param==null){
@@ -268,6 +238,89 @@ public class SalesAppParamController implements Serializable {
 			return (Seller) sellerBean.get(Integer.parseInt(value));
 		}
 		return (Seller) sellerBean.createNewTo();
+	}
+	
+	private void loadAmazonSalesChannels() throws ManagerBeanException {
+		getAmazonSalesChannels().clear();
+		
+		boolean continueSearch = true;
+		int counter = 0;
+		ApplicationParameter amazonSalesChannel = null;
+		while(continueSearch && counter < 1000){
+			amazonSalesChannel = AppParamUtil.getParameter(MARKET_SALES_CHANNEL_BASE_NAME + counter);
+			if(amazonSalesChannel==null){
+				continueSearch = false;
+			} else {
+				String[] values = amazonSalesChannel.getValue().split(";");
+				AmazonSalesChannel salesChannel = new AmazonSalesChannel();
+				salesChannel.setName(values.length>0?values[0]:null);
+				salesChannel.setSeller(values.length>1?obtainSeller(values[1]):obtainSeller(null));
+				getAmazonSalesChannels().add(salesChannel);
+			}
+			counter++;
+		}
+		if(getAmazonSalesChannels()==null || getAmazonSalesChannels().size()==0){
+			amazonSalesChannels.add(new AmazonSalesChannel());
+		}
+	}
+
+	private void saveAmazonSalesChannels() throws ManagerBeanException {
+		StringBuilder builder = new StringBuilder();
+		ListIterator<AmazonSalesChannel> it = getAmazonSalesChannels().listIterator();
+		int counter = -1;
+		while(it.hasNext()){
+			counter = it.nextIndex();
+			ApplicationParameter amazonSalesChannelParam = AppParamUtil.getParameter(MARKET_SALES_CHANNEL_BASE_NAME + counter);
+			if(amazonSalesChannelParam==null){
+				amazonSalesChannelParam = new ApplicationParameter();
+				amazonSalesChannelParam.setName(MARKET_SALES_CHANNEL_BASE_NAME + counter);
+			}
+			
+			AmazonSalesChannel asc = it.next();
+			if(StringUtils.isNotBlank(asc.getName().trim()) || (asc.getSeller()!=null && asc.getSeller().getId()!=null)){
+				builder.delete(0, builder.length());
+				if(StringUtils.isNotBlank(asc.getName().trim())){
+					builder.append(asc.getName());
+				}
+				builder.append(";");
+				if(asc.getSeller()!=null && asc.getSeller().getId()!=null){
+					builder.append(asc.getSeller().getId());
+				}
+				amazonSalesChannelParam.setValue(builder.toString());
+				AppParamUtil.insertParameter(amazonSalesChannelParam);
+			}
+		}
+		// remove defined remaining sales channels
+		ApplicationParameter amazonSalesChannelParam = AppParamUtil.getParameter(MARKET_SALES_CHANNEL_BASE_NAME + ++counter);
+		while(amazonSalesChannelParam!=null){
+			amazonSalesChannelParam.setValue(null);
+			AppParamUtil.insertParameter(amazonSalesChannelParam);
+			amazonSalesChannelParam = AppParamUtil.getParameter(MARKET_SALES_CHANNEL_BASE_NAME + (++counter));
+		}
+	}
+
+
+	
+	// **********************************************************
+	
+	public class AmazonSalesChannel {
+		private String name;
+		private Seller seller;
+		public AmazonSalesChannel() throws ManagerBeanException{
+			seller = (Seller) BeanManager.getManagerBean(Seller.class).createNewTo();
+		}
+		public String getName() {
+			return name;
+		}
+		public void setName(String name) {
+			this.name = name;
+		}
+		public Seller getSeller() {
+			return seller;
+		}
+		public void setSeller(Seller seller) {
+			this.seller = seller;
+		}
 	}
 	
 }

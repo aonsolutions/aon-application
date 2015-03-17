@@ -129,6 +129,11 @@
 			value="#{bundle.aon_module_aonOne}"
 			action="menu_aonOne" immediate="true"
 			styleClass="aon-top-menu-item" />
+
+		<aon:commandLink id="menu_eCommerce"
+			value="#{bundle.aon_module_eCommerce}"
+			action="menu_eCommerce" immediate="true"
+			styleClass="aon-top-menu-item" />
 		
 		<aon:if test="#{!((domainSwitcher.type == 'ADMIN') and !aonRole.admin)}">		
 			<aon:commandLink id="menu_configuration"

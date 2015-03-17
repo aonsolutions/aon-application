@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.type;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 // Á --> \u00C1 á --> \u00E1
 // É --> \u00C9 é --> \u00E9
 // Í --> \u00CD í --> \u00ED
@@ -7,7 +9,8 @@ package com.esferalia.aon.occam.api.model.type;
 // Ú --> \u00DA ú --> \u00FA
 // Ñ --> \u00D1 ñ --> \u00F1
 // º --> \u00AA ª --> \u00BA
-// ¿ --> \u00BF
+// ¿ --> \u00BF 
+// Ç --> \u00C7	ç --> \u00E7
 
 /**
  * 
@@ -136,12 +139,12 @@ public enum StreetType {
 	CUSTA	("CUSTA","CT","CUESTA"),
 	CXON 	("CXON ","CX","CALEXON"),
 	CZADA	("CZADA","CZ","CALZADA"),
-	CZADS	("CZADS","CÇ","CALZADAS"),
+	CZADS	("CZADS","C\u00C7","CALZADAS"),
 	DEMAR	("DEMAR","DM","DEMARCACION"),
 	DHSA 	("DHSA ","DH","DEHESA"),
 	DISEM	("DISEM","DS","DISEMINADO"),
 	DISSE	("DISSE","DS","DISSEMINAT"),
-	DRERA	("DRERA","DR","DREÇERA"),
+	DRERA	("DRERA","DR","DRE\u00C7ERA"),
 	EDIFC	("EDIFC","ED","EDIFICIO/S"),
 	EIRAD	("EIRAD","EI","EIRADO"),
 	EMPR 	("EMPR ","ER","EMPRESA"),
@@ -235,7 +238,7 @@ public enum StreetType {
 	PBDO 	("PBDO ","PB","POBLADO"),
 	PBLO 	("PBLO ","PB","PUEBLO"),
 	PDA  	("PDA  ","PV","PUJADA"),
-	PDIS 	("PDIS ","PÇ","PASSADIS"),
+	PDIS 	("PDIS ","P\u00C7","PASSADIS"),
 	PG   	("PG   ","PG","PG"),
 	PGIND	("PGIND","PG","POLIGONO INDUST"),
 	PINAR	("PINAR","PN","PINAR"),
@@ -243,7 +246,7 @@ public enum StreetType {
 	PJDA 	("PJDA ","SU","PUJADA, SUBIDA"),
 	PL   	("PL   ","PL","PL"),
 	PLA  	("PLA  ","PW","PLA"),
-	PLACA	("PLAÇA","PZ","PLAÇA"),
+	PLACA	("PLA\u00C7A","PZ","PLA\u00C7A"),
 	PLAYA	("PLAYA","PY","PLAYA"),
 	PLAZA	("PLAZA","PZ","PLAZA"),
 	PLCET	("PLCET","PL","PLACETA"),
@@ -275,7 +278,7 @@ public enum StreetType {
 	PTILO	("PTILO","PO","PORTILLO"),
 	PTLLO	("PTLLO","PO","PUERTILO"),
 	PTO  	("PTO  ","PO","PUERTO"),
-	PZO  	("PZO  ","PÇ","PASADIZO"),
+	PZO  	("PZO  ","P\u00C7","PASADIZO"),
 	PZTA 	("PZTA ","PL","PLAZOLETA"),
 	RABAL	("RABAL","AR","RABAL"),
 	RACDA	("RACDA","RA","RACONADA"),
@@ -370,4 +373,19 @@ public enum StreetType {
 		}
 		return null;
 	}
+	
+	public static StreetType safeValueOf( String value ) {
+		if (AonStringUtils.isBlank(value)) {
+			return null;
+		}
+		for (StreetType st : StreetType.values()) {
+			if (AonStringUtils.equalsIgnoreCase(value, st.getAeatCode())
+			 || AonStringUtils.equalsIgnoreCase(value, st.getIneCode())
+			 || AonStringUtils.equalsIgnoreCase(value, st.getDescription())) {
+				return st;
+			}
+		}
+		return null;
+	}
+	
 }

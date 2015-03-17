@@ -67,7 +67,9 @@ public class MenuParser {
 	
 	private static final String VALUE_ATTRIBUTE = "value";
 	
-	private static final String TITLE_ATTRIBUTE = "title";
+	public static final String STYLE_ATTRIBUTE = "style";
+	
+	public static final String STYLE_CLASS_ATTRIBUTE = "styleClass";
 
 	public static final String ACTION_ATTRIBUTE = "action";
 		
@@ -94,6 +96,8 @@ public class MenuParser {
 	public static final String MENU_ACTION_PREFFIX = "menu_";
 	
 	private static final String CONFIG_MENU_PREFFIX = "config_";
+	
+	public static final String FISCAL_STYLE_CLASS = "aon-fiscal-link-box";
 	
 	private ApplicationOptionController controller;
 	
@@ -259,7 +263,6 @@ public class MenuParser {
 			}
 			category.setId(id);
 			element.addAttribute(ID_ATTRIBUTE, IOption.ID_PATTERN);
-			element.addAttribute(VALUE_ATTRIBUTE, IOption.VALUE_PATTERN);
 			category.setXml( element.asXML() );			
 		}
 	}
@@ -390,6 +393,26 @@ public class MenuParser {
 		parseActionSources( option, element );		
 	}
 	
+	private String getDescription( Element element ) {
+		String description = element.attributeValue(VALUE_ATTRIBUTE);
+		if (StringUtils.isBlank(description)) {
+			StringBuffer sb = new StringBuffer();
+			for( Object _element : element.elements() ) {
+				Element child = (Element) _element;
+				String value = child.attributeValue(VALUE_ATTRIBUTE);
+				if (! StringUtils.isEmpty(value) ) {
+					sb.append(value);
+					String styleClass = child.attributeValue(STYLE_CLASS_ATTRIBUTE);
+					if ( FISCAL_STYLE_CLASS.equals(styleClass) ) {
+						sb.append("-");
+					}
+				}
+			}
+			description = sb.toString();	
+		}
+		return description;
+	}
+	
 	private ApplicationOption getApplicationOption( Element element ) {
 		ApplicationOption option = null;
 		String action = getAction(element);
@@ -412,16 +435,12 @@ public class MenuParser {
 			}
 			initOption(option, element);
 			option.setGroup( getOptionGroup(element) );
-			String description = element.attributeValue(VALUE_ATTRIBUTE);
-			if (StringUtils.isBlank(description)) {
-				description = element.attributeValue(TITLE_ATTRIBUTE);	
-			}
-			option.setDescription( description );
+			String description = getDescription(element);
+			option.setDescription(description);
 			if ( StringUtils.isEmpty(description) ) {
 				LOGGER.error( "Null description for {}", option );
 			}
 			element.addAttribute(ID_ATTRIBUTE, IOption.ID_PATTERN);
-			element.addAttribute(VALUE_ATTRIBUTE, IOption.VALUE_PATTERN);
 			option.setXml( element.asXML() );
 		} else {
 			LOGGER.error( "Null action in {} for {} ", category, element );

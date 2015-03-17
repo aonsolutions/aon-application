@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.common.client.i18n;
 
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.i18n.client.Messages;
 
@@ -21,16 +22,97 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("#,##0.00")
 	String decimalPattern();
 
+	// -----------------------------------------------------------Enum Messages
+	@DefaultMessage("----------")
+	@AlternateMessage({ "ALAVA", "Araba/Alava", "BIZKAIA", "Bizkaia",
+			"GIPUZKOA", "Gipuzkoa", "NAVARRA", "Navarra", "COMMON_TERRITORY",
+			"Territorio Com\u00FAn" })
+	String administrationName(@Select Administration administration);
+
+	@DefaultMessage("----------")
+	@AlternateMessage({ "DESCONOCIDO", "Desconocido", "ARABA",
+			"Araba/\u00C1lava", "ALBACETE", "Albacete", "ALICANTE", "Alicante",
+			"ALMERIA", "Almer\u00EDa", "ASTURIAS", "Asturias", "AVILA",
+			"\u00C1vila", "BADAJOZ", "Badajoz", "BARCELONA", "Barcelona",
+			"BIZKAIA", "Bizkaia", "BURGOS", "Burgos", "CACERES",
+			"C\u00E1ceres", "CADIZ", "C\u00E1diz", "CANTABRIA", "Cantabria",
+			"CASTELLON", "Castell\u00F3n", "CEUTA", "Ceuta", "CIUDAD_REAL",
+			"Ciudad Real", "CORDOBA", "C\u00F3rdoba", "A_CORUNA",
+			"Coru\u00F1a, A", "CUENCA", "Cuenca", "GIPUZKOA", "Gipuzkoa",
+			"GIRONA", "Girona", "GRANADA", "Granada", "GUADALAJARA",
+			"Guadalajara", "HUELVA", "Huelva", "HUESCA", "Huesca",
+			"ILLES_BALEARS", "Illes Balears", "JAEN", "Jaen", "LEON",
+			"Le\u00F3n", "LLEIDA", "Lleida", "LUGO", "Lugo", "MADRID",
+			"Madrid", "MALAGA", "M\u00E1laga", "MELILLA", "Melilla", "MURCIA",
+			"Murcia", "NAVARRA", "Navarra", "OURENSE", "Ourense", "PALENCIA",
+			"Palencia", "LAS_PALMAS", "Palmas, Las", "PONTEVEDRA",
+			"Pontevedra", "LA_RIOJA", "Rioja, La", "SALAMANCA", "Salamanca",
+			"TENERIFE", "S.C. Tenerife", "SEGOVIA", "Segovia", "SEVILLA",
+			"Sevilla", "SORIA", "Soria", "TARRAGONA", "Tarragona", "TERUEL",
+			"Teruel", "TOLEDO", "Toledo", "VALENCIA", "Valencia", "VALLADOLID",
+			"Valladolid", "ZAMORA", "Zamora", "ZARAGOZA", "Zaragoza",
+
+			"NO_RESIDENTE", "No residente" })
+	String provinceName(@Select Province province);
+
+	@DefaultMessage("{0}")
+	@AlternateMessage({
+	 		 "=0", "-------------------"
+	 		,"=1", "Territorio espa\u00F1ol, excepto Pais Vasco y Navarra"
+			,"=2", "Pais Vasco o Navarra"
+			,"=3", "Sin referencia catastral"
+			})
+	String buildingLocationValue(@PluralCount int location);
+
+	@DefaultMessage("----------")
+	@AlternateMessage(
+			{"NIF"				,"NIF"
+			,"CIF"				,"CIF"
+			,"NIE"				,"NIE"
+			,"PASSPORT"			,"Pasaporte"
+			,"WORK_PERMIT"		,"Perm. Trab."
+			,"COMMUNITY_CARD"	,"Tarj. Comun."
+			,"OTHER","Otro"
+			})
+	String documentType(@Select DocumentType d);
+
 	@DefaultMessage("ESP")
 	String currencyCode();
 
-	// ---------------------------------------------------------------- Modulos
 	@DefaultMessage("Integral fiscal")
 	String fiscalPanel();
+
+	@DefaultMessage("Modelo 111")
+	String mod111();
+
+	@DefaultMessage("Modelo 115")
+	String mod115();
+
+	@DefaultMessage("Modelo 123")
+	String mod123();
+
+	@DefaultMessage("Modelo 130")
+	String mod130();
+
+	@DefaultMessage("Modelo 131")
+	String mod131();
 
 	@DefaultMessage("Modelo 140")
 	String mod140();
 	
+	@DefaultMessage("Modelo 303")
+	String mod303();
+	
+	@DefaultMessage("Modelo 340")
+	String mod340();
+	
+	@DefaultMessage("Modelo 347")
+	String mod347();
+	
+	@DefaultMessage("Modelo 349")
+	String mod349();
+	
+
 	@DefaultMessage("Libro-registro de operaciones econ\u00F3micas")
 	String mod140Description();
 
@@ -248,6 +330,12 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Empresa")
 	String enterprise();
 
+	@DefaultMessage("Datos de empresa")
+	String enterpriseData();
+
+	@DefaultMessage("Modelos fiscales")
+	String fiscalModels();
+
 	@DefaultMessage("Administraci\u00F3n")
 	String administration();
 
@@ -290,6 +378,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Nombre")
 	String name();
 
+	@DefaultMessage("Alias / Nombre comercial")
+	String alias();
+
 	@DefaultMessage("Apellidos y Nombre, raz\u00F3n social o denominaci\u00F3n")
 	String companyName();
 
@@ -307,6 +398,15 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Tel\u00E9fono")
 	String phone();
+	
+	@DefaultMessage("Fax")
+	String fax();
+	
+	@DefaultMessage("eMail")
+	String email();
+	
+	@DefaultMessage("Web")
+	String web();
 
 	@DefaultMessage("Datos del inmueble")
 	String buildingData();
@@ -383,6 +483,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Actividades a las que se refiere la declaraci\u00F3n")
 	String activities();
+
+	@DefaultMessage("Modulos. Actividades empresariales")
+	String moduleActivities();
 
 	@DefaultMessage("(de mayor a menor importacia por vol\u00FAmen de operaciones)")
 	String activitiesNote();
@@ -935,49 +1038,6 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("S\u00F3lo para sujetos pasivos que tributan a varias Administraciones")
 	String page8HelpText();
-
-	// -----------------------------------------------------------Enum Messages
-	@DefaultMessage("----------")
-	@AlternateMessage({ "ALAVA", "Araba/Alava", "BIZKAIA", "Bizkaia",
-			"GIPUZKOA", "Gipuzkoa", "NAVARRA", "Navarra", "COMMON_TERRITORY",
-			"Territorio Com\u00FAn" })
-	String administrationName(@Select Administration administration);
-
-	@DefaultMessage("----------")
-	@AlternateMessage({ "DESCONOCIDO", "Desconocido", "ARABA",
-			"Araba/\u00C1lava", "ALBACETE", "Albacete", "ALICANTE", "Alicante",
-			"ALMERIA", "Almer\u00EDa", "ASTURIAS", "Asturias", "AVILA",
-			"\u00C1vila", "BADAJOZ", "Badajoz", "BARCELONA", "Barcelona",
-			"BIZKAIA", "Bizkaia", "BURGOS", "Burgos", "CACERES",
-			"C\u00E1ceres", "CADIZ", "C\u00E1diz", "CANTABRIA", "Cantabria",
-			"CASTELLON", "Castell\u00F3n", "CEUTA", "Ceuta", "CIUDAD_REAL",
-			"Ciudad Real", "CORDOBA", "C\u00F3rdoba", "A_CORUNA",
-			"Coru\u00F1a, A", "CUENCA", "Cuenca", "GIPUZKOA", "Gipuzkoa",
-			"GIRONA", "Girona", "GRANADA", "Granada", "GUADALAJARA",
-			"Guadalajara", "HUELVA", "Huelva", "HUESCA", "Huesca",
-			"ILLES_BALEARS", "Illes Balears", "JAEN", "Jaen", "LEON",
-			"Le\u00F3n", "LLEIDA", "Lleida", "LUGO", "Lugo", "MADRID",
-			"Madrid", "MALAGA", "M\u00E1laga", "MELILLA", "Melilla", "MURCIA",
-			"Murcia", "NAVARRA", "Navarra", "OURENSE", "Ourense", "PALENCIA",
-			"Palencia", "LAS_PALMAS", "Palmas, Las", "PONTEVEDRA",
-			"Pontevedra", "LA_RIOJA", "Rioja, La", "SALAMANCA", "Salamanca",
-			"TENERIFE", "S.C. Tenerife", "SEGOVIA", "Segovia", "SEVILLA",
-			"Sevilla", "SORIA", "Soria", "TARRAGONA", "Tarragona", "TERUEL",
-			"Teruel", "TOLEDO", "Toledo", "VALENCIA", "Valencia", "VALLADOLID",
-			"Valladolid", "ZAMORA", "Zamora", "ZARAGOZA", "Zaragoza",
-
-			"NO_RESIDENTE", "No residente" })
-	String provinceName(@Select Province province);
-
-	@DefaultMessage("{0}")
-	@AlternateMessage({
-	 		 "=0", "-------------------"
-	 		,"=1", "Territorio espa\u00F1ol, excepto Pais Vasco y Navarra"
-			,"=2", "Pais Vasco o Navarra"
-			,"=3", "Sin referencia catastral"
-			})
-	String buildingLocationValue(@PluralCount int location);
-
 	
 	@DefaultMessage("Datos de secretario, representantes y administradores")
 	String administratorPage();
@@ -1609,16 +1669,41 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Facturas")
 	String invoices();
+	
 	@DefaultMessage("Presupuestos")
 	String offers();
+	
 	@DefaultMessage("Pedidos de compra")
 	String purchaseOrders();
+	
 	@DefaultMessage("Pedidos de venta")
 	String saleOrders();
+	
 	@DefaultMessage("Albaranes de compra")
 	String incomes();
+	
 	@DefaultMessage("Albaranes de venta")
 	String deliveries();
 	
+	@DefaultMessage("[Comience a escribir para buscar empresas]")
+	String startTyping();
+
+	@DefaultMessage("Max. Personas")
+	String maxPerson();
+
+	@DefaultMessage("Lim. Exceso")
+	String maxImport();
+
+	@DefaultMessage("Porc. IVA")
+	String vatPercent();
+	
+	@DefaultMessage("Informaci\u00F3n adicional del ep\u00EDgrafe")
+	String epigraphAdditionalInfo();
+
+	@DefaultMessage("IRPF. M\u00F3dulos. Estimaci\u00F3n objetiva.")
+	String irpfModules();
+
+	@DefaultMessage("IVA. M\u00F3dulos. R\u00E9gimen simplificado.")
+	String vatModules();
 
 }

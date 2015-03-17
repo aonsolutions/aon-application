@@ -81,6 +81,55 @@ public class AeatUtils {
 		}
 	}
 
+	public static synchronized void printMod111(int year, Period period,InputStream input, OutputStream output) throws AonException {
+		try {
+			InputStreamReader fis = new InputStreamReader(input,"ISO-8859-1");
+			byte[] o = IOUtils.toByteArray(fis, "ISO-8859-1");
+			String fileString = new String(o);
+			fileString = fileString.replace("\n", "");
+			fileString = fileString.replace("\r", "");
+			String urlParameters =
+					"HID=IE1111VA" 
+					+ "&IDI=ES"
+					+ "&FIC="+URLEncoder.encode(fileString, "ISO-8859-1")
+//					+ "&RUT="
+					+ "&PRG=EWLINKQN"
+					+ "&FIN=F"
+					+ "&EJF="+year
+					+ "&MOD=111";
+			// String location= "https://www2.agenciatributaria.gob.es/es13/l/zi22zilk0022";
+			String location= "https://www6.aeat.es/es13/l/zi22zilk0022 ";
+			URL url = new URL(location);
+			HttpsURLConnection connection = (HttpsURLConnection) url
+					.openConnection();
+			connection.setDoOutput(true);
+			connection.setDoInput(true);
+			connection.setInstanceFollowRedirects(false);
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
+			connection.setRequestProperty("charset", "ISO-8859-1");
+			connection.setRequestProperty("Content-Length","" + Integer.toString(urlParameters.getBytes().length));
+			connection.setUseCaches(false);
+
+			DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+			wr.writeBytes(urlParameters);
+			wr.flush();
+			wr.close();
+
+			DataInputStream in = new DataInputStream(connection.getInputStream());
+			IOUtils.copy(in, output);
+			output.flush();
+			connection.disconnect();
+			output.flush();
+		} catch (FileNotFoundException e) {
+			throw new AonException("No se pudo realizar la impresión. (" + e.getMessage() + ")",e);
+		} catch (UnsupportedEncodingException e) {
+			throw new AonException("No se pudo realizar la impresión. (" + e.getMessage() + ")",e);
+		} catch (IOException e) {
+			throw new AonException("No se pudo realizar la impresión. (" + e.getMessage() + ")",e);
+		}
+	}
+
 	public static synchronized void printMod115(int year, Period period,InputStream input, OutputStream output) throws AonException {
 		try {
 			InputStreamReader fis = new InputStreamReader(input,"ISO-8859-1");
@@ -181,7 +230,106 @@ public class AeatUtils {
 		}
 	}
 	
+	public static synchronized void printMod130(int year, Period period,InputStream input, OutputStream output) throws AonException {
+		try {
+			InputStreamReader fis = new InputStreamReader(input,"ISO-8859-1");
+			byte[] o = IOUtils.toByteArray(fis, "ISO-8859-1");
+			String fileString = new String(o);
+			fileString = fileString.replace("\n", "");
+			fileString = fileString.replace("\r", "");
+			String urlParameters =
+					"HID=INV5130A" 
+					+ "&IDI=ES"
+					+ "&LEV=000000000000"
+					+ "&FIC="+URLEncoder.encode(fileString, "ISO-8859-1")
+					+ "&RUT="
+					+ "&PRG=PTLINK6F"
+					+ "&FIN="
+					+ "&EJF="+year
+					+ "&MOD=130";
+			String location= "https://www6.aeat.es/es13/l/zi22zilk0022";
+
+			URL url = new URL(location);
+			HttpsURLConnection connection = (HttpsURLConnection) url
+					.openConnection();
+			connection.setDoOutput(true);
+			connection.setDoInput(true);
+			connection.setInstanceFollowRedirects(false);
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
+			connection.setRequestProperty("charset", "ISO-8859-1");
+			connection.setRequestProperty("Content-Length","" + Integer.toString(urlParameters.getBytes().length));
+			connection.setUseCaches(false);
+
+			DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+			wr.writeBytes(urlParameters);
+			wr.flush();
+			wr.close();
+
+			DataInputStream in = new DataInputStream(connection.getInputStream());
+			IOUtils.copy(in, output);
+			output.flush();
+			connection.disconnect();
+			output.flush();
+		} catch (FileNotFoundException e) {
+			throw new AonException("No se pudo realizar la impresión. (" + e.getMessage() + ")",e);
+		} catch (UnsupportedEncodingException e) {
+			throw new AonException("No se pudo realizar la impresión. (" + e.getMessage() + ")",e);
+		} catch (IOException e) {
+			throw new AonException("No se pudo realizar la impresión. (" + e.getMessage() + ")",e);
+		}
+	}
 	
+	public static synchronized void printMod131(int year, Period period,InputStream input, OutputStream output) throws AonException {
+		try {
+			InputStreamReader fis = new InputStreamReader(input,"ISO-8859-1");
+			byte[] o = IOUtils.toByteArray(fis, "ISO-8859-1");
+			String fileString = new String(o);
+			fileString = fileString.replace("\n", "");
+			fileString = fileString.replace("\r", "");
+			String urlParameters =
+					"HID=INV5131A" 
+					+ "&IDI=ES"
+					+ "&LEV=000000000000"
+					+ "&FIC="+URLEncoder.encode(fileString, "ISO-8859-1")
+					+ "&RUT="
+					+ "&PRG=PTLINK6F"
+					+ "&FIN="
+					+ "&EJF="+year
+					+ "&MOD=131";
+			String location= "https://www6.aeat.es/es13/l/zi22zilk0022";
+
+			URL url = new URL(location);
+			HttpsURLConnection connection = (HttpsURLConnection) url
+					.openConnection();
+			connection.setDoOutput(true);
+			connection.setDoInput(true);
+			connection.setInstanceFollowRedirects(false);
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
+			connection.setRequestProperty("charset", "ISO-8859-1");
+			connection.setRequestProperty("Content-Length","" + Integer.toString(urlParameters.getBytes().length));
+			connection.setUseCaches(false);
+
+			DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+			wr.writeBytes(urlParameters);
+			wr.flush();
+			wr.close();
+
+			DataInputStream in = new DataInputStream(connection.getInputStream());
+			IOUtils.copy(in, output);
+			output.flush();
+			connection.disconnect();
+			output.flush();
+		} catch (FileNotFoundException e) {
+			throw new AonException("No se pudo realizar la impresión. (" + e.getMessage() + ")",e);
+		} catch (UnsupportedEncodingException e) {
+			throw new AonException("No se pudo realizar la impresión. (" + e.getMessage() + ")",e);
+		} catch (IOException e) {
+			throw new AonException("No se pudo realizar la impresión. (" + e.getMessage() + ")",e);
+		}
+	}
+
 	public static synchronized void printMod303(int year, Period period,InputStream input, OutputStream output) throws AonException {
 		try {
 			InputStreamReader fis = new InputStreamReader(input,"ISO-8859-1");

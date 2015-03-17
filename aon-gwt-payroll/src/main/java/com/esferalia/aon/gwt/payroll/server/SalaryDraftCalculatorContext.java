@@ -402,10 +402,14 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 
 	private IContractPayment getDraftPayment(Payment payment) {
 		if (StringUtils.equals("CONVENIO()", payment.getExpression()))
-			for (IContractPayment agreementPayment : getAgreementPayments())
-				//if (StringUtils.equals(agreementPayment.getName(),
-				if (payment.getId().equals(agreementPayment.getId()))
-					return newDraftPayment(agreementPayment);
+			for (IContractPayment agreementPayment : getAgreementPayments()){
+				if (payment.getId().equals(agreementPayment.getId())
+						|| StringUtils.equals(payment.getName(),agreementPayment.getName())){
+					DraftPayment draftPayment = newDraftPayment(agreementPayment);
+					draftPayment.setId(payment.getId());
+					return draftPayment;
+				}
+			}
 
 		return newDraftPayment(payment);
 	}

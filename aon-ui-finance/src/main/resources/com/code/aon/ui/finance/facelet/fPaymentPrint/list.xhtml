@@ -110,9 +110,6 @@
 								<aon:outputText value="#{bundle.aon_status}" />
 							</f:facet>
 							<aon:outputText value="#{to.financeStatus}" />
-							<f:facet name="footer">
-								<aon:outputText value="#{bundle.stat_total}" />
-							</f:facet>
 						</aon:column>
 	
 						<aon:column alias="Finance.payMethod.name"
@@ -130,13 +127,6 @@
 							<aon:outputText value="#{to.totalAmount}">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
-							<f:facet name="footer">
-								<aon:div style="float:right">
-									<aon:outputText style="text-align:right" value="#{finance.totalFinanceAmount}" >
-										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-									</aon:outputText>
-								</aon:div>
-							</f:facet>
 						</aon:column>
 					</ui:define>
 				</ui:decorate>		

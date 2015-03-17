@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IFiscal;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -13,6 +14,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
+import com.esferalia.aon.occam.impl.jooq.dao.FiscalActivityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod180DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod184DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod190DAO;
@@ -20,6 +22,11 @@ import com.esferalia.aon.occam.impl.jooq.dao.Mod193DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod390DAO;
 
 public class FiscalImpl implements IFiscal {
+
+	// ---------------------------------------------------- [FISCAL ACTIVITIES]
+	public ArrayList<FiscalActivity> getFiscalActivities(AONContext ctx,int domain){
+		return FiscalActivityDAO.getActivities(ctx, domain);
+	}
 
 	// ----------------------------------------------------------- [MODELO 180]
 	@Override

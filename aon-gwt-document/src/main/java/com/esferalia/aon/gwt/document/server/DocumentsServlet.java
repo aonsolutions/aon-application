@@ -233,7 +233,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	
 	public Boolean filter(SearchInfo si,FileInfo fi){
 		if(si.getName() != null){
-			if(!AonStringUtils.contains(fi.getTitle(), si.getName())){
+			if(!containsIgnoreCase2(fi.getTitle(), si.getName())){
 				return false;
 			}
 		}
@@ -475,6 +475,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 					String[] types = { RegistryAttachmentType.CORPORATE_IDENTITY
 							.toString() };// TODO
 					DriveUtils.types = types;
+					fileInfo.setDomain(domain);
 					DriveUtils.sync2(d, fileInfo, domain);
 				} else
 					DBConsults.insertFileData(domain, id, b);
@@ -588,7 +589,6 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 				fileInfo.setMimetype((byte)MimeType.get(getMimetype()).ordinal());
 				fi.setMimetype((byte)MimeType.get(getMimetype()).ordinal());
 				fi.setIcon(Utils.icon(getMimetype()));
-
 			}
 		
 			else fileInfo.setMimetype(fi.getMimetype());
@@ -596,10 +596,10 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			if(fi.getScope() != null)fileInfo.setScopeId(fi.getScope().getId());
 			Byte conf;if(fi.getConfidential())conf=1; else conf=0;
 			fileInfo.setSecurityLevel(conf);
-
+			
 			try {
 				DBConsults.updateFile(domain, fileInfo,fi.getTags(),domainId);
-			
+				
 				if(getMimetype()!=null){
 					//InputStream file = getFile();
 					byte[] b = getOut();//.toByteArray();
@@ -1676,6 +1676,7 @@ public Vector<FileInfo> insertFileMultiple(FileInfo fi) {
 			Drive d = DriveUtils.serviceInitialize(g);
 			String[] types = { RegistryAttachmentType.CORPORATE_IDENTITY.toString() };// TODO
 			DriveUtils.types = types;
+			fileInfo.setDomain(domain);
 			DriveUtils.sync2(d, fileInfo, domain);
 		}
 		else DBConsults.insertFileData(domain, id, b );

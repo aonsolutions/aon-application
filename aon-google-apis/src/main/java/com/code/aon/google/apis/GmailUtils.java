@@ -1,6 +1,7 @@
 package com.code.aon.google.apis;
 
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,7 +27,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
+import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -41,30 +42,44 @@ import com.google.api.services.gmail.model.Message;
 public class GmailUtils {
 
 	
-	public static Gmail serviceInitialize(DomainGserviceaccount d) throws KeyStoreException, IOException, GeneralSecurityException, SQLException{
-				
+	public static Gmail serviceInitialize(DomainGserviceaccount g) throws KeyStoreException, IOException, GeneralSecurityException, SQLException{
+		
+		
+		
 		
 		final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
 		final JsonFactory JSON_FACTORY = new JacksonFactory();
-		final String SERVICE_ACCOUNT_ID = d.getEmailAddress();
+		final String SERVICE_ACCOUNT_ID = g.getEmailAddress();
 
-		InputStream keyStream = d.getPrivateKey();
+		InputStream keyStream = new ByteArrayInputStream(g.getPrivateKey());;
 		PrivateKey serviceAccountPrivateKey = SecurityUtils.loadPrivateKeyFromKeyStore(SecurityUtils.getPkcs12KeyStore(), keyStream, "notasecret",
 		          "privatekey", "notasecret");
-		
-		GoogleCredential credential = new GoogleCredential.Builder()
+		String googleAccount = g.getGoogleAccount();
+		GoogleCredential credential;
+		if(googleAccount != null)
+			credential = new GoogleCredential.Builder()
 				.setTransport(HTTP_TRANSPORT)
 				.setJsonFactory(JSON_FACTORY)
 				.setServiceAccountId(SERVICE_ACCOUNT_ID)
 				.setServiceAccountScopes(
 						Arrays.asList(GmailScopes.GMAIL_COMPOSE , GmailScopes.GMAIL_MODIFY, GmailScopes.GMAIL_READONLY,GmailScopes.MAIL_GOOGLE_COM))
-				.setServiceAccountPrivateKey(serviceAccountPrivateKey).build();
+				.setServiceAccountPrivateKey(serviceAccountPrivateKey)
+				.setServiceAccountUser(googleAccount)
+				.build();
+		else
+			credential = new GoogleCredential.Builder()
+				.setTransport(HTTP_TRANSPORT)
+				.setJsonFactory(JSON_FACTORY)
+				.setServiceAccountId(SERVICE_ACCOUNT_ID)
+				.setServiceAccountScopes(
+						Arrays.asList(GmailScopes.GMAIL_COMPOSE , GmailScopes.GMAIL_MODIFY, GmailScopes.GMAIL_READONLY,GmailScopes.MAIL_GOOGLE_COM))
+				.setServiceAccountPrivateKey(serviceAccountPrivateKey)
+				.build();
 	
-		
 		Gmail client= new com.google.api.services.gmail.Gmail.Builder(
 				HTTP_TRANSPORT, JSON_FACTORY, credential )
 				.setApplicationName("AON SOLUTIONS").build();
-		
+		client.users().messages().list(googleAccount).execute();
 		return client;
 		
 	}
@@ -126,7 +141,7 @@ public class GmailUtils {
 	    email.addRecipient(javax.mail.Message.RecipientType.TO,
 	                       new InternetAddress(to));
 	    email.setSubject(subject);
-	    email.setText(bodyText);
+	    email.setContent(bodyText, "text/html");
 	    return email;
 	  }
 
@@ -219,13 +234,7 @@ public class GmailUtils {
 		  
 	  }
 	  public static void main(String[] args) throws MessagingException, KeyStoreException, IOException, GeneralSecurityException, SQLException {
-		  	DomainGserviceaccount d =DatabaseSync.getServiceAccount("novus.aibanez.net");
-		  
-			Gmail gmail=serviceInitialize(d);
-		  
-			System.out.println(gmail);
-			
-			send(gmail,"aibanezdegau004@gmail.com","hola","hola");
+		  	
 	  }
 
 }

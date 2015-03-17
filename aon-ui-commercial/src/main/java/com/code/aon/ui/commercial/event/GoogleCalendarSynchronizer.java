@@ -95,13 +95,14 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 
 					CalendarList calendars = CalendarUtils.Quicksort.calendarsSort(CalendarUtils.getCalendars());
 					int i=CalendarUtils.searchCalendars(calendars, company.getName(), calendars.getItems().size() );
+					com.esferalia.aon.google.sql.AbstractSQL.CommercialTracking ct = DatabaseSync.getCommercialTrackingOne(tracking.getId(), domain);
 					if(i==-1){
 						Calendar calendar =CalendarUtils.newCalendar(company);
-						CalendarUtils.addEvent(calendar.getId(), CalendarUtils.newEvent(DatabaseSync.getCommercialTrackingOne(tracking.getId(), domain),domain));
+						CalendarUtils.addEvent(calendar.getId(), CalendarUtils.newEvent(ct,domain),domain,ct);
 
 					}
 					else{
-						CalendarUtils.addEvent(calendars.getItems().get(i).getId(), CalendarUtils.newEvent(DatabaseSync.getCommercialTrackingOne(tracking.getId(), domain),domain));
+						CalendarUtils.addEvent(calendars.getItems().get(i).getId(), CalendarUtils.newEvent(ct,domain),domain,ct);
 					}
 				}
 			} catch (SQLException e) {

@@ -329,6 +329,14 @@
 										actionListener="#{salaryPrint.onInit}"
 										value="#{bundle.payroll_salaryPrint_module}" />
 								</aon:div>
+								<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="reportPrint-payroll"
+											action="reportPrint_search-payroll"
+											actionListener="#{reportPrint.onInit}"
+											value="Listado de costes" />
+									</aon:div>
+								</aon:if>
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>

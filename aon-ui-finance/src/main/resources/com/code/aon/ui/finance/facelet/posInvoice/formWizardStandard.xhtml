@@ -35,17 +35,32 @@
 		<aon:outputLabel for="InvoiceDetail_price" styleClass="aon-input-required" 
 			value="#{bundle.aon_price}:" />
 		<aon:div styleClass="aon-nowrap">
-			<aon:outputText id="InvoiceDetail_price" styleClass="aon-bold aon-margin-right"
-				value="#{detailController.to.salesPrice}">
-				<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-			</aon:outputText>
-			<aon:outputLabel for="InvoiceDetail_discount" styleClass="aon-margin-left aon-margin-right"
+			<aon:if test="#{posInvoice.posShift.pos.priceEditable}">
+				<aon:inputText id="InvoiceDetail_price"
+					value="#{detailController.to.salesPrice}"
+					required="true" size="10" maxlength="8"
+					valueChangeListener="#{detailController.onSalesPriceChanged}"
+					ajaxSingle="true" />
+			</aon:if>
+			<aon:if test="#{!posInvoice.posShift.pos.priceEditable}">
+				<aon:outputText id="InvoiceDetail_price" styleClass="aon-bold aon-margin-right"
+					value="#{detailController.to.salesPrice}">
+					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+				</aon:outputText>
+			</aon:if>
+			<aon:outputLabel for="InvoiceDetail_discount" styleClass="aon-margin-left aon-margin-right aon-input-required"
 				value="#{bundle.aon_discount}:" />
-			<aon:inputText id="InvoiceDetail_discount"
-				value="#{detailController.to.discountExpression.discountExpr}"
-				required="true" size="3" maxlength="5"
-				valueChangeListener="#{detailController.onDiscountChanged}"
-				ajaxSingle="true" />
+			<aon:if test="#{posInvoice.posShift.pos.discountEditable}">
+				<aon:inputText id="InvoiceDetail_discount"
+					value="#{detailController.to.discountExpression.discountExpr}"
+					required="true" size="3" maxlength="5"
+					valueChangeListener="#{detailController.onDiscountChanged}"
+					ajaxSingle="true" />
+			</aon:if>
+			<aon:if test="#{!posInvoice.posShift.pos.discountEditable}">
+				<aon:outputText id="InvoiceDetail_discount" styleClass="aon-bold aon-margin-right"
+					value="#{detailController.to.discountExpression.discountExpr}" />
+			</aon:if>
 			<aon:outputText styleClass="aon-bold aon-margin-right" value=" %" />
 			<aon:outputLabel for="InvoiceDetail_quantity" styleClass="aon-margin-left aon-margin-right"
 				value="#{bundle.aon_quantity}:" />

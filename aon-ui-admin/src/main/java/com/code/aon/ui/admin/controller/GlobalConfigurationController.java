@@ -144,12 +144,14 @@ public class GlobalConfigurationController implements Serializable {
 	public boolean isPortalRegistered() {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		Integer domainId = ds.getParentDomainId();
-		Integer appId = AonUtil.getAuthPrincipal().getApplicationId();
-		try {
-			return AuditManager.hasModule(domainId, appId, Module.PAYROLL_PORTAL);
-		} catch (Throwable e) {
-			LOGGER.error(e.getMessage(), e);
-		}					
+		if ( domainId != null ) {
+			Integer appId = AonUtil.getAuthPrincipal().getApplicationId();
+			try {
+				return AuditManager.hasModule(domainId, appId, Module.PAYROLL_PORTAL);
+			} catch (Throwable e) {
+				LOGGER.error(e.getMessage(), e);
+			}								
+		}
 		return false;
 	}
 	

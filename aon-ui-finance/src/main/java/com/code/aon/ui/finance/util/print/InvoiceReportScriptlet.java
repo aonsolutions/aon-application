@@ -3,15 +3,21 @@ package com.code.aon.ui.finance.util.print;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 
+import net.sf.jasperreports.engine.JRDefaultScriptlet;
+import net.sf.jasperreports.engine.JRScriptletException;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.jasperreports.engine.JRDefaultScriptlet;
-
 import com.code.aon.AonVersion;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.enumeration.ReportPrintOption;
+import com.code.aon.customer.Customer;
+import com.code.aon.finance.Invoice;
+import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.RecordData;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.company.controller.CompanyController;
@@ -24,6 +30,9 @@ public class InvoiceReportScriptlet extends JRDefaultScriptlet implements Serial
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceReportScriptlet.class.getName());
+	
+	private final String FIELD_ID = "id";
+	
 	
 	private CompanyController getCompanyController(){
 		return (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
@@ -128,5 +137,20 @@ public class InvoiceReportScriptlet extends JRDefaultScriptlet implements Serial
 		return builder.toString();
 	}
 	
+	public String getCustomerAccountNumber() throws JRScriptletException{
+		try {
+			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+			Invoice invoice = (Invoice) invoiceBean.get((Integer)super.getFieldValue(FIELD_ID));
+			IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
+			Customer customer = (Customer) customerBean.get(invoice.getRegistry().getId());
+			if(customer!=null){
+				return customer.getAccount().getCode();
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "ERROR: imposible obtener los datos de la factura al generar su informe";
+			LOGGER.error(msg,e);
+		}
+		return null;
+	}
 
 }

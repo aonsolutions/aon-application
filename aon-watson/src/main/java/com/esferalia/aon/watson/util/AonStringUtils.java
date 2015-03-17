@@ -5689,7 +5689,7 @@ public class AonStringUtils {
 	 * StringUtils.defaultString("bat") = "bat"
 	 * </pre>
 	 *
-	 * @see ObjectUtils#toString(Object)
+	 * @see AonObjectUtils#toString(Object)
 	 * @see String#valueOf(Object)
 	 * @param str
 	 *            the String to check, may be null
@@ -5711,7 +5711,7 @@ public class AonStringUtils {
 	 * StringUtils.defaultString("bat", "NULL") = "bat"
 	 * </pre>
 	 *
-	 * @see ObjectUtils#toString(Object,String)
+	 * @see AonObjectUtils#toString(Object,String)
 	 * @see String#valueOf(Object)
 	 * @param str
 	 *            the String to check, may be null

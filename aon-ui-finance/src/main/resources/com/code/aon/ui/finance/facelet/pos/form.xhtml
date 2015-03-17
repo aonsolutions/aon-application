@@ -76,6 +76,20 @@
 							reRender="DisplayModeDiv" ajaxSingle="true">
 							<f:selectItems value="#{financeCollections.posDisplayModes}" />
 						</aon:selectOneMenu>
+						<aon:selectBooleanCheckbox id="Pos_priceEditable"
+							styleClass="aon-margin-left"
+							value="#{pos.to.priceEditable}"
+							rendered="#{pos.to.standard}" />
+						<aon:outputLabel for="Pos_priceEditable" value="#{bundle.aon_price} #{bundle.aon_calendar_editable}"
+							styleClass="aon-italic aon-bold"
+							rendered="#{pos.to.standard}" />
+						<aon:selectBooleanCheckbox id="Pos_discountEditable"
+							styleClass="aon-margin-left"
+							value="#{pos.to.discountEditable}"
+							rendered="#{pos.to.standard}" />
+						<aon:outputLabel for="Pos_discountEditable" value="#{bundle.aon_discount} #{bundle.aon_calendar_editable}"
+							styleClass="aon-italic aon-bold"
+							rendered="#{pos.to.standard}" />
 						<aon:outputLabel for="Pos_numRows" value="#{bundle.aon_rows}"
 							styleClass="aon-margin-left aon-margin-right aon-italic"
 							rendered="#{pos.to.touchScreen}" />

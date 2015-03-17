@@ -377,7 +377,14 @@
 		<url-pattern>/googleLoginPopupClose/*</url-pattern>
 	</servlet-mapping>
 	
-	
+	<servlet>
+		<servlet-name>GmailServlet</servlet-name>
+		<servlet-class>com.code.aon.google.apis.servlet.GmailServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>GmailServlet</servlet-name>
+		<url-pattern>/googleMail/*</url-pattern>
+	</servlet-mapping>
 	
 	<servlet>
 		<servlet-name>OAuth2Servlet</servlet-name>

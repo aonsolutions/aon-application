@@ -10,7 +10,6 @@ import static com.code.aon.google.apis.DatabaseSync.getDomains;
 import static com.code.aon.google.apis.DatabaseSync.getEnterpriseEmail;
 import static com.code.aon.google.apis.DatabaseSync.getPotencialClient;
 import static com.code.aon.google.apis.DatabaseSync.getProject;
-import static com.code.aon.google.apis.DatabaseSync.getSellerEmail;
 import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.getHttpTransport;
 import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.getJsonFactory;
 import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.getPrincipalShortName;
@@ -35,11 +34,13 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.mail.MessagingException;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import com.code.aon.google.apis.drive.SearchFiles;
+import com.code.aon.google.apis.jooq.DBCalendar;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.pool.AonConnectionException;
@@ -66,6 +67,7 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventAttendee;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.Events;
+
 
 /**
  * @author aibanez
@@ -136,8 +138,8 @@ public class CalendarUtils {
 	}
 	
 	/**
-	 * @class Quicksort, implementación del algoritmo de ordanación
-	 * rápida, Quicksort. Distinguiendo entre calendarios y eventos.
+	 * @class Quicksort, implementaciÃ³n del algoritmo de ordanaciÃ³n
+	 * rÃ¡pida, Quicksort. Distinguiendo entre calendarios y eventos.
 	 * @author aibanez
 	 */
 	public static class Quicksort {
@@ -226,9 +228,9 @@ public class CalendarUtils {
 	
 	/**
 	 * initialize(HttpServletRequest req), Inicializa las variables globales
-	 * "credential" y "client",para sincronizar la aplicación con 
+	 * "credential" y "client",para sincronizar la aplicaciÃ³n con 
 	 * la cuenta de google del usuario.
-	 * @param req, interfaz de ServletRequest que proporciona información
+	 * @param req, interfaz de ServletRequest que proporciona informaciÃ³n
 	 * para la solicitud de servlets HTTP.
 	 * @throws IOException
 	 * @throws ServletException
@@ -317,13 +319,13 @@ public class CalendarUtils {
 	}
 	
 	/**
-	 * searchCalendars(CalendarList calendars , String dato, int n), Búsqueda 
+	 * searchCalendars(CalendarList calendars , String dato, int n), BÃºsqueda 
 	 * dicotomica de un calendario en Google Calendar. 
 	 * @param calendars, Lista de calendarios de Google Calendar
-	 * @param dato, valor con el que se realiza la búsqueda. 
-	 * @param n, tamaño de la lista "calendars"
+	 * @param dato, valor con el que se realiza la bÃºsqueda. 
+	 * @param n, tamaÃ±o de la lista "calendars"
 	 * @return Devuelve -1 si no esta en la lista, y la posicion de la lista
-	 * si está en la lista.
+	 * si estÃ¡ en la lista.
 	 */
 	public static int searchCalendars(CalendarList calendars , String dato, int n) {
 
@@ -344,12 +346,12 @@ public class CalendarUtils {
 	}
 	
 	/**
-	 * addCalendar(Domain company,String domainC), Añade un calendario a 
+	 * addCalendar(Domain company,String domainC), AÃ±ade un calendario a 
 	 * Google Calendar.
-	 * @param company, Dominio y datos de una empresa para la cual se creará 
+	 * @param company, Dominio y datos de una empresa para la cual se crearÃ¡ 
 	 * el calendario.
-	 * @param domainC, Dominio para la conexión con la base de datos.
-	 * @return Devuelve el calendario añadido.
+	 * @param domainC, Dominio para la conexiÃ³n con la base de datos.
+	 * @return Devuelve el calendario aÃ±adido.
 	 * @throws IOException
 	 * @throws SQLException
 	 * @throws AonConnectionException 
@@ -496,7 +498,7 @@ public class CalendarUtils {
 	 * newEvent(CommercialTracking commercialTracking,String domainC), Crea un 
 	 * evento de Google Calendar con los datos de un evento de la BD.
 	 * @param commercialTracking, evento de la BD.
-	 * @param domainC, Dominio para la conexión con la base de datos.
+	 * @param domainC, Dominio para la conexiÃ³n con la base de datos.
 	 * @return Devuelve un evento de Google Calendar.
 	 * @throws SQLException
 	 * @throws AonConnectionException 
@@ -520,18 +522,30 @@ public class CalendarUtils {
 		event.setDescription(description);
 		
 		// ATTENDEES
-		String email = getSellerEmail(commercialTracking,key);
+		Vector<String> emails = DBCalendar.getSellerEmails(commercialTracking,key);
+		String email = DBCalendar.getSellerEmail(commercialTracking, key);
+		
 		try {
-			if (email!=null && Utils.isGmail(email)){
-				
+			if(email == null ){
+				email = "";
+				for (String s : emails) {
+					if (s!=null && Utils.isGmail(s)){
+						if((!s.contains("gmail.com") && email.contains("gmail.com"))
+							|| email.equals(""))
+							email = s;
+					}	
+				}
+				if(!email.equals(""))DBCalendar.setSellerEmail(commercialTracking, key, email);
+			}
+			if(email !=null && email!= ""){
 				EventAttendee eventAttendee = new EventAttendee();
 				List<EventAttendee> list = new LinkedList<EventAttendee>();
 				eventAttendee.setEmail(email);
 				list.add(eventAttendee);
 				event.setAttendees(list);
 			}
+		
 		} catch (NamingException e) {
-			// TODO Bloque catch generado automáticamente
 			e.printStackTrace();
 		}
 		// START DATE
@@ -574,24 +588,32 @@ public class CalendarUtils {
 	}
 
 	/**
-	 * addEvent(String calendarId, Event event), Añade un evento al calendario
+	 * addEvent(String calendarId, Event event), AÃ±ade un evento al calendario
 	 * de Google Calendar especificado.
 	 * @param calendarId, Identificador del Calendario de Google Calendar.
 	 * @param event, Evento a introducir en el calendario.
 	 * @return Devuelve el evento introducido en el calendario.
 	 * @throws IOException
+	 * @throws AonConnectionException 
 	 */
-	public static Event addEvent(String calendarId, Event event)
-			throws IOException {
+	public static Event addEvent(String calendarId, Event event, String domain, CommercialTracking ct)
+			throws IOException, AonConnectionException {
 		View.header("Add Event");
 		View.display(event);
-		Event result = client.events().insert(calendarId, event).setSendNotifications(true)
+		Event result = client.events().insert(calendarId, event).setSendNotifications(false)
 				.execute();
+		
+		// Enviar notificaciÃ³n gmail api
+		try {
+			Utils.sendNotification(domain,result, ct);
+		} catch (SQLException | GeneralSecurityException | MessagingException | NamingException e) {
+			e.printStackTrace();
+		}
+		
 		View.display(result);
 		return result;
 		
 	}
-	
 	
 
 	/**
@@ -629,20 +651,20 @@ public class CalendarUtils {
 	
 	
 	/**
-	 * searchEvents(Events events, int dato, int n), Búsqueda 
+	 * searchEvents(Events events, int dato, int n), BÃºsqueda 
 	 * dicotomica de un evento de un calendario de Google Calendar.
 	 * @param events, Lista de eventos.
-	 * @param dato, valor con el que se realiza la búsqueda. 
-	 * @param n, tamaño de la lista "events"
+	 * @param dato, valor con el que se realiza la bÃºsqueda. 
+	 * @param n, tamaÃ±o de la lista "events"
 	 * @return Devuelve -1 si no esta en la lista, y la posicion de la lista
-	 * si está en la lista.
+	 * si estÃ¡ en la lista.
 	 */
 	public static int searchEvents(Events events, Integer dato, Integer n) {
 		String datoStr= dato.toString();
 		int centro;
 		int inf = 0;
 		int sup = n - 1;
-		System.out.println("tamañoo!!! : "+n);
+		System.out.println("tamaÃ±oo!!! : "+n);
 		while (n!=0 && inf <= sup) {
 			centro = (sup + inf) / 2;
 			if (events.getItems().get(centro).getExtendedProperties()
@@ -663,7 +685,7 @@ public class CalendarUtils {
 	 * Actualiza un evento de la base de datos a Google Calendar.
 	 * @param event, Evento de Google Calendar.
 	 * @param eventBD, Evento de la BD.
-	 * @param domainC, Dominio para la conexión con la BD.
+	 * @param domainC, Dominio para la conexiÃ³n con la BD.
 	 * @param id,  Identificado del calendario de Google Calendar.
 	 * @throws SQLException
 	 * @throws IOException
@@ -699,8 +721,8 @@ public static void synchronize(String key) throws IOException, SQLException, Aon
 						for (CommercialTracking ct : eventsBD) {
 							if (isRegular(ct)){
 								if (ct.getEventId() == null){
-									Event event=addEvent(calendarId,newEvent(ct,key));
-									DatabaseSync.setEventId(event.getId(),ct.getId(),key);// añadir el id del evento a la base de datos!!!
+									Event event=addEvent(calendarId,newEvent(ct,key),key,ct);
+									DatabaseSync.setEventId(event.getId(),ct.getId(),key);// aÃ±adir el id del evento a la base de datos!!!
 								}
 								else{
 									modifyEvent(ct.getEventId(), ct,calendarId,key);
@@ -716,10 +738,10 @@ public static void synchronize(String key) throws IOException, SQLException, Aon
 	
 	
 	/**
-	 * synchronize(String domainC), Sincronización con la base da datos, crea 
-	 * un calendario para cada empresa (si no esta creado) y añade todos los eventos
+	 * synchronize(String domainC), SincronizaciÃ³n con la base da datos, crea 
+	 * un calendario para cada empresa (si no esta creado) y aÃ±ade todos los eventos
 	 * de la base de datos para cada calendario. 
-	 * @param domainC, Dominio para la conexión con la base de datos.
+	 * @param domainC, Dominio para la conexiÃ³n con la base de datos.
 	 * @throws IOException
 	 * @throws SQLException
 	 * @throws AonConnectionException 
@@ -754,7 +776,7 @@ public static void synchronize(String key) throws IOException, SQLException, Aon
 								CommercialTracking commercialTracking = eventsBD.get(k);
 								System.out.println("		"+commercialTracking.getId());
 								System.out.println(commercialTracking.getDate()+" - "+commercialTracking.getEndDate()+" - "+ commercialTracking.getAllDay());
-								Event event=addEvent(calendar.getId(),newEvent(commercialTracking,key));
+								Event event=addEvent(calendar.getId(),newEvent(commercialTracking,key),key,commercialTracking);
 								
 								System.out.println(event.getId()+" "+ commercialTracking.getId());
 								
@@ -769,7 +791,7 @@ public static void synchronize(String key) throws IOException, SQLException, Aon
 								CommercialTracking commercialTracking = eventsBD.get(k);
 								int aux2 = searchEvents(events, commercialTracking.getId(), events.getItems().size());
 								if (aux2 == -1) {
-									addEvent(calendars.getItems().get(aux).getId(),newEvent(commercialTracking,key));
+									addEvent(calendars.getItems().get(aux).getId(),newEvent(commercialTracking,key),key,commercialTracking);
 								}
 								else{
 									modifyEvent(events.getItems().get(aux2).getId(), commercialTracking,calendars.getItems().get(aux).getId(),key);
@@ -820,8 +842,8 @@ public static void synchronize2() throws IOException, SQLException, AonConnectio
 						for (CommercialTracking ct : eventsBD) {
 							if (isRegular(ct)){
 								if (ct.getEventId() == null){
-									Event event=addEvent(calendarId,newEvent(ct,key));
-									DatabaseSync.setEventId(event.getId(),ct.getId(),key);// añadir el id del evento a la base de datos!!!
+									Event event=addEvent(calendarId,newEvent(ct,key),key,ct);
+									DatabaseSync.setEventId(event.getId(),ct.getId(),key);// aÃ±adir el id del evento a la base de datos!!!
 								}
 								else{
 									modifyEvent(ct.getEventId(), ct,calendarId,key);
@@ -921,7 +943,7 @@ public static void synchronize2() throws IOException, SQLException, AonConnectio
 	 */
 	public static void main(String[] args) throws GeneralSecurityException,
 			IOException, ServletException, SQLException, AonConnectionException, NamingException {
-		String domain = "energilandia.aibanez.net";
+		String domain = "procom-global4.aibanez.net";
 	//	synchronize(domain);
  /*ELIMINAR TODOS LOS CALENDARIOS!
 		DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
@@ -943,8 +965,7 @@ public static void synchronize2() throws IOException, SQLException, AonConnectio
 	
 		*/
 	
-		
-		synchronize2();
+		//synchronize2();
 	}
 
 

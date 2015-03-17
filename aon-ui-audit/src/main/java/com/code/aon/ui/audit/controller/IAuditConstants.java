@@ -6,7 +6,6 @@ public interface IAuditConstants {
 	String AUDIT_COLLECTIONS_CONTROLLER_NAME = "auditCollections";
 	String ACTION_DENIED_CONTROLLER_NAME = "actionDenied";	
 	String AUDIT_CONTROLLER_NAME = "audit";
-	String ACTION_MORE_USED_CONTROLLER_NAME = "actionMoreUsed";
 	String SESSION_CONTROLLER_NAME = "auditSession";
 	String ACTION_FAVORITE_CONTROLLER_NAME = "actionFavorite";
 
@@ -17,7 +16,6 @@ public interface IAuditConstants {
 	// Velocity Templates
 	String OPTIONS_TEMPLATE = "options.xhtml.vm";
 	String MENU_ITEM_TEMPLATE = "menuItem.xhtml.vm";
-	String LAST_EXECUTED_TEMPLATE = "lastExecuted.xhtml.vm";
 	String WEB_MAP_TEMPLATE = "webMap.xhtml.vm";
 	String INIT_ACTION_TEMPLATE = "initAction.xhtml.vm";
 	

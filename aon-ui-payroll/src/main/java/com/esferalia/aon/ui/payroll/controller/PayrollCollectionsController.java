@@ -403,6 +403,10 @@ public class PayrollCollectionsController implements Serializable {
 				SSRegimeType.COAL_MINING.getName(locale), null, true));
 		ssRegimes.add(new SelectItem(SSRegimeType.SEA_WORKERS,
 				SSRegimeType.SEA_WORKERS.getName(locale), null, true));
+		ssRegimes.add(new SelectItem(SSRegimeType.ISFAS,
+				SSRegimeType.ISFAS.getName(locale)));
+		ssRegimes.add(new SelectItem(SSRegimeType.MUFACE,
+				SSRegimeType.MUFACE.getName(locale)));
 //		ssRegimes.add(new SelectItem(SSRegimeType.AGRICULTURAL,
 //				 SSRegimeType.AGRICULTURAL.getName(locale), null, true));
 //		ssRegimes.add(new SelectItem(SSRegimeType.ARTIST, SSRegimeType.ARTIST

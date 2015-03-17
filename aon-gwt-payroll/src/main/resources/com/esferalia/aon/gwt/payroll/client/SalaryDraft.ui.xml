@@ -318,8 +318,8 @@
 											<g:HTMLPanel tag="div" styleName="aon-text-center">
 												<!-- e:ValueInlineHTML changeDisplayStyleName="{style.value-changed}"
 													ui:field="totalPaymentsLabel">&nbsp; </e:ValueInlineHTML-->
-												<e:ValueTextBox styleName="gwt-TextBox aon-nopadding aon-nomargin aon-text-center" visibleLength="9"
-														changeDisplayStyleName="{style.value-changed}" ui:field="totalPaymentsLabel">&nbsp; </e:ValueTextBox>												<g:InlineHTML ui:field="dbTotalPaymentsLabel"
+												<e:ExpressionValueBox styleName="gwt-TextBox aon-nopadding aon-nomargin aon-text-center" visibleLength="9"
+														changeDisplayStyleName="{style.value-changed}" ui:field="totalPaymentsLabel">&nbsp; </e:ExpressionValueBox>												<g:InlineHTML ui:field="dbTotalPaymentsLabel"
 													visible="false" />
 											</g:HTMLPanel>
 										</g:HTMLPanel>
@@ -477,8 +477,8 @@
 												<g:Label styleName="{style.cell-label}">LIQUIDO A
 													PERCIBIR (A-B)</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
-													<e:ValueTextBox styleName="gwt-TextBox aon-nopadding aon-nomargin aon-text-center" visibleLength="9"
-														changeDisplayStyleName="{style.value-changed}" ui:field="totalLiquidLabel">&nbsp; </e:ValueTextBox>
+													<e:ExpressionValueBox styleName="gwt-TextBox aon-nopadding aon-nomargin aon-text-center" visibleLength="9"
+														changeDisplayStyleName="{style.value-changed}" ui:field="totalLiquidLabel">&nbsp; </e:ExpressionValueBox>
 													<g:InlineHTML ui:field="dbTotalLiquidLabel"
 														visible="false" />
 												</g:HTMLPanel>

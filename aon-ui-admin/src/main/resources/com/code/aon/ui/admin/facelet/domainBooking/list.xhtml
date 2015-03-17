@@ -10,10 +10,19 @@
 
 	<ui:define name="content">
 		<aon:form id="domainBookingList">
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.config_domain_booking}" />
 				<ui:param name="toolbarDescription" value="" />
-			</ui:include>
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="back"
+						value="#{bundle.aon_back}" immediate="true"
+						rendered="#{domainBooking.showBackButton}"
+						action="#{domainBooking.backAction}"
+						title="#{bundle.aon_key_cancel_accelerator}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_cancel}" />
+				</ui:define>					
+			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
 

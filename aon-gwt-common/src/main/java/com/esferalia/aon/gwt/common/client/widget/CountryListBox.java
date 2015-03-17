@@ -13,5 +13,13 @@ public class CountryListBox extends ListBox {
 			this.addItem( p.getName(), p.getIso2() );	
 		}
 	}
+
+	public Country getValue() {
+		return Country.safeValueOf(getValue(getSelectedIndex()));
+	}
+
+	public void setValue(Country country) {
+		setSelectedIndex(country==null?0:country.ordinal()+1);		
+	}
 	
 }

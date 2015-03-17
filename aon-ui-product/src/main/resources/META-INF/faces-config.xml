@@ -195,6 +195,40 @@
 		</managed-property>						
 	</managed-bean>
 	
+	<!--  **** ITEM TAG PRINT **** -->
+	<managed-bean>
+		<managed-bean-name>itemTagPrint</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.product.controller.ItemTagPrintController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.product.Item</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>itemTagPrint</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Item_product_type</key>
+					<value>0|1|2|3|5</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Item_detail,Item_detail2</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{itemSearch}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
 	
 	<!-- ****** ITEM ****** -->
 	<managed-bean>
@@ -1371,6 +1405,17 @@
 	    <navigation-case>
 	      <from-outcome>itemCatalogueReport_search</from-outcome>
 	      <to-view-id>/com/code/aon/ui/product/facelet/itemCatalogueReport/search.xhtml</to-view-id>
+	    </navigation-case>
+   </navigation-rule>
+   
+   <navigation-rule>
+	    <navigation-case>
+	      <from-outcome>itemTagPrint_list</from-outcome>
+	      <to-view-id>/com/code/aon/ui/product/facelet/itemTagPrint/list.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>itemTagPrint_search</from-outcome>
+	      <to-view-id>/com/code/aon/ui/product/facelet/itemTagPrint/search.xhtml</to-view-id>
 	    </navigation-case>
    </navigation-rule>
    

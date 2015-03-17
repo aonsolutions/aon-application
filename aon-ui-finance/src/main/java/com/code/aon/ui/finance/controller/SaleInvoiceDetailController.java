@@ -10,6 +10,7 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.product.Item;
 import com.code.aon.product.enumeration.ProductType;
+import com.code.aon.product.pricing.ItemPricesManager;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 
 public class SaleInvoiceDetailController extends InvoiceDetailController {
@@ -73,6 +74,16 @@ public class SaleInvoiceDetailController extends InvoiceDetailController {
 	public void discountChanged(String discount) {
 		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
 		invoiceDetail.getDiscountExpression().setDiscountExpr(discount);
+	}
+
+	public void onSalesPriceChanged(ValueChangeEvent event) {
+		salesPriceChanged((event.getNewValue() != null && !event.getNewValue().toString().equals("")) ? (Double)event.getNewValue() : 0);
+	}
+
+	public void salesPriceChanged(double salesPrice) {
+		ItemPricesManager pricesManager = new ItemPricesManager();
+		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
+		invoiceDetail.setPrice(pricesManager.getPrice(invoiceDetail.getVatPercent(), invoiceDetail.getRetentionPercent(), salesPrice, 4));
 	}
 
 }

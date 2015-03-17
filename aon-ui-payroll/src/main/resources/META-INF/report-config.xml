@@ -170,6 +170,39 @@
 			<param id="month" value="#{salaryExpense.getMonth}" />
 		</params>
 	</report>
+	<report id="salaryExpenseMonthlyReport" description="Salary Expense Monthly Report">
+		<template path="/com/esferalia/aon/ui/payroll/report/salaryExpenseMonthly.jasper" />
+		<collection provider="#{salaryExpense}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="year" value="#{salaryExpense.getYear}" />
+			<param id="month" value="#{salaryExpense.getMonth}" />
+		</params>
+	</report>
+	<report id="salaryExpenseDetailed" description="Salary Expense Detailed Report">
+		<template path="/com/esferalia/aon/ui/payroll/report/salaryExpenseDetailed.jasper" />
+		<collection provider="#{salaryExpense}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="year" value="#{salaryExpense.getYear}" />
+			<param id="month" value="#{salaryExpense.getMonth}" />
+		</params>
+	</report>
+	<report id="salaryExpenseMonthlyDetailed" description="Salary Expense Monthly Detailed Report">
+		<template path="/com/esferalia/aon/ui/payroll/report/salaryExpenseMonthlyDetailed.jasper" />
+		<collection provider="#{salaryExpense}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="year" value="#{salaryExpense.getYear}" />
+			<param id="month" value="#{salaryExpense.getMonth}" />
+		</params>
+	</report>
 
 	<!--  IMPRESION DE LOS COSTES DE EMPRESA DEL MES ACTUAL -->
 	<report id="currentSalaryExpenseReport" description="Salary Expense Report">

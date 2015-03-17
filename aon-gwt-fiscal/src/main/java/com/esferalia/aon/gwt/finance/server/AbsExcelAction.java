@@ -3,8 +3,6 @@ package com.esferalia.aon.gwt.finance.server;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.Cell;

@@ -6,8 +6,6 @@ public interface IOption {
 
 	String ID_PATTERN = "(id)";
 	
-	String VALUE_PATTERN = "(value)";	
-	
 	String getAction();
 	
 	void setAction(String action);

@@ -22,4 +22,14 @@ public class NumberUtils {
 	public static boolean notEquals(Number n1, Number n2) {
 		return !equals(n1, n2);
 	}
+
+	public static <T extends Number> int compare(T n1, T n2) {
+		if (n1 == n2)
+			return 0;
+		if (n1 == null)
+			return -1;
+		if (n2 == null)
+			return 1;
+		return Double.compare(n1.doubleValue(), n2.doubleValue());
+	}
 }

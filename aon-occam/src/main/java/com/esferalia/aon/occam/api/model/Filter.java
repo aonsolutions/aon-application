@@ -13,6 +13,7 @@ public interface Filter {
 		Filter in(T[] t);
 		Filter isNull();
 		Filter isNotNull();
+		Filter like(T t);
 	}
 	
 	

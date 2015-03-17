@@ -9,6 +9,76 @@ public interface AonCSS extends  CssResource {
 	
 	@ClassName("aon-width-all")
 	String aonWidthAll();
+	
+	@ClassName("aon-width-half")
+	String aonWidthHalf();
+	
+	@ClassName("aon-width-half-plus")
+	String aonWidthHalfPlus();
+	
+	@ClassName("aon-width-half-minus")
+	String aonWidthHalfMinus();
+	
+	@ClassName("aon-width-auto")
+	String aonWidthAuto();
+	
+	@ClassName("aon-width-20")
+	String aonWidth20();
+	
+	@ClassName("aon-width-30")
+	String aonWidth30();
+	
+	@ClassName("aon-width-40")
+	String aonWidth40();
+	
+	@ClassName("aon-width-50")
+	String aonWidth50();
+	
+	@ClassName("aon-width-60")
+	String aonWidthAll60();
+	
+	@ClassName("aon-width-70")
+	String aonWidthAll70();
+	
+	@ClassName("aon-width-80")
+	String aonWidthAll80();
+	
+	@ClassName("aon-width-100")
+	String aonWidthAll100();
+	
+	@ClassName("aon-width-105")
+	String aonWidthAll105();
+	
+	@ClassName("aon-width-110")
+	String aonWidthAll110();
+	
+	@ClassName("aon-width-120")
+	String aonWidthAll120();
+	
+	@ClassName("aon-width-130")
+	String aonWidth130();
+	
+	@ClassName("aon-width-140")
+	String aonWidth140();
+	
+	@ClassName("aon-width-150")
+	String aonWidth150();
+	
+	@ClassName("aon-width-160")
+	String aonWidth160();
+	
+	@ClassName("aon-width-170")
+	String aonWidth170();
+	
+	@ClassName("aon-width-180")
+	String aonWidth180();
+	
+	@ClassName("aon-width-190")
+	String aonWidth190();
+	
+	@ClassName("aon-width-200")
+	String aonWidth200();
+	
 
 	@ClassName("aon-italic")
 	String aonItalic();
@@ -186,6 +256,9 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-input-text-important")
 	String aonInputTextImportant();
 
+	@ClassName("aon-inputText")
+	String aonInputText();
+
 	@ClassName("aon-fiscal-container")
 	String aonFiscalContainer();
 
@@ -340,6 +413,76 @@ public interface AonCSS extends  CssResource {
 
 	@ClassName("aon-warn-message-block")
 	String aonWarnMessageBlock();
+	
+	
+	@ClassName("aon-icon-m111")
+	String aonIconM111();
 
+	@ClassName("aon-icon-m115")
+	String aonIconM115();
+
+	@ClassName("aon-icon-m123")
+	String aonIconM123();
+
+	@ClassName("aon-icon-m130")
+	String aonIconM130();
+
+	@ClassName("aon-icon-m131")
+	String aonIconM131();
+
+	@ClassName("aon-icon-m140")
+	String aonIconM140();
+
+	@ClassName("aon-icon-m180")
+	String aonIconM180();
+
+	@ClassName("aon-icon-m184")
+	String aonIconM184();
+
+	@ClassName("aon-icon-m190")
+	String aonIconM190();
+
+	@ClassName("aon-icon-m193")
+	String aonIconM193();
+
+	@ClassName("aon-icon-m200")
+	String aonIconM200();
+
+	@ClassName("aon-icon-m303")
+	String aonIconM303();
+
+	@ClassName("aon-icon-m340")
+	String aonIconM340();
+
+	@ClassName("aon-icon-m347")
+	String aonIconM347();
+
+	@ClassName("aon-icon-m349")
+	String aonIconM349();
+
+	@ClassName("aon-icon-m390")
+	String aonIconM390();	
+
+	@ClassName("aon-icon-company")
+	String aonIconCompany();	
+
+	@ClassName("aon-icon-companyData")
+	String aonIconCompanyData();	
+
+	@ClassName("aon-icon-activities")
+	String aonIconActivities();
+	
+	@ClassName("aon-fiscal-enterprise-suggest")
+	String aonFiscalEnterpriseSuggest();
+
+	@ClassName("aon-panelGrid")
+	String aonPanelGrid();
+	
+	@ClassName("aon-panelGrid-odd")
+	String aonPanelGridOdd();
+	
+	@ClassName("aon-panelGrid-even")
+	String aonPanelGridEven();
 }
+
 

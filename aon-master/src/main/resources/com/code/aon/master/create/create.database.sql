@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.16.3
+# Version: 8.17.0
 # Created by: girazu
-# Creation Date: 25/02/2015 16:15
+# Creation Date: 12/03/2015 10:35
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -811,6 +811,8 @@ CREATE TABLE `pos` (
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre',
   `series` char(5) collate latin1_spanish_ci default NULL COMMENT 'Serie del POS',
   `customer` int(4) default NULL COMMENT 'Identificador del Cliente',
+  `price_editable` tinyint(1) NOT NULL default '0' COMMENT 'Indica si el precio es editable',
+  `discount_editable` tinyint(1) NOT NULL default '0' COMMENT 'Indica si el descuento es editable',
   `invoiceable` tinyint(1) NOT NULL default '0' COMMENT 'Indica si el Punto de Venta es facturable',
   `item_invoice` int(4) default NULL COMMENT 'Identificador del Articulo facturable',
   `display_mode` tinyint(2) NOT NULL default '0' COMMENT 'Modo de visualizacion en pantalla',
@@ -7926,7 +7928,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.16.3');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.17.0');
 
 COMMIT;
 

@@ -12,6 +12,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +37,8 @@ public class BookingInfo implements Serializable {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(BookingInfo.class);
+	
+	private final static Module[] AON_ONE_MODULES = {Module.ACCOUNTING, Module.DOCUMENT};
 
 	private Domain domain;
 	
@@ -229,7 +232,7 @@ public class BookingInfo implements Serializable {
 	
 	private void updateAonOneModules() {
 		for( DomainModuleInfo dmi : aioInfo.getApplicationModules() ) {
-			if ( dmi.getModule() != Module.DOCUMENT ) {
+			if (! ArrayUtils.contains(AON_ONE_MODULES, dmi.getModule()) ) {
 				dmi.setChecked(false);	
 			}
 		}
@@ -239,6 +242,7 @@ public class BookingInfo implements Serializable {
 	
 	private List<DomainModuleInfo> calculateBookingModules() {
 		List<DomainModuleInfo> list = new LinkedList<DomainModuleInfo>();
+		list.add(aioInfo.getModuleInfo(Module.ACCOUNTING));
 		switch ( getDomain().getType() ) {
 			case GENERIC:
 				list.add(aioInfo.getModuleInfo(Module.FISCAL));
@@ -249,7 +253,6 @@ public class BookingInfo implements Serializable {
 				break;
 			case CONSULTANCY:
 				list.add(aioInfo.getModuleInfo(Module.FISCAL));
-				list.add(aioInfo.getModuleInfo(Module.ACCOUNTING));
 				list.add(aioInfo.getModuleInfo(Module.PAYROLL));
 				list.add(aioInfo.getModuleInfo(Module.DOCUMENT));
 				list.add(aioInfo.getModuleInfo(Module.PAYROLL_PORTAL));
@@ -306,11 +309,11 @@ public class BookingInfo implements Serializable {
 		list.add(aioInfo.getModuleInfo(Module.GROUPWARE));
 		list.add(aioInfo.getModuleInfo(Module.POS));
 		if ( getDomain().getType() != DomainType.CONSULTANCY ) {
-			list.add(aioInfo.getModuleInfo(Module.ACCOUNTING));
 			list.add(aioInfo.getModuleInfo(Module.DOCUMENT));
 		}
 		if ( getDomain().getType() == DomainType.GENERIC ) {
 			list.add(aioInfo.getModuleInfo(Module.INFOWEB));
+			list.add(aioInfo.getModuleInfo(Module.ECOMMERCE));
 		}
 		this.aioInfo.sortApplicationModules(list);
 		return list;
@@ -356,11 +359,13 @@ public class BookingInfo implements Serializable {
 		if ( isAonOne() ) {
 			this.bookingModules.clear();
 			this.bookingModules.add(aioInfo.getModuleInfo(Module.AON_ONE));
+			this.bookingModules.add(aioInfo.getModuleInfo(Module.ACCOUNTING));
 			this.bookingModules.add(this.documental);
 			this.displayModules.remove(this.documental);
 		} else {
 			this.bookingModules.clear();
 			this.bookingModules.add(aioInfo.getModuleInfo(Module.AON_ONE));
+			this.bookingModules.add(aioInfo.getModuleInfo(Module.ACCOUNTING));
 			if ( getParentDomain() != null ) {
 				Integer parentDomainId = getParentDomain().getId();
 				Integer applicationId = aioInfo.getApplication().getId();
@@ -374,12 +379,6 @@ public class BookingInfo implements Serializable {
 				if ( AuditManager.hasModule(parentDomainId, applicationId, Module.PAYROLL) ) {
 					this.bookingModules.add(payroll);
 					payroll.setDisabled(!parentUser);
-				}
-				DomainModuleInfo accounting = aioInfo.getModuleInfo(Module.ACCOUNTING);
-				if ( AuditManager.hasModule(parentDomainId, applicationId, Module.ACCOUNTING) ) {
-					this.bookingModules.add(accounting);
-					accounting.setDisabled(!parentUser);
-					this.displayModules.remove(accounting);
 				}
 			}			
 			if (! this.displayModules.contains(this.documental) ) {

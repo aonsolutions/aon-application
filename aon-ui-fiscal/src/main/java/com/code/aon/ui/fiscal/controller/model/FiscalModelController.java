@@ -614,22 +614,25 @@ public abstract class FiscalModelController extends BasicController implements I
 		return ( !isNevv() 
 			&& to.isFinished() 
 			&& to.getAdministration() == Administration.COMMON_TERRITORY
+			&& to.getYear() < 2015
 			&& (to.getModel() == FiscalModelType.M111 
 				|| to.getModel() == FiscalModelType.M115  
 				|| to.getModel() == FiscalModelType.M123
 				|| to.getModel() == FiscalModelType.M130
-				|| to.getModel() == FiscalModelType.M131)
+				|| to.getModel() == FiscalModelType.M131
+				|| to.getModel() == FiscalModelType.M303)
 			&& isScriptPresent());
 	}
 
 	public boolean isAeatReportEnabled() {
 		FiscalModel to = (FiscalModel) getTo();
 		return (!isNevv() && to.isFinished() && isScriptPresent()
-			 && !to.isModel111()
-			 && (to.getModel() == FiscalModelType.M115  
+			 && (to.getModel() == FiscalModelType.M111
+			  || to.getModel() == FiscalModelType.M115  
 			  || to.getModel() == FiscalModelType.M123
 			  || to.getModel() == FiscalModelType.M130
-			  || to.getModel() == FiscalModelType.M131)
+			  || to.getModel() == FiscalModelType.M131
+			  || to.getModel() == FiscalModelType.M303)
 				);
 	}
 	public boolean isAeatOfficialReportEnabled() {

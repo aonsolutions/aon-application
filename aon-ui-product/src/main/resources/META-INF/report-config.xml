@@ -54,4 +54,14 @@
 		</params>
 	</report>
 	
+	<!--  *********  Listado de etiquetas********* -->
+	<report id="itemTagList" description="Product Tag items List">
+		<template path="/com/code/aon/ui/product/report/itemTag.jasper"/>
+		<collection provider="#{itemTagPrint}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
+			<param id="freeText" value="#{itemTagPrint.getFreeTextAll}" />
+		</params>
+	</report>
+	
 </report-config>

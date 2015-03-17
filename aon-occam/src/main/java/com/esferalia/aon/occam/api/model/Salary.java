@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -342,7 +343,6 @@ public class Salary implements Serializable{
 	
 
 	public <A,R> R getContextData(String name, Collector<? super String,A,R> collector ) {
-		System.out.println("getContextData : " + name );
 		List<ContextData> datas = contextdata.get(name);
 		if ( datas == null ) 
 			return null;

@@ -3,8 +3,8 @@ package com.esferalia.aon.gwt.fiscal.client;
 import java.util.ArrayList;
 
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
-import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -29,12 +29,12 @@ public interface FiscalService extends RemoteService {
 
 	FiscalParameters getFiscalParameters(String domainName, int domain) throws AonSQLException;
 
-	// -------------------------------------------------------------- ENTERPRISE
-	ArrayList<Enterprise> getEnterprises(int domain, String query)
-			throws AonSQLException;
-
 	// -------------------------------------------------------------- ACTIVITIES
 	ArrayList<Activity> getActivities(int activityGroup) throws AonSQLException;
+	
+	// -------------------------------------------------------FISCAL ACTIVITIES
+	ArrayList<FiscalActivity> getFiscalActivities(String domainName, int domain) throws AonSQLException;
+	FiscalActivity getFiscalActivity(String domainName, int domain, int id) throws AonSQLException;
 	
 	// ---------------------------------------------------------------MODELO 190
 	void deleteMod190(String domainName, int domain,Mod190 mod190) throws AonCoreException;

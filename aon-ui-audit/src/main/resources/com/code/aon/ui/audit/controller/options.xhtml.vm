@@ -2,8 +2,12 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 #foreach($option in ${options})
-	<aon:div styleClass="aon-direct-access-list-element">
-		${option.getXml(${preffix})}
-	</aon:div>
+	#if( ${option.isAddParentDiv()} )
+		<aon:div styleClass="aon-direct-access-list-element">
+			${option.getXml(${preffix})}
+		</aon:div>
+	#else
+    	${option.getXml(${preffix})}
+	#end
 #end
 </ui:composition>

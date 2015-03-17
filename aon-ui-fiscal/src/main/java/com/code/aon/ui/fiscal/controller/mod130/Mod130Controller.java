@@ -2,11 +2,19 @@ package com.code.aon.ui.fiscal.controller.mod130;
 
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_BATCH_DISK_ERROR;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.common.AonException;
 import com.code.aon.AonVersion;
@@ -16,6 +24,7 @@ import com.code.aon.file.tax.model.MOD130.MOD130Format;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
 import com.code.aon.fiscal.mod130.Mod130;
+import com.code.aon.ui.fiscal.aeat.AeatUtils;
 import com.code.aon.ui.fiscal.controller.FiscalParametersController;
 import com.code.aon.ui.fiscal.controller.model.FiscalModelController;
 import com.code.aon.ui.fiscal.file.MOD130Writer;
@@ -79,4 +88,41 @@ public class Mod130Controller extends FiscalModelController {
 	protected String getFormPage() {
 		return "mod130_form";
 	}	
+
+	public String aeatReport() {
+		FiscalModel fiscalModel = (FiscalModel) getTo();
+		if (fiscalModel.getYear() > 2014) {
+			try {
+				if (getFileOutput() == null) {
+					onCreateDisk(null);
+				}
+				InputStream input = getFileOutput().getFile() != null
+						?new FileInputStream(getFileOutput().getFile())
+						:new ByteArrayInputStream(getFileOutput().getContent());
+
+				FacesContext faces = FacesContext.getCurrentInstance();
+	            HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
+	            String fileName = getAutomaticFileName();
+	            response.setHeader("Content-disposition", "attachment; filename=\""+fileName+"\";");
+				AeatUtils.printMod130(getDeclaration().getHeader().getYear(),
+						getDeclaration().getHeader().getPeriod(),
+						input,response.getOutputStream());					
+		        response.flushBuffer();
+		        faces.responseComplete();
+			} catch (FileNotFoundException e) {
+				AonUtil.addErrorMessage(e.getMessage()); 
+				throw new AbortProcessingException(e.getMessage(),e);
+			} catch (UnsupportedEncodingException e) {
+				AonUtil.addErrorMessage(e.getMessage()); 
+				throw new AbortProcessingException(e.getMessage(),e);
+			} catch (IOException e) {
+				AonUtil.addErrorMessage(e.getMessage()); 
+				throw new AbortProcessingException(e.getMessage(),e);
+			} catch (AonException e) {
+				AonUtil.addErrorMessage(e.getMessage()); 
+				throw new AbortProcessingException(e.getMessage(),e);
+			}
+		} 
+		return super.aeatReport();
+	}
 }

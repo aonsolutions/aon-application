@@ -187,7 +187,7 @@ public class DomainApplicationInfo implements Serializable {
     	Comparator<DomainModuleInfo> comparator = new Comparator<DomainModuleInfo>() {
 			@Override
 			public int compare(DomainModuleInfo o1, DomainModuleInfo o2) {
-				return o1.getDescription().compareTo(o2.getDescription());
+				return o1.getDescription().compareToIgnoreCase(o2.getDescription());
 			}	    		
 		};
     	Collections.sort( list, comparator );					

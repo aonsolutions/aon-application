@@ -2352,6 +2352,13 @@
 			<value>Salary_type,Salary_endDate desc,Salary_enterpriseName,Salary_employeeName</value>
 		</managed-property>
 	</managed-bean>
+
+	<!--  **** REPORT PRINT **** -->
+	<managed-bean>
+		<managed-bean-name>reportPrint</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.ReportPrintController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 	
 	<!-- ************ GEOZONE IRPF ************** -->
 	<managed-bean>
@@ -2710,6 +2717,12 @@
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/salaryPrint/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	<!-- ************* REPORT PRINT ************* -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>reportPrint_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/reportPrint/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	
-
 </faces-config>

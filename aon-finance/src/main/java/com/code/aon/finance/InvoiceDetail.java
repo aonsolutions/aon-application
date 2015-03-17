@@ -183,6 +183,9 @@ public class InvoiceDetail extends InvoiceDetailDB implements ICalculable, IStoc
 		}
 		return CommonUtil.round(getPrice() * (1 + getVatPercent() / 100 + getSurchargePercent() / 100 - getRetentionPercent() / 100));
 	}
+	@Transient
+	public void setSalesPrice(double salesPrice) {
+	}
 
 	@Transient
 	public double getTotalSalesPrice() {

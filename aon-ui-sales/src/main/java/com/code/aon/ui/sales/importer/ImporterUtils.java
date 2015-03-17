@@ -52,6 +52,9 @@ import com.code.aon.sales.enumeration.DocumentType;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.sales.controller.ISalesConstants;
+import com.code.aon.ui.sales.controller.SalesAppParamController;
+import com.code.aon.ui.sales.controller.SalesAppParamController.AmazonSalesChannel;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -258,19 +261,20 @@ public class ImporterUtils implements Serializable {
 	}
 	
 	public static void loadAmazonSellerMap() {
-		amazonSellerMap = new HashMap<String, Seller>();
-		String name = SALES_CHANNEL_UK;
-		amazonSellerMap.put(name, obtainSellerByName(name));
-		name = SALES_CHANNEL_DE;
-		amazonSellerMap.put(name, obtainSellerByName(name));
-		name = SALES_CHANNEL_FR;
-		amazonSellerMap.put(name, obtainSellerByName(name));
-		name = SALES_CHANNEL_IT;
-		amazonSellerMap.put(name, obtainSellerByName(name));
-		name = SALES_CHANNEL_ES;
-		amazonSellerMap.put(name, obtainSellerByName(name));
-		
+		SalesAppParamController params = (SalesAppParamController) AonUtil.getRegisteredBean("salesAppParam");
+		for(AmazonSalesChannel asc: params.getAmazonSalesChannels()){
+			amazonSellerMap.put(asc.getName(), asc.getSeller());
+		}
 	}
+	public static String obtainAmazonSalesProductPrefix() {
+		SalesAppParamController params = (SalesAppParamController) AonUtil.getRegisteredBean("salesAppParam");
+		return params.getAmazonSalesProductName().get("prefix");
+	}
+	public static String obtainAmazonSalesProductSuffix() {
+		SalesAppParamController params = (SalesAppParamController) AonUtil.getRegisteredBean("salesAppParam");
+		return params.getAmazonSalesProductName().get("suffix");
+	}
+		
 	public static Seller obtainSellerByName(String name) {
 		Result<Record1<Integer>> records = getSellerRecords(name);
 		if(records!=null && records.size()>0 ){

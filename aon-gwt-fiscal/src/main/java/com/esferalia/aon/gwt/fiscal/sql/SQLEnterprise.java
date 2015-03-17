@@ -15,11 +15,13 @@ import com.esferalia.aon.payroll.sql.SQLConstants.DomainColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 
+@Deprecated
 public class SQLEnterprise {
 	private static Logger LOGGER = Logger.getLogger(SQLEnterprise.class
 			.getName());
 
 	//@formatter:off
+	@Deprecated
 	private static final String SELECT_ENTERPRISES = "SELECT "
 		+ SQLConstants.ENTERPRISE + "." + EnterpriseColumns.REGISTRY + ","
 		+ SQLConstants.ENTERPRISE + "." + EnterpriseColumns.DOMAIN + ","
@@ -38,13 +40,13 @@ public class SQLEnterprise {
 			+ "SELECT " + DomainColumns.ID + " FROM " + SQLConstants.DOMAIN 
 			+ " WHERE " + SQLConstants.DOMAIN + "."+ DomainColumns.PARENT + " =  ? )))"
 		+" AND " + SQLConstants.DOMAIN + "." + DomainColumns.ACTIVE + "=1";
-	
+	@Deprecated
 	private static final String ENTERPRISES_SUGGEST_DOCUMENT = 
 			" AND ( " + SQLConstants.REGISTRY + "." + RegistryColumns.DOCUMENT +
 			" LIKE ? OR " + SQLConstants.REGISTRY + "." + RegistryColumns.NAME +
 			" LIKE ?)"; 
 	//@formatter:on
-
+	@Deprecated
 	public static ArrayList<Enterprise> getEnterprises(int domain,
 			String query, Connection conn) throws AonSQLException {
 		String select = SELECT_ENTERPRISES;

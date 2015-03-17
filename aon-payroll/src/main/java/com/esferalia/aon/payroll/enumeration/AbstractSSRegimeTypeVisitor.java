@@ -42,5 +42,15 @@ public abstract class AbstractSSRegimeTypeVisitor<E> implements
 	public E visitArtistRegime(SSRegimeType ssRegimeType) {
 		return null;
 	}
+	
+	@Override
+	public E visitIsfasRegime(SSRegimeType ssRegimeType) {
+		return null;
+	}
+	
+	@Override
+	public E visitMufaceRegime(SSRegimeType ssRegimeType) {
+		return null;
+	}
 
 }

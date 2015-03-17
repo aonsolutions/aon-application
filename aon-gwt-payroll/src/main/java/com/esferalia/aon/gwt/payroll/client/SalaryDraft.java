@@ -75,7 +75,6 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.HasDirection.Direction;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -163,6 +162,17 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			put("FOGASA_E", "Fondo de Garant\u00eda Salarial ( FOGASA )");
 
 		}
+	};
+
+	private static Deduction.Type SYSTEM_DEDUCTION [] = {
+		Deduction.Type.IRPF,
+		Deduction.Type.COMMON_CONTINGENCY,
+		Deduction.Type.PROFESSIONAL_CONTINGENCY,
+		Deduction.Type.UNEMPLOYMENT,
+		Deduction.Type.JOB_TRAINING,
+		Deduction.Type.STRUCTURAL_OVERTIME,
+		Deduction.Type.NON_STRUCTURAL_OVERTIME,
+		Deduction.Type.FOGASA
 	};
 
 	private static Map<Deduction.Type, String> DEDUCTION_DESCRIPTIONS = new HashMap<Deduction.Type, String>() {
@@ -396,7 +406,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		@Override
 		public TextBox create(Variable variable) {
-			TextBox textBox = new TextBox();
+			TextBox textBox = new ExpressionBox();
 			textBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 			return textBox;
 		}
@@ -442,7 +452,13 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		@Override
 		public TextListBox create(Variable variable) {
-			TextListBox textListBox = new TextListBox();
+			TextListBox textListBox = new TextListBox(){
+				@Override
+				public String getValue() {
+					return getValue(getSelectedIndex()) ;
+				}
+				
+			};
 
 			int lastDay = DateUtils.getLastDayOfMonth(variable.getStartDate())
 					.getDate();
@@ -496,10 +512,19 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		private String name;
 		private String values[];
+		private String labels[];
+
+
+		public StringsListBoxFactory(String name, String  values [], String  labels []) {
+			this.name = name;
+			this.values = values;
+			this.labels = labels;
+		}
 
 		public StringsListBoxFactory(String name, String... values) {
 			this.name = name;
 			this.values = values;
+			this.labels = values;
 		}
 
 		@Override
@@ -516,8 +541,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				}
 				
 			};
-			for (String value : values)
-				textListBox.addItem(value);
+			for (int i = 0; i < values.length ; i++)
+				textListBox.addItem(labels[i], values[i]);
 			return textListBox;
 		}
 
@@ -2114,32 +2139,28 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		dbCgcBaseLabel.setText(format(salaryDraftObject.getDbCgcBase()));
 		setDbStyleName(dbCgcBaseLabel, cgcBaseLabel);
 		Double rawCgcBase = salaryDraftObject.getRawCgcBase();
-		if (!NumberUtils.equals(cgcBase, rawCgcBase)) {
-			setWarnStyles(
-					cgcBaseLabel,
-					true,
-					"La Base por Contingecias Comunes "
-							+ format(rawCgcBase)
-							+ "\u20A0 ha sido "
-							+ (rawCgcBase > cgcBase ? "limitada al m\u00e1ximo permitido"
-									: "ampliada al m\u00ednimo obligatorio"));
-		}
+		setWarnStyles(
+				cgcBaseLabel,
+				!NumberUtils.equals(cgcBase, rawCgcBase),
+				"La Base por Contingecias Comunes "
+						+ format(rawCgcBase)
+						+ "\u20A0 ha sido "
+						+ ((NumberUtils.compare(rawCgcBase,cgcBase)>0) ? "limitada al m\u00e1ximo permitido"
+								: "ampliada al m\u00ednimo obligatorio"));
 
 		Double cgpBase = salaryDraftObject.getCgpBase();
 		cgpBaseLabel.setText(format(cgpBase), displayChanges);
 		dbCgpBaseLabel.setText(format(cgpBase));
 		setDbStyleName(dbCgpBaseLabel, cgpBaseLabel);
 		Double rawCgpBase = salaryDraftObject.getRawCgpBase();
-		if (!NumberUtils.equals(cgpBase, rawCgpBase)) {
-			setWarnStyles(
-					cgpBaseLabel,
-					true,
-					"La Base por Accidentes de Trabajo y Enfermedades Profesionales  "
-							+ format(rawCgpBase)
-							+ "\u20A0 ha sido "
-							+ (rawCgpBase > cgpBase ? "limitada al m\u00e1ximo permitido"
+		setWarnStyles(
+				cgpBaseLabel,
+				!NumberUtils.equals(cgpBase, rawCgpBase),
+				"La Base por Accidentes de Trabajo y Enfermedades Profesionales  "
+						+ format(rawCgpBase)
+						+ "\u20A0 ha sido "
+						+ ((NumberUtils.compare(rawCgcBase,cgcBase)>0) ? "limitada al m\u00e1ximo permitido"
 									: "ampliada al m\u00ednimo obligatorio"));
-		}
 
 		irpfBaseLabel.setText(format(salaryDraftObject.getIrpfBase()),
 				displayChanges);
@@ -2680,7 +2701,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		newPaymentHandler.setOracle(paymentsOracle);
 		newPaymentHandler.setDescriptionBox(descriptionBox);
 
-		TextBox amountBox = new TextBox();
+		TextBox amountBox = new ExpressionBox();
 		amountBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		amountBox.addStyleName(AON.AON_TEXT_RIGHT);
 		amountBox.setVisible(false);
@@ -2718,7 +2739,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		paymentsTable.setHTML(row, 3, "&nbsp;");
 
-		TextBox amountBox = new TextBox();
+		TextBox amountBox = new ExpressionBox();
 		amountBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		amountBox.addStyleName(AON.AON_TEXT_RIGHT);
 		amountBox.setVisible(false);
@@ -2750,10 +2771,13 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		int row = paymentsTable.getRowCount();
 		for (Deduction deduction : deductions) {
 
-			String description = DEDUCTION_DESCRIPTIONS
-					.get(deduction.getType());
-			if (description != null) {
+			if (isSystemDeduction(deduction)) {
 
+				String description = DEDUCTION_DESCRIPTIONS
+						.get(deduction.getType());
+				if ( description == null )
+					description = deduction.getDescription(); 
+					
 				if (deduction.getAmount() != null) {
 					Double percent = getPercent(deduction, salaryDraftObject);
 					dumpSystemDeduction(deduction, percent, description, row++);
@@ -3229,7 +3253,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		Panel valuePanel = new HorizontalPanel();
 		valuePanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
 
-		TextBox variableTextBox = new TextBox();
+		TextBox variableTextBox = new ExpressionBox();
 		variableTextBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 
 		variableChangeHandler.setEditor(editor);
@@ -3812,7 +3836,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	private Widget newIrpfPercentBox(final Deduction irpf, final Double percent) {
 
-		final TextBox irpfPercentTexTBox = new TextBox();
+		final TextBox irpfPercentTexTBox = new ExpressionBox();
 
 		class IrpfPercentHandler implements FocusHandler, BlurHandler,
 				ChangeHandler {
@@ -4020,6 +4044,13 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	}
 
 	// ------------------------------------------------------- Static 'Library'
+	
+	private static boolean isSystemDeduction(Deduction deduction){
+		for(Deduction.Type type : SYSTEM_DEDUCTION)
+			if ( type == deduction.getType() )
+				return true;
+		return false;
+	}
 
 	private static Double getDbPercent(Deduction deduction,
 			SalaryDraftObject draftObject) {
@@ -4140,10 +4171,69 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			new EnumNameListBoxFactory<Employee.Occupation>("OCUPACION", Employee.Occupation.class), 
 			new DismissalFactory("CAUSA_INDEMNIZACION"), 
 			new StringsListBoxFactory("GRUPO_COTIZACION", new String [] {"01","02","03","04","05","06","07","08","09","10","11"}), 
+			new StringsListBoxFactory("TC2", 
+					new String [] {
+					"100","109","130","139","150","189",
+					"200","209","230","239","250","289",
+					"300","309","330","339","350","389",
+					"401","402","403","408","410","418","420","421","430","441","450","452",
+					"501","502","503","508","510","518","520","530","540","541","550","552"
+					}, 
+					new String [] {
+					"100 Indefinido, Tiempo Completo, Ordinario",
+					"109 Indefinido, Tiempo Completo, Fomento Contrataci\u00F3n Indefinida",
+					"130 Indefinido, Tiempo Completo, Personas con Discapacidad",
+					"139 Indefinido, Tiempo Completo, Personas con Discapacidad",
+					"150 Indefinido, Tiempo Completo, Fomento Contrataci\u00F3n Indefinida",
+					"189 Indefinido, Tiempo Completo",
+					
+					"200 Indefinido, Tiempo Parcial, Ordinario",
+					"209 Indefinido, Tiempo Parcial, Fomento Contrataci\u00F3n Indefinida",
+					"230 Indefinido, Tiempo Parcial, Personas con Discapacidad",
+					"239 Indefinido, Tiempo Parcial, Personas con Discapacidad",
+					"250 Indefinido, Tiempo Parcial, Fomento Contrataci\u00F3n Indefinida",
+					"289 Indefinido, Tiempo Parcial",
+					
+					"300 Indefinido, Fijo Discontinuo",
+					"309 Indefinido, Fijo Discontinuo, Fomento Contrataci\u00F3n Indefinida",
+					"330 Indefinido, Fijo Discontinuo, Personas con Discapacidad",
+					"339 Indefinido, Fijo Discontinuo, Personas con Discapacidad",
+					"350 Indefinido, Fijo Discontinuo, Fomento Contrataci\u00F3n Indefinida",
+					"389 Indefinido, Fijo Discontinuo",
+					
+					"401 Duraci\u00F3 Determinada, Tiempo Completo, Obra o Servicio Determinado",
+					"402 Duraci\u00F3 Determinada, Tiempo Completo, Eventual Circunstancias de la producci\u00F3n",
+					"403 Duraci\u00F3 Determinada, Tiempo Completo, Inserci\u00F3",
+					"408 Temporal, Tiempo Completo",
+					"410 Duraci\u00F3 Determinada, Tiempo Completo, Interinidad",
+					"418 Duraci\u00F3 Determinada, Tiempo Completo, Interinidad",
+					"420 Temporal, Tiempo Completo, Pr\u00E1cticas",
+					"421 Temporal, Tiempo Completo, Formaci\u00F3n y Aprendizaje",
+					"430 Temporal, Tiempo Completo, Personas con Discapacidad",
+					"441 Temporal, Tiempo Completo, Relevo",
+					"450 Temporal, Tiempo Completo, Fomento Contrataci\u00F3n Indefinida",
+					"452 Temporal, Tiempo Completo, Empresas de Inserci\u00F3",
+					
+					"501 Duraci\u00F3 Determinada, Tiempo Parcial, Obra o Servicio Determinado",
+					"502 Duraci\u00F3 Determinada, Tiempo Parcial, Eventual Circunstancias de la producci\u00F3n",
+					"503 Duraci\u00F3 Determinada, Tiempo Parcial, Inserci\u00F3",
+					"508 Temporal, Tiempo Parcial",
+					"510 Duraci\u00F3 Determinada, Tiempo Parcial, Interinidad",
+					"518 Duraci\u00F3 Determinada, Tiempo Parcial, Interinidad",
+					"520 Temporal, Tiempo Parcial, Pr\u00E1cticas",
+					"530 Temporal, Tiempo Parcial, Personas con Discapacidad",
+					"540 Temporal, Tiempo Parcial, Jubilado Parcial",
+					"541 Temporal, Tiempo Parcial, Relevo",
+					"550 Temporal, Tiempo Parcial, Fomento Contrataci\u00F3n Indefinida",
+					"552 Temporal, Tiempo Parcial, Empresas de Inserci\u00F3"
+					}) ,
 			new BooleanEditorFactory(),
-			new DefaultEditorFactory() };
+			new DefaultEditorFactory()
+			};
 	//@formatter:on
 
+	
+	
 	private static void enable(TextBox textBox, boolean enabled) {
 
 		if (textBox.isEnabled() == enabled)

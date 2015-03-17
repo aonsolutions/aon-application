@@ -3,13 +3,13 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>8.18-SNAPSHOT</version>
+		<version>8.19-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon.gwt.document</artifactId>
 	<packaging>jar</packaging>
-	<version>8.18-SNAPSHOT</version>
+	<version>8.19-SNAPSHOT</version>
 	<description>AON GWT DOCUMENT</description>
 	<name>AON GWT DOCUMENT</name>
 	<build>
@@ -30,6 +30,36 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.google.code.maven-replacer-plugin</groupId>
+				<artifactId>replacer</artifactId>
+				<version>1.5.3</version>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>replace</goal>
+						</goals>                   
+					</execution>
+				</executions>
+				<configuration>
+					<basedir>${project.basedir}/target/classes</basedir>
+					<includes>
+						<include>**/gwt/clean/clean.css</include>
+					</includes>
+					<regexFlags>
+					    <regexFlag>MULTILINE</regexFlag>
+					    <regexFlag>CASE_INSENSITIVE</regexFlag>
+					</regexFlags>
+					<replacements>
+						<replacement>
+							<token>^([a-z: \t,]*)\{$</token>
+							<value>/** $1 */
+.disabled-by-aon {</value>
+						</replacement>         
+					</replacements>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

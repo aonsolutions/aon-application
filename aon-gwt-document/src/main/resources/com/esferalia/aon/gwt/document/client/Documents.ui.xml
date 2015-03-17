@@ -10,7 +10,12 @@
 
 	<ui:style>
 
-	
+	.scrollable {
+      height: 400px;
+      width: 250px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
 
 @external .gwt-SplitLayoutPanel-HDragger;
 @external .gwt-SplitLayoutPanel-VDragger;
@@ -334,14 +339,13 @@ background-color:#D4CFC7;
 						</g:north>
 						<g:center>
 							
-							    
 							<c:DataGrid ui:field='dataGrid'>
-							    
-							    
-							</c:DataGrid>
 							
-							
+ 							</c:DataGrid>
 
+							    
+							
+							
 
 							<!-- g:HTMLPanel> <table cellspacing='15' cellpadding='15' style='width:100%;'> 
 								<tr> <td valign='top'> <g:ScrollPanel pixelSize="800, 800"> <c:CellTable 
@@ -350,7 +354,9 @@ background-color:#D4CFC7;
 								ui:field='pagerPanel'/> <s:RangeLabelPager ui:field='rangeLabelPager' /> 
 								</td> </tr> </table> </g:HTMLPanel -->
 						</g:center>
-
+			
+							
+			
 					</g:DockLayoutPanel>
 
 				</g:center>

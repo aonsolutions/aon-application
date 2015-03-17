@@ -19,9 +19,11 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
+import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -46,6 +48,8 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 	private static final Logger LOGGER = LoggerFactory.getLogger(SalaryExpenseController.class.getName());
 	
 	private boolean showSalaryExpenseWindow;
+	private Person person;
+	private boolean groupByPerson;
 	private Month month;
 	private Integer year;
 	private Date startDate;
@@ -55,6 +59,23 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 	private Integer activeEmployeeCount;
 	private Integer salaryCount;
 	
+	
+	public Person getPerson() {
+		return person;
+	}
+
+	public void setPerson(Person person) {
+		this.person = person;
+	}
+
+	public boolean isGroupByPerson() {
+		return groupByPerson;
+	}
+
+	public void setGroupByPerson(boolean groupByPerson) {
+		this.groupByPerson = groupByPerson;
+	}
+
 	public Integer getActiveEmployeeCount() {
 		return activeEmployeeCount;
 	}
@@ -186,6 +207,10 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 				(SalaryDraftController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
 			String alias = draft.getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID);
 			draft.getCriteria().addEqualExpression(alias, e.getId());
+			if(getPerson()!=null && getPerson().getId()!=null){
+				alias = draft.getFieldName(IEntityAlias.SALARY_CONTRACT_PERSON_ID);
+				criteria.addEqualExpression(alias, getPerson().getId());
+			}
 			draft.getCriteria().addOrder(draft.getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ID));
 			draft.getCriteria().addOrder(draft.getFieldName(IEntityAlias.CONTRACT_PERSON_FIRST_SURNAME));
 			draft.initializeModel();
@@ -208,13 +233,23 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
 			String alias = bean.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID);
 			criteria.addEqualExpression(alias, e.getId());
+			if(getPerson()!=null && getPerson().getId()!=null){
+				alias = bean.getFieldName(IEntityAlias.SALARY_CONTRACT_PERSON_ID);
+				criteria.addEqualExpression(alias, getPerson().getId());
+			}
 			alias = bean.getFieldName(IEntityAlias.SALARY_END_DATE);
 			criteria.addGreaterThanOrEqualExpression(alias, getStartDate());
 			alias = bean.getFieldName(IEntityAlias.SALARY_END_DATE);
 			criteria.addLessThanOrEqualExpression(alias, getEndDate());
-			criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_END_DATE));
-			criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID));
-			criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_EMPLOYEE_NAME));
+			if(isGroupByPerson()){
+				criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_EMPLOYEE_NAME));
+				criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID));
+				criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_END_DATE));
+			} else {
+				criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_END_DATE));
+				criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID));
+				criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_EMPLOYEE_NAME));
+			}
 			setList(new LinkedList<ISalary>());
 			
 			for( ITransferObject to : bean.getList(criteria) ) {

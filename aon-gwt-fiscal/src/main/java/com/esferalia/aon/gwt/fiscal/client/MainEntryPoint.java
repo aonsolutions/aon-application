@@ -8,12 +8,17 @@ import com.esferalia.aon.gwt.fiscal.client.mod190.Model190;
 import com.esferalia.aon.gwt.fiscal.client.mod193.Model193;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
+import com.esferalia.aon.gwt.fiscal.client.panel.FiscalPanel;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 
 public class MainEntryPoint implements EntryPoint {
 
+	
 	private static final String ENTRY_POINT_PARAM = "entryPoint";
+	
+	private static final String FS_FISCAL_PANEL = "FiscalPanel";
+	
 	private static final String FS_MOD140_ENTRY_POINT = "Model140";
 	private static final String FS_MOD190_ENTRY_POINT = "Model190";
 	private static final String FS_MOD193_ENTRY_POINT = "Model193";
@@ -22,12 +27,16 @@ public class MainEntryPoint implements EntryPoint {
 	private static final String FS_MOD390_ENTRY_POINT = "Model390";
 	private static final String FS_MOD200_ENTRY_POINT = "Model200";
 	
+	
 	private static final String FS_INVOICE_REPORT_ENTRY_POINT = "InvoiceReport";
 
 	@Override
 	public void onModuleLoad() {
 		String entryPoint = getParameter(GWT.getModuleName(), ENTRY_POINT_PARAM);
-		if ( entryPoint.equalsIgnoreCase(FS_MOD140_ENTRY_POINT)) {
+		if ( entryPoint.equalsIgnoreCase(FS_FISCAL_PANEL)) {
+			FiscalPanel panel = new FiscalPanel();
+			panel.onModuleLoad();
+		} else if ( entryPoint.equalsIgnoreCase(FS_MOD140_ENTRY_POINT)) {
 			Model140 model140 = new Model140();
 			model140.onModuleLoad();
 		} else if ( entryPoint.equalsIgnoreCase(FS_MOD190_ENTRY_POINT)) {

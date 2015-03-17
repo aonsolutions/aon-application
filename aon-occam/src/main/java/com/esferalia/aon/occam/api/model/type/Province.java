@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum Province implements Serializable {
 	  DESCONOCIDO	, ARABA			, ALBACETE			, ALICANTE
 	, ALMERIA		, AVILA			, BADAJOZ			, ILLES_BALEARS
@@ -17,4 +19,19 @@ public enum Province implements Serializable {
 	, TERUEL		, TOLEDO		, VALENCIA			, VALLADOLID
 	, BIZKAIA		, ZAMORA		, ZARAGOZA			, CEUTA
 	, MELILLA		, NO_RESIDENTE;
+
+	public static Province safeValueOf( String code ) {
+		if (AonStringUtils.isBlank(code)) {
+			return null;
+		}
+		code = AonStringUtils.trim( code);
+		if (!AonStringUtils.isNumeric(code)) {
+			return null;
+		}
+		int i = Integer.parseInt(code);
+		if (i < 0 || i > Province.values().length) {
+			return null;
+		}
+		return Province.values()[i];
+	}
 }
