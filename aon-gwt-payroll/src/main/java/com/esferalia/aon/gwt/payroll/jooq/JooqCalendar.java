@@ -225,17 +225,18 @@ public class JooqCalendar {
 				Integer calendar = result.getValue(PAYROLL_WORKPLACE.CALENDAR);
 
 				if (calendar == null) {
-
-					SelectConditionStep<Record1<Integer>> id = dslContext
-							.select(HOLIDAY.ID).from(HOLIDAY)
-							.where(HOLIDAY.DESCRIPTION.eq(holidayListBox));
+					
+					HolidayRecord holiday= dslContext
+							.selectFrom(HOLIDAY)
+							.where(HOLIDAY.DESCRIPTION.eq(holidayListBox))
+							.fetchOne();
 					
 					InsertSetMoreStep<HolidayRecord> insert = dslContext.insertInto(HOLIDAY)
 							.set(HOLIDAY.DOMAIN, domain)
 							.set(HOLIDAY.DESCRIPTION, holidayDescription);
 					
 					if (!holidayListBox.equals("-"))
-						insert = insert.set(HOLIDAY.HOLIDAY_, id);
+						insert = insert.set(HOLIDAY.HOLIDAY_, holiday.getValue(HOLIDAY.ID));
 					
 					Integer holidayId = insert.returning(HOLIDAY.ID).fetchOne().getId();
 					
