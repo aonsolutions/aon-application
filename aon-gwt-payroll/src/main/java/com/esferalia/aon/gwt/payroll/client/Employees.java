@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.esferalia.aon.gwt.common.client.widget.OptionsToolbar;
 import com.esferalia.aon.gwt.common.shared.CollectionUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.BooleanEventMetaData;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.DecimalEventMetaData;
@@ -1284,7 +1285,7 @@ public class Employees extends ResizeComposite implements
 				salaryDraftItem.setUserObject(draftObject);
 
 				// A.E.T
-				addImageItem(employeeItem, "Regularizaciones", images.aet());
+				//addImageItem(employeeItem, "Regularizaciones", images.aet());
 
 				Category category = employee.getCategory();
 
@@ -1297,7 +1298,7 @@ public class Employees extends ResizeComposite implements
 						.getUserObject()).getAgreement();
 
 				if (workplaceAgreement != null
-						&& workplaceAgreement.getId() == agreement.getId())
+						&& NumberUtils.equals(workplaceAgreement.getId(),agreement.getId()))
 					continue;
 
 				TreeItem enterpriseItem = workplaceItem.getParentItem();
