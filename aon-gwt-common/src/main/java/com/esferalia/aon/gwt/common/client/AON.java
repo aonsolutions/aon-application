@@ -157,6 +157,7 @@ public class AON {
 
 	
 	public static final String AON_ICON_CALENDAR = "aon-icon-calendar";
+	public static final String AON_ICON_COST = "aon-icon-cost";
 
 	public static final NumberFormat CURRENCY_FORMAT = NumberFormat
 			.getFormat("#,##0.00");
