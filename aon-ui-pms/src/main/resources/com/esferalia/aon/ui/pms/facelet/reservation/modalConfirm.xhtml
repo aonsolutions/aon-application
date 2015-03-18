@@ -10,7 +10,7 @@
 
 	<aon:panelGroup id="showConfirmWindow">
 		<aon:if test="#{controller.showConfirmWindow}">
-			<rich:modalPanel id="confirmModalPanel" minHeight="200" height="200" minWidth="320" width="320"
+			<rich:modalPanel id="confirmModalPanel" minHeight="220" height="220" minWidth="350" width="350"
 				rendered="#{controller.showConfirmWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
@@ -24,7 +24,7 @@
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 1em;" >
-									<aon:div style="margin-bottom:30px;">
+									<aon:div style="margin-bottom:20px;">
 										<aon:outputText styleClass="aon-bold"
 											value="#{(controller.confirmNoShow) ? 
 														((controller.to.cancelled) ? (bundle.pms_no_show_confirm) : (bundle.pms_no_show_and_cancel_confirm)) :
@@ -56,6 +56,17 @@
 												value="#{false}" />
 										</aon:commandButton>
 									</aon:panelGrid>
+
+									<aon:if test="#{controller.confirmNoShow and controller.sendAgencyNoShowEmailEnabled}">
+										<aon:div style="margin-top:15px;" styleClass="aon-text-center">
+											<aon:outputText styleClass="aon-bold"
+												value="#{bundle.aon_advice_important}:" />
+										</aon:div>
+										<aon:div styleClass="aon-text-center">
+											<aon:outputText styleClass="aon-bold"
+												value="#{bundle.pms_no_show_agency_email_message}" />
+										</aon:div>
+									</aon:if>
 								</aon:div>
 							</aon:div>
 						</aon:div>

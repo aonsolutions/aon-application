@@ -620,6 +620,11 @@ public class ProjectReservationController extends BasicController implements IPm
 		}
 	}
 
+	public boolean isSendAgencyNoShowEmailEnabled() throws ManagerBeanException {
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		return reservation.isAgencyHolder() && getReservationUtils().obtainCompanyMailAccount() != null;
+	}
+
 	private String createAgencyNoShowEmailSubject(ProjectReservation reservation) {
 		StringBuffer message = new StringBuffer();
 		message.append("NO SHOW - ");
