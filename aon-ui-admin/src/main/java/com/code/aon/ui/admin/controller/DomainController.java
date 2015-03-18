@@ -1,5 +1,6 @@
 package com.code.aon.ui.admin.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.DOMAIN_MAX_DEFINED_USERS;
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static javax.faces.application.FacesMessage.SEVERITY_ERROR;
@@ -22,6 +23,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.validator.LongRangeValidator;
 import javax.faces.validator.ValidatorException;
 import javax.mail.Address;
 import javax.mail.internet.AddressException;
@@ -91,6 +93,7 @@ import com.code.aon.webmail.db.MailAccount;
 import com.code.aon.webmail.enumeration.ConnectionSecurity;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AONContext;
+import com.sun.faces.util.MessageFactory;
 
 public class DomainController extends BasicController {
 
@@ -820,6 +823,30 @@ public class DomainController extends BasicController {
 		}
 		return this.payerDomainFilter;
 	}	
+	
+	private int getMinimumUserNumber() {
+		DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(IAdminConstants.DOMAIN_USER_CONTROLLER_NAME);
+		int number = duc.getNumberOfActiveUsers();
+		if ( number < 1 ) {
+			if ( (getDomain().getType()==DomainType.OFFICE) || getBookingInfo().isAonOne() ) {
+				number = 0;
+			} else {
+				number = 1;
+			}
+		}
+		return number;
+	}	
+	
+	public void userNumberCheck(FacesContext context, UIComponent component, Object value) {
+		Integer number = (Integer) value;
+		int minimum = getMinimumUserNumber();
+		if ( number < minimum ) {
+			FacesMessage message = MessageFactory.getMessage(
+					LongRangeValidator.MINIMUM_MESSAGE_ID, String.valueOf(minimum),
+					AonUtil.getMessage(DOMAIN_MAX_DEFINED_USERS) );			
+            throw new ValidatorException( message);			
+		}
+	}			
 	
 	private static class ParentDomainFilter extends ControllerAdapter {
 		

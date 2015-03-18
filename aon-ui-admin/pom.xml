@@ -65,6 +65,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>javax.faces</groupId>
+      <artifactId>jsf-impl</artifactId>
+      <version>1.2_14</version>
+      <scope>provided</scope>
+    </dependency>    
+    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
       <version>3.1.0</version>

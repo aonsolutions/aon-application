@@ -198,8 +198,8 @@
 						value="#{bundle.admin_domain_maxDefinedUsers}" />
 					<aon:div>
 						<aon:inputText id="Domain_maxDefinedUsers" required="true"
+							validator="#{adminDomain.userNumberCheck}"
 							size="10" value="#{adminDomain.to.maxDefinedUsers}" >
-							<f:validateLongRange minimum="#{domainUser.minimumUserNumber}" />
 						</aon:inputText>
 						<aon:div styleClass="aon-margin-left"  layout="inline"
 							rendered="#{adminDomain.to.maxDefinedUsers &gt; domainUser.numberOfActiveUsers}">

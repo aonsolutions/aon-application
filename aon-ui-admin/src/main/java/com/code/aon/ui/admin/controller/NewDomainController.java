@@ -27,6 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
+import com.code.aon.audit.DomainApplicationModule;
+import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -357,6 +359,12 @@ public class NewDomainController implements Serializable {
 		da.setApplication(application);
 		da.setDomain(domain.getId());
 		BeanManager.getManagerBean(DomainApplication.class).insert(da);
+		if ( getType() == DomainType.ENTERPRISE ) {
+			DomainApplicationModule dam = new DomainApplicationModule();
+			dam.setDomainApplication(da);
+			dam.setModule(Module.AON_ONE);
+			BeanManager.getManagerBean(DomainApplicationModule.class).insert(dam);
+		}		
 		addCompany(domain);
 		return domain.getId();		
 	}

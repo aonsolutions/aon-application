@@ -266,10 +266,6 @@ public class DomainUserController extends BasicController {
 		return message;
 	}
 	
-	public int getMinimumUserNumber() {
-		return Math.max(0, getNumberOfActiveUsers());
-	}
-	
 	public boolean isSkipUserReset() {
 		Domain domain = getDomain();
 		if ( domain.getMaxDefinedUsers() != null ) {
