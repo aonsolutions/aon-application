@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -49,6 +50,8 @@ public class ActivityForm extends ResizeComposite {
 	@UiField
 	TextBox vatPercent;
 	
+	@UiField
+	TabPanel tab;
 	@UiField
 	SimplePanel infoContainer;
 	@UiField
@@ -94,12 +97,28 @@ public class ActivityForm extends ResizeComposite {
 		maxPerson.setValue(AonNumberUtils.toString(fiscalActivity.getMaxPerson()));
 		maxImport.setValue(AonNumberUtils.toString(fiscalActivity.getMaxImport()));
 		vatPercent.setValue(AonNumberUtils.toString(fiscalActivity.getVatPercent()));
-		infoContainer.setWidget( getInfoTable( fiscalActivity.getInfo() ) );
-		moduleIRPFContainer.setWidget( getModuleTable( fiscalActivity.getModuleIRPF() ) );
-		infoIRPFContainer.setWidget( getInfoTable( fiscalActivity.getInfoIRPF() ) );
-		moduleIVAContainer.setWidget( getModuleTable( fiscalActivity.getModuleIVA() ) );
-		infoIVAContainer.setWidget( getInfoTable( fiscalActivity.getInfoIVA() ) );
+		tab.setVisible(fiscalActivity.hasInfoOrModules());
+		if ( tab.isVisible() ) {
+			if ( fiscalActivity.hasInfo() ) {
+				infoContainer.setWidget( getInfoTable( fiscalActivity.getInfo() ) );
+			}
+			if ( fiscalActivity.hasModuleIRPF() ) {
+				moduleIRPFContainer.setWidget( getModuleTable( fiscalActivity.getModuleIRPF() ) );
+			}
+			if ( fiscalActivity.hasInfoIRPF() ) {
+				infoIRPFContainer.setWidget( getInfoTable( fiscalActivity.getInfoIRPF() ) );
+			}
+			if ( fiscalActivity.hasModuleIVA() ) {
+				moduleIVAContainer.setWidget( getModuleTable( fiscalActivity.getModuleIVA() ) );
+			}
+			if ( fiscalActivity.hasInfoIVA() ) {
+				infoIVAContainer.setWidget( getInfoTable( fiscalActivity.getInfoIVA() ) );
+			}
+			tab.selectTab(0);
+		}
+		
 	}
+	
 
 	private FlexTable getInfoTable(ArrayList<FiscalActivityInfo> list) {
 		if (list != null && list.size() > 0) {

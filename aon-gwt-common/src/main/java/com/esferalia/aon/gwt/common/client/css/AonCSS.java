@@ -414,6 +414,8 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-warn-message-block")
 	String aonWarnMessageBlock();
 	
+	@ClassName("aon-tree-icon-node")
+	String aonTreeIconNode();
 	
 	@ClassName("aon-icon-m111")
 	String aonIconM111();
@@ -471,10 +473,28 @@ public interface AonCSS extends  CssResource {
 
 	@ClassName("aon-icon-activities")
 	String aonIconActivities();
+
+	@ClassName("aon-icon-year")
+	String aonIconYear();
+	
+	@ClassName("aon-icon-point-green")
+	String aonIconPointGreen();
+		
+	@ClassName("aon-icon-point-light-green")
+	String aonIconPointLightGreen();
+		
+	@ClassName("aon-icon-point-orange")
+	String aonIconPointOrange();
+		
+	@ClassName("aon-icon-point-red")
+	String aonIconPointRed();
+		
+	@ClassName("aon-icon-point-yellow")
+	String aonIconPointYellow(); 
 	
 	@ClassName("aon-fiscal-enterprise-suggest")
 	String aonFiscalEnterpriseSuggest();
-
+	
 	@ClassName("aon-panelGrid")
 	String aonPanelGrid();
 	
@@ -483,6 +503,7 @@ public interface AonCSS extends  CssResource {
 	
 	@ClassName("aon-panelGrid-even")
 	String aonPanelGridEven();
+	
 }
 
 

@@ -76,7 +76,7 @@ public class InvoiceReportServlet extends HttpServlet {
 			Integer[] scopes = AON.getUserScopes(domainName, domainId, user.getId());
 			
 			
-			AON.getInvoiceDetails(domainName, domainId, action,
+			AON.getInvoiceDetails(domainName, domainId,
 					p -> {
 						Filter f = p.getDomainProperty().eq(domainId)
 							.and(p.getTypeProperty().in(types))
@@ -86,7 +86,8 @@ public class InvoiceReportServlet extends HttpServlet {
 						f = user.hasConfidentialityRole()?f:f.and(p.getConfidentialProperty().eq( SecurityLevel.OFFICIAL.value()));	
 						return f;
 					}
-					);
+					)
+			.forEach(action);
 			
 			String fileName = "Facturas";
 			resp.setContentType(MimeType.MIME_MS_EXCEL.getName());

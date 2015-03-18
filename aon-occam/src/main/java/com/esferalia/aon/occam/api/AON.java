@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -583,12 +582,11 @@ public class AON {
 	// ********************************************
 	// ********************************* FINANCE **
 	// ********************************************
-	public static void getInvoiceDetails(String domainName,Integer domainId,
-			Consumer<InvoiceDetail> action, InvoiceFilter filter) {
+	public static Stream<InvoiceDetail> getInvoiceDetails(String domainName,Integer domainId, InvoiceFilter filter) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId);
-			getFinance().getInvoiceDetails(ctx, action, filter);
+			return getFinance().getInvoiceDetails(ctx, filter);
 		} finally {
 			if (ctx != null) ctx.close();	
 		}
@@ -597,14 +595,15 @@ public class AON {
 	// ********************************************
 	// ****************************** MANAGEMENT **
 	// ********************************************
-	public static void getOfferDetails(String domainName,Integer domainId,
-			Consumer<OfferDetail> action, OfferFilter filter) {
+	public static Stream<OfferDetail> getOfferDetails(String domainName,
+			Integer domainId, OfferFilter filter) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId);
-			getManagement().getOfferDetails(ctx, action, filter);
+			return getManagement().getOfferDetails(ctx, filter);
 		} finally {
-			if (ctx != null) ctx.close();	
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 

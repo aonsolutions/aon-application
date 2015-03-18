@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq;
 
-import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IManagement;
@@ -11,9 +11,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.OfferDAO;
 public class ManagementImpl implements IManagement {
 
 	@Override
-	public void getOfferDetails(AONContext ctx, Consumer<OfferDetail> action,
-			OfferFilter filter) {
-		OfferDAO.getOfferDetails(ctx, action, filter);
+	public Stream<OfferDetail> getOfferDetails(AONContext ctx, OfferFilter filter) {
+		return OfferDAO.getOfferDetails(ctx, filter);
 	}
 
 }

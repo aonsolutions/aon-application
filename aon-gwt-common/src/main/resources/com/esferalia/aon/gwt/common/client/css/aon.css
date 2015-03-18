@@ -925,217 +925,96 @@ input:disabled + label{
 	text-align: center;
 }
 
+.aon-tree-icon-node {
+    height: auto !important;
+    overflow: hidden !important;
+    padding: 2px 5px 2px 18px !important;
+    width: auto !important;
+}
+
 @sprite .aon-icon-m111{
 	gwt-image: "aonIconM111";
-    color: #000000;
-    font-size: 0.9em;
-    height: auto;
-    overflow: hidden;
-    padding-left: 23px;
-    padding-right: 20px;
-    text-transform: uppercase;
-    width: auto;
 }
+
 @sprite .aon-icon-m115{
 	gwt-image: "aonIconM115";
-    color: #000000;
-    font-size: 0.9em;
-    height: auto;
-    overflow: hidden;
-    padding-left: 23px;
-    padding-right: 20px;
-    text-transform: uppercase;
-    width: auto;
 }
 @sprite .aon-icon-m123{
 	gwt-image: "aonIconM123";
-    color: #000000;
-    font-size: 0.9em;
-    height: auto;
-    overflow: hidden;
-    padding-left: 23px;
-    padding-right: 20px;
-    text-transform: uppercase;
-    width: auto;
 }
 @sprite .aon-icon-m130{
 	gwt-image: "aonIconM130";
-    color: #000000;
-    font-size: 0.9em;
-    height: auto;
-    overflow: hidden;
-    padding-left: 23px;
-    padding-right: 20px;
-    text-transform: uppercase;
-    width: auto;
 }
 @sprite .aon-icon-m131{
 	gwt-image: "aonIconM131";
-    color: #000000;
-    font-size: 0.9em;
-    height: auto;
-    overflow: hidden;
-    padding-left: 23px;
-    padding-right: 20px;
-    text-transform: uppercase;
-    width: auto;
 }
 @sprite .aon-icon-m140{
 	gwt-image: "aonIconM140";
-    color: #000000;
-    font-size: 0.9em;
-    height: auto;
-    overflow: hidden;
-    padding-left: 23px;
-    padding-right: 20px;
-    text-transform: uppercase;
-    width: auto;
 }
 @sprite .aon-icon-m180{
 	gwt-image: "aonIconM180";
-    color: #000000;
-    font-size: 0.9em;
-    height: auto;
-    overflow: hidden;
-    padding-left: 23px;
-    padding-right: 20px;
-    text-transform: uppercase;
-    width: auto;
 }
 @sprite .aon-icon-m184{
 	gwt-image: "aonIconM184";
-    color: #000000;
-    font-size: 0.9em;
-    height: auto;
-    overflow: hidden;
-    padding-left: 23px;
-    padding-right: 20px;
-    text-transform: uppercase;
-    width: auto;
 }
 @sprite .aon-icon-m190{
 	gwt-image: "aonIconM190";
-    color: #000000;
-    font-size: 0.9em;
-    height: auto;
-    overflow: hidden;
-    padding-left: 23px;
-    padding-right: 20px;
-    text-transform: uppercase;
-    width: auto;
 }
 @sprite .aon-icon-m193{
 	gwt-image: "aonIconM193";
-    color: #000000;
-    font-size: 0.9em;
-    height: auto;
-    overflow: hidden;
-    padding-left: 23px;
-    padding-right: 20px;
-    text-transform: uppercase;
-    width: auto;
 }
 @sprite .aon-icon-m200{
 	gwt-image: "aonIconM200";
-    color: #000000;
-    font-size: 0.9em;
-    height: auto;
-    overflow: hidden;
-    padding-left: 23px;
-    padding-right: 20px;
-    text-transform: uppercase;
-    width: auto;
 }
 @sprite .aon-icon-m303{
 	gwt-image: "aonIconM303";
-    color: #000000;
-    font-size: 0.9em;
-    height: auto;
-    overflow: hidden;
-    padding-left: 23px;
-    padding-right: 20px;
-    text-transform: uppercase;
-    width: auto;
 }
 @sprite .aon-icon-m340{
 	gwt-image: "aonIconM340";
-    color: #000000;
-    font-size: 0.9em;
-    height: auto;
-    overflow: hidden;
-    padding-left: 23px;
-    padding-right: 20px;
-    text-transform: uppercase;
-    width: auto;
 }
 @sprite .aon-icon-m347{
 	gwt-image: "aonIconM347";
-    color: #000000;
-    font-size: 0.9em;
-    height: auto;
-    overflow: hidden;
-    padding-left: 23px;
-    padding-right: 20px;
-    text-transform: uppercase;
-    width: auto;
 }
 @sprite .aon-icon-m349{
 	gwt-image: "aonIconM349";
-    color: #000000;
-    font-size: 0.9em;
-    height: auto;
-    overflow: hidden;
-    padding-left: 23px;
-    padding-right: 20px;
-    text-transform: uppercase;
-    width: auto;
 }
 @sprite .aon-icon-m390{
 	gwt-image: "aonIconM390";
-    color: #000000;
-    font-size: 0.9em;
-    height: auto;
-    overflow: hidden;
-    padding-left: 23px;
-    padding-right: 20px;
-    text-transform: uppercase;
-    width: auto;
 }
 
 @sprite .aon-icon-company {
 	gwt-image: "aonIconEnterprise";
-    color: #000000;
-    font-size: 0.9em;
-    height: auto;
-    overflow: hidden;
-    padding-left: 23px;
-    padding-right: 20px;
-    text-transform: uppercase;
-    width: auto;
 }
 
 @sprite .aon-icon-companyData {
 	gwt-image: "aonIconCompanyData";
-    color: #000000;
-    font-size: 0.9em;
-    height: auto;
-    overflow: hidden;
-    padding-left: 23px;
-    padding-right: 20px;
-    text-transform: uppercase;
-    width: auto;
 }
 
 @sprite .aon-icon-activities {
 	gwt-image: "aonIconActivities";
-    color: #000000;
-    font-size: 0.9em;
-    height: auto;
-    overflow: hidden;
-    padding-left: 23px;
-    padding-right: 20px;
-    text-transform: uppercase;
-    width: auto;
+}
+@sprite .aon-icon-year{
+	gwt-image: "aonIconPublic";
+}
+
+@sprite .aon-icon-point-green {
+	gwt-image: "aonIconPointGreen";
+}
+	
+@sprite .aon-icon-point-light-green {
+	gwt-image: "aonIconPointLightGreen";
+}
+	
+@sprite .aon-icon-point-orange {
+	gwt-image: "aonIconPointOrange";
+}
+	
+@sprite .aon-icon-point-red {
+	gwt-image: "aonIconPointRed";
+}
+	
+@sprite .aon-icon-point-yellow {
+	gwt-image: "aonIconPointYellow";
 }
 
 .aon-fiscal-enterprise-suggest {

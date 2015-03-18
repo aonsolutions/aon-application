@@ -84,7 +84,7 @@ public class OfferReportServlet extends HttpServlet {
 				sec[1] = 1;	
 			}
 			
-			AON.getOfferDetails(domainName, domainId, action,
+			AON.getOfferDetails(domainName, domainId,
 					p -> {
 						Filter f = p.getDomainProperty().eq(domainId)
 							.and(p.getStatusProperty().in(types))
@@ -94,7 +94,7 @@ public class OfferReportServlet extends HttpServlet {
 						f = user.hasConfidentialityRole()?f:f.and(p.getConfidentialProperty().eq( SecurityLevel.OFFICIAL.value()));	
 						return f;
 					}
-				);
+				).forEach( action);
 						
 			String fileName = "Presupuestos";
 			resp.setContentType(MimeType.MIME_MS_EXCEL.getName());

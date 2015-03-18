@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.api;
 
-import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
@@ -11,7 +11,7 @@ public interface IFinance {
 	// 	***********************************************
 	// 	*********************************** INVOICE ***
 	// 	***********************************************
-	void getInvoiceDetails(AONContext ctx,Consumer<InvoiceDetail> action, InvoiceFilter filter);
+	Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx,InvoiceFilter filter);
 
 	
 	

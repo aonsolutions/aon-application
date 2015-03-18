@@ -170,4 +170,25 @@ public class FiscalActivity implements Serializable {
 		this.infoIVA.add(fai);
 		return this;
 	}
+
+	public boolean hasInfo() {
+		return (info !=null && info.size() > 0);
+	}
+	public boolean hasModuleIRPF() {
+		return (moduleIRPF !=null && moduleIRPF.size() > 0);
+	}
+	public boolean hasInfoIRPF() {
+		return (infoIRPF !=null && infoIRPF.size() > 0);
+	}
+	public boolean hasModuleIVA() {
+		return (moduleIVA !=null && moduleIVA.size() > 0);
+	}
+	public boolean hasInfoIVA() {
+		return (infoIVA !=null && infoIVA.size() > 0);
+	}
+
+	public boolean hasInfoOrModules() {
+		return hasInfo() || hasModuleIRPF() || hasInfoIRPF() 
+			|| hasModuleIVA() || hasInfoIVA();
+	}
 }

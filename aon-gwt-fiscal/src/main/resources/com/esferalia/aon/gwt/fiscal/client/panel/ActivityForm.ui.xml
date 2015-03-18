@@ -60,7 +60,7 @@
 				</table>
 			</div>
 		</div>
-		<g:TabPanel>
+		<g:TabPanel ui:field="tab">
 			<g:Tab text="{msg.epigraphAdditionalInfo}">
 				<g:SimplePanel ui:field="infoContainer"/>
 			</g:Tab>

@@ -31,6 +31,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasTreeItems;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -269,21 +270,29 @@ public class FiscalPanel extends MainEntryPoint {
 	static abstract class NodeType<T> {
 		
 		public static NodeType<Enterprise> ENTERPRISE = new NodeType<Enterprise>() {
-			private HTMLPanel widget;
+			private EnterpriseMatrixPanel widget;
+			
 			@Override
 			public void select(TreeItem item, FiscalPanel fiscalPanel) {
 				if (widget ==null) {
-					widget = new HTMLPanel("PANEL DE CONTROL FISCAL");
+					widget = new EnterpriseMatrixPanel();
 				}
+				widget.setDomainId( getCurrentDomain() );
+				widget.setDomainName( getCurrentDomainName() );
+				Enterprise uo = (Enterprise) item.getUserObject();
+				widget.setEnterprise( uo );
 				fiscalPanel.content.setWidget(widget);
 			}
 
 			@Override
 			public TreeItem render(HasTreeItems parent, FiscalPanel fiscalPanel,Enterprise enterprise) {
 				TreeItem treeItem = new TreeItem();
-				treeItem.setText(enterprise.toString());
-				treeItem.addStyleName( AON_RESOURCES.css().aonIconCompany() );
-				treeItem.setUserObject(new NodeUserObject<Enterprise>(this,enterprise));
+				InlineLabel label = new InlineLabel();
+				label.setText(enterprise.toString());
+				label.addStyleName( AON_RESOURCES.css().aonIconCompany() );
+				label.addStyleName( AON_RESOURCES.css().aonTreeIconNode() );
+				treeItem.setWidget(label);
+				treeItem.setUserObject(enterprise);
 				parent.addItem(treeItem);
 				return treeItem;
 			}
@@ -292,7 +301,6 @@ public class FiscalPanel extends MainEntryPoint {
 		public static NodeType<Enterprise> ENTERPRISE_DATA = new NodeType<Enterprise>() {
 			private EnterpriseForm widget; 
 			
-			@SuppressWarnings("unchecked")
 			@Override
 			public void select(TreeItem item, FiscalPanel fiscalPanel) {
 				if (widget ==null) {
@@ -300,17 +308,20 @@ public class FiscalPanel extends MainEntryPoint {
 				}
 				widget.setDomainId( getCurrentDomain() );
 				widget.setDomainName( getCurrentDomainName() );
-				NodeUserObject<Enterprise> uo = (NodeUserObject<Enterprise>) item.getUserObject();
-				widget.setEnterprise( uo.getUserObject() );
+				Enterprise uo = (Enterprise) item.getUserObject();
+				widget.setEnterprise( uo );
 				fiscalPanel.content.setWidget(widget);
 			}
 			
 			@Override
 			public TreeItem render(HasTreeItems parent, FiscalPanel fiscalPanel, Enterprise enterprise) {
 		    	TreeItem treeItem = new TreeItem();
-		    	treeItem.setText(MSG.enterpriseData());
-		    	treeItem.addStyleName(AON_RESOURCES.css().aonIconCompanyData());
-		    	treeItem.setUserObject(new NodeUserObject<Enterprise>(this,enterprise));
+		    	InlineLabel label = new InlineLabel();
+		    	label.setText(MSG.enterpriseData());
+		    	label.addStyleName(AON_RESOURCES.css().aonIconCompanyData());
+		    	label.addStyleName( AON_RESOURCES.css().aonTreeIconNode() );
+		    	treeItem.setWidget(label);
+		    	treeItem.setUserObject( (Enterprise) enterprise);
 		    	parent.addItem(treeItem);
 				return treeItem;
 			}
@@ -342,8 +353,11 @@ public class FiscalPanel extends MainEntryPoint {
 			@Override
 			public TreeItem render(HasTreeItems parent, final FiscalPanel fiscalPanel,Enterprise enterprise) {
 		    	final TreeItem treeItem = new TreeItem();
-		    	treeItem.setText(MSG.moduleActivities());
-		    	treeItem.addStyleName(AON_RESOURCES.css().aonIconActivities());
+		    	InlineLabel label = new InlineLabel();
+		    	label.setText(MSG.moduleActivities());
+		    	label.addStyleName(AON_RESOURCES.css().aonIconActivities());
+		    	label.addStyleName( AON_RESOURCES.css().aonTreeIconNode() );
+		    	treeItem.setWidget(label);
 		    	treeItem.setUserObject(new NodeUserObject<Enterprise>(FISCAL_ACTIVITY_GROUP,enterprise));
 		    	parent.addItem(treeItem);
 		    	FISCAL_SERVICE.getFiscalActivities(getCurrentDomainName(), enterprise.getDomain()
@@ -352,7 +366,19 @@ public class FiscalPanel extends MainEntryPoint {
 					@Override
 					public void onSuccess(ArrayList<FiscalActivity> result) {
 						for (FiscalActivity fa : result) {
-							FISCAL_ACTIVITY.render(treeItem,fiscalPanel, fa);
+							TreeItem yearNode = null; 
+							for (int i = 0 ; i < treeItem.getChildCount() ; i++) {
+								Integer year = (Integer) treeItem.getChild(i).getUserObject();
+								if (year.intValue() == fa.getYear().intValue()) {
+									yearNode = treeItem.getChild(i);
+									break;
+								}
+							}
+							if (yearNode == null) {
+								yearNode = FISCAL_ACTIVITY_YEAR.render(treeItem,fiscalPanel, fa);
+							}
+							FISCAL_ACTIVITY.render(yearNode,fiscalPanel, fa);
+							yearNode.setState(true);
 						}
 						treeItem.setState(true);
 					}
@@ -365,7 +391,34 @@ public class FiscalPanel extends MainEntryPoint {
 			}
 		}
     	;
-		
+    	public static NodeType<FiscalActivity> FISCAL_ACTIVITY_YEAR = new NodeType<FiscalActivity>() {
+    		
+    		private HTMLPanel widget;
+    		
+			@Override
+			public void select(TreeItem item, FiscalPanel fiscalPanel) {
+				if (widget ==null) {
+					widget = new HTMLPanel( item.getUserObject().toString() );
+				}
+				fiscalPanel.content.setWidget(widget);
+			}
+
+			@Override
+			public TreeItem render(HasTreeItems parent,FiscalPanel fiscalPanel, FiscalActivity t) {
+		    	TreeItem treeItem = new TreeItem();
+		    	InlineLabel label = new InlineLabel();
+		    	label.setText(t.getYear().toString());
+		    	label.addStyleName(AON_RESOURCES.css().aonIconPointGreen());
+		    	label.addStyleName( AON_RESOURCES.css().aonTreeIconNode() );
+		    	treeItem.setWidget(label);
+		    	treeItem.setUserObject( t.getYear() );
+		    	parent.addItem(treeItem);
+				return treeItem;
+			}
+    		
+    	};
+    	
+    	
 		public static NodeType<FiscalActivity> FISCAL_ACTIVITY = new NodeType<FiscalActivity>() {
 			private ActivityForm widget;
 			
@@ -385,11 +438,14 @@ public class FiscalPanel extends MainEntryPoint {
 			@Override
 			public TreeItem render(HasTreeItems parent, FiscalPanel fiscalPanel, FiscalActivity fa) {
 		    	TreeItem treeItem = new TreeItem();
-		    	treeItem.setText(fa.getYear() + " - " + fa.getEpigraph() + " - " + fa.getDescription());
-		    	treeItem.addStyleName(AON_RESOURCES.css().aonIconActivities());
+		    	InlineLabel label = new InlineLabel();
+		    	label.setText(fa.getEpigraph() + " - " + fa.getDescription());
+		    	label.addStyleName(AON_RESOURCES.css().aonIconPointLightGreen());
+		    	label.addStyleName( AON_RESOURCES.css().aonTreeIconNode() );
+		    	treeItem.setWidget(label);
 		    	treeItem.setUserObject(new NodeUserObject<FiscalActivity>(FISCAL_ACTIVITY,fa));
 		    	parent.addItem(treeItem);
-				return null;
+				return treeItem;
 			}
 		}
     	;

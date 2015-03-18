@@ -16,6 +16,7 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import java.util.Date;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
@@ -147,12 +148,10 @@ public class OfferDAO {
 		
 	}
 
-	public static void getOfferDetails(AONContext ctx,
-			Consumer<OfferDetail> action, OfferFilter filter) {
-		getFullOffers(ctx, filter)
+	public static Stream<OfferDetail> getOfferDetails(AONContext ctx, OfferFilter filter) {
+		return getFullOffers(ctx, filter)
 			.stream()
-			.map(new FullOfferDetailFiller())
-			.forEach(action);
+			.map(new FullOfferDetailFiller());
 	}
 	
 	private static class FullOfferDetailFiller  implements Function<Record,OfferDetail> {

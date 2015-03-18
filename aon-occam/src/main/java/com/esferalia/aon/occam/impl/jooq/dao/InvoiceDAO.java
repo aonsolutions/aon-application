@@ -15,8 +15,8 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.io.OutputStream;
 import java.util.Date;
-import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -174,12 +174,10 @@ public class InvoiceDAO {
 		getFullInvoices(ctx, filter).formatHTML(out);
 	}
 
-	public static void getInvoiceDetails(AONContext ctx,
-			Consumer<InvoiceDetail> action, InvoiceFilter filter) {
-		getFullInvoices(ctx, filter)
+	public static Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx, InvoiceFilter filter) {
+		return getFullInvoices(ctx, filter)
 			.stream()
-			.map(new FullInvoiceDetailFiller())
-			.forEach(action);
+			.map(new FullInvoiceDetailFiller());
 	}
 	
 	private static class FullInvoiceDetailFiller  implements Function<Record,InvoiceDetail> {

@@ -127,6 +127,24 @@ public interface AonResources extends ClientBundle, Images {
 	@Source("images/family.png")
 	ImageResource aonIconActivities();
 	
+	@Source("images/public.png")
+	ImageResource aonIconPublic();
+	
+	@Source("images/aon-icon-point-green.png")
+	ImageResource aonIconPointGreen();
+	
+	@Source("images/aon-icon-point-light-green.png")
+	ImageResource aonIconPointLightGreen();
+	
+	@Source("images/aon-icon-point-orange.png")
+	ImageResource aonIconPointOrange();
+	
+	@Source("images/aon-icon-point-red.png")
+	ImageResource aonIconPointRed();
+	
+	@Source("images/aon-icon-point-yellow.png")
+	ImageResource aonIconPointYellow();
+	
 	// ------------------------------------------------------------------------
 	
 		

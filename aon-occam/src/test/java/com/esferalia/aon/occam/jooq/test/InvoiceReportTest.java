@@ -53,7 +53,6 @@ public class InvoiceReportTest {
 		System.out.println((scopes==null?"SCOPES NULL":"SCOPES NOT NULL"));
 		
 		AON.getInvoiceDetails(DOMAIN_NAME, DOMAIN_ID
-				,detail -> detail.getDescription()
 				,p -> {
 					Filter f = p.getDomainProperty().eq(DOMAIN_ID)
 							.and(p.getTypeProperty().in(types) )
@@ -65,7 +64,8 @@ public class InvoiceReportTest {
 					return f;
 				}
 				
-				);
+				)
+		.forEach(detail -> detail.getDescription());
 		
 	}
 		
