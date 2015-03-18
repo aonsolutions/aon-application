@@ -6,8 +6,16 @@ import java.io.OutputStream;
 import org.richfaces.event.UploadEvent;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.company.Company;
+import com.code.aon.company.Enterprise;
+import com.code.aon.config.Scope;
 import com.code.aon.faces.controller.AttachmentUtil;
+import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 /**
  * Controller used in the company maintenance.
@@ -117,4 +125,20 @@ public class CompanyController extends CompanyParentController {
 		}
 	}
 
+	public static Enterprise addEnterprise(Company company) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Enterprise.class);
+		Enterprise enterprise = new Enterprise();
+		enterprise.setDomain(company.getDomain());
+		enterprise.setRegistry(company);
+		enterprise.setScope(obtainScope());
+		return (Enterprise) bean.insert(enterprise);
+	}
+
+	private static Scope obtainScope() throws ManagerBeanException {
+		IManagerBean scopeBean = BeanManager.getManagerBean(Scope.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(scopeBean.getFieldName(IEntityAlias.SCOPE_ID));
+		return (Scope)scopeBean.getList(criteria).get(0);
+	}
+	
 }

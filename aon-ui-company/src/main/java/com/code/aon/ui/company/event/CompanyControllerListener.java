@@ -15,11 +15,11 @@ import com.code.aon.company.Company;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Domain;
-import com.code.aon.config.Scope;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.MediaType;
+import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.company.controller.ICompanyController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -137,7 +137,7 @@ public class CompanyControllerListener extends ControllerAdapter {
 			ICompanyController c = (ICompanyController)event.getController();
 			Company company = (Company) c.getTo();
 			
-			Enterprise enterprise = addEnterprise(company);
+			Enterprise enterprise = CompanyController.addEnterprise(company);
 
 			if (c.isPhoneDirty()){
 				c.getPhone().setMediaType(MediaType.FIXED_PHONE);
@@ -182,21 +182,6 @@ public class CompanyControllerListener extends ControllerAdapter {
 		rAddressBean.insertOrUpdate(mainAddress);
 	}
 	
-	private Enterprise addEnterprise(Company company) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(Enterprise.class);
-		Enterprise enterprise = new Enterprise();
-		enterprise.setRegistry(company);
-		enterprise.setScope(obtainScope());
-		return (Enterprise) bean.insert(enterprise);
-	}
-
-	private Scope obtainScope() throws ManagerBeanException {
-		IManagerBean scopeBean = BeanManager.getManagerBean(Scope.class);
-		Criteria criteria = new Criteria();
-		criteria.addOrder(scopeBean.getFieldName(IEntityAlias.SCOPE_ID));
-		return (Scope)scopeBean.getList(criteria).get(0);
-	}
-
 	private void insertWorkPlace(RegistryAddress address, Enterprise enterprise) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
 		WorkPlace workPlace = new WorkPlace();

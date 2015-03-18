@@ -126,16 +126,19 @@
 						<aon:selectBooleanCheckbox id="Domain_enableHeredity"
 							disabled="true"
 							value="#{adminDomain.to.enableHeredity}" />
-					</aon:if>								
-
-					<aon:if test="#{aonRole.sysAdmin}" >
+					</aon:if>				
+					
+					<aon:if test="#{aonRole.sysAdmin or domainSwitcher.parentDomainUserInChildDomain}">							
 						<aon:outputLabel for="Domain_expirationDate"
 							value="#{bundle.admin_domain_expiration}" />
 						<aon:selectInputDate id="Domain_expirationDate" 
 							value="#{adminDomain.to.expirationDate}"
+							disabled="#{!aonRole.sysAdmin}"
 							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
-											
+							popupDateFormat="#{bundle.aon_date_pattern}"/>											
+					</aon:if>																		
+
+					<aon:if test="#{aonRole.sysAdmin}" >
 						<aon:outputLabel for="Domain_active"
 							value="#{bundle.aon_active}" />
 						<aon:selectBooleanCheckbox id="Domain_active"

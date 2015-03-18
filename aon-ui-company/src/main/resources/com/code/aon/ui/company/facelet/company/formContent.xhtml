@@ -36,16 +36,18 @@
 				value="#{company.active}" />										
 		</aon:if>
 		
-		<aon:outputText value="#{bundle.aon_lastAccess_date}" />
-		<aon:panelGroup>
-			<aon:outputText value="#{company.lastAccessDate}" >
-				<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
-					timeZone="#{timeZoneController.timeZoneId}" />
-			</aon:outputText>		
-			<aon:outputText rendered="#{company.lastAccessDate != null}"
-				value=" (#{company.lastAccessUser})" />
-		</aon:panelGroup>
-		
+		<aon:if test="#{!company.nevv}" >
+			<aon:outputText value="#{bundle.aon_lastAccess_date}" />
+			<aon:panelGroup>
+				<aon:outputText value="#{company.lastAccessDate}" >
+					<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>		
+				<aon:outputText rendered="#{company.lastAccessDate != null}"
+					value=" (#{company.lastAccessUser})" />
+			</aon:panelGroup>
+		</aon:if>
+				
 	</aon:panelGrid>
 
 </ui:composition>

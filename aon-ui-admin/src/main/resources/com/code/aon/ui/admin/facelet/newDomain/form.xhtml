@@ -81,6 +81,7 @@
 					</aon:div>
 					<aon:selectInputDate id="NewDomain_expirationDate" 
 						value="#{adminNewDomain.expirationDate}"
+						validator="#{adminNewDomain.expirationDateCheck}"
 						disabled="#{!adminNewDomain.enableHeredity and !adminNewDomain.loadDefaultValuesEnabled}"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>

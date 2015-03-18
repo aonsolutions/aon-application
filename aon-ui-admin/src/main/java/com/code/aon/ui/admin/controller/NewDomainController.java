@@ -1,21 +1,28 @@
 package com.code.aon.ui.admin.controller;
 
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
+import static javax.faces.application.FacesMessage.SEVERITY_ERROR;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
 import java.sql.Connection;
+import java.util.Calendar;
 import java.util.Date;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.validator.ValidatorException;
 import javax.mail.Address;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,11 +53,13 @@ import com.code.aon.master.IConstants;
 import com.code.aon.master.VersionManager;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.admin.BookingInfo;
 import com.code.aon.ui.admin.DomainInfo;
 import com.code.aon.ui.admin.DomainInfoType;
 import com.code.aon.ui.common.ICommonMessages;
+import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.IController;
@@ -348,6 +357,7 @@ public class NewDomainController implements Serializable {
 		da.setApplication(application);
 		da.setDomain(domain.getId());
 		BeanManager.getManagerBean(DomainApplication.class).insert(da);
+		addCompany(domain);
 		return domain.getId();		
 	}
 	
@@ -415,6 +425,29 @@ public class NewDomainController implements Serializable {
 				DomainController.sendNotificationEmail(emails, subject, content, null);
 			}
 		}
+	}
+	
+	public void expirationDateCheck(FacesContext context, UIComponent component, Object value) {
+		Date date = (Date) value;
+		if ( value != null ) {
+			Date today = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
+			if ( date.compareTo(today) <= 0 ) {
+				FacesMessage fm = new FacesMessage(AonUtil.getMessage(ICommonMessages.DOMAIN_EXPIRATION_ERROR));
+				fm.setSeverity(SEVERITY_ERROR);
+				throw new ValidatorException(fm);		
+			}
+		}
+	}		
+	
+	private void addCompany( Domain domain ) throws ManagerBeanException {
+		Company company = new Company();
+		company.setActive(true);
+		company.setDomain(domain.getId());
+		company.setDocumentType(DocumentType.CIF);
+		company.setName( domain.getDescription() );
+		company.setAlias( StringUtils.upperCase( StringUtils.substringBefore(domain.getName(), ".")) );
+		BeanManager.getManagerBean(Company.class).insert(company);
+		CompanyController.addEnterprise(company);
 	}
 	
 	private static class TemplateDomainFilter extends ControllerAdapter {
