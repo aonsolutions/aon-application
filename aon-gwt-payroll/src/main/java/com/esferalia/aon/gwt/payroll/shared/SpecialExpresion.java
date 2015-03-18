@@ -37,9 +37,13 @@ public class SpecialExpresion {
 
 	}
 
+
 	public static SpecialExpresion parse(String expression) {
 
 		if (StringUtils.isBlank(expression))
+			return new BlankExpression();
+
+		if (StringUtils.equals(expression.trim(), "REMOVE()"))
 			return new BlankExpression();
 
 		RegExp regExp = RegExp.compile(PATTERN, "g");
