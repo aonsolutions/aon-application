@@ -590,6 +590,7 @@ public class ExpressionContext {
 		List<ITimedResult<T>> values = new LinkedList<ITimedResult<T>>();
 		for (PeriodMap bindings : bindingsList) {
 			try {
+				bindings.cleanRead();
 				setCurrentBindings(bindings);
 				T value = MVEL.eval(script, bindings, toType);
 				values.add(new TimedResult<T>(value, bindings.getPeriod(),
@@ -695,7 +696,9 @@ public class ExpressionContext {
 	}
 
 	private static boolean isJavaIdentifier(String string) {
-		if (!Character.isJavaIdentifierStart(string.charAt(0)))
+		
+		if (string == null || string.length() == 0 || 
+				!Character.isJavaIdentifierStart(string.charAt(0)))
 			return false;
 		for (int i = 1; i < string.length(); i++)
 			if (!Character.isJavaIdentifierPart(string.charAt(i)))
