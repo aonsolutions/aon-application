@@ -7,7 +7,9 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.InvoiceTax;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -23,8 +25,16 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
     	InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();
     	try {
-    		if (invoiceDetail.getInvoice().isSales() && !invoiceDetail.isSkipServiceProcess()) {
-    			invoiceDetail.setSkipServiceProcess(invoiceDetail.getSource() == InvoiceSource.RESERVATION || isHotelInvoice(invoiceDetail));
+    		if (invoiceDetail.getInvoice().isSales()) {
+    			boolean reservationInvoice = invoiceDetail.getSource() == InvoiceSource.RESERVATION || isHotelInvoice(invoiceDetail);
+    			if (!invoiceDetail.isSkipServiceProcess()) {
+        			invoiceDetail.setSkipServiceProcess(reservationInvoice);
+    			}
+    			if (reservationInvoice && !invoiceDetail.isTaxDataInDetail() && isInvoiceTaxDataInDetail(invoiceDetail)) {
+    				invoiceDetail.setTaxDataInDetail(true);
+   					invoiceDetail.setVatPercent(invoiceDetail.getItem().getProduct().getVat().getPercentage());
+   					invoiceDetail.setVatQuota(CommonUtil.round(invoiceDetail.getTaxableBase() * invoiceDetail.getVatPercent() / 100));
+    			}
     		}
     	} catch (ManagerBeanException ex) {
     		throw new ManagerBeanVetoListenerException(ex.getMessage(), ex);
@@ -35,8 +45,16 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
     	InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();
     	try {
-    		if (invoiceDetail.getInvoice().isSales() && !invoiceDetail.isSkipServiceProcess()) {
-    			invoiceDetail.setSkipServiceProcess(invoiceDetail.getSource() == InvoiceSource.RESERVATION || isHotelInvoice(invoiceDetail));
+    		if (invoiceDetail.getInvoice().isSales()) {
+    			boolean reservationInvoice = invoiceDetail.getSource() == InvoiceSource.RESERVATION || isHotelInvoice(invoiceDetail);
+    			if (!invoiceDetail.isSkipServiceProcess()) {
+        			invoiceDetail.setSkipServiceProcess(reservationInvoice);
+    			}
+    			if (reservationInvoice && !invoiceDetail.isTaxDataInDetail() && isInvoiceTaxDataInDetail(invoiceDetail)) {
+    				invoiceDetail.setTaxDataInDetail(true);
+   					invoiceDetail.setVatPercent(invoiceDetail.getItem().getProduct().getVat().getPercentage());
+   					invoiceDetail.setVatQuota(CommonUtil.round(invoiceDetail.getTaxableBase() * invoiceDetail.getVatPercent() / 100));
+    			}
     		}
     	} catch (ManagerBeanException ex) {
     		throw new ManagerBeanVetoListenerException(ex.getMessage(), ex);
@@ -73,6 +91,14 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_WORK_PLACE_ID), invoiceDetail.getWorkPlace().getId());
 		return (hotelBean.getCount(criteria) > 0);
+	}
+
+	private boolean isInvoiceTaxDataInDetail(InvoiceDetail invoiceDetail) throws ManagerBeanException {
+		IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceTaxBean.getFieldName(IEntityAlias.INVOICE_TAX_INVOICE_DETAIL_INVOICE_ID), invoiceDetail.getInvoice().getId());
+		criteria.addNotEqualExpression(invoiceTaxBean.getFieldName(IEntityAlias.INVOICE_TAX_QUOTA), Double.valueOf(0));
+		return (invoiceTaxBean.getCount(criteria) > 0);
 	}
 
 }
