@@ -138,4 +138,6 @@ public interface Images extends ClientBundle, Tree.Resources {
 	ImageResource tooltip_top ();
 
 	ImageResource segsocial_small();
+
+	ImageResource cost();
 }

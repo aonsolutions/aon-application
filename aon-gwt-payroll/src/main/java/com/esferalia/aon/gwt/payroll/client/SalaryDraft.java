@@ -1895,9 +1895,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			cgcBaseDeduction.setType(Deduction.Type.OTHER);
 			cgcBaseDeduction.setSalaryType(salaryDraftObject.getType());
 		}
-
-		cgcBaseDeduction.setExpression("BASE_CGC = /*user*/ " + expression
-				+ "/**/;" + " BUILDER.setCgcBase(BASE_CGC);" + " REMOVE();");
+		//@formatter:off
+		cgcBaseDeduction.setExpression(
+				"BASE_CGC = /*user*/ " + expression + "/**/; " + 
+				"BUILDER.setCgcBase(BASE_CGC); " + 
+				"REMOVE();");
+		//@formatter:on
 
 		salaryDraftObject.addDraftDeduction(cgcBaseDeduction);
 
@@ -1933,8 +1936,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			cgpBaseDeduction.setType(Deduction.Type.OTHER);
 			cgpBaseDeduction.setSalaryType(salaryDraftObject.getType());
 		}
-		cgpBaseDeduction.setExpression("BASE_CGP = /*user*/ " + expression
-				+ "/**/;" + " BUILDER.setCgpBase(BASE_CGP);" + " REMOVE();");
+		//@formatter:off
+		cgpBaseDeduction.setExpression(
+					"BASE_CGP = /*user*/ " + expression + "/**/; " + 
+					"BUILDER.setCgpBase(BASE_CGP); " + 
+					"REMOVE();");
+		//@formatter:on
 
 		salaryDraftObject.addDraftDeduction(cgpBaseDeduction);
 
@@ -3724,7 +3731,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 						.getDescription();
 
 			dumpSystemDeduction(cost, percent, description, beforeRow + i,
-					AON.AON_ICON_PAYMENT, AON.AON_EDIT_DATA_TABLE_BUTTON,
+					AON.AON_ICON_COST, AON.AON_EDIT_DATA_TABLE_BUTTON,
 					AON.AON_PADDING_LEFT);
 		}
 	}

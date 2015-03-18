@@ -555,6 +555,10 @@
 	gwt-image: 'aon_icon_calendar';
 }
 
+@sprite .aon-icon-cost {
+        gwt-image: "cost" ;
+}
+
 @sprite .aon-icon-rowSelector-S {
         gwt-image: "aon_icon_row_s" ;
 }
