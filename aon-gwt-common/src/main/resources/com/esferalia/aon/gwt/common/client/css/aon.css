@@ -844,10 +844,12 @@ input:disabled + label{
 
 .progressbar-outer {
 	border: 1px solid black;
+	-webkit-border-radius: 5px;
+	-moz-border-radius:5px;
 }
 
 .progressbar-inner {
-	border: 1px solid black;
+	border: 0px solid black;
 	margin: 1px;
 }
 
@@ -858,7 +860,7 @@ input:disabled + label{
 }
 
 .progressbar-fullbar {
-	background: blue;
+	background: rgb(65,65,128);
 }
 
 .progressbar-blankbar {
