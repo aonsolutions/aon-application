@@ -303,9 +303,12 @@ public class SalesAppParamController implements Serializable {
 	
 	// **********************************************************
 	
-	public class AmazonSalesChannel {
+	public static class AmazonSalesChannel implements Serializable {
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private String name;
 		private Seller seller;
+		
 		public AmazonSalesChannel() throws ManagerBeanException{
 			seller = (Seller) BeanManager.getManagerBean(Seller.class).createNewTo();
 		}
