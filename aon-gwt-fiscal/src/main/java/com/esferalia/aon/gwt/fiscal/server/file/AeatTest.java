@@ -21,7 +21,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AeatTest {
 	private static String MODEL = "11802012B95528451RAMON HERRERA ZAPATOS, S.L       "
@@ -43,7 +44,7 @@ public class AeatTest {
 	public static void testPrint() throws IOException,
 			NoSuchAlgorithmException, KeyManagementException {
 
-		String fileString = StringUtils.chomp(MODEL);
+		String fileString = AonStringUtils.chomp(MODEL);
 		String encodedFile = URLEncoder.encode(fileString, "ISO-8859-1");
 
 		String urlParameters = "HID=INV3180A" + "&IDI=ES" + "&FIC="
@@ -96,7 +97,7 @@ public class AeatTest {
 	public static void testSend() throws IOException,
 			NoSuchAlgorithmException, KeyManagementException {
 
-		String fileString = StringUtils.chomp(MODEL);
+		String fileString = AonStringUtils.chomp(MODEL);
 		String encodedFile = URLEncoder.encode(fileString, "ISO-8859-1");
 
 		String urlParameters = "HID=INV3180A" + "&IDI=ES" + "&FIC="

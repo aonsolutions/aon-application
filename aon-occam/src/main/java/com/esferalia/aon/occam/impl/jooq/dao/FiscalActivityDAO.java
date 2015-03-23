@@ -11,7 +11,10 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfo;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKey;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKeyType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityModule;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Module;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
 
@@ -188,6 +191,41 @@ public class FiscalActivityDAO {
 			.setMaxImport(record.getValue(FS_ACTIVITY.MAX_IMPORT))
 			.setMaxPerson(record.getValue(FS_ACTIVITY.MAX_PERSON))
 			.setVatPercent(record.getValue(FS_ACTIVITY.VAT_PERCENT));
+	}
+
+	public static FiscalActivity getActivityFor(Epigraph epigraph, Integer year) {
+		FiscalActivity fa = new FiscalActivity()
+				.setYear(year)
+				.setEpigraph(epigraph.getEpigraph())
+				.setDescription(epigraph.getDescription())
+				.setMaxPerson(epigraph.getLimPers())
+				.setMaxImport(epigraph.getLimExceso())
+				.setVatPercent(epigraph.getPorcMin());
+		int i = 0;
+		for (FiscalActivityInfoKey key : FiscalActivityInfoKey.values() ){
+			if (key.getType() == FiscalActivityInfoKeyType.INFO) {
+				fa.addInfo(new FiscalActivityInfo().setInfoKey(key).setLine(i++));
+			}
+			if (key.getType() == FiscalActivityInfoKeyType.IRPF_INFO) {
+				fa.addInfoIRPF(new FiscalActivityInfo().setInfoKey(key).setLine(i++));
+			}
+			if (key.getType() == FiscalActivityInfoKeyType.VAT_INFO) {
+				fa.addInfoIVA(new FiscalActivityInfo().setInfoKey(key).setLine(i++));
+			}
+		}
+		for (Module module : epigraph.getIrpfModules()) {
+			fa.addModuleIRPF(new FiscalActivityModule()
+				.setLine(module.getLine())
+				.setFactor(module.getAmount())
+				.setUnit(module.getUnit()));
+		}
+		for (Module module : epigraph.getIvaModules()) {
+			fa.addModuleIRPF(new FiscalActivityModule()
+				.setLine(module.getLine())
+				.setFactor(module.getAmount())
+				.setUnit(module.getUnit()));
+		}
+		return fa;
 	}
 	
 }

@@ -8,7 +8,6 @@ import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-import com.code.aon.config.enumeration.Administration;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.file.tax.model.MOD184.Deponent;
@@ -30,7 +29,7 @@ public class MOD184Writer {
 	public FileOutput createMOD184(String domainName, int domainId, Integer mod184, int year,
 			Integer administration) throws AonSQLException {
 		try {
-			MOD184Format format = obtainFormat(year, administration);
+			MOD184Format format = MOD184Format.obtainFormat(year, administration);
 			if (format == null) {
 				throw new AonSQLException(
 						"No existe soporte para el formato de la declaraci\u00F3n "
@@ -66,20 +65,6 @@ public class MOD184Writer {
 		} catch (IOException e) {
 			throw new AonSQLException(e.getMessage());
 		}
-	}
-
-	private MOD184Format obtainFormat(int year, int administration) {
-		Administration adm = Administration.values()[administration];
-		MOD184Format f = null;
-		for (MOD184Format format : MOD184Format.values()) {
-			if (format.getAdministration() == adm && year >= format.getYear()) {
-				if (f == null || f.getYear() < format.getYear()) {
-					f = format;
-				}
-			}
-		}
-		System.out.println( f);
-		return f;
 	}
 
 	private Deponent getDeponent(String domainName, int domainId, Integer id,

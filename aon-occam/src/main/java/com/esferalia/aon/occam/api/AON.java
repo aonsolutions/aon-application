@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -33,6 +34,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -47,6 +49,7 @@ import com.esferalia.aon.occam.impl.jooq.ManagementImpl;
 import com.esferalia.aon.occam.impl.jooq.SalaryImpl;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalActivityDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FiscalMatrixDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 public class AON {
@@ -281,6 +284,18 @@ public class AON {
 	// ********************************** FISCAL **
 	// ********************************************
 
+	// -------------------------- FISCAL PANEL
+	public static FiscalModelMatrix getFiscalPanel(String domainName,
+			int domain, int year, String login) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain);
+			User user = getUser(domainName, domain, login);
+			return FiscalMatrixDAO.getModelsPanel(ctx, domain, year, user.getId());
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
 	// -------------------------- FISCAL ACTIVITIES
 	public static ArrayList<FiscalActivity> getFiscalActivities(String domainName, int domainId){
 		AONContext ctx = null;
@@ -300,6 +315,10 @@ public class AON {
 		} finally {
 			if (ctx != null) ctx.close();	
 		}
+	}
+	
+	public static FiscalActivity getFiscalActivityFor(Epigraph epigraph,Integer year) {
+		return FiscalActivityDAO.getActivityFor(epigraph, year);
 	}
 	// ----------------------------------MODELO 180
 	public static ArrayList<Mod180> getMod180s(String domainName, int domainId) {
@@ -620,5 +639,4 @@ public class AON {
 		return getSalary().getSalaries(ctx, filter, Salary::new);
 	}
 
-	
 }

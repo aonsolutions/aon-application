@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.file.tax.FileTaxUtil;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.common.shared.Secretary;
@@ -20,6 +18,7 @@ import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
 import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.CompanyParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod200File {
 	
@@ -90,7 +89,7 @@ public class Mod200File {
 	
 	public int getCnae() {
 		// TODO
-		String cnae = StringUtils.replace(getMod200().getCnae(), AonUtil.DOT, AonUtil.EMPTY); 
+		String cnae = AonStringUtils.replace(getMod200().getCnae(), AonUtil.DOT, AonUtil.EMPTY); 
 		return ensureZero(cnae);
 	}
 	public String getDocument() {

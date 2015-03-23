@@ -330,34 +330,12 @@ public class Modules implements Serializable {
 	}
 	
 	public static void main(String[] args) throws AonException {
-		String[] epis = new String[] { "314", "315", "316.2", "316.3", "316.4",
-				"316.9", "419.1", "419.2", "419.3", "423.9", "453", "463",
-				"468", "474.1", "501.3", "504.1", "504.2", "504.3", "504.4",
-				"504.5", "504.6", "504.7", "504.8", "505.1", "505.2", "505.3",
-				"505.4", "505.5", "505.6", "505.7", "642.1", "642.2", "642.3",
-				"642.5", "644.1", "644.2", "644.3", "644.6", "647.1", "647.2",
-				"647.3", "652.2", "652.3", "653.2", "653.4", "653.5", "654.2",
-				"654.5", "654.6", "659.3", "659.4", "662.2", "663.1", "663.2",
-				"663.3", "663.4", "663.9", "671.4", "671.5", "672.1", "672.2",
-				"672.3", "673.1", "673.2", "675", "676", "681", "682", "683",
-				"691.1", "691.2", "691.9", "691.9", "692", "699", "721.1",
-				"721.3", "721.2", "722", "751.5", "757", "933.1", "933.9",
-				"967.2", "971.1", "972.1", "972.2", "973.3" };
 		Modules mod = new Modules(); 
 		for (Sector sector : mod.getSectors(false)) {
-			for (Epigrafe epi: mod.getEpigrafes(sector.getId())) {
-				boolean found = false;
-				for (String e : epis) {
-					if (e.equals(epi.getCode())) {
-						found = true;
-						break;
-					}
-				}
-				if (!found) {
-					System.out.println( epi.getCode() + "("+sector.isModIva()+")"); 
-				}
-				
-			}
+			System.out.println(sector.getId() + " - " + sector.getDescription()+")");
+//			for (Epigrafe epi: mod.getEpigrafes(sector.getId())) {
+//				System.out.println(epi.getSector() + " - " + epi.getCode() + "("+ epi.getDescription()+")"); 
+//			}
 		}
 
 	}

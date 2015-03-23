@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -16,6 +17,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
@@ -34,7 +36,21 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 				new AsyncCallbackWrapper<FiscalParameters>(callback));
 	}
 
+	// ------------------------------------------------------- FISCAL PANEL
+	@Override
+	public void getFiscalPanel(String domainName, int domain,int year,
+			AsyncCallback<FiscalModelMatrix> callback) {
+		AON.start();
+		fiscalServiceAsync.getFiscalPanel(domainName,domain,year, 
+				new AsyncCallbackWrapper<FiscalModelMatrix>(callback));
+	}
 	// ------------------------------------------------------- FISCAL ACTIVITIES
+	@Override
+	public void getModuleEpigraphs(int year, AsyncCallback<ArrayList<Epigraph>> callback) {
+		AON.start();
+		fiscalServiceAsync.getModuleEpigraphs(year, 
+				new AsyncCallbackWrapper<ArrayList<Epigraph>>(callback));
+	}
 	@Override
 	public void getFiscalActivities(String domainName, int domain,
 			AsyncCallback<ArrayList<FiscalActivity>> callback) {
@@ -47,6 +63,13 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 			AsyncCallback<FiscalActivity> callback) {
 		AON.start();
 		fiscalServiceAsync.getFiscalActivity(domainName,domain,id, 
+				new AsyncCallbackWrapper<FiscalActivity>(callback));
+	}
+	@Override
+	public void getFiscalActivityFor(Epigraph epigraph, Integer year,
+			AsyncCallback<FiscalActivity> callback) {
+		AON.start();
+		fiscalServiceAsync.getFiscalActivityFor(epigraph, year,  
 				new AsyncCallbackWrapper<FiscalActivity>(callback));
 	}
 	// -------------------------------------------------------------- ACTIVITIES
@@ -291,5 +314,6 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		fiscalServiceAsync.initializeMod390(domainName, domain, year, 
 				new AsyncCallbackWrapper<Mod390>(callback));
 	}
+
 
 }

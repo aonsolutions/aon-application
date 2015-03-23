@@ -50,4 +50,16 @@ public enum MOD190Format {
 		return receiverMetadataResource;
 	}
 	
+	public static MOD190Format obtainFormat(int year, int administration) {
+		Administration adm = Administration.values()[administration];
+		MOD190Format f = null;
+		for (MOD190Format format : MOD190Format.values()) {
+			if (format.getAdministration() == adm && year >= format.getYear()) {
+				if (f == null || f.getYear() < format.getYear()) {
+					f = format;
+				}
+			}
+		}
+		return f;
+	}
 }

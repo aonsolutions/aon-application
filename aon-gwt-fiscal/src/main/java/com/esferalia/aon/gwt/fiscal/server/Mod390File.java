@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.code.aon.common.enumeration.MimeType;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 
@@ -39,7 +38,7 @@ public class Mod390File extends HttpServlet {
 			}
 			String fileName = "Mod390" + "_" + mod390.getYear() + "_" + sb.toString();
 			if (content != null) {
-				resp.setContentType(MimeType.MIME_XML.getName());
+				resp.setContentType("text/xml");
 				resp.setCharacterEncoding("ISO-8859-1");
 				resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".xml\";");
 				resp.getWriter().print(content);

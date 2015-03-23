@@ -16,6 +16,7 @@ import com.code.aon.AonVersion;
 import com.code.aon.fiscal.FiscalActivity;
 import com.code.aon.fiscal.FiscalActivityInfo;
 import com.code.aon.fiscal.activity.Aeat2012ModuleCalculator;
+import com.code.aon.fiscal.activity.Aeat2015ModuleCalculator;
 import com.code.aon.fiscal.activity.Epigrafe;
 import com.code.aon.fiscal.activity.IFiscalActivityContainer;
 import com.code.aon.fiscal.activity.IModuleCalculator;
@@ -314,11 +315,7 @@ public class FiscalActivityController extends BasicController implements IFiscal
 			if (id != null) {
 				Modules modules = new Modules();
 				List<Epigrafe> list = modules.getEpigrafes( id );
-//				if ( list != null && list.size() == 1) {
-//					selectEpigrafe(list.get(0));					
-//				} else {
-					setEpigraphs( new SerializableListDataModel( list ) );
-//				}
+				setEpigraphs( new SerializableListDataModel( list ) );
 			} else {
 				setEpigraphs( new SerializableListDataModel() );	
 			}
@@ -648,10 +645,17 @@ public class FiscalActivityController extends BasicController implements IFiscal
 	
 	public IModuleCalculator getCalculator() {
 		if (calculator == null) {
-			// TODO factory
-			calculator = new Aeat2012ModuleCalculator( this  ); 
+			FiscalActivity fa =  getFiscalActivity();
+			if (fa.getYear() < 2015) {
+				setCalculator( new Aeat2012ModuleCalculator(this));
+			} else {
+				setCalculator( new Aeat2015ModuleCalculator(this));
+			}
 		}
 		return calculator;
+	}
+	public void setCalculator(IModuleCalculator calculator) {
+		this.calculator = calculator;
 	}
 
 	public void onHideDetailPanel(ActionEvent event) {

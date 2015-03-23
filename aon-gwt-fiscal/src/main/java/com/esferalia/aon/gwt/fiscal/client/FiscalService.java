@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -15,6 +16,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -26,15 +28,18 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface FiscalService extends RemoteService {
 
 	// ------------------------------------------------------- FISCAL PARAMETERS
-
 	FiscalParameters getFiscalParameters(String domainName, int domain) throws AonSQLException;
 
+	// ------------------------------------------------------- FISCAL PANEL
+	FiscalModelMatrix getFiscalPanel(String currentDomainName,
+			int currentDomain, int y);
 	// -------------------------------------------------------------- ACTIVITIES
 	ArrayList<Activity> getActivities(int activityGroup) throws AonSQLException;
 	
-	// -------------------------------------------------------FISCAL ACTIVITIES
+	ArrayList<Epigraph> getModuleEpigraphs(int year);
 	ArrayList<FiscalActivity> getFiscalActivities(String domainName, int domain) throws AonSQLException;
 	FiscalActivity getFiscalActivity(String domainName, int domain, int id) throws AonSQLException;
+	FiscalActivity getFiscalActivityFor(Epigraph epigraph, Integer year);
 	
 	// ---------------------------------------------------------------MODELO 190
 	void deleteMod190(String domainName, int domain,Mod190 mod190) throws AonCoreException;
@@ -74,5 +79,7 @@ public interface FiscalService extends RemoteService {
 	void deleteMod390(String domainName, Integer domain,Mod390 mod390) throws AonCoreException;
 	ArrayList<Mod390Detail> getMod390Details(String domainName, Integer domain,Mod390 mod390) throws AonCoreException;
 	Mod390 initializeMod390(String domainName, Integer domain, Integer year);
+
+
 
 }

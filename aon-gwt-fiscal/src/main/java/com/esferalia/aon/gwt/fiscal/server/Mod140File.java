@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 
-import com.code.aon.common.enumeration.MimeType;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.fiscal.Mod140Context;
@@ -70,7 +69,7 @@ public class Mod140File extends HttpServlet {
 
 			ByteArrayInputStream in = new ByteArrayInputStream(
 					fos.toByteArray());
-			resp.setContentType(MimeType.MIME_TXT.getName());
+			resp.setContentType("text/txt");
 			resp.setHeader("Content-disposition", "attachment; filename=\""
 					+ fileName + ".txt\";");
 			IOUtils.copy(in, resp.getOutputStream());

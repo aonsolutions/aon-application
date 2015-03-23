@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.google.gwt.user.server.rpc.SerializationPolicy;
 import com.google.gwt.user.server.rpc.SerializationPolicyLoader;
@@ -18,16 +17,20 @@ import com.google.gwt.user.server.rpc.SerializationPolicyLoader;
 @SuppressWarnings("serial")
 public class AonRemoteServiceServlet extends RemoteServiceServlet {
 
-	AuthPrincipal getAuthPrincipal() {
-		HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();
-		AuthPrincipal authPrincipal = (AuthPrincipal) request.getUserPrincipal();
+	protected AuthPrincipal getAuthPrincipal() {
+		HttpServletRequest req = this.getThreadLocalRequest();
+		AuthPrincipal authPrincipal = (AuthPrincipal) req.getUserPrincipal();
 		return authPrincipal;
 	}
 	
-	Integer getDomainID() {
+	protected Integer getDomainID() {
 		return getAuthPrincipal().getDomainId();
 	}
-	
+
+	protected String getUserLogin() {
+		return getAuthPrincipal().getShortName();
+	}
+
 
 	@Override
 	protected SerializationPolicy doGetSerializationPolicy(

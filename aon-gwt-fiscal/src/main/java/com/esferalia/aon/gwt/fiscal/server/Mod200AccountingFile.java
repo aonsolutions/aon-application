@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
-import com.code.aon.common.enumeration.MimeType;
 import com.esferalia.aon.gwt.common.sql.SQLUtils;
 import com.esferalia.aon.gwt.fiscal.server.mod200.xml.MOD2002013;
 import com.esferalia.aon.gwt.fiscal.server.mod200.xml.Mod200toMOD2002013;
@@ -63,7 +62,7 @@ public class Mod200AccountingFile extends HttpServlet {
 			}
 			String fileName = "Mod200" + "_" + mod200.getYear() + "_" + sb.toString();
 			if (content != null) {
-				resp.setContentType(MimeType.MIME_XML.getName());
+				resp.setContentType("text/xml");
 				resp.setCharacterEncoding("ISO-8859-1");
 				resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".xml\";");
 				resp.getWriter().print(content);

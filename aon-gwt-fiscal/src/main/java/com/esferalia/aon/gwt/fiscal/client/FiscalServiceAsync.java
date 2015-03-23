@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -14,17 +15,24 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface FiscalServiceAsync {
 	// -------------------------------------------------------------- PARAMS
 	void getFiscalParameters(String domainName,int domain,AsyncCallback<FiscalParameters> callback);
 
+	// ------------------------------------------------------ FISCAL PANEL
+	void getFiscalPanel(String currentDomainName,int currentDomain,int y,
+			AsyncCallback<FiscalModelMatrix> asyncCallback);
 	// ------------------------------------------------------ FISCAL ACTIVITIES
+	void getModuleEpigraphs(int year, AsyncCallback<ArrayList<Epigraph>> callback);
 	void getFiscalActivities(String domainName, int domain,
 			AsyncCallback<ArrayList<FiscalActivity>> callback);
 	void getFiscalActivity(String domainName, int domain, int id,
 			AsyncCallback<FiscalActivity> callback);
+	void getFiscalActivityFor(Epigraph epigraph, Integer year,
+			AsyncCallback<FiscalActivity> asyncCallback);
 	
 	// -------------------------------------------------------------- ACTIVITIES
 	void getActivities(int activityGroup,

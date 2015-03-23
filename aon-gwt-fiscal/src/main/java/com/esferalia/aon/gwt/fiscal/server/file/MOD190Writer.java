@@ -6,8 +6,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
-import com.code.aon.common.util.CommonUtil;
-import com.code.aon.config.enumeration.Administration;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.file.tax.model.MOD190.Deponent;
@@ -19,13 +17,14 @@ import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class MOD190Writer {
 
 	public FileOutput createMOD190(String domainName,Integer domainId, Integer mod190, int year,
 			Byte administration) throws AonSQLException {
 		try {
-			MOD190Format format = obtainFormat(year, administration);
+			MOD190Format format = MOD190Format.obtainFormat(year, administration);
 			if (format == null) {
 				throw new AonSQLException(
 						"No existe soporte para el formato de la declaraci\u00F3n "
@@ -51,19 +50,6 @@ public class MOD190Writer {
 		} catch (IOException e) {
 			throw new AonSQLException(e.getMessage());
 		}
-	}
-
-	private MOD190Format obtainFormat(int year, int administration) {
-		Administration adm = Administration.values()[administration];
-		MOD190Format f = null;
-		for (MOD190Format format : MOD190Format.values()) {
-			if (format.getAdministration() == adm && year >= format.getYear()) {
-				if (f == null || f.getYear() < format.getYear()) {
-					f = format;
-				}
-			}
-		}
-		return f;
 	}
 
 	private Deponent getDeponent(String domainName, int domainId, Integer id,
@@ -178,8 +164,8 @@ public class MOD190Writer {
 
 			deponent.getReceivers().add(receiver);
 			++c01;
-			c02 = CommonUtil.round(c02  + CommonUtil.round(det.getPerception() + det.getInKindPerception()));
-			c03 = CommonUtil.round(c03  + CommonUtil.round(det.getRetention() + det.getInKindDeposit()));
+			c02 = AonMathUtils.round(c02  + AonMathUtils.round(det.getPerception() + det.getInKindPerception()));
+			c03 = AonMathUtils.round(c03  + AonMathUtils.round(det.getRetention() + det.getInKindDeposit()));
 		}
 		deponent.setC001(c01);
 		deponent.setC002(c02);

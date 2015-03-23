@@ -59,4 +59,18 @@ public enum MOD193Format {
 	public String getExpensesMetadataResource() {
 		return expensesMetadataResource;
 	}
+	
+	public static MOD193Format obtainFormat(int year, int administration) {
+		Administration adm = Administration.values()[administration];
+		MOD193Format f = null;
+		for (MOD193Format format : MOD193Format.values()) {
+			if (format.getAdministration() == adm && year >= format.getYear()) {
+				if (f == null || f.getYear() < format.getYear()) {
+					f = format;
+				}
+			}
+		}
+		return f;
+	}
+	
 }

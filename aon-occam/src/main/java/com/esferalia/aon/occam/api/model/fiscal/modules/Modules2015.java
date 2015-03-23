@@ -1,16 +1,16 @@
 package com.esferalia.aon.occam.api.model.fiscal.modules;
 
 public class Modules2015 {
-
+	
 	public enum FarmerIRPF {
-		 A01 (0.13,0.23,"Agrícola dedicada a la obtención de remolacha azucarera y ganadera de explotación de ganado porcino de carne, de ganado bovino de carne, de ganado ovino de carne, de ganado caprino de carne, avicultura y cunicultura.")
-		,A02 (0.13,0.23,"Forestal con un \"período medio de corta\" superior a 30 años.")
-		,A03 (0.26,0.36,"Agrícola dedicada a la obtención de cereales, cítricos, frutos secos, hortícultura, leguminosas, uva para vino de mesa sin denominación de origen, productos del olivo y hongos para el consumo humano y ganadera de explotación de ganado porcino de cría, de ganado bovino de cría, de ganado ovino de leche, de ganado caprino de leche y apicultura.")
-		,A04 (0.26,0.36,"Forestal con un \"período medio de corta\" igual o inferior a 30 años.")
-		,A05 (0.32,0.42,"Agrícola dedicada a la obtención de uva para vino de mesa con denominación de origen, y oleaginosas, ganadera de explotación de ganado bovino de leche y otras actividades ganaderas no comprendidas expresamente en otros apartados y forestal dedicada a la extracción de resina.")
-		,A06 (0.37,0.47,"Agrícola dedicada a la obtención de raíces, tubérculos, forrajes, arroz, algodón, frutos no cítricos, tabaco y otros productos agrícolas no comprendidos expresamente en otros apartados.")
-		,A07 (0.42,0.52,"Agrícola dedicada a la obtención de plantas textiles y uva de mesa, actividades accesorias realizadas por agricultores, ganaderos o titulares de actividades forestales y servicios de cría, guarda y engorde de aves.")
-		,A08 (0.56,0.00,"Otros trabajos y servicios accesorios realizados por agricultores, ganaderos o titulares de actividades forestales y servicios de cría, guarda y engorde de ganado, excepto aves.")
+		 A01 (0.13,0.23,"Agr\u00EDcola dedicada a la obtenci\u00F3n de remolacha azucarera y ganadera de explotaci\u00F3n de ganado porcino de carne, de ganado bovino de carne, de ganado ovino de carne, de ganado caprino de carne, avicultura y cunicultura.")
+		,A02 (0.13,0.23,"Forestal con un \"per\u00EDodo medio de corta\" superior a 30 a\u00F1os.")
+		,A03 (0.26,0.36,"Agr\u00EDcola dedicada a la obtenci\u00F3n de cereales, c\u00EDtricos, frutos secos, hort\u00EDcultura, leguminosas, uva para vino de mesa sin denominaci\u00F3n de origen, productos del olivo y hongos para el consumo humano y ganadera de explotaci\u00F3n de ganado porcino de cr\u00EDa, de ganado bovino de cr\u00EDa, de ganado ovino de leche, de ganado caprino de leche y apicultura.")
+		,A04 (0.26,0.36,"Forestal con un \"per\u00EDodo medio de corta\" igual o inferior a 30 a\u00F1os.")
+		,A05 (0.32,0.42,"Agr\u00EDcola dedicada a la obtenci\u00F3n de uva para vino de mesa con denominaci\u00F3n de origen, y oleaginosas, ganadera de explotaci\u00F3n de ganado bovino de leche y otras actividades ganaderas no comprendidas expresamente en otros apartados y forestal dedicada a la extracci\u00F3n de resina.")
+		,A06 (0.37,0.47,"Agr\u00EDcola dedicada a la obtenci\u00F3n de ra\u00EDces, tub\u00E9rculos, forrajes, arroz, algod\u00F3n, frutos no c\u00EDtricos, tabaco y otros productos agr\u00EDcolas no comprendidos expresamente en otros apartados.")
+		,A07 (0.42,0.52,"Agr\u00EDcola dedicada a la obtenci\u00F3n de plantas textiles y uva de mesa, actividades accesorias realizadas por agricultores, ganaderos o titulares de actividades forestales y servicios de cr\u00EDa, guarda y engorde de aves.")
+		,A08 (0.56,0.00,"Otros trabajos y servicios accesorios realizados por agricultores, ganaderos o titulares de actividades forestales y servicios de cr\u00EDa, guarda y engorde de ganado, excepto aves.")
 		;
 		private double indiceRendimientoNeto;
 		private double indiceRendimientoNetoBis;
@@ -33,24 +33,25 @@ public class Modules2015 {
 	}
 	
 	public enum FarmerIVA {
-		 A01 (0.10,	  12.00, "Ganadera de explotación intensiva de ganado porcino de carne y avicultura de carne.")
-		,A02 (0.04,	   2.00, "Ganadera de explotación intensiva de avicultura de huevos y, ganado ovino, caprino y bovino de leche.")
-		,A03 (0.10,	  24.00, "Ganadera de explotación intensiva de ganado bovino de carne y cunicultura.")
-		,A04 (0.10,	  32.00, "Ganadera de explotación intensiva de ganado porcino de cría, bovino de cría y otras intensivas o extensivas no comprendidas expresamente en otros apartados.")
-		,A05 (0.10,	  40.00, "Ganadera de explotación intensiva de ganado ovino y caprino de carne.")
-		,A06 (0.09375,40.00, "Servicios de cría, guarda y engorde de aves.")
-		,A07 (0.10,	  48.00, "Otros trabajos y servicios accesorios realizados por agricultores, ganaderos o titulares de actividades forestales que estén excluidos del régimen especial de la agricultura, ganadería y pesca del Impuesto sobre el Valor Añadido, y servicios de cría, guarda y engorde de ganado, excepto aves.")
-		,A08 (0.21,   80.00, "Actividades accesorias realizadas por agricultores, ganaderos o titulares de actividades forestales no incluidas en el régimen especial de la agricultura, ganadería y pesca del Impuesto sobre el Valor Añadido.")
-		,A09 (0.04,    2.00, "Aprovechamientos que correspondan al cedente en las actividades agrícolas, desarrolladas en régimen de aparcería, dedicadas a la obtención de productos agrícolas no comprendidas en los apartados siguientes.")
-		,A10 (0.07625,28.00, "Aprovechamientos que correspondan al cedente en las actividades agrícolas, desarrolladas en régimen de aparcería, dedicadas a la obtención de forrajes.")
-		,A11 (0.21,	  44.00, "Aprovechamientos que correspondan al cedente en las actividades agrícolas, desarrolladas en régimen de aparcería, dedicadas a la obtención de plantas textiles y tabaco.")
-		,A12 (0.21,	  44.00, "Aprovechamientos que correspondan al cedente en las actividades forestales, desarrolladas en régimen de aparcería.")
-		,A13 (0.070,  28.00, "Procesos de transformación, elaboración o manufactura de productos naturales para la obtención de queso.")
-		,A14 (0.2675, 80.00, "Procesos de transformación, elaboración o manufactura de productos naturales para la obtención de vino de mesa.")
-		,A15 (0.2675, 80.00, "Procesos de transformación, elaboración o manufactura de productos naturales para la obtención de vino con denominación de origen.")
-		,A16 (0.19625,80.00, "Procesos de transformación, elaboración o manufactura de productos naturales para la obtención de otros productos distintos a los anteriores.")
+		 A01 (0.10,	  12.00, "Ganadera de explotaci\u00F3n intensiva de ganado porcino de carne y avicultura de carne.")
+		,A02 (0.04,	   2.00, "Ganadera de explotaci\u00F3n intensiva de avicultura de huevos y, ganado ovino, caprino y bovino de leche.")
+		,A03 (0.10,	  24.00, "Ganadera de explotaci\u00F3n intensiva de ganado bovino de carne y cunicultura.")
+		,A04 (0.10,	  32.00, "Ganadera de explotaci\u00F3n intensiva de ganado porcino de cr\u00EDa, bovino de cr\u00EDa y otras intensivas o extensivas no comprendidas expresamente en otros apartados.")
+		,A05 (0.10,	  40.00, "Ganadera de explotaci\u00F3n intensiva de ganado ovino y caprino de carne.")
+		,A06 (0.06625,40.00, "Servicios de cr\u00EDa, guarda y engorde de aves.")
+		,A07 (0.070,  48.00, "Apicultura.")
+		,A08 (0.10,	  48.00, "Otros trabajos y servicios accesorios realizados por agricultores, ganaderos o titulares de actividades forestales que est\u00E9n excluidos del r\u00E9gimen especial de la agricultura, ganader\u00EDa y pesca del Impuesto sobre el Valor A\u00F1adido, y servicios de cr\u00EDa, guarda y engorde de ganado, excepto aves.")
+		,A09 (0.21,   80.00, "Actividades accesorias realizadas por agricultores, ganaderos o titulares de actividades forestales no incluidas en el r\u00E9gimen especial de la agricultura, ganader\u00EDa y pesca del Impuesto sobre el Valor A\u00F1adido.")
+		,A10 (0.04,    2.00, "Aprovechamientos que correspondan al cedente en las actividades agr\u00EDcolas, desarrolladas en r\u00E9gimen de aparcer\u00EDa, dedicadas a la obtenci\u00F3n de productos agr\u00EDcolas no comprendidas en los apartados siguientes.")
+		,A11 (0.07625,28.00, "Aprovechamientos que correspondan al cedente en las actividades agr\u00EDcolas, desarrolladas en r\u00E9gimen de aparcer\u00EDa, dedicadas a la obtenci\u00F3n de forrajes.")
+		,A12 (0.21,	  44.00, "Aprovechamientos que correspondan al cedente en las actividades agr\u00EDcolas, desarrolladas en r\u00E9gimen de aparcer\u00EDa, dedicadas a la obtenci\u00F3n de plantas textiles y tabaco.")
+		,A13 (0.21,	  44.00, "Aprovechamientos que correspondan al cedente en las actividades forestales, desarrolladas en r\u00E9gimen de aparcer\u00EDa.")
+		,A14 (0.070,  28.00, "Procesos de transformaci\u00F3n, elaboraci\u00F3n o manufactura de productos naturales para la obtenci\u00F3n de queso.")
+		,A15 (0.2675, 80.00, "Procesos de transformaci\u00F3n, elaboraci\u00F3n o manufactura de productos naturales para la obtenci\u00F3n de vino de mesa.")
+		,A16 (0.2675, 80.00, "Procesos de transformaci\u00F3n, elaboraci\u00F3n o manufactura de productos naturales para la obtenci\u00F3n de vino con denominaci\u00F3n de origen.")
+		,A17 (0.19625,80.00, "Procesos de transformaci\u00F3n, elaboraci\u00F3n o manufactura de productos naturales para la obtenci\u00F3n de otros productos distintos a los anteriores.")
 		;
-		 
+
 		private double indiceRendimientoNeto;
 		private double porcentaje;
 		private String description;
@@ -72,83 +73,93 @@ public class Modules2015 {
 	}
 	
 	public enum Epigraph implements IModuleEpigraph {
-		E_314(
+		E____("---",
+			  "Producci\u00F3n de mejill\u00F3n en batea",
+			  0,
+			  5,
+			  40000.00,
+			  new Module[] {new Module(1, "Personal asalariado", "Persona", 5500.00),
+						new Module(2, "Personal no asalariado", "Persona",7500.00),
+						new Module(3, "Bateas","Batea", 6700.00) },
+			  null 		 
+				 )
+		, E_314(
 				"314",
-				"Carpintería metálica y fabricación de estructuras metálicas y calderería.",
+				"Carpinter\u00EDa met\u00E1lica y fabricaci\u00F3n de estructuras met\u00E1licas y calderer\u00EDa.",
 				30,
 				4,
 				32475.62,
 				new Module[] {new Module(1, "Personal asalariado", "Persona", 3577.61),
 						new Module(2, "Personal no asalariado", "Persona",17044.03),
-						new Module(3, "Consumo de energía eléctrica","100 Kwh", 61.10),
-						new Module(4, "Potencia fiscal vehículo", "CVF", 170.06) },
+						new Module(3, "Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh", 61.10),
+						new Module(4, "Potencia fiscal veh\u00EDculo", "CVF", 170.06) },
 				new Module[] {new Module(1, "Personal empleado", "Persona", 5968.73),
-						new Module(2, "Consumo de energía eléctrica","100 Kwh", 43.81),
-						new Module(3, "Potencia fiscal vehículo", "CVF", 289.34) }		 
+						new Module(2, "Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh", 43.81),
+						new Module(3, "Potencia fiscal veh\u00EDculo", "CVF", 289.34) }		 
 				 )
 		, E_315(
 				"315",
-				"Carpintería metálica y fabricación de estructuras metálicas y calderería.",
+				"Carpinter\u00EDa met\u00E1lica y fabricaci\u00F3n de estructuras met\u00E1licas y calderer\u00EDa.",
 				30,
 				4,
 				32475.62,
 				new Module[] {new Module(1, "Personal asalariado", "Persona", 3577.61),
 						new Module(2, "Personal no asalariado", "Persona",17044.03),
-						new Module(3, "Consumo de energía eléctrica","100 Kwh", 61.10),
-						new Module(4, "Potencia fiscal vehículo", "CVF", 170.06) },
+						new Module(3, "Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh", 61.10),
+						new Module(4, "Potencia fiscal veh\u00EDculo", "CVF", 170.06) },
 				new Module[] {new Module(1, "Personal empleado", "Persona", 5968.73),
-						new Module(2, "Consumo de energía eléctrica","100 Kwh", 43.81),
-						new Module(3, "Potencia fiscal vehículo", "CVF", 289.34) })
+						new Module(2, "Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh", 43.81),
+						new Module(3, "Potencia fiscal veh\u00EDculo", "CVF", 289.34) })
 						
-		,E_316_2 ("316.2","Fabricación de artículos de ferretería, cerrajería, tornillería, derivados del alambre, menaje y otros artículos en metales n.c.o.p."
+		,E_316_2 ("316.2","Fabricaci\u00F3n de art\u00EDculos de ferreter\u00EDa, cerrajer\u00EDa, torniller\u00EDa, derivados del alambre, menaje y otros art\u00EDculos en metales n.c.o.p."
 				,32
 				,5
 				,32752.76
 				,new Module[]{new Module(1,"Personal asalariado","Persona",3678.39)
 					,new Module(2,"Personal no asalariado","Persona",16351.18)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",62.98)
-					,new Module(4,"Potencia fiscal vehículo","CVF",125.97)}
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",62.98)
+					,new Module(4,"Potencia fiscal veh\u00EDculo","CVF",125.97)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",8010.65)
-					,new Module(2,"Consumo de energía eléctrica","100 Kwh",42.16)
-					,new Module(3,"Potencia fiscal vehículo","CVF",28.10)}
+					,new Module(2,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",42.16)
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",28.10)}
 				)				
-		,E_316_3 ("316.3","Fabricación de artículos de ferretería, cerrajería, tornillería, derivados del alambre, menaje y otros artículos en metales n.c.o.p."
+		,E_316_3 ("316.3","Fabricaci\u00F3n de art\u00EDculos de ferreter\u00EDa, cerrajer\u00EDa, torniller\u00EDa, derivados del alambre, menaje y otros art\u00EDculos en metales n.c.o.p."
 				,32
 				,5
 				,32752.76
 				,new Module[]{new Module(1,"Personal asalariado","Persona",3678.39)
 					,new Module(2,"Personal no asalariado","Persona",16351.18)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",62.98)
-					,new Module(4,"Potencia fiscal vehículo","CVF",125.97)}
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",62.98)
+					,new Module(4,"Potencia fiscal veh\u00EDculo","CVF",125.97)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",8010.65)
-					,new Module(2,"Consumo de energía eléctrica","100 Kwh",42.16)
-					,new Module(3,"Potencia fiscal vehículo","CVF",28.10)}
+					,new Module(2,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",42.16)
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",28.10)}
 				)
-		,E_316_4 ("316.4","Fabricación de artículos de ferretería, cerrajería, tornillería, derivados del alambre, menaje y otros artículos en metales n.c.o.p."
+		,E_316_4 ("316.4","Fabricaci\u00F3n de art\u00EDculos de ferreter\u00EDa, cerrajer\u00EDa, torniller\u00EDa, derivados del alambre, menaje y otros art\u00EDculos en metales n.c.o.p."
 				,32
 				,5
 				,32752.76
 				,new Module[]{new Module(1,"Personal asalariado","Persona",3678.39)
 					,new Module(2,"Personal no asalariado","Persona",16351.18)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",62.98)
-					,new Module(4,"Potencia fiscal vehículo","CVF",125.97)}
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",62.98)
+					,new Module(4,"Potencia fiscal veh\u00EDculo","CVF",125.97)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",8010.65)
-					,new Module(2,"Consumo de energía eléctrica","100 Kwh",42.16)
-					,new Module(3,"Potencia fiscal vehículo","CVF",28.10)}
+					,new Module(2,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",42.16)
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",28.10)}
 				)
-		,E_316_9 ("316.9","Fabricación de artículos de ferretería, cerrajería, tornillería, derivados del alambre, menaje y otros artículos en metales n.c.o.p."
+		,E_316_9 ("316.9","Fabricaci\u00F3n de art\u00EDculos de ferreter\u00EDa, cerrajer\u00EDa, torniller\u00EDa, derivados del alambre, menaje y otros art\u00EDculos en metales n.c.o.p."
 				,32
 				,5
 				,32752.76
 				,new Module[]{new Module(1,"Personal asalariado","Persona",3678.39)
 					,new Module(2,"Personal no asalariado","Persona",16351.18)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",62.98)
-					,new Module(4,"Potencia fiscal vehículo","CVF",125.97)}
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",62.98)
+					,new Module(4,"Potencia fiscal veh\u00EDculo","CVF",125.97)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",8010.65)
-					,new Module(2,"Consumo de energía eléctrica","100 Kwh",42.16)
-					,new Module(3,"Potencia fiscal vehículo","CVF",28.10)}
+					,new Module(2,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",42.16)
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",28.10)}
 				)
-		,E_419_1 ("419.1","Industrias del pan y de la bollería."
+		,E_419_1 ("419.1","Industrias del pan y de la boller\u00EDa."
 				,20
 				,6
 				,41602.30
@@ -160,7 +171,7 @@ public class Modules2015 {
 					,new Module(2,"Superficie del local","Metro cua.",7.09)
 					,new Module(3,"Superficie del horno","100dm.cua.",30.47)}
 				)
-		,E_419_2 ("419.2","Industrias de la bollería, pastelería y galletas."
+		,E_419_2 ("419.2","Industrias de la boller\u00EDa, pasteler\u00EDa y galletas."
 				,30
 				,6
 				,33760.53
@@ -172,7 +183,7 @@ public class Modules2015 {
 					,new Module(2,"Superficie del local","Metro cua.",8.86)
 					,new Module(3,"Superficie del horno","100dm.cua.",59.34)}
 				)
-		,E_419_3 ("419.3","Industrias de elaboración de masas fritas."
+		,E_419_3 ("419.3","Industrias de elaboraci\u00F3n de masas fritas."
 				,32
 				,6
 				,19670.55
@@ -182,7 +193,7 @@ public class Modules2015 {
 				,new Module[]{new Module(1,"Personal empleado","Persona",2550.92)
 					,new Module(2,"Superficie del local","Metro cua.",10.63)}
 				)
-		,E_423_9 ("423.9","Elaboración de patatas fritas, palomitas de maíz y similares."
+		,E_423_9 ("423.9","Elaboraci\u00F3n de patatas fritas, palomitas de ma\u00EDz y similares."
 				,32
 				,6
 				,19670.55
@@ -192,39 +203,39 @@ public class Modules2015 {
 				,new Module[]{new Module(1,"Personal empleado","Persona",2550.92)
 					,new Module(2,"Superficie del local","Metro cua.",10.63)}
 				)
-		,E_453A  ("453"  ,"Confección en serie de prendas de vestir y sus complementos, excepto cuando su ejecución se realice mayoritariamente por encargo a terceros."
+		,E_453A  ("453"  ,"Confecci\u00F3n en serie de prendas de vestir y sus complementos, excepto cuando su ejecuci\u00F3n se realice mayoritariamente por encargo a terceros."
 				,32
 				,5
 				,38969.48
 				,new Module[]{new Module(1,"Personal asalariado","Persona",3382.36)
 					,new Module(2,"Personal no asalariado","Persona",13730.96)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",125.97)
-					,new Module(4,"Potencia fiscal vehículo","CVF",529.08)}
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",125.97)
+					,new Module(4,"Potencia fiscal veh\u00EDculo","CVF",529.08)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",5232.96)
-					,new Module(2,"Consumo de energía eléctrica","100 Kwh",25.62)
-					,new Module(3,"Potencia fiscal vehículo","CVF",198.40)}
+					,new Module(2,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",25.62)
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",198.40)}
 				)
-		,E_453B  ("453"  ,"Confección en serie de prendas de vestir y sus complementos, ejecutada directamente por la propia empresa, cuando se realice exclusivamente para terceros y por encargo."
+		,E_453B  ("453"  ,"Confecci\u00F3n en serie de prendas de vestir y sus complementos, ejecutada directamente por la propia empresa, cuando se realice exclusivamente para terceros y por encargo."
 				,32
 				,5
 				,29225.54
 				,new Module[]{new Module(1,"Personal asalariado","Persona",2538.34)
 					,new Module(2,"Personal no asalariado","Persona",10298.22)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",94.48)
-					,new Module(4,"Potencia fiscal vehículo","CVF",396.81)}
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",94.48)
+					,new Module(4,"Potencia fiscal veh\u00EDculo","CVF",396.81)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",3926.79)
-					,new Module(2,"Consumo energía eléctrica","100 Kwh",19.01)
-					,new Module(3,"Potencia fiscal vehículo","CVF",148.80)}
+					,new Module(2,"Consumo energ\u00EDa el\u00E9ctrica","100 Kwh",19.01)
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",148.80)}
 				)
-		,E_463   ("463"  ,"Fabricación en serie de piezas de carpintería, parqué y estructuras de madera para la construcción."
+		,E_463   ("463"  ,"Fabricaci\u00F3n en serie de piezas de carpinter\u00EDa, parqu\u00E9 y estructuras de madera para la construcci\u00F3n."
 				,32
 				,5
 				,28463.40
 				,new Module[]{new Module(1,"Personal asalariado","Personas",4037.41)
 					,new Module(2,"Personal no asalariado","Personas",18404.53)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",62.98)}
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",62.98)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",8126.38)
-					,new Module(2,"Consumo de energía eléctrica","100 Kwh",13.23)}
+					,new Module(2,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",13.23)}
 				)
 		,E_468   ("468"  ,"Industria del mueble de madera."
 				,32
@@ -232,208 +243,208 @@ public class Modules2015 {
 				,29534.17
 				,new Module[]{new Module(1,"Personal asalariado","Persona",2947.75)
 					,new Module(2,"Personal no asalariado","Persona",16300.79)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",49.76)}
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",49.76)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",5522.30)
-					,new Module(2,"Consumo de energía eléctrica","100 Kwh",28.10)}
+					,new Module(2,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",28.10)}
 				)
-		,E_474_1 ("474.1","Impresión de textos o imágenes."
+		,E_474_1 ("474.1","Impresi\u00F3n de textos o im\u00E1genes."
 				,30
 				,4
 				,40418.16
 				,new Module[]{new Module(1,"Personal asalariado","Persona",5208.95)
 					,new Module(2,"Personal no asalariado","Persona",21534.93)
-					,new Module(3,"Potencia eléctrica","Kw cont.",484.99)
-					,new Module(4,"Potencia fiscal vehículo","CVF",680.25)}
+					,new Module(3,"Potencia el\u00E9ctrica","Kw cont.",484.99)
+					,new Module(4,"Potencia fiscal veh\u00EDculo","CVF",680.25)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",7861.85)
-					,new Module(2,"Potencia eléctrica","Kw cont.",165.34)
-					,new Module(3,"Potencia fiscal vehículo","CVF",264.53)}
+					,new Module(2,"Potencia el\u00E9ctrica","Kw cont.",165.34)
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",264.53)}
 				)
-		,E_501_3 ("501.3","Albañilería y pequeños trabajos de construcción en general."
+		,E_501_3 ("501.3","Alba\u00F1iler\u00EDa y peque\u00F1os trabajos de construcci\u00F3n en general."
 				,9
 				,6
 				,32078.80
 				,new Module[]{new Module(1,"Personal asalariado","Personas",3640.59)
 					,new Module(2,"Personal no asalariado","Personas",17988.83)
 					,new Module(3,"Superficie del local","Metro cua.",46.60)
-					,new Module(4,"Potencia fiscal vehículo","CVF",201.55)}
+					,new Module(4,"Potencia fiscal veh\u00EDculo","CVF",201.55)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",3401.25)
 					,new Module(2,"Superficie del local","Metro cua.",23.03)
-					,new Module(3,"Potencia fiscal vehículo","CVF",76.18)}
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",76.18)}
 				)
-		,E_504_1 ("504.1","Instalaciones y montajes (excepto fontanería, frío, calor y acondicionamiento de aire)."
+		,E_504_1 ("504.1","Instalaciones y montajes (excepto fontaner\u00EDa, fr\u00EDo, calor y acondicionamiento de aire)."
 				,19
 				,3
 				,40002.45
 				,new Module[]{new Module(1,"Personal asalariado","Persona",6575.75)
 					,new Module(2,"Personal no asalariado","Persona",20854.69)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",69.28)
-					,new Module(4,"Potencia fiscal vehículo","CVF",132.27)}
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",69.28)
+					,new Module(4,"Potencia fiscal veh\u00EDculo","CVF",132.27)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",4601.93)
-					,new Module(2,"Consumo de energía eléctrica","100 Kwh",30.31)
-					,new Module(3,"Potencia fiscal vehículo","CVF",3.70)}
+					,new Module(2,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",30.31)
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",3.70)}
 				)
-		,E_504_2 ("504.2","Instalaciones de fontanería, frío, calor y acondicionamiento de aire."
+		,E_504_2 ("504.2","Instalaciones de fontaner\u00EDa, fr\u00EDo, calor y acondicionamiento de aire."
 				,20
 				,4
 				,33332.23
 				,new Module[]{new Module(1,"Personal asalariado","Persona",8238.58)
 					,new Module(2,"Personal no asalariado","Persona",22360.05)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",138.57)
-					,new Module(4,"Potencia fiscal vehículo","CVF",138.57)}
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",138.57)
+					,new Module(4,"Potencia fiscal veh\u00EDculo","CVF",138.57)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",4775.14)
-					,new Module(2,"Consumo de energía eléctrica","100 Kwh",50.61)
-					,new Module(3,"Potencia fiscal vehículo","CVF",2.96)}
+					,new Module(2,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",50.61)
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",2.96)}
 				)
-		,E_504_3 ("504.3","Instalaciones de fontanería, frío, calor y acondicionamiento de aire."
+		,E_504_3 ("504.3","Instalaciones de fontaner\u00EDa, fr\u00EDo, calor y acondicionamiento de aire."
 				,20
 				,4
 				,33332.23
 				,new Module[]{new Module(1,"Personal asalariado","Persona",8238.58)
 					,new Module(2,"Personal no asalariado","Persona",22360.05)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",138.57)
-					,new Module(4,"Potencia fiscal vehículo","CVF",138.57)}
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",138.57)
+					,new Module(4,"Potencia fiscal veh\u00EDculo","CVF",138.57)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",4775.14)
-					,new Module(2,"Consumo de energía eléctrica","100 Kwh",50.61)
-					,new Module(3,"Potencia fiscal vehículo","CVF",2.96)}
+					,new Module(2,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",50.61)
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",2.96)}
 				)
-		,E_504_4 ("504.4","Instalación de pararrayos y similares. Montaje e instalación de cocinas de todo tipo y clase, con todos sus accesorios. Montaje e instalación de aparatos elevadores de cualquier clase y tipo. Instalaciones telefónicas, telegráficas, telegráficas sin hilos y de televisión, en edificios y construcciones de cualquier clase. Montajes metálicos e instalaciones industriales completas, sin vender ni aportar la maquinaria ni los elementos objeto de la instalación o montaje."
+		,E_504_4 ("504.4","Instalaci\u00F3n de pararrayos y similares. Montaje e instalaci\u00F3n de cocinas de todo tipo y clase, con todos sus accesorios. Montaje e instalaci\u00F3n de aparatos elevadores de cualquier clase y tipo. Instalaciones telef\u00F3nicas, telegr\u00E1ficas, telegr\u00E1ficas sin hilos y de televisi\u00F3n, en edificios y construcciones de cualquier clase. Montajes met\u00E1licos e instalaciones industriales completas, sin vender ni aportar la maquinaria ni los elementos objeto de la instalaci\u00F3n o montaje."
 				,19
 				,3
 				,40002.45
 				,new Module[]{new Module(1,"Personal asalariado","Persona",6575.75)
 					,new Module(2,"Personal no asalariado","Persona",20854.69)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",69.28)
-					,new Module(4,"Potencia fiscal vehículo","CVF",132.27)}
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",69.28)
+					,new Module(4,"Potencia fiscal veh\u00EDculo","CVF",132.27)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",4601.93)
-					,new Module(2,"Consumo de energía eléctrica","100 Kwh",30.31)
-					,new Module(3,"Potencia fiscal vehículo","CVF",3.70)}
+					,new Module(2,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",30.31)
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",3.70)}
 				)
-		,E_504_5 ("504.5","Instalación de pararrayos y similares. Montaje e instalación de cocinas de todo tipo y clase, con todos sus accesorios. Montaje e instalación de aparatos elevadores de cualquier clase y tipo. Instalaciones telefónicas, telegráficas, telegráficas sin hilos y de televisión, en edificios y construcciones de cualquier clase. Montajes metálicos e instalaciones industriales completas, sin vender ni aportar la maquinaria ni los elementos objeto de la instalación o montaje."
+		,E_504_5 ("504.5","Instalaci\u00F3n de pararrayos y similares. Montaje e instalaci\u00F3n de cocinas de todo tipo y clase, con todos sus accesorios. Montaje e instalaci\u00F3n de aparatos elevadores de cualquier clase y tipo. Instalaciones telef\u00F3nicas, telegr\u00E1ficas, telegr\u00E1ficas sin hilos y de televisi\u00F3n, en edificios y construcciones de cualquier clase. Montajes met\u00E1licos e instalaciones industriales completas, sin vender ni aportar la maquinaria ni los elementos objeto de la instalaci\u00F3n o montaje."
 				,19
 				,3
 				,40002.45
 				,new Module[]{new Module(1,"Personal asalariado","Persona",6575.75)
 					,new Module(2,"Personal no asalariado","Persona",20854.69)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",69.28)
-					,new Module(4,"Potencia fiscal vehículo","CVF",132.27)}
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",69.28)
+					,new Module(4,"Potencia fiscal veh\u00EDculo","CVF",132.27)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",4601.93)
-					,new Module(2,"Consumo de energía eléctrica","100 Kwh",30.31)
-					,new Module(3,"Potencia fiscal vehículo","CVF",3.70)}
+					,new Module(2,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",30.31)
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",3.70)}
 				)
-		,E_504_6 ("504.6","Instalación de pararrayos y similares. Montaje e instalación de cocinas de todo tipo y clase, con todos sus accesorios. Montaje e instalación de aparatos elevadores de cualquier clase y tipo. Instalaciones telefónicas, telegráficas, telegráficas sin hilos y de televisión, en edificios y construcciones de cualquier clase. Montajes metálicos e instalaciones industriales completas, sin vender ni aportar la maquinaria ni los elementos objeto de la instalación o montaje."
+		,E_504_6 ("504.6","Instalaci\u00F3n de pararrayos y similares. Montaje e instalaci\u00F3n de cocinas de todo tipo y clase, con todos sus accesorios. Montaje e instalaci\u00F3n de aparatos elevadores de cualquier clase y tipo. Instalaciones telef\u00F3nicas, telegr\u00E1ficas, telegr\u00E1ficas sin hilos y de televisi\u00F3n, en edificios y construcciones de cualquier clase. Montajes met\u00E1licos e instalaciones industriales completas, sin vender ni aportar la maquinaria ni los elementos objeto de la instalaci\u00F3n o montaje."
 				,19
 				,3
 				,40002.45
 				,new Module[]{new Module(1,"Personal asalariado","Persona",6575.75)
 					,new Module(2,"Personal no asalariado","Persona",20854.69)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",69.28)
-					,new Module(4,"Potencia fiscal vehículo","CVF",132.27)}
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",69.28)
+					,new Module(4,"Potencia fiscal veh\u00EDculo","CVF",132.27)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",4601.93)
-					,new Module(2,"Consumo de energía eléctrica","100 Kwh",30.31)
-					,new Module(3,"Potencia fiscal vehículo","CVF",3.70)}
+					,new Module(2,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",30.31)
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",3.70)}
 				)
-		,E_504_7 ("504.7","Instalación de pararrayos y similares. Montaje e instalación de cocinas de todo tipo y clase, con todos sus accesorios. Montaje e instalación de aparatos elevadores de cualquier clase y tipo. Instalaciones telefónicas, telegráficas, telegráficas sin hilos y de televisión, en edificios y construcciones de cualquier clase. Montajes metálicos e instalaciones industriales completas, sin vender ni aportar la maquinaria ni los elementos objeto de la instalación o montaje."
+		,E_504_7 ("504.7","Instalaci\u00F3n de pararrayos y similares. Montaje e instalaci\u00F3n de cocinas de todo tipo y clase, con todos sus accesorios. Montaje e instalaci\u00F3n de aparatos elevadores de cualquier clase y tipo. Instalaciones telef\u00F3nicas, telegr\u00E1ficas, telegr\u00E1ficas sin hilos y de televisi\u00F3n, en edificios y construcciones de cualquier clase. Montajes met\u00E1licos e instalaciones industriales completas, sin vender ni aportar la maquinaria ni los elementos objeto de la instalaci\u00F3n o montaje."
 				,19
 				,3
 				,40002.45
 				,new Module[]{new Module(1,"Personal asalariado","Persona",6575.75)
 					,new Module(2,"Personal no asalariado","Persona",20854.69)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",69.28)
-					,new Module(4,"Potencia fiscal vehículo","CVF",132.27)}
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",69.28)
+					,new Module(4,"Potencia fiscal veh\u00EDculo","CVF",132.27)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",4601.93)
-					,new Module(2,"Consumo de energía eléctrica","100 Kwh",30.31)
-					,new Module(3,"Potencia fiscal vehículo","CVF",3.70)}
+					,new Module(2,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",30.31)
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",3.70)}
 				)
-		,E_504_8 ("504.8","Instalación de pararrayos y similares. Montaje e instalación de cocinas de todo tipo y clase, con todos sus accesorios. Montaje e instalación de aparatos elevadores de cualquier clase y tipo. Instalaciones telefónicas, telegráficas, telegráficas sin hilos y de televisión, en edificios y construcciones de cualquier clase. Montajes metálicos e instalaciones industriales completas, sin vender ni aportar la maquinaria ni los elementos objeto de la instalación o montaje."
+		,E_504_8 ("504.8","Instalaci\u00F3n de pararrayos y similares. Montaje e instalaci\u00F3n de cocinas de todo tipo y clase, con todos sus accesorios. Montaje e instalaci\u00F3n de aparatos elevadores de cualquier clase y tipo. Instalaciones telef\u00F3nicas, telegr\u00E1ficas, telegr\u00E1ficas sin hilos y de televisi\u00F3n, en edificios y construcciones de cualquier clase. Montajes met\u00E1licos e instalaciones industriales completas, sin vender ni aportar la maquinaria ni los elementos objeto de la instalaci\u00F3n o montaje."
 				,19
 				,3
 				,40002.45
 				,new Module[]{new Module(1,"Personal asalariado","Persona",6575.75)
 					,new Module(2,"Personal no asalariado","Persona",20854.69)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",69.28)
-					,new Module(4,"Potencia fiscal vehículo","CVF",132.27)}
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",69.28)
+					,new Module(4,"Potencia fiscal veh\u00EDculo","CVF",132.27)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",4601.93)
-					,new Module(2,"Consumo de energía eléctrica","100 Kwh",30.31)
-					,new Module(3,"Potencia fiscal vehículo","CVF",3.70)}
+					,new Module(2,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",30.31)
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",3.70)}
 				)
-		,E_505_1 ("505.1","Revestimientos, solados y pavimentos y colocación de aislamientos."
+		,E_505_1 ("505.1","Revestimientos, solados y pavimentos y colocaci\u00F3n de aislamientos."
 				,20
 				,4
 				,30038.06
 				,new Module[]{new Module(1,"Personal asalariado","Persona",4112.99)
 					,new Module(2,"Personal no asalariado","Persona",20325.60)
 					,new Module(3,"Superficie del local","Metro cua.",21.41)
-					,new Module(4,"Potencia fiscal vehículo","CVF",245.64)}
+					,new Module(4,"Potencia fiscal veh\u00EDculo","CVF",245.64)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",2432.84)
 					,new Module(2,"Superficie del local","Metro cua.",5.91)
-					,new Module(3,"Potencia fiscal vehículo","CVF",59.05)}
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",59.05)}
 				)
-		,E_505_2 ("505.2","Revestimientos, solados y pavimentos y colocación de aislamientos."	,20
+		,E_505_2 ("505.2","Revestimientos, solados y pavimentos y colocaci\u00F3n de aislamientos."	,20
 				,4
 				,30038.06
 				,new Module[]{new Module(1,"Personal asalariado","Persona",4112.99)
 					,new Module(2,"Personal no asalariado","Persona",20325.60)
 					,new Module(3,"Superficie del local","Metro cua.",21.41)
-					,new Module(4,"Potencia fiscal vehículo","CVF",245.64)}
+					,new Module(4,"Potencia fiscal veh\u00EDculo","CVF",245.64)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",2432.84)
 					,new Module(2,"Superficie del local","Metro cua.",5.91)
-					,new Module(3,"Potencia fiscal vehículo","CVF",59.05)}
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",59.05)}
 				)
-		,E_505_3 ("505.3","Revestimientos, solados y pavimentos y colocación de aislamientos."
+		,E_505_3 ("505.3","Revestimientos, solados y pavimentos y colocaci\u00F3n de aislamientos."
 				,20
 				,4
 				,30038.06
 				,new Module[]{new Module(1,"Personal asalariado","Persona",4112.99)
 					,new Module(2,"Personal no asalariado","Persona",20325.60)
 					,new Module(3,"Superficie del local","Metro cua.",21.41)
-					,new Module(4,"Potencia fiscal vehículo","CVF",245.64)}
+					,new Module(4,"Potencia fiscal veh\u00EDculo","CVF",245.64)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",2432.84)
 					,new Module(2,"Superficie del local","Metro cua.",5.91)
-					,new Module(3,"Potencia fiscal vehículo","CVF",59.05)}
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",59.05)}
 				)
-		,E_505_4 ("505.4","Revestimientos, solados y pavimentos y colocación de aislamientos."
+		,E_505_4 ("505.4","Revestimientos, solados y pavimentos y colocaci\u00F3n de aislamientos."
 				,20
 				,4
 				,30038.06
 				,new Module[]{new Module(1,"Personal asalariado","Persona",4112.99)
 					,new Module(2,"Personal no asalariado","Persona",20325.60)
 					,new Module(3,"Superficie del local","Metro cua.",21.41)
-					,new Module(4,"Potencia fiscal vehículo","CVF",245.64)}
+					,new Module(4,"Potencia fiscal veh\u00EDculo","CVF",245.64)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",2432.84)
 					,new Module(2,"Superficie del local","Metro cua.",5.91)
-					,new Module(3,"Potencia fiscal vehículo","CVF",59.05)}
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",59.05)}
 				)
-		,E_505_5 ("505.5","Carpintería y cerrajería."
+		,E_505_5 ("505.5","Carpinter\u00EDa y cerrajer\u00EDa."
 				,20
 				,4
 				,28356.33
 				,new Module[]{new Module(1,"Personal asalariado","Persona",6689.12)
 					,new Module(2,"Personal no asalariado","Persona",19154.07)
-					,new Module(3,"Potencia fiscal vehículo","CVF",144.87)}
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",144.87)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",3354.01)
-					,new Module(2,"Potencia fiscal vehículo","CVF",16.93)}
+					,new Module(2,"Potencia fiscal veh\u00EDculo","CVF",16.93)}
 				)
-		,E_505_6 ("505.6","Pintura de cualquier tipo y clase y revestimiento con papel, tejidos o plásticos y terminación y decoración de edificios y locales."
+		,E_505_6 ("505.6","Pintura de cualquier tipo y clase y revestimiento con papel, tejidos o pl\u00E1sticos y terminaci\u00F3n y decoraci\u00F3n de edificios y locales."
 				,30
 				,3
 				,26687.20
 				,new Module[]{new Module(1,"Personal asalariado","Persona",6027.77)
 					,new Module(2,"Personal no asalariado","Persona",17648.70)
-					,new Module(3,"Potencia fiscal vehículo","CVF",144.87)}
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",144.87)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",2629.68)
-					,new Module(2,"Potencia fiscal vehículo","CVF",14.18)}
+					,new Module(2,"Potencia fiscal veh\u00EDculo","CVF",14.18)}
 				)
-		,E_505_7 ("505.7","Trabajos en yeso y escayola y decoración de edificios y locales."
+		,E_505_7 ("505.7","Trabajos en yeso y escayola y decoraci\u00F3n de edificios y locales."
 				,30
 				,3
 				,26687.20
 				,new Module[]{new Module(1,"Personal asalariado","Persona",6027.77)
 					,new Module(2,"Personal no asalariado","Persona",17648.70)
-					,new Module(3,"Potencia fiscal vehículo","CVF",144.87)}
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",144.87)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",2629.68)
-					,new Module(2,"Potencia fiscal vehículo","CVF",14.18)}
+					,new Module(2,"Potencia fiscal veh\u00EDculo","CVF",14.18)}
 				)
-		,E_641 ("641","Comercio al por menor de frutas, verduras, hortalizas y tubérculos."
+		,E_641 ("641","Comercio al por menor de frutas, verduras, hortalizas y tub\u00E9rculos."
 				,0
 				,5
 				,16867.67
@@ -446,7 +457,7 @@ public class Modules2015 {
 					,new Module(7,"","",0.00)}
 				,null
 				)
-		,E_642_1 ("642.1","Comercio al por menor de carne y despojos; de productos y derivados cárnicos elaborados, salvo casquerías."
+		,E_642_1 ("642.1","Comercio al por menor de carne y despojos; de productos y derivados c\u00E1rnicos elaborados, salvo casquer\u00EDas."
 				,32
 				,5
 				,21635.71
@@ -454,11 +465,11 @@ public class Modules2015 {
 					,new Module(2,"Personal no asalariado","Persona",10991.07)
 					,new Module(3,"Superficie local independiente","Metro cua.",35.90)
 					,new Module(4,"Superficie local no independiente","Metro cua.",81.88)
-					,new Module(5,"Consumo de energía eléctrica","100 Kwh",39.05)}
+					,new Module(5,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",39.05)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",1753.76)
 					,new Module(2,"Superficie del local","Metro cua.",2.21)}
 				)
-		,E_642_2 ("642.2","Comercio al por menor de carne y despojos; de productos y derivados cárnicos elaborados, salvo casquerías."
+		,E_642_2 ("642.2","Comercio al por menor de carne y despojos; de productos y derivados c\u00E1rnicos elaborados, salvo casquer\u00EDas."
 				,32
 				,5
 				,21635.71
@@ -466,11 +477,11 @@ public class Modules2015 {
 					,new Module(2,"Personal no asalariado","Persona",10991.07)
 					,new Module(3,"Superficie local independiente","Metro cua.",35.90)
 					,new Module(4,"Superficie local no independiente","Metro cua.",81.88)
-					,new Module(5,"Consumo de energía eléctrica","100 Kwh",39.05)}
+					,new Module(5,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",39.05)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",1753.76)
 					,new Module(2,"Superficie del local","Metro cua.",2.21)}
 				)
-		,E_642_3 ("642.3","Comercio al por menor de carne y despojos; de productos y derivados cárnicos elaborados, salvo casquerías."
+		,E_642_3 ("642.3","Comercio al por menor de carne y despojos; de productos y derivados c\u00E1rnicos elaborados, salvo casquer\u00EDas."
 				,32
 				,5
 				,21635.71
@@ -478,11 +489,11 @@ public class Modules2015 {
 					,new Module(2,"Personal no asalariado","Persona",10991.07)
 					,new Module(3,"Superficie local independiente","Metro cua.",35.90)
 					,new Module(4,"Superficie local no independiente","Metro cua.",81.88)
-					,new Module(5,"Consumo de energía eléctrica","100 Kwh",39.05)}
+					,new Module(5,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",39.05)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",1753.76)
 					,new Module(2,"Superficie del local","Metro cua.",2.21)}
 				)
-		,E_642_4 ("642.4","Comercio al por menor de carne y despojos; de productos y derivados cárnicos elaborados, salvo casquerías."
+		,E_642_4 ("642.4","Comercio al por menor de carne y despojos; de productos y derivados c\u00E1rnicos elaborados, salvo casquer\u00EDas."
 				,0
 				,5
 				,21635.71
@@ -490,25 +501,25 @@ public class Modules2015 {
 					,new Module(2,"Personal no asalariado","Persona",10991.07)
 					,new Module(3,"Superficie local independiente","Metro cua.",35.90)
 					,new Module(4,"Superficie local no independiente","Metro cua.",81.88)
-					,new Module(5,"Consumo de energía eléctrica","100 Kwh",39.05)
+					,new Module(5,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",39.05)
 					,new Module(6,"","",0.00)
 					,new Module(7,"","",0.00)}
 				,null
 				)
-		,E_642_5 ("642.5","Comerciantes minoristas matriculados en el epígrafe 642.5 por el asado de pollos."
+		,E_642_5 ("642.5","Comerciantes minoristas matriculados en el ep\u00EDgrafe 642.5 por el asado de pollos."
 				,32
 				,4
 				,20136.65
 				,new Module[]{new Module(1,"Personal asalariado","Persona",3382.36)
 					,new Module(2,"Personal no asalariado","Persona",11337.49)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",25.19)
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",25.19)
 					,new Module(4,"Superficie del local independiente","Metro cua.",27.08)
 					,new Module(5,"Superficie del local no independiente","Metro cua.",58.57)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",673.16)
 					,new Module(2,"Superficie del local","Metro cua.",13.29)
 					,new Module(3,"Capacidad del asador","Pieza",62.89)}
 				)
-		,E_642_6 ("642.6","Comercio al por menor, en casquerías, de vísceras y despojos procedentes de animales de abasto, frescos y congelados."
+		,E_642_6 ("642.6","Comercio al por menor, en casquer\u00EDas, de v\u00EDsceras y despojos procedentes de animales de abasto, frescos y congelados."
 				,0
 				,5
 				,16237.81
@@ -516,7 +527,7 @@ public class Modules2015 {
 					,new Module(2,"Personal no asalariado","Persona",11098.14)
 					,new Module(3,"Superficie local independiente","Metro cua.",27.71)
 					,new Module(4,"Superficie local no independiente","Metro cua.",69.28)
-					,new Module(5,"Consumo de energía eléctrica","100 Kwh",35.90)
+					,new Module(5,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",35.90)
 					,new Module(6,"","",0.00)
 					,new Module(7,"","",0.00)}
 				,null
@@ -529,7 +540,7 @@ public class Modules2015 {
 					,new Module(2,"Personal no asalariado","Persona",13296.36)
 					,new Module(3,"Superficie local independiente","Metro cua.",36.53)
 					,new Module(4,"Superficie local no independiente","Metro cua.",113.37)
-					,new Module(5,"Consumo de energía eléctrica","100 Kwh",28.98)
+					,new Module(5,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",28.98)
 					,new Module(6,"","",0.00)
 					,new Module(7,"","",0.00)}
 				,null
@@ -542,19 +553,19 @@ public class Modules2015 {
 					,new Module(2,"Personal no asalariado","Persona",13296.36)
 					,new Module(3,"Superficie local independiente","Metro cua.",36.53)
 					,new Module(4,"Superficie local no independiente","Metro cua.",113.37)
-					,new Module(5,"Consumo de energía eléctrica","100 Kwh",28.98)
+					,new Module(5,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",28.98)
 					,new Module(6,"","",0.00)
 					,new Module(7,"","",0.00)}
 				,null
 				)
-		,E_644_1 ("644.1","Comercio al por menor de pan, pastelería, confitería y similares y de leche y productos lácteos."
+		,E_644_1 ("644.1","Comercio al por menor de pan, pasteler\u00EDa, confiter\u00EDa y similares y de leche y productos l\u00E1cteos."
 				,20
 				,6
 				,43605.26
-				,new Module[]{new Module(1,"Personal asalariado de fabricación","Persona",6248.22)
+				,new Module[]{new Module(1,"Personal asalariado de fabricaci\u00F3n","Persona",6248.22)
 					,new Module(2,"Resto personal asalariado","Persona",1058.17)
 					,new Module(3,"Personal no asalariado","Persona",14530.89)
-					,new Module(4,"Superficie del local de fabricación","Metro cua.",49.13)
+					,new Module(4,"Superficie del local de fabricaci\u00F3n","Metro cua.",49.13)
 					,new Module(5,"Resto superficie local independiente","Metro cua.",34.01)
 					,new Module(6,"Resto superficie local no independiente.","Metro cua.",125.97)
 					,new Module(7,"Superficie del horno","100dm.cua.",629.86)}
@@ -566,14 +577,14 @@ public class Modules2015 {
 					,new Module(6,"","",0.00)
 					,new Module(7,"","",0.00)}
 				)
-		,E_644_2 ("644.2","Despachos de pan, panes especiales y bollería."
+		,E_644_2 ("644.2","Despachos de pan, panes especiales y boller\u00EDa."
 				,20
 				,6
 				,42925.01
-				,new Module[]{new Module(1,"Personal asalariado de fabricación","Persona",6134.85)
+				,new Module[]{new Module(1,"Personal asalariado de fabricaci\u00F3n","Persona",6134.85)
 					,new Module(2,"Resto personal asalariado","Persona",1039.27)
 					,new Module(3,"Personal no asalariado","Persona",14266.34)
-					,new Module(4,"Superficie del local de fabricación","Metro cua.",48.50)
+					,new Module(4,"Superficie del local de fabricaci\u00F3n","Metro cua.",48.50)
 					,new Module(5,"Resto superficie local independiente","Metro cua.",33.38)
 					,new Module(6,"Resto superficie local no independiente.","Metro cua.",125.97)
 					,new Module(7,"Superficie del horno","100dm.cua.",629.86)}
@@ -585,14 +596,14 @@ public class Modules2015 {
 					,new Module(6,"","",0.00)
 					,new Module(7,"","",0.00)}
 				)
-		,E_644_3 ("644.3","Comercio al por menor de productos de pastelería, bollería y confitería."
+		,E_644_3 ("644.3","Comercio al por menor de productos de pasteler\u00EDa, boller\u00EDa y confiter\u00EDa."
 				,30
 				,6
 				,33760.53
-				,new Module[]{new Module(1,"Personal asalariado de fabricación","Persona",6367.89)
+				,new Module[]{new Module(1,"Personal asalariado de fabricaci\u00F3n","Persona",6367.89)
 					,new Module(2,"Resto personal asalariado","Persona",1014.08)
 					,new Module(3,"Personal no asalariado","Persona",12912.15)
-					,new Module(4,"Superficie del local de fabricación","Metro cua.",43.46)
+					,new Module(4,"Superficie del local de fabricaci\u00F3n","Metro cua.",43.46)
 					,new Module(5,"Resto superficie local independiente","Metro cua.",34.01)
 					,new Module(6,"Resto superficie local no independiente.","Metro cua.",113.37)
 					,new Module(7,"Superficie del horno","100dm.cua.",522.78)}
@@ -605,10 +616,10 @@ public class Modules2015 {
 				,32
 				,6
 				,19670.55
-				,new Module[]{new Module(1,"Personal asalariado de fabricación","Persona",6852.88)
+				,new Module[]{new Module(1,"Personal asalariado de fabricaci\u00F3n","Persona",6852.88)
 					,new Module(2,"Resto personal asalariado","Persona",2254.90)
 					,new Module(3,"Personal no asalariado","Persona",13214.47)
-					,new Module(4,"Superficie del local de fabricación","Metro cua.",27.71)
+					,new Module(4,"Superficie del local de fabricaci\u00F3n","Metro cua.",27.71)
 					,new Module(5,"Resto superficie local independiente","Metro cua.",21.41)
 					,new Module(6,"Resto superficie local no independiente","Metro cua.",36.53)
 					,new Module(7,"","",0.00)}
@@ -616,7 +627,7 @@ public class Modules2015 {
 					,new Module(2,"Superficie del local","Metro cua.",10.63)
 					,new Module(3,"Importe total de las comisiones loterias","Euro",0.21)}
 				)
-		,E_647_1 ("647.1","Comerciantes minoristas matriculados en el epígrafe 647.1 por el servicio de comercialización de loterías."
+		,E_647_1 ("647.1","Comerciantes minoristas matriculados en el ep\u00EDgrafe 647.1 por el servicio de comercializaci\u00F3n de loter\u00EDas."
 				,75
 				,5
 				,15822.10
@@ -624,36 +635,36 @@ public class Modules2015 {
 					,new Module(2,"Personal no asalariado","Persona",10839.90)
 					,new Module(3,"Superficie local independiente","Metro cua.",20.15)
 					,new Module(4,"Superficie local no independiente","Metro cua.",68.65)
-					,new Module(5,"Consumo de energía eléctrica","100 Kwh",8.81)}
+					,new Module(5,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",8.81)}
 				,new Module[]{new Module(1,"Importe total comisiones percibidas","Euro",0.21)}
 				)
-		,E_647_2 ("647.2","Comerciantes minoristas matriculados en el epígrafe 647.2 y 3 por el servicio de comercialización de loterías."
+		,E_647_2 ("647.2","Comerciantes minoristas matriculados en el ep\u00EDgrafe 647.2 y 3 por el servicio de comercializaci\u00F3n de loter\u00EDas."
 				,75
 				,4
 				,25219.62
 				,new Module[]{new Module(1,"Personal asalariado","Persona",1788.80)
 					,new Module(2,"Personal no asalariado","Persona",10827.31)
 					,new Module(3,"Superficie del local","Metro cua.",23.31)
-					,new Module(4,"Consumo de energía eléctrica","100 Kwh",32.75)}
+					,new Module(4,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",32.75)}
 				,new Module[]{new Module(1,"Importe total comisiones percibidas","Euro",0.21)}
 				)
-		,E_647_3 ("647.3","Comerciantes minoristas matriculados en el epígrafe 647.2 y 3 por el servicio de comercialización de loterías."
+		,E_647_3 ("647.3","Comerciantes minoristas matriculados en el ep\u00EDgrafe 647.2 y 3 por el servicio de comercializaci\u00F3n de loter\u00EDas."
 				,75
 				,4
 				,25219.62
 				,new Module[]{new Module(1,"Personal asalariado","Persona",1788.80)
 					,new Module(2,"Personal no asalariado","Persona",10827.31)
 					,new Module(3,"Superficie del local","Metro cua.",23.31)
-					,new Module(4,"Consumo energía eléctrica","100 Kwh",32.75)}
+					,new Module(4,"Consumo energ\u00EDa el\u00E9ctrica","100 Kwh",32.75)}
 				,new Module[]{new Module(1,"Importe total comisiones percibidas","Euro",0.21)}
 				)
-		,E_651_1 ("651.1","Comercio al por menor de productos textiles, confecciones para el hogar, alfombras y similares y artículos de tapicería."
+		,E_651_1 ("651.1","Comercio al por menor de productos textiles, confecciones para el hogar, alfombras y similares y art\u00EDculos de tapicer\u00EDa."
 				,0
 				,4
 				,23638.67
 				,new Module[]{new Module(1,"Personal asalariado","Personas",3010.74)
 					,new Module(2,"Personal no asalariado","Personas",13812.85)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",38.42)
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",38.42)
 					,new Module(4,"Superficie del local independiente","Metro cua.",35.28)
 					,new Module(5,"Superficie del local no independiente","Metro cua.",107.07)}
 				,null
@@ -665,67 +676,67 @@ public class Modules2015 {
 				,new Module[]{new Module(1,"Personal asalariado","Persona",2569.83)
 					,new Module(2,"Personal no asalariado","Persona",13995.51)
 					,new Module(3,"Superficie del local","Metro cua.",49.13)
-					,new Module(4,"Consumo de energía eléctrica","100 Kwh",56.69)}
+					,new Module(4,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",56.69)}
 				,null
 				)
-		,E_651_3 ("651.3","Comercio al por menor de lencería, corsetería y prendas especiales."
+		,E_651_3 ("651.3","Comercio al por menor de lencer\u00EDa, corseter\u00EDa y prendas especiales."
 				,0
 				,3
 				,19626.46
 				,new Module[]{new Module(1,"Personal asalariado","Persona",2198.21)
 					,new Module(2,"Personal no asalariado","Persona",11998.85)
 					,new Module(3,"Superficie del local","Metro cua.",47.87)
-					,new Module(4,"Consumo de energía eléctrica","100 Kwh",75.58)}
+					,new Module(4,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",75.58)}
 				,null
 				)
-		,E_651_4 ("651.4","Comercio al por menor de artículos de mercería y paquetería."
+		,E_651_4 ("651.4","Comercio al por menor de art\u00EDculos de mercer\u00EDa y paqueter\u00EDa."
 				,0
 				,4
 				,14862.05
 				,new Module[]{new Module(1,"Personal asalariado","Persona",1902.18)
 					,new Module(2,"Personal no asalariado","Persona",10291.93)
 					,new Module(3,"Superficie del local","Metro cua.",28.98)
-					,new Module(4,"Consumo de energía eléctrica","100 Kwh",58.57)}
+					,new Module(4,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",58.57)}
 				,null
 				)
-		,E_651_5 ("651.5","Comercio al por menor de lencería, corsetería y prendas especiales."
+		,E_651_5 ("651.5","Comercio al por menor de lencer\u00EDa, corseter\u00EDa y prendas especiales."
 				,0
 				,3
 				,19626.46
 				,new Module[]{new Module(1,"Personal asalariado","Persona",2198.21)
 					,new Module(2,"Personal no asalariado","Persona",11998.85)
 					,new Module(3,"Superficie del local","Metro cua.",47.87)
-					,new Module(4,"Consumo de energía eléctrica","100 Kwh",75.58)}
+					,new Module(4,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",75.58)}
 				,null
 				)
-		,E_651_6 ("651.6","Comercio al por menor de calzado, artículos de piel e imitación o productos sustitutivos, cinturones, carteras, bolsos, maletas y artículos de viaje en general."
+		,E_651_6 ("651.6","Comercio al por menor de calzado, art\u00EDculos de piel e imitaci\u00F3n o productos sustitutivos, cinturones, carteras, bolsos, maletas y art\u00EDculos de viaje en general."
 				,0
 				,5
 				,24306.32
 				,new Module[]{new Module(1,"Personal asalariado","Persona",3130.41)
 					,new Module(2,"Personal no asalariado","Persona",13453.83)
 					,new Module(3,"Superficie del local","Metro cua.",27.71)
-					,new Module(4,"Consumo energía eléctrica","100 Kwh",52.27)}
+					,new Module(4,"Consumo energ\u00EDa el\u00E9ctrica","100 Kwh",52.27)}
 				,null
 				)
-		,E_652_2 ("652.2","Comerciantes minoristas matriculados en el epígrafe 652.2 y 3 por el servicio de comercialización de loterías."
+		,E_652_2 ("652.2","Comerciantes minoristas matriculados en el ep\u00EDgrafe 652.2 y 3 por el servicio de comercializaci\u00F3n de loter\u00EDas."
 				,75
 				,4
 				,25333.00
 				,new Module[]{new Module(1,"Personal asalariado","Personas",3722.48)
 					,new Module(2,"Personal no asalariado","Personas",12786.18)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",31.49)
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",31.49)
 					,new Module(4,"Superficie del local independiente","Metro cua.",18.27)
 					,new Module(5,"Superficie del local no independiente","Metro cua.",55.43)}
 				,new Module[]{new Module(1,"Importe total comisiones percibidas","Euro",0.21)}
 				)
-		,E_652_3 ("652.3","Comerciantes minoristas matriculados en el epígrafe 652.2 y 3 por el servicio de comercialización de loterías."
+		,E_652_3 ("652.3","Comerciantes minoristas matriculados en el ep\u00EDgrafe 652.2 y 3 por el servicio de comercializaci\u00F3n de loter\u00EDas."
 				,75
 				,4
 				,25333.00
 				,new Module[]{new Module(1,"Personal asalariado","Personas",3722.48)
 					,new Module(2,"Personal no asalariado","Personas",12786.18)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",31.49)
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",31.49)
 					,new Module(4,"Superficie del local independiente","Metro cua.",18.27)
 					,new Module(5,"Superficie del local no independiente","Metro cua.",55.43)}
 				,new Module[]{new Module(1,"Importe total comisiones percibidas","Euro",0.21)}
@@ -736,221 +747,221 @@ public class Modules2015 {
 				,30718.31
 				,new Module[]{new Module(1,"Personal asalariado","Persona",4075.20)
 					,new Module(2,"Personal no asalariado","Persona",16200.02)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",50.39)
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",50.39)
 					,new Module(4,"Superficie del local","Metro cua.",16.38)}
 				,null
 				)
-		,E_653_2 ("653.2","Comercio al por menor de material y aparatos eléctricos, electrónicos, electrodomésticos y otros aparatos de uso doméstico accionados por otro tipo de energía distinta de la eléctrica, así como muebles de cocina"
+		,E_653_2 ("653.2","Comercio al por menor de material y aparatos el\u00E9ctricos, electr\u00F3nicos, electrodom\u00E9sticos y otros aparatos de uso dom\u00E9stico accionados por otro tipo de energ\u00EDa distinta de la el\u00E9ctrica, as\u00ED como muebles de cocina"
 				,48
 				,3
 				,26189.61
 				,new Module[]{new Module(1,"Personal asalariado","Persona",2884.77)
 					,new Module(2,"Personal no asalariado","Persona",14656.86)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",100.78)
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",100.78)
 					,new Module(4,"Superficie del local independiente","Metro cua.",36.53)
 					,new Module(5,"Superficie del local no independiente","Metro cua.",113.37)}
 				,new Module[]{new Module(1,"Personal empleado reparacion","Persona",5819.91)
-					,new Module(2,"Superficie taller reparación","Metro cua.",5.71)}
+					,new Module(2,"Superficie taller reparaci\u00F3n","Metro cua.",5.71)}
 				)
-		,E_653_3 ("653.3","Comercio al por menor de artículos de menaje, ferretería, adorno, regalo, o reclamo (incluyendo bisutería y pequeños electrodomésticos)."
+		,E_653_3 ("653.3","Comercio al por menor de art\u00EDculos de menaje, ferreter\u00EDa, adorno, regalo, o reclamo (incluyendo bisuter\u00EDa y peque\u00F1os electrodom\u00E9sticos)."
 				,0
 				,4
 				,24470.09
 				,new Module[]{new Module(1,"Personal asalariado","Personas",3709.88)
 					,new Module(2,"Personal no asalariado","Personas",15116.66)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",51.02)
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",51.02)
 					,new Module(4,"Superficie del local","Metro cua.",21.41)}
 				,null
 				)
-		,E_653_4 ("653.4","Comercio al por menor de materiales de construcción, artículos y mobiliario de saneamiento, puertas, ventanas, persianas, etc."
+		,E_653_4 ("653.4","Comercio al por menor de materiales de construcci\u00F3n, art\u00EDculos y mobiliario de saneamiento, puertas, ventanas, persianas, etc."
 				,13
 				,3
 				,26454.15
 				,new Module[]{new Module(1,"Personal asalariado","Persona",3061.12)
 					,new Module(2,"Personal no asalariado","Persona",16527.55)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",94.48)
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",94.48)
 					,new Module(4,"Superficie del local","Metro cua.",8.81)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",12317.71)
-					,new Module(2,"Consumo de energía eléctrica","100 Kwh",239.74)
+					,new Module(2,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",239.74)
 					,new Module(3,"Superficie del local","Metro cua.",9.10)}
 				)
-		,E_653_5 ("653.5","Comercio al por menor de materiales de construcción, artículos y mobiliario de saneamiento, puertas, ventanas, persianas, etc."
+		,E_653_5 ("653.5","Comercio al por menor de materiales de construcci\u00F3n, art\u00EDculos y mobiliario de saneamiento, puertas, ventanas, persianas, etc."
 				,13
 				,3
 				,26454.15
 				,new Module[]{new Module(1,"Personal asalariado","Persona",3061.12)
 					,new Module(2,"Personal no asalariado","Persona",16527.55)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",94.48)
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",94.48)
 					,new Module(4,"Superficie del local","Metro cua.",8.81)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",12317.71)
-					,new Module(2,"Consumo de energía eléctrica","100 Kwh",239.74)
+					,new Module(2,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",239.74)
 					,new Module(3,"Superficie del local","Metro cua.",9.10)}
 				)
-		,E_653_9 ("653.9","Comercio al por menor de otros artículos para el equipamiento del hogar n.c.o.p."
+		,E_653_9 ("653.9","Comercio al por menor de otros art\u00EDculos para el equipamiento del hogar n.c.o.p."
 				,0
 				,3
 				,32765.35
 				,new Module[]{new Module(1,"Personal asalariado","Persona",4950.71)
 					,new Module(2,"Personal no asalariado","Persona",20061.07)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",81.88)
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",81.88)
 					,new Module(4,"Superficie del local","Metro cua.",39.68)}
 				,null
 				)
-		,E_654_2 ("654.2","Comercio al por menor de accesorios y piezas de recambio para vehículos terrestres."
+		,E_654_2 ("654.2","Comercio al por menor de accesorios y piezas de recambio para veh\u00EDculos terrestres."
 				,13
 				,4
 				,32815.74
 				,new Module[]{new Module(1,"Personal asalariado","Persona",3098.92)
 					,new Module(2,"Personal no asalariado","Persona",17018.84)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",201.55)
-					,new Module(4,"Potencia fiscal vehículo","CVF",617.26)}
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",201.55)
+					,new Module(4,"Potencia fiscal veh\u00EDculo","CVF",617.26)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",15558.35)
-					,new Module(2,"Consumo de energía eléctrica","100 Kwh",272.80)
-					,new Module(3,"Potencia fiscal vehículo","CVF",620.03)}
+					,new Module(2,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",272.80)
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",620.03)}
 				)
-		,E_654_5 ("654.5","Comercio al por menor de toda clase de maquinaria (excepto aparatos del hogar, de oficina, médicos, ortopédicos, ópticos y fotográficos)."
+		,E_654_5 ("654.5","Comercio al por menor de toda clase de maquinaria (excepto aparatos del hogar, de oficina, m\u00E9dicos, ortop\u00E9dicos, \u00F3pticos y fotogr\u00E1ficos)."
 				,13
 				,3
 				,31367.06
 				,new Module[]{new Module(1,"Personal asalariado","Persona",9422.71)
 					,new Module(2,"Personal no asalariado","Persona",18858.03)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",39.05)
-					,new Module(4,"Potencia fiscal vehículo","CVF",132.27)}
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",39.05)
+					,new Module(4,"Potencia fiscal veh\u00EDculo","CVF",132.27)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",18021.89)
-					,new Module(2,"Consumo de energía eléctrica","100 Kwh",74.41)
-					,new Module(3,"Potencia fiscal vehículo","CVF",82.66)}
+					,new Module(2,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",74.41)
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",82.66)}
 				)
-		,E_654_6 ("654.6","Comercio al por menor de cubiertas, bandas o bandajes y cámaras de aire para toda clase de vehículos, excepto las actividades de comercio al por mayor de los artículos citados."
+		,E_654_6 ("654.6","Comercio al por menor de cubiertas, bandas o bandajes y c\u00E1maras de aire para toda clase de veh\u00EDculos, excepto las actividades de comercio al por mayor de los art\u00EDculos citados."
 				,13
 				,4
 				,26970.63
 				,new Module[]{new Module(1,"Personal asalariado","Persona",2746.19)
 					,new Module(2,"Personal no asalariado","Persona",14222.25)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",119.67)
-					,new Module(4,"Potencia fiscal vehículo","CVF",377.92)}
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",119.67)
+					,new Module(4,"Potencia fiscal veh\u00EDculo","CVF",377.92)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",14152.98)
-					,new Module(2,"Consumo de energía eléctrica","100 Kwh",206.67)
-					,new Module(3,"Potencia fiscal vehículo","CVF",372.02)}
+					,new Module(2,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",206.67)
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",372.02)}
 				)
 
-		,E_659_2 ("659.2","Comercio al por menor de muebles de oficina y de máquinas y equipos de oficina."
+		,E_659_2 ("659.2","Comercio al por menor de muebles de oficina y de m\u00E1quinas y equipos de oficina."
 				,0
 				,4
 				,30718.31
 				,new Module[]{new Module(1,"Personal asalariado","Persona",4157.08)
 					,new Module(2,"Personal no asalariado","Persona",16521.25)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",56.69)
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",56.69)
 					,new Module(4,"Superficie","Metro cua.",17.01)}
 				,null
 				)
-		,E_659_3 ("659.3","Comerciantes minoristas matriculados en el epígrafe 659.3 por el servicio de recogida de negativos y otro material fotográfico impresionado para su procesado en laboratorio de terceros y la entrega de las correspondientes copias y ampliaciones."
+		,E_659_3 ("659.3","Comerciantes minoristas matriculados en el ep\u00EDgrafe 659.3 por el servicio de recogida de negativos y otro material fotogr\u00E1fico impresionado para su procesado en laboratorio de terceros y la entrega de las correspondientes copias y ampliaciones."
 				,13
 				,3
 				,35524.14
 				,new Module[]{new Module(1,"Personal asalariado","Persona",7174.12)
 					,new Module(2,"Personal no asalariado","Persona",19273.74)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",119.67)
-					,new Module(4,"Potencia fiscal vehículo","CVF",1070.76)}
-				,new Module[]{new Module(1,"Personal recogida material fotográfico","Persona",14533.25)
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",119.67)
+					,new Module(4,"Potencia fiscal veh\u00EDculo","CVF",1070.76)}
+				,new Module[]{new Module(1,"Personal recogida material fotogr\u00E1fico","Persona",14533.25)
 					,new Module(2,"Superficie del local","Metro cua.",30.59)}
 				)			
-		,E_659_4A("659.4","Comercio al por menor de libros, periódicos, artículos de papelería y escritorio y artículos de dibujo y bellas artes, excepto en quioscos situados en la vía pública."
+		,E_659_4A("659.4","Comercio al por menor de libros, peri\u00F3dicos, art\u00EDculos de papeler\u00EDa y escritorio y art\u00EDculos de dibujo y bellas artes, excepto en quioscos situados en la v\u00EDa p\u00FAblica."
 				,75
 				,3
 				,25207.02
 				,new Module[]{new Module(1,"Personal asalariado","Persona",4648.37)
 					,new Module(2,"Personal no asalariado","Persona",17176.30)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",57.94)
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",57.94)
 					,new Module(4,"Superficie del local","Metro cua.",30.86)
-					,new Module(5,"Potencia fiscal del vehículo","CVF",535.38)}
+					,new Module(5,"Potencia fiscal del veh\u00EDculo","CVF",535.38)}
 				,new Module[]{new Module(1,"Importe total comisiones percibidas","Euro",0.21)}
 				)
-		,E_659_4B("659.4","Comercio al por menor de prensa, revistas y libros en quioscos situados en la vía pública."
+		,E_659_4B("659.4","Comercio al por menor de prensa, revistas y libros en quioscos situados en la v\u00EDa p\u00FAblica."
 				,75
 				,2
 				,28860.22
 				,new Module[]{new Module(1,"Personal asalariado","Persona",3476.83)
 					,new Module(2,"Personal no asalariado","Persona",17220.39)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",403.11)
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",403.11)
 					,new Module(4,"Superficie del local","Metro cua.",844.02)}
 				,new Module[]{new Module(1,"Importe total comisiones percibidas","Euro",0.21)}
 				)
 
-		,E_659_6 ("659.6","Comercio al por menor de juguetes, artículos de deporte, prendas deportivas de vestido, calzado y tocado, armas, cartuchería y artículos de pirotecnia."
+		,E_659_6 ("659.6","Comercio al por menor de juguetes, art\u00EDculos de deporte, prendas deportivas de vestido, calzado y tocado, armas, cartucher\u00EDa y art\u00EDculos de pirotecnia."
 				,0
 				,3
 				,24948.78
 				,new Module[]{new Module(1,"Personal asalariado","Persona",2916.26)
 					,new Module(2,"Personal no asalariado","Persona",13258.56)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",138.57)
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",138.57)
 					,new Module(4,"Superficie del local","Metro cua.",32.75)}
 				,null
 				)
-		,E_659_7 ("659.7","Comercio al por menor de semillas, abonos, flores y plantas y pequeños animales."
+		,E_659_7 ("659.7","Comercio al por menor de semillas, abonos, flores y plantas y peque\u00F1os animales."
 				,0
 				,4
 				,23978.80
 				,new Module[]{new Module(1,"Personal asalariado","Persona",4988.50)
 					,new Module(2,"Personal no asalariado","Persona",16124.43)
-					,new Module(3,"Potencia fiscal vehículo","CVF",258.24)}
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",258.24)}
 				,null
 				)
 
-		,E_662_2 ("662.2","Comerciantes minoristas matriculados en el epígrafe 662.2 por el servicio de comercialización de loterías."
+		,E_662_2 ("662.2","Comerciantes minoristas matriculados en el ep\u00EDgrafe 662.2 por el servicio de comercializaci\u00F3n de loter\u00EDas."
 				,75
 				,3
 				,16395.27
 				,new Module[]{new Module(1,"Personal asalariado","Persona",4868.82)
 					,new Module(2,"Personal no asalariado","Persona",9429.01)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",28.98)
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",28.98)
 					,new Module(4,"Superficie del local","Metro cua.",37.79)}
 				,new Module[]{new Module(1,"Importe total comisiones percibidas","Euro",0.21)}
 				)
-		,E_663_1 ("663.1","Comercio al por menor fuera de un establecimiento comercial permanente dedicado exclusivamente a la comercialización de masas fritas, con o sin coberturas o rellenos, patatas fritas, productos de aperitivo, frutos secos, golosinas, preparación de chocolate y bebidas refrescantes y facultado para la elaboración de los productos propios de churrería y patatas fritas en la propia instalación o vehículo."
+		,E_663_1 ("663.1","Comercio al por menor fuera de un establecimiento comercial permanente dedicado exclusivamente a la comercializaci\u00F3n de masas fritas, con o sin coberturas o rellenos, patatas fritas, productos de aperitivo, frutos secos, golosinas, preparaci\u00F3n de chocolate y bebidas refrescantes y facultado para la elaboraci\u00F3n de los productos propios de churrer\u00EDa y patatas fritas en la propia instalaci\u00F3n o veh\u00EDculo."
 				,20
 				,2
 				,14379.72
 				,new Module[]{new Module(1,"Personal asalariado","Persona",1398.29)
 					,new Module(2,"Personal no asalariado","Persona",13989.21)
-					,new Module(3,"Potencia fiscal vehículo","CVF",113.37)}
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",113.37)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",5881.32)
-					,new Module(2,"Potencia fiscal del vehículo","CVF",43.40)}
+					,new Module(2,"Potencia fiscal del veh\u00EDculo","CVF",43.40)}
 				)
 		
-		,E_663_2 ("663.2","Comercio al por menor fuera de un establecimiento comercial permanente de artículos textiles y de confección."
+		,E_663_2 ("663.2","Comercio al por menor fuera de un establecimiento comercial permanente de art\u00EDculos textiles y de confecci\u00F3n."
 				,0
 				,2
 				,19059.58
 				,new Module[]{new Module(1,"Personal asalariado","Persona",2991.84)
 					,new Module(2,"Personal no asalariado","Persona",13982.91)
-					,new Module(3,"Potencia fiscal vehículo","CVF",239.34)}
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",239.34)}
 				,null
 				)
-		,E_663_3 ("663.3","Comercio al por menor fuera de un establecimiento comercial permanente de calzado, pieles y artículos de cuero."
+		,E_663_3 ("663.3","Comercio al por menor fuera de un establecimiento comercial permanente de calzado, pieles y art\u00EDculos de cuero."
 				,0
 				,2
 				,17081.82
 				,new Module[]{new Module(1,"Personal asalariado","Persona",2613.92)
 					,new Module(2,"Personal no asalariado","Persona",11186.32)
-					,new Module(3,"Potencia fiscal vehículo","CVF",151.16)}
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",151.16)}
 				,null
 				)
-		,E_663_4 ("663.4","Comercio al por menor fuera de un establecimiento comercial permanente de artículos de droguería y cosméticos y de productos químicos en general."
+		,E_663_4 ("663.4","Comercio al por menor fuera de un establecimiento comercial permanente de art\u00EDculos de droguer\u00EDa y cosm\u00E9ticos y de productos qu\u00EDmicos en general."
 				,0
 				,2
 				,16886.56
 				,new Module[]{new Module(1,"Personal asalariado","Persona",3678.39)
 					,new Module(2,"Personal no asalariado","Persona",12641.30)
-					,new Module(3,"Potencia fiscal vehículo","CVF",113.37)}
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",113.37)}
 				,null
 				)
-		,E_663_9 ("663.9","Comercio al por menor fuera de un establecimiento comercial permanente de otras clases de mercancías n.c.o.p."
+		,E_663_9 ("663.9","Comercio al por menor fuera de un establecimiento comercial permanente de otras clases de mercanc\u00EDas n.c.o.p."
 				,0
 				,2
 				,18354.14
 				,new Module[]{new Module(1,"Personal asalariado","Persona",5448.29)
 					,new Module(2,"Personal no asalariado","Persona",10537.57)
-					,new Module(3,"Potencia fiscal vehículo","CVF",283.44)}
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",283.44)}
 				,null
 				)
 		,E_671_4 ("671.4","Restaurantes de dos tenedores."
@@ -959,16 +970,16 @@ public class Modules2015 {
 				,51617.08
 				,new Module[]{new Module(1,"Personal asalariado","Persona",3709.88)
 					,new Module(2,"Personal no asalariado","Persona",17434.55)
-					,new Module(3,"Potencia eléctrica","Kw cont.",201.55)
+					,new Module(3,"Potencia el\u00E9ctrica","Kw cont.",201.55)
 					,new Module(4,"Mesas","Mesa",585.77)
 					,new Module(5,"Maquinas tipo A","Maquina A",1077.06)
 					,new Module(6,"Maquinas tipo B","Maquina B",3810.65)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",2993.81)
-					,new Module(2,"Potencia eléctrica","Kw cont.",150.57)
+					,new Module(2,"Potencia el\u00E9ctrica","Kw cont.",150.57)
 					,new Module(3,"Mesas","Mesa",168.29)
 					,new Module(4,"Maquinas tipo A","Maquina A",239.15)
 					,new Module(5,"Maquinas tipo B","Maquina B",841.46)
-					,new Module(6,"Importe total comisiones por loterías","Euro",0.21)}
+					,new Module(6,"Importe total comisiones por loter\u00EDas","Euro",0.21)}
 				)
 		,E_671_5 ("671.5","Restaurantes de un tenedor."
 				,20
@@ -976,130 +987,130 @@ public class Modules2015 {
 				,38081.38
 				,new Module[]{new Module(1,"Personal asalariado","Persona",3602.80)
 					,new Module(2,"Personal no asalariado","Persona",16174.82)
-					,new Module(3,"Potencia eléctrica","Kw cont.",125.97)
+					,new Module(3,"Potencia el\u00E9ctrica","Kw cont.",125.97)
 					,new Module(4,"Mesas","Mesa",220.45)
 					,new Module(5,"Maquinas tipo A","Maquina A",1077.06)
 					,new Module(6,"Maquinas tipo B","Maquina B",3810.65)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",2400.36)
-					,new Module(2,"Potencia eléctrica","Kw cont.",70.86)
+					,new Module(2,"Potencia el\u00E9ctrica","Kw cont.",70.86)
 					,new Module(3,"Mesas","Mesa",124.00)
 					,new Module(4,"Maquinas tipo A","Maquina A",239.15)
 					,new Module(5,"Maquinas tipo B","Maquina B",841.46)
-					,new Module(6,"Importe total comisiones por loterías","Euro",0.21)}
+					,new Module(6,"Importe total comisiones por loter\u00EDas","Euro",0.21)}
 				)
-		,E_672_1 ("672.1","Cafeterías."
+		,E_672_1 ("672.1","Cafeter\u00EDas."
 				,13
 				,8
 				,39070.26
 				,new Module[]{new Module(1,"Personal asalariado","Persona",1448.68)
 					,new Module(2,"Personal no asalariado","Persona",13743.56)
-					,new Module(3,"Potencia eléctrica","Kw cont.",478.69)
+					,new Module(3,"Potencia el\u00E9ctrica","Kw cont.",478.69)
 					,new Module(4,"Mesas","Mesa",377.92)
 					,new Module(5,"Maquinas tipo A","Maquina A",957.39)
 					,new Module(6,"Maquinas tipo B","Maquina B",3747.67)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",2356.07)
-					,new Module(2,"Potencia eléctrica","Kw cont.",124.00)
+					,new Module(2,"Potencia el\u00E9ctrica","Kw cont.",124.00)
 					,new Module(3,"Mesas","Mesa",70.86)
 					,new Module(4,"Maquinas tipo A","Maquina A",221.43)
 					,new Module(5,"Maquinas tipo B","Maquina B",832.60)
-					,new Module(6,"Importe total comisiones por loterías","Euro",0.21)}
+					,new Module(6,"Importe total comisiones por loter\u00EDas","Euro",0.21)}
 				)
-		,E_672_2 ("672.2","Cafeterías."
+		,E_672_2 ("672.2","Cafeter\u00EDas."
 				,13
 				,8
 				,39070.26
 				,new Module[]{new Module(1,"Personal asalariado","Persona",1448.68)
 					,new Module(2,"Personal no asalariado","Persona",13743.56)
-					,new Module(3,"Potencia eléctrica","Kw cont.",478.69)
+					,new Module(3,"Potencia el\u00E9ctrica","Kw cont.",478.69)
 					,new Module(4,"Mesas","Mesa",377.92)
 					,new Module(5,"Maquinas tipo A","Maquina A",957.39)
 					,new Module(6,"Maquinas tipo B","Maquina B",3747.67)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",2356.07)
-					,new Module(2,"Potencia eléctrica","Kw cont.",124.00)
+					,new Module(2,"Potencia el\u00E9ctrica","Kw cont.",124.00)
 					,new Module(3,"Mesas","Mesa",70.86)
 					,new Module(4,"Maquinas tipo A","Maquina A",221.43)
 					,new Module(5,"Maquinas tipo B","Maquina B",832.60)
-					,new Module(6,"Importe total comisiones por loterías","Euro",0.21)}
+					,new Module(6,"Importe total comisiones por loter\u00EDas","Euro",0.21)}
 				)
-		,E_672_3 ("672.3","Cafeterías."
+		,E_672_3 ("672.3","Cafeter\u00EDas."
 				,13
 				,8
 				,39070.26
 				,new Module[]{new Module(1,"Personal asalariado","Persona",1448.68)
 					,new Module(2,"Personal no asalariado","Persona",13743.56)
-					,new Module(3,"Potencia eléctrica","Kw cont.",478.69)
+					,new Module(3,"Potencia el\u00E9ctrica","Kw cont.",478.69)
 					,new Module(4,"Mesas","Mesa",377.92)
 					,new Module(5,"Maquinas tipo A","Maquina A",957.39)
 					,new Module(6,"Maquinas tipo B","Maquina B",3747.67)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",2356.07)
-					,new Module(2,"Potencia eléctrica","Kw cont.",124.00)
+					,new Module(2,"Potencia el\u00E9ctrica","Kw cont.",124.00)
 					,new Module(3,"Mesas","Mesa",70.86)
 					,new Module(4,"Maquinas tipo A","Maquina A",221.43)
 					,new Module(5,"Maquinas tipo B","Maquina B",832.60)
-					,new Module(6,"Importe total comisiones por loterías","Euro",0.21)}
+					,new Module(6,"Importe total comisiones por loter\u00EDas","Euro",0.21)}
 				)
-		,E_673_1 ("673.1","Cafés y bares de categoría especial."
+		,E_673_1 ("673.1","Caf\u00E9s y bares de categor\u00EDa especial."
 				,6
 				,8
 				,30586.03
 				,new Module[]{new Module(1,"Personal asalariado","Persona",4056.30)
 					,new Module(2,"Personal no asalariado","Persona",15538.66)
-					,new Module(3,"Potencia eléctrica","Kw cont.",321.23)
+					,new Module(3,"Potencia el\u00E9ctrica","Kw cont.",321.23)
 					,new Module(4,"Mesas","Mesa",233.04)
 					,new Module(5,"Longitud de Barra","Metro",371.62)
 					,new Module(6,"Maquinas tipo A","Maquina A",957.39)
 					,new Module(7,"Maquinas tipo B","Maquina B",2903.66)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",3294.97)
-					,new Module(2,"Potencia eléctrica","Kw cont.",69.09)
+					,new Module(2,"Potencia el\u00E9ctrica","Kw cont.",69.09)
 					,new Module(3,"Mesas","Mesa",60.23)
 					,new Module(4,"Longitud de barra","Metro",77.95)
 					,new Module(5,"Maquinas tipo A","Maquina A",221.43)
 					,new Module(6,"Maquinas tipo B","Maquina B",655.45)
 					,new Module(7,"Importe total de las comisiones loterias","Euro",0.21)}
 				)
-		,E_673_2 ("673.2","Otros cafés y bares."
+		,E_673_2 ("673.2","Otros caf\u00E9s y bares."
 				,6
 				,8
 				,19084.78
 				,new Module[]{new Module(1,"Personal asalariado","Persona",1643.93)
 					,new Module(2,"Personal no asalariado","Persona",11413.08)
-					,new Module(3,"Potencia eléctrica","Kw cont.",94.48)
+					,new Module(3,"Potencia el\u00E9ctrica","Kw cont.",94.48)
 					,new Module(4,"Mesas","Mesa",119.67)
 					,new Module(5,"Longitud barra","Metro",163.76)
 					,new Module(6,"Maquinas tipo A","Maquina A",806.23)
 					,new Module(7,"Maquinas tipo B","Maquina B",2947.75)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",2577.52)
-					,new Module(2,"Potencia eléctrica","Kw cont.",47.83)
+					,new Module(2,"Potencia el\u00E9ctrica","Kw cont.",47.83)
 					,new Module(3,"Mesas","Mesa",56.69)
 					,new Module(4,"Longitud barra","Metros",62.89)
 					,new Module(5,"Maquinas tipo A","Maquina A",177.15)
 					,new Module(6,"Maquinas tipo B","Maquina B",655.45)
 					,new Module(7,"Importe total de las comisiones loterias","Euro",0.21)}
 				)
-		,E_675   ("675"	 ,"Servicios en quioscos, cajones, barracas u otros locales análogos."
+		,E_675   ("675"	 ,"Servicios en quioscos, cajones, barracas u otros locales an\u00E1logos."
 				,3
 				,3
 				,16596.83
 				,new Module[]{new Module(1,"Personal asalariado","Persona",2802.88)
 					,new Module(2,"Personal no asalariado","Persona",14461.60)
-					,new Module(3,"Potencia eléctrica","Kw cont.",107.07)
+					,new Module(3,"Potencia el\u00E9ctrica","Kw cont.",107.07)
 					,new Module(4,"Superficie del local","Metro cua.",26.45)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",4357.86)
-					,new Module(2,"Potencia eléctrica","Kw cont.",50.48)
+					,new Module(2,"Potencia el\u00E9ctrica","Kw cont.",50.48)
 					,new Module(3,"Superficie del local","Metro cua.",4.06)
 					,new Module(4,"Importe total comisiones por loterias","Euro",0.21)}
 				)
-		,E_676   ("676"	 ,"Servicios en chocolaterías, heladerías y horchaterías."
+		,E_676   ("676"	 ,"Servicios en chocolater\u00EDas, helader\u00EDas y horchater\u00EDas."
 				,20
 				,3
 				,25528.25
 				,new Module[]{new Module(1,"Personal asalariado","Persona",2418.67)
 					,new Module(2,"Personal no asalariado","Persona",20016.97)
-					,new Module(3,"Potencia eléctrica","Kw cont.",541.68)
+					,new Module(3,"Potencia el\u00E9ctrica","Kw cont.",541.68)
 					,new Module(4,"Mesas","Mesa",220.45)
 					,new Module(5,"Maquinas tipo A","Maquina A",806.23)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",3817.55)
-					,new Module(2,"Potencia eléctrica","Kw cont.",141.72)
+					,new Module(2,"Potencia el\u00E9ctrica","Kw cont.",141.72)
 					,new Module(3,"Mesas","Mesa",46.05)
 					,new Module(4,"Maquinas tipo A","Maquina A",177.15)
 					,new Module(5,"Importe total comisiones por loterias","Euro",0.21)}
@@ -1125,7 +1136,7 @@ public class Modules2015 {
 				,new Module[]{new Module(1,"Personal empleado","Persona",2533.22)
 					,new Module(2,"Numero de plazas","Plaza",55.80)}
 				)
-		,E_683   ("683"	 ,"Servicio de hospedaje en fondas y casas de huéspedes."
+		,E_683   ("683"	 ,"Servicio de hospedaje en fondas y casas de hu\u00E9spedes."
 				,30
 				,8
 				,16256.70
@@ -1135,7 +1146,7 @@ public class Modules2015 {
 				,new Module[]{new Module(1,"Personal empleado","Persona",1762.62)
 					,new Module(2,"Numero de plazas","Plaza",29.22)}
 				)
-		,E_691_1 ("691.1","Reparación de artículos eléctricos para el hogar."
+		,E_691_1 ("691.1","Reparaci\u00F3n de art\u00EDculos el\u00E9ctricos para el hogar."
 				,48
 				,3
 				,21585.33
@@ -1145,7 +1156,7 @@ public class Modules2015 {
 				,new Module[]{new Module(1,"Personal empleado","Persona",5819.91)
 					,new Module(2,"Superficie del local","Metro cua.",5.71)}
 				)
-		,E_691_2 ("691.2","Reparación de vehículos automóviles, bicicletas y otros vehículos."
+		,E_691_2 ("691.2","Reparaci\u00F3n de veh\u00EDculos autom\u00F3viles, bicicletas y otros veh\u00EDculos."
 				,30
 				,5
 				,33729.04
@@ -1155,17 +1166,17 @@ public class Modules2015 {
 				,new Module[]{new Module(1,"Personal empleado","Persona",8556.27)
 					,new Module(2,"Superficie del local","Metro cua.",16.54)}
 				)
-		,E_691_9A("691.9","Reparación de calzado."
+		,E_691_9A("691.9","Reparaci\u00F3n de calzado."
 				,48
 				,2
 				,16552.74
 				,new Module[]{new Module(1,"Personal asalariado","Persona",1845.50)
 					,new Module(2,"Personal no asalariado","Persona",10014.78)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",125.97)}
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",125.97)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",3000.89)
-					,new Module(2,"Consumo de energía eléctrica","100 Kwh",36.37)}
+					,new Module(2,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",36.37)}
 				)
-		,E_691_9B("691.9","Reparación de otros bienes de consumo n.c.o.p. (excepto reparación de calzado, restauración de obras de arte, muebles, antigüedades e instrumentos musicales)."
+		,E_691_9B("691.9","Reparaci\u00F3n de otros bienes de consumo n.c.o.p. (excepto reparaci\u00F3n de calzado, restauraci\u00F3n de obras de arte, muebles, antig\u00FCedades e instrumentos musicales)."
 				,48
 				,2
 				,24803.91
@@ -1176,7 +1187,7 @@ public class Modules2015 {
 					,new Module(2,"Superficie del local","Metro cua.",13.23)}
 				)
 		
-		,E_692   ("692"	 ,"Reparación de maquinaria industrial."
+		,E_692   ("692"	 ,"Reparaci\u00F3n de maquinaria industrial."
 				,30
 				,2
 				,30352.99
@@ -1226,15 +1237,15 @@ public class Modules2015 {
 				,new Module[]{new Module(1,"Personal empleado","Persona",1700.62)
 					,new Module(2,"Numero de asientos","Asiento",79.72)}
 				)
-		,E_722A  ("722"	 ,"Transporte de mercancías por carretera, expto residuos"
+		,E_722A  ("722"	 ,"Transporte de mercanc\u00EDas por carretera, expto residuos"
 				,10
 				,5
 				,33640.86
 				,new Module[]{new Module(1,"Personal asalariado","Persona",2728.59)
 					,new Module(2,"Personal no asalariado","Persona",10090.99)
-					,new Module(3,"Carga vehículos","Tonelada",126.21)}
+					,new Module(3,"Carga veh\u00EDculos","Tonelada",126.21)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",4149.99)
-					,new Module(2,"Carga vehículos","Tonelada",388.55)}
+					,new Module(2,"Carga veh\u00EDculos","Tonelada",388.55)}
 				)
 		,E_722B  ("722"	 ,"Transporte de residuos por carretera."
 				,1
@@ -1242,12 +1253,12 @@ public class Modules2015 {
 				,33640.86
 				,new Module[]{new Module(1,"Personal asalariado","Persona",2728.59)
 					,new Module(2,"Personal no asalariado","Persona",10090.99)
-					,new Module(3,"Carga vehículos","Tonelada",126.21)}
+					,new Module(3,"Carga veh\u00EDculos","Tonelada",126.21)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",1948.64)
-					,new Module(2,"Carga vehículos","Tonelada",181.58)}
+					,new Module(2,"Carga veh\u00EDculos","Tonelada",181.58)}
 				)
 
-		,E_751_5 ("751.5","Engrase y lavado de vehículos."
+		,E_751_5 ("751.5","Engrase y lavado de veh\u00EDculos."
 				,30
 				,5
 				,28280.74
@@ -1263,33 +1274,33 @@ public class Modules2015 {
 				,33640.86
 				,new Module[]{new Module(1,"Personal asalariado","Persona",2566.32)
 					,new Module(2,"Personal no asalariado","Persona",10175.13)
-					,new Module(3,"Carga vehículos","Tonelada",48.08)}
+					,new Module(3,"Carga veh\u00EDculos","Tonelada",48.08)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",5712.43)
-					,new Module(2,"Carga vehículos","Tonelada",256.27)}
+					,new Module(2,"Carga veh\u00EDculos","Tonelada",256.27)}
 				)
-		,E_849_5 ("849.5","Transporte de mensajería y recadería, cuando la actividad se realice exclusivamente con medios de transporte propios."
+		,E_849_5 ("849.5","Transporte de mensajer\u00EDa y recader\u00EDa, cuando la actividad se realice exclusivamente con medios de transporte propios."
 				,10
 				,5
 				,33640.86
 				,new Module[]{new Module(1,"Personal asalariado","Persona",2728.59)
 					,new Module(2,"Personal no asalariado","Persona",10090.99)
-					,new Module(3,"Carga vehículos","Tonelada",126.21)}
+					,new Module(3,"Carga veh\u00EDculos","Tonelada",126.21)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",4149.99)
-					,new Module(2,"Carga vehículos","Tonelada",388.55)}
+					,new Module(2,"Carga veh\u00EDculos","Tonelada",388.55)}
 				)
-		,E_933_1 ("933.1","Enseñanza de conducción de vehículos terrestres, acuáticos, aeronáuticos, etc."
+		,E_933_1 ("933.1","Ense\u00F1anza de conducci\u00F3n de veh\u00EDculos terrestres, acu\u00E1ticos, aeron\u00E1uticos, etc."
 				,48
 				,4
 				,47233.25
 				,new Module[]{new Module(1,"Personal asalariado","Persona",3067.42)
 					,new Module(2,"Personal no asalariado","Persona",20596.45)
-					,new Module(3,"Numero de vehículos","vehículo",774.72)
-					,new Module(4,"Potencia fiscal vehículo","CVF",258.24)}
+					,new Module(3,"Numero de veh\u00EDculos","veh\u00EDculo",774.72)
+					,new Module(4,"Potencia fiscal veh\u00EDculo","CVF",258.24)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",3000.89)
-					,new Module(2,"Numero de vehículos","vehículo",256.27)
-					,new Module(3,"Potencia fiscal vehículo","CVF",107.47)}
+					,new Module(2,"Numero de veh\u00EDculos","veh\u00EDculo",256.27)
+					,new Module(3,"Potencia fiscal veh\u00EDculo","CVF",107.47)}
 				)
-		,E_933_9 ("933.9","Otras actividades de enseñanza, tales como idiomas, corte y confección, mecanografía, taquigrafía, preparación de exámenes y oposiciones y similares n.c.o.p."
+		,E_933_9 ("933.9","Otras actividades de ense\u00F1anza, tales como idiomas, corte y confecci\u00F3n, mecanograf\u00EDa, taquigraf\u00EDa, preparaci\u00F3n de ex\u00E1menes y oposiciones y similares n.c.o.p."
 				,48
 				,5
 				,33697.55
@@ -1309,27 +1320,27 @@ public class Modules2015 {
 				,new Module[]{new Module(1,"Personal empleado","Persona",3441.10)
 					,new Module(2,"Superficie del local","Metro cua.",5.58)}
 				)
-		,E_971_1 ("971.1","Tinte, limpieza en seco, lavado y planchado de ropas hechas y de prendas y artículos del hogar usados."
+		,E_971_1 ("971.1","Tinte, limpieza en seco, lavado y planchado de ropas hechas y de prendas y art\u00EDculos del hogar usados."
 				,48
 				,4
 				,37224.77
 				,new Module[]{new Module(1,"Personal asalariado","Persona",4553.90)
 					,new Module(2,"Personal no asalariado","Persona",16773.19)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",45.98)}
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",45.98)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",3844.13)
-					,new Module(2,"Consumo de energía eléctrica","100 Kwh",14.06)}
+					,new Module(2,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",14.06)}
 				)
-		,E_972_1 ("972.1","Servicios de peluquería de señora y caballero."
+		,E_972_1 ("972.1","Servicios de peluquer\u00EDa de se\u00F1ora y caballero."
 				,13
 				,6
 				,18051.81
 				,new Module[]{new Module(1,"Personal asalariado","Persona",3161.90)
 					,new Module(2,"Personal no asalariado","Persona",9649.47)
 					,new Module(3,"Superficie del local","Metro cua.",94.48)
-					,new Module(4,"Consumo energía eléctrica","100 Kwh",81.88)}
+					,new Module(4,"Consumo energ\u00EDa el\u00E9ctrica","100 Kwh",81.88)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",2562.75)
 					,new Module(2,"Superficie del local","Metro cua.",41.33)
-					,new Module(3,"Consumo energía eléctrica","100 Kwh",17.48)}
+					,new Module(3,"Consumo energ\u00EDa el\u00E9ctrica","100 Kwh",17.48)}
 				)
 		,E_972_2 ("972.2","Salones e institutos de belleza."
 				,32
@@ -1338,20 +1349,20 @@ public class Modules2015 {
 				,new Module[]{new Module(1,"Personal asalariado","Persona",1788.80)
 					,new Module(2,"Personal no asalariado","Persona",14896.21)
 					,new Module(3,"Superficie del local","Metro cua.",88.18)
-					,new Module(4,"Consumo de energía eléctrica","100 Kwh",55.43)}
+					,new Module(4,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",55.43)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",2562.75)
 					,new Module(2,"Superficie del local","Metro cua.",41.33)
-					,new Module(3,"Consumo de energía eléctrica","100 Kwh",17.36)}
+					,new Module(3,"Consumo de energ\u00EDa el\u00E9ctrica","100 Kwh",17.36)}
 				)
-		,E_973_3 ("973.3","Servicios de copias de documentos con máquinas fotocopiadoras."
+		,E_973_3 ("973.3","Servicios de copias de documentos con m\u00E1quinas fotocopiadoras."
 				,30
 				,4
 				,24192.95
 				,new Module[]{new Module(1,"Personal asalariado","Persona",4125.59)
 					,new Module(2,"Personal no asalariado","Persona",17044.03)
-					,new Module(3,"Potencia eléctrica","Kw cont.",541.68)}
+					,new Module(3,"Potencia el\u00E9ctrica","Kw cont.",541.68)}
 				,new Module[]{new Module(1,"Personal empleado","Persona",13136.13)
-					,new Module(2,"Potencia eléctrica","Kw cont.",239.74)}
+					,new Module(2,"Potencia el\u00E9ctrica","Kw cont.",239.74)}
 				)
 				;
 		private String epigraph;

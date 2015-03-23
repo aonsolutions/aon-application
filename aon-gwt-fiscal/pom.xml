@@ -110,6 +110,14 @@
 					<groupId>asm</groupId>
 					<artifactId>asm-attrs</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>com.code.aon</groupId>
+					<artifactId>aon.common</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.code.aon</groupId>
+					<artifactId>aon.config</artifactId>
+				</exclusion>
 		   </exclusions>
 		</dependency>
 		

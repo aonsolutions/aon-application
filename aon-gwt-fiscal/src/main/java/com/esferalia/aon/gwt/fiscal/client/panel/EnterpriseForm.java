@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.panel;
 
+import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
 import com.esferalia.aon.gwt.common.client.widget.FullDocument;
 import com.esferalia.aon.gwt.common.client.widget.MunicipalityListBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
@@ -22,9 +23,6 @@ public class EnterpriseForm extends ResizeComposite {
 	private static final EnterpriseFormBinder panelBinder = GWT
 			.create(EnterpriseFormBinder.class);
 	
-	String domainName;
-	int domainId;
-
 	@UiField
 	TextBox name;
 	@UiField
@@ -83,24 +81,25 @@ public class EnterpriseForm extends ResizeComposite {
 		
 	}
 
-	public void setDomainId(int domainId) {
-		this.domainId = domainId;
-	}
-	public void setDomainName(String domainName) {
-		this.domainName = domainName;
-	}
-	
 	public void setEnterprise(Enterprise enterprise) {
-		FiscalPanel.COMMON_SERVICE.getEnterprise(domainName, domainId, enterprise.getId()
+		FiscalPanel.COMMON_SERVICE.getEnterprise(FiscalPanel.getCurrentDomainName(), 
+				FiscalPanel.getCurrentDomain(), enterprise.getId()
 				,new AsyncCallback<Enterprise>() {
 
 					@Override
 					public void onSuccess(Enterprise result) {
-						populate(result);
+						if (result != null) {
+							populate(result);
+						} else {
+							DialogMessages.alertErrorWidget(FiscalPanel.MSG
+									.unableToShowData("No se ha encontrado la empresa"));
+						}
 					}
+
 					@Override
 					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub
+						DialogMessages.alertErrorWidget(FiscalPanel.MSG
+								.unableToShowData(caught.getMessage()));
 					}
 		});
 	}

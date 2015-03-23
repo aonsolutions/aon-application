@@ -10,6 +10,12 @@
 		field="aonResources"></ui:with>
 
 	<g:HTMLPanel styleName="aon-scroll-area">
+		<g:FlowPanel height="20px"
+			styleName="aon-finding-title-toolbar aon-width-all gwt-MenuBar-horizontal aon-margin-top">
+			<g:Button ui:field='saveButton'
+				styleName='aon-finding-toolbar-item aon-icon-delete' text="{msg.saveAction}" />
+		</g:FlowPanel>
+		
 		<div class="{aonResources.css.aonGroup}">
 			<div class="{aonResources.css.aonGroupTitle}">
 				<g:InlineLabel text="{msg.moduleActivities}" />
@@ -26,6 +32,8 @@
 						</td>
 						<td class="aon-panelGrid-odd aon-width-100">
 							<g:InlineLabel text="{msg.epigraph}" />
+							<g:Button ui:field='epigraphButton'
+								styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconLoupe}" />
 						</td>
 						<td class="aon-panelGrid-even aon-width-auto" colspan="4">
 							<g:TextBox ui:field="epigraph" visibleLength="7" maxLength="7"

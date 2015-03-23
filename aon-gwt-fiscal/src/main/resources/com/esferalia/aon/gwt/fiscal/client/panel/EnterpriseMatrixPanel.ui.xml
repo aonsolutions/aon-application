@@ -12,128 +12,14 @@
 	<g:HTMLPanel styleName="aon-scroll-area">
 		<div class="{aonResources.css.aonGroup}">
 			<div class="{aonResources.css.aonGroupTitle}">
-				<g:InlineLabel text="{msg.enterpriseData}" />
+				<g:InlineLabel text="{msg.fiscalModels}" />
 			</div>
 			<div class="{aonResources.css.aonGroupBody}">
-				<table class="aon-panelGrid aon-width-all">
-					<tr>
-						<td class="aon-panelGrid-odd aon-width-200">
-							<g:InlineLabel text="{msg.name}" />
-						</td>
-						<td class="aon-panelGrid-even aon-width-auto">
-							<g:TextBox ui:field="name" visibleLength="64" maxLength="64" 
-								styleName="{aonResources.css.aonInputText}"/>
-						</td>
-					</tr>
-					<tr>
-						<td class="aon-panelGrid-odd">
-							<g:InlineLabel text="{msg.alias}" />
-						</td>
-						<td class="aon-panelGrid-even">
-							<g:TextBox ui:field="alias" visibleLength="32" maxLength="32"  
-								styleName="{aonResources.css.aonInputText}"/>
-						</td>
-					</tr>
-					<tr>
-						<td class="aon-panelGrid-odd">
-							<g:InlineLabel text="{msg.document}" />
-						</td>
-						<td class="aon-panelGrid-even">
-							<aon:FullDocument ui:field="fullDocument"/>
-						</td>
-					</tr>
-					<tr>
-						<td class="aon-panelGrid-odd" rowspan="3">
-							<g:InlineLabel text="{msg.address}" />
-						</td>
-						<td class="aon-panelGrid-even">
-							<aon:StreetTypeListBox ui:field="streetType" styleName="{aonResources.css.aonInputText}"/>
-							<g:TextBox ui:field="streetName" visibleLength="40" maxLength="128" 
-								styleName="{aonResources.css.aonInputText}"/>
-							<g:TextBox ui:field="streetNumber" visibleLength="7" maxLength="12" 
-								styleName="{aonResources.css.aonInputText}"/>
-						</td>
-					</tr>
-					<tr>
-						<td class="aon-panelGrid-even">
-							<g:TextBox ui:field="address2" visibleLength="40" maxLength="128" 
-								styleName="{aonResources.css.aonInputText}"/>
-						</td>
-					</tr>
-					<tr>
-						<td class="aon-panelGrid-even">
-							<g:TextBox ui:field="address3" visibleLength="40" maxLength="128" 
-								styleName="{aonResources.css.aonInputText}"/>
-						</td>
-					</tr>
-					
-					<tr>
-						<td class="aon-panelGrid-odd">
-							<g:InlineLabel text="{msg.zip}" />
-						</td>
-						<td class="aon-panelGrid-even">
-							<g:TextBox ui:field="zip" visibleLength="8" maxLength="16" 
-								styleName="{aonResources.css.aonInputText}"/>
-							<g:InlineLabel text="{msg.province}" 
-								styleName="{aonResources.css.aonInnerLabel}"/>
-							<aon:ProvinceListBox ui:field="province" />
-						</td>
-					</tr>
-					<tr>
-						<td class="aon-panelGrid-odd">
-							<g:InlineLabel text="{msg.town}" />
-						</td>
-						<td class="aon-panelGrid-even">
-							<aon:MunicipalityListBox ui:field="town" styleName="{aonResources.css.aonInputText}"/>
-						</td>
-					</tr>
-					<tr>
-						<td class="aon-panelGrid-odd">
-							<g:InlineLabel text="{msg.city}" />
-						</td>
-						<td class="aon-panelGrid-even">
-							<g:TextBox ui:field="city" visibleLength="40" maxLength="64" 
-								styleName="{aonResources.css.aonInputText}"/>
-						</td>
-					</tr>
-					<tr>
-						<td class="aon-panelGrid-odd">
-							<g:InlineLabel text="{msg.phone}" />
-						</td>
-						<td class="aon-panelGrid-even">
-							<g:TextBox ui:field="phone" visibleLength="16" maxLength="64" 
-								styleName="{aonResources.css.aonInputText}"/>
-						</td>
-					</tr>
-					<tr>
-						<td class="aon-panelGrid-odd">
-							<g:InlineLabel text="{msg.fax}" />
-						</td>
-						<td class="aon-panelGrid-even">
-							<g:TextBox ui:field="fax" visibleLength="16" maxLength="64"
-								styleName="{aonResources.css.aonInputText}"/>
-						</td>
-					</tr>
-					<tr>
-						<td class="aon-panelGrid-odd">
-							<g:InlineLabel text="{msg.email}" />
-						</td>
-						<td class="aon-panelGrid-even">
-							<g:TextBox ui:field="email" visibleLength="30" maxLength="64" 
-								styleName="{aonResources.css.aonInputText}"/>
-						</td>
-					</tr>
-					<tr>
-						<td class="aon-panelGrid-odd">
-							<g:InlineLabel text="{msg.web}" />
-						</td>
-						<td class="aon-panelGrid-even">
-							<g:TextBox ui:field="web" visibleLength="40" maxLength="64" 
-								styleName="{aonResources.css.aonInputText}"/>
-						</td>
-					</tr>
-
-				</table>
+				<div class="{aonResources.css.aonTextCenter}">
+					<g:InlineLabel text="{msg.fiscalYear}"/>
+					<g:ListBox ui:field="year" styleName="{aonResources.css.aonInputText}"/>
+				</div>
+				<g:SimplePanel ui:field="tablePanel" styleName="{aonResources.css.aonMarginTop}"/>
 			</div>
 		</div>
 	</g:HTMLPanel>

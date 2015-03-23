@@ -8,8 +8,6 @@ import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-import com.code.aon.common.util.CommonUtil;
-import com.code.aon.config.enumeration.Administration;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.file.tax.model.MOD193.Deponent;
@@ -22,6 +20,7 @@ import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class MOD193Writer {
 	
@@ -30,7 +29,7 @@ public class MOD193Writer {
 	public FileOutput createMOD193(String domainName,Integer domainId, Integer mod193, int year,
 			Byte administration) throws AonSQLException {
 		try {
-			MOD193Format format = obtainFormat(year, administration);
+			MOD193Format format = MOD193Format.obtainFormat(year, administration);
 			if (format == null) {
 				throw new AonSQLException(
 						"No existe soporte para el formato de la declaraci\u00F3n "
@@ -58,18 +57,18 @@ public class MOD193Writer {
 		}
 	}
 
-	private MOD193Format obtainFormat(int year, int administration) {
-		Administration adm = Administration.values()[administration];
-		MOD193Format f = null;
-		for (MOD193Format format : MOD193Format.values()) {
-			if (format.getAdministration() == adm && year >= format.getYear()) {
-				if (f == null || f.getYear() < format.getYear()) {
-					f = format;
-				}
-			}
-		}
-		return f;
-	}
+//	private MOD193Format obtainFormat(int year, int administration) {
+//		Administration adm = Administration.values()[administration];
+//		MOD193Format f = null;
+//		for (MOD193Format format : MOD193Format.values()) {
+//			if (format.getAdministration() == adm && year >= format.getYear()) {
+//				if (f == null || f.getYear() < format.getYear()) {
+//					f = format;
+//				}
+//			}
+//		}
+//		return f;
+//	}
 
 	private Deponent getDeponent(String domainName, int domainId, Integer id,
 			MOD193Format format) throws AonSQLException {
@@ -128,10 +127,10 @@ public class MOD193Writer {
 			receiver.setGuarantee( det.getGuarantee());
 			deponent.getReceivers().add(receiver);
 			deponent.setC001( deponent.getC001( ) + 1);
-			deponent.setC002( CommonUtil.round(deponent.getC002() + det.getRetentionBase()) ); 
-			deponent.setC003( CommonUtil.round(deponent.getC003() + det.getRetention()) );
+			deponent.setC002( AonMathUtils.round(deponent.getC002() + det.getRetentionBase()) ); 
+			deponent.setC003( AonMathUtils.round(deponent.getC003() + det.getRetention()) );
 			if ( "C".equals(det.getKey()) || det.getPayment() == 1 || det.getPayment() == 3) {
-				deponent.setC004( CommonUtil.round(deponent.getC004()  + det.getRetention()));
+				deponent.setC004( AonMathUtils.round(deponent.getC004()  + det.getRetention()));
 			}
 		}
 	}
@@ -145,7 +144,7 @@ public class MOD193Writer {
 			expense.setRepresentativeDocument(det.getRepresentativeDocument());
 			deponent.getExpenses().add(expense);
 			deponent.setC001( deponent.getC001( ) + 1);
-			deponent.setC005( CommonUtil.round(deponent.getC005() + det.getExpenses()) );
+			deponent.setC005( AonMathUtils.round(deponent.getC005() + det.getExpenses()) );
 		}
 	}
 }

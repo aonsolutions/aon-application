@@ -6,7 +6,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
-import com.code.aon.config.enumeration.Administration;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.file.tax.model.MOD180.Deponent;
@@ -25,7 +24,7 @@ public class MOD180Writer {
 	public FileOutput createMOD180(String domainName, int domainId, Integer mod180, int year,
 			Integer administration) throws AonSQLException {
 		try {
-			MOD180Format format = obtainFormat(year, administration);
+			MOD180Format format = MOD180Format.obtainFormat(year, administration);
 			if (format == null) {
 				throw new AonSQLException(
 						"No existe soporte para el formato de la declaraci\u00F3n "
@@ -51,20 +50,6 @@ public class MOD180Writer {
 		} catch (IOException e) {
 			throw new AonSQLException(e.getMessage());
 		}
-	}
-
-	private MOD180Format obtainFormat(int year, int administration) {
-		Administration adm = Administration.values()[administration];
-		MOD180Format f = null;
-		for (MOD180Format format : MOD180Format.values()) {
-			if (format.getAdministration() == adm && year >= format.getYear()) {
-				if (f == null || f.getYear() < format.getYear()) {
-					f = format;
-				}
-			}
-		}
-		System.out.println( f);
-		return f;
 	}
 
 	private Deponent getDeponent(String domainName, int domainId, Integer id,

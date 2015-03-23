@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.format.output.FileOutput;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.gwt.common.sql.SQLUtils;
@@ -65,7 +64,7 @@ public class Mod190File extends HttpServlet {
 			
 			
 			ByteArrayInputStream in = new ByteArrayInputStream(fileoutput.getContent());
-			resp.setContentType(MimeType.MIME_TXT.getName());
+			resp.setContentType("text/txt");
 			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".txt\";");
 			IOUtils.copy(in, resp.getOutputStream());
 			resp.flushBuffer();

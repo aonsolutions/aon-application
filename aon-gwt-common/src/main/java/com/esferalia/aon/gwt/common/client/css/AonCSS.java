@@ -98,6 +98,9 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-table-row-link")
 	String aonTableRowLink();
 	
+	@ClassName("aon-icon-padding-left")
+	String aonIconPaddingLeft();
+	
 	@ClassName("aon-icon-trash")
 	String aonIconTrash();
 
@@ -191,6 +194,29 @@ public interface AonCSS extends  CssResource {
 	
 	@ClassName("aon-icon-aeat")
 	String aonIconAeat();
+	@ClassName("aon-icon-aeat-bw")
+	String aonIconAeatBW();
+	
+	@ClassName("aon-icon-araba")
+	String aonIconAraba();
+	@ClassName("aon-icon-araba-bw")
+	String aonIconArabaBW();
+	
+	@ClassName("aon-icon-bizkaia")
+	String aonIconBizkaia();
+	@ClassName("aon-icon-bizkaia-bw")
+	String aonIconBizkaiaBW();
+	
+	@ClassName("aon-icon-gipuzkoa")
+	String aonIconGipuzkoa();
+	@ClassName("aon-icon-gipuzkoa-bw")
+	String aonIconGipuzkoaBW();
+	
+	@ClassName("aon-icon-navarra")
+	String aonIconNavarra();
+	@ClassName("aon-icon-navarra-bw")
+	String aonIconNavarraBW();
+	
 	
 	@ClassName("aon-icon-commandButton")
 	String aonIconButton();
@@ -491,7 +517,13 @@ public interface AonCSS extends  CssResource {
 		
 	@ClassName("aon-icon-point-yellow")
 	String aonIconPointYellow(); 
+
+	@ClassName("aon-icon-loupe")
+	String aonIconLoupe();
 	
+	@ClassName("aon-icon-question")
+	String aonIconQuestion();
+
 	@ClassName("aon-fiscal-enterprise-suggest")
 	String aonFiscalEnterpriseSuggest();
 	
@@ -503,6 +535,39 @@ public interface AonCSS extends  CssResource {
 	
 	@ClassName("aon-panelGrid-even")
 	String aonPanelGridEven();
+	
+	@ClassName("aon-context-menu-popup")
+	String aonContextMenuPopup();
+	
+	@ClassName("aon-context-menu")
+	String aonContextMenu();
+	
+	@ClassName("aon-fiscal-status-pending")
+	String aonFiscalStatusPending();
+	
+	@ClassName("aon-fiscal-status-missing")
+	String aonFiscalStatusMissing();
+
+	@ClassName("aon-fiscal-status-finished")
+	String aonFiscalStatusFinished();
+	
+	@ClassName("aon-fiscal-matrix")
+	String aonFiscalMatrix();
+	
+	@ClassName("aon-fiscal-matrix-monthCell")
+	String aonFiscalMatrixMonthCell();
+	
+	@ClassName("aon-fiscal-matrix-domainCell")
+	String aonFiscalMatrixDomainCell();
+	
+	@ClassName("aon-fiscal-matrix-admonCell")
+	String aonFiscalMatrixAdmonCell();
+	
+	@ClassName("aon-fiscal-matrix-modelCell")
+	String aonFiscalMatrixModelCell();
+	
+	@ClassName("aon-fiscal-matrix-dataCell")
+	String aonFiscalMatrixDataCell();
 	
 }
 

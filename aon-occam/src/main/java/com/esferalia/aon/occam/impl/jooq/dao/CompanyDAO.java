@@ -16,10 +16,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.jooq.Condition;
-import org.jooq.Record;
 import org.jooq.Record3;
 import org.jooq.Record6;
-import org.jooq.Result;
 
 import com.esferalia.aon.jooq.tables.Rmedia;
 import com.esferalia.aon.occam.api.AONContext;
@@ -117,9 +115,7 @@ public class CompanyDAO {
 	}
 
 	public static Enterprise getEnterprise(AONContext ctx,int id) {
-		Enterprise enterprise = new Enterprise();
-		
-		Result<? extends Record> result = ctx.getDslContext().select(
+		return ctx.getDslContext().select(
 				ENTERPRISE.REGISTRY
 				,ENTERPRISE.DOMAIN
 				,REGISTRY.DOCUMENT_TYPE
@@ -155,10 +151,11 @@ public class CompanyDAO {
 			.leftOuterJoin(WEB).on(WEB.REGISTRY.equal(REGISTRY.ID)
 					.and(WEB.MEDIA.equal(MediaType.WEB.value())))
 			.where(ENTERPRISE.REGISTRY.equal(id))
-			.fetch();
-		if (result != null && result.size() > 0) {
-			Record record = result.get(0);
-			enterprise.setId(record.getValue(ENTERPRISE.REGISTRY))
+			.fetch()
+			.stream()
+			.findFirst()
+			.get()
+			.map( record -> new Enterprise().setId(record.getValue(ENTERPRISE.REGISTRY))
 				.setDomain(record.getValue(ENTERPRISE.DOMAIN))
 				.setDocumentType(AonEnumUtils.enumValue(DocumentType.class,record.getValue(REGISTRY.DOCUMENT_TYPE)))
 				.setDocumentCountry(Country.safeValueOf(record.getValue(REGISTRY.DOCUMENT_COUNTRY)))
@@ -178,9 +175,7 @@ public class CompanyDAO {
 				.setFax(record.getValue(FAX.VALUE))
 				.setEmail(record.getValue(EMAIL.VALUE))
 				.setWeb(record.getValue(WEB.VALUE))
-			;
-		}
-		return enterprise;
+				);
 	}
 
 	public static Company getCompany(AONContext ctx,int domain) {

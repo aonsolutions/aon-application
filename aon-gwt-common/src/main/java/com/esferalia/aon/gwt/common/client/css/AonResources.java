@@ -66,6 +66,28 @@ public interface AonResources extends ClientBundle, Images {
 	
 	@Source("images/aon-aeat.png")
 	ImageResource aonAeat();
+	@Source("images/aon-aeat-bw.png")
+	ImageResource aonAeatBW();
+	
+	@Source("images/aon-icon-araba.png")
+	ImageResource aonIconAraba();
+	@Source("images/aon-icon-araba-bw.png")
+	ImageResource aonIconArabaBW();
+	
+	@Source("images/aon-icon-bizkaia.png")
+	ImageResource aonIconBizkaia();
+	@Source("images/aon-icon-bizkaia-bw.png")
+	ImageResource aonIconBizkaiaBW();
+	
+	@Source("images/aon-icon-gipuzkoa.png")
+	ImageResource aonIconGipuzkoa();
+	@Source("images/aon-icon-gipuzkoa-bw.png")
+	ImageResource aonIconGipuzkoaBW();
+	
+	@Source("images/aon-icon-navarra.png")
+	ImageResource aonIconNavarra();
+	@Source("images/aon-icon-navarra-bw.png")
+	ImageResource aonIconNavarraBW();
 
 	@Source("images/changed.png")
 	ImageResource aonChanged();
@@ -145,8 +167,12 @@ public interface AonResources extends ClientBundle, Images {
 	@Source("images/aon-icon-point-yellow.png")
 	ImageResource aonIconPointYellow();
 	
-	// ------------------------------------------------------------------------
+	@Source("images/aon-icon-loupe.png")
+	ImageResource aonIconLoupe();
 	
-		
+	@Source("images/aon-icon-question.png")
+	ImageResource aonIconQuestion();
+	
+	// ------------------------------------------------------------------------
 }
 

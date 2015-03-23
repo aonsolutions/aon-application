@@ -62,4 +62,18 @@ public enum MOD184Format {
 		return partnerMetadataResource;
 	}
 	
+	public static MOD184Format obtainFormat(int year, int administration) {
+		Administration adm = Administration.values()[administration];
+		MOD184Format f = null;
+		for (MOD184Format format : MOD184Format.values()) {
+			if (format.getAdministration() == adm && year >= format.getYear()) {
+				if (f == null || f.getYear() < format.getYear()) {
+					f = format;
+				}
+			}
+		}
+		System.out.println( f);
+		return f;
+	}
+	
 }

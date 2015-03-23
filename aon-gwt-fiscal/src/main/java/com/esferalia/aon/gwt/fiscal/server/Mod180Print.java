@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.format.output.FileOutput;
 import com.esferalia.aon.gwt.fiscal.server.file.MOD180Writer;
 import com.esferalia.aon.occam.api.AON;
@@ -125,7 +124,7 @@ public class Mod180Print extends HttpServlet {
 
 		DataInputStream input = new DataInputStream(connection.getInputStream());
 		
-		resp.setContentType(MimeType.MIME_PDF.getName());
+		resp.setContentType("application/pdf");
 		resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".pdf\";");
 		IOUtils.copy(input, resp.getOutputStream());
 		resp.flushBuffer();

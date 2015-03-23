@@ -19,21 +19,29 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.ContextMenuEvent;
+import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasTreeItems;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.MenuBar;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -48,6 +56,9 @@ public class FiscalPanel extends MainEntryPoint {
 	static CommonServiceAsync COMMON_SERVICE;
 	static FiscalServiceAsync FISCAL_SERVICE;
 	
+	interface FiscalNodeWidget<T> {
+		void select( TreeItem node,T t);
+	}
 	
 	interface FiscalPanelBinder extends UiBinder<Widget, FiscalPanel> {
 	}
@@ -58,6 +69,7 @@ public class FiscalPanel extends MainEntryPoint {
 	protected final static AonResources AON_RESOURCES = GWT.create(AonResources.class);
 	protected final static GWTResources GWT_RESOURCES = GWT.create(GWTResources.class);
 	protected static final NumberFormat FMT = NumberFormat.getFormat(MSG.decimalPattern(),MSG.currencyCode());
+	public static final int CURRENT_YEAR = 2015;
 
 	@UiField
 	SplitLayoutPanel splitLayoutPanel;
@@ -79,7 +91,7 @@ public class FiscalPanel extends MainEntryPoint {
 	
 	@UiField
 	SimplePanel content;
-
+	
 	public static native String getCurrentDomainName()
 	/*-{
 		return $wnd.getCurrentDomainName();
@@ -272,15 +284,14 @@ public class FiscalPanel extends MainEntryPoint {
 		public static NodeType<Enterprise> ENTERPRISE = new NodeType<Enterprise>() {
 			private EnterpriseMatrixPanel widget;
 			
+			@SuppressWarnings("unchecked")
 			@Override
 			public void select(TreeItem item, FiscalPanel fiscalPanel) {
 				if (widget ==null) {
 					widget = new EnterpriseMatrixPanel();
 				}
-				widget.setDomainId( getCurrentDomain() );
-				widget.setDomainName( getCurrentDomainName() );
-				Enterprise uo = (Enterprise) item.getUserObject();
-				widget.setEnterprise( uo );
+				NodeUserObject<Enterprise> uo = (NodeUserObject<Enterprise>) item.getUserObject();
+				widget.setEnterprise( uo.getUserObject() );
 				fiscalPanel.content.setWidget(widget);
 			}
 
@@ -292,7 +303,7 @@ public class FiscalPanel extends MainEntryPoint {
 				label.addStyleName( AON_RESOURCES.css().aonIconCompany() );
 				label.addStyleName( AON_RESOURCES.css().aonTreeIconNode() );
 				treeItem.setWidget(label);
-				treeItem.setUserObject(enterprise);
+				treeItem.setUserObject(new NodeUserObject<Enterprise>(ENTERPRISE,enterprise));
 				parent.addItem(treeItem);
 				return treeItem;
 			}
@@ -301,15 +312,15 @@ public class FiscalPanel extends MainEntryPoint {
 		public static NodeType<Enterprise> ENTERPRISE_DATA = new NodeType<Enterprise>() {
 			private EnterpriseForm widget; 
 			
+			@SuppressWarnings("unchecked")
 			@Override
 			public void select(TreeItem item, FiscalPanel fiscalPanel) {
 				if (widget ==null) {
+					
 					widget = new EnterpriseForm();
 				}
-				widget.setDomainId( getCurrentDomain() );
-				widget.setDomainName( getCurrentDomainName() );
-				Enterprise uo = (Enterprise) item.getUserObject();
-				widget.setEnterprise( uo );
+				NodeUserObject<Enterprise> uo = (NodeUserObject<Enterprise>) item.getUserObject();
+				widget.setEnterprise( uo.getUserObject() );
 				fiscalPanel.content.setWidget(widget);
 			}
 			
@@ -321,7 +332,7 @@ public class FiscalPanel extends MainEntryPoint {
 		    	label.addStyleName(AON_RESOURCES.css().aonIconCompanyData());
 		    	label.addStyleName( AON_RESOURCES.css().aonTreeIconNode() );
 		    	treeItem.setWidget(label);
-		    	treeItem.setUserObject( (Enterprise) enterprise);
+		    	treeItem.setUserObject(new NodeUserObject<Enterprise>(ENTERPRISE_DATA,enterprise));
 		    	parent.addItem(treeItem);
 				return treeItem;
 			}
@@ -365,6 +376,7 @@ public class FiscalPanel extends MainEntryPoint {
 					
 					@Override
 					public void onSuccess(ArrayList<FiscalActivity> result) {
+						boolean currentYearRendered = false;
 						for (FiscalActivity fa : result) {
 							TreeItem yearNode = null; 
 							for (int i = 0 ; i < treeItem.getChildCount() ; i++) {
@@ -375,10 +387,14 @@ public class FiscalPanel extends MainEntryPoint {
 								}
 							}
 							if (yearNode == null) {
-								yearNode = FISCAL_ACTIVITY_YEAR.render(treeItem,fiscalPanel, fa);
+								yearNode = FISCAL_ACTIVITY_YEAR.render(treeItem,fiscalPanel, fa.getYear());
+								currentYearRendered = (fa.getYear() == CURRENT_YEAR);
 							}
 							FISCAL_ACTIVITY.render(yearNode,fiscalPanel, fa);
 							yearNode.setState(true);
+						} 
+						if (!currentYearRendered) {
+							FISCAL_ACTIVITY_YEAR.render(treeItem,fiscalPanel, CURRENT_YEAR);
 						}
 						treeItem.setState(true);
 					}
@@ -391,27 +407,78 @@ public class FiscalPanel extends MainEntryPoint {
 			}
 		}
     	;
-    	public static NodeType<FiscalActivity> FISCAL_ACTIVITY_YEAR = new NodeType<FiscalActivity>() {
+    	public static NodeType<Integer> FISCAL_ACTIVITY_YEAR = new NodeType<Integer>() {
     		
     		private HTMLPanel widget;
     		
+			@SuppressWarnings("unchecked")
 			@Override
 			public void select(TreeItem item, FiscalPanel fiscalPanel) {
+				NodeUserObject<Integer> uo = (NodeUserObject<Integer>) item.getUserObject();
 				if (widget ==null) {
-					widget = new HTMLPanel( item.getUserObject().toString() );
+					widget = new HTMLPanel( uo.getUserObject().toString() );
 				}
 				fiscalPanel.content.setWidget(widget);
 			}
 
 			@Override
-			public TreeItem render(HasTreeItems parent,FiscalPanel fiscalPanel, FiscalActivity t) {
-		    	TreeItem treeItem = new TreeItem();
+			public TreeItem render(HasTreeItems parent,final FiscalPanel fiscalPanel, final Integer year) {
+		    	final TreeItem treeItem = new TreeItem();
 		    	InlineLabel label = new InlineLabel();
-		    	label.setText(t.getYear().toString());
+		    	label.setText(year.toString());
 		    	label.addStyleName(AON_RESOURCES.css().aonIconPointGreen());
 		    	label.addStyleName( AON_RESOURCES.css().aonTreeIconNode() );
 		    	treeItem.setWidget(label);
-		    	treeItem.setUserObject( t.getYear() );
+		    	treeItem.setUserObject( new NodeUserObject<Integer>(FISCAL_ACTIVITY_YEAR, year) );
+		        final PopupPanel popupPanel = new PopupPanel();
+		        popupPanel.hide();
+		        popupPanel.setAutoHideEnabled(true);
+		        popupPanel.setStyleName(AON_RESOURCES.css().aonContextMenuPopup());
+		    	Command newActivityCommand = new Command() {
+					@Override
+					public void execute() {
+						FiscalActivity fa = new FiscalActivity();
+						fa.setYear(year);
+						fa.setEpigraph(AonStringUtils.EMPTY);
+						fa.setDescription("NUEVA ACTIVIDAD");
+						TreeItem newAct = FISCAL_ACTIVITY.render(treeItem,fiscalPanel, fa);
+						treeItem.setState(true);
+						fiscalPanel.tree.setSelectedItem(newAct,true);
+						popupPanel.hide();
+					}
+				};
+				Command deleteActivityCommand = new Command() {
+					@Override
+					public void execute() {
+						Window.alert("BORRAR");
+						popupPanel.hide();
+					}
+				};
+		    	MenuBar popup = new MenuBar(true);
+		    	popup.setAnimationEnabled(true);
+		    	popup.setStyleName(AON_RESOURCES.css().aonContextMenu());
+		        MenuItem addItem = new MenuItem( MSG.newAction(), true, newActivityCommand);
+		        addItem.addStyleName(AON_RESOURCES.css().aonIconDelete());
+		        popup.addItem(addItem);
+		        MenuItem deleteItem = new MenuItem(MSG.deleteAction(), true, deleteActivityCommand);
+		        deleteItem.addStyleName(AON_RESOURCES.css().aonIconDelete());
+		        popup.addItem(deleteItem);
+		        popupPanel.setWidget(popup);
+		        
+		        label.sinkEvents(Event.ONCONTEXTMENU);
+		        label.addHandler(new ContextMenuHandler() {
+					@Override
+					public void onContextMenu(ContextMenuEvent event) {
+						event.preventDefault();
+						event.stopPropagation();
+						popupPanel.setPopupPosition(event.getNativeEvent()
+								.getClientX(), event.getNativeEvent()
+								.getClientY());
+						popupPanel.show();
+					}
+					
+				}, ContextMenuEvent.getType());
+		        
 		    	parent.addItem(treeItem);
 				return treeItem;
 			}
@@ -428,10 +495,8 @@ public class FiscalPanel extends MainEntryPoint {
 				if (widget ==null) {
 					widget = new ActivityForm();
 				}
-				widget.setDomainId( getCurrentDomain() );
-				widget.setDomainName( getCurrentDomainName() );
 				NodeUserObject<FiscalActivity> uo = (NodeUserObject<FiscalActivity>) item.getUserObject();
-				widget.setFiscalActivity( uo.getUserObject() );
+				widget.select(item, uo.getUserObject() );
 				fiscalPanel.content.setWidget(widget);
 			}
 			
@@ -439,7 +504,8 @@ public class FiscalPanel extends MainEntryPoint {
 			public TreeItem render(HasTreeItems parent, FiscalPanel fiscalPanel, FiscalActivity fa) {
 		    	TreeItem treeItem = new TreeItem();
 		    	InlineLabel label = new InlineLabel();
-		    	label.setText(fa.getEpigraph() + " - " + fa.getDescription());
+		    	label.setText((AonStringUtils.isBlank(fa.getEpigraph())?AonStringUtils.EMPTY:fa.getEpigraph() + " - ") 
+		    			+ AonStringUtils.abbreviate(fa.getDescription(), 40));
 		    	label.addStyleName(AON_RESOURCES.css().aonIconPointLightGreen());
 		    	label.addStyleName( AON_RESOURCES.css().aonTreeIconNode() );
 		    	treeItem.setWidget(label);
@@ -465,6 +531,7 @@ public class FiscalPanel extends MainEntryPoint {
 		    tree.setSelectedItem(rootNode);
 		}
 	}
+	
 }
 
 

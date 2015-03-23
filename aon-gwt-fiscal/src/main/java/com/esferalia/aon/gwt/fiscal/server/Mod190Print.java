@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.format.output.FileOutput;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.gwt.common.sql.SQLUtils;
@@ -145,7 +144,7 @@ public class Mod190Print extends HttpServlet {
 
 		DataInputStream input = new DataInputStream(connection.getInputStream());
 		
-		resp.setContentType(MimeType.MIME_PDF.getName());
+		resp.setContentType("application/pdf");
 		resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".pdf\";");
 		IOUtils.copy(input, resp.getOutputStream());
 		resp.flushBuffer();

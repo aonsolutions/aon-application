@@ -299,6 +299,10 @@
     padding-left: 15px;
     white-space: nowrap;	
 }
+.aon-icon-padding-left {
+	padding-left: 17px;
+}
+
 @sprite .aon-icon-delete {
 	width: auto;
 	gwt-image: "aonIconDelete";
@@ -391,13 +395,46 @@
     border: 1px solid #808080;
 }
 @sprite .aon-icon-aeat{
-	width: auto;
 	gwt-image: "aonAeat";
+	width: auto;
 	background-color: transparent;
 	background-attachment: scroll;
 	background-repeat: no-repeat;
 	background-position: center left;
 }
+
+@sprite .aon-icon-aeat-bw{
+	gwt-image: "aonAeatBW"
+}
+@sprite .aon-icon-araba{
+	gwt-image: "aonIconAraba"
+}
+@sprite .aon-icon-araba-bw{
+	gwt-image: "aonIconArabaBW"
+}
+@sprite .aon-icon-bizkaia{
+	gwt-image: "aonIconBizkaia"
+}
+@sprite .aon-icon-bizkaia-bw{
+	gwt-image: "aonIconBizkaiaBW"
+}
+@sprite .aon-icon-gipuzkoa{
+	gwt-image: "aonIconGipuzkoa"
+}
+@sprite .aon-icon-gipuzkoa-bw{
+	gwt-image: "aonIconGipuzkoaBW"
+}
+@sprite .aon-icon-navarra{
+	gwt-image: "aonIconNavarra"
+}
+@sprite .aon-icon-navarra-bw{
+	gwt-image: "aonIconNavarraBW"
+}
+@sprite .aon-icon-question{
+	gwt-image: "aonIconQuestion"
+}
+
+
 
 .aon-icon-commandButton{
 	padding:0 0 0 16px;
@@ -1019,6 +1056,10 @@ input:disabled + label{
 	gwt-image: "aonIconPointYellow";
 }
 
+@sprite .aon-icon-loupe {
+	gwt-image: "aonIconLoupe";
+}
+
 .aon-fiscal-enterprise-suggest {
     background-color: #eee;
     border: medium none;
@@ -1049,5 +1090,70 @@ input:disabled + label{
 	border:#c4c4c4 1px solid;
 	padding:2px 5px 2px 2px;
 	padding:1px 0.5em 1px 0.5em;
+}
+
+.aon-context-menu-popup{	
+	border-top:#fff 1px solid;	
+	background:#d7d7d7 url(images/aon-content/aon-secondary-menu.png) scroll left top repeat-x;
+	padding:0px 0em;
+	border-bottom:#a1a6b1 1px solid;
+}
+
+.aon-context-menu  {
+  cursor: default;
+}
+
+.aon-context-menu .gwt-MenuItem {
+	padding: 2px 5px 2px 18px !important;
+}
+
+.aon-context-menu .gwt-MenuItem-selected {
+  background-color: #E3E8F3;
+  padding: 2px 5px 2px 18px !important;
+}
+
+.aon-fiscal-status-pending {
+	background-color: #E0FFE0;
+}
+.aon-fiscal-status-missing {
+	background-color: #FFC2B2;
+}
+.aon-fiscal-status-finished {
+	background-color: #CCFF99;
+}
+
+.aon-fiscal-matrix {
+	margin-left:auto; 
+    margin-right:auto;
+}
+    
+.aon-fiscal-matrix td {
+	text-align: center;
+}
+.aon-fiscal-matrix-monthCell {
+	border: solid #BBB 1px;
+	width: 40px; 
+	font-weight: bold;
+}
+.aon-fiscal-matrix-domainCell {
+	font-weight: bold;
+	margin-top:5px;
+	font-size: 1.1em;
+	padding-left: 10px;
+	text-aling: left;
+}
+.aon-fiscal-matrix-admonCell {
+	width: 30px;
+	border: solid #BBB 1px;
+}
+.aon-fiscal-matrix-modelCell {
+	border: solid #BBB 1px;
+	width: 60px; 
+	font-weight: bold;
+	font-size: 1.1em;
+	white-space: nowrap;
+}
+.aon-fiscal-matrix-dataCell {
+	border: solid #BBB 1px;
 }
 

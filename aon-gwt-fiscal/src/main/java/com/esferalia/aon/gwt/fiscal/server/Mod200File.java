@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.format.output.FileOutput;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.gwt.common.sql.SQLUtils;
@@ -55,7 +54,7 @@ public class Mod200File extends HttpServlet {
 			}
 			String fileName = "Mod200" + "_" + mod200.getYear() + "_" + sb.toString();
 			ByteArrayInputStream in = new ByteArrayInputStream(fileoutput.getContent());
-			resp.setContentType(MimeType.MIME_TXT.getName());
+			resp.setContentType("text/txt");
 			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".txt\";");
 			IOUtils.copy(in, resp.getOutputStream());
 			resp.flushBuffer();

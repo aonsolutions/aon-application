@@ -36,7 +36,8 @@ public class CommonImpl implements ICommon {
 	@Override
 	public ArrayList<Enterprise> getParentEnterprises(AONContext ctx, String query) {
 		return CompanyDAO.getParentEnterprises(ctx
-			, p -> p.getParentDomainProperty().eq(ctx.getDomainId())
+			, p -> (p.getDomainProperty().eq(ctx.getDomainId())
+				   .or(p.getParentDomainProperty().eq(ctx.getDomainId())))
 				.and(
 					p.getNameProperty().like(query)
 					.or(p.getAliasProperty().like(query))

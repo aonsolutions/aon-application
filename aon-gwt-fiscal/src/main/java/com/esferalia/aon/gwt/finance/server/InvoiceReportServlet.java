@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.code.aon.common.enumeration.MimeType;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.AON;
@@ -90,7 +89,7 @@ public class InvoiceReportServlet extends HttpServlet {
 			.forEach(action);
 			
 			String fileName = "Facturas";
-			resp.setContentType(MimeType.MIME_MS_EXCEL.getName());
+			resp.setContentType("application/vnd.ms-excel");
 			resp.setHeader("Content-disposition", "attachment; filename=\""
 					+ fileName + ".xlsx\";");
 			action.finalize(resp.getOutputStream());

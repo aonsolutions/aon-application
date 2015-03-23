@@ -193,6 +193,7 @@ public class FiscalActivityControllerListener extends ControllerAdapter {
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		try {
 			FiscalActivityController c = (FiscalActivityController) event.getController();
+			c.setCalculator(null);
 			c.initialize();
 			loadActivityInfo(c);
 		} catch (ManagerBeanException e) {

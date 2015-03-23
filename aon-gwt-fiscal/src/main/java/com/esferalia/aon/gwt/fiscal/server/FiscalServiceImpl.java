@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.servlet.annotation.WebServlet;
 
@@ -10,6 +11,7 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -20,6 +22,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 import com.esferalia.aon.occam.api.model.type.Activities.Type1Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type2Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type3Activities;
@@ -40,6 +44,12 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 		return AON.getFiscalParameters(domainName, domain);
 	}
 
+	@Override
+	public FiscalModelMatrix getFiscalPanel(String domainName,
+			int domain, int year) {
+		return AON.getFiscalPanel(domainName, domain,year,this.getUserLogin());
+	}
+	
 	// ------------------------------------------------------ FISCAL ACTIVITIES
 	@Override
 	public ArrayList<FiscalActivity> getFiscalActivities(String domainName,
@@ -52,7 +62,18 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 		return AON.getFiscalActivity(domainName, domain, id);
 	}
 
+	@Override
+	public FiscalActivity getFiscalActivityFor(Epigraph epigraph, Integer year) {
+		// TODO Auto-generated method stub
+		return AON.getFiscalActivityFor(epigraph, year);
+	}
+
 	// -------------------------------------------------------------- ACTIVITIES
+	@Override
+	public ArrayList<Epigraph> getModuleEpigraphs(int year) {
+		return new ArrayList<Epigraph>(Arrays.asList(Modules2015.Epigraph.values()));
+	}
+	
 	@Override
 	public ArrayList<Activity> getActivities(int activityGroup) throws AonSQLException {
 		ArrayList<Activity> list = new ArrayList<Activity>();
