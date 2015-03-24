@@ -37,6 +37,7 @@ import com.esferalia.aon.gwt.common.sql.SQLUtils;
 import com.esferalia.aon.gwt.fiscal.server.file.MOD190Writer;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")
@@ -143,7 +144,7 @@ public class Mod190Print extends HttpServlet {
 
 		DataInputStream input = new DataInputStream(connection.getInputStream());
 		
-		resp.setContentType("application/pdf");
+		resp.setContentType(MimeType.PDF.getName());
 		resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".pdf\";");
 		AonIOUtils.copy(input, resp.getOutputStream());
 		resp.flushBuffer();

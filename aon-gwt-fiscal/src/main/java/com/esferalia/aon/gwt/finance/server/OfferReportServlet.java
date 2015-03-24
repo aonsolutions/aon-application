@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.OfferStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -96,7 +97,7 @@ public class OfferReportServlet extends HttpServlet {
 				).forEach( action);
 						
 			String fileName = "Presupuestos";
-			resp.setContentType("application/vnd.ms-excel");
+			resp.setContentType(MimeType.MS_EXCEL_2007.getName());
 			resp.setHeader("Content-disposition", "attachment; filename=\""
 					+ fileName + ".xlsx\";");
 			action.finalize(resp.getOutputStream());

@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.fiscal.Mod140Context;
 import com.esferalia.aon.occam.api.model.fiscal.Mod140Params;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod140DAO;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
@@ -68,7 +69,7 @@ public class Mod140File extends HttpServlet {
 
 			ByteArrayInputStream in = new ByteArrayInputStream(
 					fos.toByteArray());
-			resp.setContentType("text/txt");
+			resp.setContentType(MimeType.TXT.getName());
 			resp.setHeader("Content-disposition", "attachment; filename=\""
 					+ fileName + ".txt\";");
 			AonIOUtils.copy(in, resp.getOutputStream());

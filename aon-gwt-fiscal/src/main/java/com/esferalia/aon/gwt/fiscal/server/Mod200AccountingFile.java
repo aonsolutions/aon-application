@@ -23,6 +23,7 @@ import com.esferalia.aon.gwt.fiscal.server.mod200.xml.MOD2002013;
 import com.esferalia.aon.gwt.fiscal.server.mod200.xml.Mod200toMOD2002013;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200;
 import com.esferalia.aon.gwt.fiscal.sql.SQLMod200;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod200 Accounting File", urlPatterns = { "/aon_gwt_fiscal/Model200AccountingFile" })
@@ -62,7 +63,7 @@ public class Mod200AccountingFile extends HttpServlet {
 			}
 			String fileName = "Mod200" + "_" + mod200.getYear() + "_" + sb.toString();
 			if (content != null) {
-				resp.setContentType("text/xml");
+				resp.setContentType(MimeType.XML.getName());
 				resp.setCharacterEncoding("ISO-8859-1");
 				resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".xml\";");
 				resp.getWriter().print(content);

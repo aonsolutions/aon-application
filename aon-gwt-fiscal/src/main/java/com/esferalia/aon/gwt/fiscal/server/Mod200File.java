@@ -22,6 +22,7 @@ import com.esferalia.aon.gwt.common.sql.SQLUtils;
 import com.esferalia.aon.gwt.fiscal.server.file.MOD200Writer;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200;
 import com.esferalia.aon.gwt.fiscal.sql.SQLMod200;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")
@@ -53,7 +54,7 @@ public class Mod200File extends HttpServlet {
 			}
 			String fileName = "Mod200" + "_" + mod200.getYear() + "_" + sb.toString();
 			ByteArrayInputStream in = new ByteArrayInputStream(fileoutput.getContent());
-			resp.setContentType("text/txt");
+			resp.setContentType(MimeType.TXT.getName());
 			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".txt\";");
 			AonIOUtils.copy(in, resp.getOutputStream());
 			resp.flushBuffer();

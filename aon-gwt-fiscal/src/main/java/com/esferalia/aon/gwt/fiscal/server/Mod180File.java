@@ -13,6 +13,7 @@ import com.code.aon.file.format.output.FileOutput;
 import com.esferalia.aon.gwt.fiscal.server.file.MOD180Writer;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")
@@ -48,7 +49,7 @@ public class Mod180File extends HttpServlet {
 
 			ByteArrayInputStream in = new ByteArrayInputStream(
 					fileoutput.getContent());
-			resp.setContentType("text/txt");
+			resp.setContentType(MimeType.TXT.getName());
 			resp.setHeader("Content-disposition", "attachment; filename=\""
 					+ fileName + ".txt\";");
 			AonIOUtils.copy(in, resp.getOutputStream());
