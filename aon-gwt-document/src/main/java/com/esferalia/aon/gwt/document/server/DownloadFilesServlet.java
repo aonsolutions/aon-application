@@ -24,6 +24,7 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.FileInfo;
 import com.code.aon.google.apis.Utils;
+import com.code.aon.google.apis.jooq.DBDrive;
 import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.ui.google.apis.controller.GoogleDriveController;
 import com.code.aon.ui.util.AonUtil;
@@ -45,11 +46,20 @@ public class DownloadFilesServlet extends HttpServlet {
         String isDrive = p_request.getParameter("isdrive");
         String multiple = p_request.getParameter("ismultiple");
         String domainId =  p_request.getParameter("domain_id");
-        Integer domainID = Integer.parseInt(domainId);
+
         String domain = AonUtil.getDomainName();
+        Integer idFile = Integer.parseInt(fileId);
+        Integer domainID = 0;
+        if(domainId.equals("null") || domainId.equals("undefined")){
+        	try {
+				domainID = DBDrive.getRAttachDomainID(domain, idFile);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+        }
+        else domainID = Integer.parseInt(domainId);
         Integer m = Integer.parseInt(mtype);
         String mimetype = MimeType.values()[m].getName();
-        Integer idFile = Integer.parseInt(fileId);
         FileInfo fi=null;
         if(multiple.equals("true")){
         	Vector<com.esferalia.aon.gwt.document.shared.FileInfo> fvector = DocumentsServlet.getDown();
