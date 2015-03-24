@@ -120,11 +120,11 @@ public class DownloadFilesServlet extends HttpServlet {
         }
         else if (driveId != ""){
         	Drive d = null;
+        	DomainGserviceaccount g = null;
         	if(isDrive.equals("true")){
         		d = GoogleDriveController.dconnection;
         	}
         	else{
-        		DomainGserviceaccount g;
 				try {
 					g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain, domainID);
 					d = DriveUtils.serviceInitialize(g);
@@ -139,6 +139,8 @@ public class DownloadFilesServlet extends HttpServlet {
 			com.google.api.services.drive.model.File f = null;
 			try {
 				f = DriveUtils.getFile(d, driveId, idFile);
+				if(f.getDescription().equals("OLDRIVE"))
+					d = DriveUtils.serviceInitializeOld(g);
 			} catch (SQLException | GeneralSecurityException e) {
 				e.printStackTrace();
 			}

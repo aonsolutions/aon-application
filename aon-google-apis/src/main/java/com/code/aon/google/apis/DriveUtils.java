@@ -625,8 +625,12 @@ public class DriveUtils implements IBlobManager {
 				
 			} catch (IOException e) {
 				String domain = AonUtil.getDomainName();
-				Domain d = DBConsults.getDomain(domain);
-				DomainGserviceaccount g = DBConsults.getServiceAccount(domain,d.getId());
+				Integer domainId;
+				if(id != null) domainId = DBDrive.getRAttachDomainID(domain, id);
+				else {
+					domainId = DBConsults.getDomain(domain).getId();
+				}
+				DomainGserviceaccount g = DBConsults.getServiceAccount(domain,domainId);
 				Drive oldDrive = serviceInitializeOld(g);
 				f = oldDrive.files().get(fileId).execute();
 				f.setDescription("OLDRIVE");
@@ -763,6 +767,7 @@ public class DriveUtils implements IBlobManager {
 		File file = null;
 		try {
 			file = getFile(client, fileInfo.getDriveId(),fileInfo.getFileId());
+			file.setTitle(fileInfo.getTitle());
 			if(file.getDescription().equals("OLDRIVE")){
 				String domain = AonUtil.getDomainName();
 				Domain d  = DBConsults.getDomain(domain);
@@ -1257,7 +1262,6 @@ public class DriveUtils implements IBlobManager {
 						.execute();
 				return resp.getContent();
 			} catch (IOException e) {
-				// An error occurred.
 				e.printStackTrace();
 				return null;
 			}

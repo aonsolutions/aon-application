@@ -714,6 +714,27 @@ public class DBDrive {
 			}
 		}
 		
+		public static Integer getRAttachDomainID(String domain, Integer id) throws SQLException{
+			Connection connection = null;
+			try {
+
+				connection = DatabaseSync.getConnection(domain);
+
+				DSLContext dslContext = DSL.using(connection,
+						JooqSettings.getDefaultSettings());
+				
+				Result<Record1<Integer>> data =dslContext.select(RATTACH.DOMAIN)
+					.from(RATTACH)
+					.where(RATTACH.ID.eq(id)).fetch();
+			
+				if(data.get(0).value1()!=null) return data.get(0).value1();
+				else return 0;
+			} finally {
+				if (connection != null)
+					connection.close();
+			}
+		}
+		
 	//CONTRACT ATTACH
 		public static Vector<FileInfo> getDriveContractAttach(String domain, Integer domainId) throws SQLException{
 			Connection connection = null;
