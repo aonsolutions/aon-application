@@ -311,11 +311,18 @@ public class JooqCalendar {
 	private static void insertHolidayDetail(DSLContext dslContext,
 			Integer domain, Integer holidayId, Map<Date, String> map)
 			throws IllegalArgumentException {
+		
+		for (Date date : map.keySet()) {
+			
+			dslContext
+			.delete(HOLIDAY_DETAIL)
+			.where(HOLIDAY_DETAIL.HOLIDAY.eq(holidayId))
+			.and(HOLIDAY_DETAIL.DATE.eq(new java.sql.Date(date.getTime())))
+			.execute();
+			
+			
+		}
 				
-		dslContext
-		.delete(HOLIDAY_DETAIL)
-		.where(HOLIDAY_DETAIL.HOLIDAY.eq(holidayId))
-		.execute();
 
 		for (Date date : map.keySet()) {
 			dslContext

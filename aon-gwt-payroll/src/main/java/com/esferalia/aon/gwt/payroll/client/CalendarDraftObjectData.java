@@ -147,8 +147,7 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 	
 	public void getHolidayCalendar (Integer pattern, Integer year,
 			final AsyncCallback<CalendarDraftObjectData> cb) {
-		
-		this.colors = 0;
+
 		getHoliday(pattern, year, cb);
 	}
 	
@@ -181,7 +180,7 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 
 					@Override
 					public void onSuccess(CalendarDraftObject result) {
-						
+						CalendarDraftObjectData.this.colors = 0;
 						CalendarDraftObjectData.this.calendarDraftObject = result;
 						List<HolidayDraft> list = calendarDraftObject
 								.getHolidays();
@@ -190,6 +189,36 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 					}
 				});
 	}
+	
+	public void getHolidayCalendarWithYearChange(Integer pattern, Integer year,
+			final AsyncCallback<CalendarDraftObjectData> cb) {
+		
+		if ( pattern != null && pattern >= 0)
+			asignHoliday(pattern);
+
+		calendarDraftObject.getHolidayCalendar(pattern, year,
+				new AsyncCallback<CalendarDraftObject>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						cb.onFailure(caught);
+					}
+
+					@Override
+					public void onSuccess(CalendarDraftObject result) {
+						CalendarDraftObjectData.this.colors = 0;
+						CalendarDraftObjectData.this.clearDrafts();
+						CalendarDraftObjectData.this.calendarDraftObject = result;
+						List<HolidayDraft> list = calendarDraftObject
+								.getHolidays();
+						CalendarDraftObjectData.this.initHolidayList(list);
+						cb.onSuccess(CalendarDraftObjectData.this);
+					}
+				});
+	}
+
+	
+	
 
 	public void saveHolidayDraft(Integer value, final AsyncCallback<Void> cb) {
 		
@@ -235,14 +264,17 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 		}
 	}
 
-	private void addPropertyCalendar(HolidayDraft draft) {
-		MyHolidayDraft myDraftAux = new MyHolidayDraft();
-		myDraftAux.setId(draft.getId());
-		myDraftAux.setHoliday(draft.getHoliday());
-		myDraftAux.setDescription(draft.getDescription());
-		myDraftAux.setMap(draft.getHolidaysMap());
+	private void addPropertyCalendar(HolidayDraft draft) {			
 
-		myDrafts.add(myDraftAux);
+		if(conteinsId(draft.getId()) == false) {
+			MyHolidayDraft myDraftAux = new MyHolidayDraft();
+			myDraftAux.setId(draft.getId());
+			myDraftAux.setHoliday(draft.getHoliday());
+			myDraftAux.setDescription(draft.getDescription());
+			myDraftAux.setMap(draft.getHolidaysMap());
+
+			myDrafts.add(myDraftAux);
+		}
 	}
 
 	public void insertHolidays() {
@@ -364,10 +396,20 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 		return inserts.isEmpty();
 	}
 	
+	private boolean conteinsId(Integer id) {
+		
+		for(MyHolidayDraft item : myDrafts) {
+			if (item.getId() == id)
+				return true;
+		}
+		return false;
+			
+	}
+	
 	private void clearDrafts() {
 		inserts.clear();
 		myDrafts.clear();
 		generalHolidays.clear();
-		pattern = 0;
+		pattern = -50;
 	}
 }

@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -197,8 +196,28 @@ public class CalendarDraft extends Composite implements
 		Integer year = Integer.parseInt(yearLabel.getText());
 		yearLabel.setText(String.valueOf(++year));
 
-		loadCalendarPanel(Integer.parseInt(holidayList.getSelectedValue()),
-				Integer.parseInt(yearLabel.getText()), calendarDraftObjectData);
+		if (saveButton.isEnabled()) {
+			calendarDraftObjectData.saveHolidayDraft(
+					Integer.parseInt(holidayList.getSelectedValue()),
+					new AsyncCallback<Void>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+
+						}
+
+						@Override
+						public void onSuccess(Void result) {
+							saveButton.setEnabled(false);
+							loadCalendarPanelWithYearChange(null,
+									Integer.parseInt(yearLabel.getText()),
+									calendarDraftObjectData);
+						}
+					});
+		} else
+			loadCalendarPanelWithYearChange(null,
+					Integer.parseInt(yearLabel.getText()),
+					calendarDraftObjectData);
 
 	}
 
@@ -208,9 +227,28 @@ public class CalendarDraft extends Composite implements
 		Integer year = Integer.parseInt(yearLabel.getText());
 		yearLabel.setText(String.valueOf(--year));
 
-		loadCalendarPanel(Integer.parseInt(holidayList.getSelectedValue()),
-				Integer.parseInt(yearLabel.getText()), calendarDraftObjectData);
+		if (saveButton.isEnabled()) {
+			calendarDraftObjectData.saveHolidayDraft(
+					Integer.parseInt(holidayList.getSelectedValue()),
+					new AsyncCallback<Void>() {
 
+						@Override
+						public void onFailure(Throwable caught) {
+
+						}
+
+						@Override
+						public void onSuccess(Void result) {
+							saveButton.setEnabled(false);
+							loadCalendarPanelWithYearChange(null,
+									Integer.parseInt(yearLabel.getText()),
+									calendarDraftObjectData);
+						}
+					});
+		} else
+			loadCalendarPanelWithYearChange(null,
+					Integer.parseInt(yearLabel.getText()),
+					calendarDraftObjectData);
 	}
 
 	// --------------------------------------------- Listeners
@@ -265,6 +303,33 @@ public class CalendarDraft extends Composite implements
 			CalendarDraftObjectData calendarDraftData) {
 
 		calendarDraftData.getHolidayCalendar(pattern, year,
+				new AsyncCallback<CalendarDraftObjectData>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert(caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(CalendarDraftObjectData result) {
+						CalendarDraft.this.calendarPanel.clear();
+						CalendarDraft.this.calendarDraftObjectData = result;
+						CalendarDraft.this.calendarPanel.add(result
+								.getCalendar());
+						CalendarDraft.this.calendarDraftObjectData
+								.addCalendarListener(CalendarDraft.this);
+						CalendarDraft.this.calendarDraftObjectData
+								.insertHolidays();
+						CalendarDraft.this.getItemLoadIndex();
+						CalendarDraft.this.initializeLegendPanel();
+					}
+				});
+	}
+
+	private void loadCalendarPanelWithYearChange(Integer pattern, Integer year,
+			CalendarDraftObjectData calendarDraftData) {
+
+		calendarDraftData.getHolidayCalendarWithYearChange(pattern, year,
 				new AsyncCallback<CalendarDraftObjectData>() {
 
 					@Override
