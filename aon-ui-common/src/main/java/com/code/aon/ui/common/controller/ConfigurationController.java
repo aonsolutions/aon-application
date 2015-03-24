@@ -67,6 +67,8 @@ public class ConfigurationController implements Serializable {
 	
 	private Integer linesPageLimit = DEFAULT_LINES_PAGE_LIMIT;
 	
+	private Locale locale;
+	
 	/**
 	 * The Constructor.
 	 */
@@ -74,6 +76,7 @@ public class ConfigurationController implements Serializable {
 		this.properties = new HashMap<String, Object>();
 		this.styleSheets = new ArrayList<String>();
 		this.principal = resolvePrincipal();
+		this.locale = AonUtil.getCurrentLocale();
 	}
 	
 	private AuthPrincipal resolvePrincipal() {
@@ -269,6 +272,14 @@ public class ConfigurationController implements Serializable {
     		}
         }
         return localeList;
+	}
+	
+	public Locale getLocale() {
+		return locale;
+	}
+
+	public void setLocale(Locale locale) {
+		this.locale = locale;
 	}
 	
 }

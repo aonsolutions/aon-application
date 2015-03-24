@@ -36,7 +36,8 @@ public class LocaleElement implements Serializable {
 	}
 	
 	public void changeLanguage() {
-		FacesContext.getCurrentInstance().getViewRoot().setLocale( locale );		
+		FacesContext.getCurrentInstance().getViewRoot().setLocale( locale );
+		AonUtil.getConfigurationController().setLocale(locale);
 	}
 	
 }
