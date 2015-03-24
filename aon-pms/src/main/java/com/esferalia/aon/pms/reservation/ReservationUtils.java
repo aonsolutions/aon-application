@@ -442,6 +442,12 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		return strategy.getTotalVatQuota(reservation, customer);
     }
 
+	public double getReservationCalculatedTotal(ProjectReservation reservation) throws ManagerBeanException {
+		Customer customer = (Customer)BeanManager.getManagerBean(Customer.class).get(reservation.getProject().getRegistry().getId());
+		IPriceStrategy strategy = PriceStrategyFactory.getPriceStrategy();
+		return strategy.getTotalPrice(reservation, customer);
+    }
+
     public double getTaxPercentage(Tax tax, Date date) throws ManagerBeanException {
 		if (date.before(tax.getStartDate())) {
 			IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);

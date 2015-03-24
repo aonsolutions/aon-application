@@ -9,6 +9,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +69,6 @@ import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationDivert;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.pms.ProjectReservationRoom;
-import com.esferalia.aon.pms.ProjectReservationRoomDetail;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
@@ -355,20 +355,6 @@ public class ProjectReservationController extends BasicController implements IPm
 		}
 	}
 
-	public boolean isEarlyCheckOut() throws ManagerBeanException {
-		ProjectReservation reservation = (ProjectReservation)getTo();
-		if (reservation.isInvoiced() && !reservation.isNoShow()) {
-			IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
-			Criteria criteria = new Criteria();
-			String alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID);
-			criteria.addEqualExpression(alias, reservation.getId());
-			alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_DATE);
-			criteria.addEqualExpression(alias, DateUtils.addDays(reservation.getEndDate(), -1));
-			return (reservationRoomDetailBean.getCount(criteria) == 0);
-		}
-		return false;
-	}
-
 	public List<SelectItem> getReservationTimes() {
 		DateFormat formatter = new SimpleDateFormat(AonUtil.getMessage(TIME_2_PATTERN));
 		Date fromDate = DateUtils.truncate(((ProjectReservation)getTo()).getStartDate(), Calendar.DATE);
@@ -384,6 +370,24 @@ public class ProjectReservationController extends BasicController implements IPm
 			fromDate = DateUtils.addHours(fromDate, 1);
 		}
 		return hours;
+	}
+
+	public Date obtainStartTime() {
+		ProjectReservation reservation = (ProjectReservation)getTo();
+		return obtainDateTime(reservation.getStartDate(), getStartTime());
+	}
+
+	public Date obtainEndTime() {
+		ProjectReservation reservation = (ProjectReservation)getTo();
+		return obtainDateTime(!reservation.isEarlyCheckOut() ? reservation.getEndDate() : reservation.getEndTime(), getEndTime());
+	}
+
+	private Date obtainDateTime(Date date, String time) {
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(date);
+		calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time.substring(0, 2)));
+		calendar.set(Calendar.MINUTE, Integer.parseInt(time.substring(3, time.length())));
+		return calendar.getTime();
 	}
 
 	public boolean isMyScope() throws ManagerBeanException {
@@ -532,6 +536,14 @@ public class ProjectReservationController extends BasicController implements IPm
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		reservation.setCheckStatus(ReservationCheckStatus.CHECK_OUT);
 		accept(event);
+	}
+
+	public void onEarlyCheckOut(Date earlyCheckOutDate) {
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		reservation.setEarlyCheckOut(true);
+		reservation.setEndTime(earlyCheckOutDate);
+		reservation.setCheckStatus(ReservationCheckStatus.CHECK_OUT);
+		accept(null);
 	}
 
 	public void onUndoCheckStatus(ActionEvent event) {
@@ -945,7 +957,7 @@ public class ProjectReservationController extends BasicController implements IPm
 				finance.setPayMethod(payMethod.getPayment());
 			}
 		}
-		finance.setAmount(CommonUtil.round(reservation.getTotal() - reservation.getAdvancedAmount() - getFinancesAmount()));
+		finance.setAmount(CommonUtil.round(getReservationTotal(reservation) - reservation.getAdvancedAmount() - getFinancesAmount()));
 		getReservationInvoiceTo().getFinances().add(finance);
 	}
 
@@ -960,6 +972,14 @@ public class ProjectReservationController extends BasicController implements IPm
         previousFinance.setAmount(CommonUtil.round(previousFinance.getAmount() + financeToRemove.getAmount()));
 	}
 
+	private double getReservationTotal(ProjectReservation reservation) throws ManagerBeanException {
+		if (!reservation.isEarlyCheckOut()) {
+			return reservation.getTotal();
+		} else {
+			return getReservationUtils().getReservationCalculatedTotal(reservation);
+		}
+	}
+
 	public double getFinancesAmount() {
 		double amount = 0;
 		for (Finance finance : getReservationInvoiceTo().getFinances()) {
@@ -970,12 +990,12 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	public void onInvoice(ActionEvent event) {
 		setInvoiceModel(null);
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		try {
 			if (validateInvoice()) {
 				getReservationInvoiceTo().setSeries(obtainHotelInvoiceSeries());
 				getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
 
-				ProjectReservation reservation = (ProjectReservation)this.getTo();
 				ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
 				reservationInvoicing.invoice(getReservationInvoiceTo(), reservation);
 
@@ -1010,7 +1030,7 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	public boolean isFinancesAmountOk() throws ManagerBeanException {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
-		return CommonUtil.round(reservation.getTotal() - reservation.getAdvancedAmount() - getFinancesAmount()) == 0;
+		return CommonUtil.round(getReservationTotal(reservation) - reservation.getAdvancedAmount() - getFinancesAmount()) == 0;
 	}
 
 	public boolean isPayMethodOk() {
@@ -1109,6 +1129,7 @@ public class ProjectReservationController extends BasicController implements IPm
 		try {
 			getReservationInvoiceTo().setSeries(obtainHotelRectificationSeries());
 			getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
+			getReservationInvoiceTo().setEarlyCheckOut(reservation.isEarlyCheckOut());
 
 			ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
 			reservationInvoicing.rectify(getInvoiceToRectify(), getReservationInvoiceTo(), false);

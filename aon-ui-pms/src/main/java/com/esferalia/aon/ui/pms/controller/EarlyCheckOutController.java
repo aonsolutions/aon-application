@@ -461,7 +461,7 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 
 		    	ProjectReservationController reservationController = (ProjectReservationController)AonUtil.getRegisteredBean(RESERVATION_CONTROLLER_NAME);
 				reservationController.setInvoiceModel(null);
-				reservationController.onCheckOut(event);
+				reservationController.onEarlyCheckOut(getReservationInvoiceTo().getEarlyCheckOutDate());
 				reservationController.setSelectedTab(INVOICE);
 
 				String msg = "Se ha realizado correctamente la Salida Anticipada."; 

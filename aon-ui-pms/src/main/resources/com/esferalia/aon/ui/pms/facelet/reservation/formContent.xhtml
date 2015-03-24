@@ -203,9 +203,12 @@
 				reRender="ProjectReservation_nights,ProjectReservation_endDate"
 				focus="ProjectReservation_bookingHolder" />
 		</aon:selectInputDate>
-		<aon:div>
-			<aon:outputText value="#{bundle.pms_early_check_out}" styleClass="aon-label-error" 
-				rendered="#{!reservation.nevv and reservation.earlyCheckOut}" />
+		<aon:div rendered="#{!reservation.nevv and reservation.to.earlyCheckOut}">
+			<aon:outputText value="#{bundle.pms_early_check_out}" styleClass="aon-label-error" />
+			<aon:outputText value="#{reservation.to.earlyCheckOutDate}" styleClass="aon-label-error aon-margin-left">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
 		</aon:div>
 	</aon:panelGrid>
 

@@ -1,5 +1,6 @@
 package com.esferalia.aon.pms;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -311,6 +312,30 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		String alias = IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID;
 		criteria.addEqualExpression(reservationRoomDetailBean.getFieldName(alias), getId());
 		return reservationRoomDetailBean.getCount(criteria);
+	}
+
+	@Transient
+	public Date getEarlyCheckOutDate() throws ManagerBeanException {
+		if (isEarlyCheckOut()) {
+			if (getEndDate().after(getEndTime())) {
+				return DateUtils.addDays(DateUtils.truncate(getEndTime(), Calendar.DATE), 1);
+			} else {
+				IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
+				Criteria criteria = new Criteria();
+				String alias = IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID;
+				criteria.addEqualExpression(reservationRoomDetailBean.getFieldName(alias), getId());
+				alias = IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_DATE;
+				criteria.addOrder(reservationRoomDetailBean.getFieldName(alias), false);
+				List<ITransferObject> reservationRoomDetailList = reservationRoomDetailBean.getList(criteria);
+				if (reservationRoomDetailList.size() > 0) {
+					ProjectReservationRoomDetail roomDetail = (ProjectReservationRoomDetail)reservationRoomDetailList.get(0);
+					return DateUtils.addDays(roomDetail.getAssetActivity().getDate(), 1);
+				} else {
+					return getStartDate();
+				}
+			}
+		}
+		return null;
 	}
 
 	@Transient

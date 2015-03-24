@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.17.0
+# Version: 8.18.0
 # Created by: girazu
-# Creation Date: 12/03/2015 10:35
+# Creation Date: 23/03/2015 12:50
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -2025,6 +2025,7 @@ CREATE TABLE `project_reservation` (
   `crs_code` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Codigo de la Reserva en el CRS',
   `advance` double(15,2) NOT NULL default '0.00' COMMENT 'Anticipo',
   `advance_invoiced` tinyint(1) NOT NULL default '0' COMMENT 'Indica si el anticipo esta Facturado',
+  `early_check_out` tinyint(1) default '0' COMMENT 'Indica si se ha producido una salida anticipada',
   `check_status` tinyint(2) NOT NULL COMMENT 'Estado de registro en el Hotel',
   `status` tinyint(2) NOT NULL COMMENT 'Estado de la Reserva',
   `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
@@ -7928,7 +7929,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.17.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.18.0');
 
 COMMIT;
 

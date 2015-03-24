@@ -309,11 +309,11 @@ public class ProjectReservationPermission implements Serializable {
 	public boolean isNewReservationRoomAllowed() {
 		Date now = new Date();
 		boolean roleAllowed = (isRoleCommercial() && !isAfterCheckOut(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
-		return roleAllowed && reservation.isActive() && isMyScope();
+		return roleAllowed && reservation.isActive() && !reservation.isEarlyCheckOut() && isMyScope();
 	}
 
 	public boolean isSelectReservationRoomAllowed() {
-		return (reservation.isActive() || reservation.isInvoiced()) && isMyScope();
+		return (reservation.isActive() || reservation.isInvoiced()) && !reservation.isEarlyCheckOut() && isMyScope();
 	}
 
 	public boolean isAcceptReservationRoomAllowed() {

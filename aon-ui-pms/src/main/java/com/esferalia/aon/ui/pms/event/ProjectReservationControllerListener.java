@@ -2,7 +2,6 @@ package com.esferalia.aon.ui.pms.event;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -79,8 +78,8 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 		ProjectReservationController controller = (ProjectReservationController)event.getController();
 		ProjectReservation reservation = (ProjectReservation)controller.getTo();
 		validateReservation(reservation);
-		reservation.setStartTime(obtainDateTime(reservation.getStartDate(), controller.getStartTime()));
-		reservation.setEndTime(obtainDateTime(reservation.getEndDate(), controller.getEndTime()));
+		reservation.setStartTime(controller.obtainStartTime());
+		reservation.setEndTime(controller.obtainEndTime());
 		reservation.setHotelReservation(reservation.getHotel());
 	}
 
@@ -103,8 +102,8 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 		ProjectReservationController controller = (ProjectReservationController)event.getController();
 		ProjectReservation reservation = (ProjectReservation)controller.getTo();
 		validateReservation(reservation);
-		reservation.setStartTime(obtainDateTime(reservation.getStartDate(), controller.getStartTime()));
-		reservation.setEndTime(obtainDateTime(reservation.getEndDate(), controller.getEndTime()));
+		reservation.setStartTime(controller.obtainStartTime());
+		reservation.setEndTime(controller.obtainEndTime());
 	}
 
 	private void validateReservation(ProjectReservation reservation) throws ControllerListenerException {
@@ -147,14 +146,6 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 				throw new ControllerListenerException(e.getMessage(), e);
 			}
 		}
-	}
-
-	private Date obtainDateTime(Date date, String time) {
-		Calendar calendar = new GregorianCalendar();
-		calendar.setTime(date);
-		calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time.substring(0, 2)));
-		calendar.set(Calendar.MINUTE, Integer.parseInt(time.substring(3, time.length())));
-		return calendar.getTime();
 	}
 
 	private void insertProjectReservationGuest(ProjectReservation reservation, String name, String surname) throws ManagerBeanException {

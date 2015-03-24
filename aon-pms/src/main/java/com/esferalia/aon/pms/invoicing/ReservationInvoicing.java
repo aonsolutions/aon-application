@@ -289,7 +289,7 @@ public class ReservationInvoicing implements IReservationConstants {
 		boolean isVatWrong = false;
 		double vatAmount = 0;
 		double advancedAmount = 0;
-		if (!reservationInvoiceTo.isEarlyCheckOut()) {
+		if (!reservationInvoiceTo.isEarlyCheckOut() && !reservation.isEarlyCheckOut()) {
 			vatAmount = reservationUtils.getReservationCalculatedVatQuota(reservation);
 			advancedAmount = reservation.getAdvancedAmount();
 			isVatWrong = (reservation.getVatQuota() != vatAmount || advancedAmount > 0);

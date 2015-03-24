@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<aon:if test="#{!skipActivityButton}">
@@ -79,8 +80,16 @@
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_module_hotel}" />
 		</f:facet>
-		<aon:outputText value="#{to.hotel.workPlace.description}"
-			style="#{(to.diverted and !controller.myScope) ? ('color:red;') : ('')}" />
+		<aon:div>
+			<aon:outputText value="#{to.hotel.workPlace.description}"
+				style="#{(to.diverted and !controller.myScope) ? ('color:red;') : ('')}" />
+			<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto" rendered="#{to.diverted and !controller.myScope}">
+				<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic aon-width-70, aon-noborder aon-bold aon-text-left">
+					<aon:outputText	value="#{bundle.aon_source}:" styleClass="aon-margin-left" />
+					<aon:outputText	value="#{to.hotelReservation.workPlace.description}" />
+				</aon:panelGrid>
+			</rich:toolTip>
+		</aon:div>
 	</aon:column>
 
 	<aon:column alias="ProjectReservation.project.id"
@@ -131,10 +140,22 @@
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.report_checkout}" />
 		</f:facet>
-		<aon:outputText value="#{to.endDate}">
-			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-				timeZone="#{timeZoneController.timeZoneId}" />
-		</aon:outputText>
+		<aon:div>
+			<aon:outputText value="#{to.endDate}"
+				style="#{(to.earlyCheckOut) ? ('color:red;') : ('')}">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+			<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto" rendered="#{to.earlyCheckOut}">
+				<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic aon-width-120, aon-noborder aon-bold aon-text-left">
+					<aon:outputText	value="#{bundle.pms_early_check_out}:" styleClass="aon-margin-left" />
+					<aon:outputText	value="#{to.earlyCheckOutDate}">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+				</aon:panelGrid>
+			</rich:toolTip>
+		</aon:div>
 	</aon:column>
 
 	<aon:if test="#{!skipGuest}">
