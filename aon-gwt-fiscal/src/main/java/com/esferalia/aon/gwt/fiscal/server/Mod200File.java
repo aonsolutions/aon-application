@@ -16,14 +16,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
-
 import com.code.aon.file.format.output.FileOutput;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.gwt.common.sql.SQLUtils;
 import com.esferalia.aon.gwt.fiscal.server.file.MOD200Writer;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200;
 import com.esferalia.aon.gwt.fiscal.sql.SQLMod200;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod200 File download", urlPatterns = { "/aon_gwt_fiscal/Model200File" })
@@ -56,7 +55,7 @@ public class Mod200File extends HttpServlet {
 			ByteArrayInputStream in = new ByteArrayInputStream(fileoutput.getContent());
 			resp.setContentType("text/txt");
 			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".txt\";");
-			IOUtils.copy(in, resp.getOutputStream());
+			AonIOUtils.copy(in, resp.getOutputStream());
 			resp.flushBuffer();
 		} catch (AonSQLException e) {
 			rollback(conn);

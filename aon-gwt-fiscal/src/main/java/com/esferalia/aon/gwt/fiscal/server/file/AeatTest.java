@@ -20,8 +20,7 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import org.apache.commons.io.IOUtils;
-
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AeatTest {
@@ -89,7 +88,7 @@ public class AeatTest {
 		FileOutputStream out = new FileOutputStream(
 				"/home/ecastellano/AEAT/output.pdf");
 
-		IOUtils.copy(input, out);
+		AonIOUtils.copy(input, out);
 
 		connection.disconnect();
 	}
@@ -142,7 +141,7 @@ public class AeatTest {
 		FileOutputStream out = new FileOutputStream(
 				"/home/ecastellano/AEAT/output.pdf");
 
-		IOUtils.copy(input, out);
+		AonIOUtils.copy(input, out);
 
 		connection.disconnect();
 	}

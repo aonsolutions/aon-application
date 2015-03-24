@@ -24,10 +24,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
-
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod390 Print", urlPatterns = { "/aon_gwt_fiscal/Model390Print" })
@@ -125,7 +124,7 @@ public class Mod390Print extends HttpServlet {
 
 		// resp.setContentType(MimeType.MIME_PDF.getName()); //
 		resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "\";");
-		IOUtils.copy(input, resp.getOutputStream());
+		AonIOUtils.copy(input, resp.getOutputStream());
 		resp.flushBuffer();
 		connection.disconnect();
 	}

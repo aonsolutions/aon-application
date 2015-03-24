@@ -31,14 +31,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
-
 import com.code.aon.file.format.output.FileOutput;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.gwt.common.sql.SQLUtils;
 import com.esferalia.aon.gwt.fiscal.server.file.MOD193Writer;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod193 Print", urlPatterns = { "/aon_gwt_fiscal/Model193Print" })
@@ -144,7 +143,7 @@ public class Mod193Print extends HttpServlet {
 
 		DataInputStream input = new DataInputStream(connection.getInputStream());
 		resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "\";");
-		IOUtils.copy(input, resp.getOutputStream());
+		AonIOUtils.copy(input, resp.getOutputStream());
 		resp.flushBuffer();
 		connection.disconnect();
 	}

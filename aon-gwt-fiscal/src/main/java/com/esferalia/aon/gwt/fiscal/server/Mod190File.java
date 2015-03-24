@@ -16,14 +16,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
-
 import com.code.aon.file.format.output.FileOutput;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.gwt.common.sql.SQLUtils;
 import com.esferalia.aon.gwt.fiscal.server.file.MOD190Writer;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod190 File download", urlPatterns = { "/aon_gwt_fiscal/Model190File" })
@@ -66,7 +65,7 @@ public class Mod190File extends HttpServlet {
 			ByteArrayInputStream in = new ByteArrayInputStream(fileoutput.getContent());
 			resp.setContentType("text/txt");
 			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".txt\";");
-			IOUtils.copy(in, resp.getOutputStream());
+			AonIOUtils.copy(in, resp.getOutputStream());
 			resp.flushBuffer();
 
 		} catch (AonSQLException e) {

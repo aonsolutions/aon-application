@@ -9,12 +9,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
-
 import com.code.aon.file.format.output.FileOutput;
 import com.esferalia.aon.gwt.fiscal.server.file.MOD184Writer;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod184 File download", urlPatterns = { "/aon_gwt_fiscal/Model184File" })
@@ -52,7 +51,7 @@ public class Mod184File extends HttpServlet {
 			resp.setContentType("text/txt");
 			resp.setHeader("Content-disposition", "attachment; filename=\""
 					+ fileName + ".txt\";");
-			IOUtils.copy(in, resp.getOutputStream());
+			AonIOUtils.copy(in, resp.getOutputStream());
 			resp.flushBuffer();
 		} catch (Throwable e) {
 			throw new ServletException(e);

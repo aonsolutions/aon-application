@@ -13,14 +13,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
-
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.fiscal.Mod140Context;
 import com.esferalia.aon.occam.api.model.fiscal.Mod140Params;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod140DAO;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
@@ -72,7 +71,7 @@ public class Mod140File extends HttpServlet {
 			resp.setContentType("text/txt");
 			resp.setHeader("Content-disposition", "attachment; filename=\""
 					+ fileName + ".txt\";");
-			IOUtils.copy(in, resp.getOutputStream());
+			AonIOUtils.copy(in, resp.getOutputStream());
 			resp.flushBuffer();
 		} catch (Throwable e) {
 			throw new ServletException(e);
