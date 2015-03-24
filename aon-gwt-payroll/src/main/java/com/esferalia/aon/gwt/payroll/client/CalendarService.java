@@ -8,12 +8,12 @@ import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
 
 public interface CalendarService {
 
-	List<HolidayDraft> getCalendar(int workplaceId, String pattern)
+	List<HolidayDraft> getCalendar(int workplaceId, Integer pattern, Integer calendar)
 			throws IllegalArgumentException;
 
-	List<String> getHolidayDescription() throws IllegalArgumentException;
+	Map<Integer, String> getHolidayDescription() throws IllegalArgumentException;
 
 	void saveHolidayList(int workplaceId, String holidayDescription,
-			String holidayListBox, Map<Date, String> map)
+			Integer holidayListBox, Map<Date, String> map)
 			throws IllegalArgumentException;
 }

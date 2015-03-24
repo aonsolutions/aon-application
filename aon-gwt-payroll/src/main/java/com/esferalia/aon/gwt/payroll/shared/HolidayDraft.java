@@ -15,6 +15,7 @@ public class HolidayDraft implements Serializable {
 	
 	private Integer domain;
 	private Integer id;
+	private Integer holiday;
 	private String description;
 	
 	private Map<Date, String> holidays;
@@ -36,6 +37,10 @@ public class HolidayDraft implements Serializable {
 		this.description = description;
 	}
 	
+	public void setHoliday(Integer holiday) {
+		this.holiday = holiday;
+	}
+	
 	public void addHoliday(Date date, String description) {
 		holidays.put(date, description);
 	}
@@ -54,6 +59,10 @@ public class HolidayDraft implements Serializable {
 	
 	public String getDescription() {
 		return this.description;
+	}
+	
+	public Integer getHoliday() {
+		return this.holiday;
 	}
 	
 	public Map<Date, String> getHolidaysMap() {

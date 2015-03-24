@@ -9,14 +9,14 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface CalendarServiceAsync {
 
-	void getCalendar(int workplaceId, String pattern, AsyncCallback<List<HolidayDraft>> callback)
+	void getCalendar(int workplaceId, Integer pattern, Integer calendar, AsyncCallback<List<HolidayDraft>> callback)
 			throws IllegalArgumentException;
 
-	void getHolidayDescription(AsyncCallback<List<String>> callback)
+	void getHolidayDescription(AsyncCallback<Map<Integer, String>> callback)
 			throws IllegalArgumentException;
 	
 	void saveHolidayList(int workplaceId, String holidayDescription,
-			String holidayListBox, Map<Date, String> map, AsyncCallback<Void> callback)
+			Integer holidayListBox, Map<Date, String> map, AsyncCallback<Void> callback)
 			throws IllegalArgumentException;
 
 

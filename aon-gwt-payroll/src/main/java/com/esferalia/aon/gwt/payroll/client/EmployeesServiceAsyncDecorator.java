@@ -474,26 +474,26 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync,
 	}
 
 	@Override
-	public void getCalendar(int workplaceId, String pattern,
+	public void getCalendar(int workplaceId, Integer pattern, Integer year,
 			AsyncCallback<List<HolidayDraft>> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getCalendar(workplaceId, pattern,
+		employeesServiceAsync.getCalendar(workplaceId, pattern, year,
 				new AsyncCallbackWrapper<List<HolidayDraft>>(callback));
 	}
 
 	@Override
-	public void getHolidayDescription(AsyncCallback<List<String>> callback)
+	public void getHolidayDescription(AsyncCallback<Map<Integer, String>> callback)
 			throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync
-				.getHolidayDescription(new AsyncCallbackWrapper<List<String>>(
+				.getHolidayDescription(new AsyncCallbackWrapper<Map<Integer, String>>(
 						callback));
 	}
 
 	@Override
 	public void saveHolidayList(int workplaceId, String holidayDescription,
-			String holidayListBox, Map<Date, String> map,
+			Integer holidayListBox, Map<Date, String> map,
 			AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.saveHolidayList(workplaceId, holidayDescription,

@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -22,68 +21,71 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 
-	public interface Listener {
+	public interface CalendarDraftListener {
 
 		void onValueChangeEvent(ValueChangeEvent<Date> event);
 
 		void onInsertHoliday();
-
 	}
 
 	class MyHolidayDraft  {
 
 		private Integer id;
+		private Integer holiday;
 		private Integer domain;
 		private String description;
-
-		private Map<Date, String> holidays;
+		
+		private Map<Date, String> sortHolidays;
 
 		public MyHolidayDraft() {
+			
+			sortHolidays = new TreeMap<Date, String>(new Comparator<Date>() {
 
-			holidays = new LinkedHashMap<Date, String>();
+				@Override
+				public int compare(Date date1, Date date2) {					
+					return date1.compareTo(date2);
+				}
+			});
 		}
 
 		public void setId(Integer id) {
 			this.id = id;
 		}
 
-		public void setDomain(Integer domain) {
-			this.domain = domain;
+		public void setHoliday(Integer holiday) {
+			this.holiday = holiday;
 		}
 
 		public void setDescription(String description) {
 			this.description = description;
 		}
+		
+		public void setDomain(Integer domain) {
+			this.domain = domain;
+		}
 
 		public void addHoliday(Date date, String description) {
-			holidays.put(date, description);
+			sortHolidays.put(date, description);
 		}
 
 		public void setMap(Map<Date, String> general) {
-			this.holidays.putAll(general);
+			sortHolidays.putAll(general);
 		}
 
 		public Map<Date, String> getGeneralMap() {
-
-			Map<Date, String> sortMap = new TreeMap<Date, String>(
-					new Comparator<Date>() {
-
-						@Override
-						public int compare(Date date1, Date date2) {
-							return date1.compareTo(date2);
-						}
-					});
-
-			sortMap.putAll(holidays);
-			return sortMap;
+			return sortHolidays;
 		}
 
 		public Integer getId() {
 			return this.id;
 		}
-
+		
 		public Integer getDomain() {
 			return this.domain;
+		}
+
+		public Integer getHoliday() {
+			return this.holiday;
 		}
 
 		public String getDescription() {
@@ -95,15 +97,18 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 			"Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre",
 			"Octubre", "Noviembre", "Diciembre" };
 
-	private Integer colors;
-
 	private CalendarDraftObject calendarDraftObject;
 
+	private Map<Integer, String> listboxHolidayItems;
+	
 	private List<MyHolidayDraft> myDrafts;
 	private List<MyHolidayDraft> inserts;
 
 	private List<HolidayDraft> generalHolidays;
-	private List<Listener> listeners;
+	private List<CalendarDraftListener> listeners;
+	
+	private Integer pattern = -50;
+	private Integer colors;
 
 	public CalendarDraftObjectData(Integer workplaceId,
 			EmployeesServiceAsync employeesService) {
@@ -114,16 +119,16 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 
 		myDrafts = new LinkedList<MyHolidayDraft>();
 		inserts = new LinkedList<MyHolidayDraft>();
-		listeners = new ArrayList<Listener>();
+		listeners = new ArrayList<CalendarDraftListener>();
 
 		generalHolidays = new ArrayList<HolidayDraft>();
 	}
 
-	public List<String> loadListBoxItems(final AsyncCallback<List<String>> cb) {
-
-		final List<String> listboxHolidayItems = new ArrayList<String>();
-
-		calendarDraftObject.loadListBoxItems(new AsyncCallback<List<String>>() {
+	public Map<Integer, String> loadListBoxItems(final AsyncCallback<Map<Integer, String>> cb) {
+		
+		listboxHolidayItems = new HashMap<Integer, String>();
+		
+		calendarDraftObject.loadListBoxItems(new AsyncCallback<Map<Integer,String>>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -131,19 +136,42 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 			}
 
 			@Override
-			public void onSuccess(List<String> result) {
-				listboxHolidayItems.addAll(result);
+			public void onSuccess(Map<Integer, String> map) {
+				CalendarDraftObjectData.this.listboxHolidayItems.putAll(map);
 				cb.onSuccess(listboxHolidayItems);
 			}
 		});
 
 		return listboxHolidayItems;
 	}
-
-	public CalendarDraftObject getHolidayCalendar(String pattern,
+	
+	public void getHolidayCalendar (Integer pattern, Integer year,
 			final AsyncCallback<CalendarDraftObjectData> cb) {
+		
+		this.colors = 0;
+		getHoliday(pattern, year, cb);
+	}
+	
+	private void asignHoliday (Integer pattern) {
+		
+		MyHolidayDraft draft = myDrafts.get(0);
+		
+		if(draft.getId() != pattern)
+			draft.setHoliday(pattern);
+		else {			
+			generalHolidays.clear();
+			pattern = 0;
+		}
+			
+	}
 
-		calendarDraftObject.getHolidayCalendar(pattern,
+	private void getHoliday(Integer pattern, Integer year,
+			final AsyncCallback<CalendarDraftObjectData> cb) {
+		
+		if ( pattern != null && pattern >= 0)
+			asignHoliday(pattern);
+
+		calendarDraftObject.getHolidayCalendar(pattern, year,
 				new AsyncCallback<CalendarDraftObject>() {
 
 					@Override
@@ -153,6 +181,7 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 
 					@Override
 					public void onSuccess(CalendarDraftObject result) {
+						
 						CalendarDraftObjectData.this.calendarDraftObject = result;
 						List<HolidayDraft> list = calendarDraftObject
 								.getHolidays();
@@ -160,11 +189,12 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 						cb.onSuccess(CalendarDraftObjectData.this);
 					}
 				});
-
-		return calendarDraftObject;
 	}
 
-	public void saveHolidayDraft(String value, final AsyncCallback<Void> cb) {
+	public void saveHolidayDraft(Integer value, final AsyncCallback<Void> cb) {
+		
+		if (myDrafts.isEmpty())
+			myDrafts.add(initMyDrafts());
 		
 		MyHolidayDraft myDraft = myDrafts.get(myDrafts.size() - 1);
 		
@@ -186,8 +216,7 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 
 			@Override
 			public void onSuccess(Void result) {
-				inserts.clear();
-				myDrafts.clear();
+				CalendarDraftObjectData.this.clearDrafts();
 				cb.onSuccess(result);
 			}
 		});
@@ -195,7 +224,6 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 
 	private void initHolidayList(List<HolidayDraft> holidays) {
 		this.generalHolidays.clear();
-		this.colors = 0;
 
 		Iterator<HolidayDraft> iterator = holidays.iterator();
 		while (iterator.hasNext()) {
@@ -210,9 +238,8 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 	private void addPropertyCalendar(HolidayDraft draft) {
 		MyHolidayDraft myDraftAux = new MyHolidayDraft();
 		myDraftAux.setId(draft.getId());
-		myDraftAux.setDomain(draft.getDomain());
+		myDraftAux.setHoliday(draft.getHoliday());
 		myDraftAux.setDescription(draft.getDescription());
-
 		myDraftAux.setMap(draft.getHolidaysMap());
 
 		myDrafts.add(myDraftAux);
@@ -272,31 +299,35 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 
 		calendarDraftObject.getCalendar().addStyle2Date(date, getStyle(colors));
 		draft.addHoliday(date, description);
+		
 		inserts.addAll(myDrafts);
 
-		for (Listener listener : listeners)
+		for (CalendarDraftListener listener : listeners)
 			listener.onInsertHoliday();
 	}
 
 	private MyHolidayDraft initMyDrafts() {
+				
 		MyHolidayDraft draft = new MyHolidayDraft();
 		draft.setId(-1);
 		draft.setDomain(-1);
+		draft.setHoliday(-50);
 		draft.setDescription("Festivos Propios");
 
 		return draft;
 
 	}
 
-	public String getHolidayDescription() {
+	public Integer getHolidayDescription() {
+		
+		if ( myDrafts.isEmpty() == false)
+			return myDrafts.get(myDrafts.size() - 1).getHoliday();
 
-		for (HolidayDraft draft : generalHolidays) {
+		else if ( generalHolidays.isEmpty() == false)
+			return generalHolidays.get(generalHolidays.size() -1).getHoliday();
 
-			if (draft.getDomain() == 0)
-				return draft.getDescription();
-		}
-
-		return "-";
+		else
+			return -50;
 	}
 
 	public List<MyHolidayDraft> getMyDrafts() {
@@ -315,21 +346,28 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 		return (month >= 0 && month < 12) ? months[month] : "";
 	}
 
-	public void addCalendarListener(Listener listener) {
+	public void addCalendarListener(CalendarDraftListener listener) {
 		listeners.add(listener);
 	}
 
-	public void removeCalendarListener(Listener listener) {
+	public void removeCalendarListener(CalendarDraftListener listener) {
 		listeners.remove(listener);
 	}
 
 	@Override
 	public void onValueChangeEvent(ValueChangeEvent<Date> event) {
-		for (Listener listener : listeners)
+		for (CalendarDraftListener listener : listeners)
 			listener.onValueChangeEvent(event);
 	}
 
 	public boolean insertIsEmpy() {
 		return inserts.isEmpty();
+	}
+	
+	private void clearDrafts() {
+		inserts.clear();
+		myDrafts.clear();
+		generalHolidays.clear();
+		pattern = 0;
 	}
 }

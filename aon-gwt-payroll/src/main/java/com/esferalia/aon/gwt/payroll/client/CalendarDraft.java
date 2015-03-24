@@ -1,9 +1,16 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.payroll.client.CalendarDraftObjectData.MyHolidayDraft;
@@ -36,9 +43,8 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-
 public class CalendarDraft extends Composite implements
-		CalendarDraftObjectData.Listener {
+		CalendarDraftObjectData.CalendarDraftListener {
 
 	interface Style extends CssResource {
 
@@ -93,19 +99,23 @@ public class CalendarDraft extends Composite implements
 	@UiField
 	VerticalPanel legendVerticalPanel;
 	@UiField
-	ListBox yearList;
-	@UiField
 	Button addEvent;
 	@UiField
 	Button saveButton;
+	@UiField
+	Label yearLabel;
+	@UiField
+	Button lastYearButton;
+	@UiField
+	Button nextYearButton;
 
 	private Date datePickerDateSelected;
-	private String nameValueListBoxSelected;
+	private Integer nameValueListBoxSelected;
 
 	private CalendarDraftObjectData calendarDraftObjectData;
 
 	public CalendarDraft() {
-		initWidget(uiBinder.createAndBindUi(this));		
+		initWidget(uiBinder.createAndBindUi(this));
 	}
 
 	// --------------------------------------------- UiHandlers
@@ -116,22 +126,24 @@ public class CalendarDraft extends Composite implements
 				.setOverflow(Overflow.VISIBLE);
 		scrollPanel.getParent().getElement().getStyle()
 				.setPosition(Position.STATIC);
+
+		yearLabel.setText(String.valueOf(getYear(new Date())));
+
 	}
 
 	@UiHandler("holidayList")
 	void onListChangeHandler(ChangeEvent event) {
-		if(holidayList.getSelectedIndex() > 0) {
-			saveButton.setEnabled(true);
-			loadCalendarPanel(holidayList.getSelectedValue(),
-					calendarDraftObjectData);
-		}
+		saveButton.setEnabled(true);
+		Integer value = Integer.parseInt(holidayList.getSelectedValue());
+		loadCalendarPanel(value, Integer.parseInt(yearLabel.getText()),
+				calendarDraftObjectData);
 	}
-	
+
 	@UiHandler("addEvent")
 	void onAddEventClick(ClickEvent event) {
-		
+
 		FilterDialog filterDialog = new FilterDialog() {
-			
+
 			{
 				setCaption("Nuevo Festivo");
 				setFilterLabel("Datos de la festividad ...");
@@ -141,11 +153,10 @@ public class CalendarDraft extends Composite implements
 				setVisibleDatePatternLabel(false);
 			}
 
-			
 			@Override
 			protected void onAccept() {
-				
-				if (getName() != null && getDateFrom() != null) {
+
+				if (!getName().isEmpty() && getDateFrom() != null) {
 					String name = getName();
 					Date date = getDateFrom();
 					calendarDraftObjectData.addHoliday(date, name);
@@ -153,30 +164,53 @@ public class CalendarDraft extends Composite implements
 				}
 			}
 		};
-		
+
 		filterDialog.setDateFrom(getDateSelected());
 		filterDialog.center();
 		filterDialog.show();
 		filterDialog.setFocusOnNameTextBox(true);
 	}
-	
+
 	@UiHandler("saveButton")
 	void onSaveButtonClick(ClickEvent event) {
-		calendarDraftObjectData.saveHolidayDraft(nameValueListBoxSelected, new AsyncCallback<Void>() {
+		Integer id = Integer.parseInt(holidayList.getSelectedValue());
+		calendarDraftObjectData.saveHolidayDraft(id, new AsyncCallback<Void>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
 			public void onSuccess(Void result) {
-				loadCalendarPanel(null, calendarDraftObjectData);
+				saveButton.setEnabled(false);
+				loadCalendarPanel(null, Integer.parseInt(yearLabel.getText()),
+						calendarDraftObjectData);
 			}
 		});
-		
-		
+	}
+
+	@UiHandler("nextYearButton")
+	void onClickNextYearButton(ClickEvent event) {
+
+		Integer year = Integer.parseInt(yearLabel.getText());
+		yearLabel.setText(String.valueOf(++year));
+
+		loadCalendarPanel(Integer.parseInt(holidayList.getSelectedValue()),
+				Integer.parseInt(yearLabel.getText()), calendarDraftObjectData);
+
+	}
+
+	@UiHandler("lastYearButton")
+	void onClickLastYearButton(ClickEvent event) {
+
+		Integer year = Integer.parseInt(yearLabel.getText());
+		yearLabel.setText(String.valueOf(--year));
+
+		loadCalendarPanel(Integer.parseInt(holidayList.getSelectedValue()),
+				Integer.parseInt(yearLabel.getText()), calendarDraftObjectData);
+
 	}
 
 	// --------------------------------------------- Listeners
@@ -193,11 +227,11 @@ public class CalendarDraft extends Composite implements
 
 	// --------------------------------------------- ---------
 
-	public void setCalendarDraftObject(String pattern,
+	public void setCalendarDraftObject(Integer pattern,
 			CalendarDraftObjectData calendarDraftObjectData) {
 
 		calendarDraftObjectData
-				.loadListBoxItems(new AsyncCallback<List<String>>() {
+				.loadListBoxItems(new AsyncCallback<Map<Integer, String>>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
@@ -205,28 +239,32 @@ public class CalendarDraft extends Composite implements
 					}
 
 					@Override
-					public void onSuccess(List<String> result) {
-						CalendarDraft.this.holidayList.addItem("-", "-");
-						for (String item : result)
-							CalendarDraft.this.addItem2DraftMap(item);
+					public void onSuccess(Map<Integer, String> map) {
+						CalendarDraft.this.holidayList.addItem("-", "-50");
+
+						Map<Integer, String> sortedMap = sortedByComparator(map);
+
+						for (Integer id : sortedMap.keySet())
+							CalendarDraft.this.addItem2DraftMap(id, map.get(id));
 					}
 				});
 
-		loadCalendarPanel(pattern, calendarDraftObjectData);
+		loadCalendarPanel(pattern, Integer.parseInt(yearLabel.getText()),
+				calendarDraftObjectData);
 	}
 
-	private void addItem2DraftMap(String item) {
+	private void addItem2DraftMap(Integer id, String item) {
 
 		int start = item.indexOf(" ");
 		String aux = item.substring(start + 1);
 
-		holidayList.addItem(aux, item);
+		holidayList.addItem(aux, "" + id);
 	}
 
-	private void loadCalendarPanel(String pattern,
+	private void loadCalendarPanel(Integer pattern, Integer year,
 			CalendarDraftObjectData calendarDraftData) {
 
-		calendarDraftData.getHolidayCalendar(pattern,
+		calendarDraftData.getHolidayCalendar(pattern, year,
 				new AsyncCallback<CalendarDraftObjectData>() {
 
 					@Override
@@ -251,15 +289,12 @@ public class CalendarDraft extends Composite implements
 	}
 
 	private void getItemLoadIndex() {
-		
-		nameValueListBoxSelected = "-";
-		
+		nameValueListBoxSelected = calendarDraftObjectData
+				.getHolidayDescription();
+
 		for (int x = 0; x < holidayList.getItemCount(); x++) {
-			if (holidayList.getValue(x).compareTo(
-					calendarDraftObjectData.getHolidayDescription()) == 0) {
+			if (Integer.parseInt(holidayList.getValue(x)) == nameValueListBoxSelected)
 				holidayList.setItemSelected(x, true);
-				nameValueListBoxSelected = holidayList.getValue(x);
-			}
 		}
 	}
 
@@ -333,6 +368,7 @@ public class CalendarDraft extends Composite implements
 		headerPanel.add(icon);
 
 		InlineLabel holidayLabel = new InlineLabel(title);
+
 		holidayLabel.addStyleName(style.legendCaption());
 		holidayLabel.addStyleName(style.typeHoliday());
 		headerPanel.add(holidayLabel);
@@ -345,6 +381,11 @@ public class CalendarDraft extends Composite implements
 	private Integer getDay(Date date) {
 		return Integer.parseInt(DateTimeFormat.getFormat("dd-MM-yyyy")
 				.format(date).split("-")[0]);
+	}
+
+	private Integer getYear(Date date) {
+		return Integer.parseInt(DateTimeFormat.getFormat("dd-MM-yyyy")
+				.format(date).split("-")[2]);
 	}
 
 	private Date getDateSelected() {
@@ -366,5 +407,30 @@ public class CalendarDraft extends Composite implements
 		default:
 			return style.other();
 		}
+	}
+
+	private static Map<Integer, String> sortedByComparator(
+			Map<Integer, String> unsortMap) {
+
+		List<Map.Entry<Integer, String>> list = new LinkedList<Map.Entry<Integer, String>>(
+				unsortMap.entrySet());
+
+		Collections.sort(list, new Comparator<Map.Entry<Integer, String>>() {
+
+			@Override
+			public int compare(Entry<Integer, String> o1,
+					Entry<Integer, String> o2) {
+				return (o1.getValue().compareTo(o2.getValue()));
+			}
+		});
+
+		Map<Integer, String> sortedMap = new LinkedHashMap<Integer, String>();
+		for (Iterator<Map.Entry<Integer, String>> it = list.iterator(); it
+				.hasNext();) {
+			Map.Entry<Integer, String> entry = it.next();
+			sortedMap.put(entry.getKey(), entry.getValue());
+		}
+
+		return sortedMap;
 	}
 }

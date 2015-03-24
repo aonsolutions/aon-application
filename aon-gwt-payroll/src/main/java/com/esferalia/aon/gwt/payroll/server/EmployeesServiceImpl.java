@@ -430,14 +430,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
-	public List<String> getHolidayDescription() 
+	public Map<Integer, String> getHolidayDescription() 
 			throws IllegalArgumentException {
 
 		Connection conn = null;
 		try {
 			initFacesContext();
 			conn = getConnection();
-			return JooqCalendar.getHolidayDescription(conn);
+			return JooqCalendar.getHolidayDescription(conn, getParentDomainID(), getDomainID());
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
@@ -453,14 +453,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<HolidayDraft> getCalendar(int workplaceId, String pattern)
+	public List<HolidayDraft> getCalendar(int workplaceId, Integer pattern, Integer year)
 			throws IllegalArgumentException {
 
 		Connection conn = null;
 		try {
 			initFacesContext();
 			conn = getConnection();
-			return JooqCalendar.getCalendar(conn, workplaceId, pattern);
+			return JooqCalendar.getCalendar(conn, workplaceId, pattern, year);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);			
 		} finally {
@@ -476,7 +476,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	
 	@Override
 	public void saveHolidayList(int workplaceId, String holidayDescription,
-			String holidayListBox, Map<Date, String> map)
+			Integer holidayListBox, Map<Date, String> map)
 			throws IllegalArgumentException {
 
 		Connection conn = null;

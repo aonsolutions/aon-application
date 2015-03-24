@@ -156,7 +156,7 @@ public class Employees extends ResizeComposite implements
 
 	private static final int EMPLOYEE_SALARIES_INDEX = 0;
 	private static final int EMPLOYEE_IRPFOUTCOMES_INDEX = 2; // TODO : It's not
-																// statci ???
+	private static final int EMPLOYEE_CALENDAR_INDEX = 3;
 
 	private static final DateTimeFormat END_DATE_FORMAT = DateTimeFormat
 			.getFormat(PredefinedFormat.DATE_SHORT);
@@ -834,9 +834,6 @@ public class Employees extends ResizeComposite implements
 					});
 		} // end-if: Costs of this workplace haven't been loaded yet.
 
-		final TreeItem calendarItem = workplaceItem
-				.getChild(WORKPLACE_CALENDAR_INDEX);
-
 		final TreeItem statisticsItem = workplaceItem
 				.getChild(WORKPLACE_STATISTICS_INDEX);
 
@@ -925,7 +922,7 @@ public class Employees extends ResizeComposite implements
 						employeesService);
 				irpfOutcomesItem.setUserObject(documents);
 			}
-		});
+		});		
 	}
 
 	private void onLoadAvaiableEmployees(Map<String, String> map) {
@@ -1259,6 +1256,8 @@ public class Employees extends ResizeComposite implements
 			employeeItem.setUserObject(employee);
 
 			addImageItem(employeeItem, "N\u00F3minas", images.salaries());
+			
+			addImageItem(employeeItem, "Calendario", images.calendar());
 
 			if (extended) {
 
@@ -1283,7 +1282,7 @@ public class Employees extends ResizeComposite implements
 				SalaryDraftObject draftObject = new SalaryDraftObject(
 						salaryDraft, dataObject, employeesService);
 				salaryDraftItem.setUserObject(draftObject);
-
+				
 				// A.E.T
 				//addImageItem(employeeItem, "Regularizaciones", images.aet());
 

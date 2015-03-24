@@ -9,10 +9,15 @@
 		padding: 4px 0 4px 8px;
 	}
 	
+	.buttons {
+		background: transparent;
+		width: 9px;
+	}
+	
 	.year {
-		font-size: 55px;
+		font-size: 30px;
 		color: #FF704D;
-		padding-left: 35px;
+		padding-left: 28px;
 		padding-top: 2px;
 	}
 	
@@ -116,11 +121,11 @@
 								</g:HTMLPanel>
 							</g:HTMLPanel>
 
-							<g:HTMLPanel styleName="aon-finding-subtitle">
+							<!--g:HTMLPanel styleName="aon-finding-subtitle">
 								<g:HTMLPanel styleName="aon-finding-subtitle-internal">
 									<g:ListBox ui:field="yearList" />
 								</g:HTMLPanel>
-							</g:HTMLPanel>
+							</g:HTMLPanel -->
 
 							<g:HTMLPanel styleName="aon-finding-subtitle">
 								<g:HTMLPanel styleName="aon-finding-subtitle-internal">
@@ -134,17 +139,13 @@
 									<g:Button ui:field='addEvent'
 										styleName='aon-finding-toolbar-item aon-icon-task' text="Añadir Festivo" />
 									<g:Button ui:field='saveButton'
-										styleName='aon-finding-toolbar-item aon-icon-save' text="Guardar" enabled="false" />
-										
+										styleName='aon-finding-toolbar-item aon-icon-save' text="Guardar"
+										enabled="false" />
+
 								</g:HTMLPanel>
 							</g:HorizontalPanel>
 						</g:HorizontalPanel>
 					</g:FlowPanel>
-				</g:FlowPanel>
-			</g:north>
-			<g:north size="72">
-				<g:FlowPanel>
-					<g:Label styleName="{style.year}"> 2015 </g:Label>
 				</g:FlowPanel>
 			</g:north>
 			<g:center>
@@ -153,10 +154,27 @@
 				</g:ScrollPanel>
 			</g:center>
 			<g:east size="172">
-				<g:ScrollPanel>
-					<g:VerticalPanel ui:field="legendVerticalPanel"
-						styleName="{style.legend}" />
-				</g:ScrollPanel>
+				<g:VerticalPanel>
+					<g:Grid>
+						<g:row>
+							<g:customCell>
+								<g:Label styleName="{style.year}" ui:field="yearLabel" />  
+							</g:customCell>
+							<g:customCell>
+								<g:Button styleName="{style.buttons}" text="&lt;" ui:field="lastYearButton"/>
+							</g:customCell>
+							<g:customCell>
+								<g:Button styleName="{style.buttons}" text="&gt;" ui:field="nextYearButton"/>
+							</g:customCell>
+						</g:row>
+					</g:Grid>
+
+					<g:ScrollPanel>
+						<g:VerticalPanel ui:field="legendVerticalPanel"
+							styleName="{style.legend}" />
+					</g:ScrollPanel>
+
+				</g:VerticalPanel>
 			</g:east>
 		</g:DockLayoutPanel>
 	</g:HTMLPanel>
