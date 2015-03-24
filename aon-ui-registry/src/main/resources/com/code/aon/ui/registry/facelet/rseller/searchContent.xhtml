@@ -51,7 +51,7 @@
 		value="#{bundle.aon_status}" />
 	<aon:selectOneMenu id="#{controller.pojoShortName}_sellers_status"
 		converter="aon.EnumConverter"
-		valueChangeListener="#{controller.addExpression}">
+		valueChangeListener="#{controller.addEqualExpression}">
 		<f:selectItem itemLabel="-" value="#{null}"/>
 		<f:selectItems value="#{registryCollections.registrySellerStatuses}" />
 	</aon:selectOneMenu>									

@@ -23,7 +23,7 @@
 		value="#{bundle.registry_nationality}" />
 	<aon:selectOneMenu id="#{controller.pojoShortName}_registry_nationality"
 		converter="aon.EnumConverter"
-		valueChangeListener="#{controller.addExpression}" >
+		valueChangeListener="#{controller.addEqualExpression}" >
 		<f:selectItem value="#{null}" itemLabel="-"/>
 		<f:selectItems value="#{commonCollections.countries}" />
 	</aon:selectOneMenu>
@@ -37,7 +37,7 @@
 		for="#{controller.pojoShortName}_registry_documentCountry" />
 	<aon:selectOneMenu id="#{controller.pojoShortName}_registry_documentCountry"
 		converter="aon.EnumConverter"
-		valueChangeListener="#{controller.addExpression}" >
+		valueChangeListener="#{controller.addEqualExpression}" >
 		<f:selectItem value="#{null}" itemLabel="-"/>
 		<f:selectItems value="#{commonCollections.countries}" />
 	</aon:selectOneMenu>
@@ -46,7 +46,7 @@
 		for="#{controller.pojoShortName}_registry_documentType" />
 	<aon:selectOneMenu id="#{controller.pojoShortName}_registry_documentType"
 		converter="aon.EnumConverter"
-		valueChangeListener="#{controller.addExpression}" >
+		valueChangeListener="#{controller.addEqualExpression}" >
 		<f:selectItem value="#{null}" itemLabel="-"/>
 		<f:selectItems value="#{registryCollections.documentTypes}" />
 	</aon:selectOneMenu>
@@ -64,7 +64,7 @@
 		for="#{controller.pojoShortName}_registry_type" />
 	<aon:selectOneMenu id="#{controller.pojoShortName}_registry_type"
 		converter="aon.EnumConverter"
-		valueChangeListener="#{controller.addExpression}" >
+		valueChangeListener="#{controller.addEqualExpression}" >
 		<f:selectItem value="#{null}" itemLabel="-"/>
 		<f:selectItems value="#{registryCollections.registryTypes}" />
 	</aon:selectOneMenu>

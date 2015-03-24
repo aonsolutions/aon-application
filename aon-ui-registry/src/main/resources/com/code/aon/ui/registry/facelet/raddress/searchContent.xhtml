@@ -10,7 +10,7 @@
 		value="#{bundle.registry_street_type}" />
 	<aon:selectOneMenu id="#{searchController.preffix}addresses_streetType"
 		converter="aon.EnumConverter"
-		valueChangeListener="#{controller.addExpression}" >
+		valueChangeListener="#{controller.addEqualExpression}" >
 		<f:selectItem value="#{null}" itemLabel="-"/>
 		<f:selectItems value="#{registryCollections.streetTypes}" />
 	</aon:selectOneMenu>		

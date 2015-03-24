@@ -384,6 +384,7 @@ public interface ICommonMessages {
 	String FINANCE_SDD_MANDATE_SEND_EMAIL_PROCESS_INIT = "finance_sddMandate_send_email_process_init";
 	String FINANCE_SDD_MANDATE = "finance_sddMandate_module";
 	String FINANCE_SDD_MANDATE_LIST_NAME = "sddMandate_list";
+	String FINANCE_ACCOUNT = "finance_account";
 	
 	String FISCAL_RESULT = "fiscal_result";
 	

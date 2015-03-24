@@ -11,6 +11,7 @@ import static com.code.aon.ui.common.ICommonMessages.COMPANY_NAME;
 import static com.code.aon.ui.common.ICommonMessages.DOCUMENT;
 import static com.code.aon.ui.common.ICommonMessages.ENTITY;
 import static com.code.aon.ui.common.ICommonMessages.FAX;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_ACCOUNT;
 import static com.code.aon.ui.common.ICommonMessages.ID;
 import static com.code.aon.ui.common.ICommonMessages.INACTIVE;
 import static com.code.aon.ui.common.ICommonMessages.PAY_METHOD;
@@ -52,8 +53,10 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.commercial.enumeration.Advertising;
 import com.code.aon.AonVersion;
+import com.code.aon.account.Account;
+import com.code.aon.account.IAccount;
+import com.code.aon.commercial.enumeration.Advertising;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -83,7 +86,6 @@ import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.report.ReportException;
 import com.code.aon.report.poi.ReportExporter;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.registry.controller.event.RegistryFormListener;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.master.TargetDB;
@@ -296,7 +298,7 @@ public class RegistryController extends BasicController {
 			
 			FacesContext faces = FacesContext.getCurrentInstance();
 			String select = "SELECT"
-			+ getDetailColumns()
+			+ getDetailColumns(pojoClass)
 			+ getSqlTables(pojoClass);
 			String where = getSqlCriteria(pojoClass);
 			select = select + " " + where;
@@ -345,10 +347,12 @@ public class RegistryController extends BasicController {
 	private String getSqlTables(Class<?> pojoClass) {
 		Table table = pojoClass.getAnnotation(Table.class);
 		String masterTable = table.name();
-		String scopeJoin = " INNER JOIN scope scp ON c.scope = scp.id"; 
+		String scopeJoin = " INNER JOIN scope scp ON c.scope = scp.id";
+		String accountJoin = " LEFT OUTER JOIN account acc ON c.account = acc.id";
 		return " FROM " + masterTable +" c"
 			+" INNER JOIN registry r ON r.id = c.registry"
 			+ (!"com.code.aon.seller.Seller".equals(getPojo())?scopeJoin:"")
+			+ ((IAccount.class.isAssignableFrom(pojoClass))?accountJoin:"")
 			+" LEFT OUTER JOIN rmedia rm ON r.id = rm.registry"
 			+" LEFT OUTER JOIN raddress ra ON r.id = ra.registry AND ra.type = 0"
 			+" LEFT OUTER JOIN geozone gz ON ra.geozone = gz.id"
@@ -361,7 +365,8 @@ public class RegistryController extends BasicController {
 			+" LEFT OUTER JOIN category cdc ON cd.category = cdc.id";
 	}
 
-	private String getDetailColumns() {
+	private String getDetailColumns(Class<?> pojoClass) {
+		String accountColumn = ",acc.code `" + AonUtil.getMessage(FINANCE_ACCOUNT) + "`";
 		return " r.id `" + AonUtil.getMessage(ID) + "`"
 		+",ELT(c.status+1"
 		+",'"+AonUtil.getMessage(ACTIVE)+"'"
@@ -369,8 +374,8 @@ public class RegistryController extends BasicController {
 		+",'"+AonUtil.getMessage(BLOCKED)+"'"
 			+") `" + AonUtil.getMessage(STATUS) + "`"
 		+",ELT(r.type+1" 
+			+",'"+RegistryType.NATURAL.getName(AonUtil.getCurrentLocale())+"'"			
 			+",'"+RegistryType.LEGAL.getName(AonUtil.getCurrentLocale())+"'"
-			+",'"+RegistryType.NATURAL.getName(AonUtil.getCurrentLocale())+"'"
 		 	+") `" + AonUtil.getMessage(ENTITY) + "`"
 		+",CAST( CONCAT_WS('/',"
 		+"ELT(r.document_type+1" 
@@ -385,6 +390,7 @@ public class RegistryController extends BasicController {
 		+",r.document_country,r.document) AS CHAR) `" + AonUtil.getMessage(DOCUMENT) + "`"
 	 	+",r.name `" + AonUtil.getMessage(COMPANY_NAME) + "`"
 		+",r.alias `" + AonUtil.getMessage(ALIAS) + "`"
+		+ ((IAccount.class.isAssignableFrom(pojoClass))?accountColumn:"")		
 		+",r.nationality `" + AonUtil.getMessage(REGISTRY_NATIONALITY) + "`"
 		+",CAST( CONCAT_WS(' ',ra.street_type,ra.address,ra.number,ra.address2,ra.address3) AS CHAR) `" + AonUtil.getMessage(ADDRESS) + "`"
 		+",ra.city `" + AonUtil.getMessage(REGISTRY_CITY) + "`"
@@ -421,6 +427,7 @@ public class RegistryController extends BasicController {
 		tableMapping.put(mappingPrefix + ".registry.payMethods.payment", "pm");
 		tableMapping.put(mappingPrefix + ".documents", "cd");
 		tableMapping.put(mappingPrefix + ".documents.category", "cdc");
+		tableMapping.put(mappingPrefix + ".account", "acc");
 		tableMapping.put("Project", "project");
 		tableMapping.put("ProjectActivity", "project_activity");
 		
@@ -437,6 +444,7 @@ public class RegistryController extends BasicController {
 		pojoMapping.put(mappingPrefix + ".registry.payMethods.payment", PayMethod.class);
 		pojoMapping.put(mappingPrefix + ".documents", RegistryAttachment.class);
 		pojoMapping.put(mappingPrefix + ".documents.category", Category.class);
+		pojoMapping.put(mappingPrefix + ".account", Account.class);
 		pojoMapping.put("Project", Project.class);
 		pojoMapping.put("ProjectActivity", ProjectActivity.class);
 
