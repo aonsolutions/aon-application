@@ -13,10 +13,10 @@ public class FiscalActivity implements Serializable {
 	private Integer year;
 	private String epigraph;
 	private String description;
-	private Boolean farmer;
-	private Double maxPerson;
-	private Double maxImport;
-	private Double vatPercent;
+	private boolean farmer;
+	private double maxPerson;
+	private double maxImport;
+	private double vatPercent;
 	
 	private ArrayList<FiscalActivityInfo> info;
 	private ArrayList<FiscalActivityModule> moduleIRPF;
@@ -64,34 +64,34 @@ public class FiscalActivity implements Serializable {
 		return this;
 	}
 	
-	public Boolean getFarmer() {
+	public boolean isFarmer() {
 		return farmer;
 	}
-	public FiscalActivity setFarmer(Boolean farmer) {
+	public FiscalActivity setFarmer(boolean farmer) {
 		this.farmer = farmer;
 		return this;
 	}
 	
-	public Double getMaxPerson() {
+	public double getMaxPerson() {
 		return maxPerson;
 	}
-	public FiscalActivity setMaxPerson(Double maxPerson) {
+	public FiscalActivity setMaxPerson(double maxPerson) {
 		this.maxPerson = maxPerson;
 		return this;
 	}
 	
-	public Double getMaxImport() {
+	public double getMaxImport() {
 		return maxImport;
 	}
-	public FiscalActivity setMaxImport(Double maxImport) {
+	public FiscalActivity setMaxImport(double maxImport) {
 		this.maxImport = maxImport;
 		return this;
 	}
 	
-	public Double getVatPercent() {
+	public double getVatPercent() {
 		return vatPercent;
 	}
-	public FiscalActivity setVatPercent(Double vatPercent) {
+	public FiscalActivity setVatPercent(double vatPercent) {
 		this.vatPercent = vatPercent;
 		return this;
 	}

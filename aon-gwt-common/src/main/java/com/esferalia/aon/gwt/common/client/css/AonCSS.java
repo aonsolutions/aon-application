@@ -107,6 +107,9 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-icon-delete")
 	String aonIconDelete();
 
+	@ClassName("aon-icon-reset")
+	String aonIconReset();
+
 	@ClassName("aon-editDataTable-iconColumn")
     String aonDataTableIconColumn();
 	

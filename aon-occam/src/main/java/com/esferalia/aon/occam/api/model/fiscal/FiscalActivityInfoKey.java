@@ -94,7 +94,7 @@ public enum FiscalActivityInfoKey implements Serializable{
 				,IntegerStringPair.of(4,"Una batea y un barco de m\u00E1s de 30 TRB")
 				,IntegerStringPair.of(5,"Dos bateas y ning\u00FAn barco")
 				,IntegerStringPair.of(6,"Dos bateas y un barco de menos de 15 TRB.")
-				,IntegerStringPair.of(7,"Otros: numero de bateas, barcos o TRB distintos de los anteriores.")
+				,IntegerStringPair.of(7,"Otros: Distintos de los anteriores.")
 				};
 		
 		@Override
@@ -979,7 +979,20 @@ public enum FiscalActivityInfoKey implements Serializable{
 		public FiscalActivityInfoKeyType getType() {
 			return MODULE;
 		}
-	}	
+	}
+	, M62 {
+		@Override
+		public String getDescription() {
+			return "PERSONAL RECOGIDA MATERIAL FOTOGR\u00E1FICO";
+		}
+		@Override
+		public FiscalActivityInfoKeyType getType() {
+			return MODULE;
+		}
+	}
+	
+	
+	
 	,I01 {
 		@Override
 		public String getDescription() {
@@ -1003,7 +1016,7 @@ public enum FiscalActivityInfoKey implements Serializable{
 	,I03 {
 		@Override
 		public String getDescription() {
-			return "Incentivos a la inversión";
+			return "Incentivos a la inversi\u00F3n";
 		}
 		@Override
 		public FiscalActivityInfoKeyType getType() {
@@ -1023,7 +1036,7 @@ public enum FiscalActivityInfoKey implements Serializable{
 	,I05 {
 		@Override
 		public String getDescription() {
-			return "ÍNDICES CORRECTORES";
+			return "\u00CDNDICES CORRECTORES";
 		}
 		@Override
 		public FiscalActivityInfoKeyType getType() {
@@ -1095,7 +1108,7 @@ public enum FiscalActivityInfoKey implements Serializable{
 	,I12{
 		@Override
 		public String getDescription() {
-			return "Reducción para actividades económicas realizadas en el término municipal de Lorca";
+			return "Reducci\u00F3n para actividades econ\u00F3micas realizadas en el t\u00E9rmino municipal de Lorca";
 		}
 		@Override
 		public FiscalActivityInfoKeyType getType() {
@@ -1105,7 +1118,7 @@ public enum FiscalActivityInfoKey implements Serializable{
 	,I13 {
 		@Override
 		public String getDescription() {
-			return "Rendimientos a efectos de pagos fraccionados después de la reducción";
+			return "Rendimientos a efectos de pagos fraccionados despu\u00E9s de la reducci\u00F3n";
 		}
 		@Override
 		public FiscalActivityInfoKeyType getType() {
@@ -1135,7 +1148,7 @@ public enum FiscalActivityInfoKey implements Serializable{
 	,V01 {
 		@Override
 		public String getDescription() {
-			return "Índice corrector de temporada";
+			return "\u00CDndice corrector de temporada";
 		}
 		@Override
 		public FiscalActivityInfoKeyType getType() {
@@ -1155,7 +1168,7 @@ public enum FiscalActivityInfoKey implements Serializable{
 	,V03 {
 		@Override
 		public String getDescription() {
-			return "Reducción aplicable por actividades económicas realizadas en el término municipal de Lorca";
+			return "Reducci\u00F3n aplicable por actividades econ\u00F3micas realizadas en el t\u00E9rmino municipal de Lorca";
 		}
 		@Override
 		public FiscalActivityInfoKeyType getType() {
@@ -1165,7 +1178,7 @@ public enum FiscalActivityInfoKey implements Serializable{
 	,V04 {
 		@Override
 		public String getDescription() {
-			return "Cuota anual por operaciones corrientes después de las reducciones anteriores";
+			return "Cuota anual por operaciones corrientes despu\u00E9s de las reducciones anteriores";
 		}
 		@Override
 		public FiscalActivityInfoKeyType getType() {
@@ -1217,5 +1230,14 @@ public enum FiscalActivityInfoKey implements Serializable{
 	public static FiscalActivityInfoKey safeValueOf(String value) {
 		if (value == null) return null;
 		return FiscalActivityInfoKey.valueOf(value);
+	}
+	
+	
+	public static void main(String[] args) {
+		for (FiscalActivityInfoKey key : FiscalActivityInfoKey.values()) {
+			if (key.getType() == MODULE) {
+				System.out.println("FiscalActivityInfoKey." + key + " --- " + key.getDescription());
+			}
+		}
 	}
 }

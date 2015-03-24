@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import org.jooq.Record;
 
+import com.esferalia.aon.jooq.tables.records.FsActivityRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfo;
@@ -206,26 +207,167 @@ public class FiscalActivityDAO {
 			if (key.getType() == FiscalActivityInfoKeyType.INFO) {
 				fa.addInfo(new FiscalActivityInfo().setInfoKey(key).setLine(i++));
 			}
-			if (key.getType() == FiscalActivityInfoKeyType.IRPF_INFO) {
-				fa.addInfoIRPF(new FiscalActivityInfo().setInfoKey(key).setLine(i++));
+			if (epigraph.hasIrpfModules()) {
+				if (key.getType() == FiscalActivityInfoKeyType.IRPF_INFO) {
+					fa.addInfoIRPF(new FiscalActivityInfo().setInfoKey(key).setLine(i++));
+				}
 			}
-			if (key.getType() == FiscalActivityInfoKeyType.VAT_INFO) {
-				fa.addInfoIVA(new FiscalActivityInfo().setInfoKey(key).setLine(i++));
+			if (epigraph.hasIvaModules()) {	
+				if (key.getType() == FiscalActivityInfoKeyType.VAT_INFO) {
+					fa.addInfoIVA(new FiscalActivityInfo().setInfoKey(key).setLine(i++));
+				}
 			}
 		}
-		for (Module module : epigraph.getIrpfModules()) {
-			fa.addModuleIRPF(new FiscalActivityModule()
+		if (epigraph.hasIrpfModules()) {
+			for (Module module : epigraph.getIrpfModules()) {
+				fa.addModuleIRPF(new FiscalActivityModule()
+				.setInfoKey(module.getKey())
 				.setLine(module.getLine())
 				.setFactor(module.getAmount())
 				.setUnit(module.getUnit()));
+			}
 		}
-		for (Module module : epigraph.getIvaModules()) {
-			fa.addModuleIRPF(new FiscalActivityModule()
-				.setLine(module.getLine())
-				.setFactor(module.getAmount())
-				.setUnit(module.getUnit()));
+		if (epigraph.hasIvaModules()) {
+			for (Module module : epigraph.getIvaModules()) {
+				fa.addModuleIVA(new FiscalActivityModule()
+					.setInfoKey(module.getKey())
+					.setLine(module.getLine())
+					.setFactor(module.getAmount())
+					.setUnit(module.getUnit()));
+			}
 		}
 		return fa;
 	}
 	
+	public static FiscalActivity save(AONContext ctx, FiscalActivity fa) {
+		ctx.checkWrite();
+		if (fa.getId() == null) {
+			fa = insert(ctx, fa);
+		} else {
+			fa = update(ctx, fa);
+			for (FiscalActivityInfo info : fa.getInfo()) {
+				saveDetail(ctx, fa, info);
+			}
+		}
+		return getActivity(ctx, fa.getDomain(), fa.getId());
+	}
+
+	private static FiscalActivity insert(AONContext ctx, FiscalActivity fa) {
+		FsActivityRecord record =  ctx.getDslContext()
+			.insertInto(FS_ACTIVITY)
+				.set(FS_ACTIVITY.DOMAIN, fa.getDomain())
+				.set(FS_ACTIVITY.YEAR, fa.getYear())
+				.set(FS_ACTIVITY.EPIGRAPH, fa.getEpigraph())
+				.set(FS_ACTIVITY.DESCRIPTION, fa.getDescription())
+				.set(FS_ACTIVITY.FARMER,AonEnumUtils.getByte(fa.isFarmer()))
+				.set(FS_ACTIVITY.MAX_PERSON, fa.getMaxPerson())
+				.set(FS_ACTIVITY.MAX_IMPORT, fa.getMaxImport())
+				.set(FS_ACTIVITY.VAT_PERCENT, fa.getVatPercent())
+			.returning(FS_ACTIVITY.ID)
+			.fetchOne();
+		fa.setId(record.getId());
+		insertDetails(ctx, fa);
+		return fa;
+	}
+	
+	private static FiscalActivity update(AONContext ctx, FiscalActivity fa) {
+		ctx.getDslContext()
+			.update(FS_ACTIVITY)
+				.set(FS_ACTIVITY.DOMAIN, fa.getDomain())
+				.set(FS_ACTIVITY.YEAR, fa.getYear())
+				.set(FS_ACTIVITY.EPIGRAPH, fa.getEpigraph())
+				.set(FS_ACTIVITY.DESCRIPTION, fa.getDescription())
+				.set(FS_ACTIVITY.FARMER,AonEnumUtils.getByte(fa.isFarmer()))
+				.set(FS_ACTIVITY.MAX_PERSON, fa.getMaxPerson())
+				.set(FS_ACTIVITY.MAX_IMPORT, fa.getMaxImport())
+				.set(FS_ACTIVITY.VAT_PERCENT, fa.getVatPercent())
+			.where(FS_ACTIVITY.ID.equal(fa.getId()))
+			.execute();
+		return fa;
+	}
+
+	private static void insertDetails(AONContext ctx, FiscalActivity fa) {
+		for (FiscalActivityInfo info: fa.getInfo()) {
+			ctx.getDslContext()
+			.insertInto(FS_ACTIVITY_INFO)
+				.set(FS_ACTIVITY_INFO.DOMAIN,fa.getDomain())
+				.set(FS_ACTIVITY_INFO.FS_ACTIVITY,fa.getId())
+				.set(FS_ACTIVITY_INFO.INFO_KEY,info.getInfoKey().getKey())
+				.set(FS_ACTIVITY_INFO.LINE,info.getLine())
+				.set(FS_ACTIVITY_INFO.TYPE,info.getInfoKey().getType().getValue())
+				.set(FS_ACTIVITY_INFO.VALUE,info.getValue())
+			.execute();
+		}
+		for (FiscalActivityInfo info: fa.getInfoIRPF()) {
+			ctx.getDslContext()
+			.insertInto(FS_ACTIVITY_INFO)
+				.set(FS_ACTIVITY_INFO.DOMAIN,fa.getDomain())
+				.set(FS_ACTIVITY_INFO.FS_ACTIVITY,fa.getId())
+				.set(FS_ACTIVITY_INFO.INFO_KEY,info.getInfoKey().getKey())
+				.set(FS_ACTIVITY_INFO.LINE,info.getLine())
+				.set(FS_ACTIVITY_INFO.TYPE,info.getInfoKey().getType().getValue())
+				.set(FS_ACTIVITY_INFO.VALUE,info.getValue())
+			.execute();
+		}
+		for (FiscalActivityInfo info: fa.getInfoIVA()) {
+			ctx.getDslContext()
+			.insertInto(FS_ACTIVITY_INFO)
+				.set(FS_ACTIVITY_INFO.DOMAIN,fa.getDomain())
+				.set(FS_ACTIVITY_INFO.FS_ACTIVITY,fa.getId())
+				.set(FS_ACTIVITY_INFO.INFO_KEY,info.getInfoKey().getKey())
+				.set(FS_ACTIVITY_INFO.LINE,info.getLine())
+				.set(FS_ACTIVITY_INFO.TYPE,info.getInfoKey().getType().getValue())
+				.set(FS_ACTIVITY_INFO.VALUE,info.getValue())
+			.execute();
+		}
+		for (FiscalActivityModule module: fa.getModuleIVA()) {
+			ctx.getDslContext()
+			.insertInto(FS_ACTIVITY_INFO)
+				.set(FS_ACTIVITY_INFO.DOMAIN,fa.getDomain())
+				.set(FS_ACTIVITY_INFO.FS_ACTIVITY,fa.getId())
+				.set(FS_ACTIVITY_INFO.INFO_KEY,module.getInfoKey().getKey())
+				.set(FS_ACTIVITY_INFO.LINE,module.getLine())
+				.set(FS_ACTIVITY_INFO.TYPE,module.getInfoKey().getType().getValue())
+				.set(FS_ACTIVITY_INFO.VALUE,module.getValue())
+				.set(FS_ACTIVITY_INFO.FACTOR,module.getFactor())
+				.set(FS_ACTIVITY_INFO.BASE,module.getBase())
+				.set(FS_ACTIVITY_INFO.UNIT,module.getUnit())
+				.set(FS_ACTIVITY_INFO.MIN_VALUE,module.getMinValue())
+				.set(FS_ACTIVITY_INFO.MAX_VALUE,module.getMaxValue())
+			.execute();
+		}
+
+		
+	}
+	
+	private static void saveDetail(AONContext ctx, FiscalActivity fa,FiscalActivityInfo detail) {
+		ctx.checkWrite();
+		if (detail.getId() == null || detail.getId() < 0) {
+			insertDetail(ctx,fa, detail);
+		} else {
+			updateDetail(ctx,fa, detail);
+		}
+	}
+	private static void insertDetail(AONContext ctx, FiscalActivity fa,FiscalActivityInfo detail) {
+	}
+
+	private static void updateDetail(AONContext ctx, FiscalActivity fa,FiscalActivityInfo detail) {
+	}
+
+	
+	public static void delete(AONContext ctx, FiscalActivity fa) {
+		ctx.checkWrite();
+		deleteDetails(ctx, fa);
+		ctx.getDslContext()
+			.delete(FS_ACTIVITY)
+				.where(FS_ACTIVITY.ID.equal(fa.getId()))
+			.execute();
+	}
+
+	private static void deleteDetails(AONContext ctx, FiscalActivity fa) {
+		ctx.getDslContext()
+			.delete(FS_ACTIVITY_INFO)
+			.where(FS_ACTIVITY_INFO.FS_ACTIVITY.equal(fa.getId()))
+			.execute();
+	}
 }
