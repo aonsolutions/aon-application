@@ -512,7 +512,7 @@ public class DriveUtils implements IBlobManager {
 		// FileContent mediaContent = new FileContent(file.getMimeType(),
 		// fileContent);
 		
-		
+		LOGGER.info("Document info, mimetype:{} , file_ID {}", file.getMimeType(),fileInfo.getFileId());
 		ByteArrayContent  mediaContent = new ByteArrayContent (
 				file.getMimeType(), fileInfo.getData());
 
