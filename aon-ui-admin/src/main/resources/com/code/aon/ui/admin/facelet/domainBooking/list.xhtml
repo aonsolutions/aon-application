@@ -27,14 +27,32 @@
 			<aon:div styleClass="aon-scroll-area">
 
 				<aon:div styleClass="aon-width-all aon-text-right aon-margin-bottom">
+					<aon:outputText 
+						styleClass="aon-italic aon-bold aon-margin-right" 
+						value="#{bundle.admin_domain_show}:" />
 					<aon:outputLabel for="Domains_showInactive"
-						value="#{bundle.admin_domain_show_inactive}" />
+						styleClass="aon-italic" 
+						value="#{bundle.admin_domain_show_inactives}" />
 					<aon:selectBooleanCheckbox id="Domains_showInactive"
 						value="#{domainBooking.showInactive}" >
 						<a4j:support 
 							event="onclick"
 							reRender="domainBookingList"
 							actionListener="#{domainBooking.onChangeShowInactive}"
+							requestDelay="500"
+							ajaxSingle="true"
+							ignoreDupResponses="true"
+							limitToList="true"/>						
+					</aon:selectBooleanCheckbox>			
+					<aon:outputLabel for="Domains_showExpired"
+						styleClass="aon-italic" 
+						value="#{bundle.admin_domain_show_expired}" />										
+					<aon:selectBooleanCheckbox id="Domains_showExpired"
+						value="#{domainBooking.showExpired}" >
+						<a4j:support 
+							event="onclick"
+							reRender="domainBookingList"
+							actionListener="#{domainBooking.onChangeShowExpired}"
 							requestDelay="500"
 							ajaxSingle="true"
 							ignoreDupResponses="true"
@@ -124,7 +142,8 @@
 								<aon:outputText value="#{bundle.aon_name}" />
 							</f:facet>							
 							<aon:outputText value="#{to.description}"
-								style="#{(!to.active)?'color:red;font-style:italic;':''}"/>
+								title="#{(!to.active)?bundle.admin_domain_inactive:''}#{(to.expired)?bundle.admin_domain_expired:''}"
+								style="#{(!to.active or to.expired)?'color:red;font-style:italic;':''}"/>
 							<f:facet name="footer">
 								<aon:div style="float:right">
 									<aon:outputText	styleClass="aon-italic"

@@ -79,13 +79,29 @@
 							<aon:outputText value="#{bundle.admin_domain_expiration_help}"/>
 						</aon:div>
 					</aon:div>
-					<aon:selectInputDate id="NewDomain_expirationDate" 
-						value="#{adminNewDomain.expirationDate}"
-						validator="#{adminNewDomain.expirationDateCheck}"
-						disabled="#{!adminNewDomain.enableHeredity and !adminNewDomain.loadDefaultValuesEnabled}"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}"/>
- 
+					<aon:div id="expirationDateDiv">
+						<aon:outputLabel for="NewDomain_activeExpirationDate"
+							style="#{(!adminNewDomain.enableHeredity and !adminNewDomain.loadDefaultValuesEnabled)?'color: graytext;':''}"
+							value="#{bundle.aon_activate}" />
+						<aon:selectBooleanCheckbox id="NewDomain_activeExpirationDate"
+							disabled="#{!adminNewDomain.enableHeredity and !adminNewDomain.loadDefaultValuesEnabled}"
+							value="#{adminNewDomain.activeExpirationDate}">
+							<a4j:support event="onchange" ajaxSingle="true"
+								process="expirationDateDiv"
+								reRender="expirationDateDiv" />																	
+						</aon:selectBooleanCheckbox>
+						<aon:div styleClass="aon-margin-left" layout="inline">
+							<aon:selectInputDate id="NewDomain_expirationDate" 
+								value="#{adminNewDomain.expirationDate}" 
+								disabled="#{!adminNewDomain.activeExpirationDate}"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}"/>
+							<aon:outputText
+								styleClass="aon-bold aon-italic aon-label-error"
+								value="#{bundle.admin_domain_expiration_warning}"
+								rendered="#{adminNewDomain.activeExpirationDate}" />
+						</aon:div>
+ 					</aon:div>
 					<aon:div>
 						<aon:outputLabel styleClass="aon-outputLabel aon-input-required"
 							value="#{bundle.admin_new_domain_defaults}" />
@@ -96,35 +112,38 @@
 					<aon:div id="valuesDiv">
 						<aon:if test="#{adminNewDomain.parentDomain != null}">
 							<aon:div styleClass="aon-margin-top">
-								<a4j:region>
-									<aon:outputLabel for="Domain_enableHeredity"
-										value="#{bundle.admin_domain_enableHeredity}" />
-									<aon:selectBooleanCheckbox id="Domain_enableHeredity"
-										required="true" reRender="valuesDiv" ajaxSingle="false"
+								<aon:outputLabel for="Domain_enableHeredity"
+									value="#{bundle.admin_domain_enableHeredity}" />
+								<aon:selectBooleanCheckbox
+									id="Domain_enableHeredity" required="true" 
+									value="#{adminNewDomain.enableHeredity}">
+									<a4j:support event="onchange" ajaxSingle="true"
+										process="valuesDiv,expirationDateDiv"
 										actionListener="#{adminNewDomain.onChangedEnableHeredity}"
-										value="#{adminNewDomain.enableHeredity}" />
-									<aon:if test="#{adminNewDomain.loadDefaultValuesEnabled and !(empty company.domainScopes)}">
-										<aon:outputLabel for="Domain_scope" style="margin-left:2em;margin-right:0.5em;"
-											value="#{bundle.aon_scope}" />
-										<aon:selectOneMenu id="Domain_scope" 
-											value="#{adminNewDomain.scope}">
-											<f:selectItem itemLabel="-" value="#{null}"/>
-											<f:selectItems value="#{company.domainScopes}" />
-										</aon:selectOneMenu>
-										<aon:outputLabel for="Domain_type" style="margin-left:1em;"
-											value="#{bundle.admin_domain_type}" />
-										<aon:selectOneMenu id="Domain_type" 
-											value="#{adminNewDomain.type}" required="true" >
-											<f:selectItems value="#{adminCollections.newChildDomainTypes}" />
-										</aon:selectOneMenu>										
-									</aon:if>		
-								</a4j:region>
+										reRender="valuesDiv,expirationDateDiv" />										
+								</aon:selectBooleanCheckbox>
+								<aon:if test="#{adminNewDomain.loadDefaultValuesEnabled and !(empty company.domainScopes)}">
+									<aon:outputLabel for="Domain_scope" style="margin-left:2em;margin-right:0.5em;"
+										value="#{bundle.aon_scope}" />
+									<aon:selectOneMenu id="Domain_scope" 
+										value="#{adminNewDomain.scope}">
+										<f:selectItem itemLabel="-" value="#{null}"/>
+										<f:selectItems value="#{company.domainScopes}" />
+									</aon:selectOneMenu>
+									<aon:outputLabel for="Domain_type" style="margin-left:1em;"
+										value="#{bundle.admin_domain_type}" />
+									<aon:selectOneMenu id="Domain_type" 
+										value="#{adminNewDomain.type}" required="true" >
+										<f:selectItems value="#{adminCollections.newChildDomainTypes}" />
+									</aon:selectOneMenu>										
+								</aon:if>		
 							</aon:div>										
 						</aon:if>
 						<aon:if test="#{!adminNewDomain.enableHeredity}">
 							<aon:div styleClass="aon-margin-top">
 								<aon:selectOneMenu id="Domain_loadDefaults"
-									required="true" reRender="valuesDiv,NewDomain_expirationDate"
+									required="true" reRender="valuesDiv,expirationDateDiv"
+									actionListener="#{adminNewDomain.onChangedLoadDefaultValues}"
 									value="#{adminNewDomain.loadDefaultValuesEnabled}">
 									<f:selectItem itemValue="#{true}" itemLabel="#{bundle.admin_new_domain_defaults_1}" />
 									<f:selectItem itemValue="#{false}" itemLabel="#{bundle.admin_new_domain_defaults_2}" />

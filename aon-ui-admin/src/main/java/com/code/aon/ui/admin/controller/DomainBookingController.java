@@ -61,6 +61,8 @@ public class DomainBookingController extends DataScrollerState {
 	
 	private boolean showInactive;
 	
+	private boolean showExpired;
+	
 	private String backAction;
 	
 	public void onInit( ActionEvent event ) {
@@ -86,8 +88,20 @@ public class DomainBookingController extends DataScrollerState {
 	public void setShowInactive(boolean showInactive) {
 		this.showInactive = showInactive;
 	}
+	
+	public boolean isShowExpired() {
+		return showExpired;
+	}
+
+	public void setShowExpired(boolean showExpired) {
+		this.showExpired = showExpired;
+	}
 
 	public void onChangeShowInactive(ActionEvent event) {
+		initializeModel();
+	}	
+
+	public void onChangeShowExpired(ActionEvent event) {
 		initializeModel();
 	}	
 	
@@ -148,7 +162,7 @@ public class DomainBookingController extends DataScrollerState {
 	private List<DomainBookingData> getDomainBookingDatas( AONContext ctx, Condition condition ) {
 		return ctx.getDslContext()
 				.select(DOMAIN.ID, DOMAIN.NAME, DOMAIN.DESCRIPTION,
-						DOMAIN.ACTIVE,  DOMAIN.ENABLEHEREDITY,
+						DOMAIN.EXPIRATIONDATE,  DOMAIN.ACTIVE, DOMAIN.ENABLEHEREDITY,
 						DOMAIN.MAXDEFINEDUSERS, DOMAIN.TYPE, DOMAIN.MAXTOTALDOCUMENTSIZE)
 				.from(DOMAIN).where(condition)
 				.orderBy(DOMAIN.DESCRIPTION).fetch().into(DomainBookingData.class);		
@@ -170,7 +184,7 @@ public class DomainBookingController extends DataScrollerState {
 		this.totalTirants = 0;
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId());
-		Condition condition = ds.getDomainCondition(domain.getId(), isShowInactive());
+		Condition condition = ds.getDomainCondition(domain.getId(), isShowInactive(), isShowExpired());
 		domains = getDomainBookingDatas(ctx, condition);
 		for (DomainBookingData data : domains) {
 			fillDomainData(ctx, data);

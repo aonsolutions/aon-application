@@ -9,35 +9,57 @@
 	xmlns:rich="http://richfaces.org/rich">
 			
 		
-	<aon:div styleClass="aon-padding-bottom">
-		<aon:outputText styleClass="aon-italic aon-margin-right aon-bold" value="#{bundle.aon_filter}:"/>
-		<aon:inputText id="domainFilter" size="70" value="#{domainSwitcher.filter}">
-			<a4j:support 
-				event="onkeyup"
-				reRender="domainSwitcherTableContainer"
-				eventsQueue="domainSwitcherFilterKeyUp"
-				requestDelay="500"
-				ajaxSingle="true"
-				ignoreDupResponses="true"
-				limitToList="true"/>
-		</aon:inputText>
-		<aon:outputLabel for="Domains_showInactive"
-			style="margin-left:3em;" styleClass="aon-italic aon-bold aon-margin-right" 
-			value="#{bundle.admin_domain_show_inactive}" />
-		<aon:selectBooleanCheckbox id="Domains_showInactive"
-			value="#{domainSwitcher.showInactive}" >
-			<a4j:support 
-				event="onclick"
-				reRender="domainSwitcherTableContainer"
-				eventsQueue="domainSwitcherFilterKeyUp"
-				actionListener="#{domainSwitcher.onChangeShowInactive}"
-				requestDelay="500"
-				ajaxSingle="true"
-				ignoreDupResponses="true"
-				limitToList="true"/>						
-		</aon:selectBooleanCheckbox>															
-	</aon:div>
-
+	<h:panelGrid columns="2" styleClass="aon-width-all aon-padding-bottom"
+		columnClasses="aon-float-left,aon-float-right">		
+		<aon:panelGroup>
+			<aon:outputText styleClass="aon-italic aon-margin-right aon-bold" value="#{bundle.aon_filter}:"/>
+			<aon:inputText id="domainFilter" size="60" value="#{domainSwitcher.filter}">
+				<a4j:support 
+					event="onkeyup"
+					reRender="domainSwitcherTableContainer"
+					eventsQueue="domainSwitcherFilterKeyUp"
+					requestDelay="500"
+					ajaxSingle="true"
+					ignoreDupResponses="true"
+					limitToList="true"/>
+			</aon:inputText>
+		</aon:panelGroup>
+		<aon:panelGroup>	
+			<aon:outputText 
+				styleClass="aon-italic aon-bold aon-margin-right" 
+				value="#{bundle.admin_domain_show}:" />
+			<aon:outputLabel for="Domains_showInactive"
+				styleClass="aon-italic" 
+				value="#{bundle.admin_domain_show_inactives}" />
+			<aon:selectBooleanCheckbox id="Domains_showInactive"
+				value="#{domainSwitcher.showInactive}" >
+				<a4j:support 
+					event="onclick"
+					reRender="domainSwitcherTableContainer"
+					eventsQueue="domainSwitcherFilterKeyUp"
+					actionListener="#{domainSwitcher.onChangeShowInactive}"
+					requestDelay="500"
+					ajaxSingle="true"
+					ignoreDupResponses="true"
+					limitToList="true"/>						
+			</aon:selectBooleanCheckbox>			
+			<aon:outputLabel for="Domains_showExpired"
+				styleClass="aon-italic" 
+				value="#{bundle.admin_domain_show_expired}" />										
+			<aon:selectBooleanCheckbox id="Domains_showExpired"
+				value="#{domainSwitcher.showExpired}" >
+				<a4j:support 
+					event="onclick"
+					reRender="domainSwitcherTableContainer"
+					eventsQueue="domainSwitcherFilterKeyUp"
+					actionListener="#{domainSwitcher.onChangeShowExpired}"
+					requestDelay="500"
+					ajaxSingle="true"
+					ignoreDupResponses="true"
+					limitToList="true"/>						
+			</aon:selectBooleanCheckbox>
+		</aon:panelGroup>															
+	</h:panelGrid>
 	<aon:div id="domainSwitcherTableContainer" styleClass="aon-width-all">
 		<aon:methodParam name="rowSelectorAction" value="start" />
 		<aon:methodParam name="rowSelectorActionListener" value="#{domains.onSelectChildDomain}" type="actionListener" />
@@ -50,7 +72,8 @@
 						<aon:outputText value="#{bundle.aon_name}" />
 					</f:facet>							
 					<aon:outputText value="#{to.description}"
-						style="#{(!to.active)?'color:red;font-style:italic;':''}"/>					
+						title="#{(!to.active)?bundle.admin_domain_inactive:''}#{(to.expired)?bundle.admin_domain_expired:''}"
+						style="#{(!to.active or to.expired)?'color:red;font-style:italic;':''}"/>					
 				</aon:column>
 
 				<aon:column styleClass="aon-width-40">

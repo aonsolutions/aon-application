@@ -1,5 +1,7 @@
 package com.code.aon.ui.config;
 
+import java.util.Date;
+
 import org.apache.commons.io.FileUtils;
 
 import com.code.aon.AonVersion;
@@ -29,9 +31,10 @@ public class DomainBookingData extends DomainData {
 	
 	private String payerDomain;
 	
-	public DomainBookingData(Integer id, String name, String description, boolean active, boolean enableHeredity,
+	public DomainBookingData(Integer id, String name, String description, Date expirationDate,
+			boolean active, boolean enableHeredity,
 			int maxDefinedUsers, Byte type, int maxTotalDocumentSize ) {
-		super( id, name, description, active, enableHeredity );
+		super( id, name, description, expirationDate, active, enableHeredity );
 		this.maxDefinedUsers = maxDefinedUsers;
 		this.type = getType(type);
 		long value = (maxTotalDocumentSize > 0) ? maxTotalDocumentSize : 100;

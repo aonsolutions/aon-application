@@ -1,6 +1,7 @@
 package com.code.aon.ui.config;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.code.aon.AonVersion;
 
@@ -20,10 +21,13 @@ public class DomainData implements Serializable {
 	
 	private boolean enableHeredity;
 	
-	public DomainData(Integer id, String name, String description, boolean active, boolean enableHeredity) {
+	private Date expirationDate;
+	
+	public DomainData(Integer id, String name, String description, Date expirationDate, boolean active, boolean enableHeredity) {
 		this.id = id;
 		this.name = name;
 		this.description = description;
+		this.expirationDate = expirationDate;
 		this.active = active;
 		this.enableHeredity = enableHeredity;
 	}
@@ -55,5 +59,12 @@ public class DomainData implements Serializable {
 	public void setLogo(String logo) {
 		this.logo = logo;
 	}
+	
+	public boolean isExpired() {
+		if ( this.expirationDate != null ) {
+			return this.expirationDate.compareTo(new Date()) < 0;
+		}
+		return false;
+	}	
 
 }

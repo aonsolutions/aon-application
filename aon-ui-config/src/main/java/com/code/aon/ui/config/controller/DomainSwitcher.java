@@ -75,6 +75,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	private int page;
 	private Integer pageLimit;
 	private boolean showInactive;
+	private boolean showExpired;
 	private String beanName;
 
 	public DomainSwitcher() {
@@ -228,14 +229,16 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	}
 	
 	private Condition getDomainCondition() {
-		return getDomainCondition(getParentDomain(), isShowInactive());		
+		return getDomainCondition(getParentDomain(), isShowInactive(), isShowExpired());		
 	}
 
-	public Condition getDomainCondition( Integer parentDomain, boolean showInactive ) {
+	public Condition getDomainCondition( Integer parentDomain, boolean showInactive, boolean showExpired ) {
 		Condition condition = DOMAIN.PARENT.eq(parentDomain);
-		Condition expirationCondition = DOMAIN.EXPIRATIONDATE.isNull().or(
-				DOMAIN.EXPIRATIONDATE.gt(DSL.currentDate()));
-		condition = condition.and(expirationCondition);
+		if (! showExpired ) {
+			Condition expirationCondition = DOMAIN.EXPIRATIONDATE.isNull().or(
+					DOMAIN.EXPIRATIONDATE.gt(DSL.currentDate()));
+			condition = condition.and(expirationCondition);
+		}
 		if (!showInactive) {
 			condition = condition.and(DOMAIN.ACTIVE.eq((byte) 1));
 		}
@@ -284,7 +287,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 			domains = ctx
 					.getDslContext()
 					.select(DOMAIN.ID, DOMAIN.NAME, DOMAIN.DESCRIPTION,
-							DOMAIN.ACTIVE, DOMAIN.ENABLEHEREDITY)
+							DOMAIN.EXPIRATIONDATE, DOMAIN.ACTIVE, DOMAIN.ENABLEHEREDITY)
 					.from(DOMAIN).where(getDomainCondition())
 					.orderBy(DOMAIN.DESCRIPTION).fetch().into(DomainData.class);
 
@@ -342,6 +345,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		this.onEditSearch(null);
 		this.domainURL = null;
 		setShowInactive(false);
+		setShowExpired(false);
 		System.gc();
 	}
 
@@ -449,11 +453,23 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	public void setShowInactive(boolean showInactive) {
 		this.showInactive = showInactive;
 	}
+	
+	public boolean isShowExpired() {
+		return showExpired;
+	}
+
+	public void setShowExpired(boolean showExpired) {
+		this.showExpired = showExpired;
+	}
 
 	public void onChangeShowInactive(ActionEvent event) {
 		setModel(null);
 	}
 
+	public void onChangeShowExpired(ActionEvent event) {
+		setModel(null);
+	}
+	
 	@Override
 	public int getPage() {
 		return page;

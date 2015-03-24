@@ -1,7 +1,6 @@
 package com.code.aon.ui.admin.controller;
 
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
-import static javax.faces.application.FacesMessage.SEVERITY_ERROR;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -10,12 +9,8 @@ import java.sql.Connection;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.validator.ValidatorException;
 import javax.mail.Address;
 
 import org.apache.commons.dbutils.DbUtils;
@@ -91,6 +86,7 @@ public class NewDomainController implements Serializable {
 	private boolean domainManagement;
 	private DomainType type;
 	private String owner;
+	private boolean activeExpirationDate;
 	private Date expirationDate;
 	private Scope scope;
 	
@@ -214,6 +210,7 @@ public class NewDomainController implements Serializable {
 		setDomainManagement(false);
 		setEnableHeredity(parentDomain != null);
 		setScope(null);
+		setActiveExpirationDate(false);
 		setExpirationDate(null);
 		setType(DomainType.ENTERPRISE);
 		setParentDomain(parentDomain);
@@ -278,6 +275,7 @@ public class NewDomainController implements Serializable {
 		}
 		
 		validateUserPassword(getPassword());
+		validateExpirationDate();
 		
 		try {			
 			Integer newDomain = null;
@@ -346,7 +344,9 @@ public class NewDomainController implements Serializable {
 		domain.setDescription( getDomainDescription() );
 		domain.setEnableHeredity( isEnableHeredity() );
 		domain.setMaxDefinedUsers(0);
-		domain.setExpirationDate(getExpirationDate());
+		if ( isActiveExpirationDate() ) {
+			domain.setExpirationDate(getExpirationDate());	
+		}
 		domain.setScope( getScope() );
 		domain.setMaxDocumentSize(DocumentManager.MINIMUM_MAX_DOCUMENT_SIZE);
 		domain.setMaxTotalDocumentSize(DocumentManager.MINIMUM_MAX_TOTAL_DOCUMENT_SIZE);
@@ -415,6 +415,12 @@ public class NewDomainController implements Serializable {
 		setLoadDefaultValuesEnabled(true);
 	}
 	
+	public void onChangedLoadDefaultValues( ActionEvent event ) {
+		if (! isLoadDefaultValuesEnabled() ) {
+			setActiveExpirationDate(false);	
+		}
+	}
+	
 	private void saveHistory( Integer domainId ) throws ManagerBeanException, IOException, WebmailException {
 		if ( domainId != null ) {
 			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
@@ -435,14 +441,12 @@ public class NewDomainController implements Serializable {
 		}
 	}
 	
-	public void expirationDateCheck(FacesContext context, UIComponent component, Object value) {
-		Date date = (Date) value;
-		if ( value != null ) {
+	private void validateExpirationDate() {
+		if ( isActiveExpirationDate() && (getExpirationDate() != null) ) {
 			Date today = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
-			if ( date.compareTo(today) <= 0 ) {
-				FacesMessage fm = new FacesMessage(AonUtil.getMessage(ICommonMessages.DOMAIN_EXPIRATION_ERROR));
-				fm.setSeverity(SEVERITY_ERROR);
-				throw new ValidatorException(fm);		
+			if ( getExpirationDate().compareTo(today) <= 0 ) {
+				String message = AonUtil.addErrorMessageFromBundle(ICommonMessages.DOMAIN_EXPIRATION_ERROR);
+				throw new AbortProcessingException(message);
 			}
 		}
 	}		
@@ -458,6 +462,14 @@ public class NewDomainController implements Serializable {
 		CompanyController.addEnterprise(company);
 	}
 	
+	public boolean isActiveExpirationDate() {
+		return activeExpirationDate;
+	}
+
+	public void setActiveExpirationDate(boolean activeExpirationDate) {
+		this.activeExpirationDate = activeExpirationDate;
+	}
+
 	private static class TemplateDomainFilter extends ControllerAdapter {
 		
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
