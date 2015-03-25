@@ -1,5 +1,7 @@
 package com.code.aon.ui.finance.util.print;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 
@@ -17,7 +19,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
-import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.RecordData;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.company.controller.CompanyController;
@@ -40,6 +41,32 @@ public class InvoiceReportScriptlet extends JRDefaultScriptlet implements Serial
 
 	private CompanySaleInvoiceFooterController getCompanySaleInvoiceFooterController(){
 		return (CompanySaleInvoiceFooterController) AonUtil.getRegisteredBean("companySaleInvoiceFooter");
+	}
+	
+	public InputStream getLogoFile(){
+		try {
+			return getCompanyController().getAttachAsInputStream();
+		} catch (ManagerBeanException e) {
+			String msg = "ERROR: imposible obtener los datos de la factura al generar su informe";
+			LOGGER.error(msg,e);
+		} catch (IOException e) {
+			String msg = "ERROR: imposible obtener los datos de la factura al generar su informe";
+			LOGGER.error(msg,e);
+		}
+		return null;
+	}
+	
+	public InputStream getSignatureFile(){
+		try {
+			return getCompanyController().getSignatureAttachAsInputStream();
+		} catch (ManagerBeanException e) {
+			String msg = "ERROR: imposible obtener los datos de la factura al generar su informe";
+			LOGGER.error(msg,e);
+		} catch (IOException e) {
+			String msg = "ERROR: imposible obtener los datos de la factura al generar su informe";
+			LOGGER.error(msg,e);
+		}
+		return null;
 	}
 	
 	public boolean isPrintHeader() {
@@ -152,5 +179,5 @@ public class InvoiceReportScriptlet extends JRDefaultScriptlet implements Serial
 		}
 		return null;
 	}
-
+	
 }
