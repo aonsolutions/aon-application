@@ -2419,6 +2419,9 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	font-size:0.9em;	
 	display:inline;
 	}
+.aon-inputNumberSpinner td{
+	padding: 0px;
+	}
 /***************************/
 /*    aon-dataScroller2    */
 /**************************/

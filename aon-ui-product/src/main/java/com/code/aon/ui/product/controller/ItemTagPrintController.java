@@ -14,12 +14,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ItemTagPrintController extends ItemController {
 	
@@ -170,15 +169,15 @@ public class ItemTagPrintController extends ItemController {
 	@Override
 	public Collection<ITransferObject> getCollection() {
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(Item.class);
 			List<ITransferObject> list = new LinkedList<ITransferObject>();
 			for(int i=1; i<startPosition;i++){
-				list.add(bean.createNewTo());
+				list.add(this.getManagerBean().createNewTo());
 			}
-			for(Serializable o: this.getCheckList()){
-				Integer itemId = (Integer) o;
-				for(int i=0; i<tagRepeatCount.get(itemId);i++){
-					list.add(bean.get(itemId));
+			this.getCriteria().addInExpression(this.getFieldName(IEntityAlias.ITEM_ID), this.getCheckList());
+			for(Serializable o: this.getManagerBean().getList(this.getCriteria())){
+				Item item = (Item) o;
+				for(int i=0; i<tagRepeatCount.get(item.getId());i++){
+					list.add(item);
 				}
 			}
 			return list;
@@ -187,5 +186,6 @@ public class ItemTagPrintController extends ItemController {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
-	}	
+	}
+	
 }

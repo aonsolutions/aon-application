@@ -18,12 +18,12 @@
 
 				<ui:define name="additionalToolbarContent">
 					<aon:htmlCommandLink id="itemTagPrint-report"
-						value="#{bundle.aon_listing} (55x40)" target="_blank"
+						value="#{bundle.aon_listing}" target="_blank"
 						rendered="#{!(empty itemTagPrint.checkedItems) and itemTagPrint.checkedItems>0}"
 						action="#{report.onExecute}" 
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						accesskey="#{bundle.aon_key_print}">
-						<f:param name="reportKey" value="itemTagList" />
+						<f:param name="reportKey" value="itemTag_525x297" />
 					</aon:htmlCommandLink>
 				</ui:define>
 
@@ -41,7 +41,9 @@
 							value="Posición de inicio: " />
 						<rich:inputNumberSpinner id="startPosition"
 				   			inputSize="2" minValue="1" cycled="#{false}"
-							value="#{itemTagPrint.startPosition}" />
+							value="#{itemTagPrint.startPosition}" >
+							<a4j:support event="onchange" reRender="startPosition" ajaxSingle="true" />
+						</rich:inputNumberSpinner>
 							
 						<aon:outputLabel for="freeTextAll-all" styleClass="aon-bold"
 							value="#{bundle.aon_text}: " />
@@ -53,8 +55,10 @@
 						<aon:outputLabel for="tagRepeatCount-all" styleClass="aon-bold"
 							value="Repeticiones: " />
 						<rich:inputNumberSpinner id="tagRepeatCount-all"
-				   			inputSize="2" minValue="0" cycled="#{false}"
-							value="#{itemTagPrint.tagRepeatCountAll}" />
+					   		inputSize="2" minValue="1" cycled="#{false}"
+							value="#{itemTagPrint.tagRepeatCountAll}" >
+							<a4j:support event="onchange" reRender="tagRepeatCount-all" ajaxSingle="true" />
+						</rich:inputNumberSpinner>
 						
 						<aon:commandButton styleClass="aon-commandButton"
 							value="#{bundle.aon_refresh}" 
@@ -106,56 +110,47 @@
 							</f:facet>
 						</aon:column>
 						
-						<ui:include src="/com/code/aon/ui/product/facelet/item/listBasic.xhtml" >
-							<ui:param name="abbreviateName" value="#{false}" />
-						</ui:include>
+						<aon:column alias="Item.product.code"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_id}" />
+							</f:facet>
+							<aon:outputText value="#{to.product.code}"/>
+						</aon:column>
 						
+						<aon:column alias="Item.product.name,Item.detail,Item.detail2,Item.detail3"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_description}" />
+							</f:facet>
+							<aon:outputText value="#{to.product.name}">
+								<aon:abbreviateConverter maxWidth="80" />
+							</aon:outputText>
+						</aon:column>
+						
+						<aon:column alias="Item.detail,Item.detail2,Item.detail3"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.asset_features}" />
+							</f:facet>
+							<aon:outputText value="#{to.detail}#{empty to.detail2?'':', '}#{to.detail2}#{empty to.detail3?'':', '}#{to.detail3}" >
+								<aon:abbreviateConverter maxWidth="80" />
+							</aon:outputText>
+						</aon:column>
+					
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-50">
 							<f:facet name="header">
 								<aon:panelGroup>
 									<aon:outputText value="Repeticiones" />
 								</aon:panelGroup>
 							</f:facet>
-							<aon:panelGroup>
-								<rich:inputNumberSpinner id="tagRepeatCount"
-					   				inputSize="2" minValue="1" cycled="#{false}"
-									disabled="#{!controller.rowChecked}"
-									value="#{controller.tagRepeatCountChanged}" >
-									<a4j:support event="onchange" reRender="tagRepeatCount" ajaxSingle="true" />
-					   			</rich:inputNumberSpinner>
-							</aon:panelGroup>
-						</aon:column>
-						
-						<aon:column styleClass="aon-editDataTable-iconColumn">
-							<f:facet name="header">
-								<aon:outputText value="&#160;" />
-							</f:facet>
-							<aon:panelGroup style="white-space:nowrap;">
-							<!--  
-								<aon:commandLink id="customerLink" immediate="true"
-									styleClass="aon-button-goto" style="padding-right: 15px;"
-									value="&#160;" title="#{bundle.aon_go}" 
-									actionListener="#{controller.onLoadCustomer}"
-									action="customer_form"
-									reRender="aonContent" />
-								<aon:commandButton id="sddMandate-email"
-									title="#{bundle.webmail_send_email}"
-									value="&#160;"
-									rendered="#{controller.rowChecked and controller.customerEmailAvailable}"
-									actionListener="#{controller.onSendByEmail}"
-									styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
-									reRender="sepa_directDebit_list, showNewMessageWindow" />
-								<aon:htmlCommandLink id="sddMandate-report"
-									title="#{bundle.aon_report}"
-									value="&#160;" target="_blank"
-									rendered="#{controller.rowChecked}"
-									action="#{report.onExecute}" 
-									styleClass="aon-finding-toolbar-item aon-icon-pdf aon-finding-toolbar-item-no-border"
-									accesskey="#{bundle.aon_key_print}">
-									<f:param name="reportKey" value="sddMandate" />
-								</aon:htmlCommandLink>
-							-->
-							</aon:panelGroup>
+							<rich:inputNumberSpinner id="tagRepeatCount"
+								styleClass="aon-inputNumberSpinner"
+				   				inputSize="2" minValue="1" cycled="#{false}"
+								disabled="#{!controller.rowChecked}"
+								value="#{controller.tagRepeatCountChanged}" >
+								<a4j:support event="onchange" reRender="tagRepeatCount" ajaxSingle="true" />
+				   			</rich:inputNumberSpinner>
 						</aon:column>
 						
 					</ui:define>
@@ -165,7 +160,7 @@
 		</aon:form>
 		
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" >
-			<ui:param name="addWaitProcessPoll" value="sepa_directDebit_list-WaitProcess" />
+			<ui:param name="addWaitProcessPoll" value="itemTagPrint_list-WaitProcess" />
 		</ui:include>
 		
 	</ui:define>

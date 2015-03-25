@@ -55,8 +55,8 @@
 	</report>
 	
 	<!--  *********  Listado de etiquetas********* -->
-	<report id="itemTagList" description="Product Tag items List">
-		<template path="/com/code/aon/ui/product/report/itemTag.jasper"/>
+	<report id="itemTag_525x297" description="Product Tag (525x297) item List">
+		<template path="/com/code/aon/ui/product/report/itemTag_525x297.jasper"/>
 		<collection provider="#{itemTagPrint}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />

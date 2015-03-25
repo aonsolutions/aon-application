@@ -15,6 +15,7 @@
 				<ui:param name="skipResetButton" value="#{true}" />
 			</ui:include>
 
+			<aon:methodParam name="searchAction" value="itemTagPrint_list" />
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{itemTagPrint}" />
 				<ui:define name="searchContent">
@@ -22,6 +23,7 @@
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
+		
 		<aon:if test="#{aonConfiguration.bean.product.showSuppliers}">
 			<aon:lookupButtonPopup lookup="#{supplierLookup}" />
 		</aon:if>

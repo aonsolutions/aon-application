@@ -209,15 +209,6 @@
 			<value>itemTagPrint</value>
 		</managed-property>
 		<managed-property>
-			<property-name>defaultExpressions</property-name>
-			<map-entries>
-				<map-entry>
-					<key>Item_product_type</key>
-					<value>0|1|2|3|5</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>		
-		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Item_detail,Item_detail2</value>
 		</managed-property>
