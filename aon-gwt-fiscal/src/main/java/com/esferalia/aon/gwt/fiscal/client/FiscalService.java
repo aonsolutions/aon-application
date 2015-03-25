@@ -31,15 +31,18 @@ public interface FiscalService extends RemoteService {
 	FiscalParameters getFiscalParameters(String domainName, int domain) throws AonSQLException;
 
 	// ------------------------------------------------------- FISCAL PANEL
-	FiscalModelMatrix getFiscalPanel(String currentDomainName,
-			int currentDomain, int y);
+	FiscalModelMatrix getFiscalPanel(String currentDomainName,int currentDomain, int y);
+	
 	// -------------------------------------------------------------- ACTIVITIES
 	ArrayList<Activity> getActivities(int activityGroup) throws AonSQLException;
 	
+	// ---------------------------------------------------------- FISCAL ACTIVITIES
 	ArrayList<Epigraph> getModuleEpigraphs(int year);
 	ArrayList<FiscalActivity> getFiscalActivities(String domainName, int domain) throws AonSQLException;
 	FiscalActivity getFiscalActivity(String domainName, int domain, int id) throws AonSQLException;
-	FiscalActivity getFiscalActivityFor(Epigraph epigraph, Integer year);
+	FiscalActivity getFiscalActivityFor(Epigraph epigraph, FiscalActivity fa);
+	FiscalActivity save(String domainName, FiscalActivity fa);
+	void delete(String domainName, FiscalActivity fa);
 	
 	// ---------------------------------------------------------------MODELO 190
 	void deleteMod190(String domainName, int domain,Mod190 mod190) throws AonCoreException;

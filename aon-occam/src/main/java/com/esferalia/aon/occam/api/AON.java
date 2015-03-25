@@ -48,8 +48,6 @@ import com.esferalia.aon.occam.impl.jooq.FiscalImpl;
 import com.esferalia.aon.occam.impl.jooq.ManagementImpl;
 import com.esferalia.aon.occam.impl.jooq.SalaryImpl;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
-import com.esferalia.aon.occam.impl.jooq.dao.FiscalActivityDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.FiscalMatrixDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 public class AON {
@@ -291,7 +289,7 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domain);
 			User user = getUser(domainName, domain, login);
-			return FiscalMatrixDAO.getModelsPanel(ctx, domain, year, user.getId());
+			return getFiscal().getFiscalPanel(ctx, domain, year, user.getId());
 		} finally {
 			if (ctx != null) ctx.close();	
 		}
@@ -301,7 +299,7 @@ public class AON {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId);
-			return FiscalActivityDAO.getActivities(ctx, domainId);	
+			return getFiscal().getActivities(ctx, domainId);	
 		} finally {
 			if (ctx != null) ctx.close();	
 		}
@@ -311,14 +309,33 @@ public class AON {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId);
-			return FiscalActivityDAO.getActivity(ctx, domainId,id);	
+			return getFiscal().getActivity(ctx, id);	
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
+	public static FiscalActivity save(String domainName, FiscalActivity fa) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, fa.getDomain());
+			return getFiscal().save(ctx, fa);	
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
+
+	public static void delete(String domainName, FiscalActivity fa) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, fa.getDomain());
+			getFiscal().delete(ctx, fa);	
 		} finally {
 			if (ctx != null) ctx.close();	
 		}
 	}
 	
-	public static FiscalActivity getFiscalActivityFor(Epigraph epigraph,Integer year) {
-		return FiscalActivityDAO.getActivityFor(epigraph, year);
+	public static FiscalActivity getFiscalActivityFor(Epigraph epigraph,FiscalActivity fa) {
+		return getFiscal().getActivityFor(epigraph, fa);
 	}
 	// ----------------------------------MODELO 180
 	public static ArrayList<Mod180> getMod180s(String domainName, int domainId) {

@@ -1,12 +1,14 @@
 package com.esferalia.aon.occam.api.model.fiscal;
 
-import java.io.Serializable;
-
 import static com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKeyType.INFO;
-import static com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKeyType.MODULE;
 import static com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKeyType.IRPF_INFO;
+import static com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKeyType.MODULE;
 import static com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKeyType.VAT_INFO;
 
+import java.io.Serializable;
+
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.IntegerStringPair;
 
 public enum FiscalActivityInfoKey implements Serializable{
@@ -33,6 +35,11 @@ public enum FiscalActivityInfoKey implements Serializable{
 		public FiscalActivityInfoKeyType getType() {
 			return INFO;
 		}
+
+		@Override
+		public boolean accept(FiscalActivity fa) {
+			return true;
+		}
 	}
 	, A02 {
 		@Override
@@ -42,6 +49,10 @@ public enum FiscalActivityInfoKey implements Serializable{
 		@Override
 		public FiscalActivityInfoKeyType getType() {
 			return INFO;
+		}
+		@Override
+		public boolean accept(FiscalActivity fa) {
+			return true;
 		}
 	}
 	, A03{
@@ -54,6 +65,10 @@ public enum FiscalActivityInfoKey implements Serializable{
 		public FiscalActivityInfoKeyType getType() {
 			return INFO;
 		}
+		@Override
+		public boolean accept(FiscalActivity fa) {
+			return true;
+		}
 	} 
 	, A04{
 
@@ -64,6 +79,10 @@ public enum FiscalActivityInfoKey implements Serializable{
 		@Override
 		public FiscalActivityInfoKeyType getType() {
 			return INFO;
+		}
+		@Override
+		public boolean accept(FiscalActivity fa) {
+			return true;
 		}
 	} 
 	, A05{
@@ -84,6 +103,10 @@ public enum FiscalActivityInfoKey implements Serializable{
 		@Override
 		public FiscalActivityInfoKeyType getType() {
 			return INFO;
+		}
+		@Override
+		public boolean accept(FiscalActivity fa) {
+			return true;
 		}
 	} 
 	, B06{
@@ -110,6 +133,11 @@ public enum FiscalActivityInfoKey implements Serializable{
 		public FiscalActivityInfoKeyType getType() {
 			return INFO;
 		}
+
+		@Override
+		public boolean accept(FiscalActivity fa) {
+			return AonStringUtils.equals(fa.getEpigraph(),Epigraph.E____.getEpigraph());
+		}
 	}
 	, A06{
 		private IntegerStringPair[] CHOICES = new IntegerStringPair[]{
@@ -130,6 +158,16 @@ public enum FiscalActivityInfoKey implements Serializable{
 		public FiscalActivityInfoKeyType getType() {
 			return INFO;
 		}
+
+		@Override
+		public boolean accept(FiscalActivity fa) {
+			return (!AonStringUtils.equals( Epigraph.E_721_1.getEpigraph(), fa.getEpigraph())
+				&& !AonStringUtils.equals( Epigraph.E_721_2.getEpigraph(), fa.getEpigraph())
+				&& !AonStringUtils.equals( Epigraph.E_721_3.getEpigraph(), fa.getEpigraph())
+				&& !AonStringUtils.equals( Epigraph.E_722A.getEpigraph(), fa.getEpigraph())
+				&& !AonStringUtils.equals( Epigraph.E_757.getEpigraph(), fa.getEpigraph())
+				&& !AonStringUtils.equals( Epigraph.E____.getEpigraph(), fa.getEpigraph()));
+		}
 	}
 	, A07{
 
@@ -140,6 +178,11 @@ public enum FiscalActivityInfoKey implements Serializable{
 		@Override
 		public FiscalActivityInfoKeyType getType() {
 			return INFO;
+		}
+		@Override
+		public boolean accept(FiscalActivity fa) {
+			return (!AonStringUtils.equals( Epigraph.E_721_2.getEpigraph(), fa.getEpigraph())
+				&& !AonStringUtils.equals( Epigraph.E____.getEpigraph(), fa.getEpigraph()));
 		}
 	} 
 	, A08{
@@ -160,6 +203,16 @@ public enum FiscalActivityInfoKey implements Serializable{
 		@Override
 		public FiscalActivityInfoKeyType getType() {
 			return INFO;
+		}
+
+		@Override
+		public boolean accept(FiscalActivity fa) {
+			return (!AonStringUtils.equals( Epigraph.E_721_1.getEpigraph(), fa.getEpigraph())
+					&& !AonStringUtils.equals( Epigraph.E_721_2.getEpigraph(), fa.getEpigraph())
+					&& !AonStringUtils.equals( Epigraph.E_721_3.getEpigraph(), fa.getEpigraph())
+					&& !AonStringUtils.equals( Epigraph.E_722A.getEpigraph(), fa.getEpigraph())
+					&& !AonStringUtils.equals( Epigraph.E_757.getEpigraph(), fa.getEpigraph())
+					&& !AonStringUtils.equals( Epigraph.E____.getEpigraph(), fa.getEpigraph()));
 		}
 	}
 	, A09{
@@ -186,6 +239,15 @@ public enum FiscalActivityInfoKey implements Serializable{
 		public FiscalActivityInfoKeyType getType() {
 			return INFO;
 		}
+
+		@Override
+		public boolean accept(FiscalActivity fa) {
+			return (!AonStringUtils.equals( Epigraph.E_721_1.getEpigraph(), fa.getEpigraph())
+					&& !AonStringUtils.equals( Epigraph.E_721_3.getEpigraph(), fa.getEpigraph())
+					&& !AonStringUtils.equals( Epigraph.E_722A.getEpigraph(), fa.getEpigraph())
+					&& !AonStringUtils.equals( Epigraph.E_757.getEpigraph(), fa.getEpigraph())
+					&& !AonStringUtils.equals( Epigraph.E____.getEpigraph(), fa.getEpigraph()));
+		}
 	}
 	, A10{
 
@@ -196,6 +258,15 @@ public enum FiscalActivityInfoKey implements Serializable{
 		@Override
 		public FiscalActivityInfoKeyType getType() {
 			return INFO;
+		}
+		@Override
+		public boolean accept(FiscalActivity fa) {
+			return (!AonStringUtils.equals( Epigraph.E_721_1.getEpigraph(), fa.getEpigraph())
+					&& !AonStringUtils.equals( Epigraph.E_721_2.getEpigraph(), fa.getEpigraph())
+					&& !AonStringUtils.equals( Epigraph.E_721_3.getEpigraph(), fa.getEpigraph())
+					&& !AonStringUtils.equals( Epigraph.E_722A.getEpigraph(), fa.getEpigraph())
+					&& !AonStringUtils.equals( Epigraph.E_757.getEpigraph(), fa.getEpigraph())
+					&& !AonStringUtils.equals( Epigraph.E____.getEpigraph(), fa.getEpigraph()));
 		}
 	} 
 	
@@ -218,6 +289,12 @@ public enum FiscalActivityInfoKey implements Serializable{
 		public FiscalActivityInfoKeyType getType() {
 			return INFO;
 		}
+
+		@Override
+		public boolean accept(FiscalActivity fa) {
+			return AonStringUtils.equals(fa.getEpigraph(),Epigraph.E_722A.getEpigraph())
+				|| AonStringUtils.equals(fa.getEpigraph(),Epigraph.E_757.getEpigraph());
+		}
 	}
 	, C11{
 		private IntegerStringPair[] CHOICES = new IntegerStringPair[]{
@@ -238,6 +315,12 @@ public enum FiscalActivityInfoKey implements Serializable{
 		public FiscalActivityInfoKeyType getType() {
 			return INFO;
 		}
+
+		@Override
+		public boolean accept(FiscalActivity fa) {
+			return AonStringUtils.equals(fa.getEpigraph(),Epigraph.E_722A.getEpigraph())
+				|| AonStringUtils.equals(fa.getEpigraph(),Epigraph.E_757.getEpigraph());
+		}
 	}
 	, A11{
 		private IntegerStringPair[] CHOICES = new IntegerStringPair[]{
@@ -248,7 +331,7 @@ public enum FiscalActivityInfoKey implements Serializable{
 		
 		@Override
 		public String getDescription() {
-			return "Si en 2014 realiza la actividad en LORCA, seleccione:";
+			return "Si realiza la actividad en LORCA, seleccione:";
 		}
 		
 		@Override
@@ -258,6 +341,11 @@ public enum FiscalActivityInfoKey implements Serializable{
 		@Override
 		public FiscalActivityInfoKeyType getType() {
 			return INFO;
+		}
+
+		@Override
+		public boolean accept(FiscalActivity fa) {
+			return true;
 		}
 	}
 	, A13{
@@ -278,6 +366,10 @@ public enum FiscalActivityInfoKey implements Serializable{
 		@Override
 		public FiscalActivityInfoKeyType getType() {
 			return INFO;
+		}
+		@Override
+		public boolean accept(FiscalActivity fa) {
+			return true;
 		}
 	}
 	, M01 {
@@ -1206,7 +1298,6 @@ public enum FiscalActivityInfoKey implements Serializable{
 		}
 	} 
 	;
-	
 
 	public String getKey() {
 		return toString();
@@ -1223,9 +1314,13 @@ public enum FiscalActivityInfoKey implements Serializable{
 	public boolean isChoice() {
 		return getOptions() != null && getOptions().length > 0;
 	}
+	public boolean accept(FiscalActivity fa) {
+		return true;
+	}
 	
 	public abstract String getDescription();
 	public abstract FiscalActivityInfoKeyType getType();
+
 	
 	public static FiscalActivityInfoKey safeValueOf(String value) {
 		if (value == null) return null;
@@ -1240,4 +1335,5 @@ public enum FiscalActivityInfoKey implements Serializable{
 			}
 		}
 	}
+		
 }

@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.panel;
+package com.esferalia.aon.gwt.fiscal.client.tree;
 
 import java.util.ArrayList;
 
@@ -37,18 +37,18 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
-public class FiscalPanel extends MainEntryPoint {
+public class FiscalTree extends MainEntryPoint {
 	static CommonServiceAsync COMMON_SERVICE;
 	static FiscalServiceAsync FISCAL_SERVICE;
 	
 	interface FiscalNodeWidget<T> {
-		void select( TreeItem node,T t);
+		void select( TreeNode<T> node);
 	}
 	
-	interface FiscalPanelBinder extends UiBinder<Widget, FiscalPanel> {
+	interface FiscalTreeBinder extends UiBinder<Widget, FiscalTree> {
 	}
 
-	private static final FiscalPanelBinder BINDER = GWT.create(FiscalPanelBinder.class);
+	private static final FiscalTreeBinder BINDER = GWT.create(FiscalTreeBinder.class);
 	
 	protected final static CommonMessages MSG = GWT.create(CommonMessages.class);
 	protected final static AonResources AON_RESOURCES = GWT.create(AonResources.class);
@@ -56,6 +56,8 @@ public class FiscalPanel extends MainEntryPoint {
 	protected static final NumberFormat FMT = NumberFormat.getFormat(MSG.decimalPattern(),MSG.currencyCode());
 	public static final int CURRENT_YEAR = 2015;
 
+	Enterprise enterprise;
+	
 	@UiField
 	SplitLayoutPanel splitLayoutPanel;
 	@UiField
@@ -112,12 +114,12 @@ public class FiscalPanel extends MainEntryPoint {
 					@Override
 					public void onSuccess(ArrayList<Enterprise> result) {
 						if (result == null || result.size() == 0) {
+							//TODO manage
 							Window.alert("ERROR");
 						} else if ( result.size() == 1) {
-							Enterprise ent = result.get(0); 
-							enterpriseSuggest.setText(ent.toString());
+							enterpriseSuggest.setText(result.get(0).toString());
 							enterpriseSuggest.setEnabled(false);
-							initialize(ent);
+							initialize(result.get(0));
 						} else {
 							enterpriseSuggest.setText(MSG.startTyping());
 							enterpriseSuggest.setEnabled(true);
@@ -137,17 +139,18 @@ public class FiscalPanel extends MainEntryPoint {
 	}																																																																																																																																																																																																																																																																																																																																																													
 
 	private void initialize(Enterprise enterprise) {
+		this.enterprise = enterprise;
 		subtitle.setText(MSG.enterprise());
-		NodeType.renderTree(tree,this,enterprise,true);
+		TreeNode.renderTree(tree,this,enterprise,true);
 	}
 	
 	@UiHandler("tree")
 	void onTreeSelecction(SelectionEvent<TreeItem> event) {
-		TreeItem item = event.getSelectedItem();
-		NodeUserObject<?> type = (NodeUserObject<?>) item.getUserObject();
-		type.getNodeType().select(item,this);
+		TreeNode<?> node = (TreeNode<?>) event.getSelectedItem();
+		node.select(this);
 		sidebar.scrollToLeft();
 	}
+	
 	// -------------------------------------------------------------- UiHandler
 	@UiHandler("footPanel")
 	void onFootMinimize(MinimizeEvent event) {

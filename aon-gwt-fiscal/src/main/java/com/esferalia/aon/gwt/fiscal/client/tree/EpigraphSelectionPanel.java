@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.panel;
+package com.esferalia.aon.gwt.fiscal.client.tree;
 
 import java.util.ArrayList;
 
@@ -68,9 +68,9 @@ public class EpigraphSelectionPanel extends CustomDialog {
 		setAnimationEnabled(true);
 		setGlassEnabled(true);
 		setModal(true);
-		setCaption(FiscalPanel.MSG.activitySelection());
+		setCaption(FiscalTree.MSG.activitySelection());
 
-		FiscalPanel.AON_RESOURCES.css().ensureInjected();
+		FiscalTree.AON_RESOURCES.css().ensureInjected();
 		CellTable.Resources tableStyle = GWT.create(AonCellTable.class);
 
 		table = new CellTable<Epigraph>(1, tableStyle, EPIGRAPH_PROVIDES_KEY);
@@ -84,7 +84,7 @@ public class EpigraphSelectionPanel extends CustomDialog {
 		model = new NoSelectionModel<Epigraph>(EPIGRAPH_PROVIDES_KEY);
 		model.addSelectionChangeHandler(new EpigraphSelectionHandler());
 		table.setSelectionModel(model);
-		table.setEmptyTableWidget(new HTML(FiscalPanel.MSG.noData()));
+		table.setEmptyTableWidget(new HTML(FiscalTree.MSG.noData()));
 		Widget ui = epigraphPanelBinder.createAndBindUi(this);
 		setWidget(ui);
 	}
@@ -107,7 +107,7 @@ public class EpigraphSelectionPanel extends CustomDialog {
 				new ImageResourceCell()) {
 			@Override
 			public ImageResource getValue(Epigraph epigraph) {
-				return FiscalPanel.AON_RESOURCES.aonIconRowSelector();
+				return FiscalTree.AON_RESOURCES.aonIconRowSelector();
 			}
 		};
 		table.addColumn(selectorColumn);
@@ -121,8 +121,8 @@ public class EpigraphSelectionPanel extends CustomDialog {
 				return epigraph.getEpigraph();
 			}
 		};
-		table.addColumn(epigraphColumn, FiscalPanel.MSG.epigraph());
-		epigraphColumn.setCellStyleNames(FiscalPanel.AON_RESOURCES.css().aonTextCenter());
+		table.addColumn(epigraphColumn, FiscalTree.MSG.epigraph());
+		epigraphColumn.setCellStyleNames(FiscalTree.AON_RESOURCES.css().aonTextCenter());
 		table.setColumnWidth(epigraphColumn, 100, Unit.PX);
 	}
 
@@ -133,14 +133,14 @@ public class EpigraphSelectionPanel extends CustomDialog {
 				return epigraph.getDescription();
 			}
 		};
-		table.addColumn(descriptionColumn, FiscalPanel.MSG.fiscalYear());
-		descriptionColumn.setCellStyleNames(FiscalPanel.AON_RESOURCES.css().aonTextLeft());
+		table.addColumn(descriptionColumn, FiscalTree.MSG.fiscalYear());
+		descriptionColumn.setCellStyleNames(FiscalTree.AON_RESOURCES.css().aonTextLeft());
 		table.setColumnWidth(descriptionColumn, 90, Unit.PCT);
 	}
 
 	@UiHandler("table")
 	void onTableRangeChange(RangeChangeEvent event) {
-		FiscalPanel.FISCAL_SERVICE.getModuleEpigraphs(FiscalPanel.CURRENT_YEAR,
+		FiscalTree.FISCAL_SERVICE.getModuleEpigraphs(FiscalTree.CURRENT_YEAR,
 				new AsyncCallback<ArrayList<Epigraph>>() {
 					@Override
 					public void onSuccess(ArrayList<Epigraph> result) {
@@ -150,7 +150,7 @@ public class EpigraphSelectionPanel extends CustomDialog {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						DialogMessages.alertErrorWidget(FiscalPanel.MSG.unableToShowData(caught.getMessage()));
+						DialogMessages.alertErrorWidget(FiscalTree.MSG.unableToShowData(caught.getMessage()));
 					}
 				});
 	}

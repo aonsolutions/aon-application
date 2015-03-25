@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.panel;
+package com.esferalia.aon.gwt.fiscal.client.tree;
 
 import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
 import com.esferalia.aon.gwt.common.client.widget.FullDocument;
@@ -82,8 +82,8 @@ public class EnterpriseForm extends ResizeComposite {
 	}
 
 	public void setEnterprise(Enterprise enterprise) {
-		FiscalPanel.COMMON_SERVICE.getEnterprise(FiscalPanel.getCurrentDomainName(), 
-				FiscalPanel.getCurrentDomain(), enterprise.getId()
+		FiscalTree.COMMON_SERVICE.getEnterprise(FiscalTree.getCurrentDomainName(), 
+				FiscalTree.getCurrentDomain(), enterprise.getId()
 				,new AsyncCallback<Enterprise>() {
 
 					@Override
@@ -91,14 +91,14 @@ public class EnterpriseForm extends ResizeComposite {
 						if (result != null) {
 							populate(result);
 						} else {
-							DialogMessages.alertErrorWidget(FiscalPanel.MSG
+							DialogMessages.alertErrorWidget(FiscalTree.MSG
 									.unableToShowData("No se ha encontrado la empresa"));
 						}
 					}
 
 					@Override
 					public void onFailure(Throwable caught) {
-						DialogMessages.alertErrorWidget(FiscalPanel.MSG
+						DialogMessages.alertErrorWidget(FiscalTree.MSG
 								.unableToShowData(caught.getMessage()));
 					}
 		});

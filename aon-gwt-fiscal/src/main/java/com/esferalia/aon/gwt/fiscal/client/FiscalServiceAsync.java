@@ -31,8 +31,12 @@ public interface FiscalServiceAsync {
 			AsyncCallback<ArrayList<FiscalActivity>> callback);
 	void getFiscalActivity(String domainName, int domain, int id,
 			AsyncCallback<FiscalActivity> callback);
-	void getFiscalActivityFor(Epigraph epigraph, Integer year,
+	void getFiscalActivityFor(Epigraph epigraph, FiscalActivity fa,
 			AsyncCallback<FiscalActivity> asyncCallback);
+	void save(String domainName, FiscalActivity fa,
+			AsyncCallback<FiscalActivity> callback);
+	void delete(String domainName, FiscalActivity fa,
+			AsyncCallback<Void> callback);
 	
 	// -------------------------------------------------------------- ACTIVITIES
 	void getActivities(int activityGroup,

@@ -63,9 +63,19 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	}
 
 	@Override
-	public FiscalActivity getFiscalActivityFor(Epigraph epigraph, Integer year) {
-		// TODO Auto-generated method stub
-		return AON.getFiscalActivityFor(epigraph, year);
+	public FiscalActivity getFiscalActivityFor(Epigraph epigraph, FiscalActivity fa) {
+		return AON.getFiscalActivityFor(epigraph, fa);
+	}
+
+	@Override
+	public FiscalActivity save(String domainName, FiscalActivity fa) {
+		return AON.save(domainName, fa);
+		
+	}
+
+	@Override
+	public void delete(String domainName, FiscalActivity fa) {
+		AON.delete(domainName, fa);
 	}
 
 	// -------------------------------------------------------------- ACTIVITIES
@@ -254,5 +264,6 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	public Mod390 initializeMod390(String domainName, Integer domain,Integer year) {
 		return AON.initializeMod390(domainName, domain, year);
 	}
+
 
 }

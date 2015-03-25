@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalActivityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalMatrixDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod180DAO;
@@ -33,6 +34,30 @@ public class FiscalImpl implements IFiscal {
 	// --------------------------------------------- [FISCAL ACTIVITIES]
 	public ArrayList<FiscalActivity> getFiscalActivities(AONContext ctx,int domain){
 		return FiscalActivityDAO.getActivities(ctx, domain);
+	}
+	@Override
+	public FiscalActivity save(AONContext ctx, FiscalActivity fa) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> FiscalActivityDAO.save(ctx, fa));
+	}
+	@Override
+	public void delete(AONContext ctx, FiscalActivity fa) {
+		ctx.getDslContext().transaction(
+				configuration -> FiscalActivityDAO.delete(ctx, fa));
+	}
+	@Override
+	public FiscalActivity getActivity(AONContext ctx, int id) {
+		return FiscalActivityDAO.getActivity(ctx, id);
+	}
+
+	@Override
+	public ArrayList<FiscalActivity> getActivities(AONContext ctx, int domainId) {
+		return FiscalActivityDAO.getActivities(ctx, domainId);
+	}
+
+	@Override
+	public FiscalActivity getActivityFor(Epigraph epigraph, FiscalActivity fa) {
+		return FiscalActivityDAO.getActivityFor(epigraph, fa);
 	}
 
 	// ---------------------------------------------------- [MODELO 180]

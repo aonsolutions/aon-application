@@ -110,7 +110,7 @@ public class FiscalActivityDAO {
 		}
 	}	
 
-	public static FiscalActivity getActivity(AONContext ctx,int domain,int id) {
+	public static FiscalActivity getActivity(AONContext ctx,int id) {
 		ctx.checkRead();
 		Record record = ctx.getDslContext().select(
 				 FS_ACTIVITY.ID
@@ -131,7 +131,6 @@ public class FiscalActivityDAO {
 			fillFiscalActivityInfo(ctx,fa);
 			return fa;
 		}
-		
 		return null;
 	}
 
@@ -194,17 +193,15 @@ public class FiscalActivityDAO {
 			.setVatPercent(record.getValue(FS_ACTIVITY.VAT_PERCENT));
 	}
 
-	public static FiscalActivity getActivityFor(Epigraph epigraph, Integer year) {
-		FiscalActivity fa = new FiscalActivity()
-				.setYear(year)
-				.setEpigraph(epigraph.getEpigraph())
-				.setDescription(epigraph.getDescription())
-				.setMaxPerson(epigraph.getLimPers())
-				.setMaxImport(epigraph.getLimExceso())
-				.setVatPercent(epigraph.getPorcMin());
+	public static FiscalActivity getActivityFor(Epigraph epigraph, FiscalActivity fa) {
+		fa.setInfo(null);
+		fa.setInfoIRPF(null);
+		fa.setModuleIRPF(null);
+		fa.setInfoIVA(null);
+		fa.setModuleIVA(null);
 		int i = 0;
 		for (FiscalActivityInfoKey key : FiscalActivityInfoKey.values() ){
-			if (key.getType() == FiscalActivityInfoKeyType.INFO) {
+			if (key.getType() == FiscalActivityInfoKeyType.INFO && key.accept(fa)) {
 				fa.addInfo(new FiscalActivityInfo().setInfoKey(key).setLine(i++));
 			}
 			if (epigraph.hasIrpfModules()) {
@@ -245,11 +242,8 @@ public class FiscalActivityDAO {
 			fa = insert(ctx, fa);
 		} else {
 			fa = update(ctx, fa);
-			for (FiscalActivityInfo info : fa.getInfo()) {
-				saveDetail(ctx, fa, info);
-			}
 		}
-		return getActivity(ctx, fa.getDomain(), fa.getId());
+		return getActivity(ctx, fa.getId());
 	}
 
 	private static FiscalActivity insert(AONContext ctx, FiscalActivity fa) {
@@ -283,6 +277,8 @@ public class FiscalActivityDAO {
 				.set(FS_ACTIVITY.VAT_PERCENT, fa.getVatPercent())
 			.where(FS_ACTIVITY.ID.equal(fa.getId()))
 			.execute();
+		deleteDetails(ctx, fa);
+		insertDetails(ctx, fa);
 		return fa;
 	}
 
@@ -336,24 +332,7 @@ public class FiscalActivityDAO {
 				.set(FS_ACTIVITY_INFO.MAX_VALUE,module.getMaxValue())
 			.execute();
 		}
-
-		
 	}
-	
-	private static void saveDetail(AONContext ctx, FiscalActivity fa,FiscalActivityInfo detail) {
-		ctx.checkWrite();
-		if (detail.getId() == null || detail.getId() < 0) {
-			insertDetail(ctx,fa, detail);
-		} else {
-			updateDetail(ctx,fa, detail);
-		}
-	}
-	private static void insertDetail(AONContext ctx, FiscalActivity fa,FiscalActivityInfo detail) {
-	}
-
-	private static void updateDetail(AONContext ctx, FiscalActivity fa,FiscalActivityInfo detail) {
-	}
-
 	
 	public static void delete(AONContext ctx, FiscalActivity fa) {
 		ctx.checkWrite();

@@ -8,7 +8,7 @@ import com.esferalia.aon.gwt.fiscal.client.mod190.Model190;
 import com.esferalia.aon.gwt.fiscal.client.mod193.Model193;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
-import com.esferalia.aon.gwt.fiscal.client.panel.FiscalPanel;
+import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 
@@ -34,7 +34,7 @@ public class MainEntryPoint implements EntryPoint {
 	public void onModuleLoad() {
 		String entryPoint = getParameter(GWT.getModuleName(), ENTRY_POINT_PARAM);
 		if ( entryPoint.equalsIgnoreCase(FS_FISCAL_PANEL)) {
-			FiscalPanel panel = new FiscalPanel();
+			FiscalTree panel = new FiscalTree();
 			panel.onModuleLoad();
 		} else if ( entryPoint.equalsIgnoreCase(FS_MOD140_ENTRY_POINT)) {
 			Model140 model140 = new Model140();

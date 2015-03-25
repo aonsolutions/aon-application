@@ -13,13 +13,20 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 
 public interface IFiscal {
 	// 			        FISCAL PANEL
 	public FiscalModelMatrix getFiscalPanel(AONContext ctx,int domain,int year,int user);
+	
 	// 			   FISCAL ACTIVITIES
 	public ArrayList<FiscalActivity> getFiscalActivities(AONContext ctx,int domain);
-
+	public FiscalActivity save(AONContext ctx, FiscalActivity fa);
+	public void delete(AONContext ctx, FiscalActivity fa);
+	public FiscalActivity getActivity(AONContext ctx, int id);
+	public ArrayList<FiscalActivity> getActivities(AONContext ctx, int domainId);
+	public FiscalActivity getActivityFor(Epigraph epigraph, FiscalActivity fa);
+	
 	// 				   		  MOD180
 	public ArrayList<Mod180> getMod180s(AONContext ctx,int domain);
 	public Mod180 getMod180(AONContext ctx,Integer id);
@@ -59,5 +66,6 @@ public interface IFiscal {
 	public void deleteMod390(AONContext ctx,Mod390 mod390);
 	public ArrayList<Mod390Detail> getMod390Details(AONContext aonContext,Mod390 mod390);
 	public Mod390 initializeMod390(AONContext ctx, int year);
-	
+
+
 }

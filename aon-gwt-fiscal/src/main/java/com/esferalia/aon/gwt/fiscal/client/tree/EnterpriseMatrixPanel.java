@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.panel;
+package com.esferalia.aon.gwt.fiscal.client.tree;
 
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
@@ -57,21 +57,21 @@ public class EnterpriseMatrixPanel extends ResizeComposite {
 
 	private void search() {
 		int yr = Integer.parseInt( year.getSelectedValue() );
-		FiscalPanel.FISCAL_SERVICE.getFiscalPanel(FiscalPanel.getCurrentDomainName(),
+		FiscalTree.FISCAL_SERVICE.getFiscalPanel(FiscalTree.getCurrentDomainName(),
 				this.enterprise.getDomain(), yr
 				,new AsyncCallback<FiscalModelMatrix>() {
 
 					@Override
 					public void onSuccess(FiscalModelMatrix result) {
 						if (result.getRows() == null ) {
-							tablePanel.setWidget(new HTMLPanel(FiscalPanel.MSG.noData()));
+							tablePanel.setWidget(new HTMLPanel(FiscalTree.MSG.noData()));
 						} else {
 							paintTable(result);
 						}
 					}
 					@Override
 					public void onFailure(Throwable caught) {
-						tablePanel.setWidget(new HTMLPanel(FiscalPanel.MSG.noData()));
+						tablePanel.setWidget(new HTMLPanel(FiscalTree.MSG.noData()));
 					}
 		});
 	}
@@ -84,7 +84,7 @@ public class EnterpriseMatrixPanel extends ResizeComposite {
 
 	private void paintTable(FiscalModelMatrix matrix) {
 		FlexTable table = new FlexTable();
-		table.addStyleName(FiscalPanel.AON_RESOURCES.css().aonFiscalMatrix());
+		table.addStyleName(FiscalTree.AON_RESOURCES.css().aonFiscalMatrix());
 		int row = 0;
 		
 		table.setWidget(row, 0, new Label(""));
@@ -92,7 +92,7 @@ public class EnterpriseMatrixPanel extends ResizeComposite {
 		String[] months = new String[]{"E","F","M","A","M","J","X","A","S","O","N","D"};
 		for (int i = 0; i < months.length; i++  ) {
 			table.setWidget(row, i+1, new Label(months[i]));	
-			table.getFlexCellFormatter().addStyleName(row, i+1, FiscalPanel.AON_RESOURCES.css().aonFiscalMatrixMonthCell());
+			table.getFlexCellFormatter().addStyleName(row, i+1, FiscalTree.AON_RESOURCES.css().aonFiscalMatrixMonthCell());
 		}
 		row++;
 		
@@ -102,43 +102,43 @@ public class EnterpriseMatrixPanel extends ResizeComposite {
 			
 			InlineLabel admon = new InlineLabel("");
 			if (item.getAdministration() == Administration.COMMON_TERRITORY) {
-				admon.setStyleName(FiscalPanel.AON_RESOURCES.css().aonIconAeat());
+				admon.setStyleName(FiscalTree.AON_RESOURCES.css().aonIconAeat());
 			} else if (item.getAdministration() == Administration.ALAVA) {
-				admon.setStyleName(FiscalPanel.AON_RESOURCES.css().aonIconAraba());
+				admon.setStyleName(FiscalTree.AON_RESOURCES.css().aonIconAraba());
 			} else if (item.getAdministration() == Administration.BIZKAIA) {
-				admon.setStyleName(FiscalPanel.AON_RESOURCES.css().aonIconBizkaia());
+				admon.setStyleName(FiscalTree.AON_RESOURCES.css().aonIconBizkaia());
 			} else if (item.getAdministration() == Administration.GIPUZKOA) {
-				admon.setStyleName(FiscalPanel.AON_RESOURCES.css().aonIconGipuzkoa());
+				admon.setStyleName(FiscalTree.AON_RESOURCES.css().aonIconGipuzkoa());
 			} else if (item.getAdministration() == Administration.NAVARRA) {
-				admon.setStyleName(FiscalPanel.AON_RESOURCES.css().aonIconNavarra());
+				admon.setStyleName(FiscalTree.AON_RESOURCES.css().aonIconNavarra());
 			} else {
-				admon.setStyleName(FiscalPanel.AON_RESOURCES.css().aonIconQuestion());
+				admon.setStyleName(FiscalTree.AON_RESOURCES.css().aonIconQuestion());
 			}
-			admon.addStyleName(FiscalPanel.AON_RESOURCES.css().aonIconPaddingLeft());
-			table.getFlexCellFormatter().addStyleName(row, col, FiscalPanel.AON_RESOURCES.css().aonFiscalMatrixAdmonCell());
+			admon.addStyleName(FiscalTree.AON_RESOURCES.css().aonIconPaddingLeft());
+			table.getFlexCellFormatter().addStyleName(row, col, FiscalTree.AON_RESOURCES.css().aonFiscalMatrixAdmonCell());
 			table.setWidget(row, col++, admon);
 			
 			
 			Label model = new Label(item.getModel().getName() );
-			table.getFlexCellFormatter().addStyleName(row, col, FiscalPanel.AON_RESOURCES.css().aonFiscalMatrixModelCell());
+			table.getFlexCellFormatter().addStyleName(row, col, FiscalTree.AON_RESOURCES.css().aonFiscalMatrixModelCell());
 			table.setWidget(row, col++, model);
 			
 			int colSpan = 12 / item.getPeriod().getNumberOfPeriod();
 			for (int x = 0 ; x < item.getStatuses().length ; x++) {
 				FiscalStatus status = item.getStatuses()[x];
-				String styleName = FiscalPanel.AON_RESOURCES.css().aonFiscalStatusMissing();
+				String styleName = FiscalTree.AON_RESOURCES.css().aonFiscalStatusMissing();
 				String text = "\u2022";
 				if (status ==FiscalStatus.PENDING) {
-					styleName = FiscalPanel.AON_RESOURCES.css().aonFiscalStatusPending();
+					styleName = FiscalTree.AON_RESOURCES.css().aonFiscalStatusPending();
 					text = "\u2014";
 				} else if (status ==FiscalStatus.FINISHED) {
-					styleName = FiscalPanel.AON_RESOURCES.css().aonFiscalStatusFinished();
+					styleName = FiscalTree.AON_RESOURCES.css().aonFiscalStatusFinished();
 					text = "\u2714";
 				}
 				Label label = new Label(text);
 				table.getFlexCellFormatter().setColSpan(row, (x+col), colSpan);
 				table.setWidget(row, (x+col), label);
-				table.getFlexCellFormatter().addStyleName(row, col, FiscalPanel.AON_RESOURCES.css().aonFiscalMatrixDataCell());
+				table.getFlexCellFormatter().addStyleName(row, col, FiscalTree.AON_RESOURCES.css().aonFiscalMatrixDataCell());
 				table.getFlexCellFormatter().addStyleName(row, (x+col), styleName);
 				
 			}
