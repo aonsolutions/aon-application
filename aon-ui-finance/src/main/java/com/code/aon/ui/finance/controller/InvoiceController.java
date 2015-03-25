@@ -74,6 +74,7 @@ import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.IAddress;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.RegistryAddress;
@@ -1431,12 +1432,16 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 
 	public void obtainListTotals(ActionEvent event) {
 		try {	
+			Criteria criteria = new Criteria();
+			ProjectionList idPrjnList = new ProjectionList(Projection.property(getFieldName(IEntityAlias.INVOICE_ID)));
+			criteria.addInExpression(getFieldName(IEntityAlias.INVOICE_ID), ExpressionUtilities.getSubQueryExpression(Invoice.class, getCriteria(), idPrjnList));
+
 			Projection basePrjn = Projection.sum(getFieldName(IEntityAlias.INVOICE_TAXABLE_BASE));
 			Projection vatPrjn = Projection.sum(getFieldName(IEntityAlias.INVOICE_VAT_QUOTA));
 			Projection retPrjn = Projection.sum(getFieldName(IEntityAlias.INVOICE_RETENTION_QUOTA));
 			Projection totalPrjn = Projection.sum(getFieldName(IEntityAlias.INVOICE_TOTAL));
 			ProjectionList totalsPrjnList = new ProjectionList(basePrjn, vatPrjn, retPrjn, totalPrjn);
-			Object[] result = (Object[])getManagerBean().getUniqueResult(totalsPrjnList, getCriteria());
+			Object[] result = (Object[])getManagerBean().getUniqueResult(totalsPrjnList, criteria);
 
 			setListTaxableBase((result[0] == null) ? 0 : CommonUtil.round((Double)result[0]));
 			setListVatQuota((result[1] == null) ? 0 : CommonUtil.round((Double)result[1]));

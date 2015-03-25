@@ -687,10 +687,14 @@ public class FinanceController extends FinanceListController implements IFinance
 
 	public void obtainListTotals(ActionEvent event) {
 		try {	
+			Criteria criteria = new Criteria();
+			ProjectionList idPrjnList = new ProjectionList(Projection.property(getFieldName(IEntityAlias.FINANCE_ID)));
+			criteria.addInExpression(getFieldName(IEntityAlias.FINANCE_ID), ExpressionUtilities.getSubQueryExpression(Finance.class, getCriteria(), idPrjnList));
+
 			Projection amountPrjn = Projection.sum(getFieldName(IEntityAlias.FINANCE_AMOUNT));
 			Projection expensesPrjn = Projection.sum(getFieldName(IEntityAlias.FINANCE_EXPENSES));
 			ProjectionList totalsPrjnList = new ProjectionList(amountPrjn, expensesPrjn);
-			Object[] result = (Object[])getManagerBean().getUniqueResult(totalsPrjnList, getCriteria());
+			Object[] result = (Object[])getManagerBean().getUniqueResult(totalsPrjnList, criteria);
 			Double amount = (result[0] == null) ? 0 : (Double)result[0];
 			Double expenses = (result[1] == null) ? 0 : (Double) result[1];
 
