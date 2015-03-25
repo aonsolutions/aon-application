@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salary_dualColumn" columnCount="2" pageWidth="595" pageHeight="842" columnWidth="277" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2219f940-1d11-45db-a72b-ad1a7427b049">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="27"/>
+	<property name="ireport.y" value="107"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
 	<import value="com.code.aon.common.util.CommonUtil"/>
 	<import value="com.esferalia.aon.salary.enumeration.DeductionType"/>
@@ -369,7 +369,7 @@ $F{salary}.getDeductions().getIrpf().getAmount()-$V{irpfInKind})]]></variableExp
 		</band>
 	</pageHeader>
 	<detail>
-		<band height="340" splitType="Stretch">
+		<band height="377" splitType="Stretch">
 			<staticText>
 				<reportElement uuid="3f333c74-ac9e-49fa-99a5-49eeb61e4f76" style="title1" x="4" y="5" width="109" height="13"/>
 				<textElement>
@@ -384,6 +384,7 @@ $F{salary}.getDeductions().getIrpf().getAmount()-$V{irpfInKind})]]></variableExp
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($V{payments})]]></dataSourceExpression>
 					</datasetRun>
 					<jr:column width="212" uuid="e4c7e06c-4ca3-47f4-abde-1faf6d3dc035">
+						<jr:tableFooter height="15" rowSpan="1"/>
 						<jr:groupHeader groupName="type">
 							<jr:cell height="13" rowSpan="1">
 								<textField isStretchWithOverflow="true" pattern="##00" isBlankWhenNull="true">
@@ -413,6 +414,7 @@ $F{salary}.getDeductions().getIrpf().getAmount()-$V{irpfInKind})]]></variableExp
 						</jr:detailCell>
 					</jr:column>
 					<jr:column width="50" uuid="4f1fd568-8b8d-47f2-b12c-75d0e8bd191c">
+						<jr:tableFooter height="15" rowSpan="1"/>
 						<jr:groupHeader groupName="type">
 							<jr:cell height="13" rowSpan="1"/>
 						</jr:groupHeader>
@@ -432,7 +434,7 @@ $F{salary}.getDeductions().getIrpf().getAmount()-$V{irpfInKind})]]></variableExp
 				</jr:table>
 			</componentElement>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement uuid="a051ddc2-e370-481e-868d-ac62a4c36e1a" style="total1" positionType="Float" x="178" y="60" width="96" height="13"/>
+				<reportElement uuid="a051ddc2-e370-481e-868d-ac62a4c36e1a" style="total1" positionType="Float" x="178" y="47" width="96" height="13"/>
 				<box>
 					<bottomPen lineWidth="0.75"/>
 				</box>
@@ -442,7 +444,7 @@ $F{salary}.getDeductions().getIrpf().getAmount()-$V{irpfInKind})]]></variableExp
 				<textFieldExpression><![CDATA[$V{totalPayment} == 0.00 ? null : CommonUtil.round($V{totalPayment})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="89b277bb-e771-40f2-a8a0-f81b8d699da5" style="title1_dotts" positionType="Float" x="1" y="60" width="177" height="13"/>
+				<reportElement uuid="89b277bb-e771-40f2-a8a0-f81b8d699da5" style="title1_dotts" positionType="Float" x="1" y="47" width="177" height="13"/>
 				<box>
 					<bottomPen lineWidth="0.0"/>
 				</box>
@@ -452,7 +454,7 @@ $F{salary}.getDeductions().getIrpf().getAmount()-$V{irpfInKind})]]></variableExp
 				<text><![CDATA[A. TOTAL DEVENGADO]]></text>
 			</staticText>
 			<frame>
-				<reportElement uuid="1fa01c5d-8750-4b33-90e6-b6e408e7caf3" style="box" positionType="Float" x="2" y="73" width="276" height="256"/>
+				<reportElement uuid="1fa01c5d-8750-4b33-90e6-b6e408e7caf3" style="box" positionType="Float" x="2" y="121" width="276" height="256"/>
 				<box>
 					<topPen lineWidth="0.0"/>
 					<leftPen lineWidth="0.0"/>
