@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityModule;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Module;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public class FiscalActivityDAO {
@@ -202,16 +203,25 @@ public class FiscalActivityDAO {
 		int i = 0;
 		for (FiscalActivityInfoKey key : FiscalActivityInfoKey.values() ){
 			if (key.getType() == FiscalActivityInfoKeyType.INFO && key.accept(fa)) {
-				fa.addInfo(new FiscalActivityInfo().setInfoKey(key).setLine(i++));
+				fa.addInfo(new FiscalActivityInfo()
+						.setInfoKey(key)
+						.setValue(key.getDefaultValue())
+						.setLine(i++));
 			}
 			if (epigraph.hasIrpfModules()) {
 				if (key.getType() == FiscalActivityInfoKeyType.IRPF_INFO) {
-					fa.addInfoIRPF(new FiscalActivityInfo().setInfoKey(key).setLine(i++));
+					fa.addInfoIRPF(new FiscalActivityInfo()
+						.setInfoKey(key)
+						.setValue(key.getDefaultValue())
+						.setLine(i++));
 				}
 			}
 			if (epigraph.hasIvaModules()) {	
 				if (key.getType() == FiscalActivityInfoKeyType.VAT_INFO) {
-					fa.addInfoIVA(new FiscalActivityInfo().setInfoKey(key).setLine(i++));
+					fa.addInfoIVA(new FiscalActivityInfo()
+						.setInfoKey(key)
+						.setValue(key.getDefaultValue())
+						.setLine(i++));
 				}
 			}
 		}
@@ -221,7 +231,8 @@ public class FiscalActivityDAO {
 				.setInfoKey(module.getKey())
 				.setLine(module.getLine())
 				.setFactor(module.getAmount())
-				.setUnit(module.getUnit()));
+				.setUnit(module.getUnit())
+				.setValue(module.getKey().getDefaultValue()));
 			}
 		}
 		if (epigraph.hasIvaModules()) {
@@ -230,7 +241,8 @@ public class FiscalActivityDAO {
 					.setInfoKey(module.getKey())
 					.setLine(module.getLine())
 					.setFactor(module.getAmount())
-					.setUnit(module.getUnit()));
+					.setUnit(module.getUnit())
+					.setValue(module.getKey().getDefaultValue()));
 			}
 		}
 		return fa;
@@ -252,7 +264,7 @@ public class FiscalActivityDAO {
 				.set(FS_ACTIVITY.DOMAIN, fa.getDomain())
 				.set(FS_ACTIVITY.YEAR, fa.getYear())
 				.set(FS_ACTIVITY.EPIGRAPH, fa.getEpigraph())
-				.set(FS_ACTIVITY.DESCRIPTION, fa.getDescription())
+				.set(FS_ACTIVITY.DESCRIPTION, AonStringUtils.abbreviate(fa.getDescription(), 128 ) )
 				.set(FS_ACTIVITY.FARMER,AonEnumUtils.getByte(fa.isFarmer()))
 				.set(FS_ACTIVITY.MAX_PERSON, fa.getMaxPerson())
 				.set(FS_ACTIVITY.MAX_IMPORT, fa.getMaxImport())
@@ -270,7 +282,7 @@ public class FiscalActivityDAO {
 				.set(FS_ACTIVITY.DOMAIN, fa.getDomain())
 				.set(FS_ACTIVITY.YEAR, fa.getYear())
 				.set(FS_ACTIVITY.EPIGRAPH, fa.getEpigraph())
-				.set(FS_ACTIVITY.DESCRIPTION, fa.getDescription())
+				.set(FS_ACTIVITY.DESCRIPTION, AonStringUtils.abbreviate(fa.getDescription(), 128 ) )
 				.set(FS_ACTIVITY.FARMER,AonEnumUtils.getByte(fa.isFarmer()))
 				.set(FS_ACTIVITY.MAX_PERSON, fa.getMaxPerson())
 				.set(FS_ACTIVITY.MAX_IMPORT, fa.getMaxImport())

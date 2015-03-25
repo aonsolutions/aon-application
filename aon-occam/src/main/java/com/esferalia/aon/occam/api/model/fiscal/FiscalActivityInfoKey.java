@@ -54,6 +54,10 @@ public enum FiscalActivityInfoKey implements Serializable{
 		public boolean accept(FiscalActivity fa) {
 			return true;
 		}
+		@Override
+		public String getDefaultValue() {
+			return AonStringUtils.EMPTY;
+		}
 	}
 	, A03{
 
@@ -69,6 +73,10 @@ public enum FiscalActivityInfoKey implements Serializable{
 		public boolean accept(FiscalActivity fa) {
 			return true;
 		}
+		@Override
+		public String getDefaultValue() {
+			return AonStringUtils.EMPTY;
+		}
 	} 
 	, A04{
 
@@ -83,6 +91,10 @@ public enum FiscalActivityInfoKey implements Serializable{
 		@Override
 		public boolean accept(FiscalActivity fa) {
 			return true;
+		}
+		@Override
+		public String getDefaultValue() {
+			return AonStringUtils.EMPTY;
 		}
 	} 
 	, A05{
@@ -138,6 +150,11 @@ public enum FiscalActivityInfoKey implements Serializable{
 		public boolean accept(FiscalActivity fa) {
 			return AonStringUtils.equals(fa.getEpigraph(),Epigraph.E____.getEpigraph());
 		}
+		@Override
+		public String getDefaultValue() {
+			return AonStringUtils.ONE;
+		}
+		
 	}
 	, A06{
 		private IntegerStringPair[] CHOICES = new IntegerStringPair[]{
@@ -247,6 +264,10 @@ public enum FiscalActivityInfoKey implements Serializable{
 					&& !AonStringUtils.equals( Epigraph.E_722A.getEpigraph(), fa.getEpigraph())
 					&& !AonStringUtils.equals( Epigraph.E_757.getEpigraph(), fa.getEpigraph())
 					&& !AonStringUtils.equals( Epigraph.E____.getEpigraph(), fa.getEpigraph()));
+		}
+		@Override
+		public String getDefaultValue() {
+			return AonStringUtils.SIX;
 		}
 	}
 	, A10{
@@ -421,6 +442,11 @@ public enum FiscalActivityInfoKey implements Serializable{
 		public FiscalActivityInfoKeyType getType() {
 			return MODULE;
 		}
+		@Override
+		public String getDefaultValue() {
+			return "1800";
+		}
+		
 	}
 	, M02 {
 		@Override
@@ -1316,6 +1342,9 @@ public enum FiscalActivityInfoKey implements Serializable{
 	}
 	public boolean accept(FiscalActivity fa) {
 		return true;
+	}
+	public String getDefaultValue() {
+		return AonStringUtils.ZERO;
 	}
 	
 	public abstract String getDescription();

@@ -118,12 +118,7 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 	@Override
 	public void select(TreeNode<FiscalActivity> node) {
 		this.node = node;
-		Window.alert("ID ..: " + node.getTreeObject().getId() + "\n" +
-				"EPI ..: " + node.getTreeObject().getEpigraph()
-				);
-		
-		if ( node.getTreeObject().getId() == null 
-			&& AonStringUtils.isBlank( node.getTreeObject().getEpigraph() )) {
+		if ( node.getTreeObject().getId() != null) {
 			FiscalTree.FISCAL_SERVICE.getFiscalActivity(FiscalTree.getCurrentDomainName(), 
 					FiscalTree.getCurrentDomain(), node.getTreeObject().getId()
 					,new AsyncCallback<FiscalActivity>() {
@@ -139,7 +134,9 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 			});
 		} else {
 			populate(node.getTreeObject());
-			onEpigraphButtonClick(null);
+			if ( AonStringUtils.isBlank( node.getTreeObject().getEpigraph() )) {
+				onEpigraphButtonClick(null);
+			}
 		}
 	}
 
