@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="48"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -176,10 +176,10 @@
 				<textFieldExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getLeftSideText(false)]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement uuid="8b2725af-7c11-4505-bfd7-f552855e13b6" key="line-5" x="-25" y="241" width="4" height="1"/>
+				<reportElement uuid="8b2725af-7c11-4505-bfd7-f552855e13b6" key="line-5" x="-25" y="270" width="4" height="1"/>
 			</line>
 			<line>
-				<reportElement uuid="2cc5b08e-9193-4a7c-bbcc-16045dd7ba7d" key="line-6" x="553" y="241" width="4" height="1"/>
+				<reportElement uuid="2cc5b08e-9193-4a7c-bbcc-16045dd7ba7d" key="line-6" x="553" y="270" width="4" height="1"/>
 			</line>
 			<line>
 				<reportElement uuid="2ad21129-d2dc-4612-becf-241f09342077" key="line-7" x="-25" y="539" width="4" height="1"/>
@@ -417,9 +417,9 @@
 				<reportElement uuid="08f96f04-b590-4098-b326-b6ccc1365ee9" key="textField-35" x="278" y="128" width="257" height="70"/>
 				<box topPadding="5" leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
@@ -532,14 +532,14 @@
 				<textFieldExpression><![CDATA[$R{aon_company_document}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="f3f4192d-dab4-4ca2-8257-567bb0e936c8" key="textField-34" x="278" y="108" width="257" height="20"/>
-				<box leftPadding="5">
+				<reportElement uuid="f3f4192d-dab4-4ca2-8257-567bb0e936c8" key="textField-34" x="278" y="93" width="257" height="35"/>
+				<box leftPadding="5" bottomPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement verticalAlignment="Bottom">
 					<font fontName="SansSerif" size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
@@ -553,20 +553,6 @@
 					<pen lineWidth="0.75"/>
 				</graphicElement>
 			</line>
-			<textField isBlankWhenNull="false">
-				<reportElement uuid="5128f8b8-5eb4-4223-8538-30222d497453" key="textField-50" mode="Opaque" x="278" y="93" width="257" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
-				<box leftPadding="5">
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_customer}]]></textFieldExpression>
-			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="9ffef892-a600-45c2-9e61-5fef4e57d833" key="textField-51" x="121" y="178" width="120" height="20"/>
 				<box leftPadding="5">
