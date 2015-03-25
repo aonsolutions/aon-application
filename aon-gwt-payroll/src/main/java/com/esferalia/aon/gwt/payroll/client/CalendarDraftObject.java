@@ -19,6 +19,8 @@ public class CalendarDraftObject implements Calendar.Listener {
 	public interface Listener {
 
 		void onValueChangeEvent(ValueChangeEvent<Date> event);
+		
+		void onSuprPressEvent(Date date) ;
 
 	}
 	
@@ -123,6 +125,22 @@ public class CalendarDraftObject implements Calendar.Listener {
 					}
 				});
 	}
+	
+	public void deletePropertyHoliday(Integer id, Date date, final AsyncCallback<Void> cb) {
+		
+		employeesService.deletePropertyHoliday(id, date, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				cb.onFailure(caught);
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				cb.onSuccess(result);
+			}
+		});
+	}
 
 	public EmployeesServiceAsync getEmployeesService() {
 		return employeesService;
@@ -163,5 +181,11 @@ public class CalendarDraftObject implements Calendar.Listener {
 	public void onValueChangeEvent(ValueChangeEvent<Date> event) {
 		for (Listener listener : listeners)
 			listener.onValueChangeEvent(event);
+	}
+	
+	@Override
+	public void onSuprPressEvent(Date date) {
+		for (Listener listener : listeners)
+			listener.onSuprPressEvent(date);
 	}
 }

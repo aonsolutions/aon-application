@@ -495,7 +495,28 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 			releaseFacesContext();
 		}
+	}
+	
+	@Override
+	public void deletePropertyHoliday(Integer id, Date date)
+			throws IllegalArgumentException {
 
+		Connection conn = null;
+		try {
+			initFacesContext();
+			conn = getConnection();
+			JooqCalendar.deletePropertyHoliday(conn, id, date);		
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);			
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
 		
 	}
 

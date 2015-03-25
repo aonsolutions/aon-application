@@ -262,6 +262,12 @@ public class CalendarDraft extends Composite implements
 	public void onInsertHoliday() {
 		saveButton.setEnabled(!calendarDraftObjectData.insertIsEmpy());
 	}
+	
+	@Override
+	public void onChangeEvent() {
+		
+		loadCalendarPanel(null, Integer.parseInt(yearLabel.getText()), calendarDraftObjectData);
+	}
 
 	// --------------------------------------------- ---------
 

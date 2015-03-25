@@ -9,9 +9,15 @@ import com.esferalia.aon.gwt.common.client.css.AonCalendarCSS;
 import com.esferalia.aon.gwt.common.client.css.AonCalendarResources;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.HasKeyDownHandlers;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
@@ -21,17 +27,18 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarModel;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
-import com.google.gwt.user.datepicker.client.CalendarView;
 import com.google.gwt.user.datepicker.client.DatePicker;
 import com.google.gwt.user.datepicker.client.DefaultCalendarView;
 import com.google.gwt.user.datepicker.client.MonthSelector;
 
 public class Calendar extends ResizeComposite implements
-		ValueChangeHandler<Date>  {
+		ValueChangeHandler<Date>, KeyDownHandler  {
 
 	public interface Listener {
 
 		void onValueChangeEvent(ValueChangeEvent<Date> event);
+		
+		void onSuprPressEvent(Date date);
 
 	}
 
@@ -42,6 +49,8 @@ public class Calendar extends ResizeComposite implements
 
 	private Date firstDate;
 	private Date lastDate;
+	
+	private Date dateSelected;
 
 	private List<Listener> listeners;
 
@@ -57,6 +66,7 @@ public class Calendar extends ResizeComposite implements
 		listeners = new ArrayList<Listener>();
 		CALENDAR_CSS.ensureInjected();
 		table.setStylePrimaryName(CALENDAR_CSS.aonCalendar());
+		
 		initWidget(table);
 	}
 
@@ -99,7 +109,8 @@ public class Calendar extends ResizeComposite implements
 			datePicker.setYearAndMonthDropdownVisible(false);
 			datePicker.setYearArrowsVisible(false);
 			datePicker.addValueChangeHandler(this);
-			
+			datePicker.addKeyDownHandler(this);
+			datePicker.sinkEvents(Event.ONKEYDOWN);
 			table.setWidget(row, col, datePicker);
 			CalendarUtil.addMonthsToDate(date, 1);
 			row += ++col / cols;
@@ -133,11 +144,30 @@ public class Calendar extends ResizeComposite implements
 		return DateUtils.isBeforeOrEquals(date, last)
 				&& DateUtils.isAfterOrEquals(date, first);
 	}
+	
+	private Date getDateSelected() {
+		return this.dateSelected;
+	}
 
 	@Override
-	public void onValueChange(ValueChangeEvent<Date> event) {		
+	public void onValueChange(ValueChangeEvent<Date> event) {
+		
+		this.dateSelected = event.getValue();
+		
 		for (Listener listener : listeners)
 			listener.onValueChangeEvent(event);
+	}
+
+	@Override
+	public void onKeyDown(KeyDownEvent event) {
+		
+		int keyCode = event.getNativeKeyCode();
+		
+		if (keyCode == KeyCodes.KEY_DELETE) {
+			for(Listener listener : listeners)
+				listener.onSuprPressEvent(getDateSelected());
+		}
+		
 	}
 
 	// -------------------------------------------------------------------------
@@ -147,7 +177,7 @@ public class Calendar extends ResizeComposite implements
 		super.onAttach();
 	}
 
-	public class CustomDatePicker extends DatePicker {
+	public class CustomDatePicker extends DatePicker implements HasKeyDownHandlers {
 
 		public CustomDatePicker() {
 			super(new MonthAndYearSelector(), new DefaultCalendarView(),
@@ -160,8 +190,12 @@ public class Calendar extends ResizeComposite implements
 
 		public void refreshComponents() {
 			super.refreshAll();
-		}
+		}		
 
+		@Override
+		public HandlerRegistration addKeyDownHandler(KeyDownHandler handler) {
+			return addHandler(handler, KeyDownEvent.getType());			
+		}
 	}
 
 	private class MonthAndYearSelector extends MonthSelector {
@@ -229,5 +263,7 @@ public class Calendar extends ResizeComposite implements
 			name = name.replaceFirst(String.valueOf(name.charAt(0)), mayus);
 			return name;
 		}
+		
+		
 	}
 }

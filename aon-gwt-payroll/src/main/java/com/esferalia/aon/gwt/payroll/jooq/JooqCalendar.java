@@ -297,7 +297,8 @@ public class JooqCalendar {
 		Integer holidayId = insert.returning(HOLIDAY.ID).fetchOne().getId();
 
 		Integer calendarId = dslContext.insertInto(CALENDAR)
-				.set(CALENDAR.DOMAIN, domain).set(CALENDAR.HOLIDAY, holidayId)
+				.set(CALENDAR.DOMAIN, domain)
+				.set(CALENDAR.HOLIDAY, holidayId)
 				.returning(CALENDAR.ID).fetchOne().getId();
 
 		dslContext.insertInto(PAYROLL_WORKPLACE)
@@ -319,8 +320,6 @@ public class JooqCalendar {
 			.where(HOLIDAY_DETAIL.HOLIDAY.eq(holidayId))
 			.and(HOLIDAY_DETAIL.DATE.eq(new java.sql.Date(date.getTime())))
 			.execute();
-			
-			
 		}
 				
 
@@ -332,6 +331,20 @@ public class JooqCalendar {
 					.set(HOLIDAY_DETAIL.DATE, new java.sql.Date(date.getTime()))
 					.set(HOLIDAY_DETAIL.DESCRIPTION, map.get(date)).execute();
 		}
+	}
+	
+	public static void deletePropertyHoliday(Connection conn, Integer id, Date date) {
+		deletePropertyHoliday(DSL.using(conn, getDefaultSettings()), id, date);
+	}
+	
+	private static void deletePropertyHoliday(DSLContext dslContext, Integer id, Date date) 
+			throws IllegalArgumentException {
+		
+		dslContext.delete(HOLIDAY_DETAIL)
+		.where(HOLIDAY_DETAIL.HOLIDAY.eq(id))
+		.and(HOLIDAY_DETAIL.DATE.eq(new java.sql.Date(date.getTime())))
+		.execute();
+		
 	}
 
 	protected static Settings getDefaultSettings() {

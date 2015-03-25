@@ -26,6 +26,8 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 		void onValueChangeEvent(ValueChangeEvent<Date> event);
 
 		void onInsertHoliday();
+		
+		void onChangeEvent();
 	}
 
 	class MyHolidayDraft  {
@@ -103,6 +105,8 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 	
 	private List<MyHolidayDraft> myDrafts;
 	private List<MyHolidayDraft> inserts;
+	
+	private Map<Date, String> insertsDraft;
 
 	private List<HolidayDraft> generalHolidays;
 	private List<CalendarDraftListener> listeners;
@@ -119,6 +123,7 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 
 		myDrafts = new LinkedList<MyHolidayDraft>();
 		inserts = new LinkedList<MyHolidayDraft>();
+		insertsDraft = new HashMap<Date, String>();
 		listeners = new ArrayList<CalendarDraftListener>();
 
 		generalHolidays = new ArrayList<HolidayDraft>();
@@ -326,6 +331,8 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 	public void addHoliday(Date date, String description) {
 		if (myDrafts.isEmpty())
 			myDrafts.add(initMyDrafts());
+		
+		insertsDraft.put(date, description);
 
 		MyHolidayDraft draft = myDrafts.get(myDrafts.size() - 1);
 
@@ -391,6 +398,55 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 		for (CalendarDraftListener listener : listeners)
 			listener.onValueChangeEvent(event);
 	}
+	
+	@Override
+	public void onSuprPressEvent(Date date) {
+		
+		if(insertsDraft.containsKey(date)) 
+			deleteFromInsertDraft(date, insertsDraft.get(date));
+		
+		else if (!myDrafts.isEmpty())  {
+			Map<Date, String> map = myDrafts.get(myDrafts.size() -1).getGeneralMap();
+			if (map.containsKey(date))
+				deleteDateSelected(date, map.get(date));
+		}
+	}
+	
+	private void deleteFromInsertDraft(Date date, String description) {
+		
+		Map<Date, String> aux = myDrafts.get(myDrafts.size() - 1).getGeneralMap();
+		
+		insertsDraft.remove(date);
+		aux.remove(date);
+		
+		for(CalendarDraftListener listener : listeners)
+			listener.onChangeEvent();
+	}
+
+		
+	private void deleteDateSelected(Date date, String description) {
+		
+		if(Window.confirm("\u00BFConfirma que desea eliminar el festivo propio '" + description + "' \u003F ")) {
+			
+			MyHolidayDraft draft = myDrafts.get(myDrafts.size() - 1);
+			Integer id = draft.getId();
+			draft.getGeneralMap().remove(date);
+						
+			calendarDraftObject.deletePropertyHoliday(id, date, new AsyncCallback<Void>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					onFailure(caught);
+				}
+
+				@Override
+				public void onSuccess(Void result) {
+					for (CalendarDraftListener listener : listeners)
+						listener.onChangeEvent();
+				}
+			});
+		}
+	}
 
 	public boolean insertIsEmpy() {
 		return inserts.isEmpty();
@@ -408,6 +464,7 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 	
 	private void clearDrafts() {
 		inserts.clear();
+		insertsDraft.clear();
 		myDrafts.clear();
 		generalHolidays.clear();
 		pattern = -50;

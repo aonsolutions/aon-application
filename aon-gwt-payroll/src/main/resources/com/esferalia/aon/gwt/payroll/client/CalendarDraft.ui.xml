@@ -153,7 +153,7 @@
 					<g:SimplePanel ui:field="calendarPanel" />
 				</g:ScrollPanel>
 			</g:center>
-			<g:east size="172">
+			<g:east size="200">
 				<g:VerticalPanel>
 					<g:Grid>
 						<g:row>

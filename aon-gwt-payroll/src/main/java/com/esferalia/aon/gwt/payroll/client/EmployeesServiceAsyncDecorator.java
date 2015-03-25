@@ -499,4 +499,13 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync,
 		employeesServiceAsync.saveHolidayList(workplaceId, holidayDescription,
 				holidayListBox, map, new AsyncCallbackWrapper<Void>(callback));
 	}
+	
+	@Override
+	public void deletePropertyHoliday(Integer id, Date date,
+			AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.deletePropertyHoliday(id, date, 
+				new AsyncCallbackWrapper<Void>(callback));
+		
+	}
 }
