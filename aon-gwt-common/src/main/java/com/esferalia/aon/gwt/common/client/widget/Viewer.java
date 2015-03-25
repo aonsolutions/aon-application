@@ -195,6 +195,9 @@ public abstract class Viewer extends PopupPanel {
 			this.title.addStyleName(style);
 		titleStyles = styles;
 	}
+	public void removeOldIcon(String old){
+		this.title.removeStyleName(old);
+	}
 
 	public void setPrevEnabled(boolean enabled) {
 		this.prev.setEnabled(enabled);

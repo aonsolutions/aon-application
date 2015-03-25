@@ -3457,9 +3457,10 @@ public class Documents extends Composite implements EntryPoint {
 			
 			int viewerIndex = index;
 			FileInfo viewerFileInfo = fileInfo;
-			
+			String icon;
 			@Override
 			protected void onNext() {
+				icon = viewerFileInfo.getIcon();
 				viewerFileInfo = viewList.get(++viewerIndex);
 				setPrevEnabled(true);
 				setNextEnabled(viewerIndex < (viewList.size() - 1));
@@ -3468,6 +3469,7 @@ public class Documents extends Composite implements EntryPoint {
 			
 			@Override
 			protected void onPrev() {
+				icon = viewerFileInfo.getIcon();
 				viewerFileInfo = viewList.get(--viewerIndex);
 				setNextEnabled(true);
 				setPrevEnabled(viewerIndex > 0);
@@ -3489,6 +3491,7 @@ public class Documents extends Composite implements EntryPoint {
 			@Override
 			protected void onChange() {
 				showLoad();
+				removeOldIcon(icon);
 				setTitle(viewerFileInfo.getTitle(), viewerFileInfo.getIcon());
 				idoc.getAsHTML(viewerFileInfo, DEFAULT_ZOOM , new AsyncCallback<String>() {
 					@Override
@@ -4005,7 +4008,7 @@ public class Documents extends Composite implements EntryPoint {
 	 String oldName;
 	 String newName;
 	 private void editTag(Tag tag) {
-		 Dialog d = new Dialog("edit2", "Editar Etiqueta", "Cancelar", true, "Editar", true,false);
+		 Dialog d = new Dialog("edit2", "Editar Etiqueta", "Cancelar", true, "Grabar", true,false);
 		 d.setTag(tag);
 		 d.setIsNextButton(false);
 		 oldName = tag.getName();
@@ -4228,7 +4231,7 @@ public class Documents extends Composite implements EntryPoint {
 	 
 	 private void editCategory(Category category) {
 		
-		 Dialog d = new Dialog("edit2", "Editar Categoría", "Cancelar", true, "Editar", true,false);
+		 Dialog d = new Dialog("edit2", "Editar Categoría", "Cancelar", true, "Grabar", true,false);
 		 d.setCat(category);
 		 d.setIsNextButton(false);
 		 oldName = category.getName();
