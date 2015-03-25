@@ -84,10 +84,18 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 				&& StringUtils.isNotBlank(company.getCustomSaleInvoiceTemplateParam().getValue())){
 			AppParamUtil.insertParameter(AppParam.REPORT_saleInvoice, company.getCustomSaleInvoiceTemplateParam().getValue());
 			AppParamUtil.insertParameter(AppParam.REPORT_invoicePrint, company.getCustomSaleInvoiceTemplateParam().getValue());
+			AppParamUtil.insertParameter(AppParam.REPORT_invoiceDetailDefault, company.getCustomSaleInvoiceTemplateParam().getValue());
+			AppParamUtil.insertParameter(AppParam.REPORT_invoiceTaxBreakDown, company.getCustomSaleInvoiceTemplateParam().getValue());
+			AppParamUtil.insertParameter(AppParam.REPORT_invoiceFinancesDefault, company.getCustomSaleInvoiceTemplateParam().getValue());
+			AppParamUtil.insertParameter(AppParam.REPORT_invoicePrepaymentsDefault, company.getCustomSaleInvoiceTemplateParam().getValue());
 			companyController.setSaleInvoiceTemplate(SaleInvoiceTemplate.DEFAULT);
 		} else {
 			AppParamUtil.removeParameter(AppParam.REPORT_saleInvoice);
 			AppParamUtil.removeParameter(AppParam.REPORT_invoicePrint);
+			AppParamUtil.removeParameter(AppParam.REPORT_invoiceDetailDefault);
+			AppParamUtil.removeParameter(AppParam.REPORT_invoiceTaxBreakDown);
+			AppParamUtil.removeParameter(AppParam.REPORT_invoiceFinancesDefault);
+			AppParamUtil.removeParameter(AppParam.REPORT_invoicePrepaymentsDefault);
 			company.setCustomReportTemplate(false);
 		}
 		updateParam(APP_SALE_INVOICE_TEMPLATE_PARAM, companyController.getSaleInvoiceTemplate());

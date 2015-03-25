@@ -1,5 +1,6 @@
 package com.code.aon.common.enumeration;
 
+
 public enum AppParam {
 
 	ACC_DEFAULT_ALLOWANCE_ACC,
@@ -143,6 +144,14 @@ public enum AppParam {
 	REPORT_invoicePrint,
 	
 	REPORT_saleInvoice,
+	
+	REPORT_invoiceDetailDefault,
+	
+	REPORT_invoiceFinancesDefault,
+	
+	REPORT_invoicePrepaymentsDefault,
+	
+	REPORT_invoiceTaxBreakDown,
 	
 	WEBINFO_FTP_PASSWORD,
 
