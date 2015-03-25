@@ -108,10 +108,10 @@ public class IndefiniteModel extends AbstractContractModel {
 			 * Contract ccc fields
 			 */
 			if(contract.getEnterpriseCCC()!=null){
-				setPdfFieldValue(PdfFieldIndefinite.CCC_REG1.getValue(),contract.getEnterpriseCCC().getActivity().getQuoteRegimeCode().substring(0, 1));
-				setPdfFieldValue(PdfFieldIndefinite.CCC_REG2.getValue(),contract.getEnterpriseCCC().getActivity().getQuoteRegimeCode().substring(1, 2));
-				setPdfFieldValue(PdfFieldIndefinite.CCC_REG3.getValue(),contract.getEnterpriseCCC().getActivity().getQuoteRegimeCode().substring(2, 3));
-				setPdfFieldValue(PdfFieldIndefinite.CCC_REG4.getValue(),contract.getEnterpriseCCC().getActivity().getQuoteRegimeCode().substring(3, 4));
+				setPdfFieldValue(PdfFieldIndefinite.CCC_REG1.getValue(),contract.getEnterpriseCCC().getQuoteRegimeCode().substring(0, 1));
+				setPdfFieldValue(PdfFieldIndefinite.CCC_REG2.getValue(),contract.getEnterpriseCCC().getQuoteRegimeCode().substring(1, 2));
+				setPdfFieldValue(PdfFieldIndefinite.CCC_REG3.getValue(),contract.getEnterpriseCCC().getQuoteRegimeCode().substring(2, 3));
+				setPdfFieldValue(PdfFieldIndefinite.CCC_REG4.getValue(),contract.getEnterpriseCCC().getQuoteRegimeCode().substring(3, 4));
 				if(contract.getEnterpriseCCC().getCcc().length()==11){
 					setPdfFieldValue(PdfFieldIndefinite.CCC_PROV1.getValue(),contract.getEnterpriseCCC().getCcc().substring(0, 1));
 					setPdfFieldValue(PdfFieldIndefinite.CCC_PROV2.getValue(),contract.getEnterpriseCCC().getCcc().substring(1, 2));
