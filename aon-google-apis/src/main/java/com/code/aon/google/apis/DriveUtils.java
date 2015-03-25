@@ -1083,32 +1083,33 @@ public class DriveUtils implements IBlobManager {
 
 	public static void setDriveId(FileInfo fileInfo, String domain, String size)
 			throws SQLException, AonConnectionException {
-
-		if (fileInfo.getAonType().equals("registry")) {
-			DatabaseSync.addDriveId(fileInfo.getDriveId(),
-					fileInfo.getFileId(), domain, size);
-			DatabaseSync.deleteBlob(fileInfo.getFileId(), domain);
-		} else if (fileInfo.getAonType().equals("contract")) {
-			DBConsults.setDriveIdContractAttach(domain, fileInfo);
-			DBConsults.deleteBlobContractAttach(domain, fileInfo);
-		} else if (fileInfo.getAonType().equals("item")) {
-			DBConsults.setDriveIdIattach(domain, fileInfo);
-			DBConsults.deleteBlobIattach(domain, fileInfo);
-		} else if (fileInfo.getAonType().equals("invoice")) {
-			DBConsults.setDriveIdInvoiceAttach(domain, fileInfo);
-			DBConsults.deleteBlobInvoiceAttach(domain, fileInfo);
-		} else if (fileInfo.getAonType().equals("offer")) {
-			DBConsults.setDriveIdOfferAttach(domain, fileInfo);
-			DBConsults.deleteBlobOfferAttach(domain, fileInfo);
-		} else if (fileInfo.getAonType().equals("payroll")) {
-			DBConsults.setDriveIdPayrollAttach(domain, fileInfo);
-			DBConsults.deleteBlobPayrollAttach(domain, fileInfo);
-		} else if (fileInfo.getAonType().equals("project")) {
-			DBConsults.setDriveIdProjectAttach(domain, fileInfo);
-			DBConsults.deleteBlobProjectAttach(domain, fileInfo);
-		} else if (fileInfo.getAonType().equals("sepe")) {
-			DBConsults.setDriveIdSepeAttach(domain, fileInfo);
-			DBConsults.deleteBlobSepeAttach(domain, fileInfo);
+		if(fileInfo.getDriveId() != null){
+			if (fileInfo.getAonType().equals("registry")) {
+				DatabaseSync.addDriveId(fileInfo.getDriveId(),
+						fileInfo.getFileId(), domain, size);
+				DatabaseSync.deleteBlob(fileInfo.getFileId(), domain);
+			} else if (fileInfo.getAonType().equals("contract")) {
+				DBConsults.setDriveIdContractAttach(domain, fileInfo);
+				DBConsults.deleteBlobContractAttach(domain, fileInfo);
+			} else if (fileInfo.getAonType().equals("item")) {
+				DBConsults.setDriveIdIattach(domain, fileInfo);
+				DBConsults.deleteBlobIattach(domain, fileInfo);
+			} else if (fileInfo.getAonType().equals("invoice")) {
+				DBConsults.setDriveIdInvoiceAttach(domain, fileInfo);
+				DBConsults.deleteBlobInvoiceAttach(domain, fileInfo);
+			} else if (fileInfo.getAonType().equals("offer")) {
+				DBConsults.setDriveIdOfferAttach(domain, fileInfo);
+				DBConsults.deleteBlobOfferAttach(domain, fileInfo);
+			} else if (fileInfo.getAonType().equals("payroll")) {
+				DBConsults.setDriveIdPayrollAttach(domain, fileInfo);
+				DBConsults.deleteBlobPayrollAttach(domain, fileInfo);
+			} else if (fileInfo.getAonType().equals("project")) {
+				DBConsults.setDriveIdProjectAttach(domain, fileInfo);
+				DBConsults.deleteBlobProjectAttach(domain, fileInfo);
+			} else if (fileInfo.getAonType().equals("sepe")) {
+				DBConsults.setDriveIdSepeAttach(domain, fileInfo);
+				DBConsults.deleteBlobSepeAttach(domain, fileInfo);
+			}
 		}
 	}
 

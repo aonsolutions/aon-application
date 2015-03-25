@@ -68,7 +68,7 @@ public class DBDrive {
 																	.select(DOMAIN.ID)
 																	.from(DOMAIN)
 																	.where(DOMAIN.PARENT.eq(domainId)))))
-							.and(RATTACH.DRIVE_ID.isNull()).and(condition).limit(10)
+							.and(RATTACH.DRIVE_ID.isNull()).and(RATTACH.DATA.isNotNull()).and(condition).limit(10)
 					.fetch();
 	
 			Vector<FileInfo> attachs = new Vector<FileInfo>();
@@ -120,7 +120,7 @@ public class DBDrive {
 																	.select(DOMAIN.ID)
 																	.from(DOMAIN)
 																	.where(DOMAIN.PARENT.eq(domainId)))))
-							.and(CONTRACT_ATTACH.DRIVEID.isNull()).limit(10)
+							.and(CONTRACT_ATTACH.DRIVEID.isNull()).and(CONTRACT_ATTACH.DATA.isNotNull()).limit(10)
 					.fetch();
 	
 			Vector<FileInfo> attachs = new Vector<FileInfo>();
@@ -168,7 +168,7 @@ public class DBDrive {
 																	.select(DOMAIN.ID)
 																	.from(DOMAIN)
 																	.where(DOMAIN.PARENT.eq(domainId)))))
-							.and(IATTACH.DRIVEID.isNull()).limit(10)
+							.and(IATTACH.DRIVEID.isNull()).and(IATTACH.DATA.isNotNull()).limit(10)
 					.fetch();
 	
 			Vector<FileInfo> attachs = new Vector<FileInfo>();
@@ -216,7 +216,7 @@ public class DBDrive {
 																	.select(DOMAIN.ID)
 																	.from(DOMAIN)
 																	.where(DOMAIN.PARENT.eq(domainId)))))
-							.and(INVOICE_ATTACH.DRIVEID.isNull()).limit(10)
+							.and(INVOICE_ATTACH.DRIVEID.isNull()).and(INVOICE_ATTACH.DATA.isNotNull()).limit(10)
 					.fetch();
 	
 			Vector<FileInfo> attachs = new Vector<FileInfo>();
@@ -263,7 +263,7 @@ public class DBDrive {
 																	.select(DOMAIN.ID)
 																	.from(DOMAIN)
 																	.where(DOMAIN.PARENT.eq(domainId)))))
-							.and(OFFER_ATTACH.DRIVEID.isNull()).limit(10)
+							.and(OFFER_ATTACH.DRIVEID.isNull()).and(OFFER_ATTACH.DATA.isNotNull()).limit(10)
 					.fetch();
 	
 			Vector<FileInfo> attachs = new Vector<FileInfo>();
@@ -310,7 +310,7 @@ public class DBDrive {
 																	.select(DOMAIN.ID)
 																	.from(DOMAIN)
 																	.where(DOMAIN.PARENT.eq(domainId)))))
-							.and(PAYROLL_BATCH_ATTACH.DRIVEID.isNull()).limit(10)
+							.and(PAYROLL_BATCH_ATTACH.DRIVEID.isNull()).and(PAYROLL_BATCH_ATTACH.DATA.isNotNull()).limit(10)
 					.fetch();
 	
 			Vector<FileInfo> attachs = new Vector<FileInfo>();
@@ -357,7 +357,7 @@ public class DBDrive {
 																	.select(DOMAIN.ID)
 																	.from(DOMAIN)
 																	.where(DOMAIN.PARENT.eq(domainId)))))
-							.and(PROJECT_ATTACH.DRIVEID.isNull()).limit(10)
+							.and(PROJECT_ATTACH.DRIVEID.isNull()).and(PROJECT_ATTACH.DATA.isNotNull()).limit(10)
 					.fetch();
 	
 			Vector<FileInfo> attachs = new Vector<FileInfo>();
@@ -404,7 +404,7 @@ public class DBDrive {
 																	.select(DOMAIN.ID)
 																	.from(DOMAIN)
 																	.where(DOMAIN.PARENT.eq(domainId)))))
-							.and(SEPE_BATCH_ATTACH.DRIVEID.isNull()).limit(10)
+							.and(SEPE_BATCH_ATTACH.DRIVEID.isNull()).and(SEPE_BATCH_ATTACH.DATA.isNotNull()).limit(10)
 					.fetch();
 	
 			Vector<FileInfo> attachs = new Vector<FileInfo>();
