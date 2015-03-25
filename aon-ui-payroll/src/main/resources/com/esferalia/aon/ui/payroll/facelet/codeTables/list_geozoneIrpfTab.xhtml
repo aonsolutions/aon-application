@@ -17,8 +17,7 @@
 			<aon:panelGrid columns="4">
 				
 				<aon:outputText value="#{bundle.config_administration}" />
-				<aon:selectOneMenu value="#{geozoneIrpf.administration}" >
-					<f:selectItem itemLabel="-" value="#{null}" />
+				<aon:selectOneRadio value="#{geozoneIrpf.administration}" >
 					<f:selectItems value="#{geozoneIrpf.administrationList}" />
 					<a4j:support 
 						event="onchange"
@@ -29,9 +28,9 @@
 						ajaxSingle="true"
 						ignoreDupResponses="true"
 						limitToList="true"/>
-				</aon:selectOneMenu>
+				</aon:selectOneRadio>
 				
-				<aon:outputText value="#{bundle.aon_year}" />
+				<aon:outputText value="#{bundle.aon_year}" styleClass="aon-margin-left"/>
 				<rich:inputNumberSpinner value="#{geozoneIrpf.year}"
 	   				inputSize="4" minValue="2009" maxValue="2020">
 					<a4j:support 

@@ -208,7 +208,7 @@ public class FANGeneral implements Serializable, IFanFactory {
 		// Cotizaciones
 	}
 	
-	private void createEDLRecord(EDL edl, String type, Integer key, Integer amount) {
+	protected void createEDLRecord(EDL edl, String type, Integer key, Integer amount) {
 		createEDLRecord(edl, type, key, 0, amount, " ", 0, autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), " ");
 	}
 	private void createEDLRecord(EDL edl, String type, Integer key, Integer element, Integer amount) {
@@ -486,29 +486,7 @@ public class FANGeneral implements Serializable, IFanFactory {
 	 * @param dat
 	 */
 	public void createEDLCd29Segment(Double cgcTotalEnterprise, Double cgcTotalEmployee, DAT dat) {
-//		if(bonus.getSalary().getContract().getRegimeType()==SSRegimeType.AGRICULTURAL){
-//			EDL edl = dat.getEdlSegment("CD29");
-//			createEDLRecord(edl, "CD", 29, new Double(CommonUtil.round((bonus).getAmount())*100).intValue());
-//		}
-		// se obtiene la cuota de la reduccion obteniendo la diferencia entre 1)la cuota calculada a partir de la base y el porcentaje correspondiente 
-		// y 2) la cuota ya calculada (la cual ya incluye la reduccion SEA).
 		
-		Double cgcBase = new Double(dat.getEdlSegment("BA01").getImporte()/100);
-		Double cgcPercent2015 = 17.30 + 4.70;
-		Double rectifiedCgcAmount = cgcBase * cgcPercent2015 / 100;
-		Double cgcAmount = null; 
-//		try {
-//			cgcAmount = obtainCGCTotalEnterprise(salary);
-//			cgcAmount += obtainCGCTotalEmployee(salary);
-//		} catch (AonConnectionException e) {
-//			cgcAmount = rectifiedCgcAmount;
-//		} catch (SQLException e) {
-//			cgcAmount = rectifiedCgcAmount;
-//		} 
-		cgcAmount = cgcTotalEnterprise;
-		cgcAmount += cgcTotalEmployee;
-		EDL edl = dat.getEdlSegment("CD29");
-		createEDLRecord(edl, "CD", 29, new Double(CommonUtil.round(rectifiedCgcAmount-cgcAmount)*100).intValue());
 	}
 
 	/**
@@ -517,11 +495,7 @@ public class FANGeneral implements Serializable, IFanFactory {
 	 * @param dat
 	 */
 	public void createEDLCd30Segment(DAT dat) {
-		// TODO
-//		if(bonus.getSalary().getContract().getRegimeType()==SSRegimeType.AGRICULTURAL){
-//			EDL edl = dat.getEdlSegment("CD30");
-//			createEDLRecord(edl, "CD", 30, new Double(CommonUtil.round((bonus).getAmount())*100).intValue());
-//		}
+		
 	}
 	
 	/**

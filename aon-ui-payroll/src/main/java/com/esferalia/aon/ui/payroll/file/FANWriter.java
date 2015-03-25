@@ -348,7 +348,14 @@ public class FANWriter implements Serializable {
 			} else {
 				Integer days = getContractDaysOrHours(contract);
 				if(days!=null){
-					createDATRecord(datList, contract, null, getContractDaysOrHours(contract));
+					Integer ereDays = getEreDays(contract);
+					if(ereDays!=null && ereDays>0){
+						if(isErePartial(contract)){
+							createDATRecord(datList, contract, autoComplete("R", 6, " ", true), getContractDaysOrHours(contract)-ereDays);
+						}
+					} else  {
+						createDATRecord(datList, contract, null, getContractDaysOrHours(contract));
+					}
 				}
 			}
 			
@@ -379,10 +386,16 @@ public class FANWriter implements Serializable {
 //			if(isNoRetributionDischarge(contract)){
 //				datList.add(createDATRecord(contract, autoComplete("A", 5, " ", true), getContractDaysOrHours(contract)));
 //			}
-			// TODO
-//			if(StringUtils.isNotBlank(getOthers(contract))){
-//				datList.add(createDATRecord(contract, autoComplete(getOthers(contract), 6, " ", true), getContractDaysOrHours(contract)));
-//			}
+			if(StringUtils.isNotBlank(getOthers(contract))){
+				Integer ereDays = getEreDays(contract);
+				ContractCode code = getContractCode(contract);
+				if(code!=null && !code.getValue().startsWith("1") && !code.getValue().startsWith("4")){
+					String weekHours = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.WEEK_HOURS.getName());
+					Double dayHours = (Double.parseDouble(weekHours)/5);
+					ereDays = Double.valueOf(CommonUtil.round(ereDays * dayHours, 0)).intValue();
+				}
+				createDATRecord(datList, contract, autoComplete(getOthers(contract), 6, " ", true), ereDays);
+			}
 		} else if(liquidationType==LiquidationType.L13){
 			createDATRecord(datList, contract, null, getNotEnjoyedVacationDays(contract));
 		}
@@ -1185,7 +1198,33 @@ public class FANWriter implements Serializable {
 	private String getOthers(Contract contract) {
 		// TODO 
 		
+		if(isErePartial(contract)){
+			return "P";
+		}
+		if(isEreTotal(contract)){
+			return "T";
+		}
 		return " ";
+	}
+	
+	private Integer getEreDays(Contract contract) {
+		String o = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.ERE_DAYS);
+		if(o!=null && NumberUtils.isNumber(o)){
+			Integer ereDays = Integer.parseInt(o);
+			if(ereDays>0){
+				return ereDays;
+			}
+		}
+		return null;
+	}
+	
+	private boolean isErePartial(Contract contract) {
+		Integer days = getEreDays(contract);
+		return (days!=null && days>0 && days<CommonUtil.getDay(getEndDate()));
+	}
+	private boolean isEreTotal(Contract contract) {
+		Integer days = getEreDays(contract);
+		return (days!=null && days>0 && days==CommonUtil.getDay(getEndDate()));
 	}
 	
 	/**

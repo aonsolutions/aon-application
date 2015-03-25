@@ -1,0 +1,645 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+						
+	<aon:panel style="width: 750px; margin-top: 20px;">
+		<aon:panelGrid columns="4" styleClass="aon-width-all"
+			columnClasses="aon-panelGrid-even aon-text-center aon-nopadding aon-width-100,
+								aon-panelGrid-even aon-text-center aon-nopadding aon-width-auto,
+								aon-panelGrid-even aon-text-center aon-nopadding aon-width-100,
+								aon-panelGrid-even aon-text-center aon-nopadding aon-width-100">
+			<f:facet name="header">
+				<aon:outputText value="BASES DE COTIZACIÓN MENSUAL.PERÍODOS DE ACTIVIDAD" />
+			</f:facet>
+
+			<aon:div style="background-color:#f0f0f0;">
+				<aon:outputText value="Grupo de Cotización" />
+			</aon:div>
+			<aon:div style="background-color:#f0f0f0;">
+				<aon:outputText value="Categorías Profesionales" />
+				<br />
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<aon:div style="background-color:#f0f0f0;">
+				<aon:outputText value="Bases mínimas euros/mes" />
+			</aon:div>
+			<aon:div style="background-color:#f0f0f0;">
+				<aon:outputText value="Bases máximas euros /mes" />
+			</aon:div>
+
+			<aon:outputText value="1" />
+			<aon:outputText
+				value="Ingenieros y Licenciados.Personal de alta dirección no incluido en el artículo 1.3.c) del Estatuto de los Trabajadores" />
+			<aon:outputText value="#{quoteValues.values['1_BASE_CGC_MIN_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['BASE_CGC_MAX_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+
+			<aon:outputText value="2" />
+			<aon:outputText
+				value="Ingenieros Técnicos, Peritos y Ayudantes Titulados" />
+			<aon:outputText value="#{quoteValues.values['2_BASE_CGC_MIN_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['BASE_CGC_MAX_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+
+			<aon:outputText value="3" />
+			<aon:outputText value="Jefes Administrativos y de Taller" />
+			<aon:outputText value="#{quoteValues.values['3_BASE_CGC_MIN_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['BASE_CGC_MAX_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+
+			<aon:outputText value="4" />
+			<aon:outputText value="Ayudantes no Titulados" />
+			<aon:outputText value="#{quoteValues.values['4_BASE_CGC_MIN_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['BASE_CGC_MAX_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+
+			<aon:outputText value="5" />
+			<aon:outputText value="Oficiales Administrativos" />
+			<aon:outputText value="#{quoteValues.values['5_BASE_CGC_MIN_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['BASE_CGC_MAX_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+
+			<aon:outputText value="6" />
+			<aon:outputText value="Subalternos" />
+			<aon:outputText value="#{quoteValues.values['6_BASE_CGC_MIN_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['BASE_CGC_MAX_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+
+			<aon:outputText value="7" />
+			<aon:outputText value="Auxiliares Administrativos" />
+			<aon:outputText value="#{quoteValues.values['7_BASE_CGC_MIN_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['BASE_CGC_MAX_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+		
+			<aon:outputText value="8" />
+			<aon:outputText value="Oficiales de primera y segunda" />
+			<aon:outputText value="#{quoteValues.values['8_BASE_CGC_MIN_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['BASE_CGC_MAX_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+
+			<aon:outputText value="9" />
+			<aon:outputText value="Oficiales de tercera y Especialistas" />
+			<aon:outputText value="#{quoteValues.values['9_BASE_CGC_MIN_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['BASE_CGC_MAX_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+
+			<aon:outputText value="10" />
+			<aon:outputText value="Peones" />
+			<aon:outputText value="#{quoteValues.values['10_BASE_CGC_MIN_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['BASE_CGC_MAX_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+
+			<aon:outputText value="11" />
+			<aon:outputText
+				value="Trabajadores menores de dieciocho años, cualquiera que sea su categoría profesional" />
+			<aon:outputText value="#{quoteValues.values['11_BASE_CGC_MIN_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['BASE_CGC_MAX_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+		</aon:panelGrid>
+	</aon:panel>
+	
+	<hr />
+	
+	<aon:panel style="width: 750px; margin-top: 20px;">
+		<aon:panelGrid columns="4" styleClass="aon-width-all"
+			columnClasses="aon-panelGrid-even aon-text-center aon-nopadding aon-width-100,
+								aon-panelGrid-even aon-text-center aon-nopadding aon-width-auto,
+								aon-panelGrid-even aon-text-center aon-nopadding aon-width-100,
+								aon-panelGrid-even aon-text-center aon-nopadding aon-width-100">
+			<f:facet name="header">
+				<aon:outputText value="BASES DE COTIZACIÓN POR JORNADAS REALES" />
+			</f:facet>
+
+			<aon:div style="background-color:#f0f0f0;">
+				<aon:outputText value="Grupo de Cotización" />
+			</aon:div>
+			<aon:div style="background-color:#f0f0f0;">
+				<aon:outputText value="Categorías Profesionales" />
+				<br />
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<aon:div style="background-color:#f0f0f0;">
+				<aon:outputText value="Bases mínimas euros/mes" />
+			</aon:div>
+			<aon:div style="background-color:#f0f0f0;">
+				<aon:outputText value="Bases máximas euros /mes" />
+			</aon:div>
+
+			<aon:outputText value="1" />
+			<aon:outputText
+				value="Ingenieros y Licenciados.Personal de alta dirección no incluido en el artículo 1.3.c) del Estatuto de los Trabajadores" />
+			<aon:outputText value="#{quoteValues.values['1_BASE_CGC_MIN_DIA']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['BASE_CGC_MAX_DIA']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+
+			<aon:outputText value="2" />
+			<aon:outputText
+				value="Ingenieros Técnicos, Peritos y Ayudantes Titulados" />
+			<aon:outputText value="#{quoteValues.values['2_BASE_CGC_MIN_DIA']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['BASE_CGC_MAX_DIA']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+
+			<aon:outputText value="3" />
+			<aon:outputText value="Jefes Administrativos y de Taller" />
+			<aon:outputText value="#{quoteValues.values['3_BASE_CGC_MIN_DIA']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['BASE_CGC_MAX_DIA']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+
+			<aon:outputText value="4" />
+			<aon:outputText value="Ayudantes no Titulados" />
+			<aon:outputText value="#{quoteValues.values['4_BASE_CGC_MIN_DIA']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['BASE_CGC_MAX_DIA']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+
+			<aon:outputText value="5" />
+			<aon:outputText value="Oficiales Administrativos" />
+			<aon:outputText value="#{quoteValues.values['5_BASE_CGC_MIN_DIA']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['BASE_CGC_MAX_DIA']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+
+			<aon:outputText value="6" />
+			<aon:outputText value="Subalternos" />
+			<aon:outputText value="#{quoteValues.values['6_BASE_CGC_MIN_DIA']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['BASE_CGC_MAX_DIA']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+
+			<aon:outputText value="7" />
+			<aon:outputText value="Auxiliares Administrativos" />
+			<aon:outputText value="#{quoteValues.values['7_BASE_CGC_MIN_DIA']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['BASE_CGC_MAX_DIA']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+		
+			<aon:outputText value="8" />
+			<aon:outputText value="Oficiales de primera y segunda" />
+			<aon:outputText value="#{quoteValues.values['8_BASE_CGC_MIN_DIA']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['BASE_CGC_MAX_DIA']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+
+			<aon:outputText value="9" />
+			<aon:outputText value="Oficiales de tercera y Especialistas" />
+			<aon:outputText value="#{quoteValues.values['9_BASE_CGC_MIN_DIA']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['BASE_CGC_MAX_DIA']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+
+			<aon:outputText value="10" />
+			<aon:outputText value="Peones" />
+			<aon:outputText value="#{quoteValues.values['10_BASE_CGC_MIN_DIA']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['BASE_CGC_MAX_DIA']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+
+			<aon:outputText value="11" />
+			<aon:outputText
+				value="Trabajadores menores de dieciocho años, cualquiera que sea su categoría profesional" />
+			<aon:outputText value="#{quoteValues.values['11_BASE_CGC_MIN_DIA']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['BASE_CGC_MAX_DIA']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+		</aon:panelGrid>
+	</aon:panel>
+	
+	<hr />
+		
+	<aon:panel style="width: 750px; margin-top: 20px;">
+
+		<aon:panelGrid columns="2" styleClass="aon-width-all"
+			columnClasses="aon-panelGrid-even aon-text-center aon-nopadding, aon-panelGrid-even aon-text-center aon-nopadding">
+			<f:facet name="header">
+				<aon:outputText value="TIPO COTIZACIÓN %" />
+			</f:facet>
+			<aon:panelGrid columns="4" styleClass="aon-width-300"
+				columnClasses="aon-panelGrid-even aon-text-center aon-nopadding,
+									aon-panelGrid-even aon-text-center aon-nopadding,
+									aon-panelGrid-even aon-text-center aon-nopadding,
+									aon-panelGrid-even aon-text-center aon-nopadding">
+				<f:facet name="header">
+					<aon:outputText value="CONTINGENCIAS COMUNES" />
+				</f:facet>
+	
+				<aon:div style="background-color:#f0f0f0;">
+					<aon:outputText value="GRUPO" />
+				</aon:div>
+				<aon:div style="background-color:#f0f0f0;">
+					<aon:outputText value="EMPRESA" />
+				</aon:div>
+				<aon:div style="background-color:#f0f0f0;">
+					<aon:outputText value="TRABAJADOR" />
+				</aon:div>
+				<aon:div style="background-color:#f0f0f0;">
+					<aon:outputText value="TOTAL" />
+				</aon:div>
+	
+				<aon:outputText value="1" />
+				<aon:outputText value="#{quoteValues.values['PORCENTAJE_CGC_E_01']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:outputText value="#{quoteValues.values['PORCENTAJE_CGC']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:outputText value="#{quoteValues.values['PORCENTAJE_CGC_E_01'] + quoteValues.values['PORCENTAJE_CGC']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+
+				<aon:outputText value="2 a 11" />
+				<aon:outputText value="#{quoteValues.values['PORCENTAJE_CGC_E_02']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:outputText value="#{quoteValues.values['PORCENTAJE_CGC']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:outputText value="#{quoteValues.values['PORCENTAJE_CGC_E_02'] + quoteValues.values['PORCENTAJE_CGC']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				
+			</aon:panelGrid>
+			
+			<aon:panelGrid columns="1" styleClass="aon-width-all"
+				columnClasses="aon-panelGrid-even aon-text-center aon-nopadding aon-width-auto">
+				<f:facet name="header">
+					<aon:outputText value="Accidentes Trabajo y Enfermedades Profesionales" />
+				</f:facet>
+				<aon:outputText value="Tarifa Primas disposición adicional cuarta Ley 42/2006, de 28 de diciembre, de Presupuestos Generales del Estado para 2007, según redacción de la disposición final décima novena de la Ley 22/2013, de 23 de diciembre, de Presupuestos Generales del Estado para 2014." />
+			</aon:panelGrid>
+		</aon:panelGrid>
+	
+	</aon:panel>
+	
+	<hr />
+	
+	<aon:panel style="width: 750px; margin-top: 20px;">
+
+		<aon:panelGrid columns="2" styleClass="aon-width-all"
+			columnClasses="aon-panelGrid-even aon-text-center aon-nopadding, aon-panelGrid-even aon-text-center aon-nopadding">
+			<f:facet name="header">
+				<aon:outputText value="REDUCCIÓN APORTACIÓN EMPRESARIAL CONTINGENCIAS COMUNES" />
+			</f:facet>
+			<aon:panelGrid columns="3" styleClass="aon-width-300"
+				columnClasses="aon-panelGrid-even aon-text-center aon-nopadding,
+									aon-panelGrid-even aon-text-center aon-nopadding,
+									aon-panelGrid-even aon-text-center aon-nopadding">
+				
+				<aon:div style="background-color:#f0f0f0;">
+					<aon:outputText value="&#160;" />
+					<br />
+					<aon:outputText value="GRUPO" />
+					<br />
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:div style="background-color:#f0f0f0;">
+					<aon:outputText value="PUNTOS" />
+					<br />
+					<aon:outputText value="PORCENTUALES" />
+					<br />
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:div style="background-color:#f0f0f0;">
+					<aon:outputText value="TIPO" />
+					<br />
+					<aon:outputText value="EFECTIVO" />
+					<br />
+					<aon:outputText value="%" />
+				</aon:div>
+				
+				<aon:div>
+					<aon:outputText value="1" />
+					<br />
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:outputText value="#{quoteValues.values['REDUCCION_CGC_E_01']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:outputText value="#{quoteValues.values['PORCENTAJE_CGC_E_01'] - quoteValues.values['REDUCCION_CGC_E_01']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+
+				<aon:div>
+					<aon:outputText value="2 a 11" />
+					<br />
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:outputText value="#{quoteValues.values['REDUCCION_CGC_E_02']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:panelGroup>
+					<aon:outputText value="#{quoteValues.values['PORCENTAJE_CGC_E_02'] - quoteValues.values['REDUCCION_CGC_E_02']}" >
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+					<aon:outputText value="(1)(2)" />
+				</aon:panelGroup>
+			</aon:panelGrid>
+			
+			<aon:panelGrid columns="1" styleClass="aon-width-all"
+				columnClasses="aon-panelGrid-even aon-nopadding aon-noborder aon-width-auto">
+				<f:facet name="header">
+					<aon:outputText value="Reglas para trabajadores de los grupos 2 a 11" />
+				</f:facet>
+				<aon:div>
+					<aon:outputText value="(1) Base de cotización igual o inferior a " />
+					<aon:outputText value="#{quoteValues.values['BASE_MIN_REDUCCION_MES']}" styleClass="aon-bold aon-underline">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+					<aon:outputText value=" euros mensuales ó " />
+					<aon:outputText value="#{quoteValues.values['BASE_MIN_REDUCCION_DIA']}" styleClass="aon-bold aon-underline">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+					<aon:outputText value=" euros por jornada." />
+				</aon:div>
+				<aon:div>
+					<aon:outputText value="(2) Base de cotización superior a " />
+					<aon:outputText value="#{quoteValues.values['BASE_MIN_REDUCCION_MES']}" styleClass="aon-bold aon-underline">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>	
+					<aon:outputText value=" euros/mes ó " />
+					<aon:outputText value="#{quoteValues.values['BASE_MIN_REDUCCION_DIA']}" styleClass="aon-bold aon-underline">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+					<aon:outputText value=" euros/jornada, y hasta " />
+					<aon:outputText value="#{quoteValues.values['BASE_MAX_REDUCCION_MES']}" styleClass="aon-bold aon-underline">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>	
+					<aon:outputText value=" euros/mes ó " />
+					<aon:outputText value="#{quoteValues.values['BASE_MAX_REDUCCION_DIA']}" styleClass="aon-bold aon-underline">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>	
+					<aon:outputText value=" euros por jornada realizada, se aplicará el porcentaje resultante de aplicar las fórmulas establecidas en el artículo 13.4b)2ª de la Orden de cotización para 2014." />
+				</aon:div>
+			</aon:panelGrid>
+		</aon:panelGrid>
+	
+	</aon:panel>
+	
+	<hr />
+	
+	<aon:div>
+		<aon:outputText value="Grupo 1.- La cuota empresarial no podrá ser superior a " />
+		<aon:outputText value="#{quoteValues.values['CGC_E_01_TOPE_MAX_MONTHLY']}" styleClass="aon-bold aon-underline">
+			<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+		</aon:outputText>	
+		<aon:outputText value=" euros al mes ó " />
+		<aon:outputText value="#{quoteValues.values['CGC_E_01_TOPE_MAX_DAYLY']}" styleClass="aon-bold aon-underline">
+			<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+		</aon:outputText>	
+		<aon:outputText value=" por jornada real trabajada." />
+	</aon:div>
+
+	<aon:div>
+		<aon:outputText value="Grupo 2 a 11.- La cuota empresarial no podrá ser inferior a " />
+		<aon:outputText value="#{quoteValues.values['CGC_E_01_TOPE_MIN_MONTHLY']}" styleClass="aon-bold aon-underline">
+			<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+		</aon:outputText>	
+		<aon:outputText value=" euros al mes ó " />
+		<aon:outputText value="#{quoteValues.values['CGC_E_01_TOPE_MIN_DAYLY']}" styleClass="aon-bold aon-underline">
+			<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+		</aon:outputText>	
+		<aon:outputText value=" euros por jornada real trabajada." />
+	</aon:div>
+	
+	<hr />
+	
+	<aon:panel style="width: 750px; margin-top: 20px;">
+		<aon:panelGrid columns="4" styleClass="aon-width-all"
+			columnClasses="aon-panelGrid-even aon-text-center aon-nopadding aon-width-auto,
+								aon-panelGrid-even aon-text-center aon-nopadding aon-width-120,
+								aon-panelGrid-even aon-text-center aon-nopadding aon-width-120,
+								aon-panelGrid-even aon-text-center aon-nopadding aon-width-120">
+			<f:facet name="header">
+				<aon:outputText value="DESEMPLEO" />
+			</f:facet>
+
+			<aon:outputText value="&#160;" />
+			<aon:div style="background-color: #f0f0f0;">
+				<aon:outputText value="EMPRESA" />
+			</aon:div>
+			<aon:div style="background-color: #f0f0f0;">
+				<aon:outputText value="TRABAJADORES" />
+			</aon:div>
+			<aon:div style="background-color: #f0f0f0;">
+				<aon:outputText value="TOTAL" />
+			</aon:div>
+			
+			<aon:outputText value="Tipo General" />
+			<aon:outputText value="#{quoteValues.values['DESEMPL_E']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['DESEMPL']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['DESEMPL_E'] + quoteValues.values['DESEMPL']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			
+			<aon:outputText value="Contrato duración determinada Tiempo Completo" />
+			<aon:outputText value="#{quoteValues.values['DESEMPL_TC_E']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['DESEMPL_TC']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['DESEMPL_TC_E'] + quoteValues.values['DESEMPL_TC']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			
+			<aon:outputText value="Contrato duración determinada Tiempo Parcial" />
+			<aon:outputText value="#{quoteValues.values['DESEMPL_TP_E']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['DESEMPL_TP']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['DESEMPL_TP_E'] + quoteValues.values['DESEMPL_TP']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+		</aon:panelGrid>
+	</aon:panel>
+	
+	<hr />
+				
+	<aon:panel style="width: 750px; margin-top: 20px;">
+		<aon:panelGrid columns="3" styleClass="aon-width-all"
+			columnClasses="aon-panelGrid-even aon-text-center aon-nopadding aon-width-250,
+								aon-panelGrid-even aon-text-center aon-nopadding aon-width-auto,
+								aon-panelGrid-even aon-text-center aon-nopadding aon-width-250">
+			<f:facet name="header">
+				<aon:outputText value="FOGASA" />
+			</f:facet>
+
+			<aon:div style="background-color: #f0f0f0;">
+				<aon:outputText value="EMPRESA" />
+			</aon:div>
+			<aon:div style="background-color: #f0f0f0;">
+				<aon:outputText value="TRABAJADORES" />
+			</aon:div>
+			<aon:div style="background-color: #f0f0f0;">
+				<aon:outputText value="TOTAL" />
+			</aon:div>
+			
+			<aon:outputText value="#{quoteValues.values['PORCENTAJE_FOGASA']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="&#160;-&#160;" />
+			<aon:outputText value="#{quoteValues.values['PORCENTAJE_FOGASA']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+		</aon:panelGrid>
+	</aon:panel>
+	
+	<hr />
+
+	<aon:panel style="width: 750px; margin-top: 20px;">
+		<aon:panelGrid columns="3" styleClass="aon-width-all"
+			columnClasses="aon-panelGrid-even aon-text-center aon-nopadding aon-width-250,
+								aon-panelGrid-even aon-text-center aon-nopadding aon-width-auto,
+								aon-panelGrid-even aon-text-center aon-nopadding aon-width-250">
+			<f:facet name="header">
+				<aon:outputText value="FORMACIÓN PROFESIONAL" />
+			</f:facet>
+
+			<aon:div style="background-color: #f0f0f0;">
+				<aon:outputText value="EMPRESA" />
+			</aon:div>
+			<aon:div style="background-color: #f0f0f0;">
+				<aon:outputText value="TRABAJADORES" />
+			</aon:div>
+			<aon:div style="background-color: #f0f0f0;">
+				<aon:outputText value="TOTAL" />
+			</aon:div>
+
+			<aon:outputText value="#{quoteValues.values['PORCENTAJE_FP_E']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['PORCENTAJE_FP']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['PORCENTAJE_FP_E'] + quoteValues.values['PORCENTAJE_FP']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+		</aon:panelGrid>
+	</aon:panel>
+	
+	<hr />
+	
+	<aon:panel style="width: 750px; margin-top: 20px;">
+		<aon:panelGrid columns="2" styleClass="aon-width-all"
+			columnClasses="aon-panelGrid-even aon-text-center aon-nopadding, 
+								aon-panelGrid-even aon-text-center aon-nopadding">
+			<f:facet name="header">
+				<aon:outputText value="INCAPACIDAD TEMPORAL, RIESGO DURANTE EL EMBARAZO Y RIESGO DURANTE LA LACTANCIA NATURAL, PATERNIDAD Y MATERNIDAD DURANTE LA SITUACIÓN DE ACTIVIDAD, COTIZACIÓN SEGÚN MODALIDAD DE CONTRATACIÓN" />
+			</f:facet>
+
+			<aon:panelGrid columns="2" styleClass="aon-width-300"
+				columnClasses="aon-panelGrid-even aon-text-center aon-nopadding aon-width-150,
+									aon-panelGrid-even aon-text-center aon-nopadding aon-width-auto">
+				<f:facet name="header">
+					<aon:panelGroup>
+						<aon:outputText value="CONTRATO INDEFINIDO" />
+						<br />
+						<aon:outputText value="Normas Régimen General" />
+						<br />
+						<aon:outputText value="&#160;" />
+					</aon:panelGroup>
+				</f:facet>
+				<aon:div style="background-color: #f0f0f0;">
+					<aon:outputText value="GRUPO" />
+				</aon:div>
+				<aon:div style="background-color: #f0f0f0;">
+					<aon:outputText value="TIPO %" />
+				</aon:div>
+							
+				<aon:outputText value="1" />
+				<aon:outputText value="#{quoteValues.values['PORCENTAJE_ATEP_01']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				
+				<aon:outputText value="2 a 11" />
+				<aon:outputText value="#{quoteValues.values['PORCENTAJE_ATEP_02']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:panelGrid>
+			
+			<aon:panelGrid columns="1" styleClass="aon-width-all"
+				columnClasses="aon-panelGrid-even aon-nopadding aon-width-auto">
+				<aon:div style="background-color: #f0f0f0; padding: 5px;">
+					<aon:outputText value="CONTRATO TEMPORAL Y FIJOS DISCONTINUOS" />
+				</aon:div>
+				<aon:div>
+					<aon:outputText value="Se aplicarán las normas del Régimen General en relación a los días contratados en los que no hayan podido prestar sus servicios." />
+					<br />
+					<aon:outputText value="En los días en que no esté prevista la prestación de servicios, los trabajadores están obigados a ingresar la cotización correspondiente a los períodos de inactividad, salvo que estén percibiendo los subsidios por maternidad y paternidad." />
+				</aon:div>
+			</aon:panelGrid>
+		</aon:panelGrid>
+	</aon:panel>
+	
+	<hr />
+							
+</ui:composition>

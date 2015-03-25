@@ -1,11 +1,14 @@
 package com.esferalia.aon.file.payroll.fan;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
+import com.esferalia.aon.file.payroll.fan.data.DAT;
+import com.esferalia.aon.file.payroll.fan.data.EDL;
 import com.esferalia.aon.file.payroll.fan.data.EDT;
 import com.esferalia.aon.file.payroll.fan.data.EMP;
 
@@ -13,8 +16,12 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
+	private static Map<Integer, Double> reductionPercentByYear = new HashMap<Integer, Double>();
+	
+	private static Map<Integer, Double> reductionPercentByYear_it = new HashMap<Integer, Double>();
+	
 	static {
-		Map<Integer, Double> reductionPercentByYear = new HashMap<Integer, Double>();
+		reductionPercentByYear = new HashMap<Integer, Double>();
 		reductionPercentByYear.put(2012, 15.95);
 		reductionPercentByYear.put(2013, 16.40);
 		reductionPercentByYear.put(2014, 16.85);
@@ -36,7 +43,7 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 		reductionPercentByYear.put(2030, 23.12);
 		reductionPercentByYear.put(2031, 23.60);
 		
-		Map<Integer, Double> reductionPercentByYear_it = new HashMap<Integer, Double>();
+		reductionPercentByYear_it = new HashMap<Integer, Double>();
 		reductionPercentByYear_it.put(2012, 13.20);
 		reductionPercentByYear_it.put(2013, 13.65);
 		reductionPercentByYear_it.put(2014, 14.10);
@@ -60,6 +67,45 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 		
 	}
 
+	
+	/**
+	 *  29 Reducciones SEA. Contingencias comunes Sistema Especial Agrario 
+	 * @param salary
+	 * @param dat
+	 */
+	@Override
+	public void createEDLCd29Segment(Double cgcTotalEnterprise, Double cgcTotalEmployee, DAT dat) {
+		
+		Double ENTERPRISE_PERCENT = reductionPercentByYear.get(CommonUtil.getYear(new Date()));
+		Double EMPLOYEE_PERCENT = 4.7;
+		
+		// se obtiene la cuota de la reduccion obteniendo la diferencia entre 
+		// 1) la cuota calculada a partir de la base y el porcentaje correspondiente y  
+		// 2) la cuota ya calculada (la cual ya incluye la reduccion SEA).
+		
+		Double cgcBase = new Double(dat.getEdlSegment("BA01").getImporte()/100);
+		Double cgcPercent2015 = ENTERPRISE_PERCENT + EMPLOYEE_PERCENT;
+		Double rectifiedCgcAmount = cgcBase * cgcPercent2015 / 100;
+		Double cgcAmount = null; 
+		
+		cgcAmount = cgcTotalEnterprise;
+		cgcAmount += cgcTotalEmployee;
+		EDL edl = dat.getEdlSegment("CD29");
+		super.createEDLRecord(edl, "CD", 29, new Double(CommonUtil.round(rectifiedCgcAmount-cgcAmount)*100).intValue());
+	}
+
+	/**
+	 *  30 Reducciones. SEA Desempleo
+	 * @param salary
+	 * @param dat
+	 */
+	public void createEDLCd30Segment(DAT dat) {
+		// TODO
+//		if(bonus.getSalary().getContract().getRegimeType()==SSRegimeType.AGRICULTURAL){
+//			EDL edl = dat.getEdlSegment("CD30");
+//			createEDLRecord(edl, "CD", 30, new Double(CommonUtil.round((bonus).getAmount())*100).intValue());
+//		}
+	}
 	
 	/**
 	Fórmulas de cálculo y validación del Sistema Especial Agrario (0163)

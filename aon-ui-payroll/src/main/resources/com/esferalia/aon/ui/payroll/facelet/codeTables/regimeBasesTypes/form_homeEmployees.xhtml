@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+		
+	<aon:panel style="width: 750px; margin-top: 20px;">
+		<aon:panelGrid columns="3" styleClass="aon-width-all"
+			columnClasses="aon-panelGrid-even aon-text-center aon-nopadding aon-width-100,
+								aon-panelGrid-even aon-text-center aon-nopadding aon-width-auto,
+								aon-panelGrid-even aon-text-center aon-nopadding aon-width-100,
+								aon-panelGrid-even aon-text-center aon-nopadding aon-width-100">
+			<f:facet name="header">
+				<aon:outputText value="BASES DE COTIZACIÓN CONTINGENCIAS COMUNES" />
+			</f:facet>
+
+			<aon:div style="background-color:#f0f0f0;">
+				<aon:outputText value="&#160;" />
+				<br />
+				<aon:outputText value="Tramo" />
+				<br />
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<aon:div style="background-color:#f0f0f0;">
+				<aon:outputText value="Retribución mensual incrementada con la proporción de pagas extras" />
+				<br />
+				<aon:outputText value="(euros/mes)" />
+				<br />
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<aon:div style="background-color:#f0f0f0;">
+				<aon:outputText value="Base de cotización euros/mes" />
+			</aon:div>
+			
+			<aon:outputText value="1" />
+			<aon:div>
+				<aon:outputText value="Hasta " />
+				<aon:outputText value="#{quoteValues.values['1_AMOUNT_CGC_MIN_MES']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+			<aon:outputText value="#{quoteValues.values['1_BASE_CGC_MIN_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			
+			<aon:outputText value="2" />
+			<aon:div>
+				<aon:outputText value="Desde " />
+				<aon:outputText value="#{quoteValues.values['1_AMOUNT_CGC_MIN_MES']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:outputText value=" hasta " />
+				<aon:outputText value="#{quoteValues.values['2_AMOUNT_CGC_MIN_MES']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+			<aon:outputText value="#{quoteValues.values['2_BASE_CGC_MIN_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			
+			<aon:outputText value="3" />
+			<aon:div>
+				<aon:outputText value="Desde " />
+				<aon:outputText value="#{quoteValues.values['2_AMOUNT_CGC_MIN_MES']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:outputText value=" hasta " />
+				<aon:outputText value="#{quoteValues.values['3_AMOUNT_CGC_MIN_MES']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+			<aon:outputText value="#{quoteValues.values['3_BASE_CGC_MIN_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			
+			<aon:outputText value="4" />
+			<aon:div>
+				<aon:outputText value="Desde " />
+				<aon:outputText value="#{quoteValues.values['3_AMOUNT_CGC_MIN_MES']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:outputText value=" hasta " />
+				<aon:outputText value="#{quoteValues.values['4_AMOUNT_CGC_MIN_MES']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+			<aon:outputText value="#{quoteValues.values['4_BASE_CGC_MIN_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			
+			<aon:outputText value="5" />
+			<aon:div>
+				<aon:outputText value="Desde " />
+				<aon:outputText value="#{quoteValues.values['4_AMOUNT_CGC_MIN_MES']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:outputText value=" hasta " />
+				<aon:outputText value="#{quoteValues.values['5_AMOUNT_CGC_MIN_MES']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+			<aon:outputText value="#{quoteValues.values['5_BASE_CGC_MIN_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			
+			<aon:outputText value="6" />
+			<aon:div>
+				<aon:outputText value="Desde " />
+				<aon:outputText value="#{quoteValues.values['5_AMOUNT_CGC_MIN_MES']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:outputText value=" hasta " />
+				<aon:outputText value="#{quoteValues.values['6_AMOUNT_CGC_MIN_MES']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+			<aon:outputText value="#{quoteValues.values['6_BASE_CGC_MIN_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			
+			<aon:outputText value="7" />
+			<aon:div>
+				<aon:outputText value="Desde " />
+				<aon:outputText value="#{quoteValues.values['6_AMOUNT_CGC_MIN_MES']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:outputText value=" hasta " />
+				<aon:outputText value="#{quoteValues.values['7_AMOUNT_CGC_MIN_MES']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+			<aon:outputText value="#{quoteValues.values['7_BASE_CGC_MIN_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			
+			<aon:outputText value="8" />
+			<aon:div>
+				<aon:outputText value="Desde " />
+				<aon:outputText value="#{quoteValues.values['7_AMOUNT_CGC_MIN_MES']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+			<aon:outputText value="#{quoteValues.values['8_BASE_CGC_MIN_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			
+		</aon:panelGrid>
+	</aon:panel>
+	
+	<hr />
+		
+	<aon:panel style="width: 750px; margin-top: 20px;">
+		<aon:panelGrid columns="4" styleClass="aon-width-all"
+			columnClasses="aon-panelGrid-even aon-text-center aon-nopadding aon-width-auto,
+								aon-panelGrid-even aon-text-center aon-nopadding aon-width-120,
+								aon-panelGrid-even aon-text-center aon-nopadding aon-width-120,
+								aon-panelGrid-even aon-text-center aon-nopadding aon-width-120">
+			<f:facet name="header">
+				<aon:outputText value="TIPOS DE COTIZACIÓN (%)" />
+			</f:facet>
+
+			<aon:div style="background-color:#f0f0f0;">
+				<aon:outputText value="CONTINGENCIAS" />
+			</aon:div>
+			<aon:div style="background-color:#f0f0f0;">
+				<aon:outputText value="EMPLEADOR" />
+			</aon:div>
+			<aon:div style="background-color:#f0f0f0;">
+				<aon:outputText value="TRABAJADORES" />
+			</aon:div>
+			<aon:div style="background-color:#f0f0f0;">
+				<aon:outputText value="TOTAL" />
+			</aon:div>
+			
+			<aon:outputText value="Comunes" />
+			<aon:outputText value="#{quoteValues.values['PORCENTAJE_CGC_E']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['PORCENTAJE_CGC']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="#{quoteValues.values['PORCENTAJE_CGC'] + quoteValues.values['PORCENTAJE_CGC_E']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+		</aon:panelGrid>
+		
+		<aon:div style="width: 700px;">
+			<aon:div style="margin-top: 10px;">
+				<aon:outputText value="Contingencias profesionales (AT y EP), tarifa de primas disposición adicional cuarta Ley 42/2006, de 28 de diciembre, de Presupuestos Generales del Estado para 2007, en redacción dada por la disposición final décima novena de la Ley 22/2013, de 23 de diciembre, de Presupuestos Generales del Estado para 2014, (clave epígrafe 97) siendo la cuota resultante a cargo exclusivo del empleador. " />
+			</aon:div>
+		</aon:div>
+	</aon:panel>
+	
+	<hr />
+	
+	
+						
+</ui:composition>
