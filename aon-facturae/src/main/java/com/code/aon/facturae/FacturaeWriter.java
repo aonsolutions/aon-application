@@ -593,12 +593,10 @@ public class FacturaeWriter {
 		return tax;
 	}
 
-	private InvoiceLineType.TaxesOutputs.Tax getEmptyLineTax( InvoiceType invoiceType ) {
+	private InvoiceLineType.TaxesOutputs.Tax getEmptyLineTax() {
 		InvoiceLineType.TaxesOutputs.Tax tax = new InvoiceLineType.TaxesOutputs.Tax();
-		List<TaxOutputType> list = invoiceType.getTaxesOutputs().getTax();
-		TaxOutputType taxOutput = list.get(0);
-		tax.setTaxTypeCode( taxOutput.getTaxTypeCode() );
-		tax.setTaxRate( taxOutput.getTaxRate() );
+		tax.setTaxTypeCode( TaxTypeCode.IVA.getValue() );
+		tax.setTaxRate( 0.0 );
 		tax.setTaxableBase( Util.getAmount(0) );
 		tax.setTaxAmount( Util.getAmount(0) );
 		return tax;
@@ -616,7 +614,7 @@ public class FacturaeWriter {
 			}
 		}
 		if ( list.isEmpty() ) {
-			taxesOutputs.getTax().add( getEmptyLineTax(invoiceType) );
+			taxesOutputs.getTax().add( getEmptyLineTax() );
 		}
 		if (! taxesOutputs.getTax().isEmpty() ) {
 			invoiceLine.setTaxesOutputs( taxesOutputs );
@@ -761,6 +759,7 @@ public class FacturaeWriter {
 	    	if ( numberOfDecimals != DecimalUtil.DEFAULT_DECIMALS ) {
 	    		new DecimalUtil(numberOfDecimals).transform(facturae, realName);
 	    	}
+	    	HibernateUtil.getSession(sessionFactoryName).evict(_invoice);
 		} catch (Throwable t ) {
 		    try {
 				HibernateUtil.rollbackTransaction(sessionFactoryName);

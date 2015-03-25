@@ -112,8 +112,10 @@ public class InvoiceSignerController extends BasicController implements IFinance
 			Iterator<Integer> iter = getCheckedInvoices().iterator();
 			while(iter.hasNext()){
 				Integer id = iter.next();
+				Invoice invoice = null; 
 				try {
-					Invoice invoice = (Invoice) getManagerBean().get(id);
+					invoice = (Invoice) getManagerBean().get(id);
+					invoice.setUpdateEnabled(false);
 					IAttachment attachPDF = null;
 					IAttachment attachXML = null;
 					if (! invoice.isSigned() ) {
@@ -142,7 +144,7 @@ public class InvoiceSignerController extends BasicController implements IFinance
 						String msg =  "Unable to rollback transaction!";
 						LOGGER.error(msg, e);
 					}
-					String msg =  "Error recording invoice:  " + id;
+					String msg =  "Error recording invoice: " + ((invoice!=null)?invoice.getReferenceCode():id);
 					LOGGER.error(msg, e);
 					AonUtil.addErrorMessage(msg);
 					throw new AbortProcessingException(msg);
@@ -171,10 +173,12 @@ public class InvoiceSignerController extends BasicController implements IFinance
 			Iterator<Integer> iter = getCheckedInvoices().iterator();
 			while(iter.hasNext()){
 				Integer id = iter.next();
+				Invoice invoice = null;
 				try {
 					HibernateUtil.beginTransaction(sessionName);
 
-					Invoice invoice = (Invoice) getManagerBean().get(id);
+					invoice = (Invoice) getManagerBean().get(id);
+					invoice.setUpdateEnabled(false);
 					signer.cancelSign(invoice, true);
 
 					HibernateUtil.getSession(sessionName).flush();					
@@ -186,7 +190,7 @@ public class InvoiceSignerController extends BasicController implements IFinance
 						String msg =  "Unable to rollback transaction!";
 						LOGGER.error(msg, e);
 					}
-					String msg =  "Error recording invoice:  " + id;
+					String msg =  "Error recording invoice: " + ((invoice!=null)?invoice.getReferenceCode():id);
 					LOGGER.error(msg, e);
 					AonUtil.addErrorMessage(msg);
 					throw new AbortProcessingException(msg);

@@ -20,6 +20,7 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,7 +127,7 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 		for( ITransferObject to : getManagerBean().getList(getCriteria()) ) {
 			Invoice invoice = (Invoice) to;
 			IAttachment attach = controller.getInvoiceFacturae(invoice);
-			if ( attach != null ) {
+			if ( (attach != null) && (!ArrayUtils.isEmpty(attach.getData())) ) {
 				MimeType type = FACeUtil.isDefined(invoice) ? MimeType.MIME_XSIG : MimeType.MIME_XML;
 				String name = controller.getDescription(invoice) + "." + type.getExtension(); 
 	            zipOut.putNextEntry(new ZipEntry(name));
