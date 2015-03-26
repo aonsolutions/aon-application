@@ -23,11 +23,16 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 
 	public interface CalendarDraftListener {
 
-		void onValueChangeEvent(ValueChangeEvent<Date> event);
-
-		void onInsertHoliday();
+		void onValueChangeEvent(ValueChangeEvent<Date> event);	
 		
-		void onChangeEvent();
+		void onChangeEvent();	
+	}
+	
+	interface CalendarEvents {
+		
+		void onInsertHoliday();		
+		
+		void onUpdateHoliday();
 	}
 
 	class MyHolidayDraft  {
@@ -109,7 +114,9 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 	private Map<Date, String> insertsDraft;
 
 	private List<HolidayDraft> generalHolidays;
-	private List<CalendarDraftListener> listeners;
+	
+	private List<CalendarDraftListener> listeners;	
+	private List<CalendarEvents> calendarEvents;
 	
 	private Integer pattern = -50;
 	private Integer colors;
@@ -125,7 +132,7 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 		inserts = new LinkedList<MyHolidayDraft>();
 		insertsDraft = new HashMap<Date, String>();
 		listeners = new ArrayList<CalendarDraftListener>();
-
+		calendarEvents = new ArrayList<CalendarEvents>();
 		generalHolidays = new ArrayList<HolidayDraft>();
 	}
 
@@ -211,7 +218,6 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 
 					@Override
 					public void onSuccess(CalendarDraftObject result) {
-						CalendarDraftObjectData.this.colors = 0;
 						CalendarDraftObjectData.this.clearDrafts();
 						CalendarDraftObjectData.this.calendarDraftObject = result;
 						List<HolidayDraft> list = calendarDraftObject
@@ -221,9 +227,6 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 					}
 				});
 	}
-
-	
-	
 
 	public void saveHolidayDraft(Integer value, final AsyncCallback<Void> cb) {
 		
@@ -283,6 +286,8 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 	}
 
 	public void insertHolidays() {
+		
+		this.colors = 0;
 
 		ListIterator<HolidayDraft> holidaysIterator = getHolidaysListIterator();
 		while (holidaysIterator.hasPrevious()) {
@@ -340,9 +345,9 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 		draft.addHoliday(date, description);
 		
 		inserts.addAll(myDrafts);
-
-		for (CalendarDraftListener listener : listeners)
-			listener.onInsertHoliday();
+		
+		for(CalendarEvents event : calendarEvents)
+			event.onInsertHoliday();
 	}
 
 	private MyHolidayDraft initMyDrafts() {
@@ -388,9 +393,9 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 	public void addCalendarListener(CalendarDraftListener listener) {
 		listeners.add(listener);
 	}
-
-	public void removeCalendarListener(CalendarDraftListener listener) {
-		listeners.remove(listener);
+	
+	public void addCalendarEvent(CalendarEvents event) {
+		calendarEvents.add(event);
 	}
 
 	@Override
@@ -401,7 +406,10 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 	
 	@Override
 	public void onSuprPressEvent(Date date) {
-		
+		deleteHoliday(date);
+	}
+	
+	public void deleteHoliday(Date date) {
 		if(insertsDraft.containsKey(date)) 
 			deleteFromInsertDraft(date, insertsDraft.get(date));
 		
@@ -410,6 +418,7 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 			if (map.containsKey(date))
 				deleteDateSelected(date, map.get(date));
 		}
+
 	}
 	
 	private void deleteFromInsertDraft(Date date, String description) {
@@ -421,6 +430,7 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 		
 		for(CalendarDraftListener listener : listeners)
 			listener.onChangeEvent();
+			
 	}
 
 		
@@ -441,15 +451,24 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 
 				@Override
 				public void onSuccess(Void result) {
+					
 					for (CalendarDraftListener listener : listeners)
 						listener.onChangeEvent();
 				}
 			});
 		}
 	}
+	
+	public boolean canDeleteMyHoliday(Date date) {
+		
+		if (!myDrafts.isEmpty())
+			return myDrafts.get(myDrafts.size() - 1).getGeneralMap().containsKey(date);
+		
+		return false;
+	}
 
 	public boolean insertIsEmpy() {
-		return inserts.isEmpty();
+		return insertsDraft.isEmpty();
 	}
 	
 	private boolean conteinsId(Integer id) {

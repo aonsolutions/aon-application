@@ -107,6 +107,12 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-icon-delete")
 	String aonIconDelete();
 
+	@ClassName("aon-icon-previous")
+	String aonIconPrevious();
+
+	@ClassName("aon-icon-next")
+	String aonIconNext();
+
 	@ClassName("aon-icon-reset")
 	String aonIconReset();
 

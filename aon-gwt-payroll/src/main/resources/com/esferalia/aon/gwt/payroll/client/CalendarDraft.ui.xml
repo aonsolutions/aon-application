@@ -9,9 +9,12 @@
 		padding: 4px 0 4px 8px;
 	}
 	
-	.buttons {
-		background: transparent;
-		width: 9px;
+	.optionButtons {
+		width: 30px;
+		height: 25px;
+		cursor: pointer;
+		
+		border: none;
 	}
 	
 	.year {
@@ -112,7 +115,7 @@
 							</g:MenuBar>
 						</g:MenuItem>
 					</g:MenuBar>
-					<!--g:FlowPanel styleName="aon-finding-title-toolbar" -->
+
 					<g:FlowPanel styleName="gwt-MenuBar-horizontal">
 						<g:HorizontalPanel>
 							<g:HTMLPanel styleName="aon-finding-title">
@@ -120,12 +123,6 @@
 									<g:Label styleName="aon-outputText">Calendario Laboral</g:Label>
 								</g:HTMLPanel>
 							</g:HTMLPanel>
-
-							<!--g:HTMLPanel styleName="aon-finding-subtitle">
-								<g:HTMLPanel styleName="aon-finding-subtitle-internal">
-									<g:ListBox ui:field="yearList" />
-								</g:HTMLPanel>
-							</g:HTMLPanel -->
 
 							<g:HTMLPanel styleName="aon-finding-subtitle">
 								<g:HTMLPanel styleName="aon-finding-subtitle-internal">
@@ -136,12 +133,13 @@
 
 							<g:HorizontalPanel styleName="aon-finding-toolbar">
 								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+									<g:Button ui:field='deleteButton'
+										styleName='aon-finding-toolbar-item aon-icon-delete' text="Eliminar" visible="false" />
 									<g:Button ui:field='addEvent'
 										styleName='aon-finding-toolbar-item aon-icon-task' text="Añadir Festivo" />
 									<g:Button ui:field='saveButton'
 										styleName='aon-finding-toolbar-item aon-icon-save' text="Guardar"
 										enabled="false" />
-
 								</g:HTMLPanel>
 							</g:HorizontalPanel>
 						</g:HorizontalPanel>
@@ -158,13 +156,15 @@
 					<g:Grid>
 						<g:row>
 							<g:customCell>
-								<g:Label styleName="{style.year}" ui:field="yearLabel" />  
+								<g:Label styleName="{style.year}" ui:field="yearLabel" />
 							</g:customCell>
 							<g:customCell>
-								<g:Button styleName="{style.buttons}" text="&lt;" ui:field="lastYearButton"/>
+								<g:Button styleName="{style.optionButtons} aon-icon-previous" 
+									ui:field="lastYearButton" />
 							</g:customCell>
 							<g:customCell>
-								<g:Button styleName="{style.buttons}" text="&gt;" ui:field="nextYearButton"/>
+								<g:Button styleName="{style.optionButtons} aon-icon-next"
+									ui:field="nextYearButton" />
 							</g:customCell>
 						</g:row>
 					</g:Grid>

@@ -9,6 +9,10 @@
 	cursor: default;
 }
 
+.aonCalendar .datePickerDayIsValue {
+	 background: none repeat scroll 0 0 #E6E6E6 !important;
+}
+
 .aonCalendar .datePickerPreviousButton {
 	visibility: hidden;
 }
