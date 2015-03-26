@@ -308,6 +308,17 @@
 	gwt-image: "aonIconDelete";
 }
 
+@sprite .aon-icon-previous {
+	width: auto;
+	gwt-image: "aonIconPrevious";
+}
+
+@sprite .aon-icon-next {
+	width: auto;
+	gwt-image: "aonIconNext";
+}
+
+
 @sprite .aon-icon-reset {
 	width: auto;
 	gwt-image: "aonIconReset";

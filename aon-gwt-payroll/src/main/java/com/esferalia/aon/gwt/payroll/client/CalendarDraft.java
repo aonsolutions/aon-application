@@ -11,6 +11,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.esferalia.aon.calendar.Calendar;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.payroll.client.CalendarDraftObjectData.MyHolidayDraft;
 import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
@@ -84,6 +85,26 @@ public class CalendarDraft extends Composite implements
 
 	interface CalendarDraftUiBinder extends UiBinder<Widget, CalendarDraft> {
 	}
+	
+	class EnableButtons implements CalendarDraftObjectData.CalendarEvents {
+		
+		private CalendarDraftObjectData calendarDraftObjectData;
+		
+		public EnableButtons(CalendarDraftObjectData calendarDraftObjectData) {
+			this.calendarDraftObjectData = calendarDraftObjectData;
+			this.calendarDraftObjectData.addCalendarEvent(this);
+		}
+
+		@Override
+		public void onInsertHoliday() {
+			setEnableSaveButton();
+		}
+
+		@Override
+		public void onUpdateHoliday() {
+			setEnableSaveButton();			
+		}
+	}
 
 	@UiField
 	ListBox holidayList;
@@ -98,6 +119,8 @@ public class CalendarDraft extends Composite implements
 	@UiField
 	VerticalPanel legendVerticalPanel;
 	@UiField
+	Button deleteButton;
+	@UiField
 	Button addEvent;
 	@UiField
 	Button saveButton;
@@ -111,6 +134,7 @@ public class CalendarDraft extends Composite implements
 	private Date datePickerDateSelected;
 	private Integer nameValueListBoxSelected;
 
+	private EnableButtons enableButtons;
 	private CalendarDraftObjectData calendarDraftObjectData;
 
 	public CalendarDraft() {
@@ -127,7 +151,6 @@ public class CalendarDraft extends Composite implements
 				.setPosition(Position.STATIC);
 
 		yearLabel.setText(String.valueOf(getYear(new Date())));
-
 	}
 
 	@UiHandler("holidayList")
@@ -168,6 +191,12 @@ public class CalendarDraft extends Composite implements
 		filterDialog.center();
 		filterDialog.show();
 		filterDialog.setFocusOnNameTextBox(true);
+	}
+	
+	@UiHandler("deleteButton")
+	void onClickDeleteButton(ClickEvent event) {
+		calendarDraftObjectData.deleteHoliday(getDateSelected());
+		deleteButton.setVisible(false);
 	}
 
 	@UiHandler("saveButton")
@@ -238,8 +267,7 @@ public class CalendarDraft extends Composite implements
 						}
 
 						@Override
-						public void onSuccess(Void result) {
-							saveButton.setEnabled(false);
+						public void onSuccess(Void result) {							
 							loadCalendarPanelWithYearChange(null,
 									Integer.parseInt(yearLabel.getText()),
 									calendarDraftObjectData);
@@ -250,23 +278,22 @@ public class CalendarDraft extends Composite implements
 					Integer.parseInt(yearLabel.getText()),
 					calendarDraftObjectData);
 	}
+	
+	private void setEnableSaveButton() {
+		saveButton.setEnabled(!calendarDraftObjectData.insertIsEmpy());
+	}
 
 	// --------------------------------------------- Listeners
 
 	@Override
 	public void onValueChangeEvent(ValueChangeEvent<Date> event) {
 		this.datePickerDateSelected = event.getValue();
-	}
-
-	@Override
-	public void onInsertHoliday() {
-		saveButton.setEnabled(!calendarDraftObjectData.insertIsEmpy());
+		deleteButton.setVisible(calendarDraftObjectData.canDeleteMyHoliday(event.getValue()));
 	}
 	
 	@Override
-	public void onChangeEvent() {
-		
-		loadCalendarPanel(null, Integer.parseInt(yearLabel.getText()), calendarDraftObjectData);
+	public void onChangeEvent() {		
+		initOnSuccess(calendarDraftObjectData);
 	}
 
 	// --------------------------------------------- ---------
@@ -284,6 +311,7 @@ public class CalendarDraft extends Composite implements
 
 					@Override
 					public void onSuccess(Map<Integer, String> map) {
+						
 						CalendarDraft.this.holidayList.addItem("-", "-50");
 
 						Map<Integer, String> sortedMap = sortedByComparator(map);
@@ -318,16 +346,11 @@ public class CalendarDraft extends Composite implements
 
 					@Override
 					public void onSuccess(CalendarDraftObjectData result) {
-						CalendarDraft.this.calendarPanel.clear();
+						CalendarDraft.this.enableButtons = new EnableButtons(result);
 						CalendarDraft.this.calendarDraftObjectData = result;
-						CalendarDraft.this.calendarPanel.add(result
-								.getCalendar());
 						CalendarDraft.this.calendarDraftObjectData
-								.addCalendarListener(CalendarDraft.this);
-						CalendarDraft.this.calendarDraftObjectData
-								.insertHolidays();
-						CalendarDraft.this.getItemLoadIndex();
-						CalendarDraft.this.initializeLegendPanel();
+							.addCalendarListener(CalendarDraft.this);
+						initOnSuccess(result);
 					}
 				});
 	}
@@ -345,20 +368,27 @@ public class CalendarDraft extends Composite implements
 
 					@Override
 					public void onSuccess(CalendarDraftObjectData result) {
-						CalendarDraft.this.calendarPanel.clear();
+						CalendarDraft.this.enableButtons = new EnableButtons(result);
 						CalendarDraft.this.calendarDraftObjectData = result;
-						CalendarDraft.this.calendarPanel.add(result
-								.getCalendar());
-						CalendarDraft.this.calendarDraftObjectData
-								.addCalendarListener(CalendarDraft.this);
-						CalendarDraft.this.calendarDraftObjectData
-								.insertHolidays();
-						CalendarDraft.this.getItemLoadIndex();
-						CalendarDraft.this.initializeLegendPanel();
+						CalendarDraft.this.calendarDraftObjectData.addCalendarListener(CalendarDraft.this);
+						initOnSuccess(result);
 					}
 				});
 	}
-
+	
+	protected void initOnSuccess(CalendarDraftObjectData result) {
+		
+		CalendarDraft.this.calendarPanel.clear();
+		CalendarDraft.this.calendarDraftObjectData = result;
+		CalendarDraft.this.calendarPanel.add(result
+				.getCalendar());
+		CalendarDraft.this.calendarDraftObjectData
+				.insertHolidays();
+		CalendarDraft.this.getItemLoadIndex();
+		CalendarDraft.this.initializeLegendPanel();
+		
+	}
+ 
 	private void getItemLoadIndex() {
 		nameValueListBoxSelected = calendarDraftObjectData
 				.getHolidayDescription();

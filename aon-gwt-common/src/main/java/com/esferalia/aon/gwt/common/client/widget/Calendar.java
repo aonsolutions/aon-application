@@ -32,7 +32,7 @@ import com.google.gwt.user.datepicker.client.DefaultCalendarView;
 import com.google.gwt.user.datepicker.client.MonthSelector;
 
 public class Calendar extends ResizeComposite implements
-		ValueChangeHandler<Date>, KeyDownHandler  {
+		ValueChangeHandler<Date>, KeyDownHandler {
 
 	public interface Listener {
 
@@ -96,19 +96,23 @@ public class Calendar extends ResizeComposite implements
 		int col = 0;
 		Date date = CalendarUtil.copyDate(firstDate);
 		CalendarUtil.setToFirstDayOfMonth(date);
+		
+		CustomDatePicker datePicker = null;
 
 		while (lastDate.after(date)) {
 			if (col == 0)
 				table.insertRow(row);
-			table.insertCell(row, col);
-
-			final CustomDatePicker datePicker = new CustomDatePicker();
+			table.insertCell(row, col);	
+			
+			datePicker = new CustomDatePicker();
+			
 			datePicker.getStyleOfDate(date);
 			datePicker.setVisibleYearCount(1);
 			datePicker.setCurrentMonth(date);
 			datePicker.setYearAndMonthDropdownVisible(false);
 			datePicker.setYearArrowsVisible(false);
 			datePicker.addValueChangeHandler(this);
+			
 			datePicker.addKeyDownHandler(this);
 			datePicker.sinkEvents(Event.ONKEYDOWN);
 			table.setWidget(row, col, datePicker);
@@ -123,7 +127,7 @@ public class Calendar extends ResizeComposite implements
 	}
 
 	private void setStyle(String style, Date date) {
-		Iterator<Widget> iterator = ((HasWidgets) table).iterator();
+		Iterator<Widget> iterator = getTableIterator();
 		
 		while (iterator.hasNext()) {
 			Widget widget = iterator.next();
@@ -145,6 +149,10 @@ public class Calendar extends ResizeComposite implements
 				&& DateUtils.isAfterOrEquals(date, first);
 	}
 	
+	private Iterator<Widget> getTableIterator() {
+		return ((HasWidgets) table).iterator();
+	}
+	
 	private Date getDateSelected() {
 		return this.dateSelected;
 	}
@@ -152,11 +160,12 @@ public class Calendar extends ResizeComposite implements
 	@Override
 	public void onValueChange(ValueChangeEvent<Date> event) {
 		
-		this.dateSelected = event.getValue();
+		this.dateSelected = event.getValue();		
 		
 		for (Listener listener : listeners)
 			listener.onValueChangeEvent(event);
 	}
+
 
 	@Override
 	public void onKeyDown(KeyDownEvent event) {
@@ -167,7 +176,6 @@ public class Calendar extends ResizeComposite implements
 			for(Listener listener : listeners)
 				listener.onSuprPressEvent(getDateSelected());
 		}
-		
 	}
 
 	// -------------------------------------------------------------------------

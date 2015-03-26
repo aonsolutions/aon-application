@@ -94,7 +94,7 @@ public class Employees extends ResizeComposite implements
 
 		void onCostsSelected(CostDocuments docs);
 
-		void onCalendarSelected(CalendarDraftObjectData calendar);
+		void onCalendarSelected(CalendarDraftObjectData calendar);	
 
 		void onIrpfsSelected(IrpfDocuments docs);
 
@@ -1257,7 +1257,7 @@ public class Employees extends ResizeComposite implements
 
 			addImageItem(employeeItem, "N\u00F3minas", images.salaries());
 			
-			addImageItem(employeeItem, "Calendario", images.calendar());
+			//addImageItem(employeeItem, "Calendario", images.laboralCalendar());
 
 			if (extended) {
 
