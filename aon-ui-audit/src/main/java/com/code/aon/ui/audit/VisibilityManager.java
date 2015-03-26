@@ -4,8 +4,10 @@ import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +26,9 @@ public class VisibilityManager extends BasicVisibilityManager {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(VisibilityManager.class);
+	
+	private final static Module[] AON_ONE_MODULES =
+		{Module.AON_ONE, Module.DOCUMENT, Module.ACCOUNTING};
 		
 	private boolean hasModule( Integer domainId, Module module ) {
 		boolean defined = false;
@@ -55,12 +60,11 @@ public class VisibilityManager extends BasicVisibilityManager {
 		Set<Module> domainModules = getEnabledModuleList(domainId);
 		boolean addConfiguration = true;
 		if ( domainModules.contains(Module.AON_ONE) ) {
-			boolean addDocumental = domainModules.contains(Module.DOCUMENT);
-			domainModules.clear();
-			domainModules.add(Module.AON_ONE);
-			if ( addDocumental ) {
-				domainModules.add(Module.DOCUMENT);
-			}
+			for (Iterator<Module> iterator = domainModules.iterator(); iterator.hasNext();) {
+			    if (! ArrayUtils.contains(AON_ONE_MODULES, iterator.next()) ) {
+			        iterator.remove();
+			    }
+			}						
 			addConfiguration = userOfParentDomain;
 		}
 		enabledModules.addAll( domainModules );
@@ -102,16 +106,6 @@ public class VisibilityManager extends BasicVisibilityManager {
 			}
 		}
 		return enabledModules;		
-	}
-
-	@Override
-	public boolean isRenderDocumentModule() {
-		return true;
-	}
-
-	@Override
-	public boolean isRenderAccountingModule() {
-		return true;
 	}
 
 	@Override

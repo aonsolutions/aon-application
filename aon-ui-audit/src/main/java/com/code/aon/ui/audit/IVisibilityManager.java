@@ -12,10 +12,6 @@ import com.code.aon.config.User;
 
 public interface IVisibilityManager {
 	
-	boolean isRenderAccountingModule();
-	
-	boolean isRenderDocumentModule();
-	
 	boolean isRenderPayrollConfig();
 	
 	boolean isDeniedModule( String name );
