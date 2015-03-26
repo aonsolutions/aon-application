@@ -135,15 +135,7 @@
 												actionListener="#{product.onEditSearch}"
 												value="#{bundle.aon_role_product}" />
 										</aon:div>
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="template-configuration"
-												action="gwt_templates" 
-												title="#{bundle.aon_templates}">
-												<aon:outputText styleClass="aon-icon-new-text"
-													style="margin-left: 5px; padding-left: 20px;" 
-													value="#{bundle.aon_templates}" />
-											</aon:commandLink>
-										</aon:div>
+										
 									</aon:if>
 									<aon:if
 										test="#{aonRole.productOperator or aonRole.purchaseOperator}">

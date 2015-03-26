@@ -44,6 +44,15 @@
 											actionListener="#{salesImporter.onInitAmazonItemReturn}"
 											value="#{bundle.sales_amazon_sales_return_integration}"/>
 									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="template-configuration"
+												action="gwt_templates" 
+												title="#{bundle.aon_templates}">
+												<aon:outputText styleClass="aon-icon-new-text"
+													style="margin-left: 5px; padding-left: 20px;" 
+													value="#{bundle.aon_templates}" />
+											</aon:commandLink>
+									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
 						</aon:if>					
