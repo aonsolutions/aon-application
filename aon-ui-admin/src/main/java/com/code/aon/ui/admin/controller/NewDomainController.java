@@ -451,15 +451,20 @@ public class NewDomainController implements Serializable {
 		}
 	}		
 	
-	private void addCompany( Domain domain ) throws ManagerBeanException {
-		Company company = new Company();
-		company.setActive(true);
-		company.setDomain(domain.getId());
-		company.setDocumentType(DocumentType.CIF);
-		company.setName( domain.getDescription() );
-		company.setAlias( StringUtils.upperCase( StringUtils.substringBefore(domain.getName(), ".")) );
-		BeanManager.getManagerBean(Company.class).insert(company);
-		CompanyController.addEnterprise(company);
+	private void addCompany( Domain domain ) {
+		try {
+			Company company = new Company();
+			company.setActive(true);
+			company.setDomain(domain.getId());
+			company.setDocumentType(DocumentType.CIF);
+			company.setName( StringUtils.left(domain.getDescription(), 64) );
+			String alias = StringUtils.upperCase( StringUtils.substringBefore(domain.getName(), "."));
+			company.setAlias( StringUtils.left(alias, 32) );
+			BeanManager.getManagerBean(Company.class).insert(company);
+			CompanyController.addEnterprise(company);			
+		} catch ( ManagerBeanException e ) {
+			LOGGER.error( "Error creating company for " + domain, e );
+		}
 	}
 	
 	public boolean isActiveExpirationDate() {
