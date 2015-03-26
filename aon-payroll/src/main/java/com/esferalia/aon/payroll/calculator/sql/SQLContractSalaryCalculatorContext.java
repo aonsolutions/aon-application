@@ -394,11 +394,11 @@ public class SQLContractSalaryCalculatorContext extends
 
 	}
 
-	public static class CCCContextKey  {
-		
+	public static class CCCContextKey {
+
 		private CCCType cccType;
 		private SSRegimeType ssRegime;
-		
+
 		public CCCContextKey(CCCType cccType, SSRegimeType ssRegime) {
 			this.cccType = cccType;
 			this.ssRegime = ssRegime;
@@ -490,18 +490,9 @@ public class SQLContractSalaryCalculatorContext extends
 								dailyRegBase, exprCtx);
 					}
 
-					if (dailyRegBase != null) {
-						exprCtx.putVariable(ContextVariable.REGULATORY_BASE,
-								new TimedObject<Double>(dailyRegBase,
-										leaveStart, leaveEnd));
-					} else {
-						ExpressionImpl exp = new ExpressionImpl();
-						exp.setName(ContextVariable.REGULATORY_BASE.getName());
-						exp.setExpression(String.format("SELF.%s)",
-								ContextVariable.IT_START));
-						exprCtx.addLazyExpression(exp, leaveStart, leaveEnd);
-					}
-
+					exprCtx.putVariable(ContextVariable.REGULATORY_BASE,
+							new TimedObject<Double>(0.00, guarenteeStart,
+									guarenteeEnd));
 					type.accept(new LeaveTypeVisitor<Void>() {
 
 						@Override
@@ -1755,8 +1746,8 @@ public class SQLContractSalaryCalculatorContext extends
 
 		Date startDate = getFirstDayOfMonth(date);
 		Date endDate = getLastDayOfMonth(date);
+		/*
 		try {
-
 			ctx = new SQLNoItContractSalaryCalculatorContext(connection,
 					startDate, endDate, endDate, contractCriteria, 0,
 					Integer.MAX_VALUE - 1);
@@ -1768,7 +1759,8 @@ public class SQLContractSalaryCalculatorContext extends
 
 		} catch (SQLException ex) {
 			throw new ExpressionExceptionWrapper(new ExpressionException());
-		}
+		}*/
+		return getNoItCalculatorContext(connection, startDate, endDate, endDate, contractCriteria, 0, Integer.MAX_VALUE - 1);
 	}
 
 	public Object gross(double gross, Date start, Date end)
@@ -2003,11 +1995,19 @@ public class SQLContractSalaryCalculatorContext extends
 								startDate, endDate, issueDate, criteria, start,
 								end) {
 
-							public Object liquid(double liquid)
-									throws ExpressionException, SQLException,
-									SalaryException {
+							@Override
+							public Object liquid(double liquid, Date start, Date end)
+									throws ExpressionException, SQLException {
 								return x;
 							};
+
+							@Override
+							public Object gross(double gross, Date start, Date end)
+									throws ExpressionException, SQLException,
+									SalaryException {
+								throw new InterruptedException(
+										String.format("Lo sentimos. La funci\u00F3n NETO es incompatible con la funci\u00F3n BRUTO. Elija una de las dos. :-("));
+							}
 						};
 						ctx.next();
 						return ctx;
@@ -2124,11 +2124,19 @@ public class SQLContractSalaryCalculatorContext extends
 								startDate, endDate, issueDate, criteria, start,
 								end) {
 
+							@Override
+							public Object gross(double gross, Date start, Date end)
+									throws ExpressionException, SQLException {
+								return x;
+							}
+
 							public Object liquid(double liquid)
 									throws ExpressionException, SQLException,
 									SalaryException {
-								return x;
+								throw new InterruptedException(
+										String.format("Lo sentimos. La funci\u00F3n BRUTO es incompatible con la funci\u00F3n NETO. Elija una de las dos. :-("));
 							};
+
 						};
 						ctx.next();
 						return ctx;
@@ -2504,7 +2512,13 @@ public class SQLContractSalaryCalculatorContext extends
 				.collect(Collectors.summingDouble(s -> s
 						.getCommonContingenciesBase()
 						/ (s.getSalaryDays()
-								* ifnull(s.getContextData( MONTH_DAYS.getName(),summingDouble(Double::parseDouble)),(double)getMax(s.getStartDate(), DAY_OF_MONTH)) / getMax(s.getStartDate(), DAY_OF_MONTH))));
+								* ifnull(
+										s.getContextData(
+												MONTH_DAYS.getName(),
+												summingDouble(Double::parseDouble)),
+										(double) getMax(s.getStartDate(),
+												DAY_OF_MONTH)) / getMax(
+									s.getStartDate(), DAY_OF_MONTH))));
 		salaries.close();
 		if (br > 0.00)
 			return br;
@@ -3158,8 +3172,7 @@ public class SQLContractSalaryCalculatorContext extends
 
 				};
 				ctx.putVariable(WORKED_DAYS, workedDays);
-			}
-			else {
+			} else {
 			}
 			if (!containsVariable(QUOTE_DAYS, period)) {
 				ITimedVariable<Double> quoteDays = new ITimedVariable<Double>() {
