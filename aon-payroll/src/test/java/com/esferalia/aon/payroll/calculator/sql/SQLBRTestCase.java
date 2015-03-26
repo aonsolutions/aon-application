@@ -7,10 +7,12 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.BR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_START;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
+import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
 import static java.lang.String.format;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
@@ -41,6 +43,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.watson.util.AonDateUtils;
 
 public class SQLBRTestCase extends AbstractSQLTestCase {
 
@@ -230,6 +233,145 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(format("%s :", CGC_BASE),
 				(1750.00 * 1.10) * (1 + 1.00 / 12 + 1.00 / 12),
 				salary.getCommonBase(), DELTA);
+	}
+
+	@Test
+	public void testCommonDiseaseITII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.DECEMBER;
+						this.start = "01/12";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, });
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				format("BRUTO(2000 * %s / %s)", ContextVariable.WORKED_DAYS , ContextVariable.MONTH_DAYS )}, 
+				new String[] {
+				"BASE_CGC * 0.10", 
+				"BASE_CGP * 0.05",
+				"BASE_IRPF * 0.00/100" }, category);
+		addPayment(aonContext, contract,
+				"0.00 ", 
+				"DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA");
+		//@formatter:on
+
+		Date startITDate = getToday();
+		int itDays = (int) ( Math.random() * (getMax(startITDate, DAY_OF_MONTH) - get(startITDate, DAY_OF_MONTH) +1 )); 
+		Date endITDate = addDays(startITDate,itDays-1);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				endITDate, null);
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+
+		ISalary salary = calculator.calculate(ctx);
+
+		int monthDays = get(endDate, DAY_OF_MONTH);
+		Assert.assertEquals(format("%s :", TOTAL_PAYMENT)
+				,2000.00 * ( monthDays -itDays )/ monthDays,
+				salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(format("%s :", CGC_BASE),
+				2000.00,
+				salary.getCommonBase(), DELTA);
+		
+		
+	}
+
+	public void testCommonDiseaseITIV() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.DECEMBER;
+						this.start = "01/12";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, });
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				format("NETO(2000 * %s / %s)", ContextVariable.WORKED_DAYS , ContextVariable.MONTH_DAYS )}, 
+				new String[] {
+				"BASE_CGC * 0.00", 
+				"BASE_CGP * 0.00",
+				"BASE_IRPF * 0.00/100" }, category);
+		addPayment(aonContext, contract,
+				"0.00 ", 
+				"DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA");
+		//@formatter:on
+
+		Date startITDate = getToday();
+		int itDays = (int) ( Math.random() * (getMax(startITDate, DAY_OF_MONTH) - get(startITDate, DAY_OF_MONTH) +1 )); 
+		Date endITDate = addDays(startITDate,itDays-1);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				endITDate, null);
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+
+		ISalary salary = calculator.calculate(ctx);
+
+		int monthDays = get(endDate, DAY_OF_MONTH);
+		Assert.assertEquals(format("%s :", TOTAL_LIQUID)
+				,2000.00 * ( monthDays -itDays )/ monthDays,
+				salary.getTotalLiquid(), DELTA);
+		Assert.assertEquals(format("%s :", CGC_BASE),
+				2000.00,
+				salary.getCommonBase(), DELTA);
+		
+		
 	}
 
 	// ------------------------------------------------------------------------
