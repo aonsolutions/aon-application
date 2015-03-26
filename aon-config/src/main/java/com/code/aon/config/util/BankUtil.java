@@ -22,6 +22,8 @@ public class BankUtil {
 					" AND registry NOT IN (SELECT id FROM Company)" +
 					" AND (bank_account = '" + bac.getBankAccount().getIban() + "'" +
 					" OR bank_account LIKE '" + bac.getBankAccount().getCountry().getValue() + "__" + bac.getBankAccount().getBankCode() + "%')" +
+					" AND alias IS NOT NULL AND alias != ''" +
+					" AND bic IS NOT NULL AND bic != ''" +
 					" ORDER BY 3, id DESC";
 
 			Query query = session.createQuery(hqlQuery);
