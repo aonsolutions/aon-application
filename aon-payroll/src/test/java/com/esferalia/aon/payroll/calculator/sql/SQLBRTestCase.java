@@ -274,7 +274,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 
 		Date startITDate = getToday();
 		int itDays = (int) ( Math.random() * (getMax(startITDate, DAY_OF_MONTH) - get(startITDate, DAY_OF_MONTH) +1 )); 
-		Date endITDate = addDays(startITDate,itDays-1);
+		Date endITDate = addDays(startITDate,Math.max(0,itDays-1));
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
 				endITDate, null);
 
