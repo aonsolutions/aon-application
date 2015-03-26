@@ -1,19 +1,26 @@
 package com.esferalia.aon.gwt.template.server;
 
 import com.code.aon.config.Series;
+import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class StockInfo implements IsSerializable{
 	
 	String product;
-	Series series;
-	Warehouse sourceWarehouse;
-	Warehouse targetWarehouse;
+	Integer productId;
+	//Series series;
+	//Warehouse sourceWarehouse;
+	//Warehouse targetWarehouse;
 	String detail;
 	String detail2;
 	String detail3;
-	String comments;
+	//String comments;
 	Double quantity;
+	Integer row;
+	Integer itemId;
+	Integer domainId;
+	Integer transferId;
+	Double quantityDifference;
 	
 	public String getProduct() {
 		return product;
@@ -45,30 +52,42 @@ public class StockInfo implements IsSerializable{
 	public void setQuantity(Double quantity) {
 		this.quantity = quantity;
 	}
-	public Warehouse getSourceWarehouse() {
-		return sourceWarehouse;
+	public Integer getProductId() {
+		return productId;
 	}
-	public void setSourceWarehouse(Warehouse sourceWarehouse) {
-		this.sourceWarehouse = sourceWarehouse;
+	public void setProductId(Integer productId) {
+		this.productId = productId;
 	}
-	public Warehouse getTargetWarehouse() {
-		return targetWarehouse;
+	public Integer getRow() {
+		return row;
 	}
-	public void setTargetWarehouse(Warehouse targetWarehouse) {
-		this.targetWarehouse = targetWarehouse;
+	public void setRow(Integer row) {
+		this.row = row;
 	}
-	public Series getSeries() {
-		return series;
+	public Integer getItemId() {
+		return itemId;
 	}
-	public void setSeries(Series series) {
-		this.series = series;
+	public void setItemId(Integer itemId) {
+		this.itemId = itemId;
 	}
-	public String getComments() {
-		return comments;
+	public Integer getDomainId() {
+		return domainId;
 	}
-	public void setComments(String comments) {
-		this.comments = comments;
+	public void setDomainId(Integer domainId) {
+		this.domainId = domainId;
+	}
+	public Integer getTransferId() {
+		return transferId;
+	}
+	public void setTransferId(Integer transferId) {
+		this.transferId = transferId;
+	}
+	public Double getQuantityDifference() {
+		return quantityDifference;
+	}
+	public void setQuantityDifference(Double quantityDifference) {
+		this.quantityDifference = quantityDifference;
 	}
 	
-
+	
 }

@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.template.shared.Dialog;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
+import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -30,6 +31,7 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FormHandler;
@@ -63,10 +65,14 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	TemplateInfo ti;
 	Dialog d;
 	TemplateList tlist;
+	Vector<Warehouse> w;
+	Vector<String> series;
 	
 	public TemplatesDialog(Dialog dialog) {
 		setCaption(dialog.getTitle());
 		if(dialog.getTemplateList()!= null) tlist = dialog.getTemplateList();
+		if(dialog.getWarehouses() != null) w = dialog.getWarehouses();
+		if(dialog.getSeries() != null) series = dialog.getSeries();
 		label = new Label();
 		flex_table = new FlexTable();
 		vp = new VerticalPanel();
@@ -82,16 +88,18 @@ public abstract class TemplatesDialog extends CustomDialogB {
 			Dialog dialog = d;
 			@Override
 			public void onClick(ClickEvent event) {
-				if(stockCheck() || productCheck() || dialog.getType().equals("delete") || dialog.getType().contains("import") 
-						|| dialog.getType().contains("export"))
+
+				if(stockCheck(dialog) || productCheck(dialog) || dialog.getType().equals("delete") || dialog.getType().contains("import") 
+						|| dialog.getType().contains("export")){
 					onAccept();
+				}
 				else {
 					label.setText("*Faltan columnas por a\u00f1adir");
 					label.setStyleName("aon-check-template");
 				}
 			}
 		});
-
+		
 		cancel_button.setText(dialog.getCancel());
 		cancel_button.setVisible(dialog.getBoolCancel());
 		cancel_button.addClickHandler(new ClickHandler() {
@@ -167,17 +175,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setWidget(0, 0, new Label("Plantilla"));
 		flex_table.setWidget(0, 1, lb);
 		
-		for (int i = 0; i < flex_table.getRowCount(); i++) {
-			for (int j = 0; j < flex_table.getCellCount(i); j++) {
-				if ((j % 2) == 0) {
-					flex_table.getCellFormatter().setStyleName(i, j,
-							"aon-panelGrid-odd");
-				} else {
-					flex_table.getCellFormatter().setStyleName(i, j,
-							"aon-panelGrid-even");
-				}
-			}
-		}
+		flexTableCss();
 	}
 	
 	private void exportStock(TemplateList templates){
@@ -196,17 +194,15 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setWidget(0, 0, new Label("Plantilla"));
 		flex_table.setWidget(0, 1, lb);
 		
-		for (int i = 0; i < flex_table.getRowCount(); i++) {
-			for (int j = 0; j < flex_table.getCellCount(i); j++) {
-				if ((j % 2) == 0) {
-					flex_table.getCellFormatter().setStyleName(i, j,
-							"aon-panelGrid-odd");
-				} else {
-					flex_table.getCellFormatter().setStyleName(i, j,
-							"aon-panelGrid-even");
-				}
-			}
+		ListBox lb2 = new ListBox();
+		lb2.addItem("-");
+		for(Warehouse wh : w){
+			lb2.addItem(wh.getName());
 		}
+		
+		flex_table.setWidget(1, 0, new Label("Almac\u00e9n"));
+		flex_table.setWidget(1, 1, lb2);
+		flexTableCss();
 	}
 	
 	private void importProduct(String url,TemplateList templates) {
@@ -228,49 +224,53 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setWidget(1, 0, new Label("Archivo"));
 		flex_table.setWidget(1, 1, upload);
 		
-		for (int i = 0; i < flex_table.getRowCount(); i++) {
-			for (int j = 0; j < flex_table.getCellCount(i); j++) {
-				if ((j % 2) == 0) {
-					flex_table.getCellFormatter().setStyleName(i, j,
-							"aon-panelGrid-odd");
-				} else {
-					flex_table.getCellFormatter().setStyleName(i, j,
-							"aon-panelGrid-even");
-				}
-			}
-		}
+		flexTableCss();
 	}
+	
 	
 	private void importStock(String url,TemplateList templates) {
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
 		flex_table.setCellSpacing(0);
-		
+
 		ListBox lb = new ListBox();
 		lb.addItem("-");
 		for(TemplateInfo ti : templates.getList()){
 			if(ti.getType().equals("Stock"))
 				lb.addItem(ti.getName());
 		}
+
+		
 		flex_table.setWidget(0, 0, new Label("Plantilla"));
 		flex_table.setWidget(0, 1, lb);
 		
-		SingleUploader upload = newUploader(null, url);
-		flex_table.setWidget(1, 0, new Label("Archivo"));
-		flex_table.setWidget(1, 1, upload);
-		
-		for (int i = 0; i < flex_table.getRowCount(); i++) {
-			for (int j = 0; j < flex_table.getCellCount(i); j++) {
-				if ((j % 2) == 0) {
-					flex_table.getCellFormatter().setStyleName(i, j,
-							"aon-panelGrid-odd");
-				} else {
-					flex_table.getCellFormatter().setStyleName(i, j,
-							"aon-panelGrid-even");
-				}
-			}
+		ListBox lb2 = new ListBox();
+		lb2.addItem("-");
+		for(Warehouse wh : w){
+			lb2.addItem(wh.getName());
 		}
+		flex_table.setWidget(1, 0, new Label("Almacen"));
+		flex_table.setWidget(1, 1,lb2 );
+		
+		ListBox lb3 = new ListBox();
+		lb3.addItem("-");
+		for(String s : series){
+			lb3.addItem(s);
+		}
+		flex_table.setWidget(2, 0, new Label("Serie"));
+		flex_table.setWidget(2, 1,lb3 );
+		
+		TextBox tb = new TextBox();
+		tb.setStyleName("aon-inputText");
+		flex_table.setWidget(3, 0, new Label("Comentarios"));
+		flex_table.setWidget(3, 1, tb);
+		
+		SingleUploader upload = newUploader(null, url);
+		flex_table.setWidget(4, 0, new Label("Archivo"));
+		flex_table.setWidget(4, 1, upload);
+		
+		flexTableCss();
 	}
 	
 	PopupPanel popup;
@@ -307,7 +307,6 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					for(Integer k = 0;k< list_box.getItemCount();k++){
 						lb2.addItem(list_box.getItemText(k));
 					}
-				
 					handler = lb2.addChangeHandler(changeHandler());
 					
 					flex_table.setWidget(2, 0, new Label("Columna" + " " + Integer.toString(column)));
@@ -369,8 +368,8 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					vp.add(title);
 					Label r1 = new Label("Product");r1.addStyleName("aon-info-rest-template");
 					vp.add(r1);
-					Label r2 = new Label("Almac\u00e9n Destino");r2.addStyleName("aon-info-rest-template");
-					vp.add(r2);
+					//Label r2 = new Label("Almac\u00e9n Destino");r2.addStyleName("aon-info-rest-template");
+					//vp.add(r2);
 					Label r3 = new Label("Cantidad");r3.addStyleName("aon-info-rest-template");
 					vp.add(r3);
 				}
@@ -393,21 +392,8 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		});
 		
 		flex_table.setWidget(1, 2, info);
-
 		
-		
-
-		for (int i = 0; i < flex_table.getRowCount(); i++) {
-			for (int j = 0; j < flex_table.getCellCount(i); j++) {
-				if ((j % 2) == 0) {
-					flex_table.getCellFormatter().setStyleName(i, j,
-							"aon-panelGrid-odd");
-				} else {
-					flex_table.getCellFormatter().setStyleName(i, j,
-							"aon-panelGrid-even");
-				}
-			}
-		}
+		flexTableCss();
 		flex_table.getCellFormatter().setStyleName(0, 2,
 				"aon-panelGrid-aux");	
 		flex_table.getCellFormatter().setStyleName(1, 2,
@@ -608,25 +594,25 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	private void handler(){
 		ListBox lbc = (ListBox) flex_table.getWidget(column+1, 1);
 		Integer i = lbc.getSelectedIndex();
+		Boolean libre = lbc.getItemText(i).equals("Texto Libre");
 		if(lbc.getItemText(0).equals("-")){
 			lbc.removeItem(0);
-			list_box.removeItem(i);
+			if(!libre){
+				list_box.removeItem(i);
+			}
 		}
 		else{
-			list_box.removeItem(i+1);
+			if(!libre)
+				list_box.removeItem(i+1);
 		}
 		
-		
 		handler.removeHandler();
-		
 		
 		ListBox lb = new ListBox();
 		for(Integer k = 0;k< list_box.getItemCount();k++){
 			lb.addItem(list_box.getItemText(k));
 		}
-		
 		handler  = lb.addChangeHandler(changeHandler());
-		
 		if(column < max-1){
 			lbc.setEnabled(false);
 			flex_table.setWidget(column+1, 2, new Label(""));
@@ -683,15 +669,16 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	private Vector<String> stockList(){
 		Vector<String> v = new Vector<String>();
 		v.add("Producto");
-		v.add("Series");
+		//v.add("Series");
 		//v.add("Numero");
 		//v.add("Almac\u00e9n Origen");
-		v.add("Almac\u00e9n Destino");
+		//v.add("Almac\u00e9n Destino");
 		v.add("Cantidad");
 		v.add("Detalle 1");
 		v.add("Detalle 2");
 		v.add("Detalle 3");
-		v.add("Comentarios");
+		//v.add("Comentarios");
+		v.add("Texto Libre");
 		
 		return v;
 	}
@@ -716,11 +703,15 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		v.add("Detalle 1");
 		v.add("Detalle 2");
 		v.add("Detalle 3");
+		v.add("Texto Libre");
 		return v;
 		
 	}
 	
-	private Boolean productCheck() {
+	private Boolean productCheck(Dialog dialog) {
+		if(!dialog.getType().equals("new ") && !dialog.getType().equals("edit")){
+			return false;
+		}
 		Integer num = 0;
 		for(Integer i = 2; i< flex_table.getRowCount();i++){
 			ListBox l = (ListBox) flex_table.getWidget(i, 1);
@@ -741,20 +732,24 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		return false;
 	}
 	
-	private Boolean stockCheck() {
+	private Boolean stockCheck(Dialog dialog) {
+		if(!dialog.getType().equals("new") && !dialog.getType().equals("edit")){
+			return false;
+		}
+		
 		Integer num = 0;
+		
 		for(Integer i = 2; i< flex_table.getRowCount();i++){
 			ListBox l = (ListBox) flex_table.getWidget(i, 1);
 			if(estaStock(l.getItemText(l.getSelectedIndex()))){
 				num++;
 			}
 		}
-		return num == 3;
+		return num == 2;
 	}
 	private Boolean estaStock(String s) {
 		switch (s) {
 		case "Producto": return true;
-		case "Almac\u00e9n Destino" : return true;
 		case "Cantidad" : return true;
 		}
 		return false;
@@ -810,7 +805,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 			@Override
 			public void onFinish(IUploader uploader) {
 				upload.getStatusWidget().setProgress(100, 100);
-				//Window.alert("finish");
+				//Window.alert("finish");o
 				upload.getStatusWidget().setStatus(Status.DONE);
 				upload.getStatusWidget().setVisible(true);
 				progress = 0;		
@@ -828,5 +823,20 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		});
         
         return upload;
+	}
+	
+	
+	public void flexTableCss(){
+		for (int i = 0; i < flex_table.getRowCount(); i++) {
+			for (int j = 0; j < flex_table.getCellCount(i); j++) {
+				if ((j % 2) == 0) {
+					flex_table.getCellFormatter().setStyleName(i, j,
+							"aon-panelGrid-odd");
+				} else {
+					flex_table.getCellFormatter().setStyleName(i, j,
+							"aon-panelGrid-even");
+				}
+			}
+		}
 	}
 }

@@ -36,12 +36,16 @@ public class Utils {
 		
 		NodeList nList = doc.getElementsByTagName("column");
 	 
+		TemplateInfo ti = new TemplateInfo();
+		ti.sethasWarehouse(false);
 		Vector<String> columns = new Vector<String>();
 		for (int temp = 0; temp < nList.getLength(); temp++) {
 			String column = nList.item(temp).getTextContent();
+			if(column.equals("Almac\u00e9n Destino"))
+				ti.sethasWarehouse(true);
 			columns.add(column);
 		}
-		TemplateInfo ti = new TemplateInfo();
+		
 		ti.setType(type);
 		ti.setColumns(columns);
 		

@@ -1,0 +1,23 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:es3='urn:import:com.google.gwt.user.client.ui'
+	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
+	
+	<ui:Style>
+
+
+
+	</ui:Style>
+	
+	<g:HTMLPanel styleName="form-template">
+
+		<div>
+		<g:HorizontalPanel ui:field="barPanel">
+			
+		</g:HorizontalPanel>
+		</div>
+	
+	
+	</g:HTMLPanel>
+
+</ui:UiBinder>

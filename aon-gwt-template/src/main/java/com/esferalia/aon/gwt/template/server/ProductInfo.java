@@ -8,6 +8,8 @@ public class ProductInfo implements IsSerializable{
 
 	Product product;
 	Item item;
+	Integer row;
+	
 	public Product getProduct() {
 		return product;
 	}
@@ -19,6 +21,12 @@ public class ProductInfo implements IsSerializable{
 	}
 	public void setItem(Item item) {
 		this.item = item;
+	}
+	public Integer getRow() {
+		return row;
+	}
+	public void setRow(Integer row) {
+		this.row = row;
 	}
 	
 	

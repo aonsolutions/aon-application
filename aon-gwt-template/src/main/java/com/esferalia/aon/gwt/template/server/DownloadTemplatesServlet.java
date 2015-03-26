@@ -115,13 +115,18 @@ public class DownloadTemplatesServlet extends HttpServlet {
         font.setBoldweight(Font.BOLDWEIGHT_BOLD);
         style.setFont(font);
         style.setAlignment(CellStyle.ALIGN_CENTER);
-        
+        style.setBorderBottom(CellStyle.BORDER_MEDIUM);
+
         for(Integer i = 0; i< aux.getColumns().size(); i++){
         	Cell celda = fila.createCell(i);
         	celda.setCellValue(aux.getColumns().get(i));
         	celda.setCellStyle(style);
         }
-        
+        Integer columns = aux.getColumns().size();
+
+        for(Integer h = 0; h< columns;h++){
+        	hoja.autoSizeColumn(h);
+        }
         libro.write(archivo);        
         archivo.close();
 

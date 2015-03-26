@@ -17,6 +17,7 @@ public class TemplateInfo implements IsSerializable{
 	String driveId;
 	
 	Boolean isParent;
+	Boolean hasWarehouse;
 	
 	public static final ProvidesKey<TemplateInfo> PROVIDES_KEY = new ProvidesKey<TemplateInfo>() {
 		@Override
@@ -79,6 +80,12 @@ public class TemplateInfo implements IsSerializable{
 	}
 	public void setIsParent(Boolean isParent) {
 		this.isParent = isParent;
+	}
+	public Boolean gethasWarehouse() {
+		return hasWarehouse;
+	}
+	public void sethasWarehouse(Boolean hasWarehouse) {
+		this.hasWarehouse = hasWarehouse;
 	}
 	
 	

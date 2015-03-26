@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.template.shared;
 
+import java.util.Vector;
+
+import com.code.aon.config.Series;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class Dialog implements IsSerializable{
@@ -14,6 +17,9 @@ public class Dialog implements IsSerializable{
 	String url;
 	TemplateList templateList;
 	Error error;
+	Vector<Warehouse> warehouses;
+	Vector<String> series;
+	
 	public Dialog() {
 	
 	}
@@ -96,6 +102,22 @@ public class Dialog implements IsSerializable{
 
 	public void setError(Error error) {
 		this.error = error;
+	}
+
+	public Vector<Warehouse> getWarehouses() {
+		return warehouses;
+	}
+
+	public void setWarehouses(Vector<Warehouse> warehouses) {
+		this.warehouses = warehouses;
+	}
+
+	public Vector<String> getSeries() {
+		return series;
+	}
+
+	public void setSeries(Vector<String> series) {
+		this.series = series;
 	}
 	
 	

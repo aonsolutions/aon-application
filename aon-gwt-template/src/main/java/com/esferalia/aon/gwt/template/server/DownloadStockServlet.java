@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.sql.SQLException;
-import java.util.Locale;
 import java.util.Vector;
 
 import javax.servlet.ServletException;
@@ -26,13 +25,13 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
-import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
+import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.google.api.services.drive.Drive;
 
 public class DownloadStockServlet extends HttpServlet {
@@ -50,10 +49,17 @@ public class DownloadStockServlet extends HttpServlet {
         String fileId = p_request.getParameter("id");
         String name = p_request.getParameter("name");
         String domain_id = p_request.getParameter("domain_id");
+        String warehouse = p_request.getParameter("warehouse");
         Integer domainId = Integer.parseInt(domain_id);
         String domain = AonUtil.getDomainName();
         Integer idFile  = Integer.parseInt(fileId);
-        
+        Warehouse w = new Warehouse();
+        if(!warehouse.equals("-"))
+        	try {
+        		w = DBConsults.getWarehouse(warehouse, domainId, domain);
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
         byte[] b = null ;
         
         if (driveId != ""){
@@ -120,7 +126,8 @@ public class DownloadStockServlet extends HttpServlet {
         font.setBoldweight(Font.BOLDWEIGHT_BOLD);
         style.setFont(font);
         style.setAlignment(CellStyle.ALIGN_CENTER);
-        
+        style.setBorderBottom(CellStyle.BORDER_MEDIUM);
+       
         Integer columns = aux.getColumns().size();
         for(Integer i = 0; i< columns; i++){
         	Cell celda = fila.createCell(i);
@@ -129,7 +136,7 @@ public class DownloadStockServlet extends HttpServlet {
         }
         Vector<StockInfo> v = new Vector<StockInfo>();
 		try {
-			v = DBConsults.getStocks(domain,domainId);
+			v = DBConsults.getStocks(domain,domainId,w.getId());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -141,18 +148,22 @@ public class DownloadStockServlet extends HttpServlet {
         		StockInfo si = v.get(j);
         		switch (type) {
         		case "Producto": celda.setCellValue(si.getProduct());break;
-        		case "Series": celda.setCellValue(si.getSeries().getCode());break;
-        		case "Almac\u00e9n Destino": celda.setCellValue(si.getTargetWarehouse().getName());break;
+        		//case "Series": celda.setCellValue(si.getSeries().getCode());break;
+        		//case "Almac\u00e9n Destino": celda.setCellValue(si.getTargetWarehouse().getName());break;
         		case "Cantidad": celda.setCellValue(si.getQuantity());break;
         		case "Detalle 1":  celda.setCellValue(si.getDetail());break;
         		case "Detalle 2":  celda.setCellValue(si.getDetail2());break;
         		case "Detalle 3":  celda.setCellValue(si.getDetail3());break;
-        		case "Comentarios": celda.setCellValue(si.getComments());break;
+        		case "Texto Libre": celda.setCellValue("");break;
+        		//case "Comentarios": celda.setCellValue(si.getComments());break;
         		default:
-        			break;        		}
+        			break;
+        		}
         	}
         }
-		
+        for(Integer h = 0; h< columns;h++){
+        	hoja.autoSizeColumn(h);
+        }
         libro.write(archivo);        
         archivo.close();
 

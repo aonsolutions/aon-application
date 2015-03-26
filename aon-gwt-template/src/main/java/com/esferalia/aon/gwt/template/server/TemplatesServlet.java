@@ -14,6 +14,8 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
 import java.util.Vector;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -43,7 +45,7 @@ import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
-import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 
@@ -116,6 +118,17 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		return tl;
 	}
 	
+	public Vector<Warehouse> getWarehouses(){
+		Vector<Warehouse> v = new Vector<Warehouse>();
+		String domain = AonUtil.getDomainName();
+		try {
+			v = DBConsults.getWarehouse(domain, domainId);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return v;
+	}
+	
 	public TemplateInfo newTemplate(TemplateInfo ti ){
 		String domain = AonUtil.getDomainName();
 		byte[] b = Utils.newXmlFile(ti);
@@ -150,17 +163,63 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	}
 	
 	//-------------------- IMPORTAR STOCK
-	
-	public com.esferalia.aon.gwt.template.shared.Error insertStock(TemplateInfo ti) {
+	Vector<StockInfo> stock;
+	TransferInfo transferInfo;
+	String textError;
+	Error error;
+	Integer rowCount;
+	StockInfo si;
+	public Integer executeExcel(TemplateInfo ti, String warehouse, String series, String comments){
+		long startAll= System.currentTimeMillis();
+		String domain = AonUtil.getDomainName();
+		error = new Error();
 		Vector<String> verror = new Vector<String>();
+		error.setTextError(verror);
+		textError = "";
+		Vector<StockInfo> stock = new Vector<StockInfo>();
 		com.esferalia.aon.gwt.template.shared.Error error = new Error();
+		
+		Warehouse w = new Warehouse();
+		Series s = new Series();
+		try {
+			w = DBConsults.getWarehouse(warehouse, ti.getDomainId(),domain);
+			s = DBConsults.getSeries(domain, domainId, series);
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+
+    	Boolean b = true;
+
+		transferInfo = new TransferInfo();
+		transferInfo.setTargetWarehouse(w);
+		transferInfo.setSeries(s);
+		transferInfo.setComments(comments);
+		
+    	if(transferInfo.getSeries() != null && transferInfo.getTargetWarehouse() !=null){
+    		
+    		
+    			try {
+    		 		b = DBConsults.checkSeries(domain,domainId,transferInfo.getSeries(),transferInfo.getTargetWarehouse());
+    	 		} catch (SQLException e) {
+    	 			e.printStackTrace();
+    	 		}
+    		
+    	}
+    	if(!b){
+    		verror.add("*Error : La serie y el almacén no concuerdan.");
+
+    	}
+		
+
+
 		if(!getMimetype().equals(MimeType.MIME_MS_EXCEL.getName())
 			&& !getMimetype().equals(MimeType.MIME_MS_EXCEL_2007.getName())){
 			//El archivo no es un fichero Excel.
 			error.setError(false);
 			verror.add("*El archivo importado no es de tipo excel.");
 			error.setTextError(verror);
-			return error;
+			this.error = error;
+			return -1;
 		}
 		byte[] data = getOut();
 		
@@ -184,119 +243,116 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			e.printStackTrace();
 		}
 		HSSFSheet sheet = workbook.getSheetAt(0);
-
+		
+		rowCount  = sheet.getPhysicalNumberOfRows();
+		
 		Iterator<Row> rowIterator = sheet.iterator();
-		Integer i = 0;
-		String textError = "";
-		Vector<StockInfo> stock = new Vector<StockInfo>();
-		while(rowIterator.hasNext()) {
-			 Row row = rowIterator.next();
-			 Iterator<Cell> cellIterator = row.cellIterator();
-			 StockInfo si = newStock();
-			 Integer j = 0;
-             while(cellIterator.hasNext()) {
-                Cell cell = cellIterator.next();
-                Object o = null ;
+
+	 	/* LAMBDA java 1.8 */
+		Iterable<Row> rowIterable = () -> rowIterator;
+		Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
+		rowStream.forEach(row ->{
+			long startRow= System.currentTimeMillis();
+			Iterator<Cell> cellIterator = row.cellIterator();
+			Iterable<Cell> cellIterable = () -> cellIterator;
+			si = newStock();
+			Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
+			cellStream.forEach(cell ->{
+				Object object = null ;
                 switch (cell.getCellType()) {
-				case Cell.CELL_TYPE_BLANK:
-					//
-					break;
-				case Cell.CELL_TYPE_BOOLEAN: 
-					o = cell.getBooleanCellValue();
-					break;
-				case Cell.CELL_TYPE_ERROR:
-					o = cell.getErrorCellValue();
-					break;
-				case Cell.CELL_TYPE_FORMULA:
-					//
-					break; // AÑADIR A PI ITEM --> %BENEFICIO SOBRE COSTE, %BENEFICIO SOBRE COMPRA Y PVP
-			           
-		             //pi.getItem().setExpensesPercent(0);
-		             //pi.getItem().setPrice(0);
-		            // checkPrices();
-				case Cell.CELL_TYPE_NUMERIC:
-					o = cell.getNumericCellValue();
-					break;
-				case Cell.CELL_TYPE_STRING:
-					o = cell.getStringCellValue();
-					break;
-				default:
-					break;
+					case Cell.CELL_TYPE_BLANK:
+						break;
+					case Cell.CELL_TYPE_BOOLEAN: 
+						object = cell.getBooleanCellValue();break;
+					case Cell.CELL_TYPE_ERROR:
+						object = cell.getErrorCellValue();break;
+					case Cell.CELL_TYPE_FORMULA:
+						break; 
+					case Cell.CELL_TYPE_NUMERIC:
+						object = cell.getNumericCellValue();break;
+					case Cell.CELL_TYPE_STRING:
+						object = cell.getStringCellValue();break;
+					default:
+						break;
 				}
-                if(i == 0){//Primera fila del fichero Excel.
-                	if(ti.getColumns().size()<=j || ti.getColumns().get(j) == null || !ti.getColumns().get(j).equalsIgnoreCase(cell.getStringCellValue())){
+                if(cell.getRowIndex() == 0){//Primera fila del fichero Excel.
+                	if(ti.getColumns().size()<= cell.getColumnIndex() || ti.getColumns().get(cell.getColumnIndex()) == null || !ti.getColumns().get(cell.getColumnIndex()).equalsIgnoreCase(cell.getStringCellValue())){
                 		 // El archivo no es compatible con la plantilla
              			error.setError(false);
              			verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
              			error.setTextError(verror);
-             			return error;
+             			this.error = error;
+                		rowCount = -1;
                 	} 
                 }
                 else{
-                	if(j!= cell.getColumnIndex()){
-                		 if(ti.getColumns().get(j).equals("Producto") || ti.getColumns().get(j).equals("Almac\u00e9n Destino") || ti.getColumns().get(j).equals("Cantidad") || ti.getColumns().get(j).equals("Series")){
-                			Integer fila = i+1;
-                			Integer columna = j+1;
-                			textError= textError + "*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n";
-                	 	}
-                		 j++;
-                	 }
-                	 
-                	 si = check(ti.getColumns().get(j),o,si,cell.getCellType());
-                	 if(si == null){
-             			Integer fila = i+1;
-             			Integer columna = j+1;
-                		textError= textError + "*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n";
-                		si = newStock();	
-                	 }
-                 }
-                 j++;
-             }
-             
-             if(j != ti.getColumns().size()){
-            	 if(i == 0){
-            		 error.setError(false);
-            		 verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
-            		 error.setTextError(verror);
-            		 return error;
-            	 }
-            	 else{
-            		 if(ti.getColumns().get(j).equals("Producto") || ti.getColumns().get(j).equals("Almac\u00e9n Destino") || ti.getColumns().get(j).equals("Cantidad")){
-            			Integer fila = i+1;
-          				Integer columna = j+1;
-          				verror.add("*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n");
-          				textError= textError + "*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n";
-            		 }
-            	 }
-             }
+                	if(cell.getColumnIndex() !=0){
+                		Cell beforeCell = row.getCell(cell.getColumnIndex()-1);
+            			if(beforeCell == null || beforeCell.getCellType() == Cell.CELL_TYPE_BLANK){
+            				if(ti.getColumns().get(beforeCell.getColumnIndex()).equals("Producto") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Almac\u00e9n Destino") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Cantidad") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Series")){
+            					textError= textError + "*Fila "+beforeCell.getRowIndex()+", Columna "+beforeCell.getColumnIndex()+" : Dato Incorrecto \n";
+            				}
+            			}
+                	}
+                	if(!ti.getColumns().get(cell.getColumnIndex()).equals("Texto Libre")){
+                		si = check(ti.getColumns().get(cell.getColumnIndex()),object,si,cell.getCellType());
+                		if(si == null){
+                			textError= textError + "*Fila "+cell.getRowIndex()+", Columna "+cell.getColumnIndex()+" : Dato Incorrecto \n";
+                			si = newStock();	
+                		}
+                	}
+                 }  
+			});
+			//System.out.println(ti.getColumns().size());
+			//System.out.println(row.getLastCellNum());
+			if(row.getLastCellNum() != ti.getColumns().size()){
+				if(row.getRowNum() == 0){
+					error.setError(false);
+            		verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
+            		error.setTextError(verror);
+            		this.error = error;
+            		rowCount = -1;
+            		
+            	}
+            	else{
+            		if(row.getLastCellNum() != -1){
+            			Short cellnum = row.getLastCellNum();
+            			if(row.getLastCellNum() > ti.getColumns().size())cellnum--;
+            			if(ti.getColumns().get(cellnum).equals("Producto") || ti.getColumns().get(cellnum).equals("Almac\u00e9n Destino") || ti.getColumns().get(cellnum).equals("Cantidad")){
+          					verror.add("*Fila "+row.getRowNum()+", Columna "+row.getLastCellNum()+" : Dato Incorrecto \n");
+          					textError= textError + "*Fila "+row.getRowNum()+", Columna "+row.getLastCellNum()+" : Dato Incorrecto \n";
+            			}
+            		}
+            	}
+            }
             
-             if(i>0){ 
-            	Boolean b = true;
-            	String domain = AonUtil.getDomainName();
-            	if(si.getSeries() != null && si.getTargetWarehouse() !=null){
-            		try {
-            		 	b = DBConsults.checkSeries(domain,domainId,si.getSeries(),si.getTargetWarehouse());
-            	 	} catch (SQLException e) {
-            	 		e.printStackTrace();
-					}
-            	}
-            	if(!b){
-            		Integer fila = i+1;
-            		verror.add("*Fila "+fila+" : La serie y el almacén no concuerdan.");
-            		textError=textError +"*Fila "+fila+" : La serie y el almacén no concuerdan.";
-            	}
+            if(row.getRowNum() > 0){ 
+            	si.setRow(row.getRowNum());
             	stock.add(si);
-             }
-             i++;
-		 }
-		
+            }
+    		long timeRow = System.currentTimeMillis() - startRow;
+    		//System.out.println("row time: " + (timeRow/1000d));
+		});
+		this.stock = stock;
+		long time = System.currentTimeMillis() - startAll;
+		System.out.println("time: " + (time/1000d));
+		System.out.println(rowCount);
+		return rowCount;
+	}
+	
+	public Error insertStock() {
+		long startAll= System.currentTimeMillis();
+		Vector<String> verror = error.getTextError();
+		String domain = AonUtil.getDomainName();
+		Error error = new Error();
 		if(textError.equals("")){
 			error.setError(true);
 			verror.add("");
 			error.setTextError(verror);
-			String domain = AonUtil.getDomainName();
+			//String domain = AonUtil.getDomainName();
 			try {
-				DBConsults.insertStock(domain,domainId,stock);
+				error = DBConsults.insertStock2(domain,domainId,stock,transferInfo);
+				
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -307,86 +363,30 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			error.setError(false);
  			error.setTextError(verror);
 		}
+		
+		long timeAll = System.currentTimeMillis() - startAll;
+			
+		System.out.println("ALL    " + (timeAll/1000d));
 		return error;
 	}
-	
+
 	private StockInfo check(String template, Object value,StockInfo stock, Integer type) {
-		String domain = AonUtil.getDomainName();
 		
 		switch (template) {
 		case "Producto": case "Product": 
 			if(type.equals(Cell.CELL_TYPE_STRING) && !value.equals("")){
-				Boolean b = false;
+				/*Boolean b = false;
 				try {
 					b = DBConsults.isItem(domain, domainId, (String) value);
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
-				if(b) stock.setProduct((String) value);
-				else return null;
+				if(b)*/ 
+				stock.setProduct((String) value);
+				//else return null;
 			}
 			else return null;
 			break;
-		case "Series":
-			if(type.equals(Cell.CELL_TYPE_STRING)){
-				String strAux=(String) value;
-				Vector<Series> v = null;
-				try{
-					v=DBConsults.getSeries(domain, domainId);
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}		
-				Boolean b = true;
-				for(Series s : v){
-					if(strAux.equalsIgnoreCase(s.getCode())){
-						stock.setSeries(s);
-						b=false;
-					}
-				}
-				if(b) return null;
-			}
-			else return null;
-			break;
-		case "Almac\u00e9n Destino":
-			if(type.equals(Cell.CELL_TYPE_STRING)){
-				String strAux = (String) value;
-				Vector<Warehouse> v = null;
-				try {
-					v = DBConsults.getWarehouse(domain, domainId);
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				Boolean b = true;
-				for(Warehouse whouse : v){
-					if(strAux.equalsIgnoreCase(whouse.getName())){
-						stock.setTargetWarehouse(whouse);
-						b= false;
-					}
-				}
-				if(b) return null;
-			}
-			else return null;
-			break;
-		/*case "Almac\u00e9n Origen":
-			if(type.equals(Cell.CELL_TYPE_STRING)){
-				String strAux = (String) value;
-				Vector<Warehouse> v = null;
-				try {
-					v = DBConsults.getWarehouse(domain, domainId);
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				Boolean b = true;
-				for(Warehouse whouse : v){
-					if(strAux.equalsIgnoreCase(whouse.getName())){
-						stock.setSourceWarehouse(whouse);
-						b= false;
-					}
-				}
-				if(b) return null;
-			}
-			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
-			break;*/
 		case "Cantidad": case "Quantity":
 			if(type.equals(Cell.CELL_TYPE_NUMERIC)){
 				Double n = (Double) value;
@@ -397,23 +397,23 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		case "Detalle 1": case "Detail 1":
 			if(type.equals(Cell.CELL_TYPE_STRING))
 				stock.setDetail((String)value);
-			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
+			//else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break;
 		case "Detalle 2": case "Detail 2":
 			if(type.equals(Cell.CELL_TYPE_STRING))
 				stock.setDetail2((String)value);
-			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
+			//else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break;
 		case "Detalle 3": case "Detail 3":
 			if(type.equals(Cell.CELL_TYPE_STRING))
 				stock.setDetail3((String)value);
-			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
+			//else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break;
-		case "Comentarios": case "Comments":
+		/*case "Comentarios": case "Comments":
 			if(type.equals(Cell.CELL_TYPE_STRING))
 				stock.setComments((String)value);
 			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
-			break;
+			break;*/
 		default:
 			break;
 		}
@@ -427,12 +427,208 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		stock.setDetail("");
 		stock.setDetail2("");
 		stock.setDetail3("");
-		stock.setComments("");
-		stock.setSourceWarehouse(null);
+		//stock.setComments("");
+		//stock.setSourceWarehouse(null);
 		return stock;
 	}
 	
+	public Vector<String> getSeries(){
+		String domain = AonUtil.getDomainName();
+		Vector<Series> series = new Vector<Series>();
+		try {
+			series = DBConsults.getSeries(domain, domainId);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		Vector<String> seriesCode = new Vector<String>();
+		series.parallelStream().forEach(s ->{
+			seriesCode.add(s.getCode());
+		});
+		return seriesCode;
+	}
+	
 	//-------------------- IMPORTAR PRODUCTOS
+	Vector<String> verror;
+	Vector<ProductInfo> products;
+	ProductInfo pi;
+	public Integer executeExcel2(TemplateInfo ti){
+		long startAll= System.currentTimeMillis();
+		String domain = AonUtil.getDomainName();
+		error = new Error();
+		verror = new Vector<String>();
+		error.setTextError(verror);
+		textError = "";
+		Vector<ProductInfo> products = new Vector<ProductInfo>();
+		com.esferalia.aon.gwt.template.shared.Error error = new Error();
+    	
+
+		if(!getMimetype().equals(MimeType.MIME_MS_EXCEL.getName())
+			&& !getMimetype().equals(MimeType.MIME_MS_EXCEL_2007.getName())){
+			//El archivo no es un fichero Excel.
+			error.setError(false);
+			verror.add("*El archivo importado no es de tipo excel.");
+			error.setTextError(verror);
+			this.error = error;
+			return -1;
+		}
+		byte[] data = getOut();
+		
+		File aux = new File("/tmp/products.xls");
+		try {
+			org.apache.commons.io.FileUtils.writeByteArrayToFile(aux, data);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		FileInputStream excel = null;
+		try {
+			excel = new FileInputStream(aux);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		HSSFWorkbook workbook= null;
+		try {
+			workbook = new HSSFWorkbook(excel);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		HSSFSheet sheet = workbook.getSheetAt(0);
+		
+		rowCount  = sheet.getPhysicalNumberOfRows();
+		
+		Iterator<Row> rowIterator = sheet.iterator();
+
+	 	/* LAMBDA java 1.8 */
+		Iterable<Row> rowIterable = () -> rowIterator;
+		Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
+		rowStream.forEach(row ->{
+			long startRow= System.currentTimeMillis();
+			Iterator<Cell> cellIterator = row.cellIterator();
+			Iterable<Cell> cellIterable = () -> cellIterator;
+			pi = newProduct();
+			Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
+			cellStream.forEach(cell ->{
+				Object object = null ;
+                switch (cell.getCellType()) {
+					case Cell.CELL_TYPE_BLANK:
+						break;
+					case Cell.CELL_TYPE_BOOLEAN: 
+						object = cell.getBooleanCellValue();break;
+					case Cell.CELL_TYPE_ERROR:
+						object = cell.getErrorCellValue();break;
+					case Cell.CELL_TYPE_FORMULA:
+						break; 
+					case Cell.CELL_TYPE_NUMERIC:
+						object = cell.getNumericCellValue();break;
+					case Cell.CELL_TYPE_STRING:
+						object = cell.getStringCellValue();break;
+					default:
+						break;
+				}
+                if(cell.getRowIndex() == 0){//Primera fila del fichero Excel.
+                	if(ti.getColumns().size()<= cell.getColumnIndex() || ti.getColumns().get(cell.getColumnIndex()) == null || !ti.getColumns().get(cell.getColumnIndex()).equalsIgnoreCase(cell.getStringCellValue())){
+                		 // El archivo no es compatible con la plantilla
+             			error.setError(false);
+             			verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
+             			error.setTextError(verror);
+             			this.error = error;
+                		rowCount = -1;
+                	} 
+                }
+                else{
+                	if(cell.getColumnIndex() !=0){
+                		Cell beforeCell = row.getCell(cell.getColumnIndex()-1);
+            			if(beforeCell == null || beforeCell.getCellType() == Cell.CELL_TYPE_BLANK){
+            				if(beforeCell == null){
+            					verror.add("*Fila "+cell.getRowIndex()+", Columna "+0+" : Dato Incorrecto");
+            					textError= textError + "*Fila "+cell.getRowIndex()+", Columna "+0+" : Dato Incorrecto \n";
+            				}
+            				else if(ti.getColumns().get(beforeCell.getColumnIndex()).equals("Nombre") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("C\u00f3digo") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Precio Coste") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Precio Venta Base")){
+            					verror.add("*Fila "+beforeCell.getRowIndex()+", Columna "+beforeCell.getColumnIndex()+" : Dato Incorrecto");
+            					textError= textError + "*Fila "+beforeCell.getRowIndex()+", Columna "+beforeCell.getColumnIndex()+" : Dato Incorrecto \n";
+            				}
+            			}
+                	}
+
+                	if(!ti.getColumns().get(cell.getColumnIndex()).equals("Texto Libre")){
+                		long startcheck= System.currentTimeMillis();
+                		pi = check(ti.getColumns().get(cell.getColumnIndex()),object,pi,cell.getCellType());
+                		long timecheck = System.currentTimeMillis() - startcheck;
+                		System.out.println("timecheck: " + (timecheck/1000d));
+                		if(pi == null){
+                			verror.add("*Fila "+cell.getRowIndex()+", Columna "+cell.getColumnIndex()+" : Dato Incorrecto ");
+                			textError= textError + "*Fila "+cell.getRowIndex()+", Columna "+cell.getColumnIndex()+" : Dato Incorrecto \n";
+                			pi = newProduct();	
+                		}
+                	}
+                 }  
+			});
+			//System.out.println(ti.getColumns().size());
+			//System.out.println(row.getLastCellNum());
+			if(row.getLastCellNum() != ti.getColumns().size()){
+				if(row.getRowNum() == 0){
+					error.setError(false);
+            		verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
+            		error.setTextError(verror);
+            		this.error = error;
+            		rowCount = -1;
+            		
+            	}
+            	else{
+            		if(row.getLastCellNum() != -1){
+            			Short cellnum = row.getLastCellNum();
+            			if(row.getLastCellNum() > ti.getColumns().size())cellnum--;
+            			if(ti.getColumns().get(cellnum).equals("Nombre") || ti.getColumns().get(cellnum).equals("C\u00f3digo") || ti.getColumns().get(cellnum).equals("Precio Coste") || ti.getColumns().get(cellnum).equals("Precio Venta Base")){
+          					verror.add("*Fila "+row.getRowNum()+", Columna "+row.getLastCellNum()+" : Dato Incorrecto \n");
+          					textError= textError + "*Fila "+row.getRowNum()+", Columna "+row.getLastCellNum()+" : Dato Incorrecto \n";
+            			}
+            		}
+            	}
+            }
+            
+            if(row.getRowNum() > 0 && pi.getProduct().getCode()!= null){ 
+            	pi.setRow(row.getRowNum());
+            	products.add(pi);
+            }
+    		long timeRow = System.currentTimeMillis() - startRow;
+    		//System.out.println("row time: " + (timeRow/1000d));
+		});
+		
+		this.products = products;
+		long time = System.currentTimeMillis() - startAll;
+		System.out.println("time: " + (time/1000d));
+		System.out.println(rowCount);
+		return rowCount;
+	}
+	
+	public Error insertProduct() {
+		long startAll= System.currentTimeMillis();
+		String domain = AonUtil.getDomainName();
+		Error error = new Error();
+		if(textError.equals("")){
+			error.setError(true);
+			verror.add("");
+			error.setTextError(verror);
+			//String domain = AonUtil.getDomainName();
+			try {
+				error = DBConsults.insertProducts(domain, domainId, products);
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+	        //insertar STOCK en base de datos.!!
+		}
+		else{
+			//Alguna de las filas contiene datos erroneos.
+			error.setError(false);
+ 			error.setTextError(verror);
+		}
+		
+		long timeAll = System.currentTimeMillis() - startAll;
+			
+		System.out.println("ALL    " + (timeAll/1000d));
+		return error;
+	}
 	
 	public com.esferalia.aon.gwt.template.shared.Error insertProducts(TemplateInfo ti) {
 		//Archivo Excel
@@ -468,11 +664,11 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			e.printStackTrace();
 		}
 		HSSFSheet sheet = workbook.getSheetAt(0);
-
 		Iterator<Row> rowIterator = sheet.iterator();
 		Integer i = 0;
 		String textError = "";
 		Vector<ProductInfo> products = new Vector<ProductInfo>();
+		
 		while(rowIterator.hasNext()) {
 			 Row row = rowIterator.next();
 			 Iterator<Cell> cellIterator = row.cellIterator();
@@ -516,23 +712,25 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
                 	 } 
                  }
                  else{
-                	 if(j!= cell.getColumnIndex()){
-                		 if(ti.getColumns().get(j).equals("Nombre") || ti.getColumns().get(j).equals("C\u00f3digo") || ti.getColumns().get(j).equals("Precio Coste") || ti.getColumns().get(j).equals("Precio Venta Base")){
-                			Integer fila = i+1;
-                			Integer columna = j+1;
-                			verror.add("*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n");
-                			textError= textError + "*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n";
+                	 if(!ti.getColumns().get(j).equals("Texto Libre")){
+                	 	if(j!= cell.getColumnIndex()){
+                	 		if(ti.getColumns().get(j).equals("Nombre") || ti.getColumns().get(j).equals("C\u00f3digo") || ti.getColumns().get(j).equals("Precio Coste") || ti.getColumns().get(j).equals("Precio Venta Base")){
+                	 			Integer fila = i+1;
+                	 			Integer columna = j+1;
+                	 			verror.add("*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n");
+                				textError= textError + "*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n";
+                	 		}
+                		 	j++;
                 	 	}
-                		 j++;
-                	 }
                 	 
-                	 pi = check(ti.getColumns().get(j),o,pi,cell.getCellType());
-                	 if(pi == null){
-             			Integer fila = i+1;
-             			Integer columna = j+1;
-             			verror.add("*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n");
-                		textError= textError + "*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n";
-                		pi = newProduct();	
+                	 	pi = check(ti.getColumns().get(j),o,pi,cell.getCellType());
+                	 	if(pi == null){
+             				Integer fila = i+1;
+             				Integer columna = j+1;
+             				verror.add("*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n");
+             				textError= textError + "*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n";
+                			pi = newProduct();	
+                	 	}
                 	 }
                  }
                  j++;
@@ -599,6 +797,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	static final String SERVICE = ProductType.SERVICE.getName(new Locale("es_ES"));
 
 	private ProductInfo check(String template, Object value,ProductInfo product, Integer type) {
+		
 		String domain = AonUtil.getDomainName();
 		switch (template) {
 		case "Nombre": 

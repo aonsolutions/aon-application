@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.template.server;
+package com.esferalia.aon.gwt.template.shared;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 

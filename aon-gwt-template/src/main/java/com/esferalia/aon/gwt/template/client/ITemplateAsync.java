@@ -5,6 +5,7 @@ import java.util.Vector;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
+import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 
@@ -28,6 +29,17 @@ public interface ITemplateAsync {
 	void searchNameTemplate(String searchStr, Vector<TemplateInfo> templates,
 			AsyncCallback<Vector<TemplateInfo>> callback);
 
-	void insertStock(TemplateInfo ti, AsyncCallback<Error> callback);
+	void insertStock(AsyncCallback<Error> callback);
+
+	void getWarehouses(AsyncCallback<Vector<Warehouse>> callback);
+
+	void getSeries(AsyncCallback<Vector<String>> callback);
+
+	void executeExcel(TemplateInfo ti, String warehouse, String series,
+			String comments, AsyncCallback<Integer> callback);
+
+	void insertProduct(AsyncCallback<Error> callback);
+
+	void executeExcel2(TemplateInfo ti, AsyncCallback<Integer> callback);
 
 }

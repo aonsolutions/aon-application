@@ -26,7 +26,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
-import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DomainGserviceaccount;
@@ -121,7 +120,8 @@ public class DownloadProductServlet extends HttpServlet {
         font.setBoldweight(Font.BOLDWEIGHT_BOLD);
         style.setFont(font);
         style.setAlignment(CellStyle.ALIGN_CENTER);
-        
+        style.setBorderBottom(CellStyle.BORDER_MEDIUM);
+
         Integer columns = aux.getColumns().size();
         for(Integer i = 0; i< columns; i++){
         	Cell celda = fila.createCell(i);
@@ -168,7 +168,9 @@ public class DownloadProductServlet extends HttpServlet {
         			break;        		}
         	}
         }
-        
+        for(Integer h = 0; h< columns;h++){
+        	hoja.autoSizeColumn(h);
+        }
         libro.write(archivo);        
         archivo.close();
 
