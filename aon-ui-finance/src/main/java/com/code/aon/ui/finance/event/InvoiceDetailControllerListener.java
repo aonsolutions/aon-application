@@ -1,9 +1,11 @@
 package com.code.aon.ui.finance.event;
 
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_ALREADY_RECORDED_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_DETAIL_NO_WORKPLACE_ERROR;
 
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.AonVersion;
@@ -175,16 +177,17 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 		Invoice invoice = (Invoice)controller.getInvoice();
 		if (invoice.getPosShift() != null && invoice.getPosShift().getId() != null) {
 			invoiceDetail.setWorkPlace(invoice.getPosShift().getPos().getWorkPlace());
-		} else if (invoiceDetail.getLine() == 1) {
+		} else if (invoiceDetail.getLine() != 1) {
+			invoiceDetail.setWorkPlace(obtainPreviousWorkPlace(invoice));
+		} else {
 			CompanyCollectionsController companyCollections = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
 			List<SelectItem> workPlaces = companyCollections.getCurrentUserWorkPlaces();
 			if (workPlaces.size() > 0) {
 				invoiceDetail.setWorkPlace((WorkPlace)workPlaces.get(0).getValue());
+			} else {
+				throw new AbortProcessingException(FINANCE_INVOICE_DETAIL_NO_WORKPLACE_ERROR);
 			}
-		} else {
-			invoiceDetail.setWorkPlace(obtainPreviousWorkPlace(invoice));
 		}
-
 	}
 
 	private WorkPlace obtainPreviousWorkPlace(Invoice invoice) throws ManagerBeanException {
