@@ -11,6 +11,7 @@ import java.util.Map;
 import com.esferalia.aon.gwt.common.client.widget.Calendar;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
+import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -20,7 +21,9 @@ public class CalendarDraftObject implements Calendar.Listener {
 
 		void onValueChangeEvent(ValueChangeEvent<Date> event);
 		
-		void onSuprPressEvent(Date date) ;
+		void onSuprPressEvent(Date date);
+		
+		void onEnterPressEvent(Date date);
 
 	}
 	
@@ -188,4 +191,11 @@ public class CalendarDraftObject implements Calendar.Listener {
 		for (Listener listener : listeners)
 			listener.onSuprPressEvent(date);
 	}
+	
+	@Override
+	public void onEnterPressEvent(Date date) {
+		for(Listener listener : listeners)
+			listener.onEnterPressEvent(date);
+	}
+	
 }

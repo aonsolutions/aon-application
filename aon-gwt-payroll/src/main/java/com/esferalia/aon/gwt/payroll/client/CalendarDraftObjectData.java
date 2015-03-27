@@ -35,71 +35,6 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 		void onUpdateHoliday();
 	}
 
-	class MyHolidayDraft  {
-
-		private Integer id;
-		private Integer holiday;
-		private Integer domain;
-		private String description;
-		
-		private Map<Date, String> sortHolidays;
-
-		public MyHolidayDraft() {
-			
-			sortHolidays = new TreeMap<Date, String>(new Comparator<Date>() {
-
-				@Override
-				public int compare(Date date1, Date date2) {					
-					return date1.compareTo(date2);
-				}
-			});
-		}
-
-		public void setId(Integer id) {
-			this.id = id;
-		}
-
-		public void setHoliday(Integer holiday) {
-			this.holiday = holiday;
-		}
-
-		public void setDescription(String description) {
-			this.description = description;
-		}
-		
-		public void setDomain(Integer domain) {
-			this.domain = domain;
-		}
-
-		public void addHoliday(Date date, String description) {
-			sortHolidays.put(date, description);
-		}
-
-		public void setMap(Map<Date, String> general) {
-			sortHolidays.putAll(general);
-		}
-
-		public Map<Date, String> getGeneralMap() {
-			return sortHolidays;
-		}
-
-		public Integer getId() {
-			return this.id;
-		}
-		
-		public Integer getDomain() {
-			return this.domain;
-		}
-
-		public Integer getHoliday() {
-			return this.holiday;
-		}
-
-		public String getDescription() {
-			return this.description;
-		}
-	}
-
 	private static final String[] months = { "Enero", "Febrero", "Marzo",
 			"Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre",
 			"Octubre", "Noviembre", "Diciembre" };
@@ -162,25 +97,9 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 
 		getHoliday(pattern, year, cb);
 	}
-	
-	private void asignHoliday (Integer pattern) {
-		
-		MyHolidayDraft draft = myDrafts.get(0);
-		
-		if(draft.getId() != pattern)
-			draft.setHoliday(pattern);
-		else {			
-			generalHolidays.clear();
-			pattern = 0;
-		}
-			
-	}
 
 	private void getHoliday(Integer pattern, Integer year,
 			final AsyncCallback<CalendarDraftObjectData> cb) {
-		
-		if ( pattern != null && pattern >= 0)
-			asignHoliday(pattern);
 
 		calendarDraftObject.getHolidayCalendar(pattern, year,
 				new AsyncCallback<CalendarDraftObject>() {
@@ -204,9 +123,6 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 	
 	public void getHolidayCalendarWithYearChange(Integer pattern, Integer year,
 			final AsyncCallback<CalendarDraftObjectData> cb) {
-		
-		if ( pattern != null && pattern >= 0)
-			asignHoliday(pattern);
 
 		calendarDraftObject.getHolidayCalendar(pattern, year,
 				new AsyncCallback<CalendarDraftObject>() {
@@ -226,6 +142,14 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 						cb.onSuccess(CalendarDraftObjectData.this);
 					}
 				});
+	}
+	
+	public void assignHoliday2Draft(Integer value) {
+		
+		if(myDrafts.isEmpty() == false) {
+			MyHolidayDraft draft = myDrafts.get(0);
+			draft.setHoliday(value);
+		}
 	}
 
 	public void saveHolidayDraft(Integer value, final AsyncCallback<Void> cb) {
@@ -368,7 +292,7 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 			return myDrafts.get(myDrafts.size() - 1).getHoliday();
 
 		else if ( generalHolidays.isEmpty() == false)
-			return generalHolidays.get(generalHolidays.size() -1).getHoliday();
+			return generalHolidays.get(0).getId();
 
 		else
 			return -50;
@@ -407,6 +331,12 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 	@Override
 	public void onSuprPressEvent(Date date) {
 		deleteHoliday(date);
+	}
+
+	@Override
+	public void onEnterPressEvent(Date date) {
+		
+		
 	}
 	
 	public void deleteHoliday(Date date) {
@@ -488,4 +418,73 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 		generalHolidays.clear();
 		pattern = -50;
 	}
+	
+	//MY CLASS
+	
+
+	class MyHolidayDraft  {
+
+		private Integer id;
+		private Integer holiday;
+		private Integer domain;
+		private String description;
+		
+		private Map<Date, String> sortHolidays;
+
+		public MyHolidayDraft() {
+			
+			sortHolidays = new TreeMap<Date, String>(new Comparator<Date>() {
+
+				@Override
+				public int compare(Date date1, Date date2) {					
+					return date1.compareTo(date2);
+				}
+			});
+		}
+
+		public void setId(Integer id) {
+			this.id = id;
+		}
+
+		public void setHoliday(Integer holiday) {
+			this.holiday = holiday;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
+		
+		public void setDomain(Integer domain) {
+			this.domain = domain;
+		}
+
+		public void addHoliday(Date date, String description) {
+			sortHolidays.put(date, description);
+		}
+
+		public void setMap(Map<Date, String> general) {
+			sortHolidays.putAll(general);
+		}
+
+		public Map<Date, String> getGeneralMap() {
+			return sortHolidays;
+		}
+
+		public Integer getId() {
+			return this.id;
+		}
+		
+		public Integer getDomain() {
+			return this.domain;
+		}
+
+		public Integer getHoliday() {
+			return this.holiday;
+		}
+
+		public String getDescription() {
+			return this.description;
+		}
+	}
+
 }

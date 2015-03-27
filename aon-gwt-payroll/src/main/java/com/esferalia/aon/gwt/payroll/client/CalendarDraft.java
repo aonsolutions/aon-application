@@ -155,8 +155,11 @@ public class CalendarDraft extends Composite implements
 
 	@UiHandler("holidayList")
 	void onListChangeHandler(ChangeEvent event) {
-		saveButton.setEnabled(true);
+		saveButton.setEnabled(true);		
 		Integer value = Integer.parseInt(holidayList.getSelectedValue());
+		
+		calendarDraftObjectData.assignHoliday2Draft(value);
+		
 		loadCalendarPanel(value, Integer.parseInt(yearLabel.getText()),
 				calendarDraftObjectData);
 	}
@@ -392,7 +395,7 @@ public class CalendarDraft extends Composite implements
 	private void getItemLoadIndex() {
 		nameValueListBoxSelected = calendarDraftObjectData
 				.getHolidayDescription();
-
+		
 		for (int x = 0; x < holidayList.getItemCount(); x++) {
 			if (Integer.parseInt(holidayList.getValue(x)) == nameValueListBoxSelected)
 				holidayList.setItemSelected(x, true);
