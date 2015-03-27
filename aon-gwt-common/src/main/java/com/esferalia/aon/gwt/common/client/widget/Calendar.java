@@ -9,6 +9,9 @@ import com.esferalia.aon.gwt.common.client.css.AonCalendarCSS;
 import com.esferalia.aon.gwt.common.client.css.AonCalendarResources;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.DoubleClickEvent;
+import com.google.gwt.event.dom.client.DoubleClickHandler;
+import com.google.gwt.event.dom.client.HasDoubleClickHandlers;
 import com.google.gwt.event.dom.client.HasKeyDownHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
@@ -18,6 +21,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
@@ -39,6 +43,8 @@ public class Calendar extends ResizeComposite implements
 		void onValueChangeEvent(ValueChangeEvent<Date> event);
 		
 		void onSuprPressEvent(Date date);
+		
+		void onEnterPressEvent(Date date);
 
 	}
 
@@ -111,8 +117,7 @@ public class Calendar extends ResizeComposite implements
 			datePicker.setCurrentMonth(date);
 			datePicker.setYearAndMonthDropdownVisible(false);
 			datePicker.setYearArrowsVisible(false);
-			datePicker.addValueChangeHandler(this);
-			
+			datePicker.addValueChangeHandler(this);			
 			datePicker.addKeyDownHandler(this);
 			datePicker.sinkEvents(Event.ONKEYDOWN);
 			table.setWidget(row, col, datePicker);
@@ -172,12 +177,24 @@ public class Calendar extends ResizeComposite implements
 		
 		int keyCode = event.getNativeKeyCode();
 		
-		if (keyCode == KeyCodes.KEY_DELETE) {
-			for(Listener listener : listeners)
-				listener.onSuprPressEvent(getDateSelected());
-		}
-	}
+		if (keyCode == KeyCodes.KEY_DELETE)
+			onSuprPress(getDateSelected());
+			
+		else if (keyCode == KeyCodes.KEY_ENTER)
+			onEnterPress(getDateSelected());
 
+	}
+	
+	private final void onSuprPress (Date date) {
+		for(Listener listener : listeners)
+			listener.onSuprPressEvent(date);
+	}
+	
+	private final void onEnterPress (Date date) {
+		for (Listener listener : listeners)
+			listener.onEnterPressEvent(date);
+	}
+	
 	// -------------------------------------------------------------------------
 	@Override
 	protected void onAttach() {
@@ -198,6 +215,7 @@ public class Calendar extends ResizeComposite implements
 
 		public void refreshComponents() {
 			super.refreshAll();
+			
 		}		
 
 		@Override
@@ -264,6 +282,8 @@ public class Calendar extends ResizeComposite implements
 			model.shiftCurrentMonth(numMonths);
 			picker.refreshComponents();
 		}
+		
+		
 
 		private String firstCharToUpper(String name) {
 			String mayus = String.valueOf(name.charAt(0));
