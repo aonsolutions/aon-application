@@ -16,10 +16,32 @@
 
 			<aon:column styleClass="aon-editDataTable-iconColumn">
 				<aon:outputText value="&#160;"
-					rendered="#{controller.to == to}"
-					styleClass="aon-icon2 aon-icon-rowSelector" />																
+					styleClass="aon-icon2 aon-icon-rowSelector"
+					title="#{bundle.product_itemDetail_selected}"
+					rendered="#{controller.to == to}" />
 			</aon:column>
-			
+
+			<aon:if test="#{product.to.serializable}">
+				<aon:column alias="Item.serialNumber"
+					styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_serial_number}" />
+					</f:facet>
+					<aon:outputText value="#{to.serialNumber}" />
+				</aon:column>
+
+				<aon:column alias="Item.serialDate"
+					styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_serial_date}" />
+					</f:facet>
+					<aon:outputText value="#{to.serialDate}">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+				</aon:column>
+			</aon:if>
+
 			<aon:if test="#{product.showDetail}">
 				<aon:column alias="Item.detail"
 					styleClass="aon-editDataTable-textColumn">
@@ -51,31 +73,61 @@
 			</aon:if>
 
 			<aon:column alias="Item.barcode"
-				styleClass="aon-editDataTable-textColumn">
+					styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.product_barcode}" />
 				</f:facet>
 				<aon:outputText value="#{to.barcode}" />
 			</aon:column>
 
-			<aon:column alias="Item.price"
-				styleClass="aon-editDataTable-numberColumn aon-width-100">
+			<aon:column alias="Item.purchasePrice"
+				styleClass="aon-editDataTable-numberColumn">
 				<f:facet name="header">
-					<aon:outputText value="#{bundle.product_sales_base_price}" />
+					<aon:outputText value="#{bundle.product_purchase_price}" />
+				</f:facet>
+				<aon:outputText value="#{to.purchasePrice}">
+					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+				</aon:outputText>
+			</aon:column>
+			
+			<aon:column alias="Item.price"
+				styleClass="aon-editDataTable-numberColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.product_sales_base}" />
 				</f:facet>
 				<aon:outputText value="#{to.price}">
 					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 				</aon:outputText>
 			</aon:column>
 			
+			<aon:column styleClass="aon-editDataTable-numberColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_sales_price}" />
+				</f:facet>
+				<aon:outputText value="#{to.salesPrice}">
+					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+				</aon:outputText>
+			</aon:column>
+			
+			<aon:if test="#{product.to.inventoriable}">
+				<aon:column styleClass="aon-editDataTable-numberColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.product_stock}" />
+					</f:facet>
+					<aon:outputText value="#{to.stock}">
+						<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
+					</aon:outputText>
+				</aon:column>
+			</aon:if>			
+			
 			<aon:column alias="Product.status"
-				styleClass="aon-editDataTable-textColumn aon-width-80">
+				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_status}" />
 				</f:facet>
 				<aon:outputText value="#{to.status}" />
 			</aon:column>			
-			
+
 		</ui:define>
 	</ui:decorate>
 	 

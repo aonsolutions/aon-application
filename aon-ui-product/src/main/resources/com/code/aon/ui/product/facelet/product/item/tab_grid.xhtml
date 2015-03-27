@@ -7,22 +7,31 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<aon:div styleClass="aon-toolbar" >
-		<aon:commandButton id="saveItem" value="#{bundle.aon_save}"					
+	<aon:div styleClass="aon-toolbar">
+		<aon:commandButton id="saveItem" 
 			styleClass="aon-finding-toolbar-item aon-icon-accept"
-			actionListener="#{product.acceptItem}" />
-		<aon:confirmButton id="removeItem"
-			rendered="#{controller.model.rowCount > 1}"
-			value="#{bundle.aon_remove}" immediate="true"
+			value="#{bundle.aon_save}"					
+			actionListener="#{product.onAcceptItem}" />
+		<aon:confirmButton id="removeItem" immediate="true"
 			styleClass="aon-finding-toolbar-item aon-icon-delete"
+			value="#{bundle.aon_remove}"
+			rendered="#{controller.model.rowCount > 1 and !controller.to.wildCard}"
 			confirmTitle="#{bundle.aon_confirm_title}"
 			confirmMessage="#{bundle.aon_remove_confirm}"
 			confirmAction="product_form"
 			confirmActionListener="#{product.onRemoveItem}" />
+		<aon:commandButton id="searchItem" immediate="true"
+			styleClass="aon-finding-toolbar-item aon-icon-search"
+			value="#{bundle.aon_search}"
+			actionListener="#{item.onEditSearch}"
+			reRender="showSearchItemWindow">			
+			<f:setPropertyActionListener target="#{product.showSearchItemWindow}" value="#{true}" />							
+		</aon:commandButton>
 		<aon:commandButton id="resetItem"
-			value="#{bundle.aon_reset}" reRender="showNewItemWindow"
+			styleClass="aon-finding-toolbar-item aon-icon-new"
+			value="#{bundle.aon_reset}" 
 			actionListener="#{product.onResetItem}"
-			styleClass="aon-finding-toolbar-item aon-icon-new" >			
+			reRender="showNewItemWindow">			
 			<f:setPropertyActionListener target="#{product.showNewItemWindow}" value="#{true}" />							
 		</aon:commandButton>
 		<ui:include src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml">
@@ -31,6 +40,6 @@
 		</ui:include>								
 	</aon:div>	
 									
-	<ui:include src="/com/code/aon/ui/product/facelet/product/item/form_content.xhtml" />
+	<ui:include src="/com/code/aon/ui/product/facelet/product/item/list.xhtml" />
 
 </ui:composition>

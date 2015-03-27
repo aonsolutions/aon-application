@@ -35,16 +35,6 @@ public class Product extends ProductDB implements IAuditable {
 	private Set<Item> items = new HashSet<Item>();
 	private Set<ProductTag> tags = new HashSet<ProductTag>();
 
-	@Transient
-	public String getShortName() {
-		return (getName().length() > 16) ? StringUtils.substring(getName(), 0, 16) : getName();
-	}
-
-	@Transient
-	public boolean isWithholding() {
-		return (getRetention() != null && getRetention().getId() != null);
-	}
-
     @OneToMany(mappedBy="product")
 	public Set<Item> getItems() {
 		return this.items;
@@ -90,10 +80,32 @@ public class Product extends ProductDB implements IAuditable {
 	@Transient
 	public String getFullName() throws ManagerBeanException {
 		String tags = getTagList();
-		if (! StringUtils.isEmpty(tags)) {
+		if (!StringUtils.isEmpty(tags)) {
 			return getName() + " (" + tags + ")";
 		}
 		return getName();
 	}	
-	
+
+	@Transient
+	public String getShortName() {
+		return (getName().length() > 16) ? StringUtils.substring(getName(), 0, 16) : getName();
+	}
+
+	@Transient
+	public boolean isWithholding() {
+		return (getRetention() != null && getRetention().getId() != null);
+	}
+
+    @Transient
+    public int getItemCount() throws ManagerBeanException {
+    	int itemCount = 0;
+    	if (getId() != null) {
+        	IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+        	Criteria criteria = new Criteria();
+        	criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), getId());
+    		itemCount = itemBean.getCount(criteria);
+    	}
+    	return itemCount;
+    }
+
 }

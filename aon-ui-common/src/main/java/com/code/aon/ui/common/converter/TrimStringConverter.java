@@ -6,14 +6,14 @@ import javax.faces.convert.Converter;
 
 import org.apache.commons.lang.StringUtils;
 
-public class EmptyStringConverter implements Converter {
+public class TrimStringConverter implements Converter {
 
 	@Override
 	public Object getAsObject(FacesContext context, UIComponent component, String value) {
 		if ((value == null) || StringUtils.isBlank(value)) {
 			return null;
 		}
-		return value;
+		return StringUtils.trim(value);
 	}
 
 	@Override
@@ -21,7 +21,7 @@ public class EmptyStringConverter implements Converter {
 		if (value == null) {
 			return null;
 		}
-		return value.toString();
+		return StringUtils.trim(value.toString());
 	}
 
 }

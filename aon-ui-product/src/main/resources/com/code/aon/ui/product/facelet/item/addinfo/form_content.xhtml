@@ -18,8 +18,8 @@
 	<aon:outputLabel for="ItemAddInfo_value" value="#{bundle.aon_value}" />
 	<aon:inputText id="ItemAddInfo_value"
 		value="#{controller.to.value}"
-		required="true" 
-		size="100" maxlength="128" />
+		size="100" maxlength="128"
+		required="true" converter="aon.TrimStringConverter" />
 
 	<aon:outputLabel for="ItemAddInfo_valueDate" value="#{bundle.aon_date}" />
 	<aon:selectInputDate id="ItemAddInfo_valueDate"

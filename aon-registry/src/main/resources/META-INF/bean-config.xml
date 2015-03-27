@@ -14,13 +14,6 @@
 	</bean>
 
 	<bean description="">
-		<pojo>com.code.aon.registry.RegistryAddInfo</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.registry.event.RegistryAddInfoBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
-
-	<bean description="">
 		<pojo>com.code.aon.registry.RegistryAddress</pojo>
 		<vetoListeners>
 	        <vetoListener>com.code.aon.registry.event.RegistryAddressBeanVetoListener</vetoListener>

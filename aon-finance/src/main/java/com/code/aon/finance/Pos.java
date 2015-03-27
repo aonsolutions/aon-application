@@ -15,6 +15,7 @@ public class Pos extends PosDB {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public Pos() {
+		setDisplayMode(PosDisplayMode.STANDARD);
 		setActive(true);
 	}
 

@@ -28,10 +28,11 @@
 		<f:selectItem itemLabel="-" value="#{null}" />
 		<f:selectItems value="#{productCollections.categories}" />
 	</aon:selectOneMenu>
-	
-	<ui:include 
-		src="/com/code/aon/ui/config/facelet/tag/input.xhtml" />
-	
+
+	<aon:if test="#{searchController.selectableTagsCount > 0}">
+		<ui:include src="/com/code/aon/ui/config/facelet/tag/input.xhtml" />
+	</aon:if>
+
 	<aon:if test="#{aonConfiguration.bean.product.showBrand and productCollections.brandsCount > 0}">
 		<aon:outputLabel for="Product_brand_id"
 			value="#{bundle.tas_make}" />
@@ -94,6 +95,16 @@
 		</ui:include>
 	</aon:if>	
 	
+	<aon:if test="#{aonConfiguration.bean.product.showSerializable}">
+		<aon:outputLabel for="Product_serializable"
+			value="#{bundle.aon_serializable}" />
+		<aon:selectOneRadio id="Product_serializable"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
+		</aon:selectOneRadio>
+	</aon:if>	
+
 	<aon:if test="#{aonConfiguration.bean.product.showStock}">
 		<aon:outputLabel for="Product_inventoriable"
 			value="#{bundle.product_inventoriable}" />
@@ -108,6 +119,14 @@
 		<aon:outputLabel for="Product_composition"
 			value="#{bundle.product_composite_product}" />
 		<aon:selectOneRadio id="Product_composition"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+		</aon:selectOneRadio>
+
+		<aon:outputLabel for="Product_manufactured"
+			value="#{bundle.product_manufactured_product}" />
+		<aon:selectOneRadio id="Product_manufactured"
 			valueChangeListener="#{controller.addExpression}">
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
 			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />

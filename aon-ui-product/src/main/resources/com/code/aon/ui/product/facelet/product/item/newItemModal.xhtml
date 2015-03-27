@@ -9,22 +9,31 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 	
 	<aon:methodParam name="ndm_saveActionListener"
-		value="#{product.acceptItem}" type="actionListener" />
+		value="#{product.onAcceptItem}" type="actionListener" />
 	<aon:methodParam name="ndm_cancelActionListener"
 		value="#{product.onCancelItem}" type="actionListener" />
 
 	<ui:decorate template="/com/code/aon/ui/product/facelet/item/newDetailModal.xhtml">
 		<ui:param name="detailId" value="Item" />
-		<ui:param name="minWidth" value="820" />
-		<ui:param name="minHeight" value="280" />
+		<ui:param name="minWidth" value="540" />
+		<ui:param name="minHeight" value="360" />
 		<ui:param name="modalTitle" value="#{bundle.aon_detail}" />
 		<ui:param name="showNewDetailWindow" value="#{controller.showNewItemWindow}" />
 		<ui:param name="detailController" value="#{itemController}" />
 	
 		<ui:define name="afterContent">
-			<ui:include src="/com/code/aon/ui/product/facelet/product/item/form_content.xhtml" >
-				<ui:param name="controller" value="#{itemController}" />
-			</ui:include>
+			<aon:panelGrid id="productNewDiv" columns="2"
+				columnClasses="aon-panelGrid-odd aon-width-150,	aon-panelGrid-even aon-width-450" >
+
+				<ui:include src="/com/code/aon/ui/product/facelet/product/item/formNewContent.xhtml">
+					<ui:param name="itemTo" value="#{itemController.to}" />
+				</ui:include>
+
+				<ui:include src="/com/code/aon/ui/product/facelet/product/item/formPrices.xhtml" >
+					<ui:param name="itemTo" value="#{itemController.to}" />
+				</ui:include>
+
+			</aon:panelGrid>
 		</ui:define>
 		
 	</ui:decorate>

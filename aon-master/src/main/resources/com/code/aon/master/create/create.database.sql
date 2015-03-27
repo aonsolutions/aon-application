@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.18.0
+# Version: 8.20.0
 # Created by: girazu
-# Creation Date: 23/03/2015 12:50
+# Creation Date: 27/03/2015 13:15
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -736,10 +736,13 @@ CREATE TABLE `product` (
   `brand` int(4) default NULL COMMENT 'Marca Comercial del Producto',
   `category` int(4) default NULL COMMENT 'Categoria del Producto',
   `inventoriable` tinyint(1) default NULL COMMENT 'Indica si el Producto es inventariable',
+  `serializable` tinyint(1) default '0' COMMENT 'Indica si el Producto es serializable',
+  `lotable` tinyint(1) default '0' COMMENT 'Indica si el Producto es loteable',
   `status` tinyint(2) default '0' COMMENT 'Estado del Producto',
   `vat` int(4) default NULL COMMENT 'IVA del Producto',
   `retention` int(4) default NULL COMMENT 'Retencion del Producto',
   `type` tinyint(2) default NULL COMMENT 'Tipo de Producto',
+  `manufactured` tinyint(1) default '0' COMMENT 'Indica si el Producto es elaborado',
   `composition` tinyint(1) default '0' COMMENT 'Indica si el Producto es una Composicion',
   `composition_price` tinyint(1) default '0' COMMENT 'Indica si el Precio lo determina la Composicion',
   `sales_account` int(4) default NULL COMMENT 'Identificador de la Cuenta Contable de Ventas',
@@ -779,6 +782,8 @@ CREATE TABLE `item` (
   `detail2` varchar(15) collate latin1_spanish_ci default NULL COMMENT 'Detalle 2 del Articulo',
   `detail3` varchar(15) collate latin1_spanish_ci default NULL COMMENT 'Detalle 3 del Articulo',
   `description` text collate latin1_spanish_ci COMMENT 'Descripcion del Articulo',
+  `serial_number` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Numero de serie',
+  `serial_date` date default NULL COMMENT 'Fecha de serializacion',
   `price` double default '0' COMMENT 'Precio del Articulo',
   `status` tinyint(2) default '0' COMMENT 'Estado del Articulo',
   `expenses_percent` double default '0' COMMENT 'Gastos porcentuales del Articulo',
@@ -1214,6 +1219,7 @@ CREATE TABLE `user` (
   `enterprise` int(4) default NULL COMMENT 'Identificador de la Empresa',
   `registry` int(4) default NULL COMMENT 'Identificador del Registry',
   `active` tinyint(1) NOT NULL default '1' COMMENT 'Indica si el Usuario esta activo o no',
+  `allowConcurrent` tinyint(1) default '0' COMMENT 'Indica si el Usuario admite Sesiones concurrentes',
   `password` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Contraseña del Usuario',
   `passwordExpiration` date default NULL COMMENT 'Fecha de Expiracion de la Contraseña',
   `toolbar` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de Barra de Herramientas del Usuario',
@@ -7929,7 +7935,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.18.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.20.0');
 
 COMMIT;
 

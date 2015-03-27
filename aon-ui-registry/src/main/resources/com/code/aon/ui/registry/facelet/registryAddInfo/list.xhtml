@@ -96,11 +96,13 @@
 									value="#{to.value}" />
 								<aon:inputText id="RegistryAddInfo_value"
 									rendered="#{formEdit}" size="32" maxlength="128" 
-									value="#{registryAddInfo.to.value}" required="#{true}" />
+									value="#{registryAddInfo.to.value}" required="#{true}"
+									converter="aon.TrimStringConverter" />
 								<f:facet name="footer">
 									<aon:inputText id="RegistryAddInfo_value-New"
 										rendered="#{formNew}" size="32" maxlength="128" 
-										value="#{registryAddInfo.to.value}" required="#{true}" />
+										value="#{registryAddInfo.to.value}" required="#{true}"
+										converter="aon.TrimStringConverter" />
 								</f:facet>
 							</aon:column>
 

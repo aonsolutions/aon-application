@@ -17,13 +17,6 @@
 	</bean>
 
 	<bean description="">
-		<pojo>com.code.aon.product.ItemAddInfo</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.product.event.ItemAddInfoBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
-	
-	<bean description="">
 		<pojo>com.code.aon.product.ItemAlternative</pojo>
 		<listeners>
 	        <listener>com.code.aon.product.event.ItemAlternativeBeanListener</listener>

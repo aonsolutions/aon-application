@@ -12,6 +12,9 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Hibernate;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.hibernate.annotations.Where;
 
 import com.code.aon.AonVersion;
@@ -21,6 +24,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.annotations.Heritable;
 import com.code.aon.common.audit.IAuditable;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tax;
 import com.code.aon.product.enumeration.ProductStatus;
@@ -70,33 +74,35 @@ public class Item extends ItemDB implements IPriceable, IAuditable {
 	
 	@Transient
 	public String getFullName() {
-		StringBuffer sb = new StringBuffer();
-		
-		if (StringUtils.isNotEmpty(getDetail())) {
-			sb.append(getDetail());
-		}
-		if (StringUtils.isNotEmpty(getDetail2())) {
-			if ( sb.length() > 0 ) {
-				sb.append("/");
-			}
-			sb.append(getDetail2());
-		}
-		if (StringUtils.isNotEmpty(getDetail3())) {
-			if ( sb.length() > 0 ) {
-				sb.append("/");
-			}
-			sb.append(getDetail3());
-		}
-		if ( sb.length() > 0 ) {
-			return getProduct().getName() + " [" + sb.toString() + "]";
-		}
-		return getProduct().getName();
+		String details = getDetails();
+		return (details.length() > 0) ? getProduct().getName() + " [" + details + "]" : getProduct().getName();
 	}
 
 	public void setFullName( String value ) {
 	}
-	
-    public void setPurchasePrice(double purchasePrice) {
+
+	@Transient
+	public String getDetails() {
+		StringBuffer sb = new StringBuffer();
+		if (StringUtils.isNotEmpty(getDetail())) {
+			sb.append(getDetail());
+		}
+		if (StringUtils.isNotEmpty(getDetail2())) {
+			if (sb.length() > 0) {
+				sb.append(" / ");
+			}
+			sb.append(getDetail2());
+		}
+		if (StringUtils.isNotEmpty(getDetail3())) {
+			if (sb.length() > 0) {
+				sb.append(" / ");
+			}
+			sb.append(getDetail3());
+		}
+		return (sb.length() > 0) ? sb.toString() : "";
+	}
+
+	public void setPurchasePrice(double purchasePrice) {
 		super.setPurchasePrice(CommonUtil.round(purchasePrice, 4));
 	}
 
@@ -166,5 +172,35 @@ public class Item extends ItemDB implements IPriceable, IAuditable {
 		}
 		return compositionList;
 	}
+
+    @Transient
+    public double getStock() throws ManagerBeanException {
+    	double stock = 0;
+    	if (getId() != null) {
+        	String select = "SELECT SUM(quantity) quantity FROM stock as stock WHERE stock.item = " + getId();
+        	Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+        	SQLQuery query = session.createSQLQuery(select);
+        	List<?> list = query.addScalar("quantity", Hibernate.DOUBLE).list();
+        	if (!list.isEmpty() && list.get(0) != null) {
+        		stock = (Double)list.get(0);
+        	}
+    	}
+    	return stock;
+    }
+
+    @Transient
+    public boolean isWildCard() throws ManagerBeanException {
+    	boolean wildCard = false;
+    	if (getId() != null && getProduct().getId() != null && getProduct().isSerializable()) {
+        	String select = "SELECT MIN(id) wildCard FROM item as item WHERE item.product = " + getProduct().getId();
+        	Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+        	SQLQuery query = session.createSQLQuery(select);
+        	List<?> list = query.addScalar("wildCard", Hibernate.INTEGER).list();
+        	if (!list.isEmpty() && list.get(0) != null) {
+        		wildCard = getId().intValue() == ((Integer)list.get(0)).intValue();
+        	}
+    	}
+    	return wildCard;
+    }
 
 }

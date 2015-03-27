@@ -17,7 +17,9 @@
 					
 		<aon:panelCollapsible expanded="false" label="#{bundle.aon_detail}" >
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
-				<ui:include src="/com/code/aon/ui/product/facelet/product/item/searchContent.xhtml" />
+				<ui:include src="/com/code/aon/ui/product/facelet/product/item/searchContent.xhtml">
+					<ui:param name="aliasPreffix" value="Product_items" />
+				</ui:include>
 			</aon:panelGrid>
 		</aon:panelCollapsible>
 				

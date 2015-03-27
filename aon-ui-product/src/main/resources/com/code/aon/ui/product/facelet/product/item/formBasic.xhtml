@@ -15,9 +15,20 @@
 		</ui:include>
 
 		<aon:outputLabel for="Item_status" value="#{bundle.aon_status}" />
-		<aon:selectOneRadio id="Item_status" value="#{controller.to.status}">
-			<f:selectItems value="#{productCollections.productStatuses}" />
-		</aon:selectOneRadio>
+		<aon:panelGrid columns="2" columnClasses="aon-width-200, aon-width-auto">
+			<aon:selectOneRadio id="Item_status" value="#{controller.to.status}"
+				disabled="#{controller.to.wildCard}">
+				<f:selectItems value="#{productCollections.productStatuses}" />
+			</aon:selectOneRadio>
+			<aon:if test="#{product.to.inventoriable}">
+				<aon:div>
+					<aon:outputLabel value="#{bundle.product_stat_stock}:" styleClass="aon-margin-right aon-bold" />
+					<aon:outputText value="#{controller.to.stock}" styleClass="aon-bold">
+						<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
+					</aon:outputText>
+				</aon:div>
+			</aon:if>
+		</aon:panelGrid>
 
 		<aon:if test="#{aonConfiguration.bean.product.showEcommerceData}">
 			<aon:selectBooleanCheckbox id="Item_internet" 

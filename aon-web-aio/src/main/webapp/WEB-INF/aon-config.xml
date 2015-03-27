@@ -161,6 +161,7 @@
 			showStock="true"
 			showTariff="true"
 			showCatalogues="true"
+			showSerializable="false"
 			showComposition="true"
 			showAlternatives="true"
 			showSuppliers="true"

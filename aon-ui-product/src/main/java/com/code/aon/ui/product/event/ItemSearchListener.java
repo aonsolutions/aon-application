@@ -1,6 +1,7 @@
 package com.code.aon.ui.product.event;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
@@ -21,6 +22,7 @@ public class ItemSearchListener extends RegistrySearchListener {
 	
 	private ProductStatus[] itemStatuses;
 	private Supplier supplier;
+	private String supplierCode;
 	private Supplier supplierParam;
 	private Product product;
 	private ProductCategory category;
@@ -39,6 +41,14 @@ public class ItemSearchListener extends RegistrySearchListener {
 
 	public void setSupplier(Supplier supplier) {
 		this.supplier = supplier;
+	}
+
+	public String getSupplierCode() {
+		return supplierCode;
+	}
+
+	public void setSupplierCode(String supplierCode) {
+		this.supplierCode = supplierCode;
 	}
 
 	public Supplier getSupplierParam() {
@@ -70,14 +80,15 @@ public class ItemSearchListener extends RegistrySearchListener {
 		ProductStatus[] defaultItemStatus = {ProductStatus.ACTIVE};
 		setItemStatuses(defaultItemStatus);
 		IManagerBean supplierBean = BeanManager.getManagerBean(Supplier.class);
-		if ((getSupplierParam() != null) && (getSupplierParam().getId() != null)) {
+		if (getSupplierParam() != null && getSupplierParam().getId() != null) {
 			setSupplier(getSupplierParam());
 		} else {
 			setSupplier((Supplier)supplierBean.createNewTo());
 		}
+		setSupplierCode(null);
 		setSupplierParam((Supplier)supplierBean.createNewTo());
-		setProduct( (Product) BeanManager.getManagerBean(Product.class).createNewTo() );
-		setCategory( (ProductCategory) BeanManager.getManagerBean(ProductCategory.class).createNewTo() );
+		setProduct((Product) BeanManager.getManagerBean(Product.class).createNewTo());
+		setCategory((ProductCategory) BeanManager.getManagerBean(ProductCategory.class).createNewTo());
 		super.init();
 	}
 	
@@ -89,6 +100,9 @@ public class ItemSearchListener extends RegistrySearchListener {
 		}
 		if (getSupplier() != null && getSupplier().getId() != null) {
 			criteria.addEqualExpression(getController().resolveAlias("Item_suppliers_registry_id"), getSupplier().getId());
+		}
+		if (StringUtils.isNotBlank(StringUtils.trim(getSupplierCode()))) {
+			criteria.addEqualExpression(getController().resolveAlias("Items_suppliers_code"), StringUtils.trim(getSupplierCode()));
 		}
 		if (getProduct() != null && getProduct().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.ITEM_PRODUCT_ID), getProduct().getId());

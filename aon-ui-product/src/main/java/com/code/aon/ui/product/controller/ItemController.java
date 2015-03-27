@@ -104,6 +104,24 @@ public class ItemController extends BasicController implements IAuditableControl
 		return pricesManager;
 	}
 
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
+	}
+	
+	public void setCurrentItem(Item item) {
+		setTo(item);
+	}
+
+	public static void clearBarcode(Item item) {
+		if (StringUtils.isEmpty(item.getBarcode())) {
+			item.setBarcode(null);
+		}
+	}	
+
 	public void onPurchasePriceChanged(ValueChangeEvent event) {
 		getPricesManager().onPurchasePriceChanged((Item)this.getTo(), event.getNewValue());
 	}
@@ -139,29 +157,9 @@ public class ItemController extends BasicController implements IAuditableControl
 	}
 
 	public void onProductHistory(ActionEvent e){
-		ProductStatEngineController controller =(ProductStatEngineController)AonUtil.getRegisteredBean("productStat");
+		ProductStatEngineController controller = (ProductStatEngineController)AonUtil.getRegisteredBean("productStat");
 		controller.setItem((Item)this.getTo());
 		controller.getProductData();
 	}
 
-	public void setCurrentItem( Item item ) {
-		setTo(item);
-	}
-
-	public static void clearBarcode( Item item ) {
-		if ( StringUtils.isEmpty(item.getBarcode()) ) {
-			item.setBarcode(null);
-		}
-	}	
-
-	@Override
-	public boolean isShowAuditInfoWindow() {
-		return showAuditInfoWindow;
-	}
-
-	@Override
-	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
-		this.showAuditInfoWindow = showAuditInfoWindow;
-	}
-	
 }

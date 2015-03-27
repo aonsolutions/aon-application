@@ -16,95 +16,142 @@ import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.config.Domain;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.Projection;
-import com.code.aon.ql.ProjectionList;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class ItemBeanVetoListener extends ManagerBeanVetoListenerAdapter {
-	
+
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Item item = (Item)evt.getTo();
-		checkValidCode(item, false);
 		checkItem(item);
+
+		try {
+			checkValidBarCode(item, null);
+			checkValidDetails(item, null);
+			checkValidSerialNumber(item, null);
+		} catch(ManagerBeanException e) {
+			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Item item = (Item)evt.getTo();
-		checkValidCode(item, true);
 		checkItem(item);
+
+		try {
+			Item itemDB = (Item)BeanManager.getManagerBean(Item.class).get(item.getId());
+			checkValidBarCode(item, itemDB);
+			checkValidDetails(item, itemDB);
+			checkValidSerialNumber(item, itemDB);
+		} catch(ManagerBeanException e) {
+			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
+		}
 	}
 
 	private void checkItem(Item item) {
     	if (StringUtils.isEmpty(item.getProduct().getCode())) {
-    		item.getProduct().setCode(item.getId().toString());
+    		item.getProduct().setCode(item.getProduct().getId().toString());
     	}
-    	if (item.getProduct().isInventoriable()) {
+    	if (item.getProduct().isSerializable() && !item.getProduct().isInventoriable()) {
+    		item.getProduct().setInventoriable(true);
+    	}
+    	if (item.getProduct().isInventoriable() && item.getProduct().isComposition()) {
     		item.getProduct().setComposition(false);
     	}
-    	if (!item.getProduct().isComposition()) {
+    	if (!item.getProduct().isComposition() && item.getProduct().isCompositionPrice()) {
     		item.getProduct().setCompositionPrice(false);
     	}
 	}
 
-	private String getBarcode( IManagerBean itemBean, Item item ) throws ManagerBeanException {
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_ID),item.getId());
-		ProjectionList pl = new ProjectionList();
-		pl.add(Projection.property(itemBean.getFieldName(IEntityAlias.ITEM_BARCODE)));
-		List<?> list = itemBean.getList(pl, criteria);
-		return (String) list.get(0);		
-	}
-	
-    private void checkValidCode(Item to, boolean update) throws ManagerBeanVetoListenerException {
-    	if ( StringUtils.isEmpty(to.getBarcode()) ) {
-    		return;
-    	}
-		try {
+    private void checkValidBarCode(Item to, Item itemDB) throws ManagerBeanException {
+    	if (StringUtils.isNotEmpty(to.getBarcode())) {
 			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 			boolean checkInDomain = true;
-			if ( update ) {
-				String barcode = getBarcode(itemBean, to);
-				checkInDomain = ! StringUtils.equals(to.getBarcode(), barcode);
+			if (itemDB != null) {
+				checkInDomain = !StringUtils.equals(to.getBarcode(), itemDB.getBarcode());
 			}
-			if ( checkInDomain ) {
+			if (checkInDomain) {
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_BARCODE),to.getBarcode());
-				List<ITransferObject> list = itemBean.getList(criteria);
-				if (! list.isEmpty()) {
-					Item duplicate = (Item) list.get(0);
-					throw new ManagerBeanVetoListenerException(
-							"Ya existe un producto con el mismo código de barras (" + duplicate.getFullName() + ")");	
+				criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_BARCODE), to.getBarcode());
+				List<ITransferObject> itemList = itemBean.getList(criteria);
+				if (!itemList.isEmpty()) {
+					Item duplicate = (Item)itemList.get(0);
+					throw new ManagerBeanException("Ya existe un Producto con el mismo Código de Barras (" + duplicate.getFullName() + ")");	
 				}				
 			}
-			// Si estamos grabando un producto en un dominio padre, se chequea que no exista el 
-			// código en ningún dominio hijo con la propiedad "heridity" habilitada.
+
 			int currentDomain = DomainManager.getCurrentDomain();
 			IManagerBean domainBean = BeanManager.getManagerBean(Domain.class);
-			Domain domain = (Domain) domainBean.get(currentDomain);
-			if ( (domain != null) && domain.isDomainManagement() ) {
-				Criteria c = new Criteria();
-				c.addEqualExpression(domainBean.getFieldName(IEntityAlias.DOMAIN_PARENT_ID), currentDomain);
-				c.addEqualExpression(domainBean.getFieldName(IEntityAlias.DOMAIN_ENABLE_HEREDITY), true);
-				List<ITransferObject> domains = domainBean.getList(c);
-				for (ITransferObject d : domains) {
-					Domain child = (Domain) d;
+			Domain domain = (Domain)domainBean.get(currentDomain);
+			if (domain != null && domain.isDomainManagement()) {
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(domainBean.getFieldName(IEntityAlias.DOMAIN_PARENT_ID), currentDomain);
+				criteria.addEqualExpression(domainBean.getFieldName(IEntityAlias.DOMAIN_ENABLE_HEREDITY), true);
+				List<ITransferObject> domainList = domainBean.getList(criteria);
+				for (ITransferObject ito : domainList) {
+					Domain child = (Domain)ito;
 					Criteria childCriteria = new Criteria();
-					childCriteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_DOMAIN),child.getId());
-					childCriteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_BARCODE),to.getBarcode());
+					childCriteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_DOMAIN), child.getId());
+					childCriteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_BARCODE), to.getBarcode());
 					childCriteria.setSkipDomainFilter(true);
-					if ( itemBean.getCount(childCriteria) > 0 ) {
-						throw new ManagerBeanVetoListenerException("Ya existe un producto con el mismo código de barras "
-								+ " en el dominio '"+child.getName()+" " + child.getDescription() +"'");							
+					if (itemBean.getCount(childCriteria) > 0) {
+						throw new ManagerBeanException("Ya existe un Producto con el mismo Código de Barras en el Dominio " + child.getName());							
 					}
 				}
 			}
-		} catch (ManagerBeanException e) {
-			throw new ManagerBeanVetoListenerException("No se pudo chequear la existencia del producto.");
-		}
+    	}
 	}
-	
+
+    private void checkValidDetails(Item to, Item itemDB) throws ManagerBeanException {
+    	if (StringUtils.isNotEmpty(to.getDetail())) {
+			boolean checkInDomain = true;
+			if (itemDB != null) {
+				checkInDomain = !StringUtils.equals(to.getDetail(), itemDB.getDetail()) || !StringUtils.equals(to.getDetail2(), itemDB.getDetail2()) 
+									|| !StringUtils.equals(to.getDetail3(), itemDB.getDetail3());
+			}
+			if (checkInDomain) {
+				IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), to.getProduct().getId());
+				criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_DETAIL), to.getDetail());
+		    	if (StringUtils.isNotEmpty(to.getDetail2())) {
+					criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_DETAIL2), to.getDetail2());
+		    	}
+		    	if (StringUtils.isNotEmpty(to.getDetail3())) {
+					criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_DETAIL3), to.getDetail3());
+		    	}
+				List<ITransferObject> itemList = itemBean.getList(criteria);
+				if (!itemList.isEmpty()) {
+					Item duplicate = (Item)itemList.get(0);
+					throw new ManagerBeanException("Ya existe el Detalle (" + duplicate.getDetails() + ")");	
+				}				
+			}
+
+    	}
+	}
+
+    private void checkValidSerialNumber(Item to, Item itemDB) throws ManagerBeanException {
+    	if (StringUtils.isNotEmpty(to.getSerialNumber())) {
+			boolean checkInDomain = true;
+			if (itemDB != null) {
+				checkInDomain = !StringUtils.equals(to.getSerialNumber(), itemDB.getSerialNumber());
+			}
+			if (checkInDomain) {
+				IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), to.getProduct().getId());
+				criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER), to.getSerialNumber());
+				List<ITransferObject> itemList = itemBean.getList(criteria);
+				if (!itemList.isEmpty()) {
+					Item duplicate = (Item)itemList.get(0);
+					throw new ManagerBeanException("Ya existe el Número de Serie (" + duplicate.getSerialNumber() + ")");	
+				}				
+			}
+
+    	}
+	}
+
 }

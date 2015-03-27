@@ -8,38 +8,55 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
 
+	<aon:if test="#{!product.nevv and product.to.serializable and !itemTo.wildCard}">
+		<aon:outputLabel for="Item_serial_number"
+			value="#{bundle.aon_serial_number}" />
+		<aon:inputText id="Item_serial_number" 
+			value="#{itemTo.serialNumber}" size="32" maxlength="32"
+			required="true" converter="aon.TrimStringConverter" />
+
+		<aon:outputLabel for="Item_serial_date"
+			value="#{bundle.aon_date} #{bundle.aon_series}" />
+		<aon:selectInputDate id="Item_serial_date"
+			value="#{itemTo.serialDate}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+	</aon:if>
+
 	<aon:if test="#{product.showDetail}">
 		<aon:outputLabel for="Item_product_detail"
 			value="#{product.labelDetail}" />
 		<aon:inputText id="Item_product_detail" 
-			value="#{itemTo.detail}" size="25" maxlength="15" />
+			value="#{itemTo.detail}" size="32" maxlength="15"
+			required="true" converter="aon.TrimStringConverter" />
 	</aon:if>
 
 	<aon:if test="#{product.showDetail2}">
 		<aon:outputLabel for="Item_product_detail2"
 			value="#{product.labelDetail2}" />
 		<aon:inputText id="Item_product_detail2" 
-			value="#{itemTo.detail2}" size="25" maxlength="15" />
+			value="#{itemTo.detail2}" size="32" maxlength="15"
+			required="true" converter="aon.TrimStringConverter" />
 	</aon:if>
 
 	<aon:if test="#{product.showDetail3}">
 		<aon:outputLabel for="Item_product_detail3"
 			value="#{product.labelDetail3}" />
 		<aon:inputText id="Item_product_detail3" 
-			value="#{itemTo.detail3}" size="25" maxlength="15" />
+			value="#{itemTo.detail3}" size="32" maxlength="15"
+			required="true" converter="aon.TrimStringConverter" />
 	</aon:if>
 
 	<aon:if test="#{aonConfiguration.bean.product.showBarcode}">
 		<aon:outputLabel for="Item_barcode"
 			value="#{bundle.product_barcode}" />
 		<aon:inputText id="Item_barcode" 
-			value="#{itemTo.barcode}" size="25" maxlength="32" />
-		</aon:if>
+			value="#{itemTo.barcode}" size="32" maxlength="32"
+			converter="aon.TrimStringConverter" />
+	</aon:if>
 
 	<aon:outputLabel for="Item_description" value="#{bundle.aon_description}" />
- 	<aon:div style="margin-bottom: 0.5em;">
-		<aon:inputTextarea id="Item_description"
-			value="#{itemTo.description}" cols="54" rows="4" />
- 	</aon:div>
+	<aon:inputTextarea id="Item_description"
+		value="#{itemTo.description}" cols="50" rows="4" />
 
 </ui:composition>

@@ -30,6 +30,13 @@
 		<converter-class>com.code.aon.ui.common.converter.EmptyStringConverter</converter-class>
 	</converter>
 	
+   	<!-- ************* TRIM STRING CONVERTER ***************** -->
+	<converter>
+		<description>Conversor para eliminar espacios en blanco sobrantes.</description>
+		<converter-id>aon.TrimStringConverter</converter-id>
+		<converter-class>com.code.aon.ui.common.converter.TrimStringConverter</converter-class>
+	</converter>
+	
    	<!-- ************* BIC CONVERTER ***************** -->	
 	<validator>
 		<validator-id>BICValidator</validator-id>	

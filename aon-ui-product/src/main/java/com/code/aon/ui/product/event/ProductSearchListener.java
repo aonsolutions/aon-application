@@ -35,43 +35,17 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private ProductStatus[] statuses;
-	
 	private ProductStatus[] itemStatuses;
-	
 	private ProductType[] types;
-	
 	private Tax vat;
-	
 	private Tax retention;
-	
 	private Account purchaseAccount;
-	
 	private Account salesAccount;
-	
 	private Tag[] tags;
-	
 	private Supplier supplier;
-	
 	private String supplierCode;
-	
 	private ProductCategory category;
 	
-	public Supplier getSupplier() {
-		return supplier;
-	}
-
-	public void setSupplier(Supplier supplier) {
-		this.supplier = supplier;
-	}
-	
-	public String getSupplierCode() {
-		return supplierCode;
-	}
-
-	public void setSupplierCode(String supplierCode) {
-		this.supplierCode = supplierCode;
-	}
-
 	public ProductStatus[] getStatuses() {
 		return statuses;
 	}
@@ -80,6 +54,14 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 		this.statuses = statuses;
 	}
 
+	public ProductStatus[] getItemStatuses() {
+		return itemStatuses;
+	}
+
+	public void setItemStatuses(ProductStatus[] itemStatuses) {
+		this.itemStatuses = itemStatuses;
+	}
+	
 	public ProductType[] getTypes() {
 		return types;
 	}
@@ -120,14 +102,6 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 		this.salesAccount = salesAccount;
 	}
 	
-	public ProductStatus[] getItemStatuses() {
-		return itemStatuses;
-	}
-
-	public void setItemStatuses(ProductStatus[] itemStatuses) {
-		this.itemStatuses = itemStatuses;
-	}
-	
 	public Tag[] getTags() {
 		if (ArrayUtils.isEmpty(tags)) {
 			tags = new Tag[]{getEmptyTag()};
@@ -153,6 +127,22 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 		return ids;
 	}			
 	
+	public Supplier getSupplier() {
+		return supplier;
+	}
+
+	public void setSupplier(Supplier supplier) {
+		this.supplier = supplier;
+	}
+	
+	public String getSupplierCode() {
+		return supplierCode;
+	}
+
+	public void setSupplierCode(String supplierCode) {
+		this.supplierCode = supplierCode;
+	}
+
 	public ProductCategory getCategory() {
 		return category;
 	}
@@ -163,22 +153,19 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 
 	@Override
 	protected void init() throws ManagerBeanException {
-		setStatuses( new ProductStatus[]{ProductStatus.ACTIVE} );
-		setTypes( new ProductType[0] );
-		IManagerBean taxBean = BeanManager.getManagerBean(Tax.class);
-		setVat( (Tax) taxBean.createNewTo() );
-		setRetention( (Tax) taxBean.createNewTo() );
-		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-		setPurchaseAccount( (Account) accountBean.createNewTo() );
-		setSalesAccount( (Account) accountBean.createNewTo() );
-		setItemStatuses( new ProductStatus[0] );
-		setTags( new Tag[]{getEmptyTag()} );
-		IManagerBean supplierBean = BeanManager.getManagerBean(Supplier.class);
-		setSupplier((Supplier)supplierBean.createNewTo());
+		setStatuses(new ProductStatus[]{ProductStatus.ACTIVE});
+		setItemStatuses(new ProductStatus[0]);
+		setTypes(new ProductType[0]);
+		setVat((Tax)BeanManager.getManagerBean(Tax.class).createNewTo());
+		setRetention((Tax)BeanManager.getManagerBean(Tax.class).createNewTo());
+		setPurchaseAccount((Account)BeanManager.getManagerBean(Account.class).createNewTo());
+		setSalesAccount((Account)BeanManager.getManagerBean(Account.class).createNewTo());
+		setTags(new Tag[]{getEmptyTag()});
+		setSupplier((Supplier)BeanManager.getManagerBean(Supplier.class).createNewTo());
 		setSupplierCode(null);
-		setCategory( (ProductCategory) BeanManager.getManagerBean(ProductCategory.class).createNewTo() );
+		setCategory((ProductCategory) BeanManager.getManagerBean(ProductCategory.class).createNewTo());
 	}
-	
+
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		if (!ArrayUtils.isEmpty(getStatuses())) {
@@ -192,23 +179,23 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 			String alias = getController().resolveAlias(IEntityAlias.PRODUCT_TYPE);
 			addEnumToCriteria(criteria, alias, getTypes());
 		}
-		if ( (getVat() != null) && (getVat().getId() != null) ) {
+		if ((getVat() != null) && (getVat().getId() != null)) {
 			String alias = getController().resolveAlias(IEntityAlias.PRODUCT_VAT_ID);
 			criteria.addEqualExpression(alias, getVat().getId());			
 		}	
-		if ( (getRetention() != null) && (getRetention().getId() != null) ) {
+		if ((getRetention() != null) && (getRetention().getId() != null)) {
 			String alias = getController().resolveAlias(IEntityAlias.PRODUCT_RETENTION_ID);
 			criteria.addEqualExpression(alias, getRetention().getId());			
 		}	
-		if ( (getPurchaseAccount() != null) && (getPurchaseAccount().getId() != null) ) {
+		if ((getPurchaseAccount() != null) && (getPurchaseAccount().getId() != null)) {
 			String alias = getController().resolveAlias(IEntityAlias.PRODUCT_PURCHASE_ACCOUNT_ID);
 			criteria.addEqualExpression(alias, getPurchaseAccount().getId());			
 		}	
-		if ( (getSalesAccount() != null) && (getSalesAccount().getId() != null) ) {
+		if ((getSalesAccount() != null) && (getSalesAccount().getId() != null)) {
 			String alias = getController().resolveAlias(IEntityAlias.PRODUCT_SALES_ACCOUNT_ID);
 			criteria.addEqualExpression(alias, getSalesAccount().getId());			
 		}	
-		if ( getTagsSize() > 0 ) {
+		if (getTagsSize() > 0) {
 			addEnumToCriteria(criteria, "Product.tags.tag.id", getTagsIds().toArray());	
 		}
 		if (getSupplier() != null && getSupplier().getId() != null) {
@@ -221,11 +208,11 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 			criteria.addEqualExpression(getController().resolveAlias("Product_category<id"), getCategory().getId());
 		}
 	}
-	
+
 	public void onAddTag(ActionEvent event) {
 		this.tags = (Tag[]) ArrayUtils.add(this.tags, getEmptyTag());
 	}
-	
+
 	public void onRemoveTag(ActionEvent event) {
         FacesContext context = FacesContext.getCurrentInstance();
 		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("index"));		
@@ -234,22 +221,29 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 			setTags(new Tag[]{getEmptyTag()});
 		}
 	}		
-	 
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
     public List<SelectItem> getSelectableTags() throws ManagerBeanException {
     	IManagerBean tagBean = BeanManager.getManagerBean(Tag.class);
     	Criteria criteria = new Criteria();
-    	criteria.addEqualExpression(tagBean.getFieldName(IEntityAlias.TAG_TYPE), TagType.PRODUCT );
+    	criteria.addEqualExpression(tagBean.getFieldName(IEntityAlias.TAG_TYPE), TagType.PRODUCT);
     	criteria.addOrder(tagBean.getFieldName(IEntityAlias.TAG_NAME));
-    	return ConfigCollectionsController.getTagList( (List) tagBean.getList(criteria));
+    	return ConfigCollectionsController.getTagList((List)tagBean.getList(criteria));
     }    
-    
-	private ConfigCollectionsController getCollectionsController() {
-		return (ConfigCollectionsController)AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
-	}
-    
+
+    public int getSelectableTagsCount() throws ManagerBeanException {
+    	IManagerBean tagBean = BeanManager.getManagerBean(Tag.class);
+    	Criteria criteria = new Criteria();
+    	criteria.addEqualExpression(tagBean.getFieldName(IEntityAlias.TAG_TYPE), TagType.PRODUCT);
+    	return tagBean.getCount(criteria);
+    }    
+
 	private Tag getEmptyTag() {
 		return getCollectionsController().getEmptyTag();
 	}	
-	
+
+	private ConfigCollectionsController getCollectionsController() {
+		return (ConfigCollectionsController)AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
+	}
+
 }

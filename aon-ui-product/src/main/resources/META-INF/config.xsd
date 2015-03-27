@@ -26,6 +26,7 @@
 			<xs:attribute name="showStock" type="xs:boolean" use="required"/>
 			<xs:attribute name="showTariff" type="xs:boolean" use="required"/>
 			<xs:attribute name="showCatalogues" type="xs:boolean" use="required"/>
+			<xs:attribute name="showSerializable" type="xs:boolean" use="required"/>
 			<xs:attribute name="showComposition" type="xs:boolean" use="required"/>
 			<xs:attribute name="showAlternatives" type="xs:boolean" use="required"/>
 			<xs:attribute name="showSuppliers" type="xs:boolean" use="required"/>

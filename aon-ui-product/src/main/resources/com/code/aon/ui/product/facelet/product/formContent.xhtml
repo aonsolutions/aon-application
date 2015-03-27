@@ -9,6 +9,7 @@
 
 	<aon:panelGrid columns="2" cellpadding="5" styleClass="aon-panelGrid-formatting"
 		columnClasses="aon-width-half aon-vertical-align-top,aon-width-half aon-vertical-align-top">
+
 		<aon:div>
 			<aon:div styleClass="aon-group">
 				<aon:div styleClass="aon-group-title">
@@ -24,42 +25,24 @@
 								<ui:param name="categoryChangeReRender" value="itemDataGrid,itemData" />
 							</ui:include>
 
+							<aon:if test="#{aonRole.accountingOperator and aonConfiguration.bean.product.showAccount}">
+								<aon:outputLabel value="#{bundle.aon_sales_account}"
+									rendered="#{controller.to.salesAccount.id != null}" />
+								<aon:outputText styleClass="aon-bold"
+									value="#{controller.to.salesAccount.code} - #{controller.to.salesAccount.description}"
+									rendered="#{controller.to.salesAccount.id != null}" />
+
+								<aon:outputLabel value="#{bundle.aon_purchase_account}"
+									rendered="#{controller.to.purchaseAccount.id != null}" />
+								<aon:outputText styleClass="aon-bold"
+									value="#{controller.to.purchaseAccount.code} - #{controller.to.purchaseAccount.description}"
+									rendered="#{controller.to.purchaseAccount.id != null}" />
+							</aon:if>
+
 						</aon:panelGrid>
 					</aon:div>
 				</aon:div>
 			</aon:div>
-			
-			<aon:if test="#{aonRole.accountingOperator and aonConfiguration.bean.product.showAccount}">
-				<aon:div styleClass="aon-group" >
-					<aon:div styleClass="aon-group-title">
-						<aon:outputText value="#{bundle.accounting_balance_detail_accounts}"/>
-					</aon:div>
-					<aon:div styleClass="aon-group-body"> 	
-						<aon:div styleClass="aon-group-body-internal">
-							<a4j:region>
-								<aon:panelGrid columns="2" styleClass="aon-width-all"
-									columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
-	
-									<aon:outputLabel for="Account_id-Sales"
-										value="#{bundle.aon_sales_account}" />
-									<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
-										<ui:param name="lookupTo" value="#{controller.to.salesAccount}" />
-										<ui:param name="lookupSuffix" value="-Sales" />
-									</ui:include>
-
-									<aon:outputLabel for="Account_id-Purchase"
-										value="#{bundle.aon_purchase_account}" />
-									<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
-										<ui:param name="lookupTo" value="#{controller.to.purchaseAccount}" />
-										<ui:param name="lookupSuffix" value="-Purchase" />
-									</ui:include>
-
-								</aon:panelGrid>
-							</a4j:region>
-						</aon:div>
-					</aon:div>
-				</aon:div>
-			</aon:if>			
 
 		</aon:div>
 		
@@ -71,46 +54,34 @@
 				<aon:div styleClass="aon-group-body"> 
 					<aon:div styleClass="aon-group-body-internal">
 					
-						<aon:if test="#{product.showDetail}">				
-							<ui:include	src="/com/code/aon/ui/product/facelet/product/item/list.xhtml">
-								<ui:param name="controller" value="#{item}" />
-							</ui:include>
-						</aon:if>
-						<aon:if test="#{!product.showDetail}">				
-							<ui:include	src="/com/code/aon/ui/product/facelet/product/item/formBasic.xhtml">
-								<ui:param name="controller" value="#{item}" />
-							</ui:include>
-						</aon:if>
+						<ui:include	src="/com/code/aon/ui/product/facelet/product/item/formBasic.xhtml">
+							<ui:param name="controller" value="#{item}" />
+						</ui:include>
 	
 					</aon:div>
 				</aon:div>
 			</aon:div>
 	
-			<aon:if test="#{!product.showDetail}">
-			
-				<aon:div styleClass="aon-group">
-					<aon:div styleClass="aon-group-title">
-						<aon:outputText value="#{bundle.product_basic_sales_tariff}"/>
-					</aon:div>
-					<aon:div styleClass="aon-group-body"> 	
-						<aon:div styleClass="aon-group-body-internal">
-							<a4j:region>
-								<aon:panelGrid columns="2" styleClass="aon-width-all"
-									columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
-			
-							
-									<ui:include	src="/com/code/aon/ui/product/facelet/product/item/formPrices.xhtml">
-										<ui:param name="controller" value="#{item}" />
-										<ui:param name="itemTo" value="#{item.to}" />
-									</ui:include>
-				
-								</aon:panelGrid>
-							</a4j:region>
-						</aon:div>
+			<aon:div styleClass="aon-group">
+				<aon:div styleClass="aon-group-title">
+					<aon:outputText value="#{bundle.product_basic_sales_tariff}"/>
+				</aon:div>
+				<aon:div styleClass="aon-group-body"> 	
+					<aon:div styleClass="aon-group-body-internal">
+						<a4j:region>
+							<aon:panelGrid columns="2" styleClass="aon-width-all"
+								columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
+
+								<ui:include	src="/com/code/aon/ui/product/facelet/product/item/formPrices.xhtml">
+									<ui:param name="controller" value="#{item}" />
+									<ui:param name="itemTo" value="#{item.to}" />
+								</ui:include>
+
+							</aon:panelGrid>
+						</a4j:region>
 					</aon:div>
 				</aon:div>
-				
-			</aon:if>
+			</aon:div>
 		</aon:panelGroup>
 		
 	</aon:panelGrid>

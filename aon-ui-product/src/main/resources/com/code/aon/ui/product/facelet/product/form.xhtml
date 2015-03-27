@@ -24,6 +24,14 @@
 						</aon:menuItem>
 						<rich:menuSeparator id="historyMenuSeparator" />		
 					</aon:if>
+					<aon:if test="#{aonRole.accountingOperator and aonConfiguration.bean.product.showAccount}">
+						<aon:menuItem id="account-button"
+							value="#{bundle.accounting_balance_detail_accounts}"
+							reRender="showAccountsWindow"
+							iconClass="aon-icon-account-entry">
+							<f:setPropertyActionListener target="#{product.showAccountsWindow}" value="#{true}" />							
+						</aon:menuItem>
+					</aon:if>
 					<aon:if test="#{aonConfiguration.bean.product.showTariff}">
 						<aon:menuItem id="tariff-button"
 							value="#{bundle.product_tariff_module2}"
@@ -101,11 +109,11 @@
 						<ui:param name="controller" value="#{product}" />
 					</ui:include>
 
-					<aon:panelTabSet selectedTab="#{item.selectedTab}">
-						<aon:if test="#{product.showDetail}">
+					<aon:panelTabSet selectedTab="#{item.selectedTab}" styleClass="aon-nomargin">
+						<aon:if test="#{product.to.serializable or product.showDetail}">
 							<aon:panelTab id="itemPanelTab"
 								label="#{bundle.aon_detail}">
-								<ui:include src="/com/code/aon/ui/product/facelet/product/item/tab_grid.xhtml">
+								<ui:include	src="/com/code/aon/ui/product/facelet/product/item/tab_grid.xhtml">
 									<ui:param name="controller" value="#{item}" />
 								</ui:include>
 							</aon:panelTab>
@@ -203,11 +211,6 @@
 		</aon:form>
 
 		<aon:if test="#{!product.nevv}">
-			<ui:include src="/com/code/aon/ui/product/facelet/product/item/newItemModal.xhtml">
-				<ui:param name="controller" value="#{product}" />
-				<ui:param name="itemController" value="#{item}" />
-				<ui:param name="modalReRender" value="productDiv" />
-			</ui:include>		
 			<aon:if test="#{aonConfiguration.bean.product.showComposition or aonConfiguration.bean.product.showAlternatives}">
 				<aon:lookupButtonPopup lookup="#{itemLookup}" />
 			</aon:if>
@@ -217,6 +220,21 @@
 			</aon:if>
 			<aon:if test="#{aonRole.accountingOperator and aonConfiguration.bean.product.showAccount}">
 				<aon:lookupButtonPopup lookup="#{accountLookup}" />
+			</aon:if>
+			<ui:include src="/com/code/aon/ui/product/facelet/product/item/searchItemModal.xhtml">
+				<ui:param name="controller" value="#{product}" />
+				<ui:param name="itemController" value="#{item}" />
+				<ui:param name="modalReRender" value="productDiv" />
+			</ui:include>		
+			<ui:include src="/com/code/aon/ui/product/facelet/product/item/newItemModal.xhtml">
+				<ui:param name="controller" value="#{product}" />
+				<ui:param name="itemController" value="#{item}" />
+				<ui:param name="modalReRender" value="productDiv" />
+			</ui:include>		
+			<aon:if test="#{aonRole.accountingOperator and aonConfiguration.bean.product.showAccount}">
+				<ui:include src="/com/code/aon/ui/product/facelet/product/modalAccounts.xhtml">
+					<ui:param name="controller" value="#{product}" />
+				</ui:include>		
 			</aon:if>
 			<aon:if test="#{aonConfiguration.bean.product.showStock and product.to.inventoriable}">
 				<ui:include src="/com/code/aon/ui/product/facelet/item/modalInfo.xhtml" />

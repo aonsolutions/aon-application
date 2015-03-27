@@ -7,7 +7,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
 import com.code.aon.product.enumeration.ProductStatus;
-import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -27,9 +26,6 @@ public class ItemControllerListener extends ControllerAdapter implements IItemCo
     public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
     	Item item = (Item)event.getController().getTo();
         item.setStatus(ProductStatus.ACTIVE);
-        item.getProduct().setType(ProductType.COMMERCIAL_PRODUCT);
-        item.getProduct().setInventoriable(false);
-        item.getProduct().setComposition(false);
     	try {
     		ProductController.updateVat(item.getProduct());
         } catch (ManagerBeanException e) {
@@ -57,8 +53,6 @@ public class ItemControllerListener extends ControllerAdapter implements IItemCo
 				item.setStatus(ProductStatus.ACTIVE);
 			}
 			ItemController.clearBarcode(item);
-			
-			item.getProduct().setStatus(item.getStatus());
 			ProductController.updateVat(item.getProduct());
 
 			IManagerBean productBean = BeanManager.getManagerBean(Product.class);
@@ -76,7 +70,6 @@ public class ItemControllerListener extends ControllerAdapter implements IItemCo
 				item.setStatus(ProductStatus.ACTIVE);
 			}
 			ItemController.clearBarcode(item);
-			item.getProduct().setStatus(item.getStatus());
 
 			IManagerBean productBean = BeanManager.getManagerBean(Product.class);
 			productBean.restoreNullSubPOJOs(item.getProduct());

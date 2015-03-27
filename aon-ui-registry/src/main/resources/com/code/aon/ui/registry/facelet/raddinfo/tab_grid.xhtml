@@ -44,12 +44,14 @@
 				<aon:inputText id="RegistryAddInfo_value"
 					value="#{controller.to.value}"
 					rendered="#{formEdit}" required="true" 
-					size="100" maxlength="128" />
+					size="100" maxlength="128"
+					converter="aon.TrimStringConverter" />
 				<f:facet name="footer">
 					<aon:inputText id="RegistryAddInfo_value-New"
 						value="#{controller.to.value}"
 						rendered="#{formNew}" required="true" 
-						size="100" maxlength="128" />
+						size="100" maxlength="128"
+						converter="aon.TrimStringConverter" />
 				</f:facet>
 			</aon:column>
 

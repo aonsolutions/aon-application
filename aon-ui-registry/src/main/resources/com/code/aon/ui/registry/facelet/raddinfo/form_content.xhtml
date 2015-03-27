@@ -18,8 +18,8 @@
 	<aon:outputLabel for="RegistryAddInfo_value" value="#{bundle.aon_value}" />
 	<aon:inputText id="RegistryAddInfo_value"
 		value="#{controller.to.value}"
-		required="true" 
-		size="80" maxlength="128" />
+		size="80" maxlength="128"
+		required="true" converter="aon.TrimStringConverter" />
 
 	<aon:outputLabel for="RegistryAddInfo_valueDate" value="#{bundle.aon_date}" />
 	<aon:selectInputDate id="RegistryAddInfo_valueDate"
