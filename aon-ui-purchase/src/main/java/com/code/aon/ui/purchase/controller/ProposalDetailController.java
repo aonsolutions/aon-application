@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
+import org.ajax4jsf.component.html.HtmlAjaxCommandButton;
+
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -25,6 +27,20 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class ProposalDetailController extends LinesController implements IPurchaseConstants {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
+	@Override
+	public void onAccept(ActionEvent event) {
+		boolean reset = isNevv();
+		super.onAccept(event);
+		if(reset){
+			super.onReset(event);
+		}
+		try  {
+			((HtmlAjaxCommandButton) event.getSource()).setFocus("Item_id-New");
+		} catch(Exception e){
+			// continue without focus...
+		}
+	}
 	
 	public void onLoadPurchase(ActionEvent event) throws ManagerBeanException {
 		ProposalDetail proposalDetail = (ProposalDetail)this.getModel().getRowData();
