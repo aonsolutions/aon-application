@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="48"/>
+	<property name="ireport.y" value="646"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -197,7 +197,7 @@
 					<font size="55"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA["COMPANY"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{company}.getAlias()]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement uuid="04e8acd6-569e-4dcd-8c80-a90137f9799e" key="line-9" positionType="FixRelativeToBottom" x="553" y="0" width="15" height="176" forecolor="#999999">
