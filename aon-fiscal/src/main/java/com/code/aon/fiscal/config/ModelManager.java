@@ -150,7 +150,6 @@ public class ModelManager {
 			String modelLit = params.getModel()==Model.M303_RS?"303":params.getModel().getName();
 			select = select.and(FS_MODEL.MODEL.equal(modelLit));
 		}
-		System.out.println( select.orderBy(FS_MODEL.YEAR).getSQL(true) );
 		Result<Record9<Byte,String,String,String,Byte,String,Byte,Integer,String>> models = 
 				select.orderBy(FS_MODEL.YEAR)
 				.fetch();

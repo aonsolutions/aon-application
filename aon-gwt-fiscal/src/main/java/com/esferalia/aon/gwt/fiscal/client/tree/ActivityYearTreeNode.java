@@ -25,16 +25,16 @@ public class ActivityYearTreeNode extends TreeNode<Integer> {
 	}
 
 	@Override
-	public void select(FiscalTree fiscalPanel) {
+	public void select(FiscalTree fiscalTree) {
 		if (widget == null) {
 			widget = new HTMLPanel(getTreeObject().toString());
 		}
-		fiscalPanel.content.setWidget(widget);
+		fiscalTree.content.setWidget(widget);
 	}
 
 	@Override
 	public ActivityYearTreeNode render(HasTreeItems parent,
-			final FiscalTree fiscalPanel, final Integer year) {
+			final FiscalTree fiscalTree, final Integer year) {
 		InlineLabel label = new InlineLabel();
 		label.setText(year.toString());
 		label.addStyleName(FiscalTree.AON_RESOURCES.css().aonIconPointGreen());
@@ -42,11 +42,13 @@ public class ActivityYearTreeNode extends TreeNode<Integer> {
 		setWidget(label);
 		setUserObject(year);
 		parent.addItem(this);
-		linkContextMenu(label, fiscalPanel);
+		if ( year >= FiscalTree.CURRENT_YEAR) {
+			linkContextMenu(label, fiscalTree);
+		}
 		return this;
 	}
 
-	private void linkContextMenu(Label label, final FiscalTree fiscalPanel) {
+	private void linkContextMenu(Label label, final FiscalTree fiscalTree) {
 		final PopupPanel popupPanel = new PopupPanel();
 		popupPanel.hide();
 		popupPanel.setAutoHideEnabled(true);
@@ -56,14 +58,14 @@ public class ActivityYearTreeNode extends TreeNode<Integer> {
 			@Override
 			public void execute() {
 				TreeItem newAct = TreeNodeTypes.FISCAL_ACTIVITY.getInstance()
-						.render(ActivityYearTreeNode.this, fiscalPanel
+						.render(ActivityYearTreeNode.this, fiscalTree
 							, new FiscalActivity()
-								.setDomain(fiscalPanel.enterprise.getDomain())
+								.setDomain(fiscalTree.enterprise.getDomain())
 								.setYear(getTreeObject())
 								.setEpigraph(AonStringUtils.EMPTY)
 								.setDescription("NUEVA ACTIVIDAD"));
 				setState(true);
-				fiscalPanel.tree.setSelectedItem(newAct, true);
+				fiscalTree.tree.setSelectedItem(newAct, true);
 				popupPanel.hide();
 			}
 		};

@@ -230,7 +230,6 @@ public class InvoiceReportManager {
 			stmt.append("," + FINANCE_TOTAL);
 			stmt.append("," + FINANCE_DATE);
 		}
-		System.out.println(stmt.toString());
 		ps = conn.prepareStatement(stmt.toString(),ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 		int i = 0;
 		ps.setInt(++i, params.getDomain());

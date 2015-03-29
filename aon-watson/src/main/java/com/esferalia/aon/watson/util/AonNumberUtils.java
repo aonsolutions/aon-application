@@ -18,6 +18,17 @@ public class AonNumberUtils {
 		return null;
 	}
 
+	public static double todouble(String value) {
+		if (!AonStringUtils.isBlank(value)) {
+			try {
+				return Double.parseDouble(value);
+			} catch (NumberFormatException e) {
+				// Nothing. returns 0.
+			}
+		}
+		return 0;		
+	}
+
 	public static String toString(Integer value) {
 		if (value == null) return null;
 		return value.toString();

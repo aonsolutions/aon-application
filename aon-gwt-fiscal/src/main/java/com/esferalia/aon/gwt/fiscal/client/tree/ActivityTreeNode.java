@@ -7,6 +7,7 @@ import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasTreeItems;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
@@ -55,7 +56,22 @@ public class ActivityTreeNode extends TreeNode<FiscalActivity> {
 			@Override
 			public void execute() {
 				if (Window.confirm( FiscalTree.MSG.deleteAction() )) {
-					if (getTreeObject().getId() == null) {
+					if (getTreeObject().getId() != null) {
+						FiscalTree.FISCAL_SERVICE.delete(FiscalTree.getCurrentDomainName(), getTreeObject()
+								,new AsyncCallback<Void>() {
+				
+									@Override
+									public void onSuccess(Void v) {
+										fiscalPanel.tree.setSelectedItem(getParentItem(),true);
+										getParentItem().removeItem(ActivityTreeNode.this);							
+									}
+									@Override
+									public void onFailure(Throwable caught) {
+										// TODO Auto-generated method stub
+									}
+				
+						});
+					} else {
 						fiscalPanel.tree.setSelectedItem(getParentItem(),true);
 						getParentItem().removeItem(ActivityTreeNode.this);							
 					}

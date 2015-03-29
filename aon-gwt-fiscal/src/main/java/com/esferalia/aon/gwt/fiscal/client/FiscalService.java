@@ -37,12 +37,13 @@ public interface FiscalService extends RemoteService {
 	ArrayList<Activity> getActivities(int activityGroup) throws AonSQLException;
 	
 	// ---------------------------------------------------------- FISCAL ACTIVITIES
+	FiscalActivity calculate(String domainName, FiscalActivity fa);
 	ArrayList<Epigraph> getModuleEpigraphs(int year);
 	ArrayList<FiscalActivity> getFiscalActivities(String domainName, int domain) throws AonSQLException;
 	FiscalActivity getFiscalActivity(String domainName, int domain, int id) throws AonSQLException;
-	FiscalActivity getFiscalActivityFor(Epigraph epigraph, FiscalActivity fa);
-	FiscalActivity save(String domainName, FiscalActivity fa);
-	void delete(String domainName, FiscalActivity fa);
+	FiscalActivity getFiscalActivityFor(String domainName,Epigraph epigraph, FiscalActivity fa);
+	FiscalActivity save(String domainName, FiscalActivity fa) throws AonCoreException;
+	void delete(String domainName, FiscalActivity fa) throws AonCoreException;
 	
 	// ---------------------------------------------------------------MODELO 190
 	void deleteMod190(String domainName, int domain,Mod190 mod190) throws AonCoreException;

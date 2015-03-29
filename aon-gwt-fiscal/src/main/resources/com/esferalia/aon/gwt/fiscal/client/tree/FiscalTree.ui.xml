@@ -39,12 +39,12 @@
 		</g:west>
 
 		<g:center>
-			<g:SimplePanel ui:field="content"/>
+			<g:ScrollPanel ui:field="content"/>
 		</g:center>
 		
 		<g:south size="0">
 			<aon:MinimizePanel ui:field="footPanel">
-				<g:TabLayoutPanel barHeight="26" barUnit="PX">
+				<g:TabLayoutPanel styleName="gwt-Selector" barHeight="26" barUnit="PX" width="100%">
 					<g:tab>
 						<g:header>
 							<span class="aon-icon-time aon-icon-commandButton" style="padding-left: 20px;">

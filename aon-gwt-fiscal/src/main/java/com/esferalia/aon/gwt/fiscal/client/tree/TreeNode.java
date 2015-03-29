@@ -9,6 +9,10 @@ abstract class TreeNode<T> extends TreeItem {
 
 	public abstract void select(FiscalTree fiscalPanel);
 	public abstract T getTreeObject();
+	
+	public void setTreeObject(T t) {
+		setUserObject(t);
+	}
 
 	public abstract TreeNode<T> render(HasTreeItems parent,
 			FiscalTree fiscalPanel, T t);

@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.fiscal.modules;
 
+import java.io.Serializable;
+
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKey;
 
 public class Modules2015 {
@@ -74,7 +76,7 @@ public class Modules2015 {
 		}
 	}
 	
-	public enum Epigraph implements IModuleEpigraph {
+	public enum Epigraph implements Serializable {
 		E____("---",
 			  "Producci\u00F3n de mejill\u00F3n en batea",
 			  0,
@@ -1353,7 +1355,7 @@ public class Modules2015 {
 		private String epigraph;
 		private String description;
 		private Module[] irpfModules;
-		private Module[] ivaModules;
+		private Module[] vatModules;
 		private double porcMin;
 		private double limPers;
 		private double limExceso;
@@ -1367,7 +1369,7 @@ public class Modules2015 {
 			this.limPers=limPers;
 			this.limExceso=limExceso;
 			this.irpfModules=irpfModules;
-			this.ivaModules=ivaModules;
+			this.vatModules=ivaModules;
 		}
 		public String getEpigraph() {
 			return epigraph;
@@ -1384,16 +1386,16 @@ public class Modules2015 {
 		public double getLimExceso() {
 			return limExceso;
 		}
-		public Module[] getIrpfModules() {
+		public Module[] getIRPFModules() {
 			return irpfModules;
 		}
-		public Module[] getIvaModules() {
-			return ivaModules;
+		public Module[] getVATModules() {
+			return vatModules;
 		}
-		public boolean hasIvaModules() {
-			return ivaModules != null;
+		public boolean hasVATModules() {
+			return vatModules != null;
 		}
-		public boolean hasIrpfModules() {
+		public boolean hasIRPFModules() {
 			return irpfModules != null;
 		}
 	}

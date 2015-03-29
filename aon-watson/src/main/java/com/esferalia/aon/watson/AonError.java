@@ -17,6 +17,8 @@ public enum AonError implements Serializable{
 	,EMPTY_ENTERPRISE("No se ha indicado una empresa.")
 	,EMPTY_DATE_FROM("No se ha indicado una fecha 'desde'.")
 	,EMPTY_DATE_TO("No se ha indicado una fecha 'hasta'.")
+	,EMPTY_DOMAIN("El dominio es un dato obligatorio, no puede estar vacio")
+	,EMPTY_EPIGRAPH("El epígrafe es un dato obligatorio, no puede estar vacio")
 	
 	// -----------------------------------------------------------
 	// --------------------- ENUMERATION -------------------------
@@ -37,7 +39,6 @@ public enum AonError implements Serializable{
 	,ACCOUNT_PERIOD_END_OVERLAP("Solape con la fecha fin y el periodo {0}")
 	,ACCOUNT_PERIOD_UNKOWN_FOR_DATE("No se encuentra un ejercicio contable para la fecha {0,date,dd/MM/yyyy}")
 	// --------------------------------------------- ACCOUNT_ENTRY
-	,ACCOUNT_ENTRY_DOMAIN("El dominio del asiento es un dato obligatorio, no puede estar vacio")
 	,ACCOUNT_ENTRY_WRONG_DOMAIN("El ejericio del asiento no existe o no es válido para el dominio ({0}).")
 	,ACCOUNT_ENTRY_EMPTY_DATE("La fecha del asiento es un dato obligatorio, no puede estar vacia")
 	,ACCOUNT_ENTRY_EMPTY_PERIOD("El ejercicio del asiento es un dato obligatorio, no puede estar vacio")
@@ -53,7 +54,8 @@ public enum AonError implements Serializable{
 	,ACCOUNT_ENTRY_ACCOUNT_INACTIVE("La cuenta contable está desactivada. (ID={0}, [{1} - {2}])")
 	,ACCOUNT_ENTRY_SALARY_NO_LINES("No se han definido líneas en el apunte de nóminas.")
 	,ACCOUNT_ENTRY_SALARY_NO_ACCOUNT("Línea de apunte de nóminas sin cuenta contable y la cuenta asignada al tipo no se puede recuperar. (TIPO={0}, CANTIDAD={1,number}). Revise el valor del parámetro {2}.")
-	
+	// --------------------------------------------- FISCAL ACTIVITY
+	,DUPLICATE_EPIGRAPH("Ya existe el epígrafe {1} en el año {0}")	
 	// -----------------------------------------------------------
 	// --------------------- FISCAL ------------------------------
 	// -----------------------------------------------------------

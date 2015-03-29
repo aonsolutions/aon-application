@@ -52,6 +52,10 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	
 	// ------------------------------------------------------ FISCAL ACTIVITIES
 	@Override
+	public FiscalActivity calculate(String domainName, FiscalActivity fa) {
+		return AON.calculate(domainName, fa);
+	}
+	@Override
 	public ArrayList<FiscalActivity> getFiscalActivities(String domainName,
 			int domain) throws AonSQLException {
 		return AON.getFiscalActivities(domainName, domain);
@@ -63,8 +67,9 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	}
 
 	@Override
-	public FiscalActivity getFiscalActivityFor(Epigraph epigraph, FiscalActivity fa) {
-		return AON.getFiscalActivityFor(epigraph, fa);
+	public FiscalActivity getFiscalActivityFor(String domainName, Epigraph epigraph
+			, FiscalActivity fa) {
+		return AON.getFiscalActivityFor(domainName, epigraph, fa);
 	}
 
 	@Override
@@ -264,6 +269,5 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	public Mod390 initializeMod390(String domainName, Integer domain,Integer year) {
 		return AON.initializeMod390(domainName, domain, year);
 	}
-
 
 }

@@ -1,6 +1,8 @@
 package com.esferalia.aon.occam.api.model.fiscal;
 
-public enum FiscalActivityInfoKeyType {
+import java.io.Serializable;
+
+public enum FiscalActivityInfoKeyType implements Serializable {
 	INFO,
 	VAT_MODULE,
 	IRPF_MODULE,
@@ -14,4 +16,5 @@ public enum FiscalActivityInfoKeyType {
 	public Byte getValue() {
 		return (byte) ordinal();
 	}
+		
 }

@@ -78,8 +78,6 @@ public class Mod311Manager extends FiscalModelManager {
 			conn = DatabaseUtil.getConnection(getDomainName());
 			ps = conn.prepareStatement(SELECT,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			
-			System.out.println( SELECT );
-			
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				double d = rs.getDouble(1);

@@ -26,13 +26,14 @@ public interface FiscalServiceAsync {
 	void getFiscalPanel(String currentDomainName,int currentDomain,int y,
 			AsyncCallback<FiscalModelMatrix> asyncCallback);
 	// ------------------------------------------------------ FISCAL ACTIVITIES
+	void calculate(String domainName, FiscalActivity fa,AsyncCallback<FiscalActivity> callback);
 	void getModuleEpigraphs(int year, AsyncCallback<ArrayList<Epigraph>> callback);
 	void getFiscalActivities(String domainName, int domain,
 			AsyncCallback<ArrayList<FiscalActivity>> callback);
 	void getFiscalActivity(String domainName, int domain, int id,
 			AsyncCallback<FiscalActivity> callback);
-	void getFiscalActivityFor(Epigraph epigraph, FiscalActivity fa,
-			AsyncCallback<FiscalActivity> asyncCallback);
+	void getFiscalActivityFor(String domainName, Epigraph epigraph,
+			FiscalActivity fa, AsyncCallback<FiscalActivity> asyncCallback);
 	void save(String domainName, FiscalActivity fa,
 			AsyncCallback<FiscalActivity> callback);
 	void delete(String domainName, FiscalActivity fa,

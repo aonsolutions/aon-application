@@ -892,7 +892,6 @@ public class Mod190DAO {
 				.orderBy(IRPF_DATA.END_DATE.desc(),IRPF_DATA.START_DATE.asc())
 				.fetchInto(IrpfDataRecord.class);
 		IrpfData irpfData = new IrpfData();
-		System.out.println("" + person + " ---> " + list.size());
 		if (list != null && list.size() > 0) { 
 			IrpfDataRecord record = list.get(0);
 			irpfData.setCeutaMelilla(AonEnumUtils.getBoolean(record

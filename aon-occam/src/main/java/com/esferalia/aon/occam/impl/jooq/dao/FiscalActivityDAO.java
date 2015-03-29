@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.FsActivity.FS_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.FsActivityInfo.FS_ACTIVITY_INFO;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.jooq.Record;
 
@@ -13,104 +14,20 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfo;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKey;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKeyType;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityModule;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Module;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
+import com.esferalia.aon.occam.impl.jooq.validation.FiscalActivityValidation;
+import com.esferalia.aon.occam.server.fiscal.calc.Aeat2015ModuleCalculator;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public class FiscalActivityDAO {
 	
-	enum FiscalActivityInfoType {
-		INFO{
-			@Override
-			public void accept(Record record, FiscalActivity fa) {
-				fa.addInfo(new FiscalActivityInfo()
-					.setId(record.getValue(FS_ACTIVITY_INFO.ID))
-					.setFiscalActivity(record.getValue(FS_ACTIVITY_INFO.FS_ACTIVITY))
-					.setInfoKey(FiscalActivityInfoKey.safeValueOf(record.getValue(FS_ACTIVITY_INFO.INFO_KEY)) )
-					.setLine(record.getValue(FS_ACTIVITY_INFO.LINE))
-					.setValue(record.getValue(FS_ACTIVITY_INFO.VALUE)));				
-			}
-		}
-		,VAT_MODULE {
-			@Override
-			public void accept(Record record, FiscalActivity fa) {
-				fa.addModuleIVA(new FiscalActivityModule()
-				.setFactor(record.getValue(FS_ACTIVITY_INFO.FACTOR))
-				.setBase(record.getValue(FS_ACTIVITY_INFO.BASE))
-				.setUnit(record.getValue(FS_ACTIVITY_INFO.UNIT))
-				.setMinValue(record.getValue(FS_ACTIVITY_INFO.MIN_VALUE))
-				.setMaxValue(record.getValue(FS_ACTIVITY_INFO.MAX_VALUE))
-				.setId(record.getValue(FS_ACTIVITY_INFO.ID))
-				.setFiscalActivity(record.getValue(FS_ACTIVITY_INFO.FS_ACTIVITY))
-				.setInfoKey(FiscalActivityInfoKey.safeValueOf(record.getValue(FS_ACTIVITY_INFO.INFO_KEY)) )
-				.setLine(record.getValue(FS_ACTIVITY_INFO.LINE))
-				.setValue(record.getValue(FS_ACTIVITY_INFO.VALUE))
-				);				
-			}
-		}
-		,IRPF_MODULE{
-			@Override
-			public void accept(Record record, FiscalActivity fa) {
-				fa.addModuleIRPF(new FiscalActivityModule()
-					.setFactor(record.getValue(FS_ACTIVITY_INFO.FACTOR))
-					.setBase(record.getValue(FS_ACTIVITY_INFO.BASE))
-					.setUnit(record.getValue(FS_ACTIVITY_INFO.UNIT))
-					.setMinValue(record.getValue(FS_ACTIVITY_INFO.MIN_VALUE))
-					.setMaxValue(record.getValue(FS_ACTIVITY_INFO.MAX_VALUE))
-					.setId(record.getValue(FS_ACTIVITY_INFO.ID))
-					.setFiscalActivity(record.getValue(FS_ACTIVITY_INFO.FS_ACTIVITY))
-					.setInfoKey(FiscalActivityInfoKey.safeValueOf(record.getValue(FS_ACTIVITY_INFO.INFO_KEY)) )
-					.setLine(record.getValue(FS_ACTIVITY_INFO.LINE))
-					.setValue(record.getValue(FS_ACTIVITY_INFO.VALUE))
-					);				
-			}
-		}
-		,VAT_INFO{
-			@Override
-			public void accept(Record record, FiscalActivity fa) {
-				fa.addInfoIVA(new FiscalActivityInfo()
-				.setId(record.getValue(FS_ACTIVITY_INFO.ID))
-				.setFiscalActivity(record.getValue(FS_ACTIVITY_INFO.FS_ACTIVITY))
-				.setInfoKey(FiscalActivityInfoKey.safeValueOf(record.getValue(FS_ACTIVITY_INFO.INFO_KEY)) )
-				.setLine(record.getValue(FS_ACTIVITY_INFO.LINE))
-				.setValue(record.getValue(FS_ACTIVITY_INFO.VALUE)));				
-			}
-		}
-		,IRPF_INFO{
-			@Override
-			public void accept(Record record, FiscalActivity fa) {
-				fa.addInfoIRPF(new FiscalActivityInfo()
-				.setId(record.getValue(FS_ACTIVITY_INFO.ID))
-				.setFiscalActivity(record.getValue(FS_ACTIVITY_INFO.FS_ACTIVITY))
-				.setInfoKey(FiscalActivityInfoKey.safeValueOf(record.getValue(FS_ACTIVITY_INFO.INFO_KEY)) )
-				.setLine(record.getValue(FS_ACTIVITY_INFO.LINE))
-				.setValue(record.getValue(FS_ACTIVITY_INFO.VALUE)));				
-			}
-		}
-		,MODULE_DETAIL{
-			@Override
-			public void accept(Record record, FiscalActivity fa) {}
-		}
-		;
-		
-		public byte getOrdinal() {
-			return (byte) this.ordinal();
-		}
-		
-		public abstract void accept(Record record, FiscalActivity fa);
-
-		public static void acceptRecord(Record record, FiscalActivity fa) {
-			for ( FiscalActivityInfoType type : FiscalActivityInfoType.values()) {
-				if (record.getValue(FS_ACTIVITY_INFO.TYPE) == type.getOrdinal()) {
-					type.accept(record, fa);	
-				}
-			}
-		}
-	}	
-
+	public static FiscalActivity calculate(AONContext ctx,FiscalActivity fa) {
+		return Aeat2015ModuleCalculator.calculate(ctx, fa);
+	}
+	
 	public static FiscalActivity getActivity(AONContext ctx,int id) {
 		ctx.checkRead();
 		Record record = ctx.getDslContext().select(
@@ -155,8 +72,22 @@ public class FiscalActivityDAO {
 		.orderBy(FS_ACTIVITY_INFO.LINE)
 		.fetch()
 		.stream()
-		.forEach(record -> FiscalActivityInfoType.acceptRecord(record,fa))
-		;
+		.forEach(record ->   
+			fa.add(new FiscalActivityInfo()
+				.setId(record.getValue(FS_ACTIVITY_INFO.ID))
+				.setFiscalActivity(record.getValue(FS_ACTIVITY_INFO.FS_ACTIVITY))
+				.setInfoKey(FiscalActivityInfoKey.safeValueOf(record.getValue(FS_ACTIVITY_INFO.INFO_KEY)) )
+				.setInfoType(com.esferalia.aon.watson.util.AonEnumUtils.enumValue(
+						FiscalActivityInfoKeyType.class
+						, record.getValue(FS_ACTIVITY_INFO.TYPE)))
+				.setLine(record.getValue(FS_ACTIVITY_INFO.LINE))
+				.setValue(record.getValue(FS_ACTIVITY_INFO.VALUE))
+				.setFactor(record.getValue(FS_ACTIVITY_INFO.FACTOR))
+				.setBase(record.getValue(FS_ACTIVITY_INFO.BASE))
+				.setUnit(record.getValue(FS_ACTIVITY_INFO.UNIT))
+				.setMinValue(record.getValue(FS_ACTIVITY_INFO.MIN_VALUE))
+				.setMaxValue(record.getValue(FS_ACTIVITY_INFO.MAX_VALUE))
+		));
 	}
 
 	public static ArrayList<FiscalActivity> getActivities(AONContext ctx,int domain) {
@@ -194,62 +125,68 @@ public class FiscalActivityDAO {
 			.setVatPercent(record.getValue(FS_ACTIVITY.VAT_PERCENT));
 	}
 
-	public static FiscalActivity getActivityFor(Epigraph epigraph, FiscalActivity fa) {
-		fa.setInfo(null);
-		fa.setInfoIRPF(null);
-		fa.setModuleIRPF(null);
-		fa.setInfoIVA(null);
-		fa.setModuleIVA(null);
+	public static FiscalActivity getActivityFor(AONContext ctx,Epigraph epigraph, FiscalActivity fa) {
+		//forces to create a new map on first call on getMap method.
+		fa.getMap().clear();
+		
 		int i = 0;
 		for (FiscalActivityInfoKey key : FiscalActivityInfoKey.values() ){
-			if (key.getType() == FiscalActivityInfoKeyType.INFO && key.accept(fa)) {
-				fa.addInfo(new FiscalActivityInfo()
+			if (key.accept(epigraph,fa)) {
+				fa.add(new FiscalActivityInfo()
 						.setInfoKey(key)
+						.setInfoType(key.getType())
 						.setValue(key.getDefaultValue())
 						.setLine(i++));
-			}
-			if (epigraph.hasIrpfModules()) {
-				if (key.getType() == FiscalActivityInfoKeyType.IRPF_INFO) {
-					fa.addInfoIRPF(new FiscalActivityInfo()
-						.setInfoKey(key)
-						.setValue(key.getDefaultValue())
-						.setLine(i++));
-				}
-			}
-			if (epigraph.hasIvaModules()) {	
-				if (key.getType() == FiscalActivityInfoKeyType.VAT_INFO) {
-					fa.addInfoIVA(new FiscalActivityInfo()
-						.setInfoKey(key)
-						.setValue(key.getDefaultValue())
-						.setLine(i++));
-				}
 			}
 		}
-		if (epigraph.hasIrpfModules()) {
-			for (Module module : epigraph.getIrpfModules()) {
-				fa.addModuleIRPF(new FiscalActivityModule()
-				.setInfoKey(module.getKey())
-				.setLine(module.getLine())
-				.setFactor(module.getAmount())
-				.setUnit(module.getUnit())
-				.setValue(module.getKey().getDefaultValue()));
-			}
-		}
-		if (epigraph.hasIvaModules()) {
-			for (Module module : epigraph.getIvaModules()) {
-				fa.addModuleIVA(new FiscalActivityModule()
+		if (epigraph.hasIRPFModules()) {
+			for (Module module : epigraph.getIRPFModules()) {
+				fa.add(new FiscalActivityInfo()
 					.setInfoKey(module.getKey())
+					.setInfoType(FiscalActivityInfoKeyType.IRPF_MODULE)
+					.setLine(module.getLine())
+					.setFactor(module.getAmount())
+					.setUnit(module.getUnit())
+					.setValue(module.getKey().getDefaultValue())
+					);
+				if (module.getKey().getDetailKeys() != null) {
+					for (FiscalActivityInfoKey detailKey : module.getKey().getDetailKeys() ){
+						fa.add(new FiscalActivityInfo()
+							.setInfoKey(detailKey)
+							.setInfoType(FiscalActivityInfoKeyType.MODULE_DETAIL)
+							.setValue(detailKey.getDefaultValue())
+							.setLine(i++));
+					}
+				}
+			}
+		}
+		if (epigraph.hasVATModules()) {
+			for (Module module : epigraph.getVATModules()) {
+				fa.add(new FiscalActivityInfo()
+					.setInfoKey(module.getKey())
+					.setInfoType(FiscalActivityInfoKeyType.VAT_MODULE)
 					.setLine(module.getLine())
 					.setFactor(module.getAmount())
 					.setUnit(module.getUnit())
 					.setValue(module.getKey().getDefaultValue()));
+				if (module.getKey().getDetailKeys() != null) {
+					for (FiscalActivityInfoKey detailKey : module.getKey().getDetailKeys() ){
+						fa.add(new FiscalActivityInfo()
+							.setInfoKey(detailKey)
+							.setInfoType(FiscalActivityInfoKeyType.MODULE_DETAIL)
+							.setValue(detailKey.getDefaultValue())
+							.setLine(i++));
+					}
+				}
 			}
 		}
-		return fa;
+		
+		return calculate(ctx, fa);
 	}
 	
 	public static FiscalActivity save(AONContext ctx, FiscalActivity fa) {
 		ctx.checkWrite();
+		FiscalActivityValidation.validate(ctx,fa);
 		if (fa.getId() == null) {
 			fa = insert(ctx, fa);
 		} else {
@@ -295,54 +232,23 @@ public class FiscalActivityDAO {
 	}
 
 	private static void insertDetails(AONContext ctx, FiscalActivity fa) {
-		for (FiscalActivityInfo info: fa.getInfo()) {
-			ctx.getDslContext()
-			.insertInto(FS_ACTIVITY_INFO)
-				.set(FS_ACTIVITY_INFO.DOMAIN,fa.getDomain())
-				.set(FS_ACTIVITY_INFO.FS_ACTIVITY,fa.getId())
-				.set(FS_ACTIVITY_INFO.INFO_KEY,info.getInfoKey().getKey())
-				.set(FS_ACTIVITY_INFO.LINE,info.getLine())
-				.set(FS_ACTIVITY_INFO.TYPE,info.getInfoKey().getType().getValue())
-				.set(FS_ACTIVITY_INFO.VALUE,info.getValue())
-			.execute();
-		}
-		for (FiscalActivityInfo info: fa.getInfoIRPF()) {
-			ctx.getDslContext()
-			.insertInto(FS_ACTIVITY_INFO)
-				.set(FS_ACTIVITY_INFO.DOMAIN,fa.getDomain())
-				.set(FS_ACTIVITY_INFO.FS_ACTIVITY,fa.getId())
-				.set(FS_ACTIVITY_INFO.INFO_KEY,info.getInfoKey().getKey())
-				.set(FS_ACTIVITY_INFO.LINE,info.getLine())
-				.set(FS_ACTIVITY_INFO.TYPE,info.getInfoKey().getType().getValue())
-				.set(FS_ACTIVITY_INFO.VALUE,info.getValue())
-			.execute();
-		}
-		for (FiscalActivityInfo info: fa.getInfoIVA()) {
-			ctx.getDslContext()
-			.insertInto(FS_ACTIVITY_INFO)
-				.set(FS_ACTIVITY_INFO.DOMAIN,fa.getDomain())
-				.set(FS_ACTIVITY_INFO.FS_ACTIVITY,fa.getId())
-				.set(FS_ACTIVITY_INFO.INFO_KEY,info.getInfoKey().getKey())
-				.set(FS_ACTIVITY_INFO.LINE,info.getLine())
-				.set(FS_ACTIVITY_INFO.TYPE,info.getInfoKey().getType().getValue())
-				.set(FS_ACTIVITY_INFO.VALUE,info.getValue())
-			.execute();
-		}
-		for (FiscalActivityModule module: fa.getModuleIVA()) {
-			ctx.getDslContext()
-			.insertInto(FS_ACTIVITY_INFO)
-				.set(FS_ACTIVITY_INFO.DOMAIN,fa.getDomain())
-				.set(FS_ACTIVITY_INFO.FS_ACTIVITY,fa.getId())
-				.set(FS_ACTIVITY_INFO.INFO_KEY,module.getInfoKey().getKey())
-				.set(FS_ACTIVITY_INFO.LINE,module.getLine())
-				.set(FS_ACTIVITY_INFO.TYPE,module.getInfoKey().getType().getValue())
-				.set(FS_ACTIVITY_INFO.VALUE,module.getValue())
-				.set(FS_ACTIVITY_INFO.FACTOR,module.getFactor())
-				.set(FS_ACTIVITY_INFO.BASE,module.getBase())
-				.set(FS_ACTIVITY_INFO.UNIT,module.getUnit())
-				.set(FS_ACTIVITY_INFO.MIN_VALUE,module.getMinValue())
-				.set(FS_ACTIVITY_INFO.MAX_VALUE,module.getMaxValue())
-			.execute();
+		for (Integer type : fa.getMap().keySet()) {
+			Map<Integer, FiscalActivityInfo> map = fa.getMap().get(type);
+			for (FiscalActivityInfo info: map.values()) {
+				ctx.getDslContext().insertInto(FS_ACTIVITY_INFO)
+					.set(FS_ACTIVITY_INFO.DOMAIN,fa.getDomain())
+					.set(FS_ACTIVITY_INFO.FS_ACTIVITY,fa.getId())
+					.set(FS_ACTIVITY_INFO.INFO_KEY,info.getInfoKey().getKey())
+					.set(FS_ACTIVITY_INFO.LINE,info.getLine())
+					.set(FS_ACTIVITY_INFO.TYPE,info.getInfoType().getValue())
+					.set(FS_ACTIVITY_INFO.VALUE,info.getValue())
+					.set(FS_ACTIVITY_INFO.FACTOR,info.getFactor())
+					.set(FS_ACTIVITY_INFO.BASE,info.getBase())
+					.set(FS_ACTIVITY_INFO.UNIT,info.getUnit())
+					.set(FS_ACTIVITY_INFO.MIN_VALUE,info.getMinValue())
+					.set(FS_ACTIVITY_INFO.MAX_VALUE,info.getMaxValue())
+				.execute();
+			}
 		}
 	}
 	

@@ -1,13 +1,18 @@
 package com.esferalia.aon.gwt.fiscal.client.tree;
 
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
+import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
+import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.fiscal.client.tree.EpigraphSelectionPanel.SelectionCallBack;
 import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree.FiscalNodeWidget;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfo;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityModule;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKey;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKeyType;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.IntegerStringPair;
@@ -15,6 +20,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -31,6 +37,67 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<FiscalActivity>{
+	
+	public static class ActivityInput {
+		private String label;
+		private Widget widget;
+		private Integer infoKey;
+		private Integer infoKeyType;
+		
+		public String getLabel() {
+			return this.label;
+		}
+		public ActivityInput setLabel(String label) {
+			this.label = label;
+			return this;
+		}
+
+		public Widget getWidget() {
+			return this.widget;
+		}
+		public ActivityInput setWidget(Widget widget) {
+			this.widget = widget;
+			return this;
+		}
+		public Integer getInfoKey() {
+			return infoKey;
+		}
+		public ActivityInput setInfoKey(Integer infoKey) {
+			this.infoKey = infoKey;
+			return this;
+		}
+		public Integer getInfoKeyType() {
+			return infoKeyType;
+		}
+		public ActivityInput setInfoKeyType(Integer infoKeyType) {
+			this.infoKeyType = infoKeyType;
+			return this;
+		}
+		public String getValue() {
+			if (widget instanceof TextBox) {
+				return ((TextBox) widget).getValue();	
+			} else if (widget instanceof ListBox) {
+				return ((ListBox) widget).getSelectedValue();
+			}
+			Window.alert("Unknown widget");
+			return null;
+		}
+		public void setValue(String v) {
+			if (widget instanceof TextBox) {
+				((TextBox) widget).setValue(v);	
+			} else if (widget instanceof ListBox) {
+				ListBox l = (ListBox) widget;
+				for (int i = 0; i < l.getItemCount(); i++) {
+					if (AonStringUtils.equals(l.getValue(i),v)) {
+						l.setSelectedIndex(i);
+						break;
+					}
+				}
+			} else {
+				Window.alert("Unknown widget");
+			}
+		}
+	}
 
 	interface ActivityFormBinder extends
 			UiBinder<Widget, ActivityForm> {
@@ -42,27 +109,31 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 	TreeNode<FiscalActivity> node;
 	EpigraphSelectionPanel epigraphSelection; 
 	
+	private LinkedHashMap<Integer,LinkedHashMap<Integer,ActivityInput>> inputs 
+		= new LinkedHashMap<Integer, LinkedHashMap<Integer,ActivityInput>>();	
 	
 	@UiField
 	Button saveButton;
+	@UiField
+	Button calculateButton;
 	
 	@UiField
 	Button epigraphButton;
 	
 	@UiField
-	TextBox year;
+	Label year;
 	@UiField
-	TextBox epigraph;
+	Label epigraph;
 	@UiField
-	TextBox description;
+	Label description;
 //	@UiField
 //	CheckBox farmer;
 	@UiField
-	TextBox maxPerson;
+	Label maxPerson;
 	@UiField
-	TextBox maxImport;
+	Label maxImport;
 	@UiField
-	TextBox vatPercent;
+	Label vatPercent;
 	
 	@UiField
 	TabPanel tab;
@@ -78,6 +149,7 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 	SimplePanel infoIVAContainer;
 
 	public ActivityForm() {
+		
 		epigraphSelection = new EpigraphSelectionPanel(new SelectionCallBack() {
 			
 			@Override
@@ -92,7 +164,8 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 				node.getTreeObject().setMaxImport( epigraph.getLimExceso());
 				node.getTreeObject().setVatPercent( epigraph.getPorcMin() );
 				
-				FiscalTree.FISCAL_SERVICE.getFiscalActivityFor(epigraph,node.getTreeObject()
+				FiscalTree.FISCAL_SERVICE.getFiscalActivityFor(FiscalTree.getCurrentDomainName()
+						,epigraph,node.getTreeObject()
 						,new AsyncCallback<FiscalActivity>() {
 
 							@Override
@@ -101,7 +174,7 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 							}
 							@Override
 							public void onFailure(Throwable caught) {
-								// TODO Auto-generated method stub
+								DialogMessages.alertErrorWidget(caught.getMessage());
 							}
 				});
 				
@@ -114,7 +187,9 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 		
 		Widget ui = panelBinder.createAndBindUi(this);
 		initWidget(ui);
+		tab.addStyleName(FiscalTree.AON_RESOURCES.css().aonWidthAll());
 	}
+	
 	@Override
 	public void select(TreeNode<FiscalActivity> node) {
 		this.node = node;
@@ -129,7 +204,7 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 						}
 						@Override
 						public void onFailure(Throwable caught) {
-							// TODO Auto-generated method stub
+							DialogMessages.alertErrorWidget(caught.getMessage());
 						}
 			});
 		} else {
@@ -141,45 +216,44 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 	}
 
 	private void populate(FiscalActivity fiscalActivity) {
-		node.setUserObject( fiscalActivity );
-		year.setValue(AonNumberUtils.toString(fiscalActivity.getYear()));
-		epigraph.setValue(fiscalActivity.getEpigraph());
+		node.setTreeObject( fiscalActivity );
+		year.setText(AonNumberUtils.toString(fiscalActivity.getYear()));
+		epigraph.setText(fiscalActivity.getEpigraph());
 		if (AonStringUtils.isNotBlank(fiscalActivity.getEpigraph())) {
-			description.setValue(fiscalActivity.getDescription());
-			maxPerson.setValue(AonNumberUtils.toString(fiscalActivity.getMaxPerson()));
-			maxImport.setValue(AonNumberUtils.toString(fiscalActivity.getMaxImport()));
-			vatPercent.setValue(AonNumberUtils.toString(fiscalActivity.getVatPercent()));
+			description.setText(fiscalActivity.getDescription());
+			maxPerson.setText(FiscalTree.FMT.format(fiscalActivity.getMaxPerson()));
+			maxImport.setText(FiscalTree.FMT.format(fiscalActivity.getMaxImport()));
+			vatPercent.setText(FiscalTree.FMT.format(fiscalActivity.getVatPercent()));
 		} else {
-			description.setValue(null);
-			maxPerson.setValue(null);
-			maxImport.setValue(null);
-			vatPercent.setValue(null);
+			description.setText(null);
+			maxPerson.setText(null);
+			maxImport.setText(null);
+			vatPercent.setText(null);
 		}
 		tab.setVisible(fiscalActivity.hasInfoOrModules());
 		if ( tab.isVisible() ) {
-			if ( fiscalActivity.hasInfo() ) {
-				infoContainer.setWidget( getInfoTable(fiscalActivity,fiscalActivity.getInfo() ) );
+			if (fiscalActivity.hasInfo()) {
+				infoContainer.setWidget(getInfoTable(fiscalActivity,fiscalActivity.getMap().get(
+								FiscalActivityInfoKeyType.INFO.ordinal())));
 			}
-			if ( fiscalActivity.hasModuleIRPF() ) {
-				moduleIRPFContainer.setWidget( getModuleTable(fiscalActivity,fiscalActivity.getModuleIRPF() ) );
+			if ( fiscalActivity.hasIRPFModules() ) {
+				moduleIRPFContainer.setWidget( getModuleTable(fiscalActivity,fiscalActivity.getMap().get(
+						FiscalActivityInfoKeyType.IRPF_MODULE.ordinal())));
 			}
-			if ( fiscalActivity.hasInfoIRPF() ) {
-				infoIRPFContainer.setWidget( getInfoTable(fiscalActivity,fiscalActivity.getInfoIRPF() ) );
+			if ( fiscalActivity.hasIRPFInfo() ) {
+				infoIRPFContainer.setWidget( getInfoTable(fiscalActivity,fiscalActivity.getMap().get(
+						FiscalActivityInfoKeyType.IRPF_INFO.ordinal())));
 			}
-			if ( fiscalActivity.hasModuleIVA() ) {
-				moduleIVAContainer.setWidget( getModuleTable(fiscalActivity,fiscalActivity.getModuleIVA() ) );
+			if ( fiscalActivity.hasVATModules() ) {
+				moduleIVAContainer.setWidget( getModuleTable(fiscalActivity,fiscalActivity.getMap().get(
+						FiscalActivityInfoKeyType.VAT_MODULE.ordinal())));
 			}
-			if ( fiscalActivity.hasInfoIVA() ) {
-				infoIVAContainer.setWidget( getInfoTable(fiscalActivity,fiscalActivity.getInfoIVA() ) );
+			if ( fiscalActivity.hasVATInfo() ) {
+				infoIVAContainer.setWidget( getInfoTable(fiscalActivity,fiscalActivity.getMap().get(
+						FiscalActivityInfoKeyType.VAT_INFO.ordinal())));
 			}
 			tab.selectTab(0);
 		}
-		year.setReadOnly(true);
-		epigraph.setEnabled(isEnabled(fiscalActivity));
-		description.setReadOnly(true);
-		maxPerson.setReadOnly(true);
-		maxImport.setReadOnly(true);
-		vatPercent.setReadOnly(true);
 	}
 	
 
@@ -188,19 +262,21 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 		
 	}
 
-	private FlexTable getInfoTable(FiscalActivity fiscalActivity,ArrayList<FiscalActivityInfo> list) {
-		if (list != null && list.size() > 0) {
+	private FlexTable getInfoTable(FiscalActivity fiscalActivity,Map<Integer,FiscalActivityInfo> map) {
+		if (map != null && map.size() > 0) {
 			FlexTable table = new FlexTable();
 			table.setStyleName(FiscalTree.AON_RESOURCES.css().aonPanelGrid());
 			table.addStyleName(FiscalTree.AON_RESOURCES.css().aonWidthAll());
 			table.addStyleName(FiscalTree.AON_RESOURCES.css().aonMarginTop());
 			table.setCellSpacing(0);
 			int row = 0;
-			for (FiscalActivityInfo info : list) {
+			for (FiscalActivityInfo info : map.values()) {
 				Label desc = new Label(info.getInfoKey().getDescription() );
 				table.setWidget(row, 0, desc);
 				table.getFlexCellFormatter().setStyleName(row, 0, FiscalTree.AON_RESOURCES.css().aonPanelGridOdd());
 				table.getFlexCellFormatter().addStyleName(row, 0, FiscalTree.AON_RESOURCES.css().aonWidthAuto());
+				table.getFlexCellFormatter().addStyleName(row, 1, FiscalTree.AON_RESOURCES.css().aonTextRight());
+				table.getFlexCellFormatter().addStyleName(row, 1, FiscalTree.AON_RESOURCES.css().aonWidth150());
 				if (info.getInfoKey().isChoice()) {
 					ListBox listBox = new ListBox();
 					listBox.setEnabled(isEnabled(fiscalActivity));
@@ -214,6 +290,19 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 						i++;
 					}
 					table.setWidget(row, 1, listBox);
+					listBox.addChangeHandler(new ChangeHandler() {
+						
+						@Override
+						public void onChange(ChangeEvent event) {
+							calculate();
+						}
+					});
+					put(info.getInfoType().ordinal(),info.getInfoKey().ordinal()
+						, new ActivityInput()
+							.setLabel(desc.getText())
+							.setInfoKey(info.getInfoKey().ordinal())
+							.setInfoKeyType(info.getInfoType().ordinal())
+							.setWidget(listBox));
 				} else {
 					TextBox text = new TextBox();
 					text.setWidth("100px");
@@ -227,6 +316,18 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 					text.setStyleName(FiscalTree.AON_RESOURCES.css().aonInputText());
 					text.setEnabled(isEnabled(fiscalActivity));
 					table.setWidget(row, 1, text);
+					text.addChangeHandler(new ChangeHandler() {
+						@Override
+						public void onChange(ChangeEvent event) {
+							calculate();
+						}
+					});
+					put(info.getInfoType().ordinal(),info.getInfoKey().ordinal()
+						, new ActivityInput()
+							.setLabel(desc.getText())
+							.setInfoKey(info.getInfoKey().ordinal())
+							.setInfoKeyType(info.getInfoType().ordinal())
+							.setWidget(text));
 				}
 				table.getFlexCellFormatter().setStyleName(row,1, FiscalTree.AON_RESOURCES.css().aonPanelGridEven());
 				++row;
@@ -236,49 +337,125 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 		return null;
 	}
 
-	private FlexTable getModuleTable(FiscalActivity fiscalActivity,ArrayList<FiscalActivityModule> list) {
-		if (list != null && list.size() > 0) {
+	private void put(Integer infoType,Integer infoKey, ActivityInput widget) {
+		if (inputs.get(infoType) == null) {
+			inputs.put(infoType, new LinkedHashMap<Integer, ActivityForm.ActivityInput>());
+		}
+		inputs.get(infoType).put(infoKey, widget);
+	}
+	
+	private FlexTable getModuleTable(FiscalActivity fiscalActivity,Map<Integer,FiscalActivityInfo> map) {
+		if (map != null && map.size() > 0) {
 			FlexTable table = new FlexTable();
 			table.setStyleName(FiscalTree.AON_RESOURCES.css().aonPanelGrid());
 			table.addStyleName(FiscalTree.AON_RESOURCES.css().aonWidthAll());
 			table.addStyleName(FiscalTree.AON_RESOURCES.css().aonMarginTop());
 			table.setCellSpacing(0);
 			int row = 0;
-			for (FiscalActivityModule info : list) {
+			for (final FiscalActivityInfo info : map.values()) {
 				Label desc = new Label(info.getInfoKey().getDescription() );
+				table.addStyleName(FiscalTree.AON_RESOURCES.css().aonWidthAll());
 				table.setWidget(row, 0, desc);
 				table.getFlexCellFormatter().setStyleName(row, 0, FiscalTree.AON_RESOURCES.css().aonPanelGridOdd());
 				table.getFlexCellFormatter().addStyleName(row, 0, FiscalTree.AON_RESOURCES.css().aonWidthAuto());
+				
 				table.getFlexCellFormatter().setStyleName(row, 1, FiscalTree.AON_RESOURCES.css().aonPanelGridEven());
 				table.getFlexCellFormatter().addStyleName(row, 1, FiscalTree.AON_RESOURCES.css().aonTextRight());
+				table.getFlexCellFormatter().addStyleName(row, 1, FiscalTree.AON_RESOURCES.css().aonWidth130());
+				
 				table.getFlexCellFormatter().setStyleName(row, 2, FiscalTree.AON_RESOURCES.css().aonPanelGridEven());
+				table.getFlexCellFormatter().addStyleName(row, 2, FiscalTree.AON_RESOURCES.css().aonTextCenter());
+				table.getFlexCellFormatter().addStyleName(row, 2, FiscalTree.AON_RESOURCES.css().aonWidth20());
+				
 				table.getFlexCellFormatter().setStyleName(row, 3, FiscalTree.AON_RESOURCES.css().aonPanelGridEven());
-				table.getFlexCellFormatter().addStyleName(row, 3, FiscalTree.AON_RESOURCES.css().aonTextRight());
+				table.getFlexCellFormatter().addStyleName(row, 3, FiscalTree.AON_RESOURCES.css().aonWidth130());
+				
 				table.getFlexCellFormatter().setStyleName(row, 4, FiscalTree.AON_RESOURCES.css().aonPanelGridEven());
 				table.getFlexCellFormatter().addStyleName(row, 4, FiscalTree.AON_RESOURCES.css().aonTextRight());
-				table.getFlexCellFormatter().addStyleName(row, 4, FiscalTree.AON_RESOURCES.css().aonBold());
+				table.getFlexCellFormatter().addStyleName(row, 4, FiscalTree.AON_RESOURCES.css().aonWidth130());
+				
+				table.getFlexCellFormatter().setStyleName(row, 5, FiscalTree.AON_RESOURCES.css().aonPanelGridEven());
+				table.getFlexCellFormatter().addStyleName(row, 5, FiscalTree.AON_RESOURCES.css().aonTextRight());
+				table.getFlexCellFormatter().addStyleName(row, 5, FiscalTree.AON_RESOURCES.css().aonBold());
+				table.getFlexCellFormatter().addStyleName(row, 5, FiscalTree.AON_RESOURCES.css().aonWidth150());
 
-				TextBox text = new TextBox();
+				final TextBox text = new TextBox();
 				text.setWidth("100px");
+				text.setValue(info.getValue());
+				text.setStyleName(FiscalTree.AON_RESOURCES.css().aonInputText());
+				text.setEnabled(!info.getInfoKey().hasDetails() && isEnabled(fiscalActivity));
+				table.setWidget(row, 1, text);
+				put(info.getInfoType().ordinal(),info.getInfoKey().ordinal()
+					, new ActivityInput()
+						.setLabel(desc.getText())
+						.setInfoKey(info.getInfoKey().ordinal())
+						.setInfoKeyType(info.getInfoType().ordinal())
+						.setWidget(text));
+				
+				// *************
+				if (info.getInfoKey().hasDetails()) {
+					Button detailButton = new Button();
+					detailButton.setStyleName(FiscalTree.AON_RESOURCES.css().aonIconButton());
+					detailButton.addStyleName(FiscalTree.AON_RESOURCES.css().aonIconLoupe());
+					final CustomDialog detailDialog = new CustomDialog();
+					detailDialog.setVisible(false);
+					detailDialog.setAnimationEnabled(true);
+					detailDialog.setGlassEnabled(true);
+					detailDialog.setModal(true);
+					detailDialog.setCaption( info.getInfoKey().getDescription() );
+
+					LinkedHashMap<Integer,FiscalActivityInfo> detailMap = new LinkedHashMap<Integer, FiscalActivityInfo>();
+					for (final FiscalActivityInfoKey detailKey : info.getInfoKey().getDetailKeys()) {
+						detailMap.put(detailKey.ordinal()
+							, fiscalActivity.getMap().get(FiscalActivityInfoKeyType.MODULE_DETAIL.ordinal()).get(detailKey.ordinal()));
+					}
+					FlexTable detailTable = getInfoTable(fiscalActivity, detailMap); 
+					detailDialog.add( detailTable );
+					Button accept = new Button();
+					accept.setText(FiscalTree.MSG.accept());
+					accept.addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							detailDialog.hide();
+						}
+					});
+					int detailRow = detailTable.getRowCount();
+					detailTable.setWidget(detailRow, 0, accept);
+					detailTable.getFlexCellFormatter().setColSpan(detailRow, 0, 2);
+					detailTable.getFlexCellFormatter().setStyleName(detailRow, 0, FiscalTree.AON_RESOURCES.css().aonTextCenter());
+					detailButton.addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							detailDialog.center();
+							detailDialog.show();
+						}
+					});
+					table.setWidget(row, 2, detailButton);
+				}
+				// *************
+
+				
+				Label unit = new Label(info.getUnit() );
+				table.setWidget(row, 3, unit);
+				
+				Label factor = new Label( FiscalTree.FMT.format( info.getFactor()) );
+				table.setWidget(row, 4, factor);
+				
+				final TextBox base = new TextBox();
+				base.setWidth("100px");
+				base.setValue(FiscalTree.FMT.format( info.getBase()));
+				base.setStyleName(FiscalTree.AON_RESOURCES.css().aonInputText());
+				base.setEnabled(false);
+				table.setWidget(row, 5, base);
+
 				text.addChangeHandler(new ChangeHandler() {
 					@Override
 					public void onChange(ChangeEvent event) {
-						
+						double value = AonNumberUtils.todouble(text.getValue());
+						base.setValue(FiscalTree.FMT.format( AonMathUtils.round(value * info.getBase())));
+						calculate();
 					}
 				});
-				text.setValue(info.getValue());
-				text.setStyleName(FiscalTree.AON_RESOURCES.css().aonInputText());
-				text.setEnabled(isEnabled(fiscalActivity));
-				table.setWidget(row, 1, text);
-				
-				Label unit = new Label(info.getUnit() );
-				table.setWidget(row, 2, unit);
-				
-				Label factor = new Label( FiscalTree.FMT.format( info.getFactor()) );
-				table.setWidget(row, 3, factor);
-				
-				Label base = new Label(FiscalTree.FMT.format( info.getBase()));
-				table.setWidget(row, 4, base);
 
 				++row;
 			}
@@ -287,10 +464,54 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 		return null;
 	}
 	
+	private void populateTreeObject() {
+		for (Integer type : inputs.keySet()) {
+			for (Integer key : inputs.get(type).keySet()) {
+				ActivityInput input = inputs.get(type).get(key);
+				node.getTreeObject().setValue(input.getInfoKeyType(),input.getInfoKey(),input.getValue());
+			}
+		}
+	}
+	
+	private void populateTreeInputs(FiscalActivity fa) {
+		node.setTreeObject(fa);
+		for (Integer type : inputs.keySet()) {
+			for (Integer key : inputs.get(type).keySet()) {
+				ActivityInput input = inputs.get(type).get(key);
+				String v = fa.getValue(input.getInfoKeyType(),input.getInfoKey());
+				input.setValue(v);
+			}
+		}
+	}
+	private void calculate() {
+		populateTreeObject();
+		FiscalTree.FISCAL_SERVICE.calculate(FiscalTree.getCurrentDomainName()
+				,node.getTreeObject()
+				,new AsyncCallback<FiscalActivity>() {
+
+					@Override
+					public void onSuccess(FiscalActivity result) {
+						populateTreeInputs(result);
+					}
+					@Override
+					public void onFailure(Throwable caught) {
+						DialogMessages.alertErrorWidget(caught.getMessage());								
+					}
+
+		});
+	}
+	
+	@UiHandler("calculateButton")
+	void onCalculateButtonClick(ClickEvent event) {
+		if (Window.confirm( FiscalTree.MSG.calculateAction())) {
+			calculate();
+		}
+	}
+	
 	@UiHandler("saveButton")
 	void onSaveButtonClick(ClickEvent event) {
 		if (Window.confirm( FiscalTree.MSG.saveAction())) {
-			
+			populateTreeObject();
 			FiscalTree.FISCAL_SERVICE.save(FiscalTree.getCurrentDomainName(), node.getTreeObject()
 					,new AsyncCallback<FiscalActivity>() {
 	
@@ -300,13 +521,13 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 						}
 						@Override
 						public void onFailure(Throwable caught) {
-							// TODO Auto-generated method stub
+							DialogMessages.alertErrorWidget(caught.getMessage());
 						}
 	
 			});
 		}
 	}
-	
+
 	@UiHandler("epigraphButton")
 	void onEpigraphButtonClick(ClickEvent event) {
 		epigraphSelection.center();

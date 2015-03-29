@@ -304,6 +304,16 @@ public class AON {
 			if (ctx != null) ctx.close();	
 		}
 	}
+	public static FiscalActivity calculate(String domainName, FiscalActivity fa) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, fa.getDomain());
+			return getFiscal().calculate(ctx, fa);	
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
+	
 	public static FiscalActivity getFiscalActivity(String domainName,
 			int domainId, int id) {
 		AONContext ctx = null;
@@ -334,8 +344,14 @@ public class AON {
 		}
 	}
 	
-	public static FiscalActivity getFiscalActivityFor(Epigraph epigraph,FiscalActivity fa) {
-		return getFiscal().getActivityFor(epigraph, fa);
+	public static FiscalActivity getFiscalActivityFor(String domainName,Epigraph epigraph,FiscalActivity fa) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, fa.getDomain());
+			return getFiscal().getActivityFor(ctx,epigraph, fa);
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
 	}
 	// ----------------------------------MODELO 180
 	public static ArrayList<Mod180> getMod180s(String domainName, int domainId) {

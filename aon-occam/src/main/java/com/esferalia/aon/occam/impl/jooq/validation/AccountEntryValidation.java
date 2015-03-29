@@ -27,7 +27,7 @@ public class AccountEntryValidation {
 	 */
 	public static BiConsumer<AccountEntry,AONContext> EMPTY_DOMAIN = (ae,ctx) -> {
 		if (ae.getDomain() == null) 
-			throw new AonCoreException(AonError.ACCOUNT_ENTRY_DOMAIN.getMessage());
+			throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
 	};
 	
 	/**

@@ -46,6 +46,13 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 	}
 	// ------------------------------------------------------- FISCAL ACTIVITIES
 	@Override
+	public void calculate(String domainName, FiscalActivity fa,AsyncCallback<FiscalActivity> callback) {
+		AON.start();
+		fiscalServiceAsync.calculate(domainName,fa, 
+				new AsyncCallbackWrapper<FiscalActivity>(callback));
+		
+	}
+	@Override
 	public void getModuleEpigraphs(int year, AsyncCallback<ArrayList<Epigraph>> callback) {
 		AON.start();
 		fiscalServiceAsync.getModuleEpigraphs(year, 
@@ -66,10 +73,10 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 				new AsyncCallbackWrapper<FiscalActivity>(callback));
 	}
 	@Override
-	public void getFiscalActivityFor(Epigraph epigraph, FiscalActivity fa,
-			AsyncCallback<FiscalActivity> callback) {
+	public void getFiscalActivityFor(String domainName, Epigraph epigraph
+			, FiscalActivity fa,AsyncCallback<FiscalActivity> callback) {
 		AON.start();
-		fiscalServiceAsync.getFiscalActivityFor(epigraph, fa,  
+		fiscalServiceAsync.getFiscalActivityFor(domainName, epigraph, fa,  
 				new AsyncCallbackWrapper<FiscalActivity>(callback));
 	}
 	@Override
@@ -331,7 +338,5 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		fiscalServiceAsync.initializeMod390(domainName, domain, year, 
 				new AsyncCallbackWrapper<Mod390>(callback));
 	}
-
-
 
 }

@@ -1,8 +1,9 @@
-
 package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
+
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class FiscalActivity implements Serializable {
 
@@ -18,11 +19,8 @@ public class FiscalActivity implements Serializable {
 	private double maxImport;
 	private double vatPercent;
 	
-	private ArrayList<FiscalActivityInfo> info;
-	private ArrayList<FiscalActivityModule> moduleIRPF;
-	private ArrayList<FiscalActivityInfo> infoIRPF;
-	private ArrayList<FiscalActivityModule> moduleIVA;
-	private ArrayList<FiscalActivityInfo> infoIVA;
+	private LinkedHashMap<Integer,LinkedHashMap<Integer,FiscalActivityInfo>> map
+		= new LinkedHashMap<Integer,LinkedHashMap<Integer,FiscalActivityInfo>>();
 	
 	public Integer getId() {
 		return id;
@@ -96,99 +94,131 @@ public class FiscalActivity implements Serializable {
 		return this;
 	}
 	
-	public ArrayList<FiscalActivityInfo> getInfo() {
-		return info;
+	public LinkedHashMap<Integer, LinkedHashMap<Integer,FiscalActivityInfo>> getMap() {
+		return map;
 	}
-	public FiscalActivity setInfo(ArrayList<FiscalActivityInfo> info) {
-		this.info = info;
-		return this;
-	}
-	public FiscalActivity addInfo(FiscalActivityInfo fai) {
-		if (this.info == null) {
-			this.info = new ArrayList<FiscalActivityInfo>();
-		}
-		this.info.add(fai);
-		return this;
-	}
-
-	public ArrayList<FiscalActivityModule> getModuleIRPF() {
-		return moduleIRPF;
-	}
-	public FiscalActivity setModuleIRPF(ArrayList<FiscalActivityModule> moduleIRPF) {
-		this.moduleIRPF = moduleIRPF;
-		return this;
-	}
-	public FiscalActivity addModuleIRPF(FiscalActivityModule fam) {
-		if (this.moduleIRPF == null) {
-			this.moduleIRPF = new ArrayList<FiscalActivityModule>();
-		}
-		this.moduleIRPF.add(fam);
-		return this;
+	public void setMap(LinkedHashMap<Integer, LinkedHashMap<Integer, FiscalActivityInfo>> map) {
+		this.map = map;
 	}
 	
-	public ArrayList<FiscalActivityInfo> getInfoIRPF() {
-		return infoIRPF;
-	}
-	public FiscalActivity setInfoIRPF(ArrayList<FiscalActivityInfo> infoIRPF) {
-		this.infoIRPF = infoIRPF;
-		return this;
-	}
-	public FiscalActivity addInfoIRPF(FiscalActivityInfo fai) {
-		if (this.infoIRPF == null) {
-			this.infoIRPF = new ArrayList<FiscalActivityInfo>();
+	public FiscalActivity add(FiscalActivityInfo fai) {
+		try {
+			LinkedHashMap<Integer,FiscalActivityInfo> detailMap =  getMap().get( fai.getInfoType().ordinal() );
+			if (detailMap == null) {
+				detailMap = new LinkedHashMap<Integer, FiscalActivityInfo>();
+				getMap().put(fai.getInfoType().ordinal(), detailMap);
+			}
+			detailMap.put(fai.getInfoKey().ordinal(), fai);
+			return this;
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
 		}
-		this.infoIRPF.add(fai);
-		return this;
 	}
-
-	public ArrayList<FiscalActivityModule> getModuleIVA() {
-		return moduleIVA;
-	}
-	public FiscalActivity setModuleIVA(ArrayList<FiscalActivityModule> moduleIVA) {
-		this.moduleIVA = moduleIVA;
-		return this;
-	}
-	public FiscalActivity addModuleIVA(FiscalActivityModule fam) {
-		if (this.moduleIVA == null) {
-			this.moduleIVA = new ArrayList<FiscalActivityModule>();
-		}
-		this.moduleIVA.add(fam);
-		return this;
-	}
-
-	public ArrayList<FiscalActivityInfo> getInfoIVA() {
-		return infoIVA;
-	}
-	public FiscalActivity setInfoIVA(ArrayList<FiscalActivityInfo> infoIVA) {
-		this.infoIVA = infoIVA;
-		return this;
-	}
-	public FiscalActivity addInfoIVA(FiscalActivityInfo fai) {
-		if (this.infoIVA == null) {
-			this.infoIVA = new ArrayList<FiscalActivityInfo>();
-		}
-		this.infoIVA.add(fai);
-		return this;
-	}
-
 	public boolean hasInfo() {
-		return (info !=null && info.size() > 0);
+		return getMap().containsKey( FiscalActivityInfoKeyType.INFO.ordinal() );
 	}
-	public boolean hasModuleIRPF() {
-		return (moduleIRPF !=null && moduleIRPF.size() > 0);
+	public boolean hasIRPFModules() {
+		return getMap().containsKey( FiscalActivityInfoKeyType.IRPF_MODULE.ordinal());
 	}
-	public boolean hasInfoIRPF() {
-		return (infoIRPF !=null && infoIRPF.size() > 0);
+	public boolean hasIRPFInfo() {
+		return getMap().containsKey( FiscalActivityInfoKeyType.IRPF_INFO.ordinal());
 	}
-	public boolean hasModuleIVA() {
-		return (moduleIVA !=null && moduleIVA.size() > 0);
+	public boolean hasVATModules() {
+		return getMap().containsKey( FiscalActivityInfoKeyType.VAT_MODULE.ordinal());
 	}
-	public boolean hasInfoIVA() {
-		return (infoIVA !=null && infoIVA.size() > 0);
+	public boolean hasVATInfo() {
+		return getMap().containsKey( FiscalActivityInfoKeyType.VAT_INFO.ordinal());
+	}
+	public boolean hasInfoOrModules() {
+		return hasInfo() || hasIRPFModules() || hasIRPFInfo() 
+			|| hasVATModules() || hasVATInfo();
+	}
+	public void setValue(FiscalActivityInfoKeyType type, FiscalActivityInfoKey key, double value) {
+		String val = AonNumberUtils.toString(value);
+		this.setValue(type, key, val);
+	}
+	public void setValue(FiscalActivityInfoKeyType type, FiscalActivityInfoKey key, String value) {
+		this.setValue(type.ordinal(), key.ordinal(), value);
+	}
+	public void setValue(Integer type, Integer key, String value) {
+		if ( getMap().get(type) == null || getMap().get(type).get(key) == null) {
+			throw new IllegalStateException("No existe la clave " + key);
+		}
+		getMap().get(type).get(key).setValue(value);
+	}
+	public void setBase(Integer type, Integer key, double base) {
+		if ( getMap().get(type) == null || getMap().get(type).get(key) == null) {
+			throw new IllegalStateException("No existe la clave " + key);
+		}
+		getMap().get(type).get(key).setBase(base);
+	}
+	
+	public String getValue(Integer type, Integer key) {
+		if ( getMap().get(type) == null || getMap().get(type).get(key) == null ) {
+			return null;
+		}
+		return getMap().get(type).get(key).getValue();
+	}
+	
+	public double getDoubleValue(FiscalActivityInfoKeyType type, FiscalActivityInfoKey key) {
+		return AonNumberUtils.todouble( getMap().get(type.ordinal()).get(key.ordinal()).getValue());
+	}
+	public double getInfoDoubleValue(FiscalActivityInfoKey key) {
+		return getDoubleValue(FiscalActivityInfoKeyType.INFO, key);
+	}
+//	public void setInfoValue(FiscalActivityInfoKey key, double value) {
+//		setValue(FiscalActivityInfoKeyType.INFO, key, value);
+//	}
+	public double getIRPFInfoDoubleValue(FiscalActivityInfoKey key) {
+		return getDoubleValue(FiscalActivityInfoKeyType.IRPF_INFO, key);
+	}
+	public void setIRPFInfoValue(FiscalActivityInfoKey key, double value) {
+		setValue(FiscalActivityInfoKeyType.IRPF_INFO, key, value);
+	}
+	public FiscalActivityInfo getIRPFModule(FiscalActivityInfoKey key) {
+		return getMap().get(FiscalActivityInfoKeyType.IRPF_MODULE.ordinal()).get(key.ordinal());
+	}
+	public double getIRPFModuleDoubleValue(FiscalActivityInfoKey key) {
+		return getDoubleValue(FiscalActivityInfoKeyType.IRPF_MODULE, key);
+	}
+	public void setIRPFModuleValue(FiscalActivityInfoKey key, double value) {
+		setValue(FiscalActivityInfoKeyType.IRPF_MODULE, key, value);
+	}
+//	public double getVATInfoDoubleValue(FiscalActivityInfoKey key) {
+//		return getDoubleValue(FiscalActivityInfoKeyType.VAT_INFO, key);
+//	}
+	public void setVATInfoValue(FiscalActivityInfoKey key, double value) {
+		setValue(FiscalActivityInfoKeyType.VAT_INFO, key, value);
+	}
+//	public double getVATModuleDoubleValue(FiscalActivityInfoKey key) {
+//		return getDoubleValue(FiscalActivityInfoKeyType.VAT_MODULE, key);
+//	}
+//	public void setVATModuleValue(FiscalActivityInfoKey key, double value) {
+//		setValue(FiscalActivityInfoKeyType.VAT_MODULE, key, value);
+//	}
+	public double getModuleDetailDoubleValue(FiscalActivityInfoKey key) {
+		return getDoubleValue(FiscalActivityInfoKeyType.MODULE_DETAIL, key);
+	}
+//	public void setModuleDetailValue(FiscalActivityInfoKey key, double value) {
+//		setValue(FiscalActivityInfoKeyType.MODULE_DETAIL, key, value);
+//	}
+
+	@Override
+	public String toString() {
+		StringBuilder buf = new StringBuilder();
+		String CR = "\n";
+		buf.append(" ------ " + getId() + " - " + getEpigraph() + CR );
+		for (Integer type : getMap().keySet() ) {
+			for (FiscalActivityInfo fai : getMap().get(type).values() ) {
+				buf.append(fai.getInfoType() 
+						+ " - " + fai.getInfoKey()
+						+ " - " + fai.getValue()
+						+ CR);		
+			}
+		}
+		buf.append(" ------ ");
+		return buf.toString();
 	}
 
-	public boolean hasInfoOrModules() {
-		return hasInfo() || hasModuleIRPF() || hasInfoIRPF() 
-			|| hasModuleIVA() || hasInfoIVA();
-	}
 }

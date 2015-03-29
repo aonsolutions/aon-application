@@ -329,15 +329,4 @@ public class Modules implements Serializable {
 		throw new IllegalArgumentException("Ejericio no soportado");
 	}
 	
-	public static void main(String[] args) throws AonException {
-		Modules mod = new Modules(); 
-		for (Sector sector : mod.getSectors(false)) {
-			System.out.println(sector.getId() + " - " + sector.getDescription()+")");
-//			for (Epigrafe epi: mod.getEpigrafes(sector.getId())) {
-//				System.out.println(epi.getSector() + " - " + epi.getCode() + "("+ epi.getDescription()+")"); 
-//			}
-		}
-
-	}
-	
 }

@@ -32,6 +32,10 @@ public class FiscalImpl implements IFiscal {
 	}
 	
 	// --------------------------------------------- [FISCAL ACTIVITIES]
+	@Override
+	public FiscalActivity calculate(AONContext ctx, FiscalActivity fa) {
+		return FiscalActivityDAO.calculate(ctx, fa);
+	}
 	public ArrayList<FiscalActivity> getFiscalActivities(AONContext ctx,int domain){
 		return FiscalActivityDAO.getActivities(ctx, domain);
 	}
@@ -56,8 +60,8 @@ public class FiscalImpl implements IFiscal {
 	}
 
 	@Override
-	public FiscalActivity getActivityFor(Epigraph epigraph, FiscalActivity fa) {
-		return FiscalActivityDAO.getActivityFor(epigraph, fa);
+	public FiscalActivity getActivityFor(AONContext ctx, Epigraph epigraph, FiscalActivity fa) {
+		return FiscalActivityDAO.getActivityFor(ctx, epigraph, fa);
 	}
 
 	// ---------------------------------------------------- [MODELO 180]

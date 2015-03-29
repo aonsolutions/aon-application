@@ -77,7 +77,7 @@ public class FiscalTree extends MainEntryPoint {
 	SuggestBox enterpriseSuggest;
 	
 	@UiField
-	SimplePanel content;
+	ScrollPanel content;
 	
 	public static native String getCurrentDomainName()
 	/*-{
@@ -178,6 +178,7 @@ public class FiscalTree extends MainEntryPoint {
 	
 	private void cleanErrorMessage() {
 		resultsPanel.clearFlowPanel();
+		resultsPanel.setWidget(new SimplePanel());
 		closeFootPanel();
 	}
 
@@ -256,7 +257,6 @@ public class FiscalTree extends MainEntryPoint {
 	
 }
 
-
 //,MOD111(MSG.mod111(),AON_RESOURCES.css().aonIconM111(),new HTMLPanel("MOD111"),null)
 //,MOD115(MSG.mod115(),AON_RESOURCES.css().aonIconM115(),new HTMLPanel("MOD115"),null)
 //,MOD123(MSG.mod123(),AON_RESOURCES.css().aonIconM123(),new HTMLPanel("MOD123"),null)
@@ -273,3 +273,4 @@ public class FiscalTree extends MainEntryPoint {
 //,MOD347(MSG.mod347(),AON_RESOURCES.css().aonIconM347(),new HTMLPanel("MOD347"),null)
 //,MOD349(MSG.mod349(),AON_RESOURCES.css().aonIconM349(),new HTMLPanel("MOD349"),null)
 //,MOD390(MSG.mod390(),AON_RESOURCES.css().aonIconM390(),new HTMLPanel("MOD390"),null)
+

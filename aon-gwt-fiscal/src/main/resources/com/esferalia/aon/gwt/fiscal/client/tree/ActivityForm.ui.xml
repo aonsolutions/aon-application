@@ -14,6 +14,8 @@
 			styleName="aon-finding-title-toolbar aon-width-all gwt-MenuBar-horizontal aon-margin-top">
 			<g:Button ui:field='saveButton'
 				styleName='aon-finding-toolbar-item aon-icon-delete' text="{msg.saveAction}" />
+			<g:Button ui:field='calculateButton'
+				styleName='aon-finding-toolbar-item aon-icon-refresh' text="{msg.calculateAction}" />
 		</g:FlowPanel>
 		
 		<div class="{aonResources.css.aonGroup}">
@@ -21,54 +23,30 @@
 				<g:InlineLabel text="{msg.moduleActivities}" />
 			</div>
 			<div class="{aonResources.css.aonGroupBody}">
-				<table class="aon-panelGrid aon-width-all">
-					<tr>
-						<td class="aon-panelGrid-odd aon-width-100">
-							<g:InlineLabel text="{msg.year}" />
-						</td>
-						<td class="aon-panelGrid-even aon-width-100">
-							<g:TextBox ui:field="year" visibleLength="4" maxLength="4" 
-								styleName="{aonResources.css.aonInputText}"/>
-						</td>
-						<td class="aon-panelGrid-odd aon-width-100">
-							<g:InlineLabel text="{msg.epigraph}" />
-							<g:Button ui:field='epigraphButton'
-								styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconLoupe}" />
-						</td>
-						<td class="aon-panelGrid-even aon-width-auto" colspan="4">
-							<g:TextBox ui:field="epigraph" visibleLength="7" maxLength="7"
-								enabled="false" styleName="{aonResources.css.aonInputText}"/>
-							<g:TextBox ui:field="description" visibleLength="50" maxLength="30"
-								enabled="false" styleName="{aonResources.css.aonInputText}"/>
-						</td>
-					</tr>
-					<tr>
-						<td class="aon-panelGrid-odd aon-width-100">
-							<g:InlineLabel text="{msg.maxPerson}" />
-						</td>
-						<td class="aon-panelGrid-even aon-width-100">
-							<g:TextBox ui:field="maxPerson" visibleLength="7" maxLength="7"  
-								styleName="{aonResources.css.aonInputText}"/>
-						</td>
-						<td class="aon-panelGrid-odd aon-width-100">
-							<g:InlineLabel text="{msg.maxImport}" />
-						</td>
-						<td class="aon-panelGrid-even aon-width-100">
-							<g:TextBox ui:field="maxImport" visibleLength="7" maxLength="7"  
-								styleName="{aonResources.css.aonInputText}"/>
-						</td>
-						<td class="aon-panelGrid-odd aon-width-100">
-							<g:InlineLabel text="{msg.vatPercent}" />
-						</td>
-						<td class="aon-panelGrid-even aon-width-auto">
-							<g:TextBox ui:field="vatPercent" visibleLength="7" maxLength="7"  
-								styleName="{aonResources.css.aonInputText}"/>
-						</td>
-					</tr>
-				</table>
+				<div>
+					<g:InlineLabel text="{msg.year}" styleName="{aonResources.css.aonItalic}"/>
+					<g:InlineLabel ui:field="year" styleName="{aonResources.css.aonIconButton} {aonResources.css.aonBold}"/>
+					
+					<span styleName="{aonResources.css.aonMarginLeft} {aonResources.css.aonVerticalAlignMiddle}">
+						<g:InlineLabel text="{msg.epigraph}" styleName="{aonResources.css.aonItalic}"/>
+						<g:InlineLabel ui:field="epigraph" styleName="{aonResources.css.aonBold} {aonResources.css.aonMarginLeft}"/>
+						<g:Button ui:field="epigraphButton" styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconLoupe}"
+							title="{msg.pushToChange}"/>
+					</span>
+					
+					<g:InlineLabel text="{msg.maxPerson}" styleName="{aonResources.css.aonMarginLeft} {aonResources.css.aonItalic}"/>
+					<g:InlineLabel ui:field="maxPerson" styleName="{aonResources.css.aonMarginLeft}"/>
+					<g:InlineLabel text="{msg.maxImport}" styleName="{aonResources.css.aonMarginLeft} {aonResources.css.aonItalic}"/>
+					<g:InlineLabel ui:field="maxImport" styleName="{aonResources.css.aonMarginLeft}"/>
+					<g:InlineLabel text="{msg.vatPercent}" styleName="{aonResources.css.aonMarginLeft} {aonResources.css.aonItalic}"/>
+					<g:InlineLabel ui:field="vatPercent" styleName="{aonResources.css.aonMarginLeft}"/>
+					<div>
+						<g:InlineLabel ui:field="description"/>
+					</div>
+				</div>
 			</div>
 		</div>
-		<g:TabPanel ui:field="tab">
+		<g:TabPanel ui:field="tab" styleName="gwt-Selector">
 			<g:Tab text="{msg.epigraphAdditionalInfo}">
 				<g:SimplePanel ui:field="infoContainer"/>
 			</g:Tab>

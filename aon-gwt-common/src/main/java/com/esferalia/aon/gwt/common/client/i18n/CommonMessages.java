@@ -1705,5 +1705,8 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("IVA. M\u00F3dulos. R\u00E9gimen simplificado.")
 	String vatModules();
+	
+	@DefaultMessage("Click para cambiar el ep\u00EDgrafe.")
+	String pushToChange();
 
 }

@@ -205,7 +205,6 @@ public class VatCollection {
 		stmt.append("," + INVESTMENT);
 		stmt.append("," + PERCENTAGE);
 		stmt.append("," + SURCHARGE_PERCENT);
-		System.out.println(stmt.toString());
 		return stmt.toString();
 	}
 

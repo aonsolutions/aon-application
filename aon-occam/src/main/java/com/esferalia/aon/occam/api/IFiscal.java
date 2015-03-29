@@ -20,12 +20,13 @@ public interface IFiscal {
 	public FiscalModelMatrix getFiscalPanel(AONContext ctx,int domain,int year,int user);
 	
 	// 			   FISCAL ACTIVITIES
+	public FiscalActivity calculate(AONContext ctx, FiscalActivity fa);
 	public ArrayList<FiscalActivity> getFiscalActivities(AONContext ctx,int domain);
 	public FiscalActivity save(AONContext ctx, FiscalActivity fa);
 	public void delete(AONContext ctx, FiscalActivity fa);
 	public FiscalActivity getActivity(AONContext ctx, int id);
 	public ArrayList<FiscalActivity> getActivities(AONContext ctx, int domainId);
-	public FiscalActivity getActivityFor(Epigraph epigraph, FiscalActivity fa);
+	public FiscalActivity getActivityFor(AONContext ctx,Epigraph epigraph, FiscalActivity fa);
 	
 	// 				   		  MOD180
 	public ArrayList<Mod180> getMod180s(AONContext ctx,int domain);
