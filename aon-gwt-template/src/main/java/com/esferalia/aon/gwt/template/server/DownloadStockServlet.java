@@ -30,6 +30,7 @@ import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
+import com.esferalia.aon.gwt.template.jooq.DBStock;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.google.api.services.drive.Drive;
@@ -56,7 +57,7 @@ public class DownloadStockServlet extends HttpServlet {
         Warehouse w = new Warehouse();
         if(!warehouse.equals("-"))
         	try {
-        		w = DBConsults.getWarehouse(warehouse, domainId, domain);
+        		w = DBStock.getWarehouse(warehouse, domainId, domain);
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 			}
@@ -136,7 +137,7 @@ public class DownloadStockServlet extends HttpServlet {
         }
         Vector<StockInfo> v = new Vector<StockInfo>();
 		try {
-			v = DBConsults.getStocks(domain,domainId,w.getId());
+			v = DBStock.getStocks(domain,domainId,w.getId());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

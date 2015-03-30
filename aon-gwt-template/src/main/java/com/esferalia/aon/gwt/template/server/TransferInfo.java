@@ -9,6 +9,7 @@ public class TransferInfo {
 	Warehouse sourceWarehouse;
 	Warehouse targetWarehouse;
 	String comments;
+	
 	public Series getSeries() {
 		return series;
 	}

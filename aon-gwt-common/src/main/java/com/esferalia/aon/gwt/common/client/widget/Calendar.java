@@ -9,9 +9,6 @@ import com.esferalia.aon.gwt.common.client.css.AonCalendarCSS;
 import com.esferalia.aon.gwt.common.client.css.AonCalendarResources;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.DoubleClickEvent;
-import com.google.gwt.event.dom.client.DoubleClickHandler;
-import com.google.gwt.event.dom.client.HasDoubleClickHandlers;
 import com.google.gwt.event.dom.client.HasKeyDownHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
@@ -21,7 +18,6 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
@@ -34,18 +30,22 @@ import com.google.gwt.user.datepicker.client.CalendarUtil;
 import com.google.gwt.user.datepicker.client.DatePicker;
 import com.google.gwt.user.datepicker.client.DefaultCalendarView;
 import com.google.gwt.user.datepicker.client.MonthSelector;
+import com.google.gwt.view.client.SelectionModel;
 
 public class Calendar extends ResizeComposite implements
 		ValueChangeHandler<Date>, KeyDownHandler {
-
+	
 	public interface Listener {
 
 		void onValueChangeEvent(ValueChangeEvent<Date> event);
 		
-		void onSuprPressEvent(Date date);
+		void onSuprPressEvent(final Date date);
 		
-		void onEnterPressEvent(Date date);
-
+		void onEnterPressEvent(final Date date);
+	}
+	
+	interface SelectionState {
+		
 	}
 
 	private static AonCalendarCSS CALENDAR_CSS = GWT
@@ -208,7 +208,7 @@ public class Calendar extends ResizeComposite implements
 			super(new MonthAndYearSelector(), new DefaultCalendarView(),
 					new CalendarModel());
 			MonthAndYearSelector monthSelector = (MonthAndYearSelector) this
-					.getMonthSelector();
+					.getMonthSelector();			
 			monthSelector.setPicker(this);
 			monthSelector.setModel(this.getModel());
 		}
@@ -282,8 +282,7 @@ public class Calendar extends ResizeComposite implements
 			model.shiftCurrentMonth(numMonths);
 			picker.refreshComponents();
 		}
-		
-		
+				
 
 		private String firstCharToUpper(String name) {
 			String mayus = String.valueOf(name.charAt(0));
@@ -291,7 +290,6 @@ public class Calendar extends ResizeComposite implements
 			name = name.replaceFirst(String.valueOf(name.charAt(0)), mayus);
 			return name;
 		}
-		
-		
 	}
+	
 }

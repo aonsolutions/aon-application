@@ -71,8 +71,6 @@ public class Templates extends Composite implements EntryPoint {
 
 	private static final String SILENT = "silent";
 	
-	
-	
 	class DocumentContextMenu extends ContextMenu {
 
 		ScheduledCommand viewCommand = new ScheduledCommand() {
@@ -570,6 +568,48 @@ public class Templates extends Composite implements EntryPoint {
 		popup.addStyleName("gwt-PopupPanel-template");
 		popup.setGlassEnabled(true);
 		popup.show();
+	}
+	private void importFee(){
+		//TODO
+		Dialog d = new Dialog("Importar Cuotas","Importar",true,"Cancelar",true,"importFee");
+		d.setUrl(GWT.getModuleBaseURL());
+		d.setTemplateList(template_list);
+		TemplatesDialog popup = new TemplatesDialog(d) {
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+			
+			@Override
+			protected void onAccept() {
+				ListBox lb = (ListBox) flex_table.getWidget(0, 1);
+				String template = lb.getItemText(lb.getSelectedIndex());
+				TemplateInfo ti = new TemplateInfo();
+				
+				//TODO AÑADIR TODOS LOS ATRIBUTOS
+				for(TemplateInfo t : tlist.getList()) {
+					if(t.getName().equals(template) && t.getType().equals("Cuota")){
+						ti = t;
+					}
+				}
+				
+				item.executeExcel3(ti, new AsyncCallback<Integer>() {
+					@Override
+					public void onSuccess(Integer result) {
+							hide();
+					}
+					@Override
+					public void onFailure(Throwable caught) {}
+					
+				});
+			}
+		};
+		popup.addStyleName("gwt-PopupPanel-template");
+		popup.setGlassEnabled(true);
+		popup.show();
+	}
+	private void exportFee(){
+		//TODO
 	}
 	
 	private void importProduct(){
@@ -1071,6 +1111,26 @@ public class Templates extends Composite implements EntryPoint {
 	public static native void exportStockx(Templates thiz) /*-{
 		$wnd.stockx = function() {
 			thiz.@com.esferalia.aon.gwt.template.client.Templates::stockx(*)();
+		}
+	}-*/;
+	
+	public void fee(){
+		importFee();
+	}
+
+	public static native void exportFee(Templates thiz) /*-{
+		$wnd.fee = function() {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::fee(*)();
+		}
+	}-*/;
+
+	public void feex(){
+		exportFee();
+	}
+	
+	public static native void exportFeex(Templates thiz) /*-{
+		$wnd.feex = function() {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::feex(*)();
 		}
 	}-*/;
 }

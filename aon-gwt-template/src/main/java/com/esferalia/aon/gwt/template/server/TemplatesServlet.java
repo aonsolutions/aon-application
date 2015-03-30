@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.Collator;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
@@ -27,9 +28,12 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Series;
 import com.code.aon.config.Tax;
 import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.customer.Customer;
+import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.product.Brand;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
@@ -37,15 +41,20 @@ import com.code.aon.product.ProductCategory;
 import com.code.aon.product.ProductTag;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
+import com.code.aon.project.Project;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.template.client.ITemplate;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
+import com.esferalia.aon.gwt.template.jooq.DBFee;
+import com.esferalia.aon.gwt.template.jooq.DBProduct;
+import com.esferalia.aon.gwt.template.jooq.DBStock;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 
@@ -122,7 +131,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		Vector<Warehouse> v = new Vector<Warehouse>();
 		String domain = AonUtil.getDomainName();
 		try {
-			v = DBConsults.getWarehouse(domain, domainId);
+			v = DBStock.getWarehouse(domain, domainId);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -161,6 +170,403 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			e.printStackTrace();
 		}
 	}
+	//-------------------- IMPORTAR FEE
+	Vector<FeeInfo> fees;
+	FeeInfo fi;
+	Vector<Seller> sellers = new Vector<Seller>();
+	Vector<WorkPlace> workplaces = new Vector<WorkPlace>();
+	Vector<Project> projects = new Vector<Project>();
+	Vector<Customer> customers = new Vector<Customer>();
+	public Integer executeExcel3(TemplateInfo ti){
+		long startAll= System.currentTimeMillis();
+		String domain = AonUtil.getDomainName();
+		error = new Error();
+		verror = new Vector<String>();
+		error.setTextError(verror);
+		textError = "";
+		Vector<FeeInfo> fees = new Vector<FeeInfo>();
+
+		try {
+			sellers = DBFee.getSellers(domain,domainId);
+			workplaces = DBFee.getWorkplaces(domain,domainId);
+			projects = DBFee.getProjects(domain,domainId);
+			customers = DBFee.getCustomers(domain, domainId);
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		
+		Error error = new Error();
+		if(!getMimetype().equals(MimeType.MIME_MS_EXCEL.getName())
+				&& !getMimetype().equals(MimeType.MIME_MS_EXCEL_2007.getName())){
+				//El archivo no es un fichero Excel.
+				error.setError(false);
+				verror.add("*El archivo importado no es de tipo excel.");
+				error.setTextError(verror);
+				this.error = error;
+				return -1;
+		}
+		byte[] data = getOut();
+			
+		File aux = new File("/tmp/fee.xls");
+		try {
+			org.apache.commons.io.FileUtils.writeByteArrayToFile(aux, data);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		FileInputStream excel = null;
+		try {
+			excel = new FileInputStream(aux);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		HSSFWorkbook workbook= null;
+		try {
+			workbook = new HSSFWorkbook(excel);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		HSSFSheet sheet = workbook.getSheetAt(0);
+		
+		rowCount  = sheet.getPhysicalNumberOfRows();
+		
+		Iterator<Row> rowIterator = sheet.iterator();
+
+		/* LAMBDA java 1.8 */
+		Iterable<Row> rowIterable = () -> rowIterator;
+		Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
+		rowStream.forEach(row ->{
+			long startRow= System.currentTimeMillis();
+			Iterator<Cell> cellIterator = row.cellIterator();
+			Iterable<Cell> cellIterable = () -> cellIterator;
+			fi = newFee();
+			Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
+			cellStream.forEach(cell ->{
+                if(cell.getRowIndex() == 0){//Primera fila del fichero Excel.
+                	if(ti.getColumns().size()<= cell.getColumnIndex() || ti.getColumns().get(cell.getColumnIndex()) == null || !ti.getColumns().get(cell.getColumnIndex()).equalsIgnoreCase(cell.getStringCellValue())){
+                		 // El archivo no es compatible con la plantilla
+             			error.setError(false);
+             			verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
+             			error.setTextError(verror);
+             			this.error = error;
+                		rowCount = -1;
+                	} 
+                }
+                else{
+                	if(cell.getColumnIndex() !=0){
+                		Cell beforeCell = row.getCell(cell.getColumnIndex()-1);
+            			if(beforeCell == null || beforeCell.getCellType() == Cell.CELL_TYPE_BLANK){
+            				if(beforeCell == null){
+            					verror.add("*Fila "+cell.getRowIndex()+", Columna "+0+" : Dato Incorrecto");
+            					textError= textError + "*Fila "+cell.getRowIndex()+", Columna "+0+" : Dato Incorrecto \n";
+            				}
+            				else if(ti.getColumns().get(beforeCell.getColumnIndex()).equals("Nombre") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("C\u00f3digo") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Precio Coste") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Precio Venta Base")){
+            					verror.add("*Fila "+beforeCell.getRowIndex()+", Columna "+beforeCell.getColumnIndex()+" : Dato Incorrecto");
+            					textError= textError + "*Fila "+beforeCell.getRowIndex()+", Columna "+beforeCell.getColumnIndex()+" : Dato Incorrecto \n";
+            				}
+            			}
+                	}
+
+                	if(!ti.getColumns().get(cell.getColumnIndex()).equals("Texto Libre")){
+                		fi = checkFee(ti.getColumns().get(cell.getColumnIndex()),fi,cell);
+                		if(fi == null){
+                			verror.add("*Fila "+cell.getRowIndex()+", Columna "+cell.getColumnIndex()+" : Dato Incorrecto ");
+                			textError= textError + "*Fila "+cell.getRowIndex()+", Columna "+cell.getColumnIndex()+" : Dato Incorrecto \n";
+                			fi = newFee();	
+                		}
+                	}
+                 }  
+			});
+			if(row.getLastCellNum() != ti.getColumns().size()){
+				if(row.getRowNum() == 0){
+					error.setError(false);
+            		verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
+            		error.setTextError(verror);
+            		this.error = error;
+            		rowCount = -1;
+            		
+            	}
+            	else{
+            		if(row.getLastCellNum() != -1){
+            			Short cellnum = row.getLastCellNum();
+            			if(row.getLastCellNum() > ti.getColumns().size())cellnum--;
+            			if(ti.getColumns().get(cellnum).equals("Nombre") || ti.getColumns().get(cellnum).equals("C\u00f3digo") || ti.getColumns().get(cellnum).equals("Precio Coste") || ti.getColumns().get(cellnum).equals("Precio Venta Base")){
+          					verror.add("*Fila "+row.getRowNum()+", Columna "+row.getLastCellNum()+" : Dato Incorrecto \n");
+          					textError= textError + "*Fila "+row.getRowNum()+", Columna "+row.getLastCellNum()+" : Dato Incorrecto \n";
+            			}
+            		}
+            	}
+            }
+            
+            if(row.getRowNum() > 0 && fi.getProduct()!= null){ 
+            	fi.setRow(row.getRowNum());
+            	fees.add(fi);
+            }
+    		long timeRow = System.currentTimeMillis() - startRow;
+    		//System.out.println("row time: " + (timeRow/1000d));
+		});
+		
+		this.fees = fees;
+
+		long time = System.currentTimeMillis() - startAll;
+		System.out.println("time: " + (time/1000d));
+		System.out.println(rowCount);
+		return rowCount;
+	}
+
+	public Error insertFee() {
+		long startAll= System.currentTimeMillis();
+		Vector<String> verror = error.getTextError();
+		String domain = AonUtil.getDomainName();
+		Error error = new Error();
+		if(textError.equals("")){
+			error.setError(true);
+			verror.add("");
+			error.setTextError(verror);
+			try {
+				//insertar Fee en base de datos.!!
+				error = DBFee.insertFee(domain,domainId,fees);
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		else{
+			//Alguna de las filas contiene datos erroneos.
+			error.setError(false);
+ 			error.setTextError(verror);
+		}
+		
+		long timeAll = System.currentTimeMillis() - startAll;
+			
+		System.out.println("ALL    " + (timeAll/1000d));
+		return error;
+	}
+	
+	private FeeInfo newFee() {
+		FeeInfo feeInfo = new FeeInfo();
+		feeInfo.setPeriod(0);
+		feeInfo.setDiscount(0.0);
+		feeInfo.setBillingGroup(false);
+		feeInfo.setConfidential(false);
+		feeInfo.setDetail("");
+		feeInfo.setDetail2("");
+		feeInfo.setDetail3("");
+		feeInfo.setDescription("");
+		return feeInfo;
+	}
+	
+	private FeeInfo checkFee(String template,FeeInfo fee, Cell cell) {
+		Integer type = cell.getCellType();
+		switch (template) {
+		case "Cliente": case "Client":
+			if(type.equals(Cell.CELL_TYPE_STRING) && !cell.getStringCellValue().equals("")){
+				String strAux = cell.getStringCellValue();
+				Boolean b = true;
+				for(Customer s : customers){
+					if(strAux.equalsIgnoreCase(s.getRegistry().getDocument()) || strAux.equalsIgnoreCase(s.getRegistry().getAlias()) || strAux.equalsIgnoreCase(s.getRegistry().getName())){
+						fee.setClient(cell.getStringCellValue());
+						fee.setClientId(s.getId());
+						b= false;
+					}
+				}
+				if(b) return null;	
+			}
+			else return null;
+			break;
+		case "Producto": case "Product":
+			if(type.equals(Cell.CELL_TYPE_STRING) && !cell.getStringCellValue().equals(""))
+				fee.setProduct(cell.getStringCellValue());
+			else return null;
+			break;
+		case "Cantidad": case "Quantity":
+			if(type.equals(Cell.CELL_TYPE_NUMERIC)){ 
+				fee.setQuantity(cell.getNumericCellValue());
+			}
+			else return null;
+			break;
+		case "Precio": case "Price":
+			if(type.equals(Cell.CELL_TYPE_NUMERIC))
+				fee.setPrice(cell.getNumericCellValue());
+			else return null;
+			break;
+		case "Descuento": case "Discount":
+			if(type.equals(Cell.CELL_TYPE_NUMERIC))
+				fee.setPrice(cell.getNumericCellValue());
+			else return null;
+			break;
+		case "Fecha Inicio": case "Start Date":
+			if(type.equals(Cell.CELL_TYPE_STRING)){
+				Date d = Utils.stringToDate(cell.getStringCellValue());
+				if(d != null) fee.setEndDate(d); 
+				else return null;
+			}
+			else if(type.equals(Cell.CELL_TYPE_NUMERIC)){
+				fee.setStartDate(cell.getDateCellValue());
+			}
+		/*	else if(type.equals(Cell.CELL_TYPE_FORMULA)){
+				
+			}*/
+			else return null;
+			break;
+		case "Fecha Fin": case "End Date":
+			if(type.equals(Cell.CELL_TYPE_STRING)){
+				Date d = Utils.stringToDate(cell.getStringCellValue());
+				if(d != null) fee.setEndDate(d); 
+				else return null;
+			}
+			else if(type.equals(Cell.CELL_TYPE_NUMERIC)){
+				fee.setStartDate(cell.getDateCellValue());
+			}
+		/*	else if(type.equals(Cell.CELL_TYPE_FORMULA)){
+				
+			}*/
+			else return null;
+			break;
+		case "Fecha Facturaci\u00f3n": case "Billing Date":
+			if(type.equals(Cell.CELL_TYPE_STRING)){
+				Date d = Utils.stringToDate(cell.getStringCellValue());
+				if(d != null) fee.setEndDate(d); 
+				else return null;
+			}
+			else if(type.equals(Cell.CELL_TYPE_NUMERIC)){
+				fee.setStartDate(cell.getDateCellValue());
+			}
+		/*	else if(type.equals(Cell.CELL_TYPE_FORMULA)){
+				
+			}*/
+			else return null;
+			break;
+		case "Periodo": case "period": //enum
+			if(type.equals(Cell.CELL_TYPE_STRING)){
+			//TODO
+			}
+			else return null;
+			break;
+		case "Comercial": case "Seller": //bd
+			if(type.equals(Cell.CELL_TYPE_STRING)){
+				String strAux = cell.getStringCellValue();
+				Boolean b = true;
+				for(Seller s : sellers){
+					if(strAux.equalsIgnoreCase(s.getRegistryDocument()) || strAux.equalsIgnoreCase(s.getRegistryAlias()) || strAux.equalsIgnoreCase(s.getRegistryName())){
+						fee.setSeller(cell.getStringCellValue());
+						fee.setSellerId(s.getId());
+						b= false;
+					}
+				}
+				if(b) return null;	
+			}
+			else return null;
+			break;
+		case "Centro Trabajo": case "Workplace": //bd
+			if(type.equals(Cell.CELL_TYPE_STRING)){
+				String strAux = cell.getStringCellValue();
+				Boolean b = true;
+				for(WorkPlace s : workplaces){
+					if(strAux.equalsIgnoreCase(s.getDescription())){
+						fee.setWorkplace(cell.getStringCellValue());
+						fee.setWorkplaceId(s.getId());
+						b= false;
+					}
+				}
+				if(b) return null;	
+			}
+			else return null;
+			break;
+		case "Grupo Facturaci\u00f3n": 
+			Boolean bool = false;
+			switch (type) {
+			case Cell.CELL_TYPE_STRING:
+				String string = cell.getStringCellValue();
+				if(string.equalsIgnoreCase("si") || string.equalsIgnoreCase("yes") || string.equalsIgnoreCase("true"))
+					bool = true;
+				else if( string.equalsIgnoreCase("no") || string.equalsIgnoreCase("false"))
+					bool = false;
+				else return null;
+				break;
+			case Cell.CELL_TYPE_NUMERIC:
+				Double num = cell.getNumericCellValue();
+				if(num.equals(1.0)) bool = true;
+				else if(num.equals(0.0)) bool = false;
+				else return null;
+				break;
+			case Cell.CELL_TYPE_BOOLEAN:
+				bool = cell.getBooleanCellValue();
+				break;
+			case Cell.CELL_TYPE_BLANK:
+				return fee;
+			default:
+				return null;
+			}
+			fee.setBillingGroup(bool);
+			break;
+		case "Confidencial": case "Confidential":
+			Boolean bool2 = false;
+			switch (type) {
+			case Cell.CELL_TYPE_STRING:
+				String string = cell.getStringCellValue();
+				if(string.equalsIgnoreCase("si") || string.equalsIgnoreCase("yes") || string.equalsIgnoreCase("true"))
+					bool2 = true;
+				else if( string.equalsIgnoreCase("no") || string.equalsIgnoreCase("false"))
+					bool2 = false;
+				else return null;
+				break;
+			case Cell.CELL_TYPE_NUMERIC:
+				Double num = cell.getNumericCellValue();
+				if(num.equals(1.0)) bool2 = true;
+				else if(num.equals(0.0)) bool2 = false;
+				else return null;
+				break;
+			case Cell.CELL_TYPE_BOOLEAN:
+				bool2 = cell.getBooleanCellValue();
+				break;
+			case Cell.CELL_TYPE_BLANK:
+				return fee;
+			default:
+				return null;
+			}
+			fee.setConfidential(bool2);
+			break;
+		case "Proyecto": case "Project":  //BD
+			if(type.equals(Cell.CELL_TYPE_STRING)){
+				String strAux = cell.getStringCellValue();
+				Boolean b = true;
+				for(Project s : projects){
+					if(strAux.equalsIgnoreCase(s.getName()) || strAux.equalsIgnoreCase(s.getAlias())){
+						fee.setProject(cell.getStringCellValue());
+						fee.setProjectId(s.getId());
+						b= false;
+					}
+				}
+				if(b) return null;	
+			}
+			else return null;
+			break;
+		case "Detalle 1": case "Detail 1":
+			if(type.equals(Cell.CELL_TYPE_STRING))
+				fee.setDetail(cell.getStringCellValue());
+			//else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
+			break;
+		case "Detalle 2": case "Detail 2":
+			if(type.equals(Cell.CELL_TYPE_STRING))
+				fee.setDetail2(cell.getStringCellValue());
+			//else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
+			break;
+		case "Detalle 3": case "Detail 3":
+			if(type.equals(Cell.CELL_TYPE_STRING))
+				fee.setDetail3(cell.getStringCellValue());
+			//else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
+			break;
+		case "Descripci\u00f3n":
+			if(type.equals(Cell.CELL_TYPE_STRING))
+				fee.setDescription(cell.getStringCellValue());
+			break;
+
+		default:
+			break;
+		}
+		return fee;
+	}
 	
 	//-------------------- IMPORTAR STOCK
 	Vector<StockInfo> stock;
@@ -182,8 +588,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		Warehouse w = new Warehouse();
 		Series s = new Series();
 		try {
-			w = DBConsults.getWarehouse(warehouse, ti.getDomainId(),domain);
-			s = DBConsults.getSeries(domain, domainId, series);
+			w = DBStock.getWarehouse(warehouse, ti.getDomainId(),domain);
+			s = DBStock.getSeries(domain, domainId, series);
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
@@ -199,7 +605,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
     		
     		
     			try {
-    		 		b = DBConsults.checkSeries(domain,domainId,transferInfo.getSeries(),transferInfo.getTargetWarehouse());
+    		 		b = DBStock.checkSeries(domain,domainId,transferInfo.getSeries(),transferInfo.getTargetWarehouse());
     	 		} catch (SQLException e) {
     	 			e.printStackTrace();
     	 		}
@@ -351,7 +757,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			error.setTextError(verror);
 			//String domain = AonUtil.getDomainName();
 			try {
-				error = DBConsults.insertStock2(domain,domainId,stock,transferInfo);
+				error = DBStock.insertStock2(domain,domainId,stock,transferInfo);
 				
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -375,15 +781,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		switch (template) {
 		case "Producto": case "Product": 
 			if(type.equals(Cell.CELL_TYPE_STRING) && !value.equals("")){
-				/*Boolean b = false;
-				try {
-					b = DBConsults.isItem(domain, domainId, (String) value);
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				if(b)*/ 
 				stock.setProduct((String) value);
-				//else return null;
 			}
 			else return null;
 			break;
@@ -436,7 +834,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		String domain = AonUtil.getDomainName();
 		Vector<Series> series = new Vector<Series>();
 		try {
-			series = DBConsults.getSeries(domain, domainId);
+			series = DBStock.getSeries(domain, domainId);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -611,7 +1009,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			error.setTextError(verror);
 			//String domain = AonUtil.getDomainName();
 			try {
-				error = DBConsults.insertProducts(domain, domainId, products);
+				error = DBProduct.insertProducts(domain, domainId, products);
 				
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -772,7 +1170,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			error.setTextError(verror);
 			String domain = AonUtil.getDomainName();
 			try {
-				DBConsults.insertProducts(domain,domainId,products);
+				DBProduct.insertProducts(domain,domainId,products);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -825,7 +1223,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 				String strAux = (String) value;
 				Vector<ProductCategory> v = null;
 				try {
-					v = DBConsults.getCategories(domain, domainId);
+					v = DBProduct.getCategories(domain, domainId);
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -845,7 +1243,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 				String strAux = (String) value;
 				Vector<Brand> v = null;
 				try {
-					v = DBConsults.getBrands(domain, domainId);
+					v = DBProduct.getBrands(domain, domainId);
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -864,7 +1262,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			if(type.equals(Cell.CELL_TYPE_STRING)){
 				Vector<ProductTag> tags = null;
 				try {
-					tags = DBConsults.getTags(domain, domainId);
+					tags = DBProduct.getTags(domain, domainId);
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -909,7 +1307,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			Tax vat = new Tax();
 			Vector<Tax> vats = new Vector<Tax>();
 			try {
-				vats = DBConsults.getIVA(domain, domainId);
+				vats = DBProduct.getIVA(domain, domainId);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -947,7 +1345,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			Tax retention = new Tax();
 			Vector<Tax> retentions = new Vector<Tax>();
 			try {
-				retentions = DBConsults.getRetentions(domain, domainId);
+				retentions = DBProduct.getRetentions(domain, domainId);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
