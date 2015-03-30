@@ -32,6 +32,7 @@ import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.product.ProductTag;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
+import com.esferalia.aon.gwt.template.jooq.DBProduct;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.google.api.services.drive.Drive;
 
@@ -130,7 +131,7 @@ public class DownloadProductServlet extends HttpServlet {
         }
         Vector<ProductInfo> v = new Vector<ProductInfo>();
 		try {
-			v = DBConsults.getProducts(domain,domainId);
+			v = DBProduct.getProducts(domain,domainId);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

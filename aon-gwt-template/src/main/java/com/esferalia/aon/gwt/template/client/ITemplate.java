@@ -40,5 +40,9 @@ public interface ITemplate extends RemoteService{
 	public Error insertProduct();
 	
 	public Integer executeExcel2(TemplateInfo ti);
+	
+	public Integer executeExcel3(TemplateInfo ti);
+	
+	public Error insertFee();
 
 }
