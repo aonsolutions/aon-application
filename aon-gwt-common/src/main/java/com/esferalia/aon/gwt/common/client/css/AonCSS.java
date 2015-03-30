@@ -529,9 +529,18 @@ public interface AonCSS extends  CssResource {
 
 	@ClassName("aon-icon-loupe")
 	String aonIconLoupe();
-	
+
+	@ClassName("aon-icon-modules")
+	String aonIconModules();
+
+	@ClassName("aon-icon-module")
+	String aonIconModule();
+
 	@ClassName("aon-icon-question")
 	String aonIconQuestion();
+	
+	@ClassName("aon-icon-model")
+	String aonIconModel();	
 
 	@ClassName("aon-fiscal-enterprise-suggest")
 	String aonFiscalEnterpriseSuggest();
@@ -577,6 +586,18 @@ public interface AonCSS extends  CssResource {
 	
 	@ClassName("aon-fiscal-matrix-dataCell")
 	String aonFiscalMatrixDataCell();
+
+	@ClassName("aon-fiscal-tree-list")
+	String aonFiscalTreeList();
+	
+	@ClassName("aon-fiscal-tree-title")
+	String aonFiscalTreeTitle();
+
+	@ClassName("aon-fiscal-tree-item")
+	String aonFiscalTreeItem();
+
+	
+
 	
 }
 

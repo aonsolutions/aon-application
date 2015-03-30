@@ -38,7 +38,7 @@ public class ActivityTreeNode extends TreeNode<FiscalActivity> {
     	InlineLabel label = new InlineLabel();
     	label.setText((AonStringUtils.isBlank(fa.getEpigraph())?AonStringUtils.EMPTY:fa.getEpigraph() + " - ") 
     			+ AonStringUtils.abbreviate(fa.getDescription(), 40));
-    	label.addStyleName(FiscalTree.AON_RESOURCES.css().aonIconPointLightGreen());
+    	label.addStyleName(FiscalTree.AON_RESOURCES.css().aonIconModule());
     	label.addStyleName(FiscalTree.AON_RESOURCES.css().aonTreeIconNode() );
     	this.setWidget(label);
     	this.setUserObject(fa);

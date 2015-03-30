@@ -37,6 +37,12 @@ public abstract class TreeNodeTypes<T> {
 			return new ActivityTreeNode();
 		}
 	};
+	public static TreeNodeTypes<Enterprise> FISCAL_MODEL_GROUP = new TreeNodeTypes<Enterprise>() {
+		@Override
+		TreeNode<Enterprise> getInstance() {
+			return new FiscalModelGroupNode();
+		}
+	};
 
 	abstract TreeNode<T> getInstance();
 }

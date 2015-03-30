@@ -2,11 +2,12 @@ package com.esferalia.aon.gwt.fiscal.client.tree;
 
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasTreeItems;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
@@ -14,10 +15,11 @@ import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class ActivityYearTreeNode extends TreeNode<Integer> {
 
-	private HTMLPanel widget;
+	private VerticalPanel widget;
 
 	@Override
 	public Integer getTreeObject() {
@@ -25,11 +27,31 @@ public class ActivityYearTreeNode extends TreeNode<Integer> {
 	}
 
 	@Override
-	public void select(FiscalTree fiscalTree) {
-		if (widget == null) {
-			widget = new HTMLPanel(getTreeObject().toString());
+	public void select(final FiscalTree fiscalTree) {
+		if (widget ==null) {
+			widget = new VerticalPanel( );
+			widget.setStyleName(FiscalTree.AON_RESOURCES.css().aonFiscalTreeList());
+			widget.setSpacing(5);
+			Label title = new Label( getText());
+			title.setStyleName(FiscalTree.AON_RESOURCES.css().aonFiscalTreeTitle());
+			widget.add(title);
+			for (int i = 0; i < getChildCount() ; i++) {
+				final TreeItem item = getChild(i); 
+				InlineLabel label =  new InlineLabel(getChild(i).getText());
+				label.setStyleName(FiscalTree.AON_RESOURCES.css().aonFiscalTreeItem());
+				label.addStyleName(FiscalTree.AON_RESOURCES.css().aonIconPointGreen());
+				label.addClickHandler( new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						fiscalTree.tree.setSelectedItem(item);
+					}
+				});
+				widget.add(label);
+			}
 		}
 		fiscalTree.content.setWidget(widget);
+		
 	}
 
 	@Override

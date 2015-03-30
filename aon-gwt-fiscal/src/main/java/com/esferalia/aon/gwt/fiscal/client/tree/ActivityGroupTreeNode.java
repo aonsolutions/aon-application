@@ -26,10 +26,16 @@ public class ActivityGroupTreeNode extends TreeNode<Enterprise> {
 	public void select(final FiscalTree fiscalPanel) {
 		if (widget ==null) {
 			widget = new VerticalPanel( );
-			widget.add(new Label(FiscalTree.MSG.moduleActivities()));
+			widget.setStyleName(FiscalTree.AON_RESOURCES.css().aonFiscalTreeList());
+			Label title = new Label(FiscalTree.MSG.moduleActivities());
+			title.setStyleName(FiscalTree.AON_RESOURCES.css().aonFiscalTreeTitle());
+			widget.add(title);
+			
 			for (int i = 0; i < getChildCount() ; i++) {
 				final TreeItem item = getChild(i); 
-				Label label =  new Label(getChild(i).getText());
+				InlineLabel label =  new InlineLabel(getChild(i).getText());
+				label.setStyleName(FiscalTree.AON_RESOURCES.css().aonFiscalTreeItem());
+				label.addStyleName(FiscalTree.AON_RESOURCES.css().aonIconModule());
 				label.addClickHandler( new ClickHandler() {
 					
 					@Override
@@ -47,7 +53,7 @@ public class ActivityGroupTreeNode extends TreeNode<Enterprise> {
 	public ActivityGroupTreeNode render(HasTreeItems parent, final FiscalTree fiscalPanel,Enterprise enterprise) {
     	InlineLabel label = new InlineLabel();
     	label.setText(FiscalTree.MSG.moduleActivities());
-    	label.addStyleName(FiscalTree.AON_RESOURCES.css().aonIconActivities());
+    	label.addStyleName(FiscalTree.AON_RESOURCES.css().aonIconModules());
     	label.addStyleName(FiscalTree.AON_RESOURCES.css().aonTreeIconNode() );
     	setWidget(label);
     	setUserObject(enterprise);

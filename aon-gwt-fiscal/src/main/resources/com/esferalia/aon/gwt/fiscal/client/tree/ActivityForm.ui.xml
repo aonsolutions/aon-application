@@ -23,27 +23,51 @@
 				<g:InlineLabel text="{msg.moduleActivities}" />
 			</div>
 			<div class="{aonResources.css.aonGroupBody}">
-				<div>
-					<g:InlineLabel text="{msg.year}" styleName="{aonResources.css.aonItalic}"/>
-					<g:InlineLabel ui:field="year" styleName="{aonResources.css.aonIconButton} {aonResources.css.aonBold}"/>
-					
-					<span styleName="{aonResources.css.aonMarginLeft} {aonResources.css.aonVerticalAlignMiddle}">
-						<g:InlineLabel text="{msg.epigraph}" styleName="{aonResources.css.aonItalic}"/>
-						<g:InlineLabel ui:field="epigraph" styleName="{aonResources.css.aonBold} {aonResources.css.aonMarginLeft}"/>
-						<g:Button ui:field="epigraphButton" styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconLoupe}"
-							title="{msg.pushToChange}"/>
-					</span>
-					
-					<g:InlineLabel text="{msg.maxPerson}" styleName="{aonResources.css.aonMarginLeft} {aonResources.css.aonItalic}"/>
-					<g:InlineLabel ui:field="maxPerson" styleName="{aonResources.css.aonMarginLeft}"/>
-					<g:InlineLabel text="{msg.maxImport}" styleName="{aonResources.css.aonMarginLeft} {aonResources.css.aonItalic}"/>
-					<g:InlineLabel ui:field="maxImport" styleName="{aonResources.css.aonMarginLeft}"/>
-					<g:InlineLabel text="{msg.vatPercent}" styleName="{aonResources.css.aonMarginLeft} {aonResources.css.aonItalic}"/>
-					<g:InlineLabel ui:field="vatPercent" styleName="{aonResources.css.aonMarginLeft}"/>
-					<div>
-						<g:InlineLabel ui:field="description"/>
-					</div>
-				</div>
+				<table>
+					<tr>
+						<td class="{aonResources.css.aonItalic}">
+							<g:InlineLabel text="{msg.year}" />
+						</td>
+						<td class="{aonResources.css.aonBold}">
+							<g:InlineLabel ui:field="year"/>
+						</td>
+						<td class="{aonResources.css.aonItalic} {aonResources.css.aonNowrap}">
+							<g:InlineLabel text="{msg.maxPerson}"/>
+						</td>
+						<td>
+							<g:InlineLabel ui:field="maxPerson"/>
+						</td>
+						<td class="{aonResources.css.aonItalic}  {aonResources.css.aonNowrap}">
+							<g:InlineLabel text="{msg.maxImport}"/>
+						</td>
+						<td>
+							<g:InlineLabel ui:field="maxImport"/>
+						</td>
+						<td class="{aonResources.css.aonItalic}  {aonResources.css.aonNowrap}">
+							<g:InlineLabel text="{msg.vatPercent}" />
+						</td>
+						<td>
+							<g:InlineLabel ui:field="vatPercent"/>
+							<span>%</span>
+						</td>
+						<td class="{aonResources.css.aonWidthAll}">
+						</td>
+					</tr>
+					<tr>
+						<td class="{aonResources.css.aonItalic}">
+							<g:InlineLabel text="{msg.epigraph}"/>						
+						</td>
+						<td class="{aonResources.css.aonBold}">
+							<g:InlineLabel ui:field="epigraph" />
+						</td>
+						<td>
+							<g:Button ui:field="epigraphButton" styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconLoupe}" title="{msg.pushToChange}"/>
+						</td>
+						<td colspan="6">
+							<g:InlineLabel ui:field="description"/>
+						</td>
+					</tr>
+				</table>
 			</div>
 		</div>
 		<g:TabPanel ui:field="tab" styleName="gwt-Selector">

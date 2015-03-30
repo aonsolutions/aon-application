@@ -25,10 +25,9 @@ abstract class TreeNode<T> extends TreeItem {
 
 		TreeNode<Enterprise> rootNode = TreeNodeTypes.ENTERPRISE.getInstance();
 		rootNode.render(tree, fiscalPanel, enterprise);
-		TreeNodeTypes.ENTERPRISE_DATA.getInstance().render(rootNode,
-				fiscalPanel, enterprise);
-		TreeNodeTypes.FISCAL_ACTIVITY_GROUP.getInstance().render(rootNode,
-				fiscalPanel, enterprise);
+		TreeNodeTypes.ENTERPRISE_DATA.getInstance().render(rootNode,fiscalPanel, enterprise);
+		TreeNodeTypes.FISCAL_ACTIVITY_GROUP.getInstance().render(rootNode,fiscalPanel, enterprise);
+		TreeNodeTypes.FISCAL_MODEL_GROUP.getInstance().render(rootNode,fiscalPanel, enterprise);
 		rootNode.setState(true);
 		tree.addItem(rootNode);
 		tree.setSelectedItem(rootNode);

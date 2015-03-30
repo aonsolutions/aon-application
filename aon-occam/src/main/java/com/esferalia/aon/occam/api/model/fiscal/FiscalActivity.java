@@ -162,7 +162,10 @@ public class FiscalActivity implements Serializable {
 	}
 	
 	public double getDoubleValue(FiscalActivityInfoKeyType type, FiscalActivityInfoKey key) {
-		return AonNumberUtils.todouble( getMap().get(type.ordinal()).get(key.ordinal()).getValue());
+		if (getMap().get(type.ordinal()).get(key.ordinal()) != null) {
+			return AonNumberUtils.todouble( getMap().get(type.ordinal()).get(key.ordinal()).getValue());
+		}
+		return 0.0;
 	}
 	public double getInfoDoubleValue(FiscalActivityInfoKey key) {
 		return getDoubleValue(FiscalActivityInfoKeyType.INFO, key);

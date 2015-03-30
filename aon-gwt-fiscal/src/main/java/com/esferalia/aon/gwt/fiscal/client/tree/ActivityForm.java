@@ -217,6 +217,8 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 
 	private void populate(FiscalActivity fiscalActivity) {
 		node.setTreeObject( fiscalActivity );
+		saveButton.setEnabled(isEnabled(fiscalActivity));
+		calculateButton.setEnabled(isEnabled(fiscalActivity));
 		year.setText(AonNumberUtils.toString(fiscalActivity.getYear()));
 		epigraph.setText(fiscalActivity.getEpigraph());
 		if (AonStringUtils.isNotBlank(fiscalActivity.getEpigraph())) {
@@ -259,7 +261,6 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 
 	private boolean isEnabled(FiscalActivity fiscalActivity) {
 		return ( fiscalActivity.getYear() >= 2015 );
-		
 	}
 
 	private FlexTable getInfoTable(FiscalActivity fiscalActivity,Map<Integer,FiscalActivityInfo> map) {
