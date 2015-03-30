@@ -1,11 +1,13 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
@@ -96,6 +98,46 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 				new AsyncCallbackWrapper<Void>(callback));
 	}
 	
+	// ----------------------------------------------------FISCAL MODEL
+	@Override
+	public void calculate(String domainName, FiscalModel fm,
+			AsyncCallback<FiscalModel> callback) {
+		AON.start();
+		fiscalServiceAsync.calculate(domainName, fm, 
+				new AsyncCallbackWrapper<FiscalModel>(callback));
+	}
+
+	@Override
+	public void getFiscalModels(String domainName, int domain,
+			AsyncCallback<LinkedList<FiscalModel>> callback) {
+		AON.start();
+		fiscalServiceAsync.getFiscalModels(domainName, domain, 
+				new AsyncCallbackWrapper<LinkedList<FiscalModel>>(callback));
+	}
+
+	@Override
+	public void getFiscalModel(String domainName, int domain, int id,
+			AsyncCallback<FiscalModel> callback) {
+		AON.start();
+		fiscalServiceAsync.getFiscalModel(domainName, domain,id, 
+				new AsyncCallbackWrapper<FiscalModel>(callback));
+	}
+
+	@Override
+	public void save(String domainName, FiscalModel fm,
+			AsyncCallback<FiscalModel> callback) {
+		AON.start();
+		fiscalServiceAsync.save(domainName, fm, 
+				new AsyncCallbackWrapper<FiscalModel>(callback));
+	}
+
+	@Override
+	public void delete(String domainName, FiscalModel fm,
+			AsyncCallback<Void> callback) {
+		fiscalServiceAsync.delete(domainName, fm, 
+				new AsyncCallbackWrapper<Void>(callback));
+	}
+
 	// -------------------------------------------------------------- ACTIVITIES
 	@Override
 	public void getActivities(int activityGroup,

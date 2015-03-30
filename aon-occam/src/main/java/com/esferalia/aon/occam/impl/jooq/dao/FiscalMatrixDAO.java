@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix.FiscalModelMatrixItem;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix.FiscalStatus;
@@ -91,9 +91,9 @@ public class FiscalMatrixDAO {
 						.setStatus(rec.getValue(FS_VAT_DECLARATION.STATUS)==1?FiscalStatus.FINISHED:FiscalStatus.PENDING)
 						.setAdministration(AonEnumUtils.enumValue(Administration.class, rec.getValue(FS_VAT_DECLARATION.ADMINISTRATION)))
 						;
-					FiscalModel model = FiscalModel.M303_RG;
+					FiscalModelType model = FiscalModelType.M303_RG;
 					if (item.getPeriod() == Period.YEAR ) {
-						model = FiscalModel.M390_HF;
+						model = FiscalModelType.M390_HF;
 					}
 					item.setModel( model );
 					return item;
@@ -128,7 +128,7 @@ public class FiscalMatrixDAO {
 							:(rec.getValue(FS_MODEL.NAME) + AonStringUtils.SPACE + rec.getValue(FS_MODEL.SURNAME))
 						))
 				.setPeriod(Period.values()[rec.getValue(FS_MODEL.PERIOD)])
-				.setModel( "303".equals(rec.getValue(FS_MODEL.MODEL))?FiscalModel.M303_RS:FiscalModel.valueOf("M" + rec.getValue(FS_MODEL.MODEL) ) )
+				.setModel( "303".equals(rec.getValue(FS_MODEL.MODEL))?FiscalModelType.M303_RS:FiscalModelType.valueOf("M" + rec.getValue(FS_MODEL.MODEL) ) )
 				.setAdministration(AonEnumUtils.enumValue(Administration.class, rec.getValue(FS_MODEL.ADMINISTRATION)))
 				.setStatus(rec.getValue(FS_MODEL.STATUS)==1?FiscalStatus.FINISHED:FiscalStatus.PENDING)
 					)
@@ -157,7 +157,7 @@ public class FiscalMatrixDAO {
 					.setAdministration(AonEnumUtils.enumValue(Administration.class, rec.getValue(FS_MOD349.ADMINISTRATION)))
 					.setPeriod(Period.values()[rec.getValue(FS_MOD349.PERIOD)])
 					.setYear(year)
-					.setModel( FiscalModel.M349)
+					.setModel( FiscalModelType.M349)
 					.setStatus(rec.getValue(FS_MOD349.STATUS)==1?FiscalStatus.FINISHED:FiscalStatus.PENDING)
 					)
 				.stream();
@@ -184,7 +184,7 @@ public class FiscalMatrixDAO {
 					.setDomainId(rec.getValue(DOMAIN.ID))
 					.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
 					.setPeriod(Period.YEAR)
-					.setModel( FiscalModel.M347)
+					.setModel( FiscalModelType.M347)
 					.setStatus(rec.getValue(FS_MOD347.STATUS)==1?FiscalStatus.FINISHED:FiscalStatus.PENDING)
 				)
 				.stream();
@@ -210,7 +210,7 @@ public class FiscalMatrixDAO {
 					.setAdministration(AonEnumUtils.enumValue(Administration.class, rec.getValue(FS_MODEL180.ADMINISTRATION)))
 					.setDomainId(rec.getValue(DOMAIN.ID))
 					.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
-					.setModel( FiscalModel.M180)
+					.setModel( FiscalModelType.M180)
 					.setPeriod(Period.YEAR)
 					.setStatus(rec.getValue(FS_MODEL180.STATUS)==1?FiscalStatus.FINISHED:FiscalStatus.PENDING)
 				)
@@ -237,7 +237,7 @@ public class FiscalMatrixDAO {
 					.setAdministration(AonEnumUtils.enumValue(Administration.class, rec.getValue(FS_MODEL190.ADMINISTRATION)))
 					.setDomainId(rec.getValue(DOMAIN.ID))
 					.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
-					.setModel( FiscalModel.M190)
+					.setModel( FiscalModelType.M190)
 					.setPeriod(Period.YEAR)
 					.setStatus(rec.getValue(FS_MODEL190.STATUS)==1?FiscalStatus.FINISHED:FiscalStatus.PENDING)
 				)
@@ -264,7 +264,7 @@ public class FiscalMatrixDAO {
 					.setAdministration(AonEnumUtils.enumValue(Administration.class, rec.getValue(FS_MODEL390.ADMINISTRATION)))
 					.setDomainId(rec.getValue(DOMAIN.ID))
 					.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
-					.setModel( FiscalModel.M390)
+					.setModel( FiscalModelType.M390)
 					.setPeriod(Period.YEAR)
 					.setStatus(rec.getValue(FS_MODEL390.STATUS)==1?FiscalStatus.FINISHED:FiscalStatus.PENDING)
 				)
@@ -291,7 +291,7 @@ public class FiscalMatrixDAO {
 					.setAdministration(AonEnumUtils.enumValue(Administration.class, rec.getValue(FS_MODEL200.ADMINISTRATION)))
 					.setDomainId(rec.getValue(DOMAIN.ID))
 					.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
-					.setModel( FiscalModel.M200)
+					.setModel( FiscalModelType.M200)
 					.setPeriod(Period.YEAR)
 					.setStatus(FiscalStatus.PENDING) // TODO ??
 				)
@@ -321,7 +321,7 @@ public class FiscalMatrixDAO {
 							.setDomainId(rec.getValue(DOMAIN.ID))
 							.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
 							.setAdministration(params.getAdministration(Administration.COMMON_TERRITORY))
-							.setModel( FiscalModel.valueOf(AonStringUtils.substringAfter(rec.getValue(APP_PARAM.NAME),PARAM_PREFIX)) )
+							.setModel( FiscalModelType.valueOf(AonStringUtils.substringAfter(rec.getValue(APP_PARAM.NAME),PARAM_PREFIX)) )
 							.setStatus( FiscalStatus.MISSING)
 							.setPeriod("Y".equals(rec.getValue(APP_PARAM.VALUE))
 										?Period.YEAR

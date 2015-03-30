@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -24,6 +25,7 @@ import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
@@ -349,6 +351,55 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, fa.getDomain());
 			return getFiscal().getActivityFor(ctx,epigraph, fa);
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
+	// -------------------------- FISCAL MODELS
+	public static LinkedList<FiscalModel> getFiscalModels(String domainName, int domainId){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			return getFiscal().getModels(ctx, domainId);	
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
+	public static FiscalModel calculate(String domainName, FiscalModel fm) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, fm.getDomain());
+			return getFiscal().calculate(ctx, fm);	
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
+	
+	public static FiscalModel getFiscalModel(String domainName,
+			int domainId, int id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			return getFiscal().getModel(ctx, id);	
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
+	public static FiscalModel save(String domainName, FiscalModel fm) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, fm.getDomain());
+			return getFiscal().save(ctx, fm);	
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
+
+	public static void delete(String domainName, FiscalModel fm) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, fm.getDomain());
+			getFiscal().delete(ctx, fm);	
 		} finally {
 			if (ctx != null) ctx.close();	
 		}

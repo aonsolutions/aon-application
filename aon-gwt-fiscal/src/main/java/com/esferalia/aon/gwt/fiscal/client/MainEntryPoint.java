@@ -9,8 +9,11 @@ import com.esferalia.aon.gwt.fiscal.client.mod193.Model193;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
 import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.BodyElement;
+import com.google.gwt.dom.client.Document;
 
 public class MainEntryPoint implements EntryPoint {
 
@@ -32,6 +35,8 @@ public class MainEntryPoint implements EntryPoint {
 
 	@Override
 	public void onModuleLoad() {
+		ensureGwtSelector();
+		
 		String entryPoint = getParameter(GWT.getModuleName(), ENTRY_POINT_PARAM);
 		if ( entryPoint.equalsIgnoreCase(FS_FISCAL_PANEL)) {
 			FiscalTree panel = new FiscalTree();
@@ -91,5 +96,14 @@ public class MainEntryPoint implements EntryPoint {
 		}
 		return null;
 	}-*/;
+
+	public static void ensureGwtSelector() {
+		BodyElement body = Document.get().getBody();
+		String className = body.getClassName();
+		if (AonStringUtils.isBlank(className)
+				|| (className.indexOf("gwt-Selector") == -1))
+			body.addClassName("gwt-Selector");
+
+	}
 
 }

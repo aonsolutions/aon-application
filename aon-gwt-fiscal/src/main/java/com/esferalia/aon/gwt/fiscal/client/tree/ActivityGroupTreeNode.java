@@ -40,6 +40,7 @@ public class ActivityGroupTreeNode extends TreeNode<Enterprise> {
 					
 					@Override
 					public void onClick(ClickEvent event) {
+						item.setState(true);
 						fiscalPanel.tree.setSelectedItem(item);
 					}
 				});
@@ -87,7 +88,7 @@ public class ActivityGroupTreeNode extends TreeNode<Enterprise> {
 					TreeNodeTypes.FISCAL_ACTIVITY
 						.getInstance()
 						.render(yearNode,fiscalPanel, fa);
-					yearNode.setState(true);
+					yearNode.setState((fa.getYear() == FiscalTree.CURRENT_YEAR));
 				} 
 				if (!currentYearRendered) {
 					TreeNodeTypes.FISCAL_ACTIVITY_YEAR

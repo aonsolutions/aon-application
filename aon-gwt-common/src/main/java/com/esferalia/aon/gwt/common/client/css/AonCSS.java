@@ -35,25 +35,25 @@ public interface AonCSS extends  CssResource {
 	String aonWidth50();
 	
 	@ClassName("aon-width-60")
-	String aonWidthAll60();
+	String aonWidth60();
 	
 	@ClassName("aon-width-70")
-	String aonWidthAll70();
+	String aonWidth70();
 	
 	@ClassName("aon-width-80")
-	String aonWidthAll80();
+	String aonWidth80();
 	
 	@ClassName("aon-width-100")
-	String aonWidthAll100();
+	String aonWidth100();
 	
 	@ClassName("aon-width-105")
-	String aonWidthAll105();
+	String aonWidth105();
 	
 	@ClassName("aon-width-110")
-	String aonWidthAll110();
+	String aonWidth110();
 	
 	@ClassName("aon-width-120")
-	String aonWidthAll120();
+	String aonWidth120();
 	
 	@ClassName("aon-width-130")
 	String aonWidth130();
@@ -595,8 +595,6 @@ public interface AonCSS extends  CssResource {
 
 	@ClassName("aon-fiscal-tree-item")
 	String aonFiscalTreeItem();
-
-	
 
 	
 }

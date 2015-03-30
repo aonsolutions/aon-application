@@ -1,7 +1,11 @@
 package com.esferalia.aon.gwt.common.client;
 
+
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.BodyElement;
+import com.google.gwt.dom.client.Document;
 
 public abstract class AONEntryPoint implements EntryPoint {
 
@@ -39,5 +43,13 @@ public abstract class AONEntryPoint implements EntryPoint {
 		return null;
 	}-*/;
 
+	public static void ensureGwtSelector() {
+		BodyElement body = Document.get().getBody();
+		String className = body.getClassName();
+		if (AonStringUtils.isBlank(className)
+				|| (className.indexOf("gwt-Selector") == -1))
+			body.addClassName("gwt-Selector");
+
+	}
 
 }

@@ -1,10 +1,12 @@
 package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IFiscal;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
@@ -18,6 +20,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalActivityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalMatrixDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod180DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod184DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod190DAO;
@@ -35,9 +38,6 @@ public class FiscalImpl implements IFiscal {
 	@Override
 	public FiscalActivity calculate(AONContext ctx, FiscalActivity fa) {
 		return FiscalActivityDAO.calculate(ctx, fa);
-	}
-	public ArrayList<FiscalActivity> getFiscalActivities(AONContext ctx,int domain){
-		return FiscalActivityDAO.getActivities(ctx, domain);
 	}
 	@Override
 	public FiscalActivity save(AONContext ctx, FiscalActivity fa) {
@@ -62,6 +62,31 @@ public class FiscalImpl implements IFiscal {
 	@Override
 	public FiscalActivity getActivityFor(AONContext ctx, Epigraph epigraph, FiscalActivity fa) {
 		return FiscalActivityDAO.getActivityFor(ctx, epigraph, fa);
+	}
+
+	// --------------------------------------------- [FISCAL MODELS]
+	@Override
+	public FiscalModel calculate(AONContext ctx, FiscalModel fm) {
+		return FiscalModelDAO.calculate(ctx, fm);
+	}
+	@Override
+	public FiscalModel save(AONContext ctx, FiscalModel fm) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> FiscalModelDAO.save(ctx, fm));
+	}
+	@Override
+	public void delete(AONContext ctx, FiscalModel fm) {
+		ctx.getDslContext().transaction(
+				configuration -> FiscalModelDAO.delete(ctx, fm));
+	}
+	@Override
+	public FiscalModel getModel(AONContext ctx, int id) {
+		return FiscalModelDAO.getModel(ctx, id);
+	}
+
+	@Override
+	public LinkedList<FiscalModel> getModels(AONContext ctx, int domainId) {
+		return FiscalModelDAO.getModels(ctx, domainId);
 	}
 
 	// ---------------------------------------------------- [MODELO 180]

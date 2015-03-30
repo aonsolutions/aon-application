@@ -1,10 +1,12 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
@@ -45,6 +47,13 @@ public interface FiscalService extends RemoteService {
 	FiscalActivity save(String domainName, FiscalActivity fa) throws AonCoreException;
 	void delete(String domainName, FiscalActivity fa) throws AonCoreException;
 	
+	// ---------------------------------------------------------- FISCAL MODEL
+	FiscalModel calculate(String domainName, FiscalModel fm);
+	LinkedList<FiscalModel> getFiscalModels(String domainName, int domain) throws AonSQLException;
+	FiscalModel getFiscalModel(String domainName, int domain, int id) throws AonSQLException;
+	FiscalModel save(String domainName, FiscalModel fm) throws AonCoreException;
+	void delete(String domainName, FiscalModel fm) throws AonCoreException;
+
 	// ---------------------------------------------------------------MODELO 190
 	void deleteMod190(String domainName, int domain,Mod190 mod190) throws AonCoreException;
 	Mod190 saveMod190(String domainName, int domain,Mod190 mod190) throws AonCoreException;

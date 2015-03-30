@@ -1,7 +1,9 @@
 package com.esferalia.aon.gwt.common.client.i18n;
 
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.i18n.client.Messages;
 
@@ -75,6 +77,53 @@ public interface CommonMessages extends Messages {
 			,"OTHER","Otro"
 			})
 	String documentType(@Select DocumentType d);
+
+	@DefaultMessage("-----")
+	@AlternateMessage(
+		{"M111"		,"Mod. 111"
+		,"M115" 	,"Mod. 115"
+		,"M123"		,"Mod. 123"
+		,"M130"		,"Mod. 130"
+		,"M131"		,"Mod. 131"
+		,"M303_RG"	,"Mod. 303 R\u00E9g. Gen."
+		,"M303_RS"	,"Mod. 303 R\u00E9g. Sim."
+		,"M340"		,"Mod. 340"
+		,"M347"		,"Mod. 347"
+		,"M349"		,"Mod. 349"
+		,"M390"		,"Mod. 390"
+		,"M390_HF"	,"Mod. 390 Hac. For."
+		,"M180"		,"Mod. 180"
+		,"M184"		,"Mod. 184"
+		,"M190"		,"Mod. 190"
+		,"M193"		,"Mod. 193"
+		,"M310"		,"Mod. 310"
+		,"M311"		,"Mod. 311"
+		,"M200"		,"Mod. 200"
+		,"M202"		,"Mod. 202"
+		})	
+	String fiscalModelType(@Select FiscalModelType f);
+
+	@DefaultMessage("-----")
+	@AlternateMessage(
+		{"M01"		,"Enero"
+		,"M02"		,"Febrero"
+		,"M03"		,"Marzo"
+		,"M04"		,"Abril"
+		,"M05"		,"Mayo"
+		,"M06"		,"Junio"
+		,"M07"		,"Julio"
+		,"M08"		,"Agosto"
+		,"M09"		,"Septiembre"
+		,"M10"		,"Octubre"
+		,"M11"		,"Noviembre"
+		,"M12"		,"Diciembre"
+		,"T1"		,"1\u00AA Trimestre"
+		,"T2"		,"2\u00AA Trimestre"
+		,"T3"		,"3\u00AA Trimestre"
+		,"T4"		,"4\u00AA Trimestre"
+		,"YEAR"		,"Anual"
+		})	
+	String fiscalPeriod(@Select Period f);
 
 	@DefaultMessage("ESP")
 	String currencyCode();
@@ -1708,5 +1757,5 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Click para cambiar el ep\u00EDgrafe.")
 	String pushToChange();
-
+	
 }

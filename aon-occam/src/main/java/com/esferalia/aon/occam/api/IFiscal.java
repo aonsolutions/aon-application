@@ -1,8 +1,10 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
@@ -21,12 +23,18 @@ public interface IFiscal {
 	
 	// 			   FISCAL ACTIVITIES
 	public FiscalActivity calculate(AONContext ctx, FiscalActivity fa);
-	public ArrayList<FiscalActivity> getFiscalActivities(AONContext ctx,int domain);
 	public FiscalActivity save(AONContext ctx, FiscalActivity fa);
 	public void delete(AONContext ctx, FiscalActivity fa);
 	public FiscalActivity getActivity(AONContext ctx, int id);
 	public ArrayList<FiscalActivity> getActivities(AONContext ctx, int domainId);
 	public FiscalActivity getActivityFor(AONContext ctx,Epigraph epigraph, FiscalActivity fa);
+
+	// 			   FISCAL MODEL
+	public FiscalModel calculate(AONContext ctx, FiscalModel fm);
+	public FiscalModel save(AONContext ctx, FiscalModel fm);
+	public void delete(AONContext ctx, FiscalModel fm);
+	public FiscalModel getModel(AONContext ctx, int id);
+	public LinkedList<FiscalModel> getModels(AONContext ctx, int domainId);
 	
 	// 				   		  MOD180
 	public ArrayList<Mod180> getMod180s(AONContext ctx,int domain);

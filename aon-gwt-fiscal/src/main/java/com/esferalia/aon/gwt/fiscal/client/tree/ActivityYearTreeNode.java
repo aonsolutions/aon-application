@@ -31,7 +31,6 @@ public class ActivityYearTreeNode extends TreeNode<Integer> {
 		if (widget ==null) {
 			widget = new VerticalPanel( );
 			widget.setStyleName(FiscalTree.AON_RESOURCES.css().aonFiscalTreeList());
-			widget.setSpacing(5);
 			Label title = new Label( getText());
 			title.setStyleName(FiscalTree.AON_RESOURCES.css().aonFiscalTreeTitle());
 			widget.add(title);
@@ -39,11 +38,12 @@ public class ActivityYearTreeNode extends TreeNode<Integer> {
 				final TreeItem item = getChild(i); 
 				InlineLabel label =  new InlineLabel(getChild(i).getText());
 				label.setStyleName(FiscalTree.AON_RESOURCES.css().aonFiscalTreeItem());
-				label.addStyleName(FiscalTree.AON_RESOURCES.css().aonIconPointGreen());
+				label.addStyleName(FiscalTree.AON_RESOURCES.css().aonIconModule());
 				label.addClickHandler( new ClickHandler() {
 					
 					@Override
 					public void onClick(ClickEvent event) {
+						item.setState(true);
 						fiscalTree.tree.setSelectedItem(item);
 					}
 				});

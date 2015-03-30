@@ -42,9 +42,10 @@ public class FiscalActivityValidation {
 	public static BiConsumer<FiscalActivity,AONContext> DUPLICATE_EPIGRAPH = (fa,ctx) -> {
 		int count = ctx.getDslContext().selectCount()
 			.from(FS_ACTIVITY)
-			.where(FS_ACTIVITY.YEAR.eq(fa.getYear()))
-//			.and(FS_ACTIVITY.ID.ne(fa.getId()))
+			.where(FS_ACTIVITY.DOMAIN.eq(fa.getDomain()))
+			.and(FS_ACTIVITY.YEAR.eq(fa.getYear()))
 			.and(FS_ACTIVITY.EPIGRAPH.eq(fa.getEpigraph()))
+			.and(FS_ACTIVITY.ID.ne(fa.getId()))
 			.fetchOne(0,int.class);
 		if (count>0) {
 			throw new AonCoreException(AonError.DUPLICATE_EPIGRAPH.format(fa.getYear(),fa.getEpigraph()));

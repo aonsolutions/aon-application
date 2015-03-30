@@ -89,4 +89,5 @@ public enum Period implements Serializable {
 	public boolean isMonthPeriod() {
 		return (this.ordinal() < 12);
 	}
+
 }

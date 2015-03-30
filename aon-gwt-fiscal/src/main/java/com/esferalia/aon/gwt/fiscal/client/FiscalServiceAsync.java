@@ -1,9 +1,12 @@
+
 package com.esferalia.aon.gwt.fiscal.client;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
@@ -39,6 +42,14 @@ public interface FiscalServiceAsync {
 	void delete(String domainName, FiscalActivity fa,
 			AsyncCallback<Void> callback);
 	
+	// ------------------------------------------------------ FISCAL MODELS
+	void calculate(String domainName, FiscalModel fm,AsyncCallback<FiscalModel> callback);
+	void getFiscalModels(String domainName, int domain,
+			AsyncCallback<LinkedList<FiscalModel>> callback);
+	void getFiscalModel(String domainName, int domain, int id,AsyncCallback<FiscalModel> callback);
+	void save(String domainName, FiscalModel fm,AsyncCallback<FiscalModel> callback);
+	void delete(String domainName, FiscalModel fm, AsyncCallback<Void> callback);
+
 	// -------------------------------------------------------------- ACTIVITIES
 	void getActivities(int activityGroup,
 			AsyncCallback<ArrayList<Activity>> callback);

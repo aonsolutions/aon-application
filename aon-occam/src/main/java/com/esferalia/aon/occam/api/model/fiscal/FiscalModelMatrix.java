@@ -52,7 +52,7 @@ public class FiscalModelMatrix implements Serializable {
 
 		private static final long serialVersionUID = 413993542639618705L;
 		
-		private FiscalModel model;
+		private FiscalModelType model;
 		private int year;
 		private FiscalMatrixPeriod period;
 		private Administration administration;
@@ -62,11 +62,11 @@ public class FiscalModelMatrix implements Serializable {
 		private String name;
 		private FiscalStatus[] statuses;
 
-		public FiscalModel getModel() {
+		public FiscalModelType getModel() {
 			return model;
 		}
 
-		public FiscalModelMatrixRow setModel(FiscalModel model) {
+		public FiscalModelMatrixRow setModel(FiscalModelType model) {
 			this.model = model;
 			return this;
 		}
@@ -182,7 +182,7 @@ public class FiscalModelMatrix implements Serializable {
 		
 		private static final long serialVersionUID = -3871892696016731326L;
 		
-		private FiscalModel model;
+		private FiscalModelType model;
 		private int year;
 		private Period period;
 		private Administration administration;
@@ -193,10 +193,10 @@ public class FiscalModelMatrix implements Serializable {
 		private String name;
 		
 		
-		public FiscalModel getModel() {
+		public FiscalModelType getModel() {
 			return model;
 		}
-		public FiscalModelMatrixItem setModel(FiscalModel model) {
+		public FiscalModelMatrixItem setModel(FiscalModelType model) {
 			this.model = model;
 			return this;
 		}

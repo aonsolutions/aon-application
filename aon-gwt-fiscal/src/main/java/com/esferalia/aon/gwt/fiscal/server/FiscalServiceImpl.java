@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.server;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 
 import javax.servlet.annotation.WebServlet;
 
@@ -11,6 +12,7 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
@@ -81,6 +83,33 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	@Override
 	public void delete(String domainName, FiscalActivity fa) {
 		AON.delete(domainName, fa);
+	}
+
+	// ------------------------------------------------------ FISCAL MODELS
+	@Override
+	public FiscalModel calculate(String domainName, FiscalModel fm) {
+		return AON.calculate(domainName, fm);
+	}
+	@Override
+	public LinkedList<FiscalModel> getFiscalModels(String domainName,
+			int domain) throws AonSQLException {
+		return AON.getFiscalModels(domainName, domain);
+	}
+	@Override
+	public FiscalModel getFiscalModel(String domainName,
+			int domain,int id) throws AonSQLException {
+		return AON.getFiscalModel(domainName, domain, id);
+	}
+
+	@Override
+	public FiscalModel save(String domainName, FiscalModel fm) {
+		return AON.save(domainName, fm);
+		
+	}
+
+	@Override
+	public void delete(String domainName, FiscalModel fm) {
+		AON.delete(domainName, fm);
 	}
 
 	// -------------------------------------------------------------- ACTIVITIES

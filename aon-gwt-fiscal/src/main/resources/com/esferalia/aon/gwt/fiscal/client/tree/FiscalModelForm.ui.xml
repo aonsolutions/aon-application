@@ -8,8 +8,6 @@
 		field="msg"></ui:with>
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
 		field="aonResources"></ui:with>
-	<ui:with type="com.esferalia.aon.gwt.common.client.css.GWTResources"
-		field="GWTResources"></ui:with>
 
 	<g:HTMLPanel styleName="aon-scroll-area">
 		<g:FlowPanel height="20px"
@@ -27,34 +25,32 @@
 			<div class="{aonResources.css.aonGroupBody}">
 				<table>
 					<tr>
-						<td class="{aonResources.css.aonItalic} {aonResources.css.aonWidth50}">
+						<td class="{aonResources.css.aonItalic}">
 							<g:InlineLabel text="{msg.year}" />
 						</td>
-						<td class="{aonResources.css.aonBold} {aonResources.css.aonWidth50}">
+						<td class="{aonResources.css.aonBold}">
 							<g:InlineLabel ui:field="year"/>
 						</td>
-						<td>
-						</td>
-						<td class="{aonResources.css.aonItalic} {aonResources.css.aonNowrap}  {aonResources.css.aonWidth70}">
+						<td class="{aonResources.css.aonItalic} {aonResources.css.aonNowrap}">
 							<g:InlineLabel text="{msg.maxPerson}"/>
 						</td>
-						<td class="{aonResources.css.aonNowrap} {aonResources.css.aonWidth50}">
+						<td>
 							<g:InlineLabel ui:field="maxPerson"/>
 						</td>
-						<td class="{aonResources.css.aonItalic}  {aonResources.css.aonNowrap} {aonResources.css.aonWidth70}">
+						<td class="{aonResources.css.aonItalic}  {aonResources.css.aonNowrap}">
 							<g:InlineLabel text="{msg.maxImport}"/>
 						</td>
-						<td class="{aonResources.css.aonNowrap} {aonResources.css.aonWidth50}">
+						<td>
 							<g:InlineLabel ui:field="maxImport"/>
 						</td>
-						<td class="{aonResources.css.aonItalic}  {aonResources.css.aonNowrap} {aonResources.css.aonWidth70}">
+						<td class="{aonResources.css.aonItalic}  {aonResources.css.aonNowrap}">
 							<g:InlineLabel text="{msg.vatPercent}" />
 						</td>
-						<td class="{aonResources.css.aonNowrap} {aonResources.css.aonWidth50}">
+						<td>
 							<g:InlineLabel ui:field="vatPercent"/>
 							<span>%</span>
 						</td>
-						<td class="{aonResources.css.aonWidthAuto}">
+						<td class="{aonResources.css.aonWidthAll}">
 						</td>
 					</tr>
 					<tr>
@@ -64,33 +60,33 @@
 						<td class="{aonResources.css.aonBold}">
 							<g:InlineLabel ui:field="epigraph" />
 						</td>
-						<td class="{aonResources.css.aonWidth20}">
+						<td>
 							<g:Button ui:field="epigraphButton" styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconLoupe}" title="{msg.pushToChange}"/>
 						</td>
-						<td colspan="7">
+						<td colspan="6">
 							<g:InlineLabel ui:field="description"/>
 						</td>
 					</tr>
 				</table>
-				<g:TabPanel ui:field="tab">
-					<g:Tab text="{msg.epigraphAdditionalInfo}">
-						<g:SimplePanel ui:field="infoContainer"/>
-					</g:Tab>
-					<g:Tab text="{msg.irpfModules}">
-						<g:HTMLPanel>
-							<g:SimplePanel ui:field="moduleIRPFContainer"/>
-							<g:SimplePanel ui:field="infoIRPFContainer"/>
-						</g:HTMLPanel>
-					</g:Tab>
-					<g:Tab text="{msg.vatModules}">
-						<g:HTMLPanel>
-							<g:SimplePanel ui:field="moduleIVAContainer"/>
-							<g:SimplePanel ui:field="infoIVAContainer"/>
-						</g:HTMLPanel>
-					</g:Tab>
-				</g:TabPanel>
 			</div>
 		</div>
+		<g:TabPanel ui:field="tab" styleName="gwt-Selector">
+			<g:Tab text="{msg.epigraphAdditionalInfo}">
+				<g:SimplePanel ui:field="infoContainer"/>
+			</g:Tab>
+			<g:Tab text="{msg.irpfModules}">
+				<g:HTMLPanel>
+					<g:SimplePanel ui:field="moduleIRPFContainer"/>
+					<g:SimplePanel ui:field="infoIRPFContainer"/>
+				</g:HTMLPanel>
+			</g:Tab>
+			<g:Tab text="{msg.vatModules}">
+				<g:HTMLPanel>
+					<g:SimplePanel ui:field="moduleIVAContainer"/>
+					<g:SimplePanel ui:field="infoIVAContainer"/>
+				</g:HTMLPanel>
+			</g:Tab>
+		</g:TabPanel>
 	</g:HTMLPanel>
 
 </ui:UiBinder>
