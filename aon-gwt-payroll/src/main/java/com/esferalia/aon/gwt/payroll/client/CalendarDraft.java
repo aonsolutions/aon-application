@@ -11,7 +11,6 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.esferalia.aon.calendar.Calendar;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.payroll.client.CalendarDraftObjectData.MyHolidayDraft;
 import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
@@ -298,6 +297,37 @@ public class CalendarDraft extends Composite implements
 	public void onChangeEvent() {		
 		initOnSuccess(calendarDraftObjectData);
 	}
+	
+	@Override
+	public void onEnterKeyPress(final Date date) {
+		
+		FilterDialog filterDialog = new FilterDialog() {
+
+			{
+				setCaption("Descripci\u00F3n de festividad");
+				setFilterLabel("Datos de la festividad " + AON.DATE_FORMAT.format(date));
+				setNameLabel("Descripci\u00F3n");
+				setVisibleDatePatternLabel(false);
+				setVisibleDateLabel(false);
+				setVisibleDateBox(false);
+			}
+
+			@Override
+			protected void onAccept() {
+
+				if (!getName().isEmpty()) {
+					String name = getName();					
+					calendarDraftObjectData.addHoliday(date, name);
+					initializeLegendPanel();
+				}
+			}
+		};
+
+		filterDialog.setDateFrom(getDateSelected());
+		filterDialog.center();
+		filterDialog.show();
+		filterDialog.setFocusOnNameTextBox(true);
+	}
 
 	// --------------------------------------------- ---------
 
@@ -390,6 +420,15 @@ public class CalendarDraft extends Composite implements
 		CalendarDraft.this.getItemLoadIndex();
 		CalendarDraft.this.initializeLegendPanel();
 		
+	}
+	
+	protected void deshabilitGestionCalendar() {
+		
+		holidayList.setEnabled(false);
+		addEvent.setEnabled(false);
+		saveButton.setVisible(false);
+		
+		calendarDraftObjectData.removeCalendarListener(this);		
 	}
  
 	private void getItemLoadIndex() {
