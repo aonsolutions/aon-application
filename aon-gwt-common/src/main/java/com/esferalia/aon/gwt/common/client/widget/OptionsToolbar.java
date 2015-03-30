@@ -55,6 +55,22 @@ public class OptionsToolbar extends Composite {
 		this.listeners = new ArrayList<Listener>();
 	}
 	
+	public void setVisiblePasteButton(boolean visible) {
+		pasteButton.setVisible(visible);
+	}
+	
+	public void setVisibleCopyButton(boolean visible) {
+		copyButton.setVisible(visible);
+	}
+	
+	public void setVisibleDraftButton(boolean visible) {
+		draftButton.setVisible(visible);
+	}
+	
+	public void setVisibleNewButton(boolean visible) {
+		newButton.setVisible(visible);
+	}
+	
 	@UiHandler("newButton")
 	void onClickNewButton(ClickEvent event) {
 		for(Listener listener : listeners)

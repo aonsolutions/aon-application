@@ -49,7 +49,7 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	private Reports reports;
 	private Statistics stats;
 	private ITEditor it;
-	private CalendarDraft calendar;
+	private CalendarDraft calendarDraft;
 	private Documents documents;
 	
 	
@@ -73,13 +73,14 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		// displayed.
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
-
+		
 		jsf = new JSF();
 		cost = new Cost();
 		salary = new Salary();
 		reports = new Reports();
 		stats = new Statistics();
-		calendar = new CalendarDraft();
+		calendarDraft = new CalendarDraft();
+		
 		it = new ITEditor(){
 			@Override
 			protected void showContractActiveTooltip(Tooltip tooltip,
@@ -101,7 +102,12 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		};
 		salary.hideDeleteButton();
 		documents = new Documents();
+		employees.getOptionsToolbar().setVisibleCopyButton(false);
+		employees.getOptionsToolbar().setVisibleDraftButton(false);
+		employees.getOptionsToolbar().setVisibleNewButton(false);
+		employees.getOptionsToolbar().setVisiblePasteButton(false);		
 		employees.addListener(this);
+		
 	}
 
 	@Override
@@ -156,8 +162,10 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	
 
 	@Override
-	public void onCalendarSelected(CalendarDraftObjectData calendarObjectData) {
-		detailPanel.setWidget(calendar);
+	public void onCalendarSelected(CalendarDraftObjectData calendarObjectData) {		
+		detailPanel.setWidget(calendarDraft);
+		calendarDraft.setCalendarDraftObject(null, calendarObjectData);
+		calendarDraft.deshabilitGestionCalendar();
 	}
 
 	
@@ -198,7 +206,7 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	
 	@Override
 	public void onEmployeeContextMenu(Employee employee, ContextMenuEvent event) {
-		// TODO Auto-generated method stub
+		
 	}
 	
 	@Override
@@ -255,4 +263,5 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		// TODO Auto-generated method stub
 		
 	}
+
 }

@@ -687,6 +687,10 @@ public class Employees extends ResizeComposite implements
 	EmployeesServiceAsync getEmployeesService() {
 		return employeesService;
 	}
+	
+	OptionsToolbar getOptionsToolbar() {
+		return toolbar;
+	}
 
 	// ------------------------------------------------------------------------
 

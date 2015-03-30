@@ -26,6 +26,8 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 		void onValueChangeEvent(ValueChangeEvent<Date> event);	
 		
 		void onChangeEvent();	
+		
+		void onEnterKeyPress(final Date date);
 	}
 	
 	interface CalendarEvents {
@@ -44,9 +46,10 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 	private Map<Integer, String> listboxHolidayItems;
 	
 	private List<MyHolidayDraft> myDrafts;
-	private List<MyHolidayDraft> inserts;
 	
 	private Map<Date, String> insertsDraft;
+	private Map<Date, String> generalHolidayDrafts;
+	private Map<Date, String> propertyHolidayDrafts;
 
 	private List<HolidayDraft> generalHolidays;
 	
@@ -64,8 +67,11 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 		calendarDraftObject.addListener(this);
 
 		myDrafts = new LinkedList<MyHolidayDraft>();
-		inserts = new LinkedList<MyHolidayDraft>();
+		
 		insertsDraft = new HashMap<Date, String>();
+		generalHolidayDrafts = new HashMap<Date, String>();
+		propertyHolidayDrafts = new HashMap<Date, String>();
+		
 		listeners = new ArrayList<CalendarDraftListener>();
 		calendarEvents = new ArrayList<CalendarEvents>();
 		generalHolidays = new ArrayList<HolidayDraft>();
@@ -268,8 +274,6 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 		calendarDraftObject.getCalendar().addStyle2Date(date, getStyle(colors));
 		draft.addHoliday(date, description);
 		
-		inserts.addAll(myDrafts);
-		
 		for(CalendarEvents event : calendarEvents)
 			event.onInsertHoliday();
 	}
@@ -318,8 +322,12 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 		listeners.add(listener);
 	}
 	
+	public void removeCalendarListener(CalendarDraftListener listener) {
+		listeners.clear();
+	}
+	
 	public void addCalendarEvent(CalendarEvents event) {
-		calendarEvents.add(event);
+		calendarDraftObject.removeListener(this);
 	}
 
 	@Override
@@ -336,7 +344,14 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 	@Override
 	public void onEnterPressEvent(Date date) {
 		
+		String description = "";
 		
+		if(myDrafts.size() > 0)
+			description = myDrafts.get(myDrafts.size() - 1).getGeneralMap().get(date);
+		
+		
+		for(CalendarDraftListener listener : listeners)
+			listener.onEnterKeyPress(date);
 	}
 	
 	public void deleteHoliday(Date date) {
@@ -411,16 +426,12 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 			
 	}
 	
-	private void clearDrafts() {
-		inserts.clear();
+	private void clearDrafts() {		
 		insertsDraft.clear();
 		myDrafts.clear();
 		generalHolidays.clear();
 		pattern = -50;
 	}
-	
-	//MY CLASS
-	
 
 	class MyHolidayDraft  {
 
