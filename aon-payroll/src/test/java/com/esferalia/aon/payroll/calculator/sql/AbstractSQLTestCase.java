@@ -167,7 +167,7 @@ public abstract class AbstractSQLTestCase {
 		}
 		
 		new VersionManager().createDatabase(connection, dbName);
-		connection.createStatement().execute("use " + rs.getString(1));
+		connection.createStatement().execute("use " + dbName );
 	}
 
 	@After
