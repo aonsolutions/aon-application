@@ -43,13 +43,4 @@ public abstract class AONEntryPoint implements EntryPoint {
 		return null;
 	}-*/;
 
-	public static void ensureGwtSelector() {
-		BodyElement body = Document.get().getBody();
-		String className = body.getClassName();
-		if (AonStringUtils.isBlank(className)
-				|| (className.indexOf("gwt-Selector") == -1))
-			body.addClassName("gwt-Selector");
-
-	}
-
 }
