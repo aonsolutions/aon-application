@@ -40,20 +40,20 @@ public class  ItemComparator<E extends Enum<?>> implements Comparator<Item<E>> {
 		if ( id0 != null && id1 != null)
 			return Math.abs(id0) - Math.abs(id1); // p0 - p1
 			
-		String name0 = p0.getName();
-		String name1 = p1.getName();
-		if (name0 != null && name1 == null )
-			return 1;
-		if (name0 == null && name1 != null )
-			return -1;
-		if (name0 != null && name1 != null )
-			return name0.compareTo(name0);
-
 		String description0 = p0.getDescription();
 		String description1 = p1.getDescription();
-		if (description0 == null) {
-			return description1 == null ? 0 : -1;
+		if (description0 != null && description1 == null )
+			return 1;
+		if (description0 == null && description1 != null )
+			return -1;
+		if (description0 != null && description1 != null )
+			return description0.compareTo(description1);
+
+		String name0 = p0.getName();
+		String name1 = p1.getName();
+		if (name0 == null) {
+			return name1 == null ? 0 : -1;
 		}
-		return description0.compareTo(description1);
+		return name0.compareTo(name1);
 	}
 }
