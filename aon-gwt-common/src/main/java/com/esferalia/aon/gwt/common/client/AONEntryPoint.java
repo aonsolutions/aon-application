@@ -1,11 +1,8 @@
 package com.esferalia.aon.gwt.common.client;
 
 
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.BodyElement;
-import com.google.gwt.dom.client.Document;
 
 public abstract class AONEntryPoint implements EntryPoint {
 
