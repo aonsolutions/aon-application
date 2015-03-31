@@ -57,9 +57,6 @@
 										styleName='aon-editDataTable-button aon-icon-cancel {style.button-align}'
 										title="Restaurar convenio" enabled="false" />
 
-									<g:Button ui:field='clearAgreementButton'
-										styleName='aon-editDataTable-button aon-icon-cleartrash {style.button-align}'
-										title="Vaciar papelera de convenios" />
 								</g:HTMLPanel>
 							</g:FlowPanel>
 						</g:north>

@@ -61,8 +61,6 @@ public class MainTrash extends MainEntryPoint implements
 	@UiField
 	Button restoreAgreementButton;
 	@UiField
-	Button clearAgreementButton;
-	@UiField
 	Button clearEmployeeButton;
 	@UiField
 	Button deleteEmployeeButton;
@@ -172,11 +170,6 @@ public class MainTrash extends MainEntryPoint implements
 	void onRestoreClickButton(ClickEvent event) {
 		for (Listener listener : listeners)
 			listener.onRestoreAgreementAction(agreement);
-	}
-
-	@UiHandler("clearAgreementButton")
-	void onClearClickButton(ClickEvent event) {
-
 	}
 	
 	@UiHandler("deleteEmployeeButton")
