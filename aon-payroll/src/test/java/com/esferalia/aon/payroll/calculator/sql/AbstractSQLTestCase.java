@@ -47,6 +47,9 @@ import org.junit.Before;
 
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.config.enumeration.Administration;
+import com.code.aon.dbutils.AonSQLException;
+import com.code.aon.master.CreateDB;
+import com.code.aon.master.VersionManager;
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.person.enumeration.MaritalStatus;
 import com.code.aon.registry.enumeration.AddressType;
@@ -140,7 +143,7 @@ public abstract class AbstractSQLTestCase {
 	}
 
 	@Before
-	public void setUp() throws ClassNotFoundException, SQLException {
+	public void setUp() throws ClassNotFoundException, SQLException, AonSQLException {
 		// first of all load JDBC driver
 		Class.forName("org.gjt.mm.mysql.Driver");
 
@@ -159,8 +162,12 @@ public abstract class AbstractSQLTestCase {
 		while (rs.next()) {
 			if (rs.getString(1).startsWith(dbName)) {
 				connection.createStatement().execute("use " + rs.getString(1));
+				return;
 			}
 		}
+		
+		new VersionManager().createDatabase(connection, dbName);
+		connection.createStatement().execute("use " + rs.getString(1));
 	}
 
 	@After
