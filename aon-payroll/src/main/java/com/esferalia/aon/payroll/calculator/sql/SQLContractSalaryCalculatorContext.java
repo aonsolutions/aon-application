@@ -61,6 +61,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_YEARS
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.parse;
 import static com.esferalia.aon.salary.expression.ExpressionContext.getCurrentBindings;
 import static com.esferalia.aon.watson.util.AonDateUtils.add;
+import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
 import static com.esferalia.aon.watson.util.AonUtils.ifnull;
 import static java.util.Calendar.DAY_OF_MONTH;
@@ -2508,7 +2509,8 @@ public class SQLContractSalaryCalculatorContext extends
 
 		int contractId = getId();
 
-		Date prevMonth = addMonth2Date(date, -1);
+		
+		Date prevMonth = getLastDayOfMonth(add(date, Calendar.MONTH, -1));
 
 		Stream<com.esferalia.aon.occam.api.model.Salary> salaries = AON
 				.getSalaries(
