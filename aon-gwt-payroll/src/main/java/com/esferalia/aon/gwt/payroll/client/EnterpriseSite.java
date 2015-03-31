@@ -4,6 +4,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 
+import java.util.Date;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.css.AonResources;
@@ -15,8 +16,10 @@ import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -79,7 +82,19 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		salary = new Salary();
 		reports = new Reports();
 		stats = new Statistics();
-		calendarDraft = new CalendarDraft();
+		calendarDraft = new CalendarDraft() {
+			
+			@Override
+			protected void onEnterKeyPressAction(Date date) {
+
+			}
+			
+			@Override
+			protected void onSuprKeyPressAction(Date date) {				
+				
+			}
+		};
+		calendarDraft.deshabilitGestionCalendar();
 		
 		it = new ITEditor(){
 			@Override
@@ -107,6 +122,7 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		employees.getOptionsToolbar().setVisibleNewButton(false);
 		employees.getOptionsToolbar().setVisiblePasteButton(false);		
 		employees.addListener(this);
+		
 		
 	}
 
@@ -163,9 +179,8 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 
 	@Override
 	public void onCalendarSelected(CalendarDraftObjectData calendarObjectData) {		
-		detailPanel.setWidget(calendarDraft);
+		detailPanel.setWidget(calendarDraft);				
 		calendarDraft.setCalendarDraftObject(null, calendarObjectData);
-		calendarDraft.deshabilitGestionCalendar();
 	}
 
 	
@@ -263,5 +278,4 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		// TODO Auto-generated method stub
 		
 	}
-
 }

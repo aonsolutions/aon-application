@@ -18,6 +18,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
@@ -30,7 +31,6 @@ import com.google.gwt.user.datepicker.client.CalendarUtil;
 import com.google.gwt.user.datepicker.client.DatePicker;
 import com.google.gwt.user.datepicker.client.DefaultCalendarView;
 import com.google.gwt.user.datepicker.client.MonthSelector;
-import com.google.gwt.view.client.SelectionModel;
 
 public class Calendar extends ResizeComposite implements
 		ValueChangeHandler<Date>, KeyDownHandler {
@@ -39,9 +39,9 @@ public class Calendar extends ResizeComposite implements
 
 		void onValueChangeEvent(ValueChangeEvent<Date> event);
 		
-		void onSuprPressEvent(final Date date);
+		void onSuprPressEvent(Date date);
 		
-		void onEnterPressEvent(final Date date);
+		void onEnterPressEvent(Date date);
 	}
 	
 	interface SelectionState {

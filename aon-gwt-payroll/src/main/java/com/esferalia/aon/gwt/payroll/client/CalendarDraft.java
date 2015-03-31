@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.payroll.client.CalendarDraftObjectData.CalendarDraftListener;
 import com.esferalia.aon.gwt.payroll.client.CalendarDraftObjectData.MyHolidayDraft;
 import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
 import com.google.gwt.core.client.GWT;
@@ -265,7 +266,7 @@ public class CalendarDraft extends Composite implements
 
 						@Override
 						public void onFailure(Throwable caught) {
-
+							
 						}
 
 						@Override
@@ -289,7 +290,7 @@ public class CalendarDraft extends Composite implements
 
 	@Override
 	public void onValueChangeEvent(ValueChangeEvent<Date> event) {
-		this.datePickerDateSelected = event.getValue();
+		this.datePickerDateSelected = event.getValue();		
 		deleteButton.setVisible(calendarDraftObjectData.canDeleteMyHoliday(event.getValue()));
 	}
 	
@@ -300,7 +301,15 @@ public class CalendarDraft extends Composite implements
 	
 	@Override
 	public void onEnterKeyPress(final Date date) {
-		
+		onEnterKeyPressAction(date);
+	}
+	
+	@Override
+	public void onSuprKeyPress(Date date) {
+		onSuprKeyPressAction(date);
+	}
+	
+	protected void onEnterKeyPressAction (final Date date) {
 		FilterDialog filterDialog = new FilterDialog() {
 
 			{
@@ -327,6 +336,11 @@ public class CalendarDraft extends Composite implements
 		filterDialog.center();
 		filterDialog.show();
 		filterDialog.setFocusOnNameTextBox(true);
+
+	}
+	
+	protected void onSuprKeyPressAction(final Date date) {
+		calendarDraftObjectData.deleteHoliday(date);
 	}
 
 	// --------------------------------------------- ---------
@@ -426,9 +440,7 @@ public class CalendarDraft extends Composite implements
 		
 		holidayList.setEnabled(false);
 		addEvent.setEnabled(false);
-		saveButton.setVisible(false);
-		
-		calendarDraftObjectData.removeCalendarListener(this);		
+		saveButton.setVisible(false);				
 	}
  
 	private void getItemLoadIndex() {
