@@ -50,34 +50,36 @@ public class SQLAgreementPaymentsFactoryTestCase extends AbstractSQLTestCase {
 		agreement.setDomain(parentId);
 		
 		Date startDate = AonDateUtils.getYearFirstDay(new Date());
+		
+		
 
-		agreement.addPayment (new Payment()
+		agreement.addPayment (new com.esferalia.aon.occam.api.model.Payment()
 		.setDomain(parentId)
 		.setStartDate(startDate)
 		.setExpression("BASE_PARENT")
 		.setCode("BASE"));
 
-		agreement.addPayment(new Payment()
+		agreement.addPayment(new com.esferalia.aon.occam.api.model.Payment()
 		.setDomain(parentId)
 		.setStartDate(startDate)
 		.setCode("EXTRA")
 		.setExpression("EXTRA_PARENT")
 		.setType(PaymentType.CRA_0004));
 
-		agreement.addPayment(new Payment()
+		agreement.addPayment(new com.esferalia.aon.occam.api.model.Payment()
 		.setDomain(parentId)
 		.setStartDate(startDate)
 		.setCode("PLUS")
 		.setExpression("PLUS_PARENT"));
 
-		agreement.addPayment(new Payment()
+		agreement.addPayment(new com.esferalia.aon.occam.api.model.Payment()
 		.setDomain(overrideId)
 		.setStartDate(startDate)
 		.setCode("EXTRA")
 		.setExpression("EXTRA_OVERRIDE")
 		.setType(PaymentType.CRA_0004));
 		
-		agreement.addPayment(new Payment()
+		agreement.addPayment(new com.esferalia.aon.occam.api.model.Payment()
 		.setDomain(overrideId)
 		.setStartDate(AonDateUtils.addDays(startDate, 10))
 		.setCode("PLUS")

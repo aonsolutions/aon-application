@@ -12,8 +12,11 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_O
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
 
+import java.text.Collator;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -197,6 +200,8 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 		}
 
 	}
+	
+	
 
 	private static class UndefPayment extends SimpleContractPayment {
 
@@ -222,6 +227,15 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 			return false;
 		}
 
+		boolean dependsOn(String var){
+			if ( var == null )
+				return false;
+			for ( String v : exception.getVariableNames() )
+				if ( var.equals(v)) 
+					return true;
+			return false;
+		}
+
 		boolean willBeDefined(Collection<String> willbeDefined) {
 
 			for (String var : exception.getVariableNames())
@@ -235,6 +249,7 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 			calculator.onUndefinedData(this, exception.getMessage(),
 					exception.getVariableNames());
 		}
+		
 
 	}
 
@@ -386,20 +401,40 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 				}
 				paymentsVars.add(contractPayment.getName());
 			}
+			
+			Collections.sort(undefPayments,(p1,p2)-> {
+				if ( p1.dependsOn(p2.getName()))
+					return 1;
+				if ( p2.dependsOn(p1.getName()))
+					return -1;
 
+				if ( p1.getName() == p2.getName())
+					return 0;
+				if ( p1.getName() == null )
+					return 1;
+				if ( p2.getName() == null )
+					return -1;
+				return p1.getName().compareTo(p2.getName());
+			}
+			);
+			
 			HashSet<String> willBeDefined = new HashSet<String>();
 
 			for (ListIterator<UndefPayment> listIterator = undefPayments
 					.listIterator(); listIterator.hasNext();) {
 				UndefPayment undefPayment = listIterator.next();
 				if (undefPayment.willBeDefined(paymentsVars)) {
-					willBeDefined.addAll(paymentsVars);
+					willBeDefined.addAll(paymentsVars); // ??? Why?
+					willBeDefined.add(undefPayment.getName());
 					continue;
 				}
 				// clean undefined ...
 				listIterator.remove();
 				undefPayment.onUndefinedData(this);
-				paymentsVars.remove(undefPayment.getName());
+				// If not already or will be defined, clean it.  
+				if ( !alreadyDefined.contains(undefPayment.getName()) 
+						&& !willBeDefined.contains(undefPayment.getName()))
+					paymentsVars.remove(undefPayment.getName());
 			}
 			// Many payments can share same variable...
 			paymentsVars.addAll(willBeDefined);
