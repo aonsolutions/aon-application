@@ -493,6 +493,7 @@ public class SQLContractSalaryCalculatorContext extends
 					exprCtx.putVariable(ContextVariable.REGULATORY_BASE,
 							new TimedObject<Double>(0.00, guarenteeStart,
 									guarenteeEnd));
+
 					type.accept(new LeaveTypeVisitor<Void>() {
 
 						@Override
@@ -546,12 +547,10 @@ public class SQLContractSalaryCalculatorContext extends
 				}
 			};
 		}
-
+		
 		@Override
-		public Object liquid(double liquid, Date start, Date end)
-				throws ExpressionException, SQLException, SalaryException {
-			throw new UndefinedContextVariablesException(
-					ContextVariable.TOTAL_LIQUID);
+		public double getIrpf() {
+			return 0.00;
 		}
 
 		@Override
@@ -571,6 +570,9 @@ public class SQLContractSalaryCalculatorContext extends
 				throws ExpressionException {
 			return this.guarantee(guarentee);
 		}
+		
+		
+
 	}
 
 	/**
@@ -1746,21 +1748,8 @@ public class SQLContractSalaryCalculatorContext extends
 
 		Date startDate = getFirstDayOfMonth(date);
 		Date endDate = getLastDayOfMonth(date);
-		/*
-		try {
-			ctx = new SQLNoItContractSalaryCalculatorContext(connection,
-					startDate, endDate, endDate, contractCriteria, 0,
-					Integer.MAX_VALUE - 1);
-			ctx.next();
-			return ctx;
-
-		} catch (ExpressionException ex) {
-			throw new ExpressionExceptionWrapper(ex);
-
-		} catch (SQLException ex) {
-			throw new ExpressionExceptionWrapper(new ExpressionException());
-		}*/
-		return getNoItCalculatorContext(connection, startDate, endDate, endDate, contractCriteria, 0, Integer.MAX_VALUE - 1);
+		return getNoItCalculatorContext(connection, startDate, endDate,
+				endDate, contractCriteria, 0, Integer.MAX_VALUE - 1);
 	}
 
 	public Object gross(double gross, Date start, Date end)
@@ -1996,18 +1985,20 @@ public class SQLContractSalaryCalculatorContext extends
 								end) {
 
 							@Override
-							public Object liquid(double liquid, Date start, Date end)
-									throws ExpressionException, SQLException {
+							public Object liquid(double liquid, Date start,
+									Date end) throws ExpressionException,
+									SQLException {
 								return x;
 							};
 
 							@Override
-							public Object gross(double gross, Date start, Date end)
-									throws ExpressionException, SQLException,
-									SalaryException {
+							public Object gross(double gross, Date start,
+									Date end) throws ExpressionException,
+									SQLException, SalaryException {
 								throw new InterruptedException(
 										String.format("Lo sentimos. La funci\u00F3n NETO es incompatible con la funci\u00F3n BRUTO. Elija una de las dos. :-("));
 							}
+							
 						};
 						ctx.next();
 						return ctx;
@@ -2024,25 +2015,25 @@ public class SQLContractSalaryCalculatorContext extends
 						Connection conn, Date startDate, Date endDate,
 						Criteria criteria) {
 					try {
+						SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+								conn, startDate, endDate, endDate, criteria) {
+
+							@Override
+							public double getIrpf() {
+								return 0.00;
+							};
+
+							@Override
+							public Object liquid(double liquid, Date start,
+									Date end) throws ExpressionException,
+									SQLException {
+								return x;
+							}
+
+						};
+						ctx.leaveLoader = leaveLoader;
 						return new SQLIrpfCalculatorContext(connection,
-								startDate, endDate,
-								new SQLContractSalaryCalculatorContext(conn,
-										startDate, endDate, endDate, criteria) {
-
-									@Override
-									public double getIrpf() {
-										return 0.00;
-									};
-
-									@Override
-									public Object liquid(double liquid,
-											Date start, Date end)
-											throws ExpressionException,
-											SQLException {
-										return x;
-									}
-
-								}) {
+								startDate, endDate, ctx) {
 							@Override
 							public String getNif() {
 								return "87449445H";
@@ -2078,6 +2069,7 @@ public class SQLContractSalaryCalculatorContext extends
 				}
 
 			};
+			ctx.leaveLoader = leaveLoader;
 			ctx.next();
 			return ctx;
 		} catch (ExpressionException e) {
@@ -2125,8 +2117,14 @@ public class SQLContractSalaryCalculatorContext extends
 								end) {
 
 							@Override
-							public Object gross(double gross, Date start, Date end)
-									throws ExpressionException, SQLException {
+							public double getIrpf() {
+								return 0.00;
+							}
+
+							@Override
+							public Object gross(double gross, Date start,
+									Date end) throws ExpressionException,
+									SQLException {
 								return x;
 							}
 
@@ -2138,6 +2136,7 @@ public class SQLContractSalaryCalculatorContext extends
 							};
 
 						};
+
 						ctx.next();
 						return ctx;
 					} catch (ExpressionException e) {
@@ -2172,6 +2171,7 @@ public class SQLContractSalaryCalculatorContext extends
 					return Collections.emptyList();
 				}
 			};
+			ctx.leaveLoader = leaveLoader;
 			ctx.next();
 			return ctx;
 		} catch (ExpressionException e) {
@@ -2225,8 +2225,16 @@ public class SQLContractSalaryCalculatorContext extends
 	protected IIrpfCalculatorContext getIrpfCalculatorContext(Connection conn,
 			Date startDate, Date endDate, Criteria criteria) {
 		try {
+			SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+					conn, startDate, endDate, endDate, criteria) {
+				@Override
+				public double getIrpf() {
+					return 0.00;
+				}
+			};
+			ctx.leaveLoader = leaveLoader;
 			return new SQLIrpfCalculatorContext(connection, startDate, endDate,
-					criteria) {
+					ctx) {
 				@Override
 				public String getNif() {
 					return "87449445H";
@@ -2251,6 +2259,7 @@ public class SQLContractSalaryCalculatorContext extends
 				public String getRetenedorApellidosNombre() {
 					return "LINUX FOUNDATION";
 				}
+
 			};
 		} catch (SQLException e) {
 			throw new ExpressionExceptionWrapper(new ExpressionException(e));
