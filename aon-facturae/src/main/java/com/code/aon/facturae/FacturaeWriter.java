@@ -529,6 +529,15 @@ public class FacturaeWriter {
 		return tax;
 	}
 
+	private TaxOutputType getEmptyTax() {
+		TaxOutputType taxOutput = new TaxOutputType();
+		taxOutput.setTaxTypeCode( TaxTypeCode.IVA.getValue() );
+		taxOutput.setTaxRate( 0.0 );
+		taxOutput.setTaxableBase( Util.getAmount(0) );
+		taxOutput.setTaxAmount( Util.getAmount(0) );		
+		return taxOutput;
+	}
+	
 	private TaxOutputType getTaxOutput( TaxBreakDown tdb ) {
 		TaxOutputType taxOutput = new TaxOutputType();
 		initTaxOutput(taxOutput, tdb, false);
@@ -564,6 +573,9 @@ public class FacturaeWriter {
 				taxesOutputs.getTax().add( getTaxOutput(tbd) );
 			}
 		}
+		if ( taxBreakDowns.isEmpty() ) {
+			taxesOutputs.getTax().add( getEmptyTax() );
+		}		
 		if (! taxesOutputs.getTax().isEmpty() ) {
 			invoiceType.setTaxesOutputs( taxesOutputs );
 		}
