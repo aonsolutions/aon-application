@@ -116,17 +116,17 @@
 	</aon:if>
 
 	<aon:if test="#{aonConfiguration.bean.product.showComposition}">
-		<aon:outputLabel for="Product_composition"
-			value="#{bundle.product_composite_product}" />
-		<aon:selectOneRadio id="Product_composition"
+		<aon:outputLabel for="Product_manufactured"
+			value="#{bundle.product_manufactured_product}" />
+		<aon:selectOneRadio id="Product_manufactured"
 			valueChangeListener="#{controller.addExpression}">
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
 			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
 		</aon:selectOneRadio>
 
-		<aon:outputLabel for="Product_manufactured"
-			value="#{bundle.product_manufactured_product}" />
-		<aon:selectOneRadio id="Product_manufactured"
+		<aon:outputLabel for="Product_composition"
+			value="#{bundle.product_composite_product}" />
+		<aon:selectOneRadio id="Product_composition"
 			valueChangeListener="#{controller.addExpression}">
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
 			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />

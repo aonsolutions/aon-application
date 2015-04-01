@@ -156,7 +156,7 @@ public class ItemController extends BasicController implements IAuditableControl
 		}
 	}
 
-	public void onProductHistory(ActionEvent e){
+	public void onProductHistory(ActionEvent e) {
 		ProductStatEngineController controller = (ProductStatEngineController)AonUtil.getRegisteredBean("productStat");
 		controller.setItem((Item)this.getTo());
 		controller.getProductData();

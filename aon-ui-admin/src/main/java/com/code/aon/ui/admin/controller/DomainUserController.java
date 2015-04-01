@@ -234,10 +234,14 @@ public class DomainUserController extends BasicController {
 		}
 	}		
 
-	public int getNumberOfActiveUsers() {
+	public static int getNumberOfActiveUsers( Integer domainId) {
         try {
 			IManagerBean bean = BeanManager.getManagerBean(User.class);
 			Criteria criteria = new Criteria();
+			if ( domainId != null ) {
+				criteria.setSkipDomainFilter(true);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.USER_DOMAIN), domainId);
+			}
 			String alias = bean.getFieldName(IEntityAlias.USER_ACTIVE);
 			criteria.addEqualExpression(alias, Boolean.TRUE);
 			criteria.addNullExpression(bean.getFieldName(IEntityAlias.USER_ENTERPRISE));
@@ -246,6 +250,10 @@ public class DomainUserController extends BasicController {
 			LOGGER.error(e.getMessage(), e);
 		}
         return 0;
+	}
+	
+	public int getNumberOfActiveUsers() {
+		return getNumberOfActiveUsers(null);
 	}
 
 	public String getActiveUsersMessage() {

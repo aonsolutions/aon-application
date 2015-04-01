@@ -74,7 +74,7 @@
 				onmouseover="disableRowSelector();" onmouseup="disableRowSelector();"
 				onmouseout="enableRowSelector();" >
 				<aon:commandLink id="goToDomainBooking"
-					rendered="#{to.domainManagement}"
+					rendered="#{to.domainManagement or (to.parent != null)}"
 					title="#{bundle.config_domain_booking}"
 					styleClass="aon-button-goto" style="padding-right: 20px;padding-top: 2px;" 
 					value="&#160;" immediate="true" ajaxSingle="true"
@@ -83,7 +83,7 @@
 		</aon:div>																
 	</aon:column>
 	
-	<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
+	<aon:column styleClass="aon-editDataTable-numberColumn aon-nowrap aon-width-60">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.admin_users}" />
 		</f:facet>							

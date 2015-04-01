@@ -1,37 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:aon="http://www.code.es/aon-rich-components">
-<body>
-
-<ui:composition>
-
-	<aon:if test="#{lookup != null}">
-		<ui:param name="controller" value="#{lookup}"/>
-		<ui:param name="abbreviateName" value="#{true}"/>
-	</aon:if>
-
-	<aon:column alias="Item.product.category&lt;name"
-		styleClass="aon-editDataTable-textColumn aon-nowrap">
-		<f:facet name="header">
-			<aon:outputText value="#{bundle.aon_category}" />
-		</f:facet>
-		<aon:outputText value="#{to.product.category.name}" />
-	</aon:column>
-
-	<aon:column alias="Item.product.name,Item.detail,Item.detail2,Item.detail3"
-		styleClass="aon-editDataTable-textColumn">
-		<f:facet name="header">
-			<aon:outputText value="#{bundle.aon_description}" />
-		</f:facet>
-		<aon:outputText value="#{to.fullName}">
-			<aon:if test="#{abbreviateName}">
-				<aon:abbreviateConverter maxWidth="80" />
-			</aon:if>
-		</aon:outputText>
-	</aon:column>
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html">
 
 	<aon:column alias="Item.product.code"
 		styleClass="aon-editDataTable-textColumn">
@@ -41,7 +15,14 @@
 		<aon:outputText value="#{to.product.code}"/>
 	</aon:column>
 
-</ui:composition>
+	<aon:column alias="Item.product.name,Item.detail,Item.detail2,Item.detail3"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_name}" />
+		</f:facet>
+		<aon:outputText value="#{to.fullName}">
+			<aon:abbreviateConverter maxWidth="80" />
+		</aon:outputText>
+	</aon:column>
 
-</body>
-</html>
+</ui:composition>

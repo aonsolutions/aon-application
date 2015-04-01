@@ -10,9 +10,9 @@
 		<ui:param name="lookupInputSize" value="10"/>
 		<ui:param name="lookupInputMaxLength" value="15"/>
 		<ui:param name="lookupInputOnSubmit" value="toUpperCase(this);"/>		
-		<ui:param name="lookupLabel" value="#{bundle.aon_product}" />
 		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.fullName}"/>
-		<ui:param name="lookupInputSuggestExpression" value="#{lto.fullName} (#{lto.product.code})"/>
+		<ui:param name="lookupInputSuggestExpression" value="#{lto.fullName} (#{lto.product.code})#{(empty lto.serialNumber)?'':' #'}#{lto.serialNumber}"/>
+		<ui:param name="lookupLabel" value="#{bundle.aon_product}" />
 		<ui:param name="goToProperty" value="#{lookupTo.product}"/>
 		<ui:param name="controller" value="#{product}" />
 		<ui:param name="searchButtonWidth" value="740"/>

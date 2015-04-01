@@ -13,6 +13,9 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Hibernate;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
@@ -21,6 +24,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.annotations.Heritable;
 import com.code.aon.common.audit.IAuditable;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.ProductDB;
@@ -106,6 +110,22 @@ public class Product extends ProductDB implements IAuditable {
     		itemCount = itemBean.getCount(criteria);
     	}
     	return itemCount;
+    }
+
+    @Transient
+    public double getStock() throws ManagerBeanException {
+    	double stock = 0;
+    	if (getId() != null) {
+        	String select = "SELECT SUM(quantity) quantity FROM stock as stock WHERE stock.item IN (" +
+        						"SELECT id FROM item as item WHERE item.product = " + getId() + ")";
+        	Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+        	SQLQuery query = session.createSQLQuery(select);
+        	List<?> list = query.addScalar("quantity", Hibernate.DOUBLE).list();
+        	if (!list.isEmpty() && list.get(0) != null) {
+        		stock = (Double)list.get(0);
+        	}
+    	}
+    	return stock;
     }
 
 }

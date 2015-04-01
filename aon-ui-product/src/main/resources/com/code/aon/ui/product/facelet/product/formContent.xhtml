@@ -22,6 +22,7 @@
 
 							<ui:include	src="/com/code/aon/ui/product/facelet/product/formBasic.xhtml">
 								<ui:param name="controller" value="#{product}" />
+								<ui:param name="productTo" value="#{product.to}" />
 								<ui:param name="categoryChangeReRender" value="itemDataGrid,itemData" />
 							</ui:include>
 
@@ -49,7 +50,8 @@
 		<aon:panelGroup>
 			<aon:div styleClass="aon-group">
 				<aon:div styleClass="aon-group-title">
-					<aon:outputText value="#{bundle.aon_detail}"/>
+					<aon:outputText value="#{item.nevv ? bundle.aon_reset : ''} #{bundle.aon_detail}" 
+						style="#{item.nevv ? 'color:red;' : ''}" />
 				</aon:div>
 				<aon:div styleClass="aon-group-body"> 
 					<aon:div styleClass="aon-group-body-internal">

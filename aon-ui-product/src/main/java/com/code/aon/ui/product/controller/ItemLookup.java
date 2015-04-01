@@ -15,7 +15,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.faces.component.richfaces.lookup.inputText.JoinProperty;
 import com.code.aon.faces.controller.RichLookupBean;
 import com.code.aon.product.Item;
-import com.code.aon.product.pricing.ItemPricesManager;
+import com.code.aon.product.Product;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
@@ -23,41 +23,44 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryItem;
 import com.code.aon.registry.enumeration.RegistryMode;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class ItemLookup extends RichLookupBean {
+public class ItemLookup extends RichLookupBean implements IItemConstants {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(ItemLookup.class);
 
-	private ItemPricesManager pricesManager;
+	public ProductController getProductController() {
+		return (ProductController)AonUtil.getRegisteredBean(PRODUCT);
+	}
 
-	public ItemPricesManager getPricesManager() {
-		if (pricesManager == null) {
-			pricesManager = new ItemPricesManager();
+	public void onSerializableChanged(ValueChangeEvent event) {
+		Product product = ((Item)getTo()).getProduct();
+		if (event.getNewValue() != null && (Boolean)event.getNewValue()) {
+			product.setInventoriable(true);
 		}
-		return pricesManager;
 	}
 
 	public void onPurchasePriceChanged(ValueChangeEvent event) {
-		getPricesManager().onPurchasePriceChanged((Item)this.getTo(), event.getNewValue());
+		getProductController().onPurchasePriceChanged((Item)this.getTo(), event.getNewValue());
 	}
 
 	public void onProfitChanged(ValueChangeEvent event) {
-		getPricesManager().onProfitChanged((Item)this.getTo(), event.getNewValue());
+		getProductController().onProfitChanged((Item)this.getTo(), event.getNewValue());
 	}
 
 	public void onPriceChanged(ValueChangeEvent event) {
-		getPricesManager().onPriceChanged((Item)this.getTo(), event.getNewValue());
+		getProductController().onPriceChanged((Item)this.getTo(), event.getNewValue());
 	}
 
 	public void onSalesProfitChanged(ValueChangeEvent event) {
-		getPricesManager().onSalesProfitChanged((Item)this.getTo(), event.getNewValue());
+		getProductController().onSalesProfitChanged((Item)this.getTo(), event.getNewValue());
 	}
 
 	public void onSalesPriceChanged(ValueChangeEvent event) {
-		getPricesManager().onSalesPriceChanged((Item)this.getTo(), event.getNewValue());
+		getProductController().onSalesPriceChanged((Item)this.getTo(), event.getNewValue());
 	}
 
 	@Override

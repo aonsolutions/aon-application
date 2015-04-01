@@ -218,9 +218,13 @@
 					<aon:if test="#{!domainSwitcher.childDomain}" >
 						<aon:outputLabel for="Domain_domainManagement"
 							value="#{bundle.admin_domain_domainManagement}" />
-						<aon:selectBooleanCheckbox id="Domain_domainManagement"
-							disabled="#{!aonRole.sysAdmin}"
-							value="#{adminDomain.to.domainManagement}" />
+						<aon:div>							
+							<aon:selectBooleanCheckbox id="Domain_domainManagement"
+								disabled="#{!aonRole.sysAdmin}"
+								value="#{adminDomain.to.domainManagement}" />
+							<aon:outputText styleClass="aon-margin-left" rendered="#{adminDomain.domainChildNumber &gt; 0}"
+								value="#{bundle.admin_domain_childs}: #{adminDomain.domainChildNumber}" />
+						</aon:div>
 					</aon:if>
 
 					<aon:outputLabel for="Domain_maxDocumentSize"

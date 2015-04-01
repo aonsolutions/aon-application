@@ -14,7 +14,8 @@
 		</aon:if>
 
 		<ui:include src="/com/code/aon/ui/product/facelet/product/formBasic.xhtml">
-			<ui:param name="categoryChangeReRender" value="productNewDiv" />		
+			<ui:param name="productTo" value="#{controller.to}" />
+			<ui:param name="categoryChangeReRender" value="productNewDiv" />
 		</ui:include>
 
 		<ui:include src="/com/code/aon/ui/product/facelet/product/item/formNewContent.xhtml">

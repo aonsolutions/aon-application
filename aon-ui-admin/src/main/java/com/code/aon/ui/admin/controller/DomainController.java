@@ -846,7 +846,15 @@ public class DomainController extends BasicController {
 					AonUtil.getMessage(DOMAIN_MAX_DEFINED_USERS) );			
             throw new ValidatorException( message);			
 		}
-	}			
+	}		
+	
+	public int getDomainChildNumber() throws ManagerBeanException {
+		Domain domain = getDomain();
+		Criteria criteria = new Criteria();
+		criteria.setSkipDomainFilter(true);
+		criteria.addEqualExpression(getFieldName(IEntityAlias.DOMAIN_PARENT_ID), domain.getId());
+		return getManagerBean().getCount(criteria);
+	}	
 	
 	private static class ParentDomainFilter extends ControllerAdapter {
 		

@@ -1,5 +1,7 @@
 package com.code.aon.ui.product.event;
 
+import static com.code.aon.ui.common.ICommonMessages.PRODUCT_NOT_ACTIVE_ITEMS_FOUND_WARNING;
+
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -57,6 +59,9 @@ public class ProductControllerListener extends ControllerAdapter implements IIte
 		try {
 			Product product = (Product)event.getController().getTo();
 			controller.onSearchAllItem(null);
+			if (controller.getItemController().getRowCount() == 0) {
+				AonUtil.addWarningMessageFromBundle(PRODUCT_NOT_ACTIVE_ITEMS_FOUND_WARNING);
+			}
 
 			getSearch().setTags(getTagList(product));			
 		} catch (ManagerBeanException e) {

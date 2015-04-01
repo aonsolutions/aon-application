@@ -926,7 +926,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Item_product_category&lt;name,Item_product_name,Item_detail,Item_detail2,Item_detail3</value>
+			<value>Item_product_name,Item_detail,Item_detail2,Item_detail3,Item_serialNumber</value>
 		</managed-property>
 		<managed-property>
 			<property-name>suggestAlias</property-name>
@@ -934,63 +934,11 @@
 		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
-			<value>/com/code/aon/ui/product/facelet/item/listBasic.xhtml</value>
+			<value>/com/code/aon/ui/product/facelet/item/listContent.xhtml</value>
 		</managed-property>
 		<managed-property>
 			<property-name>searchPagePath</property-name>
 			<value>/com/code/aon/ui/product/facelet/item/searchContent.xhtml</value>
-		</managed-property>
-		<managed-property>
-			<property-name>newPagePath</property-name>
-			<value>/com/code/aon/ui/product/facelet/item/formNewContent.xhtml</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{itemSearch}</value>
-				<value>#{itemControllerListener}</value>			
-			</list-entries>
-		</managed-property>		
-	</managed-bean>
-
-	<!-- ************ ITEM DETAIL LOOKUP ************** -->
-	<managed-bean>
-		<managed-bean-name>itemDetailLookup</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.product.controller.ItemLookup</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>itemDetailLookup</value>
-		</managed-property>
-		<managed-property>
-			<property-name>foreignPojo</property-name>
-			<value>com.code.aon.product.Item</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultExpressions</property-name>
-			<map-entries>
-				<map-entry>
-					<key>Item_product_type</key>
-					<value>!4</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>		
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Item_product_category_name,Item_product_name,Item_barcode</value>
-		</managed-property>
-		<managed-property>
-			<property-name>suggestAlias</property-name>
-			<value>Item_product_name,Item_detail,Item_detail2</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listPagePath</property-name>
-			<value>/com/code/aon/ui/product/facelet/lookup/itemDetail/list.xhtml</value>
-		</managed-property>
-		<managed-property>
-			<property-name>searchPagePath</property-name>
-			<value>/com/code/aon/ui/product/facelet/lookup/itemDetail/search.xhtml</value>
 		</managed-property>
 		<managed-property>
 			<property-name>newPagePath</property-name>

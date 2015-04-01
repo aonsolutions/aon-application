@@ -8,7 +8,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
 
-	<aon:if test="#{!product.nevv and product.to.serializable and !itemTo.wildCard}">
+	<aon:if test="#{!controller.nevv and itemTo.product.serializable and !itemTo.wildCard}">
 		<aon:outputLabel for="Item_serial_number"
 			value="#{bundle.aon_serial_number}" />
 		<aon:inputText id="Item_serial_number" 
@@ -23,25 +23,25 @@
 			popupDateFormat="#{bundle.aon_date_pattern}" />
 	</aon:if>
 
-	<aon:if test="#{product.showDetail}">
+	<aon:if test="#{itemTo.product.category != null and !empty itemTo.product.category.detail}">
 		<aon:outputLabel for="Item_product_detail"
-			value="#{product.labelDetail}" />
+			value="#{itemTo.product.category.detail}" />
 		<aon:inputText id="Item_product_detail" 
 			value="#{itemTo.detail}" size="32" maxlength="15"
 			required="true" converter="aon.TrimStringConverter" />
 	</aon:if>
 
-	<aon:if test="#{product.showDetail2}">
+	<aon:if test="#{itemTo.product.category != null and !empty itemTo.product.category.detail2}">
 		<aon:outputLabel for="Item_product_detail2"
-			value="#{product.labelDetail2}" />
+			value="#{itemTo.product.category.detail2}" />
 		<aon:inputText id="Item_product_detail2" 
 			value="#{itemTo.detail2}" size="32" maxlength="15"
 			required="true" converter="aon.TrimStringConverter" />
 	</aon:if>
 
-	<aon:if test="#{product.showDetail3}">
+	<aon:if test="#{itemTo.product.category != null and !empty itemTo.product.category.detail3}">
 		<aon:outputLabel for="Item_product_detail3"
-			value="#{product.labelDetail3}" />
+			value="#{itemTo.1product.category.detail3}" />
 		<aon:inputText id="Item_product_detail3" 
 			value="#{itemTo.detail3}" size="32" maxlength="15"
 			required="true" converter="aon.TrimStringConverter" />

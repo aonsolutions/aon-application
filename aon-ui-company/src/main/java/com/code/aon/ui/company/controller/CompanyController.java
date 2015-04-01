@@ -2,12 +2,14 @@ package com.code.aon.ui.company.controller;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 import org.richfaces.event.UploadEvent;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.company.Company;
@@ -125,20 +127,26 @@ public class CompanyController extends CompanyParentController {
 		}
 	}
 
-	public static Enterprise addEnterprise(Company company) throws ManagerBeanException {
+	public static Enterprise addEnterprise(Company company, Scope scope) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Enterprise.class);
 		Enterprise enterprise = new Enterprise();
 		enterprise.setDomain(company.getDomain());
 		enterprise.setRegistry(company);
-		enterprise.setScope(obtainScope());
+		enterprise.setScope(scope);
 		return (Enterprise) bean.insert(enterprise);
 	}
 
-	private static Scope obtainScope() throws ManagerBeanException {
-		IManagerBean scopeBean = BeanManager.getManagerBean(Scope.class);
+	public static Scope obtainScope( Integer domain ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Scope.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(scopeBean.getFieldName(IEntityAlias.SCOPE_ID));
-		return (Scope)scopeBean.getList(criteria).get(0);
+		criteria.setSkipDomainFilter(true);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SCOPE_DOMAIN), domain);
+		criteria.addOrder(bean.getFieldName(IEntityAlias.SCOPE_ID));
+		List<ITransferObject> list = bean.getList(criteria, 0, 1);
+		if (! list.isEmpty() ) {
+			return (Scope) list.get(0);
+		}
+		return null;
 	}
 	
 }

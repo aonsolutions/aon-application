@@ -42,31 +42,31 @@
 				</aon:column>
 			</aon:if>
 
-			<aon:if test="#{product.showDetail}">
+			<aon:if test="#{product.to.category != null and !empty product.to.category.detail}">
 				<aon:column alias="Item.detail"
 					styleClass="aon-editDataTable-textColumn">
 					<f:facet name="header">
-						<aon:outputText value="#{product.labelDetail}" />
+						<aon:outputText value="#{product.to.category.detail}" />
 					</f:facet>
 					<aon:outputText value="#{to.detail}" />
 				</aon:column>
 			</aon:if>
 
-			<aon:if test="#{product.showDetail2}">
+			<aon:if test="#{product.to.category != null and !empty product.to.category.detail2}">
 				<aon:column alias="Item.detail2"
 					styleClass="aon-editDataTable-textColumn">
 					<f:facet name="header">
-						<aon:outputText value="#{product.labelDetail2}" />
+						<aon:outputText value="#{product.to.category.detail2}" />
 					</f:facet>
 					<aon:outputText value="#{to.detail2}" />
 				</aon:column>
 			</aon:if>
 
-			<aon:if test="#{product.showDetail3}">
+			<aon:if test="#{product.to.category != null and !empty product.to.category.detail3}">
 				<aon:column alias="Item.detail3"
 					styleClass="aon-editDataTable-textColumn">
 					<f:facet name="header">
-						<aon:outputText value="#{product.labelDetail3}" />
+						<aon:outputText value="#{product.to.category.detail3}" />
 					</f:facet>
 					<aon:outputText value="#{to.detail3}" />
 				</aon:column>

@@ -9,33 +9,33 @@
 
 	<aon:outputLabel for="Product_code" value="#{bundle.aon_id}" />
 	<aon:inputText id="Product_code" 
-		value="#{controller.to.code}" size="20" maxlength="15" 
+		value="#{productTo.code}" size="20" maxlength="15" 
 		onblur="toUpperCase(this);" required="true" />
 
 	<aon:outputLabel for="Product_name" value="#{bundle.aon_name}" />
 	<aon:inputText id="Product_name" 
-		value="#{controller.to.name}" required="true" size="64" maxlength="64" />
+		value="#{productTo.name}" required="true" size="64" maxlength="64" />
 
 	<aon:if test="#{aonConfiguration.bean.product.showType}">
 		<aon:outputLabel for="Product_type"
 			value="#{bundle.aon_type}" />
 		<aon:selectOneMenu id="Product_type" styleClass="aon-margin-right"
-			value="#{controller.to.type}" required="true">
+			value="#{productTo.type}" required="true">
 			<f:selectItems value="#{productCollections.commonProductTypes}" />
 		</aon:selectOneMenu>
 	</aon:if>
 
 	<aon:outputLabel for="Product_category" value="#{bundle.aon_category}" />
-	<aon:selectOneMenu id="Product_category" 
-		value="#{controller.to.category}"
-		reRender="#{categoryChangeReRender}" ajaxSingle="false">
+	<aon:selectOneMenu id="Product_category"
+		value="#{productTo.category}"
+		reRender="#{categoryChangeReRender}" ajaxSingle="true">
 		<f:selectItem itemLabel="-" value="#{null}" />
 		<f:selectItems value="#{productCollections.categories}" />
 	</aon:selectOneMenu>
 
 	<aon:if test="#{aonConfiguration.bean.product.showBrand and productCollections.brandsCount > 0}">
 		<aon:outputLabel for="Product_brand" value="#{bundle.tas_make}" />
-		<aon:selectOneMenu id="Product_brand" value="#{controller.to.brand}">
+		<aon:selectOneMenu id="Product_brand" value="#{productTo.brand}">
 			<f:selectItem itemLabel="-" value="#{null}" />
 			<f:selectItems value="#{productCollections.brands}" />
 		</aon:selectOneMenu>
@@ -50,12 +50,12 @@
 	<aon:outputLabel for="Product_vat" value="#{bundle.aon_vat}" />
 	<aon:div>
 		<aon:selectOneMenu id="Product_vat" 
-			value="#{controller.to.vat}" required="true"
+			value="#{productTo.vat}" required="true"
 			ajaxSingle="true" reRender="Product_vat_percentage,Item_sales_price">
 			<f:selectItems value="#{configCollections.vatTaxes}" />
 		</aon:selectOneMenu>
 		<aon:outputLabel id="Product_vat_percentage" styleClass="aon-margin-left aon-italic"
-			value="#{controller.to.vat.percentage}">
+			value="#{productTo.vat.percentage}">
 			<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 		</aon:outputLabel>
 		<aon:outputLabel value="%" />
@@ -64,56 +64,56 @@
 	<aon:outputLabel for="Product_retention" value="#{bundle.aon_retention}" />
 	<aon:div>
 		<aon:selectOneMenu id="Product_retention" 
-			value="#{controller.to.retention}"
+			value="#{productTo.retention}"
 			ajaxSingle="true" reRender="Product_retention_percentage,Item_sales_price">
 			<f:selectItem itemLabel="-" itemValue="" />
 			<f:selectItems value="#{configCollections.retentionTaxes}" />
 		</aon:selectOneMenu>
 		<aon:panelGroup id="Product_retention_percentage">
 			<aon:outputLabel styleClass="aon-margin-left aon-italic"
-				value="#{controller.to.retention.percentage}"
-				rendered="#{controller.to.withholding}">
+				value="#{productTo.retention.percentage}"
+				rendered="#{productTo.withholding}">
 				<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 			</aon:outputLabel>
-			<aon:outputLabel value="%" rendered="#{controller.to.withholding}" />
+			<aon:outputLabel value="%" rendered="#{productTo.withholding}" />
 		</aon:panelGroup>
 	</aon:div>
 
 	<aon:if test="#{aonConfiguration.bean.product.showSerializable}">
 		<aon:outputLabel for="Product_serializable" value="#{bundle.aon_serializable}"
-			rendered="#{controller.nevv or controller.to.serializable or controller.to.itemCount == 1}" />
+			rendered="#{controller.nevv or productTo.serializable or productTo.itemCount == 1}" />
 		<aon:panelGrid id="Product_serializable_panel" styleClass="aon-noborder"
 			columns="2" columnClasses="aon-width-110, aon-width-auto"
-			rendered="#{controller.nevv or controller.to.itemCount == 1}">
+			rendered="#{controller.nevv or productTo.itemCount == 1}">
 			<aon:selectOneRadio id="Product_serializable"
 				styleClass="aon-vertical-align-middle" style="display:inline-table;" 
-				value="#{controller.to.serializable}"
-				disabled="#{controller.to.composition}"
+				value="#{productTo.serializable}"
+				disabled="#{productTo.composition}"
 				valueChangeListener="#{controller.onSerializableChanged}"
 				ajaxSingle="true" reRender="Product_serializable_panel,Product_features">
 				<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
 				<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
 			</aon:selectOneRadio>
 			<aon:div style="display:inline;"
-				rendered="#{controller.to.serializable}">
+				rendered="#{productTo.serializable}">
 				<aon:outputLabel for="Product_lotable" 
 					styleClass="aon-margin-left aon-margin-right aon-bold aon-italic aon-vertical-align-middle"
 					value="#{bundle.aon_serialization_type}" />
 				<aon:selectOneRadio id="Product_lotable"
 					styleClass="aon-vertical-align-middle" style="display:inline-table;" 
-					value="#{controller.to.lotable}">
+					value="#{productTo.lotable}">
 					<f:selectItem itemLabel="#{bundle.aon_serializable_unitary}" itemValue="#{false}" />
 					<f:selectItem itemLabel="#{bundle.aon_serializable_batch}" itemValue="#{true}" />
 				</aon:selectOneRadio>
 			</aon:div>
 		</aon:panelGrid>
-		<aon:panelGroup rendered="#{!controller.nevv and controller.to.serializable and controller.to.itemCount > 1}">
+		<aon:panelGroup rendered="#{!controller.nevv and productTo.serializable and productTo.itemCount > 1}">
 			<aon:outputLabel styleClass="aon-bold aon-italic"
 				value="#{bundle.aon_serializable_unitary}"
-				rendered="#{!controller.to.lotable}" />
+				rendered="#{!productTo.lotable}" />
 			<aon:outputLabel styleClass="aon-bold aon-italic"
 				value="#{bundle.aon_serializable_batch}"
-				rendered="#{controller.to.lotable}" />
+				rendered="#{productTo.lotable}" />
 		</aon:panelGroup>
 	</aon:if>
 
@@ -122,45 +122,45 @@
 		<aon:div id="Product_features">
 			<aon:if test="#{aonConfiguration.bean.product.showStock}">
 				<aon:selectBooleanCheckbox id="Product_inventoriable"
-					value="#{controller.to.inventoriable}"
-					rendered="#{!controller.to.composition}"
-					disabled="#{controller.to.serializable or controller.onStock}"
+					value="#{productTo.inventoriable}"
+					rendered="#{!productTo.composition}"
+					disabled="#{productTo.serializable or productTo.stock > 0}"
 					ajaxSingle="true" reRender="Product_features" />
 				<aon:outputLabel for="Product_inventoriable" styleClass="aon-margin-right aon-italic"
 					value="#{bundle.product_inventoriable}"
-					rendered="#{!controller.to.composition}" />
+					rendered="#{!productTo.composition}" />
 			</aon:if>
 
 			<aon:if test="#{aonConfiguration.bean.product.showComposition}">
 				<aon:selectBooleanCheckbox id="Product_manufactured"
-					value="#{controller.to.manufactured}"
-					rendered="#{!controller.to.composition}"
+					value="#{productTo.manufactured}"
+					rendered="#{!productTo.composition}"
 					ajaxSingle="true" reRender="Product_features" />
 				<aon:outputLabel for="Product_manufactured" styleClass="aon-margin-right aon-italic"
 					value="#{bundle.product_manufactured_product}"
-					rendered="#{!controller.to.composition}" />
+					rendered="#{!productTo.composition}" />
 
 				<aon:selectBooleanCheckbox id="Product_composition"
-					value="#{controller.to.composition}"
-					rendered="#{!controller.to.inventoriable and !controller.to.manufactured}"
+					value="#{productTo.composition}"
+					rendered="#{!productTo.inventoriable and !productTo.manufactured}"
 					ajaxSingle="true" reRender="Product_serializable_panel,Product_features" />
 				<aon:outputLabel for="Product_composition" styleClass="aon-margin-right aon-italic"
 					value="#{bundle.product_composite_product}"
-					rendered="#{!controller.to.inventoriable and !controller.to.manufactured}" />
+					rendered="#{!productTo.inventoriable and !productTo.manufactured}" />
 
 				<aon:panelGroup id="Product_composition_price">
-					<aon:selectBooleanCheckbox value="#{controller.to.compositionPrice}"
-						rendered="#{controller.to.composition}" />
+					<aon:selectBooleanCheckbox value="#{productTo.compositionPrice}"
+						rendered="#{productTo.composition}" />
 					<aon:outputLabel for="Product_composition_price" styleClass="aon-margin-right aon-italic"
 						value="#{bundle.product_composition_price}"
-						rendered="#{controller.to.composition}" />
+						rendered="#{productTo.composition}" />
 				</aon:panelGroup>
 			</aon:if>
 		</aon:div>
 	</aon:if>
 
 	<aon:outputLabel for="Product_status" value="#{bundle.aon_status}" />
-	<aon:selectOneRadio id="Product_status" value="#{controller.to.status}">
+	<aon:selectOneRadio id="Product_status" value="#{productTo.status}">
 		<f:selectItems value="#{productCollections.productStatuses}" />
 	</aon:selectOneRadio>
 	 

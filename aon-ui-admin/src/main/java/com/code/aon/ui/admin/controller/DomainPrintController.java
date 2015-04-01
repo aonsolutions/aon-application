@@ -156,6 +156,9 @@ public class DomainPrintController extends BasicController {
 	public void onGoToDomainBooking(ActionEvent event) throws ManagerBeanException {
 		if ( getModel().isRowAvailable() ) {
 			Domain domain = (Domain) getSelectedTO();
+			if ( domain.getParent() != null ) {
+				domain = domain.getParent();
+			}
 			DomainBookingController dbc = (DomainBookingController) AonUtil.getRegisteredBean(DOMAIN_BOOKING_CONTROLLER_NAME);
 			dbc.init(domain);
 			dbc.setBackAction(DOMAIN_PRINT_CONTROLLER_NAME + IController.SEARCH_SUFFIX);

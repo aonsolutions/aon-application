@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:include src="/com/code/aon/ui/product/facelet/item/listBasic.xhtml" />
+
+	<aon:column alias="Item.barcode"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.product_barcode}" />
+		</f:facet>
+		<aon:outputText value="#{to.barcode}" />
+	</aon:column>
+
+	<aon:if test="#{aonConfiguration.bean.product.showSerializable and productCollections.serialNumberCount > 0}">
+		<aon:column alias="Item.serialNumber"
+			styleClass="aon-editDataTable-textColumn">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_serial_number}" />
+			</f:facet>
+			<aon:outputText value="#{to.serialNumber}" />
+		</aon:column>
+	</aon:if>
+
+</ui:composition>

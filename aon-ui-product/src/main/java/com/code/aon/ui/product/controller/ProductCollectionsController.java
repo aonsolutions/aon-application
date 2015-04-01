@@ -185,4 +185,13 @@ public class ProductCollectionsController implements Serializable {
     	return addInfos;
     }
 
+	public int getSerialNumberCount() throws ManagerBeanException {
+		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_STATUS), ProductStatus.ACTIVE);
+		criteria.addNotNullExpression(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER));
+		criteria.addNotEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER), "");
+		return itemBean.getCount(criteria);
+	}
+
 }

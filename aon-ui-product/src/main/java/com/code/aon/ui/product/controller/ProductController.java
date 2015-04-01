@@ -12,8 +12,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
 import com.code.aon.AonVersion;
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tax;
@@ -28,7 +26,6 @@ import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.product.event.ItemSearchListener;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.warehouse.Stock;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProductController extends BasicController implements IAuditableController, IItemConstants {
@@ -94,7 +91,7 @@ public class ProductController extends BasicController implements IAuditableCont
 		this.showAuditInfoWindow = showAuditInfoWindow;
 	}
 	
-	private ItemController getItemController() {
+	public ItemController getItemController() {
 		return (ItemController)AonUtil.getRegisteredBean(ITEM);
 	}
 
@@ -146,46 +143,6 @@ public class ProductController extends BasicController implements IAuditableCont
 			onSelectItem(event);
 		}
 	}
-		
-	public void onSearchAllItem(ActionEvent event) throws ManagerBeanException {
-		ItemController itemController = (ItemController)AonUtil.getRegisteredBean(ITEM);
-		itemController.onEditSearch(event);
-		searchItems(event);
-	}
-	
-	public void onSearchItem(ActionEvent event) throws ManagerBeanException {
-		ItemController itemController = (ItemController)AonUtil.getRegisteredBean(ITEM);
-		itemController.clearCriteria();
-		searchItems(event);
-	}
-	
-	public void searchItems(ActionEvent event) throws ManagerBeanException {
-		ItemController itemController = (ItemController)AonUtil.getRegisteredBean(ITEM);
-		Product product = (Product)getTo();
-		ItemSearchListener itemSearch = (ItemSearchListener)AonUtil.getRegisteredBean(ITEM_SEARCH_CONTROLLER_NAME);
-		itemSearch.setProduct(product);
-		if (product.isSerializable()) {
-			itemController.getCriteria().addOrder(itemController.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER));
-		}
-		if (product.getCategory() != null && StringUtils.isNotEmpty(product.getCategory().getDetail())) {
-			itemController.getCriteria().addOrder(itemController.getFieldName(IEntityAlias.ITEM_DETAIL));
-			if (StringUtils.isNotEmpty(product.getCategory().getDetail2())) {
-				itemController.getCriteria().addOrder(itemController.getFieldName(IEntityAlias.ITEM_DETAIL2));
-			}
-			if (StringUtils.isNotEmpty(product.getCategory().getDetail3())) {
-				itemController.getCriteria().addOrder(itemController.getFieldName(IEntityAlias.ITEM_DETAIL3));
-			}
-		}
-		itemController.onSearch(null);
-		if (itemController.getModel().getRowCount() > 0) {
-			itemController.getModel().setRowIndex(0);
-			itemController.onSelect(null);
-		} else {
-			itemController.onReset(null);
-		}
-		Item item = (Item)itemController.getTo();
-		item.setProduct(product);
-	}
 
 	private void updateItem(ItemController itemController) {
 		Product product = (Product)getTo();
@@ -221,6 +178,54 @@ public class ProductController extends BasicController implements IAuditableCont
 		}
 	}
 	
+	public void onSearchAllItem(ActionEvent event) throws ManagerBeanException {
+		ItemController itemController = (ItemController)AonUtil.getRegisteredBean(ITEM);
+		itemController.onEditSearch(event);
+		searchItems(true);
+	}
+	
+	public void onSearchItem(ActionEvent event) throws ManagerBeanException {
+		ItemController itemController = (ItemController)AonUtil.getRegisteredBean(ITEM);
+		itemController.clearCriteria();
+		searchItems(false);
+	}
+	
+	public void searchItems(ActionEvent event) throws ManagerBeanException {
+		searchItems(false);
+	}
+
+	private void searchItems(boolean allItems) throws ManagerBeanException {
+		ItemController itemController = (ItemController)AonUtil.getRegisteredBean(ITEM);
+		Product product = (Product)getTo();
+		ItemSearchListener itemSearch = (ItemSearchListener)AonUtil.getRegisteredBean(ITEM_SEARCH_CONTROLLER_NAME);
+		itemSearch.setProduct(product);
+		if (!product.isSerializable()) {
+			if (allItems) {
+				itemSearch.setItemStatuses(null);
+			}
+		} else {
+			itemController.getCriteria().addOrder(itemController.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER));
+		}
+		if (product.getCategory() != null && StringUtils.isNotEmpty(product.getCategory().getDetail())) {
+			itemController.getCriteria().addOrder(itemController.getFieldName(IEntityAlias.ITEM_DETAIL));
+			if (StringUtils.isNotEmpty(product.getCategory().getDetail2())) {
+				itemController.getCriteria().addOrder(itemController.getFieldName(IEntityAlias.ITEM_DETAIL2));
+			}
+			if (StringUtils.isNotEmpty(product.getCategory().getDetail3())) {
+				itemController.getCriteria().addOrder(itemController.getFieldName(IEntityAlias.ITEM_DETAIL3));
+			}
+		}
+		itemController.onSearch(null);
+		if (itemController.getModel().getRowCount() > 0) {
+			itemController.getModel().setRowIndex(0);
+			itemController.onSelect(null);
+		} else {
+			itemController.onReset(null);
+		}
+		Item item = (Item)itemController.getTo();
+		item.setProduct(product);
+	}
+
 	public void onSerializableChanged(ValueChangeEvent event) {
 		Product product = (Product) getTo();
 		if (event.getNewValue() != null && (Boolean)event.getNewValue()) {
@@ -228,26 +233,6 @@ public class ProductController extends BasicController implements IAuditableCont
 		}
 	}
 
-	public void onPurchasePriceChanged(ValueChangeEvent event) {
-		getItemController().getPricesManager().onPurchasePriceChanged(getItem(), event.getNewValue());
-	}
-
-	public void onProfitChanged(ValueChangeEvent event) {
-		getItemController().getPricesManager().onProfitChanged(getItem(), event.getNewValue());
-	}
-
-	public void onSalesProfitChanged(ValueChangeEvent event) {
-		getItemController().getPricesManager().onSalesProfitChanged(getItem(), event.getNewValue());
-	}
-
-	public void onPriceChanged(ValueChangeEvent event) {
-		getItemController().getPricesManager().onPriceChanged(getItem(), event.getNewValue());
-	}
-
-	public void onSalesPriceChanged(ValueChangeEvent event) {
-		getItemController().getPricesManager().onSalesPriceChanged(getItem(), event.getNewValue());
-	}
-	
 	private ProductCategory getCategory() {
 		Product product = (Product) getTo();
 		return product.getCategory();
@@ -257,7 +242,7 @@ public class ProductController extends BasicController implements IAuditableCont
 		if (getDetailLevel() > 0) {
 			ProductCategory category = getCategory();
 			if (category != null) {
-				return !StringUtils.isEmpty(category.getDetail());
+				return StringUtils.isNotBlank(category.getDetail());
 			}			
 		}
 		return false;
@@ -267,7 +252,7 @@ public class ProductController extends BasicController implements IAuditableCont
 		if (getDetailLevel() > 1) {
 			ProductCategory category = getCategory();
 			if (category != null) {
-				return !StringUtils.isEmpty(category.getDetail2());
+				return StringUtils.isNotBlank(category.getDetail2());
 			}			
 		}
 		return false;
@@ -277,38 +262,50 @@ public class ProductController extends BasicController implements IAuditableCont
 		if (getDetailLevel() > 2) {
 			ProductCategory category = getCategory();
 			if (category != null) {
-				return !StringUtils.isEmpty(category.getDetail3());
+				return StringUtils.isNotBlank(category.getDetail3());
 			}			
 		}
 		return false;
 	}
 	
-	public String getLabelDetail() {
-		Product product = (Product) getTo();
-		return product.getCategory().getDetail();
-	}
-	
-	public String getLabelDetail2() {
-		Product product = (Product) getTo();
-		return product.getCategory().getDetail2();
+	public void onPurchasePriceChanged(ValueChangeEvent event) {
+		onPurchasePriceChanged(getItem(), event.getNewValue());
 	}
 
-	public String getLabelDetail3() {
-		Product product = (Product) getTo();
-		return product.getCategory().getDetail3();
+	public void onPurchasePriceChanged(Item item, Object value) {
+		getItemController().getPricesManager().onPurchasePriceChanged(item, value);
 	}
-	
-	public boolean isOnStock() {
-		Product product = (Product) getTo();
-		try {
-			IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_ITEM_PRODUCT_ID), product.getId());
-			criteria.addNotEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_QUANTITY), 0.0);
-			return stockBean.getCount(criteria) > 0;
-		} catch (ManagerBeanException e) {
-		}
-		return false;
+
+	public void onProfitChanged(ValueChangeEvent event) {
+		onProfitChanged(getItem(), event.getNewValue());
+	}
+
+	public void onProfitChanged(Item item, Object value) {
+		getItemController().getPricesManager().onProfitChanged(item, value);
+	}
+
+	public void onSalesProfitChanged(ValueChangeEvent event) {
+		onSalesProfitChanged(getItem(), event.getNewValue());
+	}
+
+	public void onSalesProfitChanged(Item item, Object value) {
+		getItemController().getPricesManager().onSalesProfitChanged(item, value);
+	}
+
+	public void onPriceChanged(ValueChangeEvent event) {
+		onPriceChanged(getItem(), event.getNewValue());
+	}
+
+	public void onPriceChanged(Item item, Object value) {
+		getItemController().getPricesManager().onPriceChanged(item, value);
+	}
+
+	public void onSalesPriceChanged(ValueChangeEvent event) {
+		onSalesPriceChanged(getItem(), event.getNewValue());
+	}
+
+	public void onSalesPriceChanged(Item item, Object value) {
+		getItemController().getPricesManager().onSalesPriceChanged(item, value);
 	}
 
 }
