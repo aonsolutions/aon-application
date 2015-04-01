@@ -119,8 +119,9 @@ public class SalesInvoicingManager {
 		invoice.setSecurityLevel(sales.getSecurityLevel());
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setType(InvoiceType.SALES);
-		invoice.setScope(sales.getScope());
 		invoice.setComments(StringUtils.isNotBlank(sales.getPurchaseReference()) ? "Ref. compra: " + sales.getPurchaseReference() : null);
+		invoice.setScope(sales.getScope());
+		invoice.setSeller(sales.getSeller());
 
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		invoiceBean.restoreNullSubPOJOs(invoice);

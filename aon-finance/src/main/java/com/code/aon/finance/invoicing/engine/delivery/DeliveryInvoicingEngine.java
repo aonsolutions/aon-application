@@ -371,6 +371,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine, Serializable {
 			invoiceDetail.setDiscountExpression(deliveryDetail.getDiscountExpression());
 			invoiceDetail.setSource(InvoiceSource.DELIVERY);
 			invoiceDetail.setSourceId(deliveryDetail.getId());
+			invoiceDetail.setSeller((deliveryDetail.getSalesDetail() != null) ? deliveryDetail.getSalesDetail().getSales().getSeller() : null);
 			invoiceDetail.setWorkPlace(deliveryDetail.getDelivery().getWorkPlace());
 			invoiceDetail.getInvoice().setUpdateEnabled(updateEnabled && (deliveryDetailList.indexOf(deliveryDetail) == (deliveryDetailList.size() - 1)));
 

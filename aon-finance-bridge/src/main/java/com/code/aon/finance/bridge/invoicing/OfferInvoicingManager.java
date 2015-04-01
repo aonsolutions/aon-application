@@ -121,6 +121,7 @@ public class OfferInvoicingManager {
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setType(InvoiceType.SALES);
 		invoice.setScope(offer.getScope());
+		invoice.setSeller(offer.getSeller());
 
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		invoiceBean.restoreNullSubPOJOs(invoice);

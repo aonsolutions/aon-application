@@ -28,6 +28,7 @@ import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
+import com.code.aon.seller.Seller;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
@@ -113,6 +114,7 @@ public class DeliveryInvoicingManager {
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setType(InvoiceType.SALES);
 		invoice.setScope(delivery.getScope());
+		invoice.setSeller(obtainSeller(delivery.getId()));
 
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		invoiceBean.restoreNullSubPOJOs(invoice);
@@ -123,6 +125,19 @@ public class DeliveryInvoicingManager {
     	Criteria criteria = new Criteria();
     	criteria.addEqualExpression("invoice.type", InvoiceType.SALES.ordinal());
     	return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
+	}
+
+	private Seller obtainSeller(Integer deliveryId) throws ManagerBeanException {
+		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_DELIVERY_ID), deliveryId);
+		criteria.addNotNullExpression(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_SALES_DETAIL_ID));
+		criteria.addOrder(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_LINE));
+		List<ITransferObject> deliveryDetailList = deliveryDetailBean.getList(criteria, 0, 1);
+		if (deliveryDetailList.size() > 0) {
+			return ((DeliveryDetail)deliveryDetailList.get(0)).getSalesDetail().getSales().getSeller();
+		}
+		return null;
 	}
 
 	private void createInvoiceDetails(Invoice invoice, Delivery delivery) throws ManagerBeanException {
@@ -147,6 +162,7 @@ public class DeliveryInvoicingManager {
 			invoiceDetail.setWorkPlace(delivery.getWorkPlace());
 			invoiceDetail.setSource(InvoiceSource.DELIVERY);
 			invoiceDetail.setSourceId(deliveryDetail.getId());
+			invoiceDetail.setSeller((deliveryDetail.getSalesDetail() != null) ? deliveryDetail.getSalesDetail().getSales().getSeller() : null);
 			invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
 			invoiceDetail.getInvoice().setUpdateEnabled(line == deliveryDetailList.size());
 			invoiceDetailBean.restoreNullSubPOJOs(invoiceDetail);
