@@ -19,6 +19,9 @@ public interface AonResources extends ClientBundle, Images {
 	@CssResource.NotStrict
 	AonDataGrid aonDataGrid();
 
+	@Source("images/aon-menuBar.png")
+	ImageResource menuBar();
+
 	@Source("images/aon-icon-rowSelector.png")
 	ImageResource aonIconRowSelector();
 
@@ -190,6 +193,9 @@ public interface AonResources extends ClientBundle, Images {
 
 	@Source("images/aon-icon-model.png")
 	ImageResource aonIconModel();
+	
+	@Source("images/aon-aeat-header-image.png")
+	ImageResource aonAeatHeaderImage();
 
 	// ------------------------------------------------------------------------
 }

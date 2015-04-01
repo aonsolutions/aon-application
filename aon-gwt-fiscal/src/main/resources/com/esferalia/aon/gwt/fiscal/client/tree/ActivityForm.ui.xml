@@ -44,7 +44,7 @@
 						<td class="{aonResources.css.aonItalic}  {aonResources.css.aonNowrap} {aonResources.css.aonWidth70}">
 							<g:InlineLabel text="{msg.maxImport}"/>
 						</td>
-						<td class="{aonResources.css.aonNowrap} {aonResources.css.aonWidth50}">
+						<td class="{aonResources.css.aonNowrap} {aonResources.css.aonWidth70}">
 							<g:InlineLabel ui:field="maxImport"/>
 						</td>
 						<td class="{aonResources.css.aonItalic}  {aonResources.css.aonNowrap} {aonResources.css.aonWidth70}">

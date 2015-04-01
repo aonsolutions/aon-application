@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -42,7 +43,9 @@ public class FiscalModel implements Serializable {
 	private String contactPhone;
 	private String contactCellular;
 	private String contactEmail;
-
+	
+	HashMap<String,FiscalModelDetail> map;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -275,5 +278,19 @@ public class FiscalModel implements Serializable {
 	public FiscalModel setContactEmail(String contactEmail) {
 		this.contactEmail = contactEmail;
 		return this;
+	}
+	
+	public HashMap<String, FiscalModelDetail> getMap() {
+		if (map == null) {
+			map = new HashMap<String, FiscalModelDetail>();
+		}
+		return map;
+	}
+	public FiscalModel setMap(HashMap<String, FiscalModelDetail> map) {
+		this.map = map;
+		return this;
+	}
+	public void put(FiscalModelDetail detail) {
+		getMap().put(detail.getType(), detail);
 	}
 }

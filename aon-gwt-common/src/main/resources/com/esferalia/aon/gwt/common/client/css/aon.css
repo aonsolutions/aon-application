@@ -3,10 +3,15 @@
 @def fiscalBackgroundColor #DDDDDD;	
 @def fiscalSelectedBackgroundColor #BBBBBB;	
 
-.aon-scroll-area{	
-	padding:8px 1.5em 1.5em 1.5em;
+.aon-Selector{
+	margin: 0px;
+	color: #4B4B4B;
+	font: 12px/1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
 }
 
+.aon-scroll-area{	
+	padding: 8px 1.5em 1.5em 1.5em;
+}
 .aon-width-all{
 	width:100%;
 }
@@ -285,6 +290,9 @@
     padding-right: 20px;
     text-transform: uppercase;
     width: auto;
+}
+@sprite .aon-aeat-header-image  {
+	gwt-image: "aonAeatHeaderImage";
 }
 
 @sprite .aon-list-data {
@@ -1219,4 +1227,185 @@ input:disabled + label{
     text-decoration: underline;
 }
 
+/* 
+	*********************************************
+	********************************* GWT CLASSES
+	********************************************* 
+*/
 
+/* GWT Tree */
+.aon-Selector .gwt-Tree {
+	
+}
+
+.aon-Selector .gwt-Tree .gwt-TreeItem {
+	padding: 0;
+	cursor: pointer;
+	font-size: 0.9em;
+	display: block !important;
+	border: 1px solid #FFFFFF;
+}
+
+.aon-Selector .gwt-Tree .gwt-TreeItem-selected {
+	background: #FFFADC;
+    border: 1px solid #D3C061;
+}
+
+.aon-Selector .gwt-Tree .gwt-TreeItem-highlight {
+	color : #000000;
+	font-size: 1.1em;
+	font-weight: bolder;
+	
+}
+
+/* Splitters */
+.aon-Selector .gwt-SplitLayoutPanel-HDragger,.gwt-SplitLayoutPanel-VDragger {
+	background-color: #eee;
+}
+
+.aon-Selector .gwt-SplitLayoutPanel-HDragger {
+	cursor: col-resize;
+}
+
+.aon-Selector .gwt-SplitLayoutPanel-VDragger {
+	cursor: row-resize;
+}
+
+/* MenuBar */
+@sprite .aon-Selector .gwt-MenuBar-horizontal {
+	gwt-image: "menuBar"; 
+} 
+
+.aon-Selector .gwt-MenuBar-horizontal {
+	background-repeat: repeat-x;
+	border-bottom: 1px solid #717E88;
+    border-top: 1px solid #FFFFFF;
+    font-size: 11px;
+    width:100%;	
+}
+
+.aon-Selector .gwt-MenuBar-horizontal .gwt-MenuItem {
+    background-position: center !important;
+    background-color:transparent;
+    border: 1px solid transparent;
+    color: #000000;
+    cursor: pointer;
+    font-family: arial,verdana,"sans-serif";
+    font-size: 1em;
+    font-weight: bold;
+    padding: 3px 7px 4px 7px;
+    text-transform: uppercase;
+}
+
+.aon-Selector .gwt-MenuBar-vertical .gwt-MenuItemSeparator .menuSeparatorInner {
+	height: 1px;
+	margin: 0px 4px;
+}
+
+.aon-Selector .gwt-MenuBar-vertical .gwt-MenuItem {
+	min-width :125px;
+	padding: 4px 40px 4px 20px;
+}
+
+.aon-Selector .gwt-MenuBar .gwt-MenuItem:hover,
+.aon-Selector .gwt-MenuBar .gwt-MenuItem-selected,
+.aon-Selector .gwt-MenuBar-vertical .gwt-MenuItem-selected,
+.aon-Selector .gwt-MenuBar-vertical .subMenuIcon-selected	{
+	border: none;
+	background-color: #EBEBEF;
+
+}
+
+.aon-Selector .gwt-MenuBar-horizontal .gwt-MenuItem:hover,
+.aon-Selector .gwt-MenuBar-horizontal .gwt-MenuItem-selected {
+	background-color: #FFFFFF;
+	border: 1px solid #FFFFFF;
+	box-shadow: 2px 2px 5px 1px #BBBBBB;
+}
+
+.aon-Selector .gwt-MenuBarPopup {
+	margin : 0px;
+	background: white;
+	border-right: 1px solid #EBEBEF;
+	border-left: 1px solid #EBEBEF;
+	border-bottom: 1px solid #EBEBEF;
+	padding: 4px 0px;
+	box-shadow: 2px 2px 5px 1px #EBEBEF;
+
+}
+
+.aon-Selector .gwt-MenuBarPopup .menuPopupTopLeft,
+.aon-Selector .gwt-MenuBarPopup .menuPopupTopCenter,
+.aon-Selector .gwt-MenuBarPopup .menuPopupTopRight,
+.aon-Selector .gwt-MenuBarPopup .menuPopupMiddleLeft,
+.aon-Selector .gwt-MenuBarPopup .menuPopupMiddleRight,
+.aon-Selector .gwt-MenuBarPopup .menuPopupBottomLeft,
+.aon-Selector .gwt-MenuBarPopup .menuPopupBottomCenter,
+.aon-Selector .gwt-MenuBarPopup .menuPopupBottomRight
+	{
+	display: none;
+}
+
+/* TabBar */
+.aon-Selector .gwt-TabBar {
+    background: none repeat scroll 0 0 #fff;
+    padding-top: 6px;
+}
+.aon-Selector .gwt-TabBar .gwt-TabBarFirst {
+    width: 5px;
+}
+.aon-Selector .gwt-TabBar .gwt-TabBarRest {
+}
+.aon-Selector .gwt-TabBar .gwt-TabBarItem {
+    background: none repeat scroll 0 0 #ddd;
+    border-color: #666;
+    border-style: solid;
+    border-radius: 3px 3px 0 0;
+    border-width: 1px 1px 0;
+    color: #555;
+    cursor: pointer;
+    font-weight: normal;
+    margin-left: 4px;
+    padding: 4px 8px;
+    text-align: center;
+}
+.aon-Selector .gwt-TabBar .gwt-TabBarItem-selected {
+    background: none repeat scroll 0 0 white;
+    color: #333;
+    cursor: default;
+    font-weight: bold;
+}
+.aon-Selector .gwt-TabBar .gwt-TabBarItem-disabled {
+    color: #999999;
+    cursor: default;
+}
+.aon-Selector .gwt-TabPanel {
+}
+.aon-Selector .gwt-TabPanelBottom {
+    border-color: #ccc;
+    border-style: solid;
+    border-width: 1px;
+    overflow: hidden;
+    padding: 6px;
+}
+
+.aon-fiscal-model-table {
+	width: 100%;
+}
+.aon-fiscal-model-table-header-image {
+    width: 48px;	
+}
+.aon-fiscal-model-table-header-title {
+    background-color: #3a85c3;
+    color: white;
+    font-size: 2em;
+    text-align: center;
+    width: auto;
+}
+.aon-fiscal-model-table-header-model {
+    background-color: #3a85c3;
+    color: white;
+    font-size: 1.5em;
+    text-align: center;
+    width: 70px;	
+}

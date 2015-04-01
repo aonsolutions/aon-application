@@ -14,20 +14,18 @@ abstract class TreeNode<T> extends TreeItem {
 		setUserObject(t);
 	}
 
-	public abstract TreeNode<T> render(HasTreeItems parent,
-			FiscalTree fiscalPanel, T t);
+	public abstract TreeNode<T> render(HasTreeItems parent,FiscalTree fiscalTree, T t);
 
-	public static void renderTree(Tree tree, FiscalTree fiscalPanel,
+	public static void renderTree(Tree tree, FiscalTree fiscalTree,
 			Enterprise enterprise, boolean removeAll) {
 		if (removeAll && tree.getItemCount() > 0) {
 			tree.removeItems();
 		}
-
 		TreeNode<Enterprise> rootNode = TreeNodeTypes.ENTERPRISE.getInstance();
-		rootNode.render(tree, fiscalPanel, enterprise);
-		TreeNodeTypes.ENTERPRISE_DATA.getInstance().render(rootNode,fiscalPanel, enterprise);
-		TreeNodeTypes.FISCAL_ACTIVITY_GROUP.getInstance().render(rootNode,fiscalPanel, enterprise);
-		TreeNodeTypes.FISCAL_MODEL_YEAR_GROUP.getInstance().render(rootNode,fiscalPanel, enterprise);
+		rootNode.render(tree, fiscalTree, enterprise);
+		TreeNodeTypes.ENTERPRISE_DATA.getInstance().render(rootNode,fiscalTree, enterprise);
+		TreeNodeTypes.FISCAL_ACTIVITY_GROUP.getInstance().render(rootNode,fiscalTree, enterprise);
+		TreeNodeTypes.FISCAL_MODEL_YEAR_GROUP.getInstance().render(rootNode,fiscalTree, enterprise);
 		rootNode.setState(true);
 		tree.addItem(rootNode);
 		tree.setSelectedItem(rootNode);

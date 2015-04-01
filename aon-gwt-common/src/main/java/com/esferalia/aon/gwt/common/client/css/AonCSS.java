@@ -4,6 +4,12 @@ import com.google.gwt.resources.client.CssResource;
 
 public interface AonCSS extends  CssResource {
 	
+	@ClassName("aon-Selector")
+	String aonSelector();
+	
+	@ClassName("aon-aeat-header-image")
+	String aonAeatHeaderImage();
+	
 	@ClassName("aon-scroll-area")
 	String aonScrollArea();
 	
@@ -596,7 +602,17 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-fiscal-tree-item")
 	String aonFiscalTreeItem();
 
+	@ClassName("aon-fiscal-model-table")
+	String aonFiscalModelTable();
+		
+	@ClassName("aon-fiscal-model-table-header-image")
+	String aonFiscalModelTableHeaderImage();
 	
+	@ClassName("aon-fiscal-model-table-header-title")
+	String aonFiscalModelTableHeaderTitle();
+
+	@ClassName("aon-fiscal-model-table-header-model")
+	String aonFiscalModelTableHeaderModel();
+
+
 }
-
-

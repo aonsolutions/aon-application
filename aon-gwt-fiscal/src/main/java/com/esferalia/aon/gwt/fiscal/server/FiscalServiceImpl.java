@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
+import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -32,6 +33,7 @@ import com.esferalia.aon.occam.api.model.type.Activities.Type3Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type4Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type7Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.TypeActivity;
+import com.esferalia.aon.watson.error.AonCoreException;
 
 /**
  * The server side implementation of the RPC service.
@@ -59,12 +61,12 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	}
 	@Override
 	public ArrayList<FiscalActivity> getFiscalActivities(String domainName,
-			int domain) throws AonSQLException {
+			int domain) throws AonCoreException {
 		return AON.getFiscalActivities(domainName, domain);
 	}
 	@Override
 	public FiscalActivity getFiscalActivity(String domainName,
-			int domain,int id) throws AonSQLException {
+			int domain,int id) throws AonCoreException {
 		return AON.getFiscalActivity(domainName, domain, id);
 	}
 
@@ -75,7 +77,7 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	}
 
 	@Override
-	public FiscalActivity save(String domainName, FiscalActivity fa) {
+	public FiscalActivity save(String domainName, FiscalActivity fa) throws AonCoreException{
 		return AON.save(domainName, fa);
 		
 	}
@@ -92,17 +94,17 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	}
 	@Override
 	public LinkedList<FiscalModel> getFiscalModels(String domainName,
-			int domain) throws AonSQLException {
+			int domain) throws AonCoreException {
 		return AON.getFiscalModels(domainName, domain);
 	}
 	@Override
 	public FiscalModel getFiscalModel(String domainName,
-			int domain,int id) throws AonSQLException {
+			int domain,int id) throws AonCoreException {
 		return AON.getFiscalModel(domainName, domain, id);
 	}
 
 	@Override
-	public FiscalModel save(String domainName, FiscalModel fm) {
+	public FiscalModel save(String domainName, FiscalModel fm) throws AonCoreException{
 		return AON.save(domainName, fm);
 		
 	}
@@ -299,4 +301,10 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 		return AON.initializeMod390(domainName, domain, year);
 	}
 
+	// ---------------------------------------------------------------MODELO 131
+	@Override
+	public Mod131 getMod131(String domainName,
+			int domain,int id) throws AonCoreException {
+		return AON.getMod131(domainName, domain, id);
+	}
 }

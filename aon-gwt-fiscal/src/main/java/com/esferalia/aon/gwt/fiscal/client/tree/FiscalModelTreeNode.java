@@ -1,19 +1,19 @@
 package com.esferalia.aon.gwt.fiscal.client.tree;
 
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasTreeItems;
 import com.google.gwt.user.client.ui.InlineLabel;
 
 public class FiscalModelTreeNode extends TreeNode<FiscalModel> {
 
-	private FiscalModelForm widget;
+	private HTMLPanel widget;
 
 	@Override
 	public void select(FiscalTree fiscalPanel) {
 		if (widget ==null) {
-			widget = new FiscalModelForm();
+			widget = new HTMLPanel(" MODELO FISCAL SIN IMPLEMENTAR" );
 		}
-		widget.select(this );
 		fiscalPanel.content.setWidget(widget);
 	}
 	

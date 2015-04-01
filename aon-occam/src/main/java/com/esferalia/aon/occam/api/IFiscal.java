@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
+import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -75,6 +76,9 @@ public interface IFiscal {
 	public void deleteMod390(AONContext ctx,Mod390 mod390);
 	public ArrayList<Mod390Detail> getMod390Details(AONContext aonContext,Mod390 mod390);
 	public Mod390 initializeMod390(AONContext ctx, int year);
+
+	// 				   		  MOD131
+	public Mod131 getMod131(AONContext ctx, int id);
 
 
 }

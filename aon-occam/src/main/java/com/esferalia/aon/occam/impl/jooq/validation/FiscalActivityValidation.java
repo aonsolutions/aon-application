@@ -45,7 +45,9 @@ public class FiscalActivityValidation {
 			.where(FS_ACTIVITY.DOMAIN.eq(fa.getDomain()))
 			.and(FS_ACTIVITY.YEAR.eq(fa.getYear()))
 			.and(FS_ACTIVITY.EPIGRAPH.eq(fa.getEpigraph()))
-			.and(FS_ACTIVITY.ID.ne(fa.getId()))
+			.and( fa.getId()!=null
+				?FS_ACTIVITY.ID.ne(fa.getId())
+				:FS_ACTIVITY.ID.eq(FS_ACTIVITY.ID))
 			.fetchOne(0,int.class);
 		if (count>0) {
 			throw new AonCoreException(AonError.DUPLICATE_EPIGRAPH.format(fa.getYear(),fa.getEpigraph()));

@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -35,6 +36,7 @@ public class FiscalModelYearGroupTreeNode extends TreeNode<Enterprise> {
 				final TreeItem item = getChild(i); 
 				InlineLabel label =  new InlineLabel(getChild(i).getText());
 				label.setStyleName(FiscalTree.AON_RESOURCES.css().aonFiscalTreeItem());
+				label.addStyleName(FiscalTree.AON_RESOURCES.css().aonIconPointGreen() );
 				label.addClickHandler( new ClickHandler() {
 					@Override
 					public void onClick(ClickEvent event) {
@@ -103,9 +105,21 @@ public class FiscalModelYearGroupTreeNode extends TreeNode<Enterprise> {
     								.getInstance()
     								.render(yearNode,fiscalTree, fm.getModel());
     					}
-    					TreeNodeTypes.FISCAL_MODEL
-    						.getInstance()
-    						.render(modelNode,fiscalTree, fm);
+    					if (fm.getModel() == FiscalModelType.M131) {
+    						Mod131 mod131 = new Mod131();
+    						mod131.setModel(fm.getModel());
+    						mod131.setYear(fm.getYear());
+    						mod131.setPeriod(fm.getPeriod());
+    						mod131.setReplacement(fm.isReplacement());
+    						
+    						TreeNodeTypes.MODEL_131
+    							.getInstance()
+    							.render(modelNode,fiscalTree, mod131);
+    					} else {
+        					TreeNodeTypes.FISCAL_MODEL
+    							.getInstance()
+    							.render(modelNode,fiscalTree, fm);
+    					}
     					yearNode.setState((fm.getYear() == FiscalTree.CURRENT_YEAR));
     				} 
     				if (!currentYearRendered) {

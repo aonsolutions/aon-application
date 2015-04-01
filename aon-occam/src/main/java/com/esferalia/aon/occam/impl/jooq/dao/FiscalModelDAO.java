@@ -7,11 +7,15 @@ import java.util.LinkedList;
 
 import org.jooq.Record;
 
+import com.esferalia.aon.jooq.tables.records.FsModelDetailRecord;
 import com.esferalia.aon.jooq.tables.records.FsModelRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.Mod131Key;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
@@ -22,44 +26,55 @@ public class FiscalModelDAO {
 		return null;
 	}
 	
+	public static Mod131 getMod131(AONContext ctx,int id) {
+		FiscalModel fm = getModel(ctx, id);
+		if (fm != null) {
+			Mod131 mod131 = new Mod131();
+			mod131.setId(fm.getId())
+				.setDomain(fm.getDomain())
+				.setYear(fm.getYear())
+				.setFinance(fm.getFinance())
+				.setModel(fm.getModel())
+				.setPeriod(fm.getPeriod())
+				.setAdministration(fm.getAdministration())
+				.setFinished(fm.isFinished())
+				.setConfidential(fm.isConfidential())
+				.setComplementary(fm.isComplementary())
+				.setReplacement(fm.isReplacement())
+				.setWithoutActivity(fm.isWithoutActivity())
+				.setNumber(fm.getNumber())
+				.setReplacedNumber(fm.getReplacedNumber())
+				.setComments(fm.getComments())
+				.setDocument(fm.getDocument())
+				.setSurname(fm.getSurname())
+				.setName(fm.getName())
+				.setStreetInitial(fm.getStreetInitial())
+				.setStreetName(fm.getStreetName())
+				.setStreetNumber(fm.getStreetNumber())
+				.setStreetStair(fm.getStreetStair())
+				.setStreetFloor(fm.getStreetFloor())
+				.setStreetDoor(fm.getStreetDoor())
+				.setPhone(fm.getPhone())
+				.setTown(fm.getTown())
+				.setProvince(fm.getProvince())
+				.setZip(fm.getZip())
+				.setAdmonAeat(fm.getAdmonAeat())
+				.setContactPerson(fm.getContactPerson())
+				.setContactPhone(fm.getContactPhone())
+				.setContactCellular(fm.getContactCellular())
+				.setContactEmail(fm.getContactEmail())
+			;
+			for (Mod131Key key : Mod131Key.values()) {
+				key.fill(fm, mod131);
+			}
+			return mod131;
+		}
+		return null;
+	}
+	
 	public static FiscalModel getModel(AONContext ctx,int id) {
 		ctx.checkRead();
-		Record record = ctx.getDslContext().select(
-				 FS_MODEL.ID
-				,FS_MODEL.DOMAIN
-				,FS_MODEL.YEAR
-				,FS_MODEL.PERIOD
-				,FS_MODEL.ADMINISTRATION
-				,FS_MODEL.STATUS
-				,FS_MODEL.SECURITY_LEVEL
-				,FS_MODEL.COMPLEMENTARY
-				,FS_MODEL.REPLACEMENT
-				,FS_MODEL.WITHOUTACTIVITY
-				,FS_MODEL.MODEL
-				,FS_MODEL.NUMBER
-				,FS_MODEL.REPLACED_NUMBER
-				,FS_MODEL.COMMENTS
-				,FS_MODEL.FINANCE
-				,FS_MODEL.DOCUMENT
-				,FS_MODEL.SURNAME
-				,FS_MODEL.NAME
-				,FS_MODEL.STREET_INITIAL
-				,FS_MODEL.STREET_NAME
-				,FS_MODEL.STREET_NUMBER
-				,FS_MODEL.STREET_STAIR
-				,FS_MODEL.STREET_FLOOR
-				,FS_MODEL.STREET_DOOR
-				,FS_MODEL.PHONE
-				,FS_MODEL.TOWN
-				,FS_MODEL.PROVINCE
-				,FS_MODEL.ZIP
-				,FS_MODEL.ADMON_AEAT
-				,FS_MODEL.CONTACT_PERSON
-				,FS_MODEL.CONTACT_PHONE
-				,FS_MODEL.CONTACT_CELLULAR
-				,FS_MODEL.CONTACT_EMAIL
-			)
-			.from(FS_MODEL)
+		FsModelRecord record = ctx.getDslContext().selectFrom(FS_MODEL)
 			.where(FS_MODEL.ID.eq(id))
 			.fetchOne();
 		if (record != null) {
@@ -71,8 +86,25 @@ public class FiscalModelDAO {
 	}
 
 	private static void fillModelDetails(AONContext ctx,FiscalModel fm) {
-		
+		ctx.getDslContext().selectFrom( FS_MODEL_DETAIL)
+			.where(FS_MODEL_DETAIL.FS_MODEL.eq(fm.getId()))
+			.fetch()
+			.forEach( record -> fm.put( populateDetail(record) ) );
 	}
+
+	private static FiscalModelDetail populateDetail(FsModelDetailRecord record) {
+		return new FiscalModelDetail()
+			.setId(record.getId())
+			.setType(record.getType())
+			.setDescription(record.getDescription())
+			.setAccumulatedAmount(record.getAcuAmount())
+			.setDeclaredAmount(record.getDecAmount())
+			.setResultAmount(record.getResAmount())
+			.setAdjustAmount(record.getAdjAmount())
+			.setAmount(record.getAmount())
+			;
+	}
+
 
 	public static LinkedList<FiscalModel> getModels(AONContext ctx,int domain) {
 		ctx.checkRead();

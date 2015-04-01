@@ -145,6 +145,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Modelo 131")
 	String mod131();
+	
+	@DefaultMessage("IRPF. Empresarios y profesionales en Estimaci\u00F3n Objetiva. Pago fraccionado.")
+	String mod131Long();
 
 	@DefaultMessage("Modelo 140")
 	String mod140();
@@ -1757,5 +1760,20 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Click para cambiar el ep\u00EDgrafe.")
 	String pushToChange();
+	
+	@DefaultMessage("I. Actividades econ\u00F3micas en estimaci\u00F3n objetiva distintas de las agr\u00EDcolas, ganaderas y forestales.")
+	String mod131Activities();
+	
+	@DefaultMessage("Actividad (ep\u00EDgrafe IAE)")
+	String mod131Epigraph();
+	
+	@DefaultMessage("Rendimiento neto de la actividad a efectos del pago fraccionado")
+	String mod131NetYield();
+	
+	@DefaultMessage("Porcentaje aplicable")
+	String mod131Percent();
+	
+	@DefaultMessage("Resultado de aplicar el porcentaje correspondiente a cada actividad.")
+	String mod131Result();
 	
 }

@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
+import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -41,16 +42,16 @@ public interface FiscalService extends RemoteService {
 	// ---------------------------------------------------------- FISCAL ACTIVITIES
 	FiscalActivity calculate(String domainName, FiscalActivity fa);
 	ArrayList<Epigraph> getModuleEpigraphs(int year);
-	ArrayList<FiscalActivity> getFiscalActivities(String domainName, int domain) throws AonSQLException;
-	FiscalActivity getFiscalActivity(String domainName, int domain, int id) throws AonSQLException;
+	ArrayList<FiscalActivity> getFiscalActivities(String domainName, int domain) throws AonCoreException;
+	FiscalActivity getFiscalActivity(String domainName, int domain, int id) throws AonCoreException;
 	FiscalActivity getFiscalActivityFor(String domainName,Epigraph epigraph, FiscalActivity fa);
 	FiscalActivity save(String domainName, FiscalActivity fa) throws AonCoreException;
 	void delete(String domainName, FiscalActivity fa) throws AonCoreException;
 	
 	// ---------------------------------------------------------- FISCAL MODEL
 	FiscalModel calculate(String domainName, FiscalModel fm);
-	LinkedList<FiscalModel> getFiscalModels(String domainName, int domain) throws AonSQLException;
-	FiscalModel getFiscalModel(String domainName, int domain, int id) throws AonSQLException;
+	LinkedList<FiscalModel> getFiscalModels(String domainName, int domain) throws AonCoreException;
+	FiscalModel getFiscalModel(String domainName, int domain, int id) throws AonCoreException;
 	FiscalModel save(String domainName, FiscalModel fm) throws AonCoreException;
 	void delete(String domainName, FiscalModel fm) throws AonCoreException;
 
@@ -93,6 +94,8 @@ public interface FiscalService extends RemoteService {
 	ArrayList<Mod390Detail> getMod390Details(String domainName, Integer domain,Mod390 mod390) throws AonCoreException;
 	Mod390 initializeMod390(String domainName, Integer domain, Integer year);
 
+	// ---------------------------------------------------------------MODELO 131
+	Mod131 getMod131(String domainName, int domain, int id) throws AonCoreException;
 
 
 }

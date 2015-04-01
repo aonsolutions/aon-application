@@ -29,6 +29,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
@@ -77,7 +78,7 @@ public class FiscalTree extends MainEntryPoint {
 	SuggestBox enterpriseSuggest;
 	
 	@UiField
-	ScrollPanel content;
+	SimpleLayoutPanel content;
 	
 	public static native String getCurrentDomainName()
 	/*-{

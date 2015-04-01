@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
+import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -92,5 +93,9 @@ public interface FiscalServiceAsync {
 	void deleteMod390(String domainName, Integer domain, Mod390 mod390, AsyncCallback<Void> callback);
 	void getMod390Details(String domainName, Integer domain, Mod390 mod390,AsyncCallback<ArrayList<Mod390Detail>> callback);
 	void initializeMod390(String domainName, Integer domain, Integer year, AsyncCallback<Mod390> callback);
+
+	// ---------------------------------------------------------------MODELO 131
+	void getMod131(String domainName, int domain, int id,
+			AsyncCallback<Mod131> callback);
 
 }

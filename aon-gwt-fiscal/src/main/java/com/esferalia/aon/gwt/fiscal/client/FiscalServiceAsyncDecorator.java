@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
+import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -379,6 +380,15 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		AON.start();
 		fiscalServiceAsync.initializeMod390(domainName, domain, year, 
 				new AsyncCallbackWrapper<Mod390>(callback));
+	}
+	// ---------------------------------------------------------------MODELO 131
+
+	@Override
+	public void getMod131(String domainName, int domain, int id,
+			AsyncCallback<Mod131> callback) {
+		AON.start();
+		fiscalServiceAsync.getMod131(domainName, domain,id, 
+						new AsyncCallbackWrapper<Mod131>(callback));
 	}
 
 }
