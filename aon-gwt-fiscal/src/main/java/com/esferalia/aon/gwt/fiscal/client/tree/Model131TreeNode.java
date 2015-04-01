@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.tree;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.google.gwt.user.client.ui.HasTreeItems;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -25,12 +26,12 @@ public class Model131TreeNode extends TreeNode<Mod131> {
 	@Override
 	public Model131TreeNode render(HasTreeItems parent, FiscalTree fiscalPanel, Mod131 mod131) {
     	InlineLabel label = new InlineLabel();
-    	label.setText(FiscalTree.MSG.fiscalModelType( mod131.getModel()) 
+    	label.setText(AON.MSG.fiscalModelType( mod131.getModel()) 
     			+ " - " 
-    			+ FiscalTree.MSG.fiscalPeriod(mod131.getPeriod())
+    			+ AON.MSG.fiscalPeriod(mod131.getPeriod())
     			+ (mod131.isReplacement()? " - Sust.":"") );
-    	label.addStyleName(FiscalTree.AON_RESOURCES.css().aonTreeIconNode() );
-   		label.addStyleName(FiscalTree.AON_RESOURCES.css().aonIconModule() );
+    	label.addStyleName(AON.AON_CSS.aonTreeIconNode() );
+   		label.addStyleName(AON.AON_CSS.aonIconModule() );
     	this.setWidget(label);
     	this.setUserObject(mod131);
     	parent.addItem(this);

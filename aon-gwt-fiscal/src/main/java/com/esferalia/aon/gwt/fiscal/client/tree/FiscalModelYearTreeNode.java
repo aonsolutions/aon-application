@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.tree;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -22,19 +23,19 @@ public class FiscalModelYearTreeNode extends TreeNode<Integer> {
 	public void select(final FiscalTree fiscalTree) {
 		if (widget ==null) {
 			widget = new VerticalPanel( );
-			widget.setStyleName(FiscalTree.AON_RESOURCES.css().aonFiscalTreeList());
+			widget.setStyleName(AON.AON_CSS.aonFiscalTreeList());
 			Label title = new Label( getText());
-			title.setStyleName(FiscalTree.AON_RESOURCES.css().aonFiscalTreeTitle());
+			title.setStyleName(AON.AON_CSS.aonFiscalTreeTitle());
 			widget.add(title);
 			for (int i = 0; i < getChildCount() ; i++) {
 				final TreeItem item = getChild(i); 
 				InlineLabel label =  new InlineLabel(getChild(i).getText());
-				label.setStyleName(FiscalTree.AON_RESOURCES.css().aonFiscalTreeItem());
+				label.setStyleName(AON.AON_CSS.aonFiscalTreeItem());
 		    	String className = FiscalModelGroupTreeNode.STYLE_MAP.get(item.getUserObject());
 		    	if (AonStringUtils.isNotBlank(className)) {
 		    		label.addStyleName(className);
 		    	} else {
-		    		label.addStyleName(FiscalTree.AON_RESOURCES.css().aonIconPointOrange() );
+		    		label.addStyleName(AON.AON_CSS.aonIconPointOrange() );
 		    	}
 				label.addClickHandler( new ClickHandler() {
 					
@@ -56,8 +57,8 @@ public class FiscalModelYearTreeNode extends TreeNode<Integer> {
 			final FiscalTree fiscalTree, final Integer year) {
 		InlineLabel label = new InlineLabel();
 		label.setText(year.toString());
-		label.addStyleName(FiscalTree.AON_RESOURCES.css().aonIconPointGreen());
-		label.addStyleName(FiscalTree.AON_RESOURCES.css().aonTreeIconNode());
+		label.addStyleName(AON.AON_CSS.aonIconPointGreen());
+		label.addStyleName(AON.AON_CSS.aonTreeIconNode());
 		setWidget(label);
 		setUserObject(year);
 		parent.addItem(this);

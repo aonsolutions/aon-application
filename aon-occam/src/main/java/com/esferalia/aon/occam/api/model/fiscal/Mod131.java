@@ -192,12 +192,19 @@ public class Mod131 extends FiscalModel implements Serializable {
 		return this;
 	}
 	public Mod131Activity getActivity(int i) {
-		Mod131Activity act = getActivities().get(i);
-		if (act == null) {
+		Mod131Activity act = null;
+		if (!hasActivity(i)) {
 			act = new Mod131Activity();
-			getActivities().set(0, act);
-		}
+			getActivities().add(act);
+		} 
+		act = getActivities().get(i); 	
 		return act;
+	}
+	public boolean hasActivity(int i) {
+		return (getActivities() != null
+			&& !getActivities().isEmpty()
+			&& getActivities().size() > i
+			&& getActivities().get(i) != null);
 	}
 	
 }

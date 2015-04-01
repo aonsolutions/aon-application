@@ -1639,7 +1639,7 @@ public interface CommonMessages extends Messages {
 	String expenses();
 	
 	@DefaultMessage("Renta atribuible / Rend. Neto atribuible")
-	String netYield();
+	String netYieldExt();
 	
 	@DefaultMessage("Porc. Reducci\u00F3n")
 	String reductionPercent();
@@ -1648,7 +1648,7 @@ public interface CommonMessages extends Messages {
 	String deductionRightRent();
 	
 	@DefaultMessage("Ganancias / P\u00E9rdidas")
-	String result();
+	String profitLoss();
 	
 	@DefaultMessage("Base de la deducci\u00F3n / Importe")
 	String deductionBase();
@@ -1764,16 +1764,18 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("I. Actividades econ\u00F3micas en estimaci\u00F3n objetiva distintas de las agr\u00EDcolas, ganaderas y forestales.")
 	String mod131Activities();
 	
-	@DefaultMessage("Actividad (ep\u00EDgrafe IAE)")
-	String mod131Epigraph();
+	@DefaultMessage("Rendimiento neto")
+	String netYield();
 	
-	@DefaultMessage("Rendimiento neto de la actividad a efectos del pago fraccionado")
-	String mod131NetYield();
+	@DefaultMessage("Porc. aplicable")
+	String appliedPercent();
 	
-	@DefaultMessage("Porcentaje aplicable")
-	String mod131Percent();
+	@DefaultMessage("Resultado")
+	String result();
 	
-	@DefaultMessage("Resultado de aplicar el porcentaje correspondiente a cada actividad.")
-	String mod131Result();
+	@DefaultMessage("Suma de rendimientos netos")
+	String netYieldSum();
 	
+	@DefaultMessage("Pago fraccionado previo del trimestre: Suma de resultados")
+	String mod131ResultSum();
 }

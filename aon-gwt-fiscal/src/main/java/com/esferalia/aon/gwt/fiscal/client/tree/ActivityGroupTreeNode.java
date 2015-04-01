@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.tree;
 
 import java.util.ArrayList;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -26,16 +27,16 @@ public class ActivityGroupTreeNode extends TreeNode<Enterprise> {
 	public void select(final FiscalTree fiscalPanel) {
 		if (widget ==null) {
 			widget = new VerticalPanel( );
-			widget.setStyleName(FiscalTree.AON_RESOURCES.css().aonFiscalTreeList());
-			Label title = new Label(FiscalTree.MSG.moduleActivities());
-			title.setStyleName(FiscalTree.AON_RESOURCES.css().aonFiscalTreeTitle());
+			widget.setStyleName(AON.AON_CSS.aonFiscalTreeList());
+			Label title = new Label(AON.MSG.moduleActivities());
+			title.setStyleName(AON.AON_CSS.aonFiscalTreeTitle());
 			widget.add(title);
 			
 			for (int i = 0; i < getChildCount() ; i++) {
 				final TreeItem item = getChild(i); 
 				InlineLabel label =  new InlineLabel(getChild(i).getText());
-				label.setStyleName(FiscalTree.AON_RESOURCES.css().aonFiscalTreeItem());
-				label.addStyleName(FiscalTree.AON_RESOURCES.css().aonIconModule());
+				label.setStyleName(AON.AON_CSS.aonFiscalTreeItem());
+				label.addStyleName(AON.AON_CSS.aonIconModule());
 				label.addClickHandler( new ClickHandler() {
 					
 					@Override
@@ -53,9 +54,9 @@ public class ActivityGroupTreeNode extends TreeNode<Enterprise> {
 	@Override
 	public ActivityGroupTreeNode render(HasTreeItems parent, final FiscalTree fiscalPanel,Enterprise enterprise) {
     	InlineLabel label = new InlineLabel();
-    	label.setText(FiscalTree.MSG.moduleActivities());
-    	label.addStyleName(FiscalTree.AON_RESOURCES.css().aonIconModules());
-    	label.addStyleName(FiscalTree.AON_RESOURCES.css().aonTreeIconNode() );
+    	label.setText(AON.MSG.moduleActivities());
+    	label.addStyleName(AON.AON_CSS.aonIconModules());
+    	label.addStyleName(AON.AON_CSS.aonTreeIconNode() );
     	setWidget(label);
     	setUserObject(enterprise);
     	parent.addItem(this);

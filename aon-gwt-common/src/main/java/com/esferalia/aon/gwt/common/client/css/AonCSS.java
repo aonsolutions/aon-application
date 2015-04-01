@@ -613,6 +613,23 @@ public interface AonCSS extends  CssResource {
 
 	@ClassName("aon-fiscal-model-table-header-model")
 	String aonFiscalModelTableHeaderModel();
+	
+	@ClassName("aon-fiscal-model-data-table")
+	String aonFiscalModelDataTable();
 
+	@ClassName("aon-fiscal-model-data-table-title")
+	String aonFiscalModelDataTableTitle();
+	
+	@ClassName("aon-fiscal-model-data-table-header")
+	String  aonFiscalModelDataTableHeader();
+
+	@ClassName("aon-fiscal-model-data-table-desc")
+	String aonFiscalModelDataTableDesc();
+
+	@ClassName("aon-fiscal-model-data-table-box")
+	String aonFiscalModelDataTableBox();
+
+	@ClassName("aon-fiscal-model-data-table-data")
+	String aonFiscalModelDataTableData();
 
 }

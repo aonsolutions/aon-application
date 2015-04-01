@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.tree;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
@@ -38,8 +39,8 @@ public class ActivityTreeNode extends TreeNode<FiscalActivity> {
     	InlineLabel label = new InlineLabel();
     	label.setText((AonStringUtils.isBlank(fa.getEpigraph())?AonStringUtils.EMPTY:fa.getEpigraph() + " - ") 
     			+ AonStringUtils.abbreviate(fa.getDescription(), 40));
-    	label.addStyleName(FiscalTree.AON_RESOURCES.css().aonIconModule());
-    	label.addStyleName(FiscalTree.AON_RESOURCES.css().aonTreeIconNode() );
+    	label.addStyleName(AON.AON_CSS.aonIconModule());
+    	label.addStyleName(AON.AON_CSS.aonTreeIconNode() );
     	this.setWidget(label);
     	this.setUserObject(fa);
     	parent.addItem(this);
@@ -51,11 +52,11 @@ public class ActivityTreeNode extends TreeNode<FiscalActivity> {
         final PopupPanel popupPanel = new PopupPanel();
         popupPanel.hide();
         popupPanel.setAutoHideEnabled(true);
-        popupPanel.setStyleName(FiscalTree.AON_RESOURCES.css().aonContextMenuPopup());
+        popupPanel.setStyleName(AON.AON_CSS.aonContextMenuPopup());
 		Command deleteActivityCommand = new Command() {
 			@Override
 			public void execute() {
-				if (Window.confirm( FiscalTree.MSG.deleteAction() )) {
+				if (Window.confirm( AON.MSG.deleteAction() )) {
 					if (getTreeObject().getId() != null) {
 						FiscalTree.FISCAL_SERVICE.delete(FiscalTree.getCurrentDomainName(), getTreeObject()
 								,new AsyncCallback<Void>() {
@@ -81,9 +82,9 @@ public class ActivityTreeNode extends TreeNode<FiscalActivity> {
 		};
     	MenuBar popup = new MenuBar(true);
     	popup.setAnimationEnabled(true);
-    	popup.setStyleName(FiscalTree.AON_RESOURCES.css().aonContextMenu());
-        MenuItem deleteItem = new MenuItem(FiscalTree.MSG.deleteAction(), true, deleteActivityCommand);
-        deleteItem.addStyleName(FiscalTree.AON_RESOURCES.css().aonIconDelete());
+    	popup.setStyleName(AON.AON_CSS.aonContextMenu());
+        MenuItem deleteItem = new MenuItem(AON.MSG.deleteAction(), true, deleteActivityCommand);
+        deleteItem.addStyleName(AON.AON_CSS.aonIconDelete());
         popup.addItem(deleteItem);
         popupPanel.setWidget(popup);
         label.sinkEvents(Event.ONCONTEXTMENU);

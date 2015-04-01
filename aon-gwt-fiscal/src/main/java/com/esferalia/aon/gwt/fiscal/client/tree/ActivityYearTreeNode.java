@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.tree;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -30,15 +31,15 @@ public class ActivityYearTreeNode extends TreeNode<Integer> {
 	public void select(final FiscalTree fiscalTree) {
 		if (widget ==null) {
 			widget = new VerticalPanel( );
-			widget.setStyleName(FiscalTree.AON_RESOURCES.css().aonFiscalTreeList());
+			widget.setStyleName(AON.AON_CSS.aonFiscalTreeList());
 			Label title = new Label( getText());
-			title.setStyleName(FiscalTree.AON_RESOURCES.css().aonFiscalTreeTitle());
+			title.setStyleName(AON.AON_CSS.aonFiscalTreeTitle());
 			widget.add(title);
 			for (int i = 0; i < getChildCount() ; i++) {
 				final TreeItem item = getChild(i); 
 				InlineLabel label =  new InlineLabel(getChild(i).getText());
-				label.setStyleName(FiscalTree.AON_RESOURCES.css().aonFiscalTreeItem());
-				label.addStyleName(FiscalTree.AON_RESOURCES.css().aonIconModule());
+				label.setStyleName(AON.AON_CSS.aonFiscalTreeItem());
+				label.addStyleName(AON.AON_CSS.aonIconModule());
 				label.addClickHandler( new ClickHandler() {
 					
 					@Override
@@ -59,8 +60,8 @@ public class ActivityYearTreeNode extends TreeNode<Integer> {
 			final FiscalTree fiscalTree, final Integer year) {
 		InlineLabel label = new InlineLabel();
 		label.setText(year.toString());
-		label.addStyleName(FiscalTree.AON_RESOURCES.css().aonIconPointGreen());
-		label.addStyleName(FiscalTree.AON_RESOURCES.css().aonTreeIconNode());
+		label.addStyleName(AON.AON_CSS.aonIconPointGreen());
+		label.addStyleName(AON.AON_CSS.aonTreeIconNode());
 		setWidget(label);
 		setUserObject(year);
 		parent.addItem(this);
@@ -74,7 +75,7 @@ public class ActivityYearTreeNode extends TreeNode<Integer> {
 		final PopupPanel popupPanel = new PopupPanel();
 		popupPanel.hide();
 		popupPanel.setAutoHideEnabled(true);
-		popupPanel.setStyleName(FiscalTree.AON_RESOURCES.css()
+		popupPanel.setStyleName(AON.AON_CSS
 				.aonContextMenuPopup());
 		Command newActivityCommand = new Command() {
 			@Override
@@ -93,10 +94,10 @@ public class ActivityYearTreeNode extends TreeNode<Integer> {
 		};
 		MenuBar popup = new MenuBar(true);
 		popup.setAnimationEnabled(true);
-		popup.setStyleName(FiscalTree.AON_RESOURCES.css().aonContextMenu());
-		MenuItem addItem = new MenuItem(FiscalTree.MSG.newAction(), true,
+		popup.setStyleName(AON.AON_CSS.aonContextMenu());
+		MenuItem addItem = new MenuItem(AON.MSG.newAction(), true,
 				newActivityCommand);
-		addItem.addStyleName(FiscalTree.AON_RESOURCES.css().aonIconReset());
+		addItem.addStyleName(AON.AON_CSS.aonIconReset());
 		popup.addItem(addItem);
 		popupPanel.setWidget(popup);
 		label.sinkEvents(Event.ONCONTEXTMENU);

@@ -60,55 +60,12 @@
 								<g:TextBox ui:field="surname" styleName="{aonResources.css.aonInputText}"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="period" styleName="{aonResources.css.aonInputText}"/>
-								<g:TextBox ui:field="year" styleName="{aonResources.css.aonInputText}"/>
+								<aon:PeriodListBox ui:field="period" styleName="{aonResources.css.aonInputText}"/>
+								<g:IntegerBox ui:field="year" styleName="{aonResources.css.aonInputText}"/>
 							</td>
 						</tr>
 					</table>
-					<table class="{aonResources.css.aonWidthAll}">
-						<tr>
-							<td colspan="4">
-								<g:Label text="{msg.mod131Activities}"/>
-							</td>
-						</tr>
-						<tr>
-							<td class="{aonResources.css.aonWidthAuto}"><g:Label text="{msg.mod131Epigraph}"/></td>
-							<td class="{aonResources.css.aonWidth150}"><g:Label text="{msg.mod131NetYield}"/></td>
-							<td class="{aonResources.css.aonWidth70}"><g:Label text="{msg.mod131Percent}"/></td>
-							<td class="{aonResources.css.aonWidth150}"><g:Label text="{msg.mod131Result}"/></td>
-						</tr>
-						<tr>
-							<td><g:TextBox ui:field="ep1" styleName="{aonResources.css.aonInputText}"/></td>
-							<td><g:TextBox ui:field="ny1" styleName="{aonResources.css.aonInputText}"/></td>
-							<td><g:TextBox ui:field="pr1" styleName="{aonResources.css.aonInputText}"/></td>
-							<td><g:TextBox ui:field="rs1" styleName="{aonResources.css.aonInputText}"/></td>
-						</tr>
-						<tr>
-							<td><g:TextBox ui:field="ep2" styleName="{aonResources.css.aonInputText}"/></td>
-							<td><g:TextBox ui:field="ny2" styleName="{aonResources.css.aonInputText}"/></td>
-							<td><g:TextBox ui:field="pr2" styleName="{aonResources.css.aonInputText}"/></td>
-							<td><g:TextBox ui:field="rs2" styleName="{aonResources.css.aonInputText}"/></td>
-						</tr>
-						<tr>
-							<td><g:TextBox ui:field="ep3" styleName="{aonResources.css.aonInputText}"/></td>
-							<td><g:TextBox ui:field="ny3" styleName="{aonResources.css.aonInputText}"/></td>
-							<td><g:TextBox ui:field="pr3" styleName="{aonResources.css.aonInputText}"/></td>
-							<td><g:TextBox ui:field="rs3" styleName="{aonResources.css.aonInputText}"/></td>
-						</tr>
-						<tr>
-							<td><g:TextBox ui:field="ep4" styleName="{aonResources.css.aonInputText}"/></td>
-							<td><g:TextBox ui:field="ny4" styleName="{aonResources.css.aonInputText}"/></td>
-							<td><g:TextBox ui:field="pr4" styleName="{aonResources.css.aonInputText}"/></td>
-							<td><g:TextBox ui:field="rs4" styleName="{aonResources.css.aonInputText}"/></td>
-						</tr>
-						<tr>
-							<td><g:TextBox ui:field="ep5" styleName="{aonResources.css.aonInputText}"/></td>
-							<td><g:TextBox ui:field="ny5" styleName="{aonResources.css.aonInputText}"/></td>
-							<td><g:TextBox ui:field="pr5" styleName="{aonResources.css.aonInputText}"/></td>
-							<td><g:TextBox ui:field="rs5" styleName="{aonResources.css.aonInputText}"/></td>
-						</tr>
-					</table>
-					
+					<g:SimplePanel ui:field="activitiesTablePanel"/>
 				</g:HTMLPanel>
 			</g:ScrollPanel>
 		</g:center>

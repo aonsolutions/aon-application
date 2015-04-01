@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.tree;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
 import com.esferalia.aon.gwt.common.client.widget.FullDocument;
 import com.esferalia.aon.gwt.common.client.widget.MunicipalityListBox;
@@ -91,14 +92,14 @@ public class EnterpriseForm extends ResizeComposite {
 						if (result != null) {
 							populate(result);
 						} else {
-							DialogMessages.alertErrorWidget(FiscalTree.MSG
+							DialogMessages.alertErrorWidget(AON.MSG
 									.unableToShowData("No se ha encontrado la empresa"));
 						}
 					}
 
 					@Override
 					public void onFailure(Throwable caught) {
-						DialogMessages.alertErrorWidget(FiscalTree.MSG
+						DialogMessages.alertErrorWidget(AON.MSG
 								.unableToShowData(caught.getMessage()));
 					}
 		});

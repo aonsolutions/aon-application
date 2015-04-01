@@ -4,6 +4,8 @@ import com.esferalia.aon.gwt.common.client.css.AonCSS;
 import com.esferalia.aon.gwt.common.client.css.AonCalendarCSS;
 import com.esferalia.aon.gwt.common.client.css.AonCalendarResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
+import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
@@ -21,8 +23,12 @@ public class AON {
 			"_viewRoot:status.stop", "_viewRoot:status.start", "status_error" };
 
 	// ------------------------------------------------------------------------
-	public static AonCSS AON_CSS = GWT.<AonResources> create(
-			AonResources.class).css();
+	public static final CommonMessages MSG = GWT.create(CommonMessages.class);
+	public static final AonResources AON_RESOURCES = GWT.create(AonResources.class);
+	public static final AonCSS AON_CSS = GWT.<AonResources> create(AonResources.class).css();
+	public static final GWTResources GWT_RESOURCES = GWT.create(GWTResources.class);
+
+	public static final NumberFormat FMT = NumberFormat.getFormat(MSG.decimalPattern(),MSG.currencyCode());
 	
 	public static AonCalendarCSS Calendar_CSS = GWT.<AonCalendarResources> create(
 			AonCalendarResources.class).calendar();

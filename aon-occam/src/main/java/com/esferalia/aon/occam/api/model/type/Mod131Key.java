@@ -66,7 +66,7 @@ public enum Mod131Key implements Serializable {
 		}
 		@Override
 		public void fill(FiscalModel fm, Mod131 mod131) {
-			mod131.getActivity(1).setEpigraph(fm.getMap().get(getValue()).getDescription());
+//			mod131.getActivity(1).setEpigraph(fm.getMap().get(getValue()).getDescription());
 		}
 	},
 	AC22("131-AC22") {

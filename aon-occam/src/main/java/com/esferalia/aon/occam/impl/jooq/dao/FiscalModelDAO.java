@@ -65,7 +65,9 @@ public class FiscalModelDAO {
 				.setContactEmail(fm.getContactEmail())
 			;
 			for (Mod131Key key : Mod131Key.values()) {
-				key.fill(fm, mod131);
+				if (fm.getMap().containsKey(key.getValue())) {
+					key.fill(fm, mod131);
+				}
 			}
 			return mod131;
 		}

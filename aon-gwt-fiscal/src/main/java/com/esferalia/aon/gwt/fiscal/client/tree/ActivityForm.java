@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.tree;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.fiscal.client.tree.EpigraphSelectionPanel.SelectionCallBack;
@@ -187,7 +188,7 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 		
 		Widget ui = panelBinder.createAndBindUi(this);
 		initWidget(ui);
-		tab.addStyleName(FiscalTree.AON_RESOURCES.css().aonWidthAll());
+		tab.addStyleName(AON.AON_CSS.aonWidthAll());
 	}
 	
 	@Override
@@ -223,9 +224,9 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 		epigraph.setText(fiscalActivity.getEpigraph());
 		if (AonStringUtils.isNotBlank(fiscalActivity.getEpigraph())) {
 			description.setText(fiscalActivity.getDescription());
-			maxPerson.setText(FiscalTree.FMT.format(fiscalActivity.getMaxPerson()));
-			maxImport.setText(FiscalTree.FMT.format(fiscalActivity.getMaxImport()));
-			vatPercent.setText(FiscalTree.FMT.format(fiscalActivity.getVatPercent()));
+			maxPerson.setText(AON.FMT.format(fiscalActivity.getMaxPerson()));
+			maxImport.setText(AON.FMT.format(fiscalActivity.getMaxImport()));
+			vatPercent.setText(AON.FMT.format(fiscalActivity.getVatPercent()));
 		} else {
 			description.setText(null);
 			maxPerson.setText(null);
@@ -266,18 +267,18 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 	private FlexTable getInfoTable(FiscalActivity fiscalActivity,Map<Integer,FiscalActivityInfo> map) {
 		if (map != null && map.size() > 0) {
 			FlexTable table = new FlexTable();
-			table.setStyleName(FiscalTree.AON_RESOURCES.css().aonPanelGrid());
-			table.addStyleName(FiscalTree.AON_RESOURCES.css().aonWidthAll());
-			table.addStyleName(FiscalTree.AON_RESOURCES.css().aonMarginTop());
+			table.setStyleName(AON.AON_CSS.aonPanelGrid());
+			table.addStyleName(AON.AON_CSS.aonWidthAll());
+			table.addStyleName(AON.AON_CSS.aonMarginTop());
 			table.setCellSpacing(0);
 			int row = 0;
 			for (FiscalActivityInfo info : map.values()) {
 				Label desc = new Label(info.getInfoKey().getDescription() );
 				table.setWidget(row, 0, desc);
-				table.getFlexCellFormatter().setStyleName(row, 0, FiscalTree.AON_RESOURCES.css().aonPanelGridOdd());
-				table.getFlexCellFormatter().addStyleName(row, 0, FiscalTree.AON_RESOURCES.css().aonWidthAuto());
-				table.getFlexCellFormatter().addStyleName(row, 1, FiscalTree.AON_RESOURCES.css().aonTextRight());
-				table.getFlexCellFormatter().addStyleName(row, 1, FiscalTree.AON_RESOURCES.css().aonWidth150());
+				table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+				table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonWidthAuto());
+				table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextRight());
+				table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonWidth150());
 				if (info.getInfoKey().isChoice()) {
 					ListBox listBox = new ListBox();
 					listBox.setEnabled(isEnabled(fiscalActivity));
@@ -314,7 +315,7 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 						}
 					});
 					text.setValue(info.getValue());
-					text.setStyleName(FiscalTree.AON_RESOURCES.css().aonInputText());
+					text.setStyleName(AON.AON_CSS.aonInputText());
 					text.setEnabled(isEnabled(fiscalActivity));
 					table.setWidget(row, 1, text);
 					text.addChangeHandler(new ChangeHandler() {
@@ -330,7 +331,7 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 							.setInfoKeyType(info.getInfoType().ordinal())
 							.setWidget(text));
 				}
-				table.getFlexCellFormatter().setStyleName(row,1, FiscalTree.AON_RESOURCES.css().aonPanelGridEven());
+				table.getFlexCellFormatter().setStyleName(row,1, AON.AON_CSS.aonPanelGridEven());
 				++row;
 			}
 			return table;
@@ -348,42 +349,42 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 	private FlexTable getModuleTable(FiscalActivity fiscalActivity,Map<Integer,FiscalActivityInfo> map) {
 		if (map != null && map.size() > 0) {
 			FlexTable table = new FlexTable();
-			table.setStyleName(FiscalTree.AON_RESOURCES.css().aonPanelGrid());
-			table.addStyleName(FiscalTree.AON_RESOURCES.css().aonWidthAll());
-			table.addStyleName(FiscalTree.AON_RESOURCES.css().aonMarginTop());
+			table.setStyleName(AON.AON_CSS.aonPanelGrid());
+			table.addStyleName(AON.AON_CSS.aonWidthAll());
+			table.addStyleName(AON.AON_CSS.aonMarginTop());
 			table.setCellSpacing(0);
 			int row = 0;
 			for (final FiscalActivityInfo info : map.values()) {
 				Label desc = new Label(info.getInfoKey().getDescription() );
-				table.addStyleName(FiscalTree.AON_RESOURCES.css().aonWidthAll());
+				table.addStyleName(AON.AON_CSS.aonWidthAll());
 				table.setWidget(row, 0, desc);
-				table.getFlexCellFormatter().setStyleName(row, 0, FiscalTree.AON_RESOURCES.css().aonPanelGridOdd());
-				table.getFlexCellFormatter().addStyleName(row, 0, FiscalTree.AON_RESOURCES.css().aonWidthAuto());
+				table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+				table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonWidthAuto());
 				
-				table.getFlexCellFormatter().setStyleName(row, 1, FiscalTree.AON_RESOURCES.css().aonPanelGridEven());
-				table.getFlexCellFormatter().addStyleName(row, 1, FiscalTree.AON_RESOURCES.css().aonTextRight());
-				table.getFlexCellFormatter().addStyleName(row, 1, FiscalTree.AON_RESOURCES.css().aonWidth130());
+				table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+				table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextRight());
+				table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonWidth130());
 				
-				table.getFlexCellFormatter().setStyleName(row, 2, FiscalTree.AON_RESOURCES.css().aonPanelGridEven());
-				table.getFlexCellFormatter().addStyleName(row, 2, FiscalTree.AON_RESOURCES.css().aonTextCenter());
-				table.getFlexCellFormatter().addStyleName(row, 2, FiscalTree.AON_RESOURCES.css().aonWidth20());
+				table.getFlexCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonPanelGridEven());
+				table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonTextCenter());
+				table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonWidth20());
 				
-				table.getFlexCellFormatter().setStyleName(row, 3, FiscalTree.AON_RESOURCES.css().aonPanelGridEven());
-				table.getFlexCellFormatter().addStyleName(row, 3, FiscalTree.AON_RESOURCES.css().aonWidth130());
+				table.getFlexCellFormatter().setStyleName(row, 3, AON.AON_CSS.aonPanelGridEven());
+				table.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonWidth130());
 				
-				table.getFlexCellFormatter().setStyleName(row, 4, FiscalTree.AON_RESOURCES.css().aonPanelGridEven());
-				table.getFlexCellFormatter().addStyleName(row, 4, FiscalTree.AON_RESOURCES.css().aonTextRight());
-				table.getFlexCellFormatter().addStyleName(row, 4, FiscalTree.AON_RESOURCES.css().aonWidth130());
+				table.getFlexCellFormatter().setStyleName(row, 4, AON.AON_CSS.aonPanelGridEven());
+				table.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonTextRight());
+				table.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonWidth130());
 				
-				table.getFlexCellFormatter().setStyleName(row, 5, FiscalTree.AON_RESOURCES.css().aonPanelGridEven());
-				table.getFlexCellFormatter().addStyleName(row, 5, FiscalTree.AON_RESOURCES.css().aonTextRight());
-				table.getFlexCellFormatter().addStyleName(row, 5, FiscalTree.AON_RESOURCES.css().aonBold());
-				table.getFlexCellFormatter().addStyleName(row, 5, FiscalTree.AON_RESOURCES.css().aonWidth150());
+				table.getFlexCellFormatter().setStyleName(row, 5, AON.AON_CSS.aonPanelGridEven());
+				table.getFlexCellFormatter().addStyleName(row, 5, AON.AON_CSS.aonTextRight());
+				table.getFlexCellFormatter().addStyleName(row, 5, AON.AON_CSS.aonBold());
+				table.getFlexCellFormatter().addStyleName(row, 5, AON.AON_CSS.aonWidth150());
 
 				final TextBox text = new TextBox();
 				text.setWidth("100px");
 				text.setValue(info.getValue());
-				text.setStyleName(FiscalTree.AON_RESOURCES.css().aonInputText());
+				text.setStyleName(AON.AON_CSS.aonInputText());
 				text.setEnabled(!info.getInfoKey().hasDetails() && isEnabled(fiscalActivity));
 				table.setWidget(row, 1, text);
 				put(info.getInfoType().ordinal(),info.getInfoKey().ordinal()
@@ -396,8 +397,8 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 				// *************
 				if (info.getInfoKey().hasDetails()) {
 					Button detailButton = new Button();
-					detailButton.setStyleName(FiscalTree.AON_RESOURCES.css().aonIconButton());
-					detailButton.addStyleName(FiscalTree.AON_RESOURCES.css().aonIconLoupe());
+					detailButton.setStyleName(AON.AON_CSS.aonIconButton());
+					detailButton.addStyleName(AON.AON_CSS.aonIconLoupe());
 					final CustomDialog detailDialog = new CustomDialog();
 					detailDialog.setVisible(false);
 					detailDialog.setAnimationEnabled(true);
@@ -413,7 +414,7 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 					FlexTable detailTable = getInfoTable(fiscalActivity, detailMap); 
 					detailDialog.add( detailTable );
 					Button accept = new Button();
-					accept.setText(FiscalTree.MSG.accept());
+					accept.setText(AON.MSG.accept());
 					accept.addClickHandler(new ClickHandler() {
 						@Override
 						public void onClick(ClickEvent event) {
@@ -423,7 +424,7 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 					int detailRow = detailTable.getRowCount();
 					detailTable.setWidget(detailRow, 0, accept);
 					detailTable.getFlexCellFormatter().setColSpan(detailRow, 0, 2);
-					detailTable.getFlexCellFormatter().setStyleName(detailRow, 0, FiscalTree.AON_RESOURCES.css().aonTextCenter());
+					detailTable.getFlexCellFormatter().setStyleName(detailRow, 0, AON.AON_CSS.aonTextCenter());
 					detailButton.addClickHandler(new ClickHandler() {
 						@Override
 						public void onClick(ClickEvent event) {
@@ -439,13 +440,13 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 				Label unit = new Label(info.getUnit() );
 				table.setWidget(row, 3, unit);
 				
-				Label factor = new Label( FiscalTree.FMT.format( info.getFactor()) );
+				Label factor = new Label( AON.FMT.format( info.getFactor()) );
 				table.setWidget(row, 4, factor);
 				
 				final TextBox base = new TextBox();
 				base.setWidth("100px");
-				base.setValue(FiscalTree.FMT.format( info.getBase()));
-				base.setStyleName(FiscalTree.AON_RESOURCES.css().aonInputText());
+				base.setValue(AON.FMT.format( info.getBase()));
+				base.setStyleName(AON.AON_CSS.aonInputText());
 				base.setEnabled(false);
 				table.setWidget(row, 5, base);
 
@@ -453,7 +454,7 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 					@Override
 					public void onChange(ChangeEvent event) {
 						double value = AonNumberUtils.todouble(text.getValue());
-						base.setValue(FiscalTree.FMT.format( AonMathUtils.round(value * info.getBase())));
+						base.setValue(AON.FMT.format( AonMathUtils.round(value * info.getBase())));
 						calculate();
 					}
 				});
@@ -504,14 +505,14 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 	
 	@UiHandler("calculateButton")
 	void onCalculateButtonClick(ClickEvent event) {
-		if (Window.confirm( FiscalTree.MSG.calculateAction())) {
+		if (Window.confirm( AON.MSG.calculateAction())) {
 			calculate();
 		}
 	}
 	
 	@UiHandler("saveButton")
 	void onSaveButtonClick(ClickEvent event) {
-		if (Window.confirm( FiscalTree.MSG.saveAction())) {
+		if (Window.confirm( AON.MSG.saveAction())) {
 			populateTreeObject();
 			FiscalTree.FISCAL_SERVICE.save(FiscalTree.getCurrentDomainName(), node.getTreeObject()
 					,new AsyncCallback<FiscalActivity>() {

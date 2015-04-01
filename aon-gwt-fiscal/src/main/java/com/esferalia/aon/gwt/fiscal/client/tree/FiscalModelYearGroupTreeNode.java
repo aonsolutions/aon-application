@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.tree;
 
 import java.util.LinkedList;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
@@ -28,15 +29,15 @@ public class FiscalModelYearGroupTreeNode extends TreeNode<Enterprise> {
 	public void select(final FiscalTree fiscalTree) {
 		if (widget ==null) {
 			widget = new VerticalPanel( );
-			widget.setStyleName(FiscalTree.AON_RESOURCES.css().aonFiscalTreeList());
+			widget.setStyleName(AON.AON_CSS.aonFiscalTreeList());
 			Label title = new Label(getText());
-			title.setStyleName(FiscalTree.AON_RESOURCES.css().aonFiscalTreeTitle());
+			title.setStyleName(AON.AON_CSS.aonFiscalTreeTitle());
 			widget.add(title);
 			for (int i = 0; i < getChildCount() ; i++) {
 				final TreeItem item = getChild(i); 
 				InlineLabel label =  new InlineLabel(getChild(i).getText());
-				label.setStyleName(FiscalTree.AON_RESOURCES.css().aonFiscalTreeItem());
-				label.addStyleName(FiscalTree.AON_RESOURCES.css().aonIconPointGreen() );
+				label.setStyleName(AON.AON_CSS.aonFiscalTreeItem());
+				label.addStyleName(AON.AON_CSS.aonIconPointGreen() );
 				label.addClickHandler( new ClickHandler() {
 					@Override
 					public void onClick(ClickEvent event) {
@@ -55,9 +56,9 @@ public class FiscalModelYearGroupTreeNode extends TreeNode<Enterprise> {
 	public TreeNode<Enterprise> render(HasTreeItems parent,
 			final FiscalTree fiscalTree, Enterprise enterprise) {
     	InlineLabel label = new InlineLabel();
-    	label.setText(FiscalTree.MSG.fiscalModels());
-    	label.addStyleName(FiscalTree.AON_RESOURCES.css().aonIconModel());
-    	label.addStyleName(FiscalTree.AON_RESOURCES.css().aonTreeIconNode() );
+    	label.setText(AON.MSG.fiscalModels());
+    	label.addStyleName(AON.AON_CSS.aonIconModel());
+    	label.addStyleName(AON.AON_CSS.aonTreeIconNode() );
     	setWidget(label);
     	setUserObject(enterprise);
     	parent.addItem(this);
@@ -107,11 +108,11 @@ public class FiscalModelYearGroupTreeNode extends TreeNode<Enterprise> {
     					}
     					if (fm.getModel() == FiscalModelType.M131) {
     						Mod131 mod131 = new Mod131();
+    						mod131.setId(fm.getId());
     						mod131.setModel(fm.getModel());
     						mod131.setYear(fm.getYear());
     						mod131.setPeriod(fm.getPeriod());
     						mod131.setReplacement(fm.isReplacement());
-    						
     						TreeNodeTypes.MODEL_131
     							.getInstance()
     							.render(modelNode,fiscalTree, mod131);

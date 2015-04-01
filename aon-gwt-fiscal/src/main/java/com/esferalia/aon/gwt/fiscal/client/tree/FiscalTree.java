@@ -2,13 +2,11 @@ package com.esferalia.aon.gwt.fiscal.client.tree;
 
 import java.util.ArrayList;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.common.client.css.AonResources;
-import com.esferalia.aon.gwt.common.client.css.GWTResources;
-import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
 import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
@@ -20,7 +18,6 @@ import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -51,10 +48,6 @@ public class FiscalTree extends MainEntryPoint {
 
 	private static final FiscalTreeBinder BINDER = GWT.create(FiscalTreeBinder.class);
 	
-	protected final static CommonMessages MSG = GWT.create(CommonMessages.class);
-	protected final static AonResources AON_RESOURCES = GWT.create(AonResources.class);
-	protected final static GWTResources GWT_RESOURCES = GWT.create(GWTResources.class);
-	protected static final NumberFormat FMT = NumberFormat.getFormat(MSG.decimalPattern(),MSG.currencyCode());
 	public static final int CURRENT_YEAR = 2015;
 
 	Enterprise enterprise;
@@ -92,8 +85,8 @@ public class FiscalTree extends MainEntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
-		GWT_RESOURCES.css().ensureInjected();
-		AON_RESOURCES.css().ensureInjected();
+		AON.GWT_RESOURCES.css().ensureInjected();
+		AON.AON_RESOURCES.css().ensureInjected();
 
 		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
 		FISCAL_SERVICE = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
@@ -104,7 +97,7 @@ public class FiscalTree extends MainEntryPoint {
 		EnterpriseSuggestOracle oracle = new EnterpriseSuggestOracle();
 		enterpriseSuggest = new SuggestBox(oracle);
 		enterpriseSuggest.setLimit(20);
-		enterpriseSuggest.addStyleName(AON_RESOURCES.css().aonFiscalEnterpriseSuggest());
+		enterpriseSuggest.addStyleName(AON.AON_RESOURCES.css().aonFiscalEnterpriseSuggest());
 		
 		Widget ui = BINDER.createAndBindUi(this);
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
@@ -122,7 +115,7 @@ public class FiscalTree extends MainEntryPoint {
 							enterpriseSuggest.setEnabled(false);
 							initialize(result.get(0));
 						} else {
-							enterpriseSuggest.setText(MSG.startTyping());
+							enterpriseSuggest.setText(AON.MSG.startTyping());
 							enterpriseSuggest.setEnabled(true);
 							enterpriseSuggest.getValueBox().selectAll();
 							enterpriseSuggest.setFocus(true);
@@ -131,7 +124,7 @@ public class FiscalTree extends MainEntryPoint {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						DialogMessages.alertErrorWidget(MSG.unableToShowData(caught
+						DialogMessages.alertErrorWidget(AON.MSG.unableToShowData(caught
 								.getMessage()));
 					}
 				});
@@ -141,7 +134,7 @@ public class FiscalTree extends MainEntryPoint {
 
 	private void initialize(Enterprise enterprise) {
 		this.enterprise = enterprise;
-		subtitle.setText(MSG.enterprise());
+		subtitle.setText(AON.MSG.enterprise());
 		TreeNode.renderTree(tree,this,enterprise,true);
 	}
 	

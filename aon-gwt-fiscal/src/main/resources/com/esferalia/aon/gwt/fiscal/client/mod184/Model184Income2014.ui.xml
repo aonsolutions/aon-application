@@ -105,7 +105,7 @@
 								<g:InlineLabel text="{msg.expenses}" />
 							</td>
 							<td>
-								<g:InlineLabel text="{msg.netYield}" />
+								<g:InlineLabel text="{msg.netYieldExt}" />
 							</td>
 						</tr>
 						<tr>
@@ -130,7 +130,7 @@
 								<g:InlineLabel text="{msg.deductionRightRent}" />
 							</td>
 							<td>
-								<g:InlineLabel text="{msg.result}" />
+								<g:InlineLabel text="{msg.profitLoss}" />
 							</td>
 						</tr>
 						<tr>
