@@ -1,10 +1,10 @@
 package com.code.aon.ui.common.controller;
 
+import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.Date;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
@@ -18,6 +18,9 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.AonVersion;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.enumeration.AppParam;
+import com.code.aon.common.util.AdminUtil;
+import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AONContext;
@@ -44,6 +47,8 @@ public class LoggedUser implements Serializable {
 	/** The company name. */
 	private String companyName;
 	
+	private boolean skipConcurrentCheck;
+	
 	/**
 	 * Instantiates a new logged user.
 	 */
@@ -52,7 +57,12 @@ public class LoggedUser implements Serializable {
 		if ( principal != null ) {
 			this.logged = true;
 			initVariables(principal);
-			updateLastAccess(principal);
+			if (! isAdminUser(principal) ) {
+				updateLastAccess(principal);	
+				this.skipConcurrentCheck = calculateSkipConcurrentCheck(principal);
+			} else {
+				this.skipConcurrentCheck = true;
+			}
 		}
 	}
 		
@@ -96,14 +106,30 @@ public class LoggedUser implements Serializable {
     	HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
     	if ( session != null ) {
     		result = new Timestamp(session.getCreationTime());
-    	} else {
-    		result = new Timestamp(new Date().getTime());
     	}
     	return result;
     }
+    
+    private Timestamp getUserLastAccess() {
+    	Timestamp ts = null;
+    	AuthPrincipal principal = AonUtil.getAuthPrincipal();
+		AONContext ctx = AONContext.getAONContext(principal.getDomain(), principal.getDomainId());
+		try {
+			ts = ctx.getDslContext()
+					.select(USER.LASTACCESS)
+					.from(USER)
+					.where(USER.ID.eq(principal.getUserId()))
+					.fetchOne(0, Timestamp.class);
+		} catch ( Throwable th ) {
+			LOGGER.error(th.getMessage(), th);
+		} finally {
+			ctx.finalize();	
+		}				    	
+		return ts;
+    }
 
 	private void updateLastAccess( AuthPrincipal principal ) {
-		AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), DomainManager.getCurrentDomain());
+		AONContext ctx = AONContext.getAONContext(principal.getDomain(), principal.getDomainId());
 		try {
 			ctx.getDslContext().update(USER)
 			.set(USER.LASTACCESS, getSessionCreatedTimestamp() )
@@ -160,5 +186,68 @@ public class LoggedUser implements Serializable {
 	public void setCompanyName(String companyName) {
 		this.companyName = companyName;
 	}
+	
+	private boolean isAdminUser( AuthPrincipal principal ) {
+		if ( StringUtils.endsWith(principal.getContext(), "*") ) {
+			return true;
+		}
+		Integer type = AdminUtil.getDomainType(principal.getUserDomainId());
+		return (type != null) && (type == DomainType.ADMIN.ordinal());
+
+	}
+	
+	private boolean isAllowDomainConcurrent( String domain ) {
+		boolean allow = false;
+		Integer domainId = DomainManager.getCurrentDomain();
+		AONContext ctx = AONContext.getAONContext(domain, domainId);
+		try {
+			String value = ctx.getDslContext() 
+					.select(APP_PARAM.VALUE)
+					.from(APP_PARAM)
+					.where(APP_PARAM.DOMAIN.eq(domainId)
+						.and(APP_PARAM.NAME.eq(AppParam.AON_ALLOW_CONCURRENT_DOMAIN.getValue())))
+					.fetchOne(0, String.class);		
+			allow = Boolean.valueOf(value);
+		} catch ( Throwable th ) {
+			LOGGER.error(th.getMessage(), th);
+		} finally {
+			ctx.finalize();	
+		}				    	
+		return allow;
+	}	
+
+	private boolean isAllowUserConcurrent( AuthPrincipal principal ) {
+		boolean allow = false;
+		AONContext ctx = AONContext.getAONContext(principal.getDomain(), principal.getDomainId());
+		try {
+			allow = ctx.getDslContext() 
+				.select(USER.ALLOWCONCURRENT)
+				.from(USER)
+				.where(USER.ID.eq(principal.getUserId())).fetchOne(0, Boolean.class);	
+		} catch ( Throwable th ) {
+			LOGGER.error(th.getMessage(), th);
+		} finally {
+			ctx.finalize();	
+		}				    	
+		return allow;
+	}	
+	
+	private boolean calculateSkipConcurrentCheck( AuthPrincipal principal ) {
+		if ( isAllowDomainConcurrent(principal.getDomain()) || isAllowUserConcurrent(principal)  ) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean isConcurrentSession() {
+		if (! skipConcurrentCheck ) {
+			Timestamp sessionCreated = getSessionCreatedTimestamp();
+			if ( sessionCreated != null ) {
+				Timestamp userLastAccess = getUserLastAccess();
+				return (userLastAccess != null) && (userLastAccess.compareTo(sessionCreated) > 0);
+			}			
+		}
+		return false;
+	}	
 	
 }

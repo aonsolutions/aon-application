@@ -135,6 +135,7 @@ public class LoginModule extends UsernamePasswordLoginModule {
 			if ( (this.adminUserLogin != null) && dbUtil.isSupportEnabled(domain.getId()) ) {
 				User adminUser = dbUtil.getUserOfAdminDomain(this.adminUserLogin);
 				if ( adminUser != null ) {
+					principal.setContext(principal.getContext()+"*");
 					return adminUser.getPassword();
 				}
 			}

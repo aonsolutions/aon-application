@@ -158,6 +158,11 @@
 				<aon:div styleClass="aon-margin-top">
 					<aon:panelGrid columns="2"
 						columnClasses="aon-panelGrid-odd aon-width-140, aon-panelGrid-even aon-width-auto">
+
+						<aon:outputLabel for="User_allowConcurrent"
+							value="#{bundle.admin_allow_concurrent}" />
+						<aon:selectBooleanCheckbox id="User_allowConcurrent"
+							value="#{domainUser.to.allowConcurrent}" />
 	
 						<ui:include src="/com/code/aon/ui/registry/facelet/registry/lookup.xhtml" >
 							<ui:param name="lookupBean" value="#{registryLookup}" />

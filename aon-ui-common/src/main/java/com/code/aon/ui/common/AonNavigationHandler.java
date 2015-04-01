@@ -2,15 +2,19 @@ package com.code.aon.ui.common;
 
 import javax.faces.application.NavigationHandler;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.util.AonUtil;
 
 /**
  * The Class AonNavigationHandler.
  */
 public class AonNavigationHandler extends NavigationHandler {
+
+	private static final String CONCURRENT_ACCESS_ERROR_ACTION = "concurrentAccessError";
 
 	private NavigationHandler _base;
 	
@@ -41,16 +45,24 @@ public class AonNavigationHandler extends NavigationHandler {
 	
 	@Override
 	public void handleNavigation(FacesContext fc, String fromAction, String outcome) {
-		
-		if (! (StringUtils.isEmpty(outcome) || StringUtils.startsWith(outcome, ACTION_SKIP_PREFFIX)) ) {
-			process(fc, fromAction, outcome);
-			AonUtil.getConfigurationController().setCurrentAction(outcome);			
-			outcome = strip(outcome);
+		String _fromAction = fromAction;
+		String _outcome = outcome;
+		if (! (StringUtils.isEmpty(_outcome) || StringUtils.startsWith(_outcome, ACTION_SKIP_PREFFIX)) ) {
+			process(fc, _fromAction, _outcome);
+			AonUtil.getConfigurationController().setCurrentAction(_outcome);			
+			_outcome = strip(_outcome);
 		}
-		if (! StringUtils.isEmpty(fromAction) ) {
-			fromAction = strip(fromAction);
+		if (! StringUtils.isEmpty(_fromAction) ) {
+			_fromAction = strip(_fromAction);
+		}			
+		LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(ICommonConstants.LOGGED_USER_CONTROLLER_NAME);
+		if ( loggedUser.isConcurrentSession() ) {
+	    	HttpSession session = (HttpSession) fc.getExternalContext().getSession(false);
+	    	session.invalidate();    	
+			_fromAction = CONCURRENT_ACCESS_ERROR_ACTION;
+			_outcome = CONCURRENT_ACCESS_ERROR_ACTION;
 		}
-		_base.handleNavigation(fc, fromAction, outcome);
+		_base.handleNavigation(fc, _fromAction, _outcome);
 	}
 
 }
