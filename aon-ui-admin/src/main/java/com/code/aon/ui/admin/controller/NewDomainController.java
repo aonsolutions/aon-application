@@ -278,16 +278,17 @@ public class NewDomainController implements Serializable {
 		validateExpirationDate();
 		
 		try {			
-			Integer newDomain = null;
+			Domain newDomain = null;
 			if ( isLoadDefaultValuesEnabled() ) {
 				newDomain = createDomain(domainFinalName);
 				if (! isEnableHeredity() ) {
-					insertScript(newDomain,domainFinalName,IConstants.INSERT_DOMAIN_DEFAULTS_SCRIPT);	
+					insertScript(newDomain.getId(), domainFinalName, IConstants.INSERT_DOMAIN_DEFAULTS_SCRIPT);	
 				}
 				if ( getType() == DomainType.GARAGE ) {
-					insertScript(newDomain,domainFinalName,IConstants.INSERT_DOMAIN_GARAGE_DEFAULTS_SCRIPT);
+					insertScript(newDomain.getId(), domainFinalName, IConstants.INSERT_DOMAIN_GARAGE_DEFAULTS_SCRIPT);
 				}
 				copyCustomizeId(newDomain);
+				addCompany(newDomain);
 			} else {
 				newDomain = duplicateDomain(domainFinalName);
 			}
@@ -301,14 +302,14 @@ public class NewDomainController implements Serializable {
 		}
 	}
 	
-	private void copyCustomizeId( Integer newDomain ) {
+	private void copyCustomizeId( Domain newDomain ) {
 		String idValue = AppParamUtil.getValue(AppParam.AON_CUSTOMIZE_HERITABLE_ID);
 		if (! StringUtils.isEmpty(idValue) ) {
 			ApplicationParameter ap1 = new ApplicationParameter(AppParam.AON_CUSTOMIZE_ID.getValue(), idValue);
-			ap1.setDomain(newDomain);
+			ap1.setDomain(newDomain.getId());
 			AppParamUtil.insertParameter(ap1);
 			ApplicationParameter ap2 = new ApplicationParameter(AppParam.AON_CUSTOMIZE_HERITABLE_ID.getValue(), idValue);
-			ap2.setDomain(newDomain);
+			ap2.setDomain(newDomain.getId());
 			AppParamUtil.insertParameter(ap2);
 		}		
 	}
@@ -330,7 +331,7 @@ public class NewDomainController implements Serializable {
 		}
 	}		
 
-	private Integer createDomain(String name) throws ManagerBeanException {
+	private Domain createDomain(String name) throws ManagerBeanException {
 		AuthPrincipal principal = AonUtil.getAuthPrincipal();		
 		IManagerBean bean = BeanManager.getManagerBean(Domain.class);
 		Domain domain = new Domain();
@@ -365,11 +366,10 @@ public class NewDomainController implements Serializable {
 			dam.setModule(Module.AON_ONE);
 			BeanManager.getManagerBean(DomainApplicationModule.class).insert(dam);
 		}		
-		addCompany(domain);
-		return domain.getId();		
+		return domain;		
 	}
 	
-	private void updateDomain( Integer domainId  ) throws ManagerBeanException {
+	private Domain updateDomain( Integer domainId  ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Domain.class);
 		Domain domain = (Domain) bean.get(domainId);
 		if ( domain != null ) {
@@ -379,25 +379,26 @@ public class NewDomainController implements Serializable {
 			domain.setModificationUser(null);
 			bean.update(domain);
 		}
+		return domain;
 	}
 	
-	private Integer duplicateDomain(String name) throws AonConnectionException, AonSQLException, ManagerBeanException {
+	private Domain duplicateDomain(String name) throws AonConnectionException, AonSQLException, ManagerBeanException {
 		Connection connection = null;
-		Integer newDomainId = null;
+		Domain newDomain = null;
 		try {			
 			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			AonDomainDuplicate add = new AonDomainDuplicate(connection);
 			add.setDescription(getDomainDescription());
 			add.setOwner(getOwner());
 			Integer parent = (getParentDomain() != null) ? getParentDomain().getId() : null;
-			newDomainId = add.execute(getTemplateDomain().getId(), parent, name);
+			Integer newDomainId = add.execute(getTemplateDomain().getId(), parent, name);
 			if ( newDomainId != null ) {
-				updateDomain( newDomainId );
+				newDomain = updateDomain( newDomainId );
 			}
 		} finally {
 			DbUtils.closeQuietly(connection);
 		}	
-		return newDomainId;
+		return newDomain;
 	}
 	
 	public IControllerListener getTemplateDomainFilter() {
@@ -421,10 +422,8 @@ public class NewDomainController implements Serializable {
 		}
 	}
 	
-	private void saveHistory( Integer domainId ) throws ManagerBeanException, IOException, WebmailException {
-		if ( domainId != null ) {
-			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
-			Domain domain = (Domain) bean.get(domainId);
+	private void saveHistory( Domain domain ) throws ManagerBeanException, IOException, WebmailException {
+		if ( domain != null ) {
 			BookingInfo bookingInfo = DomainController.getBookingInfo(domain);
 			DomainInfo di = DomainInfo.getDomainInfo(domain, bookingInfo);
 			di.setInfoType(DomainInfoType.INSERT);
@@ -432,7 +431,7 @@ public class NewDomainController implements Serializable {
 			if ( company != null ) {
 				DomainController.saveHistory(di, company, RegistryAttachmentType.DOMAIN_INSERT_HISTORY);
 			}
-			Address[] emails = DomainController.getNotificationEmails(domainId);
+			Address[] emails = DomainController.getNotificationEmails(domain.getId());
 			if (! ArrayUtils.isEmpty(emails) ) {
 				String subject = AonUtil.getMessage(ICommonMessages.DOMAIN_INSERT_EMAIL_SUBJECT, domain.getName());
 				String content = DomainController.getEmailContent(domain, di, ICommonMessages.DOMAIN_INSERT_EMAIL_BODY);
@@ -451,6 +450,19 @@ public class NewDomainController implements Serializable {
 		}
 	}		
 	
+	private Scope getEnterpriseScope( Domain domain ) throws ManagerBeanException {
+		Scope enterpriseScope = getScope();
+		if ( enterpriseScope == null ) {
+			if ( getParentDomain() != null ) {
+				enterpriseScope = CompanyController.obtainScope(getParentDomain().getId());
+			}
+			if ( enterpriseScope == null ) {
+				enterpriseScope = CompanyController.obtainScope(domain.getId());
+			}
+		}
+		return enterpriseScope;
+	}
+	
 	private void addCompany( Domain domain ) {
 		try {
 			Company company = new Company();
@@ -461,7 +473,7 @@ public class NewDomainController implements Serializable {
 			String alias = StringUtils.upperCase( StringUtils.substringBefore(domain.getName(), "."));
 			company.setAlias( StringUtils.left(alias, 32) );
 			BeanManager.getManagerBean(Company.class).insert(company);
-			CompanyController.addEnterprise(company);			
+			CompanyController.addEnterprise(company, getEnterpriseScope(domain));			
 		} catch ( ManagerBeanException e ) {
 			LOGGER.error( "Error creating company for " + domain, e );
 		}

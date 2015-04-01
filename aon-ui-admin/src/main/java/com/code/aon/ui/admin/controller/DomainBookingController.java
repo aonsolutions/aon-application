@@ -243,6 +243,10 @@ public class DomainBookingController extends DataScrollerState {
 		long value = (getDomain().getMaxTotalDocumentSize() > 0) ? getDomain().getMaxTotalDocumentSize() : 100;
 		return FileUtils.byteCountToDisplaySize(value * FileUtils.ONE_MB); 
 	}
+	
+	public int getNumberOfActiveUsers() {
+		return DomainUserController.getNumberOfActiveUsers(domain.getId());
+	}
 
 	public String getBookingModuleList() throws ManagerBeanException {
 		Set<String> modules = new TreeSet<String>();

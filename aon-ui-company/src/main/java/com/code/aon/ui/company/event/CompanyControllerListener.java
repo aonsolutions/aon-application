@@ -15,6 +15,7 @@ import com.code.aon.company.Company;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Domain;
+import com.code.aon.config.Scope;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
@@ -136,8 +137,9 @@ public class CompanyControllerListener extends ControllerAdapter {
 		try{
 			ICompanyController c = (ICompanyController)event.getController();
 			Company company = (Company) c.getTo();
-			
-			Enterprise enterprise = CompanyController.addEnterprise(company);
+
+			Scope scope = CompanyController.obtainScope(company.getId());
+			Enterprise enterprise = CompanyController.addEnterprise(company, scope);
 
 			if (c.isPhoneDirty()){
 				c.getPhone().setMediaType(MediaType.FIXED_PHONE);
