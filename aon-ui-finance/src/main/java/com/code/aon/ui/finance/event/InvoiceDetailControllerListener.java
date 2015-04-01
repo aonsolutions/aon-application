@@ -185,7 +185,7 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 			if (workPlaces.size() > 0) {
 				invoiceDetail.setWorkPlace((WorkPlace)workPlaces.get(0).getValue());
 			} else {
-				throw new AbortProcessingException(FINANCE_INVOICE_DETAIL_NO_WORKPLACE_ERROR);
+				throw new AbortProcessingException(AonUtil.getMessage(FINANCE_INVOICE_DETAIL_NO_WORKPLACE_ERROR));
 			}
 		}
 	}
