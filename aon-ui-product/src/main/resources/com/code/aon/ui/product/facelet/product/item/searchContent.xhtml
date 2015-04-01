@@ -18,6 +18,23 @@
 			value="#{bundle.aon_serial_number}" />
 		<aon:inputText id="#{aliasPreffix}_serialNumber" size="25"
 			valueChangeListener="#{controller.addExpression}" />
+
+		<aon:outputLabel value="#{bundle.aon_date} #{bundle.aon_series}" />
+		<aon:div>
+			<aon:outputLabel for="#{aliasPreffix}_serialDate-From" styleClass="aon-form-date-label aon-padding-right" 
+				value="#{bundle.aon_date_from}:" />
+			<aon:selectInputDate id="#{aliasPreffix}_serialDate-From"
+				valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}" />
+
+			<aon:outputLabel for="#{aliasPreffix}_serialDate-To" styleClass="aon-form-date-label aon-padding-right"
+				value="#{bundle.aon_date_to}" />
+			<aon:selectInputDate id="#{aliasPreffix}_serialDate-To"
+				valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}" />
+		</aon:div>
 	</aon:if>
 
 	<aon:if test="#{product.detailLevel &gt; 0}">
