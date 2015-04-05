@@ -3,14 +3,15 @@ package com.code.aon.fiscal.mod130;
 import com.code.aon.common.AonException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.Administration;
+import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.enumeration.Mod130Key;
 import com.code.aon.fiscal.model.FiscalModelDetailCalculator;
 
-public class Aeat2011Mod130Calculator extends FiscalModelDetailCalculator implements IMod130Calculator {
+public class Aeat2015Mod130Calculator extends FiscalModelDetailCalculator implements IMod130Calculator {
 
 	@Override
 	public boolean accept(int year, Administration administration) {
-		if ( year < 2015 && administration == Administration.COMMON_TERRITORY) {
+		if ( year >= 2015 && administration == Administration.COMMON_TERRITORY) {
 			return true;
 		}
 		return false;
@@ -70,7 +71,11 @@ public class Aeat2011Mod130Calculator extends FiscalModelDetailCalculator implem
 		c12 =  c12>0?c12:0;
 		mod130.getDetail( Mod130Key.C12 ).setAmount( c12 );
 		
-		double c13 = mod130.getDetail( Mod130Key.C13 ).getAmount();
+		FiscalModelDetail detC13 = mod130.getDetail( Mod130Key.C131 );
+		double c13 = 0;
+		if (detC13 != null) {
+			c13 = detC13.getAmount();
+		}
 		
 		// Casilla 14. Se anotará en esta casilla el resultado de efectuar la operación 
 		// indicada en el impreso. De obtenerse una cantidad negativa, se hará constar 

@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.accounting.summary.SummaryCollection;
@@ -26,7 +25,6 @@ import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.IFiscalConstants;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
 import com.code.aon.fiscal.enumeration.Mod130Key;
-import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.model.FiscalModelManager;
 import com.code.aon.fiscal.model.IFiscalDeclaration;
 import com.code.aon.pool.AonConnectionException;
@@ -102,30 +100,6 @@ public class Mod130Manager extends FiscalModelManager {
 			+" AND it.tax_type = 2" 		// IRPF
 			+" AND i.tax_date >= ?"
 			+" AND i.tax_date <= ?";
-	
-	private static String SELECT_13_03 = "SELECT " 
-			+" fm.period,fmd.amount"
-			+" FROM fs_model_detail fmd"
-			+" INNER JOIN fs_model fm ON (fmd.fs_model = fm.id)" 
-			+" WHERE " + DomainManager.getStaticSQLWhereClause("fmd.domain")
-			+" AND fm.model = ? "
-			+" AND fm.administration = ? "
-			+" AND fm.year = ? "
-			+" AND fm.document = ? "
-			+" AND fmd.type = ? "
-			+" ORDER by fm.period";
-	
-	private static String SELECT_13_08 = "SELECT " 
-			+" fm.period,fmd.amount"
-			+" FROM fs_model_detail fmd"
-			+" INNER JOIN fs_model fm ON (fmd.fs_model = fm.id)" 
-			+" WHERE " + DomainManager.getStaticSQLWhereClause("fmd.domain")
-			+" AND fm.model = ? "
-			+" AND fm.administration!= ? "
-			+" AND fm.year = ? "
-			+" AND fm.document = ? "
-			+" AND fmd.type = ? "
-			+" ORDER by fm.period";
 	
 	private String domainName;
 	
@@ -252,62 +226,35 @@ public class Mod130Manager extends FiscalModelManager {
 			mod130.ensureDetail(Mod130Key.C06).addAccumulatedAmount(c06);
 	//		 ------------------------------------------------------------------------
 			
-	//		Casilla 13. Podrán cumplimentar esta casilla únicamente los contribuyentes que 
-	//		tengan derecho a la deducción por obtención de rendimientos de actividades 
-	//		económicas a efectos del pago fraccionado por cumplir el siguiente requisito:
-	//		Que, en el primer trimestre del ejercicio o en el primer trimestre de inicio de 
-	//		actividades, la suma del resultado de elevar al año el importe de la casilla 03 
-	//		y/o, en su caso, el resultado de elevar al año el 25 por 100 de la casilla 08, 
-	//		sea igual o inferior a 12.000 euros. En los supuestos de inicio de la actividad 
-	//		a lo largo del ejercicio en la elevación al año se tendrán en consideración los 
-	//		dí­as que resten hasta el final del año.
-	// 
-	//		Además, si el contribuyente también está obligado a presentar el modelo 131 para 
-	//		declarar el pago fraccionado correspondiente a las actividades económicas en   
-	//		estimación objetiva que realice, como sucede, entre otros, en el supuesto a que 
-	//		se refiere el segundo párrafo del artí­culo 35 del Reglamento del Impuesto,
-	//		deberá adicionar a las magnitudes anteriores el importe de la casilla 01 o, 
-	//		en su caso, el resultado de elevar al año el 25 por 100 de la casilla 03 y/o 05 
-	//		del primer trimestre del ejercicio o del primer trimestre de inicio de actividades  
-	//		del modelo 131. Si la suma total de estas magnitudes no excede de 12.000 euros, se  
-	//		consignará en esta casilla 13 el importe obtenido de dividir entre cuatro la cuantí­a   
-	//		de la deducción por obtención de rendimientos de actividades económicas, prevista  
-	//		en el apartado 1 del artí­culo 80 bis de la Ley del Impuesto, que corresponda a   
-	//		efectos de los pagos fraccionados. 
-	//
-	//		Para calcular la cuantí­a de esta deducción, deberá tenerse en cuenta que:
-	//		- Cuando la suma de las magnitudes anteriormente indicadas (incluidas, en su caso, 
-	//			las referidas al modelo 131) sea igual o inferior a 8.000 euros anuales, esta 
-	//			deducción asciende a 400 euros.
-	//		- Cuando dicha suma esté comprendida entre 8.000,01 y 12.000 euros anuales, la 
-	//			cuantí­a de la deducción vendrá determinada por la siguiente operación: 
-	//			(400 euros menos el producto de multiplicar por 0,1 la diferencia entre la 
-	//			suma de las magnitudes indicadas y 8.000 euros anuales).
-	//			
-	//		Adviértase que, en el supuesto de que el contribuyente también esté obligado a presentar 
-	//		el modelo 131, el importe correspondiente a la minoración del pago fraccionado por la 
-	//		deducción del artí­culo 80 bis de la Ley del Impuesto, calculada conforme se ha señalado 
-	//		en los párrafos anteriores, puede distribuirse, si así­ lo decide, entre ambos modelos 
-	//		130 y 131 siempre que los importes consignados en las casillas 13 del modelo 130 y 09 
-	//		del modelo 131 no superen en su conjunto, para cada trimestre, el importe de la minoración.
-			double previousC03 = 0;
-			double previousC08 = 0;
-			if (fiscalModel.getPeriod() == Period.T1) {
-				previousC03 = c03;
-			} else {
-				previousC03 = getC13_03(conn,SELECT_13_03,fiscalModel,Mod130Key.C03, c03);
-				previousC08 = getC13_08(conn,SELECT_13_08,fiscalModel,Mod130Key.C08);
-			}
+	//		Casilla 13. Cuando la cuantía de los rendimientos NETOS ( * ) de actividades económicas 
+	//		del obligado tributario, obtenidos en el ejercicio anterior al que corresponde el trimestre 
+	//		por el que se efectúa la autoliquidación, haya sido igual o inferior a 12.000 euros, se 
+	//		consignará en esta casilla el siguiente importe, en función de la cuantía de los citados 
+	//		rendimientos: 
+	//		
+	//		Cuantía de los rendimientos netos 
+	//		del ejercicio anterior (en euros) 	Importe de la minoración (en euros)
+	//		-----------------------------------------------------------------------
+	//		Igual o inferior a 9.000 				100
+	//		Entre 9.000,01 y 10.000 				75
+	//		Entre 10.000,01 y 11.000 				50
+	//		Entre 11.000,01 y 12.000 				25
+	//		
+	//		(*) Rendimiento neto de la actividad previo a la aplicación, en su caso de la reducción 
+	//		por obtención de rendimientos irregulares, por mantenimiento o creación de empleo y resto 
+	//		de reducciones aplicables en su caso sobre el rendimiento neto reducido de la actividad 
+	//		(casillas 118, 143 o/y 171 del modelo de declaración de IRPF-2014)
+	//		En el supuesto de que en el ejercicio anterior no se hubiese ejercicio actividad económica 
+	//		alguna, se considerará que la cuantía de los rendimientos netos del ejercicio anterior son cero.
+	//		Adviértase que, en el caso de que el contribuyente también esté obligado a presentar el 
+	//		modelo 131, el importe correspondiente a la minoración del pago fraccionado contemplada en 
+	//		el artículo 110.3.c) del Reglamento del Impuesto, calculada conforme se ha señalado en esta 
+	//		casilla, puede distribuirse, si así se decide, entre ambos modelos 130 y 131 siempre que 
+	//		los importes consignados en las casillas 13 del modelo 130 y 09 del modelo 131 no superen 
+	//		en su conjunto, para cada trimestre, el importe de la minoración.
 			
 			double c13 = 0;
-			if ( CommonUtil.round(previousC03 + previousC08) <= 12000 ) {
-				if ( CommonUtil.round(previousC03 + previousC08) <= 8000 ) {
-					c13 = CommonUtil.round( 400.0 / 4 );		
-				} else {
-					c13 = CommonUtil.round( (400.0 - ((previousC03 + previousC08 - 8000) * 0.1)) / 4);
-				}
-			}
-			mod130.ensureDetail(Mod130Key.C13).addAccumulatedAmount(c13);
+			mod130.ensureDetail(Mod130Key.C131).addAccumulatedAmount(c13);
 	
 	//		 ------------------------------------------------------------------------
 	//		Casilla 15. Si en la casilla 14 anterior se hubiera obtenido una cantidad positiva, 
@@ -514,111 +461,6 @@ public class Mod130Manager extends FiscalModelManager {
 			DatabaseUtil.closeQuietly(conn);
 		}
 		return mod130;
-	}
-	
-
-	private double getC13_03(Connection c, String select,FiscalModel fiscalModel, Mod130Key key, double current03) throws AonException {
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		double c03 = 0;
-		try {
-			ps = c.prepareStatement(select,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			int i = 0;
-			int filled = DomainManager.fillHostVariables(ps, 1);
-			i = i + filled;
-			ps.setString(++i, fiscalModel.getModel().getValue());
-			ps.setInt(++i, fiscalModel.getAdministration().ordinal());
-			ps.setInt(++i, fiscalModel.getYear());
-			ps.setString(++i, fiscalModel.getDocument());
-			ps.setString(++i, key.getValue());
-			rs = ps.executeQuery();
-			if (rs.next()) {
-				Period period = Period.values()[rs.getInt(1)]; 
-				c03 = rs.getDouble(2);
-				Date firstPeriodDay = period.getStartDate(fiscalModel.getYear());
-				Date firstYearDay = CommonUtil.getYearFirstDay(fiscalModel.getYear());
-				double product;
-				if ( DateUtils.isSameDay(firstPeriodDay, firstYearDay) ) {
-					product = 4.0;
-				} else {
-					long days = CommonUtil.getDaysBetweenDates(
-						period.getDueDate(fiscalModel.getYear())
-						, CommonUtil.getYearLastDay(fiscalModel.getYear()));
-					product = CommonUtil.round(365/days);
-				}
-				c03 = CommonUtil.round(c03 * product);
-			} else {
-				c03 = current03;
-			}
-			rs.close();
-			ps.close();
-			return c03 ;
-		} catch (SQLException e) {
-			throw new AonException(e.getMessage(), e);
-		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-		}
-	}
-	
-	private double getC13_08(Connection c,String select,FiscalModel fiscalModel, Mod130Key key) throws AonException {
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		double c08 = 0;
-		try {
-			ps = c.prepareStatement(select,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			int i = 0;
-			int filled = DomainManager.fillHostVariables(ps, 1);
-			i = i + filled;
-			ps.setString(++i, fiscalModel.getModel().getValue());
-			ps.setInt(++i, fiscalModel.getAdministration().ordinal());
-			ps.setInt(++i, fiscalModel.getYear());
-			ps.setString(++i, fiscalModel.getDocument());
-			ps.setString(++i, key.getValue());
-			rs = ps.executeQuery();
-			if (rs.next()) {
-				Period period = Period.values()[rs.getInt(1)]; 
-				c08 = rs.getDouble(2);
-				Date firstPeriodDay = period.getStartDate(fiscalModel.getYear());
-				Date firstYearDay = CommonUtil.getYearFirstDay(fiscalModel.getYear());
-				double product;
-				if ( DateUtils.isSameDay(firstPeriodDay, firstYearDay) ) {
-					product = 4.0;
-				} else {
-					long days = CommonUtil.getDaysBetweenDates(period.getDueDate(fiscalModel.getYear()), CommonUtil.getYearLastDay(fiscalModel.getYear()));
-					product = CommonUtil.round(365/days);
-				}
-				c08 = CommonUtil.round(( c08 * 25 / 100) * product);
-			}
-			rs.close();
-			ps.close();
-			return c08 ;
-		} catch (SQLException e) {
-			throw new AonException(e.getMessage(), e);
-		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-		}
 	}
 	
 }

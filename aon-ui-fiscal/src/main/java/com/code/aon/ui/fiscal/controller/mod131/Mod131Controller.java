@@ -115,6 +115,7 @@ public class Mod131Controller extends FiscalModelController {
 						input,response.getOutputStream());					
 		        response.flushBuffer();
 		        faces.responseComplete();
+		        return null;
 			} catch (FileNotFoundException e) {
 				AonUtil.addErrorMessage(e.getMessage()); 
 				throw new AbortProcessingException(e.getMessage(),e);
@@ -129,6 +130,6 @@ public class Mod131Controller extends FiscalModelController {
 				throw new AbortProcessingException(e.getMessage(),e);
 			}
 		} 
-		return super.aeatReport();
+		return null;
 	}
 }

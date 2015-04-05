@@ -31,6 +31,7 @@ public enum Mod130Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 	H3 ("130-H3" ,true ,false,0,null),
 	C12("130-12" ,false,true ,1,null),
 	C13("130-13" ,false,false,1,null),
+	C131("130-131" ,false,false,1,null),
 	C14("130-14" ,false,true ,1,null),
 	C15("130-15" ,false,false,1,null),
 	C16("130-16" ,false,false,1,null),
@@ -97,6 +98,12 @@ public enum Mod130Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 
 	@Override
 	public boolean accept(Administration administration, Period period, int year) {
+		if (this == C13 ) {
+			return (year < 2015);
+		}
+		if (this == C131 ) {
+			return (year >= 2015);
+		}
 		if (administrations == null) {
 			return true;
 		}
