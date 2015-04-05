@@ -176,7 +176,8 @@
 													actionListener="#{mod131.onEditSearch}"
 													title="#{bundle.fiscal_model_131_module}">
 													<aon:outputText styleClass="aon-fiscal-link-box" value="131" />
-													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_131_module}" />
+													<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
+														style="margin-left: 5px; padding-left: 20px;" value="#{bundle.fiscal_model_131_module}" />
 												</aon:commandLink>
 											</aon:if>
 
@@ -264,16 +265,20 @@
 												<aon:commandLink id="fiscalActivity" 
 													action="fiscalActivity_list"
 													actionListener="#{fiscalActivity.onSearch}"
-													value="#{bundle.fiscal_activities_modules}" />
+													title="#{bundle.fiscal_activities_modules}">
+													<aon:outputText value="#{bundle.fiscal_activities_modules}"
+													 styleClass="aon-icon-new-text" style="margin-left: 5px; padding-left: 20px;"/>
+												</aon:commandLink>
 											</aon:div>
 										</aon:if>
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="gwt_fiscalPanel"
+												style="background-color: yellow;"
 												action="gwt_fiscalPanel"
-												value="Integral fiscal [BETA]">
+												value="[BETA] Integral fiscal">
 											</aon:commandLink>
 										</aon:div>
- 									</aon:div>
+  									</aon:div>
 								</aon:panelGrid>
 						</aon:panelGroup>
 

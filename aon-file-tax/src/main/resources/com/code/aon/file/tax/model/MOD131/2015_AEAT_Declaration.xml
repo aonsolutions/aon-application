@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <register name="Declaration">
-	<field name="cte0"      value="&lt;T3150"                                                 format="AlphaNumeric"  pattern="X(6)"  />
+	<field name="cte0"      value="&lt;T1310"                                                 format="AlphaNumeric"  pattern="X(6)"  />
 	<field name="year"      value="bean"  bean="Declaration"    property="year"               format="Numeric"       pattern="9(4)"  />
 	<field name="period"    value="bean"  bean="Declaration"    property="period"             format="AlphaNumeric"  pattern="X(2)"  />
 	<field name="cte1"      value="0000>"                                                     format="AlphaNumeric"  pattern="X(5)"  />
@@ -17,8 +17,8 @@
 	<field name="free0"     value=" "                                                         format="Alphabetic"    pattern="X"     />
 	<field name="type"      value="bean"  bean="Declaration"    property="declarationType"    format="AlphaNumeric"  pattern="X(1)"  />
 	<field name="document"  value="bean"  bean="Declaration"    property="document"           format="Nif"           pattern="X(9)"  />
-	<field name="surname"   value="bean"  bean="Declaration"    property="surname"            format="AlphaNumeric"  pattern="X(30)" />
-	<field name="name"      value="bean"  bean="Declaration"    property="name"               format="AlphaNumeric"  pattern="X(15)" />
+	<field name="surname"   value="bean"  bean="Declaration"    property="surname"            format="AlphaNumeric"  pattern="X(60)" />
+	<field name="name"      value="bean"  bean="Declaration"    property="name"               format="AlphaNumeric"  pattern="X(20)" />
 	<field name="year1"     value="bean"  bean="Declaration"    property="year"               format="Numeric"       pattern="9(4)"  />
 	<field name="period1"   value="bean"  bean="Declaration"    property="period"             format="AlphaNumeric"  pattern="X(2)"  />
 
@@ -50,7 +50,7 @@
 	<field name="c06"       value="bean"  bean="Declaration"    property="boxes(131-06)"      format="DefNumeric"    pattern="S9(14)V99" />
 	<field name="c07"       value="bean"  bean="Declaration"    property="boxes(131-07)"      format="DefNumeric"    pattern="S9(14)V99" />
 	<field name="c08"       value="bean"  bean="Declaration"    property="boxes(131-08)"      format="DefNumeric"    pattern="S9(14)V99" />
-	<field name="c09"       value="bean"  bean="Declaration"    property="boxes(131-09)"      format="DefNumeric"    pattern="S9(14)V99" />
+	<field name="c09"       value="bean"  bean="Declaration"    property="boxes(131-091)"     format="DefNumeric"    pattern="S9(14)V99" />
 	<field name="c10"       value="bean"  bean="Declaration"    property="boxes(131-10)"      format="DefNumeric"    pattern="S9(14)V99" />
 	<field name="c11"       value="bean"  bean="Declaration"    property="boxes(131-11)"      format="DefNumeric"    pattern="S9(14)V99" />
 	<field name="c12"       value="bean"  bean="Declaration"    property="boxes(131-12)"      format="DefNumeric"    pattern="S9(14)V99" />

@@ -64,9 +64,11 @@ public class Mod303 implements IFiscalDeclaration, IMod303Declaration, Serializa
 		clearMap();
 		Administration admin = fiscalModel.getAdministration();
 		Period period = fiscalModel.getPeriod();
+		
 		boolean cacAdded = false;
 		for (Mod303Key key : Mod303Key.values()) {
-			if (key.accept(admin,period) && (key.getParentKey() == null || key.getParentKey() == Mod303Key.PBK)) {
+			if (key.accept(admin,period,fiscalModel.getYear()) 
+					&& (key.getParentKey() == null || key.getParentKey() == Mod303Key.PBK)) {
 				if (key == Mod303Key.CAC1 
 				 || key == Mod303Key.CAC2
 				 || key == Mod303Key.CAC3

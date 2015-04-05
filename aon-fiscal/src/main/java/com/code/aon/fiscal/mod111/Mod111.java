@@ -39,7 +39,7 @@ public class Mod111 implements IFiscalDeclaration, Serializable {
 		clearMap();
 		Administration admin = fiscalModel.getAdministration();
 		for (Mod111Key key : Mod111Key.values()) {
-			if (key.accept(admin,fiscalModel.getPeriod())) {
+			if (key.accept(admin,fiscalModel.getPeriod(),fiscalModel.getYear())) {
 				ensureDetail(key);
 			}
 		}

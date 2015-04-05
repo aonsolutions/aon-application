@@ -57,7 +57,7 @@ public class Mod131 implements IFiscalDeclaration, Serializable {
 		Administration admin = fiscalModel.getAdministration();
 		boolean added = false;
 		for (Mod131Key key : Mod131Key.values()) {
-			if (key.accept(admin,fiscalModel.getPeriod())) {
+			if (key.accept(admin,fiscalModel.getPeriod(),fiscalModel.getYear())) {
 				if (!key.isActivityKey()){
 					ensureDetail(key);	
 				} else {

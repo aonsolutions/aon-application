@@ -253,7 +253,7 @@ public enum Mod111Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 	}
 
 	@Override
-	public boolean accept(Administration administration, Period period) {
+	public boolean accept(Administration administration, Period period, int year) {
 		if (administrations == null) {
 			return true;
 		}

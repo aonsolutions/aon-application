@@ -44,38 +44,39 @@ public class Aeat2015ModuleCalculator implements IModuleCalculator, Serializable
 		SPECIAL_EPIGRAPHS.put("721.1", new FiscalActivityInfoKey[] {
 			FiscalActivityInfoKey.A01,FiscalActivityInfoKey.A02,FiscalActivityInfoKey.A03
 			,FiscalActivityInfoKey.A04,FiscalActivityInfoKey.A05,FiscalActivityInfoKey.A07
-			,FiscalActivityInfoKey.A11,FiscalActivityInfoKey.A13
+			,FiscalActivityInfoKey.A10,FiscalActivityInfoKey.A11,FiscalActivityInfoKey.A13
 		});
 		// Transporte por autotaxis
 		SPECIAL_EPIGRAPHS.put("721.2", new FiscalActivityInfoKey[] {
 				FiscalActivityInfoKey.A01,FiscalActivityInfoKey.A02,FiscalActivityInfoKey.A03
 				,FiscalActivityInfoKey.A04,FiscalActivityInfoKey.A05,FiscalActivityInfoKey.A09
-				,FiscalActivityInfoKey.A11,FiscalActivityInfoKey.A13
+				,FiscalActivityInfoKey.A10,FiscalActivityInfoKey.A11,FiscalActivityInfoKey.A13
 			});
 		// Transporte urbano colectivo y de viajeros por carretera 
 		SPECIAL_EPIGRAPHS.put("721.3", new FiscalActivityInfoKey[] {
 				FiscalActivityInfoKey.A01,FiscalActivityInfoKey.A02,FiscalActivityInfoKey.A03
 				,FiscalActivityInfoKey.A04,FiscalActivityInfoKey.A05,FiscalActivityInfoKey.A07
-				,FiscalActivityInfoKey.A11,FiscalActivityInfoKey.A13
+				,FiscalActivityInfoKey.A10,FiscalActivityInfoKey.A11,FiscalActivityInfoKey.A13
 			});
 		// Transporte de mercancías por carretera, excepto residuos 
 		SPECIAL_EPIGRAPHS.put("722"	 , new FiscalActivityInfoKey[] {
 				FiscalActivityInfoKey.A01,FiscalActivityInfoKey.A02,FiscalActivityInfoKey.A03
 				,FiscalActivityInfoKey.A04,FiscalActivityInfoKey.A05,FiscalActivityInfoKey.A07
-				,FiscalActivityInfoKey.C10,FiscalActivityInfoKey.C11
+				,FiscalActivityInfoKey.A10,FiscalActivityInfoKey.C10,FiscalActivityInfoKey.C11
 				,FiscalActivityInfoKey.A11,FiscalActivityInfoKey.A13
 			});
 		// Servicios de mudanzas 
 		SPECIAL_EPIGRAPHS.put("757"	 , new FiscalActivityInfoKey[] {
 				FiscalActivityInfoKey.A01,FiscalActivityInfoKey.A02,FiscalActivityInfoKey.A03
 				,FiscalActivityInfoKey.A04,FiscalActivityInfoKey.A05,FiscalActivityInfoKey.A07
-				,FiscalActivityInfoKey.C10,FiscalActivityInfoKey.C11
+				,FiscalActivityInfoKey.A10,FiscalActivityInfoKey.C10,FiscalActivityInfoKey.C11
 				,FiscalActivityInfoKey.A11,FiscalActivityInfoKey.A13
 		});
 		// Producción de mejillón en batea.
 		SPECIAL_EPIGRAPHS.put("---", new FiscalActivityInfoKey[] {
-				FiscalActivityInfoKey.A01,FiscalActivityInfoKey.A02,FiscalActivityInfoKey.A03,FiscalActivityInfoKey.A04
-				,FiscalActivityInfoKey.A05,FiscalActivityInfoKey.B06,FiscalActivityInfoKey.A11,FiscalActivityInfoKey.A13
+				FiscalActivityInfoKey.A01,FiscalActivityInfoKey.A02,FiscalActivityInfoKey.A03
+				,FiscalActivityInfoKey.A04,FiscalActivityInfoKey.A05,FiscalActivityInfoKey.A10
+				,FiscalActivityInfoKey.B06,FiscalActivityInfoKey.A11,FiscalActivityInfoKey.A13
 		});			
 	}
 	private static final Map<FiscalActivityInfoKey, FiscalActivityInfoKey[]> DETAIL_MODULES = new HashMap<FiscalActivityInfoKey, FiscalActivityInfoKey[]>();
@@ -162,6 +163,8 @@ public class Aeat2015ModuleCalculator implements IModuleCalculator, Serializable
 
 	private Double calculateDetailM02(List<FiscalActivityInfo> modulesDetailList) {
 		double m02 = 0.0;
+		double m01 = getIrpfModulesKey(FiscalActivityInfoKey.M01).getDoubleValue();
+		double a13 = getActivityInfoKey(FiscalActivityInfoKey.A13).getDoubleValue();
 		//Horas anuales del titular.
 		FiscalActivityInfo info021 = null;
 		double m021 = 0.0;
@@ -225,10 +228,13 @@ public class Aeat2015ModuleCalculator implements IModuleCalculator, Serializable
 			info021.setDoubleValue(m021);
 		}
 		boolean titularFullTime = CommonUtil.round(m021) == 1800;
-		boolean moreThanOne = (CommonUtil.round(m022 + m024 + m025) > 1800);
+		boolean moreThanOne = (CommonUtil.round(m01) > 1);
 				
 		if (CommonUtil.round(m021) != 0) {
 			m02 = m021 / 1800;
+			if (CommonUtil.round(a13) != 0) {
+				m02 = CommonUtil.round(m02 * 0.75);
+			}
 		}
 		
 		if (CommonUtil.round(m022) > 1800) {
@@ -253,7 +259,7 @@ public class Aeat2015ModuleCalculator implements IModuleCalculator, Serializable
 			}
 			m02 = m02 + d;	
 		}
-		
+			
 		if (CommonUtil.round(m025) != 0) {
 			double d = ((m025 / 1800) * 0.75);
 			if (titularFullTime && !moreThanOne) {
@@ -436,26 +442,26 @@ public class Aeat2015ModuleCalculator implements IModuleCalculator, Serializable
 		if (previousAsalariados != 0 && personalAsalariado > previousAsalariados ) {
 			as = CommonUtil.round((personalAsalariado - previousAsalariados));
 			coef = as * 0.40;
-			
 		}
+		
 		if (CommonUtil.round(as) > 0.0) {
-			coef = coef + (0.10 * as); 
+			coef = coef + 0.10; 
 			as = CommonUtil.round(as - 1);
 		}
 		if (CommonUtil.round(as) > 0.0) {
-			coef = coef + (0.15 * (as>=2?2:as));
+			coef = coef + 0.15;
 			as = CommonUtil.round(as - 2);
 		}
 		if (CommonUtil.round(as) > 0.0) {
-			coef = coef + (0.20 * (as>=2?2:as));
+			coef = coef + 0.20;
 			as = CommonUtil.round(as - 2);
 		}
 		if (CommonUtil.round(as) > 0.0) {
-			coef = coef + (0.25 * (as>=3?3:as));
+			coef = coef + 0.25;
 			as = CommonUtil.round(as - 3);
 		}
 		if (CommonUtil.round(as) > 0.0) {
-			coef = coef + (0.30 * as);
+			coef = coef + 0.30;
 		}
 
 		double i02 = 0;
@@ -557,16 +563,19 @@ public class Aeat2015ModuleCalculator implements IModuleCalculator, Serializable
 				indiceEmpresasPequeñaDimensionAplicable = false;
 			}
 			// Indique si la actividad se realiza con un único tractocamión y sin semirremolques.
+			// Cuando la actividad se desarrolle con un único tractocamión y sin
+			// semirremolques, se aplicará, exclusivamente, el índice 0,75
 			double c11 = getActivityInfoKey(FiscalActivityInfoKey.C11).getDoubleValue();
 			if (CommonUtil.round(c11) == 1.0) {
 				i06 = 0.75;
 				indiceEmpresasPequeñaDimensionAplicable = false;
-			}
-			// Indique si la actividad se realiza con tractocamiones y el titular carece de semirremolques.
-			double c10 = getActivityInfoKey(FiscalActivityInfoKey.C10).getDoubleValue();
-			if (CommonUtil.round(c10) == 1.0) {
-				i06 = 0.90;
-				indiceEmpresasPequeñaDimensionAplicable = false;
+			} else {
+				// Indique si la actividad se realiza con tractocamiones y el titular carece de semirremolques.
+				double c10 = getActivityInfoKey(FiscalActivityInfoKey.C10).getDoubleValue();
+				if (CommonUtil.round(c10) == 1.0) {
+					i06 = 0.90;
+					indiceEmpresasPequeñaDimensionAplicable = false;
+				}
 			}
 		} else if ("---".equals(fa.getEpigraph())) {
 			// Actividad de producción de mejillón en batea:

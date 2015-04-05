@@ -327,7 +327,7 @@ public enum Mod303Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 	}
 
 	@Override
-	public boolean accept(Administration administration, Period period) {
+	public boolean accept(Administration administration, Period period, int year) {
 		boolean ret = true;
 		if (administrations != null) {
 			ret = false;

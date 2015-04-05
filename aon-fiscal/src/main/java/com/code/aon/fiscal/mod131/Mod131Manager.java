@@ -8,8 +8,6 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.time.DateUtils;
-
 import com.code.aon.AonVersion;
 import com.code.aon.accounting.summary.SummaryCollection;
 import com.code.aon.accounting.summary.SummaryProvider;
@@ -25,7 +23,6 @@ import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
 import com.code.aon.fiscal.enumeration.Mod131Key;
-import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.model.FiscalModelManager;
 import com.code.aon.fiscal.model.IFiscalDeclaration;
 import com.code.aon.pool.AonConnectionException;
@@ -69,28 +66,6 @@ public class Mod131Manager extends FiscalModelManager {
 			+" AND i.tax_date >= ?"
 			+" AND i.tax_date <= ?";
 
-	private static String SELECT_09_03 = "SELECT " 
-			+" fm.period,fmd.amount"
-			+" FROM fs_model_detail fmd"
-			+" INNER JOIN fs_model fm ON (fmd.fs_model = fm.id)" 
-			+" WHERE " + DomainManager.getStaticSQLWhereClause("fmd.domain")
-			+" AND fm.model = ? "
-			+" AND fm.administration = ? "
-			+" AND fm.year = ? "
-			+" AND fmd.type = ? "
-			+" ORDER by fm.period";
-	
-	private static String SELECT_09_08 = "SELECT " 
-			+" fm.period,fmd.amount"
-			+" FROM fs_model_detail fmd"
-			+" INNER JOIN fs_model fm ON (fmd.fs_model = fm.id)" 
-			+" WHERE " + DomainManager.getStaticSQLWhereClause("fmd.domain")
-			+" AND fm.model = ? "
-			+" AND fm.administration!= ? "
-			+" AND fm.year = ? "
-			+" AND fmd.type = ? "
-			+" ORDER by fm.period";
-	
 	private String domainName;
 	
 	public Mod131Manager(String domainName) {
@@ -159,50 +134,30 @@ public class Mod131Manager extends FiscalModelManager {
 			Date periodStart = fiscalModel.getPeriod().getStartDate(fiscalModel.getYear());
 			mod131.ensureDetail(Mod131Key.C08).addAccumulatedAmount(getC08(conn,periodStart,dateTo));		
 	
-	//		Casilla 09. Podrán cumplimentar esta casilla únicamente los contribuyentes que tengan 
-	//		derecho a la deducción por obtención de rendimientos de actividades económicas a efectos
-	//		del pago fraccionado por cumplir el siguiente requisito:
-	//		Que la suma del importe de la casilla 01 o, en el supuesto de que no pudiera determinarse 
-	//		ningún dato-base, el resultado de elevar al año el 25 por 100 de la casilla 03 del primer
-	//		trimestre del ejercicio o del primer trimestre de inicio de actividades y/o, en su caso, 
-	//		para actividades agrícolas, ganaderas y forestales, el resultado de elevar al año el 25 
-	//		por 100 de la casilla 05 del primer trimestre del ejercicio o del primer trimestre de 
-	//		inicio de actividades, sea igual o inferior a 12.000 euros. En los supuestos de inicio 
-	//		de la actividad a lo largo del ejercicio en la elevación al año se tendrán en consideración 
-	//		los días que resten hasta el final del año.
-	//		Además, si el contribuyente también está obligado a presentar el modelo 130 para declarar 
-	//		el pago fraccionado correspondiente a las actividades económicas en estimación directa
-	//		que realice, como sucede, entre otros, en el supuesto a que se refiere el segundo párrafo 
-	//		del artículo 35 del Reglamento del Impuesto, deberá adicionar a las magnitudes anteriores
-	//		el resultado de elevar al año el importe de la casilla 03, y/o el resultado de elevar al 
-	//		año el 25 por 100 de la casilla 08, ambos del primer trimestre del ejercicio o del primer 
-	//		trimestre de inicio de actividades.
-	//		Si la suma total de estas magnitudes no excede de 12.000 euros, se consignará en esta 
-	//		casilla 09 el importe obtenido de dividir entre cuatro la cuantía de la deducción por 
-	//		obtención de rendimientos de actividades económicas, prevista en el apartado 1 del 
-	//		artículo 80 bis de la Ley del Impuesto, que corresponda a efectos de los pagos fraccionados.
-	//		Para calcular la cuantía de esta deducción deberá tenerse en cuenta que:
-	//		- Cuando la suma de las magnitudes anteriormente indicadas (incluidas, en su caso, las 
-	//		  referidas al modelo 130) sea igual o inferior a 8.000 euros anuales, esta deducción asciende
-	//		  a 400 euros.
-	//		- Cuando dicha suma esté comprendida entre 8.000,01 y 12.000 euros anuales, la cuantía 
-	//		  de la deducción vendrá determinada por la siguiente operación: (400 euros menos el 
-	//		  producto de multiplicar por 0,1 la diferencia entre la suma de las magnitudes indicadas 
-	//		  y 8.000 euros anuales).
-	
-			double sumC01 = mod131.getDetail( Mod131Key.AC01).getAmount();
-			double previousC03 = getC09_03(conn,SELECT_09_03,fiscalModel,Mod131Key.C03);
-			double previousC08 = getC09_08(conn,SELECT_09_08,fiscalModel,Mod131Key.C08);
+	//		Casilla 09. Cuando la cuantía de los rendimientos netos de actividades económicas del ejercicio 
+	//		anterior sea igual o inferior a 12.000 euros, para determinar el importe de cada uno
+	//		de los pagos fraccionados, los contribuyentes deducirán el importe que resulte del siguiente cuadro:
+			
+	//			Cuantía de los rendimientos netos del			Importe de la minoración(euros)       
+	//				ejercicio anterior (euros)
+	//			-------------------------------------------------------------------------------
+	//			Igual o inferior a 9.000						100
+	//			Entre 9.000,01 y 10.000				            75
+	//			Entre 10.000,01 y 11.000						50
+	//			Entre 11.000,01 y 12.000						25
+			
+	//			A efectos de que el programa aplique esa minoración, desde la casilla 09 del modelo de 
+	//		declaración se despliega una ventana de captura en la que se deberá marcar la casilla 
+	//		que corresponda a la cuantía de los rendimientos netos del conjunto de actividades económicas 
+	//		ejercidas en 2014, siempre que no fueran superiores a 12.000 euros.
+	//			Además, en el caso excepcional de que en el trimestre deba presentar también el modelo 
+	//		130 de pago fraccionado (por ejemplo, por haber iniciado en 2015 el ejercicio de alguna 
+	//		actividad acogida al método de estimación directa), en la ventana de captura deberá 
+	//		indicarse también la cantidad reflejada en la casilla 13 del modelo 130 correspondiente 
+	//		al trimestre por el que se presenta la declaración.
+			
 			double c09 = 0;
-			double temp = CommonUtil.round(sumC01 + previousC03 + previousC08);
-			if ( temp <= 12000 ) {
-				if ( temp <= 8000 ) {
-					c09 = CommonUtil.round( 400.0 / 4 );
-				} else {
-					c09 = CommonUtil.round( (400.0 - ((temp - 8000) * 0.1)) / 4);
-				}
-			}
-			mod131.ensureDetail(Mod131Key.C09).addAccumulatedAmount(c09);
+			mod131.ensureDetail(Mod131Key.C091).addAccumulatedAmount(c09);
 			
 	//		Casilla 11. Si en la casilla 10 anterior se hubiera obtenido una cantidad positiva, 
 	//		se hará constar en la casilla 11 el importe de los resultados negativos que, en su 
@@ -349,103 +304,6 @@ public class Mod131Manager extends FiscalModelManager {
 			rs.close();
 			ps.close();
 			return retention;
-		} catch (SQLException e) {
-			throw new AonException(e.getMessage(), e);
-		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-		}
-	}
-	private double getC09_03(Connection conn,String select,FiscalModel fiscalModel, Mod131Key key) throws AonException {
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		double c03 = 0;
-		try {
-			ps = conn.prepareStatement(select,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			int i = 0;
-			int filled = DomainManager.fillHostVariables(ps, 1);
-			i = i + filled;
-			ps.setString(++i, fiscalModel.getModel().getValue());
-			ps.setInt(++i, fiscalModel.getAdministration().ordinal());
-			ps.setInt(++i, fiscalModel.getYear());
-			ps.setString(++i, key.getValue());
-			rs = ps.executeQuery();
-			if (rs.next()) {
-				Period period = Period.values()[rs.getInt(1)]; 
-				c03 = rs.getDouble(2);
-				Date firstPeriodDay = period.getStartDate(fiscalModel.getYear());
-				Date firstYearDay = CommonUtil.getYearFirstDay(fiscalModel.getYear());
-				double product;
-				if ( DateUtils.isSameDay(firstPeriodDay, firstYearDay) ) {
-					product = 4.0;
-				} else {
-					long days = CommonUtil.getDaysBetweenDates(period.getDueDate(fiscalModel.getYear()), CommonUtil.getYearLastDay(fiscalModel.getYear()));
-					product = CommonUtil.round(365/days);
-				}
-				c03 = CommonUtil.round(c03 * product);
-			}
-			rs.close();
-			ps.close();
-			return c03 ;
-		} catch (SQLException e) {
-			throw new AonException(e.getMessage(), e);
-		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-			}
-		}
-	}
-	
-	private double getC09_08(Connection conn,String select,FiscalModel fiscalModel, Mod131Key key) throws AonException {
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		double c08 = 0;
-		try {
-			ps = conn.prepareStatement(select,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			int i = 0;
-			int filled = DomainManager.fillHostVariables(ps, 1);
-			i = i + filled;
-			ps.setString(++i, fiscalModel.getModel().getValue());
-			ps.setInt(++i, fiscalModel.getAdministration().ordinal());
-			ps.setInt(++i, fiscalModel.getYear());
-			ps.setString(++i, key.getValue());
-			rs = ps.executeQuery();
-			if (rs.next()) {
-				Period period = Period.values()[rs.getInt(1)]; 
-				c08 = rs.getDouble(2);
-				Date firstPeriodDay = period.getStartDate(fiscalModel.getYear());
-				Date firstYearDay = CommonUtil.getYearFirstDay(fiscalModel.getYear());
-				double product;
-				if ( DateUtils.isSameDay(firstPeriodDay, firstYearDay) ) {
-					product = 4.0;
-				} else {
-					long days = CommonUtil.getDaysBetweenDates(period.getDueDate(fiscalModel.getYear()), CommonUtil.getYearLastDay(fiscalModel.getYear()));
-					product = CommonUtil.round(365/days);
-				}
-				c08 = CommonUtil.round(( c08 * 25 / 100) * product);
-			}
-			rs.close();
-			ps.close();
-			return c08 ;
 		} catch (SQLException e) {
 			throw new AonException(e.getMessage(), e);
 		} finally {

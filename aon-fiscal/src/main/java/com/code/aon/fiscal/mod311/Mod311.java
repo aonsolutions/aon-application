@@ -48,7 +48,7 @@ public class Mod311 implements IFiscalDeclaration, Serializable {
 		Administration admin = fiscalModel.getAdministration();
 		boolean cacAdded = false;
 		for (Mod311Key key : Mod311Key.values()) {
-			if (key.accept(admin,fiscalModel.getPeriod())) {
+			if (key.accept(admin,fiscalModel.getPeriod(),fiscalModel.getYear())) {
 				if (key == Mod311Key.CAC1 
 				 || key == Mod311Key.CAC2
 				 || key == Mod311Key.CAC3

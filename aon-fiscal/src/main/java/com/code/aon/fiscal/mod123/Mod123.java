@@ -38,7 +38,7 @@ public class Mod123 implements IFiscalDeclaration, Serializable {
 		clearMap();
 		Administration admin = fiscalModel.getAdministration();
 		for (Mod123Key key : Mod123Key.values()) {
-			if (key.accept(admin,fiscalModel.getPeriod())) {
+			if (key.accept(admin,fiscalModel.getPeriod(),fiscalModel.getYear())) {
 				ensureDetail(key);
 			}
 		}

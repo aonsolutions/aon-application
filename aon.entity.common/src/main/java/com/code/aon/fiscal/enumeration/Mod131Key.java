@@ -44,16 +44,17 @@ public enum Mod131Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 	C05("131-05" ,false,false,1,null),
 	C06("131-06" ,false,true ,1,null),
 	
-	H4 ("131-H4" ,true ,true ,0,null),
-	C07("131-07" ,false,true ,1,null),
-	C08("131-08" ,false,false,1,null),
-	C09("131-09" ,false,false,1,null),
-	C10("131-10" ,false,true ,1,null),
-	C11("131-11" ,false,false,1,null),
-	C12("131-12" ,false,false,1,null),
-	C13("131-13" ,false,true ,1,null),
-	C14("131-14" ,false,false,1,null),
-	C15("131-15" ,false,true ,1,null);
+	H4 ("131-H4"   ,true ,true ,0,null),
+	C07("131-07"   ,false,true ,1,null),
+	C08("131-08"   ,false,false,1,null),
+	C09("131-09"   ,false,false,1,null),
+	C091("131-091" ,false,false,1,null),
+	C10("131-10"   ,false,true ,1,null),
+	C11("131-11"   ,false,false,1,null),
+	C12("131-12"   ,false,false,1,null),
+	C13("131-13"   ,false,true ,1,null),
+	C14("131-14"   ,false,false,1,null),
+	C15("131-15"   ,false,true ,1,null);
 
 	public static final String ACTIVITIES_PREFIX = "131-AC";
 	
@@ -124,7 +125,13 @@ public enum Mod131Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 	}
 
 	@Override
-	public boolean accept(Administration administration, Period period) {
+	public boolean accept(Administration administration, Period period, int year) {
+		if (this == C09 ) {
+			return (year < 2015);
+		}
+		if (this == C091 ) {
+			return (year >= 2015);
+		}
 		if (administrations == null) {
 			return true;
 		}
@@ -135,4 +142,5 @@ public enum Mod131Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 		}
 		return false;
 	}
+
 }
