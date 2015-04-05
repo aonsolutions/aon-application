@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.tree;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -17,12 +18,16 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -248,7 +253,39 @@ public class FiscalTree extends MainEntryPoint {
 			return enterprise.toString();
 		}
 	}
-	
+
+	public static Widget renderBreadcrumb(final FiscalTree fiscalTree, TreeItem item) {
+		FlowPanel widget = new FlowPanel();
+		widget.setStyleName(AON.AON_CSS.aonFiscalTreeBreadcrumb());
+		Stack<TreeItem> stack = new Stack<TreeItem>();
+		TreeItem child = item; 
+		while (child.getParentItem() != null) {
+			stack.push(child);
+			child = child.getParentItem();
+		}
+		stack.push(fiscalTree.tree.getItem(0));
+		while (!stack.empty()) {
+			final TreeItem it = stack.pop();
+			InlineLabel title = new InlineLabel( it.getText());
+			title.setStyleName(AON.AON_CSS.aonFiscalTreeTitle());
+			widget.add(title);
+			if (it != item) {
+				title.addClickHandler( new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						it.setState(true);
+						fiscalTree.tree.setSelectedItem(it);
+					}
+				});
+				InlineLabel sep = new InlineLabel( ">" );
+				sep.addStyleName(AON.AON_CSS.aonMarginLeft());
+				sep.addStyleName(AON.AON_CSS.aonMarginRight());
+				widget.add(sep);	
+			}
+		}
+		return widget;
+	}
 }
 
 //,MOD131(MSG.mod131(),AON_RESOURCES.css().aonIconM131(),new HTMLPanel("MOD131"),null)

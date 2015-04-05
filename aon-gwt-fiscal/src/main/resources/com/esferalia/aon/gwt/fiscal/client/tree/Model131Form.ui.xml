@@ -50,18 +50,30 @@
 							</td>
 						</tr>
 					</table>
-					<table>
+					<table class="{aonResources.css.aonFiscalModelDataTable} ">
 						<tr>
-							<td>
-								<g:TextBox ui:field="document" styleName="{aonResources.css.aonInputText}"/>
+							<td styleName="{aonResources.css.aonWidth120}">
+								<g:Label text="{msg.document}" styleName="{aonResources.css.aonItalic}"/>
+								<g:TextBox ui:field="document" visibleLength="10" maxLength="9" 
+									styleName="{aonResources.css.aonInputText}"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="name" styleName="{aonResources.css.aonInputText}"/>
-								<g:TextBox ui:field="surname" styleName="{aonResources.css.aonInputText}"/>
+								<g:Label text="{msg.companyName}" styleName="{aonResources.css.aonItalic}"/>
+								<g:TextBox ui:field="name" visibleLength="30" maxLength="45" 
+									styleName="{aonResources.css.aonInputText}"/>
+								<g:TextBox ui:field="surname" visibleLength="30" maxLength="30"
+									styleName="{aonResources.css.aonInputText}"/>
 							</td>
-							<td>
-								<aon:PeriodListBox ui:field="period" styleName="{aonResources.css.aonInputText}"/>
-								<g:IntegerBox ui:field="year" styleName="{aonResources.css.aonInputText}"/>
+							<td styleName="{aonResources.css.aonWidthAuto}">
+								<g:Button ui:field="status" styleName="{aonResources.css.aonItalic}"/>
+							</td>
+							<td styleName="{aonResources.css.aonWidth50}">
+								<g:Label ui:field="period" 
+									styleName="{aonResources.css.aonFontBig} {aonResources.css.aonTextCenter}"/>
+							</td>
+							<td styleName="{aonResources.css.aonWidth70}">
+								<g:Label ui:field="year" 
+									styleName="{aonResources.css.aonFontBig} {aonResources.css.aonTextCenter}"/>
 							</td>
 						</tr>
 					</table>

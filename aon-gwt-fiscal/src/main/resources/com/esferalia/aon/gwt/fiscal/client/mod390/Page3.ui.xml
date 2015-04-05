@@ -48,7 +48,7 @@
 			<tr style="font-weight: bold;">
 				<td>
 					<g:Button ui:field='mainActivityButton'
-						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonTableRowLink}" />
+						styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonTableRowLink}" />
 				</td>
 				<td>
 					<g:Label ui:field='mainActivityEpigraph' />
@@ -61,7 +61,7 @@
 				</td>
 				<td>
 					<g:Button ui:field='mainActivityDeleteButton'
-						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconDelete}" />
+						styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconDelete}" />
 				</td>
 			</tr>
 
@@ -74,7 +74,7 @@
 			<tr style="font-weight: bold;">
 				<td>
 					<g:Button ui:field='activity1Button'
-						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonTableRowLink}" />
+						styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonTableRowLink}" />
 				</td>
 				<td>
 					<g:Label ui:field='activity1Epigraph' />
@@ -87,14 +87,14 @@
 				</td>
 				<td>
 					<g:Button ui:field='activity1DeleteButton'
-						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconDelete}" />
+						styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconDelete}" />
 				</td>
 			</tr>
 
 			<tr style="font-weight: bold;">
 				<td>
 					<g:Button ui:field='activity2Button'
-						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonTableRowLink}" />
+						styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonTableRowLink}" />
 				</td>
 				<td>
 					<g:Label ui:field='activity2Epigraph' />
@@ -107,14 +107,14 @@
 				</td>
 				<td>
 					<g:Button ui:field='activity2DeleteButton'
-						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconDelete}" />
+						styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconDelete}" />
 				</td>
 			</tr>
 
 			<tr style="font-weight: bold;">
 				<td>
 					<g:Button ui:field='activity3Button'
-						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonTableRowLink}" />
+						styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonTableRowLink}" />
 				</td>
 				<td>
 					<g:Label ui:field='activity3Epigraph' />
@@ -127,14 +127,14 @@
 				</td>
 				<td>
 					<g:Button ui:field='activity3DeleteButton'
-						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconDelete}" />
+						styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconDelete}" />
 				</td>
 			</tr>
 
 			<tr style="font-weight: bold;">
 				<td>
 					<g:Button ui:field='activity4Button'
-						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonTableRowLink}" />
+						styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonTableRowLink}" />
 				</td>
 				<td>
 					<g:Label ui:field='activity4Epigraph' />
@@ -147,14 +147,14 @@
 				</td>
 				<td>
 					<g:Button ui:field='activity4DeleteButton'
-						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconDelete}" />
+						styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconDelete}" />
 				</td>
 			</tr>
 
 			<tr style="font-weight: bold;">
 				<td>
 					<g:Button ui:field='activity5Button'
-						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonTableRowLink}" />
+						styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonTableRowLink}" />
 				</td>
 				<td>
 					<g:Label ui:field='activity5Epigraph' />
@@ -167,7 +167,7 @@
 				</td>
 				<td>
 					<g:Button ui:field='activity5DeleteButton'
-						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconDelete}" />
+						styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconDelete}" />
 				</td>
 			</tr>
 		</table>

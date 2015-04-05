@@ -31,7 +31,6 @@ public interface IFiscal {
 	public FiscalActivity getActivityFor(AONContext ctx,Epigraph epigraph, FiscalActivity fa);
 
 	// 			   FISCAL MODEL
-	public FiscalModel calculate(AONContext ctx, FiscalModel fm);
 	public FiscalModel save(AONContext ctx, FiscalModel fm);
 	public void delete(AONContext ctx, FiscalModel fm);
 	public FiscalModel getModel(AONContext ctx, int id);
@@ -79,6 +78,8 @@ public interface IFiscal {
 
 	// 				   		  MOD131
 	public Mod131 getMod131(AONContext ctx, int id);
+	public Mod131 calculate(AONContext ctx, Mod131 mod131);
+	public Mod131 save(AONContext ctx, Mod131 mod131);
 
 
 }

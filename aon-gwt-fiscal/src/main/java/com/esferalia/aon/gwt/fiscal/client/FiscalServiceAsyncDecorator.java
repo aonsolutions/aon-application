@@ -101,14 +101,6 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 	
 	// ----------------------------------------------------FISCAL MODEL
 	@Override
-	public void calculate(String domainName, FiscalModel fm,
-			AsyncCallback<FiscalModel> callback) {
-		AON.start();
-		fiscalServiceAsync.calculate(domainName, fm, 
-				new AsyncCallbackWrapper<FiscalModel>(callback));
-	}
-
-	@Override
 	public void getFiscalModels(String domainName, int domain,
 			AsyncCallback<LinkedList<FiscalModel>> callback) {
 		AON.start();
@@ -389,6 +381,21 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		AON.start();
 		fiscalServiceAsync.getMod131(domainName, domain,id, 
 						new AsyncCallbackWrapper<Mod131>(callback));
+	}
+
+	@Override
+	public void calculate(String domainName, Mod131 mod131,
+			AsyncCallback<Mod131> callback) {
+		AON.start();
+		fiscalServiceAsync.calculate(domainName, mod131, 
+						new AsyncCallbackWrapper<Mod131>(callback));
+	}
+	@Override
+	public void save(String domainName, Mod131 mod131,
+			AsyncCallback<Mod131> callback) {
+		AON.start();
+		fiscalServiceAsync.save(domainName, mod131, 
+				new AsyncCallbackWrapper<Mod131>(callback));
 	}
 
 }

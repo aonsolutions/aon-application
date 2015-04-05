@@ -324,6 +324,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Imprimir via AEAT")
 	String printViaAeat();
 
+	@DefaultMessage("Finalizado")
+	String finished();
+
 	@DefaultMessage("Pendiente")
 	String pending();
 	
@@ -1778,4 +1781,10 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Pago fraccionado previo del trimestre: Suma de resultados")
 	String mod131ResultSum();
+
+	@DefaultMessage("Reabrir la declaraci\u00F3n?")
+	String reopen();
+	
+	@DefaultMessage("Finalizar la declaraci\u00F3n?")
+	String finish();
 }

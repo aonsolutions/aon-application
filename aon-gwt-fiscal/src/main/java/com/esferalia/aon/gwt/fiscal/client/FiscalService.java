@@ -49,7 +49,6 @@ public interface FiscalService extends RemoteService {
 	void delete(String domainName, FiscalActivity fa) throws AonCoreException;
 	
 	// ---------------------------------------------------------- FISCAL MODEL
-	FiscalModel calculate(String domainName, FiscalModel fm);
 	LinkedList<FiscalModel> getFiscalModels(String domainName, int domain) throws AonCoreException;
 	FiscalModel getFiscalModel(String domainName, int domain, int id) throws AonCoreException;
 	FiscalModel save(String domainName, FiscalModel fm) throws AonCoreException;
@@ -96,6 +95,8 @@ public interface FiscalService extends RemoteService {
 
 	// ---------------------------------------------------------------MODELO 131
 	Mod131 getMod131(String domainName, int domain, int id) throws AonCoreException;
+	Mod131 calculate(String domainName, Mod131 mod131);
+	Mod131 save(String domainName, Mod131 mod131);
 
 
 }

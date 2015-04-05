@@ -1,5 +1,7 @@
 /.settings/
 /target/
+/gwt-unitCache/
+/war/
 /.project
 /.classpath
 /Connect.gwt.xml

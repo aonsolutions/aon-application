@@ -397,7 +397,7 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 				// *************
 				if (info.getInfoKey().hasDetails()) {
 					Button detailButton = new Button();
-					detailButton.setStyleName(AON.AON_CSS.aonIconButton());
+					detailButton.setStyleName(AON.AON_CSS.aonIconCommandButton());
 					detailButton.addStyleName(AON.AON_CSS.aonIconLoupe());
 					final CustomDialog detailDialog = new CustomDialog();
 					detailDialog.setVisible(false);

@@ -65,7 +65,7 @@
 							<g:InlineLabel ui:field="epigraph" />
 						</td>
 						<td class="{aonResources.css.aonWidth20}">
-							<g:Button ui:field="epigraphButton" styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconLoupe}" title="{msg.pushToChange}"/>
+							<g:Button ui:field="epigraphButton" styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconLoupe}" title="{msg.pushToChange}"/>
 						</td>
 						<td colspan="7">
 							<g:InlineLabel ui:field="description"/>

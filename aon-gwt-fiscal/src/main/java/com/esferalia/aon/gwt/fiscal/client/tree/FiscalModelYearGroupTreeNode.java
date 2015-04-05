@@ -12,7 +12,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasTreeItems;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -30,9 +29,7 @@ public class FiscalModelYearGroupTreeNode extends TreeNode<Enterprise> {
 		if (widget ==null) {
 			widget = new VerticalPanel( );
 			widget.setStyleName(AON.AON_CSS.aonFiscalTreeList());
-			Label title = new Label(getText());
-			title.setStyleName(AON.AON_CSS.aonFiscalTreeTitle());
-			widget.add(title);
+			widget.add(FiscalTree.renderBreadcrumb(fiscalTree, this));
 			for (int i = 0; i < getChildCount() ; i++) {
 				final TreeItem item = getChild(i); 
 				InlineLabel label =  new InlineLabel(getChild(i).getText());

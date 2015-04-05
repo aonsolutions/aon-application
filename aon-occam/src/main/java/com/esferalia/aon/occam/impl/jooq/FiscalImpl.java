@@ -67,10 +67,6 @@ public class FiscalImpl implements IFiscal {
 
 	// --------------------------------------------- [FISCAL MODELS]
 	@Override
-	public FiscalModel calculate(AONContext ctx, FiscalModel fm) {
-		return FiscalModelDAO.calculate(ctx, fm);
-	}
-	@Override
 	public FiscalModel save(AONContext ctx, FiscalModel fm) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> FiscalModelDAO.save(ctx, fm));
@@ -275,6 +271,14 @@ public class FiscalImpl implements IFiscal {
 	@Override
 	public Mod131 getMod131(AONContext ctx, int id) {
 		return FiscalModelDAO.getMod131(ctx, id);
+	}
+	@Override
+	public Mod131 calculate(AONContext ctx, Mod131 mod131) {
+		return FiscalModelDAO.calculate(ctx, mod131);
+	}
+	@Override
+	public Mod131 save(AONContext ctx, Mod131 mod131) {
+		return FiscalModelDAO.save(ctx, mod131);
 	}
 
 }

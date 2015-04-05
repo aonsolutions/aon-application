@@ -8,6 +8,21 @@
 	color: #4B4B4B;
 	font: 12px/1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
 }
+.aon-input-text-important {
+	border: 1px solid #808080 !important;
+	padding: 1px;
+}
+.aon-inputText {
+    border: 1px solid #808080;
+}
+.aon-number-box{
+	text-align: right;
+	padding-left: 2px;
+	padding-right: 2px;
+}
+.aon-number-box:focus {
+	text-align: center;
+}
 
 .aon-scroll-area{	
 	padding: 8px 1.5em 1.5em 1.5em;
@@ -178,6 +193,12 @@
 .aon-margin-left{
 	margin-left: 1em;
 }
+.aon-margin-bottom{
+	margin-bottom: 1em;
+}
+.aon-margin-right{
+	margin-right: 1em;
+}
 .aon-bold {
 	font-weight: bold;
 }
@@ -204,6 +225,9 @@
 }
 .aon-font-small {
 	font-size: 0.8em;
+}
+.aon-font-big {
+	font-size: 1.5em;
 }
 .aon-padding {
 	padding: 1em;
@@ -397,10 +421,11 @@
 	background-color: transparent; 
 }
 @sprite .aon-input-error {
+	gwt-image: "aonInputError" ;
+	background-position: 2px 3px;
 	color: red !important;
 	width: auto;
 	height: auto;
-	gwt-image: "aonInputError" ;
 	padding-left: 9px !important; 
 }
 
@@ -411,13 +436,6 @@
     border-image: imageUrl 0 250 0 0;
     padding-right: 10px;
 }
-.aon-input-text-important {
-	border: 1px solid #808080 !important;
-	padding: 1px;
-}
-.aon-inputText {
-    border: 1px solid #808080;
-}
 @sprite .aon-icon-aeat{
 	gwt-image: "aonAeat";
 	width: auto;
@@ -427,6 +445,16 @@
 	background-position: center left;
 }
 
+@sprite .aon-icon-lock{
+	gwt-image: "aonIconLock";
+	width: auto;
+	height: auto;
+}
+@sprite .aon-icon-unlock{
+	gwt-image: "aonIconUnlock";
+	width: auto;
+	height: auto;
+}
 @sprite .aon-icon-aeat-bw{
 	gwt-image: "aonAeatBW"
 }
@@ -458,8 +486,25 @@
 	gwt-image: "aonIconQuestion"
 }
 
+.aon-icon-button {
+  background: #eaeced;
+  background-image: -webkit-linear-gradient(top, #eaeced, #cfcfcf);
+  background-image: -moz-linear-gradient(top, #eaeced, #cfcfcf);
+  background-image: -ms-linear-gradient(top, #eaeced, #cfcfcf);
+  background-image: -o-linear-gradient(top, #eaeced, #cfcfcf);
+  background-image: linear-gradient(to bottom, #eaeced, #cfcfcf);
+  -webkit-border-radius: 5;
+  -moz-border-radius: 5;
+  border-radius: 5px;
+  color: #808080;
+  padding: 5px 5px 5px 20px;
+  text-decoration: none;
+}
 
-
+.aon-icon-button:hover {
+  background: #d6d6d6;
+  text-decoration: none;
+}
 .aon-icon-commandButton{
 	padding:0 0 0 16px;
 	text-align:left;
@@ -994,6 +1039,11 @@ input:disabled + label{
     padding: 2px 5px 2px 18px !important;
     width: auto !important;
 }
+.aon-tree-year {
+	border: 1px solid #BCBCBC;
+    font-weight: bold;
+    padding: 2px 5px;
+}
 
 @sprite .aon-icon-m111{
 	gwt-image: "aonIconM111";
@@ -1209,19 +1259,27 @@ input:disabled + label{
 .aon-fiscal-tree-list td {
 	padding: 3px;
 }
-
-.aon-fiscal-tree-title {
-	font-size: 1.5em;
-	text-decoration: underline;
-	margin-bottom: 5px;
-	margin-left: 20px;
-	width: 100%;
+.aon-fiscal-tree-breadcrumb {
+    font-size: 0.8em;
+    padding-bottom: 10px;
+    padding-left: 2em;
+    padding-top: 10px;
+    vertical-align: top;
 }
+.aon-fiscal-tree-title {
+	cursor: pointer;
+	font-size: 1.1em;
+}
+
+.aon-fiscal-tree-title:hover {
+	text-decoration: underline;
+}	
 .aon-fiscal-tree-item {
     cursor: pointer;
-    font-size: 1.5em;
+    font-size: 1.3em;
     margin-left: 40px;
-    padding: 0 0 0 18px;
+    padding: 0 0 0 20px;
+    text-transform: uppercase;
 }
 .aon-fiscal-tree-item:hover {
     text-decoration: underline;
@@ -1410,7 +1468,10 @@ input:disabled + label{
     width: 70px;	
 }
 .aon-fiscal-model-data-table {
-	width: 100%;
+	width: 90%;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 10px;
 }
 .aon-fiscal-model-data-table tr td {
 	border-bottom: solid #DDD 0.5px; 	
@@ -1429,13 +1490,13 @@ input:disabled + label{
 }
 .aon-fiscal-model-data-table-desc {
 	text-align: left;
-	padding-left: 5px;
+	padding-left: 8px;
 }
 .aon-fiscal-model-data-table-box {
-	border: solid #DDD 0.5px;
-	padding: 3px;
-	white-space: nowrap;
-	color: #DDD;
+    border: 0.5px solid #bbb;
+    color: #bbb;
+    margin-right: 2px;
+    padding: 1px;
 }
 .aon-fiscal-model-data-table-data {
 	text-align: right;

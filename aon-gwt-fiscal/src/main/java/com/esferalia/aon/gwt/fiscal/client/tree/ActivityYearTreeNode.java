@@ -32,9 +32,7 @@ public class ActivityYearTreeNode extends TreeNode<Integer> {
 		if (widget ==null) {
 			widget = new VerticalPanel( );
 			widget.setStyleName(AON.AON_CSS.aonFiscalTreeList());
-			Label title = new Label( getText());
-			title.setStyleName(AON.AON_CSS.aonFiscalTreeTitle());
-			widget.add(title);
+			widget.add(FiscalTree.renderBreadcrumb(fiscalTree, this));
 			for (int i = 0; i < getChildCount() ; i++) {
 				final TreeItem item = getChild(i); 
 				InlineLabel label =  new InlineLabel(getChild(i).getText());
@@ -60,8 +58,7 @@ public class ActivityYearTreeNode extends TreeNode<Integer> {
 			final FiscalTree fiscalTree, final Integer year) {
 		InlineLabel label = new InlineLabel();
 		label.setText(year.toString());
-		label.addStyleName(AON.AON_CSS.aonIconPointGreen());
-		label.addStyleName(AON.AON_CSS.aonTreeIconNode());
+		label.addStyleName(AON.AON_CSS.aonTreeYear());
 		setWidget(label);
 		setUserObject(year);
 		parent.addItem(this);

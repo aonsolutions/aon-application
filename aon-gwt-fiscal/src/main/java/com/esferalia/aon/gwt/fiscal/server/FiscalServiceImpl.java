@@ -89,10 +89,6 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 
 	// ------------------------------------------------------ FISCAL MODELS
 	@Override
-	public FiscalModel calculate(String domainName, FiscalModel fm) {
-		return AON.calculate(domainName, fm);
-	}
-	@Override
 	public LinkedList<FiscalModel> getFiscalModels(String domainName,
 			int domain) throws AonCoreException {
 		return AON.getFiscalModels(domainName, domain);
@@ -306,5 +302,15 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	public Mod131 getMod131(String domainName,
 			int domain,int id) throws AonCoreException {
 		return AON.getMod131(domainName, domain, id);
+	}
+
+	@Override
+	public Mod131 calculate(String domainName, Mod131 mod131) {
+		return AON.calculate(domainName, mod131);
+	}
+
+	@Override
+	public Mod131 save(String domainName, Mod131 mod131) {
+		return AON.save(domainName, mod131);
 	}
 }

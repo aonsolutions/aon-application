@@ -288,7 +288,7 @@ public class AeatUtils {
 			fileString = fileString.replace("\n", "");
 			fileString = fileString.replace("\r", "");
 			String urlParameters =
-					"HID=INV5131A" 
+					"HID=IE51310A" 
 					+ "&IDI=ES"
 					+ "&LEV=000000000000"
 					+ "&FIC="+URLEncoder.encode(fileString, "ISO-8859-1")
@@ -297,7 +297,8 @@ public class AeatUtils {
 					+ "&FIN="
 					+ "&EJF="+year
 					+ "&MOD=131";
-			String location= "https://www6.aeat.es/es13/l/zi22zilk0022";
+//			String location= "https://www6.aeat.es/es13/l/zi22zilk0022";
+			String location="https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";
 
 			URL url = new URL(location);
 			HttpsURLConnection connection = (HttpsURLConnection) url

@@ -7,6 +7,9 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-Selector")
 	String aonSelector();
 	
+	@ClassName("aon-number-box")
+	String aonNumberBox();
+	
 	@ClassName("aon-aeat-header-image")
 	String aonAeatHeaderImage();
 	
@@ -85,6 +88,8 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-width-200")
 	String aonWidth200();
 	
+	@ClassName("aon-icon-button")
+	String aonIconButton();
 
 	@ClassName("aon-italic")
 	String aonItalic();
@@ -121,6 +126,12 @@ public interface AonCSS extends  CssResource {
 
 	@ClassName("aon-icon-reset")
 	String aonIconReset();
+	
+	@ClassName("aon-icon-lock")
+	String aonIconLock();
+	
+	@ClassName("aon-icon-unlock")
+	String aonIconUnlock();
 
 	@ClassName("aon-editDataTable-iconColumn")
     String aonDataTableIconColumn();
@@ -157,6 +168,9 @@ public interface AonCSS extends  CssResource {
 	
 	@ClassName("aon-margin-left")
     String aonMarginLeft();
+	
+	@ClassName("aon-margin-right")
+    String aonMarginRight();
 
 	@ClassName("aon-bold")
     String aonBold();
@@ -188,6 +202,9 @@ public interface AonCSS extends  CssResource {
 
 	@ClassName("aon-font-small")
     String aonFontSmall();
+	
+	@ClassName("aon-font-big")
+	String aonFontBig();
 	
 	@ClassName("aon-padding")
     String aonPadding();
@@ -234,7 +251,7 @@ public interface AonCSS extends  CssResource {
 	
 	
 	@ClassName("aon-icon-commandButton")
-	String aonIconButton();
+	String aonIconCommandButton();
 	
 	@ClassName("aon-page-header")
 	String aonPageHeader();
@@ -458,6 +475,9 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-tree-icon-node")
 	String aonTreeIconNode();
 	
+	@ClassName("aon-tree-year")
+	String aonTreeYear();
+	
 	@ClassName("aon-icon-m111")
 	String aonIconM111();
 
@@ -601,6 +621,9 @@ public interface AonCSS extends  CssResource {
 
 	@ClassName("aon-fiscal-tree-item")
 	String aonFiscalTreeItem();
+	
+	@ClassName("aon-fiscal-tree-breadcrumb")
+	String aonFiscalTreeBreadcrumb();
 
 	@ClassName("aon-fiscal-model-table")
 	String aonFiscalModelTable();

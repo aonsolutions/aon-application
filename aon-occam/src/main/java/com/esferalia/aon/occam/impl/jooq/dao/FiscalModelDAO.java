@@ -17,15 +17,21 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.occam.server.fiscal.calc.Aeat2013Mod131Calculator;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
 
 public class FiscalModelDAO {
 	
-	public static FiscalModel calculate(AONContext ctx,FiscalModel fa) {
-		return null;
+	public static Mod131 calculate(AONContext ctx, Mod131 mod131) {
+		return Aeat2013Mod131Calculator.calculate(ctx, mod131);
 	}
 	
+	public static Mod131 save(AONContext ctx, Mod131 mod131) {
+		// TODO
+		return null;
+	}
+
 	public static Mod131 getMod131(AONContext ctx,int id) {
 		FiscalModel fm = getModel(ctx, id);
 		if (fm != null) {

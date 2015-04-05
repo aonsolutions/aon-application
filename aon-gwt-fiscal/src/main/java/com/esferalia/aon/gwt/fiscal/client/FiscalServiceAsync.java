@@ -44,7 +44,6 @@ public interface FiscalServiceAsync {
 			AsyncCallback<Void> callback);
 	
 	// ------------------------------------------------------ FISCAL MODELS
-	void calculate(String domainName, FiscalModel fm,AsyncCallback<FiscalModel> callback);
 	void getFiscalModels(String domainName, int domain,
 			AsyncCallback<LinkedList<FiscalModel>> callback);
 	void getFiscalModel(String domainName, int domain, int id,AsyncCallback<FiscalModel> callback);
@@ -97,5 +96,8 @@ public interface FiscalServiceAsync {
 	// ---------------------------------------------------------------MODELO 131
 	void getMod131(String domainName, int domain, int id,
 			AsyncCallback<Mod131> callback);
+	void calculate(String domainName, Mod131 mod131,
+			AsyncCallback<Mod131> callback);
+	void save(String domainName, Mod131 mod131,AsyncCallback<Mod131> asyncCallback);
 
 }

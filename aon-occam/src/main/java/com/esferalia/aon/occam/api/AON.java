@@ -366,15 +366,6 @@ public class AON {
 			if (ctx != null) ctx.close();	
 		}
 	}
-	public static FiscalModel calculate(String domainName, FiscalModel fm) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, fm.getDomain());
-			return getFiscal().calculate(ctx, fm);	
-		} finally {
-			if (ctx != null) ctx.close();	
-		}
-	}
 	
 	public static FiscalModel getFiscalModel(String domainName,
 			int domainId, int id) {
@@ -412,6 +403,24 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId);
 			return getFiscal().getMod131(ctx, id);	
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
+	public static Mod131 calculate(String domainName, Mod131 mod131) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod131.getDomain());
+			return getFiscal().calculate(ctx, mod131);	
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
+	public static Mod131 save(String domainName, Mod131 mod131) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod131.getDomain());
+			return getFiscal().save(ctx, mod131);	
 		} finally {
 			if (ctx != null) ctx.close();	
 		}
