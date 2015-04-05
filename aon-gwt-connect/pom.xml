@@ -22,7 +22,11 @@
           <deploy>${project.build.directory}/extra</deploy>
           <extra>${project.build.directory}/extra</extra>
           <webappDirectory>${project.build.outputDirectory}</webappDirectory>
-          <module>com.esferalia.aon.gwt.connect.Connect</module>
+	      <module>com.esferalia.aon.gwt.connect.Connect</module>
+				<compileSourcesArtifacts>
+				  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.common</compileSourcesArtifact>  
+				  <compileSourcesArtifact>com.esferalia.aon:aon.occam</compileSourcesArtifact>
+				</compileSourcesArtifacts>
         </configuration>
         <executions>
           <execution>
@@ -106,6 +110,13 @@
       <artifactId>aon.gwt.common</artifactId>
       <version>${project.version}</version>
     </dependency>
+	<dependency>
+		<groupId>com.esferalia.aon</groupId>
+		<artifactId>aon.gwt.common</artifactId>
+		<version>${project.version}</version>
+		<scope>compile</scope>
+		<classifier>sources</classifier>
+	</dependency>
     <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.ui.config</artifactId>
