@@ -29,7 +29,12 @@ import static com.esferalia.aon.jooq.tables.IrpfResult.IRPF_RESULT;
 import static com.esferalia.aon.jooq.tables.LeaveBatch.LEAVE_BATCH;
 import static com.esferalia.aon.jooq.tables.LeaveBatchDetail.LEAVE_BATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
+import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
+import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
+import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
+import static com.esferalia.aon.jooq.tables.Rpaymethod.RPAYMETHOD;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryBonus.SALARY_BONUS;
 import static com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST;
@@ -63,13 +68,24 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Category;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.jooq.tables.Contract;
+import com.esferalia.aon.jooq.tables.PayMethod;
 import com.esferalia.aon.jooq.tables.Person;
+import com.esferalia.aon.jooq.tables.Raddress;
+import com.esferalia.aon.jooq.tables.Rattach;
+import com.esferalia.aon.jooq.tables.Rbank;
+import com.esferalia.aon.jooq.tables.Rmedia;
+import com.esferalia.aon.jooq.tables.Rpaymethod;
 import com.esferalia.aon.jooq.tables.records.ContractBonusRecord;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.jooq.tables.records.ContractDeductionRecord;
 import com.esferalia.aon.jooq.tables.records.ContractInfoRecord;
 import com.esferalia.aon.jooq.tables.records.ContractPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
+import com.esferalia.aon.jooq.tables.records.RaddressRecord;
+import com.esferalia.aon.jooq.tables.records.RattachRecord;
+import com.esferalia.aon.jooq.tables.records.RbankRecord;
+import com.esferalia.aon.jooq.tables.records.RmediaRecord;
+import com.esferalia.aon.jooq.tables.records.RpaymethodRecord;
 
 public class JooqEmployees {
 
@@ -88,6 +104,18 @@ public class JooqEmployees {
 					.where(REGISTRY.DOCUMENT.eq(document))
 					.and(PERSON.REGISTRY.eq(registry))
 					.fetchOne();
+			
+			List<RaddressRecord> listRAddress = dslContext.selectFrom(RADDRESS)
+							.where(RADDRESS.REGISTRY.eq(registry))
+							.fetchInto(RADDRESS);
+			
+			List<RattachRecord> listRAttach = dslContext.selectFrom(RATTACH)
+					.where(RATTACH.REGISTRY.eq(registry))
+					.fetchInto(RATTACH);
+			
+			List<RbankRecord> listRBank = dslContext.selectFrom(RBANK)
+					.where(RBANK.REGISTRY.eq(registry))
+					.fetchInto(RBANK);
 			
 			
 
@@ -110,6 +138,106 @@ public class JooqEmployees {
 						.set(REGISTRY.SECURITY_LEVEL,
 								person.getValue(REGISTRY.SECURITY_LEVEL))
 						.returning(REGISTRY.ID).fetchOne().getId();
+				
+				for (RaddressRecord rAddress : listRAddress) {
+					
+					int rAddressID = dslContext.insertInto(RADDRESS)
+							.set(RADDRESS.DOMAIN, domain)
+							.set(RADDRESS.REGISTRY, registryId)
+							.set(RADDRESS.TYPE, rAddress.getValue(RADDRESS.TYPE))
+							.set(RADDRESS.RECIPIENT, rAddress.getValue(RADDRESS.RECIPIENT))
+							.set(RADDRESS.STREET_TYPE, rAddress.getValue(RADDRESS.STREET_TYPE))
+							.set(RADDRESS.ADDRESS, rAddress.getValue(RADDRESS.ADDRESS))
+							.set(RADDRESS.NUMBER, rAddress.getValue(RADDRESS.NUMBER))
+							.set(RADDRESS.ADDRESS2, rAddress.getValue(RADDRESS.ADDRESS2))
+							.set(RADDRESS.ADDRESS3, rAddress.getValue(RADDRESS.ADDRESS3))
+							.set(RADDRESS.ZIP, rAddress.getValue(RADDRESS.ZIP))
+							.set(RADDRESS.CITY, rAddress.getValue(RADDRESS.CITY))
+							.set(RADDRESS.GEOZONE, rAddress.getValue(RADDRESS.GEOZONE))
+							.set(RADDRESS.ALIAS, rAddress.getValue(RADDRESS.ALIAS))
+							.set(RADDRESS.MUNICIPALITY_CODE, rAddress.getValue(RADDRESS.MUNICIPALITY_CODE))
+							.returning(RADDRESS.ID).fetchOne().getId();
+					
+					List<RmediaRecord> rmediaList = dslContext
+							.selectFrom(RMEDIA)
+							.where(RMEDIA.REGISTRY.eq(registry)
+									.and(RMEDIA.RADDRESS.eq(rAddress.getValue(RADDRESS.ID))))
+									.fetchInto(RMEDIA);
+					
+					for (RmediaRecord rMedia : rmediaList) {
+						
+						dslContext.insertInto(RMEDIA)
+						.set(RMEDIA.DOMAIN, domain)
+						.set(RMEDIA.REGISTRY, registryId)
+						.set(RMEDIA.MEDIA, rMedia.getValue(RMEDIA.MEDIA))
+						.set(RMEDIA.VALUE, rMedia.getValue(RMEDIA.VALUE))
+						.set(RMEDIA.COMMENT, rMedia.getValue(RMEDIA.COMMENT))
+						.set(RMEDIA.ADMINISTRATIVE, rMedia.getValue(RMEDIA.ADMINISTRATIVE))
+						.set(RMEDIA.COMMERCIAL, rMedia.getValue(RMEDIA.COMMERCIAL))
+						.set(RMEDIA.TECHNICAL, rMedia.getValue(RMEDIA.TECHNICAL))
+						.set(RMEDIA.RADDRESS, rAddressID)
+						.execute();
+					}
+				}
+				
+				
+				for (RattachRecord rAttach : listRAttach) {
+					
+					dslContext.insertInto(RATTACH)
+					.set(RATTACH.DOMAIN, domain)
+					.set(RATTACH.REGISTRY, registryId)
+					.set(RATTACH.CATEGORY, rAttach.getValue(RATTACH.CATEGORY))
+					.set(RATTACH.MIMETYPE, rAttach.getValue(RATTACH.MIMETYPE))
+					.set(RATTACH.DESCRIPTION, rAttach.getValue(RATTACH.DESCRIPTION))
+					.set(RATTACH.DATA, rAttach.getValue(RATTACH.DATA))
+					.set(RATTACH.TYPE, rAttach.getValue(RATTACH.TYPE))
+					.set(RATTACH.SCOPE, rAttach.getValue(RATTACH.SCOPE))
+					.set(RATTACH.SECURITY_LEVEL, rAttach.getValue(RATTACH.SECURITY_LEVEL))
+					.set(RATTACH.ATTACH_DATE, rAttach.getValue(RATTACH.ATTACH_DATE))
+					.set(RATTACH.DRIVE_ID, rAttach.getValue(RATTACH.DRIVE_ID))
+					.set(RATTACH.DPARENT_ID, rAttach.getValue(RATTACH.DPARENT_ID))
+					.set(RATTACH.CREATION_USER, rAttach.getValue(RATTACH.CREATION_USER))
+					.set(RATTACH.CREATION_DATE, rAttach.getValue(RATTACH.CREATION_DATE))
+					.set(RATTACH.MODIFICATION_USER, rAttach.getValue(RATTACH.MODIFICATION_USER))
+					.set(RATTACH.MODIFICATION_DATE, rAttach.getValue(RATTACH.MODIFICATION_DATE))
+					.execute();
+				}
+				
+				for (RbankRecord rBank : listRBank) {
+					
+					int rBankId = dslContext.insertInto(RBANK)
+							.set(RBANK.DOMAIN, domain)
+							.set(RBANK.REGISTRY, registryId)
+							.set(RBANK.BANK_ACCOUNT, rBank.getValue(RBANK.BANK_ACCOUNT))
+							.set(RBANK.BIC, rBank.getValue(RBANK.BIC))
+							.set(RBANK.SUFIX, rBank.getValue(RBANK.SUFIX))
+							.set(RBANK.ALIAS, rBank.getValue(RBANK.ALIAS))
+							.set(RBANK.ACTIVE, rBank.getValue(RBANK.ACTIVE))
+							.set(RBANK.ACCOUNT, rBank.getValue(RBANK.ACCOUNT))
+							.returning(RBANK.ID).fetchOne().getId();
+					
+					
+					List<RpaymethodRecord> listRPayMethod = dslContext.selectFrom(RPAYMETHOD)
+							.where(RPAYMETHOD.REGISTRY.eq(registry)
+									.and(RPAYMETHOD.RBANK.eq(rBank.getValue(RBANK.ID))))
+							.fetchInto(RPAYMETHOD);
+					
+					for (RpaymethodRecord payMethod : listRPayMethod) {
+						
+						dslContext.insertInto(RPAYMETHOD)
+						.set(RPAYMETHOD.DOMAIN, domain)
+						.set(RPAYMETHOD.REGISTRY, registryId)
+						.set(RPAYMETHOD.PAY_METHOD, payMethod.getValue(RPAYMETHOD.PAY_METHOD))						
+						.set(RPAYMETHOD.RBANK, rBankId)
+						.set(RPAYMETHOD.NUMBER_OF_PYMNTS, payMethod.getValue(RPAYMETHOD.NUMBER_OF_PYMNTS))
+						.set(RPAYMETHOD.DAYS_TO_FIRST_PYMNT, payMethod.getValue(RPAYMETHOD.DAYS_TO_FIRST_PYMNT))
+						.set(RPAYMETHOD.DAYS_BETWEEN_PYMNTS, payMethod.getValue(RPAYMETHOD.DAYS_BETWEEN_PYMNTS))
+						.set(RPAYMETHOD.PYMNT_DAYS, payMethod.getValue(RPAYMETHOD.PYMNT_DAYS))
+						.execute();
+						
+					}
+				}
+				
 
 				dslContext
 						.insertInto(PERSON)

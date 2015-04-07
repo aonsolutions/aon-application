@@ -1319,11 +1319,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private EmployeeContextMenu getEmployeeContextMenu() {
 		if ( employeeContextMenu == null ) {
 			employeeContextMenu = new EmployeeContextMenu();
-			Employee employee = getClipboardEmployee();
-			if ( employee != null ) {
-				employeeContextMenu.setCopyEmployee(employee);
-				this.pasteItem.setVisible(true);
-			}
 		}
 		return employeeContextMenu;
 	}
@@ -1335,13 +1330,26 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 	
 	private WorkplaceContextMenu getWorkplaceContextMenu() {
+		
 		if ( workplaceContextMenu == null )
 			workplaceContextMenu = new WorkplaceContextMenu();
+		
+		Employee employee = getClipboardEmployee();
+		if (employee != null) {
+			
+			if(employeeContextMenu == null)			
+				employeeContextMenu = getEmployeeContextMenu();
+			
+			employeeContextMenu.setCopyEmployee(employee);
+			this.pasteItem.setVisible(true);
+		}
+		
 		return workplaceContextMenu;
 	}
 	
 	private Employee getClipboardEmployee(){
-		if(storage.getItem(EMPLOYEE) != null) {			
+		
+		if(storage.getItem(EMPLOYEE) != null) {		
 			return JSON2Employee(storage.getItem(EMPLOYEE).toString());
 		}
 		return null;

@@ -19,7 +19,7 @@ public class CalendarDraftObject implements Calendar.Listener {
 
 	public interface Listener {
 
-		void onValueChangeEvent(ValueChangeEvent<Date> event);
+		void onValueChangeEvent(Date date);
 		
 		void onSuprPressEvent(Date date);
 		
@@ -177,10 +177,10 @@ public class CalendarDraftObject implements Calendar.Listener {
 	}
 
 	@Override
-	public void onValueChangeEvent(ValueChangeEvent<Date> event) {
+	public void onValueChangeEvent(Date date) {
 		
 		for (Listener listener : listeners)
-			listener.onValueChangeEvent(event);
+			listener.onValueChangeEvent(date);
 	}
 	
 	@Override

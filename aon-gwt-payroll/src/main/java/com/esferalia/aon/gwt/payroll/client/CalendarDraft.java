@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.payroll.client.CalendarDraftObjectData.CalendarDraftListener;
 import com.esferalia.aon.gwt.payroll.client.CalendarDraftObjectData.MyHolidayDraft;
 import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
 import com.google.gwt.core.client.GWT;
@@ -21,7 +20,6 @@ import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.AttachEvent;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -289,9 +287,9 @@ public class CalendarDraft extends Composite implements
 	// --------------------------------------------- Listeners
 
 	@Override
-	public void onValueChangeEvent(ValueChangeEvent<Date> event) {
-		this.datePickerDateSelected = event.getValue();		
-		deleteButton.setVisible(calendarDraftObjectData.canDeleteMyHoliday(event.getValue()));
+	public void onValueChangeEvent(Date date) {
+		this.datePickerDateSelected = date;	
+		deleteButton.setVisible(calendarDraftObjectData.canDeleteMyHoliday(date));
 	}
 	
 	@Override
@@ -491,7 +489,8 @@ public class CalendarDraft extends Composite implements
 		for (Date key : map.keySet()) {
 
 			String descr = map.get(key);
-			String month = calendarDraftObjectData.getMonth(key.getMonth());
+			//Integer monthAux = getMonth(key);
+			String month = calendarDraftObjectData.getMonth(getMonth(key));
 
 			if (!auxMonth.equals(month)) {
 				auxMonth = month;
@@ -541,6 +540,13 @@ public class CalendarDraft extends Composite implements
 	private Integer getYear(Date date) {
 		return Integer.parseInt(DateTimeFormat.getFormat("dd-MM-yyyy")
 				.format(date).split("-")[2]);
+	}
+
+	private Integer getMonth(Date date) {
+		
+		//Example: January is Month 1 *******
+		return Integer.parseInt(DateTimeFormat.getFormat("dd-MM-yyyy")
+				.format(date).split("-")[1]) - 1;
 	}
 
 	private Date getDateSelected() {

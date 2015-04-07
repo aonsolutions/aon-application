@@ -15,7 +15,6 @@ import java.util.TreeMap;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.Calendar;
 import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -23,7 +22,7 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 
 	public interface CalendarDraftListener {
 
-		void onValueChangeEvent(ValueChangeEvent<Date> event);	
+		void onValueChangeEvent(Date date);	
 		
 		void onChangeEvent();	
 		
@@ -334,10 +333,10 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 	}
 
 	@Override
-	public void onValueChangeEvent(ValueChangeEvent<Date> event) {
+	public void onValueChangeEvent(Date date) {
 		
 		for (CalendarDraftListener listener : listeners)
-			listener.onValueChangeEvent(event);
+			listener.onValueChangeEvent(date);
 	}
 	
 	@Override
