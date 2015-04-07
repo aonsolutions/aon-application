@@ -32,6 +32,7 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.company.Company;
+import com.code.aon.company.Enterprise;
 import com.code.aon.config.Application;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Domain;
@@ -50,6 +51,7 @@ import com.code.aon.master.IConstants;
 import com.code.aon.master.VersionManager;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.admin.BookingInfo;
@@ -473,7 +475,11 @@ public class NewDomainController implements Serializable {
 			String alias = StringUtils.upperCase( StringUtils.substringBefore(domain.getName(), "."));
 			company.setAlias( StringUtils.left(alias, 32) );
 			BeanManager.getManagerBean(Company.class).insert(company);
-			CompanyController.addEnterprise(company, getEnterpriseScope(domain));			
+			Enterprise enterprise = CompanyController.addEnterprise(company, getEnterpriseScope(domain));
+			RegistryAddress address = CompanyController.getEmpyMainAddress(company);
+			address.setGeozone(null);
+			BeanManager.getManagerBean(RegistryAddress.class).insert(address);
+			CompanyController.insertWorkPlace(address, enterprise);
 		} catch ( ManagerBeanException e ) {
 			LOGGER.error( "Error creating company for " + domain, e );
 		}

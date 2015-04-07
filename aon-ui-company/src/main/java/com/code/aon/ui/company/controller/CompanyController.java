@@ -14,9 +14,11 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.company.Company;
 import com.code.aon.company.Enterprise;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Scope;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryAddress;
 import com.esferalia.aon.entity.IEntityAlias;
 
 /**
@@ -148,5 +150,17 @@ public class CompanyController extends CompanyParentController {
 		}
 		return null;
 	}
+	
+	public static void insertWorkPlace(RegistryAddress address, Enterprise enterprise) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
+		WorkPlace workPlace = new WorkPlace();
+		workPlace.setDomain(enterprise.getDomain());
+		workPlace.setEnterprise(enterprise);
+		workPlace.setScope(enterprise.getScope());
+		workPlace.setDescription(ICompanyConstants.PRINCIPAL);
+		workPlace.setAddress(address);
+		workPlace.setActive(true);
+		bean.insert(workPlace);
+	}	
 	
 }

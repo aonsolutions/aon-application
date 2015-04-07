@@ -13,7 +13,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.Company;
 import com.code.aon.company.Enterprise;
-import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Domain;
 import com.code.aon.config.Scope;
 import com.code.aon.ql.Criteria;
@@ -21,7 +20,6 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.company.controller.ICompanyController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -165,7 +163,7 @@ public class CompanyControllerListener extends ControllerAdapter {
 			if(c.isAddressDirty()){
 				c.getMainAddress().setRegistry(company);
 				saveRegistryAddress(c.getMainAddress());
-				insertWorkPlace(c.getMainAddress(), enterprise);
+				CompanyController.insertWorkPlace(c.getMainAddress(), enterprise);
 			}
 			
 			updateDomainValues(c);
@@ -182,17 +180,6 @@ public class CompanyControllerListener extends ControllerAdapter {
 	private void saveRegistryAddress(RegistryAddress mainAddress) throws ManagerBeanException {
 		IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 		rAddressBean.insertOrUpdate(mainAddress);
-	}
-	
-	private void insertWorkPlace(RegistryAddress address, Enterprise enterprise) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
-		WorkPlace workPlace = new WorkPlace();
-		workPlace.setEnterprise(enterprise);
-		workPlace.setScope(enterprise.getScope());
-		workPlace.setDescription(ICompanyConstants.PRINCIPAL);
-		workPlace.setAddress(address);
-		workPlace.setActive(true);
-		bean.insert(workPlace);
 	}
 	
 	private void initDomainValues( ICompanyController controller ) throws ManagerBeanException {

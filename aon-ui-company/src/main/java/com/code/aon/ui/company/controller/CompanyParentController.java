@@ -418,11 +418,7 @@ public class CompanyParentController extends BasicController implements ICompany
 				this.onReset(null);
 				((Company)this.getTo()).setDocumentType(DocumentType.CIF);
 				initControllerData();
-				this.mainAddress = new RegistryAddress();
-				this.mainAddress.setRegistry(new Registry());
-				this.mainAddress.setAddressType(AddressType.MAIN);
-				this.mainAddress.setStreetType(StreetType.CL);
-				this.mainAddress.setGeozone(new GeoZone());
+				this.mainAddress = getEmpyMainAddress(new Registry());
 			}
 		} catch (ManagerBeanException e) {
 			throw new AbortProcessingException(e.getMessage(), e);
@@ -495,16 +491,22 @@ public class CompanyParentController extends BasicController implements ICompany
 	public void addressChanged(ValueChangeEvent event) throws ManagerBeanException {
 		addressDirty = true;
 	}
+	
+	public static RegistryAddress getEmpyMainAddress( Registry registry ) {
+		RegistryAddress mainAddress = new RegistryAddress();
+		mainAddress.setDomain(registry.getDomain());
+		mainAddress.setRegistry(registry);
+		mainAddress.setAddressType(AddressType.MAIN);			
+		mainAddress.setStreetType(StreetType.CL);
+		mainAddress.setGeozone(new GeoZone());
+		return mainAddress;
+	}
 
 	private void loadMainAddress() throws ManagerBeanException {
 		Company company = (Company)this.getModel().getRowData();
 		this.mainAddress = RegistryInfo.getMainAddress(company);
 		if (this.mainAddress == null) {
-			this.mainAddress = new RegistryAddress();
-			this.mainAddress.setRegistry(company);
-			this.mainAddress.setAddressType(AddressType.MAIN);			
-			this.mainAddress.setStreetType(StreetType.CL);
-			this.mainAddress.setGeozone(new GeoZone());
+			this.mainAddress = getEmpyMainAddress(company);
 		} else if (this.mainAddress.getStreetType() == null) {
 			this.mainAddress.setStreetType(StreetType.CL);
 		}
