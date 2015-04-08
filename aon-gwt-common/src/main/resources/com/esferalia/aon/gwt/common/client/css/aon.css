@@ -1317,7 +1317,8 @@ input:disabled + label{
 }
 
 /* Splitters */
-.aon-Selector .gwt-SplitLayoutPanel-HDragger,.gwt-SplitLayoutPanel-VDragger {
+.aon-Selector .gwt-SplitLayoutPanel-HDragger,
+.aon-Selector .gwt-SplitLayoutPanel-VDragger {
 	background-color: #eee;
 }
 

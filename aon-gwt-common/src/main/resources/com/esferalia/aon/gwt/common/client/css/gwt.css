@@ -82,7 +82,8 @@ select {
 }
 
 /* Splitters */
-.gwt-Selector .gwt-SplitLayoutPanel-HDragger,.gwt-SplitLayoutPanel-VDragger {
+.gwt-Selector .gwt-SplitLayoutPanel-HDragger,
+.gwt-Selector .gwt-SplitLayoutPanel-VDragger {
 	background-color: white;
 }
 
