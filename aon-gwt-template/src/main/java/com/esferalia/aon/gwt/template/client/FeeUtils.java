@@ -28,6 +28,7 @@ public class FeeUtils {
 		v.add("Detalle2");
 		v.add("Detalle3");
 		v.add("Texto Libre");
+		v.add("Linea");
 		return v;
 	}
 	

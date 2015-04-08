@@ -36,7 +36,7 @@ public class ProductUtils {
 	}
 	
 	public static Boolean productCheck(Dialog dialog, FlexTable flex_table) {
-		if(!dialog.getType().equals("new ") && !dialog.getType().equals("edit")){
+		if(!dialog.getType().equals("new") && !dialog.getType().equals("edit")){
 			return false;
 		}
 		Integer num = 0;

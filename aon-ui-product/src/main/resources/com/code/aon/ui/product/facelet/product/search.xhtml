@@ -8,11 +8,28 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="productSearch">
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+		<aon:form id="productSearch">				
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">	
 				<ui:param name="toolbarTitle" value="#{bundle.aon_role_product}" />
 				<ui:param name="controller" value="#{product}" />
-			</ui:include>
+				
+				<ui:define name="additionalToolbarContent">
+					<aon:if test="#{salesAppParam.activeMarketPlace}">
+							<ui:include
+								src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
+							<aon:commandLink id="product-import" value="Importar"
+								onclick="product()"
+								styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
+							</aon:commandLink>
+							<aon:commandLink id="product-export" value="Exportar"
+								onclick="productx()"
+								styleClass="aon-finding-toolbar-item aon-icon-export-excel-trans">
+							</aon:commandLink>
+					</aon:if>
+				</ui:define>
+			</ui:decorate>
+			
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">

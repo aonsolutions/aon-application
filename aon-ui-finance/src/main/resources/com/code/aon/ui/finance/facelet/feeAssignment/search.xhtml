@@ -8,16 +8,26 @@
 
 	<ui:define name="content">
 		<aon:form id="feeAssignmentSearch">
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.finance_fee_assignment_module}" />
 				<ui:param name="controller" value="#{feeAssignment}" />
 				<ui:param name="skipResetButton" value="#{true}" />
-			</ui:include>
 
+				<ui:define name="additionalToolbarContent">
+					<ui:include
+						src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
+					<aon:commandLink id="customer-fee-import" value="Importar"
+						onclick="fee()"
+						styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
+					</aon:commandLink>
+				</ui:define>
+			</ui:decorate>
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{feeAssignment}" />
 				<ui:param name="skipAfterSearch" value="#{true}" />
+				
 				<ui:define name="searchContent">
 					<ui:include src="/com/code/aon/ui/customer/facelet/customer/searchContent.xhtml" >
 						<ui:param name="searchController" value="#{customerSearch}" />

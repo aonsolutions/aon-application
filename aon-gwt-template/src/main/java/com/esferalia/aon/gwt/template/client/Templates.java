@@ -9,12 +9,10 @@ import java.util.List;
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.ProgressBar;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.template.client.css.AonGwtTemplateResources;
-import com.esferalia.aon.gwt.template.server.TransferInfo;
 import com.esferalia.aon.gwt.template.shared.Dialog;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
@@ -49,7 +47,6 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -102,7 +99,7 @@ public class Templates extends Composite implements EntryPoint {
 			};
 		};
 		
-		private MenuItem viewItem;
+		//private MenuItem viewItem;
 		private MenuItem editItem;
 		private MenuItem removeItem;
 		private MenuItem downloadItem;
@@ -218,8 +215,13 @@ public class Templates extends Composite implements EntryPoint {
 
 			exportProduct(this);
 			exportStock(this);
+			exportTransferStock(this);
+			exportFee(this);
 			exportProductx(this);
 			exportStockx(this);
+			exportTransferStockx(this);
+			exportFeex(this);
+			
 		}
 	}
 	
@@ -597,6 +599,44 @@ public class Templates extends Composite implements EntryPoint {
 					@Override
 					public void onSuccess(Integer result) {
 							hide();
+							if(result !=-1){
+								pbd = new ProgressBarDialog(result.doubleValue(), 0.86) {
+									
+								};
+
+								pbd.addStyleName("gwt-PopupPanel-template");
+								pbd.setGlassEnabled(true);
+								pbd.show();
+								item.insertFee(new AsyncCallback<Error>() {
+									
+									@Override
+									public void onSuccess(Error result) {
+										pbd.hide();
+										Dialog d2 = new Dialog("Importar Cuotas","Aceptar",true,"Cancelar",false,"importResponse");
+										d2.setError(result);
+										TemplatesDialog popup2 = new TemplatesDialog(d2){
+
+											@Override
+											protected void onAccept() {
+												hide();			
+											}
+
+											@Override
+											protected void onCancel() {
+												hide();
+											}
+										};
+										popup2.addStyleName("gwt-PopupPanel-template");
+										popup2.setGlassEnabled(true);
+										popup2.show();
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {
+										Window.alert(caught.toString());
+									}
+								});
+							}
 					}
 					@Override
 					public void onFailure(Throwable caught) {}
@@ -765,7 +805,7 @@ public class Templates extends Composite implements EntryPoint {
 						ti = t;
 					}
 				}
-				item.executeExcel(ti, warehouse, series, comments, new AsyncCallback<Integer>() {
+				item.executeExcel(ti, warehouse,null, series, comments, new AsyncCallback<Integer>() {
 					
 					@Override
 					public void onSuccess(Integer result) {
@@ -886,8 +926,181 @@ public class Templates extends Composite implements EntryPoint {
 		popup.show();
 
 	}
+	
+	private void importTransferStock(Vector<Warehouse> w, Vector<String> series){
+		Dialog d = new Dialog("Traspaso entre almacenes","Importar",true,"Cancelar",true,"importTransferStock");
+		d.setUrl(GWT.getModuleBaseURL());
+		d.setTemplateList(template_list);
+		d.setWarehouses(w);
+		d.setSeries(series);
+		TemplatesDialog popup = new TemplatesDialog(d) {
+			
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+			
+			@Override
+			protected void onAccept() {
+				ListBox lb = (ListBox) flex_table.getWidget(0, 1);
+				String template = lb.getItemText(lb.getSelectedIndex());
+				TemplateInfo ti = new TemplateInfo();
+				String  warehouse2 = "";
+				ListBox  lb2 = (ListBox) flex_table.getWidget(1, 1);
+				warehouse2 = lb2.getItemText(lb2.getSelectedIndex());
+				
+				String  warehouse = "";
+				ListBox  lb4 = (ListBox) flex_table.getWidget(2, 1);
+				warehouse = lb4.getItemText(lb4.getSelectedIndex());				
+				
+				String series = "";
+				ListBox lb3 = (ListBox) flex_table.getWidget(3, 1);
+				series = lb3.getItemText(lb3.getSelectedIndex());
+				String comments = "";
+				TextBox tb = (TextBox) flex_table.getWidget(4, 1);
+				comments = tb.getText();
+				//TODO AÑADIR TODOS LOS ATRIBUTOS
+				for(TemplateInfo t : tlist.getList()) {
+					if(t.getName().equals(template) && t.getType().equals("Stock")){
+						ti = t;
+					}
+				}
+				item.executeExcel(ti, warehouse, warehouse2, series, comments, new AsyncCallback<Integer>() {
+					
+					@Override
+					public void onSuccess(Integer result) {
+						
+						hide();
+						
+						if(result !=-1){
+							pbd = new ProgressBarDialog(result.doubleValue(),0.101) {
+
+							};
+							pbd.addStyleName("gwt-PopupPanel-template");
+							pbd.setGlassEnabled(true);
+							pbd.show();
+							item.insertTransferStock(new AsyncCallback<Error>() {
+								@Override
+								public void onSuccess(Error result) {
+									pbd.hide();
+									Dialog d2 = new Dialog("Traspaso entre almacenes","Aceptar",true,"Cancelar",false,"importResponse");
+									d2.setError(result);
+									TemplatesDialog popup2 = new TemplatesDialog(d2){
+										
+										@Override
+										protected void onAccept() {
+											hide();			
+										}
+
+										@Override
+										protected void onCancel() {
+											hide();
+										}	
+									};
+									popup2.addStyleName("gwt-PopupPanel-template");
+									popup2.setGlassEnabled(true);
+									popup2.show();
+								}
+							
+								@Override
+								public void onFailure(Throwable caught) {
+									Window.alert(caught.toString());
+								}	
+							});
+						}
+						else{
+							item.insertTransferStock(new AsyncCallback<Error>() {
+								@Override
+								public void onSuccess(Error result) {
+									Dialog d2 = new Dialog("Importar Stock","Aceptar",true,"Cancelar",false,"importResponse");
+									d2.setError(result);
+									TemplatesDialog popup2 = new TemplatesDialog(d2){
+
+										@Override
+										protected void onAccept() {
+											hide();			
+										}
+
+										@Override
+										protected void onCancel() {
+											hide();
+										}
+									};
+									popup2.addStyleName("gwt-PopupPanel-template");
+									popup2.setGlassEnabled(true);
+									popup2.show();
+								}
+								
+								@Override
+								public void onFailure(Throwable caught) {
+									Window.alert(caught.toString());
+								}
+							});
+						}
+						
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert(caught.getMessage());
+					}
+				});
+			}
+		};
+
+		popup.addStyleName("gwt-PopupPanel-template");
+		popup.setGlassEnabled(true);
+		popup.show();
+
+	}
 
 	private void exportStocks(Vector<Warehouse> w){
+		Dialog d = new Dialog("Exportar Stock","Descargar",true,"Cancelar",true,"exportStock");
+		d.setUrl(GWT.getModuleBaseURL());
+		d.setTemplateList(template_list);
+		d.setWarehouses(w);
+		TemplatesDialog popup = new TemplatesDialog(d) {
+			
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+			
+			@Override
+			protected void onAccept() {
+
+				ListBox lb = (ListBox) flex_table.getWidget(0, 1);
+				String template = lb.getItemText(lb.getSelectedIndex());
+				TemplateInfo ti = new TemplateInfo();
+				
+				for(TemplateInfo t : tlist.getList()) {
+					if(t.getName().equals(template) && t.getType().equals("Stock")){
+						ti = t;
+					}
+				}
+				ListBox lb2 = (ListBox) flex_table.getWidget(1, 1);
+				String warehouse = lb2.getItemText(lb2.getSelectedIndex());
+				
+				String driveId="";
+				if(ti.getDriveId()!=null)driveId= ti.getDriveId();
+				String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_stock/"
+		            	+ "?id=" + Integer.toString(ti.getId())
+		            	+ "&drive_id=" +URL.encode(driveId)
+		            	+ "&name=" +URL.encode(ti.getName()
+		            	+ "&domain_id=" + ti.getDomainId())
+		            	+ "&warehouse=" + warehouse;
+				
+				Window.open( fileDownloadURL, "_blank",null);
+				hide();
+				// llamar  servlet de descarga para krear excel con todos losproductos
+			}
+		};	
+		popup.addStyleName("gwt-PopupPanel-template");
+		popup.setGlassEnabled(true);
+		popup.show();
+	}
+	
+	private void exportTransferStocks(Vector<Warehouse> w){
 		Dialog d = new Dialog("Exportar Stock","Descargar",true,"Cancelar",true,"exportStock");
 		d.setUrl(GWT.getModuleBaseURL());
 		d.setTemplateList(template_list);
@@ -1131,6 +1344,56 @@ public class Templates extends Composite implements EntryPoint {
 	public static native void exportFeex(Templates thiz) /*-{
 		$wnd.feex = function() {
 			thiz.@com.esferalia.aon.gwt.template.client.Templates::feex(*)();
+		}
+	}-*/;
+	
+	public void transferStock(){
+		item.getWarehouses(new AsyncCallback<Vector<Warehouse>>() {
+			
+			@Override
+			public void onSuccess(Vector<Warehouse> result) {
+				ws = result;
+				item.getSeries(new AsyncCallback<Vector<String>>() {
+					Vector<Warehouse> whs = ws;
+					@Override
+					public void onSuccess(Vector<String> result) {
+						importTransferStock(whs, result);		
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
+				
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+	}
+
+	public static native void exportTransferStock(Templates thiz) /*-{
+		$wnd.transferStock = function() {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::transferStock(*)();
+		}
+	}-*/;
+	
+	public void transferStockx(){
+		item.getWarehouses(new AsyncCallback<Vector<Warehouse>>() {
+			
+			@Override
+			public void onSuccess(Vector<Warehouse> result) {
+				exportTransferStocks(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+		
+	}
+	
+	public static native void exportTransferStockx(Templates thiz) /*-{
+		$wnd.transferStockx = function() {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::transferStockx(*)();
 		}
 	}-*/;
 }

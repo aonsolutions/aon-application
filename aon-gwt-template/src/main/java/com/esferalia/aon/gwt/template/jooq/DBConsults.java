@@ -119,8 +119,8 @@ public class DBConsults {
 				Result<Record4<Integer, String, Byte, String>> recordDefault = dslContext
 						.select(RATTACH.ID, RATTACH.DESCRIPTION,
 								RATTACH.MIMETYPE, RATTACH.DRIVE_ID)
-						.from(RATTACH).join(DOMAIN).on(DOMAIN.PARENT.eq(RATTACH.DOMAIN))
-						.where(RATTACH.TYPE.eq((byte)15).and(DOMAIN.ID.eq(domainId)))
+						.from(RATTACH)
+						.where(RATTACH.TYPE.eq((byte)15).and(RATTACH.DOMAIN.eq(0)))
 						.fetch();
 				
 				Vector<TemplateInfo> v = new Vector<TemplateInfo>();
@@ -189,7 +189,51 @@ public class DBConsults {
 					ti.setIsParent(true);
 					v.add(ti);
 				});
-				
+				if(recordDefault.isEmpty()){
+					TemplateInfo stockTemplate = new TemplateInfo();
+					Vector<String> v2 = new Vector<String>();
+					v2.add("Producto");v2.add("Cantidad");
+					stockTemplate.setColumns(v2);
+					stockTemplate.setDomain(domain);
+					stockTemplate.setDomainId(0);
+					stockTemplate.setName("Stock Default");
+					stockTemplate.setType("Stock");
+					stockTemplate.sethasWarehouse(false);
+					stockTemplate.setIsParent(true);
+					Integer id = insertTemplate(domain, stockTemplate,Utils.newXmlFile(stockTemplate), 0);
+					stockTemplate.setId(id);
+					v.add(stockTemplate);
+					
+					TemplateInfo productTemplate = new TemplateInfo();
+					v2 = new Vector<String>();
+					v2.add("Nombre");v2.add("C/u00f3digo");v2.add("Precio Coste");v2.add("Precio Venta Base");
+					productTemplate.setColumns(v2);
+					productTemplate.setDomain(domain);
+					productTemplate.setDomainId(0);
+					productTemplate.setName("Product Default");
+					productTemplate.setType("Producto");
+					productTemplate.sethasWarehouse(false);
+					productTemplate.setIsParent(true);
+					id = insertTemplate(domain, productTemplate,Utils.newXmlFile(productTemplate), 0);
+					productTemplate.setId(id);
+					v.add(productTemplate);
+					
+					TemplateInfo feeTemplate = new TemplateInfo();
+					v2 = new Vector<String>();
+					v2.add("Cliente");v2.add("Producto");v2.add("Cantidad");v2.add("Precio");v2.add("Descuento");
+					v2.add("Fecha Inicio");v2.add("Fecha Facturaci\u00f3n");v2.add("Centro de Trabajo");
+					feeTemplate.setColumns(v2);
+					feeTemplate.setDomain(domain);
+					feeTemplate.setDomainId(0);
+					feeTemplate.setName("Fee Default");
+					feeTemplate.setType("Cuota");
+					feeTemplate.sethasWarehouse(false);
+					feeTemplate.setIsParent(true);
+					id = insertTemplate(domain, feeTemplate,Utils.newXmlFile(feeTemplate), 0);
+					feeTemplate.setId(id);
+					v.add(feeTemplate);
+				}
+				else{
 				recordDefault.stream().forEach(r -> {
 					TemplateInfo ti = new TemplateInfo();
 					ti.setId(r.value1());
@@ -219,8 +263,10 @@ public class DBConsults {
 					ti.setColumns(aux.getColumns());
 					ti.setType(aux.getType());
 					ti.setIsParent(true);
+					ti.setDomainId(0);
 					v.add(ti);
 				});
+				}
 				
 				TemplateList tl = new TemplateList();
 				tl.setList(v);
@@ -232,22 +278,30 @@ public class DBConsults {
 			}
 		
 	}
-	
+
 	public static Integer insertTemplate(String domain, TemplateInfo ti, byte[] b,Integer domainId) throws SQLException {
 		Connection connection = null;
 		try {
 			connection = DatabaseSync.getConnection(domain);
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
+			Integer registry;
+			if(domainId.equals(0)){
+				Result<Record1<Integer>> reg = dslContext.select(REGISTRY.ID)
+						.from(REGISTRY)
+						.where(REGISTRY.DOMAIN.eq(domainId)).fetch();
+				registry = reg.get(0).value1();
+			}
+			else{
+				Result<Record1<Integer>> reg = dslContext.select(ENTERPRISE.REGISTRY)
+						.from(ENTERPRISE.join(DOMAIN).on(ENTERPRISE.DOMAIN.eq(DOMAIN.ID)))
+						.where(DOMAIN.ID.eq(domainId)).fetch();
+				registry = reg.get(0).value1();
+			}
 			
-			
-			Result<Record1<Integer>> reg = dslContext.select(ENTERPRISE.REGISTRY)
-				.from(ENTERPRISE.join(DOMAIN).on(ENTERPRISE.DOMAIN.eq(DOMAIN.ID)))
-				.where(DOMAIN.ID.eq(domainId)).fetch();
-			
-						
+
 			return dslContext.insertInto(RATTACH,RATTACH.REGISTRY,RATTACH.DOMAIN,RATTACH.CATEGORY,RATTACH.MIMETYPE,RATTACH.DESCRIPTION,RATTACH.TYPE,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.ATTACH_DATE,RATTACH.DATA,RATTACH.DRIVE_ID,RATTACH.DPARENT_ID)
-						.values(reg.get(0).value1(),domainId,null,(byte) MimeType.MIME_XML.ordinal(),ti.getName(),(byte) 15,null,(byte)0,null,b,null,null).returning(RATTACH.ID).fetchOne().getId();
+						.values(registry,domainId,null,(byte) MimeType.MIME_XML.ordinal(),ti.getName(),(byte) 15,null,(byte)0,null,b,null,null).returning(RATTACH.ID).fetchOne().getId();
 	
 		} finally {
 			if (connection != null)

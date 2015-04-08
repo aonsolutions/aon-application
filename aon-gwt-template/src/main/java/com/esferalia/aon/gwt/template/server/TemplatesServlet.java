@@ -33,6 +33,7 @@ import com.code.aon.config.Series;
 import com.code.aon.config.Tax;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.customer.Customer;
+import com.code.aon.customer.InvoicingGroup;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.product.Brand;
 import com.code.aon.product.Item;
@@ -121,11 +122,14 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		TemplateList tl = null;
 		try {
 			tl = DBConsults.getTemplates(domain, domainId);
-		} catch (SQLException e) {
+		}catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return tl;
 	}
+	
+
+	
 	
 	public Vector<Warehouse> getWarehouses(){
 		Vector<Warehouse> v = new Vector<Warehouse>();
@@ -177,6 +181,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	Vector<WorkPlace> workplaces = new Vector<WorkPlace>();
 	Vector<Project> projects = new Vector<Project>();
 	Vector<Customer> customers = new Vector<Customer>();
+	Vector<InvoicingGroup> invoicingGroups = new Vector<InvoicingGroup>();
 	public Integer executeExcel3(TemplateInfo ti){
 		long startAll= System.currentTimeMillis();
 		String domain = AonUtil.getDomainName();
@@ -191,6 +196,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			workplaces = DBFee.getWorkplaces(domain,domainId);
 			projects = DBFee.getProjects(domain,domainId);
 			customers = DBFee.getCustomers(domain, domainId);
+			invoicingGroups = DBFee.getInvoicingGroups(domain, domainId);
+			
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
@@ -241,6 +248,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			Iterable<Cell> cellIterable = () -> cellIterator;
 			fi = newFee();
 			Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
+			rowAux = row;
 			cellStream.forEach(cell ->{
                 if(cell.getRowIndex() == 0){//Primera fila del fichero Excel.
                 	if(ti.getColumns().size()<= cell.getColumnIndex() || ti.getColumns().get(cell.getColumnIndex()) == null || !ti.getColumns().get(cell.getColumnIndex()).equalsIgnoreCase(cell.getStringCellValue())){
@@ -254,15 +262,15 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
                 }
                 else{
                 	if(cell.getColumnIndex() !=0){
-                		Cell beforeCell = row.getCell(cell.getColumnIndex()-1);
+                		Cell beforeCell = rowAux.getCell(cell.getColumnIndex()-1);
             			if(beforeCell == null || beforeCell.getCellType() == Cell.CELL_TYPE_BLANK){
             				if(beforeCell == null){
-            					verror.add("*Fila "+cell.getRowIndex()+", Columna "+0+" : Dato Incorrecto");
-            					textError= textError + "*Fila "+cell.getRowIndex()+", Columna "+0+" : Dato Incorrecto \n";
+            					verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto");
+            					textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto \n";
             				}
             				else if(ti.getColumns().get(beforeCell.getColumnIndex()).equals("Nombre") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("C\u00f3digo") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Precio Coste") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Precio Venta Base")){
-            					verror.add("*Fila "+beforeCell.getRowIndex()+", Columna "+beforeCell.getColumnIndex()+" : Dato Incorrecto");
-            					textError= textError + "*Fila "+beforeCell.getRowIndex()+", Columna "+beforeCell.getColumnIndex()+" : Dato Incorrecto \n";
+            					verror.add("*Fila "+(beforeCell.getRowIndex()+1)+", Columna "+Utils.getColumn(beforeCell.getColumnIndex())+" : Dato Incorrecto");
+            					textError= textError + "*Fila "+(beforeCell.getRowIndex()+1)+", Columna "+Utils.getColumn(beforeCell.getColumnIndex())+" : Dato Incorrecto \n";
             				}
             			}
                 	}
@@ -270,8 +278,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
                 	if(!ti.getColumns().get(cell.getColumnIndex()).equals("Texto Libre")){
                 		fi = checkFee(ti.getColumns().get(cell.getColumnIndex()),fi,cell);
                 		if(fi == null){
-                			verror.add("*Fila "+cell.getRowIndex()+", Columna "+cell.getColumnIndex()+" : Dato Incorrecto ");
-                			textError= textError + "*Fila "+cell.getRowIndex()+", Columna "+cell.getColumnIndex()+" : Dato Incorrecto \n";
+                			verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto ");
+                			textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n";
                 			fi = newFee();	
                 		}
                 	}
@@ -291,8 +299,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
             			Short cellnum = row.getLastCellNum();
             			if(row.getLastCellNum() > ti.getColumns().size())cellnum--;
             			if(ti.getColumns().get(cellnum).equals("Nombre") || ti.getColumns().get(cellnum).equals("C\u00f3digo") || ti.getColumns().get(cellnum).equals("Precio Coste") || ti.getColumns().get(cellnum).equals("Precio Venta Base")){
-          					verror.add("*Fila "+row.getRowNum()+", Columna "+row.getLastCellNum()+" : Dato Incorrecto \n");
-          					textError= textError + "*Fila "+row.getRowNum()+", Columna "+row.getLastCellNum()+" : Dato Incorrecto \n";
+          					verror.add("*Fila "+(row.getRowNum()+1)+", Columna "+Utils.getColumn(row.getLastCellNum())+" : Dato Incorrecto \n");
+          					textError= textError + "*Fila "+(row.getRowNum()+1)+", Columna "+Utils.getColumn(row.getLastCellNum())+" : Dato Incorrecto \n";
             			}
             		}
             	}
@@ -347,7 +355,6 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		FeeInfo feeInfo = new FeeInfo();
 		feeInfo.setPeriod(0);
 		feeInfo.setDiscount(0.0);
-		feeInfo.setBillingGroup(false);
 		feeInfo.setConfidential(false);
 		feeInfo.setDetail("");
 		feeInfo.setDetail2("");
@@ -392,13 +399,13 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			break;
 		case "Descuento": case "Discount":
 			if(type.equals(Cell.CELL_TYPE_NUMERIC))
-				fee.setPrice(cell.getNumericCellValue());
+				fee.setDiscount(cell.getNumericCellValue());
 			else return null;
 			break;
 		case "Fecha Inicio": case "Start Date":
 			if(type.equals(Cell.CELL_TYPE_STRING)){
 				Date d = Utils.stringToDate(cell.getStringCellValue());
-				if(d != null) fee.setEndDate(d); 
+				if(d != null) fee.setStartDate(d); 
 				else return null;
 			}
 			else if(type.equals(Cell.CELL_TYPE_NUMERIC)){
@@ -416,7 +423,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 				else return null;
 			}
 			else if(type.equals(Cell.CELL_TYPE_NUMERIC)){
-				fee.setStartDate(cell.getDateCellValue());
+				fee.setEndDate(cell.getDateCellValue());
 			}
 		/*	else if(type.equals(Cell.CELL_TYPE_FORMULA)){
 				
@@ -426,11 +433,11 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		case "Fecha Facturaci\u00f3n": case "Billing Date":
 			if(type.equals(Cell.CELL_TYPE_STRING)){
 				Date d = Utils.stringToDate(cell.getStringCellValue());
-				if(d != null) fee.setEndDate(d); 
+				if(d != null) fee.setBillingDate(d); 
 				else return null;
 			}
 			else if(type.equals(Cell.CELL_TYPE_NUMERIC)){
-				fee.setStartDate(cell.getDateCellValue());
+				fee.setBillingDate(cell.getDateCellValue());
 			}
 		/*	else if(type.equals(Cell.CELL_TYPE_FORMULA)){
 				
@@ -474,31 +481,18 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			else return null;
 			break;
 		case "Grupo Facturaci\u00f3n": 
-			Boolean bool = false;
-			switch (type) {
-			case Cell.CELL_TYPE_STRING:
-				String string = cell.getStringCellValue();
-				if(string.equalsIgnoreCase("si") || string.equalsIgnoreCase("yes") || string.equalsIgnoreCase("true"))
-					bool = true;
-				else if( string.equalsIgnoreCase("no") || string.equalsIgnoreCase("false"))
-					bool = false;
-				else return null;
-				break;
-			case Cell.CELL_TYPE_NUMERIC:
-				Double num = cell.getNumericCellValue();
-				if(num.equals(1.0)) bool = true;
-				else if(num.equals(0.0)) bool = false;
-				else return null;
-				break;
-			case Cell.CELL_TYPE_BOOLEAN:
-				bool = cell.getBooleanCellValue();
-				break;
-			case Cell.CELL_TYPE_BLANK:
-				return fee;
-			default:
-				return null;
+			if(type.equals(Cell.CELL_TYPE_STRING)){
+				String strAux = cell.getStringCellValue();
+				Boolean b = true;
+				for(InvoicingGroup s : invoicingGroups){
+					if(strAux.equalsIgnoreCase(s.getDescription())){
+						fee.setBillingGroup(s.getId());
+						b= false;
+					}
+				}
+				if(b) return null;	
 			}
-			fee.setBillingGroup(bool);
+			else return null;
 			break;
 		case "Confidencial": case "Confidential":
 			Boolean bool2 = false;
@@ -561,7 +555,9 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			if(type.equals(Cell.CELL_TYPE_STRING))
 				fee.setDescription(cell.getStringCellValue());
 			break;
-
+		case "Linea": case "Line":
+			if(type.equals(Cell.CELL_TYPE_NUMERIC))
+				fee.setLine(cell.getNumericCellValue());
 		default:
 			break;
 		}
@@ -575,7 +571,10 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	Error error;
 	Integer rowCount;
 	StockInfo si;
-	public Integer executeExcel(TemplateInfo ti, String warehouse, String series, String comments){
+	TemplateInfo ti;
+	Row rowAux ;
+	public Integer executeExcel(TemplateInfo templateInfo, String warehouse1,String warehouse2 , String series, String comments){
+		ti = templateInfo;
 		long startAll= System.currentTimeMillis();
 		String domain = AonUtil.getDomainName();
 		error = new Error();
@@ -585,10 +584,26 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		Vector<StockInfo> stock = new Vector<StockInfo>();
 		com.esferalia.aon.gwt.template.shared.Error error = new Error();
 		
+		if(warehouse1.equals("-") && (warehouse2.equals("-") || warehouse2 == null)){
+			error.setError(false);
+			textError = textError + "*Error : No ha seleccionado ning\u00fan almac\u00e9n. \n";
+    		verror.add("*Error : No ha seleccionado ning\u00fan almac\u00e9n.");
+    		error.setTextError(verror);
+    		this.error = error;
+    		return -1;
+		}
+		
 		Warehouse w = new Warehouse();
+		Warehouse w2 = new Warehouse();
+
 		Series s = new Series();
 		try {
-			w = DBStock.getWarehouse(warehouse, ti.getDomainId(),domain);
+			Integer domId;
+			if (ti.getDomainId().equals(0)) domId = domainId; 
+			else domId = ti.getDomainId();
+			
+			if(!warehouse1.equals("-")) w = DBStock.getWarehouse(warehouse1, domId,domain);
+			if(warehouse2 != null && !warehouse2.equals("-")) 	w2 = DBStock.getWarehouse(warehouse2, domId,domain);
 			s = DBStock.getSeries(domain, domainId, series);
 		} catch (SQLException e1) {
 			e1.printStackTrace();
@@ -597,7 +612,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
     	Boolean b = true;
 
 		transferInfo = new TransferInfo();
-		transferInfo.setTargetWarehouse(w);
+		if(!warehouse1.equals("-")) transferInfo.setTargetWarehouse(w);
+		if(warehouse2 != null && !warehouse2.equals("-")) transferInfo.setSourceWarehouse(w2);
 		transferInfo.setSeries(s);
 		transferInfo.setComments(comments);
 		
@@ -612,8 +628,12 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
     		
     	}
     	if(!b){
+    		error.setError(false);
+    		textError = textError + "*Error : La serie y el almacén no concuerdan. \n";
     		verror.add("*Error : La serie y el almacén no concuerdan.");
-
+    		error.setTextError(verror);
+    		this.error = error;
+    		return -1;
     	}
 		
 
@@ -662,6 +682,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			Iterator<Cell> cellIterator = row.cellIterator();
 			Iterable<Cell> cellIterable = () -> cellIterator;
 			si = newStock();
+			rowAux = row;
 			Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
 			cellStream.forEach(cell ->{
 				Object object = null ;
@@ -685,6 +706,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
                 	if(ti.getColumns().size()<= cell.getColumnIndex() || ti.getColumns().get(cell.getColumnIndex()) == null || !ti.getColumns().get(cell.getColumnIndex()).equalsIgnoreCase(cell.getStringCellValue())){
                 		 // El archivo no es compatible con la plantilla
              			error.setError(false);
+             			textError =  textError + "*El archivo importado no es compatible con la plantilla seleccionada.\n";
              			verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
              			error.setTextError(verror);
              			this.error = error;
@@ -693,17 +715,29 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
                 }
                 else{
                 	if(cell.getColumnIndex() !=0){
-                		Cell beforeCell = row.getCell(cell.getColumnIndex()-1);
+                		Cell beforeCell = rowAux.getCell(cell.getColumnIndex()-1);
             			if(beforeCell == null || beforeCell.getCellType() == Cell.CELL_TYPE_BLANK){
-            				if(ti.getColumns().get(beforeCell.getColumnIndex()).equals("Producto") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Almac\u00e9n Destino") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Cantidad") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Series")){
-            					textError= textError + "*Fila "+beforeCell.getRowIndex()+", Columna "+beforeCell.getColumnIndex()+" : Dato Incorrecto \n";
+            				if(beforeCell == null){
+            					textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto \n";
+            					verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto");
+            					error.setTextError(verror);
+            					this.error = error;
+            				}
+            				else if(ti.getColumns().get(beforeCell.getColumnIndex()).equals("Producto") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Almac\u00e9n Destino") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Cantidad") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Series")){
+            					textError= textError + "*Fila "+(beforeCell.getRowIndex()+1)+", Columna "+Utils.getColumn(beforeCell.getColumnIndex())+" : Dato Incorrecto \n";
+            					verror.add("*Fila "+(beforeCell.getRowIndex()+1)+", Columna "+Utils.getColumn(beforeCell.getColumnIndex())+" : Dato Incorrecto \n");
+            					error.setTextError(verror);
+            					this.error = error;
             				}
             			}
                 	}
                 	if(!ti.getColumns().get(cell.getColumnIndex()).equals("Texto Libre")){
                 		si = check(ti.getColumns().get(cell.getColumnIndex()),object,si,cell.getCellType());
                 		if(si == null){
-                			textError= textError + "*Fila "+cell.getRowIndex()+", Columna "+cell.getColumnIndex()+" : Dato Incorrecto \n";
+                			textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n";
+                			verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n");
+                			error.setTextError(verror);
+                			this.error = error;
                 			si = newStock();	
                 		}
                 	}
@@ -714,6 +748,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			if(row.getLastCellNum() != ti.getColumns().size()){
 				if(row.getRowNum() == 0){
 					error.setError(false);
+					textError= textError + "*El archivo importado no es compatible con la plantilla seleccionada. \n ";
             		verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
             		error.setTextError(verror);
             		this.error = error;
@@ -725,8 +760,10 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
             			Short cellnum = row.getLastCellNum();
             			if(row.getLastCellNum() > ti.getColumns().size())cellnum--;
             			if(ti.getColumns().get(cellnum).equals("Producto") || ti.getColumns().get(cellnum).equals("Almac\u00e9n Destino") || ti.getColumns().get(cellnum).equals("Cantidad")){
-          					verror.add("*Fila "+row.getRowNum()+", Columna "+row.getLastCellNum()+" : Dato Incorrecto \n");
-          					textError= textError + "*Fila "+row.getRowNum()+", Columna "+row.getLastCellNum()+" : Dato Incorrecto \n";
+          					verror.add("*Fila "+(row.getRowNum()+1)+", Columna "+Utils.getColumn(row.getLastCellNum())+" : Dato Incorrecto \n");
+          					error.setTextError(verror);
+          					this.error = error;
+          					textError= textError + "*Fila "+(row.getRowNum()+1)+", Columna "+Utils.getColumn(row.getLastCellNum())+" : Dato Incorrecto \n";
             			}
             		}
             	}
@@ -772,6 +809,35 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		
 		long timeAll = System.currentTimeMillis() - startAll;
 			
+		System.out.println("ALL    " + (timeAll/1000d));
+		return error;
+	}
+	
+	public Error insertTransferStock(){
+		long startAll= System.currentTimeMillis();
+		Vector<String> verror = error.getTextError();
+		String domain = AonUtil.getDomainName();
+		Error error = new Error();
+		if(textError.equals("")){
+			error.setError(true);
+			verror.add("");
+			error.setTextError(verror);
+			//String domain = AonUtil.getDomainName();
+			try {
+				error = DBStock.insertTransferStock(domain,domainId,stock,transferInfo);
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+	        //insertar STOCK en base de datos.!!
+		}
+		else{
+			//Alguna de las filas contiene datos erroneos.
+			error.setError(false);
+ 			error.setTextError(verror);
+		}
+		
+		long timeAll = System.currentTimeMillis() - startAll;
 		System.out.println("ALL    " + (timeAll/1000d));
 		return error;
 	}
@@ -938,12 +1004,12 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
                 		Cell beforeCell = row.getCell(cell.getColumnIndex()-1);
             			if(beforeCell == null || beforeCell.getCellType() == Cell.CELL_TYPE_BLANK){
             				if(beforeCell == null){
-            					verror.add("*Fila "+cell.getRowIndex()+", Columna "+0+" : Dato Incorrecto");
-            					textError= textError + "*Fila "+cell.getRowIndex()+", Columna "+0+" : Dato Incorrecto \n";
+            					verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto");
+            					textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto \n";
             				}
             				else if(ti.getColumns().get(beforeCell.getColumnIndex()).equals("Nombre") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("C\u00f3digo") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Precio Coste") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Precio Venta Base")){
-            					verror.add("*Fila "+beforeCell.getRowIndex()+", Columna "+beforeCell.getColumnIndex()+" : Dato Incorrecto");
-            					textError= textError + "*Fila "+beforeCell.getRowIndex()+", Columna "+beforeCell.getColumnIndex()+" : Dato Incorrecto \n";
+            					verror.add("*Fila "+(beforeCell.getRowIndex()+1)+", Columna "+Utils.getColumn(beforeCell.getColumnIndex())+" : Dato Incorrecto");
+            					textError= textError + "*Fila "+(beforeCell.getRowIndex()+1)+", Columna "+Utils.getColumn(beforeCell.getColumnIndex())+" : Dato Incorrecto \n";
             				}
             			}
                 	}
@@ -954,8 +1020,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
                 		long timecheck = System.currentTimeMillis() - startcheck;
                 		System.out.println("timecheck: " + (timecheck/1000d));
                 		if(pi == null){
-                			verror.add("*Fila "+cell.getRowIndex()+", Columna "+cell.getColumnIndex()+" : Dato Incorrecto ");
-                			textError= textError + "*Fila "+cell.getRowIndex()+", Columna "+cell.getColumnIndex()+" : Dato Incorrecto \n";
+                			verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto ");
+                			textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n";
                 			pi = newProduct();	
                 		}
                 	}
@@ -977,8 +1043,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
             			Short cellnum = row.getLastCellNum();
             			if(row.getLastCellNum() > ti.getColumns().size())cellnum--;
             			if(ti.getColumns().get(cellnum).equals("Nombre") || ti.getColumns().get(cellnum).equals("C\u00f3digo") || ti.getColumns().get(cellnum).equals("Precio Coste") || ti.getColumns().get(cellnum).equals("Precio Venta Base")){
-          					verror.add("*Fila "+row.getRowNum()+", Columna "+row.getLastCellNum()+" : Dato Incorrecto \n");
-          					textError= textError + "*Fila "+row.getRowNum()+", Columna "+row.getLastCellNum()+" : Dato Incorrecto \n";
+          					verror.add("*Fila "+(row.getRowNum()+1)+", Columna "+Utils.getColumn(row.getLastCellNum())+" : Dato Incorrecto \n");
+          					textError= textError + "*Fila "+(row.getRowNum()+1)+", Columna "+Utils.getColumn(row.getLastCellNum())+" : Dato Incorrecto \n";
             			}
             		}
             	}
@@ -1115,8 +1181,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
                 	 		if(ti.getColumns().get(j).equals("Nombre") || ti.getColumns().get(j).equals("C\u00f3digo") || ti.getColumns().get(j).equals("Precio Coste") || ti.getColumns().get(j).equals("Precio Venta Base")){
                 	 			Integer fila = i+1;
                 	 			Integer columna = j+1;
-                	 			verror.add("*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n");
-                				textError= textError + "*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n";
+                	 			verror.add("*Fila "+(fila+1)+", Columna "+Utils.getColumn(columna)+" : Dato Incorrecto \n");
+                				textError= textError + "*Fila "+(fila+1)+", Columna "+Utils.getColumn(columna)+" : Dato Incorrecto \n";
                 	 		}
                 		 	j++;
                 	 	}
@@ -1125,8 +1191,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
                 	 	if(pi == null){
              				Integer fila = i+1;
              				Integer columna = j+1;
-             				verror.add("*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n");
-             				textError= textError + "*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n";
+             				verror.add("*Fila "+(fila+1)+", Columna "+Utils.getColumn(columna)+" : Dato Incorrecto \n");
+             				textError= textError + "*Fila "+(fila+1)+", Columna "+Utils.getColumn(columna)+" : Dato Incorrecto \n";
                 			pi = newProduct();	
                 	 	}
                 	 }
@@ -1144,8 +1210,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
             		 if(ti.getColumns().get(j).equals("Nombre") || ti.getColumns().get(j).equals("C\u00f3digo") || ti.getColumns().get(j).equals("Precio Coste") || ti.getColumns().get(j).equals("Precio Venta Base")){
             			Integer fila = i+1;
           				Integer columna = j+1;
-          				verror.add("*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n");
-          				textError= textError + "*Fila "+fila+", Columna "+columna+" : Dato Incorrecto \n";
+          				verror.add("*Fila "+(fila+1)+", Columna "+Utils.getColumn(columna)+" : Dato Incorrecto \n");
+          				textError= textError + "*Fila "+(fila+1)+", Columna "+Utils.getColumn(columna)+" : Dato Incorrecto \n";
             		 }
             	 }
              }

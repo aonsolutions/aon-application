@@ -7,10 +7,13 @@ import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
+import static com.esferalia.aon.jooq.tables.WarehouseTransfer.WAREHOUSE_TRANSFER;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.jooq.tables.InvoicingGroup.INVOICING_GROUP;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Vector;
 
 import org.jooq.Condition;
@@ -25,6 +28,7 @@ import org.jooq.impl.DSL;
 
 import com.code.aon.company.WorkPlace;
 import com.code.aon.customer.Customer;
+import com.code.aon.customer.InvoicingGroup;
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.jooq.JooqSettings;
 import com.code.aon.project.Project;
@@ -35,7 +39,11 @@ import com.esferalia.aon.jooq.tables.records.CustomerFeeRecord;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 
 public class DBFee {
+	private static final String SET_FOREIGN_KEY_CHECKS_0 = "SET FOREIGN_KEY_CHECKS=0;";
+	private static final String SET_FOREIGN_KEY_CHECKS_1 = "SET FOREIGN_KEY_CHECKS=1;";
 
+	
+	static Integer domainIdFee;
 	public static Error insertFee(String domain, Integer domainId, Vector<FeeInfo> fees)throws SQLException{
 		Error error = new Error();
 		error.setError(true);
@@ -49,17 +57,19 @@ public class DBFee {
 					JooqSettings.getDefaultSettings());
 			Vector<String> v = new Vector<String>();
 			InsertValuesStep17<CustomerFeeRecord, Integer, Integer, Integer, Short, Integer, String, Double, Double, String, java.sql.Date, java.sql.Date, java.sql.Date, Short, Byte, Integer, Integer, Integer> customerFeeInsertQuery = dslContext.insertInto(CUSTOMER_FEE, CUSTOMER_FEE.DOMAIN, CUSTOMER_FEE.PROJECT, CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE, CUSTOMER_FEE.ITEM, CUSTOMER_FEE.DESCRIPTION, CUSTOMER_FEE.QUANTITY, CUSTOMER_FEE.PRICE, CUSTOMER_FEE.DISCOUNT_EXPR, CUSTOMER_FEE.INITIAL_DATE, CUSTOMER_FEE.FINAL_DATE, CUSTOMER_FEE.BILLING_DATE, CUSTOMER_FEE.PERIOD, CUSTOMER_FEE.SECURITY_LEVEL, CUSTOMER_FEE.INVOICING_GROUP, CUSTOMER_FEE.SELLER, CUSTOMER_FEE.WORKPLACE);
+			
+			domainIdFee = domainId;
 			fees.stream().forEach(s ->{	
 				if(s.getProduct() != null){
 					Result<Record1< Integer>> data = dslContext.select(ITEM.ID)
 						.from(ITEM)
-						.where(ITEM.BARCODE.eq(s.getProduct())).and(ITEM.DOMAIN.eq(domainId)).fetch();
+						.where(ITEM.BARCODE.eq(s.getProduct())).and(ITEM.DOMAIN.eq(domainIdFee)).fetch();
 					if(data.isEmpty()){
 
 						data = dslContext.select(ITEM.ID)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
-										.and(PRODUCT.DOMAIN.eq(domainId)).fetch();
+										.and(PRODUCT.DOMAIN.eq(domainIdFee)).fetch();
 					}
 					if(data.size()>1){
 						Condition detail = ITEM.DETAIL.eq(s.getDetail());
@@ -80,7 +90,7 @@ public class DBFee {
 									.and(detail)
 									.and(detail2)
 									.and(detail3)
-									.and(PRODUCT.DOMAIN.eq(domainId)).fetch();
+									.and(PRODUCT.DOMAIN.eq(domainIdFee)).fetch();
 					}
 
 
@@ -90,21 +100,37 @@ public class DBFee {
 						if (s.getConfidential()) confidential = 1;
 						else confidential = 0;
 						
-						Byte invoiceGroup;
-						if (s.getBillingGroup()) invoiceGroup = 1;
-						else invoiceGroup = 0;
+	
 						Integer itemId = data.get(0).value1();
 						
 						java.sql.Date t = null;
 						if(s.getEndDate() != null ) new java.sql.Date(s.getEndDate().getTime());
-						Short line = 1;
+						
+						Short line;
+						if(s.getLine() == null){
+							Result<Record1<Short>> n = dslContext.select(DSL.max(CUSTOMER_FEE.LINE))
+								.from(CUSTOMER_FEE)
+								.where(CUSTOMER_FEE.DOMAIN.eq(domainId).and(CUSTOMER_FEE.CUSTOMER.eq(s.getClientId()))).fetch();
+							
+							if(n.isEmpty() || n.get(0).value1()==null) line = 1;
+							else line = n.get(0).value1(); //get max number (domain, customer)
+							line++;
+						}
+						else{
+
+							line = s.getLine().shortValue();
+							dslContext.update(CUSTOMER_FEE).set(CUSTOMER_FEE.LINE, CUSTOMER_FEE.LINE.add(1))
+									.where(CUSTOMER_FEE.DOMAIN.eq(domainId)).and(CUSTOMER_FEE.CUSTOMER.eq(s.getClientId()))
+									.and(CUSTOMER_FEE.LINE.greaterThan(line));
+							
+						}
+						
 	
 						Short period = s.getPeriod().shortValue();
-						customerFeeInsertQuery.values(domainId, s.getProjectId(), s.getClientId(),line, itemId, s.getDescription(), s.getQuantity(), s.getPrice(), s.getDiscount().toString(), new java.sql.Date(s.getStartDate().getTime()), t , new java.sql.Date(s.getBillingDate().getTime()),period, invoiceGroup, confidential, s.getSellerId(),s.getWorkplaceId());
-
+						customerFeeInsertQuery.values(domainIdFee, s.getProjectId(), s.getClientId(),line, itemId, s.getDescription(), s.getQuantity(), s.getPrice(), s.getDiscount().toString(), new java.sql.Date(s.getStartDate().getTime()), t , new java.sql.Date(s.getBillingDate().getTime()),period, confidential.byteValue(), s.getBillingGroup(), s.getSellerId(),s.getWorkplaceId());
 					}
 					else{
-						v.add("*Fila " +s.getRow() + " : El producto no existe o los detalles no coincide.");
+						v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
 						error.setError(false);
 						error.setTextError(v);
 					}
@@ -112,7 +138,15 @@ public class DBFee {
 			});
 	
 			if(error.getError()){
+				Statement sOpen = connection.createStatement();
+				sOpen.execute(SET_FOREIGN_KEY_CHECKS_0);
+				System.out.println("Claves referenciales desactivadas");
+				
 				customerFeeInsertQuery.execute();
+				
+				Statement sClose = connection.createStatement();
+				sClose.execute(SET_FOREIGN_KEY_CHECKS_1);
+				System.out.println("Claves referenciales activadas");
 			}
 			return error;
 			
@@ -249,6 +283,38 @@ public class DBFee {
 				workplace.setDescription(r.value2());
 
 				v.add(workplace);
+			}
+
+			return v;
+
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static Vector<InvoicingGroup> getInvoicingGroups(String domain,Integer domainId) throws SQLException{
+		Connection connection = null;
+		try {
+			connection = DatabaseSync.getConnection(domain);
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+
+			Result<Record2<Integer, String>> data = dslContext.select(INVOICING_GROUP.ID,INVOICING_GROUP.DESCRIPTION)
+					.from(INVOICING_GROUP)
+					.where(INVOICING_GROUP.DOMAIN.eq(domainId))
+					.fetch();
+			
+	
+
+			Vector<InvoicingGroup> v = new Vector<InvoicingGroup>();
+
+			for (Record2<Integer, String> r : data) {
+				InvoicingGroup ig = new InvoicingGroup();
+				ig.setId(r.value1());
+				ig.setDescription(r.value2());
+
+				v.add(ig);
 			}
 
 			return v;

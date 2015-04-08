@@ -18,7 +18,7 @@ public class FeeInfo {
 	Integer sellerId;
 	String workplace;
 	Integer workplaceId;
-	Boolean billingGroup;
+	Integer billingGroup;
 	Boolean confidential;
 	String project;
 	Integer projectId;
@@ -27,7 +27,7 @@ public class FeeInfo {
 	String detail3;
 	Integer row;
 	String description;
-	
+	Integer line;
 	public String getClient() {
 		return client;
 	}
@@ -106,10 +106,10 @@ public class FeeInfo {
 	public void setWorkplaceId(Integer workplaceId) {
 		this.workplaceId = workplaceId;
 	}
-	public Boolean getBillingGroup() {
+	public Integer getBillingGroup() {
 		return billingGroup;
 	}
-	public void setBillingGroup(Boolean billingGroup) {
+	public void setBillingGroup(Integer billingGroup) {
 		this.billingGroup = billingGroup;
 	}
 	public Boolean getConfidential() {
@@ -166,6 +166,14 @@ public class FeeInfo {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+	public Integer getLine() {
+		return line;
+	}
+	public void setLine(Integer line) {
+		this.line = line;
+	}
+	public void setLine(Double line) {
+		this.line = line.intValue();
+	}
 	
 }

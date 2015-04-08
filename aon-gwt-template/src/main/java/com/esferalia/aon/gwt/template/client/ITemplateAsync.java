@@ -35,8 +35,8 @@ public interface ITemplateAsync {
 
 	void getSeries(AsyncCallback<Vector<String>> callback);
 
-	void executeExcel(TemplateInfo ti, String warehouse, String series,
-			String comments, AsyncCallback<Integer> callback);
+	void executeExcel(TemplateInfo ti, String warehouse, String warehouse2,
+			String series, String comments, AsyncCallback<Integer> callback);
 
 	void insertProduct(AsyncCallback<Error> callback);
 
@@ -45,5 +45,7 @@ public interface ITemplateAsync {
 	void executeExcel3(TemplateInfo ti, AsyncCallback<Integer> callback);
 
 	void insertFee(AsyncCallback<Error> callback);
+
+	void insertTransferStock(AsyncCallback<Error> callback);
 
 }

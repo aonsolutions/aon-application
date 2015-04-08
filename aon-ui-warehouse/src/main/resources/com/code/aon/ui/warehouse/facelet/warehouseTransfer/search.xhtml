@@ -8,12 +8,19 @@
 
 	<ui:define name="content">
 		<aon:form id="incomeSearch">
-
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.warehouse_transfer_module}" />
 				<ui:param name="controller" value="#{warehouseTransfer}" />
-			</ui:include>
-
+				<ui:define name="additionalToolbarContent">
+					<ui:include
+						src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
+					<aon:commandLink id="transfer-stock-import" value="Importar"
+						onclick="transferStock()"
+						styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
+					</aon:commandLink>
+				</ui:define>
+			</ui:decorate>
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{warehouseTransfer}" />

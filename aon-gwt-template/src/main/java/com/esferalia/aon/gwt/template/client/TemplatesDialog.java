@@ -31,7 +31,6 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FormHandler;
@@ -117,9 +116,13 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		case "delete": deleteTemplate(dialog.getTemplateInfo().getName());break;
 		case "importProduct": importProduct(dialog.getUrl(),dialog.getTemplateList());break;
 		case "importStock": importStock(dialog.getUrl(),dialog.getTemplateList());break;
+		case "importTransferStock": importTransferStock(dialog.getUrl(),dialog.getTemplateList());break;
 		case "importResponse": importResponse(dialog.getError());break;
 		case "exportProduct": exportProduct(dialog.getTemplateList());break;
 		case "exportStock": exportStock(dialog.getTemplateList());break;
+		case "exportTransferStock": exportTransferStock(dialog.getTemplateList());break;
+		case "importFee": importFee(dialog.getUrl(),dialog.getTemplateList());break;
+		case "exportFee": exportFee(dialog.getTemplateList());break;
 		default:
 			break;
 	}
@@ -160,7 +163,6 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	}
 	
 	private void exportProduct(TemplateList templates){
-		//TODO 
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
@@ -176,6 +178,14 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setWidget(0, 1, lb);
 		
 		flexTableCss();
+	}
+	
+	private void exportFee(TemplateList templates){
+		//TODO 
+	}
+	
+	private void exportTransferStock(TemplateList templates){
+		//TODO 
 	}
 	
 	private void exportStock(TemplateList templates){
@@ -215,6 +225,28 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		lb.addItem("-");
 		for(TemplateInfo ti : templates.getList()){
 			if(ti.getType().equals("Producto"))
+				lb.addItem(ti.getName());
+		}
+		flex_table.setWidget(0, 0, new Label("Plantilla"));
+		flex_table.setWidget(0, 1, lb);
+		
+		SingleUploader upload = newUploader(null, url);
+		flex_table.setWidget(1, 0, new Label("Archivo"));
+		flex_table.setWidget(1, 1, upload);
+		
+		flexTableCss();
+	}
+	
+	private void importFee(String url,TemplateList templates) {
+		flex_table.setStyleName("aon-panelGrid");
+		flex_table.setWidth("400px");
+		flex_table.setBorderWidth(1);
+		flex_table.setCellSpacing(0);
+		
+		ListBox lb = new ListBox();
+		lb.addItem("-");
+		for(TemplateInfo ti : templates.getList()){
+			if(ti.getType().equals("Cuota"))
 				lb.addItem(ti.getName());
 		}
 		flex_table.setWidget(0, 0, new Label("Plantilla"));
@@ -268,6 +300,59 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		SingleUploader upload = newUploader(null, url);
 		flex_table.setWidget(4, 0, new Label("Archivo"));
 		flex_table.setWidget(4, 1, upload);
+		
+		flexTableCss();
+	}
+	
+	private void importTransferStock(String url,TemplateList templates) {
+		flex_table.setStyleName("aon-panelGrid");
+		flex_table.setWidth("400px");
+		flex_table.setBorderWidth(1);
+		flex_table.setCellSpacing(0);
+
+		ListBox lb = new ListBox();
+		lb.addItem("-");
+		for(TemplateInfo ti : templates.getList()){
+			if(ti.getType().equals("Stock"))
+				lb.addItem(ti.getName());
+		}
+
+		
+		flex_table.setWidget(0, 0, new Label("Plantilla"));
+		flex_table.setWidget(0, 1, lb);
+		
+		ListBox lb2 = new ListBox();
+		lb2.addItem("-");
+		for(Warehouse wh : w){
+			lb2.addItem(wh.getName());
+		}
+		flex_table.setWidget(1, 0, new Label("Almac\u00e9n Origen"));
+		flex_table.setWidget(1, 1,lb2 );
+		
+		ListBox lb4 = new ListBox();
+		lb4.addItem("-");
+		for(Warehouse wh : w){
+			lb4.addItem(wh.getName());
+		}
+		flex_table.setWidget(2, 0, new Label("Almac\u00e9n Destino"));
+		flex_table.setWidget(2, 1,lb4 );
+		
+		ListBox lb3 = new ListBox();
+		lb3.addItem("-");
+		for(String s : series){
+			lb3.addItem(s);
+		}
+		flex_table.setWidget(3, 0, new Label("Serie"));
+		flex_table.setWidget(3, 1,lb3 );
+		
+		TextBox tb = new TextBox();
+		tb.setStyleName("aon-inputText");
+		flex_table.setWidget(4, 0, new Label("Comentarios"));
+		flex_table.setWidget(4, 1, tb);
+		
+		SingleUploader upload = newUploader(null, url);
+		flex_table.setWidget(5, 0, new Label("Archivo"));
+		flex_table.setWidget(5, 1, upload);
 		
 		flexTableCss();
 	}

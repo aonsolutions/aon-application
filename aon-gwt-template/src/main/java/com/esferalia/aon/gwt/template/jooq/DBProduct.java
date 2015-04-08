@@ -196,7 +196,7 @@ public class DBProduct {
 					}
 					else{
 						error.setError(false);
-						verror.add("Fila " + r.getRow()+": El producto está repetido.");
+						verror.add("*Fila " + (r.getRow()+1)+": El producto está repetido.");
 						error.setTextError(verror);
 					}
 					

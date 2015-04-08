@@ -11,13 +11,16 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Vector;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.DeleteConditionStep;
 import org.jooq.InsertValuesStep4;
+import org.jooq.InsertValuesStep5;
 import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Record3;
@@ -34,73 +37,19 @@ import com.esferalia.aon.gwt.template.server.StockInfo;
 import com.esferalia.aon.gwt.template.server.TransferInfo;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
+import com.esferalia.aon.jooq.tables.records.StockRecord;
 import com.esferalia.aon.jooq.tables.records.WarehouseTransferDetailRecord;
 
 public class DBStock {
 
-	
-	static InsertValuesStep4<WarehouseTransferDetailRecord, Integer, Integer, Integer, Double> transferInsert;
-	static String stockquery ;
-	public class ImportStockThread extends Thread{
-		private final String domain;
-		private final Vector<StockInfo> stock;
-		private final Integer warehouse;
-		Integer domainId;
-		public ImportStockThread(String domain, Vector<StockInfo> stock, Integer warehouse) {
-			this.stock = stock;
-			this.domain = domain;
-			this.warehouse = warehouse;
-		}
-	
-		@Override
-		public void run() {
-			long startAll2= System.currentTimeMillis();
+	private static final String SET_FOREIGN_KEY_CHECKS_0 = "SET FOREIGN_KEY_CHECKS=0;";
+	private static final String SET_FOREIGN_KEY_CHECKS_1 = "SET FOREIGN_KEY_CHECKS=1;";
 
-			Connection connection2 = null;
-			try{
-				connection2 = DatabaseSync.getConnection(domain);
-				DSLContext dslContext = DSL.using(connection2,
-						JooqSettings.getDefaultSettings());
-				transferInsert = dslContext.insertInto(WAREHOUSE_TRANSFER_DETAIL, WAREHOUSE_TRANSFER_DETAIL.DOMAIN, WAREHOUSE_TRANSFER_DETAIL.ITEM, WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER, WAREHOUSE_TRANSFER_DETAIL.QUANTITY);
-				//for(StockInfo stockInfo :stock){
-				stockquery = "update stock set quantity = case ";
-				stock.stream().forEach(stockInfo -> {
-					domainId = stockInfo.getDomainId();
-					if(stockInfo.getProduct() != null){
-						transferInsert.values(stockInfo.getDomainId(),stockInfo.getItemId(),stockInfo.getTransferId(),stockInfo.getQuantityDifference());	
-						
-						if(stockInfo.getQuantityDifference() != 0.0)
-							stockquery = stockquery + " when item = "+ stockInfo.getItemId()+" then "+ stockInfo.getQuantity(); //+ ";";
-					}
-				});
-				stockquery = stockquery + " else " + 0.0 + " end where domain = "+ domainId +";";
-				dslContext.query(stockquery).execute();
-				transferInsert.execute();
-				//}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}finally {
-				if (connection2 != null)
-					try {
-						connection2.close();
-					} catch (SQLException e) {
-						e.printStackTrace();
-					}
-			}
-			long timeAll2 = System.currentTimeMillis() - startAll2;
-			
-			System.out.println("TIME RUN    " + (timeAll2/1000d));
-		}
-	}
-	
-	public static Error insertFee(){
-		//TODO
-		return null;
-	}
-	
+	static String stockquery ;
 	
 	Vector<String> v = new Vector<String>();
 	static String itemIds;
+	static TransferInfo transferInfo;
 	public static Error insertStock2(String domain, Integer domainId,Vector<StockInfo> stock, TransferInfo ti) throws SQLException {
 		itemIds ="";
 		Error error = new Error();
@@ -140,8 +89,9 @@ public class DBStock {
 			Integer transferId = dslContext.insertInto(WAREHOUSE_TRANSFER,WAREHOUSE_TRANSFER.DOMAIN, WAREHOUSE_TRANSFER.SERIES,WAREHOUSE_TRANSFER.NUMBER, WAREHOUSE_TRANSFER.COMMENTS, WAREHOUSE_TRANSFER.ISSUE_TIME, WAREHOUSE_TRANSFER.SOURCE_WAREHOUSE, WAREHOUSE_TRANSFER.TARGET_WAREHOUSE)
 					.values(domainId,scode,next,ti.getComments(),t,null,ti.getTargetWarehouse().getId()).returning(WAREHOUSE_TRANSFER.ID).fetchOne().getId();
 			Vector<String> v = new Vector<String>();
-			transferInsert = dslContext.insertInto(WAREHOUSE_TRANSFER_DETAIL, WAREHOUSE_TRANSFER_DETAIL.DOMAIN, WAREHOUSE_TRANSFER_DETAIL.ITEM, WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER, WAREHOUSE_TRANSFER_DETAIL.QUANTITY);
+			InsertValuesStep4<WarehouseTransferDetailRecord, Integer, Integer, Integer, Double> transferInsert = dslContext.insertInto(WAREHOUSE_TRANSFER_DETAIL, WAREHOUSE_TRANSFER_DETAIL.DOMAIN, WAREHOUSE_TRANSFER_DETAIL.ITEM, WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER, WAREHOUSE_TRANSFER_DETAIL.QUANTITY);
 			stockquery = "update stock set quantity = case ";
+			transferInfo= ti;
 			stock.stream().forEach(s ->{
 				if(s.getProduct() != null){
 					Result<Record1< Integer>> data = dslContext.select(ITEM.ID)
@@ -179,7 +129,7 @@ public class DBStock {
 						Integer itemId = data.get(0).value1();
 						Result<Record1<Double>> data2 = dslContext.select(STOCK.QUANTITY)
 							.from(STOCK)
-							.where(STOCK.ITEM.eq(itemId).and(STOCK.WAREHOUSE.eq(ti.getTargetWarehouse().getId()))).fetch();
+							.where(STOCK.ITEM.eq(itemId).and(STOCK.WAREHOUSE.eq(transferInfo.getTargetWarehouse().getId()))).fetch();
 						Double quantity;
 						if(!data2.isEmpty()){
 							 
@@ -209,7 +159,7 @@ public class DBStock {
 						}
 						else{
 							
-							v.add("*Fila " +s.getRow() + " : El producto no está en stock.");
+							v.add("*Fila " +(s.getRow()+1) + " : El producto no está en stock.");
 							error.setError(false);
 							error.setTextError(v);
 							//return error;
@@ -217,7 +167,7 @@ public class DBStock {
 						
 					}
 					else{
-						v.add("*Fila " +s.getRow() + " : El producto no existe o los detalles no coincide.");
+						v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
 						error.setError(false);
 						error.setTextError(v);
 						
@@ -235,6 +185,194 @@ public class DBStock {
 				/*DBConsults outer = new DBConsults();
 				ImportStockThread thread = outer.new ImportStockThread(domain, stock, ti.getTargetWarehouse().getId());
 				thread.start();*/
+			}
+			return error;
+			
+		}finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static Error insertTransferStock(String domain, Integer domainId,Vector<StockInfo> stock, TransferInfo ti) throws SQLException {
+		Error error = new Error();
+		error.setError(true);
+		Vector<String> verror = new Vector<String>();
+		verror.add("");
+		error.setTextError(verror);
+		Connection connection = null;
+		try {
+			connection = DatabaseSync.getConnection(domain);
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			 
+			DeleteConditionStep<StockRecord> stockDeleteQuery;
+			InsertValuesStep4<StockRecord, Integer, Integer, Double, Integer> stockInsertQuery = dslContext.insertInto(STOCK, STOCK.DOMAIN, STOCK.ITEM, STOCK.QUANTITY, STOCK.WAREHOUSE);
+			InsertValuesStep5<StockRecord, Integer, Integer, Integer, Double, Integer> stockUpdateQuery = dslContext.insertInto(STOCK, STOCK.ID, STOCK.DOMAIN, STOCK.ITEM, STOCK.QUANTITY, STOCK.WAREHOUSE);
+			InsertValuesStep4<WarehouseTransferDetailRecord, Integer, Integer, Integer, Double> transferInsert = dslContext.insertInto(WAREHOUSE_TRANSFER_DETAIL, WAREHOUSE_TRANSFER_DETAIL.DOMAIN, WAREHOUSE_TRANSFER_DETAIL.ITEM, WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER, WAREHOUSE_TRANSFER_DETAIL.QUANTITY);
+
+			Vector<Integer> stockDeleteIds = new Vector<Integer>();
+
+			Date d = new Date();
+			Timestamp t = new Timestamp(d.getTime());
+			Condition series;
+			String scode;
+			
+			if(ti.getSeries() == null || ti.getSeries().getCode() == "-") {
+				series = WAREHOUSE_TRANSFER.SERIES.isNull();
+				scode = null;
+			}
+			else {
+				series = WAREHOUSE_TRANSFER.SERIES.eq(ti.getSeries().getCode());
+				scode = ti.getSeries().getCode();
+			}
+			Result<Record1<Integer>> n = dslContext.select(DSL.max(WAREHOUSE_TRANSFER.NUMBER))
+				.from(WAREHOUSE_TRANSFER)
+				.where(WAREHOUSE_TRANSFER.DOMAIN.eq(domainId).and(series)).fetch();
+			
+			Integer max;
+			if(n.isEmpty() || n.get(0).value1()==null) max = 0;
+			else max = n.get(0).value1(); //get max number (domain, serie)
+			Integer next = max+1;
+			
+			Integer source = null, target = null;
+			if(ti.getSourceWarehouse() != null) source = ti.getSourceWarehouse().getId();
+			if(ti.getTargetWarehouse() != null) target = ti.getTargetWarehouse().getId();
+			
+			Integer transferId = dslContext.insertInto(WAREHOUSE_TRANSFER,WAREHOUSE_TRANSFER.DOMAIN, WAREHOUSE_TRANSFER.SERIES,WAREHOUSE_TRANSFER.NUMBER, WAREHOUSE_TRANSFER.COMMENTS, WAREHOUSE_TRANSFER.ISSUE_TIME, WAREHOUSE_TRANSFER.SOURCE_WAREHOUSE, WAREHOUSE_TRANSFER.TARGET_WAREHOUSE)
+					.values(domainId,scode,next,ti.getComments(),t,source,target).returning(WAREHOUSE_TRANSFER.ID).fetchOne().getId();
+			Vector<String> v = new Vector<String>();
+			
+			stock.stream().forEach(s ->{
+				if(s.getProduct() != null){
+					Result<Record1< Integer>> data = dslContext.select(ITEM.ID)
+						.from(ITEM)
+						.where(ITEM.BARCODE.eq(s.getProduct())).and(ITEM.DOMAIN.eq(domainId)).fetch();
+					if(data.isEmpty()){
+
+						data = dslContext.select(ITEM.ID)
+								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+								.where(PRODUCT.CODE.eq(s.getProduct()))
+										.and(PRODUCT.DOMAIN.eq(domainId)).fetch();
+					}
+					if(data.size()>1){
+						Condition detail = ITEM.DETAIL.eq(s.getDetail());
+						if(s.getDetail() == "") 
+							detail = ITEM.DETAIL.eq("").or(ITEM.DETAIL.isNull());
+						
+						Condition detail2 = ITEM.DETAIL2.eq(s.getDetail2());
+						if(s.getDetail2() == "") 
+							detail2 = ITEM.DETAIL2.eq("").or(ITEM.DETAIL2.isNull());
+						
+						Condition detail3 = ITEM.DETAIL3.eq(s.getDetail3());
+						if(s.getDetail3() == "") 
+							detail3 = ITEM.DETAIL3.eq("").or(ITEM.DETAIL3.isNull());
+						
+						data = dslContext.select(ITEM.ID)
+								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+								.where(PRODUCT.CODE.eq(s.getProduct()))
+									.and(detail)
+									.and(detail2)
+									.and(detail3)
+									.and(PRODUCT.DOMAIN.eq(domainId)).fetch();
+					}
+					if(!data.isEmpty()){
+						Integer itemId = data.get(0).value1();
+						ti.getSourceWarehouse();
+						ti.getTargetWarehouse();
+						Result<Record2<Double, Integer>> data2 = null;
+						if(ti.getTargetWarehouse() != null) 
+							data2 = dslContext.select(STOCK.QUANTITY, STOCK.ID)
+								.from(STOCK)
+								.where(STOCK.ITEM.eq(itemId).and(STOCK.WAREHOUSE.eq(ti.getTargetWarehouse().getId()))).fetch();
+							
+						Result<Record2<Double, Integer>> data3 = null; 
+						if(ti.getSourceWarehouse() != null) 
+							data3= dslContext.select(STOCK.QUANTITY, STOCK.ID)
+								.from(STOCK)
+								.where(STOCK.ITEM.eq(itemId).and(STOCK.WAREHOUSE.eq(ti.getSourceWarehouse().getId()))).fetch();
+						
+						transferInsert.values(domainId, itemId, transferId,s.getQuantity());
+						Double quantity, quantity2;
+						Integer stockId, stockId2;
+						if(ti.getSourceWarehouse() != null && ti.getTargetWarehouse() != null ){
+
+							if(data2.isNotEmpty() && data3.isNotEmpty()){
+								quantity = data2.get(0).value1();
+								quantity2 = data3.get(0).value1();
+								stockId = data2.get(0).value2();
+								stockId2 = data3.get(0).value2();
+								
+								//UPDATE source & target
+								stockDeleteIds.add(stockId);
+								stockDeleteIds.add(stockId2);
+								stockUpdateQuery.values(stockId, domainId, itemId, (quantity+s.getQuantity()), ti.getTargetWarehouse().getId());
+								stockUpdateQuery.values(stockId2, domainId, itemId, (quantity2-s.getQuantity()), ti.getSourceWarehouse().getId());
+							}
+							else if(data2.isEmpty() && data3.isNotEmpty()){
+								quantity2 = data3.get(0).value1();
+								stockId2 = data3.get(0).value2(); 
+								
+								//UPDATE source
+								stockDeleteIds.add(stockId2);
+								stockUpdateQuery.values(stockId2, domainId, itemId, (quantity2-s.getQuantity()), ti.getSourceWarehouse().getId());
+								
+								//INSERT target
+								stockInsertQuery.values(domainId, itemId, s.getQuantity(), ti.getTargetWarehouse().getId());
+							}
+						}
+						else if(ti.getSourceWarehouse() != null && ti.getTargetWarehouse() == null){
+							if(data3.isNotEmpty()){
+								quantity2 = data3.get(0).value1();
+								stockId2 = data3.get(0).value2();
+								
+								//UPDATE source
+								stockDeleteIds.add(stockId2);
+								stockUpdateQuery.values(stockId2, domainId, itemId, (quantity2-s.getQuantity()), ti.getSourceWarehouse().getId());
+							}
+
+						}
+						else if(ti.getSourceWarehouse() == null && ti.getTargetWarehouse() != null){
+							if(data2.isNotEmpty()){
+								quantity = data2.get(0).value1();
+								stockId = data2.get(0).value2();
+								
+								//UPDATE target
+								stockDeleteIds.add(stockId);
+								stockUpdateQuery.values(stockId, domainId, itemId, (quantity+s.getQuantity()), ti.getTargetWarehouse().getId());
+							}
+							else{
+								//INSERT target
+								stockInsertQuery.values(domainId, itemId, s.getQuantity(), ti.getTargetWarehouse().getId());
+							}
+						}
+					}
+					else{
+						v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
+						error.setError(false);
+						error.setTextError(v);
+					}
+				}
+			});
+	
+			if(error.getError()){
+				Statement sOpen = connection.createStatement();
+				sOpen.execute(SET_FOREIGN_KEY_CHECKS_0);
+				System.out.println("Claves referenciales desactivadas");
+				
+				if(stockDeleteIds.size() > 0){
+					stockDeleteQuery = dslContext.delete(STOCK).where(STOCK.ID.in(stockDeleteIds));
+					stockDeleteQuery.execute();
+					stockUpdateQuery.execute();
+				}	
+				
+				stockInsertQuery.execute();
+				
+				transferInsert.execute();
+				
+				Statement sClose = connection.createStatement();
+				sClose.execute(SET_FOREIGN_KEY_CHECKS_1);
+				System.out.println("Claves referenciales activadas");
 			}
 			return error;
 			

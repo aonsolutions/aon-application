@@ -29,18 +29,7 @@
 						<f:param name="reportKey" value="productList" />
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
-					<aon:if test="#{salesAppParam.activeMarketPlace}">
-						<ui:include
-							src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
-						<aon:commandLink id="product-import" value="Importar"
-							onclick="product()"
-							styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
-						</aon:commandLink>
-						<aon:commandLink id="product-export" value="Exportar"
-							onclick="productx()"
-							styleClass="aon-finding-toolbar-item aon-icon-export-excel-trans">
-						</aon:commandLink>
-					</aon:if>
+					
 				</ui:define>
 			</ui:decorate>
 			

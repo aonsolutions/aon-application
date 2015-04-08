@@ -35,7 +35,7 @@ public interface ITemplate extends RemoteService{
 	
 	public Error insertStock();
 	
-	public Integer executeExcel(TemplateInfo ti, String warehouse, String series, String comments);
+	public Integer executeExcel(TemplateInfo ti, String warehouse,String warehouse2, String series, String comments);
 
 	public Error insertProduct();
 	
@@ -44,5 +44,7 @@ public interface ITemplate extends RemoteService{
 	public Integer executeExcel3(TemplateInfo ti);
 	
 	public Error insertFee();
+	
+	public Error insertTransferStock();
 
 }

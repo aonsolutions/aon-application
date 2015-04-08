@@ -11,6 +11,7 @@ import com.google.gwt.core.shared.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -53,6 +54,7 @@ public abstract class ProgressBarDialog extends CustomDialogB {
 	
 	
 	public ProgressBarDialog(Double d, Double d2) {
+
 		setCaption("Importando...");
 		setWidth("400px");
 		barPanel = new HorizontalPanel();
@@ -62,6 +64,8 @@ public abstract class ProgressBarDialog extends CustomDialogB {
 	}
 	
 	private void evalProgressBar(Double cargaTrabajo) {
-		progressBarCallback.scheduleRepeating(cargaTrabajo.intValue());
+		if(cargaTrabajo.intValue() == 0)
+			progressBarCallback.scheduleRepeating(1);
+		else progressBarCallback.scheduleRepeating(cargaTrabajo.intValue());
 	}
 }
