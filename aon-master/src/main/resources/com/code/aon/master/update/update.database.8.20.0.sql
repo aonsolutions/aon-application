@@ -6,6 +6,7 @@ BEGIN;
 
 ALTER TABLE `payment_concept` modify `code` VARCHAR(25) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo'; 
 ALTER TABLE `deduction_concept` modify `code` VARCHAR(25) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo'; 
+ALTER TABLE `salary_payment` modify `payment_concept` VARCHAR(25) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo'; 
 
 SET @PLUS_SALARIAL=(SELECT id FROM payment_concept WHERE domain= 0 AND code='PLUS_SALARIAL');
 
@@ -15,6 +16,7 @@ INSERT INTO payment_concept (domain, code, description, type, description_decora
 SET @EXPRESSION=(SELECT expression FROM payment_concept WHERE id=@PLUS_SALARIAL);
 UPDATE  contract_payment SET expression=@EXPRESSION WHERE payment_concept=@PLUS_SALARIAL AND expression IS NULL;
 UPDATE  payment_concept SET code='PLUS_EXTRA_SALARIAL', expression=NULL, description= 'PLUS EXTRA SALARIAL' WHERE id=@PLUS_SALARIAL;
+UPDATE  salary_payment SET payment_concept='PLUS_EXTRA_SALARIAL' WHERE payment_concept='PLUS_SALARIAL';
 
 UPDATE contract_payment SET expression= REPLACE(expression, 'PLUS_SALARIAL', 'PLUS_EXTRA_SALARIAL') 
 WHERE expression LIKE '%PLUS_SALARIAL%' and payment_concept <> @PLUS_SALARIAL;
