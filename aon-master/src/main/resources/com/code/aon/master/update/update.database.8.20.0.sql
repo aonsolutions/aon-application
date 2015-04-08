@@ -1,8 +1,11 @@
-# Database: aon_master
+ # Database: aon_master
 # Version: Actualizacion de la version 8.20.0 a la version 8.20.1.
 # Created by: rtrepiana
 
 BEGIN;
+
+ALTER TABLE `payment_concept` modify `code` VARCHAR(25) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo'; 
+ALTER TABLE `deduction_concept` modify `code` VARCHAR(25) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo'; 
 
 SET @PLUS_SALARIAL=(SELECT id FROM payment_concept WHERE domain= 0 AND code='PLUS_SALARIAL');
 
