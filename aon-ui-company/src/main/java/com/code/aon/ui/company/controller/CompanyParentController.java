@@ -1,6 +1,7 @@
 package com.code.aon.ui.company.controller;
 
 import static com.code.aon.common.enumeration.AppParam.APP_FPAYMENT_TEMPLATE_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_ITEM_TAG_TEMPLATE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_ADDRESS_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_DISCOUNT_PRICE_APPLIED;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_HEADER_PARAM;
@@ -48,6 +49,7 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.company.Company;
 import com.code.aon.company.enumeration.FinancePaymentTemplate;
+import com.code.aon.company.enumeration.ItemTagTemplate;
 import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.company.enumeration.SaleInvoiceTemplate;
 import com.code.aon.config.ApplicationParameter;
@@ -149,6 +151,8 @@ public class CompanyParentController extends BasicController implements ICompany
 	private boolean printSaleInvoiceFooter;
 
 	private FinancePaymentTemplate financePaymentTemplate;
+	
+	private ItemTagTemplate itemTagTemplate;
 	
 	private boolean smartCard;
 	
@@ -858,6 +862,14 @@ public class CompanyParentController extends BasicController implements ICompany
 		this.financePaymentTemplate = financePaymentTemplate;
 	}
 
+	public ItemTagTemplate getItemTagTemplate() {
+		return itemTagTemplate;
+	}
+
+	public void setItemTagTemplate(ItemTagTemplate itemTagTemplate) {
+		this.itemTagTemplate = itemTagTemplate;
+	}
+
 	public boolean isSmartCard() {
 		return smartCard;
 	}
@@ -906,6 +918,11 @@ public class CompanyParentController extends BasicController implements ICompany
 	public FinancePaymentTemplate obtainFinancePaymentTemplate() throws ManagerBeanException {
 		String value = AppParamUtil.getValue(APP_FPAYMENT_TEMPLATE_PARAM);
 		return (value == null?null:FinancePaymentTemplate.getEnumByValue(value));
+	}
+	
+	public ItemTagTemplate obtainItemTagTemplate() throws ManagerBeanException {
+		String value = AppParamUtil.getValue(APP_ITEM_TAG_TEMPLATE_PARAM);
+		return (value == null?null:ItemTagTemplate.getEnumByValue(value));
 	}
 	
 	public boolean obtainPrintLogo() throws ManagerBeanException {

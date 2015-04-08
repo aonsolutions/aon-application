@@ -16,7 +16,10 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.company.enumeration.ItemTagTemplate;
 import com.code.aon.product.Item;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -165,6 +168,12 @@ public class ItemTagPrintController extends ItemController {
 	///////////////////////////////////////
 	// JASPER PRINT
 	///////////////////////////////////////
+	
+	public String getReportTemplate(){
+		CompanyController company = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		ItemTagTemplate template = company.getItemTagTemplate();
+		return template==null ? ItemTagTemplate.TEMPLATE_1.getValue() : template.getValue();
+	}
 
 	@Override
 	public Collection<ITransferObject> getCollection() {

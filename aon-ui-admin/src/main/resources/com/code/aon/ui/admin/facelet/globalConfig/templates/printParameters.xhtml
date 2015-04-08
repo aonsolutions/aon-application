@@ -128,6 +128,22 @@
 				</aon:panelGrid>
 			</aon:panel>
 			
+			<aon:if test="#{actionDenied.moduleEnabled['pos']}">
+				<aon:panel>
+					<f:facet name="header">
+						<aon:outputLabel value="#{bundle.product_tag_module}" />
+					</f:facet>
+					<aon:panelGrid columns="2" style="width:350px">
+						<aon:outputLabel for="Company_itemTag_template"
+							value="#{bundle.product_tag_print_template}" />
+						<aon:selectOneMenu id="Company_itemTag_template"
+							value="#{company.itemTagTemplate}" >
+								<f:selectItems value="#{companyCollections.itemTagTemplate}" />
+						</aon:selectOneMenu>
+					</aon:panelGrid>
+				</aon:panel>
+			</aon:if>
+			
 		</aon:div>
 	</aon:form>
 

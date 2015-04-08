@@ -20,6 +20,7 @@ import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.enumeration.EnterpriseSalaryTemplate;
 import com.code.aon.company.enumeration.FinancePaymentTemplate;
+import com.code.aon.company.enumeration.ItemTagTemplate;
 import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.company.enumeration.SalarySendingMethod;
 import com.code.aon.company.enumeration.SalaryTemplate;
@@ -45,7 +46,21 @@ public class CompanyCollectionsController implements Serializable {
 	private List<SelectItem> reportPrintOptions;
 	private List<SelectItem> simpleReportPrintOptions;
 	private List<SelectItem> financePaymentTemplate;
+	private List<SelectItem> itemTagTemplate;
 	
+	public List<SelectItem> getItemTagTemplate(){
+		if (itemTagTemplate == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			itemTagTemplate = new LinkedList<SelectItem>();
+			ItemTagTemplate[] list = ItemTagTemplate.values();
+			for (ItemTagTemplate o : list) {
+				String name = o.getName(locale);
+				SelectItem item = new SelectItem(o, name);
+				itemTagTemplate.add(item);
+			}
+		}
+		return itemTagTemplate;
+	}
 	public List<SelectItem> getFinancePaymentTemplates(){
 		if (financePaymentTemplate == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
