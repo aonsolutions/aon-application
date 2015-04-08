@@ -12,6 +12,8 @@ SET @PLUS_SALARIAL=(SELECT id FROM payment_concept WHERE domain= 0 AND code='PLU
 INSERT INTO payment_concept (domain, code, description, type, description_decorable, expression, irpf_expression, quote_expression) 
 ( SELECT domain, code, description, type, description_decorable, '/*user*/ 0.00 /**/ * DIAS_TRABAJADOS / DIAS_MES', irpf_expression, quote_expression  FROM payment_concept WHERE id=@PLUS_SALARIAL) ;
 
+SET @EXPRESSION=(SELECT expression FROM payment_concept WHERE id=@PLUS_SALARIAL);
+UPDATE  contract_payment SET expression=@EXPRESSION WHERE payment_concept=@PLUS_SALARIAL AND expression IS NULL;
 UPDATE  payment_concept SET code='PLUS_EXTRA_SALARIAL', expression=NULL, description= 'PLUS EXTRA SALARIAL' WHERE id=@PLUS_SALARIAL;
 
 UPDATE contract_payment SET expression= REPLACE(expression, 'PLUS_SALARIAL', 'PLUS_EXTRA_SALARIAL') 
