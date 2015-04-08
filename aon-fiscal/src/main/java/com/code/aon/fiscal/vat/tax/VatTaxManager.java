@@ -321,7 +321,8 @@ public class VatTaxManager implements Serializable {
 
 	private VatTaxKeyEx[] obtainModelAffectedKeys(ResultSet rs) throws SQLException {
 		InvoiceType invoiceType = InvoiceType.values()[rs.getInt(TYPE)];
-		boolean rectification = rs.getInt(RECTIFICATION_TYPE) == RectificationType.SPECIAL_RECTIFIER.ordinal();
+		boolean rectification = rs.getInt(RECTIFICATION_TYPE) == RectificationType.SPECIAL_RECTIFIER.ordinal()
+				|| rs.getInt(RECTIFICATION_TYPE) == RectificationType.NORMAL_RECTIFIER.ordinal();
 		boolean service = rs.getInt(SERVICE) == 1;
 		double percent = rs.getDouble(PERCENTAGE);
 		VatDeductionType vatDeductionType = VatDeductionType.values()[rs.getInt(VAT_DEDUCTION_TYPE)];
