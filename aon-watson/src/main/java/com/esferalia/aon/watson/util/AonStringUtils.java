@@ -22,6 +22,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import com.esferalia.aon.watson.server.AonObjectUtils;
 
 /**
  * <p>
@@ -140,7 +144,7 @@ public class AonStringUtils {
 	public static final String SEVEN = "7";
 	public static final String EIGHT = "8";
 	public static final String NINE = "9";
-	
+
 	/**
 	 * The empty String {@code ""}.
 	 * 
@@ -789,8 +793,8 @@ public class AonStringUtils {
 		int index = lastIndex ? str.length() : INDEX_NOT_FOUND;
 		do {
 			if (lastIndex) {
-				index = AonCharSequenceUtils
-						.lastIndexOf(str, searchStr, index - 1);
+				index = AonCharSequenceUtils.lastIndexOf(str, searchStr,
+						index - 1);
 			} else {
 				index = AonCharSequenceUtils.indexOf(str, searchStr, index + 1);
 			}
@@ -1333,14 +1337,13 @@ public class AonStringUtils {
 		final int len = searchStr.length();
 		final int max = str.length() - len;
 		for (int i = 0; i <= max; i++) {
-			if (AonCharSequenceUtils
-					.regionMatches(str, true, i, searchStr, 0, len)) {
+			if (AonCharSequenceUtils.regionMatches(str, true, i, searchStr, 0,
+					len)) {
 				return true;
 			}
 		}
 		return false;
 	}
-
 
 	// IndexOfAny chars
 	// -----------------------------------------------------------------------
@@ -1642,8 +1645,8 @@ public class AonStringUtils {
 		final int strLen = seq.length();
 		for (int i = 0; i < strLen; i++) {
 			final char ch = seq.charAt(i);
-			final boolean chFound = AonCharSequenceUtils.indexOf(searchChars, ch,
-					0) >= 0;
+			final boolean chFound = AonCharSequenceUtils.indexOf(searchChars,
+					ch, 0) >= 0;
 			if (i + 1 < strLen && Character.isHighSurrogate(ch)) {
 				final char ch2 = seq.charAt(i + 1);
 				if (chFound
@@ -4632,7 +4635,8 @@ public class AonStringUtils {
 		final int lastIdx = strLen - 1;
 		final String ret = str.substring(0, lastIdx);
 		final char last = str.charAt(lastIdx);
-		if (last == AonCharUtils.LF && ret.charAt(lastIdx - 1) == AonCharUtils.CR) {
+		if (last == AonCharUtils.LF
+				&& ret.charAt(lastIdx - 1) == AonCharUtils.CR) {
 			return ret.substring(0, lastIdx - 1);
 		}
 		return ret;
@@ -5220,7 +5224,6 @@ public class AonStringUtils {
 		return str.toUpperCase();
 	}
 
-
 	// Count matches
 	// -----------------------------------------------------------------------
 	/**
@@ -5759,7 +5762,7 @@ public class AonStringUtils {
 	 * @return the passed in CharSequence, or the default
 	 * @see StringUtils#defaultString(String, String)
 	 */
-	public static String defaultIfBlank(String str,String defaultStr) {
+	public static String defaultIfBlank(String str, String defaultStr) {
 		return isBlank(str) ? defaultStr : str;
 	}
 
@@ -6660,8 +6663,8 @@ public class AonStringUtils {
 		if (prefix.length() > str.length()) {
 			return false;
 		}
-		return AonCharSequenceUtils.regionMatches(str, ignoreCase, 0, prefix, 0,
-				prefix.length());
+		return AonCharSequenceUtils.regionMatches(str, ignoreCase, 0, prefix,
+				0, prefix.length());
 	}
 
 	/**
@@ -7143,5 +7146,58 @@ public class AonStringUtils {
 			return str;
 		}
 		return wrapWith.concat(str).concat(wrapWith);
+	}
+
+	/**
+	 * Convert Roman Numeral to Decimal.
+	 * 
+	 * @param string
+	 *            Roman Numeral
+	 * @return Decimal
+	 * @throws IllegalArgumentException
+	 *             If string is {@code null}, is empty or is not a roman
+	 *             numeral.
+	 */
+	public static int romanIntValue(String string) {
+		if (string == null)
+			throw new IllegalArgumentException("null string");
+		if (string.isEmpty())
+			throw new IllegalArgumentException("empty string");
+		return __romanIntValue(string);
+	}
+
+	// ------------------------------------------------------------------------
+
+	private static int __romanIntValue(String string) {
+		String number = string.toUpperCase();
+		if (number.isEmpty())
+			return 0;
+		if (number.startsWith("M"))
+			return 1000 + __romanIntValue(number.substring(1));
+		if (number.startsWith("CM"))
+			return 900 + __romanIntValue(number.substring(2));
+		if (number.startsWith("D"))
+			return 500 + __romanIntValue(number.substring(1));
+		if (number.startsWith("CD"))
+			return 400 + __romanIntValue(number.substring(2));
+		if (number.startsWith("C"))
+			return 100 + __romanIntValue(number.substring(1));
+		if (number.startsWith("XC"))
+			return 90 + __romanIntValue(number.substring(2));
+		if (number.startsWith("L"))
+			return 50 + __romanIntValue(number.substring(1));
+		if (number.startsWith("XL"))
+			return 40 + __romanIntValue(number.substring(2));
+		if (number.startsWith("X"))
+			return 10 + __romanIntValue(number.substring(1));
+		if (number.startsWith("IX"))
+			return 9 + __romanIntValue(number.substring(2));
+		if (number.startsWith("V"))
+			return 5 + __romanIntValue(number.substring(1));
+		if (number.startsWith("IV"))
+			return 4 + __romanIntValue(number.substring(2));
+		if (number.startsWith("I"))
+			return 1 + __romanIntValue(number.substring(1));
+		throw new IllegalArgumentException("unexpected roman numerals");
 	}
 }

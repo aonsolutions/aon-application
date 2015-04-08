@@ -1,5 +1,7 @@
 package com.esferalia.aon.ui.payroll.utils;
 
+import static com.esferalia.aon.watson.util.AonStringUtils.romanIntValue;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
 import java.util.Collection;
@@ -9,6 +11,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.sf.jasperreports.engine.JRImageRenderer;
 import net.sf.jasperreports.engine.JRRenderable;
@@ -21,30 +25,158 @@ import org.hibernate.util.ComparableComparator;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.IResourceable;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.model.Payment;
+import com.esferalia.aon.payroll.SalaryPayment;
+import com.esferalia.aon.salary.ISalaryItem;
+import com.esferalia.aon.salary.enumeration.PaymentType;
+import com.esferalia.aon.salary.payment.IPayment;
 import com.ibm.icu.text.RuleBasedNumberFormat;
 
 public class ReportUtils {
+	
+	
+	private static class ReportSalaryItem<T extends Enum<T> & IResourceable> implements ISalaryItem<T> {
+		
+		protected ISalaryItem<T> salaryItem;
+		
+		public ReportSalaryItem(ISalaryItem<T> salaryItem) {
+			this.salaryItem = salaryItem;
+		}
 
-	public static class ComparableComparator implements Comparator {
+		public T getType() {
+			return salaryItem.getType();
+		}
 
+		public String getName() {
+			return salaryItem.getName();
+		}
+
+		public double getAmount() {
+			return salaryItem.getAmount();
+		}
+
+		public String getDescription() {
+			String description = salaryItem.getDescription();
+			Matcher matcher = StringComparator.ORDER.matcher(description);
+			if ( matcher.matches() )
+				return matcher.group(2);
+			return description;
+		}
+	}
+	
+	
+	private static class ReportPayment extends ReportSalaryItem<PaymentType> implements IPayment{
+
+		public ReportPayment(IPayment payment) {
+			super(payment);
+		}
+
+		@Override
+		public String getExpression() {
+			return ((IPayment) salaryItem).getExpression();
+		}
+		
+		
+		
+		
+	}
+	
+	public static class PropertyComparator implements Comparator {
+		
+		private static final StringComparator STRING = new StringComparator();
+		private static final ComparableComparator COMPARABLE = new ComparableComparator();
+		
 		public int compare(Object x, Object y) {
+			if ( x instanceof String ) 
+				return STRING.compare((String)x, (String)y);
+			if ( x instanceof Comparable ) 
+				return COMPARABLE.compare((Comparable)x, (Comparable)y);
+			else 
+				return 0;
+		}
+		
+		public static final Comparator INSTANCE = new PropertyComparator();
+	}
+
+	public static class ComparableComparator implements Comparator<Comparable> {
+
+		public int compare(Comparable x, Comparable y) {
 			if ( x == y )
 				return 0;
 			if ( x == null )
 				return 1;
 			if ( y == null )
 				return -1;
-			return ( (Comparable) x ).compareTo(y);
+			return x.compareTo(y);
 		}
 		
-		public static final Comparator INSTANCE = new ComparableComparator();
 
 		
+	}
+	
+	public static class StringComparator implements Comparator<String> {
+
+		private static Pattern ORDER = Pattern.compile(
+				"^\\[(\\d+)\\]\\s*(.*)$");
+		private static Pattern ROMAN = Pattern.compile(
+				"^((C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3}))([\\W_]+.*)?$"
+				,Pattern.CASE_INSENSITIVE);
+
+		@Override
+		public int compare(String s0, String s1) {
+			
+			if ( s0 == s1 )
+				return 0;
+			if (s0 == null )
+				return -1;
+			if (s1 == null )
+				return 1;
+
+			// By roman numerals, if exists
+			Matcher order0 = ORDER.matcher(s0);
+			Matcher order1 = ORDER.matcher(s1);
+			boolean matches0 = order0.matches();
+			boolean matches1 = order1.matches();
+			
+			if ( matches0 && matches1 ) {
+				int compareTo = Integer.parseInt(order0.group(1)) - Integer.parseInt(order1.group(1)); 
+				if (compareTo != 0) 
+					return compareTo;
+			}
+			if ( matches0 && !matches1)
+				return -1; 	
+			if ( matches1 && !matches0)
+				return 1;	
+				
+			// By roman numerals, if exists
+			try {
+				Matcher matcher0 = ROMAN.matcher(s0.trim());
+				Matcher matcher1 = ROMAN.matcher(s1.trim());
+				matches0 = matcher0.matches();
+				matches1 = matcher1.matches();
+				if (matches0 && matches1 ) {
+					int roman0 = romanIntValue(matcher0.group(1));
+					int roman1 = romanIntValue(matcher1.group(1));
+					if (roman0 != roman1)
+						return roman0 - roman1;
+				}
+				if ( matches0 && !matches1)
+					return -1; 	
+				if ( matches1 && !matches0)
+					return 1;	
+			} catch ( IllegalArgumentException e){
+				// Not roman numeral. Due a bug at 'ROMAN' regular expression.
+				// 'ROMAN' matches empty strings and strings like '[1] SALARIO'
+			}
+
+			return s0.compareTo(s1);
+		}
 	}
 	
 	public static String capitalize(String str) {
@@ -54,9 +186,14 @@ public class ReportUtils {
 	public static final <T> List<T> sort(Collection<T> collection,
 			String property) {
 		List<T> list = new LinkedList<T>(collection);
-		Comparator<T> comparator = new BeanComparator(property,ComparableComparator.INSTANCE);
+		Comparator<T> comparator = new BeanComparator(property,PropertyComparator.INSTANCE);
 		Collections.sort(list, comparator);
-		return list;
+		
+		List<T> ret = new LinkedList<T>();
+		for (T t : list)
+			ret.add(wrap(t));
+		
+		return ret;
 	}
 
 	public static final <T> List<T> sort(Collection<T> collection,
@@ -64,12 +201,17 @@ public class ReportUtils {
 		List<T> list = new LinkedList<T>(collection);
 		Comparator<T> comparators[] = new Comparator[properties.length];
 		for (int i = 0; i < properties.length; i++) {
-			comparators[i] = new BeanComparator(properties[i],ComparableComparator.INSTANCE);
+			comparators[i] = new BeanComparator(properties[i],PropertyComparator.INSTANCE);
 
 		}
 		Comparator<T> comparator = new ChainedComparator<T>(comparators);
 		Collections.sort(list, comparator);
-		return list;
+
+		List<T> ret = new LinkedList<T>();
+		for (T t : list)
+			ret.add(wrap(t));
+		
+		return ret;
 	}
 
 	public static final <T> List<T> sort(Collection<T> collection,
@@ -101,13 +243,12 @@ public class ReportUtils {
 				list.add(t);
 			}
 		}
-		Comparator<T> comparator = new BeanComparator(property,ComparableComparator.INSTANCE);
+		Comparator<T> comparator = new BeanComparator(property,PropertyComparator.INSTANCE);
 		Collections.sort(list, comparator);
 		return list;
 	}
 
 	public static JRRenderable getRenderer(RegistryAttachment rattach) {
-		System.out.println(rattach.getMimeType() + "-" + rattach.getId());
 		return JRImageRenderer.getInstance(rattach.getData());
 	}
 
@@ -233,6 +374,13 @@ public class ReportUtils {
 			}
 			return 0;
 		}
+	}
+	
+	private static <T> T wrap(T t) {
+		if ( t instanceof SalaryPayment){
+			return (T) new ReportPayment((SalaryPayment)t);
+		}
+		return t;
 	}
 
 	public static void main(String[] args) {

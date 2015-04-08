@@ -65,16 +65,16 @@
 	</queryString>
 	<field name="salary" class="com.esferalia.aon.payroll.Salary"/>
 	<variable name="supplements" class="java.util.List">
-		<variableExpression><![CDATA[$F{salary}.getPayments().getSalarySupplements().getValues()]]></variableExpression>
+		<variableExpression><![CDATA[ReportUtils.sort($F{salary}.getPayments().getSalarySupplements().getValues(),"description")]]></variableExpression>
 	</variable>
 	<variable name="compensations" class="java.util.List">
-		<variableExpression><![CDATA[$F{salary}.getPayments().getCompensationOrPrepaidExpenses().getValues()]]></variableExpression>
+		<variableExpression><![CDATA[ReportUtils.sort($F{salary}.getPayments().getCompensationOrPrepaidExpenses().getValues(),"description")]]></variableExpression>
 	</variable>
 	<variable name="others" class="java.util.List">
-		<variableExpression><![CDATA[$F{salary}.getPayments().getOtherNonWages().getValues()]]></variableExpression>
+		<variableExpression><![CDATA[ReportUtils.sort($F{salary}.getPayments().getOtherNonWages().getValues(),"description")]]></variableExpression>
 	</variable>
 	<variable name="ssBenefits" class="java.util.List">
-		<variableExpression><![CDATA[$F{salary}.getPayments().getSpecialSecurityBenefits().getValues()]]></variableExpression>
+		<variableExpression><![CDATA[ReportUtils.sort($F{salary}.getPayments().getSpecialSecurityBenefits().getValues(),"description")]]></variableExpression>
 	</variable>
 	<variable name="salaryInKind" class="java.lang.Double">
 		<variableExpression><![CDATA[$F{salary}.getPayments().getSalaryInKind().getAmount()]]></variableExpression>

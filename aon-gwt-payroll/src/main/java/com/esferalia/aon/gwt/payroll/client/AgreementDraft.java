@@ -1286,7 +1286,7 @@ public class AgreementDraft extends ResizeComposite implements
 
 		int row = paymentsTable.getRowCount();
 
-		SortedSet<Payment> payments = new TreeSet<Payment>(new ItemComparator());
+		SortedSet<Payment> payments = new TreeSet<Payment>(new ItemComparator<Payment.Type>());
 		payments.addAll(agreementDraftObject.getPayments());
 		for (Payment payment : payments) {
 			editors.add(dumpPayment(payment, row++));
