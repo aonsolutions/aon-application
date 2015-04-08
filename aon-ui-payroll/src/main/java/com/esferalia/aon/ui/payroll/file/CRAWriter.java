@@ -84,22 +84,28 @@ public class CRAWriter {
 			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			for (EnterpriseCCC ccc: cccs) {
 				DDE dde = createDDERecord(year, month, ccc.getFullCcc());
-				eti.getDdeList().add(dde);
 				Result<Record3<Byte, Double, Integer>> record = getSalaryPaymentSelect(connection, ccc, startCal.getTime(), endCal.getTime() );
 				TRB trb = null;
 				for (Record3<Byte, Double, Integer> step : record) {
 					Byte type = step.value1();
 					Double amount = step.value2();
 					Integer contractId = step.value3();
-					Contract contract = (Contract) contractBean.get(contractId);
-					if(trb==null || !contract.getPerson().getSocialSecurityNumber().equals(trb.getNaf())){
-						trb = createTRBRecord(contract.getPerson().getSocialSecurityNumber());
-						dde.getTrbList().add(trb);
+					if(amount!=0.0d){
+						Contract contract = (Contract) contractBean.get(contractId);
+						if(trb==null || !contract.getPerson().getSocialSecurityNumber().equals(trb.getNaf())){
+							trb = createTRBRecord(contract.getPerson().getSocialSecurityNumber());
+							dde.getTrbList().add(trb);
+						}
+						CRE cre = createCRERecord(String.valueOf(type), amount);
+						if(cre!=null){
+							trb.getCreList().add(cre);
+						}
 					}
-					CRE cre = createCRERecord(String.valueOf(type), amount);
-					if(cre!=null){
-						trb.getCreList().add(cre);
-					}
+				}
+				if(dde.getTrbList()!=null && !dde.getTrbList().isEmpty()){
+					eti.getDdeList().add(dde);
+				} else {
+					AonUtil.addErrorMessage("No hay datos para la cuenta de cotización: " + ccc.getFullCcc());
 				}
 			}
 			return eti;
