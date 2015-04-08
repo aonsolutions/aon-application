@@ -34,7 +34,7 @@ import com.code.aon.config.Tax;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.InvoicingGroup;
-import com.code.aon.fiscal.enumeration.Period;
+import com.code.aon.finance.enumeration.BillingPeriod;
 import com.code.aon.product.Brand;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
@@ -263,7 +263,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
                 else{
                 	if(cell.getColumnIndex() !=0){
                 		Cell beforeCell = rowAux.getCell(cell.getColumnIndex()-1);
-            			if(beforeCell == null || beforeCell.getCellType() == Cell.CELL_TYPE_BLANK){
+            			if((beforeCell == null || beforeCell.getCellType() == Cell.CELL_TYPE_BLANK) && isRequiredFee(ti.getColumns().get(cell.getColumnIndex()-1))){
             				if(beforeCell == null){
             					verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto");
             					textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto \n";
@@ -322,6 +322,12 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		return rowCount;
 	}
 
+	public Boolean isRequiredFee(String s){
+		return s.equals("Cliente") || s.equals("Producto") || s.equals("Cantidad") || s.equals("Precio")
+				|| s.equals("Descuento") || s.equals("Fecha Inicio") || s.equals("Fecha Facturaci\u00f3n" )
+				|| s.equals("Centro Trabajo");
+	}
+	
 	public Error insertFee() {
 		long startAll= System.currentTimeMillis();
 		Vector<String> verror = error.getTextError();
@@ -445,10 +451,27 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			else return null;
 			break;
 		case "Periodo": case "period": //enum
-			if(type.equals(Cell.CELL_TYPE_STRING)){
-			//TODO
-			}
-			else return null;
+		
+				String t;
+				if(type.equals(Cell.CELL_TYPE_STRING)){
+					t = cell.getStringCellValue();
+					if (t.equalsIgnoreCase(NO_PERIOD))
+						fee.setPeriod(BillingPeriod.NO_PERIOD.ordinal());
+					else if(t.equalsIgnoreCase(MONTHLY))
+						fee.setPeriod(BillingPeriod.MONTHLY.ordinal());
+					else if(t.equalsIgnoreCase(BI_MONTHLY))
+						fee.setPeriod(BillingPeriod.BI_MONTHLY.ordinal());
+					else if(t.equalsIgnoreCase(THREE_MONTHLY))
+						fee.setPeriod(BillingPeriod.THREE_MONTHLY.ordinal());
+					else if(t.equalsIgnoreCase(FOUR_MONTHLY))
+						fee.setPeriod(BillingPeriod.FOUR_MONTHLY.ordinal());
+					else if(t.equalsIgnoreCase(SIX_MONTHLY))
+						fee.setPeriod(BillingPeriod.SIX_MONTHLY.ordinal());
+					else if(t.equalsIgnoreCase(YEARLY))
+						fee.setPeriod(BillingPeriod.YEARLY.ordinal());
+					else return null;
+				}
+	
 			break;
 		case "Comercial": case "Seller": //bd
 			if(type.equals(Cell.CELL_TYPE_STRING)){
@@ -716,7 +739,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
                 else{
                 	if(cell.getColumnIndex() !=0){
                 		Cell beforeCell = rowAux.getCell(cell.getColumnIndex()-1);
-            			if(beforeCell == null || beforeCell.getCellType() == Cell.CELL_TYPE_BLANK){
+            			if((beforeCell == null || beforeCell.getCellType() == Cell.CELL_TYPE_BLANK) && isRequiredStock(ti.getColumns().get(cell.getColumnIndex()-1))){
             				if(beforeCell == null){
             					textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto \n";
             					verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto");
@@ -782,7 +805,9 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		System.out.println(rowCount);
 		return rowCount;
 	}
-	
+	public Boolean isRequiredStock(String s){
+		return s.equals("Producto") ||s.equals("Cantidad");
+	}
 	public Error insertStock() {
 		long startAll= System.currentTimeMillis();
 		Vector<String> verror = error.getTextError();
@@ -916,6 +941,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	Vector<ProductInfo> products;
 	ProductInfo pi;
 	public Integer executeExcel2(TemplateInfo ti){
+		this.ti = ti;
 		long startAll= System.currentTimeMillis();
 		String domain = AonUtil.getDomainName();
 		error = new Error();
@@ -1002,7 +1028,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
                 else{
                 	if(cell.getColumnIndex() !=0){
                 		Cell beforeCell = row.getCell(cell.getColumnIndex()-1);
-            			if(beforeCell == null || beforeCell.getCellType() == Cell.CELL_TYPE_BLANK){
+            			if((beforeCell == null || beforeCell.getCellType() == Cell.CELL_TYPE_BLANK) && isRequiredProduct(ti.getColumns().get(cell.getColumnIndex()-1))){
             				if(beforeCell == null){
             					verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto");
             					textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto \n";
@@ -1064,6 +1090,10 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		System.out.println(rowCount);
 		return rowCount;
 	}
+
+	public Boolean isRequiredProduct(String s) {
+		return s.equals("Nombre") || s.equals("C\u00f3digo") || s.equals("Precio Coste") || s.equals("Precio Venta Base");
+	}
 	
 	public Error insertProduct() {
 		long startAll= System.currentTimeMillis();
@@ -1075,7 +1105,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			error.setTextError(verror);
 			//String domain = AonUtil.getDomainName();
 			try {
-				error = DBProduct.insertProducts(domain, domainId, products);
+				error = DBProduct.insertProducts(domain, domainId, products, ti);
 				
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -1236,7 +1266,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			error.setTextError(verror);
 			String domain = AonUtil.getDomainName();
 			try {
-				DBProduct.insertProducts(domain,domainId,products);
+				DBProduct.insertProducts(domain,domainId,products, this.ti);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -1260,6 +1290,14 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	static final String PREPAYMENT = ProductType.PREPAYMENT.getName(new Locale("es_ES"));
 	static final String SERVICE = ProductType.SERVICE.getName(new Locale("es_ES"));
 
+	static final String NO_PERIOD = BillingPeriod.NO_PERIOD.getName(new  Locale("es_ES"));
+	static final String MONTHLY = BillingPeriod.MONTHLY.getName(new Locale("es_ES"));
+	static final String BI_MONTHLY = BillingPeriod.BI_MONTHLY.getName(new Locale("es_ES"));
+	static final String THREE_MONTHLY = BillingPeriod.THREE_MONTHLY.getName(new Locale("es_ES"));
+	static final String FOUR_MONTHLY = BillingPeriod.FOUR_MONTHLY.getName(new Locale("es_ES"));
+	static final String SIX_MONTHLY = BillingPeriod.SIX_MONTHLY.getName(new Locale("es_ES"));
+	static final String YEARLY = BillingPeriod.YEARLY.getName(new Locale("es_ES"));
+	
 	private ProductInfo check(String template, Object value,ProductInfo product, Integer type) {
 		
 		String domain = AonUtil.getDomainName();
@@ -1345,7 +1383,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 					product.getProduct().setTags(tags2);
 				else return null;
 			}
-			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
+			//else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break; 
 		case "Tipo":
 			String t;
@@ -1367,7 +1405,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 					product.getProduct().setType(ProductType.PREPAYMENT);
 				else return null;
 			}
-			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
+			//else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break; 
 		case "IVA" : 
 			Tax vat = new Tax();

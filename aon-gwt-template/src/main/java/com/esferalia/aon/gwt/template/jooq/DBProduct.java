@@ -22,6 +22,7 @@ import org.jooq.InsertValuesStep14;
 import org.jooq.InsertValuesStep15;
 import org.jooq.InsertValuesStep3;
 import org.jooq.Record1;
+import org.jooq.Record10;
 import org.jooq.Record19;
 import org.jooq.Record2;
 import org.jooq.Record3;
@@ -42,6 +43,7 @@ import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
 import com.esferalia.aon.gwt.template.server.ProductInfo;
 import com.esferalia.aon.gwt.template.shared.Error;
+import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.jooq.tables.records.ItemRecord;
 import com.esferalia.aon.jooq.tables.records.ProductRecord;
 import com.esferalia.aon.jooq.tables.records.ProductTagRecord;
@@ -51,7 +53,9 @@ public class DBProduct {
 	private static final String SET_FOREIGN_KEY_CHECKS_0 = "SET FOREIGN_KEY_CHECKS=0;";
 	private static final String SET_FOREIGN_KEY_CHECKS_1 = "SET FOREIGN_KEY_CHECKS=1;";
 
-	public static Error insertProducts(String domain, Integer domainId,Vector<ProductInfo> products) throws SQLException {
+	static TemplateInfo ti;
+	public static Error insertProducts(String domain, Integer domainId,Vector<ProductInfo> products, TemplateInfo templateInfo) throws SQLException {
+		ti = templateInfo;
 		long startAll = System.currentTimeMillis();
 		Error error = new Error();
 		error.setError(true);
@@ -80,36 +84,41 @@ public class DBProduct {
 			InsertValuesStep15<ProductRecord, Integer, Integer, String, String, Integer, Integer, Byte, Byte, Integer, Integer, Byte, Byte, Byte, Integer, Integer> productInsertQuery = dslContext.insertInto(PRODUCT,PRODUCT.ID, PRODUCT.DOMAIN,PRODUCT.NAME,PRODUCT.CODE,PRODUCT.BRAND,PRODUCT.CATEGORY,PRODUCT.INVENTORIABLE,PRODUCT.STATUS,PRODUCT.VAT,PRODUCT.RETENTION,PRODUCT.TYPE,PRODUCT.COMPOSITION,PRODUCT.COMPOSITION_PRICE,PRODUCT.SALES_ACCOUNT,PRODUCT.PURCHASE_ACCOUNT);
 			InsertValuesStep14<ProductRecord, Integer, String, String, Integer, Integer, Byte, Byte, Integer, Integer, Byte, Byte, Byte, Integer, Integer> productInsertQuery2 = dslContext.insertInto(PRODUCT, PRODUCT.DOMAIN,PRODUCT.NAME,PRODUCT.CODE,PRODUCT.BRAND,PRODUCT.CATEGORY,PRODUCT.INVENTORIABLE,PRODUCT.STATUS,PRODUCT.VAT,PRODUCT.RETENTION,PRODUCT.TYPE,PRODUCT.COMPOSITION,PRODUCT.COMPOSITION_PRICE,PRODUCT.SALES_ACCOUNT,PRODUCT.PURCHASE_ACCOUNT);
 			InsertValuesStep15<ItemRecord,Integer, Integer, Integer, String, Double, Byte, Double, Double, Double, Double, Byte, String, String, String, String> itemInsertQuery2 = dslContext.insertInto(ITEM, ITEM.ID,ITEM.DOMAIN,ITEM.PRODUCT, ITEM.DESCRIPTION, ITEM.PRICE, ITEM.STATUS, ITEM.EXPENSES_PERCENT, ITEM.EXPENSES_FIXED, ITEM.PROFIT_PERCENT, ITEM.PURCHASE_PRICE, ITEM.INTERNET, ITEM.BARCODE, ITEM.DETAIL,ITEM.DETAIL2,ITEM.DETAIL3);
-
+			
 			//for(ProductInfo r : products){
 			products.stream().forEach(r->{
 				//get product 
-				Record1<Integer> data = dslContext.select(PRODUCT.ID)
+		
+				Record10<Integer, Integer, Integer, Byte, Byte, Integer, Integer, Byte, Byte, Byte> data = dslContext.select(PRODUCT.ID, PRODUCT.BRAND, PRODUCT.CATEGORY,PRODUCT.INVENTORIABLE,PRODUCT.STATUS, PRODUCT.VAT, PRODUCT.RETENTION,PRODUCT.TYPE, PRODUCT.COMPOSITION, PRODUCT.COMPOSITION_PRICE)
 											.from(PRODUCT)
 											.where(PRODUCT.CODE.eq(r.getProduct().getCode()).and(PRODUCT.DOMAIN.eq(domainId))).fetchOne();
+			
+				Product product = getProduct(r.getProduct(), data, ti, domainId);
+
+				
 				Integer productId;
 				Byte inventoriable;
-				if (r.getProduct().isInventoriable()) inventoriable = 1;
+				if (product.isInventoriable()) inventoriable = 1;
 				else inventoriable = 0;
 				
 				Byte composition;
-				if (r.getProduct().isComposition()) composition = 1;
+				if (product.isComposition()) composition = 1;
 				else composition = 0;
 			
 				Byte compositionPrice;
-				if (r.getProduct().isCompositionPrice()) compositionPrice = 1;
+				if (product.isCompositionPrice()) compositionPrice = 1;
 				else compositionPrice = 0;
-			
+				
 				Integer brandId;
-				if(r.getProduct().getBrand()!=null) brandId = r.getProduct().getBrand().getId();
+				if(product.getBrand() != null) brandId = product.getBrand().getId();
 				else brandId = null;
-			
-				Integer categoryId;
-				if(r.getProduct().getCategory()!=null) categoryId = r.getProduct().getCategory().getId();
-				else categoryId = null;
+				
+				Integer catId;
+				if(product.getCategory() != null) catId= product.getCategory().getId();
+				else catId = null;
+				
 				r.setIsProduct(data!=null);
 				if(data!= null){
-					
 					productId = data.value1();
 					
 					if(r.getProduct().getTags() != null){
@@ -123,7 +132,8 @@ public class DBProduct {
 
 					if(!esta(productId,productDeleteProductIds)){
 						productDeleteProductIds.add(productId);
-						productInsertQuery.values(productId,domainId,r.getProduct().getName(),r.getProduct().getCode(),brandId,categoryId, inventoriable,(byte) r.getProduct().getStatus().ordinal(),r.getProduct().getVat().getId(),r.getProduct().getRetention().getId(),(byte) r.getProduct().getType().ordinal(),composition,compositionPrice,null,null);
+						
+						productInsertQuery.values(product.getId(),product.getDomain(),product.getName(),product.getCode(),brandId,catId, inventoriable,(byte) product.getStatus().ordinal(),product.getVat().getId(),product.getRetention().getId(),(byte) product.getType().ordinal(),composition,compositionPrice,null,null);
 					}
 					
 					/*dslContext.update(PRODUCT).set(PRODUCT.NAME, r.getProduct().getName())
@@ -145,7 +155,7 @@ public class DBProduct {
 					*/
 					if(!esta(r.getProduct().getCode(), productInsertCode)){
 						productInsertCode.add(r.getProduct().getCode());
-						productInsertQuery2.values(domainId,r.getProduct().getName(),r.getProduct().getCode(),brandId,categoryId, inventoriable,(byte) r.getProduct().getStatus().ordinal(),r.getProduct().getVat().getId(),r.getProduct().getRetention().getId(),(byte) r.getProduct().getType().ordinal(),composition,compositionPrice,null,null);
+						productInsertQuery2.values(domainId,product.getName(),product.getCode(),brandId,catId, inventoriable,(byte) product.getStatus().ordinal(),product.getVat().getId(),product.getRetention().getId(),(byte) product.getType().ordinal(),composition,compositionPrice,null,null);
 					}
 				}
 			});
@@ -239,6 +249,58 @@ public class DBProduct {
 				connection.close();
 		}
 		
+		
+	}
+	
+	private static Product getProduct(Product p, Record10<Integer, Integer, Integer, Byte, Byte, Integer, Integer,Byte, Byte, Byte> data, TemplateInfo ti, Integer domainId){
+		Product product = new Product();
+		product.setId(data.value1());
+		product.setDomain(domainId);
+		product.setName(p.getName());
+		product.setCode(p.getCode());
+		
+		if(ti.getColumns().contains("Marca")) product.setBrand(p.getBrand());
+		else if(data.value2()!= null){
+			Brand brand = new Brand();if(data.value2() != null) brand.setId(data.value2());
+			product.setBrand(brand);
+		}		
+		else product.setBrand(null);
+			
+		if(ti.getColumns().contains("Categor\u00eda")) product.setCategory(p.getCategory());
+		else if(data.value3() != null){
+			ProductCategory cat = new ProductCategory();cat.setId(data.value3());
+			product.setCategory(cat);
+		}
+		else product.setCategory(null);
+		
+		if(ti.getColumns().contains("Inventoriable")) product.setInventoriable(p.isInventoriable());
+		else product.setInventoriable(data.value4()==1);
+	
+		if(ti.getColumns().contains("Estado")) product.setStatus(p.getStatus());
+		else product.setStatus(ProductStatus.values()[data.value5()]);
+		
+		if(ti.getColumns().contains("IVA")) product.setVat(p.getVat());
+		else{
+			Tax t = new Tax(); t.setId(data.value6());
+			product.setVat(t);
+		}
+		
+		if(ti.getColumns().contains("IRPF")) product.setRetention(p.getRetention());
+		else{
+			Tax tax = new Tax(); tax.setId(data.value7());
+			product.setRetention(tax); 
+		}
+		
+		if(ti.getColumns().contains("Tipo")) product.setType(p.getType());
+		else product.setType(ProductType.values()[data.value8()]);
+
+		if(ti.getColumns().contains("Producto Compuesto")) product.setComposition(p.isComposition());
+		else product.setComposition(data.value9() ==1);
+		
+		if(ti.getColumns().contains("Precio Composici\u00f3n")) product.setCompositionPrice(p.isCompositionPrice());
+		else product.setCompositionPrice(data.value10() ==1);		 
+		 
+		return product;
 		
 	}
 	
