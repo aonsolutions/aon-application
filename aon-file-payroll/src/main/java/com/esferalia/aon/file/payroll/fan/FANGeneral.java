@@ -1,22 +1,155 @@
 package com.esferalia.aon.file.payroll.fan;
 
 import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.file.payroll.fan.data.DAT;
 import com.esferalia.aon.file.payroll.fan.data.EDL;
 import com.esferalia.aon.file.payroll.fan.data.EDT;
 import com.esferalia.aon.file.payroll.fan.data.EMP;
 import com.esferalia.aon.file.payroll.fan.data.TRA;
+import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseCCC;
+import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryData;
+import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.enumeration.ss.T33;
 
 public class FANGeneral implements Serializable, IFanFactory {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-
+	
+	@Override
+	public String getQuoteIndicator(List<ITransferObject> salaryDataList) {
+		ContractCode code = getContractCode(salaryDataList);
+		if(code!=null && (code.getValue().startsWith("2") || code.getValue().startsWith("3") || code.getValue().startsWith("5"))){
+			String weekHours = obtainWeekHours(salaryDataList);
+			if( StringUtils.isNotBlank(weekHours) ){
+				return "H";
+			}
+		}
+		return null;
+	}
+	
+	@Override
+	public String getQuoteMode(List<ITransferObject> list) {
+		return null;
+	}
+	
+	/**
+	 * Dias/horas
+		Este campo puede tomar valor entre 1 y 30 (Retribución mensual) ó 31 (Retribución diaria), para la
+		cotización por días, y entre 1 y 248 en caso de cotización por horas. Si existe más de un segmento
+		DAT para un mismo trabajador y periodo (diferentes situaciones contractuales en el mismo mes),
+		estos límites se aplicarán a la suma de todos ellos. Cuando el trabajador se encuentre en situación de
+		Maternidad a tiempo parcial o en situación de ERE parcial, los días consignados en el segmento DAT
+		relativo a una de estas situaciones, no se tendrán en cuenta a efectos del límite máximo de días.
+		Para el Rég. 0163: para los trabajadores de modalidad G se indicará número de dias elta y para los
+		trabajadores de modalidad J se indicará el número de jornadas reales efectivamente trabajadas, o, en
+		situación IT las que se deberían haber realizado.
+	 * @param c
+	 * @return
+	 */
+	public Integer getContractDaysOrHours(Salary salary, List<ITransferObject> salaryDataList, Integer itDays, Date startDate, Date endDate) {
+		// TODO 
+		
+		Contract contract = salary.getContract();
+		
+		ContractCode code = getContractCode(salaryDataList);
+		if(code==null || code.getValue().startsWith("1") || code.getValue().startsWith("4")){
+			if(itDays!=null && itDays>0){
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(startDate);
+				int days = cal.getActualMaximum(Calendar.DAY_OF_MONTH)-itDays; 
+				return (days==0)?null:days;
+			}
+			if( startDate.before(contract.getStartDate()) 
+					|| (contract.getEndDate()!=null && endDate.after(contract.getEndDate())) ){
+				Date start = startDate.before(contract.getStartDate())?contract.getStartDate():startDate;
+				Date end = (contract.getEndDate()!=null && endDate.after(contract.getEndDate()))?contract.getEndDate():endDate;
+				return (int) getAvailableDays(start, end);
+			} else {
+				return 30;
+			}
+		} else {
+			String weekHours = obtainWeekHours(salaryDataList);
+			Double dayHours = (Double.parseDouble(weekHours)/7);
+			
+			Calendar startCal = Calendar.getInstance();
+			startCal.setTime(startDate);
+			Calendar endCal = Calendar.getInstance();
+			endCal.setTime(endDate); 
+			
+			long totalDays = 0;
+			if( startDate.before(contract.getStartDate()) 
+					|| (contract.getEndDate()!=null && endDate.after(contract.getEndDate())) ){
+				Date start = startDate.before(contract.getStartDate())?contract.getStartDate():startDate;
+				Date end = (contract.getEndDate()!=null && endDate.after(contract.getEndDate()))?contract.getEndDate():endDate;
+				totalDays =  getAvailableDays(start, end);
+			} else {
+				totalDays =  getAvailableDays(startDate, endDate);
+			}
+			
+			if(itDays!=null && itDays>0){
+				int days = Double.valueOf(CommonUtil.round((totalDays - itDays) * dayHours, 0)).intValue();
+				return (days==0)?null:days;
+			}
+			
+			return (totalDays * dayHours)<1?1:Double.valueOf(CommonUtil.round(totalDays * dayHours, 0)).intValue();
+		}
+		
+	}
+	
+	protected long getAvailableDays(Date start, Date end) {
+		Calendar startCal = Calendar.getInstance();
+		startCal.setTime(start);
+		startCal.set(Calendar.HOUR_OF_DAY, 0);
+		startCal.set(Calendar.MINUTE, 0);
+		startCal.set(Calendar.SECOND, 0);
+		Calendar endCal = Calendar.getInstance();
+		endCal.setTime(end);
+		endCal.set(Calendar.HOUR_OF_DAY, 23);
+		endCal.set(Calendar.MINUTE, 59);
+		endCal.set(Calendar.SECOND, 59);
+		return CommonUtil.getDaysBetweenDates(startCal.getTime(), endCal.getTime());
+	}
+	
+	private ContractCode getContractCode(List<ITransferObject> salaryDataList) {
+		String o;
+		o = null;
+		List<ITransferObject> list = salaryDataList;
+		for(ITransferObject to: list){
+			SalaryData sa = (SalaryData) to;
+			if(sa.getName().equals("TC2")){
+				o = sa.getExpression();
+			}
+		}
+		if(o!=null){
+			return ContractCode.getContractCodeByValue(o);
+		}
+		return null;
+	}
+	
+	private String obtainWeekHours(List<ITransferObject> salaryDataList){
+		String o = null;
+		List<ITransferObject> list = salaryDataList;
+		for(ITransferObject to: list){
+			SalaryData sa = (SalaryData) to;
+			if(sa.getName().equals("HORAS_SEMANA")){
+				o = sa.getExpression();
+			}
+		}
+		return o;
+	}
+	
 	
 	// *********************************************
 	// *********************************************
@@ -123,19 +256,34 @@ public class FANGeneral implements Serializable, IFanFactory {
 		}
 	}
 	
-	public void createEDLBa20Segment() {
-		// TODO 20 Base de cotización empresarial C.Comunes = AT y EP
+	/**
+	 * 20 Base de cotización empresarial C.Comunes = AT y EP
+	 */
+	public void createEDLBa20Segment(Double enterpriseBase, DAT dat) {
+		EDL edl = dat.getEdlSegment("BA20");
+		createEDLRecord(edl, "BA", 20, new Double(enterpriseBase * 100).intValue());
 	}
 
-	public void createEDLBa21Segment() {
-		// 21 Base de cotización empresarial por contingencias comunes Base de
-		// cotización empresarial por desempleo y FOGASA
-		// (Baja a partir del 1 de enero de 2012) (Régimen Especial Agrario)
+	/**
+	 * 21 Base de cotización empresarial por contingencias comunes 
+	 * 
+	 * @param salary
+	 * @param dat
+	 */
+	public void createEDLBa21Segment(Double commonEnterpriseBase, DAT dat) {
+		EDL edl = dat.getEdlSegment("BA21");
+		createEDLRecord(edl, "BA", 21, new Double(commonEnterpriseBase * 100).intValue());
 	}
 	
-	public void createEDLBa22Segment() {
-		// TODO 22 Base de cotización empresarial por AT y EP y Otras
-		// Cotizaciones
+	/**
+	 *  22 Base de cotización empresarial por AT y EP y Otras Cotizaciones
+	 * 
+	 * @param salary
+	 * @param dat
+	 */
+	public void createEDLBa22Segment(Double profesisonalEnterpriseBase, DAT dat) {
+		EDL edl = dat.getEdlSegment("BA22");
+		createEDLRecord(edl, "BA", 22, new Double(profesisonalEnterpriseBase * 100).intValue());
 	}
 	
 	public void createEDLBa23Segment() {

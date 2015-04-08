@@ -1,8 +1,13 @@
 package com.esferalia.aon.file.payroll.fan;
 
+import java.util.Date;
+import java.util.List;
+
+import com.code.aon.common.ITransferObject;
 import com.esferalia.aon.file.payroll.fan.data.DAT;
 import com.esferalia.aon.file.payroll.fan.data.EMP;
 import com.esferalia.aon.payroll.EnterpriseCCC;
+import com.esferalia.aon.payroll.Salary;
 
 public interface IFanFactory {
 
@@ -28,7 +33,12 @@ public interface IFanFactory {
 //	public void createEDTCaSegments(EnterpriseCCC ccc, EMP emp);
 //	
 //	public void createEDTTtSegments(EnterpriseCCC ccc, EMP emp);
+
+	public String getQuoteIndicator(List<ITransferObject> salaryDataList);
 	
+	public String getQuoteMode(List<ITransferObject> list);
+	
+	public Integer getContractDaysOrHours(Salary salary, List<ITransferObject> salaryDataList, Integer itDays, Date startDate, Date endDate);
 	
 	// *********************************************
 	// TRABAJADOR
@@ -44,9 +54,9 @@ public interface IFanFactory {
 	public void createEDLBa09Segment();
 	public void createEDLBa10Segment(Double overtimeBase, DAT dat);
 	public void createEDLBa11Segment(Double nonEstructuralOvertimeBase, DAT dat);
-	public void createEDLBa20Segment();
-	public void createEDLBa21Segment();
-	public void createEDLBa22Segment();
+	public void createEDLBa20Segment(Double base, DAT dat);
+	public void createEDLBa21Segment(Double base, DAT dat);
+	public void createEDLBa22Segment(Double base, DAT dat);
 	public void createEDLBa23Segment();
 	public void createEDLBa28Segment();
 	public void createEDLBa30Segment();

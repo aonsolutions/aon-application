@@ -44,7 +44,6 @@ import com.esferalia.aon.file.payroll.fan.IFanFactory;
 import com.esferalia.aon.file.payroll.fan.data.AYN;
 import com.esferalia.aon.file.payroll.fan.data.DAT;
 import com.esferalia.aon.file.payroll.fan.data.EDL;
-import com.esferalia.aon.file.payroll.fan.data.EDT;
 import com.esferalia.aon.file.payroll.fan.data.EMP;
 import com.esferalia.aon.file.payroll.fan.data.ETI;
 import com.esferalia.aon.file.payroll.fan.data.MPG;
@@ -57,17 +56,18 @@ import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBonus;
+import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.LiquidationType;
 import com.esferalia.aon.payroll.enumeration.Mutual;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
-import com.esferalia.aon.payroll.enumeration.ss.T33;
 import com.esferalia.aon.payroll.enumeration.ss.T86;
 import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 public class FANWriter implements Serializable {
@@ -342,20 +342,31 @@ public class FANWriter implements Serializable {
 	private List<DAT> createDATRecords(Contract contract) throws ManagerBeanException {
 		List<DAT> datList = new LinkedList<DAT>();
 		
+		Salary salary = null;
+		List<ITransferObject> salaryDataList = null;
 		if(liquidationType==LiquidationType.L00){
+			salary = getSalary(contract, SalaryType.SALARY);
+			salaryDataList = PayrollUtils.getInstance().getSalaryDataList(salary, true);
+			
 			if(isLessThan7DaysContract(contract)){
-				createDATRecord(datList, contract, autoComplete("C", 7, " ", true), getContractDaysOrHours(contract));
+				createDATRecord(datList, contract, salaryDataList, autoComplete("C", 7, " ", true), getContractDaysOrHours(contract, salaryDataList));
 			} else {
-				Integer days = getContractDaysOrHours(contract);
-				if(days!=null){
-					Integer ereDays = getEreDays(contract);
-					if(ereDays!=null && ereDays>0){
-						if(isErePartial(contract)){
-							createDATRecord(datList, contract, autoComplete("R", 6, " ", true), getContractDaysOrHours(contract)-ereDays);
-						}
-					} else  {
-						createDATRecord(datList, contract, null, getContractDaysOrHours(contract));
+				Integer daysHours = getContractDaysOrHours(contract, salaryDataList);
+				Integer discountDaysHours = 0;
+				if(isErePartial(salaryDataList)){
+					ContractCode code = getContractCode(contract);
+					discountDaysHours = Double.valueOf(CommonUtil.round(getEreDays(salaryDataList), 0)).intValue();
+					if(code!=null && !code.getValue().startsWith("1") && !code.getValue().startsWith("4")){
+						String weekHours = obtainWeekHours(contract);
+						Double dayHours = (Double.parseDouble(weekHours)/5);
+						discountDaysHours = Double.valueOf(CommonUtil.round(discountDaysHours * dayHours, 0)).intValue();
 					}
+				}
+				if(isEreTotal(salaryDataList)){
+					daysHours = null;
+				}
+				if(daysHours!=null){
+					createDATRecord(datList, contract, salaryDataList, null, daysHours-discountDaysHours);
 				}
 			}
 			
@@ -372,11 +383,11 @@ public class FANWriter implements Serializable {
 				Integer itDays = getItDays(contract);
 				ContractCode code = getContractCode(contract);
 				if(code!=null && !code.getValue().startsWith("1") && !code.getValue().startsWith("4")){
-					String weekHours = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.WEEK_HOURS.getName());
+					String weekHours = obtainWeekHours(contract);
 					Double dayHours = (Double.parseDouble(weekHours)/5);
 					itDays = Double.valueOf(CommonUtil.round(itDays * dayHours, 0)).intValue();
 				}
-				createDATRecord(datList, contract, autoComplete(getJournalReduction(contract), 3, " ", true), itDays);
+				createDATRecord(datList, contract, salaryDataList, autoComplete(getJournalReduction(contract), 3, " ", true), itDays);
 			}
 			// TODO
 //			if(isMonthSalary(contract)){
@@ -386,18 +397,18 @@ public class FANWriter implements Serializable {
 //			if(isNoRetributionDischarge(contract)){
 //				datList.add(createDATRecord(contract, autoComplete("A", 5, " ", true), getContractDaysOrHours(contract)));
 //			}
-			if(StringUtils.isNotBlank(getOthers(contract))){
-				Integer ereDays = getEreDays(contract);
+			if(StringUtils.isNotBlank(getOthers(salaryDataList))){
+				Integer ereDays = getEreDays(salaryDataList);
 				ContractCode code = getContractCode(contract);
 				if(code!=null && !code.getValue().startsWith("1") && !code.getValue().startsWith("4")){
-					String weekHours = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.WEEK_HOURS.getName());
+					String weekHours = obtainWeekHours(contract);
 					Double dayHours = (Double.parseDouble(weekHours)/5);
 					ereDays = Double.valueOf(CommonUtil.round(ereDays * dayHours, 0)).intValue();
 				}
-				createDATRecord(datList, contract, autoComplete(getOthers(contract), 6, " ", true), ereDays);
+				createDATRecord(datList, contract, salaryDataList, autoComplete(getOthers(salaryDataList), 6, " ", true), ereDays);
 			}
 		} else if(liquidationType==LiquidationType.L13){
-			createDATRecord(datList, contract, null, getNotEnjoyedVacationDays(contract));
+			createDATRecord(datList, contract, salaryDataList, null, getNotEnjoyedVacationDays(contract));
 		}
 		
 		return datList;
@@ -410,13 +421,13 @@ public class FANWriter implements Serializable {
 	 * @return
 	 * @throws ManagerBeanException
 	 */
-	private DAT createDATRecord(List<DAT> list, Contract contract, String indicadorPerfil, Integer diasHoras) {
+	private DAT createDATRecord(List<DAT> list, Contract contract, List<ITransferObject> salaryDataList, String indicadorPerfil, Integer diasHoras) {
 		DAT dat = new DAT();
 		dat.setMes(endMonth.ordinal()+1);
 		dat.setIndicadoresPerfil(indicadorPerfil);
 		dat.setDiasHoras(diasHoras);
 		dat.setDiasAlta(getContractDischargeDays(contract));
-		dat.setIndicadorCotizacion(getQuoteIndicator(contract));
+		dat.setIndicadorCotizacion(getQuoteIndicator(salaryDataList));
 		dat.setIndicadorVacaciones(getVacationIndicator(contract));
 		dat.setClaveJornadasColectivo(getCollectiveJournalHours(contract));
 		dat.setEspecificos(getSpecifics(contract));
@@ -428,14 +439,14 @@ public class FANWriter implements Serializable {
 		dat.setEpigrafeAtEp(getAtEpEpigraph(contract));
 		dat.setEpigrafeSecundario(getSecondariEpigraph(contract));
 		dat.setOcupacion(getContractOccupation(contract));
-		dat.setModalidadCotizacion(getQuoteMode(contract));
+		dat.setModalidadCotizacion(getQuoteMode(salaryDataList));
 		dat.setIndDiscapacidad(getHandicapIndicator(contract));
 		dat.setIndRelacion(getEmploymentRelation(contract));
 		dat.setColectivoPeculiar(getParticularGroup(contract));
 		dat.setInfoComplementaria(null);
 		dat.setCotizacionDesempleo(null);
 		list.add(dat);
-		createEDLRecords(contract, dat, list);
+		createEDLRecords(contract, salaryDataList, dat, list);
 		return dat;
 	}
 	
@@ -594,23 +605,30 @@ public class FANWriter implements Serializable {
 		return null;
 	}
 	
-	private void createEDLRecords(Contract contract, DAT dat, List<DAT> datList) {
+	private void createEDLRecords(Contract contract, List<ITransferObject> salaryDataList, DAT dat, List<DAT> datList) {
 		Salary salary = null;
 	
 		if(liquidationType==LiquidationType.L00){
-			salary = getSalary(contract, SalaryType.SALARY);
 		
+			salary = getSalary(contract, SalaryType.SALARY);
 		
 			if(salary!=null){
 					
-				if(dat.getIndicadoresPerfil()==null || !dat.getIndicadoresPerfil().contains("I")){
-					if(!isContractLeave(contract)){
-						fanFactory.createEDLBa01Segment(salary.getCommonBase(), dat);
-						fanFactory.createEDLBa02Segment(salary.getProfessionalBase(), dat);
-					} else {
+				if(dat.getIndicadoresPerfil()==null 
+						|| (!dat.getIndicadoresPerfil().contains("I")
+								&& !dat.getIndicadoresPerfil().contains("P") 
+								&& !dat.getIndicadoresPerfil().contains("T")) ){
+					if(isContractLeave(contract)){
 						Double itBase = getITBase(salary);
 						fanFactory.createEDLBa01Segment(salary.getCommonBase() - itBase, dat);
 						fanFactory.createEDLBa02Segment(salary.getProfessionalBase() - itBase, dat);
+					} else if(isErePartial(salaryDataList) || isEreTotal(salaryDataList)){
+						Double ereBase = getEreBase(salary,salaryDataList);
+						fanFactory.createEDLBa01Segment(salary.getCommonBase() - ereBase, dat);
+						fanFactory.createEDLBa02Segment(salary.getProfessionalBase() - ereBase, dat);
+					} else {
+						fanFactory.createEDLBa01Segment(salary.getCommonBase(), dat);
+						fanFactory.createEDLBa02Segment(salary.getProfessionalBase(), dat);
 					}
 						
 						
@@ -621,9 +639,6 @@ public class FANWriter implements Serializable {
 					fanFactory.createEDLBa09Segment();
 					fanFactory.createEDLBa10Segment(salary.getOvertimeBase(), dat);
 					fanFactory.createEDLBa11Segment(salary.getNonEstructuralOvertimeBase(), dat);
-					fanFactory.createEDLBa20Segment();
-					fanFactory.createEDLBa21Segment();
-					fanFactory.createEDLBa22Segment();
 					fanFactory.createEDLBa23Segment();
 					fanFactory.createEDLBa28Segment();
 					fanFactory.createEDLBa30Segment();
@@ -638,9 +653,7 @@ public class FANWriter implements Serializable {
 					fanFactory.createEDLBa41Segment();
 					fanFactory.createEDLBa42Segment();
 					
-					createBonusSegment(salary, dat);
-						
-				} else {				
+				} else {
 					if (isContractLeave(contract)) {
 						Calendar cal = Calendar.getInstance();
 						cal.setTime(getStartDate());
@@ -649,9 +662,15 @@ public class FANWriter implements Serializable {
 						fanFactory.createEDLBa02Segment(datList.size()>1?itBase:salary.getProfessionalBase(), dat);
 						fanFactory.createEDLCd01Segment(getECSSAmount(salary), dat);
 						fanFactory.createEDLCd03Segment(getATEPAmount(salary), dat);
-						createBonusSegment(salary, dat);
-					}
+					} else if(isErePartial(salaryDataList) || isEreTotal(salaryDataList)){
+						Double ereBase = getEreBase(salary, salaryDataList);
+						fanFactory.createEDLBa21Segment(datList.size()>1?ereBase:salary.getCommonBase(), dat);
+						fanFactory.createEDLBa22Segment(datList.size()>1?ereBase:salary.getProfessionalBase(), dat);
+					}  
 				}
+
+				createBonusSegment(salary, dat, datList);
+				
 			}
 //			createEDLCd05Segment(salary, dat);
 //			createEDLCd16Segment(salary, dat);
@@ -671,7 +690,8 @@ public class FANWriter implements Serializable {
 		
 	}
 	
-	private void createBonusSegment(Salary salary, DAT dat){
+	
+	private void createBonusSegment(Salary salary, DAT dat, List<DAT> datList){
 		List<ITransferObject> bonusList = getSalaryBonuses(salary);
 		if (bonusList!=null && !bonusList.isEmpty()) {
 			SalaryBonus bonus = null;
@@ -719,6 +739,9 @@ public class FANWriter implements Serializable {
 						fanFactory.createEDLCd17Segment(bonus.getAmount(), dat);
 					} else if(bonusType==BonusType.REDUCTION_FLAT_RATE_RDL03_2014){
 						fanFactory.createEDLCd31Segment(bonus.getAmount(), dat);
+						if(datList.size()>1){
+							populateBonusAmount(datList, "CD31");
+						}
 					}
 				} else if(bonus!=null && bonusType==null) {
 					fanFactory.createEDLCd07Segment(bonus.getAmount(), dat);
@@ -729,7 +752,8 @@ public class FANWriter implements Serializable {
 			Double cgcTotalEnterprise = 0.0;
 			Double cgcTotalEmployee = 0.0;
 			try {
-				cgcTotalEnterprise = obtainCGCTotalEnterprise(salary);
+//				cgcTotalEnterprise = obtainCGCTotalEnterprise(salary);
+				cgcTotalEnterprise = obtainCGCEnterpriseCuota(salary);
 				cgcTotalEmployee = obtainCGCTotalEmployee(salary);
 			} catch (AonConnectionException e) {
 				// do nothing
@@ -741,6 +765,29 @@ public class FANWriter implements Serializable {
 				fanFactory.createEDLCd30Segment(dat);
 			}
 		}
+	}
+	
+	private void populateBonusAmount(List<DAT> datList, String key) {
+		Integer totalDiasHoras = 0;
+		for(DAT dat: datList){
+			if(dat.getEdl().containsKey(key)){
+				totalDiasHoras += dat.getDiasHoras();
+			}
+		}
+		for(DAT dat: datList){
+			Integer diasHoras = dat.getDiasHoras();
+			if(dat.getEdl().containsKey(key)){
+				EDL edl = dat.getEdl().get(key);
+				edl.setImporte((edl.getImporte()*totalDiasHoras)/diasHoras);
+			}
+		}
+	}
+	
+	private Double getEreBase(Salary salary, List<ITransferObject> salaryDataList) {
+		// TODO
+		Integer salaryDays = salary.getTimeUnits();
+		Integer ereDays = Math.min(getEreDays(salaryDataList), salaryDays);
+		return (salary.getCommonBase()*ereDays)/salaryDays;
 	}
 	
 	private Double getITBase(Salary salary) {
@@ -937,12 +984,8 @@ public class FANWriter implements Serializable {
 		G Cotización Sistema General
 		obligatorio para reg. 0613 
 	 */
-	private String getQuoteMode(Contract contract) {
-		if(contract.getEnterpriseCCC().getType()==CCCType.AGRICULTURAL){
-			String o = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get("JORNADAS_REALES");
-			return o!=null && !o.isEmpty()?"J":"G";
-		}
-		return null;
+	private String getQuoteMode(List<ITransferObject> list) {
+		return fanFactory.getQuoteMode(list);
 	}
 	private String getContractOccupation(Contract contract) {
 		String o = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.OCCUPATION.getName());
@@ -1012,15 +1055,8 @@ public class FANWriter implements Serializable {
 	 * @param c
 	 * @return
 	 */
-	private String getQuoteIndicator(Contract contract) {
-		ContractCode code = getContractCode(contract);
-		if(code!=null && (code.getValue().startsWith("2") || code.getValue().startsWith("3") || code.getValue().startsWith("5"))){
-			String weekHours = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.WEEK_HOURS.getName());
-			if( StringUtils.isNotBlank(weekHours) ){
-				return "H";
-			}
-		}
-		return null;
+	private String getQuoteIndicator(List<ITransferObject> salaryDataList) {
+		return fanFactory.getQuoteIndicator(salaryDataList);
 	}
 	
 	/**
@@ -1075,82 +1111,22 @@ public class FANWriter implements Serializable {
 	 * @param c
 	 * @return
 	 */
-	private Integer getContractDaysOrHours(Contract contract) {
-		// TODO 
+	private Integer getContractDaysOrHours(Contract contract, List<ITransferObject> list) {
+		Salary salary = getSalary(contract, SalaryType.SALARY);
 		Integer itDays = getItDays(contract);
-		ContractCode code = getContractCode(contract);
-		if(code==null || code.getValue().startsWith("1") || code.getValue().startsWith("4")){
-			if(contract.getEnterpriseCCC().getType()==CCCType.AGRICULTURAL){
-				String o = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get("JORNADAS_REALES");
-				Integer realDays = 0;
-				if(o!=null){
-					if(NumberUtils.isNumber(o)){
-						realDays = Integer.parseInt(o);
-					}
-					return realDays;
-				}
-			}
-			if(itDays!=null && itDays>0){
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(getStartDate());
-				int days = cal.getActualMaximum(Calendar.DAY_OF_MONTH)-itDays; 
-				return (days==0)?null:days;
-			}
-			if( getStartDate().before(contract.getStartDate()) 
-					|| (contract.getEndDate()!=null && getEndDate().after(contract.getEndDate())) ){
-				Date start = getStartDate().before(contract.getStartDate())?contract.getStartDate():getStartDate();
-				Date end = (contract.getEndDate()!=null && getEndDate().after(contract.getEndDate()))?contract.getEndDate():getEndDate();
-				return (int) getAvailableDays(start, end);
-			} else {
-				return 30;
-			}
-		} else {
-			String weekHours = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.WEEK_HOURS.getName());
-			Double dayHours = (Double.parseDouble(weekHours)/7);
-			
-			Calendar startCal = Calendar.getInstance();
-			startCal.setTime(getStartDate());
-			Calendar endCal = Calendar.getInstance();
-			endCal.setTime(getEndDate());
-			
-			long totalDays = 0;
-			if( getStartDate().before(contract.getStartDate()) 
-					|| (contract.getEndDate()!=null && getEndDate().after(contract.getEndDate())) ){
-				Date start = getStartDate().before(contract.getStartDate())?contract.getStartDate():getStartDate();
-				Date end = (contract.getEndDate()!=null && getEndDate().after(contract.getEndDate()))?contract.getEndDate():getEndDate();
-				totalDays =  getAvailableDays(start, end);
-			} else {
-				totalDays =  getAvailableDays(getStartDate(), getEndDate());
-			}
-			
-			if(itDays!=null && itDays>0){
-				int days = Double.valueOf(CommonUtil.round((totalDays - itDays) * dayHours, 0)).intValue();
-				return (days==0)?null:days;
-			}
-			
-			return (totalDays * dayHours)<1?1:Double.valueOf(CommonUtil.round(totalDays * dayHours, 0)).intValue();
-		}
-		
+		return fanFactory.getContractDaysOrHours(salary, list, itDays, getStartDate(), getEndDate());
 	}
+	
 	
 	private Integer getNotEnjoyedVacationDays(Contract contract) {
 		String days = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.NO_HOLIDAYS.getName());
 		return (int) NumberUtils.toDouble(days);
 	}
-	
-	private long getAvailableDays(Date start, Date end) {
-		Calendar startCal = Calendar.getInstance();
-		startCal.setTime(start);
-		startCal.set(Calendar.HOUR_OF_DAY, 0);
-		startCal.set(Calendar.MINUTE, 0);
-		startCal.set(Calendar.SECOND, 0);
-		Calendar endCal = Calendar.getInstance();
-		endCal.setTime(end);
-		endCal.set(Calendar.HOUR_OF_DAY, 23);
-		endCal.set(Calendar.MINUTE, 59);
-		endCal.set(Calendar.SECOND, 59);
-		return CommonUtil.getDaysBetweenDates(startCal.getTime(), endCal.getTime());
+
+	private String obtainWeekHours(Contract contract) {
+		return SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.WEEK_HOURS.getName());
 	}
+	
 	
 	/**
 	 * numero de horas destinadas a formacion para las bonificaciones por formacion
@@ -1195,35 +1171,44 @@ public class FANWriter implements Serializable {
 	 * @param c
 	 * @return
 	 */
-	private String getOthers(Contract contract) {
+	private String getOthers(List<ITransferObject> list) {
 		// TODO 
 		
-		if(isErePartial(contract)){
+		if(isErePartial(list)){
 			return "P";
 		}
-		if(isEreTotal(contract)){
+		if(isEreTotal(list)){
 			return "T";
 		}
 		return " ";
 	}
 	
-	private Integer getEreDays(Contract contract) {
-		String o = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.ERE_DAYS);
+	private Integer getEreDays(List<ITransferObject> list) {
+		String o;
+		o = null;
+		for(ITransferObject to: list){
+			SalaryData sa = (SalaryData) to;
+			if(sa.getName().equals(ContextVariable.ERE_DAYS.getName())){
+				o = sa.getExpression();
+			}
+		}
 		if(o!=null && NumberUtils.isNumber(o)){
-			Integer ereDays = Integer.parseInt(o);
+			Integer ereDays = Double.valueOf(o).intValue();
 			if(ereDays>0){
 				return ereDays;
 			}
 		}
+		
 		return null;
 	}
 	
-	private boolean isErePartial(Contract contract) {
-		Integer days = getEreDays(contract);
+	private boolean isErePartial(List<ITransferObject> list) {
+		Integer days = getEreDays(list);
 		return (days!=null && days>0 && days<CommonUtil.getDay(getEndDate()));
 	}
-	private boolean isEreTotal(Contract contract) {
-		Integer days = getEreDays(contract);
+	
+	private boolean isEreTotal(List<ITransferObject> list) {
+		Integer days = getEreDays(list);
 		return (days!=null && days>0 && days==CommonUtil.getDay(getEndDate()));
 	}
 	
@@ -1291,58 +1276,6 @@ public class FANWriter implements Serializable {
 		return false;
 	}
 	
-//	private void createEDLRecord(EDL edl, String type, Integer key, Integer amount) {
-//		createEDLRecord(edl, type, key, 0, amount, " ", 0, autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), " ");
-//	}
-//	private void createEDLRecord(EDL edl, String type, Integer key, Integer element, Integer amount) {
-//		createEDLRecord(edl, type, key, element, amount, " ", 0, autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), " ");
-//	}
-//	private void createEDLRecord(EDL edl, String type, Integer key, Integer amount, String sign) {
-//		createEDLRecord(edl, type, key, 0, amount, " ", 0, autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), " ");
-//	}
-//	private void createEDLRecord(EDL edl, String type, Integer key, Integer element, Integer amount, String sign) {
-//		createEDLRecord(edl, type, key, element, amount, sign, 0, autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), " ");
-//	}
-//	/**
-//	Tipo de elementos de datos
-//	Determina la naturaleza del elemento que siga a continuación, indicando:
-//	BA Si se trata de una base. En este caso debe cumplimentarse el importe de la misma en el
-//	subcampo correspondiente. Para BA09 (Base de horas complementarias), deberá indicarse en el
-//	campo elemento, el nº de horas complementarias realizadas.
-//	CD Si se trata de una compensación y/o deducción. En tal caso deben cumplimentarse días e importe.
-//	
-//	Clave. Tipo específico de base o compensación/deducción. Según tabla de Bases, si se trata de una base, o
-//	según tabla compensaciones y/o deducciones si se trata de compensación y/o deducción. (Vercapítulo
-//	Tabla T - 25 y T - 26
-//	
-//	Elemento. Indica el número de días a que se refiere la compensación o deducción, es decir, los días con derecho
-//	a compensación, bonificación, subvención o reducción.
-//	Necesariamente va ligado al tipo de elemento CD. A ceros en el caso de BA, excepto para BA09, que
-//	es obligatorio, e indicará el nº de horas complementarias realizadas.
-//	Obligatorio para Compensación/Deducción por formación teórica presencial CD10 o formación teórica
-//	a distancia: CD11.
-//	
-//	Importe. Indica el importe de la base o de la compensación/deducción. Los importes se consignarán con dos
-//	céntimos de euro, sin caracteres se
-//	paradores de céntimos.
-//	1360
-//	
-//	Signo del importe. Si es negativo aparece el carácter '-'. En campos positivos el carácter ' '.
-//	Restricciones de uso. No se podrán consignar bases en negativo. Para los segmentos CD no se
-//	admitirán signos negativos, excepto para liquidaciones L04.
-//	 */
-//	private void createEDLRecord(EDL edl, String type, Integer key, Integer element, Integer amount, String sign, Integer resolutionType, String resolutionDate, String startPeriod, String endPeriod, String resolutionReference) {
-//		edl.setTipoElementoDatos(type);
-//		edl.setClave(key);
-//		edl.setElemento(element);
-//		edl.setImporte(amount);
-//		edl.setSigno(sign);
-//		edl.setTipoResolucion(resolutionType);
-//		edl.setFechaResolucion(resolutionDate);
-//		edl.setInicioPeriodo(startPeriod);
-//		edl.setFinPeriodo(endPeriod);
-//		edl.setReferencia(resolutionReference);
-//	}
 	
 	/**
 	 * TC/2 Totales
@@ -1794,14 +1727,13 @@ public class FANWriter implements Serializable {
 			DatabaseUtil.closeQuietly(conn);
 		}
 	}
-	private Double obtainCGCTotalEnterprise(Salary salary) throws AonConnectionException, SQLException {
+	private Double obtainCGCEnterpriseCuota(Salary salary) throws AonConnectionException, SQLException {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		try {
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
-			String select = "SELECT sum(amount) FROM salary_cost";
-			select += " WHERE type in (" + DeductionType.COMMON_CONTINGENCY.ordinal() + ")";
-			select += " AND cost_concept in ('CGC_E')";
+			String select = "SELECT expression FROM salary_data";
+			select += " WHERE name = '_CUOTA'";
 			select += " AND salary = " + salary.getId() + " ;";
 			
 			ps = conn.prepareStatement(select);
@@ -1813,6 +1745,7 @@ public class FANWriter implements Serializable {
 			DatabaseUtil.closeQuietly(conn);
 		}
 	}
+	
 	private Double obtainCGCTotalEmployee(Salary salary) throws AonConnectionException, SQLException {
 		Connection conn = null;
 		PreparedStatement ps = null;

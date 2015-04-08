@@ -1,16 +1,23 @@
 package com.esferalia.aon.file.payroll.fan;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.math.NumberUtils;
+
 import com.code.aon.AonVersion;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.file.payroll.fan.data.DAT;
 import com.esferalia.aon.file.payroll.fan.data.EDL;
 import com.esferalia.aon.file.payroll.fan.data.EDT;
 import com.esferalia.aon.file.payroll.fan.data.EMP;
+import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryData;
 
 public class FANAgricultural extends FANGeneral implements Serializable, IFanFactory {
 	
@@ -66,7 +73,80 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 		reductionPercentByYear_it.put(2031, 20.85);
 		
 	}
-
+	
+	@Override
+	public String getQuoteIndicator(List<ITransferObject> salaryDataList) {
+		return null;
+	}
+	
+	public String getQuoteMode(List<ITransferObject> list) {
+		Integer _realDays = obtainJornadasReales(list);
+		Boolean _monthlyQuote = isMonthlyQuote(list);
+		return _realDays!=null && !_monthlyQuote?"J":"G";
+	}
+	
+	private Boolean isMonthlyQuote(List<ITransferObject> list){
+		String o;
+		o = null;
+		for(ITransferObject to: list){
+			SalaryData sa = (SalaryData) to;
+			if(sa.getName().equals("COTIZACION_MENSUAL")){
+				o = sa.getExpression();
+			}
+		}
+		if(o!=null){
+			return new Boolean(o);
+		}
+		return null;
+	}
+	
+	/**
+	 * Dias/horas
+		Este campo puede tomar valor entre 1 y 30 (Retribución mensual) ó 31 (Retribución diaria), para la
+		cotización por días, y entre 1 y 248 en caso de cotización por horas. Si existe más de un segmento
+		DAT para un mismo trabajador y periodo (diferentes situaciones contractuales en el mismo mes),
+		estos límites se aplicarán a la suma de todos ellos. Cuando el trabajador se encuentre en situación de
+		Maternidad a tiempo parcial o en situación de ERE parcial, los días consignados en el segmento DAT
+		relativo a una de estas situaciones, no se tendrán en cuenta a efectos del límite máximo de días.
+		Para el Rég. 0163: para los trabajadores de modalidad G se indicará número de dias elta y para los
+		trabajadores de modalidad J se indicará el número de jornadas reales efectivamente trabajadas, o, en
+		situación IT las que se deberían haber realizado.
+	 * @param c
+	 * @return
+	 */
+	public Integer getContractDaysOrHours(Salary salary, List<ITransferObject> salaryDataList, Integer itDays, Date startDate, Date endDate) {
+		
+		if(itDays!=null && itDays>0){
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(startDate);
+			int days = cal.getActualMaximum(Calendar.DAY_OF_MONTH)-itDays; 
+			return (days==0)?null:days;
+		}
+	
+		Integer _realDays = obtainJornadasReales(salaryDataList);
+		if(_realDays!=null && !"".equals(_realDays)){
+			return Double.valueOf(_realDays).intValue();
+		} else {
+			return 30;
+		}
+		
+	}
+	
+	private Integer obtainJornadasReales(List<ITransferObject> salaryDataList){
+		String o = null;
+		List<ITransferObject> list = salaryDataList;
+		for(ITransferObject to: list){
+			SalaryData sa = (SalaryData) to;
+			if(sa.getName().equals("JORNADAS_REALES")){
+				o = sa.getExpression();
+			}
+		}
+		if(o!=null && NumberUtils.isNumber(o)){
+			return Integer.parseInt(o);
+		}
+		return null;
+	}
+	
 	
 	/**
 	 *  29 Reducciones SEA. Contingencias comunes Sistema Especial Agrario 
@@ -84,8 +164,8 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 		// 2) la cuota ya calculada (la cual ya incluye la reduccion SEA).
 		
 		Double cgcBase = new Double(dat.getEdlSegment("BA01").getImporte()/100);
-		Double cgcPercent2015 = ENTERPRISE_PERCENT + EMPLOYEE_PERCENT;
-		Double rectifiedCgcAmount = cgcBase * cgcPercent2015 / 100;
+		Double cgcPercent = ENTERPRISE_PERCENT + EMPLOYEE_PERCENT;
+		Double rectifiedCgcAmount = cgcBase * cgcPercent / 100;
 		Double cgcAmount = null; 
 		
 		cgcAmount = cgcTotalEnterprise;

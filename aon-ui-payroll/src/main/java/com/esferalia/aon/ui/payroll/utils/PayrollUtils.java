@@ -36,6 +36,7 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
@@ -200,6 +201,15 @@ public class PayrollUtils {
 		return vl;
 	}
 	
+	public List<ITransferObject> getSalaryDataList(Salary salary, boolean includeChildDomains) throws ManagerBeanException{
+		IManagerBean bean = BeanManager.getManagerBean(SalaryData.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_DATA_SALARY_ID), salary.getId());
+		if(includeChildDomains){
+			completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.SALARY_DATA_DOMAIN));
+		}
+		return bean.getList(criteria);
+	}
 	public List<ITransferObject> getContractDataList(Contract contract, Date startDate, Date endDate, String variableName) throws ManagerBeanException{
 		IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 		Criteria criteria = new Criteria();
@@ -247,6 +257,22 @@ public class PayrollUtils {
 	// //////////////////////////////////
 	// DOMAIN METHODS
 	// //////////////////////////////////
+	
+	public void completeChildDomainCriteria(Criteria criteria, String fieldName){
+		completeChildDomainCriteria(criteria, fieldName, true);
+	}
+	public void completeChildDomainCriteria(Criteria criteria, String fieldName, boolean discardParentDomain){
+		if(DomainManager.isDomainManagementAvailable()){
+			criteria.setSkipDomainFilter( true );
+			if(!discardParentDomain){
+				Expression expr1 = ExpressionUtilities.getInExpression(fieldName, getCurrentChildDomainIds());
+				Expression expr2 = ExpressionUtilities.getEqualExpression(fieldName, DomainManager.getCurrentDomain());
+				criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+			} else {
+				criteria.addInExpression(fieldName, getCurrentChildDomainIds());
+			}
+		}
+	}
 	
 	public Enterprise getCurrentDomainEnterprise(){
 		try {
@@ -325,5 +351,6 @@ public class PayrollUtils {
 		}
 		return null;
 	}
+
 
 }
