@@ -3100,10 +3100,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			draft.setSalaryTable(allSalaryTable);
 			draft.setCategoriesMap(allCategories);
 			draft.setDatesWithChanges(datesWithChanges);
-
+			
+			List<Integer> domainIds = new ArrayList<Integer>();
+			if ( parentDomainId != null ) 
+				domainIds.add(parentDomainId);
+			domainIds.add(domainId);
+			
 			eval(draft.getId(), allLevels, allSalaryTable,
-					draft.getStartDate(), draft.getEndDate(), parentDomainId,
-					domainId);
+					draft.getStartDate(), draft.getEndDate(), domainIds.toArray(new Integer[]{}));
 
 		} finally {
 			if (connection != null)
