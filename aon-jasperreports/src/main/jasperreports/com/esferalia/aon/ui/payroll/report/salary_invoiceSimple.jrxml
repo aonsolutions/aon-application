@@ -74,7 +74,7 @@
 	</queryString>
 	<field name="salary" class="com.esferalia.aon.payroll.Salary"/>
 	<variable name="payments" class="java.util.List">
-		<variableExpression><![CDATA[ReportUtils.sort($F{salary}.getSalaryPayments(), "type", "description")]]></variableExpression>
+		<variableExpression><![CDATA[ReportUtils.sort($F{salary}.getSalaryPayments(), "description")]]></variableExpression>
 	</variable>
 	<variable name="deductions" class="java.util.List">
 		<variableExpression><![CDATA[ReportUtils.sort($F{salary}.getSalaryDeductions(),"type", "description")]]></variableExpression>
