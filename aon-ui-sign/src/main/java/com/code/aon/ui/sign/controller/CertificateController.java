@@ -35,7 +35,6 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.facturae.FacturaeSigner;
 import com.code.aon.facturae.KeyStoreData;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.company.controller.CompanyController;
@@ -275,10 +274,7 @@ public class CertificateController implements Serializable {
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), id);
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.DIGITAL_CERTIFICATE);
 		String scopeAlias = bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_SCOPE_ID);
-		Expression exp = UserUtils.getInstance().getNullableScopeExpression(scopeAlias);
-		if  (exp != null) {
-			criteria.addExpression(exp);	
-		}
+		UserUtils.getInstance().addNullableScopeExpression(criteria, scopeAlias);
 		return criteria;
 	}
 	

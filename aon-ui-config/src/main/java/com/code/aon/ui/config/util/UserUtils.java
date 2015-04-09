@@ -1,6 +1,7 @@
 package com.code.aon.ui.config.util;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,10 +18,12 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Scope;
 import com.code.aon.config.User;
 import com.code.aon.config.UserScope;
 import com.code.aon.config.UserWorkGroup;
+import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.config.enumeration.Toolbar;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
@@ -41,6 +44,12 @@ public class UserUtils implements Serializable {
 
 	private Boolean passwordExpired;
 	private User loggedUser;
+	private List<Integer> userScopeIds;
+	private boolean addScopeExpression;
+	
+	public UserUtils() {
+		this.userScopeIds = Collections.emptyList();
+	}
 
 	public boolean isPasswordExpired() {
 		if (passwordExpired == null) {
@@ -71,6 +80,7 @@ public class UserUtils implements Serializable {
 				LOGGER.error(e.getMessage(), e);
 			}
 		}		
+		this.userScopeIds = getUserScopeIds(false);
 	}
 
 	private User resolveUser() {
@@ -107,32 +117,68 @@ public class UserUtils implements Serializable {
 	public List<Scope> getCurrentUserScopes() {
 		return getCurrentUserScopes(false);
 	}
+
+
+	@SuppressWarnings("unchecked")
+	private List<Integer> getScopeIds( Integer[] domains ) throws ManagerBeanException {
+		IManagerBean scopeBean = BeanManager.getManagerBean(Scope.class);
+		Criteria criteria = new Criteria();
+		criteria.setSkipDomainFilter(true);
+		criteria.addInExpression(scopeBean.getFieldName(IEntityAlias.SCOPE_DOMAIN), domains);
+		Projection projection = Projection.property(scopeBean.getFieldName(IEntityAlias.SCOPE_ID));
+		return scopeBean.getList(new ProjectionList(projection), criteria);																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																				
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private List<Scope> getScopes( Integer[] domains ) throws ManagerBeanException {
+		IManagerBean scopeBean = BeanManager.getManagerBean(Scope.class);
+		Criteria criteria = new Criteria();
+		criteria.setSkipDomainFilter(true);
+		criteria.addInExpression(scopeBean.getFieldName(IEntityAlias.SCOPE_DOMAIN), domains);
+		criteria.addOrder(scopeBean.getFieldName(IEntityAlias.SCOPE_DESCRIPTION));
+		return (List) scopeBean.getList(criteria);																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																				
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<Integer> getUserScopeIds( Integer[] domains ) throws ManagerBeanException {
+		IManagerBean userScopeBean = BeanManager.getManagerBean(UserScope.class);
+		Criteria criteria = new Criteria();
+		criteria.setSkipDomainFilter(true);
+		criteria.addEqualExpression("UserScope.domain", loggedUser.getDomain());
+		criteria.addInExpression("UserScope.scope.domain", domains);
+		criteria.addEqualExpression(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_USER_ID), loggedUser.getId());
+		Projection projection = Projection.property(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_SCOPE_ID));
+		return userScopeBean.getList(new ProjectionList(projection), criteria);
+	}
+	
+	private List<Scope> getUserScopes( Integer[] domains ) throws ManagerBeanException {
+		List<Scope> scopes = new LinkedList<Scope>();
+		IManagerBean userScopeBean = BeanManager.getManagerBean(UserScope.class);
+		Criteria criteria = new Criteria();
+		criteria.setSkipDomainFilter(true);
+		criteria.addEqualExpression("UserScope.domain", loggedUser.getDomain());
+		criteria.addInExpression("UserScope.scope.domain", domains);
+		criteria.addEqualExpression(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_USER_ID), loggedUser.getId());
+		criteria.addOrder(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_SCOPE_DESCRIPTION));
+		scopes = new LinkedList<Scope>();
+		for (ITransferObject ito : userScopeBean.getList(criteria)) {
+			scopes.add(((UserScope)ito).getScope());	
+		}
+		return scopes;
+	}
 	
 	public List<Scope> getCurrentUserScopes( boolean forceHeredity ) {
-		List<Scope> scopes = new LinkedList<Scope>();
+		List<Scope> scopes = null;
 		try {
-			// Si el usuario pertenece a un dominio padre, pero el dominio activo es hijo,
-			// se habilitan todos los scopes del hijo.
-			if (DomainManager.isParentDomainUserInChildDomain()) {
-				IManagerBean scopeBean = BeanManager.getManagerBean(Scope.class);
-				Criteria criteria = new Criteria();
-				criteria.addOrder(scopeBean.getFieldName(IEntityAlias.SCOPE_DESCRIPTION));
-				if ( forceHeredity ) {
-					UserUtils.getInstance().addForceHeredityDomainCondition(criteria, scopeBean.getFieldName(IEntityAlias.SCOPE_DOMAIN) );
-				}
-				for (ITransferObject ito : scopeBean.getList(criteria)) {
-					scopes.add((Scope) ito);
+			if ( isAdminUser() ) {
+				scopes = getScopes(getDomains(true));
+			} else if (DomainManager.isParentDomainUserInChildDomain()) {
+				scopes = getScopes(new Integer[]{DomainManager.getCurrentDomain()});
+				if ( isAddParentScope(forceHeredity) ) {
+					scopes.addAll(getUserScopes(new Integer[]{loggedUser.getDomain()}));	
 				}
 			} else {
-				Integer[] domains = getDomains(forceHeredity);
-				IManagerBean userScopeBean = BeanManager.getManagerBean(UserScope.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_USER_ID), getLoggedUser().getId());
-				criteria.addInExpression("UserScope.scope.domain", domains);
-				criteria.addOrder(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_SCOPE_DESCRIPTION));
-				for (ITransferObject ito : userScopeBean.getList(criteria)) {
-					scopes.add(((UserScope)ito).getScope());	
-				}
+				scopes = getUserScopes(getDomains(forceHeredity));
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error scopes related with the user" + getLoggedUser().getLogin(), e);
@@ -140,71 +186,86 @@ public class UserUtils implements Serializable {
 		return scopes;
 	}
 
-	public boolean isScopeInUserScopes(Scope scope) {
-		return getCurrentUserScopes().contains(scope);
-	}
-
-	public List<Integer> getCurrentUserScopeIds() {
-		return getUserScopeIds(getLoggedUser());
-	}
-
-	@SuppressWarnings("unchecked")
-	private List<Integer> getUserScopeIds(User user) {
+	private List<Integer> getUserScopeIds( boolean forceHeredity ) {
 		List<Integer> scopes = null;
 		try {		
-			if (DomainManager.isParentDomainUserInChildDomain()) {
-				IManagerBean scopeBean = BeanManager.getManagerBean(Scope.class);
-				Criteria criteria = new Criteria();
-				Projection projection = Projection.property(scopeBean.getFieldName(IEntityAlias.SCOPE_ID));
-				scopes = scopeBean.getList(new ProjectionList(projection), criteria);
+			if ( isAdminUser() ) {
+				scopes = getScopeIds(getDomains(true));
+			} else if (DomainManager.isParentDomainUserInChildDomain()) {
+				this.addScopeExpression = isAddParentScope(false);			
+				scopes = getScopeIds(new Integer[]{DomainManager.getCurrentDomain()});
+				if ( this.addScopeExpression ) {
+					scopes.addAll(getUserScopeIds(new Integer[]{loggedUser.getDomain()}));	
+				}
 			} else {	
-				IManagerBean userScopeBean = BeanManager.getManagerBean(UserScope.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_USER_ID), user.getId());
-				Projection projection = Projection.property(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_SCOPE_ID));
-				scopes = userScopeBean.getList(new ProjectionList(projection), criteria);
+				this.addScopeExpression = true;
+				scopes = getUserScopeIds(getDomains(forceHeredity));
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.error("Error scopes related with the user" + user.getLogin(), e);
+			LOGGER.error("Error scopes related with the user" + loggedUser.getLogin(), e);
 		}		
 		return scopes;
 	}
+	
+	public boolean isScopeInUserScopes(Scope scope) {
+		return getCurrentUserScopes().contains(scope);
+	}
+	
+	public List<Integer> getCurrentUserScopeIds() {
+		return getCurrentUserScopeIds(false);
+	}
 
-	public void addScopeFilterToCriteria(Criteria criteria, String alias) throws ManagerBeanException {
-		Expression scopeExpression = null;
-		for(Scope scope : getCurrentUserScopes()) {
-			if (scopeExpression == null) {
-				scopeExpression = ExpressionUtilities.getEqualExpression(alias, scope.getId());				
-			} else {
-				Expression expression = ExpressionUtilities.getEqualExpression(alias, scope.getId());
-				scopeExpression = ExpressionUtilities.getOrExpression(scopeExpression, expression);
-			}
+	public List<Integer> getCurrentUserScopeIds( boolean forceHeredity ) {
+		if ( forceHeredity ) {
+			return getUserScopeIds(forceHeredity);
 		}
-		if (scopeExpression != null) {
-			criteria.addExpression(scopeExpression);
+		return this.userScopeIds;
+	}
+	
+	public void addScopeFilterToCriteria(Criteria criteria, String alias) throws ManagerBeanException {
+		if ( this.addScopeExpression ) {
+			List<Integer> list = getCurrentUserScopeIds();
+			if (! list.isEmpty() ) {
+				if (list.size() == 1) {
+					criteria.addEqualExpression(alias, list.get(0));
+				} else {
+					criteria.addInExpression(alias, list);
+				}			
+			}			
 		}
 	}	
 
-	public Expression getNullableScopeExpression(String resolvedAlias) {
-		User user = getLoggedUser();
+	public Expression getNullableScopeExpression(String resolvedAlias, boolean forceHeredity) {
 		String nullAlias = StringUtils.substringBeforeLast(resolvedAlias, ".");
 		Expression exp = ExpressionUtilities.getNullExpression(nullAlias);
-		if (user != null) {
-			List<Integer> list = getUserScopeIds(user);
-			if (list!= null && !list.isEmpty()) {
-				String ljAlias = getLeftJoinAlias(resolvedAlias);
-				Expression scopeExp = null;
-				if (list.size() == 1) {
-					scopeExp = ExpressionUtilities.getEqualExpression(ljAlias, list.get(0));
-				} else {
-					scopeExp = ExpressionUtilities.getInExpression(ljAlias, list);
-				}
-				exp = ExpressionUtilities.getOrExpression(exp, scopeExp);					
+		List<Integer> list = getCurrentUserScopeIds(forceHeredity);
+		if (list!= null && !list.isEmpty()) {
+			String ljAlias = getLeftJoinAlias(resolvedAlias);
+			Expression scopeExp = null;
+			if (list.size() == 1) {
+				scopeExp = ExpressionUtilities.getEqualExpression(ljAlias, list.get(0));
+			} else {
+				scopeExp = ExpressionUtilities.getInExpression(ljAlias, list);
 			}
+			exp = ExpressionUtilities.getOrExpression(exp, scopeExp);					
 		}
 		return exp;
 	}
+	
+	public Expression getNullableScopeExpression(String resolvedAlias) {
+		return getNullableScopeExpression(resolvedAlias, false);
+	}
+	
+	public void addNullableScopeExpression(Criteria criteria, String resolvedAlias, boolean forceHeredity ) {
+		if ( this.addScopeExpression ) {
+			criteria.addExpression( getNullableScopeExpression(resolvedAlias, forceHeredity) );
+		}
+	}
 
+	public void addNullableScopeExpression(Criteria criteria, String resolvedAlias) {
+		addNullableScopeExpression(criteria, resolvedAlias, false);
+	}
+	
 	private String getLeftJoinAlias(String alias) {
 		String ljAlias = alias;
 		int index = StringUtils.lastIndexOf(alias, '.');
@@ -213,8 +274,13 @@ public class UserUtils implements Serializable {
 		}
 		return ljAlias;
 	}
+	
+	private boolean isAddParentScope( boolean forceHeredity ) {
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
+		return ( ds.isChildDomain() && (ds.isEnableHeredity() || forceHeredity) );
+	}
 
-	public Integer[] getDomains( boolean forceHeredity ) {
+	private Integer[] getDomains( boolean forceHeredity ) {
 		Integer[] domains = null;
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
 		if ( ds.isChildDomain() && (ds.isEnableHeredity() || forceHeredity) ) {
@@ -231,5 +297,14 @@ public class UserUtils implements Serializable {
 			criteria.addInExpression(alias, getDomains(true));
 		}
 	}
+	
+	private boolean isAdminUser() {
+		Integer type = AdminUtil.getDomainType(loggedUser.getDomain());
+		return (type != null) && (type == DomainType.ADMIN.ordinal());		
+	}
+	
+	public boolean isAddScopeExpression() {
+		return this.addScopeExpression;
+	}	
 	
 }

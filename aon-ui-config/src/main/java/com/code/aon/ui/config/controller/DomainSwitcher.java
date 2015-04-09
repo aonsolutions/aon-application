@@ -3,6 +3,7 @@ package com.code.aon.ui.config.controller;
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
+import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.io.Serializable;
 import java.net.IDN;
@@ -41,7 +42,6 @@ import com.code.aon.common.domain.IDomainChangeListener;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.config.Domain;
-import com.code.aon.config.UserScope;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.common.ICommonConstants;
@@ -213,18 +213,20 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	}
 
 	private List<Integer> getUserScopes() {
-		List<Integer> scopes = new LinkedList<Integer>();
+		List<Integer> scopes = null;
 		AuthPrincipal principal = AonUtil.getAuthPrincipal();
-		String sessionFactoryName = HibernateUtil
-				.getSessionFactoryName(UserScope.class.getName());
-		String q = "SELECT us FROM UserScope us WHERE us.user = "
-				+ principal.getUserId();
-		Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(
-				q);
-		for (Object o : query.list()) {
-			scopes.add(((UserScope) o).getScope().getId());
-		}
-		HibernateUtil.closeSession(sessionFactoryName, false);
+		AONContext ctx = AONContext.getAONContext(getDomainNameURL(), domainId);
+		try {
+			scopes = ctx
+					.getDslContext()
+					.select(USER_SCOPE.SCOPE)
+					.from(USER_SCOPE).where(USER_SCOPE.USER_ID.eq(principal.getUserId()))
+					.fetch().into(Integer.class);
+		} catch ( Throwable th ) {
+			LOGGER.error(th.getMessage(), th);
+		} finally {
+			ctx.finalize();	
+		}						
 		return scopes;
 	}
 	

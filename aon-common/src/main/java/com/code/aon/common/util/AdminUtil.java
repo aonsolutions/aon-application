@@ -163,7 +163,7 @@ public class AdminUtil {
 			SQLQuery query = session.createSQLQuery(stmt);
 			query.setInteger("domainId", domainId);
 			List<Object> list = query.list();
-			domainName = !list.isEmpty() ? query.list().get(0).toString() : null;			
+			domainName = !list.isEmpty() ? list.get(0).toString() : null;			
 		} finally {
 			closeSession();	
 		}
@@ -180,7 +180,7 @@ public class AdminUtil {
 			SQLQuery query = session.createSQLQuery(stmt);
 			query.setInteger("domainId", domainId);
 			List<Object> list = query.list();
-			domainDescription = !list.isEmpty() ? query.list().get(0).toString() : null;			
+			domainDescription = !list.isEmpty() ? list.get(0).toString() : null;			
 		} finally {
 			closeSession();	
 		}
@@ -197,7 +197,7 @@ public class AdminUtil {
 			SQLQuery query = session.createSQLQuery(stmt);
 			query.setInteger("domainId", domainId);
 			List<Object> list = query.list();
-			domainType = !list.isEmpty() ? ((Byte)query.list().get(0)).intValue() : null;			
+			domainType = !list.isEmpty() ? ((Byte)list.get(0)).intValue() : null;			
 		} finally {
 			closeSession();	
 		}

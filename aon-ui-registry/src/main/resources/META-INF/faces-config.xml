@@ -527,7 +527,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{corporateIdentityAttachControllerListener}</value> 
-				<value>#{registryAttachScopeListener}</value>
+				<value>#{corporateIdentityScopeListener}</value>
 				<value>#{corporateIdentitySearch}</value>
 			</list-entries>
 		</managed-property>
@@ -539,6 +539,20 @@
 			com.code.aon.ui.registry.controller.event.CorporateIdentityControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>corporateIdentityScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>RegistryAttachment_scope_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>forceHeredity</property-name>
+			<value>#{true}</value>
+		</managed-property>
 	</managed-bean>
 	
 	<managed-bean>
@@ -902,7 +916,7 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{registryAttachScopeListener}</value>
+				<value>#{corporateIdentityScopeListener}</value>
 				<value>#{corporateIdentitySearch}</value>
 			</list-entries>
 		</managed-property>		

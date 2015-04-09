@@ -34,7 +34,7 @@ public class CampaignActionLookupListener extends ControllerAdapter {
 			Expression expr2 = ExpressionUtilities.getGreaterThanOrEqualExpression(endDate, date);
 			criteria.addExpression( ExpressionUtilities.getOrExpression(expr1, expr2) );
 			String scope = controller.getFieldName(IEntityAlias.MARKETING_ACTION_CAMPAIGN_SCOPE_ID);
-			criteria.addExpression( UserUtils.getInstance().getNullableScopeExpression(scope) );
+			UserUtils.getInstance().addNullableScopeExpression(criteria, scope);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException( e.getMessage(), e );
 		}
