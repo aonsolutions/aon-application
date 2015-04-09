@@ -189,10 +189,13 @@ public class FiscalParametersController implements IFiscalConstants, Serializabl
 		Creditor creditor = null;
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Creditor.class);
-			creditor = (Creditor) bean.createNewTo();
 			if (StringUtils.isNotBlank(value)) {
 				int id = Integer.parseInt(value);
 				creditor = (Creditor) bean.get(id);
+			}
+			if ( creditor == null ) {
+				getParameters().get(FS_ADMON_CREDITOR).setValue(null);
+				creditor = (Creditor) bean.createNewTo();	
 			}
 		} catch (NumberFormatException e) {
 			e.printStackTrace();

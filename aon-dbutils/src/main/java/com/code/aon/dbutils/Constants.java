@@ -26,6 +26,7 @@ public interface Constants {
 	String CNO_TABLE_NAME = "cno";
 	String COMMERCIAL_TRACKING_TABLE_NAME = "commercial_tracking";
 	String COMPANY_TABLE_NAME = "company";
+	String CREDITOR_TABLE_NAME = "creditor";
 	String DOMAIN_TABLE_NAME = "domain";
 	String DOMAIN_APPLICATION_TABLE_NAME = "domain_application";
 	String DOMAIN_APPLICATION_MODULE_TABLE_NAME = "domain_application_module";
