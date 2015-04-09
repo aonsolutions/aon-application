@@ -16,7 +16,6 @@ import com.code.aon.marketing.enumeration.ActionTargetStatus;
 import com.code.aon.marketing.enumeration.NewsType;
 import com.code.aon.marketing.enumeration.NewsletterLayout;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
 import com.code.aon.registry.Category;
 import com.code.aon.registry.enumeration.CategoryType;
 import com.code.aon.ui.config.util.UserUtils;
@@ -87,8 +86,7 @@ public class MarketingCollectionsController implements Serializable {
 		IManagerBean categoryBean = BeanManager.getManagerBean(Category.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(categoryBean.getFieldName(IEntityAlias.CATEGORY_TYPE), CategoryType.ARTICLE);
-		Expression exp = UserUtils.getInstance().getNullableScopeExpression(categoryBean.getFieldName(IEntityAlias.CATEGORY_SCOPE_ID));
-		criteria.addExpression(exp);
+		UserUtils.getInstance().addNullableScopeExpression(criteria, categoryBean.getFieldName(IEntityAlias.CATEGORY_SCOPE_ID));
 		criteria.addOrder(categoryBean.getFieldName(IEntityAlias.CATEGORY_NAME));
 		return RegistryCollectionsController.getCategoryList( (List) categoryBean.getList(criteria));
 	}
