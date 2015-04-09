@@ -9,7 +9,7 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
 	<g:SplitLayoutPanel ui:field="splitLayoutPanel" styleName="{aonResources.css.aonSelector}">
-		<g:north size="26">
+		<g:north size="30">
 			<g:FlowPanel ui:field="toolbarPanel" height="100%"
 				styleName="aon-finding-title-toolbar aon-width-all">
 				<g:HorizontalPanel>
@@ -33,9 +33,19 @@
 		</g:north>
 		
 		<g:west size="300">
-			<g:ScrollPanel ui:field="sidebar">
-				<g:Tree ui:field="tree"/>
-			</g:ScrollPanel>
+			<g:DockLayoutPanel unit='PX'>
+				<g:north size='26'>
+					<g:FlowPanel styleName="gwt-MenuBar-horizontal" ui:field="buttonBar">
+						<aon:OptionsToolbar ui:field="toolbar" />
+					</g:FlowPanel>
+				</g:north>
+		
+				<g:center>
+					<g:ScrollPanel ui:field="sidebar">
+						<g:Tree ui:field="tree"/>
+					</g:ScrollPanel>
+				</g:center>
+			</g:DockLayoutPanel>
 		</g:west>
 
 		<g:center>

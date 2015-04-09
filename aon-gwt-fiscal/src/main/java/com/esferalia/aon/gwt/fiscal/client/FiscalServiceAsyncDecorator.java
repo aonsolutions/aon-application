@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
@@ -384,18 +385,75 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 	}
 
 	@Override
-	public void calculate(String domainName, Mod131 mod131,
+	public void getMod131s(String domainName, int domain, 
+			AsyncCallback<LinkedList<Mod131>> callback) {
+		AON.start();
+		fiscalServiceAsync.getMod131s(domainName, domain, 
+						new AsyncCallbackWrapper<LinkedList<Mod131>>(callback));
+	}
+
+	@Override
+	public void calculateMod131(String domainName, Mod131 mod131,
 			AsyncCallback<Mod131> callback) {
 		AON.start();
-		fiscalServiceAsync.calculate(domainName, mod131, 
+		fiscalServiceAsync.calculateMod131(domainName, mod131, 
 						new AsyncCallbackWrapper<Mod131>(callback));
 	}
 	@Override
-	public void save(String domainName, Mod131 mod131,
+	public void saveMod131(String domainName, Mod131 mod131,
 			AsyncCallback<Mod131> callback) {
 		AON.start();
-		fiscalServiceAsync.save(domainName, mod131, 
+		fiscalServiceAsync.saveMod131(domainName, mod131, 
 				new AsyncCallbackWrapper<Mod131>(callback));
 	}
 
+	// ---------------------------------------------------------------MODELO 202
+
+	@Override
+	public void getMod202(String domainName, int domain, int id,
+			AsyncCallback<Mod202> callback) {
+		AON.start();
+		fiscalServiceAsync.getMod202(domainName, domain,id, 
+						new AsyncCallbackWrapper<Mod202>(callback));
+	}
+
+	@Override
+	public void getMod202s(String domainName, int domain, 
+			AsyncCallback<LinkedList<Mod202>> callback) {
+		AON.start();
+		fiscalServiceAsync.getMod202s(domainName, domain, 
+						new AsyncCallbackWrapper<LinkedList<Mod202>>(callback));
+	}
+
+	@Override
+	public void calculateMod202(String domainName, Mod202 mod202,
+			AsyncCallback<Mod202> callback) {
+		AON.start();
+		fiscalServiceAsync.calculateMod202(domainName, mod202, 
+						new AsyncCallbackWrapper<Mod202>(callback));
+	}
+	@Override
+	public void saveMod202(String domainName, Mod202 mod202,
+			AsyncCallback<Mod202> callback) {
+		AON.start();
+		fiscalServiceAsync.saveMod202(domainName, mod202, 
+				new AsyncCallbackWrapper<Mod202>(callback));
+	}
+
+	@Override
+	public void initializeMod202(String currentDomainName, int currentDomain,
+			AsyncCallback<Mod202> callback) {
+		AON.start();
+		fiscalServiceAsync.initializeMod202(currentDomainName, currentDomain, 
+				new AsyncCallbackWrapper<Mod202>(callback));
+		
+	}
+
+	@Override
+	public void deleteMod202(String currentDomainName, Mod202 mod202,
+			AsyncCallback<Void> callback) {
+		AON.start();
+		fiscalServiceAsync.deleteMod202(currentDomainName,mod202,  
+				new AsyncCallbackWrapper<Void>(callback));
+	}
 }

@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
@@ -96,8 +97,22 @@ public interface FiscalServiceAsync {
 	// ---------------------------------------------------------------MODELO 131
 	void getMod131(String domainName, int domain, int id,
 			AsyncCallback<Mod131> callback);
-	void calculate(String domainName, Mod131 mod131,
+	void getMod131s(String domainName, int domain,
+			AsyncCallback<LinkedList<Mod131>> callback);
+	void calculateMod131(String domainName, Mod131 mod131,
 			AsyncCallback<Mod131> callback);
-	void save(String domainName, Mod131 mod131,AsyncCallback<Mod131> asyncCallback);
+	void saveMod131(String domainName, Mod131 mod131,AsyncCallback<Mod131> asyncCallback);
 
+	// ---------------------------------------------------------------MODELO 202
+	void getMod202(String domainName, int domain, int id,
+			AsyncCallback<Mod202> callback);
+	void getMod202s(String domainName, int domain,
+			AsyncCallback<LinkedList<Mod202>> callback);
+	void calculateMod202(String domainName, Mod202 mod202,
+			AsyncCallback<Mod202> callback);
+	void deleteMod202(String currentDomainName, Mod202 treeObject,
+			AsyncCallback<Void> callback);
+	void saveMod202(String domainName, Mod202 mod202,AsyncCallback<Mod202> asyncCallback);
+	void initializeMod202(String currentDomainName, int currentDomain,
+			AsyncCallback<Mod202> asyncCallback);
 }

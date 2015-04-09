@@ -7,25 +7,21 @@ import com.google.gwt.user.client.ui.InlineLabel;
 
 public class EnterpriseTreeNode extends TreeNode<Enterprise> {
 
-	private EnterpriseMatrixPanel widget;
-
 	@Override
 	public Enterprise getTreeObject() {
 		return (Enterprise) getUserObject();
 	}
 	
 	@Override
-	public void select(FiscalTree fiscalPanel) {
-		if (widget == null) {
-			widget = new EnterpriseMatrixPanel();
-		}
+	public void select(FiscalTree fiscalTree) {
+		EnterpriseMatrixPanel widget = new EnterpriseMatrixPanel();
 		widget.setEnterprise(getTreeObject());
-		fiscalPanel.content.setWidget(widget);
+		fiscalTree.content.setWidget(widget);
 	}
 
 	@Override
-	public EnterpriseTreeNode render(HasTreeItems parent, FiscalTree fiscalPanel,
-			Enterprise enterprise) {
+	public EnterpriseTreeNode render(HasTreeItems parent,
+			FiscalTree fiscalTree,Enterprise enterprise) {
 		InlineLabel label = new InlineLabel();
 		label.setText(enterprise.toString());
 		label.addStyleName(AON.AON_CSS.aonIconCompany());
@@ -33,6 +29,7 @@ public class EnterpriseTreeNode extends TreeNode<Enterprise> {
 		setWidget(label);
 		setUserObject(enterprise);
 		parent.addItem(this);
+    	fiscalTree.toolbar.addListener(this);
 		return this;
 	}
 

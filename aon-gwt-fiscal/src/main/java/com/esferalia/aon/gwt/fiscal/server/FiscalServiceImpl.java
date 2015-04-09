@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
@@ -305,12 +306,51 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	}
 
 	@Override
-	public Mod131 calculate(String domainName, Mod131 mod131) {
+	public LinkedList<Mod131> getMod131s(String domainName,
+			int domain) throws AonCoreException {
+		return AON.getMod131s(domainName, domain);
+	}
+
+	@Override
+	public Mod131 calculateMod131(String domainName, Mod131 mod131) {
 		return AON.calculate(domainName, mod131);
 	}
 
 	@Override
-	public Mod131 save(String domainName, Mod131 mod131) {
+	public Mod131 saveMod131(String domainName, Mod131 mod131) {
 		return AON.save(domainName, mod131);
+	}
+
+	// ---------------------------------------------------------------MODELO 202
+	@Override
+	public Mod202 getMod202(String domainName,
+			int domain,int id) throws AonCoreException {
+		return AON.getMod202(domainName, domain, id);
+	}
+
+	@Override
+	public LinkedList<Mod202> getMod202s(String domainName,
+			int domain) throws AonCoreException {
+		return AON.getMod202s(domainName, domain);
+	}
+
+	@Override
+	public Mod202 calculateMod202(String domainName, Mod202 mod202) {
+		return AON.calculate(domainName, mod202);
+	}
+
+	@Override
+	public Mod202 saveMod202(String domainName, Mod202 mod202) {
+		return AON.save(domainName, mod202);
+	}
+
+	@Override
+	public Mod202 initializeMod202(String domainName, int domain) {
+		return AON.initialize(domainName, domain);
+	}
+
+	@Override
+	public void deleteMod202(String domainName, Mod202 mod202) {
+		AON.deleteMod202(domainName, mod202);
 	}
 }

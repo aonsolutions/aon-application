@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.server.fiscal.format;
+package com.esferalia.aon.occam.server.fiscal.format.mod140;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -10,7 +10,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod140DAO.AonFiscalFileUtils;
+import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;

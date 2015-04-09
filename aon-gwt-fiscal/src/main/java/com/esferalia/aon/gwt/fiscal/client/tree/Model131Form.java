@@ -295,7 +295,7 @@ public class Model131Form extends ResizeComposite implements FiscalNodeWidget<Mo
 	
 	private void calculate() {
 		populateTreeObject();
-		FiscalTree.FISCAL_SERVICE.calculate(FiscalTree.getCurrentDomainName()
+		FiscalTree.FISCAL_SERVICE.calculateMod131(FiscalTree.getCurrentDomainName()
 				,node.getTreeObject()
 				,new AsyncCallback<Mod131>() {
 
@@ -329,7 +329,7 @@ public class Model131Form extends ResizeComposite implements FiscalNodeWidget<Mo
 				AON.MSG.reopen():AON.MSG.finish() )) {
 			populateTreeObject();
 			node.getTreeObject().setFinished(!node.getTreeObject().isFinished());
-			FiscalTree.FISCAL_SERVICE.save(FiscalTree.getCurrentDomainName()
+			FiscalTree.FISCAL_SERVICE.saveMod131(FiscalTree.getCurrentDomainName()
 					,node.getTreeObject()
 					,new AsyncCallback<Mod131>() {
 

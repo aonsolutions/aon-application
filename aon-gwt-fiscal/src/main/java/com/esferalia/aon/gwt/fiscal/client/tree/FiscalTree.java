@@ -9,15 +9,19 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
+import com.esferalia.aon.gwt.common.client.widget.ContextMenu;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.OptionsToolbar;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -57,10 +61,17 @@ public class FiscalTree extends MainEntryPoint {
 
 	Enterprise enterprise;
 	
+	TreeNode<Enterprise> rootNode;
+	TreeNode<Enterprise> enterpriseDataNode;
+	TreeNode<Enterprise> fiscalModelsNode;
+	NewContextMenu newContextMenu = new NewContextMenu();
+	
 	@UiField
 	SplitLayoutPanel splitLayoutPanel;
 	@UiField
 	ScrollPanel sidebar;
+	@UiField
+	OptionsToolbar toolbar;
 	@UiField
 	Tree tree;
 	
@@ -87,12 +98,31 @@ public class FiscalTree extends MainEntryPoint {
 	/*-{
 		return $wnd.getCurrentDomain();
 	}-*/;
+
+
+//	private static Throwable getExceptionToDisplay(Throwable throwable) {
+//		Throwable result = throwable;
+//		if (throwable instanceof UmbrellaException
+//				&& ((UmbrellaException) throwable).getCauses().size() == 1) {
+//			result = ((UmbrellaException) throwable).getCauses().iterator()
+//					.next();
+//		}
+//		return result;
+//	}
 	
 	@Override
 	public void onModuleLoad() {
 		AON.GWT_RESOURCES.css().ensureInjected();
 		AON.AON_RESOURCES.css().ensureInjected();
 
+//		GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
+//			@Override
+//			public void onUncaughtException(Throwable e) {
+//				Throwable exceptionToDisplay = getExceptionToDisplay(e);
+//				Window.alert(exceptionToDisplay.getMessage());
+//			}
+//		});
+		
 		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
 		FISCAL_SERVICE = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
 
@@ -107,6 +137,13 @@ public class FiscalTree extends MainEntryPoint {
 		Widget ui = BINDER.createAndBindUi(this);
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
+		
+		toolbar.setVisibleViewButton(false);
+		toolbar.setVisibleCopyButton(false);
+		toolbar.setVisibleDraftButton(false);
+		toolbar.setVisiblePasteButton(false);
+		
+		toolbar.setVisible(false);
 		
 		COMMON_SERVICE.getParentEnterprises(getCurrentDomainName(),getCurrentDomain(),"%"
 				,new AsyncCallback<ArrayList<Enterprise>>() {
@@ -140,7 +177,16 @@ public class FiscalTree extends MainEntryPoint {
 	private void initialize(Enterprise enterprise) {
 		this.enterprise = enterprise;
 		subtitle.setText(AON.MSG.enterprise());
-		TreeNode.renderTree(tree,this,enterprise,true);
+		toolbar.setVisible(true);
+		tree.removeItems();
+		rootNode = TreeNodeTypes.ENTERPRISE.getInstance();
+		rootNode.render(tree, this ,enterprise);
+		enterpriseDataNode = TreeNodeTypes.ENTERPRISE_DATA.getInstance().render(rootNode, this ,enterprise);
+//		TreeNodeTypes.FISCAL_ACTIVITY_GROUP.getInstance().render(rootNode,fiscalTree, enterprise);
+		fiscalModelsNode = TreeNodeTypes.FISCAL_MODELS.getInstance().render(rootNode, this, enterprise);
+		rootNode.setState(true);
+		tree.addItem(rootNode);
+		tree.setSelectedItem(rootNode);
 	}
 	
 	@UiHandler("tree")
@@ -286,23 +332,42 @@ public class FiscalTree extends MainEntryPoint {
 		}
 		return widget;
 	}
+
+	public class NewMod200Command implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			FiscalTree.FISCAL_SERVICE.initializeMod202(FiscalTree.getCurrentDomainName()
+        		, enterprise.getDomain(), new AsyncCallback<Mod202>() {
+
+					@Override
+					public void onSuccess(Mod202 mod202) {
+						TreeNode<Mod202> node = TreeNodeTypes.MODEL_202
+							.getInstance()
+							.render(fiscalModelsNode, FiscalTree.this, mod202);
+						fiscalModelsNode.setState(true);
+						FiscalTree.this.tree.setSelectedItem(node);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+					}
+				
+			});
+		}
+	}
+	
+	
+	public class NewContextMenu extends ContextMenu {
+
+		public NewContextMenu() {
+			NewMod200Command newMod200Command =  new NewMod200Command();
+			addItem(AON.MSG.mod202()
+					, newMod200Command,
+					  AON.AON_CSS.aonIconModule()
+					, AON.AON_CSS.aonIconCommandButton());
+			addSeparator();
+			addStyleName(AON.AON_CSS.aonSelector());
+		}			
+	}
 }
-
-//,MOD131(MSG.mod131(),AON_RESOURCES.css().aonIconM131(),new HTMLPanel("MOD131"),null)
-//,MOD303(MSG.mod303(),AON_RESOURCES.css().aonIconM303(),new HTMLPanel("MOD303"),null)
-
-//,MOD111(MSG.mod111(),AON_RESOURCES.css().aonIconM111(),new HTMLPanel("MOD111"),null)
-//,MOD115(MSG.mod115(),AON_RESOURCES.css().aonIconM115(),new HTMLPanel("MOD115"),null)
-//,MOD123(MSG.mod123(),AON_RESOURCES.css().aonIconM123(),new HTMLPanel("MOD123"),null)
-//,MOD130(MSG.mod130(),AON_RESOURCES.css().aonIconM130(),new HTMLPanel("MOD130"),null)
-//,MOD140(MSG.mod140(),AON_RESOURCES.css().aonIconM140(),new HTMLPanel("MOD140"),null)
-//,MOD180(MSG.mod180(),AON_RESOURCES.css().aonIconM180(),new HTMLPanel("MOD180"),null)
-//,MOD184(MSG.mod184(),AON_RESOURCES.css().aonIconM184(),new HTMLPanel("MOD184"),null)
-//,MOD190(MSG.mod190(),AON_RESOURCES.css().aonIconM190(),new HTMLPanel("MOD190"),null)
-//,MOD193(MSG.mod193(),AON_RESOURCES.css().aonIconM193(),new HTMLPanel("MOD193"),null)
-//,MOD200(MSG.mod200(),AON_RESOURCES.css().aonIconM200(),new HTMLPanel("MOD200"),null)
-//,MOD340(MSG.mod340(),AON_RESOURCES.css().aonIconM340(),new HTMLPanel("MOD340"),null)
-//,MOD347(MSG.mod347(),AON_RESOURCES.css().aonIconM347(),new HTMLPanel("MOD347"),null)
-//,MOD349(MSG.mod349(),AON_RESOURCES.css().aonIconM349(),new HTMLPanel("MOD349"),null)
-//,MOD390(MSG.mod390(),AON_RESOURCES.css().aonIconM390(),new HTMLPanel("MOD390"),null)
-

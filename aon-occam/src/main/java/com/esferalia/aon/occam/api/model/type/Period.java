@@ -90,4 +90,8 @@ public enum Period implements Serializable {
 		return (this.ordinal() < 12);
 	}
 
+	public byte getValue() {
+		return (byte) ordinal();
+	}
+
 }

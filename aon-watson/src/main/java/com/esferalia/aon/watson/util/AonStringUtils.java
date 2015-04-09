@@ -22,8 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.esferalia.aon.watson.server.AonObjectUtils;
 
@@ -134,6 +132,7 @@ public class AonStringUtils {
 	 * @since 3.2
 	 */
 	public static final String SPACE = " ";
+	public static final String COMMA = ",";
 	public static final String ZERO = "0";
 	public static final String ONE = "1";
 	public static final String TWO = "2";
@@ -181,6 +180,7 @@ public class AonStringUtils {
 	 * </p>
 	 */
 	private static final int PAD_LIMIT = 8192;
+	
 
 	/**
 	 * <p>

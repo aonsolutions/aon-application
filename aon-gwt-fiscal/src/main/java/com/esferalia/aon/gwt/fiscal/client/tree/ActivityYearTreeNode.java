@@ -49,13 +49,16 @@ public class ActivityYearTreeNode extends TreeNode<Integer> {
 				widget.add(label);
 			}
 		}
+		fiscalTree.toolbar.setVisibleCopyButton(false);
+		fiscalTree.toolbar.setVisibleDraftButton(false);
+		fiscalTree.toolbar.setVisiblePasteButton(false);
+    	fiscalTree.toolbar.addListener(this);
 		fiscalTree.content.setWidget(widget);
 		
 	}
 
 	@Override
-	public ActivityYearTreeNode render(HasTreeItems parent,
-			final FiscalTree fiscalTree, final Integer year) {
+	public ActivityYearTreeNode render(HasTreeItems parent,FiscalTree fiscalTree,final Integer year) {
 		InlineLabel label = new InlineLabel();
 		label.setText(year.toString());
 		label.addStyleName(AON.AON_CSS.aonTreeYear());
@@ -78,7 +81,8 @@ public class ActivityYearTreeNode extends TreeNode<Integer> {
 			@Override
 			public void execute() {
 				TreeItem newAct = TreeNodeTypes.FISCAL_ACTIVITY.getInstance()
-						.render(ActivityYearTreeNode.this, fiscalTree
+						.render(ActivityYearTreeNode.this
+							, fiscalTree
 							, new FiscalActivity()
 								.setDomain(fiscalTree.enterprise.getDomain())
 								.setYear(getTreeObject())

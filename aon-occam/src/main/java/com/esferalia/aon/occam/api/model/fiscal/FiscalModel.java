@@ -293,4 +293,51 @@ public class FiscalModel implements Serializable {
 	public void put(FiscalModelDetail detail) {
 		getMap().put(detail.getType(), detail);
 	}
+
+	public String getDescription(IFiscalModelKey key) {
+		return getDescription(key.getValue());
+	}
+
+	public String getDescription(String key) {
+		return ensureDetail(key).getDescription();
+	}
+
+	public void putDescription(IFiscalModelKey key, String description) {
+		putDescription(key.getValue(), description);
+	}
+
+	public void putDescription(String key, String description) {
+		FiscalModelDetail detail = ensureDetail(key);
+		detail.setDescription(description);
+	}
+
+	public double getAmount(IFiscalModelKey key) {
+		return getAmount(key.getValue());
+	}
+
+	public double getAmount(String key) {
+		return ensureDetail(key).getAmount();
+	}
+
+	public void putAmount(IFiscalModelKey key, double amount) {
+		putAmount(key.getValue(), amount);
+	}
+
+	public void putAmount(String key, double amount) {
+		FiscalModelDetail detail = ensureDetail(key);
+		detail.setAmount(amount);
+	}
+
+	public FiscalModelDetail ensureDetail(IFiscalModelKey key) {
+		return ensureDetail(key.getValue());
+	}
+
+	public FiscalModelDetail ensureDetail(String key) {
+		if (!getMap().containsKey(key)) {
+			FiscalModelDetail detail = new FiscalModelDetail();
+			detail.setType(key);
+			getMap().put(key, detail);
+		}
+		return getMap().get(key);
+	}
 }

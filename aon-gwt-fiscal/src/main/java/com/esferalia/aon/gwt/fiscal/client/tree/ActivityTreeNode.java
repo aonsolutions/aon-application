@@ -21,12 +21,16 @@ public class ActivityTreeNode extends TreeNode<FiscalActivity> {
 	private ActivityForm widget;
 	
 	@Override
-	public void select(FiscalTree fiscalPanel) {
+	public void select(FiscalTree fiscalTree) {
 		if (widget ==null) {
 			widget = new ActivityForm();
 		}
 		widget.select(this );
-		fiscalPanel.content.setWidget(widget);
+		fiscalTree.toolbar.setVisibleCopyButton(false);
+		fiscalTree.toolbar.setVisibleDraftButton(false);
+		fiscalTree.toolbar.setVisiblePasteButton(false);
+    	fiscalTree.toolbar.addListener(this);
+		fiscalTree.content.setWidget(widget);
 	}
 	
 	@Override
@@ -35,7 +39,7 @@ public class ActivityTreeNode extends TreeNode<FiscalActivity> {
 	}
 
 	@Override
-	public ActivityTreeNode render(HasTreeItems parent, FiscalTree fiscalPanel, FiscalActivity fa) {
+	public ActivityTreeNode render(HasTreeItems parent, FiscalTree fiscalTree, FiscalActivity fa) {
     	InlineLabel label = new InlineLabel();
     	label.setText((AonStringUtils.isBlank(fa.getEpigraph())?AonStringUtils.EMPTY:fa.getEpigraph() + " - ") 
     			+ AonStringUtils.abbreviate(fa.getDescription(), 40));
@@ -44,7 +48,7 @@ public class ActivityTreeNode extends TreeNode<FiscalActivity> {
     	this.setWidget(label);
     	this.setUserObject(fa);
     	parent.addItem(this);
-    	linkContextMenu( label, fiscalPanel);
+    	linkContextMenu( label, fiscalTree);
 		return this;
 	}
 	

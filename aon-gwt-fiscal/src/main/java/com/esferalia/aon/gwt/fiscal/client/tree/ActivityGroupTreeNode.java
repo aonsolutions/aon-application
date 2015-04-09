@@ -44,11 +44,17 @@ public class ActivityGroupTreeNode extends TreeNode<Enterprise> {
 				widget.add(label);
 			}
 		}
+		fiscalTree.toolbar.setVisibleCopyButton(false);
+		fiscalTree.toolbar.setVisibleDraftButton(false);
+		fiscalTree.toolbar.setVisiblePasteButton(false);
+    	fiscalTree.toolbar.addListener(this);
 		fiscalTree.content.setWidget(widget);
 	}
 	
 	@Override
-	public ActivityGroupTreeNode render(HasTreeItems parent, final FiscalTree fiscalTree, Enterprise enterprise) {
+	public ActivityGroupTreeNode render(HasTreeItems parent,
+			final FiscalTree fiscalTree
+			,Enterprise enterprise) {
     	InlineLabel label = new InlineLabel();
     	label.setText(AON.MSG.moduleActivities());
     	label.addStyleName(AON.AON_CSS.aonIconModules());
@@ -79,7 +85,7 @@ public class ActivityGroupTreeNode extends TreeNode<Enterprise> {
 					if (yearNode == null) {
 						yearNode = TreeNodeTypes.FISCAL_ACTIVITY_YEAR
 								.getInstance()
-								.render(ActivityGroupTreeNode.this,fiscalTree, fa.getYear());
+								.render(ActivityGroupTreeNode.this, fiscalTree, fa.getYear());
 						currentYearRendered = currentYearRendered || (fa.getYear() == FiscalTree.CURRENT_YEAR);
 					}
 					TreeNodeTypes.FISCAL_ACTIVITY
@@ -90,7 +96,7 @@ public class ActivityGroupTreeNode extends TreeNode<Enterprise> {
 				if (!currentYearRendered) {
 					TreeNodeTypes.FISCAL_ACTIVITY_YEAR
 						.getInstance()
-						.render(ActivityGroupTreeNode.this,fiscalTree, FiscalTree.CURRENT_YEAR);
+						.render(ActivityGroupTreeNode.this, fiscalTree, FiscalTree.CURRENT_YEAR);
 				}
 				setState(true);
 			}

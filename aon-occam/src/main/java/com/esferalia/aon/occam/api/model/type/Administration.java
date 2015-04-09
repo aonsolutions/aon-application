@@ -9,4 +9,8 @@ public enum Administration implements Serializable {
 	, NAVARRA
 	, COMMON_TERRITORY
 	, UNKNOWN;
+
+	public byte getValue() {
+		return (byte) ordinal();
+	}
 }

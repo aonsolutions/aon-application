@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
@@ -82,8 +83,11 @@ public class FiscalImpl implements IFiscal {
 	}
 
 	@Override
-	public LinkedList<FiscalModel> getModels(AONContext ctx, int domainId) {
-		return FiscalModelDAO.getModels(ctx, domainId);
+	public LinkedList<FiscalModel> getModels(AONContext ctx, int domain) {
+		LinkedList<FiscalModel> list = new LinkedList<FiscalModel>();
+		FiscalModelDAO.getModels(ctx, domain)
+			.forEach(list::add);
+		return list;
 	}
 
 	// ---------------------------------------------------- [MODELO 180]
@@ -272,13 +276,53 @@ public class FiscalImpl implements IFiscal {
 	public Mod131 getMod131(AONContext ctx, int id) {
 		return FiscalModelDAO.getMod131(ctx, id);
 	}
+
+	public LinkedList<Mod131> getMod131s(AONContext ctx, int domain) {
+		LinkedList<Mod131> list = new LinkedList<Mod131>();
+		FiscalModelDAO.getMod131s(ctx, domain).forEach(list::add);
+		return list;
+	}
+	
 	@Override
-	public Mod131 calculate(AONContext ctx, Mod131 mod131) {
-		return FiscalModelDAO.calculate(ctx, mod131);
+	public Mod131 calculateMod131(AONContext ctx, Mod131 mod131) {
+		return FiscalModelDAO.calculateMod131(ctx, mod131);
 	}
 	@Override
-	public Mod131 save(AONContext ctx, Mod131 mod131) {
-		return FiscalModelDAO.save(ctx, mod131);
+	public Mod131 saveMod131(AONContext ctx, Mod131 mod131) {
+		return FiscalModelDAO.saveMod131(ctx, mod131);
 	}
+	
+	// ----------------------------------------------------------- [MODELO 202]
+	@Override
+	public Mod202 getMod202(AONContext ctx, int id) {
+		return FiscalModelDAO.getMod202(ctx, id);
+	}
+	@Override
+	public LinkedList<Mod202> getMod202s(AONContext ctx, int domain) {
+		LinkedList<Mod202> list = new LinkedList<Mod202>();
+		FiscalModelDAO.getMod202s(ctx, domain)
+			.forEach(list::add);
+		return list;
+	}
+	@Override
+	public Mod202 calculateMod202(AONContext ctx, Mod202 mod202) {
+		return FiscalModelDAO.calculateMod202(ctx, mod202);
+	}
+	@Override
+	public Mod202 saveMod202(AONContext ctx, Mod202 mod202) {
+		return FiscalModelDAO.saveMod202(ctx, mod202);
+	}
+
+	@Override
+	public void deleteMod202(AONContext ctx, Mod202 mod202) {
+		FiscalModelDAO.delete(ctx, mod202);
+	}
+
+	@Override
+	public Mod202 initializeMod202(AONContext ctx) {
+		return FiscalModelDAO.initializeMod202(ctx);
+	}
+
+	
 
 }

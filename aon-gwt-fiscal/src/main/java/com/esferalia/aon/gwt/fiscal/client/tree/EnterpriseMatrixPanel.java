@@ -42,13 +42,10 @@ public class EnterpriseMatrixPanel extends ResizeComposite {
 		Widget ui = panelBinder.createAndBindUi(this);
 		initWidget(ui);
 		
-		year.addItem("2010");
-		year.addItem("2011");
-		year.addItem("2012");
 		year.addItem("2013");
 		year.addItem("2014");
 		year.addItem("2015");
-		year.setSelectedIndex(5);
+		year.setSelectedIndex(2);
 	}
 	
 	public void setEnterprise(Enterprise enterprise) {

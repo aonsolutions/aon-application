@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
@@ -78,8 +79,17 @@ public interface IFiscal {
 
 	// 				   		  MOD131
 	public Mod131 getMod131(AONContext ctx, int id);
-	public Mod131 calculate(AONContext ctx, Mod131 mod131);
-	public Mod131 save(AONContext ctx, Mod131 mod131);
+	public LinkedList<Mod131> getMod131s(AONContext ctx, int domain);
+	public Mod131 calculateMod131(AONContext ctx, Mod131 mod131);
+	public Mod131 saveMod131(AONContext ctx, Mod131 mod131);
+
+	// 				   		  MOD202
+	public Mod202 getMod202(AONContext ctx, int id);
+	public LinkedList<Mod202> getMod202s(AONContext ctx, int domain);
+	public Mod202 calculateMod202(AONContext ctx, Mod202 mod202);
+	public Mod202 saveMod202(AONContext ctx, Mod202 mod202);
+	public Mod202 initializeMod202(AONContext ctx);
+	public void deleteMod202(AONContext ctx, Mod202 mod202);
 
 
 }

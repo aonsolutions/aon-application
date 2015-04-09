@@ -201,6 +201,12 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("(establecimientos permanentes y entidades en r\u00E9gimen de atribuci\u00F3n de rentas constituidas en el extranjero con presencia en territorio espa\u00F1ol)")
 	String mod200Desc3();
 
+	@DefaultMessage("Modelo 202")
+	String mod202();
+	
+	@DefaultMessage("Impuesto sobre sociedades. Pago fraccionado.")
+	String mod202Long();
+
 	// ---------------------------------------------------------------- Errores
 	@DefaultMessage("No ha sido posible mostrar los datos ({0}) ")
 	String unableToShowData(String message);
@@ -674,6 +680,9 @@ public interface CommonMessages extends Messages {
 	String inKindOutputDeposit();
 
 	@DefaultMessage("Datos adicionales (s\u00F3lo en percepciones de las claves A, B.01, B.02, C o D)")
+	String additionalData190();
+
+	@DefaultMessage("Datos adicionales")
 	String additionalData();
 
 	@DefaultMessage("A\u00F1o de nacimiento")
@@ -1787,4 +1796,16 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Finalizar la declaraci\u00F3n?")
 	String finish();
+
+	@DefaultMessage("A) C\u00E1lculo del pago fraccionado: modalidad art\u00EDculo 40.2 LIS")
+	String mod202Compute1();
+
+	@DefaultMessage("B) C\u00E1lculo del pago fraccionado: modalidad art\u00EDculo 40.3 LIS")
+	String mod202Compute2();
+
+	@DefaultMessage("B.1) Caso general (empresas con porcentaje \u00FAnico)")
+	String mod202Compute3();
+
+	@DefaultMessage("B.2) Casos espec\u00EDficos (empresas con m\u00E1s de un porcentaje)")
+	String mod202Compute4();
 }

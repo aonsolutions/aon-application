@@ -10,12 +10,15 @@ public class Model131TreeNode extends TreeNode<Mod131> {
 	private Model131Form widget;
 
 	@Override
-	public void select(FiscalTree fiscalPanel) {
+	public void select(FiscalTree fiscalTree) {
 		if (widget ==null) {
 			widget = new Model131Form();
 		}
 		widget.select(this );
-		fiscalPanel.content.setWidget(widget);
+		fiscalTree.toolbar.setVisibleCopyButton(false);
+		fiscalTree.toolbar.setVisibleDraftButton(false);
+		fiscalTree.toolbar.setVisiblePasteButton(false);
+		fiscalTree.content.setWidget(widget);
 	}
 	
 	@Override
@@ -24,7 +27,7 @@ public class Model131TreeNode extends TreeNode<Mod131> {
 	}
 
 	@Override
-	public Model131TreeNode render(HasTreeItems parent, FiscalTree fiscalPanel, Mod131 mod131) {
+	public Model131TreeNode render(HasTreeItems parent, FiscalTree fiscalTree,Mod131 mod131) {
     	InlineLabel label = new InlineLabel();
     	label.setText(AON.MSG.fiscalModelType( mod131.getModel()) 
     			+ " - " 
@@ -35,6 +38,7 @@ public class Model131TreeNode extends TreeNode<Mod131> {
     	this.setWidget(label);
     	this.setUserObject(mod131);
     	parent.addItem(this);
+    	fiscalTree.toolbar.addListener(this);
 		return this;
 	}
 	

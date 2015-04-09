@@ -27,7 +27,7 @@ import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
-import com.esferalia.aon.occam.server.fiscal.format.Mod140Format;
+import com.esferalia.aon.occam.server.fiscal.format.mod140.Mod140Format;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -38,38 +38,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod140DAO {
 	
-	public static class AonFiscalFileUtils {
-		private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
-		
-		public static CharSequence text(String text, int size) {
-			return AonStringUtils.substring( AonStringUtils.rightPad(text, size),0,size);
-		}
-		public static CharSequence date(Date date) {
-			return date==null? AonStringUtils.repeat(' ', 8):DATE_FORMAT.format(date); 
-		}
-		public static CharSequence signed(Double value,int size) {
-			if (value == null) value = 0.0;
-			int val = (int) AonMathUtils.round(value * 100);
-			return (value<0?'N':' ') + AonStringUtils.leftPad(Integer.toString(Math.abs(val)), size, '0');
-		}
-		public static CharSequence unsigned(Double value,int size) {
-			if (value == null) value = 0.0;
-			int val = (int) AonMathUtils.round(value * 100);
-			return AonStringUtils.leftPad(Integer.toString(val), size, '0');
-		}
-		public static CharSequence signed(Integer value,int size) {
-			if (value == null) value = 0;
-			int val = value;
-			return (value<0?'N':' ') + AonStringUtils.leftPad(Integer.toString(Math.abs(val)), size, '0');
-		}
-		public static CharSequence unsigned(Integer value,int size) {
-			if (value == null) value = 0;
-			return AonStringUtils.leftPad(Integer.toString(value), size, '0');
-		}
-		
-	}
-	
-
 	public static void getInvoices(AONContext ctx, Mod140Context m140ctx ,Mod140Params params, Writer writer  ) {
 		ctx.checkRead();
 		final MutableInt lastInvoice = new MutableInt(Integer.MIN_VALUE);
