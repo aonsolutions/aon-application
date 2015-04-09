@@ -188,10 +188,12 @@ public class DomainBookingController extends DataScrollerState {
 		domains = getDomainBookingDatas(ctx, condition);
 		for (DomainBookingData data : domains) {
 			fillDomainData(ctx, data);
-			if ( data.isAonOne() ) {
-				this.totalOneUsers += data.getMaxDefinedUsers();
-			} else {
-				this.totalAiOUsers += data.getMaxDefinedUsers();
+			if ( data.getPayerDomain() == null ) {
+				if ( data.isAonOne() ) {
+					this.totalOneUsers += data.getMaxDefinedUsers();
+				} else {
+					this.totalAiOUsers += data.getMaxDefinedUsers();
+				}				
 			}
 			if ( data.isPortal() ) {
 				this.totalPortals++;

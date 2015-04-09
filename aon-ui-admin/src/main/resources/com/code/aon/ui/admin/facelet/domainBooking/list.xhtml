@@ -187,7 +187,7 @@
 							</f:facet>							
 							<aon:outputText rendered="#{!to.aonOne}" value="-" />
 							<aon:outputText rendered="#{to.aonOne}"
-								style="#{(to.activeUsers!=to.maxDefinedUsers)?'color:red;':''}"
+								style="#{(to.payerDomain != null)?'color:blue;':((to.activeUsers!=to.maxDefinedUsers)?'color:red;':'')}"
 								value="#{to.activeUsers} / #{to.maxDefinedUsers}" />
 							<f:facet name="footer">
 								<aon:div style="float:right">
@@ -203,7 +203,7 @@
 							</f:facet>							
 							<aon:outputText rendered="#{to.aonOne}" value="-" />
 							<aon:outputText rendered="#{!to.aonOne}"
-								style="#{(to.activeUsers!=to.maxDefinedUsers)?'color:red;':''}"
+								style="#{(to.payerDomain != null)?'color:blue;':((to.activeUsers!=to.maxDefinedUsers)?'color:red;':'')}"
 								value="#{to.activeUsers} / #{to.maxDefinedUsers}" />
 							<f:facet name="footer">
 								<aon:div style="float:right">
