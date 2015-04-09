@@ -85,6 +85,7 @@ public class TableUtil implements Constants {
 				,"ACC_DEFAULT_ASSET_PROFIT_ACC"
 				,"AON_CUSTOMIZE_HERITABLE_ID"
 				,"AON_CUSTOMIZE_ID"
+				,"FS_ADMON_CREDITOR"
 				,"PAY_default_trainingCenter_PAY"
 				,"PAY_ss_payment_bankAccount_PAY"
 				,"WEBINFO_HOMEPAGE_ID"}
@@ -112,6 +113,7 @@ public class TableUtil implements Constants {
 				,ACCOUNT_TABLE_NAME
 				,COMPANY_TABLE_NAME
 				,COMPANY_TABLE_NAME
+				,CREDITOR_TABLE_NAME
 				,TRAINING_CENTER_TABLE_NAME
 				,REGISTRY_BANK_TABLE_NAME
 				,WEB_INFO_PAGE_TABLE_NAME});
