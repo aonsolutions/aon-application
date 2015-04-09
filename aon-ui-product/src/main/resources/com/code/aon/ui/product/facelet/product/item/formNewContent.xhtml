@@ -8,7 +8,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
 
-	<aon:if test="#{!controller.nevv and itemTo.product.serializable and !itemTo.wildCard}">
+	<aon:if test="#{itemTo.product.id != null and itemTo.product.serializable and !itemTo.wildCard}">
 		<aon:outputLabel for="Item_serial_number"
 			value="#{bundle.aon_serial_number}" />
 		<aon:inputText id="Item_serial_number" 

@@ -4,22 +4,22 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/lookup.xhtml" >
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/lookup.xhtml">
 		<ui:param name="lookupBean" value="#{itemLookup}" />
-		<ui:param name="lookupInputValue" value="#{lookupTo.product.code}"/>
-		<ui:param name="lookupInputSize" value="10"/>
-		<ui:param name="lookupInputMaxLength" value="15"/>
-		<ui:param name="lookupInputOnSubmit" value="toUpperCase(this);"/>		
-		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.fullName}"/>
-		<ui:param name="lookupInputSuggestExpression" value="#{lto.fullName} (#{lto.product.code})#{(empty lto.serialNumber)?'':' #'}#{lto.serialNumber}"/>
+		<ui:param name="lookupInputValue" value="#{lookupTo.product.code}" />
+		<ui:param name="lookupInputSize" value="10" />
+		<ui:param name="lookupInputMaxLength" value="15" />
+		<ui:param name="lookupInputOnSubmit" value="toUpperCase(this);" />
+		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.fullName}" />
+		<ui:param name="lookupInputSuggestExpression" value="#{lto.fullName} (#{lto.product.code})#{(empty lto.serialNumber)?'':' #'}#{lto.serialNumber}" />
 		<ui:param name="lookupLabel" value="#{bundle.aon_product}" />
 		<ui:param name="goToProperty" value="#{lookupTo.product}"/>
 		<ui:param name="controller" value="#{product}" />
-		<ui:param name="searchButtonWidth" value="740"/>
+		<ui:param name="searchButtonWidth" value="740" />
 		<ui:param name="searchButtonTitle" value="#{bundle.product_item_selection}" />
 		<ui:param name="newButtonTitle" value="#{bundle.product_item_new}" />
-		<ui:param name="skipGoToButtonEx" value="#{actionDenied.skip['product'] or skipGoToButton}"/>
-		<ui:param name="skipNewButtonEx" value="#{actionDenied.skip['product'] or skipNewButton}"/>		
+		<ui:param name="skipGoToButtonEx" value="#{actionDenied.skip['product'] or skipGoToButton}" />
+		<ui:param name="skipNewButtonEx" value="#{actionDenied.skip['product'] or skipNewButton}" />		
 				
 		<ui:define name="lookupInputTextContent">
 			<aon:joinProperty alias="Item_product_code" value="#{lookupInputValue}" />

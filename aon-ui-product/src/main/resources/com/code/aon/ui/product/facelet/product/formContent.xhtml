@@ -23,7 +23,7 @@
 							<ui:include	src="/com/code/aon/ui/product/facelet/product/formBasic.xhtml">
 								<ui:param name="controller" value="#{product}" />
 								<ui:param name="productTo" value="#{product.to}" />
-								<ui:param name="categoryChangeReRender" value="itemDataGrid,itemData" />
+								<ui:param name="categoryChangeReRender" value="itemDataPanel" />
 							</ui:include>
 
 							<aon:if test="#{aonRole.accountingOperator and aonConfiguration.bean.product.showAccount}">
@@ -47,7 +47,7 @@
 
 		</aon:div>
 		
-		<aon:panelGroup>
+		<aon:panelGroup id="itemDataPanel">
 			<aon:div styleClass="aon-group">
 				<aon:div styleClass="aon-group-title">
 					<aon:outputText value="#{item.nevv ? bundle.aon_reset : ''} #{bundle.aon_detail}" 
