@@ -318,8 +318,13 @@ public class FiscalModelDAO {
 	}
 
 	public static Stream<Mod202> getMod202s(AONContext ctx,int domain) {
-			return getModelRecords(ctx, domain)
-				.map( record -> FiscalModelDAO.map(new Mod202(),record));
+			return ctx.getDslContext().selectFrom(FS_MODEL)
+					.where(FS_MODEL.DOMAIN.eq(domain))
+					.and(FS_MODEL.MODEL.eq( FiscalModelType.M202.getValue() ))
+					.orderBy(FS_MODEL.YEAR.desc(),FS_MODEL.MODEL.asc(),FS_MODEL.PERIOD.desc())
+					.fetch()
+					.stream()
+					.map( record -> FiscalModelDAO.map(new Mod202(),record));
 		}
 		
 	public static Mod202 getMod202(AONContext ctx,int id) {

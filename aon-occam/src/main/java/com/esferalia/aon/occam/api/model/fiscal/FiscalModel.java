@@ -43,6 +43,7 @@ public class FiscalModel implements Serializable {
 	private String contactPhone;
 	private String contactCellular;
 	private String contactEmail;
+	private String iban;
 	
 	HashMap<String,FiscalModelDetail> map;
 	
@@ -278,6 +279,12 @@ public class FiscalModel implements Serializable {
 	public FiscalModel setContactEmail(String contactEmail) {
 		this.contactEmail = contactEmail;
 		return this;
+	}
+	public String getIban() {
+		return iban;
+	}
+	public void setIban(String iban) {
+		this.iban = iban;
 	}
 	
 	public HashMap<String, FiscalModelDetail> getMap() {

@@ -10,6 +10,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class AonFiscalFileUtils {
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(
 			"yyyyMMdd");
+	private static final String AEAT_MARK = "X";
 
 	public static String spaces(int size) {
 		return AonStringUtils.repeat(AonStringUtils.SPACE, size);
@@ -19,6 +20,10 @@ public class AonFiscalFileUtils {
 			AonStringUtils.rightPad(
 			AonStringUtils.upperCase(
 			AonStringUtils.trimToEmpty(text)), size), 0,size);
+	}
+	public static String text(Number number, int size) {
+		String text = number==null?null:number.toString();
+		return text(text,size);
 	}
 
 	public static String date(Date date) {
@@ -81,6 +86,13 @@ public class AonFiscalFileUtils {
 		return unsigned(year, 4);
 	}
 	
+	public static CharSequence mark(double amount) {
+		return mark(amount==1);
+	}
+	public static CharSequence mark(boolean value) {
+		return value?AEAT_MARK:AonStringUtils.SPACE;
+	}
+
 	public static void main(String[] args) {
 
 		System.out.println("X------------------X");
@@ -88,7 +100,6 @@ public class AonFiscalFileUtils {
 		System.out.println(text("       AAA", 20) + "*");
 		System.out.println(text("AAA   LLL", 20) + "*");
 		System.out.println(text("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", 20) + "*");
-		System.out.println(text(null, 20) + "*");
 		System.out.println(text("", 20) + "*");
 		System.out.println(text("  s   sd", 20) + "*");
 		System.out.println(spaces(20) + "*");
