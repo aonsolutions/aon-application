@@ -1796,6 +1796,9 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Finalizar la declaraci\u00F3n?")
 	String finish();
+	
+	@DefaultMessage("Cert. Retenciones")
+	String generate10T();
 
 	@DefaultMessage("A) C\u00E1lculo del pago fraccionado: modalidad art\u00EDculo 40.2 LIS")
 	String mod202Compute1();
