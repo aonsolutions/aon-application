@@ -7,6 +7,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
 import com.code.aon.product.enumeration.ProductStatus;
+import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -26,7 +27,10 @@ public class ItemControllerListener extends ControllerAdapter implements IItemCo
     public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
     	Item item = (Item)event.getController().getTo();
         item.setStatus(ProductStatus.ACTIVE);
-    	try {
+        if (item.getProduct().getId() == null) {
+        	item.getProduct().setType(ProductType.COMMERCIAL_PRODUCT);
+        }
+        try {
     		ProductController.updateVat(item.getProduct());
         } catch (ManagerBeanException e) {
             throw new ControllerListenerException(e.getMessage(), e);
