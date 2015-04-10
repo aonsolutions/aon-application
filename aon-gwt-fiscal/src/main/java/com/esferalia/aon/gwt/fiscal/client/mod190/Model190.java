@@ -330,6 +330,7 @@ public class Model190 extends MainEntryPoint {
 		saveButton.setVisible(true);
 		generateFileButton.setVisible(currentMod190.getId() != null);
 		printButton.setVisible(currentMod190.getId() != null);
+		generate10TButton.setVisible(currentMod190.getId() != null);
 
 		detailList.setVisibleRangeAndClearData(detailList.getVisibleRange(),true);
 	}
@@ -356,6 +357,7 @@ public class Model190 extends MainEntryPoint {
 							newButton.setVisible(true);
 							generateFileButton.setVisible(false);							
 							printButton.setVisible(false);
+							generate10TButton.setVisible(false);
 						}
 					}
 
