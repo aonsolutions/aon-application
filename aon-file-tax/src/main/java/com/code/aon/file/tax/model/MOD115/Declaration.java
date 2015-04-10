@@ -192,8 +192,11 @@ public class Declaration {
 	public String getSurnameStart() {
 		return StringUtils.substring(getSurname(), 0, 4);
 	}
+	public String getAeatName() {
+		return StringUtils.trimToEmpty(getSurname()) + (StringUtils.isEmpty(getSurname())?"":" ") + getName();
+	}
 	public String getFullName() {
-		return getSurname() + (StringUtils.isEmpty(getSurname())?"":' ') + getName();
+		return StringUtils.trimToEmpty(getSurname()) + (StringUtils.isEmpty(getSurname())?"":", ") + getName();
 	}
 	public String getPhone() {
 		return phone;
