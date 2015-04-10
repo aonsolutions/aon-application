@@ -37,14 +37,14 @@ public class StockableBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		}
 	}
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
 	private void updateStockable(IStockable stockable) throws ManagerBeanException {
 		String select = "select stockable.item item, stockable.warehouse warehouse, stockable.quantity quantity " +
 						" from " + stockable.getTableName() + " as stockable " +
 						" where stockable.id = " + stockable.getId();
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		SQLQuery query = session.createSQLQuery(select);
-        List list = query
+		List list = query
         	.addScalar("item", Hibernate.INTEGER)
         	.addScalar("warehouse", Hibernate.INTEGER)
         	.addScalar("quantity", Hibernate.DOUBLE)
@@ -56,23 +56,16 @@ public class StockableBeanVetoListener extends ManagerBeanVetoListenerAdapter {
         	Integer warehouseId = (Integer)obj[1];
             double quantity =(Double)obj[2];
 
-     		updateStock(obtainItem(itemId), obtainWarehouse(warehouseId), quantity, !stockable.isEntry());
+     		updateStock(itemId, warehouseId, quantity, !stockable.isEntry());
         }
 	}
 
-    private Item obtainItem(Integer itemId) throws ManagerBeanException {
-    	IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
-    	return (itemId != null) ? (Item)itemBean.get(itemId) : null;
-    }
+    private void updateStock(Integer itemId, Integer warehouseId, double quantity, boolean entry) throws ManagerBeanException {
+    	Item item = obtainItem(itemId);
+    	if (item != null && item.getId() != null && item.getProduct().isInventoriable() && warehouseId != null) {
+    		Warehouse warehouse = obtainWarehouse(warehouseId);
 
-    private Warehouse obtainWarehouse(Integer warehouseId) throws ManagerBeanException {
-    	IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
-    	return (warehouseId != null) ? (Warehouse)warehouseBean.get(warehouseId) : null;
-    }
-
-    private void updateStock(Item item, Warehouse warehouse, double quantity, boolean entry) throws ManagerBeanException {
-		if (item != null && item.getId() != null && item.getProduct().isInventoriable() && warehouse != null && warehouse.getId() != null) {
-			IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
+    		IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
 			Stock stock = obtainStock(item, warehouse);
 			quantity = quantity * ((entry) ? 1 : (-1));
 			if (stock == null) {
@@ -87,6 +80,16 @@ public class StockableBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			}
 		}
 	}
+
+    private Item obtainItem(Integer itemId) throws ManagerBeanException {
+    	IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+    	return (itemId != null) ? (Item)itemBean.get(itemId) : null;
+    }
+
+    private Warehouse obtainWarehouse(Integer warehouseId) throws ManagerBeanException {
+    	IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
+    	return (warehouseId != null) ? (Warehouse)warehouseBean.get(warehouseId) : null;
+    }
 
 	private Stock obtainStock(Item item, Warehouse warehouse) throws ManagerBeanException {
 		IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);

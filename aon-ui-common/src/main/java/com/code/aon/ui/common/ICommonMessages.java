@@ -284,7 +284,8 @@ public interface ICommonMessages {
 	String CONFIG_DATE_OVERLAP = "config_date_overlap";
 	
 	String INVALID_INVOICING_GROUP_DETAIL_CHILD_KEY = "customer_invalid_invoicing_group_detail_child";
-	
+	String ITEM_COMPOSITION_SERIALIZABLE_ERROR = "product_item_composition_serializable_error";
+
 	String VALIDATE_FINANCES_GENERATION_ERROR_KEY = "finance_validate_finances_generation_error";
 	String GENERATE_INCREASES_ERROR_KEY = "finance_generate_increases_error";
 	String GENERATE_FINANCES_ERROR_KEY = "finance_generate_finances_error";

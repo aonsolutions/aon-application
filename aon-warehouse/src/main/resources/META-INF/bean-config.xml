@@ -71,4 +71,11 @@
 		</vetoListeners>
 	</bean>
 	
+	<bean description="">
+		<pojo>com.code.aon.warehouse.Stock</pojo>
+		<listeners>
+	        <listener>com.code.aon.warehouse.event.StockBeanListener</listener>
+		</listeners>
+	</bean>
+	
 </bean-config>
