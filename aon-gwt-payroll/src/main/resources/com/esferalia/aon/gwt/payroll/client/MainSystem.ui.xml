@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.payroll.client'>
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.payroll.client'
+	xmlns:common='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
 
 	<ui:style>
@@ -39,7 +40,7 @@
 
 		</g:west>
 		<g:center>
-			<aon:DetailPanel ui:field='detailPanel' />
+			<common:DetailPanel ui:field='detailPanel' />
 		</g:center>
 
 

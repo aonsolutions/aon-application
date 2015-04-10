@@ -9,7 +9,7 @@ public class DateUtils {
 	
 	
 	public static int getYear() {
-		return getYear(new Date());
+		return getYear(new Date());		
 	}
 
 	public static int getYear(Date date) {

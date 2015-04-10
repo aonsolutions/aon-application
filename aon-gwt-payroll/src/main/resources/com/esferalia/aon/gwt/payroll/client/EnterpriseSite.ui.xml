@@ -1,5 +1,7 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'>
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
 
 	<ui:style>
@@ -44,7 +46,7 @@
 
 		</g:west>
 		<g:center>
-			<employee:DetailPanel ui:field='detailPanel' />
+			<aon:DetailPanel ui:field='detailPanel' />
 		</g:center>
 	</g:SplitLayoutPanel>
 

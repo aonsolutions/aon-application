@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.payroll.client;
+package com.esferalia.aon.gwt.common.client.widget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;

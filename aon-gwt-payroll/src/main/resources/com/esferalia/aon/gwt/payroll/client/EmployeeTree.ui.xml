@@ -58,7 +58,7 @@
 
 		</g:west>
 		<g:center>
-			<payroll:DetailPanel ui:field='employeeDetail' />
+			<aon:DetailPanel ui:field='employeeDetail' />
 		</g:center>
 
 		<g:south size="0">
