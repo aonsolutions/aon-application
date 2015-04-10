@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="288"/>
+	<property name="ireport.y" value="48"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -351,7 +351,7 @@
 				<text><![CDATA[Datos de la persona o entidad pagadora]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="74d89281-b58e-41fe-ae5b-bba26a61532b" key="textField-34" positionType="Float" mode="Opaque" x="0" y="105" width="435" height="16" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="74d89281-b58e-41fe-ae5b-bba26a61532b" key="textField-34" positionType="Float" mode="Opaque" x="0" y="105" width="470" height="16" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -365,7 +365,7 @@
 				<text><![CDATA[Rendimientos del trabajo: detalle de las percepciones y de las retenciones e ingresos a cuenta]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="b9cbeb40-0052-4fb0-b8af-bd73accb9225" key="textField-34" positionType="Float" x="10" y="121" width="315" height="16" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="b9cbeb40-0052-4fb0-b8af-bd73accb9225" key="textField-34" positionType="Float" x="10" y="121" width="311" height="16" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<topPen lineWidth="0.0"/>
 					<leftPen lineWidth="0.0"/>
@@ -418,7 +418,7 @@
 				<textFieldExpression><![CDATA[$F{perception}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="51a16631-9589-4525-9ade-2a2865a8ca44" key="textField-34" positionType="Float" x="430" y="125" width="100" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="51a16631-9589-4525-9ade-2a2865a8ca44" key="textField-34" positionType="Float" x="426" y="125" width="108" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="SansSerif" size="7" isBold="false" pdfFontName="Helvetica"/>
 					<paragraph lineSpacing="Single"/>
@@ -426,7 +426,7 @@
 				<text><![CDATA[Retenciones practicadas]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="0d8c4f94-0bc4-4ce9-a783-b2ff554b4167" key="textField-34" positionType="Float" x="325" y="125" width="100" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="0d8c4f94-0bc4-4ce9-a783-b2ff554b4167" key="textField-34" positionType="Float" x="321" y="125" width="105" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="SansSerif" size="7" isBold="false" pdfFontName="Helvetica"/>
 					<paragraph lineSpacing="Single"/>
@@ -434,7 +434,7 @@
 				<text><![CDATA[Importe íntegro satisfecho]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="58f38eaf-ba66-48dd-9fa3-0757d3abb46a" key="textField-34" positionType="Float" x="325" y="149" width="100" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="58f38eaf-ba66-48dd-9fa3-0757d3abb46a" key="textField-34" positionType="Float" x="320" y="149" width="106" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="SansSerif" size="7" isBold="false" pdfFontName="Helvetica"/>
 					<paragraph lineSpacing="Single"/>
@@ -442,7 +442,7 @@
 				<text><![CDATA[Ingresos a cuenta efectuados]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="b4f692a1-09e7-4257-9f52-13bb495eda74" key="textField-34" positionType="Float" x="430" y="149" width="100" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="b4f692a1-09e7-4257-9f52-13bb495eda74" key="textField-34" positionType="Float" x="426" y="149" width="108" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="SansSerif" size="7" isBold="false" pdfFontName="Helvetica"/>
 					<paragraph lineSpacing="Single"/>
@@ -489,7 +489,7 @@
 				<textFieldExpression><![CDATA[$F{inKindDeposit}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="7ae09e47-5419-4de0-a8c9-7ff65dd9cd39" key="textField-34" positionType="Float" x="220" y="149" width="100" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="7ae09e47-5419-4de0-a8c9-7ff65dd9cd39" key="textField-34" positionType="Float" x="225" y="149" width="90" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="SansSerif" size="7" isBold="false" pdfFontName="Helvetica"/>
 					<paragraph lineSpacing="Single"/>
@@ -525,7 +525,7 @@
 				<textFieldExpression><![CDATA[$F{forecastPlanContributions}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="a12a118e-ad3b-4c6d-bb52-5dd3308d71f1" key="textField-34" positionType="Float" x="430" y="173" width="100" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="a12a118e-ad3b-4c6d-bb52-5dd3308d71f1" key="textField-34" positionType="Float" x="426" y="173" width="108" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="SansSerif" size="7" isBold="false" pdfFontName="Helvetica"/>
 					<paragraph lineSpacing="Single"/>
@@ -556,7 +556,7 @@ de dependencia) ]]></text>
 				<text><![CDATA[Contribuciones empresariales a seguros colectivos de dependencia]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="f6f2a51e-4327-4be0-8990-0f1db98ffc36" key="textField-34" positionType="Float" x="430" y="197" width="100" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="f6f2a51e-4327-4be0-8990-0f1db98ffc36" key="textField-34" positionType="Float" x="426" y="197" width="108" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="SansSerif" size="7" isBold="false" pdfFontName="Helvetica"/>
 					<paragraph lineSpacing="Single"/>
@@ -603,7 +603,7 @@ de dependencia) ]]></text>
 				<text><![CDATA[Reducciones a que se refieren el artículo 18, apartados 2 y 3, y/o las disposiciones transitorias 11.ª y 12.ª de la Ley del Impuesto]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="989a0cc0-42ec-4d44-b661-689fff4ad407" key="textField-34" positionType="Float" x="430" y="221" width="100" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="989a0cc0-42ec-4d44-b661-689fff4ad407" key="textField-34" positionType="Float" x="426" y="221" width="108" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="SansSerif" size="7" isBold="false" pdfFontName="Helvetica"/>
 					<paragraph lineSpacing="Single"/>
@@ -636,7 +636,7 @@ de dependencia) ]]></text>
 				<text><![CDATA[Gastos fiscalmente deducibles a que se refiere el artículo 19.2 de la Ley del Impuesto]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="5a3f48ba-b0e5-4b15-a36a-53038dd12ce0" key="textField-34" positionType="Float" x="430" y="245" width="100" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="5a3f48ba-b0e5-4b15-a36a-53038dd12ce0" key="textField-34" positionType="Float" x="426" y="245" width="108" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="SansSerif" size="7" isBold="false" pdfFontName="Helvetica"/>
 					<paragraph lineSpacing="Single"/>
@@ -865,7 +865,7 @@ de dependencia) ]]></text>
 				<textFieldExpression><![CDATA[$F{delay4}!=null?$F{delay4}.getDeducibleExpense():""]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="f38a1ea9-b995-46bb-9026-ed114ddc9a7e" key="textField-34" positionType="Float" mode="Opaque" x="417" y="321" width="100" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="f38a1ea9-b995-46bb-9026-ed114ddc9a7e" key="textField-34" positionType="Float" mode="Opaque" x="415" y="321" width="104" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="SansSerif" size="7" isBold="false" pdfFontName="Helvetica"/>
 					<paragraph lineSpacing="Single"/>
@@ -915,7 +915,7 @@ de dependencia) ]]></text>
 				<textFieldExpression><![CDATA[$F{refund1}!=null?$F{refund1}.getRefundAmount():""]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="e6f3808b-3d1b-43ad-bdd2-3a304cbbf5be" key="textField-34" positionType="Float" x="87" y="469" width="100" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="e6f3808b-3d1b-43ad-bdd2-3a304cbbf5be" key="textField-34" positionType="Float" x="85" y="469" width="104" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="SansSerif" size="7" isBold="false" pdfFontName="Helvetica"/>
 					<paragraph lineSpacing="Single"/>
@@ -1003,7 +1003,7 @@ de dependencia) ]]></text>
 				<textFieldExpression><![CDATA[$F{delay1}!=null?$F{delay1}.getApplicableReduction():""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="c2454f68-941c-4e7d-98f2-e44079dcfcb7" key="textField-34" positionType="Float" mode="Opaque" x="307" y="321" width="100" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="c2454f68-941c-4e7d-98f2-e44079dcfcb7" key="textField-34" positionType="Float" mode="Opaque" x="305" y="321" width="104" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="SansSerif" size="7" isBold="false" pdfFontName="Helvetica"/>
 					<paragraph lineSpacing="Single"/>
@@ -1011,7 +1011,7 @@ de dependencia) ]]></text>
 				<textFieldExpression><![CDATA["Reducciones(art.º 18, 2 y 3, y DT 11.ª y 12.ª de la Ley del Impuesto)"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="14b07590-8ba4-4e55-a1a4-4111061d0106" key="textField-34" positionType="Float" x="197" y="330" width="100" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="14b07590-8ba4-4e55-a1a4-4111061d0106" key="textField-34" positionType="Float" x="195" y="330" width="104" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="SansSerif" size="7" isBold="false" pdfFontName="Helvetica"/>
 					<paragraph lineSpacing="Single"/>
@@ -1075,7 +1075,7 @@ de dependencia) ]]></text>
 				<textFieldExpression><![CDATA[$F{delay2}!=null?$F{delay2}.getRetention():""]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="fdd30b92-0136-471f-b8c7-bb628c84ee98" key="textField-34" positionType="Float" x="87" y="330" width="100" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="fdd30b92-0136-471f-b8c7-bb628c84ee98" key="textField-34" positionType="Float" x="85" y="330" width="104" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="SansSerif" size="7" isBold="false" pdfFontName="Helvetica"/>
 					<paragraph lineSpacing="Single"/>
@@ -1195,7 +1195,7 @@ de dependencia) ]]></text>
 				<textFieldExpression><![CDATA[$F{delay1}!=null?$F{delay1}.getYear():""]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="fd99fd9c-770d-4b66-9ea9-3c6818087d88" key="textField-34" positionType="Float" x="15" y="330" width="65" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="fd99fd9c-770d-4b66-9ea9-3c6818087d88" key="textField-34" positionType="Float" x="8" y="330" width="77" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="SansSerif" size="7" isBold="false" pdfFontName="Helvetica"/>
 					<paragraph lineSpacing="Single"/>
@@ -1203,7 +1203,7 @@ de dependencia) ]]></text>
 				<text><![CDATA[Ejercicio de devengo]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="213794c6-b581-4455-8fd9-ac06866945ce" key="textField-34" positionType="Float" x="194" y="469" width="108" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="213794c6-b581-4455-8fd9-ac06866945ce" key="textField-34" positionType="Float" x="190" y="469" width="116" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="SansSerif" size="7" isBold="false" pdfFontName="Helvetica"/>
 					<paragraph lineSpacing="Single"/>
@@ -1281,7 +1281,7 @@ de dependencia) ]]></text>
 				<textFieldExpression><![CDATA[$F{refund3}!=null?$F{refund3}.getYear():""]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="0aa09f47-8f60-4528-bafb-0c27b362d699" key="textField-34" positionType="Float" x="11" y="469" width="73" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="0aa09f47-8f60-4528-bafb-0c27b362d699" key="textField-34" positionType="Float" x="8" y="469" width="77" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="SansSerif" size="7" isBold="false" pdfFontName="Helvetica"/>
 					<paragraph lineSpacing="Single"/>
