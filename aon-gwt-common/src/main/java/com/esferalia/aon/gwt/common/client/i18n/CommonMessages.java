@@ -1787,4 +1787,19 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Finalizar la declaraci\u00F3n?")
 	String finish();
+	
+	@DefaultMessage("Cert. Retenciones")
+	String generate10T();
+
+	@DefaultMessage("A) C\u00E1lculo del pago fraccionado: modalidad art\u00EDculo 40.2 LIS")
+	String mod202Compute1();
+
+	@DefaultMessage("B) C\u00E1lculo del pago fraccionado: modalidad art\u00EDculo 40.3 LIS")
+	String mod202Compute2();
+
+	@DefaultMessage("B.1) Caso general (empresas con porcentaje \u00FAnico)")
+	String mod202Compute3();
+
+	@DefaultMessage("B.2) Casos espec\u00EDficos (empresas con m\u00E1s de un porcentaje)")
+	String mod202Compute4();
 }

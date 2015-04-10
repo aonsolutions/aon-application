@@ -55,6 +55,9 @@
 								styleName='aon-finding-toolbar-item aon-icon-printer' text="{msg.printViaAeat}" />
 							<g:Button ui:field='generateFileButton'
 								styleName='aon-finding-toolbar-item aon-icon-aeat' text="{msg.generateFile}" />
+							<g:Button ui:field='generate10TButton'
+								styleName='aon-finding-toolbar-item aon-icon-pdf' text="{msg.generate10T}" />
+								
 							<g:Anchor ui:field="download" visible="false"/>							
 						</g:HTMLPanel>
 						<g:FlowPanel ui:field="formContainer">

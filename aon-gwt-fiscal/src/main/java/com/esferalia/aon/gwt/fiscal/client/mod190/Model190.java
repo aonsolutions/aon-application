@@ -167,7 +167,9 @@ public class Model190 extends MainEntryPoint {
 	Button generateFileButton;
 	@UiField
 	Button printButton;
-
+	@UiField
+	Button generate10TButton;
+	
 	@UiField
 	TextBox year;
 	@UiField
@@ -608,6 +610,16 @@ public class Model190 extends MainEntryPoint {
 		label.addStyleName("aon-icon");
 		panel.add(label);
 		resultsPanel.setWidget(panel);
+	}
+	
+	@UiHandler("generate10TButton")
+	public void on10TGeneration(ClickEvent event) {
+		diskForm.setAction(GWT.getHostPageBaseURL() +"/aon_gwt_fiscal/Model10TPrint");
+		mod190Hidden.setValue( String.valueOf(currentMod190.getId()) );
+		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
+		domainNameHidden.setValue(getCurrentDomainName());
+		diskForm.submit();
+		
 	}
 	
 
