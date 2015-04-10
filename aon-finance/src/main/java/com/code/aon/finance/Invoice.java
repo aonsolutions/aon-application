@@ -70,6 +70,7 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 
 	public Invoice() {
 		setIssueDate(new Date());
+		setSecurityLevel(SecurityLevel.OFFICIAL);
 		setDefaultTaxInfo(true);
 		setUpdateEnabled(true);
 		setUpdateDetails(false);
