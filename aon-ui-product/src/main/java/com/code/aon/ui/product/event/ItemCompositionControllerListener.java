@@ -1,5 +1,7 @@
 package com.code.aon.ui.product.event;
 
+import static com.code.aon.ui.common.ICommonMessages.ITEM_COMPOSITION_SERIALIZABLE_ERROR;
+
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -12,6 +14,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.product.controller.ItemCompositionController;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class ItemCompositionControllerListener extends ControllerAdapter {
@@ -28,6 +31,26 @@ public class ItemCompositionControllerListener extends ControllerAdapter {
 			itemComposition.setQuantity(1.0);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		ItemCompositionController controller = (ItemCompositionController)event.getController();
+		ItemComposition itemComposition = (ItemComposition)controller.getTo();
+		Item item = (Item)controller.getMasterController().getTo();
+		if (!item.getProduct().isManufactured() && itemComposition.getCompositionItem().getProduct().isSerializable()) {
+			throw new ControllerListenerException(AonUtil.getMessage(ITEM_COMPOSITION_SERIALIZABLE_ERROR));
+		}
+	}
+
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		ItemCompositionController controller = (ItemCompositionController)event.getController();
+		ItemComposition itemComposition = (ItemComposition)controller.getTo();
+		Item item = (Item)controller.getMasterController().getTo();
+		if (!item.getProduct().isManufactured() && itemComposition.getCompositionItem().getProduct().isSerializable()) {
+			throw new ControllerListenerException(AonUtil.getMessage(ITEM_COMPOSITION_SERIALIZABLE_ERROR));
 		}
 	}
 

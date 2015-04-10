@@ -50,8 +50,8 @@ public class ItemLookup extends RichLookupBean implements IItemConstants {
 				IManagerBean productBean = BeanManager.getManagerBean(Product.class);
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(productBean.getFieldName(IEntityAlias.PRODUCT_CODE), product.getCode());
-				Expression expDet = ExpressionUtilities.getNotNullExpression("Product.category<detail");
-				Expression expDet2 = ExpressionUtilities.getNotEqualExpression("Product.category<detail", "");
+				Expression expDet = ExpressionUtilities.getNotNullExpression(productBean.getFieldName(IEntityAlias.PRODUCT_PRODUCT_CATEGORY_DETAIL));
+				Expression expDet2 = ExpressionUtilities.getNotEqualExpression(productBean.getFieldName(IEntityAlias.PRODUCT_PRODUCT_CATEGORY_DETAIL), "");
 				Expression expSer = ExpressionUtilities.getEqualExpression(productBean.getFieldName(IEntityAlias.PRODUCT_SERIALIZABLE), Boolean.TRUE);
 				criteria.addExpression(ExpressionUtilities.getOrExpression(ExpressionUtilities.getAndExpression(expDet, expDet2), expSer));
 				List<ITransferObject> productList = productBean.getList(criteria, 0, 1);

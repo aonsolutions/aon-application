@@ -41,7 +41,7 @@
 
 	<aon:if test="#{itemTo.product.category != null and !empty itemTo.product.category.detail3}">
 		<aon:outputLabel for="Item_product_detail3"
-			value="#{itemTo.1product.category.detail3}" />
+			value="#{itemTo.product.category.detail3}" />
 		<aon:inputText id="Item_product_detail3" 
 			value="#{itemTo.detail3}" size="32" maxlength="15"
 			required="#{itemTo.product.id != null}" converter="aon.TrimStringConverter" />

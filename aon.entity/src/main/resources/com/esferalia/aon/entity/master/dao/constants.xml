@@ -404,8 +404,8 @@
 	</bean>
 
 	<bean class="com.code.aon.product.Product" sqlName="product">
-		<alias names="brand_id,product_category_id,code,composition,compositionPrice,id,domain,inventoriable,lotable,manufactured,name,purchaseAccount_id,retention_id,salesAccount_id,serializable,status,type,vat_id" />
-		<hibernate names="brand.id,category.id,code,composition,compositionPrice,id,domain,inventoriable,lotable,manufactured,name,purchaseAccount.id,retention.id,salesAccount.id,serializable,status,type,vat.id" />
+		<alias names="brand_id,product_category_id,product_category_detail,code,composition,compositionPrice,id,domain,inventoriable,lotable,manufactured,name,purchaseAccount_id,retention_id,salesAccount_id,serializable,status,type,vat_id" />
+		<hibernate names="brand.id,category&lt;id,category&lt;detail,code,composition,compositionPrice,id,domain,inventoriable,lotable,manufactured,name,purchaseAccount.id,retention.id,salesAccount.id,serializable,status,type,vat.id" />
 	</bean>
 
 	<bean class="com.code.aon.product.ProductTag" sqlName="product_tag">
