@@ -351,7 +351,7 @@
 				<text><![CDATA[Datos de la persona o entidad pagadora]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="74d89281-b58e-41fe-ae5b-bba26a61532b" key="textField-34" positionType="Float" mode="Opaque" x="0" y="105" width="470" height="16" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="74d89281-b58e-41fe-ae5b-bba26a61532b" key="textField-34" positionType="Float" mode="Opaque" x="0" y="105" width="502" height="16" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -373,7 +373,7 @@
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font fontName="SansSerif" size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[Rendimientos correspondientes al ejercicio.]]></text>
@@ -442,7 +442,7 @@
 				<text><![CDATA[Ingresos a cuenta efectuados]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="b4f692a1-09e7-4257-9f52-13bb495eda74" key="textField-34" positionType="Float" x="426" y="149" width="108" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="b4f692a1-09e7-4257-9f52-13bb495eda74" key="textField-34" positionType="Float" x="426" y="149" width="110" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="SansSerif" size="7" isBold="false" pdfFontName="Helvetica"/>
 					<paragraph lineSpacing="Single"/>
@@ -661,7 +661,7 @@ de dependencia) ]]></text>
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font fontName="SansSerif" size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[Rendimientos satisfechos en el ejercicio correspondientes a ejercicios anteriores (atrasos).]]></text>
@@ -941,7 +941,7 @@ de dependencia) ]]></text>
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font fontName="SansSerif" size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[Cantidades reintegradas por el perceptor en el ejercicio por haber sido indebida o excesivamente percibidas en ejercicios anteriores (reintegros).]]></text>
@@ -1203,7 +1203,7 @@ de dependencia) ]]></text>
 				<text><![CDATA[Ejercicio de devengo]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="213794c6-b581-4455-8fd9-ac06866945ce" key="textField-34" positionType="Float" x="190" y="469" width="116" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="213794c6-b581-4455-8fd9-ac06866945ce" key="textField-34" positionType="Float" x="189" y="469" width="120" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="SansSerif" size="7" isBold="false" pdfFontName="Helvetica"/>
 					<paragraph lineSpacing="Single"/>
@@ -1281,7 +1281,7 @@ de dependencia) ]]></text>
 				<textFieldExpression><![CDATA[$F{refund3}!=null?$F{refund3}.getYear():""]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="0aa09f47-8f60-4528-bafb-0c27b362d699" key="textField-34" positionType="Float" x="8" y="469" width="77" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="0aa09f47-8f60-4528-bafb-0c27b362d699" key="textField-34" positionType="Float" x="5" y="469" width="80" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="SansSerif" size="7" isBold="false" pdfFontName="Helvetica"/>
 					<paragraph lineSpacing="Single"/>
