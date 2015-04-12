@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.PercentBox;
 import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree.FiscalNodeWidget;
+import com.esferalia.aon.gwt.fiscal.client.tree.TreeNode.TreeNodeCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131.Mod131Activity;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
@@ -53,7 +54,8 @@ public class Model131Form extends ResizeComposite implements FiscalNodeWidget<Mo
 
 	private static final Model131FormBinder panelBinder = GWT.create(Model131FormBinder.class);
 	
-	TreeNode<Mod131> node;
+	Mod131 mod131;
+	TreeNodeCallback<Mod131> callback;
 	 
 	@UiField
 	Button saveButton;
@@ -85,13 +87,16 @@ public class Model131Form extends ResizeComposite implements FiscalNodeWidget<Mo
 		Widget ui = panelBinder.createAndBindUi(this);
 		initWidget(ui);
 	}
-	
 	@Override
-	public void select(TreeNode<Mod131> node) {
-		this.node = node;
-		if ( node.getTreeObject().getId() != null) {
+	public void setCallback(TreeNodeCallback<Mod131> callback) {
+		this.callback = callback;
+	}
+	@Override
+	public void select(Mod131 m131) {
+		this.mod131 = m131;
+		if ( mod131.getId() != null) {
 			FiscalTree.FISCAL_SERVICE.getMod131(FiscalTree.getCurrentDomainName(), 
-					FiscalTree.getCurrentDomain(), node.getTreeObject().getId()
+					FiscalTree.getCurrentDomain(), mod131.getId()
 					,new AsyncCallback<Mod131>() {
 
 						@Override
@@ -104,12 +109,12 @@ public class Model131Form extends ResizeComposite implements FiscalNodeWidget<Mo
 						}
 			});
 		} else {
-			populate(node.getTreeObject());
+			populate(mod131);
 		}
 	}
 
-	private void populate(Mod131 mod131) {
-		node.setTreeObject( mod131 );
+	private void populate(Mod131 m131) {
+		this.mod131 = m131;
 		saveButton.setEnabled(isEnabled(mod131));
 		calculateButton.setEnabled(isEnabled(mod131));
 		year.setText( Integer.toString( mod131.getYear() ));
@@ -273,7 +278,7 @@ public class Model131Form extends ResizeComposite implements FiscalNodeWidget<Mo
 	}
 
 	private boolean isEnabled(Mod131Key subkey) {
-		if (node.getTreeObject().isFinished()) {
+		if (mod131.isFinished()) {
 			return false;	
 		} 
 		return subkey != Mod131Key.C04 && subkey != Mod131Key.C06 
@@ -296,7 +301,7 @@ public class Model131Form extends ResizeComposite implements FiscalNodeWidget<Mo
 	private void calculate() {
 		populateTreeObject();
 		FiscalTree.FISCAL_SERVICE.calculateMod131(FiscalTree.getCurrentDomainName()
-				,node.getTreeObject()
+				,mod131
 				,new AsyncCallback<Mod131>() {
 
 					@Override
@@ -313,11 +318,11 @@ public class Model131Form extends ResizeComposite implements FiscalNodeWidget<Mo
 
 	private void populateTreeObject() {
 		for (Mod131Key key : inputs.keySet()) {
-			key.setValue(node.getTreeObject(), inputs.get(key).getValue());
+			key.setValue(mod131, inputs.get(key).getValue());
 		}
 	}
 	private void populateTreeInputs(Mod131 result) {
-		node.setTreeObject(result);
+		this.mod131 = result;
 		for (Mod131Key key : inputs.keySet()) {
 			inputs.get(key).setValue(key.getValue(result));
 		}
@@ -325,21 +330,21 @@ public class Model131Form extends ResizeComposite implements FiscalNodeWidget<Mo
 	
 	@UiHandler("status")
 	void onStatusButtonClick(ClickEvent event) {
-		if (Window.confirm( node.getTreeObject().isFinished()?
+		if (Window.confirm( mod131.isFinished()?
 				AON.MSG.reopen():AON.MSG.finish() )) {
 			populateTreeObject();
-			node.getTreeObject().setFinished(!node.getTreeObject().isFinished());
+			mod131.setFinished(!mod131.isFinished());
 			FiscalTree.FISCAL_SERVICE.saveMod131(FiscalTree.getCurrentDomainName()
-					,node.getTreeObject()
+					,mod131
 					,new AsyncCallback<Mod131>() {
 
 						@Override
 						public void onSuccess(Mod131 result) {
 							populateTreeInputs(result);
-							status.setText(node.getTreeObject().isFinished()?
+							status.setText(mod131.isFinished()?
 									AON.MSG.finished():AON.MSG.pending() );
 							status.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-							status.addStyleName(node.getTreeObject().isFinished()?
+							status.addStyleName(mod131.isFinished()?
 									AON.AON_CSS.aonIconLock():AON.AON_CSS.aonIconUnlock()) ;
 							for (Mod131Key key : inputs.keySet()) {
 								inputs.get(key).setEnabled(isEnabled(key));

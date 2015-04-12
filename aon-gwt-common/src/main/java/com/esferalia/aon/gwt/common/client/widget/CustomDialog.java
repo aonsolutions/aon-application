@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.common.client.widget;
 
+
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
@@ -27,8 +28,6 @@ import com.google.gwt.user.client.ui.Widget;
 public class CustomDialog extends PopupPanel implements
 		CustomDialogBar.Listener {
 
-	private static final String DEFAULT_STYLENAME = "aon-CustomDialog";
-	
 	private static class SimpleResizePanel extends SimplePanel implements RequiresResize , ProvidesResize{
 		
 		public SimpleResizePanel() {

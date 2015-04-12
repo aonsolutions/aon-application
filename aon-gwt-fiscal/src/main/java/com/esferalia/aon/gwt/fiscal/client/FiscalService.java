@@ -97,15 +97,15 @@ public interface FiscalService extends RemoteService {
 	// ---------------------------------------------------------------MODELO 131
 	Mod131 getMod131(String domainName, int domain, int id) throws AonCoreException;
 	LinkedList<Mod131> getMod131s(String domainName, int domain) throws AonCoreException;
-	Mod131 calculateMod131(String domainName, Mod131 mod131);
-	Mod131 saveMod131(String domainName, Mod131 mod131);
+	Mod131 calculateMod131(String domainName, Mod131 mod131) throws AonCoreException;
+	Mod131 saveMod131(String domainName, Mod131 mod131) throws AonCoreException;
 
 	// ---------------------------------------------------------------MODELO 131
 	Mod202 getMod202(String domainName, int domain, int id) throws AonCoreException;
 	LinkedList<Mod202> getMod202s(String domainName, int domain) throws AonCoreException;
-	Mod202 calculateMod202(String domainName, Mod202 mod202);
-	Mod202 saveMod202(String domainName, Mod202 mod202);
-	void deleteMod202(String currentDomainName, Mod202 treeObject);
-	Mod202 initializeMod202(String currentDomainName, int currentDomain);
+	Mod202 calculateMod202(String domainName, Mod202 mod202) throws AonCoreException;
+	Mod202 saveMod202(String domainName, Mod202 mod202) throws AonCoreException;
+	void deleteMod202(String currentDomainName, Mod202 treeObject) throws AonCoreException;
+	Mod202 initializeMod202(String currentDomainName, int currentDomain) throws AonCoreException;
 
 }

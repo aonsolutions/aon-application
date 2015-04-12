@@ -5,10 +5,15 @@ import java.util.LinkedHashMap;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
+import com.esferalia.aon.gwt.common.client.widget.CnaePanel;
+import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree.FiscalNodeWidget;
+import com.esferalia.aon.gwt.fiscal.client.tree.TreeNode.TreeNodeCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
+import com.esferalia.aon.occam.api.model.type.CNAE;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -23,8 +28,13 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -68,14 +78,23 @@ public class Model202Form extends ResizeComposite implements FiscalNodeWidget<Mo
 
 	private static final Model202FormBinder panelBinder = GWT.create(Model202FormBinder.class);
 	
-	TreeNode<Mod202> node;
+	Mod202 mod202;
+	TreeNodeCallback<Mod202> callback;
 	 
 	@UiField
 	Button saveButton;
 	@UiField
 	Button deleteButton;
 	@UiField
+	Button finishButton;
+	@UiField
+	Button reopenButton;
+	@UiField
 	Button calculateButton;
+	@UiField
+	Button generateFileButton;
+	@UiField
+	Button printButton;
 	
 	@UiField
 	TextBox document;
@@ -87,28 +106,76 @@ public class Model202Form extends ResizeComposite implements FiscalNodeWidget<Mo
 	TextBox surname;
 	
 	@UiField
-	Button status;
+	Label status;
 
 	@UiField
-	Label period;
+	ListBox period;
 	
 	@UiField
 	Label year;
 	
 	@UiField
+	TextBox cnae;
+	@UiField
+	Label cnaeDescription;
+	@UiField
+	Button cnaeButton;
+	@UiField
+	DateBoxEx initialDate;
+	
+	@UiField
 	SimplePanel tablePanel;
+	
+	@UiField
+	CnaePanel cnaePanel;
+	
+	@UiField
+	Panel formContainer;
+	FormPanel diskForm;
+	Hidden modIdHidden;
+	Hidden domainIdHidden;
+	Hidden domainNameHidden;
+	
+
 
 	public Model202Form() {
 		Widget ui = panelBinder.createAndBindUi(this);
 		initWidget(ui);
+		
+		cnaePanel = new CnaePanel( new CnaePanel.SelectionCallBack() {
+			@Override
+			public void onSelect(CNAE selected) {
+				cnae.setValue( selected.getCode());
+				cnaeDescription.setText( selected.getDescription() );
+			}
+			@Override
+			public void onClose() {
+				// Nothing
+			}
+		});
+
+		diskForm = new FormPanel("_blank");
+		diskForm.setMethod(FormPanel.METHOD_POST);
+		FlowPanel formFlowPanel = new FlowPanel();
+		diskForm.add(formFlowPanel);
+		modIdHidden = new Hidden("modId");
+		formFlowPanel.add(modIdHidden);
+		domainIdHidden = new Hidden("domainId");
+		formFlowPanel.add(domainIdHidden);
+		domainNameHidden = new Hidden("domainName");
+		formFlowPanel.add(domainNameHidden);
+		formContainer.add(diskForm);
+
+		period.addItem("1P",Integer.toString( Period.T1.ordinal() ));
+		period.addItem("2P",Integer.toString( Period.T2.ordinal() ));
+		period.addItem("3P",Integer.toString( Period.T3.ordinal() ));
 	}
 	
 	@Override
-	public void select(TreeNode<Mod202> node) {
-		this.node = node;
-		if ( node.getTreeObject().getId() != null) {
+	public void select(Mod202 mod202) {
+		if ( mod202.getId() != null) {
 			FiscalTree.FISCAL_SERVICE.getMod202(FiscalTree.getCurrentDomainName(), 
-					FiscalTree.getCurrentDomain(), node.getTreeObject().getId()
+					FiscalTree.getCurrentDomain(), mod202.getId()
 					,new AsyncCallback<Mod202>() {
 
 						@Override
@@ -117,21 +184,35 @@ public class Model202Form extends ResizeComposite implements FiscalNodeWidget<Mo
 						}
 						@Override
 						public void onFailure(Throwable caught) {
-							DialogMessages.alertErrorWidget(caught.getMessage());
+							PopupPanel box = DialogMessages.alertErrorWidget(caught.getMessage());
+							box.center();
+							box.show();
+							
 						}
 			});
 		} else {
-			populate(node.getTreeObject());
+			populate(mod202);
 		}
 	}
-
-	private void populate(Mod202 mod202) {
-		node.setTreeObject( mod202 );
+	
+	@Override
+	public void setCallback(TreeNodeCallback<Mod202> callback) {
+		this.callback = callback;
+	}
+	
+	private void populate(Mod202 m202) {
+		this.mod202 = m202;
+		boolean nevv = (mod202.getId() == null);
+		
 		saveButton.setEnabled(isEnabled(mod202));
-		deleteButton.setEnabled(isEnabled(mod202));
+		deleteButton.setEnabled(!nevv && isEnabled(mod202));
 		calculateButton.setEnabled(isEnabled(mod202));
+		
 		year.setText( Integer.toString( mod202.getYear() ));
-		period.setText(mod202.getPeriod().getName());
+		period.setItemSelected(mod202.getPeriod().ordinal() - Period.T1.ordinal(),true);
+		
+		generateFileButton.setVisible(!nevv && mod202.isFinished());
+		printButton.setVisible(!nevv);
 		
 		document.setValue(mod202.getDocument());
 		document.setEnabled(false);
@@ -139,6 +220,7 @@ public class Model202Form extends ResizeComposite implements FiscalNodeWidget<Mo
 		name.setEnabled(false);
 		surname.setValue(mod202.getSurname());
 		surname.setEnabled(false);
+		period.setEnabled( mod202.getId() == null );
 		status.setText(mod202.isFinished()?AON.MSG.finished():AON.MSG.pending() );
 		status.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
 		status.addStyleName(mod202.isFinished()?AON.AON_CSS.aonIconLock():AON.AON_CSS.aonIconUnlock()) ;
@@ -151,26 +233,7 @@ public class Model202Form extends ResizeComposite implements FiscalNodeWidget<Mo
 		table.setStyleName(AON.AON_CSS.aonFiscalModelDataTable());
 		table.setCellSpacing(0);
 		int row = 0;
-		
-		table.setWidget(row, 0, new Label( AON.MSG.additionalData() ));
-		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableTitle());
-		table.getFlexCellFormatter().setColSpan(row, 0, 4);
-		for (Mod202Key key : additionalDataKeys) {
-			row++;
-			CheckBox checkBox = new CheckBox(key.getDescription());
-			checkBox.setValue(mod202.getAmount(key)==1);
-			checkBox.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					calculate();
-				}
-			});
-			checks.put(key, checkBox);
-			table.setWidget(row, 0, checkBox);
-			table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableDesc());
-			table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
-			table.getFlexCellFormatter().setColSpan(row, 0, 4);
-		}		
+		row = paintAdditionData(row,table);
 		for (String label: KEYS.keySet()) {
 			row++;
 			table.setWidget(row, 0, new Label( label ));
@@ -206,8 +269,36 @@ public class Model202Form extends ResizeComposite implements FiscalNodeWidget<Mo
 		tablePanel.setWidget(table);
 	}
 
+	private int paintAdditionData(int row, FlexTable table) {
+		table.setWidget(row, 0, new Label( AON.MSG.additionalData() ));
+		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableTitle());
+		table.getFlexCellFormatter().setColSpan(row, 0, 4);
+		int col = 2;
+		for (Mod202Key key : additionalDataKeys) {
+			if (col == 2) {
+				col = 0;		
+				row++;
+			}
+			CheckBox checkBox = new CheckBox(key.getDescription());
+			checkBox.setValue(mod202.getAmount(key)==1);
+			checkBox.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					calculate();
+				}
+			});
+			checks.put(key, checkBox);
+			table.setWidget(row, col, checkBox);
+			table.getFlexCellFormatter().setStyleName(row, col, AON.AON_CSS.aonFiscalModelDataTableDesc());
+			table.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonPaddingLeft());
+			table.getFlexCellFormatter().setColSpan(row, col, 2);
+			col++;
+		}
+		return row;
+	}
+
 	private boolean isEnabled(Mod202Key key) {
-		if (node.getTreeObject().isFinished()) {
+		if (mod202.isFinished()) {
 			return false;	
 		} 
 		return key.isEnabled();
@@ -226,47 +317,84 @@ public class Model202Form extends ResizeComposite implements FiscalNodeWidget<Mo
 	}
 	
 	private void calculate() {
-		populateTreeObject();
+		prepareForSend();
 		FiscalTree.FISCAL_SERVICE.calculateMod202(FiscalTree.getCurrentDomainName()
-				,node.getTreeObject()
+				,mod202
 				,new AsyncCallback<Mod202>() {
 
 					@Override
 					public void onSuccess(Mod202 result) {
-						populateTreeInputs(result);
+						receiveMod202(result);
 					}
 					@Override
 					public void onFailure(Throwable caught) {
-						DialogMessages.alertErrorWidget(caught.getMessage());								
+						PopupPanel box = DialogMessages.alertErrorWidget(caught.getMessage());
+						box.center();
+						box.show();
+						
 					}
 
 		});
 	}
 
-	private void populateTreeObject() {
+	private void prepareForSend() {
+		mod202.setPeriod( Period.values()[ period.getSelectedIndex() + Period.T1.ordinal() ] );
+		mod202.setCnae( cnae.getValue() );
+		mod202.setInitialDate(this.initialDate.getValue());
+		
 		for (Mod202Key key : checks.keySet()) {
-			node.getTreeObject().putAmount(key, checks.get(key).getValue()?1:0);
+			mod202.putAmount(key, checks.get(key).getValue()?1:0);
 		}
 		for (Mod202Key key : inputs.keySet()) {
-			node.getTreeObject().putAmount(key, inputs.get(key).getValue());
+			mod202.putAmount(key, inputs.get(key).getValue());
 		}
 	}
-	private void populateTreeInputs(Mod202 result) {
-		node.setTreeObject(result);
+	
+	private void receiveMod202(Mod202 result) {
+		this.mod202 = result;
+		
+		this.cnae.setValue( mod202.getCnae() );
+		CNAE cnae = CNAE.valueOfCode(mod202.getCnae());
+		this.cnaeDescription.setText( cnae==null?null:cnae.getDescription() );
+		this.initialDate.setValue(mod202.getInitialDate());
+		
 		for (Mod202Key key : checks.keySet()) {
 			checks.get(key).setValue(result.getAmount(key)==1);
 		}
 		for (Mod202Key key : inputs.keySet()) {
 			inputs.get(key).setValue(result.getAmount(key));
 		}
+		period.setItemSelected(mod202.getPeriod().ordinal() - Period.T1.ordinal(),true);
+		boolean nevv = (mod202.getId() == null);
+		finishButton.setEnabled(!mod202.isFinished());
+		reopenButton.setEnabled(mod202.isFinished());
+		generateFileButton.setEnabled(!nevv && mod202.isFinished());
+		printButton.setEnabled(!nevv); 
+				
+		status.setText(mod202.isFinished()?AON.MSG.finished():AON.MSG.pending() );
+		status.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
+		status.addStyleName(mod202.isFinished()?AON.AON_CSS.aonIconLock():AON.AON_CSS.aonIconUnlock()) ;
+		
+		for (Mod202Key key : inputs.keySet()) {
+			inputs.get(key).setEnabled(isEnabled(key));
+		}
+		
 	}
 	
-	@UiHandler("status")
-	void onStatusButtonClick(ClickEvent event) {
-		if (Window.confirm( node.getTreeObject().isFinished()?
-				AON.MSG.reopen():AON.MSG.finish() )) {
-			populateTreeObject();
-			node.getTreeObject().setFinished(!node.getTreeObject().isFinished());
+	@UiHandler("finishButton")
+	void onFinishButtonClick(ClickEvent event) {
+		if (Window.confirm( AON.MSG.finish() )) {
+			prepareForSend();
+			mod202.setFinished(true);
+			save();
+		}
+	}
+
+	@UiHandler("reopenButton")
+	void onReopenButtonClick(ClickEvent event) {
+		if (Window.confirm( AON.MSG.reopen() )) {
+			prepareForSend();
+			mod202.setFinished(false);
 			save();
 		}
 	}
@@ -274,6 +402,7 @@ public class Model202Form extends ResizeComposite implements FiscalNodeWidget<Mo
 	@UiHandler("saveButton")
 	void onSaveButtonClick(ClickEvent event) {
 		if (Window.confirm( AON.MSG.saveAction())) {
+			prepareForSend();
 			save();
 		}
 	}
@@ -282,16 +411,18 @@ public class Model202Form extends ResizeComposite implements FiscalNodeWidget<Mo
 	void onDeleteButtonClick(ClickEvent event) {
 		if (Window.confirm( AON.MSG.deleteAction())) {
 			FiscalTree.FISCAL_SERVICE.deleteMod202(FiscalTree.getCurrentDomainName()
-					,node.getTreeObject()
+					,mod202
 					,new AsyncCallback<Void>() {
 
 						@Override
 						public void onSuccess(Void result) {
-							node.getParentItem().removeItem(node);							
+							callback.delete(mod202);
 						}
 						@Override
 						public void onFailure(Throwable caught) {
-							DialogMessages.alertErrorWidget(caught.getMessage());								
+							PopupPanel box = DialogMessages.alertErrorWidget(caught.getMessage());
+							box.center();
+							box.show();
 						}
 			});
 			
@@ -300,26 +431,62 @@ public class Model202Form extends ResizeComposite implements FiscalNodeWidget<Mo
 
 	private void save() {
 		FiscalTree.FISCAL_SERVICE.saveMod202(FiscalTree.getCurrentDomainName()
-				,node.getTreeObject()
+				,mod202
 				,new AsyncCallback<Mod202>() {
 
 					@Override
 					public void onSuccess(Mod202 result) {
-						populateTreeInputs(result);
-						status.setText(node.getTreeObject().isFinished()?
-								AON.MSG.finished():AON.MSG.pending() );
-						status.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-						status.addStyleName(node.getTreeObject().isFinished()?
-								AON.AON_CSS.aonIconLock():AON.AON_CSS.aonIconUnlock()) ;
-						for (Mod202Key key : inputs.keySet()) {
-							inputs.get(key).setEnabled(isEnabled(key));
-						}
+						receiveMod202(result);
 					}
 					@Override
 					public void onFailure(Throwable caught) {
-						DialogMessages.alertErrorWidget(caught.getMessage());								
+						PopupPanel box = DialogMessages.alertErrorWidget(caught.getMessage());
+						box.center();
+						box.show();
 					}
 		});
 	}
+	
+	@UiHandler("generateFileButton")
+	void onGenerateFileButtonClick(ClickEvent event) {
+		Window.alert(
+				  "Se va a proceder a la generaci\u00F3n de un fichero\n"
+				+ "con los datos de la declaraci\u00F3n, para su \n"
+				+ "presentaci\u00F3n en Hacienda.\n\n"
+				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
+				+ "El fichero se genera a partir de los datos guardados.");
+		diskForm.setAction(GWT.getHostPageBaseURL() +"/aon_gwt_fiscal/Model202File");
+		modIdHidden.setValue( String.valueOf(mod202.getId()) );
+		domainIdHidden.setValue(String.valueOf(FiscalTree.getCurrentDomain()));
+		domainNameHidden.setValue(FiscalTree.getCurrentDomainName());
+		diskForm.submit();
+	}
+
+	@UiHandler("printButton")
+	void onPrintButtonClick(ClickEvent event) {
+		Window.alert(
+				  "Se va a proceder a la validaci\u00F3n en los servidores de la \n"
+				+ "Agencia Tributaria. En el caso de validaci\u00F3n correcta,la Agencia \n"
+				+ "Tributaria devolver\u00E1 un documento PDF borrador con la declarai\u00F3n\n\n"
+				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
+				+ "La petici\u00F3n se genera a partir de los datos guardados.");
+		diskForm.setAction(GWT.getHostPageBaseURL() +"/aon_gwt_fiscal/Model202Print");
+		modIdHidden.setValue( String.valueOf(mod202.getId()) );
+		domainIdHidden.setValue(String.valueOf(FiscalTree.getCurrentDomain()));
+		domainNameHidden.setValue(FiscalTree.getCurrentDomainName());
+		diskForm.submit();
+	}
+	
+	@UiHandler("period")
+	void onChangePeriod(ChangeEvent event) {
+		mod202.setPeriod( Period.values()[ period.getSelectedIndex() + Period.T1.ordinal() ] );
+		callback.changeLabel(mod202);
+	}
+	
+	@UiHandler("cnaeButton")
+	void onClickCnae(ClickEvent event) {
+		cnaePanel.onShow();
+	}
+	
 	
 }

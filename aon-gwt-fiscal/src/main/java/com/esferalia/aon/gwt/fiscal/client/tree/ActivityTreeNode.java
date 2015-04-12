@@ -25,7 +25,20 @@ public class ActivityTreeNode extends TreeNode<FiscalActivity> {
 		if (widget ==null) {
 			widget = new ActivityForm();
 		}
-		widget.select(this );
+		widget.select( this.getTreeObject() );
+		widget.setCallback(new TreeNodeCallback<FiscalActivity>() {
+
+			@Override
+			public void delete(FiscalActivity t) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void changeLabel(FiscalActivity fa) {
+				setLabel(fa);
+			}
+			
+		});
 		fiscalTree.toolbar.setVisibleCopyButton(false);
 		fiscalTree.toolbar.setVisibleDraftButton(false);
 		fiscalTree.toolbar.setVisiblePasteButton(false);
@@ -40,18 +53,23 @@ public class ActivityTreeNode extends TreeNode<FiscalActivity> {
 
 	@Override
 	public ActivityTreeNode render(HasTreeItems parent, FiscalTree fiscalTree, FiscalActivity fa) {
-    	InlineLabel label = new InlineLabel();
-    	label.setText((AonStringUtils.isBlank(fa.getEpigraph())?AonStringUtils.EMPTY:fa.getEpigraph() + " - ") 
-    			+ AonStringUtils.abbreviate(fa.getDescription(), 40));
-    	label.addStyleName(AON.AON_CSS.aonIconModule());
-    	label.addStyleName(AON.AON_CSS.aonTreeIconNode() );
-    	this.setWidget(label);
+		Label label = setLabel(fa);
     	this.setUserObject(fa);
     	parent.addItem(this);
     	linkContextMenu( label, fiscalTree);
 		return this;
 	}
 	
+	private Label setLabel(FiscalActivity fa) {
+    	InlineLabel label = new InlineLabel();
+    	label.setText((AonStringUtils.isBlank(fa.getEpigraph())?AonStringUtils.EMPTY:fa.getEpigraph() + " - ") 
+    			+ AonStringUtils.abbreviate(fa.getDescription(), 40));
+    	label.addStyleName(AON.AON_CSS.aonIconModule());
+    	label.addStyleName(AON.AON_CSS.aonTreeIconNode() );
+    	this.setWidget(label);
+		return label;
+	}
+
 	private void linkContextMenu(Label label, final FiscalTree fiscalPanel) {
         final PopupPanel popupPanel = new PopupPanel();
         popupPanel.hide();

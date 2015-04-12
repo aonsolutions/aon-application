@@ -2,9 +2,8 @@ package com.esferalia.aon.gwt.common.client.widget;
 
 import java.util.Arrays;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
-import com.esferalia.aon.gwt.common.client.css.AonResources;
-import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
 import com.esferalia.aon.occam.api.model.type.CNAE;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -39,10 +38,6 @@ public class CnaePanel extends CustomDialog {
 			return item.getCode();
 		}
 	};
-
-	
-	private final CommonMessages MSG = GWT.create(CommonMessages.class);
-	private final AonResources AON_RESOURCES = GWT.create(AonResources.class);
 	
 	private SelectionCallBack callback;
 
@@ -63,7 +58,7 @@ public class CnaePanel extends CustomDialog {
 		setModal(true);
 		setCaption("C.N.A.E.");
 
-		AON_RESOURCES.css().ensureInjected();
+		AON.AON_RESOURCES.css().ensureInjected();
 		CellTable.Resources tableStyle = GWT.create(AonCellTable.class);
 
 		table = new CellTable<CNAE>(1, tableStyle, CNAE_PROVIDES_KEY);
@@ -82,7 +77,7 @@ public class CnaePanel extends CustomDialog {
 			}
 		});
 		table.setSelectionModel(model);
-		table.setEmptyTableWidget(new HTML(MSG.noData()));
+		table.setEmptyTableWidget(new HTML(AON.MSG.noData()));
 
 		Widget ui = cnaePanelBinder.createAndBindUi(this);
 		setWidget(ui);
@@ -118,8 +113,8 @@ public class CnaePanel extends CustomDialog {
 				return cnae.getCode();
 			}
 		};
-		table.addColumn(codeColumn, MSG.code());
-		codeColumn.setCellStyleNames(AON_RESOURCES.css().aonTextCenter());
+		table.addColumn(codeColumn, AON.MSG.code());
+		codeColumn.setCellStyleNames(AON.AON_RESOURCES.css().aonTextCenter());
 		table.setColumnWidth(codeColumn, 80, Unit.PX);
 	}
 
@@ -130,8 +125,8 @@ public class CnaePanel extends CustomDialog {
 				return cnae.getDescription();
 			}
 		};
-		table.addColumn(titleColumn, MSG.description());
-		titleColumn.setCellStyleNames(AON_RESOURCES.css().aonTextLeft());
+		table.addColumn(titleColumn, AON.MSG.description());
+		titleColumn.setCellStyleNames(AON.AON_RESOURCES.css().aonTextLeft());
 		table.setColumnWidth(titleColumn, "auto");
 	}
 

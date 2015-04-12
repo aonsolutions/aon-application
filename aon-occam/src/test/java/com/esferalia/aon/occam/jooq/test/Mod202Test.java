@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.jooq.test;
 
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -33,10 +34,11 @@ public class Mod202Test {
 	
 	@Test
 	public void testFile() throws IOException {
-		Writer writer = new OutputStreamWriter( System.out );  
+		Writer writer = new OutputStreamWriter( new FileOutputStream( "/tmp/mod202.txt" ),"ISO-8859-15");  
 		List<Mod202> list = AON.getMod202s(DOMAIN_NAME, DOMAIN_ID);
 		for (Mod202 mod202 : list) {
-			Mod202Writer.fill(writer, mod202);
+			Mod202 m202 = AON.getMod202(DOMAIN_NAME, DOMAIN_ID, mod202.getId());
+			Mod202Writer.fill(writer, m202);
 		}
 		writer.flush();
 		writer.close();

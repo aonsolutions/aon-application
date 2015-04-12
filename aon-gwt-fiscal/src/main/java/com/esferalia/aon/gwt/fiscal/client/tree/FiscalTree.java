@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.client.tree.TreeNode.TreeNodeCallback;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.google.gwt.core.client.GWT;
@@ -49,7 +50,8 @@ public class FiscalTree extends MainEntryPoint {
 	static FiscalServiceAsync FISCAL_SERVICE;
 	
 	interface FiscalNodeWidget<T> {
-		void select( TreeNode<T> node);
+		void select( T t);
+		void setCallback( TreeNodeCallback<T> callback);
 	}
 	
 	interface FiscalTreeBinder extends UiBinder<Widget, FiscalTree> {

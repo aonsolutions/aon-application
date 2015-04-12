@@ -161,7 +161,7 @@ public enum Aeat2015Record1 implements Serializable,IMod202Record{
 	//	Tipo: Num Pos:124 Long: 1
 	//	Datos adicionales (3) - Cooperativa fiscalmente protegida u Otras entidades con posibilidad de aplicar dos tipos impositivos (ej. entidades ZEC)
 	,C20(
-			(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.X07),1))
+			(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.X07),1,0))
 	)
 	//	Datos adicionales (3) - Tipo de gravamen del Impuesto sobre Sociedades del ejercicio en curso
 	//	Cadena alfanumérica de 5 posiciones para permitir consignar dos tipos. Ejemplos: "00", "01", "25", "20/25
@@ -175,7 +175,7 @@ public enum Aeat2015Record1 implements Serializable,IMod202Record{
 	//	Tipo: Num Pos:130 Long: 1
 	//	Datos adicionales (3) - Importe neto de la cifra de negocios 
 	,C22(
-			(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.X09),1))
+			(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.X09),1 ,0))
 	)
 	//	Datos adicionales (3) - Entidades en las que al menos el 85% de ingresos del periodo impositivo(?)
 	//	X o blanco

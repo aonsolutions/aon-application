@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.fiscal.client.tree.EpigraphSelectionPanel.SelectionCallBack;
 import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree.FiscalNodeWidget;
+import com.esferalia.aon.gwt.fiscal.client.tree.TreeNode.TreeNodeCallback;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfo;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKey;
@@ -107,7 +108,13 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 	private static final ActivityFormBinder panelBinder = GWT
 			.create(ActivityFormBinder.class);
 	
-	TreeNode<FiscalActivity> node;
+	FiscalActivity fiscalActivity;
+	TreeNodeCallback<FiscalActivity> callback;
+	
+	@Override
+	public void setCallback(TreeNodeCallback<FiscalActivity> callback) {
+		this.callback = callback;
+	}
 	EpigraphSelectionPanel epigraphSelection; 
 	
 	private LinkedHashMap<Integer,LinkedHashMap<Integer,ActivityInput>> inputs 
@@ -155,18 +162,14 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 			
 			@Override
 			public void onSelect(Epigraph epigraph) {
-				if (node.getWidget() != null && node.getWidget() instanceof Label) {
-					Label label = (Label) node.getWidget();
-					label.setText(epigraph.getEpigraph() + " - " + AonStringUtils.abbreviate(epigraph.getDescription(), 40));
-				}
-				node.getTreeObject().setEpigraph( epigraph.getEpigraph());
-				node.getTreeObject().setDescription( epigraph.getDescription());
-				node.getTreeObject().setMaxPerson( epigraph.getLimPers() );
-				node.getTreeObject().setMaxImport( epigraph.getLimExceso());
-				node.getTreeObject().setVatPercent( epigraph.getPorcMin() );
-				
+				fiscalActivity.setEpigraph( epigraph.getEpigraph());
+				fiscalActivity.setDescription( epigraph.getDescription());
+				fiscalActivity.setMaxPerson( epigraph.getLimPers() );
+				fiscalActivity.setMaxImport( epigraph.getLimExceso());
+				fiscalActivity.setVatPercent( epigraph.getPorcMin() );
+				callback.changeLabel(fiscalActivity);
 				FiscalTree.FISCAL_SERVICE.getFiscalActivityFor(FiscalTree.getCurrentDomainName()
-						,epigraph,node.getTreeObject()
+						,epigraph,fiscalActivity
 						,new AsyncCallback<FiscalActivity>() {
 
 							@Override
@@ -192,11 +195,11 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 	}
 	
 	@Override
-	public void select(TreeNode<FiscalActivity> node) {
-		this.node = node;
-		if ( node.getTreeObject().getId() != null) {
+	public void select(FiscalActivity fa) {
+		fiscalActivity = fa;
+		if ( fiscalActivity.getId() != null) {
 			FiscalTree.FISCAL_SERVICE.getFiscalActivity(FiscalTree.getCurrentDomainName(), 
-					FiscalTree.getCurrentDomain(), node.getTreeObject().getId()
+					FiscalTree.getCurrentDomain(), fiscalActivity.getId()
 					,new AsyncCallback<FiscalActivity>() {
 
 						@Override
@@ -209,15 +212,15 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 						}
 			});
 		} else {
-			populate(node.getTreeObject());
-			if ( AonStringUtils.isBlank( node.getTreeObject().getEpigraph() )) {
+			populate(fiscalActivity);
+			if ( AonStringUtils.isBlank( fiscalActivity.getEpigraph() )) {
 				onEpigraphButtonClick(null);
 			}
 		}
 	}
 
-	private void populate(FiscalActivity fiscalActivity) {
-		node.setTreeObject( fiscalActivity );
+	private void populate(FiscalActivity fa) {
+		this.fiscalActivity = fa;
 		saveButton.setEnabled(isEnabled(fiscalActivity));
 		calculateButton.setEnabled(isEnabled(fiscalActivity));
 		year.setText(AonNumberUtils.toString(fiscalActivity.getYear()));
@@ -470,13 +473,13 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 		for (Integer type : inputs.keySet()) {
 			for (Integer key : inputs.get(type).keySet()) {
 				ActivityInput input = inputs.get(type).get(key);
-				node.getTreeObject().setValue(input.getInfoKeyType(),input.getInfoKey(),input.getValue());
+				fiscalActivity.setValue(input.getInfoKeyType(),input.getInfoKey(),input.getValue());
 			}
 		}
 	}
 	
 	private void populateTreeInputs(FiscalActivity fa) {
-		node.setTreeObject(fa);
+		this.fiscalActivity = fa;
 		for (Integer type : inputs.keySet()) {
 			for (Integer key : inputs.get(type).keySet()) {
 				ActivityInput input = inputs.get(type).get(key);
@@ -488,7 +491,7 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 	private void calculate() {
 		populateTreeObject();
 		FiscalTree.FISCAL_SERVICE.calculate(FiscalTree.getCurrentDomainName()
-				,node.getTreeObject()
+				,fiscalActivity
 				,new AsyncCallback<FiscalActivity>() {
 
 					@Override
@@ -514,7 +517,7 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 	void onSaveButtonClick(ClickEvent event) {
 		if (Window.confirm( AON.MSG.saveAction())) {
 			populateTreeObject();
-			FiscalTree.FISCAL_SERVICE.save(FiscalTree.getCurrentDomainName(), node.getTreeObject()
+			FiscalTree.FISCAL_SERVICE.save(FiscalTree.getCurrentDomainName(), fiscalActivity
 					,new AsyncCallback<FiscalActivity>() {
 	
 						@Override

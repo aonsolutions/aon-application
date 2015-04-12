@@ -14,7 +14,18 @@ public class Model131TreeNode extends TreeNode<Mod131> {
 		if (widget ==null) {
 			widget = new Model131Form();
 		}
-		widget.select(this );
+		widget.select(this.getTreeObject());
+		widget.setCallback(new TreeNodeCallback<Mod131>() {
+			
+			@Override
+			public void delete(Mod131 t) {
+			}
+
+			@Override
+			public void changeLabel(Mod131 t) {
+			}
+		});
+		
 		fiscalTree.toolbar.setVisibleCopyButton(false);
 		fiscalTree.toolbar.setVisibleDraftButton(false);
 		fiscalTree.toolbar.setVisiblePasteButton(false);

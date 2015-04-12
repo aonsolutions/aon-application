@@ -1448,6 +1448,37 @@ input:disabled + label{
     padding: 6px;
 }
 
+/* DialogBox */
+.aon-Selector .gwt-DialogBox {
+	background-color: white;
+	border: 1px solid #666;
+	z-index: 2;
+}
+
+.aon-Selector .gwt-DialogBox .Caption {
+	background: #d3d6dd url(gradient_bg_th.png) repeat-x bottom left;
+	font-weight: bold;
+	text-shadow: #fff 0 2px 2px;
+	cursor: default;
+	padding: 5px 10px;
+	border-bottom: 1px solid #999;
+	text-align: left;
+}
+
+.aon-Selector .gwt-DialogBox .dialogContent {
+	
+}
+
+.aon-Selector .gwt-DialogBox .gwt-Button {
+	margin: 10px;
+}
+
+.aon-Selector .gwt-PopupPanelGlass {
+	background-color: #000;
+	opacity: 0.3;
+	filter: literal("alpha(opacity=30)");
+}
+
 .aon-fiscal-model-table {
 	width: 100%;
 }
@@ -1469,7 +1500,7 @@ input:disabled + label{
     width: 70px;	
 }
 .aon-fiscal-model-data-table {
-	width: 90%;
+	width: 95%;
 	margin-left: auto;
 	margin-right: auto;
 	margin-bottom: 10px;

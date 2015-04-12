@@ -8,6 +8,11 @@ import com.google.gwt.user.client.ui.TreeItem;
 
 abstract class TreeNode<T> extends TreeItem implements OptionsToolbar.Listener {
 
+	interface TreeNodeCallback<T> {
+		void delete(T t);
+		void changeLabel(T t);
+	}
+
 	NewContextMenu newContextMenu;
 	
 	public void setNewContextMenu(NewContextMenu newContextMenu) {

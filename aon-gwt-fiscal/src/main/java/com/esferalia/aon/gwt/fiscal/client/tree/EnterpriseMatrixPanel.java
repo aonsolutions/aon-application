@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.client.tree;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree.FiscalNodeWidget;
+import com.esferalia.aon.gwt.fiscal.client.tree.TreeNode.TreeNodeCallback;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix.FiscalModelMatrixRow;
@@ -21,7 +23,7 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class EnterpriseMatrixPanel extends ResizeComposite {
+public class EnterpriseMatrixPanel extends ResizeComposite implements FiscalNodeWidget<Enterprise>{
 
 	interface EnterpriseFormBinder extends
 			UiBinder<Widget, EnterpriseMatrixPanel> {
@@ -30,6 +32,7 @@ public class EnterpriseMatrixPanel extends ResizeComposite {
 	private static final EnterpriseFormBinder panelBinder = GWT
 			.create(EnterpriseFormBinder.class);
 	
+	TreeNodeCallback<Enterprise> callback;
 	Enterprise enterprise;
 	
 	@UiField
@@ -48,9 +51,15 @@ public class EnterpriseMatrixPanel extends ResizeComposite {
 		year.setSelectedIndex(2);
 	}
 	
-	public void setEnterprise(Enterprise enterprise) {
+	@Override
+	public void select(Enterprise enterprise) {
 		this.enterprise = enterprise;
 		search();
+	}
+	
+	@Override
+	public void setCallback(TreeNodeCallback<Enterprise> callback) {
+		this.callback = callback;
 	}
 
 	private void search() {

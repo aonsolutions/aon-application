@@ -15,7 +15,18 @@ public class EnterpriseTreeNode extends TreeNode<Enterprise> {
 	@Override
 	public void select(FiscalTree fiscalTree) {
 		EnterpriseMatrixPanel widget = new EnterpriseMatrixPanel();
-		widget.setEnterprise(getTreeObject());
+		widget.select(getTreeObject());
+		widget.setCallback(new TreeNodeCallback<Enterprise>() {
+
+			@Override
+			public void delete(Enterprise t) {
+			}
+
+			@Override
+			public void changeLabel(Enterprise t) {
+			}
+			
+		});
 		fiscalTree.content.setWidget(widget);
 	}
 

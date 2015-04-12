@@ -3,6 +3,9 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.FsModelDetail.FS_MODEL_DETAIL;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.stream.Stream;
 
@@ -20,6 +23,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.CNAE;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -31,6 +35,8 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FiscalModelDAO {
 	
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("ddMMyyyy");
+
 	public static Mod131 calculateMod131(AONContext ctx, Mod131 mod131) {
 		return Aeat2013Mod131Calculator.calculate(ctx, mod131);
 	}
@@ -240,6 +246,7 @@ public class FiscalModelDAO {
 	}
 
 	private static void insertDetails(AONContext ctx, FiscalModel fm) {
+		// Excepciones.
 		for (FiscalModelDetail detail : fm.getMap().values() ) {
 			ctx.getDslContext().insertInto(FS_MODEL_DETAIL)
 				.set(FS_MODEL_DETAIL.DOMAIN, fm.getDomain())
@@ -333,15 +340,17 @@ public class FiscalModelDAO {
 			.where(FS_MODEL.ID.eq(id))
 			.fetchOne();
 		if (record != null) {
-			Mod202 fm = new Mod202(); 
-			populate(fm,record);
-			fillModelDetails(ctx,fm);
-			return fm;
+			Mod202 mod202 = new Mod202(); 
+			populate(mod202,record);
+			fillModelDetails(ctx,mod202);
+			onFillFiscalModel(mod202);
+			return mod202;
 		}
 		return null;
 	}
 	
 	public static Mod202 saveMod202(AONContext ctx, Mod202 mod202) {
+		ensureDetail(mod202);
 		FiscalModel fm = save(ctx, mod202);
 		return getMod202(ctx, fm.getId());
 	}
@@ -399,4 +408,54 @@ public class FiscalModelDAO {
 		return mod202;
 	}
 	
+	private static void onFillFiscalModel(Mod202 mod202) {
+		for (Mod202Key key : Mod202Key.values()) {
+			if (key == Mod202Key.P02) {
+				String c = mod202.getDescription(Mod202Key.P02);
+				Date initialDate = null;
+				if (AonStringUtils.isNotEmpty( c )) {
+					try {
+						initialDate = DATE_FORMAT.parse(c);
+					} catch (ParseException e) {
+					}
+				}
+				mod202.setInitialDate(initialDate);
+			} else if (key == Mod202Key.P03) {
+				String c = mod202.getDescription(Mod202Key.P03);
+				if (AonStringUtils.isNotEmpty( c )) {
+					CNAE cnae = CNAE.valueOfCode(c); 
+					mod202.setCnae(cnae==null?null:cnae.getCode());
+					mod202.setCnaeDescription(cnae==null?null:cnae.getDescription());
+				} else {
+					mod202.setCnae(null);
+				}
+			}
+		}
+	}
+	private static void ensureDetail(Mod202 mod202) {
+		for (Mod202Key key : Mod202Key.values()) {
+			if (key == Mod202Key.P02) {
+				if (mod202.getInitialDate() != null) {
+					try {
+						String date = DATE_FORMAT.format(mod202.getInitialDate());
+						mod202.putDescription(Mod202Key.P02,date);
+					} catch (NumberFormatException e) {
+						mod202.putAmount(Mod202Key.P02,0);
+					}
+				} else {
+					mod202.putAmount(Mod202Key.P02,0);
+				}
+			} else if (key == Mod202Key.P03) {
+				if (AonStringUtils.isNotEmpty( mod202.getCnae())) {
+					try {
+						mod202.putDescription(Mod202Key.P03, mod202.getCnae());
+					} catch (NumberFormatException e) {
+						mod202.putAmount(Mod202Key.P03,0);
+					}
+				} else {
+					mod202.putAmount(Mod202Key.P03,0);
+				}
+			}
+		}
+	}
 }

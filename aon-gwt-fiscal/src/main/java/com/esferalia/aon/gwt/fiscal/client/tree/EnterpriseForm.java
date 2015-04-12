@@ -6,6 +6,8 @@ import com.esferalia.aon.gwt.common.client.widget.FullDocument;
 import com.esferalia.aon.gwt.common.client.widget.MunicipalityListBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
 import com.esferalia.aon.gwt.common.client.widget.StreetTypeListBox;
+import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree.FiscalNodeWidget;
+import com.esferalia.aon.gwt.fiscal.client.tree.TreeNode.TreeNodeCallback;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -15,7 +17,7 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class EnterpriseForm extends ResizeComposite {
+public class EnterpriseForm extends ResizeComposite implements FiscalNodeWidget<Enterprise> {
 
 	interface EnterpriseFormBinder extends
 			UiBinder<Widget, EnterpriseForm> {
@@ -23,6 +25,9 @@ public class EnterpriseForm extends ResizeComposite {
 
 	private static final EnterpriseFormBinder panelBinder = GWT
 			.create(EnterpriseFormBinder.class);
+	
+	TreeNodeCallback<Enterprise> callback;
+	Enterprise enterprise;
 	
 	@UiField
 	TextBox name;
@@ -82,7 +87,9 @@ public class EnterpriseForm extends ResizeComposite {
 		
 	}
 
-	public void setEnterprise(Enterprise enterprise) {
+	@Override
+	public void select(Enterprise enterprise) {
+		this.enterprise = enterprise;
 		FiscalTree.COMMON_SERVICE.getEnterprise(FiscalTree.getCurrentDomainName(), 
 				FiscalTree.getCurrentDomain(), enterprise.getId()
 				,new AsyncCallback<Enterprise>() {
@@ -103,6 +110,11 @@ public class EnterpriseForm extends ResizeComposite {
 								.unableToShowData(caught.getMessage()));
 					}
 		});
+	}
+	
+	@Override
+	public void setCallback(TreeNodeCallback<Enterprise> callback) {
+		this.callback = callback;
 	}
 	
 	private void populate(Enterprise enterprise) {

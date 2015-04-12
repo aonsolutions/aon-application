@@ -87,7 +87,7 @@ public enum Aeat2015Record2 implements Serializable,IMod202Record{
 	//	Tipo: Num Pos:83 Long: 5
 	//	B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) -  Porcentaje [24]
 	,C11(
-			(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C24),17))
+			(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C24),5))
 	)
 	//	B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) -  Importe pago fraccionado [25]
 	//	15 enteros + 2 decimales
@@ -150,7 +150,7 @@ public enum Aeat2015Record2 implements Serializable,IMod202Record{
 	//	Tipo: Num Pos:224 Long: 5
 	//	B) Liquidación. Mod. 40.3 LIS - Volumen operaciones en Territorio Común (%) [29]
 	,C20(
-			(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C29),17))
+			(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C29),5))
 	)
 	//	B) Liquidación. Mod. 40.3 LIS - Pagos fraccionados de periodos anteriores en Territorio Común [30]
 	//	15 enteros + 2 decimales
