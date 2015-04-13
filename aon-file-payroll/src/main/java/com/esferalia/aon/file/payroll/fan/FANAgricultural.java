@@ -75,7 +75,7 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 	}
 	
 	@Override
-	public String getQuoteIndicator(List<ITransferObject> salaryDataList) {
+	public String getQuoteIndicator(List<ITransferObject> salaryDataList, Map<String, String> contractDataMap) {
 		return null;
 	}
 	

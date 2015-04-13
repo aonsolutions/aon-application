@@ -4,8 +4,10 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
@@ -28,10 +30,10 @@ public class FANGeneral implements Serializable, IFanFactory {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
-	public String getQuoteIndicator(List<ITransferObject> salaryDataList) {
+	public String getQuoteIndicator(List<ITransferObject> salaryDataList, Map<String, String> contractDataMap) {
 		ContractCode code = getContractCode(salaryDataList);
 		if(code!=null && (code.getValue().startsWith("2") || code.getValue().startsWith("3") || code.getValue().startsWith("5"))){
-			String weekHours = obtainWeekHours(salaryDataList);
+			String weekHours = obtainWeekHours(salaryDataList, contractDataMap);
 			if( StringUtils.isNotBlank(weekHours) ){
 				return "H";
 			}
@@ -58,7 +60,7 @@ public class FANGeneral implements Serializable, IFanFactory {
 	 * @param c
 	 * @return
 	 */
-	public Integer getContractDaysOrHours(Salary salary, List<ITransferObject> salaryDataList, Integer itDays, Date startDate, Date endDate) {
+	public Integer getContractDaysOrHours(Salary salary, List<ITransferObject> salaryDataList, Map<String, String> contractDataMap, Integer itDays, Date startDate, Date endDate) {
 		// TODO 
 		
 		Contract contract = salary.getContract();
@@ -80,8 +82,8 @@ public class FANGeneral implements Serializable, IFanFactory {
 				return 30;
 			}
 		} else {
-			String weekHours = obtainWeekHours(salaryDataList);
-			Double dayHours = (Double.parseDouble(weekHours)/7);
+			String weekHours = obtainWeekHours(salaryDataList, contractDataMap);
+			Double dayHours = (Double.parseDouble(NumberUtils.isNumber(weekHours)?weekHours:"0")/7);
 			
 			Calendar startCal = Calendar.getInstance();
 			startCal.setTime(startDate);
@@ -138,7 +140,7 @@ public class FANGeneral implements Serializable, IFanFactory {
 		return null;
 	}
 	
-	private String obtainWeekHours(List<ITransferObject> salaryDataList){
+	private String obtainWeekHours(List<ITransferObject> salaryDataList, Map<String, String> contractDataMap){
 		String o = null;
 		List<ITransferObject> list = salaryDataList;
 		for(ITransferObject to: list){
@@ -146,6 +148,9 @@ public class FANGeneral implements Serializable, IFanFactory {
 			if(sa.getName().equals("HORAS_SEMANA")){
 				o = sa.getExpression();
 			}
+		}
+		if(o==null || !NumberUtils.isNumber(o)){
+			return contractDataMap.get("HORAS_SEMANA");
 		}
 		return o;
 	}

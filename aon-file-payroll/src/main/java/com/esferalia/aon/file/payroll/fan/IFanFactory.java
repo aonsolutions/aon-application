@@ -2,6 +2,7 @@ package com.esferalia.aon.file.payroll.fan;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.code.aon.common.ITransferObject;
 import com.esferalia.aon.file.payroll.fan.data.DAT;
@@ -34,11 +35,11 @@ public interface IFanFactory {
 //	
 //	public void createEDTTtSegments(EnterpriseCCC ccc, EMP emp);
 
-	public String getQuoteIndicator(List<ITransferObject> salaryDataList);
+	public String getQuoteIndicator(List<ITransferObject> salaryDataList, Map<String, String> contractDataMap);
 	
 	public String getQuoteMode(List<ITransferObject> list);
 	
-	public Integer getContractDaysOrHours(Salary salary, List<ITransferObject> salaryDataList, Integer itDays, Date startDate, Date endDate);
+	public Integer getContractDaysOrHours(Salary salary, List<ITransferObject> salaryDataList, Map<String, String> contractDataMap, Integer itDays, Date startDate, Date endDate);
 	
 	// *********************************************
 	// TRABAJADOR

@@ -427,7 +427,7 @@ public class FANWriter implements Serializable {
 		dat.setIndicadoresPerfil(indicadorPerfil);
 		dat.setDiasHoras(diasHoras);
 		dat.setDiasAlta(getContractDischargeDays(contract));
-		dat.setIndicadorCotizacion(getQuoteIndicator(salaryDataList));
+		dat.setIndicadorCotizacion(getQuoteIndicator(contract, salaryDataList));
 		dat.setIndicadorVacaciones(getVacationIndicator(contract));
 		dat.setClaveJornadasColectivo(getCollectiveJournalHours(contract));
 		dat.setEspecificos(getSpecifics(contract));
@@ -569,7 +569,8 @@ public class FANWriter implements Serializable {
 			
 			ps = conn.prepareStatement(select);
 			ResultSet rs = ps.executeQuery();
-			if(rs.next()){
+			int days = 0;
+			while(rs.next()){
 				Calendar cal = Calendar.getInstance();
 				if(rs.getDate(1)!=null){
 					cal.setTime(rs.getDate(1));
@@ -589,11 +590,11 @@ public class FANWriter implements Serializable {
 				if(startDate.before(getStartDate())) startDate = getStartDate();
 				if(endDate == null || endDate.after(getEndDate())) endDate = getEndDate();
 				
-				int days = Integer.parseInt(String.valueOf(CommonUtil.getDaysBetweenDates(startDate, endDate, false)));
-				days = days>=0?days+1:0;
-				days = days>CommonUtil.daysInMonth(getStartDate())?CommonUtil.daysInMonth(getStartDate()):days;
-				return days;
+				days += Integer.parseInt(String.valueOf(CommonUtil.getDaysBetweenDates(startDate, endDate, false)));
 			}
+			days = days>=0?days+1:0;
+			days = days>CommonUtil.daysInMonth(getStartDate())?CommonUtil.daysInMonth(getStartDate()):days;
+			return days;
 		} catch (AonConnectionException e) {
 			// return null
 		} catch (SQLException e) {
@@ -1055,8 +1056,8 @@ public class FANWriter implements Serializable {
 	 * @param c
 	 * @return
 	 */
-	private String getQuoteIndicator(List<ITransferObject> salaryDataList) {
-		return fanFactory.getQuoteIndicator(salaryDataList);
+	private String getQuoteIndicator(Contract contract, List<ITransferObject> salaryDataList) {
+		return fanFactory.getQuoteIndicator(salaryDataList, SEPEUtils.getInstance().getContractDataMap(contract, false, true));
 	}
 	
 	/**
@@ -1111,10 +1112,10 @@ public class FANWriter implements Serializable {
 	 * @param c
 	 * @return
 	 */
-	private Integer getContractDaysOrHours(Contract contract, List<ITransferObject> list) {
+	private Integer getContractDaysOrHours(Contract contract, List<ITransferObject> salaryDataList) {
 		Salary salary = getSalary(contract, SalaryType.SALARY);
 		Integer itDays = getItDays(contract);
-		return fanFactory.getContractDaysOrHours(salary, list, itDays, getStartDate(), getEndDate());
+		return fanFactory.getContractDaysOrHours(salary, salaryDataList, SEPEUtils.getInstance().getContractDataMap(contract, false, true), itDays, getStartDate(), getEndDate());
 	}
 	
 	
