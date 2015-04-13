@@ -199,7 +199,7 @@ public enum Aeat2015Record2 implements Serializable,IMod202Record{
 	//	Tipo: An Pos:315 Long: 22
 	//	Información adicional  (5). Numero de Referencia de Sociedades (NRS)
 	,C27(
-			(writer,mod202) -> writer.append(AonFiscalFileUtils.text(mod202.getAmount(Mod202Key.A02),22))
+			(writer,mod202) -> writer.append(AonFiscalFileUtils.text(mod202.getDescription(Mod202Key.A02),22))
 	)
 	//	Información adicional  (5). Importe excluido por operaciones de quita o espera
 	//	15 enteros + 2 decimales

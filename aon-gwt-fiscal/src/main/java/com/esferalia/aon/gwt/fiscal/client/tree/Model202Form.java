@@ -1,15 +1,18 @@
 package com.esferalia.aon.gwt.fiscal.client.tree;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.LinkedHashMap;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
 import com.esferalia.aon.gwt.common.client.widget.CnaePanel;
+import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.IbanTextBox;
 import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree.FiscalNodeWidget;
 import com.esferalia.aon.gwt.fiscal.client.tree.TreeNode.TreeNodeCallback;
+import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.type.CNAE;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
@@ -19,9 +22,12 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -33,46 +39,52 @@ import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
-import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 
 public class Model202Form extends ResizeComposite implements FiscalNodeWidget<Mod202>{
 
+	static class CorrectionRow {
+		String label;
+		Mod202Key decrease;
+		Mod202Key increase;
+		private CorrectionRow(String label,Mod202Key increase, Mod202Key decrease) {
+			this.label = label; 
+			this.increase = increase; 
+			this.decrease = decrease; 
+		}
+	}
 	interface Model202FormBinder extends
 			UiBinder<Widget, Model202Form> {
 	}
 	private static Mod202Key[] additionalDataKeys = new Mod202Key[]{
-			 Mod202Key.X01,Mod202Key.X02,Mod202Key.X03,Mod202Key.X04,Mod202Key.X05
-			,Mod202Key.X06,Mod202Key.X07,Mod202Key.X08,Mod202Key.X09,Mod202Key.X10};  
-	private static LinkedHashMap<String, Mod202Key[]> KEYS = new LinkedHashMap<String, Mod202Key[]>();
-	static {
-//		KEYS.put(AON.MSG.accrual()
-//			, new Mod202Key[]{Mod202Key.P01,Mod202Key.P02,Mod202Key.P03});
-		KEYS.put(AON.MSG.liquidacion(), new Mod202Key[]{});
-		KEYS.put(AON.MSG.mod202Compute1(), new Mod202Key[]{Mod202Key.C01
-			,Mod202Key.C02,Mod202Key.C03});
-		KEYS.put(AON.MSG.mod202Compute1(), new Mod202Key[]{
-			 Mod202Key.C04,Mod202Key.C05,Mod202Key.C06,Mod202Key.C36
-			,Mod202Key.C37,Mod202Key.C07,Mod202Key.C08,Mod202Key.C38
-			,Mod202Key.C39,Mod202Key.C09,Mod202Key.C43,Mod202Key.C13
-			,Mod202Key.C44,Mod202Key.C14,Mod202Key.C45,Mod202Key.C46
-		});
-		KEYS.put(AON.MSG.mod202Compute2(), new Mod202Key[]{
-			 Mod202Key.C16,Mod202Key.C17,Mod202Key.C47,Mod202Key.C40
-			,Mod202Key.C48,Mod202Key.C49,Mod202Key.C18
-		});
-		KEYS.put(AON.MSG.mod202Compute3(), new Mod202Key[]{
-			 Mod202Key.C19,Mod202Key.C20,Mod202Key.C21,Mod202Key.C22 
-			,Mod202Key.C23,Mod202Key.C24,Mod202Key.C25,Mod202Key.C50 
-			,Mod202Key.C42,Mod202Key.C51,Mod202Key.C52,Mod202Key.C26
-			,Mod202Key.C27,Mod202Key.C28,Mod202Key.C29,Mod202Key.C30 
-			,Mod202Key.C31,Mod202Key.C32,Mod202Key.C33,Mod202Key.C34
-		});
-	}
+		Mod202Key.X01,Mod202Key.X02,Mod202Key.X03,Mod202Key.X04,Mod202Key.X05,
+		Mod202Key.X06,Mod202Key.X07,Mod202Key.X10,Mod202Key.X08,Mod202Key.X09,
+		Mod202Key.X00};
+	private static Mod202Key[] computeADataKeys = new Mod202Key[]{
+		Mod202Key.C01,Mod202Key.C02,Mod202Key.C03};
+	private static CorrectionRow[] correctionsKeys = new CorrectionRow[]{
+		new CorrectionRow(AON.MSG.mod202Correction1(),Mod202Key.C05,Mod202Key.C06),
+		new CorrectionRow(AON.MSG.mod202Correction2(),Mod202Key.C36,Mod202Key.C37),
+		new CorrectionRow(AON.MSG.mod202Correction3(),Mod202Key.C07,Mod202Key.C08),
+		new CorrectionRow(AON.MSG.mod202Correction4(),Mod202Key.C38,Mod202Key.C39)};
+	private static Mod202Key[] computeBDataKeys = new Mod202Key[]{
+		Mod202Key.C09,Mod202Key.C43,Mod202Key.C13,Mod202Key.C44,Mod202Key.C14
+	};
+	private static Mod202Key[] computeB1DataKeys = new Mod202Key[]{
+		Mod202Key.C16,Mod202Key.C17,Mod202Key.C47,Mod202Key.C40};
+	private static Mod202Key[] computeB2DataKeys = new Mod202Key[]{
+		Mod202Key.C50,Mod202Key.C42};
+	private static Mod202Key[] computeB21DataKeys = new Mod202Key[]{
+		Mod202Key.C26,Mod202Key.C27,Mod202Key.C28,Mod202Key.C29,Mod202Key.C30 
+		,Mod202Key.C31,Mod202Key.C32,Mod202Key.C33,Mod202Key.C34};
+
 	private EnumMap<Mod202Key, CheckBox> checks = new EnumMap<Mod202Key, CheckBox>(Mod202Key.class);
 	private EnumMap<Mod202Key, DoubleBox> inputs = new EnumMap<Mod202Key, DoubleBox>(Mod202Key.class);	
 
@@ -93,8 +105,8 @@ public class Model202Form extends ResizeComposite implements FiscalNodeWidget<Mo
 	Button calculateButton;
 	@UiField
 	Button generateFileButton;
-	@UiField
-	Button printButton;
+//	@UiField
+//	Button printButton;
 	
 	@UiField
 	TextBox document;
@@ -124,10 +136,14 @@ public class Model202Form extends ResizeComposite implements FiscalNodeWidget<Mo
 	DateBoxEx initialDate;
 	
 	@UiField
-	SimplePanel tablePanel;
+	FlowPanel tablePanel;
 	
 	@UiField
 	CnaePanel cnaePanel;
+	
+	TextBox typeX08; 
+	ListBox listBox;
+	ListBox calculationBox;
 	
 	@UiField
 	Panel formContainer;
@@ -136,7 +152,8 @@ public class Model202Form extends ResizeComposite implements FiscalNodeWidget<Mo
 	Hidden domainIdHidden;
 	Hidden domainNameHidden;
 	
-
+	private boolean changeDisplayStyleName;
+	private int changeDisplayMillis = 4000;
 
 	public Model202Form() {
 		Widget ui = panelBinder.createAndBindUi(this);
@@ -201,9 +218,9 @@ public class Model202Form extends ResizeComposite implements FiscalNodeWidget<Mo
 	}
 	
 	private void populate(Mod202 m202) {
+		changeDisplayStyleName = false;
 		this.mod202 = m202;
 		boolean nevv = (mod202.getId() == null);
-		
 		saveButton.setEnabled(isEnabled(mod202));
 		deleteButton.setEnabled(!nevv && isEnabled(mod202));
 		calculateButton.setEnabled(isEnabled(mod202));
@@ -211,8 +228,10 @@ public class Model202Form extends ResizeComposite implements FiscalNodeWidget<Mo
 		year.setText( Integer.toString( mod202.getYear() ));
 		period.setItemSelected(mod202.getPeriod().ordinal() - Period.T1.ordinal(),true);
 		
+		finishButton.setVisible(!mod202.isFinished());
+		reopenButton.setVisible(mod202.isFinished());
 		generateFileButton.setVisible(!nevv && mod202.isFinished());
-		printButton.setVisible(!nevv);
+//		printButton.setVisible(!nevv);
 		
 		document.setValue(mod202.getDocument());
 		document.setEnabled(false);
@@ -224,88 +243,422 @@ public class Model202Form extends ResizeComposite implements FiscalNodeWidget<Mo
 		status.setText(mod202.isFinished()?AON.MSG.finished():AON.MSG.pending() );
 		status.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
 		status.addStyleName(mod202.isFinished()?AON.AON_CSS.aonIconLock():AON.AON_CSS.aonIconUnlock()) ;
-		paintTable(mod202);
+		
+		this.cnae.setValue( mod202.getCnae() );
+		CNAE cnae = CNAE.valueOfCode(mod202.getCnae());
+		this.cnae.setEnabled(isEnabled(mod202));
+		this.cnaeDescription.setText( cnae==null?null:cnae.getDescription() );
+		
+		this.initialDate.setValue(mod202.getInitialDate());
+		this.initialDate.setEnabled(isEnabled(mod202));
+		
+		paintAdditionData();
+		paintComputeATable();
+		paintComputeBTable();
+		paintComputeB2Table();
+		enableByCalculationMode();
 	}
-	
 
-	private void paintTable(final Mod202 mod202) {
+	private void enableByCalculationMode() {
+		int i = calculationBox.getSelectedIndex();
+		if (i == 0 ) {
+			for (Mod202Key key : Mod202Key.MOD_B_KEYS) {
+				inputs.get(key).setEnabled(false);	
+			}
+			for (Mod202Key key : Mod202Key.MOD_B1_KEYS) {
+				inputs.get(key).setEnabled(false);
+			}
+			for (Mod202Key key : Mod202Key.MOD_B2_KEYS) {
+				inputs.get(key).setEnabled(false);
+			}
+		}
+
+		if (i == 1) {
+			for (Mod202Key key : Mod202Key.MOD_A_KEYS) {
+				inputs.get(key).setEnabled(false);
+			}
+			for (Mod202Key key : Mod202Key.MOD_B2_KEYS) {
+				inputs.get(key).setEnabled(false);
+			}
+		}
+		if (i == 2) {
+			for (Mod202Key key : Mod202Key.MOD_A_KEYS) {
+				inputs.get(key).setEnabled(false);
+			}
+			for (Mod202Key key : Mod202Key.MOD_B1_KEYS) {
+				inputs.get(key).setEnabled(false);
+			}
+		}
+	}
+
+	private void paintAdditionData() {
 		FlexTable table = new FlexTable();
 		table.setStyleName(AON.AON_CSS.aonFiscalModelDataTable());
 		table.setCellSpacing(0);
 		int row = 0;
-		row = paintAdditionData(row,table);
-		for (String label: KEYS.keySet()) {
-			row++;
-			table.setWidget(row, 0, new Label( label ));
-			table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableTitle());
-			table.getFlexCellFormatter().setColSpan(row, 0, 4);
-			for (Mod202Key key : KEYS.get(label)) {
-				row++;
-				table.setWidget(row, 0, new Label( key.getDescription()));
-				table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableDesc());
-				table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
-				table.getFlexCellFormatter().setColSpan(row, 0, 3);
-
-				FlowPanel p = new FlowPanel();
-				p.setStyleName(AON.AON_CSS.aonNowrap());
-				InlineLabel l = new InlineLabel( key.getBox() );
-				l.setStyleName(AON.AON_CSS.aonFiscalModelDataTableBox());
-				p.add(l);
-				DoubleBox doubleBox = new DoubleBox();
-				doubleBox.setValue(mod202.getAmount(key));
-				doubleBox.setEnabled(isEnabled(key));
-				p.add(doubleBox);
-				inputs.put(key, doubleBox);
-				doubleBox.addChangeHandler(new ChangeHandler() {
-					@Override
-					public void onChange(ChangeEvent event) {
-						calculate();
-					}
-				});
-				table.setWidget(row, 1, p );
-				table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonFiscalModelDataTableData());
-			}
-		}
-		tablePanel.setWidget(table);
-	}
-
-	private int paintAdditionData(int row, FlexTable table) {
 		table.setWidget(row, 0, new Label( AON.MSG.additionalData() ));
 		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableTitle());
 		table.getFlexCellFormatter().setColSpan(row, 0, 4);
-		int col = 2;
 		for (Mod202Key key : additionalDataKeys) {
-			if (col == 2) {
-				col = 0;		
-				row++;
+			row++;
+			if (key == Mod202Key.X08) {
+				FlowPanel p = new FlowPanel();
+				p.setStyleName(AON.AON_CSS.aonNowrap());
+				InlineLabel l = new InlineLabel( key.getDescription() );
+				p.add(l);
+				final TextBox typeX08 = new TextBox();
+				this.typeX08 = typeX08;
+				typeX08.setVisibleLength(6);
+				typeX08.setValue(mod202.getDescription(Mod202Key.X08));
+				typeX08.setEnabled(isEnabled(key));
+				typeX08.setStyleName(AON.AON_CSS.aonInputText());
+				typeX08.addStyleName(AON.AON_CSS.aonMarginLeft());
+				p.add(typeX08);
+				typeX08.addChangeHandler(new ChangeHandler() {
+					@Override
+					public void onChange(ChangeEvent event) {
+						mod202.putDescription(Mod202Key.X08,typeX08.getValue());
+					}
+				});
+				table.setWidget(row, 0, p);
+			} else if (key == Mod202Key.X09) {
+				FlowPanel p = new FlowPanel();
+				InlineLabel l = new InlineLabel( key.getDescription() );
+				p.add(l);
+				p.setStyleName(AON.AON_CSS.aonNowrap());
+				final ListBox listBox = new ListBox();
+				this.listBox = listBox;
+				listBox.addItem("No Consta", "0");
+				listBox.addItem(">= 10 Millones y < 20 Millones", "1");
+				listBox.addItem(">= 20 Millones y < 60 Millones", "2");
+				listBox.addItem(">= 60 Millones", "3");
+				listBox.setSelectedIndex((int) mod202.getAmount(Mod202Key.X09));
+				listBox.setEnabled(isEnabled(key));
+				listBox.setStyleName(AON.AON_CSS.aonInputText());
+				listBox.addStyleName(AON.AON_CSS.aonMarginLeft());
+				p.add(listBox);
+				listBox.addChangeHandler(new ChangeHandler() {
+					@Override
+					public void onChange(ChangeEvent event) {
+						mod202.putAmount(Mod202Key.X09,listBox.getSelectedIndex());
+					}
+				});
+				table.setWidget(row, 0, p);
+			} else if (key == Mod202Key.X00) {
+				FlowPanel p = new FlowPanel();
+				InlineLabel l = new InlineLabel( key.getDescription() );
+				p.add(l);
+				p.setStyleName(AON.AON_CSS.aonNowrap());
+				final ListBox calcBox = new ListBox();
+				this.calculationBox = calcBox;
+				calcBox.addItem(AON.MSG.calculation0(), "0");
+				calcBox.addItem(AON.MSG.calculation1(), "1");
+				calcBox.addItem(AON.MSG.calculation2(), "2");
+				calcBox.setSelectedIndex((int) mod202.getAmount(Mod202Key.X00));
+				calcBox.setEnabled(isEnabled(key));
+				calcBox.setStyleName(AON.AON_CSS.aonInputText());
+				calcBox.addStyleName(AON.AON_CSS.aonMarginLeft());
+				p.add(calcBox);
+				calcBox.addChangeHandler(new ChangeHandler() {
+					@Override
+					public void onChange(ChangeEvent event) {
+						mod202.putAmount(Mod202Key.X00,calcBox.getSelectedIndex());
+						calculate();
+					}
+				});
+				table.setWidget(row, 0, p);
+			} else {
+				CheckBox checkBox = new CheckBox(key.getDescription());
+				checkBox.setValue(mod202.getAmount(key)==1);
+				checkBox.setEnabled(isEnabled(key));
+				checkBox.addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						calculate();
+					}
+				});
+				checks.put(key, checkBox);
+				table.setWidget(row, 0, checkBox);
 			}
-			CheckBox checkBox = new CheckBox(key.getDescription());
-			checkBox.setValue(mod202.getAmount(key)==1);
-			checkBox.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					calculate();
-				}
-			});
-			checks.put(key, checkBox);
-			table.setWidget(row, col, checkBox);
-			table.getFlexCellFormatter().setStyleName(row, col, AON.AON_CSS.aonFiscalModelDataTableDesc());
-			table.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonPaddingLeft());
-			table.getFlexCellFormatter().setColSpan(row, col, 2);
-			col++;
+			table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableDesc());
+			table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
 		}
-		return row;
+		tablePanel.add(table);
 	}
+
+	private void paintComputeATable() {
+		FlexTable table = new FlexTable();
+		table.setStyleName(AON.AON_CSS.aonFiscalModelDataTable());
+		table.setCellSpacing(0);
+		int row = 0;
+		table.setWidget(row, 0, new Label( AON.MSG.liquidacion() ));
+		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableTitle());
+		table.getFlexCellFormatter().setColSpan(row, 0, 4);
+		row++;
+		table.setWidget(row, 0, new Label( AON.MSG.mod202Compute1() ));
+		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableTitle());
+		table.getFlexCellFormatter().setColSpan(row, 0, 4);
+		for (Mod202Key key : computeADataKeys) {
+			row++;
+			table.setWidget(row, 0, new Label( key.getDescription()));
+			table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableDesc());
+			table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
+			table.getFlexCellFormatter().setColSpan(row, 0, 3);
+			FlowPanel p = getInputPanel(key);
+			table.setWidget(row, 1, p );
+			table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonFiscalModelDataTableData());
+		}
+		tablePanel.add(table);
+	}
+
+	private void paintComputeBTable() {
+		FlexTable table = new FlexTable();
+		table.setStyleName(AON.AON_CSS.aonFiscalModelDataTable());
+		table.setCellSpacing(0);
+		int row = 0;
+		table.setWidget(row, 0, new Label( AON.MSG.mod202Compute2() ));
+		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableTitle());
+		table.getFlexCellFormatter().setColSpan(row, 0, 3);
+		row++;
+		table.setWidget(row, 0, new Label( Mod202Key.C04.getDescription()));
+		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableDesc());
+		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
+		table.getFlexCellFormatter().setColSpan(row, 0, 3);
+		FlowPanel p = getInputPanel(Mod202Key.C04);
+		table.setWidget(row, 1, p );
+		table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonFiscalModelDataTableData());
+		table.getFlexCellFormatter().setColSpan(row, 0, 2);
+		row++;
+		table.setWidget(row, 0, new Label( AON.MSG.mod202Compute21() ));
+		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableTitle());
+		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonWidthAuto());
+		table.setWidget(row, 1, new Label( AON.MSG.increase() ));
+		table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonFiscalModelDataTableTitle());
+		table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonWidth190());
+		table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextCenter());
+		table.setWidget(row, 2, new Label( AON.MSG.decrease()));
+		table.getFlexCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonFiscalModelDataTableTitle());
+		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonWidth190());
+		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonTextCenter());
+		for (CorrectionRow cr : correctionsKeys) {
+			row++;
+			table.setWidget(row, 0, new Label( cr.label));
+			table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableDesc());
+			table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
+			if (cr.increase == Mod202Key.C36) {
+				table.setWidget(row, 1, new Label(""));	
+			} else {
+				table.setWidget(row, 1, getInputPanel(cr.increase) );
+				table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonFiscalModelDataTableData());
+			}
+			table.setWidget(row, 2, getInputPanel(cr.decrease));
+			table.getFlexCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonFiscalModelDataTableData());
+		}
+		for (Mod202Key key : computeBDataKeys) {
+			row++;
+			table.setWidget(row, 0, new Label( key.getDescription()));
+			table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableDesc());
+			table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
+			table.setWidget(row, 1, getInputPanel(key));
+			table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonFiscalModelDataTableData());
+			table.getFlexCellFormatter().setColSpan(row, 1, 2);
+		}
+		row++;
+		table.setWidget(row, 0, new Label( "" ));
+		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableTitle());
+		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonWidthAuto());
+		table.setWidget(row, 1, new Label( AON.MSG.increase() ));
+		table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonFiscalModelDataTableTitle());
+		table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonWidth190());
+		table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextCenter());
+		table.setWidget(row, 2, new Label( AON.MSG.decrease()));
+		table.getFlexCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonFiscalModelDataTableTitle());
+		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonWidth190());
+		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonTextCenter());
+		row++;
+		table.setWidget(row, 0, new Label( AON.MSG.mod202Correction5() ));
+		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableDesc());
+		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
+		table.setWidget(row, 1, getInputPanel(Mod202Key.C45) );
+		table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonFiscalModelDataTableData());
+		table.setWidget(row, 2, getInputPanel(Mod202Key.C46));
+		table.getFlexCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonFiscalModelDataTableData());
+		row++;
+		table.setWidget(row, 0, new Label( AON.MSG.mod202Compute3() ));
+		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableTitle());
+		table.getFlexCellFormatter().setColSpan(row, 0, 3);
+		for (Mod202Key key : computeB1DataKeys) {
+			row++;
+			table.setWidget(row, 0, new Label( key.getDescription()));
+			table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableDesc());
+			table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
+			table.setWidget(row, 1, getInputPanel(key));
+			table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonFiscalModelDataTableData());
+			table.getFlexCellFormatter().setColSpan(row, 1, 2);
+		}
+
+		row++;
+		table.setWidget(row, 0, new Label( "" ));
+		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableTitle());
+		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonWidthAuto());
+		table.setWidget(row, 1, new Label( AON.MSG.increase() ));
+		table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonFiscalModelDataTableTitle());
+		table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonWidth190());
+		table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextCenter());
+		table.setWidget(row, 2, new Label( AON.MSG.decrease()));
+		table.getFlexCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonFiscalModelDataTableTitle());
+		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonWidth190());
+		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonTextCenter());
+		row++;
+		table.setWidget(row, 0, new Label( AON.MSG.mod202Correction6() ));
+		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableDesc());
+		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
+		table.setWidget(row, 1, getInputPanel(Mod202Key.C48) );
+		table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonFiscalModelDataTableData());
+		table.setWidget(row, 2, getInputPanel(Mod202Key.C49));
+		table.getFlexCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonFiscalModelDataTableData());
+		row++;
+		table.setWidget(row, 0, new Label( Mod202Key.C18.getDescription()));
+		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableDesc());
+		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
+		table.setWidget(row, 1, getInputPanel(Mod202Key.C18));
+		table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonFiscalModelDataTableData());
+		table.getFlexCellFormatter().setColSpan(row, 1, 2);
+		tablePanel.add(table);
+	}
+	
+	private void paintComputeB2Table() {
+		FlexTable table = new FlexTable();
+		table.setStyleName(AON.AON_CSS.aonFiscalModelDataTable());
+		table.setCellSpacing(0);
+		int row = 0;
+		table.setWidget(row, 0, new Label( AON.MSG.mod202Compute4() ));
+		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableTitle());
+		table.getFlexCellFormatter().setColSpan(row, 0, 5);
+		
+		row++;
+		table.setWidget(row, 0, new Label( Mod202Key.C19.getDescription()));
+		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableDesc());
+		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
+		table.setWidget(row, 1, getInputPanel(Mod202Key.C19));
+		table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonFiscalModelDataTableData());
+		table.getFlexCellFormatter().setColSpan(row, 2, 2);
+		table.setWidget(row, 3, new Label( Mod202Key.C22.getDescription()));
+		table.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonPaddingLeft());
+
+		row++;
+		table.setWidget(row, 0, new Label( Mod202Key.C20.getDescription()));
+		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableDesc());
+		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
+		table.setWidget(row, 1, getInputPanel(Mod202Key.C20));
+		table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonFiscalModelDataTableData());
+		table.setWidget(row, 2, new Label( Mod202Key.C21.getDescription()));
+		table.getFlexCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonFiscalModelDataTableDesc());
+		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonPaddingLeft());
+		table.setWidget(row, 3, getInputPanel(Mod202Key.C21));
+		table.getFlexCellFormatter().setStyleName(row, 3, AON.AON_CSS.aonFiscalModelDataTableData());
+		table.setWidget(row, 4, getInputPanel(Mod202Key.C22));
+		table.getFlexCellFormatter().setStyleName(row, 4, AON.AON_CSS.aonFiscalModelDataTableData());
+		
+		row++;
+		table.setWidget(row, 0, new Label( Mod202Key.C23.getDescription()));
+		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableDesc());
+		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
+		table.setWidget(row, 1, getInputPanel(Mod202Key.C23));
+		table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonFiscalModelDataTableData());
+		table.setWidget(row, 2, new Label( Mod202Key.C24.getDescription()));
+		table.getFlexCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonFiscalModelDataTableDesc());
+		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonPaddingLeft());
+		table.setWidget(row, 3, getInputPanel(Mod202Key.C24));
+		table.getFlexCellFormatter().setStyleName(row, 3, AON.AON_CSS.aonFiscalModelDataTableData());
+		table.setWidget(row, 4, getInputPanel(Mod202Key.C25));
+		table.getFlexCellFormatter().setStyleName(row, 4, AON.AON_CSS.aonFiscalModelDataTableData());
+		
+		for (Mod202Key key : computeB2DataKeys) {
+			row++;
+			table.setWidget(row, 0, new Label( key.getDescription()));
+			table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableDesc());
+			table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
+			table.getFlexCellFormatter().setColSpan(row, 0, 4);
+			table.setWidget(row, 1, getInputPanel(key));
+			table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonFiscalModelDataTableData());
+		}
+		row++;
+		table.setWidget(row, 0, new Label( "" ));
+		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableTitle());
+		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonWidthAuto());
+		table.getFlexCellFormatter().setColSpan(row, 0, 3);
+		table.setWidget(row, 1, new Label( AON.MSG.increase() ));
+		table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonFiscalModelDataTableTitle());
+		table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonWidth190());
+		table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextCenter());
+		table.setWidget(row, 2, new Label( AON.MSG.decrease()));
+		table.getFlexCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonFiscalModelDataTableTitle());
+		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonWidth190());
+		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonTextCenter());
+		row++;
+		table.setWidget(row, 0, new Label( AON.MSG.mod202Correction6() ));
+		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableDesc());
+		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
+		table.getFlexCellFormatter().setColSpan(row, 0, 3);
+		table.setWidget(row, 1, getInputPanel(Mod202Key.C51) );
+		table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonFiscalModelDataTableData());
+		table.setWidget(row, 2, getInputPanel(Mod202Key.C52));
+		table.getFlexCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonFiscalModelDataTableData());
+		for (Mod202Key key : computeB21DataKeys) {
+			row++;
+			table.setWidget(row, 0, new Label( key.getDescription()));
+			table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableDesc());
+			table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
+			table.getFlexCellFormatter().setColSpan(row, 0, 4);
+			table.setWidget(row, 1, getInputPanel(key));
+			table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonFiscalModelDataTableData());
+		}
+		tablePanel.add(table);
+	}
+	
+
+	private FlowPanel getInputPanel(Mod202Key key) {
+		FlowPanel p = new FlowPanel();
+		p.setStyleName(AON.AON_CSS.aonNowrap());
+		InlineLabel l = new InlineLabel( key.getBox() );
+		l.setStyleName(AON.AON_CSS.aonFiscalModelDataTableBox());
+		p.add(l);
+		DoubleBox doubleBox = new DoubleBox();
+		doubleBox.setValue(mod202.getAmount(key));
+		p.add(doubleBox);
+		inputs.put(key, doubleBox);
+		doubleBox.setReadOnly( 
+			key == Mod202Key.C03 || key == Mod202Key.C38
+		 || key == Mod202Key.C39 || key == Mod202Key.C13
+		 || key == Mod202Key.C16 || key == Mod202Key.C17
+		 || key == Mod202Key.C18 || key == Mod202Key.C19 
+		 || key == Mod202Key.C21 || key == Mod202Key.C22 
+		 || key == Mod202Key.C23 || key == Mod202Key.C24 
+		 || key == Mod202Key.C25 || key == Mod202Key.C26 
+		 || key == Mod202Key.C32 || key == Mod202Key.C33 
+		 || key == Mod202Key.C34
+				);
+		doubleBox.setEnabled(isEnabled(key));
+		doubleBox.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				calculate();
+			}
+		});
+		return p;
+	}
+
 
 	private boolean isEnabled(Mod202Key key) {
 		if (mod202.isFinished()) {
 			return false;	
-		} 
+		}
 		return key.isEnabled();
 	}
 
 	private boolean isEnabled(Mod202 mod202) {
-		return ( mod202.getYear() >= 2015 );
+		return ( !mod202.isFinished() && mod202.getYear() >= 2015 );
 	}
 
 
@@ -324,14 +677,16 @@ public class Model202Form extends ResizeComposite implements FiscalNodeWidget<Mo
 
 					@Override
 					public void onSuccess(Mod202 result) {
+						changeDisplayStyleName = true;
 						receiveMod202(result);
+						changeDisplayStyleName = false;
 					}
 					@Override
 					public void onFailure(Throwable caught) {
+						changeDisplayStyleName = false;
 						PopupPanel box = DialogMessages.alertErrorWidget(caught.getMessage());
 						box.center();
 						box.show();
-						
 					}
 
 		});
@@ -349,44 +704,129 @@ public class Model202Form extends ResizeComposite implements FiscalNodeWidget<Mo
 			mod202.putAmount(key, inputs.get(key).getValue());
 		}
 	}
-	
+
+	private boolean shouldDisplayChange(Double oldText,Double newText) {
+		return changeDisplayStyleName  
+				&& changeDisplayMillis != 0 
+				&& oldText != newText
+				&& (oldText == null || !oldText.equals(newText));
+	}
+
 	private void receiveMod202(Mod202 result) {
 		this.mod202 = result;
 		
+		boolean nevv = (mod202.getId() == null);
+		saveButton.setEnabled(isEnabled(mod202));
+		deleteButton.setEnabled(!nevv && isEnabled(mod202));
+		calculateButton.setEnabled(isEnabled(mod202));
+		finishButton.setVisible(!mod202.isFinished());
+		reopenButton.setVisible(mod202.isFinished());
+		generateFileButton.setVisible(!nevv && mod202.isFinished());
+//		printButton.setVisible(!nevv); 
+
 		this.cnae.setValue( mod202.getCnae() );
-		CNAE cnae = CNAE.valueOfCode(mod202.getCnae());
-		this.cnaeDescription.setText( cnae==null?null:cnae.getDescription() );
+		CNAE cn = CNAE.valueOfCode(mod202.getCnae());
+		this.cnaeDescription.setText( cn==null?null:cn.getDescription() );
 		this.initialDate.setValue(mod202.getInitialDate());
 		
 		for (Mod202Key key : checks.keySet()) {
 			checks.get(key).setValue(result.getAmount(key)==1);
+			checks.get(key).setEnabled(isEnabled(key));
 		}
-		for (Mod202Key key : inputs.keySet()) {
-			inputs.get(key).setValue(result.getAmount(key));
+		for (final Mod202Key key : inputs.keySet()) {
+			Double oldValue = inputs.get(key).getValue();
+			Double newValue = result.getAmount(key);
+			inputs.get(key).setValue(newValue);
+			if (shouldDisplayChange(oldValue, newValue)) {
+				inputs.get(key).addStyleName(AON.AON_CSS.aonValueChanged());
+				if (changeDisplayMillis > 0)
+					new Timer() {
+						@Override
+						public void run() {
+							inputs.get(key).removeStyleName(AON.AON_CSS.aonValueChanged());
+						}
+					}.schedule(changeDisplayMillis);
+			}
+			inputs.get(key).setEnabled(isEnabled(key));
 		}
 		period.setItemSelected(mod202.getPeriod().ordinal() - Period.T1.ordinal(),true);
-		boolean nevv = (mod202.getId() == null);
-		finishButton.setEnabled(!mod202.isFinished());
-		reopenButton.setEnabled(mod202.isFinished());
-		generateFileButton.setEnabled(!nevv && mod202.isFinished());
-		printButton.setEnabled(!nevv); 
-				
+		
 		status.setText(mod202.isFinished()?AON.MSG.finished():AON.MSG.pending() );
 		status.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
 		status.addStyleName(mod202.isFinished()?AON.AON_CSS.aonIconLock():AON.AON_CSS.aonIconUnlock()) ;
 		
-		for (Mod202Key key : inputs.keySet()) {
-			inputs.get(key).setEnabled(isEnabled(key));
-		}
-		
+		enableByCalculationMode();		
+		typeX08.setEnabled(isEnabled(mod202)); 
+		listBox.setEnabled(isEnabled(mod202));
+		calculationBox.setEnabled(isEnabled(mod202));
+		cnae.setEnabled(isEnabled(mod202));
+		initialDate.setEnabled(isEnabled(mod202));
 	}
 	
 	@UiHandler("finishButton")
 	void onFinishButtonClick(ClickEvent event) {
 		if (Window.confirm( AON.MSG.finish() )) {
-			prepareForSend();
-			mod202.setFinished(true);
-			save();
+			if ( mod202.getResult() <= 0 ) {
+				mod202.putDescription(Mod202Key.P01, "N");
+			} 
+			final CustomDialog detailDialog = new CustomDialog();
+			detailDialog.setVisible(false);
+			detailDialog.setAnimationEnabled(true);
+			detailDialog.setGlassEnabled(true);
+			detailDialog.setModal(true);
+			detailDialog.setCaption( AON.MSG.finish() );
+			FlexTable table = new FlexTable();
+			table.setStyleName(AON.AON_CSS.aonPanelGrid());
+			table.addStyleName(AON.AON_CSS.aonWidthAll());
+			table.addStyleName(AON.AON_CSS.aonMarginTop());
+			detailDialog.add( table );
+			
+			final IbanTextBox iban = new IbanTextBox(getSuggestOracle());
+			iban.setValue( mod202.getIban() );
+			iban.addSelectionHandler( new SelectionHandler<Suggestion>() {
+				@Override
+				public void onSelection(SelectionEvent<Suggestion> event) {
+					Suggestion suggestion = event.getSelectedItem();
+					iban.setValue(suggestion.getReplacementString());
+				}
+			});
+			table.setWidget(0, 0, new Label(AON.MSG.iban()));
+			table.getFlexCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridOdd());
+			table.getFlexCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonWidthAuto());
+			table.setWidget(0, 1, iban);
+			table.getFlexCellFormatter().setStyleName(0,1, AON.AON_CSS.aonPanelGridEven());
+			
+			FlowPanel buttons = new FlowPanel();
+			buttons.setStyleName(AON.AON_CSS.aonWidthAll()); 
+			buttons.addStyleName(AON.AON_CSS.aonTextCenter());
+			Button accept = new Button();
+			accept.setText(AON.MSG.accept());
+			accept.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					detailDialog.hide();
+					prepareForSend();
+					mod202.setFinished(true);
+					mod202.putDescription(Mod202Key.P01, "U");
+					mod202.setIban( iban.getValue() );
+					save();
+				}
+			});
+			buttons.add(accept);
+			Button cancel = new Button();
+			cancel.addStyleName(AON.AON_CSS.aonMarginLeft());
+			cancel.setText(AON.MSG.cancelAction());
+			cancel.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					detailDialog.hide();
+				}
+			});
+			buttons.add(cancel);
+			table.setWidget(1, 0, buttons);
+			table.getFlexCellFormatter().setColSpan(1, 0, 2);
+			detailDialog.center();
+			detailDialog.show();
 		}
 	}
 
@@ -462,25 +902,30 @@ public class Model202Form extends ResizeComposite implements FiscalNodeWidget<Mo
 		diskForm.submit();
 	}
 
-	@UiHandler("printButton")
-	void onPrintButtonClick(ClickEvent event) {
-		Window.alert(
-				  "Se va a proceder a la validaci\u00F3n en los servidores de la \n"
-				+ "Agencia Tributaria. En el caso de validaci\u00F3n correcta,la Agencia \n"
-				+ "Tributaria devolver\u00E1 un documento PDF borrador con la declarai\u00F3n\n\n"
-				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
-				+ "La petici\u00F3n se genera a partir de los datos guardados.");
-		diskForm.setAction(GWT.getHostPageBaseURL() +"/aon_gwt_fiscal/Model202Print");
-		modIdHidden.setValue( String.valueOf(mod202.getId()) );
-		domainIdHidden.setValue(String.valueOf(FiscalTree.getCurrentDomain()));
-		domainNameHidden.setValue(FiscalTree.getCurrentDomainName());
-		diskForm.submit();
-	}
+//	@UiHandler("printButton")
+//	void onPrintButtonClick(ClickEvent event) {
+//		Window.alert(
+//				  "Se va a proceder a la validaci\u00F3n en los servidores de la \n"
+//				+ "Agencia Tributaria. En el caso de validaci\u00F3n correcta,la Agencia \n"
+//				+ "Tributaria devolver\u00E1 un documento PDF borrador con la declarai\u00F3n\n\n"
+//				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
+//				+ "La petici\u00F3n se genera a partir de los datos guardados.");
+//		diskForm.setAction(GWT.getHostPageBaseURL() +"/aon_gwt_fiscal/Model202Print");
+//		modIdHidden.setValue( String.valueOf(mod202.getId()) );
+//		domainIdHidden.setValue(String.valueOf(FiscalTree.getCurrentDomain()));
+//		domainNameHidden.setValue(FiscalTree.getCurrentDomainName());
+//		diskForm.submit();
+//	}
 	
 	@UiHandler("period")
 	void onChangePeriod(ChangeEvent event) {
 		mod202.setPeriod( Period.values()[ period.getSelectedIndex() + Period.T1.ordinal() ] );
 		callback.changeLabel(mod202);
+	}
+	
+	@Override
+	public void newMod202(TreeNodeCallback<Mod202> callback) {
+		callback.newMod202();
 	}
 	
 	@UiHandler("cnaeButton")
@@ -489,4 +934,34 @@ public class Model202Form extends ResizeComposite implements FiscalNodeWidget<Mo
 	}
 	
 	
+	class EnterpriseSuggestOracle extends MultiWordSuggestOracle {
+		@Override
+		public void requestSuggestions(final Request request,
+				final Callback callback) {
+			FiscalTree.COMMON_SERVICE.getCompanyBanks(
+					FiscalTree.getCurrentDomainName(),
+					mod202.getDomain(),
+					new AsyncCallback<ArrayList<CompanyBank>>() {
+
+						public void onFailure(Throwable caught) {
+							Window.alert("Error while getting suggestions.");
+						}
+
+						public void onSuccess(ArrayList<CompanyBank> result) {
+							ArrayList<Suggestion> suggestions = new ArrayList<Suggestion>();
+							if (result != null) {
+								for (final CompanyBank cb : result) {
+									suggestions.add(new IbanTextBox.IbanSuggestion(cb));
+								}
+							}
+							Response resp = new Response(suggestions);
+							callback.onSuggestionsReady(request, resp);
+						}
+					});
+		}
+	}
+	
+	private SuggestOracle getSuggestOracle() {
+		return new EnterpriseSuggestOracle();
+	}
 }

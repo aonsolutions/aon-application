@@ -6,7 +6,8 @@ import com.esferalia.aon.occam.api.model.fiscal.IFiscalModelKey;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum Mod202Key implements IFiscalModelKey, Serializable {
-	 P01("202-P01","Tipo de declaraci\u00F3n")
+	 P00("202-P00","IBAN")
+	,P01("202-P01","Tipo de declaraci\u00F3n")
 	,P02("202-P02","Fecha de inicio del per\u00EDodo impositivo")
 	,P03("202-P03","C.N.A.E. actividad principal")
 	
@@ -20,6 +21,7 @@ public enum Mod202Key implements IFiscalModelKey, Serializable {
 	,X08("202-X08","Tipo de gravamen del Impuesto sobre Sociedades del ejercicio en curso")
 	,X09("202-X09","Importe neto de la cifra de negocios")
 	,X10("202-X10","Entidades en las que al menos el 85% de ingresos del periodo impositivo")
+	,X00("202-X00","Modalidad de c\u00E1lculo")
 	
 	,C01("202-C01","Base del pago fraccionado")
 	,C02("202-C02","Resultado de la declaraci\u00F3n anterior (complementarias)")
@@ -80,6 +82,19 @@ public enum Mod202Key implements IFiscalModelKey, Serializable {
 	private String value;
 	private String description;
 	
+	public static Mod202Key[] MOD_A_KEYS = new Mod202Key[]{Mod202Key.C01,Mod202Key.C02,Mod202Key.C03};
+	public static Mod202Key[] MOD_B_KEYS = new Mod202Key[]{Mod202Key.C04,Mod202Key.C05,Mod202Key.C06
+			,Mod202Key.C37,Mod202Key.C07,Mod202Key.C08,Mod202Key.C38,Mod202Key.C39,Mod202Key.C09
+			,Mod202Key.C43,Mod202Key.C13,Mod202Key.C44,Mod202Key.C14,Mod202Key.C45,Mod202Key.C46
+			,Mod202Key.C27,Mod202Key.C28,Mod202Key.C29,Mod202Key.C30,Mod202Key.C31,Mod202Key.C32
+			,Mod202Key.C33,Mod202Key.C34};
+	public static Mod202Key[] MOD_B1_KEYS = new Mod202Key[]{Mod202Key.C16,Mod202Key.C17,Mod202Key.C47
+			,Mod202Key.C40,Mod202Key.C48,Mod202Key.C49,Mod202Key.C18};
+	public static Mod202Key[] MOD_B2_KEYS = new Mod202Key[]{Mod202Key.C19,Mod202Key.C20,Mod202Key.C21
+		,Mod202Key.C22,Mod202Key.C23,Mod202Key.C24,Mod202Key.C25,Mod202Key.C50,Mod202Key.C42 
+		,Mod202Key.C51,Mod202Key.C52,Mod202Key.C26
+	};
+	
 	private Mod202Key(String value,String description) {
     	this.value = value;
     	this.description = description;
@@ -101,4 +116,5 @@ public enum Mod202Key implements IFiscalModelKey, Serializable {
 		// TODO improve!
 		return AonStringUtils.substringAfter(value, "202-C");
 	}
+	
 }

@@ -92,6 +92,10 @@ public class Model131Form extends ResizeComposite implements FiscalNodeWidget<Mo
 		this.callback = callback;
 	}
 	@Override
+	public void newMod202(TreeNodeCallback<Mod131> callback) {
+		callback.newMod202();
+	}
+	@Override
 	public void select(Mod131 m131) {
 		this.mod131 = m131;
 		if ( mod131.getId() != null) {

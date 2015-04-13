@@ -12,9 +12,6 @@ public interface IMod202Record {
 		void fill(Writer writer, Mod202 mod202) throws IOException;
 	}
 	
-	public static final String MODEL = "140";
-	public static final String END_LINE = "\r\n";
-	
 	IRecordFiller getFiller();
 	
 	

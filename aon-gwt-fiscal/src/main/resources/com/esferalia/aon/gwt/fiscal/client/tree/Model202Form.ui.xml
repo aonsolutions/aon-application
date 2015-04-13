@@ -37,8 +37,10 @@
 								styleName='aon-finding-toolbar-item aon-icon-lock' text="{msg.finish}" />
 							<g:Button ui:field='reopenButton'
 								styleName='aon-finding-toolbar-item aon-icon-unlock' text="{msg.reopen}" />
+<!-- 								
 							<g:Button ui:field='printButton'
 								styleName='aon-finding-toolbar-item aon-icon-printer' text="{msg.printViaAeat}" />
+ -->
 							<g:Button ui:field='generateFileButton'
 								styleName='aon-finding-toolbar-item aon-icon-aeat' text="{msg.generateFile}" />
 						</g:HTMLPanel>
@@ -93,10 +95,8 @@
 									styleName="{aonResources.css.aonFontBig} {aonResources.css.aonTextCenter}"/>
 							</td>
 						</tr>
-					</table>
-					<table class="{aonResources.css.aonFiscalModelDataTable} ">
 						<tr>
-							<td styleName="{aonResources.css.aonWidthAuto} {aonResources.css.aonNowrap}">
+							<td styleName="{aonResources.css.aonWidthAuto} {aonResources.css.aonNowrap}" colspan="3">
 								<g:Label text="{msg.mainActivityCNAE}" styleName="{aonResources.css.aonItalic}"/>
 								<g:TextBox ui:field="cnae" visibleLength="4" maxLength="4" readOnly="true"
 									styleName="{aonResources.css.aonMarginLeft} {aonResources.css.aonInputText}"/>
@@ -105,14 +105,14 @@
 									title="{msg.mainActivityCNAE}"/>
 								<g:InlineLabel ui:field="cnaeDescription" styleName="{aonResources.css.aonMarginLeft}"/>
 							</td>
-							<td styleName="{aonResources.css.aonWidth110}">
+							<td styleName="{aonResources.css.aonWidth110}" colspan="3">
 								<g:Label text="{msg.yearInitialDate}" styleName="{aonResources.css.aonItalic}"/>
 								<aon:DateBoxEx ui:field="initialDate" 
 									styleName="{aonResources.css.aonInputText}"/>
 							</td>
 						</tr>
 					</table>
-					<g:SimplePanel ui:field="tablePanel"/>
+					<g:FlowPanel ui:field="tablePanel"/>
 					<aon:CnaePanel ui:field="cnaePanel" />
 				</g:HTMLPanel>
 			</g:ScrollPanel>

@@ -52,6 +52,7 @@ public class FiscalTree extends MainEntryPoint {
 	interface FiscalNodeWidget<T> {
 		void select( T t);
 		void setCallback( TreeNodeCallback<T> callback);
+		void newMod202( TreeNodeCallback<T> callback);
 	}
 	
 	interface FiscalTreeBinder extends UiBinder<Widget, FiscalTree> {
@@ -363,7 +364,7 @@ public class FiscalTree extends MainEntryPoint {
 	public class NewContextMenu extends ContextMenu {
 
 		public NewContextMenu() {
-			NewMod200Command newMod200Command =  new NewMod200Command();
+			NewMod200Command newMod200Command = getNewMod200Command();  
 			addItem(AON.MSG.mod202()
 					, newMod200Command,
 					  AON.AON_CSS.aonIconModule()
@@ -371,5 +372,9 @@ public class FiscalTree extends MainEntryPoint {
 			addSeparator();
 			addStyleName(AON.AON_CSS.aonSelector());
 		}			
+	}
+
+	public NewMod200Command getNewMod200Command() {
+		return new NewMod200Command();
 	}
 }

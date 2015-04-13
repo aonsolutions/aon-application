@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.occam.api.model.type.Period;
 
 public class FiscalModel implements Serializable {
@@ -320,6 +321,9 @@ public class FiscalModel implements Serializable {
 
 	public double getAmount(IFiscalModelKey key) {
 		return getAmount(key.getValue());
+	}
+	public boolean getCheck(Mod202Key key) {
+		return getAmount(key.getValue()) == 1;
 	}
 
 	public double getAmount(String key) {

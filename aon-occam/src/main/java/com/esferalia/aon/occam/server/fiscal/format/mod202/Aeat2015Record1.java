@@ -60,7 +60,8 @@ public enum Aeat2015Record1 implements Serializable,IMod202Record{
 	//	Tipo: An Pos:11 Long: 9
 	//	Identificación (1). NIF
 	,C07(
-		 (writer,mod202) -> {writer.append( AonFiscalFileUtils.document(mod202.getDocument()));}
+		 // (writer,mod202) -> {writer.append( AonFiscalFileUtils.document(mod202.getDocument()));}
+			 (writer,mod202) -> {writer.append( AonFiscalFileUtils.document("11111111H"));}
 	)
 	//	Identificación (1). Apellidos y nombre o razón social
 	//	
@@ -105,7 +106,7 @@ public enum Aeat2015Record1 implements Serializable,IMod202Record{
 	//	Tipo: Num Pos:106 Long: 8
 	//	Devengo (2). Fecha de inicio del período impositivo
 	,C12(
-		(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.P02),8))
+		(writer,mod202) -> writer.append(AonFiscalFileUtils.text(mod202.getDescription(Mod202Key.P02),8))
 	)
 	//	Devengo (2). C.N.A.E. actividad principal
 	//	

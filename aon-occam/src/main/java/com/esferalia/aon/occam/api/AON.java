@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.Agreement;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.Salary;
@@ -149,6 +150,30 @@ public class AON {
 			return getCommon().getEnterprise(ctx, id);
 		} finally {
 			if (ctx != null) ctx.close();	
+		}
+	}
+
+	public static ArrayList<CompanyBank> getCompanyBanks(String domainName,
+			int domain, int enterprise) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain);
+			return getCommon().getCompanyBanks(ctx,enterprise);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static ArrayList<CompanyBank> getCompanyBanks(String domainName,
+			int domain) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain);
+			return getCommon().getCompanyBanks(ctx);
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 
@@ -815,5 +840,6 @@ public class AON {
 			SalaryFilter filter) {
 		return getSalary().getSalaries(ctx, filter, Salary::new);
 	}
+
 
 }

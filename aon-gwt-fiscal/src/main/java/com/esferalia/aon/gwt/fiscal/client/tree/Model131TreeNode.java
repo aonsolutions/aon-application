@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.tree;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree.NewMod200Command;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.google.gwt.user.client.ui.HasTreeItems;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -10,7 +11,7 @@ public class Model131TreeNode extends TreeNode<Mod131> {
 	private Model131Form widget;
 
 	@Override
-	public void select(FiscalTree fiscalTree) {
+	public void select(final FiscalTree fiscalTree) {
 		if (widget ==null) {
 			widget = new Model131Form();
 		}
@@ -23,6 +24,12 @@ public class Model131TreeNode extends TreeNode<Mod131> {
 
 			@Override
 			public void changeLabel(Mod131 t) {
+			}
+
+			@Override
+			public void newMod202() {
+				NewMod200Command newMod200Command =  fiscalTree.getNewMod200Command();
+				newMod200Command.execute();
 			}
 		});
 		

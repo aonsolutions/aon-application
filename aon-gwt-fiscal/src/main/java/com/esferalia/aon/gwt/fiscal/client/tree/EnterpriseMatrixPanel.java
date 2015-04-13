@@ -7,9 +7,12 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix.FiscalModelMatrixRow;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix.FiscalStatus;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -82,6 +85,10 @@ public class EnterpriseMatrixPanel extends ResizeComposite implements FiscalNode
 					}
 		});
 	}
+	@Override
+	public void newMod202(TreeNodeCallback<Enterprise> callback) {
+		callback.newMod202();
+	}
 	
 	@UiHandler("year")
 	void onChangeYear(ChangeEvent event) {
@@ -143,6 +150,18 @@ public class EnterpriseMatrixPanel extends ResizeComposite implements FiscalNode
 					text = "\u2714";
 				}
 				Label label = new Label(text);
+				final TreeNodeCallback<Enterprise> cb = callback;;				
+				if (item.getModel() == FiscalModelType.M202) {
+					label.addStyleName(AON.AON_CSS.aonClickable());
+					label.setTitle("Crear nuevo modelo 202");
+					label.addClickHandler(new ClickHandler() {
+						
+						@Override
+						public void onClick(ClickEvent event) {
+							cb.newMod202();
+						}
+					});
+				}
 				table.getFlexCellFormatter().setColSpan(row, (x+col), colSpan);
 				table.setWidget(row, (x+col), label);
 				table.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonFiscalMatrixDataCell());

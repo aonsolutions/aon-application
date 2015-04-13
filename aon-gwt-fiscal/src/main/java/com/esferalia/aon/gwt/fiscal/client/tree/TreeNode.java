@@ -11,6 +11,7 @@ abstract class TreeNode<T> extends TreeItem implements OptionsToolbar.Listener {
 	interface TreeNodeCallback<T> {
 		void delete(T t);
 		void changeLabel(T t);
+		void newMod202();
 	}
 
 	NewContextMenu newContextMenu;

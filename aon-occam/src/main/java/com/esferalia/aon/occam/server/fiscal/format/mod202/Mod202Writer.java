@@ -15,6 +15,7 @@ public class Mod202Writer {
 		for (Aeat2015Record2 item : Aeat2015Record2.values()) {
 			item.getFiller().fill(writer, mod202);
 		}
+		writer.flush();
 	}
 	
 

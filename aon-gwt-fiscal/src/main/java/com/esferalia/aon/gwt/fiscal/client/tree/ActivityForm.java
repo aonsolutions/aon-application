@@ -195,6 +195,11 @@ public class ActivityForm extends ResizeComposite implements FiscalNodeWidget<Fi
 	}
 	
 	@Override
+	public void newMod202(TreeNodeCallback<FiscalActivity> callback) {
+		callback.newMod202();
+	}
+	
+	@Override
 	public void select(FiscalActivity fa) {
 		fiscalActivity = fa;
 		if ( fiscalActivity.getId() != null) {

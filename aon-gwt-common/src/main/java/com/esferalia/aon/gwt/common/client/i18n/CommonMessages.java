@@ -1794,10 +1794,10 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Pago fraccionado previo del trimestre: Suma de resultados")
 	String mod131ResultSum();
 
-	@DefaultMessage("Reabrir la declaraci\u00F3n?")
+	@DefaultMessage("Reabrir")
 	String reopen();
 	
-	@DefaultMessage("Finalizar la declaraci\u00F3n?")
+	@DefaultMessage("Finalizar")
 	String finish();
 	
 	@DefaultMessage("Cert. Retenciones")
@@ -1812,9 +1812,38 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("B) C\u00E1lculo del pago fraccionado: modalidad art\u00EDculo 40.3 LIS")
 	String mod202Compute2();
 
+	@DefaultMessage("Correcciones al resultado contable")
+	String mod202Compute21();
+
 	@DefaultMessage("B.1) Caso general (empresas con porcentaje \u00FAnico)")
 	String mod202Compute3();
 
 	@DefaultMessage("B.2) Casos espec\u00EDficos (empresas con m\u00E1s de un porcentaje)")
 	String mod202Compute4();
+	
+	@DefaultMessage("Correcciones al resultado contable - por Impuesto sobre Sociedades")
+	String mod202Correction1();
+	
+	@DefaultMessage("30% gastos amortiz (exc.  emp. reducidas)")
+	String mod202Correction2();
+	
+	@DefaultMessage("Resto correcciones al resultado contable, excepto comp.")
+	String mod202Correction3();
+	
+	@DefaultMessage("TOTAL")
+	String mod202Correction4();
+
+	@DefaultMessage("Reserva de nivelaci\u00F3n (art. 105 LIS) (Solo entidades del art. 101 LIS)")
+	String mod202Correction5();
+
+	@DefaultMessage("Reserva de nivelaci\u00F3n (105 LIS) convertido en cuotas")
+	String mod202Correction6();
+	
+	@DefaultMessage("A) Art\u00EDculo LIS 40.2 LIS")
+	String calculation0();
+	@DefaultMessage("B.1) Art\u00EDculo 40.3 LIS")
+	String calculation1();
+	@DefaultMessage("B.2) Art\u00EDculo 40.3 LIS")
+	String calculation2();
+
 }

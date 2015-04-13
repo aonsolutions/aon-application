@@ -86,7 +86,10 @@ public class EnterpriseForm extends ResizeComposite implements FiscalNodeWidget<
 		web.setEnabled(false);
 		
 	}
-
+	@Override
+	public void newMod202(TreeNodeCallback<Enterprise> callback) {
+		callback.newMod202();
+	}
 	@Override
 	public void select(Enterprise enterprise) {
 		this.enterprise = enterprise;

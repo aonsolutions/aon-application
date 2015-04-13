@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.server.fiscal.calc.Aeat2013Mod131Calculator;
+import com.esferalia.aon.occam.server.fiscal.calc.Aeat2015Mod202Calculator;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -395,8 +396,7 @@ public class FiscalModelDAO {
 	}
 	
 	public static Mod202 calculateMod202(AONContext ctx, Mod202 mod202) {
-	//	return Aeat2013Mod202Calculator.calculate(ctx, mod131);
-		return mod202;
+		return Aeat2015Mod202Calculator.calculate(ctx, mod202);
 	}
 
 	public static Mod202 initializeMod202(AONContext ctx) {
@@ -440,20 +440,20 @@ public class FiscalModelDAO {
 						String date = DATE_FORMAT.format(mod202.getInitialDate());
 						mod202.putDescription(Mod202Key.P02,date);
 					} catch (NumberFormatException e) {
-						mod202.putAmount(Mod202Key.P02,0);
+						mod202.putDescription(Mod202Key.P02,null);
 					}
 				} else {
-					mod202.putAmount(Mod202Key.P02,0);
+					mod202.putDescription(Mod202Key.P02,null);
 				}
 			} else if (key == Mod202Key.P03) {
 				if (AonStringUtils.isNotEmpty( mod202.getCnae())) {
 					try {
 						mod202.putDescription(Mod202Key.P03, mod202.getCnae());
 					} catch (NumberFormatException e) {
-						mod202.putAmount(Mod202Key.P03,0);
+						mod202.putDescription(Mod202Key.P03,null);
 					}
 				} else {
-					mod202.putAmount(Mod202Key.P03,0);
+					mod202.putDescription(Mod202Key.P03,null);
 				}
 			}
 		}

@@ -7,6 +7,8 @@ import java.util.Map;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.ICommon;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.type.AppParam;
@@ -45,6 +47,21 @@ public class CommonImpl implements ICommon {
 					)
 			);
 	}
+	@Override
+	public ArrayList<CompanyBank> getCompanyBanks(AONContext ctx, int enterprise) {
+		return CompanyDAO.getBanks(ctx, enterprise);
+	}
+	@Override
+	public ArrayList<CompanyBank> getCompanyBanks(AONContext ctx) {
+		Company company = CompanyDAO.getCompany(ctx, ctx.getDomainId());
+		return CompanyDAO.getBanks(ctx, company.getId());
+	}
+	
+	@Override
+	public Company getCompany(AONContext ctx, int domain) {
+		return CompanyDAO.getCompany(ctx, domain);
+	}
+	
 	// ------------------ PRODUCT
 	@Override
 	public List<String> getProductTags(AONContext ctx) {
@@ -55,6 +72,5 @@ public class CommonImpl implements ICommon {
 	public Map<Integer, String[]> getProductTagMap(AONContext ctx) {
 		return ProductDAO.getProductTagMap(ctx);
 	}
-	
 
 }

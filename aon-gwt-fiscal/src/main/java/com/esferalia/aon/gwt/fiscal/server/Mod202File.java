@@ -35,7 +35,7 @@ public class Mod202File extends HttpServlet {
 			conn = getConnection();
 			disableAutoCommit(conn);
 			//  
-			int id = Integer.parseInt(req.getParameter("mod202"));
+			int id = Integer.parseInt(req.getParameter("modId"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			Mod202 mod202 = AON.getMod202(domainName, domainId, id);

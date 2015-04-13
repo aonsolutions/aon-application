@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.tree;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree.NewMod200Command;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -9,15 +10,9 @@ import com.google.gwt.user.client.ui.InlineLabel;
 
 public class Model202TreeNode extends TreeNode<Mod202> {
 
-	
-	
-	private Model202Form widget;
-
 	@Override
-	public void select(FiscalTree fiscalTree) {
-		if (widget ==null) {
-			widget = new Model202Form();
-		}
+	public void select(final FiscalTree fiscalTree) {
+		Model202Form widget = new Model202Form();
 		widget.select( this.getTreeObject() );
 		widget.setCallback(new TreeNodeCallback<Mod202>() {
 
@@ -28,6 +23,11 @@ public class Model202TreeNode extends TreeNode<Mod202> {
 			@Override
 			public void changeLabel(Mod202 mod202) {
 				setLabel(mod202);
+			}
+			@Override
+			public void newMod202() {
+				NewMod200Command newMod200Command =  fiscalTree.getNewMod200Command();
+				newMod200Command.execute();
 			}
 			
 		});
