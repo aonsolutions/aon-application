@@ -163,7 +163,8 @@ public class Aeat2015ModuleCalculator implements IModuleCalculator, Serializable
 
 	private Double calculateDetailM02(List<FiscalActivityInfo> modulesDetailList) {
 		double m02 = 0.0;
-		double m01 = getIrpfModulesKey(FiscalActivityInfoKey.M01).getDoubleValue();
+		FiscalActivityInfo info01 = getIrpfModulesKey(FiscalActivityInfoKey.M01);
+		double m01 = info01==null?0.0:info01.getDoubleValue();
 		double a13 = getActivityInfoKey(FiscalActivityInfoKey.A13).getDoubleValue();
 		//Horas anuales del titular.
 		FiscalActivityInfo info021 = null;
