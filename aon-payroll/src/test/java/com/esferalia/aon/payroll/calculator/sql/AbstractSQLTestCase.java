@@ -626,4 +626,39 @@ public abstract class AbstractSQLTestCase {
 
 		}
 	}
+
+	protected final PaymentConceptRecord addConcept(AONContext aonContext, String code) {
+		DomainRecord domain = newDomain(aonContext);
+		return aonContext
+				.getDslContext()
+				.insertInto(PAYMENT_CONCEPT)
+				.set(PAYMENT_CONCEPT.DOMAIN, domain.getId())
+				.set(PAYMENT_CONCEPT.CODE, code)
+				.set(PAYMENT_CONCEPT.TYPE,
+						(byte) PaymentType.CRA_0001.ordinal())
+				.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, "_P")
+				.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, "_P")
+				.returning().fetchOne();
+	
+	}
+
+	protected final void addPayment(AONContext aonContext, ContractRecord contract, PaymentConceptRecord concept,
+			String expression) {
+				aonContext
+						.getDslContext()
+						.insertInto(CONTRACT_PAYMENT)
+						.set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
+						.set(CONTRACT_PAYMENT.PAYMENT_CONCEPT, concept.getId())
+						.set(CONTRACT_PAYMENT.CONTRACT, contract.getId())
+						.set(CONTRACT_PAYMENT.START_DATE, contract.getStartDate())
+						.set(CONTRACT_PAYMENT.END_DATE, contract.getEndDate())
+						.set(CONTRACT_PAYMENT.EXPRESSION, expression)
+						.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, "_P")
+						.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, "_P")
+						.set(CONTRACT_PAYMENT.TYPE,
+								(byte) PaymentType.CRA_0001.ordinal())
+						.set(CONTRACT_PAYMENT.SALARY_TYPE,
+								(byte) SalaryType.SALARY.ordinal()).execute();
+			
+			}
 }

@@ -3,8 +3,6 @@ package com.esferalia.aon.payroll.calculator.sql;
 import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
-import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
-import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
@@ -38,7 +36,6 @@ import com.esferalia.aon.jooq.tables.PaymentConcept;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
-import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
@@ -49,8 +46,6 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
-import com.esferalia.aon.salary.enumeration.PaymentType;
-import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
@@ -235,43 +230,6 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		Assert.assertEquals(String.format("%s",ContextVariable.CGC_BASE), 1875.00 + (1750.00*2/12), salary.getCommonBase());
 		
-
-	}
-	// ------------------------------------------------------------------------
-	protected final  PaymentConceptRecord addConcept(AONContext aonContext, String code) {
-		DomainRecord domain = newDomain(aonContext);
-		return aonContext
-				.getDslContext()
-				.insertInto(PAYMENT_CONCEPT)
-				.set(PAYMENT_CONCEPT.DOMAIN, domain.getId())
-				.set(PAYMENT_CONCEPT.CODE, code)
-				.set(PAYMENT_CONCEPT.TYPE,
-						(byte) PaymentType.CRA_0001.ordinal())
-				.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, "_P")
-				.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, "_P")
-				.returning().fetchOne();
-
-	}
-
-	protected final void addPayment(AONContext aonContext,
-			ContractRecord contract, 
-			PaymentConceptRecord concept, 
-			String expression) {
-		aonContext
-				.getDslContext()
-				.insertInto(CONTRACT_PAYMENT)
-				.set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
-				.set(CONTRACT_PAYMENT.PAYMENT_CONCEPT, concept.getId())
-				.set(CONTRACT_PAYMENT.CONTRACT, contract.getId())
-				.set(CONTRACT_PAYMENT.START_DATE, contract.getStartDate())
-				.set(CONTRACT_PAYMENT.END_DATE, contract.getEndDate())
-				.set(CONTRACT_PAYMENT.EXPRESSION, expression)
-				.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, "_P")
-				.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, "_P")
-				.set(CONTRACT_PAYMENT.TYPE,
-						(byte) PaymentType.CRA_0001.ordinal())
-				.set(CONTRACT_PAYMENT.SALARY_TYPE,
-						(byte) SalaryType.SALARY.ordinal()).execute();
 
 	}
 

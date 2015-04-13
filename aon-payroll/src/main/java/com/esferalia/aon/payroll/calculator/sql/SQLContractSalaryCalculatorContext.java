@@ -454,13 +454,17 @@ public class SQLContractSalaryCalculatorContext extends
 	public static class SQLNoItContractSalaryCalculatorContext extends
 			SQLContractSalaryCalculatorContext {
 
+		private int end;
+		private int start;
+
 		public SQLNoItContractSalaryCalculatorContext(Connection connection,
 				final Date startDate, final Date endDate, Date issueDate,
 				Criteria criteria, final int start, final int end)
 				throws SQLException, ExpressionException {
 
 			super(connection, startDate, endDate, issueDate, criteria);
-
+			this.start = start+1;
+			this.end = end +1;
 			// with this, we assure no leave I.T.
 			super.leaveLoader = new SQLContractLeaveLoader(startDate, endDate) {
 				@Override
@@ -548,31 +552,21 @@ public class SQLContractSalaryCalculatorContext extends
 				}
 			};
 		}
-		
+
 		@Override
 		public double getIrpf() {
 			return 0.00;
 		}
 
 		@Override
-		public Object guarantee(double guarentee) throws ExpressionException {
-			throw new SalaryExpressionException(new GuarenteeException(
-					guarentee));
-		}
-
-		@Override
-		public Object guarantee(double guarentee, int start)
-				throws ExpressionException {
-			return this.guarantee(guarentee);
-		}
-
-		@Override
 		public Object guarantee(double guarentee, int start, int end)
 				throws ExpressionException {
-			return this.guarantee(guarentee);
+			if ( this.start == start && this.end == end ){
+				throw new SalaryExpressionException(new GuarenteeException(
+						guarentee));
+			}
+			return super.guarantee(guarentee);
 		}
-		
-		
 
 	}
 
@@ -1999,7 +1993,7 @@ public class SQLContractSalaryCalculatorContext extends
 								throw new InterruptedException(
 										String.format("Lo sentimos. La funci\u00F3n NETO es incompatible con la funci\u00F3n BRUTO. Elija una de las dos. :-("));
 							}
-							
+
 						};
 						ctx.next();
 						return ctx;
@@ -2509,7 +2503,6 @@ public class SQLContractSalaryCalculatorContext extends
 
 		int contractId = getId();
 
-		
 		Date prevMonth = getLastDayOfMonth(add(date, Calendar.MONTH, -1));
 
 		Stream<com.esferalia.aon.occam.api.model.Salary> salaries = AON
