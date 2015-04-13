@@ -20,9 +20,17 @@
 					<g:ListBox ui:field="year" styleName="{aonResources.css.aonInputText}"/>
 				</div>
 				<g:SimplePanel ui:field="tablePanel" styleName="{aonResources.css.aonMarginTop}"/>
+			</div>
+		</div>
+		<div class="{aonResources.css.aonGroup}">
+			<div class="{aonResources.css.aonGroupTitle}">
+				<g:InlineLabel text="{msg.fiscalModels}" />
+			</div>
+			<div class="{aonResources.css.aonGroupBody}">
 				<g:FlowPanel  ui:field="linkPanel" styleName="{aonResources.css.aonMarginTop}"/>
 			</div>
 		</div>
+
 	</g:HTMLPanel>
 
 </ui:UiBinder>
