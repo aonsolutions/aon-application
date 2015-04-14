@@ -32,6 +32,7 @@ import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.model.Payment;
+import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.salary.ISalaryItem;
 import com.esferalia.aon.salary.enumeration.PaymentType;
@@ -41,7 +42,7 @@ import com.ibm.icu.text.RuleBasedNumberFormat;
 public class ReportUtils {
 	
 	
-	private static class ReportSalaryItem<T extends Enum<T> & IResourceable> implements ISalaryItem<T> {
+	public static class ReportSalaryItem<T extends Enum<T> & IResourceable> implements ISalaryItem<T> {
 		
 		protected ISalaryItem<T> salaryItem;
 		
@@ -71,19 +72,29 @@ public class ReportUtils {
 	}
 	
 	
-	private static class ReportPayment extends ReportSalaryItem<PaymentType> implements IPayment{
+	public static class ReportPayment extends ReportSalaryItem<PaymentType> implements IPayment{
 
-		public ReportPayment(IPayment payment) {
+		public ReportPayment(SalaryPayment payment) {
 			super(payment);
 		}
 
 		@Override
 		public String getExpression() {
-			return ((IPayment) salaryItem).getExpression();
+			return ((SalaryPayment) salaryItem).getExpression();
 		}
 		
 		
+		public Double getUnits() throws ManagerBeanException{
+			return ((SalaryPayment) salaryItem).getUnits();
+		}
+
+		public Salary getSalary(){
+			return ((SalaryPayment) salaryItem).getSalary();
+		}
 		
+		public String getPaymentConcept() {
+			return ((SalaryPayment) salaryItem).getPaymentConcept();
+		}
 		
 	}
 	
