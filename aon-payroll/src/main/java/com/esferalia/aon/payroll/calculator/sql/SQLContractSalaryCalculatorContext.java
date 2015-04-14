@@ -37,6 +37,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MORE_THAN_65;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAYMENT_VARIABLE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY;
@@ -61,8 +62,8 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_YEARS
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.parse;
 import static com.esferalia.aon.salary.expression.ExpressionContext.getCurrentBindings;
 import static com.esferalia.aon.watson.util.AonDateUtils.add;
-import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
+import static com.esferalia.aon.watson.util.AonStringUtils.equals;
 import static com.esferalia.aon.watson.util.AonUtils.ifnull;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
@@ -82,12 +83,12 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.function.BinaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -182,7 +183,9 @@ import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.expression.Variables.NotFoundHandler;
 import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
+import com.sun.mail.imap.protocol.ListInfo;
 
 public class SQLContractSalaryCalculatorContext extends
 		AbstractContractSalaryCalculatorContext implements
@@ -351,6 +354,21 @@ public class SQLContractSalaryCalculatorContext extends
 
 	private static final int CACHE_SIZE = 25;
 
+	public static class PaymentVariable {
+
+		private IContractPayment payment;
+
+		public PaymentVariable(IContractPayment payment) {
+			this.payment = payment;
+		}
+
+		public Integer getMES() {
+			return payment.getMonth() != null ? payment.getMonth().getValue() + 1
+					: null;
+		}
+
+	}
+
 	public static class AgreementContextKey {
 
 		private Integer domain;
@@ -463,8 +481,8 @@ public class SQLContractSalaryCalculatorContext extends
 				throws SQLException, ExpressionException {
 
 			super(connection, startDate, endDate, issueDate, criteria);
-			this.start = start+1;
-			this.end = end +1;
+			this.start = start + 1;
+			this.end = end + 1;
 			// with this, we assure no leave I.T.
 			super.leaveLoader = new SQLContractLeaveLoader(startDate, endDate) {
 				@Override
@@ -561,7 +579,7 @@ public class SQLContractSalaryCalculatorContext extends
 		@Override
 		public Object guarantee(double guarentee, int start, int end)
 				throws ExpressionException {
-			if ( this.start == start && this.end == end ){
+			if (this.start == start && this.end == end) {
 				throw new SalaryExpressionException(new GuarenteeException(
 						guarentee));
 			}
@@ -1108,6 +1126,7 @@ public class SQLContractSalaryCalculatorContext extends
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public Collection<IContractPayment> getContractPayments()
 			throws AonException {
 		try {
@@ -1116,13 +1135,35 @@ public class SQLContractSalaryCalculatorContext extends
 			paymentStmt.setInt(1, id);
 			ResultSet rs = paymentStmt.executeQuery();
 			this.sqlContractPayment.setResultSet(rs);
-			// return new HierarchyPayments(
-			// this.sqlContractPayment,
-			// getAgreementPayments().iterator(),
-			// this.systemPayments.iterator());
 
 			return new CompositePayments(this.sqlContractPayment,
-					getAgreementPayments(), getSSRegimePayments());
+					getAgreementPayments(), getSSRegimePayments()) {
+				@Override
+				public Iterator<IContractPayment> iterator() {
+					Iterator<IContractPayment> iterator = super.iterator();
+					return new Iterator<IContractPayment>() {
+						@Override
+						public boolean hasNext() {
+							return iterator.hasNext();
+						}
+
+						@Override
+						public IContractPayment next() {
+							IContractPayment nextPayment = iterator.next();
+							if (nextPayment != null)
+								SQLContractSalaryCalculatorContext.this
+										.getExpressionContext()
+										.setVariable(
+												ContextVariable.PAYMENT_VARIABLE,
+												new PaymentVariable(nextPayment),
+												nextPayment.getStartDate(),
+												nextPayment.getEndDate());
+							return nextPayment;
+						}
+
+					};
+				}
+			};
 		} catch (SQLException e) {
 			throw new AonException(e);
 		}
@@ -2176,6 +2217,30 @@ public class SQLContractSalaryCalculatorContext extends
 		}
 	}
 
+	public Object agreement() throws ExpressionException, SQLException {
+		List<ITimedVariable<Object>> vars = getExpressionContext()
+				.getVariables(PAYMENT_VARIABLE);
+		if (vars == null || vars.isEmpty())
+			throw new ExpressionExceptionWrapper(
+					new UndefinedVariablesException(PAYMENT_VARIABLE));
+		
+		String name  = ((PaymentVariable)vars.get(0)).payment.getName();
+		if ( AonStringUtils.isEmpty(name))
+			throw new ExpressionExceptionWrapper(
+					new UndefinedVariablesException(PAYMENT_VARIABLE));
+		
+		Double total = 0.00;
+		for (IContractPayment payment : getAgreementPayments()) {
+			List<ITimedResult<Double>> results = getExpressionContext().eval(payment.getExpression(), 
+					payment.getStartDate(), 
+					payment.getEndDate(),
+					Double.class);
+			for (ITimedResult<Double> result : results)
+				total += result.getValue();
+		}
+		return total;
+	}
+
 	public Object agreement(String name) throws ExpressionException,
 			SQLException {
 		ExpressionContext agreementCtx = getAgreementContext();
@@ -2746,7 +2811,10 @@ public class SQLContractSalaryCalculatorContext extends
 		ActiveTimedVariable<Double> bonusDays = new ActiveTimedVariable<Double>() {
 			@Override
 			public Double getValue(Period p) {
-				return (double) getAvailableDays(p.getStart(), p.getEnd());
+				Date bonusStart = Period.max(sqlContractBonus.getStartDate(),p.getStart());
+				Date bonusEnd = Period.min(sqlContractBonus.getEndDate(),p.getEnd());
+				long bonusDays = getAvailableDays(bonusStart, bonusEnd);
+				return bonusDays == AonDateUtils.getMax(bonusStart, Calendar.DATE) ? 30.00 : bonusDays * 1.00;
 			}
 		};
 

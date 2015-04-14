@@ -53,23 +53,8 @@ import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 
 public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalculator<T> {
 
-	private static final String PAYMENT_VARIABLE = "CONCEPTO";
 	private static final String BUILDER_VARIABLE = "BUILDER";
 
-	public static class PaymentVariable {
-
-		private IContractPayment payment;
-
-		public PaymentVariable(IContractPayment payment) {
-			this.payment = payment;
-		}
-
-		public Integer getMES() {
-			return payment.getMonth() != null ? payment.getMonth().getValue() + 1
-					: null;
-		}
-
-	}
 
 	public interface IListener {
 
@@ -803,11 +788,11 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 								description = expressionContext.evalTemplate(
 										contractBonus.getDescription(),
 										period.getStart(), period.getEnd());
-								salaryBuilder.addBonus(value, description,
-										contractBonus, amount.getContext());
 							} catch (Exception e) {
 								// TODO : Log ???
 							}
+							salaryBuilder.addBonus(value, description,
+									contractBonus, amount.getContext());
 						}
 						bonus += amount.getValue();
 					}
@@ -847,9 +832,6 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 
 		try {
 
-			expressionContext.setVariable(PAYMENT_VARIABLE,
-					new PaymentVariable(contractPayment), paymentStart,
-					paymentEnd);
 			List<ITimedResult<Double>> results = expressionContext.eval(
 					contractPayment.getExpression(), paymentStart, paymentEnd,
 					Double.class);
