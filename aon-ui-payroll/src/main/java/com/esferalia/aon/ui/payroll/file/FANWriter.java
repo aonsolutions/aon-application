@@ -570,30 +570,32 @@ public class FANWriter implements Serializable {
 			ps = conn.prepareStatement(select);
 			ResultSet rs = ps.executeQuery();
 			int days = 0;
-			while(rs.next()){
-				Calendar cal = Calendar.getInstance();
-				if(rs.getDate(1)!=null){
-					cal.setTime(rs.getDate(1));
-					startDate = cal.getTime();
+			if(rs.getFetchSize()>0){
+				while(rs.next()){
+					Calendar cal = Calendar.getInstance();
+					if(rs.getDate(1)!=null){
+						cal.setTime(rs.getDate(1));
+						startDate = cal.getTime();
+					}
+					if(rs.getDate(2)!=null){
+						cal.setTime(rs.getDate(2));
+						endDate = cal.getTime();
+					}
+					if(startDate!=null && startIncrease!=null && startIncrease>0){
+						Calendar start = Calendar.getInstance();
+						start.setTime(startDate);
+						start.add(Calendar.DAY_OF_MONTH, startIncrease);
+						startDate = start.getTime();
+					}
+					
+					if(startDate.before(getStartDate())) startDate = getStartDate();
+					if(endDate == null || endDate.after(getEndDate())) endDate = getEndDate();
+					
+					days += Integer.parseInt(String.valueOf(CommonUtil.getDaysBetweenDates(startDate, endDate, false)));
 				}
-				if(rs.getDate(2)!=null){
-					cal.setTime(rs.getDate(2));
-					endDate = cal.getTime();
-				}
-				if(startDate!=null && startIncrease!=null && startIncrease>0){
-					Calendar start = Calendar.getInstance();
-					start.setTime(startDate);
-					start.add(Calendar.DAY_OF_MONTH, startIncrease);
-					startDate = start.getTime();
-				}
-				
-				if(startDate.before(getStartDate())) startDate = getStartDate();
-				if(endDate == null || endDate.after(getEndDate())) endDate = getEndDate();
-				
-				days += Integer.parseInt(String.valueOf(CommonUtil.getDaysBetweenDates(startDate, endDate, false)));
+				days = days>=0?days+1:0;
+				days = days>CommonUtil.daysInMonth(getStartDate())?CommonUtil.daysInMonth(getStartDate()):days;
 			}
-			days = days>=0?days+1:0;
-			days = days>CommonUtil.daysInMonth(getStartDate())?CommonUtil.daysInMonth(getStartDate()):days;
 			return days;
 		} catch (AonConnectionException e) {
 			// return null
