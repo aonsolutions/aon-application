@@ -138,11 +138,6 @@ public class BoardBookingController extends DataScrollerState implements ICollec
 				hotelId = o!=null?(Integer)(((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]):null;
 				date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
 			}
-			while( booking.getHotelId().equals(hotelId) && getToDate().before(date) && it.hasNext() ){
-				o = it.next();
-				hotelId = o!=null?(Integer)(((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]):null;
-				date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
-			}
 		}
 		
 	}
