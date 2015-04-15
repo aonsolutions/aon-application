@@ -1503,6 +1503,10 @@ public class SQLContractSalaryCalculatorContext extends
 	protected Date getStart() {
 		return this.startDate;
 	}
+	
+	protected Criteria getCriteria() {
+		return criteria;
+	}
 
 	protected String getMainSql(Object... args) {
 		return MAIN_SQL;
@@ -2266,10 +2270,7 @@ public class SQLContractSalaryCalculatorContext extends
 				endCalendar.getActualMaximum(Calendar.DAY_OF_YEAR));
 		Date endYear = endCalendar.getTime();
 
-		Criteria contractCriteria = new Criteria();
-		contractCriteria.addExpression(criteria.getExpression());
-		contractCriteria.addEqualExpression(SQLConstants.CONTRACT + "."
-				+ ContractColumns.ID, getId());
+		Criteria contractCriteria = getContractCriteria();
 
 		IIrpfCalculatorContext irpfCalculatorContext = getIrpfCalculatorContext(
 				connection, startDate, endYear, contractCriteria);
@@ -2281,7 +2282,15 @@ public class SQLContractSalaryCalculatorContext extends
 
 		return irpfOutcome.getIrpfResult().getIrpf();
 	}
-
+	
+	protected Criteria getContractCriteria(){
+		Criteria contractCriteria = new Criteria();
+		contractCriteria.addExpression(criteria.getExpression());
+		contractCriteria.addEqualExpression(SQLConstants.CONTRACT + "."
+				+ ContractColumns.ID, getId());
+		return contractCriteria;
+	}
+	
 	protected IIrpfCalculatorContext getIrpfCalculatorContext(Connection conn,
 			Date startDate, Date endDate, Criteria criteria) {
 		try {
