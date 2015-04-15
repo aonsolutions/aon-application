@@ -1,5 +1,9 @@
 package com.code.aon.ui.warehouse.event;
 
+import static com.code.aon.ui.common.ICommonMessages.ITEM_SERIALIZABLE_WILDCARD_ERROR;
+
+import javax.faces.event.AbortProcessingException;
+
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -9,6 +13,7 @@ import com.code.aon.ql.Projection;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.warehouse.controller.IncomeController;
 import com.code.aon.ui.warehouse.controller.IncomeDetailController;
 import com.code.aon.warehouse.Income;
@@ -37,10 +42,23 @@ public class IncomeDetailControllerListener extends ControllerAdapter {
 	}
 
 	@Override
+	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		IncomeDetailController controller = (IncomeDetailController)event.getController();
+		IncomeDetail incomeDetail = (IncomeDetail)controller.getTo();
+
+		controller.setLongDescription((incomeDetail.getDescription().length() > 64) ? true : false);
+	}
+
+	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		IncomeDetailController controller = (IncomeDetailController)event.getController();
 		IncomeDetail incomeDetail = (IncomeDetail)controller.getTo();
 		incomeDetail.setWarehouse(((IncomeController)controller.getMasterController()).getWarehouse());
+		try {
+			checkSerializableWildCard(incomeDetail);
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
 	}
 
 	@Override
@@ -48,19 +66,16 @@ public class IncomeDetailControllerListener extends ControllerAdapter {
 		IncomeDetailController controller = (IncomeDetailController)event.getController();
 		IncomeDetail incomeDetail = (IncomeDetail)controller.getTo();
 		incomeDetail.setWarehouse(((IncomeController)controller.getMasterController()).getWarehouse());
+		try {
+			checkSerializableWildCard(incomeDetail);
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		event.getController().initializeModel();
-	}
-
-	@Override
-	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
-		IncomeDetailController controller = (IncomeDetailController)event.getController();
-		IncomeDetail incomeDetail = (IncomeDetail)controller.getTo();
-
-		controller.setLongDescription((incomeDetail.getDescription().length() > 64) ? true : false);
 	}
 
 	private	Integer calculateNextLine(Income income) throws ManagerBeanException {
@@ -70,6 +85,12 @@ public class IncomeDetailControllerListener extends ControllerAdapter {
 		Projection projection = Projection.max(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_LINE));
 		Object value = incomeDetailBean.getUniqueResult(projection, criteria);
 		return (value != null) ? ((Integer)value) + 1 : 1;
+	}
+
+	private void checkSerializableWildCard(IncomeDetail incomeDetail) throws ManagerBeanException {
+		if (incomeDetail.getItem() != null && incomeDetail.getItem().getProduct().isSerializable() && incomeDetail.getItem().isWildCard()) {
+			throw new AbortProcessingException(AonUtil.getMessage(ITEM_SERIALIZABLE_WILDCARD_ERROR));
+		}
 	}
 
 }

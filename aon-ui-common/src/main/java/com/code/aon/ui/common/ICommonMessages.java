@@ -285,6 +285,7 @@ public interface ICommonMessages {
 	
 	String INVALID_INVOICING_GROUP_DETAIL_CHILD_KEY = "customer_invalid_invoicing_group_detail_child";
 	String ITEM_COMPOSITION_SERIALIZABLE_ERROR = "product_item_composition_serializable_error";
+	String ITEM_SERIALIZABLE_WILDCARD_ERROR = "product_item_serializable_wildcard_error";
 
 	String VALIDATE_FINANCES_GENERATION_ERROR_KEY = "finance_validate_finances_generation_error";
 	String GENERATE_INCREASES_ERROR_KEY = "finance_generate_increases_error";

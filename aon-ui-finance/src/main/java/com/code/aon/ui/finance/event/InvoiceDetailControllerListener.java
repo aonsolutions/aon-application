@@ -2,6 +2,7 @@ package com.code.aon.ui.finance.event;
 
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_ALREADY_RECORDED_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_DETAIL_NO_WORKPLACE_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.ITEM_SERIALIZABLE_WILDCARD_ERROR;
 
 import java.util.List;
 
@@ -56,7 +57,7 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 			invoiceDetail.setSeller((invoice.getSeller() != null && invoice.getSeller().getId() != null) ? invoice.getSeller() : null);
 			invoiceDetail.setLine(calculateNextLine(invoice));
 			invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
-			fillPosWorkPlace(event, invoiceDetail);
+			fillWorkPlace(event, invoiceDetail);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
@@ -86,12 +87,14 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
 		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
 		try {
+			checkSerializableWildCard(invoiceDetail);
+
 			invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
 			if (invoiceDetail.getInvoice().isSales() || invoiceDetail.getInvoice().isPurchase()) {
 				invoiceDetail.setTaxableBase(controller.getTaxableBase());
 			}
 			if (invoiceDetail.getWorkPlace() == null || invoiceDetail.getWorkPlace().getId() == null) {
-				fillPosWorkPlace(event, invoiceDetail);
+				fillWorkPlace(event, invoiceDetail);
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
@@ -114,12 +117,14 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
 		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
 		try {
+			checkSerializableWildCard(invoiceDetail);
+
 			invoiceDetail.getInvoice().setStatus(controller.getInvoice().getStatus());
 			if (invoiceDetail.getInvoice().isSales() || invoiceDetail.getInvoice().isPurchase()) {
 				invoiceDetail.setTaxableBase(controller.getTaxableBase());
 			}
 			if (invoiceDetail.getWorkPlace() == null || invoiceDetail.getWorkPlace().getId() == null) {
-				fillPosWorkPlace(event, invoiceDetail);
+				fillWorkPlace(event, invoiceDetail);
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
@@ -172,7 +177,13 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 		return (value != null) ? ((Integer)value) + 1 : 1;
 	}
 
-	private void fillPosWorkPlace(ControllerEvent event, InvoiceDetail invoiceDetail) throws ManagerBeanException {
+	private void checkSerializableWildCard(InvoiceDetail invoiceDetail) throws ManagerBeanException {
+		if (invoiceDetail.getItem() != null && invoiceDetail.getItem().getProduct().isSerializable() && invoiceDetail.getItem().isWildCard()) {
+			throw new AbortProcessingException(AonUtil.getMessage(ITEM_SERIALIZABLE_WILDCARD_ERROR));
+		}
+	}
+
+	private void fillWorkPlace(ControllerEvent event, InvoiceDetail invoiceDetail) throws ManagerBeanException {
 		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
 		Invoice invoice = (Invoice)controller.getInvoice();
 		if (invoice.getPosShift() != null && invoice.getPosShift().getId() != null) {

@@ -1,5 +1,9 @@
 package com.code.aon.ui.warehouse.event;
 
+import static com.code.aon.ui.common.ICommonMessages.ITEM_SERIALIZABLE_WILDCARD_ERROR;
+
+import javax.faces.event.AbortProcessingException;
+
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -9,6 +13,7 @@ import com.code.aon.ql.Projection;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.warehouse.controller.DeliveryController;
 import com.code.aon.ui.warehouse.controller.DeliveryDetailController;
 import com.code.aon.warehouse.Delivery;
@@ -36,10 +41,24 @@ public class DeliveryDetailControllerListener extends ControllerAdapter {
 	}
 
 	@Override
+	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		DeliveryDetailController controller = (DeliveryDetailController)event.getController();
+		DeliveryDetail deliveryDetail = (DeliveryDetail)controller.getTo();
+		deliveryDetail.setWarehouse(((DeliveryController)controller.getMasterController()).getWarehouse());
+
+		controller.setLongDescription((deliveryDetail.getDescription().length() > 64) ? true : false);
+	}
+
+	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		DeliveryDetailController controller = (DeliveryDetailController)event.getController();
 		DeliveryDetail deliveryDetail = (DeliveryDetail)controller.getTo();
 		deliveryDetail.setWarehouse(((DeliveryController)controller.getMasterController()).getWarehouse());
+		try {
+			checkSerializableWildCard(deliveryDetail);
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
 	}
 
 	@Override
@@ -47,20 +66,16 @@ public class DeliveryDetailControllerListener extends ControllerAdapter {
 		DeliveryDetailController controller = (DeliveryDetailController)event.getController();
 		DeliveryDetail deliveryDetail = (DeliveryDetail)controller.getTo();
 		deliveryDetail.setWarehouse(((DeliveryController)controller.getMasterController()).getWarehouse());
+		try {
+			checkSerializableWildCard(deliveryDetail);
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		event.getController().initializeModel();
-	}
-
-	@Override
-	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
-		DeliveryDetailController controller = (DeliveryDetailController)event.getController();
-		DeliveryDetail deliveryDetail = (DeliveryDetail)controller.getTo();
-		deliveryDetail.setWarehouse(((DeliveryController)controller.getMasterController()).getWarehouse());
-
-		controller.setLongDescription((deliveryDetail.getDescription().length() > 64) ? true : false);
 	}
 
 	private	Integer calculateNextLine(Delivery delivery) throws ManagerBeanException {
@@ -70,6 +85,12 @@ public class DeliveryDetailControllerListener extends ControllerAdapter {
 		Projection projection = Projection.max(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_LINE));
 		Object value = deliveryDetailBean.getUniqueResult(projection, criteria);
 		return (value != null) ? ((Integer)value) + 1 : 1;
+	}
+
+	private void checkSerializableWildCard(DeliveryDetail deliveryDetail) throws ManagerBeanException {
+		if (deliveryDetail.getItem() != null && deliveryDetail.getItem().getProduct().isSerializable() && deliveryDetail.getItem().isWildCard()) {
+			throw new AbortProcessingException(AonUtil.getMessage(ITEM_SERIALIZABLE_WILDCARD_ERROR));
+		}
 	}
 
 }
