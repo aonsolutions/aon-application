@@ -3,6 +3,8 @@ package com.esferalia.aon.occam.api;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import org.jooq.Condition;
 import org.jooq.Configuration;
@@ -24,6 +26,8 @@ import com.esferalia.aon.watson.server.AonEnumUtils;
 
 public class AONContext {
 
+	private static final String SET_FOREIGN_KEY_CHECKS_0 = "SET FOREIGN_KEY_CHECKS=0;";
+	private static final String SET_FOREIGN_KEY_CHECKS_1 = "SET FOREIGN_KEY_CHECKS=1;";
 	private static Settings SETTINGS = null;
 	
 	private static Settings getDefaultSettings() {
@@ -83,6 +87,26 @@ public class AONContext {
 	}
 	public DSLContext getDslContext() {
 		return dslContext;
+	}
+	
+	public void deactivateForeignKeys(){
+		try {
+			Statement sOpen = connection.createStatement();
+			sOpen.execute(SET_FOREIGN_KEY_CHECKS_0);
+			System.out.println("Claves referenciales desactivadas");	
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void activateForeignKeys(){
+		try{
+			Statement sClose = connection.createStatement();
+			sClose.execute(SET_FOREIGN_KEY_CHECKS_1);
+			System.out.println("Claves referenciales activadas");		
+		} catch(SQLException e){
+			e.printStackTrace();
+		}
 	}
 	
 	@Override

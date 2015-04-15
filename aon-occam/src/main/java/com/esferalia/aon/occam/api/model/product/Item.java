@@ -11,7 +11,7 @@ public class Item implements Serializable {
 	private static final long serialVersionUID = 817004609996847321L;
 	
 	private Integer id;
-	private int domain;
+	private Integer domain;
 	private Integer productId;
 	private Account salesAccount;
 	private Account purchaseAccount;
@@ -37,7 +37,8 @@ public class Item implements Serializable {
 	private double purchasePrice;
 	private boolean internet;
 	private String barcode;
-	
+	private Byte status;
+	private String serialNumber;
 	public Integer getId() {
 		return id;
 	}
@@ -45,10 +46,10 @@ public class Item implements Serializable {
 		this.id = id;
 		return this;
 	}
-	public int getDomain() {
+	public Integer getDomain() {
 		return domain;
 	}
-	public Item setDomain(int domain) {
+	public Item setDomain(Integer domain) {
 		this.domain = domain;
 		return this;
 	}
@@ -227,7 +228,32 @@ public class Item implements Serializable {
 		this.barcode = barcode;
 		return this;
 	}
-
+	public Byte getStatus() {
+		return status;
+	}
+	public void setStatus(Byte status) {
+		this.status = status;
+	}
+	
+	
+	
+	public String getSerialNumber() {
+		return serialNumber;
+	}
+	public void setSerialNumber(String serialNumber) {
+		this.serialNumber = serialNumber;
+	}
+	public String getDetails(){
+		String details = "";
+		if(getDetail() != null)
+			details.concat(getDetail());
+		if(getDetail2() != null)
+			details.concat(", "+getDetail2());
+		if(getDetail3() != null)
+			details.concat(", "+getDetail3());
+		return details;
+	}
+	
 	public String getFullName() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(getName());

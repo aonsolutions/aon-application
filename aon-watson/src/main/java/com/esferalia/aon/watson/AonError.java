@@ -65,6 +65,22 @@ public enum AonError implements Serializable{
 	,FISCAL_NO_REPLACED_DECLARATION("No existe una declaración a la que sustituir.")
 	,FISCAL_DECLARATION_ALREADY_REPLACED("Ya existe una declaración sustitutiva.")
 	,FISCAL_DECLARATION_ALREADY_EXISTS("Ya existe una declaración en el periodo.")
+	// --------------------------------------------- PRODUCT
+	,DUPLICATE_PRODUCT_CODE("Ya existe un Producto con el mismo Código {0}.")
+	,DUPLICATE_PRODUCT_CODE_DOMAIN("Ya existe un Producto con el mismo Código en el Dominio: {0}.")
+	,EMPTY_PRODUCT_CODE("El Código del Producto es un dato obligatorio, no puede estar vacio.")
+	,EMPTY_PRODUCT_NAME("El Nombre del Producto es un dato obligatorio, no puede estar vacio.")
+	,EMPTY_PRODUCT("El Producto es un dato obligatorio, no puede estar vacio.")
+	,EMPTY_TAG("La Etiqueta es un dato obligatorio, no puede estar vacio.")
+	,EXIST_PRODUCT("El Producto no existe en el mismo dominio.")
+	,EXIST_TAG("La etiqueta no existe en el mismo dominio.")
+	,DUPLICATE_PRODUCT_TAG("Ya existe un Producto con la misma etiqueta {0}.")
+	,DUPLICATE_BARCODE("Ya existe un Producto con el mismo Código de Barras {0}.")
+	,DUPLICATE_BARCODE_DOMAIN("Ya existe un Producto con el mismo Código de Barras en el Dominio {0}.")
+	,DUPLICATE_DETAILS("Ya existe el Detalle {0}.")
+	,DUPLICATE_SERIAL_NUMBER("Ya existe el número de serie {0}.")
+	,EMPTY_WORKPLACE("El Lugar de trabajo es un dato obligatorio, no puede estar vacio")
+
 	;
 	
 	

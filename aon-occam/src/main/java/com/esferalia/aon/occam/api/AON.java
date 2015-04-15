@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
@@ -42,15 +43,20 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
+import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.AccountingImpl;
 import com.esferalia.aon.occam.impl.jooq.AgreementImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
+import com.esferalia.aon.occam.impl.jooq.FeeImpl;
 import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
 import com.esferalia.aon.occam.impl.jooq.FiscalImpl;
 import com.esferalia.aon.occam.impl.jooq.ManagementImpl;
+import com.esferalia.aon.occam.impl.jooq.ProductImpl;
 import com.esferalia.aon.occam.impl.jooq.SalaryImpl;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -89,6 +95,14 @@ public class AON {
 		return new AgreementImpl();
 	}
 
+	private static IProduct getProduct(){
+		return new ProductImpl();
+	}
+	
+	private static IFee getFee(){
+		return new FeeImpl();
+	}
+	
 	// ********************************************
 	// ******************************** SECURITY **
 	// ********************************************
@@ -196,6 +210,78 @@ public class AON {
 			if (ctx != null) ctx.close();	
 		}
 	}
+	
+	
+	// ********************************************
+	// ********************************* PRODUCT **
+	// ********************************************
+	
+	// ------------------------------------ PRODUCT
+	
+	public static void insert(AONContext ctx, Product p) {
+		getProduct().insert(ctx, p);
+	}
+	public static void insertWithId(AONContext ctx, Product p) {
+		getProduct().insertWithId(ctx, p);
+	}
+	public static void insert(AONContext ctx, Stream<Product> ps) {
+		getProduct().insert(ctx, ps);
+	}
+	public static void insertWithId(AONContext ctx, Stream<Product> ps) {
+		getProduct().insertWithId(ctx, ps);
+	}
+	public static void update(AONContext ctx, Product p) {
+		getProduct().update(ctx, p);
+	}
+	public static void delete(AONContext ctx, Product p) {
+		getProduct().delete(ctx, p);
+	}
+	public static void delete(AONContext ctx, Stream<Product> ps) {
+		getProduct().delete(ctx, ps);
+	}
+	
+	// ------------------------------------ PRODUCT_TAG
+	
+	public static void insertProductTag(AONContext ctx, ProductTag pt){
+		getProduct().insertProductTag(ctx, pt);
+	}
+	public static void insertProductTag(AONContext ctx, Stream<ProductTag> pts){
+		getProduct().insertProductTag(ctx, pts);
+	}
+	public static void updateProductTag(AONContext ctx, ProductTag pt){
+		getProduct().updateProductTag(ctx, pt);
+	}
+	public static void deleteProductTag(AONContext ctx, ProductTag pt){
+		 getProduct().deleteProductTag(ctx, pt);
+	}
+	public static void deleteProductTag(AONContext ctx, Stream<ProductTag> pts){
+		getProduct().deleteProductTag(ctx, pts);
+	}
+	
+	// ------------------------------------ ITEM
+	
+	public static void insertItem(AONContext ctx, Item i) {
+		getProduct().insertItem(ctx, i);
+	}
+	public static void insertItemWithId(AONContext ctx, Item i) {
+		getProduct().insertItemWithId(ctx, i);
+	}
+	public static void insertItem(AONContext ctx, Stream<Item> is) {
+		getProduct().insertItem(ctx, is);
+	}
+	public static void insertItemWithId(AONContext ctx, Stream<Item> is) {
+		getProduct().insertItemWithId(ctx, is);
+	}
+	public static void updateItem(AONContext ctx, Item i) {
+		getProduct().updateItem(ctx, i);
+	}
+	public static void deleteItem(AONContext ctx, Item i) {
+		getProduct().deleteItem(ctx, i);
+	}
+	public static void deleteItem(AONContext ctx, Stream<Item> is) {
+		getProduct().deleteItem(ctx, is);
+	}
+	
 	// ********************************************
 	// ****************************** ACCOUNTING **
 	// ********************************************
@@ -839,6 +925,26 @@ public class AON {
 	public static Stream<Salary> getSalaries(AONContext ctx,
 			SalaryFilter filter) {
 		return getSalary().getSalaries(ctx, filter, Salary::new);
+	}
+	
+	// ********************************************
+	// ************************************* FEE **
+	// ********************************************
+	
+	public static void insertFee(AONContext ctx, Fee f){
+		getFee().insertFee(ctx, f);
+	}
+	public static void insertFee(AONContext ctx, Stream<Fee> fs){
+		getFee().insertFee(ctx, fs);
+	}
+	public static void updateFee(AONContext ctx, Fee f){
+		getFee().updateFee(ctx, f);
+	}
+	public static void deleteFee(AONContext ctx, Fee f){
+		 getFee().deleteFee(ctx, f);
+	}
+	public static void deleteFee(AONContext ctx, Stream<Fee> fs){
+		getFee().deleteFee(ctx, fs);
 	}
 
 
