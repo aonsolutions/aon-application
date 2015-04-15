@@ -28,6 +28,7 @@ import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.IrpfResult;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.ITimedVariable;
@@ -299,6 +300,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				contract.getId());
 
 		
+		addPayment(aonContext, contract, getFirstDayOfYear(getToday()), "99999.00", SalaryType.SETTLE);
 		SQLContractSettleCalculatorContext ctx = new SQLContractSettleCalculatorContext(
 				connection, start, end, issue, criteria);
 
@@ -308,7 +310,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			@Override
 			public void onIrpf(IrpfOutcome irpfOutcome) {
 				int month = irpfOutcome.getIrpfResult().getEffectiveDate().getMonth();
-				assertEquals(10000.00 * (month +1),
+				assertEquals((10000.00 * (month +1)) + 99999.00,
 								irpfOutcome.getIrpfResult().getAnnualRemuneration());
 				throw new OnIrpfOutcome(irpfOutcome);
 			}

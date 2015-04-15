@@ -1069,7 +1069,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	// Thread local variable containing each thread's IRPFs
 	private static final ThreadLocal<Stack<ISalary>> SALARIES = new ThreadLocal<Stack<ISalary>>();
 
-	private void nextSalary() throws SalaryException, ExpressionException,
+	protected void nextSalary() throws SalaryException, ExpressionException,
 			SQLException {
 
 		nextIrpfBase = 0.00;
@@ -1168,7 +1168,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	
 	
 	// ------------------------------------------------------------------------
-	private static BigDecimal round(BigDecimal value) {
+	protected static BigDecimal round(BigDecimal value) {
 		return value != null && value.doubleValue() != 0.00 ? value.setScale(
 				SCALE, RoundingMode.HALF_UP) : null;
 	}

@@ -3650,18 +3650,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		Connection conn = null;
 		try {
 			conn = getConnection();
-			Calendar endCalendar = Calendar.getInstance();
-			endCalendar.setTime(draft.getStartDate());
-			endCalendar.set(Calendar.DAY_OF_YEAR,
-					endCalendar.getActualMaximum(Calendar.DAY_OF_YEAR));
-			Date endYear = endCalendar.getTime();
 
 			Criteria contractCriteria = new Criteria();
 			contractCriteria.addEqualExpression(SQLConstants.CONTRACT + "."
 					+ ContractColumns.ID, draft.getEmployee().getId());
 
-			SalaryDraftCalculatorContext<?> draftCtx = getSalaryCalculatorContextImpl(
-					conn, draft, null);
 
 			class IrpfListener implements IListener {
 				private IrpfOutcome irpfOutcome;
@@ -3685,18 +3678,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 
 			IrpfListener listener = new IrpfListener();
+			SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = getSalaryCalculatorContext(
+					conn, draft, null);
 
 			draftCtx.setListener(listener);
-			ContractSalaryCalculator calculator = new ContractSalaryCalculator();
-			calculator.setSalaryBuilder(new AbstractSalaryBuilder() {
-			});
-			calculator.calculate(draftCtx);
 
+			draftCtx.getCtx().getIrpf();
+			
 			return listener.irpfOutcome;
 
-		} catch (SalaryException e) {
-			// TODO Auto-generated catch block
-			throw new IllegalArgumentException(e);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
@@ -3778,16 +3768,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
-	private static IContractSalaryCalculatorContext getSalaryCalculatorContext(
+	private static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getSalaryCalculatorContext(
 			final Connection conn, final SalaryDraft draft,
 			final IContractSalaryCalculatorContext.IListener listener)
 			throws ExpressionException, SQLException {
 
 		SalaryType salaryType = SalaryType.values()[draft.getType().ordinal()];
 		return salaryType
-				.accept(new SalaryTypeVisitor<IContractSalaryCalculatorContext>() {
+				.accept(new SalaryTypeVisitor<SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>>() {
 					@Override
-					public IContractSalaryCalculatorContext visitSalary(
+					public SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> visitSalary(
 							SalaryType salaryType) {
 						try {
 							return getSalaryCalculatorContextImpl(conn, draft,
@@ -3800,7 +3790,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					}
 
 					@Override
-					public IContractSalaryCalculatorContext visitDelay(
+					public SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> visitDelay(
 							SalaryType salaryType) {
 						try {
 							return getDelayCalculatorContextImpl(conn, draft,
@@ -3813,7 +3803,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					}
 
 					@Override
-					public IContractSalaryCalculatorContext visitSettle(
+					public SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> visitSettle(
 							SalaryType salaryType) {
 						try {
 							return getSettleCalculatorContextImpl(conn, draft,
@@ -3826,7 +3816,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					}
 
 					@Override
-					public IContractSalaryCalculatorContext visitExtra(
+					public SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> visitExtra(
 							SalaryType salaryType) {
 						try {
 							return getExtraCalculatorContextImpl(conn, draft,
@@ -3839,7 +3829,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					}
 
 					@Override
-					public IContractSalaryCalculatorContext visitNotEnjoyedVacations(
+					public SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> visitNotEnjoyedVacations(
 							SalaryType salaryType) {
 						try {
 							return getNotEnjoyedCalculatorContextImpl(conn,
@@ -4176,7 +4166,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		return draftCtx;
 	}
 
-	private static IContractSalaryCalculatorContext getNotEnjoyedCalculatorContextImpl(
+	private static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getNotEnjoyedCalculatorContextImpl(
 			final Connection conn, final SalaryDraft draft,
 			IContractSalaryCalculatorContext.IListener listener)
 			throws ExpressionException, SQLException {
@@ -4185,20 +4175,20 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		criteria.addEqualExpression(tableCol(CONTRACT, ContractColumns.ID),
 				draft.getEmployee().getId());
 
-		SQLContractNotEnjoyedCalculatorContext ctx = new SQLContractNotEnjoyedCalculatorContext(
+		SQLContractSalaryCalculatorContext ctx = new SQLContractNotEnjoyedCalculatorContext(
 				conn, draft.getStartDate(), draft.getEndDate(),
 				draft.getIssueDate(), criteria);
 
 		ctx.setListener(listener);
 		ctx.next();
 
-		SalaryDraftCalculatorContext<SQLContractNotEnjoyedCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractNotEnjoyedCalculatorContext>(
+		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
 				draft, ctx);
 		draftCtx.setListener(listener);
-		return draftCtx;
+		return  draftCtx;
 	}
 
-	private static IContractSalaryCalculatorContext getSettleCalculatorContextImpl(
+	private static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getSettleCalculatorContextImpl(
 			final Connection conn, final SalaryDraft draft,
 			IContractSalaryCalculatorContext.IListener listener)
 			throws ExpressionException, SQLException {
@@ -4207,20 +4197,20 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		criteria.addEqualExpression(tableCol(CONTRACT, ContractColumns.ID),
 				draft.getEmployee().getId());
 
-		SQLContractSettleCalculatorContext ctx = new SQLContractSettleCalculatorContext(
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSettleCalculatorContext(
 				conn, draft.getStartDate(), draft.getEndDate(),
 				draft.getIssueDate(), criteria);
 
 		ctx.setListener(listener);
 		ctx.next();
 
-		SalaryDraftCalculatorContext<SQLContractSettleCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSettleCalculatorContext>(
+		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
 				draft, ctx);
 		draftCtx.setListener(listener);
 		return draftCtx;
 	}
 
-	private static IContractSalaryCalculatorContext getExtraCalculatorContextImpl(
+	private static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getExtraCalculatorContextImpl(
 			final Connection conn, final SalaryDraft draft,
 			IContractSalaryCalculatorContext.IListener listener)
 			throws ExpressionException, SQLException {
@@ -4229,20 +4219,20 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		criteria.addEqualExpression(tableCol(CONTRACT, ContractColumns.ID),
 				draft.getEmployee().getId());
 
-		SQLContractExtraCalculatorContext ctx = new SQLContractExtraCalculatorContext(
+		SQLContractSalaryCalculatorContext ctx = new SQLContractExtraCalculatorContext(
 				conn, draft.getStartDate(), draft.getEndDate(),
 				draft.getIssueDate(), draft.getIssueDate(), criteria);
 
 		ctx.setListener(listener);
 		ctx.next();
 
-		SalaryDraftCalculatorContext<SQLContractExtraCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractExtraCalculatorContext>(
+		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
 				draft, ctx);
 		draftCtx.setListener(listener);
 		return draftCtx;
 	}
 
-	private static IContractSalaryCalculatorContext getDelayCalculatorContextImpl(
+	private static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getDelayCalculatorContextImpl(
 			final Connection conn, final SalaryDraft draft,
 			IContractSalaryCalculatorContext.IListener listener)
 			throws ExpressionException, SQLException {
