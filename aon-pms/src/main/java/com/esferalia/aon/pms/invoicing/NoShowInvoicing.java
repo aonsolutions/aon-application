@@ -3,7 +3,9 @@ package com.esferalia.aon.pms.invoicing;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -20,6 +22,7 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Series;
+import com.code.aon.config.Tax;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.finance.Finance;
@@ -127,39 +130,72 @@ public class NoShowInvoicing {
 
 	private double createNoShowInvoiceDetails(Invoice invoice, ProjectReservation reservation, NoShowInvoiceTo noShowInvoiceTo) throws ManagerBeanException {
 		ReservationUtils reservationUtils = new ReservationUtils();
-		boolean taxDataInDetail = false;
 
 		double advanceVatPercent = reservationUtils.getTaxPercentage(reservation.getHotelReservation().getItemAdvance().getVat(), invoice.getIssueDate());
 		double advancedAmount = reservation.getAdvancedAmount();
-		double advanceTaxableBase = CommonUtil.round(advancedAmount / (1 + advanceVatPercent / 100));
+		double advanceTaxableBase = CommonUtil.round(advancedAmount / (1 + advanceVatPercent / 100), 4);
+		double advanceVatQuota = CommonUtil.round(advancedAmount - CommonUtil.round(advanceTaxableBase));
 
 		double penaltyVatPercent = reservationUtils.getTaxPercentage(reservation.getHotelReservation().getItemNoShow().getVat(), invoice.getIssueDate());
-		double penaltyTaxableBase = CommonUtil.round(advancedAmount / (1 + penaltyVatPercent / 100));
 		double penaltyAmount = advancedAmount;
+		double penaltyTaxableBase = CommonUtil.round(penaltyAmount / (1 + penaltyVatPercent / 100), 4);
 		if (!noShowInvoiceTo.isKeepAdvance()) {
 			penaltyTaxableBase = getPenaltyTaxableBase(reservation, noShowInvoiceTo.getPenaltyDays());
-			penaltyAmount = CommonUtil.round(penaltyTaxableBase * (1 + penaltyVatPercent / 100));
+			penaltyAmount = CommonUtil.round(CommonUtil.round(penaltyTaxableBase) * (1 + penaltyVatPercent / 100));
 		}
-		double firstNightPenaltyTaxableBase = penaltyTaxableBase;
-		double firstNightPenaltyAmount = penaltyAmount;
-		double secondNightPenaltyTaxableBase = 0;
-		double secondNightPenaltyAmount = 0;
-		if (noShowInvoiceTo.getPenaltyDays() > 1) {
-			firstNightPenaltyTaxableBase = reservation.getOneNightNoShowTaxableBase();
-			firstNightPenaltyAmount = CommonUtil.round(firstNightPenaltyTaxableBase * (1 + penaltyVatPercent / 100));
-			secondNightPenaltyTaxableBase = CommonUtil.round(penaltyTaxableBase - firstNightPenaltyTaxableBase);
-			secondNightPenaltyAmount = CommonUtil.round(penaltyAmount - firstNightPenaltyAmount);
-		}
+		double penaltyVatQuota = CommonUtil.round(penaltyAmount - CommonUtil.round(penaltyTaxableBase));
 		double invoiceTotal = CommonUtil.round(penaltyAmount - advancedAmount);
 
-		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-		if (advancedAmount > 0) {
-			taxDataInDetail = (invoiceTotal != CommonUtil.round((penaltyTaxableBase - advanceTaxableBase) * (1 + penaltyVatPercent / 100)));
+		Map<Date, Double> penaltyTaxableBases = new HashMap<Date, Double>();
+		if (noShowInvoiceTo.getPenaltyDays() < 0) {
+			Date fromDate = reservation.getStartDate();
+			Date toDate = reservation.getEndDate();
+			Tax vat = reservation.getHotelReservation().getItemNoShow().getVat();
+			penaltyTaxableBases = reservationUtils.getReservationServicesTaxableBasesPerDay(reservation.getId(), fromDate, toDate, vat);
+		} else if (noShowInvoiceTo.getPenaltyDays() < 2) {
+			penaltyTaxableBases.put(reservation.getStartDate(), penaltyTaxableBase);
+		} else if (noShowInvoiceTo.getPenaltyDays() == 2) {
+			double firstNightPenaltyTaxableBase = reservation.getOneNightPenaltyTaxableBase();
+			penaltyTaxableBases.put(reservation.getStartDate(), firstNightPenaltyTaxableBase);
+			double secondNightPenaltyTaxableBase = CommonUtil.round(penaltyTaxableBase - firstNightPenaltyTaxableBase, 4);
+			if (secondNightPenaltyTaxableBase != 0) {
+				penaltyTaxableBases.put(DateUtils.addDays(reservation.getStartDate(), 1) , secondNightPenaltyTaxableBase);
+			}
+		}
 
+		int line = 0;
+		boolean taxDataInDetail = (invoiceTotal != CommonUtil.round(CommonUtil.round((penaltyTaxableBase - advanceTaxableBase) * (1 + penaltyVatPercent / 100))));
+		for (Date date=reservation.getStartDate(); !date.after(reservation.getEndDate()); date = DateUtils.addDays(date, 1)) {
+			if (penaltyTaxableBases.containsKey(date)) {
+				double taxableBase = penaltyTaxableBases.get(date);
+				InvoiceDetail invoiceDetail = new InvoiceDetail();
+				invoiceDetail.setInvoice(invoice);
+				invoiceDetail.setProject(reservation.getProject());
+				invoiceDetail.setLine(++line);
+				invoiceDetail.setItem(reservation.getHotelReservation().getItemNoShow());
+				invoiceDetail.setDescription(obtainDetailDescription(date, null, invoiceDetail.getItem().getFullName()));
+				invoiceDetail.setQuantity(1);
+				invoiceDetail.setPrice(taxableBase);
+				invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
+				invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
+				invoiceDetail.setTaxableBase(taxableBase);
+				invoiceDetail.setWorkPlace(reservation.getHotelReservation().getWorkPlace());
+				if (taxDataInDetail) {
+					invoiceDetail.setTaxDataInDetail(true);
+					invoiceDetail.setVatPercent(penaltyVatPercent);
+					invoiceDetail.setVatQuota((line == penaltyTaxableBases.size()) ? penaltyVatQuota : CommonUtil.round(taxableBase * penaltyVatPercent / 100));
+					penaltyVatQuota = CommonUtil.round(penaltyVatQuota - invoiceDetail.getVatQuota());
+				}
+				invoiceDetail.setUpdateEnabled((advancedAmount > 0) ? false : line == penaltyTaxableBases.size());
+				BeanManager.getManagerBean(InvoiceDetail.class).insert(invoiceDetail);
+			}
+		}
+		
+		if (advancedAmount > 0) {
 			InvoiceDetail invoiceDetail = new InvoiceDetail();
 			invoiceDetail.setInvoice(invoice);
 			invoiceDetail.setProject(reservation.getProject());
-			invoiceDetail.setLine(1);
+			invoiceDetail.setLine(++line);
 			invoiceDetail.setItem(reservation.getHotelReservation().getItemAdvance());
 			invoiceDetail.setDescription(obtainDetailDescription(reservation.getStartDate(), null, invoiceDetail.getItem().getFullName()));
 			invoiceDetail.setQuantity(-1);
@@ -171,51 +207,9 @@ public class NoShowInvoicing {
 			if (taxDataInDetail) {
 				invoiceDetail.setTaxDataInDetail(true);
 				invoiceDetail.setVatPercent(advanceVatPercent);
-				invoiceDetail.setVatQuota(CommonUtil.round((advancedAmount - advanceTaxableBase) * (-1)));
+				invoiceDetail.setVatQuota(CommonUtil.round(advanceVatQuota * (-1)));
 			}
-			invoiceDetail.setUpdateEnabled(false);
-			invoiceDetailBean.insert(invoiceDetail);
-		}
-
-		InvoiceDetail invoiceDetail = new InvoiceDetail();
-		invoiceDetail.setInvoice(invoice);
-		invoiceDetail.setProject(reservation.getProject());
-		invoiceDetail.setLine((advancedAmount <= 0) ? 1 : 2);
-		invoiceDetail.setItem(reservation.getHotelReservation().getItemNoShow());
-		invoiceDetail.setDescription(obtainDetailDescription(reservation.getStartDate(), null, invoiceDetail.getItem().getFullName()));
-		invoiceDetail.setQuantity(1);
-		invoiceDetail.setPrice(firstNightPenaltyTaxableBase);
-		invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
-		invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
-		invoiceDetail.setTaxableBase(firstNightPenaltyTaxableBase);
-		invoiceDetail.setWorkPlace(reservation.getHotelReservation().getWorkPlace());
-		if (taxDataInDetail) {
-			invoiceDetail.setTaxDataInDetail(true);
-			invoiceDetail.setVatPercent(penaltyVatPercent);
-			invoiceDetail.setVatQuota(CommonUtil.round((firstNightPenaltyAmount - firstNightPenaltyTaxableBase)));
-		}
-		invoiceDetail.setUpdateEnabled(noShowInvoiceTo.getPenaltyDays() <= 1);
-		invoiceDetailBean.insert(invoiceDetail);
-
-		if (noShowInvoiceTo.getPenaltyDays() > 1) {
-			invoiceDetail = new InvoiceDetail();
-			invoiceDetail.setInvoice(invoice);
-			invoiceDetail.setProject(reservation.getProject());
-			invoiceDetail.setLine((advancedAmount <= 0) ? 2 : 3);
-			invoiceDetail.setItem(reservation.getHotelReservation().getItemNoShow());
-			invoiceDetail.setDescription(obtainDetailDescription(DateUtils.addDays(reservation.getStartDate(), 1), null, invoiceDetail.getItem().getFullName()));
-			invoiceDetail.setQuantity(1);
-			invoiceDetail.setPrice(secondNightPenaltyTaxableBase);
-			invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
-			invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
-			invoiceDetail.setTaxableBase(secondNightPenaltyTaxableBase);
-			invoiceDetail.setWorkPlace(reservation.getHotelReservation().getWorkPlace());
-			if (taxDataInDetail) {
-				invoiceDetail.setTaxDataInDetail(true);
-				invoiceDetail.setVatPercent(penaltyVatPercent);
-				invoiceDetail.setVatQuota(CommonUtil.round((secondNightPenaltyAmount - secondNightPenaltyTaxableBase)));
-			}
-			invoiceDetailBean.insert(invoiceDetail);
+			BeanManager.getManagerBean(InvoiceDetail.class).insert(invoiceDetail);
 		}
 
 		if (advancedAmount > 0 && invoiceTotal != 0) {
@@ -351,10 +345,12 @@ public class NoShowInvoicing {
 
 	private double getPenaltyTaxableBase(ProjectReservation reservation, int penaltyDays) throws ManagerBeanException {
 		switch (penaltyDays) {
+			case -1:
+				return reservation.getAllNightPenaltyTaxableBase();
 			case 1:
-				return reservation.getOneNightNoShowTaxableBase();
+				return reservation.getOneNightPenaltyTaxableBase();
 			case 2:
-				return reservation.getTwoNightNoShowTaxableBase();
+				return reservation.getTwoNightPenaltyTaxableBase();
 			default:
 				return 0;
 		}

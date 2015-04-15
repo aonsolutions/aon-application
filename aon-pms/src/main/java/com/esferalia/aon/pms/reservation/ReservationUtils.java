@@ -150,7 +150,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
     	BeanManager.getManagerBean(ProjectReservationRoom.class).update(reservationRoom);
     }
 
-    public Map<Tax, Double> getReservationServicesTaxableBases(Integer reservationId, Date fromDate, Date toDate) throws ManagerBeanException {
+    public Map<Tax, Double> getReservationServicesTaxableBasesPerTax(Integer reservationId, Date fromDate, Date toDate) throws ManagerBeanException {
 		Map<Tax, Double> reservationBases = new HashMap<Tax, Double>();
 		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
 		Criteria criteria = new Criteria();
@@ -168,6 +168,30 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 				base += reservationBases.get(vat);
 			}
 			reservationBases.put(vat, CommonUtil.round(base, 4));
+		}
+		return reservationBases;
+	}
+
+    public Map<Date, Double> getReservationServicesTaxableBasesPerDay(Integer reservationId, Date fromDate, Date toDate, Tax vat) throws ManagerBeanException {
+		Map<Date, Double> reservationBases = new HashMap<Date, Double>();
+		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
+		Criteria criteria = new Criteria();
+		String alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID;
+		criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), reservationId);
+		alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE;
+		criteria.addBetweenExpression(reservationServiceDetailBean.getFieldName(alias), fromDate, toDate);
+		alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ITEM_PRODUCT_VAT_ID;
+		criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), vat.getId());
+		alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA;
+		criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), false);
+		for (ITransferObject ito : reservationServiceDetailBean.getList(criteria)) {
+			ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)ito;
+			Date date = reservationServiceDetail.getEffectiveDate();
+			double base = reservationServiceDetail.getTaxableBase();
+			if (reservationBases.containsKey(date)) {
+				base += reservationBases.get(date);
+			}
+			reservationBases.put(date, CommonUtil.round(base, 4));
 		}
 		return reservationBases;
 	}
