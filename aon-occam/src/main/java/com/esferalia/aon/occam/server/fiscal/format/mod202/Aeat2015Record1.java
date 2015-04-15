@@ -60,8 +60,7 @@ public enum Aeat2015Record1 implements Serializable,IMod202Record{
 	//	Tipo: An Pos:11 Long: 9
 	//	Identificación (1). NIF
 	,C07(
-		 // (writer,mod202) -> {writer.append( AonFiscalFileUtils.document(mod202.getDocument()));}
-			 (writer,mod202) -> {writer.append( AonFiscalFileUtils.document("11111111H"));}
+		 (writer,mod202) -> {writer.append( AonFiscalFileUtils.document(mod202.getDocument()));}
 	)
 	//	Identificación (1). Apellidos y nombre o razón social
 	//	
