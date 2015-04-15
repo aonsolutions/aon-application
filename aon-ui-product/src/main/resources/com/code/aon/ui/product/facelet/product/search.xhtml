@@ -18,11 +18,11 @@
 					<aon:if test="#{salesAppParam.activeMarketPlace}">
 							<ui:include
 								src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
-							<aon:commandLink id="product-import" value="Importar"
+							<aon:commandLink id="product-import" value="#{bundle.aon_import}"
 								onclick="product()"
 								styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
 							</aon:commandLink>
-							<aon:commandLink id="product-export" value="Exportar"
+							<aon:commandLink id="product-export" value="#{bundle.account_export}"
 								onclick="productx()"
 								styleClass="aon-finding-toolbar-item aon-icon-export-excel-trans">
 							</aon:commandLink>
