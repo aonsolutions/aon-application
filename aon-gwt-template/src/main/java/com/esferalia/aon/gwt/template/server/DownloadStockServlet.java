@@ -156,6 +156,7 @@ public class DownloadStockServlet extends HttpServlet {
         		case "Detalle 2":  celda.setCellValue(si.getDetail2());break;
         		case "Detalle 3":  celda.setCellValue(si.getDetail3());break;
         		case "Texto Libre": celda.setCellValue("");break;
+        		case "Nombre": celda.setCellValue(si.getProductName());
         		//case "Comentarios": celda.setCellValue(si.getComments());break;
         		default:
         			break;

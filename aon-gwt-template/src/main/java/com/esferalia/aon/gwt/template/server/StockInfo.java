@@ -19,6 +19,7 @@ public class StockInfo implements IsSerializable{
 	Integer domainId;
 	Integer transferId;
 	Double quantityDifference;
+	String productName;
 	
 	public String getProduct() {
 		return product;
@@ -85,6 +86,12 @@ public class StockInfo implements IsSerializable{
 	}
 	public void setQuantityDifference(Double quantityDifference) {
 		this.quantityDifference = quantityDifference;
+	}
+	public String getProductName() {
+		return productName;
+	}
+	public void setProductName(String productName) {
+		this.productName = productName;
 	}
 	
 	

@@ -416,6 +416,7 @@ public class DBStock {
 				//si.setComments(s[0]);
 				//si.setTargetWarehouse(getWarehouse(dslContext, d.value3()));
 				si.setProductId(d.value5());
+				si.setProductName(i.getProduct().getName());
 				v.add(si);
 			}
 			return v;
@@ -465,13 +466,14 @@ public class DBStock {
 
 	public static Product getProduct(DSLContext dslContext, Integer id ){
 		
-		Result<Record1<String>> data = dslContext.select(PRODUCT.CODE)
+		Result<Record2<String,String>> data = dslContext.select(PRODUCT.CODE,PRODUCT.NAME)
 			.from(PRODUCT)
 			.where(PRODUCT.ID.eq(id)).fetch();
 		
 		Product p = new Product();
 		p.setId(id);
 		p.setCode(data.get(0).value1());
+		p.setName(data.get(0).value2());
 		return p;
 		
 	}

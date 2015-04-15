@@ -178,6 +178,7 @@ public class Templates extends Composite implements EntryPoint {
 	ListBox list_box = new ListBox();
 	TemplateList template_list;
 	TemplatesDialog popup;
+	Integer domainId;
 	
 	
 	public Templates() {
@@ -189,6 +190,7 @@ public class Templates extends Composite implements EntryPoint {
 					@Override
 					public void onSuccess(TemplateList result) {
 						template_list = result;
+						domainId = result.getDomainId();
 						Load();						
 					}
 					
@@ -761,7 +763,7 @@ public class Templates extends Composite implements EntryPoint {
 		            	+ "?id=" + Integer.toString(ti.getId())
 		            	+ "&drive_id=" +URL.encode(driveId)
 		            	+ "&name=" +URL.encode(ti.getName()
-		            	+ "&domain_id=" + ti.getDomainId());
+		            	+ "&domain_id=" + domainId);
 				Window.open( fileDownloadURL, "_blank",null);
 				hide();
 				// llamar  servlet de descarga para krear excel con todos losproductos
@@ -1086,8 +1088,8 @@ public class Templates extends Composite implements EntryPoint {
 				String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_stock/"
 		            	+ "?id=" + Integer.toString(ti.getId())
 		            	+ "&drive_id=" +URL.encode(driveId)
-		            	+ "&name=" +URL.encode(ti.getName()
-		            	+ "&domain_id=" + ti.getDomainId())
+		            	+ "&name=" +URL.encode(ti.getName())
+		            	+ "&domain_id=" + domainId
 		            	+ "&warehouse=" + warehouse;
 				
 				Window.open( fileDownloadURL, "_blank",null);
@@ -1132,8 +1134,8 @@ public class Templates extends Composite implements EntryPoint {
 				String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_stock/"
 		            	+ "?id=" + Integer.toString(ti.getId())
 		            	+ "&drive_id=" +URL.encode(driveId)
-		            	+ "&name=" +URL.encode(ti.getName()
-		            	+ "&domain_id=" + ti.getDomainId())
+		            	+ "&name=" +URL.encode(ti.getName())
+		            	+ "&domain_id=" + domainId
 		            	+ "&warehouse=" + warehouse;
 				
 				Window.open( fileDownloadURL, "_blank",null);

@@ -21,6 +21,7 @@ public class StockUtils {
 		v.add("Detalle 3");
 		//v.add("Comentarios");
 		v.add("Texto Libre");
+		v.add("Nombre");
 		
 		return v;
 	}

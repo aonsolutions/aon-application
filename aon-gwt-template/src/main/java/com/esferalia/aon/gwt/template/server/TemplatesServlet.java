@@ -139,6 +139,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		TemplateList tl = null;
 		try {
 			tl = DBConsults.getTemplates(domain, domainId);
+			tl.setDomainId(domainId);
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -769,7 +770,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
             				}
             			}
                 	}
-                	if(!ti.getColumns().get(cell.getColumnIndex()).equals("Texto Libre")){
+                	if(!ti.getColumns().get(cell.getColumnIndex()).equals("Texto Libre") && !ti.getColumns().get(cell.getColumnIndex()).equals("Nombre")){
                 		si = check(ti.getColumns().get(cell.getColumnIndex()),object,si,cell.getCellType());
                 		if(si == null){
                 			textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n";

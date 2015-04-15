@@ -130,7 +130,7 @@ public class DBConsults {
 				if(recordDefault.isEmpty()){
 					TemplateInfo stockTemplate = new TemplateInfo();
 					Vector<String> v2 = new Vector<String>();
-					v2.add("Producto");v2.add("Cantidad");
+					v2.add("Producto");v2.add("Nombre");v2.add("Cantidad");
 					stockTemplate.setColumns(v2);
 					stockTemplate.setDomain(domain);
 					stockTemplate.setDomainId(0);
@@ -144,7 +144,7 @@ public class DBConsults {
 					
 					TemplateInfo productTemplate = new TemplateInfo();
 					v2 = new Vector<String>();
-					v2.add("Nombre");v2.add("C/u00f3digo");v2.add("Precio Coste");v2.add("Precio Venta Base");
+					v2.add("Nombre");v2.add("Código");v2.add("Precio Coste");v2.add("Precio Venta Base");
 					productTemplate.setColumns(v2);
 					productTemplate.setDomain(domain);
 					productTemplate.setDomainId(0);
