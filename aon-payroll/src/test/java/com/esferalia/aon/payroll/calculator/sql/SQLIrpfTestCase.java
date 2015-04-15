@@ -1,6 +1,9 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
+import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
+import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static junit.framework.Assert.assertEquals;
 
@@ -8,6 +11,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.function.Consumer;
 
 import junit.framework.Assert;
@@ -27,6 +31,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.watson.util.AonDateUtils;
 
 public class SQLIrpfTestCase extends AbstractSQLTestCase {
 	
@@ -261,6 +266,62 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 	}
 
 
+	@Test
+	public void testSettle() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		
+		ContractRecord contract = newContract(aonContext, 
+				add(getToday(), Calendar.YEAR, -10),
+				Collections.emptyMap(),
+				new String[]{
+				} ,
+				new String[]{
+				"BASE_CGC * 0.10",
+				"BASE_CGP * 0.05",
+				"BASE_ESTR * 0.10",
+				"BASE_NESTR * 0.20",
+				"BASE_IRPF * PORCENTAJE_IRPF/100"
+				}, 
+				null);
+		
+		addPayment(aonContext, contract, getFirstDayOfYear(getToday()), "10000.00");
+		
+		Date start = getFirstDayOfMonth(getToday());
+		Date end = getLastDayOfMonth(start);
+		Date issue = getLastDayOfMonth(start);;
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+
+		
+		SQLContractSettleCalculatorContext ctx = new SQLContractSettleCalculatorContext(
+				connection, start, end, issue, criteria);
+
+		ctx.next();
+
+		ctx.setListener(new Listener() {
+			@Override
+			public void onIrpf(IrpfOutcome irpfOutcome) {
+				int month = irpfOutcome.getIrpfResult().getEffectiveDate().getMonth();
+				assertEquals(10000.00 * (month +1),
+								irpfOutcome.getIrpfResult().getAnnualRemuneration());
+				throw new OnIrpfOutcome(irpfOutcome);
+			}
+		});
+		
+		try {
+			ctx.getIrpf();
+			Assert.fail();
+		} catch ( OnIrpfOutcome e ) {
+			System.out.println(e.getMessage());
+		}
+	}
+
 	// ------------------------------------------------------------------------
 
 	private void test(Consumer<IrpfResult> c, String [] payments, String [] deductions)
@@ -309,5 +370,17 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		});
 
 		ctx.getIrpf();
+	}
+	
+	private static class OnIrpfOutcome extends RuntimeException {
+		IrpfOutcome irpfOutcome;
+		public OnIrpfOutcome(IrpfOutcome irpfOutcome) {
+			this.irpfOutcome = irpfOutcome;
+		}
+		
+		@Override
+		public String getMessage() {
+			return irpfOutcome.getIrpfResult().getAnnualRemuneration() + ":" + irpfOutcome.getIrpfResult().getIrpf() ;
+		}
 	}
 }
