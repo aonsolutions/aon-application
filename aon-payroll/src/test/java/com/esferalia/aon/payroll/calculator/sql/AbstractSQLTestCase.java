@@ -119,7 +119,8 @@ public abstract class AbstractSQLTestCase {
 	protected static Date getToday() {
 		Calendar calendar = Calendar.getInstance();
 		calendar = DateUtils.truncate(calendar, DAY_OF_MONTH);
-		return new Date(calendar.getTimeInMillis());
+		return new Date(calendar.getTimeInMillis() );
+		//return new Date(calendar.get(YEAR), calendar.get(MONTH), calendar.get(DAY_OF_MONTH));
 	}
 
 
@@ -651,6 +652,25 @@ public abstract class AbstractSQLTestCase {
 						.set(CONTRACT_PAYMENT.PAYMENT_CONCEPT, concept.getId())
 						.set(CONTRACT_PAYMENT.CONTRACT, contract.getId())
 						.set(CONTRACT_PAYMENT.START_DATE, contract.getStartDate())
+						.set(CONTRACT_PAYMENT.END_DATE, contract.getEndDate())
+						.set(CONTRACT_PAYMENT.EXPRESSION, expression)
+						.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, "_P")
+						.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, "_P")
+						.set(CONTRACT_PAYMENT.TYPE,
+								(byte) PaymentType.CRA_0001.ordinal())
+						.set(CONTRACT_PAYMENT.SALARY_TYPE,
+								(byte) SalaryType.SALARY.ordinal()).execute();
+			
+			}
+
+	protected final void addPayment(AONContext aonContext, ContractRecord contract, Date startDate,
+			String expression) {
+				aonContext
+						.getDslContext()
+						.insertInto(CONTRACT_PAYMENT)
+						.set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
+						.set(CONTRACT_PAYMENT.CONTRACT, contract.getId())
+						.set(CONTRACT_PAYMENT.START_DATE, startDate)
 						.set(CONTRACT_PAYMENT.END_DATE, contract.getEndDate())
 						.set(CONTRACT_PAYMENT.EXPRESSION, expression)
 						.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, "_P")
