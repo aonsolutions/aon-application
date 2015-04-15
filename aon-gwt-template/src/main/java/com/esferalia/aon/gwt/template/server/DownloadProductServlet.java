@@ -30,6 +30,7 @@ import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.product.ProductTag;
+import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBProduct;
@@ -142,29 +143,29 @@ public class DownloadProductServlet extends HttpServlet {
         		String type = aux.getColumns().get(k);
         		ProductInfo pi = v.get(j);
         		String tags="";
-        		for(ProductTag pt :pi.getProduct().getTags()){
+        		for(ProductTag pt :pi.getTags()){
         			tags = tags + ", "+pt.getTag().getName();
         		}
         		switch (type) {
-        		case "Nombre": celda.setCellValue(pi.getProduct().getName());break;
-        		case "C\u00f3digo": celda.setCellValue(pi.getProduct().getCode());break;
-        		case "Precio Coste": celda.setCellValue(pi.getItem().getPurchasePrice());break;
-        		case "Precio Venta Base": celda.setCellValue(pi.getItem().getPrice());break;
-        		case "Categor\u00eda": celda.setCellValue(pi.getProduct().getCategory().getName());break;
-        		case "Marca": celda.setCellValue(pi.getProduct().getBrand().getName());break;
+        		case "Nombre": celda.setCellValue(pi.getDownloadItem().getName());break;
+        		case "C\u00f3digo": celda.setCellValue(pi.getDownloadItem().getCode());break;
+        		case "Precio Coste": celda.setCellValue(pi.getDownloadItem().getPurchasePrice());break;
+        		case "Precio Venta Base": celda.setCellValue(pi.getDownloadItem().getPrice());break;
+        		case "Categor\u00eda": celda.setCellValue(pi.getDownloadItem().getCategory());break;
+        		case "Marca": celda.setCellValue(pi.getDownloadItem().getBrand());break;
         		case "Etiqueta":  celda.setCellValue(tags);break;
-        		case "Tipo": celda.setCellValue(pi.getProduct().getType().getName(new Locale("es_ES")));break;
-        		case "IVA": celda.setCellValue(pi.getProduct().getVat().getName());break;
-        		case "IRPF": celda.setCellValue(pi.getProduct().getRetention().getName());break;
-        		case "Inventoriable": celda.setCellValue(pi.getProduct().isInventoriable());break;
-        		case "Producto Compuesto": celda.setCellValue(pi.getProduct().isComposition());break;
-        		case "Precio Composici\u00f3n": celda.setCellValue(pi.getProduct().isCompositionPrice());break;
-        		case "Estado": celda.setCellValue(pi.getProduct().getStatus().getName(new Locale("es_ES")));break;
-        		case "C\u00f3digo de Barras":  celda.setCellValue(pi.getItem().getBarcode());break;
-        		case "Descripci\u00f3n":  celda.setCellValue(pi.getItem().getDescription());break;
-        		case "Detalle 1":  celda.setCellValue(pi.getItem().getDetail());break;
-        		case "Detalle 2":  celda.setCellValue(pi.getItem().getDetail2());break;
-        		case "Detalle 3":  celda.setCellValue(pi.getItem().getDetail3());break;
+        		case "Tipo": celda.setCellValue(com.code.aon.product.enumeration.ProductType.values()[pi.getDownloadItem().getType().ordinal()].getName(new Locale("es_ES")));break;
+        		case "IVA": celda.setCellValue(pi.getDownloadItem().getVat().getName());break;
+        		case "IRPF": celda.setCellValue(pi.getDownloadItem().getRetention().getName());break;
+        		case "Inventoriable": celda.setCellValue(pi.getDownloadItem().isInventoriable());break;
+        		case "Producto Compuesto": celda.setCellValue(pi.getDownloadItem().isComposition());break;
+        		case "Precio Composici\u00f3n": celda.setCellValue(pi.getDownloadItem().isCompositionPrice());break;
+        		case "Estado": celda.setCellValue(ProductStatus.values()[pi.getDownloadItem().getStatus()].getName(new Locale("es_ES")));break;
+        		case "C\u00f3digo de Barras":  celda.setCellValue(pi.getDownloadItem().getBarcode());break;
+        		case "Descripci\u00f3n":  celda.setCellValue(pi.getDownloadItem().getDescription());break;
+        		case "Detalle 1":  celda.setCellValue(pi.getDownloadItem().getDetail());break;
+        		case "Detalle 2":  celda.setCellValue(pi.getDownloadItem().getDetail2());break;
+        		case "Detalle 3":  celda.setCellValue(pi.getDownloadItem().getDetail3());break;
         		default:
         			break;        		}
         	}

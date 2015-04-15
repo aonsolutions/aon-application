@@ -9,7 +9,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
@@ -36,8 +38,6 @@ import com.code.aon.customer.Customer;
 import com.code.aon.customer.InvoicingGroup;
 import com.code.aon.finance.enumeration.BillingPeriod;
 import com.code.aon.product.Brand;
-import com.code.aon.product.Item;
-import com.code.aon.product.Product;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.product.ProductTag;
 import com.code.aon.product.enumeration.ProductStatus;
@@ -63,7 +63,24 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 
 	private static final long serialVersionUID = 6871016881549113129L;
+	
+	static final String COMMERCIAL_PRODUCT = ProductType.COMMERCIAL_PRODUCT.getName(new Locale("es_ES")); 
+	static final String EXTERNAL_WORK = ProductType.EXTERNAL_WORK.getName(new Locale("es_ES"));
+	static final String EXPENSE = ProductType.EXPENSE.getName(new Locale("es_ES"));
+	static final String INCREASE = ProductType.INCREASE.getName(new Locale("es_ES"));
+	static final String LABOUR = ProductType.LABOUR.getName(new Locale("es_ES"));
+	static final String PREPAYMENT = ProductType.PREPAYMENT.getName(new Locale("es_ES"));
+	static final String SERVICE = ProductType.SERVICE.getName(new Locale("es_ES"));
 
+	static final String NO_PERIOD = BillingPeriod.NO_PERIOD.getName(new  Locale("es_ES"));
+	static final String MONTHLY = BillingPeriod.MONTHLY.getName(new Locale("es_ES"));
+	static final String BI_MONTHLY = BillingPeriod.BI_MONTHLY.getName(new Locale("es_ES"));
+	static final String THREE_MONTHLY = BillingPeriod.THREE_MONTHLY.getName(new Locale("es_ES"));
+	static final String FOUR_MONTHLY = BillingPeriod.FOUR_MONTHLY.getName(new Locale("es_ES"));
+	static final String SIX_MONTHLY = BillingPeriod.SIX_MONTHLY.getName(new Locale("es_ES"));
+	static final String YEARLY = BillingPeriod.YEARLY.getName(new Locale("es_ES"));
+	
+	HashMap<String, ProductInfo> map = new HashMap<String, ProductInfo>();
 	Integer domainId;
 	public static byte[] out;
 	static Integer size;
@@ -204,7 +221,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		
 		Error error = new Error();
 		if(!getMimetype().equals(MimeType.MIME_MS_EXCEL.getName())
-				&& !getMimetype().equals(MimeType.MIME_MS_EXCEL_2007.getName())){
+				&& !getMimetype().equals(MimeType.MIME_MS_EXCEL_2007.getName())
+				&& !getMimetype().equals(MimeType.MIME_STAR_OFFICE_SPREADSHEET.getName())){
 				//El archivo no es un fichero Excel.
 				error.setError(false);
 				verror.add("*El archivo importado no es de tipo excel.");
@@ -243,7 +261,6 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		Iterable<Row> rowIterable = () -> rowIterator;
 		Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
 		rowStream.forEach(row ->{
-			long startRow= System.currentTimeMillis();
 			Iterator<Cell> cellIterator = row.cellIterator();
 			Iterable<Cell> cellIterable = () -> cellIterator;
 			fi = newFee();
@@ -310,8 +327,6 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
             	fi.setRow(row.getRowNum());
             	fees.add(fi);
             }
-    		long timeRow = System.currentTimeMillis() - startRow;
-    		//System.out.println("row time: " + (timeRow/1000d));
 		});
 		
 		this.fees = fees;
@@ -701,7 +716,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		Iterable<Row> rowIterable = () -> rowIterator;
 		Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
 		rowStream.forEach(row ->{
-			long startRow= System.currentTimeMillis();
+	
 			Iterator<Cell> cellIterator = row.cellIterator();
 			Iterable<Cell> cellIterable = () -> cellIterator;
 			si = newStock();
@@ -796,8 +811,6 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
             	si.setRow(row.getRowNum());
             	stock.add(si);
             }
-    		long timeRow = System.currentTimeMillis() - startRow;
-    		//System.out.println("row time: " + (timeRow/1000d));
 		});
 		this.stock = stock;
 		long time = System.currentTimeMillis() - startAll;
@@ -942,8 +955,6 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	ProductInfo pi;
 	public Integer executeExcel2(TemplateInfo ti){
 		this.ti = ti;
-		long startAll= System.currentTimeMillis();
-		String domain = AonUtil.getDomainName();
 		error = new Error();
 		verror = new Vector<String>();
 		error.setTextError(verror);
@@ -991,8 +1002,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	 	/* LAMBDA java 1.8 */
 		Iterable<Row> rowIterable = () -> rowIterator;
 		Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
+		map = new HashMap<String, ProductInfo>();
 		rowStream.forEach(row ->{
-			long startRow= System.currentTimeMillis();
 			Iterator<Cell> cellIterator = row.cellIterator();
 			Iterable<Cell> cellIterable = () -> cellIterator;
 			pi = newProduct();
@@ -1053,8 +1064,6 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
                 	}
                  }  
 			});
-			//System.out.println(ti.getColumns().size());
-			//System.out.println(row.getLastCellNum());
 			if(row.getLastCellNum() != ti.getColumns().size()){
 				if(row.getRowNum() == 0){
 					error.setError(false);
@@ -1079,18 +1088,34 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
             if(row.getRowNum() > 0 && pi.getProduct().getCode()!= null){ 
             	pi.setRow(row.getRowNum());
             	products.add(pi);
+            	if(!map.containsKey(pi.getProduct().getCode()))
+            		map.put(pi.getProduct().getCode(), pi);
+            	else{
+            		map.get(pi.getProduct().getCode()).setProduct(pi.getProduct());
+            		map.get(pi.getProduct().getCode()).getItem().add(pi.getItem().get(0));
+            		Vector<com.esferalia.aon.occam.api.model.product.ProductTag> pts = new Vector<com.esferalia.aon.occam.api.model.product.ProductTag>();
+            		if(pi.getProductTag() != null && pi.getProductTag().size() > 0){
+            			for (com.esferalia.aon.occam.api.model.product.ProductTag pt : pi.getProductTag()) {
+            				if(!esta(pt,map.get(pi.getProduct().getCode()).getProductTag())){
+            					pts.add(pt);
+            				}	
+            			}
+            			map.get(pi.getProduct().getCode()).getProductTag().addAll(pts);
+            		}
+            	}
             }
-    		long timeRow = System.currentTimeMillis() - startRow;
-    		//System.out.println("row time: " + (timeRow/1000d));
 		});
-		
 		this.products = products;
-		long time = System.currentTimeMillis() - startAll;
-		System.out.println("time: " + (time/1000d));
-		System.out.println(rowCount);
 		return rowCount;
 	}
 
+	public Boolean esta(com.esferalia.aon.occam.api.model.product.ProductTag pt, Vector<com.esferalia.aon.occam.api.model.product.ProductTag> pts){
+		for (com.esferalia.aon.occam.api.model.product.ProductTag productTag : pts) {
+			if(productTag.getId().equals(pt.getId())) return true;
+		}
+		return false;
+	}
+	
 	public Boolean isRequiredProduct(String s) {
 		return s.equals("Nombre") || s.equals("C\u00f3digo") || s.equals("Precio Coste") || s.equals("Precio Venta Base");
 	}
@@ -1104,12 +1129,12 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			verror.add("");
 			error.setTextError(verror);
 			//String domain = AonUtil.getDomainName();
-			try {
-				error = DBProduct.insertProducts(domain, domainId, products, ti);
-				
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			
+				//error = DBProduct.insertProducts(domain, domainId, products, ti);
+				java.util.List<ProductInfo> l = new ArrayList<ProductInfo>(map.values());
+				Vector<ProductInfo> v = new Vector<ProductInfo>(l);
+ 				error = DBProduct.insertProducts2(domain, domainId, v, ti);
+		
 	        //insertar STOCK en base de datos.!!
 		}
 		else{
@@ -1123,203 +1148,33 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		System.out.println("ALL    " + (timeAll/1000d));
 		return error;
 	}
-	
-	public com.esferalia.aon.gwt.template.shared.Error insertProducts(TemplateInfo ti) {
-		//Archivo Excel
-		Vector<String> verror = new Vector<String>();
-		com.esferalia.aon.gwt.template.shared.Error error = new Error();
-		if(!getMimetype().equals(MimeType.MIME_MS_EXCEL.getName())
-			&& !getMimetype().equals(MimeType.MIME_MS_EXCEL_2007.getName())){
-			//El archivo no es un fichero Excel.
-			error.setError(false);
-			verror.add("*El archivo importado no es de tipo excel.");
-			error.setTextError(verror);
-			return error;
-		}
-		byte[] data = getOut();
-		
-		File aux = new File("/tmp/products.xls");
-		try {
-			org.apache.commons.io.FileUtils.writeByteArrayToFile(aux, data);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		FileInputStream excel = null;
-		try {
-			excel = new FileInputStream(aux);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		HSSFWorkbook workbook= null;
-		try {
-			workbook = new HSSFWorkbook(excel);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		HSSFSheet sheet = workbook.getSheetAt(0);
-		Iterator<Row> rowIterator = sheet.iterator();
-		Integer i = 0;
-		String textError = "";
-		Vector<ProductInfo> products = new Vector<ProductInfo>();
-		
-		while(rowIterator.hasNext()) {
-			 Row row = rowIterator.next();
-			 Iterator<Cell> cellIterator = row.cellIterator();
-			 ProductInfo pi = newProduct();
-			 Integer j = 0;
-             while(cellIterator.hasNext()) {
-                Cell cell = cellIterator.next();
-                Object o = null ;
-                switch (cell.getCellType()) {
-				case Cell.CELL_TYPE_BLANK:
-					//
-					break;
-				case Cell.CELL_TYPE_BOOLEAN: 
-					o = cell.getBooleanCellValue();
-					break;
-				case Cell.CELL_TYPE_ERROR:
-					o = cell.getErrorCellValue();
-					break;
-				case Cell.CELL_TYPE_FORMULA:
-					//
-					break;
-				case Cell.CELL_TYPE_NUMERIC:
-					o = cell.getNumericCellValue();
-					break;
-				case Cell.CELL_TYPE_STRING:
-					o = cell.getStringCellValue();
-					break;
-				default:
-					break;
-				}
-                	 
-                 
-                
-                 if(i == 0){//Primera fila del fichero Excel.
-                	 if(ti.getColumns().size()<=j ||ti.getColumns().get(j) == null || !ti.getColumns().get(j).equalsIgnoreCase(cell.getStringCellValue())){
-                		 // El archivo no es compatible con la plantilla
-             			error.setError(false);
-             			verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
-             			error.setTextError(verror);
-             			return error;
-                	 } 
-                 }
-                 else{
-                	 if(!ti.getColumns().get(j).equals("Texto Libre")){
-                	 	if(j!= cell.getColumnIndex()){
-                	 		if(ti.getColumns().get(j).equals("Nombre") || ti.getColumns().get(j).equals("C\u00f3digo") || ti.getColumns().get(j).equals("Precio Coste") || ti.getColumns().get(j).equals("Precio Venta Base")){
-                	 			Integer fila = i+1;
-                	 			Integer columna = j+1;
-                	 			verror.add("*Fila "+(fila+1)+", Columna "+Utils.getColumn(columna)+" : Dato Incorrecto \n");
-                				textError= textError + "*Fila "+(fila+1)+", Columna "+Utils.getColumn(columna)+" : Dato Incorrecto \n";
-                	 		}
-                		 	j++;
-                	 	}
-                	 
-                	 	pi = check(ti.getColumns().get(j),o,pi,cell.getCellType());
-                	 	if(pi == null){
-             				Integer fila = i+1;
-             				Integer columna = j+1;
-             				verror.add("*Fila "+(fila+1)+", Columna "+Utils.getColumn(columna)+" : Dato Incorrecto \n");
-             				textError= textError + "*Fila "+(fila+1)+", Columna "+Utils.getColumn(columna)+" : Dato Incorrecto \n";
-                			pi = newProduct();	
-                	 	}
-                	 }
-                 }
-                 j++;
-             }
-             if(j != ti.getColumns().size()){
-            	 if(i == 0){
-            		 error.setError(false);
-            		 verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
-            		 error.setTextError(verror);
-            		 return error;
-            	 }
-            	 else{
-            		 if(ti.getColumns().get(j).equals("Nombre") || ti.getColumns().get(j).equals("C\u00f3digo") || ti.getColumns().get(j).equals("Precio Coste") || ti.getColumns().get(j).equals("Precio Venta Base")){
-            			Integer fila = i+1;
-          				Integer columna = j+1;
-          				verror.add("*Fila "+(fila+1)+", Columna "+Utils.getColumn(columna)+" : Dato Incorrecto \n");
-          				textError= textError + "*Fila "+(fila+1)+", Columna "+Utils.getColumn(columna)+" : Dato Incorrecto \n";
-            		 }
-            	 }
-             }
-             // AÑADIR A PI ITEM --> %BENEFICIO SOBRE COSTE, %BENEFICIO SOBRE COMPRA Y PVP
-           
-             //pi.getItem().setExpensesPercent(0);
-             //pi.getItem().setPrice(0);
-            // checkPrices();
-             if(i>0){ 
-            	 if(textError.equals("")){ 	
-            		 double profitPercent =((pi.getItem().getPrice()-pi.getItem().getPurchasePrice())/pi.getItem().getPurchasePrice())*100.00;
-            		 pi.getItem().setProfitPercent(profitPercent);
-            		 products.add(pi);
-            	 }
-             }
-             i++;
-		 }
-		
-		if(textError.equals("")){
-			error.setError(true);
-			verror.add("");
-			error.setTextError(verror);
-			String domain = AonUtil.getDomainName();
-			try {
-				DBProduct.insertProducts(domain,domainId,products, this.ti);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-	        //insertar productos en base de datos.!!
-		}
-		else{
-			//Alguna de las filas contiene datos erroneos.
-			error.setError(false);
- 			error.setTextError(verror);
-		}
-		System.out.println(error.getTextError());
-		
-		return error;
-	}
-	
-	static final String COMMERCIAL_PRODUCT = ProductType.COMMERCIAL_PRODUCT.getName(new Locale("es_ES")); 
-	static final String EXTERNAL_WORK = ProductType.EXTERNAL_WORK.getName(new Locale("es_ES"));
-	static final String EXPENSE = ProductType.EXPENSE.getName(new Locale("es_ES"));
-	static final String INCREASE = ProductType.INCREASE.getName(new Locale("es_ES"));
-	static final String LABOUR = ProductType.LABOUR.getName(new Locale("es_ES"));
-	static final String PREPAYMENT = ProductType.PREPAYMENT.getName(new Locale("es_ES"));
-	static final String SERVICE = ProductType.SERVICE.getName(new Locale("es_ES"));
 
-	static final String NO_PERIOD = BillingPeriod.NO_PERIOD.getName(new  Locale("es_ES"));
-	static final String MONTHLY = BillingPeriod.MONTHLY.getName(new Locale("es_ES"));
-	static final String BI_MONTHLY = BillingPeriod.BI_MONTHLY.getName(new Locale("es_ES"));
-	static final String THREE_MONTHLY = BillingPeriod.THREE_MONTHLY.getName(new Locale("es_ES"));
-	static final String FOUR_MONTHLY = BillingPeriod.FOUR_MONTHLY.getName(new Locale("es_ES"));
-	static final String SIX_MONTHLY = BillingPeriod.SIX_MONTHLY.getName(new Locale("es_ES"));
-	static final String YEARLY = BillingPeriod.YEARLY.getName(new Locale("es_ES"));
-	
 	private ProductInfo check(String template, Object value,ProductInfo product, Integer type) {
 		
 		String domain = AonUtil.getDomainName();
 		switch (template) {
 		case "Nombre": 
-			if(type.equals(Cell.CELL_TYPE_STRING) && !value.equals(""))
+			if(type.equals(Cell.CELL_TYPE_STRING) && !value.equals("")){
 				product.getProduct().setName((String) value);
+			}
 			else return null;
 			break;
 		case "C\u00f3digo" : 
-			if(type.equals(Cell.CELL_TYPE_STRING) && !value.equals(""))
-				product.getProduct().setCode((String) value);
+			if(type.equals(Cell.CELL_TYPE_STRING) && !value.equals("")){
+				product.getProduct().setCode((String) value);		
+			}
 			else return null;
 			break; 
 		case "Precio Coste" : 
-			if(type.equals(Cell.CELL_TYPE_NUMERIC))
-				product.getItem().setPurchasePrice((double) value);
+			if(type.equals(Cell.CELL_TYPE_NUMERIC)){
+				product.getItem().get(0).setPurchasePrice((double) value);
+			}
 			else return null;
 			break; 
 		case "Precio Venta Base" :
-			if(type.equals(Cell.CELL_TYPE_NUMERIC))
-				product.getItem().setPrice((double) value);
+			if(type.equals(Cell.CELL_TYPE_NUMERIC)){
+				product.getItem().get(0).setPrice((double) value);
+			}
 			else return null;
 			break; 
 		case "Categor\u00eda" :
@@ -1334,7 +1189,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 				Boolean b = true;
 				for(ProductCategory pc : v){
 					if(strAux.equalsIgnoreCase(pc.getName())){
-						product.getProduct().setCategory(pc);
+						product.getProduct().setCategory(pc.getId());
 						b= false;
 					}
 				}
@@ -1354,7 +1209,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 				Boolean b = true;
 				for(Brand brand : v){
 					if(strAux.equalsIgnoreCase(brand.getName())){
-						product.getProduct().setBrand(brand);
+						product.getProduct().setBrand(brand.getId());
 						b= false;
 					}
 				}
@@ -1372,15 +1227,23 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 				}
 				Vector<String> strings = tags((String)value);
 				Set<ProductTag> tags2 = new HashSet<ProductTag>();
+				Vector<com.esferalia.aon.occam.api.model.product.ProductTag> pts = new Vector<com.esferalia.aon.occam.api.model.product.ProductTag>();
 				for(ProductTag tag : tags){
 					for(String s : strings){
 						if(s.equalsIgnoreCase(tag.getTag().getName())){
 							tags2.add(tag);
+							com.esferalia.aon.occam.api.model.product.ProductTag pt = new com.esferalia.aon.occam.api.model.product.ProductTag();
+							pt.setDomain(tag.getDomain());
+							pt.setId(tag.getId());
+							pt.setProduct(tag.getProduct().getId());
+							pt.setTag(tag.getTag().getId());
+							pts.add(pt);
 						}
 					}
 				}
-				if(!tags2.isEmpty())
-					product.getProduct().setTags(tags2);
+				if(!tags2.isEmpty()){
+					product.setProductTag(pts);
+				}
 				else return null;
 			}
 			//else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
@@ -1389,20 +1252,27 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			String t;
 			if(type.equals(Cell.CELL_TYPE_STRING)){
 				t = (String) value;
-				if (t.equalsIgnoreCase(COMMERCIAL_PRODUCT))
-					product.getProduct().setType(ProductType.COMMERCIAL_PRODUCT);
-				else if(t.equalsIgnoreCase(SERVICE))
-					product.getProduct().setType(ProductType.SERVICE);
-				else if(t.equalsIgnoreCase(EXTERNAL_WORK))
-					product.getProduct().setType(ProductType.EXTERNAL_WORK);
-				else if(t.equalsIgnoreCase(LABOUR))
-					product.getProduct().setType(ProductType.LABOUR);
-				else if(t.equalsIgnoreCase(EXPENSE))
-					product.getProduct().setType(ProductType.EXPENSE);
-				else if(t.equalsIgnoreCase(INCREASE))
-					product.getProduct().setType(ProductType.INCREASE);
-				else if(t.equalsIgnoreCase(PREPAYMENT))
-					product.getProduct().setType(ProductType.PREPAYMENT);
+				if (t.equalsIgnoreCase(COMMERCIAL_PRODUCT)){
+					product.getProduct().setType((byte) ProductType.COMMERCIAL_PRODUCT.ordinal());	
+				}
+				else if(t.equalsIgnoreCase(SERVICE)){
+					product.getProduct().setType((byte) ProductType.SERVICE.ordinal());
+				}
+				else if(t.equalsIgnoreCase(EXTERNAL_WORK)){
+					product.getProduct().setType((byte) ProductType.EXTERNAL_WORK.ordinal());
+				}
+				else if(t.equalsIgnoreCase(LABOUR)){
+					product.getProduct().setType((byte) ProductType.LABOUR.ordinal());
+				}
+				else if(t.equalsIgnoreCase(EXPENSE)){
+					product.getProduct().setType((byte) ProductType.EXPENSE.ordinal());
+				}	
+				else if(t.equalsIgnoreCase(INCREASE)){
+					product.getProduct().setType((byte) ProductType.INCREASE.ordinal());
+				}	
+				else if(t.equalsIgnoreCase(PREPAYMENT)){
+					product.getProduct().setType((byte) ProductType.PREPAYMENT.ordinal());
+				}
 				else return null;
 			}
 			//else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
@@ -1443,7 +1313,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			default:
 				return null;
 			}
-			product.getProduct().setVat(vat);
+			product.getProduct().setVat(vat.getId());
 			break; 
 		case "IRPF" :
 			Tax retention = new Tax();
@@ -1481,7 +1351,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			default:
 				return null;
 			}
-			product.getProduct().setRetention(retention);
+			product.getProduct().setRetention(retention.getId());
 			break; 
 		case "Inventoriable" : 
 			Boolean bool = false;
@@ -1592,31 +1462,36 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			default:
 				return null;
 			}
-			product.getProduct().setStatus(status);
+			product.getProduct().setStatus((byte) status.ordinal());
 			break; 
 		case "C\u00f3digo de Barras" : 
-			if(type.equals(Cell.CELL_TYPE_STRING))
-				product.getItem().setBarcode((String) value);
+			if(type.equals(Cell.CELL_TYPE_STRING)){
+				product.getItem().get(0).setBarcode((String) value);
+			}
 			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break; 
 		case "Descripci\u00f3n" :
-			if(type.equals(Cell.CELL_TYPE_STRING))
-				product.getItem().setDescription((String)value);
+			if(type.equals(Cell.CELL_TYPE_STRING)){
+				product.getItem().get(0).setDescription((String)value);
+			}
 			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break;
 		case "Detalle 1":
-			if(type.equals(Cell.CELL_TYPE_STRING))
-				product.getItem().setDetail((String)value);
+			if(type.equals(Cell.CELL_TYPE_STRING)){
+				product.getItem().get(0).setDetail((String) value);
+			}
 			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break;
 		case "Detalle 2":
-			if(type.equals(Cell.CELL_TYPE_STRING))
-				product.getItem().setDetail2((String)value);
+			if(type.equals(Cell.CELL_TYPE_STRING)){
+				product.getItem().get(0).setDetail2((String) value);
+			}
 			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break;
 		case "Detalle 3":
-			if(type.equals(Cell.CELL_TYPE_STRING))
-				product.getItem().setDetail3((String)value);
+			if(type.equals(Cell.CELL_TYPE_STRING)){
+				product.getItem().get(0).setDetail3((String) value);
+			}
 			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break;
 		default:
@@ -1628,62 +1503,50 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	
 	private ProductInfo newProduct() {
 		ProductInfo pi = new ProductInfo();
-		Product p = new Product();
-		Item i = new Item();
+		com.esferalia.aon.occam.api.model.product.Product p2 = new com.esferalia.aon.occam.api.model.product.Product();
+		p2.setDomain(domainId);
+		com.esferalia.aon.occam.api.model.product.Item i2 = new com.esferalia.aon.occam.api.model.product.Item();
+		i2.setDomain(domainId);
 	
-		// Categoría (product)
-		p.setCategory(null);
-		 
-		// Marca (product)
-		p.setBrand(null);
-	
-		// Etiqueta (product)
-		p.setTags(null);
-		
 		// Tipo (product)
-		p.setType(ProductType.COMMERCIAL_PRODUCT);
+		p2.setType((byte)ProductType.COMMERCIAL_PRODUCT.ordinal());
 		
 		// IVA (product)
 		Tax vat = new Tax();
 		vat.setName("GENERAL");
 		vat.setType(TaxType.VAT);
-		p.setVat(vat);
+		p2.setVat(vat.getId());
 		
 		// IRPF (product)
 		Tax retention = new Tax();
 		retention.setName("IRPF");
 		retention.setType(TaxType.RETENTION);
-		p.setRetention(retention);
+		p2.setRetention(retention.getId());
 		
 		// Inventoriable (product)
-		 p.setInventoriable(false);
+		 p2.setInventoriable(false);
 		
 		 // producto compuesto (product)
-		p.setComposition(false);
-		
+		p2.setComposition(false);
 		// precio composicion
-		p.setCompositionPrice(false);
+		p2.setCompositionPrice(false);
 		
 		// estado (product)
-		p.setStatus(ProductStatus.ACTIVE);
-		
-		// barcode (item)
-		i.setBarcode(null);
-		
-		// description (item)
-		i.setDescription(null);
+		p2.setStatus((byte)ProductStatus.ACTIVE.ordinal());
 		
 		// detail
-		i.setDetail("");
+		i2.setDetail("");
 		
 		// detail2
-		i.setDetail2("");
+		i2.setDetail2("");
 		
 		// detail3
-		i.setDetail3("");
+		i2.setDetail3("");
 		
-		pi.setItem(i);
-		pi.setProduct(p);
+		Vector<com.esferalia.aon.occam.api.model.product.Item> is= new Vector<com.esferalia.aon.occam.api.model.product.Item>(); 
+		is.add(0, i2);
+		pi.setProduct(p2);
+		pi.setItem(is);
 		return pi;
 	}
 	
@@ -1721,6 +1584,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		}
 		return vector;
 	}
+	
 	
 	/**
 	 * <p>

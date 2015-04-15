@@ -21,7 +21,6 @@ public interface ITemplateAsync {
 
 	void deleteTemplate(TemplateInfo ti, AsyncCallback<Void> callback);
 
-	void insertProducts(TemplateInfo ti, AsyncCallback<Error> callback);
 
 	void searchTypeTemplate(String searchStr, Vector<TemplateInfo> templates,
 			AsyncCallback<Vector<TemplateInfo>> callback);

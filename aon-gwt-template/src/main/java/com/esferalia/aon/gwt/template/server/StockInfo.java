@@ -1,7 +1,5 @@
 package com.esferalia.aon.gwt.template.server;
 
-import com.code.aon.config.Series;
-import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class StockInfo implements IsSerializable{

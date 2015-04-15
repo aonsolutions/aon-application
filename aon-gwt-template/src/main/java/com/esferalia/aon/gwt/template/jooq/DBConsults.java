@@ -1,89 +1,27 @@
 package com.esferalia.aon.gwt.template.jooq;
 
-import static com.esferalia.aon.jooq.tables.Brand.BRAND;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
-import static com.esferalia.aon.jooq.tables.Item.ITEM;
-import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
-import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
-import static com.esferalia.aon.jooq.tables.ProductTag.PRODUCT_TAG;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
-import static com.esferalia.aon.jooq.tables.Series.SERIES;
-import static com.esferalia.aon.jooq.tables.Stock.STOCK;
-import static com.esferalia.aon.jooq.tables.Tag.TAG;
-import static com.esferalia.aon.jooq.tables.Tax.TAX;
-import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
-import static com.esferalia.aon.jooq.tables.WarehouseTransfer.WAREHOUSE_TRANSFER;
-import static com.esferalia.aon.jooq.tables.WarehouseTransferDetail.WAREHOUSE_TRANSFER_DETAIL;
-import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-import static com.esferalia.aon.jooq.tables.Seller.SELLER;
-import static com.esferalia.aon.jooq.tables.Project.PROJECT;
-import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
-import static com.esferalia.aon.jooq.tables.CustomerFee.CUSTOMER_FEE;
 
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.Vector;
 
-import org.jooq.Condition;
 import org.jooq.DSLContext;
-import org.jooq.DeleteConditionStep;
-import org.jooq.InsertValuesStep14;
-import org.jooq.InsertValuesStep15;
-import org.jooq.InsertValuesStep17;
-import org.jooq.InsertValuesStep3;
-import org.jooq.InsertValuesStep4;
 import org.jooq.Record1;
-import org.jooq.Record10;
-import org.jooq.Record19;
-import org.jooq.Record2;
-import org.jooq.Record3;
 import org.jooq.Record4;
-import org.jooq.Record5;
-import org.jooq.Record6;
-import org.jooq.Record7;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.company.WorkPlace;
-import com.code.aon.config.Series;
-import com.code.aon.config.Tag;
-import com.code.aon.config.Tax;
-import com.code.aon.customer.Customer;
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.jooq.JooqSettings;
-import com.code.aon.product.Brand;
-import com.code.aon.product.Item;
-import com.code.aon.product.Product;
-import com.code.aon.product.ProductCategory;
-import com.code.aon.product.ProductTag;
-import com.code.aon.product.enumeration.ProductStatus;
-import com.code.aon.product.enumeration.ProductType;
-import com.code.aon.project.Project;
-import com.code.aon.registry.Registry;
-import com.esferalia.aon.gwt.template.server.FeeInfo;
-import com.esferalia.aon.gwt.template.server.ProductInfo;
-import com.esferalia.aon.gwt.template.server.StockInfo;
-import com.esferalia.aon.gwt.template.server.TransferInfo;
 import com.esferalia.aon.gwt.template.server.Utils;
-import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
-import com.esferalia.aon.gwt.template.shared.Warehouse;
-import com.esferalia.aon.jooq.tables.records.CustomerFeeRecord;
-import com.esferalia.aon.jooq.tables.records.ItemRecord;
-import com.esferalia.aon.jooq.tables.records.ProductRecord;
-import com.esferalia.aon.jooq.tables.records.ProductTagRecord;
-import com.esferalia.aon.jooq.tables.records.WarehouseTransferDetailRecord;
-import com.esferalia.aon.occam.api.model.registry.Seller;
 
 
 
@@ -196,7 +134,7 @@ public class DBConsults {
 					stockTemplate.setColumns(v2);
 					stockTemplate.setDomain(domain);
 					stockTemplate.setDomainId(0);
-					stockTemplate.setName("Stock Default");
+					stockTemplate.setName("Est\u00e1ndar");
 					stockTemplate.setType("Stock");
 					stockTemplate.sethasWarehouse(false);
 					stockTemplate.setIsParent(true);
@@ -210,7 +148,7 @@ public class DBConsults {
 					productTemplate.setColumns(v2);
 					productTemplate.setDomain(domain);
 					productTemplate.setDomainId(0);
-					productTemplate.setName("Product Default");
+					productTemplate.setName("Est\u00e1ndar");
 					productTemplate.setType("Producto");
 					productTemplate.sethasWarehouse(false);
 					productTemplate.setIsParent(true);
@@ -225,7 +163,7 @@ public class DBConsults {
 					feeTemplate.setColumns(v2);
 					feeTemplate.setDomain(domain);
 					feeTemplate.setDomainId(0);
-					feeTemplate.setName("Fee Default");
+					feeTemplate.setName("Est\u00e1ndar");
 					feeTemplate.setType("Cuota");
 					feeTemplate.sethasWarehouse(false);
 					feeTemplate.setIsParent(true);

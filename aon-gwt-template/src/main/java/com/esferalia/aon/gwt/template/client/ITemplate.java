@@ -23,7 +23,6 @@ public interface ITemplate extends RemoteService{
 	
 	public void deleteTemplate(TemplateInfo ti);
 	
-	public com.esferalia.aon.gwt.template.shared.Error insertProducts(TemplateInfo ti);
 
 	public Vector<TemplateInfo> searchTypeTemplate(String searchStr, Vector<TemplateInfo> templates);
 	
