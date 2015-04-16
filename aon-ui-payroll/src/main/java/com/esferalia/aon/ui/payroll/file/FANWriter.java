@@ -570,7 +570,9 @@ public class FANWriter implements Serializable {
 			ps = conn.prepareStatement(select);
 			ResultSet rs = ps.executeQuery();
 			int days = 0;
-			if(rs.getFetchSize()>0){
+			rs.last();
+			if(rs.getRow()>0){
+				rs.beforeFirst();
 				while(rs.next()){
 					Calendar cal = Calendar.getInstance();
 					if(rs.getDate(1)!=null){
