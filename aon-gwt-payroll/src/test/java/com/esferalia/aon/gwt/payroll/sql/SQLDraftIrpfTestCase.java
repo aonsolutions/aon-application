@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 
+import org.junit.Test;
+
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
@@ -13,7 +15,12 @@ import com.esferalia.aon.payroll.calculator.sql.SQLIrpfTestCase;
 import com.esferalia.aon.salary.expression.ExpressionException;
 
 public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
-
+	
+	@Test
+	@Override
+	public void testTotalLiquid() throws ExpressionException, SQLException {
+	}
+	
 	@Override
 	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(
 			Connection connection, Date startDate, Date endDate,
@@ -50,8 +57,6 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 			Connection connection, Date startDate, Date endDate,
 			Date issueDate, Criteria criteria) throws ExpressionException,
 			SQLException {
-		SQLContractSettleCalculatorContext sqlCtx = new SQLContractSettleCalculatorContext(
-				connection, startDate, endDate, issueDate, criteria);
 
 		SalaryDraft draft = new SalaryDraft();
 
@@ -69,8 +74,8 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 
 		draft.addDraftPayment(draftPayment);
 
-		SQLSalaryDraftCalculatorContext draftCtx = new SQLSalaryDraftCalculatorContext(
-				draft, sqlCtx);
+		SQLSettleDraftCalculatorContext draftCtx = new SQLSettleDraftCalculatorContext(
+				draft, connection, startDate, endDate, issueDate, criteria);
 
 		return draftCtx;
 	}
@@ -80,5 +85,16 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 			double annualRemuneration) {
 		super.assertAnnualRemuneration(expected + 66666.00, annualRemuneration);
 	}
-
+	
+	@Override
+	protected void assertAnnualRemuneration(double expected,
+			double annualRemuneration, double delta) {
+		super.assertAnnualRemuneration(expected + 66666.00, annualRemuneration, delta);
+	}
+	
+	@Override
+	protected void assertDeduccibleExpenses(double expected,
+			double deduccibleExpenses) {
+		super.assertDeduccibleExpenses(expected + (66666.00 * 0.15), deduccibleExpenses);
+	}
 }
