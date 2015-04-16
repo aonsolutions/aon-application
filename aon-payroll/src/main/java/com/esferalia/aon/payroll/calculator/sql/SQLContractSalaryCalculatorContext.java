@@ -94,6 +94,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.ajax4jsf.renderkit.ProducerContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.math3.analysis.UnivariateFunction;
@@ -368,6 +369,7 @@ public class SQLContractSalaryCalculatorContext extends
 		}
 
 	}
+	
 
 	public static class AgreementContextKey {
 
@@ -745,6 +747,8 @@ public class SQLContractSalaryCalculatorContext extends
 		return criteria;
 	}
 
+
+
 	private Criteria criteria;
 	public Connection connection;
 
@@ -789,6 +793,7 @@ public class SQLContractSalaryCalculatorContext extends
 	private OrderByList order;
 
 	private IListener listener;
+	
 
 	/*
 	 * public SQLContractSalaryCalculatorContext(Connection connection, Date
@@ -914,6 +919,7 @@ public class SQLContractSalaryCalculatorContext extends
 				CACHE_SIZE, agreementContextFactory);
 		this.leaveLoader = new SQLContractLeaveLoader(this.startDate,
 				this.endDate);
+		
 
 	}
 
@@ -2294,14 +2300,36 @@ public class SQLContractSalaryCalculatorContext extends
 	protected IIrpfCalculatorContext getIrpfCalculatorContext(Connection conn,
 			Date startDate, Date endDate, Criteria criteria) {
 		try {
-			SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
-					conn, startDate, endDate, endDate, criteria) {
-				@Override
-				public double getIrpf() {
-					return 0.00;
-				}
-			};
-			ctx.leaveLoader = leaveLoader;
+			ISQLContractSalaryCalculatorContext ctx = getUnderlyingIrpfSQLCalculatorContext(
+					conn, startDate, endDate, criteria);
+			return getIrpfCalculatorContext(conn, startDate, endDate, ctx);
+		} catch (SQLException e) {
+			throw new ExpressionExceptionWrapper(new ExpressionException(e));
+		} catch (ExpressionException e) {
+			throw new ExpressionExceptionWrapper(e);
+		}
+
+	}
+
+
+	protected SQLContractSalaryCalculatorContext getUnderlyingIrpfSQLCalculatorContext(
+			Connection conn, Date startDate, Date endDate, Criteria criteria)
+			throws SQLException, ExpressionException {
+		
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				conn, startDate, endDate, issueDate, criteria) {
+			@Override
+			public double getIrpf() {
+				return 0.00;
+			}
+		};
+		ctx.leaveLoader = leaveLoader;
+		return ctx;
+	}
+
+	protected IIrpfCalculatorContext getIrpfCalculatorContext(Connection conn,
+			Date startDate, Date endDate, ISQLContractSalaryCalculatorContext ctx) {
+		try {
 			return new SQLIrpfCalculatorContext(connection, startDate, endDate,
 					ctx) {
 				@Override
