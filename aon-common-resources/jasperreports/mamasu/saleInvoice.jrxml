@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="646"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -186,7 +186,7 @@
 				<reportElement uuid="81959e65-38a2-407b-b15b-37ff3914203c" key="line-8" x="553" y="539" width="4" height="1"/>
 			</line>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="00507b76-0f6d-4e7b-aef1-ccb4a783fe18" key="textField-42" x="0" y="176" width="80" height="574" forecolor="#999999"/>
+				<reportElement uuid="00507b76-0f6d-4e7b-aef1-ccb4a783fe18" key="textField-42" x="0" y="176" width="80" height="626" forecolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -197,7 +197,7 @@
 					<font size="55"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{company}.getAlias()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{registry}.getAlias()]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement uuid="04e8acd6-569e-4dcd-8c80-a90137f9799e" key="line-9" positionType="FixRelativeToBottom" x="553" y="0" width="15" height="176" forecolor="#999999">
