@@ -131,6 +131,7 @@ import com.esferalia.aon.gwt.payroll.sql.SQLEvents;
 import com.esferalia.aon.gwt.payroll.sql.SQLITData;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraftCalculatorContext;
+import com.esferalia.aon.gwt.payroll.sql.SQLSettleDraftCalculatorContext;
 import com.esferalia.aon.gwt.payroll.sql.SQLStatistics;
 import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
 import com.esferalia.aon.payroll.Contract;
@@ -4197,15 +4198,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		criteria.addEqualExpression(tableCol(CONTRACT, ContractColumns.ID),
 				draft.getEmployee().getId());
 
-		SQLContractSalaryCalculatorContext ctx = new SQLContractSettleCalculatorContext(
-				conn, draft.getStartDate(), draft.getEndDate(),
-				draft.getIssueDate(), criteria);
 
-		ctx.setListener(listener);
-		ctx.next();
-
-		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
-				draft, ctx);
+		SQLSettleDraftCalculatorContext draftCtx = new SQLSettleDraftCalculatorContext(
+				draft, conn, draft.getStartDate(), draft.getEndDate(), draft.getIssueDate(), criteria);
+		draftCtx.next();
 		draftCtx.setListener(listener);
 		return draftCtx;
 	}
