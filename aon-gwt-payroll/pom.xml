@@ -255,7 +255,27 @@
 			<artifactId>itext</artifactId>
 			<version>2.1.7</version>
 		</dependency>
-	</dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8</version>
+			<type>jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.0.8</version>
+			<scope>test</scope>
+		</dependency>
+	    <dependency>
+	      <groupId>com.esferalia.aon</groupId>
+	      <artifactId>aon.payroll</artifactId>
+	      <type>test-jar</type>
+	      <version>${project.version}</version>
+	      <scope>test</scope>
+	    </dependency>
+  </dependencies>
   <profiles>
     <profile>
     <id>dev</id>
