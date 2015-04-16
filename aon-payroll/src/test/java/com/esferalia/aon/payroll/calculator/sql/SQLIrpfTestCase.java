@@ -78,7 +78,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				result -> assertAnnualRemuneration(CommonUtil.round((1500.00 + 250.00) * 1.10
 						* (12 - result.getEffectiveDate().getMonth()), 3),
 				result.getAnnualRemuneration());
-		asserts = asserts.andThen(result -> assertDeduccibleExpenses(CommonUtil.round(result.getAnnualRemuneration() * 0.15,3), result.getDeducciblesExpenses()));
+		asserts = asserts.andThen(result -> assertEquals(CommonUtil.round(result.getAnnualRemuneration() * 0.15,3), result.getDeducciblesExpenses()));
 				
 		test(asserts, 
 				new String[]{
@@ -102,7 +102,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				result -> assertAnnualRemuneration(CommonUtil.round(2500.00
 						* (12 - result.getEffectiveDate().getMonth()), 3),
 				result.getAnnualRemuneration());
-		asserts = asserts.andThen(result -> assertDeduccibleExpenses(CommonUtil.round(result.getAnnualRemuneration() * 0.15,3), 
+		asserts = asserts.andThen(result -> assertEquals(CommonUtil.round(result.getAnnualRemuneration() * 0.15,3), 
 				result.getDeducciblesExpenses()));
 		
 		test(asserts, 
@@ -343,6 +343,12 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				annualRemuneration);
 	}
 	
+	protected void assertAnnualRemuneration(double expected, double annualRemuneration, double delta){
+		assertEquals(expected,
+				annualRemuneration,
+				delta);
+	}
+
 	protected void assertDeduccibleExpenses(double expected, double deduccibleExpenses){
 		assertEquals(expected,
 				deduccibleExpenses);

@@ -139,14 +139,7 @@ public class SQLContractSettleCalculatorContext extends
 						ExpressionException, SQLException {
 					super.nextSalary();
 
-					SQLContractSettleCalculatorContext ctx = new SQLContractSettleCalculatorContext(
-							getConnection(), getStart(), getEnd(),
-							getIssueDate(), getCriteria()) {
-						@Override
-						public double getIrpf() {
-							return 0.00;
-						}
-					};
+					ISQLContractSalaryCalculatorContext ctx = SQLContractSettleCalculatorContext.this.newSQLContractSettleCalculatorContext();
 					ctx.next();
 
 					settleIrpfBase = new ContractSalaryCalculator<Salary>(
@@ -166,5 +159,19 @@ public class SQLContractSettleCalculatorContext extends
 			throw new ExpressionExceptionWrapper(e);
 		}
 	}
+	
+	protected ISQLContractSalaryCalculatorContext newSQLContractSettleCalculatorContext()
+			throws SQLException, ExpressionException {
+		return new SQLContractSettleCalculatorContext(
+				getConnection(), getStart(), getEnd(),
+				getIssueDate(), getCriteria()) {
+			@Override
+			public double getIrpf() {
+				return 0.00;
+			}
+		};
+	}
+
+	
 
 }
