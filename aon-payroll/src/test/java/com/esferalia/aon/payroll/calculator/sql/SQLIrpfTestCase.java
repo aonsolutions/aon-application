@@ -26,6 +26,7 @@ import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.IrpfResult;
+import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -57,16 +58,27 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 
 	}
 	
+	private static class OnIrpfOutcome extends RuntimeException {
+		IrpfOutcome irpfOutcome;
+		public OnIrpfOutcome(IrpfOutcome irpfOutcome) {
+			this.irpfOutcome = irpfOutcome;
+		}
+		
+		@Override
+		public String getMessage() {
+			return irpfOutcome.getIrpfResult().getAnnualRemuneration() + ":" + irpfOutcome.getIrpfResult().getIrpf() ;
+		}
+	}
 	// ------------------------------------------------------------------------
 
 	@Test
 	public void testSimple() throws ExpressionException, SQLException {
 
 		Consumer<IrpfResult> asserts = 
-				result -> assertEquals(CommonUtil.round((1500.00 + 250.00) * 1.10
+				result -> assertAnnualRemuneration(CommonUtil.round((1500.00 + 250.00) * 1.10
 						* (12 - result.getEffectiveDate().getMonth()), 3),
 				result.getAnnualRemuneration());
-		asserts = asserts.andThen(result -> assertEquals(CommonUtil.round(result.getAnnualRemuneration() * 0.15,3), result.getDeducciblesExpenses()));
+		asserts = asserts.andThen(result -> assertDeduccibleExpenses(CommonUtil.round(result.getAnnualRemuneration() * 0.15,3), result.getDeducciblesExpenses()));
 				
 		test(asserts, 
 				new String[]{
@@ -87,10 +99,10 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 	public void testTotalPayment() throws ExpressionException, SQLException {
 		
 		Consumer<IrpfResult> asserts = 
-				result -> assertEquals(CommonUtil.round(2500.00
+				result -> assertAnnualRemuneration(CommonUtil.round(2500.00
 						* (12 - result.getEffectiveDate().getMonth()), 3),
 				result.getAnnualRemuneration());
-		asserts = asserts.andThen(result -> assertEquals(CommonUtil.round(result.getAnnualRemuneration() * 0.15,3), 
+		asserts = asserts.andThen(result -> assertDeduccibleExpenses(CommonUtil.round(result.getAnnualRemuneration() * 0.15,3), 
 				result.getDeducciblesExpenses()));
 		
 		test(asserts, 
@@ -153,7 +165,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				result -> {
 					int month = result.getEffectiveDate().getMonth();
 					
-					assertEquals(
+					assertAnnualRemuneration(
 							CommonUtil.round(
 									1000.00 +
 									( month < 07 ? 1000.00/2 : 0.00) 
@@ -164,7 +176,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		asserts = asserts.andThen(
 				result -> {
 					int month = result.getEffectiveDate().getMonth();
-					assertEquals(
+					assertDeduccibleExpenses(
 							CommonUtil.round(
 									(1000.00 * 2 / 12 ) * 0.15 * (12 - month),3), 
 							result.getDeducciblesExpenses());
@@ -195,7 +207,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				result -> {
 					int month = result.getEffectiveDate().getMonth();
 					
-					assertEquals(
+					assertAnnualRemuneration(
 							CommonUtil.round(
 									1000.00 *
 									( 12 -month) 
@@ -210,7 +222,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		asserts = asserts.andThen(
 				result -> {
 					int month = result.getEffectiveDate().getMonth();
-					assertEquals(
+					assertDeduccibleExpenses(
 							CommonUtil.round(
 									(1000.00 ) * 0.15 * (12 - month),3)+							
 							CommonUtil.round(
@@ -301,7 +313,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 
 		
 		addPayment(aonContext, contract, getFirstDayOfYear(getToday()), "99999.00", SalaryType.SETTLE);
-		SQLContractSettleCalculatorContext ctx = new SQLContractSettleCalculatorContext(
+		ISQLContractSalaryCalculatorContext ctx = getContractSettleCalculatorContext(
 				connection, start, end, issue, criteria);
 
 		ctx.next();
@@ -310,8 +322,8 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			@Override
 			public void onIrpf(IrpfOutcome irpfOutcome) {
 				int month = irpfOutcome.getIrpfResult().getEffectiveDate().getMonth();
-				assertEquals((10000.00 * (month +1)) + 99999.00,
-								irpfOutcome.getIrpfResult().getAnnualRemuneration());
+				assertAnnualRemuneration((10000.00 * (month +1)) + 99999.00,
+						irpfOutcome.getIrpfResult().getAnnualRemuneration());
 				throw new OnIrpfOutcome(irpfOutcome);
 			}
 		});
@@ -324,6 +336,29 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		}
 	}
 
+	// ------------------------------------------------------------------------
+	
+	protected void assertAnnualRemuneration(double expected, double annualRemuneration){
+		assertEquals(expected,
+				annualRemuneration);
+	}
+	
+	protected void assertDeduccibleExpenses(double expected, double deduccibleExpenses){
+		assertEquals(expected,
+				deduccibleExpenses);
+	}
+
+	protected ISQLContractSalaryCalculatorContext getContractSettleCalculatorContext(Connection connection,
+			Date startDate, Date endDate, Date issueDate, Criteria criteria) throws ExpressionException, SQLException{
+		return new SQLContractSettleCalculatorContext(
+				connection, startDate, endDate, issueDate, criteria);
+	}
+	
+	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
+			Date startDate, Date endDate, Date issueDate, Criteria criteria) throws ExpressionException, SQLException{
+		return new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, issueDate, criteria);
+	}
 	// ------------------------------------------------------------------------
 
 	private void test(Consumer<IrpfResult> c, String [] payments, String [] deductions)
@@ -358,7 +393,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
 				contract.getId());
 
-		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, start, end, issue, criteria);
 
 		ctx.next();
@@ -374,15 +409,4 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		ctx.getIrpf();
 	}
 	
-	private static class OnIrpfOutcome extends RuntimeException {
-		IrpfOutcome irpfOutcome;
-		public OnIrpfOutcome(IrpfOutcome irpfOutcome) {
-			this.irpfOutcome = irpfOutcome;
-		}
-		
-		@Override
-		public String getMessage() {
-			return irpfOutcome.getIrpfResult().getAnnualRemuneration() + ":" + irpfOutcome.getIrpfResult().getIrpf() ;
-		}
-	}
 }
