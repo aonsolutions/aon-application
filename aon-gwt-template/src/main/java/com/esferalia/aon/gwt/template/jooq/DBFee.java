@@ -10,13 +10,10 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Vector;
 
 import org.jooq.Condition;
-import org.jooq.DSLContext;
 import org.jooq.InsertValuesStep17;
 import org.jooq.Record1;
 import org.jooq.Record2;
@@ -28,44 +25,40 @@ import org.jooq.impl.DSL;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.InvoicingGroup;
-import com.code.aon.google.apis.DatabaseSync;
-import com.code.aon.google.apis.jooq.JooqSettings;
 import com.code.aon.project.Project;
 import com.code.aon.registry.Registry;
 import com.esferalia.aon.gwt.template.server.FeeInfo;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.jooq.tables.records.CustomerFeeRecord;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 
 public class DBFee {
-	private static final String SET_FOREIGN_KEY_CHECKS_0 = "SET FOREIGN_KEY_CHECKS=0;";
-	private static final String SET_FOREIGN_KEY_CHECKS_1 = "SET FOREIGN_KEY_CHECKS=1;";
 
-	
 	static Integer domainIdFee;
-	public static Error insertFee(String domain, Integer domainId, Vector<FeeInfo> fees)throws SQLException{
+	public static Error insertFee(String domain, Integer domainId, Vector<FeeInfo> fees){
 		Error error = new Error();
 		error.setError(true);
 		Vector<String> verror = new Vector<String>();
 		verror.add("");
 		error.setTextError(verror);
-		Connection connection = null;
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain, domainId);
+			
 			Vector<String> v = new Vector<String>();
-			InsertValuesStep17<CustomerFeeRecord, Integer, Integer, Integer, Short, Integer, String, Double, Double, String, java.sql.Date, java.sql.Date, java.sql.Date, Short, Byte, Integer, Integer, Integer> customerFeeInsertQuery = dslContext.insertInto(CUSTOMER_FEE, CUSTOMER_FEE.DOMAIN, CUSTOMER_FEE.PROJECT, CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE, CUSTOMER_FEE.ITEM, CUSTOMER_FEE.DESCRIPTION, CUSTOMER_FEE.QUANTITY, CUSTOMER_FEE.PRICE, CUSTOMER_FEE.DISCOUNT_EXPR, CUSTOMER_FEE.INITIAL_DATE, CUSTOMER_FEE.FINAL_DATE, CUSTOMER_FEE.BILLING_DATE, CUSTOMER_FEE.PERIOD, CUSTOMER_FEE.SECURITY_LEVEL, CUSTOMER_FEE.INVOICING_GROUP, CUSTOMER_FEE.SELLER, CUSTOMER_FEE.WORKPLACE);
+			InsertValuesStep17<CustomerFeeRecord, Integer, Integer, Integer, Short, Integer, String, Double, Double, String, java.sql.Date, java.sql.Date, java.sql.Date, Short, Byte, Integer, Integer, Integer> customerFeeInsertQuery = ctx.getDslContext().insertInto(CUSTOMER_FEE, CUSTOMER_FEE.DOMAIN, CUSTOMER_FEE.PROJECT, CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE, CUSTOMER_FEE.ITEM, CUSTOMER_FEE.DESCRIPTION, CUSTOMER_FEE.QUANTITY, CUSTOMER_FEE.PRICE, CUSTOMER_FEE.DISCOUNT_EXPR, CUSTOMER_FEE.INITIAL_DATE, CUSTOMER_FEE.FINAL_DATE, CUSTOMER_FEE.BILLING_DATE, CUSTOMER_FEE.PERIOD, CUSTOMER_FEE.SECURITY_LEVEL, CUSTOMER_FEE.INVOICING_GROUP, CUSTOMER_FEE.SELLER, CUSTOMER_FEE.WORKPLACE);
 			
 			domainIdFee = domainId;
+			AONContext sctx = ctx;
 			fees.stream().forEach(s ->{	
 				if(s.getProduct() != null){
-					Result<Record1< Integer>> data = dslContext.select(ITEM.ID)
+					Result<Record1< Integer>> data = sctx.getDslContext().select(ITEM.ID)
 						.from(ITEM)
 						.where(ITEM.BARCODE.eq(s.getProduct())).and(ITEM.DOMAIN.eq(domainIdFee)).fetch();
 					if(data.isEmpty()){
 
-						data = dslContext.select(ITEM.ID)
+						data = sctx.getDslContext().select(ITEM.ID)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
 										.and(PRODUCT.DOMAIN.eq(domainIdFee)).fetch();
@@ -83,7 +76,7 @@ public class DBFee {
 						if(s.getDetail3() == "") 
 							detail3 = ITEM.DETAIL3.eq("").or(ITEM.DETAIL3.isNull());
 						
-						data = dslContext.select(ITEM.ID)
+						data = sctx.getDslContext().select(ITEM.ID)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
 									.and(detail)
@@ -107,7 +100,7 @@ public class DBFee {
 						
 						Short line;
 						if(s.getLine() == null){
-							Result<Record1<Short>> n = dslContext.select(DSL.max(CUSTOMER_FEE.LINE))
+							Result<Record1<Short>> n = sctx.getDslContext().select(DSL.max(CUSTOMER_FEE.LINE))
 								.from(CUSTOMER_FEE)
 								.where(CUSTOMER_FEE.DOMAIN.eq(domainId).and(CUSTOMER_FEE.CUSTOMER.eq(s.getClientId()))).fetch();
 							
@@ -118,7 +111,7 @@ public class DBFee {
 						else{
 
 							line = s.getLine().shortValue();
-							dslContext.update(CUSTOMER_FEE).set(CUSTOMER_FEE.LINE, CUSTOMER_FEE.LINE.add(1))
+							sctx.getDslContext().update(CUSTOMER_FEE).set(CUSTOMER_FEE.LINE, CUSTOMER_FEE.LINE.add(1))
 									.where(CUSTOMER_FEE.DOMAIN.eq(domainId)).and(CUSTOMER_FEE.CUSTOMER.eq(s.getClientId()))
 									.and(CUSTOMER_FEE.LINE.greaterThan(line));
 							
@@ -137,32 +130,23 @@ public class DBFee {
 			});
 	
 			if(error.getError()){
-				Statement sOpen = connection.createStatement();
-				sOpen.execute(SET_FOREIGN_KEY_CHECKS_0);
-				System.out.println("Claves referenciales desactivadas");
-				
+				ctx.deactivateForeignKeys();
 				customerFeeInsertQuery.execute();
-				
-				Statement sClose = connection.createStatement();
-				sClose.execute(SET_FOREIGN_KEY_CHECKS_1);
-				System.out.println("Claves referenciales activadas");
+				ctx.activateForeignKeys();
 			}
 			return error;
 			
-		}finally {
-			if (connection != null)
-				connection.close();
+		} finally {
+				if (ctx != null) ctx.close();
 		}
 	}
 	
-	public static Vector<Customer> getCustomers(String domain,Integer domainId) throws SQLException{
-		Connection connection = null;
+	public static Vector<Customer> getCustomers(String domain,Integer domainId) {
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain, domainId);
 
-			Result<Record4<Integer, String, String, String>> data = dslContext.select(REGISTRY.ID, REGISTRY.ALIAS, REGISTRY.DOCUMENT, REGISTRY.NAME)
+			Result<Record4<Integer, String, String, String>> data = ctx.getDslContext().select(REGISTRY.ID, REGISTRY.ALIAS, REGISTRY.DOCUMENT, REGISTRY.NAME)
 					.from(REGISTRY).join(CUSTOMER).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
 					.where(CUSTOMER.DOMAIN.eq(domainId))
 					.fetch();
@@ -186,8 +170,7 @@ public class DBFee {
 			return v;
 
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null) ctx.close();
 		}
 	}
 	
@@ -195,13 +178,11 @@ public class DBFee {
 	
 	public static Vector<Seller> getSellers(String domain, Integer domainId)
 			throws SQLException {
-		Connection connection = null;
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain, domainId);
 
-			Result<Record4<Integer, String, String, String>> data = dslContext.select(REGISTRY.ID,REGISTRY.ALIAS,REGISTRY.NAME, REGISTRY.DOCUMENT)
+			Result<Record4<Integer, String, String, String>> data = ctx.getDslContext().select(REGISTRY.ID,REGISTRY.ALIAS,REGISTRY.NAME, REGISTRY.DOCUMENT)
 					.from(REGISTRY).join(SELLER).on(REGISTRY.ID.eq(SELLER.REGISTRY))
 					.where(SELLER.DOMAIN.eq(domainId))
 					.fetch();
@@ -222,19 +203,16 @@ public class DBFee {
 			return v;
 
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null) ctx.close();
 		}
 	}
 
-	public static Vector<Project> getProjects(String domain,Integer domainId) throws SQLException{
-		Connection connection = null;
+	public static Vector<Project> getProjects(String domain,Integer domainId){
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain, domainId);
 
-			Result<Record3<Integer, String, String>> data = dslContext.select(PROJECT.ID,PROJECT.ALIAS,PROJECT.NAME)
+			Result<Record3<Integer, String, String>> data = ctx.getDslContext().select(PROJECT.ID,PROJECT.ALIAS,PROJECT.NAME)
 					.from(PROJECT)
 					.where(PROJECT.DOMAIN.eq(domainId))
 					.fetch();
@@ -254,20 +232,17 @@ public class DBFee {
 			return v;
 
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null) ctx.close();
 		}
 	}
 
 
-	public static Vector<WorkPlace> getWorkplaces(String domain,Integer domainId) throws SQLException{
-		Connection connection = null;
+	public static Vector<WorkPlace> getWorkplaces(String domain,Integer domainId){
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain, domainId);
 
-			Result<Record2<Integer, String>> data = dslContext.select(WORKPLACE.ID,WORKPLACE.DESCRIPTION)
+			Result<Record2<Integer, String>> data = ctx.getDslContext().select(WORKPLACE.ID,WORKPLACE.DESCRIPTION)
 					.from(WORKPLACE)
 					.where(WORKPLACE.DOMAIN.eq(domainId))
 					.fetch();
@@ -287,19 +262,16 @@ public class DBFee {
 			return v;
 
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null) ctx.close();
 		}
 	}
 	
-	public static Vector<InvoicingGroup> getInvoicingGroups(String domain,Integer domainId) throws SQLException{
-		Connection connection = null;
+	public static Vector<InvoicingGroup> getInvoicingGroups(String domain,Integer domainId) {
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain, domainId);
 
-			Result<Record2<Integer, String>> data = dslContext.select(INVOICING_GROUP.ID,INVOICING_GROUP.DESCRIPTION)
+			Result<Record2<Integer, String>> data = ctx.getDslContext().select(INVOICING_GROUP.ID,INVOICING_GROUP.DESCRIPTION)
 					.from(INVOICING_GROUP)
 					.where(INVOICING_GROUP.DOMAIN.eq(domainId))
 					.fetch();
@@ -319,8 +291,7 @@ public class DBFee {
 			return v;
 
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null) ctx.close();
 		}
 	}
 }

@@ -218,6 +218,10 @@ public class AON {
 	
 	// ------------------------------------ PRODUCT
 	
+	public static Product getProduct(AONContext ctx, Integer id){
+		return getProduct().getProduct(ctx, id);
+	}
+	
 	public static void insert(AONContext ctx, Product p) {
 		getProduct().insert(ctx, p);
 	}

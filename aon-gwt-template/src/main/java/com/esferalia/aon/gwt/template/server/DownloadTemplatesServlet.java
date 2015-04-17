@@ -45,9 +45,15 @@ public class DownloadTemplatesServlet extends HttpServlet {
         String driveId = p_request.getParameter("drive_id");
         String fileId = p_request.getParameter("id");
         String name = p_request.getParameter("name");
-
+        
         String domain = AonUtil.getDomainName();
         Integer idFile = Integer.parseInt(fileId);
+        Integer domainId = null;
+		try {
+			domainId = com.code.aon.google.apis.jooq.DBConsults.getDomain(domain).getId();
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
         byte[] b = null ;
         
         if (driveId != ""){
@@ -80,11 +86,8 @@ public class DownloadTemplatesServlet extends HttpServlet {
         }
         else if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);
-            try {
-            	b = DBConsults.getTemplate(domain, id);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+            b = DBConsults.getTemplate(domain,domainId, id);
+
         }
         else return;
         

@@ -14,6 +14,11 @@ public class ProductImpl implements IProduct{
 	// ------------------------------------- PRODUCT
 	
 	@Override
+	public Product getProduct(AONContext ctx, Integer productId) {
+		return ProductDAO.getProduct(ctx, productId);
+	}
+	
+	@Override
 	public void insert(AONContext ctx, Product p) {
 		ctx.getDslContext().transaction(configuration -> {
 			ProductDAO.insert(ctx, p);

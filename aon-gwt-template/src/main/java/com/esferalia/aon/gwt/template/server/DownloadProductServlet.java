@@ -87,11 +87,7 @@ public class DownloadProductServlet extends HttpServlet {
         }
         else if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);
-            try {
-            	b = DBConsults.getTemplate(domain, id);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+        	b = DBConsults.getTemplate(domain,domainId, id);
         }
         else return;
         
@@ -130,12 +126,8 @@ public class DownloadProductServlet extends HttpServlet {
         	celda.setCellValue(aux.getColumns().get(i));
         	celda.setCellStyle(style);
         }
-        Vector<ProductInfo> v = new Vector<ProductInfo>();
-		try {
-			v = DBProduct.getProducts(domain,domainId);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+        Vector<ProductInfo> v =  DBProduct.getProducts(domain,domainId);
+
         for(Integer j = 0; j< v.size();j++){
         	Row row = hoja.createRow(j+1);
         	for(Integer k = 0; k< columns; k++){

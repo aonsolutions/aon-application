@@ -7,6 +7,8 @@ public class Warehouse implements IsSerializable{
 	Integer workplace;
 	Integer id;
 	Integer domainId;
+	
+	
 	public String getName() {
 		return name;
 	}

@@ -9,8 +9,6 @@ import static com.esferalia.aon.jooq.tables.ProductTag.PRODUCT_TAG;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.Tax.TAX;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
@@ -23,12 +21,9 @@ import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Record5;
 import org.jooq.Result;
-import org.jooq.impl.DSL;
 
 import com.code.aon.config.Tag;
 import com.code.aon.config.Tax;
-import com.code.aon.google.apis.DatabaseSync;
-import com.code.aon.google.apis.jooq.JooqSettings;
 import com.code.aon.product.Brand;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.product.ProductTag;
@@ -124,7 +119,6 @@ public class DBProduct {
 		verror.add("");
 		error.setTextError(verror);
 		AONContext ctx = null;
-		
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
 			
@@ -225,14 +219,12 @@ public class DBProduct {
 		return false;
 	}
 	
-	public static ProductCategory getCategory(String domain, Integer id) throws SQLException{
-		Connection connection = null;
+	public static ProductCategory getCategory(String domain,Integer domainId, Integer id) {
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain, domainId);
 			
-			Result<Record5<Integer, String, String, String, String>> data = dslContext.select(PCATEGORY.ID,PCATEGORY.NAME,PCATEGORY.DETAIL,PCATEGORY.DETAIL2,PCATEGORY.DETAIL3)
+			Result<Record5<Integer, String, String, String, String>> data = ctx.getDslContext().select(PCATEGORY.ID,PCATEGORY.NAME,PCATEGORY.DETAIL,PCATEGORY.DETAIL2,PCATEGORY.DETAIL3)
 				.from(PCATEGORY)
 				.where(PCATEGORY.ID.eq(id)).fetch();
 			
@@ -244,27 +236,24 @@ public class DBProduct {
 			if(data.get(0).value5() != null) c.setDetail3(data.get(0).value5());
 			return c;
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null) ctx.close();
 		}	
 	}
 	
-	public static  Vector<ProductCategory> getCategories(String domain, Integer domainId) throws SQLException {
-		Connection connection = null;
+	public static  Vector<ProductCategory> getCategories(String domain, Integer domainId)  {
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain, domainId);
 			
-			Result<Record5<Integer, String, String, String, String>> data = dslContext.select(PCATEGORY.ID,PCATEGORY.NAME,PCATEGORY.DETAIL,PCATEGORY.DETAIL2,PCATEGORY.DETAIL3)
+			Result<Record5<Integer, String, String, String, String>> data = ctx.getDslContext().select(PCATEGORY.ID,PCATEGORY.NAME,PCATEGORY.DETAIL,PCATEGORY.DETAIL2,PCATEGORY.DETAIL3)
 				.from(PCATEGORY)
 				.where(PCATEGORY.DOMAIN.eq(domainId)).fetch();
 			
-			Result<Record5<Integer, String, String, String, String>> dataSon = dslContext.select(PCATEGORY.ID,PCATEGORY.NAME,PCATEGORY.DETAIL,PCATEGORY.DETAIL2,PCATEGORY.DETAIL3)
+			Result<Record5<Integer, String, String, String, String>> dataSon = ctx.getDslContext().select(PCATEGORY.ID,PCATEGORY.NAME,PCATEGORY.DETAIL,PCATEGORY.DETAIL2,PCATEGORY.DETAIL3)
 					.from(PCATEGORY).join(DOMAIN).on(PCATEGORY.DOMAIN.eq(DOMAIN.ID))
 					.where(DOMAIN.PARENT.eq(domainId)).fetch();
 			
-			Result<Record5<Integer, String, String, String, String>> dataParent = dslContext.select(PCATEGORY.ID,PCATEGORY.NAME,PCATEGORY.DETAIL,PCATEGORY.DETAIL2,PCATEGORY.DETAIL3)
+			Result<Record5<Integer, String, String, String, String>> dataParent = ctx.getDslContext().select(PCATEGORY.ID,PCATEGORY.NAME,PCATEGORY.DETAIL,PCATEGORY.DETAIL2,PCATEGORY.DETAIL3)
 					.from(PCATEGORY).join(DOMAIN).on(PCATEGORY.DOMAIN.eq(DOMAIN.PARENT))
 					.where(DOMAIN.ID.eq(domainId)).fetch();
 			
@@ -300,20 +289,17 @@ public class DBProduct {
 			return v;
 			
 		} finally {
-		if (connection != null)
-			connection.close();
+			if (ctx != null) ctx.close();
 		}
 	}
 	
-	public static Vector<ProductInfo> getProducts(String domain,Integer domainId) throws SQLException{
-		Connection connection = null;
+	public static Vector<ProductInfo> getProducts(String domain,Integer domainId) {
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain, domainId);
 			
 			Result<Record19<String, String, Integer, Integer, Byte, Integer, Integer, Byte, Byte, Byte, Byte, Double, Double, String, String, String, String, String, Integer>>
-				data =	dslContext.select(PRODUCT.CODE,PRODUCT.NAME,PRODUCT.CATEGORY
+				data =	ctx.getDslContext().select(PRODUCT.CODE,PRODUCT.NAME,PRODUCT.CATEGORY
 						,PRODUCT.BRAND,PRODUCT.TYPE,PRODUCT.VAT, PRODUCT.RETENTION,PRODUCT.INVENTORIABLE,PRODUCT.COMPOSITION
 						,PRODUCT.COMPOSITION_PRICE,PRODUCT.STATUS,ITEM.PURCHASE_PRICE,ITEM.PRICE,ITEM.BARCODE,ITEM.DESCRIPTION
 						,ITEM.DETAIL,ITEM.DETAIL2,ITEM.DETAIL3,PRODUCT.ID)
@@ -328,13 +314,13 @@ public class DBProduct {
 				i.setCode(r.value1());
 				i.setName(r.value2());
 				if(r.value3()!=null){
-					ProductCategory c = getCategory(domain, r.value3());
+					ProductCategory c = getCategory(domain,domainId, r.value3());
 					i.setCategory(c.getName());
 				}
 				else i.setCategory("");
 				
 				if(r.value4()!=null){
-					Brand brand = getBrand(domain, r.value4());
+					Brand brand = getBrand(domain,domainId, r.value4());
 					i.setBrand(brand.getName());
 				}
 				else i.setBrand("");
@@ -343,7 +329,7 @@ public class DBProduct {
 					i.setType(com.esferalia.aon.occam.api.model.type.ProductType.values()[r.value5()]);
 				}
 				if(r.value6()!=null){
-					com.esferalia.aon.occam.api.model.product.Tax vat = getTax(domain, r.value6());
+					com.esferalia.aon.occam.api.model.product.Tax vat = getTax(domain,domainId, r.value6());
 					i.setVat(vat);
 				}
 				else{
@@ -352,7 +338,7 @@ public class DBProduct {
 					i.setVat(t);
 				}
 				if(r.value7()!=null){
-					com.esferalia.aon.occam.api.model.product.Tax retention = getTax(domain, r.value7());
+					com.esferalia.aon.occam.api.model.product.Tax retention = getTax(domain,domainId, r.value7());
 					i.setRetention(retention);
 				}
 				else{
@@ -376,7 +362,7 @@ public class DBProduct {
 				else i.setDetail2("");
 				if(r.value18()!=null) i.setDetail3(r.value18());
 				else i.setDetail3("");
-				Set<ProductTag> tags = getTags(dslContext, r.value19());
+				Set<ProductTag> tags = getTags(ctx.getDslContext(), r.value19());
 				pi.setTags(tags);
 				pi.setDownloadItem(i);
 				v.add(pi);
@@ -384,8 +370,7 @@ public class DBProduct {
 			return v;
 
 		} finally {
-		if (connection != null)
-			connection.close();
+			if (ctx != null) ctx.close();
 		}
 	}
 	
@@ -409,22 +394,20 @@ public class DBProduct {
 		
 	}
 	
-	public static  Vector<ProductTag> getTags(String domain, Integer domainId) throws SQLException {
-		Connection connection = null;
+	public static  Vector<ProductTag> getTags(String domain, Integer domainId){
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain, domainId);
 			
-			Result<Record2< Integer, String>> data = dslContext.select(TAG.ID,TAG.NAME)
+			Result<Record2< Integer, String>> data = ctx.getDslContext().select(TAG.ID,TAG.NAME)
 				.from(TAG)
 				.where(TAG.DOMAIN.eq(domainId)).fetch();
 		
-			Result<Record2< Integer, String>> dataSon = dslContext.select(TAG.ID,TAG.NAME)
+			Result<Record2< Integer, String>> dataSon = ctx.getDslContext().select(TAG.ID,TAG.NAME)
 					.from(TAG).join(DOMAIN).on(TAG.DOMAIN.eq(DOMAIN.ID))
 					.where(DOMAIN.PARENT.eq(domainId)).fetch();
 			
-			Result<Record2< Integer, String>> dataParent = dslContext.select(TAG.ID,TAG.NAME)
+			Result<Record2< Integer, String>> dataParent = ctx.getDslContext().select(TAG.ID,TAG.NAME)
 					.from(TAG).join(DOMAIN).on(TAG.DOMAIN.eq(DOMAIN.PARENT))
 					.where(DOMAIN.ID.eq(domainId)).fetch();
 			
@@ -458,27 +441,24 @@ public class DBProduct {
 			return v;
 			
 		} finally {
-		if (connection != null)
-			connection.close();
+			if (ctx != null) ctx.close();
 		}
 	}
 	
-	public static  Vector<Brand> getBrands(String domain, Integer domainId) throws SQLException {
-		Connection connection = null;
+	public static  Vector<Brand> getBrands(String domain, Integer domainId) {
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain, domainId);
 			
-			Result<Record2<Integer, String>> data = dslContext.select(BRAND.ID,BRAND.NAME)
+			Result<Record2<Integer, String>> data = ctx.getDslContext().select(BRAND.ID,BRAND.NAME)
 				.from(BRAND)
 				.where(BRAND.DOMAIN.eq(domainId)).fetch();
 			
-			Result<Record2<Integer, String>> dataSon = dslContext.select(BRAND.ID,BRAND.NAME)
+			Result<Record2<Integer, String>> dataSon = ctx.getDslContext().select(BRAND.ID,BRAND.NAME)
 					.from(BRAND).join(DOMAIN).on(BRAND.DOMAIN.eq(DOMAIN.ID))
 					.where(DOMAIN.PARENT.eq(domainId)).fetch();
 			
-			Result<Record2<Integer, String>> dataParent = dslContext.select(BRAND.ID,BRAND.NAME)
+			Result<Record2<Integer, String>> dataParent = ctx.getDslContext().select(BRAND.ID,BRAND.NAME)
 					.from(BRAND).join(DOMAIN).on(BRAND.DOMAIN.eq(DOMAIN.PARENT))
 					.where(DOMAIN.ID.eq(domainId)).fetch();
 			
@@ -510,19 +490,16 @@ public class DBProduct {
 			return v;
 			
 		} finally {
-		if (connection != null)
-			connection.close();
+			if (ctx != null) ctx.close();
 		}
 	}
 	
-	public static Brand getBrand(String domain, Integer id) throws SQLException{
-		Connection connection = null;
+	public static Brand getBrand(String domain,Integer domainId, Integer id) {
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain, domainId);
 			
-			Result<Record2<Integer, String>> data = dslContext.select(BRAND.ID,BRAND.NAME)
+			Result<Record2<Integer, String>> data = ctx.getDslContext().select(BRAND.ID,BRAND.NAME)
 				.from(BRAND)
 				.where(BRAND.ID.eq(id)).fetch();
 			
@@ -532,19 +509,16 @@ public class DBProduct {
 			
 			return brand;
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null) ctx.close();
 		}	
 	}
 	
-	public static com.esferalia.aon.occam.api.model.product.Tax getTax(String domain, Integer id) throws SQLException{
-		Connection connection = null;
+	public static com.esferalia.aon.occam.api.model.product.Tax getTax(String domain, Integer domainId, Integer id) {
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain, domainId);
 			
-			Result<Record3<Integer,String,Double>>  data = dslContext.select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
+			Result<Record3<Integer,String,Double>>  data = ctx.getDslContext().select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
 				.from(TAX)
 				.where(TAX.ID.eq(id)).fetch();
 			
@@ -555,29 +529,25 @@ public class DBProduct {
 			if(data.get(0).value3()!=null)t.setPercentage(data.get(0).value3());
 			return t;
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null) ctx.close();
 		}	
 	}
 	
-	public static Vector<Tax> getRetentions(String domain, Integer domainId) throws SQLException {
+	public static Vector<Tax> getRetentions(String domain, Integer domainId)  {
 		Vector<Tax> v = new Vector<Tax>();
-		Connection connection = null;
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain, domainId);
 			
-			Result<Record3<Integer,String,Double>> data = dslContext.select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
+			Result<Record3<Integer,String,Double>> data = ctx.getDslContext().select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
 					.from(TAX)
 					.where(TAX.DOMAIN.eq(domainId).and(TAX.TAX_TYPE.eq((byte)2))).fetch();
 			
-			Result<Record3<Integer,String,Double>> dataSon = dslContext.select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
+			Result<Record3<Integer,String,Double>> dataSon = ctx.getDslContext().select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
 					.from(TAX).join(DOMAIN).on(TAX.DOMAIN.eq(DOMAIN.ID))
 					.where(DOMAIN.PARENT.eq(domainId).and(TAX.TAX_TYPE.eq((byte)2))).fetch();
 			
-			Result<Record3<Integer,String,Double>> dataParent = dslContext.select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
+			Result<Record3<Integer,String,Double>> dataParent = ctx.getDslContext().select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
 					.from(TAX).join(DOMAIN).on(TAX.DOMAIN.eq(DOMAIN.PARENT))
 					.where(DOMAIN.ID.eq(domainId).and(TAX.TAX_TYPE.eq((byte)2))).fetch();
 			
@@ -606,29 +576,25 @@ public class DBProduct {
 			});
 			return v;			
 		}finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null) ctx.close();
 		}
 	}
 	
-	public static Vector<Tax> getIVA(String domain, Integer domainId) throws SQLException {
+	public static Vector<Tax> getIVA(String domain, Integer domainId) {
 		Vector<Tax> v = new Vector<Tax>();
-		Connection connection = null;
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain, domainId);
 			
-			Result<Record3<Integer,String,Double>> data = dslContext.select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
+			Result<Record3<Integer,String,Double>> data = ctx.getDslContext().select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
 					.from(TAX)
 					.where(TAX.DOMAIN.eq(domainId).and(TAX.TAX_TYPE.eq((byte)1))).fetch();
 			
-			Result<Record3<Integer,String,Double>> dataSon = dslContext.select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
+			Result<Record3<Integer,String,Double>> dataSon = ctx.getDslContext().select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
 					.from(TAX).join(DOMAIN).on(TAX.DOMAIN.eq(DOMAIN.ID))
 					.where(DOMAIN.PARENT.eq(domainId).and(TAX.TAX_TYPE.eq((byte)1))).fetch();
 			
-			Result<Record3<Integer,String,Double>> dataParent = dslContext.select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
+			Result<Record3<Integer,String,Double>> dataParent = ctx.getDslContext().select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
 					.from(TAX).join(DOMAIN).on(TAX.DOMAIN.eq(DOMAIN.PARENT))
 					.where(DOMAIN.ID.eq(domainId).and(TAX.TAX_TYPE.eq((byte)1))).fetch();
 			
@@ -657,8 +623,7 @@ public class DBProduct {
 			});
 			return v;			
 		}finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null) ctx.close();
 		}
 	}
 	

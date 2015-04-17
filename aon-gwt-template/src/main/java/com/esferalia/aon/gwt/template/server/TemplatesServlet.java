@@ -47,6 +47,7 @@ import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.template.client.ITemplate;
+import com.esferalia.aon.gwt.template.jooq.DBCatalogue;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBFee;
 import com.esferalia.aon.gwt.template.jooq.DBProduct;
@@ -82,6 +83,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	
 	HashMap<String, ProductInfo> map = new HashMap<String, ProductInfo>();
 	Integer domainId;
+	String domain;
 	public static byte[] out;
 	static Integer size;
 	private static String mimetype;
@@ -126,6 +128,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			initFacesContext();
 			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 			domainId = ds.getDomainId();
+			domain = AonUtil.getDomainName();
 		}
 		finally{releaseFacesContext();}
 	}
@@ -136,13 +139,11 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	
 	public TemplateList getTemplates(){
 		String domain = AonUtil.getDomainName();
+
 		TemplateList tl = null;
-		try {
-			tl = DBConsults.getTemplates(domain, domainId);
-			tl.setDomainId(domainId);
-		}catch (SQLException e) {
-			e.printStackTrace();
-		}
+		tl = DBConsults.getTemplates(domain, domainId);
+		tl.setDomainId(domainId);
+	
 		return tl;
 	}
 	
@@ -150,47 +151,33 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	
 	
 	public Vector<Warehouse> getWarehouses(){
-		Vector<Warehouse> v = new Vector<Warehouse>();
 		String domain = AonUtil.getDomainName();
-		try {
-			v = DBStock.getWarehouse(domain, domainId);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return v;
+		return DBStock.getWarehouse(domain, domainId);
 	}
 	
 	public TemplateInfo newTemplate(TemplateInfo ti ){
 		String domain = AonUtil.getDomainName();
 		byte[] b = Utils.newXmlFile(ti);
-		try {
-			Integer id = DBConsults.insertTemplate(domain, ti, b,domainId);
-			ti.setId(id);
-			ti.setIsParent(false);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		
+		Integer id = DBConsults.insertTemplate(domain, ti, b,domainId);
+		ti.setId(id);
+		ti.setIsParent(false);
+	
 		return ti;
 	}
 	
 	public TemplateInfo editTemplate(TemplateInfo ti){
 		String domain = AonUtil.getDomainName();
 		byte[] b = Utils.newXmlFile(ti);
-		try {
-			DBConsults.updateTemplate(domain, ti, domainId, b);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+
+		DBConsults.updateTemplate(domain, ti, domainId, b);
+	
 		return ti;
 	}
 
 	public void deleteTemplate(TemplateInfo ti){
 		String domain = AonUtil.getDomainName();
-		try {
-			DBConsults.removeTemplate(domain, ti.getId());
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		DBConsults.removeTemplate(domain,domainId, ti.getId());
 	}
 	//-------------------- IMPORTAR FEE
 	Vector<FeeInfo> fees;
@@ -353,13 +340,10 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			error.setError(true);
 			verror.add("");
 			error.setTextError(verror);
-			try {
-				//insertar Fee en base de datos.!!
-				error = DBFee.insertFee(domain,domainId,fees);
-				
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+
+			//insertar Fee en base de datos.!!
+			error = DBFee.insertFee(domain,domainId,fees);
+
 		}
 		else{
 			//Alguna de las filas contiene datos erroneos.
@@ -612,6 +596,186 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	StockInfo si;
 	TemplateInfo ti;
 	Row rowAux ;
+	
+	public Integer executeExcelProposal(TemplateInfo templateInfo){
+		ti = templateInfo;
+		long startAll= System.currentTimeMillis();
+		error = new Error();
+		Vector<String> verror = new Vector<String>();
+		error.setTextError(verror);
+		textError = "";
+		Vector<StockInfo> stock = new Vector<StockInfo>();
+		Error error = new Error();
+		
+		if(!getMimetype().equals(MimeType.MIME_MS_EXCEL.getName())
+				&& !getMimetype().equals(MimeType.MIME_MS_EXCEL_2007.getName())){
+				//El archivo no es un fichero Excel.
+				error.setError(false);
+				verror.add("*El archivo importado no es de tipo excel.");
+				error.setTextError(verror);
+				this.error = error;
+				return -1;
+		}
+		byte[] data = getOut();
+		
+		File aux = new File("/tmp/products.xls");
+		
+		try {
+			org.apache.commons.io.FileUtils.writeByteArrayToFile(aux, data);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		FileInputStream excel = null;
+		try {
+			excel = new FileInputStream(aux);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		HSSFWorkbook workbook= null;
+		try {
+			workbook = new HSSFWorkbook(excel);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		HSSFSheet sheet = workbook.getSheetAt(0);
+		
+		rowCount  = sheet.getPhysicalNumberOfRows();
+		
+		Iterator<Row> rowIterator = sheet.iterator();
+
+		/* LAMBDA java 1.8 */
+		Iterable<Row> rowIterable = () -> rowIterator;
+		Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
+		rowStream.forEach(row ->{
+		
+			Iterator<Cell> cellIterator = row.cellIterator();
+			Iterable<Cell> cellIterable = () -> cellIterator;
+			si = newStock();
+			rowAux = row;
+			Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
+			cellStream.forEach(cell ->{
+				Object object = null ;
+                switch (cell.getCellType()) {
+					case Cell.CELL_TYPE_BLANK:
+						break;
+					case Cell.CELL_TYPE_BOOLEAN: 
+						object = cell.getBooleanCellValue();break;
+					case Cell.CELL_TYPE_ERROR:
+						object = cell.getErrorCellValue();break;
+					case Cell.CELL_TYPE_FORMULA:
+						break; 
+					case Cell.CELL_TYPE_NUMERIC:
+						object = cell.getNumericCellValue();break;
+					case Cell.CELL_TYPE_STRING:
+						object = cell.getStringCellValue();break;
+					default:
+						break;
+				}
+                if(cell.getRowIndex() == 0){//Primera fila del fichero Excel.
+                	if(ti.getColumns().size()<= cell.getColumnIndex() || ti.getColumns().get(cell.getColumnIndex()) == null || !ti.getColumns().get(cell.getColumnIndex()).equalsIgnoreCase(cell.getStringCellValue())){
+                		// El archivo no es compatible con la plantilla
+	             		error.setError(false);
+	             		textError =  textError + "*El archivo importado no es compatible con la plantilla seleccionada.\n";
+	             		verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
+	             		error.setTextError(verror);
+	             		this.error = error;
+	                	rowCount = -1;
+	                } 
+                }
+                else{
+	                if(cell.getColumnIndex() !=0){
+	                	Cell beforeCell = rowAux.getCell(cell.getColumnIndex()-1);
+	            		if((beforeCell == null || beforeCell.getCellType() == Cell.CELL_TYPE_BLANK) && isRequiredStock(ti.getColumns().get(cell.getColumnIndex()-1))){
+	            			if(beforeCell == null){
+	            				textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto \n";
+	            				verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto");
+	            				error.setTextError(verror);
+	            				this.error = error;
+	            			}
+	            			else if(ti.getColumns().get(beforeCell.getColumnIndex()).equals("Producto") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Almac\u00e9n Destino") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Cantidad") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Series")){
+	            				textError= textError + "*Fila "+(beforeCell.getRowIndex()+1)+", Columna "+Utils.getColumn(beforeCell.getColumnIndex())+" : Dato Incorrecto \n";
+	            				verror.add("*Fila "+(beforeCell.getRowIndex()+1)+", Columna "+Utils.getColumn(beforeCell.getColumnIndex())+" : Dato Incorrecto \n");
+	            				error.setTextError(verror);
+	            				this.error = error;
+	            			}
+	            		}
+	                }
+	               	if(ti.getColumns().get(cell.getColumnIndex()).equals("Cantidad") || ti.getColumns().get(cell.getColumnIndex()).equals("Cdigo")){
+	               		si = check(ti.getColumns().get(cell.getColumnIndex()),object,si,cell.getCellType());
+	                	if(si == null){
+	                		textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n";
+	                		verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n");
+	                		error.setTextError(verror);
+	                		this.error = error;
+	                		si = newStock();	
+	                	}
+	               	}	
+                }  
+			});
+
+			if(row.getLastCellNum() != ti.getColumns().size()){	
+				if(row.getRowNum() == 0){
+					error.setError(false);
+					textError= textError + "*El archivo importado no es compatible con la plantilla seleccionada. \n ";
+	            	verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
+	            	error.setTextError(verror);
+	            	this.error = error;
+	            	rowCount = -1;
+	            	
+	            }
+	           	else{
+	           		if(row.getLastCellNum() != -1){
+	           			Short cellnum = row.getLastCellNum();
+	           			if(row.getLastCellNum() > ti.getColumns().size())cellnum--;
+	           			if(ti.getColumns().get(cellnum).equals("Producto") || ti.getColumns().get(cellnum).equals("Almac\u00e9n Destino") || ti.getColumns().get(cellnum).equals("Cantidad")){
+	          				verror.add("*Fila "+(row.getRowNum()+1)+", Columna "+Utils.getColumn(row.getLastCellNum())+" : Dato Incorrecto \n");
+	          				error.setTextError(verror);
+	          				this.error = error;
+	          				textError= textError + "*Fila "+(row.getRowNum()+1)+", Columna "+Utils.getColumn(row.getLastCellNum())+" : Dato Incorrecto \n";
+	           			}
+	           		}
+	           	}
+			}
+	          
+			if(row.getRowNum() > 0){ 
+				si.setRow(row.getRowNum());
+	           	stock.add(si);
+	        }
+		});
+		this.stock = stock;
+		long time = System.currentTimeMillis() - startAll;
+		System.out.println("time: " + (time/1000d));
+		System.out.println(rowCount);
+		return rowCount;
+	}
+	
+	
+	public Error insertProposal(){
+		long startAll= System.currentTimeMillis();
+		Vector<String> verror = error.getTextError();
+		String domain = AonUtil.getDomainName();
+		Error error = new Error();
+		if(textError.equals("")){
+			error.setError(true);
+			verror.add("");
+			error.setTextError(verror);
+		//TODO proposal
+			error = DBStock.insertProposal(domain,domainId,stock,2);
+
+	        //insertar STOCK en base de datos.!!
+		}
+		else{
+			//Alguna de las filas contiene datos erroneos.
+			error.setError(false);
+ 			error.setTextError(verror);
+		}
+		
+		long timeAll = System.currentTimeMillis() - startAll;
+		System.out.println("ALL    " + (timeAll/1000d));
+		return error;
+	}
+
 	public Integer executeExcel(TemplateInfo templateInfo, String warehouse1,String warehouse2 , String series, String comments){
 		ti = templateInfo;
 		long startAll= System.currentTimeMillis();
@@ -621,7 +785,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		error.setTextError(verror);
 		textError = "";
 		Vector<StockInfo> stock = new Vector<StockInfo>();
-		com.esferalia.aon.gwt.template.shared.Error error = new Error();
+		Error error = new Error();
 		
 		if(warehouse1.equals("-") && (warehouse2.equals("-") || warehouse2 == null)){
 			error.setError(false);
@@ -636,17 +800,14 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		Warehouse w2 = new Warehouse();
 
 		Series s = new Series();
-		try {
-			Integer domId;
-			if (ti.getDomainId().equals(0)) domId = domainId; 
-			else domId = ti.getDomainId();
-			
-			if(!warehouse1.equals("-")) w = DBStock.getWarehouse(warehouse1, domId,domain);
-			if(warehouse2 != null && !warehouse2.equals("-")) 	w2 = DBStock.getWarehouse(warehouse2, domId,domain);
-			s = DBStock.getSeries(domain, domainId, series);
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-		}
+	
+		Integer domId;
+		if (ti.getDomainId().equals(0)) domId = domainId; 
+		else domId = ti.getDomainId();
+		
+		if(!warehouse1.equals("-")) w = DBStock.getWarehouse(warehouse1, domId,domain);
+		if(warehouse2 != null && !warehouse2.equals("-")) 	w2 = DBStock.getWarehouse(warehouse2, domId,domain);
+		s = DBStock.getSeries(domain, domainId, series);
 
     	Boolean b = true;
 
@@ -657,14 +818,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		transferInfo.setComments(comments);
 		
     	if(transferInfo.getSeries() != null && transferInfo.getTargetWarehouse() !=null){
-    		
-    		
-    			try {
-    		 		b = DBStock.checkSeries(domain,domainId,transferInfo.getSeries(),transferInfo.getTargetWarehouse());
-    	 		} catch (SQLException e) {
-    	 			e.printStackTrace();
-    	 		}
-    		
+    		 b = DBStock.checkSeries(domain,domainId,transferInfo.getSeries(),transferInfo.getTargetWarehouse());	
     	}
     	if(!b){
     		error.setError(false);
@@ -832,12 +986,9 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			verror.add("");
 			error.setTextError(verror);
 			//String domain = AonUtil.getDomainName();
-			try {
-				error = DBStock.insertStock2(domain,domainId,stock,transferInfo);
-				
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+
+			error = DBStock.insertStock2(domain,domainId,stock,transferInfo);
+
 	        //insertar STOCK en base de datos.!!
 		}
 		else{
@@ -861,13 +1012,9 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			error.setError(true);
 			verror.add("");
 			error.setTextError(verror);
-			//String domain = AonUtil.getDomainName();
-			try {
-				error = DBStock.insertTransferStock(domain,domainId,stock,transferInfo);
-				
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+
+			error = DBStock.insertTransferStock(domain,domainId,stock,transferInfo);
+
 	        //insertar STOCK en base de datos.!!
 		}
 		else{
@@ -935,14 +1082,24 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		return stock;
 	}
 	
+	public Vector<String> getSeries(String warehouse){
+		String domain = AonUtil.getDomainName();
+		Warehouse w = DBStock.getWarehouse(warehouse, domainId, domain);
+		WorkPlace workplace = DBCatalogue.getWorkplace(w.getWorkplace(), domainId, domain);
+		Vector<Series> series = DBStock.getSeries(w, workplace,domain, domainId);
+
+		Vector<String> seriesCode = new Vector<String>();
+		series.parallelStream().forEach(s ->{
+			seriesCode.add(s.getCode());
+		});
+		return seriesCode;
+	}
 	public Vector<String> getSeries(){
 		String domain = AonUtil.getDomainName();
 		Vector<Series> series = new Vector<Series>();
-		try {
-			series = DBStock.getSeries(domain, domainId);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+
+		series = DBStock.getSeries(domain, domainId);
+
 		Vector<String> seriesCode = new Vector<String>();
 		series.parallelStream().forEach(s ->{
 			seriesCode.add(s.getCode());
@@ -1181,12 +1338,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		case "Categor\u00eda" :
 			if(type.equals(Cell.CELL_TYPE_STRING)){
 				String strAux = (String) value;
-				Vector<ProductCategory> v = null;
-				try {
-					v = DBProduct.getCategories(domain, domainId);
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+				Vector<ProductCategory> v = DBProduct.getCategories(domain, domainId);
 				Boolean b = true;
 				for(ProductCategory pc : v){
 					if(strAux.equalsIgnoreCase(pc.getName())){
@@ -1201,12 +1353,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		case "Marca" : 
 			if(type.equals(Cell.CELL_TYPE_STRING)){
 				String strAux = (String) value;
-				Vector<Brand> v = null;
-				try {
-					v = DBProduct.getBrands(domain, domainId);
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+				Vector<Brand> v =  DBProduct.getBrands(domain, domainId);
 				Boolean b = true;
 				for(Brand brand : v){
 					if(strAux.equalsIgnoreCase(brand.getName())){
@@ -1220,12 +1367,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			break; 
 		case "Etiqueta" : 
 			if(type.equals(Cell.CELL_TYPE_STRING)){
-				Vector<ProductTag> tags = null;
-				try {
-					tags = DBProduct.getTags(domain, domainId);
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+				Vector<ProductTag> tags =  DBProduct.getTags(domain, domainId);
+
 				Vector<String> strings = tags((String)value);
 				Set<ProductTag> tags2 = new HashSet<ProductTag>();
 				Vector<com.esferalia.aon.occam.api.model.product.ProductTag> pts = new Vector<com.esferalia.aon.occam.api.model.product.ProductTag>();
@@ -1280,12 +1423,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			break; 
 		case "IVA" : 
 			Tax vat = new Tax();
-			Vector<Tax> vats = new Vector<Tax>();
-			try {
-				vats = DBProduct.getIVA(domain, domainId);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			Vector<Tax> vats = DBProduct.getIVA(domain, domainId);
+
 			switch (type) {
 			case Cell.CELL_TYPE_STRING:
 				String s = (String) value;
@@ -1318,12 +1457,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			break; 
 		case "IRPF" :
 			Tax retention = new Tax();
-			Vector<Tax> retentions = new Vector<Tax>();
-			try {
-				retentions = DBProduct.getRetentions(domain, domainId);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			Vector<Tax> retentions =  DBProduct.getRetentions(domain, domainId);
 			switch (type) {
 			case Cell.CELL_TYPE_STRING:
 				String s = (String) value;
@@ -1586,6 +1720,14 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		return vector;
 	}
 	
+	
+	public Vector<com.esferalia.aon.gwt.template.shared.WorkPlace> getWorkplaces(){
+		return DBCatalogue.getWorkplaces(domainId, domain);
+	}
+	public Vector<com.esferalia.aon.gwt.template.shared.Department> getDepartments(String workplace){
+		WorkPlace w = DBCatalogue.getWorkplace(workplace, domainId, domain);
+		return DBCatalogue.getDepartments(domainId, domain, w.getId());
+	}
 	
 	/**
 	 * <p>

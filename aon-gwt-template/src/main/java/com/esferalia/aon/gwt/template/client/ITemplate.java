@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.template.client;
 
 import java.util.Vector;
 
+import com.esferalia.aon.gwt.template.jooq.DBCatalogue;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
@@ -30,6 +31,8 @@ public interface ITemplate extends RemoteService{
 	
 	public Vector<Warehouse> getWarehouses();
 	
+	public Vector<String> getSeries(String warehouse);
+	
 	public Vector<String> getSeries();
 	
 	public Error insertStock();
@@ -46,4 +49,11 @@ public interface ITemplate extends RemoteService{
 	
 	public Error insertTransferStock();
 
+	public Vector<com.esferalia.aon.gwt.template.shared.WorkPlace> getWorkplaces();
+	
+	public Vector<com.esferalia.aon.gwt.template.shared.Department> getDepartments(String workplace);
+	
+	public Integer executeExcelProposal(TemplateInfo templateInfo);
+	
+	public Error insertProposal();
 }

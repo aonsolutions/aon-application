@@ -2,10 +2,12 @@ package com.esferalia.aon.gwt.template.client;
 
 import java.util.Vector;
 
+import com.esferalia.aon.gwt.template.shared.Department;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
+import com.esferalia.aon.gwt.template.shared.WorkPlace;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 
@@ -32,7 +34,7 @@ public interface ITemplateAsync {
 
 	void getWarehouses(AsyncCallback<Vector<Warehouse>> callback);
 
-	void getSeries(AsyncCallback<Vector<String>> callback);
+	void getSeries(String warehouse, AsyncCallback<Vector<String>> callback);
 
 	void executeExcel(TemplateInfo ti, String warehouse, String warehouse2,
 			String series, String comments, AsyncCallback<Integer> callback);
@@ -46,5 +48,17 @@ public interface ITemplateAsync {
 	void insertFee(AsyncCallback<Error> callback);
 
 	void insertTransferStock(AsyncCallback<Error> callback);
+
+	void getWorkplaces(AsyncCallback<Vector<WorkPlace>> callback);
+
+	void getDepartments(String workplace,
+			AsyncCallback<Vector<Department>> callback);
+
+	void executeExcelProposal(TemplateInfo templateInfo,
+			AsyncCallback<Integer> callback);
+
+	void insertProposal(AsyncCallback<Error> callback);
+
+	void getSeries(AsyncCallback<Vector<String>> callback);
 
 }

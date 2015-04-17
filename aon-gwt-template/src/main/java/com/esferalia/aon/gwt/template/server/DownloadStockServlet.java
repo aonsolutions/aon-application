@@ -56,11 +56,8 @@ public class DownloadStockServlet extends HttpServlet {
         Integer idFile  = Integer.parseInt(fileId);
         Warehouse w = new Warehouse();
         if(!warehouse.equals("-"))
-        	try {
-        		w = DBStock.getWarehouse(warehouse, domainId, domain);
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
+        	w = DBStock.getWarehouse(warehouse, domainId, domain);
+
         byte[] b = null ;
         
         if (driveId != ""){
@@ -92,11 +89,7 @@ public class DownloadStockServlet extends HttpServlet {
         }
         else if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);
-            try {
-            	b = DBConsults.getTemplate(domain, id);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+        	b = DBConsults.getTemplate(domain,domainId, id);
         }
         else return;
         
@@ -135,12 +128,8 @@ public class DownloadStockServlet extends HttpServlet {
         	celda.setCellValue(aux.getColumns().get(i));
         	celda.setCellStyle(style);
         }
-        Vector<StockInfo> v = new Vector<StockInfo>();
-		try {
-			v = DBStock.getStocks(domain,domainId,w.getId());
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+        Vector<StockInfo> v = DBStock.getStocks(domain,domainId,w.getId());
+
         for(Integer j = 0; j< v.size();j++){
         	Row row = hoja.createRow(j+1);
         	for(Integer k = 0; k< columns; k++){

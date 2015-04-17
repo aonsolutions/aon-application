@@ -6,39 +6,32 @@ import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Vector;
 
 import org.jooq.DSLContext;
 import org.jooq.Record1;
 import org.jooq.Record4;
 import org.jooq.Result;
-import org.jooq.impl.DSL;
 
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.google.apis.DatabaseSync;
-import com.code.aon.google.apis.jooq.JooqSettings;
 import com.esferalia.aon.gwt.template.server.Utils;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
+import com.esferalia.aon.occam.api.AONContext;
 
 
 
 
 public class DBConsults {
 	
-	public static TemplateList getTemplates(String domain , Integer domainId) throws SQLException{
-			Connection connection = null;
-			try {
-				connection = DatabaseSync.getConnection(domain);
-				
-				DSLContext dslContext = DSL.using(connection,
-						JooqSettings.getDefaultSettings());
+	public static TemplateList getTemplates(String domain , Integer domainId){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain, domainId);
 				
 				
 				// DOMAIN + DOMAIN SON
-				Result<Record4<Integer, String, Byte, String>> record = dslContext
+				Result<Record4<Integer, String, Byte, String>> record = ctx.getDslContext()
 						.select(RATTACH.ID, RATTACH.DESCRIPTION,
 								RATTACH.MIMETYPE, RATTACH.DRIVE_ID)
 						.from(RATTACH).join(DOMAIN).on(DOMAIN.ID.eq(RATTACH.DOMAIN))
@@ -46,7 +39,7 @@ public class DBConsults {
 						.fetch();
 				
 				// DOMAIN PARENT
-				Result<Record4<Integer, String, Byte, String>> recordParent = dslContext
+				Result<Record4<Integer, String, Byte, String>> recordParent = ctx.getDslContext()
 						.select(RATTACH.ID, RATTACH.DESCRIPTION,
 								RATTACH.MIMETYPE, RATTACH.DRIVE_ID)
 						.from(RATTACH).join(DOMAIN).on(DOMAIN.PARENT.eq(RATTACH.DOMAIN))
@@ -54,7 +47,7 @@ public class DBConsults {
 						.fetch();
 				
 				//default
-				Result<Record4<Integer, String, Byte, String>> recordDefault = dslContext
+				Result<Record4<Integer, String, Byte, String>> recordDefault = ctx.getDslContext()
 						.select(RATTACH.ID, RATTACH.DESCRIPTION,
 								RATTACH.MIMETYPE, RATTACH.DRIVE_ID)
 						.from(RATTACH)
@@ -62,6 +55,7 @@ public class DBConsults {
 						.fetch();
 				
 				Vector<TemplateInfo> v = new Vector<TemplateInfo>();
+				AONContext sctx = ctx;
 				record.stream().forEach(r -> {
 					TemplateInfo ti = new TemplateInfo();
 					ti.setId(r.value1());
@@ -75,7 +69,7 @@ public class DBConsults {
 					}
 					else{
 						f = new File("/tmp/"+ti.getName()+".xml"); 
-						byte[] b = getXml(dslContext,ti.getId());
+						byte[] b = getXml(sctx.getDslContext(),ti.getId());
 						try {
 							org.apache.commons.io.FileUtils.writeByteArrayToFile(f,b);
 						} catch (Exception e) {
@@ -109,7 +103,7 @@ public class DBConsults {
 					}
 					else{
 						f = new File("/tmp/"+ti.getName()+".xml"); 
-						byte[] b = getXml(dslContext,ti.getId());
+						byte[] b = getXml(sctx.getDslContext(),ti.getId());
 						try {
 							org.apache.commons.io.FileUtils.writeByteArrayToFile(f,b);
 						} catch (Exception e) {
@@ -185,7 +179,7 @@ public class DBConsults {
 					}
 					else{
 						f = new File("/tmp/"+ti.getName()+".xml"); 
-						byte[] b = getXml(dslContext,ti.getId());
+						byte[] b = getXml(sctx.getDslContext(),ti.getId());
 						try {
 							org.apache.commons.io.FileUtils.writeByteArrayToFile(f,b);
 						} catch (Exception e) {
@@ -210,56 +204,48 @@ public class DBConsults {
 				tl.setList(v);
 				return tl;
 			}finally {
-				if (connection != null)
-					connection.close();	
-
+				if (ctx != null) ctx.close();
 			}
 		
 	}
 
-	public static Integer insertTemplate(String domain, TemplateInfo ti, byte[] b,Integer domainId) throws SQLException {
-		Connection connection = null;
+	public static Integer insertTemplate(String domain, TemplateInfo ti, byte[] b,Integer domainId) {
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain, domainId);
+			
 			Integer registry;
 			if(domainId.equals(0)){
-				Result<Record1<Integer>> reg = dslContext.select(REGISTRY.ID)
+				Result<Record1<Integer>> reg = ctx.getDslContext().select(REGISTRY.ID)
 						.from(REGISTRY)
 						.where(REGISTRY.DOMAIN.eq(domainId)).fetch();
 				registry = reg.get(0).value1();
 			}
 			else{
-				Result<Record1<Integer>> reg = dslContext.select(ENTERPRISE.REGISTRY)
+				Result<Record1<Integer>> reg = ctx.getDslContext().select(ENTERPRISE.REGISTRY)
 						.from(ENTERPRISE.join(DOMAIN).on(ENTERPRISE.DOMAIN.eq(DOMAIN.ID)))
 						.where(DOMAIN.ID.eq(domainId)).fetch();
 				registry = reg.get(0).value1();
 			}
 			
 
-			return dslContext.insertInto(RATTACH,RATTACH.REGISTRY,RATTACH.DOMAIN,RATTACH.CATEGORY,RATTACH.MIMETYPE,RATTACH.DESCRIPTION,RATTACH.TYPE,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.ATTACH_DATE,RATTACH.DATA,RATTACH.DRIVE_ID,RATTACH.DPARENT_ID)
+			return ctx.getDslContext().insertInto(RATTACH,RATTACH.REGISTRY,RATTACH.DOMAIN,RATTACH.CATEGORY,RATTACH.MIMETYPE,RATTACH.DESCRIPTION,RATTACH.TYPE,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.ATTACH_DATE,RATTACH.DATA,RATTACH.DRIVE_ID,RATTACH.DPARENT_ID)
 						.values(registry,domainId,null,(byte) MimeType.MIME_XML.ordinal(),ti.getName(),(byte) 15,null,(byte)0,null,b,null,null).returning(RATTACH.ID).fetchOne().getId();
 	
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null) ctx.close();
 		}
 	}
 	
-	public static byte[] getTemplate(String domain , Integer id) throws SQLException {
-		Connection connection = null;
+	public static byte[] getTemplate(String domain , Integer domainId, Integer id) {
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain, domainId);
 			
-			return getXml(dslContext, id);
+			return getXml(ctx.getDslContext(), id);
 			
 		}finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null) ctx.close();
 		}
 	}
 	
@@ -273,80 +259,29 @@ public class DBConsults {
 
 	}
 	
-	public static void removeTemplate(String domain,Integer id) throws SQLException{
-		Connection connection = null;
+	public static void removeTemplate(String domain,Integer domainId, Integer id){
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-			dslContext.delete(RATTACH).where(RATTACH.ID.eq(id)).execute();
+			ctx = AONContext.getAONContext(domain, domainId);
+			
+			ctx.getDslContext().delete(RATTACH).where(RATTACH.ID.eq(id)).execute();
 			
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null) ctx.close();
 		}
 	}
 	
-	public static void updateTemplate(String domain,TemplateInfo ti, Integer domainId, byte[] b) throws SQLException{
-		Connection connection = null;
+	public static void updateTemplate(String domain,TemplateInfo ti, Integer domainId, byte[] b){
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain, domainId);
 			
-			dslContext.update(RATTACH).set(RATTACH.DESCRIPTION,ti.getName())
+			ctx.getDslContext().update(RATTACH).set(RATTACH.DESCRIPTION,ti.getName())
 									.set(RATTACH.DATA,b)
 							.where(RATTACH.ID.eq(ti.getId())).execute();
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null) ctx.close();
 		}
 	}
 	
-
-	
-	/*
-	
-	public static Boolean isItem(String domain, Integer domainId, String p) throws SQLException{
-		Connection connection = null;
-		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-			
-			Result<Record1< Integer>> data = dslContext.select(ITEM.ID)
-					.from(ITEM)
-					.where(ITEM.BARCODE.eq(p)).fetch();
-				
-			if(data.isEmpty()){
-				data = dslContext.select(ITEM.ID)
-						.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
-						.where(PRODUCT.CODE.eq(p)).fetch();
-			}
-			return !data.isEmpty();
-			
-		}finally {
-			if (connection != null)
-				connection.close();
-			}
-		
-	}
-	
-	public static Warehouse getWarehouse(DSLContext dslContext, Integer id ){
-		
-		Result<Record1<String>> data = dslContext.select(WAREHOUSE.NAME)
-			.from(WAREHOUSE)
-			.where(WAREHOUSE.ID.eq(id)).fetch();
-		
-		Warehouse w = new Warehouse();
-
-		if(data.get(0).value1()!=null) w.setName(data.get(0).value1());
-		else w.setName("");
-		
-			
-		return w;
-		
-	}
-
-*/
 }

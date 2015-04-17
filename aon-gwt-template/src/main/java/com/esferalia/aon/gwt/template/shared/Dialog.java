@@ -18,6 +18,7 @@ public class Dialog implements IsSerializable{
 	TemplateList templateList;
 	Error error;
 	Vector<Warehouse> warehouses;
+	String warehouseName;
 	Vector<String> series;
 	
 	public Dialog() {
@@ -119,7 +120,14 @@ public class Dialog implements IsSerializable{
 	public void setSeries(Vector<String> series) {
 		this.series = series;
 	}
-	
+
+	public String getWarehouseName() {
+		return warehouseName;
+	}
+
+	public void setWarehouseName(String warehouseName) {
+		this.warehouseName = warehouseName;
+	}
 	
 
 }

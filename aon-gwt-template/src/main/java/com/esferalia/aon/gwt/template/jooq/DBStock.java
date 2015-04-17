@@ -8,10 +8,8 @@ import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 import static com.esferalia.aon.jooq.tables.WarehouseTransfer.WAREHOUSE_TRANSFER;
 import static com.esferalia.aon.jooq.tables.WarehouseTransferDetail.WAREHOUSE_TRANSFER_DETAIL;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.jooq.tables.ProposalDetail.PROPOSAL_DETAIL;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Vector;
@@ -19,49 +17,49 @@ import java.util.Vector;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.DeleteConditionStep;
+import org.jooq.InsertValuesStep13;
 import org.jooq.InsertValuesStep4;
 import org.jooq.InsertValuesStep5;
 import org.jooq.Record1;
+import org.jooq.Record10;
 import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Record5;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
+import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Series;
-import com.code.aon.google.apis.DatabaseSync;
-import com.code.aon.google.apis.jooq.JooqSettings;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
+import com.esferalia.aon.gwt.template.server.ProposalInfo;
 import com.esferalia.aon.gwt.template.server.StockInfo;
 import com.esferalia.aon.gwt.template.server.TransferInfo;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
+import com.esferalia.aon.jooq.tables.records.ProposalDetailRecord;
 import com.esferalia.aon.jooq.tables.records.StockRecord;
 import com.esferalia.aon.jooq.tables.records.WarehouseTransferDetailRecord;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
 
 public class DBStock {
-
-	private static final String SET_FOREIGN_KEY_CHECKS_0 = "SET FOREIGN_KEY_CHECKS=0;";
-	private static final String SET_FOREIGN_KEY_CHECKS_1 = "SET FOREIGN_KEY_CHECKS=1;";
 
 	static String stockquery ;
 	
 	Vector<String> v = new Vector<String>();
 	static String itemIds;
 	static TransferInfo transferInfo;
-	public static Error insertStock2(String domain, Integer domainId,Vector<StockInfo> stock, TransferInfo ti) throws SQLException {
+	public static Error insertStock2(String domain, Integer domainId,Vector<StockInfo> stock, TransferInfo ti){
 		itemIds ="";
 		Error error = new Error();
 		error.setError(true);
 		Vector<String> verror = new Vector<String>();
 		verror.add("");
 		error.setTextError(verror);
-		Connection connection = null;
-		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domain, domainId);
 			 
 			
 			Date d = new Date();
@@ -77,7 +75,7 @@ public class DBStock {
 				series = WAREHOUSE_TRANSFER.SERIES.eq(ti.getSeries().getCode());
 				scode = ti.getSeries().getCode();
 			}
-			Result<Record1<Integer>> n = dslContext.select(DSL.max(WAREHOUSE_TRANSFER.NUMBER))
+			Result<Record1<Integer>> n = ctx.getDslContext().select(DSL.max(WAREHOUSE_TRANSFER.NUMBER))
 				.from(WAREHOUSE_TRANSFER)
 				.where(WAREHOUSE_TRANSFER.DOMAIN.eq(domainId).and(series)).fetch();
 			
@@ -86,20 +84,22 @@ public class DBStock {
 			else max = n.get(0).value1(); //get max number (domain, serie)
 			Integer next = max+1;
 			
-			Integer transferId = dslContext.insertInto(WAREHOUSE_TRANSFER,WAREHOUSE_TRANSFER.DOMAIN, WAREHOUSE_TRANSFER.SERIES,WAREHOUSE_TRANSFER.NUMBER, WAREHOUSE_TRANSFER.COMMENTS, WAREHOUSE_TRANSFER.ISSUE_TIME, WAREHOUSE_TRANSFER.SOURCE_WAREHOUSE, WAREHOUSE_TRANSFER.TARGET_WAREHOUSE)
+			Integer transferId = ctx.getDslContext().insertInto(WAREHOUSE_TRANSFER,WAREHOUSE_TRANSFER.DOMAIN, WAREHOUSE_TRANSFER.SERIES,WAREHOUSE_TRANSFER.NUMBER, WAREHOUSE_TRANSFER.COMMENTS, WAREHOUSE_TRANSFER.ISSUE_TIME, WAREHOUSE_TRANSFER.SOURCE_WAREHOUSE, WAREHOUSE_TRANSFER.TARGET_WAREHOUSE)
 					.values(domainId,scode,next,ti.getComments(),t,null,ti.getTargetWarehouse().getId()).returning(WAREHOUSE_TRANSFER.ID).fetchOne().getId();
 			Vector<String> v = new Vector<String>();
-			InsertValuesStep4<WarehouseTransferDetailRecord, Integer, Integer, Integer, Double> transferInsert = dslContext.insertInto(WAREHOUSE_TRANSFER_DETAIL, WAREHOUSE_TRANSFER_DETAIL.DOMAIN, WAREHOUSE_TRANSFER_DETAIL.ITEM, WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER, WAREHOUSE_TRANSFER_DETAIL.QUANTITY);
+			InsertValuesStep4<WarehouseTransferDetailRecord, Integer, Integer, Integer, Double> transferInsert = ctx.getDslContext().insertInto(WAREHOUSE_TRANSFER_DETAIL, WAREHOUSE_TRANSFER_DETAIL.DOMAIN, WAREHOUSE_TRANSFER_DETAIL.ITEM, WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER, WAREHOUSE_TRANSFER_DETAIL.QUANTITY);
 			stockquery = "update stock set quantity = case ";
 			transferInfo= ti;
+			
+			AONContext sctx = ctx;
 			stock.stream().forEach(s ->{
 				if(s.getProduct() != null){
-					Result<Record1< Integer>> data = dslContext.select(ITEM.ID)
+					Result<Record1< Integer>> data = sctx.getDslContext().select(ITEM.ID)
 						.from(ITEM)
 						.where(ITEM.BARCODE.eq(s.getProduct())).and(ITEM.DOMAIN.eq(domainId)).fetch();
 					if(data.isEmpty()){
 
-						data = dslContext.select(ITEM.ID)
+						data = sctx.getDslContext().select(ITEM.ID)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
 										.and(PRODUCT.DOMAIN.eq(domainId)).fetch();
@@ -117,7 +117,7 @@ public class DBStock {
 						if(s.getDetail3() == "") 
 							detail3 = ITEM.DETAIL3.eq("").or(ITEM.DETAIL3.isNull());
 						
-						data = dslContext.select(ITEM.ID)
+						data = sctx.getDslContext().select(ITEM.ID)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
 									.and(detail)
@@ -127,7 +127,7 @@ public class DBStock {
 					}
 					if(!data.isEmpty()){
 						Integer itemId = data.get(0).value1();
-						Result<Record1<Double>> data2 = dslContext.select(STOCK.QUANTITY)
+						Result<Record1<Double>> data2 = sctx.getDslContext().select(STOCK.QUANTITY)
 							.from(STOCK)
 							.where(STOCK.ITEM.eq(itemId).and(STOCK.WAREHOUSE.eq(transferInfo.getTargetWarehouse().getId()))).fetch();
 						Double quantity;
@@ -179,7 +179,7 @@ public class DBStock {
 			if(error.getError()){
 				if(!stockquery.equals("update stock set quantity = case ")){
 					stockquery = stockquery + " else " + 0.0 + " end where domain = "+ domainId +" and item in ("+ itemIds.substring(1) +");";
-					dslContext.query(stockquery).execute();
+					ctx.getDslContext().query(stockquery).execute();
 				}
 				transferInsert.execute();
 				/*DBConsults outer = new DBConsults();
@@ -189,27 +189,75 @@ public class DBStock {
 			return error;
 			
 		}finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null) ctx.close();
 		}
 	}
 	
-	public static Error insertTransferStock(String domain, Integer domainId,Vector<StockInfo> stock, TransferInfo ti) throws SQLException {
+	public static Error insertProposal(String domain, Integer domainId,Vector<StockInfo> stock,Integer proposal){
 		Error error = new Error();
 		error.setError(true);
 		Vector<String> verror = new Vector<String>();
 		verror.add("");
 		error.setTextError(verror);
-		Connection connection = null;
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domain, domainId);
+			InsertValuesStep13<ProposalDetailRecord, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, Timestamp, String, Timestamp> proposalInsertQuery = ctx.getDslContext().insertInto(PROPOSAL_DETAIL, PROPOSAL_DETAIL.DOMAIN, PROPOSAL_DETAIL.PROPOSAL, PROPOSAL_DETAIL.ITEM, PROPOSAL_DETAIL.DESCRIPTION,  PROPOSAL_DETAIL.QUANTITY, PROPOSAL_DETAIL.PRICE, PROPOSAL_DETAIL.DISCOUNT_EXPR, PROPOSAL_DETAIL.STATUS, PROPOSAL_DETAIL.SUPPLIER, PROPOSAL_DETAIL.CREATION_USER, PROPOSAL_DETAIL.CREATION_DATE, PROPOSAL_DETAIL.MODIFICATION_USER, PROPOSAL_DETAIL.MODIFICATION_DATE);
+
+			AONContext sctx = ctx;
+			stock.stream().forEach(s ->{
+				
+				String code = s.getProduct();
+				
+				Record1<Integer> data = sctx.getDslContext().select(PRODUCT.ID)
+						.from(PRODUCT)
+						.where(PRODUCT.CODE.eq(code).and(PRODUCT.DOMAIN.eq(domainId))).fetchOne();
+				
+				Record2<Integer, Double> record = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE)
+						.from(ITEM)
+						.where(ITEM.PRODUCT.eq(data.value1()))
+						.fetchOne();
+				
+				//TODO CHECK, PRODUCT IN CATALOGUE???
+				
+				ProposalInfo pi = new ProposalInfo();
+				pi.setQuantity(s.getQuantity());
+				pi.setDomain(domainId);
+				pi.setProposal(proposal);
+				pi.setItem(record.value1());
+				pi.setPrice(record.value2());
+				pi.setStatus((byte) 0); 
+				pi.setDescription("");
+				pi.setDiscount((double) 0);
+
+				proposalInsertQuery.values(pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), null, null, null, null, null);
+				
+			});
+			if(error.getError()){
+				proposalInsertQuery.execute();
+			}
+			return error;
+		} finally{
+			if (ctx != null) ctx.close();	
+		}
+		
+	}
+	
+	public static Error insertTransferStock(String domain, Integer domainId,Vector<StockInfo> stock, TransferInfo ti){
+		Error error = new Error();
+		error.setError(true);
+		Vector<String> verror = new Vector<String>();
+		verror.add("");
+		error.setTextError(verror);
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain, domainId);
+			
 			 
 			DeleteConditionStep<StockRecord> stockDeleteQuery;
-			InsertValuesStep4<StockRecord, Integer, Integer, Double, Integer> stockInsertQuery = dslContext.insertInto(STOCK, STOCK.DOMAIN, STOCK.ITEM, STOCK.QUANTITY, STOCK.WAREHOUSE);
-			InsertValuesStep5<StockRecord, Integer, Integer, Integer, Double, Integer> stockUpdateQuery = dslContext.insertInto(STOCK, STOCK.ID, STOCK.DOMAIN, STOCK.ITEM, STOCK.QUANTITY, STOCK.WAREHOUSE);
-			InsertValuesStep4<WarehouseTransferDetailRecord, Integer, Integer, Integer, Double> transferInsert = dslContext.insertInto(WAREHOUSE_TRANSFER_DETAIL, WAREHOUSE_TRANSFER_DETAIL.DOMAIN, WAREHOUSE_TRANSFER_DETAIL.ITEM, WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER, WAREHOUSE_TRANSFER_DETAIL.QUANTITY);
+			InsertValuesStep4<StockRecord, Integer, Integer, Double, Integer> stockInsertQuery = ctx.getDslContext().insertInto(STOCK, STOCK.DOMAIN, STOCK.ITEM, STOCK.QUANTITY, STOCK.WAREHOUSE);
+			InsertValuesStep5<StockRecord, Integer, Integer, Integer, Double, Integer> stockUpdateQuery = ctx.getDslContext().insertInto(STOCK, STOCK.ID, STOCK.DOMAIN, STOCK.ITEM, STOCK.QUANTITY, STOCK.WAREHOUSE);
+			InsertValuesStep4<WarehouseTransferDetailRecord, Integer, Integer, Integer, Double> transferInsert = ctx.getDslContext().insertInto(WAREHOUSE_TRANSFER_DETAIL, WAREHOUSE_TRANSFER_DETAIL.DOMAIN, WAREHOUSE_TRANSFER_DETAIL.ITEM, WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER, WAREHOUSE_TRANSFER_DETAIL.QUANTITY);
 
 			Vector<Integer> stockDeleteIds = new Vector<Integer>();
 
@@ -226,7 +274,7 @@ public class DBStock {
 				series = WAREHOUSE_TRANSFER.SERIES.eq(ti.getSeries().getCode());
 				scode = ti.getSeries().getCode();
 			}
-			Result<Record1<Integer>> n = dslContext.select(DSL.max(WAREHOUSE_TRANSFER.NUMBER))
+			Result<Record1<Integer>> n = ctx.getDslContext().select(DSL.max(WAREHOUSE_TRANSFER.NUMBER))
 				.from(WAREHOUSE_TRANSFER)
 				.where(WAREHOUSE_TRANSFER.DOMAIN.eq(domainId).and(series)).fetch();
 			
@@ -239,18 +287,18 @@ public class DBStock {
 			if(ti.getSourceWarehouse() != null) source = ti.getSourceWarehouse().getId();
 			if(ti.getTargetWarehouse() != null) target = ti.getTargetWarehouse().getId();
 			
-			Integer transferId = dslContext.insertInto(WAREHOUSE_TRANSFER,WAREHOUSE_TRANSFER.DOMAIN, WAREHOUSE_TRANSFER.SERIES,WAREHOUSE_TRANSFER.NUMBER, WAREHOUSE_TRANSFER.COMMENTS, WAREHOUSE_TRANSFER.ISSUE_TIME, WAREHOUSE_TRANSFER.SOURCE_WAREHOUSE, WAREHOUSE_TRANSFER.TARGET_WAREHOUSE)
+			Integer transferId = ctx.getDslContext().insertInto(WAREHOUSE_TRANSFER,WAREHOUSE_TRANSFER.DOMAIN, WAREHOUSE_TRANSFER.SERIES,WAREHOUSE_TRANSFER.NUMBER, WAREHOUSE_TRANSFER.COMMENTS, WAREHOUSE_TRANSFER.ISSUE_TIME, WAREHOUSE_TRANSFER.SOURCE_WAREHOUSE, WAREHOUSE_TRANSFER.TARGET_WAREHOUSE)
 					.values(domainId,scode,next,ti.getComments(),t,source,target).returning(WAREHOUSE_TRANSFER.ID).fetchOne().getId();
 			Vector<String> v = new Vector<String>();
-			
+			AONContext sctx = ctx;
 			stock.stream().forEach(s ->{
 				if(s.getProduct() != null){
-					Result<Record1< Integer>> data = dslContext.select(ITEM.ID)
+					Result<Record1< Integer>> data = sctx.getDslContext().select(ITEM.ID)
 						.from(ITEM)
 						.where(ITEM.BARCODE.eq(s.getProduct())).and(ITEM.DOMAIN.eq(domainId)).fetch();
 					if(data.isEmpty()){
 
-						data = dslContext.select(ITEM.ID)
+						data = sctx.getDslContext().select(ITEM.ID)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
 										.and(PRODUCT.DOMAIN.eq(domainId)).fetch();
@@ -268,7 +316,7 @@ public class DBStock {
 						if(s.getDetail3() == "") 
 							detail3 = ITEM.DETAIL3.eq("").or(ITEM.DETAIL3.isNull());
 						
-						data = dslContext.select(ITEM.ID)
+						data = sctx.getDslContext().select(ITEM.ID)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
 									.and(detail)
@@ -282,13 +330,13 @@ public class DBStock {
 						ti.getTargetWarehouse();
 						Result<Record2<Double, Integer>> data2 = null;
 						if(ti.getTargetWarehouse() != null) 
-							data2 = dslContext.select(STOCK.QUANTITY, STOCK.ID)
+							data2 = sctx.getDslContext().select(STOCK.QUANTITY, STOCK.ID)
 								.from(STOCK)
 								.where(STOCK.ITEM.eq(itemId).and(STOCK.WAREHOUSE.eq(ti.getTargetWarehouse().getId()))).fetch();
 							
 						Result<Record2<Double, Integer>> data3 = null; 
 						if(ti.getSourceWarehouse() != null) 
-							data3= dslContext.select(STOCK.QUANTITY, STOCK.ID)
+							data3= sctx.getDslContext().select(STOCK.QUANTITY, STOCK.ID)
 								.from(STOCK)
 								.where(STOCK.ITEM.eq(itemId).and(STOCK.WAREHOUSE.eq(ti.getSourceWarehouse().getId()))).fetch();
 						
@@ -356,12 +404,9 @@ public class DBStock {
 			});
 	
 			if(error.getError()){
-				Statement sOpen = connection.createStatement();
-				sOpen.execute(SET_FOREIGN_KEY_CHECKS_0);
-				System.out.println("Claves referenciales desactivadas");
-				
+				ctx.deactivateForeignKeys();
 				if(stockDeleteIds.size() > 0){
-					stockDeleteQuery = dslContext.delete(STOCK).where(STOCK.ID.in(stockDeleteIds));
+					stockDeleteQuery = ctx.getDslContext().delete(STOCK).where(STOCK.ID.in(stockDeleteIds));
 					stockDeleteQuery.execute();
 					stockUpdateQuery.execute();
 				}	
@@ -370,38 +415,34 @@ public class DBStock {
 				
 				transferInsert.execute();
 				
-				Statement sClose = connection.createStatement();
-				sClose.execute(SET_FOREIGN_KEY_CHECKS_1);
-				System.out.println("Claves referenciales activadas");
+				ctx.activateForeignKeys();
 			}
 			return error;
 			
 		}finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null) ctx.close();	
 		}
 	}
 	
-	public static Vector<StockInfo> getStocks(String domain, Integer domainId,Integer wid) throws SQLException{
-		Connection connection = null;
+	public static Vector<StockInfo> getStocks(String domain, Integer domainId,Integer wid) {
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain, domainId);
+			
 			Result<Record5<Integer, Integer, Integer, Double,Integer>> data ;
 			if(wid != null)
-				data = dslContext.select(STOCK.ID, STOCK.ITEM, STOCK.WAREHOUSE, STOCK.QUANTITY,ITEM.PRODUCT)
+				data = ctx.getDslContext().select(STOCK.ID, STOCK.ITEM, STOCK.WAREHOUSE, STOCK.QUANTITY,ITEM.PRODUCT)
 				.from(STOCK).join(ITEM).on(ITEM.ID.eq(STOCK.ITEM))
 				.where(STOCK.DOMAIN.eq(domainId)).and(STOCK.WAREHOUSE.eq(wid)).fetch();
 			else
-				data = dslContext.select(STOCK.ID, STOCK.ITEM, STOCK.WAREHOUSE, STOCK.QUANTITY,ITEM.PRODUCT)
+				data = ctx.getDslContext().select(STOCK.ID, STOCK.ITEM, STOCK.WAREHOUSE, STOCK.QUANTITY,ITEM.PRODUCT)
 				.from(STOCK).join(ITEM).on(ITEM.ID.eq(STOCK.ITEM))
 				.where(STOCK.DOMAIN.eq(domainId)).fetch();
 				
 			Vector<StockInfo> v = new Vector<StockInfo>();
 			for (Record5<Integer, Integer, Integer, Double, Integer> d : data) {
 				StockInfo si = new StockInfo();
-				Item i = getItem(dslContext,domain,d.value2());
+				Item i = getItem(ctx.getDslContext(),domain,d.value2());
 				si.setDetail(i.getDetail());
 				si.setDetail2(i.getDetail2());
 				si.setDetail3(i.getDetail3());
@@ -410,7 +451,7 @@ public class DBStock {
 					si.setProduct(i.getProduct().getCode());
 				}
 				si.setQuantity(d.value4());
-				String[] s = getWarehouseComments(dslContext, d.value3());
+				String[] s = getWarehouseComments(ctx.getDslContext(), d.value3());
 				Series ss = new Series();ss.setCode(s[1]);
 				//si.setSeries(ss);
 				//si.setComments(s[0]);
@@ -421,9 +462,8 @@ public class DBStock {
 			}
 			return v;
 		} finally {
-			if (connection != null)
-				connection.close();
-			}
+			if (ctx != null) ctx.close();
+		}
 	}
 	
 	public static String[] getWarehouseComments(DSLContext dslContext, Integer id ){
@@ -478,14 +518,12 @@ public class DBStock {
 		
 	}
 	
-	public static Boolean checkSeries(String domain, Integer domainId,Series s, Warehouse w) throws SQLException{
-		Connection connection = null;
+	public static Boolean checkSeries(String domain, Integer domainId,Series s, Warehouse w){
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain, domainId);
 			
-			Result<Record1< Integer>> data = dslContext.select(SERIES.ID)
+			Result<Record1< Integer>> data = ctx.getDslContext().select(SERIES.ID)
 				.from(WAREHOUSE)
 					.join(WORKPLACE).on(WAREHOUSE.WORKPLACE.eq(WORKPLACE.ID))
 					.join(SERIES).on(SERIES.SCOPE.eq(WORKPLACE.SCOPE))
@@ -494,19 +532,16 @@ public class DBStock {
 			return !data.isEmpty();
 
 		} finally {
-		if (connection != null)
-			connection.close();
+			if (ctx != null) ctx.close();
 		}
 	}
 	
-	public static Series getSeries(String domain,Integer domainId, String serie) throws SQLException{
-		Connection connection = null;
+	public static Series getSeries(String domain,Integer domainId, String serie){
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain, domainId);
 			
-			Result<Record3< Integer, String,String>> data = dslContext.select(SERIES.ID,SERIES.CODE,SERIES.DESCRIPTION)
+			Result<Record3< Integer, String,String>> data = ctx.getDslContext().select(SERIES.ID,SERIES.CODE,SERIES.DESCRIPTION)
 				.from(SERIES)
 				.where(SERIES.DOMAIN.eq(domainId))
 					.and(SERIES.CODE.eq(serie)).fetch();
@@ -522,21 +557,49 @@ public class DBStock {
 			return s;
 
 		} finally {
-		if (connection != null)
-			connection.close();
+			if (ctx != null) ctx.close();
 		}
 	}
 	
-	public static Vector<Series> getSeries(String domain,Integer domainId) throws SQLException{
-		Connection connection = null;
+	public static Vector<Series> getSeries(Warehouse warehouse, WorkPlace workplace, String domain,Integer domainId){
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain, domainId);
 			
-			Result<Record3< Integer, String,String>> data = dslContext.select(SERIES.ID,SERIES.CODE,SERIES.DESCRIPTION)
+			Result<Record3< Integer, String,String>> data = ctx.getDslContext().select(SERIES.ID,SERIES.CODE,SERIES.DESCRIPTION)
 				.from(SERIES)
-				.where(SERIES.DOMAIN.eq(domainId)).fetch();
+				.where(SERIES.DOMAIN.eq(domainId))
+					.and(SERIES.ACTIVE.eq((byte)1))
+					.and(SERIES.SCOPE.eq(workplace.getScope().getId()))
+					.and(SERIES.DELIVERY.eq((byte) 1))
+					.fetch();
+			
+			Vector<Series> v = new Vector<Series>();
+			for(Record3<Integer, String,String> r : data){
+				Series s = new Series();
+				s.setId(r.value1());
+				s.setCode(r.value2());
+				s.setDescription(r.value3());
+				v.add(s);
+			}
+			return v;
+
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static Vector<Series> getSeries(String domain,Integer domainId){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain, domainId);
+			
+			Result<Record3< Integer, String,String>> data = ctx.getDslContext().select(SERIES.ID,SERIES.CODE,SERIES.DESCRIPTION)
+				.from(SERIES)
+				.where(SERIES.DOMAIN.eq(domainId))
+				.and(SERIES.ACTIVE.eq((byte)1))
+				.and(SERIES.DELIVERY.eq((byte)1))
+				.fetch();
 			
 			Vector<Series> v = new Vector<Series>();
 			
@@ -550,19 +613,16 @@ public class DBStock {
 			return v;
 
 		} finally {
-		if (connection != null)
-			connection.close();
+			if (ctx != null) ctx.close();
 		}
 	}
 	
-	public static Warehouse getWarehouse(String warehouse, Integer domainId,String domain) throws SQLException{
-		Connection connection = null;
+	public static Warehouse getWarehouse(String warehouse, Integer domainId,String domain){
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain, domainId);
 			
-			Result<Record3< Integer, String,Integer>> data = dslContext.select(WAREHOUSE.ID,WAREHOUSE.NAME,WAREHOUSE.WORKPLACE)
+			Result<Record3< Integer, String,Integer>> data = ctx.getDslContext().select(WAREHOUSE.ID,WAREHOUSE.NAME,WAREHOUSE.WORKPLACE)
 				.from(WAREHOUSE)
 				.where(WAREHOUSE.NAME.eq(warehouse)).and(WAREHOUSE.DOMAIN.eq(domainId)).fetch();
 			
@@ -573,25 +633,21 @@ public class DBStock {
 				w.setDomainId(domainId);
 				w.setId(r.value1());
 				w.setName(r.value2());
-				w.setWorkplace(0);//
-		
+				w.setWorkplace(r.value3());	
 			}
 			return w;
 
 		} finally {
-		if (connection != null)
-			connection.close();
+			if (ctx != null) ctx.close();
 		}
 	}
 	
-	public static Vector<Warehouse> getWarehouse(String domain,Integer domainId) throws SQLException{
-		Connection connection = null;
+	public static Vector<Warehouse> getWarehouse(String domain,Integer domainId){
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain, domainId);
 			
-			Result<Record3< Integer, String,Integer>> data = dslContext.select(WAREHOUSE.ID,WAREHOUSE.NAME,WAREHOUSE.WORKPLACE)
+			Result<Record3< Integer, String,Integer>> data = ctx.getDslContext().select(WAREHOUSE.ID,WAREHOUSE.NAME,WAREHOUSE.WORKPLACE)
 				.from(WAREHOUSE)
 				.where(WAREHOUSE.DOMAIN.eq(domainId)).fetch();
 			
@@ -608,8 +664,7 @@ public class DBStock {
 			return v;
 
 		} finally {
-		if (connection != null)
-			connection.close();
+			if (ctx != null) ctx.close();
 		}
 	}
 }

@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.product.ProductTag;
 public interface IProduct {
 
 	// PRODUCT
+	public Product getProduct(AONContext ctx, Integer productId);
 	public void insert(AONContext ctx,Product p);
 	public void insertWithId(AONContext ctx,Product p);
 	public void insert(AONContext ctx,Stream<Product> ps);
