@@ -25,6 +25,7 @@ import com.code.aon.account.bridge.AccountEntryFinanceBatch;
 import com.code.aon.account.bridge.AccountEntryFinanceTracking;
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.InvoiceDetailAccount;
+import com.code.aon.account.bridge.writer.pricing.AccountInvoicePriceStrategy;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.common.BeanManager;
@@ -35,15 +36,17 @@ import com.code.aon.company.Enterprise;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.config.enumeration.VatDeductionType;
+import com.code.aon.config.enumeration.WithholdingType;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.InvoiceTax;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
-import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
+import com.code.aon.finance.util.FinanceUtil;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
@@ -125,7 +128,7 @@ public abstract class BasicExporter implements Serializable {
 	
 	private boolean investment;
 	
-	private InvoicePriceStrategy priceStrategy;
+	private AccountInvoicePriceStrategy priceStrategy;
 	
 	private double total;
 	
@@ -134,6 +137,10 @@ public abstract class BasicExporter implements Serializable {
 	private boolean withholdingFarmer;	
 	
 	private boolean invoiceExport;
+	
+	private boolean ticket;
+	
+	private boolean renting;
 	
 	public BasicExporter( InvoiceExportConfiguration configuration ) {
 		this.configuration = configuration;
@@ -218,6 +225,8 @@ public abstract class BasicExporter implements Serializable {
 		this.total = getInvoiceTotalPrice(invoice);
 		this.withholding = invoice.isWithholding();
 		this.withholdingFarmer = invoice.isWithholdingFarmer();
+		this.ticket = (invoice.getPosShift() != null) && (invoice.getPosShift().getId() != null);
+		this.renting = calculateRenting();
 	}
 	
 	private void initBasic( Finance finance ) throws ManagerBeanException {
@@ -361,6 +370,34 @@ public abstract class BasicExporter implements Serializable {
 	public Finance getFinance() {
 		return finance;
 	}
+	
+	public boolean isRectifier() {
+		return (getRectificationType() == RectificationType.NORMAL_RECTIFIER) ||
+				(getRectificationType() == RectificationType.SPECIAL_RECTIFIER);
+	}
+	
+	public boolean isTicket() {
+		return ticket;
+	}
+	
+	public boolean isRenting() {
+		return renting;
+	}
+
+	private boolean calculateRenting() throws ManagerBeanException {
+		boolean renting = false;
+		IManagerBean bean = BeanManager.getManagerBean(InvoiceTax.class);
+		for( InvoiceDetail id : getInvoice().getLines() ) {
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.INVOICE_TAX_INVOICE_DETAIL_ID), id.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.INVOICE_TAX_WITHHOLDING_TYPE), WithholdingType.RENTING);
+			if ( bean.getCount(criteria) > 0 ) {
+				renting = true;
+				break;
+			}
+		}
+		return renting;
+	}
 
 	public Set<Finance> getFinances() {
 		if ( isInvoiceExport() ) {
@@ -462,9 +499,9 @@ public abstract class BasicExporter implements Serializable {
 		return list;
 	}
 	
-	public InvoicePriceStrategy getPriceStrategy() {
+	public AccountInvoicePriceStrategy getPriceStrategy() {
 		if (priceStrategy == null) {
-			priceStrategy = new InvoicePriceStrategy();
+			priceStrategy = new AccountInvoicePriceStrategy();
 		}
 		return priceStrategy;
 	}	
@@ -490,10 +527,9 @@ public abstract class BasicExporter implements Serializable {
 	}
 	
 	protected Enterprise getEnterprise() {
-		for( InvoiceDetail id : getInvoice().getLines() ) {
-			if ( id.getWorkPlace()!=null && id.getWorkPlace().getId()!=null ) {
-				return id.getWorkPlace().getEnterprise();
-			}
+		if (! getInvoice().getLines().isEmpty() ) {
+			InvoiceDetail id = getInvoice().getLines().iterator().next();
+			return FinanceUtil.getEnterprise(id);
 		}
 		return null;
 	}

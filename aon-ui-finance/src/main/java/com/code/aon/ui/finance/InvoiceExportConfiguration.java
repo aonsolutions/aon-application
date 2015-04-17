@@ -191,6 +191,8 @@ public class InvoiceExportConfiguration implements Serializable {
 				case LOGIC_WIN:
 				case EXCEL:
 				case DSI_GESTION:
+				case GLASOF:
+				case CONTA_PLUS:
 					return true;
 			}
 		}

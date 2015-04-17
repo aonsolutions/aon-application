@@ -349,6 +349,8 @@ public interface ICommonMessages {
 	String FINANCE_INVOICE_EXPORT_LOGIC_WIN = "finance_invoice_export_logic_win";
 	String FINANCE_INVOICE_EXPORT_EXCEL = "finance_invoice_export_excel";
 	String FINANCE_INVOICE_EXPORT_DSI_GESTION = "finance_invoice_export_dsi_gestion";
+	String FINANCE_INVOICE_EXPORT_GLASOF = "finance_invoice_export_glasof";
+	String FINANCE_INVOICE_EXPORT_CONTA_PLUS = "finance_invoice_export_conta_plus";
 	String FINANCE_INVOICE_RECORD = "finance_invoice_record";
 	String FINANCE_INVOICE_RECORD_ERROR = "finance_invoice_record_error";
 	String FINANCE_INVOICE_EXPORT = "finance_invoice_export";

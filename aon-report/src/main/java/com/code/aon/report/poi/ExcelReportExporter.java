@@ -9,32 +9,24 @@ import java.util.Date;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFCellUtil;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.util.CellRangeAddress;
 
 import com.code.aon.report.ReportException;
 
 public class ExcelReportExporter implements IReportExporter {
+	
 	public static final String DATE_PATTERN = "dd/MM/yyyy";
 	public static final String DECIMAL_PATTERN = "#,##0.00";
 	public static final String NUMBER_PATTERN = "#,###";
 	public  static short DEFAULT_BACKGROUND = new HSSFColor.AUTOMATIC().getIndex();
 
 	private HSSFWorkbook workbook;
-    private HSSFSheet sheet;
+	private ExcelSheet sheet;
     private HSSFCellStyle headerCellStyle;
-    private HSSFRow headerRow;
-    private HSSFRow row;
-    private int columnCount;
-    private int rowCount;
-    private int cellCount;
     private DataFormat dataFormat;
     private CellStyle numberCellStyle;
     private CellStyle decimalCellStyle;
@@ -42,13 +34,21 @@ public class ExcelReportExporter implements IReportExporter {
 
 	public void startExport(String name) throws ReportException {
 	    workbook = new HSSFWorkbook();
-	    sheet = workbook.createSheet(name);
-        sheet.setDefaultColumnWidth(50);
+	    setSheet(createSheet(name));
         dataFormat = workbook.getCreationHelper().createDataFormat();
 	    headerCellStyle = createHeaderStyle();
-	    columnCount = 0;
-	    rowCount = 0;
-	    cellCount = 0;
+	}
+	
+	public ExcelSheet createSheet( String name ) {
+		return new ExcelSheet(workbook, name);
+	}
+	
+	public ExcelSheet getSheet() {
+		return sheet;
+	}
+
+	public void setSheet(ExcelSheet sheet) {
+		this.sheet = sheet;
 	}
 
 	public HSSFCellStyle createHeaderStyle() {
@@ -78,8 +78,7 @@ public class ExcelReportExporter implements IReportExporter {
 	}
 
 	public void addHeaderRow() {
-		headerRow = sheet.createRow(rowCount++);
-	    columnCount = 0;
+		this.sheet.addHeaderRow();
 	}
 	
 	public void addHeaderCell(String label) {
@@ -91,13 +90,7 @@ public class ExcelReportExporter implements IReportExporter {
 	}
 
 	public void addHeaderCell(String label, int width, HSSFCellStyle cellStyle) {
-		if (headerRow == null) {
-			addHeaderRow();
-		}
-		if (width > 0) {
-			sheet.setColumnWidth(columnCount, width);	
-		}
-		HSSFCellUtil.createCell(headerRow, columnCount++, label, cellStyle);
+		this.sheet.addHeaderCell(label, width, cellStyle);
 	}
 
 	public HSSFCell addCell() {
@@ -105,11 +98,7 @@ public class ExcelReportExporter implements IReportExporter {
 	}
 
 	public HSSFCell addCell(HSSFCellStyle cellStyle) {
-		HSSFCell cell = row.createCell(cellCount++);
-		if (cellStyle != null) {
-			cell.setCellStyle(cellStyle);
-		}
-		return cell;
+		return this.sheet.addCell(cellStyle);
 	}
 	
 	public HSSFCell addStringCell(String value,HSSFCellStyle cellStyle) {
@@ -130,6 +119,7 @@ public class ExcelReportExporter implements IReportExporter {
 		cell.setCellStyle(cellStyle);
 		return cell;
 	}
+	
 	public HSSFCell addNumberCell(double number) {	
 		HSSFCell cell = addCell();
 		cell.setCellValue(number);
@@ -147,6 +137,7 @@ public class ExcelReportExporter implements IReportExporter {
 	public HSSFCell addDecimalCell(double number) {
 		return addDecimalCell(number,getDecimalCellStyle());
 	}
+	
 	public HSSFCell addDecimalCell(double number,CellStyle cellStyle) {
 		HSSFCell cell = addCell();
 		cell.setCellValue(number);
@@ -220,9 +211,8 @@ public class ExcelReportExporter implements IReportExporter {
     	return workbook.createFont();	
     }
 
-	public void startLine() throws ReportException {
-		row = sheet.createRow(rowCount++);
-		cellCount = 0;		
+	public void startLine() {
+		this.sheet.startLine();
 	}
 
 	public Object exportColumn(ReportColumnMetadata column, Object data) throws ReportException {
@@ -265,16 +255,14 @@ public class ExcelReportExporter implements IReportExporter {
 	}
 
 	public void addMergedRegion(int fromRow, int toRow, int fromCell, int toCell) {
-		sheet.addMergedRegion(new CellRangeAddress(fromRow, toRow, fromCell, toCell));
+		this.sheet.addMergedRegion(fromRow, toRow, fromCell, toCell);
 	}
 
-	public void endLine() throws ReportException {
+	public void endLine() {
 	}
 
 	public void autoSizeColumns() {
-		for(int i=0; i<columnCount; i++) {
-			sheet.autoSizeColumn(i);
-		}
+		this.sheet.autoSizeColumns();
 	}
 
 	public void endExport(OutputStream out) throws ReportException {

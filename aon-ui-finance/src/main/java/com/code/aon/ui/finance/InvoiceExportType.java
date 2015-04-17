@@ -18,7 +18,11 @@ public enum InvoiceExportType implements IResourceable {
 	
 	EXCEL(ICommonMessages.FINANCE_INVOICE_EXPORT_EXCEL),
 	
-	DSI_GESTION(ICommonMessages.FINANCE_INVOICE_EXPORT_DSI_GESTION);
+	DSI_GESTION(ICommonMessages.FINANCE_INVOICE_EXPORT_DSI_GESTION),
+	
+	GLASOF(ICommonMessages.FINANCE_INVOICE_EXPORT_GLASOF),
+	
+	CONTA_PLUS(ICommonMessages.FINANCE_INVOICE_EXPORT_CONTA_PLUS);
 
 	private String label;
 	

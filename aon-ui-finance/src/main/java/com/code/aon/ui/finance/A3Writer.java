@@ -31,7 +31,6 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.enumeration.InvoiceType;
-import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
@@ -118,11 +117,6 @@ public class A3Writer extends BasicExporter {
 		setString(BasicExporter.NEW_LINE, 254, 2);
 	}
 	
-	private boolean isAbono() {
-		return getRectificationType() == RectificationType.NORMAL_RECTIFIER ||
-				getRectificationType() == RectificationType.SPECIAL_RECTIFIER;		
-	}
-	
 	private boolean isFacturaEmitida() {
 		return isSales();
 	}
@@ -139,7 +133,7 @@ public class A3Writer extends BasicExporter {
 		// Tipo de Registro
 		if (! isInvoiceExport() ) {
 			setInteger( 0, 14, 1);
-		} else if ( isAbono() || (getTotal()<0) ) {
+		} else if ( isRectifier() || (getTotal()<0) ) {
 			setInteger( 2, 14, 1);
 		} else {
 			setInteger( 1, 14, 1);	
@@ -180,7 +174,7 @@ public class A3Writer extends BasicExporter {
 	private String getTipoDeImporte( AccountEntryDetail aed ) {
 		String result = "C";
 		if ( aed.getDebit() != 0 ) {
-			if ( isAbono() ) {
+			if ( isRectifier() ) {
 				if ( isFacturaRecibida() ) {
 					result = "A";
 				}
@@ -190,7 +184,7 @@ public class A3Writer extends BasicExporter {
 				}
 			}
 		} else {
-			if ( isAbono() ) {
+			if ( isRectifier() ) {
 				if ( isFacturaEmitida() ) {
 					result = "A";
 				}

@@ -43,9 +43,11 @@ import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.finance.A3Writer;
 import com.code.aon.ui.finance.AplifisaWriter;
 import com.code.aon.ui.finance.BasicExporter;
+import com.code.aon.ui.finance.ContaPlusWriter;
 import com.code.aon.ui.finance.DsiWriter;
 import com.code.aon.ui.finance.ExcelWriter;
 import com.code.aon.ui.finance.GeyceWriter;
+import com.code.aon.ui.finance.GlasofWriter;
 import com.code.aon.ui.finance.InvoiceExportConfiguration;
 import com.code.aon.ui.finance.LogicWinWriter;
 import com.code.aon.ui.util.AonUtil;
@@ -130,6 +132,12 @@ public class ExporterController implements Serializable {
 				break;
 			case DSI_GESTION:				
 				exporter = new DsiWriter(this.configuration);
+				break;
+			case GLASOF:				
+				exporter = new GlasofWriter(this.configuration);
+				break;
+			case CONTA_PLUS:				
+				exporter = new ContaPlusWriter(this.configuration);
 				break;
 		}
 		this.fileName = exporter.getFileName();
