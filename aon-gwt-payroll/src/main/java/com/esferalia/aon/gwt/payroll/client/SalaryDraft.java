@@ -1895,11 +1895,14 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			cgcBaseDeduction.setType(Deduction.Type.OTHER);
 			cgcBaseDeduction.setSalaryType(salaryDraftObject.getType());
 		}
+		
 		//@formatter:off
 		cgcBaseDeduction.setExpression(
-				"BASE_CGC = /*user*/ " + expression + "/**/; " + 
-				"BUILDER.setCgcBase(BASE_CGC); " + 
-				"REMOVE();");
+				"if ( "+salaryDraftObject.getType().getVariable()+" ) {" +
+				" BASE_CGC = /*user*/ " + expression + "/**/; " + 
+				" BUILDER.setCgcBase(BASE_CGC);" +
+				"}"+
+				" REMOVE();");
 		//@formatter:on
 
 		salaryDraftObject.addDraftDeduction(cgcBaseDeduction);
@@ -1938,9 +1941,11 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		}
 		//@formatter:off
 		cgpBaseDeduction.setExpression(
-					"BASE_CGP = /*user*/ " + expression + "/**/; " + 
-					"BUILDER.setCgpBase(BASE_CGP); " + 
-					"REMOVE();");
+				"if ( "+salaryDraftObject.getType().getVariable()+" ) {" +
+				" BASE_CGP = /*user*/ " + expression + "/**/; " + 
+				" BUILDER.setCgpBase(BASE_CGP); " + 
+				"}"+
+				" REMOVE();");
 		//@formatter:on
 
 		salaryDraftObject.addDraftDeduction(cgpBaseDeduction);
@@ -2104,7 +2109,11 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		syncDatesListBox();
 		syncSalarySelect();
-
+		
+		//clean...???
+		cgcBaseDeduction = null;
+		cgpBaseDeduction = null;
+		
 		// Sync undo & redo controls
 		salaryDraftObject.addUndoManagerListener(this);
 		redoButton.setEnabled(salaryDraftObject.canRedo());

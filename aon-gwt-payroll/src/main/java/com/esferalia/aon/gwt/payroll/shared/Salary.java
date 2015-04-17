@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.lang.model.type.TypeVisitor;
 
 import com.esferalia.aon.gwt.common.shared.HasDescription;
+import com.esferalia.aon.payroll.enumeration.VariableType;
 
 public class Salary implements Serializable {
 	
@@ -58,12 +59,28 @@ public class Salary implements Serializable {
 		};
 		
 		
+		public String getVariable(){
+			return VARIABLES.get(this);
+		}
+
 		public String getDescription(){
 			return DESCRIPTIONS.get(this);
 		}
 		
 		public abstract <E> E accept(TypeVisitor<E>  visitor);
 
+
+		static Map<Type, String> VARIABLES = 
+				new HashMap<Salary.Type, String>() {
+			{
+				put(SALARY,"NOMINA");
+				put(EXTRA,"EXTRA");
+				put(SETTLE,"FINIQUITO");
+				put(DELAY,"ATRASOS");
+				put(NOT_ENJOYED_VACATIONS,"NOMINA");
+			}
+		};
+		
 		static Map<Type, String> DESCRIPTIONS = 
 				new HashMap<Salary.Type, String>() {
 			{
@@ -74,7 +91,6 @@ public class Salary implements Serializable {
 				put(NOT_ENJOYED_VACATIONS,"Vacaciones");
 			}
 		};
-		
 	}
 
 	private int id ;
