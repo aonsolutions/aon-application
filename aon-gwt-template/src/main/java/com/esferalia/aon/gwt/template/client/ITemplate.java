@@ -4,6 +4,7 @@ import java.util.Vector;
 
 import com.esferalia.aon.gwt.template.jooq.DBCatalogue;
 import com.esferalia.aon.gwt.template.shared.Error;
+import com.esferalia.aon.gwt.template.shared.Series;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
@@ -31,13 +32,13 @@ public interface ITemplate extends RemoteService{
 	
 	public Vector<Warehouse> getWarehouses();
 	
-	public Vector<String> getSeries(String warehouse);
+	public Vector<Series> getSeries(String warehouse);
 	
-	public Vector<String> getSeries();
+	public Vector<Series> getSeries();
 	
 	public Error insertStock();
 	
-	public Integer executeExcel(TemplateInfo ti, String warehouse,String warehouse2, String series, String comments);
+	public Integer executeExcel(Integer inventory,TemplateInfo ti, String warehouse,String warehouse2, String series, String comments);
 
 	public Error insertProduct();
 	

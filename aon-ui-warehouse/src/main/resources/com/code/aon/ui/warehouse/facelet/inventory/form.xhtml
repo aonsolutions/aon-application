@@ -5,9 +5,23 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
+	
+		<aon:form style="display:none">
+			<aon:commandButton id="inventoryDetailRefreshButton" reRender="inventoryDetailList"
+				actionListener="#{inventoryDetail.onRefresh}" />
+			<script type="text/javascript">
+            	//<![CDATA[
+					refreshInventoryDetail = function(){
+						#{rich:element('inventoryDetailRefreshButton')}.click();	
+					}
+            	//]]>
+			</script>
+		</aon:form>
+		
 		<aon:form id="inventoryForm">
 
 			<aon:methodParam name="resetActionListener" value="#{inventory.onStartClosing}" type="actionListener" />
@@ -50,11 +64,12 @@
 						<ui:include
 							src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
 						<aon:commandLink id="stock-import" value="#{bundle.aon_import}"
-							onclick="stock('#{inventory.to.warehouse.name}')"
+							onclick="stock('#{inventory.to.warehouse.name}','#{inventory.to.id}', window)"
+				
 							styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
 						</aon:commandLink>
 						<aon:commandLink id="stock-export" value="#{bundle.account_export}"
-							onclick="stockx()"
+							onclick="stockx2('#{inventory.to.warehouse.name}')"
 							styleClass="aon-finding-toolbar-item aon-icon-export-excel-trans">
 						</aon:commandLink>
 					</aon:if>
@@ -62,7 +77,7 @@
 				
 			</ui:decorate>
 	
-			<aon:div styleClass="aon-scroll-area">
+			<aon:div styleClass="aon-scroll-area" id="inventoryDetailList">
 
 				<aon:div styleClass="aon-padding-bottom">
 					<aon:panelGrid columns="8" style="width:100%;"

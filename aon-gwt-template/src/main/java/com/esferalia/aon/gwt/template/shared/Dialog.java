@@ -2,7 +2,7 @@ package com.esferalia.aon.gwt.template.shared;
 
 import java.util.Vector;
 
-import com.code.aon.config.Series;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class Dialog implements IsSerializable{
@@ -20,7 +20,8 @@ public class Dialog implements IsSerializable{
 	Vector<Warehouse> warehouses;
 	String warehouseName;
 	Vector<String> series;
-	
+	Vector<Series> series2;
+
 	public Dialog() {
 	
 	}
@@ -128,6 +129,15 @@ public class Dialog implements IsSerializable{
 	public void setWarehouseName(String warehouseName) {
 		this.warehouseName = warehouseName;
 	}
+
+	public Vector<Series> getSeries2() {
+		return series2;
+	}
+
+	public void setSeries2(Vector<Series> series2) {
+		this.series2 = series2;
+	}
+
 	
 
 }

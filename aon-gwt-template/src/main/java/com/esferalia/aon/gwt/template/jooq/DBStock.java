@@ -8,10 +8,14 @@ import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 import static com.esferalia.aon.jooq.tables.WarehouseTransfer.WAREHOUSE_TRANSFER;
 import static com.esferalia.aon.jooq.tables.WarehouseTransferDetail.WAREHOUSE_TRANSFER_DETAIL;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.jooq.tables.WorkplaceDepartment.WORKPLACE_DEPARTMENT;
 import static com.esferalia.aon.jooq.tables.ProposalDetail.PROPOSAL_DETAIL;
+import static com.esferalia.aon.jooq.tables.Proposal.PROPOSAL;
+import static com.esferalia.aon.jooq.tables.CatalogueItem.CATALOGUE_ITEM;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Vector;
 
 import org.jooq.Condition;
@@ -46,11 +50,12 @@ import com.esferalia.aon.occam.api.AONContext;
 public class DBStock {
 
 	static String stockquery ;
+	static String inventoryquery ;
 	
 	Vector<String> v = new Vector<String>();
 	static String itemIds;
 	static TransferInfo transferInfo;
-	public static Error insertStock2(String domain, Integer domainId,Vector<StockInfo> stock, TransferInfo ti){
+	public static Error insertStock2(String domain, Integer domainId,Vector<StockInfo> stock, TransferInfo ti, Integer inventoryId){
 		itemIds ="";
 		Error error = new Error();
 		error.setError(true);
@@ -89,6 +94,7 @@ public class DBStock {
 			Vector<String> v = new Vector<String>();
 			InsertValuesStep4<WarehouseTransferDetailRecord, Integer, Integer, Integer, Double> transferInsert = ctx.getDslContext().insertInto(WAREHOUSE_TRANSFER_DETAIL, WAREHOUSE_TRANSFER_DETAIL.DOMAIN, WAREHOUSE_TRANSFER_DETAIL.ITEM, WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER, WAREHOUSE_TRANSFER_DETAIL.QUANTITY);
 			stockquery = "update stock set quantity = case ";
+			inventoryquery = "update inventory_detail set real_quantity = case ";
 			transferInfo= ti;
 			
 			AONContext sctx = ctx;
@@ -136,7 +142,7 @@ public class DBStock {
 							quantity = data2.get(0).value1();
 							//System.out.println(" New Quantity: "+ s.getQuantity() +" ; code:  "+s.getProduct());
 							//System.out.println(" Old Quantity: "+ quantity + " or " + Math.abs(quantity));
-
+							System.out.println(s.getProduct());
 							Double quantityTransfer = s.getQuantity()-quantity;
 							
 							s.setDomainId(domainId);
@@ -149,7 +155,7 @@ public class DBStock {
 							if(quantityTransfer != 0.0){
 								itemIds = itemIds + ","+s.getItemId();
 								stockquery = stockquery + " when item = "+ s.getItemId()+" then "+ s.getQuantity();
-							
+								inventoryquery = inventoryquery + " when item = "+ s.getItemId()+" then "+s.getQuantity();
 							}
 							/*if(s.getQuantityDifference() != 0.0)
 								dslContext.update(STOCK)
@@ -181,6 +187,10 @@ public class DBStock {
 					stockquery = stockquery + " else " + 0.0 + " end where domain = "+ domainId +" and item in ("+ itemIds.substring(1) +");";
 					ctx.getDslContext().query(stockquery).execute();
 				}
+				if(!inventoryquery.equals("update inventory_detail set real_quantity = case ")){
+					inventoryquery = inventoryquery + " else " + 0.0 + " end where inventory = "+ inventoryId +" and domain = "+ domainId +" and item in ("+ itemIds.substring(1) +");";
+					ctx.getDslContext().query(inventoryquery).execute();
+				}
 				transferInsert.execute();
 				/*DBConsults outer = new DBConsults();
 				ImportStockThread thread = outer.new ImportStockThread(domain, stock, ti.getTargetWarehouse().getId());
@@ -199,6 +209,7 @@ public class DBStock {
 		Vector<String> verror = new Vector<String>();
 		verror.add("");
 		error.setTextError(verror);
+		Vector<String> v = new Vector<String>();
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domain, domainId);
@@ -229,9 +240,14 @@ public class DBStock {
 				pi.setStatus((byte) 0); 
 				pi.setDescription("");
 				pi.setDiscount((double) 0);
-
-				proposalInsertQuery.values(pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), null, null, null, null, null);
-				
+				if(isCatalogue(sctx,pi)){
+					proposalInsertQuery.values(pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), null, null, null, null, null);
+				}
+				else{
+					v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
+					error.setError(false);
+					error.setTextError(v);
+				}
 			});
 			if(error.getError()){
 				proposalInsertQuery.execute();
@@ -241,6 +257,27 @@ public class DBStock {
 			if (ctx != null) ctx.close();	
 		}
 		
+	}
+	
+	private static Boolean isCatalogue(AONContext ctx, ProposalInfo pi){
+		Result<Record1<Integer>> data = ctx.getDslContext().select(WORKPLACE_DEPARTMENT.CATALOGUE)
+					.from(PROPOSAL).join(WORKPLACE_DEPARTMENT).on(PROPOSAL.WORKPLACE.eq(WORKPLACE_DEPARTMENT.WORKPLACE).and(PROPOSAL.DEPARTMENT.eq(WORKPLACE_DEPARTMENT.DEPARTMENT)))
+					.where(PROPOSAL.ID.eq(pi.getProposal()))
+					.fetch();
+		
+		for (Record1<Integer> record : data) {
+			record.value1();
+			Result<Record1<Integer>> data2 = ctx.getDslContext().select(CATALOGUE_ITEM.ID)
+							.from(CATALOGUE_ITEM)
+							.where(CATALOGUE_ITEM.CATALOGUE.eq(record.value1()))
+							.and(CATALOGUE_ITEM.ITEM.eq(pi.getItem()))
+							.fetch();
+			if(data2.isNotEmpty())
+				return true;
+		}
+		
+		
+		return false;
 	}
 	
 	public static Error insertTransferStock(String domain, Integer domainId,Vector<StockInfo> stock, TransferInfo ti){

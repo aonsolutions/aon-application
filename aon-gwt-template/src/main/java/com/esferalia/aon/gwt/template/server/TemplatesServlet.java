@@ -701,7 +701,9 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	            			}
 	            		}
 	                }
-	               	if(ti.getColumns().get(cell.getColumnIndex()).equals("Cantidad") || ti.getColumns().get(cell.getColumnIndex()).equals("Cdigo")){
+	               	if(ti.getColumns().get(cell.getColumnIndex()).equals("Cantidad") || ti.getColumns().get(cell.getColumnIndex()).equals("Producto") 
+	               			|| ti.getColumns().get(cell.getColumnIndex()).equals("Detalle 1") || ti.getColumns().get(cell.getColumnIndex()).equals("Detalle 2") 
+	               			|| ti.getColumns().get(cell.getColumnIndex()).equals("Detalle 3")){
 	               		si = check(ti.getColumns().get(cell.getColumnIndex()),object,si,cell.getCellType());
 	                	if(si == null){
 	                		textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n";
@@ -776,8 +778,10 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		return error;
 	}
 
-	public Integer executeExcel(TemplateInfo templateInfo, String warehouse1,String warehouse2 , String series, String comments){
+	Integer inventoryId ;
+	public Integer executeExcel(Integer inventory, TemplateInfo templateInfo, String warehouse1,String warehouse2 , String series, String comments){
 		ti = templateInfo;
+		inventoryId = inventory;
 		long startAll= System.currentTimeMillis();
 		String domain = AonUtil.getDomainName();
 		error = new Error();
@@ -871,7 +875,6 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		Iterable<Row> rowIterable = () -> rowIterator;
 		Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
 		rowStream.forEach(row ->{
-	
 			Iterator<Cell> cellIterator = row.cellIterator();
 			Iterable<Cell> cellIterable = () -> cellIterator;
 			si = newStock();
@@ -916,11 +919,14 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
             					error.setTextError(verror);
             					this.error = error;
             				}
-            				else if(ti.getColumns().get(beforeCell.getColumnIndex()).equals("Producto") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Almac\u00e9n Destino") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Cantidad") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Series")){
+            				else if(ti.getColumns().get(beforeCell.getColumnIndex()).equals("Producto") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Almac\u00e9n Destino") ||  ti.getColumns().get(beforeCell.getColumnIndex()).equals("Series")){
             					textError= textError + "*Fila "+(beforeCell.getRowIndex()+1)+", Columna "+Utils.getColumn(beforeCell.getColumnIndex())+" : Dato Incorrecto \n";
             					verror.add("*Fila "+(beforeCell.getRowIndex()+1)+", Columna "+Utils.getColumn(beforeCell.getColumnIndex())+" : Dato Incorrecto \n");
             					error.setTextError(verror);
             					this.error = error;
+            				}
+            				if(ti.getColumns().get(beforeCell.getColumnIndex()).equals("Cantidad")){
+
             				}
             			}
                 	}
@@ -933,6 +939,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
                 			this.error = error;
                 			si = newStock();	
                 		}
+                		
                 	}
                  }  
 			});
@@ -964,7 +971,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
             
             if(row.getRowNum() > 0){ 
             	si.setRow(row.getRowNum());
-            	stock.add(si);
+            	if(si.getQuantity() != null)
+            		stock.add(si);
             }
 		});
 		this.stock = stock;
@@ -987,7 +995,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			error.setTextError(verror);
 			//String domain = AonUtil.getDomainName();
 
-			error = DBStock.insertStock2(domain,domainId,stock,transferInfo);
+			error = DBStock.insertStock2(domain,domainId,stock,transferInfo, inventoryId);
 
 	        //insertar STOCK en base de datos.!!
 		}
@@ -1042,7 +1050,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 				Double n = (Double) value;
 				stock.setQuantity(n);
 			}
-			else return null;
+			//else return null;
 			break;
 		case "Detalle 1": case "Detail 1":
 			if(type.equals(Cell.CELL_TYPE_STRING))
@@ -1082,27 +1090,33 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		return stock;
 	}
 	
-	public Vector<String> getSeries(String warehouse){
+	public Vector<com.esferalia.aon.gwt.template.shared.Series> getSeries(String warehouse){
 		String domain = AonUtil.getDomainName();
 		Warehouse w = DBStock.getWarehouse(warehouse, domainId, domain);
 		WorkPlace workplace = DBCatalogue.getWorkplace(w.getWorkplace(), domainId, domain);
 		Vector<Series> series = DBStock.getSeries(w, workplace,domain, domainId);
 
-		Vector<String> seriesCode = new Vector<String>();
+		Vector<com.esferalia.aon.gwt.template.shared.Series> seriesCode = new Vector<com.esferalia.aon.gwt.template.shared.Series>();
 		series.parallelStream().forEach(s ->{
-			seriesCode.add(s.getCode());
+			com.esferalia.aon.gwt.template.shared.Series serie = new com.esferalia.aon.gwt.template.shared.Series();
+			serie.setId(s.getId());
+			serie.setName(s.getCode());
+			seriesCode.add(serie);
 		});
 		return seriesCode;
 	}
-	public Vector<String> getSeries(){
+	public Vector<com.esferalia.aon.gwt.template.shared.Series> getSeries(){
 		String domain = AonUtil.getDomainName();
 		Vector<Series> series = new Vector<Series>();
 
 		series = DBStock.getSeries(domain, domainId);
 
-		Vector<String> seriesCode = new Vector<String>();
+		Vector<com.esferalia.aon.gwt.template.shared.Series> seriesCode = new Vector<com.esferalia.aon.gwt.template.shared.Series>();
 		series.parallelStream().forEach(s ->{
-			seriesCode.add(s.getCode());
+			com.esferalia.aon.gwt.template.shared.Series serie = new com.esferalia.aon.gwt.template.shared.Series();
+			serie.setId(s.getId());
+			serie.setName(s.getCode());
+			seriesCode.add(serie);
 		});
 		return seriesCode;
 	}

@@ -10,13 +10,22 @@
 	<ui:define name="content">
 		<aon:form id="stockReportSearch">
 
-			<ui:include
-				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.warehouse_order_proposal_module}" />
 				<ui:param name="controller" value="#{orderProposal}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipBackButton" value="true" />
-			</ui:include>
+				
+				<ui:define name="additionalToolbarContent">
+					<ui:include
+							src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
+						<aon:commandLink id="proposal-import" value="Importar"
+							onclick="proposalx()"
+							styleClass="aon-finding-toolbar-item aon-icon-export-excel-trans">
+						</aon:commandLink>
+				</ui:define>
+			</ui:decorate>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{orderProposal}" />

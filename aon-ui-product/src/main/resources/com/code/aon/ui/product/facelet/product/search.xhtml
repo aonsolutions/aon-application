@@ -15,7 +15,7 @@
 				<ui:param name="controller" value="#{product}" />
 				
 				<ui:define name="additionalToolbarContent">
-					<aon:if test="#{salesAppParam.activeMarketPlace}">
+					<!-- aon:if test="#{salesAppParam.activeMarketPlace}"-->
 							<ui:include
 								src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
 							<aon:commandLink id="product-import" value="#{bundle.aon_import}"
@@ -26,7 +26,7 @@
 								onclick="productx()"
 								styleClass="aon-finding-toolbar-item aon-icon-export-excel-trans">
 							</aon:commandLink>
-					</aon:if>
+					<!-- /aon:if-->
 				</ui:define>
 			</ui:decorate>
 			

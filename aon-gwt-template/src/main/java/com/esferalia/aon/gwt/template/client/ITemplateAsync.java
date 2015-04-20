@@ -4,6 +4,7 @@ import java.util.Vector;
 
 import com.esferalia.aon.gwt.template.shared.Department;
 import com.esferalia.aon.gwt.template.shared.Error;
+import com.esferalia.aon.gwt.template.shared.Series;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
@@ -34,10 +35,11 @@ public interface ITemplateAsync {
 
 	void getWarehouses(AsyncCallback<Vector<Warehouse>> callback);
 
-	void getSeries(String warehouse, AsyncCallback<Vector<String>> callback);
+	void getSeries(String warehouse, AsyncCallback<Vector<Series>> callback);
 
-	void executeExcel(TemplateInfo ti, String warehouse, String warehouse2,
-			String series, String comments, AsyncCallback<Integer> callback);
+	void executeExcel(Integer inventory, TemplateInfo ti, String warehouse,
+			String warehouse2, String series, String comments,
+			AsyncCallback<Integer> callback);
 
 	void insertProduct(AsyncCallback<Error> callback);
 
@@ -59,6 +61,6 @@ public interface ITemplateAsync {
 
 	void insertProposal(AsyncCallback<Error> callback);
 
-	void getSeries(AsyncCallback<Vector<String>> callback);
+	void getSeries(AsyncCallback<Vector<Series>> callback);
 
 }

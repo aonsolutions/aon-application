@@ -177,6 +177,11 @@ public class InventoryDetailController extends LinesController implements IColle
 		return this.itemFilter;
 	}	
 	
+	public void onRefresh(ActionEvent event) {
+		System.out.println("onRefersh ......................");
+		initializeModel();
+	}
+
 	private static class ItemFilter extends ControllerAdapter {
 		
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;

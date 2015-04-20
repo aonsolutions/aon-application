@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.common.client.widget.CustomDialogB;
 import com.esferalia.aon.gwt.template.shared.Department;
 import com.esferalia.aon.gwt.template.shared.Dialog;
 import com.esferalia.aon.gwt.template.shared.Error;
+import com.esferalia.aon.gwt.template.shared.Series;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
@@ -33,6 +34,7 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -70,13 +72,12 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	Dialog d;
 	TemplateList tlist;
 	Vector<Warehouse> w;
-	Vector<String> series;
-	
+	Vector<Series> series;
 	public TemplatesDialog(Dialog dialog) {
 		setCaption(dialog.getTitle());
 		if(dialog.getTemplateList()!= null) tlist = dialog.getTemplateList();
 		if(dialog.getWarehouses() != null) w = dialog.getWarehouses();
-		if(dialog.getSeries() != null) series = dialog.getSeries();
+		if(dialog.getSeries2() != null) series = dialog.getSeries2();
 		label = new Label();
 		flex_table = new FlexTable();
 		vp = new VerticalPanel();
@@ -302,11 +303,18 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setWidget(0, 1, lb);
 		
 		ListBox lb2 = new ListBox();
-		lb2.addItem("-");
-		for(Warehouse wh : w){
-			lb2.addItem(wh.getName());
+		if(w.size()>1){
+			lb2.addItem("-");
+			for(Warehouse wh : w){
+				lb2.addItem(wh.getName());
+			}
 		}
-		
+		else {
+			for(Warehouse wh : w){
+				lb2.addItem(wh.getName());
+			}
+			lb2.setEnabled(false);
+		}
 		flex_table.setWidget(1, 0, new Label("Almac\u00e9n"));
 		flex_table.setWidget(1, 1, lb2);
 		flexTableCss();
@@ -357,6 +365,8 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	}
 	
 	private void importStock(Dialog dialog) {
+		
+		Window.alert("debug1");
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
@@ -379,17 +389,25 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		
 		flex_table.setWidget(1, 0, new Label("Almacen"));
 		flex_table.setWidget(1, 1,lb2 );
-		
+		Window.alert("debug2");
+
 		ListBox lb3 = new ListBox();
-		if(series.size()>1)
+		Window.alert("debug3");
+		Window.alert(series+"");
+		if(series.size()>1){
+
+			Window.alert("debug4");
 			lb3.addItem("-");
-		
-		for(String s : series){
-			lb3.addItem(s);
+		}
+		for(Series s : series){
+			Window.alert("debug5");
+
+			lb3.addItem(s.getName());
 		}
 		flex_table.setWidget(2, 0, new Label("Serie"));
 		flex_table.setWidget(2, 1,lb3 );
-		
+		Window.alert("debug6");
+
 		TextBox tb = new TextBox();
 		tb.setStyleName("aon-inputText");
 		flex_table.setWidget(3, 0, new Label("Comentarios"));
@@ -401,7 +419,13 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		
 		flexTableCss();
 	}
-	
+	private Boolean esta(Series series,Vector<Series> series2){
+		for (Series series3 : series2) {
+			if(series3.getName().equals(series.getName()))
+				return true;
+		}
+		return false;
+	}
 	private void importTransferStock(String url,TemplateList templates) {
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
@@ -424,22 +448,133 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		for(Warehouse wh : w){
 			lb2.addItem(wh.getName());
 		}
+		lb2.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				ListBox lb = (ListBox)flex_table.getWidget(1, 1);
+				if(!lb.getSelectedItemText().equals("-")){
+				item.getSeries(lb.getSelectedItemText(), new AsyncCallback<Vector<Series>>() {
+					
+					@Override
+					public void onSuccess(Vector<Series> result) {
+						
+						ListBox lb4 = (ListBox) flex_table.getWidget(2, 1);
+						String w2 = lb4.getSelectedItemText();
+						
+						if(!w2.equals("-")){
+							
+							series = new Vector<Series>();
+							series.addAll(result);
+							item.getSeries(w2, new AsyncCallback<Vector<Series>>() {
+								Vector<Series> series2 = series;
+								@Override
+								public void onSuccess(Vector<Series> result) {
+									
+									for (Series series : result) {
+										if(!esta(series, series2)){
+											series2.add(series);
+										}
+									}
+									ListBox lb3 = new ListBox();
+									if(series2.size()>1)lb3.addItem("-");
+									for(Series s : series2){
+										lb3.addItem(s.getName());
+									}
+									flex_table.setWidget(3, 1,lb3 );
+								}
+								
+								@Override
+								public void onFailure(Throwable caught) {}
+							});
+						}
+						else{
+							ListBox lb3 = new ListBox();
+							if(result.size()>1) lb3.addItem("-");
+							for(Series s : result){
+								lb3.addItem(s.getName());
+							}
+							flex_table.setWidget(3, 1,lb3 );
+						}
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
+				}
+			}
+		});
+		
 		flex_table.setWidget(1, 0, new Label("Almac\u00e9n Origen"));
 		flex_table.setWidget(1, 1,lb2 );
+		
 		
 		ListBox lb4 = new ListBox();
 		lb4.addItem("-");
 		for(Warehouse wh : w){
 			lb4.addItem(wh.getName());
 		}
+		lb4.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				ListBox lb = (ListBox)flex_table.getWidget(2, 1);
+				item.getSeries(lb.getSelectedItemText(), new AsyncCallback<Vector<Series>>() {
+					
+					@Override
+					public void onSuccess(Vector<Series> result) {
+						
+						ListBox lb2 = (ListBox) flex_table.getWidget(1, 1);
+						String w2 = lb2.getSelectedItemText();
+						
+						if(!w2.equals("-")){
+							series = new Vector<Series>();
+							series.addAll(result);
+							item.getSeries(w2, new AsyncCallback<Vector<Series>>() {
+								Vector<Series> series2 = series;
+								@Override
+								public void onSuccess(Vector<Series> result) {
+									for (Series series : result) {
+										if(!esta(series, series2)){
+											series2.add(series);
+										}
+									}
+									ListBox lb3 = new ListBox();
+									if(series2.size()>1)lb3.addItem("-");
+									for(Series s : series2){
+										lb3.addItem(s.getName());
+									}
+									flex_table.setWidget(3, 1,lb3 );
+								}
+								
+								@Override
+								public void onFailure(Throwable caught) {}
+							});
+						}
+						else{
+							ListBox lb3 = new ListBox();
+							if(result.size()>1) lb3.addItem("-");
+							for(Series s : result){
+								lb3.addItem(s.getName());
+							}
+							flex_table.setWidget(3, 1,lb3 );
+						}
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
+			}
+		});
+		
 		flex_table.setWidget(2, 0, new Label("Almac\u00e9n Destino"));
 		flex_table.setWidget(2, 1,lb4 );
 		
 		ListBox lb3 = new ListBox();
 		lb3.addItem("-");
-		for(String s : series){
+		/*for(String s : series){
 			lb3.addItem(s);
-		}
+		}*/
 		flex_table.setWidget(3, 0, new Label("Serie"));
 		flex_table.setWidget(3, 1,lb3 );
 		
