@@ -10,6 +10,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 import junit.framework.Assert;
 
@@ -18,14 +19,16 @@ import org.junit.Test;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.salary.expression.ITimedVariable;
 
 /**
  * @author rtrepiana
@@ -36,7 +39,7 @@ public class SQLContractSalaryCalculatorTestCase extends
 
 
 	@Test
-	public void testLiquidAndPayment() throws ExpressionException, SQLException, SalaryException {
+	public void testListener() throws ExpressionException, SQLException, SalaryException {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
