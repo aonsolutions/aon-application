@@ -153,28 +153,28 @@ public class SQLContractSalaryCalculatorContextTestCase extends AbstractSQLTestC
 		Assert.assertEquals(String.format("%s", MONTH_DAYS), getMax(getToday(), DATE) , systemMonthDays.getValue(systemMonthDays.getPeriod()));
 
 		ITimedVariable<?> userCustomDays = redefinedMap.get("_" + Long.toString(customVarI) );
-		Assert.assertEquals("_" + Long.toString(customVarI), (int) customVarI*100, (int) userCustomDays.getValue(userCustomDays.getPeriod()));
+		Assert.assertEquals("_" + Long.toString(customVarI), customVarI*100, ((Number)userCustomDays.getValue(userCustomDays.getPeriod())).longValue());
 		ITimedVariable<?> systemCustomDays = implicitMap.get("_" + Long.toString(customVarI) );
-		Assert.assertEquals("_" + Long.toString(customVarI), (int) customVarI , (int) systemCustomDays.getValue(systemCustomDays.getPeriod()));
+		Assert.assertEquals("_" + Long.toString(customVarI), customVarI , ((Number)systemCustomDays.getValue(systemCustomDays.getPeriod())).longValue());
 
 		ITimedVariable<?> userCustomIIDays = redefinedMap.get("_" + Long.toString(customVarII) );
-		Assert.assertEquals("_" + Long.toString(customVarII), (int) customVarII*1000, (int) userCustomIIDays.getValue(userCustomIIDays.getPeriod()));
+		Assert.assertEquals("_" + Long.toString(customVarII), customVarII*1000, ((Number)userCustomIIDays.getValue(userCustomIIDays.getPeriod())).longValue());
 		ITimedVariable<?> systemCustomIIDays = implicitMap.get("_" + Long.toString(customVarII) );
-		Assert.assertEquals("_" + Long.toString(customVarII), (int) customVarII , (int) systemCustomIIDays.getValue(systemCustomIIDays.getPeriod()));
+		Assert.assertEquals("_" + Long.toString(customVarII), customVarII , ((Number)systemCustomIIDays.getValue(systemCustomIIDays.getPeriod())).longValue());
 
 		ITimedVariable<?> userCustomIIIDays = redefinedMap.get("_" + Long.toString(customVarIII) );
-		Assert.assertEquals("_" + Long.toString(customVarIII), (int) customVarIII*10000, (int) userCustomIIIDays.getValue(userCustomIIIDays.getPeriod()));
+		Assert.assertEquals("_" + Long.toString(customVarIII), customVarIII*10000, ((Number)userCustomIIIDays.getValue(userCustomIIIDays.getPeriod())).longValue());
 		ITimedVariable<?> systemCustomIIIDays = implicitMap.get("_" + Long.toString(customVarIII) );
-		Assert.assertEquals("_" + Long.toString(customVarIII), (int) customVarIII , (int) systemCustomIIIDays.getValue(systemCustomIIIDays.getPeriod()));
+		Assert.assertEquals("_" + Long.toString(customVarIII), customVarIII , ((Number)systemCustomIIIDays.getValue(systemCustomIIIDays.getPeriod())).longValue());
 
 		ITimedVariable<?> userCustomVIDays = redefinedMap.get("_" + Long.toString(customVarVI) );
 		try {
-		Assert.assertEquals("_" + Long.toString(customVarVI), (int) customVarVI*2000, (int) userCustomVIDays.getValue(userCustomVIDays.getPeriod()));
+		Assert.assertEquals("_" + Long.toString(customVarVI), customVarVI*2000, ((Number)userCustomVIDays.getValue(userCustomVIDays.getPeriod())).longValue());
 		} catch ( ExpressionExceptionWrapper e ){
 			
 		}
 		ITimedVariable<?> systemCustomVIDays = implicitMap.get("_" + Long.toString(customVarVI) );
-		Assert.assertEquals("_" + Long.toString(customVarVI), (int) customVarVI , (int) systemCustomVIDays.getValue(systemCustomVIDays.getPeriod()));
+		Assert.assertEquals("_" + Long.toString(customVarVI), customVarVI , ((Number)systemCustomVIDays.getValue(systemCustomVIDays.getPeriod())).longValue());
 	}
 
 	// ------------------------------------------------------------------------
