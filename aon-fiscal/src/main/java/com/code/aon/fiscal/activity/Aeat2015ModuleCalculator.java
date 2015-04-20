@@ -7,16 +7,10 @@ import java.util.Map;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.fiscal.FiscalActivity;
 import com.code.aon.fiscal.FiscalActivityInfo;
 import com.code.aon.fiscal.enumeration.FiscalActivityInfoKey;
-import com.code.aon.ql.Criteria;
-import com.esferalia.aon.entity.IEntityAlias;
 
 
 public class Aeat2015ModuleCalculator implements IModuleCalculator, Serializable {
@@ -435,47 +429,48 @@ public class Aeat2015ModuleCalculator implements IModuleCalculator, Serializable
 				personalAsalariado = personalAsalariado + persoAsal.getDoubleValue();
 			}
 		}
-		
-		double coef = 0.0;
-		double previousAsalariados = getPreviousAsalariados(fa);
-
-		double as = personalAsalariado;
-		if (previousAsalariados != 0 && personalAsalariado > previousAsalariados ) {
-			as = CommonUtil.round((personalAsalariado - previousAsalariados));
-			coef = as * 0.40;
-		}
-		
-		if (CommonUtil.round(as) > 0.0) {
-			coef = coef + 0.10; 
-			as = CommonUtil.round(as - 1);
-		}
-		if (CommonUtil.round(as) > 0.0) {
-			coef = coef + 0.15;
-			as = CommonUtil.round(as - 2);
-		}
-		if (CommonUtil.round(as) > 0.0) {
-			coef = coef + 0.20;
-			as = CommonUtil.round(as - 2);
-		}
-		if (CommonUtil.round(as) > 0.0) {
-			coef = coef + 0.25;
-			as = CommonUtil.round(as - 3);
-		}
-		if (CommonUtil.round(as) > 0.0) {
-			coef = coef + 0.30;
-		}
 
 		double i02 = 0;
-		for (FiscalActivityInfoKey key : persoKeys ){
-			FiscalActivityInfo persoAsal = getIrpfModulesKey(key);
-			if (persoAsal != null) {
-				double m01 = persoAsal.getDoubleValue();
-				double ratioPersonalAsalariado = 
-						(personalAsalariado != 0 )?m01 / personalAsalariado:1;
-				double f = persoAsal.getFactor();
-				i02 = CommonUtil.round(i02 + (coef * ratioPersonalAsalariado * f)); 
+		double coef = 0.0;
+		double as = personalAsalariado;
+		FiscalActivityInfo infoA10 = getActivityInfoKey(FiscalActivityInfoKey.A10);
+		double previousAsalariados = infoA10 == null? 0 : infoA10.getDoubleValue();
+		if (previousAsalariados != 0 && personalAsalariado >= previousAsalariados ) {
+			if( CommonUtil.round((personalAsalariado - previousAsalariados)) > 0 ) {
+				coef = 0.40;
+			} else {
+				if (CommonUtil.round(as) > 0.0) {
+					coef = coef + 0.10; 
+					as = CommonUtil.round(as - 1);
+				}
+				if (CommonUtil.round(as) > 0.0) {
+					coef = coef + 0.15;
+					as = CommonUtil.round(as - 2);
+				}
+				if (CommonUtil.round(as) > 0.0) {
+					coef = coef + 0.20;
+					as = CommonUtil.round(as - 2);
+				}
+				if (CommonUtil.round(as) > 0.0) {
+					coef = coef + 0.25;
+					as = CommonUtil.round(as - 3);
+				}
+				if (CommonUtil.round(as) > 0.0) {
+					coef = coef + 0.30;
+				}
 			}
-				
+
+			for (FiscalActivityInfoKey key : persoKeys ){
+				FiscalActivityInfo persoAsal = getIrpfModulesKey(key);
+				if (persoAsal != null) {
+					double m01 = persoAsal.getDoubleValue();
+					double ratioPersonalAsalariado = 
+							(personalAsalariado != 0 )?m01 / personalAsalariado:1;
+					double f = persoAsal.getFactor();
+					i02 = CommonUtil.round(i02 + (coef * ratioPersonalAsalariado * f)); 
+				}
+					
+			}
 		}
 		getIrpfInfoKey(FiscalActivityInfoKey.I02).setDoubleValue(i02);		
 	
@@ -635,7 +630,6 @@ public class Aeat2015ModuleCalculator implements IModuleCalculator, Serializable
 		// desarrolla la actividad.
 		
 		double i07 = 0.0;
-		FiscalActivityInfo infoA10 = getActivityInfoKey(FiscalActivityInfoKey.A10);
 		if (indiceEmpresasPequeñaDimensionAplicable) {
 			// En ningún caso será aplicable el índice corrector para empresas de pequeña 
 			// dimensión (b.1) a las actividades para las que están previstos los índices 
@@ -826,36 +820,6 @@ public class Aeat2015ModuleCalculator implements IModuleCalculator, Serializable
 		double i15 = CommonUtil.round(i13 *  i14 / 100 );
 		getIrpfInfoKey(FiscalActivityInfoKey.I14).setDoubleValue(i14);
 		getIrpfInfoKey(FiscalActivityInfoKey.I15).setDoubleValue(i15);
-	}
-
-	private double getPreviousAsalariados(FiscalActivity fa) {
-		double previousAsalariados = 0;
-		try {
-			int previousYear = fa.getYear() - 1;
-			IManagerBean bean = BeanManager.getManagerBean(FiscalActivity.class);
-			Criteria c = new Criteria();
-			c.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_ACTIVITY_YEAR), previousYear);
-			c.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_ACTIVITY_EPIGRAPH), fa.getEpigraph());
-			List<ITransferObject> list = bean.getList(c);
-			if (list != null && list.size()>0) {
-				Integer id = ((FiscalActivity)list.get(0)).getId();
-				bean = BeanManager.getManagerBean(FiscalActivityInfo.class);
-				c = new Criteria();
-				c.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_ACTIVITY_INFO_FISCAL_ACTIVITY_ID), id);
-				FiscalActivityInfoKey[] persoKeys = {FiscalActivityInfoKey.M01,FiscalActivityInfoKey.M15,FiscalActivityInfoKey.M16};		
-				c.addInExpression(bean.getFieldName(IEntityAlias.FISCAL_ACTIVITY_INFO_INFO_KEY), persoKeys);
-				list = bean.getList(c);
-				if (list != null) {
-					for (ITransferObject to : list) {
-						FiscalActivityInfo info = (FiscalActivityInfo) to;
-						previousAsalariados = CommonUtil.round(previousAsalariados + info.getDoubleValue());
-					}
-				}
-			}
-		} catch (ManagerBeanException e) {
-  		   return 0; 
-		}
-		return previousAsalariados;
 	}
 
 	@Override
