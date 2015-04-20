@@ -342,10 +342,9 @@ public class FANWriter implements Serializable {
 	private List<DAT> createDATRecords(Contract contract) throws ManagerBeanException {
 		List<DAT> datList = new LinkedList<DAT>();
 		
-		Salary salary = null;
+		Salary salary = getSalary(contract, SalaryType.SALARY);
 		List<ITransferObject> salaryDataList = PayrollUtils.getInstance().getSalaryDataList(salary, true);
 		if(liquidationType==LiquidationType.L00){
-			salary = getSalary(contract, SalaryType.SALARY);
 			
 			if(isLessThan7DaysContract(contract)){
 				createDATRecord(datList, contract, salaryDataList, autoComplete("C", 7, " ", true), getContractDaysOrHours(contract, salaryDataList));
