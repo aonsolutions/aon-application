@@ -459,7 +459,8 @@ public class Aeat2015ModuleCalculator implements IModuleCalculator, Serializable
 					coef = coef + 0.30;
 				}
 			}
-
+		}
+		if (coef != 0 ) {
 			for (FiscalActivityInfoKey key : persoKeys ){
 				FiscalActivityInfo persoAsal = getIrpfModulesKey(key);
 				if (persoAsal != null) {
