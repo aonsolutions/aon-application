@@ -343,10 +343,9 @@ public class FANWriter implements Serializable {
 		List<DAT> datList = new LinkedList<DAT>();
 		
 		Salary salary = null;
-		List<ITransferObject> salaryDataList = null;
+		List<ITransferObject> salaryDataList = PayrollUtils.getInstance().getSalaryDataList(salary, true);
 		if(liquidationType==LiquidationType.L00){
 			salary = getSalary(contract, SalaryType.SALARY);
-			salaryDataList = PayrollUtils.getInstance().getSalaryDataList(salary, true);
 			
 			if(isLessThan7DaysContract(contract)){
 				createDATRecord(datList, contract, salaryDataList, autoComplete("C", 7, " ", true), getContractDaysOrHours(contract, salaryDataList));
