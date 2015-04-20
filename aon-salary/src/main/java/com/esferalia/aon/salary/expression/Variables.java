@@ -58,6 +58,8 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 
 		private Map<String, ITimedVariable<?>> read = new HashMap<String, ITimedVariable<?>>();
 
+		private Map<String, ITimedVariable<?>> redefined = new HashMap<String, ITimedVariable<?>>();
+
 		public PeriodMap(Period period) {
 			this.period = period;
 		}
@@ -145,7 +147,14 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		public Map<String, ITimedVariable<?>> getRead() {
 			return new HashMap<String, ITimedVariable<?>>(read);
 		}
-
+		
+		public void cleanRedefined() {
+			redefined.clear();
+		}
+		
+		public Map<String, ITimedVariable<?>> getRedefined() {
+			return new HashMap<String, ITimedVariable<?>>(redefined);
+		}
 
 		public <T> T get(Object key, Function<Object,T> mapper, T def) {
 			return get(key.toString(), mapper, def);	
@@ -219,50 +228,53 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		return vars.keySet();
 	}
 
-	public void putAll(Variables variables) {
+	public Map<String,List<ITimedVariable<?>>> putAll(Variables variables) {
+		Map<String,List<ITimedVariable<?>>> redefined = new HashMap<String,List<ITimedVariable<?>>>();
 		for (Entry<String, List<ITimedVariable<?>>> entry : variables.vars
 				.entrySet()) {
 			for (ITimedVariable<?> timedVar: entry.getValue()) {
-				put(entry.getKey(),timedVar);
+				redefined.put(entry.getKey(),put(entry.getKey(),timedVar));
 			}
 		}
+		return redefined;
 	}
 
-	public void put(String name, ITimedVariable<?> var) {
+	public List<ITimedVariable<?>> put(String name, ITimedVariable<?> var) {
 		List<ITimedVariable<?>> values = vars.get(name);
 		if (values == null) {
 			values = new ArrayList<ITimedVariable<?>>();
 			values.add(var);
 			vars.put(name, values);
+			return Collections.emptyList();
 		} else {
 			int index = Collections.binarySearch(values, var, this);
 			if (index >= 0) {
 				values.set(index, var);
+				return Collections.emptyList();
 			} else {
 				int position = -(index + 1);
 				values.add(position, var);
 				if (values.size() == 1) {
-					return;
+					return Collections.emptyList();
 				} // Only one value, all ok.
-
+				
+				List<ITimedVariable<?>> redefined = new ArrayList<ITimedVariable<?>>();
+				
 				// Fix NEXT value
 				if (position + 1 < values.size()) {
 					ITimedVariable<?> next = values.get(position + 1);
 					while (intersects(var, next)) {
+						redefined.add(next);
 						Date start = var.getPeriod().getEnd();
 						Date end = next.getPeriod().getEnd();
 						if (Period.compare(start, end) >= 0) {
 							values.remove(position + 1);
-						} // La nueva variable sobreescribe totalmente el
-							// antiguo valor.
-						else {
+						}else {
 							start = Variables.add(start, 1);
 							ITimedVariable<?> wrapNext = new WrapTimedVariable<Object>(
 									start, end, next);
 							values.set(position + 1, wrapNext);
-						} // La nueva variable sobreescribe parcialmente el
-							// antiguo valor.
-						
+						}
 						if ( values.size() <= (position +1) )
 							break;
 						
@@ -275,6 +287,7 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 				if (position - 1 >= 0) {
 					ITimedVariable<?> prev = values.get(position - 1);
 					if (intersects(var, prev)) {
+						redefined.add(prev);
 						Date end = var.getPeriod().getStart();
 						Date start = prev.getPeriod().getStart(); // start
 																	// remain
@@ -298,6 +311,8 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 						}
 					} // Eliminamos
 				}
+				
+				return redefined;
 
 			}
 		}

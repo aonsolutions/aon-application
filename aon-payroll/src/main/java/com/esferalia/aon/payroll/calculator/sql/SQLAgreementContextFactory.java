@@ -4,7 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import com.code.aon.common.util.CommonUtil;
@@ -12,14 +16,17 @@ import com.code.aon.ql.OrderByList;
 import com.esferalia.aon.payroll.calculator.LRUCache;
 import com.esferalia.aon.payroll.calculator.LRUCacheFactory;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.AgreementContextKey;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelDataColumns;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.DeferredExpressionVariable;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
+import com.esferalia.aon.salary.expression.IExpressionVariable;
+import com.esferalia.aon.salary.expression.ITimedResult;
+import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.watson.util.Pair;
 
 public class SQLAgreementContextFactory implements
 		LRUCacheFactory<AgreementContextKey, ExpressionContext> {
@@ -57,6 +64,9 @@ public class SQLAgreementContextFactory implements
 
 	private Supplier<ExpressionContext> systemExpressionContextSupplier;
 
+	private Map<AgreementKey, Map<String, Pair<ITimedVariable<?>, ITimedVariable<?>>>> agreementDataRedefined;
+	private Map<AgreementContextKey, Map<String, Pair<ITimedVariable<?>, ITimedVariable<?>>>> agreementLevelRedefined;
+
 	public SQLAgreementContextFactory(Connection conn,
 			Supplier<ExpressionContext> systemExpressionCtxtSupplier,
 			Date startDate, Date endDate, OrderByList order)
@@ -66,6 +76,9 @@ public class SQLAgreementContextFactory implements
 		initAgreementDataContextCache();
 		initAgreementStmt(conn, startDate, endDate, order);
 		this.systemExpressionContextSupplier = systemExpressionCtxtSupplier;
+
+		agreementDataRedefined = new HashMap<AgreementKey, Map<String, Pair<ITimedVariable<?>, ITimedVariable<?>>>>();
+		agreementLevelRedefined = new HashMap<AgreementContextKey, Map<String, Pair<ITimedVariable<?>, ITimedVariable<?>>>>();
 	}
 
 	public void close() throws SQLException {
@@ -85,13 +98,16 @@ public class SQLAgreementContextFactory implements
 
 	public ExpressionContext create(AgreementKey agreementKey) {
 		try {
-			
+
 			ExpressionContext expressionCtx = new ExpressionContext(
 					systemExpressionContextSupplier.get());
 
 			agreementDataStmt.setInt(1, agreementKey.getDomain());
 			agreementDataStmt.setInt(2, agreementKey.getId());
-			loadData(agreementDataStmt, expressionCtx);
+			
+			Map<String, Pair<ITimedVariable<?>, ITimedVariable<?>>> redefined = 
+					loadData(agreementDataStmt, expressionCtx);
+			agreementDataRedefined.put(agreementKey, redefined);
 
 			return expressionCtx;
 		} catch (SQLException e) {
@@ -115,11 +131,15 @@ public class SQLAgreementContextFactory implements
 					new ExpressionContext(agreementDataCache.get(agreementKey)) : 
 					new ExpressionContext(); 
 			//@formatter:on
-					
-					
+
 			agreementLevelDataStmt.setInt(1, key.getDomain());
 			agreementLevelDataStmt.setInt(2, key.getAgreementLevelId());
-			loadData(agreementLevelDataStmt, levelCtx);
+			
+			Map<String, Pair<ITimedVariable<?>, ITimedVariable<?>>> redefined =
+					loadData(agreementLevelDataStmt, levelCtx);
+			if ( agreementDataRedefined.containsKey(agreementKey) )
+				redefined.putAll(agreementDataRedefined.get(agreementKey));
+			agreementLevelRedefined.put(key, redefined);
 
 			return levelCtx;
 		} catch (SQLException e) {
@@ -136,14 +156,20 @@ public class SQLAgreementContextFactory implements
 	public ExpressionContext getAgreementDataContext(int agreementId) {
 		return agreementDataCache.get(agreementId);
 	}
+	
+	public Map<String, Pair<ITimedVariable<?>, ITimedVariable<?>>> getImplicitRedefined(AgreementContextKey key) {
+		return agreementLevelRedefined.containsKey(key) ? agreementLevelRedefined.get(key) : Collections.emptyMap();
+	}
 
 	// ------------------------------------------
 	// La ropa interior
 	// ------------------------------------------
 
-	private void loadData(PreparedStatement stmt, ExpressionContext context)
+	private Map<String, Pair<ITimedVariable<?>, ITimedVariable<?>>> loadData(PreparedStatement stmt, ExpressionContext context)
 			throws SQLException {
 		ResultSet rs = null;
+		Map<String, Pair<ITimedVariable<?>, ITimedVariable<?>>> redefinedMap = 
+				new HashMap<String, Pair<ITimedVariable<?>, ITimedVariable<?>>>();
 		try {
 			rs = stmt.executeQuery();
 			while (rs.next()) {
@@ -158,20 +184,68 @@ public class SQLAgreementContextFactory implements
 				Date end = Period
 						.min(rs.getDate(AgreementLevelDataColumns.END_DATE),
 								endDate);
+				ITimedVariable<?> implicit = context.getVariable(
+						expr.getName(), start, end);
 				try {
-					context.addExpression(expr, start, end);
+					List<ITimedResult<Object>> results = context.addExpression(
+							expr, start, end);
+
+					Pair<ITimedVariable<?>, ITimedVariable<?>> redefined =onRedefinedImplicit(context, expr.getName(), implicit,
+							results);
+					if ( redefined != null )
+						redefinedMap.put(expr.getName(), redefined);
+
 				} catch (Exception e) {
 					DeferredExpressionVariable<Object> variable = new DeferredExpressionVariable<Object>(
 							start, end, expr);
 					context.putVariable(expr.getName(), variable);
+					Pair<ITimedVariable<?>, ITimedVariable<?>> redefined =onRedefinedImplicit(context, expr.getName(), implicit,
+							variable);
+					if ( redefined != null )
+						redefinedMap.put(expr.getName(), redefined);
 				}
 			}
+			return redefinedMap;
 		} finally {
 			if (rs != null)
 				rs.close();
 		}
 	}
-	
+
+	private Pair<ITimedVariable<?>, ITimedVariable<?>> onRedefinedImplicit(
+			ExpressionContext ctx, String name, ITimedVariable<?> implicit,
+			List<ITimedResult<Object>> results) {
+		if (results == null)
+			return null;
+		if (results.isEmpty())
+			return null;
+		if (implicit == null)
+			return null;
+		if (implicit instanceof IExpressionVariable<?>
+				&& ((IExpressionVariable<?>) implicit).getExpression()
+						.getScope().compareTo(ExpressionScope.AGREEMENT) >= 0)
+			return null;
+
+		return new Pair<ITimedVariable<?>, ITimedVariable<?>>(results.get(0),
+				implicit);
+
+	}
+
+	private Pair<ITimedVariable<?>, ITimedVariable<?>> onRedefinedImplicit(
+			ExpressionContext ctx, String name, ITimedVariable<?> implicit,
+			DeferredExpressionVariable<?> deferred) {
+		if (implicit == null)
+			return null;
+		if (implicit instanceof IExpressionVariable<?>
+				&& ((IExpressionVariable<?>) implicit).getExpression()
+						.getScope().compareTo(ExpressionScope.AGREEMENT) >= 0)
+			return null;
+
+		return new Pair<ITimedVariable<?>, ITimedVariable<?>>(deferred,
+				implicit);
+
+	}
+
 	private boolean isAgreementDomain(AgreementKey key) throws SQLException {
 		ResultSet rs = null;
 		try {
@@ -180,7 +254,7 @@ public class SQLAgreementContextFactory implements
 			rs = isAgreementDomainStmt.executeQuery();
 			return rs.next();
 		} finally {
-			if ( rs != null)
+			if (rs != null)
 				rs.close();
 		}
 	}

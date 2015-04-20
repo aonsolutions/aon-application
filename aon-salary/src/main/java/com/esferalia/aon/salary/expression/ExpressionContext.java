@@ -365,14 +365,14 @@ public class ExpressionContext {
 		throw new UnsupportedOperationException();
 	}
 
-	public void putVariable(Object name, ITimedVariable<?> timedVariable) {
-		variables.put(name.toString(), timedVariable);
+	public List<ITimedVariable<?>> putVariable(Object name, ITimedVariable<?> timedVariable) {
+		return variables.put(name.toString(), timedVariable);
 	}
 
-	public void setVariable(Object name, Object value, Date start, Date end) {
+	public List<ITimedVariable<?>>  setVariable(Object name, Object value, Date start, Date end) {
 		ITimedVariable<Object> timedObject = new TimedObject<Object>(value,
 				start, end);
-		this.putVariable(name.toString(), timedObject);
+		return this.putVariable(name.toString(), timedObject);
 	}
 
 	public void removeVariable(Object name, Date start, Date end) {
