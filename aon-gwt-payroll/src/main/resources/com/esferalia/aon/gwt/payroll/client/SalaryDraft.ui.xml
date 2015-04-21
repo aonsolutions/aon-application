@@ -351,8 +351,12 @@
 									styleName="aon-icon-offer aon-no-margin aon-editDataTable-button {style.context-tab-button} {style.context-tab-button-selected}" />
 							<g:Button ui:field='contextTimeLineButton'
 									styleName="aon-icon-statistics aon-no-margin aon-editDataTable-button {style.context-tab-button}" />
-							<g:FlexTable ui:field="contextTable"
-								styleName="aon-dataTable {style.edit-cells} {style.context-tab-voffset}" />
+							<g:DeckPanel ui:field="contextDeckPanel" styleName="{style.context-tab-voffset}">
+								<g:FlexTable ui:field="contextTable"
+									styleName="aon-dataTable {style.edit-cells}" />
+								<g:SimplePanel ui:field="contextTimeLinePanel" />
+							</g:DeckPanel>
+							
 							<g:HTML styleName="{style.vertical-space} {style.context-tab-voffset}" />
 
 							<g:FlexTable ui:field="eventsTable" styleName="aon-dataTable {style.context-tab-voffset}" />

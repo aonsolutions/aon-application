@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import com.code.aon.faces.component.richfaces.rowSelector.DataTableWrapper;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
@@ -41,7 +42,8 @@ import com.esferalia.aon.gwt.payroll.shared.UndefinedDeductionVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
-import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart;
+import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -85,6 +87,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Focusable;
@@ -108,6 +111,7 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
 import com.google.gwt.user.client.ui.SuggestBox.SuggestionCallback;
@@ -118,6 +122,10 @@ import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 import com.google.gwt.user.datepicker.client.DateBox;
+import com.google.gwt.visualization.client.AbstractDataTable;
+import com.google.gwt.visualization.client.DataTable;
+import com.google.gwt.visualization.client.VisualizationUtils;
+import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
 
 public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		SalarySelect.Listener, UndoManager.Listener {
@@ -1608,6 +1616,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		@ClassName("value-changed")
 		String valueChanged();
 
+		@ClassName("context-tab-button-selected")
+		String contextTabButtonSelected();
 	}
 
 	interface Binder extends UiBinder<Widget, SalaryDraft> {
@@ -1631,6 +1641,14 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	SalarySelect salarySelect;
 	@UiField
 	FlexTable contextTable;
+	@UiField
+	SimplePanel contextTimeLinePanel;
+	@UiField
+	Button contextTableButton;
+	@UiField
+	Button contextTimeLineButton;
+	@UiField
+	DeckPanel contextDeckPanel;
 	@UiField
 	FlexTable eventsTable;
 	@UiField
@@ -1771,6 +1789,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		scope = Scope.CONTRACT;
 		salarySelect.addListener(this);
 		showDraft();
+		showContextTable();
+		
 		zoom = Constants.DEFAULT_ZOOM;
 		initEventsStyles(style);
 		initSalaryDb();
@@ -1780,6 +1800,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	public void setSalaryDraftObject(SalaryDraftObject salaryDraftObject) {
 		showDraft();
+		showContextTable();
 		this.salaryDraftObject = salaryDraftObject;
 		onChangedSalaryDraftObject(salaryDraftObject);
 	}
@@ -2102,6 +2123,46 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		Widget visibleWidget = deckPanel.getWidget(index);
 		return visibleWidget == w;
 	}
+	
+	private void showContextTable() {
+		contextDeckPanel.showWidget(contextDeckPanel.getWidgetIndex(contextTable));
+		contextTableButton.addStyleName(style.contextTabButtonSelected());
+		contextTimeLineButton.removeStyleName(style.contextTabButtonSelected());
+	}
+
+	private void showContextTimeLine() {
+		VisualizationUtils.loadVisualizationApi(new Runnable() {
+			@Override
+			public void run() {
+				Window.alert("loadVisualizationApiCallback");
+				Options options = Options.create();
+
+				DataTable data =  DataTable.create();
+				data.addColumn(ColumnType.STRING, "Variable");
+				data.addColumn(ColumnType.STRING, "Value");
+				data.addColumn(ColumnType.DATE, "Start");
+				data.addColumn(ColumnType.DATE, "End");
+				
+				data.addRow();
+				data.setValue(0, 0, "X");
+				data.setValue(0, 1, "x");
+				data.setValue(0, 2, DateUtils.getFirstDayOfYear(new Date()));
+				data.setValue(0, 3, DateUtils.addDays2Date(DateUtils.getFirstDayOfMonth(new Date()),-1));
+
+				data.addRow();
+				data.setValue(1, 0, "X");
+				data.setValue(1, 1, "xxx");
+				data.setValue(1, 2, DateUtils.getFirstDayOfMonth(new Date()));
+				data.setValue(1, 3, DateUtils.getLastDayOfYear(new Date()));
+
+				contextTimeLinePanel.setWidget(new TimeLineChart(data, options));
+			}
+		},TimeLineChart.PACKAGE);		
+
+		contextDeckPanel.showWidget(contextDeckPanel.getWidgetIndex(contextTimeLinePanel));
+		contextTableButton.removeStyleName(style.contextTabButtonSelected());
+		contextTimeLineButton.addStyleName(style.contextTabButtonSelected());
+	}
 
 	private void onChangedSalaryDraftObject(SalaryDraftObject salaryDraftObject) {
 
@@ -2393,6 +2454,16 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	@UiHandler("salaryButton")
 	void onSalaryButtonClick(ClickEvent event) {
 		salaryDraftObject.emitSalary(this);
+	}
+
+	@UiHandler("contextTableButton")
+	void onContextTableButtonClick(ClickEvent event) {
+		showContextTable();
+	}
+
+	@UiHandler("contextTimeLineButton")
+	void onContextTimeLineButtonClick(ClickEvent event) {
+		showContextTimeLine();
 	}
 
 	private void syncSalarySelect() {
