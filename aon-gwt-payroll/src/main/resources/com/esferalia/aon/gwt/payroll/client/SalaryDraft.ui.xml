@@ -108,6 +108,25 @@
 		}
 		
 		
+		.context-tab-voffset{
+			top: -24px;
+			position: relative;
+		}
+		
+		.context-tab-button {	
+			top: 22px;
+			right: -28px;
+			float: right;
+			opacity: 0.6;
+			padding-top: 20px;
+			position: relative;
+		}
+		.context-tab-button:hover,
+		.context-tab-button-selected {
+			opacity: 1.0;
+			box-shadow: 4px 4px 4px rgb(204, 204, 204);
+		}
+		
 	</ui:style>
 
 
@@ -327,21 +346,25 @@
 								</g:row>
 							</g:Grid>
 
-							<g:HTML styleName="{style.vertical-space}" />
+							<!--  g:HTML styleName="{style.vertical-space}" /-->
+							<g:Button ui:field='contextTableButton'
+									styleName="aon-icon-offer aon-no-margin aon-editDataTable-button {style.context-tab-button} {style.context-tab-button-selected}" />
+							<g:Button ui:field='contextTimeLineButton'
+									styleName="aon-icon-statistics aon-no-margin aon-editDataTable-button {style.context-tab-button}" />
 							<g:FlexTable ui:field="contextTable"
-								styleName="aon-dataTable {style.edit-cells}" />
-							<g:HTML styleName="{style.vertical-space}" />
+								styleName="aon-dataTable {style.edit-cells} {style.context-tab-voffset}" />
+							<g:HTML styleName="{style.vertical-space} {style.context-tab-voffset}" />
 
-							<g:FlexTable ui:field="eventsTable" styleName="aon-dataTable" />
-							<g:HTML ui:field="eventsTableSpace" styleName="{style.vertical-space}"
+							<g:FlexTable ui:field="eventsTable" styleName="aon-dataTable {style.context-tab-voffset}" />
+							<g:HTML ui:field="eventsTableSpace" styleName="{style.vertical-space} {style.context-tab-voffset}"
 								visible="false" />
 
 							<g:FlexTable ui:field="paymentsTable"
-								styleName="aon-dataTable {style.edit-rows}" />
+								styleName="aon-dataTable {style.edit-rows} {style.context-tab-voffset}" />
 
-							<g:HTML styleName="{style.vertical-space}" />
+							<g:HTML styleName="{style.vertical-space} {style.context-tab-voffset}" />
 
-							<g:HorizontalPanel styleName="aon-width-all">
+							<g:HorizontalPanel styleName="aon-width-all {style.context-tab-voffset}">
 
 								<g:Grid ui:field="basesTable" styleName="aon-dataTable">
 									<g:row styleName="aon-dataTable-row-odd">
