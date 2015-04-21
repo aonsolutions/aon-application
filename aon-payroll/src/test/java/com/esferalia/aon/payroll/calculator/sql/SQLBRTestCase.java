@@ -56,6 +56,47 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 
 		// @formatter:on
 		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { });
+
+		ContractRecord contract = newContract(aonContext, getToday(),
+				new HashMap<String, String>() {
+					{
+						put(MONTH_DAYS.getName(), format("%d", 30));
+					}
+				}, 
+				new String[] { 
+						"0.10 * P_1 * 1.00",
+						"3000.00 * DIAS_TRABAJADOS / DIAS_MES"}, 
+				new String[] {}, 
+				category);
+		//@formatter:off
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+
+		double br = (3000.00 * 1.10)/ 30;
+
+		// Same day of job start. Without salaries.
+		Assert.assertEquals(br, (Double) ctx.br(getToday()), DELTA);
+		
+	}
+
+	@Test
+	public void testBRII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
 				new Extra[] { new Extra() {
 					{
 						this.expression = "P_0 + P_1 + P_2";

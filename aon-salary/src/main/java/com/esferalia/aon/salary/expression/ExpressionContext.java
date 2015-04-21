@@ -252,21 +252,6 @@ public class ExpressionContext {
 		return MVEL.eval(script, type);
 	}
 
-	public static void analyze(String script) {
-		ParserContext ctx = new ParserContext();
-		MVEL.analysisCompile(script, ctx);
-
-		if (ctx.getErrorList() != null)
-			throw new CompileException("Failed to compile: "
-					+ ctx.getErrorList().size() + " compilation error(s): ",
-					ctx.getErrorList());
-
-		Map<String, Object> vars = new HashMap<String, Object>();
-		for (String input : ctx.getInputs().keySet())
-			vars.put(input, false);
-
-		MVEL.eval(script, vars);
-	}
 
 	public static class ExpressionExceptionWrapper extends RuntimeException {
 
@@ -302,35 +287,45 @@ public class ExpressionContext {
 		return null;
 	}
 
-	private static String getUndefinedProperty(PropertyAccessException e,
+	public static String getUndefinedProperty(PropertyAccessException e,
 			PeriodMap bindings) throws UnknownUndefVarException {
 
 		String property = getUndefinedProperty(e);
 		if (property != null)
 			return property;
 
+//		int end = e.getCursor();
+//		do {
+//			if (end <= 0)
+//				throw new UnknownUndefVarException();
+//			while (end-- > 0)
+//				if (Character.isJavaIdentifierPart(expr[end]))
+//					break;
+//			int start = end;
+//			while (start >= 0) {
+//				if (!Character.isJavaIdentifierPart(expr[start]))
+//					break;
+//				else
+//					start--;
+//			}
+//			int offset = start + 1;
+//			int len = end - offset + 1;
+//			property = new String(expr, offset, len);
+//			end = start;
+//		} while (!isJavaIdentifier(property) || bindings.containsKey(property));
+		
 		char expr[] = e.getExpr();
-		int end = e.getCursor();
-		do {
-			if (end <= 0)
-				throw new UnknownUndefVarException();
-			while (end-- > 0)
-				if (Character.isJavaIdentifierPart(expr[end]))
-					break;
-			int start = end;
-			while (start >= 0) {
-				if (!Character.isJavaIdentifierPart(expr[start]))
-					break;
-				else
-					start--;
-			}
-			int offset = start + 1;
-			int len = end - offset + 1;
-			property = new String(expr, offset, len);
-			end = start;
-		} while (!isJavaIdentifier(property) || bindings.containsKey(property));
-
-		return property;
+		int start = e.getCursor();
+		if ( start >= expr.length )
+			throw new UnknownUndefVarException();
+		
+		if ( !Character.isJavaIdentifierStart(expr[start]))
+			throw new UnknownUndefVarException();
+		
+		int end = start  + 1;
+		for ( ;end < expr.length && Character.isJavaIdentifierPart(expr[end]); end++ );
+		
+		return new String(expr, start, end -start);
 	}
 
 	private Variables variables;

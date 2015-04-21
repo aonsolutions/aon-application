@@ -1253,11 +1253,15 @@ public class SQLContractSalaryCalculatorContext extends
 
 	@Override
 	public List<ITimedVariable<?>> get(String var) {
+		
+		if ( var == null )
+			return null;
+		
 		Matcher matcher = ACTUAL_VAR_PATTERN.matcher(var);
 
-		if (!matcher.matches()) {
+		if (!matcher.matches())
 			return null;
-		}
+
 		List<ITimedVariable<?>> values = new ArrayList<ITimedVariable<?>>(1);
 
 		String srcVar = matcher.group(1);
