@@ -366,7 +366,6 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	
 	private void importStock(Dialog dialog) {
 		
-		Window.alert("debug1");
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
@@ -389,24 +388,19 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		
 		flex_table.setWidget(1, 0, new Label("Almacen"));
 		flex_table.setWidget(1, 1,lb2 );
-		Window.alert("debug2");
 
 		ListBox lb3 = new ListBox();
-		Window.alert("debug3");
-		Window.alert(series+"");
 		if(series.size()>1){
 
-			Window.alert("debug4");
 			lb3.addItem("-");
 		}
 		for(Series s : series){
-			Window.alert("debug5");
 
 			lb3.addItem(s.getName());
 		}
 		flex_table.setWidget(2, 0, new Label("Serie"));
 		flex_table.setWidget(2, 1,lb3 );
-		Window.alert("debug6");
+		
 
 		TextBox tb = new TextBox();
 		tb.setStyleName("aon-inputText");

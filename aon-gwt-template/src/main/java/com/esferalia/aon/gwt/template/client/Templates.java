@@ -837,7 +837,7 @@ public class Templates extends Composite implements EntryPoint {
 									@Override
 									protected void onAccept() {
 										hide();
-										refresh();
+										refreshInventoryDetail();
 									
 									}
 
@@ -1179,14 +1179,12 @@ public class Templates extends Composite implements EntryPoint {
 					lb2 = (ListBox) flex_table.getWidget(1, 1);
 					department = lb2.getItemText(lb2.getSelectedIndex());
 				}
-				Window.alert(workplace +" - "+ department);
 
 				String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_catalogue/"
 		            	+ "?&domain_id=" + domainId
 		            	+ "&workplace=" + workplace
 		            	+ "&department="+ department;
 				
-				Window.alert(fileDownloadURL);
 				Window.open( fileDownloadURL, "_blank",null);
 				hide();
 				// llamar  servlet de descarga para krear excel con todos losproductos
@@ -1197,8 +1195,9 @@ public class Templates extends Composite implements EntryPoint {
 		popup.show();
 	}
 	
-	
+	Integer proposalId;
 	private void importProposal(Integer proposal) {
+		proposalId = proposal;
 		Dialog d = new Dialog("Importar Solicitudes de Compra","Importar",true,"Cancelar",true,"importProposal");
 		d.setUrl(GWT.getModuleBaseURL());
 		d.setTemplateList(template_list);
@@ -1219,7 +1218,7 @@ public class Templates extends Composite implements EntryPoint {
 				
 				//TODO AÑADIR TODOS LOS ATRIBUTOS
 				for(TemplateInfo t : tlist.getList()) {
-					if(t.getName().equals(template) && t.getType().equals("Producto")){
+					if(t.getName().equals(template) && t.getType().equals("Stock")){
 						ti = t;
 					}
 				}
@@ -1237,10 +1236,41 @@ public class Templates extends Composite implements EntryPoint {
 								pbd.setGlassEnabled(true);
 								pbd.show();
 								
-								item.insertProposal(new AsyncCallback<Error>() {
+								item.insertProposal(proposalId,new AsyncCallback<Error>() {
 									@Override
 									public void onSuccess(Error result) {
 										pbd.hide();
+										Dialog d2 = new Dialog("Importar Solicitudes de Compra","Aceptar",true,"Cancelar",false,"importResponse");
+										d2.setError(result);
+										TemplatesDialog popup2 = new TemplatesDialog(d2){
+
+											@Override
+											protected void onAccept() {
+												hide();	
+												//TODO ACTUALIZAR !!! REFRESH!!!
+												refreshProposalDetail();
+											}
+
+											@Override
+											protected void onCancel() {
+												hide();
+											}
+										};
+										popup2.addStyleName("gwt-PopupPanel-template");
+										popup2.setGlassEnabled(true);
+										popup2.show();
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {
+										Window.alert(caught.toString());
+									}
+								});
+							}		
+							else{
+								item.insertProposal(proposalId,new AsyncCallback<Error>() {
+									@Override
+									public void onSuccess(Error result) {
 										Dialog d2 = new Dialog("Importar Solicitudes de Compra","Aceptar",true,"Cancelar",false,"importResponse");
 										d2.setError(result);
 										TemplatesDialog popup2 = new TemplatesDialog(d2){
@@ -1265,7 +1295,7 @@ public class Templates extends Composite implements EntryPoint {
 										Window.alert(caught.toString());
 									}
 								});
-							}					
+							}
 					}
 					
 					@Override
@@ -1425,11 +1455,17 @@ public class Templates extends Composite implements EntryPoint {
 		});
 	}
 	
-	public static native void refresh() /*-{
-		$wnd.alert("refresh");
+	public static native void refreshInventoryDetail() /*-{
+		
 		$wnd.refreshInventoryDetail();
 	}-*/;
 
+
+	public static native void refreshProposalDetail() /*-{
+		
+		$wnd.refreshProposalDetail();
+	}-*/;
+	
 	public static native void exportStock(Templates thiz) /*-{
 		$wnd.stock = function(warehouse, inventoryId) {
 			thiz.@com.esferalia.aon.gwt.template.client.Templates::stock(*)(warehouse,inventoryId);
@@ -1550,8 +1586,8 @@ public class Templates extends Composite implements EntryPoint {
 		}
 	}-*/;
 	
-	public void proposal(Integer proposal){
-		importProposal(proposal);
+	public void proposal(String proposal){
+		importProposal(Integer.parseInt(proposal));
 	}
 
 	public static native void exportProposal(Templates thiz) /*-{

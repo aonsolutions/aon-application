@@ -94,4 +94,9 @@ public class ProposalDetailController extends LinesController implements IPurcha
 		return rItem;
 	}
 	
+	
+	public void onRefresh(ActionEvent event) {
+		System.out.println("onRefersh ......................");
+		initializeModel();
+	}
 }

@@ -10,6 +10,19 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
+		
+		<aon:form style="display:none">
+			<aon:commandButton id="proposalDetailRefreshButton" reRender="proposalDetailList"
+				actionListener="#{proposalDetail.onRefresh}" />
+			<script type="text/javascript">
+            	//<![CDATA[
+					refreshProposalDetail = function(){
+						#{rich:element('proposalDetailRefreshButton')}.click();	
+					}
+            	//]]>
+			</script>
+		</aon:form>
+	
 		<aon:form id="proposalForm">
 
 			<ui:decorate
@@ -51,10 +64,16 @@
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
 					</aon:if>
+					<ui:include
+						src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
+					<aon:commandLink id="proposal-import" value="#{bundle.aon_import}"
+						onclick="proposal('#{proposal.to.id}')"
+						styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
+					</aon:commandLink>
 				</ui:define>
 			</ui:decorate>
 
-			<aon:div styleClass="aon-scroll-area">
+			<aon:div styleClass="aon-scroll-area" id="proposalDetailList">
 
 				<aon:panelGrid id="proposalPanel" columns="2" >
 				

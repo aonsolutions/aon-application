@@ -741,8 +741,10 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			}
 	          
 			if(row.getRowNum() > 0){ 
-				si.setRow(row.getRowNum());
-	           	stock.add(si);
+				if(si.getProduct() != null && si.getQuantity() != null){
+					si.setRow(row.getRowNum());
+	           		stock.add(si);
+				}
 	        }
 		});
 		this.stock = stock;
@@ -753,7 +755,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	}
 	
 	
-	public Error insertProposal(){
+	public Error insertProposal(Integer proposal){
 		long startAll= System.currentTimeMillis();
 		Vector<String> verror = error.getTextError();
 		String domain = AonUtil.getDomainName();
@@ -763,7 +765,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			verror.add("");
 			error.setTextError(verror);
 		//TODO proposal
-			error = DBStock.insertProposal(domain,domainId,stock,2);
+			error = DBStock.insertProposal(domain,domainId,stock,proposal);
 
 	        //insertar STOCK en base de datos.!!
 		}

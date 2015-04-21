@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.template.server;
 
 public class ProposalInfo {
-
+	Integer id;
 	Integer domain;
 	Integer proposal;
 	Integer item;
@@ -12,6 +12,14 @@ public class ProposalInfo {
 	Byte status;
 	Integer supplier;
 	
+	
+	
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
 	public Integer getDomain() {
 		return domain;
 	}

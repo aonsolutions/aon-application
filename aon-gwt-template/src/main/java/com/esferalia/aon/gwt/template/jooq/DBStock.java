@@ -1,7 +1,10 @@
 package com.esferalia.aon.gwt.template.jooq;
 
+import static com.esferalia.aon.jooq.tables.CatalogueItem.CATALOGUE_ITEM;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.Proposal.PROPOSAL;
+import static com.esferalia.aon.jooq.tables.ProposalDetail.PROPOSAL_DETAIL;
 import static com.esferalia.aon.jooq.tables.Series.SERIES;
 import static com.esferalia.aon.jooq.tables.Stock.STOCK;
 import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
@@ -9,23 +12,19 @@ import static com.esferalia.aon.jooq.tables.WarehouseTransfer.WAREHOUSE_TRANSFER
 import static com.esferalia.aon.jooq.tables.WarehouseTransferDetail.WAREHOUSE_TRANSFER_DETAIL;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.jooq.tables.WorkplaceDepartment.WORKPLACE_DEPARTMENT;
-import static com.esferalia.aon.jooq.tables.ProposalDetail.PROPOSAL_DETAIL;
-import static com.esferalia.aon.jooq.tables.Proposal.PROPOSAL;
-import static com.esferalia.aon.jooq.tables.CatalogueItem.CATALOGUE_ITEM;
 
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Vector;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.DeleteConditionStep;
 import org.jooq.InsertValuesStep13;
+import org.jooq.InsertValuesStep14;
 import org.jooq.InsertValuesStep4;
 import org.jooq.InsertValuesStep5;
 import org.jooq.Record1;
-import org.jooq.Record10;
 import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Record5;
@@ -44,7 +43,6 @@ import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.esferalia.aon.jooq.tables.records.ProposalDetailRecord;
 import com.esferalia.aon.jooq.tables.records.StockRecord;
 import com.esferalia.aon.jooq.tables.records.WarehouseTransferDetailRecord;
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 
 public class DBStock {
@@ -214,8 +212,10 @@ public class DBStock {
 		try{
 			ctx = AONContext.getAONContext(domain, domainId);
 			InsertValuesStep13<ProposalDetailRecord, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, Timestamp, String, Timestamp> proposalInsertQuery = ctx.getDslContext().insertInto(PROPOSAL_DETAIL, PROPOSAL_DETAIL.DOMAIN, PROPOSAL_DETAIL.PROPOSAL, PROPOSAL_DETAIL.ITEM, PROPOSAL_DETAIL.DESCRIPTION,  PROPOSAL_DETAIL.QUANTITY, PROPOSAL_DETAIL.PRICE, PROPOSAL_DETAIL.DISCOUNT_EXPR, PROPOSAL_DETAIL.STATUS, PROPOSAL_DETAIL.SUPPLIER, PROPOSAL_DETAIL.CREATION_USER, PROPOSAL_DETAIL.CREATION_DATE, PROPOSAL_DETAIL.MODIFICATION_USER, PROPOSAL_DETAIL.MODIFICATION_DATE);
+			InsertValuesStep14<ProposalDetailRecord, Integer, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, Timestamp, String, Timestamp> proposalUpdateQuery = ctx.getDslContext().insertInto(PROPOSAL_DETAIL, PROPOSAL_DETAIL.ID, PROPOSAL_DETAIL.DOMAIN, PROPOSAL_DETAIL.PROPOSAL, PROPOSAL_DETAIL.ITEM, PROPOSAL_DETAIL.DESCRIPTION,  PROPOSAL_DETAIL.QUANTITY, PROPOSAL_DETAIL.PRICE, PROPOSAL_DETAIL.DISCOUNT_EXPR, PROPOSAL_DETAIL.STATUS, PROPOSAL_DETAIL.SUPPLIER, PROPOSAL_DETAIL.CREATION_USER, PROPOSAL_DETAIL.CREATION_DATE, PROPOSAL_DETAIL.MODIFICATION_USER, PROPOSAL_DETAIL.MODIFICATION_DATE);
 
 			AONContext sctx = ctx;
+			Vector<Integer> updateIds = new Vector<Integer>();
 			stock.stream().forEach(s ->{
 				
 				String code = s.getProduct();
@@ -229,7 +229,7 @@ public class DBStock {
 						.where(ITEM.PRODUCT.eq(data.value1()))
 						.fetchOne();
 				
-				//TODO CHECK, PRODUCT IN CATALOGUE???
+				// TODO update
 				
 				ProposalInfo pi = new ProposalInfo();
 				pi.setQuantity(s.getQuantity());
@@ -241,7 +241,13 @@ public class DBStock {
 				pi.setDescription("");
 				pi.setDiscount((double) 0);
 				if(isCatalogue(sctx,pi)){
-					proposalInsertQuery.values(pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), null, null, null, null, null);
+					if(isProposal(sctx,pi)){
+						pi = getProposal(sctx,pi);
+						updateIds.add(pi.getId());
+						proposalUpdateQuery.values(pi.getId(), pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), null, null, null, null, null);
+					}
+					else
+						proposalInsertQuery.values(pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), null, null, null, null, null);
 				}
 				else{
 					v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
@@ -250,6 +256,10 @@ public class DBStock {
 				}
 			});
 			if(error.getError()){
+				if(updateIds.size()>0){
+					ctx.getDslContext().delete(PROPOSAL_DETAIL).where(PROPOSAL_DETAIL.ID.in(updateIds)).execute();
+					proposalUpdateQuery.execute();
+				}
 				proposalInsertQuery.execute();
 			}
 			return error;
@@ -278,6 +288,30 @@ public class DBStock {
 		
 		
 		return false;
+	}
+	
+	private static Boolean isProposal(AONContext ctx, ProposalInfo pi){
+		
+		Result<Record1<Integer>> data = ctx.getDslContext().select(PROPOSAL_DETAIL.ID)
+					.from(PROPOSAL_DETAIL)
+					.where(PROPOSAL_DETAIL.PROPOSAL.eq(pi.getProposal()))
+					.and(PROPOSAL_DETAIL.ITEM.eq(pi.getItem()))
+					.fetch();
+		
+		return data.isNotEmpty();
+	}
+	
+	private static ProposalInfo getProposal(AONContext ctx, ProposalInfo pi){
+		
+		Result<Record2<Integer, Double>> data = ctx.getDslContext().select(PROPOSAL_DETAIL.ID, PROPOSAL_DETAIL.QUANTITY)
+					.from(PROPOSAL_DETAIL)
+					.where(PROPOSAL_DETAIL.PROPOSAL.eq(pi.getProposal()))
+					.and(PROPOSAL_DETAIL.ITEM.eq(pi.getItem()))
+					.fetch();
+		
+		pi.setId(data.get(0).value1());
+		pi.setQuantity(pi.getQuantity()+data.get(0).value2());
+		return pi;
 	}
 	
 	public static Error insertTransferStock(String domain, Integer domainId,Vector<StockInfo> stock, TransferInfo ti){
