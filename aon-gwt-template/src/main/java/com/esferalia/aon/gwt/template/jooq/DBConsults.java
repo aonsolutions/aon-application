@@ -136,6 +136,21 @@ public class DBConsults {
 					stockTemplate.setId(id);
 					v.add(stockTemplate);
 					
+					TemplateInfo stockPurchaseTemplate = new TemplateInfo();
+					v2 = new Vector<String>();
+					v2.add("Centro de Trabajo");v2.add("Departamento");
+					v2.add("Producto");v2.add("Nombre");v2.add("Cantidad");
+					stockTemplate.setColumns(v2);
+					stockTemplate.setDomain(domain);
+					stockTemplate.setDomainId(0);
+					stockTemplate.setName("Compra");
+					stockTemplate.setType("Stock");
+					stockTemplate.sethasWarehouse(false);
+					stockTemplate.setIsParent(true);
+					id = insertTemplate(domain, stockTemplate,Utils.newXmlFile(stockTemplate), 0);
+					stockTemplate.setId(id);
+					v.add(stockTemplate);
+					
 					TemplateInfo productTemplate = new TemplateInfo();
 					v2 = new Vector<String>();
 					v2.add("Nombre");v2.add("Código");v2.add("Precio Coste");v2.add("Precio Venta Base");

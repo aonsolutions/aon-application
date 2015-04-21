@@ -34,7 +34,6 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -145,10 +144,32 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		case "exportFee": exportFee(dialog.getTemplateList());break;
 		case "exportCatalogue": exportCatalogue(dialog.getTemplateList());break;
 		case "importProposal": importProposal(dialog.getUrl(),dialog.getTemplateList());break;
+		case "exportProposal": exportProposal(dialog.getUrl(),dialog.getTemplateList());break;
 		default:
 			break;
 		}
+	} 
+	
+	private void exportProposal(String url,TemplateList templates){
+		flex_table.setStyleName("aon-panelGrid");
+		flex_table.setWidth("400px");
+		flex_table.setBorderWidth(1);
+		flex_table.setCellSpacing(0);
+		ListBox lb = new ListBox();
+		
+		lb.addItem("-");
+		
+		for(TemplateInfo ti : templates.getList()){
+			if(ti.getType().equals("Stock"))
+				lb.addItem(ti.getName());
+		}
+		flex_table.setWidget(0, 0, new Label("Plantilla"));
+		flex_table.setWidget(0, 1, lb);
+		
+		flexTableCss();
 	}
+
+	
 	private void importProposal(String url,TemplateList templates) {
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");

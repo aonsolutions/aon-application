@@ -25,12 +25,14 @@ import org.jooq.InsertValuesStep14;
 import org.jooq.InsertValuesStep4;
 import org.jooq.InsertValuesStep5;
 import org.jooq.Record1;
+import org.jooq.Record16;
 import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Record5;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
+import com.code.aon.company.Department;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Series;
 import com.code.aon.product.Item;
@@ -43,6 +45,7 @@ import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.esferalia.aon.jooq.tables.records.ProposalDetailRecord;
 import com.esferalia.aon.jooq.tables.records.StockRecord;
 import com.esferalia.aon.jooq.tables.records.WarehouseTransferDetailRecord;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 
 public class DBStock {
@@ -589,7 +592,7 @@ public class DBStock {
 		
 	}
 	
-	public static Boolean checkSeries(String domain, Integer domainId,Series s, Warehouse w){
+	public static Boolean checkSeries(String domain, Integer domainId,Series s, Warehouse w, Warehouse w2){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
@@ -600,7 +603,13 @@ public class DBStock {
 					.join(SERIES).on(SERIES.SCOPE.eq(WORKPLACE.SCOPE))
 				.where(SERIES.ID.eq(s.getId()).and(WAREHOUSE.ID.eq(w.getId()))).fetch();
 			
-			return !data.isEmpty();
+			Result<Record1< Integer>> data2 = ctx.getDslContext().select(SERIES.ID)
+					.from(WAREHOUSE)
+						.join(WORKPLACE).on(WAREHOUSE.WORKPLACE.eq(WORKPLACE.ID))
+						.join(SERIES).on(SERIES.SCOPE.eq(WORKPLACE.SCOPE))
+					.where(SERIES.ID.eq(s.getId()).and(WAREHOUSE.ID.eq(w2.getId()))).fetch();
+			
+			return data.isNotEmpty() || data2.isNotEmpty();
 
 		} finally {
 			if (ctx != null) ctx.close();
@@ -734,6 +743,44 @@ public class DBStock {
 			}
 			return v;
 
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static Vector<StockInfo> getProposal(String domain, Integer domainId, Integer proposalId){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain, domainId);
+			
+			Result<Record16<Integer, Integer, Integer, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, Timestamp, String, Timestamp>> data = ctx.getDslContext().select( PROPOSAL.WORKPLACE, PROPOSAL.DEPARTMENT, PROPOSAL_DETAIL.ID, PROPOSAL_DETAIL.DOMAIN, PROPOSAL_DETAIL.PROPOSAL, PROPOSAL_DETAIL.ITEM, PROPOSAL_DETAIL.DESCRIPTION,  PROPOSAL_DETAIL.QUANTITY, PROPOSAL_DETAIL.PRICE, PROPOSAL_DETAIL.DISCOUNT_EXPR, PROPOSAL_DETAIL.STATUS, PROPOSAL_DETAIL.SUPPLIER, PROPOSAL_DETAIL.CREATION_USER, PROPOSAL_DETAIL.CREATION_DATE, PROPOSAL_DETAIL.MODIFICATION_USER, PROPOSAL_DETAIL.MODIFICATION_DATE)
+								.from(PROPOSAL_DETAIL).join(PROPOSAL).on(PROPOSAL.ID.eq(PROPOSAL_DETAIL.PROPOSAL))
+								.where(PROPOSAL_DETAIL.PROPOSAL.eq(proposalId))
+								.and(PROPOSAL_DETAIL.DOMAIN.eq(domainId))
+								.fetch();
+			
+			Vector<StockInfo> v = new Vector<StockInfo>();
+			
+			for(Record16<Integer, Integer, Integer, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, Timestamp, String, Timestamp> r : data){
+				StockInfo si  = new StockInfo();
+				WorkPlace wp = DBCatalogue.getWorkplace(r.value1(), domainId, domain);
+				Department d = DBCatalogue.getDepartment(wp, r.value2(), domainId, domain);
+				Integer productId = ctx.getDslContext().select(ITEM.PRODUCT).from(ITEM).where(ITEM.ID.eq(r.value6())).fetchOne().value1();
+				com.esferalia.aon.occam.api.model.product.Product p = AON.getProduct(ctx, productId);
+				si.setDepartmentStr(d.getName());
+				si.setWorkplaceStr(wp.getDescription());
+				si.setDomainId(domainId);
+				si.setDetail("");
+				si.setDetail2("");
+				si.setDetail3("");
+				si.setItemId(r.value6());
+				si.setQuantity(r.value8());
+				si.setProductName(p.getName());
+				si.setProduct(p.getCode());
+				System.out.println(si.getProductName());
+				v.add(si);
+			}
+			return v;
 		} finally {
 			if (ctx != null) ctx.close();
 		}

@@ -20,7 +20,22 @@ public class StockInfo implements IsSerializable{
 	Integer transferId;
 	Double quantityDifference;
 	String productName;
+	String workplaceStr;
+	String departmentStr;
 	
+	
+	public String getWorkplaceStr() {
+		return workplaceStr;
+	}
+	public void setWorkplaceStr(String workplaceStr) {
+		this.workplaceStr = workplaceStr;
+	}
+	public String getDepartmentStr() {
+		return departmentStr;
+	}
+	public void setDepartmentStr(String departmentStr) {
+		this.departmentStr = departmentStr;
+	}
 	public String getProduct() {
 		return product;
 	}

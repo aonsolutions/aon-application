@@ -227,6 +227,7 @@ public class Templates extends Composite implements EntryPoint {
 			exportFeex(this);
 			exportCataloguex(this);
 			exportProposal(this);
+			exportProposalx(this);
 			
 		}
 	}
@@ -1307,6 +1308,45 @@ public class Templates extends Composite implements EntryPoint {
 		popup.setGlassEnabled(true);
 		popup.show();
 	}
+	
+	private void exportProposal(Integer proposal){
+		proposalId = proposal;
+		Dialog d = new Dialog("Exportar Compra","Descargar",true,"Cancelar",true,"exportProposal");
+		d.setUrl(GWT.getModuleBaseURL());
+		d.setTemplateList(template_list);
+		TemplatesDialog popup = new TemplatesDialog(d) {
+			
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+			
+			@Override
+			protected void onAccept() {
+				
+				ListBox lb = (ListBox) flex_table.getWidget(0, 1);
+				String template = lb.getItemText(lb.getSelectedIndex());
+				TemplateInfo ti = new TemplateInfo();
+				
+				for(TemplateInfo t : tlist.getList()) {
+					if(t.getName().equals(template) && t.getType().equals("Stock")){
+						ti = t;
+					}
+				}
+				
+				String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_proposal/"
+		            	+ "?id=" + Integer.toString(ti.getId())
+		            	+ "&domain_id=" + domainId
+		            	+ "&proposal=" + proposalId;
+				
+				Window.open( fileDownloadURL, "_blank",null);
+				hide();
+			}
+		};	
+		popup.addStyleName("gwt-PopupPanel-template");
+		popup.setGlassEnabled(true);
+		popup.show();
+	}
 	//------------------------------ ui handlers
 	
 	@UiHandler("nameSearchButton")
@@ -1593,6 +1633,16 @@ public class Templates extends Composite implements EntryPoint {
 	public static native void exportProposal(Templates thiz) /*-{
 		$wnd.proposal = function(proposal) {
 			thiz.@com.esferalia.aon.gwt.template.client.Templates::proposal(*)(proposal);
+		}
+	}-*/;
+	
+	public void proposalx(String proposal){
+		exportProposal(Integer.parseInt(proposal));
+	}
+
+	public static native void exportProposalx(Templates thiz) /*-{
+		$wnd.proposalx = function(proposal) {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::proposalx(*)(proposal);
 		}
 	}-*/;
 }

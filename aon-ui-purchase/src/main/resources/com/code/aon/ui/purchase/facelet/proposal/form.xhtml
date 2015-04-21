@@ -63,13 +63,18 @@
 							<f:param name="reportKey" value="purchaseProposal" />
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
+					
+						<ui:include
+							src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
+						<aon:commandLink id="proposal-import" value="#{bundle.aon_import}"
+							onclick="proposal('#{proposal.to.id}')"
+							styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
+						</aon:commandLink>
+						<aon:commandLink id="proposal-export" value="#{bundle.account_export}"
+							onclick="proposalx('#{proposal.to.id}')"
+							styleClass="aon-finding-toolbar-item aon-icon-export-excel-trans">
+						</aon:commandLink>
 					</aon:if>
-					<ui:include
-						src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
-					<aon:commandLink id="proposal-import" value="#{bundle.aon_import}"
-						onclick="proposal('#{proposal.to.id}')"
-						styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
-					</aon:commandLink>
 				</ui:define>
 			</ui:decorate>
 

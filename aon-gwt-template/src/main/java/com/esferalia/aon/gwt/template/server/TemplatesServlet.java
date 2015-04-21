@@ -321,6 +321,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 
 		long time = System.currentTimeMillis() - startAll;
 		System.out.println("time: " + (time/1000d));
+		if(rowCount != -1) rowCount = fees.size();
 		System.out.println(rowCount);
 		return rowCount;
 	}
@@ -750,6 +751,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		this.stock = stock;
 		long time = System.currentTimeMillis() - startAll;
 		System.out.println("time: " + (time/1000d));
+		if(rowCount != -1) rowCount = stock.size();
 		System.out.println(rowCount);
 		return rowCount;
 	}
@@ -824,7 +826,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		transferInfo.setComments(comments);
 		
     	if(transferInfo.getSeries() != null && transferInfo.getTargetWarehouse() !=null){
-    		 b = DBStock.checkSeries(domain,domainId,transferInfo.getSeries(),transferInfo.getTargetWarehouse());	
+    		 b = DBStock.checkSeries(domain,domainId,transferInfo.getSeries(),transferInfo.getTargetWarehouse(), transferInfo.getSourceWarehouse());	
     	}
     	if(!b){
     		error.setError(false);
@@ -980,6 +982,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		this.stock = stock;
 		long time = System.currentTimeMillis() - startAll;
 		System.out.println("time: " + (time/1000d));
+		if(rowCount != -1) rowCount = stock.size();
 		System.out.println(rowCount);
 		return rowCount;
 	}
@@ -1280,6 +1283,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
             }
 		});
 		this.products = products;
+		if(rowCount != -1) rowCount = products.size();
 		return rowCount;
 	}
 
