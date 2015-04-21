@@ -9,6 +9,10 @@ public enum MOD303Format {
 			,Administration.ALAVA
 			,MimeType.MIME_XML
 			,Alava2010MOD303Factory.class)
+	,BIZKAIA_2015(2015
+			,Administration.BIZKAIA
+			,MimeType.MIME_TXT
+			,Bizkaia2015MOD303Factory.class)
 	,BIZKAIA_2012(2011
 			,Administration.BIZKAIA
 			,MimeType.MIME_TXT
