@@ -26,7 +26,7 @@ public class BonusConceptController extends AbstractConceptController {
 
 	public boolean isExpressionValid() {
 		try {
-			analyze(getBonusConcept().getExpression());
+			//analyze(getBonusConcept().getExpression());
 			return true;
 		} catch (Throwable e) {
 			expressionException = e;
@@ -41,15 +41,6 @@ public class BonusConceptController extends AbstractConceptController {
 	public void onChangeExpression(ActionEvent event) {
 	}
 	// --------------------------------------------------------- Private Methods
-
-	private void analyze(String expression) {
-		try {
-			ExpressionContext.analyze(expression);
-		} catch ( PropertyAccessException e ){
-			
-		} catch ( UnresolveablePropertyException e ){
-		}
-	}
 
 	private BonusConcept getBonusConcept() {
 		return (BonusConcept) getTo();

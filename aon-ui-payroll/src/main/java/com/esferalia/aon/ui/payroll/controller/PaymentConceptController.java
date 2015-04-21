@@ -30,7 +30,7 @@ public class PaymentConceptController extends AbstractConceptController {
 
 	public boolean isExpressionValid() {
 		try {
-			analyze(getPaymentConcept().getExpression());
+			//analyze(getPaymentConcept().getExpression());
 			return true;
 		} catch (Throwable e) {
 			expressionException = e;
@@ -44,7 +44,7 @@ public class PaymentConceptController extends AbstractConceptController {
 
 	public boolean isIrpfExpressionValid() {
 		try {
-			analyze(getPaymentConcept().getIrpfExpression());
+			//analyze(getPaymentConcept().getIrpfExpression());
 			return true;
 		} catch (Throwable e) {
 			irpfExpressionException = e;
@@ -58,7 +58,7 @@ public class PaymentConceptController extends AbstractConceptController {
 
 	public boolean isQuoteExpressionValid() {
 		try {
-			analyze(getPaymentConcept().getQuoteExpression());
+			//analyze(getPaymentConcept().getQuoteExpression());
 			return true;
 		} catch (Throwable e) {
 			quoteExpressionException = e;
@@ -75,15 +75,6 @@ public class PaymentConceptController extends AbstractConceptController {
 	
 	
 	// --------------------------------------------------------- Private Methods
-
-	private void analyze(String expression) {
-		try {
-			ExpressionContext.analyze(expression);
-		} catch ( PropertyAccessException e ){
-			
-		} catch ( UnresolveablePropertyException e ){
-		}
-	}
 
 	private PaymentConcept getPaymentConcept() {
 		return (PaymentConcept) getTo();

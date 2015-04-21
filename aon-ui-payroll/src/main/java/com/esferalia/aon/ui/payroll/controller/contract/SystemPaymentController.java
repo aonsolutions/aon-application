@@ -218,7 +218,7 @@ public class SystemPaymentController extends ContractDetailVariableController
 
 	public boolean isExpressionValid() {
 		try {
-			analyze(getPaymentExpression());
+			//analyze(getPaymentExpression());
 			return true;
 		} catch (Throwable e) {
 			expressionException = e;
@@ -232,7 +232,7 @@ public class SystemPaymentController extends ContractDetailVariableController
 
 	public boolean isIrpfExpressionValid() {
 		try {
-			analyze(getPaymentIrpfExpression());
+			//analyze(getPaymentIrpfExpression());
 			return true;
 		} catch (Throwable e) {
 			irpfExpressionException = e;
@@ -246,7 +246,7 @@ public class SystemPaymentController extends ContractDetailVariableController
 
 	public boolean isQuoteExpressionValid() {
 		try {
-			analyze(getPaymentQuoteExpression());
+			//analyze(getPaymentQuoteExpression());
 			return true;
 		} catch (Throwable e) {
 			quoteExpressionException = e;
@@ -401,14 +401,6 @@ public class SystemPaymentController extends ContractDetailVariableController
 
 	// --------------------------------------------------------- Private Methods
 
-	private void analyze(String expression) {
-		try {
-			ExpressionContext.analyze(expression);
-		} catch (PropertyAccessException e) {
-
-		} catch (UnresolveablePropertyException e) {
-		}
-	}
 
 	private PaymentType getPaymentType() {
 		return ((SystemPayment) getTo()).getType();
