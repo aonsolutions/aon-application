@@ -177,7 +177,7 @@ public class Mod10TPrint extends HttpServlet {
 			if(detail.getKey().equals("G")){
 				cert = completeCertificate(mod190, detail, cert, "G");
 			} else if(detail.getKey().equals("H")){
-				cert = completeCertificate(mod190, detail, cert, "H");
+				cert = completeCertificate(mod190, detail, cert, null);
 				if(detail.getSubKey().equals("02")){
 					cert.setProf1(completeCertificate(mod190, detail, new RetentionCertificate(), "H"));
 				} else if(detail.getSubKey().equals("03")){
