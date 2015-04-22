@@ -8,6 +8,8 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.customer.Customer;
+import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.MarketingAction;
 import com.code.aon.product.Item;
@@ -33,6 +35,10 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 
 	private MarketingAction action;
 	
+	private CustomerStatus[] customerStatuses;
+	
+	private Boolean customer;
+	
 	public MarketingAction getAction() {
 		return action;
 	}
@@ -57,6 +63,22 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 		this.item = registryItem;
 	}
 
+	public Boolean getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Boolean customer) {
+		this.customer = customer;
+	}
+
+	public CustomerStatus[] getCustomerStatuses() {
+		return customerStatuses;
+	}
+
+	public void setCustomerStatuses(CustomerStatus[] customerStatuses) {
+		this.customerStatuses = customerStatuses;
+	}
+	
 	@Override
 	protected void init() throws ManagerBeanException {
 		TargetStatus[] defaultTargetStatus = {TargetStatus.ACTIVE};
@@ -64,7 +86,9 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
 		CommercialCollectionsController collections = (CommercialCollectionsController) AonUtil.getRegisteredBean(ICommercialConstants.COLLECTIONS_CONTROLLER_NAME);
 		collections.refreshActivities();
-		setAction( (MarketingAction) BeanManager.getManagerBean(MarketingAction.class).createNewTo() );		
+		setAction( (MarketingAction) BeanManager.getManagerBean(MarketingAction.class).createNewTo() );
+		setCustomer(null);
+		setCustomerStatuses(new CustomerStatus[0]);
 		super.init();
 	}
 	
@@ -76,6 +100,16 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 		ProjectionList pl = new ProjectionList( Projection.property(idAlias) );
 		Expression exp = ExpressionUtilities.getSubQueryExpression(ActionTarget.class, subCriteria, pl);
 		criteria.addInExpression(getFieldName(IEntityAlias.TARGET_ID), exp);			
+	}
+
+	public void addCustomerStatusSubQuery(CustomerStatus[] customerStatuses, Criteria criteria) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Customer.class);			
+		Criteria subCriteria = new Criteria();
+		addEnumToCriteria(subCriteria, bean.getFieldName(IEntityAlias.CUSTOMER_STATUS), customerStatuses);
+		String idAlias = bean.getFieldName(IEntityAlias.CUSTOMER_REGISTRY_ID);
+		ProjectionList pl = new ProjectionList( Projection.property(idAlias) );
+		Expression exp = ExpressionUtilities.getSubQueryExpression(Customer.class, subCriteria, pl);
+		criteria.addInExpression(getFieldName(IEntityAlias.TARGET_REGISTRY_ID), exp);			
 	}
 	
 	@Override
@@ -91,6 +125,13 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 		if (getAction()!=null && getAction().getId()!=null) {
 			addActionSubQuery(getAction(), criteria);			
 		}		
+		if ( getCustomer() != null ) {
+			if ( getCustomer() && !ArrayUtils.isEmpty(getCustomerStatuses()) ) {
+				addCustomerStatusSubQuery(getCustomerStatuses(), criteria);
+			} else {
+				criteria.addEqualExpression("Target.customer", getCustomer());
+			}
+		}
 		super.completeCriteria( criteria );
 	}
 

@@ -16,12 +16,19 @@
 				<aon:if test="#{aonConfiguration.bean.target.showSearchOnlyCustomers}">
 					<aon:outputLabel for="Target_customer"
 						value="#{bundle.aon_customer}" />
-					<aon:selectOneMenu id="Target_customer" 
-						valueChangeListener="#{controller.addExpression}">
-						<f:selectItem value="#{null}" itemLabel="" />
-						<f:selectItem itemValue="#{true}" itemLabel="#{bundle.aon_yes}" />
-						<f:selectItem itemValue="#{false}" itemLabel="#{bundle.aon_no}" />
-					</aon:selectOneMenu>
+					<h:panelGrid id="targetCustomerGrid" columns="2">	
+						<aon:selectOneMenu id="Target_customer" 
+							reRender="targetCustomerGrid"
+							value="#{searchController.customer}">
+							<f:selectItem value="#{null}" itemLabel="" />
+							<f:selectItem itemValue="#{true}" itemLabel="#{bundle.aon_yes}" />
+							<f:selectItem itemValue="#{false}" itemLabel="#{bundle.aon_no}" />
+						</aon:selectOneMenu>
+						<aon:selectManyCheckbox rendered="#{searchController.customer}"
+							value="#{searchController.customerStatuses}">
+							<f:selectItems value="#{customerCollections.customerStatuses}"/>
+						</aon:selectManyCheckbox>		
+					</h:panelGrid>					
 				</aon:if>					
 				<ui:insert name="additionalTargetSearchContent"/>				
 			</aon:panelGrid>

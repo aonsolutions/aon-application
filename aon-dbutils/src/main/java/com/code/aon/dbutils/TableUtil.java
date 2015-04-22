@@ -41,7 +41,7 @@ public class TableUtil implements Constants {
 
 	public static final String[] HEREDITY_TABLES = new String[] {
 		ACCOUNT_TABLE_NAME, AGREEMENT_TABLE_NAME, GEOTREE_TABLE_NAME, GEOZONE_TABLE_NAME, 
-		PRODUCT_CATEGORY_TABLE_NAME, TAX_TABLE_NAME
+		PAY_METHOD_TABLE_NAME, PRODUCT_CATEGORY_TABLE_NAME, TAX_TABLE_NAME
 	};
 	
 	public static final String[] FORCE_HEREDITY_TABLES = new String[] {
