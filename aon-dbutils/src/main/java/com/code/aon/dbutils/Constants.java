@@ -46,6 +46,7 @@ public interface Constants {
 	String MK_ACTION_TARGET_TABLE_NAME = "mk_action_target";
 	String NOTICE_TABLE_NAME = "notice";
 	String OFFER_DETAIL_TABLE_NAME = "offer_detail";
+	String PAY_METHOD_TABLE_NAME = "pay_method";
 	String PAYMENT_CONCEPT_TABLE_NAME = "payment_concept";
 	String PRODUCT_CATEGORY_TABLE_NAME = "pcategory";
 	String PROFILE_TABLE_NAME = "profile";
