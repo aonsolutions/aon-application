@@ -32,6 +32,7 @@ import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.Statistics;
+import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -366,6 +367,16 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync,
 	}
 
 	@Override
+	public void getVariables(SalaryDraft salaryDraft, Date startDate, Date endDate,
+			String[] names, AsyncCallback<List<Variable>> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getVariables(salaryDraft, startDate, endDate,
+				names, new AsyncCallbackWrapper<List<Variable>>(callback));
+
+	}
+
+	@Override
 	public void getAvailPeriod(Integer workplaceId, String name,
 			AsyncCallback<Period> callback) throws IllegalArgumentException {
 		AON.start();
@@ -483,7 +494,8 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync,
 	}
 
 	@Override
-	public void getHolidayDescription(AsyncCallback<Map<Integer, String>> callback)
+	public void getHolidayDescription(
+			AsyncCallback<Map<Integer, String>> callback)
 			throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync
@@ -499,13 +511,13 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync,
 		employeesServiceAsync.saveHolidayList(workplaceId, holidayDescription,
 				holidayListBox, map, new AsyncCallbackWrapper<Void>(callback));
 	}
-	
+
 	@Override
 	public void deletePropertyHoliday(Integer id, Date date,
 			AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.deletePropertyHoliday(id, date, 
+		employeesServiceAsync.deletePropertyHoliday(id, date,
 				new AsyncCallbackWrapper<Void>(callback));
-		
+
 	}
 }

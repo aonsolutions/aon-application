@@ -245,6 +245,12 @@ public class SalaryDraftObject implements IContextProvider {
 
 	}
 
+	public void getVariables(String[] names, Date startDate, Date endDate,
+			AsyncCallback<List<Variable>> callback) {
+		employeesServiceAsync.getVariables(salaryDraft, startDate, endDate,
+				names, callback);
+	}
+
 	public void calculate(final CalculateCallback callback) {
 
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);

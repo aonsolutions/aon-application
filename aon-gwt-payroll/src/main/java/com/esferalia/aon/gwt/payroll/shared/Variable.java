@@ -116,5 +116,6 @@ public abstract class Variable implements HasStartAndEndDate, HasDomain<Integer>
 				+ name + "\")\\s*\\)\\s*");
 	
 	}
+	
 
 }

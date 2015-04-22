@@ -22,6 +22,7 @@ import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
+import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -127,6 +128,9 @@ public interface EmployeesService extends RemoteService, CalendarService,
 
 	Events getEvents(Integer workplaceId, Date startDate, Date endDate,
 			int offset, int limit, String names[])
+			throws IllegalArgumentException;
+
+	List<Variable> getVariables(SalaryDraft salaryDraft, Date startDate, Date endDate, String names[])
 			throws IllegalArgumentException;
 
 	Period getAvailPeriod(Integer workplaceId, String name)

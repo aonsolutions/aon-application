@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.esferalia.aon.gwt.common.shared.DateUtils.getFirstDayOfMonth;
+import static com.esferalia.aon.gwt.common.shared.DateUtils.getFirstDayOfYear;
+import static com.esferalia.aon.gwt.common.shared.DateUtils.getLastDayOfYear;
 import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_MAX_LENGTH;
 import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENGTH;
 
@@ -8,13 +11,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 
-import com.code.aon.faces.component.richfaces.rowSelector.DataTableWrapper;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
@@ -87,7 +91,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Focusable;
@@ -122,10 +125,9 @@ import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 import com.google.gwt.user.datepicker.client.DateBox;
-import com.google.gwt.visualization.client.AbstractDataTable;
+import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
 import com.google.gwt.visualization.client.DataTable;
 import com.google.gwt.visualization.client.VisualizationUtils;
-import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
 
 public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		SalarySelect.Listener, UndoManager.Listener {
@@ -172,16 +174,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		}
 	};
 
-	private static Deduction.Type SYSTEM_DEDUCTION [] = {
-		Deduction.Type.IRPF,
-		Deduction.Type.COMMON_CONTINGENCY,
-		Deduction.Type.PROFESSIONAL_CONTINGENCY,
-		Deduction.Type.UNEMPLOYMENT,
-		Deduction.Type.JOB_TRAINING,
-		Deduction.Type.STRUCTURAL_OVERTIME,
-		Deduction.Type.NON_STRUCTURAL_OVERTIME,
-		Deduction.Type.FOGASA
-	};
+	private static Deduction.Type SYSTEM_DEDUCTION[] = { Deduction.Type.IRPF,
+			Deduction.Type.COMMON_CONTINGENCY,
+			Deduction.Type.PROFESSIONAL_CONTINGENCY,
+			Deduction.Type.UNEMPLOYMENT, Deduction.Type.JOB_TRAINING,
+			Deduction.Type.STRUCTURAL_OVERTIME,
+			Deduction.Type.NON_STRUCTURAL_OVERTIME, Deduction.Type.FOGASA };
 
 	private static Map<Deduction.Type, String> DEDUCTION_DESCRIPTIONS = new HashMap<Deduction.Type, String>() {
 		{
@@ -460,12 +458,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		@Override
 		public TextListBox create(Variable variable) {
-			TextListBox textListBox = new TextListBox(){
+			TextListBox textListBox = new TextListBox() {
 				@Override
 				public String getValue() {
-					return getValue(getSelectedIndex()) ;
+					return getValue(getSelectedIndex());
 				}
-				
+
 			};
 
 			int lastDay = DateUtils.getLastDayOfMonth(variable.getStartDate())
@@ -522,8 +520,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		private String values[];
 		private String labels[];
 
-
-		public StringsListBoxFactory(String name, String  values [], String  labels []) {
+		public StringsListBoxFactory(String name, String values[],
+				String labels[]) {
 			this.name = name;
 			this.values = values;
 			this.labels = labels;
@@ -542,14 +540,14 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		@Override
 		public TextListBox create(Variable variable) {
-			TextListBox textListBox = new TextListBox(){
+			TextListBox textListBox = new TextListBox() {
 				@Override
 				public void setValue(String value) {
 					super.setValue(value.replaceAll("^[\"'](.*)[\"']$", "$1"));
 				}
-				
+
 			};
-			for (int i = 0; i < values.length ; i++)
+			for (int i = 0; i < values.length; i++)
 				textListBox.addItem(labels[i], values[i]);
 			return textListBox;
 		}
@@ -1790,7 +1788,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		salarySelect.addListener(this);
 		showDraft();
 		showContextTable();
-		
+
 		zoom = Constants.DEFAULT_ZOOM;
 		initEventsStyles(style);
 		initSalaryDb();
@@ -1916,7 +1914,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			cgcBaseDeduction.setType(Deduction.Type.OTHER);
 			cgcBaseDeduction.setSalaryType(salaryDraftObject.getType());
 		}
-		
+
 		//@formatter:off
 		cgcBaseDeduction.setExpression(
 				"if ( "+salaryDraftObject.getType().getVariable()+" ) {" +
@@ -2123,45 +2121,74 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		Widget visibleWidget = deckPanel.getWidget(index);
 		return visibleWidget == w;
 	}
-	
+
 	private void showContextTable() {
-		contextDeckPanel.showWidget(contextDeckPanel.getWidgetIndex(contextTable));
+		contextDeckPanel.showWidget(contextDeckPanel
+				.getWidgetIndex(contextTable));
 		contextTableButton.addStyleName(style.contextTabButtonSelected());
 		contextTimeLineButton.removeStyleName(style.contextTabButtonSelected());
 	}
 
 	private void showContextTimeLine() {
-		VisualizationUtils.loadVisualizationApi(new Runnable() {
-			@Override
-			public void run() {
-				Window.alert("loadVisualizationApiCallback");
-				Options options = Options.create();
 
-				DataTable data =  DataTable.create();
-				data.addColumn(ColumnType.STRING, "Variable");
-				data.addColumn(ColumnType.STRING, "Value");
-				data.addColumn(ColumnType.DATE, "Start");
-				data.addColumn(ColumnType.DATE, "End");
-				
-				data.addRow();
-				data.setValue(0, 0, "X");
-				data.setValue(0, 1, "x");
-				data.setValue(0, 2, DateUtils.getFirstDayOfYear(new Date()));
-				data.setValue(0, 3, DateUtils.addDays2Date(DateUtils.getFirstDayOfMonth(new Date()),-1));
+		Date startDate = getFirstDayOfYear(salaryDraftObject.getStartDate());
+		Date endDate = getLastDayOfYear(salaryDraftObject.getEndDate());
 
-				data.addRow();
-				data.setValue(1, 0, "X");
-				data.setValue(1, 1, "xxx");
-				data.setValue(1, 2, DateUtils.getFirstDayOfMonth(new Date()));
-				data.setValue(1, 3, DateUtils.getLastDayOfYear(new Date()));
+		Set<String> names = new HashSet<String>();
+		for (Variable v : salaryDraftObject.getContext())
+			names.add(v.getName());
+		for (Variable v : salaryDraftObject.getDrafContext())
+			names.add(v.getName());
 
-				contextTimeLinePanel.setWidget(new TimeLineChart(data, options));
-			}
-		},TimeLineChart.PACKAGE);		
+		salaryDraftObject.getVariables(names.toArray(new String[names.size()]),
+				startDate, endDate, new AsyncCallback<List<Variable>>() {
 
-		contextDeckPanel.showWidget(contextDeckPanel.getWidgetIndex(contextTimeLinePanel));
-		contextTableButton.removeStyleName(style.contextTabButtonSelected());
-		contextTimeLineButton.addStyleName(style.contextTabButtonSelected());
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+					}
+
+					@Override
+					public void onSuccess(final List<Variable> variables) {
+						
+						VisualizationUtils.loadVisualizationApi(new Runnable() {
+							@Override
+							public void run() {
+
+								Options options = Options.create();
+								options.setWidth(contextTable.getOffsetWidth());
+								
+								DataTable data =  DataTable.create();
+								data.addColumn(ColumnType.STRING, "Variable");
+								data.addColumn(ColumnType.STRING, "Value");
+								data.addColumn(ColumnType.DATE, "Start");
+								data.addColumn(ColumnType.DATE, "End");
+								for (Variable v : variables) {
+									int row = data.addRow();
+									data.setValue(row, 0, v.getName());
+									if (v.getValue() == null)
+										data.setValueNull(row, 1);
+									else
+										data.setValue(row, 1,
+												String.valueOf(v.getValue()));
+									data.setValue(row, 2, v.getStartDate());
+									data.setValue(row, 3, v.getEndDate());
+								}
+								
+
+								contextTimeLinePanel
+										.setWidget(new TimeLineChart(data,
+												options));
+								contextDeckPanel.showWidget(contextDeckPanel
+										.getWidgetIndex(contextTimeLinePanel));
+								contextTableButton.removeStyleName(style.contextTabButtonSelected());
+								contextTimeLineButton.addStyleName(style.contextTabButtonSelected());
+							}
+						}, TimeLineChart.PACKAGE);
+					}
+
+				});
+
 	}
 
 	private void onChangedSalaryDraftObject(SalaryDraftObject salaryDraftObject) {
@@ -2170,11 +2197,11 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		syncDatesListBox();
 		syncSalarySelect();
-		
-		//clean...???
+
+		// clean...???
 		cgcBaseDeduction = null;
 		cgpBaseDeduction = null;
-		
+
 		// Sync undo & redo controls
 		salaryDraftObject.addUndoManagerListener(this);
 		redoButton.setEnabled(salaryDraftObject.canRedo());
@@ -2222,7 +2249,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				"La Base por Contingecias Comunes "
 						+ format(rawCgcBase)
 						+ "\u20A0 ha sido "
-						+ ((NumberUtils.compare(rawCgcBase,cgcBase)>0) ? "limitada al m\u00e1ximo permitido"
+						+ ((NumberUtils.compare(rawCgcBase, cgcBase) > 0) ? "limitada al m\u00e1ximo permitido"
 								: "ampliada al m\u00ednimo obligatorio"));
 
 		Double cgpBase = salaryDraftObject.getCgpBase();
@@ -2236,8 +2263,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				"La Base por Accidentes de Trabajo y Enfermedades Profesionales  "
 						+ format(rawCgpBase)
 						+ "\u20A0 ha sido "
-						+ ((NumberUtils.compare(rawCgcBase,cgcBase)>0) ? "limitada al m\u00e1ximo permitido"
-									: "ampliada al m\u00ednimo obligatorio"));
+						+ ((NumberUtils.compare(rawCgcBase, cgcBase) > 0) ? "limitada al m\u00e1ximo permitido"
+								: "ampliada al m\u00ednimo obligatorio"));
 
 		irpfBaseLabel.setText(format(salaryDraftObject.getIrpfBase()),
 				displayChanges);
@@ -2399,22 +2426,31 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	private void initDatesListBox() {
 		datesListBox.addChangeHandler(new ChangeHandler() {
 
-			PeriodDialog periodDialog = new PeriodDialog() {
-				{
-					setDateTimeFormat(DATE_SHORT);
-				}
+			PeriodDialog periodDialog = null;
 
-				@Override
-				protected void onAccept() {
-					if (getEndDate() == null) {
-						salaryDraftObject.setDraftPeriod(getStartDate());
-					} else {
-						salaryDraftObject.setDraftPeriod(getStartDate(),
-								getEndDate());
+			private PeriodDialog getPeriodDialog() {
+
+				if (periodDialog != null)
+					return periodDialog;
+
+				periodDialog = new PeriodDialog() {
+					{
+						setDateTimeFormat(DATE_SHORT);
 					}
-					syncDatesListBox();
-				}
-			};
+
+					@Override
+					protected void onAccept() {
+						if (getEndDate() == null) {
+							salaryDraftObject.setDraftPeriod(getStartDate());
+						} else {
+							salaryDraftObject.setDraftPeriod(getStartDate(),
+									getEndDate());
+						}
+						syncDatesListBox();
+					}
+				};
+				return periodDialog;
+			}
 
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -2422,8 +2458,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				int index = datesListBox.getSelectedIndex();
 				String value = datesListBox.getValue(index);
 				if (CUSTOM.equals(value)) {
-					periodDialog.center();
-					periodDialog.show();
+					getPeriodDialog().center();
+					getPeriodDialog().show();
 				} else if (ONLY_THIS_MONTH.equals(value)) {
 					salaryDraftObject.setDraftPeriod(null, null);
 				} else if (FROM_THIS_MONTH.equals(value)) {
@@ -2860,11 +2896,11 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 			if (isSystemDeduction(deduction)) {
 
-				String description = DEDUCTION_DESCRIPTIONS
-						.get(deduction.getType());
-				if ( description == null )
-					description = deduction.getDescription(); 
-					
+				String description = DEDUCTION_DESCRIPTIONS.get(deduction
+						.getType());
+				if (description == null)
+					description = deduction.getDescription();
+
 				if (deduction.getAmount() != null) {
 					Double percent = getPercent(deduction, salaryDraftObject);
 					dumpSystemDeduction(deduction, percent, description, row++);
@@ -4131,10 +4167,10 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	}
 
 	// ------------------------------------------------------- Static 'Library'
-	
-	private static boolean isSystemDeduction(Deduction deduction){
-		for(Deduction.Type type : SYSTEM_DEDUCTION)
-			if ( type == deduction.getType() )
+
+	private static boolean isSystemDeduction(Deduction deduction) {
+		for (Deduction.Type type : SYSTEM_DEDUCTION)
+			if (type == deduction.getType())
 				return true;
 		return false;
 	}
@@ -4319,8 +4355,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			};
 	//@formatter:on
 
-	
-	
 	private static void enable(TextBox textBox, boolean enabled) {
 
 		if (textBox.isEnabled() == enabled)

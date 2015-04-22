@@ -943,6 +943,61 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 
 	}
+	
+	@Override
+	public List<Variable> getVariables(SalaryDraft salaryDraft, Date startDate,
+			Date endDate, String[] names) throws IllegalArgumentException {
+		try {
+			initFacesContext();
+			salaryDraft.setStartDate(startDate);
+			salaryDraft.setEndDate(endDate);
+			
+			SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> ctx = 
+					getSalaryCalculatorContext(getConnection(), salaryDraft, null);
+			
+			
+			Map<String, boolean []> defined = getDefinedMap(ctx);
+			
+			List<Variable> variables = new LinkedList<Variable>();
+			for (String name : names) {
+				for( ITimedVariable<?> var : ctx.getExpressionContext().getVariables(name) ){
+					IExpression expression = var instanceof IExpressionVariable<?> ? 
+							((IExpressionVariable<?>)var).getExpression() : null;
+							
+					ContextVariable contextVariable = ContextVariable.getVariableByName(name);
+					try {
+					
+					Object value = var.getValue(var.getPeriod());
+					if ( value instanceof String ||
+							value instanceof Boolean ||
+							value instanceof Number )
+						variables.add(new StringVariable.Builder()
+						.setName(name)
+						.setStartDate(var.getPeriod().getStart())
+						.setEndDate(var.getPeriod().getEnd())
+						.setValue(var.getValue(var.getPeriod()))
+						.setDefined(defined.get(name))
+						.setExpression(expression != null ? expression.getExpression(): null)
+						.setImplicit(contextVariable!= null && contextVariable.isInternal())
+						.setScope((expression != null && expression.getScope() != null) ? Scope.values()[expression.getScope().ordinal()]: null)
+						.create());
+					}catch ( ExpressionExceptionWrapper  e){
+						
+					}
+				
+				}
+			}
+			return variables;
+			
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} catch (ExpressionException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			releaseFacesContext();
+		}
+
+	}
 
 	@Override
 	public AgreementDraft calculateAgreementDraft(AgreementDraft agreementDraft)
@@ -3368,6 +3423,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 	}
+
 
 	protected static ContextDescriptor getContext(Connection conn,
 			IContractSalaryCalculatorContext calculatorCtx, Date startDate,
