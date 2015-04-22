@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import static com.esferalia.aon.gwt.common.shared.DateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.gwt.common.shared.DateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.gwt.common.shared.DateUtils.getLastDayOfYear;
 import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_MAX_LENGTH;
@@ -48,6 +47,8 @@ import com.esferalia.aon.gwt.payroll.shared.UndefinedVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options;
+import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.RowLabelStyle;
+import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.Timeline;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -114,6 +115,7 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
@@ -2151,12 +2153,30 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 					@Override
 					public void onSuccess(final List<Variable> variables) {
 						
+						final int offsetWidth = contextTable.getOffsetWidth();
+						
+						contextDeckPanel.showWidget(contextDeckPanel
+								.getWidgetIndex(contextTimeLinePanel));
+						contextTableButton.removeStyleName(style.contextTabButtonSelected());
+						contextTimeLineButton.addStyleName(style.contextTabButtonSelected());
+						contextTimeLinePanel.setWidth(offsetWidth + "px");
+
 						VisualizationUtils.loadVisualizationApi(new Runnable() {
 							@Override
 							public void run() {
 
+
 								Options options = Options.create();
-								options.setWidth(contextTable.getOffsetWidth());
+								options.setWidth(offsetWidth);
+								
+								Timeline timeline = Timeline.create();								
+								
+								RowLabelStyle rowStyle = RowLabelStyle.create();
+								rowStyle.setFontSize("12");
+								rowStyle.setTextAlign("left");
+								timeline.setRowLabelStyle(rowStyle);
+								
+								options.setTimeline(timeline);
 								
 								DataTable data =  DataTable.create();
 								data.addColumn(ColumnType.STRING, "Variable");
@@ -2179,10 +2199,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 								contextTimeLinePanel
 										.setWidget(new TimeLineChart(data,
 												options));
-								contextDeckPanel.showWidget(contextDeckPanel
-										.getWidgetIndex(contextTimeLinePanel));
-								contextTableButton.removeStyleName(style.contextTabButtonSelected());
-								contextTimeLineButton.addStyleName(style.contextTabButtonSelected());
 							}
 						}, TimeLineChart.PACKAGE);
 					}
