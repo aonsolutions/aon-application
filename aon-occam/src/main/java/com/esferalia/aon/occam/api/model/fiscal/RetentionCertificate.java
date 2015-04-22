@@ -16,15 +16,23 @@ public class RetentionCertificate implements Serializable {
 	private String employeeName;
 	private String employeeDocument;
 	
+	/**
+	 * *************************************************************************
+	 * Rendimientos del trabajo, dietas exceptuadas de gravamen y rentas exentas
+	 * *************************************************************************
+	 */
+	// Rendimientos de trabajo
 	private double perception;
 	private double retention;
 	private double inKindPerception;
 	private double inKindDeposit;
 	private double inKindOutputDeposit;
 	
+	//
 	private double forecastPlanContributions;
 	private double dependencyContributions;
 	
+	//
 	private double applicableReduction;
 	private double deducibleExpense;
 	
@@ -46,6 +54,25 @@ public class RetentionCertificate implements Serializable {
 	// Dietas exceptuadas de gravamen y rentas exentas del impueto
 	private double journeyDiet;
 	private double incomeExemption;
+	
+	/** 
+	 * ****************************************
+	 * Rendimientos de actividades economicas
+	 * ****************************************
+	 */
+	// Rendimientos de actividades agricolas o ganaderas
+	// clave H, subclave 02
+	private RetentionCertificate prof1;
+	// Rendimientos de actividades forestales
+	// clave H, subclave 03
+	private RetentionCertificate prof2;
+	// Rendimientos de actividades empresariales en estimacion objetiva
+	// previstas en el art. 95.6 del Reglamento del IRPF
+	// clave H, subclave 04
+	private RetentionCertificate prof3;
+	// Rendimientos a que se refiere el articulo 75.2.b) del Reglamento del
+	// IRPF, que deban calificarse como rendimientos de actividades economicas
+	private RetentionCertificate prof4;
 	
 	
 	public Integer getId() {
@@ -215,6 +242,30 @@ public class RetentionCertificate implements Serializable {
 	}
 	public void setIncomeExemption(double incomeExemption) {
 		this.incomeExemption = incomeExemption;
+	}
+	public RetentionCertificate getProf1() {
+		return prof1;
+	}
+	public void setProf1(RetentionCertificate prof1) {
+		this.prof1 = prof1;
+	}
+	public RetentionCertificate getProf2() {
+		return prof2;
+	}
+	public void setProf2(RetentionCertificate prof2) {
+		this.prof2 = prof2;
+	}
+	public RetentionCertificate getProf3() {
+		return prof3;
+	}
+	public void setProf3(RetentionCertificate prof3) {
+		this.prof3 = prof3;
+	}
+	public RetentionCertificate getProf4() {
+		return prof4;
+	}
+	public void setProf4(RetentionCertificate prof4) {
+		this.prof4 = prof4;
 	}
 	
 }
