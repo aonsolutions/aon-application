@@ -76,28 +76,34 @@ public class Mod10TPrint extends HttpServlet {
 			// Trabajadores
 			Map<String, RetentionCertificate> employeeCertificates = new HashMap<>();
 			mod190.getDetails().forEach(detail -> {createEmployeeCertificate(mod190, detail, employeeCertificates);});
-//			jasperPrint = JasperFillManager.fillReport(
-//					new BufferedInputStream(new FileInputStream(TESTING_TEMPLATE_EMPLOYEE)),
-//					new HashMap<String, Object>(),
-//					new JRBeanCollectionDataSource(professionalCertificates.values()));
-			jasperPrint = JasperFillManager.fillReport(
-					JRReport.class.getResourceAsStream(REPORT_TEMPLATE_EMPLOYEE),
-					new HashMap<String, Object>(),
-					new JRBeanCollectionDataSource(employeeCertificates.values()));
-			byte[] employeeData = JasperExportManager.exportReportToPdf(jasperPrint);
+			byte[] employeeData = null;
+			if(employeeCertificates.size()>0){
+//				jasperPrint = JasperFillManager.fillReport(
+//						new BufferedInputStream(new FileInputStream(TESTING_TEMPLATE_EMPLOYEE)),
+//						new HashMap<String, Object>(),
+//						new JRBeanCollectionDataSource(professionalCertificates.values()));
+				jasperPrint = JasperFillManager.fillReport(
+						JRReport.class.getResourceAsStream(REPORT_TEMPLATE_EMPLOYEE),
+						new HashMap<String, Object>(),
+						new JRBeanCollectionDataSource(employeeCertificates.values()));
+				employeeData = JasperExportManager.exportReportToPdf(jasperPrint);
+			}
 			
 			// Profesionales
 			Map<String, RetentionCertificate> professionalCertificates = new HashMap<>();
 			mod190.getDetails().forEach(detail -> {createProfessionalCertificate(mod190, detail, professionalCertificates);});
-//			jasperPrint = JasperFillManager.fillReport(
-//					new BufferedInputStream(new FileInputStream(TESTING_TEMPLATE_PROFESSIONAL)),
-//					new HashMap<String, Object>(),
-//					new JRBeanCollectionDataSource(professionalCertificates.values()));
-			jasperPrint = JasperFillManager.fillReport(
-					JRReport.class.getResourceAsStream(REPORT_TEMPLATE_PROFESSIONAL),
-					new HashMap<String, Object>(),
-					new JRBeanCollectionDataSource(professionalCertificates.values()));
-			byte[] professionalData = JasperExportManager.exportReportToPdf(jasperPrint);
+			byte[] professionalData = null;
+			if(professionalCertificates.size()>0){
+//				jasperPrint = JasperFillManager.fillReport(
+//						new BufferedInputStream(new FileInputStream(TESTING_TEMPLATE_PROFESSIONAL)),
+//						new HashMap<String, Object>(),
+//						new JRBeanCollectionDataSource(professionalCertificates.values()));
+				jasperPrint = JasperFillManager.fillReport(
+						JRReport.class.getResourceAsStream(REPORT_TEMPLATE_PROFESSIONAL),
+						new HashMap<String, Object>(),
+						new JRBeanCollectionDataSource(professionalCertificates.values()));
+				professionalData = JasperExportManager.exportReportToPdf(jasperPrint);
+			}
 			
 			
 			resp.setContentType(MimeType.PDF.getName());
@@ -171,6 +177,7 @@ public class Mod10TPrint extends HttpServlet {
 			if(detail.getKey().equals("G")){
 				cert = completeCertificate(mod190, detail, cert, "G");
 			} else if(detail.getKey().equals("H")){
+				cert = completeCertificate(mod190, detail, cert, "H");
 				if(detail.getSubKey().equals("02")){
 					cert.setProf1(completeCertificate(mod190, detail, new RetentionCertificate(), "H"));
 				} else if(detail.getSubKey().equals("03")){
@@ -183,17 +190,6 @@ public class Mod10TPrint extends HttpServlet {
 			map.put(cert.getEmployeeDocument(), cert);
 		}
 	}
-	
-//	private RetentionCertificate createCertificate(Mod190 mod190, Mod190Detail detail, Map<String, RetentionCertificate> map, String key){
-//		RetentionCertificate cert = null;
-////		if(map.containsKey(detail.getDocument())){
-////			cert = map.get(detail.getDocument());
-////		} else {
-//			cert = new RetentionCertificate();
-////		}
-//		
-//		return completeCertificate(mod190, detail, cert, key);
-//	}
 		
 	private RetentionCertificate completeCertificate(Mod190 mod190, Mod190Detail detail, RetentionCertificate cert, String key){
 		cert.setId(null);
