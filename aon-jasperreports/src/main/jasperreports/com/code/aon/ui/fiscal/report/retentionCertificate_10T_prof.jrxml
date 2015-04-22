@@ -389,7 +389,7 @@
 					<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{retention}.equals( 0.00 )?$F{retention}:""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{retention}.equals( 0.00 )?"":$F{retention}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00;-###0.00" isBlankWhenNull="true">
 				<reportElement uuid="95e7bb32-bd22-4d17-b62e-bdfd345b9697" key="textField-34" positionType="Float" x="330" y="164" width="90" height="12" isPrintWhenDetailOverflows="true"/>
@@ -403,7 +403,7 @@
 					<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{perception}.equals( 0.00 )?$F{perception}:""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{perception}.equals( 0.00 )?"":$F{perception}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="51a16631-9589-4525-9ade-2a2865a8ca44" key="textField-34" positionType="Float" x="430" y="152" width="100" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
@@ -449,7 +449,7 @@
 					<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{inKindOutputDeposit}.equals( 0.00 )?$F{inKindOutputDeposit}:""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{inKindOutputDeposit}.equals( 0.00 )?"":$F{inKindOutputDeposit}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="fd56a958-26af-496e-99dc-3d0deedbbd66" key="textField-34" positionType="Float" x="21" y="176" width="194" height="24" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
@@ -474,7 +474,7 @@
 					<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{inKindDeposit}.equals( 0.00 )?$F{inKindDeposit}:""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{inKindDeposit}.equals( 0.00 )?"":$F{inKindDeposit}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="7ae09e47-5419-4de0-a8c9-7ff65dd9cd39" key="textField-34" positionType="Float" x="220" y="176" width="100" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
@@ -496,7 +496,7 @@
 					<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{inKindPerception}.equals( 0.00 )?$F{inKindPerception}:""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{inKindPerception}.equals( 0.00 )?"":$F{inKindPerception}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement uuid="9e7265f4-cd45-430f-a230-3dcd2d78e053" key="textField-34" positionType="Float" x="10" y="636" width="253" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
