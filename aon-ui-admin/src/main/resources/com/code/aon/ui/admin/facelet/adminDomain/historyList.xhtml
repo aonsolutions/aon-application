@@ -9,7 +9,7 @@
 
 	<aon:valueParam name="showModificationColumns" default="#{true}"/>
 
-	<c:if test="#{!showModificationColumns}">
+	<aon:if test="#{!showModificationColumns}">
 		<aon:column styleClass="aon-editDataTable-iconColumn">
 			<f:facet name="header">
 				<aon:outputText value="&#160;" />
@@ -23,7 +23,7 @@
 				rendered="#{to.infoType == 'REMOVE'}"
 				style="padding-left:15px;" styleClass="aon-icon-delete"/>
 		</aon:column>	
-	</c:if>	
+	</aon:if>	
 
 	<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-110" >
 		<f:facet name="header">
@@ -42,7 +42,7 @@
 		<aon:outputText	value="#{to.user}" />
 	</aon:column>
 
-	<c:if test="#{!showModificationColumns}">
+	<aon:if test="#{!showModificationColumns}">
 		<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap" >
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_name}" />
@@ -56,7 +56,7 @@
 			</f:facet>							
 			<aon:outputText value="#{to.parent}" />
 		</aon:column>
-	</c:if>
+	</aon:if>
 	
 	<aon:column styleClass="aon-editDataTable-textColumn aon-width-80" >
 		<f:facet name="header">
@@ -110,7 +110,7 @@
 		</aon:div>																						
 	</aon:column>		
 	
-	<c:if test="#{showModificationColumns}">
+	<aon:if test="#{showModificationColumns}">
 		<aon:column styleClass="aon-editDataTable-iconColumn">
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_changes}" />
@@ -122,6 +122,6 @@
 					styleClass="aon-width-450" />						
 			</aon:div>													
 		</aon:column>	
-	</c:if>	
+	</aon:if>	
 
 </ui:composition>

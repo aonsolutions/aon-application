@@ -7,6 +7,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
@@ -31,9 +33,11 @@ import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceSearchListener extends RegistrySearchListener {
-	
+
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-	
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceSearchListener.class.getName());
+		
 	private static final PayMethod EMPTY_PAYMETHOD = new PayMethod();
 	
 	private String defaultType;
@@ -171,10 +175,14 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 		this.customerEInvoice = customerEInvoice;
 	}
 
+	private void resetRegistry() throws ManagerBeanException {
+		setRegistry((Registry)BeanManager.getManagerBean(Registry.class).createNewTo());
+	}
+	
 	@Override
 	protected void init() throws ManagerBeanException {
 		super.init();
-		setRegistry((Registry)BeanManager.getManagerBean(Registry.class).createNewTo());
+		resetRegistry();
 		setProject((Project)BeanManager.getManagerBean(Project.class).createNewTo());
 		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
 		setSeller((Seller)BeanManager.getManagerBean(Seller.class).createNewTo());
@@ -242,4 +250,12 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 		}
 	}
 
+	public void onResetRegistry(ActionEvent event) {
+		try {
+			resetRegistry();
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+	}
+	
 }

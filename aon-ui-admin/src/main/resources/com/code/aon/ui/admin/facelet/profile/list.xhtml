@@ -23,13 +23,13 @@
 				</ui:define>
 			</ui:decorate>
 
-			<c:if test="#{!domainApplicationProfile.noRegisteredApplications}">
+			<aon:if test="#{!domainApplicationProfile.noRegisteredApplications}">
 				<ui:include src="/com/code/aon/ui/admin/facelet/profile/listContent.xhtml" >
 					<ui:param name="controller" value="#{domainApplicationProfile}" />
 					<ui:param name="skipDomainColumn" value="#{domainSwitcher.parentDomain}" />
 					<ui:param name="rowSelectorToggleOnClick" value="#{to.domain.id == domainSwitcher.domainId}" />
 				</ui:include>
-			</c:if>
+			</aon:if>
 		</aon:form>
 	</ui:define>
 

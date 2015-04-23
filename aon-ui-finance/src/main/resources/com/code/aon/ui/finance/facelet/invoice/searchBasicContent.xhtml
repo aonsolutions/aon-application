@@ -6,6 +6,22 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
+	<aon:valueParam name="showInvoiceType" default="#{false}"/>
+
+	<aon:if test="#{showInvoiceType}">
+		<aon:outputLabel for="Invoice_type"
+			value="#{bundle.aon_type}" />
+		<aon:selectOneMenu id="Invoice_type"
+			actionListener="#{searchController.onResetRegistry}"
+			reRender="invoiceSearch" ajaxSingle="false"
+			value="#{searchController.defaultType}">
+			<f:selectItem itemLabel="#{bundle.aon_sales}" itemValue="SALES" />
+			<f:selectItem itemLabel="#{bundle.aon_purchases}" itemValue="PURCHASE" />
+			<f:selectItem itemLabel="#{bundle.aon_expenses}" itemValue="EXPENSES" />
+			<f:selectItem itemLabel="#{bundle.finance_undeductible_invoice_management_module}" itemValue="UNDEDUCTIBLE" />
+		</aon:selectOneMenu>			
+	</aon:if>							
+
 	<aon:outputLabel for="Invoice_referenceCode"
 		value="#{bundle.aon_invoice_number}" />
 	<aon:inputText id="Invoice_referenceCode"

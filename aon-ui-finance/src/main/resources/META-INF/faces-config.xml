@@ -1363,9 +1363,9 @@
 		</managed-property>		
 	</managed-bean>
 	
-	<!-- ************* SALE INVOICE recorder ***************** -->
+	<!-- ************* INVOICE RECORDER ***************** -->
 	<managed-bean>
-		<managed-bean-name>saleInvoiceRecorder</managed-bean-name>
+		<managed-bean-name>invoiceRecorder</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.finance.controller.InvoiceRecorderController
 		</managed-bean-class>
@@ -1376,7 +1376,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>saleInvoiceRecorder</value>
+			<value>invoiceRecorder</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
@@ -1388,14 +1388,14 @@
 				<value-class>
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
-				<value>#{saleInvoiceRecorderSearch}</value>
+				<value>#{invoiceRecorderSearch}</value>
 				<value>#{invoiceScopeListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 	
 	<managed-bean>
-		<managed-bean-name>saleInvoiceRecorderSearch</managed-bean-name>
+		<managed-bean-name>invoiceRecorderSearch</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.finance.event.InvoiceSearchListener
 		</managed-bean-class>
@@ -1403,147 +1403,6 @@
 		<managed-property>
 			<property-name>defaultType</property-name>
 			<value>SALES</value>
-		</managed-property>		
-		<managed-property>
-			<property-name>defaultStatus</property-name>
-			<value>PENDING</value>
-		</managed-property>		
-	</managed-bean>
-
-	<!-- ************* PURCHASE INVOICE RECORDER ***************** -->
-	<managed-bean>
-		<managed-bean-name>purchaseInvoiceRecorder</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.controller.InvoiceRecorderController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.finance.Invoice</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>purchaseInvoiceRecorder</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Invoice_issueDate desc,Invoice_referenceCode desc</value>
-		</managed-property>									
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>
-					com.code.aon.ui.form.event.IControllerListener
-				</value-class>
-				<value>#{purchaseInvoiceRecorderSearch}</value>
-				<value>#{invoiceScopeListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>purchaseInvoiceRecorderSearch</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.event.InvoiceSearchListener
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>defaultType</property-name>
-			<value>PURCHASE</value>
-		</managed-property>		
-		<managed-property>
-			<property-name>defaultStatus</property-name>
-			<value>PENDING</value>
-		</managed-property>		
-	</managed-bean>
-
-	<!-- ************* EXPENSE INVOICE RECORDER ***************** -->
-	<managed-bean>
-		<managed-bean-name>expenseInvoiceRecorder</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.controller.InvoiceRecorderController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.finance.Invoice</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>expenseInvoiceRecorder</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Invoice_issueDate desc,Invoice_referenceCode desc</value>
-		</managed-property>									
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>
-					com.code.aon.ui.form.event.IControllerListener
-				</value-class>
-				<value>#{expenseInvoiceRecorderSearch}</value>
-				<value>#{invoiceScopeListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>expenseInvoiceRecorderSearch</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.event.InvoiceSearchListener
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>defaultType</property-name>
-			<value>EXPENSES</value>
-		</managed-property>		
-		<managed-property>
-			<property-name>defaultStatus</property-name>
-			<value>PENDING</value>
-		</managed-property>		
-	</managed-bean>
-
-	<!-- ************* UNDEDUCTIBLE INVOICE RECORDER ***************** -->
-	<managed-bean>
-		<managed-bean-name>undeductibleInvoiceRecorder</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.controller.InvoiceRecorderController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.finance.Invoice</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>undeductibleInvoiceRecorder</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Invoice_issueDate desc,Invoice_referenceCode desc</value>
-		</managed-property>									
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>
-					com.code.aon.ui.form.event.IControllerListener
-				</value-class>
-				<value>#{undeductibleInvoiceRecorderSearch}</value>
-				<value>#{invoiceScopeListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>undeductibleInvoiceRecorderSearch</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.event.InvoiceSearchListener
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>defaultType</property-name>
-			<value>UNDEDUCTIBLE</value>
 		</managed-property>		
 		<managed-property>
 			<property-name>defaultStatus</property-name>
@@ -4481,51 +4340,15 @@
 		</navigation-case>
 	</navigation-rule>   
   
-	<!-- =================== Sale Invoice Recorder ========================== -->
+	<!-- =================== Invoice Recorder ========================== -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>saleInvoiceRecorder_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/finance/facelet/saleInvoiceRecorder/list.xhtml</to-view-id>
+			<from-outcome>invoiceRecorder_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/invoiceRecorder/listContent.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>saleInvoiceRecorder_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/finance/facelet/saleInvoiceRecorder/search.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>   
-  
-	<!-- =================== Purchase Invoice Recorder ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>purchaseInvoiceRecorder_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/finance/facelet/purchaseInvoiceRecorder/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>purchaseInvoiceRecorder_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/finance/facelet/purchaseInvoiceRecorder/search.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>   
-
-	<!-- =================== Expense Invoice Recorder ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>expenseInvoiceRecorder_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/finance/facelet/expenseInvoiceRecorder/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>expenseInvoiceRecorder_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/finance/facelet/expenseInvoiceRecorder/search.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>   
-
-	<!-- =================== Undeductible Invoice Recorder ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>undeductibleInvoiceRecorder_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/finance/facelet/undeductibleInvoiceRecorder/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>undeductibleInvoiceRecorder_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/finance/facelet/undeductibleInvoiceRecorder/search.xhtml</to-view-id>
+			<from-outcome>invoiceRecorder_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/invoiceRecorder/searchContent.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>   
 

@@ -29,10 +29,7 @@ public class InvoiceRecorderController extends BasicController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceRecorderController.class.getName());
 
-	private static final String SALE_VIEW_NAME = "saleInvoiceRecorder_list";
-	private static final String PURCHASE_VIEW_NAME = "purchaseInvoiceRecorder_list";
-	private static final String EXPENSE_VIEW_NAME = "expenseInvoiceRecorder_list";
-	private static final String UNDEDUCTIBLE_VIEW_NAME = "undeductibleInvoiceRecorder_list";
+	private static final String INVOICE_RECORDER_VIEW_NAME = "invoiceRecorder_list";
 	private String invoiceViewer;
 	private AccountEntryInvoiceWriter accountEntryInvoiceWriter;
 
@@ -414,23 +411,19 @@ public class InvoiceRecorderController extends BasicController {
 			InvoiceRecorder recordController = (InvoiceRecorder)getModel().getRowData();
 			InvoiceType type = recordController.getInvoice().getType();
 			String invoiceControllerName;
-			String currentViewName;
+			String currentViewName = INVOICE_RECORDER_VIEW_NAME;
 			if (type == InvoiceType.SALES) {
 				invoiceControllerName = IFinanceConstants.SALE_INVOICE_CONTROLLER_NAME;
 				setInvoiceViewer(IFinanceConstants.SALE_INVOICE_FORM_NAME);
-				currentViewName = SALE_VIEW_NAME;
 			} else if (type == InvoiceType.PURCHASE) {
 				invoiceControllerName = IFinanceConstants.PURCHASE_INVOICE_CONTROLLER_NAME;
 				setInvoiceViewer(IFinanceConstants.PURCHASE_INVOICE_FORM_NAME);
-				currentViewName = PURCHASE_VIEW_NAME;
 			} else if (type == InvoiceType.EXPENSES) {
 				invoiceControllerName = IFinanceConstants.EXPENSE_INVOICE_CONTROLLER_NAME;
 				setInvoiceViewer(IFinanceConstants.EXPENSE_INVOICE_FORM_NAME);
-				currentViewName = EXPENSE_VIEW_NAME;
 			} else if (type == InvoiceType.UNDEDUCTIBLE) {
 				invoiceControllerName = IFinanceConstants.UNDEDUCTIBLE_INVOICE_CONTROLLER_NAME;
 				setInvoiceViewer(IFinanceConstants.UNDEDUCTIBLE_INVOICE_FORM_NAME);
-				currentViewName = UNDEDUCTIBLE_VIEW_NAME;
 			} else {
 				Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 				String msg = "No existe visor para el tipo de factura " + type.getName(locale);

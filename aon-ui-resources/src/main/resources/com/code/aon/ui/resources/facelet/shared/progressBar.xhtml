@@ -51,13 +51,13 @@
 							<f:facet name="complete">
 								<aon:div styleClass="aon-text-center">
 									<aon:div>
-										<c:if test="#{progressBarBean.progressionErrorMessage == null}">
+										<aon:if test="#{progressBarBean.progressionErrorMessage == null}">
 											<aon:outputText value="#{progressBarCompleteMessage}" />
-										</c:if>
-										<c:if test="#{progressBarBean.progressionErrorMessage != null}">
+										</aon:if>
+										<aon:if test="#{progressBarBean.progressionErrorMessage != null}">
 											<aon:outputText style="color: red;font-weight:bold;"
 												value="#{progressBarBean.progressionErrorMessage}" />
-										</c:if>
+										</aon:if>
 									</aon:div>
 									<aon:div styleClass="aon-margin-top">
 										<aon:commandButton

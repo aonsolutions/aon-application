@@ -451,28 +451,10 @@
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="saleInvoiceRecorder-accounting"
-											action="saleInvoiceRecorder_search-accounting"
-											actionListener="#{saleInvoiceRecorder.onEditSearch}"
-											value="#{bundle.finance_sale_invoice_recording_module}"/>
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="purchaseInvoiceRecorder-accounting"
-											action="purchaseInvoiceRecorder_search-accounting"										
-											actionListener="#{purchaseInvoiceRecorder.onEditSearch}"
-											value="#{bundle.finance_purchase_invoice_recording_module}"/>
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="expenseInvoiceRecorder-accounting"
-											action="expenseInvoiceRecorder_search-accounting"
-											actionListener="#{expenseInvoiceRecorder.onEditSearch}"
-											value="#{bundle.finance_expense_invoice_recording_module}"/>
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="undeductibleInvoiceRecorder-accounting"
-											action="undeductibleInvoiceRecorder_search-accounting"
-											actionListener="#{undeductibleInvoiceRecorder.onEditSearch}"
-											value="#{bundle.finance_undeductible_invoice_recording_module}"/>
+										<aon:commandLink id="invoiceRecorder-accounting"
+											action="invoiceRecorder_search-accounting"
+											actionListener="#{invoiceRecorder.onEditSearch}"
+											value="#{bundle.finance_invoice_recording_module}"/>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="financeTrackingEntry-accounting"
