@@ -75,7 +75,17 @@ public class Item extends ItemDB implements IPriceable, IAuditable {
 	@Transient
 	public String getFullName() {
 		String details = getDetails();
-		return (details.length() > 0) ? getProduct().getName() + " [" + details + "]" : getProduct().getName();
+		StringBuffer sb = new StringBuffer();
+		if (StringUtils.isNotEmpty(getProduct().getName())) {
+			sb.append(getProduct().getName());
+		}
+		if (StringUtils.isNotEmpty(details)) {
+			sb.append(" [" + details + "]");
+		}
+		if (getProduct().isSerializable() && StringUtils.isNotEmpty(getSerialNumber())) {
+			sb.append(" #" + getSerialNumber());
+		}
+		return (sb.length() > 0) ? sb.toString() : "";
 	}
 
 	public void setFullName( String value ) {

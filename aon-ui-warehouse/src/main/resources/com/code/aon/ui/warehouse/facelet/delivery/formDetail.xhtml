@@ -110,12 +110,18 @@
 						style="#{!deliveryDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
 						<f:validateLength maximum="1024" />
 					</aon:inputTextarea>
-					<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
-						actionListener="#{deliveryDetail.onShortDescription}" reRender="DeliveryDetail_description"
-						rendered="#{deliveryDetail.longDescription and deliveryDetail.to.item.product.code != null}" />
-					<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
-						actionListener="#{deliveryDetail.onLongDescription}" reRender="DeliveryDetail_description"
-						rendered="#{!deliveryDetail.longDescription and deliveryDetail.to.item.product.code != null}" />
+					<aon:commandLink id="DeliveryDetail_description_short" immediate="true"
+						value="&#160;" title="#{bundle.aon_cancel} #{bundle.aon_editing}"
+						styleClass="aon-icon-edit-end-simple" style="margin-left: 5px; padding-right: 12px;"
+						rendered="#{deliveryDetail.longDescription and deliveryDetail.to.item.product.code != null}"
+						actionListener="#{deliveryDetail.onShortDescription}" 
+						reRender="deliveryDetailItemEdit" ajaxSingle="true" />
+					<aon:commandLink id="DeliveryDetail_description_long" immediate="true"
+						value="&#160;" title="#{bundle.aon_edit}"
+						styleClass="aon-icon-edit-add-simple" style="margin-left: 5px; padding-right: 12px;"
+						rendered="#{!deliveryDetail.longDescription and deliveryDetail.to.item.product.code != null}"
+						actionListener="#{deliveryDetail.onLongDescription}"
+						reRender="deliveryDetailItemEdit" ajaxSingle="true" />
 				</aon:panelGroup>
 				<f:facet name="footer">
 					<aon:div>
@@ -157,12 +163,18 @@
 								style="#{!deliveryDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
 								<f:validateLength maximum="1024" />
 							</aon:inputTextarea>
-							<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
-								actionListener="#{deliveryDetail.onShortDescription}" reRender="DeliveryDetail_description-New"
-								rendered="#{deliveryDetail.longDescription and deliveryDetail.to.item.product.code != null}" />
-							<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
-								actionListener="#{deliveryDetail.onLongDescription}" reRender="DeliveryDetail_description-New"
-								rendered="#{!deliveryDetail.longDescription and deliveryDetail.to.item.product.code != null}" />
+							<aon:commandLink id="DeliveryDetail_description_short-New" immediate="true"
+								value="&#160;" title="#{bundle.aon_cancel} #{bundle.aon_editing}"
+								styleClass="aon-icon-edit-end-simple" style="margin-left: 5px; padding-right: 12px;"
+								rendered="#{deliveryDetail.longDescription and deliveryDetail.to.item.product.code != null}"
+								actionListener="#{deliveryDetail.onShortDescription}" 
+								reRender="deliveryDetailItemNew" ajaxSingle="true" />
+							<aon:commandLink id="DeliveryDetail_description_long-New" immediate="true"
+								value="&#160;" title="#{bundle.aon_edit}"
+								styleClass="aon-icon-edit-add-simple" style="margin-left: 5px; padding-right: 12px;"
+								rendered="#{!deliveryDetail.longDescription and deliveryDetail.to.item.product.code != null}"
+								actionListener="#{deliveryDetail.onLongDescription}"
+								reRender="deliveryDetailItemNew" ajaxSingle="true" />
 						</aon:panelGroup>
 					</aon:div>
 				</f:facet>

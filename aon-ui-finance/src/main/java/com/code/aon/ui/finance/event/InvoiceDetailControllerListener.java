@@ -87,7 +87,7 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
 		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
 		try {
-			checkSerializableWildCard(invoiceDetail);
+			checkSerializable(invoiceDetail);
 
 			invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
 			if (invoiceDetail.getInvoice().isSales() || invoiceDetail.getInvoice().isPurchase()) {
@@ -117,7 +117,7 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
 		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
 		try {
-			checkSerializableWildCard(invoiceDetail);
+			checkSerializable(invoiceDetail);
 
 			invoiceDetail.getInvoice().setStatus(controller.getInvoice().getStatus());
 			if (invoiceDetail.getInvoice().isSales() || invoiceDetail.getInvoice().isPurchase()) {
@@ -177,9 +177,13 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 		return (value != null) ? ((Integer)value) + 1 : 1;
 	}
 
-	private void checkSerializableWildCard(InvoiceDetail invoiceDetail) throws ManagerBeanException {
-		if (invoiceDetail.getItem() != null && invoiceDetail.getItem().getProduct().isSerializable() && invoiceDetail.getItem().isWildCard()) {
-			throw new AbortProcessingException(AonUtil.getMessage(ITEM_SERIALIZABLE_WILDCARD_ERROR));
+	private void checkSerializable(InvoiceDetail invoiceDetail) throws ManagerBeanException {
+		if (invoiceDetail.getItem() != null && invoiceDetail.getItem().getProduct().isSerializable()) {
+			if (invoiceDetail.getItem().isWildCard()) {
+				throw new AbortProcessingException(AonUtil.getMessage(ITEM_SERIALIZABLE_WILDCARD_ERROR));
+			} else if (!invoiceDetail.getItem().getProduct().isLotable() && Math.abs(invoiceDetail.getQuantity()) != 1) {
+				invoiceDetail.setQuantity(1);
+			}
 		}
 	}
 

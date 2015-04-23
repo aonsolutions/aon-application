@@ -54,11 +54,7 @@ public class DeliveryDetailControllerListener extends ControllerAdapter {
 		DeliveryDetailController controller = (DeliveryDetailController)event.getController();
 		DeliveryDetail deliveryDetail = (DeliveryDetail)controller.getTo();
 		deliveryDetail.setWarehouse(((DeliveryController)controller.getMasterController()).getWarehouse());
-		try {
-			checkSerializableWildCard(deliveryDetail);
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException(e.getMessage(), e);
-		}
+		checkSerializable(deliveryDetail);
 	}
 
 	@Override
@@ -66,11 +62,7 @@ public class DeliveryDetailControllerListener extends ControllerAdapter {
 		DeliveryDetailController controller = (DeliveryDetailController)event.getController();
 		DeliveryDetail deliveryDetail = (DeliveryDetail)controller.getTo();
 		deliveryDetail.setWarehouse(((DeliveryController)controller.getMasterController()).getWarehouse());
-		try {
-			checkSerializableWildCard(deliveryDetail);
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException(e.getMessage(), e);
-		}
+		checkSerializable(deliveryDetail);
 	}
 
 	@Override
@@ -87,9 +79,17 @@ public class DeliveryDetailControllerListener extends ControllerAdapter {
 		return (value != null) ? ((Integer)value) + 1 : 1;
 	}
 
-	private void checkSerializableWildCard(DeliveryDetail deliveryDetail) throws ManagerBeanException {
-		if (deliveryDetail.getItem() != null && deliveryDetail.getItem().getProduct().isSerializable() && deliveryDetail.getItem().isWildCard()) {
-			throw new AbortProcessingException(AonUtil.getMessage(ITEM_SERIALIZABLE_WILDCARD_ERROR));
+	private void checkSerializable(DeliveryDetail deliveryDetail) throws ControllerListenerException {
+		try {
+			if (deliveryDetail.getItem() != null && deliveryDetail.getItem().getProduct().isSerializable()) {
+				if (deliveryDetail.getItem().isWildCard()) {
+					throw new AbortProcessingException(AonUtil.getMessage(ITEM_SERIALIZABLE_WILDCARD_ERROR));
+				} else if (!deliveryDetail.getItem().getProduct().isLotable() && Math.abs(deliveryDetail.getQuantity()) != 1) {
+					deliveryDetail.setQuantity(1);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
 		}
 	}
 

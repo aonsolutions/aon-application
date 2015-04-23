@@ -41,12 +41,18 @@ public class PurchaseDetailControllerListener extends ControllerAdapter {
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		checkQuantities();
+		Purchase purchase = (Purchase)((LinesController)event.getController()).getMasterController().getTo();
+		PurchaseDetail purchaseDetail = (PurchaseDetail)event.getController().getTo();
+		checkQuantities(purchase, purchaseDetail);
+		checkSerializable(purchaseDetail);
 	}
 	
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		checkQuantities();
+		Purchase purchase = (Purchase)((LinesController)event.getController()).getMasterController().getTo();
+		PurchaseDetail purchaseDetail = (PurchaseDetail)event.getController().getTo();
+		checkQuantities(purchase, purchaseDetail);
+		checkSerializable(purchaseDetail);
 	}
 	
 	@Override
@@ -75,14 +81,24 @@ public class PurchaseDetailControllerListener extends ControllerAdapter {
 		}
 	}
 	
-	private void checkQuantities() throws ControllerListenerException {
-		Purchase purchase = (Purchase) ((LinesController)this.getController()).getMasterController().getTo();
-		PurchaseDetail purchaseDetail = (PurchaseDetail) this.getController().getTo();
+	private void checkQuantities(Purchase purchase, PurchaseDetail purchaseDetail) throws ControllerListenerException {
 		if (purchaseDetail.getQuantity() < 0 && purchase.getDocumentType()!=PurchaseDocumentType.ITEM_RETURN) {
 			throw new ControllerListenerException("La cantidad no puede ser negativa.");
 		}
 		if (purchaseDetail.getQuantity() > 0 && purchase.getDocumentType()==PurchaseDocumentType.ITEM_RETURN) {
 			throw new ControllerListenerException("La cantidad a devolver no puede ser positiva.");
+		}
+	}
+
+	private void checkSerializable(PurchaseDetail purchaseDetail) throws ControllerListenerException {
+		try {
+			if (purchaseDetail.getItem() != null && purchaseDetail.getItem().getProduct().isSerializable()) {
+				if (!purchaseDetail.getItem().getProduct().isLotable() && !purchaseDetail.getItem().isWildCard() && Math.abs(purchaseDetail.getQuantity()) != 1) {
+					purchaseDetail.setQuantity(1);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
 		}
 	}
 
@@ -92,5 +108,5 @@ public class PurchaseDetailControllerListener extends ControllerAdapter {
 		pd.setStatus(ProposalDetailStatus.PENDING);
 		proposalDetailBean.update(pd);
 	}
-	
+
 }

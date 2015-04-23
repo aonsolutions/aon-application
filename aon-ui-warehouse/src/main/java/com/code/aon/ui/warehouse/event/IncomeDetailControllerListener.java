@@ -54,11 +54,7 @@ public class IncomeDetailControllerListener extends ControllerAdapter {
 		IncomeDetailController controller = (IncomeDetailController)event.getController();
 		IncomeDetail incomeDetail = (IncomeDetail)controller.getTo();
 		incomeDetail.setWarehouse(((IncomeController)controller.getMasterController()).getWarehouse());
-		try {
-			checkSerializableWildCard(incomeDetail);
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException(e.getMessage(), e);
-		}
+		checkSerializable(incomeDetail);
 	}
 
 	@Override
@@ -66,11 +62,7 @@ public class IncomeDetailControllerListener extends ControllerAdapter {
 		IncomeDetailController controller = (IncomeDetailController)event.getController();
 		IncomeDetail incomeDetail = (IncomeDetail)controller.getTo();
 		incomeDetail.setWarehouse(((IncomeController)controller.getMasterController()).getWarehouse());
-		try {
-			checkSerializableWildCard(incomeDetail);
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException(e.getMessage(), e);
-		}
+		checkSerializable(incomeDetail);
 	}
 
 	@Override
@@ -87,9 +79,17 @@ public class IncomeDetailControllerListener extends ControllerAdapter {
 		return (value != null) ? ((Integer)value) + 1 : 1;
 	}
 
-	private void checkSerializableWildCard(IncomeDetail incomeDetail) throws ManagerBeanException {
-		if (incomeDetail.getItem() != null && incomeDetail.getItem().getProduct().isSerializable() && incomeDetail.getItem().isWildCard()) {
-			throw new AbortProcessingException(AonUtil.getMessage(ITEM_SERIALIZABLE_WILDCARD_ERROR));
+	private void checkSerializable(IncomeDetail incomeDetail) throws ControllerListenerException {
+		try {
+			if (incomeDetail.getItem() != null && incomeDetail.getItem().getProduct().isSerializable()) {
+				if (incomeDetail.getItem().isWildCard()) {
+					throw new AbortProcessingException(AonUtil.getMessage(ITEM_SERIALIZABLE_WILDCARD_ERROR));
+				} else if (!incomeDetail.getItem().getProduct().isLotable() && Math.abs(incomeDetail.getQuantity()) != 1) {
+					incomeDetail.setQuantity(1);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
 		}
 	}
 

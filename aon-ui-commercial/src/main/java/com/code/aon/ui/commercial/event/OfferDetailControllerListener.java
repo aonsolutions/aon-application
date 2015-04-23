@@ -38,16 +38,28 @@ public class OfferDetailControllerListener extends ControllerAdapter {
 	}
 
 	@Override
-	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		event.getController().initializeModel();
-	}
-
-	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		OfferDetailController controller = (OfferDetailController)event.getController();
 		OfferDetail offerDetail = (OfferDetail)controller.getTo();
 
 		controller.setLongDescription( StringUtils.length(offerDetail.getDescription())>64);
+	}
+
+	@Override
+	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		OfferDetail offerDetail = (OfferDetail)event.getController().getTo();
+		checkSerializable(offerDetail);
+	}
+
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		OfferDetail offerDetail = (OfferDetail)event.getController().getTo();
+		checkSerializable(offerDetail);
+	}
+
+	@Override
+	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		event.getController().initializeModel();
 	}
 
 	private	Integer calculateNextLine(Offer offer) throws ManagerBeanException {
@@ -57,6 +69,18 @@ public class OfferDetailControllerListener extends ControllerAdapter {
 		Projection projection = Projection.max(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_LINE));
 		Object value = offerDetailBean.getUniqueResult(projection, criteria);
 		return (value != null) ? ((Integer)value) + 1 : 1;
+	}
+
+	private void checkSerializable(OfferDetail offerDetail) throws ControllerListenerException {
+		try {
+			if (offerDetail.getItem() != null && offerDetail.getItem().getProduct().isSerializable()) {
+				if (!offerDetail.getItem().getProduct().isLotable() && !offerDetail.getItem().isWildCard() && Math.abs(offerDetail.getQuantity()) != 1) {
+					offerDetail.setQuantity(1);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
 	}
 
 }

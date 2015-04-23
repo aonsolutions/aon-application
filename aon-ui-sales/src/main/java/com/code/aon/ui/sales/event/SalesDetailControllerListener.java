@@ -38,12 +38,18 @@ public class SalesDetailControllerListener extends ControllerAdapter {
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		checkQuantities();
+		Sales sales = (Sales)((LinesController)event.getController()).getMasterController().getTo();
+		SalesDetail salesDetail = (SalesDetail)event.getController().getTo();
+		checkQuantities(sales, salesDetail);
+		checkSerializable(salesDetail);
 	}
 	
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		checkQuantities();
+		Sales sales = (Sales)((LinesController)event.getController()).getMasterController().getTo();
+		SalesDetail salesDetail = (SalesDetail)event.getController().getTo();
+		checkQuantities(sales, salesDetail);
+		checkSerializable(salesDetail);
 	}
 	
 	@Override
@@ -68,14 +74,24 @@ public class SalesDetailControllerListener extends ControllerAdapter {
 		return (value != null) ? ((Integer)value) + 1 : 1;
 	}
 	
-	private void checkQuantities() throws ControllerListenerException {
-		Sales sales = (Sales) ((LinesController)this.getController()).getMasterController().getTo();
-		SalesDetail salesDetail = (SalesDetail) this.getController().getTo();
+	private void checkQuantities(Sales sales, SalesDetail salesDetail) throws ControllerListenerException {
 		if (salesDetail.getQuantity() < 0 && !sales.isItemReturn()) {
 			throw new ControllerListenerException("La cantidad no puede ser negativa.");
 		}
 		if (salesDetail.getQuantity() > 0 && sales.isItemReturn()) {
 			throw new ControllerListenerException("La cantidad debe ser negativa.");
+		}
+	}
+
+	private void checkSerializable(SalesDetail salesDetail) throws ControllerListenerException {
+		try {
+			if (salesDetail.getItem() != null && salesDetail.getItem().getProduct().isSerializable()) {
+				if (!salesDetail.getItem().getProduct().isLotable() && !salesDetail.getItem().isWildCard() && Math.abs(salesDetail.getQuantity()) != 1) {
+					salesDetail.setQuantity(1);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
 		}
 	}
 
