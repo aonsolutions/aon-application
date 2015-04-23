@@ -456,6 +456,14 @@
 											actionListener="#{invoiceRecorder.onEditSearch}"
 											value="#{bundle.finance_invoice_recording_module}"/>
 									</aon:div>
+									<aon:if test="#{desktop.state.payrollEnabled}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="salaryAccounting-accounting"
+												action="salaryAccounting_form-accounting"
+												actionListener="#{salaryAccounting.onReset}"
+												value="#{bundle.accounting_salary_module}"/>
+										</aon:div>
+									</aon:if>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="financeTrackingEntry-accounting"
 											action="financeTrackingEntry_form-accounting"

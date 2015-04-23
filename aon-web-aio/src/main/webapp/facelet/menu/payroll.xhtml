@@ -336,6 +336,14 @@
 											actionListener="#{reportPrint.onInit}"
 											value="Listado de costes" />
 									</aon:div>
+									<aon:if test="#{desktop.state.accoutingEnabled}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="salaryAccounting-payroll"
+												action="salaryAccounting_form-payroll"
+												actionListener="#{salaryAccounting.onReset}"
+												value="#{bundle.accounting_salary_module}"/>
+										</aon:div>
+									</aon:if>								
 								</aon:if>
 							</aon:div>
 						</aon:panelGrid>

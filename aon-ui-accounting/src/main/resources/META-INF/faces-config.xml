@@ -424,6 +424,13 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ********** SALARY ACCOUNTING CONTROLLER ********* -->
+	<managed-bean>
+		<managed-bean-name>salaryAccounting</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.SalaryAccountingController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ********** ACCOUNT SOCIAL INSURANCE CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>socialInsuranceEntry</managed-bean-name>
@@ -1093,6 +1100,14 @@
 		<navigation-case>
 			<from-outcome>accountingFinanceChecker_stripped</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/finance/stripped.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!--  **** SALARY ACCOUNTING  **** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>salaryAccounting_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/salaryAccounting/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
