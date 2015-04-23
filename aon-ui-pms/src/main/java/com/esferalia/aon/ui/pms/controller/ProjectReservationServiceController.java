@@ -103,7 +103,7 @@ public class ProjectReservationServiceController extends LinesController {
 	}
 
 	public void setServiceQuantity(double serviceQuantity) {
-		this.serviceQuantity = serviceQuantity;
+		this.serviceQuantity = CommonUtil.round(serviceQuantity);
 	}
 
 	public double getServicePrice() {
@@ -111,7 +111,7 @@ public class ProjectReservationServiceController extends LinesController {
 	}
 
 	public void setServicePrice(double servicePrice) {
-		this.servicePrice = servicePrice;
+		this.servicePrice = CommonUtil.round(servicePrice, 4);
 	}
 
 	@Override
