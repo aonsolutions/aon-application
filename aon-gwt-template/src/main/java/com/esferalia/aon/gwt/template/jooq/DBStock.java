@@ -329,14 +329,18 @@ public class DBStock {
 			
 			 
 			DeleteConditionStep<StockRecord> stockDeleteQuery;
+			DeleteConditionStep<WarehouseTransferDetailRecord> transferDeleteQuery;
 			InsertValuesStep4<StockRecord, Integer, Integer, Double, Integer> stockInsertQuery = ctx.getDslContext().insertInto(STOCK, STOCK.DOMAIN, STOCK.ITEM, STOCK.QUANTITY, STOCK.WAREHOUSE);
 			InsertValuesStep5<StockRecord, Integer, Integer, Integer, Double, Integer> stockUpdateQuery = ctx.getDslContext().insertInto(STOCK, STOCK.ID, STOCK.DOMAIN, STOCK.ITEM, STOCK.QUANTITY, STOCK.WAREHOUSE);
 			InsertValuesStep4<WarehouseTransferDetailRecord, Integer, Integer, Integer, Double> transferInsert = ctx.getDslContext().insertInto(WAREHOUSE_TRANSFER_DETAIL, WAREHOUSE_TRANSFER_DETAIL.DOMAIN, WAREHOUSE_TRANSFER_DETAIL.ITEM, WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER, WAREHOUSE_TRANSFER_DETAIL.QUANTITY);
+			InsertValuesStep5<WarehouseTransferDetailRecord, Integer, Integer, Integer, Integer, Double> transferUpdate = ctx.getDslContext().insertInto(WAREHOUSE_TRANSFER_DETAIL,WAREHOUSE_TRANSFER_DETAIL.ID, WAREHOUSE_TRANSFER_DETAIL.DOMAIN, WAREHOUSE_TRANSFER_DETAIL.ITEM, WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER, WAREHOUSE_TRANSFER_DETAIL.QUANTITY);
 
 			Vector<Integer> stockDeleteIds = new Vector<Integer>();
-
-			Date d = new Date();
+			Vector<Integer> transferDeleteIds = new Vector<Integer>();
+			
+			/*Date d = new Date();
 			Timestamp t = new Timestamp(d.getTime());
+			
 			Condition series;
 			String scode;
 			
@@ -363,6 +367,15 @@ public class DBStock {
 			
 			Integer transferId = ctx.getDslContext().insertInto(WAREHOUSE_TRANSFER,WAREHOUSE_TRANSFER.DOMAIN, WAREHOUSE_TRANSFER.SERIES,WAREHOUSE_TRANSFER.NUMBER, WAREHOUSE_TRANSFER.COMMENTS, WAREHOUSE_TRANSFER.ISSUE_TIME, WAREHOUSE_TRANSFER.SOURCE_WAREHOUSE, WAREHOUSE_TRANSFER.TARGET_WAREHOUSE)
 					.values(domainId,scode,next,ti.getComments(),t,source,target).returning(WAREHOUSE_TRANSFER.ID).fetchOne().getId();
+			*/
+			
+			Integer transferId = ctx.getDslContext().select(WAREHOUSE_TRANSFER.ID)
+										.from(WAREHOUSE_TRANSFER)
+										.where(WAREHOUSE_TRANSFER.DOMAIN.eq(domainId))
+										.and(WAREHOUSE_TRANSFER.SERIES.eq(ti.getSeries().getCode()))
+										.and(WAREHOUSE_TRANSFER.NUMBER.eq(ti.getNumber()))
+										.fetchOne().value1();
+			
 			Vector<String> v = new Vector<String>();
 			AONContext sctx = ctx;
 			stock.stream().forEach(s ->{
@@ -414,7 +427,18 @@ public class DBStock {
 								.from(STOCK)
 								.where(STOCK.ITEM.eq(itemId).and(STOCK.WAREHOUSE.eq(ti.getSourceWarehouse().getId()))).fetch();
 						
-						transferInsert.values(domainId, itemId, transferId,s.getQuantity());
+						Record2<Integer,Double> data4 = sctx.getDslContext().select(WAREHOUSE_TRANSFER_DETAIL.ID, WAREHOUSE_TRANSFER_DETAIL.QUANTITY)
+											.from(WAREHOUSE_TRANSFER_DETAIL)
+											.where(WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER.eq(transferId))
+											.and(WAREHOUSE_TRANSFER_DETAIL.ITEM.eq(itemId))
+											.fetchOne();
+						if(data4 != null){
+							transferDeleteIds.add(data4.value1());
+							transferUpdate.values(data4.value1(),domainId, itemId, transferId,s.getQuantity()+data4.value2());
+						}
+						else {
+							transferInsert.values(domainId, itemId, transferId,s.getQuantity());
+						}
 						Double quantity, quantity2;
 						Integer stockId, stockId2;
 						if(ti.getSourceWarehouse() != null && ti.getTargetWarehouse() != null ){
@@ -487,6 +511,11 @@ public class DBStock {
 				
 				stockInsertQuery.execute();
 				
+				if(transferDeleteIds.size() > 0){
+					transferDeleteQuery = ctx.getDslContext().delete(WAREHOUSE_TRANSFER_DETAIL).where(WAREHOUSE_TRANSFER_DETAIL.ID.in(transferDeleteIds));
+					transferDeleteQuery.execute();
+					transferUpdate.execute();
+				}
 				transferInsert.execute();
 				
 				ctx.activateForeignKeys();
@@ -596,20 +625,23 @@ public class DBStock {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
+			Result<Record1< Integer>> data = null; 
+			if(w != null)
+				data = ctx.getDslContext().select(SERIES.ID)
+					.from(WAREHOUSE)
+						.join(WORKPLACE).on(WAREHOUSE.WORKPLACE.eq(WORKPLACE.ID))
+						.join(SERIES).on(SERIES.SCOPE.eq(WORKPLACE.SCOPE))
+					.where(SERIES.ID.eq(s.getId()).and(WAREHOUSE.ID.eq(w.getId()))).fetch();
 			
-			Result<Record1< Integer>> data = ctx.getDslContext().select(SERIES.ID)
-				.from(WAREHOUSE)
-					.join(WORKPLACE).on(WAREHOUSE.WORKPLACE.eq(WORKPLACE.ID))
-					.join(SERIES).on(SERIES.SCOPE.eq(WORKPLACE.SCOPE))
-				.where(SERIES.ID.eq(s.getId()).and(WAREHOUSE.ID.eq(w.getId()))).fetch();
-			
-			Result<Record1< Integer>> data2 = ctx.getDslContext().select(SERIES.ID)
+			Result<Record1< Integer>> data2 = null;
+			if(w2 != null)
+				data2 = ctx.getDslContext().select(SERIES.ID)
 					.from(WAREHOUSE)
 						.join(WORKPLACE).on(WAREHOUSE.WORKPLACE.eq(WORKPLACE.ID))
 						.join(SERIES).on(SERIES.SCOPE.eq(WORKPLACE.SCOPE))
 					.where(SERIES.ID.eq(s.getId()).and(WAREHOUSE.ID.eq(w2.getId()))).fetch();
 			
-			return data.isNotEmpty() || data2.isNotEmpty();
+			return (w != null && data.isNotEmpty()) || (w2!= null && data2.isNotEmpty());
 
 		} finally {
 			if (ctx != null) ctx.close();

@@ -125,6 +125,7 @@ public class DBConsults {
 					TemplateInfo stockTemplate = new TemplateInfo();
 					Vector<String> v2 = new Vector<String>();
 					v2.add("Producto");v2.add("Nombre");v2.add("Cantidad");
+					v2.add("Detalle 1");v2.add("Detalle 2");v2.add("Detalle 3");
 					stockTemplate.setColumns(v2);
 					stockTemplate.setDomain(domain);
 					stockTemplate.setDomainId(0);
@@ -140,16 +141,17 @@ public class DBConsults {
 					v2 = new Vector<String>();
 					v2.add("Centro de Trabajo");v2.add("Departamento");
 					v2.add("Producto");v2.add("Nombre");v2.add("Cantidad");
-					stockTemplate.setColumns(v2);
-					stockTemplate.setDomain(domain);
-					stockTemplate.setDomainId(0);
-					stockTemplate.setName("Compra");
-					stockTemplate.setType("Stock");
-					stockTemplate.sethasWarehouse(false);
-					stockTemplate.setIsParent(true);
-					id = insertTemplate(domain, stockTemplate,Utils.newXmlFile(stockTemplate), 0);
-					stockTemplate.setId(id);
-					v.add(stockTemplate);
+					v2.add("Detalle 1");v2.add("Detalle 2");v2.add("Detalle 3");
+					stockPurchaseTemplate.setColumns(v2);
+					stockPurchaseTemplate.setDomain(domain);
+					stockPurchaseTemplate.setDomainId(0);
+					stockPurchaseTemplate.setName("Compra");
+					stockPurchaseTemplate.setType("Stock");
+					stockPurchaseTemplate.sethasWarehouse(false);
+					stockPurchaseTemplate.setIsParent(true);
+					id = insertTemplate(domain, stockPurchaseTemplate,Utils.newXmlFile(stockPurchaseTemplate), 0);
+					stockPurchaseTemplate.setId(id);
+					v.add(stockPurchaseTemplate);
 					
 					TemplateInfo productTemplate = new TemplateInfo();
 					v2 = new Vector<String>();

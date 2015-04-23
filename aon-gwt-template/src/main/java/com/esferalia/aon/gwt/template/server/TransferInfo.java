@@ -9,6 +9,7 @@ public class TransferInfo {
 	Warehouse sourceWarehouse;
 	Warehouse targetWarehouse;
 	String comments;
+	Integer number;
 	
 	public Series getSeries() {
 		return series;
@@ -33,6 +34,12 @@ public class TransferInfo {
 	}
 	public void setComments(String comments) {
 		this.comments = comments;
+	}
+	public Integer getNumber() {
+		return number;
+	}
+	public void setNumber(Integer number) {
+		this.number = number;
 	}
 
 }

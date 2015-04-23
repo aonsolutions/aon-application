@@ -132,10 +132,12 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		switch (dialog.getType()) {
 		case "new": newTemplate();break;
 		case "edit": editTemplate(dialog);break;
+		case "import": importar(dialog);break;
+		case "export": exportar(dialog);break;
 		case "delete": deleteTemplate(dialog.getTemplateInfo().getName());break;
 		case "importProduct": importProduct(dialog.getUrl(),dialog.getTemplateList());break;
 		case "importStock": importStock(dialog);break;
-		case "importTransferStock": importTransferStock(dialog.getUrl(),dialog.getTemplateList());break;
+		case "importTransferStock": importTransferStock(dialog);break;
 		case "importResponse": importResponse(dialog.getError());break;
 		case "exportProduct": exportProduct(dialog.getTemplateList());break;
 		case "exportStock": exportStock(dialog.getTemplateList());break;
@@ -149,6 +151,39 @@ public abstract class TemplatesDialog extends CustomDialogB {
 			break;
 		}
 	} 
+	
+	private void importar(Dialog dialog){
+		flex_table.setStyleName("aon-panelGrid");
+		flex_table.setWidth("400px");
+		flex_table.setBorderWidth(1);
+		flex_table.setCellSpacing(0);
+		
+		ListBox lb = new ListBox();
+		lb.addItem("-");
+		lb.addItem("Producto");
+		lb.addItem("Traspaso entre almacenes");
+		lb.addItem("Stock");
+		lb.addItem("Asignar Cuotas");
+		flex_table.setWidget(0, 0, new Label("Tipo"));
+		flex_table.setWidget(0, 1, lb);
+	}
+
+	private void exportar(Dialog dialog){
+		flex_table.setStyleName("aon-panelGrid");
+		flex_table.setWidth("400px");
+		flex_table.setBorderWidth(1);
+		flex_table.setCellSpacing(0);
+		
+		ListBox lb = new ListBox();
+		lb.addItem("-");
+		lb.addItem("Producto");
+		lb.addItem("Stock");
+		lb.addItem("Catalogo");
+		flex_table.setWidget(0, 0, new Label("Tipo"));
+		flex_table.setWidget(0, 1, lb);
+	
+		flexTableCss();
+	}
 	
 	private void exportProposal(String url,TemplateList templates){
 		flex_table.setStyleName("aon-panelGrid");
@@ -441,7 +476,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		}
 		return false;
 	}
-	private void importTransferStock(String url,TemplateList templates) {
+	private void importTransferStock(Dialog dialog) {
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
@@ -449,7 +484,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 
 		ListBox lb = new ListBox();
 		lb.addItem("-");
-		for(TemplateInfo ti : templates.getList()){
+		for(TemplateInfo ti : dialog.getTemplateList().getList()){
 			if(ti.getType().equals("Stock"))
 				lb.addItem(ti.getName());
 		}
@@ -520,8 +555,11 @@ public abstract class TemplatesDialog extends CustomDialogB {
 			}
 		});
 		
+		ListBox lb2Aux = new ListBox();
+		lb2Aux.addItem(dialog.getWarehouses().get(0).getName());
+		lb2Aux.setEnabled(false);
 		flex_table.setWidget(1, 0, new Label("Almac\u00e9n Origen"));
-		flex_table.setWidget(1, 1,lb2 );
+		flex_table.setWidget(1, 1,lb2Aux );
 		
 		
 		ListBox lb4 = new ListBox();
@@ -582,23 +620,30 @@ public abstract class TemplatesDialog extends CustomDialogB {
 			}
 		});
 		
+		
+		ListBox lb4Aux = new ListBox();
+		lb4Aux.addItem(dialog.getWarehouses().get(1).getName());
+		lb4Aux.setEnabled(false);
 		flex_table.setWidget(2, 0, new Label("Almac\u00e9n Destino"));
-		flex_table.setWidget(2, 1,lb4 );
+		flex_table.setWidget(2, 1,lb4Aux );
 		
 		ListBox lb3 = new ListBox();
 		lb3.addItem("-");
 		/*for(String s : series){
 			lb3.addItem(s);
 		}*/
+		ListBox lb3Aux = new ListBox();
+		lb3Aux.addItem(dialog.getSeries2().get(0).getName());
+		lb3Aux.setEnabled(false);
 		flex_table.setWidget(3, 0, new Label("Serie"));
-		flex_table.setWidget(3, 1,lb3 );
+		flex_table.setWidget(3, 1,lb3Aux );
 		
 		TextBox tb = new TextBox();
 		tb.setStyleName("aon-inputText");
 		flex_table.setWidget(4, 0, new Label("Comentarios"));
 		flex_table.setWidget(4, 1, tb);
 		
-		SingleUploader upload = newUploader(null, url);
+		SingleUploader upload = newUploader(null, dialog.getUrl());
 		flex_table.setWidget(5, 0, new Label("Archivo"));
 		flex_table.setWidget(5, 1, upload);
 		
@@ -783,7 +828,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 				}
 				else if(lb.getItemText(lb.getSelectedIndex()).equals("Stock")){
 					vp.add(new Label("Columnas Obligatorias:"));
-					vp.add(new Label("Product"));
+					vp.add(new Label("Producto"));
 					vp.add(new Label("Almac\u00e9n Destino"));
 					vp.add(new Label("Cantidad"));
 				}
@@ -803,7 +848,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					vp.add(r5);
 					Label r6 = new Label("Fecha Inicio");r6.addStyleName("aon-info-rest-template");
 					vp.add(r6);
-					Label r7 = new Label("Fecha Facturación");r7.addStyleName("aon-info-rest-template");
+					Label r7 = new Label("Fecha Facturaci\u00f3n");r7.addStyleName("aon-info-rest-template");
 					vp.add(r7);
 				}
 				popup = new PopupPanel();

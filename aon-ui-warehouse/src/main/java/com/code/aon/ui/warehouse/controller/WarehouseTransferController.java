@@ -26,6 +26,5 @@ public class WarehouseTransferController extends HeaderObjectController {
 	public List<SelectItem> getSeriesCodes() throws ManagerBeanException {
 		ConfigCollectionsController ccc = (ConfigCollectionsController) AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
 		return ccc.getDeliverySeriesIds();
-	}
-		
+	}		
 }

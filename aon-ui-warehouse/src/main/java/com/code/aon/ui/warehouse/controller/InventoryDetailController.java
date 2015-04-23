@@ -178,7 +178,6 @@ public class InventoryDetailController extends LinesController implements IColle
 	}	
 	
 	public void onRefresh(ActionEvent event) {
-		System.out.println("onRefersh ......................");
 		initializeModel();
 	}
 

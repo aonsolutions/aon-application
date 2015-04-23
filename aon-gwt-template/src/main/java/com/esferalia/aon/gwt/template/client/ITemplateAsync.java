@@ -39,7 +39,7 @@ public interface ITemplateAsync {
 
 	void executeExcel(Integer inventory, TemplateInfo ti, String warehouse,
 			String warehouse2, String series, String comments,
-			AsyncCallback<Integer> callback);
+			Boolean istransfer, Integer number, AsyncCallback<Integer> callback);
 
 	void insertProduct(AsyncCallback<Error> callback);
 

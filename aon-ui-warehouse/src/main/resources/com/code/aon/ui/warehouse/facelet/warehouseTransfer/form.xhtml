@@ -10,14 +10,36 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
+	
+		<aon:form style="display:none">
+			<aon:commandButton id="warehouseTransferRefreshButton" reRender="warehouseTransferList"
+				actionListener="#{warehouseTransferDetail.onRefresh}" />
+			<script type="text/javascript">
+            	//<![CDATA[
+					refreshWarehouseTransfer = function(){
+						#{rich:element('warehouseTransferRefreshButton')}.click();	
+					}
+            	//]]>
+			</script>
+		</aon:form>
 		<aon:form id="warehouseTransferForm">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.warehouse_transfer_module}" />
 				<ui:param name="controller" value="#{warehouseTransfer}" />
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:if test="#{!warehouseTransfer.nevv}">
+						<ui:include
+							src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
+						<aon:commandLink id="transfer-stock-import" value="#{bundle.aon_import}"
+							onclick="transferStock('#{warehouseTransfer.to.sourceWarehouse.name}','#{warehouseTransfer.to.targetWarehouse.name}','#{warehouseTransfer.to.series}','#{warehouseTransfer.to.number}')"
+							styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
+						</aon:commandLink>
+					</aon:if>
+				</ui:define>
 			</ui:decorate>
 
-			<aon:div styleClass="aon-scroll-area">
+			<aon:div styleClass="aon-scroll-area" id="warehouseTransferList">
 				<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
 					columnClasses="aon-panelGrid-odd aon-width-150,
 						aon-panelGrid-even aon-width-auto,

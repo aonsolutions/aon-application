@@ -208,18 +208,30 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		}
 		
 		Error error = new Error();
+		if(getOut() == null){
+			error.setError(false);
+ 			textError =  textError + "*No ha importado ningún archivo.\n";
+
+			verror.add("*No ha importado ningún archivo.");
+			error.setTextError(verror);
+			this.error = error;
+			return -1;
+		}
 		if(!getMimetype().equals(MimeType.MIME_MS_EXCEL.getName())
 				&& !getMimetype().equals(MimeType.MIME_MS_EXCEL_2007.getName())
 				&& !getMimetype().equals(MimeType.MIME_STAR_OFFICE_SPREADSHEET.getName())){
 				//El archivo no es un fichero Excel.
 				error.setError(false);
+	 			textError =  textError + "*El archivo importado no es de tipo excel.\n";
+
 				verror.add("*El archivo importado no es de tipo excel.");
 				error.setTextError(verror);
 				this.error = error;
 				return -1;
 		}
+		
 		byte[] data = getOut();
-			
+
 		File aux = new File("/tmp/fee.xls");
 		try {
 			org.apache.commons.io.FileUtils.writeByteArrayToFile(aux, data);
@@ -323,6 +335,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		System.out.println("time: " + (time/1000d));
 		if(rowCount != -1) rowCount = fees.size();
 		System.out.println(rowCount);
+		setOut(null);setMimetype(null);
 		return rowCount;
 	}
 
@@ -608,15 +621,27 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		Vector<StockInfo> stock = new Vector<StockInfo>();
 		Error error = new Error();
 		
+		if(getOut() == null){
+			error.setError(false);
+ 			textError =  textError + "*No ha importado ningún archivo.\n";
+
+			verror.add("*No ha importado ningún archivo.");
+			error.setTextError(verror);
+			this.error = error;
+			return -1;
+		}
 		if(!getMimetype().equals(MimeType.MIME_MS_EXCEL.getName())
 				&& !getMimetype().equals(MimeType.MIME_MS_EXCEL_2007.getName())){
 				//El archivo no es un fichero Excel.
 				error.setError(false);
+	 			textError =  textError + "*El archivo importado no es de tipo excel.\n";
+
 				verror.add("*El archivo importado no es de tipo excel.");
 				error.setTextError(verror);
 				this.error = error;
 				return -1;
 		}
+		
 		byte[] data = getOut();
 		
 		File aux = new File("/tmp/products.xls");
@@ -694,7 +719,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	            				error.setTextError(verror);
 	            				this.error = error;
 	            			}
-	            			else if(ti.getColumns().get(beforeCell.getColumnIndex()).equals("Producto") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Almac\u00e9n Destino") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Cantidad") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Series")){
+	            			else if(ti.getColumns().get(beforeCell.getColumnIndex()).equals("Producto") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Almac\u00e9n Destino") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Series")){
 	            				textError= textError + "*Fila "+(beforeCell.getRowIndex()+1)+", Columna "+Utils.getColumn(beforeCell.getColumnIndex())+" : Dato Incorrecto \n";
 	            				verror.add("*Fila "+(beforeCell.getRowIndex()+1)+", Columna "+Utils.getColumn(beforeCell.getColumnIndex())+" : Dato Incorrecto \n");
 	            				error.setTextError(verror);
@@ -742,7 +767,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			}
 	          
 			if(row.getRowNum() > 0){ 
-				if(si.getProduct() != null && si.getQuantity() != null){
+				if(si.getProduct() != null && si.getQuantity() != null
+						&& si.getQuantity() != 0){
 					si.setRow(row.getRowNum());
 	           		stock.add(si);
 				}
@@ -753,6 +779,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		System.out.println("time: " + (time/1000d));
 		if(rowCount != -1) rowCount = stock.size();
 		System.out.println(rowCount);
+		setOut(null);setMimetype(null);
 		return rowCount;
 	}
 	
@@ -783,7 +810,9 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	}
 
 	Integer inventoryId ;
-	public Integer executeExcel(Integer inventory, TemplateInfo templateInfo, String warehouse1,String warehouse2 , String series, String comments){
+	Boolean transfer;
+	public Integer executeExcel(Integer inventory, TemplateInfo templateInfo, String warehouse1,String warehouse2 , String series, String comments,Boolean istransfer ,Integer number){
+		transfer = istransfer;
 		ti = templateInfo;
 		inventoryId = inventory;
 		long startAll= System.currentTimeMillis();
@@ -824,6 +853,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		if(warehouse2 != null && !warehouse2.equals("-")) transferInfo.setSourceWarehouse(w2);
 		transferInfo.setSeries(s);
 		transferInfo.setComments(comments);
+		if(istransfer) transferInfo.setNumber(number);
 		
     	if(transferInfo.getSeries() != null && transferInfo.getTargetWarehouse() !=null){
     		 b = DBStock.checkSeries(domain,domainId,transferInfo.getSeries(),transferInfo.getTargetWarehouse(), transferInfo.getSourceWarehouse());	
@@ -837,17 +867,26 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
     		return -1;
     	}
 		
-
+    	if(getOut() == null){
+			error.setError(false);
+ 			textError =  textError + "*No ha importado ningún archivo.\n";
+			verror.add("*No ha importado ningún archivo.");
+			error.setTextError(verror);
+			this.error = error;
+			return -1;
+		}
 
 		if(!getMimetype().equals(MimeType.MIME_MS_EXCEL.getName())
 			&& !getMimetype().equals(MimeType.MIME_MS_EXCEL_2007.getName())){
 			//El archivo no es un fichero Excel.
 			error.setError(false);
+ 			textError =  textError + "*El archivo importado no es de tipo excel.\n";
 			verror.add("*El archivo importado no es de tipo excel.");
 			error.setTextError(verror);
 			this.error = error;
 			return -1;
 		}
+		
 		byte[] data = getOut();
 		
 		File aux = new File("/tmp/products.xls");
@@ -975,7 +1014,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
             
             if(row.getRowNum() > 0){ 
             	si.setRow(row.getRowNum());
-            	if(si.getQuantity() != null)
+            	
+            	if(si.getQuantity() != null && (transfer && si.getQuantity() != 0))
             		stock.add(si);
             }
 		});
@@ -984,6 +1024,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		System.out.println("time: " + (time/1000d));
 		if(rowCount != -1) rowCount = stock.size();
 		System.out.println(rowCount);
+		setOut(null);setMimetype(null);
 		return rowCount;
 	}
 	public Boolean isRequiredStock(String s){
@@ -1139,16 +1180,27 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		Vector<ProductInfo> products = new Vector<ProductInfo>();
 		com.esferalia.aon.gwt.template.shared.Error error = new Error();
     	
+		if(getOut() == null){
+			error.setError(false);
+ 			textError =  textError + "*No ha importado ningún archivo.\n";
 
+			verror.add("*No ha importado ningún archivo.");
+			error.setTextError(verror);
+			this.error = error;
+			return -1;
+		}
 		if(!getMimetype().equals(MimeType.MIME_MS_EXCEL.getName())
 			&& !getMimetype().equals(MimeType.MIME_MS_EXCEL_2007.getName())){
 			//El archivo no es un fichero Excel.
 			error.setError(false);
+ 			textError =  textError + "*El archivo importado no es de tipo excel.\n";
+
 			verror.add("*El archivo importado no es de tipo excel.");
 			error.setTextError(verror);
 			this.error = error;
 			return -1;
 		}
+		
 		byte[] data = getOut();
 		
 		File aux = new File("/tmp/products.xls");
@@ -1284,6 +1336,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		});
 		this.products = products;
 		if(rowCount != -1) rowCount = products.size();
+		setOut(null);setMimetype(null);
 		return rowCount;
 	}
 

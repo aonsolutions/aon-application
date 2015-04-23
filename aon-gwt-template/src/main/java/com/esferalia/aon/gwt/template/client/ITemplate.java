@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.template.client;
 
 import java.util.Vector;
 
-import com.esferalia.aon.gwt.template.jooq.DBCatalogue;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.Series;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
@@ -38,7 +37,7 @@ public interface ITemplate extends RemoteService{
 	
 	public Error insertStock();
 	
-	public Integer executeExcel(Integer inventory,TemplateInfo ti, String warehouse,String warehouse2, String series, String comments);
+	public Integer executeExcel(Integer inventory,TemplateInfo ti, String warehouse,String warehouse2, String series, String comments, Boolean istransfer,Integer number);
 
 	public Error insertProduct();
 	

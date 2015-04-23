@@ -63,7 +63,8 @@
 							<f:param name="reportKey" value="purchaseProposal" />
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
-					
+					</aon:if>
+					<aon:if test="#{!proposal.nevv}">
 						<ui:include
 							src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
 						<aon:commandLink id="proposal-import" value="#{bundle.aon_import}"

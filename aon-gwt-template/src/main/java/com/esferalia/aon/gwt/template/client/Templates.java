@@ -168,6 +168,8 @@ public class Templates extends Composite implements EntryPoint {
 	
 	@UiField(provided = true) DataGrid<TemplateInfo> dataGrid; 
 	@UiField Button new_button;
+	@UiField Button import_button;
+	@UiField Button export_button;
 	@UiField(provided = true) TextBox nameSearchBox;
 	@UiField(provided = true) TextBox typeSearchBox;
 	@UiField Button nameSearchButton;
@@ -814,7 +816,7 @@ public class Templates extends Composite implements EntryPoint {
 						ti = t;
 					}
 				}
-				item.executeExcel(inventoryId, ti, warehouse,null, series, comments, new AsyncCallback<Integer>() {
+				item.executeExcel(inventoryId, ti, warehouse,null, series, comments,false,-1,new AsyncCallback<Integer>() {
 					
 					@Override
 					public void onSuccess(Integer result) {
@@ -937,15 +939,16 @@ public class Templates extends Composite implements EntryPoint {
 		popup.show();
 
 	}
-	
-	private void importTransferStock(Vector<Warehouse> w, Vector<Series> series){
+	Integer num;
+	private void importTransferStock( Vector<Warehouse> w, Vector<Series> series, Integer number){
+		num = number;
 		Dialog d = new Dialog("Traspaso entre almacenes","Importar",true,"Cancelar",true,"importTransferStock");
 		d.setUrl(GWT.getModuleBaseURL());
 		d.setTemplateList(template_list);
 		d.setWarehouses(w);
 		d.setSeries2(series);
 		TemplatesDialog popup = new TemplatesDialog(d) {
-			
+			Integer number = num;
 			@Override
 			protected void onCancel() {
 				hide();
@@ -976,7 +979,7 @@ public class Templates extends Composite implements EntryPoint {
 						ti = t;
 					}
 				}
-				item.executeExcel(0,ti, warehouse, warehouse2, series, comments, new AsyncCallback<Integer>() {
+				item.executeExcel(0,ti, warehouse, warehouse2, series, comments,true,number, new AsyncCallback<Integer>() {
 					
 					@Override
 					public void onSuccess(Integer result) {
@@ -1000,7 +1003,8 @@ public class Templates extends Composite implements EntryPoint {
 										
 										@Override
 										protected void onAccept() {
-											hide();			
+											hide();
+											refreshTransferStock();
 										}
 
 										@Override
@@ -1453,6 +1457,47 @@ public class Templates extends Composite implements EntryPoint {
 		popup.show();
 	}
 	
+	@UiHandler("import_button")
+	void importButton(ClickEvent event){
+		Dialog d = new Dialog("Importar","Importar",true,"Cancelar",true,"import");
+		popup = new TemplatesDialog(d) {
+
+			@Override
+			protected void onAccept() {
+				hide();
+			}
+
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+			
+		};
+		popup.addStyleName("gwt-PopupPanel-template");
+		popup.setGlassEnabled(true);
+		popup.show();
+	}
+	
+	@UiHandler("export_button")
+	void exportButton(ClickEvent event){
+		Dialog d = new Dialog("Exportar","Exportar",true,"Cancelar",true,"export");
+		popup = new TemplatesDialog(d) {
+
+			@Override
+			protected void onAccept() {
+				hide();
+			}
+
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+			
+		};
+		popup.addStyleName("gwt-PopupPanel-template");
+		popup.setGlassEnabled(true);
+		popup.show();
+	}
 	
 	// ------------------------------------------------------------------------
 	
@@ -1496,14 +1541,17 @@ public class Templates extends Composite implements EntryPoint {
 	}
 	
 	public static native void refreshInventoryDetail() /*-{
-		
 		$wnd.refreshInventoryDetail();
 	}-*/;
 
 
-	public static native void refreshProposalDetail() /*-{
-		
+	public static native void refreshProposalDetail() /*-{	
 		$wnd.refreshProposalDetail();
+	}-*/;
+	
+	public static native void refreshTransferStock() /*-{
+		$wnd.alert('eeey');
+		$wnd.refreshWarehouseTransfer();
 	}-*/;
 	
 	public static native void exportStock(Templates thiz) /*-{
@@ -1566,34 +1614,24 @@ public class Templates extends Composite implements EntryPoint {
 			thiz.@com.esferalia.aon.gwt.template.client.Templates::feex(*)();
 		}
 	}-*/;
-	
-	public void transferStock(){
-		item.getWarehouses(new AsyncCallback<Vector<Warehouse>>() {
-			
-			@Override
-			public void onSuccess(Vector<Warehouse> result) {
-				ws = result;
-				item.getSeries(new AsyncCallback<Vector<Series>>() {
-					Vector<Warehouse> whs = ws;
-					@Override
-					public void onSuccess(Vector<Series> result) {
-						importTransferStock(whs, result);		
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {}
-				});
-				
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {}
-		});
+	public void transferStock(String sourceWarehouse,String targetWarehouse, String serie, String number){
+		Window.alert(sourceWarehouse +" - "+targetWarehouse+" - "+serie+" - "+number);
+		Warehouse w1 = new Warehouse();
+		w1.setName(sourceWarehouse);
+		Warehouse w2 = new Warehouse();
+		w2.setName(targetWarehouse);
+		Vector<Warehouse> warehouses = new Vector<Warehouse>();
+		warehouses.add(0,w1);warehouses.add(1,w2);
+		Vector<Series> series = new Vector<Series>();
+		Series s = new Series();
+		s.setName(serie);
+		series.add(s);
+		importTransferStock(warehouses,series, Integer.parseInt(number));		
 	}
 
 	public static native void exportTransferStock(Templates thiz) /*-{
-		$wnd.transferStock = function() {
-			thiz.@com.esferalia.aon.gwt.template.client.Templates::transferStock(*)();
+		$wnd.transferStock = function(source,target,serie, number) {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::transferStock(*)(source,target,serie,number);
 		}
 	}-*/;
 	

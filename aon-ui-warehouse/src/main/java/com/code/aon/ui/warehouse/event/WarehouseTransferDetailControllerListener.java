@@ -20,5 +20,4 @@ public class WarehouseTransferDetailControllerListener extends ControllerAdapter
 		WarehouseTransferDetail wtd = (WarehouseTransferDetail) detail.getTo();
 		wtd.setWarehouseTransfer(wt);
 	}
-	
 }
