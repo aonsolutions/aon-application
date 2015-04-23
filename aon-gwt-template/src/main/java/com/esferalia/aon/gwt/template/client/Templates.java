@@ -1550,7 +1550,6 @@ public class Templates extends Composite implements EntryPoint {
 	}-*/;
 	
 	public static native void refreshTransferStock() /*-{
-		$wnd.alert('eeey');
 		$wnd.refreshWarehouseTransfer();
 	}-*/;
 	
@@ -1615,7 +1614,6 @@ public class Templates extends Composite implements EntryPoint {
 		}
 	}-*/;
 	public void transferStock(String sourceWarehouse,String targetWarehouse, String serie, String number){
-		Window.alert(sourceWarehouse +" - "+targetWarehouse+" - "+serie+" - "+number);
 		Warehouse w1 = new Warehouse();
 		w1.setName(sourceWarehouse);
 		Warehouse w2 = new Warehouse();
