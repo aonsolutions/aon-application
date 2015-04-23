@@ -292,11 +292,16 @@ public abstract class AbstractSQLTestCase {
 
 	protected void addPayments(AONContext aonContext,
 			AgreementRecord agreement, Date startDate, Payment payments[]) {
+		addPayments(aonContext, agreement.getDomain(), agreement, startDate, payments);
+	}
+
+	protected void addPayments(AONContext aonContext,
+			int domainId, AgreementRecord agreement, Date startDate, Payment payments[]) {
 		for (Payment payment : payments) {
 			aonContext
 					.getDslContext()
 					.insertInto(AGREEMENT_PAYMENT)
-					.set(AGREEMENT_PAYMENT.DOMAIN, agreement.getDomain())
+					.set(AGREEMENT_PAYMENT.DOMAIN, domainId)
 					.set(AGREEMENT_PAYMENT.AGREEMENT, agreement.getId())
 					.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, payment.concept)
 					.set(AGREEMENT_PAYMENT.EXPRESSION, payment.expression)
@@ -306,6 +311,7 @@ public abstract class AbstractSQLTestCase {
 					.fetchOne();
 		}
 	}
+
 
 	protected void addData(AONContext aonContext, AgreementRecord agreement,
 			Date startDate, Map<String, String> datas) {
