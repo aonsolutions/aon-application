@@ -327,14 +327,17 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 		if (dropDownPopupPanel.isShowing())
 			return;
 
+		int itemCount = dropDownCellList.getVisibleItemCount();
+		if ( itemCount == 0 ) 
+			return;
+
+		int listHeight = dropDownCellList.getOffsetHeight();
+		int itemHeight = listHeight / itemCount;
+
 		dropDownPopupPanel.setVisible(false);
 		Element popupEl = dropDownPopupPanel.getElement();
 		Document.get().getBody().appendChild(popupEl);
 		popupEl.getStyle().setPosition(Position.ABSOLUTE);
-
-		int listHeight = dropDownCellList.getOffsetHeight();
-		int itemCount = dropDownCellList.getVisibleItemCount();
-		int itemHeight = listHeight / itemCount;
 
 		int height = Math.min(MAX_DISPLAY_ROWS * itemHeight, listHeight);
 		dropDownScrollPanel.setHeight(String.valueOf(height) + "px");

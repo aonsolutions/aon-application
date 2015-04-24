@@ -71,6 +71,7 @@ import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.text.client.DateTimeFormatRenderer;
 import com.google.gwt.text.shared.Parser;
+import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -2589,7 +2590,9 @@ public class AgreementDraft extends ResizeComposite implements
 	}
 
 	private static String getSuggestionString(Payment payment) {
-		StringBuffer suggestion = new StringBuffer(payment.getDescription());
+		String description = payment.getDescription();
+		StringBuffer suggestion = StringUtils.isEmpty(description)  ? 
+				new StringBuffer():new  StringBuffer(description);
 		if (!StringUtils.isEmpty(payment.getName()))
 			suggestion.append(" (").append(payment.getName()).append(")");
 		return suggestion.toString();
@@ -2835,6 +2838,14 @@ public class AgreementDraft extends ResizeComposite implements
 
 		};
 	};
+	
+	private static class DateBox extends ValueBox<Date> {
+
+		public DateBox(Renderer<Date> renderer, Parser<Date> parser) {
+			super(Document.get().createTextInputElement(), renderer, parser);
+		}
+		
+	}
 
 	private Panel newExtraDatePanel(ValueBox<Date> dateBox, Button button) {
 		Panel datePanel = new HorizontalPanel();
@@ -2855,8 +2866,9 @@ public class AgreementDraft extends ResizeComposite implements
 	}
 
 	private ValueBox<Date> newDateBox() {
-		return ValueBox.wrap(Document.get().createTextInputElement(),
-				YEAR_MONTH_NUM_DAY_RENDERER, YEAR_MONTH_NUM_DAY_PARSER);
+//		return ValueBox.wrap(Document.get().createTextInputElement(),
+//				YEAR_MONTH_NUM_DAY_RENDERER, YEAR_MONTH_NUM_DAY_PARSER);
+		return new DateBox(YEAR_MONTH_NUM_DAY_RENDERER, YEAR_MONTH_NUM_DAY_PARSER);
 	}
 
 	private void loadContentAssistManager() {

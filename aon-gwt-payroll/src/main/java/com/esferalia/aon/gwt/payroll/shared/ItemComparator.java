@@ -23,9 +23,12 @@ public class  ItemComparator<E extends Enum<?>> implements Comparator<Item<E>> {
 	@Override
 	public int compare(Item<E> p0, Item<E> p1) {
 		
+		String description0 = p0.getDescription();
+		String description1 = p1.getDescription();
+
 		// By order
-		MatchResult order0 = ORDER.exec(p0.getDescription());
-		MatchResult order1 = ORDER.exec(p1.getDescription());
+		MatchResult order0 = ORDER.exec(description0);
+		MatchResult order1 = ORDER.exec(description1);
 		if ( order0 != null && order1 == null)
 			return -1; 			//p0 < p1
 		if ( order1 != null && order0 == null )
@@ -47,27 +50,28 @@ public class  ItemComparator<E extends Enum<?>> implements Comparator<Item<E>> {
 		if (compareTo != 0) 
 			return compareTo;
 
-		String description0 = p0.getDescription();
-		String description1 = p1.getDescription();
+
 		// By description
 		if (description0 != null && description1 == null )
 			return 1;
 		if (description0 == null && description1 != null )
 			return -1;
 		
-		try {
-			MatchResult matcher0 = ROMAN.exec(description0.trim());
-			MatchResult matcher1 = ROMAN.exec(description1.trim());
-			if (matcher0 != null && matcher1 != null ) {
-				int roman0 = romanIntValue(matcher0.getGroup(1));
-				int roman1 = romanIntValue(matcher1.getGroup(1));
-				if (roman0 != roman1)
-					return roman0 - roman1;
+		if (description0 != null &&  description1 != null ){
+			try {
+				MatchResult matcher0 = ROMAN.exec(description0.trim());
+				MatchResult matcher1 = ROMAN.exec(description1.trim());
+				if (matcher0 != null && matcher1 != null ) {
+					int roman0 = romanIntValue(matcher0.getGroup(1));
+					int roman1 = romanIntValue(matcher1.getGroup(1));
+					if (roman0 != roman1)
+						return roman0 - roman1;
+				}
+			}catch ( IllegalArgumentException e){
+				// Not roman numeral. Due a bug at 'ROMAN' regular expression.
+				// 'ROMAN' matches empty strings and strings like '[1] SALARIO'
 			}
-		} catch ( IllegalArgumentException e){
-			// Not roman numeral. Due a bug at 'ROMAN' regular expression.
-			// 'ROMAN' matches empty strings and strings like '[1] SALARIO'
-		}
+		} // Noy null
 
 		compareTo = description0 == description1 ? 0 : description0.compareTo(description1);
 		if (compareTo != 0) 
