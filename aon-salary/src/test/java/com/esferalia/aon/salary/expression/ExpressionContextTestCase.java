@@ -86,6 +86,34 @@ public class ExpressionContextTestCase {
 		} catch ( PropertyAccessException e ) {
 			Assert.assertEquals("NO_DEFINIDA",ExpressionContext.getUndefinedProperty(e, (PeriodMap) null));
 		}
+
+		try {
+			MVEL.eval("X");
+			Assert.fail();
+		} catch ( PropertyAccessException e ) {
+			Assert.assertEquals("X",ExpressionContext.getUndefinedProperty(e, (PeriodMap) null));
+		}
+
+		try {
+			MVEL.eval(" X  ");
+			Assert.fail();
+		} catch ( PropertyAccessException e ) {
+			Assert.assertEquals("X",ExpressionContext.getUndefinedProperty(e, (PeriodMap) null));
+		}
+
+		try {
+			MVEL.eval(" \r\nX  ");
+			Assert.fail();
+		} catch ( PropertyAccessException e ) {
+			Assert.assertEquals("X",ExpressionContext.getUndefinedProperty(e, (PeriodMap) null));
+		}
+
+		try {
+			MVEL.eval("1!=1?X:Y");
+			Assert.fail();
+		} catch ( PropertyAccessException e ) {
+			Assert.assertEquals("Y",ExpressionContext.getUndefinedProperty(e, (PeriodMap) null));
+		}
 	}
 
 }
