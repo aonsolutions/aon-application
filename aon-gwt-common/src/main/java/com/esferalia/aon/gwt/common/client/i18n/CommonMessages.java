@@ -326,6 +326,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Generar fichero")
 	String generateFile();
+	
+	@DefaultMessage("Imprimir certificado")
+	String printCertificate();
 
 	@DefaultMessage("Imprimir via AEAT")
 	String printViaAeat();
