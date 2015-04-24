@@ -31,30 +31,40 @@
 			<aon:div id="entryContainer" styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2">
 
-					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{salaryAccounting.enterprise}" />
-						<ui:param name="idRequired" value="#{true}" />
-						<ui:param name="skipNewButton" value="#{true}" />
-						<ui:param name="skipGoToButton" value="#{true}" />
-					</ui:include>
+					<aon:if test="#{domainSwitcher.domainManagementAvailable}">
+						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{salaryAccounting.enterprise}" />
+							<ui:param name="idRequired" value="#{true}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+							<ui:param name="skipGoToButton" value="#{true}" />
+						</ui:include>
+					</aon:if>
 
-					<aon:outputLabel for="SalaryAccounting_fromDate"
-						value="#{bundle.aon_start_date}" />
-					<aon:selectInputDate id="SalaryAccounting_fromDate"
-						required="true"
-						value="#{salaryAccounting.fromDate}"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}">
-					</aon:selectInputDate>
+					<aon:outputLabel value="#{bundle.aon_period}"
+						styleClass="aon-outputLabel aon-input-required" />
+					<aon:div>
+						<aon:outputLabel for="SalaryAccounting_month"
+							styleClass="aon-outputLabel aon-italic"
+							style="margin-right:0.4em;"
+							value="#{bundle.aon_month}" />
+						<aon:selectOneMenu id="SalaryAccounting_month"
+							reRender="SalaryAccounting_concept"
+							actionListener="#{salaryAccounting.onUpdateConcept}"
+							required="true"
+							value="#{salaryAccounting.month}">
+							<f:selectItems value="#{commonCollections.months}" />
+						</aon:selectOneMenu>
 
-					<aon:outputLabel for="SalaryAccounting_toDate"
-						value="#{bundle.aon_end_date}" />
-					<aon:selectInputDate id="SalaryAccounting_toDate"
-						required="true"
-						value="#{salaryAccounting.toDate}"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}">
-					</aon:selectInputDate>
+						<aon:outputLabel for="SalaryAccounting_year"
+							styleClass="aon-outputLabel aon-italic aon-margin-left"
+							style="margin-right:0.4em;"
+							value="#{bundle.aon_year}" />
+						<aon:selectOneMenu id="SalaryAccounting_year"
+							required="true"
+							value="#{salaryAccounting.period}">
+							<f:selectItems value="#{accountingCollections.enabledAccountPeriods}" />
+						</aon:selectOneMenu>							
+					</aon:div>
 					
 					<aon:outputLabel for="SalaryAccounting_concept"
 						styleClass="aon-outputLabel aon-input-required"
@@ -62,7 +72,7 @@
 					<rich:comboBox id="SalaryAccounting_concept"
 						suggestionValues="#{accountingCollections.conceptsDescriptions}"
 						value="#{salaryAccounting.concept}" required="true"
-						maxlength="32" width="130"
+						maxlength="32" width="250"
 						directInputSuggestions="true"
 						label="#{bundle.aon_concept}"
 						inputClass="aon-inputText"
@@ -82,6 +92,8 @@
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>
- 		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+		<aon:if test="#{domainSwitcher.domainManagementAvailable}">
+ 			<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+ 		</aon:if>
 	</ui:define>
 </ui:composition>

@@ -178,6 +178,7 @@ public interface ICommonMessages {
 	String ACCOUNTING_TOTAL_EXPENSES = "accounting_total_expenses";
 	String ACCOUNTING_GROSS_MARGIN = "accounting_gross_margin";
 	String ACCOUNTING_PROFIT_AND_LOSS_MODULE = "accounting_profit_and_loss_module";	
+	String ACCOUNTING_SALARY_CONCEPT = "accounting_salary_concept";
 	
 	String ASSET_ERROR_TIME_RANGE = "asset_error_time_range";
 	String ASSET_ERROR_DATE_RANGE = "asset_error_date_range";
