@@ -397,6 +397,9 @@
 				<version>2.10</version>
 				<configuration>
 					<workingDirectory>target</workingDirectory>
+					<excludes>
+						<exclude>**/GWT*.java</exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 
