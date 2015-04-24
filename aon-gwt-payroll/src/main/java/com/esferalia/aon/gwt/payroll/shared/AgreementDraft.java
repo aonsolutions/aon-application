@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -111,15 +112,23 @@ public class AgreementDraft extends Agreement {
 			}
 
 		}
+		
+		public static SalaryTable emptySalaryTable(){
+			return new SalaryTable(Collections.<Key, Variable>emptyMap());
+		}
 
 		private Map<Key, Variable> map;
 
+		public SalaryTable(Map<Key, Variable> map) {
+			this.map = map;
+		}
+
 		public SalaryTable() {
-			map = new HashMap<Key, Variable>();
+			this( new HashMap<Key, Variable>());
 		}
 
 		public SalaryTable(SalaryTable salaryTable) {
-			map = new HashMap<Key, Variable>(salaryTable.map);
+			this(new HashMap<Key, Variable>(salaryTable.map));
 		}
 
 		public int size() {
@@ -259,7 +268,7 @@ public class AgreementDraft extends Agreement {
 	}
 
 	public Set<Extra> getExtras() {
-		return extras;
+		return extras != null ? extras : Collections.<Extra>emptySet();
 	}
 
 	public void setExtras(Set<Extra> extras) {
@@ -267,7 +276,7 @@ public class AgreementDraft extends Agreement {
 	}
 
 	public Set<Payment> getPayments() {
-		return payments;
+		return payments != null ? payments : Collections.<Payment>emptySet();
 	}
 
 	public void setPayments(Set<Payment> payments) {
@@ -275,7 +284,7 @@ public class AgreementDraft extends Agreement {
 	}
 
 	public Set<Level> getLevels() {
-		return levels;
+		return levels != null ? levels : Collections.<Level>emptySet();
 	}
 
 	public void setLevels(Set<Level> levels) {
@@ -283,7 +292,7 @@ public class AgreementDraft extends Agreement {
 	}
 
 	public Set<String> getVariables() {
-		return variables;
+		return variables != null ? variables : Collections.<String>emptySet();
 	}
 
 	public void setVariables(Set<String> variables) {
@@ -291,7 +300,7 @@ public class AgreementDraft extends Agreement {
 	}
 	
 	public SalaryTable getSalaryTable() {
-		return salaryTable;
+		return salaryTable != null ? salaryTable : SalaryTable.emptySalaryTable();
 	}
 
 	public void setSalaryTable(SalaryTable salaryTable) {
@@ -299,7 +308,7 @@ public class AgreementDraft extends Agreement {
 	}
 
 	public SortedSet<Date> getDatesWithChanges() {
-		return datesWithChanges;
+		return datesWithChanges != null ? datesWithChanges : new TreeSet<Date>();//Collections.<Date>emptySortedSet();
 	}
 
 	public void setDatesWithChanges(SortedSet<Date> datesWithChanges) {
@@ -307,7 +316,7 @@ public class AgreementDraft extends Agreement {
 	}
 
 	public Map<Integer, Set<String>> getCategoriesMap() {
-		return categories;
+		return categories != null ? categories : Collections.<Integer, Set<String>>emptyMap();
 	}
 
 	public void setCategoriesMap(Map<Integer, Set<String>> categories) {

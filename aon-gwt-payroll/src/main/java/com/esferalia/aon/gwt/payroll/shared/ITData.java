@@ -49,47 +49,47 @@ public class ITData implements Serializable{
 		}
 		
 		@Override
-		public void setPerson(int personId) {
+		public Employee setPerson(int personId) {
 			throw new UnsupportedOperationException();
 		}
 		
 		@Override
-		public void setId(int id) {
+		public Employee setId(int id) {
 			throw new UnsupportedOperationException();
 		}
 		
 		@Override
-		public void setDocument(String document) {
+		public Employee setDocument(String document) {
 			throw new UnsupportedOperationException();
 		}
 		
 		@Override
-		public void setName(String name) {
+		public Employee setName(String name) {
 			throw new UnsupportedOperationException();
 		}
 		
 		@Override
-		public void setFirstSurname(String firstSurname) {
+		public Employee setFirstSurname(String firstSurname) {
 			throw new UnsupportedOperationException();
 		}
 		
 		@Override
-		public void setSecondSurName(String secondSurName) {
+		public Employee setSecondSurName(String secondSurName) {
 			throw new UnsupportedOperationException();
 		}
 		
 		@Override
-		public void setSocialSecurity(String pSocialSecurity) {
+		public Employee setSocialSecurity(String pSocialSecurity) {
 			throw new UnsupportedOperationException();
 		}
 		
 		@Override
-		public void setStartDate(Date startDate) {
+		public Employee setStartDate(Date startDate) {
 			throw new UnsupportedOperationException();
 		}
 		
 		@Override
-		public void setEndDate(Date endDate) {
+		public Employee setEndDate(Date endDate) {
 			throw new UnsupportedOperationException();
 		}		
 	}

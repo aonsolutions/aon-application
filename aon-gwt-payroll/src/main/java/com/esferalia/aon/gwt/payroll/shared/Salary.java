@@ -5,12 +5,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.lang.model.type.TypeVisitor;
-
 import com.esferalia.aon.gwt.common.shared.HasDescription;
-import com.esferalia.aon.payroll.enumeration.VariableType;
 
-public class Salary implements Serializable {
+public class  Salary implements Serializable {
 	
 	public static interface TypeVisitor<E> {
 
@@ -103,12 +100,14 @@ public class Salary implements Serializable {
 	private Date issueDate;
 	private Date chargeDate;
 	
+	
 	public int getId() {
 		return id;
 	}
 	
-	public void setId(int id) {
+	public <T extends Salary> T setId(int id) {
 		this.id = id;
+		return thix();
 	}
 
 	public Type getType() {
@@ -124,35 +123,44 @@ public class Salary implements Serializable {
 		return startDate;
 	}
 
-	public void setStartDate(Date startDate) {
+	public <T extends Salary> T  setStartDate(Date startDate) {
 		this.startDate = startDate;
+		return thix();
 	}
 
 	public Date getEndDate() {
 		return endDate;
 	}
 
-	public void setEndDate(Date endDate) {
+	public <T extends Salary> T  setEndDate(Date endDate) {
 		this.endDate = endDate;
+		return thix();
 	}
 
 	public Date getIssueDate() {
 		return issueDate;
 	}
 
-	public void setIssueDate(Date issueDate) {
+	public <T extends Salary> T  setIssueDate(Date issueDate) {
 		this.issueDate = issueDate;
+		return thix();
 	}
 
 	public Date getChargeDate() {
 		return chargeDate;
 	}
 
-	public void setChargeDate(Date chargeDate) {
+	public <T extends Salary> T  setChargeDate(Date chargeDate) {
 		this.chargeDate = chargeDate;
+		return thix();
 	}
 	
+	// ------------------------------------------------------------------------
 	
+	private <T extends Salary> T thix() {
+		return (T) this;
+	}
+
 	
 	
 	

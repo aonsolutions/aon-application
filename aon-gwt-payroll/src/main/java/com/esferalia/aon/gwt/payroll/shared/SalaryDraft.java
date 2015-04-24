@@ -30,16 +30,18 @@ public class SalaryDraft extends SalaryPreview {
 			return type;
 		}
 
-		public void setType(Type type) {
+		public Event setType(Type type) {
 			this.type = type;
+			return this;
 		}
 
 		public String getMessage() {
 			return message;
 		}
 
-		public void setMessage(String message) {
+		public Event setMessage(String message) {
 			this.message = message;
+			return this;
 		}
 
 	}
@@ -52,8 +54,9 @@ public class SalaryDraft extends SalaryPreview {
 			return payment;
 		}
 
-		public void setPayment(Payment payment) {
+		public PaymentEvent setPayment(Payment payment) {
 			this.payment = payment;
+			return this;
 		}
 
 	}
@@ -66,8 +69,9 @@ public class SalaryDraft extends SalaryPreview {
 			return deduction;
 		}
 
-		public void setDeduction(Deduction deduction) {
+		public DeductionEvent setDeduction(Deduction deduction) {
 			this.deduction = deduction;
+			return this;
 		}
 	}
 
@@ -145,7 +149,7 @@ public class SalaryDraft extends SalaryPreview {
 		draftLeaveIts = new Stack<ITDataPerson>();
 	}
 
-	public void clear() {
+	public SalaryDraft clear() {
 		clearCosts();
 		clearEvents();
 		clearContext();
@@ -153,9 +157,10 @@ public class SalaryDraft extends SalaryPreview {
 		clearPayments();
 		clearDeductions();
 		clearEmbargos();
+		return this;
 	}
 
-	public void clearDb() {
+	public SalaryDraft clearDb() {
 		dbId = null;
 		dbGgcBase = null;
 		dbGgpBase = null;
@@ -166,14 +171,16 @@ public class SalaryDraft extends SalaryPreview {
 		dbRemuneration = null;
 		dbTotalLiquid = null;
 		dbTotalPayment = null;
+		return this;
 	}
 
-	public void clearDrafts() {
+	public SalaryDraft clearDrafts() {
 		draftContext.clear();
 		draftPayments.clear();
 		draftDeductions.clear();
 		draftEmbargos.clear();
 		draftLeaveIts.clear();
+		return this;
 	}
 
 	public boolean hasDrafts() {
@@ -182,8 +189,9 @@ public class SalaryDraft extends SalaryPreview {
 				|| (draftLeaveIts.size() > 0);
 	}
 
-	public void addPayment(Payment payment) {
+	public SalaryDraft addPayment(Payment payment) {
 		payments.add(payment);
+		return this;
 	}
 
 	public Payment addDraftPayment(Payment payment) {
@@ -206,12 +214,14 @@ public class SalaryDraft extends SalaryPreview {
 		return draftPayments.remove(payment);
 	}
 
-	public void addDeduction(Deduction deduction) {
+	public SalaryDraft addDeduction(Deduction deduction) {
 		deductions.add(deduction);
+		return this;
 	}
 
-	public void addEmbargo(Deduction embargo) {
+	public SalaryDraft addEmbargo(Deduction embargo) {
 		embargos.add(embargo);
+		return this;
 	}
 
 	public Deduction addDraftDeduction(Deduction deduction) {
@@ -252,7 +262,7 @@ public class SalaryDraft extends SalaryPreview {
 		return draftEmbargos.remove(embargo);
 	}
 
-	public void addVariable(String name, Object value, Date startDate,
+	public SalaryDraft addVariable(String name, Object value, Date startDate,
 			Date endDate) {
 		Variable var;
 		if (value instanceof Number) {
@@ -270,6 +280,7 @@ public class SalaryDraft extends SalaryPreview {
 		var.setImplicit(true);
 		if (!context.contains(var))
 			context.add(var);
+		return this;
 	}
 
 	public void addVariable(String name, Object value, Date startDate,
@@ -373,36 +384,41 @@ public class SalaryDraft extends SalaryPreview {
 		return draftContext;
 	}
 
-	public void setDraftContext(List<Variable> draftContext) {
+	public SalaryDraft setDraftContext(List<Variable> draftContext) {
 		this.draftContext = draftContext;
+		return this;
 	}
 
 	public List<Payment> getDraftPayments() {
 		return draftPayments;
 	}
 
-	public void setDraftPayments(List<Payment> draftPayments) {
+	public SalaryDraft setDraftPayments(List<Payment> draftPayments) {
 		this.draftPayments = draftPayments;
+		return this;
 	}
 
 	public List<Deduction> getDraftDeductions() {
 		return draftDeductions;
 	}
 
-	public void setDraftDeductions(List<Deduction> draftDeductions) {
+	public SalaryDraft setDraftDeductions(List<Deduction> draftDeductions) {
 		this.draftDeductions = draftDeductions;
+		return this;
 	}
 
 	public List<Deduction> getDraftEmbargos() {
 		return draftEmbargos;
 	}
 
-	public void setDraftEmbargos(List<Deduction> draftEmbargos) {
+	public SalaryDraft setDraftEmbargos(List<Deduction> draftEmbargos) {
 		this.draftEmbargos = draftEmbargos;
+		return this;
 	}
 
-	public void setDraftLeaveIts(List<ITDataPerson> draftLeaveIts) {
+	public SalaryDraft setDraftLeaveIts(List<ITDataPerson> draftLeaveIts) {
 		this.draftLeaveIts = draftLeaveIts;
+		return this;
 	}
 
 	public List<ITDataPerson> getDraftLeaveIts() {
@@ -449,40 +465,45 @@ public class SalaryDraft extends SalaryPreview {
 		return employeeSS;
 	}
 
-	public void setEmployeeSS(String employeeSS) {
+	public SalaryDraft setEmployeeSS(String employeeSS) {
 		this.employeeSS = employeeSS;
+		return this;
 	}
 
 	public Date getEmployeeSeniorityDate() {
 		return employeeSeniorityDate;
 	}
 
-	public void setEmployeeSeniorityDate(Date employeeSeniorityDate) {
+	public SalaryDraft setEmployeeSeniorityDate(Date employeeSeniorityDate) {
 		this.employeeSeniorityDate = employeeSeniorityDate;
+		return this;
 	}
 
 	public Double getIrpfBase() {
 		return irpfBase;
 	}
 
-	public void setIrpfBase(Double irpfBase) {
+	public SalaryDraft setIrpfBase(Double irpfBase) {
 		this.irpfBase = irpfBase;
+		return this;
 	}
 
 	public Double getInkindIrpfBase() {
 		return inkindIrpfBase;
 	}
 
-	public void setInkindIrpfBase(Double inkindIrpfBase) {
+	public SalaryDraft setInkindIrpfBase(Double inkindIrpfBase) {
 		this.inkindIrpfBase = inkindIrpfBase;
+		return this;
 	}
 	
 	public Double getMoneyIrpfBase() {
 		return moneyIrpfBase;
 	}
 	
-	public void setMoneyIrpfBase(Double moneyIrpfBase) {
+	public SalaryDraft setMoneyIrpfBase(Double moneyIrpfBase) {
 		this.moneyIrpfBase = moneyIrpfBase;
+		return this;
 	}
 
 	public Double getProrationBase() {
@@ -493,60 +514,68 @@ public class SalaryDraft extends SalaryPreview {
 		return community;
 	}
 
-	public void setCommunity(String community) {
+	public SalaryDraft setCommunity(String community) {
 		this.community = community;
+		return this;
 	}
 
-	public void setProrationBase(Double prorationBase) {
+	public SalaryDraft setProrationBase(Double prorationBase) {
 		this.prorationBase = prorationBase;
+		return this;
 	}
 
 	public String getEmployeeDocument() {
 		return employeeDocument;
 	}
 
-	public void setEmployeeDocument(String employeeDocument) {
+	public SalaryDraft setEmployeeDocument(String employeeDocument) {
 		this.employeeDocument = employeeDocument;
+		return this;
 	}
 
 	public Double getCgcBase() {
 		return cgcBase;
 	}
 
-	public void setCgcBase(Double cgcBase) {
+	public SalaryDraft setCgcBase(Double cgcBase) {
 		this.cgcBase = cgcBase;
+		return this;
 	}
 
 	public Double getDbGgcBase() {
 		return dbGgcBase;
 	}
 
-	public void setDbGgcBase(Double dbGgcBase) {
+	public SalaryDraft setDbGgcBase(Double dbGgcBase) {
 		this.dbGgcBase = dbGgcBase;
+		return this;
 	}
 
 	public Double getRawCgcBase() {
 		return rawCgcBase;
 	}
 
-	public void setRawCgcBase(Double rawCgcBase) {
+	public SalaryDraft setRawCgcBase(Double rawCgcBase) {
 		this.rawCgcBase = rawCgcBase;
+		return this;
 	}
 
 	public Double getDbGgpBase() {
 		return dbGgpBase;
 	}
 
-	public void setDbGgpBase(Double dbGgpBase) {
+	public SalaryDraft setDbGgpBase(Double dbGgpBase) {
 		this.dbGgpBase = dbGgpBase;
+		return this;
 	}
 
 	public Double getDbIrpfBase() {
 		return dbIrpfBase;
 	}
 
-	public void setDbIrpfBase(Double dbIrpfBase) {
+	public SalaryDraft setDbIrpfBase(Double dbIrpfBase) {
 		this.dbIrpfBase = dbIrpfBase;
+		return this;
 	}
 
 	public Double getDbInkindIrpfBase() {
@@ -557,64 +586,73 @@ public class SalaryDraft extends SalaryPreview {
 		return dbMoneyIrpfBase;
 	}
 	
-	public void setDbMoneyIrpfBase(Double dbMoneyIrpfBase) {
+	public SalaryDraft setDbMoneyIrpfBase(Double dbMoneyIrpfBase) {
 		this.dbMoneyIrpfBase = dbMoneyIrpfBase;
+		return this;
 	}
 	
-	public void setDbInkindIrpfBase(Double dbInkindIrpfBase) {
+	public SalaryDraft setDbInkindIrpfBase(Double dbInkindIrpfBase) {
 		this.dbInkindIrpfBase = dbInkindIrpfBase;
+		return this;
 	}
 
 	public Double getDbHExtraBase() {
 		return dbHExtraBase;
 	}
 
-	public void setDbHExtraBase(Double dbHExtraBase) {
+	public SalaryDraft setDbHExtraBase(Double dbHExtraBase) {
 		this.dbHExtraBase = dbHExtraBase;
+		return this;
 	}
 
 	public Double getDbNonHExtraBase() {
 		return dbNonHExtraBase;
 	}
 
-	public void setDbNonHExtraBase(Double dbNonHExtraBase) {
+	public SalaryDraft setDbNonHExtraBase(Double dbNonHExtraBase) {
 		this.dbNonHExtraBase = dbNonHExtraBase;
+		return this;
 	}
 
 	public Double getDbProrationBase() {
 		return dbProrationBase;
 	}
 
-	public void setDbProrationBase(Double dbProrationBase) {
+	public SalaryDraft setDbProrationBase(Double dbProrationBase) {
 		this.dbProrationBase = dbProrationBase;
+		return this;
 	}
 
 	public Double getDbRemuneration() {
 		return dbRemuneration;
 	}
 
-	public void setDbRemuneration(Double dbRemuneration) {
+	public SalaryDraft setDbRemuneration(Double dbRemuneration) {
 		this.dbRemuneration = dbRemuneration;
+		return this;
 	}
 
 	public Double getDbTotalLiquid() {
 		return dbTotalLiquid;
 	}
 
-	public void setDbTotalLiquid(Double dbTotalLiquid) {
+	public SalaryDraft setDbTotalLiquid(Double dbTotalLiquid) {
 		this.dbTotalLiquid = dbTotalLiquid;
+		return this;
 	}
 
 	public Double getDbTotalPayment() {
 		return dbTotalPayment;
 	}
 
-	public void setDbTotalPayment(Double dbTotalPayment) {
+	public SalaryDraft setDbTotalPayment(Double dbTotalPayment) {
 		this.dbTotalPayment = dbTotalPayment;
+		return this;
 	}
 
-	public void setDbTotalDeduction(Double dbTotalDeduction) {
+	public SalaryDraft setDbTotalDeduction(Double dbTotalDeduction) {
 		this.dbTotalDeduction = dbTotalDeduction;
+		return this;
 	}
 
 	public Double getDbTotalDeduction() {
@@ -625,120 +663,135 @@ public class SalaryDraft extends SalaryPreview {
 		return cgpBase;
 	}
 
-	public void setCgpBase(Double cgpBase) {
+	public SalaryDraft setCgpBase(Double cgpBase) {
 		this.cgpBase = cgpBase;
+		return this;
 	}
 
 	public Double gethExtraBase() {
 		return hExtraBase;
 	}
 
-	public void sethExtraBase(Double hExtraBase) {
+	public SalaryDraft sethExtraBase(Double hExtraBase) {
 		this.hExtraBase = hExtraBase;
+		return this;
 	}
 
 	public Double getNonHExtraBase() {
 		return nonHExtraBase;
 	}
 
-	public void setNonHExtraBase(Double nonHExtraBase) {
+	public SalaryDraft setNonHExtraBase(Double nonHExtraBase) {
 		this.nonHExtraBase = nonHExtraBase;
+		return this;
 	}
 
 	public Double getRemuneration() {
 		return remuneration;
 	}
 
-	public void setRemuneration(Double remuneration) {
+	public SalaryDraft setRemuneration(Double remuneration) {
 		this.remuneration = remuneration;
+		return this;
 	}
 
 	public Double getTotalLiquid() {
 		return totalLiquid;
 	}
 
-	public void setTotalLiquid(Double totalLiquid) {
+	public SalaryDraft setTotalLiquid(Double totalLiquid) {
 		this.totalLiquid = totalLiquid;
+		return this;
 	}
 
 	public Double getTotalPayment() {
 		return totalPayment;
 	}
 
-	public void setTotalPayment(Double totalPayment) {
+	public SalaryDraft setTotalPayment(Double totalPayment) {
 		this.totalPayment = totalPayment;
+		return this;
 	}
 
 	public Double getTotalDeduction() {
 		return totalDeduction;
 	}
 
-	public void setTotalDeduction(Double totalDeduction) {
+	public SalaryDraft setTotalDeduction(Double totalDeduction) {
 		this.totalDeduction = totalDeduction;
+		return this;
 	}
 
 	public String getEnterpriseName() {
 		return enterpriseName;
 	}
 
-	public void setEnterpriseName(String enterpriseName) {
+	public SalaryDraft setEnterpriseName(String enterpriseName) {
 		this.enterpriseName = enterpriseName;
+		return this;
 	}
 
 	public String getEnterpriseAddress() {
 		return enterpriseAddress;
 	}
 
-	public void setEnterpriseAddress(String enterpriseAddress) {
+	public SalaryDraft setEnterpriseAddress(String enterpriseAddress) {
 		this.enterpriseAddress = enterpriseAddress;
+		return this;
 	}
 
 	public String getEnterpriseDocument() {
 		return enterpriseDocument;
 	}
 
-	public void setEnterpriseDocument(String enterpriseDocument) {
+	public SalaryDraft setEnterpriseDocument(String enterpriseDocument) {
 		this.enterpriseDocument = enterpriseDocument;
+		return this;
 	}
 
 	public String getEnterpriseCCC() {
 		return enterpriseCCC;
 	}
 
-	public void setEnterpriseCCC(String enterpriseCCC) {
+	public SalaryDraft setEnterpriseCCC(String enterpriseCCC) {
 		this.enterpriseCCC = enterpriseCCC;
+		return this;
 	}
 
 	public String getEmployeeName() {
 		return employeeName;
 	}
 
-	public void setEmployeeName(String employeeName) {
+	public SalaryDraft setEmployeeName(String employeeName) {
 		this.employeeName = employeeName;
+		return this;
 	}
 
 	public String getEmployeeQuoteGroup() {
 		return employeeQuoteGroup;
 	}
 
-	public void setEmployeeQuoteGroup(String employeeQuoteGroup) {
+	public SalaryDraft setEmployeeQuoteGroup(String employeeQuoteGroup) {
 		this.employeeQuoteGroup = employeeQuoteGroup;
+		return this;
 	}
 
 	public String getEmployeeAgreementCategory() {
 		return employeeAgreementCategory;
 	}
 
-	public void setEmployeeAgreementCategory(String employeeAgreementCategory) {
+	public SalaryDraft setEmployeeAgreementCategory(String employeeAgreementCategory) {
 		this.employeeAgreementCategory = employeeAgreementCategory;
+		return this;
 	}
 
 	public boolean hasDbSalary() {
 		return dbId != null;
 	}
 
-	public void setDbId(Integer dbId) {
+	public SalaryDraft setDbId(Integer dbId) {
 		this.dbId = dbId;
+		return this;
 	}
 
 }

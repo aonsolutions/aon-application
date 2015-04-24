@@ -14,8 +14,9 @@ public class SalaryPreview extends Salary {
 		return employee;
 	}
 	
-	public void setEmployee(Employee employee) {
+	public <T extends SalaryPreview> T  setEmployee(Employee employee) {
 		this.employee = employee;
+		return (T) this;
 	}
 
 }
