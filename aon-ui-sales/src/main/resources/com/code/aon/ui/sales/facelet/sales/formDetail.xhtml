@@ -69,6 +69,15 @@
 					rendered="#{formList}">
 					<aon:abbreviateConverter maxWidth="64" />
 				</aon:outputText>
+				<aon:commandLink id="SalesDetail_serialNumber" immediate="true"
+					value="&#160;" title="#{bundle.aon_to_specify} #{bundle.aon_serial_number}"
+					styleClass="aon-icon-version" style="margin-left: 5px; padding-right: 12px;"
+					rendered="#{formList and to.item.wildCard}"
+					actionListener="#{salesDetail.onAssignSerialNumberShow}" 
+					reRender="showSerialNumberWindow" ajaxSingle="true">
+					<f:setPropertyActionListener target="#{salesDetail.showSerialNumberWindow}"
+						value="#{true}" />
+				</aon:commandLink>
 				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
 					<ui:param name="lookupTo" value="#{salesDetail.to.item}" />
 					<ui:param name="idRequired" value="#{true}" />
@@ -84,10 +93,10 @@
 				</ui:include>
 				<aon:panelGroup id="salesDetailItemEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
 					<aon:if test="#{aonConfiguration.bean.product.showStock}">
-						<aon:commandButton value="&#160;"
-							title="#{bundle.product_info}"
+						<aon:commandLink id="SalesDetail_itemInfo"
+							value="&#160;" title="#{bundle.product_info}"
+							styleClass="aon-icon-info" style="margin-left: 5px; padding-right: 12px; padding-top: 1px;"
 							rendered="#{salesDetail.to.item != null and salesDetail.to.item.id != null and salesDetail.to.item.product.inventoriable}"
-							styleClass="aon-icon aon-icon-edit-end aon-icon-info"
 							actionListener="#{itemInfo.onShowPanel}"
 							reRender="itemInfoContainer">
 							<aon:set var="#{itemInfo.stockVisible}" value="#{true}" />
@@ -96,7 +105,7 @@
 							<aon:set var="#{itemInfo.warehouse}" value="#{null}" /> 
 							<aon:set var="#{itemInfo.componentId}" value="Item_id" />
 							<aon:set var="#{itemInfo.alternativeMethod}" value="salesDetail.onItemChanged" />
-						</aon:commandButton>															
+						</aon:commandLink>															
 					</aon:if>
 					<aon:inputTextarea id="SalesDetail_description" 
 						value="#{salesDetail.to.description}"
@@ -105,12 +114,18 @@
 						style="#{!salesDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
 						<f:validateLength maximum="1024" />
 					</aon:inputTextarea>
-					<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
-						actionListener="#{salesDetail.onShortDescription}" reRender="SalesDetail_description"
-						rendered="#{salesDetail.longDescription and salesDetail.to.item.product.code != null}" />
-					<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
-						actionListener="#{salesDetail.onLongDescription}" reRender="SalesDetail_description"
-						rendered="#{!salesDetail.longDescription and salesDetail.to.item.product.code != null}" />
+					<aon:commandLink id="SalesDetail_description_short" immediate="true"
+						value="&#160;" title="#{bundle.aon_cancel} #{bundle.aon_editing}"
+						styleClass="aon-icon-edit-end-simple" style="margin-left: 5px; padding-right: 12px;"
+						rendered="#{salesDetail.longDescription and salesDetail.to.item.product.code != null}"
+						actionListener="#{salesDetail.onShortDescription}" 
+						reRender="salesDetailItemEdit" ajaxSingle="true" />
+					<aon:commandLink id="SalesDetail_description_long" immediate="true"
+						value="&#160;" title="#{bundle.aon_edit}"
+						styleClass="aon-icon-edit-add-simple" style="margin-left: 5px; padding-right: 12px;"
+						rendered="#{!salesDetail.longDescription and salesDetail.to.item.product.code != null}"
+						actionListener="#{salesDetail.onLongDescription}"
+						reRender="salesDetailItemEdit" ajaxSingle="true" />
 				</aon:panelGroup>
 				<f:facet name="footer" >
 					<aon:div>
@@ -130,10 +145,10 @@
 						</ui:include>
 						<aon:panelGroup id="salesDetailItemNew" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
 							<aon:if test="#{aonConfiguration.bean.product.showStock}">
-								<aon:commandButton value="&#160;"
-									title="#{bundle.product_info}"
+								<aon:commandLink id="SalesDetail_itemInfo-New"
+									value="&#160;" title="#{bundle.product_info}"
+									styleClass="aon-icon-info" style="margin-left: 5px; padding-right: 12px; padding-top: 1px;"
 									rendered="#{salesDetail.to.item != null and salesDetail.to.item.id != null and salesDetail.to.item.product.inventoriable}"
-									styleClass="aon-icon aon-icon-edit-end aon-icon-info"
 									actionListener="#{itemInfo.onShowPanel}"
 									reRender="itemInfoContainer">
 									<aon:set var="#{itemInfo.stockVisible}" value="#{true}" />
@@ -142,7 +157,7 @@
 									<aon:set var="#{itemInfo.warehouse}" value="#{null}" /> 
 									<aon:set var="#{itemInfo.componentId}" value="Item_id-New" />
 									<aon:set var="#{itemInfo.alternativeMethod}" value="salesDetail.onItemChanged" />
-								</aon:commandButton>															
+								</aon:commandLink>															
 							</aon:if>
 							<aon:inputTextarea id="SalesDetail_description-New"
 								value="#{salesDetail.to.description}"
@@ -151,12 +166,18 @@
 								style="#{!salesDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
 								<f:validateLength maximum="1024" />
 							</aon:inputTextarea>
-							<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
-								actionListener="#{salesDetail.onShortDescription}" reRender="SalesDetail_description-New"
-								rendered="#{salesDetail.longDescription and salesDetail.to.item.product.code != null}" />
-							<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
-								actionListener="#{salesDetail.onLongDescription}" reRender="SalesDetail_description-New"
-								rendered="#{!salesDetail.longDescription and salesDetail.to.item.product.code != null}" />
+							<aon:commandLink id="SalesDetail_description_short-New" immediate="true"
+								value="&#160;" title="#{bundle.aon_cancel} #{bundle.aon_editing}"
+								styleClass="aon-icon-edit-end-simple" style="margin-left: 5px; padding-right: 12px;"
+								rendered="#{salesDetail.longDescription and salesDetail.to.item.product.code != null}"
+								actionListener="#{salesDetail.onShortDescription}" 
+								reRender="salesDetailItemNew" ajaxSingle="true" />
+							<aon:commandLink id="SalesDetail_description_long-New" immediate="true"
+								value="&#160;" title="#{bundle.aon_edit}"
+								styleClass="aon-icon-edit-add-simple" style="margin-left: 5px; padding-right: 12px;"
+								rendered="#{!salesDetail.longDescription and salesDetail.to.item.product.code != null}"
+								actionListener="#{salesDetail.onLongDescription}"
+								reRender="salesDetailItemNew" ajaxSingle="true" />
 						</aon:panelGroup>
 					</aon:div>
 				</f:facet>

@@ -194,6 +194,7 @@
 												</f:facet>
 												<aon:selectBooleanCheckbox id="Detail_Row_checked"
 													value="#{income.purchaseTransferManager.detailRowChecked}"
+													rendered="#{!to.item.wildCard}"
 													valueChangeListener="#{income.purchaseTransferManager.detailRowSelected}">
 													<a4j:support event="onclick" 
 														ajaxSingle="true"

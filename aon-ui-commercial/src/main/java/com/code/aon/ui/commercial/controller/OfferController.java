@@ -1,5 +1,6 @@
 package com.code.aon.ui.commercial.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.ITEM_SERIALIZABLE_REQUIRED_ERROR;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
 import java.util.Date;
@@ -56,6 +57,7 @@ import com.code.aon.registry.RegistrySupplier;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.RegistrySellerStatus;
 import com.code.aon.sales.Sales;
+import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.bridge.ProjectTasManager;
 import com.code.aon.sales.bridge.SalesManager;
 import com.code.aon.seller.Seller;
@@ -766,16 +768,6 @@ public class OfferController extends HeaderObjectController implements ISignatur
 		return (SaleInvoiceController) AonUtil.getRegisteredBean(IFinanceConstants.SALE_INVOICE_CONTROLLER_NAME);
 	}		
 	
-	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {
-		Offer to = getOffer();
-		SaleInvoiceController controller = getSaleInvoiceController();
-		controller.onCancel(event);
-		controller.initSeries(false);
-		setInvoiceSeries(SeriesUtil.ensureInvoiceSeries(to.getSeries()));
-		setInvoiceNumber(0);
-		setInvoiceDate(new Date());
-	}
-
 	public void onInvoiceSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
 		if ( getSaleInvoiceController().isNumberEditable() ) {			
 			updateInvoiceNumber((String)event.getNewValue());	
@@ -788,6 +780,36 @@ public class OfferController extends HeaderObjectController implements ISignatur
 
 	private void updateInvoiceNumber(String seriesId) {
 		setInvoiceNumber(getSaleInvoiceController().obtainMaxNumber(seriesId));
+	}
+
+	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {
+		Offer to = getOffer();
+		validate(to);
+		SaleInvoiceController controller = getSaleInvoiceController();
+		controller.onCancel(event);
+		controller.initSeries(false);
+		setInvoiceSeries(SeriesUtil.ensureInvoiceSeries(to.getSeries()));
+		setInvoiceNumber(0);
+		setInvoiceDate(new Date());
+	}
+
+	private void validate(Offer offer) {
+		try {
+			IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ID), offer.getId());
+			criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_ITEM_PRODUCT_SERIALIZABLE), Boolean.TRUE);
+			Expression serialNullExp = ExpressionUtilities.getNullExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_ITEM_SERIAL_NUMBER));
+			Expression serialEmptyExp = ExpressionUtilities.getEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_ITEM_SERIAL_NUMBER), "");
+			criteria.addExpression(ExpressionUtilities.getOrExpression(serialNullExp, serialEmptyExp));
+			if (offerDetailBean.getCount(criteria) > 0) {
+				String message = AonUtil.addErrorMessageFromBundle(ITEM_SERIALIZABLE_REQUIRED_ERROR);
+				throw new AbortProcessingException(message);
+			}
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage());
+		}
 	}
 
 	public void onInvoice(ActionEvent event) {

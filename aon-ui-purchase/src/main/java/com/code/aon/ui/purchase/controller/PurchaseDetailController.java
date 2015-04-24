@@ -1,23 +1,39 @@
 package com.code.aon.ui.purchase.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.DATE_PATTERN;
 import static com.code.aon.ui.common.ICommonMessages.INVOICE_DELIVERY;
 import static com.code.aon.ui.common.ICommonMessages.LINE;
 import static com.code.aon.ui.common.ICommonMessages.QUANTITY_PATTERN;
 import static com.code.aon.ui.common.ICommonMessages.TRANSFERED_TO;
 import static com.code.aon.ui.common.ICommonMessages.UNITS;
 
+import java.io.Serializable;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.Item;
+import com.code.aon.product.Product;
+import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
@@ -39,8 +55,15 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 	private IPriceStrategy priceStrategy;
 	private boolean longDescription;
 	private PurchaseDetail purchaseDetail;
-	
-	public IPriceStrategy getPriceStrategy(){
+	private boolean showSerialNumberWindow;
+	private Item serializableItem;
+	private double serializableQuantity;
+	private String serialNumber;
+	private Date serialDate;
+	private List<SelectItem> serialNumbers;
+	private String[] selectedBreakdown;
+
+	public IPriceStrategy getPriceStrategy() {
 		if(priceStrategy == null){
 			priceStrategy = PriceStrategyFactory.getPriceStrategy();
 		}
@@ -77,6 +100,62 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 
 	public void setPurchaseDetail(PurchaseDetail purchaseDetail) {
 		this.purchaseDetail = purchaseDetail;
+	}
+
+	public boolean isShowSerialNumberWindow() {
+		return showSerialNumberWindow;
+	}
+
+	public void setShowSerialNumberWindow(boolean value) {
+		this.showSerialNumberWindow = value;
+	}
+
+	public Item getSerializableItem() {
+		return serializableItem;
+	}
+
+	public void setSerializableItem(Item serializableItem) {
+		this.serializableItem = serializableItem;
+	}
+
+	public double getSerializableQuantity() {
+		return serializableQuantity;
+	}
+
+	public void setSerializableQuantity(double serializableQuantity) {
+		this.serializableQuantity = serializableQuantity;
+	}
+
+	public String getSerialNumber() {
+		return serialNumber;
+	}
+
+	public void setSerialNumber(String serialNumber) {
+		this.serialNumber = serialNumber;
+	}
+
+	public Date getSerialDate() {
+		return serialDate;
+	}
+
+	public void setSerialDate(Date serialDate) {
+		this.serialDate = serialDate;
+	}
+
+	public List<SelectItem> getSerialNumbers() {
+		return serialNumbers;
+	}
+
+	public void setSerialNumbers(List<SelectItem> serialNumbers) {
+		this.serialNumbers = serialNumbers;
+	}
+
+	public String[] getSelectedBreakdown() {
+		return selectedBreakdown;
+	}
+
+	public void setSelectedBreakdown(String[] selectedBreakdown) {
+		this.selectedBreakdown = selectedBreakdown;
 	}
 
 	public void onPurchaseDetailProjectShow(ActionEvent event) throws ManagerBeanException {
@@ -125,7 +204,138 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 			}
 			purchaseDetail.setPrice(getPriceStrategy().getUnitPurchasePrice(purchaseDetail, purchase.getIssueDate(), purchase.getSupplier()));
 		}
-	}	
+	}
+
+	public void onAssignSerialNumberShow(ActionEvent event) throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			PurchaseDetail purchaseDetail = (PurchaseDetail)this.getModel().getRowData();
+			setPurchaseDetail(purchaseDetail);
+			setSerializableItem(purchaseDetail.getItem());
+			setSerializableQuantity(purchaseDetail.getItem().getProduct().isLotable() ? purchaseDetail.getQuantity() : 1);
+			setSerialNumber(null);
+			setSerialDate(null);
+			setSerialNumbers(new LinkedList<SelectItem>());
+			setSelectedBreakdown(null);
+		} else {
+			setShowSerialNumberWindow(false);
+		}
+	}
+
+	public void onAddSerialNumber(ActionEvent event) {
+		if (StringUtils.isNotBlank(getSerialNumber())) {
+			SerializableBreakdown breakdown = new SerializableBreakdown();
+			breakdown.setSerialNumber(getSerialNumber());
+			breakdown.setSerialDate(getSerialDate());
+			breakdown.setQuantity(getSerializableQuantity());
+			getSerialNumbers().add(new SelectItem(breakdown, breakdown.getLabel()));
+			setSerialNumber(null);
+		}
+	}
+
+	public void onRemoveSerialNumber(ActionEvent event) {
+		for (String breakdownLabel : getSelectedBreakdown()) {
+			for (SelectItem selectItem : getSerialNumbers()) {
+				SerializableBreakdown breakdown = (SerializableBreakdown)selectItem.getValue();
+				if (breakdown.getLabel().equals(breakdownLabel)) {
+					getSerialNumbers().remove(selectItem);
+					break;
+				}
+			}
+		}
+		setSelectedBreakdown(null);
+	}
+
+	public void onAssignSerialNumber(ActionEvent event) throws ManagerBeanException {
+		if (getPurchaseDetail() != null) {
+			boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+			boolean mustCloseSession = HibernateUtil.mustCloseSession();
+			String sessionName = HibernateUtil.getSessionFactoryName();
+			try {
+				HibernateUtil.setBeginTransaction(false);
+				HibernateUtil.setCloseSession(false);
+				HibernateUtil.beginTransaction(sessionName);
+				
+				assignSerialNumber(getPurchaseDetail());
+				onSearch(event);
+				
+				HibernateUtil.commitTransaction(sessionName);
+			} catch (Exception e) {
+				try {
+					HibernateUtil.rollbackTransaction(sessionName);
+				} catch (DAOException daoe) {}
+				AonUtil.addErrorMessage(e.getMessage());
+				throw new AbortProcessingException(e.getMessage());
+			} finally {
+				HibernateUtil.closeSession(sessionName);
+				HibernateUtil.setCloseSession(mustCloseSession);
+				HibernateUtil.setBeginTransaction(mustBeginTransaction);
+			}
+		}
+		setPurchaseDetail(null);
+	}
+
+	private void assignSerialNumber(PurchaseDetail purchaseDetail) throws ManagerBeanException {
+		int line = purchaseDetail.getLine();
+		double quantity = 0;
+		for (SelectItem selectItem : getSerialNumbers()) {
+			SerializableBreakdown breakdown = (SerializableBreakdown)selectItem.getValue();
+			quantity += CommonUtil.round(breakdown.getQuantity(), 3);
+		}
+
+		if (purchaseDetail.getQuantity() > quantity) {
+			purchaseDetail.setQuantity(CommonUtil.round(purchaseDetail.getQuantity() - quantity, 3));
+			getManagerBean().restoreNullSubPOJOs(purchaseDetail);
+			getManagerBean().update(purchaseDetail);
+		} else {
+			getManagerBean().remove(purchaseDetail);
+			--line;
+		}
+
+		for (SelectItem selectItem : getSerialNumbers()) {
+			SerializableBreakdown breakdown = (SerializableBreakdown)selectItem.getValue();
+			Item item = null;
+
+			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), getSerializableItem().getProduct().getId());
+			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER), breakdown.getSerialNumber());
+			List<ITransferObject> itemList = itemBean.getList(criteria);
+			if (!itemList.isEmpty()) {
+				item = (Item)itemList.get(0);
+			} else {
+				item = new Item();
+				Product product = (Product)HibernateUtil.getSession(HibernateUtil.getSessionFactoryName()).merge(getSerializableItem().getProduct());
+				item.setProduct(product);
+				item.setDescription(getSerializableItem().getDescription());
+				item.setSerialNumber(breakdown.getSerialNumber());
+				item.setSerialDate(breakdown.getSerialDate());
+				item.setPrice(getSerializableItem().getPrice());
+				item.setProfitPercent(getSerializableItem().getProfitPercent());
+				item.setPurchasePrice(getSerializableItem().getPurchasePrice());
+				item.setStatus(ProductStatus.ACTIVE);
+				itemBean.restoreNullSubPOJOs(item);
+				item = (Item)itemBean.insert(item);
+			}
+
+			if (item != null) {
+				PurchaseDetail newPurchaseDetail = new PurchaseDetail();
+				newPurchaseDetail.setPurchase(purchaseDetail.getPurchase());
+				newPurchaseDetail.setProject(purchaseDetail.getProject());
+				newPurchaseDetail.setLine(++line);
+				newPurchaseDetail.setItem(item);
+				newPurchaseDetail.setDescription(item.getFullName());
+				newPurchaseDetail.setQuantity(breakdown.getQuantity());
+				newPurchaseDetail.setPrice(purchaseDetail.getPrice());
+				newPurchaseDetail.setDiscountExpression(purchaseDetail.getDiscountExpression());
+				newPurchaseDetail.setTaxes(purchaseDetail.getTaxes());
+				newPurchaseDetail.setStatus(PurchaseDetailStatus.PENDING);
+				newPurchaseDetail.setProposalDetail(purchaseDetail.getProposalDetail());
+				newPurchaseDetail.setDelivered(0);
+				getManagerBean().restoreNullSubPOJOs(newPurchaseDetail);
+				getManagerBean().insert(newPurchaseDetail);
+			}
+		}
+	}
 
 	public double getAmount() {
 		return getPriceStrategy().getBasePrice((ICalculable)this.getTo());
@@ -192,6 +402,64 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 		PurchaseDetail purchaseDetail = (PurchaseDetail)this.getModel().getRowData();
 		BasicController proposalController = (BasicController)AonUtil.getRegisteredBean(IPurchaseConstants.PROPOSAL_CONTROLLER_NAME);
 		proposalController.onLoad(event, purchaseDetail.getProposalDetail().getProposal().getId(), "purchase_form", null);
+	}
+
+	public static class SerializableBreakdown implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
+		private String serialNumber;
+		private Date serialDate;
+		private double quantity;
+
+		public SerializableBreakdown() {
+			serialNumber = "";
+			quantity = 0;
+		}
+
+		public String getSerialNumber() {
+			return serialNumber;
+		}
+		public void setSerialNumber(String serialNumber) {
+			this.serialNumber = serialNumber;
+		}
+
+		public Date getSerialDate() {
+			return serialDate;
+		}
+		public void setSerialDate(Date serialDate) {
+			this.serialDate = serialDate;
+		}
+
+		public double getQuantity() {
+			return quantity;
+		}
+		public void setQuantity(double quantity) {
+			this.quantity = quantity;
+		}
+
+		public String getLabel() {
+			NumberFormat numberFormat = new DecimalFormat(AonUtil.getMessage(QUANTITY_PATTERN));
+			DateFormat dateFormat = new SimpleDateFormat(AonUtil.getMessage(DATE_PATTERN));
+			String label = "(" + numberFormat.format(quantity) + ") #" + getSerialNumber();
+			if (serialDate != null) {
+				label += " [" + dateFormat.format(serialDate) + "]";
+			}
+			return label;
+		}
+
+		@Override
+		public String toString() {
+			return getLabel();
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null) return false;
+			final SerializableBreakdown o = (SerializableBreakdown)obj;
+			return o.getSerialNumber().equals(getSerialNumber()) && o.getQuantity() == getQuantity();
+		}
+
 	}
 
 }

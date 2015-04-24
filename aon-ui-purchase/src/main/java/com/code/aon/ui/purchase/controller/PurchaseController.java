@@ -1,5 +1,6 @@
 package com.code.aon.ui.purchase.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.ITEM_SERIALIZABLE_REQUIRED_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.PURCHASE_RETURNED_IN_MSG;
 import static com.code.aon.ui.common.ICommonMessages.PURCHASE_RETURN_OVER_MSG;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
@@ -51,6 +52,8 @@ import com.code.aon.purchase.util.IEmailControllerListener;
 import com.code.aon.purchase.util.IEmailable;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.supplier.Supplier;
@@ -514,9 +517,29 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 
 	public void onIncomeShow(ActionEvent event) throws ManagerBeanException {
 		Purchase to = (Purchase)this.getTo();
+		validate(to);
 		setIncomeReferenceCode(null);
 		setIncomeDate(new Date());
 		setIncomeWarehouse(obtainDeliveryWarehouse(to.getWorkPlace()));
+	}
+
+	private void validate(Purchase purchase) {
+		try {
+			IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
+			criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_ITEM_PRODUCT_SERIALIZABLE), Boolean.TRUE);
+			Expression serialNullExp = ExpressionUtilities.getNullExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_ITEM_SERIAL_NUMBER));
+			Expression serialEmptyExp = ExpressionUtilities.getEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_ITEM_SERIAL_NUMBER), "");
+			criteria.addExpression(ExpressionUtilities.getOrExpression(serialNullExp, serialEmptyExp));
+			if (purchaseDetailBean.getCount(criteria) > 0) {
+				String message = AonUtil.addErrorMessageFromBundle(ITEM_SERIALIZABLE_REQUIRED_ERROR);
+				throw new AbortProcessingException(message);
+			}
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage());
+		}
 	}
 
 	private Warehouse obtainDeliveryWarehouse(WorkPlace workPlace) throws ManagerBeanException {
@@ -547,6 +570,8 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 	}
 
 	public void onInvoiceShow(ActionEvent event) {
+		Purchase to = (Purchase)this.getTo();
+		validate(to);
 		setInvoiceRefCode(null);
 		setInvoiceDate(new Date());
 	}

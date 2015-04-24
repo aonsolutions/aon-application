@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showSerialNumberWindow">
+		<aon:if test="#{purchaseDetail.showSerialNumberWindow}">
+			<rich:modalPanel id="serialNumberModalPanel" minHeight="380"
+				minWidth="520" rendered="#{purchaseDetail.showSerialNumberWindow}"
+				showWhenRendered="true" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{bundle.aon_to_specify} #{bundle.aon_serial_number}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showSerialNumberWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{purchaseDetail.showSerialNumberWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="serialNumberForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="serialNumber-accept"
+										value="#{bundle.aon_accept}"
+										actionListener="#{purchaseDetail.onAssignSerialNumber}"
+										action="purchaseForm"
+										styleClass="aon-finding-toolbar-item aon-icon-accept">
+										<rich:componentControl for="serialNumberModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{purchaseDetail.showSerialNumberWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+									<aon:commandButton id="serialNumber-cancel"
+										value="#{bundle.aon_cancel}"
+										reRender="showSerialNumberWindow"
+										immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel">
+										<f:setPropertyActionListener
+											target="#{purchaseDetail.showSerialNumberWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+									<aon:panelGrid id="serialNumberGrid" columns="2" dir="true" styleClass="aon-width-all">
+
+										<aon:outputLabel value="#{bundle.aon_product}" />
+										<aon:outputText styleClass="aon-bold"
+											value="#{purchaseDetail.serializableItem.product.name}" />
+
+										<aon:outputLabel for="PurchaseDetail_serialQuantity"
+											value="#{bundle.aon_quantity}"
+											rendered="#{purchaseDetail.serializableItem.product.lotable}" />
+										<aon:inputText id="PurchaseDetail_serialQuantity" 
+											value="#{purchaseDetail.serializableQuantity}"
+											rendered="#{purchaseDetail.serializableItem.product.lotable}"
+											required="true" size="5" />
+
+										<aon:outputLabel for="PurchaseDetail_serialDate"
+											value="#{bundle.aon_serial_date}" />
+										<aon:selectInputDate id="PurchaseDetail_serialDate" 
+											value="#{purchaseDetail.serialDate}"
+											timeZone="#{timeZoneController.timeZone}"
+											popupDateFormat="#{bundle.aon_date_pattern}" />
+
+										<aon:outputLabel for="PurchaseDetail_serialNumber"
+											value="#{bundle.aon_serial_number}" />
+										<aon:div>
+											<aon:inputText id="PurchaseDetail_serialNumber"
+												value="#{purchaseDetail.serialNumber}" 
+												size="40" maxlength="32"
+												converter="aon.TrimStringConverter" />
+											<aon:commandButton id="PurchaseDetail_serialNumber-add"
+												styleClass="aon-finding-toolbar-item aon-search-add"
+												value="&#160;"
+												rendered="#{true}"
+												actionListener="#{purchaseDetail.onAddSerialNumber}"
+												reRender="serialNumberGrid" />
+											<aon:commandButton id="PurchaseDetail_serialNumber-remove"
+												styleClass="aon-finding-toolbar-item aon-search-minus"
+												value="&#160;"
+												actionListener="#{purchaseDetail.onRemoveSerialNumber}"
+												reRender="serialNumberGrid">
+											</aon:commandButton>
+										</aon:div>
+
+										<aon:outputLabel for="PurchaseDetail_serialNumbers"
+											value="#{bundle.aon_list}" />
+										<aon:selectManyListbox id="PurchaseDetail_serialNumbers"
+											style="width:280px;"
+											value="#{purchaseDetail.selectedBreakdown}" size="12">
+											<f:selectItems value="#{purchaseDetail.serialNumbers}" />
+										</aon:selectManyListbox>
+
+									</aon:panelGrid>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</aon:if>
+	</aon:panelGroup>
+
+</ui:composition>

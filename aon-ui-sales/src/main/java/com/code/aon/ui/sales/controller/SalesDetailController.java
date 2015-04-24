@@ -1,18 +1,33 @@
 package com.code.aon.ui.sales.controller;
 
-import java.text.DecimalFormat;
-import java.util.Iterator;
+import static com.code.aon.ui.common.ICommonMessages.DATE_PATTERN;
 
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.Item;
+import com.code.aon.product.Product;
+import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
@@ -34,7 +49,13 @@ public class SalesDetailController extends LinesController implements ISalesCons
 
 	private IPriceStrategy priceStrategy;
 	private boolean longDescription;
-	
+	private SalesDetail salesDetail;
+	private boolean showSerialNumberWindow;
+	private Item serializableItem;
+	private double serializableQuantity;
+	private List<SelectItem> serialNumbers;
+	private Item[] selectedItems;
+
 	public IPriceStrategy getPriceStrategy(){
 		if(priceStrategy == null){
 			priceStrategy = PriceStrategyFactory.getPriceStrategy();
@@ -64,6 +85,54 @@ public class SalesDetailController extends LinesController implements ISalesCons
 
 	public void onShortDescription(ActionEvent event) {
 		setLongDescription(false);
+	}
+
+	public SalesDetail getSalesDetail() {
+		return salesDetail;
+	}
+
+	public void setSalesDetail(SalesDetail salesDetail) {
+		this.salesDetail = salesDetail;
+	}
+
+	public boolean isShowSerialNumberWindow() {
+		return showSerialNumberWindow;
+	}
+
+	public void setShowSerialNumberWindow(boolean value) {
+		this.showSerialNumberWindow = value;
+	}
+
+	public Item getSerializableItem() {
+		return serializableItem;
+	}
+
+	public void setSerializableItem(Item serializableItem) {
+		this.serializableItem = serializableItem;
+	}
+
+	public double getSerializableQuantity() {
+		return serializableQuantity;
+	}
+
+	public void setSerializableQuantity(double serializableQuantity) {
+		this.serializableQuantity = serializableQuantity;
+	}
+
+	public List<SelectItem> getSerialNumbers() {
+		return serialNumbers;
+	}
+
+	public void setSerialNumbers(List<SelectItem> serialNumbers) {
+		this.serialNumbers = serialNumbers;
+	}
+
+	public Item[] getSelectedItems() {
+		return selectedItems;
+	}
+
+	public void setSelectedItems(Item[] selectedItems) {
+		this.selectedItems = selectedItems;
 	}
 
 	public boolean isPending() throws ManagerBeanException {
@@ -127,6 +196,105 @@ public class SalesDetailController extends LinesController implements ISalesCons
 			if (salesDetail.getItem() != null && salesDetail.getItem().getId() != null) {
 				salesDetail.setQuantity((Double)event.getNewValue());
 				salesDetail.setPrice(getPriceStrategy().getUnitPrice(salesDetail, sales.getIssueDate(), sales.getCustomer()));
+			}
+		}
+	}
+
+	public void onAssignSerialNumberShow(ActionEvent event) throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
+			setSalesDetail(salesDetail);
+			setSerializableItem(salesDetail.getItem());
+			setSerializableQuantity(salesDetail.getItem().getProduct().isLotable() ? salesDetail.getQuantity() : 1);
+			setSerialNumbers(obtainItemSerialNumbers(salesDetail.getItem().getProduct()));
+			setSelectedItems(null);
+		} else {
+			setShowSerialNumberWindow(false);
+		}
+	}
+
+	private List<SelectItem> obtainItemSerialNumbers(Product product) throws ManagerBeanException {
+		List<SelectItem> items = new LinkedList<SelectItem>();
+		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), product.getId());
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_STATUS), ProductStatus.ACTIVE);
+		criteria.addNotNullExpression(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER));
+		criteria.addNotEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER), StringUtils.EMPTY);
+		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER));
+		for (ITransferObject ito : itemBean.getList(criteria)) {
+			Item item = (Item)ito;
+			items.add(new SelectItem(item, getItemSerialLabel(item.getSerialNumber(), item.getSerialDate())));
+		}
+		return items;
+	}
+
+	private String getItemSerialLabel(String serialNumber, Date serialDate) {
+		DateFormat dateFormat = new SimpleDateFormat(AonUtil.getMessage(DATE_PATTERN));
+		String label = "#" + serialNumber;
+		if (serialDate != null) {
+			label += " [" + dateFormat.format(serialDate) + "]";
+		}
+		return label;
+	}
+
+	public void onAssignSerialNumber(ActionEvent event) throws ManagerBeanException {
+		if (getSalesDetail() != null) {
+			boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+			boolean mustCloseSession = HibernateUtil.mustCloseSession();
+			String sessionName = HibernateUtil.getSessionFactoryName();
+			try {
+				HibernateUtil.setBeginTransaction(false);
+				HibernateUtil.setCloseSession(false);
+				HibernateUtil.beginTransaction(sessionName);
+				
+				assignSerialNumber(getSalesDetail());
+				onSearch(event);
+				
+				HibernateUtil.commitTransaction(sessionName);
+			} catch (Exception e) {
+				try {
+					HibernateUtil.rollbackTransaction(sessionName);
+				} catch (DAOException daoe) {}
+				AonUtil.addErrorMessage(e.getMessage());
+				throw new AbortProcessingException(e.getMessage());
+			} finally {
+				HibernateUtil.closeSession(sessionName);
+				HibernateUtil.setCloseSession(mustCloseSession);
+				HibernateUtil.setBeginTransaction(mustBeginTransaction);
+			}
+		}
+		setSalesDetail(null);
+	}
+
+	private void assignSerialNumber(SalesDetail salesDetail) throws ManagerBeanException {
+		int line = salesDetail.getLine();
+		double quantity = CommonUtil.round(getSelectedItems().length * getSerializableQuantity(), 3);
+		if (salesDetail.getQuantity() > quantity) {
+			salesDetail.setQuantity(CommonUtil.round(salesDetail.getQuantity() - quantity, 3));
+			getManagerBean().restoreNullSubPOJOs(salesDetail);
+			getManagerBean().update(salesDetail);
+		} else {
+			getManagerBean().remove(salesDetail);
+			--line;
+		}
+
+		for (Item item : getSelectedItems()) {
+			if (item != null) {
+				SalesDetail newSalesDetail = new SalesDetail();
+				newSalesDetail.setSales(salesDetail.getSales());
+				newSalesDetail.setLine(++line);
+				newSalesDetail.setItem(item);
+				newSalesDetail.setDescription(item.getFullName());
+				newSalesDetail.setQuantity(getSerializableQuantity());
+				newSalesDetail.setPrice(salesDetail.getPrice());
+				newSalesDetail.setDiscountExpression(salesDetail.getDiscountExpression());
+				newSalesDetail.setTaxes(salesDetail.getTaxes());
+				newSalesDetail.setStatus(SalesDetailStatus.PENDING);
+				newSalesDetail.setOfferDetail(salesDetail.getOfferDetail());
+				newSalesDetail.setDelivered(0);
+				getManagerBean().restoreNullSubPOJOs(newSalesDetail);
+				getManagerBean().insert(newSalesDetail);
 			}
 		}
 	}

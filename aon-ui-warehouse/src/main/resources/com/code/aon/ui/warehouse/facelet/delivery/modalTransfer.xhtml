@@ -160,6 +160,7 @@
 												</f:facet>
 												<aon:selectBooleanCheckbox id="DetailCheck"
 													value="#{delivery.salesTransferManager.detailRowChecked}"
+													rendered="#{!to.item.wildCard}"
 													valueChangeListener="#{delivery.salesTransferManager.detailRowSelected}"
 													reRender="salesData,transfered" ajaxSingle="true" />	
 											</aon:column>

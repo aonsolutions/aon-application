@@ -10,6 +10,8 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -245,7 +247,7 @@ public class SalesTransferManager implements Serializable {
 		Iterator<?> iterator = salesDetailList.iterator();
 		while (iterator.hasNext()) {
 			SalesDetail detail = (SalesDetail)iterator.next();
-			if (!detailChecks.contains(detail)) {
+			if (!detailChecks.contains(detail) && (!detail.getItem().getProduct().isSerializable() || !StringUtils.isEmpty(detail.getItem().getSerialNumber()))) {
 				detail.setTransfered(detail.getQuantity()-detail.getDelivered());
 				detailChecks.add(detail);
 			}

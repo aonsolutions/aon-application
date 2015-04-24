@@ -78,10 +78,10 @@
 				</ui:include>						
 				<aon:panelGroup id="offerDetailItemEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
 					<aon:if test="#{aonConfiguration.bean.product.showAlternatives}">
-						<aon:commandButton value="&#160;"
-							title="#{bundle.product_info}"
+						<aon:commandLink id="OfferDetail_itemInfo"
+							value="&#160;" title="#{bundle.product_info}"
+							styleClass="aon-icon-info" style="margin-left: 5px; padding-right: 12px; padding-top: 1px;"
 							rendered="#{offerDetail.to.item != null and offerDetail.to.item.id != null and !offerDetail.to.item.active}"
-							styleClass="aon-icon aon-icon-edit-end aon-icon-info"
 							actionListener="#{itemInfo.onShowPanel}"
 							reRender="itemInfoContainer">
 							<aon:set var="#{itemInfo.stockVisible}" value="#{false}" />
@@ -89,7 +89,7 @@
 							<aon:set var="#{itemInfo.item}" value="#{offerDetail.to.item}" /> 
 							<aon:set var="#{itemInfo.componentId}" value="Item_id" />
 							<aon:set var="#{itemInfo.alternativeMethod}" value="offerDetail.onItemChanged" />
-						</aon:commandButton>															
+						</aon:commandLink>															
 					</aon:if>
 					<aon:inputTextarea id="OfferDetail_description"
 						value="#{offerDetail.to.description}" required="true"
@@ -116,10 +116,10 @@
 						</ui:include>						
 						<aon:panelGroup id="offerDetailItemNew" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
 							<aon:if test="#{aonConfiguration.bean.product.showAlternatives}">
-								<aon:commandButton value="&#160;"
-									title="#{bundle.product_info}"
+								<aon:commandLink id="OfferDetail_itemInfo-New"
+									value="&#160;" title="#{bundle.product_info}"
+									styleClass="aon-icon-info" style="margin-left: 5px; padding-right: 12px; padding-top: 1px;"
 									rendered="#{offerDetail.to.item != null and offerDetail.to.item.id != null and !offerDetail.to.item.active}"
-									styleClass="aon-icon aon-icon-edit-end aon-icon-info"
 									actionListener="#{itemInfo.onShowPanel}"
 									reRender="itemInfoContainer">
 									<aon:set var="#{itemInfo.stockVisible}" value="#{false}" />
@@ -127,7 +127,7 @@
 									<aon:set var="#{itemInfo.item}" value="#{offerDetail.to.item}" /> 
 									<aon:set var="#{itemInfo.componentId}" value="Item_id-New" />
 									<aon:set var="#{itemInfo.alternativeMethod}" value="offerDetail.onItemChanged" />
-								</aon:commandButton>															
+								</aon:commandLink>															
 							</aon:if>
 							<aon:inputTextarea id="OfferDetail_description-New"
 								value="#{offerDetail.to.description}" required="true"

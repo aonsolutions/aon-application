@@ -88,10 +88,10 @@
 				</ui:include>
 				<aon:panelGroup id="deliveryDetailItemEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
 					<aon:if test="#{aonConfiguration.bean.product.showStock}">
-						<aon:commandButton value="&#160;"
-							title="#{bundle.product_info}"
+						<aon:commandLink id="DeliveryDetail_itemInfo"
+							value="&#160;" title="#{bundle.product_info}"
+							styleClass="aon-icon-info" style="margin-left: 5px; padding-right: 12px; padding-top: 1px;"
 							rendered="#{deliveryDetail.to.item != null and deliveryDetail.to.item.id != null and deliveryDetail.to.item.product.inventoriable}"
-							styleClass="aon-icon aon-icon-edit-end aon-icon-info"
 							actionListener="#{itemInfo.onShowPanel}"
 							reRender="itemInfoContainer">
 							<aon:set var="#{itemInfo.stockVisible}" value="#{true}" />
@@ -101,7 +101,7 @@
 							<aon:set var="#{itemInfo.rowStock}" value="#{deliveryDetail.rowStock}" /> 
 							<aon:set var="#{itemInfo.componentId}" value="DeliveryDetail_item_product_code" />
 							<aon:set var="#{itemInfo.alternativeMethod}" value="deliveryDetail.onItemChanged" />
-						</aon:commandButton>															
+						</aon:commandLink>															
 					</aon:if>
 					<aon:inputTextarea id="DeliveryDetail_description" 
 						value="#{deliveryDetail.to.description}"
@@ -141,10 +141,10 @@
 						</ui:include>
 						<aon:panelGroup id="deliveryDetailItemNew" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
 							<aon:if test="#{aonConfiguration.bean.product.showStock}">
-								<aon:commandButton value="&#160;"
-									title="#{bundle.product_info}"
+								<aon:commandLink id="DeliveryDetail_itemInfo-New"
+									value="&#160;" title="#{bundle.product_info}"
+									styleClass="aon-icon-info" style="margin-left: 5px; padding-right: 12px; padding-top: 1px;"
 									rendered="#{deliveryDetail.to.item != null and deliveryDetail.to.item.id != null and deliveryDetail.to.item.product.inventoriable}"
-									styleClass="aon-icon aon-icon-edit-end aon-icon-info"
 									actionListener="#{itemInfo.onShowPanel}"
 									reRender="itemInfoContainer">
 									<aon:set var="#{itemInfo.stockVisible}" value="#{true}" />
@@ -154,7 +154,7 @@
 									<aon:set var="#{itemInfo.rowStock}" value="#{deliveryDetail.rowStock}" /> 
 									<aon:set var="#{itemInfo.componentId}" value="Item_id-New" />
 									<aon:set var="#{itemInfo.alternativeMethod}" value="deliveryDetail.onItemChanged" />
-								</aon:commandButton>															
+								</aon:commandLink>															
 							</aon:if>
 							<aon:inputTextarea id="DeliveryDetail_description-New" 
 								value="#{deliveryDetail.to.description}"

@@ -1,5 +1,6 @@
 package com.code.aon.ui.sales.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.ITEM_SERIALIZABLE_REQUIRED_ERROR;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
 import java.util.Date;
@@ -40,6 +41,8 @@ import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.sales.Sales;
@@ -571,11 +574,31 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	
 	public void onDeliveryShow(ActionEvent event) throws ManagerBeanException {
 		Sales to = (Sales) this.getTo();
+		validate(to);
 		getDeliveryController().initSeries(false);
 		setDeliverySeries(SeriesUtil.ensureDeliverySeries(to.getSeries()));
 		setDeliveryNumber(0);
 		setDeliveryDate(new Date());
 		setDeliveryWarehouse(obtainDeliveryWarehouse(to.getWorkPlace()));
+	}
+
+	private void validate(Sales sales) {
+		try {
+			IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_ID), sales.getId());
+			criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_ITEM_PRODUCT_SERIALIZABLE), Boolean.TRUE);
+			Expression serialNullExp = ExpressionUtilities.getNullExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_ITEM_SERIAL_NUMBER));
+			Expression serialEmptyExp = ExpressionUtilities.getEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_ITEM_SERIAL_NUMBER), "");
+			criteria.addExpression(ExpressionUtilities.getOrExpression(serialNullExp, serialEmptyExp));
+			if (salesDetailBean.getCount(criteria) > 0) {
+				String message = AonUtil.addErrorMessageFromBundle(ITEM_SERIALIZABLE_REQUIRED_ERROR);
+				throw new AbortProcessingException(message);
+			}
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage());
+		}
 	}
 
 	public void onDeliverySeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
@@ -629,6 +652,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	
 	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {
 		Sales to = (Sales)this.getTo();
+		validate(to);
 		SaleInvoiceController controller = getSaleInvoiceController();
 		controller.onCancel(event);
 		controller.initSeries(false);

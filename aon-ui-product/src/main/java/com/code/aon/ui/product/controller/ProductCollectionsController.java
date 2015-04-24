@@ -8,6 +8,8 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -190,7 +192,7 @@ public class ProductCollectionsController implements Serializable {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_STATUS), ProductStatus.ACTIVE);
 		criteria.addNotNullExpression(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER));
-		criteria.addNotEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER), "");
+		criteria.addNotEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER), StringUtils.EMPTY);
 		return itemBean.getCount(criteria);
 	}
 
