@@ -1014,7 +1014,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
             
             if(row.getRowNum() > 0){ 
             	si.setRow(row.getRowNum());
-            	
+            	System.out.println("CANTIDAD = "+si.getQuantity());
             	if(si.getQuantity() != null && (transfer && si.getQuantity() != 0))
             		stock.add(si);
             }

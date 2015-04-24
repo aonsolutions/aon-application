@@ -410,9 +410,31 @@ public class Templates extends Composite implements EntryPoint {
 	
 	private class ActionHasCell implements HasCell<TemplateInfo, TemplateInfo> {
 	    private ActionCell<TemplateInfo> cell;
-
+	    String s;
+	    
 	    public ActionHasCell(String text, Delegate<TemplateInfo> delegate) {
-	        cell = new ActionCell<TemplateInfo>(text, delegate);
+	    	Window.alert(delegate.toString());
+	    	s = text;
+	        cell = new ActionCell<TemplateInfo>(text, delegate){
+	        	String text = s;
+	        	@Override
+	        	public void render(com.google.gwt.cell.client.Cell.Context context,
+	        			TemplateInfo value, SafeHtmlBuilder sb) {
+	        		if(text.equals("download")){
+	        			sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-google-drive-excel\" tabindex=\"-1\">");
+						sb.appendHtmlConstant("</button>");		
+	        		}
+	        		if(text.equals("edit")){
+	        			sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-edit\" tabindex=\"-1\">");
+						sb.appendHtmlConstant("</button>");		
+	        		}
+	        		if(text.equals("delete")){
+	        			sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-delete\" tabindex=\"-1\">");
+						sb.appendHtmlConstant("</button>");		
+	        		}
+	        	}
+	        };
+	        
 	    }
 
 	    @Override
@@ -438,7 +460,9 @@ public class Templates extends Composite implements EntryPoint {
 		initContextMenu();
 		
 		List<HasCell<TemplateInfo, ?>> cells = new LinkedList<HasCell<TemplateInfo, ?>>();
-	    cells.add(new ActionHasCell("Edit", new Delegate<TemplateInfo>() {
+	    
+	    
+		cells.add(new ActionHasCell("edit", new Delegate<TemplateInfo>() {
 
 	        @Override
 	        public void execute(TemplateInfo object) {
@@ -446,7 +470,7 @@ public class Templates extends Composite implements EntryPoint {
 	        	edit(object);
 	        }
 	    }));
-	    cells.add(new ActionHasCell("Delete", new Delegate<TemplateInfo>() {
+	    cells.add(new ActionHasCell("delete", new Delegate<TemplateInfo>() {
 
 	        @Override
 	        public void execute(TemplateInfo object) {
@@ -454,8 +478,17 @@ public class Templates extends Composite implements EntryPoint {
 	        	delete(object);
 	        }
 	    }));
-	    CompositeCell<TemplateInfo> cell = new CompositeCell<TemplateInfo>(cells);
-
+	    cells.add(new ActionHasCell("download", new Delegate<TemplateInfo>() {
+	    	
+	        @Override
+	        public void execute(TemplateInfo object) {
+	            // DOWNLOAD CODE
+	        	download(object);
+	        }
+	    }));
+		
+		
+		CompositeCell<TemplateInfo> cell = new CompositeCell<TemplateInfo>(cells);
 		/** Name Column **/
 		Column<TemplateInfo, String> nameColumn = new Column<TemplateInfo, String>(
 				new TextCell()) {
@@ -516,14 +549,15 @@ public class Templates extends Composite implements EntryPoint {
 		dataGrid.setColumnWidth(typeColumn, 20, Unit.PCT);
 
 		/** Download Column **/
-		/*dataGrid.addColumn(new Column<TemplateInfo, TemplateInfo>(cell){
+		Column<TemplateInfo,TemplateInfo> downloadColumn = 	new Column<TemplateInfo, TemplateInfo>(cell){
+
 			@Override
 			public TemplateInfo getValue(TemplateInfo object) {
 				return object;
 			}
-		},"Download");
-		*/
-		Column<TemplateInfo,String> downloadColumn = new Column<TemplateInfo, String>(new ButtonCell()) {
+		};
+		
+		/*Column<TemplateInfo,String> downloadColumn = new Column<TemplateInfo, String>(new ButtonCell()) {
 			
 			@Override
 			public void render(Context context, TemplateInfo object,
@@ -538,15 +572,15 @@ public class Templates extends Composite implements EntryPoint {
 			public String getValue(TemplateInfo object) {
 				return "";
 			}
-		};
+		};*/
 		downloadColumn.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
-		downloadColumn.setFieldUpdater(new FieldUpdater<TemplateInfo, String>() {
+		/*downloadColumn.setFieldUpdater(new FieldUpdater<TemplateInfo, String>() {
 			@Override
 			public void update(int index, TemplateInfo object, String value) {
 				download(object);
 			}
-		});	
-		dataGrid.addColumn(downloadColumn, "Descargar");//("+dataProvider.getList().size()+")");
+		});*/	
+		dataGrid.addColumn(downloadColumn, "Acciones");//("+dataProvider.getList().size()+")");
 		dataGrid.setColumnWidth(downloadColumn, 10, Unit.PCT);
 	}
 	
