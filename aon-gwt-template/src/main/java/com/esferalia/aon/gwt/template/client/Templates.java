@@ -413,7 +413,6 @@ public class Templates extends Composite implements EntryPoint {
 	    String s;
 	    
 	    public ActionHasCell(String text, Delegate<TemplateInfo> delegate) {
-	    	Window.alert(delegate.toString());
 	    	s = text;
 	        cell = new ActionCell<TemplateInfo>(text, delegate){
 	        	String text = s;
