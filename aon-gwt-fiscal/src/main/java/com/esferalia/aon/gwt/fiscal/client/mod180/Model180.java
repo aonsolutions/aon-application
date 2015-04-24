@@ -138,6 +138,8 @@ public class Model180 extends MainEntryPoint {
 	Button generateFileButton;
 	@UiField
 	Button printButton;
+	@UiField
+	Button printMod180Button;
 
 	@UiField
 	TextBox year;
@@ -332,6 +334,7 @@ public class Model180 extends MainEntryPoint {
 		saveButton.setVisible(true);
 		generateFileButton.setVisible(currentMod180.getId() != null);
 		printButton.setVisible(currentMod180.getId() != null);
+		printMod180Button.setVisible(currentMod180.getId() != null);
 
 		pagerPanel.setVisible(currentMod180.getId() != null);
 		perceptorPanel.setVisible(currentMod180.getId() != null);
@@ -357,6 +360,7 @@ public class Model180 extends MainEntryPoint {
 							deleteButton.setVisible(false);
 							generateFileButton.setVisible(false);
 							printButton.setVisible(false);
+							printMod180Button.setVisible(false);
 							newButton.setVisible(true);
 						}
 					}
@@ -606,5 +610,15 @@ public class Model180 extends MainEntryPoint {
 		label.addStyleName("aon-icon");
 		panel.add(label);
 		resultsPanel.setWidget(panel);
+	}
+	
+	@UiHandler("printMod180Button")
+	public void onPrintMod180(ClickEvent event) {
+		diskForm.setAction(GWT.getHostPageBaseURL() +"/aon_gwt_fiscal/Model180CertificatePrint");
+		mod180Hidden.setValue( String.valueOf(currentMod180.getId()) );
+		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
+		domainNameHidden.setValue(getCurrentDomainName());
+		diskForm.submit();
+		
 	}
 }
