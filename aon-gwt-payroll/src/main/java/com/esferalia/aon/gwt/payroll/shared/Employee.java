@@ -75,28 +75,32 @@ public class Employee implements Serializable, HasId<Integer> {
 		return id;
 	}
 
-	public void setId(int id) {
+	public Employee setId(int id) {
 		this.id = id;
+		return this;
 	}
 
 	public int getPerson() {
 		return person;
 	}
 
-	public void setPerson(int personId) {
+	public Employee setPerson(int personId) {
 		this.person = personId;
+		return this;
 	}
 
 	public String getDocument() {
 		return document;
 	}
 
-	public void setDocument(String document) {
+	public Employee setDocument(String document) {
 		this.document = document;
+		return this;
 	}
 	
-	public void setSocialSecurity(String pSocialSecurity) {
+	public Employee setSocialSecurity(String pSocialSecurity) {
 		socialSecurity = pSocialSecurity;
+		return this;
 	}
 	
 	public String getSocialSecurity() {
@@ -107,24 +111,27 @@ public class Employee implements Serializable, HasId<Integer> {
 		return name;
 	}
 
-	public void setName(String name) {
+	public Employee setName(String name) {
 		this.name = name;
+		return this;
 	}
 
 	public String getFirstSurname() {
 		return firstSurname;
 	}
 
-	public void setFirstSurname(String firstSurname) {
+	public Employee setFirstSurname(String firstSurname) {
 		this.firstSurname = firstSurname;
+		return this;
 	}
 
 	public String getSecondSurName() {
 		return secondSurname;
 	}
 
-	public void setSecondSurName(String secondSurName) {
+	public Employee setSecondSurName(String secondSurName) {
 		this.secondSurname = secondSurName;
+		return this;
 	}
 
 	public String getFullname() {
@@ -151,24 +158,27 @@ public class Employee implements Serializable, HasId<Integer> {
 		return startDate;
 	}
 
-	public void setStartDate(Date startDate) {
+	public Employee setStartDate(Date startDate) {
 		this.startDate = startDate;
+		return this;
 	}
 
 	public Date getEndDate() {
 		return endDate;
 	}
 
-	public void setEndDate(Date endDate) {
+	public Employee setEndDate(Date endDate) {
 		this.endDate = endDate;
+		return this;
 	}
 	
 	public Category getCategory() {
 		return category;
 	}
 	
-	public void setCategory(Category category) {
+	public Employee setCategory(Category category) {
 		this.category = category;
+		return this;
 	}
 
 	@Override
