@@ -5,6 +5,7 @@ package com.esferalia.aon.gwt.template.client;
 import static com.esferalia.aon.gwt.common.client.AONEntryPoint.getParameter;
 
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
@@ -19,9 +20,14 @@ import com.esferalia.aon.gwt.template.shared.Series;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
+import com.google.gwt.cell.client.ActionCell;
+import com.google.gwt.cell.client.ActionCell.Delegate;
 import com.google.gwt.cell.client.ButtonCell;
+import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.Cell.Context;
+import com.google.gwt.cell.client.CompositeCell;
 import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -32,6 +38,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -170,6 +177,8 @@ public class Templates extends Composite implements EntryPoint {
 	@UiField Button new_button;
 	@UiField Button import_button;
 	@UiField Button export_button;
+	@UiField Button edit_button;
+	@UiField Button delete_button;
 	@UiField(provided = true) TextBox nameSearchBox;
 	@UiField(provided = true) TextBox typeSearchBox;
 	@UiField Button nameSearchButton;
@@ -229,8 +238,7 @@ public class Templates extends Composite implements EntryPoint {
 			exportFeex(this);
 			exportCataloguex(this);
 			exportProposal(this);
-			exportProposalx(this);
-			
+			exportProposalx(this);	
 		}
 	}
 	
@@ -277,7 +285,20 @@ public class Templates extends Composite implements EntryPoint {
 		DefaultKeyboardSelectionHandler<TemplateInfo> selHandler = new DefaultKeyboardSelectionHandler<TemplateInfo>(dataGrid){
 			@Override
 			public void onCellPreview(CellPreviewEvent<TemplateInfo> event) {
-				
+				if(BrowserEvents.CLICK.equals(event.getNativeEvent().getType())){
+					Integer relRow = event.getIndex() - dataGrid.getPageStart();
+				    Integer subrow = event.getContext().getSubIndex();
+				    dataGrid.setKeyboardSelectedRow(relRow, subrow, true); 
+				    TemplateInfo object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
+				    if(object.getIsParent()){
+				    	edit_button.setVisible(false);
+				    	delete_button.setVisible(false);
+				    }
+				    else{
+				    	edit_button.setVisible(true);
+				    	delete_button.setVisible(true);
+				    }
+				}
 				if(BrowserEvents.CONTEXTMENU.equals(event.getNativeEvent().getType())){
 					Integer relRow = event.getIndex() - dataGrid.getPageStart();
 				    Integer subrow = event.getContext().getSubIndex();
@@ -387,12 +408,54 @@ public class Templates extends Composite implements EntryPoint {
 		
 	}
 	
+	private class ActionHasCell implements HasCell<TemplateInfo, TemplateInfo> {
+	    private ActionCell<TemplateInfo> cell;
+
+	    public ActionHasCell(String text, Delegate<TemplateInfo> delegate) {
+	        cell = new ActionCell<TemplateInfo>(text, delegate);
+	    }
+
+	    @Override
+	    public Cell<TemplateInfo> getCell() {
+	        return cell;
+	    }
+
+	    @Override
+	    public FieldUpdater<TemplateInfo, TemplateInfo> getFieldUpdater() {
+	        return null;
+	    }
+
+	    @Override
+	    public TemplateInfo getValue(TemplateInfo object) {
+	        return object;
+	    }
+	}
+	
 	private void initTableColumns(
 			final SelectionModel<TemplateInfo> selectionModel,
 			ListHandler<TemplateInfo> sortHandler) {
 		
 		initContextMenu();
 		
+		List<HasCell<TemplateInfo, ?>> cells = new LinkedList<HasCell<TemplateInfo, ?>>();
+	    cells.add(new ActionHasCell("Edit", new Delegate<TemplateInfo>() {
+
+	        @Override
+	        public void execute(TemplateInfo object) {
+	           // EDIT CODE
+	        	edit(object);
+	        }
+	    }));
+	    cells.add(new ActionHasCell("Delete", new Delegate<TemplateInfo>() {
+
+	        @Override
+	        public void execute(TemplateInfo object) {
+	            // DELETE CODE
+	        	delete(object);
+	        }
+	    }));
+	    CompositeCell<TemplateInfo> cell = new CompositeCell<TemplateInfo>(cells);
+
 		/** Name Column **/
 		Column<TemplateInfo, String> nameColumn = new Column<TemplateInfo, String>(
 				new TextCell()) {
@@ -451,15 +514,24 @@ public class Templates extends Composite implements EntryPoint {
 		dataGrid.addColumn(typeColumn, "Tipo");
 
 		dataGrid.setColumnWidth(typeColumn, 20, Unit.PCT);
-		
+
 		/** Download Column **/
+		/*dataGrid.addColumn(new Column<TemplateInfo, TemplateInfo>(cell){
+			@Override
+			public TemplateInfo getValue(TemplateInfo object) {
+				return object;
+			}
+		},"Download");
+		*/
 		Column<TemplateInfo,String> downloadColumn = new Column<TemplateInfo, String>(new ButtonCell()) {
 			
 			@Override
 			public void render(Context context, TemplateInfo object,
 					SafeHtmlBuilder sb) {
+				
 				sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-google-drive-excel\" tabindex=\"-1\">");
-				sb.appendHtmlConstant("</button>");				
+				sb.appendHtmlConstant("</button>");		
+
 			}
 			
 			@Override
@@ -473,7 +545,7 @@ public class Templates extends Composite implements EntryPoint {
 			public void update(int index, TemplateInfo object, String value) {
 				download(object);
 			}
-		});		
+		});	
 		dataGrid.addColumn(downloadColumn, "Descargar");//("+dataProvider.getList().size()+")");
 		dataGrid.setColumnWidth(downloadColumn, 10, Unit.PCT);
 	}
@@ -492,8 +564,6 @@ public class Templates extends Composite implements EntryPoint {
 	}
 	
 	private void edit(TemplateInfo object){
-		//TODO Editar plantilla
-		
 		Dialog d = new Dialog("Editar Plantilla","Grabar",true,"Cancelar",true,"edit");
 		d.setTemplateInfo(object);
 		TemplatesDialog popup = new TemplatesDialog(d) {
@@ -581,7 +651,6 @@ public class Templates extends Composite implements EntryPoint {
 		popup.show();
 	}
 	private void importFee(){
-		//TODO
 		Dialog d = new Dialog("Importar Cuotas","Importar",true,"Cancelar",true,"importFee");
 		d.setUrl(GWT.getModuleBaseURL());
 		d.setTemplateList(template_list);
@@ -597,7 +666,6 @@ public class Templates extends Composite implements EntryPoint {
 				String template = lb.getItemText(lb.getSelectedIndex());
 				TemplateInfo ti = new TemplateInfo();
 				
-				//TODO AÑADIR TODOS LOS ATRIBUTOS
 				for(TemplateInfo t : tlist.getList()) {
 					if(t.getName().equals(template) && t.getType().equals("Cuota")){
 						ti = t;
@@ -679,8 +747,6 @@ public class Templates extends Composite implements EntryPoint {
 				String template = lb.getItemText(lb.getSelectedIndex());
 				TemplateInfo ti = new TemplateInfo();
 				
-				
-				//TODO AÑADIR TODOS LOS ATRIBUTOS
 				for(TemplateInfo t : tlist.getList()) {
 					if(t.getName().equals(template) && t.getType().equals("Producto")){
 						ti = t;
@@ -810,7 +876,7 @@ public class Templates extends Composite implements EntryPoint {
 				String comments = "";
 				TextBox tb = (TextBox) flex_table.getWidget(3, 1);
 				comments = tb.getText();
-				//TODO AÑADIR TODOS LOS ATRIBUTOS
+				
 				for(TemplateInfo t : tlist.getList()) {
 					if(t.getName().equals(template) && t.getType().equals("Stock")){
 						ti = t;
@@ -899,7 +965,7 @@ public class Templates extends Composite implements EntryPoint {
 				});
 				
 				/*item.insertStock(ti, warehouse, series, comments, new AsyncCallback<com.esferalia.aon.gwt.template.shared.Error>() {
-					//TODO SERIES
+				
 					@Override
 					public void onSuccess(com.esferalia.aon.gwt.template.shared.Error result) {
 							hide();
@@ -973,7 +1039,7 @@ public class Templates extends Composite implements EntryPoint {
 				String comments = "";
 				TextBox tb = (TextBox) flex_table.getWidget(4, 1);
 				comments = tb.getText();
-				//TODO AÑADIR TODOS LOS ATRIBUTOS
+		
 				for(TemplateInfo t : tlist.getList()) {
 					if(t.getName().equals(template) && t.getType().equals("Stock")){
 						ti = t;
@@ -1220,8 +1286,6 @@ public class Templates extends Composite implements EntryPoint {
 				String template = lb.getItemText(lb.getSelectedIndex());
 				TemplateInfo ti = new TemplateInfo();
 				
-				
-				//TODO AÑADIR TODOS LOS ATRIBUTOS
 				for(TemplateInfo t : tlist.getList()) {
 					if(t.getName().equals(template) && t.getType().equals("Stock")){
 						ti = t;
@@ -1252,7 +1316,6 @@ public class Templates extends Composite implements EntryPoint {
 											@Override
 											protected void onAccept() {
 												hide();	
-												//TODO ACTUALIZAR !!! REFRESH!!!
 												refreshProposalDetail();
 											}
 
@@ -1460,6 +1523,7 @@ public class Templates extends Composite implements EntryPoint {
 	@UiHandler("import_button")
 	void importButton(ClickEvent event){
 		Dialog d = new Dialog("Importar","Importar",true,"Cancelar",true,"import");
+		d.setTemplateList(template_list);
 		popup = new TemplatesDialog(d) {
 
 			@Override
@@ -1481,6 +1545,7 @@ public class Templates extends Composite implements EntryPoint {
 	@UiHandler("export_button")
 	void exportButton(ClickEvent event){
 		Dialog d = new Dialog("Exportar","Exportar",true,"Cancelar",true,"export");
+		d.setTemplateList(template_list);
 		popup = new TemplatesDialog(d) {
 
 			@Override
@@ -1497,6 +1562,20 @@ public class Templates extends Composite implements EntryPoint {
 		popup.addStyleName("gwt-PopupPanel-template");
 		popup.setGlassEnabled(true);
 		popup.show();
+	}
+	
+	@UiHandler("edit_button")
+	void editButton(ClickEvent event){
+		TemplateInfo object;
+		object= dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
+		edit(object);
+	}
+	
+	@UiHandler("delete_button")
+	void deleteButton(ClickEvent event){
+		TemplateInfo object;
+		object= dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
+		delete(object);
 	}
 	
 	// ------------------------------------------------------------------------

@@ -6,6 +6,7 @@ package com.esferalia.aon.gwt.template.client;
 import gwtupload.client.IFileInput.FileInputType;
 import gwtupload.client.IUploadStatus.Status;
 import gwtupload.client.IUploader;
+import gwtupload.client.IUploader.OnCancelUploaderHandler;
 import gwtupload.client.IUploader.OnFinishUploaderHandler;
 import gwtupload.client.IUploader.OnStartUploaderHandler;
 import gwtupload.client.IUploader.OnStatusChangedHandler;
@@ -153,6 +154,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	} 
 	
 	private void importar(Dialog dialog){
+		dialogAux = dialog;
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
@@ -161,14 +163,42 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		ListBox lb = new ListBox();
 		lb.addItem("-");
 		lb.addItem("Producto");
-		lb.addItem("Traspaso entre almacenes");
 		lb.addItem("Stock");
 		lb.addItem("Asignar Cuotas");
+		
+		lb.addChangeHandler(new ChangeHandler() {
+			Dialog dialog = dialogAux;
+			@Override
+			public void onChange(ChangeEvent event) {
+				ListBox lb = (ListBox) flex_table.getWidget(0, 1);
+				switch (lb.getSelectedItemText()) {
+				case "Producto": importProduct(dialog.getUrl(),dialog.getTemplateList());break;
+				case "Stock": item.getWarehouses(new AsyncCallback<Vector<Warehouse>>() {
+					
+					@Override
+					public void onSuccess(Vector<Warehouse> result) {
+						dialog.setWarehouses(result);
+						
+						importStock(dialog);
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {}
+				});break;
+				case "Asignar Cuotas": importFee(dialog.getUrl(),dialog.getTemplateList());break;
+				default:
+					break;
+				}
+			}
+		});
+		
 		flex_table.setWidget(0, 0, new Label("Tipo"));
 		flex_table.setWidget(0, 1, lb);
+		flexTableCss();
 	}
-
+	Dialog dialogAux;
 	private void exportar(Dialog dialog){
+		dialogAux = dialog;
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
@@ -179,6 +209,22 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		lb.addItem("Producto");
 		lb.addItem("Stock");
 		lb.addItem("Catalogo");
+		
+		lb.addChangeHandler(new ChangeHandler() {
+			Dialog dialog = dialogAux;
+			@Override
+			public void onChange(ChangeEvent event) {
+				ListBox lb = (ListBox) flex_table.getWidget(0, 1);
+				switch (lb.getSelectedItemText()) {
+				case "Producto": exportProduct(dialog.getTemplateList());break;
+				case "Stock": exportStock(dialog.getTemplateList());break;
+				case "Catalogo": exportCatalogue(dialog.getTemplateList());break;
+				default:
+					break;
+				}
+			}
+		});
+		
 		flex_table.setWidget(0, 0, new Label("Tipo"));
 		flex_table.setWidget(0, 1, lb);
 	
@@ -220,7 +266,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setWidget(0, 0, new Label("Plantilla"));
 		flex_table.setWidget(0, 1, lb);
 		
-		SingleUploader upload = newUploader(null, url);
+		SingleUploader upload = newUploader(null, url, 1);
 		flex_table.setWidget(1, 0, new Label("Archivo"));
 		flex_table.setWidget(1, 1, upload);
 		
@@ -391,7 +437,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setWidget(0, 0, new Label("Plantilla"));
 		flex_table.setWidget(0, 1, lb);
 		
-		SingleUploader upload = newUploader(null, url);
+		SingleUploader upload = newUploader(null, url, 1);
 		flex_table.setWidget(1, 0, new Label("Archivo"));
 		flex_table.setWidget(1, 1, upload);
 		
@@ -413,7 +459,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setWidget(0, 0, new Label("Plantilla"));
 		flex_table.setWidget(0, 1, lb);
 		
-		SingleUploader upload = newUploader(null, url);
+		SingleUploader upload = newUploader(null, url, 1);
 		flex_table.setWidget(1, 0, new Label("Archivo"));
 		flex_table.setWidget(1, 1, upload);
 		
@@ -463,7 +509,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setWidget(3, 0, new Label("Comentarios"));
 		flex_table.setWidget(3, 1, tb);
 		
-		SingleUploader upload = newUploader(null, dialog.getUrl());
+		SingleUploader upload = newUploader(null, dialog.getUrl(), 4);
 		flex_table.setWidget(4, 0, new Label("Archivo"));
 		flex_table.setWidget(4, 1, upload);
 		
@@ -643,7 +689,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setWidget(4, 0, new Label("Comentarios"));
 		flex_table.setWidget(4, 1, tb);
 		
-		SingleUploader upload = newUploader(null, dialog.getUrl());
+		SingleUploader upload = newUploader(null, dialog.getUrl(), 5);
 		flex_table.setWidget(5, 0, new Label("Archivo"));
 		flex_table.setWidget(5, 1, upload);
 		
@@ -1077,7 +1123,10 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	}
 	
 	long progress = 10;
-	public  SingleUploader newUploader(SingleUploader up,String url){
+	Integer rowAux;
+	String urlAux;
+	public  SingleUploader newUploader(SingleUploader up,String url, Integer row){
+		rowAux = row;urlAux = url;
 		final SingleUploader upload;
        	if(up==null){
        		 upload=  new SingleUploader(FileInputType.BROWSER_INPUT.with(FileInputType.LABEL.getInstance()));
@@ -1094,7 +1143,20 @@ public abstract class TemplatesDialog extends CustomDialogB {
         upload.getForm().setMethod(FormPanel.METHOD_POST);
         upload.setTitle("uploadFormElement");
         upload.avoidEmptyFiles(true);
-     
+       
+        upload.addOnCancelUploadHandler(new OnCancelUploaderHandler() {
+        	Integer row = rowAux;
+        	String url = urlAux;
+        	@Override
+			public void onCancel(IUploader uploader) {
+        		//Window.alert("lalalala error");
+        		SingleUploader upload = newUploader(null, url,row);
+        		flex_table.setWidget(row, 1, upload);
+        		// reset out of TemplatesServlet!!!
+        		
+			}
+		});
+        
         upload.addOnStatusChangedHandler(new OnStatusChangedHandler() {
 		
 			@Override

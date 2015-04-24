@@ -576,9 +576,9 @@ public class DBStock {
 			.where(WAREHOUSE_TRANSFER.TARGET_WAREHOUSE.eq(id)).fetch();
 		String[] s = new String[2];
 
-		if(data.get(0).value1()!=null) s[0] = data.get(0).value1();
+		if(data != null && data.get(0).value1()!=null) s[0] = data.get(0).value1();
 		else s[0] = "";
-		if(data.get(0).value2()!=null) s[1] = data.get(0).value2();
+		if(data != null && data.get(0).value2()!=null) s[1] = data.get(0).value2();
 		else s[1] = "";
 			
 		return s;

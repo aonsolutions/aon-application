@@ -811,6 +811,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 
 	Integer inventoryId ;
 	Boolean transfer;
+	Boolean hasQuantity = true; 
 	public Integer executeExcel(Integer inventory, TemplateInfo templateInfo, String warehouse1,String warehouse2 , String series, String comments,Boolean istransfer ,Integer number){
 		transfer = istransfer;
 		ti = templateInfo;
@@ -876,8 +877,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			return -1;
 		}
 
-		if(!getMimetype().equals(MimeType.MIME_MS_EXCEL.getName())
-			&& !getMimetype().equals(MimeType.MIME_MS_EXCEL_2007.getName())){
+		if(!Utils.isExcel(getMimetype())){
 			//El archivo no es un fichero Excel.
 			error.setError(false);
  			textError =  textError + "*El archivo importado no es de tipo excel.\n";
@@ -969,11 +969,11 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
             					this.error = error;
             				}
             				if(ti.getColumns().get(beforeCell.getColumnIndex()).equals("Cantidad")){
-
+            					hasQuantity = false;
             				}
             			}
                 	}
-                	if(!ti.getColumns().get(cell.getColumnIndex()).equals("Texto Libre") && !ti.getColumns().get(cell.getColumnIndex()).equals("Nombre")){
+                	if(hasQuantity && !ti.getColumns().get(cell.getColumnIndex()).equals("Texto Libre") && !ti.getColumns().get(cell.getColumnIndex()).equals("Nombre")){
                 		si = check(ti.getColumns().get(cell.getColumnIndex()),object,si,cell.getCellType());
                 		if(si == null){
                 			textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n";
@@ -1131,6 +1131,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		stock.setDetail("");
 		stock.setDetail2("");
 		stock.setDetail3("");
+		stock.setQuantity(null);
 		//stock.setComments("");
 		//stock.setSourceWarehouse(null);
 		return stock;
