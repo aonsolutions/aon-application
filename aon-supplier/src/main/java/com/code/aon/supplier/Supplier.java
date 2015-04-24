@@ -69,7 +69,7 @@ public class Supplier extends SupplierDB implements IRegistry, ITaxInfo, IScopab
 	
 	@Transient
 	public boolean isRetentionFree() {
-		return getTransaction()!=InvoiceTransactionType.NATIONAL && getTransaction()!=InvoiceTransactionType.OTHER_ISP;
+		return (getTransaction() == InvoiceTransactionType.INTRACOMMUNITY || getTransaction() == InvoiceTransactionType.EXTRACOMMUNITY);
 	}
 
 	@Transient

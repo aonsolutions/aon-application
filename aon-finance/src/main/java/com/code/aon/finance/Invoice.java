@@ -205,7 +205,7 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 
 	@Transient
 	public boolean isRetentionFree() {
-		return (getTransaction() != InvoiceTransactionType.NATIONAL && getTransaction() != InvoiceTransactionType.OTHER_ISP);
+		return (getTransaction() == InvoiceTransactionType.INTRACOMMUNITY || getTransaction() == InvoiceTransactionType.EXTRACOMMUNITY);
 	}
 	
 	@Transient

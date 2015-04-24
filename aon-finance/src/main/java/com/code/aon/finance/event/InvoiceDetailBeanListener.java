@@ -186,7 +186,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 		double surchargeQuota = 0.0;
 
 		Invoice invoice = (!invoiceDetail.getInvoice().isRectifier()) ? invoiceDetail.getInvoice() : invoiceDetail.getInvoice().getRectificationInvoice();
-		if (invoice.isNational() || !invoice.isSales()) {
+		if (!invoice.isSales() || invoice.isNational() || (invoice.isCanCeuMel() && tax.isRetention())) {
 			if (tax.isRetention() && tax.getWithholdingType() == WithholdingType.FARMER && invoiceDetail.getInvoice().isWithholdingFarmer()) {
 				double detailVatBase = 0;
 				if (detailVat.getQuota() != 0) {
