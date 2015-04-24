@@ -118,7 +118,7 @@ public class Target extends TargetDB implements IRegistry, ITaxInfo, IScopable, 
 	
 	@Transient
 	public boolean isRetentionFree() {
-		return (getTransaction() != InvoiceTransactionType.NATIONAL && getTransaction() != InvoiceTransactionType.OTHER_ISP);
+		return (getTransaction() == InvoiceTransactionType.INTRACOMMUNITY || getTransaction() == InvoiceTransactionType.EXTRACOMMUNITY);
 	}
 	
 }
