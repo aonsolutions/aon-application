@@ -44,6 +44,10 @@
 		<field name="surchargeQuota" class="java.lang.Double"/>
 		<field name="base" class="java.lang.Double"/>
 		<field name="taxType" class="com.code.aon.config.enumeration.TaxType"/>
+		<variable name="DoubleFormater" class="java.text.DecimalFormat" resetType="None">
+			<variableExpression><![CDATA[new java.text.DecimalFormat("#,##0.00;-#,##0.00")]]></variableExpression>
+			<initialValueExpression><![CDATA[new java.text.DecimalFormat("#,##0.00;-#,##0.00")]]></initialValueExpression>
+		</variable>
 		<variable name="taxTotal" class="java.lang.Double" calculation="Sum">
 			<variableExpression><![CDATA[($F{taxType}.ordinal() == 2?new Double($F{taxQuota}.doubleValue()*(-1)):$F{taxQuota})]]></variableExpression>
 			<initialValueExpression><![CDATA[new Double(0)]]></initialValueExpression>
@@ -194,7 +198,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" rotation="Left">
-					<font size="55"/>
+					<font size="50"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{registry}.getAlias()]]></textFieldExpression>
@@ -348,12 +352,12 @@
 					<font fontName="SansSerif" size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA["TITLE OF THE CONCEPT"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["CONCEPT"]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement uuid="7149d086-c774-445e-bbfa-2addfe03018f" key="line-9" positionType="Float" x="80" y="25" width="456" height="1" forecolor="#999999"/>
 				<graphicElement>
-					<pen lineWidth="0.5" lineColor="#000000"/>
+					<pen lineWidth="1.0" lineColor="#006699"/>
 				</graphicElement>
 			</line>
 			<componentElement>
@@ -426,17 +430,12 @@
 		</band>
 		<band/>
 	</detail>
-	<columnFooter>
-		<band>
-			<printWhenExpression><![CDATA[false]]></printWhenExpression>
-		</band>
-	</columnFooter>
 	<pageFooter>
 		<band height="195">
 			<line>
 				<reportElement uuid="a9e2d1da-4281-4edb-9896-7f0f598f9267" key="line-9" x="0" y="87" width="535" height="1" forecolor="#999999"/>
 				<graphicElement>
-					<pen lineWidth="0.5" lineColor="#000000"/>
+					<pen lineWidth="1.0" lineColor="#006699"/>
 				</graphicElement>
 			</line>
 			<textField isBlankWhenNull="true">
@@ -509,7 +508,7 @@
 									<font fontName="SansSerif" size="12" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression><![CDATA["Taxes " + ($F{taxPercent}==null?"":$F{taxPercent}+" %")]]></textFieldExpression>
+								<textFieldExpression><![CDATA["Taxes " + ($F{taxPercent}==null?"":$V{DoubleFormater}.format( $F{taxPercent} )+" %")]]></textFieldExpression>
 							</textField>
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 								<reportElement uuid="b8c9b351-1be3-47c2-bbdb-d18711cc5566" key="textField-50" x="0" y="40" width="150" height="20"/>
