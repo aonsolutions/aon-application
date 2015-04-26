@@ -61,12 +61,33 @@ public class Mod180CertificatePrint extends HttpServlet {
 			if(mod180!=null){
 				HashMap<String, Object> params = new HashMap<String, Object>();
 				params.put("mod180", mod180);
-				params.put("messages", ResourceBundle.getBundle(MESSAGES_RESOURCE_BUNDLE, req.getLocale()));
+				ResourceBundle rb = null;
+				try {
+					rb = ResourceBundle.getBundle(MESSAGES_RESOURCE_BUNDLE, req.getLocale());
+				} catch (Throwable th) {
+					// DO NOTHING
+				}
+				params.put("messages", rb);
 				data = createReport(JRReport.class.getResourceAsStream(REPORT_TEMPLATE), params, mod180.getDetails());
 			}
 			
 			resp.setContentType(MimeType.PDF.getName());
-			String fileName = "certificado_retenciones";
+			
+			String s = mod180.getName();
+		    StringBuilder sb = new StringBuilder();
+		    if(!Character.isJavaIdentifierStart(s.charAt(0))) {
+		        sb.append("_");
+		    }
+		    for (char c : s.toCharArray()) {
+		        if(Character.isJavaIdentifierPart(c)) {
+		            sb.append(c);
+		        }
+		    }		
+			
+		    String fileName = "CertificadoRetenciones_" 
+					+ "_" + mod180.getYear() 
+					+ "_" + sb.toString();
+			
 			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".pdf\";");
 			AonIOUtils.copy(new ByteArrayInputStream(data), resp.getOutputStream());
 			
