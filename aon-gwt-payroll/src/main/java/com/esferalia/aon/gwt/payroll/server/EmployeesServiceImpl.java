@@ -429,16 +429,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			releaseFacesContext();
 		}
 	}
-	
+
 	@Override
-	public Map<Integer, String> getHolidayDescription() 
+	public Map<Integer, String> getHolidayDescription()
 			throws IllegalArgumentException {
 
 		Connection conn = null;
 		try {
 			initFacesContext();
 			conn = getConnection();
-			return JooqCalendar.getHolidayDescription(conn, getParentDomainID(), getDomainID());
+			return JooqCalendar.getHolidayDescription(conn,
+					getParentDomainID(), getDomainID());
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
@@ -454,8 +455,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<HolidayDraft> getCalendar(int workplaceId, Integer pattern, Integer year)
-			throws IllegalArgumentException {
+	public List<HolidayDraft> getCalendar(int workplaceId, Integer pattern,
+			Integer year) throws IllegalArgumentException {
 
 		Connection conn = null;
 		try {
@@ -463,7 +464,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			conn = getConnection();
 			return JooqCalendar.getCalendar(conn, workplaceId, pattern, year);
 		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);			
+			throw new IllegalArgumentException(e);
 		} finally {
 			if (conn != null) {
 				try {
@@ -474,7 +475,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			releaseFacesContext();
 		}
 	}
-	
+
 	@Override
 	public void saveHolidayList(int workplaceId, String holidayDescription,
 			Integer holidayListBox, Map<Date, String> map)
@@ -484,9 +485,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			initFacesContext();
 			conn = getConnection();
-			JooqCalendar.insertHolidays(conn, getDomainID(), workplaceId, holidayDescription, holidayListBox, map);			
+			JooqCalendar.insertHolidays(conn, getDomainID(), workplaceId,
+					holidayDescription, holidayListBox, map);
 		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);			
+			throw new IllegalArgumentException(e);
 		} finally {
 			if (conn != null) {
 				try {
@@ -497,7 +499,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			releaseFacesContext();
 		}
 	}
-	
+
 	@Override
 	public void deletePropertyHoliday(Integer id, Date date)
 			throws IllegalArgumentException {
@@ -506,9 +508,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			initFacesContext();
 			conn = getConnection();
-			JooqCalendar.deletePropertyHoliday(conn, id, date);		
+			JooqCalendar.deletePropertyHoliday(conn, id, date);
 		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);			
+			throw new IllegalArgumentException(e);
 		} finally {
 			if (conn != null) {
 				try {
@@ -518,7 +520,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 			releaseFacesContext();
 		}
-		
+
 	}
 
 	@Override
@@ -943,7 +945,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 
 	}
-	
+
 	@Override
 	public List<Variable> getVariables(SalaryDraft salaryDraft, Date startDate,
 			Date endDate, String[] names) throws IllegalArgumentException {
@@ -951,44 +953,60 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			initFacesContext();
 			salaryDraft.setStartDate(startDate);
 			salaryDraft.setEndDate(endDate);
-			
-			SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> ctx = 
-					getSalaryCalculatorContext(getConnection(), salaryDraft, null);
-			
-			
-			Map<String, boolean []> defined = getDefinedMap(ctx);
-			
+
+			SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> ctx = getSalaryCalculatorContext(
+					getConnection(), salaryDraft, null);
+
+			Map<String, boolean[]> defined = getDefinedMap(ctx);
+
 			List<Variable> variables = new LinkedList<Variable>();
 			for (String name : names) {
-				for( ITimedVariable<?> var : ctx.getExpressionContext().getVariables(name) ){
-					IExpression expression = var instanceof IExpressionVariable<?> ? 
-							((IExpressionVariable<?>)var).getExpression() : null;
-							
-					ContextVariable contextVariable = ContextVariable.getVariableByName(name);
+				for (ITimedVariable<?> var : ctx.getExpressionContext()
+						.getVariables(name)) {
+					IExpression expression = var instanceof IExpressionVariable<?> ? ((IExpressionVariable<?>) var)
+							.getExpression() : null;
+
+					ContextVariable contextVariable = ContextVariable
+							.getVariableByName(name);
 					try {
-					
-					Object value = var.getValue(var.getPeriod());
-					if ( value instanceof String ||
-							value instanceof Boolean ||
-							value instanceof Number )
-						variables.add(new StringVariable.Builder()
-						.setName(name)
-						.setStartDate(var.getPeriod().getStart())
-						.setEndDate(var.getPeriod().getEnd())
-						.setValue(var.getValue(var.getPeriod()))
-						.setDefined(defined.get(name))
-						.setExpression(expression != null ? expression.getExpression(): null)
-						.setImplicit(contextVariable!= null && contextVariable.isInternal())
-						.setScope((expression != null && expression.getScope() != null) ? Scope.values()[expression.getScope().ordinal()]: null)
-						.create());
-					}catch ( ExpressionExceptionWrapper  e){
-						
+
+						Object value = var.getValue(var.getPeriod());
+						if (value instanceof String || value instanceof Boolean
+								|| value instanceof Number)
+							variables
+									.add(new StringVariable.Builder()
+											.setName(name)
+											.setStartDate(
+													var.getPeriod().getStart())
+											.setEndDate(
+													var.getPeriod().getEnd())
+											.setValue(
+													var.getValue(var
+															.getPeriod()))
+											.setDefined(defined.get(name))
+											.setExpression(
+													expression != null ? expression
+															.getExpression()
+															: null)
+											.setImplicit(
+													contextVariable != null
+															&& contextVariable
+																	.isInternal())
+											.setScope(
+													(expression != null && expression
+															.getScope() != null) ? Scope
+															.values()[expression
+															.getScope()
+															.ordinal()]
+															: null).create());
+					} catch (ExpressionExceptionWrapper e) {
+
 					}
-				
+
 				}
 			}
 			return variables;
-			
+
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} catch (ExpressionException e) {
@@ -1002,13 +1020,21 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public AgreementDraft calculateAgreementDraft(AgreementDraft agreementDraft)
 			throws IllegalArgumentException {
+		Connection connection = null;
 		try {
 			initFacesContext();
-			calculate(agreementDraft, getDomainID(), getParentDomainID());
+			connection = getConnection();
+			EmployeesServiceHelper.calculate(connection, agreementDraft, getDomainID(), getParentDomainID());
 			return agreementDraft;
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
+			if ( connection != null ){
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
 			releaseFacesContext();
 		}
 
@@ -3042,151 +3068,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	private static void calculate(AgreementDraft draft, Integer domainId,
-			Integer parentDomainId) throws SQLException {
-		Connection connection = null;
-		try {
-			connection = getConnection();
-
-			SortedSet<Date> datesWithChanges = parentDomainId == null ? SQLAgreementDraft
-					.getDatesWithChanges(connection, draft.getId(), domainId)
-					: SQLAgreementDraft.getDatesWithChanges(connection,
-							draft.getId(), domainId, parentDomainId);
-
-			Set<Payment> dbPayments = SQLAgreementDraft.getPayments(connection,
-					draft.getId(), draft.getStartDate(), draft.getEndDate(),
-					domainId, parentDomainId);
-
-			Collection<Payment> payments = new CompositeItems<Payment>(
-					draft.getDraftPayments(), dbPayments);
-
-			Set<String> variables = new HashSet<String>();
-			Set<String> paymentsNames = new HashSet<String>();
-
-			Set<Payment> allPayments = new HashSet<Payment>();
-			for (Payment payment : payments) {
-
-				if (hide(payment, dbPayments))
-					continue;
-
-				try {
-					variables.addAll(ExpressionContext.getVariableSet(
-							payment.getExpression(),
-							payment.getIrpfExpression(),
-							payment.getQuoteExpression()));
-				} catch (Exception e) {
-					// TODO:
-
-				}
-
-				paymentsNames.add(payment.getName());
-
-				allPayments.add(payment);
-			}
-
-			variables.removeAll(paymentsNames);
-
-			// Filter ContextVariable
-			List<String> contextVariables = new LinkedList<String>();
-			for (ContextVariable ctxVar : ContextVariable.values())
-				if (ctxVar.isInternal())
-					contextVariables.add(ctxVar.getName());
-			variables.removeAll(contextVariables);
-
-			// This is awfull ... very awful
-			List<String> privateVariables = new LinkedList<String>();
-			for (String var : variables) {
-				if (var.endsWith("_ACTUAL"))
-					privateVariables.add(var);
-			}
-			variables.removeAll(privateVariables);
-
-			/*
-			 * Clean system variables. Set<String> systemVars =
-			 * getSystemVariables(connection, draft.getStartDate(),
-			 * draft.getEndDate()); variables.removeAll(systemVars);
-			 */
-
-			Set<Level> dbLevels = SQLAgreementDraft.getLevels(connection,
-					draft.getId());
-
-			Set<Level> allLevels = new HashSet<Level>(dbLevels);
-
-			for (Level draftLevel : draft.getDraftLevels()) {
-				allLevels.remove(draftLevel);
-				if (!StringUtils.equals(REMOVE, draftLevel.getDescription()))
-					allLevels.add(draftLevel);
-			}
-
-			Set<Extra> dbExtras = SQLAgreementDraft.getExtras(connection,
-					draft.getId());
-
-			Set<Extra> allExtras = new HashSet<Extra>(dbExtras);
-
-			for (Extra draftExtra : draft.getDraftExtras()) {
-				allExtras.remove(draftExtra);
-				if (!StringUtils.equals(REMOVE, draftExtra.getIssueDate()))
-					allExtras.add(draftExtra);
-			}
-
-			Map<Integer, Set<String>> dbCategories = SQLAgreementDraft
-					.getCategories(connection, draft.getId());
-
-			Map<Integer, Set<String>> allCategories = new HashMap<Integer, Set<String>>(
-					dbCategories);
-
-			Map<Integer, Set<String>> draftCategories = draft
-					.getDraftCategories();
-			allCategories.putAll(draftCategories);
-
-			Level agreementData = new Level();
-			agreementData.setId(0);
-			allLevels.add(agreementData);
-
-			SalaryTable dbSalaryTable = SQLAgreementDraft.getSalaryTable(
-					connection, draft.getId(), draft.getStartDate(),
-					draft.getEndDate());
-			SalaryTable allSalaryTable = new SalaryTable(dbSalaryTable);
-			allSalaryTable.putAll(draft.getDraftSalaryTable());
-
-			draft.setLevels(allLevels);
-			draft.setExtras(allExtras);
-			draft.setVariables(variables); // * No draft
-			draft.setPayments(allPayments);
-			draft.setSalaryTable(allSalaryTable);
-			draft.setCategoriesMap(allCategories);
-			draft.setDatesWithChanges(datesWithChanges);
-			
-			List<Integer> domainIds = new ArrayList<Integer>();
-			if ( parentDomainId != null ) 
-				domainIds.add(parentDomainId);
-			domainIds.add(domainId);
-			
-			eval(draft.getId(), allLevels, allSalaryTable,
-					draft.getStartDate(), draft.getEndDate(), domainIds.toArray(new Integer[]{}));
-
-		} finally {
-			if (connection != null)
-				connection.close();
-		}
-	}
-
-	private static boolean hide(Payment payment, Set<Payment> parents) {
-		if (payment.getConceptId() == null)
-			return false;
-		if (!StringUtils.equals(REMOVE, payment.getExpression()))
-			return false;
-
-		if (payment.getId() < 0)
-			return true;
-
-		return parents
-				.stream()
-				.filter(parent -> parent.getConceptId().equals(
-						payment.getConceptId())
-						&& parent.getDomain().equals(payment.getDomain()))
-				.findAny().isPresent();
-	}
 
 	private static void calculateAndSave(Connection conn, SalaryDraft draft)
 			throws SQLException {
@@ -3423,7 +3304,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 	}
-
 
 	protected static ContextDescriptor getContext(Connection conn,
 			IContractSalaryCalculatorContext calculatorCtx, Date startDate,
@@ -3712,7 +3592,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			contractCriteria.addEqualExpression(SQLConstants.CONTRACT + "."
 					+ ContractColumns.ID, draft.getEmployee().getId());
 
-
 			class IrpfListener implements IListener {
 				private IrpfOutcome irpfOutcome;
 
@@ -3741,7 +3620,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			draftCtx.setListener(listener);
 
 			draftCtx.getCtx().getIrpf();
-			
+
 			return listener.irpfOutcome;
 
 		} catch (SQLException e) {
@@ -4242,7 +4121,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
 				draft, ctx);
 		draftCtx.setListener(listener);
-		return  draftCtx;
+		return draftCtx;
 	}
 
 	private static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getSettleCalculatorContextImpl(
@@ -4254,9 +4133,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		criteria.addEqualExpression(tableCol(CONTRACT, ContractColumns.ID),
 				draft.getEmployee().getId());
 
-
 		SQLSettleDraftCalculatorContext draftCtx = new SQLSettleDraftCalculatorContext(
-				draft, conn, draft.getStartDate(), draft.getEndDate(), draft.getIssueDate(), criteria);
+				draft, conn, draft.getStartDate(), draft.getEndDate(),
+				draft.getIssueDate(), criteria);
 		draftCtx.next();
 		draftCtx.setListener(listener);
 		return draftCtx;
@@ -4570,126 +4449,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		} finally {
 
 		}
-	}
-
-	private static void eval(int agreementId, Set<Level> levels,
-			SalaryTable salaryTable, Date start, Date end, Integer... domainIds) {
-		// try to resolve some variables. Here we go.
-		Connection conn = null;
-		try {
-
-			conn = getConnection();
-
-			SQLSystemExpressionContextFactory systemCtxFactory = new SQLSystemExpressionContextFactory(
-					conn, start, end, ISQLContractSalaryCalculatorContext.NEWER);
-
-			Supplier<ExpressionContext> systemCtxSupplier = () -> systemCtxFactory
-					.create(new CCCContextKey(null, null));
-
-			SQLAgreementContextFactory agreementCtxFactory = new SQLAgreementContextFactory(
-					conn, systemCtxSupplier, start, end,
-					ISQLContractSalaryCalculatorContext.NEWER);
-
-			LinkedList<Variable> defVars = new LinkedList<Variable>(
-					salaryTable.getVariables(0));
-
-			for (Level level : levels) {
-				ExpressionContext levelCtx = new ExpressionContext();
-
-				for (Integer domainId : domainIds) {
-					AgreementContextKey levelKey = new AgreementContextKey(
-							domainId, agreementId, level.getId());
-					levelCtx.add(agreementCtxFactory.create(levelKey));
-				}
-
-				for (Variable defVar : defVars)
-					if (!salaryTable.contains(level.getId(), defVar.getName()))
-						salaryTable.put(level.getId(), copy(defVar));
-
-				LinkedList<Variable> levelVars = new LinkedList<Variable>(
-						salaryTable.getVariables(level.getId()));
-
-				eval(levelCtx, levelVars, start, end);
-			}
-
-		} catch (Throwable e) {
-			// e.printStackTrace();
-		} finally {
-			if (conn != null)
-				try {
-					conn.close();
-				} catch (SQLException e) {
-				}
-			;
-		}
-	}
-
-	private static Variable copy(Variable var) {
-		Variable copy = new StringVariable();
-		copy.setImplicit(true);
-		copy.setName(var.getName());
-		copy.setScope(var.getScope());
-		copy.setEndDate(var.getEndDate());
-		copy.setStartDate(var.getStartDate());
-		copy.setExpression(var.getExpression());
-		return copy;
-	}
-
-	private static void eval(ExpressionContext ctx, LinkedList<Variable> vars,
-			Date start, Date end) {
-		int errors = 0;
-		while (errors < vars.size()) {
-			Variable var = vars.pop();
-			try {
-				List<ITimedResult<Object>> results = ctx.eval(
-						var.getExpression(), start, end);
-				errors = 0;
-				for (ITimedResult<Object> result : results) {
-					var.setValue(result.getValue());
-					ctx.putVariable(var.getName(), result);
-					// System.out.println(var.getName() + " = " +
-					// var.getValue());
-				}
-			} catch (UndefinedVariablesException e) {
-				vars.add(var);
-				errors++;
-			} catch (CompileException e) {
-				var.setValue(generateErrorMessage(e));
-				errors++;
-			} catch (ExpressionException e) {
-				errors++;
-				// Nothing to do... Only report this error. This will be
-				// very hepfull.
-			}
-		}
-	}
-
-	private static String generateErrorMessage(CompileException e) {
-		char expr[] = e.getExpr();
-		int cursor = e.getCursor();
-		return String.format("Error sintactico cerca de '%s'",
-				showCodeNearError(expr, cursor));
-	}
-
-	private static CharSequence showCodeNearError(char[] expr, int cursor) {
-		if (expr == null)
-			return "???";
-
-		int end = Math.min(cursor + 10, expr.length - 1);
-		int start = Math.max(0, end - 20);
-
-		while (start < end && Character.isWhitespace(expr[start]))
-			start++;
-
-		CharSequence cs = null;
-
-		try {
-			cs = String.copyValueOf(expr, start, end - start);
-		} catch (StringIndexOutOfBoundsException e) {
-			throw e;
-		}
-
-		return cs;
 	}
 
 	private static void deleteSalaries(Connection conn, int... ids)
