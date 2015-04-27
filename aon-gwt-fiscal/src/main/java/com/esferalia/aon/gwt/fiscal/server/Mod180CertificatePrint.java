@@ -35,7 +35,7 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Mod180 Print", urlPatterns = { "/aon_gwt_fiscal/Model180CertificatePrint" })
+@WebServlet(name = "Mod180 Certificate Print", urlPatterns = { "/aon_gwt_fiscal/Model180CertificatePrint" })
 public class Mod180CertificatePrint extends HttpServlet {
 	
 	public final String REPORT_TEMPLATE 		= "/com/code/aon/ui/fiscal/report/mod180_retentionCertificate.jasper";
