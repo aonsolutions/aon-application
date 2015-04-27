@@ -168,7 +168,7 @@ public class Model190 extends MainEntryPoint {
 	@UiField
 	Button printButton;
 	@UiField
-	Button generate10TButton;
+	Button printMod190Button;
 	
 	@UiField
 	TextBox year;
@@ -330,7 +330,7 @@ public class Model190 extends MainEntryPoint {
 		saveButton.setVisible(true);
 		generateFileButton.setVisible(currentMod190.getId() != null);
 		printButton.setVisible(currentMod190.getId() != null);
-		generate10TButton.setVisible(currentMod190.getId() != null);
+		printMod190Button.setVisible(currentMod190.getId() != null);
 
 		detailList.setVisibleRangeAndClearData(detailList.getVisibleRange(),true);
 	}
@@ -357,7 +357,7 @@ public class Model190 extends MainEntryPoint {
 							newButton.setVisible(true);
 							generateFileButton.setVisible(false);							
 							printButton.setVisible(false);
-							generate10TButton.setVisible(false);
+							printMod190Button.setVisible(false);
 						}
 					}
 
@@ -614,9 +614,9 @@ public class Model190 extends MainEntryPoint {
 		resultsPanel.setWidget(panel);
 	}
 	
-	@UiHandler("generate10TButton")
+	@UiHandler("printMod190Button")
 	public void on10TGeneration(ClickEvent event) {
-		diskForm.setAction(GWT.getHostPageBaseURL() +"/aon_gwt_fiscal/Model10TPrint");
+		diskForm.setAction(GWT.getHostPageBaseURL() +"/aon_gwt_fiscal/Model190CertificatePrint");
 		mod190Hidden.setValue( String.valueOf(currentMod190.getId()) );
 		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
 		domainNameHidden.setValue(getCurrentDomainName());
