@@ -847,7 +847,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		if(warehouse2 != null && !warehouse2.equals("-")) 	w2 = DBStock.getWarehouse(warehouse2, domId,domain);
 		s = DBStock.getSeries(domain, domainId, series);
 
-    	Boolean b = true;
+    	//Boolean b = true;
 
 		transferInfo = new TransferInfo();
 		if(!warehouse1.equals("-")) transferInfo.setTargetWarehouse(w);
@@ -856,7 +856,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		transferInfo.setComments(comments);
 		if(istransfer) transferInfo.setNumber(number);
 		
-    	if(transferInfo.getSeries() != null && transferInfo.getTargetWarehouse() !=null){
+    	/*if(transferInfo.getSeries() != null && transferInfo.getTargetWarehouse() !=null){
     		 b = DBStock.checkSeries(domain,domainId,transferInfo.getSeries(),transferInfo.getTargetWarehouse(), transferInfo.getSourceWarehouse());	
     	}
     	if(!b){
@@ -866,7 +866,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
     		error.setTextError(verror);
     		this.error = error;
     		return -1;
-    	}
+    	}*/
 		
     	if(getOut() == null){
 			error.setError(false);

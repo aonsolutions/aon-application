@@ -145,8 +145,8 @@ public class DBConsults {
 					stockPurchaseTemplate.setColumns(v2);
 					stockPurchaseTemplate.setDomain(domain);
 					stockPurchaseTemplate.setDomainId(0);
-					stockPurchaseTemplate.setName("Compra");
-					stockPurchaseTemplate.setType("Stock");
+					stockPurchaseTemplate.setName("Solicitud de Compra");
+					stockPurchaseTemplate.setType("Catalogo");
 					stockPurchaseTemplate.sethasWarehouse(false);
 					stockPurchaseTemplate.setIsParent(true);
 					id = insertTemplate(domain, stockPurchaseTemplate,Utils.newXmlFile(stockPurchaseTemplate), 0);

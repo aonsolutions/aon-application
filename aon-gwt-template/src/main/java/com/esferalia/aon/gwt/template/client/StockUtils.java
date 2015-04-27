@@ -22,8 +22,6 @@ public class StockUtils {
 		//v.add("Comentarios");
 		v.add("Texto Libre");
 		v.add("Nombre");
-		v.add("Centro de Trabajo");
-		v.add("Departamento");
 		
 		return v;
 	}
