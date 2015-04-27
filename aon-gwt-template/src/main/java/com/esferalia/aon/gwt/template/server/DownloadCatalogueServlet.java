@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Vector;
 
 import javax.servlet.ServletException;
@@ -69,11 +68,15 @@ public class DownloadCatalogueServlet extends HttpServlet {
         style.setBorderBottom(CellStyle.BORDER_MEDIUM);
        
 
-        Cell c1 = fila.createCell(0);c1.setCellValue("Lugar de Trabajo");c1.setCellStyle(style);
+        Cell c1 = fila.createCell(0);c1.setCellValue("Centro de Trabajo");c1.setCellStyle(style);
         Cell c2 = fila.createCell(1);c2.setCellValue("Departamento");c2.setCellStyle(style);
         Cell c3 = fila.createCell(2);c3.setCellValue("Producto");c3.setCellStyle(style);
         Cell c4 = fila.createCell(3);c4.setCellValue("Nombre");c4.setCellStyle(style);
         Cell c5 = fila.createCell(4);c5.setCellValue("Cantidad");c5.setCellStyle(style);
+        Cell c6 = fila.createCell(5);c6.setCellValue("Detalle 1");c6.setCellStyle(style);
+        Cell c7 = fila.createCell(6);c7.setCellValue("Detalle 2");c7.setCellStyle(style);
+        Cell c8 = fila.createCell(7);c8.setCellValue("Detalle 3");c8.setCellStyle(style);
+        
 
         Vector<CatalogueInfo> v = DBCatalogue.getCatalogues(domain, domainId, wp, dt);
 
@@ -84,6 +87,10 @@ public class DownloadCatalogueServlet extends HttpServlet {
         	Cell ca2 = row.createCell(1);ca2.setCellValue(v.get(j).getDepartment());
         	Cell ca3 = row.createCell(2);ca3.setCellValue(v.get(j).getProductCode());
         	Cell ca4 = row.createCell(3);ca4.setCellValue(v.get(j).getProductName());
+        	Cell ca6 = row.createCell(5);ca6.setCellValue(v.get(j).getDetail());
+        	Cell ca7 = row.createCell(6);ca7.setCellValue(v.get(j).getDetail2());
+        	Cell ca8 = row.createCell(7);ca8.setCellValue(v.get(j).getDetail3());
+        		
         }
         for(Integer h = 0; h< 4;h++){
         	hoja.autoSizeColumn(h);

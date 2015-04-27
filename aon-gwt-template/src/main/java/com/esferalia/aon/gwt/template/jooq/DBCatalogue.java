@@ -10,7 +10,7 @@ import java.util.Vector;
 
 import org.jooq.Record1;
 import org.jooq.Record2;
-import org.jooq.Record3;
+import org.jooq.Record6;
 import org.jooq.Result;
 
 import com.code.aon.company.Department;
@@ -33,6 +33,8 @@ public class DBCatalogue {
 			Result<Record2<Integer, String>> record = ctx.getDslContext().select(WORKPLACE.ID, WORKPLACE.DESCRIPTION)
 					.from(WORKPLACE)
 					.where(WORKPLACE.DOMAIN.eq(domainId))
+					.and(WORKPLACE.ACTIVE.eq((byte)1))
+					.orderBy(WORKPLACE.DESCRIPTION)
 					.fetch();
 			
 			Vector<com.esferalia.aon.gwt.template.shared.WorkPlace> v = new Vector<com.esferalia.aon.gwt.template.shared.WorkPlace>();
@@ -182,9 +184,9 @@ public static Department getDepartment(WorkPlace wp, Integer department, Integer
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
 			
-			Result<Record3<Integer, Integer, Integer>> record = null;
+			Result<Record6<Integer, Integer, Integer, String, String, String>> record = null;
 			if(wp != null && dt != null){
-				record = ctx.getDslContext().select(ITEM.PRODUCT, WORKPLACE_DEPARTMENT.WORKPLACE, WORKPLACE_DEPARTMENT.DEPARTMENT)
+				record = ctx.getDslContext().select(ITEM.PRODUCT, WORKPLACE_DEPARTMENT.WORKPLACE, WORKPLACE_DEPARTMENT.DEPARTMENT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3)
 				.from(CATALOGUE_ITEM).join(ITEM).on(ITEM.ID.eq(CATALOGUE_ITEM.ITEM))
 				.join(WORKPLACE_DEPARTMENT).on(WORKPLACE_DEPARTMENT.CATALOGUE.eq(CATALOGUE_ITEM.CATALOGUE))
 				.where(WORKPLACE_DEPARTMENT.WORKPLACE.eq(wp.getId()))
@@ -193,7 +195,7 @@ public static Department getDepartment(WorkPlace wp, Integer department, Integer
 				.fetch();
 			}
 			else if(wp != null && dt == null){
-				record = ctx.getDslContext().select(ITEM.PRODUCT, WORKPLACE_DEPARTMENT.WORKPLACE, WORKPLACE_DEPARTMENT.DEPARTMENT)
+				record = ctx.getDslContext().select(ITEM.PRODUCT, WORKPLACE_DEPARTMENT.WORKPLACE, WORKPLACE_DEPARTMENT.DEPARTMENT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3)
 				.from(CATALOGUE_ITEM).join(ITEM).on(ITEM.ID.eq(CATALOGUE_ITEM.ITEM))
 				.join(WORKPLACE_DEPARTMENT).on(WORKPLACE_DEPARTMENT.CATALOGUE.eq(CATALOGUE_ITEM.CATALOGUE))
 				.where(WORKPLACE_DEPARTMENT.WORKPLACE.eq(wp.getId()))
@@ -201,7 +203,7 @@ public static Department getDepartment(WorkPlace wp, Integer department, Integer
 				.fetch();
 			}
 			else if(wp == null && dt == null){
-				record = ctx.getDslContext().select(ITEM.PRODUCT, WORKPLACE_DEPARTMENT.WORKPLACE, WORKPLACE_DEPARTMENT.DEPARTMENT)
+				record = ctx.getDslContext().select(ITEM.PRODUCT, WORKPLACE_DEPARTMENT.WORKPLACE, WORKPLACE_DEPARTMENT.DEPARTMENT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3)
 				.from(CATALOGUE_ITEM).join(ITEM).on(ITEM.ID.eq(CATALOGUE_ITEM.ITEM))
 				.join(WORKPLACE_DEPARTMENT).on(WORKPLACE_DEPARTMENT.CATALOGUE.eq(CATALOGUE_ITEM.CATALOGUE))
 				.where(CATALOGUE_ITEM.DOMAIN.eq(domainId))
@@ -219,6 +221,12 @@ public static Department getDepartment(WorkPlace wp, Integer department, Integer
 					Product p = AON.getProduct(sctx, r.value1());
 					c.setProductCode(p.getCode());
 					c.setProductName(p.getName());
+					if(r.value4() != null) c.setDetail(r.value4());
+					else c.setDetail("");
+					if(r.value5() != null) c.setDetail2(r.value5());
+					else c.setDetail2("");
+					if(r.value6() != null)c.setDetail3(r.value6());
+					else c.setDetail3("");
 					cs.add(c);
 				});
 				return cs;

@@ -756,7 +756,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	           		if(row.getLastCellNum() != -1){
 	           			Short cellnum = row.getLastCellNum();
 	           			if(row.getLastCellNum() > ti.getColumns().size())cellnum--;
-	           			if(ti.getColumns().get(cellnum).equals("Producto") || ti.getColumns().get(cellnum).equals("Almac\u00e9n Destino") || ti.getColumns().get(cellnum).equals("Cantidad")){
+	           			if(ti.getColumns().get(cellnum).equals("Producto") || ti.getColumns().get(cellnum).equals("Almac\u00e9n Destino")){
 	          				verror.add("*Fila "+(row.getRowNum()+1)+", Columna "+Utils.getColumn(row.getLastCellNum())+" : Dato Incorrecto \n");
 	          				error.setTextError(verror);
 	          				this.error = error;
@@ -811,7 +811,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 
 	Integer inventoryId ;
 	Boolean transfer;
-	Boolean hasQuantity = true; 
+
 	public Integer executeExcel(Integer inventory, TemplateInfo templateInfo, String warehouse1,String warehouse2 , String series, String comments,Boolean istransfer ,Integer number){
 		transfer = istransfer;
 		ti = templateInfo;
@@ -957,10 +957,12 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
                 		Cell beforeCell = rowAux.getCell(cell.getColumnIndex()-1);
             			if((beforeCell == null || beforeCell.getCellType() == Cell.CELL_TYPE_BLANK) && isRequiredStock(ti.getColumns().get(cell.getColumnIndex()-1))){
             				if(beforeCell == null){
-            					textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto \n";
-            					verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto");
-            					error.setTextError(verror);
-            					this.error = error;
+            					if(ti.getColumns().get(cell.getColumnIndex()-1).equals("Producto") || ti.getColumns().get(cell.getColumnIndex()-1).equals("Almac\u00e9n Destino") ||  ti.getColumns().get(cell.getColumnIndex()-1).equals("Series")){
+            						textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto \n";
+            						verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto");
+            						error.setTextError(verror);
+            						this.error = error;
+            					}
             				}
             				else if(ti.getColumns().get(beforeCell.getColumnIndex()).equals("Producto") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Almac\u00e9n Destino") ||  ti.getColumns().get(beforeCell.getColumnIndex()).equals("Series")){
             					textError= textError + "*Fila "+(beforeCell.getRowIndex()+1)+", Columna "+Utils.getColumn(beforeCell.getColumnIndex())+" : Dato Incorrecto \n";
@@ -968,12 +970,10 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
             					error.setTextError(verror);
             					this.error = error;
             				}
-            				if(ti.getColumns().get(beforeCell.getColumnIndex()).equals("Cantidad")){
-            					hasQuantity = false;
-            				}
+       
             			}
                 	}
-                	if(hasQuantity && !ti.getColumns().get(cell.getColumnIndex()).equals("Texto Libre") && !ti.getColumns().get(cell.getColumnIndex()).equals("Nombre")){
+                	if(!ti.getColumns().get(cell.getColumnIndex()).equals("Texto Libre") && !ti.getColumns().get(cell.getColumnIndex()).equals("Nombre")){
                 		si = check(ti.getColumns().get(cell.getColumnIndex()),object,si,cell.getCellType());
                 		if(si == null){
                 			textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n";
@@ -1002,7 +1002,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
             		if(row.getLastCellNum() != -1){
             			Short cellnum = row.getLastCellNum();
             			if(row.getLastCellNum() > ti.getColumns().size())cellnum--;
-            			if(ti.getColumns().get(cellnum).equals("Producto") || ti.getColumns().get(cellnum).equals("Almac\u00e9n Destino") || ti.getColumns().get(cellnum).equals("Cantidad")){
+            			if(ti.getColumns().get(cellnum).equals("Producto") || ti.getColumns().get(cellnum).equals("Almac\u00e9n Destino") ){
           					verror.add("*Fila "+(row.getRowNum()+1)+", Columna "+Utils.getColumn(row.getLastCellNum())+" : Dato Incorrecto \n");
           					error.setTextError(verror);
           					this.error = error;
@@ -1014,8 +1014,11 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
             
             if(row.getRowNum() > 0){ 
             	si.setRow(row.getRowNum());
-            	System.out.println("CANTIDAD = "+si.getQuantity());
-            	if(si.getQuantity() != null && (transfer && si.getQuantity() != 0))
+            	if(transfer){
+            		if(si.getQuantity() != null && si.getQuantity()!= 0)
+            			stock.add(si);
+            	}
+            	else if(si.getQuantity() != null)
             		stock.add(si);
             }
 		});

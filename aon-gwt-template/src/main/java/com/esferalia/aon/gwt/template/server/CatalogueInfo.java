@@ -6,6 +6,9 @@ public class CatalogueInfo {
 	String department;
 	String productCode;
 	String productName;
+	String detail;
+	String detail2;
+	String detail3;
 	
 	public String getWorkplace() {
 		return workplace;
@@ -31,7 +34,23 @@ public class CatalogueInfo {
 	public void setProductName(String productName) {
 		this.productName = productName;
 	}
-	
-	
+	public String getDetail() {
+		return detail;
+	}
+	public void setDetail(String detail) {
+		this.detail = detail;
+	}
+	public String getDetail2() {
+		return detail2;
+	}
+	public void setDetail2(String detail2) {
+		this.detail2 = detail2;
+	}
+	public String getDetail3() {
+		return detail3;
+	}
+	public void setDetail3(String detail3) {
+		this.detail3 = detail3;
+	}
 	
 }

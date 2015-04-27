@@ -28,6 +28,7 @@ import org.jooq.Record1;
 import org.jooq.Record16;
 import org.jooq.Record2;
 import org.jooq.Record3;
+import org.jooq.Record4;
 import org.jooq.Record5;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
@@ -143,7 +144,6 @@ public class DBStock {
 							quantity = data2.get(0).value1();
 							//System.out.println(" New Quantity: "+ s.getQuantity() +" ; code:  "+s.getProduct());
 							//System.out.println(" Old Quantity: "+ quantity + " or " + Math.abs(quantity));
-							System.out.println(s.getProduct());
 							Double quantityTransfer = s.getQuantity()-quantity;
 							
 							s.setDomainId(domainId);
@@ -553,6 +553,7 @@ public class DBStock {
 				else {
 					si.setProduct(i.getProduct().getCode());
 				}
+				
 				si.setQuantity(d.value4());
 				String[] s = getWarehouseComments(ctx.getDslContext(), d.value3());
 				Series ss = new Series();ss.setCode(s[1]);
@@ -797,19 +798,22 @@ public class DBStock {
 				StockInfo si  = new StockInfo();
 				WorkPlace wp = DBCatalogue.getWorkplace(r.value1(), domainId, domain);
 				Department d = DBCatalogue.getDepartment(wp, r.value2(), domainId, domain);
-				Integer productId = ctx.getDslContext().select(ITEM.PRODUCT).from(ITEM).where(ITEM.ID.eq(r.value6())).fetchOne().value1();
+				Record4<Integer, String, String, String> rd = ctx.getDslContext().select(ITEM.PRODUCT,ITEM.DETAIL,ITEM.DETAIL2, ITEM.DETAIL3).from(ITEM).where(ITEM.ID.eq(r.value6())).fetchOne();
+				Integer productId = rd.value1();
 				com.esferalia.aon.occam.api.model.product.Product p = AON.getProduct(ctx, productId);
 				si.setDepartmentStr(d.getName());
 				si.setWorkplaceStr(wp.getDescription());
 				si.setDomainId(domainId);
-				si.setDetail("");
-				si.setDetail2("");
-				si.setDetail3("");
+				if(rd.value2() != null )si.setDetail(rd.value2()); 
+				else si.setDetail("");
+				if(rd.value3() != null )si.setDetail2(rd.value3()); 
+				else si.setDetail2("");
+				if(rd.value4() != null )si.setDetail3(rd.value4()); 
+				else si.setDetail3("");
 				si.setItemId(r.value6());
 				si.setQuantity(r.value8());
 				si.setProductName(p.getName());
 				si.setProduct(p.getCode());
-				System.out.println(si.getProductName());
 				v.add(si);
 			}
 			return v;

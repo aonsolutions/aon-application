@@ -93,6 +93,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 			@Override
 			public void onClick(ClickEvent event) {
 				
+				
 				if(dialog.getType().equals("exportCatalogue")){
 					ListBox lb1 = (ListBox) flex_table.getWidget(0, 1);
 					ListBox lb2 = null;
@@ -103,6 +104,23 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					}
 					else{
 						onAccept();
+					}
+				}
+				else if(dialog.getType().contains("import") || dialog.getType().contains("export")){
+					if(dialog.getType().equals("importResponse")){
+						onAccept();
+					}
+					else{
+						ListBox lb1 = (ListBox) flex_table.getWidget(0, 1);
+						Label label1 = (Label) flex_table.getWidget(0, 0);
+						if(label1.getText().equals("Plantilla")){
+							if(lb1.getSelectedItemText().equals("-")){
+								label.setText("*Es necesario seleccionar una plantilla.");
+								label.setStyleName("aon-check-template");
+							}
+							else onAccept();
+						}
+						else onAccept();
 					}
 				}
 				else{
