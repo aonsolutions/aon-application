@@ -45,11 +45,11 @@ import com.lowagie.text.pdf.PdfCopyFields;
 import com.lowagie.text.pdf.PdfReader;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Mod10T Print", urlPatterns = { "/aon_gwt_fiscal/Model10TPrint" })
-public class Mod10TPrint extends HttpServlet {
+@WebServlet(name = "Mod190 Print", urlPatterns = { "/aon_gwt_fiscal/Model190CertificatePrint" })
+public class Mod190CertificatePrint extends HttpServlet {
 	
-	public final String REPORT_TEMPLATE_EMPLOYEE 		= "/com/code/aon/ui/fiscal/report/retentionCertificate_10T.jasper";
-	public final String REPORT_TEMPLATE_PROFESSIONAL 	= "/com/code/aon/ui/fiscal/report/retentionCertificate_10T_prof.jasper";
+	public final String REPORT_TEMPLATE_EMPLOYEE 		= "/com/code/aon/ui/fiscal/report/mod190_retentionCertificate_page1.jasper";
+	public final String REPORT_TEMPLATE_PROFESSIONAL 	= "/com/code/aon/ui/fiscal/report/mod190_retentionCertificate_page2.jasper";
 
 	
 	@Override
@@ -78,7 +78,22 @@ public class Mod10TPrint extends HttpServlet {
 			byte[] professionalData = createReport(JRReport.class.getResourceAsStream(REPORT_TEMPLATE_PROFESSIONAL), professionalCertificates.values());
 			
 			resp.setContentType(MimeType.PDF.getName());
-			String fileName = "certificado_retenciones";
+			
+			String s = mod190.getName();
+		    StringBuilder sb = new StringBuilder();
+		    if(!Character.isJavaIdentifierStart(s.charAt(0))) {
+		        sb.append("_");
+		    }
+		    for (char c : s.toCharArray()) {
+		        if(Character.isJavaIdentifierPart(c)) {
+		            sb.append(c);
+		        }
+		    }		
+			
+		    String fileName = "CertificadoRetenciones_" 
+					+ "_" + mod190.getYear() 
+					+ "_" + sb.toString();
+			
 			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".pdf\";");
 			AonIOUtils.copy(new ByteArrayInputStream(mergePdf(employeeData, professionalData)), resp.getOutputStream());
 			
