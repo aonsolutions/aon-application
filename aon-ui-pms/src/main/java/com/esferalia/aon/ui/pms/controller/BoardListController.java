@@ -11,6 +11,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -24,6 +25,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.enumeration.AppParam;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.product.Item;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.ql.Criteria;
@@ -113,8 +116,11 @@ public class BoardListController extends DataScrollerState implements ICollectio
 	}
 	
 	private Integer getBoardCategoryId() {
-		// TODO: Id de categoria a pinon. Se asume que la categoria de las pensiones es la de id=4
-		return 4;
+		String value = AppParamUtil.getValue(AppParam.PMS_BOARD_CATEGORY);
+		if(NumberUtils.isNumber(value)){
+			return Integer.parseInt(value);
+		}
+		return null;
 	}
 	
 	public List<ITransferObject> getBoardItems() {
@@ -128,10 +134,13 @@ public class BoardListController extends DataScrollerState implements ICollectio
 	
 	public List<SelectItem> getBoardItemList() {
 		List<SelectItem> list = new LinkedList<SelectItem>();
-		for (ITransferObject ito : boardItems()) {
-			Item i = (Item)ito;
-			SelectItem item = new SelectItem(i, i.getProduct().getName());
-			list.add(item);
+		List<ITransferObject> boardItems =  boardItems();
+		if(boardItems!=null){
+			for (ITransferObject ito : boardItems) {
+				Item i = (Item)ito;
+				SelectItem item = new SelectItem(i, i.getProduct().getName());
+				list.add(item);
+			}
 		}
 		return list;
 	}

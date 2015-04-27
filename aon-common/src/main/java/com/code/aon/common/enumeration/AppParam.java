@@ -215,6 +215,8 @@ public enum AppParam {
 	
 	PAY_ss_payment_bankAccount_PAY,
 	
+	PMS_BOARD_CATEGORY,
+	
 	POS_INVOICE_PRINT_OUTPUT,
 	
 	POS_INVOICE_PRINT_LOGO,
