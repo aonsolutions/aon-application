@@ -80,64 +80,21 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 
 public abstract class AbstractSQLTestCase {
 
-	protected static class Extra {
-		Month month;
-		String start;
-		String end;
-		String issue;
-		String expression;
+	public static class Extra {
+		public Month month;
+		public String start;
+		public String end;
+		public String issue;
+		public String expression;
 	}
 
-	protected static class Payment {
-		Integer concept;
-		String expression;
-		SalaryType salary = SalaryType.SALARY;
+	public static class Payment {
+		public Integer concept;
+		public String expression;
+		public SalaryType salary = SalaryType.SALARY;
 	}
 
 	private Connection connection;
-
-	private static String getDbPort() {
-		return System.getProperty("dbPort", "3306");
-	}
-
-	private static String getDbHost() {
-		return System.getProperty("dbHost", "127.0.0.1");
-	}
-
-	private static String getDbName() {
-		return System.getProperty("dbName", "aon_reveng");
-	}
-
-	private static String getDbUser() {
-		return System.getProperty("dbUser", "dbuser");
-	}
-
-	private static String getDbPasswd() {
-		return System.getProperty("dbPasswd", "serubd2000");
-	}
-
-	protected static Date getToday() {
-		Calendar calendar = Calendar.getInstance();
-		calendar = DateUtils.truncate(calendar, DAY_OF_MONTH);
-		return new Date(calendar.getTimeInMillis());
-		// return new Date(calendar.get(YEAR), calendar.get(MONTH),
-		// calendar.get(DAY_OF_MONTH));
-	}
-
-	protected static Date addMonths(Date date, int value) {
-		return add(date, MONTH, value);
-	}
-
-	protected static Date addDays(Date date, int value) {
-		return add(date, DAY_OF_MONTH, value);
-	}
-
-	protected static Date add(Date date, int field, int value) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		calendar.add(field, value);
-		return new Date(calendar.getTimeInMillis());
-	}
 
 	public Connection getConnection() {
 		return connection;
@@ -145,6 +102,62 @@ public abstract class AbstractSQLTestCase {
 
 	@Before
 	public void setUp() throws ClassNotFoundException, SQLException,
+			AonSQLException {
+		connection = connect();
+	}
+
+	@After
+	public void tearDown() throws SQLException {
+		if (connection != null)
+			connection.close();
+	}
+
+	// ------------------------------------------------------- static 'library'
+
+	public static String getDbPort() {
+		return System.getProperty("dbPort", "3306");
+	}
+
+	public static String getDbHost() {
+		return System.getProperty("dbHost", "127.0.0.1");
+	}
+
+	public static String getDbName() {
+		return System.getProperty("dbName", "aon_reveng");
+	}
+
+	public static String getDbUser() {
+		return System.getProperty("dbUser", "dbuser");
+	}
+
+	public static String getDbPasswd() {
+		return System.getProperty("dbPasswd", "serubd2000");
+	}
+
+	public static Date addMonths(Date date, int value) {
+		return add(date, MONTH, value);
+	}
+
+	public static Date addDays(Date date, int value) {
+		return add(date, DAY_OF_MONTH, value);
+	}
+
+	public static Date add(Date date, int field, int value) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(field, value);
+		return new Date(calendar.getTimeInMillis());
+	}
+
+	public static Date getToday() {
+		Calendar calendar = Calendar.getInstance();
+		calendar = DateUtils.truncate(calendar, DAY_OF_MONTH);
+		return new Date(calendar.getTimeInMillis());
+		// return new Date(calendar.get(YEAR), calendar.get(MONTH),
+		// calendar.get(DAY_OF_MONTH));
+	}
+
+	public static Connection connect() throws ClassNotFoundException, SQLException,
 			AonSQLException {
 		// first of all load JDBC driver
 		Class.forName("org.gjt.mm.mysql.Driver");
@@ -157,35 +170,39 @@ public abstract class AbstractSQLTestCase {
 
 		String url = String
 				.format("jdbc:mysql://%s:%s", dbHost, dbPort, dbName);
-		connection = DriverManager.getConnection(url, dbUser, dbPasswd);
+		Connection connection = DriverManager.getConnection(url, dbUser, dbPasswd);
 
 		ResultSet rs = connection.createStatement().executeQuery(
 				"SHOW DATABASES");
 		while (rs.next()) {
 			if (rs.getString(1).startsWith(dbName)) {
 				connection.createStatement().execute("use " + rs.getString(1));
-				return;
+				return connection;
 			}
 		}
 
 		new VersionManager().createDatabase(connection, dbName);
 		connection.createStatement().execute("use " + dbName);
+		return connection;
 	}
 
-	@After
-	public void tearDown() throws SQLException {
-		if (connection != null)
-			connection.close();
-	}
-
-	protected final DomainRecord newDomain(AONContext aonContext) {
+	public static final DomainRecord newDomain(AONContext aonContext) {
 		return aonContext.getDslContext().insertInto(DOMAIN)
 				.set(DOMAIN.NAME, String.valueOf(System.currentTimeMillis()))
 				.set(DOMAIN.OWNER, "").set(DOMAIN.DESCRIPTION, "").returning()
 				.fetchOne();
 	}
 
-	protected final AgreementRecord newAgreement(AONContext aonContext) {
+	public static final DomainRecord newDomain(AONContext aonContext, int parent) {
+		return aonContext.getDslContext().insertInto(DOMAIN)
+				.set(DOMAIN.NAME, String.valueOf(System.currentTimeMillis()))
+				.set(DOMAIN.OWNER, "")
+				.set(DOMAIN.PARENT, parent)
+				.set(DOMAIN.DESCRIPTION, "").returning()
+				.fetchOne();
+	}
+
+	public static final AgreementRecord newAgreement(AONContext aonContext) {
 		// Add a domain, with a generated ID
 		DomainRecord domain = newDomain(aonContext);
 
@@ -194,7 +211,7 @@ public abstract class AbstractSQLTestCase {
 				.set(AGREEMENT.DESCRIPTION, "").returning().fetchOne();
 	}
 
-	protected final AgreementLevelCategoryRecord newAgreementCategory(
+	public static final AgreementLevelCategoryRecord newAgreementCategory(
 			AONContext aonContext, AgreementRecord agreement) {
 		AgreementLevelRecord level = aonContext.getDslContext()
 				.insertInto(AGREEMENT_LEVEL)
@@ -209,23 +226,23 @@ public abstract class AbstractSQLTestCase {
 				.returning().fetchOne();
 	}
 
-	protected final AgreementLevelCategoryRecord newAgreement(
+	public static final AgreementLevelCategoryRecord newAgreement(
 			AONContext aonContext, Extra extras[]) {
 		return newAgreement(aonContext, extras, Collections.emptyMap());
 	}
 
-	protected final AgreementLevelCategoryRecord newAgreement(
+	public static final AgreementLevelCategoryRecord newAgreement(
 			AONContext aonContext, Extra extras[], Map<String, String> datas) {
 		return newAgreement(aonContext, extras, new Payment[] {}, datas);
 	}
 
-	protected final AgreementLevelCategoryRecord newAgreement(
+	public static final AgreementLevelCategoryRecord newAgreement(
 			AONContext aonContext, Extra extras[], Payment payments[]) {
 		return newAgreement(aonContext, extras, payments,
 				Collections.emptyMap());
 	}
 
-	protected final AgreementLevelCategoryRecord newAgreement(
+	public static final AgreementLevelCategoryRecord newAgreement(
 			AONContext aonContext, Extra extras[], Payment payments[],
 			Map<String, String> datas) {
 		return aonContext.getDslContext().transactionResult(
@@ -258,8 +275,8 @@ public abstract class AbstractSQLTestCase {
 				});
 	}
 
-	protected void addExtras(AONContext aonContext, AgreementRecord agreement,
-			Date startDate, Extra extras[]) {
+	public static void addExtras(AONContext aonContext,
+			AgreementRecord agreement, Date startDate, Extra extras[]) {
 		for (Extra extra : extras) {
 			AgreementPaymentRecord payment = aonContext
 					.getDslContext()
@@ -290,13 +307,14 @@ public abstract class AbstractSQLTestCase {
 
 	}
 
-	protected void addPayments(AONContext aonContext,
+	public static void addPayments(AONContext aonContext,
 			AgreementRecord agreement, Date startDate, Payment payments[]) {
-		addPayments(aonContext, agreement.getDomain(), agreement, startDate, payments);
+		addPayments(aonContext, agreement.getDomain(), agreement, startDate,
+				payments);
 	}
 
-	protected void addPayments(AONContext aonContext,
-			int domainId, AgreementRecord agreement, Date startDate, Payment payments[]) {
+	public static void addPayments(AONContext aonContext, int domainId,
+			AgreementRecord agreement, Date startDate, Payment payments[]) {
 		for (Payment payment : payments) {
 			aonContext
 					.getDslContext()
@@ -312,9 +330,8 @@ public abstract class AbstractSQLTestCase {
 		}
 	}
 
-
-	protected void addData(AONContext aonContext, AgreementRecord agreement,
-			Date startDate, Map<String, String> datas) {
+	public static void addData(AONContext aonContext,
+			AgreementRecord agreement, Date startDate, Map<String, String> datas) {
 		for (Map.Entry<String, String> data : datas.entrySet()) {
 			aonContext.getDslContext().insertInto(AGREEMENT_DATA)
 					.set(AGREEMENT_DATA.DOMAIN, agreement.getDomain())
@@ -326,25 +343,25 @@ public abstract class AbstractSQLTestCase {
 		}
 	}
 
-	protected final ContractRecord newContract(AONContext aonContext,
+	public static final ContractRecord newContract(AONContext aonContext,
 			Date startDate, Map<String, String> data,
 			AgreementLevelCategoryRecord category) {
 		return newContract(aonContext, startDate, data, new String[0],
 				new String[0], category);
 	}
 
-	protected final ContractRecord newContract(AONContext aonContext,
+	public static final ContractRecord newContract(AONContext aonContext,
 			Date startDate, Map<String, String> data) {
 		return newContract(aonContext, startDate, data, new String[0],
 				new String[0], null);
 	}
 
-	protected final ContractRecord newContract(AONContext aonContext,
+	public static final ContractRecord newContract(AONContext aonContext,
 			String[] payments, String[] deductions) {
 		return newContract(aonContext, payments, deductions, null);
 	}
 
-	protected final ContractRecord newContract(AONContext aonContext,
+	public static final ContractRecord newContract(AONContext aonContext,
 			String[] payments, String[] deductions,
 			AgreementLevelCategoryRecord category) {
 		Calendar calendar = Calendar.getInstance();
@@ -355,7 +372,7 @@ public abstract class AbstractSQLTestCase {
 				payments, deductions, category);
 	}
 
-	protected final ContractRecord newContract(AONContext aonContext,
+	public static final ContractRecord newContract(AONContext aonContext,
 			Date startDate, Map<String, String> data, String[] payments,
 			String[] deductions, AgreementLevelCategoryRecord category) {
 		return aonContext.getDslContext().transactionResult(
@@ -566,7 +583,7 @@ public abstract class AbstractSQLTestCase {
 
 	}
 
-	protected final void addData(AONContext aonContext,
+	public static final void addData(AONContext aonContext,
 			ContractRecord contract, Date startDate, Date endDate,
 			Map<String, String> datas) {
 		for (Map.Entry<String, String> data : datas.entrySet()) {
@@ -581,7 +598,7 @@ public abstract class AbstractSQLTestCase {
 		}
 	}
 
-	protected final void addData(AONContext aonContext,
+	public static final void addData(AONContext aonContext,
 			AgreementLevelCategoryRecord category, Date startDate,
 			Date endDate, Map<String, String> datas) {
 		for (Map.Entry<String, String> data : datas.entrySet()) {
@@ -600,7 +617,7 @@ public abstract class AbstractSQLTestCase {
 		}
 	}
 
-	protected final void addData(AONContext aonContext, Integer domain,
+	public static final void addData(AONContext aonContext, Integer domain,
 			AgreementLevelCategoryRecord category, Date startDate,
 			Date endDate, Map<String, String> datas) {
 		for (Map.Entry<String, String> data : datas.entrySet()) {
@@ -619,7 +636,7 @@ public abstract class AbstractSQLTestCase {
 		}
 	}
 
-	protected final PaymentConceptRecord addConcept(AONContext aonContext,
+	public static final PaymentConceptRecord addConcept(AONContext aonContext,
 			String code) {
 		DomainRecord domain = newDomain(aonContext);
 		return aonContext
@@ -635,7 +652,7 @@ public abstract class AbstractSQLTestCase {
 
 	}
 
-	protected final void addPayment(AONContext aonContext,
+	public static final void addPayment(AONContext aonContext,
 			ContractRecord contract, PaymentConceptRecord concept,
 			String expression) {
 		aonContext
@@ -656,13 +673,13 @@ public abstract class AbstractSQLTestCase {
 
 	}
 
-	protected final void addPayment(AONContext aonContext,
+	public static final void addPayment(AONContext aonContext,
 			ContractRecord contract, Date startDate, String expression) {
 		addPayment(aonContext, contract, startDate, expression,
 				SalaryType.SALARY);
 	}
 
-	protected final void addPayment(AONContext aonContext,
+	public static final void addPayment(AONContext aonContext,
 			ContractRecord contract, Date startDate, String expression,
 			SalaryType salaryType) {
 		aonContext
