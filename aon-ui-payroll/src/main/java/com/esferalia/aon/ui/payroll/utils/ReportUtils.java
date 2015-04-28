@@ -91,6 +91,10 @@ public class ReportUtils {
 		public Salary getSalary(){
 			return ((SalaryPayment) salaryItem).getSalary();
 		}
+
+		public Double getUnitAmount() throws ManagerBeanException{
+			return ((SalaryPayment) salaryItem).getUnitAmount();
+		}
 		
 		public String getPaymentConcept() {
 			return ((SalaryPayment) salaryItem).getPaymentConcept();
