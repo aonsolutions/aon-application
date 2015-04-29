@@ -259,7 +259,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		lb.addItem("-");
 		
 		for(TemplateInfo ti : templates.getList()){
-			if(ti.getType().equals("Stock"))
+			if(ti.getType().equals("Stock") || ti.getType().equals("Catalogo"))
 				lb.addItem(ti.getName());
 		}
 		flex_table.setWidget(0, 0, new Label("Plantilla"));

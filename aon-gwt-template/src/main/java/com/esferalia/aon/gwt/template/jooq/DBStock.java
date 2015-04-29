@@ -535,12 +535,16 @@ public class DBStock {
 			Result<Record5<Integer, Integer, Integer, Double,Integer>> data ;
 			if(wid != null)
 				data = ctx.getDslContext().select(STOCK.ID, STOCK.ITEM, STOCK.WAREHOUSE, STOCK.QUANTITY,ITEM.PRODUCT)
-				.from(STOCK).join(ITEM).on(ITEM.ID.eq(STOCK.ITEM))
-				.where(STOCK.DOMAIN.eq(domainId)).and(STOCK.WAREHOUSE.eq(wid)).fetch();
+				.from(STOCK).join(ITEM).on(ITEM.ID.eq(STOCK.ITEM)).join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+				.where(STOCK.DOMAIN.eq(domainId)).and(STOCK.WAREHOUSE.eq(wid))
+				.orderBy(PRODUCT.NAME)
+				.fetch();
 			else
 				data = ctx.getDslContext().select(STOCK.ID, STOCK.ITEM, STOCK.WAREHOUSE, STOCK.QUANTITY,ITEM.PRODUCT)
-				.from(STOCK).join(ITEM).on(ITEM.ID.eq(STOCK.ITEM))
-				.where(STOCK.DOMAIN.eq(domainId)).fetch();
+				.from(STOCK).join(ITEM).on(ITEM.ID.eq(STOCK.ITEM)).join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+				.where(STOCK.DOMAIN.eq(domainId))
+				.orderBy(PRODUCT.NAME)
+				.fetch();
 				
 			Vector<StockInfo> v = new Vector<StockInfo>();
 			for (Record5<Integer, Integer, Integer, Double, Integer> d : data) {
@@ -788,8 +792,10 @@ public class DBStock {
 			
 			Result<Record16<Integer, Integer, Integer, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, Timestamp, String, Timestamp>> data = ctx.getDslContext().select( PROPOSAL.WORKPLACE, PROPOSAL.DEPARTMENT, PROPOSAL_DETAIL.ID, PROPOSAL_DETAIL.DOMAIN, PROPOSAL_DETAIL.PROPOSAL, PROPOSAL_DETAIL.ITEM, PROPOSAL_DETAIL.DESCRIPTION,  PROPOSAL_DETAIL.QUANTITY, PROPOSAL_DETAIL.PRICE, PROPOSAL_DETAIL.DISCOUNT_EXPR, PROPOSAL_DETAIL.STATUS, PROPOSAL_DETAIL.SUPPLIER, PROPOSAL_DETAIL.CREATION_USER, PROPOSAL_DETAIL.CREATION_DATE, PROPOSAL_DETAIL.MODIFICATION_USER, PROPOSAL_DETAIL.MODIFICATION_DATE)
 								.from(PROPOSAL_DETAIL).join(PROPOSAL).on(PROPOSAL.ID.eq(PROPOSAL_DETAIL.PROPOSAL))
+								.join(ITEM).on(PROPOSAL_DETAIL.ITEM.eq(ITEM.ID)).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PROPOSAL_DETAIL.PROPOSAL.eq(proposalId))
 								.and(PROPOSAL_DETAIL.DOMAIN.eq(domainId))
+								.orderBy(PRODUCT.NAME)
 								.fetch();
 			
 			Vector<StockInfo> v = new Vector<StockInfo>();

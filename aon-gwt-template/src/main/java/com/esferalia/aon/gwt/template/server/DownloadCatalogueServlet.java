@@ -60,12 +60,29 @@ public class DownloadCatalogueServlet extends HttpServlet {
         Row fila = hoja.createRow(0);
         
         
+        fila.setHeightInPoints(16);
         CellStyle style = libro.createCellStyle();
         Font font = libro.createFont();
+        font.setFontHeightInPoints((short)12);
         font.setBoldweight(Font.BOLDWEIGHT_BOLD);
         style.setFont(font);
         style.setAlignment(CellStyle.ALIGN_CENTER);
         style.setBorderBottom(CellStyle.BORDER_MEDIUM);
+       
+        
+        CellStyle style2 = libro.createCellStyle();
+		Font font2 = libro.createFont();
+		//font2.setFontHeight((short) 14);
+		font2.setFontHeightInPoints((short)12);
+		style2.setFont(font2);
+		style2.setAlignment(CellStyle.ALIGN_CENTER);
+		style2.setBorderBottom(CellStyle.BORDER_THIN);
+        Integer columns = 8;
+        for(Integer i = 0; i< columns; i++){
+        	hoja.setDefaultColumnStyle(i, style2); 	
+        }
+        
+        
        
 
         Cell c1 = fila.createCell(0);c1.setCellValue("Centro de Trabajo");c1.setCellStyle(style);
@@ -90,9 +107,11 @@ public class DownloadCatalogueServlet extends HttpServlet {
         	Cell ca6 = row.createCell(5);ca6.setCellValue(v.get(j).getDetail());
         	Cell ca7 = row.createCell(6);ca7.setCellValue(v.get(j).getDetail2());
         	Cell ca8 = row.createCell(7);ca8.setCellValue(v.get(j).getDetail3());
+        	
+        	row.setHeightInPoints(16);
         		
         }
-        for(Integer h = 0; h< 4;h++){
+        for(Integer h = 0; h<8;h++){
         	hoja.autoSizeColumn(h);
         }
         libro.write(archivo);        

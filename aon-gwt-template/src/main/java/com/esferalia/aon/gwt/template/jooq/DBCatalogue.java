@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Department.DEPARTMENT;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.jooq.tables.WorkplaceDepartment.WORKPLACE_DEPARTMENT;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 
 import java.util.Vector;
 
@@ -189,24 +190,30 @@ public static Department getDepartment(WorkPlace wp, Integer department, Integer
 				record = ctx.getDslContext().select(ITEM.PRODUCT, WORKPLACE_DEPARTMENT.WORKPLACE, WORKPLACE_DEPARTMENT.DEPARTMENT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3)
 				.from(CATALOGUE_ITEM).join(ITEM).on(ITEM.ID.eq(CATALOGUE_ITEM.ITEM))
 				.join(WORKPLACE_DEPARTMENT).on(WORKPLACE_DEPARTMENT.CATALOGUE.eq(CATALOGUE_ITEM.CATALOGUE))
+				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.where(WORKPLACE_DEPARTMENT.WORKPLACE.eq(wp.getId()))
 				.and(WORKPLACE_DEPARTMENT.DEPARTMENT.eq(dt.getId()))
 				.and(CATALOGUE_ITEM.DOMAIN.eq(domainId))
+				.orderBy(PRODUCT.NAME)
 				.fetch();
 			}
 			else if(wp != null && dt == null){
 				record = ctx.getDslContext().select(ITEM.PRODUCT, WORKPLACE_DEPARTMENT.WORKPLACE, WORKPLACE_DEPARTMENT.DEPARTMENT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3)
 				.from(CATALOGUE_ITEM).join(ITEM).on(ITEM.ID.eq(CATALOGUE_ITEM.ITEM))
 				.join(WORKPLACE_DEPARTMENT).on(WORKPLACE_DEPARTMENT.CATALOGUE.eq(CATALOGUE_ITEM.CATALOGUE))
+				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.where(WORKPLACE_DEPARTMENT.WORKPLACE.eq(wp.getId()))
 				.and(CATALOGUE_ITEM.DOMAIN.eq(domainId))
+				.orderBy(PRODUCT.NAME)
 				.fetch();
 			}
 			else if(wp == null && dt == null){
 				record = ctx.getDslContext().select(ITEM.PRODUCT, WORKPLACE_DEPARTMENT.WORKPLACE, WORKPLACE_DEPARTMENT.DEPARTMENT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3)
 				.from(CATALOGUE_ITEM).join(ITEM).on(ITEM.ID.eq(CATALOGUE_ITEM.ITEM))
 				.join(WORKPLACE_DEPARTMENT).on(WORKPLACE_DEPARTMENT.CATALOGUE.eq(CATALOGUE_ITEM.CATALOGUE))
+				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.where(CATALOGUE_ITEM.DOMAIN.eq(domainId))
+				.orderBy(PRODUCT.NAME)
 				.fetch();
 			}
 			AONContext sctx = ctx;

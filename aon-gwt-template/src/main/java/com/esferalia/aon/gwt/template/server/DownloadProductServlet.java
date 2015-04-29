@@ -114,19 +114,30 @@ public class DownloadProductServlet extends HttpServlet {
         Sheet hoja = libro.createSheet("Plantilla 1");
         Row fila = hoja.createRow(0);
         
-        
+
+        fila.setHeightInPoints(16);
         CellStyle style = libro.createCellStyle();
         Font font = libro.createFont();
+        font.setFontHeightInPoints((short)12);
         font.setBoldweight(Font.BOLDWEIGHT_BOLD);
         style.setFont(font);
         style.setAlignment(CellStyle.ALIGN_CENTER);
         style.setBorderBottom(CellStyle.BORDER_MEDIUM);
-
+       
+        
+        CellStyle style2 = libro.createCellStyle();
+		Font font2 = libro.createFont();
+		//font2.setFontHeight((short) 14);
+		font2.setFontHeightInPoints((short)12);
+		style2.setFont(font2);
+		style2.setAlignment(CellStyle.ALIGN_CENTER);
+		style2.setBorderBottom(CellStyle.BORDER_THIN);
         Integer columns = aux.getColumns().size();
         for(Integer i = 0; i< columns; i++){
+        	hoja.setDefaultColumnStyle(i, style2);
         	Cell celda = fila.createCell(i);
         	celda.setCellValue(aux.getColumns().get(i));
-        	celda.setCellStyle(style);
+        	celda.setCellStyle(style);  	
         }
         Vector<ProductInfo> v =  DBProduct.getProducts(domain,domainId);
 
@@ -163,6 +174,8 @@ public class DownloadProductServlet extends HttpServlet {
         		default:
         			break;        		}
         	}
+        	row.setHeightInPoints(16);
+
         }
         for(Integer h = 0; h< columns;h++){
         	hoja.autoSizeColumn(h);

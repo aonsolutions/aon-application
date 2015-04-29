@@ -304,7 +304,9 @@ public class DBProduct {
 						,PRODUCT.COMPOSITION_PRICE,PRODUCT.STATUS,ITEM.PURCHASE_PRICE,ITEM.PRICE,ITEM.BARCODE,ITEM.DESCRIPTION
 						,ITEM.DETAIL,ITEM.DETAIL2,ITEM.DETAIL3,PRODUCT.ID)
 						.from(PRODUCT).join(ITEM).on(PRODUCT.ID.eq(ITEM.PRODUCT))
-						.where(PRODUCT.DOMAIN.eq(domainId)).fetch();
+						.where(PRODUCT.DOMAIN.eq(domainId))
+						.orderBy(PRODUCT.NAME)
+						.fetch();
 			
 			Vector<ProductInfo> v = new Vector<ProductInfo>();
 			
