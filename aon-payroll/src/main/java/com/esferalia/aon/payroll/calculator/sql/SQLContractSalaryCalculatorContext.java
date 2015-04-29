@@ -117,6 +117,7 @@ import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.AbstractContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.CompositeCosts;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.ContextFunctions;
 import com.esferalia.aon.payroll.calculator.ContractLeaveLoader.Leave;
@@ -1213,8 +1214,9 @@ public class SQLContractSalaryCalculatorContext extends
 
 	@Override
 	public Collection<IContractCost> getContractCosts() throws AonException {
-		return new HierarchyDeductions(getCCCCosts().iterator(),
-				getSSRegimeCosts().iterator());
+//		return new HierarchyDeductions(getCCCCosts().iterator(),
+//				getSSRegimeCosts().iterator());
+		return new CompositeCosts(getCCCCosts(), getSSRegimeCosts());
 	}
 
 	@Override
