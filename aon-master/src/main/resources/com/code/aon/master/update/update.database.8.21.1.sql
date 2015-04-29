@@ -2,6 +2,8 @@
 # Version: Actualizacion de la version 8.21.1 a la version 8.21.2.
 # Created by: rtrepiana
 
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+
 BEGIN;
 
 SET @DESCRIPTION=(SELECT description FROM `system_cost` WHERE code='ECSS_E' LIMIT 1);
@@ -24,3 +26,4 @@ UPDATE `db_version` SET `version_number` = '8.21.2';
 
 COMMIT;
 
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
