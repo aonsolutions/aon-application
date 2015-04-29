@@ -400,6 +400,18 @@ public class TicketPrinter {
 		return sb.toString();
 	}
 	
+	private String getFooterText( PosInvoiceParamsController pipc ) {
+		StringBuffer sb = new StringBuffer();
+		String text = StringUtils.replace(pipc.getFooterText(), "\r\n", "\n");
+		String[] lines = StringUtils.splitPreserveAllTokens(text, "\r\n");
+		if (! ArrayUtils.isEmpty(lines) ) {
+			for( String line : lines ) {
+				sb.append( getCenteredLine(line) );	
+			}	
+		}
+		return sb.toString();
+	}
+	
 	private String getTicket( Invoice invoice, boolean gift ) throws ManagerBeanException {
 		PosInvoiceParamsController pipc = (PosInvoiceParamsController) AonUtil.getRegisteredBean(POS_INVOICE_PARAMS_CONTROLLER_NAME);
 		pipc.onInit(null);
@@ -480,9 +492,9 @@ public class TicketPrinter {
 		if ( pipc.isPrintDomain() ) {
 			sb.append( getCenteredLine(company.getWeb().getValue()) );
 		}
-		sb.append( getCenteredLine(pipc.getFooterText()) );
+		sb.append( getFooterText(pipc) );
 
-		append( sb, getFeedLines(3) );
+		append( sb, getFeedLines(4) );
 		append( sb, getCutTicket() );
 		append( sb, getOpenDrawer() );
 		append( sb, getInitializePrinter() );
