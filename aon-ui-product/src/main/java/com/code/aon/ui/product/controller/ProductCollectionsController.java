@@ -8,8 +8,6 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -19,6 +17,7 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.product.Brand;
 import com.code.aon.product.Item;
 import com.code.aon.product.ItemAddInfo;
+import com.code.aon.product.Product;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.product.enumeration.ItemTariffType;
 import com.code.aon.product.enumeration.ProductStatus;
@@ -187,13 +186,12 @@ public class ProductCollectionsController implements Serializable {
     	return addInfos;
     }
 
-	public int getSerialNumberCount() throws ManagerBeanException {
-		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+	public int getSerializableProductCount() throws ManagerBeanException {
+		IManagerBean productBean = BeanManager.getManagerBean(Product.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_STATUS), ProductStatus.ACTIVE);
-		criteria.addNotNullExpression(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER));
-		criteria.addNotEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER), StringUtils.EMPTY);
-		return itemBean.getCount(criteria);
+		criteria.addEqualExpression(productBean.getFieldName(IEntityAlias.PRODUCT_STATUS), ProductStatus.ACTIVE);
+		criteria.addEqualExpression(productBean.getFieldName(IEntityAlias.PRODUCT_SERIALIZABLE), Boolean.TRUE);
+		return productBean.getCount(criteria);
 	}
 
 }

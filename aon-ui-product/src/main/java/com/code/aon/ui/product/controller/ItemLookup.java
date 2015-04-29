@@ -35,12 +35,16 @@ public class ItemLookup extends RichLookupBean implements IItemConstants {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(ItemLookup.class);
 
+	public ProductCollectionsController getProductCollectionsController() {
+		return (ProductCollectionsController)AonUtil.getRegisteredBean(PRODUCT_COLLECTIONS);
+	}
+
 	public ProductController getProductController() {
 		return (ProductController)AonUtil.getRegisteredBean(PRODUCT);
 	}
 
-	public boolean isSearchProductEnabled() {
-		return getProductController().getDetailLevel() > 0;
+	public boolean isSearchProductEnabled() throws ManagerBeanException {
+		return getProductController().getDetailLevel() > 0 || getProductCollectionsController().getSerializableProductCount() > 0;
 	}
 
 	public void onSearchProduct(ActionEvent event) {

@@ -27,7 +27,7 @@
 				<aon:commandButton id="searchProduct" immediate="true"
 					styleClass="aon-icon-search aon-margin-left aon-noborder"
 					value="&#160;"
-					rendered="#{!fieldDisabled and productTo.code != null and controller.searchProductEnabled and productCollections.serialNumberCount > 0}"
+					rendered="#{!fieldDisabled and productTo.code != null and controller.searchProductEnabled}"
 					actionListener="#{controller.onSearchProduct}"
 					reRender="#{categoryChangeReRender}" ajaxSingle="true" />			
 			</aon:div>
