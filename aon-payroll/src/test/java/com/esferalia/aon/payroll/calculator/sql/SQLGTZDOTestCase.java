@@ -303,7 +303,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		//@formatter:off
 		Assert.assertEquals(
 				(( 1500.00 + 250.00 ) * 1.10) * workedDays / monthDays 
-				+ (1500.00 + 250.00 ) * Math.min(30,itDays-3) / monthDays
+				+ (1500.00 + 250.00 ) * Math.max(0,Math.min(30,itDays-3)) / monthDays
 				, 
 				salary.getTotalPayment() 
 				, DELTA);
