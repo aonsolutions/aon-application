@@ -10,13 +10,13 @@
 
 	<aon:if test="#{itemTo.product.id != null and itemTo.product.serializable and !itemTo.wildCard}">
 		<aon:outputLabel for="Item_serial_number"
-			value="#{bundle.aon_serial_number}" />
+			value="#{itemTo.product.lotable ? bundle.aon_lot_number : bundle.aon_serial_number}" />
 		<aon:inputText id="Item_serial_number" 
 			value="#{itemTo.serialNumber}" size="32" maxlength="32"
 			required="true" converter="aon.TrimStringConverter" />
 
 		<aon:outputLabel for="Item_serial_date"
-			value="#{bundle.aon_date} #{bundle.aon_series}" />
+			value="#{itemTo.product.lotable ? bundle.aon_lot_date : bundle.aon_serial_date}" />
 		<aon:selectInputDate id="Item_serial_date"
 			value="#{itemTo.serialDate}"
 			timeZone="#{timeZoneController.timeZone}"

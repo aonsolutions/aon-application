@@ -57,7 +57,6 @@ import com.code.aon.registry.RegistrySupplier;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.RegistrySellerStatus;
 import com.code.aon.sales.Sales;
-import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.bridge.ProjectTasManager;
 import com.code.aon.sales.bridge.SalesManager;
 import com.code.aon.seller.Seller;

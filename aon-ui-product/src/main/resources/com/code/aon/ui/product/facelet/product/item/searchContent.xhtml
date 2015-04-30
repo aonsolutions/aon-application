@@ -15,11 +15,11 @@
 
 	<aon:if test="#{aonConfiguration.bean.product.showSerializable}">
 		<aon:outputLabel for="#{aliasPreffix}_serialNumber"
-			value="#{bundle.aon_serial_number}" />
+			value="#{bundle.aon_serial_or_lot_number}" />
 		<aon:inputText id="#{aliasPreffix}_serialNumber" size="25"
 			valueChangeListener="#{controller.addExpression}" />
 
-		<aon:outputLabel value="#{bundle.aon_date} #{bundle.aon_series}" />
+		<aon:outputLabel value="#{bundle.aon_serial_or_lot_date}" />
 		<aon:div>
 			<aon:outputLabel for="#{aliasPreffix}_serialDate-From" styleClass="aon-form-date-label aon-padding-right" 
 				value="#{bundle.aon_date_from}:" />

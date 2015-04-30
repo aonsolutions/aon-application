@@ -15,7 +15,9 @@
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{bundle.aon_to_specify} #{bundle.aon_serial_number}" />
+						<aon:outputText value="#{bundle.aon_to_specify}" />
+						<aon:outputText value="&#160;" />
+						<aon:outputText value="#{salesDetail.serializableItem.product.lotable ? bundle.aon_lot_number : bundle.aon_serial_number}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">

@@ -70,7 +70,7 @@
 					<aon:abbreviateConverter maxWidth="64" />
 				</aon:outputText>
 				<aon:commandLink id="SalesDetail_serialNumber" immediate="true"
-					value="&#160;" title="#{bundle.aon_to_specify} #{bundle.aon_serial_number}"
+					value="&#160;" title="#{bundle.aon_to_specify} #{to.item.product.lotable ? bundle.aon_lot_number : bundle.aon_serial_number}"
 					styleClass="aon-icon-version" style="margin-left: 5px; padding-right: 12px;"
 					rendered="#{formList and to.item.wildCard}"
 					actionListener="#{salesDetail.onAssignSerialNumberShow}" 

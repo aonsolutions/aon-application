@@ -27,11 +27,11 @@
 	</aon:if>
 
 	<aon:if test="#{aonConfiguration.bean.product.showSerializable}">
-		<aon:outputLabel for="Item_serialNumber" value="#{bundle.aon_serial_number}" />
+		<aon:outputLabel for="Item_serialNumber" value="#{bundle.aon_serial_or_lot_number}" />
 		<aon:inputText id="Item_serialNumber" size="25"
 			valueChangeListener="#{controller.addExpression}" />
 
-		<aon:outputLabel value="#{bundle.aon_date} #{bundle.aon_series}" />
+		<aon:outputLabel value="#{bundle.aon_serial_or_lot_date}" />
 		<aon:div>
 			<aon:outputLabel for="Item_serialDate-From" styleClass="aon-form-date-label aon-padding-right" 
 				value="#{bundle.aon_date_from}:" />
