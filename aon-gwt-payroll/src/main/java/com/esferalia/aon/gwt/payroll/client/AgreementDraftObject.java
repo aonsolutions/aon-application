@@ -555,7 +555,7 @@ public class AgreementDraftObject {
 	// ------------------------------------------------------------------------
 
 	Set<Level> getChangedLevels() {
-		if (oldAgreementDraft == null || oldAgreementDraft.getLevels() == null)
+		if (oldAgreementDraft == null || oldAgreementDraft.getLevels().isEmpty())
 			return Collections.emptySet();
 
 		Set<Level> changed = new HashSet<Level>();
@@ -573,7 +573,7 @@ public class AgreementDraftObject {
 
 	Set<String> getChangedVariables() {
 		if (oldAgreementDraft == null
-				|| oldAgreementDraft.getVariables() == null)
+				|| oldAgreementDraft.getVariables().isEmpty())
 			return Collections.emptySet();
 		Set<String> changed = new HashSet<String>(agreementDraft.getVariables());
 		changed.removeAll(oldAgreementDraft.getVariables());
