@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Vector;
 
@@ -19,13 +20,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.Region;
 
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
@@ -109,40 +113,67 @@ public class DownloadProductServlet extends HttpServlet {
         File archivoXLS = new File(name + ".xls" );
         if(archivoXLS.exists()) archivoXLS.delete();
         archivoXLS.createNewFile();        
-        Workbook libro = new HSSFWorkbook();
+        HSSFWorkbook libro = new HSSFWorkbook();
         FileOutputStream archivo = new FileOutputStream(archivoXLS);
-        Sheet hoja = libro.createSheet("Plantilla 1");
-        Row fila = hoja.createRow(0);
+        HSSFSheet hoja = libro.createSheet("Plantilla 1");
         
+        Integer columns = aux.getColumns().size();
 
+        hoja.addMergedRegion(new Region(0,(short)0,0,columns.shortValue()));
+        
+        Row rowInfo = hoja.createRow(0);
+        Row fila = hoja.createRow(1);
+
+        Date d = new Date();
+        
+        String info = "Productos ## "+com.esferalia.aon.gwt.template.server.Utils.getDay(d.getDate())
+        		+"-"+com.esferalia.aon.gwt.template.server.Utils.getMonth(d.getMonth())
+        		+"-"+com.esferalia.aon.gwt.template.server.Utils.getYear(d);
+        
+        rowInfo.setHeightInPoints(16);
         fila.setHeightInPoints(16);
-        CellStyle style = libro.createCellStyle();
+        CellStyle style = libro.createCellStyle();CellStyle styleInfo = libro.createCellStyle();
         Font font = libro.createFont();
         font.setFontHeightInPoints((short)12);
         font.setBoldweight(Font.BOLDWEIGHT_BOLD);
-        style.setFont(font);
-        style.setAlignment(CellStyle.ALIGN_CENTER);
-        style.setBorderBottom(CellStyle.BORDER_MEDIUM);
+        style.setFont(font);styleInfo.setFont(font);
+        style.setAlignment(CellStyle.ALIGN_CENTER);styleInfo.setAlignment(CellStyle.ALIGN_CENTER);
+        style.setBorderBottom(CellStyle.BORDER_MEDIUM); styleInfo.setBorderBottom(CellStyle.BORDER_MEDIUM);
+       	styleInfo.setFillBackgroundColor(HSSFColor.LIGHT_YELLOW.index);
        
         
+       	Cell cellInfo = rowInfo.createCell(0);
+       	cellInfo.setCellValue(info);
+       	cellInfo.setCellStyle(styleInfo);
+       	
         CellStyle style2 = libro.createCellStyle();
-		Font font2 = libro.createFont();
-		//font2.setFontHeight((short) 14);
-		font2.setFontHeightInPoints((short)12);
+        Font font2 = libro.createFont();
+        font.setFontHeightInPoints((short)12);
 		style2.setFont(font2);
 		style2.setAlignment(CellStyle.ALIGN_CENTER);
 		style2.setBorderBottom(CellStyle.BORDER_THIN);
-        Integer columns = aux.getColumns().size();
+		
+        CellStyle style3 = libro.createCellStyle();
+		style3.setFont(font2);
+		style3.setAlignment(CellStyle.ALIGN_LEFT);
+		style3.setBorderBottom(CellStyle.BORDER_THIN);
+		
         for(Integer i = 0; i< columns; i++){
-        	hoja.setDefaultColumnStyle(i, style2);
         	Cell celda = fila.createCell(i);
         	celda.setCellValue(aux.getColumns().get(i));
         	celda.setCellStyle(style);  	
         }
+        Cell celdaf = fila.createCell(columns);
+        celdaf.setCellStyle(style);
+       /* for(Integer i = 0; i<= columns; i++){
+        	if(aux.getColumns().size()!=i && ( aux.getColumns().get(i).equals("Producto") || aux.getColumns().get(i).equals("Nombre")))
+            	hoja.setDefaultColumnStyle(i, style3);
+        	else hoja.setDefaultColumnStyle(i, style2);
+        }*/
         Vector<ProductInfo> v =  DBProduct.getProducts(domain,domainId);
 
         for(Integer j = 0; j< v.size();j++){
-        	Row row = hoja.createRow(j+1);
+        	Row row = hoja.createRow(j+2);
         	for(Integer k = 0; k< columns; k++){
         		Cell celda = row.createCell(k);
         		String type = aux.getColumns().get(k);
@@ -152,29 +183,31 @@ public class DownloadProductServlet extends HttpServlet {
         			tags = tags + ", "+pt.getTag().getName();
         		}
         		switch (type) {
-        		case "Nombre": celda.setCellValue(pi.getDownloadItem().getName());break;
-        		case "C\u00f3digo": celda.setCellValue(pi.getDownloadItem().getCode());break;
-        		case "Precio Coste": celda.setCellValue(pi.getDownloadItem().getPurchasePrice());break;
-        		case "Precio Venta Base": celda.setCellValue(pi.getDownloadItem().getPrice());break;
-        		case "Categor\u00eda": celda.setCellValue(pi.getDownloadItem().getCategory());break;
-        		case "Marca": celda.setCellValue(pi.getDownloadItem().getBrand());break;
-        		case "Etiqueta":  celda.setCellValue(tags);break;
-        		case "Tipo": celda.setCellValue(com.code.aon.product.enumeration.ProductType.values()[pi.getDownloadItem().getType().ordinal()].getName(new Locale("es_ES")));break;
-        		case "IVA": celda.setCellValue(pi.getDownloadItem().getVat().getName());break;
-        		case "IRPF": celda.setCellValue(pi.getDownloadItem().getRetention().getName());break;
-        		case "Inventoriable": celda.setCellValue(pi.getDownloadItem().isInventoriable());break;
-        		case "Producto Compuesto": celda.setCellValue(pi.getDownloadItem().isComposition());break;
-        		case "Precio Composici\u00f3n": celda.setCellValue(pi.getDownloadItem().isCompositionPrice());break;
-        		case "Estado": celda.setCellValue(ProductStatus.values()[pi.getDownloadItem().getStatus()].getName(new Locale("es_ES")));break;
-        		case "C\u00f3digo de Barras":  celda.setCellValue(pi.getDownloadItem().getBarcode());break;
-        		case "Descripci\u00f3n":  celda.setCellValue(pi.getDownloadItem().getDescription());break;
-        		case "Detalle 1":  celda.setCellValue(pi.getDownloadItem().getDetail());break;
-        		case "Detalle 2":  celda.setCellValue(pi.getDownloadItem().getDetail2());break;
-        		case "Detalle 3":  celda.setCellValue(pi.getDownloadItem().getDetail3());break;
+        		case "Nombre": celda.setCellValue(pi.getDownloadItem().getName());celda.setCellStyle(style3);break;
+        		case "C\u00f3digo": celda.setCellValue(pi.getDownloadItem().getCode());celda.setCellStyle(style3);break;
+        		case "Precio Coste": celda.setCellValue(pi.getDownloadItem().getPurchasePrice());celda.setCellStyle(style2);break;
+        		case "Precio Venta Base": celda.setCellValue(pi.getDownloadItem().getPrice());celda.setCellStyle(style2);break;
+        		case "Categor\u00eda": celda.setCellValue(pi.getDownloadItem().getCategory());celda.setCellStyle(style2);break;
+        		case "Marca": celda.setCellValue(pi.getDownloadItem().getBrand());celda.setCellStyle(style2);break;
+        		case "Etiqueta":  celda.setCellValue(tags);celda.setCellStyle(style2);break;
+        		case "Tipo": celda.setCellValue(com.code.aon.product.enumeration.ProductType.values()[pi.getDownloadItem().getType().ordinal()].getName(new Locale("es_ES")));celda.setCellStyle(style2);break;
+        		case "IVA": celda.setCellValue(pi.getDownloadItem().getVat().getName());celda.setCellStyle(style2);break;
+        		case "IRPF": celda.setCellValue(pi.getDownloadItem().getRetention().getName());celda.setCellStyle(style2);break;
+        		case "Inventoriable": celda.setCellValue(pi.getDownloadItem().isInventoriable());celda.setCellStyle(style2);break;
+        		case "Producto Compuesto": celda.setCellValue(pi.getDownloadItem().isComposition());celda.setCellStyle(style2);break;
+        		case "Precio Composici\u00f3n": celda.setCellValue(pi.getDownloadItem().isCompositionPrice());celda.setCellStyle(style2);break;
+        		case "Estado": celda.setCellValue(ProductStatus.values()[pi.getDownloadItem().getStatus()].getName(new Locale("es_ES")));celda.setCellStyle(style2);break;
+        		case "C\u00f3digo de Barras":  celda.setCellValue(pi.getDownloadItem().getBarcode());celda.setCellStyle(style2);break;
+        		case "Descripci\u00f3n":  celda.setCellValue(pi.getDownloadItem().getDescription());celda.setCellStyle(style2);break;
+        		case "Detalle 1":  celda.setCellValue(pi.getDownloadItem().getDetail());celda.setCellStyle(style2);break;
+        		case "Detalle 2":  celda.setCellValue(pi.getDownloadItem().getDetail2());celda.setCellStyle(style2);break;
+        		case "Detalle 3":  celda.setCellValue(pi.getDownloadItem().getDetail3());celda.setCellStyle(style2);break;
         		default:
         			break;        		}
         	}
-        	row.setHeightInPoints(16);
+        	Cell lastCell = row.createCell(columns);
+        	lastCell.setCellStyle(style2);
+        	row.setHeightInPoints(20);
 
         }
         for(Integer h = 0; h< columns;h++){

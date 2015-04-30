@@ -305,6 +305,7 @@ public class DBProduct {
 						,ITEM.DETAIL,ITEM.DETAIL2,ITEM.DETAIL3,PRODUCT.ID)
 						.from(PRODUCT).join(ITEM).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 						.where(PRODUCT.DOMAIN.eq(domainId))
+						.and(PRODUCT.STATUS.eq((byte)0))
 						.orderBy(PRODUCT.NAME)
 						.fetch();
 			

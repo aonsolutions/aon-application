@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Vector;
 
 import javax.servlet.ServletException;
@@ -14,13 +15,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.Region;
 
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
@@ -71,62 +75,90 @@ public class DownloadProposalServlet extends HttpServlet {
         File archivoXLS = new File("compra" + ".xls" );
         if(archivoXLS.exists()) archivoXLS.delete();
         archivoXLS.createNewFile();        
-        Workbook libro = new HSSFWorkbook();
+        HSSFWorkbook libro = new HSSFWorkbook();
         FileOutputStream archivo = new FileOutputStream(archivoXLS);
-        Sheet hoja = libro.createSheet("Plantilla 1");
-        Row fila = hoja.createRow(0);
+        HSSFSheet hoja = libro.createSheet("Plantilla 1");
+        
+        Integer columns = aux.getColumns().size();
+        hoja.addMergedRegion(new Region(0,(short)0,0,columns.shortValue()));
+        Row rowInfo = hoja.createRow(0);
+        Row fila = hoja.createRow(1);
         
 
+        Date d = new Date();
+        
+        String info = "Solicitud de Compra ## "+com.esferalia.aon.gwt.template.server.Utils.getDay(d.getDate())
+        		+"-"+com.esferalia.aon.gwt.template.server.Utils.getMonth(d.getMonth())
+        		+"-"+com.esferalia.aon.gwt.template.server.Utils.getYear(d);
+        
+        rowInfo.setHeightInPoints(16);
         fila.setHeightInPoints(16);
-        CellStyle style = libro.createCellStyle();
+        CellStyle style = libro.createCellStyle();CellStyle styleInfo = libro.createCellStyle();
         Font font = libro.createFont();
         font.setFontHeightInPoints((short)12);
         font.setBoldweight(Font.BOLDWEIGHT_BOLD);
-        style.setFont(font);
-        style.setAlignment(CellStyle.ALIGN_CENTER);
-        style.setBorderBottom(CellStyle.BORDER_MEDIUM);
+        style.setFont(font);styleInfo.setFont(font);
+        style.setAlignment(CellStyle.ALIGN_CENTER);styleInfo.setAlignment(CellStyle.ALIGN_CENTER);
+        style.setBorderBottom(CellStyle.BORDER_MEDIUM); styleInfo.setBorderBottom(CellStyle.BORDER_MEDIUM);
+       	styleInfo.setFillBackgroundColor(HSSFColor.LIGHT_YELLOW.index);
+
+       	Cell cellInfo = rowInfo.createCell(0);
+       	cellInfo.setCellValue(info);
+       	cellInfo.setCellStyle(styleInfo);
        
         
         CellStyle style2 = libro.createCellStyle();
-		Font font2 = libro.createFont();
-		font2.setFontHeightInPoints((short)12);
+        Font font2 = libro.createFont();
+        font.setFontHeightInPoints((short)12);
 		style2.setFont(font2);
 		style2.setAlignment(CellStyle.ALIGN_CENTER);
 		style2.setBorderBottom(CellStyle.BORDER_THIN);
-        Integer columns = aux.getColumns().size();
+		
+        CellStyle style3 = libro.createCellStyle();
+		style3.setFont(font2);
+		style3.setAlignment(CellStyle.ALIGN_LEFT);
+		style3.setBorderBottom(CellStyle.BORDER_THIN);
+		
+        
         for(Integer i = 0; i< columns; i++){
-        	hoja.setDefaultColumnStyle(i, style2);
         	Cell celda = fila.createCell(i);
         	celda.setCellValue(aux.getColumns().get(i));
         	celda.setCellStyle(style);  	
         }
-        
+        Cell celdaf = fila.createCell(columns);
+        celdaf.setCellStyle(style);
+      /*  for(Integer i = 0; i<= columns; i++){
+        	if(aux.getColumns().size()!=i && ( aux.getColumns().get(i).equals("Producto") || aux.getColumns().get(i).equals("Nombre")))
+        		hoja.setDefaultColumnStyle(i, style3);
+        	else hoja.setDefaultColumnStyle(i, style2);
+        }*/
         Vector<StockInfo> v = DBStock.getProposal(domain, domainId, proposalId);
         
         for(Integer j = 0; j< v.size();j++){
-        	Row row = hoja.createRow(j+1);
+        	Row row = hoja.createRow(j+2);
         	for(Integer k = 0; k< columns; k++){
         		Cell celda = row.createCell(k);
         		String type = aux.getColumns().get(k);
         		StockInfo si = v.get(j);
         		switch (type) {
-        		case "Producto": celda.setCellValue(si.getProduct());break;
+        		case "Producto": celda.setCellValue(si.getProduct());celda.setCellStyle(style3);break;
         		//case "Series": celda.setCellValue(si.getSeries().getCode());break;
         		//case "Almac\u00e9n Destino": celda.setCellValue(si.getTargetWarehouse().getName());break;
-        		case "Cantidad": celda.setCellValue(si.getQuantity());break;
-        		case "Detalle 1":  celda.setCellValue(si.getDetail());break;
-        		case "Detalle 2":  celda.setCellValue(si.getDetail2());break;
-        		case "Detalle 3":  celda.setCellValue(si.getDetail3());break;
-        		case "Texto Libre": celda.setCellValue("");break;
-        		case "Nombre": celda.setCellValue(si.getProductName());break;
-        		case "Centro de Trabajo": celda.setCellValue(si.getWorkplaceStr());break;
-        		case "Departamento": celda.setCellValue(si.getDepartmentStr());break;
+        		case "Cantidad": celda.setCellValue(si.getQuantity());celda.setCellStyle(style2);break;
+        		case "Detalle 1":  celda.setCellValue(si.getDetail());celda.setCellStyle(style2);break;
+        		case "Detalle 2":  celda.setCellValue(si.getDetail2());celda.setCellStyle(style2);break;
+        		case "Detalle 3":  celda.setCellValue(si.getDetail3());celda.setCellStyle(style2);break;
+        		case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style2);break;
+        		case "Nombre": celda.setCellValue(si.getProductName());celda.setCellStyle(style3);break;
+ 
            		//case "Comentarios": celda.setCellValue(si.getComments());break;
         		default:
         			break;
         		}
         	}
-        	row.setHeightInPoints(16);
+        	Cell lastCell = row.createCell(columns);
+        	lastCell.setCellStyle(style2);
+        	row.setHeightInPoints(20);
 
         }
         for(Integer h = 0; h< columns;h++){

@@ -278,7 +278,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		ListBox lb = new ListBox();
 		lb.addItem("-");
 		for(TemplateInfo ti : templates.getList()){
-			if(ti.getType().equals("Stock") || ti.getType().equals("Catalogo") )
+			if(ti.getType().equals("Stock") )
 				lb.addItem(ti.getName());
 		}
 		flex_table.setWidget(0, 0, new Label("Plantilla"));
@@ -296,12 +296,22 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
 		flex_table.setCellSpacing(0);
+		
+		ListBox lb0 = new ListBox();
+		lb0.addItem("-");
+		
+		for(TemplateInfo t : templateList.getList()){
+			if(t.getType().equals("Stock"))
+				lb0.addItem(t.getName());
+		}
+		flex_table.setWidget(0, 0, new Label("Plantilla"));
+		flex_table.setWidget(0, 1, lb0);
+		
 		item.getWorkplaces(new AsyncCallback<Vector<WorkPlace>>() {
 			
 			@Override
 			public void onSuccess(Vector<WorkPlace> result) {
 
-				
 				ListBox lb1 = new ListBox();
 				lb1.addItem("-");
 				for(WorkPlace w : result){
@@ -322,8 +332,8 @@ public abstract class TemplatesDialog extends CustomDialogB {
 									lb2.addItem(w.getName());
 								}
 								
-								flex_table.setWidget(1, 0, new Label("Departamento"));
-								flex_table.setWidget(1, 1, lb2);
+								flex_table.setWidget(2, 0, new Label("Departamento"));
+								flex_table.setWidget(2, 1, lb2);
 								
 								flexTableCss();
 							}
@@ -334,8 +344,8 @@ public abstract class TemplatesDialog extends CustomDialogB {
 						
 					}
 				});
-				flex_table.setWidget(0, 0, new Label("Lugar de Trabajo"));
-				flex_table.setWidget(0, 1, lb1);
+				flex_table.setWidget(1, 0, new Label("Lugar de Trabajo"));
+				flex_table.setWidget(1, 1, lb1);
 				
 				flexTableCss();
 			}

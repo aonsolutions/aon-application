@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Vector;
 
 import javax.servlet.ServletException;
@@ -14,18 +15,23 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.Region;
 
 import com.code.aon.company.Department;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.template.jooq.DBCatalogue;
+import com.esferalia.aon.gwt.template.jooq.DBConsults;
+import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 
 @WebServlet(name = "DownloadTemplatesCatalogue", urlPatterns = { "/aon_gwt_template/gwt_download_catalogue/*" })
 public class DownloadCatalogueServlet extends HttpServlet {
@@ -39,6 +45,7 @@ public class DownloadCatalogueServlet extends HttpServlet {
         String domain_id = p_request.getParameter("domain_id");
         String workplace = p_request.getParameter("workplace");
         String department = p_request.getParameter("department");
+        String template_id = p_request.getParameter("template_id");
         Integer domainId = Integer.parseInt(domain_id);
         String domain = AonUtil.getDomainName();
 
@@ -51,41 +58,89 @@ public class DownloadCatalogueServlet extends HttpServlet {
         if(!department.equals("-"))
         	dt = DBCatalogue.getDepartment(wp, department, domainId, domain);
 
+        byte[] b = null ;
+        
+        if(template_id!=""){
+        	Integer id = Integer.parseInt(template_id);
+        	b = DBConsults.getTemplate(domain,domainId, id);
+        }
+        else return;
+        
+        File f = new File("/tmp/catalogue.xml"); 
+        try {
+			org.apache.commons.io.FileUtils.writeByteArrayToFile(f,b);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+        TemplateInfo aux = null;
+		try {
+			aux = com.esferalia.aon.gwt.template.server.Utils.readxml(f);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+        
         File archivoXLS = new File("itemCatalogue" + ".xls" );
         if(archivoXLS.exists()) archivoXLS.delete();
         archivoXLS.createNewFile();        
-        Workbook libro = new HSSFWorkbook();
+        HSSFWorkbook libro = new HSSFWorkbook();
         FileOutputStream archivo = new FileOutputStream(archivoXLS);
-        Sheet hoja = libro.createSheet("Plantilla 1");
-        Row fila = hoja.createRow(0);
+        HSSFSheet hoja = libro.createSheet("Plantilla 1");
+        Integer columns = aux.getColumns().size();
+        hoja.addMergedRegion(new Region(0,(short)0,0,columns.shortValue()));
+     
+        Row rowInfo = hoja.createRow(0);
+        Row fila = hoja.createRow(1);
+        
+        Date d = new Date();
+        
+        String info = "Catalogo ## "+workplace+" ## "+department+" ## "
+        		+com.esferalia.aon.gwt.template.server.Utils.getDay(d.getDate())
+        		+"-"+com.esferalia.aon.gwt.template.server.Utils.getMonth(d.getMonth())
+        		+"-"+com.esferalia.aon.gwt.template.server.Utils.getYear(d);
         
         
+        rowInfo.setHeightInPoints(16);
         fila.setHeightInPoints(16);
-        CellStyle style = libro.createCellStyle();
+        CellStyle style = libro.createCellStyle();CellStyle styleInfo = libro.createCellStyle();
         Font font = libro.createFont();
         font.setFontHeightInPoints((short)12);
         font.setBoldweight(Font.BOLDWEIGHT_BOLD);
-        style.setFont(font);
-        style.setAlignment(CellStyle.ALIGN_CENTER);
-        style.setBorderBottom(CellStyle.BORDER_MEDIUM);
+        style.setFont(font);styleInfo.setFont(font);
+        style.setAlignment(CellStyle.ALIGN_CENTER);styleInfo.setAlignment(CellStyle.ALIGN_CENTER);
+        style.setBorderBottom(CellStyle.BORDER_MEDIUM); styleInfo.setBorderBottom(CellStyle.BORDER_MEDIUM);
+       	styleInfo.setFillBackgroundColor(HSSFColor.LIGHT_YELLOW.index);
        
+       	Cell cellInfo = rowInfo.createCell(0);
+       	cellInfo.setCellValue(info);
+       	cellInfo.setCellStyle(styleInfo);
         
         CellStyle style2 = libro.createCellStyle();
-		Font font2 = libro.createFont();
-		//font2.setFontHeight((short) 14);
-		font2.setFontHeightInPoints((short)12);
+        Font font2 = libro.createFont();
+        font.setFontHeightInPoints((short)12);
 		style2.setFont(font2);
 		style2.setAlignment(CellStyle.ALIGN_CENTER);
 		style2.setBorderBottom(CellStyle.BORDER_THIN);
-        Integer columns = 8;
-        for(Integer i = 0; i< columns; i++){
-        	hoja.setDefaultColumnStyle(i, style2); 	
+		
+        CellStyle style3 = libro.createCellStyle();
+		style3.setFont(font2);
+		style3.setAlignment(CellStyle.ALIGN_LEFT);
+		style3.setBorderBottom(CellStyle.BORDER_THIN);
+		
+		for(Integer i = 0; i< columns; i++){
+	        	Cell celda = fila.createCell(i);
+	        	celda.setCellValue(aux.getColumns().get(i));
+	        	celda.setCellStyle(style);  	
+	    }
+	    Cell celdaf = fila.createCell(columns);
+	    celdaf.setCellStyle(style);
+/*
+        for(Integer i = 0; i<= columns; i++){
+        	if(aux.getColumns().get(i).equals("Producto") || aux.getColumns().get(i).equals("Nombre"))
+        		hoja.setDefaultColumnStyle(i, style3);
+        	else hoja.setDefaultColumnStyle(i, style2); 
         }
-        
-        
-       
 
-        Cell c1 = fila.createCell(0);c1.setCellValue("Centro de Trabajo");c1.setCellStyle(style);
+        /*Cell c1 = fila.createCell(0);c1.setCellValue("Centro de Trabajo");c1.setCellStyle(style);
         Cell c2 = fila.createCell(1);c2.setCellValue("Departamento");c2.setCellStyle(style);
         Cell c3 = fila.createCell(2);c3.setCellValue("Producto");c3.setCellStyle(style);
         Cell c4 = fila.createCell(3);c4.setCellValue("Nombre");c4.setCellStyle(style);
@@ -93,22 +148,44 @@ public class DownloadCatalogueServlet extends HttpServlet {
         Cell c6 = fila.createCell(5);c6.setCellValue("Detalle 1");c6.setCellStyle(style);
         Cell c7 = fila.createCell(6);c7.setCellValue("Detalle 2");c7.setCellStyle(style);
         Cell c8 = fila.createCell(7);c8.setCellValue("Detalle 3");c8.setCellStyle(style);
-        
+        */
 
+        
         Vector<CatalogueInfo> v = DBCatalogue.getCatalogues(domain, domainId, wp, dt);
 
         for(Integer j = 0; j< v.size();j++){
-        	Row row = hoja.createRow(j+1);
+        	Row row = hoja.createRow(j+2);
+        	for(Integer k = 0; k< columns; k++){
+				Cell celda = row.createCell(k);
+				String type = aux.getColumns().get(k);
+				CatalogueInfo si = v.get(j);
+        		switch (type) {
+        		case "Producto": celda.setCellValue(si.getProductCode());celda.setCellStyle(style3);break;
+        		//case "Series": celda.setCellValue(si.getSeries().getCode());break;
+        		//case "Almac\u00e9n Destino": celda.setCellValue(si.getTargetWarehouse().getName());break;
+        		case "Cantidad": celda.setCellValue("");celda.setCellStyle(style2);break;
+        		case "Detalle 1":  celda.setCellValue(si.getDetail());celda.setCellStyle(style2);break;
+        		case "Detalle 2":  celda.setCellValue(si.getDetail2());celda.setCellStyle(style2);break;
+        		case "Detalle 3":  celda.setCellValue(si.getDetail3());celda.setCellStyle(style2);break;
+        		case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style2);break;
+        		case "Nombre": celda.setCellValue(si.getProductName());celda.setCellStyle(style3);break;
 
-        	Cell ca1 = row.createCell(0);ca1.setCellValue(v.get(j).getWorkplace());
+        		//case "Comentarios": celda.setCellValue(si.getComments());break;
+        		default:
+        			break;
+        		}
+        	}
+        	/*Cell ca1 = row.createCell(0);ca1.setCellValue(v.get(j).getWorkplace());
         	Cell ca2 = row.createCell(1);ca2.setCellValue(v.get(j).getDepartment());
         	Cell ca3 = row.createCell(2);ca3.setCellValue(v.get(j).getProductCode());
         	Cell ca4 = row.createCell(3);ca4.setCellValue(v.get(j).getProductName());
         	Cell ca6 = row.createCell(5);ca6.setCellValue(v.get(j).getDetail());
         	Cell ca7 = row.createCell(6);ca7.setCellValue(v.get(j).getDetail2());
         	Cell ca8 = row.createCell(7);ca8.setCellValue(v.get(j).getDetail3());
-        	
-        	row.setHeightInPoints(16);
+        	*/
+    	    Cell lastCell = row.createCell(columns);
+    	    lastCell.setCellStyle(style2);
+        	row.setHeightInPoints(20);
         		
         }
         for(Integer h = 0; h<8;h++){

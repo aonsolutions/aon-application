@@ -1271,21 +1271,29 @@ public class Templates extends Composite implements EntryPoint {
 			
 			@Override
 			protected void onAccept() {
-
-				ListBox lb1 = (ListBox) flex_table.getWidget(0, 1);
-				String workplace = lb1.getItemText(lb1.getSelectedIndex());
+				ListBox lb0 = (ListBox) flex_table.getWidget(0,1);
+				String template = lb0.getSelectedItemText();
+				
+				for(TemplateInfo t : tlist.getList()) {
+					if(t.getName().equals(template) && t.getType().equals("Stock")){
+						ti = t;
+					}
+				}
+				ListBox lb1 = (ListBox) flex_table.getWidget(1, 1);
+				String workplace = lb1.getSelectedItemText();
 				
 				ListBox lb2;
 				String department = "-";
 				if(workplace != "-"){
-					lb2 = (ListBox) flex_table.getWidget(1, 1);
-					department = lb2.getItemText(lb2.getSelectedIndex());
+					lb2 = (ListBox) flex_table.getWidget(2, 1);
+					department = lb2.getSelectedItemText();
 				}
 
 				String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_catalogue/"
 		            	+ "?&domain_id=" + domainId
 		            	+ "&workplace=" + workplace
-		            	+ "&department="+ department;
+		            	+ "&department="+ department
+		            	+ "&template_id="+ti.getId();
 				
 				Window.open( fileDownloadURL, "_blank",null);
 				hide();

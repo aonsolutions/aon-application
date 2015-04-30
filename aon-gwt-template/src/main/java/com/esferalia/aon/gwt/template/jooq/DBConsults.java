@@ -137,7 +137,7 @@ public class DBConsults {
 					stockTemplate.setId(id);
 					v.add(stockTemplate);
 					
-					TemplateInfo stockPurchaseTemplate = new TemplateInfo();
+					/*TemplateInfo stockPurchaseTemplate = new TemplateInfo();
 					v2 = new Vector<String>();
 					v2.add("Centro de Trabajo");v2.add("Departamento");
 					v2.add("Producto");v2.add("Nombre");v2.add("Cantidad");
@@ -152,7 +152,7 @@ public class DBConsults {
 					id = insertTemplate(domain, stockPurchaseTemplate,Utils.newXmlFile(stockPurchaseTemplate), 0);
 					stockPurchaseTemplate.setId(id);
 					v.add(stockPurchaseTemplate);
-					
+					*/
 					TemplateInfo productTemplate = new TemplateInfo();
 					v2 = new Vector<String>();
 					v2.add("Nombre");v2.add("Código");v2.add("Precio Coste");v2.add("Precio Venta Base");

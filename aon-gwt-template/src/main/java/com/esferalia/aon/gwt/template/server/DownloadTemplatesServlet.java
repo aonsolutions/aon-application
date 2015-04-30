@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.sql.SQLException;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -17,13 +18,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.Region;
 
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
@@ -109,35 +113,58 @@ public class DownloadTemplatesServlet extends HttpServlet {
         File archivoXLS = new File(name + ".xls" );
         if(archivoXLS.exists()) archivoXLS.delete();
         archivoXLS.createNewFile();        
-        Workbook libro = new HSSFWorkbook();
+        HSSFWorkbook libro = new HSSFWorkbook();
         FileOutputStream archivo = new FileOutputStream(archivoXLS);
-        Sheet hoja = libro.createSheet("Plantilla 1");
-        Row fila = hoja.createRow(0);
+        HSSFSheet hoja = libro.createSheet("Plantilla 1");
+        Integer columns = aux.getColumns().size();
+
+        hoja.addMergedRegion(new Region(0,(short)0,0,columns.shortValue()));
         
+        Row rowInfo = hoja.createRow(0);
+        Row fila = hoja.createRow(1);
+        
+        
+        String info = aux.getType()+" ## ";
+        
+        rowInfo.setHeightInPoints(16);
         fila.setHeightInPoints(16);
-        CellStyle style = libro.createCellStyle();
+        CellStyle style = libro.createCellStyle();CellStyle styleInfo = libro.createCellStyle();
         Font font = libro.createFont();
         font.setFontHeightInPoints((short)12);
         font.setBoldweight(Font.BOLDWEIGHT_BOLD);
-        style.setFont(font);
-        style.setAlignment(CellStyle.ALIGN_CENTER);
-        style.setBorderBottom(CellStyle.BORDER_MEDIUM);
+        style.setFont(font);styleInfo.setFont(font);
+        style.setAlignment(CellStyle.ALIGN_CENTER);styleInfo.setAlignment(CellStyle.ALIGN_CENTER);
+        style.setBorderBottom(CellStyle.BORDER_MEDIUM); styleInfo.setBorderBottom(CellStyle.BORDER_MEDIUM);
+       	styleInfo.setFillBackgroundColor(HSSFColor.LIGHT_YELLOW.index);
+
+       	Cell cellInfo = rowInfo.createCell(0);
+       	cellInfo.setCellValue(info);
+       	cellInfo.setCellStyle(styleInfo);
       
         CellStyle style2 = libro.createCellStyle();
-      	Font font2 = libro.createFont();
-      	//font2.setFontHeight((short) 14);
-      	font2.setFontHeightInPoints((short)12);
+        Font font2 = libro.createFont();
+        font.setFontHeightInPoints((short)12);
       	style2.setFont(font2);
       	style2.setAlignment(CellStyle.ALIGN_CENTER);
       	style2.setBorderBottom(CellStyle.BORDER_THIN);
+      	
+        CellStyle style3 = libro.createCellStyle();
+      	style3.setFont(font2);
+      	style3.setAlignment(CellStyle.ALIGN_LEFT);
+      	style3.setBorderBottom(CellStyle.BORDER_THIN);
 
         for(Integer i = 0; i< aux.getColumns().size(); i++){
-        	hoja.setDefaultColumnStyle(i, style2); 	
         	Cell celda = fila.createCell(i);
         	celda.setCellValue(aux.getColumns().get(i));
         	celda.setCellStyle(style);
         }
-        Integer columns = aux.getColumns().size();
+        Cell celdaf = fila.createCell(columns);
+        celdaf.setCellStyle(style);
+       /* for(Integer i = 0; i<= aux.getColumns().size(); i++){
+        	if(aux.getColumns().size()!=i && ( aux.getColumns().get(i).equals("Producto") || aux.getColumns().get(i).equals("Nombre")))
+        		hoja.setDefaultColumnStyle(i, style3);
+        	else hoja.setDefaultColumnStyle(i, style2);
+        }*/
 
         for(Integer h = 0; h< columns;h++){
         	hoja.autoSizeColumn(h);

@@ -194,6 +194,7 @@ public static Department getDepartment(WorkPlace wp, Integer department, Integer
 				.where(WORKPLACE_DEPARTMENT.WORKPLACE.eq(wp.getId()))
 				.and(WORKPLACE_DEPARTMENT.DEPARTMENT.eq(dt.getId()))
 				.and(CATALOGUE_ITEM.DOMAIN.eq(domainId))
+				.and(PRODUCT.STATUS.eq((byte)0))
 				.orderBy(PRODUCT.NAME)
 				.fetch();
 			}
@@ -204,6 +205,7 @@ public static Department getDepartment(WorkPlace wp, Integer department, Integer
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.where(WORKPLACE_DEPARTMENT.WORKPLACE.eq(wp.getId()))
 				.and(CATALOGUE_ITEM.DOMAIN.eq(domainId))
+				.and(PRODUCT.STATUS.eq((byte)0))
 				.orderBy(PRODUCT.NAME)
 				.fetch();
 			}
@@ -213,6 +215,7 @@ public static Department getDepartment(WorkPlace wp, Integer department, Integer
 				.join(WORKPLACE_DEPARTMENT).on(WORKPLACE_DEPARTMENT.CATALOGUE.eq(CATALOGUE_ITEM.CATALOGUE))
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.where(CATALOGUE_ITEM.DOMAIN.eq(domainId))
+				.and(PRODUCT.STATUS.eq((byte)0))
 				.orderBy(PRODUCT.NAME)
 				.fetch();
 			}

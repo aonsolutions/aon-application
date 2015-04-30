@@ -537,12 +537,14 @@ public class DBStock {
 				data = ctx.getDslContext().select(STOCK.ID, STOCK.ITEM, STOCK.WAREHOUSE, STOCK.QUANTITY,ITEM.PRODUCT)
 				.from(STOCK).join(ITEM).on(ITEM.ID.eq(STOCK.ITEM)).join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 				.where(STOCK.DOMAIN.eq(domainId)).and(STOCK.WAREHOUSE.eq(wid))
+				.and(PRODUCT.STATUS.eq((byte)0))
 				.orderBy(PRODUCT.NAME)
 				.fetch();
 			else
 				data = ctx.getDslContext().select(STOCK.ID, STOCK.ITEM, STOCK.WAREHOUSE, STOCK.QUANTITY,ITEM.PRODUCT)
 				.from(STOCK).join(ITEM).on(ITEM.ID.eq(STOCK.ITEM)).join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 				.where(STOCK.DOMAIN.eq(domainId))
+				.and(PRODUCT.STATUS.eq((byte)0))
 				.orderBy(PRODUCT.NAME)
 				.fetch();
 				
@@ -795,6 +797,7 @@ public class DBStock {
 								.join(ITEM).on(PROPOSAL_DETAIL.ITEM.eq(ITEM.ID)).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PROPOSAL_DETAIL.PROPOSAL.eq(proposalId))
 								.and(PROPOSAL_DETAIL.DOMAIN.eq(domainId))
+								.and(PRODUCT.STATUS.eq((byte)0))
 								.orderBy(PRODUCT.NAME)
 								.fetch();
 			
