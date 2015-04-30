@@ -63,7 +63,6 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.parse;
 import static com.esferalia.aon.salary.expression.ExpressionContext.getCurrentBindings;
 import static com.esferalia.aon.watson.util.AonDateUtils.add;
 import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
-import static com.esferalia.aon.watson.util.AonStringUtils.equals;
 import static com.esferalia.aon.watson.util.AonUtils.ifnull;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
@@ -94,7 +93,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.ajax4jsf.renderkit.ProducerContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.math3.analysis.UnivariateFunction;
@@ -187,7 +185,6 @@ import com.esferalia.aon.salary.expression.Variables.NotFoundHandler;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
-import com.sun.mail.imap.protocol.ListInfo;
 
 public class SQLContractSalaryCalculatorContext extends
 		AbstractContractSalaryCalculatorContext implements
@@ -370,7 +367,6 @@ public class SQLContractSalaryCalculatorContext extends
 		}
 
 	}
-	
 
 	public static class AgreementContextKey {
 
@@ -748,8 +744,6 @@ public class SQLContractSalaryCalculatorContext extends
 		return criteria;
 	}
 
-
-
 	private Criteria criteria;
 	public Connection connection;
 
@@ -794,7 +788,6 @@ public class SQLContractSalaryCalculatorContext extends
 	private OrderByList order;
 
 	private IListener listener;
-	
 
 	/*
 	 * public SQLContractSalaryCalculatorContext(Connection connection, Date
@@ -920,7 +913,6 @@ public class SQLContractSalaryCalculatorContext extends
 				CACHE_SIZE, agreementContextFactory);
 		this.leaveLoader = new SQLContractLeaveLoader(this.startDate,
 				this.endDate);
-		
 
 	}
 
@@ -1213,10 +1205,14 @@ public class SQLContractSalaryCalculatorContext extends
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public Collection<IContractCost> getContractCosts() throws AonException {
-//		return new HierarchyDeductions(getCCCCosts().iterator(),
-//				getSSRegimeCosts().iterator());
-		return new CompositeCosts(getCCCCosts(), getSSRegimeCosts());
+		return new CompositeCosts(getCCCCosts(), getSSRegimeCosts()){
+			@Override
+			protected int getLevel(IContractCost item) {
+				return ((ISystemCost) item).getDomain();
+			}
+		};
 	}
 
 	@Override
@@ -1255,10 +1251,10 @@ public class SQLContractSalaryCalculatorContext extends
 
 	@Override
 	public List<ITimedVariable<?>> get(String var) {
-		
-		if ( var == null )
+
+		if (var == null)
 			return null;
-		
+
 		Matcher matcher = ACTUAL_VAR_PATTERN.matcher(var);
 
 		if (!matcher.matches())
@@ -1515,7 +1511,7 @@ public class SQLContractSalaryCalculatorContext extends
 	protected Date getStart() {
 		return this.startDate;
 	}
-	
+
 	protected Criteria getCriteria() {
 		return criteria;
 	}
@@ -1650,11 +1646,11 @@ public class SQLContractSalaryCalculatorContext extends
 
 		return ctx;
 	}
-	
+
 	private void onRedefinedImplicit() {
-		if ( listener == null)
+		if (listener == null)
 			return;
-		
+
 		Integer agreementId = getAgreementId();
 		Integer agreementLevelId = getAgreementLevel();
 		Integer agreementDomain = getAgreementDomain();
@@ -1663,7 +1659,9 @@ public class SQLContractSalaryCalculatorContext extends
 				agreementDomain, agreementId, agreementLevelId);
 
 		agreementContextFactory.getImplicitRedefined(agreementAndLevelKey)
-		.forEach((name, pair)->listener.onRedefinedImplicit(name, pair.getLeft(), pair.getRight()));
+				.forEach(
+						(name, pair) -> listener.onRedefinedImplicit(name,
+								pair.getLeft(), pair.getRight()));
 	}
 
 	private Collection<IContractCost> getCCCCosts() throws AonException {
@@ -2254,18 +2252,17 @@ public class SQLContractSalaryCalculatorContext extends
 		if (vars == null || vars.isEmpty())
 			throw new ExpressionExceptionWrapper(
 					new UndefinedVariablesException(PAYMENT_VARIABLE));
-		
-		String name  = ((PaymentVariable)vars.get(0)).payment.getName();
-		if ( AonStringUtils.isEmpty(name))
+
+		String name = ((PaymentVariable) vars.get(0)).payment.getName();
+		if (AonStringUtils.isEmpty(name))
 			throw new ExpressionExceptionWrapper(
 					new UndefinedVariablesException(PAYMENT_VARIABLE));
-		
+
 		Double total = 0.00;
 		for (IContractPayment payment : getAgreementPayments()) {
-			List<ITimedResult<Double>> results = getExpressionContext().eval(payment.getExpression(), 
-					payment.getStartDate(), 
-					payment.getEndDate(),
-					Double.class);
+			List<ITimedResult<Double>> results = getExpressionContext().eval(
+					payment.getExpression(), payment.getStartDate(),
+					payment.getEndDate(), Double.class);
 			for (ITimedResult<Double> result : results)
 				total += result.getValue();
 		}
@@ -2309,15 +2306,15 @@ public class SQLContractSalaryCalculatorContext extends
 
 		return irpfOutcome.getIrpfResult().getIrpf();
 	}
-	
-	protected Criteria getContractCriteria(){
+
+	protected Criteria getContractCriteria() {
 		Criteria contractCriteria = new Criteria();
 		contractCriteria.addExpression(criteria.getExpression());
 		contractCriteria.addEqualExpression(SQLConstants.CONTRACT + "."
 				+ ContractColumns.ID, getId());
 		return contractCriteria;
 	}
-	
+
 	protected IIrpfCalculatorContext getIrpfCalculatorContext(Connection conn,
 			Date startDate, Date endDate, Criteria criteria) {
 		try {
@@ -2332,11 +2329,10 @@ public class SQLContractSalaryCalculatorContext extends
 
 	}
 
-
 	protected SQLContractSalaryCalculatorContext getUnderlyingIrpfSQLCalculatorContext(
 			Connection conn, Date startDate, Date endDate, Criteria criteria)
 			throws SQLException, ExpressionException {
-		
+
 		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
 				conn, startDate, endDate, issueDate, criteria) {
 			@Override
@@ -2349,7 +2345,8 @@ public class SQLContractSalaryCalculatorContext extends
 	}
 
 	protected IIrpfCalculatorContext getIrpfCalculatorContext(Connection conn,
-			Date startDate, Date endDate, ISQLContractSalaryCalculatorContext ctx) {
+			Date startDate, Date endDate,
+			ISQLContractSalaryCalculatorContext ctx) {
 		try {
 			return new SQLIrpfCalculatorContext(connection, startDate, endDate,
 					ctx) {
@@ -2650,7 +2647,7 @@ public class SQLContractSalaryCalculatorContext extends
 		if (br > 0.00)
 			return br;
 
-		// If no salaries are present, the result is 0.
+		// No salaries are present.
 
 		SQLNoItContractSalaryCalculatorContext ctx = (SQLNoItContractSalaryCalculatorContext) getNoItSalary(
 				connection, date, SalaryType.SALARY, contractId);
@@ -2660,6 +2657,17 @@ public class SQLContractSalaryCalculatorContext extends
 		return salary.getCommonBase()
 				/ ctx.getVariable(QUOTE_DAYS, Double.class);
 
+	}
+
+	public Object br(Date start, Date end) throws ExpressionException, SalaryException, SQLException {
+		int count  = 0;
+		double br  = 0.00;
+		for (Date date = start; date.compareTo(end) <= 0; date = add(date, Calendar.MONTH, 1)) {
+			count++;
+			br += (double) br(getLastDayOfMonth(date));
+		}
+
+		return br / count;
 	}
 
 	private double getAdvanceNoticeDays() {
@@ -2869,10 +2877,13 @@ public class SQLContractSalaryCalculatorContext extends
 		ActiveTimedVariable<Double> bonusDays = new ActiveTimedVariable<Double>() {
 			@Override
 			public Double getValue(Period p) {
-				Date bonusStart = Period.max(sqlContractBonus.getStartDate(),p.getStart());
-				Date bonusEnd = Period.min(sqlContractBonus.getEndDate(),p.getEnd());
+				Date bonusStart = Period.max(sqlContractBonus.getStartDate(),
+						p.getStart());
+				Date bonusEnd = Period.min(sqlContractBonus.getEndDate(),
+						p.getEnd());
 				long bonusDays = getAvailableDays(bonusStart, bonusEnd);
-				return bonusDays == AonDateUtils.getMax(bonusStart, Calendar.DATE) ? 30.00 : bonusDays * 1.00;
+				return bonusDays == AonDateUtils.getMax(bonusStart,
+						Calendar.DATE) ? 30.00 : bonusDays * 1.00;
 			}
 		};
 
@@ -3213,7 +3224,7 @@ public class SQLContractSalaryCalculatorContext extends
 
 				ctx.putVariable(PARTIAL_FACTOR, partial_factor);
 			}
-			
+
 			ITimedVariable<Double> workedDays = new ITimedVariable<Double>() {
 				@Override
 				public Period getPeriod() {
@@ -3226,10 +3237,11 @@ public class SQLContractSalaryCalculatorContext extends
 					try {
 						if (!isFullTime()) {
 							return workDays
-									* getCurrentBindings().get(
-											PARTIAL_FACTOR,
-											obj -> ((Number) obj)
-													.doubleValue(), 1.00);
+									* getCurrentBindings()
+											.get(PARTIAL_FACTOR,
+													obj -> ((Number) obj)
+															.doubleValue(),
+													1.00);
 						}
 					} catch (ExpressionExceptionWrapper e) {
 					}
@@ -3237,14 +3249,17 @@ public class SQLContractSalaryCalculatorContext extends
 				}
 
 			};
-			ITimedVariable<?> userWorkedDays = getExpressionContext().getVariable(WORKED_DAYS, period.getStart(), period.getEnd());
-			
-			//if (!containsVariable(WORKED_DAYS, period)) {
+			ITimedVariable<?> userWorkedDays = getExpressionContext()
+					.getVariable(WORKED_DAYS, period.getStart(),
+							period.getEnd());
+
+			// if (!containsVariable(WORKED_DAYS, period)) {
 			if (userWorkedDays == null) {
 				ctx.putVariable(WORKED_DAYS, workedDays);
 			} else {
-				if ( listener != null )
-					listener.onRedefinedImplicit(WORKED_DAYS.getName(), userWorkedDays, workedDays );
+				if (listener != null)
+					listener.onRedefinedImplicit(WORKED_DAYS.getName(),
+							userWorkedDays, workedDays);
 			}
 			if (!containsVariable(QUOTE_DAYS, period)) {
 				ITimedVariable<Double> quoteDays = new ITimedVariable<Double>() {
@@ -3342,12 +3357,14 @@ public class SQLContractSalaryCalculatorContext extends
 				Date start = Period.max(dataStart, startDate);
 				Date end = Period.min(dataEnd, endDate);
 
-				ITimedVariable<?> implicit = ctx.getVariable(expr.getName(), start, end);
+				ITimedVariable<?> implicit = ctx.getVariable(expr.getName(),
+						start, end);
 				try {
-					List<ITimedResult<Object>> results = ctx.addExpression(expr, start, end);
-				
+					List<ITimedResult<Object>> results = ctx.addExpression(
+							expr, start, end);
+
 					onRedefinedImplicit(ctx, expr.getName(), implicit, results);
-				
+
 				} catch (UndefinedVariablesException e) {
 					failed.add(new TimedObject<IExpression>(expr, new Period(
 							start, end)));
@@ -3362,12 +3379,14 @@ public class SQLContractSalaryCalculatorContext extends
 				try {
 					Period period = timedExpr.getPeriod();
 					IExpression expr = timedExpr.getValue();
-					
-					ITimedVariable<?> implicit = ctx.getVariable(expr.getName(), period.getStart(), period.getEnd());
-					List<ITimedResult<Object>> results = ctx.addExpression(expr, period.getStart(), period.getEnd());
-				
-					onRedefinedImplicit(ctx, expr.getName(),implicit, results);
-				
+
+					ITimedVariable<?> implicit = ctx.getVariable(
+							expr.getName(), period.getStart(), period.getEnd());
+					List<ITimedResult<Object>> results = ctx.addExpression(
+							expr, period.getStart(), period.getEnd());
+
+					onRedefinedImplicit(ctx, expr.getName(), implicit, results);
+
 				} catch (UndefinedVariablesException e) {
 					onUndefinedData(timedExpr.getValue(), e.getMessage(),
 							timedExpr.getPeriod().getStart(), timedExpr
@@ -3383,18 +3402,19 @@ public class SQLContractSalaryCalculatorContext extends
 		}
 	}
 
-	private void onRedefinedImplicit(ExpressionContext ctx,
-			String name, ITimedVariable<?> implicit,
-			List<ITimedResult<Object>> results) {
-		if ( listener == null  )
+	private void onRedefinedImplicit(ExpressionContext ctx, String name,
+			ITimedVariable<?> implicit, List<ITimedResult<Object>> results) {
+		if (listener == null)
 			return;
-		if ( results == null  )
+		if (results == null)
 			return;
-		if ( results.isEmpty()  )
+		if (results.isEmpty())
 			return;
-		if ( implicit == null  )
+		if (implicit == null)
 			return;
-		if ( implicit instanceof IExpressionVariable<?> && ((IExpressionVariable<?>) implicit).getExpression().getScope().compareTo(ExpressionScope.AGREEMENT) >= 0 )
+		if (implicit instanceof IExpressionVariable<?>
+				&& ((IExpressionVariable<?>) implicit).getExpression()
+						.getScope().compareTo(ExpressionScope.AGREEMENT) >= 0)
 			return;
 		listener.onRedefinedImplicit(name, results.get(0), implicit);
 	}

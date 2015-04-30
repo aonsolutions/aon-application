@@ -17,6 +17,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -39,7 +40,9 @@ import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
+import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.cost.Costs;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -58,11 +61,11 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		AONContext aonContext = new AONContext(connection);
 
 		cleanSystemCosts(aonContext);
-		addSystemCost(aonContext, getFirstDayOfYear(getToday()), "ECSS_E",
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(getToday()), "ECSS_E",
 				DeductionType.COMMON_CONTINGENCY, "50");
-		addSystemCost(aonContext, getFirstDayOfYear(getToday()), "ECSS_E",
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(getToday()), "ECSS_E",
 				DeductionType.COMMON_CONTINGENCY, "100");
-		addSystemCost(aonContext, getFirstDayOfYear(getToday()), "ECSS_E",
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(getToday()), "ECSS_E",
 				DeductionType.COMMON_CONTINGENCY, "200");
 
 		ContractRecord contract = newContract(aonContext, new String[] {},
@@ -100,6 +103,76 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		Assert.assertEquals(
 				"ECSS_E",
 				350.00,
+				salary.getSalaryCosts()
+						.stream()
+						.collect(
+								Collectors.summingDouble(cost -> cost
+										.getAmount())));
+
+	}
+
+	@Test
+	public void testSystemCostsII() throws SQLException, AonException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSystemCosts(aonContext);
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(getToday()), "CGC_E",
+				DeductionType.COMMON_CONTINGENCY, "50");
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(getToday()), "CGC_E",
+				DeductionType.COMMON_CONTINGENCY, "100");
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(getToday()), "CGC_P",
+				DeductionType.COMMON_CONTINGENCY, "999");
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(getToday()), "NESTR",
+				DeductionType.COMMON_CONTINGENCY, "111");
+		addCCCCost(aonContext, CCCType.TRAINING, getFirstDayOfYear(getToday()), "CGC_E",
+				DeductionType.COMMON_CONTINGENCY, "200");
+		addCCCCost(aonContext, CCCType.TRAINING, getFirstDayOfYear(getToday()), "CGC_E",
+				DeductionType.COMMON_CONTINGENCY, "300");
+		addCCCCost(aonContext, CCCType.TRAINING, getFirstDayOfYear(getToday()), "CGC_P",
+				DeductionType.COMMON_CONTINGENCY, "666");
+
+		ContractRecord contract = newContract(aonContext, 
+				SSRegimeType.GENERAL,
+				CCCType.TRAINING,
+				getFirstDayOfYear(getToday()),
+				Collections.emptyMap(),
+				new String[] {},
+				new String[] {},
+				null);
+
+		Date start = getFirstDayOfMonth(getToday());
+		Date end = getLastDayOfMonth(start);
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, start, end, end, criteria);
+		ctx.next();
+
+		int costs = 0;
+		for (IContractCost cost : ctx.getContractCosts()) {
+			costs++;
+			System.out.println(cost.getName() + " '" + cost.getExpression()
+					+ "' [ " + cost.getStartDate() + "..." + cost.getEndDate()
+					+ "]");
+		}
+
+		Assert.assertEquals( 4, costs);
+
+		ctx = new SQLContractSalaryCalculatorContext(connection, start, end,
+				end, criteria);
+		ctx.next();
+
+		Salary salary = new ContractSalaryCalculator<Salary>(
+				new SalaryBuilder()).calculate(ctx);
+
+		Assert.assertEquals(
+				500.00 + 666.00 + 111.00,
 				salary.getSalaryCosts()
 						.stream()
 						.collect(
@@ -303,22 +376,40 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
 
-	protected final void addSystemCost(AONContext aonContext, Date startDate,
+
+	protected final void addCCCCost(AONContext aonContext, CCCType cccType,Date startDate,
 			String code, DeductionType type, String expression) {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
 
 		aonContext
 				.getDslContext()
 				.insertInto(SYSTEM_COST)
-				.set(SYSTEM_COST.DOMAIN, 0)
 				.set(SYSTEM_COST.CODE, code)
 				.set(SYSTEM_COST.START_DATE, startDate)
 				.set(SYSTEM_COST.TYPE,
 						(byte) (type != null ? type.ordinal()
 								: DeductionType.OTHER.ordinal()))
+				.set(SYSTEM_COST.DOMAIN, (-1)*( 100 + cccType.ordinal()))
 				.set(SYSTEM_COST.EXPRESSION, expression).execute();
 
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
 
+	protected final void addSSRegimeCost(AONContext aonContext, SSRegimeType ssRegimetype, Date startDate,
+			String code, DeductionType type, String expression) {
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+
+		aonContext
+				.getDslContext()
+				.insertInto(SYSTEM_COST)
+				.set(SYSTEM_COST.CODE, code)
+				.set(SYSTEM_COST.START_DATE, startDate)
+				.set(SYSTEM_COST.TYPE,
+						(byte) (type != null ? type.ordinal()
+								: DeductionType.OTHER.ordinal()))
+				.set(SYSTEM_COST.DOMAIN, (-1)*ssRegimetype.ordinal())
+				.set(SYSTEM_COST.EXPRESSION, expression).execute();
+
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+	}
 }

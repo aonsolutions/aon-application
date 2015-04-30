@@ -375,6 +375,12 @@ public abstract class AbstractSQLTestCase {
 	public static final ContractRecord newContract(AONContext aonContext,
 			Date startDate, Map<String, String> data, String[] payments,
 			String[] deductions, AgreementLevelCategoryRecord category) {
+		return newContract(aonContext, SSRegimeType.GENERAL, CCCType.PRINCIPAL, startDate, data, payments, deductions, category);
+	}
+	
+	public static final ContractRecord newContract(AONContext aonContext,
+			SSRegimeType ssRegimeType, CCCType cccType, Date startDate, Map<String, String> data, String[] payments,
+			String[] deductions, AgreementLevelCategoryRecord category) {
 		return aonContext.getDslContext().transactionResult(
 				new TransactionalCallable<ContractRecord>() {
 					@Override
@@ -425,7 +431,7 @@ public abstract class AbstractSQLTestCase {
 										enterprise.getId())
 								.set(ENTERPRISE_ACTIVITY.DESCRIPTION, "")
 								.set(ENTERPRISE_ACTIVITY.TYPE,
-										(byte) SSRegimeType.GENERAL.ordinal())
+										(byte)ssRegimeType.ordinal())
 								.returning().fetchOne();
 
 						EnterpriseCccRecord enterpriseCcc = aonContext
@@ -433,7 +439,7 @@ public abstract class AbstractSQLTestCase {
 								.insertInto(ENTERPRISE_CCC)
 								.set(ENTERPRISE_CCC.DOMAIN, domain.getId())
 								.set(ENTERPRISE_CCC.TYPE,
-										(byte) CCCType.PRINCIPAL.ordinal())
+										(byte) cccType.ordinal())
 								.set(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY,
 										enterpriseActivity.getId()).returning()
 								.fetchOne();
