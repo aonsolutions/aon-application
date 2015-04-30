@@ -17,7 +17,7 @@
 		<aon:outputText value="#{to.barcode}" />
 	</aon:column>
 
-	<aon:if test="#{aonConfiguration.bean.product.showSerializable and productCollections.serialNumberCount > 0}">
+	<aon:if test="#{aonConfiguration.bean.product.showSerializable and productCollections.serializableProductCount > 0}">
 		<aon:column alias="Item.serialNumber"
 			styleClass="aon-editDataTable-textColumn">
 			<f:facet name="header">
