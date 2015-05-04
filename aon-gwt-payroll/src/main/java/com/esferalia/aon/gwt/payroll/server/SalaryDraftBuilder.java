@@ -602,6 +602,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 		undefVar.setPayment(newPayment(contractPayment));
 
 		salaryDraft.addUndefinedVariable(undefVar);
+
 	}
 
 	@Override
@@ -713,17 +714,17 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 		undefVar.setScope(getScope(expression.getScope()));
 
 		salaryDraft.addUndefinedVariable(undefVar);
-
+		
 	}
 
 	@Override
 	public void onRedefinedImplicit(String name, ITimedVariable<?> redefined,
 			ITimedVariable<?> implicit) {
-		salaryDraft
-				.addWarning(String
-						.format("La variable del sistema '%s' con valor '%s' esta redefinida con el valor '%s'",
-								name, implicit.getValue(implicit.getPeriod()),
-								redefined.getValue(redefined.getPeriod())));
+//		salaryDraft
+//				.addWarning(String
+//						.format("La variable del sistema '%s' con valor '%s' esta redefinida con el valor '%s'",
+//								name, implicit.getValue(implicit.getPeriod()),
+//								redefined.getValue(redefined.getPeriod())));
 	}
 
 	// -------------------------------------------------------------------------
@@ -745,7 +746,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 			if (contextVariable != null && contextVariable.isInternal()) {
 				continue;
 			}
-
+			
 			Period period = var.getPeriod();
 			Object value = var.getValue(period);
 
