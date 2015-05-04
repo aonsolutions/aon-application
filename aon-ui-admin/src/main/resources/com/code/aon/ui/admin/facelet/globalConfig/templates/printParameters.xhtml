@@ -111,6 +111,13 @@
 						<br />
 						<aon:outputText value="#{companySaleInvoiceFooter.gtaDefaultText}" styleClass="aon-italic" />
 					</aon:div>
+					<aon:div rendered="#{!company.printSaleInvoiceFooter 
+						and companySaleInvoiceFooter.hotelDomainType
+						and companySaleInvoiceFooter.hotelSaleInvoiceTemplate}" >
+						<aon:outputText value="#{bundle.hotel_footer_text_default}: " styleClass="aon-italic aon-underline" />
+						<br />
+						<aon:outputText value="#{companySaleInvoiceFooter.hotelDefaultText}" styleClass="aon-italic" />
+					</aon:div>
 				</aon:panel>
 			</aon:div>
 			

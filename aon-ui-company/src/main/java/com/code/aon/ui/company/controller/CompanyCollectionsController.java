@@ -10,6 +10,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.AonVersion;
+import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -25,10 +26,10 @@ import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.company.enumeration.SalarySendingMethod;
 import com.code.aon.company.enumeration.SalaryTemplate;
 import com.code.aon.company.enumeration.SaleInvoiceTemplate;
-import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryBank;
+import com.code.aon.ui.audit.AuditManager;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
@@ -109,19 +110,28 @@ public class CompanyCollectionsController implements Serializable {
 		if (saleInvoiceTemplates == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
-			DomainType type = ds.getType();
 			saleInvoiceTemplates = new LinkedList<SelectItem>();
 			SaleInvoiceTemplate[] st = SaleInvoiceTemplate.values();
-			for (SaleInvoiceTemplate c : st) {
+			for (SaleInvoiceTemplate template : st) {
 				boolean skip = false;
-				if ( (c == SaleInvoiceTemplate.GTA) && (type != DomainType.GARAGE) ) {
-					skip = true;
-				} else if ( (c == SaleInvoiceTemplate.HOTEL) && (type != DomainType.HOTEL) ) {
-					skip = true;
+				
+				Integer domainId = ds.getDomainId();
+				if ( domainId != null ) {
+					Integer appId = AonUtil.getAuthPrincipal().getApplicationId();
+					try {
+						if ( template == SaleInvoiceTemplate.GTA && !AuditManager.hasModule(domainId, appId, Module.GARAGE)){
+							skip = true;
+						} else if ( template == SaleInvoiceTemplate.HOTEL && !AuditManager.hasModule(domainId, appId, Module.HOTEL)){
+							skip = true;
+						}
+					} catch (Throwable e) {
+						skip = true;
+					}								
 				}
+				
 				if (! skip ) {
-					String name = c.getName(locale);
-					SelectItem item = new SelectItem(c, name);
+					String name = template.getName(locale);
+					SelectItem item = new SelectItem(template, name);
 					saleInvoiceTemplates.add(item);					
 				}
 			}
