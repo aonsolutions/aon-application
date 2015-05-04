@@ -22,6 +22,18 @@
 			<version>4.1</version>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.5.11</version>
+               	<scope>test</scope>
+       	</dependency>
+      	<dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-jcl</artifactId>
+                <version>1.5.11</version>
+               	<scope>test</scope>
+       	</dependency>
 		<dependency>
 			<groupId>org.mvel</groupId>
 			<artifactId>mvel2</artifactId>

@@ -3,9 +3,12 @@
  */
 package com.esferalia.aon.salary.expression;
 
-import static org.junit.Assert.*;
+import java.util.Calendar;
+import java.util.Date;
+
 import junit.framework.Assert;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 import org.mvel2.MVEL;
 import org.mvel2.PropertyAccessException;
@@ -114,6 +117,49 @@ public class ExpressionContextTestCase {
 		} catch ( PropertyAccessException e ) {
 			Assert.assertEquals("Y",ExpressionContext.getUndefinedProperty(e, (PeriodMap) null));
 		}
+
+		try {
+			MVEL.eval("100+100000+X");
+			Assert.fail();
+		} catch ( PropertyAccessException e ) {
+			Assert.assertEquals("X",ExpressionContext.getUndefinedProperty(e, (PeriodMap) null));
+		}
+
 	}
 
+	@Test
+	public void testGetUndefinedPropertyII() throws UnknownUndefVarException {
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		
+		calendar.set(Calendar.DATE, 1);
+		Date start = calendar.getTime();
+		calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.MONTH));
+		Date end = calendar.getTime(); 
+		ExpressionContext context = new ExpressionContext();
+		
+		try {
+			context.eval("NO_DEFINIDA", start, end, Double.class);
+			Assert.fail();
+		} catch ( PropertyAccessException e ) {
+		} catch (UndefinedVariablesException e) {
+			Assert.assertEquals("NO_DEFINIDA",e.getVariableNames()[0]);
+		} catch (ExpressionException e) {
+			Assert.fail();
+		}
+		
+		try {
+			context.eval("100*NO_DEFINIDA", start, end, Double.class);
+			Assert.fail();
+		} catch ( PropertyAccessException e ) {
+		} catch (UndefinedVariablesException e) {
+			Assert.assertEquals("NO_DEFINIDA",e.getVariableNames()[0]);
+		} catch (ExpressionException e) {
+			Assert.fail();
+		}
+	}
 }
