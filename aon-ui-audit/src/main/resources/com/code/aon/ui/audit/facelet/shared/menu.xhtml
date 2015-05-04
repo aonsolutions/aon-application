@@ -2,20 +2,29 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"	
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/menu.xhtml" >
 		<ui:define name="beforeRightMenuContent">
 			<ui:insert name="beforeRightMenuContentEx" />
 			<aon:if test="#{(!aonConfiguration.properties.hideMenuFavorite) and (not empty actionFavorite.favoriteAndMoreUsedOptions)}">
-				<aon:dropDownMenu>
-					<aon:dynamicInclude value="#{actionFavorite.menuTemplate}" />
-	                <f:facet name="label"> 
-						<aon:graphicImage title="#{bundle.aon_favorites}"
-							value="#{aonResource.resolve['/images/aon-main-menu/aon-icon-favorites.png']}" />
-	                </f:facet>				
-				</aon:dropDownMenu>
-			</aon:if>				
+				<aon:graphicImage id="aonLogo"
+					title="#{bundle.aon_favorites}"
+					value="#{aonResource.resolve['/images/aon-main-menu/aon-icon-favorites.png']}" >
+					<a4j:support event="onclick"
+						actionListener="#{actionFavorite.onRenderMenu}" 
+						reRender="testContextMenu"
+						oncomplete="Richfaces.componentControl.performOperation(event,'onclick','#aonContent\\:mainMenuForm\\:testContextMenu','show')"						
+						ajaxSingle="true" />
+			    	<aon:contextMenu id="testContextMenu"
+			    		attached="aonLogo" submitMode="ajax">
+			    		<aon:dynamicInclude include="#{actionFavorite.renderMenu}"
+			    			value="#{actionFavorite.menuTemplate}" />
+			        </aon:contextMenu> 														
+				</aon:graphicImage>
+			</aon:if>
 		</ui:define>
 		<ui:define name="beforeHelpMenuContent">
 			<ui:insert name="beforeWebMapMenuContent"/>

@@ -33,6 +33,14 @@ public final class DynamicIncludeHandler extends TagHandler {
 		this.value = this.getRequiredAttribute("value");
 	}
 
+	private boolean isInclude( FaceletContext ctx ) {
+		TagAttribute includeTag = getAttribute("include");
+		if ( includeTag != null ) {
+			return includeTag.getBoolean(ctx);
+		}
+		return true;
+	}
+	
 	@Override
 	public void apply(FaceletContext ctx, UIComponent parent)
 			throws IOException, FacesException, FaceletException, ELException {
@@ -40,18 +48,20 @@ public final class DynamicIncludeHandler extends TagHandler {
 		if (StringUtils.isBlank(template)) {
 			return;
 		}
-		File file = File.createTempFile( "dynamicInclude", ".xhtml" );
-		URL url = file.toURI().toURL();
-		VariableMapper orig = ctx.getVariableMapper();
-		ctx.setVariableMapper(new VariableMapperWrapper(orig));
-		try {
-			this.nextHandler.apply(ctx, null);
-			FileUtils.writeStringToFile(file, template, "UTF-8");
-			Facelet facelet = DynamicFacelet.createFacelet(ctx, url);
-			facelet.apply(ctx.getFacesContext(), parent);
-		} finally {
-			ctx.setVariableMapper(orig);
-			FileUtils.deleteQuietly(file);
+		if ( isInclude(ctx) ) {
+			File file = File.createTempFile( "dynamicInclude", ".xhtml" );
+			URL url = file.toURI().toURL();
+			VariableMapper orig = ctx.getVariableMapper();
+			ctx.setVariableMapper(new VariableMapperWrapper(orig));
+			try {
+				this.nextHandler.apply(ctx, null);
+				FileUtils.writeStringToFile(file, template, "UTF-8");
+				Facelet facelet = DynamicFacelet.createFacelet(ctx, url);
+				facelet.apply(ctx.getFacesContext(), parent);
+			} finally {
+				ctx.setVariableMapper(orig);
+				FileUtils.deleteQuietly(file);
+			}			
 		}
 	}
 

@@ -51,6 +51,8 @@ public class ActionFavoriteController implements IAuditConstants, Serializable {
 	
 	private String menuTemplate;
 	
+	private boolean renderMenu;
+	
 	public ActionFavoriteController() {
 		initFavorites();
 		initFavoriteAndMoreUsedOptions();
@@ -203,6 +205,20 @@ public class ActionFavoriteController implements IAuditConstants, Serializable {
 				}
 			}
 		}
+	}
+
+	public boolean isRenderMenu() {
+		boolean value = renderMenu;
+		this.renderMenu = false;
+		return value;
+	}
+
+	public void setRenderMenu(boolean renderMenu) {
+		this.renderMenu = renderMenu;
 	}	
+	
+	public void onRenderMenu( ActionEvent event ) {
+		setRenderMenu(true);
+	}
 
 }

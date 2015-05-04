@@ -159,6 +159,10 @@
         <component-class>org.richfaces.component.html.HtmlDropDownMenu</component-class>
     </component>
     <component>
+        <component-type>com.code.aon.faces.ContextMenu</component-type>
+        <component-class>org.richfaces.component.html.ContextMenu</component-class>
+    </component>
+    <component>
         <component-type>com.code.aon.faces.MenuGroup</component-type>
         <component-class>org.richfaces.component.html.HtmlMenuGroup</component-class>
     </component>
