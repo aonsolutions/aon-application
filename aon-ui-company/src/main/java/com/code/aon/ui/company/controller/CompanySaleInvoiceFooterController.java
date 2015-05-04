@@ -10,11 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
+import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.company.enumeration.SaleInvoiceTemplate;
-import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.registry.RegistryAddress;
+import com.code.aon.ui.audit.AuditManager;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.DomainSwitcher;
@@ -30,10 +31,24 @@ public class CompanySaleInvoiceFooterController extends LinesController {
 	private String text;
 
 	public String getText() {
-		if ( StringUtils.isEmpty(text) && isGarageDomainType() && isGarageSaleInvoiceTemplate()) {
-			createGtaLOPD();
+		if ( StringUtils.isEmpty(text) ){
+			CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+			SaleInvoiceTemplate template = controller.getSaleInvoiceTemplate();
+			try {
+				if ( template == SaleInvoiceTemplate.GTA && isGarageDomainType()){
+					setText(obtainGtaLOPD());
+				} else if ( template == SaleInvoiceTemplate.HOTEL && isHotelDomainType()){
+					setText(obtainHotelLOPD());
+				}
+			} catch (ManagerBeanException e) {
+				setText(null);
+			}
 		}
 		return text;
+	}
+	
+	public void setText(String text) {
+		this.text = text;
 	}
 	
 	public String getGtaDefaultText() {
@@ -46,19 +61,48 @@ public class CompanySaleInvoiceFooterController extends LinesController {
 			throw new AbortProcessingException(msg, e);
 		}
 	}
-
-	public void setText(String text) {
-		this.text = text;
+	
+	public String getHotelDefaultText() {
+		try {
+			return obtainHotelLOPD();
+		} catch (ManagerBeanException e) {
+			String msg = "Se ha producido un error de lectura. Vuelva a intentarlo pasados unos segundos.";
+			LOGGER.error(msg, e);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		}
 	}
 	
 	public boolean isGarageDomainType() {
+		return isDomainType(Module.GARAGE);
+	}
+	
+	public boolean isHotelDomainType() {
+		return isDomainType(Module.HOTEL);
+	}
+	
+	public boolean isDomainType(Module module) {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
-		return ds.getType() == DomainType.GARAGE;
+		Integer domainId = ds.getDomainId();
+		if ( domainId != null ) {
+			Integer appId = AonUtil.getAuthPrincipal().getApplicationId();
+			try {
+				return AuditManager.hasModule(domainId, appId, module);
+			} catch (Throwable th) {
+				return false;
+			}	
+		}	
+		return false;
 	}
 	
 	public boolean isGarageSaleInvoiceTemplate() {
 		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 		return controller.getSaleInvoiceTemplate() == SaleInvoiceTemplate.GTA;
+	}
+	
+	public boolean isHotelSaleInvoiceTemplate() {
+		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		return controller.getSaleInvoiceTemplate() == SaleInvoiceTemplate.HOTEL;
 	}
 	
 	public void createLOPD(ActionEvent event) {
@@ -77,17 +121,6 @@ public class CompanySaleInvoiceFooterController extends LinesController {
 		setText(AonUtil.getMessage(COMPANY_SALE_INVOICE_FOOTER_LOPD, companyName, companyFullAddress));
 	}
 	
-	private void createGtaLOPD() {
-		try {
-			setText(obtainGtaLOPD());
-		} catch (ManagerBeanException e) {
-			String msg = "Se ha producido un error de lectura. Vuelva a intentarlo pasados unos segundos.";
-			LOGGER.error(msg, e);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
-		}
-	}
-
 	private String obtainGtaLOPD() throws ManagerBeanException {
 		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 		RegistryAddress address = controller.obtainAddress();
@@ -106,6 +139,18 @@ public class CompanySaleInvoiceFooterController extends LinesController {
 		buffer.append(" (").append(address.getGeozone().getName()).append(") ");
 		buffer.append(AonUtil.getMessage(ICommonMessages.TAS_LEGAL_TEXT_3));
 		return buffer.toString();
+	}
+	
+	private String obtainHotelLOPD() throws ManagerBeanException {
+		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		RegistryAddress address = controller.obtainAddress();
+		Company company = controller.obtainCompany();
+		String nameParam = company.getName();
+		nameParam += StringUtils.isNotBlank(company.getAlias())?" ("+company.getAlias()+")":"";
+		String addressParam = address.getZip();
+		addressParam += ", " + address.getCity();
+		addressParam += ", " + address.getFullAddress();
+		return AonUtil.getMessage(ICommonMessages.HOTEL_FOOTER_TEXT, nameParam, addressParam);
 	}
 	
 }
