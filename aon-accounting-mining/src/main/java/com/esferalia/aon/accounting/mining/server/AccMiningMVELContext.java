@@ -158,7 +158,7 @@ public class AccMiningMVELContext implements Map<String, Object> {
 	 * @return
 	 * @throws AccMiningException
 	 */
-	public double sab(int ... accounts  ) throws AccMiningException {
+	public double sab(int [] accounts  ) throws AccMiningException {
 		return getCreditBalance(accounts);
 	}
 
@@ -168,7 +168,7 @@ public class AccMiningMVELContext implements Map<String, Object> {
 	 * @return El dato si es positivo, en otro caso cero.
 	 * @throws AccMiningException
 	 */
-	public double sabPositivo(int ... accounts) throws AccMiningException {
+	public double sabPositivo(int [] accounts) throws AccMiningException {
 		double d = sab(accounts); 
 		return d>0?d:0;
 	}
@@ -200,7 +200,7 @@ public class AccMiningMVELContext implements Map<String, Object> {
 	 * @return
 	 * @throws AccMiningException
 	 */
-	public double sdb(int ... accounts  ) throws AccMiningException {
+	public double sdb(int [] accounts  ) throws AccMiningException {
 		return getDebitBalance(accounts);
 	}
 	/**
@@ -209,7 +209,7 @@ public class AccMiningMVELContext implements Map<String, Object> {
 	 * @return El dato si es positivo, en otro caso cero.
 	 * @throws AccMiningException
 	 */
-	public double sdbPositivo(int ... accounts) throws AccMiningException {
+	public double sdbPositivo(int [] accounts) throws AccMiningException {
 		double d = sdb(accounts); 
 		return d>0?d:0;
 	}
@@ -239,7 +239,7 @@ public class AccMiningMVELContext implements Map<String, Object> {
 	 * @return
 	 * @throws AccMiningException
 	 */
-	public double sap(int ... accounts  ) throws AccMiningException {
+	public double sap(int [] accounts  ) throws AccMiningException {
 		return getCreditPyG(accounts);
 	}
 
@@ -249,7 +249,7 @@ public class AccMiningMVELContext implements Map<String, Object> {
 	 * @return El dato si es positivo, en otro caso cero.
 	 * @throws AccMiningException
 	 */
-	public double sapPositivo(int ... accounts) throws AccMiningException {
+	public double sapPositivo(int [] accounts) throws AccMiningException {
 		double d = sap(accounts); 
 		return d>0?d:0;
 	}
@@ -281,7 +281,7 @@ public class AccMiningMVELContext implements Map<String, Object> {
 	 * @return
 	 * @throws AccMiningException
 	 */
-	public double sdp(int ... accounts  ) throws AccMiningException {
+	public double sdp(int [] accounts  ) throws AccMiningException {
 		return getDebitPyG(accounts);
 	}
 	/**
@@ -290,7 +290,7 @@ public class AccMiningMVELContext implements Map<String, Object> {
 	 * @return El dato si es positivo, en otro caso cero.
 	 * @throws AccMiningException
 	 */
-	public double sdpPositivo(int ... accounts) throws AccMiningException {
+	public double sdpPositivo(int [] accounts) throws AccMiningException {
 		double d = sdp(accounts); 
 		return d>0?d:0;
 	}
@@ -325,7 +325,7 @@ public class AccMiningMVELContext implements Map<String, Object> {
 
 	//------------------------------------------------------------------------------------------
 	
-	private double getCreditBalance(int ... accounts  ) throws AccMiningException {
+	private double getCreditBalance(int [] accounts  ) throws AccMiningException {
 		double d = 0.0;
 		for (int account : accounts) {
 			String acc = Integer.toString(account);
@@ -337,7 +337,7 @@ public class AccMiningMVELContext implements Map<String, Object> {
 		return d;
 	}
 	
-	private double getDebitBalance(int ... accounts ) throws AccMiningException {
+	private double getDebitBalance(int [] accounts ) throws AccMiningException {
 		double d = 0.0;
 		for (int account : accounts) {
 			String acc = Integer.toString(account);
@@ -349,7 +349,7 @@ public class AccMiningMVELContext implements Map<String, Object> {
 		return d;
 	}
 	
-	private double getCreditPyG(int ... accounts  ) throws AccMiningException {
+	private double getCreditPyG(int [] accounts  ) throws AccMiningException {
 		double d = 0.0;
 		for (int account : accounts) {
 			String acc = Integer.toString(account);
@@ -361,7 +361,7 @@ public class AccMiningMVELContext implements Map<String, Object> {
 		return d;
 	}
 	
-	private double getDebitPyG(int ... accounts ) throws AccMiningException {
+	private double getDebitPyG(int [] accounts ) throws AccMiningException {
 		double d = 0.0;
 		for (int account : accounts) {
 			String acc = Integer.toString(account);
