@@ -60,6 +60,7 @@ public interface ICommonMessages {
 	String GTA_FOOTER_TEXT_2 = "gta_footer_text_2";
 	String HOLDER = "aon_holder";
 	String HOME = "aon_home";
+	String HOTEL_FOOTER_TEXT = "hotel_footer_text";
 	String ID = "aon_id";
 	String INACTIVE = "aon_inactive";	
 	String INVOICE_DELIVERY = "aon_invoice_delivery";
