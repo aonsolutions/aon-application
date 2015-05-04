@@ -587,7 +587,9 @@ public class ExpressionContext {
 			try {
 				bindings.cleanRead();
 				setCurrentBindings(bindings);
-				T value = MVEL.eval(script, bindings, toType);
+				// Fix MVEL 2.2.4-Final BUG with multiline scripts 
+				String fixedScript = script.replaceAll("[\n\r]", "");
+				T value = MVEL.eval(fixedScript, bindings, toType);
 				values.add(new TimedResult<T>(value, bindings.getPeriod(),
 						bindings.getRead()));
 			} catch (PropertyAccessException e) {
