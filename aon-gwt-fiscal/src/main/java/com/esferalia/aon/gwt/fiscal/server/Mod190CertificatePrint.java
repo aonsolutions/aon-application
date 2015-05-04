@@ -137,8 +137,8 @@ public class Mod190CertificatePrint extends HttpServlet {
 			cert.setDependencyContributions(0);
 			
 			if(detail.getKey().equals("A")){
-				cert.setApplicableReduction(detail.getIrpfResult().getApplicableReduction());
-				cert.setDeducibleExpense(detail.getIrpfResult().getDeducibleExpense());
+				cert.setApplicableReduction(cert.getApplicableReduction() + detail.getIrpfResult().getApplicableReduction());
+				cert.setDeducibleExpense(cert.getDeducibleExpense() + detail.getIrpfResult().getDeducibleExpense());
 			}
 			
 			cert.setDelay1(obtainRetentionCertificate(mod190.getYear()-1));
@@ -152,9 +152,9 @@ public class Mod190CertificatePrint extends HttpServlet {
 			
 			if(detail.getKey().equals("L")){
 				if(detail.getSubKey().equals("01")){
-					cert.setJourneyDiet(detail.getPerception());
-				} else if(detail.getSubKey().equals("20")){
-					cert.setIncomeExemption(detail.getPerception());
+					cert.setJourneyDiet(cert.getJourneyDiet() + detail.getPerception());
+				} else if(detail.getSubKey().equals("05") || detail.getSubKey().equals("20")){
+					cert.setIncomeExemption(cert.getIncomeExemption() + detail.getPerception());
 				}
 			}
 			
@@ -200,11 +200,11 @@ public class Mod190CertificatePrint extends HttpServlet {
 		cert.setEmployeeDocument(detail.getDocument());
 		
 		if(StringUtils.isNotBlank(key) && detail.getKey().equals(key)){
-			cert.setPerception(detail.getPerception());
-			cert.setRetention(detail.getRetention());
-			cert.setInKindPerception(detail.getInKindPerception());
-			cert.setInKindDeposit(detail.getInKindDeposit());
-			cert.setInKindOutputDeposit(detail.getInKindOutputDeposit());
+			cert.setPerception(cert.getPerception() + detail.getPerception());
+			cert.setRetention(cert.getRetention() + detail.getRetention());
+			cert.setInKindPerception(cert.getInKindPerception() + detail.getInKindPerception());
+			cert.setInKindDeposit(cert.getInKindDeposit() + detail.getInKindDeposit());
+			cert.setInKindOutputDeposit(cert.getInKindOutputDeposit() + detail.getInKindOutputDeposit());
 		}
 		
 		return cert;
