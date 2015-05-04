@@ -5,6 +5,7 @@ package com.esferalia.aon.salary.expression;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -128,7 +129,7 @@ public class ExpressionContextTestCase {
 	}
 
 	@Test
-	public void testGetUndefinedPropertyII() throws UnknownUndefVarException {
+	public void testGetUndefinedPropertyII() throws ExpressionException {
 		
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -161,5 +162,36 @@ public class ExpressionContextTestCase {
 		} catch (ExpressionException e) {
 			Assert.fail();
 		}
+		try {
+			context.setVariable("DIAS_MES", 30, start, end);
+			context.setVariable("DIAS_NOMINA", 30, start, end);
+			context.setVariable("HORAS_NOMINA", 400, start, end);
+			context.setVariable("TIEMPO_COMPLETO", true, start, end);
+			context.setVariable("GRUPO_COTIZACION", "01", start, end);
+			String expression = 				
+					"[\r\n"
+					+"\"01\":(TIEMPO_COMPLETO ? 1056.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 6.37 * HORAS_NOMINA),\r\n" 
+					+"\"02\":(TIEMPO_COMPLETO ? 876.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 5.28 * HORAS_NOMINA),\r\n"
+					+"\"03\":(TIEMPO_COMPLETO ? 762.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.59 * HORAS_NOMINA),\r\n"
+					+"\"04\":(TIEMPO_COMPLETO ? 756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.56 * HORAS_NOMINA),\r\n"
+					+"\"05\":(TIEMPO_COMPLETO ? 756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.56 * HORAS_NOMINA),\r\n"
+					+"\"06\":(TIEMPO_COMPLETO ? 756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.56 * HORAS_NOMINA),\r\n"
+					+"\"07\":(TIEMPO_COMPLETO ? 756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.56 * HORAS_NOMINA),\r\n"
+					+"\"08\":(TIEMPO_COMPLETO ? 25.22 * DIAS_NOMINA : 4.56 * HORAS_NOMINA),\r\n"
+					+"\"09\":(TIEMPO_COMPLETO ? 25.22 * DIAS_NOMINA : 4.56 * HORAS_NOMINA),\r\n"
+					+"\"10\":(TIEMPO_COMPLETO ? 25.22* DIAS_NOMINA : 4.56 * HORAS_NOMINA),\r\n"
+					+"\"11\":(TIEMPO_COMPLETO ? 25.22 * DIAS_NOMINA : 4.56 * HORAS_NOMINA)\r\n"
+					+"]\r\n"
+					+"[GRUPO_COTIZACION]\r\n";
+			
+			System.out.println(expression);
+			
+			List<ITimedResult<Double>> results = context.eval(expression,
+				start, end, Double.class);
+			Assert.assertEquals(1056.90, results.get(0).getValue());
+		} catch (UndefinedVariablesException e) {
+			Assert.fail(e.getMessage());
+		} 
+
 	}
 }
