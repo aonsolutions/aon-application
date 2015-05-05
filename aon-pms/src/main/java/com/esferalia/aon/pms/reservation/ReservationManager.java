@@ -215,12 +215,19 @@ public class ReservationManager implements IReservationConstants {
 			if (agencyInfo == null) {
 				agencyInfo = findProfileInfo(reservationType.getResGuests().getResGuestArray(), AGENCY_TYPE, IATA);
 			}
-			Customer agency = getReservationUtils().obtainAgency(agencyInfo);
+			Customer agency = reservation.getAgency();
+			if (agency == null || agency.getId() == null) {
+				agency = getReservationUtils().obtainAgency(agencyInfo);
+			}
 			double agencyCommissionPercent = getReservationUtils().obtainAgencyCommissionPercent(agencyInfo);
 			double agencyCommissionAmount = getReservationUtils().obtainAgencyCommissionAmount(agencyInfo);
 			calculateCommission = agencyCommissionAmount != 0 && getReservationUtils().isAgencyCommission(agency);
 			String agencyRebate = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), DISCOUNT_MODE, null);
 			ProfileInfo companyInfo = findProfileInfo(reservationType.getResGuests().getResGuestArray(), COMPANY_TYPE, SOLRES);
+			Customer company = reservation.getCompany();
+			if (company == null || company.getId() == null) {
+				company = getReservationUtils().obtainCompany(companyInfo);
+			}
 			String discountPercent = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), DISCOUNT, PERCENT);
 			String discountAmount = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), DISCOUNT, AMOUNT);
 			String bookingHolder = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), BOOKING_HOLDER, null);
@@ -246,7 +253,7 @@ public class ReservationManager implements IReservationConstants {
 			reservation.setAgencyCommissionPercent(agencyCommissionPercent);
 			reservation.setAgencyCommissionAmount(agencyCommissionAmount);
 			reservation.setAgencyRebate(agencyRebate != null && agencyRebate.equals(AGENCY_REBATE));
-			reservation.setCompany(getReservationUtils().obtainCompany(companyInfo));
+			reservation.setCompany(company);
 			reservation.setDiscountPercent((discountPercent != null) ? Double.parseDouble(discountPercent) : 0);
 			reservation.setDiscountAmount((discountAmount != null) ? Double.parseDouble(discountAmount) : 0);
 			reservation.setBookingHolder(getReservationUtils().obtainBookingHolder(bookingHolder));
