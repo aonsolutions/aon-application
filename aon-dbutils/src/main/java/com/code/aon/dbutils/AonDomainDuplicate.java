@@ -87,6 +87,8 @@ public class AonDomainDuplicate implements Constants {
 			TableInfo ti = this.tables.get(ACCOUNT_PERIOD_TABLE_NAME);
 			ti.setListener(new AccountingPeriodTableInfoListener(this.sourceParentDomain));
 		}
+		TableInfo hotelTableInfo = tables.get(HOTEL_TABLE_NAME); 
+		hotelTableInfo.setListener(new HotelTableInfoListener());
 	}
 	
 	private void fixApplicationUser() {
@@ -468,7 +470,7 @@ public class AonDomainDuplicate implements Constants {
 				AonDomainDuplicate add = new AonDomainDuplicate(connection);
 				add.setDescription(dcl.getValue(DESCRIPTION_ARGUMENT));
 				add.setOwner(dcl.getValue(OWNER_ARGUMENT));
-				String domainName = "prueba-confialia.aonsolutions.net";	
+				String domainName = dcl.getValue(NEW_NAME_ARGUMENT);	
 				Integer parentDomainId = null;
 				String parentDomain = dcl.getValue(PARENT_ARGUMENT);
 				if (! StringUtils.isEmpty(parentDomain) ) {

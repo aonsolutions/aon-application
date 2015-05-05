@@ -40,6 +40,7 @@ public interface Constants {
 	String GEOZONE_IRPF_HANDICAP_TABLE_NAME = "geozone_irpf_handicap";
 	String GEOZONE_IRPF_DESCENDANT_TABLE_NAME = "geozone_irpf_descendant";
 	String GEOZONE_IRPF_TABLE_NAME = "geozone_irpf";
+	String HOTEL_TABLE_NAME = "hotel";
 	String HOLIDAY_TABLE_NAME = "holiday";
 	String INCOME_DETAIL_TABLE_NAME = "income_detail";
 	String INVOICE_DETAIL_TABLE_NAME = "invoice_detail";
@@ -64,6 +65,7 @@ public interface Constants {
 	String TRAINING_CENTER_TABLE_NAME = "training_center";
 	String WEB_INFO_PAGE_TABLE_NAME = "web_info_page";
 	
+	String CODE_COLUMN_NAME = "code";
 	String DESCRIPTION_COLUMN_NAME = "description";
 	String DOMAIN_COLUMN_NAME = "domain";
 	String EXPRESSION_COLUMN_NAME = "expression";
