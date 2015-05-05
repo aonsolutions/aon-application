@@ -231,7 +231,7 @@ try {
 													<%=commonBundle.getString("aon_trademark")%>
 												</span>
 												<span class="aon-footer-company-label">
-													<%=commonBundle.getString("aon_esferalia")%> <%=commonBundle.getString("aon_networks")%>
+													<%=commonBundle.getString("aon_solutions_ltd")%>
 												</span>
 											</c:if>
 										</c:if>
