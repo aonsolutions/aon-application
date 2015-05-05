@@ -1,5 +1,9 @@
 package com.esferalia.aon.gwt.template.server;
 
+import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.Stock.STOCK;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,15 +34,18 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.Region;
+import org.jooq.Condition;
 
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
+import com.esferalia.aon.gwt.template.jooq.DBProduct;
 import com.esferalia.aon.gwt.template.jooq.DBStock;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
+import com.esferalia.aon.jooq.tables.Stock;
 import com.google.api.services.drive.Drive;
 
 @WebServlet(name = "DownloadTemplatesStock", urlPatterns = { "/aon_gwt_template/gwt_download_stock/*" })
@@ -58,6 +65,13 @@ public class DownloadStockServlet extends HttpServlet {
         String name = p_request.getParameter("name");
         String domain_id = p_request.getParameter("domain_id");
         String warehouse = p_request.getParameter("warehouse");
+        
+        String category = p_request.getParameter("category");
+        String brand = p_request.getParameter("brand");
+        String code = p_request.getParameter("code");
+        String description = p_request.getParameter("description");
+        String stock = p_request.getParameter("stock");
+        
         Integer domainId = Integer.parseInt(domain_id);
         String domain = AonUtil.getDomainName();
         Integer idFile  = Integer.parseInt(fileId);
@@ -173,7 +187,18 @@ public class DownloadStockServlet extends HttpServlet {
         	else hoja.setDefaultColumnStyle(i, style2);
         }*/
         
-        Vector<StockInfo> v = DBStock.getStocks(domain,domainId,w.getId());
+        Condition c = PRODUCT.DOMAIN.eq(domainId);
+        if(!category.equals("null") && !category.equals(""))
+        	c = c.and(PRODUCT.CATEGORY.eq(Integer.parseInt(category)));
+        if(!brand.equals("null") && !brand.equals(""))
+        	c = c.and(PRODUCT.BRAND.eq(Integer.parseInt(brand)));
+        if(!code.equals("null") && !code.equals(""))
+        	c = c.and(PRODUCT.CODE.like(code));
+        if(!description.equals("null") && !description.equals(""))
+        	c.and(PRODUCT.NAME.like(description));
+        if(!stock.equals("false") && !stock.equals("null") && !stock.equals(""))
+        	c = c.and(STOCK.QUANTITY.greaterThan(0.0));
+        Vector<StockInfo> v = DBStock.getStocks(domain,domainId,w.getId(),c);
 
         for(Integer j = 0; j< v.size();j++){
         	Row row = hoja.createRow(j+2);

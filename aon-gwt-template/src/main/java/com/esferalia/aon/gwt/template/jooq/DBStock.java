@@ -530,7 +530,7 @@ public class DBStock {
 		}
 	}
 	
-	public static Vector<StockInfo> getStocks(String domain, Integer domainId,Integer wid) {
+	public static Vector<StockInfo> getStocks(String domain, Integer domainId,Integer wid, Condition c) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
@@ -540,12 +540,14 @@ public class DBStock {
 				data = ctx.getDslContext().select(STOCK.ID, STOCK.ITEM, STOCK.WAREHOUSE, STOCK.QUANTITY,ITEM.PRODUCT)
 				.from(STOCK).join(ITEM).on(ITEM.ID.eq(STOCK.ITEM)).join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 				.where(STOCK.DOMAIN.eq(domainId)).and(STOCK.WAREHOUSE.eq(wid))
+				.and(c)
 				.orderBy(PRODUCT.NAME)
 				.fetch();
 			else
 				data = ctx.getDslContext().select(STOCK.ID, STOCK.ITEM, STOCK.WAREHOUSE, STOCK.QUANTITY,ITEM.PRODUCT)
 				.from(STOCK).join(ITEM).on(ITEM.ID.eq(STOCK.ITEM)).join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 				.where(STOCK.DOMAIN.eq(domainId))
+				.and(c)
 				.orderBy(PRODUCT.NAME)
 				.fetch();
 				

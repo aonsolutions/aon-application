@@ -69,7 +69,7 @@
 							styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
 						</aon:commandLink>
 						<aon:commandLink id="stock-export" value="#{bundle.account_export}"
-							onclick="stockx2('#{inventory.to.warehouse.name}')"
+							onclick="stockx2('#{inventory.to.warehouse.name}','#{inventoryDetail.category.id}','#{inventoryDetail.brand.id}','#{inventoryDetail.code}','#{inventoryDetail.description}','#{inventoryDetail.stock}')"
 							styleClass="aon-finding-toolbar-item aon-icon-export-excel-trans">
 						</aon:commandLink>
 					</aon:if>

@@ -40,7 +40,13 @@
 					value="#{inventoryDetail.brand}">
 					<f:selectItem itemLabel="-" value="#{null}"/>
 					<f:selectItems value="#{productCollections.brands}" />
-				</aon:selectOneMenu>		
+				</aon:selectOneMenu>
+						
+				<aon:outputLabel for="Inventory_productStock"
+			  		value="#{bundle.product_stock}"  />
+			  	<aon:selectBooleanCheckbox id="Inventory_productStock"
+						value="#{inventoryDetail.stock}">
+				</aon:selectBooleanCheckbox>
 				
 				<aon:outputText value="" />
 				<aon:commandButton id="search"

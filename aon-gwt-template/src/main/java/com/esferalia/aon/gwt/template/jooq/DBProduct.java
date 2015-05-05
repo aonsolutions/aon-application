@@ -50,9 +50,9 @@ public class DBProduct {
 		Integer itemId = null;
 		String details = null;
 		String details2 = "";
-		if(i.getDetail()!= null) details2 =  details + i.getDetail();
-		if(i.getDetail2()!= null) details2 =  details + i.getDetail2();
-		if(i.getDetail3()!= null) details2 =  details + i.getDetail3();
+		if(i.getDetail()!= null) details2 =  details2 + i.getDetail();
+		if(i.getDetail2()!= null) details2 =  details2 + i.getDetail2();
+		if(i.getDetail3()!= null) details2 =  details2 + i.getDetail3();
 		for(Record7<Integer, String, String, String, String, String, Timestamp> i2 : data){
 			itemId =  i2.value1();
 			if(i2.value2()!= null) barcode = i2.value2();
@@ -244,6 +244,26 @@ public class DBProduct {
 			Result<Record5<Integer, String, String, String, String>> data = ctx.getDslContext().select(PCATEGORY.ID,PCATEGORY.NAME,PCATEGORY.DETAIL,PCATEGORY.DETAIL2,PCATEGORY.DETAIL3)
 				.from(PCATEGORY)
 				.where(PCATEGORY.ID.eq(id)).fetch();
+			
+			ProductCategory c = new ProductCategory();
+			c.setId(data.get(0).value1());
+			c.setName(data.get(0).value2());
+			if(data.get(0).value3() != null) c.setDetail(data.get(0).value3());
+			if(data.get(0).value4() != null) c.setDetail2(data.get(0).value4());
+			if(data.get(0).value5() != null) c.setDetail3(data.get(0).value5());
+			return c;
+		} finally {
+			if (ctx != null) ctx.close();
+		}	
+	}
+	public static ProductCategory getCategory(String domain,Integer domainId, String name) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain, domainId);
+			
+			Result<Record5<Integer, String, String, String, String>> data = ctx.getDslContext().select(PCATEGORY.ID,PCATEGORY.NAME,PCATEGORY.DETAIL,PCATEGORY.DETAIL2,PCATEGORY.DETAIL3)
+				.from(PCATEGORY)
+				.where(PCATEGORY.NAME.eq(name)).fetch();
 			
 			ProductCategory c = new ProductCategory();
 			c.setId(data.get(0).value1());
@@ -521,6 +541,25 @@ public class DBProduct {
 			Result<Record2<Integer, String>> data = ctx.getDslContext().select(BRAND.ID,BRAND.NAME)
 				.from(BRAND)
 				.where(BRAND.ID.eq(id)).fetch();
+			
+			Brand brand = new Brand();
+			brand.setId(data.get(0).value1());
+			brand.setName(data.get(0).value2());
+			
+			return brand;
+		} finally {
+			if (ctx != null) ctx.close();
+		}	
+	}
+	
+	public static Brand getBrand(String domain,Integer domainId, String name) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain, domainId);
+			
+			Result<Record2<Integer, String>> data = ctx.getDslContext().select(BRAND.ID,BRAND.NAME)
+				.from(BRAND)
+				.where(BRAND.NAME.eq(name)).fetch();
 			
 			Brand brand = new Brand();
 			brand.setId(data.get(0).value1());

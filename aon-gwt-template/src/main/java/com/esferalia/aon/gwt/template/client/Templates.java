@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.template.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.template.shared.Dialog;
 import com.esferalia.aon.gwt.template.shared.Error;
+import com.esferalia.aon.gwt.template.shared.ExportInfo;
 import com.esferalia.aon.gwt.template.shared.Series;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
@@ -1161,14 +1162,15 @@ public class Templates extends Composite implements EntryPoint {
 		popup.show();
 
 	}
-
-	private void exportStocks(Vector<Warehouse> w){
+	ExportInfo eiAux;
+	private void exportStocks(Vector<Warehouse> w,ExportInfo ei){
+		eiAux = ei;
 		Dialog d = new Dialog("Exportar Stock","Descargar",true,"Cancelar",true,"exportStock");
 		d.setUrl(GWT.getModuleBaseURL());
 		d.setTemplateList(template_list);
 		d.setWarehouses(w);
 		TemplatesDialog popup = new TemplatesDialog(d) {
-			
+			ExportInfo ei = eiAux;
 			@Override
 			protected void onCancel() {
 				hide();
@@ -1196,7 +1198,12 @@ public class Templates extends Composite implements EntryPoint {
 		            	+ "&drive_id=" +URL.encode(driveId)
 		            	+ "&name=" +URL.encode(ti.getName())
 		            	+ "&domain_id=" + domainId
-		            	+ "&warehouse=" + warehouse;
+		            	+ "&warehouse=" + warehouse
+		            	+ "&category="+ei.getCategory()
+		            	+ "&brand="+ei.getBrand()
+		            	+ "&code="+ei.getCode()
+		            	+ "&description="+ei.getDescription()
+		            	+ "&stock="+ei.getStock();
 				
 				Window.open( fileDownloadURL, "_blank",null);
 				hide();
@@ -1678,7 +1685,8 @@ public class Templates extends Composite implements EntryPoint {
 			
 			@Override
 			public void onSuccess(Vector<Warehouse> result) {
-				exportStocks(result);
+			
+				exportStocks(result,new ExportInfo());
 			}
 			
 			@Override
@@ -1694,17 +1702,24 @@ public class Templates extends Composite implements EntryPoint {
 	}-*/;
 	
 	
-	public void stockx2(String warehouse){
+	public void stockx2(String warehouse,String category, String brand,String code,String description,String stock){
+		ExportInfo ei = new ExportInfo();
+		ei.setCategory(category);
+		ei.setBrand(brand);
+		ei.setCode(code);
+		ei.setDescription(description);
+		ei.setStock(stock);
+		
 		Vector<Warehouse> v = new Vector<Warehouse>();
 		Warehouse w = new Warehouse();
 		w.setName(warehouse);
 		v.add(w);
-		exportStocks(v);		
+		exportStocks(v,ei);		
 	}
 	
 	public static native void exportStockx2(Templates thiz) /*-{
-		$wnd.stockx2 = function(warehouse) {
-			thiz.@com.esferalia.aon.gwt.template.client.Templates::stockx2(*)(warehouse);
+		$wnd.stockx2 = function(warehouse, category, brand, code, description, stock) {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::stockx2(*)(warehouse, category, brand, code, description, stock);
 		}
 	}-*/;
 	

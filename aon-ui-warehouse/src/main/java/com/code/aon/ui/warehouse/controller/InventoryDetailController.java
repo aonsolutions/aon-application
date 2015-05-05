@@ -50,7 +50,7 @@ public class InventoryDetailController extends LinesController implements IColle
 	private Brand brand;
 	private String code;
 	private String description;
-	
+	private Boolean stock;
 	private ItemFilter itemFilter;
 	
 	public boolean isShowSearchPanel() {
@@ -93,12 +93,21 @@ public class InventoryDetailController extends LinesController implements IColle
 		this.description = description;
 	}
 	
+	public Boolean getStock() {
+		return stock;
+	}
+
+	public void setStock(Boolean stock) {
+		this.stock = stock;
+	}
+
 	public void resetSearchPanel(){
 		setShowSearchPanel(false);
 		setCategory(null);
 		setBrand(null);
 		setCode(null);
 		setDescription(null);
+		setStock(false);
 	}
 
 	public void onAcceptNext(ActionEvent event) {
@@ -135,6 +144,10 @@ public class InventoryDetailController extends LinesController implements IColle
 		if ( StringUtils.isNotBlank(getDescription()) ) {
 			String field = "InventoryDetail.item.product.name";
 			criteria.addExpression( ExpressionUtilities.getLikeExpression(field, "%"+getDescription()+"%") );
+		}
+		if ( getStock() ) {
+			String field = "InventoryDetail.realQuantity";
+			criteria.addExpression( ExpressionUtilities.getGreaterThanExpression(field, 0.0));
 		}
 		
 		onSearch(event);
