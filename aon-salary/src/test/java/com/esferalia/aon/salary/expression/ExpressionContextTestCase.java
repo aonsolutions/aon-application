@@ -193,5 +193,67 @@ public class ExpressionContextTestCase {
 			Assert.fail(e.getMessage());
 		} 
 
+		try {
+			context.setVariable("DIAS_MES", 30, start, end);
+			context.setVariable("DIAS_NOMINA", 30, start, end);
+			context.setVariable("HORAS_NOMINA", 400, start, end);
+			context.setVariable("TIEMPO_COMPLETO", true, start, end);
+			context.setVariable("GRUPO_COTIZACION", "01", start, end);
+			String expression = 				
+					"[\r\n"
+					+"\t\t\t\t\"01\":(TIEMPO_COMPLETO ? 1056.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 6.37 * HORAS_NOMINA),\r\n" 
+					+"\t\t\t\t\"02\":(TIEMPO_COMPLETO ? 876.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 5.28 * HORAS_NOMINA),\r\n"
+					+"\t\t\t\t\"03\":(TIEMPO_COMPLETO ? 762.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.59 * HORAS_NOMINA),\r\n"
+					+"\t\t\t\t\"04\":(TIEMPO_COMPLETO ? 756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.56 * HORAS_NOMINA),\r\n"
+					+"\t\t\t\t\"05\":(TIEMPO_COMPLETO ? 756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.56 * HORAS_NOMINA),\r\n"
+					+"\t\t\t\t\"06\":(TIEMPO_COMPLETO ? 756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.56 * HORAS_NOMINA),\r\n"
+					+"\t\t\t\t\"07\":(TIEMPO_COMPLETO ? 756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.56 * HORAS_NOMINA),\r\n"
+					+"\t\t\t\t\"08\":(TIEMPO_COMPLETO ? 25.22 * DIAS_NOMINA : 4.56 * HORAS_NOMINA),\r\n"
+					+"\t\t\t\t\"09\":(TIEMPO_COMPLETO ? 25.22 * DIAS_NOMINA : 4.56 * HORAS_NOMINA),\r\n"
+					+"\t\t\t\t\"10\":(TIEMPO_COMPLETO ? 25.22* DIAS_NOMINA : 4.56 * HORAS_NOMINA),\r\n"
+					+"\t\t\t\t\"11\":(TIEMPO_COMPLETO ? 25.22 * DIAS_NOMINA : 4.56 * HORAS_NOMINA)\r\n"
+					+"\t\t\t\t]\r\n"
+					+"\t\t\t\t[GRUPO_COTIZACION]\r\n";
+			
+			System.out.println(expression);
+			
+			List<ITimedResult<Double>> results = context.eval(expression,
+				start, end, Double.class);
+			Assert.assertEquals(1056.90, results.get(0).getValue());
+		} catch (UndefinedVariablesException e) {
+			Assert.fail(e.getMessage());
+		} 
+
+		try {
+			context.setVariable("DIAS_MES", 30, start, end);
+			context.setVariable("DIAS_NOMINA", 30, start, end);
+			context.setVariable("HORAS_NOMINA", 400, start, end);
+			context.setVariable("TIEMPO_COMPLETO", true, start, end);
+			context.setVariable("GRUPO_COTIZACION", "01", start, end);
+			String expression = 				
+					"["
+					+"   \"01\":(TIEMPO_COMPLETO ? 1056.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 6.37 * HORAS_NOMINA)," 
+					+"   \"02\":(TIEMPO_COMPLETO ? 876.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 5.28 * HORAS_NOMINA),"
+					+"   \"03\":(TIEMPO_COMPLETO ? 762.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.59 * HORAS_NOMINA),"
+					+"   \"04\":(TIEMPO_COMPLETO ? 756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.56 * HORAS_NOMINA),"
+					+"   \"05\":(TIEMPO_COMPLETO ? 756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.56 * HORAS_NOMINA),"
+					+"   \"06\":(TIEMPO_COMPLETO ? 756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.56 * HORAS_NOMINA),"
+					+"   \"07\":(TIEMPO_COMPLETO ? 756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.56 * HORAS_NOMINA),"
+					+"   \"08\":(TIEMPO_COMPLETO ? 25.22 * DIAS_NOMINA : 4.56 * HORAS_NOMINA),"
+					+"   \"09\":(TIEMPO_COMPLETO ? 25.22 * DIAS_NOMINA : 4.56 * HORAS_NOMINA),"
+					+"   \"10\":(TIEMPO_COMPLETO ? 25.22* DIAS_NOMINA : 4.56 * HORAS_NOMINA),"
+					+"   \"11\":(TIEMPO_COMPLETO ? 25.22 * DIAS_NOMINA : 4.56 * HORAS_NOMINA)"
+					+"   ]"
+					+"   [GRUPO_COTIZACION]";
+			
+			System.out.println(expression);
+			
+			List<ITimedResult<Double>> results = context.eval(expression,
+				start, end, Double.class);
+			Assert.assertEquals(1056.90, results.get(0).getValue());
+		} catch (UndefinedVariablesException e) {
+			Assert.fail(e.getMessage());
+		} 
+
 	}
 }
