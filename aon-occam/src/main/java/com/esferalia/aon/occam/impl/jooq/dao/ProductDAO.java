@@ -377,7 +377,7 @@ public class ProductDAO {
 			ctx.getDslContext()
 				.insertInto(ITEM, ITEM.DOMAIN, ITEM.PRODUCT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3, ITEM.DESCRIPTION, ITEM.SERIAL_NUMBER, ITEM.SERIAL_DATE, ITEM.PRICE, ITEM.STATUS, ITEM.EXPENSES_PERCENT, ITEM.EXPENSES_FIXED, ITEM.PROFIT_PERCENT, ITEM.PURCHASE_PRICE, ITEM.INTERNET, ITEM.BARCODE, ITEM.CREATION_USER, ITEM.CREATION_DATE, ITEM.MODIFICATION_USER, ITEM.MODIFICATION_DATE)
 				.values(i.getDomain(), i.getProductId(), i.getDetail(), i.getDetail2(), i.getDetail3(), i.getDescription(), i.getSerialNumber()
-						, null, i.getPrice(), i.getStatus(), i.getExpensesPercent(),i.getExpensesFixed(), i.getProfitPercent(), i.getPurchasePrice(), null, i.getBarcode(), null, null, null, null)
+						, null, i.getPrice(), i.getStatus(), i.getExpensesPercent(),i.getExpensesFixed(), i.getProfitPercent(), i.getPurchasePrice(), (byte)0, i.getBarcode(), i.getCreationUser(), i.getCreationDate(), i.getModificationUser(), i.getModificationDate())
 				.execute();
 		});		
 	}
@@ -388,7 +388,7 @@ public class ProductDAO {
 			InsertValuesStep20<ItemRecord, Integer, Integer, String, String, String, String, String, Date, Double, Byte, Double, Double, Double, Double, Byte, String, String, Timestamp, String, Timestamp> insertQuery = ctx.getDslContext().insertInto(ITEM, ITEM.DOMAIN, ITEM.PRODUCT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3, ITEM.DESCRIPTION, ITEM.SERIAL_NUMBER, ITEM.SERIAL_DATE, ITEM.PRICE, ITEM.STATUS, ITEM.EXPENSES_PERCENT, ITEM.EXPENSES_FIXED, ITEM.PROFIT_PERCENT, ITEM.PURCHASE_PRICE, ITEM.INTERNET, ITEM.BARCODE, ITEM.CREATION_USER, ITEM.CREATION_DATE, ITEM.MODIFICATION_USER, ITEM.MODIFICATION_DATE);
 			is.forEach(i ->{
 				ProductValidation.validateItem(ctx, i);
-				insertQuery.values(i.getDomain(), i.getProductId(), i.getDetail(), i.getDetail2(), i.getDetail3(), i.getDescription(), i.getSerialNumber(), null, i.getPrice(), i.getStatus(), i.getExpensesPercent(),i.getExpensesFixed(), i.getProfitPercent(), i.getPurchasePrice(), null, i.getBarcode(), null, null, null, null);
+				insertQuery.values(i.getDomain(), i.getProductId(), i.getDetail(), i.getDetail2(), i.getDetail3(), i.getDescription(), i.getSerialNumber(), null, i.getPrice(), i.getStatus(), i.getExpensesPercent(),i.getExpensesFixed(), i.getProfitPercent(), i.getPurchasePrice(), (byte)0, i.getBarcode(), i.getCreationUser(), i.getCreationDate(), i.getModificationUser(), i.getModificationDate());
 			});
 			insertQuery.execute();
 		});		
@@ -453,7 +453,7 @@ public class ProductDAO {
 			ProductValidation.validateItem(ctx, i);
 			ctx.getDslContext()
 				.insertInto(ITEM,ITEM.ID, ITEM.DOMAIN, ITEM.PRODUCT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3, ITEM.DESCRIPTION, ITEM.SERIAL_NUMBER, ITEM.SERIAL_DATE, ITEM.PRICE, ITEM.STATUS, ITEM.EXPENSES_PERCENT, ITEM.EXPENSES_FIXED, ITEM.PROFIT_PERCENT, ITEM.PURCHASE_PRICE, ITEM.INTERNET, ITEM.BARCODE, ITEM.CREATION_USER, ITEM.CREATION_DATE, ITEM.MODIFICATION_USER, ITEM.MODIFICATION_DATE)
-				.values(i.getId(), i.getDomain(), i.getProductId(), i.getDetail(), i.getDetail2(), i.getDetail3(), i.getDescription(), null, null, i.getPrice(), i.getStatus(), i.getExpensesPercent(),i.getExpensesFixed(), i.getProfitPercent(), i.getPurchasePrice(), null, i.getBarcode(), null, null, null, null)
+				.values(i.getId(), i.getDomain(), i.getProductId(), i.getDetail(), i.getDetail2(), i.getDetail3(), i.getDescription(), null, null, i.getPrice(), i.getStatus(), i.getExpensesPercent(),i.getExpensesFixed(), i.getProfitPercent(), i.getPurchasePrice(), (byte)0, i.getBarcode(), i.getCreationUser(), i.getCreationDate(), i.getModificationUser(), i.getModificationDate())
 				.execute();
 		});		
 	}
@@ -464,7 +464,7 @@ public class ProductDAO {
 			InsertValuesStep21<ItemRecord,Integer, Integer, Integer, String, String, String, String, String, Date, Double, Byte, Double, Double, Double, Double, Byte, String, String, Timestamp, String, Timestamp> insertQuery = ctx.getDslContext().insertInto(ITEM,ITEM.ID, ITEM.DOMAIN, ITEM.PRODUCT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3, ITEM.DESCRIPTION, ITEM.SERIAL_NUMBER, ITEM.SERIAL_DATE, ITEM.PRICE, ITEM.STATUS, ITEM.EXPENSES_PERCENT, ITEM.EXPENSES_FIXED, ITEM.PROFIT_PERCENT, ITEM.PURCHASE_PRICE, ITEM.INTERNET, ITEM.BARCODE, ITEM.CREATION_USER, ITEM.CREATION_DATE, ITEM.MODIFICATION_USER, ITEM.MODIFICATION_DATE);
 			is.forEach(i ->{
 				ProductValidation.validateItem(ctx, i);
-				insertQuery.values(i.getId(), i.getDomain(), i.getProductId(), i.getDetail(), i.getDetail2(), i.getDetail3(), i.getDescription(), null, null, i.getPrice(), i.getStatus(), i.getExpensesPercent(),i.getExpensesFixed(), i.getProfitPercent(), i.getPurchasePrice(), null, i.getBarcode(), null, null, null, null);
+				insertQuery.values(i.getId(), i.getDomain(), i.getProductId(), i.getDetail(), i.getDetail2(), i.getDetail3(), i.getDescription(), null, null, i.getPrice(), i.getStatus(), i.getExpensesPercent(),i.getExpensesFixed(), i.getProfitPercent(), i.getPurchasePrice(), (byte)0, i.getBarcode(), i.getCreationUser(), i.getCreationDate(), i.getModificationUser(), i.getModificationDate());
 			});
 			insertQuery.execute();
 		});		

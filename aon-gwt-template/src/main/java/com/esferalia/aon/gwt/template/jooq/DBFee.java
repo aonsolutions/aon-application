@@ -27,6 +27,7 @@ import com.code.aon.customer.Customer;
 import com.code.aon.customer.InvoicingGroup;
 import com.code.aon.project.Project;
 import com.code.aon.registry.Registry;
+import com.esferalia.aon.gwt.template.server.AuditInfo;
 import com.esferalia.aon.gwt.template.server.FeeInfo;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.jooq.tables.records.CustomerFeeRecord;
@@ -36,7 +37,7 @@ import com.esferalia.aon.occam.api.model.registry.Seller;
 public class DBFee {
 
 	static Integer domainIdFee;
-	public static Error insertFee(String domain, Integer domainId, Vector<FeeInfo> fees){
+	public static Error insertFee(String domain, Integer domainId, Vector<FeeInfo> fees, AuditInfo ai){
 		Error error = new Error();
 		error.setError(true);
 		Vector<String> verror = new Vector<String>();

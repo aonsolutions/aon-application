@@ -9,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.ProductTag.PRODUCT_TAG;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.Tax.TAX;
 
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
@@ -16,10 +17,13 @@ import java.util.Vector;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
 import org.jooq.Record10;
+import org.jooq.Record11;
+import org.jooq.Record12;
 import org.jooq.Record19;
 import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Record5;
+import org.jooq.Record7;
 import org.jooq.Result;
 
 import com.code.aon.config.Tag;
@@ -27,6 +31,7 @@ import com.code.aon.config.Tax;
 import com.code.aon.product.Brand;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.product.ProductTag;
+import com.esferalia.aon.gwt.template.server.AuditInfo;
 import com.esferalia.aon.gwt.template.server.ProductInfo;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
@@ -37,7 +42,7 @@ import com.esferalia.aon.occam.api.model.product.Item;
 public class DBProduct {
 
 	private static com.esferalia.aon.occam.api.model.product.Item getItem(com.esferalia.aon.occam.api.model.product.Item i,Integer productId, Integer domainId, AONContext ctx){
-		Result<Record5<Integer, String, String, String, String>> data = ctx.getDslContext().select(ITEM.ID,ITEM.BARCODE,ITEM.DETAIL,ITEM.DETAIL2,ITEM.DETAIL3)
+		Result<Record7<Integer, String, String, String, String, String, Timestamp>> data = ctx.getDslContext().select(ITEM.ID,ITEM.BARCODE,ITEM.DETAIL,ITEM.DETAIL2,ITEM.DETAIL3,ITEM.CREATION_USER,ITEM.CREATION_DATE)
 				.from(ITEM)
 				.where(ITEM.PRODUCT.eq(productId)).fetch();
 		
@@ -48,7 +53,7 @@ public class DBProduct {
 		if(i.getDetail()!= null) details2 =  details + i.getDetail();
 		if(i.getDetail2()!= null) details2 =  details + i.getDetail2();
 		if(i.getDetail3()!= null) details2 =  details + i.getDetail3();
-		for(Record5<Integer, String, String, String, String> i2 : data){
+		for(Record7<Integer, String, String, String, String, String, Timestamp> i2 : data){
 			itemId =  i2.value1();
 			if(i2.value2()!= null) barcode = i2.value2();
 			details = "";
@@ -59,6 +64,8 @@ public class DBProduct {
 			if((barcode != null && barcode.equals(i.getBarcode())) || (details!= null && details.equals(details2))){
 				i.setId(itemId);
 				i.setProductId(productId);
+				i.setCreationDate(i2.value7());
+				i.setCreationUser(i2.value6());
 				return i;
 			}
 		}
@@ -66,7 +73,7 @@ public class DBProduct {
 	}
 	
 	private static com.esferalia.aon.occam.api.model.product.Product getProduct(com.esferalia.aon.occam.api.model.product.Product p, TemplateInfo ti, Integer domainId, AONContext ctx){
-		Record10<Integer, Integer, Integer, Byte, Byte, Integer, Integer, Byte, Byte, Byte> data = ctx.getDslContext().select(PRODUCT.ID, PRODUCT.BRAND, PRODUCT.CATEGORY,PRODUCT.INVENTORIABLE,PRODUCT.STATUS, PRODUCT.VAT, PRODUCT.RETENTION,PRODUCT.TYPE, PRODUCT.COMPOSITION, PRODUCT.COMPOSITION_PRICE)
+		Record12<Integer, Integer, Integer, Byte, Byte, Integer, Integer, Byte, Byte, Byte, String, Timestamp> data = ctx.getDslContext().select(PRODUCT.ID, PRODUCT.BRAND, PRODUCT.CATEGORY,PRODUCT.INVENTORIABLE,PRODUCT.STATUS, PRODUCT.VAT, PRODUCT.RETENTION,PRODUCT.TYPE, PRODUCT.COMPOSITION, PRODUCT.COMPOSITION_PRICE, PRODUCT.CREATION_USER, PRODUCT.CREATION_DATE)
 				.from(PRODUCT)
 				.where(PRODUCT.CODE.eq(p.getCode()).and(PRODUCT.DOMAIN.eq(domainId))).fetchOne();
 		if(data != null){
@@ -105,13 +112,14 @@ public class DBProduct {
 		
 			if(ti.getColumns().contains("Precio Composici\u00f3n")) product.setCompositionPrice(p.isCompositionPrice());
 			else product.setCompositionPrice(data.value10() ==1);		 
-		 
+			product.setCreationUser(data.value11());
+			product.setCreationDate(data.value12());
 			return product;	
 		}
 		return null;
 	}
 	
-	public static Error insertProducts2(String domain, Integer domainId,Vector<ProductInfo> products, TemplateInfo templateInfo){
+	public static Error insertProducts2(String domain, Integer domainId,Vector<ProductInfo> products, TemplateInfo templateInfo, AuditInfo ai){
 		long start = System.currentTimeMillis();
 		Error error = new Error();
 		error.setError(true);
@@ -152,15 +160,22 @@ public class DBProduct {
 							}
 							else{
 								i.setProductId(product.getId());
+								i.setCreationUser(ai.getUsername());i.setModificationUser(ai.getUsername());
+								i.setCreationDate(new Timestamp(ai.getDate().getTime()));i.setModificationDate(new Timestamp(ai.getDate().getTime()));
 								iitems.add(i);	
 							}
 						});
 					}
+					product.setModificationDate(new Timestamp(ai.getDate().getTime()));
+					product.setModificationUser(ai.getUsername());
 					uproducts.add(product);
 					r.getProduct().setId(product.getId());
 				}
 				else{
-					iproducts.add(r.getProduct());
+					com.esferalia.aon.occam.api.model.product.Product product2 = r.getProduct();
+					product2.setCreationUser(ai.getUsername());product2.setModificationUser(ai.getUsername());
+					product2.setCreationDate(new Timestamp(ai.getDate().getTime()));product2.setModificationDate(new Timestamp(ai.getDate().getTime()));
+					iproducts.add(product2);
 				}
 			});
 			AON.deleteProductTag(ctx, iproductsTag.stream());
@@ -182,6 +197,8 @@ public class DBProduct {
 				if(r.getItem() != null){	
 					r.getItem().stream().forEach(i ->{
 						i.setProductId(productId);
+						i.setCreationUser(ai.getUsername());i.setModificationUser(ai.getUsername());
+						i.setCreationDate(new Timestamp(ai.getDate().getTime()));i.setModificationDate(new Timestamp(ai.getDate().getTime()));
 						iitems.add(i);	
 					});
 				}
@@ -305,7 +322,6 @@ public class DBProduct {
 						,ITEM.DETAIL,ITEM.DETAIL2,ITEM.DETAIL3,PRODUCT.ID)
 						.from(PRODUCT).join(ITEM).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 						.where(PRODUCT.DOMAIN.eq(domainId))
-						.and(PRODUCT.STATUS.eq((byte)0))
 						.orderBy(PRODUCT.NAME)
 						.fetch();
 			
@@ -630,5 +646,26 @@ public class DBProduct {
 		}
 	}
 	
-	
+	public static Tax getIVAName(String domain, Integer domainId, String name) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain, domainId);
+			
+			Record3<Integer, String, Double> data = ctx.getDslContext().select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
+					.from(TAX)
+					.where(TAX.DOMAIN.eq(domainId).and(TAX.TAX_TYPE.eq((byte)1)))
+					.and(TAX.NAME.eq(name))
+					.fetchOne();
+			
+
+				Tax tax = new Tax();
+				tax.setId(data.value1());
+				tax.setName(data.value2());
+				tax.setPercentage(data.value3());
+
+			return tax;			
+		}finally {
+			if (ctx != null) ctx.close();
+		}
+	}
 }

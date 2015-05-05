@@ -57,6 +57,7 @@ import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.watson.util.AonUtils;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 
@@ -84,6 +85,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	HashMap<String, ProductInfo> map = new HashMap<String, ProductInfo>();
 	Integer domainId;
 	String domain;
+	Integer userId;
 	public static byte[] out;
 	static Integer size;
 	private static String mimetype;
@@ -129,6 +131,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 			domainId = ds.getDomainId();
 			domain = AonUtil.getDomainName();
+			userId = AonUtil.getAuthPrincipal().getUserId();
 		}
 		finally{releaseFacesContext();}
 	}
@@ -361,7 +364,11 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			error.setTextError(verror);
 
 			//insertar Fee en base de datos.!!
-			error = DBFee.insertFee(domain,domainId,fees);
+			AuditInfo ai = new AuditInfo();
+			ai.setDate(new Date());
+			ai.setUserId(userId);
+			ai.setUsername(DBConsults.getUsername(domain, domainId, userId));
+			error = DBFee.insertFee(domain,domainId,fees,ai);
 
 		}
 		else{
@@ -803,7 +810,11 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			verror.add("");
 			error.setTextError(verror);
 		//TODO proposal
-			error = DBStock.insertProposal(domain,domainId,stock,proposal);
+			AuditInfo ai = new AuditInfo();
+			ai.setDate(new Date());
+			ai.setUserId(userId);
+			ai.setUsername(DBConsults.getUsername(domain, domainId, userId));
+			error = DBStock.insertProposal(domain,domainId,stock,proposal,ai);
 
 	        //insertar STOCK en base de datos.!!
 		}
@@ -1056,8 +1067,11 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			verror.add("");
 			error.setTextError(verror);
 			//String domain = AonUtil.getDomainName();
-
-			error = DBStock.insertStock2(domain,domainId,stock,transferInfo, inventoryId);
+			AuditInfo ai = new AuditInfo();
+			ai.setDate(new Date());
+			ai.setUserId(userId);
+			ai.setUsername(DBConsults.getUsername(domain, domainId, userId));
+			error = DBStock.insertStock2(domain,domainId,stock,transferInfo, inventoryId,ai);
 
 	        //insertar STOCK en base de datos.!!
 		}
@@ -1082,8 +1096,11 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			error.setError(true);
 			verror.add("");
 			error.setTextError(verror);
-
-			error = DBStock.insertTransferStock(domain,domainId,stock,transferInfo);
+			AuditInfo ai = new AuditInfo();
+			ai.setDate(new Date());
+			ai.setUserId(userId);
+			ai.setUsername(DBConsults.getUsername(domain, domainId, userId));
+			error = DBStock.insertTransferStock(domain,domainId,stock,transferInfo,ai);
 
 	        //insertar STOCK en base de datos.!!
 		}
@@ -1325,7 +1342,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
             		else{
             			if(row.getLastCellNum() != -1){
             				Short cellnum = row.getLastCellNum();
-            				if(row.getLastCellNum() > ti.getColumns().size())cellnum--;
+            				if(row.getLastCellNum() == ti.getColumns().size())cellnum--;
             				if(ti.getColumns().get(cellnum).equals("Nombre") || ti.getColumns().get(cellnum).equals("C\u00f3digo") || ti.getColumns().get(cellnum).equals("Precio Coste") || ti.getColumns().get(cellnum).equals("Precio Venta Base")){
           						verror.add("*Fila "+(row.getRowNum()+1)+", Columna "+Utils.getColumn(row.getLastCellNum())+" : Dato Incorrecto \n");
           						textError= textError + "*Fila "+(row.getRowNum()+1)+", Columna "+Utils.getColumn(row.getLastCellNum())+" : Dato Incorrecto \n";
@@ -1336,6 +1353,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
             
             	if(row.getRowNum() > 1 && pi.getProduct().getCode()!= null){ 
             		pi.setRow(row.getRowNum());
+            		if(pi.getItem().get(0).getPurchasePrice() == 0) pi.getItem().get(0).setProfitPercent(0);
+            		else pi.getItem().get(0).setProfitPercent(((pi.getItem().get(0).getPrice()-pi.getItem().get(0).getPurchasePrice())/pi.getItem().get(0).getPurchasePrice())*100);
             		products.add(pi);
             		if(!map.containsKey(pi.getProduct().getCode()))
             			map.put(pi.getProduct().getCode(), pi);
@@ -1385,7 +1404,11 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 				//error = DBProduct.insertProducts(domain, domainId, products, ti);
 				java.util.List<ProductInfo> l = new ArrayList<ProductInfo>(map.values());
 				Vector<ProductInfo> v = new Vector<ProductInfo>(l);
- 				error = DBProduct.insertProducts2(domain, domainId, v, ti);
+				AuditInfo ai = new AuditInfo();
+				ai.setDate(new Date());
+				ai.setUserId(userId);
+				ai.setUsername(DBConsults.getUsername(domain, domainId, userId));
+ 				error = DBProduct.insertProducts2(domain, domainId, v, ti,ai);
 		
 	        //insertar STOCK en base de datos.!!
 		}
@@ -1741,9 +1764,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		p2.setType((byte)ProductType.COMMERCIAL_PRODUCT.ordinal());
 		
 		// IVA (product)
-		Tax vat = new Tax();
-		vat.setName("GENERAL");
-		vat.setType(TaxType.VAT);
+		Tax vat = DBProduct.getIVAName(domain, domainId,"GENERAL");
 		p2.setVat(vat.getId());
 		
 		// IRPF (product)
@@ -1771,7 +1792,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		
 		// detail3
 		i2.setDetail3("");
-		
+		i2.setStatus((byte) 0);
 		Vector<com.esferalia.aon.occam.api.model.product.Item> is= new Vector<com.esferalia.aon.occam.api.model.product.Item>(); 
 		is.add(0, i2);
 		pi.setProduct(p2);

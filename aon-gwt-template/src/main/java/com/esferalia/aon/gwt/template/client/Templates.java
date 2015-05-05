@@ -218,12 +218,12 @@ public class Templates extends Composite implements EntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
+		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
+		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
+		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		boolean silent = Boolean.parseBoolean(getParameter(GWT.getModuleName(), SILENT));
 		
 		if (silent){
-			GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-			GWT.<AonResources> create(AonResources.class).css().ensureInjected();
-			GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 
 			exportProduct(this);
 			exportStock(this);
@@ -352,11 +352,7 @@ public class Templates extends Composite implements EntryPoint {
 
 		
 		initTableColumns(selectionModel, sortHandler);
- 	
-		
-		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-		GWT.<AonResources> create(AonResources.class).css().ensureInjected();		
-		GWT.<AonGwtTemplateResources> create(AonGwtTemplateResources.class).css().ensureInjected();		
+ 			
 		
 		Widget ui = binder.createAndBindUi(this);
 		

@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.io.File;
 import java.util.Vector;
@@ -300,5 +301,24 @@ public class DBConsults {
 			if (ctx != null) ctx.close();
 		}
 	}
+
 	
+	public static String getUsername(String domain,Integer domainId, Integer id){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain, domainId);
+			
+			Record1<String> data = ctx.getDslContext().select(USER.LOGIN)
+				.from(USER)
+				.where(USER.ID.eq(id))
+				.and(USER.DOMAIN.eq(domainId))
+				.fetchOne();
+			
+			return data.value1();
+			
+			
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
 }

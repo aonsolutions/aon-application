@@ -20,6 +20,7 @@ import java.util.Vector;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.DeleteConditionStep;
+import org.jooq.InsertValuesStep12;
 import org.jooq.InsertValuesStep13;
 import org.jooq.InsertValuesStep14;
 import org.jooq.InsertValuesStep4;
@@ -38,6 +39,7 @@ import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Series;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
+import com.esferalia.aon.gwt.template.server.AuditInfo;
 import com.esferalia.aon.gwt.template.server.ProposalInfo;
 import com.esferalia.aon.gwt.template.server.StockInfo;
 import com.esferalia.aon.gwt.template.server.TransferInfo;
@@ -57,7 +59,7 @@ public class DBStock {
 	Vector<String> v = new Vector<String>();
 	static String itemIds;
 	static TransferInfo transferInfo;
-	public static Error insertStock2(String domain, Integer domainId,Vector<StockInfo> stock, TransferInfo ti, Integer inventoryId){
+	public static Error insertStock2(String domain, Integer domainId,Vector<StockInfo> stock, TransferInfo ti, Integer inventoryId, AuditInfo ai){
 		itemIds ="";
 		Error error = new Error();
 		error.setError(true);
@@ -204,7 +206,7 @@ public class DBStock {
 		}
 	}
 	
-	public static Error insertProposal(String domain, Integer domainId,Vector<StockInfo> stock,Integer proposal){
+	public static Error insertProposal(String domain, Integer domainId,Vector<StockInfo> stock,Integer proposal, AuditInfo ai){
 		Error error = new Error();
 		error.setError(true);
 		Vector<String> verror = new Vector<String>();
@@ -215,7 +217,7 @@ public class DBStock {
 		try{
 			ctx = AONContext.getAONContext(domain, domainId);
 			InsertValuesStep13<ProposalDetailRecord, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, Timestamp, String, Timestamp> proposalInsertQuery = ctx.getDslContext().insertInto(PROPOSAL_DETAIL, PROPOSAL_DETAIL.DOMAIN, PROPOSAL_DETAIL.PROPOSAL, PROPOSAL_DETAIL.ITEM, PROPOSAL_DETAIL.DESCRIPTION,  PROPOSAL_DETAIL.QUANTITY, PROPOSAL_DETAIL.PRICE, PROPOSAL_DETAIL.DISCOUNT_EXPR, PROPOSAL_DETAIL.STATUS, PROPOSAL_DETAIL.SUPPLIER, PROPOSAL_DETAIL.CREATION_USER, PROPOSAL_DETAIL.CREATION_DATE, PROPOSAL_DETAIL.MODIFICATION_USER, PROPOSAL_DETAIL.MODIFICATION_DATE);
-			InsertValuesStep14<ProposalDetailRecord, Integer, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, Timestamp, String, Timestamp> proposalUpdateQuery = ctx.getDslContext().insertInto(PROPOSAL_DETAIL, PROPOSAL_DETAIL.ID, PROPOSAL_DETAIL.DOMAIN, PROPOSAL_DETAIL.PROPOSAL, PROPOSAL_DETAIL.ITEM, PROPOSAL_DETAIL.DESCRIPTION,  PROPOSAL_DETAIL.QUANTITY, PROPOSAL_DETAIL.PRICE, PROPOSAL_DETAIL.DISCOUNT_EXPR, PROPOSAL_DETAIL.STATUS, PROPOSAL_DETAIL.SUPPLIER, PROPOSAL_DETAIL.CREATION_USER, PROPOSAL_DETAIL.CREATION_DATE, PROPOSAL_DETAIL.MODIFICATION_USER, PROPOSAL_DETAIL.MODIFICATION_DATE);
+			InsertValuesStep12<ProposalDetailRecord, Integer, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, Timestamp> proposalUpdateQuery = ctx.getDslContext().insertInto(PROPOSAL_DETAIL, PROPOSAL_DETAIL.ID, PROPOSAL_DETAIL.DOMAIN, PROPOSAL_DETAIL.PROPOSAL, PROPOSAL_DETAIL.ITEM, PROPOSAL_DETAIL.DESCRIPTION,  PROPOSAL_DETAIL.QUANTITY, PROPOSAL_DETAIL.PRICE, PROPOSAL_DETAIL.DISCOUNT_EXPR, PROPOSAL_DETAIL.STATUS, PROPOSAL_DETAIL.SUPPLIER, PROPOSAL_DETAIL.MODIFICATION_USER, PROPOSAL_DETAIL.MODIFICATION_DATE);
 
 			AONContext sctx = ctx;
 			Vector<Integer> updateIds = new Vector<Integer>();
@@ -244,13 +246,14 @@ public class DBStock {
 				pi.setDescription("");
 				pi.setDiscount((double) 0);
 				if(isCatalogue(sctx,pi)){
+					Timestamp t = new Timestamp(ai.getDate().getTime());
 					if(isProposal(sctx,pi)){
 						pi = getProposal(sctx,pi);
 						updateIds.add(pi.getId());
-						proposalUpdateQuery.values(pi.getId(), pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), null, null, null, null, null);
+						proposalUpdateQuery.values(pi.getId(), pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), null, ai.getUsername(), t);
 					}
 					else
-						proposalInsertQuery.values(pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), null, null, null, null, null);
+						proposalInsertQuery.values(pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), null, ai.getUsername(), t, ai.getUsername(), t);
 				}
 				else{
 					v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
@@ -317,7 +320,7 @@ public class DBStock {
 		return pi;
 	}
 	
-	public static Error insertTransferStock(String domain, Integer domainId,Vector<StockInfo> stock, TransferInfo ti){
+	public static Error insertTransferStock(String domain, Integer domainId,Vector<StockInfo> stock, TransferInfo ti,AuditInfo ai){
 		Error error = new Error();
 		error.setError(true);
 		Vector<String> verror = new Vector<String>();
@@ -537,14 +540,12 @@ public class DBStock {
 				data = ctx.getDslContext().select(STOCK.ID, STOCK.ITEM, STOCK.WAREHOUSE, STOCK.QUANTITY,ITEM.PRODUCT)
 				.from(STOCK).join(ITEM).on(ITEM.ID.eq(STOCK.ITEM)).join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 				.where(STOCK.DOMAIN.eq(domainId)).and(STOCK.WAREHOUSE.eq(wid))
-				.and(PRODUCT.STATUS.eq((byte)0))
 				.orderBy(PRODUCT.NAME)
 				.fetch();
 			else
 				data = ctx.getDslContext().select(STOCK.ID, STOCK.ITEM, STOCK.WAREHOUSE, STOCK.QUANTITY,ITEM.PRODUCT)
 				.from(STOCK).join(ITEM).on(ITEM.ID.eq(STOCK.ITEM)).join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 				.where(STOCK.DOMAIN.eq(domainId))
-				.and(PRODUCT.STATUS.eq((byte)0))
 				.orderBy(PRODUCT.NAME)
 				.fetch();
 				
@@ -797,7 +798,7 @@ public class DBStock {
 								.join(ITEM).on(PROPOSAL_DETAIL.ITEM.eq(ITEM.ID)).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PROPOSAL_DETAIL.PROPOSAL.eq(proposalId))
 								.and(PROPOSAL_DETAIL.DOMAIN.eq(domainId))
-								.and(PRODUCT.STATUS.eq((byte)0))
+								
 								.orderBy(PRODUCT.NAME)
 								.fetch();
 			
