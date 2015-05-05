@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.Viewer;
+import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.document.client.css.AonGwtDocumentResources;
 import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.CategoryList;
@@ -45,6 +46,7 @@ import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.BodyElement;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
@@ -767,21 +769,32 @@ public class Documents extends Composite implements EntryPoint {
 			}
 		});
 	}
-	
+	public static void ensureGwtSelector() {
+		BodyElement body = com.google.gwt.dom.client.Document.get().getBody();
+		String className = body.getClassName();
+		if (StringUtils.isBlank(className)
+				|| (className.indexOf("gwt-Selector") == -1))
+			body.addClassName("gwt-Selector");
+
+	}
 	@Override
 	public void onModuleLoad() {
-		
+		ensureGwtSelector();
+		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
+		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
+		GWT.<AonGwtDocumentResources> create(AonGwtDocumentResources.class).css().ensureInjected();
 		boolean silent = Boolean.parseBoolean(getParameter(GWT.getModuleName(), SILENT));
 		
 		if ( ! silent ){
+	
+			
 			stack1 = new StackLayoutPanel(Unit.EM);
 			prueba2 = new HorizontalPanel();
+			exportReload(this);
+			exportPopup(this);
 		}
 		else {
-			// Inject rich styles.
-			GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-			GWT.<AonResources> create(AonResources.class).css().ensureInjected();
-			GWT.<AonGwtDocumentResources>create(AonGwtDocumentResources.class).css().ensureInjected();
+			// Inject rich styles
 
 			exportPreview(this);
 		}
@@ -1195,9 +1208,7 @@ public class Documents extends Composite implements EntryPoint {
 		showMorePager = new ShowMorePager((CustomDataGrid<FileInfo>) dataGrid);
 		
 		// Inject rich styles.
-		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
-		GWT.<AonGwtDocumentResources> create(AonGwtDocumentResources.class).css().ensureInjected();
+
 
 		// Create the UI defined in DSIImportForm.ui.xml.
 		Widget ui = binder.createAndBindUi(this);
@@ -2616,6 +2627,10 @@ public class Documents extends Composite implements EntryPoint {
 
 	@UiHandler("allButton")
 	void getAllAttach(ClickEvent event) {
+		all();
+	}
+	
+	public void all(){
 		gestionLote.setVisible(false);
 		gestionDocs.setVisible(true);
 		editFile.setVisible(false);
@@ -2656,7 +2671,6 @@ public class Documents extends Composite implements EntryPoint {
 			dataGrid.redraw();
 		}
 		docs.setFilter(docs.getEfiles());
-
 	}
 
 	Boolean isServiconvenios=false;
@@ -4511,6 +4525,47 @@ public class Documents extends Composite implements EntryPoint {
     		thiz.@com.esferalia.aon.gwt.document.client.Documents::preview(*)(index, files);
     	}
 	}-*/;
+	
+	public void reload(){
+		pop = new PopupPanel();
+		pop.setStyleName("aon-outputConnectionStatus-start");
+		pop.setPopupPosition(25, 5);
+		pop.show();
+		idoc.getAllFiles(new AsyncCallback<Document>() {
+			
+			@Override
+			public void onSuccess(Document result) {
+				pop.hide();				
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				
+			}
+		});
+		
+		all();	
+	}
+
+
+	public static native void exportReload(Documents thiz) /*-{
+    	$wnd.reloadDocumental = function() {
+    		thiz.@com.esferalia.aon.gwt.document.client.Documents::reload(*)();
+    	}
+	}-*/;
+	
+	public void popup(){
+
+		
+	}
+
+
+	public static native void exportPopup(Documents thiz) /*-{
+    	$wnd.popup = function() {
+    		thiz.@com.esferalia.aon.gwt.document.client.Documents::popup(*)();
+    	}
+	}-*/;
+	
 	
 	
 	

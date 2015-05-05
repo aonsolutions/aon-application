@@ -31,6 +31,8 @@ public class SelectedMenuController implements Serializable {
 	
 	private String lastMenuAction;
 	
+	private boolean document;
+	
 	public void onMenuReset( ActionEvent event ) {
 		setLastMenuAction(null);
 	}
@@ -84,6 +86,16 @@ public class SelectedMenuController implements Serializable {
 			UICommand command = (UICommand) component;
 			addActionListener(command, ON_MENU_RESET);
 		}
+	}
+
+	public boolean isDocument() {
+		if(getLastMenuAction()!=null)
+			return getLastMenuAction().equals("gwt_documents");
+		else return false;
+	}
+
+	public void setDocument(boolean document) {
+		this.document = document;
 	}
 	
 }
