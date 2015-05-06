@@ -6,7 +6,7 @@
 		<version>8.23-SNAPSHOT</version>
 	</parent>
 	<groupId>net.aonsolutios</groupId>
-	<artifactId>aon.segsocial</artifactId>
+	<artifactId>tgss</artifactId>
 	<name>AON SEGSOCIAL</name>
 	<dependencies>
 	</dependencies>
@@ -24,7 +24,7 @@
 						</goals>
 						<configuration>
 							<schemaFiles>SolicitudTrabajadoresTramos.xsd</schemaFiles>
-							<packageName>net.aonsolutions.segsocial.creta.jaxb.request.employee</packageName> 
+							<packageName>net.aonsolutions.tgss.creta.jaxb.request.employee</packageName> 
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
@@ -35,7 +35,7 @@
 						</goals>
 						<configuration>
 							<schemaFiles>TrabajadoresTramos.xsd</schemaFiles>
-							<packageName>net.aonsolutions.segsocial.creta.jaxb.response.employee</packageName> 
+							<packageName>net.aonsolutions.tgss.creta.jaxb.response.employee</packageName> 
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
@@ -46,7 +46,7 @@
 						</goals>
 						<configuration>
 							<schemaFiles>SolicitudBorrador.xsd</schemaFiles>
-							<packageName>net.aonsolutions.segsocial.creta.jaxb.request.draft</packageName> 
+							<packageName>net.aonsolutions.tgss.creta.jaxb.request.draft</packageName> 
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
@@ -57,7 +57,7 @@
 						</goals>
 						<configuration>
 							<schemaFiles>SolicitudCalculos.xsd</schemaFiles>
-							<packageName>net.aonsolutions.segsocial.creta.jaxb.request.calc</packageName> 
+							<packageName>net.aonsolutions.tgss.creta.jaxb.request.calc</packageName> 
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
@@ -68,7 +68,7 @@
 						</goals>
 						<configuration>
 							<schemaFiles>Calculos.xsd</schemaFiles>
-							<packageName>net.aonsolutions.segsocial.creta.jaxb.response.calc</packageName> 
+							<packageName>net.aonsolutions.tgss.creta.jaxb.response.calc</packageName> 
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
@@ -79,7 +79,7 @@
 						</goals>
 						<configuration>
 							<schemaFiles>SolicitudConfirmacion.xsd</schemaFiles>
-							<packageName>net.aonsolutions.segsocial.creta.jaxb.request.confirm</packageName> 
+							<packageName>net.aonsolutions.tgss.creta.jaxb.request.confirm</packageName> 
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
@@ -90,7 +90,7 @@
 						</goals>
 						<configuration>
 							<schemaFiles>Respuesta.xsd</schemaFiles>
-							<packageName>net.aonsolutions.segsocial.creta.jaxb.response</packageName> 
+							<packageName>net.aonsolutions.tgss.creta.jaxb.response</packageName> 
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
@@ -101,7 +101,7 @@
 						</goals>
 						<configuration>
 							<schemaFiles>Bases.xsd</schemaFiles>
-							<packageName>net.aonsolutions.segsocial.creta.jaxb.response.bases</packageName> 
+							<packageName>net.aonsolutions.tgss.creta.jaxb.response.bases</packageName> 
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
@@ -112,7 +112,7 @@
 						</goals>
 						<configuration>
 							<schemaFiles>DCL.xsd</schemaFiles>
-							<packageName>net.aonsolutions.segsocial.creta.jaxb.response.dcl</packageName> 
+							<packageName>net.aonsolutions.tgss.creta.jaxb.response.dcl</packageName> 
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
@@ -123,7 +123,7 @@
 						</goals>
 						<configuration>
 							<schemaFiles>RLC.xsd</schemaFiles>
-							<packageName>net.aonsolutions.segsocial.creta.jaxb.response.rlc</packageName> 
+							<packageName>net.aonsolutions.tgss.creta.jaxb.response.rlc</packageName> 
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
@@ -134,7 +134,7 @@
 						</goals>
 						<configuration>
 							<schemaFiles>RNT.xsd</schemaFiles>
-							<packageName>net.aonsolutions.segsocial.creta.jaxb.response.rnt</packageName> 
+							<packageName>net.aonsolutions.tgss.creta.jaxb.response.rnt</packageName> 
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
