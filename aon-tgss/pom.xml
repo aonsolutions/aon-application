@@ -6,7 +6,7 @@
 		<version>8.23-SNAPSHOT</version>
 	</parent>
 	<groupId>net.aonsolutios</groupId>
-	<artifactId>tgss</artifactId>
+	<artifactId>aon.tgss</artifactId>
 	<name>AON SEGSOCIAL</name>
 	<dependencies>
 	</dependencies>

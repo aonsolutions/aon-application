@@ -181,6 +181,10 @@
 		<module>aon-solutions-release</module>
 		<module>aon-common-resources</module>
 		
+		<!-- COMMING SOON -->
+		<module>aon-tgss</module>
+		<module>aon-creta</module>
+
 	</modules>
 
 	<scm>
