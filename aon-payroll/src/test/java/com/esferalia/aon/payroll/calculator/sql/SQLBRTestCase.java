@@ -169,6 +169,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				(Double) ctx.br(addMonths(getToday(), 2)), 0.005);
 
 	}
+	
 
 	@Test
 	public void testCommonDiseaseITI() throws ExpressionException, SQLException,
@@ -205,7 +206,10 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				"BASE_CGP * 0.05",
 				"BASE_IRPF * 0.00/100" }, category);
 		addPayment(aonContext, contract,
-				"0.00 ", 
+				"TRACE('BASE_REGULADORA=%f\r\n',BASE_REGULADORA); "
+				//+"TRACE('DIAS_ENFERMEDAD_COMUN = %d \r\n',DIAS_ENFERMEDAD_COMUN);"
+				+"TRACE('%1$td/%1$tm/%1$tY \r\n',INICIO_IT);"
+				+"0.00", 
 				"DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA");
 		//@formatter:on
 
@@ -213,6 +217,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		Date endITDate = startITDate;
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
 				endITDate, null);
+		System.out.println("IT [" + startITDate + "...]" );
 
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -245,6 +250,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		endITDate = null;
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
 				endITDate, null);
+		System.out.println("IT [" + startITDate + "...]" );
 		ctx = new SQLContractSalaryCalculatorContext(connection, startDate,
 				endDate, endDate, criteria);
 		ctx.next();
@@ -255,6 +261,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				salary.getTotalPayment(), DELTA);
 		Assert.assertEquals(format("%s :", CGC_BASE), (1750.00 * 1.10)
 				* (1 + 1.00 / 12 + 1.00 / 12), salary.getCommonBase(), DELTA);
+		System.out.println("CGC_BASE [" + startDate + "..." + endDate + "] :" + salary.getCommonBase());
 
 		startDate = getFirstDayOfMonth(add(getToday(), MONTH, 2));
 		endDate = getLastDayOfMonth(startDate);
@@ -267,7 +274,23 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				salary.getTotalPayment(), DELTA);
 		Assert.assertEquals(format("%s :", CGC_BASE), (1750.00 * 1.10)
 				* (1 + 1.00 / 12 + 1.00 / 12), salary.getCommonBase(), DELTA);
+		System.out.println("CGC_BASE [" + startDate + "..." + endDate + "] :" + salary.getCommonBase());
+		
+		
+		startDate = getFirstDayOfMonth(add(getToday(), MONTH, 3));
+		endDate = getLastDayOfMonth(startDate);
+		ctx = new SQLContractSalaryCalculatorContext(connection, startDate,
+				endDate, endDate, criteria);
+		ctx.next();
+
+		salary = calculator.calculate(ctx);
+		Assert.assertEquals(format("%s :", TOTAL_PAYMENT), 0.00,
+				salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(format("%s :", CGC_BASE), (1750.00 * 1.10)
+				* (1 + 1.00 / 12 + 1.00 / 12), salary.getCommonBase(), DELTA);
+		System.out.println("CGC_BASE [" + startDate + "..." + endDate + "] :" + salary.getCommonBase());
 	}
+
 
 	@Test
 	public void testCommonDiseaseITWithPayment() throws ExpressionException,
