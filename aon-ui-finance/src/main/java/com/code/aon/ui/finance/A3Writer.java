@@ -272,11 +272,11 @@ public class A3Writer extends BasicExporter {
 			if ( tbd.getTaxType() == TaxType.VAT ) {
 				taxQuota = tbd.getTaxQuota();
 				taxPercent = tbd.getTaxPercent();
-				vatIncluded = (taxQuota != 0);
+				vatIncluded = true;
 			} else if ( tbd.getTaxType() == TaxType.RETENTION ) {
 				retentionQuota = tbd.getTaxQuota();
 				retentionPercent = tbd.getTaxPercent();
-				retentionIncluded = (retentionQuota != 0);
+				retentionIncluded = true;
 			}
 			if ( tbd.getSurchargeQuota()!=0 || tbd.getSurchargePercent() != 0 ) {
 				surchargeQuota = tbd.getSurchargeQuota();
