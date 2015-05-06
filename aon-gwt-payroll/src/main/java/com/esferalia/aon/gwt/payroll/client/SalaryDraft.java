@@ -8,6 +8,8 @@ import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENG
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -115,7 +117,6 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
@@ -2153,6 +2154,19 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 					@Override
 					public void onSuccess(final List<Variable> variables) {
 						
+						Collections.sort( variables, new Comparator<Variable>() {
+							@Override
+							public int compare(Variable v1, Variable v2) {
+								if ( v1.getScope() == v2.getScope() )
+									return v1.getName().compareTo(v2.getName());
+								if ( v1.getScope() == null ) 
+									return -1;
+								if ( v2.getScope() == null ) 
+									return 1;
+								return v2.getScope().compareTo(v1.getScope());
+							}
+						});
+						
 						final int offsetWidth = contextTable.getOffsetWidth();
 						
 						contextDeckPanel.showWidget(contextDeckPanel
@@ -2186,13 +2200,39 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 								for (Variable v : variables) {
 									int row = data.addRow();
 									data.setValue(row, 0, v.getName());
-									if (v.getValue() == null)
-										data.setValueNull(row, 1);
-									else
-										data.setValue(row, 1,
-												String.valueOf(v.getValue()));
 									data.setValue(row, 2, v.getStartDate());
 									data.setValue(row, 3, v.getEndDate());
+									Object value = v.getValue();
+									if (value == null)
+										data.setValueNull(row, 1);
+									else if ( "true".equalsIgnoreCase(value.toString()))
+										data.setValue(row, 1,"SI");
+									else if ( "false".equalsIgnoreCase(value.toString()))
+										data.setValue(row, 1,"NO");
+									else if ( v.getName().equalsIgnoreCase("TC2"))
+										data.setValue(row, 1, Employee.TC2.getDescriptionByCode(value.toString()));
+									else if ( v.getName().equalsIgnoreCase("OCUPACION"))
+										data.setValue(row, 1, Employee.Occupation.valueOf(value.toString()).getDescription());
+									else if ( v.getName().startsWith("PORCENTAJE"))
+										try {
+											data.setValue(row, 1, formatPercent(Double.parseDouble(value.toString())));
+										}catch(NumberFormatException e){
+											data.setValue(row, 1,v.getValue().toString());
+										}
+									else if ( v.getName().startsWith("COEFICIENTE"))
+										try {
+											data.setValue(row, 1, formatPercent(Double.parseDouble(value.toString())*100));
+										}catch(NumberFormatException e){
+											data.setValue(row, 1,v.getValue().toString());
+										}
+									else {
+										try {
+											data.setValue(row, 1, format(Double.parseDouble(value.toString())));
+										}catch(NumberFormatException e){
+											data.setValue(row, 1,v.getValue().toString());
+										}
+									}
+									
 								}
 								
 
@@ -4035,7 +4075,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		}
 
 		if (isSystemVariable(irpfPercentVar)) {
-
 			String irpfIcon = IRPF_ICONS.get(salaryDraftObject.getCommunity());
 
 			Button aeatButton = getSystemVarButton(irpfPercentVar,
@@ -4310,62 +4349,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			new EnumNameListBoxFactory<Employee.Occupation>("OCUPACION", Employee.Occupation.class), 
 			new DismissalFactory("CAUSA_INDEMNIZACION"), 
 			new StringsListBoxFactory("GRUPO_COTIZACION", new String [] {"01","02","03","04","05","06","07","08","09","10","11"}), 
-			new StringsListBoxFactory("TC2", 
-					new String [] {
-					"100","109","130","139","150","189",
-					"200","209","230","239","250","289",
-					"300","309","330","339","350","389",
-					"401","402","403","408","410","418","420","421","430","441","450","452",
-					"501","502","503","508","510","518","520","530","540","541","550","552"
-					}, 
-					new String [] {
-					"100 Indefinido, Tiempo Completo, Ordinario",
-					"109 Indefinido, Tiempo Completo, Fomento Contrataci\u00F3n Indefinida",
-					"130 Indefinido, Tiempo Completo, Personas con Discapacidad",
-					"139 Indefinido, Tiempo Completo, Personas con Discapacidad",
-					"150 Indefinido, Tiempo Completo, Fomento Contrataci\u00F3n Indefinida",
-					"189 Indefinido, Tiempo Completo",
-					
-					"200 Indefinido, Tiempo Parcial, Ordinario",
-					"209 Indefinido, Tiempo Parcial, Fomento Contrataci\u00F3n Indefinida",
-					"230 Indefinido, Tiempo Parcial, Personas con Discapacidad",
-					"239 Indefinido, Tiempo Parcial, Personas con Discapacidad",
-					"250 Indefinido, Tiempo Parcial, Fomento Contrataci\u00F3n Indefinida",
-					"289 Indefinido, Tiempo Parcial",
-					
-					"300 Indefinido, Fijo Discontinuo",
-					"309 Indefinido, Fijo Discontinuo, Fomento Contrataci\u00F3n Indefinida",
-					"330 Indefinido, Fijo Discontinuo, Personas con Discapacidad",
-					"339 Indefinido, Fijo Discontinuo, Personas con Discapacidad",
-					"350 Indefinido, Fijo Discontinuo, Fomento Contrataci\u00F3n Indefinida",
-					"389 Indefinido, Fijo Discontinuo",
-					
-					"401 Duraci\u00F3 Determinada, Tiempo Completo, Obra o Servicio Determinado",
-					"402 Duraci\u00F3 Determinada, Tiempo Completo, Eventual Circunstancias de la producci\u00F3n",
-					"403 Duraci\u00F3 Determinada, Tiempo Completo, Inserci\u00F3",
-					"408 Temporal, Tiempo Completo",
-					"410 Duraci\u00F3 Determinada, Tiempo Completo, Interinidad",
-					"418 Duraci\u00F3 Determinada, Tiempo Completo, Interinidad",
-					"420 Temporal, Tiempo Completo, Pr\u00E1cticas",
-					"421 Temporal, Tiempo Completo, Formaci\u00F3n y Aprendizaje",
-					"430 Temporal, Tiempo Completo, Personas con Discapacidad",
-					"441 Temporal, Tiempo Completo, Relevo",
-					"450 Temporal, Tiempo Completo, Fomento Contrataci\u00F3n Indefinida",
-					"452 Temporal, Tiempo Completo, Empresas de Inserci\u00F3",
-					
-					"501 Duraci\u00F3 Determinada, Tiempo Parcial, Obra o Servicio Determinado",
-					"502 Duraci\u00F3 Determinada, Tiempo Parcial, Eventual Circunstancias de la producci\u00F3n",
-					"503 Duraci\u00F3 Determinada, Tiempo Parcial, Inserci\u00F3",
-					"508 Temporal, Tiempo Parcial",
-					"510 Duraci\u00F3 Determinada, Tiempo Parcial, Interinidad",
-					"518 Duraci\u00F3 Determinada, Tiempo Parcial, Interinidad",
-					"520 Temporal, Tiempo Parcial, Pr\u00E1cticas",
-					"530 Temporal, Tiempo Parcial, Personas con Discapacidad",
-					"540 Temporal, Tiempo Parcial, Jubilado Parcial",
-					"541 Temporal, Tiempo Parcial, Relevo",
-					"550 Temporal, Tiempo Parcial, Fomento Contrataci\u00F3n Indefinida",
-					"552 Temporal, Tiempo Parcial, Empresas de Inserci\u00F3"
-					}) ,
+			new StringsListBoxFactory("TC2", Employee.TC2.getCodes(),Employee.TC2.getDescriptions()) ,
 			new BooleanEditorFactory(),
 			new DefaultEditorFactory()
 			};
