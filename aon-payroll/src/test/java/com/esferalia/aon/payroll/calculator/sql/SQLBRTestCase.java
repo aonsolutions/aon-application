@@ -78,14 +78,15 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
-		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 
 		double br = (3000.00 * 1.10)/ 30;
 
 		// Same day of job start. Without salaries.
-		Assert.assertEquals(br, (Double) ctx.br(getToday()), DELTA);
+		ctx.getExpressionContext().setVariable("TODAY", getToday(), startDate, endDate);
+		Assert.assertEquals(br, ctx.getExpressionContext().eval("BR(TODAY)", startDate, endDate, Double.class).get(0).getValue(), DELTA);
 		
 	}
 
@@ -134,14 +135,15 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
-		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 
 		double br = (1750.00 * 1.10) * (1 + 1.00 / 12 + 1.00 / 12) / 30;
 
 		// Same day of job start. Without salaries.
-		Assert.assertEquals(br, (Double) ctx.br(getToday()), DELTA);
+		ctx.getExpressionContext().setVariable("TODAY", getToday(), startDate, endDate);
+		Assert.assertEquals(br, ctx.getExpressionContext().eval("BR(TODAY)", startDate, endDate, Double.class).get(0).getValue(), DELTA);
 		
 		ctx.getExpressionContext()
 		.eval(String.format("%s(%s)", BR,SALARY_START.getName() ), startDate, endDate)
@@ -149,8 +151,8 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 
 
 		// Next month of job start. But without salaries.
-		Assert.assertEquals(br, (Double) ctx.br(addMonths(getToday(), 1)),
-				DELTA);
+		ctx.getExpressionContext().setVariable("NEXT_MONTH", addMonths(getToday(), 1), startDate, endDate);
+		Assert.assertEquals(br, ctx.getExpressionContext().eval("BR(NEXT_MONTH)", startDate, endDate, Double.class).get(0).getValue(), DELTA);
 
 		
 		
@@ -161,12 +163,11 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 
 		addPayment(aonContext, contract, "100", "100");
 		// Next month of job start. But now with salaries.
-		Assert.assertEquals(br, (Double) ctx.br(addMonths(getToday(), 1)),
-				0.005);
+		Assert.assertEquals(br, ctx.getExpressionContext().eval("BR(NEXT_MONTH)", startDate, endDate, Double.class).get(0).getValue(), 0.005);
 
 		// Next two month of job start. Without salaries.
-		Assert.assertEquals(br + (100d / 30d),
-				(Double) ctx.br(addMonths(getToday(), 2)), 0.005);
+		ctx.getExpressionContext().setVariable("NEXT_MONTH2", addMonths(getToday(), 2), startDate, endDate);
+		Assert.assertEquals(br + (100d / 30d), ctx.getExpressionContext().eval("BR(NEXT_MONTH2)", startDate, endDate, Double.class).get(0).getValue(), 0.005);
 
 	}
 	
@@ -226,7 +227,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
-		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 
@@ -251,7 +252,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
 				endITDate, null);
 		System.out.println("IT [" + startITDate + "...]" );
-		ctx = new SQLContractSalaryCalculatorContext(connection, startDate,
+		ctx = getContractSalaryCalculatorContext(connection, startDate,
 				endDate, endDate, criteria);
 		ctx.next();
 
@@ -265,7 +266,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 
 		startDate = getFirstDayOfMonth(add(getToday(), MONTH, 2));
 		endDate = getLastDayOfMonth(startDate);
-		ctx = new SQLContractSalaryCalculatorContext(connection, startDate,
+		ctx = getContractSalaryCalculatorContext(connection, startDate,
 				endDate, endDate, criteria);
 		ctx.next();
 
@@ -279,7 +280,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		
 		startDate = getFirstDayOfMonth(add(getToday(), MONTH, 3));
 		endDate = getLastDayOfMonth(startDate);
-		ctx = new SQLContractSalaryCalculatorContext(connection, startDate,
+		ctx = getContractSalaryCalculatorContext(connection, startDate,
 				endDate, endDate, criteria);
 		ctx.next();
 
@@ -343,7 +344,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
-		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 
@@ -412,7 +413,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
-		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 
@@ -461,7 +462,8 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				new String[] {
 				"BASE_IRPF * PORCENTAJE_IRPF/100" }, category);
 		addPayment(aonContext, contract,
-				"0.00 ", 
+				"TRACE('BASE_REGULADORA=%f\r\n',DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA); "
+				+"0.00 ", 
 				"DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA");
 		//@formatter:on
 
@@ -479,7 +481,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
-		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 
@@ -546,7 +548,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
-		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 
@@ -598,5 +600,12 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 						(byte) SalaryType.SALARY.ordinal()).execute();
 
 	}
+	
+	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
+			Date startDate, Date endDate, Date issueDate, Criteria criteria) throws ExpressionException, SQLException{
+		return new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, issueDate, criteria);
+	}
+
 
 }
