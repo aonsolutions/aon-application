@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Proposal.PROPOSAL;
 import static com.esferalia.aon.jooq.tables.ProposalDetail.PROPOSAL_DETAIL;
+import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Series.SERIES;
 import static com.esferalia.aon.jooq.tables.Stock.STOCK;
 import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
@@ -22,7 +23,6 @@ import org.jooq.DSLContext;
 import org.jooq.DeleteConditionStep;
 import org.jooq.InsertValuesStep12;
 import org.jooq.InsertValuesStep13;
-import org.jooq.InsertValuesStep14;
 import org.jooq.InsertValuesStep4;
 import org.jooq.InsertValuesStep5;
 import org.jooq.Record1;
@@ -206,7 +206,27 @@ public class DBStock {
 		}
 	}
 	
-	public static Error insertProposal(String domain, Integer domainId,Vector<StockInfo> stock,Integer proposal, AuditInfo ai){
+	public static Integer getSupplier(AONContext ctx, Integer workplace, Integer domainId){
+		Record1<Integer> a = ctx.getDslContext().select(RITEM.REGISTRY)
+		.from(RITEM)
+		.where(RITEM.WORKPLACE.eq(workplace))
+		.and(RITEM.DOMAIN.eq(domainId)).and(RITEM.TYPE.eq((byte)2))
+		.orderBy(RITEM.PRIORITY).limit(1)
+		.fetchOne();
+		
+		if(a == null){
+			Record1<Integer> b = ctx.getDslContext().select(RITEM.REGISTRY)
+					.from(RITEM)
+					.where(RITEM.DOMAIN.eq(domainId)).and(RITEM.WORKPLACE.isNull()).and(RITEM.TYPE.eq((byte)2))
+					.orderBy(RITEM.PRIORITY).limit(1)
+					.fetchOne();
+			return b.value1();
+		}
+		return a.value1();
+		
+	}
+	
+	public static Error insertProposal(String domain, Integer domainId,Vector<StockInfo> stock,Integer proposal, AuditInfo ai, Integer workplace){
 		Error error = new Error();
 		error.setError(true);
 		Vector<String> verror = new Vector<String>();
@@ -218,9 +238,10 @@ public class DBStock {
 			ctx = AONContext.getAONContext(domain, domainId);
 			InsertValuesStep13<ProposalDetailRecord, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, Timestamp, String, Timestamp> proposalInsertQuery = ctx.getDslContext().insertInto(PROPOSAL_DETAIL, PROPOSAL_DETAIL.DOMAIN, PROPOSAL_DETAIL.PROPOSAL, PROPOSAL_DETAIL.ITEM, PROPOSAL_DETAIL.DESCRIPTION,  PROPOSAL_DETAIL.QUANTITY, PROPOSAL_DETAIL.PRICE, PROPOSAL_DETAIL.DISCOUNT_EXPR, PROPOSAL_DETAIL.STATUS, PROPOSAL_DETAIL.SUPPLIER, PROPOSAL_DETAIL.CREATION_USER, PROPOSAL_DETAIL.CREATION_DATE, PROPOSAL_DETAIL.MODIFICATION_USER, PROPOSAL_DETAIL.MODIFICATION_DATE);
 			InsertValuesStep12<ProposalDetailRecord, Integer, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, Timestamp> proposalUpdateQuery = ctx.getDslContext().insertInto(PROPOSAL_DETAIL, PROPOSAL_DETAIL.ID, PROPOSAL_DETAIL.DOMAIN, PROPOSAL_DETAIL.PROPOSAL, PROPOSAL_DETAIL.ITEM, PROPOSAL_DETAIL.DESCRIPTION,  PROPOSAL_DETAIL.QUANTITY, PROPOSAL_DETAIL.PRICE, PROPOSAL_DETAIL.DISCOUNT_EXPR, PROPOSAL_DETAIL.STATUS, PROPOSAL_DETAIL.SUPPLIER, PROPOSAL_DETAIL.MODIFICATION_USER, PROPOSAL_DETAIL.MODIFICATION_DATE);
-
+			
 			AONContext sctx = ctx;
 			Vector<Integer> updateIds = new Vector<Integer>();
+			Integer supplier = getSupplier(ctx, workplace, domainId);
 			stock.stream().forEach(s ->{
 				
 				String code = s.getProduct();
@@ -250,10 +271,10 @@ public class DBStock {
 					if(isProposal(sctx,pi)){
 						pi = getProposal(sctx,pi);
 						updateIds.add(pi.getId());
-						proposalUpdateQuery.values(pi.getId(), pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), null, ai.getUsername(), t);
+						proposalUpdateQuery.values(pi.getId(), pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), supplier, ai.getUsername(), t);
 					}
 					else
-						proposalInsertQuery.values(pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), null, ai.getUsername(), t, ai.getUsername(), t);
+						proposalInsertQuery.values(pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), supplier, ai.getUsername(), t, ai.getUsername(), t);
 				}
 				else{
 					v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");

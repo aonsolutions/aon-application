@@ -14,10 +14,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
-import org.jooq.Record10;
-import org.jooq.Record11;
 import org.jooq.Record12;
 import org.jooq.Record19;
 import org.jooq.Record2;
@@ -330,7 +329,7 @@ public class DBProduct {
 		}
 	}
 	
-	public static Vector<ProductInfo> getProducts(String domain,Integer domainId) {
+	public static Vector<ProductInfo> getProducts(String domain,Integer domainId, Condition condition) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
@@ -341,7 +340,7 @@ public class DBProduct {
 						,PRODUCT.COMPOSITION_PRICE,PRODUCT.STATUS,ITEM.PURCHASE_PRICE,ITEM.PRICE,ITEM.BARCODE,ITEM.DESCRIPTION
 						,ITEM.DETAIL,ITEM.DETAIL2,ITEM.DETAIL3,PRODUCT.ID)
 						.from(PRODUCT).join(ITEM).on(PRODUCT.ID.eq(ITEM.PRODUCT))
-						.where(PRODUCT.DOMAIN.eq(domainId))
+						.where(condition)
 						.orderBy(PRODUCT.NAME)
 						.fetch();
 			

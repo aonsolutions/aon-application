@@ -42,18 +42,14 @@
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="stockList" />
 					</aon:htmlCommandLink>
-					<!-- 
+					
 					<ui:include
-						src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
-					<aon:commandLink id="stock-import" value="#{bundle.aon_import}"
-						onclick="stock()"
-						styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
+							src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
+					<aon:commandLink id="stock-export" value="Exportar"
+							onclick="stockx('#{stock.warehouse.id}','#{stock.quantity}','#{stock.code}','#{stock.name}','#{stock.barcode}','#{stock.provider}','#{stock.brand.id}','#{stockSearch.category.id}','#{stockSearch.statusesStr}','#{stockSearch.typesStr}','#{stockSearch.tagsStr}')"
+							styleClass="aon-finding-toolbar-item aon-icon-export-excel-trans">
 					</aon:commandLink>
-					<aon:commandLink id="stock-export" value="#{bundle.account_export}"
-						onclick="stockx()"
-						styleClass="aon-finding-toolbar-item aon-icon-export-excel-trans">
-					</aon:commandLink>
-					 -->
+					
 				</ui:define>				
 				
 			</ui:decorate>

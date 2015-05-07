@@ -17,7 +17,7 @@
 				<ui:param name="controller" value="#{stock}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:define name="additionalToolbarContent">
-					<ui:include
+						<ui:include
 							src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
 						<aon:commandLink id="stock-export" value="Exportar"
 							onclick="stockx()"
@@ -41,7 +41,7 @@
 
 								<aon:outputLabel for="Stock_warehouse_id" value="#{bundle.aon_module_warehouse}" />
 								<aon:selectOneMenu id="Stock_warehouse_id"
-									value="#{warehouseCollections.warehouse}"
+									value="#{stock.warehouse}"
 									valueChangeListener="#{stock.addIdEqualExpression}">
 									<f:selectItem itemLabel="-" value="#{null}"/>
 									<f:selectItems value="#{warehouseCollections.warehouses}" />
@@ -49,6 +49,7 @@
 							
 								<aon:outputLabel for="Stock_quantity" value="#{bundle.aon_quantity}" />
 								<aon:inputText id="Stock_quantity" size="10"
+									value="#{stock.quantity}"
 									valueChangeListener="#{stock.addExpression}" />				
 
 							</aon:panelGrid>
@@ -60,24 +61,28 @@
 								<aon:outputLabel for="Stock_item_product_code"
 									value="#{bundle.aon_id}" />
 								<aon:inputText id="Stock_item_product_code" size="25"
+									value="#{stock.code}"
 									valueChangeListener="#{controller.addExpression}"
 									onblur="toUpperCase(this);" />
 							
 								<aon:outputLabel for="Stock_item_product_name"
 									value="#{bundle.aon_name}" />
 								<aon:inputText id="Stock_item_product_name" size="50"
+									value="#{stock.name}"
 									valueChangeListener="#{controller.addExpression}" />
 							
 								<aon:if test="#{aonConfiguration.bean.product.showBarcode}">
 									<aon:outputLabel for="Stock_item_barcode"
 										value="#{bundle.product_barcode}" />
 									<aon:inputText id="Stock_item_barcode" size="25"
+										value="#{stock.barcode}"
 										valueChangeListener="#{controller.addExpression}" />
 								</aon:if>
 
 								<aon:outputLabel for="Stock_item_suppliers_code"
 									value="#{bundle.product_item_supplier_code}" />
 								<aon:inputText id="Stock_item_suppliers_code" size="25"
+									value="#{stock.provider}"
 									valueChangeListener="#{controller.addExpression}" />
 							
 								<aon:outputLabel for="Stock_item_product_category_id"
@@ -95,7 +100,7 @@
 									<aon:outputLabel for="Stock_item_product_brand_id"
 										value="#{bundle.tas_make}" />
 									<aon:selectOneMenu id="Stock_item_product_brand_id"
-										value="#{productCollections.brand}"
+										value="#{stock.brand}"
 										valueChangeListener="#{controller.addIdEqualExpression}">
 										<f:selectItem itemLabel="-" value="#{null}" />
 										<f:selectItems value="#{productCollections.brands}" />

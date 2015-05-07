@@ -835,12 +835,13 @@ public class Templates extends Composite implements EntryPoint {
 		popup.show();
 	}
 
-	private void exportProducts(){
+	private void exportProducts(ExportInfo ei){
 		Dialog d = new Dialog("Exportar Productos","Descargar",true,"Cancelar",true,"exportProduct");
 		d.setUrl(GWT.getModuleBaseURL());
 		d.setTemplateList(template_list);
+		eiAux = ei;
 		TemplatesDialog popup = new TemplatesDialog(d) {
-			
+			ExportInfo ei = eiAux;
 			@Override
 			protected void onCancel() {
 				hide();
@@ -864,7 +865,23 @@ public class Templates extends Composite implements EntryPoint {
 		            	+ "?id=" + Integer.toString(ti.getId())
 		            	+ "&drive_id=" +URL.encode(driveId)
 		            	+ "&name=" +URL.encode(ti.getName()
-		            	+ "&domain_id=" + domainId);
+		            	+ "&domain_id=" + domainId)
+						+ "&description="+ei.getName()
+						+ "&code="+ei.getCode()
+						+ "&category="+ei.getCategory()
+						+ "&tags="+ei.getTags()
+						+ "&vat="+ei.getVat()
+						+ "&retention="+ei.getRetention()
+						+ "&purchaseAccount="+ei.getPurchaseAccount()
+						+ "&salesAccount="+ei.getSalesAccount()
+						+ "&serializable="+ei.getSerializable()
+						+ "&inventoriable="+ei.getInventoriable()
+						+ "&manufactured="+ei.getManufactured()
+						+ "&composition="+ei.getComposition()
+						+ "&statuses="+ei.getStatuses()
+						+ "&types="+ei.getTypes()
+						+ "&brand="+ei.getBrand();
+				
 				Window.open( fileDownloadURL, "_blank",null);
 				hide();
 				// llamar  servlet de descarga para krear excel con todos losproductos
@@ -1203,7 +1220,13 @@ public class Templates extends Composite implements EntryPoint {
 		            	+ "&brand="+ei.getBrand()
 		            	+ "&code="+ei.getCode()
 		            	+ "&description="+ei.getDescription()
-		            	+ "&stock="+ei.getStock();
+		            	+ "&stock="+ei.getStock()
+						+ "&barcode="+ei.getBarcode()
+						+ "&provider="+ei.getProvider()
+						+ "&tags="+ei.getTags()
+						+ "&statuses="+ei.getStatuses()
+						+ "&types="+ei.getTypes()
+						+ "&quantity="+ei.getQuantity();
 				
 				Window.open( fileDownloadURL, "_blank",null);
 				hide();
@@ -1309,8 +1332,10 @@ public class Templates extends Composite implements EntryPoint {
 	}
 	
 	Integer proposalId;
-	private void importProposal(Integer proposal) {
+	Integer workplaceId;
+	private void importProposal(Integer proposal, Integer workplace) {
 		proposalId = proposal;
+		workplaceId = workplace;
 		Dialog d = new Dialog("Importar Solicitudes de Compra","Importar",true,"Cancelar",true,"importProposal");
 		d.setUrl(GWT.getModuleBaseURL());
 		d.setTemplateList(template_list);
@@ -1347,7 +1372,7 @@ public class Templates extends Composite implements EntryPoint {
 								pbd.setGlassEnabled(true);
 								pbd.show();
 								
-								item.insertProposal(proposalId,new AsyncCallback<Error>() {
+								item.insertProposal(proposalId,workplaceId,new AsyncCallback<Error>() {
 									@Override
 									public void onSuccess(Error result) {
 										pbd.hide();
@@ -1378,7 +1403,7 @@ public class Templates extends Composite implements EntryPoint {
 								});
 							}		
 							else{
-								item.insertProposal(proposalId,new AsyncCallback<Error>() {
+								item.insertProposal(proposalId,workplaceId,new AsyncCallback<Error>() {
 									@Override
 									public void onSuccess(Error result) {
 										Dialog d2 = new Dialog("Importar Solicitudes de Compra","Aceptar",true,"Cancelar",false,"importResponse");
@@ -1632,13 +1657,16 @@ public class Templates extends Composite implements EntryPoint {
     	}
 	}-*/;
 	
-	public void productx(){
-		exportProducts();
+	public void productx(String code,String name,String category,String tags,String brand,String vat,String retention,String purchaseAccount,String  salesAccount,String  serializable, String inventoriable, String manufactured, String composition,  String statuses, String types){
+		//Window.alert(code +" - "+name+" - "+category+" - "+tags+" - "+brand+" - "+vat+" - "+retention+" - "+purchaseAccount+" - "+salesAccount+" - "+serializable+" - "+inventoriable+" - "+manufactured+" - "+composition+" - "+statuses+" - "+types); 
+		ExportInfo ei = new ExportInfo();
+		ei.setCode(code);ei.setName(name);ei.setCategory(category);ei.setTags(tags);ei.setBrand(brand);ei.setVat(vat);ei.setRetention(retention);ei.setPurchaseAccount(purchaseAccount);ei.setSalesAccount(salesAccount);ei.setSerializable(serializable);ei.setInventoriable(inventoriable);ei.setManufactured(manufactured);ei.setComposition(composition);ei.setStatuses(statuses);ei.setTypes(types);
+		exportProducts(ei);
 	}
 
 	public static native void exportProductx(Templates thiz) /*-{
-		$wnd.productx = function() {
-			thiz.@com.esferalia.aon.gwt.template.client.Templates::productx(*)();
+		$wnd.productx = function(code,name,category,tags,brand,vat,retention,purchaseAccount, salesAccount, serializable, inventoriable,manufactured, composition, statuses, types) {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::productx(*)(code,name,category,tags,brand,vat,retention,purchaseAccount, salesAccount, serializable, inventoriable,manufactured, composition, statuses, types);
 		}
 	}-*/;
 	
@@ -1679,25 +1707,39 @@ public class Templates extends Composite implements EntryPoint {
 			thiz.@com.esferalia.aon.gwt.template.client.Templates::stock(*)(warehouse,inventoryId);
 		}
 	}-*/;
-
-	public void stockx(){
+	
+	String wAux;
+	public void stockx(String warehouse, String quantity, String code, String name, String barcode, String provider,String brand, String category,String statuses, String types, String tags){
+		//Window.alert(warehouse +" - "+ quantity+" - "+code+" - "+name+" - "+barcode+" - "+provider+" - "+brand+" - "+category+" - "+statuses+" - "+types+" - "+tags); 
+		ExportInfo ei = new ExportInfo();
+		ei.setWarehouse(warehouse);ei.setQuantity(quantity);ei.setCode(code); ei.setName(name);ei.setBarcode(barcode);ei.setProvider(provider);ei.setBrand(brand);ei.setCategory(category);ei.setStatuses(statuses);ei.setTypes(types);ei.setTags(tags);
+		ei.setDescription(name);
+		eiAux=ei;
+		wAux = warehouse;
 		item.getWarehouses(new AsyncCallback<Vector<Warehouse>>() {
-			
+			ExportInfo ei = eiAux; String warehouse =  wAux;
 			@Override
 			public void onSuccess(Vector<Warehouse> result) {
-			
-				exportStocks(result,new ExportInfo());
+				Vector<Warehouse> v = new Vector<Warehouse>();
+				if(!warehouse.equals("") && !warehouse.equals("null") && warehouse != null){
+					for (Warehouse w : result) {
+						if(w.getId() == Integer.parseInt(warehouse))
+							v.add(w);
+					}				
+				}
+				else v = result;
+				exportStocks(v,ei);
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {}
 		});
-		
 	}
 	
 	public static native void exportStockx(Templates thiz) /*-{
-		$wnd.stockx = function() {
-			thiz.@com.esferalia.aon.gwt.template.client.Templates::stockx(*)();
+
+		$wnd.stockx = function(warehouse, quantity, code,name,barcode, provider, brand, category,statuses, types, tags) {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::stockx(*)(warehouse, quantity, code,name,barcode, provider, brand, category,statuses, types, tags);
 		}
 	}-*/;
 	
@@ -1791,13 +1833,13 @@ public class Templates extends Composite implements EntryPoint {
 		}
 	}-*/;
 	
-	public void proposal(String proposal){
-		importProposal(Integer.parseInt(proposal));
+	public void proposal(String proposal, String workplace){
+		importProposal(Integer.parseInt(proposal), Integer.parseInt(workplace));
 	}
 
 	public static native void exportProposal(Templates thiz) /*-{
-		$wnd.proposal = function(proposal) {
-			thiz.@com.esferalia.aon.gwt.template.client.Templates::proposal(*)(proposal);
+		$wnd.proposal = function(proposal, workplace) {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::proposal(*)(proposal, workplace);
 		}
 	}-*/;
 	

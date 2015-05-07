@@ -18,6 +18,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tag;
 import com.code.aon.config.Tax;
 import com.code.aon.config.enumeration.TagType;
+import com.code.aon.product.Brand;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
@@ -34,24 +35,56 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
+	private String code;
+	private String name;
 	private ProductStatus[] statuses;
+	private String statusesStr;
 	private ProductStatus[] itemStatuses;
 	private ProductType[] types;
+	private String typesStr;
 	private ProductCategory category;
 	private Tax vat;
 	private Tax retention;
 	private Account purchaseAccount;
 	private Account salesAccount;
 	private Tag[] tags;
+	private String tagsStr;
 	private Supplier supplier;
 	private String supplierCode;
+	private Boolean inventoriable;
+	private Boolean serializable;
+	private Boolean manufactured;
+	private Boolean composition;
+	private Brand brand;
 	
+	
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public ProductStatus[] getStatuses() {
 		return statuses;
 	}
 
 	public void setStatuses(ProductStatus[] statuses) {
 		this.statuses = statuses;
+		String s ="";
+		for(Integer i=0; i<statuses.length; i++){
+			s = s+"$"+statuses[i].ordinal();
+		}
+		this.statusesStr= s;
 	}
 
 	public ProductStatus[] getItemStatuses() {
@@ -68,6 +101,11 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 
 	public void setTypes(ProductType[] types) {
 		this.types = types;
+		String s ="";
+		for(Integer i=0; i<types.length; i++){
+			s = s+"$"+types[i].ordinal();
+		}
+		this.typesStr= s;
 	}
 	
 	public ProductCategory getCategory() {
@@ -119,6 +157,13 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 
 	public void setTags(Tag[] tags) {
 		this.tags = tags;
+		List<Integer> l = getTagsIds();
+		String s ="";
+		for(Integer i=0; i<l.size(); i++){
+			System.out.println(l.get(i));
+			s = s+"$"+l.get(i);
+		}
+		this.tagsStr= s;
 	}
 
 	public int getTagsSize() {
@@ -246,5 +291,71 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 	private ConfigCollectionsController getCollectionsController() {
 		return (ConfigCollectionsController)AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
 	}
+
+	public String getStatusesStr() {
+		return statusesStr;
+	}
+
+	public void setStatusesStr(String statusesStr) {
+		this.statusesStr = statusesStr;
+	}
+
+	public String getTypesStr() {
+		return typesStr;
+	}
+
+	public void setTypesStr(String typesStr) {
+		this.typesStr = typesStr;
+	}
+
+	public String getTagsStr() {
+		return tagsStr;
+	}
+
+	public void setTagsStr(String tagsStr) {
+		this.tagsStr = tagsStr;
+	}
+
+	public Boolean getInventoriable() {
+		return inventoriable;
+	}
+
+	public void setInventoriable(Boolean inventoriable) {
+		this.inventoriable = inventoriable;
+	}
+
+	public Boolean getSerializable() {
+		return serializable;
+	}
+
+	public void setSerializable(Boolean serializable) {
+		this.serializable = serializable;
+	}
+
+	public Boolean getManufactured() {
+		return manufactured;
+	}
+
+	public void setManufactured(Boolean manufactured) {
+		this.manufactured = manufactured;
+	}
+
+	public Boolean getComposition() {
+		return composition;
+	}
+
+	public void setComposition(Boolean composition) {
+		this.composition = composition;
+	}
+
+	public Brand getBrand() {
+		return brand;
+	}
+
+	public void setBrand(Brand brand) {
+		this.brand = brand;
+	}
+	
+	
 
 }

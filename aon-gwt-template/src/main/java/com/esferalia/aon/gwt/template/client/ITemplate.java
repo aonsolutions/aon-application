@@ -55,5 +55,5 @@ public interface ITemplate extends RemoteService{
 	
 	public Integer executeExcelProposal(TemplateInfo templateInfo);
 	
-	public Error insertProposal(Integer proposal);
+	public Error insertProposal(Integer proposal, Integer workplace);
 }

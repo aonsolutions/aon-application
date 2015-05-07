@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.template.server;
 
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,9 +29,8 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.Region;
+import org.jooq.Condition;
 
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
@@ -57,6 +58,25 @@ public class DownloadProductServlet extends HttpServlet {
         String fileId = p_request.getParameter("id");
         String name = p_request.getParameter("name");
         String domain_id = p_request.getParameter("domain_id");
+        
+        String description = p_request.getParameter("description");
+        String code = p_request.getParameter("code");
+        String category = p_request.getParameter("category");
+        String tags1 = p_request.getParameter("tags");
+        String vat = p_request.getParameter("vat");
+        String retention = p_request.getParameter("retention");
+        String purchaseAccount = p_request.getParameter("purchaseAccount");
+        String salesAccount= p_request.getParameter("salesAccount");
+        String serializable= p_request.getParameter("serializable");
+        String inventoriable=p_request.getParameter("inventoriable");
+        String manufactured = p_request.getParameter("manufactured");
+        String composition = p_request.getParameter("composition");
+        String statuses = p_request.getParameter("statuses");
+        String types = p_request.getParameter("types");
+        String brand = p_request.getParameter("brand");
+
+        
+        
         Integer domainId = Integer.parseInt(domain_id);
         String domain = AonUtil.getDomainName();
         Integer idFile = Integer.parseInt(fileId);
@@ -170,7 +190,99 @@ public class DownloadProductServlet extends HttpServlet {
             	hoja.setDefaultColumnStyle(i, style3);
         	else hoja.setDefaultColumnStyle(i, style2);
         }*/
-        Vector<ProductInfo> v =  DBProduct.getProducts(domain,domainId);
+        
+        Condition c = PRODUCT.DOMAIN.eq(domainId);
+        if(!category.equals("null") && !category.equals("") && !category.equals("undefined"))
+        	c = c.and(PRODUCT.CATEGORY.eq(Integer.parseInt(category)));
+        if(!brand.equals("null") && !brand.equals("") && !brand.equals("undefined"))
+        	c = c.and(PRODUCT.BRAND.eq(Integer.parseInt(brand)));
+        if(!code.equals("null") && !code.equals("") && !code.equals("undefined"))
+        	c = c.and(PRODUCT.CODE.like(code));
+        if(!description.equals("null") && !description.equals("") && !description.equals("undefined"))
+        	c.and(PRODUCT.NAME.like(description));
+
+        if(!types.equals("null") && !types.equals("") && !types.equals("undefined")){
+        	String s= types.substring(1) ;
+        	while(s !=""){
+        		Integer index = s.indexOf("$");
+        		if(index == -1){
+        			c = c.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s)));
+        			s="";
+        		}
+        		else{ 
+        			c = c.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s.substring(0, index))));
+        			s = s.substring(index+1);
+        		}
+        	}
+        }
+        if(!statuses.equals("null") && !statuses.equals("") && !statuses.equals("undefined")){
+        	String s= statuses.substring(1) ;
+        	while(s !=""){
+        		Integer index = s.indexOf("$");
+        		if(index == -1){
+        			c = c.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s)));
+        			s="";
+        		}
+        		else{ 
+        			c = c.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s.substring(0, index))));
+        			s = s.substring(index+1);
+        		}
+        	}
+        }
+       /* if(!tags.equals("null") && !tags.equals("") && !tags.equals("undefined")){
+        	String s= tags.substring(1) ;
+        	while(s !=""){
+        		Integer index = s.indexOf("$");
+        		if(index == -1){
+        			c = c.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s)));
+        			s="";
+        		}
+        		else{ 
+        			c = c.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s.substring(0, index))));
+        			s = s.substring(index+1);
+        		}
+        	}
+        }*/
+        if(!vat.equals("null") && !vat.equals("") && !vat.equals("undefined")){
+        	c = c.and(PRODUCT.VAT.eq(Integer.parseInt(vat)));
+        }
+        if(!retention.equals("null") && !retention.equals("") && !retention.equals("undefined")){
+        	c = c.and(PRODUCT.RETENTION.eq(Integer.parseInt(retention)));
+        }
+        if(!purchaseAccount.equals("null") && !purchaseAccount.equals("") && !purchaseAccount.equals("undefined")){
+        	c = c.and(PRODUCT.PURCHASE_ACCOUNT.eq(Integer.parseInt(purchaseAccount)));
+        }
+        if(!salesAccount.equals("null") && !salesAccount.equals("") && !salesAccount.equals("undefined")){
+        	c = c.and(PRODUCT.SALES_ACCOUNT.eq(Integer.parseInt(salesAccount)));
+        }
+        if(!serializable.equals("null") && !serializable.equals("") && !serializable.equals("undefined")){
+        	if(serializable.equals("true"))
+        		c = c.and(PRODUCT.SERIALIZABLE.eq((byte)1));
+        	else if(serializable.equals("false"))
+        		c = c.and(PRODUCT.SERIALIZABLE.eq((byte)0));
+        }
+        if(!inventoriable.equals("null") && !inventoriable.equals("") && !inventoriable.equals("undefined")){
+        	if(inventoriable.equals("true"))
+        		c = c.and(PRODUCT.INVENTORIABLE.eq((byte)0));
+        	else if(inventoriable.equals("false"))
+        		c = c.and(PRODUCT.INVENTORIABLE.eq((byte)1));
+        }
+        if(!manufactured.equals("null") && !manufactured.equals("") && !manufactured.equals("undefined")){
+        	if(manufactured.equals("true"))
+        		c = c.and(PRODUCT.MANUFACTURED.eq((byte)0));
+        	else if(manufactured.equals("false"))
+        		c = c.and(PRODUCT.MANUFACTURED.eq((byte)1));
+        }
+        if(!composition.equals("null") && !composition.equals("") && !composition.equals("undefined")){
+        	if(composition.equals("true"))
+        		c = c.and(PRODUCT.COMPOSITION.eq((byte)0));
+        	else if(composition.equals("false"))
+        		c = c.and(PRODUCT.COMPOSITION.eq((byte)1));
+        }
+        
+        
+        
+        Vector<ProductInfo> v =  DBProduct.getProducts(domain,domainId,c);
 
         for(Integer j = 0; j< v.size();j++){
         	Row row = hoja.createRow(j+2);

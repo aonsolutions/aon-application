@@ -68,7 +68,7 @@
 						<ui:include
 							src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
 						<aon:commandLink id="proposal-import" value="#{bundle.aon_import}"
-							onclick="proposal('#{proposal.to.id}')"
+							onclick="proposal('#{proposal.to.id}','#{proposal.to.workPlace.id}')"
 							styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
 						</aon:commandLink>
 						<aon:commandLink id="proposal-export" value="#{bundle.account_export}"

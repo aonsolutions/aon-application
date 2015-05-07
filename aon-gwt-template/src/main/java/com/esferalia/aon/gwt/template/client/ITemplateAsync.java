@@ -59,7 +59,8 @@ public interface ITemplateAsync {
 	void executeExcelProposal(TemplateInfo templateInfo,
 			AsyncCallback<Integer> callback);
 
-	void insertProposal(Integer proposal, AsyncCallback<Error> callback);
+	void insertProposal(Integer proposal, Integer workplace,
+			AsyncCallback<Error> callback);
 
 	void getSeries(AsyncCallback<Vector<Series>> callback);
 

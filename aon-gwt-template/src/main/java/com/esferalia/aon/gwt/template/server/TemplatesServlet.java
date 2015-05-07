@@ -57,7 +57,6 @@ import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.esferalia.aon.occam.api.model.registry.Seller;
-import com.esferalia.aon.watson.util.AonUtils;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 
@@ -800,7 +799,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	}
 	
 	
-	public Error insertProposal(Integer proposal){
+	public Error insertProposal(Integer proposal,Integer workplace){
 		long startAll= System.currentTimeMillis();
 		Vector<String> verror = error.getTextError();
 		String domain = AonUtil.getDomainName();
@@ -814,7 +813,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			ai.setDate(new Date());
 			ai.setUserId(userId);
 			ai.setUsername(DBConsults.getUsername(domain, domainId, userId));
-			error = DBStock.insertProposal(domain,domainId,stock,proposal,ai);
+			error = DBStock.insertProposal(domain,domainId,stock,proposal,ai,workplace);
 
 	        //insertar STOCK en base de datos.!!
 		}

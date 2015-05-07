@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
@@ -31,8 +30,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.Region;
 import org.jooq.Condition;
 
@@ -41,11 +38,9 @@ import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
-import com.esferalia.aon.gwt.template.jooq.DBProduct;
 import com.esferalia.aon.gwt.template.jooq.DBStock;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
-import com.esferalia.aon.jooq.tables.Stock;
 import com.google.api.services.drive.Drive;
 
 @WebServlet(name = "DownloadTemplatesStock", urlPatterns = { "/aon_gwt_template/gwt_download_stock/*" })
@@ -71,6 +66,13 @@ public class DownloadStockServlet extends HttpServlet {
         String code = p_request.getParameter("code");
         String description = p_request.getParameter("description");
         String stock = p_request.getParameter("stock");
+        
+        String barcode = p_request.getParameter("barcode");
+        String provider = p_request.getParameter("provider");
+        String tags = p_request.getParameter("tags");
+        String statuses = p_request.getParameter("statuses");
+        String types = p_request.getParameter("types");
+        String quantity = p_request.getParameter("quantity");
         
         Integer domainId = Integer.parseInt(domain_id);
         String domain = AonUtil.getDomainName();
@@ -188,16 +190,65 @@ public class DownloadStockServlet extends HttpServlet {
         }*/
         
         Condition c = PRODUCT.DOMAIN.eq(domainId);
-        if(!category.equals("null") && !category.equals(""))
+        if(!category.equals("null") && !category.equals("") && !category.equals("undefined"))
         	c = c.and(PRODUCT.CATEGORY.eq(Integer.parseInt(category)));
-        if(!brand.equals("null") && !brand.equals(""))
+        if(!brand.equals("null") && !brand.equals("") && !brand.equals("undefined"))
         	c = c.and(PRODUCT.BRAND.eq(Integer.parseInt(brand)));
-        if(!code.equals("null") && !code.equals(""))
+        if(!code.equals("null") && !code.equals("") && !code.equals("undefined"))
         	c = c.and(PRODUCT.CODE.like(code));
-        if(!description.equals("null") && !description.equals(""))
+        if(!description.equals("null") && !description.equals("") && !description.equals("undefined"))
         	c.and(PRODUCT.NAME.like(description));
-        if(!stock.equals("false") && !stock.equals("null") && !stock.equals(""))
+        if(!stock.equals("false") && !stock.equals("null") && !stock.equals("") && !stock.equals("undefined"))
         	c = c.and(STOCK.QUANTITY.greaterThan(0.0));
+        if(!quantity.equals("null") && !quantity.equals("") && !quantity.equals("undefined")){
+        	c = c.and(STOCK.QUANTITY.eq(Double.parseDouble(quantity)));
+        }
+        if(!types.equals("null") && !types.equals("") && !types.equals("undefined")){
+        	String s= types.substring(1) ;
+        	while(s !=""){
+        		Integer index = s.indexOf("$");
+        		if(index == -1){
+        			c = c.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s)));
+        			s="";
+        		}
+        		else{ 
+        			c = c.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s.substring(0, index))));
+        			s = s.substring(index+1);
+        		}
+        	}
+        }
+        if(!statuses.equals("null") && !statuses.equals("") && !statuses.equals("undefined")){
+        	String s= statuses.substring(1) ;
+        	while(s !=""){
+        		Integer index = s.indexOf("$");
+        		if(index == -1){
+        			c = c.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s)));
+        			s="";
+        		}
+        		else{ 
+        			c = c.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s.substring(0, index))));
+        			s = s.substring(index+1);
+        		}
+        	}
+        }
+       /* if(!tags.equals("null") && !tags.equals("") && !tags.equals("undefined")){
+        	String s= tags.substring(1) ;
+        	while(s !=""){
+        		Integer index = s.indexOf("$");
+        		if(index == -1){
+        			c = c.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s)));
+        			s="";
+        		}
+        		else{ 
+        			c = c.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s.substring(0, index))));
+        			s = s.substring(index+1);
+        		}
+        	}
+        }*/
+        if(!barcode.equals("null") && !barcode.equals("") && !barcode.equals("undefined"))
+        	c = c.and(ITEM.BARCODE.like(barcode));
+        //if(!provider.equals("null") && !provider.equals("") && !provider.equals("undefined"))
+        	
         Vector<StockInfo> v = DBStock.getStocks(domain,domainId,w.getId(),c);
 
         for(Integer j = 0; j< v.size();j++){
