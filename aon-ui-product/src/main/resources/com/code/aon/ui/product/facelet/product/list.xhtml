@@ -29,13 +29,13 @@
 						<f:param name="reportKey" value="productList" />
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
-					<!--ui:include
+					<ui:include
 						src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
 							
 					<aon:commandLink id="product-export" value="#{bundle.account_export}"
 						onclick="productx('#{productSearch.code}','#{productSearch.name}','#{productSearch.category.id}','#{productSearch.tagsStr}','#{productSearch.brand.id}','#{productSearch.vat.id}','#{productSearch.retention.id}','#{productSearch.purchaseAccount.id}','#{productSearch.salesAccount.id}','#{productSearch.serializable}','#{productSearch.inventoriable}','#{productSearch.manufactured}','#{productSearch.composition}', '#{productSearch.statusesStr}','#{productSearch.typesStr}')"
 						styleClass="aon-finding-toolbar-item aon-icon-export-excel-trans">
-					</aon:commandLink-->
+					</aon:commandLink>
 					
 				</ui:define>
 			</ui:decorate>

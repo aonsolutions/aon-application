@@ -195,9 +195,9 @@ public class DownloadStockServlet extends HttpServlet {
         if(!brand.equals("null") && !brand.equals("") && !brand.equals("undefined"))
         	c = c.and(PRODUCT.BRAND.eq(Integer.parseInt(brand)));
         if(!code.equals("null") && !code.equals("") && !code.equals("undefined"))
-        	c = c.and(PRODUCT.CODE.like(code));
+        	c = c.and(PRODUCT.CODE.like("%"+code+"%"));
         if(!description.equals("null") && !description.equals("") && !description.equals("undefined"))
-        	c.and(PRODUCT.NAME.like(description));
+        	c.and(PRODUCT.NAME.like("%"+description+"%"));
         if(!stock.equals("false") && !stock.equals("null") && !stock.equals("") && !stock.equals("undefined"))
         	c = c.and(STOCK.QUANTITY.greaterThan(0.0));
         if(!quantity.equals("null") && !quantity.equals("") && !quantity.equals("undefined")){
@@ -246,7 +246,7 @@ public class DownloadStockServlet extends HttpServlet {
         	}
         }*/
         if(!barcode.equals("null") && !barcode.equals("") && !barcode.equals("undefined"))
-        	c = c.and(ITEM.BARCODE.like(barcode));
+        	c = c.and(ITEM.BARCODE.like("%"+barcode+"%"));
         //if(!provider.equals("null") && !provider.equals("") && !provider.equals("undefined"))
         	
         Vector<StockInfo> v = DBStock.getStocks(domain,domainId,w.getId(),c);

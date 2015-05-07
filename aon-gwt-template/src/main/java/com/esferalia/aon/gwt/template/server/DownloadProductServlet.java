@@ -197,9 +197,9 @@ public class DownloadProductServlet extends HttpServlet {
         if(!brand.equals("null") && !brand.equals("") && !brand.equals("undefined"))
         	c = c.and(PRODUCT.BRAND.eq(Integer.parseInt(brand)));
         if(!code.equals("null") && !code.equals("") && !code.equals("undefined"))
-        	c = c.and(PRODUCT.CODE.like(code));
+        	c = c.and(PRODUCT.CODE.like("%"+code+"%"));
         if(!description.equals("null") && !description.equals("") && !description.equals("undefined"))
-        	c.and(PRODUCT.NAME.like(description));
+        	c.and(PRODUCT.NAME.like("%"+description+"%"));
 
         if(!types.equals("null") && !types.equals("") && !types.equals("undefined")){
         	String s= types.substring(1) ;

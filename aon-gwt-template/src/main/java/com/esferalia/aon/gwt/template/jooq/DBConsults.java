@@ -157,6 +157,7 @@ public class DBConsults {
 					TemplateInfo productTemplate = new TemplateInfo();
 					v2 = new Vector<String>();
 					v2.add("Nombre");v2.add("Código");v2.add("Precio Coste");v2.add("Precio Venta Base");
+					v2.add("Detalle 1");v2.add("Detalle 2");v2.add("Detalle 3");
 					productTemplate.setColumns(v2);
 					productTemplate.setDomain(domain);
 					productTemplate.setDomainId(0);
