@@ -633,7 +633,7 @@ public class EmployeesServiceHelper {
 				criteria);
 
 		ctx.setListener(listener);
-//		ctx.next();
+		ctx.next();
 
 		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
 				draft, ctx);

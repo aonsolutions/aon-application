@@ -2650,10 +2650,33 @@ public class SQLContractSalaryCalculatorContext extends
 		// No salaries are present.
 		ISQLContractSalaryCalculatorContext ctx = (ISQLContractSalaryCalculatorContext) getNoItSalary(
 				connection, date, SalaryType.SALARY, contractId);
-		Salary salary = new ContractSalaryCalculator<Salary>(
-				new SalaryBuilder()).calculate(ctx);
-		return salary.getCommonBase()
-				/ ctx.getExpressionContext().getVariable(QUOTE_DAYS, ctx.getStartDate(), ctx.getEndDate(), Double.class);
+		try {
+			Salary salary = new ContractSalaryCalculator<Salary>(
+					new SalaryBuilder()) {
+				@Override
+				protected void resolvePayment(
+						IContractPayment contractPayment,
+						Date start,
+						Date end,
+						Date issueDate,
+						ExpressionContext expressionContext,
+						com.esferalia.aon.payroll.calculator.TaxCalculator taxCalculator,
+						com.esferalia.aon.payroll.calculator.QuoteCalculator quoteCalculator)
+						throws AonException {
+					try {
+						super.resolvePayment(contractPayment, start, end,
+								issueDate, expressionContext, taxCalculator,
+								quoteCalculator);
+					} catch ( SalaryExpressionException e ) {
+					}
+				};
+			}.calculate(ctx);
+			return salary.getCommonBase()
+					/ ctx.getExpressionContext().getVariable(QUOTE_DAYS,
+							ctx.getStartDate(), ctx.getEndDate(), Double.class);
+		} catch (Throwable t) {
+			throw t;
+		}
 	}
 
 	public Object br(Date start, Date end) throws ExpressionException,

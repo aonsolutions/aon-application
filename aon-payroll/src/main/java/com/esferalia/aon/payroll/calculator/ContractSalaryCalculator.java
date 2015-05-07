@@ -817,9 +817,7 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 		return total;
 	}
 
-	// ---------------------------------------------------------------- Private
-
-	private void resolvePayment(IContractPayment contractPayment, Date start,
+	protected void resolvePayment(IContractPayment contractPayment, Date start,
 			Date end, Date issueDate, ExpressionContext expressionContext,
 			TaxCalculator taxCalculator, QuoteCalculator quoteCalculator)
 			throws AonException {
@@ -831,7 +829,7 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 		String name = contractPayment.getName();
 
 		try {
-
+//			System.out.println(contractPayment.getExpression());
 			List<ITimedResult<Double>> results = expressionContext.eval(
 					contractPayment.getExpression(), paymentStart, paymentEnd,
 					Double.class);
@@ -910,25 +908,33 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 		} catch (RemoveException e) {
 			onRemove(contractPayment);
 		} catch (InvalidVariables e) {
+//			System.out.println(e.getMessage());
 			onInvalidData(contractPayment, e.getMessage(), e.getVariables());
 		} catch (InterruptedException e) {
+//			System.out.println(e.getMessage());
 			throw e; // Not catch
 		} catch (CheckException e) {
+//			System.out.println(e.getMessage());
 			onCheckError(contractPayment, e.getMessage());
 		} catch (RemoveVariableError e) {
+//			System.out.println(e.getMessage());
 			onUndefinedData(contractPayment, e.getVariable());
 		} catch (UndefinedTotalPaymentException e) {
 			throw e;
 		} catch (UndefinedVariablesException e) {
+//			System.out.println(e.getMessage());
 			UndefinedContextVariablesException.throvv(e);
 			// onUndefinedData(contractPayment, e.getMessage(),
 			// e.getVariableNames());
 		} catch (CompileException e) {
-			e.printStackTrace();
+//			System.out.println(e.getMessage());
 			onCompileError(contractPayment, e.getMessage());
 		}
 
 	}
+
+	// ---------------------------------------------------------------- Private
+
 
 	public static final String DAY_FOMAT = "%s ( %te )";
 	public static final String DAY_PERIOD_FOMAT = "%s ( %te - %te )";

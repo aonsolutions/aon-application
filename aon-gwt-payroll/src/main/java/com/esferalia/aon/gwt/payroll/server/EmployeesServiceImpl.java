@@ -3716,11 +3716,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					public SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> visitSalary(
 							SalaryType salaryType) {
 						try {
-							SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> ctx = EmployeesServiceHelper
+							return EmployeesServiceHelper
 									.getSalaryCalculatorContext(conn, draft,
 											listener);
-							ctx.next();
-							return ctx;
 						} catch (SQLException e) {
 							throw new IllegalArgumentException(e);
 						} catch (ExpressionException e) {
