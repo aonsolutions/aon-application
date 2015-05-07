@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.template.jooq;
 import static com.esferalia.aon.jooq.tables.CatalogueItem.CATALOGUE_ITEM;
 import static com.esferalia.aon.jooq.tables.Department.DEPARTMENT;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.jooq.tables.WorkplaceDepartment.WORKPLACE_DEPARTMENT;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
@@ -191,10 +192,12 @@ public static Department getDepartment(WorkPlace wp, Integer department, Integer
 				.from(CATALOGUE_ITEM).join(ITEM).on(ITEM.ID.eq(CATALOGUE_ITEM.ITEM))
 				.join(WORKPLACE_DEPARTMENT).on(WORKPLACE_DEPARTMENT.CATALOGUE.eq(CATALOGUE_ITEM.CATALOGUE))
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+				.join(RITEM).on(RITEM.ITEM.eq(ITEM.ID))
 				.where(WORKPLACE_DEPARTMENT.WORKPLACE.eq(wp.getId()))
 				.and(WORKPLACE_DEPARTMENT.DEPARTMENT.eq(dt.getId()))
 				.and(CATALOGUE_ITEM.DOMAIN.eq(domainId))
 				.and(PRODUCT.STATUS.eq((byte)0))
+				.and(RITEM.WORKPLACE.eq(wp.getId()).or(RITEM.WORKPLACE.isNull()))
 				.orderBy(PRODUCT.NAME)
 				.fetch();
 			}
@@ -203,9 +206,11 @@ public static Department getDepartment(WorkPlace wp, Integer department, Integer
 				.from(CATALOGUE_ITEM).join(ITEM).on(ITEM.ID.eq(CATALOGUE_ITEM.ITEM))
 				.join(WORKPLACE_DEPARTMENT).on(WORKPLACE_DEPARTMENT.CATALOGUE.eq(CATALOGUE_ITEM.CATALOGUE))
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+				.join(RITEM).on(RITEM.ITEM.eq(ITEM.ID))
 				.where(WORKPLACE_DEPARTMENT.WORKPLACE.eq(wp.getId()))
 				.and(CATALOGUE_ITEM.DOMAIN.eq(domainId))
 				.and(PRODUCT.STATUS.eq((byte)0))
+				.and(RITEM.WORKPLACE.eq(wp.getId()).or(RITEM.WORKPLACE.isNull()))
 				.orderBy(PRODUCT.NAME)
 				.fetch();
 			}
