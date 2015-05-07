@@ -1207,7 +1207,7 @@ public class SQLContractSalaryCalculatorContext extends
 	@Override
 	@SuppressWarnings("unchecked")
 	public Collection<IContractCost> getContractCosts() throws AonException {
-		return new CompositeCosts(getCCCCosts(), getSSRegimeCosts()){
+		return new CompositeCosts(getCCCCosts(), getSSRegimeCosts()) {
 			@Override
 			protected int getLevel(IContractCost item) {
 				return ((ISystemCost) item).getDomain();
@@ -2648,21 +2648,20 @@ public class SQLContractSalaryCalculatorContext extends
 			return br;
 
 		// No salaries are present.
-
-		SQLNoItContractSalaryCalculatorContext ctx = (SQLNoItContractSalaryCalculatorContext) getNoItSalary(
+		ISQLContractSalaryCalculatorContext ctx = (ISQLContractSalaryCalculatorContext) getNoItSalary(
 				connection, date, SalaryType.SALARY, contractId);
 		Salary salary = new ContractSalaryCalculator<Salary>(
 				new SalaryBuilder()).calculate(ctx);
-
 		return salary.getCommonBase()
-				/ ctx.getVariable(QUOTE_DAYS, Double.class);
-
+				/ ctx.getExpressionContext().getVariable(QUOTE_DAYS, ctx.getStartDate(), ctx.getEndDate(), Double.class);
 	}
 
-	public Object br(Date start, Date end) throws ExpressionException, SalaryException, SQLException {
-		int count  = 0;
-		double br  = 0.00;
-		for (Date date = start; date.compareTo(end) <= 0; date = add(date, Calendar.MONTH, 1)) {
+	public Object br(Date start, Date end) throws ExpressionException,
+			SalaryException, SQLException {
+		int count = 0;
+		double br = 0.00;
+		for (Date date = start; date.compareTo(end) <= 0; date = add(date,
+				Calendar.MONTH, 1)) {
 			count++;
 			br += (double) br(getLastDayOfMonth(date));
 		}

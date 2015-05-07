@@ -70,16 +70,11 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				new String[] {}, 
 				category);
 		//@formatter:off
-		
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(
-				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
-				contract.getId());
 
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
-				connection, startDate, endDate, endDate, criteria);
+				connection, startDate, endDate, endDate, contract);
 		ctx.next();
 
 		double br = (3000.00 * 1.10)/ 30;
@@ -128,15 +123,10 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 						"BASE_IRPF * PORCENTAJE_IRPF/100" }, category);
 		//@formatter:off
 		
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(
-				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
-				contract.getId());
-
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
-				connection, startDate, endDate, endDate, criteria);
+				connection, startDate, endDate, endDate, contract);
 		ctx.next();
 
 		double br = (1750.00 * 1.10) * (1 + 1.00 / 12 + 1.00 / 12) / 30;
@@ -220,15 +210,10 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				endITDate, null);
 		System.out.println("IT [" + startITDate + "...]" );
 
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(
-				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
-				contract.getId());
-
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
-				connection, startDate, endDate, endDate, criteria);
+				connection, startDate, endDate, endDate, contract);
 		ctx.next();
 
 		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
@@ -253,7 +238,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				endITDate, null);
 		System.out.println("IT [" + startITDate + "...]" );
 		ctx = getContractSalaryCalculatorContext(connection, startDate,
-				endDate, endDate, criteria);
+				endDate, endDate, contract);
 		ctx.next();
 
 		salary = calculator.calculate(ctx);
@@ -267,7 +252,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		startDate = getFirstDayOfMonth(add(getToday(), MONTH, 2));
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(connection, startDate,
-				endDate, endDate, criteria);
+				endDate, endDate, contract);
 		ctx.next();
 
 		salary = calculator.calculate(ctx);
@@ -281,7 +266,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		startDate = getFirstDayOfMonth(add(getToday(), MONTH, 3));
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(connection, startDate,
-				endDate, endDate, criteria);
+				endDate, endDate, contract);
 		ctx.next();
 
 		salary = calculator.calculate(ctx);
@@ -337,15 +322,10 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
 				endITDate, null);
 
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(
-				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
-				contract.getId());
-
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
-				connection, startDate, endDate, endDate, criteria);
+				connection, startDate, endDate, endDate, contract);
 		ctx.next();
 
 		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
@@ -601,6 +581,16 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 
 	}
 	
+	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
+			Date startDate, Date endDate, Date issueDate, ContractRecord contract) throws ExpressionException, SQLException{
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+		return getContractSalaryCalculatorContext(
+				connection, startDate, endDate, issueDate, criteria);
+	}
+
 	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
 			Date startDate, Date endDate, Date issueDate, Criteria criteria) throws ExpressionException, SQLException{
 		return new SQLContractSalaryCalculatorContext(

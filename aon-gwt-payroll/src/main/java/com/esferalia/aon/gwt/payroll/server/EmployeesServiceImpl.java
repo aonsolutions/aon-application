@@ -1024,12 +1024,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			initFacesContext();
 			connection = getConnection();
-			EmployeesServiceHelper.calculate(connection, agreementDraft, getDomainID(), getParentDomainID());
+			EmployeesServiceHelper.calculate(connection, agreementDraft,
+					getDomainID(), getParentDomainID());
 			return agreementDraft;
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
-			if ( connection != null ){
+			if (connection != null) {
 				try {
 					connection.close();
 				} catch (SQLException logOrIgnrore) {
@@ -3068,7 +3069,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-
 	private static void calculateAndSave(Connection conn, SalaryDraft draft)
 			throws SQLException {
 		if (draft.hasDbSalary())
@@ -3716,8 +3716,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					public SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> visitSalary(
 							SalaryType salaryType) {
 						try {
-							return getSalaryCalculatorContextImpl(conn, draft,
-									listener);
+							SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> ctx = EmployeesServiceHelper
+									.getSalaryCalculatorContext(conn, draft,
+											listener);
+							ctx.next();
+							return ctx;
 						} catch (SQLException e) {
 							throw new IllegalArgumentException(e);
 						} catch (ExpressionException e) {
@@ -3783,323 +3786,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			final Connection conn, final AgreementDraft draft, int levelId)
 			throws ExpressionException, SQLException {
 		return getSalaryCalculatorContextImpl(conn, draft, levelId);
-	}
-
-	private static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getSalaryCalculatorContextImpl(
-			final Connection conn, final SalaryDraft draft,
-			IContractSalaryCalculatorContext.IListener listener)
-			throws ExpressionException, SQLException {
-
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(tableCol(CONTRACT, ContractColumns.ID),
-				draft.getEmployee().getId());
-
-		class SalaryCalculatorContextImpl extends
-				SQLContractSalaryCalculatorContext {
-
-			public SalaryCalculatorContextImpl(Connection connection,
-					Date startDate, Date endDate, Date issueDate,
-					Criteria criteria) throws SQLException, ExpressionException {
-				super(connection, startDate, endDate, issueDate, criteria);
-			}
-
-			@Override
-			protected IIrpfCalculatorContext getIrpfCalculatorContext(
-					Connection conn, Date startDate, Date endDate,
-					Criteria criteria) {
-				try {
-					SQLContractSalaryCalculatorContext sqlContractSalaryCalculatorCtx = new SQLContractSalaryCalculatorContext(
-							conn, startDate, endDate, endDate, criteria) {
-
-						@Override
-						public double getIrpf() {
-							return 0.00;
-						}
-
-					};
-
-					SQLSalaryDraftCalculatorContext sqlDraftSalaryCalculatorCtx = new SQLSalaryDraftCalculatorContext(
-							draft, sqlContractSalaryCalculatorCtx);
-
-					return new SQLIrpfCalculatorContext(conn, startDate,
-							endDate, sqlDraftSalaryCalculatorCtx) {
-						@Override
-						public String getNif() {
-							return "87449445H";
-						}
-
-						@Override
-						public String getApellidosNombre() {
-							return "TORVALDS BENEDICT LINUS";
-						}
-
-						@Override
-						public String getRetenedorNif() {
-							return "Z7896423E";
-						}
-
-						@Override
-						public String getRetenedorApellidosNombre() {
-							return "LINUX FOUNDATION";
-						}
-					};
-				} catch (SQLException e) {
-					throw new ExpressionExceptionWrapper(
-							new ExpressionException(e));
-				} catch (ExpressionException e) {
-					throw new ExpressionExceptionWrapper(e);
-				}
-			}
-
-			@Override
-			protected ISalaryCalculatorContext getPaymentCalculatorContext(
-					Connection conn, Date startDate, Date endDate,
-					Date issueDate, Criteria criteria, final double x) {
-				try {
-					SQLContractSalaryCalculatorContext sqlContractSalaryCalculatorCtx = new SQLContractSalaryCalculatorContext(
-							conn, startDate, endDate, issueDate, criteria) {
-
-						@Override
-						public double getIrpf() {
-							return 0.00;
-						}
-
-						@Override
-						public Object gross(double liquid, Date start, Date end)
-								throws ExpressionException, SQLException {
-							return x;
-						}
-
-						@Override
-						public Object liquid(double liquid, Date start, Date end)
-								throws ExpressionException, SQLException,
-								SalaryException {
-							throw new InterruptedException(
-									String.format("Lo sentimos. La funci\u00F3n BRUTO es incompatible con la funci\u00F3n NETO. Elija una de las dos. :-("));
-						}
-
-						@Override
-						protected ISQLContractSalaryCalculatorContext getNoItCalculatorContext(
-								Connection conn, Date startDate, Date endDate,
-								Date issueDate, Criteria criteria, int start,
-								int end) {
-							ISQLContractSalaryCalculatorContext draftCtx;
-							try {
-								SQLNoItContractSalaryCalculatorContext sqlCtx = new SQLNoItContractSalaryCalculatorContext(
-										conn, startDate, endDate, issueDate,
-										criteria, start, end);
-								draftCtx = new SQLSalaryDraftCalculatorContext(
-										draft, sqlCtx);
-								draftCtx.next();
-								return draftCtx;
-							} catch (ExpressionException e) {
-								throw new ExpressionExceptionWrapper(e);
-							} catch (SQLException e) {
-								throw new ExpressionExceptionWrapper(
-										new ExpressionException(e));
-							}
-						}
-
-						@Override
-						public Collection<IContractDeduction> getContractDeductions()
-								throws AonException {
-							return Collections.emptyList();
-						}
-
-						@Override
-						public Collection<IContractEmbargo> getContractEmbargos()
-								throws AonException {
-							return Collections.emptyList();
-						}
-
-						@Override
-						public Collection<IContractBonus> getContractBonus()
-								throws AonException {
-							return Collections.emptyList();
-						}
-
-						@Override
-						public Collection<IContractCost> getContractCosts()
-								throws AonException {
-							return Collections.emptyList();
-						}
-
-					};
-					SQLSalaryDraftCalculatorContext sqlDraftSalaryCalculatorCtx = new SQLSalaryDraftCalculatorContext(
-							draft, sqlContractSalaryCalculatorCtx);
-
-					sqlDraftSalaryCalculatorCtx
-							.setListener(SalaryCalculatorContextImpl.this
-									.getListener());
-
-					sqlDraftSalaryCalculatorCtx.next();
-					return sqlDraftSalaryCalculatorCtx;
-
-				} catch (ExpressionException e) {
-					throw new ExpressionExceptionWrapper(e);
-				} catch (SQLException e) {
-					throw new ExpressionExceptionWrapper(
-							new ExpressionException(e));
-				}
-			}
-
-			@Override
-			protected ISalaryCalculatorContext getLiquidCalculatorContext(
-					Connection conn, Date startDate, Date endDate,
-					Date issueDate, Criteria criteria, final double x) {
-				try {
-					SQLContractSalaryCalculatorContext sqlContractSalaryCalculatorCtx = new SQLContractSalaryCalculatorContext(
-							conn, startDate, endDate, issueDate, criteria) {
-
-						@Override
-						public Object liquid(double liquid, Date start, Date end)
-								throws ExpressionException, SQLException {
-							return x;
-						}
-
-						@Override
-						public Object gross(double gross, Date start, Date end)
-								throws ExpressionException, SQLException,
-								SalaryException {
-							throw new InterruptedException(
-									String.format("Lo sentimos. La funci\u00F3n NETO es incompatible con la funci\u00F3n BRUTO. Elija una de las dos. :-("));
-						}
-
-						@Override
-						protected ISQLContractSalaryCalculatorContext getNoItCalculatorContext(
-								Connection conn, Date startDate, Date endDate,
-								Date issueDate, Criteria criteria, int start,
-								int end) {
-							ISQLContractSalaryCalculatorContext draftCtx;
-							try {
-								SQLNoItContractSalaryCalculatorContext sqlCtx = new SQLNoItContractSalaryCalculatorContext(
-										conn, startDate, endDate, issueDate,
-										criteria, start, end);
-								draftCtx = new SQLSalaryDraftCalculatorContext(
-										draft, sqlCtx);
-								draftCtx.next();
-								return draftCtx;
-							} catch (ExpressionException e) {
-								throw new ExpressionExceptionWrapper(e);
-							} catch (SQLException e) {
-								throw new ExpressionExceptionWrapper(
-										new ExpressionException(e));
-							}
-						}
-
-						@Override
-						protected IIrpfCalculatorContext getIrpfCalculatorContext(
-								Connection conn, Date startDate, Date endDate,
-								Criteria criteria) {
-							try {
-								SQLContractSalaryCalculatorContext sqlContractSalaryCalculatorCtx = new SQLContractSalaryCalculatorContext(
-										conn, startDate, endDate, endDate,
-										criteria) {
-
-									@Override
-									public double getIrpf() {
-										return 0.00;
-									}
-
-									@Override
-									public Object liquid(double liquid,
-											Date start, Date end)
-											throws ExpressionException,
-											SQLException {
-										return x;
-									}
-
-								};
-
-								SQLSalaryDraftCalculatorContext sqlDraftSalaryCalculatorCtx = new SQLSalaryDraftCalculatorContext(
-										draft, sqlContractSalaryCalculatorCtx);
-
-								return new SQLIrpfCalculatorContext(conn,
-										startDate, endDate,
-										sqlDraftSalaryCalculatorCtx) {
-									@Override
-									public String getNif() {
-										return "87449445H";
-									}
-
-									@Override
-									public String getApellidosNombre() {
-										return "TORVALDS BENEDICT LINUS";
-									}
-
-									@Override
-									public String getRetenedorNif() {
-										return "Z7896423E";
-									}
-
-									@Override
-									public String getRetenedorApellidosNombre() {
-										return "LINUX FOUNDATION";
-									}
-								};
-							} catch (SQLException e) {
-								throw new ExpressionExceptionWrapper(
-										new ExpressionException(e));
-							} catch (ExpressionException e) {
-								throw new ExpressionExceptionWrapper(e);
-							}
-						}
-
-					};
-					SQLSalaryDraftCalculatorContext sqlDraftSalaryCalculatorCtx = new SQLSalaryDraftCalculatorContext(
-							draft, sqlContractSalaryCalculatorCtx);
-
-					sqlDraftSalaryCalculatorCtx
-							.setListener(SalaryCalculatorContextImpl.this
-									.getListener());
-
-					sqlDraftSalaryCalculatorCtx.next();
-					return sqlDraftSalaryCalculatorCtx;
-
-				} catch (ExpressionException e) {
-					throw new ExpressionExceptionWrapper(e);
-				} catch (SQLException e) {
-					throw new ExpressionExceptionWrapper(
-							new ExpressionException(e));
-				}
-			}
-
-			@Override
-			protected ISQLContractSalaryCalculatorContext getNoItCalculatorContext(
-					Connection conn, Date startDate, Date endDate,
-					Date issueDate, Criteria criteria, int start, int end) {
-
-				ISQLContractSalaryCalculatorContext draftCtx;
-				try {
-					SQLNoItContractSalaryCalculatorContext sqlCtx = new SQLNoItContractSalaryCalculatorContext(
-							conn, startDate, endDate, issueDate, criteria,
-							start, end);
-					draftCtx = new SQLSalaryDraftCalculatorContext(draft,
-							sqlCtx);
-					draftCtx.next();
-					return draftCtx;
-				} catch (ExpressionException e) {
-					throw new ExpressionExceptionWrapper(e);
-				} catch (SQLException e) {
-					throw new ExpressionExceptionWrapper(
-							new ExpressionException(e));
-				}
-
-			}
-
-		}
-
-		SalaryCalculatorContextImpl ctx = new SalaryCalculatorContextImpl(conn,
-				draft.getStartDate(), draft.getEndDate(), draft.getIssueDate(),
-				criteria);
-
-		ctx.setListener(listener);
-		ctx.next();
-
-		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
-				draft, ctx);
-		draftCtx.setListener(listener);
-		return draftCtx;
 	}
 
 	private static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getNotEnjoyedCalculatorContextImpl(

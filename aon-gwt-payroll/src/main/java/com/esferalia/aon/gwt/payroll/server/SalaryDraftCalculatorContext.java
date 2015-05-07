@@ -33,11 +33,13 @@ import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.ContractLeaveLoader.Leave;
 import com.esferalia.aon.payroll.calculator.DelegateContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.DelegateSQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.HierarchyDeductions;
 import com.esferalia.aon.payroll.calculator.HierarchyIterator;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
@@ -56,7 +58,7 @@ import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 
 public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorContext>
-		extends DelegateContractSalaryCalculatorContext<T> {
+		extends DelegateSQLContractSalaryCalculatorContext<T> {
 
 	static class DraftPayment extends ContractPayment {
 
