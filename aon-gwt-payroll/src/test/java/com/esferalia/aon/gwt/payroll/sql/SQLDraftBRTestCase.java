@@ -40,6 +40,7 @@ public class SQLDraftBRTestCase extends SQLBRTestCase {
 
 		SQLSalaryDraftCalculatorContext draftCtx = new SQLSalaryDraftCalculatorContext(
 				draft, connection, startDate, endDate, issueDate, criteria);
+		draftCtx.next();
 		return draftCtx;
 	}
 }
