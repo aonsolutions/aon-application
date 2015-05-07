@@ -419,12 +419,16 @@ public class Templates extends Composite implements EntryPoint {
 						sb.appendHtmlConstant("</button>");		
 	        		}
 	        		if(text.equals("edit")){
-	        			sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-edit\" tabindex=\"-1\">");
-						sb.appendHtmlConstant("</button>");		
+	        			if(!value.getIsParent()){
+	        				sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-edit\" tabindex=\"-1\">");
+							sb.appendHtmlConstant("</button>");
+	        			}
 	        		}
 	        		if(text.equals("delete")){
-	        			sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-delete\" tabindex=\"-1\">");
-						sb.appendHtmlConstant("</button>");		
+	        			if(!value.getIsParent()){
+	        				sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-delete\" tabindex=\"-1\">");
+							sb.appendHtmlConstant("</button>");
+	        			}
 	        		}
 	        	}
 	        };

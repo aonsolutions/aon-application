@@ -807,7 +807,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					Label title = new Label("Columnas Obligatorias:");
 					title.addStyleName("aon-info-title-template");
 					vp.add(title);
-					Label r1 = new Label("Product");r1.addStyleName("aon-info-rest-template");
+					Label r1 = new Label("Producto");r1.addStyleName("aon-info-rest-template");
 					vp.add(r1);
 					//Label r2 = new Label("Almac\u00e9n Destino");r2.addStyleName("aon-info-rest-template");
 					//vp.add(r2);
@@ -830,7 +830,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					vp.add(r5);
 					Label r6 = new Label("Fecha Inicio");r6.addStyleName("aon-info-rest-template");
 					vp.add(r6);
-					Label r7 = new Label("Fecha Facturación");r7.addStyleName("aon-info-rest-template");
+					Label r7 = new Label("Fecha Facturaci\u00f3n");r7.addStyleName("aon-info-rest-template");
 					vp.add(r7);
 				}
 				else b = false;
