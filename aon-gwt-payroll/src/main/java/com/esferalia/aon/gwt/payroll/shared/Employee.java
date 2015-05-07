@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.NoSuchElementException;
 
 import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.gwt.common.shared.HasId;
@@ -54,6 +55,100 @@ public class Employee implements Serializable, HasId<Integer> {
 			return description;
 		};
 	} 
+	
+	public enum TC2 implements HasDescription{
+
+		_100 (100 ,"Indefinido, Tiempo Completo, Ordinario"),
+		_109 (109 ,"Indefinido, Tiempo Completo, Fomento Contrataci\u00F3n Indefinida"),
+		_130 (130 ,"Indefinido, Tiempo Completo, Personas con Discapacidad"),
+		_139 (139 ,"Indefinido, Tiempo Completo, Personas con Discapacidad"),
+		_150 (150 ,"Indefinido, Tiempo Completo, Fomento Contrataci\u00F3n Indefinida"),
+		_189 (189 ,"Indefinido, Tiempo Completo"),
+		
+		_200 (200 ,"Indefinido, Tiempo Parcial, Ordinario"),
+		_209 (209 ,"Indefinido, Tiempo Parcial, Fomento Contrataci\u00F3n Indefinida"),
+		_230 (230 ,"Indefinido, Tiempo Parcial, Personas con Discapacidad"),
+		_239 (239 ,"Indefinido, Tiempo Parcial, Personas con Discapacidad"),
+		_250 (250 ,"Indefinido, Tiempo Parcial, Fomento Contrataci\u00F3n Indefinida"),
+		_289 (289 ,"Indefinido, Tiempo Parcial"),
+		
+		_300 (300 ,"Indefinido, Fijo Discontinuo"),
+		_309 (309 ,"Indefinido, Fijo Discontinuo, Fomento Contrataci\u00F3n Indefinida"),
+		_330 (330 ,"Indefinido, Fijo Discontinuo, Personas con Discapacidad"),
+		_339 (339 ,"Indefinido, Fijo Discontinuo, Personas con Discapacidad"),
+		_350 (350 ,"Indefinido, Fijo Discontinuo, Fomento Contrataci\u00F3n Indefinida"),
+		_389 (389 ,"Indefinido, Fijo Discontinuo"),
+		
+		_401 (401 ,"Duraci\u00F3 Determinada, Tiempo Completo, Obra o Servicio Determinado"),
+		_402 (402 ,"Duraci\u00F3 Determinada, Tiempo Completo, Eventual Circunstancias de la producci\u00F3n"),
+		_403 (403 ,"Duraci\u00F3 Determinada, Tiempo Completo, Inserci\u00F3"),
+		_408 (408 ,"Temporal, Tiempo Completo"),
+		_410 (410 ,"Duraci\u00F3 Determinada, Tiempo Completo, Interinidad"),
+		_418 (418 ,"Duraci\u00F3 Determinada, Tiempo Completo, Interinidad"),
+		_420 (420 ,"Temporal, Tiempo Completo, Pr\u00E1cticas"),
+		_421 (421 ,"Temporal, Tiempo Completo, Formaci\u00F3n y Aprendizaje"),
+		_430 (430 ,"Temporal, Tiempo Completo, Personas con Discapacidad"),
+		_441 (441 ,"Temporal, Tiempo Completo, Relevo"),
+		_450 (450 ,"Temporal, Tiempo Completo, Fomento Contrataci\u00F3n Indefinida"),
+		_452 (452 ,"Temporal, Tiempo Completo, Empresas de Inserci\u00F3"),
+		
+		_501 (501 ,"Duraci\u00F3 Determinada, Tiempo Parcial, Obra o Servicio Determinado"),
+		_502 (502 ,"Duraci\u00F3 Determinada, Tiempo Parcial, Eventual Circunstancias de la producci\u00F3n"),
+		_503 (503 ,"Duraci\u00F3 Determinada, Tiempo Parcial, Inserci\u00F3"),
+		_508 (508 ,"Temporal, Tiempo Parcial"),
+		_510 (510 ,"Duraci\u00F3 Determinada, Tiempo Parcial, Interinidad"),
+		_518 (518 ,"Duraci\u00F3 Determinada, Tiempo Parcial, Interinidad"),
+		_520 (520 ,"Temporal, Tiempo Parcial, Pr\u00E1cticas"),
+		_530 (530 ,"Temporal, Tiempo Parcial, Personas con Discapacidad"),
+		_540 (540 ,"Temporal, Tiempo Parcial, Jubilado Parcial"),
+		_541 (541 ,"Temporal, Tiempo Parcial, Relevo"),
+		_550 (550 ,"Temporal, Tiempo Parcial, Fomento Contrataci\u00F3n Indefinida"),
+		_552 (552 ,"Temporal, Tiempo Parcial, Empresas de Inserci\u00F3");
+		
+		private int code;
+		private String description;
+		
+		private TC2( int code, String description){
+			this.code = code;
+			this.description = description;
+			
+		}
+		
+		public String getCode() {
+			return String.valueOf(code);
+		}
+		
+		@Override
+		public String getDescription() {
+			return code + " " + description;
+		}
+		
+		
+		
+		public static String [] getCodes() {
+			TC2 [] tc2s = TC2.values();
+			String [] codes = new String [tc2s.length];
+			for (int i = 0; i < tc2s.length; i++)
+				codes[i] = tc2s[i].getCode();
+			return codes;
+		}
+		
+		public static String [] getDescriptions() {
+			TC2 [] tc2s = TC2.values();
+			String [] descriptions = new String [tc2s.length];
+			for (int i = 0; i < tc2s.length; i++)
+				descriptions[i] = tc2s[i].getDescription();
+			return descriptions;
+		}
+		
+		public static String getDescriptionByCode(String code) {
+			for (TC2 tc2: TC2.values() )
+				if ( tc2.getCode().equals(code))
+					return tc2.getDescription();
+				
+			throw new NoSuchElementException();
+		}
+	}
 	
 	private int id;
 
