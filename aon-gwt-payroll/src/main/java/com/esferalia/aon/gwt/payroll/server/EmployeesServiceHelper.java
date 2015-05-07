@@ -1,9 +1,12 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,24 +20,42 @@ import java.util.function.Supplier;
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
 
+import com.code.aon.common.AonException;
+import com.code.aon.ql.Criteria;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
 import com.esferalia.aon.gwt.payroll.sql.SQLAgreementDraft;
+import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraftCalculatorContext;
+import com.esferalia.aon.payroll.calculator.IContractBonus;
+import com.esferalia.aon.payroll.calculator.IContractCost;
+import com.esferalia.aon.payroll.calculator.IContractDeduction;
+import com.esferalia.aon.payroll.calculator.IContractEmbargo;
+import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementContextFactory;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.AgreementContextKey;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.CCCContextKey;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLSystemExpressionContextFactory;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
+import com.esferalia.aon.payroll.irpf.sql.SQLIrpfCalculatorContext;
+import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
+import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
+import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
+import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 
 public class EmployeesServiceHelper {
 
@@ -168,6 +189,13 @@ public class EmployeesServiceHelper {
 				domainIds.toArray(new Integer[] {}));
 	}
 
+	public static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getSalaryCalculatorContext(
+			final Connection conn, final SalaryDraft draft,
+			IContractSalaryCalculatorContext.IListener listener)
+			throws ExpressionException, SQLException {
+		return getSalaryCalculatorContextImpl(conn, draft, listener);
+	}
+
 	// ------------------------------------------------------------------------
 
 	private static Variable copy(Variable var) {
@@ -236,7 +264,7 @@ public class EmployeesServiceHelper {
 			}
 		} catch (Throwable e) {
 			// e.printStackTrace();
-		} 
+		}
 	}
 
 	private static void eval(ExpressionContext ctx, LinkedList<Variable> vars,
@@ -294,6 +322,327 @@ public class EmployeesServiceHelper {
 		}
 
 		return cs;
+	}
+
+	private static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getSalaryCalculatorContextImpl(
+			final Connection conn, final SalaryDraft draft,
+			IContractSalaryCalculatorContext.IListener listener)
+			throws ExpressionException, SQLException {
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(tableCol(CONTRACT, ContractColumns.ID),
+				draft.getEmployee().getId());
+
+		class SalaryCalculatorContextImpl extends
+				SQLContractSalaryCalculatorContext {
+
+			public SalaryCalculatorContextImpl(Connection connection,
+					Date startDate, Date endDate, Date issueDate,
+					Criteria criteria) throws SQLException, ExpressionException {
+				super(connection, startDate, endDate, issueDate, criteria);
+			}
+
+			@Override
+			protected IIrpfCalculatorContext getIrpfCalculatorContext(
+					Connection conn, Date startDate, Date endDate,
+					Criteria criteria) {
+				try {
+					SQLContractSalaryCalculatorContext sqlContractSalaryCalculatorCtx = new SQLContractSalaryCalculatorContext(
+							conn, startDate, endDate, endDate, criteria) {
+
+						@Override
+						public double getIrpf() {
+							return 0.00;
+						}
+
+					};
+
+					SQLSalaryDraftCalculatorContext sqlDraftSalaryCalculatorCtx = new SQLSalaryDraftCalculatorContext(
+							draft, sqlContractSalaryCalculatorCtx);
+
+					return new SQLIrpfCalculatorContext(conn, startDate,
+							endDate, sqlDraftSalaryCalculatorCtx) {
+						@Override
+						public String getNif() {
+							return "87449445H";
+						}
+
+						@Override
+						public String getApellidosNombre() {
+							return "TORVALDS BENEDICT LINUS";
+						}
+
+						@Override
+						public String getRetenedorNif() {
+							return "Z7896423E";
+						}
+
+						@Override
+						public String getRetenedorApellidosNombre() {
+							return "LINUX FOUNDATION";
+						}
+					};
+				} catch (SQLException e) {
+					throw new ExpressionExceptionWrapper(
+							new ExpressionException(e));
+				} catch (ExpressionException e) {
+					throw new ExpressionExceptionWrapper(e);
+				}
+			}
+
+			@Override
+			protected ISalaryCalculatorContext getPaymentCalculatorContext(
+					Connection conn, Date startDate, Date endDate,
+					Date issueDate, Criteria criteria, final double x) {
+				try {
+					SQLContractSalaryCalculatorContext sqlContractSalaryCalculatorCtx = new SQLContractSalaryCalculatorContext(
+							conn, startDate, endDate, issueDate, criteria) {
+
+						@Override
+						public double getIrpf() {
+							return 0.00;
+						}
+
+						@Override
+						public Object gross(double liquid, Date start, Date end)
+								throws ExpressionException, SQLException {
+							return x;
+						}
+
+						@Override
+						public Object liquid(double liquid, Date start, Date end)
+								throws ExpressionException, SQLException,
+								SalaryException {
+							throw new InterruptedException(
+									String.format("Lo sentimos. La funci\u00F3n BRUTO es incompatible con la funci\u00F3n NETO. Elija una de las dos. :-("));
+						}
+
+						@Override
+						protected ISQLContractSalaryCalculatorContext getNoItCalculatorContext(
+								Connection conn, Date startDate, Date endDate,
+								Date issueDate, Criteria criteria, int start,
+								int end) {
+							ISQLContractSalaryCalculatorContext draftCtx;
+							try {
+								SQLNoItContractSalaryCalculatorContext sqlCtx = new SQLNoItContractSalaryCalculatorContext(
+										conn, startDate, endDate, issueDate,
+										criteria, start, end);
+								draftCtx = new SQLSalaryDraftCalculatorContext(
+										draft, sqlCtx);
+								draftCtx.next();
+								return draftCtx;
+							} catch (ExpressionException e) {
+								throw new ExpressionExceptionWrapper(e);
+							} catch (SQLException e) {
+								throw new ExpressionExceptionWrapper(
+										new ExpressionException(e));
+							}
+						}
+
+						@Override
+						public Collection<IContractDeduction> getContractDeductions()
+								throws AonException {
+							return Collections.emptyList();
+						}
+
+						@Override
+						public Collection<IContractEmbargo> getContractEmbargos()
+								throws AonException {
+							return Collections.emptyList();
+						}
+
+						@Override
+						public Collection<IContractBonus> getContractBonus()
+								throws AonException {
+							return Collections.emptyList();
+						}
+
+						@Override
+						public Collection<IContractCost> getContractCosts()
+								throws AonException {
+							return Collections.emptyList();
+						}
+
+					};
+					SQLSalaryDraftCalculatorContext sqlDraftSalaryCalculatorCtx = new SQLSalaryDraftCalculatorContext(
+							draft, sqlContractSalaryCalculatorCtx);
+
+					sqlDraftSalaryCalculatorCtx
+							.setListener(SalaryCalculatorContextImpl.this
+									.getListener());
+
+					sqlDraftSalaryCalculatorCtx.next();
+					return sqlDraftSalaryCalculatorCtx;
+
+				} catch (ExpressionException e) {
+					throw new ExpressionExceptionWrapper(e);
+				} catch (SQLException e) {
+					throw new ExpressionExceptionWrapper(
+							new ExpressionException(e));
+				}
+			}
+
+			@Override
+			protected ISalaryCalculatorContext getLiquidCalculatorContext(
+					Connection conn, Date startDate, Date endDate,
+					Date issueDate, Criteria criteria, final double x) {
+				try {
+					SQLContractSalaryCalculatorContext sqlContractSalaryCalculatorCtx = new SQLContractSalaryCalculatorContext(
+							conn, startDate, endDate, issueDate, criteria) {
+
+						@Override
+						public Object liquid(double liquid, Date start, Date end)
+								throws ExpressionException, SQLException {
+							return x;
+						}
+
+						@Override
+						public Object gross(double gross, Date start, Date end)
+								throws ExpressionException, SQLException,
+								SalaryException {
+							throw new InterruptedException(
+									String.format("Lo sentimos. La funci\u00F3n NETO es incompatible con la funci\u00F3n BRUTO. Elija una de las dos. :-("));
+						}
+
+						@Override
+						protected ISQLContractSalaryCalculatorContext getNoItCalculatorContext(
+								Connection conn, Date startDate, Date endDate,
+								Date issueDate, Criteria criteria, int start,
+								int end) {
+							ISQLContractSalaryCalculatorContext draftCtx;
+							try {
+								SQLNoItContractSalaryCalculatorContext sqlCtx = new SQLNoItContractSalaryCalculatorContext(
+										conn, startDate, endDate, issueDate,
+										criteria, start, end);
+								draftCtx = new SQLSalaryDraftCalculatorContext(
+										draft, sqlCtx);
+								draftCtx.next();
+								return draftCtx;
+							} catch (ExpressionException e) {
+								throw new ExpressionExceptionWrapper(e);
+							} catch (SQLException e) {
+								throw new ExpressionExceptionWrapper(
+										new ExpressionException(e));
+							}
+						}
+
+						@Override
+						protected IIrpfCalculatorContext getIrpfCalculatorContext(
+								Connection conn, Date startDate, Date endDate,
+								Criteria criteria) {
+							try {
+								SQLContractSalaryCalculatorContext sqlContractSalaryCalculatorCtx = new SQLContractSalaryCalculatorContext(
+										conn, startDate, endDate, endDate,
+										criteria) {
+
+									@Override
+									public double getIrpf() {
+										return 0.00;
+									}
+
+									@Override
+									public Object liquid(double liquid,
+											Date start, Date end)
+											throws ExpressionException,
+											SQLException {
+										return x;
+									}
+
+								};
+
+								SQLSalaryDraftCalculatorContext sqlDraftSalaryCalculatorCtx = new SQLSalaryDraftCalculatorContext(
+										draft, sqlContractSalaryCalculatorCtx);
+
+								return new SQLIrpfCalculatorContext(conn,
+										startDate, endDate,
+										sqlDraftSalaryCalculatorCtx) {
+									@Override
+									public String getNif() {
+										return "87449445H";
+									}
+
+									@Override
+									public String getApellidosNombre() {
+										return "TORVALDS BENEDICT LINUS";
+									}
+
+									@Override
+									public String getRetenedorNif() {
+										return "Z7896423E";
+									}
+
+									@Override
+									public String getRetenedorApellidosNombre() {
+										return "LINUX FOUNDATION";
+									}
+								};
+							} catch (SQLException e) {
+								throw new ExpressionExceptionWrapper(
+										new ExpressionException(e));
+							} catch (ExpressionException e) {
+								throw new ExpressionExceptionWrapper(e);
+							}
+						}
+
+					};
+					SQLSalaryDraftCalculatorContext sqlDraftSalaryCalculatorCtx = new SQLSalaryDraftCalculatorContext(
+							draft, sqlContractSalaryCalculatorCtx);
+
+					sqlDraftSalaryCalculatorCtx
+							.setListener(SalaryCalculatorContextImpl.this
+									.getListener());
+
+					sqlDraftSalaryCalculatorCtx.next();
+					return sqlDraftSalaryCalculatorCtx;
+
+				} catch (ExpressionException e) {
+					throw new ExpressionExceptionWrapper(e);
+				} catch (SQLException e) {
+					throw new ExpressionExceptionWrapper(
+							new ExpressionException(e));
+				}
+			}
+
+			@Override
+			protected ISQLContractSalaryCalculatorContext getNoItCalculatorContext(
+					Connection conn, Date startDate, Date endDate,
+					Date issueDate, Criteria criteria, int start, int end) {
+
+				ISQLContractSalaryCalculatorContext draftCtx;
+				try {
+					SQLNoItContractSalaryCalculatorContext sqlCtx = new SQLNoItContractSalaryCalculatorContext(
+							conn, startDate, endDate, issueDate, criteria,
+							start, end);
+					draftCtx = new SQLSalaryDraftCalculatorContext(draft,
+							sqlCtx);
+					draftCtx.next();
+					return draftCtx;
+				} catch (ExpressionException e) {
+					throw new ExpressionExceptionWrapper(e);
+				} catch (SQLException e) {
+					throw new ExpressionExceptionWrapper(
+							new ExpressionException(e));
+				}
+
+			}
+
+		}
+
+		SalaryCalculatorContextImpl ctx = new SalaryCalculatorContextImpl(conn,
+				draft.getStartDate(), draft.getEndDate(), draft.getIssueDate(),
+				criteria);
+
+		ctx.setListener(listener);
+//		ctx.next();
+
+		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
+				draft, ctx);
+		draftCtx.setListener(listener);
+		return draftCtx;
+	}
+
+	private static String tableCol(String table, String col) {
+		return String.format("%1$s.%2$s", table, col);
 	}
 
 }
