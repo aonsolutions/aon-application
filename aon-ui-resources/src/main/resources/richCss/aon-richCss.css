@@ -2881,6 +2881,12 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .aon-icon-minus-grey{
 	background:transparent url(images/aon-icon/aon-icon-minus-grey.png) scroll left center no-repeat;
 }
+.aon-icon-plus{
+	background:transparent url(images/aon-icon/aon-icon-plus.png) scroll left center no-repeat;
+}
+.aon-icon-plus-blue{
+	background:transparent url(images/aon-icon/aon-icon-plus-blue.png) scroll left center no-repeat;
+}
 .aon-icon-check-blue{
 	background:transparent url(images/aon-icon/aon-icon-check-blue.png) scroll left center no-repeat;
 }

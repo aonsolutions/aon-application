@@ -6,14 +6,12 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.faces.component.richfaces.lookup.inputText.JoinProperty;
 import com.code.aon.faces.controller.RichLookupBean;
@@ -43,34 +41,9 @@ public class ItemLookup extends RichLookupBean implements IItemConstants {
 		return (ProductController)AonUtil.getRegisteredBean(PRODUCT);
 	}
 
-	public boolean isSearchProductEnabled() throws ManagerBeanException {
-		return getProductController().getDetailLevel() > 0 || getProductCollectionsController().getSerializableProductCount() > 0;
-	}
-
-	public void onSearchProduct(ActionEvent event) {
-		Product product = ((Item)getTo()).getProduct();
-		if (StringUtils.isNotEmpty(product.getCode())) {
-			try {
-				IManagerBean productBean = BeanManager.getManagerBean(Product.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(productBean.getFieldName(IEntityAlias.PRODUCT_CODE), product.getCode());
-				Expression expDet = ExpressionUtilities.getNotNullExpression(productBean.getFieldName(IEntityAlias.PRODUCT_PRODUCT_CATEGORY_DETAIL));
-				Expression expDet2 = ExpressionUtilities.getNotEqualExpression(productBean.getFieldName(IEntityAlias.PRODUCT_PRODUCT_CATEGORY_DETAIL), "");
-				Expression expSer = ExpressionUtilities.getEqualExpression(productBean.getFieldName(IEntityAlias.PRODUCT_SERIALIZABLE), Boolean.TRUE);
-				criteria.addExpression(ExpressionUtilities.getOrExpression(ExpressionUtilities.getAndExpression(expDet, expDet2), expSer));
-				List<ITransferObject> productList = productBean.getList(criteria, 0, 1);
-				if (productList.size() > 0) {
-					((Item)getTo()).setProduct((Product)productList.get(0));
-				} else {
-					product.setId(null);
-				}
-			} catch (ManagerBeanException ex) {ex.printStackTrace();}
-		}
-	}
-
-	public void onCodeChanged(ValueChangeEvent event) {
-		Product product = ((Item)getTo()).getProduct();
-		product.setCode((event.getNewValue() != null) ? event.getNewValue().toString().toUpperCase() : null);
+	public void onResetItem(ActionEvent event) throws ManagerBeanException {
+		Item item = (Item)getTo();
+		getProductController().updateItemPrices(item);
 	}
 
 	public void onSerializableChanged(ValueChangeEvent event) {

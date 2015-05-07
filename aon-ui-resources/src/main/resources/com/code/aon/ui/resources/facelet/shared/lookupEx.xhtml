@@ -74,6 +74,9 @@
 				<ui:insert name="newButtonContent"/>
 			</aon:lookupButton>
 		</aon:if>
+
+		<ui:insert name="afterLookupButtonContent"/>
+
 		<aon:if test="#{!skipSuggestText}">																		
 			<aon:lookupSuggestText id="#{pojoName}_name#{lookupSuffix}"
 				lookup="#{lookupBean}" lookupProperty="#{lookupProperty}"

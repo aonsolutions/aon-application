@@ -12,6 +12,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tax;
@@ -108,31 +110,35 @@ public class ProductController extends BasicController implements IAuditableCont
 	
 	public void onAcceptItem(ActionEvent event) throws ManagerBeanException {
 		ItemController itemController = getItemController();
-		ItemController.clearBarcode((Item)itemController.getTo());
-		updateItem(itemController);
+		Item item = (Item)itemController.getTo();
+		ItemController.clearBarcode(item);
+		updateItem(item);
 		itemController.accept(event);
 		getManagerBean().initializePOJO(getTo());
 	}
 
 	public void onCancelItem(ActionEvent event) throws ManagerBeanException {
 		ItemController itemController = getItemController();
+		Item item = (Item)itemController.getTo();
 		itemController.onCancel(event);
 		itemController.setCurrentItem(saveStateItem);
-		updateItem(itemController);
+		updateItem(item);
 	}
 
 	public void onResetItem(ActionEvent event) throws ManagerBeanException {
 		ItemController itemController = getItemController();
-		this.saveStateItem = (Item)itemController.getTo();	
+		Item item = (Item)itemController.getTo();
+		this.saveStateItem = item;
 		itemController.onReset(event);
-		updateItem(itemController);
-		updateItemPrices(itemController);
+		updateItem(item);
+		updateItemPrices(item);
 	}
 
 	public void onSelectItem(ActionEvent event) {
 		ItemController itemController = getItemController();
+		Item item = (Item)itemController.getTo();
 		itemController.onSelect(event);
-		updateItem(itemController);
+		updateItem(item);
 	}
 	
 	public void onRemoveItem(ActionEvent event) throws ManagerBeanException {
@@ -144,10 +150,8 @@ public class ProductController extends BasicController implements IAuditableCont
 		}
 	}
 
-	private void updateItem(ItemController itemController) {
-		Product product = (Product)getTo();
-		Item item = (Item)itemController.getTo();
-		item.setProduct(product);		
+	public void updateItem(Item item) {
+		item.setProduct((Product)getTo());		
 		if (!isShowDetail()) {
 			item.setDetail(null);
 			item.setDetail2(null);
@@ -158,18 +162,18 @@ public class ProductController extends BasicController implements IAuditableCont
 		} else if (!isShowDetail3()) {
 			item.setDetail3(null);
 		}
-		if (!product.isSerializable()) {
+		if (!item.getProduct().isSerializable()) {
 			item.setSerialNumber(null);
 			item.setSerialDate(null);
 		}
 	}
 
-	private void updateItemPrices(ItemController itemController) throws ManagerBeanException {
-		Item item = (Item)itemController.getTo();
+	public void updateItemPrices(Item item) throws ManagerBeanException {
+		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(itemController.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), item.getProduct().getId());
-		criteria.addOrder(itemController.getFieldName(IEntityAlias.ITEM_ID), false);
-		List<ITransferObject> itemList = itemController.getManagerBean().getList(criteria, 0, 1);
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), item.getProduct().getId());
+		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_ID), item.getProduct().isSerializable());
+		List<ITransferObject> itemList = itemBean.getList(criteria, 0, 1);
 		if (!itemList.isEmpty()) {
 			Item lastItem = (Item)itemList.get(0);
 			item.setPurchasePrice(lastItem.getPurchasePrice());

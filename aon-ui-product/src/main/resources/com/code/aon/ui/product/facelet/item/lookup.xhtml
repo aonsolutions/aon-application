@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
@@ -17,14 +18,36 @@
 		<ui:param name="controller" value="#{product}" />
 		<ui:param name="searchButtonWidth" value="740" />
 		<ui:param name="searchButtonTitle" value="#{bundle.product_item_selection}" />
+		<ui:param name="newButtonHeight" value="560" />
 		<ui:param name="newButtonTitle" value="#{bundle.product_item_new}" />
 		<ui:param name="skipGoToButtonEx" value="#{actionDenied.skip['product'] or skipGoToButton}" />
-		<ui:param name="skipNewButtonEx" value="#{actionDenied.skip['product'] or skipNewButton}" />		
-				
+		<ui:param name="skipNewButtonEx" value="#{actionDenied.skip['product'] or skipNewButton}" />
+
 		<ui:define name="lookupInputTextContent">
 			<aon:joinProperty alias="Item_product_code" value="#{lookupInputValue}" />
 			<aon:joinProperty alias="Item_barcode" value="#{lookupInputValue}" orExpression="#{true}" />			
 		</ui:define>		
+
+		<ui:define name="afterLookupButtonContent">
+			<aon:if test="#{!skipNewButtonEx and lookupTo.product.id != null and (lookupTo.product.serializable or !empty lookupTo.product.category.detail)}">
+				<aon:lookupButton 
+					windowTitle="#{newButtonTitle}"
+					styleClass="aon-icon-plus aon-noborder"
+					disabled="#{lookupDisabled}" actionType="new"
+					minHeight="#{newButtonHeight}" minWidth="#{newButtonWidth}"
+					property="#{lookupTo}" lookup="#{lookupBean}"
+					lookupProperty="#{lookupProperty}"
+					lookupChangeListener="#{lookupChangeListener}"
+					controllerListener="#{lookupControllerListener}"
+					lookupAction="#{lookupAction}"
+					rendered="true"
+					selectReRender="#{lookup_reRender}" >
+					<f:setPropertyActionListener target="#{lookupBean.to.product}"
+						value="#{lookupTo.product}" />
+					<aon:actionListener method="#{lookupBean.onResetItem}" />
+				</aon:lookupButton>
+			</aon:if>
+		</ui:define>
 	</ui:decorate>
 
 </ui:composition>
