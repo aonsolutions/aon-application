@@ -44,6 +44,16 @@
 			<version>1.1.8</version>
 		</dependency>
 		<dependency>
+			<groupId>es.mityc</groupId>
+			<artifactId>lib-policy</artifactId>
+			<version>1.1.8</version>
+		</dependency>
+		<dependency>
+			<groupId>es.mityc</groupId>
+			<artifactId>lib-trust</artifactId>
+			<version>1.1.8</version>
+		</dependency>
+		<dependency>
 			<groupId>xml-security</groupId>
 			<artifactId>xmlsec-adsi</artifactId>
 			<version>1.4.2</version>

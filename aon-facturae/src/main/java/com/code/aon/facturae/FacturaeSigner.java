@@ -82,6 +82,9 @@ public class FacturaeSigner {
             dataToSign.setEsquema(XAdESSchemas.XAdES_132);
             	
             dataToSign.setXMLEncoding("UTF-8");
+            
+            dataToSign.setAddPolicy(true);
+            dataToSign.setPolicyKey("facturae31");
 
             dataToSign.addClaimedRol(new SimpleClaimedRole("Emisor"));
             dataToSign.setEnveloped(true);
