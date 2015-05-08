@@ -11,13 +11,10 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.faces.controller.LogPanelController;
-import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
-import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.finance.BasicExporter;
@@ -143,7 +140,9 @@ public class FBatchExporterController extends BasicController implements IFinanc
 			if ( ! isRecorded() ) {			
 				for( Serializable id : getCheckList() ) {
 					FinanceBatch fbatch = (FinanceBatch) session.get(FinanceBatch.class, id);
-					recordFinanceBatch(sessionName, fbatch);
+					if ( fbatch.getFinanceBatchStatus() != FinanceBatchStatus.RECORDED ) {
+						recordFinanceBatch(sessionName, fbatch);	
+					}
 				}
 			}
 			HibernateUtil.closeSession(sessionName);			
