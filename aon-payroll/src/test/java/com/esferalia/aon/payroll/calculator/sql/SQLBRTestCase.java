@@ -391,15 +391,10 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
 				endITDate, null);
 
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(
-				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
-				contract.getId());
-
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
-				connection, startDate, endDate, endDate, criteria);
+				connection, startDate, endDate, endDate, contract);
 
 		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder());
@@ -458,15 +453,10 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
 				endITDate, null);
 
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(
-				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
-				contract.getId());
-
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
-				connection, startDate, endDate, endDate, criteria);
+				connection, startDate, endDate, endDate, contract);
 
 		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder());
@@ -524,15 +514,10 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
 				endITDate, null);
 
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(
-				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
-				contract.getId());
-
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
-				connection, startDate, endDate, endDate, criteria);
+				connection, startDate, endDate, endDate, contract);
 
 		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder());
@@ -593,15 +578,10 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
 				null, null);
 
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(
-				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
-				contract.getId());
-
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
-				connection, startDate, endDate, endDate, criteria);
+				connection, startDate, endDate, endDate, contract);
 		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		ISalary salary = calculator.calculate(ctx);
@@ -612,7 +592,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		startDate = getFirstDayOfMonth(add(getToday(), MONTH,1));
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(
-				connection, startDate, endDate, endDate, criteria);
+				connection, startDate, endDate, endDate, contract);
 		salary = calculator.calculate(ctx);
 		Assert.assertEquals(format("%s :", TOTAL_PAYMENT), 1750.00, salary.getTotalPayment(),
 				DELTA);
@@ -622,7 +602,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 			startDate = getFirstDayOfMonth(add(getToday(), MONTH,i));
 			endDate = getLastDayOfMonth(startDate);
 			ctx = getContractSalaryCalculatorContext(
-					connection, startDate, endDate, endDate, criteria);
+					connection, startDate, endDate, endDate, contract);
 			salary = calculator.calculate(ctx);
 			Assert.assertEquals(format("%s :", TOTAL_PAYMENT), 1750.00, salary.getTotalPayment(),
 					DELTA);
@@ -678,15 +658,10 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
 				null, null);
 
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(
-				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
-				contract.getId());
-
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
-				connection, startDate, endDate, endDate, criteria);
+				connection, startDate, endDate, endDate, contract);
 		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		ISalary salary = calculator.calculate(ctx);
@@ -694,20 +669,12 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				DELTA);
 		Assert.assertEquals(format("%s :", CGC_BASE), 1750.00, salary.getCommonBase(), DELTA);
 
-		startDate = getFirstDayOfMonth(add(getToday(), MONTH,1));
-		endDate = getLastDayOfMonth(startDate);
-		ctx = getContractSalaryCalculatorContext(
-				connection, startDate, endDate, endDate, criteria);
-		salary = calculator.calculate(ctx);
-		Assert.assertEquals(format("%s :", TOTAL_PAYMENT), 1750.00, salary.getTotalPayment(),
-				DELTA);
-		Assert.assertEquals(format("%s :", CGC_BASE), 1750.00, salary.getCommonBase(), DELTA);
 		
 		for ( int i = 1; i <= 10 ; i++ ) {
 			startDate = getFirstDayOfMonth(add(getToday(), MONTH,i));
 			endDate = getLastDayOfMonth(startDate);
 			ctx = getContractSalaryCalculatorContext(
-					connection, startDate, endDate, endDate, criteria);
+					connection, startDate, endDate, endDate, contract);
 			salary = calculator.calculate(ctx);
 			Assert.assertEquals(format("%s :", TOTAL_PAYMENT), 1750.00, salary.getTotalPayment(),
 					DELTA);
@@ -762,15 +729,10 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
 				null, null);
 
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(
-				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
-				contract.getId());
-
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
-				connection, startDate, endDate, endDate, criteria);
+				connection, startDate, endDate, endDate, contract);
 		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		ISalary salary = calculator.calculate(ctx);
@@ -778,20 +740,11 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				DELTA);
 		Assert.assertEquals(format("%s :", CGC_BASE), 1750.00, salary.getCommonBase(), DELTA);
 
-		startDate = getFirstDayOfMonth(add(getToday(), MONTH,1));
-		endDate = getLastDayOfMonth(startDate);
-		ctx = getContractSalaryCalculatorContext(
-				connection, startDate, endDate, endDate, criteria);
-		salary = calculator.calculate(ctx);
-		Assert.assertEquals(format("%s :", TOTAL_PAYMENT), 1750.00, salary.getTotalPayment(),
-				DELTA);
-		Assert.assertEquals(format("%s :", CGC_BASE), 1750.00, salary.getCommonBase(), DELTA);
-		
 		for ( int i = 1; i <= 10 ; i++ ) {
 			startDate = getFirstDayOfMonth(add(getToday(), MONTH,i));
 			endDate = getLastDayOfMonth(startDate);
 			ctx = getContractSalaryCalculatorContext(
-					connection, startDate, endDate, endDate, criteria);
+					connection, startDate, endDate, endDate, contract);
 			salary = calculator.calculate(ctx);
 			Assert.assertEquals(format("%s :", TOTAL_PAYMENT), 1750.00, salary.getTotalPayment(),
 					DELTA);

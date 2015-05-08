@@ -2668,6 +2668,7 @@ public class SQLContractSalaryCalculatorContext extends
 								issueDate, expressionContext, taxCalculator,
 								quoteCalculator);
 					} catch ( SalaryExpressionException e ) {
+						//e.printStackTrace();
 					}
 				};
 			}.calculate(ctx);
@@ -2675,6 +2676,7 @@ public class SQLContractSalaryCalculatorContext extends
 					/ ctx.getExpressionContext().getVariable(QUOTE_DAYS,
 							ctx.getStartDate(), ctx.getEndDate(), Double.class);
 		} catch (Throwable t) {
+			t.printStackTrace();
 			throw t;
 		}
 	}
