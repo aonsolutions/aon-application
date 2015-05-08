@@ -18,8 +18,10 @@ import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.common.AonException;
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.common.enumeration.AppParam;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.product.strategy.TaxBreakDown;
 
 public class ContaPlusWriter extends BasicExporter {
@@ -28,15 +30,52 @@ public class ContaPlusWriter extends BasicExporter {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContaPlusWriter.class);
 
-	public static final String DBF_SUFFIX = ".dbf";
+	private static final String DEFAULT_CHARGED_VAT_ACCOUNT = "477000000";
+	
+	private static final String DEFAULT_PAID_VAT_ACCOUNT = "472000000";
+
+	private static final String DEFAULT_SALES_ACCOUNT = "700000000";
+	
+	private static final String CHARGED_VAT_ACCOUNT = "4772100000";
+	
+	private static final String SALES_T_ACCOUNT = "7050500000";
+	
+	private static final String SALES_F_ACCOUNT = "7050600000";
+	
+	private static final String SALES_G_ACCOUNT = "7050700000";
+
+	private static final String DBF_SUFFIX = ".dbf";
+
+	private String salesAccount;
+	
+	private String chargedVat;
+	
+	private String paidVat;
 	
 	private List<Object[]> lines;
 	
 	public ContaPlusWriter(InvoiceExportConfiguration configuration) {
 		super(configuration);
 		this.lines = new LinkedList<Object[]>();
+		this.salesAccount = obtainAccount(AppParam.ACC_DEFAULT_SALES_ACC, DEFAULT_SALES_ACCOUNT);
+		this.chargedVat = obtainAccount(AppParam.ACC_DEFAULT_CHARGED_VAT_ACC, DEFAULT_CHARGED_VAT_ACCOUNT);
+		this.paidVat = obtainAccount(AppParam.ACC_DEFAULT_PAID_VAT_ACC, DEFAULT_PAID_VAT_ACCOUNT);
 	}
 
+	private String obtainAccount( AppParam appPparam, String _default ) {
+		String code = _default; 
+		Integer id = AppParamUtil.getValueAsInteger(appPparam);
+		if ( id != null ) {
+			try {
+				Account account = (Account) BeanManager.getManagerBean(Account.class).get(id);
+				code = account.getCode();
+			} catch (ManagerBeanException e) {
+				LOGGER.error(e.getMessage(), e);
+			} 
+		}
+		return code;
+	}
+	
 	@Override
 	public InvoiceExportType getType() {
 		return InvoiceExportType.CONTA_PLUS;
@@ -44,10 +83,7 @@ public class ContaPlusWriter extends BasicExporter {
 	
 	@Override
 	protected boolean isSkipAccount(Account account) {
-		if (! isInvoiceExport() ) {
-			return false;			
-		}
-		return super.isSkipAccount(account);
+		return false;
 	}	
 	
 	private String getString( String value, int maxLength) {
@@ -60,19 +96,16 @@ public class ContaPlusWriter extends BasicExporter {
 	
 	@Override
 	public void write( AccountEntry accountEntry ) throws IOException, ManagerBeanException {
-		writeAccounts( accountEntry, getRegistryDetail() );
+		if ( getRegistryDetail() != null ) {
+			writeAccounts( accountEntry, getRegistryDetail() );
+		}
 		for( AccountEntryDetail aed : getDetails() ) {
 			writeAccounts( accountEntry, aed );				
 		}
 	}
-	
-	private TaxBreakDown getVat( AccountEntryDetail aed ) {
-		for ( TaxBreakDown tax : getTaxes(aed) ) {
-			if ( tax.getTaxType() == TaxType.VAT ) {
-				return tax;
-			}
-		}
-		return null;
+
+	private TaxBreakDown getVat() {
+		return getNextTax(getTaxBreakDowns());
 	}
 	
 	private Account getRegistryAccount() {
@@ -86,12 +119,44 @@ public class ContaPlusWriter extends BasicExporter {
 		String code = account.getCode();
 		if ( ObjectUtils.equals(account, getRegistryAccount()) ) {
 			code = StringUtils.substring(code, 0, 3) + "0" + StringUtils.substring(code, 3); 
+		} else if ( StringUtils.equals(salesAccount, code) ) {
+			if ( "T".equals(getInvoiceSeries()) ) {
+				code = SALES_T_ACCOUNT;
+			} else if ( "F".equals(getInvoiceSeries()) ) {
+				code = SALES_F_ACCOUNT;
+			} else if ( "G".equals(getInvoiceSeries()) ) {
+				code = SALES_G_ACCOUNT;
+			}
+		} else if ( StringUtils.equals(chargedVat, code) ) {
+			code = CHARGED_VAT_ACCOUNT;
 		}
 		return getString( code, 12 );
 	}
 	
-	private void writeAccounts( AccountEntry accountEntry, AccountEntryDetail aed ) throws IOException {
+	private boolean isVatAccount( Account account ) {
+		return StringUtils.equals(chargedVat, account.getCode()) || 
+				StringUtils.equals(paidVat, account.getCode());
+	}
+	
+	private Integer getFacturaNumber() {
+		if ( getInvoiceNumber() != null ) {
+			int number = getInvoiceNumber();
+			if ( "T".equals(getInvoiceSeries()) ) {
+				number += 1000000;
+			} else if ( "F".equals(getInvoiceSeries()) ) {
+				number += 1100000;
+			} else if ( "G".equals(getInvoiceSeries()) ) {
+				number += 1400000;
+			}			
+			return number;
+		}
+		return getMainId();
+	}
+	
+	private void writeAccounts( AccountEntry accountEntry, AccountEntryDetail aed ) throws IOException, ManagerBeanException {
 		Object[] data = new Object[32];
+		
+		boolean vatAccount = isVatAccount(aed.getAccount());
 		
 		// 01 - ASIEN (N6)
 		data[0] = getJournal(accountEntry);
@@ -114,15 +179,20 @@ public class ContaPlusWriter extends BasicExporter {
 		// 07 - PTAHABER (N16, 2)
 		data[6] = 0.0;
 		// 08 - FACTURA (N8)
-		data[7] = getMainId();
+		if ( vatAccount ) {
+			data[7] = getFacturaNumber();	
+		}
 		// 09 - BASEIMPO (N16, 2)
 		data[8] = 0.0;
-		TaxBreakDown vat = getVat(aed);
-		if ( vat != null ) {
-			// 10 - IVA (N5, 2)
-			data[9] = vat.getTaxPercent();	
-			// 11 - RECEQUIV (N5, 2)
-			data[10] = vat.getSurchargePercent();
+		TaxBreakDown vat = null;
+		if ( vatAccount ) {
+			vat = getVat();
+			if ( vat != null ) {
+				// 10 - IVA (N5, 2)
+				data[9] = vat.getTaxPercent();	
+				// 11 - RECEQUIV (N5, 2)
+				data[10] = vat.getSurchargePercent();				
+			}
 		}
 		// 12 - DOCUMENTO (C10)
 		data[11] = getString(getReferenceCode(), 10 );

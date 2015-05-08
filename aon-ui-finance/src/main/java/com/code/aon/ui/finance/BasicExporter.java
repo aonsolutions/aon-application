@@ -142,6 +142,10 @@ public abstract class BasicExporter implements Serializable {
 	
 	private boolean renting;
 	
+	private String invoiceSeries;
+	
+	private Integer invoiceNumber;
+	
 	public BasicExporter( InvoiceExportConfiguration configuration ) {
 		this.configuration = configuration;
 	}
@@ -227,6 +231,8 @@ public abstract class BasicExporter implements Serializable {
 		this.withholdingFarmer = invoice.isWithholdingFarmer();
 		this.ticket = (invoice.getPosShift() != null) && (invoice.getPosShift().getId() != null);
 		this.renting = calculateRenting();
+		this.invoiceSeries = invoice.getSeries();
+		this.invoiceNumber = invoice.getNumber();
 	}
 	
 	private void initBasic( Finance finance ) throws ManagerBeanException {
@@ -382,6 +388,14 @@ public abstract class BasicExporter implements Serializable {
 	
 	public boolean isRenting() {
 		return renting;
+	}
+
+	public String getInvoiceSeries() {
+		return invoiceSeries;
+	}
+
+	public Integer getInvoiceNumber() {
+		return invoiceNumber;
 	}
 
 	private boolean calculateRenting() throws ManagerBeanException {
