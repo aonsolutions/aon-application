@@ -600,7 +600,7 @@ public class Mod390DAO {
 					.from(FS_MODEL390)
 					.where(FS_MODEL390.YEAR.equal(mod390.getYear())
 					.and(FS_MODEL390.ENTERPRISE.equal(mod390.getEnterprise()))
-					.and(FS_MODEL390.RECEIPT.equal(mod390.getReplacedReceipt()))).fetchCount() == 0) 
+					.and(FS_MODEL390.REPLACEMENT.equal((byte)0))).fetchCount() == 0) 
 				throw new AonCoreException(
 						AonError.FISCAL_NO_REPLACED_DECLARATION.getMessage());
 
