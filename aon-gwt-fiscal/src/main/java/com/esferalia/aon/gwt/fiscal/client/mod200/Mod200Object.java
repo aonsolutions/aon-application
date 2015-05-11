@@ -7,11 +7,10 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.UndoManager;
 import com.esferalia.aon.gwt.common.client.Undoable;
-import com.esferalia.aon.gwt.fiscal.client.Mod200ServiceAsyncDecorator;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.DoubleVariable;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
 import com.esferalia.aon.occam.api.model.CompanyBank;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.DoubleVariable;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Key;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -70,23 +69,20 @@ public class Mod200Object implements Serializable, IsSerializable {
 	private int domain;
 	private int year;
 	private Mod200 mod200;
-	private Mod200ServiceAsyncDecorator mod200Service;
 	private UndoManager<UndoableEdit<?>> undoManager;
 	
 	private boolean authomaticCalculation = true;
 	
-	public Mod200Object(String currentDomainName,int currentDomain,int year,
-			Mod200ServiceAsyncDecorator mod200Service) {
+	public Mod200Object(String currentDomainName,int currentDomain,int year) {
 		this.domainName = currentDomainName;
 		this.domain = currentDomain;
 		this.year = year;
-		this.mod200Service = mod200Service;
 		this.undoManager = new UndoManager<UndoableEdit<?>>();
 	}
 	
 	// ************************************
 	public void initializeMod200(final AsyncCallback<Mod200> callback) {
-		mod200Service.initialize(domainName,domain,mod200, new AsyncCallback<Mod200>() {
+		Model200.FISCAL_SERVICE.initializeMod200(domainName,domain,mod200, new AsyncCallback<Mod200>() {
 			
 			@Override
 			public void onSuccess(Mod200 result) {
@@ -102,7 +98,7 @@ public class Mod200Object implements Serializable, IsSerializable {
 	}
 
 	public void save(final AsyncCallback<Mod200> callback) {
-		mod200Service.save(domainName,domain,mod200, new AsyncCallback<Mod200>() {
+		Model200.FISCAL_SERVICE.saveMod200(domainName,domain,mod200, new AsyncCallback<Mod200>() {
 			
 			@Override
 			public void onSuccess(Mod200 result) {
@@ -117,12 +113,11 @@ public class Mod200Object implements Serializable, IsSerializable {
 		});
 	}
 	
-	public void delete(final AsyncCallback<Mod200> callback) {
-		mod200Service.delete(domainName,domain,mod200, new AsyncCallback<Mod200>() {
+	public void delete(final AsyncCallback<Void> callback) {
+		Model200.FISCAL_SERVICE.deleteMod200(domainName,domain,mod200.getId(), new AsyncCallback<Void>() {
 			
 			@Override
-			public void onSuccess(Mod200 result) {
-				mod200 = result;
+			public void onSuccess(Void result) {
 				callback.onSuccess(result);
 			}
 			
@@ -134,7 +129,7 @@ public class Mod200Object implements Serializable, IsSerializable {
 	}
 	
 	public void getMod200(final AsyncCallback<Mod200> callback) {
-		mod200Service.getMod200(domainName,domain, year, new AsyncCallback<Mod200>() {
+		Model200.FISCAL_SERVICE.getMod200ByYear(domainName,domain, year, new AsyncCallback<Mod200>() {
 			
 			@Override
 			public void onSuccess(Mod200 result) {
@@ -151,7 +146,7 @@ public class Mod200Object implements Serializable, IsSerializable {
 	// ************************************
 	
 	public Administration getAdministration() {
-		return Administration.values()[mod200.getAdministration()];
+		return mod200.getAdministration();
 	} 
 	public boolean isAuthomaticCalculation() {
 		return authomaticCalculation;
@@ -210,7 +205,7 @@ public class Mod200Object implements Serializable, IsSerializable {
 	}
 
 	public void calculate() {
-		mod200Service.calculate(mod200, new AsyncCallback<Mod200>() {
+		Model200.FISCAL_SERVICE.calculateMod200(mod200, new AsyncCallback<Mod200>() {
 			
 			@Override
 			public void onSuccess(Mod200 result) {
@@ -242,7 +237,7 @@ public class Mod200Object implements Serializable, IsSerializable {
 	}
 
 	public void validate(final AsyncCallback<Mod200> callback) {
-		mod200Service.validate(mod200, new AsyncCallback<Mod200>() {
+		Model200.FISCAL_SERVICE.validateMod200(mod200, new AsyncCallback<Mod200>() {
 			
 			@Override
 			public void onSuccess(Mod200 result) {
@@ -258,7 +253,7 @@ public class Mod200Object implements Serializable, IsSerializable {
 	}
 	
 	public void dumpAEAT(final AsyncCallback<String> callback) {
-		mod200Service.dumpAEAT(mod200, new AsyncCallback<String>() {
+		Model200.FISCAL_SERVICE.dumpAEAT(mod200, new AsyncCallback<String>() {
 			
 			@Override
 			public void onSuccess(String result) {
@@ -273,7 +268,7 @@ public class Mod200Object implements Serializable, IsSerializable {
 	}
 
 	public void getCompanyBanks(final AsyncCallback<ArrayList<CompanyBank>> callback) {
-		mod200Service.getCompanyBanks(domainName,domain,mod200.getEnterprise(), new AsyncCallback<ArrayList<CompanyBank>>() {
+		Model200.COMMON_SERVICE.getCompanyBanks(domainName,domain,new AsyncCallback<ArrayList<CompanyBank>>() {
 			
 			@Override
 			public void onSuccess(ArrayList<CompanyBank> result) {

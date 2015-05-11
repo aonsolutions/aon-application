@@ -4,12 +4,13 @@ import static com.esferalia.aon.gwt.fiscal.client.mod200.Model200.MSG;
 import static com.esferalia.aon.gwt.fiscal.client.mod200.Model200.RESOURCES;
 
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
+import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.DoubleVariable;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Correction;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200CorrectionKey;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.DoubleVariable;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Correction;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CorrectionKey;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Key;
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;

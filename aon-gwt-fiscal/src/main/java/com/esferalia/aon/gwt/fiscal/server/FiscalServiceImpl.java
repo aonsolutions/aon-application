@@ -7,13 +7,13 @@ import java.util.LinkedList;
 import javax.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
-import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 import com.esferalia.aon.occam.api.model.type.Activities.Type1Activities;
@@ -45,7 +46,7 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 
 	// ------------------------------------------------------- FISCAL PARAMETERS
 	@Override
-	public FiscalParameters getFiscalParameters(String domainName,int domain) throws AonSQLException {
+	public FiscalParameters getFiscalParameters(String domainName,int domain) throws AonCoreException {
 		return AON.getFiscalParameters(domainName, domain);
 	}
 
@@ -53,6 +54,17 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	public FiscalModelMatrix getFiscalPanel(String domainName,
 			int domain, int year) {
 		return AON.getFiscalPanel(domainName, domain,year,this.getUserLogin());
+	}
+	
+	@Override
+	public LinkedList<IFiscalModel> getAllModels(String domainName,
+			int domain) {
+		return AON.getAllModels(domainName, domain,this.getUserLogin());
+	}
+	@Override
+	public LinkedList<IFiscalModel> getAllModels(String domainName,
+			int domain, int year) {
+		return AON.getAllModels(domainName, domain,year,this.getUserLogin());
 	}
 	
 	// ------------------------------------------------------ FISCAL ACTIVITIES
@@ -118,7 +130,7 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	}
 	
 	@Override
-	public ArrayList<Activity> getActivities(int activityGroup) throws AonSQLException {
+	public ArrayList<Activity> getActivities(int activityGroup) throws AonCoreException {
 		ArrayList<Activity> list = new ArrayList<Activity>();
 		TypeActivity[] types = null;
 		if (activityGroup == 0) {
@@ -133,7 +145,7 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 			types = Type7Activities.values();
 		}
 		if (types == null) {
-			throw new AonSQLException("Grupo de actividad no soportado " + activityGroup );
+			throw new AonCoreException("Grupo de actividad no soportado " + activityGroup );
 		}
 		Activity a;
 		for (TypeActivity type : types) {
@@ -321,6 +333,16 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 		return AON.save(domainName, mod131);
 	}
 
+	@Override
+	public void deleteMod131(String domainName, Mod131 mod131) {
+		AON.deleteMod131(domainName, mod131);
+	}
+
+	@Override
+	public Mod131 initializeMod131(String domainName, int domain, Mod131 mod131) {
+		return AON.initializeMod131(domainName, domain, mod131);
+	}
+
 	// ---------------------------------------------------------------MODELO 202
 	@Override
 	public Mod202 getMod202(String domainName,
@@ -345,12 +367,57 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	}
 
 	@Override
-	public Mod202 initializeMod202(String domainName, int domain) {
-		return AON.initialize(domainName, domain);
+	public Mod202 initializeMod202(String domainName, int domain, Mod202 mod202) {
+		return AON.initializeMod202(domainName, domain, mod202);
 	}
 
 	@Override
 	public void deleteMod202(String domainName, Mod202 mod202) {
 		AON.deleteMod202(domainName, mod202);
+	}
+
+	// ---------------------------------------------------------------MODELO 200
+	@Override
+	public Mod200 initializeMod200(String domainName, int domain, Mod200 mod200) {
+		return AON.initializeMod200(domainName,domain,mod200);
+	}
+
+	@Override
+	public Mod200 getMod200ByYear(String domainName, int domain, int year)
+			throws AonCoreException {
+		return AON.getMod200ByYear(domainName,domain,year);
+	}
+
+	@Override
+	public Mod200 getMod200ById(String domainName, int domain, int id)
+			throws AonCoreException {
+		return AON.getMod200ById(domainName,domain,id);
+	}
+
+	@Override
+	public Mod200 calculateMod200(Mod200 mod200) throws AonCoreException {
+		return AON.calculateMod200(mod200);
+	}
+
+	@Override
+	public Mod200 saveMod200(String domainName, int domain, Mod200 mod200)
+			throws AonCoreException {
+		return AON.saveMod200(domainName,domain,mod200);
+	}
+
+	@Override
+	public Mod200 validateMod200(Mod200 mod200) throws AonCoreException {
+		return AON.validateMod200(mod200);
+	}
+
+	@Override
+	public void deleteMod200(String domainName, int domain, int id)
+			throws AonCoreException {
+		AON.deleteMod200(domainName,domain,id);
+	}
+
+	@Override
+	public String dumpAEAT(Mod200 mod200) throws AonCoreException {
+		return AON.dumpAEAT(mod200);
 	}
 }

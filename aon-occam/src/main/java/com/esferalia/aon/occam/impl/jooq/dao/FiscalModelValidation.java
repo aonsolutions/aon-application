@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FiscalModelValidation {
 
@@ -18,7 +19,7 @@ public class FiscalModelValidation {
 	 * El dominio no puede estar vacio.
 	 */
 	public static BiConsumer<FiscalModel,AONContext> EMPTY_DOMAIN = (fm,ctx) -> {
-		if (fm.getDomain() == null) 
+		if (fm.getDomain() == 0) 
 			throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
 	};
 	
@@ -26,7 +27,7 @@ public class FiscalModelValidation {
 	 * El ejercicio no puede estar vacio.
 	 */
 	public static BiConsumer<FiscalModel,AONContext> EMPTY_YEAR = (fm,ctx) -> {
-		if (fm.getYear() == null) 
+		if (fm.getYear() == 0) 
 			throw new AonCoreException(AonError.EMPTY_YEAR.getMessage());
 	};
 
@@ -81,11 +82,29 @@ public class FiscalModelValidation {
 		}
 	};
 
+	/**
+	 * El telefono debe tener nueve caracters como maximo.
+	 */
+	public static BiConsumer<FiscalModel,AONContext> CONTACT_CELLULAR = (fm,ctx) -> {
+		if (AonStringUtils.length( fm.getContactCellular()) > 9  ) 
+			throw new AonCoreException(AonError.INVALID_LENGTH.format( "Tel\u00E9fono de Contacto", "9" ));
+	};
+
+	/**
+	 * El telefono debe tener nueve caracters como maximo.
+	 */
+	public static BiConsumer<FiscalModel,AONContext> CONTACT_PHONE = (fm,ctx) -> {
+		if (AonStringUtils.length( fm.getContactPhone()) > 9  ) 
+			throw new AonCoreException(AonError.INVALID_LENGTH.format( "Tel\u00E9fono de Contacto", "9" ));
+	};
+
 	public static void validate(AONContext ctx, FiscalModel fm) {
 		EMPTY_DOMAIN
 		.andThen(EMPTY_YEAR)
 		.andThen(INVALID_YEAR)
 		.andThen(EMPTY_PERIOD)
+		.andThen(CONTACT_CELLULAR)
+		.andThen(CONTACT_PHONE)
 		.andThen(SAME_PERIOD_EXISTS_CHECK)
 		.accept(fm, ctx);
 	}

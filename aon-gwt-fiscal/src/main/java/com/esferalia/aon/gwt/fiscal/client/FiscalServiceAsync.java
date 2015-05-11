@@ -1,4 +1,3 @@
-
 package com.esferalia.aon.gwt.fiscal.client;
 
 import java.util.ArrayList;
@@ -8,6 +7,7 @@ import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -28,8 +29,13 @@ public interface FiscalServiceAsync {
 	void getFiscalParameters(String domainName,int domain,AsyncCallback<FiscalParameters> callback);
 
 	// ------------------------------------------------------ FISCAL PANEL
-	void getFiscalPanel(String currentDomainName,int currentDomain,int y,
+	void getFiscalPanel(String currentDomainName,int currentDomain,int year,
 			AsyncCallback<FiscalModelMatrix> asyncCallback);
+	void getAllModels(String domainName, int domain, 
+			AsyncCallback<LinkedList<IFiscalModel>> callback);
+	void getAllModels(String domainName, int domain, int year,
+			AsyncCallback<LinkedList<IFiscalModel>> callback);
+
 	// ------------------------------------------------------ FISCAL ACTIVITIES
 	void calculate(String domainName, FiscalActivity fa,AsyncCallback<FiscalActivity> callback);
 	void getModuleEpigraphs(int year, AsyncCallback<ArrayList<Epigraph>> callback);
@@ -45,8 +51,7 @@ public interface FiscalServiceAsync {
 			AsyncCallback<Void> callback);
 	
 	// ------------------------------------------------------ FISCAL MODELS
-	void getFiscalModels(String domainName, int domain,
-			AsyncCallback<LinkedList<FiscalModel>> callback);
+	void getFiscalModels(String domainName, int domain,AsyncCallback<LinkedList<FiscalModel>> callback);
 	void getFiscalModel(String domainName, int domain, int id,AsyncCallback<FiscalModel> callback);
 	void save(String domainName, FiscalModel fm,AsyncCallback<FiscalModel> callback);
 	void delete(String domainName, FiscalModel fm, AsyncCallback<Void> callback);
@@ -95,24 +100,30 @@ public interface FiscalServiceAsync {
 	void initializeMod390(String domainName, Integer domain, Integer year, AsyncCallback<Mod390> callback);
 
 	// ---------------------------------------------------------------MODELO 131
-	void getMod131(String domainName, int domain, int id,
-			AsyncCallback<Mod131> callback);
-	void getMod131s(String domainName, int domain,
-			AsyncCallback<LinkedList<Mod131>> callback);
-	void calculateMod131(String domainName, Mod131 mod131,
-			AsyncCallback<Mod131> callback);
+	void getMod131(String domainName, int domain, int id,AsyncCallback<Mod131> callback);
+	void getMod131s(String domainName, int domain,AsyncCallback<LinkedList<Mod131>> callback);
+	void calculateMod131(String domainName, Mod131 mod131,AsyncCallback<Mod131> callback);
 	void saveMod131(String domainName, Mod131 mod131,AsyncCallback<Mod131> asyncCallback);
+	void deleteMod131(String currentDomainName, Mod131 mod131,AsyncCallback<Void> callback);
+	void initializeMod131(String domainName, int domain, Mod131 mod131,AsyncCallback<Mod131> asyncCallback);
 
 	// ---------------------------------------------------------------MODELO 202
-	void getMod202(String domainName, int domain, int id,
-			AsyncCallback<Mod202> callback);
-	void getMod202s(String domainName, int domain,
-			AsyncCallback<LinkedList<Mod202>> callback);
-	void calculateMod202(String domainName, Mod202 mod202,
-			AsyncCallback<Mod202> callback);
-	void deleteMod202(String currentDomainName, Mod202 treeObject,
-			AsyncCallback<Void> callback);
+	void getMod202(String domainName, int domain, int id,AsyncCallback<Mod202> callback);
+	void getMod202s(String domainName, int domain,AsyncCallback<LinkedList<Mod202>> callback);
+	void calculateMod202(String domainName, Mod202 mod202,AsyncCallback<Mod202> callback);
+	void deleteMod202(String currentDomainName, Mod202 treeObject,AsyncCallback<Void> callback);
 	void saveMod202(String domainName, Mod202 mod202,AsyncCallback<Mod202> asyncCallback);
-	void initializeMod202(String currentDomainName, int currentDomain,
-			AsyncCallback<Mod202> asyncCallback);
+	void initializeMod202(String domainName, int domain, Mod202 mod202,AsyncCallback<Mod202> asyncCallback);
+
+	// ---------------------------------------------------------------MODELO 200
+	void initializeMod200(String domainName, int domain, Mod200 mod200,AsyncCallback<Mod200> callback);
+	void getMod200ByYear(String domainName, int domain, int year,AsyncCallback<Mod200> callback);
+	void calculateMod200(Mod200 mod200, AsyncCallback<Mod200> callback);
+	void deleteMod200(String domainName, int domain, int id,AsyncCallback<Void> callback);
+	void dumpAEAT(Mod200 mod200, AsyncCallback<String> callback);
+	void getMod200ById(String domainName, int domain, int id,AsyncCallback<Mod200> callback);
+	void saveMod200(String domainName, int domain, Mod200 mod200,AsyncCallback<Mod200> callback);
+	void validateMod200(Mod200 mod200, AsyncCallback<Mod200> callback);
+
+
 }

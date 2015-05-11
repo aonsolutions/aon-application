@@ -4,13 +4,14 @@ import static com.esferalia.aon.gwt.fiscal.client.mod200.Model200.RESOURCES;
 
 import java.util.ArrayList;
 
+import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
 import com.esferalia.aon.gwt.common.client.widget.IbanTextBox;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.DoubleVariable;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
 import com.esferalia.aon.occam.api.model.CompanyBank;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.DoubleVariable;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Key;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;

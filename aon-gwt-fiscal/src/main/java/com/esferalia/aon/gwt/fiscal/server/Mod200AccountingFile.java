@@ -1,14 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.commit;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.disableAutoCommit;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.enableAutoCommit;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.rollback;
-
 import java.io.IOException;
 import java.io.StringWriter;
-import java.sql.Connection;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,12 +11,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
-import com.esferalia.aon.gwt.common.sql.SQLUtils;
-import com.esferalia.aon.gwt.fiscal.server.mod200.xml.MOD2002013;
-import com.esferalia.aon.gwt.fiscal.server.mod200.xml.Mod200toMOD2002013;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200;
-import com.esferalia.aon.gwt.fiscal.sql.SQLMod200;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.impl.jooq.dao.mod200_2013.MOD2002013;
+import com.esferalia.aon.occam.impl.jooq.dao.mod200_2013.Mod200toMOD2002013;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod200 Accounting File", urlPatterns = { "/aon_gwt_fiscal/Model200AccountingFile" })
@@ -33,12 +25,11 @@ public class Mod200AccountingFile extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		Connection conn = null;
 		try {
-			conn = getConnection();
-			disableAutoCommit(conn);
 			int id = Integer.parseInt(req.getParameter("mod200"));
-			Mod200 mod200 = SQLMod200.getById(id, conn);
+			String domainName = req.getParameter("domainName");
+			int domainId = Integer.parseInt(req.getParameter("domainId"));
+			Mod200 mod200 = AON.getMod200ById(domainName,domainId,id);
 
 			MOD2002013 mod = Mod200toMOD2002013.getMOD2002013(mod200);
 			StringWriter writer = new StringWriter();
@@ -49,8 +40,6 @@ public class Mod200AccountingFile extends HttpServlet {
 			um.marshal(mod,writer);
 			String content = writer.toString();
 			
-			commit(conn);
-
 			String s = mod200.getEnterpriseName();
 			StringBuilder sb = new StringBuilder();
 			if (!Character.isJavaIdentifierStart(s.charAt(0))) {
@@ -70,11 +59,7 @@ public class Mod200AccountingFile extends HttpServlet {
 			}
 			resp.flushBuffer();
 		} catch (Throwable e) {
-			rollback(conn);
 			throw new ServletException(e);
-		} finally {
-			enableAutoCommit(conn);
-			SQLUtils.closeQuietly(conn);
 		}
 
 	}

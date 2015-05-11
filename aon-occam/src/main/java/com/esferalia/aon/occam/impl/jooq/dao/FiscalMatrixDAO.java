@@ -13,14 +13,16 @@ import static com.esferalia.aon.jooq.tables.FsVat.FS_VAT;
 import static com.esferalia.aon.jooq.tables.FsVatDeclaration.FS_VAT_DECLARATION;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
+import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix.FiscalModelMatrixItem;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix.FiscalStatus;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonEnumUtils;
@@ -34,15 +36,39 @@ public class FiscalMatrixDAO {
 	
 	public static FiscalModelMatrix getModelsPanel(AONContext ctx, int domain,int year,int user) {
 		FiscalModelMatrix matrix = new FiscalModelMatrix();
-		getModels(ctx, domain, year, user).forEach( item -> matrix.add(item));
+		Stream.concat(
+				getConfiguratedModels(ctx, domain, year, user)
+				,getModels(ctx, domain, year, user)) 
+				.forEach( item -> matrix.add(item));
 		return matrix;
 	}
-
-	public static Stream<FiscalModelMatrixItem> getModels(AONContext ctx, int domain,int year,int user) {
+	public static LinkedList<IFiscalModel> getAllModels(AONContext ctx, int domain,int year,int user) {
+		LinkedList<IFiscalModel> list = new LinkedList<IFiscalModel>();
+		getModels(ctx, domain, year, user) 
+			.forEach( item -> list.add(item));
+		return list;
 		
-		return Stream.concat(Stream.concat(Stream.concat(Stream.concat(Stream.concat(Stream.concat(Stream.concat(Stream.concat(
-				fillConfiguratedModels(ctx, domain, user)
-				,fillModel303(ctx, domain, year, user))
+	}
+	public static LinkedList<IFiscalModel> getAllModels(AONContext ctx, int domain,int user) {
+		LinkedList<IFiscalModel> list = new LinkedList<IFiscalModel>();
+		getModels(ctx, domain, Integer.MIN_VALUE, user) 
+			.forEach( item -> list.add(item));
+		return list;
+		
+	}
+	
+	private static Stream<IFiscalModel> getConfiguratedModels(AONContext ctx, int domain,int year,int user) {
+		return fillConfiguratedModels(ctx, domain, user);
+	}
+	private static Stream<IFiscalModel> getModels(AONContext ctx, int domain,int year,int user) {
+		return Stream.concat(
+				Stream.concat(
+				Stream.concat(
+				Stream.concat(
+				Stream.concat(
+				Stream.concat(
+				Stream.concat(
+				 fillModel303(ctx, domain, year, user)
 				,fillFiscalModel(ctx, domain, year, user))
 				,fillModel347(ctx, domain, year, user))
 				,fillModel349(ctx, domain, year, user))
@@ -52,7 +78,7 @@ public class FiscalMatrixDAO {
 				,fillModel200(ctx, domain, year, user))
 			.sorted( (a,b) -> {
 				int ret = Integer.compare(a.getYear(), b.getYear());
-				if (ret == 0) ret = Integer.compare(a.getDomainId(), b.getDomainId());
+				if (ret == 0) ret = Integer.compare(a.getDomain(), b.getDomain());
 				if (ret == 0) ret = Integer.compare(a.getModel().ordinal(), b.getModel().ordinal());
 				if (ret == 0) {
 					if (a.getAdministration() == null && b.getAdministration() == null) return 0;
@@ -65,9 +91,10 @@ public class FiscalMatrixDAO {
 		
 	}
 	
-	private static Stream<FiscalModelMatrixItem> fillModel303(AONContext ctx, int domain, int year,int user) {
+	private static Stream<IFiscalModel> fillModel303(AONContext ctx, int domain, int year,int user) {
+		
 			return ctx.getDslContext()
-				.select(FS_VAT.STATUS, FS_VAT.PERIOD,FS_VAT_DECLARATION.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
+				.select(FS_VAT.YEAR ,FS_VAT.STATUS, FS_VAT.PERIOD,FS_VAT_DECLARATION.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
 				.from(FS_VAT)
 				.join(DOMAIN).on( FS_VAT.DOMAIN.equal(DOMAIN.ID))
 				.leftOuterJoin(FS_VAT_DECLARATION).on( FS_VAT.ID.equal(FS_VAT_DECLARATION.FS_VAT))
@@ -79,14 +106,17 @@ public class FiscalMatrixDAO {
 							.where(USER_SCOPE.USER_ID.equal(user))
 							.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
 							)))
-					.and(FS_VAT.YEAR.equal(year))
+					.and(year==Integer.MIN_VALUE
+							?FS_VAT.YEAR.equal(FS_VAT.YEAR)
+							:FS_VAT.YEAR.equal(year)		
+						)
 				.orderBy(FS_VAT.PERIOD)
 				.fetch()
-				.map( rec -> { FiscalModelMatrixItem item = 
-					new FiscalModelMatrixItem()
-						.setDomainId(rec.getValue(DOMAIN.ID))
+				.map( rec -> { FiscalModel item = 
+					new FiscalModel()
+						.setDomain(rec.getValue(DOMAIN.ID))
 						.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
-						.setYear(year)
+						.setYear(rec.getValue(FS_VAT.YEAR))
 						.setPeriod( Period.values()[rec.getValue(FS_VAT.PERIOD)])
 						.setStatus(rec.getValue(FS_VAT_DECLARATION.STATUS)==1?FiscalStatus.FINISHED:FiscalStatus.PENDING)
 						.setAdministration(AonEnumUtils.enumValue(Administration.class, rec.getValue(FS_VAT_DECLARATION.ADMINISTRATION)))
@@ -96,20 +126,24 @@ public class FiscalMatrixDAO {
 						model = FiscalModelType.M390_HF;
 					}
 					item.setModel( model );
-					return item;
+					return (IFiscalModel) item;
 				} )
 			.stream();
 	}
 	
- 	 private static Stream<FiscalModelMatrixItem> fillFiscalModel(AONContext ctx, int domain, int year,int user) {
+ 	 private static Stream<IFiscalModel> fillFiscalModel(AONContext ctx, int domain, int year,int user) {
  		return ctx.getDslContext()
-			.select(FS_MODEL.STATUS, FS_MODEL.DOCUMENT, FS_MODEL.NAME,FS_MODEL.SURNAME
-						,FS_MODEL.PERIOD, FS_MODEL.MODEL, FS_MODEL.ADMINISTRATION ,DOMAIN.ID,DOMAIN.DESCRIPTION)
+			.select(FS_MODEL.YEAR, FS_MODEL.STATUS, FS_MODEL.DOCUMENT, FS_MODEL.NAME,FS_MODEL.SURNAME
+					,FS_MODEL.PERIOD, FS_MODEL.MODEL, FS_MODEL.ADMINISTRATION ,DOMAIN.ID,DOMAIN.DESCRIPTION)
 			.from(FS_MODEL)
 			.join(DOMAIN).onKey()
 			.where(FS_MODEL.DOMAIN.equal(domain))
 					.or(DOMAIN.PARENT.equal(domain))
 				.and(FS_MODEL.YEAR.equal(year))
+				.and(year==Integer.MIN_VALUE
+						?FS_MODEL.YEAR.equal(FS_MODEL.YEAR)
+						:FS_MODEL.YEAR.equal(year)		
+					)
 				.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
 						ctx.getDslContext().select(USER_SCOPE.SCOPE)
 								.from(USER_SCOPE)
@@ -118,11 +152,11 @@ public class FiscalMatrixDAO {
 								)))
  			.orderBy(FS_MODEL.YEAR)
 			.fetch()
-			.map( rec -> new FiscalModelMatrixItem()
-				.setDomainId(rec.getValue(DOMAIN.ID))
+			.map( rec -> (IFiscalModel) new FiscalModel()
+				.setDomain(rec.getValue(DOMAIN.ID))
 				.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
 				.setDocument(rec.getValue(FS_MODEL.DOCUMENT))
-				.setYear(year)
+				.setYear(rec.getValue(FS_MODEL.YEAR))
 				.setName(AonStringUtils.trim(AonStringUtils.isEmpty(rec.getValue(FS_MODEL.NAME))
 							?AonStringUtils.EMPTY
 							:(rec.getValue(FS_MODEL.NAME) + AonStringUtils.SPACE + rec.getValue(FS_MODEL.SURNAME))
@@ -135,14 +169,17 @@ public class FiscalMatrixDAO {
 			.stream();
 	}
 	
-	private static Stream<FiscalModelMatrixItem> fillModel349(AONContext ctx, int domain, int year, int user ) {
+	private static Stream<IFiscalModel> fillModel349(AONContext ctx, int domain, int year, int user ) {
 		return ctx.getDslContext()
-				.select(FS_MOD349.STATUS, FS_MOD349.YEAR, FS_MOD349.PERIOD,FS_MOD349.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
+				.select(FS_MOD349.YEAR,FS_MOD349.STATUS, FS_MOD349.YEAR, FS_MOD349.PERIOD,FS_MOD349.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
 				.from(FS_MOD349)
 				.join(DOMAIN).onKey()
 				.where(FS_MOD349.DOMAIN.equal(domain))
 					.or(DOMAIN.PARENT.equal(domain))
-				.and(FS_MOD349.YEAR.equal(year))					
+				.and(year==Integer.MIN_VALUE
+						?FS_MOD349.YEAR.equal(FS_MOD349.YEAR)
+						:FS_MOD349.YEAR.equal(year)		
+					)
 				.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
 						ctx.getDslContext().select(USER_SCOPE.SCOPE)
 						.from(USER_SCOPE)
@@ -151,26 +188,29 @@ public class FiscalMatrixDAO {
 						)))
 				.orderBy(FS_MOD349.YEAR)
 				.fetch()
-				.map( rec -> new FiscalModelMatrixItem()
-					.setDomainId(rec.getValue(DOMAIN.ID))
+				.map( rec -> (IFiscalModel) new FiscalModel()
+					.setDomain(rec.getValue(DOMAIN.ID))
 					.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
 					.setAdministration(AonEnumUtils.enumValue(Administration.class, rec.getValue(FS_MOD349.ADMINISTRATION)))
 					.setPeriod(Period.values()[rec.getValue(FS_MOD349.PERIOD)])
-					.setYear(year)
+					.setYear(rec.getValue(FS_MOD349.YEAR))
 					.setModel( FiscalModelType.M349)
 					.setStatus(rec.getValue(FS_MOD349.STATUS)==1?FiscalStatus.FINISHED:FiscalStatus.PENDING)
 					)
 				.stream();
 	}
 
- 	 private static Stream<FiscalModelMatrixItem> fillModel347(AONContext ctx, int domain, int year, int user ) {
+ 	 private static Stream<IFiscalModel> fillModel347(AONContext ctx, int domain, int year, int user ) {
 		return ctx.getDslContext()
 				.select(FS_MOD347.STATUS, FS_MOD347.YEAR,FS_MOD347.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
 				.from(FS_MOD347)
 				.join(DOMAIN).onKey()
 				.where(FS_MOD347.DOMAIN.equal(domain))
 					.or(DOMAIN.PARENT.equal(domain))
-				.and(FS_MOD347.YEAR.equal(year))
+				.and(year==Integer.MIN_VALUE
+						?FS_MOD347.YEAR.equal(FS_MOD347.YEAR)
+						:FS_MOD347.YEAR.equal(year)		
+					)
 				.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
 						ctx.getDslContext().select(USER_SCOPE.SCOPE)
 						.from(USER_SCOPE)
@@ -179,25 +219,29 @@ public class FiscalMatrixDAO {
 						)))
 				.orderBy(FS_MOD347.YEAR)
 				.fetch()
-				.map( rec -> new FiscalModelMatrixItem()
+				.map( rec -> (IFiscalModel) new FiscalModel()
 					.setAdministration(AonEnumUtils.enumValue(Administration.class, rec.getValue(FS_MOD347.ADMINISTRATION)))
-					.setDomainId(rec.getValue(DOMAIN.ID))
+					.setDomain(rec.getValue(DOMAIN.ID))
 					.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
 					.setPeriod(Period.YEAR)
+					.setYear(rec.getValue(FS_MOD347.YEAR))
 					.setModel( FiscalModelType.M347)
 					.setStatus(rec.getValue(FS_MOD347.STATUS)==1?FiscalStatus.FINISHED:FiscalStatus.PENDING)
 				)
 				.stream();
 	}
 
-	private static Stream<FiscalModelMatrixItem> fillModel180(AONContext ctx, int domain, int year, int user) {
+	private static Stream<IFiscalModel> fillModel180(AONContext ctx, int domain, int year, int user) {
 		return ctx.getDslContext()
 				.select(FS_MODEL180.STATUS, FS_MODEL180.YEAR,FS_MODEL180.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
 				.from(FS_MODEL180)
 				.join(DOMAIN).onKey()
 				.where(FS_MODEL180.DOMAIN.equal(domain))
 					.or(DOMAIN.PARENT.equal(domain))
-				.and(FS_MODEL180.YEAR.equal(year))
+				.and(year==Integer.MIN_VALUE
+						?FS_MODEL180.YEAR.equal(FS_MODEL180.YEAR)
+						:FS_MODEL180.YEAR.equal(year)		
+					)
 				.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
 						ctx.getDslContext().select(USER_SCOPE.SCOPE)
 						.from(USER_SCOPE)
@@ -206,25 +250,29 @@ public class FiscalMatrixDAO {
 						)))
 				.orderBy(FS_MODEL180.YEAR)
 				.fetch()
-				.map( rec -> new FiscalModelMatrixItem()
+				.map( rec -> (IFiscalModel) new FiscalModel()
 					.setAdministration(AonEnumUtils.enumValue(Administration.class, rec.getValue(FS_MODEL180.ADMINISTRATION)))
-					.setDomainId(rec.getValue(DOMAIN.ID))
+					.setDomain(rec.getValue(DOMAIN.ID))
 					.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
 					.setModel( FiscalModelType.M180)
+					.setYear(rec.getValue(FS_MODEL180.YEAR))
 					.setPeriod(Period.YEAR)
 					.setStatus(rec.getValue(FS_MODEL180.STATUS)==1?FiscalStatus.FINISHED:FiscalStatus.PENDING)
 				)
 				.stream();
 	}
 
-	private static Stream<FiscalModelMatrixItem> fillModel190(AONContext ctx, int domain, int year, int user) {
+	private static Stream<IFiscalModel> fillModel190(AONContext ctx, int domain, int year, int user) {
 		return ctx.getDslContext()
 				.select(FS_MODEL190.STATUS, FS_MODEL190.YEAR,FS_MODEL190.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
 				.from(FS_MODEL190)
 				.join(DOMAIN).onKey()
 				.where(FS_MODEL190.DOMAIN.equal(domain))
 					.or(DOMAIN.PARENT.equal(domain))
-				.and(FS_MODEL190.YEAR.equal(year))
+				.and(year==Integer.MIN_VALUE
+						?FS_MODEL190.YEAR.equal(FS_MODEL190.YEAR)
+						:FS_MODEL190.YEAR.equal(year)		
+					)
 				.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
 						ctx.getDslContext().select(USER_SCOPE.SCOPE)
 						.from(USER_SCOPE)
@@ -233,25 +281,29 @@ public class FiscalMatrixDAO {
 						)))
 				.orderBy(FS_MODEL190.YEAR)
 				.fetch()
-				.map( rec -> new FiscalModelMatrixItem()
+				.map( rec -> (IFiscalModel) new FiscalModel()
 					.setAdministration(AonEnumUtils.enumValue(Administration.class, rec.getValue(FS_MODEL190.ADMINISTRATION)))
-					.setDomainId(rec.getValue(DOMAIN.ID))
+					.setDomain(rec.getValue(DOMAIN.ID))
 					.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
 					.setModel( FiscalModelType.M190)
 					.setPeriod(Period.YEAR)
+					.setYear(rec.getValue(FS_MODEL190.YEAR))
 					.setStatus(rec.getValue(FS_MODEL190.STATUS)==1?FiscalStatus.FINISHED:FiscalStatus.PENDING)
 				)
 				.stream();
 	}
 
-	private static Stream<FiscalModelMatrixItem> fillModel390(AONContext ctx, int domain, int year, int user) {
+	private static Stream<IFiscalModel> fillModel390(AONContext ctx, int domain, int year, int user) {
 		return ctx.getDslContext()
 				.select(FS_MODEL390.STATUS, FS_MODEL390.YEAR,FS_MODEL390.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
 				.from(FS_MODEL390)
 				.join(DOMAIN).onKey()
 				.where(FS_MODEL390.DOMAIN.equal(domain))
 					.or(DOMAIN.PARENT.equal(domain))
-				.and(FS_MODEL390.YEAR.equal(year))
+				.and(year==Integer.MIN_VALUE
+						?FS_MODEL390.YEAR.equal(FS_MODEL390.YEAR)
+						:FS_MODEL390.YEAR.equal(year)		
+					)
 				.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
 						ctx.getDslContext().select(USER_SCOPE.SCOPE)
 						.from(USER_SCOPE)
@@ -260,25 +312,29 @@ public class FiscalMatrixDAO {
 						)))
 				.orderBy(FS_MODEL390.YEAR)
 				.fetch()
-				.map( rec -> new FiscalModelMatrixItem()
+				.map( rec -> (IFiscalModel) new FiscalModel()
 					.setAdministration(AonEnumUtils.enumValue(Administration.class, rec.getValue(FS_MODEL390.ADMINISTRATION)))
-					.setDomainId(rec.getValue(DOMAIN.ID))
+					.setDomain(rec.getValue(DOMAIN.ID))
 					.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
 					.setModel( FiscalModelType.M390)
 					.setPeriod(Period.YEAR)
+					.setYear(rec.getValue(FS_MODEL390.YEAR))
 					.setStatus(rec.getValue(FS_MODEL390.STATUS)==1?FiscalStatus.FINISHED:FiscalStatus.PENDING)
 				)
 				.stream();
 	}
 
-	private static Stream<FiscalModelMatrixItem> fillModel200(AONContext ctx, int domain, int year, int user) {
+	private static Stream<IFiscalModel> fillModel200(AONContext ctx, int domain, int year, int user) {
 		return ctx.getDslContext()
-				.select(FS_MODEL200.YEAR,FS_MODEL200.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
+				.select(FS_MODEL200.ID,FS_MODEL200.YEAR,FS_MODEL200.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
 				.from(FS_MODEL200)
 				.join(DOMAIN).onKey()
 				.where(FS_MODEL200.DOMAIN.equal(domain))
 					.or(DOMAIN.PARENT.equal(domain))
-				.and(FS_MODEL200.YEAR.equal(year))
+				.and(year==Integer.MIN_VALUE
+						?FS_MODEL200.YEAR.equal(FS_MODEL200.YEAR)
+						:FS_MODEL200.YEAR.equal(year)		
+					)
 				.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
 						ctx.getDslContext().select(USER_SCOPE.SCOPE)
 						.from(USER_SCOPE)
@@ -287,18 +343,20 @@ public class FiscalMatrixDAO {
 						)))
 				.orderBy(FS_MODEL200.YEAR)
 				.fetch()
-				.map( rec -> new FiscalModelMatrixItem()
+				.map( rec -> (IFiscalModel) new FiscalModel()
+					.setId( rec.getValue(FS_MODEL200.ID) )
 					.setAdministration(AonEnumUtils.enumValue(Administration.class, rec.getValue(FS_MODEL200.ADMINISTRATION)))
-					.setDomainId(rec.getValue(DOMAIN.ID))
+					.setDomain(rec.getValue(DOMAIN.ID))
 					.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
 					.setModel( FiscalModelType.M200)
 					.setPeriod(Period.YEAR)
+					.setYear(rec.getValue(FS_MODEL200.YEAR))
 					.setStatus(FiscalStatus.PENDING) // TODO ??
 				)
 				.stream();
 	}
 
-	public static Stream<FiscalModelMatrixItem> fillConfiguratedModels(AONContext ctx, int domain, int user) {
+	public static Stream<IFiscalModel> fillConfiguratedModels(AONContext ctx, int domain, int user) {
 		FiscalParameters params = AppParamDAO.getFiscalParameters(ctx);
 		return ctx.getDslContext()
 			.select(APP_PARAM.NAME,APP_PARAM.VALUE,DOMAIN.ID,DOMAIN.DESCRIPTION)
@@ -315,10 +373,10 @@ public class FiscalMatrixDAO {
 							)))
 			.orderBy(APP_PARAM.NAME)
 			.fetch()
-			.map( rec -> 
+			.map( rec ->
 					AonStringUtils.containsAny(rec.getValue(APP_PARAM.VALUE), "YQM")
-						?new FiscalModelMatrixItem()
-							.setDomainId(rec.getValue(DOMAIN.ID))
+						? (IFiscalModel) new FiscalModel()
+							.setDomain(rec.getValue(DOMAIN.ID))
 							.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
 							.setAdministration(params.getAdministration(Administration.COMMON_TERRITORY))
 							.setModel( FiscalModelType.valueOf(AonStringUtils.substringAfter(rec.getValue(APP_PARAM.NAME),PARAM_PREFIX)) )
@@ -329,7 +387,8 @@ public class FiscalMatrixDAO {
 											?Period.T1
 											:Period.M01
 									  )
-						:null	
+						:null
+					
 				 )
 			.stream()
 			.filter( item ->  item != null );

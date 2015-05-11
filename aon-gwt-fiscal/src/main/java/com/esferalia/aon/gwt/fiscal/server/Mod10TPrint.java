@@ -33,12 +33,12 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.esferalia.aon.gwt.common.sql.SQLUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.RetentionCertificate;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.server.AonDatabaseUtil;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfCopyFields;
@@ -88,7 +88,7 @@ public class Mod10TPrint extends HttpServlet {
 			throw new ServletException(e);
 		} finally {
 			enableAutoCommit(conn);
-			SQLUtils.closeQuietly(conn);
+			AonDatabaseUtil.closeQuietly(conn);
 		}
 	}
 	

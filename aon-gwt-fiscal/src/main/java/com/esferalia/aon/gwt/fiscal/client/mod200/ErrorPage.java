@@ -8,7 +8,7 @@ import java.util.List;
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200.IValidationMessageSelectioinHandler;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.ValidationMessage;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.ValidationMessage;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.FieldUpdater;

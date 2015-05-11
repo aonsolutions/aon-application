@@ -30,4 +30,8 @@ public enum AccountEntryType  implements Serializable {
 	RETURNED_PAYMENT,
 	RETURNED_COLLECTION,
 	SOCIAL_INSURANCE_ADJUST;
+
+	public Byte getValue() {
+		return (byte) ordinal();
+	}
 }

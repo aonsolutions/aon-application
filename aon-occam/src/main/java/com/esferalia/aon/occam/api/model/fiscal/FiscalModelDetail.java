@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.type.Mod131Key;
+
 public class FiscalModelDetail implements Serializable {
 
 	private static final long serialVersionUID = 5819123654568341791L;
@@ -70,6 +72,9 @@ public class FiscalModelDetail implements Serializable {
 	public FiscalModelDetail setAmount(double amount) {
 		this.amount = amount;
 		return this;
+	}
+	public Mod131Key getKey() {
+		return Mod131Key.getKey(getType());
 	}
 	
 }

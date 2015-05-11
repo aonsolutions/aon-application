@@ -9,11 +9,24 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AonFiscalFileUtils {
 	
+	private static char[] SEEK= new char[]{'á','é','í','ó','ú','Á','É','Í','Ó','Ú','º','ª'};
+	private static char[] ALTER = new char[]{'a','e','i','o','u','A','E','I','O','U',' ',' '};
+
 	private static final SimpleDateFormat DATE_FORMAT = 
 			new SimpleDateFormat("yyyyMMdd");
 	
 	private static final String AEAT_MARK = "X";
 
+	public static String changeInvalidCharacters(String token) {
+		if (AonStringUtils.isNotBlank(token)) {
+			for (int i = 0; i < SEEK.length ; i ++) {
+				token = AonStringUtils.replaceChars(token, SEEK[i], ALTER[i]);
+			}
+		}
+		return token;
+	}
+
+	
 	public static String zeros(int size) {
 		return AonStringUtils.repeat(AonStringUtils.ZERO, size);
 	}
@@ -58,15 +71,6 @@ public class AonFiscalFileUtils {
 		return AonStringUtils.leftPad(l, size,'0');
 		
 	}
-
-//	public static String signed(Integer value, int size) {
-//		if (value == null)
-//			value = 0;
-//		int val = value;
-//		return text( 
-//			(value < 0 ? 'N' : ' ')+ AonStringUtils.leftPad(Integer.toString(Math.abs(val)), size,'0')
-//				,size);
-//	}
 
 	public static String unsigned(Integer value, int size) {
 		if (value == null)

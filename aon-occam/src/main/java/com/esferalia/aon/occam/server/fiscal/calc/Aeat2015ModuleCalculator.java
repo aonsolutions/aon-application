@@ -1,14 +1,5 @@
 package com.esferalia.aon.occam.server.fiscal.calc;
 
-import static com.esferalia.aon.jooq.tables.FsActivity.FS_ACTIVITY;
-import static com.esferalia.aon.jooq.tables.FsActivityInfo.FS_ACTIVITY_INFO;
-
-import java.math.BigDecimal;
-
-import org.jooq.Field;
-import org.jooq.Record1;
-import org.jooq.impl.DSL;
-
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfo;
@@ -18,11 +9,6 @@ import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class Aeat2015ModuleCalculator  {
-	
-	private static String[] PERSO_KEYS = new String[]{
-			 FiscalActivityInfoKey.M01.getKey()
-			,FiscalActivityInfoKey.M15.getKey()
-			,FiscalActivityInfoKey.M16.getKey()};
 	
 	public static FiscalActivity calculate(AONContext ctx, FiscalActivity fac) {
 		try {
@@ -45,23 +31,6 @@ public class Aeat2015ModuleCalculator  {
 		return fac;
 	}
 	
-	private static double getPreviousAsalariados(AONContext ctx, FiscalActivity fa) {
-		double previousAsalariados = 0;
-		Field<BigDecimal> sum = DSL.sum(DSL.cast(FS_ACTIVITY_INFO.VALUE, BigDecimal.class));
-		Record1<BigDecimal> record = ctx.getDslContext().select(sum)
-			.from(FS_ACTIVITY)
-			.join(FS_ACTIVITY_INFO).on(FS_ACTIVITY.ID.eq(FS_ACTIVITY_INFO.FS_ACTIVITY))
-			.where(FS_ACTIVITY.DOMAIN.eq(fa.getDomain()))
-			.and(FS_ACTIVITY.YEAR.eq(fa.getYear() - 1))
-			.and(FS_ACTIVITY.EPIGRAPH.eq(fa.getEpigraph()))
-			.and(FS_ACTIVITY_INFO.INFO_KEY.in(PERSO_KEYS))
-			.fetchOne();
-		if (record != null && record.getValue(sum) != null) {
-			previousAsalariados = AonMathUtils.round(record.getValue(sum).doubleValue());
-		}
-		return previousAsalariados;
-	}
-
 	/**
 	 *  Personal asalariado: Persona asalariada es cualquier otra que trabaje 
 	 *  en la actividad. En particular, tendrán la consideración de personal 
@@ -274,46 +243,50 @@ public class Aeat2015ModuleCalculator  {
 			personalAsalariado += fac.getIRPFModuleDoubleValue(FiscalActivityInfoKey.M16);
 		}
 		double coef = 0.0;
-		double previousAsalariados = getPreviousAsalariados(ctx,fac);
+//		double previousAsalariados = getPreviousAsalariados(ctx,fac);
 
-		double as = personalAsalariado;
-		if (previousAsalariados != 0 && personalAsalariado > previousAsalariados ) {
-			as = AonMathUtils.round((personalAsalariado - previousAsalariados));
-			coef = as * 0.40;
-			
-		}
-		if (AonMathUtils.round(as) > 0.0) {
-			coef = coef + (0.10 * as); 
-			as = AonMathUtils.round(as - 1);
-		}
-		if (AonMathUtils.round(as) > 0.0) {
-			coef = coef + (0.15 * (as>=2?2:as));
-			as = AonMathUtils.round(as - 2);
-		}
-		if (AonMathUtils.round(as) > 0.0) {
-			coef = coef + (0.20 * (as>=2?2:as));
-			as = AonMathUtils.round(as - 2);
-		}
-		if (AonMathUtils.round(as) > 0.0) {
-			coef = coef + (0.25 * (as>=3?3:as));
-			as = AonMathUtils.round(as - 3);
-		}
-		if (AonMathUtils.round(as) > 0.0) {
-			coef = coef + (0.30 * as);
-		}
-
-		FiscalActivityInfoKey[] persoKeys = {FiscalActivityInfoKey.M01,FiscalActivityInfoKey.M15,FiscalActivityInfoKey.M16};
+		// Empleados al inicio de ejercicio (o al inicio de la actividad
+		double a10 = fac.getInfoDoubleValue(FiscalActivityInfoKey.A10);
+		
 		double i02 = 0;
-		for (FiscalActivityInfoKey key : persoKeys ){
-			FiscalActivityInfo persoAsal = fac.getIRPFModule(key);
-			if (persoAsal != null) {
-				double m01 = persoAsal.getDoubleValue();
-				double ratioPersonalAsalariado = 
-						(personalAsalariado != 0 )?m01 / personalAsalariado:1;
-				double f = persoAsal.getFactor();
-				i02 = AonMathUtils.round(i02 + (coef * ratioPersonalAsalariado * f)); 
+		double as = personalAsalariado;
+		if (a10 != 0 && personalAsalariado >= a10 ) {
+			if( AonMathUtils.round((personalAsalariado - a10)) > 0 ) {
+				coef = 0.40;
+			} else {
+				if (AonMathUtils.round(as) > 0.0) {
+					coef = coef + 0.10; 
+					as = AonMathUtils.round(as - 1);
+				}
+				if (AonMathUtils.round(as) > 0.0) {
+					coef = coef + 0.15;
+					as = AonMathUtils.round(as - 2);
+				}
+				if (AonMathUtils.round(as) > 0.0) {
+					coef = coef + 0.20;
+					as = AonMathUtils.round(as - 2);
+				}
+				if (AonMathUtils.round(as) > 0.0) {
+					coef = coef + 0.25;
+					as = AonMathUtils.round(as - 3);
+				}
+				if (AonMathUtils.round(as) > 0.0) {
+					coef = coef + 0.30;
+				}
 			}
-				
+			if (coef != 0 ) {
+				FiscalActivityInfoKey[] persoKeys = {FiscalActivityInfoKey.M01,FiscalActivityInfoKey.M15,FiscalActivityInfoKey.M16};
+				for (FiscalActivityInfoKey key : persoKeys ){
+					FiscalActivityInfo persoAsal = fac.getIRPFModule(key);
+					if (persoAsal != null) {
+						double m01 = persoAsal.getDoubleValue();
+						double ratioPersonalAsalariado = 
+								(personalAsalariado != 0 )?m01 / personalAsalariado:1;
+						double f = persoAsal.getFactor();
+						i02 = AonMathUtils.round(i02 + (coef * ratioPersonalAsalariado * f)); 
+					}
+				}
+			}
 		}
 		fac.setIRPFInfoValue(FiscalActivityInfoKey.I02, AonMathUtils.round(i02));
 		
@@ -441,8 +414,6 @@ public class Aeat2015ModuleCalculator  {
 		double a06 = fac.getInfoDoubleValue(FiscalActivityInfoKey.A06);
 		// Capacidad de carga del vehículo superior a 1000 Kg.
 		double a08 = fac.getInfoDoubleValue(FiscalActivityInfoKey.A08);
-		// Empleados al inicio de ejercicio (o al inicio de la actividad
-		double a10 = fac.getInfoDoubleValue(FiscalActivityInfoKey.A10);
 		
 		
 		// *****************************************************************

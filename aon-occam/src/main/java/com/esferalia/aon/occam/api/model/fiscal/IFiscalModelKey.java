@@ -1,5 +1,9 @@
 package com.esferalia.aon.occam.api.model.fiscal;
 
-public interface IFiscalModelKey {
+import java.io.Serializable;
+
+public interface IFiscalModelKey extends Serializable {
 	String getValue();
+	String getBox();
+	String getDescription();
 }

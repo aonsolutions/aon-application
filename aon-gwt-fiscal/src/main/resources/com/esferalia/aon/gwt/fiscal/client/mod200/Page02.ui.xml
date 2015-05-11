@@ -34,9 +34,7 @@
 					</g:Button>
 				</div>
 			</div>
-			
 			<soci:ParticipationPanel ui:field="participationPanel"/>
-			
 		</g:HTMLPanel>
 		<g:FlexTable ui:field="table" styleName="aon-width-all"/>
 	</g:HTMLPanel>

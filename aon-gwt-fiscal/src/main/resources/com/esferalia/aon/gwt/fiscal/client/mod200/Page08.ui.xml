@@ -28,7 +28,7 @@
 							<g:Label text="Resultado de la cuenta de perdidas y ganancias"/>
 						</td>
 						<td>
-							<soci:BoxLabel ui:field="c500Label" text="500"/>
+							<aon:BoxLabel ui:field="c500Label" text="500"/>
 						</td>
 						<td>
 							<aon:DoubleTextBox ui:field="c500" enabled="false" changeDisplayStyleName="{aonResources.css.aonValueChanged}"/>
@@ -40,13 +40,13 @@
 							<g:Label text="Correcciones por Impuesto sobre Sociedades"/>
 						</td>
 						<td>
-							<soci:BoxLabel ui:field="c301Label" text="301"/>
+							<aon:BoxLabel ui:field="c301Label" text="301"/>
 						</td>
 						<td>
 							<aon:DoubleTextBox ui:field="c301"/>
 						</td>
 						<td>
-							<soci:BoxLabel ui:field="c302Label" text="302"/>
+							<aon:BoxLabel ui:field="c302Label" text="302"/>
 						</td>
 						<td>
 							<aon:DoubleTextBox ui:field="c302"/>
@@ -58,7 +58,7 @@
 							<g:Label text="Resultado de la cuenta de perdidas y ganancias antes de Impuestos de Sociedades"/>
 						</td>
 						<td>
-							<soci:BoxLabel ui:field="c501Label" text="501"/>
+							<aon:BoxLabel ui:field="c501Label" text="501"/>
 						</td>
 						<td>
 							<aon:DoubleTextBox ui:field="c501" enabled="false" changeDisplayStyleName="{aonResources.css.aonValueChanged}"/>
@@ -123,13 +123,13 @@
 							<g:Label text="Total correcciones al resultado de la cuenta de perdidas y ganancias"/>
 						</td>
 						<td>
-							<soci:BoxLabel ui:field="c417Label" text="417"/>
+							<aon:BoxLabel ui:field="c417Label" text="417"/>
 						</td>
 						<td>
 							<aon:DoubleTextBox ui:field="c417" enabled="false" changeDisplayStyleName="{aonResources.css.aonValueChanged}"/>
 						</td>
 						<td>
-							<soci:BoxLabel ui:field="c418Label" text="418"/>
+							<aon:BoxLabel ui:field="c418Label" text="418"/>
 						</td>
 						<td>
 							<aon:DoubleTextBox ui:field="c418" enabled="false" changeDisplayStyleName="{aonResources.css.aonValueChanged}"/>

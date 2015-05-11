@@ -57,5 +57,8 @@ public class AccountPeriod implements Serializable {
 	public void setStatus(AccountPeriodStatus status) {
 		this.status = status;
 	}
+	public boolean isClosed() {
+		return this.status == AccountPeriodStatus.CLOSED;
+	}
 	
 }

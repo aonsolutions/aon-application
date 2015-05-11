@@ -13,4 +13,5 @@ public enum Administration implements Serializable {
 	public byte getValue() {
 		return (byte) ordinal();
 	}
+	
 }

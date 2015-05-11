@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.IFiscal;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
@@ -19,14 +20,18 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalActivityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalMatrixDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.Mod131DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod180DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod184DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod190DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod193DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.Mod200DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.Mod202DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod390DAO;
 
 public class FiscalImpl implements IFiscal {
@@ -35,7 +40,16 @@ public class FiscalImpl implements IFiscal {
 	public FiscalModelMatrix getFiscalPanel(AONContext ctx,int domain,int year,int user){
 		return FiscalMatrixDAO.getModelsPanel(ctx, domain, year, user);
 	}
-	
+	@Override
+	public LinkedList<IFiscalModel> getAllModels(AONContext ctx, int domain,int user) {
+		return FiscalMatrixDAO.getAllModels(ctx, domain, user);
+	}
+	@Override
+	public LinkedList<IFiscalModel> getAllModels(AONContext ctx, int domain,
+			int year, int user) {
+		return FiscalMatrixDAO.getAllModels(ctx, domain, year, user);
+	}
+
 	// --------------------------------------------- [FISCAL ACTIVITIES]
 	@Override
 	public FiscalActivity calculate(AONContext ctx, FiscalActivity fa) {
@@ -274,55 +288,108 @@ public class FiscalImpl implements IFiscal {
 	// ----------------------------------------------------------- [MODELO 131]
 	@Override
 	public Mod131 getMod131(AONContext ctx, int id) {
-		return FiscalModelDAO.getMod131(ctx, id);
+		return Mod131DAO.getMod131(ctx, id);
 	}
 
 	public LinkedList<Mod131> getMod131s(AONContext ctx, int domain) {
 		LinkedList<Mod131> list = new LinkedList<Mod131>();
-		FiscalModelDAO.getMod131s(ctx, domain).forEach(list::add);
+		Mod131DAO.getMod131s(ctx, domain).forEach(list::add);
 		return list;
 	}
 	
 	@Override
 	public Mod131 calculateMod131(AONContext ctx, Mod131 mod131) {
-		return FiscalModelDAO.calculateMod131(ctx, mod131);
+		return Mod131DAO.calculateMod131(ctx, mod131);
 	}
 	@Override
 	public Mod131 saveMod131(AONContext ctx, Mod131 mod131) {
-		return FiscalModelDAO.saveMod131(ctx, mod131);
+		return Mod131DAO.saveMod131(ctx, mod131);
 	}
 	
+	@Override
+	public void deleteMod131(AONContext ctx, Mod131 mod131) {
+		Mod131DAO.delete(ctx, mod131);
+	}
+
+	@Override
+	public Mod131 initializeMod131(AONContext ctx, Mod131 mod131) {
+		return Mod131DAO.initializeMod131(ctx,mod131);
+	}
+
 	// ----------------------------------------------------------- [MODELO 202]
 	@Override
 	public Mod202 getMod202(AONContext ctx, int id) {
-		return FiscalModelDAO.getMod202(ctx, id);
+		return Mod202DAO.getMod202(ctx, id);
 	}
 	@Override
 	public LinkedList<Mod202> getMod202s(AONContext ctx, int domain) {
 		LinkedList<Mod202> list = new LinkedList<Mod202>();
-		FiscalModelDAO.getMod202s(ctx, domain)
+		Mod202DAO.getMod202s(ctx, domain)
 			.forEach(list::add);
 		return list;
 	}
 	@Override
 	public Mod202 calculateMod202(AONContext ctx, Mod202 mod202) {
-		return FiscalModelDAO.calculateMod202(ctx, mod202);
+		return Mod202DAO.calculateMod202(ctx, mod202);
 	}
 	@Override
 	public Mod202 saveMod202(AONContext ctx, Mod202 mod202) {
-		return FiscalModelDAO.saveMod202(ctx, mod202);
+		return Mod202DAO.saveMod202(ctx, mod202);
 	}
 
 	@Override
 	public void deleteMod202(AONContext ctx, Mod202 mod202) {
-		FiscalModelDAO.delete(ctx, mod202);
+		Mod202DAO.delete(ctx, mod202);
 	}
 
 	@Override
-	public Mod202 initializeMod202(AONContext ctx) {
-		return FiscalModelDAO.initializeMod202(ctx);
+	public Mod202 initializeMod202(AONContext ctx, Mod202 mod202) {
+		return Mod202DAO.initializeMod202(ctx,mod202);
 	}
 
+	// ----------------------------------------------------------- [MODELO 200]
+	@Override
+	public Mod200 initializeNewMod200(AONContext ctx, Mod200 mod200) {
+		return Mod200DAO.initializeNewMod200(ctx,mod200);
+	}
 	
+	@Override
+	public Mod200 initializeMod200(AONContext ctx, Mod200 mod200) {
+		return Mod200DAO.initializeMod200(ctx,mod200);
+	}
+
+	@Override
+	public Mod200 getMod200ByYear(AONContext ctx, int year) {
+		return Mod200DAO.getByYear(ctx,year);
+	}
+
+	@Override
+	public Mod200 getMod200ById(AONContext ctx, int id) {
+		return Mod200DAO.getById(ctx,id);
+	}
+	@Override
+	public Mod200 calculateMod200(Mod200 mod200) {
+		return Mod200DAO.calculate(mod200);
+	}
+	@Override
+	public Mod200 validateMod200(Mod200 mod200) {
+		return Mod200DAO.validate(mod200);
+	}
+	@Override
+	public Mod200 saveMod200(AONContext ctx, Mod200 mod200) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod200DAO.save(ctx, mod200));
+	}
+	@Override
+	public void deleteMod200(AONContext ctx, int id) {
+		ctx.getDslContext().transaction(
+				configuration -> Mod200DAO.delete(ctx, id));
+	}
+
+	@Override
+	public String dumpAEAT(Mod200 mod200) {
+		return Mod200DAO.dumpAEAT(mod200);
+	}
+
 
 }

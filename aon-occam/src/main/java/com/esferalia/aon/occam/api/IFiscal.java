@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
@@ -17,11 +18,14 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 
 public interface IFiscal {
 	// 			        FISCAL PANEL
 	public FiscalModelMatrix getFiscalPanel(AONContext ctx,int domain,int year,int user);
+	public LinkedList<IFiscalModel> getAllModels(AONContext ctx,int domain,int user);
+	public LinkedList<IFiscalModel> getAllModels(AONContext ctx,int domain,int year,int user);
 	
 	// 			   FISCAL ACTIVITIES
 	public FiscalActivity calculate(AONContext ctx, FiscalActivity fa);
@@ -82,14 +86,27 @@ public interface IFiscal {
 	public LinkedList<Mod131> getMod131s(AONContext ctx, int domain);
 	public Mod131 calculateMod131(AONContext ctx, Mod131 mod131);
 	public Mod131 saveMod131(AONContext ctx, Mod131 mod131);
+	public void deleteMod131(AONContext ctx, Mod131 mod131);
+	public Mod131 initializeMod131(AONContext ctx, Mod131 mod131);
 
 	// 				   		  MOD202
 	public Mod202 getMod202(AONContext ctx, int id);
 	public LinkedList<Mod202> getMod202s(AONContext ctx, int domain);
 	public Mod202 calculateMod202(AONContext ctx, Mod202 mod202);
 	public Mod202 saveMod202(AONContext ctx, Mod202 mod202);
-	public Mod202 initializeMod202(AONContext ctx);
+	public Mod202 initializeMod202(AONContext ctx, Mod202 mod202);
 	public void deleteMod202(AONContext ctx, Mod202 mod202);
 
+	// 				   		  MOD200
+	
+	public Mod200 initializeNewMod200(AONContext ctx, Mod200 mod200);
+	public Mod200 initializeMod200(AONContext ctx, Mod200 mod200);
+	public Mod200 getMod200ByYear(AONContext ctx, int year);
+	public Mod200 getMod200ById(AONContext ctx, int id);
+	public Mod200 calculateMod200(Mod200 mod200);
+	public Mod200 validateMod200(Mod200 mod200);
+	public Mod200 saveMod200(AONContext ctx, Mod200 mod200);
+	public void deleteMod200(AONContext ctx, int id);
+	public String dumpAEAT(Mod200 mod200);
 
 }

@@ -118,10 +118,6 @@ public class AONContext {
 		AonDatabaseUtil.closeQuietly(connection);
 	}
 
-	public AONContext getNested(Configuration configuration) {
-		return new AONContext(DSL.using(configuration), getDomainName(), getDomainId());
-	}
-
 	public boolean canWrite() {
 		return true;
 	}
@@ -134,8 +130,8 @@ public class AONContext {
 			throw new SecurityException( AonError.READ_FORBIDDEN.getMessage() );	
 	}
 	public void checkWrite() {
-		if (!canRead()) 
-			throw new SecurityException( AonError.READ_FORBIDDEN.getMessage() );	
+		if (!canWrite()) 
+			throw new SecurityException( AonError.WRITE_FORBIDDEN.getMessage() );	
 	}
 	
 	public void transaction(TransactionalRunnable transactional) {

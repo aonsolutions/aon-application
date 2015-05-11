@@ -1,8 +1,16 @@
 @external .*;
 
-@def fiscalBackgroundColor #DDDDDD;	
-@def fiscalSelectedBackgroundColor #BBBBBB;	
+body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
+    background-color: rgba(255,255,255,0);
+}
 
+@media print
+{    
+    .aon-no-print, .aon-no-print *
+    {
+        display: none !important;
+    }
+}
 .aon-Selector{
 	margin: 0px;
 	color: #4B4B4B;
@@ -178,6 +186,9 @@
 	padding-right:0.5em;	
 	border:#ccc 1px solid;
 }
+.aon-wrap {
+	white-space: normal;
+}
 .aon-nowrap {
 	white-space: nowrap;
 }
@@ -277,18 +288,18 @@
 	margin-top: 5px;
 }
 .aon-link-item{
-	background-color: fiscalBackgroundColor;
+	background-color: #DDDDDD;
 	cursor: pointer;
     margin-bottom: 2px;
     padding: 3px 0;
 }
 .aon-link-item:hover{
-	background-color: fiscalSelectedBackgroundColor;
+	background-color: #BBBBBB;
 }
 .aon-link-item-selected {
     margin-bottom: 2px;
     padding: 3px 0;
-	background-color: fiscalSelectedBackgroundColor;
+	background-color: #BBBBBB;
 }
 .aon-link-number{
 	border-top: solid #CCC .5px;
@@ -317,6 +328,18 @@
 }
 @sprite .aon-aeat-header-image  {
 	gwt-image: "aonAeatHeaderImage";
+}
+@sprite .aon-araba-header-image  {
+	gwt-image: "aonArabaHeaderImage";
+}
+@sprite .aon-bizkaia-header-image  {
+	gwt-image: "aonBizkaiaHeaderImage";
+}
+@sprite .aon-gipuzkoa-header-image  {
+	gwt-image: "aonGipuzkoaHeaderImage";
+}
+@sprite .aon-navarra-header-image  {
+	gwt-image: "aonNavarraHeaderImage";
 }
 
 @sprite .aon-list-data {
@@ -712,25 +735,25 @@
 
 
 .aon-fiscal-title {
-	background-color: fiscalBackgroundColor; 
+	background-color: #DDDDDD; 
 	border: 1px solid #FFFFFF;
 	padding-bottom: 4px;
 }
 .aon-fiscal-year {
-	background-color: fiscalBackgroundColor; 
+	background-color: #DDDDDD; 
 	border: 1px solid #FFFFFF; 
 	font-size: 16px; 
 	font-weight: bold;	
 }
 .aon-fiscal-model {
-	background-color: fiscalBackgroundColor; 
+	background-color: #DDDDDD; 
 	border: 1px solid #FFFFFF; 
 	font-size: 14px;
 }
 
 
 .aon-fiscal-header {
-	background-color: fiscalBackgroundColor;
+	background-color: #DDDDDD;
 	color: black;
 	font-weight: bold;
 	font-size: 1.2em;
@@ -738,8 +761,8 @@
 	margin-bottom: 10px;
 }
 .aon-fiscal-box {
-    border: 0.5px solid fiscalSelectedBackgroundColor;
-    color: fiscalSelectedBackgroundColor;
+    border: 0.5px solid #BBBBBB;
+    color: #BBBBBB;
     font-family: monospace Courier !important;
     font-size: 0.9em;
     padding: 2px 2px 2px 3px;
@@ -768,7 +791,7 @@ input:disabled + label{
 }
 
 .aon-fiscal-border-bottom {
-	border-bottom: 0.5px solid fiscalSelectedBackgroundColor;
+	border-bottom: 0.5px solid #BBBBBB;
 }
 
 .aon-fiscal-container{
@@ -1036,63 +1059,17 @@ input:disabled + label{
 .aon-tree-icon-node {
     height: auto !important;
     overflow: hidden !important;
-    padding: 2px 5px 2px 18px !important;
+    padding: 2px 5px 2px 20px !important;
     width: auto !important;
 }
 .aon-tree-year {
-	border: 1px solid #BCBCBC;
     font-weight: bold;
     padding: 2px 5px;
 }
 
-@sprite .aon-icon-m111{
-	gwt-image: "aonIconM111";
-}
-
-@sprite .aon-icon-m115{
-	gwt-image: "aonIconM115";
-}
-@sprite .aon-icon-m123{
-	gwt-image: "aonIconM123";
-}
-@sprite .aon-icon-m130{
-	gwt-image: "aonIconM130";
-}
-@sprite .aon-icon-m131{
-	gwt-image: "aonIconM131";
-}
-@sprite .aon-icon-m140{
-	gwt-image: "aonIconM140";
-}
-@sprite .aon-icon-m180{
-	gwt-image: "aonIconM180";
-}
-@sprite .aon-icon-m184{
-	gwt-image: "aonIconM184";
-}
-@sprite .aon-icon-m190{
-	gwt-image: "aonIconM190";
-}
-@sprite .aon-icon-m193{
-	gwt-image: "aonIconM193";
-}
-@sprite .aon-icon-m200{
-	gwt-image: "aonIconM200";
-}
-@sprite .aon-icon-m303{
-	gwt-image: "aonIconM303";
-}
-@sprite .aon-icon-m340{
-	gwt-image: "aonIconM340";
-}
-@sprite .aon-icon-m347{
-	gwt-image: "aonIconM347";
-}
-@sprite .aon-icon-m349{
-	gwt-image: "aonIconM349";
-}
-@sprite .aon-icon-m390{
-	gwt-image: "aonIconM390";
+.aon-tree-model {
+    font-weight: bold;
+    padding: 2px 5px;
 }
 
 @sprite .aon-icon-company {
@@ -1276,10 +1253,8 @@ input:disabled + label{
 }	
 .aon-fiscal-tree-item {
     cursor: pointer;
-    font-size: 1.3em;
+    font-size: 1.1em;
     margin-left: 40px;
-    padding: 0 0 0 20px;
-    text-transform: uppercase;
 }
 .aon-fiscal-tree-item:hover {
     text-decoration: underline;
@@ -1483,17 +1458,33 @@ input:disabled + label{
 	width: 100%;
 }
 .aon-fiscal-model-table-header-image {
-    width: 48px;	
+    width: 48px;
+    background-color: white;
+    text-align: center;	
 }
+.aon-fiscal-aeat-bg {
+	background-color:  #3a85c3;
+}
+.aon-fiscal-navarra-bg {
+	background-color:  #da002a;
+}
+.aon-fiscal-araba-bg {
+	background-color:  #A30C51;
+}
+.aon-fiscal-bizkaia-bg {
+	background-color:  #D70004;
+}
+.aon-fiscal-gipuzkoa-bg {
+	background-color:  #A1C031;
+}
+
 .aon-fiscal-model-table-header-title {
-    background-color: #3a85c3;
     color: white;
     font-size: 2em;
     text-align: center;
     width: auto;
 }
 .aon-fiscal-model-table-header-model {
-    background-color: #3a85c3;
     color: white;
     font-size: 1.5em;
     text-align: center;
@@ -1512,6 +1503,9 @@ input:disabled + label{
 	padding-left: 5px;
 	font-weight: bold;
 }
+.aon-fiscal-model-data-table-subtitle {
+	padding-left: 10px;
+}
 .aon-fiscal-model-data-table-header {
     font-size: 0.9em;
     font-weight: bold;
@@ -1521,7 +1515,7 @@ input:disabled + label{
 }
 .aon-fiscal-model-data-table-desc {
 	text-align: left;
-	padding-left: 8px;
+	padding-left: 15px;
 }
 .aon-fiscal-model-data-table-box {
     border: 0.5px solid #bbb;
@@ -1531,5 +1525,6 @@ input:disabled + label{
 }
 .aon-fiscal-model-data-table-data {
 	text-align: right;
-	padding-right: 3px;	
+	padding-right: 3px;
+	width: 155px;	
 }

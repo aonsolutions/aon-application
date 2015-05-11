@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq;
 
 import java.sql.ResultSet;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -17,6 +18,8 @@ import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
+import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
+import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
@@ -34,6 +37,10 @@ public class AccountingImpl implements IAccounting {
 	@Override
 	public Account fetchAccount(AONContext ctx, Integer accountId) {
 		return AccountDAO.fetchOne(ctx, accountId);
+	}
+	@Override
+	public Account fetchAccount(AONContext ctx, String code) {
+		return AccountDAO.fetchOne(ctx, code);
 	}
 
 	// --------- ACCOUNT PERIOD ------------------------------------------
@@ -196,5 +203,10 @@ public class AccountingImpl implements IAccounting {
 		return ae;
 	}
 	
+	// 					      BALANCE
+	public LinkedHashMap<String, AccountBalance>
+		getAccountBalances(AONContext ctx,AccMiningParameters params) throws AonCoreException {
+		return AccountEntryDAO.fetchBalance(ctx, params);		
+	}
 
 }

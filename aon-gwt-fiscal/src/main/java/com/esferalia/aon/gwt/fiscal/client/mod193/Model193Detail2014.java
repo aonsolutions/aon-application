@@ -8,7 +8,7 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
 import com.esferalia.aon.gwt.common.client.widget.IntegerTextBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
-import com.esferalia.aon.occam.api.model.fiscal.Mod193Key;
+import com.esferalia.aon.occam.api.model.type.Mod193Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;

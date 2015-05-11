@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.common.client.widget.cell;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.cell.client.TextInputCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
@@ -9,8 +10,8 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 public class SizableTextInputCell extends TextInputCell {
 
 	interface CustomInputTemplate extends SafeHtmlTemplates {
-		@Template("<input type=\"text\" value=\"{0}\" size=\"{1}\"></input>")
-		SafeHtml input(String value, int size);
+		@Template("<input type=\"text\" value=\"{0}\" class=\"{1}\" size=\"{2}\"></input>")
+		SafeHtml input(String value,String styleName,int size);
 	}
 	
 	private static CustomInputTemplate template;
@@ -32,6 +33,6 @@ public class SizableTextInputCell extends TextInputCell {
 		}
 		String s = (viewData != null) ? viewData.getCurrentValue() : value;
 		if (s==null) s = "";
-		sb.append(template.input(s,size));
+		sb.append(template.input(s,AON.AON_CSS.aonInputText(),size));
 	}
 }		

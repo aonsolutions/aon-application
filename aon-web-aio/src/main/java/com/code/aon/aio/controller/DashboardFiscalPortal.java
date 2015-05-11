@@ -29,12 +29,14 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.accounting.mining.server.AccMiningMVELContext;
-import com.esferalia.aon.accounting.mining.server.IAccMiningKeyAccept;
-import com.esferalia.aon.accounting.mining.shared.AccMiningException;
-import com.esferalia.aon.accounting.mining.shared.AccMiningParameters;
-import com.esferalia.aon.accounting.mining.shared.AccountBalance;
-import com.esferalia.aon.accounting.mining.sql.SQLAccounting;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
+import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
+import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
+import com.esferalia.aon.watson.error.AonCoreException;
 
 public class DashboardFiscalPortal implements Serializable {
 	
@@ -214,12 +216,12 @@ public class DashboardFiscalPortal implements Serializable {
 	}
 	public DashboardEntry[] getExpensesEntries() {
 		if (expensesEntries == null) {
-			Connection c = null;
-			List<DashboardEntry> list = new LinkedList<DashboardEntry>(); 
+			List<DashboardEntry> list = new LinkedList<DashboardEntry>();
+			AONContext aonctx = null;
 			try {
-				c = DatabaseUtil.getConnection(getDomainName());
+				aonctx = AONContext.getAONContext(getDomainName(), getDomainId());  
 				AccMiningMVELContext ctx = getAccMiningContext();
-				Map<String,AccountBalance> map = SQLAccounting.getAccountBalances(c, getParams(expensesPeriod)); 
+				Map<String,AccountBalance> map = AON.getAccountBalances(aonctx, getParams(expensesPeriod)); 
 				ctx.setAccounts( map );
 				for (String key : map.keySet()) {
 					if ( StringUtils.startsWith(key, "6") && !StringUtils.startsWith(key, "60") ) {
@@ -227,7 +229,8 @@ public class DashboardFiscalPortal implements Serializable {
 							Double value = (Double) ctx.evaluateExpression("expense","sdp({"+key+"})");
 							if (value > 0.0) {
 								DashboardEntry entry = new DashboardEntry();
-								entry.setName(SQLAccounting.getAccountName(c, domainId ,key) );
+								Account account = AON.getAccount(aonctx,key) ;
+								entry.setName(account==null?key:account.getDescription());
 								entry.setValue(value);
 								list.add(entry);
 							}
@@ -235,14 +238,13 @@ public class DashboardFiscalPortal implements Serializable {
 					}
 				}
 				expensesEntries = list.toArray( new DashboardEntry[list.size()]);
-			} catch (AonConnectionException e) {
-				e.printStackTrace();
-				// Nothing. Se mostrara array vacio.
-			} catch (AccMiningException e) {
+			} catch (AonCoreException e) {
 				// Nothing. Se mostrara array vacio.
 				e.printStackTrace();
 			} finally {
-				DatabaseUtil.closeQuietly(c);
+				if (aonctx != null) {
+					aonctx.close();
+				}
 			}
 		}
 		return expensesEntries;
@@ -260,3 +262,5 @@ public class DashboardFiscalPortal implements Serializable {
 		return ctx;
 	}
 }
+
+

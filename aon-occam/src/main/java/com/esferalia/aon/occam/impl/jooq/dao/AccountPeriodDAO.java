@@ -35,6 +35,12 @@ public class AccountPeriodDAO {
 		return populateRecord(ctx.getDslContext().fetchOne(ACCOUNT_PERIOD, condition));
 	}
 
+	public static AccountPeriod fetchOneByYear(AONContext ctx, int year) {
+		ctx.checkRead();
+		Date date = AonDateUtils.getYearLastDay(year);
+		return fetchOne(ctx,date);
+	}
+
 	private static AccountPeriod populateRecord(AccountPeriodRecord record) {
 		if (record == null) return null;
 		AccountPeriod period = new AccountPeriod();

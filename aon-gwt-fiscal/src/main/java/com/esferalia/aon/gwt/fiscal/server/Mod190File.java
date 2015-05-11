@@ -18,11 +18,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.file.format.output.FileOutput;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
-import com.esferalia.aon.gwt.common.sql.SQLUtils;
 import com.esferalia.aon.gwt.fiscal.server.file.MOD190Writer;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.server.AonDatabaseUtil;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")
@@ -77,7 +77,7 @@ public class Mod190File extends HttpServlet {
 			throw new ServletException(e);
 		} finally {
 			enableAutoCommit(conn);
-			SQLUtils.closeQuietly(conn);
+			AonDatabaseUtil.closeQuietly(conn);
 		}
 
 	}

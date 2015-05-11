@@ -7,14 +7,13 @@ import com.esferalia.aon.gwt.common.client.css.AonCellTable;
 import com.esferalia.aon.occam.api.model.type.CNAE;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.HasKeyboardPagingPolicy.KeyboardPagingPolicy;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -26,10 +25,10 @@ public class CnaePanel extends CustomDialog {
 		void onClose();
 	}
 
-	interface CnaePanelBinder extends UiBinder<Widget, CnaePanel> {
-	}
-	private static final CnaePanelBinder cnaePanelBinder = GWT
-			.create(CnaePanelBinder.class);
+//	interface CnaePanelBinder extends UiBinder<Widget, CnaePanel> {
+//	}
+//	private static final CnaePanelBinder cnaePanelBinder = GWT
+//			.create(CnaePanelBinder.class);
 
 
 	private static final ProvidesKey<CNAE> CNAE_PROVIDES_KEY = new ProvidesKey<CNAE>() {
@@ -58,6 +57,11 @@ public class CnaePanel extends CustomDialog {
 		setModal(true);
 		setCaption("C.N.A.E.");
 
+		ScrollPanel scroll = new ScrollPanel();
+		scroll.setWidth("550px");
+		scroll.setHeight("500px");
+		scroll.setStyleName(AON.AON_CSS.aonPadding());
+
 		AON.AON_RESOURCES.css().ensureInjected();
 		CellTable.Resources tableStyle = GWT.create(AonCellTable.class);
 
@@ -78,9 +82,10 @@ public class CnaePanel extends CustomDialog {
 		});
 		table.setSelectionModel(model);
 		table.setEmptyTableWidget(new HTML(AON.MSG.noData()));
-
-		Widget ui = cnaePanelBinder.createAndBindUi(this);
-		setWidget(ui);
+		scroll.setWidget(table);
+		this.setWidget(scroll);
+//		Widget ui = cnaePanelBinder.createAndBindUi(this);
+//		setWidget(ui);
 
 	}
 	

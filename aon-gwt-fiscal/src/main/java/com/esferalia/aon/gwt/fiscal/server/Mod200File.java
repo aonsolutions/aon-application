@@ -1,14 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.commit;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.disableAutoCommit;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.enableAutoCommit;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.rollback;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.sql.Connection;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,11 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.file.format.output.FileOutput;
-import com.esferalia.aon.gwt.common.shared.AonSQLException;
-import com.esferalia.aon.gwt.common.sql.SQLUtils;
 import com.esferalia.aon.gwt.fiscal.server.file.MOD200Writer;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200;
-import com.esferalia.aon.gwt.fiscal.sql.SQLMod200;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
@@ -33,15 +24,13 @@ public class Mod200File extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		Connection conn = null;
 		try {
-			conn = getConnection();
-			disableAutoCommit(conn);
 			int id = Integer.parseInt(req.getParameter("mod200"));
-			Mod200 mod200 = SQLMod200.getById(id, conn);
-			commit(conn);
+			String domainName = req.getParameter("domainName");
+			int domainId = Integer.parseInt(req.getParameter("domainId"));
+			Mod200 mod200 = AON.getMod200ById(domainName,domainId,id);
 			MOD200Writer writer = new MOD200Writer();
-			FileOutput fileoutput = writer.createMOD200(conn, mod200);
+			FileOutput fileoutput = writer.createMOD200(mod200);
 			String s = mod200.getEnterpriseName();
 			StringBuilder sb = new StringBuilder();
 			if (!Character.isJavaIdentifierStart(s.charAt(0))) {
@@ -58,15 +47,8 @@ public class Mod200File extends HttpServlet {
 			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".txt\";");
 			AonIOUtils.copy(in, resp.getOutputStream());
 			resp.flushBuffer();
-		} catch (AonSQLException e) {
-			rollback(conn);
-			throw new ServletException(e);
 		} catch (Throwable e) {
-			rollback(conn);
 			throw new ServletException(e);
-		} finally {
-			enableAutoCommit(conn);
-			SQLUtils.closeQuietly(conn);
 		}
 
 	}

@@ -10,13 +10,15 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.text.shared.Parser;
 import com.google.gwt.text.shared.Renderer;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.ValueBox;
 
 public class DoubleBox extends ValueBox<Double> {
 
 	private static final int VISIBLE_LENGTH = 15;
 	private static final int MAX_LENGTH = 15;
-
+	private static final int CHANGE_DISPLAY_MILLIS = 4000;
+	
 	private static final Renderer<Double> RENDERER = new AbstractRenderer<Double>() {
 
 		@Override
@@ -41,10 +43,14 @@ public class DoubleBox extends ValueBox<Double> {
 
 		}
 	};
-
+	
 	public DoubleBox() {
+		this(VISIBLE_LENGTH);
+	}
+	
+	public DoubleBox(int visibleLength) {
 		super(Document.get().createTextInputElement(), RENDERER, PARSER);
-		setVisibleLength(VISIBLE_LENGTH);
+		setVisibleLength(visibleLength);
 		setMaxLength(MAX_LENGTH);
 		setStyleName(AON.AON_CSS.aonInputText());
 		addStyleName(AON.AON_CSS.aonNumberBox());
@@ -60,5 +66,19 @@ public class DoubleBox extends ValueBox<Double> {
 				}
 			}
 		});
+	}
+
+	public void setValue(Double value, boolean fireEvents, boolean shouldDisplayChange) {
+		setValue(value, fireEvents);
+		if (shouldDisplayChange) {
+			addStyleName(AON.AON_CSS.aonValueChanged());
+			if (CHANGE_DISPLAY_MILLIS > 0)
+				new Timer() {
+					@Override
+					public void run() {
+						removeStyleName(AON.AON_CSS.aonValueChanged());
+					}
+				}.schedule(CHANGE_DISPLAY_MILLIS);
+		}
 	}
 }

@@ -132,6 +132,7 @@ public class AonStringUtils {
 	 * @since 3.2
 	 */
 	public static final String SPACE = " ";
+	public static final String DOT = ".";
 	public static final String COMMA = ",";
 	public static final String ZERO = "0";
 	public static final String ONE = "1";

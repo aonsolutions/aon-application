@@ -4,12 +4,11 @@ import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.FsModelDetail.FS_MODEL_DETAIL;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.stream.Stream;
 
 import org.jooq.Record;
+import org.jooq.exception.DataAccessException;
 
 import com.esferalia.aon.jooq.tables.records.FsModelDetailRecord;
 import com.esferalia.aon.jooq.tables.records.FsModelRecord;
@@ -20,52 +19,19 @@ import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
-import com.esferalia.aon.occam.api.model.fiscal.Mod131;
-import com.esferalia.aon.occam.api.model.fiscal.Mod202;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.type.Administration;
-import com.esferalia.aon.occam.api.model.type.CNAE;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
-import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.occam.api.model.type.Period;
-import com.esferalia.aon.occam.server.fiscal.calc.Aeat2013Mod131Calculator;
-import com.esferalia.aon.occam.server.fiscal.calc.Aeat2015Mod202Calculator;
-import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public class FiscalModelDAO {
 	
-	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("ddMMyyyy");
+	static final DateFormat DATE_FORMAT = new SimpleDateFormat("ddMMyyyy");
 
-	public static Mod131 calculateMod131(AONContext ctx, Mod131 mod131) {
-		return Aeat2013Mod131Calculator.calculate(ctx, mod131);
-	}
-	
-	public static Mod131 saveMod131(AONContext ctx, Mod131 mod131) {
-		FiscalModel fm = save(ctx, mod131);
-		return getMod131(ctx, fm.getId());
-	}
-
-	public static Stream<Mod131> getMod131s(AONContext ctx, int domain) {
-		return getModelRecords(ctx, domain)
-			.map( record -> FiscalModelDAO.map(new Mod131(),record));
-	}
-	
-	public static Mod131 getMod131(AONContext ctx,int id) {
-		ctx.checkRead();
-		FsModelRecord record = ctx.getDslContext().selectFrom(FS_MODEL)
-			.where(FS_MODEL.ID.eq(id))
-			.fetchOne();
-		if (record != null) {
-			Mod131 fm = new Mod131(); 
-			populate(fm,record);
-			fillModelDetails(ctx,fm);
-			return fm;
-		}
-		return null;
-	}
-	
 	public static FiscalModel getModel(AONContext ctx,int id) {
 		ctx.checkRead();
 		FsModelRecord record = ctx.getDslContext().selectFrom(FS_MODEL)
@@ -80,7 +46,7 @@ public class FiscalModelDAO {
 		return null;
 	}
 
-	private static void fillModelDetails(AONContext ctx,FiscalModel fm) {
+	static void fillModelDetails(AONContext ctx,FiscalModel fm) {
 		ctx.getDslContext().selectFrom( FS_MODEL_DETAIL)
 			.where(FS_MODEL_DETAIL.FS_MODEL.eq(fm.getId()))
 			.fetch()
@@ -114,7 +80,7 @@ public class FiscalModelDAO {
 			.map( record -> FiscalModelDAO.map(new FiscalModel(),record) );
 	}
 
-	private static FiscalModel populate(FiscalModel fm, Record record) {
+	static FiscalModel populate(FiscalModel fm, Record record) {
 		return fm.setId(record.getValue(FS_MODEL.ID))
 			.setDomain(record.getValue(FS_MODEL.DOMAIN))
 			.setYear(record.getValue(FS_MODEL.YEAR))
@@ -122,7 +88,8 @@ public class FiscalModelDAO {
 					Period.class, record.getValue(FS_MODEL.PERIOD)))
 			.setAdministration(com.esferalia.aon.watson.util.AonEnumUtils.enumValue(
 					Administration.class,record.getValue(FS_MODEL.ADMINISTRATION)))
-			.setFinished( AonEnumUtils.getBoolean( record.getValue(FS_MODEL.STATUS)))
+			.setStatus( com.esferalia.aon.watson.util.AonEnumUtils.enumValue(
+					FiscalStatus.class,record.getValue(FS_MODEL.STATUS)))
 			.setConfidential(AonEnumUtils.getBoolean( record.getValue(FS_MODEL.SECURITY_LEVEL)))
 			.setComplementary( AonEnumUtils.getBoolean( record.getValue(FS_MODEL.COMPLEMENTARY)))
 			.setReplacement( AonEnumUtils.getBoolean( record.getValue(FS_MODEL.REPLACEMENT)))
@@ -153,14 +120,20 @@ public class FiscalModelDAO {
 	}
 
 	public static FiscalModel save(AONContext ctx, FiscalModel fm) {
-		ctx.checkWrite();
-		FiscalModelValidation.validate(ctx,fm);
-		if (fm.getId() == null) {
-			fm = insert(ctx, fm);
-		} else {
-			fm = update(ctx, fm);
+		try {
+			ctx.checkWrite();
+			FiscalModelValidation.validate(ctx,fm);
+			if (fm.getId() == null) {
+				fm = insert(ctx, fm);
+			} else {
+				fm = update(ctx, fm);
+			}
+			return getModel(ctx, fm.getId());
+		} catch (DataAccessException t) {
+			throw new AonCoreException(t.getCause()!=null?t.getCause().getMessage():t.getMessage());
+		} catch (Throwable t) {
+			throw new AonCoreException(t.getMessage());
 		}
-		return getModel(ctx, fm.getId());
 	}
 
 	private static FiscalModel insert(AONContext ctx, FiscalModel fm) {
@@ -279,19 +252,14 @@ public class FiscalModelDAO {
 			.execute();
 	}
 	
-	private static void initializeFiscalModel(AONContext ctx, FiscalModel fm) {
+	static void initializeFiscalModel(AONContext ctx, FiscalModel fm) {
 		FiscalParameters params = AppParamDAO.getFiscalParameters(ctx);
 		fm.setDomain(ctx.getDomainId());
 		fm.setDocument(params.getDocument());
 		fm.setName(params.getName());
-		fm.setModel(FiscalModelType.M202);
 		fm.setAdministration(params.getAdministration(Administration.COMMON_TERRITORY));
 		fm.setAdmonAeat(params.getAdministrationCode());
 		
-		// TODO ----------------------
-		fm.setYear( AonDateUtils.getYear(new Date()) );
-		fm.setPeriod( Period.T1 );
-		fm.setReplacement(false);
 		// ---------------------------
 		Company company = CompanyDAO.getCompany(ctx,ctx.getDomainId());
 		Enterprise enterprise = CompanyDAO.getEnterprise(ctx, company.getId() );
@@ -325,37 +293,6 @@ public class FiscalModelDAO {
 		fm.setContactEmail( params.getContactMail() );
 	}
 
-	public static Stream<Mod202> getMod202s(AONContext ctx,int domain) {
-			return ctx.getDslContext().selectFrom(FS_MODEL)
-					.where(FS_MODEL.DOMAIN.eq(domain))
-					.and(FS_MODEL.MODEL.eq( FiscalModelType.M202.getValue() ))
-					.orderBy(FS_MODEL.YEAR.desc(),FS_MODEL.MODEL.asc(),FS_MODEL.PERIOD.desc())
-					.fetch()
-					.stream()
-					.map( record -> FiscalModelDAO.map(new Mod202(),record));
-		}
-		
-	public static Mod202 getMod202(AONContext ctx,int id) {
-		ctx.checkRead();
-		FsModelRecord record = ctx.getDslContext().selectFrom(FS_MODEL)
-			.where(FS_MODEL.ID.eq(id))
-			.fetchOne();
-		if (record != null) {
-			Mod202 mod202 = new Mod202(); 
-			populate(mod202,record);
-			fillModelDetails(ctx,mod202);
-			onFillFiscalModel(mod202);
-			return mod202;
-		}
-		return null;
-	}
-	
-	public static Mod202 saveMod202(AONContext ctx, Mod202 mod202) {
-		ensureDetail(mod202);
-		FiscalModel fm = save(ctx, mod202);
-		return getMod202(ctx, fm.getId());
-	}
-	
 	public static <V extends FiscalModel> V map(V fm,Record record) {
 		((FiscalModel) fm).setId(record.getValue(FS_MODEL.ID))
 			.setDomain(record.getValue(FS_MODEL.DOMAIN))
@@ -364,7 +301,8 @@ public class FiscalModelDAO {
 					Period.class, record.getValue(FS_MODEL.PERIOD)))
 			.setAdministration(com.esferalia.aon.watson.util.AonEnumUtils.enumValue(
 					Administration.class,record.getValue(FS_MODEL.ADMINISTRATION)))
-			.setFinished( AonEnumUtils.getBoolean( record.getValue(FS_MODEL.STATUS)))
+			.setStatus( com.esferalia.aon.watson.util.AonEnumUtils.enumValue(
+					FiscalStatus.class,record.getValue(FS_MODEL.STATUS)))
 			.setConfidential(AonEnumUtils.getBoolean( record.getValue(FS_MODEL.SECURITY_LEVEL)))
 			.setComplementary( AonEnumUtils.getBoolean( record.getValue(FS_MODEL.COMPLEMENTARY)))
 			.setReplacement( AonEnumUtils.getBoolean( record.getValue(FS_MODEL.REPLACEMENT)))
@@ -395,67 +333,4 @@ public class FiscalModelDAO {
 		return fm;	
 	}
 	
-	public static Mod202 calculateMod202(AONContext ctx, Mod202 mod202) {
-		return Aeat2015Mod202Calculator.calculate(ctx, mod202);
-	}
-
-	public static Mod202 initializeMod202(AONContext ctx) {
-		Mod202 mod202 = new Mod202();
-		initializeFiscalModel(ctx, mod202);
-		for (Mod202Key key : Mod202Key.values()) {
-			mod202.ensureDetail(key);
-		}
-		return mod202;
-	}
-	
-	private static void onFillFiscalModel(Mod202 mod202) {
-		for (Mod202Key key : Mod202Key.values()) {
-			if (key == Mod202Key.P02) {
-				String c = mod202.getDescription(Mod202Key.P02);
-				Date initialDate = null;
-				if (AonStringUtils.isNotEmpty( c )) {
-					try {
-						initialDate = DATE_FORMAT.parse(c);
-					} catch (ParseException e) {
-					}
-				}
-				mod202.setInitialDate(initialDate);
-			} else if (key == Mod202Key.P03) {
-				String c = mod202.getDescription(Mod202Key.P03);
-				if (AonStringUtils.isNotEmpty( c )) {
-					CNAE cnae = CNAE.valueOfCode(c); 
-					mod202.setCnae(cnae==null?null:cnae.getCode());
-					mod202.setCnaeDescription(cnae==null?null:cnae.getDescription());
-				} else {
-					mod202.setCnae(null);
-				}
-			}
-		}
-	}
-	private static void ensureDetail(Mod202 mod202) {
-		for (Mod202Key key : Mod202Key.values()) {
-			if (key == Mod202Key.P02) {
-				if (mod202.getInitialDate() != null) {
-					try {
-						String date = DATE_FORMAT.format(mod202.getInitialDate());
-						mod202.putDescription(Mod202Key.P02,date);
-					} catch (NumberFormatException e) {
-						mod202.putDescription(Mod202Key.P02,null);
-					}
-				} else {
-					mod202.putDescription(Mod202Key.P02,null);
-				}
-			} else if (key == Mod202Key.P03) {
-				if (AonStringUtils.isNotEmpty( mod202.getCnae())) {
-					try {
-						mod202.putDescription(Mod202Key.P03, mod202.getCnae());
-					} catch (NumberFormatException e) {
-						mod202.putDescription(Mod202Key.P03,null);
-					}
-				} else {
-					mod202.putDescription(Mod202Key.P03,null);
-				}
-			}
-		}
-	}
 }

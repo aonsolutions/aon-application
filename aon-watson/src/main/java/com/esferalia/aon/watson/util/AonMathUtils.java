@@ -114,4 +114,15 @@ public class AonMathUtils {
 	public static boolean isNotZero(double value) {
 		return !isZero(value);
 	}
+	
+	/**
+	 * Devuelve verdadero si son iguales los valores pasados, redondesdos a dos decimales.
+	 * @param Primer double a comparar.
+	 * @param Segundo double a comparar.
+	 * @return
+	 */
+	public static boolean equals(double value1,double value2) {
+		return round(value1) == round(value2);
+	}
+	
 }

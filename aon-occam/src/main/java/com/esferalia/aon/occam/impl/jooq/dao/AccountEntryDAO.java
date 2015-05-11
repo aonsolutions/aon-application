@@ -1,17 +1,25 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
+import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
 
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.MessageFormat;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
 import org.jooq.AggregateFunction;
 import org.jooq.Condition;
+import org.jooq.Field;
+import org.jooq.Record;
 import org.jooq.Record1;
+import org.jooq.Select;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 import org.jooq.lambda.SQL;
@@ -23,6 +31,8 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
+import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
+import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
@@ -184,13 +194,48 @@ public class AccountEntryDAO {
 
 	public static boolean existsAnyEntry(AONContext ctx, Integer period, AccountEntryType accountEntryType) {
 		ctx.checkRead();
-		int count = ctx.getDslContext()
-				.selectFrom(ACCOUNT_ENTRY)
+		Select<Record> select = ctx.getDslContext()
+				.select()
+				.from(ACCOUNT_ENTRY)
 				.where(ACCOUNT_ENTRY.ACCOUNT_PERIOD.equal(period))
-				.and(ACCOUNT_ENTRY.ENTRY_TYPE.equal( AonEnumUtils.getByte( accountEntryType))).fetchCount();
-		return (count > 0);
+				.and(ACCOUNT_ENTRY.ENTRY_TYPE.equal( AonEnumUtils.getByte( accountEntryType)));
+		return ctx.getDslContext().fetchCount(select) > 0;
 	}
 	
+	
+	public static LinkedHashMap<String, AccountBalance> fetchBalance(
+			AONContext ctx, AccMiningParameters params) {
+		
+		Field<String> accountField = DSL.substring(ACCOUNT.CODE, 1, params.getAccountLevel()); 
+		Field<BigDecimal> sumDebit = DSL.sum(ACCOUNT_ENTRY_DETAIL.DEBIT); 
+		Field<BigDecimal> sumCredit = DSL.sum(ACCOUNT_ENTRY_DETAIL.CREDIT); 
+		LinkedHashMap<String, AccountBalance> map = new LinkedHashMap<String, AccountBalance>();
+		ctx.getDslContext()
+			.select(ACCOUNT_ENTRY.ENTRY_TYPE, accountField, sumDebit, sumCredit)
+			.from( ACCOUNT_ENTRY )
+			.join(ACCOUNT_ENTRY_DETAIL).on(ACCOUNT_ENTRY.ID.equal(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
+			.join(ACCOUNT).on(ACCOUNT_ENTRY_DETAIL.ACCOUNT.equal(ACCOUNT.ID))
+			.where(ACCOUNT_ENTRY.DOMAIN.equal(params.getDomain()))
+			.and(ACCOUNT_ENTRY.ENTRY_DATE.between(
+					 AonDateUtils.toSql( params.getStartDate() )
+					,AonDateUtils.toSql( params.getEndDate())))
+			.and(ACCOUNT_ENTRY.ENTRY_TYPE.ne(AccountEntryType.CLOSING.getValue()) )
+			.groupBy(ACCOUNT_ENTRY.ENTRY_TYPE, accountField)
+			.fetch()
+			.stream()
+			.forEach( record -> {
+				byte type = record.getValue(ACCOUNT_ENTRY.ENTRY_TYPE);
+				String account = record.getValue(accountField);
+				double debit = record.getValue(sumDebit).doubleValue();
+				double credit = record.getValue(sumCredit).doubleValue();
+				putAccountBalance(map,type,account.substring(0,1), debit,credit);
+				putAccountBalance(map,type,account.substring(0,2), debit,credit);
+				putAccountBalance(map,type,account.substring(0,3), debit,credit);
+				putAccountBalance(map,type,account, debit,credit);
+			});
+		return map;
+	}
+
 	// -----------------------------------------
 	// ------------------------- PRIVATE METHODS
 	// -----------------------------------------
@@ -262,6 +307,15 @@ public class AccountEntryDAO {
 				}
 			}
 			AccountPeriodDAO.update(ctx,period);
+		}
+	}
+
+	private static void putAccountBalance(Map<String, AccountBalance> map,int type, String account,double debit, double credit) {
+		if (map.containsKey(account)) {
+			AccountBalance ac = map.get(account);
+			ac.add(type,debit, credit);
+		} else {
+			map.put(account, new AccountBalance(type,debit,credit));	
 		}
 	}
 

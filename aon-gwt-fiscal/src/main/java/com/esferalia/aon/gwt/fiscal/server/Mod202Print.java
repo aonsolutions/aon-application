@@ -30,11 +30,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.esferalia.aon.gwt.common.sql.SQLUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.server.fiscal.format.mod202.Mod202Writer;
+import com.esferalia.aon.watson.server.AonDatabaseUtil;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")
@@ -134,7 +134,7 @@ public class Mod202Print extends HttpServlet {
 			throw new ServletException(e);
 		} finally {
 			enableAutoCommit(conn);
-			SQLUtils.closeQuietly(conn);
+			AonDatabaseUtil.closeQuietly(conn);
 		}
 
 	}

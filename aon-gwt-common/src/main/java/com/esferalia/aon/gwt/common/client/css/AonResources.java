@@ -76,26 +76,36 @@ public interface AonResources extends ClientBundle, Images {
 	@Source("images/aon-timer.gif")
 	ImageResource aonTimer();
 	
+	@Source("images/aon-aeat-header-image.png")
+	ImageResource aonAeatHeaderImage();
 	@Source("images/aon-aeat.png")
 	ImageResource aonAeat();
 	@Source("images/aon-aeat-bw.png")
 	ImageResource aonAeatBW();
 	
+	@Source("images/aon-araba-header-image.png")
+	ImageResource aonArabaHeaderImage();
 	@Source("images/aon-icon-araba.png")
 	ImageResource aonIconAraba();
 	@Source("images/aon-icon-araba-bw.png")
 	ImageResource aonIconArabaBW();
 	
+	@Source("images/aon-bizkaia-header-image.png")
+	ImageResource aonBizkaiaHeaderImage();
 	@Source("images/aon-icon-bizkaia.png")
 	ImageResource aonIconBizkaia();
 	@Source("images/aon-icon-bizkaia-bw.png")
 	ImageResource aonIconBizkaiaBW();
 	
+	@Source("images/aon-gipuzkoa-header-image.png")
+	ImageResource aonGipuzkoaHeaderImage();
 	@Source("images/aon-icon-gipuzkoa.png")
 	ImageResource aonIconGipuzkoa();
 	@Source("images/aon-icon-gipuzkoa-bw.png")
 	ImageResource aonIconGipuzkoaBW();
 	
+	@Source("images/aon-navarra-header-image.png")
+	ImageResource aonNavarraHeaderImage();
 	@Source("images/aon-icon-navarra.png")
 	ImageResource aonIconNavarra();
 	@Source("images/aon-icon-navarra-bw.png")
@@ -110,54 +120,6 @@ public interface AonResources extends ClientBundle, Images {
 	@Source("images/curly-lt.png")
 	ImageResource aonCurlyLT();
 
-	@Source("images/aon-icon-m111.png")
-	ImageResource aonIconM111();
-
-	@Source("images/aon-icon-m115.png")
-	ImageResource aonIconM115();
-	
-	@Source("images/aon-icon-m123.png")
-	ImageResource aonIconM123();
-	
-	@Source("images/aon-icon-m130.png")
-	ImageResource aonIconM130();
-	
-	@Source("images/aon-icon-m131.png")
-	ImageResource aonIconM131();
-	
-	@Source("images/aon-icon-m140.png")
-	ImageResource aonIconM140();
-	
-	@Source("images/aon-icon-m180.png")
-	ImageResource aonIconM180();
-	
-	@Source("images/aon-icon-m184.png")
-	ImageResource aonIconM184();
-	
-	@Source("images/aon-icon-m190.png")
-	ImageResource aonIconM190();
-	
-	@Source("images/aon-icon-m193.png")
-	ImageResource aonIconM193();
-	
-	@Source("images/aon-icon-m200.png")
-	ImageResource aonIconM200();
-	
-	@Source("images/aon-icon-m303.png")
-	ImageResource aonIconM303();
-	
-	@Source("images/aon-icon-m340.png")
-	ImageResource aonIconM340();
-	
-	@Source("images/aon-icon-m347.png")
-	ImageResource aonIconM347();
-	
-	@Source("images/aon-icon-m349.png")
-	ImageResource aonIconM349();
-	
-	@Source("images/aon-icon-m390.png")
-	ImageResource aonIconM390();
-	
 	@Source("images/family.png")
 	ImageResource aonIconActivities();
 	
@@ -194,9 +156,6 @@ public interface AonResources extends ClientBundle, Images {
 	@Source("images/aon-icon-model.png")
 	ImageResource aonIconModel();
 	
-	@Source("images/aon-aeat-header-image.png")
-	ImageResource aonAeatHeaderImage();
-
 	@Source("images/aon-icon-lock.png")
 	ImageResource aonIconLock();
 

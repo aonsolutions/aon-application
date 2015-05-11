@@ -1,16 +1,17 @@
 package com.esferalia.aon.gwt.fiscal.client.mod200;
 
 import static com.esferalia.aon.gwt.fiscal.client.mod200.Model200.RESOURCES;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Behaviour.BEHAVIOUR_KEYS_MAP;
+import static com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Behaviour.BEHAVIOUR_KEYS_MAP;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.DoubleVariable;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.IMod200KeysProvider;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.DoubleVariable;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.IMod200KeysProvider;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Key;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;

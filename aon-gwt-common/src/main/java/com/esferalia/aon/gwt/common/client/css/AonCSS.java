@@ -4,6 +4,9 @@ import com.google.gwt.resources.client.CssResource;
 
 public interface AonCSS extends  CssResource {
 	
+	@ClassName("aon-no-print")
+	String aonNoPrint();
+	
 	@ClassName("aon-Selector")
 	String aonSelector();
 	
@@ -12,6 +15,18 @@ public interface AonCSS extends  CssResource {
 	
 	@ClassName("aon-aeat-header-image")
 	String aonAeatHeaderImage();
+	
+	@ClassName("aon-araba-header-image")
+	String aonArabaHeaderImage();
+	
+	@ClassName("aon-bizkaia-header-image")
+	String aonBizkaiaHeaderImage();
+	
+	@ClassName("aon-gipuzkoa-header-image")
+	String aonGipuzkoaHeaderImage();
+	
+	@ClassName("aon-navarra-header-image")
+	String aonNavarraHeaderImage();
 	
 	@ClassName("aon-scroll-area")
 	String aonScrollArea();
@@ -141,6 +156,9 @@ public interface AonCSS extends  CssResource {
 
 	@ClassName("aon-editDataTable-numberColumn")
     String aonDataTableNumberColumn();
+
+	@ClassName("aon-wrap")
+	String aonWrap();
 
 	@ClassName("aon-nowrap")
     String aonNowrap();
@@ -462,6 +480,21 @@ public interface AonCSS extends  CssResource {
 	
 	@ClassName("groupHeaderCell")
 	String groupHeaderCell();
+
+	@ClassName("aon-fiscal-aeat-bg")
+	String aonFiscalAeatBg();
+	
+	@ClassName("aon-fiscal-navarra-bg")
+	String aonFiscalNavarraBg();
+	
+	@ClassName("aon-fiscal-araba-bg")
+	String aonFiscalArabaBg();
+	
+	@ClassName("aon-fiscal-bizkaia-bg")
+	String aonFiscalBizkaiaBg();
+
+	@ClassName("aon-fiscal-gipuzkoa-bg")
+	String aonFiscalGipuzkoaBg();
 	
 	@ClassName("aon-fiscal-table")
 	String aonFiscalTable();
@@ -478,53 +511,8 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-tree-year")
 	String aonTreeYear();
 	
-	@ClassName("aon-icon-m111")
-	String aonIconM111();
-
-	@ClassName("aon-icon-m115")
-	String aonIconM115();
-
-	@ClassName("aon-icon-m123")
-	String aonIconM123();
-
-	@ClassName("aon-icon-m130")
-	String aonIconM130();
-
-	@ClassName("aon-icon-m131")
-	String aonIconM131();
-
-	@ClassName("aon-icon-m140")
-	String aonIconM140();
-
-	@ClassName("aon-icon-m180")
-	String aonIconM180();
-
-	@ClassName("aon-icon-m184")
-	String aonIconM184();
-
-	@ClassName("aon-icon-m190")
-	String aonIconM190();
-
-	@ClassName("aon-icon-m193")
-	String aonIconM193();
-
-	@ClassName("aon-icon-m200")
-	String aonIconM200();
-
-	@ClassName("aon-icon-m303")
-	String aonIconM303();
-
-	@ClassName("aon-icon-m340")
-	String aonIconM340();
-
-	@ClassName("aon-icon-m347")
-	String aonIconM347();
-
-	@ClassName("aon-icon-m349")
-	String aonIconM349();
-
-	@ClassName("aon-icon-m390")
-	String aonIconM390();	
+	@ClassName("aon-tree-model")
+	String aonTreeModel();
 
 	@ClassName("aon-icon-company")
 	String aonIconCompany();	
@@ -642,7 +630,10 @@ public interface AonCSS extends  CssResource {
 
 	@ClassName("aon-fiscal-model-data-table-title")
 	String aonFiscalModelDataTableTitle();
-	
+
+	@ClassName("aon-fiscal-model-data-table-subtitle")
+	String aonFiscalModelDataTableSubtitle();
+
 	@ClassName("aon-fiscal-model-data-table-header")
 	String  aonFiscalModelDataTableHeader();
 

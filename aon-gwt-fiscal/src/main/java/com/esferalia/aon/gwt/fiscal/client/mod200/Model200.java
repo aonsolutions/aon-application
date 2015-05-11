@@ -1,18 +1,22 @@
 package com.esferalia.aon.gwt.fiscal.client.mod200;
 
+import com.esferalia.aon.gwt.common.client.CommonService;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
 import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
+import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
+import com.esferalia.aon.gwt.fiscal.client.FiscalService;
+import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
-import com.esferalia.aon.gwt.fiscal.client.Mod200Service;
-import com.esferalia.aon.gwt.fiscal.client.Mod200ServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.Mod200ServiceAsyncDecorator;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200.BalanceType;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.ValidationMessage;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200.BalanceType;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.ValidationMessage;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
@@ -36,6 +40,8 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Model200 extends MainEntryPoint {
+	public static CommonServiceAsync COMMON_SERVICE;
+	public static FiscalServiceAsync FISCAL_SERVICE;
 
 	interface IValidationMessageSelectioinHandler {
 		void validationMessageSelected(ValidationMessage msg);
@@ -95,8 +101,6 @@ public class Model200 extends MainEntryPoint {
 
 	private static final Model200Binder MODEL_200_BINDER = GWT
 			.create(Model200Binder.class);
-	
-	private Mod200ServiceAsyncDecorator mod200Service;
 	
 	final static CommonMessages MSG = GWT.create(CommonMessages.class);
 	final static AonResources RESOURCES = GWT.create(AonResources.class);
@@ -161,6 +165,12 @@ public class Model200 extends MainEntryPoint {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		RESOURCES.css().ensureInjected();
 
+		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
+		FISCAL_SERVICE = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
+
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
+		
 		Widget ui = MODEL_200_BINDER.createAndBindUi(this);
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
@@ -170,18 +180,13 @@ public class Model200 extends MainEntryPoint {
 		mod200Hidden = new Hidden("mod200");
 		diskForm.add(mod200Hidden);
 		formContainer.add(diskForm);
-
-		Mod200ServiceAsync mod200ServiceRaw = GWT
-				.create(Mod200Service.class);
-		mod200Service = new Mod200ServiceAsyncDecorator(mod200ServiceRaw);
 		
 		startModel();
 	}
 
 
 	private void startModel() {
-		mod200 = new Mod200Object(getCurrentDomainName(),getCurrentDomain()
-				, year, mod200Service);
+		mod200 = new Mod200Object(getCurrentDomainName(),getCurrentDomain() , year);
 		mod200.getMod200(new AsyncCallback<Mod200>() {
 			
 			@Override
@@ -274,9 +279,9 @@ public class Model200 extends MainEntryPoint {
 	@UiHandler("removeButton")
 	void onRemoveButtonClick(ClickEvent event) {
 		if (Window.confirm(MSG.confirmDeleteAction())) {
-			remove(new PopupAsyncCallback() {
+			remove(new VoidPopupAsyncCallback() {
 				@Override
-				public void onSuccess(Mod200 result) {
+				public void onSuccess(Void result) {
 					super.onSuccess(result);
 					startModel();
 				}
@@ -353,7 +358,7 @@ public class Model200 extends MainEntryPoint {
 		deckPanel.page14.populate(mod200);
 	}
 
-	private void remove(PopupAsyncCallback callback) {
+	private void remove(VoidPopupAsyncCallback callback) {
 		final PopupPanel popup = new PopupPanel(false, true);
 		Label label = new Label(MSG.processing());
 		label.addStyleName(RESOURCES.css().aonTimer());
@@ -368,6 +373,25 @@ public class Model200 extends MainEntryPoint {
 			popup.hide();
 			DialogMessages.alertErrorWidget(e.getMessage()).center();
 		}
+	}
+
+	private class VoidPopupAsyncCallback implements AsyncCallback<Void> {
+		PopupPanel popup;
+		
+		public void setPopup(PopupPanel popup) {
+			this.popup = popup;
+		}
+
+		@Override
+		public void onSuccess(Void result) {
+			popup.hide();
+		}
+
+		@Override
+		public void onFailure(Throwable caught) {
+			popup.hide();
+		}
+		
 	}
 
 	private class PopupAsyncCallback implements AsyncCallback<Mod200> {

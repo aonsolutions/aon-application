@@ -13,12 +13,6 @@ public class FiscalModelMatrix implements Serializable {
 	
 	private LinkedList<FiscalModelMatrixRow> rows;
 	
-	public static enum FiscalStatus implements Serializable{
-		 MISSING
-		,PENDING
-		,FINISHED
-	}
-
 	public static enum FiscalMatrixPeriod implements Serializable {
 		MONTHLY {
 			@Override
@@ -178,107 +172,107 @@ public class FiscalModelMatrix implements Serializable {
 		}
 	}
 
-	public static class FiscalModelMatrixItem implements Serializable{
-		
-		private static final long serialVersionUID = -3871892696016731326L;
-		
-		private FiscalModelType model;
-		private int year;
-		private Period period;
-		private Administration administration;
-		private FiscalStatus status;
-		private int domainId;
-		private String domainName;
-		private String document;
-		private String name;
-		
-		
-		public FiscalModelType getModel() {
-			return model;
-		}
-		public FiscalModelMatrixItem setModel(FiscalModelType model) {
-			this.model = model;
-			return this;
-		}
-		public int getYear() {
-			return year;
-		}
-		public FiscalModelMatrixItem setYear(int year) {
-			this.year = year;
-			return this;
-		}
-		public Period getPeriod() {
-			return period;
-		}
-		public FiscalModelMatrixItem setPeriod(Period period) {
-			this.period = period;
-			return this;
-		}
-		public Administration getAdministration() {
-			return administration;
-		}
-		public FiscalModelMatrixItem setAdministration(Administration administration) {
-			this.administration = administration;
-			return this;
-		}
-		public FiscalStatus getStatus() {
-			return status;
-		}
-		public FiscalModelMatrixItem setStatus(FiscalStatus status) {
-			this.status = status;
-			return this;
-		}
-		public int getDomainId() {
-			return domainId;
-		}
-		public FiscalModelMatrixItem setDomainId(int domainId) {
-			this.domainId = domainId;
-			return this;
-		}
-		public String getDomainName() {
-			return domainName;
-		}
-		public FiscalModelMatrixItem setDomainName(String domainName) {
-			this.domainName = domainName;
-			return this;
-		}
-		public String getDocument() {
-			return document;
-		}
-		public FiscalModelMatrixItem setDocument(String document) {
-			this.document = document;
-			return this;
-		}
-		public String getName() {
-			return name;
-		}
-		public FiscalModelMatrixItem setName(String name) {
-			this.name = name;
-			return this;
-		}
-		
-		@Override
-		public String toString() {
-			return model
-				+ "\t - " +year
-				+ " - " +period
-				+ "\t - " +administration
-				+ " - " +status
-				+ " - " +domainId
-				+ " - " +domainName
-				+ " - " +document
-				+ " - " +name;
-		}
-		
-	}
+//	public static class FiscalModelMatrixItem implements Serializable{
+//		
+//		private static final long serialVersionUID = -3871892696016731326L;
+//		
+//		private FiscalModelType model;
+//		private int year;
+//		private Period period;
+//		private Administration administration;
+//		private FiscalStatus status;
+//		private int domainId;
+//		private String domainName;
+//		private String document;
+//		private String name;
+//		
+//		
+//		public FiscalModelType getModel() {
+//			return model;
+//		}
+//		public FiscalModelMatrixItem setModel(FiscalModelType model) {
+//			this.model = model;
+//			return this;
+//		}
+//		public int getYear() {
+//			return year;
+//		}
+//		public FiscalModelMatrixItem setYear(int year) {
+//			this.year = year;
+//			return this;
+//		}
+//		public Period getPeriod() {
+//			return period;
+//		}
+//		public FiscalModelMatrixItem setPeriod(Period period) {
+//			this.period = period;
+//			return this;
+//		}
+//		public Administration getAdministration() {
+//			return administration;
+//		}
+//		public FiscalModelMatrixItem setAdministration(Administration administration) {
+//			this.administration = administration;
+//			return this;
+//		}
+//		public FiscalStatus getStatus() {
+//			return status;
+//		}
+//		public FiscalModelMatrixItem setStatus(FiscalStatus status) {
+//			this.status = status;
+//			return this;
+//		}
+//		public int getDomainId() {
+//			return domainId;
+//		}
+//		public FiscalModelMatrixItem setDomainId(int domainId) {
+//			this.domainId = domainId;
+//			return this;
+//		}
+//		public String getDomainName() {
+//			return domainName;
+//		}
+//		public FiscalModelMatrixItem setDomainName(String domainName) {
+//			this.domainName = domainName;
+//			return this;
+//		}
+//		public String getDocument() {
+//			return document;
+//		}
+//		public FiscalModelMatrixItem setDocument(String document) {
+//			this.document = document;
+//			return this;
+//		}
+//		public String getName() {
+//			return name;
+//		}
+//		public FiscalModelMatrixItem setName(String name) {
+//			this.name = name;
+//			return this;
+//		}
+//		
+//		@Override
+//		public String toString() {
+//			return model
+//				+ "\t - " +year
+//				+ " - " +period
+//				+ "\t - " +administration
+//				+ " - " +status
+//				+ " - " +domainId
+//				+ " - " +domainName
+//				+ " - " +document
+//				+ " - " +name;
+//		}
+//		
+//	}
 	
-	public FiscalModelMatrix add(FiscalModelMatrixItem item) {
+	public FiscalModelMatrix add(IFiscalModel item) {
 		if (rows == null) {
 			rows = new LinkedList<FiscalModelMatrix.FiscalModelMatrixRow>();
 		}
 		FiscalModelMatrixRow row = null; 
 		for (FiscalModelMatrixRow r : rows) {
-			if (r.getModel() == item.getModel() && r.getPeriod() == FiscalMatrixPeriod.get(item.getPeriod()) && r.getAdministration() == item.getAdministration() && r.getDomainId() == item.getDomainId()) {
+			if (r.getModel() == item.getModel() && r.getPeriod() == FiscalMatrixPeriod.get(item.getPeriod()) && r.getAdministration() == item.getAdministration() && r.getDomainId() == item.getDomain()) {
 				if (r.getYear() == 0) {
 					r.setYear( item.getYear());
 				}
@@ -296,7 +290,7 @@ public class FiscalModelMatrix implements Serializable {
 			row = new FiscalModelMatrixRow().setModel(item.getModel())
 					.setYear(item.getYear()).setPeriod(item.getPeriod())
 					.setAdministration(item.getAdministration())
-					.setDomainId(item.getDomainId())
+					.setDomainId(item.getDomain())
 					.setDomainName(item.getDomainName())
 					.setDocument(item.getDocument())
 					.setName(item.getName())

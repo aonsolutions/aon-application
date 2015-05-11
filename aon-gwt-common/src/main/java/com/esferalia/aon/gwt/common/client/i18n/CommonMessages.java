@@ -105,6 +105,31 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("-----")
 	@AlternateMessage(
+		{"M111"		,"Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades econ\u00F3micas."
+		,"M115" 	,"Retenciones e ingresos a cuenta. Rentas o rendimientos procedentes del arrendamiento de inmuebles urbanos."
+		,"M123"		,"Retenciones e ingresos a cuenta. Determinados rendimientos del capital mobiliario o determinadas rentas."
+		,"M130"		,"IRPF. Empresarios y profesionales en Estimaci\u00F3n Directa. Pago fraccionado."
+		,"M131"		,"IRPF. Empresarios y profesionales en Estimaci\u00F3n Objetiva. Pago fraccionado."
+		,"M303_RG"	,"IVA. Autoliquidaci\u00F3n. R\u00E9gimen General"
+		,"M303_RS"	,"IVA. Autoliquidaci\u00F3n. R\u00E9gimen Simplificado"
+		,"M340"		,"Mod. 340"
+		,"M347"		,"Mod. 347"
+		,"M349"		,"Mod. 349"
+		,"M390"		,"Mod. 390"
+		,"M390_HF"	,"Mod. 390 Hac. For."
+		,"M180"		,"Mod. 180"
+		,"M184"		,"Mod. 184"
+		,"M190"		,"Mod. 190"
+		,"M193"		,"Mod. 193"
+		,"M310"		,"IVA. Autoliquidaci\u00F3n. R\u00E9gimen Simplificado"
+		,"M311"		,"IVA. Autoliquidaci\u00F3n Final. R\u00E9gimen Simplificado"
+		,"M200"		,"Declaraci\u00F3n-liquidaci\u00F3n del Impuesto sobre Sociedades."
+		,"M202"		,"Impuesto sobre sociedades. Pago fraccionado."
+		})	
+	String fiscalModelDescriptionlong(@Select FiscalModelType f);
+
+	@DefaultMessage("-----")
+	@AlternateMessage(
 		{"M01"		,"Enero"
 		,"M02"		,"Febrero"
 		,"M03"		,"Marzo"
@@ -289,6 +314,9 @@ public interface CommonMessages extends Messages {
 	// ---------------------------------------------------------Button Messages
 	@DefaultMessage("Nuevo")
 	String newAction();
+
+	@DefaultMessage("Nuevo {0}")
+	String newSomething(String message);
 
 	@DefaultMessage("Guardar")
 	String saveAction();
@@ -1610,6 +1638,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Retenciones e ingresos a cuenta")
 	String retentionAccount();
 	
+	@DefaultMessage("Ret. e ingr. cta.")
+	String retentionAccountShort();
+	
 	@DefaultMessage("Fecha de inicio del pr\u00E9stamo")
 	String loanStart();
 	
@@ -1844,9 +1875,56 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("A) Art\u00EDculo LIS 40.2 LIS")
 	String calculation0();
+	
 	@DefaultMessage("B.1) Art\u00EDculo 40.3 LIS")
 	String calculation1();
+	
 	@DefaultMessage("B.2) Art\u00EDculo 40.3 LIS")
 	String calculation2();
+	
+	@DefaultMessage("I. Actividades econ\u00F3micas en estimaci\u00F3n objetiva distintas de las agr\u00EDcolas, ganaderas y forestales.")
+	String mod131Header1();
+	
+	@DefaultMessage("II. Actividades econ\u00F3micas en estimaci\u00F3n objetiva distintas de las agr\u00EDcolas, ganaderas y forestales, sin posibilidad de determinar ninguno de los datos-base a efectos del pago fraccionado.")
+	String mod131Header2();
+	
+	@DefaultMessage("III. Actividades agr\u00EDcolas, ganaderas y forestales, en estimaci\u00F3n objetiva.")
+	String mod131Header3();
+	
+	@DefaultMessage("IV. Total liquidaci\u00F3n.")
+	String mod131Header4();
+	
+	@DefaultMessage("I. Rendimientos del trabajo")
+	String mod111Header1();
+	
+	@DefaultMessage("II. Rendimientos de actividades econ\u00F3micas")
+	String mod111Header2();
+	
+	@DefaultMessage("III. Premios por la participaci\u00F3n en juegos, concursos, rifas o combinaciones aleatorias")
+	String mod111Header3();
+	
+	@DefaultMessage("IV. Ganancias patrimoniales derivadas de los aprovechamientos forestales de los vecinos en los montes p\u00FAblicos")
+	String mod111Header4();
+	
+	@DefaultMessage("V. Contraprestaciones por la cesi\u00F3n de derechos de imagen, ingresos a cuenta previstos en el art\u00EDculo 92.8 de la Ley del Impuesto ")
+	String mod111Header5();
 
+	@DefaultMessage("Total liquidaci\u00F3n")
+	String mod111Header6();
+
+	@DefaultMessage("Rendimientos dinerarios")
+	String moneyYield();
+
+	@DefaultMessage("Rendimientos en especie")
+	String inKindYield();
+	
+	@DefaultMessage("Contrapartidas dinerarias o en especie")
+	String moneyInKindReturn();
+	
+	@DefaultMessage("N\u00AA de perceptores")
+	String receivers();
+
+	@DefaultMessage("Percepciones")
+	String perceptions();
+	
 }

@@ -27,6 +27,7 @@
 		<module>aon-ui-messaging</module>
 		<module>aon-sql-payroll</module>
 		<module>aon-sql-google</module>
+		<module>aon-accounting-mining</module>
 		 -->
 
 		<!-- MAVEN PLUGINS -->
@@ -165,7 +166,6 @@
 		<module>aon-file-payroll</module>
 		<module>aon-facturae</module>
 		<module>aon-stat</module>
-		<module>aon-accounting-mining</module>
 		
 		<!-- WEB MODULES -->
 		<module>aon-web-aio</module>

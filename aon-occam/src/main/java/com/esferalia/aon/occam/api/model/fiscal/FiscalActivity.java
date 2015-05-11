@@ -141,6 +141,9 @@ public class FiscalActivity implements Serializable {
 	public void setValue(FiscalActivityInfoKeyType type, FiscalActivityInfoKey key, String value) {
 		this.setValue(type.ordinal(), key.ordinal(), value);
 	}
+	public void setValue(Integer type, Integer key, Double value) {
+		this.setValue(type, key, value==null?null:value.toString());
+	}
 	public void setValue(Integer type, Integer key, String value) {
 		if ( getMap().get(type) == null || getMap().get(type).get(key) == null) {
 			throw new IllegalStateException("No existe la clave " + key);
@@ -162,11 +165,15 @@ public class FiscalActivity implements Serializable {
 	}
 	
 	public double getDoubleValue(FiscalActivityInfoKeyType type, FiscalActivityInfoKey key) {
-		if (getMap().get(type.ordinal()).get(key.ordinal()) != null) {
-			return AonNumberUtils.todouble( getMap().get(type.ordinal()).get(key.ordinal()).getValue());
+		return this.getDoubleValue(type.ordinal(), key.ordinal());
+	}
+	public double getDoubleValue(Integer type, Integer key) {
+		if (getMap().get(type).get(key) != null) {
+			return AonNumberUtils.todouble( getMap().get(type).get(key).getValue());
 		}
 		return 0.0;
 	}
+	
 	public double getInfoDoubleValue(FiscalActivityInfoKey key) {
 		return getDoubleValue(FiscalActivityInfoKeyType.INFO, key);
 	}

@@ -6,9 +6,7 @@ import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.Date;
 import java.util.LinkedList;
 
 import org.jooq.Condition;
@@ -33,7 +31,6 @@ import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public class Mod140DAO {

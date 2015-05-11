@@ -1,24 +1,24 @@
 package com.esferalia.aon.occam.api.model.fiscal;
 
-import java.io.Serializable;
 import java.util.HashMap;
 
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.occam.api.model.type.Period;
 
-public class FiscalModel implements Serializable {
+public class FiscalModel implements IFiscalModel {
 
 	private static final long serialVersionUID = -6772628350162797968L;
 	
 	private Integer id;
-	private Integer domain;
-	private Integer year;
+	private int domain;
+	private String domainName;
+	private int year;
 	private Integer finance;
 	private FiscalModelType model;
 	private Period period;
 	private Administration administration;
-	private boolean finished;
+	private FiscalStatus status;
 	private boolean  confidential;
 	private boolean complementary;
 	private boolean replacement;
@@ -48,6 +48,7 @@ public class FiscalModel implements Serializable {
 	
 	HashMap<String,FiscalModelDetail> map;
 	
+	@Override
 	public Integer getId() {
 		return id;
 	}
@@ -56,18 +57,29 @@ public class FiscalModel implements Serializable {
 		return this;
 	}
 	
-	public Integer getDomain() {
+	@Override
+	public int getDomain() {
 		return domain;
 	}
-	public FiscalModel setDomain(Integer domain) {
+	public FiscalModel setDomain(int domain) {
 		this.domain = domain;
 		return this;
 	}
 	
-	public Integer getYear() {
+	@Override
+	public String getDomainName() {
+		return domainName;
+	}
+	public FiscalModel setDomainName(String domainName) {
+		this.domainName = domainName;
+		return this;
+	}
+
+	@Override
+	public int getYear() {
 		return year;
 	}
-	public FiscalModel setYear(Integer year) {
+	public FiscalModel setYear(int year) {
 		this.year = year;
 		return this;
 	}
@@ -78,6 +90,7 @@ public class FiscalModel implements Serializable {
 		this.finance = finance;
 		return this;
 	}
+	@Override
 	public FiscalModelType getModel() {
 		return model;
 	}
@@ -85,6 +98,7 @@ public class FiscalModel implements Serializable {
 		this.model = model;
 		return this;
 	}
+	@Override
 	public Period getPeriod() {
 		return period;
 	}
@@ -92,6 +106,7 @@ public class FiscalModel implements Serializable {
 		this.period = period;
 		return this;
 	}
+	@Override
 	public Administration getAdministration() {
 		return administration;
 	}
@@ -100,11 +115,15 @@ public class FiscalModel implements Serializable {
 		return this;
 	}
 	public boolean isFinished() {
-		return finished;
+		return getStatus() == FiscalStatus.FINISHED;
 	}
-	public FiscalModel setFinished(boolean finished) {
-		this.finished = finished;
+	public FiscalModel setStatus(FiscalStatus status) {
+		this.status = status;
 		return this;
+	}
+	@Override
+	public FiscalStatus getStatus() {
+		return this.status;
 	}
 	public boolean isConfidential() {
 		return confidential;
@@ -120,6 +139,7 @@ public class FiscalModel implements Serializable {
 		this.complementary = complementary;
 		return this;
 	}
+	@Override
 	public boolean isReplacement() {
 		return replacement;
 	}
@@ -155,6 +175,7 @@ public class FiscalModel implements Serializable {
 		this.comments = comments;
 		return this;
 	}
+	@Override
 	public String getDocument() {
 		return document;
 	}
@@ -162,6 +183,7 @@ public class FiscalModel implements Serializable {
 		this.document = document;
 		return this;
 	}
+	@Override
 	public String getSurname() {
 		return surname;
 	}
@@ -169,6 +191,7 @@ public class FiscalModel implements Serializable {
 		this.surname = surname;
 		return this;
 	}
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -351,4 +374,43 @@ public class FiscalModel implements Serializable {
 		}
 		return getMap().get(key);
 	}
+	
+	public static void map(FiscalModel from,FiscalModel to) {
+		to.setId(from.getId());
+		to.setAdministration(from.getAdministration());
+		to.setModel(from.getModel());
+		to.setYear(from.getYear());
+		to.setPeriod(from.getPeriod());
+		to.setReplacement(from.isReplacement());
+		to.setDomain(from.getDomain());
+		to.setFinance(from.getFinance());
+		to.setStatus(from.getStatus());
+		to.setConfidential(from.isConfidential());
+		to.setComplementary(from.isComplementary());
+		to.setWithoutActivity(from.isWithoutActivity());
+		to.setNumber(from.getNumber());
+		to.setReplacedNumber(from.getReplacedNumber());
+		to.setComments(from.getComments());
+		to.setDocument(from.getDocument());
+		to.setSurname(from.getSurname());
+		to.setName(from.getName());
+		to.setStreetInitial(from.getStreetInitial());
+		to.setStreetName(from.getStreetName());
+		to.setStreetNumber(from.getStreetNumber());
+		to.setStreetStair(from.getStreetStair());
+		to.setStreetFloor(from.getStreetFloor());
+		to.setStreetDoor(from.getStreetDoor());
+		to.setPhone(from.getPhone());
+		to.setTown(from.getTown());
+		to.setProvince(from.getProvince());
+		to.setZip(from.getZip());
+		to.setAdmonAeat(from.getAdmonAeat());
+		to.setContactPerson(from.getContactPerson());
+		to.setContactPhone(from.getContactPhone());
+		to.setContactCellular(from.getContactCellular());
+		to.setContactEmail(from.getContactEmail());
+		to.setIban(from.getIban());;
+		to.setMap(from.getMap());
+	}
+
 }

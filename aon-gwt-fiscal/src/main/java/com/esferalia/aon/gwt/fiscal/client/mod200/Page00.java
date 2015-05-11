@@ -2,22 +2,23 @@ package com.esferalia.aon.gwt.fiscal.client.mod200;
 
 import static com.esferalia.aon.gwt.fiscal.client.mod200.Model200.MSG;
 import static com.esferalia.aon.gwt.fiscal.client.mod200.Model200.RESOURCES;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Character.CHARACTERS_KEYS;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Character.CHARACTER_ALSO_CHECK_MAP;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Character.CHARACTER_INCOMPATIBILITY_MAP;
+import static com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Character.CHARACTERS_KEYS;
+import static com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Character.CHARACTER_ALSO_CHECK_MAP;
+import static com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Character.CHARACTER_INCOMPATIBILITY_MAP;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.CnaePanel;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.DoubleVariable;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200.BalanceType;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.DoubleVariable;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200.BalanceType;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Key;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.CNAE;
 import com.google.gwt.core.client.GWT;

@@ -24,7 +24,6 @@
 					<webappDirectory>${project.build.outputDirectory}</webappDirectory>
 					<compileSourcesArtifacts>
 					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.common</compileSourcesArtifact>  
-					  <compileSourcesArtifact>com.esferalia.aon:aon.accounting.mining</compileSourcesArtifact>
 					  <compileSourcesArtifact>com.esferalia.aon:aon.occam</compileSourcesArtifact>
 					</compileSourcesArtifacts>
 				</configuration>
@@ -105,21 +104,6 @@
 		
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
-			<artifactId>aon.accounting.mining</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>com.esferalia.aon</groupId>
-			<artifactId>aon.accounting.mining</artifactId>
-			<version>${project.version}</version>
-			<scope>provided</scope>
-			<classifier>sources</classifier>
-		</dependency>
-		
-		<dependency>
-			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.gwt.common</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
@@ -145,13 +129,6 @@
 			<artifactId>gwt-user</artifactId>
 			<version>2.7.0</version>
 			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-    		<groupId>com.sun.xml.bind</groupId>
-    		<artifactId>jaxb-impl</artifactId>
-	    	<version>2.2.5-2</version>
-			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
@@ -262,11 +239,10 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-	      <groupId>com.lowagie</groupId>
-	      <artifactId>itext</artifactId>
-	      <version>2.1.7</version>
-	    </dependency>
-		
+			<groupId>com.lowagie</groupId>
+			<artifactId>itext</artifactId>
+			<version>2.1.7</version>
+		</dependency>		
 	</dependencies>
   <profiles>
     <profile>

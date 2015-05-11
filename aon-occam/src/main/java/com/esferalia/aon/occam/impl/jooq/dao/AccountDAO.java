@@ -19,6 +19,13 @@ public class AccountDAO {
 		return populateRecord(ctx.getDslContext().fetchOne(ACCOUNT,condition));
 	}
 
+	public static Account fetchOne(AONContext ctx, String code) {
+		Condition condition = ACCOUNT.CODE.equal(code)
+			.and(ctx.getDomainInheritanceCondition(ctx.getDomainId(),ACCOUNT.DOMAIN));
+		ctx.checkRead();
+		return populateRecord(ctx.getDslContext().fetchOne(ACCOUNT,condition));
+	}
+
 	private static Account populateRecord(AccountRecord record) {
 		if (record == null) return null;
 		Account account = new Account();

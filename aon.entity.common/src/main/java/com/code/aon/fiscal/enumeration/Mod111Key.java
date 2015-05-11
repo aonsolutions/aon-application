@@ -251,6 +251,9 @@ public enum Mod111Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 	public String getValue() {
 		return value;
 	}
+	public Administration[] getAdministrations() {
+		return administrations;
+	}
 
 	@Override
 	public boolean accept(Administration administration, Period period, int year) {

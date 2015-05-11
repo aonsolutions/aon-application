@@ -31,7 +31,6 @@
 
 	<!-- Specify the app entry point class. -->
 	<inherits name="com.esferalia.aon.gwt.common.Common" />
-	<inherits name="com.esferalia.aon.accounting.mining.AccMining" />
 	<inherits name="com.esferalia.aon.occam.api.Occam" />
 
 	<!-- Other module inherits --> 

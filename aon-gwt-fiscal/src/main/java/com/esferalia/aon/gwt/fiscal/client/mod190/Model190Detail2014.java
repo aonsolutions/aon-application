@@ -7,7 +7,7 @@ import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfResult;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
-import com.esferalia.aon.occam.api.model.fiscal.Mod190Key;
+import com.esferalia.aon.occam.api.model.type.Mod190Key;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;

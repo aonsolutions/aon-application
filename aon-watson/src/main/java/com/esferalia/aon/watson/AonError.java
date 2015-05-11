@@ -5,6 +5,16 @@ import java.text.MessageFormat;
 
 
 public enum AonError implements Serializable{
+	// Á --> \u00C1 á --> \u00E1
+	// É --> \u00C9 é --> \u00E9
+	// Í --> \u00CD í --> \u00ED
+	// Ó --> \u00D3 ó --> \u00F3
+	// Ú --> \u00DA ú --> \u00FA
+	// Ñ --> \u00D1 ñ --> \u00F1
+	// º --> \u00AA ª --> \u00BA
+	// ¿ --> \u00BF
+	
+	
 	// -----------------------------------------------------------
 	// --------------------- SECUROTY ----------------------------
 	// -----------------------------------------------------------
@@ -21,7 +31,8 @@ public enum AonError implements Serializable{
 	,EMPTY_YEAR("El ejercicio es un dato obligatorio, no puede estar vacio")
 	,INVALID_YEAR("El ejercicio debe tener un valor real")
 	,EMPTY_PERIOD("El periodo es un dato obligatorio, no puede estar vacio")
-	,EMPTY_EPIGRAPH("El epígrafe es un dato obligatorio, no puede estar vacio")
+	,EMPTY_EPIGRAPH("El ep\u00EDgrafe es un dato obligatorio, no puede estar vacio")
+	,INVALID_LENGTH("La longitud del dato \"{0}\" no puede superar los {1} car\u00E1cteres")
 	
 	// -----------------------------------------------------------
 	// --------------------- ENUMERATION -------------------------
@@ -42,43 +53,43 @@ public enum AonError implements Serializable{
 	,ACCOUNT_PERIOD_END_OVERLAP("Solape con la fecha fin y el periodo {0}")
 	,ACCOUNT_PERIOD_UNKOWN_FOR_DATE("No se encuentra un ejercicio contable para la fecha {0,date,dd/MM/yyyy}")
 	// --------------------------------------------- ACCOUNT_ENTRY
-	,ACCOUNT_ENTRY_WRONG_DOMAIN("El ejericio del asiento no existe o no es válido para el dominio ({0}).")
+	,ACCOUNT_ENTRY_WRONG_DOMAIN("El ejericio del asiento no existe o no es v\u00E1lido para el dominio ({0}).")
 	,ACCOUNT_ENTRY_EMPTY_DATE("La fecha del asiento es un dato obligatorio, no puede estar vacia")
 	,ACCOUNT_ENTRY_EMPTY_PERIOD("El ejercicio del asiento es un dato obligatorio, no puede estar vacio")
 	,ACCOUNT_ENTRY_EMPTY_TYPE("El tipo de asiento es un dato obligatorio, no puede estar vacio.")
-	,ACCOUNT_ENTRY_DATE_IN_PERIOD("La Fecha del Asiento no está dentro del periodo asignado al ejercicio {0}")
-	,ACCOUNT_ENTRY_PERIOD_INACTIVE("El Ejercicio {0} está inactivo.")
-	,ACCOUNT_ENTRY_PERIOD_OPERATING("No se permite la introducción o modificación de asientos en el ejercicio {0}, porque ya se ha realizado el asiento de explotación.")
-	,ACCOUNT_ENTRY_PERIOD_CLOSING("No se permite la introducción o modificación de asientos en el ejercicio {0} porque ya se ha realizado el asiento de cierre.")
+	,ACCOUNT_ENTRY_DATE_IN_PERIOD("La Fecha del Asiento no est\u00E1 dentro del periodo asignado al ejercicio {0}")
+	,ACCOUNT_ENTRY_PERIOD_INACTIVE("El Ejercicio {0} est\u00E1 inactivo.")
+	,ACCOUNT_ENTRY_PERIOD_OPERATING("No se permite la introducci\u00F3n o modificaci\u00F3n de asientos en el ejercicio {0}, porque ya se ha realizado el asiento de explotaci\u00F3n.")
+	,ACCOUNT_ENTRY_PERIOD_CLOSING("No se permite la introducci\u00F3n o modificaci\u00F3n de asientos en el ejercicio {0} porque ya se ha realizado el asiento de cierre.")
 	,ACCOUNT_ENTRY_EMPTY_CONCEPT("El concepto del apunte es un dato obligatorio, no puede estar vacio.")
 	,ACCOUNT_ENTRY_EMPTY_ACCOUNT("La cuenta contable del apunte es un dato obligatorio, no puede estar vacio. (LINEA={0,number},CONCEPTO={1},DEBE={2,number},HABER={3,number})")
 	,ACCOUNT_ENTRY_ACCOUNT_NOT_FOUND("Cuenta contable no encontrada en el dominio del asiento. (ID={0}, [{1} - {2}])")
-	,ACCOUNT_ENTRY_ACCOUNT_INVALID_LENGTH("La cuenta contable debe ser de último nivel (9 dígitos). (ID={0}, [{1} - {2}])")
-	,ACCOUNT_ENTRY_ACCOUNT_INACTIVE("La cuenta contable está desactivada. (ID={0}, [{1} - {2}])")
-	,ACCOUNT_ENTRY_SALARY_NO_LINES("No se han definido líneas en el apunte de nóminas.")
-	,ACCOUNT_ENTRY_SALARY_NO_ACCOUNT("Línea de apunte de nóminas sin cuenta contable y la cuenta asignada al tipo no se puede recuperar. (TIPO={0}, CANTIDAD={1,number}). Revise el valor del parámetro {2}.")
+	,ACCOUNT_ENTRY_ACCOUNT_INVALID_LENGTH("La cuenta contable debe ser de \u00FAltimo nivel (9 d\u00EDgitos). (ID={0}, [{1} - {2}])")
+	,ACCOUNT_ENTRY_ACCOUNT_INACTIVE("La cuenta contable est\u00E1 desactivada. (ID={0}, [{1} - {2}])")
+	,ACCOUNT_ENTRY_SALARY_NO_LINES("No se han definido l\u00EDneas en el apunte de n\u00F3minas.")
+	,ACCOUNT_ENTRY_SALARY_NO_ACCOUNT("L\u00EDnea de apunte de n\u00F3minas sin cuenta contable y la cuenta asignada al tipo no se puede recuperar. (TIPO={0}, CANTIDAD={1,number}). Revise el valor del par\u00E1metro {2}.")
 	// --------------------------------------------- FISCAL ACTIVITY
-	,DUPLICATE_EPIGRAPH("Ya existe el epígrafe {1} en el año {0}")	
+	,DUPLICATE_EPIGRAPH("Ya existe el ep\u00EDgrafe {1} en el a\u00F1o {0}")	
 	// -----------------------------------------------------------
 	// --------------------- FISCAL ------------------------------
 	// -----------------------------------------------------------
-	,FISCAL_NO_REPLACED_DECLARATION("No existe una declaración a la que sustituir.")
-	,FISCAL_DECLARATION_ALREADY_REPLACED("Ya existe una declaración sustitutiva.")
-	,FISCAL_DECLARATION_ALREADY_EXISTS("Ya existe una declaración en el periodo.")
+	,FISCAL_NO_REPLACED_DECLARATION("No existe una declaraci\u00F3n a la que sustituir.")
+	,FISCAL_DECLARATION_ALREADY_REPLACED("Ya existe una declaraci\u00F3n sustitutiva.")
+	,FISCAL_DECLARATION_ALREADY_EXISTS("Ya existe una declaraci\u00F3n en el periodo.")
 	// --------------------------------------------- PRODUCT
-	,DUPLICATE_PRODUCT_CODE("Ya existe un Producto con el mismo Código {0}.")
-	,DUPLICATE_PRODUCT_CODE_DOMAIN("Ya existe un Producto con el mismo Código en el Dominio: {0}.")
-	,EMPTY_PRODUCT_CODE("El Código del Producto es un dato obligatorio, no puede estar vacio.")
+	,DUPLICATE_PRODUCT_CODE("Ya existe un Producto con el mismo C\u00F3digo {0}.")
+	,DUPLICATE_PRODUCT_CODE_DOMAIN("Ya existe un Producto con el mismo C\u00F3digo en el Dominio: {0}.")
+	,EMPTY_PRODUCT_CODE("El C\u00F3digo del Producto es un dato obligatorio, no puede estar vacio.")
 	,EMPTY_PRODUCT_NAME("El Nombre del Producto es un dato obligatorio, no puede estar vacio.")
 	,EMPTY_PRODUCT("El Producto es un dato obligatorio, no puede estar vacio.")
 	,EMPTY_TAG("La Etiqueta es un dato obligatorio, no puede estar vacio.")
 	,EXIST_PRODUCT("El Producto no existe en el mismo dominio.")
 	,EXIST_TAG("La etiqueta no existe en el mismo dominio.")
 	,DUPLICATE_PRODUCT_TAG("Ya existe un Producto con la misma etiqueta {0}.")
-	,DUPLICATE_BARCODE("Ya existe un Producto con el mismo Código de Barras {0}.")
-	,DUPLICATE_BARCODE_DOMAIN("Ya existe un Producto con el mismo Código de Barras en el Dominio {0}.")
+	,DUPLICATE_BARCODE("Ya existe un Producto con el mismo C\u00F3digo de Barras {0}.")
+	,DUPLICATE_BARCODE_DOMAIN("Ya existe un Producto con el mismo C\u00F3digo de Barras en el Dominio {0}.")
 	,DUPLICATE_DETAILS("Ya existe el Detalle {0}.")
-	,DUPLICATE_SERIAL_NUMBER("Ya existe el número de serie {0}.")
+	,DUPLICATE_SERIAL_NUMBER("Ya existe el n\u00FAmero de serie {0}.")
 	,EMPTY_WORKPLACE("El Lugar de trabajo es un dato obligatorio, no puede estar vacio")
 
 	;
