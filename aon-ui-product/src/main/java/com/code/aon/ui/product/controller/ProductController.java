@@ -36,12 +36,162 @@ public class ProductController extends BasicController implements IAuditableCont
 
 	private int detailLevel;
 	private Item item;
+	private String itemSerialDate1;
+	private String itemSerialDate2;
 	private boolean showNewItemWindow;
 	private boolean showSearchItemWindow;
 	private Item saveStateItem;
 	private boolean showAccountsWindow;
 	private boolean showAuditInfoWindow;
 	
+	private String barcode;
+	private Integer serialNumber;
+	private String detail;
+	private String detail2;
+	private String detail3; 
+	private String description;
+	private Double purchasePrice;
+	private Double profitPercent;
+	private Double price;
+	private Integer internet;
+	
+	private String creationUser;
+	private String creationDate1;
+	private String creationDate2;
+	private String modificationUser;
+	private String modificationDate1;
+	private String modificationDate2;
+	
+	
+	
+	public String getCreationUser() {
+		return creationUser;
+	}
+
+	public void setCreationUser(String creationUser) {
+		this.creationUser = creationUser;
+	}
+
+	public String getCreationDate1() {
+		return creationDate1;
+	}
+
+	public void setCreationDate1(String creationDate1) {
+		this.creationDate1 = creationDate1;
+	}
+
+	public String getCreationDate2() {
+		return creationDate2;
+	}
+
+	public void setCreationDate2(String creationDate2) {
+		this.creationDate2 = creationDate2;
+	}
+
+	public String getModificationUser() {
+		return modificationUser;
+	}
+
+	public void setModificationUser(String modificationUser) {
+		this.modificationUser = modificationUser;
+	}
+
+	public String getModificationDate1() {
+		return modificationDate1;
+	}
+
+	public void setModificationDate1(String modificationDate1) {
+		this.modificationDate1 = modificationDate1;
+	}
+
+	public String getModificationDate2() {
+		return modificationDate2;
+	}
+
+	public void setModificationDate2(String modificationDate2) {
+		this.modificationDate2 = modificationDate2;
+	}
+
+	public Integer getSerialNumber() {
+		return serialNumber;
+	}
+
+	public void setSerialNumber(Integer serialNumber) {
+		this.serialNumber = serialNumber;
+	}
+
+	public String getBarcode() {
+		return barcode;
+	}
+
+	public void setBarcode(String barcode) {
+		this.barcode = barcode;
+	}
+
+	public String getDetail() {
+		return detail;
+	}
+
+	public void setDetail(String detail) {
+		this.detail = detail;
+	}
+
+	public String getDetail2() {
+		return detail2;
+	}
+
+	public void setDetail2(String detail2) {
+		this.detail2 = detail2;
+	}
+
+	public String getDetail3() {
+		return detail3;
+	}
+
+	public void setDetail3(String detail3) {
+		this.detail3 = detail3;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Double getPurchasePrice() {
+		return purchasePrice;
+	}
+
+	public void setPurchasePrice(Double purchasePrice) {
+		this.purchasePrice = purchasePrice;
+	}
+
+	public Double getProfitPercent() {
+		return profitPercent;
+	}
+
+	public void setProfitPercent(Double profitPercent) {
+		this.profitPercent = profitPercent;
+	}
+
+	public Double getPrice() {
+		return price;
+	}
+
+	public void setPrice(Double price) {
+		this.price = price;
+	}
+
+	public Integer getInternet() {
+		return internet;
+	}
+
+	public void setInternet(Integer internet) {
+		this.internet = internet;
+	}
+
 	public ProductController() {
 		String value = AppParamUtil.getValue(AON_PRODUCT_DETAIL_LEVEL);
 		if (value != null) {
@@ -93,6 +243,24 @@ public class ProductController extends BasicController implements IAuditableCont
 		this.showAuditInfoWindow = showAuditInfoWindow;
 	}
 	
+	
+	public String getItemSerialDate1() {
+		return itemSerialDate1;
+	}
+
+	public void setItemSerialDate1(String itemSerialDate1) {
+		
+		this.itemSerialDate1 = itemSerialDate1;
+	}
+
+	public String getItemSerialDate2() {
+		return itemSerialDate2;
+	}
+
+	public void setItemSerialDate2(String itemSerialDate2) {
+		this.itemSerialDate2 = itemSerialDate2;
+	}
+
 	public ItemController getItemController() {
 		return (ItemController)AonUtil.getRegisteredBean(ITEM);
 	}

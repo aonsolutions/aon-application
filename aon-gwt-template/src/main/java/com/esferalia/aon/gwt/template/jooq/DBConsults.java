@@ -123,66 +123,75 @@ public class DBConsults {
 					v.add(ti);
 				});
 				if(recordDefault.isEmpty()){
-					TemplateInfo stockTemplate = new TemplateInfo();
-					Vector<String> v2 = new Vector<String>();
-					v2.add("Producto");v2.add("Nombre");v2.add("Cantidad");
-					v2.add("Detalle 1");v2.add("Detalle 2");v2.add("Detalle 3");
-					stockTemplate.setColumns(v2);
-					stockTemplate.setDomain(domain);
-					stockTemplate.setDomainId(0);
-					stockTemplate.setName("Est\u00e1ndar");
-					stockTemplate.setType("Stock");
-					stockTemplate.sethasWarehouse(false);
-					stockTemplate.setIsParent(true);
-					Integer id = insertTemplate(domain, stockTemplate,Utils.newXmlFile(stockTemplate), 0);
-					stockTemplate.setId(id);
-					v.add(stockTemplate);
 					
-					/*TemplateInfo stockPurchaseTemplate = new TemplateInfo();
-					v2 = new Vector<String>();
-					v2.add("Centro de Trabajo");v2.add("Departamento");
-					v2.add("Producto");v2.add("Nombre");v2.add("Cantidad");
-					v2.add("Detalle 1");v2.add("Detalle 2");v2.add("Detalle 3");
-					stockPurchaseTemplate.setColumns(v2);
-					stockPurchaseTemplate.setDomain(domain);
-					stockPurchaseTemplate.setDomainId(0);
-					stockPurchaseTemplate.setName("Solicitud de Compra");
-					stockPurchaseTemplate.setType("Catalogo");
-					stockPurchaseTemplate.sethasWarehouse(false);
-					stockPurchaseTemplate.setIsParent(true);
-					id = insertTemplate(domain, stockPurchaseTemplate,Utils.newXmlFile(stockPurchaseTemplate), 0);
-					stockPurchaseTemplate.setId(id);
-					v.add(stockPurchaseTemplate);
-					*/
-					TemplateInfo productTemplate = new TemplateInfo();
-					v2 = new Vector<String>();
-					v2.add("Nombre");v2.add("Código");v2.add("Precio Coste");v2.add("Precio Venta Base");
-					v2.add("Detalle 1");v2.add("Detalle 2");v2.add("Detalle 3");
-					productTemplate.setColumns(v2);
-					productTemplate.setDomain(domain);
-					productTemplate.setDomainId(0);
-					productTemplate.setName("Est\u00e1ndar");
-					productTemplate.setType("Producto");
-					productTemplate.sethasWarehouse(false);
-					productTemplate.setIsParent(true);
-					id = insertTemplate(domain, productTemplate,Utils.newXmlFile(productTemplate), 0);
-					productTemplate.setId(id);
-					v.add(productTemplate);
+					Result<Record1<Integer>> data = ctx.getDslContext()
+							.select(DOMAIN.ID)
+							.from(DOMAIN)
+							.where(DOMAIN.ID.eq(0))
+							.fetch();
+					if (data.isNotEmpty()){
+						
+						TemplateInfo stockTemplate = new TemplateInfo();
+						Vector<String> v2 = new Vector<String>();
+						v2.add("Producto");v2.add("Nombre");v2.add("Cantidad");
+						v2.add("Detalle 1");v2.add("Detalle 2");v2.add("Detalle 3");
+						stockTemplate.setColumns(v2);
+						stockTemplate.setDomain(domain);
+						stockTemplate.setDomainId(0);
+						stockTemplate.setName("Est\u00e1ndar");
+						stockTemplate.setType("Stock");
+						stockTemplate.sethasWarehouse(false);
+						stockTemplate.setIsParent(true);
+						Integer id = insertTemplate(domain, stockTemplate,Utils.newXmlFile(stockTemplate), 0);
+						stockTemplate.setId(id);
+						v.add(stockTemplate);
 					
-					TemplateInfo feeTemplate = new TemplateInfo();
-					v2 = new Vector<String>();
-					v2.add("Cliente");v2.add("Producto");v2.add("Cantidad");v2.add("Precio");v2.add("Descuento");
-					v2.add("Fecha Inicio");v2.add("Fecha Facturaci\u00f3n");v2.add("Centro de Trabajo");
-					feeTemplate.setColumns(v2);
-					feeTemplate.setDomain(domain);
-					feeTemplate.setDomainId(0);
-					feeTemplate.setName("Est\u00e1ndar");
-					feeTemplate.setType("Cuota");
-					feeTemplate.sethasWarehouse(false);
-					feeTemplate.setIsParent(true);
-					id = insertTemplate(domain, feeTemplate,Utils.newXmlFile(feeTemplate), 0);
-					feeTemplate.setId(id);
-					v.add(feeTemplate);
+						/*TemplateInfo stockPurchaseTemplate = new TemplateInfo();
+						v2 = new Vector<String>();
+						v2.add("Centro de Trabajo");v2.add("Departamento");
+						v2.add("Producto");v2.add("Nombre");v2.add("Cantidad");
+						v2.add("Detalle 1");v2.add("Detalle 2");v2.add("Detalle 3");
+						stockPurchaseTemplate.setColumns(v2);
+						stockPurchaseTemplate.setDomain(domain);
+						stockPurchaseTemplate.setDomainId(0);
+						stockPurchaseTemplate.setName("Solicitud de Compra");
+						stockPurchaseTemplate.setType("Catalogo");
+						stockPurchaseTemplate.sethasWarehouse(false);
+						stockPurchaseTemplate.setIsParent(true);
+						id = insertTemplate(domain, stockPurchaseTemplate,Utils.newXmlFile(stockPurchaseTemplate), 0);
+						stockPurchaseTemplate.setId(id);
+						v.add(stockPurchaseTemplate);
+					 	*/
+						TemplateInfo productTemplate = new TemplateInfo();
+						v2 = new Vector<String>();
+						v2.add("Nombre");v2.add("Código");v2.add("Precio Coste");v2.add("Precio Venta Base");
+						v2.add("Detalle 1");v2.add("Detalle 2");v2.add("Detalle 3");
+						productTemplate.setColumns(v2);
+						productTemplate.setDomain(domain);
+						productTemplate.setDomainId(0);
+						productTemplate.setName("Est\u00e1ndar");
+						productTemplate.setType("Producto");
+						productTemplate.sethasWarehouse(false);
+						productTemplate.setIsParent(true);
+						id = insertTemplate(domain, productTemplate,Utils.newXmlFile(productTemplate), 0);
+						productTemplate.setId(id);
+						v.add(productTemplate);
+						
+						TemplateInfo feeTemplate = new TemplateInfo();
+						v2 = new Vector<String>();
+						v2.add("Cliente");v2.add("Producto");v2.add("Cantidad");v2.add("Precio");v2.add("Descuento");
+						v2.add("Fecha Inicio");v2.add("Fecha Facturaci\u00f3n");v2.add("Centro de Trabajo");
+						feeTemplate.setColumns(v2);
+						feeTemplate.setDomain(domain);
+						feeTemplate.setDomainId(0);
+						feeTemplate.setName("Est\u00e1ndar");
+						feeTemplate.setType("Cuota");
+						feeTemplate.sethasWarehouse(false);
+						feeTemplate.setIsParent(true);
+						id = insertTemplate(domain, feeTemplate,Utils.newXmlFile(feeTemplate), 0);
+						feeTemplate.setId(id);
+						v.add(feeTemplate);
+					}
 				}
 				else{
 				recordDefault.stream().forEach(r -> {

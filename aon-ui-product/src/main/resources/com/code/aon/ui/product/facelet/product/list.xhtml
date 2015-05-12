@@ -33,7 +33,9 @@
 						src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
 							
 					<aon:commandLink id="product-export" value="#{bundle.account_export}"
-						onclick="productx('#{productSearch.code}','#{productSearch.name}','#{productSearch.category.id}','#{productSearch.tagsStr}','#{productSearch.brand.id}','#{productSearch.vat.id}','#{productSearch.retention.id}','#{productSearch.purchaseAccount.id}','#{productSearch.salesAccount.id}','#{productSearch.serializable}','#{productSearch.inventoriable}','#{productSearch.manufactured}','#{productSearch.composition}', '#{productSearch.statusesStr}','#{productSearch.typesStr}')"
+						onclick="productx('#{productSearch.code}','#{productSearch.name}','#{productSearch.category.id}','#{productSearch.tagsStr}','#{productSearch.brand.id}','#{productSearch.vat.id}','#{productSearch.retention.id}','#{productSearch.purchaseAccount.id}','#{productSearch.salesAccount.id}','#{productSearch.serializable}','#{productSearch.inventoriable}','#{productSearch.manufactured}','#{productSearch.composition}', '#{productSearch.statusesStr}','#{productSearch.typesStr}'
+											,'#{product.barcode}','#{product.serialNumber}','#{product.itemSerialDate1}','#{product.itemSerialDate2}','#{product.detail}','#{product.detail2}','#{product.detail3}','#{product.description}','#{product.purchasePrice}','#{product.profitPercent}','#{product.price}','#{product.internet}','#{productSearch.itemStatusesStr}','#{productSearch.supplierCode}'
+											,'#{product.creationUser}','#{product.creationDate1}','#{product.creationDate2}','#{product.modificationUser}','#{product.modificationDate1}','#{product.modificationDate2}')"
 						styleClass="aon-finding-toolbar-item aon-icon-export-excel-trans">
 					</aon:commandLink>
 					

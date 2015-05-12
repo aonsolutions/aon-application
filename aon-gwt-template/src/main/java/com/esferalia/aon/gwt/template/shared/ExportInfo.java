@@ -25,6 +25,66 @@ public class ExportInfo implements IsSerializable{
 	String manufactured;
 	String composition;
 	
+	String serialNumber;
+	String itemSerialDate1;
+	String itemSerialDate2;
+	String detail;
+	String detail2;
+	String detail3;
+	String itemDescription;
+	String supplierCode;
+	String purchasePrice;
+	String profitPercent;
+	String price;
+	String itemStatuses;
+	String internet;
+	
+	String creationUser;
+	String creationDate1;
+	String creationDate2;
+	String modificationUser;
+	String modificationDate1;
+	String modificationDate2;
+	
+	
+	
+	
+	public String getCreationUser() {
+		return creationUser;
+	}
+	public void setCreationUser(String creationUser) {
+		this.creationUser = creationUser;
+	}
+	public String getCreationDate1() {
+		return creationDate1;
+	}
+	public void setCreationDate1(String creationDate1) {
+		this.creationDate1 = creationDate1;
+	}
+	public String getCreationDate2() {
+		return creationDate2;
+	}
+	public void setCreationDate2(String creationDate2) {
+		this.creationDate2 = creationDate2;
+	}
+	public String getModificationUser() {
+		return modificationUser;
+	}
+	public void setModificationUser(String modificationUser) {
+		this.modificationUser = modificationUser;
+	}
+	public String getModificationDate1() {
+		return modificationDate1;
+	}
+	public void setModificationDate1(String modificationDate1) {
+		this.modificationDate1 = modificationDate1;
+	}
+	public String getModificationDate2() {
+		return modificationDate2;
+	}
+	public void setModificationDate2(String modificationDate2) {
+		this.modificationDate2 = modificationDate2;
+	}
 	public String getCategory() {
 		return category;
 	}
@@ -150,6 +210,84 @@ public class ExportInfo implements IsSerializable{
 	}
 	public void setComposition(String composition) {
 		this.composition = composition;
+	}
+	public String getSerialNumber() {
+		return serialNumber;
+	}
+	public void setSerialNumber(String serialNumber) {
+		this.serialNumber = serialNumber;
+	}
+	public String getItemSerialDate1() {
+		return itemSerialDate1;
+	}
+	public void setItemSerialDate1(String itemSerialDate1) {
+		this.itemSerialDate1 = itemSerialDate1;
+	}
+	public String getItemSerialDate2() {
+		return itemSerialDate2;
+	}
+	public void setItemSerialDate2(String itemSerialDate2) {
+		this.itemSerialDate2 = itemSerialDate2;
+	}
+	public String getDetail() {
+		return detail;
+	}
+	public void setDetail(String detail) {
+		this.detail = detail;
+	}
+	public String getDetail2() {
+		return detail2;
+	}
+	public void setDetail2(String detail2) {
+		this.detail2 = detail2;
+	}
+	public String getDetail3() {
+		return detail3;
+	}
+	public void setDetail3(String detail3) {
+		this.detail3 = detail3;
+	}
+	public String getItemDescription() {
+		return itemDescription;
+	}
+	public void setItemDescription(String itemDescription) {
+		this.itemDescription = itemDescription;
+	}
+	public String getSupplierCode() {
+		return supplierCode;
+	}
+	public void setSupplierCode(String supplierCode) {
+		this.supplierCode = supplierCode;
+	}
+	public String getPurchasePrice() {
+		return purchasePrice;
+	}
+	public void setPurchasePrice(String purchasePrice) {
+		this.purchasePrice = purchasePrice;
+	}
+	public String getProfitPercent() {
+		return profitPercent;
+	}
+	public void setProfitPercent(String profitPercent) {
+		this.profitPercent = profitPercent;
+	}
+	public String getPrice() {
+		return price;
+	}
+	public void setPrice(String price) {
+		this.price = price;
+	}
+	public String getItemStatuses() {
+		return itemStatuses;
+	}
+	public void setItemStatuses(String itemStatuses) {
+		this.itemStatuses = itemStatuses;
+	}
+	public String getInternet() {
+		return internet;
+	}
+	public void setInternet(String internet) {
+		this.internet = internet;
 	}
 	
 	

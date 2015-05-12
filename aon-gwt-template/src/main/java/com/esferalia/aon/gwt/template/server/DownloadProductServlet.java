@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.template.server;
 
+import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 
 import java.io.BufferedInputStream;
@@ -11,6 +12,9 @@ import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Vector;
@@ -75,7 +79,28 @@ public class DownloadProductServlet extends HttpServlet {
         String types = p_request.getParameter("types");
         String brand = p_request.getParameter("brand");
 
+        String barcode = p_request.getParameter("barcode");
+        String serialNumber = p_request.getParameter("serialNumber");
+        String itemSerialDate1 = p_request.getParameter("itemSerialDate1");
+        String itemSerialDate2 = p_request.getParameter("itemSerialDate2");
+        String detail = p_request.getParameter("detail");
+        String detail2 = p_request.getParameter("detail2");
+        String detail3 = p_request.getParameter("detail3");
+        String itemDescription = p_request.getParameter("itemDescription");
+        String purchasePrice = p_request.getParameter("purchasePrice");
+        String profitPercent = p_request.getParameter("profitPercent");
+        String price = p_request.getParameter("price");
+        String itemStatuses = p_request.getParameter("itemStatuses");
+        String supplierCode = p_request.getParameter("supplierCode");
         
+    	String creationUser = p_request.getParameter("creationUser");
+    	String creationDate1 = p_request.getParameter("creationDate1");
+    	String creationDate2 = p_request.getParameter("creationDate2");
+    	String modificationUser = p_request.getParameter("modificationUser");
+    	String modificationDate1 = p_request.getParameter("modificationDate1");
+    	String modificationDate2 = p_request.getParameter("modificationDate2");
+
+    	
         
         Integer domainId = Integer.parseInt(domain_id);
         String domain = AonUtil.getDomainName();
@@ -192,6 +217,9 @@ public class DownloadProductServlet extends HttpServlet {
         }*/
         
         Condition c = PRODUCT.DOMAIN.eq(domainId);
+        
+        //-------------------- PRODUCT FILTER
+        
         if(!category.equals("null") && !category.equals("") && !category.equals("undefined"))
         	c = c.and(PRODUCT.CATEGORY.eq(Integer.parseInt(category)));
         if(!brand.equals("null") && !brand.equals("") && !brand.equals("undefined"))
@@ -199,7 +227,7 @@ public class DownloadProductServlet extends HttpServlet {
         if(!code.equals("null") && !code.equals("") && !code.equals("undefined"))
         	c = c.and(PRODUCT.CODE.like("%"+code+"%"));
         if(!description.equals("null") && !description.equals("") && !description.equals("undefined"))
-        	c.and(PRODUCT.NAME.like("%"+description+"%"));
+        	c = c.and(PRODUCT.NAME.like("%"+description+"%"));
 
         if(!types.equals("null") && !types.equals("") && !types.equals("undefined")){
         	String s= types.substring(1) ;
@@ -280,7 +308,123 @@ public class DownloadProductServlet extends HttpServlet {
         		c = c.and(PRODUCT.COMPOSITION.eq((byte)1));
         }
         
+        //-------------------- ITEM FILTER
         
+        if(!barcode.equals("null") && !barcode.equals("") && !barcode.equals("undefined")){
+        	c = c.and(ITEM.BARCODE.like("%"+barcode+"%"));
+        }
+        if(!serialNumber.equals("null") && !serialNumber.equals("") && !serialNumber.equals("undefined")){
+        	c = c.and(ITEM.SERIAL_NUMBER.like("%"+serialNumber+"%"));
+        }
+        if(!itemSerialDate1.equals("null") && !itemSerialDate1.equals("") && !itemSerialDate1.equals("undefined")){	
+        	SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        	try {
+				Date d1 = formatter.parse(itemSerialDate1);
+	        	java.sql.Date date = new java.sql.Date(d1.getTime());
+	        	c = c.and(ITEM.SERIAL_DATE.greaterOrEqual(date));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+        }
+        if(!itemSerialDate2.equals("null") && !itemSerialDate2.equals("") && !itemSerialDate2.equals("undefined")){
+
+        	SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        	try {
+				Date d1 = formatter.parse(itemSerialDate2);
+	        	java.sql.Date date = new java.sql.Date(d1.getTime());
+	        	c = c.and(ITEM.SERIAL_DATE.lessOrEqual(date));
+        	} catch (ParseException e) {
+        		e.printStackTrace();
+        	}
+        }
+        if(!detail.equals("null") && !detail.equals("") && !detail.equals("undefined")){
+        	c = c.and(ITEM.DETAIL.like("%"+detail+"%"));
+        }
+        if(!detail2.equals("null") && !detail2.equals("") && !detail2.equals("undefined")){
+        	c = c.and(ITEM.DETAIL2.like("%"+detail2+"%"));
+        }
+        if(!detail3.equals("null") && !detail3.equals("") && !detail3.equals("undefined")){
+        	c = c.and(ITEM.DETAIL3.like("%"+detail3+"%"));
+        }
+        if(!itemDescription.equals("null") && !itemDescription.equals("") && !itemDescription.equals("undefined")){
+        	c = c.and(ITEM.DESCRIPTION.like("%"+itemDescription+"%"));
+        }
+        if(!purchasePrice.equals("null") && !purchasePrice.equals("") && !purchasePrice.equals("undefined")){
+        	c = c.and(ITEM.PURCHASE_PRICE.eq(Double.parseDouble(purchasePrice)));
+        }
+        if(!profitPercent.equals("null") && !profitPercent.equals("") && !profitPercent.equals("undefined")){
+        	c = c.and(ITEM.PROFIT_PERCENT.eq(Double.parseDouble(profitPercent)));
+        }
+        if(!price.equals("null") && !price.equals("") && !price.equals("undefined")){
+        	c = c.and(ITEM.PRICE.eq(Double.parseDouble(price)));
+        }
+        if(!itemStatuses.equals("null") && !itemStatuses.equals("") && !itemStatuses.equals("undefined")){
+        	String s= itemStatuses.substring(1) ;
+        	while(s !=""){
+        		Integer index = s.indexOf("$");
+        		if(index == -1){
+        			c = c.and(ITEM.STATUS.eq((byte)Integer.parseInt(s)));
+        			s="";
+        		}
+        		else{ 
+        			c = c.and(ITEM.STATUS.eq((byte)Integer.parseInt(s.substring(0, index))));
+        			s = s.substring(index+1);
+        		}
+        	}
+        }
+       /*if(!supplierCode.equals("null") && !supplierCode.equals("") && !supplierCode.equals("undefined")){
+        	c = c.and(ITEM.SERIAL_NUMBER.like("%"+serialNumber+"%"));
+        }*/
+        
+        //-------------------- AUDITORY FILTER
+        
+        if(!creationUser.equals("null") && !creationUser.equals("") && !creationUser.equals("undefined"))
+        	c = c.and(PRODUCT.CREATION_USER.like("%"+creationUser+"%"));
+        
+        if(!creationDate1.equals("null") && !creationDate1.equals("") && !creationDate1.equals("undefined")){	
+        	SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        	try {
+				Date d1 = formatter.parse(creationDate1);
+				Timestamp t = new Timestamp(d1.getTime());
+	        	c = c.and(PRODUCT.CREATION_DATE.greaterOrEqual(t));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+        }
+        if(!creationDate2.equals("null") && !creationDate2.equals("") && !creationDate2.equals("undefined")){	
+        	SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        	try {
+				Date d1 = formatter.parse(creationDate2);
+				Timestamp t = new Timestamp(d1.getTime());
+	        	c = c.and(PRODUCT.CREATION_DATE.lessOrEqual(t));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+        }
+        if(!modificationUser.equals("null") && !modificationUser.equals("") && !modificationUser.equals("undefined"))
+        	c = c.and(PRODUCT.MODIFICATION_USER.like("%"+modificationUser+"%"));
+        
+        if(!modificationDate1.equals("null") && !modificationDate1.equals("") && !modificationDate1.equals("undefined")){	
+        	SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        	try {
+				Date d1 = formatter.parse(modificationDate1);
+				Timestamp t = new Timestamp(d1.getTime());
+	        	c = c.and(PRODUCT.MODIFICATION_DATE.greaterOrEqual(t));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+        }
+        if(!modificationDate2.equals("null") && !modificationDate2.equals("") && !modificationDate2.equals("undefined")){	
+        	SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        	try {
+				Date d1 = formatter.parse(modificationDate2);
+	        	Timestamp t = new Timestamp(d1.getTime());
+	        	c = c.and(PRODUCT.MODIFICATION_DATE.lessOrEqual(t));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+        }
+        //TODO 
         
         Vector<ProductInfo> v =  DBProduct.getProducts(domain,domainId,c);
 
@@ -352,9 +496,6 @@ public class DownloadProductServlet extends HttpServlet {
         fis.close();
         out.flush();
         out.close();
-        
-       //TODO probar --->  libro.close();
-
     }
 	
 	}

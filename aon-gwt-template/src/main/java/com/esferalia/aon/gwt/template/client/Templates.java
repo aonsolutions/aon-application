@@ -853,11 +853,9 @@ public class Templates extends Composite implements EntryPoint {
 			
 			@Override
 			protected void onAccept() {
-
 				ListBox lb = (ListBox) flex_table.getWidget(0, 1);
 				String template = lb.getItemText(lb.getSelectedIndex());
 				TemplateInfo ti = new TemplateInfo();
-				
 				for(TemplateInfo t : tlist.getList()) {
 					if(t.getName().equals(template) && t.getType().equals("Producto")){
 						ti = t;
@@ -884,8 +882,33 @@ public class Templates extends Composite implements EntryPoint {
 						+ "&composition="+ei.getComposition()
 						+ "&statuses="+ei.getStatuses()
 						+ "&types="+ei.getTypes()
-						+ "&brand="+ei.getBrand();
+						+ "&brand="+ei.getBrand()
+						
+						+ "&barcode="+ei.getBarcode()
+						+ "&serialNumber="+ei.getSerialNumber()
+						+ "&itemSerialDate1="+ei.getItemSerialDate1()
+						+ "&itemSerialDate2="+ei.getItemSerialDate2()
+						+ "&detail="+ei.getDetail()
+						+ "&detail2="+ei.getDetail2()
+						+ "&detail3="+ei.getDetail3()
+						+ "&itemDescription="+ei.getItemDescription()
+						+ "&purchasePrice="+ei.getPurchasePrice()
+						+ "&profitPercent="+ei.getProfitPercent()
+						+ "&price="+ei.getPrice()
+						+ "&itemStatuses="+ei.getItemStatuses()
+						+ "&supplierCode="+ei.getSupplierCode()
+						
+						+ "&creationUser="+ei.getCreationUser()
+						+ "&creationDate1="+ei.getCreationDate1()
+						+ "&creationDate2="+ei.getCreationDate2()
+						+ "&modificationUser="+ei.getModificationUser()
+						+ "&modificationDate1="+ei.getModificationDate1()
+						+ "&modificationDate2="+ei.getModificationDate1();
+						
+						
 				
+					
+
 				Window.open( fileDownloadURL, "_blank",null);
 				hide();
 				// llamar  servlet de descarga para krear excel con todos losproductos
@@ -1661,16 +1684,40 @@ public class Templates extends Composite implements EntryPoint {
     	}
 	}-*/;
 	
-	public void productx(String code,String name,String category,String tags,String brand,String vat,String retention,String purchaseAccount,String  salesAccount,String  serializable, String inventoriable, String manufactured, String composition,  String statuses, String types){
+	public void productx(String code,String name,String category,String tags,String brand,String vat,String retention,String purchaseAccount,String  salesAccount,String  serializable, String inventoriable, String manufactured, String composition,  String statuses, String types
+			,String barcode,String serialNumber,String itemSerialDate1, String itemSerialDate2,String detail,String detail2,String detail3,String description,String purchasePrice,String profitPercent,String price,String internet,String itemStatusesStr,String supplierCode
+			, String creationUser,String creationDate1, String creationDate2,String modificationUser,String modificationDate1, String modificationDate2){
 		//Window.alert(code +" - "+name+" - "+category+" - "+tags+" - "+brand+" - "+vat+" - "+retention+" - "+purchaseAccount+" - "+salesAccount+" - "+serializable+" - "+inventoriable+" - "+manufactured+" - "+composition+" - "+statuses+" - "+types); 
+		//Window.alert(barcode+" - "+serialNumber+" - "+itemSerialDate1+" - "+itemSerialDate2+" - "+detail+" - "+detail2+" - "+detail3+" - "+description+" - "+purchasePrice+" - "+profitPercent+" - "+price+" - "+internet+" - "+itemStatusesStr+" - "+supplierCode); 
+		Window.alert(creationUser+" - "+creationDate1+" - "+creationDate2+" - "+modificationUser+" - "+modificationDate1+" - "+modificationDate2);
+		String d1 = ""; 
+		if(itemSerialDate1 != null && !itemSerialDate1.equals("")) d1 = itemSerialDate1.substring(8,10)+"-"+Utils.getMonth(itemSerialDate1.substring(4,7))+"-"+itemSerialDate1.substring(25);
+		String d2 = "";
+		if(itemSerialDate2 != null && !itemSerialDate2.equals("")) d2 = itemSerialDate2.substring(8,10)+"-"+Utils.getMonth(itemSerialDate2.substring(4,7))+"-"+itemSerialDate2.substring(25);
+		String d3 = ""; 
+		if(creationDate1 != null && !creationDate1.equals("")) d3 = creationDate1.substring(8,10)+"-"+Utils.getMonth(creationDate1.substring(4,7))+"-"+creationDate1.substring(25);
+		String d4 = "";
+		if(creationDate2 != null && !creationDate2.equals("")) d4 = creationDate2.substring(8,10)+"-"+Utils.getMonth(creationDate2.substring(4,7))+"-"+creationDate2.substring(25);
+		String d5 = ""; 
+		if(modificationDate1 != null && !modificationDate1.equals("")) d5 = modificationDate1.substring(8,10)+"-"+Utils.getMonth(modificationDate1.substring(4,7))+"-"+modificationDate1.substring(25);
+		String d6 = "";
+		if(modificationDate2 != null && !modificationDate2.equals("")) d6 = modificationDate2.substring(8,10)+"-"+Utils.getMonth(modificationDate2.substring(4,7))+"-"+modificationDate2.substring(25);
+		
+		
 		ExportInfo ei = new ExportInfo();
 		ei.setCode(code);ei.setName(name);ei.setCategory(category);ei.setTags(tags);ei.setBrand(brand);ei.setVat(vat);ei.setRetention(retention);ei.setPurchaseAccount(purchaseAccount);ei.setSalesAccount(salesAccount);ei.setSerializable(serializable);ei.setInventoriable(inventoriable);ei.setManufactured(manufactured);ei.setComposition(composition);ei.setStatuses(statuses);ei.setTypes(types);
+		ei.setBarcode(barcode);ei.setSerialNumber(serialNumber);ei.setItemSerialDate1(d1);ei.setItemSerialDate2(d2);ei.setDetail(detail);ei.setDetail2(detail2);ei.setDetail3(detail3);ei.setPurchasePrice(purchasePrice);ei.setProfitPercent(profitPercent);ei.setPrice(price);ei.setInternet(internet);ei.setItemStatuses(itemStatusesStr);ei.setSupplierCode(supplierCode);
+		ei.setCreationUser(creationUser);ei.setCreationDate1(d3); ei.setCreationDate2(d4);  ei.setModificationUser(modificationUser) ; ei.setModificationDate1(d5);ei.setModificationDate2(d6);
 		exportProducts(ei);
 	}
 
 	public static native void exportProductx(Templates thiz) /*-{
-		$wnd.productx = function(code,name,category,tags,brand,vat,retention,purchaseAccount, salesAccount, serializable, inventoriable,manufactured, composition, statuses, types) {
-			thiz.@com.esferalia.aon.gwt.template.client.Templates::productx(*)(code,name,category,tags,brand,vat,retention,purchaseAccount, salesAccount, serializable, inventoriable,manufactured, composition, statuses, types);
+		$wnd.productx = function(code,name,category,tags,brand,vat,retention,purchaseAccount, salesAccount, serializable, inventoriable,manufactured, composition, statuses, types
+								,barcode,serialNumber,itemSerialDate1,itemSerialDate2,detail,detail2,detail3,description,purchasePrice,profitPercent,price,internet,itemStatusesStr,supplierCode
+								,creationUser,creationDate1, creationDate2, modificationUser, modificationDate1,modificationDate2) {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::productx(*)(code,name,category,tags,brand,vat,retention,purchaseAccount, salesAccount, serializable, inventoriable,manufactured, composition, statuses, types
+																			,barcode,serialNumber,itemSerialDate1,itemSerialDate2,detail,detail2,detail3,description,purchasePrice,profitPercent,price,internet,itemStatusesStr,supplierCode
+																			,creationUser,creationDate1, creationDate2, modificationUser, modificationDate1,modificationDate2);
 		}
 	}-*/;
 	

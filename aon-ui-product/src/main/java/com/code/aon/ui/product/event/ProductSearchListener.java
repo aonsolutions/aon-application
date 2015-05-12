@@ -40,6 +40,7 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 	private ProductStatus[] statuses;
 	private String statusesStr;
 	private ProductStatus[] itemStatuses;
+	private String itemStatusesStr;
 	private ProductType[] types;
 	private String typesStr;
 	private ProductCategory category;
@@ -93,8 +94,21 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 
 	public void setItemStatuses(ProductStatus[] itemStatuses) {
 		this.itemStatuses = itemStatuses;
+		String s ="";
+		for(Integer i=0; i<itemStatuses.length; i++){
+			s = s+"$"+itemStatuses[i].ordinal();
+		}
+		this.itemStatusesStr= s;
 	}
 	
+	public String getItemStatusesStr() {
+		return itemStatusesStr;
+	}
+
+	public void setItemStatusesStr(String itemStatusesStr) {
+		this.itemStatusesStr = itemStatusesStr;
+	}
+
 	public ProductType[] getTypes() {
 		return types;
 	}

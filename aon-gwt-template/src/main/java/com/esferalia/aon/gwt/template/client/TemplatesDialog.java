@@ -74,6 +74,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	Vector<Warehouse> w;
 	Vector<Series> series;
 	public TemplatesDialog(Dialog dialog) {
+		
 		setCaption(dialog.getTitle());
 		if(dialog.getTemplateList()!= null) tlist = dialog.getTemplateList();
 		if(dialog.getWarehouses() != null) w = dialog.getWarehouses();
@@ -391,11 +392,11 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	}
 	
 	private void exportProduct(TemplateList templates){
+		
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
 		flex_table.setCellSpacing(0);
-		
 		ListBox lb = new ListBox();
 		lb.addItem("-");
 		for(TemplateInfo ti : templates.getList()){
@@ -404,7 +405,6 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		}
 		flex_table.setWidget(0, 0, new Label("Plantilla"));
 		flex_table.setWidget(0, 1, lb);
-		
 		flexTableCss();
 	}
 	
