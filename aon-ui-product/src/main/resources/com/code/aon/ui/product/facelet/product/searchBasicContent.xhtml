@@ -13,14 +13,14 @@
 
 	<aon:outputLabel for="Product_code" value="#{bundle.aon_id}" />
 	<aon:inputText id="Product_code" size="25"
-		value="#{searchController.code}"
+		value="#{productExport.code}"
 		valueChangeListener="#{controller.addExpression}"
 		onblur="toUpperCase(this);" />
 
 	<aon:outputLabel for="Product_name"
 		value="#{bundle.aon_name}" />
 	<aon:inputText id="Product_name" size="50"
-	value="#{searchController.name}"
+		value="#{productExport.name}"
 		valueChangeListener="#{controller.addExpression}" />
 
 	<aon:outputLabel for="Product_category_id"
@@ -39,7 +39,7 @@
 		<aon:outputLabel for="Product_brand_id"
 			value="#{bundle.tas_make}" />
 		<aon:selectOneMenu id="Product_brand_id"
-			value="#{searchController.brand}"
+			value="#{productExport.brand}"
 			valueChangeListener="#{controller.addIdEqualExpression}">
 			<f:selectItem itemLabel="-" value="#{null}" />
 			<f:selectItems value="#{productCollections.brands}" />
@@ -101,7 +101,7 @@
 		<aon:outputLabel for="Product_serializable"
 			value="#{bundle.aon_serializable}" />
 		<aon:selectOneRadio id="Product_serializable"
-			value="#{searchController.serializable}"
+			value="#{productExport.serializable}"
 			valueChangeListener="#{controller.addExpression}">
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
 			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
@@ -112,7 +112,7 @@
 		<aon:outputLabel for="Product_inventoriable"
 			value="#{bundle.product_inventoriable}" />
 		<aon:selectOneRadio id="Product_inventoriable"
-			value="#{searchController.inventoriable}"
+			value="#{productExport.inventoriable}"
 			valueChangeListener="#{controller.addExpression}">
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
 			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
@@ -123,7 +123,7 @@
 		<aon:outputLabel for="Product_manufactured"
 			value="#{bundle.product_manufactured_product}" />
 		<aon:selectOneRadio id="Product_manufactured"
-			value="#{searchController.manufactured}"
+			value="#{productExport.manufactured}"
 			valueChangeListener="#{controller.addExpression}">
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
 			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
@@ -132,7 +132,7 @@
 		<aon:outputLabel for="Product_composition"
 			value="#{bundle.product_composite_product}" />
 		<aon:selectOneRadio id="Product_composition"
-			value="#{searchController.composition}"
+			value="#{productExport.composition}"
 			valueChangeListener="#{controller.addExpression}">
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
 			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />

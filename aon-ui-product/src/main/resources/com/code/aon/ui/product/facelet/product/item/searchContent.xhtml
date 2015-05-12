@@ -10,7 +10,7 @@
 		<aon:outputLabel for="#{aliasPreffix}_barcode"
 			value="#{bundle.product_barcode}" />
 		<aon:inputText id="#{aliasPreffix}_barcode" size="25"
-			value="#{controller.barcode}"
+			value="#{productExport.barcode}"
 			valueChangeListener="#{controller.addExpression}" />
 	</aon:if>
 
@@ -18,7 +18,7 @@
 		<aon:outputLabel for="#{aliasPreffix}_serialNumber"
 			value="#{bundle.aon_serial_or_lot_number}" />
 		<aon:inputText id="#{aliasPreffix}_serialNumber" size="25"
-			value="#{controller.serialNumber}"
+			value="#{productExport.serialNumber}"
 			valueChangeListener="#{controller.addExpression}" />
 
 		<aon:outputLabel value="#{bundle.aon_serial_or_lot_date}" />
@@ -26,7 +26,7 @@
 			<aon:outputLabel for="#{aliasPreffix}_serialDate-From" styleClass="aon-form-date-label aon-padding-right" 
 				value="#{bundle.aon_date_from}:" />
 			<aon:selectInputDate id="#{aliasPreffix}_serialDate-From"
-				value="#{controller.itemSerialDate1}"
+				value="#{productExport.itemSerialDate1}"
 				valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
 				timeZone="#{timeZoneController.timeZone}"
 				popupDateFormat="#{bundle.aon_date_pattern}" />
@@ -34,7 +34,7 @@
 			<aon:outputLabel for="#{aliasPreffix}_serialDate-To" styleClass="aon-form-date-label aon-padding-right"
 				value="#{bundle.aon_date_to}" />
 			<aon:selectInputDate id="#{aliasPreffix}_serialDate-To"
-				value="#{controller.itemSerialDate2}"
+				value="#{productExport.itemSerialDate2}"
 				valueChangeListener="#{controller.addLessThanOrEqualExpression}"
 				timeZone="#{timeZoneController.timeZone}"
 				popupDateFormat="#{bundle.aon_date_pattern}" />
@@ -45,21 +45,21 @@
 		<aon:outputLabel for="#{aliasPreffix}_detail"
 			value="#{bundle.aon_detail}" />
 		<aon:inputText id="#{aliasPreffix}_detail" size="25"
-			value="#{controller.detail}"
+			value="#{productExport.detail}"
 			valueChangeListener="#{controller.addExpression}" />
 	
 		<aon:if test="#{product.detailLevel &gt; 1}">
 			<aon:outputLabel for="#{aliasPreffix}_detail2"
 				value="#{bundle.product_detail2}" />
 			<aon:inputText id="#{aliasPreffix}_detail2" size="25"
-				value="#{controller.detail2}"
+				value="#{productExport.detail2}"
 				valueChangeListener="#{controller.addExpression}" />
 
 			<aon:if test="#{product.detailLevel &gt; 2}">
 				<aon:outputLabel for="#{aliasPreffix}_detail3"
 					value="#{bundle.product_detail3}" />
 				<aon:inputText id="#{aliasPreffix}_detail3" size="25"
-					value="#{controller.detail3}"
+					value="#{productExport.detail3}"
 					valueChangeListener="#{controller.addExpression}" />
 			</aon:if>
 		</aon:if>
@@ -68,7 +68,7 @@
 	<aon:outputLabel for="#{aliasPreffix}_description"
 		value="#{bundle.aon_description}" />
 	<aon:inputText id="#{aliasPreffix}_description" size="50"
-		value="#{controller.description}"
+		value="#{productExport.description}"
 		valueChangeListener="#{controller.addExpression}" />
 		
 	<aon:if test="#{aonConfiguration.bean.product.showSuppliers}">
@@ -87,26 +87,26 @@
 	<aon:outputLabel for="#{aliasPreffix}_purchasePrice"
 		value="#{bundle.product_purchase_price}" />
 	<aon:inputText id="#{aliasPreffix}_purchasePrice" size="25"
-		value="#{controller.purchasePrice}"
+		value="#{productExport.purchasePrice}"
 		valueChangeListener="#{controller.addExpression}" />
 	
 	<aon:outputLabel for="#{aliasPreffix}_profitPercent"
 		value="% #{bundle.aon_profit}" />
 	<aon:inputText id="#{aliasPreffix}_profitPercent" size="25"
-		value="#{controller.profitPercent}"
+		value="#{productExport.profitPercent}"
 		valueChangeListener="#{controller.addExpression}" />
 	
 	<aon:outputLabel for="#{aliasPreffix}_price"
 		value="#{bundle.product_sales_base_price}" />
 	<aon:inputText id="#{aliasPreffix}_price" size="25"
-		value="#{controller.price}"
+		value="#{productExport.price}"
 		valueChangeListener="#{controller.addExpression}" />
 	
 	<aon:if test="#{aonConfiguration.bean.product.showEcommerceData}">
 		<aon:outputLabel for="#{aliasPreffix}_internet"
 			value="#{bundle.product_ecommerce}" />
 		<aon:selectOneRadio id="#{aliasPreffix}_internet"
-			value="#{controller.internet}"
+			value="#{productExport.internet}"
 			valueChangeListener="#{controller.addExpression}">
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
 			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />

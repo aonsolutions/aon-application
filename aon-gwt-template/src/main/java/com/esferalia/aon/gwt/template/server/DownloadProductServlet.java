@@ -234,11 +234,11 @@ public class DownloadProductServlet extends HttpServlet {
         	while(s !=""){
         		Integer index = s.indexOf("$");
         		if(index == -1){
-        			c = c.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s)));
+        			c = c.and(PRODUCT.TYPE.eq((byte)Integer.parseInt(s)));
         			s="";
         		}
         		else{ 
-        			c = c.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s.substring(0, index))));
+        			c = c.and(PRODUCT.TYPE.eq((byte)Integer.parseInt(s.substring(0, index))));
         			s = s.substring(index+1);
         		}
         	}

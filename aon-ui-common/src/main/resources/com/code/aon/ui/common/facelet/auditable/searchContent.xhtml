@@ -12,7 +12,7 @@
 			<aon:outputLabel for="#{controller.pojoShortName}_creationUser"
 				value="#{bundle.aon_creation_user}" />
 			<aon:inputText id="#{controller.pojoShortName}_creationUser" size="20"
-				value="#{product.creationUser}"
+				value="#{productExport.creationUser}"
 				valueChangeListener="#{controller.addExpression}" />			
 
 			<aon:outputLabel value="#{bundle.aon_creation_date}" />
@@ -20,7 +20,7 @@
 				<aon:outputLabel for="#{controller.pojoShortName}_creationDate-From" styleClass="aon-form-date-label aon-padding-right" 
 					value="#{bundle.aon_date_from}:" />
 				<aon:selectInputDate id="#{controller.pojoShortName}_creationDate-From"
-					value="#{product.creationDate1}"
+					value="#{productExport.creationDate1}"
 					valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}" />
@@ -28,7 +28,7 @@
 				<aon:outputLabel for="#{controller.pojoShortName}_creationDate-To" styleClass="aon-form-date-label aon-padding-right" 
 					value="#{bundle.aon_date_to}:" />
 				<aon:selectInputDate id="#{controller.pojoShortName}_creationDate-To"
-					value="#{product.creationDate2}"
+					value="#{productExport.creationDate2}"
 					valueChangeListener="#{controller.addLessThanOrEqualExpression}"
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}" />
@@ -37,7 +37,7 @@
 			<aon:outputLabel for="#{controller.pojoShortName}_modificationUser"
 				value="#{bundle.aon_modification_user}" />
 			<aon:inputText id="#{controller.pojoShortName}_modificationUser" size="20"
-				value="#{product.modificationUser}"
+				value="#{productExport.modificationUser}"
 				valueChangeListener="#{controller.addExpression}" />			
 
 			<aon:outputLabel value="#{bundle.aon_modification_date}" />
@@ -45,7 +45,7 @@
 				<aon:outputLabel for="#{controller.pojoShortName}_modificationDate-From" styleClass="aon-form-date-label aon-padding-right" 
 					value="#{bundle.aon_date_from}:" />
 				<aon:selectInputDate id="#{controller.pojoShortName}_modificationDate-From"
-					value="#{product.modificationDate1}"
+					value="#{productExport.modificationDate1}"
 					valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}" />
@@ -53,7 +53,7 @@
 				<aon:outputLabel for="#{controller.pojoShortName}_modificationDate-To" styleClass="aon-form-date-label aon-padding-right" 
 					value="#{bundle.aon_date_to}:" />
 				<aon:selectInputDate id="#{controller.pojoShortName}_modificationDate-To"
-					value="#{product.modificationDate2}"
+					value="#{productExport.modificationDate2}"
 					valueChangeListener="#{controller.addLessThanOrEqualExpression}"
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}" />
