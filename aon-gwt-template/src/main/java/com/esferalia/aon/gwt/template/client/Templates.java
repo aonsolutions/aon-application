@@ -1687,9 +1687,6 @@ public class Templates extends Composite implements EntryPoint {
 	public void productx(String code,String name,String category,String tags,String brand,String vat,String retention,String purchaseAccount,String  salesAccount,String  serializable, String inventoriable, String manufactured, String composition,  String statuses, String types
 			,String barcode,String serialNumber,String itemSerialDate1, String itemSerialDate2,String detail,String detail2,String detail3,String description,String purchasePrice,String profitPercent,String price,String internet,String itemStatusesStr,String supplierCode
 			, String creationUser,String creationDate1, String creationDate2,String modificationUser,String modificationDate1, String modificationDate2){
-		//Window.alert(code +" - "+name+" - "+category+" - "+tags+" - "+brand+" - "+vat+" - "+retention+" - "+purchaseAccount+" - "+salesAccount+" - "+serializable+" - "+inventoriable+" - "+manufactured+" - "+composition+" - "+statuses+" - "+types); 
-		//Window.alert(barcode+" - "+serialNumber+" - "+itemSerialDate1+" - "+itemSerialDate2+" - "+detail+" - "+detail2+" - "+detail3+" - "+description+" - "+purchasePrice+" - "+profitPercent+" - "+price+" - "+internet+" - "+itemStatusesStr+" - "+supplierCode); 
-		Window.alert(creationUser+" - "+creationDate1+" - "+creationDate2+" - "+modificationUser+" - "+modificationDate1+" - "+modificationDate2);
 		String d1 = ""; 
 		if(itemSerialDate1 != null && !itemSerialDate1.equals("")) d1 = itemSerialDate1.substring(8,10)+"-"+Utils.getMonth(itemSerialDate1.substring(4,7))+"-"+itemSerialDate1.substring(25);
 		String d2 = "";
