@@ -16,9 +16,18 @@
 					template="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
 					<ui:param name="toolbarTitle" value="#{bundle.config_series_module}" />
 					<ui:param name="controller" value="#{series}" />
+					<ui:define name="additionalToolbarContent" >
+						<aon:commandButton id="#{toolbarID}-clear"
+							value="#{bundle.aon_clear}"
+							actionListener="#{seriesListener.onClear}"
+							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
+					</ui:define>
 				</ui:decorate>
 
 				<aon:div styleClass="aon-scroll-area">
+
+					<ui:include src="/com/code/aon/ui/config/facelet/series/filterContent.xhtml" />
+
 					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 					
 						<ui:param name="controller" value="#{series}" />

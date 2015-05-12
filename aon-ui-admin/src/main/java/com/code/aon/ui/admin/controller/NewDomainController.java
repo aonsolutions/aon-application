@@ -364,6 +364,7 @@ public class NewDomainController implements Serializable {
 		BeanManager.getManagerBean(DomainApplication.class).insert(da);
 		if ( getType() == DomainType.ENTERPRISE ) {
 			DomainApplicationModule dam = new DomainApplicationModule();
+			dam.setDomain(domain.getId());
 			dam.setDomainApplication(da);
 			dam.setModule(Module.AON_ONE);
 			BeanManager.getManagerBean(DomainApplicationModule.class).insert(dam);
