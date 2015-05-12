@@ -188,7 +188,7 @@ public static Department getDepartment(WorkPlace wp, Integer department, Integer
 			
 			Result<Record6<Integer, Integer, Integer, String, String, String>> record = null;
 			if(wp != null && dt != null){
-				record = ctx.getDslContext().select(ITEM.PRODUCT, WORKPLACE_DEPARTMENT.WORKPLACE, WORKPLACE_DEPARTMENT.DEPARTMENT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3)
+				record = ctx.getDslContext().selectDistinct(ITEM.PRODUCT, WORKPLACE_DEPARTMENT.WORKPLACE, WORKPLACE_DEPARTMENT.DEPARTMENT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3)
 				.from(CATALOGUE_ITEM).join(ITEM).on(ITEM.ID.eq(CATALOGUE_ITEM.ITEM))
 				.join(WORKPLACE_DEPARTMENT).on(WORKPLACE_DEPARTMENT.CATALOGUE.eq(CATALOGUE_ITEM.CATALOGUE))
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
