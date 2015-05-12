@@ -8,7 +8,7 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="productSearch">				
+		<aon:form id="productSearch" onload="#{product.initialize};#{productSearch.initialize};">				
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">	
 				<ui:param name="toolbarTitle" value="#{bundle.aon_role_product}" />

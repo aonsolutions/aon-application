@@ -59,6 +59,34 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 	private Brand brand;
 	
 	
+	public String getInitialize(){
+		code = "";
+		name = "";
+		
+		statusesStr = "";
+		
+		itemStatusesStr = "";
+		types = null;
+		typesStr = "";
+		category = new ProductCategory();
+		vat = new Tax();
+		retention = new Tax();
+		purchaseAccount = new Account(); 
+		salesAccount = new Account();
+		tags = null;
+		tagsStr = "";
+		
+
+		
+		inventoriable = null;
+		serializable = null;
+		manufactured = null;
+		composition = null;
+		brand = new Brand();
+		
+		return "";
+	}
+	
 	public String getCode() {
 		return code;
 	}

@@ -63,7 +63,32 @@ public class ProductController extends BasicController implements IAuditableCont
 	private String modificationDate2;
 	
 	
-	
+	public String getInitialize(){
+		
+		item = new Item();
+		itemSerialDate1 ="";
+		itemSerialDate2 ="";
+		
+		barcode = "";
+		serialNumber = null;
+		detail = "";
+		detail2 = "";
+		detail3 = ""; 
+		description = "";
+		purchasePrice = null;
+		profitPercent = null;
+		price = null;
+		internet = null;
+		
+		creationUser = "";
+		creationDate1 = "";
+		creationDate2 = "";
+		modificationUser = "";
+		modificationDate1 = "";
+		modificationDate2 = "";
+		
+		return "";
+	}
 	public String getCreationUser() {
 		return creationUser;
 	}

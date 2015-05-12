@@ -43,7 +43,18 @@ public class StockController extends BasicController {
 	String provider;
 	Brand brand;
 	
-
+	public String getInitialize(){
+		
+		warehouse = new Warehouse();
+		quantity = null;
+		code = "";
+		name = "";
+		barcode = "";
+		provider = "";
+		brand = new Brand();
+	
+		return "";
+	}
 
 	public Integer getQuantity() {
 		return quantity;
