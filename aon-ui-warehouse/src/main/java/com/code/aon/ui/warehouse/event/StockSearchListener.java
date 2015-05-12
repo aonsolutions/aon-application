@@ -22,6 +22,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.form.event.ControllerSearchListenerEx;
+import com.code.aon.ui.warehouse.controller.StockExportGwtController;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class StockSearchListener extends ControllerSearchListenerEx {
@@ -31,46 +32,21 @@ public class StockSearchListener extends ControllerSearchListenerEx {
 	private static final Tag EMPTY_TAG = new Tag();
 	
 	private ProductStatus[] statuses;
-	private String statusesStr;
 	
 	private ProductType[] types;
-	private String typesStr;
 	
 	private Tag[] tags;
-	private String tagsStr;
 	
 	private ProductCategory category;
 	
-	public String getStatusesStr(){
-		return statusesStr;
-	}
-	public void setStatusesStr(String str){
-		this.statusesStr = str;
-	}
-	public String getTypesStr(){
-		return typesStr;
-	}
-	public void setTypesStr(String str){
-		this.typesStr = str;
-	}
-	public String getTagsStr(){
-		return tagsStr;
-	}
-	public void setTagsStr(String str){
-		this.tagsStr = str;
-	}
 
 	public ProductStatus[] getStatuses() {
 		return statuses;
 	}
 
 	public void setStatuses(ProductStatus[] statuses) {
+		StockExportGwtController.setStatuses(statuses);
 		this.statuses = statuses;
-		String s ="";
-		for(Integer i=0; i<statuses.length; i++){
-			s = s+"$"+statuses[i].ordinal();
-		}
-		this.statusesStr= s;
 	}
 
 	public ProductType[] getTypes() {
@@ -78,12 +54,8 @@ public class StockSearchListener extends ControllerSearchListenerEx {
 	}
 
 	public void setTypes(ProductType[] types) {
+		StockExportGwtController.setTypes(types);
 		this.types = types;
-		String s ="";
-		for(Integer i=0; i<types.length; i++){
-			s = s+"$"+types[i].ordinal();
-		}
-		this.typesStr= s;
 	}
 	
 	public Tag[] getTags() {
@@ -94,15 +66,8 @@ public class StockSearchListener extends ControllerSearchListenerEx {
 	}
 
 	public void setTags(Tag[] tags) {
-		this.tags = tags;
-		List<Integer> l = getTagsIds();
-		String s ="";
-		for(Integer i=0; i<l.size(); i++){
-			System.out.println(l.get(i));
-			s = s+"$"+l.get(i);
-		}
-		this.tagsStr= s;
-		
+		StockExportGwtController.setTags(tags);
+		this.tags = tags;	
 	}
 
 	public int getTagsSize() {
@@ -124,6 +89,7 @@ public class StockSearchListener extends ControllerSearchListenerEx {
 	}
 
 	public void setCategory(ProductCategory category) {
+		StockExportGwtController.setCategory(category);
 		this.category = category;
 	}	
 

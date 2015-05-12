@@ -252,7 +252,11 @@
 		<managed-bean-class>com.code.aon.ui.warehouse.event.StockSearchListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	
+		<managed-bean>
+		<managed-bean-name>stockExport</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.warehouse.controller.StockExportGwtController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>stockScopeListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
