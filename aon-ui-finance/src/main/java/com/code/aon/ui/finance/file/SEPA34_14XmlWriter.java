@@ -88,7 +88,7 @@ public class SEPA34_14XmlWriter {
 			Account detailAccount = detail.getAccount();
 			detailAccount.setBic(finance.getBic());
 			detailAccount.setIban(finance.getBankAccount().getIban());			
-			detail.getReceiver().setReferenceCode(finance.getRegistry().getId().toString());
+			detail.getReceiver().setReferenceCode(SEPA34_14XmlWriter.createId(finance));
 			receiver.setOrganisation(finance.getRegistry().getType()==RegistryType.LEGAL);
 			receiver.setDocumentType(finance.getRegistryDocumentType().getName(locale));
 			IAddress iAddress = AEB34Writer.obtainInvoiceAddress(finance.getInvoice(), finance.getRegistry());
@@ -99,9 +99,16 @@ public class SEPA34_14XmlWriter {
 		master.setAmount(total);
 	}
 	
-	private static String getDateString( Date date ) {
+	private static String getTimestampString( Date date ) {
 		TimeZone tz = TimeZone.getTimeZone("UTC");
 		DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+		df.setTimeZone(tz);	
+		return df.format(date);		
+	}
+
+	private static String getDateString( Date date ) {
+		TimeZone tz = TimeZone.getTimeZone("UTC");
+		DateFormat df = new SimpleDateFormat("yyyyMMdd");
 		df.setTimeZone(tz);	
 		return df.format(date);		
 	}
@@ -109,7 +116,7 @@ public class SEPA34_14XmlWriter {
 	public static String createId( Company company, FinanceBatch fbatch, boolean includeId ) {
 		StringBuffer sb = new StringBuffer();
 		sb.append('A').append(StringUtils.leftPad(fbatch.getId().toString(), 10 ,'0'));
-		sb.append(getDateString(fbatch.getIssueDate()));
+		sb.append(getTimestampString(fbatch.getIssueDate()));
 		String value = null;
 		if ( includeId ) {
 			value = company.getId().toString();
@@ -117,6 +124,14 @@ public class SEPA34_14XmlWriter {
 			value = company.getDocument();
 		}
 		sb.append(StringUtils.leftPad(value, 10 ,'0'));
+		return sb.toString();
+	}
+
+	public static String createId( Finance finance ) {
+		StringBuffer sb = new StringBuffer();
+		sb.append(finance.getId()).append('/');
+		sb.append(finance.getRegistryDocument()).append('/');
+		sb.append(getDateString(finance.getDueDate()));
 		return sb.toString();
 	}
 	
