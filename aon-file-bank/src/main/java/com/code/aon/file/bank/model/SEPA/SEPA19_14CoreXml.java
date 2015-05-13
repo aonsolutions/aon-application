@@ -89,7 +89,7 @@ public class SEPA19_14CoreXml extends BasicSEPAXml {
 		Element directDebitTransactionInformation = createElement(DIRECT_DEBIT_TRANSACTION_INFORMATION);
 		paymentInformation.appendChild(directDebitTransactionInformation);	
 		
-		addPaymentIdentification(directDebitTransactionInformation, individual.getReferenceCode());
+		addPaymentIdentification(directDebitTransactionInformation, individual.getInternalCode());
 		addInstructedAmount(directDebitTransactionInformation, individual.getAmount());
 		addDirectDebitTransaction(directDebitTransactionInformation, individual);
 		addDebtorAgent(directDebitTransactionInformation, individual.getAccount());

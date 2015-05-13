@@ -80,6 +80,7 @@ public class SEPA19_14CoreXmlWriter {
 			individual.setOrganisation(finance.getRegistry().getType()==RegistryType.LEGAL);
 			individual.setDocument(finance.getRegistryDocument());		
 			individual.setDocumentType(finance.getRegistryDocumentType().getName(locale));
+			individual.setInternalCode(SEPA34_14XmlWriter.createId(finance));
 			Account detailAccount = individual.getAccount();
 			detailAccount.setBic(finance.getBic());
 			detailAccount.setIban(finance.getBankAccount().getIban());
