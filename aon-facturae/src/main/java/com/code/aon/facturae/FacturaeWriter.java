@@ -73,6 +73,7 @@ import es.mityc.facturae32.InvoicesType;
 import es.mityc.facturae32.ItemsType;
 import es.mityc.facturae32.LanguageCodeType;
 import es.mityc.facturae32.LegalEntityType;
+import es.mityc.facturae32.LegalLiteralsType;
 import es.mityc.facturae32.ModalityType;
 import es.mityc.facturae32.OverseasAddressType;
 import es.mityc.facturae32.PartiesType;
@@ -92,6 +93,8 @@ public class FacturaeWriter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FacturaeWriter.class.getName());
 	
 	public static final String FACTURAE_EXTENSION = ".xsig";
+	
+	private static final String VAT_ACCRUAL_PAYMENT_TEXT = "R\u00E9gimen especial del criterio de caja";
 	
 	private Invoice invoice;
 	
@@ -599,6 +602,12 @@ public class FacturaeWriter {
 		return invoiceTotals;
 	}	
 	
+	private LegalLiteralsType getLegalLiterals() {
+		LegalLiteralsType legalLiterals = new LegalLiteralsType();
+		legalLiterals.getLegalReference().add( VAT_ACCRUAL_PAYMENT_TEXT );
+		return legalLiterals;
+	}	
+	
 	private InvoiceLineType.TaxesOutputs.Tax getLineTax( TaxBreakDown tdb ) {
 		InvoiceLineType.TaxesOutputs.Tax tax = new InvoiceLineType.TaxesOutputs.Tax();
 		initTaxOutput( tax, tdb, true );
@@ -721,6 +730,9 @@ public class FacturaeWriter {
 		invoiceType.setInvoiceIssueData( getInvoiceIssueData() );
 		addTaxes( invoiceType );
 		invoiceType.setInvoiceTotals( getInvoiceTotals() );
+		if ( this.invoice.isVatAccrualPayment() ) {
+			invoiceType.setLegalLiterals( getLegalLiterals() );			
+		}
 		invoiceType.setItems( getItems(invoiceType) );
 		addPaymentDetails( invoiceType );
 		return invoiceType;
