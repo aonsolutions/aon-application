@@ -15,12 +15,32 @@
 
 		<ui:define name="columns">
 
-			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-20">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-10">
 				<f:facet name="header">
 					<aon:outputLabel for="ProjectReservationGuest_guestIndex" value="#{bundle.aon_order}" />
 				</f:facet>
 				<aon:outputText id="ProjectReservationGuest_guestIndex" value="#{to.guestIndex}" 
 					rendered="#{formList or formEdit}" />
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-150 aon-nowrap">
+				<f:facet name="header">
+					<aon:outputLabel value="#{bundle.aon_document}" />
+				</f:facet>
+				<aon:outputText styleClass="aon-margin-right" value="#{to.documentCountry.value}" rendered="#{formList and !empty to.document}" />
+				<aon:outputText value="#{to.document}" rendered="#{formList}" />
+				<aon:div rendered="#{formEdit}">
+					<ui:include src="tab_grid_document.xhtml">
+						<ui:param name="suffix" value="" />
+					</ui:include>
+				</aon:div>
+				<f:facet name="footer">
+					<aon:div rendered="#{formNew}">
+						<ui:include src="tab_grid_document.xhtml">
+							<ui:param name="suffix" value="-New" />
+						</ui:include>
+					</aon:div>
+				</f:facet>
 			</aon:column>
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top">
@@ -44,26 +64,6 @@
 				<f:facet name="footer">
 					<aon:div rendered="#{formNew}">
 						<ui:include src="tab_grid_name.xhtml">
-							<ui:param name="suffix" value="-New" />
-						</ui:include>
-					</aon:div>
-				</f:facet>
-			</aon:column>
-
-			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-150 aon-nowrap">
-				<f:facet name="header">
-					<aon:outputLabel value="#{bundle.aon_document}" />
-				</f:facet>
-				<aon:outputText styleClass="aon-margin-right" value="#{to.documentCountry.value}" rendered="#{formList and !empty to.document}" />
-				<aon:outputText value="#{to.document}" rendered="#{formList}" />
-				<aon:div rendered="#{formEdit}">
-					<ui:include src="tab_grid_document.xhtml">
-						<ui:param name="suffix" value="" />
-					</ui:include>
-				</aon:div>
-				<f:facet name="footer">
-					<aon:div rendered="#{formNew}">
-						<ui:include src="tab_grid_document.xhtml">
 							<ui:param name="suffix" value="-New" />
 						</ui:include>
 					</aon:div>

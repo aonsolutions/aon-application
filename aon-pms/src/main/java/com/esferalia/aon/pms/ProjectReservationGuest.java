@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.Country;
+import com.code.aon.registry.RegistryDocument;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.esferalia.aon.entity.master.ProjectReservationGuestDB;
 
@@ -27,12 +28,15 @@ public class ProjectReservationGuest extends ProjectReservationGuestDB {
     	String fullName = StringUtils.isEmpty(getTreatment()) ? "" : getTreatment() + " ";
     	fullName += StringUtils.isEmpty(getName()) ? "" : getName() + " ";
     	fullName += StringUtils.isEmpty(getSurname()) ? "" : getSurname() + " ";
+    	fullName += StringUtils.isEmpty(getSurname2()) ? "" : getSurname2() + " ";
     	return fullName;
 	}
 
     @Transient
 	public String getFullAddress() {
     	String fullAddress = StringUtils.isEmpty(getAddress()) ? "" : getAddress() + " ";
+    	fullAddress += StringUtils.isEmpty(getNumber()) ? "" : getNumber() + " ";
+    	fullAddress += StringUtils.isEmpty(getAddress2()) ? "" : getAddress2() + " ";
     	fullAddress += StringUtils.isEmpty(getZip()) ? "" : getZip() + " - ";
     	fullAddress += StringUtils.isEmpty(getCity()) ? "" : getCity() + " ";
     	fullAddress += StringUtils.isEmpty(getProvince()) ? "" : "(" + getProvince() + ") ";
@@ -40,4 +44,22 @@ public class ProjectReservationGuest extends ProjectReservationGuestDB {
     	return fullAddress;
 	}
 	
+	@Transient
+	public boolean isValidDocument() {
+		RegistryDocument registryDocument = new RegistryDocument();
+		registryDocument.setDocument(getDocument());
+		registryDocument.setType(getDocumentType());
+		registryDocument.setCountry(getDocumentCountry());
+		return registryDocument.isValid();
+	}
+
+	@Transient
+	public boolean isDocumentValidable() {
+		RegistryDocument registryDocument = new RegistryDocument();
+		registryDocument.setDocument(getDocument());
+		registryDocument.setType(getDocumentType());
+		registryDocument.setCountry(getDocumentCountry());
+		return registryDocument.isValidable();
+	}
+
 }

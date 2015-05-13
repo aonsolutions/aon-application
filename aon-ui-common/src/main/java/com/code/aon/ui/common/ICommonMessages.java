@@ -500,6 +500,7 @@ public interface ICommonMessages {
 	String REGISTRY_FINANCE_DATA_MODULE = "registry_finance_data_module";
 	String REGISTRY_DIR_STAFF = "registry_dir_staff";
 	String REGISTRY_DOCUMENT_ERROR = "registry_document_error";
+	String REGISTRY_DOCUMENT_INCORRECT_ERROR = "registry_document_incorrect";
 	String INVALID_EMAIL = "registry_invalid_email";
 	String QUESTION = "registry_question";
 	String RESPONSE = "registry_response";

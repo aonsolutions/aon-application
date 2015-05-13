@@ -1,10 +1,23 @@
 package com.esferalia.aon.ui.pms.event;
 
+import static com.code.aon.ui.common.ICommonMessages.REGISTRY_DOCUMENT_INCORRECT_ERROR;
+
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.AonVersion;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Country;
+import com.code.aon.person.Person;
+import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryAddress;
+import com.code.aon.registry.RegistryMedia;
+import com.code.aon.registry.enumeration.AddressType;
+import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 
 public class ProjectReservationGuestControllerListener extends ControllerAdapter {
@@ -21,6 +34,140 @@ public class ProjectReservationGuestControllerListener extends ControllerAdapter
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		ProjectReservationGuest to = (ProjectReservationGuest)event.getController().getTo();
 		to.setGuestIndex(0);
+		if (StringUtils.isNotBlank(to.getDocument())) {
+			savePerson(to);
+		}
+	}
+
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		ProjectReservationGuest to = (ProjectReservationGuest)event.getController().getTo();
+		if (StringUtils.isNotBlank(to.getDocument())) {
+			savePerson(to);
+		}
+	}
+
+	private void savePerson(ProjectReservationGuest reservationGuest) throws ControllerListenerException {
+		if (!reservationGuest.isDocumentValidable() || reservationGuest.isValidDocument()) {
+			try {
+				if (reservationGuest.getPerson() == null || reservationGuest.getPerson().getId() == null) {
+					insertPerson(reservationGuest);
+				} else {
+					updatePerson(reservationGuest);
+				}
+			} catch (ManagerBeanException ex) {
+				throw new ControllerListenerException(ex.getMessage());
+			}
+		} else {
+			throw new ControllerListenerException(AonUtil.getMessage(REGISTRY_DOCUMENT_INCORRECT_ERROR));
+		}
+	}
+
+	private void insertPerson(ProjectReservationGuest reservationGuest) throws ManagerBeanException {
+		Person person = new Person();
+		person.setRegistry(new Registry());
+		person.getRegistry().setDocumentType(reservationGuest.getDocumentType());
+		person.getRegistry().setDocumentCountry(reservationGuest.getDocumentCountry());
+		person.getRegistry().setDocument(reservationGuest.getDocument());
+		person.setName(reservationGuest.getName());
+		person.setFirstSurname(reservationGuest.getSurname());
+		person.setSecondSurname(reservationGuest.getSurname2());
+		person.setBirthDate(reservationGuest.getBirthDate());
+		person = (Person)BeanManager.getManagerBean(Person.class).insert(person);
+
+		reservationGuest.setPerson(person);
+		
+		if (StringUtils.isNotBlank(reservationGuest.getEmail())) {
+			RegistryMedia email = new RegistryMedia();
+			email.setRegistry(person.getRegistry());
+			email.setMediaType(MediaType.EMAIL);
+			email.setValue(reservationGuest.getEmail());
+			BeanManager.getManagerBean(RegistryMedia.class).insert(email);
+		}
+
+		if (StringUtils.isNotBlank(reservationGuest.getPhone())) {
+			RegistryMedia phone = new RegistryMedia();
+			phone.setRegistry(person.getRegistry());
+			phone.setMediaType(MediaType.CELLULAR);
+			phone.setValue(reservationGuest.getPhone());
+			BeanManager.getManagerBean(RegistryMedia.class).insert(phone);
+		}
+
+		if (StringUtils.isNotBlank(reservationGuest.getAddress()) && StringUtils.isNotBlank(reservationGuest.getCity())) {
+			RegistryAddress address = new RegistryAddress();
+			address.setRegistry(person.getRegistry());
+			address.setAddressType(AddressType.MAIN);
+			address.setAddress(reservationGuest.getAddress());
+			address.setNumber(reservationGuest.getNumber());
+			address.setAddress2(reservationGuest.getAddress2());
+			address.setZip(reservationGuest.getZip());
+			address.setCity(reservationGuest.getCity());
+			address.setAddress3(reservationGuest.getProvince());
+			BeanManager.getManagerBean(RegistryAddress.class).insert(address);
+		}
+	}
+
+	private void updatePerson(ProjectReservationGuest reservationGuest) throws ManagerBeanException {
+		Person person = reservationGuest.getPerson();
+		person.setName(reservationGuest.getName());
+		person.setFirstSurname(reservationGuest.getSurname());
+		person.setSecondSurname(reservationGuest.getSurname2());
+		person.setBirthDate(reservationGuest.getBirthDate());
+		person = (Person)BeanManager.getManagerBean(Person.class).update(person);
+
+		reservationGuest.setPerson(person);
+
+		if (StringUtils.isNotBlank(reservationGuest.getEmail())) {
+			RegistryMedia email = person.getRegistry().getEmail();
+			if (email == null) {
+				email = new RegistryMedia();
+				email.setRegistry(person.getRegistry());
+				email.setMediaType(MediaType.EMAIL);
+				email.setValue(reservationGuest.getEmail());
+				BeanManager.getManagerBean(RegistryMedia.class).insert(email);
+			} else if (!email.getValue().equals(reservationGuest.getEmail())) {
+				email.setValue(reservationGuest.getEmail());
+				BeanManager.getManagerBean(RegistryMedia.class).update(email);
+			}
+		}
+
+		if (StringUtils.isNotBlank(reservationGuest.getPhone())) {
+			RegistryMedia phone = person.getRegistry().getCellular();
+			if (phone == null) {
+				phone = new RegistryMedia();
+				phone.setRegistry(person.getRegistry());
+				phone.setMediaType(MediaType.CELLULAR);
+				phone.setValue(reservationGuest.getPhone());
+				BeanManager.getManagerBean(RegistryMedia.class).insert(phone);
+			} else if (!phone.getValue().equals(reservationGuest.getPhone())) {
+				phone.setValue(reservationGuest.getPhone());
+				BeanManager.getManagerBean(RegistryMedia.class).update(phone);
+			}
+		}
+
+		if (StringUtils.isNotBlank(reservationGuest.getAddress()) && StringUtils.isNotBlank(reservationGuest.getCity())) {
+			RegistryAddress address = person.getRegistry().getDefaultAddress();
+			if (address == null) {
+				address = new RegistryAddress();
+				address.setRegistry(person.getRegistry());
+				address.setAddressType(AddressType.MAIN);
+				address.setAddress(reservationGuest.getAddress());
+				address.setNumber(reservationGuest.getNumber());
+				address.setAddress2(reservationGuest.getAddress2());
+				address.setZip(reservationGuest.getZip());
+				address.setCity(reservationGuest.getCity());
+				address.setAddress3(reservationGuest.getProvince());
+				BeanManager.getManagerBean(RegistryAddress.class).insert(address);
+			} else {
+				address.setAddress(reservationGuest.getAddress());
+				address.setNumber(reservationGuest.getNumber());
+				address.setAddress2(reservationGuest.getAddress2());
+				address.setZip(reservationGuest.getZip());
+				address.setCity(reservationGuest.getCity());
+				address.setAddress3(reservationGuest.getProvince());
+				BeanManager.getManagerBean(RegistryAddress.class).update(address);
+			}
+		}
 	}
 
 }

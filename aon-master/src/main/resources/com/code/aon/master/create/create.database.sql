@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.20.0
+# Version: 8.23.0
 # Created by: girazu
-# Creation Date: 27/03/2015 13:15
+# Creation Date: 07/05/2015 16:45
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -1376,7 +1376,7 @@ CREATE TABLE `agreement_data` (
 CREATE TABLE `payment_concept` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `code` varchar(15) collate latin1_spanish_ci default NULL COMMENT 'Codigo',
+  `code` varchar(25) collate latin1_spanish_ci default NULL COMMENT 'Codigo',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   `type` tinyint(2) default NULL COMMENT 'Tipo de Percepcion Salarial',
   `description_decorable` tinyint(2) NOT NULL default '0',
@@ -3135,7 +3135,7 @@ CREATE TABLE `contract_data` (
 CREATE TABLE `deduction_concept` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `code` varchar(15) collate latin1_spanish_ci default NULL COMMENT 'Codigo',
+  `code` varchar(25) collate latin1_spanish_ci default NULL COMMENT 'Codigo',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   `type` tinyint(2) default NULL COMMENT 'Tipo de Deduccion Salarial',
   `description_decorable` tinyint(2) default '0',
@@ -6527,23 +6527,30 @@ CREATE TABLE `project_reservation_guest` (
   `project_reservation` int(4) NOT NULL COMMENT 'Identificador de la Reserva',
   `guest_index` tinyint(2) NOT NULL COMMENT 'Numero de Huesped',
   `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre',
-  `surname` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Apellidos',
+  `surname` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Apellido 1',
+  `surname2` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Apellido 2',
   `treatment` varchar(4) collate latin1_spanish_ci default NULL COMMENT 'Tratamiento',
   `document` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Numero de documento de identificacion',
   `document_type` tinyint(2) default '0' COMMENT 'Tipo de documento',
   `document_country` varchar(2) collate latin1_spanish_ci default 'ES' COMMENT 'Pais del documento',
+  `birth_date` date default NULL COMMENT 'Fecha de nacimiento',
   `email` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Email',
   `phone` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Telefono',
   `address` varchar(256) collate latin1_spanish_ci default NULL COMMENT 'Direccion',
+  `number` varchar(12) collate latin1_spanish_ci default NULL COMMENT 'Numero',
+  `address2` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Segunda parte de la Direccion',
   `zip` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Codigo postal',
   `city` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Ciudad',
   `province` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Provincia',
-  `country` varchar(2) collate latin1_spanish_ci default NULL COMMENT 'Pais',
+  `country` varchar(3) collate latin1_spanish_ci default NULL COMMENT 'Pais',
   `barcode` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Codigo de pulsera',
+  `person` int(4) default NULL COMMENT 'Identificador de la Persona',
   PRIMARY KEY  (`id`),
   KEY `IDX_PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION` (`project_reservation`),
   KEY `IDX_PROJECT_RESERVATION_GUEST_DOMAIN` (`domain`),
+  KEY `IDX_PROJECT_RESERVATION_GUEST_PERSON` (`person`),
   CONSTRAINT `FK_PROJECT_RESERVATION_GUEST_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_PROJECT_RESERVATION_GUEST_PERSON` FOREIGN KEY (`person`) REFERENCES `person` (`registry`),
   CONSTRAINT `FK_PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION` FOREIGN KEY (`project_reservation`) REFERENCES `project_reservation` (`project`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Huespedes por Reserva';
 
@@ -7341,7 +7348,7 @@ CREATE TABLE `salary_payment` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `salary` int(4) NOT NULL COMMENT 'Recibo del pago de salarios',
   `type` tinyint(2) default NULL COMMENT 'Tipo de Percepción Salarial',
-  `payment_concept` varchar(15) collate latin1_spanish_ci default NULL COMMENT 'Codigo del concepto',
+  `payment_concept` varchar(25) collate latin1_spanish_ci default NULL COMMENT 'Codigo',
   `description` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Fórmula',
   `amount` double(15,3) default '0.000' COMMENT 'Importe',
@@ -7935,7 +7942,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.20.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.23.0');
 
 COMMIT;
 
