@@ -29,6 +29,7 @@ public class ItemControllerListener extends ControllerAdapter implements IItemCo
         item.setStatus(ProductStatus.ACTIVE);
         if (item.getProduct().getId() == null) {
         	item.getProduct().setType(ProductType.COMMERCIAL_PRODUCT);
+            item.getProduct().setStatus(ProductStatus.ACTIVE);
         }
         try {
     		ProductController.updateVat(item.getProduct());
