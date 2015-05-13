@@ -10,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.ContractDeduction.CONTRACT_DEDUCTION;
+import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
@@ -73,6 +74,7 @@ import com.esferalia.aon.jooq.tables.records.ScopeRecord;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.enumeration.CCCType;
+import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
@@ -113,6 +115,40 @@ public abstract class AbstractSQLTestCase {
 	}
 
 	// ------------------------------------------------------- static 'library'
+
+	protected final void addIT(AONContext aonContext, ContractRecord contract, LeaveType type,
+			Date startDate, Date endDate, Double regulatoryBase) {
+				aonContext.getDslContext()
+						.insertInto(CONTRACT_LEAVE)
+						.set(CONTRACT_LEAVE.DOMAIN, contract.getDomain())
+						.set(CONTRACT_LEAVE.CONTRACT, contract.getId())
+						.set(CONTRACT_LEAVE.START_DATE, startDate)
+						.set(CONTRACT_LEAVE.END_DATE, endDate)
+						.set(CONTRACT_LEAVE.DAILY_REG_BASE, regulatoryBase)
+						// .set(CONTRACT_LEAVE.DAILY_CGC_BASE, regulatoryBase)
+						// .set(CONTRACT_LEAVE.DAILY_CGP_BASE, regulatoryBase)
+						.set(CONTRACT_LEAVE.DISCHARGE_CAUSE, (byte) type.ordinal())
+						.execute();
+			
+			}
+
+	protected final void addPayment(AONContext aonContext, ContractRecord contract, String expression,
+			String quoteExpression) {
+				aonContext
+						.getDslContext()
+						.insertInto(CONTRACT_PAYMENT)
+						.set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
+						.set(CONTRACT_PAYMENT.CONTRACT, contract.getId())
+						.set(CONTRACT_PAYMENT.START_DATE, contract.getStartDate())
+						.set(CONTRACT_PAYMENT.END_DATE, contract.getEndDate())
+						.set(CONTRACT_PAYMENT.EXPRESSION, expression)
+						.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
+						.set(CONTRACT_PAYMENT.TYPE,
+								(byte) PaymentType.CRA_0001.ordinal())
+						.set(CONTRACT_PAYMENT.SALARY_TYPE,
+								(byte) SalaryType.SALARY.ordinal()).execute();
+			
+			}
 
 	public static String getDbPort() {
 		return System.getProperty("dbPort", "3306");

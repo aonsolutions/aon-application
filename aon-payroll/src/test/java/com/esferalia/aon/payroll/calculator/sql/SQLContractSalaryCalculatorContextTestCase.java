@@ -1,12 +1,10 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.SystemCost.SYSTEM_COST;
 import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
-import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
@@ -16,9 +14,10 @@ import static java.util.Calendar.DATE;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -28,8 +27,6 @@ import org.junit.Test;
 
 import com.code.aon.common.AonException;
 import com.code.aon.ql.Criteria;
-import com.esferalia.aon.jooq.tables.SystemCost;
-import com.esferalia.aon.jooq.tables.SystemData;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
@@ -44,11 +41,12 @@ import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.SalaryException;
-import com.esferalia.aon.salary.cost.Costs;
 import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedVariable;
-import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
+import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
 public class SQLContractSalaryCalculatorContextTestCase extends
@@ -61,11 +59,14 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		AONContext aonContext = new AONContext(connection);
 
 		cleanSystemCosts(aonContext);
-		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(getToday()), "ECSS_E",
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), "ECSS_E",
 				DeductionType.COMMON_CONTINGENCY, "50");
-		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(getToday()), "ECSS_E",
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), "ECSS_E",
 				DeductionType.COMMON_CONTINGENCY, "100");
-		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(getToday()), "ECSS_E",
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), "ECSS_E",
 				DeductionType.COMMON_CONTINGENCY, "200");
 
 		ContractRecord contract = newContract(aonContext, new String[] {},
@@ -100,14 +101,8 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		Salary salary = new ContractSalaryCalculator<Salary>(
 				new SalaryBuilder()).calculate(ctx);
 
-		Assert.assertEquals(
-				"ECSS_E",
-				350.00,
-				salary.getSalaryCosts()
-						.stream()
-						.collect(
-								Collectors.summingDouble(cost -> cost
-										.getAmount())));
+		Assert.assertEquals("ECSS_E", 350.00, salary.getSalaryCosts().stream()
+				.collect(Collectors.summingDouble(cost -> cost.getAmount())));
 
 	}
 
@@ -118,29 +113,28 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		AONContext aonContext = new AONContext(connection);
 
 		cleanSystemCosts(aonContext);
-		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(getToday()), "CGC_E",
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), "CGC_E",
 				DeductionType.COMMON_CONTINGENCY, "50");
-		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(getToday()), "CGC_E",
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), "CGC_E",
 				DeductionType.COMMON_CONTINGENCY, "100");
-		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(getToday()), "CGC_P",
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), "CGC_P",
 				DeductionType.COMMON_CONTINGENCY, "999");
-		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(getToday()), "NESTR",
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), "NESTR",
 				DeductionType.COMMON_CONTINGENCY, "111");
-		addCCCCost(aonContext, CCCType.TRAINING, getFirstDayOfYear(getToday()), "CGC_E",
-				DeductionType.COMMON_CONTINGENCY, "200");
-		addCCCCost(aonContext, CCCType.TRAINING, getFirstDayOfYear(getToday()), "CGC_E",
-				DeductionType.COMMON_CONTINGENCY, "300");
-		addCCCCost(aonContext, CCCType.TRAINING, getFirstDayOfYear(getToday()), "CGC_P",
-				DeductionType.COMMON_CONTINGENCY, "666");
+		addCCCCost(aonContext, CCCType.TRAINING, getFirstDayOfYear(getToday()),
+				"CGC_E", DeductionType.COMMON_CONTINGENCY, "200");
+		addCCCCost(aonContext, CCCType.TRAINING, getFirstDayOfYear(getToday()),
+				"CGC_E", DeductionType.COMMON_CONTINGENCY, "300");
+		addCCCCost(aonContext, CCCType.TRAINING, getFirstDayOfYear(getToday()),
+				"CGC_P", DeductionType.COMMON_CONTINGENCY, "666");
 
-		ContractRecord contract = newContract(aonContext, 
-				SSRegimeType.GENERAL,
-				CCCType.TRAINING,
-				getFirstDayOfYear(getToday()),
-				Collections.emptyMap(),
-				new String[] {},
-				new String[] {},
-				null);
+		ContractRecord contract = newContract(aonContext, SSRegimeType.GENERAL,
+				CCCType.TRAINING, getFirstDayOfYear(getToday()),
+				Collections.emptyMap(), new String[] {}, new String[] {}, null);
 
 		Date start = getFirstDayOfMonth(getToday());
 		Date end = getLastDayOfMonth(start);
@@ -162,7 +156,7 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 					+ "]");
 		}
 
-		Assert.assertEquals( 4, costs);
+		Assert.assertEquals(4, costs);
 
 		ctx = new SQLContractSalaryCalculatorContext(connection, start, end,
 				end, criteria);
@@ -350,6 +344,265 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 						.getPeriod())).longValue());
 	}
 
+	@Test
+	public void testSplit() {
+
+		List<Period> worked = new ArrayList<Period>();
+		worked.add(new Period(getFirstDayOfMonth(getToday()),
+				getLastDayOfMonth(getToday())));
+
+		List<Period> leaves = new ArrayList<Period>();
+		leaves.add(new Period(getFirstDayOfMonth(getToday()),
+				getFirstDayOfMonth(getToday())));
+
+		List<Period> split = SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext
+				.split(worked, leaves);
+		
+		Assert.assertEquals(2, split.size());
+		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
+		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getEnd());
+		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE,1), split.get(1).getStart());
+		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(1).getEnd());
+
+	
+		leaves.add(new Period(getLastDayOfMonth(getToday()),
+				getLastDayOfMonth(getToday())));
+
+		split = SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext
+				.split(worked, leaves);
+		Assert.assertEquals(3, split.size());
+		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
+		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getEnd());
+		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE,1), split.get(1).getStart());
+		Assert.assertEquals(add(getLastDayOfMonth(getToday()),DATE,-1), split.get(1).getEnd());
+		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(2).getStart());
+		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(2).getEnd());
+		
+		leaves.add(new Period(add(getFirstDayOfMonth(getToday()),DATE, 13),
+				add(getFirstDayOfMonth(getToday()),DATE, 19)));
+
+		Collections.sort(leaves); // Must be sort
+		split = SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext
+				.split(worked, leaves);
+		
+		Assert.assertEquals(5, split.size());
+		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
+		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getEnd());
+		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE,1), split.get(1).getStart());
+		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 12), split.get(1).getEnd());
+		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 13), split.get(2).getStart());
+		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 19), split.get(2).getEnd());
+		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 20), split.get(3).getStart());
+		Assert.assertEquals(add(getLastDayOfMonth(getToday()),DATE, -1), split.get(3).getEnd());
+		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(4).getStart());
+		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(4).getEnd());
+
+		//
+		List<Period> whole = new ArrayList<Period>();
+		whole.add(new Period(getFirstDayOfMonth(getToday()),
+				getLastDayOfMonth(getToday())));
+		split = SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext
+				.split(worked, whole);
+		Assert.assertEquals(1, split.size());
+		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
+		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(0).getEnd());
+	
+		whole = new ArrayList<Period>();
+		whole.add(new Period(add(getFirstDayOfMonth(getToday()), DATE, -1),
+				add(getLastDayOfMonth(getToday()), DATE, 1)));
+		split = SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext
+				.split(worked, whole);
+		Assert.assertEquals(1, split.size());
+		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
+		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(0).getEnd());
+
+		//--
+		List<Period> one = new ArrayList<Period>();
+		one.add(new Period(add(getFirstDayOfMonth(getToday()),DATE, 10),
+				add(getFirstDayOfMonth(getToday()),DATE, 20)));
+		split = SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext
+				.split(worked, one);
+		Assert.assertEquals(3, split.size());
+		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
+		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 9), split.get(0).getEnd());
+		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 10), split.get(1).getStart());
+		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 20), split.get(1).getEnd());
+		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 21), split.get(2).getStart());
+		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(2).getEnd());
+
+		one = new ArrayList<Period>();
+		one.add(new Period(add(getFirstDayOfMonth(getToday()),DATE, 0),
+				add(getFirstDayOfMonth(getToday()),DATE, 20)));
+		split = SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext
+				.split(worked, one);
+		Assert.assertEquals(2, split.size());
+		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
+		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 20), split.get(0).getEnd());
+		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 21), split.get(1).getStart());
+		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(1).getEnd());
+		
+		one = new ArrayList<Period>();
+		one.add(new Period(add(getFirstDayOfMonth(getToday()),DATE, -100),
+				add(getFirstDayOfMonth(getToday()),DATE, 20)));
+		split = SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext
+				.split(worked, one);
+		Assert.assertEquals(2, split.size());
+		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
+		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 20), split.get(0).getEnd());
+		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 21), split.get(1).getStart());
+		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(1).getEnd());
+		
+		one = new ArrayList<Period>();
+		one.add(new Period(add(getFirstDayOfMonth(getToday()),DATE, -1),
+				add(getFirstDayOfMonth(getToday()),DATE, 20)));
+		split = SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext
+				.split(worked, one);
+		Assert.assertEquals(2, split.size());
+		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
+		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 20), split.get(0).getEnd());
+		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 21), split.get(1).getStart());
+		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(1).getEnd());
+
+		one = new ArrayList<Period>();
+		one.add(new Period(add(getFirstDayOfMonth(getToday()),DATE, 10),
+				add(getFirstDayOfMonth(getToday()),DATE, 200)));
+		split = SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext
+				.split(worked, one);
+		Assert.assertEquals(2, split.size());
+		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
+		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 9), split.get(0).getEnd());
+		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 10), split.get(1).getStart());
+		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(1).getEnd());
+		
+		one = new ArrayList<Period>();
+		one.add(new Period(add(getFirstDayOfMonth(getToday()),DATE, 10),
+				add(getLastDayOfMonth(getToday()),DATE, 1)));
+		split = SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext
+				.split(worked, one);
+		Assert.assertEquals(2, split.size());
+		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
+		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 9), split.get(0).getEnd());
+		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 10), split.get(1).getStart());
+		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(1).getEnd());
+
+		List<Period> nu11 = new ArrayList<Period>();
+		nu11.add(new Period(getFirstDayOfMonth(getToday()),
+				null));
+		split = SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext
+				.split(worked, nu11);
+		Assert.assertEquals(1, split.size());
+		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
+		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(0).getEnd());
+
+	}
+	
+	@Test
+	public void testGuaranteee() throws ExpressionException, SQLException{
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext, SSRegimeType.GENERAL,
+				CCCType.TRAINING, getFirstDayOfYear(getToday()),
+				Collections.emptyMap(), new String[] {}, new String[] {}, null);
+
+		Date start = getFirstDayOfMonth(getToday());
+		Date end = getLastDayOfMonth(start);
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, start, end, end, criteria);
+		ctx.next();
+
+		try {
+			ctx.getExpressionContext().eval("GTZDO(P1+P2)", start, end);
+			Assert.fail();
+		} catch ( UndefinedVariablesException e ) {
+			Assert.assertEquals(ContextVariable.LEAVE_DAYS.getName(),e.getVariableNames()[0]);
+			Assert.assertEquals("SELF.guarantee(0)",e.getExpression());
+		}
+	
+		try {
+			ctx.getExpressionContext().eval("GTZDO((P1)+P2)", start, end);
+			Assert.fail();
+		} catch ( UndefinedVariablesException e ) {
+			Assert.assertEquals(ContextVariable.LEAVE_DAYS.getName(),e.getVariableNames()[0]);
+			Assert.assertEquals("SELF.guarantee(0)",e.getExpression());
+		}
+
+		try {
+			ctx.getExpressionContext().eval("GTZDO((P1+P2))", start, end);
+			Assert.fail();
+		} catch ( UndefinedVariablesException e ) {
+			Assert.assertEquals(ContextVariable.LEAVE_DAYS.getName(),e.getVariableNames()[0]);
+			Assert.assertEquals("SELF.guarantee(0)",e.getExpression());
+		}
+
+		try {
+			ctx.getExpressionContext().eval("GTZDO(P1+(P2))", start, end);
+			Assert.fail();
+		} catch ( UndefinedVariablesException e ) {
+			Assert.assertEquals(ContextVariable.LEAVE_DAYS.getName(),e.getVariableNames()[0]);
+			Assert.assertEquals("SELF.guarantee(0)",e.getExpression());
+		}
+
+		try {
+			ctx.getExpressionContext().eval("GTZDO( P1 + P2 ,1)", start, end);
+			Assert.fail();
+		} catch ( UndefinedVariablesException e ) {
+			Assert.assertEquals(ContextVariable.LEAVE_DAYS.getName(),e.getVariableNames()[0]);
+			Assert.assertEquals("SELF.guarantee(0,1)",e.getExpression());
+		}
+
+		try {
+			ctx.getExpressionContext().eval("GTZDO( P1 + P2 ,1, 360)", start, end);
+			Assert.fail();
+		} catch ( UndefinedVariablesException e ) {
+			Assert.assertEquals(ContextVariable.LEAVE_DAYS.getName(),e.getVariableNames()[0]);
+			Assert.assertEquals("SELF.guarantee(0,1, 360)",e.getExpression());
+		}
+		try {
+			ctx.getExpressionContext().eval("GTZDO( P1 + (P2 * 100) ,1, 360)", start, end);
+			Assert.fail();
+		} catch ( UndefinedVariablesException e ) {
+			Assert.assertEquals(ContextVariable.LEAVE_DAYS.getName(),e.getVariableNames()[0]);
+			Assert.assertEquals("SELF.guarantee(0,1, 360)",e.getExpression());
+		}
+
+		try {
+			ctx.getExpressionContext().eval("GTZDO( (P1) + (P2 * 100) ,1, 360)", start, end);
+			Assert.fail();
+		} catch ( UndefinedVariablesException e ) {
+			Assert.assertEquals(ContextVariable.LEAVE_DAYS.getName(),e.getVariableNames()[0]);
+			Assert.assertEquals("SELF.guarantee(0,1, 360)",e.getExpression());
+		}
+		try {
+			ctx.getExpressionContext().eval("GTZDO( (P1) + (P2 * 100) ,1, 360)", start, end);
+			Assert.fail();
+		} catch ( UndefinedVariablesException e ) {
+			Assert.assertEquals(ContextVariable.LEAVE_DAYS.getName(),e.getVariableNames()[0]);
+			Assert.assertEquals("SELF.guarantee(0,1, 360)",e.getExpression());
+		}
+		try {
+			ctx.getExpressionContext().eval("GTZDO()", start, end);
+			Assert.fail();
+		} catch ( UndefinedVariablesException e ) {
+			Assert.assertEquals(ContextVariable.LEAVE_DAYS.getName(),e.getVariableNames()[0]);
+			Assert.assertEquals("SELF.guarantee(0)",e.getExpression());
+		}
+
+		try {
+			ctx.getExpressionContext().eval("GTZDO(P,4) + GTZDO(P,1,3)", start, end);
+			Assert.fail();
+		} catch ( UndefinedVariablesException e ) {
+			Assert.assertEquals(ContextVariable.LEAVE_DAYS.getName(),e.getVariableNames()[0]);
+			Assert.assertEquals("SELF.guarantee(0,4) + SELF.guarantee(0,1,3)",e.getExpression());
+		}
+	}
+
 	// ------------------------------------------------------------------------
 
 	protected final void addSystemData(AONContext aonContext, Date startDate,
@@ -376,9 +629,8 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
 
-
-	protected final void addCCCCost(AONContext aonContext, CCCType cccType,Date startDate,
-			String code, DeductionType type, String expression) {
+	protected final void addCCCCost(AONContext aonContext, CCCType cccType,
+			Date startDate, String code, DeductionType type, String expression) {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
 
 		aonContext
@@ -389,14 +641,15 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 				.set(SYSTEM_COST.TYPE,
 						(byte) (type != null ? type.ordinal()
 								: DeductionType.OTHER.ordinal()))
-				.set(SYSTEM_COST.DOMAIN, (-1)*( 100 + cccType.ordinal()))
+				.set(SYSTEM_COST.DOMAIN, (-1) * (100 + cccType.ordinal()))
 				.set(SYSTEM_COST.EXPRESSION, expression).execute();
 
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
 
-	protected final void addSSRegimeCost(AONContext aonContext, SSRegimeType ssRegimetype, Date startDate,
-			String code, DeductionType type, String expression) {
+	protected final void addSSRegimeCost(AONContext aonContext,
+			SSRegimeType ssRegimetype, Date startDate, String code,
+			DeductionType type, String expression) {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
 
 		aonContext
@@ -407,7 +660,7 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 				.set(SYSTEM_COST.TYPE,
 						(byte) (type != null ? type.ordinal()
 								: DeductionType.OTHER.ordinal()))
-				.set(SYSTEM_COST.DOMAIN, (-1)*ssRegimetype.ordinal())
+				.set(SYSTEM_COST.DOMAIN, (-1) * ssRegimetype.ordinal())
 				.set(SYSTEM_COST.EXPRESSION, expression).execute();
 
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");

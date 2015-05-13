@@ -240,6 +240,7 @@ public class ExpressionContext {
 			if (!RESERVED_WORDS.contains(var)) {
 				names.add(var);
 			}
+			
 		}
 		return names;
 	}
@@ -368,6 +369,10 @@ public class ExpressionContext {
 		ITimedVariable<Object> timedObject = new TimedObject<Object>(value,
 				start, end);
 		return this.putVariable(name.toString(), timedObject);
+	}
+
+	public void removeVariable(Object name) {
+		variables.remove(name.toString());
 	}
 
 	public void removeVariable(Object name, Date start, Date end) {

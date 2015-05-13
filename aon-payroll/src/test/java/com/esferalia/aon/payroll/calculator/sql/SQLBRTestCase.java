@@ -1,7 +1,6 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
@@ -566,7 +565,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				new String[] {
 				}, category);
 		addPayment(aonContext, contract,
-				"GTZDO( P_0+ P_1,1,365)", 
+				"GTZDO( P_0 + P_1,1,365)", 
 				"0.00");
 		addPayment(aonContext, contract,
 				"TRACE('DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA=%f\r\n',BASE_REGULADORA * DIAS_ENFERMEDAD_COMUN); "
@@ -584,7 +583,9 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, contract);
 		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder());
-		ISalary salary = calculator.calculate(ctx);
+		Salary salary = calculator.calculate(ctx);
+		for(com.esferalia.aon.payroll.SalaryPayment payment: salary.getSalaryPayments())
+			System.out.println(payment.getName() +  " = " + payment.getAmount() + " (" + payment.getExpression() +")");
 		Assert.assertEquals(format("%s :", TOTAL_PAYMENT), 1750.00, salary.getTotalPayment(),
 				DELTA);
 		Assert.assertEquals(format("%s :", CGC_BASE), 1750.00, salary.getCommonBase(), DELTA);
@@ -594,6 +595,8 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
 		salary = calculator.calculate(ctx);
+		for(com.esferalia.aon.payroll.SalaryPayment payment: salary.getSalaryPayments())
+			System.out.println(payment.getName() +  " = " + payment.getAmount() + " (" + payment.getExpression() +")");
 		Assert.assertEquals(format("%s :", TOTAL_PAYMENT), 1750.00, salary.getTotalPayment(),
 				DELTA);
 		Assert.assertEquals(format("%s :", CGC_BASE), 1750.00, salary.getCommonBase(), DELTA);
@@ -757,39 +760,23 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 
 	// ------------------------------------------------------------------------
 
-	protected final void addIT(AONContext aonContext, ContractRecord contract,
-			LeaveType type, Date startDate, Date endDate, Double regulatoryBase) {
-		aonContext.getDslContext()
-				.insertInto(CONTRACT_LEAVE)
-				.set(CONTRACT_LEAVE.DOMAIN, contract.getDomain())
-				.set(CONTRACT_LEAVE.CONTRACT, contract.getId())
-				.set(CONTRACT_LEAVE.START_DATE, startDate)
-				.set(CONTRACT_LEAVE.END_DATE, endDate)
-				.set(CONTRACT_LEAVE.DAILY_REG_BASE, regulatoryBase)
-				// .set(CONTRACT_LEAVE.DAILY_CGC_BASE, regulatoryBase)
-				// .set(CONTRACT_LEAVE.DAILY_CGP_BASE, regulatoryBase)
-				.set(CONTRACT_LEAVE.DISCHARGE_CAUSE, (byte) type.ordinal())
-				.execute();
-
-	}
-
-	protected final void addPayment(AONContext aonContext,
-			ContractRecord contract, String expression, String quoteExpression) {
-		aonContext
-				.getDslContext()
-				.insertInto(CONTRACT_PAYMENT)
-				.set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
-				.set(CONTRACT_PAYMENT.CONTRACT, contract.getId())
-				.set(CONTRACT_PAYMENT.START_DATE, contract.getStartDate())
-				.set(CONTRACT_PAYMENT.END_DATE, contract.getEndDate())
-				.set(CONTRACT_PAYMENT.EXPRESSION, expression)
-				.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
-				.set(CONTRACT_PAYMENT.TYPE,
-						(byte) PaymentType.CRA_0001.ordinal())
-				.set(CONTRACT_PAYMENT.SALARY_TYPE,
-						(byte) SalaryType.SALARY.ordinal()).execute();
-
-	}
+//	protected final void addPayment(AONContext aonContext,
+//			ContractRecord contract, String expression, String quoteExpression) {
+//		aonContext
+//				.getDslContext()
+//				.insertInto(CONTRACT_PAYMENT)
+//				.set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
+//				.set(CONTRACT_PAYMENT.CONTRACT, contract.getId())
+//				.set(CONTRACT_PAYMENT.START_DATE, contract.getStartDate())
+//				.set(CONTRACT_PAYMENT.END_DATE, contract.getEndDate())
+//				.set(CONTRACT_PAYMENT.EXPRESSION, expression)
+//				.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
+//				.set(CONTRACT_PAYMENT.TYPE,
+//						(byte) PaymentType.CRA_0001.ordinal())
+//				.set(CONTRACT_PAYMENT.SALARY_TYPE,
+//						(byte) SalaryType.SALARY.ordinal()).execute();
+//
+//	}
 	
 	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
 			Date startDate, Date endDate, Date issueDate, ContractRecord contract) throws ExpressionException, SQLException{

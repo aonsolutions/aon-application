@@ -83,6 +83,7 @@ import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
+import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.Period;
@@ -408,6 +409,217 @@ public class SQLWorkedDaysTestCase extends
 	
 	}
 
+	@Test
+	public void testWorkDaysWithIT() throws ExpressionException,
+			SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		Date contractStart = getToday();
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, contractStart,
+				new HashMap<String, String>() {
+					{
+					}
+				});
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+
+		Date start = getFirstDayOfMonth(addMonths(contractStart, 1));
+		Date end = getLastDayOfMonth(start);
+		
+		Date startIT = add(start, DAY_OF_MONTH, 13 );
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIT, null, null);
+		
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, start, end, end, criteria);
+		ctx.next();
+
+		List<ITimedResult<Double>> workedDays = ctx.getExpressionContext()
+				.eval(format("%s", WORKED_DAYS), start, end, Double.class);
+
+		Assert.assertEquals(1, workedDays.size());
+		assertEquals(
+				workedDays.get(0),
+				13.00,
+				start, 
+				add(startIT,DAY_OF_MONTH,-1));
+	}
+	
+
+	@Test
+	public void testWorkDaysWithITII() throws ExpressionException,
+			SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		Date contractStart = getToday();
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, contractStart,
+				new HashMap<String, String>() {
+					{
+					}
+				});
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+
+		Date start = getFirstDayOfMonth(addMonths(contractStart, 1));
+		Date end = getLastDayOfMonth(start);
+		
+		Date startIT = add(start, DAY_OF_MONTH, 13 );
+		Date endIT = add(startIT, DAY_OF_MONTH, 9 );
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIT, endIT, null);
+		
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, start, end, end, criteria);
+		ctx.next();
+
+		List<ITimedResult<Double>> workedDays = ctx.getExpressionContext()
+				.eval(format("%s", WORKED_DAYS), start, end, Double.class);
+
+		Assert.assertEquals(2, workedDays.size());
+		assertEquals(
+				workedDays.get(0),
+				13.00,
+				start, 
+				add(startIT,DAY_OF_MONTH,-1));
+		assertEquals(
+				workedDays.get(1),
+				(double) (get(end,DAY_OF_MONTH)-get(endIT, DAY_OF_MONTH)),
+				add(endIT,DAY_OF_MONTH,+1), 
+				end);
+	}
+	
+	@Test
+	public void testWorkDaysWithITIII() throws ExpressionException,
+			SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		Date contractStart = getToday();
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, contractStart,
+				new HashMap<String, String>() {
+					{
+					}
+				});
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+
+		Date start = getFirstDayOfMonth(addMonths(contractStart, 1));
+		Date end = getLastDayOfMonth(start);
+		
+		Date startITI = add(start, DAY_OF_MONTH, 5 );
+		Date endITI =startITI;
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITI, endITI, null);
+
+		Date startITII = add(start, DAY_OF_MONTH, 7 );
+		Date endITII =startITII;
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITII, endITII, null);
+
+		Date startITIII = add(start, DAY_OF_MONTH, 9 );
+		Date endITIII =startITIII;
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITIII, endITIII, null);
+
+		Date startITIV = add(start, DAY_OF_MONTH, 11 );
+		Date endITIV =startITIV;
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITIV, endITIV, null);
+
+		Date startITV = add(start, DAY_OF_MONTH, 20 );
+		Date endITV =add(startITV, DAY_OF_MONTH, 20 );
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITV, endITV, null);
+
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, start, end, end, criteria);
+		ctx.next();
+
+		List<ITimedResult<Double>> workedDays = ctx.getExpressionContext()
+				.eval(format("%s", WORKED_DAYS), start, end, Double.class);
+
+		Assert.assertEquals(5, workedDays.size());
+		assertEquals(
+				workedDays.get(0),
+				5.00,
+				start, 
+				add(startITI,DAY_OF_MONTH,-1));
+		assertEquals(
+				workedDays.get(1),
+				1.00,
+				add(endITI,DAY_OF_MONTH,1), 
+				add(endITI,DAY_OF_MONTH,1));
+		assertEquals(
+				workedDays.get(2),
+				1.00,
+				add(endITII,DAY_OF_MONTH,1), 
+				add(endITII,DAY_OF_MONTH,1));
+		assertEquals(
+				workedDays.get(3),
+				1.00,
+				add(endITIII,DAY_OF_MONTH,1), 
+				add(endITIII,DAY_OF_MONTH,1));
+		assertEquals(
+				workedDays.get(4),
+				8.00,
+				add(endITIV,DAY_OF_MONTH,1), 
+				add(startITV,DAY_OF_MONTH,-1));
+	}
+
+	@Test
+	public void testWorkDaysWithITIV() throws ExpressionException,
+			SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		Date contractStart = getToday();
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, contractStart,
+				new HashMap<String, String>() {
+					{
+					}
+				});
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+
+		Date start = getFirstDayOfMonth(addMonths(contractStart, 1));
+		Date end = getLastDayOfMonth(start);
+		
+		Date startIT = start;
+		Date endIT = null;
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIT, endIT, null);
+		
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, start, end, end, criteria);
+		ctx.next();
+		
+		try {
+			List<ITimedResult<Double>> workedDays = ctx.getExpressionContext()
+					.eval(format("%s", WORKED_DAYS), start, end, Double.class);
+			Assert.fail();
+		} catch ( UndefinedVariablesException e){
+			
+		}
+	}
+
 	// ------------------------------------------------------------------------
 	protected void testWorkedDays(ContractRecord contract, double coefficient, Double monthdays) throws ExpressionException, SQLException {
 		Connection connection = getConnection();
@@ -492,8 +704,8 @@ public class SQLWorkedDaysTestCase extends
 	}
 	
 	protected void assertEquals(ITimedResult<Double> var, Double value, Date start, Date end){
-		Assert.assertEquals(value, var.getValue(), DELTA);
 		Assert.assertEquals(new Period(start, end), var.getPeriod());
+		Assert.assertEquals(value, var.getValue(), DELTA);
 	}
 
 	protected void assertEquals(List<ITimedResult<Double>> vars, Double value, Date start, Date end){

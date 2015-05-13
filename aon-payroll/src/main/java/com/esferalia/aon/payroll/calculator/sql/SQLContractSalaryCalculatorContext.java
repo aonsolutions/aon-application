@@ -468,11 +468,42 @@ public class SQLContractSalaryCalculatorContext extends
 
 	}
 
+	public static class SQLGuaranteeContractSalaryCalculatorContext extends
+			SQLNoItContractSalaryCalculatorContext {
+
+		protected static interface Listener {
+			void onGuarantee(double guarantee, int start, int end);
+		}
+
+		private Listener listener;
+
+		public SQLGuaranteeContractSalaryCalculatorContext(
+				Connection connection, Date startDate, Date endDate,
+				Date issueDate, Criteria criteria, int start, int end)
+				throws SQLException, ExpressionException {
+			super(connection, startDate, endDate, issueDate, criteria, start,
+					end);
+		}
+
+		@Override
+		public Object guarantee(double guarantee, int start, int end)
+				throws ExpressionException {
+			if (this.start == start && this.end == end) {
+				listener.onGuarantee(guarantee, start, end);
+				return guarantee;
+			} else {
+				return super.guarantee(guarantee);
+			}
+		}
+
+	}
+
 	public static class SQLNoItContractSalaryCalculatorContext extends
 			SQLContractSalaryCalculatorContext {
 
-		private int end;
-		private int start;
+		protected int end;
+		protected int start;
+		protected List<Period> guarantees = new ArrayList<Period>();
 
 		public SQLNoItContractSalaryCalculatorContext(Connection connection,
 				final Date startDate, final Date endDate, Date issueDate,
@@ -484,6 +515,7 @@ public class SQLContractSalaryCalculatorContext extends
 			this.end = end + 1;
 			// with this, we assure no leave I.T.
 			super.leaveLoader = new SQLContractLeaveLoader(startDate, endDate) {
+
 				@Override
 				public void loadContractLeave(Integer id, Date leaveStart,
 						Date leaveEnd, long parentDays, LeaveType type,
@@ -501,6 +533,23 @@ public class SQLContractSalaryCalculatorContext extends
 
 					Period guarenteePeriod = new Period(guarenteeStart,
 							guarenteeEnd);
+					
+					SQLNoItContractSalaryCalculatorContext.this.guarantees.add(guarenteePeriod) ;
+
+					SQLNoItContractSalaryCalculatorContext.this.guarantees
+							.add(guarenteePeriod);
+
+					exprCtx.removeVariable(GUARANTEE);
+
+					try {
+						Method guarantee = SQLContractSalaryCalculatorContext.class
+								.getMethod("guaranteee", double.class);
+						exprCtx.setVariable(GUARANTEE,
+								new MethodStub(guarantee), guarenteeStart,
+								guarenteeEnd);
+					} catch (SecurityException e) {
+					} catch (NoSuchMethodException e) {
+					}
 
 					List<Period> leavePeriods = leavePeriod
 							.sub(guarenteePeriod);
@@ -583,8 +632,81 @@ public class SQLContractSalaryCalculatorContext extends
 						guarentee));
 			}
 			return super.guarantee(guarentee);
+
 		}
 
+		@Override
+		protected List<Period> splitWorkedDays(List<Period> worked) {
+
+			List<Period> leaves = guarantees;
+
+			Collections.sort(leaves);
+			Collections.sort(worked);
+
+			return split(worked, leaves);
+		}
+
+		public static List<Period> split(List<Period> worked,
+				List<Period> leaves) {
+
+			if (worked.isEmpty() || leaves.isEmpty())
+				return worked;
+
+			List<Period> periods = new LinkedList<Period>();
+
+			int l = 0;
+			int w = 0;
+			Period work = worked.get(w);
+			Period leave = leaves.get(l);
+			// while (w < worked.size() && l < leaves.size()) {
+			do {
+
+				if (work.getEnd() != null
+						&& leave.getStart().after(work.getEnd())) {
+					periods.add(work);
+					if (++w >= worked.size())
+						return periods;
+					work = worked.get(w);
+					continue;
+				}// leave after work, try with next work
+
+				if (leave.getEnd() != null
+						&& leave.getEnd().before(work.getStart())) {
+					if (++l >= leaves.size())
+						break;
+					leave = leaves.get(l);
+					continue;
+				}// leave before work, try with next leave
+
+				Period intersect = work.intersect(leave);
+
+				if (work.getStart().before(intersect.getStart()))
+					periods.add(new Period(work.getStart(), add(
+							intersect.getStart(), DAY_OF_MONTH, -1)));
+
+				periods.add(new Period(intersect.getStart(), intersect.getEnd()));
+
+				if (intersect.getEnd() != null
+						&& (work.getEnd() == null || work.getEnd().after(
+								intersect.getEnd()))) {
+					work = new Period(add(intersect.getEnd(), DAY_OF_MONTH, 1),
+							work.getEnd());
+					if (++l >= leaves.size())
+						break;
+					leave = leaves.get(l);
+				}// leave ends before work, try next leave with this remain
+				else {
+					if (++w >= worked.size())
+						return periods;
+					work = worked.get(w);
+				}// leave until ends of work, try next work with this leave.
+
+			} while (true);
+
+			periods.add(work);
+
+			return periods;
+		}
 	}
 
 	/**
@@ -1491,6 +1613,13 @@ public class SQLContractSalaryCalculatorContext extends
 		return leaveLoader.getLeaves();
 	}
 
+	public List<Period> getLeavesPeriods() {
+		List<Period> periods = new ArrayList<Period>();
+		for (Leave l : leaveLoader.getLeaves())
+			periods.add(l);
+		return periods;
+	}
+
 	protected ISalaryCalculatorContext getLiquidCalculatorContext(final double x) {
 
 		Criteria contractCriteria = new Criteria();
@@ -1557,6 +1686,10 @@ public class SQLContractSalaryCalculatorContext extends
 				EnterpriseColumns.DOMAIN);
 		return id == null ? null : new AgreementKey((Integer) id,
 				(Integer) domain);
+	}
+
+	protected List<Period> splitWorkedDays(List<Period> periods) {
+		return periods;
 	}
 
 	// --------------------------------------------------------- Private methods
@@ -1897,11 +2030,12 @@ public class SQLContractSalaryCalculatorContext extends
 			calculator.calculate(ctx);
 		} catch (GuarenteeException e) {
 
-			if (e.guarentee == guarentee)
-				throw new ContextFunctions.UselessGuaranteeException(guarentee);
-			if (e.guarentee < guarentee)
-				throw new ContextFunctions.UselessGuaranteeException(
-						e.guarentee, guarentee);
+			// if (e.guarentee == guarentee)
+			// throw new ContextFunctions.UselessGuaranteeException(guarentee);
+			//
+			// if (e.guarentee < guarentee)
+			// throw new ContextFunctions.UselessGuaranteeException(
+			// e.guarentee, guarentee);
 
 			// Gets PREST. IT for GTZDO periods.
 			double prestIt = 0.00;
@@ -1909,6 +2043,7 @@ public class SQLContractSalaryCalculatorContext extends
 					.getVariables(LEAVE_DAYS.getName(), ctx.getStartDate(),
 							ctx.getEndDate());
 			Date guaranteeStart = ctx.getStartDate();
+
 			for (ITimedVariable<Object> leave : leaves) {
 				Period leavePeriod = leave.getPeriod();
 				Date leaveStart = leavePeriod.getStart();
@@ -1922,7 +2057,7 @@ public class SQLContractSalaryCalculatorContext extends
 				prestIt += getDayDoubleVariable(PREST_IT.getName(),
 						guaranteeStart, ctx.getEndDate());
 
-			return e.guarentee - guarentee - prestIt;
+			return e.guarentee - /* guarentee - */prestIt;
 
 		} catch (SalaryException e) {
 			throw new RuntimeException(e);
@@ -2549,9 +2684,9 @@ public class SQLContractSalaryCalculatorContext extends
 				Period.max(p.getStart(), contractStartDate),
 				Period.min(p.getEnd(), contractEndDate));
 
-		Long leaveDays = getLeaveDays(p);
+		// Long leaveDays = getLeaveDays(p);
 
-		double workedDays = availableDays - leaveDays;
+		double workedDays = availableDays /*- leaveDays*/;
 		workedDays -= getCurrentBindings().get(ERE_DAYS,
 				obj -> ((Number) obj).doubleValue(), 0.00);
 		workedDays -= getCurrentBindings().get(STRIKE_DAYS,
@@ -2667,8 +2802,8 @@ public class SQLContractSalaryCalculatorContext extends
 						super.resolvePayment(contractPayment, start, end,
 								issueDate, expressionContext, taxCalculator,
 								quoteCalculator);
-					} catch ( SalaryExpressionException e ) {
-						//e.printStackTrace();
+					} catch (SalaryExpressionException e) {
+						// e.printStackTrace();
 					}
 				};
 			}.calculate(ctx);
@@ -3109,7 +3244,26 @@ public class SQLContractSalaryCalculatorContext extends
 		 */
 
 		this.contractExpressionContext = new ExpressionContext(
-				this.implicitExpressionContext, this);
+				this.implicitExpressionContext, this){
+			@Override
+			public <T> List<ITimedResult<T>> eval(String script, Date start,
+					Date end, Class<T> toType) throws ExpressionException,
+					UndefinedVariablesException {
+				try {
+					return super.eval(script, start, end, toType);
+				} catch (UndefinedVariablesException e) {
+					if (script.matches(String
+							.format(".*%s\\w*\\(.*", GUARANTEE)))
+						return eval(script.replaceAll(
+								String.format("%s\\w*\\(([^(),]|\\(([^\\)]*)\\))*", GUARANTEE),
+								"SELF.guarantee(0"), start, end, toType);
+					if (e.getExpression() == null)
+						e.setExpression(script);
+					throw e;
+				}
+			}
+			
+		};
 
 		this.contractExpressionContext.setVariable(CONTEXT,
 				contractExpressionContext, startDate, endDate);
@@ -3130,22 +3284,18 @@ public class SQLContractSalaryCalculatorContext extends
 		loadExpression(this.contractExpressionContext, AGREEMENT,
 				"def(x){ SELF.agreement(x)};", this.startDate, this.endDate);
 
-		loadContractLeave(this.contractExpressionContext);
-		loadContractData(this.contractExpressionContext);
-		loadPersonData(this.contractExpressionContext);
-
 		try {
 			Method guarantee = SQLContractSalaryCalculatorContext.class
 					.getMethod("guaranteee", double.class);
 			this.contractExpressionContext.setVariable(GUARANTEE,
 					new MethodStub(guarantee), this.startDate, this.endDate);
 		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+
+		loadContractLeave(this.contractExpressionContext);
+		loadContractData(this.contractExpressionContext);
+		loadPersonData(this.contractExpressionContext);
 
 		if (!containsVariable(ACTUAL_DAYS)) {
 			// Los 'DIAS_EFECTIVOS' son pesados de calcular ( necesitan de
@@ -3248,6 +3398,44 @@ public class SQLContractSalaryCalculatorContext extends
 
 				ctx.putVariable(PARTIAL_FACTOR, partial_factor);
 			}
+			if (!containsVariable(QUOTE_DAYS, period)) {
+				ITimedVariable<Double> quoteDays = new ITimedVariable<Double>() {
+					@Override
+					public Period getPeriod() {
+						return period;
+					}
+
+					@Override
+					public Double getValue(Period p) {
+						return getQuoteDays(ctx, p);
+					}
+
+				};
+				ctx.putVariable(QUOTE_DAYS, quoteDays);
+			}
+			if (!containsVariable(SALARY_DAYS, period)) {
+				ITimedVariable<Double> salaryDays = new ITimedVariable<Double>() {
+					@Override
+					public Period getPeriod() {
+						return period;
+					}
+
+					@Override
+					public Double getValue(Period p) {
+						return getSalaryDays(ctx, p);
+					}
+
+				};
+				ctx.putVariable(SALARY_DAYS, salaryDays);
+			}
+		}
+
+		// ITs
+		List<Period> leaves = getLeavesPeriods();
+		intersects = Period.sub(intersects, leaves);
+		intersects = splitWorkedDays(intersects);
+
+		for (Period period : intersects) {
 
 			ITimedVariable<Double> workedDays = new ITimedVariable<Double>() {
 				@Override
@@ -3284,36 +3472,6 @@ public class SQLContractSalaryCalculatorContext extends
 				if (listener != null)
 					listener.onRedefinedImplicit(WORKED_DAYS.getName(),
 							userWorkedDays, workedDays);
-			}
-			if (!containsVariable(QUOTE_DAYS, period)) {
-				ITimedVariable<Double> quoteDays = new ITimedVariable<Double>() {
-					@Override
-					public Period getPeriod() {
-						return period;
-					}
-
-					@Override
-					public Double getValue(Period p) {
-						return getQuoteDays(ctx, p);
-					}
-
-				};
-				ctx.putVariable(QUOTE_DAYS, quoteDays);
-			}
-			if (!containsVariable(SALARY_DAYS, period)) {
-				ITimedVariable<Double> salaryDays = new ITimedVariable<Double>() {
-					@Override
-					public Period getPeriod() {
-						return period;
-					}
-
-					@Override
-					public Double getValue(Period p) {
-						return getSalaryDays(ctx, p);
-					}
-
-				};
-				ctx.putVariable(SALARY_DAYS, salaryDays);
 			}
 
 		}

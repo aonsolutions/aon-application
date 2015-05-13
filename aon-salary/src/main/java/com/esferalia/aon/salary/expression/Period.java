@@ -120,7 +120,7 @@ public class Period implements Comparable<Period> {
 		return compare(start, other.start) == 0 && compare(end, other.end) == 0;
 	}
 
-	public static List<Period> intersect(List<Period> a, List<Period> b) {
+	public static List<Period> intersect(Iterable<Period> a, Iterable<Period> b) {
 		if (a == null || b == null)
 			return null;
 
@@ -151,9 +151,11 @@ public class Period implements Comparable<Period> {
 			}
 		}
 
+
 		return periods;
 	}
 
+	
 	public static List<Period> sub(Period period, List<Period> periods) {
 
 		if (periods == null || periods.isEmpty()) {
@@ -175,6 +177,15 @@ public class Period implements Comparable<Period> {
 		return subs;
 	}
 
+	public static List<Period> sub(List<Period> a, List<Period> b) {
+
+		List<Period> subs = new LinkedList<Period>();
+
+		for(Period period: a )
+			subs.addAll(sub(period, b));
+		
+		return subs;
+	}
 
 	private static int compareEnds(Period a, Period b) {
 		if (b == null) {
