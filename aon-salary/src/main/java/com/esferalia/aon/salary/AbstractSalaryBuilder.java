@@ -205,10 +205,11 @@ public abstract class AbstractSalaryBuilder<T extends ISalary> implements ISalar
 			String description, Date startDate, Date endDate, IPayment payment,
 			Map<String, ITimedVariable<?>> context) {
 	}
-
+	
+	
 	@Override
-	public void addZeroPayment(Double quote, Double tax, IPayment payment,
-			Map<String, ITimedVariable<?>> context) {
+	public void addZeroPayment(Double quote, Double tax, Date startDate,
+			Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
 	}
 
 	@Override

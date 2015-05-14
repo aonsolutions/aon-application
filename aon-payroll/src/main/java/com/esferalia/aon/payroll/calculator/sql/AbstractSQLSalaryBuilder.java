@@ -284,7 +284,7 @@ public abstract class AbstractSQLSalaryBuilder<T extends ISalary> implements ISa
 	}
 	
 	@Override
-	public void addZeroPayment(Double quote, Double tax,IPayment payment, Map<String, ITimedVariable<?>> context) {
+	public void addZeroPayment(Double quote, Double tax,Date startDate, Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
 		//TODO: No payment, so we're not going to save it. But at upcoming versions
 		// we store taxes and quotes, so we'll have much more info.
 	}

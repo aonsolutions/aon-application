@@ -895,7 +895,7 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 							contractPayment, result.getContext());
 
 				} catch (NotNowException e) {
-					salaryBuilder.addZeroPayment(quote, 0.00, contractPayment,
+					salaryBuilder.addZeroPayment(quote, 0.00, resultStart, resultEnd, contractPayment,
 							result.getContext());
 
 				}

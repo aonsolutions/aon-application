@@ -335,7 +335,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 	public void setInkindIrpfBase(Double inkindIrpfBase) {
 		salaryDraft.setInkindIrpfBase(inkindIrpfBase);
 	}
-	
+
 	public void setMoneyIrpfBase(Double moneyIrpfBase) {
 		salaryDraft.setMoneyIrpfBase(moneyIrpfBase);
 	}
@@ -464,11 +464,11 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 	}
 
 	@Override
-	public void addZeroPayment(Double quote, Double tax, IPayment payment,
+	public void addZeroPayment(Double quote, Double tax, Date startDate,
+			Date endDate, IPayment payment,
 			Map<String, ITimedVariable<?>> context) {
-		addPayment(0.00, quote, tax, payment.getDescription(),
-				((IContractPayment) payment).getStartDate(),
-				((IContractPayment) payment).getEndDate(), payment, context);
+		addPayment(0.00, quote, tax, payment.getDescription(), startDate,
+				endDate, payment, context);
 	}
 
 	@Override
@@ -517,7 +517,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 
 	@Override
 	public void onInvalidData(String variableName, String message) {
-		
+
 		InvalidVariable invalidVariable = new InvalidVariable();
 
 		invalidVariable.setName(variableName);
@@ -527,7 +527,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 		invalidVariable.setScope(Scope.SYSTEM);
 
 		salaryDraft.addUndefinedVariable(invalidVariable);
-		
+
 	}
 
 	@Override
@@ -714,17 +714,17 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 		undefVar.setScope(getScope(expression.getScope()));
 
 		salaryDraft.addUndefinedVariable(undefVar);
-		
+
 	}
 
 	@Override
 	public void onRedefinedImplicit(String name, ITimedVariable<?> redefined,
 			ITimedVariable<?> implicit) {
-//		salaryDraft
-//				.addWarning(String
-//						.format("La variable del sistema '%s' con valor '%s' esta redefinida con el valor '%s'",
-//								name, implicit.getValue(implicit.getPeriod()),
-//								redefined.getValue(redefined.getPeriod())));
+		// salaryDraft
+		// .addWarning(String
+		// .format("La variable del sistema '%s' con valor '%s' esta redefinida con el valor '%s'",
+		// name, implicit.getValue(implicit.getPeriod()),
+		// redefined.getValue(redefined.getPeriod())));
 	}
 
 	// -------------------------------------------------------------------------
@@ -746,7 +746,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 			if (contextVariable != null && contextVariable.isInternal()) {
 				continue;
 			}
-			
+
 			Period period = var.getPeriod();
 			Object value = var.getValue(period);
 
@@ -906,17 +906,18 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 	private static <T extends ISalaryItem<DeductionType>> List<T> getDbDeductionCounterParts(
 			Collection<T> dbDeductions, Item<?> deduction) {
 		List<T> matchDbItems = getDbItemCounterParts(dbDeductions, deduction);
-		if ( matchDbItems.size() > 0 )
+		if (matchDbItems.size() > 0)
 			return matchDbItems;
 
 		List<T> typeMatchDbItems = new LinkedList<T>();
 		for (T dbDeduction : dbDeductions)
-			if ( deduction.getType() != null && dbDeduction.getType() != null )
-				if (deduction.getType().ordinal() == dbDeduction.getType().ordinal())
+			if (deduction.getType() != null && dbDeduction.getType() != null)
+				if (deduction.getType().ordinal() == dbDeduction.getType()
+						.ordinal())
 					typeMatchDbItems.add(dbDeduction);
 
 		return typeMatchDbItems;
-		
+
 	}
 
 	private static boolean equals(Enum<?> type1, Enum<?> type2) {

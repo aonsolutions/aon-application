@@ -277,10 +277,10 @@ public class CompositeSalaryBuilder<E extends ISalary,T extends ISalaryBuilder<E
 	}
 
 	@Override
-	public void addZeroPayment(Double quote, Double tax, IPayment payment,
-			Map<String, ITimedVariable<?>> context) {
+	public void addZeroPayment(Double quote, Double tax, Date startDate,
+			Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
 		for (ISalaryBuilder<E> builder : builders)
-			builder.addZeroPayment(quote, tax, payment, context);
+			builder.addZeroPayment(quote, tax, null, null, payment, context);
 	}
 
 	@Override

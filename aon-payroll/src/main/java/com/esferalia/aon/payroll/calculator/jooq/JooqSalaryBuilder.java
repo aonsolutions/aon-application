@@ -426,8 +426,8 @@ public class JooqSalaryBuilder implements ISalaryBuilder<ISalary> {
 	}
 
 	@Override
-	public void addZeroPayment(Double quote, Double tax, IPayment payment,
-			Map<String, ITimedVariable<?>> context) {
+	public void addZeroPayment(Double quote, Double tax, Date startDate,
+			Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
 		addPayment(0.00, quote, tax, payment.getDescription(), null, null,
 				payment, context);
 	}

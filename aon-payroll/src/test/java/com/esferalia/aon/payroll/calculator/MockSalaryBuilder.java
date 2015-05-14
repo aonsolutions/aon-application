@@ -265,8 +265,8 @@ public class MockSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 	}
 
 	@Override
-	public void addZeroPayment(Double quote, Double tax, IPayment payment,
-			Map<String, ITimedVariable<?>> context) {
+	public void addZeroPayment(Double quote, Double tax, Date startDate,
+			Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
 		// TODO Auto-generated method stub
 
 	}

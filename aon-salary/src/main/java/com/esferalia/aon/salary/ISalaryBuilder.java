@@ -9,7 +9,7 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 
-public interface ISalaryBuilder<T extends ISalary>  {
+public interface ISalaryBuilder<T extends ISalary> {
 
 	public T getSalary();
 
@@ -83,7 +83,6 @@ public interface ISalaryBuilder<T extends ISalary>  {
 	public void setHExtraBase(Double hExtraBase);
 
 	public void setNonHExtraBase(Double nonHExtraBase);
-	
 
 	// ------------------------------------------------------------------------
 	// Totals
@@ -114,8 +113,8 @@ public interface ISalaryBuilder<T extends ISalary>  {
 			String description, Date start, Date end, IPayment payment,
 			Map<String, ITimedVariable<?>> context);
 
-	public void addZeroPayment(Double quote, Double tax, IPayment payment,
-			Map<String, ITimedVariable<?>> context);
+	public void addZeroPayment(Double quote, Double tax, 
+			Date startDate, Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context);
 
 	public void addDeduction(Double amount, String description,
 			IDeduction deduction, Map<String, ITimedVariable<?>> context);
