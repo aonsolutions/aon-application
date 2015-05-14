@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.jooq.tables.WorkplaceDepartment.WORKPLACE_DEPARTMENT;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.util.Vector;
 
@@ -27,15 +28,16 @@ import com.esferalia.aon.occam.api.model.product.Product;
 
 public class DBCatalogue {
 	
-	public static Vector<com.esferalia.aon.gwt.template.shared.WorkPlace> getWorkplaces(Integer domainId,String domain){
+	public static Vector<com.esferalia.aon.gwt.template.shared.WorkPlace> getWorkplaces(Integer domainId,String domain, Integer userId){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
 			
 			Result<Record2<Integer, String>> record = ctx.getDslContext().select(WORKPLACE.ID, WORKPLACE.DESCRIPTION)
-					.from(WORKPLACE)
+					.from(WORKPLACE).join(USER_SCOPE).on(WORKPLACE.SCOPE.eq(USER_SCOPE.SCOPE))
 					.where(WORKPLACE.DOMAIN.eq(domainId))
 					.and(WORKPLACE.ACTIVE.eq((byte)1))
+					.and(USER_SCOPE.USER_ID.eq(userId))
 					.orderBy(WORKPLACE.DESCRIPTION)
 					.fetch();
 			

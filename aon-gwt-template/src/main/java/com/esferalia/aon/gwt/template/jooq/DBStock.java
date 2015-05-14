@@ -13,6 +13,7 @@ import static com.esferalia.aon.jooq.tables.WarehouseTransfer.WAREHOUSE_TRANSFER
 import static com.esferalia.aon.jooq.tables.WarehouseTransferDetail.WAREHOUSE_TRANSFER_DETAIL;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.jooq.tables.WorkplaceDepartment.WORKPLACE_DEPARTMENT;
+import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -773,15 +774,18 @@ public class DBStock {
 		}
 	}
 	
-	public static Warehouse getWarehouse(String warehouse, Integer domainId,String domain){
+	public static Warehouse getWarehouse(String warehouse, Integer domainId,String domain, Integer userId){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
 			
 			Result<Record3< Integer, String,Integer>> data = ctx.getDslContext().select(WAREHOUSE.ID,WAREHOUSE.NAME,WAREHOUSE.WORKPLACE)
-				.from(WAREHOUSE)
-				.where(WAREHOUSE.NAME.eq(warehouse)).and(WAREHOUSE.DOMAIN.eq(domainId)).fetch();
-			
+				.from(WAREHOUSE).join(WORKPLACE).on(WAREHOUSE.WORKPLACE.eq(WORKPLACE.ID))
+				.join(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(WORKPLACE.SCOPE))
+				.where(WAREHOUSE.NAME.eq(warehouse)).and(WAREHOUSE.DOMAIN.eq(domainId))
+				.and(USER_SCOPE.USER_ID.eq(userId))
+				.fetch();
+				
 			Warehouse w = new Warehouse();
 			
 			for(Record3<Integer, String,Integer> r : data){
@@ -798,14 +802,17 @@ public class DBStock {
 		}
 	}
 	
-	public static Vector<Warehouse> getWarehouse(String domain,Integer domainId){
+	public static Vector<Warehouse> getWarehouse(String domain,Integer domainId, Integer userId){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
 			
 			Result<Record3< Integer, String,Integer>> data = ctx.getDslContext().select(WAREHOUSE.ID,WAREHOUSE.NAME,WAREHOUSE.WORKPLACE)
-				.from(WAREHOUSE)
-				.where(WAREHOUSE.DOMAIN.eq(domainId)).fetch();
+				.from(WAREHOUSE).join(WORKPLACE).on(WAREHOUSE.WORKPLACE.eq(WORKPLACE.ID))
+				.join(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(WORKPLACE.SCOPE))
+				.where(WAREHOUSE.DOMAIN.eq(domainId))
+				.and(USER_SCOPE.USER_ID.eq(userId))
+				.fetch();
 			
 			Vector<Warehouse> v = new Vector<Warehouse>();
 			

@@ -77,9 +77,10 @@ public class DownloadStockServlet extends HttpServlet {
         Integer domainId = Integer.parseInt(domain_id);
         String domain = AonUtil.getDomainName();
         Integer idFile  = Integer.parseInt(fileId);
+        Integer userId = AonUtil.getAuthPrincipal().getUserId();
         Warehouse w = new Warehouse();
         if(!warehouse.equals("-"))
-        	w = DBStock.getWarehouse(warehouse, domainId, domain);
+        	w = DBStock.getWarehouse(warehouse, domainId, domain, userId);
 
         byte[] b = null ;
         
@@ -197,7 +198,7 @@ public class DownloadStockServlet extends HttpServlet {
         if(!code.equals("null") && !code.equals("") && !code.equals("undefined"))
         	c = c.and(PRODUCT.CODE.like("%"+code+"%"));
         if(!description.equals("null") && !description.equals("") && !description.equals("undefined"))
-        	c.and(PRODUCT.NAME.like("%"+description+"%"));
+        	c = c.and(PRODUCT.NAME.like("%"+description+"%"));
         if(!stock.equals("false") && !stock.equals("null") && !stock.equals("") && !stock.equals("undefined"))
         	c = c.and(STOCK.QUANTITY.greaterThan(0.0));
         if(!quantity.equals("null") && !quantity.equals("") && !quantity.equals("undefined")){

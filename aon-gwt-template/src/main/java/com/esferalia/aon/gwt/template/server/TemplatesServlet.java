@@ -154,7 +154,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	
 	public Vector<Warehouse> getWarehouses(){
 		String domain = AonUtil.getDomainName();
-		return DBStock.getWarehouse(domain, domainId);
+		return DBStock.getWarehouse(domain, domainId, userId);
 	}
 	
 	public TemplateInfo newTemplate(TemplateInfo ti ){
@@ -862,8 +862,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		if (ti.getDomainId().equals(0)) domId = domainId; 
 		else domId = ti.getDomainId();
 		
-		if(!warehouse1.equals("-")) w = DBStock.getWarehouse(warehouse1, domId,domain);
-		if(warehouse2 != null && !warehouse2.equals("-")) 	w2 = DBStock.getWarehouse(warehouse2, domId,domain);
+		if(!warehouse1.equals("-")) w = DBStock.getWarehouse(warehouse1, domId,domain,userId);
+		if(warehouse2 != null && !warehouse2.equals("-")) 	w2 = DBStock.getWarehouse(warehouse2, domId,domain,userId);
 		s = DBStock.getSeries(domain, domainId, series);
 
     	//Boolean b = true;
@@ -1171,7 +1171,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	
 	public Vector<com.esferalia.aon.gwt.template.shared.Series> getSeries(String warehouse){
 		String domain = AonUtil.getDomainName();
-		Warehouse w = DBStock.getWarehouse(warehouse, domainId, domain);
+		Warehouse w = DBStock.getWarehouse(warehouse, domainId, domain,userId);
 		WorkPlace workplace = DBCatalogue.getWorkplace(w.getWorkplace(), domainId, domain);
 		Vector<Series> series = DBStock.getSeries(w, workplace,domain, domainId);
 
@@ -1836,7 +1836,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	
 	
 	public Vector<com.esferalia.aon.gwt.template.shared.WorkPlace> getWorkplaces(){
-		return DBCatalogue.getWorkplaces(domainId, domain);
+		return DBCatalogue.getWorkplaces(domainId, domain,userId);
 	}
 	public Vector<com.esferalia.aon.gwt.template.shared.Department> getDepartments(String workplace){
 		WorkPlace w = DBCatalogue.getWorkplace(workplace, domainId, domain);
