@@ -127,6 +127,7 @@ public abstract class AbstractSQLTestCase {
 						.set(CONTRACT_LEAVE.DAILY_REG_BASE, regulatoryBase)
 						// .set(CONTRACT_LEAVE.DAILY_CGC_BASE, regulatoryBase)
 						// .set(CONTRACT_LEAVE.DAILY_CGP_BASE, regulatoryBase)
+						.set(CONTRACT_LEAVE.TYPE, (byte) type.ordinal())
 						.set(CONTRACT_LEAVE.DISCHARGE_CAUSE, (byte) type.ordinal())
 						.execute();
 			
@@ -697,6 +698,12 @@ public abstract class AbstractSQLTestCase {
 	public static final void addPayment(AONContext aonContext,
 			ContractRecord contract, PaymentConceptRecord concept,
 			String expression) {
+		addPayment(aonContext, contract, concept, expression, "_P");
+	}
+
+	public static final void addPayment(AONContext aonContext,
+			ContractRecord contract, PaymentConceptRecord concept,
+			String expression, String quoteExpression) {
 		aonContext
 				.getDslContext()
 				.insertInto(CONTRACT_PAYMENT)
@@ -706,7 +713,7 @@ public abstract class AbstractSQLTestCase {
 				.set(CONTRACT_PAYMENT.START_DATE, contract.getStartDate())
 				.set(CONTRACT_PAYMENT.END_DATE, contract.getEndDate())
 				.set(CONTRACT_PAYMENT.EXPRESSION, expression)
-				.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, "_P")
+				.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
 				.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, "_P")
 				.set(CONTRACT_PAYMENT.TYPE,
 						(byte) PaymentType.CRA_0001.ordinal())
