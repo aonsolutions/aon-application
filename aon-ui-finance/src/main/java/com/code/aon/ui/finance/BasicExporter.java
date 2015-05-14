@@ -759,6 +759,17 @@ public abstract class BasicExporter implements Serializable {
 	protected boolean isInvoiceExport() {
 		return this.invoiceExport;
 	}
+
+	protected String getAccountCode( String code ) {
+		String cuenta = StringUtils.substring(code, 0, 4);
+		String subCuenta = StringUtils.substring(code, 4);
+		int length = StringUtils.length(subCuenta);
+		if ( length > 5 ) {
+			subCuenta = StringUtils.substring(subCuenta, length-5, length);	
+		}
+		subCuenta = StringUtils.leftPad(subCuenta, getConfiguration().getAccountSize()-4, '0');
+		return cuenta + subCuenta;
+	}	
 	
 	public void write() throws IOException, ManagerBeanException {
 		for( AccountEntry accountEntry : getAccountEntries() ) {

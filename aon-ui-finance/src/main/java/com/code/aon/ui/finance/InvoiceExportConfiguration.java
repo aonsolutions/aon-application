@@ -149,6 +149,9 @@ public class InvoiceExportConfiguration implements Serializable {
 				case DSI_GESTION:
 					this.accountSize = 9;
 					break;
+				case CONTA_PLUS:
+					this.accountSize = 10;
+					break;					
 				default:
 					this.accountSize = null;
 			}

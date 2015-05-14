@@ -97,10 +97,10 @@ public class ContaPlusWriter extends BasicExporter {
 	@Override
 	public void write( AccountEntry accountEntry ) throws IOException, ManagerBeanException {
 		if ( getRegistryDetail() != null ) {
-			writeAccounts( accountEntry, getRegistryDetail() );
+			writeAccounts( accountEntry, getRegistryDetail(), true );
 		}
 		for( AccountEntryDetail aed : getDetails() ) {
-			writeAccounts( accountEntry, aed );				
+			writeAccounts( accountEntry, aed, false );				
 		}
 	}
 
@@ -115,20 +115,27 @@ public class ContaPlusWriter extends BasicExporter {
 		return null;
 	}
 	
+	private String getSalesAccount() {
+		if ( "T".equals(getInvoiceSeries()) ) {
+			return SALES_T_ACCOUNT;
+		} else if ( "F".equals(getInvoiceSeries()) ) {
+			return SALES_F_ACCOUNT;
+		} else if ( "G".equals(getInvoiceSeries()) ) {
+			return SALES_G_ACCOUNT;
+		}
+		return getAccountCode(salesAccount);
+	}
+	
 	private String getAccount( Account account ) {
 		String code = account.getCode();
 		if ( ObjectUtils.equals(account, getRegistryAccount()) ) {
 			code = StringUtils.substring(code, 0, 3) + "0" + StringUtils.substring(code, 3); 
 		} else if ( StringUtils.equals(salesAccount, code) ) {
-			if ( "T".equals(getInvoiceSeries()) ) {
-				code = SALES_T_ACCOUNT;
-			} else if ( "F".equals(getInvoiceSeries()) ) {
-				code = SALES_F_ACCOUNT;
-			} else if ( "G".equals(getInvoiceSeries()) ) {
-				code = SALES_G_ACCOUNT;
-			}
+			code = getSalesAccount();
 		} else if ( StringUtils.equals(chargedVat, code) ) {
 			code = CHARGED_VAT_ACCOUNT;
+		} else {
+			code = getAccountCode(code);
 		}
 		return getString( code, 12 );
 	}
@@ -153,7 +160,17 @@ public class ContaPlusWriter extends BasicExporter {
 		return getMainId();
 	}
 	
-	private void writeAccounts( AccountEntry accountEntry, AccountEntryDetail aed ) throws IOException, ManagerBeanException {
+	private String getBalancingAccount( AccountEntryDetail aed, boolean registry ) {
+		String code = null;
+		if ( aed.getBalancingAccount() != null ) {
+			code = getAccount(aed.getBalancingAccount()); 
+		} else if ( registry ) {
+			code = getSalesAccount();
+		}
+		return code;
+	}
+	
+	private void writeAccounts( AccountEntry accountEntry, AccountEntryDetail aed, boolean registry ) {
 		Object[] data = new Object[32];
 		
 		boolean vatAccount = isVatAccount(aed.getAccount());
@@ -165,9 +182,7 @@ public class ContaPlusWriter extends BasicExporter {
 		// 03 - SUBCTA (C12)
 		data[2] = getAccount(aed.getAccount());
 		// 04 - CONTRA (C12)
-		if ( aed.getBalancingAccount() != null ) {
-			data[3] = getAccount(aed.getBalancingAccount()); 
-		}
+		data[3] = getBalancingAccount(aed, registry);
 		// 05 - PTADEBE (N16, 2)
 		data[4] = 0.0;
 		// 06 - CONCEPTO (C25)
