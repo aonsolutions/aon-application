@@ -659,6 +659,8 @@ public class Documents extends Composite implements EntryPoint {
 	
 	@UiField HorizontalPanel ftoolbar;
 	
+	@UiField Label sConvenios;
+	
 	@UiField Button newFile;
 
 	@UiField Button editFile;
@@ -717,7 +719,7 @@ public class Documents extends Composite implements EntryPoint {
 					@Override
 					public void onSuccess(Document result) {
 						docs = result;
-
+						
 						idoc.getLists(new AsyncCallback<Lists>() {
 
 							@Override
@@ -779,14 +781,13 @@ public class Documents extends Composite implements EntryPoint {
 	}
 	@Override
 	public void onModuleLoad() {
-		ensureGwtSelector();
+		
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 		GWT.<AonGwtDocumentResources> create(AonGwtDocumentResources.class).css().ensureInjected();
 		boolean silent = Boolean.parseBoolean(getParameter(GWT.getModuleName(), SILENT));
 		
 		if ( ! silent ){
-	
 			
 			stack1 = new StackLayoutPanel(Unit.EM);
 			prueba2 = new HorizontalPanel();
@@ -795,7 +796,6 @@ public class Documents extends Composite implements EntryPoint {
 		}
 		else {
 			// Inject rich styles
-
 			exportPreview(this);
 		}
 	}
@@ -840,6 +840,7 @@ public class Documents extends Composite implements EntryPoint {
 					Category c = cAux;
 					@Override
 					public void onClick(ClickEvent event) {
+						newFile.setVisible(true); sConvenios.setVisible(false);
 						gestionLote.setVisible(false);
 						gestionDocs.setVisible(true);
 						editFile.setVisible(false);
@@ -904,6 +905,7 @@ public class Documents extends Composite implements EntryPoint {
 				Tag t=tAux;	
 				@Override
 					public void onClick(ClickEvent event) {
+						newFile.setVisible(true); sConvenios.setVisible(false);
 						gestionLote.setVisible(false);
 						gestionDocs.setVisible(true);
 						editFile.setVisible(false);
@@ -1190,7 +1192,12 @@ public class Documents extends Composite implements EntryPoint {
 		dataGrid.setAutoHeaderRefreshDisabled(true);
 		dataGrid.setEmptyTableWidget(new Label("No hay ning\u00fan archivo."));
 		
-		addDataDisplay(dataGrid);
+		if(docs.getIsServiconvenios()){
+			//
+			dataProvider = new ListDataProvider<FileInfo>(docs.getServiconvenios());
+			dataProvider.addDataDisplay(dataGrid);
+		}
+		else addDataDisplay(dataGrid);
 		
 		ListHandler<FileInfo> sortHandler = getSortHandler();
 				//docs.getFil());
@@ -1232,6 +1239,11 @@ public class Documents extends Composite implements EntryPoint {
 			stack1.getHeaderWidget(1).setVisible(false);
 			stack1.getWidget(1).setVisible(false);
 		}		
+		if(docs.getIsServiconvenios()){
+			isServiconvenios = true;
+			newFile.setVisible(false); 
+			sConvenios.setVisible(true);
+		}
 	}
 	
 	
@@ -2631,6 +2643,7 @@ public class Documents extends Composite implements EntryPoint {
 	}
 	
 	public void all(){
+		newFile.setVisible(true); sConvenios.setVisible(false);
 		gestionLote.setVisible(false);
 		gestionDocs.setVisible(true);
 		editFile.setVisible(false);
@@ -2638,32 +2651,35 @@ public class Documents extends Composite implements EntryPoint {
 		optionFile.setVisible(false);
 		html.setVisible(false);
 		filterButton.setVisible(false);
-		if(docs.getEfiles()==null){
-		idoc.getAllFiles(new AsyncCallback<Document>() {
-
-			@Override
-			public void onSuccess(Document result) {
-				docs = result;
-				for(FileInfo f : dataProvider.getList()){
-					dataGrid.getSelectionModel().setSelected(f, false);
+		if(docs.getEfiles()==null ){
+	
+			idoc.getAllFiles(new AsyncCallback<Document>() {
+			
+				@Override
+				public void onSuccess(Document result) {
+					docs = result;
+					for(FileInfo f : dataProvider.getList()){
+						dataGrid.getSelectionModel().setSelected(f, false);
+					}
+					addDataDisplay(dataGrid);
+					isServiconvenios=false;
+					isLote = false;
+					updateDatagridColumns();
+					dataGrid.redraw();
 				}
-				addDataDisplay(dataGrid);
-				isServiconvenios=false;
-				isLote = false;
-				updateDatagridColumns();
-				dataGrid.redraw();
-			}
 
 
-			@Override
-			public void onFailure(Throwable caught) {
+				@Override
+				public void onFailure(Throwable caught) {
 
-				Window.alert(caught.toString() + ": "
-						+ caught.getCause().toString());
-			}
-		});
+					Window.alert(caught.toString() + ": "
+							+ caught.getCause().toString());
+				}
+			});
 		}
 		else{
+
+
 			addDataDisplay(dataGrid);
 			isServiconvenios=false;
 			isLote = false;
@@ -2682,6 +2698,7 @@ public class Documents extends Composite implements EntryPoint {
 		pop.setStyleName("aon-outputConnectionStatus-start");
 		pop.setPopupPosition(25, 5);
 		pop.show();
+		newFile.setVisible(false); sConvenios.setVisible(true);
 		gestionLote.setVisible(false);
 		gestionDocs.setVisible(true);
 		editFile.setVisible(false);
@@ -2777,9 +2794,9 @@ public class Documents extends Composite implements EntryPoint {
 				}
 				else {
 					sb.appendHtmlConstant("<g:Button class=\"aon-editDataTable-button "
-						+ object.getIcon() + "\" >"+"&nbsp;&nbsp;"+object.getTitle());
+						+ object.getIcon() + "\" >"+"&nbsp;&nbsp;"+ object.getTitle());
 				}
-				
+				;
 			}
 			@Override
 			public String getValue(FileInfo object) {
@@ -3035,6 +3052,7 @@ public class Documents extends Composite implements EntryPoint {
 		d.setSearchDomain(searchDomain);
 		d.setIsNextButton(false);
 		d.setConfidentialUser(confidentialUser);
+		d.setIsServiconvenios(isServiconvenios);
 		popup2 = new DocumentsDialog(d) {
 			
 			@Override
@@ -3048,7 +3066,7 @@ public class Documents extends Composite implements EntryPoint {
 				html.setVisible(false);
 				filterButton.setVisible(false);
 				SearchInfo si = new SearchInfo();
-				if(getSons().size()!=1){
+				if(getSons().size()!=1 && !isServiconvenios){
 					SuggestBox tb0 = (SuggestBox) grid.getWidget(0, 1);
 					if ("".equals(tb0.getText()))
 						si.setDomain(null);
@@ -3062,7 +3080,6 @@ public class Documents extends Composite implements EntryPoint {
 						newFilterTag(domain);				
 					}
 				}else si.setDomain(null);
-				
 				TextBox tb1 = (TextBox) grid.getWidget(1, 1);
 				if ("".equals(tb1.getText()))
 					si.setName(null);
@@ -3080,7 +3097,6 @@ public class Documents extends Composite implements EntryPoint {
 
 					}
 				}
-
 				DateBox tb2 = (DateBox) grid.getWidget(3, 1);
 				if ("".equals(tb2.getTextBox().getText()))
 					si.setDate(null);
@@ -3101,7 +3117,6 @@ public class Documents extends Composite implements EntryPoint {
 				else
 					si.setCategory(s1);
 // TODO		
- 
 				VerticalPanel vp = (VerticalPanel) grid.getWidget(5, 1);
 
 				Vector<String> v = new Vector<String>();
@@ -3109,7 +3124,6 @@ public class Documents extends Composite implements EntryPoint {
 				HorizontalPanel hp = (HorizontalPanel) vp.getWidget(0);
 
 				ListBox lb2 = (ListBox) hp.getWidget(0);
-
 				String s2 = null;
 				for (int i = 0; i < lb2.getItemCount(); i++) {
 
@@ -3122,7 +3136,6 @@ public class Documents extends Composite implements EntryPoint {
 
 					}
 				}
-
 				if ("-".equals(s2) || s2 == null)
 
 					si.setTag(null);
@@ -3157,7 +3170,6 @@ public class Documents extends Composite implements EntryPoint {
 					si.setTag(v);
 					si.setYoTag(v2);
 				}
-
 				ListBox lb3 = (ListBox) grid.getWidget(6, 1);
 				String s3 = null;
 				for (int i = 0; i < lb3.getItemCount(); i++) {
@@ -3178,13 +3190,12 @@ public class Documents extends Composite implements EntryPoint {
 					vaux = lote;
 				else
 					vaux = docs.getEfiles();
-
 				idoc.searchFile(si, vaux,docs.getFiles(),
 							new AsyncCallback<Vector<FileInfo>>() {
 
 							@Override
 							public void onSuccess(Vector<FileInfo> result) {
-								if( !result.isEmpty() && !docs.getEfiles().get(0).getDomain().equals(result.get(0).getDomain())){
+								if(!isServiconvenios && !result.isEmpty() && !docs.getEfiles().get(0).getDomain().equals(result.get(0).getDomain())){
 									idoc.eSearchFile(docs.getFiles(), result.get(0).getDomain(), new AsyncCallback<Vector<FileInfo>>() {
 										
 										@Override
@@ -3203,7 +3214,7 @@ public class Documents extends Composite implements EntryPoint {
 								for(FileInfo f : dataProvider.getList()){
 									dataGrid.getSelectionModel().setSelected(f, false);
 								}
-
+								dataProvider = null;
 								dataProvider = new ListDataProvider<FileInfo>(
 										searchs);
 								dataProvider.addDataDisplay(dataGrid);
@@ -3579,6 +3590,7 @@ public class Documents extends Composite implements EntryPoint {
 		removeFilterCat();
 		removeFilterTag();
 		searchDomain = docs.getDomain();
+		newFile.setVisible(true); sConvenios.setVisible(false);
 		gestionLote.setVisible(false);
 		gestionDocs.setVisible(true);
 		editFile.setVisible(false);
@@ -3776,10 +3788,8 @@ public class Documents extends Composite implements EntryPoint {
 		dataGrid.setColumnWidth(getDownloadColumn(), 10, Unit.PCT);
 	*/
 		String s = getTotalSize()+" / "+dataProvider.getList().size()+" Archivos";
-		Label l = (Label)prueba2.getWidget(2);
-		l.setText(s);
-		
-
+		Label l1 = (Label)prueba2.getWidget(0);
+		l1.setText(s);
 	}
 	
 	 public static String byteCountToDisplaySize(long size) {
@@ -4389,6 +4399,7 @@ public class Documents extends Composite implements EntryPoint {
 	
 	@UiHandler("loteButton")
 	void lote(ClickEvent event) {
+		
 		gestionLote.setVisible(true);
 		gestionDocs.setVisible(false);
 		clean.setVisible(true);
@@ -4525,6 +4536,7 @@ public class Documents extends Composite implements EntryPoint {
     		thiz.@com.esferalia.aon.gwt.document.client.Documents::preview(*)(index, files);
     	}
 	}-*/;
+	
 	
 	public void reload(){
 		pop = new PopupPanel();

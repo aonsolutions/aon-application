@@ -20,8 +20,11 @@
 			<aon:if test="#{desktop.state.showServiconvenios}">
 				<aon:div styleClass="aon-text-center aon-margin-bottom aon-support">
 					<aon:commandLink id="serviconvenios" styleClass="none" 
-						action="corporateIdentityAttach_list"
-						actionListener="#{corporateIdentityAttach.onInitServiconvenios}" >				
+						action="gwt_documents"
+						actionListener="#{serviconvenios.onServiconvenios}"
+						>		
+						
+						 
 						<h:graphicImage title="#{bundle.aon_external_serviconvenios}"
 							url="#{aonResource.resolve['/images/logo-serviconvenios.png']}" />
 					</aon:commandLink>

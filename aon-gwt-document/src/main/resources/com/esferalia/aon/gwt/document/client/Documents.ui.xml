@@ -199,6 +199,10 @@ background-color:#D4CFC7;
 							</g:HTMLPanel>
 							<g:HorizontalPanel  ui:field="ftoolbar" styleName="aon-finding-toolbar">
 								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+									<g:Label ui:field="sConvenios" visible="false" styleName='aon-finding-toolbar-item aon-icon-serviconvenios'
+										text="ServiConvenios" />
+								</g:HTMLPanel>
+								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 									<g:Button ui:field="newFile" visible="true" styleName='aon-finding-toolbar-item aon-icon-new'
 										text="Nuevo" />
 								</g:HTMLPanel>

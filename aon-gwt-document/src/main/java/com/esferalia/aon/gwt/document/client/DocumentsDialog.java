@@ -83,7 +83,9 @@ public abstract class DocumentsDialog extends CustomDialogB {
 	String domainSon;
 	Integer num;
 	Boolean confidentialUserDialog = null;
+	Boolean isServiconvenios = false;
 	public DocumentsDialog(Dialog dialog) {
+		if(dialog.getIsServiconvenios()!= null) isServiconvenios = dialog.getIsServiconvenios();
 		if(dialog.getConfidentialUser()!= null) confidentialUserDialog = dialog.getConfidentialUser();
 		num = 0;
 		tree();
@@ -777,67 +779,79 @@ public abstract class DocumentsDialog extends CustomDialogB {
 					lb3.addItem(Character.toString((char)9660)+s.getName());
 			}
 		}
-		for (Tag t : lists2.getTagList().getList()) {
-			if(t.getIsParent())
-				lb2.addItem(Character.toString((char)9650)+t.getName());
-			else if(t.getIsSon())
-				lb2.addItem(Character.toString((char)9660)+t.getName());
-			else lb2.addItem(t.getName());
+
+		if(dialog.getIsServiconvenios()){
+			for(Tag t : lists2.getTagListDomainZero().getList()){
+				lb2.addItem(t.getName());
+			}
+			for(Category c : lists2.getCategoryListDomainZero().getList()){
+				lb1.addItem(c.getName());
+			}
 		}
-		if(dialog.getSon()){
-			for(Tag t : lists2.getTagListSon().getList()){
-				if(t.getDomain().equals(dialog.getSearchDomain()))
+		else{
+			for (Tag t : lists2.getTagList().getList()) {
+				if(t.getIsParent())
+					lb2.addItem(Character.toString((char)9650)+t.getName());
+				else if(t.getIsSon())
 					lb2.addItem(Character.toString((char)9660)+t.getName());
+				else lb2.addItem(t.getName());
 			}
-		}
-		for (Category c : lists2.getCategoryList().getList()) {
-			if(c.getIsParent())
-				lb1.addItem(Character.toString((char)9650)+c.getName());
-			else if(c.getIsSon())
-				lb1.addItem(Character.toString((char)9660)+c.getName());
-			else lb1.addItem(c.getName());
-		}
-		if(dialog.getSon()){
-			for(Category c : lists2.getCategoryListSon().getList()){
-				if(c.getDomain().equals(dialog.getSearchDomain()))
+			if(dialog.getSon()){
+				for(Tag t : lists2.getTagListSon().getList()){
+					if(t.getDomain().equals(dialog.getSearchDomain()))
+						lb2.addItem(Character.toString((char)9660)+t.getName());
+				}
+			}
+			for (Category c : lists2.getCategoryList().getList()) {
+				if(c.getIsParent())
+					lb1.addItem(Character.toString((char)9650)+c.getName());
+				else if(c.getIsSon())
 					lb1.addItem(Character.toString((char)9660)+c.getName());
+				else lb1.addItem(c.getName());
+			}
+			if(dialog.getSon()){
+				for(Category c : lists2.getCategoryListSon().getList()){
+					if(c.getDomain().equals(dialog.getSearchDomain()))
+						lb1.addItem(Character.toString((char)9660)+c.getName());
+				}
 			}
 		}
+
 		lb2.addChangeHandler(OneHandler());
 		
 		grid.setStyleName("aon-panelGrid");
 		grid.setWidth("400px");
 		grid.setBorderWidth(1);
 		grid.setCellSpacing(0);
-		if(dialog.getSons().size() != 1){
-		SuggestBox tb0 = new SuggestBox(Utils.createOracle(dialog.getSons()));
-		tb0.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
-			@Override
-			public void onSelection(
+		if(dialog.getSons().size() != 1 && !dialog.getIsServiconvenios()){
+			SuggestBox tb0 = new SuggestBox(Utils.createOracle(dialog.getSons()));
+			tb0.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
+				@Override
+				public void onSelection(
 					SelectionEvent<SuggestOracle.Suggestion> event) {
-				String s = event.getSelectedItem().getDisplayString();
-				/*Integer pos1 = s.indexOf('>');
-				Integer pos2 = s.indexOf('/')-1;
-				String s2 = s.substring(pos2);
-				Integer pos3 = s2.indexOf('>');
-				String string = s.substring(pos1+1,pos2)+s2.substring(pos3+1);*/
-				String string2 = Utils.getOracleString(s);
-				domainSon = string2;
-				son1 = true;
-				ListBox auxlb = (ListBox) grid.getWidget(4, 1);
-				removeFilter(auxlb);
-				for (Category c : lists2.getCategoryListSon().getList()) {
-					if(c.getDomain().equals(string2)){
-						auxlb.addItem(Character.toString((char)9660)+c.getName());
-						grid.setWidget(4, 1, auxlb);
+					String s = event.getSelectedItem().getDisplayString();
+					/*Integer pos1 = s.indexOf('>');
+					Integer pos2 = s.indexOf('/')-1;
+					String s2 = s.substring(pos2);
+					Integer pos3 = s2.indexOf('>');
+					String string = s.substring(pos1+1,pos2)+s2.substring(pos3+1);*/
+					String string2 = Utils.getOracleString(s);
+					domainSon = string2;
+					son1 = true;
+					ListBox auxlb = (ListBox) grid.getWidget(4, 1);
+					removeFilter(auxlb);
+					for (Category c : lists2.getCategoryListSon().getList()) {
+						if(c.getDomain().equals(string2)){
+							auxlb.addItem(Character.toString((char)9660)+c.getName());
+							grid.setWidget(4, 1, auxlb);
+						}
 					}
-				}
-				VerticalPanel v = (VerticalPanel) grid.getWidget(5, 1);
-				HorizontalPanel h = (HorizontalPanel) v.getWidget(0);
-				ListBox auxlb2 = (ListBox) h.getWidget(0);
-				removeFilter(auxlb2);
-				for (Tag t : lists2.getTagListSon().getList()) {
-					if(t.getDomain().equals(string2)){
+					VerticalPanel v = (VerticalPanel) grid.getWidget(5, 1);
+					HorizontalPanel h = (HorizontalPanel) v.getWidget(0);
+					ListBox auxlb2 = (ListBox) h.getWidget(0);
+					removeFilter(auxlb2);
+					for (Tag t : lists2.getTagListSon().getList()) {
+						if(t.getDomain().equals(string2)){
 					
 						/*if (bool) {
 							ListBox lb = (ListBox) grid.getWidget(5, 1);
@@ -853,23 +867,21 @@ public abstract class DocumentsDialog extends CustomDialogB {
 							grid.setWidget(5, 1, vertical);
 						}					
 					//}
-				}
-				ListBox auxlb3 = (ListBox) grid.getWidget(6, 1);
-				removeFilter(auxlb3);
-				for (Scope scope : lists2.getScopeListSon().getList()) {
-
-					if(scope.getDomain().equals(string2)){
-						auxlb3.addItem(Character.toString((char)9660)+scope.getName());
-						grid.setWidget(6, 1, auxlb3);
+					}
+					ListBox auxlb3 = (ListBox) grid.getWidget(6, 1);
+					removeFilter(auxlb3);
+					for (Scope scope : lists2.getScopeListSon().getList()) {
+						if(scope.getDomain().equals(string2)){
+							auxlb3.addItem(Character.toString((char)9660)+scope.getName());
+							grid.setWidget(6, 1, auxlb3);
+						}
 					}
 				}
-			}
-			
-		});
-		tb0.setStyleName("aon-inputText");
-		tb0.setWidth("100%");
-		grid.setWidget(0, 0, new Label("Empresa"));
-		grid.setWidget(0, 1, tb0);
+			});
+			tb0.setStyleName("aon-inputText");
+			tb0.setWidth("100%");
+			grid.setWidget(0, 0, new Label("Empresa"));
+			grid.setWidget(0, 1, tb0);
 		}
 		TextBox tb1 = new TextBox();
 		tb1.setStyleName("aon-inputText");
@@ -1211,13 +1223,19 @@ public abstract class DocumentsDialog extends CustomDialogB {
 				
 				
 				lb2.addItem("-");
-				
-				for (Tag t : lists2.getTagList().getList()) {
-					if(t.getIsParent())
-						lb2.addItem(Character.toString((char)9650)+t.getName());
-					else if(t.getIsSon())
-						lb2.addItem(Character.toString((char)9660)+t.getName());
-					else lb2.addItem(t.getName());
+				if(isServiconvenios){
+					for(Tag t : lists2.getTagListDomainZero().getList()){
+						lb2.addItem(t.getName());
+					}
+				}
+				else{
+					for (Tag t : lists2.getTagList().getList()) {
+						if(t.getIsParent())
+							lb2.addItem(Character.toString((char)9650)+t.getName());
+						else if(t.getIsSon())
+							lb2.addItem(Character.toString((char)9660)+t.getName());
+						else lb2.addItem(t.getName());
+					}
 				}
 				
 				//TODO				

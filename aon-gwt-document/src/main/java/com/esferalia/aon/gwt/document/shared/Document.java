@@ -15,7 +15,14 @@ public class Document implements IsSerializable{
 	Vector<FileInfo> filter = new Vector<FileInfo>();
 	Vector<FileInfo> efiles = new Vector<FileInfo>();
 	String domain;
+	Boolean isServiconvenios;
 	
+	public Boolean getIsServiconvenios() {
+		return isServiconvenios;
+	}
+	public void setIsServiconvenios(Boolean isServiconvenios) {
+		this.isServiconvenios = isServiconvenios;
+	}
 	public Vector<FileInfo> getFiles() {
 		return files;
 	}

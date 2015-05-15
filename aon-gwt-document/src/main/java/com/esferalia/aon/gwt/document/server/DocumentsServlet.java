@@ -3,9 +3,6 @@ package com.esferalia.aon.gwt.document.server;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
 
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -48,7 +45,6 @@ import com.code.aon.google.apis.DriveFile;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.GmailUtils;
 import com.code.aon.google.apis.UrlShortenerUtils;
-import com.code.aon.google.apis.drive.SearchFiles;
 import com.code.aon.google.apis.drive.ShareFiles;
 import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.pool.AonConnectionException;
@@ -86,7 +82,6 @@ import com.esferalia.aon.gwt.document.shared.Tags;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.RattachColumns;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.About;
 import com.google.api.services.drive.model.File;
@@ -107,7 +102,17 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 
 	private static InputStream file;
 	private static String mimetype;
+	public static Boolean serviconvenios;
 	
+	
+	public static Boolean getServiconvenios() {
+		return serviconvenios;
+	}
+
+	public static void setServiconvenios(Boolean serviconvenios) {
+		DocumentsServlet.serviconvenios = serviconvenios;
+	}
+
 	public static String getMimetype() {
 		return mimetype;
 	}
@@ -160,12 +165,15 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		try {
 			String domainUrl = DBConsults.getDomain(domain, domainId);
 			docs  = DBConsults.getAllRattach(domain,domainUrl,user_id, confidential,domainId, userDomainId);
-			
+			if(getServiconvenios())
+				docs.setServiconvenios(DBConsults.getServiConvenios(domain));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		//docs.setFiles(DBConsults.getFilesGwt());
 		docs.setDomain(domain);
+		docs.setIsServiconvenios(getServiconvenios());
+		//setServiconvenios(false);
 		return docs;
 	}
 	
@@ -320,10 +328,13 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		
 		try {
 			domain = DBConsults.getDomain(domain, domainId);
+			String domainZero = DBConsults.getDomain(domain, 0);
+			lists.setCategoryListDomainZero(DBConsults.getCategoryList(domainZero));
 			lists.setCategoryList(DBConsults.getCategoryList(domain));
 			lists.setCategoryListSon(DBConsults.getCategoryListSon(domain));
 			lists.setScopeList(DBConsults.getScopeList(domain,domainId,user_id,userDomainId));
 			lists.setScopeListSon(DBConsults.getScopeListSon(domain,domainId,user_id,userDomainId));
+			lists.setTagListDomainZero(DBConsults.getTagList(domainZero));
 			lists.setTagList(DBConsults.getTagList(domain));
 			lists.setTagListSon(DBConsults.getTagListSon(domain));
 		} catch (SQLException e) {

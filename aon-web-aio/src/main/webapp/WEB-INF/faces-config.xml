@@ -67,6 +67,15 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	<!--  **** SERVICONVENIOS CONTROLLER **** -->
+	<managed-bean>
+		<managed-bean-name>serviconvenios</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.aio.controller.ServiConveniosController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 
 	<!-- =================== Application Menu Navigation Rules ================= -->	
 

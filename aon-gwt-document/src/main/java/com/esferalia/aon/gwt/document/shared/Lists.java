@@ -3,9 +3,10 @@ package com.esferalia.aon.gwt.document.shared;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class Lists implements IsSerializable{
-
+	CategoryList categoryListDomainZero = new CategoryList();
 	CategoryList categoryList = new CategoryList();
 	CategoryList categoryListSon = new CategoryList();
+	TagList tagListDomainZero = new TagList();
 	TagList tagList = new TagList();
 	TagList tagListSon = new TagList();
 	ScopeList scopeList = new ScopeList();
@@ -55,6 +56,22 @@ public class Lists implements IsSerializable{
 
 	public void setScopeListSon(ScopeList scopeListSon) {
 		this.scopeListSon = scopeListSon;
+	}
+
+	public CategoryList getCategoryListDomainZero() {
+		return categoryListDomainZero;
+	}
+
+	public void setCategoryListDomainZero(CategoryList categoryListDomainZero) {
+		this.categoryListDomainZero = categoryListDomainZero;
+	}
+
+	public TagList getTagListDomainZero() {
+		return tagListDomainZero;
+	}
+
+	public void setTagListDomainZero(TagList tagListDomainZero) {
+		this.tagListDomainZero = tagListDomainZero;
 	}
 	
 }
