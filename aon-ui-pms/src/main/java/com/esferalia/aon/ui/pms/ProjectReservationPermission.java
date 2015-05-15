@@ -181,7 +181,7 @@ public class ProjectReservationPermission implements Serializable {
 
 	public boolean isCancelAllowed() throws ManagerBeanException {
 		Date now = new Date();
-		boolean roleAllowed = (isRoleCommercial() && isBeforeCheckIn(now)) || (isRoleFinance() && !isBeforeCheckIn(now));
+		boolean roleAllowed = (isRoleCommercial() && !isAfterCheckOut(now)) || (isRoleFinance() && !isBeforeCheckIn(now));
 		return roleAllowed && (reservation.isActive() || reservation.isBlocked()) && (reservation.isNoCheck() || reservation.isNoShow());
 	}
 
