@@ -27,8 +27,13 @@
 				<f:facet name="header">
 					<aon:outputLabel value="#{bundle.aon_document}" />
 				</f:facet>
-				<aon:outputText styleClass="aon-margin-right" value="#{to.documentCountry.value}" rendered="#{formList and !empty to.document}" />
-				<aon:outputText value="#{to.document}" rendered="#{formList}" />
+				<aon:div rendered="#{formList}" style="display:inline;">
+					<aon:outputText value="#{to.documentCountry.value}" styleClass="aon-margin-right" 
+						rendered="#{!empty to.document}" />
+					<aon:outputText value="#{to.document}" />
+					<aon:outputText value="&#160;" styleClass="aon-margin-left aon-icon-commandButton aon-icon-contact"
+						rendered="#{to.person.id != null}" />
+				</aon:div>
 				<aon:div rendered="#{formEdit}">
 					<ui:include src="tab_grid_document.xhtml">
 						<ui:param name="suffix" value="" />
