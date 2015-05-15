@@ -20,4 +20,15 @@
         <url-pattern>/ReservationService</url-pattern>
     </servlet-mapping>
 
+	<!-- Authentication Servlet -->
+    <servlet>
+        <servlet-name>AuthenticationServlet</servlet-name>
+        <servlet-class>com.code.aon.gps.servlet.AuthenticationServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AuthenticationServlet</servlet-name>
+        <url-pattern>/AuthenticationServlet</url-pattern>
+    </servlet-mapping>
+
 </web-app>

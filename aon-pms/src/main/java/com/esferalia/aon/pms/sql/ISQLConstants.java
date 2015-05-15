@@ -16,6 +16,7 @@ public interface ISQLConstants {
 	String GUESTS = "guests";
 
 	String RESERVATION = "reservation";
+	String RESERVATION_GUEST = "reservationGuest";
 	String RESERVATION_ROOM = "reservationRoom";
 	String RESERVATION_ROOM_DETAIL = "reservationRoomDetail";
 	String ASSET_ACTIVITY = "assetActivity";
@@ -31,6 +32,7 @@ public interface ISQLConstants {
 	String CHECK_STATUS = "checkStatus";
 	String COMMENTS = "comments";
 	String TOTAL = "total";
+	String ROOM = "room";
 	String ROOM_NUMBER = "roomNumber";
 	String ROOM_CODE = "roomCode";
 	String ROOM_TYPE = "roomType";
