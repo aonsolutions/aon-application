@@ -242,7 +242,7 @@
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.gwt.document</artifactId>
 			<version>${project.version}</version>
-			<scope>runtime</scope>
+			<scope>compile</scope>
 		</dependency>
 				
 		<dependency>
