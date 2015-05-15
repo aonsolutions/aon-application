@@ -4,8 +4,9 @@ import javax.faces.event.ActionEvent;
 
 import com.code.aon.faces.controller.IRichConstants;
 import com.code.aon.faces.controller.SelectedMenuController;
+import com.code.aon.ui.google.apis.controller.GoogleDriveController;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.gwt.document.server.DocumentsServlet;
+
 
 public class ServiConveniosController {
 	public static Boolean serviConvenios;
@@ -17,7 +18,7 @@ public class ServiConveniosController {
 	public static void setServiConvenios(Boolean serviConvenios) {
 		SelectedMenuController smc = (SelectedMenuController) AonUtil.getRegisteredBean(IRichConstants.SELECTED_MENU_CONTROLLER_NAME);
 		smc.setLastMenuAction("gwt_documents");
-		DocumentsServlet.setServiconvenios(serviConvenios);
+		GoogleDriveController.setServiconvenios(serviConvenios);
 		ServiConveniosController.serviConvenios = serviConvenios;
 	}
 	

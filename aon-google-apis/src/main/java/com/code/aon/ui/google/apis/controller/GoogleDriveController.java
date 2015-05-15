@@ -40,6 +40,17 @@ public class GoogleDriveController implements Serializable {
 	
 	public static GoogleUser uconnection;
 	
+	// pasarela a gwt Document.
+	public static Boolean serviconvenios;
+	
+	public static Boolean getServiconvenios() {
+		return serviconvenios;
+	}
+
+	public static void setServiconvenios(Boolean serviconvenios) {
+		GoogleDriveController.serviconvenios = serviconvenios;
+	}
+
 	public Drive getClientSession(){
 		Drive drive=null;
 		

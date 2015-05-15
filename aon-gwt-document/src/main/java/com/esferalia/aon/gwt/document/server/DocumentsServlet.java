@@ -130,6 +130,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	}
 
 	void initFacesContext() {
+		setServiconvenios(GoogleDriveController.serviconvenios);
 		ServletContext context = getServletContext();
 		HttpServletRequest request = getThreadLocalRequest();
 		HttpServletResponse response = getThreadLocalResponse();
