@@ -49,6 +49,9 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 
 		SQLSalaryDraftCalculatorContext draftCtx = new SQLSalaryDraftCalculatorContext(
 				draft, connection, startDate, endDate, issueDate, criteria);
+		
+		draftCtx.next();
+		
 		return draftCtx;
 	}
 
@@ -77,6 +80,7 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 		SQLSettleDraftCalculatorContext draftCtx = new SQLSettleDraftCalculatorContext(
 				draft, connection, startDate, endDate, issueDate, criteria);
 
+		draftCtx.next();
 		return draftCtx;
 	}
 

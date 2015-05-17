@@ -53,6 +53,7 @@ import com.code.aon.master.CreateDB;
 import com.code.aon.master.VersionManager;
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.person.enumeration.MaritalStatus;
+import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
@@ -79,6 +80,7 @@ import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.ExpressionException;
 
 public abstract class AbstractSQLTestCase {
 
@@ -114,42 +116,28 @@ public abstract class AbstractSQLTestCase {
 			connection.close();
 	}
 
+	// ------------------------------------------------------------------------
+
+	protected  ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
+			Date startDate, Date endDate, Date issueDate, Criteria criteria)
+			throws ExpressionException, SQLException {
+				ISQLContractSalaryCalculatorContext ctx =  new SQLContractSalaryCalculatorContext(
+						connection, startDate, endDate, issueDate, criteria);
+				ctx.next();
+				return ctx;
+			}
+
+	protected  ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
+			Date startDate, Date endDate, Date issueDate, ContractRecord contract)
+			throws ExpressionException, SQLException {
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(
+						CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+						contract.getId());
+				return getContractSalaryCalculatorContext(
+						connection, startDate, endDate, issueDate, criteria);
+			}
 	// ------------------------------------------------------- static 'library'
-
-	protected final void addIT(AONContext aonContext, ContractRecord contract, LeaveType type,
-			Date startDate, Date endDate, Double regulatoryBase) {
-				aonContext.getDslContext()
-						.insertInto(CONTRACT_LEAVE)
-						.set(CONTRACT_LEAVE.DOMAIN, contract.getDomain())
-						.set(CONTRACT_LEAVE.CONTRACT, contract.getId())
-						.set(CONTRACT_LEAVE.START_DATE, startDate)
-						.set(CONTRACT_LEAVE.END_DATE, endDate)
-						.set(CONTRACT_LEAVE.DAILY_REG_BASE, regulatoryBase)
-						// .set(CONTRACT_LEAVE.DAILY_CGC_BASE, regulatoryBase)
-						// .set(CONTRACT_LEAVE.DAILY_CGP_BASE, regulatoryBase)
-						.set(CONTRACT_LEAVE.TYPE, (byte) type.ordinal())
-						.set(CONTRACT_LEAVE.DISCHARGE_CAUSE, (byte) type.ordinal())
-						.execute();
-			
-			}
-
-	protected final void addPayment(AONContext aonContext, ContractRecord contract, String expression,
-			String quoteExpression) {
-				aonContext
-						.getDslContext()
-						.insertInto(CONTRACT_PAYMENT)
-						.set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
-						.set(CONTRACT_PAYMENT.CONTRACT, contract.getId())
-						.set(CONTRACT_PAYMENT.START_DATE, contract.getStartDate())
-						.set(CONTRACT_PAYMENT.END_DATE, contract.getEndDate())
-						.set(CONTRACT_PAYMENT.EXPRESSION, expression)
-						.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
-						.set(CONTRACT_PAYMENT.TYPE,
-								(byte) PaymentType.CRA_0001.ordinal())
-						.set(CONTRACT_PAYMENT.SALARY_TYPE,
-								(byte) SalaryType.SALARY.ordinal()).execute();
-			
-			}
 
 	public static String getDbPort() {
 		return System.getProperty("dbPort", "3306");
@@ -747,4 +735,41 @@ public abstract class AbstractSQLTestCase {
 				.execute();
 
 	}
+
+	public static final void addIT(AONContext aonContext, ContractRecord contract, LeaveType type,
+			Date startDate, Date endDate, Double regulatoryBase) {
+				aonContext.getDslContext()
+						.insertInto(CONTRACT_LEAVE)
+						.set(CONTRACT_LEAVE.DOMAIN, contract.getDomain())
+						.set(CONTRACT_LEAVE.CONTRACT, contract.getId())
+						.set(CONTRACT_LEAVE.START_DATE, startDate)
+						.set(CONTRACT_LEAVE.END_DATE, endDate)
+						.set(CONTRACT_LEAVE.DAILY_REG_BASE, regulatoryBase)
+						// .set(CONTRACT_LEAVE.DAILY_CGC_BASE, regulatoryBase)
+						// .set(CONTRACT_LEAVE.DAILY_CGP_BASE, regulatoryBase)
+						.set(CONTRACT_LEAVE.TYPE, (byte) type.ordinal())
+						.set(CONTRACT_LEAVE.DISCHARGE_CAUSE, (byte) type.ordinal())
+						.execute();
+			
+			}
+
+	public static  void addPayment(AONContext aonContext, ContractRecord contract, String expression,
+			String quoteExpression) {
+				aonContext
+						.getDslContext()
+						.insertInto(CONTRACT_PAYMENT)
+						.set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
+						.set(CONTRACT_PAYMENT.CONTRACT, contract.getId())
+						.set(CONTRACT_PAYMENT.START_DATE, contract.getStartDate())
+						.set(CONTRACT_PAYMENT.END_DATE, contract.getEndDate())
+						.set(CONTRACT_PAYMENT.EXPRESSION, expression)
+						.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
+						.set(CONTRACT_PAYMENT.TYPE,
+								(byte) PaymentType.CRA_0001.ordinal())
+						.set(CONTRACT_PAYMENT.SALARY_TYPE,
+								(byte) SalaryType.SALARY.ordinal()).execute();
+			
+			}
+
+
 }

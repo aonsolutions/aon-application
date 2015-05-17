@@ -1,7 +1,5 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
-import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
@@ -27,7 +25,6 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import com.code.aon.common.enumeration.Month;
-import com.code.aon.ql.Criteria;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -39,8 +36,6 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
-import com.esferalia.aon.salary.enumeration.PaymentType;
-import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 
 public class SQLBRTestCase extends AbstractSQLTestCase {
@@ -760,41 +755,6 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 
 	// ------------------------------------------------------------------------
 
-//	protected final void addPayment(AONContext aonContext,
-//			ContractRecord contract, String expression, String quoteExpression) {
-//		aonContext
-//				.getDslContext()
-//				.insertInto(CONTRACT_PAYMENT)
-//				.set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
-//				.set(CONTRACT_PAYMENT.CONTRACT, contract.getId())
-//				.set(CONTRACT_PAYMENT.START_DATE, contract.getStartDate())
-//				.set(CONTRACT_PAYMENT.END_DATE, contract.getEndDate())
-//				.set(CONTRACT_PAYMENT.EXPRESSION, expression)
-//				.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
-//				.set(CONTRACT_PAYMENT.TYPE,
-//						(byte) PaymentType.CRA_0001.ordinal())
-//				.set(CONTRACT_PAYMENT.SALARY_TYPE,
-//						(byte) SalaryType.SALARY.ordinal()).execute();
-//
-//	}
-	
-	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
-			Date startDate, Date endDate, Date issueDate, ContractRecord contract) throws ExpressionException, SQLException{
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(
-				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
-				contract.getId());
-		return getContractSalaryCalculatorContext(
-				connection, startDate, endDate, issueDate, criteria);
-	}
-
-	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
-			Date startDate, Date endDate, Date issueDate, Criteria criteria) throws ExpressionException, SQLException{
-		ISQLContractSalaryCalculatorContext ctx =  new SQLContractSalaryCalculatorContext(
-				connection, startDate, endDate, issueDate, criteria);
-		ctx.next();
-		return ctx;
-	}
 
 
 }

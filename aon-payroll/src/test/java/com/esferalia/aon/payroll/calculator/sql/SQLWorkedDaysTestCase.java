@@ -5,7 +5,7 @@ package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGREEMENT_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
@@ -191,27 +191,6 @@ public class SQLWorkedDaysTestCase extends
 				end,
 				null);
 	
-		start = getFirstDayOfMonth(add(getToday(), MONTH, 1));
-		end = getLastDayOfMonth(start);
-
-		Date ereStart = add(start, DAY_OF_MONTH, 10);
-		Date ereEnd = add(ereStart, DAY_OF_MONTH, 6);
-		addData(aonContext, contract, ereStart, ereEnd, 
-				new HashMap<String, String>() {
-				{
-					put(ERE_DAYS.getName(),format("%d", 6));
-				}
-			});
-		ctx = new SQLContractSalaryCalculatorContext(
-				connection, start, end, end, criteria);
-		ctx.next();
-		assertEquals(ctx, 
-				(double) ((get(end, DAY_OF_MONTH) -6) ),  
-				start, 
-				end,
-				null);
-		ereStart = add(start, DAY_OF_MONTH, 10);
-		ereEnd = add(ereStart, DAY_OF_MONTH, 6);
 	}
 
 	@Test
@@ -390,7 +369,7 @@ public class SQLWorkedDaysTestCase extends
 					Assert.assertTrue(String.format(WORKED_DAYS.getName()),context.containsKey(WORKED_DAYS.getName()));
 					Assert.assertTrue(String.format(TC2.getName()),context.containsKey(TC2.getName()));
 					Assert.assertTrue(String.format(PARTIAL_FACTOR.getName()),context.containsKey(PARTIAL_FACTOR.getName()));
-					Assert.assertTrue(String.format(ERE_DAYS.getName()),context.containsKey(ERE_DAYS.getName()));
+					Assert.assertTrue(String.format(ERE_FACTOR.getName()),context.containsKey(ERE_FACTOR.getName()));
 					Assert.assertTrue(String.format(STRIKE_DAYS.getName()),context.containsKey(STRIKE_DAYS.getName()));
 					
 					Assert.assertTrue(String.format(WEEK_HOURS.getName()),context.containsKey(WEEK_HOURS.getName()));

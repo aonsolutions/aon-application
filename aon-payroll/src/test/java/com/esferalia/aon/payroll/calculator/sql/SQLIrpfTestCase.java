@@ -316,8 +316,6 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSettleCalculatorContext(
 				connection, start, end, issue, criteria);
 
-		ctx.next();
-
 		ctx.setListener(new Listener() {
 			@Override
 			public void onIrpf(IrpfOutcome irpfOutcome) {
@@ -356,15 +354,12 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 
 	protected ISQLContractSalaryCalculatorContext getContractSettleCalculatorContext(Connection connection,
 			Date startDate, Date endDate, Date issueDate, Criteria criteria) throws ExpressionException, SQLException{
-		return new SQLContractSettleCalculatorContext(
+		SQLContractSettleCalculatorContext ctx =  new SQLContractSettleCalculatorContext(
 				connection, startDate, endDate, issueDate, criteria);
+		ctx.next();
+		return ctx;
 	}
 	
-	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
-			Date startDate, Date endDate, Date issueDate, Criteria criteria) throws ExpressionException, SQLException{
-		return new SQLContractSalaryCalculatorContext(
-				connection, startDate, endDate, issueDate, criteria);
-	}
 	// ------------------------------------------------------------------------
 
 	private void test(Consumer<IrpfResult> c, String [] payments, String [] deductions)
@@ -401,8 +396,6 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, start, end, issue, criteria);
-
-		ctx.next();
 
 		ctx.setListener(new Listener() {
 

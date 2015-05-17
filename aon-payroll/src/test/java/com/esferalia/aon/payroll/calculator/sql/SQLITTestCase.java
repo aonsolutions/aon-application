@@ -1,10 +1,11 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
-import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
@@ -33,6 +34,7 @@ import com.code.aon.ql.Criteria;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
+import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
@@ -90,6 +92,50 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		}
 
 		Assert.assertEquals(4, salary.getSalaryPayments().size());
+
+	}
+
+	@Test
+	public void testMaternityIT() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {						
+				"BASE_CGC * 0.10", 
+				"BASE_CGP * 0.05",
+				"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				}, null);
+		//@formatter:on
+		
+		
+		PaymentConceptRecord maternity = addConcept(aonContext, MATERNITY.getName());
+		addPayment(aonContext, contract, maternity, "DIAS_MATERNIDAD * 0", "DIAS_MATERNIDAD * BASE_REGULADORA");
+		
+		Date startITDate = getToday();
+		addIT(aonContext, contract, LeaveType.MATERNITY, startITDate,
+				null, 100.00);
+
+		
+		Date startDate = add(getFirstDayOfMonth(getToday()),MONTH,1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		Assert.assertEquals(0.00, salary.getTotalPayment());
+		Assert.assertEquals(0.00, salary.getTotalLiquid());
+		Assert.assertEquals(get(endDate, DAY_OF_MONTH) * 100.00, salary.getCommonBase());
 
 	}
 
@@ -159,28 +205,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 	}
 
+
 	// ------------------------------------------------------------------------
 
-	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(
-			Connection connection, Date startDate, Date endDate,
-			Date issueDate, ContractRecord contract)
-			throws ExpressionException, SQLException {
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(
-				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
-				contract.getId());
-		return getContractSalaryCalculatorContext(connection, startDate,
-				endDate, issueDate, criteria);
-	}
-
-	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(
-			Connection connection, Date startDate, Date endDate,
-			Date issueDate, Criteria criteria) throws ExpressionException,
-			SQLException {
-		ISQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
-				connection, startDate, endDate, issueDate, criteria);
-		ctx.next();
-		return ctx;
-	}
 
 }
