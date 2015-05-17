@@ -18,6 +18,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTRACT_STA
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DELAY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EXTRA_PAY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FEMALE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
@@ -40,6 +41,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACT
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAYMENT_VARIABLE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.REGULATORY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_HOURS;
@@ -533,8 +535,9 @@ public class SQLContractSalaryCalculatorContext extends
 
 					Period guarenteePeriod = new Period(guarenteeStart,
 							guarenteeEnd);
-					
-					SQLNoItContractSalaryCalculatorContext.this.guarantees.add(guarenteePeriod) ;
+
+					SQLNoItContractSalaryCalculatorContext.this.guarantees
+							.add(guarenteePeriod);
 
 					SQLNoItContractSalaryCalculatorContext.this.guarantees
 							.add(guarenteePeriod);
@@ -644,6 +647,14 @@ public class SQLContractSalaryCalculatorContext extends
 			Collections.sort(worked);
 
 			return split(worked, leaves);
+		}
+		
+		@Override
+		protected void loadDaysContextVariables(ExpressionContext ctx)
+				throws ExpressionException {
+			ctx.removeVariable(ERE_DAYS);
+			ctx.removeVariable(ERE_FACTOR);
+			super.loadDaysContextVariables(ctx);
 		}
 
 		public static List<Period> split(List<Period> worked,
@@ -2687,7 +2698,7 @@ public class SQLContractSalaryCalculatorContext extends
 		// Long leaveDays = getLeaveDays(p);
 
 		double workedDays = availableDays /*- leaveDays*/;
-		workedDays -= getCurrentBindings().get(ERE_DAYS,
+		workedDays *= 1.00 - getCurrentBindings().get(ERE_FACTOR,
 				obj -> ((Number) obj).doubleValue(), 0.00);
 		workedDays -= getCurrentBindings().get(STRIKE_DAYS,
 				obj -> ((Number) obj).doubleValue(), 0.00);
@@ -2699,21 +2710,11 @@ public class SQLContractSalaryCalculatorContext extends
 
 	}
 
-	protected double getQuoteDays(ExpressionContext ctx, Period p) {
-
-		Long quoteDays = days(Period.max(p.getStart(), contractStartDate),
-				Period.min(p.getEnd(), contractEndDate));
-		double monthDays = getMax(p.getStart(), DAY_OF_MONTH);
-		double ctxMonthDays = getContexVariable(ctx, p, MONTH_DAYS);
-		return quoteDays * ctxMonthDays / monthDays;
-
-	}
-
-	private double getSalaryDays(ExpressionContext ctx, Period p) {
+	private double getDays(ExpressionContext ctx, Period p, double factor) {
 		Long availableDays = getAvailableDays(p.getStart(), p.getEnd());
 		double monthDays = getMax(p.getStart(), DAY_OF_MONTH);
 		double ctxMonthDays = getContexVariable(ctx, p, MONTH_DAYS);
-		return availableDays * ctxMonthDays / monthDays;
+		return availableDays * factor * ctxMonthDays / monthDays;
 	}
 
 	private int getSeniorityYears(Period period) {
@@ -3244,7 +3245,7 @@ public class SQLContractSalaryCalculatorContext extends
 		 */
 
 		this.contractExpressionContext = new ExpressionContext(
-				this.implicitExpressionContext, this){
+				this.implicitExpressionContext, this) {
 			@Override
 			public <T> List<ITimedResult<T>> eval(String script, Date start,
 					Date end, Class<T> toType) throws ExpressionException,
@@ -3254,15 +3255,16 @@ public class SQLContractSalaryCalculatorContext extends
 				} catch (UndefinedVariablesException e) {
 					if (script.matches(String
 							.format(".*%s\\w*\\(.*", GUARANTEE)))
-						return eval(script.replaceAll(
-								String.format("%s\\w*\\(([^(),]|\\(([^\\)]*)\\))*", GUARANTEE),
-								"SELF.guarantee(0"), start, end, toType);
+						return eval(script.replaceAll(String
+								.format("%s\\w*\\(([^(),]|\\(([^\\)]*)\\))*",
+										GUARANTEE), "SELF.guarantee(0"), start,
+								end, toType);
 					if (e.getExpression() == null)
 						e.setExpression(script);
 					throw e;
 				}
 			}
-			
+
 		};
 
 		this.contractExpressionContext.setVariable(CONTEXT,
@@ -3314,7 +3316,7 @@ public class SQLContractSalaryCalculatorContext extends
 		loadDaysContextVariables(contractExpressionContext);
 	}
 
-	private void loadDaysContextVariables(ExpressionContext ctx)
+	protected void loadDaysContextVariables(ExpressionContext ctx)
 			throws ExpressionException {
 
 		if (!containsVariable(WEEK_HOURS)) {
@@ -3407,7 +3409,7 @@ public class SQLContractSalaryCalculatorContext extends
 
 					@Override
 					public Double getValue(Period p) {
-						return getQuoteDays(ctx, p);
+						return getDays(ctx, p, 1.00);
 					}
 
 				};
@@ -3422,7 +3424,7 @@ public class SQLContractSalaryCalculatorContext extends
 
 					@Override
 					public Double getValue(Period p) {
-						return getSalaryDays(ctx, p);
+						return getDays(ctx, p, 1.00);
 					}
 
 				};
@@ -3433,6 +3435,62 @@ public class SQLContractSalaryCalculatorContext extends
 		// ITs
 		List<Period> leaves = getLeavesPeriods();
 		intersects = Period.sub(intersects, leaves);
+
+		if (!containsVariable(ERE_DAYS)) {
+
+			// ERE
+			for (ITimedVariable<Object> ereFactor : ctx
+					.getVariables(ERE_FACTOR)) {
+				Period period = ereFactor.getPeriod();
+				Object value = ereFactor.getValue(period);
+				if (!(value instanceof Number))
+					continue;
+
+				double factor = ((Number) value).doubleValue();
+				if (((Number) value).doubleValue() >= 1.00)
+					intersects = Period.sub(intersects,
+							Collections.singletonList(period));
+				else
+					intersects = SQLNoItContractSalaryCalculatorContext.split(
+							intersects, Collections.singletonList(period));
+
+				ITimedVariable<Double> ereDays = new ITimedVariable<Double>() {
+					@Override
+					public Period getPeriod() {
+						return period;
+					}
+
+					@Override
+					public Double getValue(Period p) {
+						return getDays(ctx, p, factor);
+					}
+
+				};
+				ctx.putVariable(ERE_DAYS, ereDays);
+
+				ITimedVariable<Double> ereBase = new ITimedVariable<Double>() {
+					@Override
+					public Period getPeriod() {
+						return period;
+					}
+
+					@Override
+					public Double getValue(Period p) {
+						try {
+							return (Double) br(p.getStart());
+						} catch (ExpressionException | SalaryException
+								| SQLException e) {
+							throw new ExpressionExceptionWrapper(
+									new UndefinedContextVariablesException(
+											REGULATORY_BASE));
+						}
+					}
+
+				};
+				ctx.putVariable(REGULATORY_BASE, ereBase);
+			}
+		}
+
 		intersects = splitWorkedDays(intersects);
 
 		for (Period period : intersects) {

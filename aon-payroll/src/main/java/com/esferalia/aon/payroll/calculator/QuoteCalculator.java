@@ -6,6 +6,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MIN
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MAX;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MIN;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
 
@@ -75,6 +76,8 @@ public abstract class QuoteCalculator {
 		return nonStructuralBase;
 	}
 
+	public abstract Double getEreBase() throws AonException;
+
 	public abstract Double getMaternityBase() throws AonException;
 
 	public abstract Double quote(IContractPayment payment, Date start, Date end,
@@ -128,6 +131,11 @@ public abstract class QuoteCalculator {
 		public Double quote(IContractPayment payment, Date start, Date end,
 				double amount) throws AonException {
 			return null ; // No cotiza...
+		}
+		
+		@Override
+		public Double getEreBase() throws AonException {
+			return null;
 		}
 
 		@Override
@@ -183,10 +191,17 @@ public abstract class QuoteCalculator {
 		}
 
 		@Override
+		public Double getEreBase() throws AonException {
+			return bases.containsKey(ERE.getName()) ? bases.get(ERE
+					.getName()) : 0.00;
+		}
+
+		@Override
 		public Double getMaternityBase() throws AonException {
 			return bases.containsKey(MATERNITY.getName()) ? bases.get(MATERNITY
 					.getName()) : 0.00;
 		}
+		
 
 		protected double getQuote(IContractPayment payment, Date start,
 				Date end, double amount) throws AonException {
@@ -370,6 +385,14 @@ public abstract class QuoteCalculator {
 			for (GeneralQuote calculator : calculators)
 				rawCgpBase += calculator.getRawCgpBase();
 			return rawCgpBase;
+		}
+
+		@Override
+		public Double getEreBase() throws AonException {
+			double ereBase = 0.00;
+			for (GeneralQuote calculator : calculators)
+				ereBase += calculator.getEreBase();
+			return ereBase;
 		}
 
 		@Override

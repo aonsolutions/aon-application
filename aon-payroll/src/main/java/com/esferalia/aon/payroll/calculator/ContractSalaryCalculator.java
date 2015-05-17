@@ -461,10 +461,11 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 
 			try {
 				Double cgcBase = quoteCalculator.getCgcBase();
+				Double ereBase = quoteCalculator.getEreBase();
 				Double maternityBase = quoteCalculator.getMaternityBase();
-				if (cgcBase != null && maternityBase != null)
+				if (cgcBase != null && maternityBase != null && ereBase != null)
 					expressionContext.setVariable(CGC_BASE, cgcBase
-							- maternityBase, start, end);
+							- maternityBase - ereBase, start, end);
 			} catch (UndefinedVariablesException e) {
 				onInvalidData(e.getVariableNames());
 			}
@@ -505,10 +506,11 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 				onInvalidData(e.getVariableNames());
 			}
 			salaryBuilder.setCgcBase(cgcBase);
+			Double ereBase = quoteCalculator.getEreBase();
 			Double maternityBase = quoteCalculator.getMaternityBase();
-			if (cgcBase != null && maternityBase != null)
+			if (cgcBase != null && maternityBase != null && ereBase != null)
 				expressionContext.setVariable(CGC_BASE,
-						cgcBase - maternityBase, start, end);
+						cgcBase - maternityBase - ereBase, start, end);
 
 			Double cgpBase = quoteCalculator.getRawCgpBase();
 			try {
@@ -517,9 +519,9 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 				onInvalidData(e.getVariableNames());
 			}
 			salaryBuilder.setCgpBase(cgpBase);
-			if (cgpBase != null && maternityBase != null)
+			if (cgpBase != null && maternityBase != null && ereBase != null )
 				expressionContext.setVariable(CGP_BASE,
-						cgpBase - maternityBase, start, end);
+						cgpBase - maternityBase -ereBase, start, end);
 			Double nonStructuralBase = quoteCalculator.getNonStructuralBase();
 			salaryBuilder.setNonHExtraBase(nonStructuralBase);
 			if (nonStructuralBase != null)
@@ -829,7 +831,7 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 		String name = contractPayment.getName();
 
 		try {
-//			System.out.println(contractPayment.getExpression());
+//			System.out.print(contractPayment.getExpression() + " = " );
 			List<ITimedResult<Double>> results = expressionContext.eval(
 					contractPayment.getExpression(), paymentStart, paymentEnd,
 					Double.class);
@@ -840,6 +842,7 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 
 				Double resultDouble = result.getValue();
 				double resultValue = resultDouble != null ? resultDouble : 0.00;
+				
 				
 				if (!StringUtils.isEmpty(name)) {
 					Date valueStart = resultStart;
@@ -901,7 +904,6 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 				}
 
 			}
-
 			// quoteCalculator.quote(contractPayment, paymentStart,
 			// paymentEnd, total);
 
