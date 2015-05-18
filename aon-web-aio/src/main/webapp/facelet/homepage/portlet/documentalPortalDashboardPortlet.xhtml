@@ -78,7 +78,7 @@
 						-->
 						<c:set var="count" value="0" scope="page" />						
         				<c:forEach var="recent" items="#{dashboard.recentsFiles}" >
-        				actionListener="#{serviconvenios.onServiconvenios}"
+        				
     						data.addRow(['&lt;div style="cursor:pointer;" onclick="preview(${count},recentsFiles)" &gt; #{recent.date != null ? recent.date : "&amp;nbsp;"  } &lt;/div&gt;',
 							            "&lt;div style=\"cursor:pointer; text-align:left; \" onclick=\"preview(${count},recentsFiles)\" &gt; &lt;span class=\"#{recent.icon}\" style=\"padding-left: 20px;\" &gt;  &lt;/span&gt;#{recent.name} &lt;/div&gt;",
 						             	'&lt;div style="cursor:pointer;" onclick="preview(${count},recentsFiles)" &gt; #{( empty recent.category ) ? "&amp;nbsp;"  : recent.category }&lt;/div&gt;',
