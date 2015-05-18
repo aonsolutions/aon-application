@@ -202,12 +202,15 @@ public abstract class AbstractSQLTestCase {
 		while (rs.next()) {
 			if (rs.getString(1).startsWith(dbName)) {
 				connection.createStatement().execute("use " + rs.getString(1));
+				new VersionManager().uptodateDatabase(connection);
 				return connection;
 			}
 		}
+		
+		VersionManager versionManager = new VersionManager();
+		versionManager.createDatabase(connection, dbName);
+		versionManager.uptodateDatabase(connection);
 
-		new VersionManager().createDatabase(connection, dbName);
-		connection.createStatement().execute("use " + dbName);
 		return connection;
 	}
 
