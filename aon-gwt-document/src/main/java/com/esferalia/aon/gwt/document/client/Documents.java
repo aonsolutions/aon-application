@@ -64,6 +64,8 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.http.client.URL;
@@ -84,6 +86,8 @@ import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardPagingPolicy.KeyboardPagingPolicy;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.Window.ClosingEvent;
+import com.google.gwt.user.client.Window.ClosingHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -155,17 +159,20 @@ public class Documents extends Composite implements EntryPoint {
 		 */
 		private final ScrollPanel scrollPanel;
 
+		CustomDataGrid<?> dataGridAux;
+		
 		/**
 		 * Construct a new {@link ShowMorePager}.
 		 */
+		
 		public ShowMorePager(CustomDataGrid<?> dataGrid) {
 			setDisplay(dataGrid);
 
 			this.scrollPanel = (ScrollPanel) dataGrid.getScrollPanel();
-
+			dataGridAux = dataGrid;
 			// Handle scroll events.
 			scrollPanel.addScrollHandler(new ScrollHandler() {
-
+				CustomDataGrid<?> dataGrid = dataGridAux;
 				@Override
 				public void onScroll(ScrollEvent event) {
 					// If scrolling up, ignore the event.
@@ -179,14 +186,20 @@ public class Documents extends Composite implements EntryPoint {
 					int maxScrollTop = scrollPanel
 							.getMaximumVerticalScrollPosition();
 
+					
+
 					if (ShowMorePager.this.lastScrollPos >= maxScrollTop) {
 						// We are near the end, so increase the page size.
 						int incrementSize = getIncrementSize();
-
 						Range range = getDisplay().getVisibleRange();
 						// We are near the end, so increase the page size.
 						int newPageSize = range.getLength() + incrementSize;
-						getDisplay().setVisibleRange(0, newPageSize);
+						Integer rowCount = dataGrid.getRowCount();
+						if(rowCount > range.getLength()){
+							if(rowCount <= newPageSize)
+								getDisplay().setVisibleRange(0, rowCount);
+							else getDisplay().setVisibleRange(0, newPageSize);
+						}
 					}
 				}
 			});
@@ -779,6 +792,9 @@ public class Documents extends Composite implements EntryPoint {
 			body.addClassName("gwt-Selector");
 
 	}
+	
+	
+	
 	@Override
 	public void onModuleLoad() {
 		
@@ -788,6 +804,7 @@ public class Documents extends Composite implements EntryPoint {
 		boolean silent = Boolean.parseBoolean(getParameter(GWT.getModuleName(), SILENT));
 		
 		if ( ! silent ){
+			JsFileInfo.addOnBeforeUnloadHandler();
 			
 			stack1 = new StackLayoutPanel(Unit.EM);
 			prueba2 = new HorizontalPanel();
@@ -2681,6 +2698,12 @@ public class Documents extends Composite implements EntryPoint {
 
 
 			addDataDisplay(dataGrid);
+
+			Integer rowCount = showMorePager.getDisplay().getRowCount();
+			if(dataProvider.getList().size() == rowCount){
+				showMorePager.setRangeLimited(false);
+				
+			}
 			isServiconvenios=false;
 			isLote = false;
 			updateDatagridColumns();

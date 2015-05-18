@@ -25,5 +25,11 @@ public class JsFileInfo extends JavaScriptObject {
 	public final native byte getMimetype() /*-{
 		return this.mimetype;
 	}-*/;
+	
+	 public static native void addOnBeforeUnloadHandler()/*-{
+		$wnd.onbeforeunload = function(event){
+			var x = $wnd.document.getElementById("aonContent:mainMenuForm:home").click();
+		}
+	}-*/;
 
 }
