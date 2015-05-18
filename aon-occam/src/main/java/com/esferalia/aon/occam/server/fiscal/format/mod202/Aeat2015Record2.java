@@ -59,7 +59,7 @@ public enum Aeat2015Record2 implements Serializable,IMod202Record{
 	//	Tipo: N Pos:27 Long: 17
 	//	B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) - Base a tipo 1 [20]
 	,C7(
-			(writer,mod202) -> writer.append(AonFiscalFileUtils.signed(mod202.getAmount(Mod202Key.C20),17))
+			(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C20),17))
 	)
 	//	B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) -  Porcentaje [21]
 	//	3 enteros + 2 decimales
@@ -73,14 +73,14 @@ public enum Aeat2015Record2 implements Serializable,IMod202Record{
 	//	Tipo: N Pos:49 Long: 17
 	//	B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) -  Importe pago fraccionado [22]
 	,C9(
-			(writer,mod202) -> writer.append(AonFiscalFileUtils.signed(mod202.getAmount(Mod202Key.C22),17))
+			(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C22),17))
 	)
 	//	B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) - Base a tipo 2 [23]
 	//	15 enteros + 2 decimales
 	//	Tipo: N Pos:66 Long: 17
 	//	B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) - Base a tipo 2 [23]
 	,C10(
-			(writer,mod202) -> writer.append(AonFiscalFileUtils.signed(mod202.getAmount(Mod202Key.C23),17))
+			(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C23),17))
 	)
 	//	B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) -  Porcentaje [24]
 	//	3 enteros + 2 decimales
@@ -94,14 +94,14 @@ public enum Aeat2015Record2 implements Serializable,IMod202Record{
 	//	Tipo: N Pos:88 Long: 17
 	//	B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) -  Importe pago fraccionado [25]
 	,C12(
-			(writer,mod202) -> writer.append(AonFiscalFileUtils.signed(mod202.getAmount(Mod202Key.C25),17))
+			(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C25),17))
 	)
 	//	B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje). Dotaciones del art. 11.12 de la LIS (sólo cooperativas) (DF 4ª LIS) [50]
 	//	15 enteros + 2 decimales
 	//	Tipo: N Pos:105 Long: 17
 	//	B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje). Dotaciones del art. 11.12 de la LIS (sólo cooperativas) (DF 4ª LIS) [50]
 	,C13(
-			(writer,mod202) -> writer.append(AonFiscalFileUtils.signed(mod202.getAmount(Mod202Key.C50),17))
+			(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C50),17))
 	)
 	//	B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje). Compensación de cuotas negativas de períodos anteriores (sólo cooperativas) [42]
 	//	15 enteros + 2 decimales

@@ -35,7 +35,7 @@ public enum Record4Bizkaia2015 implements Serializable,IMod140Record {
 			 (writer,ctx,invoice,vatIdx) -> {writer.append( AonFiscalFileUtils.text(invoice.getEpigraph(), 7));}
 			 )
 	,IDENTIFICACION_DE_LA_ACTIVIDAD(
-			 (writer,ctx,invoice,vatIdx) -> {writer.append( AonStringUtils.repeat('0', 2));}
+			 (writer,ctx,invoice,vatIdx) -> {writer.append("01");}
 			 )
 	,TIPO_DE_OPERACION(
 			 (writer,ctx,invoice,vatIdx) -> {writer.append( 'A' );}
@@ -165,40 +165,40 @@ public enum Record4Bizkaia2015 implements Serializable,IMod140Record {
 			 (writer,ctx,invoice,vatIdx) -> {writer.append( AonStringUtils.repeat(' ', 3));}
 			 )
 	,IMPORTE_INGRESO (
-			 (writer,ctx,invoice,vatIdx) -> {writer.append( AonFiscalFileUtils.signed( invoice.getRetentionQuota(), 13 ));}
+			 (writer,ctx,invoice,vatIdx) -> {writer.append( AonFiscalFileUtils.signedSpace( invoice.getRetentionQuota(), 14 ));}
 			 )
 	,CRITERIO_COBRO(
 			 (writer,ctx,invoice,vatIdx) -> {writer.append( 'N' );}
 			 )
 	,IMPORTE_NO_COBRADO(
-			 (writer,ctx,invoice,vatIdx) -> {writer.append( AonFiscalFileUtils.signed( 0.0, 13 ));}
+			 (writer,ctx,invoice,vatIdx) -> {writer.append( AonFiscalFileUtils.signedSpace( 0.0, 14 ));}
 			 )
 	,INGRESO_A_COMPUTAR(
-			 (writer,ctx,invoice,vatIdx) -> {writer.append( AonFiscalFileUtils.signed( invoice.getRetentionQuota(), 13 ));}
+			 (writer,ctx,invoice,vatIdx) -> {writer.append( AonFiscalFileUtils.signedSpace( invoice.getRetentionQuota(), 14 ));}
 			 )
 	,BASE_IMPONIBLE(
-			 (writer,ctx,invoice,vatIdx) -> {writer.append( AonFiscalFileUtils.signed( invoice.getInvoiceVATs().get(vatIdx).getBase(), 13 ));}
+			 (writer,ctx,invoice,vatIdx) -> {writer.append( AonFiscalFileUtils.signedSpace( invoice.getInvoiceVATs().get(vatIdx).getBase(), 14 ));}
 			 )
 	,TIPO_IMPOSITIVO(
 			 (writer,ctx,invoice,vatIdx) -> {writer.append( AonFiscalFileUtils.unsigned( invoice.getInvoiceVATs().get(vatIdx).getPercentage(), 5 ));}
 			 )
 	,CUOTA_DEL_IMPUESTO(
-			 (writer,ctx,invoice,vatIdx) -> {writer.append( AonFiscalFileUtils.signed( invoice.getInvoiceVATs().get(vatIdx).getQuota(), 13 ));}
+			 (writer,ctx,invoice,vatIdx) -> {writer.append( AonFiscalFileUtils.signedSpace( invoice.getInvoiceVATs().get(vatIdx).getQuota(), 14 ));}
 			 )
 	,IMPORTE_TOTAL_DE_LA_FACTURA(
-			 (writer,ctx,invoice,vatIdx) -> {writer.append( AonFiscalFileUtils.signed( invoice.getTotal(), 13 ));}
+			 (writer,ctx,invoice,vatIdx) -> {writer.append( AonFiscalFileUtils.signedSpace( invoice.getTotal(), 14 ));}
 			 )
 	,TIPO_DEL_RECARGO_DE_EQUIVALENCIA(
 			 (writer,ctx,invoice,vatIdx) -> {writer.append( AonFiscalFileUtils.unsigned( invoice.getInvoiceVATs().get(vatIdx).getSurcharge(), 5 ));}
 			 )
 	,CUOTA_DEL_RECARGO_DE_EQUIVALENCIA(
-			 (writer,ctx,invoice,vatIdx) -> {writer.append( AonFiscalFileUtils.signed( invoice.getInvoiceVATs().get(vatIdx).getSurchargeQuota(), 13 ));}
+			 (writer,ctx,invoice,vatIdx) -> {writer.append( AonFiscalFileUtils.signedSpace( invoice.getInvoiceVATs().get(vatIdx).getSurchargeQuota(), 14 ));}
 			 )
 	,CRITERIO_CAJA(
 			 (writer,ctx,invoice,vatIdx) -> {writer.append( invoice.isVatAccrualPayment()?'X':' ' );}
 			 )
 	,IMPORTE_COBRADO(
-			 (writer,ctx,invoice,vatIdx) -> {writer.append( AonFiscalFileUtils.signed( 0.0, 13 ));}
+			 (writer,ctx,invoice,vatIdx) -> {writer.append( AonFiscalFileUtils.signedSpace( 0.0, 14 ));}
 			 )
 	,FECHA_COBRO(
 			 (writer,ctx,invoice,vatIdx) -> {writer.append( AonStringUtils.repeat('0',8 ));}

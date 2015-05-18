@@ -210,7 +210,7 @@ public enum Aeat2015Record1 implements Serializable,IMod202Record{
 	//	Tipo: N Pos:183 Long: 17
 	//	B) Liquidación. Mod. 40.3 LIS - Resultado contable después del IS [04]
 	,C27(
-			(writer,mod202) -> writer.append(AonFiscalFileUtils.signed(mod202.getAmount(Mod202Key.C04),17))
+			(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C04),17))
 	)
 	//	B) Liquidación. Mod. 40.3 LIS - Correcciones al resultado contable - por Impuesto sobre Sociedades - Aumentos [05]
 	//	15 enteros + 2 decimales
@@ -287,7 +287,7 @@ public enum Aeat2015Record1 implements Serializable,IMod202Record{
 	//	Tipo: N Pos:370 Long: 17
 	//	B) Liquidación. Mod. 40.3 LIS - Base imponible previa [13]
 	,C38(
-			(writer,mod202) -> writer.append(AonFiscalFileUtils.signed(mod202.getAmount(Mod202Key.C13),17))
+			(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C13),17))
 	)
 	//	B) Liquidación. Mod. 40.3 LIS - Remanente reserva de capitalización no aplicada por insuficiencia de base [44]
 	//	15 enteros + 2 decimales
@@ -336,7 +336,7 @@ public enum Aeat2015Record1 implements Serializable,IMod202Record{
 	//	Tipo: N Pos:477 Long: 17
 	//	B) Liquidación. Mod. 40.3 LIS - B1 - Caso general - Dotaciones del art. 11.12 LIS (DF 4ª LIS) [47]
 	,C45(
-			(writer,mod202) -> writer.append(AonFiscalFileUtils.signed(mod202.getAmount(Mod202Key.C47),17))
+			(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C47),17))
 	)
 	//	B) Liquidación. Mod. 40.3 LIS - B1 - Caso general - Compensación de cuotas negativas ejer. anteriores (sólo cooperativas) [40]
 	//	15 enteros + 2 decimales

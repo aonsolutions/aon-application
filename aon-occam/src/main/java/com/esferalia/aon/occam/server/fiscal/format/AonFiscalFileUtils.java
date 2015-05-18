@@ -48,15 +48,36 @@ public class AonFiscalFileUtils {
 		return date == null ? AonStringUtils.repeat(' ', 8) : DATE_FORMAT
 				.format(date);
 	}
+	
+	public static String signedZero(Double value, int size) {
+		return signed(value, '0', size);	
+	}
+	public static String signedZero(Double value, int size, int precision) {
+		return signed(value, '0', size,precision);
+	}
 
-	public static String signed(Double value, int size) {
-		if (value == null) return zeros(size);
-		return text( (value < 0 ? 'N' : '0') + unsigned(value,(size - 1)), size);
+	public static String signedSpace(Double value, int size) {
+		return signed(value, ' ', size);	
 	}
-	public static String signed(Double value, int size, int precision) {
-		if (value == null) return zeros(size);
-		return text( (value < 0 ? 'N' : '0') + unsigned(value,(size - 1),precision), size);
+	public static String signedSpace(Double value, int size, int precision) {
+		return signed(value, ' ', size,precision);
 	}
+	public static String signed(Double value, char positive, int size) {
+		return signed(value, positive, size,2);
+	}
+	public static String signed(Double value, char positive, int size, int precision) {
+		if (value == null) return positive + zeros(size-1);
+		return (value < 0 ? 'N' : positive) + unsigned(value,(size - 1),precision);
+	}
+
+//	public static String signed(Double value, int size) {
+//		if (value == null) return zeros(size);
+//		return text( (value < 0 ? 'N' : '0') + unsigned(value,(size - 1)), size);
+//	}
+//	public static String signed(Double value, int size, int precision) {
+//		if (value == null) return zeros(size);
+//		return text( (value < 0 ? 'N' : '0') + unsigned(value,(size - 1),precision), size);
+//	}
 
 	public static String unsigned(double value, int size) {
 		return unsigned(value, size, 2);		
@@ -128,7 +149,7 @@ public class AonFiscalFileUtils {
 		System.out.println(year(20115));
 		System.out.println("****");
 
-		length = 17;
+		length = 13;
 		System.out.println( AonStringUtils.repeat("*",length) );
 		Double[] values = new Double[]{
 				null
@@ -136,13 +157,15 @@ public class AonFiscalFileUtils {
 				,15.15
 				,-15.15
 				,15.1583423
-				,22342342.13
-				,922342342.13
+				,222342.13
+				,922342.13
 		};
 		for (Double d : values) {
 			Double db = d == null ? null : d * (-1);
-			System.out.println(signed( d, length) + " ----> " + d );	
-			System.out.println(signed( db,length) + " ----> " + db );
+			System.out.println(signedZero( d, length) + " ----> " + d );	
+			System.out.println(signedZero( db,length) + " ----> " + db );
+			System.out.println(signedSpace( d, length) + " -S--> " + d );	
+			System.out.println(signedSpace( db,length) + " -S--> " + db );
 		}
 		System.out.println( AonStringUtils.repeat("*",length) );
 		
