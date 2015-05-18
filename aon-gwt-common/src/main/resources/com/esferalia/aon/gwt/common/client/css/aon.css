@@ -488,7 +488,8 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 	gwt-image: "aonIconArabaBW"
 }
 @sprite .aon-icon-bizkaia{
-	gwt-image: "aonIconBizkaia"
+	gwt-image: "aonIconBizkaia";
+	width: auto;
 }
 @sprite .aon-icon-bizkaia-bw{
 	gwt-image: "aonIconBizkaiaBW"

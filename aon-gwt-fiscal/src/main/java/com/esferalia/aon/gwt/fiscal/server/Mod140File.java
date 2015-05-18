@@ -45,7 +45,7 @@ public class Mod140File extends HttpServlet {
 			Date toDate = null;
 			String toDateParam = req.getParameter("toDate");
 			if (AonStringUtils.isNotBlank(toDateParam)){
-				fromDate = DATE_FORMAT.parse(toDateParam);
+				toDate = DATE_FORMAT.parse(toDateParam);
 			}
 					
 			ctx = AONContext.getAONContext(domainName, domainId);
