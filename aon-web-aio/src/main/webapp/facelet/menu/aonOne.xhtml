@@ -365,6 +365,13 @@
 										</aon:div>										
 									</aon:if>
 								</aon:if>
+								<aon:if test="#{aonRole.accountingOperator and (domainSwitcher.parentDomainUserInChildDomain or domainSwitcher.parentDomain) and !actionDenied.moduleEnabled['accounting']}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="account-aonOne"
+											action="account_list-aonOne"
+											value="#{bundle.account_module}" />
+									</aon:div>
+								</aon:if>								
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>					
