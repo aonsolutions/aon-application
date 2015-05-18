@@ -378,8 +378,10 @@ public class Employees extends ResizeComposite implements
 							employeesService, new BooleanEventMetaData(
 									"DIAS_EFECTIVOS", DAY),
 							new BooleanEventMetaData("DIAS_VACACIONES", DAY),
-							new BooleanEventMetaData("HUELGA", DAY),
-							new EventMetaData("OBSERVACIONES", MONTH));
+							//new BooleanEventMetaData("HUELGA", DAY),
+							new DecimalEventMetaData("COEFICIENTE_ERE", DAY),
+							new EventMetaData("OBSERVACIONES", MONTH)
+							);
 
 				Date date = new Date();
 
