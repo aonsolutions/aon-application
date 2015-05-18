@@ -898,10 +898,12 @@ public class Mod190DAO {
 					.getCeutaMelilla()));
 			Byte familySituation = record.getFamilySituation();
 			if (familySituation != null) {
-				irpfData.setFamilySituation(familySituation);
+				familySituation = (byte) (familySituation + 1);
 			} else {
 				familySituation = (byte) 0;
 			}
+			irpfData.setFamilySituation(familySituation);
+			
 			irpfData.setSpouseDocument(record.getSpouseDocument());
 			Byte disabilityLevel = record.getDisabilityLevel();
 			if (disabilityLevel != null) {
