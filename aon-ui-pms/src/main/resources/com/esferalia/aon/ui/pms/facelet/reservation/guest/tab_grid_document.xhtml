@@ -13,7 +13,7 @@
 				value="#{controller.to.documentType}"
 				valueChangeListener="#{controller.onDocumentTypeChanged}"
 				reRender="GuestDocumentDiv#{suffix},GuestNameDiv#{suffix},GuestContactDiv#{suffix},GuestAddressDiv#{suffix}">
-				<f:selectItems value="#{registryCollections.documentTypes}" />
+				<f:selectItems value="#{pmsCollections.personDocumentTypes}" />
 			</aon:selectOneMenu>
 
 			<aon:outputLabel for="ProjectReservationGuest_documentCountry" value="#{bundle.aon_country}"/>

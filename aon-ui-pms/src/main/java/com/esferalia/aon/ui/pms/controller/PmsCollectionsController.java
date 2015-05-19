@@ -22,6 +22,7 @@ import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
+import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.seller.Seller;
 import com.code.aon.seller.enumeration.SellerStatus;
 import com.code.aon.ui.config.util.UserUtils;
@@ -42,6 +43,7 @@ public class PmsCollectionsController implements Serializable {
 	private List<SelectItem> reservationStatuses;
 	private List<SelectItem> reservationDivertStatuses;
 	private List<SelectItem> bookingHolders;
+	private List<SelectItem> personDocumentTypes;
 
 	public Hotel getHotel() {
 		return null;
@@ -362,6 +364,17 @@ public class PmsCollectionsController implements Serializable {
 			}
 		}
 		return bookingHolders;
+	}
+
+	public List<SelectItem> getPersonDocumentTypes() {
+		if (personDocumentTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			personDocumentTypes = new LinkedList<SelectItem>();
+			personDocumentTypes.add(new SelectItem(DocumentType.NIF, DocumentType.NIF.getName(locale)));
+			personDocumentTypes.add(new SelectItem(DocumentType.NIE, DocumentType.NIE.getName(locale)));
+			personDocumentTypes.add(new SelectItem(DocumentType.PASSPORT, DocumentType.PASSPORT.getName(locale)));
+		}
+		return personDocumentTypes;
 	}
 
 }
