@@ -118,25 +118,28 @@ public abstract class AbstractSQLTestCase {
 
 	// ------------------------------------------------------------------------
 
-	protected  ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
-			Date startDate, Date endDate, Date issueDate, Criteria criteria)
-			throws ExpressionException, SQLException {
-				ISQLContractSalaryCalculatorContext ctx =  new SQLContractSalaryCalculatorContext(
-						connection, startDate, endDate, issueDate, criteria);
-				ctx.next();
-				return ctx;
-			}
+	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(
+			Connection connection, Date startDate, Date endDate,
+			Date issueDate, Criteria criteria) throws ExpressionException,
+			SQLException {
+		ISQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, issueDate, criteria);
+		ctx.next();
+		return ctx;
+	}
 
-	protected  ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
-			Date startDate, Date endDate, Date issueDate, ContractRecord contract)
+	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(
+			Connection connection, Date startDate, Date endDate,
+			Date issueDate, ContractRecord contract)
 			throws ExpressionException, SQLException {
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(
-						CONTRACT.getName() + "." + CONTRACT.ID.getName(),
-						contract.getId());
-				return getContractSalaryCalculatorContext(
-						connection, startDate, endDate, issueDate, criteria);
-			}
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+		return getContractSalaryCalculatorContext(connection, startDate,
+				endDate, issueDate, criteria);
+	}
+
 	// ------------------------------------------------------- static 'library'
 
 	public static String getDbPort() {
@@ -182,8 +185,8 @@ public abstract class AbstractSQLTestCase {
 		// calendar.get(DAY_OF_MONTH));
 	}
 
-	public static Connection connect() throws ClassNotFoundException, SQLException,
-			AonSQLException {
+	public static Connection connect() throws ClassNotFoundException,
+			SQLException, AonSQLException {
 		// first of all load JDBC driver
 		Class.forName("org.gjt.mm.mysql.Driver");
 
@@ -195,7 +198,8 @@ public abstract class AbstractSQLTestCase {
 
 		String url = String
 				.format("jdbc:mysql://%s:%s", dbHost, dbPort, dbName);
-		Connection connection = DriverManager.getConnection(url, dbUser, dbPasswd);
+		Connection connection = DriverManager.getConnection(url, dbUser,
+				dbPasswd);
 
 		ResultSet rs = connection.createStatement().executeQuery(
 				"SHOW DATABASES");
@@ -206,7 +210,7 @@ public abstract class AbstractSQLTestCase {
 				return connection;
 			}
 		}
-		
+
 		VersionManager versionManager = new VersionManager();
 		versionManager.createDatabase(connection, dbName);
 		versionManager.uptodateDatabase(connection);
@@ -224,10 +228,8 @@ public abstract class AbstractSQLTestCase {
 	public static final DomainRecord newDomain(AONContext aonContext, int parent) {
 		return aonContext.getDslContext().insertInto(DOMAIN)
 				.set(DOMAIN.NAME, String.valueOf(System.currentTimeMillis()))
-				.set(DOMAIN.OWNER, "")
-				.set(DOMAIN.PARENT, parent)
-				.set(DOMAIN.DESCRIPTION, "").returning()
-				.fetchOne();
+				.set(DOMAIN.OWNER, "").set(DOMAIN.PARENT, parent)
+				.set(DOMAIN.DESCRIPTION, "").returning().fetchOne();
 	}
 
 	public static final AgreementRecord newAgreement(AONContext aonContext) {
@@ -403,11 +405,21 @@ public abstract class AbstractSQLTestCase {
 	public static final ContractRecord newContract(AONContext aonContext,
 			Date startDate, Map<String, String> data, String[] payments,
 			String[] deductions, AgreementLevelCategoryRecord category) {
-		return newContract(aonContext, SSRegimeType.GENERAL, CCCType.PRINCIPAL, startDate, data, payments, deductions, category);
+		return newContract(aonContext, SSRegimeType.GENERAL, CCCType.PRINCIPAL,
+				startDate, null, data, payments, deductions, category);
 	}
-	
+
 	public static final ContractRecord newContract(AONContext aonContext,
-			SSRegimeType ssRegimeType, CCCType cccType, Date startDate, Map<String, String> data, String[] payments,
+			SSRegimeType ssRegimeType, CCCType cccType, Date startDate,
+			Map<String, String> data, String[] payments,
+			String[] deductions, AgreementLevelCategoryRecord category) {
+		return newContract(aonContext, ssRegimeType, cccType, startDate,
+				null, data, payments, deductions, category);
+	}
+
+	public static final ContractRecord newContract(AONContext aonContext,
+			SSRegimeType ssRegimeType, CCCType cccType, Date startDate,
+			Date endDate, Map<String, String> data, String[] payments,
 			String[] deductions, AgreementLevelCategoryRecord category) {
 		return aonContext.getDslContext().transactionResult(
 				new TransactionalCallable<ContractRecord>() {
@@ -459,7 +471,7 @@ public abstract class AbstractSQLTestCase {
 										enterprise.getId())
 								.set(ENTERPRISE_ACTIVITY.DESCRIPTION, "")
 								.set(ENTERPRISE_ACTIVITY.TYPE,
-										(byte)ssRegimeType.ordinal())
+										(byte) ssRegimeType.ordinal())
 								.returning().fetchOne();
 
 						EnterpriseCccRecord enterpriseCcc = aonContext
@@ -540,6 +552,7 @@ public abstract class AbstractSQLTestCase {
 								.set(CONTRACT.PERSON, person.getId())
 								.set(CONTRACT.WORKPLACE, workplace.getId())
 								.set(CONTRACT.START_DATE, startDate)
+								.set(CONTRACT.END_DATE, endDate)
 								.set(CONTRACT.ENTERPRISE_CCC,
 										enterpriseCcc.getId())
 								.set(CONTRACT.ENTERPRISE_ACTIVITY,
@@ -739,40 +752,41 @@ public abstract class AbstractSQLTestCase {
 
 	}
 
-	public static final void addIT(AONContext aonContext, ContractRecord contract, LeaveType type,
-			Date startDate, Date endDate, Double regulatoryBase) {
-				aonContext.getDslContext()
-						.insertInto(CONTRACT_LEAVE)
-						.set(CONTRACT_LEAVE.DOMAIN, contract.getDomain())
-						.set(CONTRACT_LEAVE.CONTRACT, contract.getId())
-						.set(CONTRACT_LEAVE.START_DATE, startDate)
-						.set(CONTRACT_LEAVE.END_DATE, endDate)
-						.set(CONTRACT_LEAVE.DAILY_REG_BASE, regulatoryBase)
-						// .set(CONTRACT_LEAVE.DAILY_CGC_BASE, regulatoryBase)
-						// .set(CONTRACT_LEAVE.DAILY_CGP_BASE, regulatoryBase)
-						.set(CONTRACT_LEAVE.TYPE, (byte) type.ordinal())
-						.set(CONTRACT_LEAVE.DISCHARGE_CAUSE, (byte) type.ordinal())
-						.execute();
-			
-			}
+	public static final void addIT(AONContext aonContext,
+			ContractRecord contract, LeaveType type, Date startDate,
+			Date endDate, Double regulatoryBase) {
+		aonContext
+				.getDslContext()
+				.insertInto(CONTRACT_LEAVE)
+				.set(CONTRACT_LEAVE.DOMAIN, contract.getDomain())
+				.set(CONTRACT_LEAVE.CONTRACT, contract.getId())
+				.set(CONTRACT_LEAVE.START_DATE, startDate)
+				.set(CONTRACT_LEAVE.END_DATE, endDate)
+				.set(CONTRACT_LEAVE.DAILY_REG_BASE, regulatoryBase)
+				// .set(CONTRACT_LEAVE.DAILY_CGC_BASE, regulatoryBase)
+				// .set(CONTRACT_LEAVE.DAILY_CGP_BASE, regulatoryBase)
+				.set(CONTRACT_LEAVE.TYPE, (byte) type.ordinal())
+				.set(CONTRACT_LEAVE.DISCHARGE_CAUSE, (byte) type.ordinal())
+				.execute();
 
-	public static  void addPayment(AONContext aonContext, ContractRecord contract, String expression,
-			String quoteExpression) {
-				aonContext
-						.getDslContext()
-						.insertInto(CONTRACT_PAYMENT)
-						.set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
-						.set(CONTRACT_PAYMENT.CONTRACT, contract.getId())
-						.set(CONTRACT_PAYMENT.START_DATE, contract.getStartDate())
-						.set(CONTRACT_PAYMENT.END_DATE, contract.getEndDate())
-						.set(CONTRACT_PAYMENT.EXPRESSION, expression)
-						.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
-						.set(CONTRACT_PAYMENT.TYPE,
-								(byte) PaymentType.CRA_0001.ordinal())
-						.set(CONTRACT_PAYMENT.SALARY_TYPE,
-								(byte) SalaryType.SALARY.ordinal()).execute();
-			
-			}
+	}
 
+	public static void addPayment(AONContext aonContext,
+			ContractRecord contract, String expression, String quoteExpression) {
+		aonContext
+				.getDslContext()
+				.insertInto(CONTRACT_PAYMENT)
+				.set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
+				.set(CONTRACT_PAYMENT.CONTRACT, contract.getId())
+				.set(CONTRACT_PAYMENT.START_DATE, contract.getStartDate())
+				.set(CONTRACT_PAYMENT.END_DATE, contract.getEndDate())
+				.set(CONTRACT_PAYMENT.EXPRESSION, expression)
+				.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
+				.set(CONTRACT_PAYMENT.TYPE,
+						(byte) PaymentType.CRA_0001.ordinal())
+				.set(CONTRACT_PAYMENT.SALARY_TYPE,
+						(byte) SalaryType.SALARY.ordinal()).execute();
+
+	}
 
 }
