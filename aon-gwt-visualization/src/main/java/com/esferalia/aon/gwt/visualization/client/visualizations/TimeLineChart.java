@@ -27,8 +27,6 @@ import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Event.NativePreviewEvent;
-import com.google.gwt.user.client.Event.NativePreviewHandler;
 import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.visualization.client.AbstractDataTable;
@@ -61,7 +59,9 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options>
 
 	private Element scrollable;
 
+	// @formatter:off
 	public static class Options extends AbstractDrawOptions {
+		
 		public static Options create() {
 			return JavaScriptObject.createObject().cast();
 		}
@@ -76,16 +76,16 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options>
 			}
 
 			public final native void setColor(String color) /*-{
-															this.color = color;
-															}-*/;
+				this.color = color;
+			}-*/;
 
 			public final native void setFontName(String fontName) /*-{
-																	this.fontName = fontName;
-																	}-*/;
+				this.fontName = fontName;
+			}-*/;
 
 			public final native void setFontSize(String fontSize) /*-{
-																	this.fontSize = fontSize;
-																	}-*/;
+				this.fontSize = fontSize;
+			}-*/;
 		}
 
 		public static class RowLabelStyle extends Properties {
@@ -98,20 +98,20 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options>
 			}
 
 			public final native void setTextAlign(String align) /*-{
-																this.align = align;
-																}-*/;
+				this.align = align;
+			}-*/;
 
 			public final native void setColor(String color) /*-{
-															this.color = color;
-															}-*/;
+				this.color = color;
+			}-*/;
 
 			public final native void setFontName(String fontName) /*-{
-																	this.fontName = fontName;
-																	}-*/;
+				this.fontName = fontName;
+			}-*/;
 
 			public final native void setFontSize(String fontSize) /*-{
-																	this.fontSize = fontSize;
-																	}-*/;
+				this.fontSize = fontSize;
+			}-*/;
 		}
 
 		public static class Timeline extends Properties {
@@ -124,77 +124,78 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options>
 			}
 
 			public final native void setBarLabelStyle(Object labelStyle) /*-{
-																			this.barLabelStyle = labelStyle;
-																			}-*/;
+				this.barLabelStyle = labelStyle;
+			}-*/;
 
 			public final native void setColorByRowLabel(boolean colorByRowLabel) /*-{
-																					this.colorByRowLabel = colorByRowLabel;
-																					}-*/;
+				this.colorByRowLabel = colorByRowLabel;
+			}-*/;
 
 			public final native void setGroupByRowLabel(boolean groupByRowLabel) /*-{
-																					this.groupByRowLabel = groupByRowLabel;
-																					}-*/;
+				this.groupByRowLabel = groupByRowLabel;
+			}-*/;
 
 			public final native void setRowLabelStyle(Object rowLabelStyle) /*-{
-																			this.rowLabelStyle = rowLabelStyle;
-																			}-*/;
+				this.rowLabelStyle = rowLabelStyle;
+			}-*/;
 
 			public final native void setShowRowLabels(boolean showRowLabels) /*-{
-																				this.showRowLabels = showRowLabels;
-																				}-*/;
+				this.showRowLabels = showRowLabels;
+			}-*/;
 
 			public final native void setShowBarLabels(boolean showBarLabels) /*-{
-																				this.showBarLabels = showBarLabels;
-																				}-*/;
+				this.showBarLabels = showBarLabels;
+			}-*/;
 
 			public final native void setSingleColor(String singleColor) /*-{
-																		this.singleColor = singleColor;
-																		}-*/;
+				this.singleColor = singleColor;
+			}-*/;
 		}
 
 		protected Options() {
 		}
 
 		public final native void setTimeline(Timeline timeline) /*-{
-																this.timeline = timeline;
-																}-*/;
+			this.timeline = timeline;
+		}-*/;
 
 		public final native void setAvoidOverlappingGridLines(boolean avoidOver) /*-{
-																					this.avoidOverlappingGridLines = avoidOver;
-																					}-*/;
+			this.avoidOverlappingGridLines = avoidOver;
+		}-*/;
 
 		public final native void setBackgroundColor(String color) /*-{
-																	this.backgroundColor = color;
-																	}-*/;
+			this.backgroundColor = color;
+		}-*/;
 
 		public final native void setColors(JsArrayString col0rs) /*-{
-																	this.colors = col0rs;
-																	}-*/;
+			this.colors = col0rs;
+		}-*/;
 
 		public final void setColors(String... colors) {
 			setColors(ArrayHelper.toJsArrayString(colors));
 		}
 
 		public final native void setEnableInteractivity(boolean enable) /*-{
-																		this.enableInteractivity = enable;
-																		}-*/;
+			this.enableInteractivity = enable;
+		}-*/;
 
 		public final native void setForceIFrame(boolean force) /*-{
-																this.forceIFrame = force;
-																}-*/;
+			this.forceIFrame = force;
+		}-*/;
 
 		public final native void setHeight(int height) /*-{
-														this.height = height;
-														}-*/;
+			this.height = height;
+		}-*/;
 
 		public final native void setWidth(int width) /*-{
-														this.width = width;
-														}-*/;
+			this.width = width;
+		}-*/;
 
 		public final native void setTitle(String title) /*-{
-														this.title = title;
-														}-*/;
+			this.title = title;
+		}-*/;
 	}
+	//@formatter:on
 
 	public static final String PACKAGE = "timeline";
 
@@ -226,24 +227,25 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options>
 		return el.getScrollHeight() - el.getClientHeight();
 	}
 
-	public final void addStateChangeHandler(StateChangeHandler handler) {
-		Handler.addHandler(this, "statechange", handler);
-	}
-
 	public final void addReadyHandler(ReadyHandler handler) {
 		Handler.addHandler(this, "ready", handler);
 	}
 
-	public final void addOnMouseOutHandler(OnMouseOutHandler handler) {
-		Handler.addHandler(this, BrowserEvents.MOUSEOUT, handler);
+	public final void addStateChangeHandler(StateChangeHandler handler) {
+		Handler.addHandler(this, "statechange", handler);
 	}
 
-	public final void addOnMouseOverHandler(OnMouseOverHandler handler) {		
-		Handler.addHandler(this, BrowserEvents.MOUSEOVER, handler);
+	public final void addOnMouseOutHandler(OnMouseOutHandler handler) {
+		Handler.addHandler(this, "onmouseout", handler);
 	}
-	
+
+	public final void addOnMouseOverHandler(OnMouseOverHandler handler) {
+		Handler.addHandler(this, "onmouseover", handler);
+	}
+
+
 	public final void addKeyPress(Handler handler) {
-		Handler.addHandler(this, BrowserEvents.KEYPRESS, handler);
+		Handler.addHandler(this, "keypress", handler);
 	}
 
 	public HandlerRegistration addMouseMoveHandler(MouseMoveHandler handler) {
@@ -261,10 +263,10 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options>
 	 *         {@link TimeLineChart.Options#setState(String)} or a statechange
 	 *         event has not yet fired.
 	 */
+	
 	//@formatter:off
 	public final native String getState() /*-{
 		var jso = this.@com.google.gwt.visualization.client.visualizations.Visualization::getJso()();
-
 		// The getState() method doesn't seem to always be present. I think this
 		// happens when you don't properly initialize it or when you try to query
 		// it before a statechanged event fires.  
@@ -274,7 +276,6 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options>
 		return null;
 	}-*/;
 	//@formatter:on
-
 
 	// --------------------------------------------------- HasMouseOverHandlers
 
@@ -297,13 +298,13 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options>
 	public HandlerRegistration addContextMenuHandler(ContextMenuHandler handler) {
 		return addHandler(handler, ContextMenuEvent.getType());
 	}
-	
+
 	// ------------------------------------------------------ KeyPressHandlers
-	
+
 	@Override
-	public HandlerRegistration addKeyPressHandler(KeyPressHandler handler) {		
+	public HandlerRegistration addKeyPressHandler(KeyPressHandler handler) {
 		return addHandler(handler, KeyPressEvent.getType());
-	}	
+	}
 
 	// -------------------------------------------------------------- Protected
 
@@ -315,20 +316,21 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options>
 		initEventHandlers();
 	}
 
-	//@formatter:off
+	// @formatter:off
 	@Override
-	protected native JavaScriptObject createJso(Element parent)	
+	protected native JavaScriptObject createJso(Element parent)
 	/*-{	   
 		return new $wnd.google.visualization.Timeline(parent);
 	}-*/;
-	//@formatter:on
+
+	// @formatter:on
 
 	// --------------------------------------------------------------- Private
 	/**
 	 * From now was unused. Not works properly and raises an exception with IE.
 	 */
 	private void initScrollHandler() {
-		try {			
+		try {
 			Element el = getElement();
 			while (DivElement.is(el)) {
 				el = el.getFirstChildElement();
@@ -352,9 +354,9 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options>
 					ScrollEvent.fireNativeEvent(event, TimeLineChart.this);
 				}
 			});
-		}catch(Exception ex) {			
+		} catch (Exception ex) {
 		}
-			}
+	}
 
 	private void initEventHandlers() {
 		try {
@@ -362,7 +364,8 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options>
 			for (int i = 0; i < el.getChildCount(); i++)
 				sinkEvents(Element.as(el.getChild(i)), Event.ONCLICK
 						| Event.ONMOUSEOVER | Event.ONMOUSEMOVE
-						| Event.ONCONTEXTMENU | Event.ONKEYPRESS | Event.ONKEYDOWN);
+						| Event.ONCONTEXTMENU | Event.ONKEYPRESS
+						| Event.ONKEYDOWN);
 
 			DOM.setEventListener(el, new EventListener() {
 
@@ -371,7 +374,7 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options>
 					DomEvent.fireNativeEvent(event, TimeLineChart.this);
 				}
 			});
-		}catch(Exception ex) {			
+		} catch (Exception ex) {
 		}
 	}
 
@@ -394,6 +397,6 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options>
 
 		for (int i = 0; i < el.getChildCount(); i++)
 			sinkEvents(Element.as(el.getChild(i)), eventBits);
-		}
+	}
 
 }

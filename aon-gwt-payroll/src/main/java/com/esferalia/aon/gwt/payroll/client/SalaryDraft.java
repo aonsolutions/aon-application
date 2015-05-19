@@ -1,6 +1,9 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.esferalia.aon.gwt.common.shared.DateUtils.addMonths2Date;
+import static com.esferalia.aon.gwt.common.shared.DateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.gwt.common.shared.DateUtils.getFirstDayOfYear;
+import static com.esferalia.aon.gwt.common.shared.DateUtils.getLastDayOfMonth;
 import static com.esferalia.aon.gwt.common.shared.DateUtils.getLastDayOfYear;
 import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_MAX_LENGTH;
 import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENGTH;
@@ -51,6 +54,7 @@ import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.RowLabelStyle;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.Timeline;
+import com.esferalia.aon.gwt.visualization.client.visualizations.Tooltip;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -72,6 +76,8 @@ import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.HasAllFocusHandlers;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseMoveEvent;
+import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -131,6 +137,8 @@ import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
 import com.google.gwt.visualization.client.DataTable;
 import com.google.gwt.visualization.client.VisualizationUtils;
+import com.google.gwt.visualization.client.events.Handler;
+import com.google.gwt.visualization.client.events.OnMouseOverHandler;
 
 public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		SalarySelect.Listener, UndoManager.Listener {
@@ -205,27 +213,27 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	private static final String PORCENTAJE_IRPF = "PORCENTAJE_IRPF";
 	private static final String PORCENTAJE_DESMPL = "PORCENTAJE_DESMPL";
 
-	//@formatter:off
-	private static String[] SKIP_VARIABLES = { 
-		"CONVENIO", "SISTEMA", "NETO", "BRUTO", "GTZDO", "_OLD",// functions 
-		"GET_VARIABLE", "SI", "MAX", "MIN", "ABS",				// functions 
-		
-		"ANTICIPO_ATRASOS", PORCENTAJE_IRPF,  					//  
-		
-		"BASE_CGC", "BASE_CGP", "BASE_CGC_E", "BASE_CGP_E", 	// internals
-		"BASE_ESTR", "BASE_NESTR", "TOTAL_DEVENGADO",			// internals
-		"ECSS", "DIAS_IT", "DIAS_ENFERMEDAD_COMUN_4_15", 		// internals
-		"DIAS_MATERNIDAD", "DIAS_ENFERMEDAD_PROFESIONAL",		// internals
-		"DIAS_ENFERMEDAD_COMUN_1_3", 							// internals
-		"DIAS_ENFERMEDAD_COMUN_16_20", 							// internals
-		"DIAS_ENFERMEDAD_COMUN_21",								// internals
-		"DIAS_ERE", "DIAS_PATERNIDAD",							// internals
-		
-		"CONTEXT", "SELF",	"THIS",								// context
-		
-		"OCUPACION_IT", "OCUPACION_IMS"
-	};
-	//@formatter:on
+	// @formatter:off
+	private static String[] SKIP_VARIABLES = { "CONVENIO", "SISTEMA", "NETO",
+			"BRUTO", "GTZDO", "_OLD",// functions
+			"GET_VARIABLE", "SI", "MAX", "MIN", "ABS", // functions
+
+			"ANTICIPO_ATRASOS", PORCENTAJE_IRPF, //
+
+			"BASE_CGC", "BASE_CGP", "BASE_CGC_E", "BASE_CGP_E", // internals
+			"BASE_ESTR", "BASE_NESTR", "TOTAL_DEVENGADO", // internals
+			"ECSS", "DIAS_IT", "DIAS_ENFERMEDAD_COMUN_4_15", // internals
+			"DIAS_MATERNIDAD", "DIAS_ENFERMEDAD_PROFESIONAL", // internals
+			"DIAS_ENFERMEDAD_COMUN_1_3", // internals
+			"DIAS_ENFERMEDAD_COMUN_16_20", // internals
+			"DIAS_ENFERMEDAD_COMUN_21", // internals
+			"DIAS_ERE", "DIAS_PATERNIDAD", // internals
+
+			"CONTEXT", "SELF", "THIS", // context
+
+			"OCUPACION_IT", "OCUPACION_IMS" };
+
+	// @formatter:on
 
 	static class VisibilityImpl implements HasVisibility {
 
@@ -1919,14 +1927,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			cgcBaseDeduction.setSalaryType(salaryDraftObject.getType());
 		}
 
-		//@formatter:off
-		cgcBaseDeduction.setExpression(
-				"if ( "+salaryDraftObject.getType().getVariable()+" ) {" +
-				" BASE_CGC = /*user*/ " + expression + "/**/; " + 
-				" BUILDER.setCgcBase(BASE_CGC);" +
-				"}"+
-				" REMOVE();");
-		//@formatter:on
+		// @formatter:off
+		cgcBaseDeduction.setExpression("if ( "
+				+ salaryDraftObject.getType().getVariable() + " ) {"
+				+ " BASE_CGC = /*user*/ " + expression + "/**/; "
+				+ " BUILDER.setCgcBase(BASE_CGC);" + "}" + " REMOVE();");
+		// @formatter:on
 
 		salaryDraftObject.addDraftDeduction(cgcBaseDeduction);
 
@@ -1962,14 +1968,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			cgpBaseDeduction.setType(Deduction.Type.OTHER);
 			cgpBaseDeduction.setSalaryType(salaryDraftObject.getType());
 		}
-		//@formatter:off
-		cgpBaseDeduction.setExpression(
-				"if ( "+salaryDraftObject.getType().getVariable()+" ) {" +
-				" BASE_CGP = /*user*/ " + expression + "/**/; " + 
-				" BUILDER.setCgpBase(BASE_CGP); " + 
-				"}"+
-				" REMOVE();");
-		//@formatter:on
+		// @formatter:off
+		cgpBaseDeduction.setExpression("if ( "
+				+ salaryDraftObject.getType().getVariable() + " ) {"
+				+ " BASE_CGP = /*user*/ " + expression + "/**/; "
+				+ " BUILDER.setCgpBase(BASE_CGP); " + "}" + " REMOVE();");
+		// @formatter:on
 
 		salaryDraftObject.addDraftDeduction(cgpBaseDeduction);
 
@@ -2135,8 +2139,13 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	private void showContextTimeLine() {
 
-		Date startDate = getFirstDayOfYear(salaryDraftObject.getStartDate());
-		Date endDate = getLastDayOfYear(salaryDraftObject.getEndDate());
+		// Date startDate = getFirstDayOfYear(salaryDraftObject.getStartDate());
+		// Date endDate = getLastDayOfYear(salaryDraftObject.getEndDate());
+
+		Date startDate = addMonths2Date(
+				getFirstDayOfMonth(salaryDraftObject.getStartDate()), -1);
+		Date endDate = addMonths2Date(
+				getLastDayOfMonth(salaryDraftObject.getEndDate()), 1);
 
 		Set<String> names = new HashSet<String>();
 		for (Variable v : salaryDraftObject.getContext())
@@ -2147,6 +2156,10 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		salaryDraftObject.getVariables(names.toArray(new String[names.size()]),
 				startDate, endDate, new AsyncCallback<List<Variable>>() {
 
+					private int clientX = -1;
+					private int clientY = -1;
+					private Tooltip tooltip = new Tooltip();
+
 					@Override
 					public void onFailure(Throwable caught) {
 						// TODO Auto-generated method stub
@@ -2154,94 +2167,139 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 					@Override
 					public void onSuccess(final List<Variable> variables) {
-						
-						Collections.sort( variables, new Comparator<Variable>() {
+
+						Collections.sort(variables, new Comparator<Variable>() {
 							@Override
 							public int compare(Variable v1, Variable v2) {
-								if ( v1.getScope() == v2.getScope() )
+								if (v1.getScope() == v2.getScope())
 									return v1.getName().compareTo(v2.getName());
-								if ( v1.getScope() == null ) 
+								if (v1.getScope() == null)
 									return -1;
-								if ( v2.getScope() == null ) 
+								if (v2.getScope() == null)
 									return 1;
 								return v2.getScope().compareTo(v1.getScope());
 							}
 						});
-						
+
 						final int offsetWidth = contextTable.getOffsetWidth();
-						
+
 						contextDeckPanel.showWidget(contextDeckPanel
 								.getWidgetIndex(contextTimeLinePanel));
-						contextTableButton.removeStyleName(style.contextTabButtonSelected());
-						contextTimeLineButton.addStyleName(style.contextTabButtonSelected());
+						contextTableButton.removeStyleName(style
+								.contextTabButtonSelected());
+						contextTimeLineButton.addStyleName(style
+								.contextTabButtonSelected());
 						contextTimeLinePanel.setWidth(offsetWidth + "px");
 
 						VisualizationUtils.loadVisualizationApi(new Runnable() {
 							@Override
 							public void run() {
 
-
 								Options options = Options.create();
 								options.setWidth(offsetWidth);
-								
-								Timeline timeline = Timeline.create();								
-								
+
+								Timeline timeline = Timeline.create();
+
 								RowLabelStyle rowStyle = RowLabelStyle.create();
 								rowStyle.setFontSize("12");
 								rowStyle.setTextAlign("left");
 								timeline.setRowLabelStyle(rowStyle);
-								
+
 								options.setTimeline(timeline);
-								
-								DataTable data =  DataTable.create();
+
+								DataTable data = DataTable.create();
 								data.addColumn(ColumnType.STRING, "Variable");
 								data.addColumn(ColumnType.STRING, "Value");
 								data.addColumn(ColumnType.DATE, "Start");
 								data.addColumn(ColumnType.DATE, "End");
-								for (Variable v : variables) {
+								for (Variable variable : variables) {
 									int row = data.addRow();
-									data.setValue(row, 0, v.getName());
-									data.setValue(row, 2, v.getStartDate());
-									data.setValue(row, 3, v.getEndDate());
-									Object value = v.getValue();
+									data.setValue(row, 0, variable.getName());
+									data.setValue(row, 2,
+											variable.getStartDate());
+									data.setValue(row, 3, variable.getEndDate());
+									Object value = variable.getValue();
 									if (value == null)
 										data.setValueNull(row, 1);
-									else if ( "true".equalsIgnoreCase(value.toString()))
-										data.setValue(row, 1,"SI");
-									else if ( "false".equalsIgnoreCase(value.toString()))
-										data.setValue(row, 1,"NO");
-									else if ( v.getName().equalsIgnoreCase("TC2"))
-										data.setValue(row, 1, Employee.TC2.getDescriptionByCode(value.toString()));
-									else if ( v.getName().equalsIgnoreCase("OCUPACION"))
-										data.setValue(row, 1, Employee.Occupation.valueOf(value.toString()).getDescription());
-									else if ( v.getName().startsWith("PORCENTAJE"))
-										try {
-											data.setValue(row, 1, formatPercent(Double.parseDouble(value.toString())));
-										}catch(NumberFormatException e){
-											data.setValue(row, 1,v.getValue().toString());
-										}
-									else if ( v.getName().startsWith("COEFICIENTE"))
-										try {
-											data.setValue(row, 1, formatPercent(Double.parseDouble(value.toString())*100));
-										}catch(NumberFormatException e){
-											data.setValue(row, 1,v.getValue().toString());
-										}
-									else {
-										try {
-											data.setValue(row, 1, format(Double.parseDouble(value.toString())));
-										}catch(NumberFormatException e){
-											data.setValue(row, 1,v.getValue().toString());
-										}
-									}
-									
-								}
-								
+									else
+										data.setValue(row, 1,
+												getValueAsString(variable));
 
-								contextTimeLinePanel
-										.setWidget(new TimeLineChart(data,
-												options));
+								}
+
+								final TimeLineChart timeLineChart = new TimeLineChart(
+										data, options);
+								contextTimeLinePanel.setWidget(timeLineChart);
+								timeLineChart
+										.addOnMouseOverHandler(new OnMouseOverHandler() {
+											@Override
+											public void onMouseOverEvent(
+													OnMouseOverEvent event) {
+												Variable variable = variables
+														.get(event.getRow());
+												tooltip.setName(variable
+														.getName());
+												tooltip.setStartDate(variable
+														.getStartDate());
+												tooltip.setEndDate(variable
+														.getEndDate());
+												HasValue<String> editor = createEditor(variable);
+												editor.setValue(getValueAsString(variable));
+												tooltip.setValueEditor((Widget) editor);
+													
+												tooltip.showToolTip(clientX,
+														clientY);
+
+											}
+										});
+								timeLineChart
+										.addMouseMoveHandler(new MouseMoveHandler() {
+
+											@Override
+											public void onMouseMove(
+													MouseMoveEvent event) {
+												clientX = event.getClientX();
+												clientY = event.getClientY();
+											}
+										});
 							}
 						}, TimeLineChart.PACKAGE);
+					}
+
+					private String getValueAsString(Variable v) {
+						Object value = v.getValue();
+						if ("true".equalsIgnoreCase(value.toString()))
+							return "SI";
+						else if ("false".equalsIgnoreCase(value.toString()))
+							return "NO";
+						else if (v.getName().equalsIgnoreCase("TC2"))
+							return Employee.TC2.getDescriptionByCode(value
+									.toString());
+						else if (v.getName().equalsIgnoreCase("OCUPACION"))
+							return Employee.Occupation
+									.valueOf(value.toString()).getDescription();
+						else if (v.getName().startsWith("PORCENTAJE"))
+							try {
+								return formatPercent(Double.parseDouble(value
+										.toString()));
+							} catch (NumberFormatException e) {
+								return v.getValue().toString();
+							}
+						else if (v.getName().startsWith("COEFICIENTE"))
+							try {
+								return formatPercent(Double.parseDouble(value
+										.toString()) * 100);
+							} catch (NumberFormatException e) {
+								return v.getValue().toString();
+							}
+						else {
+							try {
+								return format(Double.parseDouble(value
+										.toString()));
+							} catch (NumberFormatException e) {
+								return v.getValue().toString();
+							}
+						}
 					}
 
 				});
@@ -4341,20 +4399,23 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		return "CONVENIO('" + var.getName() + "')";
 	}
 
-	//@formatter:off
+	// @formatter:off
 	private final static VariableEditorFactory VARIABLE_EDITOR_FACTORIES[] = {
 			new MonthDaysEditorFactory("DIAS_MES"),
 			new MonthDaysEditorFactory("DIAS_PAGA"),
 			new MonthDaysEditorFactory("DIAS_NOMINA"),
 			new DateEditorFactory("FECHA_PREAVISO"),
-			new EnumNameListBoxFactory<Employee.Occupation>("OCUPACION", Employee.Occupation.class), 
-			new DismissalFactory("CAUSA_INDEMNIZACION"), 
-			new StringsListBoxFactory("GRUPO_COTIZACION", new String [] {"01","02","03","04","05","06","07","08","09","10","11"}), 
-			new StringsListBoxFactory("TC2", Employee.TC2.getCodes(),Employee.TC2.getDescriptions()) ,
-			new BooleanEditorFactory(),
-			new DefaultEditorFactory()
-			};
-	//@formatter:on
+			new EnumNameListBoxFactory<Employee.Occupation>("OCUPACION",
+					Employee.Occupation.class),
+			new DismissalFactory("CAUSA_INDEMNIZACION"),
+			new StringsListBoxFactory("GRUPO_COTIZACION",
+					new String[] { "01", "02", "03", "04", "05", "06", "07",
+							"08", "09", "10", "11" }),
+			new StringsListBoxFactory("TC2", Employee.TC2.getCodes(),
+					Employee.TC2.getDescriptions()),
+			new BooleanEditorFactory(), new DefaultEditorFactory() };
+
+	// @formatter:on
 
 	private static void enable(TextBox textBox, boolean enabled) {
 
