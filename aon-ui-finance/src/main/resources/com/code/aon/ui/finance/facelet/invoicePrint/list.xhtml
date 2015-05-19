@@ -6,6 +6,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -22,6 +23,11 @@
 						actionListener="#{invoicePrint.onInitSendEmail}"
 						reRender="showNewMessageWindow-Invoice"
 						styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
+					</aon:commandButton>											
+					<aon:commandButton value="&#160;" id="downloadInvoicesZip"
+						actionListener="#{invoicePrint.onStartInvoicesZip}"
+						reRender="progressBarForm"
+						styleClass="aon-finding-toolbar-item aon-icon-zip aon-finding-toolbar-item-no-border">
 					</aon:commandButton>											
 					<aon:htmlCommandLink id="invoicePrint-report"
 						value="#{bundle.aon_invoices}" target="_blank"
@@ -41,7 +47,7 @@
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="facturae"
 						value="#{bundle.finance_facturae}" target="_blank"
-						actionListener="#{invoicePrint.downloadInvoiceZip}"
+						actionListener="#{invoicePrint.onDownloadFacturaeZip}"
 						styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
 				</ui:define>				
 				
@@ -159,6 +165,25 @@
 			</ui:include>		
 			
 		</aon:if>
+		
+		<aon:methodParam name="progressBarCloseActionListener"
+			value="#{invoicePrint.onClosePanel}" type="actionListener" />
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/progressBar.xhtml">
+			<ui:param name="progressLabel" value="#{bundle.finance_invoice_print}" />
+			<ui:param name="progressBarBean" value="#{invoicePrint.progressionState}" />
+			<ui:param name="progressBarSkipCloseButton" value="#{progressBarBean.progressionErrorMessage == null}"/>
+			<ui:define name="progressBarFinishContent">
+				<aon:htmlCommandLink id="downloadInvoicesZip"
+					rendered="#{progressBarSkipCloseButton}"
+					value="#{bundle.aon_fileupload_download}" target="_blank"
+					styleClass="aon-commandButton"
+					actionListener="#{invoicePrint.onDownloadInvoicesZip}" >
+					<rich:componentControl for="progressBarPanel"
+						disableDefault="true" event="onclick" operation="hide"/>					
+				</aon:htmlCommandLink>
+			</ui:define>
+		</ui:decorate>
+		
 	</ui:define>
 
 </ui:composition>

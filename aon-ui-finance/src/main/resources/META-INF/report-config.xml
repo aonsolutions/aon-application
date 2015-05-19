@@ -98,6 +98,7 @@
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
+			<param id="companyController" value="#{saleInvoice.getCompanyController}" />
 			<!-- Params for custom templates -->
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="printRecordData" value="#{company.isPrintRecordData}" />
@@ -148,6 +149,8 @@
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
+			<param id="companyController" value="#{saleInvoice.getCompanyController}" />
+			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />			
 		</params>
 	</report>
 	<report id="saleInvoiceTemplate2" description="Fee Invoice's Report Template2">
@@ -163,6 +166,8 @@
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
+			<param id="companyController" value="#{saleInvoice.getCompanyController}" />
+			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />						
 		</params>
 		<nested-report report="invoiceDetail"/>
 		<nested-report report="invoiceTaxBreakDown"/>
@@ -182,6 +187,8 @@
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
+			<param id="companyController" value="#{saleInvoice.getCompanyController}" />
+			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />						
 		</params>
 		<nested-report report="invoiceDetail"/>
 		<nested-report report="invoiceTaxBreakDown"/>
@@ -201,6 +208,8 @@
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
+			<param id="companyController" value="#{saleInvoice.getCompanyController}" />
+			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />						
 		</params>
 	</report>
 	<report id="saleInvoiceTemplate5" description="Fee Invoice's Report Template5">
@@ -216,6 +225,8 @@
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
+			<param id="companyController" value="#{saleInvoice.getCompanyController}" />
+			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />						
 		</params>
 	</report>
 	<report id="saleInvoiceTemplate6" description="Fee Invoice's Report Template6">
@@ -231,6 +242,8 @@
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
+			<param id="companyController" value="#{saleInvoice.getCompanyController}" />
+			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />						
 		</params>
 	</report>
 	<report id="saleInvoiceTemplate7" description="Fee Invoice's Report Template7">
@@ -246,6 +259,8 @@
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
+			<param id="companyController" value="#{saleInvoice.getCompanyController}" />
+			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />						
 		</params>
 	</report>
 	<report id="saleInvoiceGta" description="Fee Invoice's Report GTA">
@@ -331,6 +346,7 @@
 			<param id="address" value="#{company.obtainAddress}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="printRecordData" value="#{company.isPrintRecordData}" />
+			<param id="companyController" value="#{saleInvoice.getCompanyController}" />
 		</params>
 		<nested-report report="invoiceDetailDefault"/>
 		<nested-report report="invoiceTaxBreakDown"/>
@@ -430,6 +446,7 @@
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
+			<param id="companyController" value="#{saleInvoice.getCompanyController}" />
 			<!-- Params for custom templates -->
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="printRecordData" value="#{company.isPrintRecordData}" />

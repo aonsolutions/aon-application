@@ -14,6 +14,8 @@
 		<parameter name="isDeliverySource" class="java.lang.String">
 			<defaultValueExpression><![CDATA[$F{deliverySource} && $F{sourceTo} != null]]></defaultValueExpression>
 		</parameter>
+		<parameter name="printReferenceCode" class="java.lang.Boolean"/>
+		<parameter name="printProductCode" class="java.lang.Boolean"/>		
 		<field name="description" class="java.lang.String"/>
 		<field name="quantity" class="java.lang.Double"/>
 		<field name="price" class="java.lang.Double"/>
@@ -80,6 +82,7 @@
 		<field name="negotiableDocument" class="java.lang.Boolean"/>
 	</subDataset>
 	<scriptlet name="invoiceReportScriptlet" class="com.code.aon.ui.finance.util.print.InvoiceReportScriptlet"/>
+	<parameter name="companyController" class="com.code.aon.ui.company.controller.CompanyController"/>	
 	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
 	<parameter name="logoImageFile" class="java.io.InputStream"/>

@@ -7,6 +7,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +29,7 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.ProgressionState;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.faces.controller.LogPanelController;
@@ -37,7 +39,11 @@ import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
+import com.code.aon.ui.common.LongProcessThread;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.util.FinanceEmailUtil;
+import com.code.aon.ui.finance.util.InvoicePrintProcess;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.IMailAccount;
@@ -50,6 +56,10 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoicePrintController.class.getName());
 	
 	private IPriceStrategy priceStrategy;
+	
+	private ProgressionState progressionState;
+	
+	private File zipFile;
 	
 	public IPriceStrategy getPriceStrategy() {
 		if (priceStrategy == null) {
@@ -84,7 +94,13 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 		}		
 	}	
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")	
+	public List<Integer> getInvoiceIds() throws ManagerBeanException {
+		String idAlias = getManagerBean().getFieldName(IEntityAlias.INVOICE_ID);
+		ProjectionList pl = new ProjectionList(Projection.property(idAlias));
+		return getManagerBean().getList(pl, getCriteria());		
+	}
+	
 	public void onSendInvoicesByEmail( ActionEvent event ) {
 		LogPanelController logger = LogPanelController.getInstance();		
 		InvoiceController controller = (InvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
@@ -97,9 +113,7 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 		try {
 			emailUtil.changeMailAccount(account);
 			emailUtil.setNumberOfMessagesPerTransport(10);
-    		String idAlias = getManagerBean().getFieldName(IEntityAlias.INVOICE_ID);
-    		ProjectionList pl = new ProjectionList(Projection.property(idAlias));
-    		List<Integer> ids = getManagerBean().getList(pl, getCriteria());
+    		List<Integer> ids = getInvoiceIds();
     		for( int i = 0; i < ids.size(); i++ ) {
 				if ( logger.isActivePoll() ) {
 	    			Invoice invoice = (Invoice) getManagerBean().get(ids.get(i));
@@ -119,7 +133,11 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 		}
 	}	
 	
-    private File getZipFile() throws IOException, ManagerBeanException {
+	public String getName( Invoice invoice, MimeType type ) {
+		return getDescription(invoice) + "(" + invoice.getId() + ")." + type.getExtension();
+	}
+	
+    private File getFacturaeZipFile() throws IOException, ManagerBeanException {
     	InvoiceController controller = (InvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
     	File file = File.createTempFile( "invoices", "." + MimeType.MIME_ZIP.getExtension());
 		OutputStream fileOut = new BufferedOutputStream( new FileOutputStream(file) );
@@ -129,7 +147,7 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 			IAttachment attach = controller.getInvoiceFacturae(invoice);
 			if ( (attach != null) && (!ArrayUtils.isEmpty(attach.getData())) ) {
 				MimeType type = FACeUtil.isDefined(invoice) ? MimeType.MIME_XSIG : MimeType.MIME_XML;
-				String name = controller.getDescription(invoice) + "." + type.getExtension(); 
+				String name = getName(invoice, type); 
 	            zipOut.putNextEntry(new ZipEntry(name));
 	            zipOut.write(attach.getData());
 	        	zipOut.closeEntry();				
@@ -139,21 +157,79 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 		return file;
     }
 	
-    public void downloadInvoiceZip( ActionEvent event ) {
+    public void onDownloadFacturaeZip( ActionEvent event ) {
     	File zipFile = null;
-    	InputStream in = null;
 		try {    	
-	    	zipFile = getZipFile();
-	    	in = new BufferedInputStream(new FileInputStream(zipFile));
-	        DownloadUtil.downloadAttachment("invoices.zip", MimeType.MIME_ZIP, in, zipFile.length() );
+	    	zipFile = getFacturaeZipFile();
+	    	downloadZip(zipFile);
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th);
 			AonUtil.addErrorMessage(th.getMessage());
 			throw new AbortProcessingException(th.getMessage(), th);
 		} finally {
-			IOUtils.closeQuietly(in);
 			FileUtils.deleteQuietly(zipFile);
 		}
     }
+
+    private void downloadZip( File zipFile ) throws FileNotFoundException {
+    	InputStream in = null;
+		try {    	
+	    	in = new BufferedInputStream(new FileInputStream(zipFile));
+	        DownloadUtil.downloadAttachment("invoices.zip", MimeType.MIME_ZIP, in, zipFile.length() );
+		} finally {
+			IOUtils.closeQuietly(in);
+		}    	
+    }
+    
+	@Override
+	public void onEditSearch(ActionEvent event) {
+		super.onEditSearch(event);
+		setProgressionState(new ProgressionState());
+	}
+
+	public void onStartInvoicesZip(ActionEvent event) {
+		getProgressionState().start();
+		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		String report = companyController.getInvoicePrintTemplateValue();
+		InvoicePrintProcess ipp = new InvoicePrintProcess(this, report);
+		LongProcessThread thread = new LongProcessThread(ipp); 
+		thread.start();				
+	}
+
+	public void onDownloadInvoicesZip(ActionEvent event) {
+		if ( getProgressionState().isFinish() ) {
+			if ( getZipFile() != null ) {
+				try {    	
+			    	downloadZip(getZipFile());
+				} catch (Throwable th) {
+					AonUtil.addErrorMessage(th.getMessage());
+					throw new AbortProcessingException(th.getMessage(), th);
+				} finally {
+					FileUtils.deleteQuietly(getZipFile());
+				}
+			}
+		}
+		getProgressionState().finish();
+	}
 	
+	public void onClosePanel(ActionEvent event) {
+		getProgressionState().finish();
+	}	
+	
+	public ProgressionState getProgressionState() {
+		return progressionState;
+	}
+
+	public void setProgressionState(ProgressionState progressionState) {
+		this.progressionState = progressionState;
+	}
+
+	public File getZipFile() {
+		return zipFile;
+	}
+
+	public void setZipFile(File zipFile) {
+		this.zipFile = zipFile;
+	}
+    
 }

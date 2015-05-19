@@ -22,8 +22,6 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.registry.RecordData;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.CompanySaleInvoiceFooterController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 
 public class InvoiceReportScriptlet extends JRDefaultScriptlet implements Serializable {
@@ -34,13 +32,18 @@ public class InvoiceReportScriptlet extends JRDefaultScriptlet implements Serial
 	
 	private final String FIELD_ID = "id";
 	
+	private final String COMPANY_CONTROLLER = "companyController";
+	
+	private final String INVOICE_FOOTER_TEXT = "invoiceFooterText";
 	
 	private CompanyController getCompanyController(){
-		return (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-	}
-
-	private CompanySaleInvoiceFooterController getCompanySaleInvoiceFooterController(){
-		return (CompanySaleInvoiceFooterController) AonUtil.getRegisteredBean("companySaleInvoiceFooter");
+		Object controller = null;
+		try {
+			controller = getParameterValue(COMPANY_CONTROLLER);
+		} catch (JRScriptletException e) {
+			LOGGER.error("Error getting company controller");
+		}
+		return (CompanyController) controller;
 	}
 	
 	public InputStream getLogoFile(){
@@ -98,7 +101,12 @@ public class InvoiceReportScriptlet extends JRDefaultScriptlet implements Serial
 	}
 	
 	public String getInvoiceFooterText() {
-		return getCompanySaleInvoiceFooterController().getText();
+		try {
+			return (String) getParameterValue(INVOICE_FOOTER_TEXT);
+		} catch (JRScriptletException e) {
+			LOGGER.error( e.getMessage(), e);
+		}
+		return null;
 	}
 	
 	public boolean isPrintDiscountPriceApplied() {

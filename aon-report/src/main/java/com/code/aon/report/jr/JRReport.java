@@ -486,6 +486,10 @@ public class JRReport {
 		this.dynParams = dynParams;
 	}
 
+	public Map<String, Object> getCustomParams() {
+		return customParams;
+	}
+
 	public void setCustomParams(Map<String, Object> customParams) {
 		this.customParams = customParams;
 	}

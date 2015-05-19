@@ -1476,4 +1476,8 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		return super.getPojoShortName();
 	}
 
+	public static CompanyController getCompanyController() {
+		return (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);		
+	}
+	
 }

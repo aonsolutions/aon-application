@@ -62,6 +62,12 @@ public class ReportManager {
 	private String reportKey;
 
 	private ICollectionProvider collectionProvider;
+	
+	private ICriteriaProvider criteriaProvider;
+	
+	private ResourceBundle bundle;
+	
+	private Locale locale;
 
 	/**
 	 * Returns the report identifier.
@@ -118,6 +124,14 @@ public class ReportManager {
 	 */
 	public void setCollectionProvider(ICollectionProvider collectionProvider) {
 		this.collectionProvider = collectionProvider;
+	}
+	
+	public ICriteriaProvider getCriteriaProvider() {
+		return criteriaProvider;
+	}
+
+	public void setCriteriaProvider(ICriteriaProvider criteriaProvider) {
+		this.criteriaProvider = criteriaProvider;
 	}
 
 	/**
@@ -222,9 +236,10 @@ public class ReportManager {
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
 		HibernateUtil.setCloseSession(false);
 		HibernateUtil.setBeginTransaction(false);
+		JRReport report = null;
 		try {
 			ensureOutputFormat();
-			JRReport report = JRReportFactory.getJRReport(reportKey);
+			report = JRReportFactory.getJRReport(reportKey);
 			resolveCustomParameters(report);
 			Criteria criteria = getCriteria(report);
 			Collection collection = getCollection(report);
@@ -243,7 +258,6 @@ public class ReportManager {
 			}
 
 			String out = report.run(outputFormat, os, getBundle(), getLocale(), criteria, collection, params);
-			report.setCustomParams(null);
 			HibernateUtil.commitTransaction(sessionFactoryName);
 			HibernateUtil.closeSession(sessionFactoryName);
 			if (out == null) {
@@ -264,6 +278,9 @@ public class ReportManager {
 			}
 			throw new ReportException(t.getMessage(), t);
 		} finally {
+			if ( report != null ) {
+				report.setCustomParams(null);	
+			}			
 			if (initTransState != HibernateUtil.mustBeginTransaction()) {
 				HibernateUtil.setBeginTransaction(initTransState);
 			}
@@ -321,14 +338,21 @@ public class ReportManager {
 	 * 
 	 * @return The ResourceBundle needed for the report.
 	 */
-	private ResourceBundle getBundle() {
-		FacesContext ctx = FacesContext.getCurrentInstance();
-		Application app = ctx.getApplication();
-		String baseName = app.getMessageBundle();
-		ResourceBundle bundle = ResourceBundle.getBundle(baseName, getLocale());
-		return bundle;
+	public ResourceBundle getBundle() {
+		if ( this.bundle == null ) {
+			FacesContext ctx = FacesContext.getCurrentInstance();
+			Application app = ctx.getApplication();
+			String baseName = app.getMessageBundle();
+			ResourceBundle bundle = ResourceBundle.getBundle(baseName, getLocale());
+			return bundle;
+		}
+		return this.bundle;
 	}
 	
+	public void setBundle(ResourceBundle bundle) {
+		this.bundle = bundle;
+	}
+
 	/**
 	 * Obtains the Locale needed for the report. <br>
 	 * <code>
@@ -339,12 +363,41 @@ public class ReportManager {
 	 * 
 	 * @return The Locale needed for the report.
 	 */
-	private Locale getLocale() {
-		FacesContext ctx = FacesContext.getCurrentInstance();
-		Locale locale = ctx.getViewRoot().getLocale();
-		return locale;
+	public Locale getLocale() {
+		if ( this.locale == null ) {
+			return AonUtil.getCurrentLocale();
+		}
+		return this.locale;
+	}
+	
+	public void setLocale(Locale locale) {
+		this.locale = locale;
 	}
 
+	private ICriteriaProvider getCriteriaProvider(JRReport report) throws ReportException {
+		ReportConfig config = report.getReportConfig();
+		String provider = config.getCriteriaProvider();
+		try {
+			if ( provider != null ) { 
+				// Criteria provider is EL expression
+				if (provider.startsWith("#")) {
+					String providerName = strip(provider);
+					return (ICriteriaProvider) AonUtil.getRegisteredBean(providerName);
+				}
+				// Criteria provider is a class.
+				Class<?> criteriaProviderClass = Class.forName(provider);
+				return (ICriteriaProvider) criteriaProviderClass.newInstance();
+			}
+			return null;
+		} catch (ClassNotFoundException e) {
+			throw new ReportException(e.getMessage(), e);
+		} catch (InstantiationException e) {
+			throw new ReportException(e.getMessage(), e);
+		} catch (IllegalAccessException e) {
+			throw new ReportException(e.getMessage(), e);
+		}
+	}
+	
 	/**
 	 * Obtains the <code>com.aon.ql.Criteria</code> that will be passed to
 	 * method <code>com.code.aon.common.IFinderBean.getList()</code>. If the
@@ -361,32 +414,16 @@ public class ReportManager {
 	 *             If an error ocurred.
 	 */
 	private Criteria getCriteria(JRReport report) throws ReportException {
-		ReportConfig config = report.getReportConfig();
-		String provider = config.getCriteriaProvider();
+		ICriteriaProvider criteriaProvider = getCriteriaProvider();
 		try {
-			if (provider != null) { // Criteria provider is EL expression ina a
-				// faces context.
-				if (provider.startsWith("#")) {
-					String providerName = strip(provider);
-					ICriteriaProvider crpr = (ICriteriaProvider) AonUtil
-							.getRegisteredBean(providerName);
-					return crpr.getCriteria();
-				}
-				// Criteria provider is a class.
-				Class<?> criteriaProviderClass = Class.forName(provider);
-				ICriteriaProvider criteriaProvider = (ICriteriaProvider) criteriaProviderClass
-						.newInstance();
+			if ( criteriaProvider == null ) {
+				criteriaProvider = getCriteriaProvider(report);
+			}
+			if ( criteriaProvider != null ) {
 				return criteriaProvider.getCriteria();
-
 			}
 			return null;
 		} catch (ManagerBeanException e) {
-			throw new ReportException(e.getMessage(), e);
-		} catch (ClassNotFoundException e) {
-			throw new ReportException(e.getMessage(), e);
-		} catch (InstantiationException e) {
-			throw new ReportException(e.getMessage(), e);
-		} catch (IllegalAccessException e) {
 			throw new ReportException(e.getMessage(), e);
 		}
 	}
@@ -446,30 +483,32 @@ public class ReportManager {
 	}
 
 	private void resolveCustomParameters(JRReport report) {
-		ReportConfig config = report.getReportConfig();
-		if (config.getParams() != null) {
-			LOGGER.debug("Passing Custom Parameters");
-			Map<String, Object> map = new HashMap<String, Object>();
-			Iterator<String> iter = config.getParams().keySet().iterator();
-			while (iter.hasNext()) {
-				String key = iter.next();
-				String value = (String) config.getParams().get(key);
-				if (value.startsWith("#")) {
-					String controllerName = value.substring(value.indexOf("{") + 1, value
-							.indexOf("."));
-					String methodName = value.substring(value.indexOf(".") + 1, value.indexOf("}"));
-					Object o = AonUtil.getRegisteredBean(controllerName);
-					try {
-						Method m = o.getClass().getMethod(methodName, new Class[0]);
-						Object obj = m.invoke(o, new Object[0]);
-						map.put(key, obj);
-					} catch (Throwable th) {
-						LOGGER.warn("Error resolving expression {}.",value);
-						LOGGER.warn(th.getMessage(), th);								
+		if ( (report.getCustomParams() == null) || report.getCustomParams().isEmpty() ) {
+			ReportConfig config = report.getReportConfig();
+			if (config.getParams() != null) {
+				LOGGER.debug("Passing Custom Parameters");
+				Map<String, Object> map = new HashMap<String, Object>();
+				Iterator<String> iter = config.getParams().keySet().iterator();
+				while (iter.hasNext()) {
+					String key = iter.next();
+					String value = (String) config.getParams().get(key);
+					if (value.startsWith("#")) {
+						String controllerName = value.substring(value.indexOf("{") + 1, value
+								.indexOf("."));
+						String methodName = value.substring(value.indexOf(".") + 1, value.indexOf("}"));
+						Object o = AonUtil.getRegisteredBean(controllerName);
+						try {
+							Method m = o.getClass().getMethod(methodName, new Class[0]);
+							Object obj = m.invoke(o, new Object[0]);
+							map.put(key, obj);
+						} catch (Throwable th) {
+							LOGGER.warn("Error resolving expression {}.",value);
+							LOGGER.warn(th.getMessage(), th);								
+						}
 					}
 				}
-			}
-			report.setCustomParams(map);
+				report.setCustomParams(map);
+			}			
 		}
 	}
 
@@ -482,4 +521,20 @@ public class ReportManager {
 		return expression;
 	}
 
+	public ICriteriaProvider resolveCriteriaProvider() throws ReportException {
+		JRReport report = JRReportFactory.getJRReport(reportKey);
+		return getCriteriaProvider(report);		
+	}
+	
+	public Map<String, Object> resolveCustomParams() throws ReportException {
+		JRReport report = JRReportFactory.getJRReport(reportKey);
+		resolveCustomParameters(report);		
+		return report.getCustomParams();
+	}
+	
+	public void setCustomParams( Map<String, Object> map) throws ReportException {
+		JRReport report = JRReportFactory.getJRReport(reportKey);
+		report.setCustomParams(map);		
+	}
+	
 }

@@ -11,7 +11,8 @@
 	<aon:methodParam name="progressBarStartAction" default=""/>
 	<aon:methodParam name="progressBarCloseAction" default=""/>
 	<aon:valueParam name="progressBarCompleteMessage"
-		default="#{bundle.marketing_action_addTargets_finish }"/>
+		default="#{bundle.marketing_action_addTargets_finish}"/>
+	<aon:valueParam name="progressBarSkipCloseButton" default="#{false}"/>
 
 	<aon:form id="progressBarForm">
 		<rich:modalPanel id="progressBarPanel" minWidth="325" autosized="true"
@@ -60,10 +61,13 @@
 										</aon:if>
 									</aon:div>
 									<aon:div styleClass="aon-margin-top">
-										<aon:commandButton
-											action="#{progressBarCloseAction}"
-											actionListener="#{progressBarCloseActionListener}"
-											value="#{bundle.aon_close}" />
+										<c:if test="#{!progressBarSkipCloseButton}">
+											<aon:commandButton
+												action="#{progressBarCloseAction}"
+												actionListener="#{progressBarCloseActionListener}"
+												value="#{bundle.aon_close}" />
+										</c:if>
+										<ui:insert name="progressBarFinishContent"/>											
 									</aon:div>
 								</aon:div>
 							</f:facet>

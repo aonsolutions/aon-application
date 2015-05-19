@@ -140,6 +140,7 @@
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 			<param id="pmsInvoicePrinter" value="#{pmsInvoicePrinter.getInstance}" />
 			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
+			<param id="companyController" value="#{saleInvoice.getCompanyController}" />
 		</params>
 	</report>
 	
@@ -156,6 +157,7 @@
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 			<param id="pmsInvoicePrinter" value="#{pmsInvoicePrinter.getInstance}" />
 			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
+			<param id="companyController" value="#{saleInvoice.getCompanyController}" />
 		</params>
 	</report>
 	

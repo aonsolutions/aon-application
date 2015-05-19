@@ -16,8 +16,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.sales.Sales;
 import com.code.aon.ui.common.ICommonMessages;
-import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
@@ -30,6 +28,8 @@ public class InvoiceDetailReportScriptlet extends JRDefaultScriptlet implements 
 	
 	private final String VARIABLE_LINE_DESCRIPTION = "lineDescription";
 	private final String FIELD_ID = "id";
+	private final String PRINT_REFERENCE_CODE = "printReferenceCode";
+	private final String PRINT_PRODUCT_CODE = "printProductCode";
 
 	
 	@Override
@@ -42,7 +42,19 @@ public class InvoiceDetailReportScriptlet extends JRDefaultScriptlet implements 
 			LOGGER.error(msg,e);
 		}
 	}
+
+	private boolean getParameterAsBoolean( String param ) throws JRScriptletException {
+		Boolean value = (Boolean) getParameterValue(param, true);
+		return ( value != null) ? value.booleanValue() : false;		
+	}
 	
+	private boolean isPrintProductCode() throws JRScriptletException {
+		return getParameterAsBoolean(PRINT_PRODUCT_CODE);
+	}
+	
+	private boolean isPrintReferenceCode() throws JRScriptletException {
+		return getParameterAsBoolean(PRINT_REFERENCE_CODE);
+	}
 		
 	private void fillDetailLineDescriptionCode() throws JRScriptletException{
 		StringBuilder builder = new StringBuilder();
@@ -50,19 +62,19 @@ public class InvoiceDetailReportScriptlet extends JRDefaultScriptlet implements 
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 			InvoiceDetail invoiceDetail = (InvoiceDetail) invoiceDetailBean.get((Integer)super.getFieldValue(FIELD_ID));
 			
-			if(getCompanyController().isPrintProductCode() && invoiceDetail.getItem().getProduct()!=null){
+			if(isPrintProductCode() && invoiceDetail.getItem().getProduct()!=null){
 				builder.append(AonUtil.getMessage(ICommonMessages.ID)).append(": ");
 				builder.append(invoiceDetail.getItem().getProduct().getCode());
 			}
 			
 			String referenceCode = obtainReferenceCode(invoiceDetail);
-			if(getCompanyController().isPrintReferenceCode() && StringUtils.isNotBlank(referenceCode)){
+			if(isPrintReferenceCode() && StringUtils.isNotBlank(referenceCode)){
 				builder.append(builder.length()>0?" - ":"");
 				builder.append(referenceCode);
 			}
 			
-			if((getCompanyController().isPrintProductCode() && invoiceDetail.getItem().getProduct()!=null)
-				|| (getCompanyController().isPrintReferenceCode() && StringUtils.isNotBlank(referenceCode))){
+			if((isPrintProductCode() && invoiceDetail.getItem().getProduct()!=null)
+				|| (isPrintReferenceCode() && StringUtils.isNotBlank(referenceCode))){
 				builder.append("\n  ");
 				builder.append(invoiceDetail.getDescription().replace("\n", "\n  "));
 			} else {
@@ -108,9 +120,4 @@ public class InvoiceDetailReportScriptlet extends JRDefaultScriptlet implements 
 		return reference.toString();
 	}
 	
-	private CompanyController getCompanyController(){
-		return (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-	}
-	
-
 }
