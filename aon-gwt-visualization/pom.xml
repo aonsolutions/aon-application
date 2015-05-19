@@ -32,6 +32,7 @@
 			<resource>
 				<directory>src/main/resources</directory>
 				<includes>
+					<include>**/client/**</include>
 					<include>**/*.gwt.xml</include>
 				</includes>
 			</resource>
