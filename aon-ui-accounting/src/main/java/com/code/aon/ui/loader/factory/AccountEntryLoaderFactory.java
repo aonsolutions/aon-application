@@ -27,6 +27,7 @@ public class AccountEntryLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		 new Column(ASI,"id"			,0,6	,true	,null)
 		,new Column(ASI,"diaro"			,0,6	,true	,null)
 		,new Column(ASI,"fecha"			,3,10	,true	,null)
+		,new Column(ASI,"tipoAsiento"	,0,1	,false  ,new int[] {0,1,2,3})
 		,new Column(ASI,"comentario"	,2,256	,false	,null)
 	};
 	

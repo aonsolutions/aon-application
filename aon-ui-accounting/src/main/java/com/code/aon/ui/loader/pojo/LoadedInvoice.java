@@ -229,15 +229,15 @@ public class LoadedInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 		accountEntry.setFecha(getFechaFactura());
 		InvoiceType type = InvoiceType.values()[getTipo()];
 		if (type == InvoiceType.SALES) {
-			accountEntry.setEntryType(AccountEntryType.SALES_INVOICE);	
+			accountEntry.setTipoAsiento(AccountEntryType.SALES_INVOICE.ordinal());	
 		} else if (type == InvoiceType.PURCHASE) {
-			accountEntry.setEntryType(AccountEntryType.PURCHASE_INVOICE);
+			accountEntry.setTipoAsiento(AccountEntryType.PURCHASE_INVOICE.ordinal());
 		} else if (type == InvoiceType.EXPENSES) {
-			accountEntry.setEntryType(AccountEntryType.EXPENSE_INVOICE);
+			accountEntry.setTipoAsiento(AccountEntryType.EXPENSE_INVOICE.ordinal());
 		} else if (type == InvoiceType.UNDEDUCTIBLE) {
-			accountEntry.setEntryType(AccountEntryType.EXPENSE_INVOICE);
+			accountEntry.setTipoAsiento(AccountEntryType.EXPENSE_INVOICE.ordinal());
 		} else {
-			accountEntry.setEntryType(AccountEntryType.MANUAL);
+			accountEntry.setTipoAsiento(AccountEntryType.MANUAL.ordinal());
 		}
 		return accountEntry;  
 	}

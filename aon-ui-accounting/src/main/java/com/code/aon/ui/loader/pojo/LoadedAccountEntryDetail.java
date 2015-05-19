@@ -3,12 +3,14 @@ package com.code.aon.ui.loader.pojo;
 import java.util.Date;
 
 import com.code.aon.accounting.AccountEntry;
+import com.code.aon.accounting.enumeration.AccountEntryType;
 
 public class LoadedAccountEntryDetail implements ILoadedPojo{
 
 	private Integer id;
 	private Integer asiento;
 	private Date fechaAsiento;
+	private Integer tipoAsiento;
 	private String cuenta;
 	private String descripcionCuenta;
 	private String concepto;
@@ -43,6 +45,15 @@ public class LoadedAccountEntryDetail implements ILoadedPojo{
 	}
 	public void setFechaAsiento(Date fechaAsiento) {
 		this.fechaAsiento = fechaAsiento;
+	}
+	public Integer getTipoAsiento() {
+		return tipoAsiento;
+	}
+	public AccountEntryType getEntryType() {
+		return tipoAsiento==null?AccountEntryType.MANUAL:AccountEntryType.values()[tipoAsiento];
+	}
+	public void setTipoAsiento(Integer tipoAsiento) {
+		this.tipoAsiento = tipoAsiento;
 	}
 	public String getCuenta() {
 		return cuenta;
@@ -104,6 +115,7 @@ public class LoadedAccountEntryDetail implements ILoadedPojo{
 		LoadedAccountEntry loaded = new LoadedAccountEntry();
 		loaded.setId(getAsiento());
 		loaded.setFecha(getFechaAsiento());
+		loaded.setTipoAsiento(getTipoAsiento());
 		return loaded;
 	}
 

@@ -29,6 +29,7 @@ public class AccountEntryDetailLoaderFactory implements ILoaderFactory<ILoadedPo
 		 new Column(APU,"id"						,0,6	,false	,null)
 		,new Column(APU,"asiento"					,0,6	,true	,null)
 		,new Column(APU,"fechaAsiento"				,3,10	,true	,null)
+		,new Column(APU,"tipoAsiento"				,0,1	,false  ,new int[] {0,1,2,3})
 		,new Column(APU,"cuenta"					,2,9	,true	,null)
 		,new Column(APU,"descripcionCuenta"			,2,128	,false	,null)
 		,new Column(APU,"concepto"					,2,32	,true	,null)
