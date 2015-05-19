@@ -55,6 +55,7 @@
     	<mapping class="com.code.aon.finance.PosShift"/>
     	<mapping class="com.code.aon.finance.PosShiftCount"/>
     	<mapping class="com.code.aon.geozone.GeoZone"/>
+    	<mapping class="com.code.aon.person.Person"/>
     	<mapping class="com.code.aon.product.Brand"/>
     	<mapping class="com.code.aon.product.CatalogueCategory"/>
     	<mapping class="com.code.aon.product.CatalogueItem"/>
