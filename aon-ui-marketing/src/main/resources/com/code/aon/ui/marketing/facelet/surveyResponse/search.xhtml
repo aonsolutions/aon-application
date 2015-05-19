@@ -28,8 +28,9 @@
 						<ui:param name="lookupTo" value="#{surveyResponseSearch.action}" />
 					</ui:include>	
 					
-					<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{surveyResponseSearch.target}" />
+					<ui:include src="/com/code/aon/ui/registry/facelet/registry/registryLookup.xhtml" >
+						<ui:param name="lookupTo" value="#{surveyResponseSearch.registry}" />
+						<ui:param name="lookupLabel" value="#{bundle.marketing_survey_respondent}" />
 						<ui:param name="skipNewButton" value="#{true}" />
 					</ui:include>					
 					
@@ -42,7 +43,7 @@
 							 
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{surveyLookup}" />
-		<aon:lookupButtonPopup lookup="#{targetLookup}" />
+		<aon:lookupButtonPopup lookup="#{registryLookup}" />
 		<aon:lookupButtonPopup lookup="#{campaignActionLookup}" />
 		<aon:lookupButtonPopup lookup="#{userLookup}" />
 	</ui:define>

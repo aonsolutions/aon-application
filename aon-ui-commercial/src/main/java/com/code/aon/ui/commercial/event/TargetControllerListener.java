@@ -45,7 +45,7 @@ public class TargetControllerListener extends ControllerAdapter implements IComm
 				String message2 = AonUtil.getMessage(ICommonMessages.REFERENCE_ACTION_TARGET);
 				throw new ControllerListenerException(message1 + " " + message2);
 			}
-			if ( FormUtil.hasReferences(SurveyResponse.class, id, IEntityAlias.SURVEY_RESPONSE_TARGET_ID) ) {
+			if ( FormUtil.hasReferences(SurveyResponse.class, id, IEntityAlias.SURVEY_RESPONSE_REGISTRY_ID) ) {
 				String message2 = AonUtil.getMessage(ICommonMessages.REFERENCE_SURVEY_RESPONSE);
 				throw new ControllerListenerException(message1 + " " + message2);
 			}

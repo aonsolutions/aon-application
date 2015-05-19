@@ -1,6 +1,5 @@
 package com.code.aon.ui.marketing.event;
 
-import com.code.aon.commercial.Target;
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -10,6 +9,7 @@ import com.code.aon.marketing.MarketingAction;
 import com.code.aon.marketing.Survey;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.registry.Registry;
 import com.code.aon.ui.form.event.ControllerSearchListener;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -19,7 +19,7 @@ public class SurveyResponseSearchListener extends ControllerSearchListener {
 
 	private Survey survey;
 	
-	private Target target;
+	private Registry registry;
 	
 	private MarketingAction action;
 	
@@ -49,12 +49,12 @@ public class SurveyResponseSearchListener extends ControllerSearchListener {
 		this.action = action;
 	}
 
-	public Target getTarget() {
-		return target;
+	public Registry getRegistry() {
+		return registry;
 	}
 
-	public void setTarget(Target target) {
-		this.target = target;
+	public void setRegistry(Registry registry) {
+		this.registry = registry;
 	}
 
 	@Override
@@ -63,8 +63,8 @@ public class SurveyResponseSearchListener extends ControllerSearchListener {
 		setAction( (MarketingAction) maBean.createNewTo() );
 		IManagerBean surveyBean = BeanManager.getManagerBean(Survey.class);
 		setSurvey( (Survey) surveyBean.createNewTo() );
-		IManagerBean targetBean = BeanManager.getManagerBean(Target.class);
-		setTarget( (Target) targetBean.createNewTo() );
+		IManagerBean registryBean = BeanManager.getManagerBean(Registry.class);
+		setRegistry( (Registry) registryBean.createNewTo() );
 		IManagerBean userBean = BeanManager.getManagerBean(User.class);
 		setUser( (User) userBean.createNewTo() );
 	}
@@ -75,9 +75,9 @@ public class SurveyResponseSearchListener extends ControllerSearchListener {
 			String alias = getFieldName(IEntityAlias.SURVEY_RESPONSE_SURVEY_ID);
 			criteria.addEqualExpression(alias, getSurvey().getId());			
 		}
-		if ( getTarget()!=null && getTarget().getId()!=null ) {
-			String alias = getFieldName(IEntityAlias.SURVEY_RESPONSE_TARGET_ID);
-			criteria.addEqualExpression(alias, getTarget().getId());			
+		if ( getRegistry()!=null && getRegistry().getId()!=null ) {
+			String alias = getFieldName(IEntityAlias.SURVEY_RESPONSE_REGISTRY_ID);
+			criteria.addEqualExpression(alias, getRegistry().getId());			
 		}
 		if ( getAction()!=null && getAction().getId()!=null ) {
 			String alias = getFieldName(IEntityAlias.SURVEY_RESPONSE_ACTION_ID);

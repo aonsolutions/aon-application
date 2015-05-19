@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.23.0
+# Version: 8.23.3
 # Created by: girazu
-# Creation Date: 07/05/2015 16:45
+# Creation Date: 18/05/2015 18:50
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -5981,19 +5981,19 @@ CREATE TABLE `survey_response` (
   `creationDate` datetime NOT NULL COMMENT 'Fecha de la creacion en el sistema de la Respuesta del Cuestionario',
   `response_date` datetime NOT NULL COMMENT 'Fecha de la Respuesta del Cuestionario',
   `survey` int(4) NOT NULL COMMENT 'Identificador del Cuestionario',
-  `target` int(4) NOT NULL COMMENT 'Identificador del Cliente Potencial',
+  `registry` int(4) NOT NULL COMMENT 'Identificador del Registro que responde al Cuestionario',
   `user` int(4) NOT NULL COMMENT 'Identificador del Usuario',
   `campaign_action` int(4) default NULL COMMENT 'Identificador de la Accion de la Campaña',
   PRIMARY KEY  (`id`),
   KEY `IDX_SURVEY_RESPONSE_MK_ACTION` (`campaign_action`),
   KEY `IDX_SURVEY_RESPONSE_SURVEY` (`survey`),
-  KEY `IDX_SURVEY_RESPONSE_TARGET` (`target`),
   KEY `IDX_SURVEY_RESPONSE_USER` (`user`),
   KEY `IDX_SURVEY_RESPONSE_DOMAIN` (`domain`),
+  KEY `IDX_SURVEY_RESPONSE_REGISTRY` (`registry`),
   CONSTRAINT `FK_SURVEY_RESPONSE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_SURVEY_RESPONSE_MK_ACTION` FOREIGN KEY (`campaign_action`) REFERENCES `mk_action` (`id`),
+  CONSTRAINT `FK_SURVEY_RESPONSE_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `FK_SURVEY_RESPONSE_SURVEY` FOREIGN KEY (`survey`) REFERENCES `survey` (`id`),
-  CONSTRAINT `FK_SURVEY_RESPONSE_TARGET` FOREIGN KEY (`target`) REFERENCES `target` (`registry`),
   CONSTRAINT `FK_SURVEY_RESPONSE_USER` FOREIGN KEY (`user`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Respuestas de Cuestionarios';
 
@@ -7942,7 +7942,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.23.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.23.3');
 
 COMMIT;
 

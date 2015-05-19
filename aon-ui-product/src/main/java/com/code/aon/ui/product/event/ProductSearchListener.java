@@ -35,7 +35,6 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
-
 	private ProductStatus[] statuses;
 	private ProductStatus[] itemStatuses;
 	private ProductType[] types;
@@ -47,8 +46,6 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 	private Tag[] tags;
 	private Supplier supplier;
 	private String supplierCode;
-
-
 
 	public ProductStatus[] getStatuses() {
 		return statuses;
@@ -68,7 +65,6 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 		this.itemStatuses = itemStatuses;
 		
 	}
-	
 
 	public ProductType[] getTypes() {
 		return types;
@@ -263,4 +259,5 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 	private ConfigCollectionsController getCollectionsController() {
 		return (ConfigCollectionsController)AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
 	}
+
 }

@@ -155,9 +155,9 @@ public class MarketingActionReport implements Serializable {
 			int rowIdx = 2;
 			for(QuestionValueReport qvr: getQuestionValueReport()){
 				row = sheet.createRow(rowIdx);
-				row.createCell(0).setCellValue(qvr.getSurveyResponse().getTarget().getId());
-				row.createCell(1).setCellValue(qvr.getSurveyResponse().getTarget().getRegistry().getDocument());
-				row.createCell(2).setCellValue(qvr.getSurveyResponse().getTarget().getRegistry().getFullName());
+				row.createCell(0).setCellValue(qvr.getSurveyResponse().getRegistry().getId());
+				row.createCell(1).setCellValue(qvr.getSurveyResponse().getRegistry().getDocument());
+				row.createCell(2).setCellValue(qvr.getSurveyResponse().getRegistry().getFullName());
 				row.createCell(3).setCellValue(qvr.getActionTarget().getComments());
 				row.createCell(4).setCellValue(qvr.getSurveyResponse().getUser().getName());
 				row.createCell(5).setCellValue(qvr.getStatus());
@@ -239,7 +239,7 @@ public class MarketingActionReport implements Serializable {
 		IManagerBean bean = BeanManager.getManagerBean(SurveyResponseDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression("SurveyResponseDetail.surveyResponse.action.id", action.getId());
-		criteria.addOrder("SurveyResponseDetail.surveyResponse.target.registry.name");
+		criteria.addOrder("SurveyResponseDetail.surveyResponse.registry.name");
 		
 		setQuestionValueReport(new LinkedList<QuestionValueReport>());
 		
@@ -249,7 +249,7 @@ public class MarketingActionReport implements Serializable {
 		IManagerBean atBean = BeanManager.getManagerBean(ActionTarget.class);
 		for( ITransferObject to : bean.getList(criteria) ) {
 			SurveyResponseDetail srd = (SurveyResponseDetail) to;
-			Target target = srd.getSurveyResponse().getTarget();
+			Target target = (Target)BeanManager.getManagerBean(Target.class).get(srd.getSurveyResponse().getRegistry().getId());
 			if ( at == null || !at.getTarget().equals(target) || !srd.getSurveyResponse().equals(sr) ) {
 				Criteria _criteria = new Criteria();
 				_criteria.addEqualExpression(atBean.getFieldName(IEntityAlias.ACTION_TARGET_TARGET_ID), target.getId());

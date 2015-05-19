@@ -371,7 +371,7 @@ public class CommunicationCenterController extends DataScrollerState implements 
 			this.surveyResponse.setAction( this.action );
 		}
 		this.surveyResponse.setSurvey( this.survey );
-		this.surveyResponse.setTarget( this.target );
+		this.surveyResponse.setRegistry( this.target.getRegistry() );
 		this.surveyResponse.setCreationDate( new Date() );
 		this.surveyResponse.setDate( this.date );
 		this.surveyResponse.setUser( user );

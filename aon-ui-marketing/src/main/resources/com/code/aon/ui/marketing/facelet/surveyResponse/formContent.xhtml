@@ -25,10 +25,10 @@
 					value="#{surveyResponse.to.action.id} (#{surveyResponse.to.action.campaign.description})" />
 			</aon:if>
 				
-			<aon:outputLabel for="SurveyResponse_target_id"
-				value="#{bundle.aon_target}" />
-			<aon:outputText id="SurveyResponse_target_id"
-				value="#{surveyResponse.to.target.registry.fullName}" />						
+			<aon:outputLabel for="SurveyResponse_registry_id"
+				value="#{bundle.marketing_survey_respondent}" />
+			<aon:outputText id="SurveyResponse_registry_id"
+				value="#{surveyResponse.to.registry.fullName}" />						
 
 			<aon:outputLabel for="SurveyResponse_user_id"
 				value="#{bundle.aon_login_user}" />
