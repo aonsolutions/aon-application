@@ -33,7 +33,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Stock_afterInventory"
-						value="#{bundle.warehouse_inventory_after}" />
+						value="#{bundle.warehouse_inventory_final}" />
 					<aon:selectOneMenu id="Stock_afterInventory"
 						reRender="Stock_beforeInventory,reportButtons"
 						actionListener="#{controller.onInventoryAfterChanged}"
@@ -43,7 +43,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Stock_beforeInventory"
-						value="#{bundle.warehouse_inventory_before}" />
+						value="#{bundle.warehouse_inventory_initial}" />
 					<aon:selectOneMenu id="Stock_beforeInventory"
 						reRender="Stock_afterInventory,reportButtons"
 						actionListener="#{controller.onInventoryBeforeChanged}"
@@ -55,8 +55,7 @@
 					<aon:outputText value="" />
 					<aon:div id="reportButtons">
 				
-						<aon:div styleClass="aon-search-commandButton-left" style="display: inline-block;">
-							<aon:div styleClass="aon-search-commandButton-right">
+						<aon:div styleClass="aon-search-lookup-button" style="display: inline-block;">
 								<aon:htmlCommandLink id="SearchButton-pdf" 
 									disabled="#{(controller.inventoryBefore==null) or (controller.inventoryAfter==null)}"
 									value="#{bundle.aon_listing}"
@@ -69,23 +68,17 @@
 									<f:setPropertyActionListener
 										target="#{controller.printHeader}" value="#{true}" />									
 								</aon:htmlCommandLink>
-							</aon:div>
 						</aon:div>
-						<aon:div styleClass="aon-search-commandButton-left" style="display: inline-block;margin-left:0.7em;">
-							<aon:div styleClass="aon-search-commandButton-right">
-								<aon:htmlCommandLink id="SearchButton-excel" 
+						<ui:include
+							src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
+						<aon:div styleClass="aon-search-lookup-button" style="display: inline-block;margin-left:-2em;">
+								<aon:commandLink id="SearchButton-excel" 
 									disabled="#{(controller.inventoryBefore==null) or (controller.inventoryAfter==null)}"
 									value="#{bundle.aon_listing}"
-									action="#{report.onExecute}"
-									target="_blank"
+									onclick="consumptionx(#{controller.warehouse.id},#{controller.inventoryBefore.inventoryDate.time}, #{controller.inventoryAfter.inventoryDate.time},#{controller.inventoryBefore.id},#{controller.inventoryAfter.id})"
 									accesskey="#{bundle.aon_key_search}"
-									styleClass="aon-icon-commandButton aon-icon-excel">
-									<f:param name="reportKey" value="consumptionControl" />
-									<f:param name="outputFormat" value="MS Excel" />
-									<f:setPropertyActionListener
-										target="#{controller.printHeader}" value="#{false}" />									
-								</aon:htmlCommandLink>
-							</aon:div>
+									styleClass="aon-icon-commandButton aon-icon-excel">								
+								</aon:commandLink>
 						</aon:div>
 					</aon:div>
 

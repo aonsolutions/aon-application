@@ -1,0 +1,142 @@
+package com.esferalia.aon.gwt.template.shared;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public class ConsumptionItem implements IsSerializable{
+	
+	Integer itemId;
+	String productCode;
+	String productName;
+	
+	Double quantity;
+	String discount;
+	Double price;
+	
+	Double initialQuantity;
+	Double finalQuantity;
+	
+	Double sales;
+	Double purchases;
+	Double transfersPlus;
+	Double transfersMinus;
+	Double consumption;
+	Double itemPrice;
+	Double totalPrice;
+	
+	String detail;
+	String detail2;
+	String detail3;
+	
+	
+	
+	public Integer getItemId() {
+		return itemId;
+	}
+	public void setItemId(Integer itemId) {
+		this.itemId = itemId;
+	}
+	public String getProductCode() {
+		return productCode;
+	}
+	public void setProductCode(String productCode) {
+		this.productCode = productCode;
+	}
+	public String getProductName() {
+		return productName;
+	}
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+	public Double getQuantity() {
+		return quantity;
+	}
+	public void setQuantity(Double quantity) {
+		this.quantity = quantity;
+	}
+	public String getDiscount() {
+		return discount;
+	}
+	public void setDiscount(String discount) {
+		this.discount = discount;
+	}
+	public Double getPrice() {
+		return price;
+	}
+	public void setPrice(Double price) {
+		this.price = price;
+	}
+	public Double getSales() {
+		return sales;
+	}
+	public void setSales(Double sales) {
+		this.sales = sales;
+	}
+	public Double getPurchases() {
+		return purchases;
+	}
+	public void setPurchases(Double purchases) {
+		this.purchases = purchases;
+	}
+	public Double getTransfersPlus() {
+		return transfersPlus;
+	}
+	public void setTransfersPlus(Double transfersPlus) {
+		this.transfersPlus = transfersPlus;
+	}
+	public Double getTransfersMinus() {
+		return transfersMinus;
+	}
+	public void setTransfersMinus(Double transfersMinus) {
+		this.transfersMinus = transfersMinus;
+	}
+	public Double getConsumption() {
+		return consumption;
+	}
+	public void setConsumption(Double consumption) {
+		this.consumption = consumption;
+	}
+	public Double getItemPrice() {
+		return itemPrice;
+	}
+	public void setItemPrice(Double itemPrice) {
+		this.itemPrice = itemPrice;
+	}
+	public Double getTotalPrice() {
+		return totalPrice;
+	}
+	public void setTotalPrice(Double totalPrice) {
+		this.totalPrice = totalPrice;
+	}
+	public String getDetail() {
+		return detail;
+	}
+	public void setDetail(String detail) {
+		this.detail = detail;
+	}
+	public String getDetail2() {
+		return detail2;
+	}
+	public void setDetail2(String detail2) {
+		this.detail2 = detail2;
+	}
+	public String getDetail3() {
+		return detail3;
+	}
+	public void setDetail3(String detail3) {
+		this.detail3 = detail3;
+	}
+	public Double getInitialQuantity() {
+		return initialQuantity;
+	}
+	public void setInitialQuantity(Double initialQuantity) {
+		this.initialQuantity = initialQuantity;
+	}
+	public Double getFinalQuantity() {
+		return finalQuantity;
+	}
+	public void setFinalQuantity(Double finalQuantity) {
+		this.finalQuantity = finalQuantity;
+	}
+	
+	
+}

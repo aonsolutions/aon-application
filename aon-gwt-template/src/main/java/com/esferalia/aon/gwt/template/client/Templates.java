@@ -238,6 +238,7 @@ public class Templates extends Composite implements EntryPoint {
 			exportCataloguex(this);
 			exportProposal(this);
 			exportProposalx(this);	
+			exportConsumptionx(this);
 		}
 	}
 	
@@ -1508,6 +1509,83 @@ public class Templates extends Composite implements EntryPoint {
 		popup.setGlassEnabled(true);
 		popup.show();
 	}
+	String warehouseAux, initialDateAux, finalDateAux, initialIdAux, finalIdAux;
+	private void exportConsumption(String warehouseId, String initialDate, String finalDate, String initialId, String finalId){
+		warehouseAux = warehouseId;
+		initialDateAux = initialDate;
+		finalDateAux = finalDate;
+		initialIdAux = initialId;
+		finalIdAux = finalId;
+		
+		Integer size = 0;
+		TemplateInfo templateInfo = null;
+		for (TemplateInfo ti : template_list.getList()) {
+			if(ti.getType().equals("Consumo")){
+				templateInfo = ti;
+				size++;
+			}
+		}
+		if(size != 1){
+			Dialog d = new Dialog("Exportar Consumo","Descargar",true,"Cancelar",true,"exportConsumption");
+			d.setUrl(GWT.getModuleBaseURL());
+			d.setTemplateList(template_list);
+			TemplatesDialog popup = new TemplatesDialog(d) {
+				String warehouseId = warehouseAux;
+				String initialDate = initialDateAux;
+				String finalDate = finalDateAux;
+				String initialId = initialIdAux;
+				String finalId = finalIdAux;
+				@Override
+				protected void onCancel() {
+					hide();
+				}
+			
+				@Override
+				protected void onAccept() {
+				
+					ListBox lb = (ListBox) flex_table.getWidget(0, 1);
+					String template = lb.getItemText(lb.getSelectedIndex());
+					TemplateInfo ti = new TemplateInfo();
+				
+					for(TemplateInfo t : tlist.getList()) {
+						if(t.getName().equals(template) && t.getType().equals("Consumo")){
+							ti = t;
+						}
+					}
+				
+					String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_consumption/"
+		            	+ "?id=" + Integer.toString(ti.getId())
+		            	+ "&domain_id=" + domainId
+		            	+ "&warehouse=" + warehouseId
+		            	+ "&initial_date=" + initialDate
+		            	+ "&final_date="+ finalDate
+		            	+ "&initial_id="+ initialId
+		            	+ "&final_id="+ finalId;
+				
+				
+				
+					Window.open( fileDownloadURL, "_blank",null);
+					hide();
+				}
+			};	
+			popup.addStyleName("gwt-PopupPanel-template");
+			popup.setGlassEnabled(true);
+			popup.show();
+		}
+		else{
+
+			String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_consumption/"
+	            	+ "?id=" + Integer.toString(templateInfo.getId())
+	            	+ "&domain_id=" + domainId
+	            	+ "&warehouse=" + warehouseId
+	            	+ "&initial_date=" + initialDate
+	            	+ "&final_date="+ finalDate
+	            	+ "&initial_id="+ initialId
+	            	+ "&final_id="+ finalId;
+			
+			Window.open( fileDownloadURL, "_blank",null);
+		}
+	}
 	//------------------------------ ui handlers
 	
 	@UiHandler("nameSearchButton")
@@ -1900,5 +1978,15 @@ public class Templates extends Composite implements EntryPoint {
 			thiz.@com.esferalia.aon.gwt.template.client.Templates::proposalx(*)(proposal);
 		}
 	}-*/;
+	
+	public void consumptionx(String warehouse, String initialDate, String finalDate, String initialId, String finalId){
+		exportConsumption(warehouse,initialDate,finalDate, initialId, finalId);
+	}
+	public static native void exportConsumptionx(Templates thiz) /*-{	
+		$wnd.consumptionx = function(warehouse, initialDate, finalDate, initialId, finalId) {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::consumptionx(*)(warehouse, initialDate, finalDate, initialId, finalId);
+		}
+	}-*/;
+	
 }
 

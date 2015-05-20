@@ -126,7 +126,8 @@ public abstract class TemplatesDialog extends CustomDialogB {
 				}
 				else{
 				
-					if(FeeUtils.feeCheck(dialog,flex_table) || StockUtils.stockCheck(dialog,flex_table) || ProductUtils.productCheck(dialog,flex_table) || dialog.getType().equals("delete") || dialog.getType().contains("import") 
+					if(FeeUtils.feeCheck(dialog,flex_table) || StockUtils.stockCheck(dialog,flex_table) || ProductUtils.productCheck(dialog,flex_table) 
+							|| ConsumptionUtils.consumptionCheck(dialog, flex_table)|| dialog.getType().equals("delete") || dialog.getType().contains("import") 
 							|| dialog.getType().contains("export")){
 						onAccept();
 					}
@@ -167,6 +168,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		case "exportCatalogue": exportCatalogue(dialog.getTemplateList());break;
 		case "importProposal": importProposal(dialog.getUrl(),dialog.getTemplateList());break;
 		case "exportProposal": exportProposal(dialog.getUrl(),dialog.getTemplateList());break;
+		case "exportConsumption": exportConsumption(dialog.getUrl(),dialog.getTemplateList());break;
 		default:
 			break;
 		}
@@ -268,6 +270,26 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		
 		flexTableCss();
 	}
+	
+	private void exportConsumption(String url,TemplateList templates){
+		flex_table.setStyleName("aon-panelGrid");
+		flex_table.setWidth("400px");
+		flex_table.setBorderWidth(1);
+		flex_table.setCellSpacing(0);
+		ListBox lb = new ListBox();
+		
+		lb.addItem("-");
+		
+		for(TemplateInfo ti : templates.getList()){
+			if(ti.getType().equals("Consumo"))
+				lb.addItem(ti.getName());
+		}
+		flex_table.setWidget(0, 0, new Label("Plantilla"));
+		flex_table.setWidget(0, 1, lb);
+		
+		flexTableCss();
+	}
+
 
 	
 	private void importProposal(String url,TemplateList templates) {
@@ -743,6 +765,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		lb.addItem("Producto");
 		lb.addItem("Stock");
 		lb.addItem("Cuota");
+		lb.addItem("Consumo");
 		lbaux = lb;
 		lb.addChangeHandler(new ChangeHandler() {
 			ListBox lb = lbaux;
@@ -758,6 +781,8 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					listBox("Stock");
 				else if(lb.getItemText(lb.getSelectedIndex()).equals("Cuota"))
 					listBox("Cuota");
+				else if(lb.getItemText(lb.getSelectedIndex()).equals("Consumo"))
+					listBox("Consumo");
 				
 				ListBox lb2 = new ListBox();
 				for(Integer k = 0;k< list_box.getItemCount();k++)
@@ -833,6 +858,29 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					Label r7 = new Label("Fecha Facturaci\u00f3n");r7.addStyleName("aon-info-rest-template");
 					vp.add(r7);
 				}
+				else if(lb.getItemText(lb.getSelectedIndex()).equals("Consumo")){
+					Label title = new Label("Columnas Obligatorias:");
+					title.addStyleName("aon-info-title-template");
+					vp.add(title);
+					Label r1 = new Label("Producto");r1.addStyleName("aon-info-rest-template");
+					vp.add(r1);
+					Label r3 = new Label("Inicial");r3.addStyleName("aon-info-rest-template");
+					vp.add(r3);
+					Label r4 = new Label("Compras");r4.addStyleName("aon-info-rest-template");
+					vp.add(r4);
+					Label r2 = new Label("Ventas");r2.addStyleName("aon-info-rest-template");
+					vp.add(r2);
+					Label r5 = new Label("Posterior");r5.addStyleName("aon-info-rest-template");
+					vp.add(r5);
+					Label r6 = new Label("Traspaso");r6.addStyleName("aon-info-rest-template");
+					vp.add(r6);
+					Label r7 = new Label("Precio");r7.addStyleName("aon-info-rest-template");
+					vp.add(r7);
+					Label r8 = new Label("Importe");r8.addStyleName("aon-info-rest-template");
+					vp.add(r8);
+					Label r9 = new Label("Consumo");r9.addStyleName("aon-info-rest-template");
+					vp.add(r9);
+				}
 				else b = false;
 				if(b){
 					popup = new PopupPanel();
@@ -877,6 +925,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		lb.addItem("Producto");
 		lb.addItem("Stock");
 		lb.addItem("Cuota");
+		lb.addItem("Consumo");
 		for(Integer i = 0;i< lb.getItemCount();i++){
 			if(lb.getItemText(i).equals(ti.getType())){
 				lb.setSelectedIndex(i);
@@ -924,6 +973,29 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					vp.add(r6);
 					Label r7 = new Label("Fecha Facturaci\u00f3n");r7.addStyleName("aon-info-rest-template");
 					vp.add(r7);
+				}
+				else if(lb.getItemText(lb.getSelectedIndex()).equals("Consumo")){
+					Label title = new Label("Columnas Obligatorias:");
+					title.addStyleName("aon-info-title-template");
+					vp.add(title);
+					Label r1 = new Label("Producto");r1.addStyleName("aon-info-rest-template");
+					vp.add(r1);
+					Label r3 = new Label("Inicial");r3.addStyleName("aon-info-rest-template");
+					vp.add(r3);
+					Label r4 = new Label("Compras");r4.addStyleName("aon-info-rest-template");
+					vp.add(r4);
+					Label r2 = new Label("Ventas");r2.addStyleName("aon-info-rest-template");
+					vp.add(r2);
+					Label r5 = new Label("Posterior");r5.addStyleName("aon-info-rest-template");
+					vp.add(r5);
+					Label r6 = new Label("Traspaso");r6.addStyleName("aon-info-rest-template");
+					vp.add(r6);
+					Label r7 = new Label("Precio");r7.addStyleName("aon-info-rest-template");
+					vp.add(r7);
+					Label r8 = new Label("Importe");r8.addStyleName("aon-info-rest-template");
+					vp.add(r8);
+					Label r9 = new Label("Consumo");r9.addStyleName("aon-info-rest-template");
+					vp.add(r9);
 				}
 				popup = new PopupPanel();
 				popup.setWidget(vp);
@@ -1127,6 +1199,8 @@ public abstract class TemplatesDialog extends CustomDialogB {
 			v = StockUtils.stockList();
 		else if(type.equals("Cuota"))
 			v = FeeUtils.feeList();
+		else if(type.equals("Consumo"))
+			v = ConsumptionUtils.consumptionList();
 		list_box = new ListBox();
 		list_box.addItem("-");
 		for(String s : v){
@@ -1144,6 +1218,8 @@ public abstract class TemplatesDialog extends CustomDialogB {
 			v = StockUtils.stockList();
 		else if(type.equals("Cuota"))
 			v = FeeUtils.feeList();
+		else if(type.equals("Consumo"))
+			v = ConsumptionUtils.consumptionList();
 		list_box_edit = new ListBox();
 		for(String s : v){
 			list_box_edit.addItem(s);
