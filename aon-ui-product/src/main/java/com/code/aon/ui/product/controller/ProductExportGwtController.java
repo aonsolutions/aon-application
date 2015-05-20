@@ -429,9 +429,11 @@ public class ProductExportGwtController extends BasicController {
 
 	public static List<Integer> getTagsIds() {
 		List<Integer> ids = new LinkedList<Integer>();
-		for( Tag tag : tags ) {
-			if ((tag != null) && (tag.getId() != null)) {
-				ids.add(tag.getId());
+		if(tags != null){
+			for( Tag tag : tags ) {
+				if ((tag != null) && (tag.getId() != null)) {
+					ids.add(tag.getId());
+				}
 			}
 		}
 		return ids;
