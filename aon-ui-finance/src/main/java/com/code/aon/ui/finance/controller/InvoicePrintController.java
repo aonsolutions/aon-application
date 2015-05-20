@@ -40,8 +40,6 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.ui.common.LongProcessThread;
-import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.util.FinanceEmailUtil;
 import com.code.aon.ui.finance.util.InvoicePrintProcess;
 import com.code.aon.ui.util.AonUtil;
@@ -189,8 +187,7 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 
 	public void onStartInvoicesZip(ActionEvent event) {
 		getProgressionState().start();
-		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-		String report = companyController.getInvoicePrintTemplateValue();
+		String report = getCompanyController().getInvoicePrintTemplateValue();
 		InvoicePrintProcess ipp = new InvoicePrintProcess(this, report);
 		LongProcessThread thread = new LongProcessThread(ipp); 
 		thread.start();				

@@ -1234,8 +1234,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	public static boolean isIncludeFacturae( Invoice invoice ) {
 		boolean include = false;
 		if ( invoice.getType() == InvoiceType.SALES ) {
-			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-			if ( companyController.isEInvoice() ) {
+			if ( getCompanyController().isEInvoice() ) {
 				try {
 					IManagerBean bean = BeanManager.getManagerBean(Customer.class);
 					if ( (invoice.getRegistry()!= null) && (invoice.getRegistry().getId()!=null) ) {

@@ -32,8 +32,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.components.LookupChangeEvent;
-import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
@@ -238,8 +236,7 @@ public class SaleInvoiceController extends InvoiceController {
 	@Override
 	public SignerController getSignerController() {
 		SignerController signer = super.getSignerController();
-		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-		signer.setReportKey(companyController.getSaleInvoiceTemplateValue());
+		signer.setReportKey(getCompanyController().getSaleInvoiceTemplateValue());
 		return signer;
 	}
 

@@ -3,6 +3,7 @@ package com.code.aon.ui.finance.util;
 import static com.code.aon.common.IProgression.FINISH_VALUE;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -24,9 +25,12 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.finance.Invoice;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.common.ILongProcess;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.finance.controller.InvoiceController;
 import com.code.aon.ui.finance.controller.InvoicePrintController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.sign.controller.SignerController;
@@ -36,9 +40,13 @@ public class InvoicePrintProcess implements ILongProcess {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FeeInvoicingProcess.class.getName());
 	
+	private static final String LOGO_IMAGE_FILE = "logoImageFile";
+	
 	private InvoicePrintController controller;
 	
 	private SignerController signerController;
+	
+	private byte[] logo;
 	
 	private ReportManager reportManager;
 	
@@ -47,6 +55,7 @@ public class InvoicePrintProcess implements ILongProcess {
 	public InvoicePrintProcess(InvoicePrintController controller, String reportKey) {
 		this.controller = controller;
 		this.signerController = controller.getSignerController();
+		this.logo = obtainLogo();
 		reportManager = new ReportManager();
 		reportManager.setOutputFormat(OutputFormat.PDF);
 		reportManager.setReportKey(reportKey);
@@ -63,7 +72,19 @@ public class InvoicePrintProcess implements ILongProcess {
 		controller.getProgressionState().setProgressionCurrentValue(Math.round((current * 100.0)/total));
 	}
 	
+	private byte[] obtainLogo() {
+		CompanyController companyController = InvoiceController.getCompanyController();
+		try {
+			RegistryAttachment attachment = companyController.obtainCompanyLogo();
+			return attachment.getData();
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+		return null;
+	}
+	
 	private byte[] getReport( Invoice invoice ) throws ReportException, ManagerBeanException {
+		customParameters.put(LOGO_IMAGE_FILE, new ByteArrayInputStream(this.logo));
 		reportManager.setCustomParams(customParameters);
 		ICriteriaProvider criteriaProvider = new InvoicePrintCriteriaProvider(controller.getManagerBean(), invoice);
 		reportManager.setCriteriaProvider(criteriaProvider);
@@ -81,9 +102,7 @@ public class InvoicePrintProcess implements ILongProcess {
 			} else {
 				data = getReport(invoice);
 			}
-		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
-		} catch (ReportException e) {
+		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 		return data;
