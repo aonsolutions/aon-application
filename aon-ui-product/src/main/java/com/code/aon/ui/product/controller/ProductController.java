@@ -127,17 +127,17 @@ public class ProductController extends BasicController implements IAuditableCont
 
 	public void onResetItem(ActionEvent event) throws ManagerBeanException {
 		ItemController itemController = getItemController();
-		Item item = (Item)itemController.getTo();
-		this.saveStateItem = item;
+		this.saveStateItem = (Item)itemController.getTo();
 		itemController.onReset(event);
+		Item item = (Item)itemController.getTo();
 		updateItem(item);
 		updateItemPrices(item);
 	}
 
 	public void onSelectItem(ActionEvent event) {
 		ItemController itemController = getItemController();
-		Item item = (Item)itemController.getTo();
 		itemController.onSelect(event);
+		Item item = (Item)itemController.getTo();
 		updateItem(item);
 	}
 	
