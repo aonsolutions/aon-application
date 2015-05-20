@@ -76,7 +76,7 @@
 									value="#{true}" />
 							</aon:menuItem>
 						</aon:if>
-						<aon:if test="#{aonConfiguration.bean.offer.showSalesOrder and aonRole.saleOperator}">
+						<aon:if test="#{aonConfiguration.bean.offer.showSalesOrder and aonRole.saleOperator and !actionDenied.skip['sales']}">
 							<aon:menuItem id="sales"
 								value="#{bundle.aon_invoice_sales}"
 								immediate="#{true}" rendered="#{(offer.pending or offer.approved) and offer.linesPending}"

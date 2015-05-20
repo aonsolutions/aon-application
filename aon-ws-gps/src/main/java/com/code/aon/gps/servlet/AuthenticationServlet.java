@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.gps.servlet.util.ServletUtils;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.sql.ISQLConstants;
 import com.esferalia.aon.pms.sql.SQLUtils;
@@ -28,12 +29,13 @@ public class AuthenticationServlet extends HttpServlet implements ISQLConstants 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationServlet.class.getName());
-	public static String JSON_DEFAULT_RESPONSE = "{\"codes\":0,\"finishdate\":\"\"}";
+	public static String JSON_DEFAULT_RESPONSE = "{\"codes\":0}";
 	public static String SELECT_RESERVATION_DATA =
 			"SELECT PRG.id AS " + RESERVATION_GUEST + ", PRR.adults AS " + ADULTS + ", PRR.children AS " + CHILDREN + ", PR.end_date AS " + END_DATE +
 			" FROM project_reservation AS PR, project_reservation_guest AS PRG, project_reservation_room AS PRR, project_reservation_room_detail AS PRRD" +
 			"	, asset_activity AS AA, asset AS A, room AS R" +
-			" WHERE PR.status <> " + ReservationStatus.CANCELLED.ordinal() + 
+			" WHERE PR.domain = ?" +
+			" AND PR.status <> " + ReservationStatus.CANCELLED.ordinal() +
 			" AND PR.status <> " + ReservationStatus.BLOCKED.ordinal() +
 			" AND PR.project = PRG.project_reservation" +
 			" AND PRG.document = ?" +
@@ -45,6 +47,15 @@ public class AuthenticationServlet extends HttpServlet implements ISQLConstants 
 			" AND A.name = ?" +
 			" AND A.id = R.asset" +
 			" AND R.active = 1";
+
+	private ServletUtils servletUtils;
+
+	public ServletUtils getServletUtils() {
+		if (servletUtils == null) {
+			servletUtils = new ServletUtils();
+		}
+		return servletUtils;
+	}
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -58,6 +69,7 @@ public class AuthenticationServlet extends HttpServlet implements ISQLConstants 
 
 	private void doRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String domain = request.getParameter(DOMAIN);
+		String login = request.getParameter(LOGIN);
 		String room = request.getParameter(ROOM);
 		String document = request.getParameter(CODE);
 		StringBuffer jsonResponse = new StringBuffer(JSON_DEFAULT_RESPONSE);
@@ -68,21 +80,22 @@ public class AuthenticationServlet extends HttpServlet implements ISQLConstants 
 		try {
 			connection = DatabaseUtil.getConnection(domain);
 			if (connection != null) {
-				stmt = connection.prepareStatement(SELECT_RESERVATION_DATA, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-				SQLUtils.setString(stmt, 1, document);
-				SQLUtils.setDate(stmt, 2, DateUtils.truncate(new Date(), Calendar.DATE));
-				SQLUtils.setString(stmt, 3, room);
-				rs = stmt.executeQuery();
-				if (rs.next()) {
-					int reservationGuest = rs.getInt(RESERVATION_GUEST);
-					int adults = rs.getInt(ADULTS);
-					int children = rs.getInt(CHILDREN);
-					Date endDate = rs.getDate(END_DATE);
+				Integer domainId = DatabaseUtil.getDomain(connection, domain);
+				if (getServletUtils().isValidLogin(connection, domainId, login)) {
+					stmt = connection.prepareStatement(SELECT_RESERVATION_DATA, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+					SQLUtils.setInt(stmt, 1, domainId);
+					SQLUtils.setString(stmt, 2, document);
+					SQLUtils.setDate(stmt, 3, DateUtils.truncate(new Date(), Calendar.DATE));
+					SQLUtils.setString(stmt, 4, room);
+					rs = stmt.executeQuery();
+					if (rs.next()) {
+						int reservationGuest = rs.getInt(RESERVATION_GUEST);
+						Date endDate = rs.getDate(END_DATE);
 
-					jsonResponse = new StringBuffer();
-					jsonResponse.append("{\"codes\":" + (adults + children));
-					jsonResponse.append(",\"finishdate\":\"" + new SimpleDateFormat("yyyy.MM.dd").format(endDate) + "\"");
-					jsonResponse.append(",\"guest\":" + reservationGuest + "}");
+						jsonResponse = new StringBuffer();
+						jsonResponse.append("{\"finishdate\":\"" + new SimpleDateFormat("yyyy.MM.dd").format(endDate) + "\"");
+						jsonResponse.append(",\"guest\":" + reservationGuest + "}");
+					}
 				}
 			}
 

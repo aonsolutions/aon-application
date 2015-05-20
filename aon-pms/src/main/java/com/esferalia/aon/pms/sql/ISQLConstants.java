@@ -4,6 +4,7 @@ public interface ISQLConstants {
 
 	String ID = "id";
 	String DOMAIN = "domain";
+	String LOGIN = "login";
 	String PROJECT_RESERVATION_ROOM = "project_reservation_room";
 	String HOTEL = "hotel";
 	String AGENCY = "agency";
@@ -53,5 +54,7 @@ public interface ISQLConstants {
 	String REFERENCE_CODE = "referenceCode";
 	String RECTIFICATION_TYPE = "rectificationType";
 	String RECTIFICATION_INVOICE = "rectificationInvoice";
+
+	String SERVLET_LOGIN = "PMS_SERVLET_LOGIN";
 
 }
