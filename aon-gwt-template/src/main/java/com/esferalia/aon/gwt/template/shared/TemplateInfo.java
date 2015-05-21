@@ -10,7 +10,7 @@ public class TemplateInfo implements IsSerializable{
 	String name;
 	String type;
 	Vector<String> columns;
-	
+	String version;
 	Integer domainId;
 	String domain;
 	Integer mimetype;
@@ -86,6 +86,12 @@ public class TemplateInfo implements IsSerializable{
 	}
 	public void sethasWarehouse(Boolean hasWarehouse) {
 		this.hasWarehouse = hasWarehouse;
+	}
+	public String getVersion() {
+		return version;
+	}
+	public void setVersion(String version) {
+		this.version = version;
 	}
 	
 	

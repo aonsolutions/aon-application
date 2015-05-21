@@ -14,7 +14,9 @@ import org.jooq.Record1;
 import org.jooq.Record4;
 import org.jooq.Result;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.template.server.Utils;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
@@ -122,7 +124,30 @@ public class DBConsults {
 					ti.setIsParent(true);
 					v.add(ti);
 				});
-				if(recordDefault.isEmpty()){
+				Boolean version = false;
+				if(recordDefault.isNotEmpty()){
+					File f = new File("/tmp/"+recordDefault.get(0).value2()+".xml"); 
+					byte[] b = getXml(sctx.getDslContext(),recordDefault.get(0).value1());
+					try {
+						org.apache.commons.io.FileUtils.writeByteArrayToFile(f,b);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					TemplateInfo aux = null;
+					try {
+						aux = Utils.readxmlWithVersion(f);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					String ver = AonVersion.VERSION;
+					
+					
+					version = ver.compareTo(aux.getVersion()) == 1;
+					if(version){
+						DBConsults.deleteDefaultTemplates(ctx, domain, domainId);
+					}
+				}
+				if(recordDefault.isEmpty() || version){
 					
 					Result<Record1<Integer>> data = ctx.getDslContext()
 							.select(DOMAIN.ID)
@@ -142,7 +167,8 @@ public class DBConsults {
 						stockTemplate.setType("Stock");
 						stockTemplate.sethasWarehouse(false);
 						stockTemplate.setIsParent(true);
-						Integer id = insertTemplate(domain, stockTemplate,Utils.newXmlFile(stockTemplate), 0);
+						stockTemplate.setVersion(AonVersion.VERSION);
+						Integer id = insertTemplate(domain, stockTemplate,Utils.newXmlFileWithVersion(stockTemplate), 0);
 						stockTemplate.setId(id);
 						v.add(stockTemplate);
 					
@@ -173,7 +199,8 @@ public class DBConsults {
 						productTemplate.setType("Producto");
 						productTemplate.sethasWarehouse(false);
 						productTemplate.setIsParent(true);
-						id = insertTemplate(domain, productTemplate,Utils.newXmlFile(productTemplate), 0);
+						productTemplate.setVersion(AonVersion.VERSION);
+						id = insertTemplate(domain, productTemplate,Utils.newXmlFileWithVersion(productTemplate), 0);
 						productTemplate.setId(id);
 						v.add(productTemplate);
 						
@@ -188,9 +215,27 @@ public class DBConsults {
 						feeTemplate.setType("Cuota");
 						feeTemplate.sethasWarehouse(false);
 						feeTemplate.setIsParent(true);
-						id = insertTemplate(domain, feeTemplate,Utils.newXmlFile(feeTemplate), 0);
+						feeTemplate.setVersion(AonVersion.VERSION);
+						id = insertTemplate(domain, feeTemplate,Utils.newXmlFileWithVersion(feeTemplate), 0);
 						feeTemplate.setId(id);
 						v.add(feeTemplate);
+						
+						TemplateInfo consumptionTemplate = new TemplateInfo();
+						v2 = new Vector<String>();
+						v2.add("Producto");v2.add("Nombre");v2.add("Inicial");v2.add("Compras");v2.add("Ventas");
+						v2.add("Traspaso");v2.add("Posterior");v2.add("Consumo");v2.add("Precio");v2.add("Importe");
+						v2.add("Detalle 1");v2.add("Detalle 2");v2.add("Detalle 3");
+						consumptionTemplate.setColumns(v2);
+						consumptionTemplate.setDomain(domain);
+						consumptionTemplate.setDomainId(0);
+						consumptionTemplate.setName("Est\u00e1ndar");
+						consumptionTemplate.setType("Consumo");
+						consumptionTemplate.sethasWarehouse(false);
+						consumptionTemplate.setIsParent(true);
+						consumptionTemplate.setVersion(AonVersion.VERSION);
+						id = insertTemplate(domain, consumptionTemplate,Utils.newXmlFileWithVersion(consumptionTemplate), 0);
+						consumptionTemplate.setId(id);
+						v.add(consumptionTemplate);
 					}
 				}
 				else{
@@ -330,5 +375,13 @@ public class DBConsults {
 		} finally {
 			if (ctx != null) ctx.close();
 		}
+	}
+	
+	public static void deleteDefaultTemplates(AONContext ctx, String domain, Integer domainId){
+		ctx.getDslContext()
+			.delete(RATTACH)
+			.where(RATTACH.TYPE.eq((byte)15))
+			.and(RATTACH.DOMAIN.eq(0))
+			.execute();
 	}
 }
