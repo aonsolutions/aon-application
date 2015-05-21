@@ -141,7 +141,7 @@ public class DBConsults {
 					}
 					String ver = AonVersion.VERSION;
 					
-					
+
 					version = ver.compareTo(aux.getVersion()) == 1;
 					if(version){
 						DBConsults.deleteDefaultTemplates(ctx, domain, domainId);
@@ -236,6 +236,38 @@ public class DBConsults {
 						id = insertTemplate(domain, consumptionTemplate,Utils.newXmlFileWithVersion(consumptionTemplate), 0);
 						consumptionTemplate.setId(id);
 						v.add(consumptionTemplate);
+						
+						TemplateInfo inventoryTemplate1 = new TemplateInfo();
+						v2 = new Vector<String>();
+						v2.add("Producto");v2.add("Nombre");v2.add("Categor\u00eda");v2.add("Recuento");
+						v2.add("Detalle 1");v2.add("Detalle 2");v2.add("Detalle 3");
+						consumptionTemplate.setColumns(v2);
+						consumptionTemplate.setDomain(domain);
+						consumptionTemplate.setDomainId(0);
+						consumptionTemplate.setName("Est\u00e1ndar");
+						consumptionTemplate.setType("Inventario Cerrado");
+						consumptionTemplate.sethasWarehouse(false);
+						consumptionTemplate.setIsParent(true);
+						consumptionTemplate.setVersion(AonVersion.VERSION);
+						id = insertTemplate(domain, consumptionTemplate,Utils.newXmlFileWithVersion(consumptionTemplate), 0);
+						consumptionTemplate.setId(id);
+						v.add(inventoryTemplate1);
+						
+						TemplateInfo inventoryTemplate2 = new TemplateInfo();
+						v2 = new Vector<String>();
+						v2.add("Producto");v2.add("Nombre");v2.add("Categor\u00eda");v2.add("Inventario");v2.add("Coste");
+						v2.add("Total");v2.add("Detalle 1");v2.add("Detalle 2");v2.add("Detalle 3");
+						consumptionTemplate.setColumns(v2);
+						consumptionTemplate.setDomain(domain);
+						consumptionTemplate.setDomainId(0);
+						consumptionTemplate.setName("Est\u00e1ndar");
+						consumptionTemplate.setType("Inventario Valorado");
+						consumptionTemplate.sethasWarehouse(false);
+						consumptionTemplate.setIsParent(true);
+						consumptionTemplate.setVersion(AonVersion.VERSION);
+						id = insertTemplate(domain, consumptionTemplate,Utils.newXmlFileWithVersion(consumptionTemplate), 0);
+						consumptionTemplate.setId(id);
+						v.add(inventoryTemplate2);
 					}
 				}
 				else{

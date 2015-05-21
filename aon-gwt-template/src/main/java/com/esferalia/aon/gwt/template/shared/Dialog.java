@@ -22,6 +22,8 @@ public class Dialog implements IsSerializable{
 	Vector<String> series;
 	Vector<Series> series2;
 
+	
+	Boolean closed;
 	public Dialog() {
 	
 	}
@@ -138,6 +140,12 @@ public class Dialog implements IsSerializable{
 		this.series2 = series2;
 	}
 
+	public Boolean isClosed(){
+		return closed;
+	}
 	
+	public void setClosed(Boolean closed){
+		this.closed = closed;
+	}
 
 }

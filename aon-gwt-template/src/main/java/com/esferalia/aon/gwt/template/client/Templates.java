@@ -239,6 +239,7 @@ public class Templates extends Composite implements EntryPoint {
 			exportProposal(this);
 			exportProposalx(this);	
 			exportConsumptionx(this);
+			exportInventoryx(this);
 		}
 	}
 	
@@ -1586,6 +1587,78 @@ public class Templates extends Composite implements EntryPoint {
 			Window.open( fileDownloadURL, "_blank",null);
 		}
 	}
+	String closedAux, inventoryIdAux;
+	private void exportInventory(String closed, String inventoryId){
+		closedAux = closed;
+		inventoryIdAux = inventoryId;
+		Integer size = 0;
+		TemplateInfo templateInfo = null;
+		for (TemplateInfo ti : template_list.getList()) {
+			if(closed.equals("true") && ti.getType().equals("Inventario Cerrado")){
+				templateInfo = ti;
+				size++;
+			}
+			if(closed.equals("false") && ti.getType().equals("Inventario Valorado")){
+				templateInfo = ti;
+				size++;
+			}
+		}
+		if(size != 1){
+			String title;
+			if(closed.equals("true")) title = "Listado de Recuento";
+			else title = "Listado Valorado";
+			Dialog d = new Dialog(title,"Descargar",true,"Cancelar",true,"exportInventory");
+			d.setUrl(GWT.getModuleBaseURL());
+			d.setTemplateList(template_list);
+			d.setClosed(closed.equals("true"));
+			TemplatesDialog popup = new TemplatesDialog(d) {
+				String closed = closedAux;
+				String inventoryId = inventoryIdAux;
+				@Override
+				protected void onCancel() {
+					hide();
+				}
+			
+				@Override
+				protected void onAccept() {
+				
+					ListBox lb = (ListBox) flex_table.getWidget(0, 1);
+					String template = lb.getItemText(lb.getSelectedIndex());
+					TemplateInfo ti = new TemplateInfo();
+					for (TemplateInfo t : tlist.getList()) {
+						if(closed.equals("true") && t.getName().equals(template) && t.getType().equals("Inventario Cerrado")){
+							ti = t;
+						}
+						if(closed.equals("false") && t.getName().equals(template) && t.getType().equals("Inventario Valorado")){
+							ti = t;
+						}
+					}
+					String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_inventory/"
+		            	+ "?id=" + Integer.toString(ti.getId())
+		            	+ "&domain_id=" + domainId
+		            	+ "&closed="+closed
+		            	+ "&inventory="+inventoryId;
+				
+				
+					Window.open( fileDownloadURL, "_blank",null);
+					hide();
+				}
+			};	
+			popup.addStyleName("gwt-PopupPanel-template");
+			popup.setGlassEnabled(true);
+			popup.show();
+		}
+		else{
+
+			String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_inventory/"
+	            	+ "?id=" + Integer.toString(templateInfo.getId())
+	            	+ "&domain_id=" + domainId
+	            	+ "&closed="+closed
+	            	+ "&inventory="+inventoryId;
+			
+			Window.open( fileDownloadURL, "_blank",null);
+		}
+	}
 	//------------------------------ ui handlers
 	
 	@UiHandler("nameSearchButton")
@@ -1985,6 +2058,15 @@ public class Templates extends Composite implements EntryPoint {
 	public static native void exportConsumptionx(Templates thiz) /*-{	
 		$wnd.consumptionx = function(warehouse, initialDate, finalDate, initialId, finalId) {
 			thiz.@com.esferalia.aon.gwt.template.client.Templates::consumptionx(*)(warehouse, initialDate, finalDate, initialId, finalId);
+		}
+	}-*/;
+	
+	public void inventoryx(String closed, String inventoryId){
+		exportInventory(closed, inventoryId);
+	}
+	public static native void exportInventoryx(Templates thiz) /*-{	
+		$wnd.inventoryx = function(closed, inventoryId) {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::inventoryx(*)(closed, inventoryId);
 		}
 	}-*/;
 	

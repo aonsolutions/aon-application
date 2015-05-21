@@ -73,8 +73,9 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	TemplateList tlist;
 	Vector<Warehouse> w;
 	Vector<Series> series;
+	Boolean closed;
 	public TemplatesDialog(Dialog dialog) {
-		
+		if(dialog.isClosed() != null) closed = dialog.isClosed();
 		setCaption(dialog.getTitle());
 		if(dialog.getTemplateList()!= null) tlist = dialog.getTemplateList();
 		if(dialog.getWarehouses() != null) w = dialog.getWarehouses();
@@ -127,8 +128,8 @@ public abstract class TemplatesDialog extends CustomDialogB {
 				else{
 				
 					if(FeeUtils.feeCheck(dialog,flex_table) || StockUtils.stockCheck(dialog,flex_table) || ProductUtils.productCheck(dialog,flex_table) 
-							|| ConsumptionUtils.consumptionCheck(dialog, flex_table)|| dialog.getType().equals("delete") || dialog.getType().contains("import") 
-							|| dialog.getType().contains("export")){
+							|| ConsumptionUtils.consumptionCheck(dialog, flex_table)|| InventoryUtils.inventoryCheck(dialog, flex_table) 
+							|| dialog.getType().equals("delete") || dialog.getType().contains("import") || dialog.getType().contains("export")){
 						onAccept();
 					}
 					else {
@@ -169,6 +170,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		case "importProposal": importProposal(dialog.getUrl(),dialog.getTemplateList());break;
 		case "exportProposal": exportProposal(dialog.getUrl(),dialog.getTemplateList());break;
 		case "exportConsumption": exportConsumption(dialog.getUrl(),dialog.getTemplateList());break;
+		case "exportInventory": exportInventory(dialog);break;
 		default:
 			break;
 		}
@@ -290,6 +292,26 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flexTableCss();
 	}
 
+	private void exportInventory(Dialog dialog){
+		flex_table.setStyleName("aon-panelGrid");
+		flex_table.setWidth("400px");
+		flex_table.setBorderWidth(1);
+		flex_table.setCellSpacing(0);
+		ListBox lb = new ListBox();
+		
+		lb.addItem("-");
+		
+		for(TemplateInfo ti : dialog.getTemplateList().getList()){
+			if(closed && ti.getType().equals("Inventario Cerrado"))
+				lb.addItem(ti.getName());
+			if(!closed && ti.getType().equals("Inventario Valorado"))
+				lb.addItem(ti.getName());
+		}
+		flex_table.setWidget(0, 0, new Label("Plantilla"));
+		flex_table.setWidget(0, 1, lb);
+		
+		flexTableCss();
+	}
 
 	
 	private void importProposal(String url,TemplateList templates) {
@@ -766,6 +788,9 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		lb.addItem("Stock");
 		lb.addItem("Cuota");
 		lb.addItem("Consumo");
+		lb.addItem("Inventario Cerrado");
+		lb.addItem("Inventario Valorado");
+
 		lbaux = lb;
 		lb.addChangeHandler(new ChangeHandler() {
 			ListBox lb = lbaux;
@@ -783,6 +808,10 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					listBox("Cuota");
 				else if(lb.getItemText(lb.getSelectedIndex()).equals("Consumo"))
 					listBox("Consumo");
+				else if(lb.getItemText(lb.getSelectedIndex()).equals("Inventario Cerrado"))
+					listBox("Inventario Cerrado");
+				else if(lb.getItemText(lb.getSelectedIndex()).equals("Inventario Valorado"))
+					listBox("Inventario Valorado");
 				
 				ListBox lb2 = new ListBox();
 				for(Integer k = 0;k< list_box.getItemCount();k++)
@@ -826,7 +855,6 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					vp.add(r3);
 					Label r4 = new Label("Precio Venta Base");r4.addStyleName("aon-info-rest-template");
 					vp.add(r4);
-
 				}
 				else if(lb.getItemText(lb.getSelectedIndex()).equals("Stock")){
 					Label title = new Label("Columnas Obligatorias:");
@@ -881,6 +909,29 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					Label r9 = new Label("Consumo");r9.addStyleName("aon-info-rest-template");
 					vp.add(r9);
 				}
+				else if(lb.getItemText(lb.getSelectedIndex()).contains("Inventario")){
+					Label title = new Label("Columnas Obligatorias:");
+					title.addStyleName("aon-info-title-template");
+					vp.add(title);
+					Label r1 = new Label("Producto");r1.addStyleName("aon-info-rest-template");
+					vp.add(r1);
+					Label r3 = new Label("Categor\u00eda");r3.addStyleName("aon-info-rest-template");
+					vp.add(r3);
+					Label r4 = new Label("Inventario");r4.addStyleName("aon-info-rest-template");
+					vp.add(r4);
+					closed = lb.getItemText(lb.getSelectedIndex()).equals("Inventario Cerrado");
+					if(closed){
+						Label r5 = new Label("Recuento");r5.addStyleName("aon-info-rest-template");
+						vp.add(r5);
+					}
+					else{
+						Label r6 = new Label("Coste");r6.addStyleName("aon-info-rest-template");
+						vp.add(r6);
+						Label r7 = new Label("Total");r7.addStyleName("aon-info-rest-template");
+						vp.add(r7);
+					}
+				}
+				
 				else b = false;
 				if(b){
 					popup = new PopupPanel();
@@ -926,6 +977,8 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		lb.addItem("Stock");
 		lb.addItem("Cuota");
 		lb.addItem("Consumo");
+		lb.addItem("Inventario Cerrado");
+		lb.addItem("Inventario Valorado");
 		for(Integer i = 0;i< lb.getItemCount();i++){
 			if(lb.getItemText(i).equals(ti.getType())){
 				lb.setSelectedIndex(i);
@@ -942,18 +995,30 @@ public abstract class TemplatesDialog extends CustomDialogB {
 			@Override
 			public void onMouseOver(MouseOverEvent event) {
 				VerticalPanel vp = new VerticalPanel();
+
 				if(lb.getItemText(lb.getSelectedIndex()).equals("Producto")){
-					vp.add(new Label("Columnas Obligatorias:"));
-					vp.add(new Label("Nombre"));
-					vp.add(new Label("C\u00f3digo"));
-					vp.add(new Label("Precio Coste"));
-					vp.add(new Label("Precio Venta Base"));
+					Label title = new Label("Columnas Obligatorias:");
+					title.addStyleName("aon-info-title-template");
+					vp.add(title);
+					Label r1 = new Label("Nombre");r1.addStyleName("aon-info-rest-template");
+					vp.add(r1);
+					Label r2 = new Label("C\u00f3digo");r2.addStyleName("aon-info-rest-template");
+					vp.add(r2);
+					Label r3 = new Label("Precio Coste");r3.addStyleName("aon-info-rest-template");
+					vp.add(r3);
+					Label r4 = new Label("Precio Venta Base");r4.addStyleName("aon-info-rest-template");
+					vp.add(r4);
 				}
 				else if(lb.getItemText(lb.getSelectedIndex()).equals("Stock")){
-					vp.add(new Label("Columnas Obligatorias:"));
-					vp.add(new Label("Producto"));
-					vp.add(new Label("Almac\u00e9n Destino"));
-					vp.add(new Label("Cantidad"));
+					Label title = new Label("Columnas Obligatorias:");
+					title.addStyleName("aon-info-title-template");
+					vp.add(title);
+					Label r1 = new Label("Producto");r1.addStyleName("aon-info-rest-template");
+					vp.add(r1);
+					//Label r2 = new Label("Almac\u00e9n Destino");r2.addStyleName("aon-info-rest-template");
+					//vp.add(r2);
+					Label r3 = new Label("Cantidad");r3.addStyleName("aon-info-rest-template");
+					vp.add(r3);
 				}
 				else if(lb.getItemText(lb.getSelectedIndex()).equals("Cuota")){
 					Label title = new Label("Columnas Obligatorias:");
@@ -996,6 +1061,28 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					vp.add(r8);
 					Label r9 = new Label("Consumo");r9.addStyleName("aon-info-rest-template");
 					vp.add(r9);
+				}
+				else if(lb.getItemText(lb.getSelectedIndex()).contains("Inventario")){
+					Label title = new Label("Columnas Obligatorias:");
+					title.addStyleName("aon-info-title-template");
+					vp.add(title);
+					Label r1 = new Label("Producto");r1.addStyleName("aon-info-rest-template");
+					vp.add(r1);
+					Label r3 = new Label("Categor\u00eda");r3.addStyleName("aon-info-rest-template");
+					vp.add(r3);
+					Label r4 = new Label("Inventario");r4.addStyleName("aon-info-rest-template");
+					vp.add(r4);
+					lb.getItemText(lb.getSelectedIndex()).equals("Inventario Cerrado");
+					if(closed){
+						Label r5 = new Label("Recuento");r5.addStyleName("aon-info-rest-template");
+						vp.add(r5);
+					}
+					else{
+						Label r6 = new Label("Coste");r6.addStyleName("aon-info-rest-template");
+						vp.add(r6);
+						Label r7 = new Label("Total");r7.addStyleName("aon-info-rest-template");
+						vp.add(r7);
+					}
 				}
 				popup = new PopupPanel();
 				popup.setWidget(vp);
@@ -1201,6 +1288,10 @@ public abstract class TemplatesDialog extends CustomDialogB {
 			v = FeeUtils.feeList();
 		else if(type.equals("Consumo"))
 			v = ConsumptionUtils.consumptionList();
+		else if(type.equals("Inventario Cerrado"))
+			v = InventoryUtils.inventoryCloseList();
+		else if(type.equals("Inventario Valorado"))
+			v = InventoryUtils.inventoryList();
 		list_box = new ListBox();
 		list_box.addItem("-");
 		for(String s : v){
@@ -1220,6 +1311,10 @@ public abstract class TemplatesDialog extends CustomDialogB {
 			v = FeeUtils.feeList();
 		else if(type.equals("Consumo"))
 			v = ConsumptionUtils.consumptionList();
+		else if(type.equals("Inventario Valorado"))
+			v = InventoryUtils.inventoryList();
+		else if(type.equals("Inventario Cerrado"))
+			v = InventoryUtils.inventoryCloseList();
 		list_box_edit = new ListBox();
 		for(String s : v){
 			list_box_edit.addItem(s);
