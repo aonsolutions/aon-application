@@ -155,7 +155,7 @@ public class DownloadConsumptionServlet extends HttpServlet {
         
         for(Integer j = 0; j< v.size();j++){
         	ConsumptionItem ci = v.get(j);
-        	ci.setConsumption(ci.getInitialQuantity()+ci.getPurchases()+ci.getTransfersPlus()-ci.getFinalQuantity());
+        	ci.setConsumption(ci.getInitialQuantity()+ci.getPurchases()+ci.getTransfersPlus()-ci.getSales()-ci.getTransfersMinus()-ci.getFinalQuantity());
         	Row row = hoja.createRow(j+2);
         	for(Integer k = 0; k< columns; k++){
         		Cell celda = row.createCell(k);
