@@ -30,7 +30,17 @@
 								styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
 								style="width: 14px;" reRender="showNewMessageWindow">
 							</aon:commandButton>
-						</aon:if>						
+						</aon:if>					
+						<aon:if test="#{saleInvoice.printWord}">
+							<aon:htmlCommandLink id="purchaseInvoice-reportWord"
+								value="&#160;" target="_new" 
+								rendered="#{!purchaseInvoice.accountSource and purchaseInvoiceDetail.model.rowCount > 0 and purchaseInvoiceDetail.to == null}"
+								action="#{report.onExecute}"
+								styleClass="aon-finding-toolbar-item aon-icon-word aon-finding-toolbar-item-no-border">
+								<f:param name="reportKey" value="purchaseInvoice" />
+								<f:param name="outputFormat" value="DOCX" />
+							</aon:htmlCommandLink>
+						</aon:if>
 						<aon:htmlCommandLink id="purchaseInvoice-report"
 							value="#{bundle.finance_invoice}" target="_new" 
 							rendered="#{!purchaseInvoice.accountSource and purchaseInvoiceDetail.model.rowCount > 0 and purchaseInvoiceDetail.to == null}"
