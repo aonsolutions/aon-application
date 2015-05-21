@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.23.3
+# Version: 8.23.4
 # Created by: girazu
-# Creation Date: 18/05/2015 18:50
+# Creation Date: 21/05/2015 18:25
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -5239,6 +5239,7 @@ CREATE TABLE `inventory` (
   `inventory_date` date NOT NULL default '0000-00-00' COMMENT 'Fecha de Inventario',
   `warehouse` int(4) NOT NULL default '0' COMMENT 'Almacen Inventariado',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Inventario',
+  `status` tinyint(2) default '0' COMMENT 'Estado del Inventario',
   PRIMARY KEY  (`id`),
   KEY `IDX_INVENTORY_DOMAIN` (`domain`),
   CONSTRAINT `FK_INVENTORY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
@@ -5982,7 +5983,7 @@ CREATE TABLE `survey_response` (
   `response_date` datetime NOT NULL COMMENT 'Fecha de la Respuesta del Cuestionario',
   `survey` int(4) NOT NULL COMMENT 'Identificador del Cuestionario',
   `registry` int(4) NOT NULL COMMENT 'Identificador del Registro que responde al Cuestionario',
-  `user` int(4) NOT NULL COMMENT 'Identificador del Usuario',
+  `user` int(4) default NULL COMMENT 'Identificador del Usuario',
   `campaign_action` int(4) default NULL COMMENT 'Identificador de la Accion de la Campaña',
   PRIMARY KEY  (`id`),
   KEY `IDX_SURVEY_RESPONSE_MK_ACTION` (`campaign_action`),
@@ -7803,13 +7804,16 @@ CREATE TABLE `warehouse_transfer` (
   `comments` text collate latin1_spanish_ci COMMENT 'Comentarios del Traspaso',
   `source_warehouse` int(4) default NULL COMMENT 'Identificador del Almacen Origen',
   `target_warehouse` int(4) default NULL COMMENT 'Identificador del Almacen Destino',
+  `inventory` int(4) default NULL COMMENT 'Identificador del Inventario',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `IDX_UNQ_WAREHOUSE_TRANSFER_DOMAIN_SERIES_NUMBER` (`domain`,`series`,`number`),
   KEY `IDX_WAREHOUSE_TRANSFER_ISSUE_TIME` (`issue_time`),
   KEY `IDX_WAREHOUSE_TRANSFER_SOURCE_WAREHOUSE` (`source_warehouse`),
   KEY `IDX_WAREHOUSE_TRANSFER_TARGET_WAREHOUSE` (`target_warehouse`),
   KEY `IDX_WAREHOUSE_TRANSFER_DOMAIN` (`domain`),
+  KEY `IDX_WAREHOUSE_TRANSFER_INVENTORY` (`inventory`),
   CONSTRAINT `FK_WAREHOUSE_TRANSFER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_WAREHOUSE_TRANSFER_INVENTORY` FOREIGN KEY (`inventory`) REFERENCES `inventory` (`id`),
   CONSTRAINT `FK_WAREHOUSE_TRANSFER_SOURCE_WAREHOUSE` FOREIGN KEY (`source_warehouse`) REFERENCES `warehouse` (`id`),
   CONSTRAINT `FK_WAREHOUSE_TRANSFER_TARGET_WAREHOUSE` FOREIGN KEY (`target_warehouse`) REFERENCES `warehouse` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Traspasos entre Almacenes';
@@ -7942,7 +7946,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.23.3');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.23.4');
 
 COMMIT;
 

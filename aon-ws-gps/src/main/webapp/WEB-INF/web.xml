@@ -31,4 +31,15 @@
         <url-pattern>/AuthenticationServlet</url-pattern>
     </servlet-mapping>
 
+	<!-- Guest Data Servlet -->
+    <servlet>
+        <servlet-name>GuestDataServlet</servlet-name>
+        <servlet-class>com.code.aon.gps.servlet.GuestDataServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GuestDataServlet</servlet-name>
+        <url-pattern>/GuestDataServlet</url-pattern>
+    </servlet-mapping>
+
 </web-app>

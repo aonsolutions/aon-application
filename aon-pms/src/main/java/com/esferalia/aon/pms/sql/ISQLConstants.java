@@ -43,6 +43,7 @@ public interface ISQLConstants {
 	String ALLOTMENT = "allotment";
 	String QUANTITY = "quantity";
 	String BREAKDOWN = "breakdown";
+	String ALIAS = "alias";
 
 	String FINANCE = "finance";
 	String DUE_DATE = "dueDate";
@@ -54,6 +55,15 @@ public interface ISQLConstants {
 	String REFERENCE_CODE = "referenceCode";
 	String RECTIFICATION_TYPE = "rectificationType";
 	String RECTIFICATION_INVOICE = "rectificationInvoice";
+
+	String PERSON = "person";
+	String SURVEY = "survey";
+	String QUESTION = "question";
+	String QUESTION_TYPE = "question_type";
+	String RESPONSE = "response";
+	String RESPONSE_DETAIL = "response_detail";
+	String EMAIL = "email";
+	String PHONE = "phone";
 
 	String SERVLET_LOGIN = "PMS_SERVLET_LOGIN";
 
