@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,11 +31,13 @@ public class AuthenticationServlet extends HttpServlet implements ISQLConstants 
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationServlet.class.getName());
 	public static String JSON_DEFAULT_RESPONSE = "{\"codes\":0}";
-	public static String SELECT_RESERVATION_DATA =
-			"SELECT PRG.id AS " + RESERVATION_GUEST + ", PRR.adults AS " + ADULTS + ", PRR.children AS " + CHILDREN + ", PR.end_date AS " + END_DATE +
+	public static String SELECT_AUTHENTICATION_DATA =
+			"SELECT PRG.id AS " + RESERVATION_GUEST + ", PR.end_date AS " + END_DATE +
 			" FROM project_reservation AS PR, project_reservation_guest AS PRG, project_reservation_room AS PRR, project_reservation_room_detail AS PRRD" +
 			"	, asset_activity AS AA, asset AS A, room AS R" +
 			" WHERE PR.domain = ?" +
+			" AND PR.start_date <= ?" +
+			" AND PR.end_date > ?" +
 			" AND PR.status <> " + ReservationStatus.CANCELLED.ordinal() +
 			" AND PR.status <> " + ReservationStatus.BLOCKED.ordinal() +
 			" AND PR.project = PRG.project_reservation" +
@@ -72,6 +75,7 @@ public class AuthenticationServlet extends HttpServlet implements ISQLConstants 
 		String login = request.getParameter(LOGIN);
 		String room = request.getParameter(ROOM);
 		String document = request.getParameter(CODE);
+		Date today = DateUtils.truncate(new Date(), Calendar.DATE);
 		StringBuffer jsonResponse = new StringBuffer(JSON_DEFAULT_RESPONSE);
 
 		Connection connection = null;
@@ -81,12 +85,14 @@ public class AuthenticationServlet extends HttpServlet implements ISQLConstants 
 			connection = DatabaseUtil.getConnection(domain);
 			if (connection != null) {
 				Integer domainId = DatabaseUtil.getDomain(connection, domain);
-				if (getServletUtils().isValidLogin(connection, domainId, login)) {
-					stmt = connection.prepareStatement(SELECT_RESERVATION_DATA, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+				if (StringUtils.isNotBlank(login) && getServletUtils().isValidLogin(connection, domainId, login)) {
+					stmt = connection.prepareStatement(SELECT_AUTHENTICATION_DATA, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 					SQLUtils.setInt(stmt, 1, domainId);
-					SQLUtils.setString(stmt, 2, document);
-					SQLUtils.setDate(stmt, 3, DateUtils.truncate(new Date(), Calendar.DATE));
-					SQLUtils.setString(stmt, 4, room);
+					SQLUtils.setDate(stmt, 2, today);
+					SQLUtils.setDate(stmt, 3, today);
+					SQLUtils.setString(stmt, 4, document);
+					SQLUtils.setDate(stmt, 5, today);
+					SQLUtils.setString(stmt, 6, room);
 					rs = stmt.executeQuery();
 					if (rs.next()) {
 						int reservationGuest = rs.getInt(RESERVATION_GUEST);

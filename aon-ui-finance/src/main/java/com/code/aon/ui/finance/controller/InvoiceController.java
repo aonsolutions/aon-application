@@ -1,5 +1,6 @@
 package com.code.aon.ui.finance.controller;
 
+import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_PRINT_OUTPUT;
 import static com.code.aon.ui.common.ICommonMessages.CALCULATE_FINANCES_AMOUNT_ERROR_KEY;
 import static com.code.aon.ui.common.ICommonMessages.CALCULATE_INVOICE_QUANTITY_ERROR_KEY;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_DUPLICATE_EXPENSE_INVOICE_WARNING;
@@ -49,8 +50,10 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.facturae.FACeUtil;
@@ -1475,6 +1478,10 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		return super.getPojoShortName();
 	}
 
+	public boolean isPrintWord() {
+		return AppParamUtil.getValueAsBoolean(AppParam.APP_PRINT_INVOICE_WORD);
+	}	
+	
 	public static CompanyController getCompanyController() {
 		return (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);		
 	}

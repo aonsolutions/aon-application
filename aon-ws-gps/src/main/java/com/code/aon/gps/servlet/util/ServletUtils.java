@@ -39,7 +39,6 @@ public class ServletUtils implements ISQLConstants, Serializable {
 		} finally {
 			SQLUtils.closeQuietly(rs);
 			SQLUtils.closeQuietly(stmt);
-			SQLUtils.closeQuietly(connection);
 		}
 	}
 

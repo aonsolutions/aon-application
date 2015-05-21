@@ -28,7 +28,19 @@
 						actionListener="#{invoicePrint.onStartInvoicesZip}"
 						reRender="progressBarForm"
 						styleClass="aon-finding-toolbar-item aon-icon-zip aon-finding-toolbar-item-no-border">
-					</aon:commandButton>											
+					</aon:commandButton>	
+					<aon:if test="#{invoicePrint.printWord}">
+						<aon:htmlCommandLink id="invoicePrint-reportWord"
+							value="&#160;" target="_new" 
+							action="#{report.onExecute}"
+							styleClass="aon-finding-toolbar-item aon-icon-word aon-finding-toolbar-item-no-border"
+							actionListener="#{companySaleInvoiceFooter.onSearch}">
+							<f:param name="reportKey" value="#{company.saleInvoiceTemplateValue}" />
+							<f:param name="outputFormat" value="DOCX" />
+							<f:setPropertyActionListener target="#{report.reportKey}"
+								value="#{company.invoicePrintTemplateValue}" />
+						</aon:htmlCommandLink>
+					</aon:if>															
 					<aon:htmlCommandLink id="invoicePrint-report"
 						value="#{bundle.aon_invoices}" target="_blank"
 						action="#{report.onExecute}"
