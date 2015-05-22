@@ -42,7 +42,9 @@
 	<aon:outputLabel for="Income_workPlace_id"
 		value="#{bundle.purchase_workplace}" />
 	<aon:selectOneMenu id="Income_workPlace_id"
-		value="#{searchController.workPlace}">
+		value="#{searchController.workPlace}"
+		reRender="aonContent:incomeSearch:Income_lines_warehouse_id"
+		>
 		<f:selectItem itemLabel="-" value="#{null}" />		
 		<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 	</aon:selectOneMenu>

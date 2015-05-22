@@ -1,17 +1,29 @@
 package com.code.aon.ui.warehouse.event;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.faces.model.SelectItem;
+
 import org.apache.commons.lang.ArrayUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.customer.Customer;
 import com.code.aon.product.Item;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
+import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -30,7 +42,29 @@ public class DeliverySearchListener extends RegistrySearchListener {
     private Project project;
     
     private ProductCategory category;
+    
+    private Warehouse warehouse;
+    
+    private WorkPlace workPlace;
 	
+    
+    
+	public Warehouse getWarehouse() {
+		return warehouse;
+	}
+
+	public void setWarehouse(Warehouse warehouse) {
+		this.warehouse = warehouse;
+	}
+
+	public WorkPlace getWorkPlace() {
+		return workPlace;
+	}
+
+	public void setWorkPlace(WorkPlace workPlace) {
+		this.workPlace = workPlace;
+	}
+
 	public String getPreffix() throws ManagerBeanException {
 		return REGISTRY_SEARCH_PREFFIX;
 	}	
@@ -76,6 +110,40 @@ public class DeliverySearchListener extends RegistrySearchListener {
 		this.category = category;
 	}			
 
+	public List<SelectItem> getWarehouses() throws ManagerBeanException {
+		WorkPlace workPlace = getWorkPlace();
+		LinkedList<SelectItem> warehouses = new LinkedList<SelectItem>();
+		if(workPlace!=null){
+			IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
+			Criteria criteria = new Criteria();
+			Expression exp1 = ExpressionUtilities.getNullExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE));
+			Expression exp2 = ExpressionUtilities.getEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_ID), workPlace.getId());
+			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
+			criteria.addOrder(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
+			List<ITransferObject> c = warehouseBean.getList(criteria);
+			Iterator<ITransferObject> iter = c.iterator();
+			while (iter.hasNext()) {
+				Warehouse warehouse = (Warehouse) iter.next();
+				SelectItem item = new SelectItem(warehouse, warehouse.getName());
+				warehouses.add(item);
+			}
+		}
+		/*else{
+			IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
+			Criteria criteria = new Criteria();
+			criteria.addOrder(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
+			List<ITransferObject> c = warehouseBean.getList(criteria);
+			Iterator<ITransferObject> iter = c.iterator();
+			while (iter.hasNext()) {
+				Warehouse warehouse = (Warehouse) iter.next();
+				SelectItem item = new SelectItem(warehouse, warehouse.getName());
+				warehouses.add(item);
+			}
+			
+		}*/
+		return warehouses;
+	}
+	
 	@Override
 	protected void init() throws ManagerBeanException {
 		super.init();
@@ -85,6 +153,8 @@ public class DeliverySearchListener extends RegistrySearchListener {
 		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
 		setProject((Project)BeanManager.getManagerBean(Project.class).createNewTo());
 		setCategory( (ProductCategory) BeanManager.getManagerBean(ProductCategory.class).createNewTo() );
+		setWarehouse((Warehouse) BeanManager.getManagerBean(Warehouse.class).createNewTo());
+		setWorkPlace((WorkPlace) BeanManager.getManagerBean(WorkPlace.class).createNewTo());
 	}
 	
 	@Override
@@ -106,5 +176,8 @@ public class DeliverySearchListener extends RegistrySearchListener {
 		if (getCategory() != null && getCategory().getId() != null) {
 			criteria.addEqualExpression(getController().resolveAlias("Delivery_lines_item_product_category<id"), getCategory().getId());
 		}		
+		if (getWarehouse() !=null && getWarehouse().getId() != null) {
+			criteria.addEqualExpression(getController().resolveAlias("Delivery_lines_warehouse_id"), getWarehouse().getId());
+		}
 	}	
 }

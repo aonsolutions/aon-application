@@ -38,8 +38,9 @@
 	<aon:outputLabel for="Delivery_workPlace_id"
 		value="#{bundle.purchase_workplace}" />
 	<aon:selectOneMenu id="Delivery_workPlace_id"
-		value="#{companyCollections.workPlace}"
-		valueChangeListener="#{controller.addIdEqualExpression}">
+		value="#{searchController.workPlace}"
+		valueChangeListener="#{controller.addIdEqualExpression}"
+		reRender="aonContent:deliverySearch:Delivery_lines_warehouse_id">
 		<f:selectItem itemLabel="-" value="#{null}" />		
 		<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 	</aon:selectOneMenu>		

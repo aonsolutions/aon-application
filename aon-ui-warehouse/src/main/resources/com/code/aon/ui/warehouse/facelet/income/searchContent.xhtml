@@ -70,6 +70,14 @@
 				<aon:inputText id="Income_lines_taxableBase"
 					valueChangeListener="#{controller.addExpression}" size="40" />
 								
+								
+				<aon:outputLabel for="Income_lines_warehouse_id"
+					value="#{bundle.aon_warehouse}" />
+				<aon:selectOneMenu id="Income_lines_warehouse_id"
+					value="#{searchController.warehouse}">
+					<f:selectItem itemLabel="-" value="#{null}" />
+					<f:selectItems value="#{searchController.warehouses}" />
+				</aon:selectOneMenu>
 			</aon:panelGrid>
 		</aon:panelCollapsible>
 
