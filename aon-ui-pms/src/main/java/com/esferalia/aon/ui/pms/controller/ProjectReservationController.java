@@ -665,6 +665,10 @@ public class ProjectReservationController extends BasicController implements IPm
 		message.append("\n");
 		message.append("Huésped/Guest: " + reservation.getGuestFullName());
 		message.append("\n");
+		message.append("Habitaciones/Rooms: " + reservation.getRoomCount());
+		message.append("\n");
+		message.append("Personas/Pax: " + reservation.getPersonCount());
+		message.append("\n");
 		message.append("\n");
 		message.append("Los gastos por No Show se aplicarán según política establecida por contrato.");
 		message.append("\n");
