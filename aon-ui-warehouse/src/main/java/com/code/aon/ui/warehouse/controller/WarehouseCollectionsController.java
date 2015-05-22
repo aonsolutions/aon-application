@@ -32,7 +32,7 @@ public class WarehouseCollectionsController implements Serializable {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-	private List<SelectItem> warehouses;
+	private static List<SelectItem> warehouses;
 	private List<SelectItem> deliveryStatuses;
 	private List<SelectItem> incomeStatuses;
 	private List<SelectItem> priceTypes;
@@ -44,7 +44,7 @@ public class WarehouseCollectionsController implements Serializable {
 	public void setWarehouse( Warehouse warehouse ) {
 	}
 	
-	public List<SelectItem> getWarehouses() throws ManagerBeanException {
+	public static List<SelectItem> getWarehouses() throws ManagerBeanException {
 		warehouses = new LinkedList<SelectItem>();
 		IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
 		Criteria criteria = new Criteria();

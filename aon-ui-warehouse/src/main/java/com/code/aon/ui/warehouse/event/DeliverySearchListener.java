@@ -23,6 +23,7 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
+import com.code.aon.ui.warehouse.controller.WarehouseCollectionsController;
 import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -112,35 +113,18 @@ public class DeliverySearchListener extends RegistrySearchListener {
 
 	public List<SelectItem> getWarehouses() throws ManagerBeanException {
 		WorkPlace workPlace = getWorkPlace();
-		LinkedList<SelectItem> warehouses = new LinkedList<SelectItem>();
+		List<SelectItem> warehouses = new LinkedList<SelectItem>();
 		if(workPlace!=null){
-			IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
-			Criteria criteria = new Criteria();
-			Expression exp1 = ExpressionUtilities.getNullExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE));
-			Expression exp2 = ExpressionUtilities.getEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_ID), workPlace.getId());
-			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
-			criteria.addOrder(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
-			List<ITransferObject> c = warehouseBean.getList(criteria);
-			Iterator<ITransferObject> iter = c.iterator();
-			while (iter.hasNext()) {
-				Warehouse warehouse = (Warehouse) iter.next();
-				SelectItem item = new SelectItem(warehouse, warehouse.getName());
-				warehouses.add(item);
+			for (SelectItem selectItem :  WarehouseCollectionsController.getWarehouses()) {
+				Warehouse w = (Warehouse) selectItem.getValue();	
+				if(w.getWorkPlace().getId().equals(workPlace.getId())){
+					warehouses.add(selectItem);
+				}
 			}
 		}
-		/*else{
-			IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
-			Criteria criteria = new Criteria();
-			criteria.addOrder(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
-			List<ITransferObject> c = warehouseBean.getList(criteria);
-			Iterator<ITransferObject> iter = c.iterator();
-			while (iter.hasNext()) {
-				Warehouse warehouse = (Warehouse) iter.next();
-				SelectItem item = new SelectItem(warehouse, warehouse.getName());
-				warehouses.add(item);
-			}
-			
-		}*/
+		else{
+			warehouses =  WarehouseCollectionsController.getWarehouses();
+		}
 		return warehouses;
 	}
 	
