@@ -120,7 +120,7 @@ public class DownloadInventoryServlet extends HttpServlet {
         Font font2 = libro.createFont();
         font.setFontHeightInPoints((short)12);
 		style2.setFont(font2);
-		style2.setAlignment(CellStyle.ALIGN_CENTER);
+		style2.setAlignment(CellStyle.ALIGN_RIGHT);
 		style2.setBorderBottom(CellStyle.BORDER_THIN);
 		
         CellStyle style3 = libro.createCellStyle();
@@ -168,7 +168,7 @@ public class DownloadInventoryServlet extends HttpServlet {
             		case "Detalle 3":  celda.setCellValue(ii.getDetail3());celda.setCellStyle(style2);break;
             		case "Nombre": celda.setCellValue(ii.getProductName());celda.setCellStyle(style3);break;
             		case "Categor\u00eda": celda.setCellValue(ii.getProductCategory());celda.setCellStyle(style2);break; 
-            		case "Coste": celda.setCellValue(ii.getCost());celda.setCellStyle(style2);break; 
+            		case "Coste": celda.setCellValue(round(ii.getCost(),2));celda.setCellStyle(style2);break; 
             		case "Inventario": celda.setCellValue(ii.getInventory());celda.setCellStyle(style2);break;
             		case "Total": celda.setCellValue(ii.getCost()*ii.getInventory());celda.setCellStyle(style2);break;
             		default:
@@ -215,5 +215,14 @@ public class DownloadInventoryServlet extends HttpServlet {
         
 
     }
+	
+	public static Double round(Double value, Integer places) {
+	    if (places < 0) throw new IllegalArgumentException();
+
+	    Long factor = (long) Math.pow(10, places);
+	    value = value * factor;
+	    Long tmp = Math.round(value);
+	    return (double) tmp / factor;
+	}
 	
 	}

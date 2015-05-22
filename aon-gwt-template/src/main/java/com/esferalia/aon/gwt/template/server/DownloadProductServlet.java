@@ -195,7 +195,7 @@ public class DownloadProductServlet extends HttpServlet {
         Font font2 = libro.createFont();
         font.setFontHeightInPoints((short)12);
 		style2.setFont(font2);
-		style2.setAlignment(CellStyle.ALIGN_CENTER);
+		style2.setAlignment(CellStyle.ALIGN_RIGHT);
 		style2.setBorderBottom(CellStyle.BORDER_THIN);
 		
         CellStyle style3 = libro.createCellStyle();
@@ -441,8 +441,8 @@ public class DownloadProductServlet extends HttpServlet {
         		switch (type) {
         		case "Nombre": celda.setCellValue(pi.getDownloadItem().getName());celda.setCellStyle(style3);break;
         		case "C\u00f3digo": celda.setCellValue(pi.getDownloadItem().getCode());celda.setCellStyle(style3);break;
-        		case "Precio Coste": celda.setCellValue(pi.getDownloadItem().getPurchasePrice());celda.setCellStyle(style2);break;
-        		case "Precio Venta Base": celda.setCellValue(pi.getDownloadItem().getPrice());celda.setCellStyle(style2);break;
+        		case "Precio Coste": celda.setCellValue(round(pi.getDownloadItem().getPurchasePrice(),2));celda.setCellStyle(style2);break;
+        		case "Precio Venta Base": celda.setCellValue(round(pi.getDownloadItem().getPrice(),2));celda.setCellStyle(style2);break;
         		case "Categor\u00eda": celda.setCellValue(pi.getDownloadItem().getCategory());celda.setCellStyle(style2);break;
         		case "Marca": celda.setCellValue(pi.getDownloadItem().getBrand());celda.setCellStyle(style2);break;
         		case "Etiqueta":  celda.setCellValue(tags);celda.setCellStyle(style2);break;
@@ -497,5 +497,14 @@ public class DownloadProductServlet extends HttpServlet {
         out.flush();
         out.close();
     }
+	
+	public static Double round(Double value, Integer places) {
+	    if (places < 0) throw new IllegalArgumentException();
+
+	    Long factor = (long) Math.pow(10, places);
+	    value = value * factor;
+	    Long tmp = Math.round(value);
+	    return (double) tmp / factor;
+	}
 	
 	}

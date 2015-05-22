@@ -118,7 +118,7 @@ public class DownloadCatalogueServlet extends HttpServlet {
         Font font2 = libro.createFont();
         font.setFontHeightInPoints((short)12);
 		style2.setFont(font2);
-		style2.setAlignment(CellStyle.ALIGN_CENTER);
+		style2.setAlignment(CellStyle.ALIGN_RIGHT);
 		style2.setBorderBottom(CellStyle.BORDER_THIN);
 		
         CellStyle style3 = libro.createCellStyle();

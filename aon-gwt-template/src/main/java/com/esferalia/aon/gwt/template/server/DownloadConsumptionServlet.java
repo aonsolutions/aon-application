@@ -133,7 +133,7 @@ public class DownloadConsumptionServlet extends HttpServlet {
         Font font2 = libro.createFont();
         font.setFontHeightInPoints((short)12);
 		style2.setFont(font2);
-		style2.setAlignment(CellStyle.ALIGN_CENTER);
+		style2.setAlignment(CellStyle.ALIGN_RIGHT);
 		style2.setBorderBottom(CellStyle.BORDER_THIN);
 		
         CellStyle style3 = libro.createCellStyle();
@@ -141,7 +141,6 @@ public class DownloadConsumptionServlet extends HttpServlet {
 		style3.setAlignment(CellStyle.ALIGN_LEFT);
 		style3.setBorderBottom(CellStyle.BORDER_THIN);
 		
-        
         for(Integer i = 0; i< columns; i++){
         	Cell celda = fila.createCell(i);
         	celda.setCellValue(aux.getColumns().get(i));
@@ -159,7 +158,8 @@ public class DownloadConsumptionServlet extends HttpServlet {
         	Row row = hoja.createRow(j+2);
         	for(Integer k = 0; k< columns; k++){
         		Cell celda = row.createCell(k);
-        		String type = aux.getColumns().get(k);       		
+        		String type = aux.getColumns().get(k); 
+     
         		switch (type) {
         		case "Producto": celda.setCellValue(ci.getProductCode());celda.setCellStyle(style3);break;
         		case "Detalle 1":  celda.setCellValue(ci.getDetail());celda.setCellStyle(style2);break;
@@ -172,8 +172,8 @@ public class DownloadConsumptionServlet extends HttpServlet {
         		case "Ventas": celda.setCellValue(ci.getSales());celda.setCellStyle(style2);break;
         		case "Posterior": celda.setCellValue(ci.getFinalQuantity());celda.setCellStyle(style2);break;
         		case "Traspaso": celda.setCellValue(ci.getTransfersPlus()-ci.getTransfersMinus());celda.setCellStyle(style2);break;
-        		case "Precio": celda.setCellValue(ci.getPrice());celda.setCellStyle(style2);break; 
-        		case "Importe": celda.setCellValue(ci.getPrice()*ci.getConsumption());celda.setCellStyle(style2);break;
+        		case "Precio": celda.setCellValue(round(ci.getPrice(),2));celda.setCellStyle(style2);break; 
+        		case "Importe": celda.setCellValue(round(ci.getPrice()*ci.getConsumption(),2));celda.setCellStyle(style2);break;
         		case "Consumo": celda.setCellValue(ci.getConsumption());celda.setCellStyle(style2);break;
         		default:
         			break;
@@ -217,5 +217,14 @@ public class DownloadConsumptionServlet extends HttpServlet {
         
 
     }
+	
+	public static Double round(Double value, Integer places) {
+	    if (places < 0) throw new IllegalArgumentException();
+
+	    Long factor = (long) Math.pow(10, places);
+	    value = value * factor;
+	    Long tmp = Math.round(value);
+	    return (double) tmp / factor;
+	}
 	
 	}

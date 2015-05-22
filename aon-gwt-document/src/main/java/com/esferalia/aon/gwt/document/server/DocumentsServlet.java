@@ -166,7 +166,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		try {
 			String domainUrl = DBConsults.getDomain(domain, domainId);
 			docs  = DBConsults.getAllRattach(domain,domainUrl,user_id, confidential,domainId, userDomainId);
-			if(getServiconvenios())
+			if(serviconvenios != null && getServiconvenios())
 				docs.setServiconvenios(DBConsults.getServiConvenios(domain));
 		} catch (SQLException e) {
 			e.printStackTrace();
