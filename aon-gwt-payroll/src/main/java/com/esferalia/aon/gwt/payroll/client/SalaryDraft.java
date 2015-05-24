@@ -2,9 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import static com.esferalia.aon.gwt.common.shared.DateUtils.addMonths2Date;
 import static com.esferalia.aon.gwt.common.shared.DateUtils.getFirstDayOfMonth;
-import static com.esferalia.aon.gwt.common.shared.DateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.gwt.common.shared.DateUtils.getLastDayOfMonth;
-import static com.esferalia.aon.gwt.common.shared.DateUtils.getLastDayOfYear;
 import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_MAX_LENGTH;
 import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENGTH;
 
@@ -15,13 +13,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Set;
+import java.util.TreeSet;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -137,7 +134,6 @@ import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
 import com.google.gwt.visualization.client.DataTable;
 import com.google.gwt.visualization.client.VisualizationUtils;
-import com.google.gwt.visualization.client.events.Handler;
 import com.google.gwt.visualization.client.events.OnMouseOverHandler;
 
 public class SalaryDraft extends ResizeComposite implements CalculateCallback,
@@ -2142,12 +2138,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		// Date startDate = getFirstDayOfYear(salaryDraftObject.getStartDate());
 		// Date endDate = getLastDayOfYear(salaryDraftObject.getEndDate());
 
-		Date startDate = addMonths2Date(
+		final Date startDate = addMonths2Date(
 				getFirstDayOfMonth(salaryDraftObject.getStartDate()), -1);
-		Date endDate = addMonths2Date(
+		final Date endDate = addMonths2Date(
 				getLastDayOfMonth(salaryDraftObject.getEndDate()), 1);
 
-		Set<String> names = new HashSet<String>();
+		final TreeSet<String> names = new TreeSet<String>();
 		for (Variable v : salaryDraftObject.getContext())
 			names.add(v.getName());
 		for (Variable v : salaryDraftObject.getDrafContext())
@@ -2167,19 +2163,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 					@Override
 					public void onSuccess(final List<Variable> variables) {
-
-						Collections.sort(variables, new Comparator<Variable>() {
-							@Override
-							public int compare(Variable v1, Variable v2) {
-								if (v1.getScope() == v2.getScope())
-									return v1.getName().compareTo(v2.getName());
-								if (v1.getScope() == null)
-									return -1;
-								if (v2.getScope() == null)
-									return 1;
-								return v2.getScope().compareTo(v1.getScope());
-							}
-						});
 
 						final int offsetWidth = contextTable.getOffsetWidth();
 
@@ -2212,15 +2195,44 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 								data.addColumn(ColumnType.STRING, "Value");
 								data.addColumn(ColumnType.DATE, "Start");
 								data.addColumn(ColumnType.DATE, "End");
+
+								for (Variable variable : salaryDraftObject
+										.getContext()) {
+									if (skipVariable(variable.getName()))
+										continue;
+									if (variable instanceof UndefinedVariable)
+										variables.add(variable);
+								}
+
+								Collections.sort(variables,
+										new Comparator<Variable>() {
+											@Override
+											public int compare(Variable v1,
+													Variable v2) {
+												return v1.getName().compareTo(
+														v2.getName());
+											}
+										});
+
 								for (Variable variable : variables) {
 									int row = data.addRow();
+
 									data.setValue(row, 0, variable.getName());
-									data.setValue(row, 2,
-											variable.getStartDate());
-									data.setValue(row, 3, variable.getEndDate());
+
+									data.setValue(
+											row,
+											2,
+											variable.getStartDate() != null ? variable
+													.getStartDate() : startDate);
+									data.setValue(
+											row,
+											3,
+											variable.getEndDate() != null ? variable
+													.getEndDate() : endDate);
+
 									Object value = variable.getValue();
 									if (value == null)
-										data.setValueNull(row, 1);
+										data.setValue(row, 1, "Sin definir");
 									else
 										data.setValue(row, 1,
 												getValueAsString(variable));
@@ -2243,10 +2255,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 														.getStartDate());
 												tooltip.setEndDate(variable
 														.getEndDate());
-												HasValue<String> editor = createEditor(variable);
-												editor.setValue(getValueAsString(variable));
-												tooltip.setValueEditor((Widget) editor);
-													
+												tooltip.setTitle(getLabel(variable));
+
+												IsWidget isWidget = newVariableEditor(variable);
+												tooltip.setValueEditor(isWidget
+														.asWidget());
+
 												tooltip.showToolTip(clientX,
 														clientY);
 
@@ -2300,6 +2314,23 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 								return v.getValue().toString();
 							}
 						}
+					}
+
+					private <T extends IsWidget & HasValue<String> & HasAllFocusHandlers & Focusable> T newVariableEditor(
+							Variable variable) {
+						T editor = createEditor(variable);
+						int width = editor instanceof ListBox ? size2px(25) + 6
+								: size2px(25);
+						editor.asWidget().getElement().getStyle()
+								.setWidth(width, Unit.PX);
+						editor.setValue(getValueAsString(variable));
+
+						VariableChangeHandler<T> variableChangeHandler = new VariableChangeHandler<T>(
+								variable);
+
+						variableChangeHandler.setEditor(editor);
+
+						return editor;
 					}
 
 				});

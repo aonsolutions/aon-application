@@ -52,6 +52,8 @@ public class Tooltip extends DecoratedPopupPanel {
 	Button acceptButton;
 	@UiField
 	SimplePanel valuePanel;
+	@UiField
+	SimplePanel titlePanel;
 
 	private List<Listener> listeners;
 
@@ -91,6 +93,11 @@ public class Tooltip extends DecoratedPopupPanel {
 	public void setName(String pFullName) {
 		nameLabel.setText(pFullName);
 	}
+	
+	public void setTitle(Widget widget) {
+		titlePanel.setWidget(widget);
+	}
+	
 	
 	public void setValueEditor(Widget valueEditor) {
 		valuePanel.setWidget(valueEditor);

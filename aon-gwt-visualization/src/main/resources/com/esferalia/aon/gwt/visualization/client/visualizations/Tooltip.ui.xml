@@ -19,6 +19,11 @@
 	<g:HTMLPanel>
 		<table>
 			<tr>
+				<td colspan="2" align="left">
+					<g:SimplePanel ui:field="titlePanel" />
+				</td>
+			</tr>
+			<tr>
 				<td>
 					<g:InlineLabel styleName="aon-bold" ui:field="nameLabel"></g:InlineLabel>
 				</td>
@@ -27,29 +32,29 @@
 				</td>
 			</tr>
 		</table>
-		<table>
+		<table width="100%">
 			<tr>
 				<td>
 					<g:InlineLabel ui:field="startDateLabel">Inicio:</g:InlineLabel>
 				</td>
-				<td>
+				<td align="left" >
 					<datepicker:DateBox ui:field="startDateBox" />
 				</td>
 				<td>
 					<g:InlineLabel>&nbsp;</g:InlineLabel>
 				</td>
-				<td>
+				<td  align="left" >
 					<g:InlineLabel ui:field="endDateLabel">Fin:</g:InlineLabel>
 				</td>
-				<td>
+				<td align="right" >
 					<datepicker:DateBox ui:field="endDateBox" />
 				</td>
 			</tr>
 			<tr>
 				<td colspan="6" align="right">
 				    <br></br>
-					<div styleName="{style.buttons}">
-						<g:Button ui:field="acceptButton">Aceptar</g:Button>
+					<div styleName="{style.buttons}" >
+						<g:Button ui:field="acceptButton" visible="false">Aceptar</g:Button>
 					</div>
 				</td>
 			</tr>
