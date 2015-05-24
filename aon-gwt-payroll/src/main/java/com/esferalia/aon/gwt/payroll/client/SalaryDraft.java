@@ -2196,13 +2196,13 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 								data.addColumn(ColumnType.DATE, "Start");
 								data.addColumn(ColumnType.DATE, "End");
 
-								for (Variable variable : salaryDraftObject
-										.getContext()) {
-									if (skipVariable(variable.getName()))
-										continue;
-									if (variable instanceof UndefinedVariable)
-										variables.add(variable);
-								}
+//								for (Variable variable : salaryDraftObject
+//										.getContext()) {
+//									if (skipVariable(variable.getName()))
+//										continue;
+//									if (variable instanceof UndefinedVariable)
+//										variables.add(variable);
+//								}
 
 								Collections.sort(variables,
 										new Comparator<Variable>() {
