@@ -473,38 +473,18 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		AONContext aonContext = new AONContext(connection);
 
 		//@formatter:off
-		AgreementLevelCategoryRecord category = newAgreement(aonContext,
-				new Extra[] { new Extra() {
-					{
-						this.expression = "P_0 + P_1 + P_2";
-						this.month = Month.DECEMBER;
-						this.start = "01/12";
-						this.end = "31/12";
-						this.issue = "15/12";
-					}
-				}, new Extra() {
-					{
-						this.expression = "P_0 + P_1 + P_2";
-						this.month = Month.JULY;
-						this.start = "01/07 -1";
-						this.end = "30/06";
-						this.issue = "01/07";
-					}
-				}, });
 		ContractRecord contract = newContract(aonContext, 
 				new String[] {
 				format("NETO(2000 * %s / %s)", ContextVariable.WORKED_DAYS , ContextVariable.MONTH_DAYS )}, 
 				new String[] {
-				"BASE_IRPF * PORCENTAJE_IRPF/100" });
+				"BASE_IRPF * PORCENTAJE_IRPF / 100" });
 		addPayment(aonContext, contract,
-				"0.00 ", 
-				"DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA");
+				"0.00 ",
+				"X=BASE_REGULADORA;if( X > 0.00){TRACE('BR=%f\r\n',X);}DIAS_ENFERMEDAD_COMUN * X");
 		//@formatter:on
 
 		Date startITDate = getToday();
-		int itDays = (int) (Math.random() * (getMax(startITDate, DAY_OF_MONTH) - get(
-				startITDate, DAY_OF_MONTH))) + 1;
-		Date endITDate = addDays(startITDate, itDays - 1);
+		Date endITDate = getLastDayOfMonth(startITDate); 
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
 				endITDate, null);
 
@@ -519,11 +499,17 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		ISalary salary = calculator.calculate(ctx);
 
 		int monthDays = get(endDate, DAY_OF_MONTH);
+		
+		int workDays = get(startITDate, DAY_OF_MONTH) -1;
 		Assert.assertEquals(format("%s :", TOTAL_LIQUID), 2000.00
-				* (monthDays - itDays) / monthDays, salary.getTotalLiquid(),
-				DELTA);
-		//Assert.assertEquals(format("%s :", CGC_BASE), 2000.00,
-		//		salary.getCommonBase(), DELTA);
+				* workDays / monthDays, salary.getTotalLiquid(),
+				0.5);
+		
+		double totalIrpf = monthDays * salary.getTotalIrpf() / workDays;
+		
+		Assert.assertEquals(format("%s :", CGC_BASE), 
+					2000.00 + totalIrpf,
+					salary.getCommonBase(), 0.9);
 
 	}
 

@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -134,7 +135,8 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 
 	}
 
-	static class DraftHierarchyEmbargos<T extends IContractEmbargo> extends HierarchyIterator<T> {
+	static class DraftHierarchyEmbargos<T extends IContractEmbargo> extends
+			HierarchyIterator<T> {
 
 		private Set<Integer> ids = new HashSet<Integer>();
 
@@ -155,7 +157,8 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		}
 	}
 
-	static class DraftHierarchyDeductions<T extends IContractDeduction> extends HierarchyDeductions<T> {
+	static class DraftHierarchyDeductions<T extends IContractDeduction> extends
+			HierarchyDeductions<T> {
 
 		private Set<Integer> ids = new HashSet<Integer>();
 
@@ -175,7 +178,6 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 				return null;
 		}
 	}
-
 
 	class DraftDeferredExpressionVariable extends DeferredExpressionVariable {
 
@@ -213,9 +215,15 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 			throws ExpressionException {
 		super(ctx);
 		this.draft = draft;
-		loadDraftContext(getExpressionContext());
-		loadDraftLeaves(getExpressionContext());
-	
+
+	}
+
+	@Override
+	public boolean next() throws SQLException, ExpressionException {
+		return ctx.next(ctx -> {
+			loadDraftContext(ctx);
+			loadDraftLeaves(ctx);
+		});
 	}
 
 	protected void loadDraftContext(ExpressionContext exprCtx)
@@ -231,102 +239,96 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		for (Variable variable : draftData) {
 			String name = variable.getName();
 
-			//ExpressionImpl expr = newExpressionImpl(variable);
-
 			Date varStartDate = resetTime(variable.getStartDate());
 			Date varEndDate = resetTime(variable.getEndDate());
 
 			Date startDate = Period.max(ctxStartDate, varStartDate);
 			Date endDate = Period.min(ctxEndDate, varEndDate);
-			
-			addVariable(variable, startDate, endDate, exprCtx );
 
-			//exprCtx.addLazyExpression(expr, startDate, endDate);
+			addVariable(variable, startDate, endDate, exprCtx);
 
-			/*
-			 * try { exprCtx.addExpression(expr, startDate, endDate); } catch
-			 * (UndefinedVariablesException e) { exprCtx.addVariable(name, new
-			 * DraftDeferredExpressionVariable( exprCtx, expr, startDate,
-			 * endDate)); }
-			 */
 		}
 
-	}	
+	}
 
 	protected void loadDraftLeaves(ExpressionContext exprCtx)
-			throws ExpressionException{		
+			throws ExpressionException {
 
 		Date ctxStartDate = resetTime(ctx.getStartDate());
 		Date ctxEndDate = resetTime(ctx.getEndDate());
-		
+
 		List<ITDataPerson> drafts = draft.getDraftLeaveIts();
-		
-		for(ITDataPerson dataPerson : drafts) {			
-						
+
+		for (ITDataPerson dataPerson : drafts) {
+
 			Date leaveStartDate = resetTime(dataPerson.getLeaveStartDate());
 			Date leaveEndDate = resetTime(dataPerson.getLeaveEndDate());
-						
+
 			Date start = Period.max(ctxStartDate, leaveStartDate);
 			Date end = Period.min(ctxEndDate, leaveEndDate);
-			
+
 			if (dataPerson.getContractId() == draft.getEmployee().getId()
 					&& DateUtils.compare(leaveStartDate, ctxEndDate) < 0
 					&& DateUtils.compare(leaveEndDate, ctxStartDate) > 0) {
-				
-				long days = leaveStartDate.before(ctxStartDate) ? 
-						DateUtils.getDaysBetween(leaveStartDate, ctxStartDate) 
-						: 0;
-				
+
+				long days = leaveStartDate.before(ctxStartDate) ? DateUtils
+						.getDaysBetween(leaveStartDate, ctxStartDate) : 0;
+
 				LeaveType type = getLeaveType(dataPerson.getType());
-				
+
 				Integer id = dataPerson.getContractLeaveId();
 				cleanDBLeave(exprCtx, id);
-				
-				loadContractLeave(id, start, end, days, type, dataPerson, exprCtx);			
+
+				loadContractLeave(id, start, end, days, type, dataPerson,
+						exprCtx);
 			}
 		}
 	}
-	
-	private void loadContractLeave(Integer id, Date start, Date end, long days, LeaveType type, 
-			ITDataPerson dataPerson, ExpressionContext exprCtx) throws ExpressionException {
-		
+
+	private void loadContractLeave(Integer id, Date start, Date end, long days,
+			LeaveType type, ITDataPerson dataPerson, ExpressionContext exprCtx)
+			throws ExpressionException {
+
 		try {
-			
-			if(dataPerson.getRegBase().compareTo("REMOVE_VARIABLE()") != 0) {
-				getCtx().loadContractLeave(id, start, end, days, type, dataPerson.getRegBase(), exprCtx);
+
+			if (dataPerson.getRegBase().compareTo("REMOVE_VARIABLE()") != 0) {
+				getCtx().loadContractLeave(id, start, end, days, type,
+						dataPerson.getRegBase(), exprCtx);
 			}
-		}catch(Exception ex) {
-			//is null
-			getCtx().loadContractLeave(id, start, end, days, type, dataPerson.getRegBase(), exprCtx);
+		} catch (Exception ex) {
+			// is null
+			getCtx().loadContractLeave(id, start, end, days, type,
+					dataPerson.getRegBase(), exprCtx);
 		}
-		
+
 	}
-	
+
 	protected void cleanDBLeave(ExpressionContext exprCtx, Integer id)
-			throws ExpressionException{		
-		if ( id <=  0 )
+			throws ExpressionException {
+		if (id <= 0)
 			return;
-		
+
 		SortedSet<Leave> dbLeaves = getCtx().getLeaves();
 		for (Leave dbLeave : dbLeaves) {
-			if ( dbLeave.getId().equals(id) ){
+			if (dbLeave.getId().equals(id)) {
 				getCtx().clean(exprCtx, dbLeave);
 			}
-		}	
-	}	
+		}
+	}
 
 	@Override
 	public Collection<IContractDeduction> getContractDeductions()
 			throws AonException {
-		return new DraftHierarchyDeductions<IContractDeduction>(getDraftDeductions().iterator(),
-				super.getContractDeductions().iterator());
+		return new DraftHierarchyDeductions<IContractDeduction>(
+				getDraftDeductions().iterator(), super.getContractDeductions()
+						.iterator());
 	}
-	
+
 	@Override
 	public Collection<IContractEmbargo> getContractEmbargos()
 			throws AonException {
-		return new DraftHierarchyEmbargos<IContractEmbargo>(getDraftEmbargos().iterator(),
-				super.getContractEmbargos().iterator());
+		return new DraftHierarchyEmbargos<IContractEmbargo>(getDraftEmbargos()
+				.iterator(), super.getContractEmbargos().iterator());
 	}
 
 	@Override
@@ -376,7 +378,7 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 			draftDeduction.setExpression(deduction.getExpression());
 			draftDeduction.setDescription(deduction.getDescription());
 			draftDeduction.setType(getDeductionType(deduction.getType()));
-			
+
 			deductions.add(draftDeduction);
 		}
 
@@ -389,7 +391,7 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		for (Deduction embargo : draft.getDraftEmbargos()) {
 
 			DraftEmbargo draftEmbargo = new DraftEmbargo();
-			
+
 			draftEmbargo.setId(embargo.getId());
 			draftEmbargo.setEndDate(resetTime(embargo.getEndDate()));
 			draftEmbargo.setStartDate(resetTime(embargo.getStartDate()));
@@ -404,9 +406,10 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 
 	private IContractPayment getDraftPayment(Payment payment) {
 		if (StringUtils.equals("CONVENIO()", payment.getExpression()))
-			for (IContractPayment agreementPayment : getAgreementPayments()){
+			for (IContractPayment agreementPayment : getAgreementPayments()) {
 				if (payment.getId().equals(agreementPayment.getId())
-						|| StringUtils.equals(payment.getName(),agreementPayment.getName())){
+						|| StringUtils.equals(payment.getName(),
+								agreementPayment.getName())) {
 					DraftPayment draftPayment = newDraftPayment(agreementPayment);
 					draftPayment.setId(payment.getId());
 					return draftPayment;
@@ -418,15 +421,16 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 
 	private void addVariable(Variable var, Date start, Date end,
 			ExpressionContext ctx) throws ExpressionException {
-		
+
 		if (Variable.isAgreementVariable(var)) {
 			ExpressionContext agreementCtx = getAgreementExpressionContext();
-			ITimedVariable<?> agreementVar = agreementCtx.getVariable(var.getName(), start, end);
-			if ( agreementVar != null ) {
-				ctx.putVariable(var.getName(), agreementVar );
+			ITimedVariable<?> agreementVar = agreementCtx.getVariable(
+					var.getName(), start, end);
+			if (agreementVar != null) {
+				ctx.putVariable(var.getName(), agreementVar);
 				return;
 			}
-		} 
+		}
 
 		ExpressionImpl expr = newExpressionImpl(var);
 		ctx.addLazyExpression(expr, start, end);
@@ -460,7 +464,7 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		expr.setName(var.getName());
 		expr.setScope(ExpressionScope.SALARY);
 		String expression = var.getExpression();
-		if ( StringUtils.isBlank(expression ))
+		if (StringUtils.isBlank(expression))
 			expr.setExpression(String.valueOf(var.getValue()));
 		else
 			expr.setExpression(var.getExpression());
@@ -529,7 +533,7 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 	private static DeductionType getDeductionType(Deduction.Type type) {
 		return type != null ? DeductionType.values()[type.ordinal()] : null;
 	}
-	
+
 	private static LeaveType getLeaveType(ITDataPerson.Type type) {
 		return type != null ? LeaveType.values()[type.ordinal()] : null;
 	}

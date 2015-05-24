@@ -63,6 +63,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
 import static java.lang.String.format;
 import static java.util.Calendar.DAY_OF_MONTH;
+import static java.util.Calendar.DAY_OF_WEEK;
 import static java.util.Calendar.DAY_OF_YEAR;
 import static java.util.Calendar.MONTH;
 import static java.util.Calendar.YEAR;
@@ -70,6 +71,7 @@ import static java.util.Calendar.YEAR;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -88,29 +90,29 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
-import com.esferalia.aon.watson.util.AonDateUtils;
 
 /**
  * @author rtrepiana
  *
  */
-public class SQLWorkedDaysTestCase extends
-		AbstractSQLTestCase {
+public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 
 	private static final double DELTA = 0.000000001;
 
-	private static ContractCode PARTIAL_TIME[] = { 
-		C200, C209, C230, C239, C250, C289, 
-		C501, C502, C503, C508, C510, C518, C520, C530, C540, C541,C550, C552, 
-	};
+	private static ContractCode PARTIAL_TIME[] = { C200, C209, C230, C239,
+			C250, C289, C501, C502, C503, C508, C510, C518, C520, C530, C540,
+			C541, C550, C552, };
 
-	private static  ContractCode FULL_TIME[] = { 
-		C100, C109, C130, C139, C150, C189, 									// indefinite fulltime
-		C401, C402, C403, C408, C410, C418, C420, C421, C430, C441, C450, C452, // partial & temp fulltime
+	private static ContractCode FULL_TIME[] = { C100, C109, C130, C139,
+			C150,
+			C189, // indefinite fulltime
+			C401, C402, C403, C408, C410, C418, C420, C421, C430, C441, C450,
+			C452, // partial & temp fulltime
 	};
 
 	@Test
-	public void testFullTimeWorkDaysI() throws ExpressionException, SQLException {
+	public void testFullTimeWorkDaysI() throws ExpressionException,
+			SQLException {
 
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
@@ -125,11 +127,12 @@ public class SQLWorkedDaysTestCase extends
 				});
 
 		testWorkedDays(contract, 1d, null);
-	
+
 	}
 
 	@Test
-	public void testFullTimeWorkDaysII() throws ExpressionException, SQLException {
+	public void testFullTimeWorkDaysII() throws ExpressionException,
+			SQLException {
 
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
@@ -140,17 +143,17 @@ public class SQLWorkedDaysTestCase extends
 					{
 						put(TC2.getName(),
 								format("\"%s\"", random(FULL_TIME).getValue()));
-						put(MONTH_DAYS.getName(),
-								format("%d", 20));
+						put(MONTH_DAYS.getName(), format("%d", 20));
 					}
 				});
 
 		testWorkedDays(contract, 1d, 20.00);
-	
+
 	}
 
 	@Test
-	public void testFullTimeWorkDaysIII() throws ExpressionException, SQLException {
+	public void testFullTimeWorkDaysIII() throws ExpressionException,
+			SQLException {
 
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
@@ -163,17 +166,16 @@ public class SQLWorkedDaysTestCase extends
 								format("\"%s\"", random(FULL_TIME).getValue()));
 					}
 				});
-		
-		addData(aonContext, contract, getToday(), getToday(), 
-			new HashMap<String, String>() {
-			{
-				put(STRIKE_DAYS.getName(),format("%d", 1));
-			}
-		});
-				
+
+		addData(aonContext, contract, getToday(), getToday(),
+				new HashMap<String, String>() {
+					{
+						put(STRIKE_DAYS.getName(), format("%d", 1));
+					}
+				});
 
 		Date contractStart = contract.getStartDate();
-		long contractStartDayOfMonth = get(contractStart,DAY_OF_MONTH);
+		long contractStartDayOfMonth = get(contractStart, DAY_OF_MONTH);
 
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -185,12 +187,9 @@ public class SQLWorkedDaysTestCase extends
 		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
 				connection, start, end, end, criteria);
 		ctx.next();
-		assertEquals(ctx, 
-				(double) ((get(end, DAY_OF_MONTH) - contractStartDayOfMonth + 1 -1) ),  
-				contractStart, 
-				end,
-				null);
-	
+		assertEquals(ctx, (double) ((get(end, DAY_OF_MONTH)
+				- contractStartDayOfMonth + 1 - 1)), contractStart, end, null);
+
 	}
 
 	@Test
@@ -204,7 +203,8 @@ public class SQLWorkedDaysTestCase extends
 				new HashMap<String, String>() {
 					{
 						put(ContextVariable.TC2.getName(),
-								format("\"%s\"", random(PARTIAL_TIME).getValue()));
+								format("\"%s\"", random(PARTIAL_TIME)
+										.getValue()));
 						put(MONDAY_HOURS.getName(), format("%d", 0));
 						put(FRIDAY_HOURS.getName(), format("%d", 0));
 						put(WEDNESDAY_HOURS.getName(), format("%d", 4));
@@ -226,16 +226,14 @@ public class SQLWorkedDaysTestCase extends
 				new HashMap<String, String>() {
 					{
 						put(TC2.getName(),
-								format("\"%s\"", random(PARTIAL_TIME).getValue()));
-						put(WEEK_HOURS.getName(),
-								format("%d", 15));
-						put(AGREEMENT_HOURS.getName(),
-								format("%d", 35));
+								format("\"%s\"", random(PARTIAL_TIME)
+										.getValue()));
+						put(WEEK_HOURS.getName(), format("%d", 15));
+						put(AGREEMENT_HOURS.getName(), format("%d", 35));
 					}
 				});
 
-		testWorkedDays(contract, (double)(15d / 35d), null);
-
+		testWorkedDays(contract, (double) (15d / 35d), null);
 
 	}
 
@@ -251,14 +249,13 @@ public class SQLWorkedDaysTestCase extends
 				new HashMap<String, String>() {
 					{
 						put(TC2.getName(),
-								format("\"%s\"", random(PARTIAL_TIME).getValue()));
-						put(PARTIAL_FACTOR.getName(),
-								format("%f", 0.69));
+								format("\"%s\"", random(PARTIAL_TIME)
+										.getValue()));
+						put(PARTIAL_FACTOR.getName(), format("%f", 0.69));
 					}
 				});
 
 		testWorkedDays(contract, 0.69, null);
-
 
 	}
 
@@ -276,11 +273,10 @@ public class SQLWorkedDaysTestCase extends
 				new HashMap<String, String>() {
 					{
 						put(TC2.getName(),
-								format("\"%s\"", random(PARTIAL_TIME).getValue()));
-						put(WEEK_HOURS.getName(),
-								format("%d", 15));
-						put(AGREEMENT_HOURS.getName(),
-								format("%d", 35));
+								format("\"%s\"", random(PARTIAL_TIME)
+										.getValue()));
+						put(WEEK_HOURS.getName(), format("%d", 15));
+						put(AGREEMENT_HOURS.getName(), format("%d", 35));
 					}
 				});
 
@@ -293,10 +289,11 @@ public class SQLWorkedDaysTestCase extends
 
 		Date start = getFirstDayOfMonth(addMonths(contractStart, 1));
 		Date end = getLastDayOfMonth(start);
-		
-		Date change = addDays(start, Math.max(2,(int) (Math.random() * get(end,DAY_OF_MONTH)))); 
-		int changeDayOfMonth = get(change,DAY_OF_MONTH);
-		
+
+		Date change = addDays(start,
+				Math.max(2, (int) (Math.random() * get(end, DAY_OF_MONTH))));
+		int changeDayOfMonth = get(change, DAY_OF_MONTH);
+
 		addData(aonContext, contract, change, null,
 				new HashMap<String, String>() {
 					private static final long serialVersionUID = 1L;
@@ -307,7 +304,6 @@ public class SQLWorkedDaysTestCase extends
 					}
 				});
 
-
 		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
 				connection, start, end, end, criteria);
 		ctx.next();
@@ -315,22 +311,15 @@ public class SQLWorkedDaysTestCase extends
 				.eval(format("%s", WORKED_DAYS), start, end, Double.class);
 
 		Assert.assertEquals(2, workedDays.size());
-		assertEquals(
-				workedDays.get(0),
-				(double) ((changeDayOfMonth - 1) * 15d / 35d),
-				start, 
+		assertEquals(workedDays.get(0),
+				(double) ((changeDayOfMonth - 1) * 15d / 35d), start,
 				addDays(change, -1));
 
-		assertEquals(
-				workedDays.get(1),
-				(double) ((get(end, DAY_OF_MONTH)-changeDayOfMonth +1) * 10d / 35d),
-				change, 
-				end);
+		assertEquals(workedDays.get(1), (double) ((get(end, DAY_OF_MONTH)
+				- changeDayOfMonth + 1) * 10d / 35d), change, end);
 
 	}
-	
-	
-	
+
 	@Test
 	public void testContextWorkDaysI() throws ExpressionException, SQLException {
 
@@ -344,11 +333,10 @@ public class SQLWorkedDaysTestCase extends
 				new HashMap<String, String>() {
 					{
 						put(TC2.getName(),
-								format("\"%s\"", random(PARTIAL_TIME).getValue()));
+								format("\"%s\"", random(PARTIAL_TIME)
+										.getValue()));
 					}
 				});
-
-		
 
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -359,38 +347,226 @@ public class SQLWorkedDaysTestCase extends
 		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
 				connection, start, end, end, criteria);
 		ctx.next();
-		
+
 		ctx.getExpressionContext()
 				.eval("100.00 * DIAS_TRABAJADOS / DIAS_MES ", start, end)
 				.stream()
-				.map(result->result.getContext())
-				.forEach(context->{
-					Assert.assertTrue(String.format(MONTH_DAYS.getName()),context.containsKey(MONTH_DAYS.getName()));
-					Assert.assertTrue(String.format(WORKED_DAYS.getName()),context.containsKey(WORKED_DAYS.getName()));
-					Assert.assertTrue(String.format(TC2.getName()),context.containsKey(TC2.getName()));
-					Assert.assertTrue(String.format(PARTIAL_FACTOR.getName()),context.containsKey(PARTIAL_FACTOR.getName()));
-					Assert.assertTrue(String.format(ERE_FACTOR.getName()),context.containsKey(ERE_FACTOR.getName()));
-					Assert.assertTrue(String.format(STRIKE_DAYS.getName()),context.containsKey(STRIKE_DAYS.getName()));
-					
-					Assert.assertTrue(String.format(WEEK_HOURS.getName()),context.containsKey(WEEK_HOURS.getName()));
-					Assert.assertTrue(String.format(MONDAY_HOURS.getName()),context.containsKey(MONDAY_HOURS.getName()));
-					Assert.assertTrue(String.format(TUESDAY_HOURS.getName()),context.containsKey(TUESDAY_HOURS.getName()));
-					Assert.assertTrue(String.format(WEDNESDAY_HOURS.getName()),context.containsKey(WEDNESDAY_HOURS.getName()));
-					Assert.assertTrue(String.format(THURSDAY_HOURS.getName()),context.containsKey(THURSDAY_HOURS.getName()));
-					Assert.assertTrue(String.format(FRIDAY_HOURS.getName()),context.containsKey(FRIDAY_HOURS.getName()));
-					Assert.assertTrue(String.format(SATURDAY_HOURS.getName()),context.containsKey(SATURDAY_HOURS.getName()));
-					Assert.assertTrue(String.format(SUNDAY_HOURS.getName()),context.containsKey(SUNDAY_HOURS.getName()));
-					
-					Assert.assertTrue(String.format(AGREEMENT_HOURS.getName()),context.containsKey(AGREEMENT_HOURS.getName()));
-					
-				});
-		
-	
+				.map(result -> result.getContext())
+				.forEach(
+						context -> {
+							Assert.assertTrue(
+									String.format(MONTH_DAYS.getName()),
+									context.containsKey(MONTH_DAYS.getName()));
+							Assert.assertTrue(
+									String.format(WORKED_DAYS.getName()),
+									context.containsKey(WORKED_DAYS.getName()));
+							Assert.assertTrue(String.format(TC2.getName()),
+									context.containsKey(TC2.getName()));
+							Assert.assertTrue(String.format(PARTIAL_FACTOR
+									.getName()), context
+									.containsKey(PARTIAL_FACTOR.getName()));
+							Assert.assertTrue(
+									String.format(ERE_FACTOR.getName()),
+									context.containsKey(ERE_FACTOR.getName()));
+							Assert.assertTrue(
+									String.format(STRIKE_DAYS.getName()),
+									context.containsKey(STRIKE_DAYS.getName()));
+
+							Assert.assertTrue(
+									String.format(WEEK_HOURS.getName()),
+									context.containsKey(WEEK_HOURS.getName()));
+							Assert.assertTrue(
+									String.format(MONDAY_HOURS.getName()),
+									context.containsKey(MONDAY_HOURS.getName()));
+							Assert.assertTrue(String.format(TUESDAY_HOURS
+									.getName()), context
+									.containsKey(TUESDAY_HOURS.getName()));
+							Assert.assertTrue(String.format(WEDNESDAY_HOURS
+									.getName()), context
+									.containsKey(WEDNESDAY_HOURS.getName()));
+							Assert.assertTrue(String.format(THURSDAY_HOURS
+									.getName()), context
+									.containsKey(THURSDAY_HOURS.getName()));
+							Assert.assertTrue(
+									String.format(FRIDAY_HOURS.getName()),
+									context.containsKey(FRIDAY_HOURS.getName()));
+							Assert.assertTrue(String.format(SATURDAY_HOURS
+									.getName()), context
+									.containsKey(SATURDAY_HOURS.getName()));
+							Assert.assertTrue(
+									String.format(SUNDAY_HOURS.getName()),
+									context.containsKey(SUNDAY_HOURS.getName()));
+
+							Assert.assertTrue(String.format(AGREEMENT_HOURS
+									.getName()), context
+									.containsKey(AGREEMENT_HOURS.getName()));
+
+						});
+
 	}
 
 	@Test
-	public void testWorkDaysWithIT() throws ExpressionException,
+	public void testContextWorkDaysII() throws ExpressionException,
 			SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		Date start = getFirstDayOfYear(getToday());
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, start,
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(),
+								format("\"%s\"", random(PARTIAL_TIME)
+										.getValue()));
+					}
+				});
+
+		Date sunday = add(start, DAY_OF_MONTH, 6);
+
+		addData(aonContext, contract, start, sunday,
+				new HashMap<String, String>() {
+					{
+						put(WEEK_HOURS.getName(), "10.00");
+					}
+				});
+
+		Date end = getLastDayOfMonth(start);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, start, end, end, contract);
+
+		List<ITimedResult<Double>> workDays = ctx.getExpressionContext().eval(
+				"DIAS_TRABAJADOS", start, end, Double.class);
+		Assert.assertEquals(2, workDays.size());
+
+		Assert.assertEquals(7d / 4d, workDays.get(0).getValue());
+		Assert.assertEquals(new Period(start, sunday), workDays.get(0)
+				.getPeriod());
+
+		Assert.assertEquals(
+				(double) get(end, DAY_OF_MONTH) - get(sunday, DAY_OF_MONTH),
+				workDays.get(1).getValue());
+		Assert.assertEquals(new Period(add(sunday, DAY_OF_MONTH, 1), end),
+				workDays.get(1).getPeriod());
+
+	}
+
+	@Test
+	public void testContextWorkDaysIII() throws ExpressionException,
+			SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		Date start = getFirstDayOfYear(getToday());
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, start,
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(),
+								format("\"%s\"", random(PARTIAL_TIME)
+										.getValue()));
+					}
+				});
+
+		Date monday = add(start, DAY_OF_MONTH, 5);
+		Date sunday = add(monday, DAY_OF_MONTH, 6);
+
+		addData(aonContext, contract, monday, sunday,
+				new HashMap<String, String>() {
+					{
+						put(WEEK_HOURS.getName(), "10.00");
+					}
+				});
+
+		Date mondayI = add(sunday, DAY_OF_MONTH, 2);
+		Date sundayI = add(mondayI, DAY_OF_MONTH, 6);
+
+		addData(aonContext, contract, mondayI, sundayI,
+				new HashMap<String, String>() {
+					{
+						put(WEEK_HOURS.getName(), "20.00");
+					}
+				});
+
+		Date end = getLastDayOfMonth(start);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, start, end, end, contract);
+
+		List<ITimedResult<Double>> workDays = ctx.getExpressionContext().eval(
+				"DIAS_TRABAJADOS", start, end, Double.class);
+		Assert.assertEquals(5, workDays.size());
+
+		Assert.assertEquals(5.00, workDays.get(0).getValue());
+		Assert.assertEquals(new Period(start, add(start, DAY_OF_MONTH, 4)),
+				workDays.get(0).getPeriod());
+
+		Assert.assertEquals(7d / 4d, workDays.get(1).getValue());
+		Assert.assertEquals(new Period(monday, sunday), workDays.get(1)
+				.getPeriod());
+
+		Assert.assertEquals(1.00, workDays.get(2).getValue());
+		Assert.assertEquals(
+				new Period(add(sunday, DAY_OF_MONTH, 1), add(sunday,
+						DAY_OF_MONTH, 1)), workDays.get(2).getPeriod());
+
+		Assert.assertEquals(7d / 2d, workDays.get(3).getValue());
+		Assert.assertEquals(new Period(mondayI, sundayI), workDays.get(3)
+				.getPeriod());
+
+		Assert.assertEquals(
+				(double) get(end, DAY_OF_MONTH) - get(sundayI, DAY_OF_MONTH),
+				workDays.get(4).getValue());
+		Assert.assertEquals(new Period(add(sundayI, DAY_OF_MONTH, 1), end),
+				workDays.get(4).getPeriod());
+
+	}
+
+	@Test
+	public void testContextWorkDaysIV() throws ExpressionException,
+			SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		Date start = getFirstDayOfYear(getToday());
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, start,
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(),
+								format("\"%s\"", random(PARTIAL_TIME)
+										.getValue()));
+					}
+				});
+
+		Date end = getLastDayOfMonth(start);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, start, end, end, contract);
+
+		List<ITimedResult<Double>> workDays = ctx.getExpressionContext().eval(
+				"DIAS_TRABAJADOS", start, end, Double.class);
+		Assert.assertEquals(1, workDays.size());
+		Assert.assertEquals((double) get(end, DAY_OF_MONTH), workDays.get(0)
+				.getValue());
+
+		ctx.getExpressionContext().setVariable(ERE_FACTOR, 0.25, start, end);
+
+		workDays = ctx.getExpressionContext().eval("DIAS_TRABAJADOS", start,
+				end, Double.class);
+		Assert.assertEquals(1, workDays.size());
+		Assert.assertEquals(get(end, DAY_OF_MONTH) * 0.75, workDays.get(0)
+				.getValue());
+
+	}
+
+
+	@Test
+	public void testWorkDaysWithIT() throws ExpressionException, SQLException {
 
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
@@ -411,10 +587,11 @@ public class SQLWorkedDaysTestCase extends
 
 		Date start = getFirstDayOfMonth(addMonths(contractStart, 1));
 		Date end = getLastDayOfMonth(start);
-		
-		Date startIT = add(start, DAY_OF_MONTH, 13 );
-		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIT, null, null);
-		
+
+		Date startIT = add(start, DAY_OF_MONTH, 13);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIT, null,
+				null);
+
 		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
 				connection, start, end, end, criteria);
 		ctx.next();
@@ -423,17 +600,12 @@ public class SQLWorkedDaysTestCase extends
 				.eval(format("%s", WORKED_DAYS), start, end, Double.class);
 
 		Assert.assertEquals(1, workedDays.size());
-		assertEquals(
-				workedDays.get(0),
-				13.00,
-				start, 
-				add(startIT,DAY_OF_MONTH,-1));
+		assertEquals(workedDays.get(0), 13.00, start,
+				add(startIT, DAY_OF_MONTH, -1));
 	}
-	
 
 	@Test
-	public void testWorkDaysWithITII() throws ExpressionException,
-			SQLException {
+	public void testWorkDaysWithITII() throws ExpressionException, SQLException {
 
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
@@ -454,11 +626,12 @@ public class SQLWorkedDaysTestCase extends
 
 		Date start = getFirstDayOfMonth(addMonths(contractStart, 1));
 		Date end = getLastDayOfMonth(start);
-		
-		Date startIT = add(start, DAY_OF_MONTH, 13 );
-		Date endIT = add(startIT, DAY_OF_MONTH, 9 );
-		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIT, endIT, null);
-		
+
+		Date startIT = add(start, DAY_OF_MONTH, 13);
+		Date endIT = add(startIT, DAY_OF_MONTH, 9);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIT, endIT,
+				null);
+
 		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
 				connection, start, end, end, criteria);
 		ctx.next();
@@ -467,18 +640,13 @@ public class SQLWorkedDaysTestCase extends
 				.eval(format("%s", WORKED_DAYS), start, end, Double.class);
 
 		Assert.assertEquals(2, workedDays.size());
-		assertEquals(
-				workedDays.get(0),
-				13.00,
-				start, 
-				add(startIT,DAY_OF_MONTH,-1));
-		assertEquals(
-				workedDays.get(1),
-				(double) (get(end,DAY_OF_MONTH)-get(endIT, DAY_OF_MONTH)),
-				add(endIT,DAY_OF_MONTH,+1), 
-				end);
+		assertEquals(workedDays.get(0), 13.00, start,
+				add(startIT, DAY_OF_MONTH, -1));
+		assertEquals(workedDays.get(1),
+				(double) (get(end, DAY_OF_MONTH) - get(endIT, DAY_OF_MONTH)),
+				add(endIT, DAY_OF_MONTH, +1), end);
 	}
-	
+
 	@Test
 	public void testWorkDaysWithITIII() throws ExpressionException,
 			SQLException {
@@ -502,26 +670,31 @@ public class SQLWorkedDaysTestCase extends
 
 		Date start = getFirstDayOfMonth(addMonths(contractStart, 1));
 		Date end = getLastDayOfMonth(start);
-		
-		Date startITI = add(start, DAY_OF_MONTH, 5 );
-		Date endITI =startITI;
-		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITI, endITI, null);
 
-		Date startITII = add(start, DAY_OF_MONTH, 7 );
-		Date endITII =startITII;
-		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITII, endITII, null);
+		Date startITI = add(start, DAY_OF_MONTH, 5);
+		Date endITI = startITI;
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITI, endITI,
+				null);
 
-		Date startITIII = add(start, DAY_OF_MONTH, 9 );
-		Date endITIII =startITIII;
-		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITIII, endITIII, null);
+		Date startITII = add(start, DAY_OF_MONTH, 7);
+		Date endITII = startITII;
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITII,
+				endITII, null);
 
-		Date startITIV = add(start, DAY_OF_MONTH, 11 );
-		Date endITIV =startITIV;
-		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITIV, endITIV, null);
+		Date startITIII = add(start, DAY_OF_MONTH, 9);
+		Date endITIII = startITIII;
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITIII,
+				endITIII, null);
 
-		Date startITV = add(start, DAY_OF_MONTH, 20 );
-		Date endITV =add(startITV, DAY_OF_MONTH, 20 );
-		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITV, endITV, null);
+		Date startITIV = add(start, DAY_OF_MONTH, 11);
+		Date endITIV = startITIV;
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITIV,
+				endITIV, null);
+
+		Date startITV = add(start, DAY_OF_MONTH, 20);
+		Date endITV = add(startITV, DAY_OF_MONTH, 20);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITV, endITV,
+				null);
 
 		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
 				connection, start, end, end, criteria);
@@ -531,36 +704,20 @@ public class SQLWorkedDaysTestCase extends
 				.eval(format("%s", WORKED_DAYS), start, end, Double.class);
 
 		Assert.assertEquals(5, workedDays.size());
-		assertEquals(
-				workedDays.get(0),
-				5.00,
-				start, 
-				add(startITI,DAY_OF_MONTH,-1));
-		assertEquals(
-				workedDays.get(1),
-				1.00,
-				add(endITI,DAY_OF_MONTH,1), 
-				add(endITI,DAY_OF_MONTH,1));
-		assertEquals(
-				workedDays.get(2),
-				1.00,
-				add(endITII,DAY_OF_MONTH,1), 
-				add(endITII,DAY_OF_MONTH,1));
-		assertEquals(
-				workedDays.get(3),
-				1.00,
-				add(endITIII,DAY_OF_MONTH,1), 
-				add(endITIII,DAY_OF_MONTH,1));
-		assertEquals(
-				workedDays.get(4),
-				8.00,
-				add(endITIV,DAY_OF_MONTH,1), 
-				add(startITV,DAY_OF_MONTH,-1));
+		assertEquals(workedDays.get(0), 5.00, start,
+				add(startITI, DAY_OF_MONTH, -1));
+		assertEquals(workedDays.get(1), 1.00, add(endITI, DAY_OF_MONTH, 1),
+				add(endITI, DAY_OF_MONTH, 1));
+		assertEquals(workedDays.get(2), 1.00, add(endITII, DAY_OF_MONTH, 1),
+				add(endITII, DAY_OF_MONTH, 1));
+		assertEquals(workedDays.get(3), 1.00, add(endITIII, DAY_OF_MONTH, 1),
+				add(endITIII, DAY_OF_MONTH, 1));
+		assertEquals(workedDays.get(4), 8.00, add(endITIV, DAY_OF_MONTH, 1),
+				add(startITV, DAY_OF_MONTH, -1));
 	}
 
 	@Test
-	public void testWorkDaysWithITIV() throws ExpressionException,
-			SQLException {
+	public void testWorkDaysWithITIV() throws ExpressionException, SQLException {
 
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
@@ -581,30 +738,32 @@ public class SQLWorkedDaysTestCase extends
 
 		Date start = getFirstDayOfMonth(addMonths(contractStart, 1));
 		Date end = getLastDayOfMonth(start);
-		
+
 		Date startIT = start;
 		Date endIT = null;
-		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIT, endIT, null);
-		
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIT, endIT,
+				null);
+
 		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
 				connection, start, end, end, criteria);
 		ctx.next();
-		
+
 		try {
 			List<ITimedResult<Double>> workedDays = ctx.getExpressionContext()
 					.eval(format("%s", WORKED_DAYS), start, end, Double.class);
 			Assert.fail();
-		} catch ( UndefinedVariablesException e){
-			
+		} catch (UndefinedVariablesException e) {
+
 		}
 	}
 
 	// ------------------------------------------------------------------------
-	protected void testWorkedDays(ContractRecord contract, double coefficient, Double monthdays) throws ExpressionException, SQLException {
+	protected void testWorkedDays(ContractRecord contract, double coefficient,
+			Double monthdays) throws ExpressionException, SQLException {
 		Connection connection = getConnection();
 
 		Date contractStart = contract.getStartDate();
-		long contractStartDayOfMonth = get(contractStart,DAY_OF_MONTH);
+		long contractStartDayOfMonth = get(contractStart, DAY_OF_MONTH);
 
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -617,11 +776,9 @@ public class SQLWorkedDaysTestCase extends
 		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
 				connection, start, end, end, criteria);
 		ctx.next();
-		assertEquals(ctx, 
-				(double) ((get(end, DAY_OF_MONTH) - contractStartDayOfMonth + 1) * coefficient),  
-				contractStart, 
-				end,
-				monthdays);
+		assertEquals(ctx, (double) ((get(end, DAY_OF_MONTH)
+				- contractStartDayOfMonth + 1) * coefficient), contractStart,
+				end, monthdays);
 
 		// 95% of cases . Whole month
 		start = getFirstDayOfMonth(addMonths(start, 1));
@@ -629,95 +786,99 @@ public class SQLWorkedDaysTestCase extends
 		ctx = new SQLContractSalaryCalculatorContext(connection, start, end,
 				end, criteria);
 		ctx.next();
-		assertEquals(ctx, 
-				(double) (get(end,DAY_OF_MONTH) * coefficient ), 
-				start, 
-				end,
-				monthdays);
+		assertEquals(ctx, (double) (get(end, DAY_OF_MONTH) * coefficient),
+				start, end, monthdays);
 
-		// Extras. First year, almost all the times will be partial. 
+		// Extras. First year, almost all the times will be partial.
 		start = getFirstDayOfYear(contractStart);
 		end = getLastDayOfYear(start);
 		ctx = new SQLContractSalaryCalculatorContext(connection, start, end,
 				end, criteria);
 		ctx.next();
-		
-		assertEquals(ctx, 
-				(double) ((get(end, DAY_OF_YEAR) - get(contractStart, DAY_OF_YEAR) + 1) * coefficient ), 
-				contractStart, 
-				end,
-				monthdays);
-		
-		// Extras. Second year. This will be whole 
-		start = getFirstDayOfYear(add(start, YEAR,1));
+
+		assertEquals(
+				ctx,
+				(double) ((get(end, DAY_OF_YEAR)
+						- get(contractStart, DAY_OF_YEAR) + 1) * coefficient),
+				contractStart, end, monthdays);
+
+		// Extras. Second year. This will be whole
+		start = getFirstDayOfYear(add(start, YEAR, 1));
 		end = getLastDayOfYear(start);
 		ctx = new SQLContractSalaryCalculatorContext(connection, start, end,
 				end, criteria);
 		ctx.next();
-		assertEquals(ctx, 
-				(double) get(end, DAY_OF_YEAR) * coefficient, 
-				start, 
-				end,
-				monthdays);
-		
-		// Extras. Second/Third year. This will be whole 
-		start = addMonths(getFirstDayOfYear(add(start, YEAR,1)), 6) ;
+		assertEquals(ctx, (double) get(end, DAY_OF_YEAR) * coefficient, start,
+				end, monthdays);
+
+		// Extras. Second/Third year. This will be whole
+		start = addMonths(getFirstDayOfYear(add(start, YEAR, 1)), 6);
 		end = add(addMonths(start, 11), DAY_OF_MONTH, -1);
 		ctx = new SQLContractSalaryCalculatorContext(connection, start, end,
 				end, criteria);
 		ctx.next();
-		assertEquals(ctx, 
-				(double) ( get(end, DAY_OF_YEAR) + ( get(getLastDayOfYear(start), DAY_OF_YEAR) - get(start, DAY_OF_YEAR)) + 1 ) * coefficient, 
-				start, 
-				end,
-				monthdays);
-		
+		assertEquals(
+				ctx,
+				(double) (get(end, DAY_OF_YEAR)
+						+ (get(getLastDayOfYear(start), DAY_OF_YEAR) - get(
+								start, DAY_OF_YEAR)) + 1)
+						* coefficient, start, end, monthdays);
+
 	}
 
-	
 	// ------------------------------------------------------------------------
-	
-	
+
 	protected static <T> T random(T arr[]) {
 		return arr[(int) ((int) (Math.random() * arr.length))];
 	}
-	
-	protected void assertEquals(ITimedResult<Double> var, Double value, Date start, Date end){
+
+	protected void assertEquals(ITimedResult<Double> var, Double value,
+			Date start, Date end) {
 		Assert.assertEquals(new Period(start, end), var.getPeriod());
 		Assert.assertEquals(value, var.getValue(), DELTA);
 	}
 
-	protected void assertEquals(List<ITimedResult<Double>> vars, Double value, Date start, Date end){
+	protected void assertEquals(List<ITimedResult<Double>> vars, Double value,
+			Date start, Date end) {
 		Assert.assertEquals(1, vars.size());
 		Assert.assertEquals(value, vars.get(0).getValue(), DELTA);
 		Assert.assertEquals(new Period(start, end), vars.get(0).getPeriod());
 	}
-	
-	
-	protected void assertEquals(SQLContractSalaryCalculatorContext ctx, Double value, Date start, Date end, Double monthDays ) throws UndefinedVariablesException, ExpressionException{
+
+	protected void assertEquals(SQLContractSalaryCalculatorContext ctx,
+			Double value, Date start, Date end, Double monthDays)
+			throws UndefinedVariablesException, ExpressionException {
 		List<ITimedResult<Double>> workedDays = ctx.getExpressionContext()
 				.eval(format("%s", WORKED_DAYS), start, end, Double.class);
-		
+
 		int months = 0;
-		for( Date date = getFirstDayOfMonth(start); date.compareTo(end)<= 0; date = add(date, MONTH, 1))
+		for (Date date = getFirstDayOfMonth(start); date.compareTo(end) <= 0; date = add(
+				date, MONTH, 1))
 			months++;
-		
-		System.out.printf("%tF..%tF ( %d ): \r\n", start, end , months );
+
+		System.out.printf("%tF..%tF ( %d ): \r\n", start, end, months);
 		Assert.assertEquals(months, workedDays.size());
-		
-		double values = 0.00; 
-		for (ITimedResult<Double> workedDay : workedDays){
-			double ctxMonthDays = ctx.getVariable(MONTH_DAYS, workedDay.getPeriod(), Number.class).doubleValue() ;
-			if ( monthDays != null ) 
+
+		double values = 0.00;
+		for (ITimedResult<Double> workedDay : workedDays) {
+			double ctxMonthDays = ctx.getVariable(MONTH_DAYS,
+					workedDay.getPeriod(), Number.class).doubleValue();
+			if (monthDays != null)
 				Assert.assertEquals(monthDays, ctxMonthDays, DELTA);
-			System.out.printf("\t%tF..%tF : %f ( %f month days)\r\n", workedDay.getPeriod().getStart(), workedDay.getPeriod().getEnd() , workedDay.getValue(), ctxMonthDays );
-			
-			values += workedDay.getValue() * ( monthDays != null ? getMax(workedDay.getPeriod().getStart(), DAY_OF_MONTH)/monthDays : 1.00 ) ;
+			System.out.printf("\t%tF..%tF : %f ( %f month days)\r\n", workedDay
+					.getPeriod().getStart(), workedDay.getPeriod().getEnd(),
+					workedDay.getValue(), ctxMonthDays);
+
+			values += workedDay.getValue()
+					* (monthDays != null ? getMax(workedDay.getPeriod()
+							.getStart(), DAY_OF_MONTH)
+							/ monthDays : 1.00);
 		}
-		System.out.printf("%f == %f \r\n", values, value );
-		
+		System.out.printf("%f == %f \r\n", values, value);
+
 		Assert.assertEquals(value, values, DELTA);
 		Assert.assertEquals(start, workedDays.get(0).getPeriod().getStart());
-		Assert.assertEquals(end, workedDays.get(months-1).getPeriod().getEnd());
+		Assert.assertEquals(end, workedDays.get(months - 1).getPeriod()
+				.getEnd());
 	}
 }

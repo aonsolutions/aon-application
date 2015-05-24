@@ -23,6 +23,7 @@ import org.mvel2.CompileException;
 import com.code.aon.common.AonException;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
+import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
@@ -195,6 +196,7 @@ public class EmployeesServiceHelper {
 			throws ExpressionException, SQLException {
 		return getSalaryCalculatorContextImpl(conn, draft, listener);
 	}
+	
 
 	// ------------------------------------------------------------------------
 
@@ -381,6 +383,12 @@ public class EmployeesServiceHelper {
 						public String getRetenedorApellidosNombre() {
 							return "LINUX FOUNDATION";
 						}
+						
+						@Override
+						public int getAñoNacimiento() {
+							return 1969;
+						}
+						
 					};
 				} catch (SQLException e) {
 					throw new ExpressionExceptionWrapper(
@@ -485,7 +493,7 @@ public class EmployeesServiceHelper {
 			@Override
 			protected ISalaryCalculatorContext getLiquidCalculatorContext(
 					Connection conn, Date startDate, Date endDate,
-					Date issueDate, Criteria criteria, final double x) {
+					Date issueDate, Criteria criteria, final double solve, final double liquid) {
 				try {
 					SQLContractSalaryCalculatorContext sqlContractSalaryCalculatorCtx = new SQLContractSalaryCalculatorContext(
 							conn, startDate, endDate, issueDate, criteria) {
@@ -493,7 +501,7 @@ public class EmployeesServiceHelper {
 						@Override
 						public Object liquid(double liquid, Date start, Date end)
 								throws ExpressionException, SQLException {
-							return x;
+							return solve;
 						}
 
 						@Override
@@ -541,11 +549,11 @@ public class EmployeesServiceHelper {
 									}
 
 									@Override
-									public Object liquid(double liquid,
+									public Object liquid(double _liquid,
 											Date start, Date end)
 											throws ExpressionException,
 											SQLException {
-										return x;
+										return solve * (_liquid / liquid);
 									}
 
 								};
@@ -575,6 +583,12 @@ public class EmployeesServiceHelper {
 									public String getRetenedorApellidosNombre() {
 										return "LINUX FOUNDATION";
 									}
+
+									@Override
+									public int getAñoNacimiento() {
+										return 1969;
+									};
+									
 								};
 							} catch (SQLException e) {
 								throw new ExpressionExceptionWrapper(
@@ -632,12 +646,12 @@ public class EmployeesServiceHelper {
 				draft.getStartDate(), draft.getEndDate(), draft.getIssueDate(),
 				criteria);
 
-		ctx.setListener(listener);
-		ctx.next();
-
 		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
 				draft, ctx);
+
+		draftCtx.next();
 		draftCtx.setListener(listener);
+		
 		return draftCtx;
 	}
 

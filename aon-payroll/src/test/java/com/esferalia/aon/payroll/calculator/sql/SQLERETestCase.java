@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.Assert;
 
@@ -35,12 +36,14 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
+import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
+import com.esferalia.aon.salary.payment.IPayment;
 
 public class SQLERETestCase extends AbstractSQLTestCase {
 
-	private static final double DELTA = 0.000001;
+	protected static final double DELTA = 0.000001;
 
 	@Test
 	public void testEREI() throws ExpressionException, SQLException,
@@ -398,7 +401,7 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 				});
 		
 		PaymentConceptRecord ere = addConcept(aonContext, ERE.getName());
-		//addPayment(aonContext, contract, ere, null , "DIAS_ERE * BASE_REGULADORA");
+		addPayment(aonContext, contract, ere, null , "DIAS_ERE * BASE_REGULADORA");
 		
 
 		Date startDate = getFirstDayOfMonth(getToday());
@@ -408,7 +411,14 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, contract);
 
 		Salary salary = new ContractSalaryCalculator<Salary>(
-				new SalaryBuilder()).calculate(ctx);
+				new SalaryBuilder(){
+				}).calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
 
 		Assert.assertEquals(
 				(1750.00 * 1.10) * (get(endDate, DAY_OF_MONTH) - (ereDays))

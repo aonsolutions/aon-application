@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.Date;
 
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.OrderByList;
 import com.esferalia.aon.gwt.payroll.server.SalaryDraftCalculatorContext;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
@@ -13,8 +12,8 @@ import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorConte
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
-import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
+import com.esferalia.aon.salary.expression.ExpressionException;
 
 public class SQLSalaryDraftCalculatorContext extends
 		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>
@@ -119,10 +118,11 @@ public class SQLSalaryDraftCalculatorContext extends
 
 	@Override
 	public boolean next() throws SQLException, ExpressionException {
-		boolean next = ctx.next();
-		super.loadDraftContext(getExpressionContext());
-		super.loadDraftLeaves(getExpressionContext());
-		return next;
+		
+		return ctx.next((ctx)->{
+			super.loadDraftContext(ctx);
+			super.loadDraftLeaves(ctx);
+		});
 	}
 
 	// ------------------------------------------------------------------------

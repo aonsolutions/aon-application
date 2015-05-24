@@ -79,9 +79,9 @@ public class SQLContractExtraCalculatorContext extends
 	}
 
 	@Override
-	protected void initContractExpressionCtx() throws SQLException,
+	protected void initContractExpressionCtx(NextHook hook) throws SQLException,
 			ExpressionException {
-		super.initContractExpressionCtx();
+		super.initContractExpressionCtx(hook);
 		initMonthVariables(getExpressionContext());
 	}
 

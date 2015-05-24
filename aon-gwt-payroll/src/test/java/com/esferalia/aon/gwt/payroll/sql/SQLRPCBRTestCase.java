@@ -33,6 +33,7 @@ public class SQLRPCBRTestCase extends SQLBRTestCase {
 		draft.setIssueDate(issueDate);
 
 		return EmployeesServiceHelper.getSalaryCalculatorContext(connection, draft, null);
+//		return super.getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, contract);
 
 	}
 }
