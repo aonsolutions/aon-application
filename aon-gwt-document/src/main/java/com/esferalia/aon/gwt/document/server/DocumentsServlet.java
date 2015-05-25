@@ -38,6 +38,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
@@ -82,6 +84,7 @@ import com.esferalia.aon.gwt.document.shared.Tags;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.RattachColumns;
+import com.esferalia.aon.watson.util.AonUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.About;
 import com.google.api.services.drive.model.File;
@@ -98,6 +101,9 @@ import com.sun.pdfview.PDFPage;
 
 public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(DocumentsServlet.class.getName());
+	
 	private static final long serialVersionUID = 6871016881549113129L;
 
 	private static InputStream file;
@@ -204,12 +210,14 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	}
 	
 	public Vector<FileInfo> searchFile(String searchStr, Vector<FileInfo> files){
+		
 		Vector<FileInfo> vector = new Vector<FileInfo>();
-		for (FileInfo fileInfo : files) {
+		for (FileInfo fileInfo : files){
 			if(containsIgnoreCase2(fileInfo.getTitle(), searchStr)){
 				vector.add(fileInfo);
 			}
 		}
+		
 		return vector;
 	}
 	
@@ -223,6 +231,8 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 				vector.add(fileInfo);
 			}
 		}
+		
+		
 		return vector;
 		
 	}
@@ -347,7 +357,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	}
 	
 	public void removeFile(Vector<FileInfo> fvector){
-
+		
 		String domain = AonUtil.getDomainName();
 		for(FileInfo fi : fvector){
 			try {
@@ -517,6 +527,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			}
 		}
 		setOuts(new Vector<FileInfo>());
+		
 		return vector;
 	}
 	
@@ -644,6 +655,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			fvector = new Vector<FileInfo>();
 			fvector.add(fi);
 		}
+
 		return fvector;
 		
 	}
@@ -1754,5 +1766,52 @@ public Vector<FileInfo> insertFileMultiple(FileInfo fi) {
 	    		return true;  
 	    }
 	    return false;
+	}
+	
+	public Boolean checkDomain(Vector<FileInfo> vector){
+		String domain = AonUtil.getDomainName();
+		Integer domainID = null;
+		try {
+			domainID = com.code.aon.google.apis.jooq.DBConsults.getDomain(domain).getId();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		for (FileInfo fileInfo : vector) {
+			Integer fdomainId = fileInfo.getDomainId();
+			String fdomain = fileInfo.getDomain();
+			if((fdomainId != null && fdomainId != 0 && domainID != null) && fdomainId != domainId && fdomainId != domainID && !domain.equals(fdomain)){
+				if(!isParent(fdomainId, domainId) && !isParent(domainId, fdomainId)
+					&& !isParent(fdomainId, domainID) && !isParent(domainID, fdomainId)){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	public Boolean checkDomain(Document document, String type){
+		Boolean bool1 = checkDomain(document.getEfiles());
+		Boolean bool2 = checkDomain(document.getFiles());
+		Boolean bool3 = checkDomain(document.getFilter());
+		
+		System.out.println("Domain Error in "+type+": Efiles "+ !bool1 +", files "+!bool2+", filter "+!bool3);
+		if(!bool1 || !bool2 || !bool3){
+			LOGGER.error("Domain Error in "+type+": Efiles "+ !bool1 +", files "+!bool2+", filter "+!bool3);
+		}
+		return bool1 || bool2 || bool3;
+	}
+	
+	public Boolean isParent(Integer domain, Integer parent){
+		String dom = AonUtil.getDomainName();
+		Integer par = null;
+		try {
+			par = DBConsults.getDomainParent(dom, domain);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		if(par != null){
+			return par == parent;
+		}
+		return false;
 	}
 }
