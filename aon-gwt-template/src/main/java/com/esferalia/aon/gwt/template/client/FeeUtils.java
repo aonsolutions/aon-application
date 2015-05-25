@@ -27,7 +27,7 @@ public class FeeUtils {
 		v.add("Detalle1");
 		v.add("Detalle2");
 		v.add("Detalle3");
-		v.add("Texto Libre");
+		//v.add("Texto Libre");
 		v.add("Linea");
 		return v;
 	}

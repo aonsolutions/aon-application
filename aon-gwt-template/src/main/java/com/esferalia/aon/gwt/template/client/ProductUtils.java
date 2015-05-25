@@ -30,7 +30,7 @@ public class ProductUtils {
 		v.add("Detalle 1");
 		v.add("Detalle 2");
 		v.add("Detalle 3");
-		v.add("Texto Libre");
+		//v.add("Texto Libre");
 		return v;
 		
 	}

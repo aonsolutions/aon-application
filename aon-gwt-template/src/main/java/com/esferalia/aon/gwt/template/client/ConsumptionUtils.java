@@ -23,7 +23,7 @@ public class ConsumptionUtils {
 		v.add("Detalle 2");
 		v.add("Detalle 3");
 		v.add("Consumo");
-		v.add("Texto Libre");
+		//v.add("Texto Libre");
 		
 		
 		return v;

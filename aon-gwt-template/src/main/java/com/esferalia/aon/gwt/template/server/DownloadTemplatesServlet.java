@@ -146,12 +146,16 @@ public class DownloadTemplatesServlet extends HttpServlet {
         font.setFontHeightInPoints((short)12);
       	style2.setFont(font2);
       	style2.setAlignment(CellStyle.ALIGN_CENTER);
-      	style2.setBorderBottom(CellStyle.BORDER_THIN);
+		style2.setBorderBottom(CellStyle.BORDER_THIN);
+		style2.setBorderRight(CellStyle.BORDER_THIN);
+		style2.setBorderLeft(CellStyle.BORDER_THIN);
       	
         CellStyle style3 = libro.createCellStyle();
       	style3.setFont(font2);
       	style3.setAlignment(CellStyle.ALIGN_LEFT);
-      	style3.setBorderBottom(CellStyle.BORDER_THIN);
+		style3.setBorderBottom(CellStyle.BORDER_THIN);
+		style3.setBorderRight(CellStyle.BORDER_THIN);
+		style3.setBorderLeft(CellStyle.BORDER_THIN);
 
         for(Integer i = 0; i< aux.getColumns().size(); i++){
         	Cell celda = fila.createCell(i);
