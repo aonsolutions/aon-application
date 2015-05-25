@@ -840,10 +840,31 @@ public class DBConsults {
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
 
-			Result<Record1<String>> data = dslContext
-					.select(DOMAIN.NAME).from(DOMAIN).where(DOMAIN.ID.eq(id)).fetch();
+			Record1<String> data = dslContext
+					.select(DOMAIN.NAME).from(DOMAIN).where(DOMAIN.ID.eq(id)).fetchOne();
 			
-			return data.get(0).value1();
+			return data.value1();
+			
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+		
+	}
+	
+	public static Integer getDomainParent(String domain,Integer id) throws SQLException{
+		Connection connection = null;
+		try {
+			
+			connection = DatabaseSync.getConnection(domain);
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+
+			Record1<Integer> data = dslContext
+					.select(DOMAIN.PARENT).from(DOMAIN).where(DOMAIN.ID.eq(id)).fetchOne();
+			if(data.value1()!= null)
+				return data.value1();
+			else return null;
 			
 		} finally {
 			if (connection != null)

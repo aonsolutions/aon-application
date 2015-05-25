@@ -111,6 +111,9 @@ public interface IDocumentAsync {
 
 	void copyLink(FileInfo doc, String l, AsyncCallback<String> callback);
 
+	void checkDomain(Document document, String type,
+			AsyncCallback<Boolean> callback);
+
 
 
 

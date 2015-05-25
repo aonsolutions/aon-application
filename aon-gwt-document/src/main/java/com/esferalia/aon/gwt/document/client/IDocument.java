@@ -106,5 +106,7 @@ public interface IDocument extends RemoteService{
 	
 	public String copyLink(FileInfo doc,String l);
 	
+	public Boolean checkDomain(Document document, String type);
+	
 	
 }
