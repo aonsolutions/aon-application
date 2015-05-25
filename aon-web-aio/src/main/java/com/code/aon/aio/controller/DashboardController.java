@@ -3,6 +3,7 @@ package com.code.aon.aio.controller;
 import static com.code.aon.google.apis.jooq.DBConsults.getCategoryName;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
+import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
@@ -993,16 +994,44 @@ public class DashboardController implements Serializable {
 			return types;
 	}
 	
-	
+	public static Result<Record3<Integer, String, String>> getCategoryAux(
+			String domain, Integer domainId) throws AonConnectionException, SQLException {
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+
+			Result<Record3<Integer, String, String>> category = dslContext
+					.select(CATEGORY.ID, CATEGORY.NAME, CATEGORY.DESCRIPTION)
+					.from(CATEGORY)
+					.join(DOMAIN)
+					.on(CATEGORY.DOMAIN.eq(DOMAIN.ID))
+					.where(DOMAIN.ID
+							.eq(domainId)
+							.or(DOMAIN.ID.in(dslContext.select(DOMAIN.PARENT)
+									.from(DOMAIN).where(DOMAIN.ID.eq(domainId)))))
+					.fetch();
+
+			return category;
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+
+	}
 	
 	public   Vector<DashboardDocs> getTypesCat() throws AonConnectionException,
 	SQLException {
 		if (types == null){
 		
 			types= new Vector<DashboardDocs>();
-
+			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+			Integer domainId = ds.getDomainId();
 			String domain = AonUtil.getDomainName();
-			Result<Record3<Integer, String,String>> category =  DBConsults.getCategoryAux(domain);
+			Result<Record3<Integer, String,String>> category =  getCategoryAux(domain, domainId);
 			sizes();
 			getTypesCatBD2();
 			//Vector<DashboardDocs> vector= new Vector<DashboardDocs>(); 
