@@ -110,7 +110,7 @@ public class IncomeSearchListener extends RegistrySearchListener {
 		WorkPlace workPlace = getWorkPlace();
 		List<SelectItem> warehouses = new LinkedList<SelectItem>();
 		if(workPlace!=null){
-			for (SelectItem selectItem :  WarehouseCollectionsController.getWarehouses()) {
+			for (SelectItem selectItem :  WarehouseCollectionsController.getStaticWarehouses()) {
 				Warehouse w = (Warehouse) selectItem.getValue();	
 				if(w.getWorkPlace().getId().equals(workPlace.getId())){
 					warehouses.add(selectItem);
@@ -118,7 +118,7 @@ public class IncomeSearchListener extends RegistrySearchListener {
 			}
 		}
 		else{
-			warehouses =  WarehouseCollectionsController.getWarehouses();
+			warehouses =  WarehouseCollectionsController.getStaticWarehouses();
 		}
 		return warehouses;
 	}
