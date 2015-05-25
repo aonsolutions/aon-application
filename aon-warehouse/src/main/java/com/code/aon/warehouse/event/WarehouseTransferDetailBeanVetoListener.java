@@ -54,13 +54,13 @@ public class WarehouseTransferDetailBeanVetoListener extends ManagerBeanVetoList
         	Object[] obj = (Object[])iterator.next();
             Integer itemId = (Integer)obj[0];
         	Integer sourceId = (Integer)obj[1];
-        	Integer targetId = (Integer)obj[1];
+        	Integer targetId = (Integer)obj[2];
             double quantity =(Double)obj[3];
             if (sourceId != null) {
-            	updateStock(obtainItem(itemId), obtainWarehouse(sourceId), quantity, false);	
+            	updateStock(obtainItem(itemId), obtainWarehouse(sourceId), quantity, true);	
             }
             if (targetId != null) {
-            	updateStock(obtainItem(itemId), obtainWarehouse(targetId), quantity, true);	
+            	updateStock(obtainItem(itemId), obtainWarehouse(targetId), quantity, false);	
             }
         }
 	}

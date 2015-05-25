@@ -21,41 +21,30 @@ public class WarehouseTransferDetailBeanListener extends ManagerBeanListenerAdap
 	@Override
 	public void beanInserted(ManagerBeanEvent evt) throws ManagerBeanException {
 		WarehouseTransferDetail wtd = (WarehouseTransferDetail) evt.getTo();
-		Warehouse source = wtd.getWarehouseTransfer().getSourceWarehouse();
-		if (source != null && source.getId() != null) {
-			updateStock(wtd, source,false);	
-		}
-		Warehouse target = wtd.getWarehouseTransfer().getTargetWarehouse();
-		if (target  != null && target.getId() != null) {
-			updateStock(wtd, target,true);	
-		}
-		
+		updateDetail(wtd, false);
 	}
 
 	@Override
 	public void beanUpdated(ManagerBeanEvent evt) throws ManagerBeanException {
 		WarehouseTransferDetail wtd = (WarehouseTransferDetail) evt.getTo();
-		Warehouse source = wtd.getWarehouseTransfer().getSourceWarehouse();
-		if (source != null && source.getId() != null) {
-			updateStock(wtd, source,false);	
-		}
-		Warehouse target = wtd.getWarehouseTransfer().getTargetWarehouse();
-		if (target  != null && target.getId() != null) {
-			updateStock(wtd, target,true);	
-		}
+		updateDetail(wtd, false);
 	}
 
 	@Override
 	public void beanRemoved(ManagerBeanEvent evt) throws ManagerBeanException {
 		WarehouseTransferDetail wtd = (WarehouseTransferDetail) evt.getTo();
+		updateDetail(wtd, true);
+	}
+	
+	private void updateDetail( WarehouseTransferDetail wtd, boolean remove ) throws ManagerBeanException {
 		Warehouse source = wtd.getWarehouseTransfer().getSourceWarehouse();
-		if (source != null) {
-			updateStock(wtd, source,true);	
+		if (source != null && source.getId() != null) {
+			updateStock(wtd, source,remove);	
 		}
 		Warehouse target = wtd.getWarehouseTransfer().getTargetWarehouse();
-		if (target  != null) {
-			updateStock(wtd, target,false);	
-		}
+		if (target != null && target.getId() != null) {
+			updateStock(wtd, target,!remove);	
+		}		
 	}
 
 	private void updateStock(WarehouseTransferDetail wtd, Warehouse warehouse ,boolean entry) throws ManagerBeanException {
