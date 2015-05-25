@@ -2,6 +2,7 @@ package com.code.aon.ui.company.controller;
 
 import static com.code.aon.common.enumeration.AppParam.APP_FPAYMENT_TEMPLATE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_ITEM_TAG_TEMPLATE_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_ITEM_TAG_TEXT_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_ADDRESS_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_DISCOUNT_PRICE_APPLIED;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_HEADER_PARAM;
@@ -153,6 +154,8 @@ public class CompanyParentController extends BasicController implements ICompany
 	private FinancePaymentTemplate financePaymentTemplate;
 	
 	private ItemTagTemplate itemTagTemplate;
+	
+	private String itemTagDefaultText;
 	
 	private boolean smartCard;
 	
@@ -870,6 +873,14 @@ public class CompanyParentController extends BasicController implements ICompany
 		this.itemTagTemplate = itemTagTemplate;
 	}
 
+	public String getItemTagDefaultText() {
+		return itemTagDefaultText;
+	}
+
+	public void setItemTagDefaultText(String itemTagDefaultText) {
+		this.itemTagDefaultText = itemTagDefaultText;
+	}
+
 	public boolean isSmartCard() {
 		return smartCard;
 	}
@@ -923,6 +934,11 @@ public class CompanyParentController extends BasicController implements ICompany
 	public ItemTagTemplate obtainItemTagTemplate() throws ManagerBeanException {
 		String value = AppParamUtil.getValue(APP_ITEM_TAG_TEMPLATE_PARAM);
 		return (value == null?null:ItemTagTemplate.getEnumByValue(value));
+	}
+
+	public String obtainItemTagDefaultText() throws ManagerBeanException {
+		String value = AppParamUtil.getValue(APP_ITEM_TAG_TEXT_PARAM);
+		return value;
 	}
 	
 	public boolean obtainPrintLogo() throws ManagerBeanException {

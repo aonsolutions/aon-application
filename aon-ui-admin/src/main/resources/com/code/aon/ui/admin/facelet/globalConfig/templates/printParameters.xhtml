@@ -147,6 +147,10 @@
 							value="#{company.itemTagTemplate}" >
 								<f:selectItems value="#{companyCollections.itemTagTemplate}" />
 						</aon:selectOneMenu>
+						<aon:outputLabel for="Company_itemTag_default_text"
+							value="#{bundle.aon_text}" />
+						<aon:inputText id="Company_itemTag_default_text" size="64"
+							value="#{company.itemTagDefaultText}"/>
 					</aon:panelGrid>
 				</aon:panel>
 			</aon:if>

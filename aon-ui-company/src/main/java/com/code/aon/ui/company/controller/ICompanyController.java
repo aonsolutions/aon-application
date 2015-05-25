@@ -31,6 +31,9 @@ public interface ICompanyController extends IController {
 	ItemTagTemplate getItemTagTemplate();
 	void setItemTagTemplate(ItemTagTemplate itemTagTemplate);
 	
+	String getItemTagDefaultText();
+	void setItemTagDefaultText(String itemTagDefaultText);
+	
 	boolean isPrintLogo();
 	void setPrintLogo(boolean printLogo);
 
@@ -70,6 +73,7 @@ public interface ICompanyController extends IController {
 	boolean obtainPrintDiscountPriceApplied() throws ManagerBeanException;
 	FinancePaymentTemplate obtainFinancePaymentTemplate() throws ManagerBeanException;
 	ItemTagTemplate obtainItemTagTemplate() throws ManagerBeanException;
+	String obtainItemTagDefaultText() throws ManagerBeanException;
 	boolean obtainPrintLogo() throws ManagerBeanException;
 	boolean obtainPrintReferenceCode() throws ManagerBeanException;
 	boolean obtainPrintProductCode() throws ManagerBeanException;

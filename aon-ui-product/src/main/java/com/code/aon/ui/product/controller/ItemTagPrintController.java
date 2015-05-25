@@ -148,10 +148,20 @@ public class ItemTagPrintController extends ItemController {
 	public void onInit(ActionEvent event){
 		checkNone(event);
 		setStartPosition(1);
-		setFreeTextAll("");
+		setFreeTextAll(obtainDefaultText());
 		setTagRepeatCountAll(1);
 	}
 	
+	private String obtainDefaultText() {
+		try {
+			CompanyController company = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+			return company.obtainItemTagDefaultText();
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> obtainDefaultText ",e);
+		}
+		return "";
+	}
+
 	@Override
 	public void onSearch(ActionEvent event) {
 		onInit(event);

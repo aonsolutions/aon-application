@@ -13,6 +13,9 @@ public enum ItemTagTemplate implements IResourceable {
 	/* Zebra 505 x 255 (1 columna) */
 	TEMPLATE_2("itemTag_505x255_1_column"),
 	
+	/* Zebra 1016 x 762 (1 columna) */
+	TEMPLATE_3("itemTag_1016x762_1_column"),
+	
 	;      
 	
     private static final String MSG_KEY_PREFIX = "aon_enum_itemTag_template_";

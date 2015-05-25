@@ -71,5 +71,13 @@
 			<param id="freeText" value="#{itemTagPrint.getFreeTextAll}" />
 		</params>
 	</report>
+	<report id="itemTag_1016x762_1_column" description="Product Tag (Zebra 1016x762) item List">
+		<template path="/com/code/aon/ui/product/report/itemTag_1016x762_1_column.jasper"/>
+		<collection provider="#{itemTagPrint}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
+			<param id="freeText" value="#{itemTagPrint.getFreeTextAll}" />
+		</params>
+	</report>
 	
 </report-config>

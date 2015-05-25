@@ -54,6 +54,7 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 			companyController.setSmartCard(companyController.obtainSmartCard());
 			companyController.setFinancePaymentTemplate(companyController.obtainFinancePaymentTemplate());
 			companyController.setItemTagTemplate(companyController.obtainItemTagTemplate());
+			companyController.setItemTagDefaultText(companyController.obtainItemTagDefaultText());
 			companyController.searchCustomReportTemplate();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
@@ -122,6 +123,7 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 		
 		// Item Tag
 		updateParam(APP_ITEM_TAG_TEMPLATE_PARAM, companyController.getItemTagTemplate());
+		updateParam(AppParam.APP_ITEM_TAG_TEXT_PARAM, companyController.getItemTagDefaultText());
 	}
 	
 	private void updateParam(AppParam appParam, ReportPrintOption value) throws ManagerBeanException {
@@ -138,6 +140,10 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 	
 	private void updateParam(AppParam appParam, ItemTagTemplate value) throws ManagerBeanException {
 		AppParamUtil.insertParameter(appParam, (value != null) ? value.getValue() : null);
+	}
+	
+	private void updateParam(AppParam appParam, String value) throws ManagerBeanException {
+		AppParamUtil.insertParameter(appParam, value);
 	}
 	
 }

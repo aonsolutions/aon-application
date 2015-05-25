@@ -164,7 +164,7 @@ public class Mod190CertificatePrint extends HttpServlet {
 	
 
 	private void createProfessionalCertificate(Mod190 mod190, Mod190Detail detail, Map<String, RetentionCertificate> map){
-		if(detail.getKey().equals("G") || detail.getKey().equals("H")){
+		if(detail.getKey().equals("G") || detail.getKey().equals("H") || detail.getKey().equals("E")){
 			RetentionCertificate cert = null;
 			if(map.containsKey(detail.getDocument())){
 				cert = map.get(detail.getDocument());
@@ -174,6 +174,8 @@ public class Mod190CertificatePrint extends HttpServlet {
 			
 			if(detail.getKey().equals("G")){
 				cert = completeCertificate(mod190, detail, cert, "G");
+			} else if(detail.getKey().equals("E")){
+				cert = completeCertificate(mod190, detail, cert, "E");
 			} else if(detail.getKey().equals("H")){
 				cert = completeCertificate(mod190, detail, cert, null);
 				if(detail.getSubKey().equals("02")){
