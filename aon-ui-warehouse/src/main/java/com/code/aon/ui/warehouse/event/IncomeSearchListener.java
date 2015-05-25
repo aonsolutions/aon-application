@@ -21,6 +21,7 @@ import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.warehouse.controller.IWarehouseConstants;
 import com.code.aon.ui.warehouse.controller.WarehouseCollectionsController;
 import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.enumeration.IncomeStatus;
@@ -107,10 +108,11 @@ public class IncomeSearchListener extends RegistrySearchListener {
 	}
 	
 	public List<SelectItem> getWarehouses() throws ManagerBeanException {
+		WarehouseCollectionsController wcc = (WarehouseCollectionsController) AonUtil.getRegisteredBean(IWarehouseConstants.COLLECTIONS_CONTROLLER_NAME);
 		WorkPlace workPlace = getWorkPlace();
 		List<SelectItem> warehouses = new LinkedList<SelectItem>();
 		if(workPlace!=null){
-			for (SelectItem selectItem :  WarehouseCollectionsController.getStaticWarehouses()) {
+			for (SelectItem selectItem :  wcc.getWarehouses()) {
 				Warehouse w = (Warehouse) selectItem.getValue();	
 				if(w.getWorkPlace().getId().equals(workPlace.getId())){
 					warehouses.add(selectItem);
@@ -118,7 +120,7 @@ public class IncomeSearchListener extends RegistrySearchListener {
 			}
 		}
 		else{
-			warehouses =  WarehouseCollectionsController.getStaticWarehouses();
+			warehouses =  wcc.getWarehouses();
 		}
 		return warehouses;
 	}

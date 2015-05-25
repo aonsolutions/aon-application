@@ -43,24 +43,6 @@ public class WarehouseCollectionsController implements Serializable {
 
 	public void setWarehouse( Warehouse warehouse ) {
 	}
-	public static List<SelectItem> getStaticWarehouses() throws ManagerBeanException {
-		List<SelectItem> warehouses = new LinkedList<SelectItem>();
-		IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
-		Criteria criteria = new Criteria();
-		Expression nullWorkPlaceExp = ExpressionUtilities.getNullExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE));
-		String ljAlias = StringUtils.replace(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_SCOPE_ID), ".scope", "<scope");
-		Expression nullScopeExp = UserUtils.getInstance().getNullableScopeExpression(ljAlias);
-		criteria.addExpression(ExpressionUtilities.getOrExpression(nullWorkPlaceExp, nullScopeExp));
-		criteria.addOrder(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
-		List<ITransferObject> c = warehouseBean.getList(criteria);
-		Iterator<ITransferObject> iter = c.iterator();
-		while (iter.hasNext()) {
-			Warehouse warehouse = (Warehouse) iter.next();
-			SelectItem item = new SelectItem(warehouse, warehouse.getName());
-			warehouses.add(item);
-		}
-		return warehouses;
-	}
 	
 	public List<SelectItem> getWarehouses() throws ManagerBeanException {
 		warehouses = new LinkedList<SelectItem>();
