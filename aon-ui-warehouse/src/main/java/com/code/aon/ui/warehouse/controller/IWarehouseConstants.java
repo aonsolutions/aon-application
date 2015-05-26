@@ -31,6 +31,10 @@ public interface IWarehouseConstants {
 	String SALE_INVOICE_CONTROLLER_NAME = "saleInvoice";
 	
 	String SALES_CONTROLLER_NAME = "sales";
+	
+	String WAREHOUSE_TRANSFER_CONTROLLER_NAME = "warehouseTransfer";
+	
+	String INVENTORY_CONTROLLER_NAME = "inventory";
 
 	
 	// ************************************************************

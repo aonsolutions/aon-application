@@ -46,9 +46,19 @@
 						aon-panelGrid-odd aon-width-150,
 						aon-panelGrid-even aon-width-200">
 
-					<ui:include src="/com/code/aon/ui/config/facelet/series/formContent.xhtml">
+					<ui:decorate template="/com/code/aon/ui/config/facelet/series/formContent.xhtml">
 						<ui:param name="controller" value="#{warehouseTransfer}" />
-					</ui:include>
+						<ui:define name="additionalSeriesContent">
+							<aon:commandLink immediate="true"
+								rendered="#{warehouseTransfer.to.inventory.id != null}"
+								styleClass="aon-button-goto"
+								style="margin-left: 5px; padding-left: 17px;" 
+								actionListener="#{warehouseTransfer.onGoToInventory}" 
+								action="inventory_form"
+								title="#{bundle.warehouse_inventory_goTo}"
+								alt="#{bundle.warehouse_inventory_goTo}" />
+						</ui:define>
+					</ui:decorate>
 
 					<aon:outputLabel for="WarehouseTransfer_issueTime" value="#{bundle.aon_date}" />
 					<aon:selectInputDate id="WarehouseTransfer_issueTime"

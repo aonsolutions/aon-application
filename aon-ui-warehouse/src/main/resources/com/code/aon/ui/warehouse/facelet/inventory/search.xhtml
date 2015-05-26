@@ -9,12 +9,10 @@
 
 		<aon:form id="inventorySearch">
 
-			<aon:methodParam name="resetActionListener" value="#{inventory.onStartClosing}" type="actionListener" />
-			<aon:methodParam name="resetAction" value="inventory_close"/>
-
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{bundle.warehouse_inventory_closed_module}" />
 				<ui:param name="controller" value="#{inventory}" />
+				<ui:param name="skipResetButton" value="#{true}" />
 			</ui:include>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
@@ -32,6 +30,20 @@
 							<f:selectItems value="#{warehouseCollections.warehouses}" />
 						</aon:selectOneMenu>
 
+						<aon:outputText for="Inventory_status"
+							value="#{bundle.aon_status}"/>
+						<aon:selectOneMenu id="Inventory_status"
+							converter="aon.EnumConverter"
+							valueChangeListener="#{inventory.addExpression}">
+							<f:selectItem itemLabel="-" value="#{null}"/>
+							<f:selectItems value="#{warehouseCollections.inventoryStatuses}"/>
+						</aon:selectOneMenu>				
+
+						<aon:outputLabel for="Inventory_description"
+							value="#{bundle.aon_description}" />
+						<aon:inputText id="Inventory_description" size="64"
+							valueChangeListener="#{inventory.addExpression}" />
+
 						<aon:outputLabel value="#{bundle.aon_date}" />
 						<aon:div>
 							<aon:outputLabel for="Inventory_inventoryDate-From" styleClass="aon-form-date-label"
@@ -48,11 +60,6 @@
 								timeZone="#{timeZoneController.timeZone}"
 								popupDateFormat="#{bundle.aon_date_pattern}"/>
 						</aon:div>							
-							
-						<aon:outputLabel for="Inventory_description"
-							value="#{bundle.aon_description}" />
-						<aon:inputText id="Inventory_description" size="64"
-							valueChangeListener="#{inventory.addExpression}" />
 					
 				</ui:define>
 			</ui:decorate>

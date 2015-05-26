@@ -6,6 +6,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -24,18 +25,22 @@
 		
 		<aon:form id="inventoryForm">
 
-			<aon:methodParam name="resetActionListener" value="#{inventory.onStartClosing}" type="actionListener" />
-			<aon:methodParam name="resetAction" value="inventory_close"/>
-			
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.warehouse_inventory_closed_module}" />
 				<ui:param name="controller" value="#{inventory}" />
 				<ui:param name="skipSaveButton" value="true" />
+				<ui:param name="skipResetButton" value="true" />
 				
 				<ui:define name="beforeSpinToolbarContent">
 					<ui:include
 							src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
+					<aon:commandButton id="processAdjustment"
+						value="#{bundle.warehouse_inventory_process}"
+						rendered="#{!inventory.to.closed}"
+						reRender="showInventoryAdjustmentWindow"
+						actionListener="#{inventory.onStartAdjustment}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"/>
 					<aon:commandLink id="inventory_close-excel-report"
 						value="&#160;" onclick="inventoryx('#{true}','#{inventory.to.id}')" 
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
@@ -93,7 +98,7 @@
 						</aon:outputText>
 						
 						<aon:outputText value="#{bundle.aon_status}" />
-						<aon:outputText value="#{(inventory.to.closed)?(bundle.aon_closed):(bundle.aon_opened)}" />
+						<aon:outputText value="#{inventory.to.status}" />
 						
 						<aon:outputText value="#{bundle.aon_module_warehouse}" />
 						<aon:outputText value="#{inventory.to.warehouse.name}"/>
@@ -120,7 +125,7 @@
 					<ui:define name="columns">					
 					
 						<aon:column alias="InventoryDetail.item.product.code"
-							styleClass="aon-editDataTable-textColumn aon-width-150">
+							styleClass="aon-editDataTable-textColumn aon-width-120">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_id}" />
 							</f:facet>
@@ -138,7 +143,7 @@
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_product}" />
 							</f:facet>
-							<aon:outputText value="#{to.item.product.name} #{to.item.detail}" />
+							<aon:outputText value="#{to.item.fullName}" />
 							<f:facet name="footer">
 								<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
 									<ui:param name="lookupTo" value="#{controller.to.item}" />
@@ -156,21 +161,37 @@
 							</f:facet>								
 						</aon:column>
 						
-						<aon:column alias="InventoryDetail.realQuantity"
-							styleClass="aon-editDataTable-numberColumn aon-width-100">
+						<aon:column alias="InventoryDetail.actualQuantity"
+							styleClass="aon-editDataTable-numberColumn aon-width-80">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.warehouse_inventory}" />
+								<aon:outputText value="#{bundle.report_closing}" />
 							</f:facet>
-							<aon:outputText value="#{to.realQuantity}" rendered="#{to.id!=inventoryDetail.to.id}">
+							<aon:outputText value="#{to.actualQuantity}">
+								<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
+							</aon:outputText>
+							<f:facet name="footer">
+								<aon:outputText value="#{controller.to.actualQuantity}" rendered="#{formNew}">
+									<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
+								</aon:outputText>
+							</f:facet>									
+						</aon:column>
+												
+						<aon:column alias="InventoryDetail.realQuantity"
+							styleClass="aon-editDataTable-numberColumn aon-width-80">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.finance_count}" />
+							</f:facet>
+							<aon:outputText value="#{to.realQuantity}" rendered="#{formList}"
+								style="#{(to.realQuantity!=to.actualQuantity)?'color:red;':''}">
 								<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
 							</aon:outputText>
 							<aon:inputText id="InventoryDetail_realQuantity" rendered="#{formEdit}"
 								ajaxSingle="true" reRender="InventoryDetail_costAmount"
-								value="#{controller.to.realQuantity}" required="true" />
+								value="#{controller.to.realQuantity}" required="true" size="10" />
 							<f:facet name="footer">
 								<aon:inputText id="InventoryDetail_realQuantity-New" rendered="#{formNew}"
 									ajaxSingle="true" reRender="InventoryDetail_costAmount-New"
-									value="#{controller.to.realQuantity}" required="true" />
+									value="#{controller.to.realQuantity}" required="true" size="10" />
 							</f:facet>									
 						</aon:column>
 	
@@ -179,7 +200,7 @@
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_cost}"	/>
 							</f:facet>
-							<aon:outputText value="#{to.cost}" rendered="#{to.id!=inventoryDetail.to.id}">
+							<aon:outputText value="#{to.cost}" rendered="#{formList}">
 								<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
 							</aon:outputText>
 							<aon:outputText id="InventoryDetail_cost"
@@ -214,5 +235,8 @@
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		<aon:if test="#{!inventory.to.closed}" >
+			<ui:include src="/com/code/aon/ui/warehouse/facelet/inventory/modalInventoryAdjustment.xhtml" />
+		</aon:if>		
 	</ui:define>
 </ui:composition>					

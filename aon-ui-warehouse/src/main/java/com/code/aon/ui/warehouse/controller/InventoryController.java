@@ -2,6 +2,7 @@ package com.code.aon.ui.warehouse.controller;
 
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -20,13 +21,20 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Inventory;
 import com.code.aon.warehouse.InventoryDetail;
 import com.code.aon.warehouse.Stock;
 import com.code.aon.warehouse.Warehouse;
+import com.code.aon.warehouse.WarehouseTransfer;
+import com.code.aon.warehouse.WarehouseTransferDetail;
+import com.code.aon.warehouse.enumeration.InventoryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
 
 /**
@@ -45,6 +53,8 @@ public class InventoryController extends BasicController {
 	private Warehouse warehouse; 
 
 	private boolean initStock;
+	
+	private boolean showInventoryAdjustmentWindow;
 	
 	public boolean isInitStock() {
 		return initStock;
@@ -100,6 +110,7 @@ public class InventoryController extends BasicController {
 			}
 			
 			Inventory inventory = new Inventory();
+			inventory.setStatus(InventoryStatus.OPEN);
 			inventory.setInventoryDate(((Inventory)this.getTo()).getInventoryDate());
 			inventory.setDescription(((Inventory)this.getTo()).getDescription());
 			
@@ -162,5 +173,86 @@ public class InventoryController extends BasicController {
 			LOGGER.error(e.getMessage(), e);
 		}
 	}	
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private List<InventoryDetail> getDetails( Inventory inventory, boolean newElements ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(InventoryDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.INVENTORY_DETAIL_INVENTORY_ID), inventory.getId());
+		String actualAlias = bean.getFieldName(IEntityAlias.INVENTORY_DETAIL_ACTUAL_QUANTITY);
+		Expression expr1 = ExpressionUtilities.getIdentifierExpression(actualAlias);
+		String realAlias = bean.getFieldName(IEntityAlias.INVENTORY_DETAIL_REAL_QUANTITY);
+		if ( newElements ) {
+			criteria.addExpression(ExpressionUtilities.getGreaterThanExpression(realAlias, expr1));
+		} else {
+			criteria.addExpression(ExpressionUtilities.getLessThanExpression(realAlias, expr1));
+		}
+		return (List) bean.getList(criteria);
+	}
+	
+	private WarehouseTransfer getWarehouseTransfer( Inventory inventory, boolean newElements ) throws ManagerBeanException {
+		WarehouseTransferController wtc = (WarehouseTransferController) AonUtil.getRegisteredBean(IWarehouseConstants.WAREHOUSE_TRANSFER_CONTROLLER_NAME);
+		WarehouseTransfer _wt = (WarehouseTransfer) wtc.getTo();
+		WarehouseTransfer wt = new WarehouseTransfer();
+		wt.setSeries(_wt.getSeries());
+		if ( _wt.getNumber() == 0 ) {
+			_wt.setNumber(wtc.obtainMaxNumber(_wt.getSeries()));
+		}
+		wt.setNumber(_wt.getNumber());
+		wt.setSecurityLevel(_wt.getSecurityLevel());
+		wt.setInventory(inventory);
+		wt.setIssueTime(inventory.getInventoryDate());
+		if ( newElements ) {
+			wt.setTargetWarehouse(inventory.getWarehouse());
+		} else {
+			wt.setSourceWarehouse(inventory.getWarehouse());
+		}
+		IManagerBean bean = BeanManager.getManagerBean(WarehouseTransfer.class);
+		bean.insert(wt);
+		_wt.setNumber(wtc.obtainMaxNumber(_wt.getSeries()));		
+		return wt;
+	}
+	
+	private void createWarehouseTransfer( Inventory inventory, boolean newElements ) throws ManagerBeanException {
+		List<InventoryDetail> details = getDetails(inventory, newElements);
+		if (! details.isEmpty() ) {
+			WarehouseTransfer wt = getWarehouseTransfer(inventory, newElements);
+			IManagerBean bean = BeanManager.getManagerBean(WarehouseTransferDetail.class);
+			for( InventoryDetail detail : details ) {
+				WarehouseTransferDetail wtd = new WarehouseTransferDetail();
+				wtd.setWarehouseTransfer(wt);
+				wtd.setItem(detail.getItem());
+				double quantity = Math.abs(detail.getActualQuantity()-detail.getRealQuantity());
+				wtd.setQuantity(quantity);
+				bean.insert(wtd);
+			}
+		}		
+	}
+	
+	public void onStartAdjustment(ActionEvent event) {
+		setShowInventoryAdjustmentWindow(true);
+		IController controller = FormUtil.getController(IWarehouseConstants.WAREHOUSE_TRANSFER_CONTROLLER_NAME);
+		controller.onReset(event);
+	}
+	
+	public void onAdjustment(ActionEvent event) {
+		Inventory inventory = (Inventory) getTo();
+		try {
+			createWarehouseTransfer(inventory, true);
+			createWarehouseTransfer(inventory, false);
+			inventory.setStatus(InventoryStatus.PROCESSED);
+			getManagerBean().update(inventory);
+		} catch ( ManagerBeanException e ) {
+			LOGGER.error(e.getMessage(), e);
+		}
+	}
+	
+	public boolean isShowInventoryAdjustmentWindow() {
+		return showInventoryAdjustmentWindow;
+	}
+
+	public void setShowInventoryAdjustmentWindow(boolean showInventoryAdjustmentWindow) {
+		this.showInventoryAdjustmentWindow = showInventoryAdjustmentWindow;
+	}
 	
 }

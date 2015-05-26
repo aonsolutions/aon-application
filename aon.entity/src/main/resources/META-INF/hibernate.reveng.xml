@@ -745,6 +745,7 @@
 	</table>
 
 	<table name="inventory">
+		<column name="status" type="com.code.aon.warehouse.enumeration.InventoryStatus"/>
 		<foreign-key foreign-table="warehouse">
 			<column-ref local-column="warehouse" foreign-column="id"/>
 			<many-to-one property="warehouse"/>

@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
@@ -21,10 +20,12 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Inventory;
 import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.code.aon.warehouse.enumeration.IncomeStatus;
+import com.code.aon.warehouse.enumeration.InventoryStatus;
 import com.code.aon.warehouse.enumeration.PriceType;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -36,6 +37,7 @@ public class WarehouseCollectionsController implements Serializable {
 	private List<SelectItem> deliveryStatuses;
 	private List<SelectItem> incomeStatuses;
 	private List<SelectItem> priceTypes;
+	private List<SelectItem> inventoryStatuses;
 
 	public Warehouse getWarehouse() {
 		return null;
@@ -65,7 +67,7 @@ public class WarehouseCollectionsController implements Serializable {
 	
 	public List<SelectItem> getDeliveryStatuses() {
 		if ( deliveryStatuses == null ) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			deliveryStatuses = new LinkedList<SelectItem>();
 			for (DeliveryStatus type : DeliveryStatus.values()) {
 				String name = type.getName(locale);
@@ -78,7 +80,7 @@ public class WarehouseCollectionsController implements Serializable {
 	
 	public List<SelectItem> getIncomeStatuses() {
 		if ( incomeStatuses == null ) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			incomeStatuses = new LinkedList<SelectItem>();
 			for (IncomeStatus type : IncomeStatus.values()) {
 				String name = type.getName(locale);
@@ -91,7 +93,7 @@ public class WarehouseCollectionsController implements Serializable {
 	
 	public List<SelectItem> getPriceTypes() {
 		if ( priceTypes == null ) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			priceTypes = new LinkedList<SelectItem>();
 			for (PriceType type : PriceType.values()) {
 				String name = type.getName(locale);
@@ -118,4 +120,18 @@ public class WarehouseCollectionsController implements Serializable {
 		}
 		return inventories;
 	}
+
+	public List<SelectItem> getInventoryStatuses() {
+		if ( inventoryStatuses == null ) {
+			Locale locale = AonUtil.getCurrentLocale();
+			inventoryStatuses = new LinkedList<SelectItem>();
+			for (InventoryStatus status : InventoryStatus.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				inventoryStatuses.add(item);
+			}
+		}
+		return inventoryStatuses;
+	}
+
 }

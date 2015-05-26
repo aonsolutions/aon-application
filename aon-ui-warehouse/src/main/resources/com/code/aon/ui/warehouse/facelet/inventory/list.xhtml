@@ -11,13 +11,11 @@
 	
 		<aon:form id="inventoryList">
 
-			<aon:methodParam name="resetActionListener" value="#{inventory.onStartClosing}" type="actionListener" />
-			<aon:methodParam name="resetAction" value="inventory_close"/>
-
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.warehouse_inventory_closed_module}" />
 				<ui:param name="controller" value="#{inventory}" />
+				<ui:param name="skipResetButton" value="#{true}" />
 				
 				<ui:define name="additionalToolbarContent">
 					<aon:htmlCommandLink id="inventory-excel-report"
@@ -59,7 +57,7 @@
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_status}" />
 							</f:facet>
-							<aon:outputText value="#{(to.closed)?(bundle.aon_closed):(bundle.aon_opened)}" />
+							<aon:outputText value="#{to.status}" />
 						</aon:column>
 												
 						<aon:column alias="Inventory.warehouse.id"

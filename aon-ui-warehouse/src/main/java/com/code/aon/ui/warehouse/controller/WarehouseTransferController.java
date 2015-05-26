@@ -11,6 +11,7 @@ import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.HeaderObjectController;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.warehouse.WarehouseTransfer;
 
 public class WarehouseTransferController extends HeaderObjectController {
 	
@@ -27,4 +28,13 @@ public class WarehouseTransferController extends HeaderObjectController {
 		ConfigCollectionsController ccc = (ConfigCollectionsController) AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
 		return ccc.getDeliverySeriesIds();
 	}		
+	
+	public void onGoToInventory( ActionEvent event ) throws ManagerBeanException {
+		WarehouseTransfer wt = (WarehouseTransfer) getTo();
+		InventoryController ic = (InventoryController) AonUtil.getRegisteredBean(IWarehouseConstants.INVENTORY_CONTROLLER_NAME);
+		ic.select(event, wt.getInventory());
+		ic.setBackAction(formAction());
+	}
+	
+	
 }

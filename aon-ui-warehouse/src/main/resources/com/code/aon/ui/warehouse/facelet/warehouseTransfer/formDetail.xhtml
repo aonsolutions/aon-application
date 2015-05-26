@@ -23,7 +23,7 @@
 				<f:facet name="header">
 					<aon:outputLabel for="Item_id" value="#{bundle.aon_product}" />
 				</f:facet>
-				<aon:outputText value="#{to.item.product.code} - #{to.item.product.name}" rendered="#{formList}" />
+				<aon:outputText value="#{to.item.product.code} - #{to.item.fullName}" rendered="#{formList}" />
 				
 				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
 					<ui:param name="lookupTo" value="#{warehouseTransferDetail.to.item}" />
