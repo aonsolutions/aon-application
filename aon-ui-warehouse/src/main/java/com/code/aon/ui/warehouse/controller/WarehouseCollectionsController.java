@@ -46,6 +46,16 @@ public class WarehouseCollectionsController implements Serializable {
 	public void setWarehouse( Warehouse warehouse ) {
 	}
 	
+	public int getWarehouseCount() throws ManagerBeanException {
+		IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
+		Criteria criteria = new Criteria();
+		Expression nullWorkPlaceExp = ExpressionUtilities.getNullExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE));
+		String ljAlias = StringUtils.replace(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_SCOPE_ID), ".scope", "<scope");
+		Expression nullScopeExp = UserUtils.getInstance().getNullableScopeExpression(ljAlias);
+		criteria.addExpression(ExpressionUtilities.getOrExpression(nullWorkPlaceExp, nullScopeExp));
+		return warehouseBean.getCount(criteria);
+	}
+	
 	public List<SelectItem> getWarehouses() throws ManagerBeanException {
 		warehouses = new LinkedList<SelectItem>();
 		IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);

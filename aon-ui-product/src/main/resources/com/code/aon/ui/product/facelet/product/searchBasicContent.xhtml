@@ -108,7 +108,7 @@
 		</aon:selectOneRadio>
 	</aon:if>	
 
-	<aon:if test="#{aonConfiguration.bean.product.showStock}">
+	<aon:if test="#{aonConfiguration.bean.product.showStock and warehouseCollections.warehouseCount > 0}">
 		<aon:outputLabel for="Product_inventoriable"
 			value="#{bundle.product_inventoriable}" />
 		<aon:selectOneRadio id="Product_inventoriable"
@@ -120,14 +120,16 @@
 	</aon:if>
 
 	<aon:if test="#{aonConfiguration.bean.product.showComposition}">
-		<aon:outputLabel for="Product_manufactured"
-			value="#{bundle.product_manufactured_product}" />
-		<aon:selectOneRadio id="Product_manufactured"
-			value="#{productExport.manufactured}"
-			valueChangeListener="#{controller.addExpression}">
-			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
-			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
-		</aon:selectOneRadio>
+		<aon:if test="#{warehouseCollections.warehouseCount > 0}">
+			<aon:outputLabel for="Product_manufactured"
+				value="#{bundle.product_manufactured_product}" />
+			<aon:selectOneRadio id="Product_manufactured"
+				value="#{productExport.manufactured}"
+				valueChangeListener="#{controller.addExpression}">
+				<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+				<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+			</aon:selectOneRadio>
+		</aon:if>
 
 		<aon:outputLabel for="Product_composition"
 			value="#{bundle.product_composite_product}" />

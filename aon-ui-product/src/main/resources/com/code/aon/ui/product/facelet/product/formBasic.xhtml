@@ -89,7 +89,7 @@
 		</aon:panelGroup>
 	</aon:div>
 
-	<aon:if test="#{aonConfiguration.bean.product.showSerializable}">
+	<aon:if test="#{aonConfiguration.bean.product.showSerializable and warehouseCollections.warehouseCount > 0}">
 		<aon:outputLabel for="Product_serializable" value="#{bundle.aon_serializable}"
 			rendered="#{controller.nevv or productTo.serializable or productTo.itemCount == 1}" />
 		<aon:panelGrid id="Product_serializable_panel" styleClass="aon-noborder"
@@ -131,7 +131,7 @@
 	<aon:if test="#{aonConfiguration.bean.product.showStock or aonConfiguration.bean.product.showComposition}">
 		<aon:outputLabel value="#{bundle.asset_features}" />
 		<aon:div id="Product_features">
-			<aon:if test="#{aonConfiguration.bean.product.showStock}">
+			<aon:if test="#{aonConfiguration.bean.product.showStock and warehouseCollections.warehouseCount > 0}">
 				<aon:selectBooleanCheckbox id="Product_inventoriable"
 					value="#{productTo.inventoriable}"
 					rendered="#{!productTo.composition}"
@@ -143,14 +143,16 @@
 			</aon:if>
 
 			<aon:if test="#{aonConfiguration.bean.product.showComposition}">
-				<aon:selectBooleanCheckbox id="Product_manufactured"
-					value="#{productTo.manufactured}"
-					disabled="#{fieldDisabled}"
-					rendered="#{!productTo.composition}"
-					ajaxSingle="true" reRender="Product_features" />
-				<aon:outputLabel for="Product_manufactured" styleClass="aon-margin-right aon-italic"
-					value="#{bundle.product_manufactured_product}"
-					rendered="#{!productTo.composition}" />
+				<aon:if test="#{warehouseCollections.warehouseCount > 0}">
+					<aon:selectBooleanCheckbox id="Product_manufactured"
+						value="#{productTo.manufactured}"
+						disabled="#{fieldDisabled}"
+						rendered="#{!productTo.composition}"
+						ajaxSingle="true" reRender="Product_features" />
+					<aon:outputLabel for="Product_manufactured" styleClass="aon-margin-right aon-italic"
+						value="#{bundle.product_manufactured_product}"
+						rendered="#{!productTo.composition}" />
+				</aon:if>
 
 				<aon:selectBooleanCheckbox id="Product_composition"
 					value="#{productTo.composition}"
