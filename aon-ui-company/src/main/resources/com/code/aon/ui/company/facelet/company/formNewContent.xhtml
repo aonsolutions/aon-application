@@ -29,18 +29,18 @@
 	<aon:outputLabel for="Company_address"
 		value="#{bundle.aon_address}" />
 	<aon:div>
-		<aon:selectOneMenu id="Company_streetType" required="true"
+		<aon:selectOneMenu id="Company_streetType"
 			label="#{bundle.registry_street_type}"
 			value="#{controller.mainAddress.streetType}"
 			valueChangeListener="#{controller.addressChanged}">
 			<f:selectItems value="#{registryCollections.streetTypes}" />
 		</aon:selectOneMenu>
-		<aon:inputText id="Company_address" required="true"
+		<aon:inputText id="Company_address"
 			style="margin-left: 5px;" value="#{controller.mainAddress.address}"
 			valueChangeListener="#{controller.addressChanged}" maxlength="128" size="32" />
 		<aon:outputLabel for="Company_number" styleClass="aon-italic aon-margin-left"
 			value="#{bundle.aon_number}" />
-		<aon:inputText id="Company_number" required="true"
+		<aon:inputText id="Company_number"
 			style="margin-left: 5px;" value="#{controller.mainAddress.number}"
 			valueChangeListener="#{controller.addressChanged}" maxlength="12" size="5" />
 	</aon:div>
