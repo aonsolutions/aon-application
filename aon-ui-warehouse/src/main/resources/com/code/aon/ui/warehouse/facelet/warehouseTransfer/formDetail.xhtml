@@ -12,6 +12,9 @@
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 		<ui:param name="dataTableId" value="warehouseTransferDetails" />
 		<ui:param name="controller" value="#{warehouseTransferDetail}" />
+		<ui:param name="skipResetButton" value="#{warehouseTransfer.readOnly}" />
+		<ui:param name="skipLineEdition" value="#{warehouseTransfer.readOnly}" />
+		<ui:param name="skipSelectRow" value="#{warehouseTransfer.readOnly}" />
 		<ui:param name="showNote" value="false" />
 		<ui:param name="showDataScroller" value="false" />
 		<ui:param name="focusOnAdd" value="Item_id-New" />

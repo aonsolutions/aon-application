@@ -27,8 +27,10 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.warehouse_transfer_module}" />
 				<ui:param name="controller" value="#{warehouseTransfer}" />
+				<ui:param name="skipSaveButton" value="#{warehouseTransfer.readOnly}" />
+				<ui:param name="skipRemoveButton" value="#{warehouseTransfer.readOnly}" />				
 				<ui:define name="beforeSpinToolbarContent">
-					<aon:if test="#{!warehouseTransfer.nevv}">
+					<aon:if test="#{!warehouseTransfer.nevv and !warehouseTransfer.readOnly}">
 						<ui:include
 							src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
 						<aon:commandLink id="transfer-stock-import" value="#{bundle.aon_import}"
