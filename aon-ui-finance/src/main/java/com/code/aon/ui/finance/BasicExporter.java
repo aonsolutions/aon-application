@@ -41,9 +41,11 @@ import com.code.aon.customer.Customer;
 import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
+import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
+import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.finance.util.FinanceUtil;
@@ -793,6 +795,22 @@ public abstract class BasicExporter implements Serializable {
 				LOGGER.error(e.getMessage(), e);
 			}			
 		}
+	}
+	
+	protected Date getLastFinanceTrackingPaidDate( Finance finance ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(FinanceTracking.class);
+		Criteria criteria = new Criteria();
+		String id = bean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_ID);
+		criteria.addEqualExpression(id, finance.getId());
+		String type = bean.getFieldName(IEntityAlias.FINANCE_TRACKING_TYPE);
+		criteria.addEqualExpression(type, FinanceTrackingType.PAID);
+		String date = bean.getFieldName(IEntityAlias.FINANCE_TRACKING_TRACKING_DATE);
+		criteria.addOrder(date, false);
+		List<ITransferObject> list = bean.getList(criteria, 0, 1);
+		if (! list.isEmpty() ) {
+			return ((FinanceTracking) list.get(0)).getTrackingDate();
+		}
+		return null;
 	}
 
 	public abstract void write( AccountEntry accountEntry ) throws IOException, ManagerBeanException;

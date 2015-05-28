@@ -3,6 +3,7 @@ package com.code.aon.ui.finance;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -170,6 +171,22 @@ public class ContaPlusWriter extends BasicExporter {
 		return code;
 	}
 	
+	private Date getAccountDate() {
+		if ( isInvoiceExport() ) {
+			return getDate();
+		} else {
+			Date date = null;
+			try {
+				if ( getFinance() != null ) {
+					date = getLastFinanceTrackingPaidDate(getFinance());
+				}
+			} catch (ManagerBeanException e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+			return (date != null) ? date : getDueDate();
+		}
+	}
+	
 	private void writeAccounts( AccountEntry accountEntry, AccountEntryDetail aed, boolean registry ) {
 		Object[] data = new Object[32];
 		
@@ -178,7 +195,7 @@ public class ContaPlusWriter extends BasicExporter {
 		// 01 - ASIEN (N6)
 		data[0] = getJournal(accountEntry);
 		// 02 - FECHA (D8)
-		data[1] = isInvoiceExport() ? getDate() : getDueDate();
+		data[1] = getAccountDate();
 		// 03 - SUBCTA (C12)
 		data[2] = getAccount(aed.getAccount());
 		// 04 - CONTRA (C12)

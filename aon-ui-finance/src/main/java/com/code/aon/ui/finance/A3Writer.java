@@ -29,7 +29,6 @@ import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.config.enumeration.VatDeductionType;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
-import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
@@ -420,20 +419,6 @@ public class A3Writer extends BasicExporter {
 		return null;
 	}
 	
-	private Date getFechaCobroPago( Finance finance ) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(FinanceTracking.class);
-		Criteria criteria = new Criteria();
-		String id = bean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_ID);
-		criteria.addEqualExpression(id, finance.getId());
-		String type = bean.getFieldName(IEntityAlias.FINANCE_TRACKING_TYPE);
-		criteria.addEqualExpression(type, FinanceTrackingType.PAID);
-		List<ITransferObject> list = bean.getList(criteria);
-		if (! list.isEmpty() ) {
-			return ((FinanceTracking) list.get(0)).getTrackingDate();
-		}
-		return null;
-	}
-	
 	private void writeFinance( Finance finance ) throws IOException, ManagerBeanException {
 		initLine();
 		// Fecha del Vencimiento
@@ -467,7 +452,7 @@ public class A3Writer extends BasicExporter {
 		// Tipo Cobro/Pago
 		setString( getTipo(finance), 58, 2);
 		// Fecha Cobro/Pago
-		Date date = getFechaCobroPago(finance);
+		Date date = getLastFinanceTrackingPaidDate(finance);
 		if ( date != null ) {
 			setDate(date, 60);	
 		}
