@@ -36,5 +36,9 @@ public class WarehouseTransferController extends HeaderObjectController {
 		ic.setBackAction(formAction());
 	}
 	
+	public boolean isReadOnly() {
+		WarehouseTransfer wt = (WarehouseTransfer) getTo();
+		return (wt.getInventory() != null) && (wt.getInventory().getId() != null);
+	}
 	
 }
