@@ -20,35 +20,15 @@
 					<ui:param name="skipFocusFirst" value="true" />
 					<ui:param name="skipSaveButton" value="#{!delivery.pending}" />
 					<ui:param name="skipRemoveButton" value="#{!delivery.pending}" />
+					<ui:param name="saveButtonReRender" value="deliveryForm" />
+					<ui:param name="showMoreMenu" value="#{!delivery.nevv and deliveryDetail.to == null}" />
 					<ui:define name="beforeSpinToolbarContent">
-						<aon:commandButton id="salesTransfer"
-							value="#{bundle.aon_invoice_sales2}"
-							immediate="#{true}" rendered="#{!delivery.nevv and delivery.pending}"
-							styleClass="aon-finding-toolbar-item aon-icon-sincronize"
-							actionListener="#{delivery.onSalesTransferShow}"
-							reRender="showSalesTransferWindow">
-							<f:setPropertyActionListener target="#{delivery.showSalesTransferWindow}"
-								value="#{true}" />
-						</aon:commandButton>
-						<aon:if test="#{aonRole.financeOperator}">
-							<aon:commandButton id="invoice"
-								value="#{bundle.aon_key_invoice_description}"
-								immediate="#{true}" rendered="#{delivery.pending and deliveryDetail.model.rowCount > 0}"
-								styleClass="aon-finding-toolbar-item aon-icon-favorite"
-								actionListener="#{delivery.onInvoiceShow}"
-								reRender="showInvoiceWindow">
-								<f:setPropertyActionListener target="#{delivery.showInvoiceWindow}"
-									value="#{true}" />
-							</aon:commandButton>
-						</aon:if>
 						<aon:commandButton value="&#160;" id="email"
 							title="#{bundle.webmail_send_email}"
 							rendered="#{deliveryDetail.model.rowCount > 0 and deliveryDetail.to == null}"
 							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
 							<aon:actionListener method="#{delivery.onSendByEmail}" />
 						</aon:commandButton>															
-						<ui:include
-							src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml" />						
 						<aon:htmlCommandLink id="delivery-report" value="#{bundle.aon_invoice_delivery}"
 							target="_new" rendered="#{!delivery.nevv and deliveryDetail.model.rowCount > 0}"
 							action="#{report.onExecute}" 
@@ -58,6 +38,40 @@
 							<f:param name="reportKey" value="#{delivery.reportTemplate}" />
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
+					</ui:define>
+					<ui:define name="moreMenuContent">
+						<aon:menuItem id="salesTransfer"
+							value="#{bundle.aon_invoice_sales2}"
+							immediate="#{true}" rendered="#{delivery.pending}"
+							iconClass="aon-icon-sincronize"
+							actionListener="#{delivery.onSalesTransferShow}"
+							reRender="showSalesTransferWindow">
+							<f:setPropertyActionListener target="#{delivery.showSalesTransferWindow}"
+								value="#{true}" />
+						</aon:menuItem>
+						<aon:if test="#{aonRole.financeOperator}">
+							<aon:menuItem id="invoice"
+								value="#{bundle.aon_key_invoice_description}"
+								immediate="#{true}" rendered="#{delivery.pending and deliveryDetail.model.rowCount > 0}"
+								iconClass="aon-icon-favorite"
+								actionListener="#{delivery.onInvoiceShow}"
+								reRender="showInvoiceWindow">
+								<f:setPropertyActionListener target="#{delivery.showInvoiceWindow}"
+									value="#{true}" />
+							</aon:menuItem>
+						</aon:if>
+						<aon:menuItem id="modifyWarehouse"
+							value="#{bundle.warehouse_change_warehouse}"
+							immediate="#{true}"
+							iconClass="aon-icon-warehouse"
+							actionListener="#{delivery.onWarehouseChangeShow}"
+							reRender="showWarehouseChangeWindow">
+							<f:setPropertyActionListener target="#{delivery.showWarehouseChangeWindow}"
+								value="#{true}" />
+						</aon:menuItem>
+
+						<ui:include
+							src="/com/code/aon/ui/common/facelet/auditable/menuContent.xhtml" />
 					</ui:define>
 				</ui:decorate>
 			</aon:div>			
@@ -364,8 +378,13 @@
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/modalTransfer.xhtml" />
 		<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/modalInvoice.xhtml" />
+		<ui:include src="/com/code/aon/ui/warehouse/facelet/shared/modalWarehouseChange.xhtml">
+			<ui:param name="controller" value="#{delivery}" />
+			<ui:param name="changeReRender" value="deliveryForm" />
+		</ui:include>
 		<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/modalConfirmStock.xhtml" />
 		<ui:include src="/com/code/aon/ui/product/facelet/item/modalInfo.xhtml" />
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />

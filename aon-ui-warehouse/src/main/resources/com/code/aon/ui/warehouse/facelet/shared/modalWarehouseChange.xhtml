@@ -9,13 +9,13 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showWarehouseChangeWindow">
-		<aon:if test="#{income.showWarehouseChangeWindow}">
+		<aon:if test="#{controller.showWarehouseChangeWindow}">
 			<rich:modalPanel id="warehouseChangeModalPanel" minHeight="240"
-				minWidth="520" rendered="#{income.showWarehouseChangeWindow}"
+				minWidth="520" rendered="#{controller.showWarehouseChangeWindow}"
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{bundle.warehouse_income_change_warehouse}" />
+						<aon:outputText value="#{bundle.warehouse_change_warehouse}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -25,7 +25,7 @@
 							reRender="showWarehouseChangeWindow" immediate="true">
 							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
-								target="#{income.showWarehouseChangeWindow}"
+								target="#{controller.showWarehouseChangeWindow}"
 								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>
@@ -39,14 +39,14 @@
 									<aon:commandButton id="warehouseChange-accept"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
 										value="#{bundle.aon_accept}"
-										actionListener="#{income.onWarehouseChange}"
-										reRender="incomeForm,showWarehouseChangeWindow"
+										actionListener="#{controller.onWarehouseChange}"
+										reRender="#{changeReRender},showWarehouseChangeWindow"
 										onclick="Richfaces.showModalPanel('waitProccess')" 
 					     				oncomplete="Richfaces.hideModalPanel('waitProccess')">
 										<rich:componentControl for="warehouseChangeModalPanel"
 											event="onclick" operation="hide"/>																					
 										<f:setPropertyActionListener
-											target="#{income.showWarehouseChangeWindow}"
+											target="#{controller.showWarehouseChangeWindow}"
 											value="#{false}" />
 									</aon:commandButton>
 									<aon:commandButton id="warehouseChange-cancel"
@@ -55,23 +55,23 @@
 										value="#{bundle.aon_cancel}"
 										reRender="showWarehouseChangeWindow">
 										<f:setPropertyActionListener
-											target="#{income.showWarehouseChangeWindow}"
+											target="#{controller.showWarehouseChangeWindow}"
 											value="#{false}" />
 									</aon:commandButton>
 								</aon:div>
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
 									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 80%;">
 
-										<aon:outputLabel for="Income_warehouse"
+										<aon:outputLabel for="WarehouseChange_warehouse"
 											value="#{bundle.aon_warehouse}" />
-										<aon:outputText id="Income_warehouse"
-											value="#{income.warehouse.name}" />
+										<aon:outputText id="WarehouseChange_warehouse"
+											value="#{controller.warehouse.name}" />
 
-										<aon:outputLabel for="Income_newWarehouse"
+										<aon:outputLabel for="WarehouseChange_newWarehouse"
 											value="#{bundle.aon_reset} #{bundle.aon_warehouse}" />
-										<aon:selectOneMenu id="Income_newWarehouse" 
-											value="#{income.newWarehouse}" required="#{true}">
-											<f:selectItems value="#{income.warehouses}" />
+										<aon:selectOneMenu id="WarehouseChange_newWarehouse" 
+											value="#{controller.newWarehouse}" required="#{true}">
+											<f:selectItems value="#{controller.warehouses}" />
 										</aon:selectOneMenu>
 
 									</aon:panelGrid>

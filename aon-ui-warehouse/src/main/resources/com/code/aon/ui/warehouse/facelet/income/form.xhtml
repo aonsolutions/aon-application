@@ -55,7 +55,7 @@
 							</aon:menuItem>
 						</aon:if>
 						<aon:menuItem id="modifyWarehouse"
-							value="#{bundle.warehouse_income_change_warehouse}"
+							value="#{bundle.warehouse_change_warehouse}"
 							immediate="#{true}"
 							iconClass="aon-icon-warehouse"
 							actionListener="#{income.onWarehouseChangeShow}"
@@ -374,7 +374,10 @@
 			<ui:param name="controller" value="#{income}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/warehouse/facelet/income/modalInvoice.xhtml" />
-		<ui:include src="/com/code/aon/ui/warehouse/facelet/income/modalWarehouseChange.xhtml" />
+		<ui:include src="/com/code/aon/ui/warehouse/facelet/shared/modalWarehouseChange.xhtml">
+			<ui:param name="controller" value="#{income}" />
+			<ui:param name="changeReRender" value="incomeForm" />
+		</ui:include>
 		<ui:include src="/com/code/aon/ui/project/facelet/project/modalProject.xhtml">
 			<ui:param name="controller" value="#{income}" />
 			<ui:param name="detailReRender" value="incomeDetails" />

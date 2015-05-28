@@ -88,6 +88,8 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	private Date invoiceDate;
 	private String selectedTab;
 	private boolean showAuditInfoWindow;
+	private boolean showWarehouseChangeWindow;
+	private Warehouse newWarehouse;
 	private Double listTotal;
 	private WarehouseEmailUtil emailUtil;
 	private boolean shippingAlternativeAddress;
@@ -212,6 +214,22 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		this.showAuditInfoWindow = showAuditInfoWindow;
 	}
 	
+	public boolean isShowWarehouseChangeWindow() {
+		return showWarehouseChangeWindow;
+	}
+
+	public void setShowWarehouseChangeWindow(boolean showWarehouseChangeWindow) {
+		this.showWarehouseChangeWindow = showWarehouseChangeWindow;
+	}
+
+	public Warehouse getNewWarehouse() {
+		return newWarehouse;
+	}
+
+	public void setNewWarehouse(Warehouse newWarehouse) {
+		this.newWarehouse = newWarehouse;
+	}
+
 	public Double getListTotal() {
 		return listTotal;
 	}
@@ -569,6 +587,35 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		}
 	}
 
+	public void onLoadInvoice(ActionEvent event) throws ManagerBeanException {
+		Invoice invoice = getInvoice();
+		if (invoice != null) {
+			BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
+			invoiceController.onLoad(event, invoice.getId(), DELIVERY_FORM_NAME, DELIVERY_CONTROLLER_NAME + ".refresh");
+		}
+	}
+	
+	public void onWarehouseChangeShow(ActionEvent event) {
+		setNewWarehouse(getWarehouse());
+	}
+
+	public void onWarehouseChange(ActionEvent event) throws ManagerBeanException {
+		Delivery delivery = (Delivery)this.getTo();
+		if (getNewWarehouse() != null && getWarehouse().getId() != getNewWarehouse().getId()) {
+			IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_DELIVERY_ID), delivery.getId());
+			for (ITransferObject ito : deliveryDetailBean.getList(criteria)) {
+				DeliveryDetail deliveryDetail = (DeliveryDetail)ito;
+				deliveryDetail.setWarehouse(getNewWarehouse());
+				deliveryDetailBean.update(deliveryDetail);
+			}
+		}
+		setWarehouse(getNewWarehouse());
+		IController deliveryDetailController = FormUtil.getController(DELIVERY_DETAIL_CONTROLLER_NAME);
+		deliveryDetailController.onSearch(null);
+	}
+
 	public void onSendByEmail( ActionEvent event ) {
 		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
 		controller.onPrepareEmailWindow(event);
@@ -584,14 +631,6 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		}
 	}	
 
-	public void onLoadInvoice(ActionEvent event) throws ManagerBeanException {
-		Invoice invoice = getInvoice();
-		if (invoice != null) {
-			BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
-			invoiceController.onLoad(event, invoice.getId(), DELIVERY_FORM_NAME, DELIVERY_CONTROLLER_NAME + ".refresh");
-		}
-	}
-	
 	public String getReportTemplate() throws ManagerBeanException {
 		String value = AppParamUtil.getValue(AppParam.APP_DELIVERY_TEMPLATE_PARAM);
 		return ( value != null) ? value : DELIVERY_CONTROLLER_NAME;
