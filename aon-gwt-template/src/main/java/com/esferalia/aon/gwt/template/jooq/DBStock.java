@@ -796,6 +796,7 @@ public class DBStock {
 				.join(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(WORKPLACE.SCOPE))
 				.where(WAREHOUSE.DOMAIN.eq(domainId))
 				.and(USER_SCOPE.USER_ID.eq(userId))
+				.orderBy(WAREHOUSE.NAME)
 				.fetch();
 			
 			Vector<Warehouse> v = new Vector<Warehouse>();
