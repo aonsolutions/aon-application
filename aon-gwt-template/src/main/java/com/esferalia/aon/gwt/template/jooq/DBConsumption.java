@@ -1,21 +1,19 @@
 package com.esferalia.aon.gwt.template.jooq;
 
 
-import static com.esferalia.aon.jooq.tables.Income.INCOME;
-import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
-import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
-import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
-import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
+import static com.esferalia.aon.jooq.tables.Income.INCOME;
+import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
+import static com.esferalia.aon.jooq.tables.Inventory.INVENTORY;
+import static com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL;
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
+import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 import static com.esferalia.aon.jooq.tables.WarehouseTransfer.WAREHOUSE_TRANSFER;
 import static com.esferalia.aon.jooq.tables.WarehouseTransferDetail.WAREHOUSE_TRANSFER_DETAIL;
-import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
-import static com.esferalia.aon.jooq.tables.Inventory.INVENTORY;
-import static com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL;
-import static com.esferalia.aon.jooq.tables.Item.ITEM;
-import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -24,7 +22,6 @@ import java.util.Map;
 
 import org.jooq.Record1;
 import org.jooq.Record2;
-import org.jooq.Record3;
 import org.jooq.Record6;
 import org.jooq.Result;
 
@@ -206,6 +203,7 @@ public class DBConsumption {
 					.where(WAREHOUSE_TRANSFER.SOURCE_WAREHOUSE.equal(warehouseId))
 					.and(WAREHOUSE_TRANSFER.ISSUE_TIME.greaterOrEqual(new Timestamp(initialDate.getTime())))
 					.and(WAREHOUSE_TRANSFER.ISSUE_TIME.lessOrEqual(new Timestamp(finalDate.getTime())))
+					.and(WAREHOUSE_TRANSFER.INVENTORY.isNull())
 					.fetch();
 
 			for (Record2<Integer, Double> record : data7) {
@@ -233,6 +231,7 @@ public class DBConsumption {
 					.where(WAREHOUSE_TRANSFER.TARGET_WAREHOUSE.equal(warehouseId))
 					.and(WAREHOUSE_TRANSFER.ISSUE_TIME.greaterOrEqual(new Timestamp(initialDate.getTime())))
 					.and(WAREHOUSE_TRANSFER.ISSUE_TIME.lessOrEqual(new Timestamp(finalDate.getTime())))
+					.and(WAREHOUSE_TRANSFER.INVENTORY.isNull())
 					.fetch();
 
 			for (Record2<Integer, Double> record : data8) {

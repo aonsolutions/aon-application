@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.template.jooq;
 
 import static com.esferalia.aon.jooq.tables.CatalogueItem.CATALOGUE_ITEM;
+import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
+import static com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Proposal.PROPOSAL;
@@ -8,15 +10,14 @@ import static com.esferalia.aon.jooq.tables.ProposalDetail.PROPOSAL_DETAIL;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Series.SERIES;
 import static com.esferalia.aon.jooq.tables.Stock.STOCK;
+import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 import static com.esferalia.aon.jooq.tables.WarehouseTransfer.WAREHOUSE_TRANSFER;
 import static com.esferalia.aon.jooq.tables.WarehouseTransferDetail.WAREHOUSE_TRANSFER_DETAIL;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.jooq.tables.WorkplaceDepartment.WORKPLACE_DEPARTMENT;
-import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.Vector;
 
 import org.jooq.Condition;
@@ -32,8 +33,8 @@ import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Record4;
 import org.jooq.Record5;
+import org.jooq.Record6;
 import org.jooq.Result;
-import org.jooq.impl.DSL;
 
 import com.code.aon.company.Department;
 import com.code.aon.company.WorkPlace;
@@ -71,34 +72,7 @@ public class DBStock {
 		try{
 			ctx = AONContext.getAONContext(domain, domainId);
 			 
-			
-			Date d = new Date();
-			Timestamp t = new Timestamp(d.getTime());
-			Condition series;
-			String scode;
-			
-			if(ti.getSeries() == null || ti.getSeries().getCode() == "-") {
-				series = WAREHOUSE_TRANSFER.SERIES.isNull();
-				scode = null;
-			}
-			else {
-				series = WAREHOUSE_TRANSFER.SERIES.eq(ti.getSeries().getCode());
-				scode = ti.getSeries().getCode();
-			}
-			Result<Record1<Integer>> n = ctx.getDslContext().select(DSL.max(WAREHOUSE_TRANSFER.NUMBER))
-				.from(WAREHOUSE_TRANSFER)
-				.where(WAREHOUSE_TRANSFER.DOMAIN.eq(domainId).and(series)).fetch();
-			
-			Integer max;
-			if(n.isEmpty() || n.get(0).value1()==null) max = 0;
-			else max = n.get(0).value1(); //get max number (domain, serie)
-			Integer next = max+1;
-			
-			Integer transferId = ctx.getDslContext().insertInto(WAREHOUSE_TRANSFER,WAREHOUSE_TRANSFER.DOMAIN, WAREHOUSE_TRANSFER.SERIES,WAREHOUSE_TRANSFER.NUMBER, WAREHOUSE_TRANSFER.COMMENTS, WAREHOUSE_TRANSFER.ISSUE_TIME, WAREHOUSE_TRANSFER.SOURCE_WAREHOUSE, WAREHOUSE_TRANSFER.TARGET_WAREHOUSE)
-					.values(domainId,scode,next,ti.getComments(),t,null,ti.getTargetWarehouse().getId()).returning(WAREHOUSE_TRANSFER.ID).fetchOne().getId();
 			Vector<String> v = new Vector<String>();
-			InsertValuesStep4<WarehouseTransferDetailRecord, Integer, Integer, Integer, Double> transferInsert = ctx.getDslContext().insertInto(WAREHOUSE_TRANSFER_DETAIL, WAREHOUSE_TRANSFER_DETAIL.DOMAIN, WAREHOUSE_TRANSFER_DETAIL.ITEM, WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER, WAREHOUSE_TRANSFER_DETAIL.QUANTITY);
-			stockquery = "update stock set quantity = case ";
 			inventoryquery = "update inventory_detail set real_quantity = case ";
 			transferInfo= ti;
 			
@@ -145,34 +119,21 @@ public class DBStock {
 						if(!data2.isEmpty()){
 							 
 							quantity = data2.get(0).value1();
-							//System.out.println(" New Quantity: "+ s.getQuantity() +" ; code:  "+s.getProduct());
-							//System.out.println(" Old Quantity: "+ quantity + " or " + Math.abs(quantity));
 							Double quantityTransfer = s.getQuantity()-quantity;
 							
 							s.setDomainId(domainId);
 							s.setItemId(itemId);
-							s.setTransferId(transferId);
-							s.setQuantityDifference(quantityTransfer);
-							
-							transferInsert.values(s.getDomainId(),s.getItemId(),s.getTransferId(),s.getQuantityDifference());	
+							s.setQuantityDifference(quantityTransfer);	
 
 							if(quantityTransfer != 0.0){
 								itemIds = itemIds + ","+s.getItemId();
-								stockquery = stockquery + " when item = "+ s.getItemId()+" then "+ s.getQuantity();
 								inventoryquery = inventoryquery + " when item = "+ s.getItemId()+" then "+s.getQuantity();
 							}
-							/*if(s.getQuantityDifference() != 0.0)
-								dslContext.update(STOCK)
-									.set(STOCK.QUANTITY,s.getQuantity())
-									.where(STOCK.ITEM.eq(s.getItemId()).and(STOCK.WAREHOUSE.eq(ti.getTargetWarehouse().getId()))).execute();
-							*/
 						}
 						else{
-							
 							v.add("*Fila " +(s.getRow()+1) + " : El producto no está en stock.");
 							error.setError(false);
 							error.setTextError(v);
-							//return error;
 						}
 						
 					}
@@ -180,25 +141,15 @@ public class DBStock {
 						v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
 						error.setError(false);
 						error.setTextError(v);
-						
-						//return error;
 					}
 				}
 			});
 	
 			if(error.getError()){
-				if(!stockquery.equals("update stock set quantity = case ")){
-					stockquery = stockquery + " else " + 0.0 + " end where domain = "+ domainId +" and item in ("+ itemIds.substring(1) +");";
-					ctx.getDslContext().query(stockquery).execute();
-				}
 				if(!inventoryquery.equals("update inventory_detail set real_quantity = case ")){
 					inventoryquery = inventoryquery + " else " + 0.0 + " end where inventory = "+ inventoryId +" and domain = "+ domainId +" and item in ("+ itemIds.substring(1) +");";
 					ctx.getDslContext().query(inventoryquery).execute();
 				}
-				transferInsert.execute();
-				/*DBConsults outer = new DBConsults();
-				ImportStockThread thread = outer.new ImportStockThread(domain, stock, ti.getTargetWarehouse().getId());
-				thread.start();*/
 			}
 			return error;
 			
@@ -614,6 +565,39 @@ public class DBStock {
 		}
 	}
 	
+	public static Vector<StockInfo> getInventoryClosed(String domain, Integer domainId,Integer inventoryId, Condition c) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain, domainId);
+			
+			Result<Record6<Double, String, String, String, String, String>> data = 
+				ctx.getDslContext().select(INVENTORY_DETAIL.REAL_QUANTITY,ITEM.DETAIL,
+						ITEM.DETAIL2, ITEM.DETAIL3, PRODUCT.CODE, PRODUCT.NAME)
+					.from(INVENTORY_DETAIL).join(ITEM).on(ITEM.ID.eq(INVENTORY_DETAIL.ITEM))
+					.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+					.where(INVENTORY_DETAIL.DOMAIN.eq(domainId))
+					.and(INVENTORY_DETAIL.INVENTORY.eq(inventoryId))
+					.and(c)
+					.orderBy(PRODUCT.NAME)
+					.fetch();
+			
+				
+			Vector<StockInfo> v = new Vector<StockInfo>();
+			for (Record6<Double, String, String, String, String, String> d : data) {
+				StockInfo si = new StockInfo();
+				si.setDetail(d.value2());
+				si.setDetail2(d.value3());
+				si.setDetail3(d.value4());
+				si.setProduct(d.value5());
+				si.setQuantity(d.value1());
+				si.setProductName(d.value6());
+				v.add(si);
+			}
+			return v;
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
 	public static String[] getWarehouseComments(DSLContext dslContext, Integer id ){
 		
 		Result<Record2<String, String>> data = dslContext.select(WAREHOUSE_TRANSFER.COMMENTS,WAREHOUSE_TRANSFER.SERIES)
@@ -867,6 +851,41 @@ public class DBStock {
 				si.setQuantity(r.value8());
 				si.setProductName(p.getName());
 				si.setProduct(p.getCode());
+				v.add(si);
+			}
+			return v;
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static Vector<StockInfo> getIncome(String domain, Integer domainId, Integer incomeId){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain, domainId);
+			
+			Result<Record6<Double, String, String, String, String, String>> data = ctx.getDslContext().select(INCOME_DETAIL.QUANTITY,ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3, PRODUCT.NAME, PRODUCT.CODE)
+								.from(INCOME_DETAIL)
+								.join(ITEM).on(INCOME_DETAIL.ITEM.eq(ITEM.ID)).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+								.where(INCOME_DETAIL.INCOME.eq(incomeId))
+								.and(INCOME_DETAIL.DOMAIN.eq(domainId))
+								.orderBy(PRODUCT.NAME)
+								.fetch();
+			
+			Vector<StockInfo> v = new Vector<StockInfo>();
+			
+			for(Record6<Double, String, String, String, String, String> r : data){
+				StockInfo si  = new StockInfo();
+				si.setDomainId(domainId);
+				if(r.value2() != null )si.setDetail(r.value2()); 
+				else si.setDetail("");
+				if(r.value3() != null )si.setDetail2(r.value3()); 
+				else si.setDetail2("");
+				if(r.value4() != null )si.setDetail3(r.value4()); 
+				else si.setDetail3("");
+				si.setQuantity(r.value1());
+				si.setProductName(r.value5());
+				si.setProduct(r.value6());
 				v.add(si);
 			}
 			return v;

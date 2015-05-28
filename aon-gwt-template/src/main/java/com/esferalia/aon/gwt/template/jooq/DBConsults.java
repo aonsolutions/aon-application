@@ -16,7 +16,6 @@ import org.jooq.Result;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.template.server.Utils;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
@@ -223,7 +222,7 @@ public class DBConsults {
 						TemplateInfo consumptionTemplate = new TemplateInfo();
 						v2 = new Vector<String>();
 						v2.add("Producto");v2.add("Nombre");v2.add("Inicial");v2.add("Compras");v2.add("Ventas");
-						v2.add("Traspaso");v2.add("Posterior");v2.add("Consumo");v2.add("Precio");v2.add("Importe");
+						v2.add("Traspaso");v2.add("Final");v2.add("Consumo");v2.add("Precio");v2.add("Importe");
 						v2.add("Detalle 1");v2.add("Detalle 2");v2.add("Detalle 3");
 						consumptionTemplate.setColumns(v2);
 						consumptionTemplate.setDomain(domain);

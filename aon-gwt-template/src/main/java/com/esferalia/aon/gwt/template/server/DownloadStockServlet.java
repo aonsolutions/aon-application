@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.template.server;
 
+import static com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Stock.STOCK;
@@ -73,7 +74,9 @@ public class DownloadStockServlet extends HttpServlet {
         String statuses = p_request.getParameter("statuses");
         String types = p_request.getParameter("types");
         String quantity = p_request.getParameter("quantity");
+        String close_inventory = p_request.getParameter("close");
         
+        Boolean closeInventory = close_inventory.equals("true");
         Integer domainId = Integer.parseInt(domain_id);
         String domain = AonUtil.getDomainName();
         Integer idFile  = Integer.parseInt(fileId);
@@ -195,18 +198,35 @@ public class DownloadStockServlet extends HttpServlet {
         }*/
         
         Condition c = PRODUCT.DOMAIN.eq(domainId);
+        Condition c2 = c;
         if(!category.equals("null") && !category.equals("") && !category.equals("undefined"))
+        	{
         	c = c.and(PRODUCT.CATEGORY.eq(Integer.parseInt(category)));
+        	c2 = c;
+        	}
         if(!brand.equals("null") && !brand.equals("") && !brand.equals("undefined"))
+        	{
         	c = c.and(PRODUCT.BRAND.eq(Integer.parseInt(brand)));
+        	c2 = c;
+        	}
         if(!code.equals("null") && !code.equals("") && !code.equals("undefined"))
+        	{
         	c = c.and(PRODUCT.CODE.like("%"+code+"%"));
+        	c2 = c;
+        	}
         if(!description.equals("null") && !description.equals("") && !description.equals("undefined"))
+        	{
         	c = c.and(PRODUCT.NAME.like("%"+description+"%"));
+        	c2 = c;
+        	}
         if(!stock.equals("false") && !stock.equals("null") && !stock.equals("") && !stock.equals("undefined"))
+        	{
         	c = c.and(STOCK.QUANTITY.greaterThan(0.0));
+        	c2 = c2.and(INVENTORY_DETAIL.REAL_QUANTITY.greaterThan(0.0));
+        	}
         if(!quantity.equals("null") && !quantity.equals("") && !quantity.equals("undefined")){
         	c = c.and(STOCK.QUANTITY.eq(Double.parseDouble(quantity)));
+        	c2 = c2.and(INVENTORY_DETAIL.REAL_QUANTITY.eq(Double.parseDouble(quantity)));
         }
         if(!types.equals("null") && !types.equals("") && !types.equals("undefined")){
         	String s= types.substring(1) ;
@@ -214,10 +234,12 @@ public class DownloadStockServlet extends HttpServlet {
         		Integer index = s.indexOf("$");
         		if(index == -1){
         			c = c.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s)));
+        			c2 = c2.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s)));
         			s="";
         		}
         		else{ 
         			c = c.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s.substring(0, index))));
+        			c2 = c2.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s.substring(0, index))));
         			s = s.substring(index+1);
         		}
         	}
@@ -228,10 +250,12 @@ public class DownloadStockServlet extends HttpServlet {
         		Integer index = s.indexOf("$");
         		if(index == -1){
         			c = c.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s)));
+        			c2 = c2.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s)));
         			s="";
         		}
         		else{ 
         			c = c.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s.substring(0, index))));
+        			c2 = c2.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s.substring(0, index))));
         			s = s.substring(index+1);
         		}
         	}
@@ -251,10 +275,20 @@ public class DownloadStockServlet extends HttpServlet {
         	}
         }*/
         if(!barcode.equals("null") && !barcode.equals("") && !barcode.equals("undefined"))
-        	c = c.and(ITEM.BARCODE.like("%"+barcode+"%"));
+        	{
+        		c = c.and(ITEM.BARCODE.like("%"+barcode+"%"));
+        		c2 = c2.and(ITEM.BARCODE.like("%"+barcode+"%"));
+        	}
         //if(!provider.equals("null") && !provider.equals("") && !provider.equals("undefined"))
-        	
-        Vector<StockInfo> v = DBStock.getStocks(domain,domainId,w.getId(),c);
+        
+        Vector<StockInfo> v;
+        if(closeInventory){
+        	String inventory_id = p_request.getParameter("inventory");
+        	Integer inventoryId = Integer.parseInt(inventory_id);
+        	v= DBStock.getInventoryClosed(domain, domainId, inventoryId, c2);
+        }
+        else
+        	v= DBStock.getStocks(domain,domainId,w.getId(),c);
 
         for(Integer j = 0; j< v.size();j++){
         	Row row = hoja.createRow(j+2);

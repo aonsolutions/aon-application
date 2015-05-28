@@ -46,9 +46,16 @@ public class ExportInfo implements IsSerializable{
 	String modificationDate1;
 	String modificationDate2;
 	
+	String inventory;
 	
 	
 	
+	public String getInventory() {
+		return inventory;
+	}
+	public void setInventory(String inventory) {
+		this.inventory = inventory;
+	}
 	public String getCreationUser() {
 		return creationUser;
 	}

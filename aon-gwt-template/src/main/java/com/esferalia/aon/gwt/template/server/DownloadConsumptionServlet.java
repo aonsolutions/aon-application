@@ -174,7 +174,7 @@ public class DownloadConsumptionServlet extends HttpServlet {
         		case "Inicial": celda.setCellValue(ci.getInitialQuantity());celda.setCellStyle(style2);break;
         		case "Compras": celda.setCellValue(ci.getPurchases());celda.setCellStyle(style2);break;
         		case "Ventas": celda.setCellValue(ci.getSales());celda.setCellStyle(style2);break;
-        		case "Posterior": celda.setCellValue(ci.getFinalQuantity());celda.setCellStyle(style2);break;
+        		case "Final": celda.setCellValue(ci.getFinalQuantity());celda.setCellStyle(style2);break;
         		case "Traspaso": celda.setCellValue(ci.getTransfersPlus()-ci.getTransfersMinus());celda.setCellStyle(style2);break;
         		case "Precio": celda.setCellValue(round(ci.getPrice(),2));celda.setCellStyle(style2);break; 
         		case "Importe": celda.setCellValue(round(ci.getPrice()*ci.getConsumption(),2));celda.setCellStyle(style2);break;

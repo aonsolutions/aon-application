@@ -171,10 +171,13 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		case "exportProposal": exportProposal(dialog.getUrl(),dialog.getTemplateList());break;
 		case "exportConsumption": exportConsumption(dialog.getUrl(),dialog.getTemplateList());break;
 		case "exportInventory": exportInventory(dialog);break;
+		case "exportIncome": exportIncome(dialog);break;
 		default:
 			break;
 		}
 	} 
+	
+	
 	
 	private void importar(Dialog dialog){
 		dialogAux = dialog;
@@ -264,6 +267,25 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		lb.addItem("-");
 		
 		for(TemplateInfo ti : templates.getList()){
+			if(ti.getType().equals("Stock"))
+				lb.addItem(ti.getName());
+		}
+		flex_table.setWidget(0, 0, new Label("Plantilla"));
+		flex_table.setWidget(0, 1, lb);
+		
+		flexTableCss();
+	}
+	
+	private void exportIncome(Dialog dialog){
+		flex_table.setStyleName("aon-panelGrid");
+		flex_table.setWidth("400px");
+		flex_table.setBorderWidth(1);
+		flex_table.setCellSpacing(0);
+		ListBox lb = new ListBox();
+		
+		lb.addItem("-");
+		
+		for(TemplateInfo ti : dialog.getTemplateList().getList()){
 			if(ti.getType().equals("Stock"))
 				lb.addItem(ti.getName());
 		}
@@ -562,24 +584,6 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		
 		flex_table.setWidget(1, 0, new Label("Almacen"));
 		flex_table.setWidget(1, 1,lb2 );
-
-		ListBox lb3 = new ListBox();
-		if(series.size()>1){
-
-			lb3.addItem("-");
-		}
-		for(Series s : series){
-
-			lb3.addItem(s.getName());
-		}
-		flex_table.setWidget(2, 0, new Label("Serie"));
-		flex_table.setWidget(2, 1,lb3 );
-		
-
-		TextBox tb = new TextBox();
-		tb.setStyleName("aon-inputText");
-		flex_table.setWidget(3, 0, new Label("Comentarios"));
-		flex_table.setWidget(3, 1, tb);
 		
 		SingleUploader upload = newUploader(null, dialog.getUrl(), 4);
 		flex_table.setWidget(4, 0, new Label("Archivo"));
@@ -898,7 +902,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					vp.add(r4);
 					Label r2 = new Label("Ventas");r2.addStyleName("aon-info-rest-template");
 					vp.add(r2);
-					Label r5 = new Label("Posterior");r5.addStyleName("aon-info-rest-template");
+					Label r5 = new Label("Final");r5.addStyleName("aon-info-rest-template");
 					vp.add(r5);
 					Label r6 = new Label("Traspaso");r6.addStyleName("aon-info-rest-template");
 					vp.add(r6);
@@ -1051,7 +1055,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					vp.add(r4);
 					Label r2 = new Label("Ventas");r2.addStyleName("aon-info-rest-template");
 					vp.add(r2);
-					Label r5 = new Label("Posterior");r5.addStyleName("aon-info-rest-template");
+					Label r5 = new Label("Final");r5.addStyleName("aon-info-rest-template");
 					vp.add(r5);
 					Label r6 = new Label("Traspaso");r6.addStyleName("aon-info-rest-template");
 					vp.add(r6);

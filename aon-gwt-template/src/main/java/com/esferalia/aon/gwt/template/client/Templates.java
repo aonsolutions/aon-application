@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.template.client;
 
 
 
+
 import static com.esferalia.aon.gwt.common.client.AONEntryPoint.getParameter;
 
 import java.util.Comparator;
@@ -240,6 +241,7 @@ public class Templates extends Composite implements EntryPoint {
 			exportProposalx(this);	
 			exportConsumptionx(this);
 			exportInventoryx(this);
+			exportIncomex(this);
 		}
 	}
 	
@@ -944,19 +946,13 @@ public class Templates extends Composite implements EntryPoint {
 				String  warehouse = "";
 				ListBox  lb2 = (ListBox) flex_table.getWidget(1, 1);
 				warehouse = lb2.getItemText(lb2.getSelectedIndex());				
-				String series = "";
-				ListBox lb3 = (ListBox) flex_table.getWidget(2, 1);
-				series = lb3.getItemText(lb3.getSelectedIndex());
-				String comments = "";
-				TextBox tb = (TextBox) flex_table.getWidget(3, 1);
-				comments = tb.getText();
-				
+
 				for(TemplateInfo t : tlist.getList()) {
 					if(t.getName().equals(template) && t.getType().equals("Stock")){
 						ti = t;
 					}
 				}
-				item.executeExcel(inventoryId, ti, warehouse,null, series, comments,false,-1,new AsyncCallback<Integer>() {
+				item.executeExcel(inventoryId, ti, warehouse,null, "" , "",false,-1,new AsyncCallback<Integer>() {
 					
 					@Override
 					public void onSuccess(Integer result) {
@@ -1209,14 +1205,17 @@ public class Templates extends Composite implements EntryPoint {
 
 	}
 	ExportInfo eiAux;
-	private void exportStocks(Vector<Warehouse> w,ExportInfo ei){
+	Boolean closeInventoryAux;
+	private void exportStocks(Vector<Warehouse> w,ExportInfo ei, Boolean closeInventory){
 		eiAux = ei;
+		closeInventoryAux = closeInventory;
 		Dialog d = new Dialog("Exportar Stock","Descargar",true,"Cancelar",true,"exportStock");
 		d.setUrl(GWT.getModuleBaseURL());
 		d.setTemplateList(template_list);
 		d.setWarehouses(w);
 		TemplatesDialog popup = new TemplatesDialog(d) {
 			ExportInfo ei = eiAux;
+			Boolean closeInventory = closeInventoryAux;
 			@Override
 			protected void onCancel() {
 				hide();
@@ -1239,6 +1238,7 @@ public class Templates extends Composite implements EntryPoint {
 				
 				String driveId="";
 				if(ti.getDriveId()!=null)driveId= ti.getDriveId();
+				
 				String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_stock/"
 		            	+ "?id=" + Integer.toString(ti.getId())
 		            	+ "&drive_id=" +URL.encode(driveId)
@@ -1255,7 +1255,9 @@ public class Templates extends Composite implements EntryPoint {
 						+ "&tags="+ei.getTags()
 						+ "&statuses="+ei.getStatuses()
 						+ "&types="+ei.getTypes()
-						+ "&quantity="+ei.getQuantity();
+						+ "&quantity="+ei.getQuantity()
+						+ "&close="+closeInventory
+						+ "&inventory="+ ei.getInventory();
 				
 				Window.open( fileDownloadURL, "_blank",null);
 				hide();
@@ -1510,6 +1512,47 @@ public class Templates extends Composite implements EntryPoint {
 		popup.setGlassEnabled(true);
 		popup.show();
 	}
+	
+	String incomeId;
+	private void exportIncome(String income){
+		incomeId = income;
+		Dialog d = new Dialog("Exportar Albarán","Descargar",true,"Cancelar",true,"exportIncome");
+		d.setUrl(GWT.getModuleBaseURL());
+		d.setTemplateList(template_list);
+		TemplatesDialog popup = new TemplatesDialog(d) {
+			
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+			
+			@Override
+			protected void onAccept() {
+				
+				ListBox lb = (ListBox) flex_table.getWidget(0, 1);
+				String template = lb.getItemText(lb.getSelectedIndex());
+				TemplateInfo ti = new TemplateInfo();
+				
+				for(TemplateInfo t : tlist.getList()) {
+					if(t.getName().equals(template) && t.getType().equals("Stock")){
+						ti = t;
+					}
+				}
+				
+				String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_income/"
+		            	+ "?id=" + Integer.toString(ti.getId())
+		            	+ "&domain_id=" + domainId
+		            	+ "&income=" + incomeId;
+				
+				Window.open( fileDownloadURL, "_blank",null);
+				hide();
+			}
+		};	
+		popup.addStyleName("gwt-PopupPanel-template");
+		popup.setGlassEnabled(true);
+		popup.show();
+	}
+	
 	String warehouseAux, initialDateAux, finalDateAux, initialIdAux, finalIdAux;
 	private void exportConsumption(String warehouseId, String initialDate, String finalDate, String initialId, String finalId){
 		warehouseAux = warehouseId;
@@ -1891,8 +1934,15 @@ public class Templates extends Composite implements EntryPoint {
 	public static native void refreshInventoryDetail() /*-{
 		$wnd.refreshInventoryDetail();
 	}-*/;
-
-
+	
+	public static native void refreshDelivery() /*-{
+		$wnd.refreshDelivery();
+	}-*/;
+	
+	public static native void refreshIncome() /*-{
+	$wnd.refreshIncome();
+	}-*/;
+	
 	public static native void refreshProposalDetail() /*-{	
 		$wnd.refreshProposalDetail();
 	}-*/;
@@ -1927,7 +1977,7 @@ public class Templates extends Composite implements EntryPoint {
 					}				
 				}
 				else v = result;
-				exportStocks(v,ei);
+				exportStocks(v,ei, false);
 			}
 			
 			@Override
@@ -1943,24 +1993,25 @@ public class Templates extends Composite implements EntryPoint {
 	}-*/;
 	
 	
-	public void stockx2(String warehouse,String category, String brand,String code,String description,String stock){
+	public void stockx2(String warehouse,String category, String brand,String code,String description,String stock, String inventory){
 		ExportInfo ei = new ExportInfo();
 		ei.setCategory(category);
 		ei.setBrand(brand);
 		ei.setCode(code);
 		ei.setDescription(description);
 		ei.setStock(stock);
+		ei.setInventory(inventory);
 		
 		Vector<Warehouse> v = new Vector<Warehouse>();
 		Warehouse w = new Warehouse();
 		w.setName(warehouse);
 		v.add(w);
-		exportStocks(v,ei);		
+		exportStocks(v,ei, true);		
 	}
 	
 	public static native void exportStockx2(Templates thiz) /*-{
-		$wnd.stockx2 = function(warehouse, category, brand, code, description, stock) {
-			thiz.@com.esferalia.aon.gwt.template.client.Templates::stockx2(*)(warehouse, category, brand, code, description, stock);
+		$wnd.stockx2 = function(warehouse, category, brand, code, description, stock, inventory) {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::stockx2(*)(warehouse, category, brand, code, description, stock, inventory);
 		}
 	}-*/;
 	
@@ -2067,6 +2118,27 @@ public class Templates extends Composite implements EntryPoint {
 	public static native void exportInventoryx(Templates thiz) /*-{	
 		$wnd.inventoryx = function(closed, inventoryId) {
 			thiz.@com.esferalia.aon.gwt.template.client.Templates::inventoryx(*)(closed, inventoryId);
+		}
+	}-*/;
+	
+	
+	public void income(){
+		//importIncome();
+	}
+
+	public static native void exportIncome(Templates thiz) /*-{
+		$wnd.proposal = function() {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::income(*)();
+		}
+	}-*/;
+	
+	public void incomex(String income){
+		exportIncome(income);
+	}
+
+	public static native void exportIncomex(Templates thiz) /*-{
+		$wnd.incomex = function(income) {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::incomex(*)(income);
 		}
 	}-*/;
 	
