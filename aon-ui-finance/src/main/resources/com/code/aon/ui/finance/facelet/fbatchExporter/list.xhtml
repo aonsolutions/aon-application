@@ -21,7 +21,7 @@
 				
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="startDownloadExport"
-						value="#{bundle.webmail_download}: #{exporter.configuration.type}"
+						value="#{bundle.webmail_download}: #{exporter.configuration.type.name}"
 						styleClass="aon-finding-toolbar-item aon-icon-mail-save" 
 						disabled="#{empty fbatchExporter.checkList}" reRender="fbatchExporterToolbar,financeDataDiv"
 						actionListener="#{fbatchExporter.onStart}" >

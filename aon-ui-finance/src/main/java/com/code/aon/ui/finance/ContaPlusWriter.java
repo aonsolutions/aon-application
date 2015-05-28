@@ -178,7 +178,7 @@ public class ContaPlusWriter extends BasicExporter {
 		// 01 - ASIEN (N6)
 		data[0] = getJournal(accountEntry);
 		// 02 - FECHA (D8)
-		data[1] = getDate();
+		data[1] = isInvoiceExport() ? getDate() : getDueDate();
 		// 03 - SUBCTA (C12)
 		data[2] = getAccount(aed.getAccount());
 		// 04 - CONTRA (C12)
