@@ -74,6 +74,8 @@ public class IncomeController extends BasicController implements IWarehouseConst
 	private boolean showConfirmWindow;
 	private boolean showPurchaseFilterWindow;
 	private boolean showAuditInfoWindow;	
+	private boolean showWarehouseChangeWindow;
+	private Warehouse newWarehouse;
 	private Double listTotal;
 
     public List<SelectItem> getAddresses() {
@@ -199,6 +201,22 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		this.showAuditInfoWindow = showAuditInfoWindow;
 	}
 	
+	public boolean isShowWarehouseChangeWindow() {
+		return showWarehouseChangeWindow;
+	}
+
+	public void setShowWarehouseChangeWindow(boolean showWarehouseChangeWindow) {
+		this.showWarehouseChangeWindow = showWarehouseChangeWindow;
+	}
+
+	public Warehouse getNewWarehouse() {
+		return newWarehouse;
+	}
+
+	public void setNewWarehouse(Warehouse newWarehouse) {
+		this.newWarehouse = newWarehouse;
+	}
+
 	public Double getListTotal() {
 		return listTotal;
 	}
@@ -580,6 +598,27 @@ public class IncomeController extends BasicController implements IWarehouseConst
 			BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(PURCHASE_INVOICE_CONTROLLER_NAME);
 			invoiceController.onLoad(event, invoice.getId(), INCOME_FORM_NAME, INCOME_CONTROLLER_NAME + ".refresh");
 		}
+	}
+
+	public void onWarehouseChangeShow(ActionEvent event) {
+		setNewWarehouse(getWarehouse());
+	}
+
+	public void onWarehouseChange(ActionEvent event) throws ManagerBeanException {
+		Income income = (Income)this.getTo();
+		if (getNewWarehouse() != null && getWarehouse().getId() != getNewWarehouse().getId()) {
+			IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_INCOME_ID), income.getId());
+			for (ITransferObject ito : incomeDetailBean.getList(criteria)) {
+				IncomeDetail incomeDetail = (IncomeDetail)ito;
+				incomeDetail.setWarehouse(getNewWarehouse());
+				incomeDetailBean.update(incomeDetail);
+			}
+		}
+		setWarehouse(getNewWarehouse());
+		IController incomeDetailController = FormUtil.getController(INCOME_DETAIL_CONTROLLER_NAME);
+		incomeDetailController.onSearch(null);
 	}
 
 }

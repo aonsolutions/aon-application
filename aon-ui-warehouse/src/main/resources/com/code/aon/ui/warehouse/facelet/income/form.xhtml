@@ -21,29 +21,8 @@
 					<ui:param name="skipSaveButton" value="#{!income.pending}" />
 					<ui:param name="skipRemoveButton" value="#{!income.pending}" />
 					<ui:param name="saveButtonReRender" value="incomeForm" />
+					<ui:param name="showMoreMenu" value="#{!income.nevv and incomeDetail.to == null}" />
 					<ui:define name="beforeSpinToolbarContent">
-						<aon:commandButton id="purchaseTransfer"
-							value="#{bundle.aon_invoice_sales2}"
-							immediate="#{true}" rendered="#{!income.nevv and income.pending}"
-							styleClass="aon-finding-toolbar-item aon-icon-sincronize"
-							actionListener="#{income.onPurchaseTransferShow}"
-							reRender="showPurchaseTransferWindow">
-							<f:setPropertyActionListener target="#{income.showPurchaseTransferWindow}"
-								value="#{true}" />
-						</aon:commandButton>
-						<aon:if test="#{aonRole.financeOperator}">
-							<aon:commandButton id="invoice"
-								value="#{bundle.aon_key_invoice_description}"
-								immediate="#{true}" rendered="#{income.pending and incomeDetail.model.rowCount > 0}"
-								styleClass="aon-finding-toolbar-item aon-icon-favorite"
-								actionListener="#{income.onInvoiceShow}"
-								reRender="showInvoiceWindow">
-								<f:setPropertyActionListener target="#{income.showInvoiceWindow}"
-									value="#{true}" />
-							</aon:commandButton>
-						</aon:if>
-						<ui:include
-							src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml" />						
 						<aon:htmlCommandLink id="incomeForm-report" value="#{bundle.aon_invoice_delivery}"
 							target="_new" rendered="#{!income.nevv and incomeDetail.model.rowCount > 0}"
 							action="#{report.onExecute}" 
@@ -53,6 +32,40 @@
 							<f:param name="reportKey" value="incomeForm" />
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
+					</ui:define>
+					<ui:define name="moreMenuContent">
+						<aon:menuItem id="purchaseTransfer"
+							value="#{bundle.aon_invoice_sales2}"
+							immediate="#{true}" rendered="#{income.pending}"
+							iconClass="aon-icon-sincronize"
+							actionListener="#{income.onPurchaseTransferShow}"
+							reRender="showPurchaseTransferWindow">
+							<f:setPropertyActionListener target="#{income.showPurchaseTransferWindow}"
+								value="#{true}" />
+						</aon:menuItem>
+						<aon:if test="#{aonRole.financeOperator}">
+							<aon:menuItem id="invoice"
+								value="#{bundle.aon_key_invoice_description}"
+								immediate="#{true}" rendered="#{income.pending and incomeDetail.model.rowCount > 0}"
+								iconClass="aon-icon-favorite"
+								actionListener="#{income.onInvoiceShow}"
+								reRender="showInvoiceWindow">
+								<f:setPropertyActionListener target="#{income.showInvoiceWindow}"
+									value="#{true}" />
+							</aon:menuItem>
+						</aon:if>
+						<aon:menuItem id="modifyWarehouse"
+							value="#{bundle.warehouse_income_change_warehouse}"
+							immediate="#{true}"
+							iconClass="aon-icon-warehouse"
+							actionListener="#{income.onWarehouseChangeShow}"
+							reRender="showWarehouseChangeWindow">
+							<f:setPropertyActionListener target="#{income.showWarehouseChangeWindow}"
+								value="#{true}" />
+						</aon:menuItem>
+
+						<ui:include
+							src="/com/code/aon/ui/common/facelet/auditable/menuContent.xhtml" />
 					</ui:define>
 				</ui:decorate>
 			</aon:div>			
@@ -361,6 +374,7 @@
 			<ui:param name="controller" value="#{income}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/warehouse/facelet/income/modalInvoice.xhtml" />
+		<ui:include src="/com/code/aon/ui/warehouse/facelet/income/modalWarehouseChange.xhtml" />
 		<ui:include src="/com/code/aon/ui/project/facelet/project/modalProject.xhtml">
 			<ui:param name="controller" value="#{income}" />
 			<ui:param name="detailReRender" value="incomeDetails" />
