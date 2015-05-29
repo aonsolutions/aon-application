@@ -2,13 +2,19 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="itemTag_1016x762_1_column" pageWidth="287" pageHeight="215" orientation="Landscape" columnWidth="287" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="e6f2b03e-3097-4960-a0f2-206be79dc16a">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.zoom" value="2.2"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<style name="Barcode" scaleImage="FillFrame" hAlign="Left" vAlign="Middle" isBlankWhenNull="true" fontName="Helvetica" fontSize="10"/>
+	<style name="Barcode" scaleImage="FillFrame" hAlign="Left" vAlign="Middle" isBlankWhenNull="true" fontName="Helvetica" fontSize="10">
+		<box>
+			<topPen lineWidth="0.0" lineColor="#000000"/>
+			<leftPen lineWidth="0.0" lineColor="#000000"/>
+			<rightPen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
 	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
 	<parameter name="freeText" class="java.lang.String" isForPrompting="false"/>
 	<field name="id" class="java.lang.Integer"/>
@@ -18,6 +24,7 @@
 	<field name="barcode" class="java.lang.String"/>
 	<field name="purchasePrice" class="java.lang.Double"/>
 	<field name="salesPrice" class="java.lang.Double"/>
+	<field name="description" class="java.lang.String"/>
 	<field name="detail" class="java.lang.String"/>
 	<field name="detail2" class="java.lang.String"/>
 	<field name="detail3" class="java.lang.String"/>
@@ -41,25 +48,25 @@
 					<printWhenExpression><![CDATA[$F{id}!=null]]></printWhenExpression>
 				</reportElement>
 				<box>
-					<topPen lineStyle="Solid" lineColor="#000000"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineStyle="Solid" lineColor="#999999"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{product}.getCode()]]></textFieldExpression>
+				<textFieldExpression><![CDATA["ETIQUETA DE PRODUCTO"]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement uuid="176b5fd1-b957-4e1b-8137-a0f027aa786b" key="textField-12" mode="Transparent" x="7" y="96" width="272" height="50" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[$F{id}!=null]]></printWhenExpression>
 				</reportElement>
-				<box>
-					<topPen lineStyle="Solid" lineColor="#000000"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineStyle="Solid" lineColor="#999999"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle" rotation="None" markup="none">
@@ -67,6 +74,7 @@
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{product}.getName()!=null?$F{product}.getName() + "\n":"")
++ ($F{description}!=null?$F{description}:"")
 + ($F{detail}!=null?$F{detail}:"")
 + ($F{detail2}!=null?", "+$F{detail2}:"")
 + ($F{detail3}!=null?", "+$F{detail3}:"")]]></textFieldExpression>
@@ -75,14 +83,14 @@
 				<reportElement uuid="291a72a6-9692-4ad7-bc2b-7ab89e667b51" key="textField-8" positionType="Float" mode="Transparent" x="7" y="186" width="272" height="20" forecolor="#000000" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[$F{id}!=null]]></printWhenExpression>
 				</reportElement>
-				<box>
-					<topPen lineStyle="Solid" lineColor="#000000"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineStyle="Solid" lineColor="#999999"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{freeText}]]></textFieldExpression>
@@ -91,7 +99,7 @@
 				<reportElement uuid="6a29d75e-33f3-4ba2-8300-03accb14907f" style="Barcode" x="7" y="36" width="272" height="40">
 					<printWhenExpression><![CDATA[$F{id}!=null && $F{barcode}!=null && !"".equals($F{barcode})]]></printWhenExpression>
 				</reportElement>
-				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false" barHeight="0">
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false" barHeight="40">
 					<jr:codeExpression><![CDATA[$F{barcode}]]></jr:codeExpression>
 				</jr:barbecue>
 			</componentElement>
@@ -147,13 +155,13 @@
 					<printWhenExpression><![CDATA[$F{id}!=null]]></printWhenExpression>
 				</reportElement>
 				<box>
-					<topPen lineStyle="Solid" lineColor="#000000"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineStyle="Solid" lineColor="#999999"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{barcode}]]></textFieldExpression>
@@ -162,14 +170,14 @@
 				<reportElement uuid="9849c62b-b20e-4e80-93f3-d2d1b980735f" key="textField-8" positionType="Float" mode="Transparent" x="7" y="146" width="272" height="20" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[$F{id}!=null && $F{serialNumber}!=null && ($F{product}.isLotable() || $F{product}.isSerializable())]]></printWhenExpression>
 				</reportElement>
-				<box>
-					<topPen lineStyle="Solid" lineColor="#000000"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineStyle="Solid" lineColor="#999999"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[(($F{product}.isLotable())?"LOTE Nº: ":"SERIE Nº: ")+ $F{serialNumber}]]></textFieldExpression>
@@ -178,19 +186,31 @@
 				<reportElement uuid="27927838-9bd5-4204-902b-0debb9a4d20f" key="textField-8" positionType="Float" mode="Transparent" x="7" y="166" width="272" height="20" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[$F{id}!=null && ($F{product}.isLotable() || $F{product}.isSerializable())]]></printWhenExpression>
 				</reportElement>
-				<box>
-					<topPen lineStyle="Solid" lineColor="#000000"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineStyle="Solid" lineColor="#999999"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{product}.isLotable()?"CONSUMIR PREFERENTEMENTE ANTES EL FIN DE: ":"FECHA SERIE: ")
+				<textFieldExpression><![CDATA[($F{product}.isLotable()?"CONSUMIR PREFERENTEMENTE ANTES DEL FIN DE: ":"FECHA SERIE: ")
 + new SimpleDateFormat("dd/MM/yyyy").format($F{serialDate})]]></textFieldExpression>
 			</textField>
+			<line>
+				<reportElement uuid="11d91d75-5122-4cc7-8ea3-b1ca1b518e8e" x="6" y="6" width="1" height="200"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement uuid="7d143838-f794-4013-9e81-38bbd5fdcd8c" x="279" y="6" width="1" height="200"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
 		</band>
 	</detail>
 </jasperReport>
