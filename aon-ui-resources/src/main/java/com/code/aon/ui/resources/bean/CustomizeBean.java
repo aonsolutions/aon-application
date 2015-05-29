@@ -144,6 +144,10 @@ public class CustomizeBean implements Serializable {
 		}
 	}
 	
+	public boolean isSnapshotVersion(){
+		return StringUtils.isNotEmpty(this.applicationVersion) && StringUtils.endsWithIgnoreCase(this.applicationVersion, "-SNAPSHOT"); 
+	}
+	
 	private Integer getCompanyId( Connection connection ) {
 		QueryRunner run = new QueryRunner();
 		try {

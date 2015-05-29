@@ -351,11 +351,16 @@
 											<a4j:commandLink ajaxSingle="true" immediate="true"
 												onclick="alert('#{bundle.aio_not_yet}');return false;" 
 												value="Memoria normalizada" />
-											<!--  
-											<aon:commandLink id="gwt_normalizedMemory"
-												action="gwt_normalizedMemory"
-												value="Memoria normalizada" />
-											-->
+										</aon:div>
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:if test="#{customize.snapshotVersion}">
+												<aon:commandLink id="gwt_normalizedMemory"
+													action="gwt_normalizedMemory"
+													title="Memoria normalizada" >
+													<aon:outputText value="Memoria normalizada"
+														styleClass="aon-icon-new-text" style="margin-left: 5px; padding-left: 20px;"/>
+												</aon:commandLink>
+											</aon:if>
 										</aon:div>
 									</aon:div>
 								</aon:panelGrid>
