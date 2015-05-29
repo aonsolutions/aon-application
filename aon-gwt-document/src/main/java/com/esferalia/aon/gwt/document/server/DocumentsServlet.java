@@ -75,6 +75,7 @@ import com.esferalia.aon.gwt.document.shared.Domain;
 import com.esferalia.aon.gwt.document.shared.Emessage;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
 import com.esferalia.aon.gwt.document.shared.FilterUtil;
+import com.esferalia.aon.gwt.document.shared.Init;
 import com.esferalia.aon.gwt.document.shared.Lists;
 import com.esferalia.aon.gwt.document.shared.MailAccount;
 import com.esferalia.aon.gwt.document.shared.MailAccountList;
@@ -147,24 +148,29 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		AonServletUtils.releaseFacesContext();
 	}
 	Boolean confidential;
-	public Vector<Boolean> initAux(){
-		try{initFacesContext();
-		Vector<Boolean> v = new Vector<Boolean>();
-		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-		domainId = ds.getDomainId();
-		confidential = AonUtil.getRoleManager().isConfidentiality();
-		Boolean documentManager = AonUtil.getRoleManager().isDocumentManager();
-		v.add(documentManager);
-		v.add(confidential);
-		return v;
+	public Init initAux(){
+		try{
+			initFacesContext();
+			Vector<Boolean> v = new Vector<Boolean>();
+			Init init = new Init();
+			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+			init.setDomainId(ds.getDomainId());
+			confidential = AonUtil.getRoleManager().isConfidentiality();
+			Boolean documentManager = AonUtil.getRoleManager().isDocumentManager();
+			v.add(documentManager);
+			v.add(confidential);
+			init.setVector(v);
+			return init;
 		}
 		finally{releaseFacesContext();}
 	}
 	
-	public Document getAllFiles(){
+	public Document getAllFiles(Integer domainId){
 		
-		/*DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-		Integer domainId = ds.getDomainId();*/
+	/*DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+		Integer domainId2 = ds.getDomainId();
+	*/	
+		
 		String domain = AonUtil.getDomainName();
 		Integer userDomainId = AonUtil.getAuthPrincipal().getUserDomainId();
 		Integer user_id=AonUtil.getAuthPrincipal().getUserId();
@@ -306,7 +312,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		return true;
 	}
 	Integer domainId;
-	public Vector<Domain> getSons(){
+	public Vector<Domain> getSons(Integer domainId){
 		
 		String domain = AonUtil.getDomainName();
 		
@@ -327,7 +333,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		
 	}
 	
-	public Lists getLists(){
+	public Lists getLists(Integer domainId){
 		/*initFacesContext();
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		Integer domainId = ds.getDomainId();*/
@@ -356,7 +362,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		return lists;
 	}
 	
-	public void removeFile(Vector<FileInfo> fvector){
+	public void removeFile(Vector<FileInfo> fvector, Integer domainId){
 		
 		String domain = AonUtil.getDomainName();
 		for(FileInfo fi : fvector){
@@ -415,7 +421,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 
 	}
 	
-	public Vector<FileInfo> insertFile(FileInfo fi) {
+	public Vector<FileInfo> insertFile(FileInfo fi,Integer  domainId2) {
 		Vector<FileInfo> files = getOuts();
 		Vector<FileInfo> vector = new Vector<FileInfo>();
 
@@ -433,7 +439,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			 */
 			String domain = AonUtil.getDomainName();
 			try {
-				domain = DBConsults.getDomain(domain, domainId);
+				domain = DBConsults.getDomain(domain, domainId2);
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 			}
@@ -537,7 +543,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		
 	}
 	
-	public Vector<FileInfo> editFile(FileInfo fi,Vector<FileInfo> fvector){
+	public Vector<FileInfo> editFile(FileInfo fi,Vector<FileInfo> fvector, Integer domainId){
 		String domain = AonUtil.getDomainName();
 		//Integer registry = AdminUtil.getCompanyId(fi.getDomainId());
 		com.code.aon.google.apis.FileInfo fileInfo = new com.code.aon.google.apis.FileInfo();
@@ -860,7 +866,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		}
 	}
 	
-	public void share(String email, Vector<FileInfo> fvector) {
+	public void share(String email, Vector<FileInfo> fvector, Integer domainId) {
 		String domain = AonUtil.getDomainName();
 		DomainGserviceaccount g;
 		Drive d = null;
@@ -1273,7 +1279,7 @@ public static void setSize(Integer sizea) {
 
 //-------------------- Administrar tags & categories
 
-public Tag newTag(String name) {
+public Tag newTag(String name, Integer domainId) {
 	initAux();
 	String domain = AonUtil.getDomainName();
 	Integer id = null;
@@ -1315,7 +1321,7 @@ public void deleteTag(Integer tagId) {
 	}
 }
 
-public Category newCategory(String name) {
+public Category newCategory(String name, Integer domainId) {
 	initAux();
 	String domain = AonUtil.getDomainName();
 	Integer id = null;
@@ -1493,7 +1499,7 @@ public MailAccountList getMailAccounts() {
 
 	}
 	
-	public void sendGmail(MailAccount ma, Emessage em) {
+	public void sendGmail(MailAccount ma, Emessage em, Integer domainId) {
 		String domain = AonUtil.getDomainName();
 		Gmail gmail = GoogleDriveController.uconnection.getGmail();
 
@@ -1630,7 +1636,7 @@ public static void setDown(Vector<FileInfo> down) {
 	DocumentsServlet.down = down;
 }
 
-public Vector<FileInfo> insertFileMultiple(FileInfo fi) {
+public Vector<FileInfo> insertFileMultiple(FileInfo fi, Integer domainId2) {
 	Vector<FileInfo> files = getOuts();
 	for(FileInfo f : files){
 	Date date = null;
@@ -1641,7 +1647,7 @@ public Vector<FileInfo> insertFileMultiple(FileInfo fi) {
 
 	String domain = AonUtil.getDomainName();
 	try {
-		domain= DBConsults.getDomain(domain, domainId);
+		domain= DBConsults.getDomain(domain, domainId2);
 	} catch (SQLException e1) {
 		e1.printStackTrace();
 	}
@@ -1768,7 +1774,7 @@ public Vector<FileInfo> insertFileMultiple(FileInfo fi) {
 	    return false;
 	}
 	
-	public Boolean checkDomain(Vector<FileInfo> vector){
+	public Boolean checkDomain(Vector<FileInfo> vector, Integer domainId){
 		String domain = AonUtil.getDomainName();
 		Integer domainID = null;
 		try {
@@ -1789,15 +1795,15 @@ public Vector<FileInfo> insertFileMultiple(FileInfo fi) {
 		return true;
 	}
 	
-	public Boolean checkDomain(Document document, String type){
-		Boolean bool1 = checkDomain(document.getEfiles());
-		Boolean bool2 = checkDomain(document.getFiles());
-		Boolean bool3 = checkDomain(document.getFilter());
-		
+	public Boolean checkDomain(Document document, String type,Integer domainId){
+		Boolean bool1 = checkDomain(document.getEfiles(), domainId);
+		Boolean bool2 = checkDomain(document.getFiles(), domainId);
+		Boolean bool3 = checkDomain(document.getFilter(), domainId);
 		System.out.println("Domain Error in "+type+": Efiles "+ !bool1 +", files "+!bool2+", filter "+!bool3);
 		if(!bool1 || !bool2 || !bool3){
 			LOGGER.error("Domain Error in "+type+": Efiles "+ !bool1 +", files "+!bool2+", filter "+!bool3);
 		}
+		System.out.println(bool1 || bool2 || bool3);
 		return bool1 || bool2 || bool3;
 	}
 	
