@@ -421,6 +421,9 @@
 				<subreportParameter name="printDiscountPriceApplied">
 					<subreportParameterExpression><![CDATA[$P{printDiscountPriceApplied}]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="companyController">
+					<subreportParameterExpression><![CDATA[$P{companyController}]]></subreportParameterExpression>
+				</subreportParameter>								
 				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(false), new Boolean(false)))]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{nestedReports}.get("invoiceDetail")]]></subreportExpression>
 			</subreport>
@@ -549,6 +552,9 @@
 				<subreportParameter name="isIncreaseType">
 					<subreportParameterExpression><![CDATA[new Boolean(true)]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="companyController">
+					<subreportParameterExpression><![CDATA[$P{companyController}]]></subreportParameterExpression>
+				</subreportParameter>								
 				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(false), new Boolean(true), ProductType.INCREASE))]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{nestedReports}.get("invoiceDetail")]]></subreportExpression>
 			</subreport>

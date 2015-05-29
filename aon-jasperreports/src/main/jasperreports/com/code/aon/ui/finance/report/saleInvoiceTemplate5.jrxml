@@ -10,12 +10,11 @@
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<import value="com.code.aon.product.enumeration.ProductType"/>
 	<subDataset name="detail" scriptletClass="com.code.aon.ui.finance.util.print.InvoiceDetailReportScriptlet" uuid="8477062c-7931-4fec-b109-59b92635182f">
+		<parameter name="companyController" class="com.code.aon.ui.company.controller.CompanyController"/>	
 		<parameter name="printDiscountPriceApplied" class="java.lang.Boolean"/>
 		<parameter name="isDeliverySource" class="java.lang.String">
 			<defaultValueExpression><![CDATA[$F{deliverySource} && $F{sourceTo} != null]]></defaultValueExpression>
 		</parameter>
-		<parameter name="printReferenceCode" class="java.lang.Boolean"/>
-		<parameter name="printProductCode" class="java.lang.Boolean"/>
 		<field name="description" class="java.lang.String"/>
 		<field name="quantity" class="java.lang.Double"/>
 		<field name="price" class="java.lang.Double"/>
@@ -688,6 +687,9 @@
 						<datasetParameter name="printDiscountPriceApplied">
 							<datasetParameterExpression><![CDATA[$P{printDiscountPriceApplied}]]></datasetParameterExpression>
 						</datasetParameter>
+						<datasetParameter name="companyController">
+							<datasetParameterExpression><![CDATA[$P{companyController}]]></datasetParameterExpression>
+						</datasetParameter>						
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(false), new Boolean(false)))]]></dataSourceExpression>
 					</datasetRun>
 					<jr:columnGroup width="535" uuid="797ebeb3-631c-4072-b29e-16e58bc3c043">
@@ -824,6 +826,9 @@ $R{report_from} + " " + new SimpleDateFormat("dd/MM/yyyy").format($F{sourceTo}.g
 						<datasetParameter name="printDiscountPriceApplied">
 							<datasetParameterExpression><![CDATA[$P{printDiscountPriceApplied}]]></datasetParameterExpression>
 						</datasetParameter>
+						<datasetParameter name="companyController">
+							<datasetParameterExpression><![CDATA[$P{companyController}]]></datasetParameterExpression>
+						</datasetParameter>						
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(false), new Boolean(true), ProductType.INCREASE))]]></dataSourceExpression>
 					</datasetRun>
 					<jr:column width="315" uuid="45efd749-8408-49cb-ab87-7593c3e8dd01">
@@ -933,6 +938,9 @@ $R{report_from} + " " + new SimpleDateFormat("dd/MM/yyyy").format($F{sourceTo}.g
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="detail" uuid="00dae9df-901a-48b3-89de-d39de667a1e6">
+						<datasetParameter name="companyController">
+							<datasetParameterExpression><![CDATA[$P{companyController}]]></datasetParameterExpression>
+						</datasetParameter>						
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(true)))]]></dataSourceExpression>
 					</datasetRun>
 					<jr:column width="315" uuid="da26410a-d1d7-4c64-8881-4e420b081ef5">

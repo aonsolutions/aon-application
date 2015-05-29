@@ -10,8 +10,7 @@
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<import value="com.code.aon.product.enumeration.ProductType"/>
 	<subDataset name="detail" scriptletClass="com.code.aon.ui.finance.util.print.InvoiceDetailReportScriptlet" uuid="e26273db-e36d-4bc9-953d-85aeedf0bc71">
-		<parameter name="printProductCode" class="java.lang.Boolean"/>
-		<parameter name="printReferenceCode" class="java.lang.Boolean"/>
+		<parameter name="companyController" class="com.code.aon.ui.company.controller.CompanyController"/>				
 		<field name="description" class="java.lang.String"/>
 		<field name="quantity" class="java.lang.Double"/>
 		<field name="price" class="java.lang.Double"/>
@@ -433,6 +432,9 @@ $P{company}.getWeb().getValue() + " - " + $P{company}.getEmail().getValue()
 				<reportElement uuid="0352b315-8de6-4018-9f53-169b0ddea6c3" key="detail" positionType="Float" x="21" y="171" width="489" height="31" isRemoveLineWhenBlank="true"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="detail" uuid="71d94f33-5f89-4585-9464-b83e0256655a">
+						<datasetParameter name="companyController">
+							<datasetParameterExpression><![CDATA[$P{companyController}]]></datasetParameterExpression>
+						</datasetParameter>												
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(false), new Boolean(false)))]]></dataSourceExpression>
 					</datasetRun>
 					<jr:column width="367" uuid="21da8e27-845d-4ac0-b3bd-3c6d3130c7ad">
@@ -801,6 +803,9 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="detail" uuid="68bd6df0-aecd-48ac-a603-45a3b8632329">
+						<datasetParameter name="companyController">
+							<datasetParameterExpression><![CDATA[$P{companyController}]]></datasetParameterExpression>
+						</datasetParameter>												
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(true)))]]></dataSourceExpression>
 					</datasetRun>
 					<jr:column width="367" uuid="bd97e56a-6652-41fd-a0f6-75a8cc8383c4">
@@ -995,6 +1000,9 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="detail" uuid="637ec55c-7f2f-4490-8ff5-cca62bc5bf76">
+						<datasetParameter name="companyController">
+							<datasetParameterExpression><![CDATA[$P{companyController}]]></datasetParameterExpression>
+						</datasetParameter>												
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(false), new Boolean(true), ProductType.INCREASE))]]></dataSourceExpression>
 					</datasetRun>
 					<jr:column width="367" uuid="ea44bbfc-2506-4a30-8f0f-f4652d2ea8ce">
