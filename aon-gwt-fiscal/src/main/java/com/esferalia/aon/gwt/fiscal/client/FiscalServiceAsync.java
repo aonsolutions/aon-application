@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import com.esferalia.aon.gwt.fiscal.shared.Memory;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
@@ -124,6 +125,11 @@ public interface FiscalServiceAsync {
 	void getMod200ById(String domainName, int domain, int id,AsyncCallback<Mod200> callback);
 	void saveMod200(String domainName, int domain, Mod200 mod200,AsyncCallback<Mod200> callback);
 	void validateMod200(Mod200 mod200, AsyncCallback<Mod200> callback);
+	
+	// --------------------------------------------------------------- NORMALIZED MEMORY
+	void readMemory(Memory memory, AsyncCallback<Memory> callback);
+	void saveMemory(Memory memory, AsyncCallback<Memory> callback);
+	void deleteMemory(Memory memory, AsyncCallback<Void> callback);
 
 
 }

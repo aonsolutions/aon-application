@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import com.esferalia.aon.gwt.fiscal.shared.Memory;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
@@ -123,5 +124,10 @@ public interface FiscalService extends RemoteService {
 	Mod200 validateMod200(Mod200 mod200) throws AonCoreException;
 	void deleteMod200(String domainName,int domain,int id) throws AonCoreException;
 	String dumpAEAT(Mod200 mod200) throws AonCoreException;
+	
+	// --------------------------------------------------------------- NORMALIZED MEMORY
+	Memory readMemory(Memory memory) throws AonCoreException;
+	Memory saveMemory(Memory memory) throws AonCoreException;
+	void deleteMemory(Memory memory) throws AonCoreException;
 	
 }

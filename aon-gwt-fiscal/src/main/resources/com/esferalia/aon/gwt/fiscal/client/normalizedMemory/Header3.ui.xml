@@ -1,0 +1,535 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+
+	<ui:style>
+		.table {
+			width: 90%;
+			border-collapse: collapse;
+		}
+		.table td:first-child {
+			border-bottom:#ccc 1px solid;
+			padding-left: 5px;
+		}
+		
+	</ui:style>
+	<g:HTMLPanel>
+		<g:Label text="Cuenta de perdidas y ganancias abreviada" styleName="{aonResources.css.aonPageHeader}"/>
+		        
+		<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
+			<tr>
+				<td colspan="2">
+					<g:Label text="(DEBE) / HABER" styleName="{aonResources.css.aonPageHeader}"/>
+				</td>
+				<td>
+					<g:Label text="NOTAS DE LA MEMORIA" styleName="{aonResources.css.aonPageHeader}"/>
+				</td>
+				<td>
+					<g:Label text="Ejercicio actual" styleName="{aonResources.css.aonPageHeader}"/>
+				</td>
+				<td>
+					<g:Label text="Ejercicio anterior" styleName="{aonResources.css.aonPageHeader}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="1. Importe neto de la cifra de negocios" />
+				</td>
+				<td>
+					<g:Label text="40100" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" ui:field="_1_notes" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" ui:field="_1_current" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" ui:field="_1_previous" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="2. Variacion de existencias de productos terminados y en curso de fabricacion" />
+				</td>
+				<td>
+					<g:Label text="40200" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="3. Trabajos realizados por la empresa para su activo" />
+				</td>
+				<td>
+					<g:Label text="40300" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="4. Aprovisionamientos" />
+				</td>
+				<td>
+					<g:Label text="40400" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="5. Otros ingresos de explotacion" />
+				</td>
+				<td>
+					<g:Label text="40500" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="6. Gastos de personal" />
+				</td>
+				<td>
+					<g:Label text="40600" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="7. Otros gastos de explotacion" />
+				</td>
+				<td>
+					<g:Label text="40700" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="8. Amortizacion del inmovilizado" />
+				</td>
+				<td>
+					<g:Label text="40800" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="9. Imputacion de subvenciones de inmovilizado no financiero y otras" />
+				</td>
+				<td>
+					<g:Label text="40900" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="10. Excesos de provisiones" />
+				</td>
+				<td>
+					<g:Label text="41000" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="11. Deterioro y resultado por enajenaciones del inmovilizado" />
+				</td>
+				<td>
+					<g:Label text="41100" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="12. Diferencia negativa de combinaciones de negocio" />
+				</td>
+				<td>
+					<g:Label text="41200" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="13. Otros resultados" />
+				</td>
+				<td>
+					<g:Label text="41300" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="A) RESULTADO DE EXPLOTACION (1+2+3+4+5+6+7+8+9+10+11+12+13)" />
+				</td>
+				<td>
+					<g:Label text="49100" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="14. Ingresos financieros" />
+				</td>
+				<td>
+					<g:Label text="41400" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="a) Imputacion de subvenciones, donaciones y legados de caracter financiero" />
+				</td>
+				<td>
+					<g:Label text="41430" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="b) Otros ingresos financieros" />
+				</td>
+				<td>
+					<g:Label text="41490" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="15. Gastos financieros" />
+				</td>
+				<td>
+					<g:Label text="41500" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="16. Variacion de valor razonable en instrumentos financieros" />
+				</td>
+				<td>
+					<g:Label text="41600" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="17. Diferencias de cambio" />
+				</td>
+				<td>
+					<g:Label text="41700" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="18. Deterioro y resultado por enajenaciones de instrumentos financieros" />
+				</td>
+				<td>
+					<g:Label text="41800" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="19. Otros ingresos y gastos de caracter financiero" />
+				</td>
+				<td>
+					<g:Label text="42100" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="a) Incorporacion al activo de gastos financieros" />
+				</td>
+				<td>
+					<g:Label text="42110" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="b) Ingresos financieros derivados de convenios de acreedores" />
+				</td>
+				<td>
+					<g:Label text="42120" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="c) Resto de ingresos y gastos" />
+				</td>
+				<td>
+					<g:Label text="42130" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="B) RESULTADO FINANCIERO (14 + 15 + 16 + 17 + 18 + 19)" />
+				</td>
+				<td>
+					<g:Label text="49200" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="C) RESULTADO ANTES DE IMPUESTOS (A + B)" />
+				</td>
+				<td>
+					<g:Label text="49300" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="20. Impuesto sobre beneficios" />
+				</td>
+				<td>
+					<g:Label text="41900" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="D) RESULTADO DEL EJERCICIO (C + 20)" />
+				</td>
+				<td>
+					<g:Label text="49500" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="21" maxLength="20" />
+				</td>
+			</tr>
+		</table>
+		
+	</g:HTMLPanel>
+	
+</ui:UiBinder>

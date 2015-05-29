@@ -8,6 +8,8 @@ import javax.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
+import com.esferalia.aon.gwt.fiscal.server.normalizedMemory.MemoryReader;
+import com.esferalia.aon.gwt.fiscal.shared.Memory;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
@@ -420,4 +422,28 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	public String dumpAEAT(Mod200 mod200) throws AonCoreException {
 		return AON.dumpAEAT(mod200);
 	}
+	
+	// --------------------------------------------------------------- NORMALIZED MEMORY
+	@Override
+	public Memory readMemory(Memory memory) throws AonCoreException {
+		// TODO
+		try {
+			MemoryReader reader = new MemoryReader();
+			reader.readXml(memory);
+		} catch (Throwable e) {
+			throw new AonCoreException(e);
+		}
+		return null;
+	}
+	@Override
+	public Memory saveMemory(Memory memory) throws AonCoreException {
+		// TODO
+		return null;
+	}
+	
+	@Override
+	public void deleteMemory(Memory memory) throws AonCoreException {
+		// TODO
+	}
+	
 }

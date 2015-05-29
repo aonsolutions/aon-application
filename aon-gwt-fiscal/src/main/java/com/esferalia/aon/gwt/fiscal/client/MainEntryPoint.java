@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.fiscal.client.mod190.Model190;
 import com.esferalia.aon.gwt.fiscal.client.mod193.Model193;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.NormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -26,6 +27,7 @@ public class MainEntryPoint implements EntryPoint {
 	private static final String FS_MOD184_ENTRY_POINT = "Model184";
 	private static final String FS_MOD390_ENTRY_POINT = "Model390";
 	private static final String FS_MOD200_ENTRY_POINT = "Model200";
+	private static final String FS_MEMORY_ENTRY_POINT = "NormalizedMemory";
 	
 	
 	private static final String FS_INVOICE_REPORT_ENTRY_POINT = "InvoiceReport";
@@ -57,6 +59,9 @@ public class MainEntryPoint implements EntryPoint {
 		} else if ( entryPoint.equalsIgnoreCase(FS_MOD200_ENTRY_POINT)) {
 			Model200 model200 = new Model200();
 			model200.onModuleLoad();
+		} else if ( entryPoint.equalsIgnoreCase(FS_MEMORY_ENTRY_POINT)) {
+			NormalizedMemory memory = new NormalizedMemory();
+			memory.onModuleLoad();
 		} else if ( entryPoint.equalsIgnoreCase(FS_INVOICE_REPORT_ENTRY_POINT)) {
 			InvoiceReport invoiceReport = new InvoiceReport();
 			invoiceReport.onModuleLoad();

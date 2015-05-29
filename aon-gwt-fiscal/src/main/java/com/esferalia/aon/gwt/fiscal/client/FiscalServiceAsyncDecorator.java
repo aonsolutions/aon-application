@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
+import com.esferalia.aon.gwt.fiscal.shared.Memory;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
@@ -553,6 +554,23 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		AON.start();
 		fsa.validateMod200(mod200,  
 				new AsyncCallbackWrapper<Mod200>(callback));
+	}
+	
+	// --------------------------------------------------------------- NORMALIZED MEMORY
+	@Override
+	public void readMemory(Memory memory, AsyncCallback<Memory> callback) {
+		AON.start();
+		fsa.readMemory(memory, new AsyncCallbackWrapper<Memory>(callback));
+	}
+	@Override
+	public void saveMemory(Memory memory, AsyncCallback<Memory> callback) {
+		AON.start();
+		fsa.saveMemory(memory, new AsyncCallbackWrapper<Memory>(callback));
+	}
+	@Override
+	public void deleteMemory(Memory memory, AsyncCallback<Void> callback) {
+		AON.start();
+		fsa.deleteMemory(memory, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 
