@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.document.shared.Domain;
 import com.esferalia.aon.gwt.document.shared.Emessage;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
 import com.esferalia.aon.gwt.document.shared.FilterUtil;
+import com.esferalia.aon.gwt.document.shared.Init;
 import com.esferalia.aon.gwt.document.shared.Lists;
 import com.esferalia.aon.gwt.document.shared.MailAccount;
 import com.esferalia.aon.gwt.document.shared.MailAccountList;
@@ -23,25 +24,26 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface IDocumentAsync {
 
-	void getAllFiles(AsyncCallback<Document> callback);
+	void getAllFiles(Integer domainId, AsyncCallback<Document> callback);
 
 	void getServiConveniosFiles(AsyncCallback<Vector<FileInfo>> callback);
 
 	void searchFile(String searchStr, Vector<FileInfo> files,
 			AsyncCallback<Vector<FileInfo>> callback);
 
-	void getLists(AsyncCallback<Lists> callback);
+	void getLists(Integer domainId, AsyncCallback<Lists> callback);
 
 	//void searchFile(SearchInfo si, Vector<FileInfo> files,
 		//	AsyncCallback<Vector<FileInfo>> callback);
 
-	void getSons(AsyncCallback<Vector<Domain>> callback);
+	void getSons(Integer domainId, AsyncCallback<Vector<Domain>> callback);
 
-	void removeFile(Vector<FileInfo> fvector, AsyncCallback<Void> callback);
+	void removeFile(Vector<FileInfo> fvector, Integer domainId,
+			AsyncCallback<Void> callback);
 
 	void newFile(FileInfo fi, AsyncCallback<Boolean> callback);
 
-	void editFile(FileInfo fi, Vector<FileInfo> fvector,
+	void editFile(FileInfo fi, Vector<FileInfo> fvector, Integer domainId,
 			AsyncCallback<Vector<FileInfo>> callback);
 
 	void check(AsyncCallback<Boolean> callback);
@@ -50,9 +52,10 @@ public interface IDocumentAsync {
 
 	void myDrive(String id, AsyncCallback<Vector<TreeDriveInfo>> callback);
 
-	void insertFile(FileInfo fi, AsyncCallback<Vector<FileInfo>> callback);
+	void insertFile(FileInfo fi, Integer domainId,
+			AsyncCallback<Vector<FileInfo>> callback);
 
-	void share(String email, Vector<FileInfo> fvector,
+	void share(String email, Vector<FileInfo> fvector, Integer domainId,
 			AsyncCallback<Void> callback);
 
 	void eSearchFile(Vector<FileInfo> v, String s,
@@ -81,15 +84,16 @@ public interface IDocumentAsync {
 	void shareMydrive(String email, Vector<FileInfo> fvector,
 			AsyncCallback<Void> callback);
 
-	void initAux(AsyncCallback<Vector<Boolean>> callback);
+	void initAux(AsyncCallback<Init> callback);
 
-	void newTag(String name, AsyncCallback<Tag> callback);
+	void newTag(String name, Integer domainId, AsyncCallback<Tag> callback);
 
 	void editTag(String name, Integer tagId, AsyncCallback<Void> callback);
 
 	void deleteTag(Integer tagId, AsyncCallback<Void> callback);
 
-	void newCategory(String name, AsyncCallback<Category> callback);
+	void newCategory(String name, Integer domainId,
+			AsyncCallback<Category> callback);
 
 	void editCategory(String name, Integer categoryId,
 			AsyncCallback<Void> callback);
@@ -102,16 +106,17 @@ public interface IDocumentAsync {
 
 	void getContacts(AsyncCallback<ContactList> callback);
 
-	void sendGmail(MailAccount ma, Emessage em, AsyncCallback<Void> callback);
+	void sendGmail(MailAccount ma, Emessage em, Integer domainId,
+			AsyncCallback<Void> callback);
 
 	void downloadMultiple(Vector<FileInfo> fvector, AsyncCallback<Void> callback);
 
-	void insertFileMultiple(FileInfo fi,
+	void insertFileMultiple(FileInfo fi, Integer domainId,
 			AsyncCallback<Vector<FileInfo>> callback);
 
 	void copyLink(FileInfo doc, String l, AsyncCallback<String> callback);
 
-	void checkDomain(Document document, String type,
+	void checkDomain(Document document, String type, Integer domainId,
 			AsyncCallback<Boolean> callback);
 
 

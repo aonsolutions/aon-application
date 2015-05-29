@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.document.shared.Domain;
 import com.esferalia.aon.gwt.document.shared.Emessage;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
 import com.esferalia.aon.gwt.document.shared.FilterUtil;
+import com.esferalia.aon.gwt.document.shared.Init;
 import com.esferalia.aon.gwt.document.shared.Lists;
 import com.esferalia.aon.gwt.document.shared.MailAccount;
 import com.esferalia.aon.gwt.document.shared.MailAccountList;
@@ -28,7 +29,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("gwt_document")
 public interface IDocument extends RemoteService{
 
-	public Document getAllFiles();
+	public Document getAllFiles(Integer domainId);
 
 	public Vector<FileInfo> getServiConveniosFiles();
 	
@@ -38,13 +39,13 @@ public interface IDocument extends RemoteService{
 
 	public FilterUtil searchFile2(SearchInfo si, Vector<FileInfo> files);
 	
-	public Lists getLists();
+	public Lists getLists(Integer domainId);
 	
-	public Vector<Domain> getSons();
+	public Vector<Domain> getSons(Integer domainId);
 	
-	public void removeFile(Vector<FileInfo> fvector);
+	public void removeFile(Vector<FileInfo> fvector, Integer domainId);
 	
-	public Vector<FileInfo> editFile(FileInfo fi, Vector<FileInfo> fvector);
+	public Vector<FileInfo> editFile(FileInfo fi, Vector<FileInfo> fvector, Integer domainId);
 	
 	public Boolean newFile(FileInfo fi);
 
@@ -54,9 +55,9 @@ public interface IDocument extends RemoteService{
 	
 	public Vector<TreeDriveInfo> myDrive(String id);
 	
-	public Vector<FileInfo> insertFile(FileInfo fi);
+	public Vector<FileInfo> insertFile(FileInfo fi, Integer domainId);
 	
-	public void share(String email,Vector<FileInfo> fvector); 
+	public void share(String email,Vector<FileInfo> fvector, Integer domainId); 
 	
 	public Vector<FileInfo> eSearchFile(Vector<FileInfo> v,String s);
 
@@ -78,15 +79,15 @@ public interface IDocument extends RemoteService{
 	
 	public void shareMydrive(String email, Vector<FileInfo> fvector);
 	
-	public Vector<Boolean> initAux();
+	public Init initAux();
 	
-	public Tag newTag(String name);
+	public Tag newTag(String name, Integer domainId);
 
 	public void editTag(String name, Integer tagId);
 
 	public void deleteTag(Integer tagId);
 
-	public Category newCategory(String name);
+	public Category newCategory(String name, Integer domainId);
 
 	public void editCategory(String name, Integer categoryId);
 
@@ -96,17 +97,17 @@ public interface IDocument extends RemoteService{
 	
 	public void sendEmail(MailAccount ma, Emessage em);
 	
-	public void sendGmail(MailAccount ma, Emessage em);
+	public void sendGmail(MailAccount ma, Emessage em, Integer domainId);
 	
 	public  ContactList getContacts();
 	
 	public void downloadMultiple(Vector<FileInfo> fvector);
 	
-	public Vector<FileInfo> insertFileMultiple(FileInfo fi);
+	public Vector<FileInfo> insertFileMultiple(FileInfo fi, Integer domainId);
 	
 	public String copyLink(FileInfo doc,String l);
 	
-	public Boolean checkDomain(Document document, String type);
+	public Boolean checkDomain(Document document, String type, Integer domainId);
 	
 	
 }
