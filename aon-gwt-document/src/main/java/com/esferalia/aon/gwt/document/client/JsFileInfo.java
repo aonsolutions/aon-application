@@ -26,9 +26,10 @@ public class JsFileInfo extends JavaScriptObject {
 		return this.mimetype;
 	}-*/;
 	
-	 public static native void addOnBeforeUnloadHandler()/*-{
+	 public static native void addOnBeforeUnloadHandler(Documents thiz)/*-{
 		$wnd.onbeforeunload = function(event){
-			var x = $wnd.document.getElementById("aonContent:mainMenuForm:home").click();
+			thiz.@com.esferalia.aon.gwt.document.client.Documents::selectedMenu(*)();
+			
 		}
 	}-*/;
 

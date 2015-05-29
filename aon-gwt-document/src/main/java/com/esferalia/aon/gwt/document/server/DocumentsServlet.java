@@ -43,6 +43,8 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.faces.controller.IRichConstants;
+import com.code.aon.faces.controller.SelectedMenuController;
 import com.code.aon.google.apis.DriveFile;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.GmailUtils;
@@ -148,6 +150,8 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		AonServletUtils.releaseFacesContext();
 	}
 	Boolean confidential;
+
+	Map<Integer, SelectedMenuController> smc = new HashMap<Integer, SelectedMenuController>();
 	public Init initAux(){
 		try{
 			initFacesContext();
@@ -155,6 +159,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			Init init = new Init();
 			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 			init.setDomainId(ds.getDomainId());
+			smc.put(ds.getDomainId(),(SelectedMenuController) AonUtil.getRegisteredBean(IRichConstants.SELECTED_MENU_CONTROLLER_NAME));		
 			confidential = AonUtil.getRoleManager().isConfidentiality();
 			Boolean documentManager = AonUtil.getRoleManager().isDocumentManager();
 			v.add(documentManager);
@@ -1819,5 +1824,10 @@ public Vector<FileInfo> insertFileMultiple(FileInfo fi, Integer domainId2) {
 			return par == parent;
 		}
 		return false;
+	}
+	
+	public void selectedMenu(Integer domainId){
+		System.out.println(smc.size());
+		smc.get(domainId).setLastMenuAction(null);
 	}
 }

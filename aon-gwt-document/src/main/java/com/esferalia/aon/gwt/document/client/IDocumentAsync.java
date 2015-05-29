@@ -119,7 +119,9 @@ public interface IDocumentAsync {
 	void checkDomain(Document document, String type, Integer domainId,
 			AsyncCallback<Boolean> callback);
 
+	void selectedMenu(Integer domainId, AsyncCallback<Void> callback);
 
+	
 
 
 
