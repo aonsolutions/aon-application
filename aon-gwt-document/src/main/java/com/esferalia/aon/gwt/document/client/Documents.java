@@ -807,7 +807,7 @@ public class Documents extends Composite implements EntryPoint {
 		boolean silent = Boolean.parseBoolean(getParameter(GWT.getModuleName(), SILENT));
 		
 		if ( ! silent ){
-			JsFileInfo.addOnBeforeUnloadHandler();
+			JsFileInfo.addOnBeforeUnloadHandler(this);
 			
 			stack1 = new StackLayoutPanel(Unit.EM);
 			prueba2 = new HorizontalPanel();
@@ -4942,6 +4942,17 @@ public class Documents extends Composite implements EntryPoint {
     		thiz.@com.esferalia.aon.gwt.document.client.Documents::popup(*)();
     	}
 	}-*/;
+	
+	public void selectedMenu(){
+		idoc.selectedMenu(initDomainId, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+	}
 	
 	
 	
