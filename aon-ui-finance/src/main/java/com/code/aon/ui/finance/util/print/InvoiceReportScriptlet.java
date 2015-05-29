@@ -30,11 +30,11 @@ public class InvoiceReportScriptlet extends JRDefaultScriptlet implements Serial
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceReportScriptlet.class.getName());
 	
-	private final String FIELD_ID = "id";
+	private static final String FIELD_ID = "id";
 	
-	private final String COMPANY_CONTROLLER = "companyController";
+	private static final String COMPANY_CONTROLLER = "companyController";
 	
-	private final String INVOICE_FOOTER_TEXT = "invoiceFooterText";
+	private static final String INVOICE_FOOTER_TEXT = "invoiceFooterText";
 	
 	private CompanyController getCompanyController(){
 		Object controller = null;

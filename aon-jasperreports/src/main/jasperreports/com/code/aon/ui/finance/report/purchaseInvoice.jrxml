@@ -189,12 +189,6 @@
 			<subreport isUsingCache="true">
 				<reportElement key="subreport-1" positionType="Float" x="0" y="138" width="535" height="29"/>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
-				<subreportParameter name="printProductCode">
-					<subreportParameterExpression><![CDATA[$P{companyController}.isPrintProductCode()]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="printReferenceCode">
-					<subreportParameterExpression><![CDATA[$P{companyController}.isPrintReferenceCode()]]></subreportParameterExpression>
-				</subreportParameter>				
 				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{lines})]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{nestedReports}.get("invoiceDetailDefault")]]></subreportExpression>
 			</subreport>
