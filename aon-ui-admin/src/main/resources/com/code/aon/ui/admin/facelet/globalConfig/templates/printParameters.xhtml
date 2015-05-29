@@ -135,7 +135,7 @@
 				</aon:panelGrid>
 			</aon:panel>
 			
-			<aon:if test="#{actionDenied.moduleEnabled['pos']}">
+			<aon:if test="#{actionDenied.moduleEnabled['pos'] or actionDenied.moduleEnabled['warehouse']}">
 				<aon:panel>
 					<f:facet name="header">
 						<aon:outputLabel value="#{bundle.product_tag_module}" />
