@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,13 +107,6 @@ public class ContaPlusWriter extends BasicExporter {
 		return getNextTax(getTaxBreakDowns());
 	}
 	
-	private Account getRegistryAccount() {
-		if ( getRegistryDetail() != null ) {
-			return getRegistryDetail().getAccount();
-		}
-		return null;
-	}
-	
 	private String getSalesAccount() {
 		if ( "T".equals(getInvoiceSeries()) ) {
 			return SALES_T_ACCOUNT;
@@ -128,14 +120,12 @@ public class ContaPlusWriter extends BasicExporter {
 	
 	private String getAccount( Account account ) {
 		String code = account.getCode();
-		if ( ObjectUtils.equals(account, getRegistryAccount()) ) {
-			code = StringUtils.substring(code, 0, 3) + "0" + StringUtils.substring(code, 3); 
-		} else if ( StringUtils.equals(salesAccount, code) ) {
+		if ( StringUtils.equals(salesAccount, code) ) {
 			code = getSalesAccount();
 		} else if ( StringUtils.equals(chargedVat, code) ) {
 			code = CHARGED_VAT_ACCOUNT;
 		} else {
-			code = getAccountCode(code);
+			code = StringUtils.substring(code, 0, 3) + "0" + StringUtils.substring(code, 3);
 		}
 		return getString( code, 12 );
 	}
