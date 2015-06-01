@@ -54,7 +54,7 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 		ContractRecord contract = newContract(aonContext,
 				getFirstDayOfYear(getToday()), Collections.emptyMap());
 
-		Date ereDay = getToday();
+		Date ereDay = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH, 10);
 
 		addData(aonContext, contract, ereDay, ereDay,
 				new HashMap<String, String>() {
@@ -74,19 +74,18 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 
 		Assert.assertEquals(2, workDays.size());
 
-		Assert.assertEquals(workDays.get(0).getValue(),
-				(double) get(getToday(), DAY_OF_MONTH) - 1);
+		Assert.assertEquals((double)get(ereDay, DAY_OF_MONTH)-1, workDays.get(0).getValue());
 		Assert.assertEquals(
 				workDays.get(0).getPeriod(),
-				new Period(getFirstDayOfMonth(getToday()), add(getToday(),
+				new Period(getFirstDayOfMonth(ereDay), add(ereDay,
 						DAY_OF_MONTH, -1)));
 
 		Assert.assertEquals(
 				workDays.get(1).getValue(),
-				(double) (getMax(getToday(), DAY_OF_MONTH) - get(getToday(),
+				(double) (getMax(ereDay, DAY_OF_MONTH) - get(ereDay,
 						DAY_OF_MONTH)));
 		Assert.assertEquals(workDays.get(1).getPeriod(),
-				new Period(add(getToday(), DAY_OF_MONTH, +1),
+				new Period(add(ereDay, DAY_OF_MONTH, +1),
 						getLastDayOfMonth(getToday())));
 
 	}
