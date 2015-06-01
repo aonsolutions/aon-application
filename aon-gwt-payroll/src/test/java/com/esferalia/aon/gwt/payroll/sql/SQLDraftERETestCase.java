@@ -107,7 +107,7 @@ public class SQLDraftERETestCase extends SQLERETestCase {
 		draft.setIssueDate(endDate);
 		
 		Date startEre = getFirstDayOfMonth(getToday());
-		int ereDays = (int) (Math.random() * (getMax(getToday(), DAY_OF_MONTH) - 1));
+		int ereDays = (int) Math.max(1,(Math.random() * (getMax(getToday(), DAY_OF_MONTH) - 1)));
 		Date endEre = add(startEre, DAY_OF_MONTH, ereDays - 1);
 		
 		NumberVariable ereVar = new NumberVariable();
