@@ -108,34 +108,23 @@ public class DBStock {
 									.and(detail)
 									.and(detail2)
 									.and(detail3)
+									
+									
 									.and(PRODUCT.DOMAIN.eq(domainId)).fetch();
 					}
 					if(!data.isEmpty()){
 						Integer itemId = data.get(0).value1();
-						Result<Record1<Double>> data2 = sctx.getDslContext().select(STOCK.QUANTITY)
-							.from(STOCK)
-							.where(STOCK.ITEM.eq(itemId).and(STOCK.WAREHOUSE.eq(transferInfo.getTargetWarehouse().getId()))).fetch();
-						Double quantity;
-						if(!data2.isEmpty()){
-							 
-							quantity = data2.get(0).value1();
-							Double quantityTransfer = s.getQuantity()-quantity;
+				
 							
-							s.setDomainId(domainId);
-							s.setItemId(itemId);
-							s.setQuantityDifference(quantityTransfer);	
+						s.setDomainId(domainId);
+						s.setItemId(itemId);
 
-							if(quantityTransfer != 0.0){
-								itemIds = itemIds + ","+s.getItemId();
-								inventoryquery = inventoryquery + " when item = "+ s.getItemId()+" then "+s.getQuantity();
-							}
-						}
-						else{
-							v.add("*Fila " +(s.getRow()+1) + " : El producto no está en stock.");
-							error.setError(false);
-							error.setTextError(v);
-						}
+			
+						itemIds = itemIds + ","+s.getItemId();
+						inventoryquery = inventoryquery + " when item = "+ s.getItemId()+" then "+s.getQuantity();
+					
 						
+			
 					}
 					else{
 						v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
