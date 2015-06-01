@@ -57,7 +57,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 	private static final double DELTA = 0.000001;
 
 	@Test
-	public void testCommonDiseaseIT() throws ExpressionException, SQLException,
+	public void testCommonDiseaseITI() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
@@ -72,7 +72,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				}, null);
 		//@formatter:on
 
-		Date startITDate = getToday();
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
 				startITDate, null);
 
@@ -94,6 +94,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(4, salary.getSalaryPayments().size());
 
 	}
+
 
 	@Test
 	public void testMaternityIT() throws ExpressionException, SQLException,
@@ -176,7 +177,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				}, category);
 		//@formatter:on
 
-		Date startITDate = getToday();
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH, 10);
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
 				startITDate, null);
 
@@ -205,7 +206,83 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 	}
 
+	@Test
+	public void testCommonDiseaseITIII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
 
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+
+		Date startITDate =getFirstDayOfMonth(getToday());
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				startITDate, null);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+
+		Assert.assertEquals(2, salary.getSalaryPayments().size());
+
+	}
+
+	@Test
+	public void testCommonDiseaseITIV() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+
+		Date startITDate =getLastDayOfMonth(getToday());
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				startITDate, null);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+
+		Assert.assertEquals(2, salary.getSalaryPayments().size());
+
+	}
 	// ------------------------------------------------------------------------
 
 
