@@ -1991,11 +1991,12 @@ public class Documents extends Composite implements EntryPoint {
 											aux.addAll(result);
 											docs.setFiles(aux);
 											Integer index=0;
-
-											while(docs.getFilter().get(index).getIsParent()){
+											
+											while(index < docs.getFilter().size() && docs.getFilter().get(index).getIsParent()){
 												index++;
 											}
-											if(result.get(0).getDomain().equals(docs.getFilter().get(index).getDomain())){
+											
+											if(docs.getFilter().size() == 0 || result.get(0).getDomain().equals(docs.getFilter().get(index).getDomain())){
 
 												aux = new Vector<FileInfo>();
 												for (FileInfo f : docs.getEfiles()) {
@@ -2024,7 +2025,6 @@ public class Documents extends Composite implements EntryPoint {
 															dataGrid.getSelectionModel().setSelected(f, false);
 														}
 														aux.addAll(result);
-
 														dataProvider = new ListDataProvider<FileInfo>(aux);
 														dataProvider.addDataDisplay(dataGrid); 
 														updateDatagridColumns();
