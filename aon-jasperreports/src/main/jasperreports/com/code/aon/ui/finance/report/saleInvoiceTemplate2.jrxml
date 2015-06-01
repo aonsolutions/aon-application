@@ -146,7 +146,7 @@
 				<imageExpression><![CDATA[$P{logoImageFile}]]></imageExpression>
 			</image>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="82442052-87c6-4f70-a371-7b0ee55c41fe" key="textField-56" x="382" y="24" width="170" height="12">
+				<reportElement uuid="82442052-87c6-4f70-a371-7b0ee55c41fe" key="textField-56" x="317" y="24" width="235" height="12" >
 					<printWhenExpression><![CDATA[$P{printHeader} && $P{printNif}.name().equals( "HEADER" )]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -194,7 +194,7 @@
 				<textFieldExpression><![CDATA[$P{address}.getFullAddress()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="d9c088ec-9db9-4c6c-bf27-4ed45a3ef0f7" key="textField-23" x="382" y="11" width="170" height="13">
+				<reportElement uuid="d9c088ec-9db9-4c6c-bf27-4ed45a3ef0f7" key="textField-23" x="317" y="11" width="235" height="13">
 					<printWhenExpression><![CDATA[$P{printHeader} && $P{printName}.name().equals( "HEADER" )]]></printWhenExpression>
 				</reportElement>
 				<box>

@@ -161,7 +161,7 @@
 				<textFieldExpression><![CDATA[$P{company}.getEmail().getValue()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="6582e046-69bc-4d9c-9ead-a786f368ce14" key="textField-23" x="382" y="11" width="170" height="13">
+				<reportElement uuid="6582e046-69bc-4d9c-9ead-a786f368ce14" key="textField-23" x="317" y="11" width="235" height="13">
 					<printWhenExpression><![CDATA[$P{printHeader} && $P{printName}.name().equals( "HEADER" )]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -191,7 +191,7 @@
 				<textFieldExpression><![CDATA[$R{aon_telephone} + ": " + $P{phone}.getValue() + ($P{fax}==null?"":" - " + $R{aon_fax} + ": " + $P{fax}.getValue())]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="bf639a90-93c1-4416-8895-870a14eaa755" key="textField-56" x="382" y="24" width="170" height="12">
+				<reportElement uuid="bf639a90-93c1-4416-8895-870a14eaa755" key="textField-56" x="317" y="24" width="235" height="12">
 					<printWhenExpression><![CDATA[$P{printHeader} && $P{printNif}.name().equals( "HEADER" )]]></printWhenExpression>
 				</reportElement>
 				<box>
