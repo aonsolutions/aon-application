@@ -740,6 +740,7 @@ public class Documents extends Composite implements EntryPoint {
 
 							@Override
 							public void onFailure(Throwable caught) {
+								Window.alert("debug1");
 								Window.alert(caught.toString());
 							}
 
@@ -759,7 +760,7 @@ public class Documents extends Composite implements EntryPoint {
 
 					@Override
 					public void onFailure(Throwable caught) {
-
+						Window.alert("debug2");
 						Window.alert(caught.toString() + ": "
 								+ caught.getCause().toString());
 					}
@@ -783,6 +784,7 @@ public class Documents extends Composite implements EntryPoint {
 			
 			@Override
 			public void onFailure(Throwable caught) {
+				Window.alert("dwebug3");
 				Window.alert(caught.toString());
 			}
 		});
@@ -1558,6 +1560,14 @@ public class Documents extends Composite implements EntryPoint {
 				@Override
 				protected void onCancel() {
 					hide();
+					idoc.clearOuts(new AsyncCallback<Void>() {
+						
+						@Override
+						public void onSuccess(Void result) {}
+						
+						@Override
+						public void onFailure(Throwable caught) {}
+					});
 					vertical = new VerticalPanel();				
 				}
 				@Override
@@ -2108,6 +2118,15 @@ public class Documents extends Composite implements EntryPoint {
 			@Override
 			protected void onCancel() {
 				hide();
+				idoc.clearOuts(new AsyncCallback<Void>() {
+					
+					@Override
+					public void onSuccess(Void result) {}
+					
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
+				
 				vertical = new VerticalPanel();			
 			}
 
@@ -2867,7 +2886,7 @@ public class Documents extends Composite implements EntryPoint {
 
 							@Override
 							public void onFailure(Throwable caught) {
-							
+							Window.alert("debug4");
 								Window.alert(caught.toString() + ": "
 									+ caught.getCause().toString());
 							}
@@ -2936,7 +2955,7 @@ public class Documents extends Composite implements EntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
-
+				Window.alert("debug5");
 				Window.alert(caught.toString() + ": "
 						+ caught.getCause().toString());
 			}

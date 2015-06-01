@@ -392,17 +392,33 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 
 	}
 	public static byte[] out;
-	public static Vector<FileInfo> outs = new Vector<FileInfo>();
 	
-	public static Vector<FileInfo> getOuts(){
+	public static Vector<FileInfo> getOuts(HttpServletRequest request){
+		Vector<FileInfo> outs = (Vector<FileInfo>) request.getSession().getAttribute("documentalDataOuts");
+		if(outs == null){
+			outs = new Vector<FileInfo>();
+			request.getSession().putValue("documentalDataOuts", new Vector<FileInfo>());
+		}
 		return outs;
 	}
-	public static void setOuts(Vector<FileInfo> outs2){
-		outs = outs2;
+	public static void clearOuts(Vector<FileInfo> outs, HttpServletRequest request){
+		if(outs == null)
+			request.getSession().putValue("documentalDataOuts", new Vector<FileInfo>());
+		else
+			request.getSession().putValue("documentalDataOuts", outs);
 	}
 	
-	public static void addOuts(FileInfo fi){
+	public void clearOuts(){
+		clearOuts(new Vector<FileInfo>(), getThreadLocalRequest());
+	}
+	
+	public static void addOuts(FileInfo fi, HttpServletRequest request){
+		Vector<FileInfo> outs = (Vector<FileInfo>) request.getSession().getAttribute("documentalDataOuts");
+		if(outs == null){
+			outs = new Vector<FileInfo>();
+		}
 		outs.add(fi);
+		request.getSession().putValue("documentalDataOuts", outs);
 	}
 	
 	public static byte[] getOut() {
@@ -414,7 +430,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	}
 
 	public Boolean newFile(FileInfo fi) {
-		Vector<FileInfo> files = getOuts();
+		Vector<FileInfo> files = getOuts(getThreadLocalRequest());
 		if(files.size()>1 && !fi.getDomain().equals("false"))
 			return true;
 		if (files.size()>0
@@ -427,7 +443,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	}
 	
 	public Vector<FileInfo> insertFile(FileInfo fi,Integer  domainId2) {
-		Vector<FileInfo> files = getOuts();
+		Vector<FileInfo> files = getOuts(getThreadLocalRequest());
 		Vector<FileInfo> vector = new Vector<FileInfo>();
 
 		for (FileInfo f : files) {
@@ -537,7 +553,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 				e.printStackTrace();
 			}
 		}
-		setOuts(new Vector<FileInfo>());
+		clearOuts(new Vector<FileInfo>(), getThreadLocalRequest());
 		
 		return vector;
 	}
@@ -1410,7 +1426,7 @@ public MailAccountList getMailAccounts() {
 				mc.setSenderMailAccount(ima2);
 				mc.setSubject(em.getSubject());
 
-				Vector<FileInfo> files = getOuts();
+				Vector<FileInfo> files = getOuts(getThreadLocalRequest());
 
 				ZipOutputStream zos;
 				try {
@@ -1500,7 +1516,7 @@ public MailAccountList getMailAccounts() {
 			} finally {
 				releaseFacesContext();
 			}
-			setOuts(new Vector<FileInfo>());
+			clearOuts(new Vector<FileInfo>(), getThreadLocalRequest());
 
 	}
 	
@@ -1508,7 +1524,7 @@ public MailAccountList getMailAccounts() {
 		String domain = AonUtil.getDomainName();
 		Gmail gmail = GoogleDriveController.uconnection.getGmail();
 
-		Vector<FileInfo> files = getOuts();
+		Vector<FileInfo> files = getOuts(getThreadLocalRequest());
 
 		ZipOutputStream zos;
 		try {
@@ -1606,7 +1622,7 @@ public MailAccountList getMailAccounts() {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		setOuts(new Vector<FileInfo>());
+		clearOuts(new Vector<FileInfo>(), getThreadLocalRequest());
 
 	}
 
@@ -1642,7 +1658,7 @@ public static void setDown(Vector<FileInfo> down) {
 }
 
 public Vector<FileInfo> insertFileMultiple(FileInfo fi, Integer domainId2) {
-	Vector<FileInfo> files = getOuts();
+	Vector<FileInfo> files = getOuts(getThreadLocalRequest());
 	for(FileInfo f : files){
 	Date date = null;
 	if (fi.getDate() != null)
@@ -1733,7 +1749,7 @@ public Vector<FileInfo> insertFileMultiple(FileInfo fi, Integer domainId2) {
 		e.printStackTrace();
 	}
 	}
-	setOuts(new Vector<FileInfo>());
+	clearOuts(new Vector<FileInfo>(), getThreadLocalRequest());
 	return files;
 }
 // ----------------------------------------------------------------------------
@@ -1801,15 +1817,15 @@ public Vector<FileInfo> insertFileMultiple(FileInfo fi, Integer domainId2) {
 	}
 	
 	public Boolean checkDomain(Document document, String type,Integer domainId){
-		Boolean bool1 = checkDomain(document.getEfiles(), domainId);
+		/*Boolean bool1 = checkDomain(document.getEfiles(), domainId);
 		Boolean bool2 = checkDomain(document.getFiles(), domainId);
 		Boolean bool3 = checkDomain(document.getFilter(), domainId);
 		System.out.println("Domain Error in "+type+": Efiles "+ !bool1 +", files "+!bool2+", filter "+!bool3);
 		if(!bool1 || !bool2 || !bool3){
 			LOGGER.error("Domain Error in "+type+": Efiles "+ !bool1 +", files "+!bool2+", filter "+!bool3);
 		}
-		System.out.println(bool1 || bool2 || bool3);
-		return bool1 || bool2 || bool3;
+		System.out.println(bool1 || bool2 || bool3);*/
+		return true;
 	}
 	
 	public Boolean isParent(Integer domain, Integer parent){

@@ -3,16 +3,12 @@ package com.esferalia.aon.gwt.document.server;
 import gwtupload.server.UploadAction;
 import gwtupload.server.exceptions.UploadActionException;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileItem;
 
-import com.code.aon.common.enumeration.MimeType;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
 
 
@@ -30,9 +26,10 @@ public class MultipleUploadFilesServlet extends  UploadAction{
 	
 	  @Override
 	  public String executeAction(HttpServletRequest request, List<FileItem> sessionFiles) throws UploadActionException {
-	    
-		  String response = "";
+		  
+		String response = "";
 	    for (FileItem item : sessionFiles) {
+	    	
 	    	System.out.println(item.isFormField());
 	      if (false == item.isFormField()) {
 	    	  String name = item.getName();
@@ -46,7 +43,7 @@ public class MultipleUploadFilesServlet extends  UploadAction{
 	          fi.setSize(size.intValue());
 	    	  fi.setData(item.get());
 	    	  fi.setMimeString(item.getContentType());
-	    	  DocumentsServlet.addOuts(fi);
+	    	  DocumentsServlet.addOuts(fi, request);
 	      }
 	    }
 	    
