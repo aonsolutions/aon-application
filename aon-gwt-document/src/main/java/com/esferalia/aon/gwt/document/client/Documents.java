@@ -739,10 +739,7 @@ public class Documents extends Composite implements EntryPoint {
 						idoc.getLists(initDomainId,new AsyncCallback<Lists>() {
 
 							@Override
-							public void onFailure(Throwable caught) {
-								Window.alert("debug1");
-								Window.alert(caught.toString());
-							}
+							public void onFailure(Throwable caught) {}
 
 							@Override
 							public void onSuccess(Lists result) {
@@ -759,11 +756,7 @@ public class Documents extends Composite implements EntryPoint {
 					}
 
 					@Override
-					public void onFailure(Throwable caught) {
-						Window.alert("debug2");
-						Window.alert(caught.toString() + ": "
-								+ caught.getCause().toString());
-					}
+					public void onFailure(Throwable caught) {}
 				});
 				}
 				
@@ -783,10 +776,7 @@ public class Documents extends Composite implements EntryPoint {
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert("dwebug3");
-				Window.alert(caught.toString());
-			}
+			public void onFailure(Throwable caught) {}
 		});
 	}
 	public static void ensureGwtSelector() {
@@ -2885,11 +2875,7 @@ public class Documents extends Composite implements EntryPoint {
 
 
 							@Override
-							public void onFailure(Throwable caught) {
-							Window.alert("debug4");
-								Window.alert(caught.toString() + ": "
-									+ caught.getCause().toString());
-							}
+							public void onFailure(Throwable caught) {}
 						});
 					}
 					else{
@@ -2954,11 +2940,7 @@ public class Documents extends Composite implements EntryPoint {
 			}
 
 			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert("debug5");
-				Window.alert(caught.toString() + ": "
-						+ caught.getCause().toString());
-			}
+			public void onFailure(Throwable caught) {}
 		});}
 		else{
 			pop.hide();
