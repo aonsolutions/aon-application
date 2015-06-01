@@ -121,6 +121,8 @@ public interface IDocumentAsync {
 
 	void selectedMenu(Integer domainId, AsyncCallback<Void> callback);
 
+	void clearOuts(AsyncCallback<Void> callback);
+
 	
 
 

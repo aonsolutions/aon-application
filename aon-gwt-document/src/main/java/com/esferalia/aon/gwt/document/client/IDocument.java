@@ -110,4 +110,6 @@ public interface IDocument extends RemoteService{
 	public Boolean checkDomain(Document document, String type, Integer domainId);
 	
 	public void selectedMenu(Integer domainId);
+	
+	public void clearOuts();
 }

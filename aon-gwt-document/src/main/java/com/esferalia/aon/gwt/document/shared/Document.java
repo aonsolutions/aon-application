@@ -6,10 +6,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class Document implements IsSerializable{
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1136921611726297915L;
 	Vector<FileInfo> files = new Vector<FileInfo>();
 	Vector<FileInfo> serviconvenios = new Vector<FileInfo>();
 	Vector<FileInfo> filter = new Vector<FileInfo>();
