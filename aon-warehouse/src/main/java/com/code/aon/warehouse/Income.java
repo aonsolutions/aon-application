@@ -48,10 +48,6 @@ public class Income extends IncomeDB implements IHeaderObject, ICalculableContai
     private int[] paymentDaysArray;
 	private Set<IncomeDetail> lines = new HashSet<IncomeDetail>();
 
-	public Income() {
-		setIssueTime( new Date() );
-	}
-
     public void setPaymentDays(String paymentDays) {
         super.setPaymentDays( paymentDays );
         StringTokenizer strTknzr = new StringTokenizer(getPaymentDays(),DELIM);

@@ -370,50 +370,53 @@ public class IncomeController extends BasicController implements IWarehouseConst
 
 	public void onWorkPlaceChanged(ValueChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			Income income = (Income)this.getTo();
 			WorkPlace workPlace = (WorkPlace)event.getNewValue();
-			((Income)this.getTo()).setWorkPlace(workPlace);
-			((Income)this.getTo()).setScope(workPlace.getScope());
-			setWarehouse(obtainWarehouse(((Income)this.getTo())));
+			income.setWorkPlace(workPlace);
+			income.setScope(workPlace.getScope());
+			updateWarehouse();
 		}
 	}
 
-	public Warehouse obtainWarehouse(Income income) throws ManagerBeanException {
+	public void updateWarehouse() throws ManagerBeanException {
+		setWarehouse(null);
+		Income income = (Income)this.getTo();
 		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_INCOME_ID), income.getId());
 		Iterator<?> iterator = incomeDetailBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
-			return ((IncomeDetail)iterator.next()).getWarehouse();
-		} else if (income.getWorkPlace() != null) {
-			IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
-			criteria = new Criteria();
-			criteria.addEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_ID), income.getWorkPlace().getId());
-			criteria.addOrder(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
-			iterator = warehouseBean.getList(criteria).iterator();
-			if (iterator.hasNext()) {
-				return (Warehouse)iterator.next();
-			} 
+			IncomeDetail detail = (IncomeDetail) iterator.next();
+			setWarehouse( detail.getWarehouse() );
+		} else {
+			List<Warehouse> warehouses = getWarehouseList(income);
+			if ( warehouses.size() == 1 ) {
+		        setWarehouse(warehouses.get(0));	
+			}
 		}
-		return null;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public List<Warehouse> getWarehouseList( Income income ) throws ManagerBeanException {
+		IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
+		Criteria criteria = new Criteria();
+		Expression exp1 = ExpressionUtilities.getNullExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE));
+		WorkPlace wp = income.getWorkPlace();
+		if( (wp!=null) && (wp.getId()!=null) ){
+			Expression exp2 = ExpressionUtilities.getEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_ID), wp.getId());
+			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
+		} else {
+			criteria.addExpression(exp1);
+		}
+		criteria.addOrder(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
+		return (List) warehouseBean.getList(criteria);
 	}
 	
 	public List<SelectItem> getWarehouses() throws ManagerBeanException {
-		WorkPlace workPlace = ((Income)this.getTo()).getWorkPlace();
-		LinkedList<SelectItem> warehouses = new LinkedList<SelectItem>();
-		if(workPlace!=null){
-			IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
-			Criteria criteria = new Criteria();
-			Expression exp1 = ExpressionUtilities.getNullExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE));
-			Expression exp2 = ExpressionUtilities.getEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_ID), workPlace.getId());
-			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
-			criteria.addOrder(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
-			List<ITransferObject> c = warehouseBean.getList(criteria);
-			Iterator<ITransferObject> iter = c.iterator();
-			while (iter.hasNext()) {
-				Warehouse warehouse = (Warehouse) iter.next();
-				SelectItem item = new SelectItem(warehouse, warehouse.getName());
-				warehouses.add(item);
-			}
+		List<SelectItem> warehouses = new LinkedList<SelectItem>();
+		for( Warehouse warehouse : getWarehouseList((Income)this.getTo()) ) {
+			SelectItem item = new SelectItem(warehouse, warehouse.getName());
+			warehouses.add(item);			
 		}
 		return warehouses;
 	}

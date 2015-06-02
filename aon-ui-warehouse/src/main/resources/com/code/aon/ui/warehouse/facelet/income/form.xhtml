@@ -7,6 +7,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -175,6 +176,9 @@
 						disabled="#{incomeDetail.model.rowCount>0 and income.warehouse.workPlace.id!=null}"
 						valueChangeListener="#{income.onWorkPlaceChanged}" 
 						reRender="Income_warehouse, Income_scope">
+						<c:if test="#{fn:length(companyCollections.currentUserWorkPlaces) > 1}" >
+							<f:selectItem itemLabel=" - " itemValue="#{null}" />
+						</c:if>
 						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 					</aon:selectOneMenu>
 
@@ -183,6 +187,9 @@
 					<aon:selectOneMenu id="Income_warehouse" 
 						value="#{income.warehouse}" required="#{true}"
 						disabled="#{incomeDetail.model.rowCount>0}">
+						<c:if test="#{fn:length(income.warehouses) > 1}" >
+							<f:selectItem itemLabel=" - " itemValue="#{null}" />
+						</c:if>
 						<f:selectItems value="#{income.warehouses}" />
 					</aon:selectOneMenu>
 

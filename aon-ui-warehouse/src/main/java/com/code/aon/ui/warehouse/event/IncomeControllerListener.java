@@ -38,16 +38,16 @@ public class IncomeControllerListener extends ControllerAdapter implements IWare
 		Income income = (Income)controller.getTo(); 
 		try {
 			List<SelectItem> workPlaces = companyColls.getCurrentUserWorkPlaces();
-			if (workPlaces.size() > 0) {
+			if (workPlaces.size() == 1 ) {
 				income.setWorkPlace((WorkPlace)workPlaces.get(0).getValue());
-			} else {
+			} else if (workPlaces.isEmpty()) {
 				throw new ControllerListenerException("No hay un Centro de Trabajo definido.");
 			}
 			income.setSecurityLevel(SecurityLevel.OFFICIAL);
 			income.setStatus(IncomeStatus.PENDING);
 			income.setScope(income.getWorkPlace().getScope());
 			controller.setAddresses(null);
-	        controller.setWarehouse(controller.obtainWarehouse((Income)controller.getTo()));
+			controller.updateWarehouse();
 			controller.setDefaultPayMethod(null);
 			controller.resetIncomePayMethod();
 		} catch (ManagerBeanException e) {
@@ -58,10 +58,11 @@ public class IncomeControllerListener extends ControllerAdapter implements IWare
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		IncomeController controller = (IncomeController)event.getController();
+		Income income = (Income)controller.getTo();
 		try {
-			controller.loadAddresses(((Income)controller.getTo()).getSupplier().getRegistry().getId());
-	        controller.setWarehouse(controller.obtainWarehouse((Income)controller.getTo()));
-			controller.loadDefaultPayMethod(((Income)controller.getTo()).getSupplier().getRegistry().getId(), true);
+			controller.loadAddresses(income.getSupplier().getRegistry().getId());
+			controller.updateWarehouse();
+			controller.loadDefaultPayMethod(income.getSupplier().getRegistry().getId(), true);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}
