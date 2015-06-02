@@ -13,6 +13,7 @@ import java.util.LinkedList;
 
 import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.Result;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -72,9 +73,8 @@ public class Mod140DAO {
 				,INVOICE.RETENTION_QUOTA
 				,INVOICE.TOTAL
 				
+				,INVOICE_DETAIL.ID
 				,INVOICE_DETAIL.TAXABLE_BASE
-				
-				,ACCOUNT.CODE
 				
 				,INVOICE_TAX.TAX_TYPE
 				,INVOICE_TAX.BASE
@@ -89,9 +89,6 @@ public class Mod140DAO {
 			.from(INVOICE)
 			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
 			.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
-			.leftOuterJoin(INVOICE_DETAIL_ACCOUNT).on(INVOICE_DETAIL.ID.equal(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL))
-			.leftOuterJoin(ACCOUNT).on(INVOICE_DETAIL_ACCOUNT.ACCOUNT.equal(ACCOUNT.ID))
-			
 			.where(getConditions(params))
 			.orderBy(INVOICE.TYPE,INVOICE.SERIES,INVOICE.NUMBER)
 			.fetch();
@@ -109,8 +106,20 @@ public class Mod140DAO {
 				populateInvoice(record, inv, m140ctx);
 				inv.setId(id);
 			}
-			
-			String account = record.getValue(ACCOUNT.CODE);
+
+			Integer detailId = record.getValue(INVOICE_DETAIL.ID);
+			Result<Record1<String>> accountsResult = ctx.getDslContext()
+				.select(ACCOUNT.CODE)
+				.from(INVOICE_DETAIL_ACCOUNT)
+				.join(ACCOUNT).on(ACCOUNT.ID.equal(INVOICE_DETAIL_ACCOUNT.ACCOUNT))
+				.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.equal(detailId))
+				.orderBy(INVOICE_DETAIL_ACCOUNT.ID.desc())
+				.fetch();
+			String account = null;
+			for (Record accountsRecord : accountsResult) {
+				account = accountsRecord.getValue(ACCOUNT.CODE);
+				break;
+			}
 			account = AonStringUtils.defaultString(account, AonStringUtils.EMPTY);
 			account = AonStringUtils.substring(account, 0, 3);
 			account = AonStringUtils.rightPad(account, 3);
