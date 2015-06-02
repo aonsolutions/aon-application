@@ -1,8 +1,9 @@
-package com.esferalia.aon.occam.api.model.finance;
+package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -10,11 +11,127 @@ import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
+import com.esferalia.aon.occam.api.model.type.VatDeductionType;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class Invoice implements Serializable {
+public class Mod140 implements Serializable {
 	
 	private static final long serialVersionUID = 8897444490096530091L;
+
+	public static class Mod140Withholding implements Serializable {
+
+		private static final long serialVersionUID = 8897444490096530091L;
+
+		private WithholdingType withholdingType;
+		
+		private double base;
+		private double percentage;
+		private double quota;
+
+		public double getBase() {
+			return base;
+		}
+
+		public void setBase(double base) {
+			this.base = base;
+		}
+
+		public double getPercentage() {
+			return percentage;
+		}
+
+		public void setPercentage(double percentage) {
+			this.percentage = percentage;
+		}
+
+		public double getQuota() {
+			return quota;
+		}
+
+		public void setQuota(double quota) {
+			this.quota = quota;
+		}
+
+		public WithholdingType getWithholdingType() {
+			return withholdingType;
+		}
+
+		public void setWithholdingType(WithholdingType withholdingType) {
+			this.withholdingType = withholdingType;
+		}
+
+	}
+
+	public class Mod140VAT implements Serializable {
+
+		private static final long serialVersionUID = 8897444490096530091L;
+
+		private VatDeductionType vatDeductionType;
+		private double base;
+		private double percentage;
+		private double quota;
+		private double surcharge;
+		private double surchargeQuota;
+		private double deductibleQuota;
+
+		public VatDeductionType getVatDeductionType() {
+			return vatDeductionType;
+		}
+
+		public void setVatDeductionType(VatDeductionType vatDeductionType) {
+			this.vatDeductionType = vatDeductionType;
+		}
+
+		public double getBase() {
+			return base;
+		}
+
+		public void setBase(double base) {
+			this.base = base;
+		}
+
+		public double getPercentage() {
+			return percentage;
+		}
+
+		public void setPercentage(double percentage) {
+			this.percentage = percentage;
+		}
+
+		public double getQuota() {
+			return quota;
+		}
+
+		public void setQuota(double quota) {
+			this.quota = quota;
+		}
+
+		public double getSurcharge() {
+			return surcharge;
+		}
+
+		public void setSurcharge(double surcharge) {
+			this.surcharge = surcharge;
+		}
+
+		public double getSurchargeQuota() {
+			return surchargeQuota;
+		}
+
+		public void setSurchargeQuota(double surchargeQuota) {
+			this.surchargeQuota = surchargeQuota;
+		}
+
+		public double getDeductibleQuota() {
+			return deductibleQuota;
+		}
+
+		public void setDeductibleQuota(double deductibleQuota) {
+			this.deductibleQuota = deductibleQuota;
+		}
+
+	}
 	
 	private Integer id;
 	private int domain;
@@ -51,269 +168,261 @@ public class Invoice implements Serializable {
 	private double retentionQuota;
 	private double total;
 	
-	private String accountCode;
-	
-	private InvoiceWithholding withholdingData;
-	private List<InvoiceVAT> invoiceVATs;
+	private HashMap<String, List<Mod140VAT>> invoiceVATs;
+	private Mod140Withholding withholdingData;
 	
 	
 	public Integer getId() {
 		return id;
 	}
-	public Invoice setId(Integer id) {
+	public Mod140 setId(Integer id) {
 		this.id = id;
 		return this;
 	}
 	public int getDomain() {
 		return domain;
 	}
-	public Invoice setDomain(int domain) {
+	public Mod140 setDomain(int domain) {
 		this.domain = domain;
 		return this;
 	}
 	public String getSeries() {
 		return series;
 	}
-	public Invoice setSeries(String series) {
+	public Mod140 setSeries(String series) {
 		this.series = series;
 		return this;
 	}
 	public int getNumber() {
 		return number;
 	}
-	public Invoice setNumber(int number) {
+	public Mod140 setNumber(int number) {
 		this.number = number;
 		return this;
 	}
 	public String getEpigraph() {
 		return epigraph;
 	}
-	public Invoice setEpigraph(String epigraph) {
+	public Mod140 setEpigraph(String epigraph) {
 		this.epigraph = epigraph;
 		return this;
 	}
 	public String getReferenceCode() {
 		return referenceCode;
 	}
-	public Invoice setReferenceCode(String referenceCode) {
+	public Mod140 setReferenceCode(String referenceCode) {
 		this.referenceCode = referenceCode;
 		return this;
 	}
 	public Date getIssueDate() {
 		return issueDate;
 	}
-	public Invoice setIssueDate(Date issueDate) {
+	public Mod140 setIssueDate(Date issueDate) {
 		this.issueDate = issueDate;
 		return this;
 	}
 	public Date getTaxDate() {
 		return taxDate;
 	}
-	public Invoice setTaxDate(Date taxDate) {
+	public Mod140 setTaxDate(Date taxDate) {
 		this.taxDate = taxDate;
 		return this;
 	}
 	public RectificationType getRectificationType() {
 		return rectificationType;
 	}
-	public Invoice setRectificationType(RectificationType rectificationType) {
+	public Mod140 setRectificationType(RectificationType rectificationType) {
 		this.rectificationType = rectificationType;
 		return this;
 	}
 	public Integer getRectificationInvoice() {
 		return rectificationInvoice;
 	}
-	public Invoice setRectificationInvoice(Integer rectificationInvoice) {
+	public Mod140 setRectificationInvoice(Integer rectificationInvoice) {
 		this.rectificationInvoice = rectificationInvoice;
 		return this;
 	}
 	public Integer getRegistry() {
 		return registry;
 	}
-	public Invoice setRegistry(Integer registry) {
+	public Mod140 setRegistry(Integer registry) {
 		this.registry = registry;
 		return this;
 	}
 	public String getRegistryDocument() {
 		return registryDocument;
 	}
-	public Invoice setRegistryDocument(String registryDocument) {
+	public Mod140 setRegistryDocument(String registryDocument) {
 		this.registryDocument = registryDocument;
 		return this;
 	}
 	public DocumentType getRegistryDocumentType() {
 		return registryDocumentType;
 	}
-	public Invoice setRegistryDocumentType(DocumentType registryDocumentType) {
+	public Mod140 setRegistryDocumentType(DocumentType registryDocumentType) {
 		this.registryDocumentType = registryDocumentType;
 		return this;
 	}
 	public Country getRegistryDocumentCountry() {
 		return registryDocumentCountry;
 	}
-	public Invoice setRegistryDocumentCountry(Country registryDocumentCountry) {
+	public Mod140 setRegistryDocumentCountry(Country registryDocumentCountry) {
 		this.registryDocumentCountry = registryDocumentCountry;
 		return this;
 	}
 	public String getRegistryName() {
 		return registryName;
 	}
-	public Invoice setRegistryName(String registryName) {
+	public Mod140 setRegistryName(String registryName) {
 		this.registryName = registryName;
 		return this;
 	}
 	public String getRegistryTown() {
 		return registryTown;
 	}
-	public Invoice setRegistryTown(String registryTown) {
+	public Mod140 setRegistryTown(String registryTown) {
 		this.registryTown = registryTown;
 		return this;
 	}
 	public String getRegistryZIP() {
 		return registryZIP;
 	}
-	public Invoice setRegistryZIP(String registryZIP) {
+	public Mod140 setRegistryZIP(String registryZIP) {
 		this.registryZIP = registryZIP;
 		return this;
 	}
 	public String getRegistryProvinceCode() {
 		return registryProvinceCode;
 	}
-	public Invoice setRegistryProvinceCode(String registryProvinceCode) {
+	public Mod140 setRegistryProvinceCode(String registryProvinceCode) {
 		this.registryProvinceCode = registryProvinceCode;
 		return this;
 	}
 	public String getRegistryProvince() {
 		return registryProvince;
 	}
-	public Invoice setRegistryProvince(String registryProvince) {
+	public Mod140 setRegistryProvince(String registryProvince) {
 		this.registryProvince = registryProvince;
 		return this;
 	}
 	public String getScope() {
 		return scope;
 	}
-	public Invoice setScope(String scope) {
+	public Mod140 setScope(String scope) {
 		this.scope = scope;
 		return this;
 	}
 	public InvoiceType getType() {
 		return type;
 	}
-	public Invoice setType(InvoiceType type) {
+	public Mod140 setType(InvoiceType type) {
 		this.type = type;
 		return this;
 	}
 	public InvoiceTransactionType getTransaction() {
 		return transaction;
 	}
-	public Invoice setTransaction(InvoiceTransactionType transaction) {
+	public Mod140 setTransaction(InvoiceTransactionType transaction) {
 		this.transaction = transaction;
 		return this;
 	}
 	public boolean isRecorded() {
 		return recorded;
 	}
-	public Invoice setRecorded(boolean recorded) {
+	public Mod140 setRecorded(boolean recorded) {
 		this.recorded = recorded;
 		return this;
 	}
 	public boolean isSurcharge() {
 		return surcharge;
 	}
-	public Invoice setSurcharge(boolean surcharge) {
+	public Mod140 setSurcharge(boolean surcharge) {
 		this.surcharge = surcharge;
 		return this;
 	}
 	public boolean isWithholding() {
 		return withholding;
 	}
-	public Invoice setWithholding(boolean withholding) {
+	public Mod140 setWithholding(boolean withholding) {
 		this.withholding = withholding;
 		return this;
 	}
 	public boolean isWithholdingFarmer() {
 		return withholdingFarmer;
 	}
-	public Invoice setWithholdingFarmer(boolean withholdingFarmer) {
+	public Mod140 setWithholdingFarmer(boolean withholdingFarmer) {
 		this.withholdingFarmer = withholdingFarmer;
 		return this;
 	}
 	public boolean isVatAccrualPayment() {
 		return vatAccrualPayment;
 	}
-	public Invoice setVatAccrualPayment(boolean vatAccrualPayment) {
+	public Mod140 setVatAccrualPayment(boolean vatAccrualPayment) {
 		this.vatAccrualPayment = vatAccrualPayment;
 		return this;
 	}
 	public boolean isInvestment() {
 		return investment;
 	}
-	public Invoice setInvestment(boolean investment) {
+	public Mod140 setInvestment(boolean investment) {
 		this.investment = investment;
 		return this;
 	}
 	public boolean isService() {
 		return service;
 	}
-	public Invoice setService(boolean service) {
+	public Mod140 setService(boolean service) {
 		this.service = service;
 		return this;
 	}
 	public boolean isAdvance() {
 		return advance;
 	}
-	public Invoice setAdvance(boolean advance) {
+	public Mod140 setAdvance(boolean advance) {
 		this.advance = advance;
 		return this;
 	}
 	public double getTaxableBase() {
 		return taxableBase;
 	}
-	public Invoice setTaxableBase(double taxableBase) {
+	public Mod140 setTaxableBase(double taxableBase) {
 		this.taxableBase = taxableBase;
 		return this;
 	}
 	public double getVatQuota() {
 		return vatQuota;
 	}
-	public Invoice setVatQuota(double vatQuota) {
+	public Mod140 setVatQuota(double vatQuota) {
 		this.vatQuota = vatQuota;
 		return this;
 	}
 	public double getRetentionQuota() {
 		return retentionQuota;
 	}
-	public Invoice setRetentionQuota(double retentionQuota) {
+	public Mod140 setRetentionQuota(double retentionQuota) {
 		this.retentionQuota = retentionQuota;
 		return this;
 	}
 	public double getTotal() {
 		return total;
 	}
-	public Invoice setTotal(double total) {
+	public Mod140 setTotal(double total) {
 		this.total = total;
 		return this;
 	}
-	public String getAccountCode() {
-		return accountCode;
-	}
-	public void setAccountCode(String accountCode) {
-		this.accountCode = accountCode;
-	}
-	public InvoiceWithholding getWithholdingData() {
+	public Mod140Withholding getWithholdingData() {
 		return withholdingData;
 	}
-	public Invoice setWithholdingData(InvoiceWithholding withholdingData) {
+	public Mod140 setWithholdingData(Mod140Withholding withholdingData) {
 		this.withholdingData = withholdingData;
 		return this;
 	}
 	
-	public List<InvoiceVAT> getInvoiceVATs() {
+	public HashMap<String,List<Mod140VAT>> getInvoiceVATs() {
 		return invoiceVATs;
 	}
 	
-	public Invoice setInvoiceVATs(List<InvoiceVAT> invoiceVATs) {
+	public Mod140 setInvoiceVATs(HashMap<String,List<Mod140VAT>> invoiceVATs) {
 		this.invoiceVATs = invoiceVATs;
 		return this;
 	}
@@ -327,7 +436,7 @@ public class Invoice implements Serializable {
 		return documentNumber;
 	}
 	
-	public Invoice initialize() {
+	public Mod140 initialize() {
 		this.id = null;
 		this.domain = 0;
 		this.series = null;
@@ -360,20 +469,22 @@ public class Invoice implements Serializable {
 		return this;
 	}
 	
-	public InvoiceVAT ensureInvoiceVAT(double percentage, double surcharge) {
+	public Mod140VAT ensureInvoiceVAT(String account,double percentage, double surcharge) {
 		if (invoiceVATs == null) {
-			invoiceVATs = new ArrayList<InvoiceVAT>();
+			invoiceVATs = new HashMap<String, List<Mod140VAT>>();
 		}
-		for (InvoiceVAT invoiceVAT : invoiceVATs) {
+		if (invoiceVATs.get(account) == null) {
+			invoiceVATs.put(account, new ArrayList<Mod140VAT>());
+		}
+		for (Mod140VAT invoiceVAT : invoiceVATs.get(account)) {
 			if (invoiceVAT.getPercentage() == percentage && invoiceVAT.getSurcharge() == surcharge) {
 				return invoiceVAT;
 			}
 		}
-		InvoiceVAT invoiceVAT = new InvoiceVAT();
+		Mod140VAT invoiceVAT = new Mod140VAT();
 		invoiceVAT.setPercentage(percentage);
 		invoiceVAT.setSurcharge(surcharge);
-		
-		invoiceVATs.add(invoiceVAT);
+		invoiceVATs.get(account).add(invoiceVAT);
 		
 		return invoiceVAT;
 	}
