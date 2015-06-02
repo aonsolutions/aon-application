@@ -10,8 +10,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Vector;
 
 public class ConnectionInfo {
 
@@ -161,6 +163,56 @@ public class ConnectionInfo {
 		return true;
 	}
 
+	public List<String> getSchemas() throws AonConnectionException{
+		Connection c = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			c = getMetadataConnection();
+			ps = c.prepareStatement(SELECT_SCHEMAS,
+					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			rs = ps.executeQuery();
+			List<String> list = new Vector<String>();
+			while (rs.next()) {
+				list.add(rs.getString(1));
+			}
+			return list;
+		} catch (SQLException e) {
+			throw new AonConnectionException(e.getMessage(),e);
+		} finally {
+			closeQuietly(rs);
+			closeQuietly(ps);
+			closeQuietly(c);
+		}	
+	}
+	
+	public List<String> getSchemaDomains(String schema) throws AonConnectionException{
+		Connection c = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			c = getMetadataConnection();
+			String select = "SELECT name FROM `" + schema + "`.domain";
+			ps = c.prepareStatement(select, ResultSet.TYPE_FORWARD_ONLY,
+					ResultSet.CONCUR_READ_ONLY);
+			rs = ps.executeQuery();
+			List<String> list = new Vector<String>();
+			while (rs.next()) {
+				list.add(rs.getString(1));
+				
+			}
+			return list;
+		} catch (SQLException e) {
+			throw new AonConnectionException(e.getMessage(),e);
+		} finally {
+			closeQuietly(rs);
+			closeQuietly(ps);
+			closeQuietly(c);
+		}	
+	}
+	
 	public Map<String, String> getDomains() throws AonConnectionException {
 		Connection c = null;
 		PreparedStatement ps = null;

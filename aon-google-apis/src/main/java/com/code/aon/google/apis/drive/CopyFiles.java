@@ -47,6 +47,8 @@ public class CopyFiles {
 	//static byte[] PRIVATE_KEY;
 	private static InputStream PRIVATE_KEY;
 	private static String pkeyPath;
+	private static String ids[] = null;
+	
 	public static void setPrivateKey() throws IOException{
 		 //PRIVATE_KEY = Files.readAllBytes(Paths.get("novus.p12"));/home/aibanez/Descargas/AON SOLUTIONS-52faf5279077.p12
 		PRIVATE_KEY = new FileInputStream(pkeyPath);
@@ -184,51 +186,60 @@ public class CopyFiles {
 		
 		About about = newDrive.about().get().execute();
 		String rootId = about.getRootFolderId();
+		if(ids != null){
+			for (String string : ids) {
+				File f = SearchFiles.searchFile(oldDrive, string);
+				copy(newDrive, oldDrive, string, rootId, f);
+			}
+		}
+		else{
+			FileList fileList = oldDrive.files().list().setMaxResults(1000).execute();
+			for(File file : fileList.getItems()){
+				String driveId = file.getId();
+				copy(newDrive, oldDrive, driveId, rootId, file);
+			}	
+		}
+	}
+	
+	private static void copy(Drive newDrive, Drive oldDrive, String driveId, String rootId, File file) throws IOException{
+		FileList fl = SearchFiles.searchFilesProperties(newDrive, "oldDriveId", driveId);
+		if(fl.getItems().size() == 0){
 		
-		FileList fileList = oldDrive.files().list().setMaxResults(1000).execute();
-		for(File file : fileList.getItems()){
-			String driveId = file.getId();
+			PropertyList l = oldDrive.properties().list(driveId).execute();
+			Boolean bdomain = false ,baontype = false;
+			for (Property p : l.getItems()) {
+				if(p.getKey().equals("domain")) bdomain = true;
+				if(p.getKey().equals("domain")) baontype = true;
+			}
 			
-
-			FileList fl = SearchFiles.searchFilesProperties(newDrive, "oldDriveId", driveId);
-			if(fl.getItems().size() == 0){
-				
-				PropertyList l = oldDrive.properties().list(driveId).execute();
-				Boolean bdomain = false ,baontype = false;
-				for (Property p : l.getItems()) {
-					if(p.getKey().equals("domain")) bdomain = true;
-					if(p.getKey().equals("domain")) baontype = true;
+			String domain;
+			if(bdomain)
+				domain = oldDrive.properties().get(driveId, "domain").execute().getValue();
+			else domain = "without.domain";
+			String aonType;
+			if(baontype)
+				aonType = oldDrive.properties().get(driveId, "aontype").execute().getValue();
+			else aonType = "without.type";
+			try {
+				FileList domainFolders = SearchFiles.searchFilesTitleEqual(newDrive, domain);
+				File domainFolder;
+				if(domainFolders.getItems().size()>0){
+					domainFolder = domainFolders.getItems().get(0);
 				}
-				
-				String domain;
-				if(bdomain)
-					domain = oldDrive.properties().get(driveId, "domain").execute().getValue();
-				else domain = "without.domain";
-				String aonType;
-				if(baontype)
-					aonType = oldDrive.properties().get(driveId, "aontype").execute().getValue();
-				else aonType = "without.type";
-				try {
-					FileList domainFolders = SearchFiles.searchFilesTitleEqual(newDrive, domain);
-					File domainFolder;
-					if(domainFolders.getItems().size()>0){
-						domainFolder = domainFolders.getItems().get(0);
-					}
-					else domainFolder = createFolder(newDrive, domain, rootId);
-				
-					FileList typeFolders = SearchFiles.searchFilesTitleAndParent(newDrive,  aonType,domainFolder.getId());
-					File typeFolder;
-					if(typeFolders.getItems().size()>0){
-						typeFolder = typeFolders.getItems().get(0);
-					}
-					else typeFolder = createFolder(newDrive, aonType, domainFolder.getId());
-				
-					PropertyList p = oldDrive.properties().list(file.getId()).execute();
-					File f = insertFile(oldDrive, newDrive, file, p, typeFolder.getId());
-					View.file(f,driveId);
-				} catch (Exception e) {
-					e.printStackTrace();
+				else domainFolder = createFolder(newDrive, domain, rootId);
+		
+				FileList typeFolders = SearchFiles.searchFilesTitleAndParent(newDrive,  aonType,domainFolder.getId());
+				File typeFolder;
+				if(typeFolders.getItems().size()>0){
+					typeFolder = typeFolders.getItems().get(0);
 				}
+				else typeFolder = createFolder(newDrive, aonType, domainFolder.getId());
+		
+				PropertyList p = oldDrive.properties().list(file.getId()).execute();
+				File f = insertFile(oldDrive, newDrive, file, p, typeFolder.getId());
+				View.file(f,driveId);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -266,11 +277,20 @@ public class CopyFiles {
 				.withDescription("private key path to connect with the Service Account");
 		OptionBuilder.withLongOpt("pkey");
 		Option pkeyOption = OptionBuilder.create("pkey");
+		
+		OptionBuilder.isRequired(false);
+		OptionBuilder.hasArg(true);
+		OptionBuilder
+				.withDescription("ID of File in Service Account.");
+		OptionBuilder.withValueSeparator(',');
+		OptionBuilder.withLongOpt("id");
+		Option idsOption = OptionBuilder.create("id");
 
 		options.addOption(helpOption);
 		options.addOption(clientOption);
 		options.addOption(accountOption);
 		options.addOption(pkeyOption);
+		options.addOption(idsOption);
 
 
 		try {
@@ -284,6 +304,8 @@ public class CopyFiles {
 			EMAIL_ADDRESS = line.getOptionValue(clientOption.getOpt(), "");
 			GOOGLE_ACCOUNT = line.getOptionValue(accountOption.getOpt(), "");
 			pkeyPath = line.getOptionValue(pkeyOption.getOpt(),"");
+			
+			ids = line.getOptionValues(idsOption.getOpt());
 			
 
 

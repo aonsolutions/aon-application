@@ -973,7 +973,6 @@ public class DriveUtils implements IBlobManager {
 			throws SQLException, AonConnectionException, IOException,
 			NamingException, KeyStoreException, GeneralSecurityException {
 		if (checkTypes(fileInfo)) {
-
 			if (fileInfo.getDriveId() == null) {
 				String type = fileInfo.getType() != -1 ? RegistryAttachmentType
 						.values()[fileInfo.getType()].name() : "UNKNOWN";

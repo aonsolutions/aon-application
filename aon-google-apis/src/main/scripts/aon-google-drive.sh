@@ -18,7 +18,8 @@ CLASSPATH=$CLASSPATH:/usr/share/java/slf4j/simple.jar
 
 CLASSPATH=$CLASSPATH:/usr/share/java/aon-dbutils.jar
 CLASSPATH=$CLASSPATH:/usr/share/java/commons-dbutils.jar
-
+CLASSPATH=$CLASSPATH:/usr/share/java/commons-codec.jar
+CLASSPATH=$CLASSPATH:/usr/share/java/commons-net-3.3.jar
 
 for jar in /usr/share/java/aon-google-apis/*.jar ; do 
   CLASSPATH=$CLASSPATH:$jar; 
@@ -54,9 +55,13 @@ case $1 in
   rm)
     $JAVA -classpath $CLASSPATH com.code.aon.google.apis.drive.RemoveFiles "${@:2}"
     ;;
+  sc)
+    $JAVA -classpath $CLASSPATH com.code.aon.google.apis.drive.ServiconveniosSynchronize
+    ;;
   sort)
     $JAVA -classpath $CLASSPATH com.code.aon.google.apis.drive.SortFiles "${@:2}"
     ;;
+ 
   *) 
     [[ -n $1 ]] && echo "Unknown subcommand: '$1'"
     echo "Type '$0 help' for usage."

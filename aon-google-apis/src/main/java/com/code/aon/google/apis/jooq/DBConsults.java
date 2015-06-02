@@ -22,8 +22,6 @@ import static com.esferalia.aon.jooq.tables.SepeBatchAttach.SEPE_BATCH_ATTACH;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 
@@ -35,15 +33,12 @@ import org.jooq.Record3;
 import org.jooq.Record4;
 import org.jooq.Record5;
 import org.jooq.Record6;
-import org.jooq.Record9;
 import org.jooq.Result;
-import org.jooq.TableField;
 import org.jooq.impl.DSL;
 
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.FileInfo;
 import com.code.aon.pool.AonConnectionException;
-import com.esferalia.aon.google.sql.SQLConstants;
 import com.esferalia.aon.google.sql.AbstractSQL.Domain;
 
 
@@ -184,6 +179,27 @@ public class DBConsults {
 			
 			return dgserviceaccount;
 		}finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static void updateGoogleAccount(String domain, Integer domainId, String googleAccount) throws SQLException{
+		Connection connection = null;
+		try {
+		
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			dslContext.update(DOMAIN_GSERVICEACCOUNT)
+				.set(DOMAIN_GSERVICEACCOUNT.GOOGLE_ACCOUNT, googleAccount)
+				.where(DOMAIN_GSERVICEACCOUNT.DOMAIN.eq(domainId))
+				.execute();
+			
+			
+		} finally {
 			if (connection != null)
 				connection.close();
 		}

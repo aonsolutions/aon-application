@@ -41,7 +41,7 @@ public class FileInfo{
 	private short type;
 	private byte [] data;
 	private String driveId;
-	private int fileId;
+	private Integer fileId;
 	private String title;
 	private Byte mimetype;
 	private Integer category;
@@ -52,16 +52,30 @@ public class FileInfo{
 	private String tag;
 	private Integer scopeId;
 	private Byte securityLevel;
-	
+	private Vector<String> tags;
 	private String domain;
 	private Integer domainId;
 	private Integer size;
+	
+	private Date modificationDate;
+
+	
+	
+	
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+	}
+
 	public FileInfo() {
 		// TODO Apéndice de constructor generado automáticamente
 	}
 
 	public FileInfo(String aonType, short type, byte [] data,
-			String driveId, int fileId, String title, Byte mimetype) {
+			String driveId, Integer fileId, String title, Byte mimetype) {
 		// TODO Apéndice de constructor generado automáticamente
 		this.type = type;
 		this.data = data;
@@ -69,6 +83,16 @@ public class FileInfo{
 		this.fileId = fileId;
 		this.title = title;
 		this.mimetype = mimetype;
+	}
+	
+	
+
+	public Vector<String> getTags() {
+		return tags;
+	}
+
+	public void setTags(Vector<String> tags) {
+		this.tags = tags;
 	}
 
 	public String getAonType() {
@@ -127,11 +151,11 @@ public class FileInfo{
 		this.driveId = driveId;
 	}
 
-	public int getFileId() {
+	public Integer getFileId() {
 		return fileId;
 	}
 
-	public void setFileId(int fileId) {
+	public void setFileId(Integer fileId) {
 		this.fileId = fileId;
 	}
 

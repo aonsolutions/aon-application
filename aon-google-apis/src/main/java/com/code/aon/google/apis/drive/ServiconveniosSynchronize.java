@@ -1,0 +1,300 @@
+package com.code.aon.google.apis.drive;
+
+import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+import java.security.GeneralSecurityException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
+import org.jooq.DSLContext;
+import org.jooq.Record1;
+import org.jooq.Result;
+import org.jooq.impl.DSL;
+import org.jooq.tools.csv.CSVReader;
+
+import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.google.apis.DatabaseSync;
+import com.code.aon.google.apis.DriveUtils;
+import com.code.aon.google.apis.DriveUtils.CheckSum;
+import com.code.aon.google.apis.FileInfo;
+import com.code.aon.google.apis.Utils;
+import com.code.aon.google.apis.jooq.DBConsults;
+import com.code.aon.google.apis.jooq.DBDrive;
+import com.code.aon.google.apis.jooq.DomainGserviceaccount;
+import com.code.aon.google.apis.jooq.JooqSettings;
+import com.code.aon.pool.AonConnectionException;
+import com.code.aon.pool.ConnectionInfo;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.esferalia.aon.google.sql.AbstractSQL.Domain;
+import com.google.api.client.http.FileContent;
+import com.google.api.client.util.DateTime;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.FileList;
+
+
+
+public class ServiconveniosSynchronize {
+
+	static FTPClient client = new FTPClient();
+	
+	static String sFTP = "ftp.aonsolutions.net";
+	static String sUser = "serviconvenios";
+	static String sPassword = "aon2014SC";
+
+	public static void sync(String domain) throws AonConnectionException{
+		
+		try {
+			
+			/*String client = "ftp://" + sUser + ":" + sPassword + "@" + sFTP;
+			
+			URL url = new URL(client + "/convenios.csv" + ";type=i");
+			URLConnection urlc = url.openConnection();
+			InputStream fis = urlc.getInputStream();
+		*/
+			client.connect(sFTP);
+			client.login(sUser, sPassword);
+
+			File convenios = download(client, "/convenios.csv");
+			
+			
+			FileInputStream fis = new FileInputStream(convenios);
+			
+			InputStreamReader fileReader = new InputStreamReader(fis, Charset.forName("UTF-8") );
+			CSVReader reader = new CSVReader(fileReader,';');
+			Integer nuevos = 0, actualizados = 0;
+			while (reader.hasNext() ) {
+				
+				
+				String[] tokens = reader.readNext();
+				if(tokens != null){
+					String modificationDate = tokens[8];
+					String fileName = tokens[6];
+					String description = tokens[3];
+					String tag1 = tokens[1];
+					String tag2 = tokens[2];
+				
+					String idStr = fileName.substring(4, 8);
+					Integer id = -Integer.parseInt(idStr);
+					FileInfo fi = null;
+					try {
+						fi = DBDrive.getServiConvenio(domain, id);
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+					if(fi != null && fi.getFileId() != null) {
+						update(fi, modificationDate, fileName, domain, tag1, tag2);
+						actualizados++;
+					}
+					else{
+						newFile(modificationDate, fileName, description, domain, tag1, tag2, id);
+						nuevos++;
+					}
+				}
+			}
+			System.out.println("nuevos: "+nuevos+" - actualizados: "+actualizados);
+			reader.close();
+			client.logout();
+			client.disconnect();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public static File download(FTPClient client, String path) throws IOException{
+		client.enterLocalPassiveMode();
+        client.setFileType(FTP.BINARY_FILE_TYPE); 	       
+        File downloadFile = new File("/tmp"+path);
+        OutputStream outputStream1 = new BufferedOutputStream(new FileOutputStream(downloadFile));
+        client.retrieveFile(path, outputStream1);
+        outputStream1.close();
+
+        return downloadFile;
+	}
+	
+	
+	public static void update(FileInfo fileInfo, String modificationDate, String fileName, String domain, String tag1, String tag2){
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		Date date = null;
+		try {
+			date = formatter.parse(modificationDate);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		if(date != null && (fileInfo.getModificationDate() == null || date.after(fileInfo.getModificationDate()))){
+			Drive drive = null;  
+			Integer domainId = 0;
+			try {
+				DomainGserviceaccount g = DBConsults.getServiceAccount(domain,domainId);
+				if(g.getGoogleAccount() == null){
+					String googleAccount = "aio@aonsolutions.net";
+					DBConsults.updateGoogleAccount(domain, domainId, googleAccount);
+					g.setGoogleAccount(googleAccount);
+				}
+				drive = DriveUtils.serviceInitialize(g);
+				/*String client2 = "ftp://" + sUser + ":" + sPassword + "@" + sFTP;
+				URL url = new URL(client2 + "/"+fileName.substring(0,12).toLowerCase() + ";type=i");
+				System.out.println(url.toString());
+				URLConnection urlc = url.openConnection();
+				InputStream fis = urlc.getInputStream();
+				*/
+				File file = download(client, "/"+fileName.substring(0,12).toLowerCase());
+				FileInputStream fis2 = new FileInputStream(file);
+
+				String md5 = CheckSum.getMD5Checksum(fis2);
+				//com.google.api.services.drive.model.File fdrive = SearchFiles.searchFile(drive, fileInfo.getDriveId());
+				
+				com.google.api.services.drive.model.File fdrive = null;
+				try {
+					fdrive = DriveUtils.getFile(drive, fileInfo.getDriveId(),fileInfo.getFileId());//TODO error dominio 
+				} catch (IOException | SQLException | GeneralSecurityException e) {
+					e.printStackTrace();
+				}
+				System.out.println(md5+" - "+fdrive.getMd5Checksum() + fdrive.getId());
+				if(!md5.equals(fdrive.getMd5Checksum())){
+					
+					
+					fdrive.setModifiedDate(new DateTime(date.getTime()));
+					//TODO ACTUALIZAR FICHERO EN GOOGLE DRIVE
+					FileContent mediaContent = new FileContent(fdrive.getMimeType(),
+							file);
+					
+					drive.files()
+						.update(fileInfo.getDriveId(), fdrive, mediaContent)
+						.execute();
+				}
+				DBDrive.updateSCModificationDate(domain, domainId, fileInfo, date);
+				
+			} catch (IOException | SQLException | GeneralSecurityException e1) {
+				e1.printStackTrace();
+			}
+		}	
+		try {
+			Long l1 = fileInfo.getTags().stream().filter(tag -> tag.equals(tag1)).count();		
+			if(l1 == 0)
+				DBDrive.setSCTag(domain, fileInfo, tag1);
+			Long l2 = fileInfo.getTags().stream().filter(tag -> tag.equals(tag2)).count();		
+			if(l2 == 0)
+				DBDrive.setSCTag(domain, fileInfo, tag2);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void newFile(String modificationDate,String fileName,String description,String domain, String tag1, String tag2, Integer id){
+		try {
+			
+			/*String client2 = "ftp://" + sUser + ":" + sPassword + "@" + sFTP;
+			URL url = new URL(client2 + "/"+fileName + ";type=i");
+			URLConnection urlc = url.openConnection();
+			InputStream fis = urlc.getInputStream();
+			*/
+			
+			File file = download(client, "/"+fileName);
+			FileInputStream fis2 = new FileInputStream(file);
+
+			
+			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+			
+			Date date = formatter.parse(modificationDate);
+			
+			Domain d = DBConsults.getDomain(domain, 0);
+			DomainGserviceaccount g = DBConsults.getServiceAccount(domain,d.getId());
+			Drive drive = DriveUtils.serviceInitialize(g);
+		
+			FileInfo fi = new FileInfo();
+			fi.setAonType("registry");
+			fi.setDomainId(0);
+			fi.setType((short)3);
+			fi.setSecurityLevel((byte) 0);
+			fi.setFileId(id);
+			fi.setCategory(-1001);
+			fi.setMimetype((byte)MimeType.MIME_PDF.ordinal());
+			fi.setTitle(description);
+			Long size = file.length();
+			fi.setSize(size.intValue());
+			fi.setData(Utils.InputStreamToByte(fis2));
+			
+			
+			Connection connection = null;
+			try {
+				connection = DatabaseSync.getConnection(domain);
+				DSLContext dslContext = DSL.using(connection,
+						JooqSettings.getDefaultSettings());
+			
+				Result<Record1<Integer>> reg = dslContext.select(REGISTRY.ID)
+					.from(REGISTRY)
+					.where(REGISTRY.DOMAIN.eq(0)).fetch();
+
+				dslContext.insertInto(RATTACH,RATTACH.ID,RATTACH.REGISTRY,RATTACH.DOMAIN,RATTACH.CATEGORY,RATTACH.MIMETYPE,RATTACH.DESCRIPTION,RATTACH.TYPE,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.ATTACH_DATE,RATTACH.DATA,RATTACH.DRIVE_ID,RATTACH.DPARENT_ID, RATTACH.MODIFICATION_DATE)
+							.values(fi.getFileId(),reg.get(0).value1(),fi.getDomainId(),fi.getCategory(),fi.getMimetype(),fi.getTitle().substring(0, 64),(byte)fi.getType(),fi.getScopeId(),fi.getSecurityLevel(),fi.getDateSql(),null,null,fi.getSize().toString(),new Timestamp(date.getTime())).execute();
+		
+				DBDrive.setSCTag(domain, fi, tag1);
+				DBDrive.setSCTag(domain, fi, tag2);
+			} finally {
+				if (connection != null)
+					connection.close();
+			}
+			
+			
+			FileList fl = SearchFiles.searchFilesProperties(drive, "fileId", Integer.toString(fi.getFileId()));
+			if(fl.getItems().size()>0){
+				DBDrive.updateDriveId(fl.getItems().get(0), fi.getFileId());
+			}
+			else{
+				String[] types = { RegistryAttachmentType.CORPORATE_IDENTITY
+						.toString() };
+				DriveUtils.types = types;
+				DriveUtils.sync2(drive, fi, d.getName());
+			}
+		} catch (Exception e) {
+		}
+		
+	}
+
+	public static void main(String[] args) {
+		try {
+			ConnectionInfo connectionInfo = ConnectionInfo.getDefaultConnectionInfo();
+			List<String> schemas;
+			
+			
+			schemas = connectionInfo.getSchemas();
+			System.out.println("NÚMERO DE SCHEMAS: "+ schemas.size());
+			schemas.stream().forEach(s -> {
+				System.out.println("> SCHEMA: "+ s);
+				try {
+					List<String> domains = connectionInfo.getSchemaDomains(s);
+					System.out.println(">> NÚMERO DE DOMINIOS: "+ domains.size());
+					if(domains.size()!=0){
+						System.out.println(">> DOMINIO: "+domains.get(0));
+						sync(domains.get(0));
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			});
+		} catch (AonConnectionException e1) {
+			e1.printStackTrace();
+		}
+		
+	}
+	
+	
+
+}

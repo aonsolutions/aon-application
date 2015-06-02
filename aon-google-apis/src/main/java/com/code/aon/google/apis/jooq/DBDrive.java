@@ -1,5 +1,7 @@
 package com.code.aon.google.apis.jooq;
 
+
+import static com.code.aon.google.apis.DatabaseSync.getDomains;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractAttach.CONTRACT_ATTACH;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
@@ -15,9 +17,12 @@ import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.SepeBatchAttach.SEPE_BATCH_ATTACH;
+import static com.esferalia.aon.jooq.tables.Tag.TAG;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.Map;
 import java.util.Vector;
 
 import org.jooq.Condition;
@@ -34,7 +39,6 @@ import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.FileInfo;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.google.sql.AbstractSQL.Domain;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.Property;
@@ -438,7 +442,19 @@ public class DBDrive {
 	/**********************************************/
 	
 	public static void updateDriveId(File f, Integer id) throws SQLException{
-		String domain = AonUtil.getDomainName();
+
+		String domain = "";
+		Map<String, String> domains;
+		try {
+			domains = getDomains();
+			Vector<String> d = new Vector<String>(domains.keySet());
+			domain = d.get(0);
+		} catch (AonConnectionException e) {
+			e.printStackTrace();
+		}
+		
+			
+		
 		Connection connection = null;
 		try {
 
@@ -2422,5 +2438,189 @@ public class DBDrive {
 			}
 		}
 	
-	
+		
+		public static Vector<FileInfo> getServiConvenios(String domain) throws SQLException{
+			Connection connection = null;
+			try {
+				Vector<FileInfo> vector = new Vector<FileInfo>();
+				
+				connection = DatabaseSync.getConnection(domain);
+
+				DSLContext dslContext = DSL.using(connection,
+							JooqSettings.getDefaultSettings());
+
+				Result<Record4<Integer, String, String, Timestamp>> username = dslContext
+							.select(RATTACH.ID, RATTACH.DESCRIPTION,
+									RATTACH.DRIVE_ID,RATTACH.MODIFICATION_DATE)
+							.from(RATTACH)
+							.where(RATTACH.DOMAIN.eq(0).and(RATTACH.ID.lessThan(0)))
+							.fetch();
+
+				for (Record4<Integer, String, String, Timestamp> record : username) {
+					FileInfo fi = new FileInfo();
+					fi.setAonType("registry");
+					if (record.value1() != null) {
+						fi.setFileId(record.value1());
+					}
+					if (record.value2() != null) {
+						fi.setTitle(record.value2());
+					}
+					if (record.value3() != null) {
+						fi.setDriveId(record.value3());
+					}
+					if (record.value4() != null) {
+						fi.setModificationDate(record.value4());
+					}
+				
+					fi.setDomainId(0);
+					vector.add(fi);
+				}
+			
+				return vector;
+				
+			} finally {
+				if (connection != null)
+					connection.close();
+			}
+		}
+		
+		public static FileInfo getServiConvenio(String domain,Integer id) throws SQLException{
+			Connection connection = null;
+			try {
+				connection = DatabaseSync.getConnection(domain);
+
+				DSLContext dslContext = DSL.using(connection,
+							JooqSettings.getDefaultSettings());
+
+				Record4<Integer, String, String, Timestamp> record = dslContext
+							.select(RATTACH.ID, RATTACH.DESCRIPTION,
+									RATTACH.DRIVE_ID,RATTACH.MODIFICATION_DATE)
+							.from(RATTACH)
+							.where(RATTACH.ID.equal(id))
+							.fetchOne();
+				
+				Result<Record1<String>> tags = dslContext.select(TAG.NAME)
+					.from(RATTACH_TAG).join(TAG).on(RATTACH_TAG.TAG.equal(TAG.ID))
+					.where(RATTACH_TAG.RATTACH.equal(id))
+					.fetch();
+				
+				FileInfo fi = null;
+				if(record != null){
+					fi = new FileInfo();
+					fi.setAonType("registry");
+					if (record.value1() != null) {
+						fi.setFileId(record.value1());
+					}
+					if (record.value2() != null) {
+						fi.setTitle(record.value2());
+					}
+					if (record.value3() != null) {
+						fi.setDriveId(record.value3());
+					}
+					if (record.value4() != null) {
+						fi.setModificationDate(record.value4());
+					}
+					Vector<String> v = new Vector<String>();
+					for(Record1<String> tag : tags){
+						v.add(tag.value1());
+					}
+					fi.setTags(v);
+			
+					fi.setDomainId(0);
+				}
+			
+				return fi;
+				
+			} finally {
+				if (connection != null)
+					connection.close();
+			}
+		}
+		
+		public static void updateSCModificationDate(String domain,Integer domainId, FileInfo fileInfo, java.util.Date date) throws SQLException{
+			
+			Connection connection = null;
+			try {
+
+				connection = DatabaseSync.getConnection(domain);
+
+				DSLContext dslContext = DSL.using(connection,
+							JooqSettings.getDefaultSettings());
+				dslContext.update(RATTACH)
+					.set(RATTACH.MODIFICATION_DATE, new Timestamp(date.getTime()))
+					.where(RATTACH.ID.eq(fileInfo.getFileId())).execute();
+				
+			} finally {
+				if (connection != null)
+					connection.close();
+			}
+		}
+		
+		public static Integer getSCLastId(String domain) throws SQLException{
+			
+			Connection connection = null;
+			try {
+
+				connection = DatabaseSync.getConnection(domain);
+
+				DSLContext dslContext = DSL.using(connection,
+							JooqSettings.getDefaultSettings());
+				Record1<Integer> lastId = dslContext.select(RATTACH.ID)
+						.from(RATTACH)
+						.where(RATTACH.ID.lessThan(0))
+						.and(RATTACH.DOMAIN.eq(0))
+						.orderBy(RATTACH.ID)
+						.limit(1)
+						.fetchOne();
+				
+				return lastId.value1();
+				
+			} finally {
+				if (connection != null)
+					connection.close();
+			}
+		}
+		
+		public static void setSCTag(String domain,FileInfo fileInfo, String tag) throws SQLException{
+			
+			Connection connection = null;
+			try {
+				
+				connection = DatabaseSync.getConnection(domain);
+
+				DSLContext dslContext = DSL.using(connection,
+							JooqSettings.getDefaultSettings());
+				
+				Record1<Integer> t = dslContext.select(TAG.ID)
+					.from(TAG)
+					.where(TAG.ID.lessThan(0))
+					.and(TAG.NAME.equal(tag))
+					.fetchOne();
+				
+				Integer tagId = null;
+				if(t != null && t.value1() != null) tagId = t.value1();
+				else{
+					Record1<Integer> lastId = dslContext.select(TAG.ID)
+							.from(TAG)
+							.where(TAG.ID.lessThan(0))
+							.and(TAG.DOMAIN.eq(0))
+							.orderBy(TAG.ID)
+							.limit(1)
+							.fetchOne();
+					
+					tagId = lastId.value1() - 1;
+					
+					dslContext.insertInto(TAG, TAG.ID, TAG.DOMAIN, TAG.NAME, TAG.TYPE)
+						.values(tagId, 0, tag,(byte) 0).execute();
+				}
+				dslContext.insertInto(RATTACH_TAG, RATTACH_TAG.DOMAIN, RATTACH_TAG.RATTACH, RATTACH_TAG.TAG)
+						.values(0, fileInfo.getFileId(), tagId).execute();
+				
+			} finally {
+				if (connection != null)
+					connection.close();
+			}
+		}
+		
+		
 }

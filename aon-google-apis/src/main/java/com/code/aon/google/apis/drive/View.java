@@ -11,12 +11,14 @@ public class View {
 		System.out.println("   --> MIME TYPE:"+f.getMimeType());
 		System.out.println("   --> SIZE:"+f.getFileSize());
 		System.out.println("   --> LINK:"+f.getAlternateLink());
-		for(Property p : f.getProperties()){
-			if(p.getKey().equals("fileId")){
-				System.out.println("   --> DB-ID:"+p.getValue());
-			}
-			if(p.getKey().equals("oldDriveId")){
-				System.out.println("   --> OLD DRIVE ID: "+ p.getValue());
+		if(f.getProperties() != null){
+			for(Property p : f.getProperties()){
+				if(p.getKey().equals("fileId")){
+					System.out.println("   --> DB-ID:"+p.getValue());
+				}
+				if(p.getKey().equals("oldDriveId")){
+					System.out.println("   --> OLD DRIVE ID: "+ p.getValue());
+				}
 			}
 		}
 		System.out.println("");
