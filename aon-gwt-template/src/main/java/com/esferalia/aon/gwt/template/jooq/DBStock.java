@@ -79,12 +79,12 @@ public class DBStock {
 			AONContext sctx = ctx;
 			stock.stream().forEach(s ->{
 				if(s.getProduct() != null){
-					Result<Record1< Integer>> data = sctx.getDslContext().select(ITEM.ID)
+					Result<Record2<Integer, Double>> data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE)
 						.from(ITEM)
 						.where(ITEM.BARCODE.eq(s.getProduct())).and(ITEM.DOMAIN.eq(domainId)).fetch();
 					if(data.isEmpty()){
 
-						data = sctx.getDslContext().select(ITEM.ID)
+						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
 										.and(PRODUCT.DOMAIN.eq(domainId)).fetch();
@@ -102,7 +102,7 @@ public class DBStock {
 						if(s.getDetail3() == "") 
 							detail3 = ITEM.DETAIL3.eq("").or(ITEM.DETAIL3.isNull());
 						
-						data = sctx.getDslContext().select(ITEM.ID)
+						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
 									.and(detail)
@@ -112,17 +112,26 @@ public class DBStock {
 									
 									.and(PRODUCT.DOMAIN.eq(domainId)).fetch();
 					}
+					
 					if(!data.isEmpty()){
 						Integer itemId = data.get(0).value1();
-				
+						System.out.println(itemId);
 							
 						s.setDomainId(domainId);
 						s.setItemId(itemId);
-
-			
-						itemIds = itemIds + ","+s.getItemId();
-						inventoryquery = inventoryquery + " when item = "+ s.getItemId()+" then "+s.getQuantity();
-					
+						
+						Result<Record1<Integer>> data2 = sctx.getDslContext().select(INVENTORY_DETAIL.ID).from(INVENTORY_DETAIL)
+						.where(INVENTORY_DETAIL.ITEM.eq(itemId))
+						.and(INVENTORY_DETAIL.INVENTORY.eq(inventoryId)).fetch();
+						
+						if(data2.isNotEmpty()){
+							itemIds = itemIds + ","+itemId;
+							inventoryquery = inventoryquery + " when item = "+ itemId+" then "+s.getQuantity();
+						}
+						else{
+							sctx.getDslContext().insertInto(INVENTORY_DETAIL, INVENTORY_DETAIL.ACTUAL_QUANTITY, INVENTORY_DETAIL.COST, INVENTORY_DETAIL.REAL_QUANTITY, INVENTORY_DETAIL.DOMAIN, INVENTORY_DETAIL.INVENTORY, INVENTORY_DETAIL.ITEM)
+									.values(0.0, data.get(0).value2(), s.getQuantity(), s.getDomainId(), inventoryId, itemId).execute() ;
+						}
 						
 			
 					}
