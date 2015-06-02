@@ -10,6 +10,17 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
+		<!--aon:form style="display:none">
+			<aon:commandButton id="deliveryRefreshButton" reRender="deliveryList"
+				actionListener="#{deliveryDetail.onRefresh}" />
+			<script type="text/javascript">
+            	//<![CDATA[
+					refreshDelivery = function(){
+						#{rich:element('deliberyRefreshButton')}.click();	
+					}
+            	//]]>
+			</script>
+		</aon:form-->
 		<aon:form id="deliveryForm">
 			<aon:div id="menuExt"> 
 				<ui:decorate
@@ -38,6 +49,18 @@
 							<f:param name="reportKey" value="#{delivery.reportTemplate}" />
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
+						
+						<!-- 
+						<ui:include
+							src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
+						<aon:commandLink id="delivery-stock-import" value="#{bundle.aon_import}"
+							onclick="delivery()"
+							styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
+						</aon:commandLink>
+						<aon:commandLink id="delivery-stock-export" value="Exportar"
+							onclick="deliveryx('#{delivery.to.id}')"
+							styleClass="aon-finding-toolbar-item aon-icon-export-excel-trans">
+						</aon:commandLink-->
 					</ui:define>
 					<ui:define name="moreMenuContent">
 						<aon:menuItem id="salesTransfer"
@@ -76,7 +99,7 @@
 				</ui:decorate>
 			</aon:div>			
 
-			<aon:div styleClass="aon-scroll-area">
+			<aon:div styleClass="aon-scroll-area" id="deliveryList">
 				<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
 					styleClass="aon-margin-bottom"
 					columnClasses="aon-panelGrid-odd aon-width-140,

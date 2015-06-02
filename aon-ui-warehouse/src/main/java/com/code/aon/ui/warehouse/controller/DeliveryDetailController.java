@@ -195,5 +195,9 @@ public class DeliveryDetailController extends LinesController implements IWareho
 		BasicController salesController = (BasicController)AonUtil.getRegisteredBean(SALES_CONTROLLER_NAME);
 		salesController.onLoad(event, deliveryDetail.getSalesDetail().getSales().getId(), DELIVERY_FORM_NAME, null);
 	}
+	
+	public void onRefresh(ActionEvent event) {
+		initializeModel();
+	}
 
 }

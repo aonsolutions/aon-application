@@ -150,5 +150,9 @@ public class IncomeDetailController extends LinesController implements IWarehous
 			this.onRemove(event);
 		}
 	}
+	
+	public void onRefresh(ActionEvent event) {
+		initializeModel();
+	}
 
 }

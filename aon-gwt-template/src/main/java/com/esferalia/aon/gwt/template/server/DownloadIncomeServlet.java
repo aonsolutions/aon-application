@@ -1,0 +1,215 @@
+package com.esferalia.aon.gwt.template.server;
+
+import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.GeneralSecurityException;
+import java.security.KeyStoreException;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Vector;
+
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.Region;
+import org.jooq.Condition;
+
+import com.code.aon.google.apis.DriveUtils;
+import com.code.aon.google.apis.Utils;
+import com.code.aon.google.apis.jooq.DomainGserviceaccount;
+import com.code.aon.product.ProductTag;
+import com.code.aon.product.enumeration.ProductStatus;
+import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.gwt.template.jooq.DBConsults;
+import com.esferalia.aon.gwt.template.jooq.DBProduct;
+import com.esferalia.aon.gwt.template.jooq.DBStock;
+import com.esferalia.aon.gwt.template.shared.TemplateInfo;
+import com.google.api.services.drive.Drive;
+
+@WebServlet(name = "DownloadTemplatesIncome", urlPatterns = { "/aon_gwt_template/gwt_download_income/*" })
+public class DownloadIncomeServlet extends HttpServlet {
+
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@Override
+    protected void doGet(HttpServletRequest p_request, HttpServletResponse p_response)throws ServletException, IOException{
+			String fileId = p_request.getParameter("id");
+	        String domain_id = p_request.getParameter("domain_id");
+	        String income_id = p_request.getParameter("income");
+	        
+	        Integer incomeId = Integer.parseInt(income_id);
+	        Integer domainId = Integer.parseInt(domain_id);
+	        String domain = AonUtil.getDomainName();
+
+	        byte[] b = null ;
+	        
+
+	        if(fileId!=""){
+	        	Integer id = Integer.parseInt(fileId);
+	        	b = DBConsults.getTemplate(domain,domainId, id);
+	        }
+	        else return;
+	        
+	        File f = new File("/tmp/"+"compra"+".xml"); 
+	        try {
+				org.apache.commons.io.FileUtils.writeByteArrayToFile(f,b);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+	        TemplateInfo aux = null;
+			try {
+				aux = com.esferalia.aon.gwt.template.server.Utils.readxml(f);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+	        File archivoXLS = new File("compra" + ".xls" );
+	        if(archivoXLS.exists()) archivoXLS.delete();
+	        archivoXLS.createNewFile();        
+	        HSSFWorkbook libro = new HSSFWorkbook();
+	        FileOutputStream archivo = new FileOutputStream(archivoXLS);
+	        HSSFSheet hoja = libro.createSheet("Plantilla 1");
+	        
+	        Integer columns = aux.getColumns().size();
+	        hoja.addMergedRegion(new Region(0,(short)0,0,columns.shortValue()));
+	        Row rowInfo = hoja.createRow(0);
+	        Row fila = hoja.createRow(1);
+	        
+
+	        Date d = new Date();
+	        
+	        String info = "Albarán de Compra ## "+com.esferalia.aon.gwt.template.server.Utils.getDay(d.getDate())
+	        		+"-"+com.esferalia.aon.gwt.template.server.Utils.getMonth(d.getMonth())
+	        		+"-"+com.esferalia.aon.gwt.template.server.Utils.getYear(d);
+	        
+	        rowInfo.setHeightInPoints(16);
+	        fila.setHeightInPoints(16);
+	        CellStyle style = libro.createCellStyle();CellStyle styleInfo = libro.createCellStyle();
+	        Font font = libro.createFont();
+	        font.setFontHeightInPoints((short)12);
+	        font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+	        style.setFont(font);styleInfo.setFont(font);
+	        style.setAlignment(CellStyle.ALIGN_CENTER);styleInfo.setAlignment(CellStyle.ALIGN_CENTER);
+	        style.setBorderBottom(CellStyle.BORDER_MEDIUM); styleInfo.setBorderBottom(CellStyle.BORDER_MEDIUM);
+	       	styleInfo.setFillBackgroundColor(HSSFColor.LIGHT_YELLOW.index);
+
+	       	Cell cellInfo = rowInfo.createCell(0);
+	       	cellInfo.setCellValue(info);
+	       	cellInfo.setCellStyle(styleInfo);
+	       
+	        
+	        CellStyle style2 = libro.createCellStyle();
+	        Font font2 = libro.createFont();
+	        font.setFontHeightInPoints((short)12);
+			style2.setFont(font2);
+			style2.setAlignment(CellStyle.ALIGN_RIGHT);
+			style2.setBorderBottom(CellStyle.BORDER_THIN);
+			style2.setBorderRight(CellStyle.BORDER_THIN);
+			style2.setBorderLeft(CellStyle.BORDER_THIN);
+			
+	        CellStyle style3 = libro.createCellStyle();
+			style3.setFont(font2);
+			style3.setAlignment(CellStyle.ALIGN_LEFT);
+			style3.setBorderBottom(CellStyle.BORDER_THIN);
+			style3.setBorderRight(CellStyle.BORDER_THIN);
+			style3.setBorderLeft(CellStyle.BORDER_THIN);
+			
+	        
+	        for(Integer i = 0; i< columns; i++){
+	        	Cell celda = fila.createCell(i);
+	        	celda.setCellValue(aux.getColumns().get(i));
+	        	celda.setCellStyle(style);  	
+	        }
+	        Cell celdaf = fila.createCell(columns);
+	        celdaf.setCellStyle(style);
+	      /*  for(Integer i = 0; i<= columns; i++){
+	        	if(aux.getColumns().size()!=i && ( aux.getColumns().get(i).equals("Producto") || aux.getColumns().get(i).equals("Nombre")))
+	        		hoja.setDefaultColumnStyle(i, style3);
+	        	else hoja.setDefaultColumnStyle(i, style2);
+	        }*/
+	        Vector<StockInfo> v = DBStock.getIncome(domain, domainId, incomeId);
+	        
+	        for(Integer j = 0; j< v.size();j++){
+	        	Row row = hoja.createRow(j+2);
+	        	for(Integer k = 0; k< columns; k++){
+	        		Cell celda = row.createCell(k);
+	        		String type = aux.getColumns().get(k);
+	        		StockInfo si = v.get(j);
+	        		switch (type) {
+	        		case "Producto": celda.setCellValue(si.getProduct());celda.setCellStyle(style3);break;
+	      	        case "Cantidad": celda.setCellValue(si.getQuantity());celda.setCellStyle(style2);break;
+	        		case "Detalle 1":  celda.setCellValue(si.getDetail());celda.setCellStyle(style2);break;
+	        		case "Detalle 2":  celda.setCellValue(si.getDetail2());celda.setCellStyle(style2);break;
+	        		case "Detalle 3":  celda.setCellValue(si.getDetail3());celda.setCellStyle(style2);break;
+	        		case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style2);break;
+	        		case "Nombre": celda.setCellValue(si.getProductName());celda.setCellStyle(style3);break;
+	 
+	        		default:
+	        			break;
+	        		}
+	        	}
+	        	Cell lastCell = row.createCell(columns);
+	        	lastCell.setCellStyle(style2);
+	        	row.setHeightInPoints(20);
+
+	        }
+	        for(Integer h = 0; h< columns;h++){
+	        	hoja.autoSizeColumn(h);
+	        }
+	        libro.write(archivo);        
+	        archivo.close();
+
+
+	        long length = archivoXLS.length();
+	        FileInputStream fis = new FileInputStream(archivoXLS);
+	        
+	        p_response.addHeader("Content-Disposition","attachment; filename=\"" + archivoXLS.getName() +"\"");
+	        //p_response.setContentType("application/octet-stream");
+	        p_response.setContentType("application/msexcel");
+
+	        if (length > 0 && length <= Integer.MAX_VALUE);
+	            p_response.setContentLength((int)length);
+	        ServletOutputStream out = p_response.getOutputStream();
+	        p_response.setBufferSize(32768);
+	        int bufSize = p_response.getBufferSize();
+	        byte[] buffer = new byte[bufSize];
+	        BufferedInputStream bis = new BufferedInputStream(fis,bufSize);
+	        int bytes;
+	        while ((bytes = bis.read(buffer, 0, bufSize)) >= 0)
+	            out.write(buffer, 0, bytes);
+	        
+	        
+	        bis.close();
+	        fis.close();
+	        out.flush();
+	        out.close();
+	        
+		}
+	
+	}
