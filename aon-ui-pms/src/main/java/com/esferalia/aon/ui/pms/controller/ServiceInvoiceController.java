@@ -67,6 +67,7 @@ import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.ProjectReservationRoomDetail;
+import com.esferalia.aon.pms.enumeration.BookingStayType;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo.HotelService;
@@ -292,10 +293,11 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 		stmt.append(" WHERE" + DomainManager.getSQLWhereClause("B.domain"));
 		stmt.append((!isReservation) ? " AND B.hotel = ?" : " AND PRR.project_reservation = ?");
 		stmt.append(" AND B.stay_date = ?");
+		stmt.append(" AND B.stay_type != " + BookingStayType.CHECKOUT.ordinal());
 		stmt.append(" AND B.project_reservation_room = PRR.id");
 		stmt.append(" AND PRR.id = PRRD.project_reservation_room");
 		stmt.append(" AND PRRD.asset_activity = AA.id");
-		stmt.append(" AND B.stay_date = AA.date");
+		stmt.append(" AND AA.date = B.stay_date");
 		stmt.append(" AND AA.asset = A.id");
 		stmt.append(" ORDER BY A.name");
 
