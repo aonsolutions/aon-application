@@ -18,6 +18,8 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.Agreement;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Bonus;
+import com.esferalia.aon.occam.api.model.BonusFilter;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
@@ -64,6 +66,7 @@ import com.esferalia.aon.occam.impl.jooq.ManagementImpl;
 import com.esferalia.aon.occam.impl.jooq.ProductImpl;
 import com.esferalia.aon.occam.impl.jooq.SalaryImpl;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
+import com.esferalia.aon.occam.impl.jooq.SystemImpl;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 public class AON {
@@ -82,6 +85,10 @@ public class AON {
 
 	private static ISalary getSalary() {
 		return new SalaryImpl();
+	}
+
+	private static ISystem getSystem() {
+		return new SystemImpl();
 	}
 	
 	private static IFiscal getFiscal() {
@@ -1064,6 +1071,10 @@ public class AON {
 		return getSalary().getSalaries(ctx, filter, Salary::new);
 	}
 	
+	public static Stream<Bonus> getAvailableBonuses(AONContext ctx,
+			BonusFilter filter) {
+		return getSystem().getAvailableBonus(ctx, filter, Bonus::new);
+	}
 	// ********************************************
 	// ************************************* FEE **
 	// ********************************************

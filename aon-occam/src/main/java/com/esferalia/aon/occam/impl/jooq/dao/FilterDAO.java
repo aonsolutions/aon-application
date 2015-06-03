@@ -195,6 +195,66 @@ public class FilterDAO implements Filter {
 		
 	}
 
+	public static class PropertyNullDAO implements Property<Boolean> {
+		
+		private Field<?> field;
+		
+		public PropertyNullDAO(Field<?> field) {
+			this.field = field;
+		}
+
+		@Override
+		public FilterDAO eq(Boolean t) {
+			return new FilterDAO( t ? field.isNull() : field.isNotNull());
+		}
+
+		@Override
+		public FilterDAO ne(Boolean t) {
+			return new FilterDAO( t ? field.isNotNull() : field.isNull());
+		}
+
+		@Override
+		public FilterDAO le(Boolean t) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public FilterDAO lt(Boolean t) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public FilterDAO gt(Boolean t) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public FilterDAO ge(Boolean t) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Filter in(Boolean[] t) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Filter isNull() {
+			return new FilterDAO( field.isNull());
+		}
+
+		@Override
+		public Filter isNotNull() {
+			return new FilterDAO( field.isNotNull());
+		}
+
+		@Override
+		public Filter like(Boolean t) {
+			throw new UnsupportedOperationException();				
+		}
+		
+	}
+
 	private Condition condition;
 	
 	public FilterDAO(Condition condition) {
