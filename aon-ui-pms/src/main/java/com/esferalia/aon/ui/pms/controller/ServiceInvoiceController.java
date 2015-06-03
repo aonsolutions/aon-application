@@ -67,7 +67,6 @@ import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.ProjectReservationRoomDetail;
-import com.esferalia.aon.pms.enumeration.BookingStayType;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo.HotelService;
@@ -85,17 +84,10 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 	private boolean showRectificationWindow;
 	private Invoice invoiceToRectify;
 	private ProjectReservation projectReservation;
+	private List<SelectItem> roomList;
 	
 	private IControllerListener currentReservationFilter;
 	
-	public ProjectReservation getProjectReservation() {
-		return projectReservation;
-	}
-
-	public void setProjectReservation(ProjectReservation projectReservation) {
-		this.projectReservation = projectReservation;
-	}
-
 	public ReservationInvoiceTo getReservationInvoiceTo() {
 		return reservationInvoiceTo;
 	}
@@ -120,6 +112,25 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 		this.invoiceToRectify = invoiceToRectify;
 	}
 	
+	public ProjectReservation getProjectReservation() {
+		return projectReservation;
+	}
+
+	public void setProjectReservation(ProjectReservation projectReservation) {
+		this.projectReservation = projectReservation;
+	}
+
+	public List<SelectItem> getRoomList() {
+		if (roomList == null || roomList.size() == 0) {
+			roomList = obtainRoomList();
+		}
+		return roomList;
+	}
+
+	public void setRoomList(List<SelectItem> roomList) {
+		this.roomList = roomList;
+	}
+
 	public IControllerListener getCurrentReservationFilter() {
 		if ( this.currentReservationFilter == null ) {
 			this.currentReservationFilter = new CurrentReservationFilter();
@@ -185,6 +196,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 		getReservationInvoiceTo().getRegistry().setId(getReservationInvoiceTo().getHotel().getCustomer().getRegistry().getId());
 		getReservationInvoiceTo().setRoom(null);
 		getReservationInvoiceTo().setGuest(null);
+		setRoomList(null);
 	}
 
 	private String obtainHotelInvoiceSeries() throws ManagerBeanException {
@@ -217,7 +229,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 		return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
 	}
 
-	public List<SelectItem> getRoomList() throws ManagerBeanException {
+	private List<SelectItem> obtainRoomList() {
 		List<SelectItem> roomList = new LinkedList<SelectItem>();
 		if (getReservationInvoiceTo().getHotel() != null) {
 			Connection connection = null;
@@ -227,13 +239,16 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 				boolean isReservation = getProjectReservation() != null && getProjectReservation().getId() != null;
 				connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
 				roomStmt = connection.prepareStatement(getRoomListSQL(isReservation));
+				Date roomDate = getReservationInvoiceTo().getIssueDate();
 				if (!isReservation) {
 					SQLUtils.setInt(roomStmt, 1, getReservationInvoiceTo().getHotel().getId());
-					SQLUtils.setDate(roomStmt, 2, getReservationInvoiceTo().getIssueDate());
 				} else {
 					SQLUtils.setInt(roomStmt, 1, getProjectReservation().getId());
-					SQLUtils.setDate(roomStmt, 2, DateUtils.addDays(getProjectReservation().getEndDate(), -1));
+					roomDate = DateUtils.addDays(getProjectReservation().getEndDate(), -1);
 				}
+				SQLUtils.setDate(roomStmt, 2, roomDate);
+				SQLUtils.setDate(roomStmt, 3, roomDate);
+				SQLUtils.setDate(roomStmt, 4, roomDate);
 				roomRs = roomStmt.executeQuery();
 				while (roomRs.next()) {
 					int reservationRoomDetailId = roomRs.getInt(RESERVATION_ROOM_DETAIL);
@@ -272,7 +287,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 					connection.rollback();
 				} catch (SQLException ex) {
 				}
-				throw new ManagerBeanException(e.getMessage());
+				//throw new ManagerBeanException(e.getMessage());
 			} finally {
 				SQLUtils.closeQuietly(roomRs);
 				SQLUtils.closeQuietly(roomStmt);
@@ -285,19 +300,21 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 	private String getRoomListSQL(boolean isReservation) throws ManagerBeanException {
 		StringBuffer stmt = new StringBuffer();
 		stmt.append("SELECT PRRD.id AS " + RESERVATION_ROOM_DETAIL + ", PRRD.domain AS " + DOMAIN);
-		stmt.append(", PRR.id AS " + RESERVATION_ROOM + ", PRR.project_reservation AS " + RESERVATION); 
+		stmt.append(", PRR.id AS " + RESERVATION_ROOM + ", PR.project AS " + RESERVATION); 
 		stmt.append(", AA.id AS " + ASSET_ACTIVITY + ", AA.date AS " + STAY_DATE);
 		stmt.append(", A.id AS " + ASSET + ", A.name AS " + ROOM_NUMBER);
-		stmt.append(" FROM booking AS B, project_reservation_room AS PRR, project_reservation_room_detail AS PRRD");
+		stmt.append(" FROM project_reservation AS PR, project_reservation_room AS PRR, project_reservation_room_detail AS PRRD");
 		stmt.append(", asset_activity AS AA, asset AS A");
-		stmt.append(" WHERE" + DomainManager.getSQLWhereClause("B.domain"));
-		stmt.append((!isReservation) ? " AND B.hotel = ?" : " AND PRR.project_reservation = ?");
-		stmt.append(" AND B.stay_date = ?");
-		stmt.append(" AND B.stay_type != " + BookingStayType.CHECKOUT.ordinal());
-		stmt.append(" AND B.project_reservation_room = PRR.id");
+		stmt.append(" WHERE" + DomainManager.getSQLWhereClause("PR.domain"));
+		stmt.append((!isReservation) ? " AND PR.hotel = ?" : " AND PR.project = ?");
+		stmt.append(" AND PR.start_date <= ?");
+		stmt.append(" AND PR.end_date > ?");
+		stmt.append(" AND PR.status != " + ReservationStatus.CANCELLED.ordinal());
+		stmt.append(" AND PR.status != " + ReservationStatus.BLOCKED.ordinal());
+		stmt.append(" AND PR.project = PRR.project_reservation");
 		stmt.append(" AND PRR.id = PRRD.project_reservation_room");
 		stmt.append(" AND PRRD.asset_activity = AA.id");
-		stmt.append(" AND AA.date = B.stay_date");
+		stmt.append(" AND AA.date = ?");
 		stmt.append(" AND AA.asset = A.id");
 		stmt.append(" ORDER BY A.name");
 

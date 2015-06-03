@@ -34,7 +34,7 @@ public class EmployeesServiceHelperTest extends AbstractSQLTestCase {
 		List<Bonus> availableBonuses = getAvailableBonuses(connection, 0,
 				domainI.getId());
 
-		Assert.assertEquals(availableBonuses.size(), BonusType.values().length);
+		Assert.assertEquals(BonusType.values().length,availableBonuses.size());
 		System.out.println(availableBonuses.size());
 
 		for (Bonus bonus : availableBonuses) {
@@ -60,7 +60,7 @@ public class EmployeesServiceHelperTest extends AbstractSQLTestCase {
 		List<Bonus> availableBonuses = getAvailableBonuses(connection, 0,
 				domains);
 
-		Assert.assertEquals(availableBonuses.size(), BonusType.values().length);
+		Assert.assertEquals(BonusType.values().length, availableBonuses.size());
 		System.out.println(availableBonuses.size());
 
 		for (Bonus bonus : availableBonuses) {
