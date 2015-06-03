@@ -34,6 +34,8 @@
 					<ui:param name="idRequired" value="#{true}" />
 					<ui:param name="lookupInputOnFocus" value="WarehouseTransferDetail_quantity" />
 					<ui:param name="lookupRendered" value="#{formEdit}" />
+					<ui:param name="lookupControllerListener" 
+						value="#{warehouseTransferDetail.itemFilter}" />										
 				</ui:include>
 				<f:facet name="footer">
 					<aon:div>
@@ -44,6 +46,8 @@
 							<ui:param name="lookupInputOnFocus" value="WarehouseTransferDetail_quantity-New" />
 							<ui:param name="lookupSuffix" value="-New" />
 							<ui:param name="lookupRendered" value="#{formNew}" />
+							<ui:param name="lookupControllerListener" 
+								value="#{warehouseTransferDetail.itemFilter}" />										
 						</ui:include>
 					</aon:div>
 				</f:facet>
@@ -59,10 +63,12 @@
 				</aon:outputText>
 				<aon:inputText id="WarehouseTransferDetail_quantity" 
 					value="#{controller.to.quantity}" rendered="#{formEdit}"
+					validator="#{controller.quantityCheck}"
 					required="true" size="5" />
 				<f:facet name="footer">
 					<aon:inputText id="WarehouseTransferDetail_quantity-New" 
-						value="#{controller.to.quantity}" rendered="#{formNew}" 
+						value="#{controller.to.quantity}" rendered="#{formNew}"
+						validator="#{controller.quantityCheck}" 
 						required="true" size="5" />
 				</f:facet>
 			</aon:column>
