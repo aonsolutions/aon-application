@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGREEMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SYSTEM;
+import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
@@ -15,7 +16,10 @@ import static java.util.Calendar.DAY_OF_MONTH;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -27,6 +31,8 @@ import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ITimedResult;
+import com.esferalia.aon.watson.util.AonDateUtils;
 
 /**
  * @author rtrepiana
@@ -36,6 +42,288 @@ public class SQLFunctionsTestCase extends
 		AbstractSQLTestCase {
 
 	private static final double DELTA = 0.000000001;
+
+	@Test
+	public void testDateFunctionI() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				newContract(aonContext, getToday(), Collections.emptyMap()));
+		//@formatter:on
+		
+		
+		Date today = getToday();
+		
+		List<ITimedResult<java.util.Date>>  date = 
+				ctx.getExpressionContext().eval(
+						String.format("FECHA(%d,%d,%d)", 
+								get(today, Calendar.YEAR),
+								get(today, Calendar.MONTH)+1,
+								get(today, Calendar.DATE)
+						)
+						, startDate
+						, endDate, java.util.Date.class);
+		Assert.assertEquals(today, new Date(date.get(0).getValue().getTime()));
+	}
+		
+	@Test
+	public void testDateFunctionII() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				newContract(aonContext, getToday(), Collections.emptyMap()));
+		//@formatter:on
+		
+		
+		Date today = getToday();
+		
+		List<ITimedResult<java.util.Date>>  date = 
+				ctx.getExpressionContext().eval(
+						String.format("FECHA(%d,%d,%d)", 
+								get(today, Calendar.YEAR),
+								get(today, Calendar.MONTH)+2,
+								0
+						)
+						, startDate
+						, endDate, java.util.Date.class);
+		Assert.assertEquals(getLastDayOfMonth(today), new Date(date.get(0).getValue().getTime()));
+	}
+
+	@Test
+	public void testMonthFunction() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				newContract(aonContext, getToday(), Collections.emptyMap()));
+		//@formatter:on
+		
+		Date today = getToday();
+		
+		List<ITimedResult<java.util.Date>>  date = 
+				ctx.getExpressionContext().eval(
+						String.format("MES(FECHA(%d,%d,%d),1)", 
+								get(today, Calendar.YEAR),
+								get(today, Calendar.MONTH)+1,
+								get(today, Calendar.DATE)
+						)
+						, startDate
+						, endDate, java.util.Date.class);
+		
+		Assert.assertEquals(add(today, Calendar.MONTH, 1), new Date(date.get(0).getValue().getTime()));
+
+		List<ITimedResult<Integer>>  month = 
+				ctx.getExpressionContext().eval(
+						String.format("MES(FECHA(%d,%d,%d))", 
+								get(today, Calendar.YEAR),
+								get(today, Calendar.MONTH)+1,
+								get(today, Calendar.DATE)
+						)
+						, startDate
+						, endDate, Integer.class);
+		
+		Assert.assertEquals(get(today, Calendar.MONTH)+1, (int)month.get(0).getValue());
+	}
+
+	@Test
+	public void testYearFunction() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				newContract(aonContext, getToday(), Collections.emptyMap()));
+		//@formatter:on
+		
+		Date today = getToday();
+		
+		List<ITimedResult<java.util.Date>>  date = 
+				ctx.getExpressionContext().eval(
+						String.format("AÑO(FECHA(%d,%d,%d),1)", 
+								get(today, Calendar.YEAR),
+								get(today, Calendar.MONTH)+1,
+								get(today, Calendar.DATE)
+						)
+						, startDate
+						, endDate, java.util.Date.class);
+		
+		Assert.assertEquals(add(today, Calendar.YEAR, 1), new Date(date.get(0).getValue().getTime()));
+
+		List<ITimedResult<Integer>>  month = 
+				ctx.getExpressionContext().eval(
+						String.format("AÑO(FECHA(%d,%d,%d))", 
+								get(today, Calendar.YEAR),
+								get(today, Calendar.MONTH),
+								get(today, Calendar.DATE)
+						)
+						, startDate
+						, endDate, Integer.class);
+		
+		Assert.assertEquals(get(today, Calendar.YEAR), (int)month.get(0).getValue());
+	}
+
+	@Test
+	public void testDayFunction() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				newContract(aonContext, getToday(), Collections.emptyMap()));
+		//@formatter:on
+		
+		Date today = getToday();
+		
+		List<ITimedResult<java.util.Date>>  date = 
+				ctx.getExpressionContext().eval(
+						String.format("DIA(FECHA(%d,%d,%d),1)", 
+								get(today, Calendar.YEAR),
+								get(today, Calendar.MONTH)+1,
+								get(today, Calendar.DATE)
+						)
+						, startDate
+						, endDate, java.util.Date.class);
+		
+		Assert.assertEquals(add(today, Calendar.DAY_OF_MONTH, 1), new Date(date.get(0).getValue().getTime()));
+
+		List<ITimedResult<Integer>>  month = 
+				ctx.getExpressionContext().eval(
+						String.format("DIA(FECHA(%d,%d,%d))", 
+								get(today, Calendar.YEAR),
+								get(today, Calendar.MONTH),
+								get(today, Calendar.DATE)
+						)
+						, startDate
+						, endDate, Integer.class);
+		
+		Assert.assertEquals(get(today, Calendar.DATE), (int)month.get(0).getValue());
+	}
+
+	@Test
+	public void testDateCompare() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				newContract(aonContext, getToday(), Collections.emptyMap()));
+		//@formatter:on
+		
+		Date today = getToday();
+		
+		List<ITimedResult<Boolean>>  compare = 
+				ctx.getExpressionContext().eval(
+						String.format("FECHA(%d,%d,%d) < DIA(FECHA(%d,%d,%d),1)", 
+								get(today, Calendar.YEAR),
+								get(today, Calendar.MONTH)+1,
+								get(today, Calendar.DATE),
+								get(today, Calendar.YEAR),
+								get(today, Calendar.MONTH)+1,
+								get(today, Calendar.DATE)
+						)
+						, startDate
+						, endDate, Boolean.class);
+		
+		compare = 
+				ctx.getExpressionContext().eval(
+						String.format("FECHA(%d,%d,%d) > DIA(FECHA(%d,%d,%d),1)", 
+								get(today, Calendar.YEAR),
+								get(today, Calendar.MONTH)+1,
+								get(today, Calendar.DATE),
+								get(today, Calendar.YEAR),
+								get(today, Calendar.MONTH)+1,
+								get(today, Calendar.DATE)
+						)
+						, startDate
+						, endDate, Boolean.class);
+
+		Assert.assertEquals(Boolean.FALSE, compare.get(0).getValue());
+
+	}
+
+	@Test
+	public void testDaysFunction() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				newContract(aonContext, getToday(), Collections.emptyMap()));
+		//@formatter:on
+		
+		Date today = getToday();
+		
+		List<ITimedResult<Integer>>  days = 
+				ctx.getExpressionContext().eval(
+						String.format("DIAS(DIA(FECHA(%d,%d,%d),100),FECHA(%d,%d,%d))", 
+								get(today, Calendar.YEAR),
+								get(today, Calendar.MONTH)+1,
+								get(today, Calendar.DATE),
+								get(today, Calendar.YEAR),
+								get(today, Calendar.MONTH)+1,
+								get(today, Calendar.DATE)
+						)
+						, startDate
+						, endDate, Integer.class);
+		
+
+		Assert.assertEquals(100, (int)days.get(0).getValue());
+
+	}
 
 	@Test
 	public void testSystemFunction() throws ExpressionException, SQLException {

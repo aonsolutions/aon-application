@@ -21,8 +21,8 @@ import com.esferalia.aon.salary.expression.TimedObject;
 public enum ContextVariable implements IResourceable{
 	
 
-	START("FECHA_INICIO", VariableType.DATE),
-	END("FECHA_FINAL", VariableType.DATE),
+	START("INICIO", VariableType.DATE),
+	END("FIN", VariableType.DATE),
 	SALARY_START("INICIO_NOMINA", VariableType.DATE),
 	SALARY_END("FIN_NOMINA", VariableType.DATE),
 	CONTRACT_START("INICIO_CONTRATO", VariableType.DATE),
@@ -153,7 +153,7 @@ public enum ContextVariable implements IResourceable{
 	MATERNITY("MTNAD", VariableType.BOOLEAN),
 	QUOTE_IT("COTIZACION_IT", VariableType.QUOTE_IT_DROP),
 	
-	// Régimenes, cotizacion 
+	// Quote Regime 
 	MORE_THAN_65("MAYOR_65", VariableType.BOOLEAN, false),
 	ASSIMILATED ("ASIMILADO_REGIMEN_GRAL", VariableType.BOOLEAN, false),
 	ENTRY_BY_COMPANY_ACCOUNT("INGRESO_AC_EMPRESA", VariableType.BOOLEAN, false),
@@ -164,14 +164,14 @@ public enum ContextVariable implements IResourceable{
 	EMBARGO_LIMIT("EMBARGABLE", VariableType.DOUBLE, false),
 	EMBARGO_MAX("MAX_EMBARGABLE", VariableType.DOUBLE, false),
 	
-	// Tipo de nomina
+	// Salary Type
 	SALARY("NOMINA", VariableType.BOOLEAN),
 	DELAY("ATRASOS", VariableType.BOOLEAN),
 	SETTLE("FINIQUITO", VariableType.BOOLEAN),
 	EXTRA_PAY("EXTRA", VariableType.BOOLEAN),
 	
 	
-	// Resultados
+	// Results
 	TOTAL_LIQUID("TOTAL_LIQUIDO", VariableType.DOUBLE),
 	TOTAL_PAYMENT("TOTAL_DEVENGADO", VariableType.DOUBLE),
 	
@@ -180,8 +180,8 @@ public enum ContextVariable implements IResourceable{
 
 	// Datos de las bonificaciones
 	BONUS_AGE("DURACION", VariableType.DATE, false),
-	BONUS_START("INICIO", VariableType.DATE, false),
 	SUBSIDIZED("BONIFICADO", VariableType.BOOLEAN),
+	BONUS_START("INICIO_BONIFICACION", VariableType.DATE, false),
 	
 	// Excel
 	OR("O", VariableType.BOOLEAN ),
@@ -196,11 +196,15 @@ public enum ContextVariable implements IResourceable{
 	INTEGER("ENTERO", VariableType.INTEGER ),
 	QUOTIENT("COCIENTE", VariableType.INTEGER ),
 	DAYS("DIAS", VariableType.INTEGER ),
+	DATE("FECHA", VariableType.DATE ),
+	MONTH("MES", VariableType.INTEGER ),
+	YEAR("AÑO", VariableType.INTEGER ),
+	DAY("DIA", VariableType.INTEGER ),
 
 	// AON's
 	MIN("MIN", VariableType.UNKNOWN ),
 	MAX("MAX", VariableType.UNKNOWN ),
-	YEAR("AÑO", VariableType.UNKNOWN ),
+	ONE("ANUAL", VariableType.UNKNOWN ),
 	TWO("BIENIO", VariableType.UNKNOWN ),
 	THREE("TRIENIO", VariableType.UNKNOWN, true ),
 	FOUR("CUATRIENIO", VariableType.UNKNOWN, true ),

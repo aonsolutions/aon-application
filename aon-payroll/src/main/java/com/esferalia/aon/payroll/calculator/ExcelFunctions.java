@@ -1,10 +1,8 @@
 package com.esferalia.aon.payroll.calculator;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 
 import org.mvel2.util.MethodStub;
@@ -70,17 +68,82 @@ public class ExcelFunctions {
 		return object != null;
 	}
 
-	// ------------------------------------------
+	// ------------------------------------------------------------------------
 	// Dates
-	// ------------------------------------------
+
 	@Variable(ContextVariable.DAYS)
 	public static Long days(Date from, Date to) {
 		return (long) (from.getTime() - to.getTime()) / (1000 * 60 * 60 * 24);
 	}
 
-	// ------------------------------------------
+	@Variable(ContextVariable.DATE)
+	public static Date date(int year, int month, int date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, year);
+		calendar.set(Calendar.MONTH, month-1); // JANUARY was 0
+		calendar.set(Calendar.DATE, date);
+		
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		
+		return calendar.getTime();
+	}
+
+	@Variable(ContextVariable.MONTH)
+	public static Date month(Date date, int months) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(Calendar.MONTH, months);
+		return calendar.getTime();
+	}
+
+	//@Variable(ContextVariable.MONTH)
+	public static int month(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		return calendar.get(Calendar.MONTH)+1;
+	}
+
+	@Variable(ContextVariable.YEAR)
+	public static Date year(Date date, int years) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(Calendar.YEAR, years);
+		return calendar.getTime();
+	}
+
+	//@Variable(ContextVariable.YEAR)
+	public static Date year(java.sql.Date date, int years) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(Calendar.YEAR, years);
+		return calendar.getTime();
+	}
+	//@Variable(ContextVariable.YEAR)
+	public static int year(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		return calendar.get(Calendar.YEAR);
+	}
+
+	@Variable(ContextVariable.DAY)
+	public static Date day(Date date, int days) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(Calendar.DAY_OF_MONTH, days);
+		return calendar.getTime();
+	}
+
+	//@Variable(ContextVariable.DAY)
+	public static int day(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		return calendar.get(Calendar.DAY_OF_MONTH);
+	}
+	// ------------------------------------------------------------------------
 	// Maths
-	// ------------------------------------------
 
 	// Choose double. Almost others Numbers fits in it.
 

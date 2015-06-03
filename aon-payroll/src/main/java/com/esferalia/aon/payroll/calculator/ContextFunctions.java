@@ -99,6 +99,13 @@ public class ContextFunctions {
 		}
 	}
 
+	public static void check(boolean condition, String format, Object ...args)
+			throws CheckException {
+		if (!condition) {
+			throw new CheckException(String.format(format, args));
+		}
+	}
+
 	public static void checkVar(String name, boolean condition, String msg)
 			throws CheckException {
 		if (!condition) {
@@ -464,7 +471,7 @@ public class ContextFunctions {
 	private static void loadSeniorityFunction(ExpressionContext context,
 			Date startDate, Date endDate) throws ExpressionException {
 		try {
-			context.setVariable(ContextVariable.YEAR, Years.ONE, startDate,
+			context.setVariable(ContextVariable.ONE, Years.ONE, startDate,
 					endDate);
 			context.setVariable(ContextVariable.TWO, Years.TWO, startDate,
 					endDate);
