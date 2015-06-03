@@ -561,6 +561,8 @@ public interface ICommonMessages {
 	String STOCK_BY_WAREHOUSE_VALUED_KEY = "warehouse_stock_by_warehouse_valued_module";
 	String STOCK_BY_ITEM_VALUED_KEY = "warehouse_stock_by_item_valued_module";
 	String WAREHOUSE_INVENTORY_DATE_ERROR = "warehouse_inventory_date_error";
+	String WAREHOUSE_QUANTITY_POSITIVE = "warehouse_quantity_postive";
+	String WAREHOUSE_QUANTITY_SERIALIZABLE = "warehouse_quantity_serializable";
 	
 	String CC_MESSAGE = "webmail_cc";
 	String TO_MESSAGE = "webmail_to";
