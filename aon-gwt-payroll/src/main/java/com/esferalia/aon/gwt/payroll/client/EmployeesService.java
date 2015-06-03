@@ -8,6 +8,7 @@ import java.util.SortedSet;
 import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
+import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -40,6 +41,9 @@ public interface EmployeesService extends RemoteService, CalendarService,
 			throws IllegalArgumentException;
 
 	List<Deduction> getAvailableDeductions(int employeeId)
+			throws IllegalArgumentException;
+
+	List<Bonus> getAvailableBonuses(int employeeId)
 			throws IllegalArgumentException;
 
 	List<Cost> getWorkplaceCosts(int workplaceId)

@@ -1,8 +1,6 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.jooq.tables.SystemCost.SYSTEM_COST;
-import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
@@ -605,64 +603,4 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 
 	// ------------------------------------------------------------------------
 
-	protected final void addSystemData(AONContext aonContext, Date startDate,
-			Date endDate, Map<String, String> datas) {
-		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
-
-		for (Map.Entry<String, String> data : datas.entrySet()) {
-			aonContext.getDslContext().insertInto(SYSTEM_DATA)
-					.set(SYSTEM_DATA.DOMAIN, 0)
-					.set(SYSTEM_DATA.START_DATE, startDate)
-					.set(SYSTEM_DATA.END_DATE, endDate)
-					.set(SYSTEM_DATA.NAME, data.getKey())
-					.set(SYSTEM_DATA.EXPRESSION, data.getValue()).execute();
-
-		}
-		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
-	}
-
-	protected final void cleanSystemCosts(AONContext aonContext) {
-		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
-
-		aonContext.getDslContext().delete(SYSTEM_COST).execute();
-
-		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
-	}
-
-	protected final void addCCCCost(AONContext aonContext, CCCType cccType,
-			Date startDate, String code, DeductionType type, String expression) {
-		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
-
-		aonContext
-				.getDslContext()
-				.insertInto(SYSTEM_COST)
-				.set(SYSTEM_COST.CODE, code)
-				.set(SYSTEM_COST.START_DATE, startDate)
-				.set(SYSTEM_COST.TYPE,
-						(byte) (type != null ? type.ordinal()
-								: DeductionType.OTHER.ordinal()))
-				.set(SYSTEM_COST.DOMAIN, (-1) * (100 + cccType.ordinal()))
-				.set(SYSTEM_COST.EXPRESSION, expression).execute();
-
-		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
-	}
-
-	protected final void addSSRegimeCost(AONContext aonContext,
-			SSRegimeType ssRegimetype, Date startDate, String code,
-			DeductionType type, String expression) {
-		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
-
-		aonContext
-				.getDslContext()
-				.insertInto(SYSTEM_COST)
-				.set(SYSTEM_COST.CODE, code)
-				.set(SYSTEM_COST.START_DATE, startDate)
-				.set(SYSTEM_COST.TYPE,
-						(byte) (type != null ? type.ordinal()
-								: DeductionType.OTHER.ordinal()))
-				.set(SYSTEM_COST.DOMAIN, (-1) * ssRegimetype.ordinal())
-				.set(SYSTEM_COST.EXPRESSION, expression).execute();
-
-		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
-	}
 }

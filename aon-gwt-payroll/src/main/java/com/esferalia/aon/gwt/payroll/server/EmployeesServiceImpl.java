@@ -49,6 +49,7 @@ import java.util.MissingResourceException;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import javax.faces.context.FacesContext;
 
@@ -99,6 +100,7 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
+import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -134,6 +136,11 @@ import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraftCalculatorContext;
 import com.esferalia.aon.gwt.payroll.sql.SQLSettleDraftCalculatorContext;
 import com.esferalia.aon.gwt.payroll.sql.SQLStatistics;
 import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.BonusFilter;
+import com.esferalia.aon.occam.api.model.BonusProperties;
+import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
@@ -144,7 +151,6 @@ import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
-import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.payroll.calculator.jooq.JooqGPSReports;
@@ -197,6 +203,7 @@ import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryBuilderListener;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
+import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.CheckException;
@@ -204,7 +211,6 @@ import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemoveVariableError;
 import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
@@ -957,7 +963,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> ctx = getSalaryCalculatorContext(
 					getConnection(), salaryDraft, null);
 
-			Map<String, boolean[]> defined = getDefinedMap(ctx);
+			Map<String, boolean[]> defined = EmployeesServiceHelper.getDefinedMap(ctx);
 
 			List<Variable> variables = new LinkedList<Variable>();
 			for (String name : names) {
@@ -1480,6 +1486,31 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			return JooqDeductions.getConcepts(conn, domainId,
 					getParentDomainID());
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+	}
+
+	@Override
+	public List<Bonus> getAvailableBonuses(int employeeId)
+			throws IllegalArgumentException {
+		Connection conn = null;
+		try {
+			initFacesContext();
+
+			conn = getConnection();
+			
+			return EmployeesServiceHelper.getAvailableBonuses(conn, employeeId, 0 );
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -3114,7 +3145,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			conn = getConnection();
 			ctx = getSalaryCalculatorContext(conn, draft, draftBuilder);
-			draftBuilder.setDefined(getDefinedMap(ctx));
+			draftBuilder.setDefined(EmployeesServiceHelper.getDefinedMap(ctx));
 			calculator.calculate(ctx);
 		} catch (ExpressionException e) {
 			// TODO Auto-generated catch block
@@ -3135,68 +3166,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				}
 			}
 		}
-	}
-
-	private static Map<String, boolean[]> getDefinedMap(
-			IContractSalaryCalculatorContext ctx) {
-		Map<String, boolean[]> definedMap = new HashMap<String, boolean[]>();
-
-		Date startDate = ctx.getStartDate();
-		Date endDate = ctx.getEndDate();
-
-		for (String name : ctx.getSystemExpressionContext().variablesSet()) {
-			boolean defined[] = new boolean[Scope.NUM_VALUES];
-			defined[Scope.SYSTEM.ordinal()] = true;
-			definedMap.put(name, defined);
-		}
-		// Agreement
-		ExpressionContext agreementCtx = ctx.getAgreementExpressionContext();
-		for (String name : agreementCtx.variablesSet()) {
-			ITimedVariable<?> var = agreementCtx.getVariable(name, startDate,
-					endDate);
-			if (!(var instanceof IExpressionVariable<?>))
-				continue;
-			ExpressionScope scope = ((IExpressionVariable<?>) var)
-					.getExpression().getScope();
-			if (scope != ExpressionScope.AGREEMENT)
-				continue;
-
-			boolean defined[] = definedMap.get(name);
-			if (defined == null) {
-				defined = new boolean[Scope.NUM_VALUES];
-				definedMap.put(name, defined);
-			}
-			defined[Scope.AGREEMENT.ordinal()] = true;
-		}
-
-		for (IContractPayment p : ctx.getAgreementPayments()) {
-			if (StringUtils.isBlank(p.getName()))
-				continue;
-
-			boolean defined[] = new boolean[Scope.NUM_VALUES];
-			defined[Scope.AGREEMENT.ordinal()] = true;
-			definedMap.put(p.getName(), defined);
-
-		}
-
-		ExpressionContext implicitCtx = ctx.getImplicitExpressionContext();
-		for (String name : ctx.getImplicitExpressionContext().variablesSet()) {
-
-			ITimedVariable<?> var = agreementCtx.getVariable(name, startDate,
-					endDate);
-			if (var instanceof IExpressionVariable<?>)
-				continue;
-			// Implicit variables don't come from expression
-
-			boolean defined[] = definedMap.get(name);
-			if (defined == null) {
-				defined = new boolean[Scope.NUM_VALUES];
-				definedMap.put(name, defined);
-			}
-			defined[Scope.APPLICATION.ordinal()] = true;
-		}
-
-		return definedMap;
 	}
 
 	private static <T> List<ITimedResult<T>> eval(String expression,

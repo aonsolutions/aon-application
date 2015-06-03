@@ -9,6 +9,7 @@ import java.util.SortedSet;
 import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
+import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -159,6 +160,13 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 			throws IllegalArgumentException {
 		failure(callback);
 		
+	}
+	
+	@Override
+	public void getAvailableBonuses(int employeeId,
+			AsyncCallback<List<Bonus>> callback)
+			throws IllegalArgumentException {
+		failure(callback);
 	}
 
 	@Override

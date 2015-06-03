@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
+import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -80,6 +81,15 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync,
 		AON.start();
 		employeesServiceAsync.getAvailableDeductions(employeeId,
 				new AsyncCallbackWrapper<List<Deduction>>(callback));
+	}
+	
+	@Override
+	public void getAvailableBonuses(int employeeId,
+			AsyncCallback<List<Bonus>> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getAvailableBonuses(employeeId,
+				new AsyncCallbackWrapper<List<Bonus>>(callback));
 	}
 
 	public void getWorkplaceCosts(int workplaceId,

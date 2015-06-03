@@ -27,6 +27,11 @@ public class SQLContractBonus extends SQLCollection<IContractBonus> implements I
 	public IContractBonus next() {
 		return this;
 	}
+	
+	@Override
+	public Integer getId() {
+		return getInt(ContractBonusColumns.ID);
+	}
 
 	@Override
 	public String getName() {

@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.client.EmployeesService;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
+import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -165,7 +166,15 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		System.out.println("Auto-generated method stub");
 		return null;
 	}
-
+	
+	@Override
+	public List<Bonus> getAvailableBonuses(int employeeId)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
+		return null;
+	}
+	
 	@Override
 	public List<Cost> getWorkplaceCosts(int workplaceId)
 			throws IllegalArgumentException {

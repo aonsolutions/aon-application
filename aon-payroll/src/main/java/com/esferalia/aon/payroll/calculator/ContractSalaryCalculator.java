@@ -796,7 +796,8 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 							salaryBuilder.addBonus(value, description,
 									contractBonus, amount.getContext());
 						}
-						bonus += amount.getValue();
+						if ( amount.getValue()  != null )
+							bonus += amount.getValue() ;
 					}
 					total += bonus;
 
@@ -805,7 +806,9 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 							e.getVariables());
 				} catch (CheckException e) {
 					onCheckError(contractBonus, e.getMessage());
-				}
+				}catch (RemoveException | RemoveVariableError e) {
+					// TODO: Something ??? It's really necessary...
+				} 
 			}
 
 		} catch (UndefinedVariablesException e) {

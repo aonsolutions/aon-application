@@ -7,7 +7,9 @@ import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
 import static com.esferalia.aon.jooq.tables.AgreementLevelData.AGREEMENT_LEVEL_DATA;
 import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
+import static com.esferalia.aon.jooq.tables.BonusConcept.BONUS_CONCEPT;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.ContractDeduction.CONTRACT_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
@@ -22,6 +24,8 @@ import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
+import static com.esferalia.aon.jooq.tables.SystemCost.SYSTEM_COST;
+import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAYMENT;
 import static com.esferalia.aon.salary.enumeration.SalaryType.EXTRA;
@@ -38,6 +42,7 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -60,10 +65,13 @@ import com.code.aon.registry.enumeration.RegistryType;
 import com.esferalia.aon.jooq.tables.AgreementData;
 import com.esferalia.aon.jooq.tables.AgreementLevelData;
 import com.esferalia.aon.jooq.tables.AgreementPayment;
+import com.esferalia.aon.jooq.tables.BonusConcept;
+import com.esferalia.aon.jooq.tables.ContractBonus;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
+import com.esferalia.aon.jooq.tables.records.BonusConceptRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
@@ -77,6 +85,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -141,6 +150,91 @@ public abstract class AbstractSQLTestCase {
 	}
 
 	// ------------------------------------------------------- static 'library'
+
+	protected final void cleanSystemData(AONContext aonContext) {
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+
+		aonContext.getDslContext().delete(SYSTEM_DATA).execute();
+
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+	}
+
+	protected final void addSystemData(AONContext aonContext, Date startDate,
+			Date endDate, Map<String, String> datas) {
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+
+		for (Map.Entry<String, String> data : datas.entrySet()) {
+			aonContext.getDslContext().insertInto(SYSTEM_DATA)
+					.set(SYSTEM_DATA.DOMAIN, 0)
+					.set(SYSTEM_DATA.START_DATE, startDate)
+					.set(SYSTEM_DATA.END_DATE, endDate)
+					.set(SYSTEM_DATA.NAME, data.getKey())
+					.set(SYSTEM_DATA.EXPRESSION, data.getValue()).execute();
+
+		}
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+	}
+
+	protected final void addSSRegimeData(AONContext aonContext, SSRegimeType ssRegimetype, Date startDate,
+			Date endDate, Map<String, String> datas) {
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+
+		for (Map.Entry<String, String> data : datas.entrySet()) {
+			aonContext.getDslContext().insertInto(SYSTEM_DATA)
+					.set(SYSTEM_DATA.DOMAIN, (-1) * ssRegimetype.ordinal())
+					.set(SYSTEM_DATA.START_DATE, startDate)
+					.set(SYSTEM_DATA.END_DATE, endDate)
+					.set(SYSTEM_DATA.NAME, data.getKey())
+					.set(SYSTEM_DATA.EXPRESSION, data.getValue()).execute();
+
+		}
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+	}
+
+	protected final void cleanSystemCosts(AONContext aonContext) {
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+
+		aonContext.getDslContext().delete(SYSTEM_COST).execute();
+
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+	}
+
+	protected final void addCCCCost(AONContext aonContext, CCCType cccType,
+			Date startDate, String code, DeductionType type, String expression) {
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+
+		aonContext
+				.getDslContext()
+				.insertInto(SYSTEM_COST)
+				.set(SYSTEM_COST.CODE, code)
+				.set(SYSTEM_COST.START_DATE, startDate)
+				.set(SYSTEM_COST.TYPE,
+						(byte) (type != null ? type.ordinal()
+								: DeductionType.OTHER.ordinal()))
+				.set(SYSTEM_COST.DOMAIN, (-1) * (100 + cccType.ordinal()))
+				.set(SYSTEM_COST.EXPRESSION, expression).execute();
+
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+	}
+
+	protected final void addSSRegimeCost(AONContext aonContext,
+			SSRegimeType ssRegimetype, Date startDate, String code,
+			DeductionType type, String expression) {
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+
+		aonContext
+				.getDslContext()
+				.insertInto(SYSTEM_COST)
+				.set(SYSTEM_COST.CODE, code)
+				.set(SYSTEM_COST.START_DATE, startDate)
+				.set(SYSTEM_COST.TYPE,
+						(byte) (type != null ? type.ordinal()
+								: DeductionType.OTHER.ordinal()))
+				.set(SYSTEM_COST.DOMAIN, (-1) * ssRegimetype.ordinal())
+				.set(SYSTEM_COST.EXPRESSION, expression).execute();
+
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+	}
 
 	public static String getDbPort() {
 		return System.getProperty("dbPort", "3306");
@@ -411,10 +505,10 @@ public abstract class AbstractSQLTestCase {
 
 	public static final ContractRecord newContract(AONContext aonContext,
 			SSRegimeType ssRegimeType, CCCType cccType, Date startDate,
-			Map<String, String> data, String[] payments,
-			String[] deductions, AgreementLevelCategoryRecord category) {
-		return newContract(aonContext, ssRegimeType, cccType, startDate,
-				null, data, payments, deductions, category);
+			Map<String, String> data, String[] payments, String[] deductions,
+			AgreementLevelCategoryRecord category) {
+		return newContract(aonContext, ssRegimeType, cccType, startDate, null,
+				data, payments, deductions, category);
 	}
 
 	public static final ContractRecord newContract(AONContext aonContext,
@@ -786,6 +880,39 @@ public abstract class AbstractSQLTestCase {
 						(byte) PaymentType.CRA_0001.ordinal())
 				.set(CONTRACT_PAYMENT.SALARY_TYPE,
 						(byte) SalaryType.SALARY.ordinal()).execute();
+
+	}
+
+	public static final BonusConceptRecord addBonusConcept(
+			AONContext aonContext, BonusType type, String expression) {
+		DomainRecord domain = newDomain(aonContext);
+		return addBonusConcept(aonContext, domain.getId(), type, expression);
+
+	}
+
+	public static final BonusConceptRecord addBonusConcept(
+			AONContext aonContext, int domain, BonusType type, String expression) {
+		return aonContext
+				.getDslContext()
+				.insertInto(BONUS_CONCEPT)
+				.set(BONUS_CONCEPT.DOMAIN, domain)
+				.set(BONUS_CONCEPT.TYPE, (byte) type.ordinal())
+				.set(BONUS_CONCEPT.EXPRESSION, expression)
+				.set(BONUS_CONCEPT.DESCRIPTION,
+						type.getName(new Locale("es", "ES"))).returning()
+				.fetchOne();
+	}
+
+	public static final void addBonus(AONContext aonContext,
+			ContractRecord contract, BonusConceptRecord concept,
+			String expression) {
+		aonContext.getDslContext().insertInto(CONTRACT_BONUS)
+				.set(CONTRACT_BONUS.DOMAIN, contract.getDomain())
+				.set(CONTRACT_BONUS.BONUS_CONCEPT, concept.getId())
+				.set(CONTRACT_BONUS.CONTRACT, contract.getId())
+				.set(CONTRACT_BONUS.START_DATE, contract.getStartDate())
+				.set(CONTRACT_BONUS.END_DATE, contract.getEndDate())
+				.set(CONTRACT_BONUS.EXPRESSION, expression).execute();
 
 	}
 

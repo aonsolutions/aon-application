@@ -3227,11 +3227,11 @@ public class SQLContractSalaryCalculatorContext extends
 				});
 
 		this.implicitExpressionContext.putVariable(BONUS_START,
-				new LazyTimedVariable<String>() {
+				new LazyTimedVariable<Date>() {
 					@Override
-					public String create() {
-						return DATE_FORMAT.format(sqlContractBonus
-								.getStartDate());
+					public Date create() {
+						return sqlContractBonus
+								.getStartDate();
 					}
 				});
 
@@ -3384,21 +3384,6 @@ public class SQLContractSalaryCalculatorContext extends
 				ctx.putVariable(PARTIAL_FACTOR, partial_factor);
 			}
 			
-			if (!containsVariable(QUOTE_DAYS, period)) {
-				ITimedVariable<Double> quoteDays = new ITimedVariable<Double>() {
-					@Override
-					public Period getPeriod() {
-						return period;
-					}
-
-					@Override
-					public Double getValue(Period p) {
-						return getDays(ctx, p, 1.00);
-					}
-
-				};
-				ctx.putVariable(QUOTE_DAYS, quoteDays);
-			}
 			
 			if (!containsVariable(SALARY_DAYS, period)) {
 				ITimedVariable<Double> salaryDays = new ITimedVariable<Double>() {
@@ -3416,7 +3401,25 @@ public class SQLContractSalaryCalculatorContext extends
 				ctx.putVariable(SALARY_DAYS, salaryDays);
 			}
 		}
-
+					
+		for (Period period : contract) {
+			if (!containsVariable(QUOTE_DAYS, period)) {
+				ITimedVariable<Double> quoteDays = new ITimedVariable<Double>() {
+					@Override
+					public Period getPeriod() {
+						return period;
+					}
+	
+					@Override
+					public Double getValue(Period p) {
+						return getDays(ctx, p, 1.00);
+					}
+	
+				};
+				ctx.putVariable(QUOTE_DAYS, quoteDays);
+			}
+		}		
+		
 		// ITs
 		List<Period> leaves = getLeavesPeriods();
 		intersects = Period.sub(intersects, leaves);
