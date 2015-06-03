@@ -287,7 +287,8 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 					connection.rollback();
 				} catch (SQLException ex) {
 				}
-				//throw new ManagerBeanException(e.getMessage());
+				AonUtil.addErrorMessage(e.getMessage());
+				throw new AbortProcessingException(e.getMessage(), e);
 			} finally {
 				SQLUtils.closeQuietly(roomRs);
 				SQLUtils.closeQuietly(roomStmt);
