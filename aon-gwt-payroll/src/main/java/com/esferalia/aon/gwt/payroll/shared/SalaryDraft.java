@@ -75,6 +75,21 @@ public class SalaryDraft extends SalaryPreview {
 		}
 	}
 
+	public static class BonusEvent extends Event implements HasBonus {
+		Bonus bonus;
+
+		@Override
+		public Bonus getBonus() {
+			return bonus;
+		}
+
+		public BonusEvent setBonus(Bonus bonus) {
+			this.bonus = bonus;
+			return this;
+		}
+
+	}
+
 	private Integer dbId;
 
 	private String enterpriseName;
@@ -130,6 +145,7 @@ public class SalaryDraft extends SalaryPreview {
 	private List<Payment> draftPayments;
 	private List<Deduction> draftDeductions;
 	private List<Deduction> draftEmbargos;
+	private List<Bonus> draftBonuses;
 
 	private List<ITDataPerson> draftLeaveIts;
 
@@ -147,6 +163,7 @@ public class SalaryDraft extends SalaryPreview {
 		draftDeductions = new Stack<Deduction>();
 		draftEmbargos = new Stack<Deduction>();
 		draftLeaveIts = new Stack<ITDataPerson>();
+		draftBonuses = new Stack<Bonus>();
 	}
 
 	public SalaryDraft clear() {
@@ -339,13 +356,36 @@ public class SalaryDraft extends SalaryPreview {
 		events.add(warning);
 	}
 
-	public void addPaymentError(PaymentEvent paymentEvent) {
+	public Bonus addDraftBonus(Bonus bonus) {
 
+		if (bonus.getId() == null) {
+			bonus.setId((-1) * (draftBonuses.size() + 1));
+		}
+
+		Bonus oldBonus = null;
+		int i = draftBonuses.indexOf(bonus);
+		if (i != -1) {
+			oldBonus = draftBonuses.remove(i);
+		}
+		draftBonuses.add(bonus);
+		return oldBonus;
+	}
+
+	public boolean removeDraftBonus(Bonus bonus) {
+		return draftBonuses.remove(bonus);
+	}
+
+
+	public void addPaymentError(PaymentEvent paymentEvent) {
 		events.add(paymentEvent);
 	}
 
 	public void addDeductionEevent(DeductionEvent deductionEvent) {
 		events.add(deductionEvent);
+	}
+
+	public void addBonusEvent(BonusEvent bonusEvent) {
+		events.add(bonusEvent);
 	}
 
 	public List<Payment> getPayments() {
@@ -407,15 +447,24 @@ public class SalaryDraft extends SalaryPreview {
 		return this;
 	}
 
+
 	public List<Deduction> getDraftEmbargos() {
 		return draftEmbargos;
 	}
-
+	
 	public SalaryDraft setDraftEmbargos(List<Deduction> draftEmbargos) {
 		this.draftEmbargos = draftEmbargos;
 		return this;
 	}
 
+	public List<Bonus> getDraftBonuses() {
+		return draftBonuses;
+	}
+
+	public void setDraftBonuses(List<Bonus> draftBonuses) {
+		this.draftBonuses = draftBonuses;
+	}
+	
 	public SalaryDraft setDraftLeaveIts(List<ITDataPerson> draftLeaveIts) {
 		this.draftLeaveIts = draftLeaveIts;
 		return this;

@@ -21,12 +21,14 @@ import com.code.aon.common.AonException;
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
+import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.esferalia.aon.payroll.ContractBonus;
 import com.esferalia.aon.payroll.ContractDeduction;
 import com.esferalia.aon.payroll.ContractEmbargo;
 import com.esferalia.aon.payroll.ContractPayment;
@@ -37,6 +39,7 @@ import com.esferalia.aon.payroll.calculator.DelegateContractSalaryCalculatorCont
 import com.esferalia.aon.payroll.calculator.DelegateSQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.HierarchyDeductions;
 import com.esferalia.aon.payroll.calculator.HierarchyIterator;
+import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
@@ -84,6 +87,26 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 	}
 
 	static class DraftDeduction extends ContractDeduction {
+		private String name;
+
+		@Override
+		@Transient
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		@Override
+		@Transient
+		public ExpressionScope getScope() {
+			return ExpressionScope.SALARY;
+		}
+	}
+
+	static class DraftBonus extends ContractBonus {
 		private String name;
 
 		@Override
@@ -174,6 +197,28 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 			// the specified element ( id )
 			if (ids.add(id))
 				return super.next(e);
+			else
+				return null;
+		}
+	}
+
+	static class DraftHierarchyBonus<T extends IContractBonus> extends
+			HierarchyIterator<T> {
+
+		private Set<Integer> ids = new HashSet<Integer>();
+
+		public DraftHierarchyBonus(Iterator<T>... childs) {
+			super(childs);
+		}
+
+		@Override
+		protected T next(T e) {
+			Integer id = e.getId();
+			// Not it's not tricky. Remember we use Set, and Set's
+			// add methos return true if this Set not already contain
+			// the specified element ( id )
+			if (ids.add(id))
+				return e;
 			else
 				return null;
 		}
@@ -338,6 +383,12 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 				super.getContractPayments());
 	}
 
+	@Override
+	public Collection<IContractBonus> getContractBonus() throws AonException {
+		return new DraftHierarchyBonus(getDraftBonuses().iterator(), 
+				super.getContractBonus().iterator());
+	}
+
 	protected SalaryDraft getDraft() {
 		return draft;
 	}
@@ -402,6 +453,25 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		}
 
 		return embargos;
+	}
+
+	private Collection<IContractBonus> getDraftBonuses() {
+		Collection<IContractBonus> bonuses = new LinkedList<IContractBonus>();
+
+		for (Bonus bonus : draft.getDraftBonuses()) {
+
+			DraftBonus draftBonus = new DraftBonus();
+
+			draftBonus.setId(bonus.getId());
+			draftBonus.setEndDate(resetTime(bonus.getEndDate()));
+			draftBonus.setStartDate(resetTime(bonus.getStartDate()));
+			draftBonus.setExpression(bonus.getExpression());
+			draftBonus.setDescription(bonus.getDescription());
+
+			bonuses.add(draftBonus);
+		}
+
+		return bonuses;
 	}
 
 	private IContractPayment getDraftPayment(Payment payment) {

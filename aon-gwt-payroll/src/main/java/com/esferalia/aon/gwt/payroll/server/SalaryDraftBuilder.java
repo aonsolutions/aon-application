@@ -23,6 +23,7 @@ import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.BonusEvent;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.DeductionEvent;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Event;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.PaymentEvent;
@@ -69,6 +70,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 
 	public SalaryDraftBuilder(SalaryDraft salaryDraft) {
 		this.salaryDraft = salaryDraft;
+		defined = Collections.emptyMap();
 		clearSalaryDraft();
 	}
 
@@ -388,14 +390,12 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 	public void addBonus(Double amount, String description, IBonus bonus,
 			Map<String, ITimedVariable<?>> context) {
 		addContext(context);
-
-		Bonus myBonus = new Bonus();
+		
+		IContractBonus contractBonus = (IContractBonus) bonus;
+		
+		Bonus myBonus = newBonus(contractBonus);
 		myBonus.setAmount(amount);
-		myBonus.setName(bonus.getName());
 		myBonus.setDescription(description);
-		myBonus.setExpression(bonus.getExpression());
-		myBonus.setDescription(bonus.getDescription());
-		myBonus.setType(getBonusType(bonus.getType()));
 
 		salaryDraft.addBonus(myBonus);
 
@@ -668,7 +668,6 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 	@Override
 	public void onCompileError(IContractDeduction contractDeduction,
 			String message) {
-		// TODO Auto-generated method stub
 		DeductionEvent event = new DeductionEvent();
 		event.setMessage(message);
 		Deduction deduction = newDeduction(contractDeduction);
@@ -679,7 +678,11 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 
 	@Override
 	public void onCheckError(IContractBonus bonus, String message) {
-		// TODO Auto-generated method stub
+		BonusEvent bonusEvent = new BonusEvent();
+		bonusEvent.setMessage(message);
+		bonusEvent.setType(Event.Type.WARNING);
+		bonusEvent.setBonus(newBonus(bonus));
+		salaryDraft.addBonusEvent(bonusEvent);
 
 	}
 
@@ -822,6 +825,17 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 			payment.setDefined(defined.get(contractPayment.getName()));
 
 		return payment;
+	}
+	
+	private Bonus newBonus(IContractBonus contractBonus) {
+		Bonus bonus = new Bonus();
+		bonus.setId(contractBonus.getId());
+		bonus.setScope(Scope.CONTRACT);
+		bonus.setName(bonus.getName());
+		bonus.setExpression(contractBonus.getExpression());
+		bonus.setDescription(contractBonus.getDescription());
+		bonus.setType(getBonusType(contractBonus.getType()));
+		return bonus;
 	}
 
 	private CompositePayment getPayment(Integer id) {

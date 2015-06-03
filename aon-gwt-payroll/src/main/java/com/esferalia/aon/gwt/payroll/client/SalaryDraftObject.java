@@ -161,6 +161,25 @@ public class SalaryDraftObject implements IContextProvider {
 
 	}
 
+	class UndoableBonusEdit extends UndoableEdit<Bonus> {
+
+		public UndoableBonusEdit(Bonus oldT, Bonus newT) {
+			super(oldT, newT);
+		}
+
+		@Override
+		void addDraft(Bonus t) {
+			salaryDraft.addDraftBonus(t);
+		}
+
+		@Override
+		void removeDraft(Bonus t) {
+			salaryDraft.removeDraftBonus(t);
+
+		}
+
+	}
+
 	private Date draftEndDate;
 	private Date draftStartDate;
 
@@ -346,6 +365,11 @@ public class SalaryDraftObject implements IContextProvider {
 	public void getDeductionConcepts(AsyncCallback<List<Deduction>> callback) {
 		int employeeId = salaryDraft.getEmployee().getId();
 		employeesServiceAsync.getAvailableDeductions(employeeId, callback);
+	}
+
+	public void getBonusConcepts(AsyncCallback<List<Bonus>> callback) {
+		int employeeId = salaryDraft.getEmployee().getId();
+		employeesServiceAsync.getAvailableBonuses(employeeId, callback);
 	}
 
 	public SalaryDraft asSalaryPreview() {
@@ -620,6 +644,13 @@ public class SalaryDraftObject implements IContextProvider {
 		return oldVar;
 	}
 
+	public Bonus addDraftBonus(Bonus bonus) {
+		Bonus oldBonus = salaryDraft.addDraftBonus(bonus);
+
+		undoManager.add(new UndoableBonusEdit(oldBonus, bonus));
+		return oldBonus;
+	}
+
 	public void renameVariable(Variable oldVar, String newName) {
 
 		String oldName = oldVar.getName();
@@ -814,6 +845,8 @@ public class SalaryDraftObject implements IContextProvider {
 				draft.getDraftDeductions());
 		setStartAndEndDates(draftStartDate, draftEndDate,
 				draft.getDraftEmbargos());
+		setStartAndEndDates(draftStartDate, draftEndDate,
+				draft.getDraftBonuses());
 	}
 
 	private static <T extends HasStartAndEndDate> void setStartAndEndDates(
