@@ -5,6 +5,7 @@ import static com.esferalia.aon.gwt.common.server.AonServletUtils.disableAutoCom
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.enableAutoCommit;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.rollback;
+import static com.esferalia.aon.gwt.payroll.server.EmployeesServiceHelper.getAvailableBonuses;
 import static com.esferalia.aon.payroll.sql.SQLConstants.AGREEMENT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.DOMAIN;
@@ -1509,8 +1510,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			initFacesContext();
 
 			conn = getConnection();
-			
-			return EmployeesServiceHelper.getAvailableBonuses(conn, employeeId, 0 );
+			List<Bonus> availableBonuses = new ArrayList<Bonus>();
+			for ( Bonus bonus : EmployeesServiceHelper.getAvailableBonuses(conn, employeeId, 0 ))
+				if ( bonus.getType() == null )
+					availableBonuses.add(bonus);
+				
+				return availableBonuses;
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

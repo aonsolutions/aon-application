@@ -207,20 +207,14 @@ public class EmployeesServiceHelper {
 	}
 
 	public static List<Bonus> getAvailableBonuses(Connection conn,
-			int employeeId, int... domains) throws IllegalArgumentException {
+			int employeeId, Integer... domains) throws IllegalArgumentException {
 		try {
 			List<Bonus> availableBonuses = new ArrayList<Bonus>();
 			AON.getAvailableBonuses(
 					new AONContext(conn),
 					props -> {
-						Filter filter = props.getDomainProperty()
-								.eq(domains[0]);
-//						props.getDomainProperty().in(domains);
-						for (int i = 1; i < domains.length; i++)
-							filter = filter.or(props.getDomainProperty().eq(
-									domains[i]));
-						filter = filter.and(props.getIsUnknowProperty().eq(true));
-						return filter;
+						return props.getDomainProperty().in(domains);
+//								.and(props.getIsUnknowProperty().eq(true));
 					}).map(b -> {
 				Bonus bonus = new Bonus();
 				bonus.setId(b.getId());

@@ -51,7 +51,7 @@ public class EmployeesServiceHelperTest extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 		
-		int domains  []= new int [BonusType.values().length];
+		Integer domains  []= new Integer [BonusType.values().length];
 		
 		for (int i = 0 ; i<  BonusType.values().length; i++ )
 			domains[i]=addBonusConcept(aonContext, BonusType.values()[i],
