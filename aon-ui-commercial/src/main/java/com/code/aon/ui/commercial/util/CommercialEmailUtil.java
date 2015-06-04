@@ -48,7 +48,7 @@ public class CommercialEmailUtil extends CompanyEmailUtil {
 		String[] emails = null;
 		Target target = offer.getTarget();
 		if ( target != null ) {
-			emails = getAdministrativeEmails(target.getRegistry());
+			emails = getCommercialEmails(target.getRegistry());
 		}
 		initMessageController(messageController, emails);
 		messageController.setSubject( getEmailSubject(offer) );
