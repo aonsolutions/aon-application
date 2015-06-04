@@ -18,7 +18,9 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationGuest;
+import com.esferalia.aon.ui.pms.controller.ProjectReservationGuestController;
 
 public class ProjectReservationGuestControllerListener extends ControllerAdapter {
 
@@ -26,7 +28,9 @@ public class ProjectReservationGuestControllerListener extends ControllerAdapter
 	
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
-		ProjectReservationGuest to = (ProjectReservationGuest)event.getController().getTo();
+		ProjectReservationGuestController controller = (ProjectReservationGuestController)event.getController();
+		ProjectReservationGuest to = (ProjectReservationGuest)controller.getTo();
+		to.setProjectReservation((ProjectReservation)controller.getMasterController().getTo());
 		to.setDocumentCountry(Country.ES);
 	}
 

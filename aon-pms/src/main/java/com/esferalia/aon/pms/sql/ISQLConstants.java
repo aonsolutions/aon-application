@@ -56,6 +56,7 @@ public interface ISQLConstants {
 	String RECTIFICATION_TYPE = "rectificationType";
 	String RECTIFICATION_INVOICE = "rectificationInvoice";
 
+	String GUEST_TYPE = "guest_type";
 	String PERSON = "person";
 	String SURVEY = "survey";
 	String QUESTION = "question";

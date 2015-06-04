@@ -592,6 +592,12 @@ color:#000;
 .aon-icon-contact{
 	background:transparent url(images/aon-icon/aon-icon-contact.png) scroll left center no-repeat;
  }
+.aon-icon-contact-error{
+	background:transparent url(images/aon-icon/aon-icon-contact-error.png) scroll left center no-repeat;
+ }
+.aon-icon-contact-new{
+	background:transparent url(images/aon-icon/aon-icon-contact-new.png) scroll left center no-repeat;
+ }
 .aon-icon-contactGroup{
 	background:transparent url(images/aon-icon/aon-icon-contactGroup.png) scroll left center no-repeat;
  }
@@ -763,6 +769,9 @@ color:#000;
 .aon-icon-mailInbox{
 	background:transparent url(images/aon-icon/aon-icon-mailInbox.png) scroll left center no-repeat;
  }
+.aon-icon-mailInbox-error{
+	background:transparent url(images/aon-icon/aon-icon-mailInbox-error.png) scroll left center no-repeat;
+ }
 .aon-icon-mailInbox-read{
 	background:transparent url(images/aon-icon/aon-icon-mailInbox-read.png) scroll left center no-repeat;
  }
@@ -845,6 +854,9 @@ color:#000;
 /** avisos icons **/
 .aon-icon-call{
 	background:transparent url(images/aon-icon/aon-icon-call.png) scroll left center no-repeat;
+	}
+.aon-icon-call-error{
+	background:transparent url(images/aon-icon/aon-icon-call-error.png) scroll left center no-repeat;
 	}
 .aon-icon-visit{
 	background:transparent url(images/aon-icon/aon-icon-visit.png) scroll left center no-repeat;
