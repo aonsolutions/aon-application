@@ -86,7 +86,7 @@ public class FacturaeSigner {
             dataToSign.setAddPolicy(true);
             dataToSign.setPolicyKey("facturae31");
 
-            dataToSign.addClaimedRol(new SimpleClaimedRole("Emisor"));
+            dataToSign.addClaimedRol(new SimpleClaimedRole("emisor"));
             dataToSign.setEnveloped(true);
             dataToSign.addObject(new ObjectToSign(new AllXMLToSign(), "Factura electrónica", null, "text/xml", null));
             dataToSign.setDocument(doc);
