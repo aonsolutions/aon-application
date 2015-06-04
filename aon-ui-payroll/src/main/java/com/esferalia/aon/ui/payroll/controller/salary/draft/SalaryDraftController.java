@@ -450,6 +450,10 @@ public class SalaryDraftController extends BasicController implements ContractSa
 	}
 
 	@Override
+	public void onRemove(IContractBonus payment) {
+	}
+
+	@Override
 	public void onCheckError(IContractPayment payment, String message) {
 		Warning warning = new Warning();
 		warning.title = AonUtil.getMessage(PAYROLL_SALARY_PAYMENTS);
