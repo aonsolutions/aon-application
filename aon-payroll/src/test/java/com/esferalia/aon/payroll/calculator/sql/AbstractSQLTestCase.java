@@ -896,10 +896,10 @@ public abstract class AbstractSQLTestCase {
 				.getDslContext()
 				.insertInto(BONUS_CONCEPT)
 				.set(BONUS_CONCEPT.DOMAIN, domain)
-				.set(BONUS_CONCEPT.TYPE, (byte) type.ordinal())
+				.set(BONUS_CONCEPT.TYPE, type != null ? (byte) type.ordinal(): null)
 				.set(BONUS_CONCEPT.EXPRESSION, expression)
 				.set(BONUS_CONCEPT.DESCRIPTION,
-						type.getName(new Locale("es", "ES"))).returning()
+						type != null ? type.getName(new Locale("es", "ES")): expression).returning()
 				.fetchOne();
 	}
 
