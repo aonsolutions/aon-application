@@ -729,6 +729,12 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 		// name, implicit.getValue(implicit.getPeriod()),
 		// redefined.getValue(redefined.getPeriod())));
 	}
+	
+	@Override
+	public void onRemove(IContractBonus contractBonus) {
+		Bonus draftBonus = newBonus(contractBonus);
+		salaryDraft.addBonus(draftBonus);
+	}
 
 	// -------------------------------------------------------------------------
 

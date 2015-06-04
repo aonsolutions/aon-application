@@ -174,6 +174,7 @@ public class SalaryDraft extends SalaryPreview {
 		clearPayments();
 		clearDeductions();
 		clearEmbargos();
+		clearBonuses();
 		return this;
 	}
 
@@ -195,6 +196,7 @@ public class SalaryDraft extends SalaryPreview {
 		draftContext.clear();
 		draftPayments.clear();
 		draftDeductions.clear();
+		draftBonuses.clear();
 		draftEmbargos.clear();
 		draftLeaveIts.clear();
 		return this;
@@ -203,7 +205,9 @@ public class SalaryDraft extends SalaryPreview {
 	public boolean hasDrafts() {
 		return (draftContext.size() > 0) || (draftPayments.size() > 0)
 				|| (draftDeductions.size() > 0) || (draftEmbargos.size() > 0)
-				|| (draftLeaveIts.size() > 0);
+				|| (draftLeaveIts.size() > 0)
+				|| (draftBonuses.size() > 0)
+				;
 	}
 
 	public SalaryDraft addPayment(Payment payment) {
@@ -411,6 +415,7 @@ public class SalaryDraft extends SalaryPreview {
 	public void clearEmbargos() {
 		embargos.clear();
 	}
+
 
 	public List<Event> getEvents() {
 		return events;

@@ -114,8 +114,9 @@ public class  Salary implements Serializable {
 		return type;
 	}
 	
-	public void setType(Type type) {
+	public  <T extends Salary> T setType(Type type) {
 		this.type = type;
+		return thix();
 	}
 
 

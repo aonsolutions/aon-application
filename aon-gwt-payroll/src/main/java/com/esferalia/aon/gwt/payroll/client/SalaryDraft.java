@@ -1571,6 +1571,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			if (item != null) {
 				bonus.setType(item.getType());
 				bonus.setName(item.getName());
+				bonus.setConceptId(item.getId());
 			} else {
 				bonus.setType(Bonus.Type.SOCIAL_SECURITY); // TODO: Sure?
 			}
@@ -2621,8 +2622,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				break;
 		}
 
-		dumpEvents(salaryDraftObject.getEvents());
-		eventsTableSpace.setVisible(eventsTable.getRowCount() > 0);
 
 		dbSalaryCheck.setVisible(salaryDraftObject.hasDbSalary());
 		setDbVisible(salaryDraftObject.hasDbSalary()
@@ -2633,6 +2632,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		if (costsCheck.getValue())
 			showCosts(true);
 
+		dumpEvents(salaryDraftObject.getEvents());
+		eventsTableSpace.setVisible(eventsTable.getRowCount() > 0);
 	}
 
 	private void initAvailablePayments() {
@@ -3017,9 +3018,9 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			else if (event instanceof HasDeduction)
 				itemButton = getDeductionButton((HasDeduction) event,
 						styles[0], styles[1]);
-//			else if (event instanceof HasBonus)
-//				itemButton = getBonusButton((HasBonus) event,
-//						styles[0], styles[1]);
+			else if (event instanceof HasBonus)
+				itemButton = getBonusButton((HasBonus) event,
+						styles[0], styles[1]);
 
 			if (itemButton != null) {
 				eventsTable.setWidget(row, 2, itemButton);
@@ -3672,7 +3673,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		int col = count % cols;
 
 		if (context.isEmpty()) {
-			if (row == 0 && col == 0)
+			if (row == 0 || col == 0)
 				return null;
 			for (; col < cols; col++)
 				contextTable.addCell(row);
@@ -4059,11 +4060,54 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		return paymentButton;
 	}
 
+	private StyleToggleButton getBonusButton(
+			final HasBonus hasBonus, final String iconStyleName,
+			final String textStyleName) {
+
+		StyleToggleButton paymentButton = new StyleToggleButton(
+				"aon-icon-file-entrance", "aon-icon-file-exit-cancel");
+
+		paymentButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+		paymentButton.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+			private Element tr;
+
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				boolean down = event.getValue();
+				if (down) {
+					if ( !costsCheck.getValue()){
+						costsCheck.setValue(true);
+						showCosts(true);
+					}
+					tr = showBonus(hasBonus.getBonus(), iconStyleName, textStyleName);
+				} else {
+					removePayment(tr);
+					removeBonus(hasBonus.getBonus());
+				}
+
+			}
+		});
+
+		return paymentButton;
+	}
+
 	private void removePayment(Element tr) {
 		RowFormatter formatter = paymentsTable.getRowFormatter();
 		for (int row = 0; row < paymentsTable.getRowCount(); row++) {
 			if (tr == formatter.getElement(row)) {
 				paymentsTable.removeRow(row);
+				return;
+			}
+		}
+	}
+
+
+	private void removeBonus(Bonus bonus) {
+		List<Bonus> bonuses = salaryDraftObject.getBonuses();
+		for (int i = 0; i < bonuses.size(); i++) {
+			if (bonus == bonuses.get(i)) {
+				bonuses.remove(i);
 				return;
 			}
 		}
@@ -4089,7 +4133,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			}
 		}
 	}
-
 	private Element showPayment(Payment payment, String iconStyleName,
 			String textStyleName) {
 
@@ -4148,6 +4191,26 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		return paymentsTable.getRowFormatter().getElement(idx);
 	}
 
+	private Element showBonus(Bonus bonus, String iconStyleName,
+			String textStyleName) {
+
+		List<Bonus> bonuses = salaryDraftObject.getBonuses();
+		bonuses.add(bonus);
+
+		int idx = paymentsTable.getRowCount() - 3; 
+		paymentsTable.insertRow(idx);
+
+		dumpItem(bonus, idx, iconStyleName,
+				new BonusChangeHandler<TextBox>(bonus), true);
+
+		CellFormatter fomatter = paymentsTable.getCellFormatter();
+		for (int col = 0; col < paymentsTable.getCellCount(idx); col++) {
+			fomatter.addStyleName(idx, col, textStyleName);
+		}
+
+		return paymentsTable.getRowFormatter().getElement(idx);
+	}
+
 	private void showCosts() {
 		showCosts(costsCheck.getValue());
 	}
@@ -4160,8 +4223,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		int costsCount = salaryDraftObject.getCosts().size();
 
 		if (show) {
-			showCosts(costsBeforeRow);
-			showBonus(costsBeforeRow + costsCount);
+			dumpCosts(costsBeforeRow);
+			dumpBonuses(costsBeforeRow + costsCount);
 		} else {
 			int bonusCount = salaryDraftObject.getBonuses().size();
 			hideCosts(costsBeforeRow - (costsCount + bonusCount));
@@ -4172,7 +4235,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		}
 	}
 
-	private void showCosts(int beforeRow) {
+	private void dumpCosts(int beforeRow) {
 		List<Deduction> costs = salaryDraftObject.getCosts();
 		for (int i = 0; i < costs.size(); i++) {
 			Deduction cost = costs.get(i);
@@ -4191,19 +4254,21 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		}
 	}
 
-	private void showBonus(int beforeRow) {
+	private void dumpBonuses(int beforeRow) {
 		List<Bonus> bonuses = salaryDraftObject.getBonuses();
 		for (int i = 0; i < bonuses.size(); i++) {
 			Bonus bonus = bonuses.get(i);
 			paymentsTable.insertRow(beforeRow + i);
-			Bonus.Type type = bonus.getType();
-
-			Widget percentWidget = new InlineLabel();
-			String description = StringUtils.abbreviate(bonus.getDescription(),
-					DESCRIPTION_MAX_LENGTH);
-
-			dumpItem(bonus, beforeRow + i, getIconRowStyle(bonus),
-					new BonusChangeHandler<TextBox>(bonus), true);
+			if ( bonus.getAmount() != null ){
+				dumpItem(bonus, beforeRow + i, getIconRowStyle(bonus),
+						new BonusChangeHandler<TextBox>(bonus), true);
+			}else{
+				String styles[] = eventStyles.get(Event.Type.WARNING);
+				dumpItem(bonus, beforeRow + i, styles[0],
+						new BonusChangeHandler<TextBox>(bonus), true);
+				addStyle(paymentsTable,  beforeRow + i, styles[1]);
+			}
+			
 		}
 		paymentsTable.insertRow(beforeRow + bonuses.size());
 		newBonusHandler = insertNewBonusRow(beforeRow + bonuses.size());

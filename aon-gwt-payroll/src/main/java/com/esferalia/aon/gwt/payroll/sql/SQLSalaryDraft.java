@@ -8,6 +8,7 @@ import java.sql.Types;
 import java.util.Calendar;
 import java.util.Date;
 
+import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
@@ -18,6 +19,8 @@ import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelCategoryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementPaymentColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.BonusConceptColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.ContractBonusColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractDeductionColumns;
@@ -25,11 +28,6 @@ import com.esferalia.aon.payroll.sql.SQLConstants.ContractEmbargoColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.DeductionConceptColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.SalaryBonusColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.SalaryCostColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.SalaryDeductionColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.SalaryPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDeductionColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemPaymentColumns;
@@ -80,6 +78,14 @@ public class SQLSalaryDraft {
 			if (!"REMOVE()".equals(expression)
 					|| inSystem(conn, embargo, domain, parentDomain)) {
 				insertEmbargo(conn, embargo, contract, domain);
+			}
+		}
+		for (Bonus bonus : draft.getDraftBonuses()) {
+			makeRoom(conn, bonus, contract);
+			String expression = bonus.getExpression();
+			if (!"REMOVE()".equals(expression)
+					/* Nooo System */) {
+				insertBonus(conn, bonus, contract, domain);
 			}
 		}
 	}
@@ -580,6 +586,17 @@ public class SQLSalaryDraft {
 		}
 	}
 
+	private static final String CONTRACT_BONUS_INSERT = "INSERT INTO "
+			+ SQLConstants.CONTRACT_BONUS + "( "
+			+ ContractBonusColumns.DOMAIN + ", "
+			+ ContractBonusColumns.CONTRACT + ", "
+			+ ContractBonusColumns.DESCRIPTION + ", "
+			+ ContractBonusColumns.EXPRESSION + ", "
+			+ ContractBonusColumns.START_DATE + ", "
+			+ ContractBonusColumns.END_DATE + ", "
+			+ ContractBonusColumns.BONUS_CONCEPT
+			+ " ) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
 	private static final String CONTRACT_DEDUCTION_INSERT = "INSERT INTO "
 			+ SQLConstants.CONTRACT_DEDUCTION + "( "
 			+ ContractDeductionColumns.DOMAIN + ", "
@@ -606,6 +623,10 @@ public class SQLSalaryDraft {
 	private static final String CONTRACT_DEDUCTION_DELETE_SQL = "DELETE FROM "
 			+ SQLConstants.CONTRACT_DEDUCTION + " WHERE "
 			+ ContractDeductionColumns.ID + " = ? ";
+
+	private static final String CONTRACT_BONUS_DELETE_SQL = "DELETE FROM "
+			+ SQLConstants.CONTRACT_BONUS + " WHERE "
+			+ ContractBonusColumns.ID + " = ? ";
 
 	private static void makeRoom(Connection conn, Deduction deduction,
 			Integer contract) throws SQLException {
@@ -669,6 +690,78 @@ public class SQLSalaryDraft {
 
 				// delete old
 				Integer id = rs.getInt(ContractPaymentColumns.ID);
+				deleteStmt.setInt(1, id);
+				deleteStmt.execute();
+			}
+
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (queryStmt != null)
+				queryStmt.close();
+			if (deleteStmt != null)
+				deleteStmt.close();
+			if (insertStmt != null)
+				insertStmt.close();
+		}
+	}
+
+	private static void makeRoom(Connection conn, Bonus bonus,
+			Integer contract) throws SQLException {
+
+		ResultSet rs = null;
+		PreparedStatement queryStmt = null;
+		PreparedStatement insertStmt = null;
+		PreparedStatement deleteStmt = null;
+		try {
+
+			java.sql.Date endDate = SQLUtils.date2sql(bonus.getEndDate());
+			java.sql.Date startDate = SQLUtils.date2sql(bonus.getStartDate());
+
+			String sql = "SELECT * " + " FROM "
+					+ SQLConstants.CONTRACT_BONUS + " WHERE "
+					+ ContractBonusColumns.ID + " = ? ";
+
+			queryStmt = conn.prepareStatement(sql);
+			queryStmt.setInt(1, bonus.getId());
+
+			deleteStmt = conn.prepareStatement(CONTRACT_BONUS_DELETE_SQL);
+			insertStmt = conn.prepareStatement(CONTRACT_BONUS_INSERT);
+
+			rs = queryStmt.executeQuery();
+			if (rs.next()) {
+				Date sqlStartDate = rs.getDate(ContractDataColumns.START_DATE);
+				Date sqlEndDate = rs.getDate(ContractDataColumns.END_DATE);
+
+				// Be care of primitive values ( int, short... ) that can be
+				// null.
+				// With 'getXXX' methods if the value is SQL NULL, the value
+				// returned is 0.
+				SQLUtils.setInt(insertStmt, 1,
+						rs.getInt(ContractBonusColumns.DOMAIN)); // NOT NULL
+				SQLUtils.setInt(insertStmt, 2,
+						rs.getInt(ContractBonusColumns.CONTRACT)); // NOT  NULL
+				SQLUtils.setString(insertStmt, 3,
+						rs.getString(ContractBonusColumns.DESCRIPTION));
+				SQLUtils.setString(insertStmt, 4,
+						rs.getString(ContractBonusColumns.EXPRESSION));
+				SQLUtils.setDate(insertStmt, 5, sqlStartDate);
+				SQLUtils.setDate(insertStmt, 6, sqlEndDate);
+				SQLUtils.set(insertStmt, 7,
+						rs.getObject(ContractBonusColumns.BONUS_CONCEPT), Types.INTEGER);
+
+				if (Period.compare(startDate, sqlStartDate) > 0) {
+					SQLUtils.setDate(insertStmt, 6, SQLUtils.date2sql(addDay(startDate, -1)));
+					insertStmt.execute();
+					SQLUtils.setDate(insertStmt, 6, sqlEndDate); // restores original end date for subsequent inserts
+				}
+				if (Period.compare(endDate, sqlEndDate) < 0) {
+					SQLUtils.setDate(insertStmt, 5, SQLUtils.date2sql(addDay(endDate, 1)));
+					insertStmt.execute();
+				}
+
+				// delete old
+				Integer id = rs.getInt(ContractBonusColumns.ID);
 				deleteStmt.setInt(1, id);
 				deleteStmt.execute();
 			}
@@ -774,6 +867,31 @@ public class SQLSalaryDraft {
 		}
 	}
 
+	private static void insertBonus(Connection conn, Bonus bonus,
+			Integer contract, Integer domain) throws SQLException {
+		PreparedStatement insertStmt = null;
+		try {
+			if (bonus.getConceptId() != null)
+				clearConceptInherit(conn, bonus);
+
+			insertStmt = conn.prepareStatement(CONTRACT_BONUS_INSERT);
+
+			SQLUtils.setInt(insertStmt, 1, domain);
+			SQLUtils.setInt(insertStmt, 2, contract);
+			SQLUtils.setString(insertStmt, 3, bonus.getDescription());
+			SQLUtils.setString(insertStmt, 4, bonus.getExpression());
+			SQLUtils.setDate(insertStmt, 5,SQLUtils.date2sql(bonus.getStartDate()));
+			SQLUtils.setDate(insertStmt, 6, SQLUtils.date2sql(bonus.getEndDate()));
+			SQLUtils.setInt(insertStmt, 7, bonus.getConceptId());
+
+			insertStmt.execute();
+
+		} finally {
+			if (insertStmt != null)
+				insertStmt.close();
+		}
+	}
+
 	private static void clearConceptInherit(Connection conn, Deduction deduction)
 			throws SQLException {
 
@@ -801,6 +919,37 @@ public class SQLSalaryDraft {
 				if (SQLUtils.sameString(expression, deduction.getExpression()))
 					deduction.setExpression(null);
 
+			}
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+		}
+	}
+
+	private static void clearConceptInherit(Connection conn, Bonus bonus)
+			throws SQLException {
+
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+			String sql = "SELECT * FROM " + SQLConstants.BONUS_CONCEPT
+					+ " WHERE " + BonusConceptColumns.ID + " = ? ";
+
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, bonus.getConceptId());
+
+			rs = stmt.executeQuery();
+			if (rs.next()) {
+				String description = rs
+						.getString(BonusConceptColumns.DESCRIPTION);
+				if (SQLUtils.sameString(description, bonus.getDescription()))
+					bonus.setDescription(null);
+				String expression = rs
+						.getString(BonusConceptColumns.EXPRESSION);
+				if (SQLUtils.sameString(expression, bonus.getExpression()))
+					bonus.setExpression(null);
 			}
 		} finally {
 			if (rs != null)
