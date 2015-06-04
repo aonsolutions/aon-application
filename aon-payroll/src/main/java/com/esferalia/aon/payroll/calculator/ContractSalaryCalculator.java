@@ -64,6 +64,8 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 
 		public void onCompileError(String variableName, String message);
 
+		public void onRemove(IContractBonus bonus);
+
 		public void onRemove(IContractDeduction payment);
 
 		public void onRemove(IContractPayment payment);
@@ -115,6 +117,10 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 
 		@Override
 		public void onCompileError(String variableName, String message) {
+		}
+		
+		@Override
+		public void onRemove(IContractBonus bonus) {
 		}
 
 		@Override
@@ -807,7 +813,7 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 				} catch (CheckException e) {
 					onCheckError(contractBonus, e.getMessage());
 				}catch (RemoveException | RemoveVariableError e) {
-					// TODO: Something ??? It's really necessary...
+					onRemove(contractBonus);
 				} 
 			}
 
@@ -1072,6 +1078,12 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 			for (int i = 0; i < variableNames.length; i++) {
 				listener.onUndefinedData(deduction, variableNames[i], message);
 			}
+		}
+	}
+
+	private void onRemove(IContractBonus bonus) {
+		if (listener != null) {
+			listener.onRemove(bonus);
 		}
 	}
 
