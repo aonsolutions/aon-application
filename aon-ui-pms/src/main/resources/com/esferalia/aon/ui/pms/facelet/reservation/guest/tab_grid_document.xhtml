@@ -29,7 +29,7 @@
 					rendered="#{controller.to.person.id != null and controller.to.guestNewInHotel}" />
 				<aon:outputText value="&#160;" styleClass="aon-icon-commandButton aon-icon-contact-new"
 					title="#{bundle.pms_reservation_guest_type_newInChain}"
-					rendered="#{controller.to.person.id == null and !empty controller.to.document}" />
+					rendered="#{!empty controller.to.document and !controller.to.guestNewInHotel and !controller.to.guestPreviouslyStayedInHotel}" />
 				<aon:outputText value="&#160;" styleClass="aon-icon-commandButton aon-icon-contact-error"
 					title="#{bundle.pms_reservation_guest_type_previouslyStayedInHotel}"
 					rendered="#{controller.to.person.id != null and controller.to.guestPreviouslyStayedInHotel}" />

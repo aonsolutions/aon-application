@@ -135,6 +135,8 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 				reservationIO.setStatus(ReservationStatus.values()[reservationIORs.getInt(STATUS)]);
 				reservationIO.setHolder(BookingHolder.values()[reservationIORs.getInt(HOLDER)]);
 				reservationIO.setGuest(reservationIORs.getString(GUEST));
+				reservationIO.setEmail(reservationIORs.getString(EMAIL));
+				reservationIO.setPhone(reservationIORs.getString(PHONE));
 				reservationIO.setAgency(reservationIORs.getString(AGENCY));
 				reservationIO.setTotal(reservationIORs.getObject(TOTAL) != null ? reservationIORs.getDouble(TOTAL) : 0);
 				reservationIO.setComments(reservationIORs.getString(COMMENTS));
@@ -175,6 +177,10 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		stmt.append(", IF(R.alias IS NOT NULL AND R.alias != '', R.alias, R.name) AS " + AGENCY + ", P.code AS " + ROOM_CODE + ", P.name AS " + ROOM_TYPE);
 		stmt.append(", (SELECT CONCAT(PRG.name, ' ', PRG.surname) FROM project_reservation_guest AS PRG");
 		stmt.append("     WHERE PRG.project_reservation = PR.project AND guest_index = 1 LIMIT 1) AS " + GUEST);
+		stmt.append(", (SELECT PRG.email FROM project_reservation_guest AS PRG");
+		stmt.append("     WHERE PRG.project_reservation = PR.project AND guest_index = 1 LIMIT 1) AS " + EMAIL);
+		stmt.append(", (SELECT PRG.phone FROM project_reservation_guest AS PRG");
+		stmt.append("     WHERE PRG.project_reservation = PR.project AND guest_index = 1 LIMIT 1) AS " + PHONE);
 		stmt.append(", (SELECT A.name FROM project_reservation_room_detail AS PRRD, asset_activity AS AA, asset AS A");
 		stmt.append("     WHERE PRRD.project_reservation_room = B.project_reservation_room AND PRRD.asset_activity = AA.id");
 		stmt.append("     AND AA.date = IF (B.stay_type = 0, B.stay_date, DATE_SUB(B.stay_date, INTERVAL 1 DAY))");
@@ -270,6 +276,8 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		private ReservationStatus status;
 		private BookingHolder holder;
 		private String guest;
+		private String email;
+		private String phone;
 		private String agency;
 		private Double total;
 		private String comments;
@@ -339,6 +347,20 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		}
 		public void setGuest(String guest) {
 			this.guest = guest;
+		}
+
+		public String getEmail() {
+			return email;
+		}
+		public void setEmail(String email) {
+			this.email = email;
+		}
+
+		public String getPhone() {
+			return phone;
+		}
+		public void setPhone(String phone) {
+			this.phone = phone;
 		}
 
 		public String getAgency() {

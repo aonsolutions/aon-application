@@ -205,6 +205,10 @@
 								<aon:outputText value="#{bundle.report_guest}" />
 							</f:facet>
 							<aon:outputText value="#{to.guest}" />
+							<aon:outputText value="&#160;" styleClass="aon-icon-call-error aon-padding-left aon-margin-left" 
+								rendered="#{empty to.phone}" />
+							<aon:outputText value="&#160;" styleClass="aon-icon-mailInbox-error aon-padding-left aon-margin-left" 
+								rendered="#{empty to.email}" />
 						</aon:column>
 						
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
