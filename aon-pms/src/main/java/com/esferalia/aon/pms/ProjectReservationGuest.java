@@ -136,6 +136,26 @@ public class ProjectReservationGuest extends ProjectReservationGuestDB implement
 	}
 
 	@Override
+	public void setName(String name) {
+		super.setName((name != null) ? name.toUpperCase() : name);
+	}
+
+	@Override
+	public void setSurname(String surname) {
+		super.setSurname((surname != null) ? surname.toUpperCase() : surname);
+	}
+
+	@Override
+	public void setSurname2(String surname2) {
+		super.setSurname2((surname2 != null) ? surname2.toUpperCase() : surname2);
+	}
+
+	@Override
+	public void setDocument(String document) {
+		super.setDocument((document!=null) ? document.toUpperCase() : document);
+	}
+
+	@Override
 	public void setPerson(Person person) {
 		super.setPerson(person);
 		setGuestType(null);

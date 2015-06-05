@@ -34,10 +34,10 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(GuestDataServlet.class.getName());
-	public static String JSON_OK_RESPONSE = "{\"result\":OK}";
-	public static String JSON_KO_RESPONSE = "{\"result\":KO}";
-	public static String SELECT_GUEST_DATA =
-			"SELECT PRG.person AS " + PERSON +
+	private static String JSON_OK_RESPONSE = "{\"result\":OK}";
+	private static String JSON_KO_RESPONSE = "{\"result\":KO}";
+	private static String SELECT_GUEST_DATA =
+			"SELECT PRG.person AS " + PERSON + ", PRG.email AS " + GUEST_EMAIL + ", PRG.phone AS " + GUEST_PHONE +
 			"	, (SELECT RM.id FROM rmedia AS RM" +
 			"		WHERE RM.registry = PRG.person AND RM.media = " + MediaType.EMAIL.ordinal() + ") AS " + EMAIL +
 			"	, (SELECT RM.id FROM rmedia AS RM" +
@@ -58,7 +58,7 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 			" AND AA.date = ?" +
 			" AND AA.asset = R.asset" +
 			" AND R.active = 1";
-	public static String SELECT_SURVEY_DATA =
+	private static String SELECT_SURVEY_DATA =
 			"SELECT S.id AS " + SURVEY + ", Q.id AS " + QUESTION +", Q.alias AS " + ALIAS + ", Q.type AS " + QUESTION_TYPE + 
 			"	, (SELECT SR.id FROM survey_response AS SR" +
 			"		WHERE SR.survey = S.id AND SR.registry = ? AND SR.response_date = ?) AS " + RESPONSE +
@@ -71,16 +71,18 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 			" AND S.id = SQ.survey" +
 			" AND SQ.question = Q.id" +
 			" ORDER BY SQ.position";
-	public static String SELECT_RESPONSE_ID =
+	private static String SELECT_RESPONSE_ID =
 			"SELECT SR.id AS " + ID + " FROM survey_response AS SR WHERE SR.survey = ? AND SR.registry = ? AND SR.response_date = ?";
-	public static String INSERT_RESPONSE_DATA =
+	private static String INSERT_RESPONSE_DATA =
 			"INSERT INTO survey_response (domain, creationDate, response_date, survey, registry) VALUES (?, ?, ?, ?, ?)";
-	public static String INSERT_RESPONSE_DETAIL_DATA =
+	private static String INSERT_RESPONSE_DETAIL_DATA =
 			"INSERT INTO survey_response_detail (domain, surveyResponse, question, value_text, value_number, value_date) VALUES (?, ?, ?, ?, ?, ?)";
-	public static String UPDATE_RESPONSE_DETAIL_DATA =
+	private static String UPDATE_RESPONSE_DETAIL_DATA =
 			"UPDATE survey_response_detail SET value_text = ?, value_number = ?, value_date = ? WHERE id = ?";
-	public static String INSERT_MEDIA_DATA =
+	private static String INSERT_MEDIA_DATA =
 			"INSERT INTO rmedia (domain, registry, media, value) VALUES (?, ?, ?, ?)";
+	private static String UPDATE_RESERVATION_GUEST =
+			"UPDATE project_reservation_guest SET ${field} = ? WHERE id = ?";
 
 	private ServletUtils servletUtils;
 
@@ -120,6 +122,7 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 		PreparedStatement insertResponseDetailStmt = null;
 		PreparedStatement updateResponseDetailStmt = null;
 		PreparedStatement insertMediaStmt = null;
+		PreparedStatement updateReservationGuestStmt = null;
 		try {
 			connection = DatabaseUtil.getConnection(domain);
 			if (connection != null) {
@@ -134,6 +137,8 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 					rs = stmt.executeQuery();
 					if (rs.next()) {
 						int person = rs.getInt(PERSON);
+						String guestEmail = rs.getString(GUEST_EMAIL);
+						String guestPhone = rs.getString(GUEST_PHONE);
 						int email = rs.getInt(EMAIL);
 						int phone = rs.getInt(PHONE);
 						int responseId = 0;
@@ -226,6 +231,18 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 									SQLUtils.setString(insertMediaStmt, 4, value);
 									insertMediaStmt.execute();
 								}
+
+								if (question.equals(EMAIL) && StringUtils.isBlank(guestEmail)) {
+									updateReservationGuestStmt = connection.prepareStatement(UPDATE_RESERVATION_GUEST.replace("${field}", EMAIL));
+									SQLUtils.setString(updateReservationGuestStmt, 1, value);
+									SQLUtils.setInt(updateReservationGuestStmt, 2, Integer.parseInt(guest));
+									updateReservationGuestStmt.execute();
+								} else if (question.equals(PHONE) && StringUtils.isBlank(guestPhone)) {
+									updateReservationGuestStmt = connection.prepareStatement(UPDATE_RESERVATION_GUEST.replace("${field}", PHONE));
+									SQLUtils.setString(updateReservationGuestStmt, 1, value);
+									SQLUtils.setInt(updateReservationGuestStmt, 2, Integer.parseInt(guest));
+									updateReservationGuestStmt.execute();
+								}
 							}
 						}
 					}
@@ -239,6 +256,7 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 			LOGGER.error(ex.getMessage(), ex);
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} finally {
+			SQLUtils.closeQuietly(updateReservationGuestStmt);
 			SQLUtils.closeQuietly(insertMediaStmt);
 			SQLUtils.closeQuietly(updateResponseDetailStmt);
 			SQLUtils.closeQuietly(insertResponseDetailStmt);

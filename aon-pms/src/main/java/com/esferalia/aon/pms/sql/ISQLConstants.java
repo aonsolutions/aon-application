@@ -65,6 +65,8 @@ public interface ISQLConstants {
 	String RESPONSE_DETAIL = "response_detail";
 	String EMAIL = "email";
 	String PHONE = "phone";
+	String GUEST_EMAIL = "guest_email";
+	String GUEST_PHONE = "guest_phone";
 
 	String SERVLET_LOGIN = "PMS_SERVLET_LOGIN";
 

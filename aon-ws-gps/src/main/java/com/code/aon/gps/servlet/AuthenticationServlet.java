@@ -30,8 +30,8 @@ public class AuthenticationServlet extends HttpServlet implements ISQLConstants 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationServlet.class.getName());
-	public static String JSON_DEFAULT_RESPONSE = "{\"codes\":0}";
-	public static String SELECT_AUTHENTICATION_DATA =
+	private static String JSON_DEFAULT_RESPONSE = "{\"codes\":0}";
+	private static String SELECT_AUTHENTICATION_DATA =
 			"SELECT PRG.id AS " + RESERVATION_GUEST + ", PR.end_date AS " + END_DATE +
 			" FROM project_reservation AS PR, project_reservation_guest AS PRG, project_reservation_room AS PRR, project_reservation_room_detail AS PRRD" +
 			"	, asset_activity AS AA, asset AS A, room AS R" +
@@ -90,7 +90,7 @@ public class AuthenticationServlet extends HttpServlet implements ISQLConstants 
 					SQLUtils.setInt(stmt, 1, domainId);
 					SQLUtils.setDate(stmt, 2, today);
 					SQLUtils.setDate(stmt, 3, today);
-					SQLUtils.setString(stmt, 4, document);
+					SQLUtils.setString(stmt, 4, document.toUpperCase());
 					SQLUtils.setDate(stmt, 5, today);
 					SQLUtils.setString(stmt, 6, room);
 					rs = stmt.executeQuery();
