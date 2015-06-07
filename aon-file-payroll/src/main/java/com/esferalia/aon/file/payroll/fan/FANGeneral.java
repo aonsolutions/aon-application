@@ -667,6 +667,17 @@ public class FANGeneral implements Serializable, IFanFactory {
 //		}
 	}
 	
+	/**
+	 * 34 Reducción Tarifa Reducida R.D.L. 1/2015
+	 * 
+	 * @param bonus
+	 * @param emp
+	 */
+	public void createEDLCd34Segment(Double bonusAmount, DAT dat) {
+		EDL edl = dat.getEdlSegment("CD34");
+		createEDLRecord(edl, "CD", 34, new Double(CommonUtil.round(bonusAmount)*100).intValue());
+	}
+	
 	
 
 	// *********************************************

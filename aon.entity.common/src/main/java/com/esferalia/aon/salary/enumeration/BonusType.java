@@ -150,6 +150,14 @@ public enum BonusType implements IResourceable {
 		public void accept(BonusTypeVisitor visitor) {
 			visitor.visitYouthWarrantyRdl082014(this);
 		}
+	},
+	
+	REDUCTION_RATE_RDL01_2015
+	{
+		@Override
+		public void accept(BonusTypeVisitor visitor) {
+			visitor.visitReductionRateRdl012015(this);
+		}
 	}
 	
 	;
