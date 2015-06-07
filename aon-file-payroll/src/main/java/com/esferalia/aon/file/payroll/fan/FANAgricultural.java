@@ -79,6 +79,7 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 		return null;
 	}
 	
+	@Override
 	public String getQuoteMode(List<ITransferObject> list) {
 		Integer _realDays = obtainJornadasReales(list);
 		Boolean _monthlyQuote = isMonthlyQuote(list);
@@ -114,7 +115,8 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 	 * @param c
 	 * @return
 	 */
-	public Integer getContractDaysOrHours(Salary salary, List<ITransferObject> salaryDataList, Integer itDays, Date startDate, Date endDate) {
+	@Override
+	public Integer getContractDaysOrHours(Salary salary, List<ITransferObject> salaryDataList, Map<String, String> contractDataMap, Integer itDays, Date startDate, Date endDate) {
 		
 		if(itDays!=null && itDays>0){
 			Calendar cal = Calendar.getInstance();

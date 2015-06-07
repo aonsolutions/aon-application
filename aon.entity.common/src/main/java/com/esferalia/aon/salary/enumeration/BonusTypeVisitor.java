@@ -37,5 +37,7 @@ public interface BonusTypeVisitor {
 	void visitContinuousFormation(BonusType bonusType);
 	
 	void visitYouthWarrantyRdl082014(BonusType bonusType);
+	
+	void visitReductionRateRdl012015(BonusType bonusType);
 
 }

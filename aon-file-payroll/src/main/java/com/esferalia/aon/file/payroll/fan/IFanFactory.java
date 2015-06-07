@@ -97,6 +97,7 @@ public interface IFanFactory {
 	public void createEDLCd29Segment(Double cgcTotalEnterprise, Double cgcTotalEmployee, DAT dat);
 	public void createEDLCd30Segment(DAT dat);
 	public void createEDLCd31Segment(Double bonusAmount, DAT dat);
+	public void createEDLCd34Segment(Double bonusAmount, DAT dat);
 	
 	
 	// *********************************************

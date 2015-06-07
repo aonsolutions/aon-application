@@ -455,7 +455,7 @@ public class FANWriter implements Serializable {
 			SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			String select = "SELECT * FROM salary_payment";
-			select += " WHERE payment_concept = '" + ContextVariable.PREST_IT.getName() + "'";
+			select += " WHERE payment_concept IN ('" + ContextVariable.PREST_IT.getName() + "', '" + ContextVariable.MATERNITY.getName() + "')";
 			select += " AND salary in (";
 			select += " SELECT id FROM salary WHERE contract = " + contract.getId()
 					+ " AND end_date >= '" + dateFormatter.format(getStartDate()) + "'" 
@@ -745,6 +745,8 @@ public class FANWriter implements Serializable {
 						if(datList.size()>1){
 							populateBonusAmount(datList, "CD31");
 						}
+					} else if(bonusType==BonusType.REDUCTION_RATE_RDL01_2015){
+						fanFactory.createEDLCd34Segment(bonus.getAmount(), dat);
 					}
 				} else if(bonus!=null && bonusType==null) {
 					fanFactory.createEDLCd07Segment(bonus.getAmount(), dat);
