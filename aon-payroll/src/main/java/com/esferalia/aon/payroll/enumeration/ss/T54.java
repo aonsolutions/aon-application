@@ -1,10 +1,16 @@
 package com.esferalia.aon.payroll.enumeration.ss;
 
+import static com.esferalia.aon.salary.enumeration.BonusType.REDUCTION_FLAT_RATE_RDL03_2014;
+import static com.esferalia.aon.salary.enumeration.BonusType.REDUCTION_RATE_RDL01_2015;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+
 import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
+import com.esferalia.aon.salary.enumeration.BonusType;
+
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -259,11 +265,11 @@ public enum T54 implements IPayrollTablesEnum {
 	T54_3191( "3191", "Fijo Discontinuo. Turismo-Hostelería", null, null ),
 	T54_3220( "3220", "Cambio puesto de trabajo Riesgo Embarazo/Enfermedad Profesional", null, null ),
 	T54_3240( "3240", "Bomberos-reducción cuotas", null, null ),
-	T54_3262( "3262", "Reducciones RDL 3/2014 Tarifa plana (primeros dos años)", null, null ),
-	T54_3263( "3263", "Reducciones RDL 3/2014 Tarifa plana (Tercer año)", null, null ),
-	T54_3266( "3266", "Tarifa Reducida REDUCCIÓN RDL 1/2015", null, null ),
+	T54_3262( "3262", "Reducciones RDL 3/2014 Tarifa plana (primeros dos años)", null, null, REDUCTION_FLAT_RATE_RDL03_2014 ),
+	T54_3263( "3263", "Reducciones RDL 3/2014 Tarifa plana (Tercer año)", null, null , REDUCTION_FLAT_RATE_RDL03_2014),
+	T54_3266( "3266", "Tarifa Reducida REDUCCIÓN RDL 1/2015", null, null,REDUCTION_RATE_RDL01_2015 ),
 	T54_3267( "3267", "Tarifa Reducida BONIFICACIÓN RDL 1/2015", null, null ),
-	T54_3268( "3268", "Tarifa Reducida tercer año REDUCCIÓN RDL 1/2015", null, null ),
+	T54_3268( "3268", "Tarifa Reducida tercer año REDUCCIÓN RDL 1/2015", null, null,REDUCTION_RATE_RDL01_2015 ),
 	T54_3269( "3269", "Tarifa Reducida tercer año BONIFICACIÓN RDL 1/2015", null, null ),
 	T54_4203( "4203", "Trabajador contrato formación sin desempleo", null, null ),
 	T54_4204( "4204", "Trabajador contrato formación con desempleo", null, null ),
@@ -277,6 +283,8 @@ public enum T54 implements IPayrollTablesEnum {
 	private String description;
 	private String startDate;
 	private String endDate;
+	
+	private BonusType type = null;
 
 	T54( String code, String description, String startDate, String endDate ) {
 		this.code = code;
@@ -285,8 +293,17 @@ public enum T54 implements IPayrollTablesEnum {
 		this.endDate = endDate;
 	}
 
+	T54( String code, String description, String startDate, String endDate, BonusType type ) {
+		this(code, description, startDate, endDate);
+		this.type = type;
+	}
+
 	public String getCode() {
 		return code;
+	}
+	
+	public BonusType getType() {
+		return type;
 	}
 
 	public String getDescription() {

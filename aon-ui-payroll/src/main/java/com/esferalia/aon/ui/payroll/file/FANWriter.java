@@ -63,12 +63,14 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.LiquidationType;
 import com.esferalia.aon.payroll.enumeration.Mutual;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.payroll.enumeration.ss.T54;
 import com.esferalia.aon.payroll.enumeration.ss.T86;
 import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FANWriter implements Serializable {
 	
@@ -896,6 +898,7 @@ public class FANWriter implements Serializable {
 	}
 	
 	private BonusType obtainBonusType(SalaryBonus bonus) {
+		BonusType type = null;
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractBonus.class);
 			Criteria criteria = new Criteria();
@@ -906,21 +909,30 @@ public class FANWriter implements Serializable {
 				if(list.size()==1){
 					ContractBonus cb = (ContractBonus) list.get(0);
 					if(cb.getBonusConcept()!=null){
-						return ((ContractBonus) list.get(0)).getBonusConcept().getType();
+						type = ((ContractBonus) list.get(0)).getBonusConcept().getType();
+						if ( type == null )
+							type = getByT54(Integer.toString(cb.getBonusConcept().getId()));
 					}
 				} else {
 					for(ITransferObject to: list){
 						ContractBonus cb = (ContractBonus) to;
 						if(StringUtils.isNotBlank(bonus.getDescription()) && bonus.getDescription().equals(cb.getBonusConcept().getDescription())){
-							return cb.getBonusConcept().getType();
+							type = cb.getBonusConcept().getType();
+							if ( type == null )
+								type = getByT54(Integer.toString(cb.getBonusConcept().getId()));
+							break;
 						}
 					}
 				}
+				
 			}
+			if ( type == null )
+				type = getByT54(bonus.getBonusConcept());
+			
 		} catch (ManagerBeanException e) {
 			// NADA
 		}
-		return null;
+		return type;
 	}
 	
 	private boolean isBonusRight(SalaryBonus bonus){
@@ -1998,6 +2010,17 @@ public class FANWriter implements Serializable {
 		}
 		return diffDays;
 	}
+	
+	
+	private static BonusType getByT54(String code){
+		if ( AonStringUtils.isEmpty(code))
+			return null;
+		for ( T54 t54: T54.values() ) 
+			if ( code.equals( t54.getCode()))
+				return t54.getType();
+		return null;
+	}
+	
 
 	
 	
