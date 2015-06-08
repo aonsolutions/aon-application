@@ -6,7 +6,6 @@ import com.esferalia.aon.gwt.fiscal.client.mod180.Model180;
 import com.esferalia.aon.gwt.fiscal.client.mod184.Model184;
 import com.esferalia.aon.gwt.fiscal.client.mod190.Model190;
 import com.esferalia.aon.gwt.fiscal.client.mod193.Model193;
-import com.esferalia.aon.gwt.fiscal.client.mod200.Model200;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.NormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree;
@@ -56,9 +55,6 @@ public class MainEntryPoint implements EntryPoint {
 		} else if ( entryPoint.equalsIgnoreCase(FS_MOD390_ENTRY_POINT)) {
 			Model390 model390 = new Model390();
 			model390.onModuleLoad();
-		} else if ( entryPoint.equalsIgnoreCase(FS_MOD200_ENTRY_POINT)) {
-			Model200 model200 = new Model200();
-			model200.onModuleLoad();
 		} else if ( entryPoint.equalsIgnoreCase(FS_MEMORY_ENTRY_POINT)) {
 			NormalizedMemory memory = new NormalizedMemory();
 			memory.onModuleLoad();

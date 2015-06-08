@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.tree.content.mod200_2013;
 
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Constants;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Constants;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Key;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -29,12 +29,11 @@ public class Page12 extends PageAbs {
 
 	@Override
 	protected void initializeTable() {
-		paintHeaderTable(this.mod200Object.getMod200());
 		table.setWidth("100%");
 		table.setCellSpacing(0);
 		table.getColumnFormatter().setWidth(1, "250px");
 		int row = 0;
-		for (final Mod200Key key : Mod200Constants.INCOME_DISTRIBUTION_KEYS_1) {
+		for (final Mod2002013Key key : Mod2002013Constants.INCOME_DISTRIBUTION_KEYS_1) {
 			if (mod200Object.isVisible(key)) {
 				row = paintKey(table,key,row);
 			}
@@ -44,7 +43,7 @@ public class Page12 extends PageAbs {
 		table1.setCellSpacing(0);
 		table1.getColumnFormatter().setWidth(1, "250px");
 		row = 0;
-		for (final Mod200Key key : Mod200Constants.INCOME_DISTRIBUTION_KEYS_2) {
+		for (final Mod2002013Key key : Mod2002013Constants.INCOME_DISTRIBUTION_KEYS_2) {
 			if (mod200Object.isVisible(key)) {
 				row = paintKey(table1,key,row);
 			}

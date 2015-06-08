@@ -12,9 +12,10 @@ import com.esferalia.aon.gwt.common.client.widget.cell.TabCheckboxCell;
 import com.esferalia.aon.gwt.common.client.widget.cell.TabSelectionCell;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002013TreeObject;
+import com.esferalia.aon.gwt.fiscal.client.widget.ModCellTable;
 import com.esferalia.aon.occam.api.model.CompanyAdministrator;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.LegalRepresentative;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Secretary;
+import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
+import com.esferalia.aon.occam.api.model.fiscal.Secretary;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.FieldUpdater;
@@ -75,7 +76,7 @@ public class Page01 extends PageAbs {
 
 	public Page01() {
 
-		CellTable.Resources tableStyle = GWT.create(Mod200CellTable.class);
+		CellTable.Resources tableStyle = GWT.create(ModCellTable.class);
 		
 		table1 = new CellTable<LegalRepresentative>(50,tableStyle);
 		table1.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
@@ -108,7 +109,6 @@ public class Page01 extends PageAbs {
 
 	public void dump(Mod2002013TreeObject mod200Object) {
 		this.mod200Object = mod200Object;
-		paintHeaderTable(this.mod200Object.getMod200());		
 		dataProvider1 = new ListDataProvider<LegalRepresentative>(this.mod200Object.getMod200().getRepresentatives());
 		dataProvider1.addDataDisplay(table1);
 		table1.redraw();

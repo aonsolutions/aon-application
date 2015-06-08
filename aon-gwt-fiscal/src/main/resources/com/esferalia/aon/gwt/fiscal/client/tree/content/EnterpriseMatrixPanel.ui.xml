@@ -25,6 +25,11 @@
 							<g:SimplePanel ui:field="tablePanel" styleName="{aonResources.css.aonMarginTop}"/>
 						</div>
 					</div>
+					<div style="margin-top: 10px;">
+						<span>Pulse</span> 
+						<span class="{aonResources.css.aonIconReset}" style="padding-left:13px;">&#160;</span>
+						<span>para agregar nuevos modelos</span>
+					</div>
 				</g:HTMLPanel>
 			</g:ScrollPanel>
 		</g:center>

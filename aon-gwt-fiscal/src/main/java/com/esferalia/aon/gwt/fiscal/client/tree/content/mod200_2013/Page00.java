@@ -1,8 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.client.tree.content.mod200_2013;
 
-import static com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Character.CHARACTERS_KEYS;
-import static com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Character.CHARACTER_ALSO_CHECK_MAP;
-import static com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Character.CHARACTER_INCOMPATIBILITY_MAP;
+import static com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Character.CHARACTERS_KEYS;
+import static com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Character.CHARACTER_ALSO_CHECK_MAP;
+import static com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Character.CHARACTER_INCOMPATIBILITY_MAP;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,10 +16,10 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002013TreeObject;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002013TreeObject.IMod200ChangeListener;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.DoubleVariable;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200.BalanceType;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.DoubleVariable2013;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013.BalanceType;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.CNAE;
 import com.google.gwt.core.client.GWT;
@@ -43,34 +43,34 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class Page00 extends PageAbs {
 	
-	public static final Mod200Key[] DECLARATION_CHARATERS_BLOCK1 = new Mod200Key[] {
-		 Mod200Key.C0001,Mod200Key.C0014,Mod200Key.C0025
-		,Mod200Key.C0002,Mod200Key.C0017,Mod200Key.C0031
-		,Mod200Key.C0003,Mod200Key.C0018,Mod200Key.C0032
-		,Mod200Key.C0004,Mod200Key.C0019,Mod200Key.C0036
-		,Mod200Key.C0005,Mod200Key.C0021,Mod200Key.C0048
-		,Mod200Key.C0011,Mod200Key.C0023,Mod200Key.C0058
-		,Mod200Key.C0013,Mod200Key.C0024,Mod200Key.C0060
+	public static final Mod2002013Key[] DECLARATION_CHARATERS_BLOCK1 = new Mod2002013Key[] {
+		 Mod2002013Key.C0001,Mod2002013Key.C0014,Mod2002013Key.C0025
+		,Mod2002013Key.C0002,Mod2002013Key.C0017,Mod2002013Key.C0031
+		,Mod2002013Key.C0003,Mod2002013Key.C0018,Mod2002013Key.C0032
+		,Mod2002013Key.C0004,Mod2002013Key.C0019,Mod2002013Key.C0036
+		,Mod2002013Key.C0005,Mod2002013Key.C0021,Mod2002013Key.C0048
+		,Mod2002013Key.C0011,Mod2002013Key.C0023,Mod2002013Key.C0058
+		,Mod2002013Key.C0013,Mod2002013Key.C0024,Mod2002013Key.C0060
 	};
 
-	public static final Mod200Key[] DECLARATION_CHARATERS_BLOCK2 = new Mod200Key[] {
-	 	 Mod200Key.C0006,Mod200Key.C0047,Mod200Key.C0038
-		,Mod200Key.C0015,Mod200Key.C0049,Mod200Key.C0046
-		,Mod200Key.C0022,Mod200Key.C0029,Mod200Key.C0012
-		,Mod200Key.C0028,Mod200Key.C0033,Mod200Key.C0057
-		,Mod200Key.C0034,Mod200Key.C0020
+	public static final Mod2002013Key[] DECLARATION_CHARATERS_BLOCK2 = new Mod2002013Key[] {
+	 	 Mod2002013Key.C0006,Mod2002013Key.C0047,Mod2002013Key.C0038
+		,Mod2002013Key.C0015,Mod2002013Key.C0049,Mod2002013Key.C0046
+		,Mod2002013Key.C0022,Mod2002013Key.C0029,Mod2002013Key.C0012
+		,Mod2002013Key.C0028,Mod2002013Key.C0033,Mod2002013Key.C0057
+		,Mod2002013Key.C0034,Mod2002013Key.C0020
 	};
 	
-	public static final Mod200Key[] DECLARATION_CHARATERS_BLOCK3 = new Mod200Key[] {
-		 Mod200Key.C0056,Mod200Key.C0026,Mod200Key.C0043
-		,Mod200Key.C0007,Mod200Key.C0027,Mod200Key.C0044 
-		,Mod200Key.C0008,Mod200Key.C0030,Mod200Key.C0045
-		,Mod200Key.C0009,Mod200Key.C0035,Mod200Key.C0062 
-		,Mod200Key.C0010,Mod200Key.C0037,Mod200Key.C0063
-		,Mod200Key.C0016,Mod200Key.C0039,Mod200Key.C0059		
+	public static final Mod2002013Key[] DECLARATION_CHARATERS_BLOCK3 = new Mod2002013Key[] {
+		 Mod2002013Key.C0056,Mod2002013Key.C0026,Mod2002013Key.C0043
+		,Mod2002013Key.C0007,Mod2002013Key.C0027,Mod2002013Key.C0044 
+		,Mod2002013Key.C0008,Mod2002013Key.C0030,Mod2002013Key.C0045
+		,Mod2002013Key.C0009,Mod2002013Key.C0035,Mod2002013Key.C0062 
+		,Mod2002013Key.C0010,Mod2002013Key.C0037,Mod2002013Key.C0063
+		,Mod2002013Key.C0016,Mod2002013Key.C0039,Mod2002013Key.C0059		
 	};
 	
-	private Map<Mod200Key, CheckBox> inputs = new HashMap<Mod200Key, CheckBox>();
+	private Map<Mod2002013Key, CheckBox> inputs = new HashMap<Mod2002013Key, CheckBox>();
 
 	
 	interface Page1Binder extends
@@ -163,7 +163,6 @@ public class Page00 extends PageAbs {
 
 	public void dump(Mod2002013TreeObject mod200Object) {
 		this.mod200Object = mod200Object;
-		paintHeaderTable(this.mod200Object.getMod200());
 		nif.setValue(this.mod200Object.getMod200().getEnterpriseDocument());
 		companyName.setValue(this.mod200Object.getMod200().getEnterpriseName());
 		phone1.setValue(this.mod200Object.getMod200().getEnterprisePhone1());
@@ -178,14 +177,14 @@ public class Page00 extends PageAbs {
 		balanceSheetType.setSelectedIndex(index);
 		index = this.mod200Object.getMod200().getPygType().ordinal();
 		profitAndLossType.setSelectedIndex(index);
-		DoubleVariable dv = this.mod200Object.getMod200().getKeysMap().get(Mod200Key.C0041);
+		DoubleVariable2013 dv = this.mod200Object.getMod200().getKeysMap().get(Mod2002013Key.C0041);
 		Double value = 0.0;
 		if (dv != null) {
 			value = dv.getValue();
 		}
 		c041.setValue(value);
 		
-		dv = this.mod200Object.getMod200().getKeysMap().get(Mod200Key.C0042);
+		dv = this.mod200Object.getMod200().getKeysMap().get(Mod2002013Key.C0042);
 		value = 0.0;
 		if (dv != null) {
 			value = dv.getValue();
@@ -195,8 +194,8 @@ public class Page00 extends PageAbs {
 		for (CheckBox check : inputs.values()) {
 			check.setValue(false);
 		}
-		for (Mod200Key key : CHARACTERS_KEYS) {
-			DoubleVariable sv = this.mod200Object.getMod200().getKeysMap().get(key);
+		for (Mod2002013Key key : CHARACTERS_KEYS) {
+			DoubleVariable2013 sv = this.mod200Object.getMod200().getKeysMap().get(key);
 			if (sv != null && inputs.containsKey( key )) {
 				inputs.get( key ).setValue( AonUtil.equals(sv.getValue() , 1.0) );
 			}
@@ -210,18 +209,18 @@ public class Page00 extends PageAbs {
 		this.mod200Object.register( new IMod200ChangeListener() {
 			
 			@Override
-			public void mod200Changed(Mod200 mod200) {
-				DoubleVariable sv = mod200.getVariable(Mod200Key.C0027);
-				if (sv != null && inputs.containsKey( Mod200Key.C0027 )) {
-					inputs.get( Mod200Key.C0027 ).setValue( AonUtil.equals(sv.getValue() , 1.0) );
+			public void mod200Changed(Mod2002013 mod200) {
+				DoubleVariable2013 sv = mod200.getVariable(Mod2002013Key.C0027);
+				if (sv != null && inputs.containsKey( Mod2002013Key.C0027 )) {
+					inputs.get( Mod2002013Key.C0027 ).setValue( AonUtil.equals(sv.getValue() , 1.0) );
 				}
 			}
 		});
 	}
 	
 	protected void initializeTable() {
-		c061.setText(Mod200Key.C0061.getDescription());
-		inputs.put(Mod200Key.C0061, c061);
+		c061.setText(Mod2002013Key.C0061.getDescription());
+		inputs.put(Mod2002013Key.C0061, c061);
 		
 		int row = 0;
 		row = initializeBlock(charactersTable1,row, DECLARATION_CHARATERS_BLOCK1);
@@ -229,11 +228,11 @@ public class Page00 extends PageAbs {
 		row = initializeBlock(charactersTable3,row, DECLARATION_CHARATERS_BLOCK3);
 	}
 
-	private int initializeBlock(FlexTable table,int row, Mod200Key[] declarationCharatersBlock) {
+	private int initializeBlock(FlexTable table,int row, Mod2002013Key[] declarationCharatersBlock) {
 		initializeTable(table);
 		int col = 0;
 		Administration adm = mod200Object==null?Administration.COMMON_TERRITORY:mod200Object.getAdministration();
-		for (final Mod200Key key : declarationCharatersBlock ) {
+		for (final Mod2002013Key key : declarationCharatersBlock ) {
 			if (col == 4) {
 				++row;
 				col = 0;
@@ -246,13 +245,13 @@ public class Page00 extends PageAbs {
 			check.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					if (key == Mod200Key.C0003
-						|| key == Mod200Key.C0004
-						|| key == Mod200Key.C0024
-						|| key == Mod200Key.C0025
-						|| key == Mod200Key.C0036
-						|| key == Mod200Key.C0058
-						|| key == Mod200Key.C0061) {
+					if (key == Mod2002013Key.C0003
+						|| key == Mod2002013Key.C0004
+						|| key == Mod2002013Key.C0024
+						|| key == Mod2002013Key.C0025
+						|| key == Mod2002013Key.C0036
+						|| key == Mod2002013Key.C0058
+						|| key == Mod2002013Key.C0061) {
 						Window.alert("La declaraci\u00F3n para el caracter '" +
 								key.getDescription()+ "' no se encuentra disponible");
 						check.setValue(false);						
@@ -270,10 +269,10 @@ public class Page00 extends PageAbs {
 		return row++;
 	}
 	
-	private void changeAvailability(Mod200Key key) {
+	private void changeAvailability(Mod2002013Key key) {
 		boolean enabled = inputs.get(key).getValue();
 		if (CHARACTER_INCOMPATIBILITY_MAP.get(key) != null) {
-			for (Mod200Key incompatible : CHARACTER_INCOMPATIBILITY_MAP.get(key)) {
+			for (Mod2002013Key incompatible : CHARACTER_INCOMPATIBILITY_MAP.get(key)) {
 				CheckBox check = inputs.get(incompatible);
 				if (check != null) {
 					check.setEnabled(!enabled);
@@ -284,7 +283,7 @@ public class Page00 extends PageAbs {
 			}
 		}
 		if (enabled && CHARACTER_ALSO_CHECK_MAP.get(key) != null) {
-			for (Mod200Key alsoCheck : CHARACTER_ALSO_CHECK_MAP.get(key)) {
+			for (Mod2002013Key alsoCheck : CHARACTER_ALSO_CHECK_MAP.get(key)) {
 				CheckBox check = inputs.get(alsoCheck);
 				if (check != null) {
 					check.setValue(true);	
@@ -326,46 +325,46 @@ public class Page00 extends PageAbs {
 		obj.getMod200().setBalanceType( balanceSheetType.getSelectedIndex() );
 		obj.getMod200().setPygType( profitAndLossType.getSelectedIndex() );
 		obj.getMod200().setCnae(cnae.getValue());
-		DoubleVariable bv = null;
-		for (Mod200Key key : inputs.keySet()) {
-			bv = new DoubleVariable( key );
+		DoubleVariable2013 bv = null;
+		for (Mod2002013Key key : inputs.keySet()) {
+			bv = new DoubleVariable2013( key );
 			bv.setValue(inputs.get(key).getValue());
 			obj.getMod200().addVariable(bv);
 		}
 		
-		bv = new DoubleVariable( Mod200Key.C0061 );
+		bv = new DoubleVariable2013( Mod2002013Key.C0061 );
 		bv.setValue( c061.getValue() );
 		obj.getMod200().addVariable(bv);
 		
-		bv = new DoubleVariable( Mod200Key.C0050 );
+		bv = new DoubleVariable2013( Mod2002013Key.C0050 );
 		bv.setValue((obj.getMod200().getBalanceType() == BalanceType.NORMAL));
 		obj.getMod200().addVariable(bv);
 		
-		bv = new DoubleVariable( Mod200Key.C0051 );
+		bv = new DoubleVariable2013( Mod2002013Key.C0051 );
 		bv.setValue((obj.getMod200().getBalanceType() == BalanceType.ABREVIADO));
 		obj.getMod200().addVariable(bv);
 		
-		bv = new DoubleVariable( Mod200Key.C0052 );
+		bv = new DoubleVariable2013( Mod2002013Key.C0052 );
 		bv.setValue((obj.getMod200().getBalanceType() == BalanceType.PYMES));
 		obj.getMod200().addVariable(bv);
 			
-		bv = new DoubleVariable( Mod200Key.C0053 );
+		bv = new DoubleVariable2013( Mod2002013Key.C0053 );
 		bv.setValue((obj.getMod200().getBalanceType() == BalanceType.NORMAL));
 		obj.getMod200().addVariable(bv);
 		
-		bv = new DoubleVariable( Mod200Key.C0054 );
+		bv = new DoubleVariable2013( Mod2002013Key.C0054 );
 		bv.setValue((obj.getMod200().getBalanceType() == BalanceType.ABREVIADO));
 		obj.getMod200().addVariable(bv);
 		
-		bv = new DoubleVariable( Mod200Key.C0055 );
+		bv = new DoubleVariable2013( Mod2002013Key.C0055 );
 		bv.setValue((obj.getMod200().getBalanceType() == BalanceType.PYMES));
 		obj.getMod200().addVariable(bv);
 		
-		bv = new DoubleVariable( Mod200Key.C0041 );
+		bv = new DoubleVariable2013( Mod2002013Key.C0041 );
 		bv.setValue( c041.getValue() );
 		obj.getMod200().addVariable(bv);
 
-		bv = new DoubleVariable( Mod200Key.C0042 );
+		bv = new DoubleVariable2013( Mod2002013Key.C0042 );
 		bv.setValue( c042.getValue() );
 		obj.getMod200().addVariable(bv);
 		

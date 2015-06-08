@@ -9,7 +9,6 @@ import com.esferalia.aon.gwt.common.client.widget.cell.SizableTextInputCell;
 import com.esferalia.aon.gwt.common.client.widget.cell.TabCheckboxCell;
 import com.esferalia.aon.gwt.common.client.widget.cell.TabSelectionCell;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
-import com.esferalia.aon.gwt.fiscal.client.mod200.Mod200Object;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002013TreeObject;
 import com.esferalia.aon.occam.api.model.CompanyParticipation;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -112,7 +111,6 @@ public class Page02 extends PageAbs {
 
 	public void dump(Mod2002013TreeObject mod200Object) {
 		this.mod200Object = mod200Object;
-		paintHeaderTable(this.mod200Object.getMod200());		
 		dataProviderIn = this.mod200Object.getMod200().getParticipationsIn() == null
 			?new ListDataProvider<CompanyParticipation>()
 			:new ListDataProvider<CompanyParticipation>(this.mod200Object.getMod200().getParticipationsIn());
@@ -430,7 +428,7 @@ public class Page02 extends PageAbs {
 	protected void initializeTable() {
 	}
 
-	public void populate(Mod200Object obj) {
+	public void populate(Mod2002013TreeObject obj) {
 		List<CompanyParticipation> listIn = new LinkedList<CompanyParticipation>();
 		for (CompanyParticipation cp : dataProviderIn.getList()) {
 			listIn.add(cp);

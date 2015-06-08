@@ -1,0 +1,57 @@
+package com.esferalia.aon.occam.api.model.fiscal.mod200_2014;
+
+import java.io.Serializable;
+
+
+public enum Mod2002014BN590Key implements Serializable, IMod200KeysProvider {
+	// Á --> \u00C1 á --> \u00E1
+	// É --> \u00C9 é --> \u00E9
+	// Í --> \u00CD í --> \u00ED
+	// Ó --> \u00D3 ó --> \u00F3
+	// Ú --> \u00DA ú --> \u00FA
+	// Ñ --> \u00D1 ñ --> \u00F1
+	// ª --> \u00AA º --> \u00BA
+	// ¿ --> \u00BF
+	  C0001(new Mod2002014Key[]{Mod2002014Key.BN854,Mod2002014Key.BN855,null            },"Activos fijos (Ley 20/1991) 2008")
+	 ,C0002(new Mod2002014Key[]{Mod2002014Key.BN857,Mod2002014Key.BN858,Mod2002014Key.BN859},"Activos fijos (Ley 20/1991) 2009")
+	 ,C0003(new Mod2002014Key[]{Mod2002014Key.BN860,Mod2002014Key.BN861,Mod2002014Key.BN862},"Activos fijos (Ley 20/1991) 2010")
+	 ,C0004(new Mod2002014Key[]{Mod2002014Key.BN863,Mod2002014Key.BN864,Mod2002014Key.BN865},"Activos fijos (Ley 20/1991) 2011")
+	 ,C0005(new Mod2002014Key[]{Mod2002014Key.BN883,Mod2002014Key.BN884,Mod2002014Key.BN885},"Activos fijos (Ley 20/1991) 2012")
+	 ,C0006(new Mod2002014Key[]{Mod2002014Key.BN088,Mod2002014Key.BN564,Mod2002014Key.BN801},"Inversiones en Canarias (Ley 20/1991) 1997")
+	 ,C0007(new Mod2002014Key[]{Mod2002014Key.BN194,Mod2002014Key.BN195,Mod2002014Key.BN196},"Inversiones en Canarias (Ley 20/1991) 1998")
+	 ,C0008(new Mod2002014Key[]{Mod2002014Key.BN868,Mod2002014Key.BN869,Mod2002014Key.BN834},"Inversiones en Canarias (Ley 20/1991) 1999")
+	 ,C0009(new Mod2002014Key[]{Mod2002014Key.BN871,Mod2002014Key.BN872,Mod2002014Key.BN873},"Inversiones en Canarias (Ley 20/1991) 2000")
+	 ,C0010(new Mod2002014Key[]{Mod2002014Key.BN874,Mod2002014Key.BN875,Mod2002014Key.BN876},"Inversiones en Canarias (Ley 20/1991) 2001")
+	 ,C0011(new Mod2002014Key[]{Mod2002014Key.BN877,Mod2002014Key.BN878,Mod2002014Key.BN879},"Inversiones en Canarias (Ley 20/1991) 2002")
+	 ,C0012(new Mod2002014Key[]{Mod2002014Key.BN880,Mod2002014Key.BN881,Mod2002014Key.BN882},"Inversiones en Canarias (Ley 20/1991) 2003")
+	 ,C0013(new Mod2002014Key[]{Mod2002014Key.BN866,Mod2002014Key.BN867,Mod2002014Key.BN870},"Inversiones en Canarias (Ley 20/1991) 2004")
+	 ,C0014(new Mod2002014Key[]{Mod2002014Key.BN939,Mod2002014Key.BN940,Mod2002014Key.BN941},"Inversiones en Canarias (Ley 20/1991) 2005")
+	 ,C0015(new Mod2002014Key[]{Mod2002014Key.BN191,Mod2002014Key.BN192,Mod2002014Key.BN193},"Inversiones en Canarias (Ley 20/1991) 2006") 
+	 ,C0016(new Mod2002014Key[]{Mod2002014Key.BN613,Mod2002014Key.BN614,Mod2002014Key.BN701},"Inversiones en Canarias (Ley 20/1991) 2007")
+	 ,C0017(new Mod2002014Key[]{Mod2002014Key.BN200,Mod2002014Key.BN257,Mod2002014Key.BN011},"Inversiones en Canarias (Ley 20/1991) 2008")
+	 ,C0018(new Mod2002014Key[]{Mod2002014Key.BN037,Mod2002014Key.BN038,Mod2002014Key.BN039},"Inversiones en Canarias (Ley 20/1991) 2009")
+	 ,C0019(new Mod2002014Key[]{Mod2002014Key.BN044,Mod2002014Key.BN045,Mod2002014Key.BN046},"Inversiones en Canarias (Ley 20/1991) 2010")
+	 ,C0020(new Mod2002014Key[]{Mod2002014Key.BN528,Mod2002014Key.BN529,Mod2002014Key.BN530},"Inversiones en Canarias (Ley 20/1991) 2011")
+	 ,C0021(new Mod2002014Key[]{Mod2002014Key.BN144,Mod2002014Key.BN145,Mod2002014Key.BN146},"Inversiones en Canarias (Ley 20/1991) 2012")
+	 ,C0022(new Mod2002014Key[]{Mod2002014Key.BN147,Mod2002014Key.BN148,Mod2002014Key.BN149},"Inversiones en Canarias (Ley 20/1991) 2013")
+	 ,C0023(new Mod2002014Key[]{Mod2002014Key.BN852,Mod2002014Key.BN853,Mod2002014Key.BN856},"Activos fijos (Ley 20/1991) 2013")
+	 ,C0024(new Mod2002014Key[]{Mod2002014Key.BN886,null           ,Mod2002014Key.BN887},"Total deducciones inversiones en Canarias (Ley 20/1991)")
+	;
+	 
+    private String description;
+    
+    private Mod2002014Key[] keys;
+    
+	private Mod2002014BN590Key(Mod2002014Key[] keys, String description) {
+	    this.keys = keys;
+		this.description = description;
+	}
+	
+	public Mod2002014Key[] getKeys() {
+		return keys;
+	}
+	public String getDescription() {
+		return description;
+	}
+}
+

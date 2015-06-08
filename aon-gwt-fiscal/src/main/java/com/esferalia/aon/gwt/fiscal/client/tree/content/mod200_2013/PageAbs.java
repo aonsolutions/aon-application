@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.tree.content.mod200_2013;
 
-import static com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Behaviour.BEHAVIOUR_KEYS_MAP;
+import static com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Behaviour.BEHAVIOUR_KEYS_MAP;
 
 import java.text.ParseException;
 import java.util.HashMap;
@@ -11,11 +11,10 @@ import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002013TreeObject;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002013TreeObject.IMod200ChangeListener;
-import com.esferalia.aon.gwt.fiscal.client.tree.node.TreeNode;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.DoubleVariable;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.IMod200KeysProvider;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.DoubleVariable2013;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.IMod200KeysProvider;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Key;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -30,8 +29,6 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.text.shared.SafeHtmlRenderer;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.CellTable.Style;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -39,14 +36,8 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ResizeComposite;
-import com.google.gwt.user.client.ui.SimplePanel;
 
 public abstract class PageAbs extends ResizeComposite {
-
-	public static interface Mod200CellTable extends CellTable.Resources {
-		@Source({CellTable.Style.DEFAULT_CSS, "Mod200CellTable.css"})
-		Style cellTableStyle();
-	}
 
 	interface DeleteButtonTemplate extends SafeHtmlTemplates {
 		@Template("<input type=\"button\" value=\"&nbsp;\" class=\"aon-icon-delete\" style=\"border: medium none !important;\">")
@@ -74,12 +65,9 @@ public abstract class PageAbs extends ResizeComposite {
 
 	protected Mod2002013TreeObject mod200Object;
 
-	private Map<Mod200Key, DoubleBox> inputs = new HashMap<Mod200Key, DoubleBox>();
-	private Map<Mod200Key, BoxLabel> labels = new HashMap<Mod200Key, BoxLabel>();
+	private HashMap<Mod2002013Key, DoubleBox> inputs = new HashMap<Mod2002013Key, DoubleBox>();
+	private HashMap<Mod2002013Key, BoxLabel> labels = new HashMap<Mod2002013Key, BoxLabel>();
 
-	@UiField
-	SimplePanel headerPanel;
-	
 	@UiField
 	Panel basePanel;
 
@@ -95,11 +83,11 @@ public abstract class PageAbs extends ResizeComposite {
 		this.mod200Object.register( new IMod200ChangeListener() {
 			
 			@Override
-			public void mod200Changed(Mod200 mod200) {
-				for (Mod200Key key : mod200.getDraftMap().keySet()) {
+			public void mod200Changed(Mod2002013 mod200) {
+				for (Mod2002013Key key : mod200.getDraftMap().keySet()) {
 					if (inputs.containsKey(key)) {
 						DoubleBox input = inputs.get(key);
-						DoubleVariable var = mod200.getDraftMap().get(key);
+						DoubleVariable2013 var = mod200.getDraftMap().get(key);
 						if (!var.isChangedByUser()) {
 							input.setValue(var.getValue()); ;
 						}
@@ -116,18 +104,18 @@ public abstract class PageAbs extends ResizeComposite {
 		initializeTable();
 	}
 	
-	public Map<Mod200Key, DoubleBox> getInputs() {
+	public Map<Mod2002013Key, DoubleBox> getInputs() {
 		return inputs;
 	}
-	public Map<Mod200Key, BoxLabel> getLabels() {
+	public Map<Mod2002013Key, BoxLabel> getLabels() {
 		return labels;
 	}
 	
-	protected int paintKey(final Mod200Key key,int row) {
+	protected int paintKey(final Mod2002013Key key,int row) {
 		return paintKey(table,key,row);
 	}
 	
-	protected int paintKey(FlexTable tab,final Mod200Key key,int row) {
+	protected int paintKey(FlexTable tab,final Mod2002013Key key,int row) {
 		Label desc = new Label(key.getDescription() );
 		if (isTitle(key)) {
 			desc.setStyleName(AON.AON_CSS.aonBold());
@@ -137,7 +125,7 @@ public abstract class PageAbs extends ResizeComposite {
 		paintKeyField(tab,key,row,1);	
 		return ++row;
 	}
-	protected void paintKeyField(FlexTable tab,final Mod200Key key,int row, int col) {
+	protected void paintKeyField(FlexTable tab,final Mod2002013Key key,int row, int col) {
 		boolean disabled = isDisabled(key);
 		
 		FlowPanel panel = new FlowPanel();
@@ -174,12 +162,12 @@ public abstract class PageAbs extends ResizeComposite {
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
 	}
 
-	protected boolean isDisabled(Mod200Key key) {
+	protected boolean isDisabled(Mod2002013Key key) {
 		Boolean[] behaviour = BEHAVIOUR_KEYS_MAP.get(key.toString());
 		return behaviour != null && behaviour[1];
 	}
 
-	protected boolean isTitle(Mod200Key key) {
+	protected boolean isTitle(Mod2002013Key key) {
 		Boolean[] behaviour = BEHAVIOUR_KEYS_MAP.get(key.toString());
 		return (behaviour != null && behaviour[0]); 
 	}
@@ -194,7 +182,7 @@ public abstract class PageAbs extends ResizeComposite {
 			tableDetail.setWidget(r, 0, desc);
 			tableDetail.getFlexCellFormatter().setStyleName(r, 0, AON.AON_CSS.aonFiscalBorderBottom());
 			col = 1;
-			for (final Mod200Key k : key.getKeys() ) {
+			for (final Mod2002013Key k : key.getKeys() ) {
 				if (k != null){
 					Boolean[] behaviour = BEHAVIOUR_KEYS_MAP.get(k.toString());
 					boolean disabled = behaviour != null && behaviour[1];
@@ -293,28 +281,6 @@ public abstract class PageAbs extends ResizeComposite {
 		tab.setWidget(row, 0, container);
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 		return tableDetail;
-	}
-
-	protected void paintHeaderTable(final Mod200 mod200) {
-		headerPanel.setStyleName(AON.AON_CSS.aonWidthAll());
-		
-		FlexTable headerTable = new FlexTable();
-		headerTable.setStyleName(AON.AON_CSS.aonFiscalModelTable());
-		
-		Label image = new Label("");
-		image.setStyleName(TreeNode.getAdministrationImage(mod200.getAdministration()));
-		
-		headerTable.setWidget(0, 0, image);
-		headerTable.getFlexCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonFiscalModelTableHeaderImage());
-		
-		headerTable.setWidget(0, 1, new Label( AON.MSG.fiscalModelDescriptionlong(mod200.getModel())));
-		headerTable.getFlexCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
-		headerTable.getFlexCellFormatter().addStyleName(0, 1, TreeNode.getAdministrationBG(mod200.getAdministration()));
-
-		headerTable.setWidget(0, 2, new Label(mod200.getModel().getName()));
-		headerTable.getFlexCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonFiscalModelTableHeaderModel());
-		headerTable.getFlexCellFormatter().addStyleName(0, 2, TreeNode.getAdministrationBG(mod200.getAdministration()));
-		headerPanel.setWidget(headerTable);
 	}
 
 	protected abstract void initializeTable();

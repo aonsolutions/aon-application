@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Address;
@@ -16,7 +17,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390DetailKey;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Prorrata;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.SimpliedRegimeActivity;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.LegalRepresentative;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.Administraciones;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.DatEstadisticos;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.DatIdent;

@@ -3,8 +3,8 @@ package com.esferalia.aon.gwt.fiscal.client.mod390;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.CnaePanel;
 import com.esferalia.aon.gwt.common.client.widget.cell.SizableTextInputCell;
-import com.esferalia.aon.gwt.fiscal.client.mod200.Mod200CellTable;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Mod390CallBack;
+import com.esferalia.aon.gwt.fiscal.client.widget.ModCellTable;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Prorrata;
 import com.esferalia.aon.occam.api.model.type.CNAE;
@@ -104,7 +104,7 @@ public class Page12 extends ResizeComposite implements RequiresResize {
 	public Page12() {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		
-		CellTable.Resources tableStyle = GWT.create(Mod200CellTable.class);
+		CellTable.Resources tableStyle = GWT.create(ModCellTable.class);
 		
 		table = new CellTable<Prorrata>(50,tableStyle);
 		table.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);

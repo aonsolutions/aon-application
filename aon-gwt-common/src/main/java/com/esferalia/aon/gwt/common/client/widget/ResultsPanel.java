@@ -120,6 +120,10 @@ public class ResultsPanel extends ResizeComposite implements ProvidesResize {
 	public void clearFlowPanel() {
 		flowPanel.clear();
 	}
+	
+	public void setFlowPanelVisible(boolean visible) {
+		flowPanel.setVisible(visible);
+	}
 
 	// ------------------------------------------------------------- UIHandlers
 

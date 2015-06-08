@@ -563,7 +563,7 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 	width: auto; 
 	height: auto;
 	gwt-image: '_error';
-	padding-left: 14px;
+	padding-left: 14px !important;
 }
 
 
@@ -1330,6 +1330,11 @@ input:disabled + label{
     font-weight: bold;
     padding: 3px 7px 4px 7px;
     text-transform: uppercase;
+}
+
+.aon-Selector .gwt-MenuBar-vertical {
+    background-color: #f5f5f5;
+    border: 1px solid #bbb;
 }
 
 .aon-Selector .gwt-MenuBar-vertical .gwt-MenuItemSeparator .menuSeparatorInner {

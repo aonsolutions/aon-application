@@ -21,7 +21,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -116,16 +117,28 @@ public interface FiscalServiceAsync {
 	void saveMod202(String domainName, Mod202 mod202,AsyncCallback<Mod202> asyncCallback);
 	void initializeMod202(String domainName, int domain, Mod202 mod202,AsyncCallback<Mod202> asyncCallback);
 
-	// ---------------------------------------------------------------MODELO 200
-	void initializeMod200(String domainName, int domain, Mod200 mod200,AsyncCallback<Mod200> callback);
-	void getMod200ByYear(String domainName, int domain, int year,AsyncCallback<Mod200> callback);
-	void calculateMod200(Mod200 mod200, AsyncCallback<Mod200> callback);
-	void deleteMod200(String domainName, int domain, int id,AsyncCallback<Void> callback);
-	void dumpAEAT(Mod200 mod200, AsyncCallback<String> callback);
-	void getMod200ById(String domainName, int domain, int id,AsyncCallback<Mod200> callback);
-	void saveMod200(String domainName, int domain, Mod200 mod200,AsyncCallback<Mod200> callback);
-	void validateMod200(Mod200 mod200, AsyncCallback<Mod200> callback);
+	// ---------------------------------------------------------------MODELO 200 - 2013
+	void initializeNewMod2002013(String domainName, int domain, Mod2002013 mod200, AsyncCallback<Mod2002013> callback);
+	void initializeMod2002013(String domainName, int domain, Mod2002013 mod200,AsyncCallback<Mod2002013> callback);
+	void getMod2002013ByYear(String domainName, int domain, int year,AsyncCallback<Mod2002013> callback);
+	void calculateMod2002013(Mod2002013 mod200, AsyncCallback<Mod2002013> callback);
+	void deleteMod2002013(String domainName, int domain, int id,AsyncCallback<Void> callback);
+	void dumpAEATMod2002013(Mod2002013 mod200, AsyncCallback<String> callback);
+	void getMod2002013ById(String domainName, int domain, int id,AsyncCallback<Mod2002013> callback);
+	void saveMod2002013(String domainName, int domain, Mod2002013 mod200,AsyncCallback<Mod2002013> callback);
+	void validateMod2002013(Mod2002013 mod200, AsyncCallback<Mod2002013> callback);
 	
+	// ---------------------------------------------------------------MODELO 200 - 2014
+	void initializeNewMod2002014(String domainName, int domain, Mod2002014 mod200, AsyncCallback<Mod2002014> callback);
+	void initializeMod2002014(String domainName, int domain, Mod2002014 mod200,AsyncCallback<Mod2002014> callback);
+	void getMod2002014ByYear(String domainName, int domain, int year,AsyncCallback<Mod2002014> callback);
+	void calculateMod2002014(Mod2002014 mod200, AsyncCallback<Mod2002014> callback);
+	void deleteMod2002014(String domainName, int domain, int id,AsyncCallback<Void> callback);
+	void dumpAEATMod2002014(Mod2002014 mod200, AsyncCallback<String> callback);
+	void getMod2002014ById(String domainName, int domain, int id,AsyncCallback<Mod2002014> callback);
+	void saveMod2002014(String domainName, int domain, Mod2002014 mod200,AsyncCallback<Mod2002014> callback);
+	void validateMod2002014(Mod2002014 mod200, AsyncCallback<Mod2002014> callback);
+
 	// --------------------------------------------------------------- NORMALIZED MEMORY
 	void readMemory(Memory memory, AsyncCallback<Memory> callback);
 	void saveMemory(Memory memory, AsyncCallback<Memory> callback);

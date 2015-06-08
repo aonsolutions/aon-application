@@ -1,12 +1,12 @@
 package com.esferalia.aon.gwt.fiscal.client.tree.content.mod200_2013;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Constants;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200LQ547Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200LQ554Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200LQ561Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200LQ579Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Constants;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013LQ547Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013LQ554Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013LQ561Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013LQ579Key;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
@@ -37,7 +37,6 @@ public class Page09 extends PageAbs {
 	}
 	
 	protected void initializeTable() {
-		paintHeaderTable(this.mod200Object.getMod200());
 		table.setWidth("100%");
 		table.setCellSpacing(0);
 		
@@ -45,24 +44,24 @@ public class Page09 extends PageAbs {
 		cf.setWidth(1, "250px");
 
 		int row = 0;
-		for (Mod200Key key : Mod200Constants.LIQUIDATION_II_KEYS) {
+		for (Mod2002013Key key : Mod2002013Constants.LIQUIDATION_II_KEYS) {
 			if (mod200Object.isVisible(key)) {
 				row = paintKey(key,row);
-				if (key == Mod200Key.LQ554) {
+				if (key == Mod2002013Key.LQ554) {
 					row = paintKeyBreakdown(table,row,AON.MSG.cooperativeRegime()
-							,Mod200LQ554Key.values(),HEADERS_1);
+							,Mod2002013LQ554Key.values(),HEADERS_1);
 				}
-				if (key == Mod200Key.LQ561) {
-					row = paintKeyBreakdown(table,row,Mod200Key.LQ561.getDescription()
-							,Mod200LQ561Key.values(),HEADERS_2);
+				if (key == Mod2002013Key.LQ561) {
+					row = paintKeyBreakdown(table,row,Mod2002013Key.LQ561.getDescription()
+							,Mod2002013LQ561Key.values(),HEADERS_2);
 				}
-				if (key == Mod200Key.LQ579) {
-					row = paintKeyBreakdown(table,row,Mod200Key.LQ579.getDescription()
-							,Mod200LQ579Key.values(),null);
+				if (key == Mod2002013Key.LQ579) {
+					row = paintKeyBreakdown(table,row,Mod2002013Key.LQ579.getDescription()
+							,Mod2002013LQ579Key.values(),null);
 				}
-				if (key == Mod200Key.LQ547) {
-					row = paintKeyBreakdown(table,row,Mod200Key.LQ547.getDescription()
-							,Mod200LQ547Key.values(),HEADERS_2);
+				if (key == Mod2002013Key.LQ547) {
+					row = paintKeyBreakdown(table,row,Mod2002013Key.LQ547.getDescription()
+							,Mod2002013LQ547Key.values(),HEADERS_2);
 				}
 			}
 		}

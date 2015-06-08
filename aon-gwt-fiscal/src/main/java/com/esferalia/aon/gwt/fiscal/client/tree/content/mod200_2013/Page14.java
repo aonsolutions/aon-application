@@ -10,9 +10,9 @@ import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002013TreeObject;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002013TreeObject.IMod200ChangeListener;
 import com.esferalia.aon.occam.api.model.CompanyBank;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.DoubleVariable;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.DoubleVariable2013;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Key;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -78,12 +78,11 @@ public class Page14 extends PageAbs {
 
 	@Override
 	protected void initializeTable() {
-		paintHeaderTable(this.mod200Object.getMod200());
 		table.setWidth("100%");
 		table.setCellSpacing(0);
 		table.getColumnFormatter().setWidth(1, "250px");
 		
-		Mod200Key key = Mod200Key.LQ552;
+		Mod2002013Key key = Mod2002013Key.LQ552;
 		Label desc = new Label(key.getDescription() );
 		desc.setStyleName(AON.AON_CSS.aonBold());
 		table.setWidget(0, 0, desc);
@@ -103,7 +102,7 @@ public class Page14 extends PageAbs {
 		table.getFlexCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonTextRight());
 		table.getFlexCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonNowrap());
 		
-		key = Mod200Key.LQ562;
+		key = Mod2002013Key.LQ562;
 		desc = new Label(key.getDescription() );
 		desc.setStyleName(AON.AON_CSS.aonBold());
 		table.setWidget(1, 0, desc);
@@ -123,7 +122,7 @@ public class Page14 extends PageAbs {
 		table.getFlexCellFormatter().addStyleName(1, 1, AON.AON_CSS.aonTextRight());
 		table.getFlexCellFormatter().addStyleName(1, 1, AON.AON_CSS.aonNowrap());
 		
-		key = Mod200Key.BN621;
+		key = Mod2002013Key.BN621;
 		desc = new Label(key.getDescription() );
 		desc.setStyleName(AON.AON_CSS.aonBold());
 		table.setWidget(2, 0, desc);
@@ -150,7 +149,7 @@ public class Page14 extends PageAbs {
 		this.mod200Object.register( new IMod200ChangeListener() {
 			
 			@Override
-			public void mod200Changed(Mod200 mod200) {
+			public void mod200Changed(Mod2002013 mod200) {
 				dumpPay(mod200);
 			}
 		});
@@ -158,7 +157,7 @@ public class Page14 extends PageAbs {
 		dumpPay(mod200.getMod200());
 	}
 	
-	private void dumpPay(Mod200 mod200) {
+	private void dumpPay(Mod2002013 mod200) {
 		devTypeR.setValue(false);
 		devTypeT.setValue(false);
 		amountD.setValue(0.0);
@@ -199,7 +198,7 @@ public class Page14 extends PageAbs {
 
 	public void populate(Mod2002013TreeObject mod200Object) {
 		
-		DoubleVariable dv =  mod200Object.getMod200().getVariable(Mod200Key.BN621);
+		DoubleVariable2013 dv =  mod200Object.getMod200().getVariable(Mod2002013Key.BN621);
 		Double value = dv==null?0.0:dv.getValue();
 		if (AonUtil.round(value) == 0.0) {
 			mod200Object.getMod200().setAmount(AonUtil.round(value));

@@ -9,13 +9,13 @@ import java.io.UnsupportedEncodingException;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod200File;
 
 public class MOD200Writer {
 	
-	public FileOutput createMOD200(Mod200 mod200) throws AonSQLException {
+	public FileOutput createMOD200(Mod2002013 mod200) throws AonSQLException {
 		try {
 			MOD200Format format = obtainFormat(mod200.getYear(), mod200.getAdministration());
 			if (format == null) {

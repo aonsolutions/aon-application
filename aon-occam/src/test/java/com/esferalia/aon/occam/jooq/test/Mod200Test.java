@@ -11,7 +11,7 @@ import org.junit.Test;
 import com.code.aon.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 
 
 public class Mod200Test {
@@ -29,11 +29,11 @@ public class Mod200Test {
 	
 	@Test
 	public void testInitialize() throws IOException {
-		Mod200 mod200 = new Mod200();
+		Mod2002013 mod200 = new Mod2002013();
 		mod200.setYear(2013);
 		mod200.setDomain(DOMAIN_ID);
-		mod200 = AON.initializeNewMod200(DOMAIN_NAME, DOMAIN_ID, mod200);
-		AON.initializeMod200(DOMAIN_NAME, DOMAIN_ID, mod200);
+		mod200 = AON.initializeNewMod2002013(DOMAIN_NAME, DOMAIN_ID, mod200);
+		AON.initializeMod2002013(DOMAIN_NAME, DOMAIN_ID, mod200);
 	}
 		
 	@AfterClass

@@ -11,7 +11,7 @@ import java.util.Map;
 import com.code.aon.file.format.core.DiskRegisterLoader;
 import com.code.aon.file.format.model.AbstractFileFiller;
 import com.code.aon.file.format.model.Fd0Exception;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200.BalanceType;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013.BalanceType;
 import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod200File;
 
 public class MOD200  extends AbstractFileFiller{

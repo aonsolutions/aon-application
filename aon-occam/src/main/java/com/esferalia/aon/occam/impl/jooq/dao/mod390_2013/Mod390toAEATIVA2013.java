@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Address;
@@ -12,7 +13,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod390.FarmerRegimeActivity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390DetailKey;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.SimpliedRegimeActivity;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.LegalRepresentative;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2013.AEATIVA2013.Administraciones;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2013.AEATIVA2013.DatEstadisticos;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2013.AEATIVA2013.DatIdent;

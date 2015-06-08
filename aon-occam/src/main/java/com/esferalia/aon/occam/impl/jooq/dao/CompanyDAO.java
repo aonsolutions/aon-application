@@ -98,7 +98,11 @@ public class CompanyDAO {
 			)
 			.from(ENTERPRISE)
 			.join(REGISTRY).on(ENTERPRISE.REGISTRY.equal(REGISTRY.ID))
-			.join(DOMAIN).on(DOMAIN.ID.equal(ENTERPRISE.DOMAIN))
+			.join(DOMAIN).on(
+						 DOMAIN.ID.equal(ENTERPRISE.DOMAIN)
+					.and(DOMAIN.DOMAINMANAGEMENT.equal((byte) 0))
+					.and(DOMAIN.ACTIVE.equal((byte) 1))
+							)
 			.leftOuterJoin(SCOPE).on(SCOPE.ID.equal(ENTERPRISE.SCOPE))
 			.where(ENTERPRISE_PROPERTIES.getConditions(filter))
 			.fetch()

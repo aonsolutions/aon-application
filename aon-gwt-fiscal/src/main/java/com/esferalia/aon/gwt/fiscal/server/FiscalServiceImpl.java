@@ -28,7 +28,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 import com.esferalia.aon.occam.api.model.type.Activities.Type1Activities;
@@ -378,51 +379,106 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 		AON.deleteMod202(domainName, mod202);
 	}
 
-	// ---------------------------------------------------------------MODELO 200
+	// ---------------------------------------------------------------MODELO 200 - 2013
 	@Override
-	public Mod200 initializeMod200(String domainName, int domain, Mod200 mod200) {
-		return AON.initializeMod200(domainName,domain,mod200);
-	}
-
-	@Override
-	public Mod200 getMod200ByYear(String domainName, int domain, int year)
-			throws AonCoreException {
-		return AON.getMod200ByYear(domainName,domain,year);
-	}
-
-	@Override
-	public Mod200 getMod200ById(String domainName, int domain, int id)
-			throws AonCoreException {
-		return AON.getMod200ById(domainName,domain,id);
-	}
-
-	@Override
-	public Mod200 calculateMod200(Mod200 mod200) throws AonCoreException {
-		return AON.calculateMod200(mod200);
-	}
-
-	@Override
-	public Mod200 saveMod200(String domainName, int domain, Mod200 mod200)
-			throws AonCoreException {
-		return AON.saveMod200(domainName,domain,mod200);
-	}
-
-	@Override
-	public Mod200 validateMod200(Mod200 mod200) throws AonCoreException {
-		return AON.validateMod200(mod200);
-	}
-
-	@Override
-	public void deleteMod200(String domainName, int domain, int id)
-			throws AonCoreException {
-		AON.deleteMod200(domainName,domain,id);
-	}
-
-	@Override
-	public String dumpAEAT(Mod200 mod200) throws AonCoreException {
-		return AON.dumpAEAT(mod200);
+	public Mod2002013 initializeNewMod2002013(String domainName, int domain, Mod2002013 mod200) {
+		return AON.initializeNewMod2002013(domainName,domain,mod200);
 	}
 	
+	@Override
+	public Mod2002013 initializeMod2002013(String domainName, int domain, Mod2002013 mod200) {
+		return AON.initializeMod2002013(domainName,domain,mod200);
+	}
+
+	@Override
+	public Mod2002013 getMod2002013ByYear(String domainName, int domain, int year)
+			throws AonCoreException {
+		return AON.getMod2002013ByYear(domainName,domain,year);
+	}
+
+	@Override
+	public Mod2002013 getMod2002013ById(String domainName, int domain, int id)
+			throws AonCoreException {
+		return AON.getMod2002013ById(domainName,domain,id);
+	}
+
+	@Override
+	public Mod2002013 calculateMod2002013(Mod2002013 mod200) throws AonCoreException {
+		return AON.calculateMod2002013(mod200);
+	}
+
+	@Override
+	public Mod2002013 saveMod2002013(String domainName, int domain, Mod2002013 mod200)
+			throws AonCoreException {
+		return AON.saveMod2002013(domainName,domain,mod200);
+	}
+
+	@Override
+	public Mod2002013 validateMod2002013(Mod2002013 mod200) throws AonCoreException {
+		return AON.validateMod2002013(mod200);
+	}
+
+	@Override
+	public void deleteMod2002013(String domainName, int domain, int id)
+			throws AonCoreException {
+		AON.deleteMod2002013(domainName,domain,id);
+	}
+
+	@Override
+	public String dumpAEATMod2002013(Mod2002013 mod200) throws AonCoreException {
+		return AON.dumpAEATMod2002013(mod200);
+	}
+	
+	// ---------------------------------------------------------------MODELO 200 - 2014
+	@Override
+	public Mod2002014 initializeNewMod2002014(String domainName, int domain, Mod2002014 mod200) {
+		return AON.initializeNewMod2002014(domainName,domain,mod200);
+	}
+	
+	@Override
+	public Mod2002014 initializeMod2002014(String domainName, int domain, Mod2002014 mod200) {
+		return AON.initializeMod2002014(domainName,domain,mod200);
+	}
+
+	@Override
+	public Mod2002014 getMod2002014ByYear(String domainName, int domain, int year)
+			throws AonCoreException {
+		return AON.getMod2002014ByYear(domainName,domain,year);
+	}
+
+	@Override
+	public Mod2002014 getMod2002014ById(String domainName, int domain, int id)
+			throws AonCoreException {
+		return AON.getMod2002014ById(domainName,domain,id);
+	}
+
+	@Override
+	public Mod2002014 calculateMod2002014(Mod2002014 mod200) throws AonCoreException {
+		return AON.calculateMod2002014(mod200);
+	}
+
+	@Override
+	public Mod2002014 saveMod2002014(String domainName, int domain, Mod2002014 mod200)
+			throws AonCoreException {
+		return AON.saveMod2002014(domainName,domain,mod200);
+	}
+
+	@Override
+	public Mod2002014 validateMod2002014(Mod2002014 mod200) throws AonCoreException {
+		return AON.validateMod2002014(mod200);
+	}
+
+	@Override
+	public void deleteMod2002014(String domainName, int domain, int id)
+			throws AonCoreException {
+		AON.deleteMod2002014(domainName,domain,id);
+	}
+
+	@Override
+	public String dumpAEATMod2002014(Mod2002014 mod200) throws AonCoreException {
+		return AON.dumpAEATMod2002014(mod200);
+	}
+
 	// --------------------------------------------------------------- NORMALIZED MEMORY
 	@Override
 	public Memory readMemory(Memory memory) throws AonCoreException {

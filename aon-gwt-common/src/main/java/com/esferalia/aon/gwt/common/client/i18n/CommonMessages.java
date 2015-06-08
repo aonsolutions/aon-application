@@ -1926,5 +1926,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Percepciones")
 	String perceptions();
+
+	@DefaultMessage("Rellene la p\u00E1gina de \"Identificaci\u00F3n\" y pulse \"Continuar\" para completar el modelo.")
+	String mustInitialzeMod200();
+	
 	
 }

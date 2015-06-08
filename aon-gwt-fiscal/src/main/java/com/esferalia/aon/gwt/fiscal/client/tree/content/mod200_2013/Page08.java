@@ -4,11 +4,11 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
 import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.DoubleVariable;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Correction;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CorrectionKey;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.DoubleVariable2013;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Correction;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013CorrectionKey;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Key;
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;
@@ -43,8 +43,8 @@ public class Page08 extends PageAbs {
 	private static final Page8Binder page8Binder = GWT
 			.create(Page8Binder.class);
 
-	private ListDataProvider<Mod200Correction> dataProvider;
-	private NoSelectionModel<Mod200Correction> model;	
+	private ListDataProvider<Mod2002013Correction> dataProvider;
+	private NoSelectionModel<Mod2002013Correction> model;	
 	
 	@UiField
 	BoxLabel c500Label;
@@ -72,7 +72,7 @@ public class Page08 extends PageAbs {
 	DoubleBox c418;
 	
 	@UiField(provided = true)
-	CellTable<Mod200Correction> correctionTable;
+	CellTable<Mod2002013Correction> correctionTable;
 	
 	@UiField(provided=true)
 	ListBox correctionType;
@@ -89,19 +89,19 @@ public class Page08 extends PageAbs {
 		correctionType = new ListBox();
 		
 		CellTable.Resources aonTableStyle = GWT.create(AonCellTable.class);
-		correctionTable = new CellTable<Mod200Correction>(1,aonTableStyle);
+		correctionTable = new CellTable<Mod2002013Correction>(1,aonTableStyle);
 		
 		correctionTable.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
 		correctionTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
 
 		correctionTable.setEmptyTableWidget(new HTML(AON.MSG.noData()));
-		dataProvider = new ListDataProvider<Mod200Correction>();
+		dataProvider = new ListDataProvider<Mod2002013Correction>();
 		dataProvider.addDataDisplay(correctionTable);
-		model = new NoSelectionModel<Mod200Correction>();
+		model = new NoSelectionModel<Mod2002013Correction>();
 		model.addSelectionChangeHandler(new SelectionChangeEvent.Handler(){
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
-				Mod200Correction mc = model.getLastSelectedObject();
+				Mod2002013Correction mc = model.getLastSelectedObject();
 				correctionType.setSelectedIndex(mc.getKey().ordinal() + 1);
 				increase.setText(mc.getIncrease()==null?null:mc.getIncrease().toString());
 				increase.setEnabled(true); 
@@ -121,25 +121,25 @@ public class Page08 extends PageAbs {
 		Widget ui = page8Binder.createAndBindUi(this);
 		initWidget(ui);
 		
-		getInputs().put(Mod200Key.LQ500, c500);
-		getInputs().put(Mod200Key.LQ301, c301);
-		getInputs().put(Mod200Key.LQ302, c302);
-		getInputs().put(Mod200Key.LQ501, c501);
-		getInputs().put(Mod200Key.I0417, c417);
-		getInputs().put(Mod200Key.D0418, c418);
-		getLabels().put(Mod200Key.LQ500, c500Label);
-		getLabels().put(Mod200Key.LQ301, c301Label);
-		getLabels().put(Mod200Key.LQ302, c302Label);
-		getLabels().put(Mod200Key.LQ501, c501Label);
-		getLabels().put(Mod200Key.I0417, c417Label);
-		getLabels().put(Mod200Key.D0418, c418Label);
+		getInputs().put(Mod2002013Key.LQ500, c500);
+		getInputs().put(Mod2002013Key.LQ301, c301);
+		getInputs().put(Mod2002013Key.LQ302, c302);
+		getInputs().put(Mod2002013Key.LQ501, c501);
+		getInputs().put(Mod2002013Key.I0417, c417);
+		getInputs().put(Mod2002013Key.D0418, c418);
+		getLabels().put(Mod2002013Key.LQ500, c500Label);
+		getLabels().put(Mod2002013Key.LQ301, c301Label);
+		getLabels().put(Mod2002013Key.LQ302, c302Label);
+		getLabels().put(Mod2002013Key.LQ501, c501Label);
+		getLabels().put(Mod2002013Key.I0417, c417Label);
+		getLabels().put(Mod2002013Key.D0418, c418Label);
 	}
 	
 	private void addKeyColumn() {
-		Column<Mod200Correction, String> keyColumn = new Column<Mod200Correction, String>(
+		Column<Mod2002013Correction, String> keyColumn = new Column<Mod2002013Correction, String>(
 				new TextCell()) {
 			@Override
-			public String getValue(Mod200Correction mc) {
+			public String getValue(Mod2002013Correction mc) {
 				return mc.getKey().getDescription();
 			}
 		};
@@ -148,10 +148,10 @@ public class Page08 extends PageAbs {
 	}
 
 	private void addIncreaseBoxColumn() {
-		Column<Mod200Correction, String> increaseBoxColumn = new Column<Mod200Correction, String>(
+		Column<Mod2002013Correction, String> increaseBoxColumn = new Column<Mod2002013Correction, String>(
 				new TextCell()) {
 			@Override
-			public String getValue(Mod200Correction mc) {
+			public String getValue(Mod2002013Correction mc) {
 				if (mc.getKey().isIncreaseEnabled() && mc.getIncrease() != null) {
 					return mc.getKey().getIncrease().getCode(mod200Object.getAdministration());
 				}
@@ -165,10 +165,10 @@ public class Page08 extends PageAbs {
 	}
 	
 	private void addIncreaseColumn() {
-		Column<Mod200Correction, String> increaseColumn = new Column<Mod200Correction, String>(
+		Column<Mod2002013Correction, String> increaseColumn = new Column<Mod2002013Correction, String>(
 				new TextCell()) {
 			@Override
-			public String getValue(Mod200Correction mc) {
+			public String getValue(Mod2002013Correction mc) {
 				if (mc.getKey().isIncreaseEnabled() && mc.getIncrease() != null) {
 					return Double.toString(mc.getIncrease());
 				}
@@ -181,10 +181,10 @@ public class Page08 extends PageAbs {
 	}
 
 	private void addDecreaseBoxColumn() {
-		Column<Mod200Correction, String> decreaseBoxColumn = new Column<Mod200Correction, String>(
+		Column<Mod2002013Correction, String> decreaseBoxColumn = new Column<Mod2002013Correction, String>(
 				new TextCell()) {
 			@Override
-			public String getValue(Mod200Correction mc) {
+			public String getValue(Mod2002013Correction mc) {
 				if (mc.getKey().isDecreaseEnabled() && mc.getDecrease() != null) {
 					return mc.getKey().getDecrease().getCode(mod200Object.getAdministration());
 				}
@@ -197,10 +197,10 @@ public class Page08 extends PageAbs {
 	}
 
 	private void addDecreaseColumn() {
-		Column<Mod200Correction, String> decreaseColumn = new Column<Mod200Correction, String>(
+		Column<Mod2002013Correction, String> decreaseColumn = new Column<Mod2002013Correction, String>(
 				new TextCell()) {
 			@Override
-			public String getValue(Mod200Correction mc) {
+			public String getValue(Mod2002013Correction mc) {
 				if (mc.getKey().isDecreaseEnabled() && mc.getDecrease() != null) {
 					return Double.toString(mc.getDecrease());
 				}
@@ -221,13 +221,13 @@ public class Page08 extends PageAbs {
 			    }
 			  }
 		};
-		Column<Mod200Correction,String> col = new Column<Mod200Correction,String>(removeButton) {
-		  public String getValue(Mod200Correction object) {
+		Column<Mod2002013Correction,String> col = new Column<Mod2002013Correction,String>(removeButton) {
+		  public String getValue(Mod2002013Correction object) {
 		    return AON.MSG.deleteAction();
 		  }
 		};
-		col.setFieldUpdater(new FieldUpdater<Mod200Correction, String>() {
-		    public void update(int index, Mod200Correction ca, String value) {
+		col.setFieldUpdater(new FieldUpdater<Mod2002013Correction, String>() {
+		    public void update(int index, Mod2002013Correction ca, String value) {
 		    	if (Window.confirm(AON.MSG.confirmDeleteAction())) {
 		    		changeKey(ca.getKey().getIncrease(), 0);
 		    		changeKey(ca.getKey().getDecrease(), 0);
@@ -242,7 +242,7 @@ public class Page08 extends PageAbs {
 		col.setCellStyleNames(AON.AON_CSS.aonTextCenter());
 	}
 	
-	private void changeKey(Mod200Key key, double value) {
+	private void changeKey(Mod2002013Key key, double value) {
 		if (key != null) {
 			mod200Object.doubleValueChanged(key, value);	
 		}
@@ -256,16 +256,16 @@ public class Page08 extends PageAbs {
 		} else if (increase.getValue() == 0 && decrease.getValue() == 0) {
 			increase.setFocus(true);
 		} else {
-			Mod200CorrectionKey key = Mod200CorrectionKey.values()[correctionType.getSelectedIndex() - 1];
-			Mod200Correction mc = null;
-			for (Mod200Correction mod200Correction : dataProvider.getList()) {
+			Mod2002013CorrectionKey key = Mod2002013CorrectionKey.values()[correctionType.getSelectedIndex() - 1];
+			Mod2002013Correction mc = null;
+			for (Mod2002013Correction mod200Correction : dataProvider.getList()) {
 				if (key == mod200Correction.getKey()) {
 					mc = mod200Correction;
 					break;
 				}
 			}
 			if (mc == null) {
-				mc = new Mod200Correction();
+				mc = new Mod2002013Correction();
 				mc.setKey(key);
 				dataProvider.getList().add(mc);
 				correctionTable.setPageSize(correctionTable.getPageSize() +1 );
@@ -291,7 +291,7 @@ public class Page08 extends PageAbs {
 	@UiHandler("correctionType")
 	public void onChangeCorrectionType(ChangeEvent event) {
 		if (correctionType.getSelectedIndex() != 0) {
-			Mod200CorrectionKey key = Mod200CorrectionKey.values()[correctionType.getSelectedIndex() - 1];
+			Mod2002013CorrectionKey key = Mod2002013CorrectionKey.values()[correctionType.getSelectedIndex() - 1];
 			increase.setEnabled(key.isIncreaseEnabled());
 			decrease.setEnabled(key.isDecreaseEnabled());
 			if (key.isIncreaseEnabled()) {
@@ -309,30 +309,30 @@ public class Page08 extends PageAbs {
 	
 	@UiHandler("c500")
 	public void onChangeC500(ChangeEvent event) {
-		onChange(Mod200Key.LQ500, c500);
+		onChange(Mod2002013Key.LQ500, c500);
 	}
 	@UiHandler("c301")
 	public void onChangeC301(ChangeEvent event) {
-		onChange(Mod200Key.LQ301, c301);
+		onChange(Mod2002013Key.LQ301, c301);
 	}
 	@UiHandler("c302")
 	public void onChangeC302(ChangeEvent event) {
-		onChange(Mod200Key.LQ302, c302);
+		onChange(Mod2002013Key.LQ302, c302);
 	}
 	@UiHandler("c501")
 	public void onChangeC501(ChangeEvent event) {
-		onChange(Mod200Key.LQ501, c501);
+		onChange(Mod2002013Key.LQ501, c501);
 	}
 	@UiHandler("c417")
 	public void onChangeC417(ChangeEvent event) {
-		onChange(Mod200Key.I0417, c417);
+		onChange(Mod2002013Key.I0417, c417);
 	}
 	@UiHandler("c418")
 	public void onChangeC418(ChangeEvent event) {
-		onChange(Mod200Key.D0418, c418);
+		onChange(Mod2002013Key.D0418, c418);
 	}
 	
-	private void onChange(Mod200Key key, DoubleBox text) {
+	private void onChange(Mod2002013Key key, DoubleBox text) {
 		text.addStyleName(AON.AON_CSS.aonChanged());
 		mod200Object.doubleValueChanged(key, text.getValue());
 	}
@@ -340,13 +340,12 @@ public class Page08 extends PageAbs {
 	
 
 	protected void initializeTable() {
-		paintHeaderTable(this.mod200Object.getMod200());		
-		Mod200 mod200 = this.mod200Object.getMod200();
+		Mod2002013 mod200 = this.mod200Object.getMod200();
 		for (int i = 0; i < correctionType.getItemCount(); i++) {
 			correctionType.removeItem(i);	
 		}
 		correctionType.addItem("--------------");
-		for (Mod200CorrectionKey key : Mod200CorrectionKey.values()) {
+		for (Mod2002013CorrectionKey key : Mod2002013CorrectionKey.values()) {
 			correctionType.addItem(
 			  (key.isIncreaseEnabled()?key.getIncrease().getCode(mod200Object.getAdministration()):"")
 			  + " " + (key.isDecreaseEnabled()?key.getDecrease().getCode(mod200Object.getAdministration()):"")
@@ -354,25 +353,25 @@ public class Page08 extends PageAbs {
 			);	
 		}
 		
-		for (Mod200Key key : getInputs().keySet() ) {
-			DoubleVariable d = mod200.getKey(key);
+		for (Mod2002013Key key : getInputs().keySet() ) {
+			DoubleVariable2013 d = mod200.getKey(key);
 			Double value = 0.0;
 			if (d != null && d.getValue() != null) {
 				value = d.getValue();
 			}
 			getInputs().get(key).setValue(value);
 		}
-		for (Mod200CorrectionKey key : Mod200CorrectionKey.values()) {
-			Mod200Correction mc = null;
+		for (Mod2002013CorrectionKey key : Mod2002013CorrectionKey.values()) {
+			Mod2002013Correction mc = null;
 			Double inc = mod200.getDoubleValue(key.getIncrease());
 			if (inc != null && inc != 0) {
-				mc = new Mod200Correction();
+				mc = new Mod2002013Correction();
 				mc.setKey(key);
 				mc.setIncrease(inc);
 			}
 			Double dec = mod200.getDoubleValue(key.getDecrease());
 			if (dec != null && dec != 0) {
-				mc = mc!=null?mc:new Mod200Correction();
+				mc = mc!=null?mc:new Mod2002013Correction();
 				mc.setKey(key);
 				mc.setDecrease(dec);
 			}

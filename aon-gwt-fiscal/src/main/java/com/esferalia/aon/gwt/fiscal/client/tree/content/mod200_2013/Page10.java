@@ -1,18 +1,18 @@
 package com.esferalia.aon.gwt.fiscal.client.tree.content.mod200_2013;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200BN082Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200BN565Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200BN570Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200BN571Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200BN572Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200BN573Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200BN584Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200BN585Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200BN588Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200BN590Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Constants;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013BN082Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013BN565Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013BN570Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013BN571Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013BN572Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013BN573Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013BN584Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013BN585Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013BN588Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013BN590Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Constants;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Key;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -71,56 +71,55 @@ public class Page10 extends PageAbs {
 	
 	@Override
 	protected void initializeTable() {
-		paintHeaderTable(this.mod200Object.getMod200());
 		int row = 0;
-		for (final Mod200Key key : Mod200Constants.LIQUIDATION_III_KEYS_1) {
+		for (final Mod2002013Key key : Mod2002013Constants.LIQUIDATION_III_KEYS_1) {
 			if (mod200Object.isVisible(key)) {
 				row = paintKey(table,key,row);
-				if (key == Mod200Key.BN570) {
+				if (key == Mod2002013Key.BN570) {
 					row = paintKeyBreakdown(table,row,AON.MSG.doubleContributionNationalPrevious()
-							,Mod200BN570Key.values(),HEADERS_1);
+							,Mod2002013BN570Key.values(),HEADERS_1);
 				} 
-				if (key == Mod200Key.BN571) {
+				if (key == Mod2002013Key.BN571) {
 					row = paintKeyBreakdown(table,row,AON.MSG.doubleContributionNational2013()
-							,Mod200BN571Key.values(),HEADERS_2);
+							,Mod2002013BN571Key.values(),HEADERS_2);
 				} 
-				if (key == Mod200Key.BN572) {
+				if (key == Mod2002013Key.BN572) {
 					row = paintKeyBreakdown(table,row,AON.MSG.doubleContributionInternationalPrevious()
-							,Mod200BN572Key.values(),HEADERS_1);
+							,Mod2002013BN572Key.values(),HEADERS_1);
 				} 
-				if (key == Mod200Key.BN573) {
+				if (key == Mod2002013Key.BN573) {
 					row = paintKeyBreakdown(table,row,AON.MSG.doubleContributionInternational2013()
-							,Mod200BN573Key.values(),HEADERS_2);
+							,Mod2002013BN573Key.values(),HEADERS_2);
 				}
 			}
 		}
 		row = 0;
-		for (final Mod200Key key : Mod200Constants.LIQUIDATION_III_KEYS_2) {
+		for (final Mod2002013Key key : Mod2002013Constants.LIQUIDATION_III_KEYS_2) {
 			row = paintKey(table1,key,row);
 			if (mod200Object.isVisible(key)) {
-				if (key == Mod200Key.BN585) {
-					row = paintKeyBreakdown(table1,row,Mod200Key.BN585.getDescription()
-							,Mod200BN585Key.values(),HEADERS_3);
+				if (key == Mod2002013Key.BN585) {
+					row = paintKeyBreakdown(table1,row,Mod2002013Key.BN585.getDescription()
+							,Mod2002013BN585Key.values(),HEADERS_3);
 				} 
-				if (key == Mod200Key.BN584) {
-					row = paintKeyBreakdown(table1,row,Mod200Key.BN584.getDescription()
-							,Mod200BN584Key.values(),HEADERS_3);
+				if (key == Mod2002013Key.BN584) {
+					row = paintKeyBreakdown(table1,row,Mod2002013Key.BN584.getDescription()
+							,Mod2002013BN584Key.values(),HEADERS_3);
 				} 
-				if (key == Mod200Key.BN588) {
-					row = paintKeyBreakdown(table1,row,Mod200Key.BN588.getDescription()
-							,Mod200BN588Key.values(),HEADERS_3);
+				if (key == Mod2002013Key.BN588) {
+					row = paintKeyBreakdown(table1,row,Mod2002013Key.BN588.getDescription()
+							,Mod2002013BN588Key.values(),HEADERS_3);
 				} 
-				if (key == Mod200Key.BN082) {
-					row = paintKeyBreakdown(table1,row,Mod200Key.BN082.getDescription()
-							,Mod200BN082Key.values(),HEADERS_4);
+				if (key == Mod2002013Key.BN082) {
+					row = paintKeyBreakdown(table1,row,Mod2002013Key.BN082.getDescription()
+							,Mod2002013BN082Key.values(),HEADERS_4);
 				} 
-				if (key == Mod200Key.BN565) {
-					row = paintKeyBreakdown(table1,row,Mod200Key.BN082.getDescription()
-							,Mod200BN565Key.values(),HEADERS_3);
+				if (key == Mod2002013Key.BN565) {
+					row = paintKeyBreakdown(table1,row,Mod2002013Key.BN082.getDescription()
+							,Mod2002013BN565Key.values(),HEADERS_3);
 				} 
-				if (key == Mod200Key.BN590) {
-					row = paintKeyBreakdown(table1,row,Mod200Key.BN590.getDescription()
-							,Mod200BN590Key.values(),HEADERS_3);
+				if (key == Mod2002013Key.BN590) {
+					row = paintKeyBreakdown(table1,row,Mod2002013Key.BN590.getDescription()
+							,Mod2002013BN590Key.values(),HEADERS_3);
 				}
 			}
 		}

@@ -21,7 +21,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -115,16 +116,28 @@ public interface FiscalService extends RemoteService {
 	Mod202 initializeMod202(String domainName, int domain, Mod202 mod202) throws AonCoreException;
 
 
-	// ---------------------------------------------------------------MODELO 200
-	Mod200 initializeMod200(String domainName,int domain,Mod200 mod200) throws AonCoreException;
-	Mod200 getMod200ByYear(String domainName,int domain, int year) throws AonCoreException;
-	Mod200 getMod200ById(String domainName,int domain, int id) throws AonCoreException;
-	Mod200 calculateMod200(Mod200 mod200) throws AonCoreException;
-	Mod200 saveMod200(String domainName,int domain,Mod200 mod200) throws AonCoreException;
-	Mod200 validateMod200(Mod200 mod200) throws AonCoreException;
-	void deleteMod200(String domainName,int domain,int id) throws AonCoreException;
-	String dumpAEAT(Mod200 mod200) throws AonCoreException;
-	
+	// ---------------------------------------------------------------MODELO 200 - 2013
+	Mod2002013 initializeNewMod2002013(String domainName,int domain,Mod2002013 mod200) throws AonCoreException;
+	Mod2002013 initializeMod2002013(String domainName,int domain,Mod2002013 mod200) throws AonCoreException;
+	Mod2002013 getMod2002013ByYear(String domainName,int domain, int year) throws AonCoreException;
+	Mod2002013 getMod2002013ById(String domainName,int domain, int id) throws AonCoreException;
+	Mod2002013 calculateMod2002013(Mod2002013 mod200) throws AonCoreException;
+	Mod2002013 saveMod2002013(String domainName,int domain,Mod2002013 mod200) throws AonCoreException;
+	Mod2002013 validateMod2002013(Mod2002013 mod200) throws AonCoreException;
+	void deleteMod2002013(String domainName,int domain,int id) throws AonCoreException;
+	String dumpAEATMod2002013(Mod2002013 mod200) throws AonCoreException;
+
+	// ---------------------------------------------------------------MODELO 200 - 2014
+	Mod2002014 initializeNewMod2002014(String domainName,int domain,Mod2002014 mod200) throws AonCoreException;
+	Mod2002014 initializeMod2002014(String domainName,int domain,Mod2002014 mod200) throws AonCoreException;
+	Mod2002014 getMod2002014ByYear(String domainName,int domain, int year) throws AonCoreException;
+	Mod2002014 getMod2002014ById(String domainName,int domain, int id) throws AonCoreException;
+	Mod2002014 calculateMod2002014(Mod2002014 mod200) throws AonCoreException;
+	Mod2002014 saveMod2002014(String domainName,int domain,Mod2002014 mod200) throws AonCoreException;
+	Mod2002014 validateMod2002014(Mod2002014 mod200) throws AonCoreException;
+	void deleteMod2002014(String domainName,int domain,int id) throws AonCoreException;
+	String dumpAEATMod2002014(Mod2002014 mod200) throws AonCoreException;
+
 	// --------------------------------------------------------------- NORMALIZED MEMORY
 	Memory readMemory(Memory memory) throws AonCoreException;
 	Memory saveMemory(Memory memory) throws AonCoreException;

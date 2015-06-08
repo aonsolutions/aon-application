@@ -5,8 +5,9 @@ import java.text.ParseException;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200.BalanceType;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Key;
+import com.esferalia.aon.gwt.fiscal.client.widget.ModCellTable;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013.BalanceType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -34,27 +35,27 @@ public class Page07 extends PageAbs {
 	
 	private static enum Page7Row {
 		 ROW1 (""             ,false,true ,true ,true ,null )
-		,ROW2 (AON.MSG.ecpnMsg15(),true ,true ,true ,true ,new Mod200Key[] {Mod200Key.TC380,Mod200Key.TC381,Mod200Key.TC382,Mod200Key.TC383,Mod200Key.TC384,Mod200Key.TC385,Mod200Key.TC386,Mod200Key.TC387,Mod200Key.TC388,Mod200Key.TC389,Mod200Key.TC390,Mod200Key.TC391,Mod200Key.TC392,Mod200Key.TC393})
-		,ROW3 (AON.MSG.ecpnMsg16(),false,true ,true ,true ,new Mod200Key[] {Mod200Key.TC394,Mod200Key.TC395,Mod200Key.TC396,Mod200Key.TC397,Mod200Key.TC398,Mod200Key.TC399,Mod200Key.TC400,Mod200Key.TC401,Mod200Key.TC402,Mod200Key.TC403,Mod200Key.TC404,Mod200Key.TC405,Mod200Key.TC406,Mod200Key.TC407})
-		,ROW4 (AON.MSG.ecpnMsg17(),false,true ,true ,true ,new Mod200Key[] {Mod200Key.TC408,Mod200Key.TC409,Mod200Key.TC410,Mod200Key.TC411,Mod200Key.TC412,Mod200Key.TC413,Mod200Key.TC414,Mod200Key.TC415,Mod200Key.TC416,Mod200Key.TC417,Mod200Key.TC418,Mod200Key.TC419,Mod200Key.TC420,Mod200Key.TC421})
-		,ROW5 (AON.MSG.ecpnMsg18(),true ,true ,true ,true ,new Mod200Key[] {Mod200Key.TC422,Mod200Key.TC423,Mod200Key.TC424,Mod200Key.TC425,Mod200Key.TC426,Mod200Key.TC427,Mod200Key.TC428,Mod200Key.TC429,Mod200Key.TC430,Mod200Key.TC431,Mod200Key.TC432,Mod200Key.TC433,Mod200Key.TC434,Mod200Key.TC435})
-		,ROW6 (AON.MSG.ecpnMsg19(),false,true ,true ,false,new Mod200Key[] {Mod200Key.TC436,Mod200Key.TC437,Mod200Key.TC438,Mod200Key.TC439,Mod200Key.TC440,Mod200Key.TC441,Mod200Key.TC442,Mod200Key.TC443,Mod200Key.TC444,Mod200Key.TC445,Mod200Key.TC446,null           ,Mod200Key.TC448,Mod200Key.TC449})
-		,ROW7 (AON.MSG.ecpnMsg20(),false,false,false,true ,new Mod200Key[] {Mod200Key.TC450,Mod200Key.TC451,Mod200Key.TC452,Mod200Key.TC453,Mod200Key.TC454,Mod200Key.TC455,Mod200Key.TC456,Mod200Key.TC457,Mod200Key.TC458,null           ,null           ,Mod200Key.TC461,Mod200Key.TC462,Mod200Key.TC463})
-		,ROW8 (AON.MSG.ecpnMsg21(),true ,false,false,true ,new Mod200Key[] {Mod200Key.TC464,Mod200Key.TC465,Mod200Key.TC466,Mod200Key.TC467,Mod200Key.TC468,Mod200Key.TC469,Mod200Key.TC470,Mod200Key.TC471,Mod200Key.TC472,null           ,null           ,Mod200Key.TC475,Mod200Key.TC476,Mod200Key.TC477})
-		,ROW9 (AON.MSG.ecpnMsg22(),false,false,false,true ,new Mod200Key[] {Mod200Key.TC478,Mod200Key.TC479,Mod200Key.TC480,Mod200Key.TC481,Mod200Key.TC482,Mod200Key.TC483,Mod200Key.TC484,Mod200Key.TC485,Mod200Key.TC486,null           ,null           ,Mod200Key.TC489,Mod200Key.TC490,Mod200Key.TC491})
-		,ROW10(AON.MSG.ecpnMsg23(),false,false,false,true ,new Mod200Key[] {Mod200Key.TC492,Mod200Key.TC493,Mod200Key.TC494,Mod200Key.TC495,Mod200Key.TC496,Mod200Key.TC497,Mod200Key.TC498,Mod200Key.TC499,Mod200Key.TC502,null           ,null           ,Mod200Key.TC503,Mod200Key.TC504,Mod200Key.TC505})
-		,ROW11(AON.MSG.ecpnMsg24(),true ,true ,true ,true ,new Mod200Key[] {Mod200Key.TC506,Mod200Key.TC507,Mod200Key.TC508,Mod200Key.TC509,Mod200Key.TC510,Mod200Key.TC511,Mod200Key.TC512,Mod200Key.TC513,Mod200Key.TC514,Mod200Key.TC515,Mod200Key.TC516,Mod200Key.TC517,Mod200Key.TC518,Mod200Key.TC519})
-		,ROW12(AON.MSG.ecpnMsg25(),false,true ,true ,true ,new Mod200Key[] {Mod200Key.TC520,Mod200Key.TC521,Mod200Key.TC522,Mod200Key.TC523,Mod200Key.TC524,Mod200Key.TC525,Mod200Key.TC526,Mod200Key.TC527,Mod200Key.TC528,Mod200Key.TC529,Mod200Key.TC530,Mod200Key.TC531,Mod200Key.TC532,Mod200Key.TC533})
-		,ROW13(AON.MSG.ecpnMsg26(),false,true ,true ,true ,new Mod200Key[] {Mod200Key.TC534,Mod200Key.TC535,Mod200Key.TC536,Mod200Key.TC537,Mod200Key.TC538,Mod200Key.TC539,Mod200Key.TC540,Mod200Key.TC541,Mod200Key.TC542,Mod200Key.TC543,Mod200Key.TC544,Mod200Key.TC545,Mod200Key.TC546,Mod200Key.TC547})
-		,ROW14(AON.MSG.ecpnMsg27(),false,true ,false,false,new Mod200Key[] {Mod200Key.TC548,Mod200Key.TC549,Mod200Key.TC550,Mod200Key.TC551,Mod200Key.TC552,Mod200Key.TC553,Mod200Key.TC554,Mod200Key.TC555,Mod200Key.TC556,Mod200Key.TC557,Mod200Key.TC558,null           ,Mod200Key.TC560,Mod200Key.TC561})
-		,ROW15(AON.MSG.ecpnMsg28(),false,true ,false,false,new Mod200Key[] {Mod200Key.TC562,Mod200Key.TC563,Mod200Key.TC564,Mod200Key.TC565,Mod200Key.TC566,Mod200Key.TC567,Mod200Key.TC568,Mod200Key.TC569,Mod200Key.TC570,Mod200Key.TC571,Mod200Key.TC572,null           ,Mod200Key.TC574,Mod200Key.TC575})
-		,ROW16(AON.MSG.ecpnMsg29(),false,true ,false,false,new Mod200Key[] {Mod200Key.TC576,Mod200Key.TC577,Mod200Key.TC578,Mod200Key.TC579,Mod200Key.TC580,Mod200Key.TC581,Mod200Key.TC582,Mod200Key.TC583,Mod200Key.TC584,Mod200Key.TC585,Mod200Key.TC586,null           ,Mod200Key.TC588,Mod200Key.TC589})
-		,ROW17(AON.MSG.ecpnMsg30(),false,true ,false,false,new Mod200Key[] {Mod200Key.TC590,Mod200Key.TC591,Mod200Key.TC592,Mod200Key.TC593,Mod200Key.TC594,Mod200Key.TC595,Mod200Key.TC596,Mod200Key.TC597,Mod200Key.TC598,Mod200Key.TC599,Mod200Key.TC600,null           ,Mod200Key.TC602,Mod200Key.TC603})
-		,ROW18(AON.MSG.ecpnMsg31(),false,true ,true ,true ,new Mod200Key[] {Mod200Key.TC604,Mod200Key.TC605,Mod200Key.TC606,Mod200Key.TC607,Mod200Key.TC608,Mod200Key.TC609,Mod200Key.TC610,Mod200Key.TC611,Mod200Key.TC612,Mod200Key.TC613,Mod200Key.TC614,Mod200Key.TC615,Mod200Key.TC616,Mod200Key.TC617})
-		,ROW19(AON.MSG.ecpnMsg32(),true ,true ,true ,true ,new Mod200Key[] {Mod200Key.TC618,Mod200Key.TC619,Mod200Key.TC620,Mod200Key.TC621,Mod200Key.TC622,Mod200Key.TC623,Mod200Key.TC624,Mod200Key.TC625,Mod200Key.TC626,Mod200Key.TC627,Mod200Key.TC628,Mod200Key.TC629,Mod200Key.TC630,Mod200Key.TC631})
-		,ROW20(AON.MSG.ecpnMsg33(),false,true ,true ,true ,new Mod200Key[] {Mod200Key.TC715,Mod200Key.TC716,Mod200Key.TC717,Mod200Key.TC718,Mod200Key.TC719,Mod200Key.TC720,Mod200Key.TC721,Mod200Key.TC722,Mod200Key.TC723,Mod200Key.TC724,Mod200Key.TC725,Mod200Key.TC726,Mod200Key.TC727,Mod200Key.TC728})
-		,ROW21(AON.MSG.ecpnMsg34(),false,true ,true ,true ,new Mod200Key[] {Mod200Key.TC729,Mod200Key.TC730,Mod200Key.TC731,Mod200Key.TC732,Mod200Key.TC733,Mod200Key.TC734,Mod200Key.TC735,Mod200Key.TC736,Mod200Key.TC737,Mod200Key.TC738,Mod200Key.TC739,Mod200Key.TC740,Mod200Key.TC741,Mod200Key.TC742})
-		,ROW22(AON.MSG.ecpnMsg35(),true ,true ,true ,true ,new Mod200Key[] {Mod200Key.TC632,Mod200Key.TC633,Mod200Key.TC634,Mod200Key.TC635,Mod200Key.TC636,Mod200Key.TC637,Mod200Key.TC638,Mod200Key.TC639,Mod200Key.TC640,Mod200Key.TC641,Mod200Key.TC642,Mod200Key.TC643,Mod200Key.TC644,Mod200Key.TC645})
+		,ROW2 (AON.MSG.ecpnMsg15(),true ,true ,true ,true ,new Mod2002013Key[] {Mod2002013Key.TC380,Mod2002013Key.TC381,Mod2002013Key.TC382,Mod2002013Key.TC383,Mod2002013Key.TC384,Mod2002013Key.TC385,Mod2002013Key.TC386,Mod2002013Key.TC387,Mod2002013Key.TC388,Mod2002013Key.TC389,Mod2002013Key.TC390,Mod2002013Key.TC391,Mod2002013Key.TC392,Mod2002013Key.TC393})
+		,ROW3 (AON.MSG.ecpnMsg16(),false,true ,true ,true ,new Mod2002013Key[] {Mod2002013Key.TC394,Mod2002013Key.TC395,Mod2002013Key.TC396,Mod2002013Key.TC397,Mod2002013Key.TC398,Mod2002013Key.TC399,Mod2002013Key.TC400,Mod2002013Key.TC401,Mod2002013Key.TC402,Mod2002013Key.TC403,Mod2002013Key.TC404,Mod2002013Key.TC405,Mod2002013Key.TC406,Mod2002013Key.TC407})
+		,ROW4 (AON.MSG.ecpnMsg17(),false,true ,true ,true ,new Mod2002013Key[] {Mod2002013Key.TC408,Mod2002013Key.TC409,Mod2002013Key.TC410,Mod2002013Key.TC411,Mod2002013Key.TC412,Mod2002013Key.TC413,Mod2002013Key.TC414,Mod2002013Key.TC415,Mod2002013Key.TC416,Mod2002013Key.TC417,Mod2002013Key.TC418,Mod2002013Key.TC419,Mod2002013Key.TC420,Mod2002013Key.TC421})
+		,ROW5 (AON.MSG.ecpnMsg18(),true ,true ,true ,true ,new Mod2002013Key[] {Mod2002013Key.TC422,Mod2002013Key.TC423,Mod2002013Key.TC424,Mod2002013Key.TC425,Mod2002013Key.TC426,Mod2002013Key.TC427,Mod2002013Key.TC428,Mod2002013Key.TC429,Mod2002013Key.TC430,Mod2002013Key.TC431,Mod2002013Key.TC432,Mod2002013Key.TC433,Mod2002013Key.TC434,Mod2002013Key.TC435})
+		,ROW6 (AON.MSG.ecpnMsg19(),false,true ,true ,false,new Mod2002013Key[] {Mod2002013Key.TC436,Mod2002013Key.TC437,Mod2002013Key.TC438,Mod2002013Key.TC439,Mod2002013Key.TC440,Mod2002013Key.TC441,Mod2002013Key.TC442,Mod2002013Key.TC443,Mod2002013Key.TC444,Mod2002013Key.TC445,Mod2002013Key.TC446,null           ,Mod2002013Key.TC448,Mod2002013Key.TC449})
+		,ROW7 (AON.MSG.ecpnMsg20(),false,false,false,true ,new Mod2002013Key[] {Mod2002013Key.TC450,Mod2002013Key.TC451,Mod2002013Key.TC452,Mod2002013Key.TC453,Mod2002013Key.TC454,Mod2002013Key.TC455,Mod2002013Key.TC456,Mod2002013Key.TC457,Mod2002013Key.TC458,null           ,null           ,Mod2002013Key.TC461,Mod2002013Key.TC462,Mod2002013Key.TC463})
+		,ROW8 (AON.MSG.ecpnMsg21(),true ,false,false,true ,new Mod2002013Key[] {Mod2002013Key.TC464,Mod2002013Key.TC465,Mod2002013Key.TC466,Mod2002013Key.TC467,Mod2002013Key.TC468,Mod2002013Key.TC469,Mod2002013Key.TC470,Mod2002013Key.TC471,Mod2002013Key.TC472,null           ,null           ,Mod2002013Key.TC475,Mod2002013Key.TC476,Mod2002013Key.TC477})
+		,ROW9 (AON.MSG.ecpnMsg22(),false,false,false,true ,new Mod2002013Key[] {Mod2002013Key.TC478,Mod2002013Key.TC479,Mod2002013Key.TC480,Mod2002013Key.TC481,Mod2002013Key.TC482,Mod2002013Key.TC483,Mod2002013Key.TC484,Mod2002013Key.TC485,Mod2002013Key.TC486,null           ,null           ,Mod2002013Key.TC489,Mod2002013Key.TC490,Mod2002013Key.TC491})
+		,ROW10(AON.MSG.ecpnMsg23(),false,false,false,true ,new Mod2002013Key[] {Mod2002013Key.TC492,Mod2002013Key.TC493,Mod2002013Key.TC494,Mod2002013Key.TC495,Mod2002013Key.TC496,Mod2002013Key.TC497,Mod2002013Key.TC498,Mod2002013Key.TC499,Mod2002013Key.TC502,null           ,null           ,Mod2002013Key.TC503,Mod2002013Key.TC504,Mod2002013Key.TC505})
+		,ROW11(AON.MSG.ecpnMsg24(),true ,true ,true ,true ,new Mod2002013Key[] {Mod2002013Key.TC506,Mod2002013Key.TC507,Mod2002013Key.TC508,Mod2002013Key.TC509,Mod2002013Key.TC510,Mod2002013Key.TC511,Mod2002013Key.TC512,Mod2002013Key.TC513,Mod2002013Key.TC514,Mod2002013Key.TC515,Mod2002013Key.TC516,Mod2002013Key.TC517,Mod2002013Key.TC518,Mod2002013Key.TC519})
+		,ROW12(AON.MSG.ecpnMsg25(),false,true ,true ,true ,new Mod2002013Key[] {Mod2002013Key.TC520,Mod2002013Key.TC521,Mod2002013Key.TC522,Mod2002013Key.TC523,Mod2002013Key.TC524,Mod2002013Key.TC525,Mod2002013Key.TC526,Mod2002013Key.TC527,Mod2002013Key.TC528,Mod2002013Key.TC529,Mod2002013Key.TC530,Mod2002013Key.TC531,Mod2002013Key.TC532,Mod2002013Key.TC533})
+		,ROW13(AON.MSG.ecpnMsg26(),false,true ,true ,true ,new Mod2002013Key[] {Mod2002013Key.TC534,Mod2002013Key.TC535,Mod2002013Key.TC536,Mod2002013Key.TC537,Mod2002013Key.TC538,Mod2002013Key.TC539,Mod2002013Key.TC540,Mod2002013Key.TC541,Mod2002013Key.TC542,Mod2002013Key.TC543,Mod2002013Key.TC544,Mod2002013Key.TC545,Mod2002013Key.TC546,Mod2002013Key.TC547})
+		,ROW14(AON.MSG.ecpnMsg27(),false,true ,false,false,new Mod2002013Key[] {Mod2002013Key.TC548,Mod2002013Key.TC549,Mod2002013Key.TC550,Mod2002013Key.TC551,Mod2002013Key.TC552,Mod2002013Key.TC553,Mod2002013Key.TC554,Mod2002013Key.TC555,Mod2002013Key.TC556,Mod2002013Key.TC557,Mod2002013Key.TC558,null           ,Mod2002013Key.TC560,Mod2002013Key.TC561})
+		,ROW15(AON.MSG.ecpnMsg28(),false,true ,false,false,new Mod2002013Key[] {Mod2002013Key.TC562,Mod2002013Key.TC563,Mod2002013Key.TC564,Mod2002013Key.TC565,Mod2002013Key.TC566,Mod2002013Key.TC567,Mod2002013Key.TC568,Mod2002013Key.TC569,Mod2002013Key.TC570,Mod2002013Key.TC571,Mod2002013Key.TC572,null           ,Mod2002013Key.TC574,Mod2002013Key.TC575})
+		,ROW16(AON.MSG.ecpnMsg29(),false,true ,false,false,new Mod2002013Key[] {Mod2002013Key.TC576,Mod2002013Key.TC577,Mod2002013Key.TC578,Mod2002013Key.TC579,Mod2002013Key.TC580,Mod2002013Key.TC581,Mod2002013Key.TC582,Mod2002013Key.TC583,Mod2002013Key.TC584,Mod2002013Key.TC585,Mod2002013Key.TC586,null           ,Mod2002013Key.TC588,Mod2002013Key.TC589})
+		,ROW17(AON.MSG.ecpnMsg30(),false,true ,false,false,new Mod2002013Key[] {Mod2002013Key.TC590,Mod2002013Key.TC591,Mod2002013Key.TC592,Mod2002013Key.TC593,Mod2002013Key.TC594,Mod2002013Key.TC595,Mod2002013Key.TC596,Mod2002013Key.TC597,Mod2002013Key.TC598,Mod2002013Key.TC599,Mod2002013Key.TC600,null           ,Mod2002013Key.TC602,Mod2002013Key.TC603})
+		,ROW18(AON.MSG.ecpnMsg31(),false,true ,true ,true ,new Mod2002013Key[] {Mod2002013Key.TC604,Mod2002013Key.TC605,Mod2002013Key.TC606,Mod2002013Key.TC607,Mod2002013Key.TC608,Mod2002013Key.TC609,Mod2002013Key.TC610,Mod2002013Key.TC611,Mod2002013Key.TC612,Mod2002013Key.TC613,Mod2002013Key.TC614,Mod2002013Key.TC615,Mod2002013Key.TC616,Mod2002013Key.TC617})
+		,ROW19(AON.MSG.ecpnMsg32(),true ,true ,true ,true ,new Mod2002013Key[] {Mod2002013Key.TC618,Mod2002013Key.TC619,Mod2002013Key.TC620,Mod2002013Key.TC621,Mod2002013Key.TC622,Mod2002013Key.TC623,Mod2002013Key.TC624,Mod2002013Key.TC625,Mod2002013Key.TC626,Mod2002013Key.TC627,Mod2002013Key.TC628,Mod2002013Key.TC629,Mod2002013Key.TC630,Mod2002013Key.TC631})
+		,ROW20(AON.MSG.ecpnMsg33(),false,true ,true ,true ,new Mod2002013Key[] {Mod2002013Key.TC715,Mod2002013Key.TC716,Mod2002013Key.TC717,Mod2002013Key.TC718,Mod2002013Key.TC719,Mod2002013Key.TC720,Mod2002013Key.TC721,Mod2002013Key.TC722,Mod2002013Key.TC723,Mod2002013Key.TC724,Mod2002013Key.TC725,Mod2002013Key.TC726,Mod2002013Key.TC727,Mod2002013Key.TC728})
+		,ROW21(AON.MSG.ecpnMsg34(),false,true ,true ,true ,new Mod2002013Key[] {Mod2002013Key.TC729,Mod2002013Key.TC730,Mod2002013Key.TC731,Mod2002013Key.TC732,Mod2002013Key.TC733,Mod2002013Key.TC734,Mod2002013Key.TC735,Mod2002013Key.TC736,Mod2002013Key.TC737,Mod2002013Key.TC738,Mod2002013Key.TC739,Mod2002013Key.TC740,Mod2002013Key.TC741,Mod2002013Key.TC742})
+		,ROW22(AON.MSG.ecpnMsg35(),true ,true ,true ,true ,new Mod2002013Key[] {Mod2002013Key.TC632,Mod2002013Key.TC633,Mod2002013Key.TC634,Mod2002013Key.TC635,Mod2002013Key.TC636,Mod2002013Key.TC637,Mod2002013Key.TC638,Mod2002013Key.TC639,Mod2002013Key.TC640,Mod2002013Key.TC641,Mod2002013Key.TC642,Mod2002013Key.TC643,Mod2002013Key.TC644,Mod2002013Key.TC645})
 		;
 		 
 		private String name;
@@ -62,9 +63,9 @@ public class Page07 extends PageAbs {
 		private boolean normal;
 		private boolean abbreviate;
 		private boolean pymes;
-		private Mod200Key[] keys;
+		private Mod2002013Key[] keys;
 		
-		private Page7Row(String name,boolean title,boolean normal,boolean abbreviate,boolean pymes,Mod200Key[] keys) {
+		private Page7Row(String name,boolean title,boolean normal,boolean abbreviate,boolean pymes,Mod2002013Key[] keys) {
 			this.name = name;
 			this.title = title;
 			this.normal = normal;
@@ -87,7 +88,7 @@ public class Page07 extends PageAbs {
 		public boolean isPymes() {
 			return pymes;
 		}
-		public Mod200Key[] getKeys() {
+		public Mod2002013Key[] getKeys() {
 			return keys;
 		}
 	}
@@ -99,9 +100,8 @@ public class Page07 extends PageAbs {
 	}
 	
 	protected void initializeTable() {
-		paintHeaderTable(this.mod200Object.getMod200());		
 		table.setCellSpacing(0);
-		CellTable.Resources tableStyle = GWT.create(Mod200CellTable.class);
+		CellTable.Resources tableStyle = GWT.create(ModCellTable.class);
 		Label label = null;
 		for (int col = 0; col < COLS.length; col++) {
 			if (col > 0) {
@@ -128,7 +128,7 @@ public class Page07 extends PageAbs {
 				for (int col = 1; col < COLS.length; col++) {
 					FlowPanel panel = new FlowPanel();
 					panel.setStyleName(AON.AON_CSS.aonNowrap());
-					final Mod200Key key = Page7Row.values()[row].getKeys()[col - 1];
+					final Mod2002013Key key = Page7Row.values()[row].getKeys()[col - 1];
 					if (key != null) {
 						BoxLabel code = new BoxLabel(key.getCode( mod200Object.getAdministration() ));
 						panel.add(code);

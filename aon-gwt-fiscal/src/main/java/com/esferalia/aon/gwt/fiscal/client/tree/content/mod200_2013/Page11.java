@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.tree.content.mod200_2013;
 
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Constants;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Constants;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Key;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -32,13 +32,12 @@ public class Page11 extends PageAbs {
 	
 	@Override
 	protected void initializeTable() {
-		paintHeaderTable(this.mod200Object.getMod200());		
 		table.setWidth("100%");
 		table.setCellSpacing(0);
 		table.getColumnFormatter().setWidth(1, "250px");
 		
 		int row = 0;
-		for (final Mod200Key key : Mod200Constants.LIQUIDATION_IV_KEYS_1) {
+		for (final Mod2002013Key key : Mod2002013Constants.LIQUIDATION_IV_KEYS_1) {
 			if (mod200Object.isVisible(key)) {
 				row = paintKey(table,key,row);
 			}
@@ -49,8 +48,8 @@ public class Page11 extends PageAbs {
 		table1.getColumnFormatter().setWidth(1, "250px");
 		table1.getColumnFormatter().setWidth(2, "250px");
 		row = 0;
-		for (int i = 0; i < Mod200Constants.LIQUIDATION_IV_KEYS_2.length; i++) {
-			Mod200Key key = Mod200Constants.LIQUIDATION_IV_KEYS_2[i];
+		for (int i = 0; i < Mod2002013Constants.LIQUIDATION_IV_KEYS_2.length; i++) {
+			Mod2002013Key key = Mod2002013Constants.LIQUIDATION_IV_KEYS_2[i];
 			if (mod200Object.isVisible(key)) {
 				if ((i+1)%2 == 0) {
 					paintKeyField(table1,key,row,2);
@@ -65,8 +64,8 @@ public class Page11 extends PageAbs {
 		table2.getColumnFormatter().setWidth(1, "250px");
 		table2.getColumnFormatter().setWidth(2, "250px");
 		row = 0;
-		for (int i = 0; i < Mod200Constants.LIQUIDATION_IV_KEYS_3.length; i++) {
-			Mod200Key key = Mod200Constants.LIQUIDATION_IV_KEYS_3[i];
+		for (int i = 0; i < Mod2002013Constants.LIQUIDATION_IV_KEYS_3.length; i++) {
+			Mod2002013Key key = Mod2002013Constants.LIQUIDATION_IV_KEYS_3[i];
 			if (mod200Object.isVisible(key)) {
 				if ((i+1)%2 == 0) {
 					paintKeyField(table2,key,row,2);

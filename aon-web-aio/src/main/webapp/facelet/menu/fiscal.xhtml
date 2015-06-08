@@ -67,8 +67,7 @@
 													actionListener="#{vatTax.onEditSearch}"
 													title="#{bundle.fiscal_model_303_module}">
 													<aon:outputText styleClass="aon-fiscal-link-box" value="303" />
-													<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-														style="margin-left: 5px; padding-left: 20px;" value="#{bundle.fiscal_model_303_module}" />
+													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_303_module}" />
 												</aon:commandLink>
 								    	
 												<aon:commandLink id="mod_340_report" 
@@ -84,8 +83,7 @@
 													actionListener="#{mod303.onEditSearch}"
 													title="#{bundle.fiscal_model_310_module}">
 													<aon:outputText styleClass="aon-fiscal-link-box" value="303"/>
-													<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-														style="margin-left: 5px; padding-left: 20px;" value="#{bundle.fiscal_model_310_module}" />
+													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_310_module}" />
 												</aon:commandLink>
 	
 												<aon:commandLink id="mod347_report" 
@@ -101,8 +99,7 @@
 													actionListener="#{mod111.onEditSearch}"
 													title="#{bundle.fiscal_model_111_module}">
 													<aon:outputText styleClass="aon-fiscal-link-box" value="111" />
-													<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-														style="margin-left: 5px; padding-left: 20px;" value="#{bundle.fiscal_model_111_module}" />
+													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_111_module}" />
 												</aon:commandLink>
 
 												<aon:commandLink id="mod349_report" 
@@ -118,8 +115,7 @@
 													actionListener="#{mod115.onEditSearch}"
 													title="#{bundle.fiscal_model_115_module}" >
 													<aon:outputText styleClass="aon-fiscal-link-box" value="115" />
-													<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-														style="margin-left: 5px; padding-left: 20px;" value="#{bundle.fiscal_model_115_module}" />
+													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_115_module}" />
 												</aon:commandLink>
 <!-- 												
 											</aon:if>
@@ -140,8 +136,7 @@
 													actionListener="#{mod123.onEditSearch}"
 													title="#{bundle.fiscal_model_123_module}">
 													<aon:outputText styleClass="aon-fiscal-link-box" value="123" />
-													<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-														style="margin-left: 5px; padding-left: 20px;" value="#{bundle.fiscal_model_123_module}" />
+													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_123_module}" />
 												</aon:commandLink>
 											</aon:if>
 
@@ -162,8 +157,7 @@
 													actionListener="#{mod130.onEditSearch}"
 													title="#{bundle.fiscal_model_130_module}">
 													<aon:outputText styleClass="aon-fiscal-link-box" value="130" />
-													<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-														style="margin-left: 5px; padding-left: 20px;" value="#{bundle.fiscal_model_130_module}" />
+													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_130_module}" />
 												</aon:commandLink>
 											</aon:if>
 
@@ -182,8 +176,7 @@
 													actionListener="#{mod131.onEditSearch}"
 													title="#{bundle.fiscal_model_131_module}">
 													<aon:outputText styleClass="aon-fiscal-link-box" value="131" />
-													<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-														style="margin-left: 5px; padding-left: 20px;" value="#{bundle.fiscal_model_131_module}" />
+													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_131_module}" />
 												</aon:commandLink>
 											</aon:if>
 
@@ -220,14 +213,17 @@
 												</aon:commandLink>
 											</aon:if>
 											
-											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-												<aon:commandLink id="gwt_mod200"
-													action="gwt_mod200"
-													title="#{bundle.fiscal_model_200_module}">
-													<aon:outputText styleClass="aon-fiscal-link-box" value="200"/>
-													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_200_module} - 2013" />
-												</aon:commandLink>
+											<aon:if test="#{domainSwitcher.domainManagementAvailable}">
+												<aon:outputText value="&#160;"/>
 											</aon:if>
+
+											<aon:commandLink id="gwt_mod200"
+												action="gwt_fiscalPanel-mod200"
+												title="#{bundle.fiscal_model_200_module}">
+												<aon:outputText styleClass="aon-fiscal-link-box" value="200"/>
+												<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
+												style="margin-left: 5px; padding-left: 20px;" value="#{bundle.fiscal_model_200_module}" />
+											</aon:commandLink>
 
 											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 												<aon:commandLink id="mod311" 
@@ -251,11 +247,10 @@
 											</aon:if>
 											
 											<aon:commandLink id="gwt_fiscalPanel"
-												action="gwt_fiscalPanel"
+												action="gwt_fiscalPanel-mod202"
 												title="Impuesto Sociedades. Pago fraccionado.">
 												<aon:outputText styleClass="aon-fiscal-link-box" value="202"/>
-												<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-													style="margin-left: 5px; padding-left: 20px;" value="Impuesto Sociedades. Pago fraccionado." />
+												<aon:outputText styleClass="aon-fiscal-link-label" value="Impuesto Sociedades. Pago fraccionado." />
 											</aon:commandLink>
 <!-- 
 											<aon:commandLink id="gwt_fiscalPanel"
@@ -291,9 +286,8 @@
 												<aon:commandLink id="fiscalActivity" 
 													action="fiscalActivity_list"
 													actionListener="#{fiscalActivity.onSearch}"
-													title="#{bundle.fiscal_activities_modules}">
-													<aon:outputText value="#{bundle.fiscal_activities_modules}"
-													 styleClass="aon-icon-new-text" style="margin-left: 5px; padding-left: 20px;"/>
+													title="#{bundle.fiscal_activities_modules}"
+													value="#{bundle.fiscal_activities_modules}">
 												</aon:commandLink>
 											</aon:div>
 										</aon:if>
@@ -346,11 +340,6 @@
 												action="reports_launcher"
 												actionListener="#{reportsLauncher.onReset}"
 												value="#{bundle.accounting_reports_launcher_module}" />
-										</aon:div>
-										<aon:div styleClass="aon-direct-access-list-element">
-											<a4j:commandLink ajaxSingle="true" immediate="true"
-												onclick="alert('#{bundle.aio_not_yet}');return false;" 
-												value="Memoria normalizada" />
 										</aon:div>
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:if test="#{customize.snapshotVersion}">

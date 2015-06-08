@@ -18,7 +18,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 
 public interface IFiscal {
@@ -97,16 +98,26 @@ public interface IFiscal {
 	public Mod202 initializeMod202(AONContext ctx, Mod202 mod202);
 	public void deleteMod202(AONContext ctx, Mod202 mod202);
 
-	// 				   		  MOD200
-	
-	public Mod200 initializeNewMod200(AONContext ctx, Mod200 mod200);
-	public Mod200 initializeMod200(AONContext ctx, Mod200 mod200);
-	public Mod200 getMod200ByYear(AONContext ctx, int year);
-	public Mod200 getMod200ById(AONContext ctx, int id);
-	public Mod200 calculateMod200(Mod200 mod200);
-	public Mod200 validateMod200(Mod200 mod200);
-	public Mod200 saveMod200(AONContext ctx, Mod200 mod200);
-	public void deleteMod200(AONContext ctx, int id);
-	public String dumpAEAT(Mod200 mod200);
+	// 				   		  MOD200 - 2013
+	public Mod2002013 initializeNewMod2002013(AONContext ctx, Mod2002013 mod200);
+	public Mod2002013 initializeMod2002013(AONContext ctx, Mod2002013 mod200);
+	public Mod2002013 getMod2002013ByYear(AONContext ctx, int year);
+	public Mod2002013 getMod2002013ById(AONContext ctx, int id);
+	public Mod2002013 calculateMod2002013(Mod2002013 mod200);
+	public Mod2002013 validateMod2002013(Mod2002013 mod200);
+	public Mod2002013 saveMod2002013(AONContext ctx, Mod2002013 mod200);
+	public void deleteMod2002013(AONContext ctx, int id);
+	public String dumpAEATMod2002013(Mod2002013 mod200);
+
+	// 				   		  MOD200 - 2014
+	public Mod2002014 initializeNewMod2002014(AONContext ctx, Mod2002014 mod200);
+	public Mod2002014 initializeMod2002014(AONContext ctx, Mod2002014 mod200);
+	public Mod2002014 getMod2002014ByYear(AONContext ctx, int year);
+	public Mod2002014 getMod2002014ById(AONContext ctx, int id);
+	public Mod2002014 calculateMod2002014(Mod2002014 mod200);
+	public Mod2002014 validateMod2002014(Mod2002014 mod200);
+	public Mod2002014 saveMod2002014(AONContext ctx, Mod2002014 mod200);
+	public void deleteMod2002014(AONContext ctx, int id);
+	public String dumpAEATMod2002014(Mod2002014 mod200);
 
 }

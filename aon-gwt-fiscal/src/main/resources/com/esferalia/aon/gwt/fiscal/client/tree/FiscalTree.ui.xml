@@ -52,21 +52,6 @@
 				<g:center>
 					<g:SimpleLayoutPanel ui:field="content"/>
 				</g:center>
-				
-				<g:south size="0">
-					<aon:MinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonNoPrint}">
-						<g:TabLayoutPanel styleName="gwt-Selector" barHeight="26" barUnit="PX" width="100%">
-							<g:tab>
-								<g:header>
-									<span class="aon-icon-time aon-icon-commandButton" style="padding-left: 20px;">
-										Notificaciones
-									</span>
-								</g:header>
-								<aon:ResultsPanel ui:field="resultsPanel" />
-							</g:tab>
-						</g:TabLayoutPanel>
-					</aon:MinimizePanel>
-				</g:south>
 			</g:SplitLayoutPanel>
 		</g:center>
 	</g:DockLayoutPanel>

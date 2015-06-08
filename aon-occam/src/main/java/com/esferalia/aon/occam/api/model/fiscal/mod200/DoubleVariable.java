@@ -1,7 +1,9 @@
 package com.esferalia.aon.occam.api.model.fiscal.mod200;
 
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Variable;
 
-public class DoubleVariable extends Variable<Double> {
+
+public class DoubleVariable<K extends IMod200Key> extends Variable<K,Double> {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -10,7 +12,7 @@ public class DoubleVariable extends Variable<Double> {
 	public DoubleVariable() {
 		super();
 	}
-	public DoubleVariable(Mod200Key key) {
+	public DoubleVariable(K key) {
 		super(key);
 	}
 
@@ -29,8 +31,8 @@ public class DoubleVariable extends Variable<Double> {
 	}
 
 	@Override
-	public DoubleVariable clone() {
-		DoubleVariable cloned = new DoubleVariable( getKey() );
+	public DoubleVariable<K> clone() {
+		DoubleVariable<K> cloned = new DoubleVariable<K>( getKey() );
 		return cloned;
 	}
 

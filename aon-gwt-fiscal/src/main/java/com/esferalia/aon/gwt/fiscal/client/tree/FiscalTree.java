@@ -9,21 +9,21 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.OptionsToolbar;
-import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.FiscalModelsTreeNode;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.FiscalModelsTreeNode.TreeNodeFiscalModelTypes;
+import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002013TreeObject;
+import com.esferalia.aon.gwt.fiscal.client.tree.node.ModelTreeNode;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.TreeNode;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.TreeNodeTypes;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -44,7 +44,6 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
@@ -56,6 +55,11 @@ import com.google.gwt.user.client.ui.Widget;
 public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listener {
 	public static CommonServiceAsync COMMON_SERVICE;
 	public static FiscalServiceAsync FISCAL_SERVICE;
+	
+	public static interface FiscalTreeCallback<T> {
+		void remove( T treeObject);
+		void onError( T treeObject);
+	}
 	
 	interface FiscalTreeBinder extends UiBinder<Widget, FiscalTree> {
 	}
@@ -80,11 +84,6 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 	OptionsToolbar toolbar;
 	@UiField
 	Tree tree;
-	
-	@UiField
-	ResultsPanel resultsPanel;
-	@UiField
-	MinimizePanel footPanel;
 	
 	@UiField 
 	Label subtitle;
@@ -165,7 +164,9 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 		
 		
 	}																																																																																																																																																																																																																																																																																																																																																													
-
+	public SimpleLayoutPanel getContent() {
+		return this.content;
+	}
 	public void setContent(Widget widget) {
 		this.content.setWidget(widget);
 	}
@@ -178,7 +179,9 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 	public FiscalModelsTreeNode getFiscalModelsNode() {
 		for (int i = 0; i < rootNode.getChildCount(); i++) {
 			if (rootNode.getChild(i) instanceof FiscalModelsTreeNode) {
-				return  (FiscalModelsTreeNode) rootNode.getChild(i);
+				FiscalModelsTreeNode node = (FiscalModelsTreeNode) rootNode.getChild(i);
+				node.setState(true);
+				return node;
 			}
 		}
 		// Nunca deberia llegar aqui.
@@ -216,52 +219,6 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 		TreeNode<?> node = (TreeNode<?>) event.getSelectedItem();
 		node.select(this);
 		sidebar.scrollToLeft();
-	}
-	
-	// -------------------------------------------------------------- UiHandler
-	@UiHandler("footPanel")
-	void onFootMinimize(MinimizeEvent event) {
-		closeFootPanel();
-	}
-	@UiHandler("footPanel")
-	void onFootMaximize(MinimizeEvent event) {
-	}
-
-	private void closeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 0);
-	}
-
-	private void maximizeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 0);
-	}
-	
-	private void showResultsPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 5);
-	}
-
-	private boolean isResultsPanelVisible() {
-		return splitLayoutPanel.getWidgetSize(footPanel) > 0;
-	}
-	
-	private void cleanErrorMessage() {
-		resultsPanel.clearFlowPanel();
-		resultsPanel.setWidget(new SimplePanel());
-		closeFootPanel();
-	}
-
-	private void showErrorMessage(String msg) {
-		showResultsPanel();
-		addErrorMessage(msg);
-	}
-
-	private void addErrorMessage(String msg) {
-		SimplePanel panel = new SimplePanel();
-		Label label = new Label(msg);
-		label.addStyleName("aon-icon-errorwarning");
-		label.addStyleName("aon-message-error");
-		label.addStyleName("aon-icon");
-		panel.add(label);
-		resultsPanel.setWidget(panel);
 	}
 
 	@UiHandler("enterpriseSuggest")
@@ -359,20 +316,22 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 	}
 
 	public class NewContextMenu extends ContextMenu {
-		private boolean[] models = new boolean[FiscalModelType.values().length];
+//		private boolean[] models = new boolean[FiscalModelType.values().length];
 		
 		public NewContextMenu() {
 //			addNewMod131();
-//			addSeparator();
+			addNewMod2002013();
+			addSeparator();
 			addNewMod202();
+			addNewMod2002014();
 			addStyleName(AON.AON_CSS.aonSelector());
 		}
 		
 		public void addItem(FiscalModelType model, String text, ScheduledCommand cmd) {
-			if ( !models[model.ordinal()] ) {
+//			if ( !models[model.ordinal()] ) {
 				super.addItem(model.getValue(), text, cmd);
-				models[model.ordinal()] = true;
-			}
+//				models[model.ordinal()] = true;
+//			}
 		}
 
 		protected NewContextMenu addNewMod202() {
@@ -402,6 +361,7 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 			
 								@Override
 								public void onFailure(Throwable caught) {
+									Window.alert(caught.getMessage());
 								}
 							});
 						}
@@ -409,7 +369,78 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 			return this; 
 		}
 		
-//		protected NewContextMenu addNewMod131() {
+		protected NewContextMenu addNewMod2002013() {
+			addItem(FiscalModelType.M200 
+					,AON.MSG.newSomething( AON.MSG.fiscalModelType( FiscalModelType.M200 ) + " - 2013" )  
+					, new ScheduledCommand() {
+						
+						@Override
+						public void execute() {
+							Mod2002013 mod200 = new Mod2002013();
+							mod200.setDomain(getEnterprise().getDomain());
+							mod200.setYear(2013);
+							FiscalTree.FISCAL_SERVICE.initializeNewMod2002013(FiscalTree.getCurrentDomainName()
+			        		, getEnterprise().getDomain(), mod200
+			        		, new AsyncCallback<Mod2002013>() {
+			
+								@Override
+								public void onSuccess(Mod2002013 mod200) {
+									final FiscalModelsTreeNode fiscalModelsNode = getFiscalModelsNode();
+									fiscalModelsNode.setState(true);
+		        					final ModelTreeNode parentNode = fiscalModelsNode.getModelNode(
+		        							mod200.getYear(),FiscalModelType.M200);
+		        					parentNode.setState(true);
+		        					TreeNode<Mod2002013TreeObject> node = 
+		        						TreeNodeFiscalModelTypes.CORPORATE_TAX.getInstance().render(parentNode
+		            		    			,TreeNodeFiscalModelTypes.MODEL_200_2013.getFiscalModel(mod200));
+		        					node.setState(true);
+	            		    		tree.setSelectedItem(node);	
+								}
+			
+								@Override
+								public void onFailure(Throwable caught) {
+								}
+							});
+						}
+					});
+			return this; 
+		}
+		
+		protected NewContextMenu addNewMod2002014() {
+			addItem(FiscalModelType.M200 
+					,AON.MSG.newSomething( AON.MSG.fiscalModelType( FiscalModelType.M200 ) + " - 2014" )  
+					, new ScheduledCommand() {
+						
+						@Override
+						public void execute() {
+							Mod2002013 mod200 = new Mod2002013();
+							mod200.setDomain(getEnterprise().getDomain());
+							mod200.setYear(2014);
+							FiscalTree.FISCAL_SERVICE.initializeNewMod2002013(FiscalTree.getCurrentDomainName()
+			        		, getEnterprise().getDomain(), mod200
+			        		, new AsyncCallback<Mod2002013>() {
+			
+								@Override
+								public void onSuccess(Mod2002013 mod200) {
+		        					final ModelTreeNode parentNode = getFiscalModelsNode().getModelNode(
+		        							mod200.getYear(),FiscalModelType.M200);
+		        					TreeNode<Mod2002013TreeObject> node = 
+		        						TreeNodeFiscalModelTypes.CORPORATE_TAX.getInstance().render(parentNode
+		            		    			,TreeNodeFiscalModelTypes.MODEL_200_2013.getFiscalModel(mod200));
+		            		    	parentNode.setState(true);
+	            		    		tree.setSelectedItem(node);	
+								}
+			
+								@Override
+								public void onFailure(Throwable caught) {
+								}
+							});
+						}
+					});
+			return this; 
+		}
+
+		//		protected NewContextMenu addNewMod131() {
 //			addItem(
 //    			FiscalModelType.M131
 //    			,AON.MSG.newSomething( AON.MSG.fiscalModelType( FiscalModelType.M131 ) )  
@@ -470,6 +501,10 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 	}
 
 	public void renderGenericContent(final TreeItem item) {
+		setContent(getGenericContent(item));
+	}
+	
+	public Widget getGenericContent(final TreeItem item) {
 		VerticalPanel widget = new VerticalPanel( );
 		widget.setStyleName(AON.AON_CSS.aonFiscalTreeList());
 		widget.add(FiscalTree.renderBreadcrumb(this, item));
@@ -490,7 +525,7 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 			});
 			widget.add(label);
 		}
-		setContent(widget);
+		return widget;
 	}
 
 }
