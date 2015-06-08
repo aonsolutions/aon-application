@@ -35,7 +35,8 @@ public class SQLContractBonus extends SQLCollection<IContractBonus> implements I
 
 	@Override
 	public String getName() {
-		return null;
+		Integer concept = getInt(ContractBonusColumns.BONUS_CONCEPT);
+		return concept == null ? null : concept.toString();
 	}
 
 	@Override
