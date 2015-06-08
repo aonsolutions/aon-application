@@ -146,7 +146,15 @@ public enum BonusType {
 		public void accept(BonusTypeVisitor visitor) {
 			visitor.visitYouthWarrantyRdl082014(this);
 		}
-	}	;
+	},
+
+        REDUCTION_RATE_RDL01_2015
+       	{
+                @Override
+                public void accept(BonusTypeVisitor visitor) {
+                        visitor.visitReductionRateRdl012015(this);
+               	}
+       	};
 
 	public abstract void accept( BonusTypeVisitor visitor );
 	
@@ -189,6 +197,8 @@ public enum BonusType {
 		void visitContinuousFormation(BonusType bonusType);
 		
 		void visitYouthWarrantyRdl082014(BonusType bonusType);
+
+		void visitReductionRateRdl012015(BonusType bonusType);
 
 	}
 
