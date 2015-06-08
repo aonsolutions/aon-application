@@ -5,12 +5,14 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
+import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.cell.SizableTextInputCell;
 import com.esferalia.aon.gwt.common.client.widget.cell.TabCheckboxCell;
 import com.esferalia.aon.gwt.common.client.widget.cell.TabSelectionCell;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002013TreeObject;
 import com.esferalia.aon.occam.api.model.CompanyParticipation;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Key;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.cell.client.ButtonCell;
@@ -31,6 +33,7 @@ import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSe
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.NoSelectionModel;
@@ -46,7 +49,6 @@ public class Page02 extends PageAbs {
 	private ListDataProvider<CompanyParticipation> dataProviderOut;
 	private NoSelectionModel<CompanyParticipation> modelOut;
 	
-	@UiField
 	ParticipationPanel participationPanel;
 	
 	@UiField(provided = true)
@@ -55,12 +57,17 @@ public class Page02 extends PageAbs {
 	@UiField(provided = true)
 	CellTable<CompanyParticipation> tableOut;
 	
+	DoubleBox cPor51;
+	DoubleBox cPorES;
+	
 	@UiField
 	Button newParticipationOut;
 	@UiField
 	Button newParticipationIn;
 
 	public Page02() {
+		participationPanel = new ParticipationPanel();
+		
 		CellTable.Resources aonTableStyle = GWT.create(AonCellTable.class);
 		tableIn = new CellTable<CompanyParticipation>(25,aonTableStyle);
 		
@@ -123,6 +130,7 @@ public class Page02 extends PageAbs {
 			:new ListDataProvider<CompanyParticipation>(this.mod200Object.getMod200().getParticipationsOut());
 		dataProviderOut.addDataDisplay(tableOut);
 		tableOut.redraw();
+		initializeTable();
 	}
 
 	private void addInDocumentColumn() {
@@ -426,6 +434,13 @@ public class Page02 extends PageAbs {
 	
 	@Override
 	protected void initializeTable() {
+		table.setWidth("100%");
+		table.setCellSpacing(0);
+		
+		ColumnFormatter cf = table.getColumnFormatter();
+		cf.setWidth(1, "250px");
+		paintKey(Mod2002013Key.POR51,0);
+		paintKey(Mod2002013Key.PORES,1);
 	}
 
 	public void populate(Mod2002013TreeObject obj) {

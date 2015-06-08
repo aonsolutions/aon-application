@@ -1234,5 +1234,8 @@ public class Mod2002013Description {
 		DESCRIPTION_MAP.put(Mod2002013Key.TR496.toString(),"L\u00EDquido a ingresar o a devolver. BIZKAIA");
 		DESCRIPTION_MAP.put(Mod2002013Key.TR497.toString(),"L\u00EDquido a ingresar o a devolver. NAVARRA");
 		DESCRIPTION_MAP.put(Mod2002013Key.TR622.toString(),"L\u00EDquido a ingresar o a devolver. TOTAL");
+
+		DESCRIPTION_MAP.put(Mod2002013Key.POR51.toString(),"Suma de  porcentajes de participaci\u00F3n de personas o entidades en el capital de la  declarante inferiores al 5% o al 1% si se trata de valores que coticen en un mercado secundario organizado");
+		DESCRIPTION_MAP.put(Mod2002013Key.PORES.toString(),"Suma de porcentajes de participaciones en situaciones especiales");
 	}
 }

@@ -129,9 +129,18 @@ public abstract class PageAbs extends ResizeComposite {
 		boolean disabled = isDisabled(key);
 		
 		FlowPanel panel = new FlowPanel();
-		BoxLabel code = new BoxLabel(key.getCode( mod200Object.getAdministration() ));
-		panel.add(code);
-		getLabels().put(key, code);
+		String codeId = key.getCode( mod200Object.getAdministration());
+		boolean show = true;
+		try {
+			show = Integer.parseInt(codeId) > 0;
+		} catch (NumberFormatException e) {
+			// Nothing;
+		}
+		if (show) {
+			BoxLabel code = new BoxLabel(codeId);
+			getLabels().put(key, code);
+			panel.add(code);
+		}
 
 		final DoubleBox text = new DoubleBox();
 		text.addChangeHandler(new ChangeHandler() {

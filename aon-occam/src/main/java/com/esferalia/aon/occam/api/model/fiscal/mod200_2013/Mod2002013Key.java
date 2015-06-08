@@ -1533,8 +1533,8 @@ public enum Mod2002013Key implements IMod200Key {
 	,TR497(497)
 	,TR622(622)
 	
-	,POR51( 999 )
-	,PORES( 998 )
+	,POR51( -1 )
+	,PORES( -2 )
 	;
 	
 	private String code;

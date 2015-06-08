@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.common.client.widget.cell.TabSelectionCell;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002014TreeObject;
 import com.esferalia.aon.occam.api.model.CompanyParticipation;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.cell.client.ButtonCell;
@@ -32,6 +33,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -46,7 +48,6 @@ public class Page02 extends PageAbs {
 	private ListDataProvider<CompanyParticipation> dataProviderOut;
 	private NoSelectionModel<CompanyParticipation> modelOut;
 	
-	@UiField
 	ParticipationPanel participationPanel;
 	
 	@UiField(provided = true)
@@ -61,6 +62,8 @@ public class Page02 extends PageAbs {
 	Button newParticipationIn;
 
 	public Page02() {
+		participationPanel = new ParticipationPanel();
+		
 		CellTable.Resources aonTableStyle = GWT.create(AonCellTable.class);
 		tableIn = new CellTable<CompanyParticipation>(25,aonTableStyle);
 		
@@ -123,6 +126,7 @@ public class Page02 extends PageAbs {
 			:new ListDataProvider<CompanyParticipation>(this.mod200Object.getMod200().getParticipationsOut());
 		dataProviderOut.addDataDisplay(tableOut);
 		tableOut.redraw();
+		initializeTable();
 	}
 
 	private void addInDocumentColumn() {
@@ -426,6 +430,13 @@ public class Page02 extends PageAbs {
 	
 	@Override
 	protected void initializeTable() {
+		table.setWidth("100%");
+		table.setCellSpacing(0);
+		
+		ColumnFormatter cf = table.getColumnFormatter();
+		cf.setWidth(1, "250px");
+		paintKey(Mod2002014Key.POR51,0);
+		paintKey(Mod2002014Key.PORES,1);
 	}
 
 	public void populate(Mod2002014TreeObject obj) {
