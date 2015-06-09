@@ -785,7 +785,7 @@ public class FANWriter implements Serializable {
 			Integer diasHoras = dat.getDiasHoras();
 			if(dat.getEdl().containsKey(key)){
 				EDL edl = dat.getEdl().get(key);
-				edl.setImporte((edl.getImporte()*totalDiasHoras)/diasHoras);
+				edl.setImporte((edl.getImporte()*diasHoras)/totalDiasHoras);
 			}
 		}
 	}
