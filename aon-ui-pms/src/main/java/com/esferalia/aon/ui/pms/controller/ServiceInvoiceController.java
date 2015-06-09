@@ -238,7 +238,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 			try {
 				boolean isReservation = getProjectReservation() != null && getProjectReservation().getId() != null;
 				connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
-				roomStmt = connection.prepareStatement(getRoomListSQL(isReservation));
+				roomStmt = connection.prepareStatement(getRoomListSQL(isReservation), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 				Date roomDate = getReservationInvoiceTo().getIssueDate();
 				if (!isReservation) {
 					SQLUtils.setInt(roomStmt, 1, getReservationInvoiceTo().getHotel().getId());
@@ -260,18 +260,17 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 					int assetId = roomRs.getInt(ASSET);
 					String roomNumber = roomRs.getString(ROOM_NUMBER);
 
-					ProjectReservation reservation = new ProjectReservation();
-					reservation.setId(reservationId);
 					ProjectReservationRoom reservationRoom = new ProjectReservationRoom();
 					reservationRoom.setId(reservationRoomId);
-					reservationRoom.setProjectReservation(reservation);
-					Asset asset = new Asset();
-					asset.setId(assetId);
-					asset.setName(roomNumber);
+					reservationRoom.setProjectReservation(new ProjectReservation());
+					reservationRoom.getProjectReservation().setId(reservationId);
+
 					AssetActivity assetActivity = new AssetActivity();
 					assetActivity.setId(assetActivityId);
 					assetActivity.setDate(stayDate);
-					assetActivity.setAsset(asset); 
+					assetActivity.setAsset(new Asset()); 
+					assetActivity.getAsset().setId(assetId);
+					assetActivity.getAsset().setName(roomNumber);
 
 					ProjectReservationRoomDetail reservationRoomDetail = new ProjectReservationRoomDetail();
 					reservationRoomDetail.setId(reservationRoomDetailId);
@@ -279,7 +278,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 					reservationRoomDetail.setProjectReservationRoom(reservationRoom);
 					reservationRoomDetail.setAssetActivity(assetActivity);
 
-					SelectItem selectItem = new SelectItem(reservationRoomDetail, reservationRoomDetail.getRoom().getAsset().getName());
+					SelectItem selectItem = new SelectItem(reservationRoomDetail, roomNumber);
 					roomList.add(selectItem);
 				}
 			} catch (Throwable e) {

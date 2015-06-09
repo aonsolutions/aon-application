@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.23.4
+# Version: 8.25.0
 # Created by: girazu
-# Creation Date: 21/05/2015 18:25
+# Creation Date: 09/06/2015 19:45
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -1879,6 +1879,7 @@ CREATE TABLE `asset_activity` (
   PRIMARY KEY  (`id`),
   KEY `IDX_ASSET_ACTIVITY_ASSET` (`asset`),
   KEY `IDX_ASSET_ACTIVITY_DOMAIN` (`domain`),
+  KEY `IDX_ASSET_ACTIVITY_DATE` (`date`),
   CONSTRAINT `FK_ASSET_ACTIVITY_ASSET` FOREIGN KEY (`asset`) REFERENCES `asset` (`id`),
   CONSTRAINT `FK_ASSET_ACTIVITY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Actividades sobre el Activo';
@@ -7946,7 +7947,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.23.4');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.25.0');
 
 COMMIT;
 
