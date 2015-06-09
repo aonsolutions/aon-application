@@ -156,8 +156,8 @@ public class DBStock {
 		}
 	}
 	
-	public static Integer getSupplier(AONContext ctx, Integer workplace, Integer domainId, Integer itemId){
-		Record1<Integer> a = ctx.getDslContext().select(RITEM.REGISTRY)
+	public static Double[] getSupplier(AONContext ctx, Integer workplace, Integer domainId, Integer itemId){
+		Record2<Integer,Double> a = ctx.getDslContext().select(RITEM.REGISTRY, RITEM.PRICE)
 		.from(RITEM)
 		.where(RITEM.WORKPLACE.eq(workplace))
 		.and(RITEM.DOMAIN.eq(domainId)).and(RITEM.TYPE.eq((byte)2))
@@ -166,18 +166,18 @@ public class DBStock {
 		.fetchOne();
 		
 		if(a == null){
-			Record1<Integer> b = ctx.getDslContext().select(RITEM.REGISTRY)
+			Record2<Integer,Double> b = ctx.getDslContext().select(RITEM.REGISTRY, RITEM.PRICE)
 					.from(RITEM)
 					.where(RITEM.DOMAIN.eq(domainId)).and(RITEM.WORKPLACE.isNull()).and(RITEM.TYPE.eq((byte)2))
 					.and(RITEM.ITEM.eq(itemId))
 					.orderBy(RITEM.PRIORITY).limit(1)
 					.fetchOne();
 			if(b == null)
-				return -1;
+				return new Double[]{-1.0};
 				
-			return b.value1();
+			return new Double[]{b.value1().doubleValue(), b.value2()};
 		}
-		return a.value1();
+		return new Double[]{a.value1().doubleValue(), a.value2()};
 		
 	}
 	
@@ -205,7 +205,7 @@ public class DBStock {
 						.from(PRODUCT)
 						.where(PRODUCT.CODE.eq(code).and(PRODUCT.DOMAIN.eq(domainId))).fetchOne();
 				
-				Record2<Integer, Double> record = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE)
+				Record1<Integer> record = sctx.getDslContext().select(ITEM.ID)
 						.from(ITEM)
 						.where(ITEM.PRODUCT.eq(data.value1()))
 						.fetchOne();
@@ -217,21 +217,22 @@ public class DBStock {
 				pi.setDomain(domainId);
 				pi.setProposal(proposal);
 				pi.setItem(record.value1());
-				pi.setPrice(record.value2());
 				pi.setStatus((byte) 0); 
 				pi.setDescription("");
 				pi.setDiscount((double) 0);
-				Integer supplier = getSupplier(sctx, workplace, domainId,pi.getItem());
-				if (supplier != -1){
+				Double[] supplier = getSupplier(sctx, workplace, domainId,pi.getItem());
+				
+				if (supplier[1] != -1){
+					pi.setPrice(supplier[2]);
 					if(isCatalogue(sctx,pi)){
 						Timestamp t = new Timestamp(ai.getDate().getTime());
 						if(isProposal(sctx,pi)){
 							pi = getProposal(sctx,pi);
 							updateIds.add(pi.getId());
-							proposalUpdateQuery.values(pi.getId(), pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), supplier, ai.getUsername(), t);
+							proposalUpdateQuery.values(pi.getId(), pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), supplier[1].intValue(), ai.getUsername(), t);
 						}
 						else
-							proposalInsertQuery.values(pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), supplier, ai.getUsername(), t, ai.getUsername(), t);
+							proposalInsertQuery.values(pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), supplier[1].intValue(), ai.getUsername(), t, ai.getUsername(), t);
 					}
 					else{
 						v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
