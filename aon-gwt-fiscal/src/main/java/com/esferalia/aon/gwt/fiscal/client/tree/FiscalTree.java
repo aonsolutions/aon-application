@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.FiscalModelsTreeNode;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.FiscalModelsTreeNode.TreeNodeFiscalModelTypes;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002013TreeObject;
+import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002014TreeObject;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.ModelTreeNode;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.TreeNode;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.TreeNodeTypes;
@@ -24,6 +25,7 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -391,7 +393,7 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 		        							mod200.getYear(),FiscalModelType.M200);
 		        					parentNode.setState(true);
 		        					TreeNode<Mod2002013TreeObject> node = 
-		        						TreeNodeFiscalModelTypes.CORPORATE_TAX.getInstance().render(parentNode
+		        						TreeNodeFiscalModelTypes.CORPORATE_TAX_2013.getInstance().render(parentNode
 		            		    			,TreeNodeFiscalModelTypes.MODEL_200_2013.getFiscalModel(mod200));
 		        					node.setState(true);
 	            		    		tree.setSelectedItem(node);	
@@ -413,20 +415,20 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 						
 						@Override
 						public void execute() {
-							Mod2002013 mod200 = new Mod2002013();
+							Mod2002014 mod200 = new Mod2002014();
 							mod200.setDomain(getEnterprise().getDomain());
 							mod200.setYear(2014);
-							FiscalTree.FISCAL_SERVICE.initializeNewMod2002013(FiscalTree.getCurrentDomainName()
+							FiscalTree.FISCAL_SERVICE.initializeNewMod2002014(FiscalTree.getCurrentDomainName()
 			        		, getEnterprise().getDomain(), mod200
-			        		, new AsyncCallback<Mod2002013>() {
+			        		, new AsyncCallback<Mod2002014>() {
 			
 								@Override
-								public void onSuccess(Mod2002013 mod200) {
+								public void onSuccess(Mod2002014 mod200) {
 		        					final ModelTreeNode parentNode = getFiscalModelsNode().getModelNode(
 		        							mod200.getYear(),FiscalModelType.M200);
-		        					TreeNode<Mod2002013TreeObject> node = 
-		        						TreeNodeFiscalModelTypes.CORPORATE_TAX.getInstance().render(parentNode
-		            		    			,TreeNodeFiscalModelTypes.MODEL_200_2013.getFiscalModel(mod200));
+		        					TreeNode<Mod2002014TreeObject> node = 
+		        						TreeNodeFiscalModelTypes.CORPORATE_TAX_2014.getInstance().render(parentNode
+		            		    			,TreeNodeFiscalModelTypes.MODEL_200_2014.getFiscalModel(mod200));
 		            		    	parentNode.setState(true);
 	            		    		tree.setSelectedItem(node);	
 								}

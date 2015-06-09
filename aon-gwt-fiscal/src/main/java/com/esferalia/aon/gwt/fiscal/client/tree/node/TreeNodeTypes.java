@@ -57,10 +57,16 @@ public abstract class TreeNodeTypes<T> {
 			return new ModelTreeNode();
 		}
 	};
-	public static TreeNodeTypes<Mod2002013TreeObject> CORPORATE_TAX = new TreeNodeTypes<Mod2002013TreeObject>() {
+	public static TreeNodeTypes<Mod2002013TreeObject> CORPORATE_TAX_2013 = new TreeNodeTypes<Mod2002013TreeObject>() {
 		@Override
 		public TreeNode<Mod2002013TreeObject> getInstance() {
 			return new Model2002013TreeNode();
+		}
+	};
+	public static TreeNodeTypes<Mod2002014TreeObject> CORPORATE_TAX_2014 = new TreeNodeTypes<Mod2002014TreeObject>() {
+		@Override
+		public TreeNode<Mod2002014TreeObject> getInstance() {
+			return new Model2002014TreeNode();
 		}
 	};
 	public abstract TreeNode<T> getInstance();

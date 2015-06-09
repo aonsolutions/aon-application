@@ -2,7 +2,7 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
-	xmlns:mod200='urn:import:com.esferalia.aon.gwt.fiscal.client.tree.content.mod200_2013'
+	xmlns:mod200='urn:import:com.esferalia.aon.gwt.fiscal.client.tree.content.mod200_2014'
 	>
 
 	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>

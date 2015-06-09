@@ -3,6 +3,8 @@ package com.esferalia.aon.occam.api.model.fiscal.mod200_2014;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Key;
+
 public class Mod2002014Description {
 	// Á --> \u00C1 á --> \u00E1
 	// É --> \u00C9 é --> \u00E9
@@ -1234,5 +1236,8 @@ public class Mod2002014Description {
 		DESCRIPTION_MAP.put(Mod2002014Key.TR496.toString(),"L\u00EDquido a ingresar o a devolver. BIZKAIA");
 		DESCRIPTION_MAP.put(Mod2002014Key.TR497.toString(),"L\u00EDquido a ingresar o a devolver. NAVARRA");
 		DESCRIPTION_MAP.put(Mod2002014Key.TR622.toString(),"L\u00EDquido a ingresar o a devolver. TOTAL");
+
+		DESCRIPTION_MAP.put(Mod2002013Key.POR51.toString(),"Suma de  porcentajes de participaci\u00F3n de personas o entidades en el capital de la  declarante inferiores al 5% o al 1% si se trata de valores que coticen en un mercado secundario organizado");
+		DESCRIPTION_MAP.put(Mod2002013Key.PORES.toString(),"Suma de porcentajes de participaciones en situaciones especiales");
 	}
 }
