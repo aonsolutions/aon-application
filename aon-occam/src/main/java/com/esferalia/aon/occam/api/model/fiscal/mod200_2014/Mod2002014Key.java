@@ -40,6 +40,7 @@ public enum Mod2002014Key implements IMod200Key {
 	,C0029(29)
 	,C0028(28)
 	,C0033(33)
+	,C0064(64)
 	,C0034(34)
 	,C0012(12)
 	,C0057(57)
@@ -62,6 +63,7 @@ public enum Mod2002014Key implements IMod200Key {
 	,C0016(16)
 	,C0059(59)
 	,C0039(39)
+	,C0065(65)
 	,C0050(50)
 	,C0051(51)
 	,C0052(52)
@@ -71,6 +73,8 @@ public enum Mod2002014Key implements IMod200Key {
 	,C0061(61)
 	,C0041(41)
 	,C0042(42)
+	
+	
 	// BALANCE: ACTIVO
 	,BA101(101)
 	,BA102(102)

@@ -51,7 +51,8 @@ public class Mod2002014Description {
 		DESCRIPTION_MAP.put(Mod2002014Key.C0033.toString(),"R\u00E9gimen especial miner\u00EDa");
 		DESCRIPTION_MAP.put(Mod2002014Key.C0034.toString(),"R\u00E9gimen especial hidrocarburos");
 		DESCRIPTION_MAP.put(Mod2002014Key.C0012.toString(),"SOCIMI");
-		DESCRIPTION_MAP.put(Mod2002014Key.C0057.toString(),"Entidades que aplican el r\u00E9gimen especial Ley 11/2009 (excepto SOCIMI)");
+		DESCRIPTION_MAP.put(Mod2002014Key.C0064.toString(),"R\u00E9gimen fiscal entrada SOCIMI");
+		DESCRIPTION_MAP.put(Mod2002014Key.C0057.toString(),"R\u00E9gimen fiscal salida SOCIMI");
 		DESCRIPTION_MAP.put(Mod2002014Key.C0020.toString(),"Otros reg\u00EDmenes especiales");
 		DESCRIPTION_MAP.put(Mod2002014Key.C0056.toString(),"Tipo gravamen reducido mant. o creaci\u00F3n empleo"); 
 		DESCRIPTION_MAP.put(Mod2002014Key.C0026.toString(),"Entidad inactiva");
@@ -71,6 +72,7 @@ public class Mod2002014Description {
 		DESCRIPTION_MAP.put(Mod2002014Key.C0016.toString(),"Opci\u00F3n art. 51.2.b) LIS Entidad que forma parte de un grupo mercantil"); 
 		DESCRIPTION_MAP.put(Mod2002014Key.C0059.toString(),"Opci\u00F3n art. 44.2. LIS");
 		DESCRIPTION_MAP.put(Mod2002014Key.C0039.toString(),"Entidad que forma parte de un grupo mercantil (art. 42 del C\u00F3d. Comercio)");
+		DESCRIPTION_MAP.put(Mod2002014Key.C0065.toString(),"Bonificaci\u00F3n personal investigador (R.D. 475/2014)");
 		DESCRIPTION_MAP.put(Mod2002014Key.C0050.toString(),"Balance y ECPN. Normal");
 		DESCRIPTION_MAP.put(Mod2002014Key.C0051.toString(),"Balance y ECPN. Abreviado");
 		DESCRIPTION_MAP.put(Mod2002014Key.C0052.toString(),"Balance y ECPN. PYMES");
@@ -80,6 +82,7 @@ public class Mod2002014Description {
 		DESCRIPTION_MAP.put(Mod2002014Key.C0061.toString(),"Estados de cuentas de Instituciones de inversi\u00F3n colectiva"); 
 		DESCRIPTION_MAP.put(Mod2002014Key.C0041.toString(),"Personal fijo");
 		DESCRIPTION_MAP.put(Mod2002014Key.C0042.toString(),"Personal no fijo");
+		
 	}
 	
 	static {
