@@ -220,10 +220,10 @@ public class Mod2002014Behaviour {
 	
 
 	static { 	
-		BEHAVIOUR_KEYS_MAP.put(Mod2002014Key.LQ500.toString(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002014Key.LQ501.toString(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002014Key.I0417.toString(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002014Key.D0418.toString(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002014Key.LQ500.toString(),new Boolean[]{TRUE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002014Key.LQ501.toString(),new Boolean[]{TRUE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002014Key.I0417.toString(),new Boolean[]{TRUE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002014Key.D0418.toString(),new Boolean[]{TRUE,TRUE});
 
 		BEHAVIOUR_KEYS_MAP.put(Mod2002014Key.LQ578.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002014Key.LQ579.toString(),new Boolean[]{FALSE,TRUE});

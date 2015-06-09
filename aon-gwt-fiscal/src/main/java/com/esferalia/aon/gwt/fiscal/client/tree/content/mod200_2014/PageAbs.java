@@ -116,15 +116,24 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 	
 	protected int paintKey(FlexTable tab,final Mod2002014Key key,int row) {
+		paintKeyDescription(tab,key,row,1);
+		paintKeyField(tab,key,row,1);	
+		return ++row;
+	}
+	
+	protected void paintEmptyCell(FlexTable tab, int row,int col) {
+		tab.setWidget(row, col, new Label());
+	}
+	
+	protected void paintKeyDescription(FlexTable tab, Mod2002014Key key, int row,int col) {
 		Label desc = new Label(key.getDescription() );
 		if (isTitle(key)) {
 			desc.setStyleName(AON.AON_CSS.aonBold());
 		}
-		tab.setWidget(row, 0, desc);
+		tab.setWidget(row, col, desc);
 		tab.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalBorderBottom());
-		paintKeyField(tab,key,row,1);	
-		return ++row;
 	}
+
 	protected void paintKeyField(FlexTable tab,final Mod2002014Key key,int row, int col) {
 		boolean disabled = isDisabled(key);
 		
