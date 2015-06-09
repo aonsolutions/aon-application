@@ -189,7 +189,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	Vector<Project> projects = new Vector<Project>();
 	Vector<Customer> customers = new Vector<Customer>();
 	Vector<InvoicingGroup> invoicingGroups = new Vector<InvoicingGroup>();
-	public Integer executeExcel3(TemplateInfo ti){
+	public Integer executeExcel3(TemplateInfo templateInfo){
+		ti = templateInfo;
 		long startAll= System.currentTimeMillis();
 		String domain = AonUtil.getDomainName();
 		error = new Error();
@@ -320,7 +321,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 					else{
 						if(row.getLastCellNum() != -1){
 							Short cellnum = row.getLastCellNum();
-							if(row.getLastCellNum() > ti.getColumns().size())cellnum--;
+							if(row.getLastCellNum() == ti.getColumns().size())cellnum--;
 							if(ti.getColumns().get(cellnum).equals("Nombre") || ti.getColumns().get(cellnum).equals("C\u00f3digo") || ti.getColumns().get(cellnum).equals("Precio Coste") || ti.getColumns().get(cellnum).equals("Precio Venta Base")){
 								verror.add("*Fila "+(row.getRowNum()+1)+", Columna "+Utils.getColumn(row.getLastCellNum())+" : Dato Incorrecto \n");
 								textError= textError + "*Fila "+(row.getRowNum()+1)+", Columna "+Utils.getColumn(row.getLastCellNum())+" : Dato Incorrecto \n";
@@ -769,7 +770,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	           		else{
 	           			if(row.getLastCellNum() != -1){
 	           				Short cellnum = row.getLastCellNum();
-	           				if(row.getLastCellNum() > ti.getColumns().size())cellnum--;
+	           				if(row.getLastCellNum() == ti.getColumns().size())cellnum--;
 	           				if(ti.getColumns().get(cellnum).equals("Producto") || ti.getColumns().get(cellnum).equals("Almac\u00e9n Destino")){
 	           					verror.add("*Fila "+(row.getRowNum()+1)+", Columna "+Utils.getColumn(row.getLastCellNum())+" : Dato Incorrecto \n");
 	          					error.setTextError(verror);
@@ -1023,7 +1024,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 					else{
 						if(row.getLastCellNum() != -1){
 							Short cellnum = row.getLastCellNum();
-							if(row.getLastCellNum() > ti.getColumns().size())cellnum--;
+							if(row.getLastCellNum() == ti.getColumns().size())cellnum--;
 							if(ti.getColumns().get(cellnum).equals("Producto") || ti.getColumns().get(cellnum).equals("Almac\u00e9n Destino") ){
 								verror.add("*Fila "+(row.getRowNum()+1)+", Columna "+Utils.getColumn(row.getLastCellNum())+" : Dato Incorrecto \n");
 								error.setTextError(verror);
