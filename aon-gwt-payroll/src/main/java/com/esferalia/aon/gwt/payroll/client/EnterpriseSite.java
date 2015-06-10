@@ -279,4 +279,11 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void onEmployeeEventsDraftSelected(
+			EmployeeEventsDraftObject employeeEventsDraft) {
+		// TODO Auto-generated method stub
+		
+	}
 }

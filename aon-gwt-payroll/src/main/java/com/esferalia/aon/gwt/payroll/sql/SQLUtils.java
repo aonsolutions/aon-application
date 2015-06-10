@@ -1,9 +1,5 @@
 package com.esferalia.aon.gwt.payroll.sql;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -119,7 +115,4 @@ public class SQLUtils {
 	
 		return constants[ordinal];
 	}
-	
-	
-
 }

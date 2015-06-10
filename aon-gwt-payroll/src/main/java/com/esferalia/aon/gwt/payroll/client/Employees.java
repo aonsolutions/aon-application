@@ -1,8 +1,5 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import static com.esferalia.aon.gwt.payroll.client.EventsDraftObject.DateField.DAY;
-import static com.esferalia.aon.gwt.payroll.client.EventsDraftObject.DateField.MONTH;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -16,6 +13,7 @@ import com.esferalia.aon.gwt.common.shared.CollectionUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
+import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraft.DateField;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.BooleanEventMetaData;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.DecimalEventMetaData;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.EnumEventMetaData;
@@ -94,7 +92,7 @@ public class Employees extends ResizeComposite implements
 
 		void onCostsSelected(CostDocuments docs);
 
-		void onCalendarSelected(CalendarDraftObjectData calendar);	
+		void onCalendarSelected(CalendarDraftObjectData calendar);
 
 		void onIrpfsSelected(IrpfDocuments docs);
 
@@ -115,6 +113,9 @@ public class Employees extends ResizeComposite implements
 		void onSalaryPreviewSelected(SalaryPreviewDocument salaryPreviewDocument);
 
 		void onEventsDraftSelected(EventsDraftObject eventsDraftObject);
+
+		void onEmployeeEventsDraftSelected(
+				EmployeeEventsDraftObject employeeEventsDraft);
 
 		void onCategoryDraftSelected(CategoryDraftObject agreementDraftObject);
 
@@ -157,6 +158,7 @@ public class Employees extends ResizeComposite implements
 	private static final int EMPLOYEE_SALARIES_INDEX = 0;
 	private static final int EMPLOYEE_IRPFOUTCOMES_INDEX = 2; // TODO : It's not
 	private static final int EMPLOYEE_CALENDAR_INDEX = 3;
+	private static final int EMPLOYEE_EVENTS_INDEX = 4;
 
 	private static final DateTimeFormat END_DATE_FORMAT = DateTimeFormat
 			.getFormat(PredefinedFormat.DATE_SHORT);
@@ -347,41 +349,40 @@ public class Employees extends ResizeComposite implements
 									"Desempe\u00F1o por Trabajador y Jornada",
 									"", new String[] { "4", "8", "10", "12",
 											"L", "LT", "LR", "F", "FT", "FR",
-											"V", "B", "P", "AI", "M" }, DAY),
+											"V", "B", "P", "AI", "M" }, DateField.DAY),
 							// @formatter:on
-							new DecimalEventMetaData("INCENTIVOS", MONTH),
-							new DecimalEventMetaData("ATRASOS", MONTH),
-							new DecimalEventMetaData("ANTICIPOS", MONTH),
-							new DecimalEventMetaData("EMBARGOS", MONTH),
+							new DecimalEventMetaData("INCENTIVOS", DateField.MONTH),
+							new DecimalEventMetaData("ATRASOS", DateField.MONTH),
+							new DecimalEventMetaData("ANTICIPOS", DateField.MONTH),
+							new DecimalEventMetaData("EMBARGOS", DateField.MONTH),
 							new DecimalEventMetaData(
 									"LTA",
 									"D\u00EDas Libres Trabajados canjeados por Alojamiento",
-									MONTH),
+									DateField.MONTH),
 							new DecimalEventMetaData("CLT",
-									"Coste d\u00EDa Libre Trabajado", MONTH),
+									"Coste d\u00EDa Libre Trabajado", DateField.MONTH),
 							new DecimalEventMetaData(
 									"CD",
 									"Coste Diario del trabajador (jornada 8 horas)",
-									MONTH),
+									DateField.MONTH),
 							new BooleanEventMetaData("LTR",
 									"D\u00EDas Libres Trabajados Recuperables",
-									MONTH),
+									DateField.MONTH),
 							new DecimalEventMetaData(
 									"HFD",
 									"Horas m\u00EDnimas a cumplimentar en contratos Fijo-Discontinuo",
-									MONTH), new EventMetaData("OBSERVACIONES",
-									MONTH));
+									DateField.MONTH), new EventMetaData("OBSERVACIONES",
+											DateField.MONTH));
 				else
 					eventsDraftObject = new EventsDraftObject(
 							workplace.getId(),
 							agreement != null ? agreement.getId() : null,
 							employeesService, new BooleanEventMetaData(
-									"DIAS_EFECTIVOS", DAY),
-							new BooleanEventMetaData("DIAS_VACACIONES", DAY),
-							//new BooleanEventMetaData("HUELGA", DAY),
-							new DecimalEventMetaData("COEFICIENTE_ERE", DAY),
-							new EventMetaData("OBSERVACIONES", MONTH)
-							);
+									"DIAS_EFECTIVOS", DateField.DAY),
+							new BooleanEventMetaData("DIAS_VACACIONES", DateField.DAY),
+							// new BooleanEventMetaData("HUELGA", DAY),
+							new DecimalEventMetaData("COEFICIENTE_ERE", DateField.DAY),
+							new EventMetaData("OBSERVACIONES", DateField.MONTH));
 
 				Date date = new Date();
 
@@ -401,7 +402,6 @@ public class Employees extends ResizeComposite implements
 							}
 
 						});
-
 			}
 
 			Agreement agreement = workplace.getAgreement();
@@ -539,6 +539,8 @@ public class Employees extends ResizeComposite implements
 			onDocumentsSelected((ISpinnable<IDocument>) userObject);
 		} else if (userObject instanceof EventsDraftObject) {
 			onEventsDraftSelected((EventsDraftObject) userObject);
+		} else if (userObject instanceof EmployeeEventsDraftObject) {
+			onEmployeeEventsDraftSelected((EmployeeEventsDraftObject) userObject);
 		} else if (userObject instanceof CategoryDraftObject) {
 			onCategoryDraftSelected((CategoryDraftObject) userObject);
 		} else if (userObject instanceof AgreementDraftObject) {
@@ -689,7 +691,7 @@ public class Employees extends ResizeComposite implements
 	EmployeesServiceAsync getEmployeesService() {
 		return employeesService;
 	}
-	
+
 	OptionsToolbar getOptionsToolbar() {
 		return toolbar;
 	}
@@ -928,7 +930,7 @@ public class Employees extends ResizeComposite implements
 						employeesService);
 				irpfOutcomesItem.setUserObject(documents);
 			}
-		});		
+		});
 	}
 
 	private void onLoadAvaiableEmployees(Map<String, String> map) {
@@ -972,9 +974,9 @@ public class Employees extends ResizeComposite implements
 			listener.onReportsSelected(reports);
 		}
 	}
-	
+
 	private void onCalendarSelected(CalendarDraftObjectData calendar) {
-		for(Listener listener : listeners)
+		for (Listener listener : listeners)
 			listener.onCalendarSelected(calendar);
 	}
 
@@ -1212,6 +1214,13 @@ public class Employees extends ResizeComposite implements
 		}
 	}
 
+	private void onEmployeeEventsDraftSelected(
+			EmployeeEventsDraftObject employeeEventsDraftObject) {
+		for (Listener listener : listeners) {
+			listener.onEmployeeEventsDraftSelected(employeeEventsDraftObject);
+		}
+	}
+
 	private void onCategoryDraftSelected(CategoryDraftObject categoryDraftObject) {
 		for (Listener listener : listeners) {
 			listener.onCategoryDraftSelected(categoryDraftObject);
@@ -1262,8 +1271,9 @@ public class Employees extends ResizeComposite implements
 			employeeItem.setUserObject(employee);
 
 			addImageItem(employeeItem, "N\u00F3minas", images.salaries());
-			
-			//addImageItem(employeeItem, "Calendario", images.laboralCalendar());
+
+			// addImageItem(employeeItem, "Calendario",
+			// images.laboralCalendar());
 
 			if (extended) {
 
@@ -1288,9 +1298,65 @@ public class Employees extends ResizeComposite implements
 				SalaryDraftObject draftObject = new SalaryDraftObject(
 						salaryDraft, dataObject, employeesService);
 				salaryDraftItem.setUserObject(draftObject);
+
+				final TreeItem employeeEventsItem = addImageItem(employeeItem,
+						"Incidencias", images.data());
+
+				final EmployeeEventsDraftObject employeeEventsDraftObject;
+
+				employeeEventsDraftObject = new EmployeeEventsDraftObject(
+						employee, employeesService,
+						new AbstractEventsDraftObject.BooleanEventMetaData(
+								"DIAS_TRABAJADOS", DateField.DAY),
+						new AbstractEventsDraftObject.BooleanEventMetaData(
+								"DIAS_EFECTIVOS", DateField.DAY),
+						new AbstractEventsDraftObject.BooleanEventMetaData(
+								"DIAS_ERE", DateField.DAY),
+						new AbstractEventsDraftObject.BooleanEventMetaData(
+								"DIAS_HUELGA", DateField.DAY),
+						new AbstractEventsDraftObject.BooleanEventMetaData(
+								"DIAS_AUSENCIA", DateField.DAY),
+						new AbstractEventsDraftObject.DecimalEventMetaData(
+								"HORAS_TRABAJADAS", DateField.DAY),
+						new AbstractEventsDraftObject.DecimalEventMetaData(
+								"HORAS_COMPLEMENTARIAS", DateField.DAY),
+						new AbstractEventsDraftObject.BooleanEventMetaData(
+								"DIAS_PECNORTA", DateField.DAY),
+						new AbstractEventsDraftObject.BooleanEventMetaData(
+								"DIAS_MANUTENCION", DateField.DAY),
+						new AbstractEventsDraftObject.BooleanEventMetaData(
+								"DIAS_PECNORTA_EXTRANJERO", DateField.DAY),
+						new AbstractEventsDraftObject.BooleanEventMetaData(
+								"DIAS_MANUTENCION_EXTRANJERO", DateField.DAY),
+						new AbstractEventsDraftObject.DecimalEventMetaData(
+								"KMS", DateField.DAY),
+						new AbstractEventsDraftObject.BooleanEventMetaData(
+								"DIAS_VACACIONES", DateField.DAY),
+						new AbstractEventsDraftObject.DecimalEventMetaData(
+								"JORNADAS_REALES", DateField.DAY),
+						new AbstractEventsDraftObject.DecimalEventMetaData(
+								"HORAS_EXTRAS", DateField.DAY),
+						new AbstractEventsDraftObject.DecimalEventMetaData(
+								"HORAS_EXTRAS_FZA", DateField.DAY));
 				
+				Date date = new Date();
+				
+				employeeEventsDraftObject.setPeriod(DateUtils.getFirstDayOfWorkWeek(date), 
+						DateUtils.getLastDayOfWorkWeek(date), new EmployeeEventsDraftObject.Callback() {
+							
+							@Override
+							public void onSucces() {								
+								employeeEventsItem.setUserObject(employeeEventsDraftObject);
+							}
+							
+							@Override
+							public void onFailure(Throwable throwable) {								
+								employeeEventsItem.setUserObject(employeeEventsDraftObject);
+							}
+						});
+
 				// A.E.T
-				//addImageItem(employeeItem, "Regularizaciones", images.aet());
+				// addImageItem(employeeItem, "Regularizaciones", images.aet());
 
 				Category category = employee.getCategory();
 
@@ -1303,7 +1369,8 @@ public class Employees extends ResizeComposite implements
 						.getUserObject()).getAgreement();
 
 				if (workplaceAgreement != null
-						&& NumberUtils.equals(workplaceAgreement.getId(),agreement.getId()))
+						&& NumberUtils.equals(workplaceAgreement.getId(),
+								agreement.getId()))
 					continue;
 
 				TreeItem enterpriseItem = workplaceItem.getParentItem();

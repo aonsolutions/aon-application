@@ -13,6 +13,7 @@ import java.util.Set;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
+import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraft.DateField;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.Period;
@@ -37,6 +38,7 @@ import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
@@ -80,9 +82,6 @@ public class EventsDraftObject {
 		void onEventAdded(Event event);
 	}
 
-	static enum DateField {
-		DAY, WEEK, MONTH, YEAR;
-	}
 
 	static class EventMetaData {
 
@@ -334,7 +333,6 @@ public class EventsDraftObject {
 			}
 			sb.append(templates.checked());
 		}
-
 	}
 
 	/**
@@ -874,7 +872,7 @@ public class EventsDraftObject {
 		this.employeesServiceAsync = employeesServiceAsync;
 
 		this.userEventsMetaDataMap = new HashMap<String, EventMetaData>();
-		for (EventMetaData eventMetaData : eventsMetaData)
+		for (EventMetaData eventMetaData : eventsMetaData)			
 			this.userEventsMetaDataMap.put(eventMetaData.name, eventMetaData);
 	}
 
@@ -1055,12 +1053,13 @@ public class EventsDraftObject {
 	private void fillEventsMetaData(final Callback cb) {
 		if (eventsMetaDataMap != null)
 			return;
-
+		
 		employeesServiceAsync.getEventsVariables(workplaceId, agreementId,
 				startDate, endDate, new AsyncCallback<Map<String, String>>() {
 
 					@Override
 					public void onSuccess(Map<String, String> result) {
+						 
 						eventsMetaDataMap = new HashMap<String, EventMetaData>();
 						eventsMetaDataMap.putAll(userEventsMetaDataMap);
 						for (String var : result.keySet())
@@ -1074,6 +1073,7 @@ public class EventsDraftObject {
 					@Override
 					public void onFailure(Throwable caught) {
 						// TODO Auto-generated method stub
+						Window.alert("Error");
 						eventsMetaDataMap = new HashMap<String, EventMetaData>();
 						eventsMetaDataMap.putAll(userEventsMetaDataMap);
 
@@ -1135,11 +1135,11 @@ public class EventsDraftObject {
 
 					@Override
 					public void onSuccess(Events result) {
+						
 						events.addAll(result);
 						draftEvents.addAll(result.getEmployees());
 						getCallback.onEventsSucces(result.getEmployees());
 					}
 				});
 	}
-
 }

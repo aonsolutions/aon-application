@@ -38,7 +38,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -49,8 +48,6 @@ import java.util.Map.Entry;
 import java.util.MissingResourceException;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import javax.faces.context.FacesContext;
 
@@ -62,7 +59,6 @@ import org.mvel2.CompileException;
 import org.mvel2.ast.Function;
 import org.mvel2.util.MethodStub;
 
-import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
@@ -133,25 +129,15 @@ import com.esferalia.aon.gwt.payroll.sql.SQLAgreementDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLEvents;
 import com.esferalia.aon.gwt.payroll.sql.SQLITData;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
-import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraftCalculatorContext;
 import com.esferalia.aon.gwt.payroll.sql.SQLSettleDraftCalculatorContext;
 import com.esferalia.aon.gwt.payroll.sql.SQLStatistics;
 import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
-import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.BonusFilter;
-import com.esferalia.aon.occam.api.model.BonusProperties;
-import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
-import com.esferalia.aon.payroll.calculator.IContractBonus;
-import com.esferalia.aon.payroll.calculator.IContractCost;
-import com.esferalia.aon.payroll.calculator.IContractDeduction;
-import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.payroll.calculator.jooq.JooqGPSReports;
@@ -161,19 +147,12 @@ import com.esferalia.aon.payroll.calculator.jooq.JooqGPSReports.HolidayLine;
 import com.esferalia.aon.payroll.calculator.jooq.JooqGPSReports.Report;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
-import com.esferalia.aon.payroll.calculator.sql.SQLAgreementContextFactory;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractDelayCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractNotEnjoyedCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
-import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.AgreementContextKey;
-import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.CCCContextKey;
-import com.esferalia.aon.payroll.calculator.sql.SQLContractSettleCalculatorContext;
-import com.esferalia.aon.payroll.calculator.sql.SQLSystemExpressionContextFactory;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
-import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
-import com.esferalia.aon.payroll.irpf.sql.SQLIrpfCalculatorContext;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns;
@@ -197,14 +176,12 @@ import com.esferalia.aon.payroll.sql.SQLConstants.SalaryPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.UserScopeColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
-import com.esferalia.aon.salary.AbstractSalaryBuilder;
 import com.esferalia.aon.salary.CompositeSalaryBuilder;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryBuilderListener;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
-import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.CheckException;
@@ -216,7 +193,6 @@ import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
-import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -3048,8 +3024,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					workplaceId, startDate, endDate);
 
 			if (agreementId != null) {
-				payments.addAll(SQLAgreementDraft.getPayments(connection,
-						agreementId, startDate, endDate));
+				//payments.addAll(SQLAgreementDraft.getPayments(connection,
+						//agreementId, startDate, endDate));
+				payments.addAll(SQLAgreementDraft.getPaymentsAux(connection, agreementId, startDate, endDate));
 			}
 
 			Map<String, String> variables = new HashMap<String, String>();

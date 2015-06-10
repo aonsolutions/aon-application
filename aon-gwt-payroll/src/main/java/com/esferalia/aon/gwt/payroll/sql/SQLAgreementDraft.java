@@ -3,6 +3,8 @@ package com.esferalia.aon.gwt.payroll.sql;
 import static com.esferalia.aon.gwt.payroll.shared.AgreementDraft.isRemove;
 import static com.esferalia.aon.gwt.payroll.sql.SQLUtils.getInteger;
 import static com.esferalia.aon.gwt.payroll.sql.SQLUtils.getType;
+import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
+import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,8 +24,14 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
+import org.jooq.Cursor;
+import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.conf.Settings;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
+import com.esferalia.aon.gwt.payroll.jooq.JooqUtils;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
@@ -46,6 +54,8 @@ import com.esferalia.aon.salary.expression.Period;
 
 public class SQLAgreementDraft {
 
+	private static Settings SETTINGS = null;
+
 	@SuppressWarnings("serial")
 	private static class DBVariable extends StringVariable {
 		private Integer id;
@@ -60,20 +70,95 @@ public class SQLAgreementDraft {
 
 	}
 
+	public static Set<Payment> getPaymentsAux(Connection connection,
+			int agreementId, Date startDate, Date endDate, Integer... domains)
+			throws SQLException {
+
+		Cursor<Record> cursor = null;
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+
+		try {
+
+			Collection<Integer> domainList = new ArrayList<Integer>(
+					domains.length);
+			for (Integer domain : domains) {
+				if (domain != null)
+					domainList.add(domain);
+			}
+
+			java.sql.Date sqlEndDate = SQLUtils.date2sql(endDate);
+			java.sql.Date sqlStartDate = SQLUtils.date2sql(startDate);
+
+			cursor = dslContext
+					.select()
+					.from(AGREEMENT_PAYMENT.leftOuterJoin(PAYMENT_CONCEPT).on(
+							AGREEMENT_PAYMENT.PAYMENT_CONCEPT
+									.eq(PAYMENT_CONCEPT.ID)))
+					.where(AGREEMENT_PAYMENT.AGREEMENT
+							.eq(agreementId)
+							.and(AGREEMENT_PAYMENT.END_DATE.isNull().or(
+									AGREEMENT_PAYMENT.END_DATE
+											.greaterOrEqual(sqlStartDate)))
+							.and(AGREEMENT_PAYMENT.START_DATE
+									.lessOrEqual(sqlEndDate))
+							.and(AGREEMENT_PAYMENT.DOMAIN.in(domainList)))
+					.fetchLazy();
+
+			Set<Payment> payments = new HashSet<Payment>();
+
+			for (Record record : cursor) {
+
+				Payment payment = new Payment();
+
+				payment.setStartDate(sqlStartDate);
+				payment.setEndDate(sqlEndDate);
+
+				payment.setId(record.getValue(AGREEMENT_PAYMENT.ID));
+				payment.setDomain(record.getValue(AGREEMENT_PAYMENT.DOMAIN));
+				
+				payment.setExpression(getAux(String.class, AGREEMENT_PAYMENT.EXPRESSION, PAYMENT_CONCEPT.EXPRESSION));
+				payment.setIrpfExpression(getAux(String.class, AGREEMENT_PAYMENT.IRPF_EXPRESSION, PAYMENT_CONCEPT.IRPF_EXPRESSION));
+				payment.setQuoteExpression(getAux(String.class, AGREEMENT_PAYMENT.QUOTE_EXPRESSION, PAYMENT_CONCEPT.QUOTE_EXPRESSION));
+				payment.setDescription(getAux(String.class, AGREEMENT_PAYMENT.DESCRIPTION, PAYMENT_CONCEPT.DESCRIPTION));
+				
+				Object paymentType = getAux(Object.class, AGREEMENT_PAYMENT.TYPE, PAYMENT_CONCEPT.TYPE);
+				payment.setType(getType(paymentType, Payment.Type.class));
+				
+				Integer month = getAux(Integer.class, AGREEMENT_PAYMENT.MONTH);
+				payment.setMonth(month != null ? month.shortValue() : null);
+				
+				Object salaryType = record.getValue(AGREEMENT_PAYMENT.SALARY_TYPE);
+				payment.setSalaryType(getType(salaryType, Salary.Type.class));
+				
+				payment.setName(record.getValue(PAYMENT_CONCEPT.CODE));
+				
+				payment.setConceptId(getAux(Integer.class, PAYMENT_CONCEPT.ID));
+				
+				payments.add(payment);
+			}
+			
+			return payments;
+
+		} finally {
+			if (cursor != null)
+				cursor.close();
+		}
+	}
+
 	public static Set<Payment> getPayments(Connection connection,
 			int agreementId, Date startDate, Date endDate, Integer... domains)
 			throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
-			
+
 			List<Integer> domainList = new ArrayList<Integer>(domains.length);
-			for (Integer domain : domains) { 
-				if ( domain != null) {
+			for (Integer domain : domains) {
+				if (domain != null) {
 					domainList.add(domain);
 				}
 			}
-			
+
 			java.sql.Date sqlEndDate = SQLUtils.date2sql(endDate);
 			java.sql.Date sqlStartDate = SQLUtils.date2sql(startDate);
 
@@ -1687,6 +1772,18 @@ public class SQLAgreementDraft {
 		return SQLUtils.get(rs, toType, SQLConstants.AGREEMENT_PAYMENT + "."
 				+ paymentColumn, SQLConstants.PAYMENT_CONCEPT + "."
 				+ conceptColumn);
+	}
+
+	private static <T> T getAux(Class<T> toType, Object ...values) throws SQLException {
+		return JooqUtils.get(toType, values);
+	}
+
+	protected static Settings getDefaultSettings() {
+		if (SETTINGS == null) {
+			SETTINGS = new Settings();
+			SETTINGS.setRenderSchema(false);
+		}
+		return SETTINGS;
 	}
 
 }
