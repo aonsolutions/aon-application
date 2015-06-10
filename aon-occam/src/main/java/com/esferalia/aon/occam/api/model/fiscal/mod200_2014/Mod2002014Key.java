@@ -337,6 +337,7 @@ public enum Mod2002014Key implements IMod200Key {
 	,T0353(353)
 	,T0354(354)
 	,T0355(355)
+	
 	// ESTADO DE CAMBIOS EN EL PATRIMONIO NETO. ESTADO TOTAL DE CAMBIOS EN EL PATRIMONIO NETO
 	,TC380(380)
 	,TC381(381)
@@ -1561,7 +1562,7 @@ public enum Mod2002014Key implements IMod200Key {
 		return this.code;
 	}
 	public String getDescription() {
-		return Mod2002014Description.DESCRIPTION_MAP.get(this.toString());
+		return Mod2002014Description.DESCRIPTION_MAP.get(this);
 	}
 
 	public String getCode(Administration adm) {

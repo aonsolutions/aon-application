@@ -37,7 +37,7 @@ public class Page13 extends PageAbs {
 	protected void initializeTable() {
 		table.setWidth("100%");
 		table.setCellSpacing(0);
-		table.getColumnFormatter().setWidth(1, "250px");
+		table.getColumnFormatter().setWidth(1, "200px");
 		int row = 0;
 		for (final Mod2002014Key key : Mod2002014Constants.DEDUCIBLE_LIMITATION_KEYS_1) {
 			if (mod200Object.isVisible(key)) {

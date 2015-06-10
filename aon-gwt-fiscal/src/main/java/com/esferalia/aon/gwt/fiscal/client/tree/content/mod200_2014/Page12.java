@@ -31,7 +31,7 @@ public class Page12 extends PageAbs {
 	protected void initializeTable() {
 		table.setWidth("100%");
 		table.setCellSpacing(0);
-		table.getColumnFormatter().setWidth(1, "250px");
+		table.getColumnFormatter().setWidth(1, "200px");
 		int row = 0;
 		for (final Mod2002014Key key : Mod2002014Constants.INCOME_DISTRIBUTION_KEYS_1) {
 			if (mod200Object.isVisible(key)) {
@@ -41,7 +41,7 @@ public class Page12 extends PageAbs {
 
 		table1.setWidth("100%");
 		table1.setCellSpacing(0);
-		table1.getColumnFormatter().setWidth(1, "250px");
+		table1.getColumnFormatter().setWidth(1, "200px");
 		row = 0;
 		for (final Mod2002014Key key : Mod2002014Constants.INCOME_DISTRIBUTION_KEYS_2) {
 			if (mod200Object.isVisible(key)) {

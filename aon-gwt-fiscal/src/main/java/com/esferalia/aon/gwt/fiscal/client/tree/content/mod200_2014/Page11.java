@@ -34,7 +34,7 @@ public class Page11 extends PageAbs {
 	protected void initializeTable() {
 		table.setWidth("100%");
 		table.setCellSpacing(0);
-		table.getColumnFormatter().setWidth(1, "250px");
+		table.getColumnFormatter().setWidth(1, "200px");
 		
 		int row = 0;
 		for (final Mod2002014Key key : Mod2002014Constants.LIQUIDATION_IV_KEYS_1) {
@@ -45,8 +45,8 @@ public class Page11 extends PageAbs {
 		
 		table1.setWidth("100%");
 		table1.setCellSpacing(0);
-		table1.getColumnFormatter().setWidth(1, "250px");
-		table1.getColumnFormatter().setWidth(2, "250px");
+		table1.getColumnFormatter().setWidth(1, "200px");
+		table1.getColumnFormatter().setWidth(2, "200px");
 		row = 0;
 		for (int i = 0; i < Mod2002014Constants.LIQUIDATION_IV_KEYS_2.length; i++) {
 			Mod2002014Key key = Mod2002014Constants.LIQUIDATION_IV_KEYS_2[i];
@@ -61,8 +61,8 @@ public class Page11 extends PageAbs {
 
 		table2.setWidth("100%");
 		table2.setCellSpacing(0);
-		table2.getColumnFormatter().setWidth(1, "250px");
-		table2.getColumnFormatter().setWidth(2, "250px");
+		table2.getColumnFormatter().setWidth(1, "200px");
+		table2.getColumnFormatter().setWidth(2, "200px");
 		row = 0;
 		for (int i = 0; i < Mod2002014Constants.LIQUIDATION_IV_KEYS_3.length; i++) {
 			Mod2002014Key key = Mod2002014Constants.LIQUIDATION_IV_KEYS_3[i];

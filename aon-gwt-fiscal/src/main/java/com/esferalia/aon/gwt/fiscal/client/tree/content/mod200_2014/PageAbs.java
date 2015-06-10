@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.DoubleVariable2014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.IMod200KeysProvider;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -116,7 +117,7 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 	
 	protected int paintKey(FlexTable tab,final Mod2002014Key key,int row) {
-		paintKeyDescription(tab,key,row,1);
+		paintKeyDescription(tab,key,row,0);
 		paintKeyField(tab,key,row,1);	
 		return ++row;
 	}
@@ -126,7 +127,11 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 	
 	protected void paintKeyDescription(FlexTable tab, Mod2002014Key key, int row,int col) {
-		Label desc = new Label(key.getDescription() );
+		String d = key.getDescription();
+		Label desc = new Label( AonStringUtils.abbreviate(d, 120) );
+		if (AonStringUtils.length(d) > 117) {
+			desc.setTitle(key.getDescription());
+		}
 		if (isTitle(key)) {
 			desc.setStyleName(AON.AON_CSS.aonBold());
 		}

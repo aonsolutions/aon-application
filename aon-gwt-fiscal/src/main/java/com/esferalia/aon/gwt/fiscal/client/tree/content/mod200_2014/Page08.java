@@ -5,7 +5,6 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Correction
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -29,10 +28,6 @@ public class Page08 extends PageAbs {
 		table.setWidth("100%");
 		table.setCellSpacing(0);
 		
-		ColumnFormatter cf = table.getColumnFormatter();
-		cf.setWidth(1, "150px");
-		cf.setWidth(2, "150px");
-		
 		int row = 0;
 		
 		Label desc = new Label(AON.MSG.ecpnMsg20());
@@ -49,7 +44,9 @@ public class Page08 extends PageAbs {
 
 		paintKeyDescription(table, Mod2002014Key.LQ301, row, 0);
 		paintKeyField(table, Mod2002014Key.LQ301, row, 1);
+		table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonWidth150());
 		paintKeyField(table, Mod2002014Key.LQ302, row, 2);
+		table.getFlexCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonWidth150());
 		++row;
 
 		paintKeyDescription(table, Mod2002014Key.LQ501, row, 0);
@@ -57,12 +54,20 @@ public class Page08 extends PageAbs {
 		paintKeyField(table, Mod2002014Key.LQ501, row, 2);
 		++row;
 		
+		paintEmptyCell(table, row, 0);
+		paintEmptyCell(table, row, 1);
+		paintEmptyCell(table, row, 2);
+		++row;
+		
 		desc = new Label(AON.MSG.corrections());
 		desc.setStyleName(AON.AON_CSS.aonBold());
 		table.setWidget(row, 0, desc);
-		table.getFlexCellFormatter().setColSpan(row, 0, 3);
-		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonTextCenter());
+		table.getFlexCellFormatter().setColSpan(row, 0, 0);
+		table.setWidget(row, 1, new Label(AON.MSG.increase()));
+		table.setWidget(row, 2, new Label(AON.MSG.decrease()));
 		++row;
+		
+		
 		
 		for (Mod2002014CorrectionKey ck : Mod2002014CorrectionKey.values()) {
 			paintKeyDescription(table, ck.isIncreaseEnabled()?ck.getIncrease():ck.getDecrease(), row, 0);

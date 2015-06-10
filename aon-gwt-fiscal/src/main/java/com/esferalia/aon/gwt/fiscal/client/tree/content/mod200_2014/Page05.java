@@ -28,7 +28,7 @@ public class Page05 extends PageAbs {
 		table.setCellSpacing(0);
 		
 		ColumnFormatter cf = table.getColumnFormatter();
-		cf.setWidth(1, "250px");
+		cf.setWidth(1, "200px");
 
 		int row = 0;
 		for (Mod2002014Key key : Mod2002014Constants.PYG_KEYS) {

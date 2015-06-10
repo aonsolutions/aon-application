@@ -15,7 +15,7 @@ import com.google.gwt.user.client.ui.ValueBox;
 
 public class DoubleBox extends ValueBox<Double> {
 
-	private static final int VISIBLE_LENGTH = 15;
+	private static final int VISIBLE_LENGTH = 12;
 	private static final int MAX_LENGTH = 15;
 	private static final int CHANGE_DISPLAY_MILLIS = 4000;
 	

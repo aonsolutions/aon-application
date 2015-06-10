@@ -807,7 +807,7 @@ input:disabled + label{
 }
 
 .aon-fiscal-padding-right {
-	padding-right: 50px;
+	padding-right: 20px;
 }
 .aon-fiscal-rotate-text {
     transform: rotate(270deg);

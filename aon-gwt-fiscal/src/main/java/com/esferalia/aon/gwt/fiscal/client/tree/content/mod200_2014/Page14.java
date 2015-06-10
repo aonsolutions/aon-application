@@ -80,7 +80,7 @@ public class Page14 extends PageAbs {
 	protected void initializeTable() {
 		table.setWidth("100%");
 		table.setCellSpacing(0);
-		table.getColumnFormatter().setWidth(1, "250px");
+		table.getColumnFormatter().setWidth(1, "200px");
 		
 		Mod2002014Key key = Mod2002014Key.LQ552;
 		Label desc = new Label(key.getDescription() );
