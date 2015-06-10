@@ -24,6 +24,7 @@ import com.code.aon.registry.RegistrySegment;
 import com.code.aon.registry.Segment;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.RegistryType;
+import com.code.aon.registry.enumeration.StreetType;
 import com.code.aon.ui.loader.ILoaderEngine;
 import com.code.aon.ui.loader.LoaderParams;
 import com.code.aon.ui.loader.LoaderUtils;
@@ -66,6 +67,15 @@ public class RegistryLoaderFactory {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryAddress.class);
 		RegistryAddress address = new RegistryAddress();
 		address.setRegistry(registry);
+		if (StringUtils.isNotBlank(loaded.getTipoVia())) {
+			StreetType streetType = null;
+			try {
+				streetType = StreetType.valueOf(loaded.getTipoVia());
+				address.setStreetType(streetType);
+			} catch (Throwable t) {
+				// Nada.
+			}
+		}
 		address.setAddress(loaded.getDireccion());
 		address.setNumber(loaded.getNumero());
 		address.setAddress2(loaded.getDireccion2());
