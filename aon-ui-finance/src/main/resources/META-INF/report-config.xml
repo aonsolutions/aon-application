@@ -635,6 +635,7 @@
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="companyController" value="#{saleInvoice.getCompanyController}" />			
 		</params>
 		
 		<nested-report report="invoiceDetail"/>
@@ -652,8 +653,6 @@
 			<param id="payment" value="#{finance.isPayment}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 		</params>
-		
-		<nested-report report="invoiceDetail"/>
 	</report>
 	
 	<!--  *********  Finance Payment List  ********* -->
