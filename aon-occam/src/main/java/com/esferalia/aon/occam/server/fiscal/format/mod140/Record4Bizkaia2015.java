@@ -265,7 +265,7 @@ public enum Record4Bizkaia2015 implements Serializable,IMod140Record {
 			invoice.ensureInvoiceVAT(null,0, 0);
 		}
 		for (String account : invoice.getInvoiceVATs().keySet()) {
-			for (int i = 0; i < invoice.getInvoiceVATs().size(); i++) {
+			for (int i = 0; i < invoice.getInvoiceVATs().get(account).size(); i++) {
 				for (Record4Bizkaia2015 item : Record4Bizkaia2015.values()) {
 					item.filler.fill(writer, ctx, invoice, account, i);
 				}
