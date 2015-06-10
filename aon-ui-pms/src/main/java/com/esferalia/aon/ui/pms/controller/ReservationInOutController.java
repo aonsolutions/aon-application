@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -101,6 +102,16 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		setFromDate(new Date());
 		setToDate(new Date());
 		setSortMode(0);
+	}
+
+	public void onCheckChanged(ValueChangeEvent event) {
+		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+			if ((Boolean)event.getNewValue()) {
+				setCheckStatuses(new ReservationCheckStatus[]{ReservationCheckStatus.NO_CHECK});
+			} else {
+				setCheckStatuses(new ReservationCheckStatus[]{ReservationCheckStatus.NO_CHECK, ReservationCheckStatus.CHECK_IN});
+			}
+		}
 	}
 
 	public void onSearch(ActionEvent event) {

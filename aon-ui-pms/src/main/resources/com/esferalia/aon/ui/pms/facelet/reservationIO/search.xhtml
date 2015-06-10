@@ -29,17 +29,18 @@
 						<aon:outputLabel for="ReservationIO_hotel_id"
 							value="#{bundle.aon_module_hotel}" />
 						<aon:selectOneMenu id="ReservationIO_hotel_id"
-							value="#{reservationIO.hotel}" >
+							value="#{reservationIO.hotel}">
 							<f:selectItems value="#{pmsCollections.currentUserHotels}" />
 						</aon:selectOneMenu>
 
 						<aon:outputLabel for="ReservationIO_checkin" 
 							value="#{bundle.aon_type}"/>
 						<aon:selectOneRadio id="ReservationIO_checkin" 
-							value="#{reservationIO.checkin}">
+							value="#{reservationIO.checkin}"
+							valueChangeListener="#{reservationIO.onCheckChanged}"
+							reRender="ReservationIO_checkStatuses">
 							<f:selectItem itemLabel="#{bundle.report_checkin}" itemValue="#{true}" />
 							<f:selectItem itemLabel="#{bundle.report_checkout}" itemValue="#{false}" />
-							<a4j:support event="onclick" reRender="ReservationIO_checkStatuses" ignoreDupResponses="true" />
 						</aon:selectOneRadio>	
 
 						<aon:outputLabel for="ReservationIO_checkStatuses" 
