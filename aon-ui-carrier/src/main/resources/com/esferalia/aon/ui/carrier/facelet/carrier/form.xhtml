@@ -73,6 +73,10 @@
 			</aon:div>
 			
 		</aon:form>
+		<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
+			<ui:param name="bankAccountController" value="#{carrierRbank.accountHelper}" />
+			<ui:param name="modalReRender" value="carrierTabs" />
+		</ui:include>
 		
  	</ui:define>
 </ui:composition>

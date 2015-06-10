@@ -109,11 +109,16 @@ public class BankAccount implements Serializable {
 
 
 	public String getBankCode() {
-		BankConfig bankConfig = BankConfig.valueOf(getCountry().getValue());
+		int length = getBankCodeLength();
 		String maxBankCode = getBban1() + getBban2();
-		return (maxBankCode.length() >= bankConfig.getBankIdLength()) ? StringUtils.substring(maxBankCode, 0, bankConfig.getBankIdLength()) : null;
+		return (maxBankCode.length() >= length) ? StringUtils.substring(maxBankCode, 0, length) : null;
 	}
 
+	public int getBankCodeLength() {
+		BankConfig bankConfig = BankConfig.valueOf(getCountry().getValue());
+		return bankConfig.getBankIdLength();
+	}
+	
 	public int getIbanLength() {
 		BankConfig bankConfig = BankConfig.valueOf(getCountry().getValue());
 		return bankConfig.getIbanLength();
@@ -129,6 +134,26 @@ public class BankAccount implements Serializable {
 		}
 		return null;
 	}
+	
+	public String getCCC() {
+		StringBuilder sb = new StringBuilder();
+		if (StringUtils.isNotBlank(getBban1())) {
+			sb.append(getBban1()).append(".");
+		}
+		if (StringUtils.isNotBlank(getBban2())) {
+			sb.append(getBban2()).append(".");
+		}
+		if (StringUtils.isNotBlank(getBban3())) {
+			sb.append("." + getBban3());
+		}
+		if (StringUtils.isNotBlank(getBban4())) {
+			sb.append(getBban4());
+		}
+		if (StringUtils.isNotBlank(getBban5())) {
+			sb.append(getBban5());
+		}
+		return sb.toString();
+	}	
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

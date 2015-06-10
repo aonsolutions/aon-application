@@ -20,7 +20,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
-import com.code.aon.config.util.BankUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.bridge.invoicing.IncomeInvoicingManager;
@@ -43,6 +42,7 @@ import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.common.controller.IAuditableController;
+import com.code.aon.ui.config.BankAccountHelper;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -77,8 +77,13 @@ public class IncomeController extends BasicController implements IWarehouseConst
 	private boolean showWarehouseChangeWindow;
 	private Warehouse newWarehouse;
 	private Double listTotal;
+	private BankAccountHelper accountHelper;
+	
+    public IncomeController() {
+    	this.accountHelper = new BankAccountHelper(this);
+	}
 
-    public List<SelectItem> getAddresses() {
+	public List<SelectItem> getAddresses() {
 		return addresses;
 	}
 	
@@ -364,8 +369,8 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		to.setBic(null);
 	}
 
-	public void onBankAccountData(ActionEvent event) {
-		BankUtil.fillBankAccountData((Income)getTo());
+	public BankAccountHelper getAccountHelper() {
+		return accountHelper;
 	}
 
 	public void onWorkPlaceChanged(ValueChangeEvent event) throws ManagerBeanException {

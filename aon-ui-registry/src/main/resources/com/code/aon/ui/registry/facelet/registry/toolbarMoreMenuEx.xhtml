@@ -7,6 +7,9 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 	
+	<aon:valueParam name="showRegistrySellerButton" default="#{false}"/>
+	<aon:valueParam name="showRegistrySupplierButton" default="#{false}"/>
+	
 	<aon:if test="#{showFeeButton}">
 		<aon:menuItem id="fee-button"
 			value="#{(feeButtonLabel!=null)?(feeButtonLabel):(bundle.finance_fees_module)}"

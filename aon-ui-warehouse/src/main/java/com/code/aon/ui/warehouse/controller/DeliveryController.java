@@ -26,7 +26,6 @@ import com.code.aon.company.WorkPlace;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.util.AppParamUtil;
-import com.code.aon.config.util.BankUtil;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
@@ -49,6 +48,7 @@ import com.code.aon.sales.bridge.SalesTransferManager;
 import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.common.controller.IAuditableController;
+import com.code.aon.ui.config.BankAccountHelper;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.HeaderObjectController;
@@ -93,9 +93,11 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	private Double listTotal;
 	private WarehouseEmailUtil emailUtil;
 	private boolean shippingAlternativeAddress;
+	private BankAccountHelper accountHelper;
 	
     public DeliveryController() {
     	this.emailUtil = new WarehouseEmailUtil();
+    	this.accountHelper = new BankAccountHelper(this);
     }
 
 	public List<SelectItem> getAddresses() {
@@ -396,8 +398,8 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		to.setBic(null);
 	}
 
-	public void onBankAccountData(ActionEvent event) {
-		BankUtil.fillBankAccountData((Delivery)getTo());
+	public BankAccountHelper getAccountHelper() {
+		return accountHelper;
 	}
 
 	public void onWorkPlaceChanged(ValueChangeEvent event) throws ManagerBeanException {

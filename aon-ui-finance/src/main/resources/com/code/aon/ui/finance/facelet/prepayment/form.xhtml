@@ -107,15 +107,10 @@
 											rendered="#{!prepayment.paymentReadOnly}">
 											<aon:panelGroup id="Prepayment_finance_bankAccount" rendered="#{prepayment.showBankManualInput}">
 												<ui:include src="/com/code/aon/ui/registry/facelet/rbank/bankAccount.xhtml">
-													<ui:param name="bankAccountTo" value="#{prepayment.to.finance.bankAccount}" />
+													<ui:param name="bankAccountController" value="#{prepayment.accountHelper}" />
 													<ui:param name="bankAccountPrefix" value="Prepayment" />
+													<ui:param name="bankCodeChangeReRender" value="Prepayment_bankAlias,Prepayment_bic" />
 												</ui:include>
-												<aon:commandButton id="bankAccountData" value="&#160;"
-													title="#{bundle.aon_bank_data}"
-													styleClass="aon-icon-commandButton aon-icon-ambito aon-margin-left" style="margin-top: 2px;"
-													actionListener="#{prepayment.onBankAccountData}"
-													reRender="Prepayment_bankAlias,Prepayment_bic" ajaxSingle="true">
-												</aon:commandButton>
  												<aon:commandLink id="BankAccount_hide_bank_manual"
 													styleClass="aon-icon-edit-end-simple" style="margin-left: 5px; padding-right: 12px;"
 													value="&#160;" title="#{bundle.aon_cancel} #{bundle.aon_editing}"
@@ -368,6 +363,9 @@
 		<aon:lookupButtonPopup lookup="#{creditorLookup}" />
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
 		<aon:lookupButtonPopup lookup="#{invoicingGroupLookup}" />
-		
+		<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
+			<ui:param name="bankAccountController" value="#{prepayment.accountHelper}" />
+			<ui:param name="modalReRender" value="Prepayment_finance_bankAccount_div" />
+		</ui:include>				
 	</ui:define>
 </ui:composition>

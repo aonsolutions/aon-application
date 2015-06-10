@@ -1,6 +1,5 @@
 package com.code.aon.ui.registry.controller.event;
 
-import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.AonVersion;
@@ -8,22 +7,29 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.BankAccount;
+import com.code.aon.config.IBankAccountContainer;
+import com.code.aon.config.IBankAccountContainerProvider;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
-import com.code.aon.config.util.BankUtil;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.RegistryPayMethod;
+import com.code.aon.ui.config.BankAccountHelper;
 import com.code.aon.ui.config.event.BankAccountValidationListener;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
-public class RegistryPayMethodFormListener extends RegistryFormListener {
+public class RegistryPayMethodFormListener extends RegistryFormListener implements IBankAccountContainerProvider{
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private RegistryPayMethod registryPayMethod;
 	private boolean customerMode;
+	private BankAccountHelper accountHelper;
+	
+	public RegistryPayMethodFormListener() {
+		this.accountHelper = new BankAccountHelper(this);
+	}
 
 	public RegistryPayMethod getRegistryPayMethod() {
 		return registryPayMethod;
@@ -143,8 +149,13 @@ public class RegistryPayMethodFormListener extends RegistryFormListener {
 		return (registryPayMethod.getPayment() != null) && (registryPayMethod.getPayment().getType() == PayMethodType.CASH_BASIS);
 	}
 	
-	public void onBankAccountData(ActionEvent event) {
-		BankUtil.fillBankAccountData(getRegistryBank());
+	public BankAccountHelper getAccountHelper() {
+		return accountHelper;
+	}
+
+	@Override
+	public IBankAccountContainer getBankAccountContainer() {
+		return getRegistryBank();
 	}
 
 }

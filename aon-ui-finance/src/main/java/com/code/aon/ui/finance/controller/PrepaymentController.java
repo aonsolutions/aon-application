@@ -16,9 +16,10 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.BankAccount;
+import com.code.aon.config.IBankAccountContainer;
+import com.code.aon.config.IBankAccountContainerProvider;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
-import com.code.aon.config.util.BankUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.InvoicingGroup;
 import com.code.aon.finance.Creditor;
@@ -34,6 +35,7 @@ import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.config.BankAccountHelper;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.customer.controller.CustomerController;
 import com.code.aon.ui.customer.controller.ICustomerConstants;
@@ -43,7 +45,7 @@ import com.code.aon.ui.registry.controller.RegistryCollectionsController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class PrepaymentController extends BasicController implements IFinanceConstants {
+public class PrepaymentController extends BasicController implements IFinanceConstants, IBankAccountContainerProvider {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
@@ -52,6 +54,11 @@ public class PrepaymentController extends BasicController implements IFinanceCon
 	private InvoiceDetail invoiceDetail;
 	private CustomerFee customerFee;
 	private boolean longDescription;
+	private BankAccountHelper accountHelper;
+
+	public PrepaymentController() {
+    	this.accountHelper = new BankAccountHelper((IBankAccountContainerProvider) this);
+	}
 
 	public RegistryBank getRegistryBank() {
 		return registryBank;
@@ -192,9 +199,14 @@ public class PrepaymentController extends BasicController implements IFinanceCon
 
 		setRegistryBank(null);
 	}
+	
+	@Override
+	public IBankAccountContainer getBankAccountContainer() {
+		return ((Prepayment)getTo()).getFinance();
+	}
 
-	public void onBankAccountData(ActionEvent event) {
-		BankUtil.fillBankAccountData(((Prepayment)getTo()).getFinance());
+	public BankAccountHelper getAccountHelper() {
+		return accountHelper;
 	}
 
 	public void onCustomerChanged(LookupChangeEvent event) throws ManagerBeanException {

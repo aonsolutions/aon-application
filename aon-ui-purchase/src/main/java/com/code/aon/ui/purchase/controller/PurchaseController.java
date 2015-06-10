@@ -32,7 +32,6 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
-import com.code.aon.config.util.BankUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
@@ -59,6 +58,7 @@ import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.common.controller.IAuditableController;
+import com.code.aon.ui.config.BankAccountHelper;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.HeaderObjectController;
@@ -102,12 +102,14 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 	private boolean shippingAlternativeAddress;
 	private boolean showShipmentWindow;
 	private Purchase returnSourcePurchase;
+	private BankAccountHelper accountHelper;
 	
 	private List<String> moreRecipients;
 	private List<IEmailControllerListener> emailControllerListenerClasses;
 	
 	public PurchaseController() {
     	this.emailUtil = new PurchaseEmailUtil();
+    	this.accountHelper = new BankAccountHelper(this);
     }
 
 	public List<SelectItem> getAddresses() {
@@ -442,8 +444,8 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 		to.setBic(null);
 	}
 
-	public void onBankAccountData(ActionEvent event) {
-		BankUtil.fillBankAccountData((Purchase)getTo());
+	public BankAccountHelper getAccountHelper() {
+		return accountHelper;
 	}
 
 	public double getTaxableBase(){

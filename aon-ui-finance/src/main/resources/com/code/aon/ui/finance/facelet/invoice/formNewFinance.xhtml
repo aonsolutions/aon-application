@@ -45,17 +45,12 @@
 	<aon:div id="InvoiceFinance_bankAccount_div" styleClass="aon-nowrap" rendered="#{invoiceController.financeGenerationMode == 1}">
 		<aon:panelGroup id="InvoiceFinance_bankAccount" rendered="#{financeController.showBankManualInput}">
 			<ui:include src="/com/code/aon/ui/registry/facelet/rbank/bankAccount.xhtml">
-				<ui:param name="bankAccountTo" value="#{financeController.to.bankAccount}" />
+				<ui:param name="bankAccountController" value="#{financeController.accountHelper}" />
 				<ui:param name="bankAccountPrefix" value="#{invoiceController.beanName}" />
 				<ui:param name="bankAccountSuffix" value="-Invoice" />
 				<ui:param name="bankAccountReRender" value="CreateBank_panel" />
+				<ui:param name="bankCodeChangeReRender" value="Finance_bankAlias,Finance_bic" />
 			</ui:include>
-			<aon:commandButton id="bankAccountData" value="&#160;"
-				title="#{bundle.aon_bank_data}"
-				styleClass="aon-icon-commandButton aon-icon-ambito aon-margin-left" style="margin-top: 2px;"
-				actionListener="#{financeController.onBankAccountData}"
-				reRender="Finance_bankAlias,Finance_bic" ajaxSingle="true">
-			</aon:commandButton>
 			<aon:panelGroup id="CreateBank_panel">
 				<aon:commandButton id="CreateBank"
 					value="&#160;" title="#{bundle.config_bank_creation} #{invoiceController.to.registryName}"

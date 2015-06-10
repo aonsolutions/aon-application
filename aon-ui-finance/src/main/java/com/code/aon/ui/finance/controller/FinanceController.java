@@ -33,7 +33,6 @@ import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.PayMethodTypeDetail;
 import com.code.aon.config.enumeration.PayMethodType;
-import com.code.aon.config.util.BankUtil;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatchDetail;
@@ -59,6 +58,7 @@ import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.config.BankAccountHelper;
 import com.code.aon.ui.finance.event.FinanceSearchListener;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -104,7 +104,12 @@ public class FinanceController extends FinanceListController implements IFinance
 	private int payrollYear;
 	private List<ITransferObject> orderedList;
 	private boolean showAuditInfoWindow;
+	private BankAccountHelper accountHelper;
 	
+	public FinanceController() {
+		this.accountHelper = new BankAccountHelper(this);
+	}
+
 	public Company getCompany() {
 		if (company == null) {
 			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
@@ -429,8 +434,8 @@ public class FinanceController extends FinanceListController implements IFinance
 		return getAllBanks().size();
 	}
 	
-	public void onBankAccountData(ActionEvent event) {
-		BankUtil.fillBankAccountData((Finance)getTo());
+	public BankAccountHelper getAccountHelper() {
+		return accountHelper;
 	}
 
 	public boolean isPending() {

@@ -34,7 +34,6 @@
 				<ui:include src="/com/code/aon/ui/registry/facelet/rbank/tab_grid.xhtml">
 					<ui:param name="controller" value="#{companyRbank}" />
 					<ui:param name="showSuffix" value="#{true}" />
-					<ui:param name="skipBankDataButton" value="#{true}" />
 				</ui:include>
 			</aon:panel>
 			
@@ -63,5 +62,9 @@
 		</aon:div>
 	</aon:form>
 	<aon:lookupButtonPopup lookup="#{accountLookup}" />
+	<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
+		<ui:param name="bankAccountController" value="#{companyRbank.accountHelper}" />
+		<ui:param name="modalReRender" value="companyRbankData" />
+	</ui:include>
 
 </ui:composition>

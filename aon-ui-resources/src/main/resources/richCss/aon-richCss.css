@@ -2908,7 +2908,9 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .aon-icon-check-black{
 	background:transparent url(images/aon-icon/aon-icon-check-black.png) scroll left center no-repeat;
 }
-
+ .aon-icon-ccc{
+	background:transparent url(images/aon-main-menu/aon-icon-ccc.png) scroll left center no-repeat;	
+ }
 
 .aon-subTable-column{
 	padding-left: 10px; 

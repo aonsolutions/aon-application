@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.InvoiceDetailAccount;
@@ -36,7 +37,6 @@ import com.code.aon.accounting.InvoiceEntryHeader;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -51,6 +51,8 @@ import com.code.aon.company.Company;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.BankAccount;
+import com.code.aon.config.IBankAccountContainer;
+import com.code.aon.config.IBankAccountContainerProvider;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Series;
 import com.code.aon.config.Tax;
@@ -59,7 +61,6 @@ import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.config.enumeration.VatDeductionType;
 import com.code.aon.config.enumeration.WithholdingType;
-import com.code.aon.config.util.BankUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Finance;
@@ -89,6 +90,7 @@ import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.config.BankAccountHelper;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.SaleInvoiceController;
 import com.code.aon.ui.form.FormUtil;
@@ -97,7 +99,7 @@ import com.code.aon.ui.registry.controller.RegistryCollectionsController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class InvoiceEntryController implements ISpecialAccountEntry, Serializable {
+public class InvoiceEntryController implements ISpecialAccountEntry, Serializable, IBankAccountContainerProvider {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -123,6 +125,11 @@ public class InvoiceEntryController implements ISpecialAccountEntry, Serializabl
 	private List<SelectItem> relatedAccounts;
 	private List<InvoiceEntryDetail> removedDetails;
 	private List<Finance> removedFinances;
+	private BankAccountHelper accountHelper;
+	
+	public InvoiceEntryController() {
+    	this.accountHelper = new BankAccountHelper(this);
+	}
 
 	public AccountEntryInvoiceWriter getWriter() {
 		if (writer == null) {
@@ -1813,10 +1820,15 @@ public class InvoiceEntryController implements ISpecialAccountEntry, Serializabl
 		return ((isSales() && pm.getType() == PayMethodType.NEGOTIABLE_DOCUMENT) || (!isSales() && pm.getType() == PayMethodType.BANK_TRANSFER));	
 	}
 
-	public void onBankAccountData(ActionEvent event) {
-		BankUtil.fillBankAccountData(getCurrentFinance());
+	@Override
+	public IBankAccountContainer getBankAccountContainer() {
+		return getCurrentFinance();
 	}
 
+	public BankAccountHelper getAccountHelper() {
+		return accountHelper;
+	}
+	
 	public boolean isTaxDateEquals() {
 		if (getHeader() != null) {
 			return ObjectUtils.equals(getHeader().getDate(), getHeader().getTaxDate());

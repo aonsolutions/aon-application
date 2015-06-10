@@ -2,6 +2,7 @@ package com.code.aon.config.util;
 
 import java.util.Iterator;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -33,6 +34,12 @@ public class BankUtil {
 				if (results != null) {
 					bac.setBankAlias((String)results[0]);
 					bac.setBic((String)results[1]);
+				}
+			} else {
+				BankBic11 bankBic = BankBic11.getBankBic11(bac.getBankAccount().getBankCode());
+				if ( bankBic != null ) {
+					bac.setBankAlias(StringUtils.left(bankBic.getDescription(), 25));
+					bac.setBic(bankBic.getBic());					
 				}
 			}
 		}

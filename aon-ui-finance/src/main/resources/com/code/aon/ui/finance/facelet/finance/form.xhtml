@@ -346,17 +346,11 @@
 					<aon:div id="Finance_bankAccount_panel" styleClass="aon-nowrap">
 						<aon:panelGroup id="Finance_bankAccount" rendered="#{finance.showBankManualInput}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/rbank/bankAccount.xhtml">
-								<ui:param name="bankAccountTo" value="#{finance.to.bankAccount}" />
+								<ui:param name="bankAccountController" value="#{finance.accountHelper}" />
 								<ui:param name="bankAccountPrefix" value="Finance" />
 								<ui:param name="bankAccountDisabled" value="#{!finance.pending and !finance.returned}" />
+								<ui:param name="bankCodeChangeReRender" value="Finance_bankAlias,Finance_bic" />
 							</ui:include>
-							<aon:commandButton id="bankAccountData" value="&#160;"
-								title="#{bundle.aon_bank_data}"
-								styleClass="aon-icon-commandButton aon-icon-ambito aon-margin-left" style="margin-top: 2px;"
-								rendered="#{finance.showBankManualInput and (finance.pending or finance.returned)}"  
-								actionListener="#{finance.onBankAccountData}"
-								reRender="Finance_bankAlias,Finance_bic" ajaxSingle="true">
-							</aon:commandButton>
 							<aon:commandLink id="bankAccount_hide_manualInput" ajaxSingle="true"
 								rendered="#{finance.showBankManualInput and (finance.pending or finance.returned)}"  
 								reRender="Finance_bankAccount_panel"
@@ -553,6 +547,10 @@
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />				
 		<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
 			<ui:param name="auditableController" value="#{finance}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
+			<ui:param name="bankAccountController" value="#{finance.accountHelper}" />
+			<ui:param name="modalReRender" value="Finance_bankAccount_panel" />
 		</ui:include>
 	</ui:define>
 </ui:composition>

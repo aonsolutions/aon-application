@@ -6,7 +6,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-		<aon:panel>
+		<aon:panel id="RegistrySupplier_payMethodPanel" >
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.finance_payMethod}" />
 			</f:facet>
@@ -51,15 +51,11 @@
 
 				<aon:div>
 					<ui:include src="/com/code/aon/ui/registry/facelet/rbank/bankAccount.xhtml">
-						<ui:param name="bankAccountTo" value="#{controller.to.bankAccount}" />
+						<ui:param name="bankAccountController" value="#{controller.accountHelper}" />
 						<ui:param name="bankAccountPrefix" value="RegistrySupplier" />
+						<ui:param name="bankAccountWindowSuffix" value="-RSupplier" />
+						<ui:param name="bankCodeChangeReRender" value="RegistrySupplier_bankAlias,RegistrySupplier_bic" />					
 					</ui:include>
-					<aon:commandButton id="bankAccountData" value="&#160;"
-						title="#{bundle.aon_bank_data}"
-						styleClass="aon-icon-commandButton aon-icon-ambito aon-margin-left" style="margin-top: 2px;"
-						actionListener="#{controller.onBankAccountData}"
-						reRender="RegistrySupplier_bankAlias,RegistrySupplier_bic" ajaxSingle="true">
-					</aon:commandButton>
 				</aon:div>
 				<aon:inputText id="RegistrySupplier_bankAlias"
 					value="#{controller.to.bankAlias}" 

@@ -9,21 +9,24 @@
 
 	<aon:valueParam name="bankAccountDisabled" default="#{false}" />
 	<aon:valueParam name="renderBankAccount" default="#{true}" />
+	<ui:param name="bankAccountReRenderEx"
+		value="#{bankCodeChangeReRender}#{(bankCodeChangeReRender != null)?',':''}#{bankAccountReRender}"/>
 
 	<aon:panelGroup id="#{bankAccountPrefix}_BankAccountDiv#{bankAccountSuffix}" styleClass="aon-vertical-align-top"
 		rendered="#{renderBankAccount}">
 		<aon:selectOneMenu id="#{bankAccountPrefix}_BankAccount_country#{bankAccountSuffix}"
 			styleClass="aon-vertical-align-middle"
-			value="#{bankAccountTo.country}" required="true"
+			value="#{bankAccountController.to.bankAccount.country}" required="true"
 			disabled="#{bankAccountDisabled}">
 			<f:selectItems value="#{commonCollections.countryCodes}" />
 			<a4j:support event="onchange" focus="#{bankAccountPrefix}_BankAccount_check#{bankAccountSuffix}"
 				reRender="#{bankAccountPrefix}_BankAccountDiv#{bankAccountSuffix}"
+				actionListener="#{bankAccountController.onBankAccountData}"
 				ajaxSingle="true" />
 		</aon:selectOneMenu>
 		<aon:inputText id="#{bankAccountPrefix}_BankAccount_check#{bankAccountSuffix}"
 			label="#{bundle.config_iban_check_digits}"
-			value="#{bankAccountTo.check}"
+			value="#{bankAccountController.to.bankAccount.check}"
 			styleClass="aon-inputText aon-width-20 aon-vertical-align-middle"
 			size="1" maxlength="2"
 			disabled="#{bankAccountDisabled}"
@@ -31,30 +34,32 @@
 			<f:validateLength minimum="2" maximum="2" />
 			<a4j:support event="onchange" reRender="#{bankAccountReRender}" ajaxSingle="true" />
 		</aon:inputText>
-		<aon:inputText value="#{bankAccountTo.bban1}"
+		<aon:inputText value="#{bankAccountController.to.bankAccount.bban1}"
 			label="#{bundle.aon_iban}"
 			styleClass="aon-inputText aon-width-40 aon-vertical-align-middle"
 			size="3" maxlength="4"
 			disabled="#{bankAccountDisabled}"
 			ajaxSingle="true">
-			<a4j:support event="onchange" reRender="#{bankAccountReRender}" ajaxSingle="true" />
+			<a4j:support event="onchange" reRender="#{bankAccountReRenderEx}" ajaxSingle="true"
+				actionListener="#{bankAccountController.onBankAccountData}" />
 		</aon:inputText>
-		<aon:inputText value="#{bankAccountTo.bban2}"
+		<aon:inputText value="#{bankAccountController.to.bankAccount.bban2}"
+			styleClass="aon-inputText aon-width-40 aon-vertical-align-middle"
+			size="3" maxlength="4"
+			disabled="#{bankAccountDisabled}"
+			ajaxSingle="true">
+			<a4j:support event="onchange" reRender="#{bankAccountReRenderEx}" ajaxSingle="true"
+				actionListener="#{bankAccountController.onBankAccountData2}" />
+		</aon:inputText>
+		<aon:inputText value="#{bankAccountController.to.bankAccount.bban3}"
 			styleClass="aon-inputText aon-width-40 aon-vertical-align-middle"
 			size="3" maxlength="4"
 			disabled="#{bankAccountDisabled}"
 			ajaxSingle="true">
 			<a4j:support event="onchange" reRender="#{bankAccountReRender}" ajaxSingle="true" />
 		</aon:inputText>
-		<aon:inputText value="#{bankAccountTo.bban3}"
-			styleClass="aon-inputText aon-width-40 aon-vertical-align-middle"
-			size="3" maxlength="4"
-			disabled="#{bankAccountDisabled}"
-			ajaxSingle="true">
-			<a4j:support event="onchange" reRender="#{bankAccountReRender}" ajaxSingle="true" />
-		</aon:inputText>
-		<aon:if test="#{bankAccountTo.ibanLength > 16}">
-			<aon:inputText value="#{bankAccountTo.bban4}"
+		<aon:if test="#{bankAccountController.to.bankAccount.ibanLength > 16}">
+			<aon:inputText value="#{bankAccountController.to.bankAccount.bban4}"
 				styleClass="aon-inputText aon-width-40 aon-vertical-align-middle"
 				size="3" maxlength="4"
 				disabled="#{bankAccountDisabled}"
@@ -62,8 +67,8 @@
 				<a4j:support event="onchange" reRender="#{bankAccountReRender}" ajaxSingle="true" />
 			</aon:inputText>
 		</aon:if>
-		<aon:if test="#{bankAccountTo.ibanLength > 20}">
-			<aon:inputText value="#{bankAccountTo.bban5}"
+		<aon:if test="#{bankAccountController.to.bankAccount.ibanLength > 20}">
+			<aon:inputText value="#{bankAccountController.to.bankAccount.bban5}"
 				styleClass="aon-inputText aon-width-40 aon-vertical-align-middle"
 				size="3" maxlength="4"
 				disabled="#{bankAccountDisabled}"
@@ -71,16 +76,16 @@
 				<a4j:support event="onchange" reRender="#{bankAccountReRender}" ajaxSingle="true" />
 			</aon:inputText>
 		</aon:if>
-		<aon:if test="#{bankAccountTo.ibanLength > 24}">
-			<aon:inputText value="#{bankAccountTo.bban6}"
+		<aon:if test="#{bankAccountController.to.bankAccount.ibanLength > 24}">
+			<aon:inputText value="#{bankAccountController.to.bankAccount.bban6}"
 				styleClass="aon-inputText aon-width-40 aon-vertical-align-middle"
 				size="3" maxlength="4"
 				ajaxSingle="true">
 				<a4j:support event="onchange" reRender="#{bankAccountReRender}" ajaxSingle="true" />
 			</aon:inputText>
 		</aon:if>
-		<aon:if test="#{bankAccountTo.ibanLength > 28}">
-			<aon:inputText value="#{bankAccountTo.bban7}"
+		<aon:if test="#{bankAccountController.to.bankAccount.ibanLength > 28}">
+			<aon:inputText value="#{bankAccountController.to.bankAccount.bban7}"
 				styleClass="aon-inputText aon-width-40 aon-vertical-align-middle"
 				size="3" maxlength="4"
 				disabled="#{bankAccountDisabled}"
@@ -88,8 +93,8 @@
 				<a4j:support event="onchange" reRender="#{bankAccountReRender}" ajaxSingle="true" />
 			</aon:inputText>
 		</aon:if>
-		<aon:if test="#{bankAccountTo.ibanLength > 32}">
-			<aon:inputText value="#{bankAccountTo.bban8}"
+		<aon:if test="#{bankAccountController.to.bankAccount.ibanLength > 32}">
+			<aon:inputText value="#{bankAccountController.to.bankAccount.bban8}"
 				styleClass="aon-inputText aon-width-40 aon-vertical-align-middle"
 				size="1" maxlength="2"
 				disabled="#{bankAccountDisabled}"
@@ -98,5 +103,11 @@
 			</aon:inputText>
 		</aon:if>
 	</aon:panelGroup>
+	<aon:commandButton value="&#160;"
+		title="#{bundle.aon_bank_data}"
+		styleClass="aon-icon-commandButton aon-icon-ccc aon-margin-left" style="margin-top: 2px;"
+		actionListener="#{bankAccountController.onShowBankAccountWindow}"
+		rendered="#{renderBankAccount}" reRender="showNewBankAccountWindow#{bankAccountWindowSuffix}"
+		ajaxSingle="true" />
 					
 </ui:composition>

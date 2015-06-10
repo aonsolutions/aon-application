@@ -357,17 +357,11 @@
 
 								<aon:div>
 									<ui:include src="/com/code/aon/ui/registry/facelet/rbank/bankAccount.xhtml">
-										<ui:param name="bankAccountTo" value="#{delivery.to.bankAccount}" />
+										<ui:param name="bankAccountController" value="#{delivery.accountHelper}" />
 										<ui:param name="bankAccountPrefix" value="Delivery" />
 										<ui:param name="bankAccountDisabled" value="#{!delivery.pending}" />
+										<ui:param name="bankCodeChangeReRender" value="Delivery_bankAlias,Delivery_bic" />
 									</ui:include>
-									<aon:commandButton id="bankAccountData" value="&#160;"
-										title="#{bundle.aon_bank_data}"
-										styleClass="aon-icon-commandButton aon-icon-ambito aon-margin-left" style="margin-top: 2px;"
-										rendered="#{delivery.pending}"
-										actionListener="#{delivery.onBankAccountData}"
-										reRender="Delivery_bankAlias,Delivery_bic" ajaxSingle="true">
-									</aon:commandButton>
 								</aon:div>
 								<aon:inputText id="Delivery_bankAlias"
 									value="#{delivery.to.bankAlias}" 
@@ -414,5 +408,9 @@
 		<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
 			<ui:param name="auditableController" value="#{delivery}" />
 		</ui:include>						
+		<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
+			<ui:param name="bankAccountController" value="#{delivery.accountHelper}" />
+			<ui:param name="modalReRender" value="payMethodDiv" />
+		</ui:include>		
 	</ui:define>
 </ui:composition>

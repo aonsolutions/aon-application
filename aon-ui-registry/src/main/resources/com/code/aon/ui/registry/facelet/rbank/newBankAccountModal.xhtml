@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showNewBankAccountWindow#{bankAccountWindowSuffix}">
+		<aon:if test="#{bankAccountController.showNewBankAccountWindow}">
+			<rich:modalPanel id="newBankAccountModalPanel#{bankAccountWindowSuffix}"
+				minWidth="550" minHeight="200" zindex="90"
+				showWhenRendered="#{bankAccountController.showNewBankAccountWindow}" >
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{bundle.registry_banks_module}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton id="bankAccount-close#{bankAccountWindowSuffix}" immediate="true"
+							type="close-button"
+							styleClass="aon-popupWindow-close"
+							reRender="showNewBankAccountWindow#{bankAccountWindowSuffix}">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener value="#{false}"
+								target="#{bankAccountController.showNewBankAccountWindow}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="newBankAccountForm#{bankAccountWindowSuffix}">
+					<aon:div styleClass="aon-popupWindow-content">
+						<aon:div style="width:100%">
+							<aon:div styleClass="aon-popupWindow-content-internal">
+								<aon:div style="width:99%">
+									<c:if test="#{!bankAccountController.to.bankAccount.validBankAccount}">
+										<aon:div styleClass="aon-toolbar">
+										
+											<h:panelGrid columns="2" cellspacing="0" cellpadding="0"
+												columnClasses="aon-finding-subtitle, aon-finding-toolbar">
+									
+												<aon:div styleClass="aon-finding-subtitle-internal">
+													<aon:outputText value="#{bundle.aon_reset} " />			
+												</aon:div>
+												
+												<aon:div styleClass="aon-finding-toolbar-item-group">
+													<aon:commandButton id="bankAccount-save#{bankAccountWindowSuffix}"
+														styleClass="aon-finding-toolbar-item aon-icon-accept"
+														value="#{bundle.aon_save}"
+														actionListener="#{bankAccountController.onSaveCCC}"
+														reRender="showNewBankAccountWindow#{bankAccountWindowSuffix},#{modalReRender}"
+														accesskey="#{bundle.aon_key_save}">
+														<rich:componentControl for="newBankAccountModalPanel#{bankAccountWindowSuffix}"
+															event="onclick" operation="hide"/>																					
+													</aon:commandButton>
+													<aon:commandButton id="bankAccount-cancel#{bankAccountWindowSuffix}" immediate="true"
+														styleClass="aon-finding-toolbar-item aon-icon-cancel"
+														value="#{bundle.aon_cancel}"
+														actionListener="#{bankAccountController.onCancelCCC}"
+														reRender="showNewBankAccountWindow#{bankAccountWindowSuffix},#{modalReRender}">
+													</aon:commandButton>		
+												</aon:div>
+											</h:panelGrid>
+										
+										</aon:div>
+									</c:if>
+								
+									<aon:div styleClass="aon-scroll-area">
+										<aon:panelGrid columns="2" styleClass="aon-width-all">
+										
+											<aon:outputText value="CCC" />
+											<c:if test="#{bankAccountController.to.bankAccount.validBankAccount}">
+												<aon:outputText value="#{bankAccountController.to.bankAccount.CCC}" />
+												
+												<aon:outputText value="#{bundle.aon_iban}" />
+												<aon:outputText value="#{bankAccountController.to.bankAccount}" />
+	
+												<aon:outputText value="#{bundle.aon_bic}" />
+												<aon:outputText value="#{bankAccountController.to.bic}" />
+											</c:if>
+											<c:if test="#{!bankAccountController.to.bankAccount.validBankAccount}">
+												<aon:div>
+													<aon:inputText value="#{bankAccountController.to.bankAccount.bban1}"
+														label="#{bundle.config_bank_code}"
+														styleClass="aon-inputText aon-width-40 aon-vertical-align-middle"
+														size="3" maxlength="4" required="true" >
+														<f:validateLength minimum="4" />
+													</aon:inputText>
+													<aon:inputText value="#{bankAccountController.to.bankAccount.bban2}"													
+														label="#{bundle.config_bank_office}"
+														styleClass="aon-inputText aon-width-40 aon-vertical-align-middle"
+														size="3" maxlength="4" required="true" >
+														<f:validateLength minimum="4" />
+													</aon:inputText>
+													<aon:inputText value="#{bankAccountController.checkDigits}"
+														label="#{bundle.config_bank_control}"
+														styleClass="aon-inputText aon-width-20 aon-vertical-align-middle"
+														size="2" maxlength="2" required="true" >
+														<f:validateLength minimum="2" />
+													</aon:inputText>
+													<aon:inputText value="#{bankAccountController.accountNumber}"
+														label="#{bundle.account_account}"
+														styleClass="aon-inputText aon-width-100 aon-vertical-align-middle"
+														size="10" maxlength="10" required="true" >
+														<f:validateLength minimum="10" />
+													</aon:inputText>
+												</aon:div>
+											</c:if>											
+										</aon:panelGrid>
+										
+									</aon:div>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:form>
+			
+			</rich:modalPanel>
+		</aon:if>
+	</aon:panelGroup>
+
+</ui:composition>

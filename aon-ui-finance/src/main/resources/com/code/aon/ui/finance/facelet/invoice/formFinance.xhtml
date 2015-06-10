@@ -112,16 +112,11 @@
 							<aon:div id="InvoiceFinance_bankAccount_panel" styleClass="aon-nowrap" rendered="#{formEdit}">
 								<aon:panelGroup id="InvoiceFinance_bankAccount" rendered="#{controller.showBankManualInput}">
 									<ui:include src="/com/code/aon/ui/registry/facelet/rbank/bankAccount.xhtml">
-										<ui:param name="bankAccountTo" value="#{controller.to.bankAccount}" />
+										<ui:param name="bankAccountController" value="#{controller.accountHelper}" />
 										<ui:param name="bankAccountPrefix" value="#{controller.beanName}" />
 										<ui:param name="bankAccountReRender" value="createBankContainer" />
+										<ui:param name="bankCodeChangeReRender" value="Finance_bankAlias,Finance_bic" />
 									</ui:include>
-									<aon:commandButton id="bankAccountData" value="&#160;"
-										title="#{bundle.aon_bank_data}"
-										styleClass="aon-icon-commandButton aon-icon-ambito aon-margin-left" style="margin-top: 2px;"
-										actionListener="#{controller.onBankAccountData}"
-										reRender="Finance_bankAlias,Finance_bic" ajaxSingle="true">
-									</aon:commandButton>
 									<aon:panelGroup id="createBankContainer">
 										<aon:commandButton id="createBank" value=""
 											reRender="InvoiceFinance_bankAccount"
@@ -177,17 +172,12 @@
 								<aon:div id="InvoiceFinance_bankAccount_panel-New" styleClass="aon-nowrap" rendered="#{formNew}">
 									<aon:panelGroup id="InvoiceFinance_bankAccount-New" rendered="#{controller.showBankManualInput}">
 										<ui:include src="/com/code/aon/ui/registry/facelet/rbank/bankAccount.xhtml">
-											<ui:param name="bankAccountTo" value="#{controller.to.bankAccount}" />
+											<ui:param name="bankAccountController" value="#{controller.accountHelper}" />
 											<ui:param name="bankAccountPrefix" value="#{controller.beanName}" />
 											<ui:param name="bankAccountSuffix" value="-New" />
 											<ui:param name="bankAccountReRender" value="createBankContainer-New" />
+											<ui:param name="bankCodeChangeReRender" value="Finance_bankAlias-New,Finance_bic-New" />
 										</ui:include>
-										<aon:commandButton id="bankAccountData-New" value="&#160;"
-											title="#{bundle.aon_bank_data}"
-											styleClass="aon-icon-commandButton aon-icon-ambito aon-margin-left" style="margin-top: 2px;"
-											actionListener="#{controller.onBankAccountData}"
-											reRender="Finance_bankAlias-New,Finance_bic-New" ajaxSingle="true">
-										</aon:commandButton>
 										<aon:panelGroup id="createBankContainer-New">
 											<aon:commandButton id="createBank-New" value=""
 												reRender="InvoiceFinance_bankAccount_panel-New"

@@ -17,7 +17,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
-import com.code.aon.config.util.BankUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceType;
@@ -25,6 +24,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.config.BankAccountHelper;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
@@ -38,6 +38,11 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 	
 	private RegistryBank registryBank;
 	private boolean showBankManualInput;
+	private BankAccountHelper accountHelper;
+	
+	public InvoiceFinanceController() {
+		this.accountHelper = new BankAccountHelper(this);
+	}
 
 	public RegistryBank getRegistryBank() {
 		return registryBank;
@@ -173,8 +178,8 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 		setRegistryBank(null);
 	}
 
-	public void onBankAccountData(ActionEvent event) {
-		BankUtil.fillBankAccountData((Finance)getTo());
+	public BankAccountHelper getAccountHelper() {
+		return accountHelper;
 	}
 
 	public boolean isBankCreationEnabled() throws ManagerBeanException {

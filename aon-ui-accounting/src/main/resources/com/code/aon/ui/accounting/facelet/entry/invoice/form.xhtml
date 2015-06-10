@@ -521,5 +521,9 @@
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
 		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
 		<aon:lookupButtonPopup lookup="#{creditorLookup}" />
+		<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
+			<ui:param name="bankAccountController" value="#{invoiceEntry.accountHelper}" />
+			<ui:param name="modalReRender" value="FinancesData" />
+		</ui:include>						
 	</ui:define>
 </ui:composition>

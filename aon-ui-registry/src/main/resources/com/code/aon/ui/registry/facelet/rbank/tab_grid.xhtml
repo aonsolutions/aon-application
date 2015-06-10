@@ -18,36 +18,20 @@
 				</f:facet>
 				<aon:outputText value="#{to.bankAccount}" rendered="#{formList}" />
 				<ui:include src="bankAccount.xhtml">
-					<ui:param name="bankAccountTo" value="#{controller.to.bankAccount}" />
+					<ui:param name="bankAccountController" value="#{controller.accountHelper}" />
 					<ui:param name="renderBankAccount" value="#{formEdit}" />
 					<ui:param name="bankAccountPrefix" value="#{controller.beanName}" />
+					<ui:param name="bankCodeChangeReRender" value="RegistryBank_alias,RegistryBank_bic" />
 				</ui:include>
-				<aon:if test="#{!skipBankDataButton}">
-					<aon:commandButton id="bankAccountData" value="&#160;"
-						title="#{bundle.aon_bank_data}"
-						styleClass="aon-icon-commandButton aon-icon-ambito aon-margin-left" style="margin-top: 2px;"
-						rendered="#{formEdit}"
-						actionListener="#{controller.onBankAccountData}"
-						reRender="RegistryBank_alias,RegistryBank_bic" ajaxSingle="true">
-					</aon:commandButton>
-				</aon:if>
 				<f:facet name="footer">
 					<aon:div>
 						<ui:include src="bankAccount.xhtml">
-							<ui:param name="bankAccountTo" value="#{controller.to.bankAccount}" />
+							<ui:param name="bankAccountController" value="#{controller.accountHelper}" />
 							<ui:param name="renderBankAccount" value="#{formNew}" />
 							<ui:param name="bankAccountPrefix" value="#{controller.beanName}" />
 							<ui:param name="bankAccountSuffix" value="-New" />
+							<ui:param name="bankCodeChangeReRender" value="RegistryBank_alias-New,RegistryBank_bic-New" />
 						</ui:include>
-						<aon:if test="#{!skipBankDataButton}">
-							<aon:commandButton id="bankAccountData-New" value="&#160;"
-								title="#{bundle.aon_bank_data}"
-								styleClass="aon-icon-commandButton aon-icon-ambito aon-margin-left" style="margin-top: 2px;"
-								rendered="#{formNew}"
-								actionListener="#{controller.onBankAccountData}"
-								reRender="RegistryBank_alias-New,RegistryBank_bic-New" ajaxSingle="true">
-							</aon:commandButton>
-						</aon:if>
 					</aon:div>															
 				</f:facet>
 			</aon:column>

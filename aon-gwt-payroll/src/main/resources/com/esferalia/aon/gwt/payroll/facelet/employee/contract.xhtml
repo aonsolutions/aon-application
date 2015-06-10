@@ -115,6 +115,11 @@
 	<ui:include
 		src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 
+	<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
+		<ui:param name="bankAccountController" value="#{personPayMethodForm.accountHelper}" />
+		<ui:param name="modalReRender" value="contractMainGrid" />
+	</ui:include>
+
 	<aon:if test="#{!edit}">
 		<ui:include src="readonly.xhtml">
 			<ui:param name="form" value="contractForm" />

@@ -50,7 +50,7 @@
 			</aon:panelGrid>
 				
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelTabSet selectedTab="#{enterprise.selectedTab}">				
+				<aon:panelTabSet id="enterpriseTab" selectedTab="#{enterprise.selectedTab}">				
 					
 					<aon:panelTab label="#{bundle.registry_addresses}">
 						<ui:include src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
@@ -85,7 +85,6 @@
 								<ui:include src="/com/code/aon/ui/registry/facelet/rbank/tab_grid.xhtml">
 									<ui:param name="controller" value="#{companyRbank}" />
 									<ui:param name="showSuffix" value="#{true}" />
-									<ui:param name="skipBankDataButton" value="#{true}" />
 								</ui:include>
 							</aon:panel>
 							<aon:panel>
@@ -164,5 +163,19 @@
 			<aon:lookupButtonPopup lookup="#{registryLookup}" />
 		</aon:if>
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+		<aon:if test="#{aonConfiguration.bean.company.showRegistryBank}">
+			<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
+				<ui:param name="bankAccountController" value="#{companyRbank.accountHelper}" />
+				<ui:param name="modalReRender" value="enterpriseTab" />
+				<ui:param name="bankAccountWindowSuffix" value="-Company" />
+			</ui:include>
+		</aon:if>
+		<aon:if test="#{aonConfiguration.bean.enterprise.showFinanceData and aonRole.financeOperator}">
+			<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
+				<ui:param name="bankAccountController" value="#{enterpriseRbank.accountHelper}" />
+				<ui:param name="modalReRender" value="enterpriseTab" />
+			</ui:include>
+		</aon:if>
+
 	</ui:define>
 </ui:composition>

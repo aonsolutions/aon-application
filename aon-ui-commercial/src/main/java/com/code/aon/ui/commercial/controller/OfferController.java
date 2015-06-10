@@ -36,7 +36,6 @@ import com.code.aon.company.WorkPlace;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.util.AppParamUtil;
-import com.code.aon.config.util.BankUtil;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
@@ -67,6 +66,7 @@ import com.code.aon.ui.commercial.util.CommercialEmailUtil;
 import com.code.aon.ui.commercial.util.OfferImportManager;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.common.controller.IAuditableController;
+import com.code.aon.ui.config.BankAccountHelper;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.HeaderObjectController;
@@ -123,9 +123,12 @@ public class OfferController extends HeaderObjectController implements ISignatur
 	private boolean includeEmailOfferReport;
 	private boolean includeEmailSddMandateReport;
 	private SddMandateObject sddMandate;
+	private BankAccountHelper accountHelper;
 	
 	public OfferController() {
 		this.emailUtil = new CommercialEmailUtil();
+		this.accountHelper = new BankAccountHelper(this);
+		
 	}
 	
 	public List<SelectItem> getAddresses() {
@@ -560,8 +563,8 @@ public class OfferController extends HeaderObjectController implements ISignatur
 		to.setBic(null);
 	}
 
-	public void onBankAccountData(ActionEvent event) {
-		BankUtil.fillBankAccountData(getOffer());
+	public BankAccountHelper getAccountHelper() {
+		return accountHelper;
 	}
 
 	public void supplierData(LookupChangeEvent event) throws ManagerBeanException {

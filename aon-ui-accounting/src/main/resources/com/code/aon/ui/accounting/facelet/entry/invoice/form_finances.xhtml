@@ -109,15 +109,10 @@
 					<aon:div id="AccountFinance_bankAccount_panel" styleClass="aon-nowrap" rendered="#{financeTo==invoiceEntry.currentFinance}">
 						<aon:panelGroup id="AccountFinance_bankAccount" rendered="#{invoiceEntry.showBankManualInput}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/rbank/bankAccount.xhtml">
-								<ui:param name="bankAccountTo" value="#{invoiceEntry.currentFinance.bankAccount}" />
+								<ui:param name="bankAccountController" value="#{invoiceEntry.accountHelper}" />
 								<ui:param name="bankAccountPrefix" value="AccountFinance" />
+								<ui:param name="bankCodeChangeReRender" value="AccountFinance_bankAlias,AccountFinance_bic" />
 							</ui:include>
-							<aon:commandButton id="bankAccountData" value="&#160;"
-								title="#{bundle.aon_bank_data}"
-								styleClass="aon-icon-commandButton aon-icon-ambito aon-margin-left" style="margin-top: 2px;"
-								actionListener="#{invoiceEntry.onBankAccountData}"
-								reRender="AccountFinance_bankAlias,AccountFinance_bic" ajaxSingle="true">
-							</aon:commandButton>
 							<aon:commandLink id="bankAccount_hide_manualInput" ajaxSingle="true"
 								rendered="#{invoiceEntry.showBankManualInput and invoiceEntry.allBanksCount>0}"  
 								reRender="AccountFinance_bankAccount_panel"
@@ -164,16 +159,11 @@
 						<aon:div id="AccountFinance_bankAccount_panel-New" styleClass="aon-nowrap" rendered="#{invoiceEntry.newFinance}">
 							<aon:panelGroup id="AccountFinance_bankAccount-New" rendered="#{invoiceEntry.showBankManualInput}">
 								<ui:include src="/com/code/aon/ui/registry/facelet/rbank/bankAccount.xhtml">
-									<ui:param name="bankAccountTo" value="#{invoiceEntry.currentFinance.bankAccount}" />
+									<ui:param name="bankAccountController" value="#{invoiceEntry.accountHelper}" />
 									<ui:param name="bankAccountPrefix" value="AccountFinance" />
 									<ui:param name="bankAccountSuffix" value="-New" />
+									<ui:param name="bankCodeChangeReRender" value="AccountFinance_bankAlias-New,AccountFinance_bic-New" />
 								</ui:include>
-								<aon:commandButton id="bankAccountData-New" value="&#160;"
-									title="#{bundle.aon_bank_data}"
-									styleClass="aon-icon-commandButton aon-icon-ambito aon-margin-left" style="margin-top: 2px;"
-									actionListener="#{invoiceEntry.onBankAccountData}"
-									reRender="AccountFinance_bankAlias-New,AccountFinance_bic-New" ajaxSingle="true">
-								</aon:commandButton>
 								<aon:commandLink id="bankAccount_hide_manualInput-New" ajaxSingle="true"
 									rendered="#{invoiceEntry.showBankManualInput and invoiceEntry.allBanksCount>0}"  
 									reRender="AccountFinance_bankAccount_panel-New"

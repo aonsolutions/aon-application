@@ -376,17 +376,11 @@
 
 								<aon:div>
 									<ui:include src="/com/code/aon/ui/registry/facelet/rbank/bankAccount.xhtml">
-										<ui:param name="bankAccountTo" value="#{purchase.to.bankAccount}" />
+										<ui:param name="bankAccountController" value="#{purchase.accountHelper}" />
 										<ui:param name="bankAccountPrefix" value="Purchase" />
 										<ui:param name="bankAccountDisabled" value="#{!purchase.pending}" />
+										<ui:param name="bankCodeChangeReRender" value="Purchase_bankAlias,Purchase_bic" />
 									</ui:include>
-									<aon:commandButton id="bankAccountData" value="&#160;"
-										title="#{bundle.aon_bank_data}"
-										styleClass="aon-icon-commandButton aon-icon-ambito aon-margin-left" style="margin-top: 2px;"
-										rendered="#{purchase.pending}"
-										actionListener="#{purchase.onBankAccountData}"
-										reRender="Purchase_bankAlias,Purchase_bic" ajaxSingle="true">
-									</aon:commandButton>
 								</aon:div>
 								<aon:inputText id="Purchase_bankAlias"
 									value="#{purchase.to.bankAlias}" 
@@ -456,5 +450,9 @@
 		<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
 			<ui:param name="auditableController" value="#{purchase}" />
 		</ui:include>			
+		<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
+			<ui:param name="bankAccountController" value="#{purchase.accountHelper}" />
+			<ui:param name="modalReRender" value="payMethodDiv" />
+		</ui:include>
 	</ui:define>
 </ui:composition>
