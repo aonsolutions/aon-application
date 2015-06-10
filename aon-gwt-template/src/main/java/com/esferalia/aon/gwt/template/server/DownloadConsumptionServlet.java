@@ -159,33 +159,41 @@ public class DownloadConsumptionServlet extends HttpServlet {
         for(Integer j = 0; j< v.size();j++){
         	ConsumptionItem ci = v.get(j);
         	ci.setConsumption(ci.getInitialQuantity()+ci.getPurchases()+ci.getTransfersPlus()-ci.getSales()-ci.getTransfersMinus()-ci.getFinalQuantity());
-        	Row row = hoja.createRow(j+2);
-        	for(Integer k = 0; k< columns; k++){
-        		Cell celda = row.createCell(k);
-        		String type = aux.getColumns().get(k); 
+
+        	if(!(ci.getInitialQuantity() == 0 && 
+        			ci.getPurchases() == 0 &&
+        			ci.getSales() == 0 &&
+        			ci.getFinalQuantity() == 0 &&
+        			(ci.getTransfersPlus()-ci.getTransfersMinus()) == 0 &&
+        			ci.getConsumption() == 0)){
+        		Row row = hoja.createRow(j+2);
+        	    for(Integer k = 0; k< columns; k++){
+        			Cell celda = row.createCell(k);
+        			String type = aux.getColumns().get(k); 
      
-        		switch (type) {
-        		case "Producto": celda.setCellValue(ci.getProductCode());celda.setCellStyle(style3);break;
-        		case "Detalle 1":  celda.setCellValue(ci.getDetail());celda.setCellStyle(style2);break;
-        		case "Detalle 2":  celda.setCellValue(ci.getDetail2());celda.setCellStyle(style2);break;
-        		case "Detalle 3":  celda.setCellValue(ci.getDetail3());celda.setCellStyle(style2);break;
-        		case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style2);break;
-        		case "Nombre": celda.setCellValue(ci.getProductName());celda.setCellStyle(style3);break;
-        		case "Inicial": celda.setCellValue(ci.getInitialQuantity());celda.setCellStyle(style2);break;
-        		case "Compras": celda.setCellValue(ci.getPurchases());celda.setCellStyle(style2);break;
-        		case "Ventas": celda.setCellValue(ci.getSales());celda.setCellStyle(style2);break;
-        		case "Final": celda.setCellValue(ci.getFinalQuantity());celda.setCellStyle(style2);break;
-        		case "Traspaso": celda.setCellValue(ci.getTransfersPlus()-ci.getTransfersMinus());celda.setCellStyle(style2);break;
-        		case "Precio": celda.setCellValue(round(ci.getPrice(),2));celda.setCellStyle(style2);break; 
-        		case "Importe": celda.setCellValue(round(ci.getPrice()*ci.getConsumption(),2));celda.setCellStyle(style2);break;
-        		case "Consumo": celda.setCellValue(ci.getConsumption());celda.setCellStyle(style2);break;
-        		default:
-        			break;
+        			switch (type) {
+        			case "Producto": celda.setCellValue(ci.getProductCode());celda.setCellStyle(style3);break;
+        			case "Detalle 1":  celda.setCellValue(ci.getDetail());celda.setCellStyle(style2);break;
+        			case "Detalle 2":  celda.setCellValue(ci.getDetail2());celda.setCellStyle(style2);break;
+        			case "Detalle 3":  celda.setCellValue(ci.getDetail3());celda.setCellStyle(style2);break;
+        			case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style2);break;
+        			case "Nombre": celda.setCellValue(ci.getProductName());celda.setCellStyle(style3);break;
+        			case "Inicial": celda.setCellValue(ci.getInitialQuantity());celda.setCellStyle(style2);break;
+        			case "Compras": celda.setCellValue(ci.getPurchases());celda.setCellStyle(style2);break;
+        			case "Ventas": celda.setCellValue(ci.getSales());celda.setCellStyle(style2);break;
+        			case "Final": celda.setCellValue(ci.getFinalQuantity());celda.setCellStyle(style2);break;
+        			case "Traspaso": celda.setCellValue(ci.getTransfersPlus()-ci.getTransfersMinus());celda.setCellStyle(style2);break;
+        			case "Precio": celda.setCellValue(round(ci.getPrice(),2));celda.setCellStyle(style2);break; 
+        			case "Importe": celda.setCellValue(round(ci.getPrice()*ci.getConsumption(),2));celda.setCellStyle(style2);break;
+        			case "Consumo": celda.setCellValue(ci.getConsumption());celda.setCellStyle(style2);break;
+        			default:
+        				break;
+        			}
         		}
+        		Cell lastCell = row.createCell(columns);
+        		lastCell.setCellStyle(style2);
+        		row.setHeightInPoints(20);
         	}
-        	Cell lastCell = row.createCell(columns);
-        	lastCell.setCellStyle(style2);
-        	row.setHeightInPoints(20);
 
         }
         for(Integer h = 0; h< columns;h++){
