@@ -23,6 +23,7 @@ import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.registry.RegistrySegment;
 import com.code.aon.registry.Segment;
 import com.code.aon.registry.enumeration.MediaType;
+import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.loader.ILoaderEngine;
 import com.code.aon.ui.loader.LoaderParams;
 import com.code.aon.ui.loader.LoaderUtils;
@@ -43,9 +44,18 @@ public class RegistryLoaderFactory {
 
 	public Registry populateRegistry(LoaderParams params,LoadedRegistry loaded) {
 		Registry registry = new Registry();
-		registry.setDocument(loaded.getDocumento());
-		registry.setDocumentType(loaded.getDocumentType());
 		registry.setDocumentCountry(loaded.getDocumentCountry());
+		registry.setDocumentType(loaded.getDocumentType());
+		registry.setDocument(loaded.getDocumento());
+		if (registry.getRegistryDocument() != null) {
+			if (registry.getRegistryDocument().isValidNIF() 
+				|| registry.getRegistryDocument().isValidNIE()) {
+				registry.setType(RegistryType.NATURAL);
+			} else if (registry.getRegistryDocument().isValidCIF()) {
+				registry.setType(RegistryType.LEGAL);	
+			}
+		}	
+		registry.setAlias(loaded.getAlias());
 		registry.setNationality(loaded.getNationality());
 		registry.setName(loaded.getRazonSocial());
 		registry.setSecurityLevel(params.getSecurityLevel());
