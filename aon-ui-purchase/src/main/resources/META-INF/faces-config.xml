@@ -48,6 +48,7 @@
 				</value-class>
 				<value>#{purchaseSearch}</value>
 				<value>#{purchaseScopeListener}</value>
+				<value>#{purchaseHeaderControllerListener}</value>
 				<value>#{purchaseControllerListener}</value>
 				<value>#{purchaseDetailChildListener}</value>
 				<value>#{nullableBankAccountValidatorListener}</value>
@@ -82,6 +83,12 @@
 			<value>Purchase_scope_id</value>
 		</managed-property>
 	</managed-bean>
+	
+ 	<managed-bean>
+		<managed-bean-name>purchaseHeaderControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.HeaderControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>	
 	
 	<managed-bean>
 		<managed-bean-name>purchaseControllerListener</managed-bean-name>
