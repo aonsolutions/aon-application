@@ -23,14 +23,20 @@
 				<aon:panelGrid id="roomTable" columns="2" width="100%">
 					
 					<aon:outputLabel for="Room_hotel" value="#{bundle.aon_module_hotel}" />
-					<aon:selectOneMenu id="Room_hotel" value="#{room.to.hotel}" >
+					<aon:selectOneMenu id="Room_hotel" 
+						value="#{room.to.hotel}" required="true">
 						<f:selectItems value="#{pmsCollections.currentUserHotels}" />
 					</aon:selectOneMenu>
 					
 					<aon:outputLabel for="Room_item" value="#{bundle.aon_type}" />
-					<aon:selectOneMenu id="Room_item" value="#{room.to.item}" >
+					<aon:selectOneMenu id="Room_item" 
+						value="#{room.to.item}" required="true"
+						rendered="#{!room.to.usedRoom}">
 						<f:selectItems value="#{pmsCollections.roomItems}" />
 					</aon:selectOneMenu>
+					<aon:outputText styleClass="aon-bold"
+						value="#{room.to.item.product.code} - #{room.to.item.product.name}"
+						rendered="#{room.to.usedRoom}" />
 					
 					<aon:outputLabel for="Room_name" value="#{bundle.aon_number}" />
 					<aon:inputText id="Room_name" value="#{room.to.asset.name}" 

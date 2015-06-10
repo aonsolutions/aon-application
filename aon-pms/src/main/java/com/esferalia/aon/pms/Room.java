@@ -8,10 +8,17 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import com.code.aon.asset.AssetActivity;
 import com.code.aon.asset.AssetFeature;
 import com.code.aon.asset.IAsset;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ql.Criteria;
 import com.code.aon.AonVersion;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.RoomDB;
 
 @Entity
@@ -33,6 +40,17 @@ public class Room extends RoomDB implements IAsset{
 	}
 	public void setFeatures(Set<AssetFeature> features) {
 		this.features = features;
+	}
+
+	@Transient
+	public boolean isUsedRoom() throws ManagerBeanException {
+		if (getId() != null) {
+			IManagerBean assetActivityBean = BeanManager.getManagerBean(AssetActivity.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_ID), getId());
+			return assetActivityBean.getCount(criteria) > 0;
+		}
+		return false;
 	}
 
 }
