@@ -43,7 +43,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2013.jaxb.MOD2002013;
-import com.esferalia.aon.occam.impl.jooq.dao.mod200_2013.jaxb.Mod2002014toMOD2002013;
+import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.MOD2002014;
+import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.Mod2002014toMOD2002014;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
@@ -813,7 +814,7 @@ public class Mod2002014DAO  {
 	
 	public static String dumpAEAT(Mod2002014 mod200)  {
 		try {
-			MOD2002013 mod = Mod2002014toMOD2002013.getMOD2002013(mod200);
+			MOD2002014 mod = Mod2002014toMOD2002014.getMOD2002014(mod200);
 			StringWriter writer = new StringWriter();
 			JAXBContext context = JAXBContext.newInstance(MOD2002013.class);
 			Marshaller um = context.createMarshaller();

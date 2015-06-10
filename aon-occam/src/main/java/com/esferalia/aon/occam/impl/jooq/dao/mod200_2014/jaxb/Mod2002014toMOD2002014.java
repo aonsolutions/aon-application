@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.impl.jooq.dao.mod200_2013.jaxb;
+package com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -8,10 +8,10 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
-public class Mod2002014toMOD2002013 {
+public class Mod2002014toMOD2002014 {
 
-	public static MOD2002013 getMOD2002013(Mod2002014 mod200) {
-		MOD2002013 mod = new MOD2002013();
+	public static MOD2002014 getMOD2002014(Mod2002014 mod200) {
+		MOD2002014 mod = new MOD2002014();
 		mod.setNormal( getNormal(mod200) );
 		return mod;
 	}
