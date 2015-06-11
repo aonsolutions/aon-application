@@ -230,7 +230,7 @@ public class TicketPrinter {
 	private String getTradeName( Enterprise enterprise ) {
 		StringBuffer sb = new StringBuffer();
 		append( sb, getBold(true) );
-		sb.append( getCenteredLine(enterprise.getRegistry().getFullName()) );
+		sb.append( getCenteredLine(enterprise.getRegistry().getAlias()) );
 		append( sb, getBold(false) );
 		return sb.toString();
 	}
@@ -412,6 +412,17 @@ public class TicketPrinter {
 		return sb.toString();
 	}
 	
+	private void appendDirStaff( StringBuffer sb, Enterprise enterprise, Company company ) throws ManagerBeanException {
+		sb.append( getCenteredLine(enterprise.getRegistry().getFullName()) );
+		sb.append( getLine(getCompanyDocument(company)) );
+		sb.append( getLine(getAddress(enterprise.obtainAddress())) );
+		String contact = getContact(enterprise);
+		if (! StringUtils.isEmpty(contact) ) {
+			sb.append( getLine(contact) );	
+		}
+		append( sb, getFeedLines(1) );		
+	}
+	
 	private String getTicket( Invoice invoice, boolean gift ) throws ManagerBeanException {
 		PosInvoiceParamsController pipc = (PosInvoiceParamsController) AonUtil.getRegisteredBean(POS_INVOICE_PARAMS_CONTROLLER_NAME);
 		pipc.onInit(null);
@@ -436,19 +447,13 @@ public class TicketPrinter {
 			append( sb, getFeedLines(1) );
 		}
 					
-		if ( pipc.isPrintTradename() ) {
+		if ( pipc.isPrintTradename() && !StringUtils.isEmpty(enterprise.getRegistry().getAlias()) ) {
 			sb.append( getTradeName(enterprise) );
 			append( sb, getFeedLines(1) );
 		}
 
 		if ( pipc.getPrintDirStaff() == ReportPrintOption.HEADER ) {
-			sb.append( getLine(getCompanyDocument(company)) );
-			sb.append( getLine(getAddress(enterprise.obtainAddress())) );
-			String contact = getContact(enterprise);
-			if (! StringUtils.isEmpty(contact) ) {
-				sb.append( getLine(contact) );	
-			}
-			append( sb, getFeedLines(1) );
+			appendDirStaff(sb, enterprise, company);
 		}
 
 		if ( gift ) {
@@ -479,10 +484,7 @@ public class TicketPrinter {
 		append( sb, getFeedLines(2) );
 		
 		if ( pipc.getPrintDirStaff() == ReportPrintOption.FOOTER ) {
-			sb.append( getLine(getCompanyDocument(company)) );
-			sb.append( getLine(getAddress(enterprise.obtainAddress())) );
-			sb.append( getLine(getContact(enterprise)) );
-			append( sb, getFeedLines(1) );
+			appendDirStaff(sb, enterprise, company);
 		}
 		
 		if ( pipc.getPrintSellerName() == ReportPrintOption.FOOTER ) {
