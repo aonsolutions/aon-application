@@ -13,6 +13,10 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="controller" value="#{purchase}" />
 				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="purchaseMassiveClosure"
+						value="#{bundle.purchase_massive_closure}"
+						actionListener="#{purchase.onMassiveClosure}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept" />				
 					<aon:htmlCommandLink id="purchaseList-excel-report" value="&#160;" 
 						target="_new" rendered="#{!delivery.nevv}"
 						action="#{report.onExecute}" 

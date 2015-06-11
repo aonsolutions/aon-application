@@ -765,4 +765,50 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 		return ccc.getSalesSeriesIds();
 	}
 
+	private boolean hasDetails( Purchase purchase) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(PurchaseDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
+			return bean.getCount(criteria) > 0;
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+		return false;
+	}
+	
+	public void onMassiveClosure(ActionEvent event) throws ManagerBeanException {
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName(Finance.class.getName());
+		try {
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
+			HibernateUtil.beginTransaction(sessionName);
+			
+			List<ITransferObject> list = getManagerBean().getList(getCriteria());
+			for( ITransferObject to : list ) {
+				Purchase purchase = (Purchase) to;
+				if ( purchase.isPending() && hasDetails(purchase) ) {
+					purchase.setStatus(PurchaseStatus.CLOSED);
+					getManagerBean().update(to);					
+				}
+			}
+
+			HibernateUtil.commitTransaction(sessionName);
+		} catch (Exception e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+				LOGGER.error("Unable to rollback transaction!", e);
+			}
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		}
+		initializeModel();
+	}
+	
 }
