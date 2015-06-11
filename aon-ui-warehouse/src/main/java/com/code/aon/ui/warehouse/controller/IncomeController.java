@@ -38,7 +38,10 @@ import com.code.aon.ql.Projection;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAddress;
+import com.code.aon.registry.RegistryItem;
 import com.code.aon.registry.RegistryPayMethod;
+import com.code.aon.registry.enumeration.RegistryItemStatus;
+import com.code.aon.registry.enumeration.RegistryMode;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.common.controller.IAuditableController;
@@ -627,6 +630,44 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		setWarehouse(getNewWarehouse());
 		IController incomeDetailController = FormUtil.getController(INCOME_DETAIL_CONTROLLER_NAME);
 		incomeDetailController.onSearch(null);
+	}
+
+	public void onSupplierPricesChange(ActionEvent event) throws ManagerBeanException {
+		Income income = (Income)this.getTo();
+		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_INCOME_ID), income.getId());
+		for (ITransferObject ito : incomeDetailBean.getList(criteria)) {
+			IncomeDetail incomeDetail = (IncomeDetail)ito;
+			if (updateSupplierPrices(income.getWorkPlace(), income.getSupplier(), incomeDetail)) {
+				incomeDetailBean.update(incomeDetail);
+			}
+		}
+
+		IController incomeDetailController = FormUtil.getController(INCOME_DETAIL_CONTROLLER_NAME);
+		incomeDetailController.onSearch(null);
+	}
+
+	private boolean updateSupplierPrices(WorkPlace workPlace, Supplier supplier, IncomeDetail incomeDetail) throws ManagerBeanException {
+		IManagerBean rItemBean = BeanManager.getManagerBean(RegistryItem.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_ITEM_ID), incomeDetail.getItem().getId());
+		criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_REGISTRY_ID), supplier.getId());
+		criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_STATUS), RegistryItemStatus.ACTIVE);
+		criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_TYPE), RegistryMode.SUPPLIER);
+		Expression wpExpr = ExpressionUtilities.getEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_WORK_PLACE_ID), workPlace.getId());
+		Expression wpNullExpr = ExpressionUtilities.getNullExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_WORK_PLACE));
+		criteria.addExpression(ExpressionUtilities.getOrExpression(wpExpr, wpNullExpr));
+		criteria.addOrder(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_WORK_PLACE), false);
+		criteria.addOrder(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_PRIORITY));
+		List<ITransferObject> rItemList = rItemBean.getList(criteria);
+		if (!rItemList.isEmpty()) {
+			RegistryItem rItem = (RegistryItem)rItemList.get(0);
+			incomeDetail.setPrice(rItem.getPrice());
+			incomeDetail.setDiscountExpression(rItem.getDiscountExpression());
+			return true;
+		}
+		return false;
 	}
 
 }

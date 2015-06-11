@@ -440,7 +440,7 @@
 	</bean>
 	<bean class="com.code.aon.registry.RegistryItem" sqlName="ritem">
 		<alias names="id,registry_id,item_id,type,code,price,discountExpression,priority,workPlace,workPlace_id,status"/>
-		<hibernate names="id,registry.id,item.id,type,code,price,discountExpression,priority,workPlace,workPlace.id,status"/>
+		<hibernate names="id,registry.id,item.id,type,code,price,discountExpression,priority,workPlace,workPlace&lt;id,status"/>
 	</bean>
 
 	<!-- ** AON SALES  **************************************************** -->

@@ -15,7 +15,10 @@ import com.code.aon.product.Item;
 import com.code.aon.purchase.Proposal;
 import com.code.aon.purchase.ProposalDetail;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryItem;
+import com.code.aon.registry.enumeration.RegistryItemStatus;
 import com.code.aon.registry.enumeration.RegistryMode;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.common.components.LookupChangeEvent;
@@ -71,21 +74,16 @@ public class ProposalDetailController extends LinesController implements IPurcha
 		IManagerBean bean = BeanManager.getManagerBean(RegistryItem.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_ITEM_ID), item.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_STATUS), RegistryItemStatus.ACTIVE);
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_TYPE), RegistryMode.SUPPLIER);
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_WORK_PLACE_ID), proposal.getWorkPlace().getId());
-		criteria.addOrder(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_PRIORITY), true);
+		Expression wpExpr = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_WORK_PLACE_ID), proposal.getWorkPlace().getId());
+		Expression wpNullExpr = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_WORK_PLACE));
+		criteria.addExpression(ExpressionUtilities.getOrExpression(wpExpr, wpNullExpr));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_WORK_PLACE), false);
+		criteria.addOrder(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_PRIORITY));
 		List<ITransferObject> list = bean.getList(criteria);
 		if (!list.isEmpty()) {
 			rItem = (RegistryItem)list.get(0);
-		} else {
-			criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_ITEM_ID), item.getId());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_TYPE), RegistryMode.SUPPLIER);
-			criteria.addOrder(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_PRIORITY), true);
-			list = bean.getList(criteria);
-			if (!list.isEmpty()) {
-				rItem = (RegistryItem)list.get(0);
-			}
 		}
 		if(rItem==null){
 			String msg = "El producto no tiene ningún proveedor asignado";
@@ -96,7 +94,6 @@ public class ProposalDetailController extends LinesController implements IPurcha
 	
 	
 	public void onRefresh(ActionEvent event) {
-		System.out.println("onRefersh ......................");
 		initializeModel();
 	}
 }

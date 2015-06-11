@@ -80,14 +80,15 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 					criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_REGISTRY_ID), registry.getId());
 					criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_STATUS), RegistryItemStatus.ACTIVE);
 					criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_TYPE), rMode);
+					Expression wpExpr = ExpressionUtilities.getEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_WORK_PLACE_ID), calc.getWorkPlace().getId());
+					Expression wpNullExpr = ExpressionUtilities.getNullExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_WORK_PLACE));
+					criteria.addExpression(ExpressionUtilities.getOrExpression(wpExpr, wpNullExpr));
 					criteria.addOrder(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_WORK_PLACE), false);
 					criteria.addOrder(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_PRIORITY));
 					for (ITransferObject itr : rItemBean.getList(criteria)) {
 						RegistryItem rItem = (RegistryItem)itr;
-						if (rItem.getWorkPlace() == null || rItem.getWorkPlace().equals(calc.getWorkPlace())) {
-							calc.getDiscountExpression().setDiscountExpr(rItem.getDiscountExpression().getDiscountExpr());
-							return rItem.getPrice();
-						}
+						calc.getDiscountExpression().setDiscountExpr(rItem.getDiscountExpression().getDiscountExpr());
+						return rItem.getPrice();
 					}
 				}
 				if (tariff != null && tariff.getId() != null) {

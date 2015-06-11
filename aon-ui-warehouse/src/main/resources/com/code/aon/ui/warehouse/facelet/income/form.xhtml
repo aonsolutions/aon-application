@@ -55,6 +55,14 @@
 									value="#{true}" />
 							</aon:menuItem>
 						</aon:if>
+						<aon:menuItem id="supplierPrices"
+							value="#{bundle.product_item_supplier_prices}"
+							immediate="#{true}" rendered="#{income.pending}"
+							iconClass="aon-icon-supplier"
+							actionListener="#{income.onSupplierPricesChange}"
+							reRender="incomeForm"
+							onclick="if(!confirm('#{bundle.product_item_supplier_prices_change_confirm}')) return false;">
+						</aon:menuItem>
 						<aon:menuItem id="modifyWarehouse"
 							value="#{bundle.warehouse_change_warehouse}"
 							immediate="#{true}"
