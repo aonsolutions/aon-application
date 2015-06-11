@@ -31,13 +31,13 @@ public class Page10 extends PageAbs {
 	private static final String[] HEADERS_1 = new String[]{null,
 		AON.MSG.pendingDeduction(),
 		AON.MSG.taxType(),
-		AON.MSG.pendingDeduction2013(),
+		AON.MSG.pendingDeduction2014(),
 		AON.MSG.appliedDeduction(),
 		AON.MSG.futureDeduction()};
 	
 	private static final String[] HEADERS_2 = new String[]{null,
 		AON.MSG.pendingDeduction(),
-		AON.MSG.pendingDeduction2013(),
+		AON.MSG.pendingDeduction2014(),
 		AON.MSG.appliedDeduction(),
 		AON.MSG.futureDeduction()};
 
@@ -80,7 +80,7 @@ public class Page10 extends PageAbs {
 							,Mod2002014BN570Key.values(),HEADERS_1);
 				} 
 				if (key == Mod2002014Key.BN571) {
-					row = paintKeyBreakdown(table,row,AON.MSG.doubleContributionNational2013()
+					row = paintKeyBreakdown(table,row,AON.MSG.doubleContributionNational2014()
 							,Mod2002014BN571Key.values(),HEADERS_2);
 				} 
 				if (key == Mod2002014Key.BN572) {
@@ -88,7 +88,7 @@ public class Page10 extends PageAbs {
 							,Mod2002014BN572Key.values(),HEADERS_1);
 				} 
 				if (key == Mod2002014Key.BN573) {
-					row = paintKeyBreakdown(table,row,AON.MSG.doubleContributionInternational2013()
+					row = paintKeyBreakdown(table,row,AON.MSG.doubleContributionInternational2014()
 							,Mod2002014BN573Key.values(),HEADERS_2);
 				}
 			}

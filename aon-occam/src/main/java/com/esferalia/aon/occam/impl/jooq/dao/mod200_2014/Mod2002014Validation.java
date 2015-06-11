@@ -443,6 +443,9 @@ public class Mod2002014Validation {
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2014(PAGE09,LQ535
 				,MessageFormat.format(EQUAL_LESS_MSG,LQ535.getDescription(),LQ534.getDescription())
 				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,LQ535.toString(),LQ534.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2014(PAGE09,LQ675
+				,MessageFormat.format(EQUAL_LESS_MSG,LQ675.getDescription(),LQ607.getDescription())
+				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,LQ675.toString(),LQ607.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2014(PAGE09,LQ547
 				,MessageFormat.format(EQUAL_LESS_MSG,LQ547.getDescription(),LQ670.getDescription())
 				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,LQ547.toString(),LQ670.toString())));

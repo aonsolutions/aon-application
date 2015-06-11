@@ -15,7 +15,7 @@ public enum Mod2002014BN573Key implements Serializable, IMod200KeysProvider {
 
 	 C0001(new Mod2002014Key[]{Mod2002014Key.BN163,Mod2002014Key.BN164,Mod2002014Key.BN165,Mod2002014Key.BN166},"Impuesto soportado por el sujeto pasivo (art. 31 L.I.S.)")
 	,C0002(new Mod2002014Key[]{Mod2002014Key.BN167,Mod2002014Key.BN168,Mod2002014Key.BN169,Mod2002014Key.BN170},"Dividendos y participaciones en beneficios (art. 32 L.I.S.)")
-	,C0003(new Mod2002014Key[]{Mod2002014Key.BN171,Mod2002014Key.BN172,null           ,Mod2002014Key.BN174},"Total 2013")
+	,C0003(new Mod2002014Key[]{Mod2002014Key.BN171,Mod2002014Key.BN172,null           ,Mod2002014Key.BN174},"Total 2014")
 	;
 	 
     private String description;

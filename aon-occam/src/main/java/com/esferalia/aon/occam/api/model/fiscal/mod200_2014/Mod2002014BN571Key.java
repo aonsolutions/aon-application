@@ -17,7 +17,7 @@ public enum Mod2002014BN571Key implements Serializable, IMod200KeysProvider {
 	 C0001(new Mod2002014Key[]{Mod2002014Key.BN119,Mod2002014Key.BN120,Mod2002014Key.BN121,Mod2002014Key.BN122},"Intersoc. al 50% (art. 30,1 y 3 L.I.S.)")
 	,C0002(new Mod2002014Key[]{Mod2002014Key.BN123,Mod2002014Key.BN124,Mod2002014Key.BN125,Mod2002014Key.BN126},"Intersoc. al 100% (art. 30,2 y 3 L.I.S.)")
 	,C0003(new Mod2002014Key[]{Mod2002014Key.BN127,Mod2002014Key.BN128,Mod2002014Key.BN129,Mod2002014Key.BN130},"Plusval\u00EDas fuente interna (art. 30.5 L.I.S.)")
-	,C0004(new Mod2002014Key[]{Mod2002014Key.BN131,Mod2002014Key.BN132,null           ,Mod2002014Key.BN133},"Total 2013")
+	,C0004(new Mod2002014Key[]{Mod2002014Key.BN131,Mod2002014Key.BN132,null           ,Mod2002014Key.BN133},"Total 2014")
 	;
 	 
     private String description;

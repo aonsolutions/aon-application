@@ -24,7 +24,9 @@ public enum Mod2002014BN585Key implements Serializable, IMod200KeysProvider {
 	,C0010(new Mod2002014Key[]{Mod2002014Key.BN138,Mod2002014Key.BN139,Mod2002014Key.BN140},"Deducci\u00F3n art. 42 L.I.S. 2011")
 	,C0011(new Mod2002014Key[]{Mod2002014Key.BN141,Mod2002014Key.BN142,Mod2002014Key.BN143},"Deducci\u00F3n art. 42 L.I.S. 2012")
 	,C0012(new Mod2002014Key[]{Mod2002014Key.BN188,Mod2002014Key.BN189,Mod2002014Key.BN190},"Deducci\u00F3n art. 42 L.I.S. 2013")
-	,C0013(new Mod2002014Key[]{Mod2002014Key.BN841,null           ,Mod2002014Key.BN843},"Total deducciones art. 36 ter Ley 43/95 y art. 42 L.I.S.")
+	,C0013(new Mod2002014Key[]{Mod2002014Key.BN803,Mod2002014Key.BN804,Mod2002014Key.BN805},"Deducci\u00F3n art. 42 L.I.S. 2014")
+	,C0014(new Mod2002014Key[]{Mod2002014Key.BN700,Mod2002014Key.BN708,Mod2002014Key.BN709},"Deducci\u00F3n art. 42 L.I.S. 2014")
+	,C0015(new Mod2002014Key[]{Mod2002014Key.BN841,null           ,Mod2002014Key.BN843},"Total deducciones art. 36 ter Ley 43/95 y art. 42 L.I.S.")
 	;
 	 
     private String description;
