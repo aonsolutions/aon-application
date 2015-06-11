@@ -7,7 +7,7 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 	
 	<ui:define name="content">
-		<aon:form id="customerForm">
+		<aon:form id="sddMandateForm">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{bundle.finance_sddMandate_module}" />
@@ -19,6 +19,7 @@
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{sddMandate}" />
 				<ui:param name="searchController" value="#{sddMandateSearch}" />
+				<ui:param name="skipAfterSearch" value="#{true}" />				
 				<ui:define name="searchContent">
 					<aon:outputText value="" />
 					<aon:div styleClass="aon-search-content-width">
