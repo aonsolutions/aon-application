@@ -16,7 +16,7 @@
 				<ui:param name="toolbarDescription" value="#{bundle.aon_list}" />
 
 				<ui:define name="additionalToolbarContent">
-					<aon:commandButton id="search" ignoreDupResponses="true"
+					<aon:commandButton id="roomBooking-search" ignoreDupResponses="true"
 						styleClass="aon-finding-toolbar-item aon-icon-search" 
 						value="#{bundle.aon_search}" 
 						action="roomBooking_search"
@@ -56,7 +56,6 @@
 					<aon:outputText styleClass="aon-margin-left aon-bold"
 						value="#{roomBooking.agencyNames}"
 						rendered="#{!empty roomBooking.agencies}" />
-
 				</aon:panel>
 
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >

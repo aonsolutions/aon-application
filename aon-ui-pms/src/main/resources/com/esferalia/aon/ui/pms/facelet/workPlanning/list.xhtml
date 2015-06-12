@@ -7,90 +7,77 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="posShiftList">
+		<aon:form id="workPlanningList">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{bundle.pms_workPlanning_module}" />
-				
+				<ui:param name="toolbarDescription" value="#{bundle.aon_list}" />
+
 				<ui:define name="additionalToolbarContent">
-				
 					<aon:commandButton id="workPlanning-search"
-						title="#{bundle.aon_key_search_accelerator}"
-						value="#{bundle.aon_search}" 
-						action="workPlanning_search" actionListener="#{workPlanning.onInit}"
 						styleClass="aon-finding-toolbar-item aon-icon-search"
+						value="#{bundle.aon_search}" 
+						action="workPlanning_search"
 						accesskey="#{bundle.aon_key_search}" />
-					
 					<aon:htmlCommandLink id="workPlanning-excel-report"
-						value="&#160;" target="_blank" action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border"
-						accesskey="#{bundle.aon_key_print}">
+						value="&#160;" action="#{report.onExecute}" target="_blank">
 						<f:param name="reportKey" value="workPlanning" />
 						<f:param name="outputFormat" value="MS Excel" />
 					</aon:htmlCommandLink>
-					<aon:htmlCommandLink id="workPlanning_list"
-						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
-						value="#{bundle.aon_listing}"
-						action="#{report.onExecute}"
-						accesskey="#{bundle.aon_key_print}">
+					<aon:htmlCommandLink id="workPlanning-report"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						value="#{bundle.aon_listing}" action="#{report.onExecute}" target="_blank">
 						<f:param name="reportKey" value="workPlanning" />
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>	
-				
 				</ui:define>
-				
 			</ui:decorate>
- 
-			<aon:div styleClass="aon-scroll-area">
-			
-				<aon:panel>
-					<aon:panelGrid columns="4" 
-						columnClasses="aon-panelGrid-even aon-noborder, 
-						aon-panelGrid-even aon-noborder">
-				
-						<aon:outputText value="#{bundle.aon_module_hotel}:" styleClass="aon-italic aon-bold" />
-						<aon:outputText value="#{workPlanning.hotel.workPlace.description}" />
-						
-						<aon:outputText value="#{bundle.aon_date}:" styleClass="aon-italic aon-bold" />
-						<aon:outputText value="#{workPlanning.date}" >
-							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-								timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>
 
-					</aon:panelGrid>
-				
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panel styleClass="aon-panelGrid-search aon-margin-bottom">
+					<aon:outputText value="#{bundle.aon_module_hotel}:" styleClass="aon-italic" />
+					<aon:outputText value="#{workPlanning.hotel.workPlace.description}" styleClass="aon-margin-left aon-bold" />
+
+					<aon:outputText value="#{bundle.aon_date}:" styleClass="aon-margin-left aon-italic" />
+					<aon:outputText styleClass="aon-margin-left aon-bold"
+						value="#{workPlanning.date}">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
 				</aon:panel>
-			
+
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{workPlanning}" />
 					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
 					<ui:param name="skipSelectButton" value="#{true}" />
 					<ui:define name="columns">
-						
+
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.pms_room}" />
 							</f:facet>
-							<aon:outputText value="#{to.room.asset.name}" />
+							<aon:outputText value="#{to.roomNumber}" />
 						</aon:column>
-						
+
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.pms_guests}" />
 							</f:facet>
-							<aon:outputText value="#{to.reservationRoomDetail.projectReservationRoom.adults + to.reservationRoomDetail.projectReservationRoom.children}" />
+							<aon:outputText value="#{to.pax}" />
 						</aon:column>
-						
+
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_operation}" />
 							</f:facet>
 							<aon:outputText value="#{to.action}" />
 						</aon:column>
-						
+
 					</ui:define>
 				</ui:decorate>
-								
+
 			</aon:div>
 
 		</aon:form>
