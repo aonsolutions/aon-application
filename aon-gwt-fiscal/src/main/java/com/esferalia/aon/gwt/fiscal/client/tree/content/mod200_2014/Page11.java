@@ -21,11 +21,14 @@ public class Page11 extends PageAbs {
 	FlexTable table1;
 	@UiField(provided = true)
 	FlexTable table2;
+	@UiField(provided = true)
+	FlexTable table3;
 	
 	public Page11() {
 		super();
 		table1 = new FlexTable();
 		table2 = new FlexTable();
+		table3 = new FlexTable();
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
 	}
@@ -75,6 +78,17 @@ public class Page11 extends PageAbs {
 			}
 		}
 
+		table3.setWidth("100%");
+		table3.setCellSpacing(0);
+		table3.getColumnFormatter().setWidth(1, "200px");
+		table3.getColumnFormatter().setWidth(2, "200px");
+		row = 0;
+		for (int i = 0; i < Mod2002014Constants.LIQUIDATION_IV_KEYS_4.length; i++) {
+			Mod2002014Key key = Mod2002014Constants.LIQUIDATION_IV_KEYS_4[i];
+			if (mod200Object.isVisible(key)) {
+				row = paintKey(table3,key,row);
+			}
+		}
 		
 	}
 

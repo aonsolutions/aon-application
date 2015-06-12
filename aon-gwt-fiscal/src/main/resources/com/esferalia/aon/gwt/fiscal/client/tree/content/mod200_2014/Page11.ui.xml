@@ -33,6 +33,9 @@
 				<div class="{aonResources.css.aonGroupBody}">
 					<g:FlexTable ui:field="table2"/>
 				</div>
+				<div class="{aonResources.css.aonGroupBody}">
+					<g:FlexTable ui:field="table3"/>
+				</div>
 			</div>
 		</g:HTMLPanel>
 	</g:ScrollPanel>

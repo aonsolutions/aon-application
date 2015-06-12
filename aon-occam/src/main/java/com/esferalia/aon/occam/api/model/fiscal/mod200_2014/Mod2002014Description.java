@@ -1031,7 +1031,7 @@ public class Mod2002014Description {
 		DESCRIPTION_MAP.put(Mod2002014Key.BN851,"2014: Innovaci\u00F3n tecnol\u00F3gica (ITE)");
 		DESCRIPTION_MAP.put(Mod2002014Key.BN517,"Total");
 		DESCRIPTION_MAP.put(Mod2002014Key.BN081,"Total");
-		DESCRIPTION_MAP.put(Mod2002014Key.BN083,"Total");
+		DESCRIPTION_MAP.put(Mod2002014Key.BN083,"Abono de deducciones I+D+i por insuficiencia de cuota (opci\u00F3n art. 44.2 L.I.S.)");
 		
 		DESCRIPTION_MAP.put(Mod2002014Key.BN565,"Deducci\u00F3n donaciones a entidades sin fines de lucro (Ley 49/2002)");
 		DESCRIPTION_MAP.put(Mod2002014Key.BN929,"Donac. a ent. sin fines de lucro (Ley 49/2002) 2004");
@@ -1158,8 +1158,6 @@ public class Mod2002014Description {
 		DESCRIPTION_MAP.put(Mod2002014Key.BN595,"Retenciones e ingresos a cuenta / pagos a cuenta participaciones I.I.C.");
 		DESCRIPTION_MAP.put(Mod2002014Key.BN596,"Retenciones e ingresos a cuenta / pagos a cuenta participaciones I.I.C. imputados por agrupaciones de inter\u00E9s econ\u00F3mico y uniones temporales de empresas");
 		DESCRIPTION_MAP.put(Mod2002014Key.BN597,"Retenciones sobre los premios de determinadas loter\u00EDas y apuestas");
-		DESCRIPTION_MAP.put(Mod2002014Key.BN408,"Abono de deducciones I + D + i por insuficiencia de cuota (opci\u00F3n art. 44.2 L.I.S.)");
-		DESCRIPTION_MAP.put(Mod2002014Key.BN150,"Abono por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (D.A. 22a L.I.S.)");
 		DESCRIPTION_MAP.put(Mod2002014Key.BN599,"Cuota del ejercicio a ingresar o a devolver (Estado)");
 		DESCRIPTION_MAP.put(Mod2002014Key.BN600,"Cuota del ejercicio a ingresar o a devolver (D. Forales / Navarra)");
 		DESCRIPTION_MAP.put(Mod2002014Key.BN601,"1er pago fraccionado");
@@ -1180,6 +1178,9 @@ public class Mod2002014Description {
 		DESCRIPTION_MAP.put(Mod2002014Key.BN620,"Importe ingreso / devoluci\u00F3n efectuada de la declaraci\u00F3n originaria");
 		DESCRIPTION_MAP.put(Mod2002014Key.BN621,"L\u00EDquido a ingresar o a devolver");
 		DESCRIPTION_MAP.put(Mod2002014Key.BN622,"L\u00EDquido a ingresar o a devolver");
+		DESCRIPTION_MAP.put(Mod2002014Key.BN150,"Abono por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (D.A. 22a L.I.S.)");
+		DESCRIPTION_MAP.put(Mod2002014Key.BN506,"Compensaci\u00F3n por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (D.A. 22a L.I.S.)");
+
 	}
 	
 	static {
