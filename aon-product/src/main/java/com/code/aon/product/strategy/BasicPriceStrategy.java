@@ -80,6 +80,11 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 					criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_REGISTRY_ID), registry.getId());
 					criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_STATUS), RegistryItemStatus.ACTIVE);
 					criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_TYPE), rMode);
+					if (calc.getWorkPlace() != null && calc.getWorkPlace().getId() != null) {
+						Expression wpExpr = ExpressionUtilities.getEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_WORK_PLACE_ID), calc.getWorkPlace().getId());
+						Expression wpNullExpr = ExpressionUtilities.getNullExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_WORK_PLACE));
+						criteria.addExpression(ExpressionUtilities.getOrExpression(wpExpr, wpNullExpr));
+					}
 					criteria.addOrder(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_WORK_PLACE), false);
 					criteria.addOrder(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_PRIORITY));
 					for (ITransferObject itr : rItemBean.getList(criteria)) {

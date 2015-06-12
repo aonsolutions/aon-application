@@ -317,7 +317,7 @@ public class ReservationInvoiceTo implements IReservationConstants, Serializable
 
 		@Override
 		public WorkPlace getWorkPlace() {
-			return null;
+			return (to.getHotel() != null) ? to.getHotel().getWorkPlace() : null;
 		}
 
 	}
