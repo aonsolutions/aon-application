@@ -103,6 +103,18 @@ public abstract class PageAbs extends ResizeComposite {
 			
 		});
 		initializeTable();
+		refreshDraftMap(this.mod200Object.getMod200());
+	}
+	
+	private void refreshDraftMap(Mod2002014 mod200) {
+		for (Mod2002014Key key : mod200.getDraftMap().keySet()) {
+			if (inputs.containsKey(key)) {
+				DoubleBox input = inputs.get(key);
+				DoubleVariable2014 var = mod200.getDraftMap().get(key);
+				input.setValue(var.getValue()); ;
+				input.addStyleName(AON.AON_CSS.aonChanged());
+			}
+		}
 	}
 	
 	public Map<Mod2002014Key, DoubleBox> getInputs() {
