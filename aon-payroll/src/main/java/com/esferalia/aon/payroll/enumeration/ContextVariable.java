@@ -147,6 +147,7 @@ public enum ContextVariable implements IResourceable{
 	CONTRACT_END_DESC("DESC_FIN_CONTRATO", VariableType.STRING, false),
 	PARTIAL_FACTOR("COEFICIENTE_PARCIALIDAD", VariableType.STRING, false),
 	ERE_FACTOR("COEFICIENTE_ERE", VariableType.INTEGER, false),
+	STRIKE_FACTOR("COEFICIENTE_HUELGA", VariableType.INTEGER, false),
 
 	// Bajas, Incapacidad Temporal
 	ERE("ERE", VariableType.BOOLEAN),

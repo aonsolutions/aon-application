@@ -83,6 +83,7 @@ import com.esferalia.aon.jooq.tables.records.ScopeRecord;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.enumeration.CCCType;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.enumeration.BonusType;
@@ -175,8 +176,9 @@ public abstract class AbstractSQLTestCase {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
 
-	protected final void addSSRegimeData(AONContext aonContext, SSRegimeType ssRegimetype, Date startDate,
-			Date endDate, Map<String, String> datas) {
+	protected final void addSSRegimeData(AONContext aonContext,
+			SSRegimeType ssRegimetype, Date startDate, Date endDate,
+			Map<String, String> datas) {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
 
 		for (Map.Entry<String, String> data : datas.entrySet()) {
@@ -740,6 +742,32 @@ public abstract class AbstractSQLTestCase {
 	}
 
 	public static final void addData(AONContext aonContext,
+			ContractRecord contract, Date startDate, Date endDate, String name,
+			String expression) {
+		aonContext.getDslContext().insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, contract.getDomain())
+				.set(CONTRACT_DATA.CONTRACT, contract.getId())
+				.set(CONTRACT_DATA.START_DATE, startDate)
+				.set(CONTRACT_DATA.END_DATE, endDate)
+				.set(CONTRACT_DATA.NAME, name)
+				.set(CONTRACT_DATA.EXPRESSION, expression).execute();
+	}
+
+	public static final void addData(AONContext aonContext,
+			ContractRecord contract, Date startDate, Date endDate,
+			ContextVariable variable, String expression) {
+		addData(aonContext, contract, startDate, endDate, variable.getName(),
+				expression);
+	}
+
+	public static final void addData(AONContext aonContext,
+			ContractRecord contract, Date startDate, Date endDate,
+			ContextVariable variable, Double value) {
+		addData(aonContext, contract, startDate, endDate, variable.getName(),
+				String.format("%f", value));
+	}
+
+	public static final void addData(AONContext aonContext,
 			AgreementLevelCategoryRecord category, Date startDate,
 			Date endDate, Map<String, String> datas) {
 		for (Map.Entry<String, String> data : datas.entrySet()) {
@@ -896,11 +924,12 @@ public abstract class AbstractSQLTestCase {
 				.getDslContext()
 				.insertInto(BONUS_CONCEPT)
 				.set(BONUS_CONCEPT.DOMAIN, domain)
-				.set(BONUS_CONCEPT.TYPE, type != null ? (byte) type.ordinal(): null)
+				.set(BONUS_CONCEPT.TYPE,
+						type != null ? (byte) type.ordinal() : null)
 				.set(BONUS_CONCEPT.EXPRESSION, expression)
 				.set(BONUS_CONCEPT.DESCRIPTION,
-						type != null ? type.getName(new Locale("es", "ES")): expression).returning()
-				.fetchOne();
+						type != null ? type.getName(new Locale("es", "ES"))
+								: expression).returning().fetchOne();
 	}
 
 	public static final void addBonus(AONContext aonContext,
