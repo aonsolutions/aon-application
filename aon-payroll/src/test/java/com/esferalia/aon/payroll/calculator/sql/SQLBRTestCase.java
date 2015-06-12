@@ -488,7 +488,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, startDate,
 						endDate, endDate, contract)).getTotalIrpf();
 
-		Date startITDate = add(getToday(), DAY_OF_MONTH, 20);
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH, 20);
 		Date endITDate = getLastDayOfMonth(startITDate);
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
 				endITDate, null);
