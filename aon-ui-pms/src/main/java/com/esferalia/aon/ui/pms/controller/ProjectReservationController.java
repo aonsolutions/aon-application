@@ -2,6 +2,7 @@ package com.esferalia.aon.ui.pms.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.DATE_PATTERN;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_OPERATION_NOT_ALLOWED_PERIOD_EXCEEDED_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.REGISTRY_DOCUMENT_INCORRECT_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.TIMESTAMP_PATTERN;
 import static com.code.aon.ui.common.ICommonMessages.TIME_2_PATTERN;
 
@@ -10,8 +11,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import javax.faces.context.ExternalContext;
@@ -833,20 +836,38 @@ public class ProjectReservationController extends BasicController implements IPm
 		return (invoiceBean.getCount(criteria) > 0);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void fillInvoiceData(ProjectReservation reservation) throws ManagerBeanException {
 		getReservationInvoiceTo().setDirectCustomer(reservation.getProject().getRegistry().getId() == reservation.getHotelReservation().getCustomer().getRegistry().getId());
 		getReservationInvoiceTo().setRegistry(reservation.getProject().getRegistry());
 		if (getReservationInvoiceTo().isDirectCustomer()) {
 			getReservationInvoiceTo().setAddress(new InvoiceAddress());
-			IManagerBean reservationGuestBean = BeanManager.getManagerBean(ProjectReservationGuest.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_ID), reservation.getId());
-			criteria.addOrder(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_GUEST_INDEX));
-			for (ITransferObject ito : reservationGuestBean.getList(criteria)) {
-				ProjectReservationGuest reservationGuest = (ProjectReservationGuest)ito;
-				getReservationInvoiceTo().setGuest(reservationGuest);
-				fillGuestData(reservationGuest);
-				break;
+
+			boolean invoiceFound = false;
+			if (getInvoiceModel() != null && getInvoiceModel().getRowCount() > 0) {
+				List<ITransferObject> invoiceList = (List<ITransferObject>)getInvoiceModel().getWrappedData();
+				ListIterator<ITransferObject> iterator = invoiceList.listIterator(invoiceList.size());
+				while (iterator.hasPrevious()) {
+					Invoice invoice = (Invoice)iterator.previous();
+					if (!invoice.isService()) {
+						invoiceFound = true;
+						fillInvoiceModificationData(invoice);
+						break;
+					}
+				}
+			} 
+
+			if (!invoiceFound) {
+				IManagerBean reservationGuestBean = BeanManager.getManagerBean(ProjectReservationGuest.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_ID), reservation.getId());
+				criteria.addOrder(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_GUEST_INDEX));
+				for (ITransferObject ito : reservationGuestBean.getList(criteria)) {
+					ProjectReservationGuest reservationGuest = (ProjectReservationGuest)ito;
+					getReservationInvoiceTo().setGuest(reservationGuest);
+					fillGuestData(reservationGuest);
+					break;
+				}
 			}
 		} else {
 			getReservationInvoiceTo().setAddress(getReservationInvoiceTo().getRegistry().getDefaultAddress());
@@ -1017,6 +1038,14 @@ public class ProjectReservationController extends BasicController implements IPm
 	}
 
 	private boolean validateInvoice() throws ManagerBeanException {
+		if (getReservationInvoiceTo().isDirectCustomer()) {
+			if (getReservationInvoiceTo().getRegistry().isDocumentValidable() && !getReservationInvoiceTo().getRegistry().isValidDocument()) {
+				String msg = AonUtil.getMessage(REGISTRY_DOCUMENT_INCORRECT_ERROR);
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+		}
+
 		if (!isFinancesAmountOk()) {
 			String msg = "El importe de los Pagos no coincide con el importe de la Reserva.";
 			AonUtil.addErrorMessage(msg);
@@ -1183,6 +1212,7 @@ public class ProjectReservationController extends BasicController implements IPm
 			setReservationInvoiceTo(new ReservationInvoiceTo(false));
 			getReservationInvoiceTo().setPosShift(PosUtils.getUserPosShift());
 			fillInvoiceModificationData(invoice);
+			fillInvoiceFinanceModificationData(invoice);
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);
@@ -1203,9 +1233,12 @@ public class ProjectReservationController extends BasicController implements IPm
 		for (ITransferObject ito : invoiceAddressBean.getList(criteria)) {
 			getReservationInvoiceTo().setAddress((InvoiceAddress)ito);
 		}
+	}
 
+	private void fillInvoiceFinanceModificationData(Invoice invoice) throws ManagerBeanException {
 		getReservationInvoiceTo().setFinances(new LinkedList<Finance>());
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Criteria criteria = new Criteria();
 		criteria = new Criteria();
 		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), invoice.getId());
 		for (ITransferObject ito : financeBean.getList(criteria)) {

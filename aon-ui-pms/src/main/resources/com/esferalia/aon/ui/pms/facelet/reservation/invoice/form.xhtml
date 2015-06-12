@@ -74,7 +74,8 @@
 	<aon:div id="invoiceDocumentDiv">
 		<aon:selectOneMenu id="ProjectReservation_invoiceCustomerDocumentType"
 			value="#{controller.reservationInvoiceTo.registry.documentType}" 
-			rendered="#{controller.reservationInvoiceTo.directCustomer}">
+			rendered="#{controller.reservationInvoiceTo.directCustomer}"
+			reRender="InvoiceCustomer_document_icon">
 			<f:selectItems value="#{registryCollections.documentTypes}" />
 		</aon:selectOneMenu>
 		<aon:outputText styleClass="aon-margin-left aon-italic"
@@ -82,15 +83,36 @@
 			rendered="#{controller.reservationInvoiceTo.directCustomer}" />
 		<aon:selectOneMenu id="ProjectReservation_customerDocumentCountry" styleClass="aon-margin-left" 
 			value="#{controller.reservationInvoiceTo.registry.documentCountry}"
-			rendered="#{controller.reservationInvoiceTo.directCustomer}">
+			rendered="#{controller.reservationInvoiceTo.directCustomer}"
+			reRender="InvoiceCustomer_document_icon">
 			<f:selectItems value="#{commonCollections.countryCodes}" />
 		</aon:selectOneMenu>
 		<aon:inputText id="ProjectReservation_invoiceCustomerDocument"	style="margin-left: 2px;"
 			value="#{controller.reservationInvoiceTo.registry.document}"
-			size="15" maxlength="16"
+			required="#{!service}" size="15" maxlength="16"
 			rendered="#{controller.reservationInvoiceTo.directCustomer}"
+			reRender="InvoiceCustomer_document_icon"
 			onblur="toUpperCase(this);" />
-		<aon:outputText value="#{controller.reservationInvoiceTo.registry.document}" styleClass="aon-bold"
+		<aon:panelGroup id="InvoiceCustomer_document_icon">
+			<aon:outputText 
+				rendered="#{!controller.reservationInvoiceTo.registry.documentValidable}"
+				styleClass="aon-icon-question"
+				style="padding-left: 15px;"
+				value="&#160;" />
+			<aon:outputText 
+				rendered="#{controller.reservationInvoiceTo.registry.documentValidable and controller.reservationInvoiceTo.registry.validDocument}"
+				styleClass="aon-icon-predetermine"
+				style="padding-left: 15px;"
+				value="&#160;" />
+			<aon:outputText 
+				rendered="#{controller.reservationInvoiceTo.registry.documentValidable and !controller.reservationInvoiceTo.registry.validDocument}"
+				styleClass="aon-icon-exception"
+				style="padding-left: 15px;"
+				value="&#160;" />
+			</aon:panelGroup>
+		<aon:outputText value="#{controller.reservationInvoiceTo.registry.documentCountry.value}" styleClass="aon-bold"
+			rendered="#{!controller.reservationInvoiceTo.directCustomer}" />
+		<aon:outputText value="#{controller.reservationInvoiceTo.registry.document}" styleClass="aon-margin-left aon-bold"
 			rendered="#{!controller.reservationInvoiceTo.directCustomer}" />
 	</aon:div>
 
