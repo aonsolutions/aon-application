@@ -234,7 +234,7 @@ public class Mod200Reader {
 			 (line,mod200) ->  mod200.setPeriodStart(getDate(line,11,8))            // Periodo Impositivo - Inicio					
 			,(line,mod200) ->  mod200.setPeriodEnd(getDate(line,19,8))    			// Periodo Impositivo - Fin
 			,(line,mod200) ->  mod200.setPeriodType(getInt(line,27,1))              // Identificación - Tipo de ejercicio
-			,(line,mod200) ->  mod200.setCnae(getString(line,28,4))                 // Identificación - C.N.A.E.  Actividad principal
+			,(line,mod200) ->  { String c=getString(line,28,4); mod200.setCnae(c.substring(0,2)+"."+c.substring(2)); }                // Identificación - C.N.A.E.  Actividad principal
 			,(line,mod200) ->  mod200.setEnterpriseDocument(getString(line,32,9))   // Identificación - NIF 
 			,(line,mod200) ->  mod200.setEnterpriseName(getString(line,41,40))      // Identificación - Apellidos y nombre o Razón Social
 			,(line,mod200) ->  mod200.setEnterprisePhone1(getString(line,81,9))     // Identificación - Teléfono 1
