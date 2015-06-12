@@ -16,7 +16,7 @@
 	<field name="room" class="com.esferalia.aon.pms.Room"/>
 	<field name="date" class="java.util.Date"/>
 	<field name="reservationRoomDetail" class="com.esferalia.aon.pms.ProjectReservationRoomDetail"/>
-	<field name="action" class="com.esferalia.aon.pms.enumeration.RoomWorkPlanning"/>
+	<field name="action" class="com.esferalia.aon.pms.enumeration.RoomWorkAction"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
