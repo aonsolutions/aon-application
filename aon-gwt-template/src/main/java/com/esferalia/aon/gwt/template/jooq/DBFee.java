@@ -117,10 +117,12 @@ public class DBFee {
 									.and(CUSTOMER_FEE.LINE.greaterThan(line));
 							
 						}
-						
-	
+						Integer w = sctx.getDslContext().select(WORKPLACE.ID)
+								.from(WORKPLACE)
+								.where(WORKPLACE.DOMAIN.eq(domainId)).limit(1).fetchOne().value1();
+						if(s.getWorkplaceId() == null) s.setWorkplaceId(w);
 						Short period = s.getPeriod().shortValue();
-						customerFeeInsertQuery.values(domainIdFee, s.getProjectId(), s.getClientId(),line, itemId, s.getDescription(), s.getQuantity(), s.getPrice(), s.getDiscount().toString(), new java.sql.Date(s.getStartDate().getTime()), t , new java.sql.Date(s.getBillingDate().getTime()),period, confidential.byteValue(), s.getBillingGroup(), s.getSellerId(),s.getWorkplaceId());
+						customerFeeInsertQuery.values(domainIdFee, s.getProjectId(), s.getClientId(),line, itemId, s.getDescription(), s.getQuantity(), s.getPrice(), s.getDiscount().toString(), new java.sql.Date(s.getStartDate().getTime()), new java.sql.Date(s.getEndDate().getTime()), new java.sql.Date(s.getBillingDate().getTime()),period, confidential.byteValue(), s.getBillingGroup(), s.getSellerId(),s.getWorkplaceId());
 					}
 					else{
 						v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
