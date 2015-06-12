@@ -1453,6 +1453,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Dotaciones por deterioro de cr\u00E9ditos u otros activos derivados de las posibles insolvencias de los deudores no vinculados con el sujeto pasivo (art. 19.13 lis) y conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la adm\u00F3n. tributaria (D.A. 22a LIS)")
 	String damageAmount();
 	
+	@DefaultMessage("Conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria")
+	String damageAmount1();
+	
 	@DefaultMessage("C\u00E1lculo autom\u00E1tico")
 	String authomaticCalculation();
 	
@@ -1938,5 +1941,18 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Rellene la p\u00E1gina de \"Identificaci\u00F3n\" y pulse \"Continuar\" para completar el modelo.")
 	String mustInitialzeMod200();
 	
+	@DefaultMessage("Ejercicio de generaci\u00F3n")
+	String liquiMsg1();
 	
+	@DefaultMessage("Importe generado. Pendiente de aplicaci\u00F3n a principio del ejercicio")
+	String liquiMsg2();
+	
+	@DefaultMessage("Aplicado en esta liquidaci\u00F3n")
+	String liquiMsg3();
+	
+	@DefaultMessage("Pendiente de aplicaci\u00F3n en periodos futuros")
+	String liquiMsg4();
+	
+	@DefaultMessage("Conversi\u00F3n")
+	String liquiMsg5();
 }

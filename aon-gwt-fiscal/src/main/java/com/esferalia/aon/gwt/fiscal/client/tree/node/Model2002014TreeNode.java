@@ -272,7 +272,7 @@ public class Model2002014TreeNode extends TreeNode<Mod2002014TreeObject>  {
 	public PageTreeNode PAGE12 = new PageTreeNode() {
 		@Override
 		protected String getPageLabel() {
-			return "14.- " + AON.MSG.incomeDistribution();
+			return "13.- " + AON.MSG.incomeDistribution();
 		}
 		@Override
 		protected void selectPage(FiscalTree fiscalTree) {
@@ -290,7 +290,7 @@ public class Model2002014TreeNode extends TreeNode<Mod2002014TreeObject>  {
 	public PageTreeNode PAGE13 = new PageTreeNode() {
 		@Override
 		protected String getPageLabel() {
-			return "13.- " + AON.MSG.deducibleLimitation();
+			return "14.- " + AON.MSG.deducibleLimitation();
 		}
 		@Override
 		protected void selectPage(FiscalTree fiscalTree) {
@@ -343,7 +343,7 @@ public class Model2002014TreeNode extends TreeNode<Mod2002014TreeObject>  {
 			    	PAGE10.render(Model2002014TreeNode.this, null);
 			    	PAGE11.render(Model2002014TreeNode.this, null);
 			    	PAGE12.render(Model2002014TreeNode.this, null);
-			    	PAGE14.render(Model2002014TreeNode.this, null);
+			    	PAGE13.render(Model2002014TreeNode.this, null);
 			    	PAGE14.render(Model2002014TreeNode.this, null);
 			    	setState(true);
 					expanded = true;
