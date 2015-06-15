@@ -232,6 +232,7 @@ public class WorkPlanningController extends DataScrollerState implements ICollec
 		stmt.append(" WHERE" + DomainManager.getSQLWhereClause("B.domain"));
 		stmt.append(" AND B.hotel = ?");
 		stmt.append(" AND B.stay_date = ?");
+		stmt.append(" AND B.hotel = PR.hotel");
 		stmt.append(" AND B.project_reservation_room = PRR.id");
 		stmt.append(" AND PRR.project_reservation = PR.project");
 		stmt.append(" AND PRR.id = PRRD.project_reservation_room");
