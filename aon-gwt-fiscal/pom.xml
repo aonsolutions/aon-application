@@ -161,6 +161,16 @@
       		<artifactId>aon.ui.config</artifactId>
     		<version>${project.version}</version>
     		<scope>compile</scope>
+    		<exclusions>
+				<exclusion>
+					<groupId>asm</groupId>
+					<artifactId>asm</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>asm</groupId>
+					<artifactId>asm-attrs</artifactId>
+				</exclusion>
+			</exclusions>
    		</dependency>
 		
 		<dependency>
