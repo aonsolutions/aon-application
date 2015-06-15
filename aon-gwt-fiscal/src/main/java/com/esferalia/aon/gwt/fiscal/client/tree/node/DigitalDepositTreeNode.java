@@ -1,7 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.client.tree.node;
 
-import org.apache.tapestry.util.text.AsciiCharacterMatcher;
-
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.FreeText;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.Header1;
@@ -20,7 +18,6 @@ import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.Paragraph6_2;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.Paragraph7_2;
 import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree;
 import com.esferalia.aon.occam.api.model.Enterprise;
-import com.gargoylesoftware.htmlunit.javascript.host.Window;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasTreeItems;
