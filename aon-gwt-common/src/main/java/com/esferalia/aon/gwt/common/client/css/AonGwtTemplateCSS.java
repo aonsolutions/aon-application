@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.template.client.css;
+package com.esferalia.aon.gwt.common.client.css;
 
 import com.google.gwt.resources.client.CssResource;
 

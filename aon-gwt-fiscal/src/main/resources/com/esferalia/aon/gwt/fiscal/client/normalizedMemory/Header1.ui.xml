@@ -42,13 +42,13 @@
 			</tr>
 			<tr>
 				<td>
-					<aon:DocumentTextBox ui:field="rdocument" />
+					<aon:DocumentTextBox ui:field="IDA01010" styleName="aon-inputText" />
 				</td>
 				<td>
-					<g:CheckBox ui:field="saType" text="SA" />
-					<g:CheckBox ui:field="dlType" text="SL" />
+					<g:CheckBox ui:field="IDA01011" text="SA" value="false"/>
+					<g:CheckBox ui:field="IDA01012" text="SL" value="false"/>
 					<g:Label text="Otras" styleName="{style.inner-label}"/>
-					<g:TextBox visibleLength="42" maxLength="40" ui:field="otherType" />
+					<g:TextBox visibleLength="42" maxLength="40" ui:field="IDA01013" styleName="aon-inputText"/>
 				</td>
 			</tr>
 		</table>
@@ -58,15 +58,15 @@
 					<g:Label text="Denominacion social" styleName="{style.inner-label}"/>
 				</td>
 				<td>
-					<g:TextBox visibleLength="42" maxLength="40" ui:field="enterpriseName" />
+					<g:TextBox visibleLength="42" maxLength="40" ui:field="IDA01020"  styleName="aon-inputText" />
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<g:Label text="Domicilio social" styleName="{style.inner-label}"/>
+					<g:Label text="Domicilio social" styleName="{style.inner-label}" />
 				</td>
 				<td>
-					<g:TextBox visibleLength="42" maxLength="40" ui:field="enterpriseAddress" />
+					<g:TextBox visibleLength="42" maxLength="40" ui:field="IDA01022"  styleName="aon-inputText"/>
 				</td>
 			</tr>
 		</table>
@@ -76,13 +76,13 @@
 					<g:Label text="Municipio" styleName="{style.inner-label}"/>
 				</td>
 				<td>
-					<g:TextBox visibleLength="42" maxLength="40" ui:field="municipalityName" />
+					<g:TextBox visibleLength="42" maxLength="40" ui:field="IDA01023" styleName="aon-inputText"/>
 				</td>
 				<td>
 					<g:Label text="Provincia" styleName="{style.inner-label}"/>
 				</td>
 				<td>
-					<g:TextBox visibleLength="42" maxLength="40" ui:field="provinceName" />
+					<g:TextBox visibleLength="42" maxLength="40" ui:field="IDA01025"  styleName="aon-inputText"/>
 				</td>
 			</tr>
 			<tr>
@@ -90,13 +90,21 @@
 					<g:Label text="Codigo postal" styleName="{style.inner-label}"/>
 				</td>
 				<td>
-					<g:TextBox visibleLength="42" maxLength="40" ui:field="zipCode" />
+					<g:TextBox visibleLength="42" maxLength="40" ui:field="IDA01024"  styleName="aon-inputText"/>
 				</td>
 				<td>
 					<g:Label text="Telefono" styleName="{style.inner-label}"/>
 				</td>
 				<td>
-					<g:TextBox visibleLength="42" maxLength="40" ui:field="phone" />
+					<g:TextBox visibleLength="42" maxLength="40" ui:field="IDA01031" styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Dirección de e-mail de contacto de la empresa" styleName="{style.inner-label}" />	
+				</td>
+				<td colspan="2">
+					<g:TextBox ui:field="IDA01037" styleName="aon-inputText" visibleLength="42" maxLength="40" />				
 				</td>
 			</tr>
 		</table>
@@ -121,10 +129,10 @@
 					<g:Label text="Sociedad dominante directa" styleName="{style.inner-label}"/>
 				</td>
 				<td>
-					<g:TextBox visibleLength="42" maxLength="40" ui:field="groupMainEnterpriseName" />
+					<g:TextBox visibleLength="42" maxLength="40" ui:field="IDA01041"  styleName="aon-inputText"/>
 				</td>
 				<td>
-					<g:TextBox visibleLength="42" maxLength="40" ui:field="groupMainEnterpriseDocument" />
+					<g:TextBox visibleLength="42" maxLength="40" ui:field="IDA01040" styleName="aon-inputText"/>
 				</td>
 			</tr>
 			<tr>
@@ -132,10 +140,10 @@
 					<g:Label text="Sociedad dominante ultima del grupo" styleName="{style.inner-label}"/>
 				</td>
 				<td>
-					<g:TextBox visibleLength="42" maxLength="40" ui:field="groupLastEnterpriseName" />
+					<g:TextBox visibleLength="42" maxLength="40" ui:field="IDA01061"  styleName="aon-inputText"/>
 				</td>
 				<td>
-					<g:TextBox visibleLength="42" maxLength="40" ui:field="groupLastEnterpriseDocument" />
+					<g:TextBox visibleLength="42" maxLength="40" ui:field="IDA01060" styleName="aon-inputText" />
 				</td>
 			</tr>
 		</table>
@@ -150,7 +158,7 @@
 					<g:Label text="Actividad principal" styleName="{style.inner-label}"/>
 				</td>
 				<td>
-					<g:TextBox visibleLength="42" maxLength="40" ui:field="enterpriseMainActivity" />
+					<g:TextBox visibleLength="42" maxLength="40" ui:field="IDA02009" styleName="aon-inputText" />
 				</td>
 			</tr>
 			<tr>
@@ -158,66 +166,206 @@
 					<g:Label text="Codigo CNAE" styleName="{style.inner-label}"/>
 				</td>
 				<td>
-					<g:TextBox visibleLength="42" maxLength="40" ui:field="cnaeCode" />
+					<g:TextBox visibleLength="42" maxLength="40" ui:field="IDA02001"  styleName="aon-inputText"/>
 				</td>
 			</tr>
 		</table>
 		<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
 			<tr>
-				<td colspan="3">
+				<td colspan="5">
 					<g:Label text="Personal asalariado" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 			</tr>
 			<tr>
-				<td colspan="3">
-					<g:Label text="a) Numero medio de personas empleadas en el curso del ejercicio, por tipo de contrato y empleo con discapacidad" styleName="{style.inner-label}"/>
+				<td colspan="5">
+					<g:Label text="a) Número medio de personas empleadas en el curso del ejercicio, por tipo de contrato y empleo con discapacidad" styleName="{style.inner-label}"/>
 				</td>
 			</tr>
 			<tr>
 				<td>
 				</td>
-				<td>
+				<td colspan="2">
 					<g:Label text="current" styleName="{style.inner-label}"/>
 				</td>
-				<td>
+				<td colspan="2">
 					<g:Label text="previous" styleName="{style.inner-label}"/>
-				</td>
+				</td> 
 			</tr>
 			<tr>
 				<td>
 					<g:Label text="FIJO" styleName="{style.inner-label}"/>
 				</td>
-				<td>
-					<g:TextBox visibleLength="42" maxLength="40" ui:field="fixedCurrentAvg" />
+				<td colspan="2">
+					<g:TextBox visibleLength="42" maxLength="40" ui:field="IDA04001" styleName="aon-inputText"/>
 				</td>
-				<td>
-					<g:TextBox visibleLength="42" maxLength="40" ui:field="fixedPreviousAvg" />
+				<td colspan="2">
+					<g:TextBox visibleLength="42" maxLength="40" ui:field="IDA040019" styleName="aon-inputText"/>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<g:Label text="FIJO" styleName="{style.inner-label}"/>
+					<g:Label text="NO FIJO" styleName="{style.inner-label}"/>
 				</td>
-				<td>
-					<g:TextBox visibleLength="42" maxLength="40" ui:field="noFixedCurrentAvg" />
+				<td colspan="2">
+					<g:TextBox visibleLength="42" maxLength="40" ui:field="IDA04002"  styleName="aon-inputText"/>
 				</td>
-				<td>
-					<g:TextBox visibleLength="42" maxLength="40" ui:field="noFixedPreviousAvg" />
+				<td colspan="2">
+					<g:TextBox visibleLength="42" maxLength="40" ui:field="IDA040029" styleName="aon-inputText"/>
 				</td>
 			</tr>			
 			<tr>
-				<td colspan="3">
+				<td colspan="5">
 					<g:Label text="Del cual: Personas empleadas con discapacidad mayor o igual al 33% (o calificacion equivalente local):" styleName="{style.inner-label}"/>
 				</td>
 			</tr>
 			<tr>
 				<td>
 				</td>
+				<td colspan="2">
+					<g:TextBox visibleLength="42" maxLength="40" ui:field="IDA04010"  styleName="aon-inputText" />
+				</td>
+				<td colspan="2">
+					<g:TextBox visibleLength="42" maxLength="40" ui:field="IDA040109" styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="5">
+					<g:Label text="b) Personal asalariado al término del ejercicio, por tipo de contrato y por sexo" styleName="{style.inner-label}"/>
+				</td>
+			</tr>
+			<tr>
 				<td>
-					<g:TextBox visibleLength="42" maxLength="40" ui:field="disabilityCurrentAvg" />
+				</td>
+				<td colspan="2">
+					<g:Label text="current" styleName="{style.inner-label}"/>
+				</td>
+				<td colspan="2">
+					<g:Label text="previous" styleName="{style.inner-label}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					
 				</td>
 				<td>
-					<g:TextBox visibleLength="42" maxLength="40" ui:field="disabilityPreviousAvg" />
+					<g:Label text="Hombres" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Mujeres" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Hombres" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Mujeres" styleName="{style.inner-label}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="FIJO" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="IDA04120"  styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="IDA04121"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="IDA041209"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="IDA041219"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="NO FIJO" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="IDA04122" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="IDA04123" styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="IDA041229"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="IDA041239" styleName="aon-inputText"/>
+				</td>
+			</tr>
+			
+		</table>
+		
+		<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
+			<tr>
+				<td colspan="3">
+					<g:Label text="Presentación de Cuentas" styleName="{aonResources.css.aonPageHeader}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+				</td>
+				<td>
+					<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Fecha de inicio a la que van referidas las cuentas" styleName="{style.inner-label}"/>
+				</td> 
+				<td>
+					<g:TextBox ui:field="IDA01102"  styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="IDA011029"  styleName="aon-inputText" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Fecha de cierre a la que van referidas las cuentas" styleName="{style.inner-label}"/>
+				</td> 
+				<td>
+					<g:TextBox ui:field="IDA01101" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="IDA011019" styleName="aon-inputText" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Número de páginas presentadas al depósito" styleName="{style.inner-label}"/>
+				</td>
+				<td colspan="2">
+					<g:TextBox ui:field="IDA01901" styleName="aon-inputText" visibleLength="42" maxLength="40"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="En caso de no figurar consignadas cifras en alguno de los ejercicios, indique la causa" styleName="{style.inner-label}"/>
+				</td>
+				<td colspan="2">
+					<g:TextBox ui:field="IDA01903" styleName="aon-inputText" visibleLength="42" maxLength="40"/>
+				</td>
+			</tr>
+
+		</table>
+		<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
+			<tr>
+				<td>
+					<g:Label text="Unidades" styleName="{aonResources.css.aonPageHeader}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:CheckBox ui:field="IDA09001" text="Euros" value="false" />
+			
+					<g:CheckBox ui:field="IDA09002" text="Miles de euros" value="false" />
+			
+					<g:CheckBox ui:field="IDA09003" text="Millones de euros" value="false" />
 				</td>
 			</tr>
 		</table>

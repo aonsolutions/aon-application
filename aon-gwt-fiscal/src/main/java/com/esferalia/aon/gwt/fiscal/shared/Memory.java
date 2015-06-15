@@ -22,6 +22,7 @@ public class Memory implements Serializable, IsSerializable {
 	private String description;
 	private boolean normalized;
 	private int year;
+	private Integer depositType;
 	
 	private byte[] data;
 
@@ -73,6 +74,12 @@ public class Memory implements Serializable, IsSerializable {
 	}
 	public void setData(byte[] data) {
 		this.data = data;
+	}
+	public Integer getDepositType() {
+		return depositType;
+	}
+	public void setDepositType(Integer depositType) {
+		this.depositType = depositType;
 	}
 	
 	

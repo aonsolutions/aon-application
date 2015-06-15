@@ -1,18 +1,26 @@
 package com.esferalia.aon.gwt.fiscal.client.normalizedMemory;
 
-import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import gwtupload.client.DecoratedFileUpload;
+import gwtupload.client.IFileInput.FileInputType;
+import gwtupload.client.IUploader;
+import gwtupload.client.IUploader.OnFinishUploaderHandler;
+import gwtupload.client.IUploader.OnStartUploaderHandler;
+import gwtupload.client.SingleUploader;
+import gwtupload.client.Uploader;
+
+import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMessages;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
-import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.client.tree.node.DigitalDepositTreeNode;
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
+import com.esferalia.aon.occam.api.model.Enterprise;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -20,21 +28,25 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DecoratorPanel;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Tree;
-import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
 
-public class NormalizedMemory extends MainEntryPoint {
+public class NormalizedMemory extends ResizeComposite {
 
+	
 	interface NormalizedMemoryBinder extends UiBinder<Widget, NormalizedMemory> {
 	}
-
+	
+	final INormalizedMemoryAsync inma = GWT.create(INormalizedMemory.class);
+	
 	private static final NormalizedMemoryBinder MODEL_NORMALIZED_MEMORY_BINDER = GWT
 			.create(NormalizedMemoryBinder.class);
 
@@ -44,13 +56,10 @@ public class NormalizedMemory extends MainEntryPoint {
 	private final static AonResources RESOURCES = GWT.create(AonResources.class);
 
 	private Memory memory;
+
 	
 	
-	FormPanel diskForm;
-	Hidden mod390Hidden;
-	
-	@UiField
-	FlowPanel menuPanel;
+	@UiField Label depositType;
 	
 	@UiField
 	Button newButton;
@@ -65,219 +74,81 @@ public class NormalizedMemory extends MainEntryPoint {
 	Button deleteButton;
 	
 	@UiField
+	Button importButton;
+	
+	@UiField
 	Button generateFileButton;
 	
 	@UiField
 	Anchor download;							
 	
-	@UiField
-	FlowPanel formContainer;
-	
-	@UiField
-	FileUpload fileUpload;
-	
-	
-	@UiField
-	Tree mainTree;
-	@UiField
-	TreeItem header1;
-	@UiField
-	TreeItem header2;
-	@UiField
-	TreeItem header3;
-	@UiField
-	TreeItem header4;
-	@UiField
-	TreeItem header5;
-	@UiField
-	TreeItem paragraph1;
-	@UiField
-	TreeItem paragraph2;
-	@UiField
-	TreeItem paragraph3_1;
-	@UiField
-	TreeItem paragraph3_2;
-	@UiField
-	TreeItem paragraph4;
-	@UiField
-	TreeItem paragraph5_1;
-	@UiField
-	TreeItem paragraph5_2;
-	@UiField
-	TreeItem paragraph6_1;
-	@UiField
-	TreeItem paragraph6_2;
-	@UiField
-	TreeItem paragraph7_1;
-	@UiField
-	TreeItem paragraph7_2;
-	@UiField
-	TreeItem paragraph8;
-	@UiField
-	TreeItem paragraph9;
-	@UiField
-	TreeItem paragraph10;
-	@UiField
-	TreeItem paragraph11_1;
-	@UiField
-	TreeItem paragraph11_2;
-	@UiField
-	TreeItem paragraph12_1;
-	@UiField
-	TreeItem paragraph12_2;
-	@UiField
-	TreeItem paragraph13_1;
-	@UiField
-	TreeItem paragraph13_2;
-	@UiField
-	TreeItem paragraph14_1;
-	@UiField
-	TreeItem paragraph14_2;
-	@UiField
-	TreeItem paragraph15;
-	@UiField
-	TreeItem footer1;
-	@UiField
-	TreeItem footer2;
-	@UiField
-	TreeItem footer3;
 
-	// collapse tree items
-	@UiField
-	TreeItem memoryItem;
-	@UiField
-	TreeItem paragraph3;
-	@UiField
-	TreeItem paragraph5;
-	@UiField
-	TreeItem paragraph6;
-	@UiField
-	TreeItem paragraph7;
-	@UiField
-	TreeItem paragraph11;
-	@UiField
-	TreeItem paragraph12;
-	@UiField
-	TreeItem paragraph13;
-	@UiField
-	TreeItem paragraph14;
+	@UiField HorizontalPanel horizontal;
+
+	
 	
 	// selected item content panel
 	@UiField
 	FlowPanel pagesPanel;
-	
-	
-	private Header1 header1Page;
-	private Header2 header2Page;
-	private Header3 header3Page;
-	private Header4 header4Page;
-	private Header5 header5Page;
-	private FreeText paragraph1Page;
-	private FreeText paragraph2Page;
-	private FreeText paragraph3_1Page;
-	private Paragraph3_2 paragraph3_2Page;
-	private FreeText paragraph4Page;
-	private FreeText paragraph5_1Page;
-	private Paragraph5_2 paragraph5_2Page;
-	private FreeText paragraph6_1Page;
-	private Paragraph6_2 paragraph6_2Page;
-	private FreeText paragraph7_1Page;
-	private Paragraph7_2 paragraph7_2Page;
-	private FreeText paragraph8Page;
-	private FreeText paragraph9Page;
-	private Paragraph10 paragraph10Page;
-	private FreeText paragraph11_1Page;
-	private Paragraph11_2 paragraph11_2Page;
-	private FreeText paragraph12_1Page;
-	private Paragraph12_2 paragraph12_2Page;
-	private FreeText paragraph13_1Page;
-	private Paragraph13_2 paragraph13_2Page;
-	private FreeText paragraph14_1Page;
-	private Paragraph14_2 paragraph14_2Page;
-	private Paragraph15 paragraph15Page;
-	private Footer1 footer1Page;
-	private Footer2 footer2Page;
-	private Footer3 footer3Page;
-	
-	@Override
-	public void onModuleLoad() {
+	SingleUploader upload;
+	Enterprise enterprise;
+	String page;
+	public NormalizedMemory(Enterprise enterprise,String page) {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		RESOURCES.css().ensureInjected();
+		depositType = new Label();
+		saveButton = new Button();
+        
+		cancelButton = new Button();
+		this.enterprise = enterprise;
+		this.page = page;
 		
-
-		// Create a remote service proxy to talk to the server-side Employees
-		// service.
-		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
-
+		pagesPanel = new FlowPanel();
 		
-		// Create the UI defined in Employee.ui.xml.
 		Widget ui = MODEL_NORMALIZED_MEMORY_BINDER.createAndBindUi(this);
+		initWidget(ui);
+		depositType.setText("Abreviado");
+		//SingleUploader upload = newUploader();
+		//horizontal.add(upload);
 		
 		
-		newButton.setVisible(false);
-		saveButton.setVisible(true);
-		cancelButton.setVisible(false);
-		deleteButton.setVisible(false);
-		generateFileButton.setVisible(false);
-
-		diskForm = new FormPanel("_blank");
-		diskForm.setMethod(FormPanel.METHOD_POST);
-		mod390Hidden = new Hidden("mod390");
-		diskForm.add(mod390Hidden);
-//		formContainer.add(diskForm);
-
-		// Add the outer panel to the RootLayoutPanel, so that it will be
-		// displayed.
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
-		root.add(ui);
-		
-		// show tree items expanded
-		memoryItem.setState(true);
-		paragraph3.setState(true);
-		paragraph5.setState(true);
-		paragraph6.setState(true);
-		paragraph7.setState(true);
-		paragraph11.setState(true);
-		paragraph12.setState(true);
-		paragraph13.setState(true);
-		paragraph14.setState(true);
-		
-		
-		header1Page = new Header1();
-		header2Page = new Header2();
-		header3Page = new Header3();
-		header4Page = new Header4();
-		header5Page = new Header5();
-		paragraph1Page = new FreeText("Apartado 1: Actividad de la empresa", true);
-		paragraph2Page = new FreeText("Apartado 2: Bases de presentacion de las cuentas anuales", true);
-		paragraph3_1Page = new FreeText("Apartado 3: Aplicacion de resultados", true);
-		paragraph3_2Page = new Paragraph3_2();
-		paragraph4Page = new FreeText("Apartado 4: Normas de registro y valoracion", true);
-		paragraph5_1Page = new FreeText("Apartado 5: Inmovilizado material, intangible, e inversiones inmobiliarias", true);
-		paragraph5_2Page = new Paragraph5_2();
-		paragraph6_1Page = new FreeText("Apartado 6: Activos financieros", true);
-		paragraph6_2Page = new Paragraph6_2();
-		paragraph7_1Page = new FreeText("Apartado 7: Pasivos financieros", true);
-		paragraph7_2Page = new Paragraph7_2();
-		paragraph8Page = new FreeText("Apartado 8: Fondos propios", true);
-		paragraph9Page = new FreeText("Apartado 9: Situacion fiscal", true);
-		paragraph10Page = new Paragraph10();
-		paragraph11_1Page = new FreeText("Apartado 11: Subvenciones, donaciones y legados", true);
-		paragraph11_2Page = new Paragraph11_2();
-		paragraph12_1Page = new FreeText("Apartado 12: Operaciones con partes vinculadas", true);
-		paragraph12_2Page = new Paragraph12_2();
-		paragraph13_1Page = new FreeText("Apartado 13: Otra informacion", true);
-		paragraph13_2Page = new Paragraph13_2();
-		paragraph14_1Page = new FreeText("Apartado 14: Informacion sobre medio ambiente", true);
-		paragraph14_2Page = new Paragraph14_2();
-		paragraph15Page = new Paragraph15();
-		footer1Page = new Footer1();
-		footer2Page = new Footer2();
-		footer3Page = new Footer3();
-		
+		inma.isModify(enterprise.getDocument(),new AsyncCallback<Boolean>() {
+			
+			@Override
+			public void onSuccess(Boolean result) {
+				saveButton.setEnabled(result);
+				cancelButton.setVisible(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
 	}
-	
+	DigitalDepositTreeNode digitalDepositTreeNode;
+	public NormalizedMemory(Boolean type, DigitalDepositTreeNode ddtn, Enterprise e) {
+		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
+		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
+
+		RESOURCES.css().ensureInjected();
+		depositType = new Label();
+		newButton = new Button();
+		
+		saveButton = new Button();
+		generateFileButton = new Button();
+		digitalDepositTreeNode = ddtn;
+		enterprise = e;
+		pagesPanel = new FlowPanel();
+		
+		Widget ui = MODEL_NORMALIZED_MEMORY_BINDER.createAndBindUi(this);
+		initWidget(ui);
+		if(type){
+			newButton.setVisible(true);
+			saveButton.setVisible(false);
+			generateFileButton.setVisible(false);
+		}
+		
+		depositType.setText("Abreviado");
+	}
 
 	public static native int getCurrentDomain()
 	/*-{
@@ -299,17 +170,218 @@ public class NormalizedMemory extends MainEntryPoint {
 	
 	@UiHandler("newButton")
 	void onNewButtonClick(ClickEvent event) {
-		Window.alert("onNewButtonClick");
+		String url = GWT.getModuleBaseURL()+"gwt_deposit_upload";
+
+		DepositDialog popup = new DepositDialog("Nuevo Deposito","new", enterprise,url) {
+			
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+			
+			@Override
+			protected void onAccept() {
+				hide();
+				digitalDepositTreeNode.items();
+				newButton.setVisible(false);
+				saveButton.setVisible(true);
+				saveButton.setEnabled(false);
+				generateFileButton.setVisible(true);
+			}
+		};
+		popup.addStyleName("gwt-PopupPanel-template");
+		popup.setGlassEnabled(true);
+		popup.show();
 	}
 	
 	@UiHandler("saveButton")
 	void onSaveButtonClick(ClickEvent event) {
 		Window.alert("onSaveButtonClick");
+		inma.saveDeposit(enterprise.getDocument(),enterprise.getDomain(), new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				saveButton.setEnabled(false);
+				cancelButton.setVisible(false);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+	}
+	FormPanel form ;
+	FileUpload a;
+	
+	@UiHandler("importButton")
+	void onImportButtonClick(ClickEvent event) {
+		String url = GWT.getModuleBaseURL()+"gwt_deposit_upload";
+		DepositDialog popup = new DepositDialog("Importar Deposito","import", enterprise, url) {
+
+			@Override
+			protected void onAccept() {
+				//action
+				hide();
+			}
+
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+			
+		};
+		
+		popup.setStyleName("gwt-PopupPanel-template");
+		popup.setGlassEnabled(true);
+		popup.show();
+		
+		/*form = new FormPanel();
+		form.setAction(GWT.getModuleBaseURL()+"/gwt_upload/");
+		 a = new FileUpload();
+
+		a.addAttachHandler(new AttachEvent.Handler() {
+			
+			@Override
+			public void onAttachOrDetach(AttachEvent event) {
+				Window.alert("UPLOAD");
+			}
+		});
+		a.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				Window.alert("uppp");
+				Window.alert(a.getFilename());
+				FileUpload a2 =(FileUpload) form.getWidget();
+				Window.alert(a2.getFilename());
+				
+			}
+		});
+		a.click();
+		
+		form.setWidget(a);
+		
+		//form.add(a);*/
+		
+
 	}
 	
 	@UiHandler("cancelButton")
 	void onCancelButtonClick(ClickEvent event) {
 		Window.alert("onCancelButtonClick");
+		
+		inma.clearSession(enterprise.getDocument(), new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				saveButton.setEnabled(false);
+				cancelButton.setVisible(false);
+				switch (page) {
+				case "IDA":
+					Header1 h1 = (Header1) pagesPanel.getWidget(0);
+					h1.init();
+					break;
+				case "MAT1":
+					FreeText ft = (FreeText) pagesPanel.getWidget(0);
+					ft.init();
+					break;
+				case "MAT2":
+					FreeText ft2 = (FreeText) pagesPanel.getWidget(0);
+					ft2.init();
+					break;
+				case "MAT3":
+					FreeText ft3 = (FreeText) pagesPanel.getWidget(0);
+					ft3.init();
+					break;
+				case "MA3":
+					Paragraph3_2 p32 = (Paragraph3_2) pagesPanel.getWidget(0);
+					p32.init();
+					break;
+				case "MAT4":
+					FreeText ft4 = (FreeText) pagesPanel.getWidget(0);
+					ft4.init();
+					break;
+				case "MAT5":
+					FreeText ft5 = (FreeText) pagesPanel.getWidget(0);
+					ft5.init();
+					break;
+				case "MA5":
+					Paragraph5_2 p52 = (Paragraph5_2) pagesPanel.getWidget(0);
+					p52.init();
+					break;
+				case "MAT6":
+					FreeText ft6 = (FreeText) pagesPanel.getWidget(0);
+					ft6.init();
+					break;
+				case "MA6":
+					Paragraph6_2 p62= (Paragraph6_2) pagesPanel.getWidget(0);
+					p62.init();
+					break;
+					
+				case "MAT7":
+					FreeText ft7 = (FreeText) pagesPanel.getWidget(0);
+					ft7.init();
+					break;
+				case "MA7":
+					Paragraph7_2 p72 = (Paragraph7_2) pagesPanel.getWidget(0);
+					p72.init();
+					break;
+				case "MAT8":
+					FreeText ft8 = (FreeText) pagesPanel.getWidget(0);
+					ft8.init();
+					break;
+				case "MAT9":
+					FreeText ft9 = (FreeText) pagesPanel.getWidget(0);
+					ft9.init();
+					break;
+				case "MA10":
+					Paragraph10 p10 = (Paragraph10) pagesPanel.getWidget(0);
+					p10.init();
+					break;
+				case "MAT11":
+					FreeText ft11 = (FreeText) pagesPanel.getWidget(0);
+					ft11.init();
+					break;
+				case "MA11":
+					Paragraph11_2 p112 = (Paragraph11_2) pagesPanel.getWidget(0);
+					p112.init();
+					break;
+				case "MAT12":
+					FreeText ft12 = (FreeText) pagesPanel.getWidget(0);
+					ft12.init();
+					break;
+				case "MA12":
+					Paragraph12_2 p122 = (Paragraph12_2) pagesPanel.getWidget(0);
+					p122.init();
+					break;
+				case "MAT13":
+					FreeText ft13 = (FreeText) pagesPanel.getWidget(0);
+					ft13.init();
+					break;
+				case "MA13":
+					Paragraph13_2 p132 = (Paragraph13_2) pagesPanel.getWidget(0);
+					p132.init();
+					break;
+				case "MAT14":
+					FreeText ft14 = (FreeText) pagesPanel.getWidget(0);
+					ft14.init();
+					break;
+				case "MA14":
+					Paragraph14_2 p142 = (Paragraph14_2) pagesPanel.getWidget(0);
+					p142.init();
+					break;
+				case "MA15":
+					Paragraph15 p15 = (Paragraph15) pagesPanel.getWidget(0);
+					p15.init();
+					break;
+				default:
+					break;
+				}
+
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
 	}
 	
 	@UiHandler("deleteButton")
@@ -319,140 +391,69 @@ public class NormalizedMemory extends MainEntryPoint {
 	
 	@UiHandler("generateFileButton")
 	void onGenerateFileButtonClick(ClickEvent event) {
-		Window.alert("Se va a proceder a la generaci\u00F3n del fichero.\n"
-				+ " Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n"
-				+ " El fichero se genera a partir de los datos guardados.");
+		String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_deposit/"
+            	+ "?domain_id=" + Integer.toString(enterprise.getDomain());
+		Window.open( fileDownloadURL, "_blank",null);
 	}
 	
 	@UiHandler("download")
 	void onDownloadClick(ClickEvent event) {
 		Window.alert("onDownloadClick");
 	}
-	
-	
-//	@UiHandler("fileUploadForm")
-//	public void onSubmit(SubmitEvent event) {
-//		Window.alert("file upload submited");
-//	}
-//	
-//	@UiHandler("fileUploadForm")
-//	void onSubmitComplete(SubmitCompleteEvent event) {
-//		Window.alert("file upload submit completed");
-//	}
-	
-//	@UiHandler("uploadButton")
-//	public void onUploadButtonClick(ClickEvent event) {
-//		Window.alert("uploadButton click");
-//         //get the filename to be uploaded
-//		String filename = fileUpload.getFilename();
-//		if (filename.length() == 0) {
-//			Window.alert("No File Specified!");
-//		} else {
-//            //submit the form
-//			fileUploadForm.submit();			          
-//		}				
-//	}
-
-	@UiHandler("fileUpload")
-	public void onChange(ChangeEvent event) {
-		
-		// filename of selected file
-//		String fileName = fileUpload.getFilename();
-//		Window.alert(fileName);
-		
-		fiscalService.readMemory(memory, new AsyncCallback<Memory>() {
-			
-			@Override
-			public void onSuccess(Memory result) {
-				Window.alert("Fichero procesado correctamente");
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert("No se ha podido procesar el fichero" + "\n" + caught.getMessage());
-			}
-		});
-		
-	}
-	
-	
-	@UiHandler("mainTree")
-	public void onSelection(SelectionEvent<TreeItem> event) {
-		pagesPanel.clear();
-		
-		TreeItem item = (TreeItem) event.getSelectedItem();
-		if(item.equals(header1)){
-			pagesPanel.add(header1Page);
-		} else if(item.equals(header2)){
-			pagesPanel.add(header2Page);
-		} else if(item.equals(header3)){
-			pagesPanel.add(header3Page);
-		} else if(item.equals(header4)){
-			pagesPanel.add(header4Page);
-		} else if(item.equals(header5)){
-			pagesPanel.add(header5Page);
-		} else if(item.equals(paragraph1)){
-			pagesPanel.add(paragraph1Page);
-		} else if(item.equals(paragraph2)){
-			pagesPanel.add(paragraph2Page);
-		} else if(item.equals(paragraph3_1)){
-			pagesPanel.add(paragraph3_1Page);
-		} else if(item.equals(paragraph3_2)){
-			pagesPanel.add(paragraph3_2Page);
-		} else if(item.equals(paragraph4)){
-			pagesPanel.add(paragraph4Page);
-		} else if(item.equals(paragraph5_1)){
-			pagesPanel.add(paragraph5_1Page);
-		} else if(item.equals(paragraph5_2)){
-			pagesPanel.add(paragraph5_2Page);
-		} else if(item.equals(paragraph6_1)){
-			pagesPanel.add(paragraph6_1Page);
-		} else if(item.equals(paragraph6_2)){
-			pagesPanel.add(paragraph6_2Page);
-		} else if(item.equals(paragraph7_1)){
-			pagesPanel.add(paragraph7_1Page);
-		} else if(item.equals(paragraph7_2)){
-			pagesPanel.add(paragraph7_2Page);
-		} else if(item.equals(paragraph8)){
-			pagesPanel.add(paragraph8Page);
-		} else if(item.equals(paragraph9)){
-			pagesPanel.add(paragraph9Page);
-		} else if(item.equals(paragraph10)){
-			pagesPanel.add(paragraph10Page);
-		} else if(item.equals(paragraph11_1)){
-			pagesPanel.add(paragraph11_1Page);
-		} else if(item.equals(paragraph11_2)){
-			pagesPanel.add(paragraph11_2Page);
-		} else if(item.equals(paragraph12_1)){
-			pagesPanel.add(paragraph12_1Page);
-		} else if(item.equals(paragraph12_2)){
-			pagesPanel.add(paragraph12_2Page);
-		} else if(item.equals(paragraph13_1)){
-			pagesPanel.add(paragraph13_1Page);
-		} else if(item.equals(paragraph13_2)){
-			pagesPanel.add(paragraph13_2Page);
-		} else if(item.equals(paragraph14_1)){
-			pagesPanel.add(paragraph14_1Page);
-		} else if(item.equals(paragraph14_2)){
-			pagesPanel.add(paragraph14_2Page);
-		} else if(item.equals(paragraph15)){
-			pagesPanel.add(paragraph15Page);
-		} else if(item.equals(footer1)){
-			pagesPanel.add(footer1Page);
-		} else if(item.equals(footer2)){
-			pagesPanel.add(footer2Page);
-		} else if(item.equals(footer3)){
-			pagesPanel.add(footer3Page);
-		} else{
-			pagesPanel.add(new Label(item.getText()));
-		}
-		
-	}
-	
 
 	private void applySelectedStyle(FocusPanel panel) {
 		panel.getElement().getStyle().setBackgroundColor("#999");
 		panel.getElement().getStyle().setColor("white");
 	}
 	
+	public void setPagesPanel(Widget widget){
+		
+		pagesPanel.add(widget);
+	}
+	
+	
+	private SingleUploader newUploader() {
+		Button b= new Button();
+		b.setStyleName("aon-finding-toolbar-item aon-icon-file-upload");
+		b.setText("Importar");
+	
+		SingleUploader upload=  new SingleUploader(FileInputType.BROWSER_INPUT);
+		
+		String url = GWT.getModuleBaseURL()+"gwt_deposit_upload";
+	 	Window.alert(url);
+		upload.setAutoSubmit(true);
+        upload.setServletPath(url);
+        upload.getFileInput().getWidget().setStyleName("aon-finding-toolbar-item aon-icon-file-upload");
+
+        upload.getForm().setAction(url);
+        upload.getForm().setEncoding(FormPanel.ENCODING_MULTIPART);
+        upload.getForm().setMethod(FormPanel.METHOD_POST);
+        upload.setTitle("uploadFormElement");
+        upload.avoidEmptyFiles(false);
+
+        upload.addOnStartUploadHandler(new OnStartUploaderHandler() {
+			
+			@Override
+			public void onStart(IUploader uploader) {
+
+			}
+		});
+
+  
+
+        upload.addOnFinishUploadHandler(new OnFinishUploaderHandler() {
+			@Override
+			public void onFinish(IUploader uploader) {
+
+			}
+		});
+        
+        return upload;
+		
+	}
+	
+	
+	
+	
+
 }

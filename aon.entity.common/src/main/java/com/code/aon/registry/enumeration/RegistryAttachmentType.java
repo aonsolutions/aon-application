@@ -23,7 +23,8 @@ public enum RegistryAttachmentType implements IResourceable {
 	DOMAIN_INSERT_HISTORY,
 	DOMAIN_REMOVE_HISTORY,
 	AON_TEMPLATES,
-	POS_INVOICE_FOOTER_TEXT;
+	POS_INVOICE_FOOTER_TEXT,
+	D2_DEPOSIT;
 	
 	
     /** Message key prefix. */

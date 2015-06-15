@@ -173,7 +173,7 @@ public class DBStock {
 					.orderBy(RITEM.PRIORITY).limit(1)
 					.fetchOne();
 			if(b == null)
-				return new Double[]{-1.0};
+				return new Double[]{-1.0,-1.0};
 				
 			return new Double[]{b.value1().doubleValue(), b.value2()};
 		}

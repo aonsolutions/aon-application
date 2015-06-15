@@ -1955,4 +1955,7 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Conversi\u00F3n")
 	String liquiMsg5();
+	
+	@DefaultMessage("Dep\u00F3sito Digital")
+	String digitalDeposit();
 }

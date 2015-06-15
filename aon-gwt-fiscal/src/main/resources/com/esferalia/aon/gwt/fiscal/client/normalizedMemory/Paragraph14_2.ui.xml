@@ -7,20 +7,424 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
 	<ui:style>
+	
 	.inner-label {
-		font-size: 1.5em;
-		color: red;
+		font-style: italic;
 		margin-left: 5px;
 		margin-right: 5px;
-		padding: 10px;
-		border: solid red 1px;
-		text-align: center;
+		display: inline;
 	}
+	
+	.pageElement {
+		margin-top: 10px;
+		border: solid #CCC 1px;
+		padding: 2px;
+	}
+	.width-all {
+			width: 100%;
+			border:#ccc 1px solid;
+		}
+		.table {
+			width: 90%;
+			border-collapse: collapse;
+		}
+		.table td:first-child {
+			border-bottom:#ccc 1px solid;
+			padding-left: 5px;
+		}
 	</ui:style>
-	<g:FlowPanel>
-		<g:Label text="{msg.difActivitiesRegime}" styleName="{aonResources.css.aonPageHeader}"/>
-
-		<g:Label text="No implementado." styleName="{style.inner-label}"/>
-	</g:FlowPanel>
+	<g:HTMLPanel>
+		<g:Label text="Apartado 14: Informacion sobre el medio ambiente" styleName="{aonResources.css.aonPageHeader}"/>
+	
+		<g:TabPanel styleName="{style.width-all}">
+			<g:Tab text="MA14.1 ">
+				<g:HTMLPanel>
+					<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
+			
+						<tr>
+							<td>
+								<g:Label text="DESCRIPCION DEL CONCEPTO"  styleName="{style.inner-label}"/>
+							
+							</td>
+							<td>
+								<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+							</td>
+							<td>
+								<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								 <g:Label text="A) ACTIVOS DE NATURALEZA MEDIOAMBIENTAL" styleName="{style.inner-label}" />
+							</td>
+							<td>
+							</td>
+							<td>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								 <g:Label text="1.Valor contable" styleName="{style.inner-label}" />
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14199000" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA141990009" visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+							</td>
+						</tr>
+						
+						<tr>
+							<td>
+								 <g:Label text="2.Amortizacion acumulada" styleName="{style.inner-label}" />
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14199001" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA141990019" visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								 <g:Label text="3.Correcciones valorativas por deterioro" styleName="{style.inner-label}" />
+							</td>
+							<td>
+							</td>
+							<td>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								 <g:Label text="3.1.Reconocidas en el ejercicio" styleName="{style.inner-label}" />
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14199002" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA141990029" visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								 <g:Label text="3.2.Acumuladas" styleName="{style.inner-label}" />
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14199003" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA141990039" visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+							</td>
+						</tr>
+						
+						<tr>
+							<td>
+								 <g:Label text="B) Gastos incurridos para la mejora y proteccion del medio ambiente" styleName="{style.inner-label}" />
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14199004" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA141990049" visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								 <g:Label text="B)Riesgos cubiertos por las provisiones para actuaciones medioambientales" styleName="{style.inner-label}" />
+							</td>
+							<td>
+							</td>
+							<td>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								 <g:Label text="1.Provision para actuaciones medioambientales, incluidas en provisiones" styleName="{style.inner-label}" />
+							</td>
+							<td>
+							</td>
+							<td>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								 <g:Label text="	Saldo al inicio del ejercicio" styleName="{style.inner-label}" />
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14199005" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA141990059" visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								 <g:Label text="	(+) Dotaciones" styleName="{style.inner-label}" />
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14199006" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA141990069" visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								 <g:Label text="	(+) Aplicaciones" styleName="{style.inner-label}" />
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14199007" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA141990079" visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								 <g:Label text="	(+/-) Otros ajustes realizados (combinaciones de negocios, etc) de los cuales" styleName="{style.inner-label}" />
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14199008" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA141990089" visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+							</td>
+						</tr>	
+						<tr>
+							<td>
+								 <g:Label text="		(+/-) Combinaciones de negocios" styleName="{style.inner-label}" />
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14199009" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA141990099" visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								 <g:Label text="		(+/-) Variaciones por cambios de valoracion(incluidas modificaciones en el tipo de descuento)" styleName="{style.inner-label}" />
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14199010" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA141990109" visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								 <g:Label text="		(+/-) Excesos" styleName="{style.inner-label}" />
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14199011" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA141990119" visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								 <g:Label text="	Saldo al cierre del ejercicio" styleName="{style.inner-label}" />
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14199012" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA141990129" visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								 <g:Label text="2.DErechos de reembolso reconocidos en el activo" styleName="{style.inner-label}" />
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14199013" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA141990139" visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								 <g:Label text="D) INVERSIONES DEL EJERCICIO POR RAZONES MEDIOAMBIENTALES" styleName="{style.inner-label}" />
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14199014" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA141990149" visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+							</td>
+						</tr>
+						
+						<tr>
+							<td>
+								 <g:Label text="E) cOMPENSACIONES A RECIBIR DE TERCEROS" styleName="{style.inner-label}" />
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14199015" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA141990159" visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+							</td>
+						</tr>
+					</table>
+					
+					
+				</g:HTMLPanel>
+			</g:Tab>
+			<g:Tab text="MA14.2 ">
+				<g:HTMLPanel>
+					<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
+						<tr>
+							<td colspan="2">
+								<g:Label text="Movimiento durante el ejercicio" styleName="{aonResources.css.aonPageHeader}"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:Label text="DEERECHOS DE EMISION DE GASES DE EFECTO INVERNADERO" styleName="{style.inner-label}"/>
+							</td>
+							<td>
+								<g:Label text="Importe" styleName="{style.inner-label}"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:Label text="A) IMPORTE (BRUTO) AL INICIO DEL EJERCICIO 2014" styleName="{style.inner-label}"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14294600" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:Label text="(+) Entradas o adquisiciones " styleName="{style.inner-label}"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14294601" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:Label text="(-) Enajenaciones y otras bajas" styleName="{style.inner-label}"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14294602" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+						</tr>
+						
+						<tr>
+							<td>
+								<g:Label text="B) IMPORTE (BRUTO) AL CIERRE DEL EJERCICIO 2014" styleName="{style.inner-label}"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14294603" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:Label text="C) CORRECCIONES DE VALOR POR DETERIORO AL INICIO DEL EJERCICIO 2014" styleName="{style.inner-label}"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14294604" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:Label text="(+) Dotaciones" styleName="{style.inner-label}"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14294605" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:Label text="(-) Aplicacion y bajas" styleName="{style.inner-label}"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14294606" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:Label text="D) CORRECCIONES DE VALOR POR DETERIORO AL CIERRE DEL EJERCICIO 2014" styleName="{style.inner-label}"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14294607" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+						</tr>
+					</table>
+					
+					
+					<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
+						<tr>
+							<td colspan="2">
+								<g:Label text="Otra Informacion" styleName="{aonResources.css.aonPageHeader}"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:Label text="CONCEPTO" styleName="{style.inner-label}"/>
+							</td>
+							<td>
+								<g:Label text="Importe" styleName="{style.inner-label}"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:Label text="E) GASTOS DEL EJERCICIO 2014 POR EMISION DE GASES DE EFECTO INVERNADERO" styleName="{style.inner-label}"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14294608" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:Label text="(+) Por derechos de emision transferidos a la cuenta de haberes de las empresas del registro nacional de derechos de emision, imputados a las emisiones en el año" styleName="{style.inner-label}"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14294610" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:Label text="(+) Por restantes derechos de emision, adquiridos o generados, que figuran en el balance, imputados a las emisiones del año" styleName="{style.inner-label}"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14294611" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+						</tr>
+						
+						<tr>
+							<td>
+								<g:Label text="(+) Cuantia que procede por deficits de derechos de emision" styleName="{style.inner-label}"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14294612" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:Label text="F) SUBVENCIONES RECIBIDAS EN EL EJERCICIO 2014, POR DERECHOS DE EMISION DE GASES DE EFECTO INVERNADERO" styleName="{style.inner-label}"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14294613" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:Label text="Importe de las subvenciones imputadas a resultados como ingresos de ejercicio 2014" styleName="{style.inner-label}"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA14294614" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							</td>
+						</tr>
+						
+					</table>
+				</g:HTMLPanel>
+			</g:Tab>
+		</g:TabPanel>
+	</g:HTMLPanel>
 	
 </ui:UiBinder>

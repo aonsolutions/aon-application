@@ -8,19 +8,715 @@
 
 	<ui:style>
 	.inner-label {
-		font-size: 1.5em;
-		color: red;
+		font-style: italic;
 		margin-left: 5px;
 		margin-right: 5px;
-		padding: 10px;
-		border: solid red 1px;
-		text-align: center;
+		display: inline;
+	}
+	
+	.pageElement {
+		margin-top: 10px;
+		border: solid #CCC 1px;
+		padding: 2px;
 	}
 	</ui:style>
-	<g:FlowPanel>
-		<g:Label text="{msg.difActivitiesRegime}" styleName="{aonResources.css.aonPageHeader}"/>
+	<g:HTMLPanel>
+		<g:Label text="Apartado 7: Pasivos Financieros" styleName="{aonResources.css.aonPageHeader}"/>
 
-		<g:Label text="No implementado." styleName="{style.inner-label}"/>
-	</g:FlowPanel>
+		<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
+			<tr>
+				<td colspan="9">
+					<g:Label text="Pasivos financieros a largo plazo" styleName="{aonResources.css.aonPageHeader}"/>
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td colspan="2">
+					<g:Label text="Deudas con entidades de credito" styleName="{style.inner-label}"/>
+				</td>
+				<td colspan="2">
+					<g:Label text="Obligaciones y otros valores negociables" styleName="{style.inner-label}"/>
+				</td>
+				<td colspan="2">
+					<g:Label text="Derivados y otros" styleName="{style.inner-label}"/>
+				</td>
+				<td colspan="2">
+					<g:Label text="TOTAL" styleName="{style.inner-label}"/>
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Debitos y partidas a pagar" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794001" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7940019" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794002" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7940029" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794003" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7940039" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794004" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7940049" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Pasivos a valor razonable con cambios en perdidas y ganancias" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794011" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7940119" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794012" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7940129" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794013" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7940139" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794014" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7940149" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Otros" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794021" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7940219" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794022" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7940229" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794023" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7940239" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794024" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7940249" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="TOTAL" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794031" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7940319" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794032" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7940329" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794033" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7940339" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794034" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7940349" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+		</table>
+		
+		<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
+			<tr>
+				<td colspan="9">
+					<g:Label text="Pasivos financieros a corto plazo" styleName="{aonResources.css.aonPageHeader}"/>
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td colspan="2">
+					<g:Label text="Deudas con entidades de credito" styleName="{style.inner-label}"/>
+				</td>
+				<td colspan="2">
+					<g:Label text="Obligaciones y otros valores negociables" styleName="{style.inner-label}"/>
+				</td>
+				<td colspan="2">
+					<g:Label text="Derivados y otros" styleName="{style.inner-label}"/>
+				</td>
+				<td colspan="2">
+					<g:Label text="TOTAL" styleName="{style.inner-label}"/>
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Debitos y partidas a pagar" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794101" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7941019" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794102" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7941029" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794103" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7941039" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794104" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7941049" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Pasivos a valor razonable con cambios en perdidas y ganancias" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794111" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7941119" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794112" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7941129" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794113" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7941139" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794114" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7941149" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Otros" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794121" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7941219" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794122" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7941229" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794123" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7941239" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794124" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7941249" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="TOTAL" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794131" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7941319" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794132" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7941329" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794133" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7941339" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794134" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA7941349" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+		</table>
+		
+		
+		<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
+			<tr>
+				<td colspan="9">
+					<g:Label text="Vencimiento de las deude al cierre del ejercicio 2014" styleName="{aonResources.css.aonPageHeader}"/>
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td colspan="7">
+					<g:Label text="Vencimiento en años" styleName="{style.inner-label}"/>
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<g:Label text="Uno" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Dos" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Tres" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Cuatro" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Cinco" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Mas de 5" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="TOTAL" styleName="{style.inner-label}"/>
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Deudas con entidades de credito" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794201" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794202" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794203" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794204" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794205" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794206" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794207" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Acreedores por arrendamiento financiero" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794211" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794212" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794213" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794214" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794215" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794216" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794217" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Otras deudas" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794221" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794222" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794223" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794224" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794225" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794226" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794227" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Deudas con empresas del grupo y asociadas" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794231" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794232" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794233" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794234" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794235" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794236" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794237" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Acreedores comerciales no corrientes" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794241" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794242" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794243" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794244" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794245" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794246" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794247" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td></td>
+			</tr>
+			
+			<tr>
+				<td>
+					<g:Label text="Acreedores comerciales y otras cuentas a pagar" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794251" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794252" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794253" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794254" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794255" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794256" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794257" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td></td>
+			</tr>
+			
+			<tr>
+				<td>
+					<g:Label text="Proveedores" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794261" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794262" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794263" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794264" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794265" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794266" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794267" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Otros acreedores" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794271" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794272" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794273" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794274" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794275" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794276" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794277" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Deuda con caracteristicas especiales" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794281" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794282" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794283" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794284" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794285" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794286" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794287" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="TOTAL" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794291" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794292" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794293" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794294" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794295" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794296" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA794297" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td></td>
+			</tr>
+		</table>
+		
+		<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
+			<tr>
+				<td colspan="9">
+					<g:Label text="Lineas de descuento y polizas al cierre del ejercicio 2014" styleName="{aonResources.css.aonPageHeader}"/>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3">
+					<g:Label text="Entidades de credito" styleName="{style.inner-label}"/>
+				</td>
+				<td colspan="2">
+					<g:Label text="Limite concedido" styleName="{style.inner-label}"/>
+				</td>
+				<td colspan="2">
+					<g:Label text="Dispuesto" styleName="{style.inner-label}"/>
+				</td>
+				<td colspan="2">
+					<g:Label text="Disponible" styleName="{style.inner-label}"/>
+				</td>
+			</tr>
+			
+			<tr>
+				<td colspan="3">
+					<g:Label text="Entidades de credito" styleName="{style.inner-label}"/>
+				</td>
+				<td colspan="2">
+					<g:TextBox visibleLength="42" maxLength="40" enabled="false" styleName="aon-inputText"/>
+				</td>
+				<td colspan="2">
+					<g:TextBox visibleLength="42" maxLength="40" enabled="false" styleName="aon-inputText"/>
+				</td>
+				<td colspan="2">
+					<g:TextBox ui:field="MA794303" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3">
+					<g:Label text="Total polizas de credito" styleName="{style.inner-label}"/>
+				</td>
+				<td colspan="2">
+					<g:TextBox ui:field="MA794311" visibleLength="42" maxLength="40" enabled="false" styleName="aon-inputText"/>
+				</td>
+				<td colspan="2">
+					<g:TextBox ui:field="MA794312" visibleLength="42" maxLength="40" enabled="false" styleName="aon-inputText"/>
+				</td>
+				<td colspan="2">
+					<g:TextBox ui:field="MA794313" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+		</table>
+	</g:HTMLPanel>
 	
 </ui:UiBinder>

@@ -32,6 +32,12 @@
 	<!-- Specify the app entry point class. -->
 	<inherits name="com.esferalia.aon.gwt.common.Common" />
 	<inherits name="com.esferalia.aon.occam.api.Occam" />
+	
+	<!-- Include GWTUpload library -->
+  	<inherits name="gwtupload.GWTUpload"/>
+  	
+ 	<!-- Load dinamically predefined styles in the library when the application starts -->
+  	<stylesheet src="Upload.css"/>
 
 	<!-- Other module inherits --> 
 	<entry-point class='com.esferalia.aon.gwt.fiscal.client.MainEntryPoint' />

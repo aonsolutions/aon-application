@@ -7,20 +7,127 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
 	<ui:style>
-	.inner-label {
-		font-size: 1.5em;
-		color: red;
+			.inner-label {
+		font-style: italic;
 		margin-left: 5px;
 		margin-right: 5px;
-		padding: 10px;
-		border: solid red 1px;
-		text-align: center;
+		display: inline;
+	}
+	
+	.pageElement {
+		margin-top: 10px;
+		border: solid #CCC 1px;
+		padding: 2px;
 	}
 	</ui:style>
-	<g:FlowPanel>
-		<g:Label text="{msg.difActivitiesRegime}" styleName="{aonResources.css.aonPageHeader}"/>
-
-		<g:Label text="No implementado." styleName="{style.inner-label}"/>
-	</g:FlowPanel>
+	<g:HTMLPanel>
+		<g:Label text="Apartado 13: Otra Informacion" styleName="{aonResources.css.aonPageHeader}"/>
+		
+		<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
+			<tr>
+				<td colspan="3">
+					<g:Label text="Numero medio de personas empleadas en el curso del ejercicio, por categorias (adaptadas a la CNO-11)" styleName="{aonResources.css.aonPageHeader}"/>
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="EJercicio 2013" styleName="{style.inner-label}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Directores generales y presidentes ejecutivos" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1398000" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA13980009" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Resto de directores y gerentes" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1398001" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA13980019" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Tecnicos y profesionales cientificos e intelectuales y profesionales de apoyo" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1398002" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA13980029" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Empleados contables, administrativos y otros empleados de oficina" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1398003" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA13980039" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Comerciales, vendedores y similares" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1398004" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA13980049" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Resto de personal cualificado" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1398005" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA13980059" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Ocupaciones elementales" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1398006" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA13980069" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Total empleado medio" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1398007" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA13980079" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+		</table>
+		
+	</g:HTMLPanel>
 	
 </ui:UiBinder>

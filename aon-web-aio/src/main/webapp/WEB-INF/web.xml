@@ -264,6 +264,8 @@
 		<url-pattern>/aon_gwt_template/gwt_upload</url-pattern>
 	</servlet-mapping>
 	
+	
+	
 	<!-- Aon GWT Document -->
 	
 	<servlet>
@@ -484,6 +486,23 @@
 		<url-pattern>/aon_gwt_fiscal/Model200Print</url-pattern>
 	</servlet-mapping>
 	
+	<servlet>
+		<servlet-name>D2 Deposit</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.fiscal.server.normalizedMemory.NormalizedMemoryServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>D2 Deposit</servlet-name>
+		<url-pattern>/aon_gwt_fiscal/gwt_deposit</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>UploadFiscalFile</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.fiscal.server.normalizedMemory.UploadFileServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UploadFiscalFile</servlet-name>
+		<url-pattern>/aon_gwt_fiscal/gwt_deposit_upload</url-pattern>
+	</servlet-mapping>
 	<!-- JSF STANDARD CONFIGURATION -->
 	<context-param>
 		<description>State saving method: "client" or "server" (= default) See

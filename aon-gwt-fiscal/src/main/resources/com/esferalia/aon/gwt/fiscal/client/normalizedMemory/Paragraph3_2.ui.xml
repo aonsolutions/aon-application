@@ -7,20 +7,203 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
 	<ui:style>
+
 	.inner-label {
-		font-size: 1.5em;
-		color: red;
+		font-style: italic;
 		margin-left: 5px;
 		margin-right: 5px;
-		padding: 10px;
-		border: solid red 1px;
-		text-align: center;
+		display: inline;
+	}
+	
+	.pageElement {
+		margin-top: 10px;
+		border: solid #CCC 1px;
+		padding: 2px;
 	}
 	</ui:style>
-	<g:FlowPanel>
-		<g:Label text="{msg.difActivitiesRegime}" styleName="{aonResources.css.aonPageHeader}"/>
+	<g:HTMLPanel>
+		<g:Label text="Apartado 3: Aplicacion de Resultados" styleName="{aonResources.css.aonPageHeader}"/>
 
-		<g:Label text="No implementado." styleName="{style.inner-label}"/>
-	</g:FlowPanel>
+		<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
+			<tr>
+				<td colspan="3">
+					<g:Label text="Base de Reparto" styleName="{aonResources.css.aonPageHeader}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					
+				</td>
+				<td>
+					<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Saldo de la cuenta de pérdidas y ganancias" styleName="{style.inner-label}" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA391000"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA3910009"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Remanente" styleName="{style.inner-label}" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA391001"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA3910019"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Reservas voluntarias" styleName="{style.inner-label}" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA391002"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA3910029"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Otras reservas de libre disposicion" styleName="{style.inner-label}" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA391003"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA3910039"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Total base de reparto = total aplicacion" styleName="{style.inner-label}" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA391004"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA3910049"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
+				</td>
+			</tr>
+		</table>	
+		
+		<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
+			<tr>
+				<td colspan="3">
+					<g:Label text="Aplicacion a" styleName="{aonResources.css.aonPageHeader}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					
+				</td>
+				<td>
+					<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Reserva legal" styleName="{style.inner-label}" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA391005"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA3910059"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Reserva por fondo de comercio" styleName="{style.inner-label}" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA391006"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA3910069"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Reservas especiales" styleName="{style.inner-label}" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA391007"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA3910079"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Reservas voluntarias" styleName="{style.inner-label}" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA391008"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA3910089"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Dividendos" styleName="{style.inner-label}" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA391009"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA3910099"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Remanente y otros" styleName="{style.inner-label}" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA391010"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA3910109"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Compensacion de perdidas de ejercicios anteriores" styleName="{style.inner-label}" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA391011"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA3910119"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Total aplicacion = toral base de reparto" styleName="{style.inner-label}" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA391012"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA3910129"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
+				</td>
+			</tr>
+		</table>
+	</g:HTMLPanel>
 	
 </ui:UiBinder>

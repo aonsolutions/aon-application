@@ -7,20 +7,584 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
 	<ui:style>
-	.inner-label {
-		font-size: 1.5em;
-		color: red;
+		.inner-label {
+		font-style: italic;
 		margin-left: 5px;
 		margin-right: 5px;
-		padding: 10px;
-		border: solid red 1px;
-		text-align: center;
+		display: inline;
+	}
+	
+	.pageElement {
+		margin-top: 10px;
+		border: solid #CCC 1px;
+		padding: 2px;
 	}
 	</ui:style>
-	<g:FlowPanel>
-		<g:Label text="{msg.difActivitiesRegime}" styleName="{aonResources.css.aonPageHeader}"/>
+	<g:HTMLPanel>
+		<g:Label text="Apartado 5: Inmovilizado material, intangible e inversiones inmobiliarias" styleName="{aonResources.css.aonPageHeader}"/>
 
-		<g:Label text="No implementado." styleName="{style.inner-label}"/>
-	</g:FlowPanel>
+	
+		<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
+			<tr>
+				<td colspan="4">
+					<g:Label text="Estado de movimientos del inmovilizado material, intangible e inversiones inmobiliarias del ejercicio actual" styleName="{aonResources.css.aonPageHeader}"/>
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<g:Label text="Inmovilizado intangible" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Inmovilizado material" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Inversiones inmobiliarias" styleName="{style.inner-label}"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="A) SALDO INICIAL BRUTO, EJERCICIO 2014"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592001" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592002" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592003" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="(+) Entradas"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592011" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592012" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592013" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="(+) Correcciones de valor por actualizacion"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592141" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592142" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592143" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="(-) Salidas"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592021" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592022" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592023" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="B) SALDO FINAL BRUTO, EJERCICIO 2014"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592031" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592032" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592033" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="C) AMORTIZACION ACUMULADA, SALDO INICIAL EJERCICIO 2014"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592041" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592042" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592043" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="(+) Dotacion a la amortizacion del ejercicio"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592051" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592052" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592053" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="(+) Aumento de la amortizacion acumulada por efecto de la actualizacion"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592151" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592152" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592153" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="(+) Aumentos por adquisiciones o traspasos"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592061" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592062" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592063" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="(-) Disminuciones por salidas, bajas o traspasos"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592071" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592072" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592073" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="D) AMORTIZACION ACUMULADA, SALDO FINAL EJERCICIO 2014"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592081" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592082" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592083" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="E) CORRECCIONES DE VALOR POR DETERIORO, SALDO INICIAL EJERCICIO 2014"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592091" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592092" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592093" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="(+) Correcciones valorativas por deterioro reconocidas en el periodo"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592101" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592102" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592103" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="(-) Reversion de correcciones valorativas por deteriodo"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592111" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592112" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592113" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+						<tr>
+				<td> 
+					<g:Label text="(-) Disminuciones por salidas, bajas o traspasos"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592121" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592122" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592123" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+						<tr>
+				<td> 
+					<g:Label text="F) CORRECCIONES DE VALOR POR DETERIORO, SALDO FINAL EJERCICIO 2014"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592131" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592132" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA592133" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			
+		</table>
+		
+				<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
+			<tr>
+				<td colspan="4">
+					<g:Label text="Estado de movimientos del inmovilizado material, intangible e inversiones inmobiliarias del ejercicio anterior" styleName="{aonResources.css.aonPageHeader}"/>
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<g:Label text="Inmovilizado intangible" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Inmovilizado material" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Inversiones inmobiliarias" styleName="{style.inner-label}"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="A) SALDO INICIAL BRUTO, EJERCICIO 2013"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920019" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920029" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920039" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="(+) Entradas"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920119" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920129" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920139" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="(+) Correcciones de valor por actualizacion"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5921419" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5921429" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5921439" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="(-) Salidas"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920219" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920229" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920239" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="B) SALDO FINAL BRUTO, EJERCICIO 2013"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920319" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920329" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920339" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="C) AMORTIZACION ACUMULADA, SALDO INICIAL EJERCICIO 2013"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920419" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920429" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920439" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="(+) Dotacion a la amortizacion del ejercicio"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920519" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920529" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920539" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="(+) Aumento de la amortizacion acumulada por efecto de la actualizacion"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5921519" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5921529" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5921539" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="(+) Aumentos por adquisiciones o traspasos"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920619" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920629" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920639" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="(-) Disminuciones por salidas, bajas o traspasos"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920719" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920729" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920739" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="D) AMORTIZACION ACUMULADA, SALDO FINAL EJERCICIO 2013"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920819" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920829" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920839" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="E) CORRECCIONES DE VALOR POR DETERIORO, SALDO INICIAL EJERCICIO 2013"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920919" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920929" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5920939" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="(+) Correcciones valorativas por deterioro reconocidas en el periodo"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5921019" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5921029" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5921039" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="(-) Reversion de correcciones valorativas por deteriodo"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5921119" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5921129" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5921139" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+						<tr>
+				<td> 
+					<g:Label text="(-) Disminuciones por salidas, bajas o traspasos"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5921219" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5921229" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5921239" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+						<tr>
+				<td> 
+					<g:Label text="F) CORRECCIONES DE VALOR POR DETERIORO, SALDO FINAL EJERCICIO 2013"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5921319" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5921329" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA5921339" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+			</tr>
+			
+		</table>
+				<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
+			<tr>
+				<td colspan="4">
+					<g:Label text="Arrendamientos financieros y otras operaciones de naturaleza similar sobre activos no corrientes" styleName="{aonResources.css.aonPageHeader}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="Descripcion del elemento objeto del contrato" styleName="{style.inner-label}"/>
+				</td>
+				<td colspan="3">
+					<g:Label text="Total contratos" styleName="{style.inner-label}"/>
+				</td>
+				
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="Coste del bien en origen"/>
+				</td>
+				<td colspan="3">
+					<g:TextBox ui:field="MA592200" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				
+			</tr>
+			<tr>
+				<td> 
+					<g:Label text="Cuotas satisfechas"/>
+				</td>
+				<td colspan="3">
+					<g:TextBox ui:field="MA592201" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				
+			</tr>
+				<tr>
+				<td> 
+					<g:Label text="Ejercicios anteriores"/>
+				</td>
+				<td colspan="3">
+					<g:TextBox ui:field="MA592202" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				
+			</tr>
+				<tr>
+				<td> 
+					<g:Label text="Ejercicio 2014"/>
+				</td>
+				<td colspan="3">
+					<g:TextBox ui:field="MA592203" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				
+			</tr>
+				<tr>
+				<td> 
+					<g:Label text="Importe cuotas pendientes 2014"/>
+				</td>
+				<td colspan="3">
+					<g:TextBox ui:field="MA592204" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				
+			</tr>
+				<tr>
+				<td> 
+					<g:Label text="Valor de la opcion de compra"/>
+				</td>
+				<td colspan="3">
+					<g:TextBox ui:field="MA592205" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				</td>
+				
+			</tr>
+			
+			
+		</table>
+	</g:HTMLPanel>
 	
 </ui:UiBinder>

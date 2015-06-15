@@ -1328,6 +1328,8 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	long progress = 10;
 	Integer rowAux;
 	String urlAux;
+	
+	
 	public  SingleUploader newUploader(SingleUploader up,String url, Integer row){
 		rowAux = row;urlAux = url;
 		final SingleUploader upload;

@@ -211,6 +211,9 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 		// Nodo:  "Modulo: Actividades empresariales."
 		// TreeNodeTypes.FISCAL_ACTIVITY_GROUP.getInstance().render(rootNode,enterprise);
 		
+		// Nodo:  "Deposito Digital"
+		TreeNode<Enterprise> digitalDeposit = TreeNodeTypes.DIGITAL_DEPOSIT.getInstance().render(rootNode, enterprise);
+		
 		rootNode.setState(true);
 		tree.addItem(rootNode);
 		tree.setSelectedItem(rootNode);

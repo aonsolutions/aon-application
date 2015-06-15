@@ -56,8 +56,8 @@ public class MainEntryPoint implements EntryPoint {
 			Model390 model390 = new Model390();
 			model390.onModuleLoad();
 		} else if ( entryPoint.equalsIgnoreCase(FS_MEMORY_ENTRY_POINT)) {
-			NormalizedMemory memory = new NormalizedMemory();
-			memory.onModuleLoad();
+			//NormalizedMemory memory = new NormalizedMemory();
+			//memory.onModuleLoad();
 		} else if ( entryPoint.equalsIgnoreCase(FS_INVOICE_REPORT_ENTRY_POINT)) {
 			InvoiceReport invoiceReport = new InvoiceReport();
 			invoiceReport.onModuleLoad();

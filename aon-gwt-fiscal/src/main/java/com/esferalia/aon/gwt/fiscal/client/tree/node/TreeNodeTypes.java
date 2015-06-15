@@ -69,5 +69,13 @@ public abstract class TreeNodeTypes<T> {
 			return new Model2002014TreeNode();
 		}
 	};
+	
+	public static TreeNodeTypes<Enterprise> DIGITAL_DEPOSIT = new TreeNodeTypes<Enterprise>() {
+		@Override
+		public TreeNode<Enterprise> getInstance() {
+			return new DigitalDepositTreeNode();
+		}
+	};
+	
 	public abstract TreeNode<T> getInstance();
 }

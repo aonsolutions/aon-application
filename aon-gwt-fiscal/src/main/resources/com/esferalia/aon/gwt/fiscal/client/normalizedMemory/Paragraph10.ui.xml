@@ -7,20 +7,269 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
 	<ui:style>
-	.inner-label {
-		font-size: 1.5em;
-		color: red;
+		.inner-label {
+		font-style: italic;
 		margin-left: 5px;
 		margin-right: 5px;
-		padding: 10px;
-		border: solid red 1px;
-		text-align: center;
+		display: inline;
+	}
+	
+	.pageElement {
+		margin-top: 10px;
+		border: solid #CCC 1px;
+		padding: 2px;
 	}
 	</ui:style>
-	<g:FlowPanel>
-		<g:Label text="{msg.difActivitiesRegime}" styleName="{aonResources.css.aonPageHeader}"/>
+	<g:HTMLPanel>
+		<g:Label text="Apartado 10: Ingresos y gastos" styleName="{aonResources.css.aonPageHeader}"/>
 
-		<g:Label text="No implementado." styleName="{style.inner-label}"/>
-	</g:FlowPanel>
+		<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
+			<tr>
+				<td colspan="3">
+					<g:Label text="Detalle de la cuenta de perdidas y ganancias" styleName="{aonResources.css.aonPageHeader}"/>
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="1.Consumo de mercaderias" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1095000" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA10950009" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text=" a)Compras, netas de devoluciones y cualquier descuento, de las cuales: " styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1095001" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA10950019" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="  -nacionales" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1095002" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA10950029" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="  -adquisiciones intracomunitarias" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1095003" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA10950039" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+						<tr>
+				<td>
+					<g:Label text="  -importaciones" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1095004" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA10950049" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+						<tr>
+				<td>
+					<g:Label text=" b) Variacion de existencias" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1095005" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA10950059" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+						<tr>
+				<td>
+					<g:Label text="2.Consumo de materias primas y otras materias consumibles" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1095006" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA10950069" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+						<tr>
+				<td>
+					<g:Label text=" a)Compras, netas de devoluciones y cualquier descuento, de las cuales: " styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1095007" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA10950079" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="  -nacionales" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1095008" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA10950089" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="  -adquisiciones intracomunitarias" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1095009" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA10950099" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+						<tr>
+				<td>
+					<g:Label text="  -importaciones" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1095010" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA10950109" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+						<tr>
+				<td>
+					<g:Label text=" b) Variacion de existencias" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1095011" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA10950119" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="3.Cargas sociales" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1095012" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA10950129" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text=" a) Seguridad social a cargo de la empresa" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1095013" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA10950139" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text=" b) Aportaciones y dotaciones para pensiones" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1095014" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA10950149" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text=" c) Otras cargas sociales" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1095015" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA10950159" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="4.Otros gastos de explotacion" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1095016" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA10950169" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text=" a) Perdidas y deterioro de operaciones comerciales" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1095017" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA10950179" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text=" b) Resto de gastos de explotacion" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1095018" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA10950189" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="4.Venta de bienes y prestacion de servicios producidos por permuta d bienes no monetarios y servicios" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1095019" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA10950199" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="5.Resultados originados fuera de la actividad normal de la empresa incluidos en 'Otros resultados'" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="MA1095020" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+				<td>
+					<g:TextBox ui:field="MA10950209" visibleLength="42" maxLength="40" styleName="aon-inputText" />
+				</td>
+			</tr>
+		</table>
+	</g:HTMLPanel>
 	
 </ui:UiBinder>
