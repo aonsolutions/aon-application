@@ -271,7 +271,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>SurveyResponse_survey_description</value>
+			<value>SurveyResponse_date desc</value>
 		</managed-property>		
 		<managed-property>
 			<property-name>listenerClasses</property-name>

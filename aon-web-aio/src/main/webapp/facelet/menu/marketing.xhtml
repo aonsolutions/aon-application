@@ -133,8 +133,8 @@
 								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="surveyResponse"
-											action="surveyResponse_list"
-											actionListener="#{surveyResponse.onSearch}"
+											action="surveyResponse_search"
+											actionListener="#{surveyResponse.onEditSearch}"
 											value="#{bundle.marketing_survey_response_module}" />
 									</aon:div>
 								</aon:if>

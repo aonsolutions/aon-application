@@ -60,14 +60,16 @@
 					<ui:include src="/com/code/aon/ui/registry/facelet/question/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{surveyResponseSearch.question}" />
 						<ui:param name="lookupControllerListener" value="#{question.notInfoListener}" />
-						<ui:param name="lookupReRender" value="registryProfileValueId" />
+						<ui:param name="lookupReRender" value="registryProfileValueIdLabel,registryProfileValueId" />
 						<aon:methodParam name="lookupChangeListener"
 							value="#{surveyResponseSearch.questionChanged}" type="lookupChangeListener" />														
 					</ui:include>				
 			
-					<aon:div styleClass="aon-padding-top">				
-						<aon:outputLabel for="RegistryProfile_value"
-							value="#{bundle.aon_value}" />
+					<aon:div id="registryProfileValueIdLabel" styleClass="aon-padding-top">				
+						<aon:div rendered="#{surveyResponseSearch.questionResolved}">
+							<aon:outputLabel for="RegistryProfile_value"
+								value="#{bundle.aon_value}" />
+						</aon:div>
 					</aon:div>
 					<aon:div id="registryProfileValueId">
 						<aon:div rendered="#{surveyResponseSearch.questionResolved}">

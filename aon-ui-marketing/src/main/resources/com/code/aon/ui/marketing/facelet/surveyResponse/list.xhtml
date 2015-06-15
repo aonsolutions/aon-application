@@ -55,6 +55,14 @@
 							</f:facet>
 							<aon:outputText value="#{to.registry.fullName}"/>
 						</aon:column>
+						
+						<aon:column alias="SurveyResponse.registry.document"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_document}" />
+							</f:facet>
+							<aon:outputText value="#{to.registry.document}" />
+						</aon:column>						
 	
 	 					<aon:column styleClass="aon-editDataTable-textColumn"
 	 						alias="SurveyResponse.date" >
