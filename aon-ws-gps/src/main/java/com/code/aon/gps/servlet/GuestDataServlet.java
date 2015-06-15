@@ -38,10 +38,12 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 	private static String JSON_KO_RESPONSE = "{\"result\":KO}";
 	private static String SELECT_GUEST_DATA =
 			"SELECT PRG.person AS " + PERSON + ", PRG.email AS " + GUEST_EMAIL + ", PRG.phone AS " + GUEST_PHONE +
+			"	, (SELECT W.description FROM workplace AS W, hotel AS H" +
+			"		WHERE PR.hotel = H.id AND H.workplace = W.id) AS " + HOTEL_NAME +
 			"	, (SELECT RM.id FROM rmedia AS RM" +
-			"		WHERE RM.registry = PRG.person AND RM.media = " + MediaType.EMAIL.ordinal() + ") AS " + EMAIL +
+			"		WHERE RM.registry = PRG.person AND RM.media = " + MediaType.EMAIL.ordinal() + " LIMIT 1) AS " + EMAIL +
 			"	, (SELECT RM.id FROM rmedia AS RM" +
-			"		WHERE RM.registry = PRG.person AND RM.media = " + MediaType.CELLULAR.ordinal() + ") AS " + PHONE +
+			"		WHERE RM.registry = PRG.person AND RM.media = " + MediaType.CELLULAR.ordinal() + " LIMIT 1) AS " + PHONE +
 			" FROM project_reservation AS PR, project_reservation_guest AS PRG, project_reservation_room AS PRR, project_reservation_room_detail AS PRRD" +
 			"	, asset_activity AS AA, room AS R" +
 			" WHERE PRG.id = ?" +
@@ -139,6 +141,7 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 						int person = rs.getInt(PERSON);
 						String guestEmail = rs.getString(GUEST_EMAIL);
 						String guestPhone = rs.getString(GUEST_PHONE);
+						String hotelName = rs.getString(HOTEL_NAME);
 						int email = rs.getInt(EMAIL);
 						int phone = rs.getInt(PHONE);
 						int responseId = 0;
@@ -159,7 +162,7 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 							responseId = (responseId == 0) ? surveyRs.getInt(RESPONSE) : responseId;
 							int responseDetailId = surveyRs.getInt(RESPONSE_DETAIL);
 
-							String value = request.getParameter(question);
+							String value = (question.equalsIgnoreCase(HOTEL)) ? hotelName : request.getParameter(question);
 							if (StringUtils.isNotBlank(value)) {
 								if (responseId == 0) {
 									insertResponseStmt = connection.prepareStatement(INSERT_RESPONSE_DATA);
