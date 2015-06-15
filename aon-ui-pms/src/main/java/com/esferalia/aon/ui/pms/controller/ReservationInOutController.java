@@ -150,6 +150,10 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 				reservationIO.setPhone(reservationIORs.getString(PHONE));
 				reservationIO.setAgency(reservationIORs.getString(AGENCY));
 				reservationIO.setTotal(reservationIORs.getObject(TOTAL) != null ? reservationIORs.getDouble(TOTAL) : 0);
+				reservationIO.setHotel(reservationIORs.getInt(HOTEL));
+				reservationIO.setHotelName(reservationIORs.getString(HOTEL_NAME));
+				reservationIO.setHotelReservation(reservationIORs.getInt(RESERVATION_HOTEL));
+				reservationIO.setHotelReservationName(reservationIORs.getString(RESERVATION_HOTEL_NAME));
 				reservationIO.setComments(reservationIORs.getString(COMMENTS));
 				reservationIO.setStayDate(reservationIORs.getDate(STAY_DATE));
 				reservationIO.setAdults(reservationIORs.getObject(ADULTS) != null ? reservationIORs.getInt(ADULTS) : 0);
@@ -184,8 +188,13 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		StringBuffer stmt = new StringBuffer();
 		stmt.append("SELECT PR.project AS " + RESERVATION + ", PR.code AS " + CODE + ", PR.start_date AS " + START_DATE + ", PR.end_date AS " + END_DATE);
 		stmt.append(", PR.check_status AS " + CHECK_STATUS + ", PR.status AS " + STATUS + ", PR.booking_holder AS " + HOLDER + ", PR.total AS " + TOTAL);
-		stmt.append(", PR.comments AS " + COMMENTS + ", B.stay_date AS " + STAY_DATE + ", PRR.adults AS " + ADULTS + ", PRR.children AS " + CHILDREN);
+		stmt.append(", PR.hotel AS " + HOTEL + ", PR.hotel_reservation AS " + RESERVATION_HOTEL + ", PR.comments AS " + COMMENTS);
+		stmt.append(", B.stay_date AS " + STAY_DATE + ", PRR.adults AS " + ADULTS + ", PRR.children AS " + CHILDREN);
 		stmt.append(", IF(R.alias IS NOT NULL AND R.alias != '', R.alias, R.name) AS " + AGENCY + ", P.code AS " + ROOM_CODE + ", P.name AS " + ROOM_TYPE);
+		stmt.append(", (SELECT W.description FROM workplace AS W, hotel AS H");
+		stmt.append("     WHERE H.id = PR.hotel AND W.id = H.workplace LIMIT 1) AS " + HOTEL_NAME);
+		stmt.append(", (SELECT W.description FROM workplace AS W, hotel AS H");
+		stmt.append("     WHERE H.id = PR.hotel_reservation AND W.id = H.workplace LIMIT 1) AS " + RESERVATION_HOTEL_NAME);
 		stmt.append(", (SELECT CONCAT(PRG.name, ' ', PRG.surname) FROM project_reservation_guest AS PRG");
 		stmt.append("     WHERE PRG.project_reservation = PR.project AND guest_index = 1 LIMIT 1) AS " + GUEST);
 		stmt.append(", (SELECT PRG.email FROM project_reservation_guest AS PRG");
@@ -207,7 +216,11 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		stmt.append(" LEFT JOIN item AS I ON PRR.item = I.id");
 		stmt.append(" LEFT JOIN product AS P ON I.product = P.id");
 		stmt.append(" WHERE" + DomainManager.getSQLWhereClause("B.domain"));
-		stmt.append(" AND B.hotel IN (" + getHotelIds() + ")");
+		if (isCheckin()) {
+			stmt.append(" AND (PR.hotel IN (" + getHotelIds() + ") OR PR.hotel_reservation IN (" + getHotelIds() + "))");
+		} else {
+			stmt.append(" AND B.hotel IN (" + getHotelIds() + ")");
+		}
 		stmt.append(" AND B.stay_date BETWEEN ? AND ?");
 		stmt.append(" AND B.stay_type = ?");
 		if (ArrayUtils.getLength(getCheckStatuses()) > 0) {
@@ -280,6 +293,10 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		private ReservationInOutController controller;
 		
 		private Integer reservation;
+		private Integer hotel;
+		private String hotelName;
+		private Integer hotelReservation;
+		private String hotelReservationName;
 		private String code;
 		private Date checkInDate;
 		private Date checkOutDate;
@@ -309,6 +326,34 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		}
 		public void setReservation(Integer reservation) {
 			this.reservation = reservation;
+		}
+
+		public Integer getHotel() {
+			return hotel;
+		}
+		public void setHotel(Integer hotel) {
+			this.hotel = hotel;
+		}
+
+		public String getHotelName() {
+			return hotelName;
+		}
+		public void setHotelName(String hotelName) {
+			this.hotelName = hotelName;
+		}
+
+		public String getHotelReservationName() {
+			return hotelReservationName;
+		}
+		public void setHotelReservationName(String hotelReservationName) {
+			this.hotelReservationName = hotelReservationName;
+		}
+
+		public Integer getHotelReservation() {
+			return hotelReservation;
+		}
+		public void setHotelReservation(Integer hotelReservation) {
+			this.hotelReservation = hotelReservation;
 		}
 
 		public String getCode() {
@@ -450,8 +495,14 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		public boolean isCheckOut() {
 			return getCheckStatus() == ReservationCheckStatus.CHECK_OUT;
 		}
+		public boolean isLateCheckIn() {
+			return (controller.isCheckin() && getCheckInDate().compareTo(getStayDate()) != 0);
+		}
+		public boolean isEarlyCheckOut() {
+			return (!controller.isCheckin() && getCheckOutDate().compareTo(getStayDate()) != 0);
+		}
 		public boolean isWrongCheck() {
-			return controller.isCheckin() ? getCheckInDate().compareTo(getStayDate()) != 0 : getCheckOutDate().compareTo(getStayDate()) != 0;
+			return isLateCheckIn() || isEarlyCheckOut();
 		}
 
 		public boolean isBlocked() {
@@ -470,6 +521,13 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 
 		public int getPax() {
 			return adults + children;
+		}
+
+		public boolean isDiverted() {
+			return (controller.isCheckin() && getHotel() != getHotelReservation());
+		}
+		public boolean isMyDivert() {
+			return (isDiverted() && getHotel().equals(controller.getHotel().getId()));
 		}
 
 	}

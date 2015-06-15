@@ -128,7 +128,7 @@
 							<aon:outputText value="&#160;" 
 								styleClass="aon-icon-commandButton #{(to.wrongCheck) ? ('aon-icon-comment-red') : ('aon-icon-comment')}"
 								rendered="#{!empty to.comments}" /> 
-							<rich:toolTip showEvent="onclick" hideEvent="onmouseout">
+							<rich:toolTip showEvent="onclick" hideEvent="onmouseout" rendered="#{!empty to.comments}">
 								<aon:outputText value="#{to.comments}" /> 
 							</rich:toolTip>
 						</aon:column>
@@ -137,45 +137,60 @@
 							<f:facet name="header">
 								<aon:outputLabel value="#{bundle.aon_number_abr}" />
 							</f:facet>
-							<aon:outputText value="#{to.roomNumber}" />
+							<aon:outputText value="#{to.roomNumber}" 
+								style="#{(to.diverted) ? ((!to.myDivert) ? ('color:red;') : ('color:forestgreen;')) : ''}" />
 						</aon:column>
 	
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-30">
 							<f:facet name="header">
 								<aon:outputLabel value="#{bundle.aon_type}" />
 							</f:facet>
-							<aon:outputText value="#{to.roomCode}" />
+							<aon:outputText value="#{to.roomCode}"
+								style="#{(to.diverted) ? ((!to.myDivert) ? ('color:red;') : ('color:forestgreen;')) : ''}" />
 						</aon:column>
 	
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20">
 							<f:facet name="header">
 								<aon:outputLabel value="#{bundle.report_pax}" />
 							</f:facet>
-							<aon:outputText value="#{to.pax}" />
+							<aon:outputText value="#{to.pax}"
+								style="#{(to.diverted) ? ((!to.myDivert) ? ('color:red;') : ('color:forestgreen;')) : ''}" />
 						</aon:column>
 	
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-30">
 							<f:facet name="header">
 								<aon:outputLabel value="#{bundle.pms_board}" />
 							</f:facet>
-							<aon:outputText value="#{to.mealPlan}" />
+							<aon:outputText value="#{to.mealPlan}"
+								style="#{(to.diverted) ? ((!to.myDivert) ? ('color:red;') : ('color:forestgreen;')) : ''}" />
 						</aon:column>
 	
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_amount}" />
 							</f:facet>
-							<aon:outputText value="#{to.total}" rendered="#{to.guestHolder}">
+							<aon:outputText value="#{to.total}" 
+								style="#{(to.diverted) ? ((!to.myDivert) ? ('color:red;') : ('color:forestgreen;')) : ''}"
+								rendered="#{to.guestHolder}">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
-							<aon:outputText value="#{bundle.pms_credit}" rendered="#{to.agencyHolder}" />
+							<aon:outputText value="#{bundle.pms_credit}" 
+								style="#{(to.diverted) ? ((!to.myDivert) ? ('color:red;') : ('color:forestgreen;')) : ''}"
+								rendered="#{to.agencyHolder}" />
 						</aon:column>
 
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
 							<f:facet name="header">
 								<aon:outputLabel value="#{bundle.aon_number}" />
 							</f:facet>
-							<aon:outputText value="#{to.reservation}" />
+							<aon:outputText value="#{to.reservation}"
+								style="#{(to.diverted) ? ((!to.myDivert) ? ('color:red;') : ('color:forestgreen;')) : ''}" />
+							<aon:outputText value="&#160;" 
+								styleClass="aon-dataTable-link"
+								rendered="#{to.diverted}" /> 
+							<rich:toolTip showEvent="onclick" hideEvent="onmouseout" rendered="#{to.diverted}">
+								<aon:outputText value="#{(!to.myDivert) ? to.hotelName : to.hotelReservationName}" /> 
+							</rich:toolTip>
 						</aon:column>
 	
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-60">
@@ -183,7 +198,7 @@
 								<aon:outputText value="#{bundle.report_checkin}" />
 							</f:facet>
 							<aon:outputText value="#{to.checkInDate}"
-								style="#{reservationIO.checkin and to.checkInDate != to.stayDate ? 'color:red;' : ''}">
+								style="#{(to.lateCheckIn or to.diverted) ? ((to.lateCheckIn or !to.myDivert) ? ('color:red;') : ('color:forestgreen;')) : ''}">
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
@@ -194,7 +209,7 @@
 								<aon:outputText value="#{bundle.report_checkout}" />
 							</f:facet>
 							<aon:outputText value="#{to.checkOutDate}"
-								style="#{!reservationIO.checkin and to.checkOutDate != to.stayDate ? 'color:red;' : ''}">
+								style="#{(to.earlyCheckOut or to.diverted) ? ((to.earlyCheckOut or !to.myDivert) ? ('color:red;') : ('color:forestgreen;')) : ''}">
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
@@ -204,7 +219,8 @@
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.report_guest}" />
 							</f:facet>
-							<aon:outputText value="#{to.guest}" />
+							<aon:outputText value="#{to.guest}"
+								style="#{(to.diverted) ? ((!to.myDivert) ? ('color:red;') : ('color:forestgreen;')) : ''}" />
 							<aon:outputText value="&#160;" styleClass="aon-icon-call-error aon-padding-left aon-margin-left" 
 								rendered="#{empty to.phone}" />
 							<aon:outputText value="&#160;" styleClass="aon-icon-mailInbox-error aon-padding-left aon-margin-left" 
@@ -215,14 +231,16 @@
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.report_agency}" />
 							</f:facet>
-							<aon:outputText value="#{to.agency}" />
+							<aon:outputText value="#{to.agency}"
+								style="#{(to.diverted) ? ((!to.myDivert) ? ('color:red;') : ('color:forestgreen;')) : ''}" />
 						</aon:column>
 						
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-110">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.report_reservation_code}" />
 							</f:facet>
-							<aon:outputText value="#{to.code}" />
+							<aon:outputText value="#{to.code}"
+								style="#{(to.diverted) ? ((!to.myDivert) ? ('color:red;') : ('color:forestgreen;')) : ''}" />
 						</aon:column>
 						
 					</ui:define>
