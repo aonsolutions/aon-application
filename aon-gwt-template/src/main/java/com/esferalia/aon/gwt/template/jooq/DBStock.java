@@ -222,17 +222,17 @@ public class DBStock {
 				pi.setDiscount((double) 0);
 				Double[] supplier = getSupplier(sctx, workplace, domainId,pi.getItem());
 				
-				if (supplier[1] != -1){
-					pi.setPrice(supplier[2]);
+				if (supplier[0] != -1){
+					pi.setPrice(supplier[1]);
 					if(isCatalogue(sctx,pi)){
 						Timestamp t = new Timestamp(ai.getDate().getTime());
 						if(isProposal(sctx,pi)){
 							pi = getProposal(sctx,pi);
 							updateIds.add(pi.getId());
-							proposalUpdateQuery.values(pi.getId(), pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), supplier[1].intValue(), ai.getUsername(), t);
+							proposalUpdateQuery.values(pi.getId(), pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), supplier[0].intValue(), ai.getUsername(), t);
 						}
 						else
-							proposalInsertQuery.values(pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), supplier[1].intValue(), ai.getUsername(), t, ai.getUsername(), t);
+							proposalInsertQuery.values(pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), supplier[0].intValue(), ai.getUsername(), t, ai.getUsername(), t);
 					}
 					else{
 						v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
@@ -247,11 +247,13 @@ public class DBStock {
 				}
 			});
 			if(error.getError()){
+
 				if(updateIds.size()>0){
 					ctx.getDslContext().delete(PROPOSAL_DETAIL).where(PROPOSAL_DETAIL.ID.in(updateIds)).execute();
 					proposalUpdateQuery.execute();
 				}
 				proposalInsertQuery.execute();
+	
 			}
 			return error;
 		} finally{
