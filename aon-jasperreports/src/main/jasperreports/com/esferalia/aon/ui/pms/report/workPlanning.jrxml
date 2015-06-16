@@ -13,9 +13,8 @@
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
 	<parameter name="hotel" class="com.esferalia.aon.pms.Hotel" isForPrompting="false"/>
 	<parameter name="date" class="java.util.Date" isForPrompting="false"/>
-	<field name="room" class="com.esferalia.aon.pms.Room"/>
-	<field name="date" class="java.util.Date"/>
-	<field name="reservationRoomDetail" class="com.esferalia.aon.pms.ProjectReservationRoomDetail"/>
+	<field name="roomNumber" class="java.lang.String"/>
+	<field name="pax" class="java.lang.Integer"/>
 	<field name="action" class="com.esferalia.aon.pms.enumeration.RoomWorkAction"/>
 	<background>
 		<band splitType="Stretch"/>
@@ -168,7 +167,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{room}.getAsset().getName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{roomNumber}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0" isBlankWhenNull="true">
 				<reportElement key="textField-53" x="35" y="0" width="60" height="14"/>
@@ -181,8 +180,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{reservationRoomDetail}.getProjectReservationRoom().getAdults()+
-$F{reservationRoomDetail}.getProjectReservationRoom().getChildren()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{pax}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-53" x="95" y="0" width="80" height="14"/>
