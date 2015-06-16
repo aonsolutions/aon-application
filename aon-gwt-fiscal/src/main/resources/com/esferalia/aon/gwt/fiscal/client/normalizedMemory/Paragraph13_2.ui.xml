@@ -21,12 +21,12 @@
 	}
 	</ui:style>
 	<g:HTMLPanel>
-		<g:Label text="Apartado 13: Otra Informacion" styleName="{aonResources.css.aonPageHeader}"/>
+		<g:Label text="Apartado 13: Otra Información" styleName="{aonResources.css.aonPageHeader}"/>
 		
 		<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
 			<tr>
 				<td colspan="3">
-					<g:Label text="Numero medio de personas empleadas en el curso del ejercicio, por categorias (adaptadas a la CNO-11)" styleName="{aonResources.css.aonPageHeader}"/>
+					<g:Label text="Número medio de personas empleadas en el curso del ejercicio, por categorías (adaptadas a la CNO-11)" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 			</tr>
 			<tr>
@@ -62,7 +62,7 @@
 			</tr>
 			<tr>
 				<td>
-					<g:Label text="Tecnicos y profesionales cientificos e intelectuales y profesionales de apoyo" styleName="{style.inner-label}"/>
+					<g:Label text="Técnicos y profesionales científicos e intelectuales y profesionales de apoyo" styleName="{style.inner-label}"/>
 				</td>
 				<td>
 					<g:TextBox ui:field="MA1398002" visibleLength="42" maxLength="40" styleName="aon-inputText" />

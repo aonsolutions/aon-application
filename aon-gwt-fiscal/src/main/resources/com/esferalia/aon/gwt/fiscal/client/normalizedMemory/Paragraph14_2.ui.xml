@@ -34,16 +34,19 @@
 		}
 	</ui:style>
 	<g:HTMLPanel>
-		<g:Label text="Apartado 14: Informacion sobre el medio ambiente" styleName="{aonResources.css.aonPageHeader}"/>
+		<g:Label text="Apartado 14: Información sobre el medio ambiente" styleName="{aonResources.css.aonPageHeader}"/>
 	
 		<g:TabPanel styleName="{style.width-all}">
 			<g:Tab text="MA14.1 ">
 				<g:HTMLPanel>
 					<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
-			
+						<tr>
+							<td colspan="3">
+								<g:Label text="Descripción del concepto" styleName="{aonResources.css.aonPageHeader}"/>
+							</td>
+						</tr>
 						<tr>
 							<td>
-								<g:Label text="DESCRIPCION DEL CONCEPTO"  styleName="{style.inner-label}"/>
 							
 							</td>
 							<td>
@@ -76,7 +79,7 @@
 						
 						<tr>
 							<td>
-								 <g:Label text="2.Amortizacion acumulada" styleName="{style.inner-label}" />
+								 <g:Label text="2.Amortización acumulada" styleName="{style.inner-label}" />
 							</td>
 							<td>
 								<g:TextBox ui:field="MA14199001" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
@@ -119,7 +122,7 @@
 						
 						<tr>
 							<td>
-								 <g:Label text="B) Gastos incurridos para la mejora y proteccion del medio ambiente" styleName="{style.inner-label}" />
+								 <g:Label text="B) Gastos incurridos para la mejora y protección del medio ambiente" styleName="{style.inner-label}" />
 							</td>
 							<td>
 								<g:TextBox ui:field="MA14199004" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
@@ -139,7 +142,7 @@
 						</tr>
 						<tr>
 							<td>
-								 <g:Label text="1.Provision para actuaciones medioambientales, incluidas en provisiones" styleName="{style.inner-label}" />
+								 <g:Label text="1.Provisión para actuaciones medioambientales, incluídas en provisiones" styleName="{style.inner-label}" />
 							</td>
 							<td>
 							</td>
@@ -203,7 +206,7 @@
 						</tr>
 						<tr>
 							<td>
-								 <g:Label text="		(+/-) Variaciones por cambios de valoracion(incluidas modificaciones en el tipo de descuento)" styleName="{style.inner-label}" />
+								 <g:Label text="		(+/-) Variaciones por cambios de valoración (incluídas modificaciones en el tipo de descuento)" styleName="{style.inner-label}" />
 							</td>
 							<td>
 								<g:TextBox ui:field="MA14199010" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
@@ -236,7 +239,7 @@
 						</tr>
 						<tr>
 							<td>
-								 <g:Label text="2.DErechos de reembolso reconocidos en el activo" styleName="{style.inner-label}" />
+								 <g:Label text="2.Derechos de reembolso reconocidos en el activo" styleName="{style.inner-label}" />
 							</td>
 							<td>
 								<g:TextBox ui:field="MA14199013" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
@@ -259,7 +262,7 @@
 						
 						<tr>
 							<td>
-								 <g:Label text="E) cOMPENSACIONES A RECIBIR DE TERCEROS" styleName="{style.inner-label}" />
+								 <g:Label text="E) COMPENSACIONES A RECIBIR DE TERCEROS" styleName="{style.inner-label}" />
 							</td>
 							<td>
 								<g:TextBox ui:field="MA14199015" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
@@ -283,7 +286,7 @@
 						</tr>
 						<tr>
 							<td>
-								<g:Label text="DEERECHOS DE EMISION DE GASES DE EFECTO INVERNADERO" styleName="{style.inner-label}"/>
+								<g:Label text="DEERECHOS DE EMISIÓN DE GASES DE EFECTO INVERNADERO" styleName="{style.inner-label}"/>
 							</td>
 							<td>
 								<g:Label text="Importe" styleName="{style.inner-label}"/>
@@ -340,7 +343,7 @@
 						</tr>
 						<tr>
 							<td>
-								<g:Label text="(-) Aplicacion y bajas" styleName="{style.inner-label}"/>
+								<g:Label text="(-) Aplicación y bajas" styleName="{style.inner-label}"/>
 							</td>
 							<td>
 								<g:TextBox ui:field="MA14294606" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
@@ -360,7 +363,7 @@
 					<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
 						<tr>
 							<td colspan="2">
-								<g:Label text="Otra Informacion" styleName="{aonResources.css.aonPageHeader}"/>
+								<g:Label text="Otra Información" styleName="{aonResources.css.aonPageHeader}"/>
 							</td>
 						</tr>
 						<tr>
@@ -373,7 +376,7 @@
 						</tr>
 						<tr>
 							<td>
-								<g:Label text="E) GASTOS DEL EJERCICIO 2014 POR EMISION DE GASES DE EFECTO INVERNADERO" styleName="{style.inner-label}"/>
+								<g:Label text="E) GASTOS DEL EJERCICIO 2014 POR EMISIÓN DE GASES DE EFECTO INVERNADERO" styleName="{style.inner-label}"/>
 							</td>
 							<td>
 								<g:TextBox ui:field="MA14294608" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
@@ -381,7 +384,7 @@
 						</tr>
 						<tr>
 							<td>
-								<g:Label text="(+) Por derechos de emision transferidos a la cuenta de haberes de las empresas del registro nacional de derechos de emision, imputados a las emisiones en el año" styleName="{style.inner-label}"/>
+								<g:Label text="(+) Por derechos de emisión transferidos a la cuenta de haberes de las empresas del registro nacional de derechos de emisión, imputados a las emisiones en el año" styleName="{style.inner-label}"/>
 							</td>
 							<td>
 								<g:TextBox ui:field="MA14294610" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
@@ -389,7 +392,7 @@
 						</tr>
 						<tr>
 							<td>
-								<g:Label text="(+) Por restantes derechos de emision, adquiridos o generados, que figuran en el balance, imputados a las emisiones del año" styleName="{style.inner-label}"/>
+								<g:Label text="(+) Por restantes derechos de emisión, adquiridos o generados, que figuran en el balance, imputados a las emisiones del año" styleName="{style.inner-label}"/>
 							</td>
 							<td>
 								<g:TextBox ui:field="MA14294611" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
@@ -398,7 +401,7 @@
 						
 						<tr>
 							<td>
-								<g:Label text="(+) Cuantia que procede por deficits de derechos de emision" styleName="{style.inner-label}"/>
+								<g:Label text="(+) Cuantía que procede por deficits de derechos de emisión" styleName="{style.inner-label}"/>
 							</td>
 							<td>
 								<g:TextBox ui:field="MA14294612" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
@@ -406,7 +409,7 @@
 						</tr>
 						<tr>
 							<td>
-								<g:Label text="F) SUBVENCIONES RECIBIDAS EN EL EJERCICIO 2014, POR DERECHOS DE EMISION DE GASES DE EFECTO INVERNADERO" styleName="{style.inner-label}"/>
+								<g:Label text="F) SUBVENCIONES RECIBIDAS EN EL EJERCICIO 2014, POR DERECHOS DE EMISIÓN DE GASES DE EFECTO INVERNADERO" styleName="{style.inner-label}"/>
 							</td>
 							<td>
 								<g:TextBox ui:field="MA14294613" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>

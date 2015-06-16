@@ -22,7 +22,7 @@
 	}
 	</ui:style>
 	<g:HTMLPanel>
-		<g:Label text="Apartado 3: Aplicacion de Resultados" styleName="{aonResources.css.aonPageHeader}"/>
+		<g:Label text="Apartado 3: Aplicación de Resultados" styleName="{aonResources.css.aonPageHeader}"/>
 
 		<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
 			<tr>
@@ -76,7 +76,7 @@
 			</tr>
 			<tr>
 				<td>
-					<g:Label text="Otras reservas de libre disposicion" styleName="{style.inner-label}" />
+					<g:Label text="Otras reservas de libre disposición" styleName="{style.inner-label}" />
 				</td>
 				<td>
 					<g:TextBox ui:field="MA391003"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
@@ -87,7 +87,7 @@
 			</tr>
 			<tr>
 				<td>
-					<g:Label text="Total base de reparto = total aplicacion" styleName="{style.inner-label}" />
+					<g:Label text="TOTAL BASE DE REPARTO = TOTAL APLICACIÓN" styleName="{style.inner-label}" />
 				</td>
 				<td>
 					<g:TextBox ui:field="MA391004"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
@@ -101,7 +101,7 @@
 		<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
 			<tr>
 				<td colspan="3">
-					<g:Label text="Aplicacion a" styleName="{aonResources.css.aonPageHeader}"/>
+					<g:Label text="Aplicación a" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 			</tr>
 			<tr>
@@ -183,7 +183,7 @@
 			</tr>
 			<tr>
 				<td>
-					<g:Label text="Compensacion de perdidas de ejercicios anteriores" styleName="{style.inner-label}" />
+					<g:Label text="Compensación de pérdidas de ejercicios anteriores" styleName="{style.inner-label}" />
 				</td>
 				<td>
 					<g:TextBox ui:field="MA391011"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>
@@ -194,7 +194,7 @@
 			</tr>
 			<tr>
 				<td>
-					<g:Label text="Total aplicacion = toral base de reparto" styleName="{style.inner-label}" />
+					<g:Label text="TOTAL APLICACIÓN = TOTAL BASE DE REPARTO" styleName="{style.inner-label}" />
 				</td>
 				<td>
 					<g:TextBox ui:field="MA391012"  visibleLength="42" maxLength="40" styleName="aon-inputText"></g:TextBox>

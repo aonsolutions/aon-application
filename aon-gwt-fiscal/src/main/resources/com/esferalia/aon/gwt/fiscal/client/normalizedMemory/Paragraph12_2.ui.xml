@@ -47,7 +47,7 @@
 					<tr>
 						<td></td>
 						<td>
-							<g:Label text="Entidad Dominantes" styleName="{style.inner-label}"/>
+							<g:Label text="Entidad Dominante" styleName="{style.inner-label}"/>
 						</td>
 						<td>
 							<g:Label text="Otras empresas del grupo" styleName="{style.inner-label}"/>
@@ -62,7 +62,7 @@
 							<g:Label text="Empresas con control conjunto o influencia significativa sobre la empresa" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:Label text="Personal clave de la direccion de la empresa o de la entidad dominante" styleName="{style.inner-label}"/>
+							<g:Label text="Personal clave de la dirección de la empresa o de la entidad dominante" styleName="{style.inner-label}"/>
 						</td>
 						<td>
 							<g:Label text="Otras partes vinculadas" styleName="{style.inner-label}"/>
@@ -73,51 +73,51 @@
 							<g:Label text="Ventas de activos corrientes" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97001" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97001"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97002" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97002"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97003" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97003"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97004" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97004"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97005" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97005"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97006" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97006"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97007"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97007"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<g:Label text="Beneficios(+)/Perdidas(-)" styleName="{style.inner-label}"/>
+							<g:Label text="Beneficios(+) / Pérdidas(-)" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97011" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97011"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97012" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97012"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97013" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97013"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97014" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97014"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97015" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97015"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97016" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97016"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97017"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97017"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
@@ -125,51 +125,51 @@
 							<g:Label text="Ventas de activos no corrientes, de las cuales:" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97021" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97021"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97022" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97022"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97023" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97023"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97024" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97024"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97025" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97025"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97026" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97026"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97027"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97027"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<g:Label text="Beneficios(+)/Perdidas(-)" styleName="{style.inner-label}"/>
+							<g:Label text="Beneficios(+) / Pérdidas(-)" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97031" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97031"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97032" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97032"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97033" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97033"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97034" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97034"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97035" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97035"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97036" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97036"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97037"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97037"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
@@ -177,25 +177,25 @@
 							<g:Label text="Compras de activos corrientes" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97041" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97041"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97042" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97042"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97043" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97043"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97044" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97044"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97045" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97045"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97046" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97046"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97047"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97047"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
@@ -203,103 +203,103 @@
 							<g:Label text="Compras de activos no corrientes" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97051" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97051"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97052" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97052"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97053" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97053"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97054" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97054"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97055" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97055"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97056" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97056"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97057"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="Prestacion de servicios, de la cual:" styleName="{style.inner-label}"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97061" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97062" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97063" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97064" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97065" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97066" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97067"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97057"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<g:Label text="Beneficios(+)/Perdidas(-)" styleName="{style.inner-label}"/>
+							<g:Label text="Prestación de servicios, de la cual:" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97071" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97061"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97072" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97062"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97073" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97063"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97074" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97064"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97075" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97065"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97076" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97066"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97077"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97067"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<g:Label text="Recepcion de servicios" styleName="{style.inner-label}"/>
+							<g:Label text="Beneficios(+) / Pérdidas(-)" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97081" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97071"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97082" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97072"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97083" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97073"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97084" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97074"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97085" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97075"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97086" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97076"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97087"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97077"    styleName="aon-inputText"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="Recepción de servicios" styleName="{style.inner-label}"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97081"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97082"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97083"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97084"   styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97085"   styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97086"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97087"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
@@ -307,129 +307,129 @@
 							<g:Label text="Contratos de arrendamiento financieros, de los cuales:" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97091" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97091"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97092" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97092"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97093" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97093"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97094" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97094"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97095" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97095"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97096" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97096"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97097"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="Beneficios(+)/Perdidas(-)" styleName="{style.inner-label}"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97101" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97102" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97103" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97104" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97105" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97106" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97107"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97097"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<g:Label text="Transferencia de investigacion y desarrollo, de los cuales:" styleName="{style.inner-label}"/>
+							<g:Label text="Beneficios(+) / Pérdidas(-)" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97111" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97101"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97112" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97102"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97113" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97103"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97114" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97104"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97115" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97105"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97116" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97106"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97117"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="Beneficios(+)/Perdidas(-)" styleName="{style.inner-label}"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97121" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97122" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97123" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97124" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97125" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97126" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97127"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97107"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<g:Label text="INgresos por intereses cobrados" styleName="{style.inner-label}"/>
+							<g:Label text="Transferencia de investigación y desarrollo, de los cuales:" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97131" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97111"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97132" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97112"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97133" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97113"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97134" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97114"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97135" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97115"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97136" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97116"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97137"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97117"    styleName="aon-inputText"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="Beneficios(+) / Pérdidas(-)" styleName="{style.inner-label}"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97121"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97122"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97123"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97124"   styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97125"   styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97126"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97127"    styleName="aon-inputText"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="Ingresos por intereses cobrados" styleName="{style.inner-label}"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97131"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97132"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97133"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97134"   styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97135"   styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97136"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97137"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
@@ -437,25 +437,25 @@
 							<g:Label text="Ingresos por intereses devengados pero no cobrados" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97141" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97141"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97142" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97142"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97143" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97143"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97144" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97144"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97145" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97145"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97146" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97146"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97147"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97147"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
@@ -463,25 +463,25 @@
 							<g:Label text="Gastos por intereses pagados" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97151" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97151"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97152" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97152"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97153" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97153"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97154" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97154"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97155" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97155"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97156" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97156"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97157"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97157"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
@@ -489,25 +489,25 @@
 							<g:Label text="Gastos por intereses devengados pero no pagados" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97161" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97161"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97162" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97162"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97163" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97163"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97164" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97164"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97165" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97165"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97166" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97166"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97167"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97167"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
@@ -515,25 +515,25 @@
 							<g:Label text="Gastos consecuencia de deudas incobrables o de dudoso cobro" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97171" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97171"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97172" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97172"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97173" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97173"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97174" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97174"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97175" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97175"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97176" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97176"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97177"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97177"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
@@ -541,77 +541,77 @@
 							<g:Label text="Dividendos y otros beneficios distribuidos" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97181" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97181"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97182" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97182"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97183" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97183"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97184" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97184"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97185" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97185"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97186" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97186"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97187"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="Garatias y avales recibidos" styleName="{style.inner-label}"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97191" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97192" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97193" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97194" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97195" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97196" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A97197"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97187"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<g:Label text="Garantias y avales prestados" styleName="{style.inner-label}"/>
+							<g:Label text="Garantías y avales recibidos" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97201" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97191"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97202" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97192"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97203" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97193"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97204" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97194"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97205" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97195"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97206" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97196"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A97207"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A97197"    styleName="aon-inputText"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="Garantías y avales prestados" styleName="{style.inner-label}"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97201"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97202"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97203"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97204"   styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97205"   styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97206"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A97207"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 				</table>
@@ -628,7 +628,7 @@
 					<tr>
 						<td></td>
 						<td>
-							<g:Label text="Entidad Dominantes" styleName="{style.inner-label}"/>
+							<g:Label text="Entidad Dominante" styleName="{style.inner-label}"/>
 						</td>
 						<td>
 							<g:Label text="Otras empresas del grupo" styleName="{style.inner-label}"/>
@@ -643,7 +643,7 @@
 							<g:Label text="Empresas con control conjunto o influencia significativa sobre la empresa" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:Label text="Personal clave de la direccion de la empresa o de la entidad dominante" styleName="{style.inner-label}"/>
+							<g:Label text="Personal clave de la dirección de la empresa o de la entidad dominante" styleName="{style.inner-label}"/>
 						</td>
 						<td>
 							<g:Label text="Otras partes vinculadas" styleName="{style.inner-label}"/>
@@ -654,51 +654,51 @@
 							<g:Label text="Ventas de activos corrientes" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970019" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970019"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970029" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970029"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970039" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970039"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970049" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970049"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970059" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970059"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970069" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970069"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970079"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970079"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<g:Label text="Beneficios(+)/Perdidas(-)" styleName="{style.inner-label}"/>
+							<g:Label text="Beneficios(+) / Pérdidas(-)" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970119" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970119"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970129" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970129"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970139" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970139"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970149" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970149"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970159" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970159"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970169" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970169"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970179"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970179"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
@@ -706,51 +706,51 @@
 							<g:Label text="Ventas de activos no corrientes, de las cuales:" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970219" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970219"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970229" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970229"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970239" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970239"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970249" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970249"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970259" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970259"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970269" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970269"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970279"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970279"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<g:Label text="Beneficios(+)/Perdidas(-)" styleName="{style.inner-label}"/>
+							<g:Label text="Beneficios(+) / Pérdidas(-)" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970319" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970319"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970329" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970329"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970339" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970339"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970349" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970349"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970359" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970359"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970369" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970369"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970379"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970379"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
@@ -758,25 +758,25 @@
 							<g:Label text="Compras de activos corrientes" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970419" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970419"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970429" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970429"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970439" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970439"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970449" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970449"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970459" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970459"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970469" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970469"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970479"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970479"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
@@ -784,103 +784,103 @@
 							<g:Label text="Compras de activos no corrientes" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970519" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970519"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970529" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970529"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970539" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970539"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970549" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970549"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970559" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970559"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970569" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970569"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970579"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="Prestacion de servicios, de la cual:" styleName="{style.inner-label}"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A970619" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A970629" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A970639" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A970649" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A970659" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A970669" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A970679"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970579"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<g:Label text="Beneficios(+)/Perdidas(-)" styleName="{style.inner-label}"/>
+							<g:Label text="Prestación de servicios, de la cual:" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970719" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970619"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970729" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970629"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970739" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970639"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970749" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970649"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970759" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970659"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970769" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970669"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970779"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970679"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<g:Label text="Recepcion de servicios" styleName="{style.inner-label}"/>
+							<g:Label text="Beneficios(+) / Pérdidas(-)" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970819" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970719"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970829" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970729"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970839" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970739"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970849" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970749"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970859" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970759"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970869" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970769"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970879"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970779"    styleName="aon-inputText"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="Recepción de servicios" styleName="{style.inner-label}"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A970819"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A970829"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A970839"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A970849"   styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A970859"   styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A970869"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A970879"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
@@ -888,129 +888,129 @@
 							<g:Label text="Contratos de arrendamiento financieros, de los cuales:" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970919" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970919"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970929" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970929"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970939" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970939"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970949" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970949"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970959" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970959"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970969" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970969"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A970979"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="Beneficios(+)/Perdidas(-)" styleName="{style.inner-label}"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A971019" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A971029" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A971039" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A971049" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A971059" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A971069" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A971079"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A970979"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<g:Label text="Transferencia de investigacion y desarrollo, de los cuales:" styleName="{style.inner-label}"/>
+							<g:Label text="Beneficios(+) / Pérdidas(-)" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971119" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971019"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971129" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971029"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971139" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971039"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971149" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971049"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971159" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971059"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971169" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971069"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971179"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="Beneficios(+)/Perdidas(-)" styleName="{style.inner-label}"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A971219" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A971229" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A971239" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A971249" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A971259" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A971269" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A971279"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971079"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<g:Label text="INgresos por intereses cobrados" styleName="{style.inner-label}"/>
+							<g:Label text="Transferencia de investigación y desarrollo, de los cuales:" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971319" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971119"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971329" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971129"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971339" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971139"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971349" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971149"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971359" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971159"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971369" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971169"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971379"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971179"    styleName="aon-inputText"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="Beneficios(+) / Pérdidas(-)" styleName="{style.inner-label}"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A971219"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A971229"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A971239"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A971249"   styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A971259"   styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A971269"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A971279"    styleName="aon-inputText"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="Ingresos por intereses cobrados" styleName="{style.inner-label}"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A971319"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A971329"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A971339"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A971349"   styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A971359"   styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A971369"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A971379"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
@@ -1018,25 +1018,25 @@
 							<g:Label text="Ingresos por intereses devengados pero no cobrados" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971419" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971419"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971429" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971429"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971439" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971439"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971449" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971449"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971459" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971459"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971469" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971469"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971479"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971479"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
@@ -1044,25 +1044,25 @@
 							<g:Label text="Gastos por intereses pagados" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971519" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971519"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971529" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971529"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971539" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971539"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971549" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971549"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971559" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971559"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971569" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971569"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971579"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971579"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
@@ -1070,25 +1070,25 @@
 							<g:Label text="Gastos por intereses devengados pero no pagados" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971619" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971619"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971629" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971629"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971639" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971639"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971649" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971649"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971659" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971659"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971669" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971669"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971679"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971679"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
@@ -1096,25 +1096,25 @@
 							<g:Label text="Gastos consecuencia de deudas incobrables o de dudoso cobro" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971719" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971719"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971729" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971729"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971739" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971739"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971749" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971749"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971759" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971759"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971769" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971769"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971779"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971779"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
@@ -1122,77 +1122,77 @@
 							<g:Label text="Dividendos y otros beneficios distribuidos" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971819" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971819"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971829" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971829"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971839" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971839"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971849" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971849"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971859" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971859"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971869" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971869"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A971879"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="Garatias y avales recibidos" styleName="{style.inner-label}"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A971919" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A971929" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A971939" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A971949" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A971959" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A971969" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-						</td>
-						<td>
-							<g:TextBox ui:field="MA12A971979"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971879"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<g:Label text="Garantias y avales prestados" styleName="{style.inner-label}"/>
+							<g:Label text="Garantías y avales recibidos" styleName="{style.inner-label}"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A972019" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971919"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A972029" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971929"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A972039" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971939"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A972049" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971949"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A972059" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971959"   styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A972069" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971969"    styleName="aon-inputText"/>
 						</td>
 						<td>
-							<g:TextBox ui:field="MA12A972079"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+							<g:TextBox ui:field="MA12A971979"    styleName="aon-inputText"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="Garantías y avales prestados" styleName="{style.inner-label}"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A972019"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A972029"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A972039"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A972049"   styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A972059"   styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A972069"    styleName="aon-inputText"/>
+						</td>
+						<td>
+							<g:TextBox ui:field="MA12A972079"    styleName="aon-inputText"/>
 						</td>
 					</tr>
 				</table>
@@ -1209,7 +1209,7 @@
 		<tr>
 			<td></td>
 			<td>
-				<g:Label text="Entidad Dominantes" styleName="{style.inner-label}"/>
+				<g:Label text="Entidad Dominante" styleName="{style.inner-label}"/>
 			</td>
 			<td>
 				<g:Label text="Otras empresas del grupo" styleName="{style.inner-label}"/>
@@ -1224,7 +1224,7 @@
 				<g:Label text="Empresas con control conjunto o influencia significativa sobre la empresa" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:Label text="Personal clave de la direccion de la empresa o de la entidad dominante" styleName="{style.inner-label}"/>
+				<g:Label text="Personal clave de la dirección de la empresa o de la entidad dominante" styleName="{style.inner-label}"/>
 			</td>
 			<td>
 				<g:Label text="Otras partes vinculadas" styleName="{style.inner-label}"/>
@@ -1235,25 +1235,25 @@
 				<g:Label text="A) ACTIVO NO CORRIENTE" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97301" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97301"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97302" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97302"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97303" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97303"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97304" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97304"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97305" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97305"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97306" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97306"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97307"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97307"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -1261,51 +1261,51 @@
 				<g:Label text="1.Invesiones financieras a largo plazo, de las cuales:" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97311" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97311"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97312" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97312"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97313" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97313"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97314" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97314"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97315" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97315"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97316" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97316"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97317"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97317"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<g:Label text="-Correcciones valorativas por creditos de dudoso cobro" styleName="{style.inner-label}"/>
+				<g:Label text="-Correcciones valorativas por créditos de dudoso cobro" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97321" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97321"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97322" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97322"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97323" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97323"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97324" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97324"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97325" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97325"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97326" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97326"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97327"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97327"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -1313,25 +1313,25 @@
 				<g:Label text="B) ACTIVO CORRIENTE" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97331" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97331"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97332" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97332"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97333" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97333"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97334" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97334"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97335" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97335"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97336" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97336"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97337"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97337"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -1339,129 +1339,129 @@
 				<g:Label text="1.Deudores comerciales y otras deudas a cobrar" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97341" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97341"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97342" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97342"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97343" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97343"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97344" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97344"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97345" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97345"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97346" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97346"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97347"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<g:Label text="a)Clientes por ventas y prestacion de servicios a largo plazo, de las cuales:" styleName="{style.inner-label}"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B97351" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B97352" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B97353" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B97354" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B97355" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B97356" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B97357"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97347"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<g:Label text="-Correcciones valorativas por creditos de dudoso cobro a largo plazo" styleName="{style.inner-label}"/>
+				<g:Label text="a)Clientes por ventas y prestación de servicios a largo plazo, de las cuales:" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97361" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97351"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97362" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97352"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97363" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97353"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97364" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97354"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97365" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97355"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97366" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97356"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97367"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<g:Label text="b)CLientes por ventas y prestacion de servicios a corto plazo. de las cuales:" styleName="{style.inner-label}"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B97371" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B97372" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B97373" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B97374" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B97375" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B97376" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B97377"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97357"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<g:Label text="-Correcciones valorativas por creditos de dudoso cobro a corto plazo" styleName="{style.inner-label}"/>
+				<g:Label text="-Correcciones valorativas por créditos de dudoso cobro a largo plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97381" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97361"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97382" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97362"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97383" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97363"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97384" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97364"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97385" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97365"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97386" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97366"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97387"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97367"    styleName="aon-inputText"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<g:Label text="b)CLientes por ventas y prestación de servicios a corto plazo. de las cuales:" styleName="{style.inner-label}"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B97371"    styleName="aon-inputText"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B97372"    styleName="aon-inputText"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B97373"    styleName="aon-inputText"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B97374"   styleName="aon-inputText"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B97375"   styleName="aon-inputText"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B97376"    styleName="aon-inputText"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B97377"    styleName="aon-inputText"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<g:Label text="-Correcciones valorativas por créditos de dudoso cobro a corto plazo" styleName="{style.inner-label}"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B97381"    styleName="aon-inputText"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B97382"    styleName="aon-inputText"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B97383"    styleName="aon-inputText"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B97384"   styleName="aon-inputText"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B97385"   styleName="aon-inputText"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B97386"    styleName="aon-inputText"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B97387"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -1469,25 +1469,25 @@
 				<g:Label text="Accionistas (socios) por desembolsos exigidos" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97391" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97391"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97392" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97392"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97393" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97393"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97394" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97394"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97395" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97395"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97396" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97396"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97397"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97397"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -1495,51 +1495,51 @@
 				<g:Label text="d)Otros deudores, de los cuales:" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97401" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97401"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97402" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97402"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97403" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97403"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97404" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97404"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97405" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97405"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97406" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97406"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97407"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97407"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<g:Label text="-Correcciones valorativas por creditos de dudoso cobro" styleName="{style.inner-label}"/>
+				<g:Label text="-Correcciones valorativas por créditos de dudoso cobro" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97411" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97411"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97412" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97412"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97413" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97413"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97414" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97414"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97415" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97415"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97416" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97416"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97417"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97417"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -1547,51 +1547,51 @@
 				<g:Label text="2.Inversiones financieras a corto plazo, de las cuales:" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97421" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97421"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97422" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97422"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97423" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97423"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97424" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97424"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97425" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97425"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97426" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97426"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97427"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97427"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<g:Label text="-Correcciones valorativas por creditos de dudoso cobro" styleName="{style.inner-label}"/>
+				<g:Label text="-Correcciones valorativas por créditos de dudoso cobro" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97431" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97431"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97432" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97432"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97433" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97433"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97434" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97434"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97435" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97435"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97436" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97436"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97437"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97437"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -1599,25 +1599,25 @@
 				<g:Label text="C)PASIVO NO CORRIENTE" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97441" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97441"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97442" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97442"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97443" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97443"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97444" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97444"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97445" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97445"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97446" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97446"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97447"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97447"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -1625,51 +1625,51 @@
 				<g:Label text="1.Deudas a largo plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97451" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97451"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97452" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97452"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97453" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97453"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97454" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97454"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97455" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97455"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97456" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97456"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97457"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97457"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<g:Label text="a)Deudas con entidades de credito" styleName="{style.inner-label}"/>
+				<g:Label text="a)Deudas con entidades de crédito" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97461" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97461"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97462" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97462"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97463" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97463"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97464" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97464"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97465" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97465"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97466" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97466"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97467"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97467"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -1677,25 +1677,25 @@
 				<g:Label text="b)Acreedores por arrendamiento financiero" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97471" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97471"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97472" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97472"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97473" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97473"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97474" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97474"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97475" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97475"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97476" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97476"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97477"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97477"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -1703,51 +1703,51 @@
 				<g:Label text="c)Otras deudas a largo plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97481" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97481"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97482" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97482"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97483" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97483"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97484" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97484"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97485" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97485"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97486" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97486"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97487"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97487"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<g:Label text="2.Deuda con caracteristicas especiales a largo plazo" styleName="{style.inner-label}"/>
+				<g:Label text="2.Deuda con características especiales a largo plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97491" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97491"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97492" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97492"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97493" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97493"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97494" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97494"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97495" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97495"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97496" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97496"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97497"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97497"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -1755,25 +1755,25 @@
 				<g:Label text="D)PASIVO CORRIENTE" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97501" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97501"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97502" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97502"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97503" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97503"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97504" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97504"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97505" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97505"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97506" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97506"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97507"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97507"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		
@@ -1782,51 +1782,51 @@
 				<g:Label text="1.Deudas a corto plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97511" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97511"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97512" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97512"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97513" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97513"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97514" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97514"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97515" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97515"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97516" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97516"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97517"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97517"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<g:Label text="a)Deudas con entidades de credito" styleName="{style.inner-label}"/>
+				<g:Label text="a)Deudas con entidades de crédito" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97521" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97521"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97522" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97522"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97523" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97523"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97524" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97524"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97525" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97525"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97526" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97526"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97527"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97527"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -1834,25 +1834,25 @@
 				<g:Label text="b)Acreedores por arrendamiento financiero" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97531" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97531"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97532" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97532"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97533" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97533"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97534" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97534"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97535" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97535"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97536" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97536"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97537"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97537"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -1860,25 +1860,25 @@
 				<g:Label text="c)Otras deudas a corto plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97541" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97541"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97542" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97542"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97543" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97543"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97544" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97544"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97545" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97545"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97546" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97546"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97547"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97547"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -1886,25 +1886,25 @@
 				<g:Label text="2.Acreedores comerciales y otras cuentas a pagar" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97551" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97551"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97552" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97552"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97553" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97553"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97554" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97554"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97555" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97555"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97556" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97556"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97557"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97557"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -1912,25 +1912,25 @@
 				<g:Label text="a)Proveedores" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97561" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97561"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97562" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97562"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97563" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97563"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97564" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97564"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97565" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97565"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97566" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97566"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97567"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97567"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -1938,51 +1938,51 @@
 				<g:Label text="b)Otros Acreedores" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97571" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97571"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97572" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97572"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97573" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97573"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97574" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97574"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97575" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97575"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97576" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97576"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97577"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97577"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<g:Label text="3.Deuda con caracteristicas especiales a corto plazo" styleName="{style.inner-label}"/>
+				<g:Label text="3.Deuda con características especiales a corto plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97581" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97581"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97582" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97582"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97583" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97583"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97584" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97584"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97585" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97585"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97586" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97586"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B97587"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B97587"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		</table>
@@ -2000,7 +2000,7 @@
 		<tr>
 			<td></td>
 			<td>
-				<g:Label text="Entidad Dominantes" styleName="{style.inner-label}"/>
+				<g:Label text="Entidad Dominante" styleName="{style.inner-label}"/>
 			</td>
 			<td>
 				<g:Label text="Otras empresas del grupo" styleName="{style.inner-label}"/>
@@ -2015,7 +2015,7 @@
 				<g:Label text="Empresas con control conjunto o influencia significativa sobre la empresa" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:Label text="Personal clave de la direccion de la empresa o de la entidad dominante" styleName="{style.inner-label}"/>
+				<g:Label text="Personal clave de la dirección de la empresa o de la entidad dominante" styleName="{style.inner-label}"/>
 			</td>
 			<td>
 				<g:Label text="Otras partes vinculadas" styleName="{style.inner-label}"/>
@@ -2026,25 +2026,25 @@
 				<g:Label text="A) ACTIVO NO CORRIENTE" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973019" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973019"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973029" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973029"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973039" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973039"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973049" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973049"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973059" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973059"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973069" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973069"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973079"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973079"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -2052,51 +2052,51 @@
 				<g:Label text="1.Invesiones financieras a largo plazo, de las cuales:" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973119" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973119"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973129" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973129"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973139" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973139"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973149" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973149"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973159" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973159"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973169" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973169"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973179"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973179"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<g:Label text="-Correcciones valorativas por creditos de dudoso cobro" styleName="{style.inner-label}"/>
+				<g:Label text="-Correcciones valorativas por créditos de dudoso cobro" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973219" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973219"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973229" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973229"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973239" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973239"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973249" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973249"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973259" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973259"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973269" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973269"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973279"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973279"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -2104,25 +2104,25 @@
 				<g:Label text="B) ACTIVO CORRIENTE" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973319" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973319"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973329" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973329"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973339" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973339"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973349" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973349"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973359" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973359"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973369" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973369"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973379"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973379"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -2130,129 +2130,129 @@
 				<g:Label text="1.Deudores comerciales y otras deudas a cobrar" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973419" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973419"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973429" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973429"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973439" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973439"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973449" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973449"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973459" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973459"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973469" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973469"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973479"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<g:Label text="a)Clientes por ventas y prestacion de servicios a largo plazo, de las cuales:" styleName="{style.inner-label}"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B973519" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B973529" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B973539" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B973549" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B973559" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B973569" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B973579"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973479"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<g:Label text="-Correcciones valorativas por creditos de dudoso cobro a largo plazo" styleName="{style.inner-label}"/>
+				<g:Label text="a)Clientes por ventas y prestación de servicios a largo plazo, de las cuales:" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973619" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973519"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973629" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973529"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973639" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973539"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973649" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973549"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973659" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973559"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973669" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973569"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973679"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<g:Label text="b)CLientes por ventas y prestacion de servicios a corto plazo. de las cuales:" styleName="{style.inner-label}"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B973719" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B973729" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B973739" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B973749" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B973759" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B973769" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
-			</td>
-			<td>
-				<g:TextBox ui:field="MA12B973779"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973579"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<g:Label text="-Correcciones valorativas por creditos de dudoso cobro a corto plazo" styleName="{style.inner-label}"/>
+				<g:Label text="-Correcciones valorativas por créditos de dudoso cobro a largo plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973819" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973619"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973829" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973629"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973839" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973639"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973849" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973649"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973859" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973659"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973869" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973669"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973879"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973679"    styleName="aon-inputText"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<g:Label text="b)CLientes por ventas y prestación de servicios a corto plazo. de las cuales:" styleName="{style.inner-label}"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B973719"    styleName="aon-inputText"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B973729"    styleName="aon-inputText"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B973739"    styleName="aon-inputText"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B973749"   styleName="aon-inputText"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B973759"   styleName="aon-inputText"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B973769"    styleName="aon-inputText"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B973779"    styleName="aon-inputText"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<g:Label text="-Correcciones valorativas por créditos de dudoso cobro a corto plazo" styleName="{style.inner-label}"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B973819"    styleName="aon-inputText"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B973829"    styleName="aon-inputText"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B973839"    styleName="aon-inputText"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B973849"   styleName="aon-inputText"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B973859"   styleName="aon-inputText"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B973869"    styleName="aon-inputText"/>
+			</td>
+			<td>
+				<g:TextBox ui:field="MA12B973879"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -2260,25 +2260,25 @@
 				<g:Label text="Accionistas (socios) por desembolsos exigidos" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973919" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973919"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973929" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973929"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973939" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973939"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973949" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973949"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973959" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973959"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973969" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973969"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B973979"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B973979"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -2286,51 +2286,51 @@
 				<g:Label text="d)Otros deudores, de los cuales:" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974019" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974019"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974029" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974029"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974039" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974039"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974049" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974049"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974059" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974059"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974069" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974069"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974079"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974079"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<g:Label text="-Correcciones valorativas por creditos de dudoso cobro" styleName="{style.inner-label}"/>
+				<g:Label text="-Correcciones valorativas por créditos de dudoso cobro" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974119" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974119"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974129" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974129"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974139" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974139"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974149" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974149"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974159" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974159"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974169" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974169"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974179"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974179"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -2338,51 +2338,51 @@
 				<g:Label text="2.Inversiones financieras a corto plazo, de las cuales:" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974219" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974219"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974229" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974229"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974239" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974239"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974249" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974249"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974259" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974259"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974269" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974269"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974279"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974279"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<g:Label text="-Correcciones valorativas por creditos de dudoso cobro" styleName="{style.inner-label}"/>
+				<g:Label text="-Correcciones valorativas por créditos de dudoso cobro" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974319" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974319"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974329" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974329"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974339" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974339"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974349" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974349"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974359" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974359"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974369" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974369"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974379"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974379"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -2390,25 +2390,25 @@
 				<g:Label text="C)PASIVO NO CORRIENTE" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974419" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974419"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974429" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974429"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974439" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974439"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974449" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974449"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974459" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974459"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974469" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974469"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974479"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974479"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -2416,51 +2416,51 @@
 				<g:Label text="1.Deudas a largo plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974519" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974519"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974529" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974529"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974539" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974539"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974549" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974549"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974559" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974559"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974569" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974569"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974579"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974579"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<g:Label text="a)Deudas con entidades de credito" styleName="{style.inner-label}"/>
+				<g:Label text="a)Deudas con entidades de crédito" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974619" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974619"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974629" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974629"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974639" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974639"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974649" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974649"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974659" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974659"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974669" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974669"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974679"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974679"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -2468,25 +2468,25 @@
 				<g:Label text="b)Acreedores por arrendamiento financiero" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974719" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974719"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974729" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974729"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974739" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974739"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974749" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974749"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974759" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974759"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974769" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974769"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974779"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974779"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -2494,51 +2494,51 @@
 				<g:Label text="c)Otras deudas a largo plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974819" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974819"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974829" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974829"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974839" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974839"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974849" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974849"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974859" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974859"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974869" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974869"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974879"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974879"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<g:Label text="2.Deuda con caracteristicas especiales a largo plazo" styleName="{style.inner-label}"/>
+				<g:Label text="2.Deuda con características especiales a largo plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974919" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974919"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974929" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974929"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974939" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974939"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974949" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974949"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974959" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974959"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974969" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974969"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B974979"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B974979"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -2546,25 +2546,25 @@
 				<g:Label text="D)PASIVO CORRIENTE" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975019" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975019"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975029" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975029"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975039" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975039"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975049" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975049"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975059" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975059"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975069" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975069"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975079"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975079"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		
@@ -2573,51 +2573,51 @@
 				<g:Label text="1.Deudas a corto plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975119" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975119"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975129" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975129"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975139" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975139"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975149" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975149"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975159" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975159"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975169" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975169"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975179"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975179"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<g:Label text="a)Deudas con entidades de credito" styleName="{style.inner-label}"/>
+				<g:Label text="a)Deudas con entidades de crédito" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975219" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975219"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975229" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975229"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975239" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975239"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975249" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975249"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975259" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975259"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975269" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975269"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975279"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975279"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -2625,25 +2625,25 @@
 				<g:Label text="b)Acreedores por arrendamiento financiero" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975319" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975319"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975329" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975329"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975339" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975339"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975349" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975349"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975359" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975359"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975369" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975369"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975379"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975379"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -2651,25 +2651,25 @@
 				<g:Label text="c)Otras deudas a corto plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975419" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975419"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975429" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975429"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975439" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975439"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975449" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975449"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975459" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975459"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975469" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975469"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975479"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975479"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -2677,25 +2677,25 @@
 				<g:Label text="2.Acreedores comerciales y otras cuentas a pagar" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975519" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975519"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975529" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975529"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975539" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975539"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975549" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975549"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975559" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975559"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975569" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975569"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975579"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975579"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -2703,25 +2703,25 @@
 				<g:Label text="a)Proveedores" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975619" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975619"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975629" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975629"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975639" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975639"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975649" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975649"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975659" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975659"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975669" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975669"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975679"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975679"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
@@ -2729,51 +2729,51 @@
 				<g:Label text="b)Otros Acreedores" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975719" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975719"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975729" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975729"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975739" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975739"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975749" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975749"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975759" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975759"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975769" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975769"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975779"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975779"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<g:Label text="3.Deuda con caracteristicas especiales a corto plazo" styleName="{style.inner-label}"/>
+				<g:Label text="3.Deuda con características especiales a corto plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975819" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975819"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975829" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975829"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975839" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975839"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975849" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975849"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975859" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975859"   styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975869" visibleLength="42" maxLength="40"   styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975869"    styleName="aon-inputText"/>
 			</td>
 			<td>
-				<g:TextBox ui:field="MA12B975879"  visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+				<g:TextBox ui:field="MA12B975879"    styleName="aon-inputText"/>
 			</td>
 		</tr>
 		</table>
@@ -2784,7 +2784,7 @@
 					<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
 						<tr>
 							<td colspan="3">
-								<g:Label text="Importes recibidos por el personal de alta direccion" styleName="{aonResources.css.aonPageHeader}"/>
+								<g:Label text="Importes recibidos por el personal de alta dirección" styleName="{aonResources.css.aonPageHeader}"/>
 							</td>
 						</tr>
 						<tr>
@@ -2801,43 +2801,43 @@
 								<g:Label text="1.Sueldos, dietas y otras remuneraciones" styleName="{style.inner-label}"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C97700" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C97700"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C977009" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<g:Label text="2.Obligaciones contraidas en materia de pensiones de las cuales:" styleName="{style.inner-label}"/>
-							</td>
-							<td>
-								<g:TextBox ui:field="MA12C97701" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-							</td>
-							<td>
-								<g:TextBox ui:field="MA12C977019" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C977009"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 						</tr>
 						<tr>
 							<td>
-								<g:Label text="a)Obligaciones con mienbros antiguos de la alta direccion" styleName="{style.inner-label}"/>
+								<g:Label text="2.Obligaciones contraídas en materia de pensiones de las cuales:" styleName="{style.inner-label}"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C97702" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C97701"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C977029" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C977019"   styleName="aon-inputText"  visibleLength="42" maxLength="40"/>
 							</td>
 						</tr>
 						<tr>
 							<td>
-								<g:Label text="b)Obligaciones con mienbros actuales de la alta direccion" styleName="{style.inner-label}"/>
+								<g:Label text="a)Obligaciones con miembros antiguos de la alta dirección" styleName="{style.inner-label}"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C97703" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C97702"   styleName="aon-inputText"  visibleLength="42" maxLength="40"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C977039" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C977029"   styleName="aon-inputText"  visibleLength="42" maxLength="40"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:Label text="b)Obligaciones con miembros actuales de la alta dirección" styleName="{style.inner-label}"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA12C97703"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA12C977039"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 						</tr>
 						<tr>
@@ -2845,32 +2845,32 @@
 								<g:Label text="3.Primas de seguro de vida pagadas, de las cuales:" styleName="{style.inner-label}"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C97704" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C97704"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C977049" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<g:Label text="a)Primas pagadas a miembros antiguos de la alta direccion" styleName="{style.inner-label}"/>
-							</td>
-							<td>
-								<g:TextBox ui:field="MA12C97705" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-							</td>
-							<td>
-								<g:TextBox ui:field="MA12C977059" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C977049"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 						</tr>
 						<tr>
 							<td>
-								<g:Label text="b)Primas pagadas a miembros actuales de la alta direccion" styleName="{style.inner-label}"/>
+								<g:Label text="a)Primas pagadas a miembros antiguos de la alta dirección" styleName="{style.inner-label}"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C97706" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C97705"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C977069" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C977059"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:Label text="b)Primas pagadas a miembros actuales de la alta dirección" styleName="{style.inner-label}"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA12C97706"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA12C977069"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 						</tr>
 						<tr>
@@ -2878,10 +2878,10 @@
 								<g:Label text="4.Indemnizaciones por cese" styleName="{style.inner-label}"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C97707" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C97707"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C977079" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C977079"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 						</tr>
 						<tr>
@@ -2889,21 +2889,21 @@
 								<g:Label text="5.Pagos basados en instrumentos de patrimonio" styleName="{style.inner-label}"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C97708" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C97708"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C977089" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C977089"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 						</tr>
 						<tr>
 							<td>
-								<g:Label text="6.Anticipos y creditos concedidos, de los cuales:" styleName="{style.inner-label}"/>
+								<g:Label text="6.Anticipos y créditos concedidos, de los cuales:" styleName="{style.inner-label}"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C97709" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C97709"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C977099" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C977099"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 						</tr>
 						<tr>
@@ -2911,21 +2911,21 @@
 								<g:Label text="a)Importes devueltos" styleName="{style.inner-label}"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C97710" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C97710"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C977109" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C977109"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 						</tr>
 						<tr>
 							<td>
-								<g:Label text="b)Obligaciones asumidas por cuenta de ellos a titulo de garantia" styleName="{style.inner-label}"/>
+								<g:Label text="b)Obligaciones asumidas por cuenta de ellos a título de garantía" styleName="{style.inner-label}"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C97711" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C97711"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C977119" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C977119"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 						</tr>
 					</table>
@@ -2933,7 +2933,7 @@
 					<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
 						<tr>
 							<td colspan="3">
-								<g:Label text="Importes recibidos por los miembros de los organos de administracion" styleName="{aonResources.css.aonPageHeader}"/>
+								<g:Label text="Importes recibidos por los miembros de los órganos de administración" styleName="{aonResources.css.aonPageHeader}"/>
 							</td>
 						</tr>
 						<tr>
@@ -2950,43 +2950,43 @@
 								<g:Label text="1.Sueldos, dietas y otras remuneraciones" styleName="{style.inner-label}"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C97720" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C97720"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C977209" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<g:Label text="2.Obligaciones contraidas en materia de pensiones de las cuales:" styleName="{style.inner-label}"/>
-							</td>
-							<td>
-								<g:TextBox ui:field="MA12C97721" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-							</td>
-							<td>
-								<g:TextBox ui:field="MA12C977219" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C977209"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 						</tr>
 						<tr>
 							<td>
-								<g:Label text="a)Obligaciones con mienbros antiguos del organo de administracion" styleName="{style.inner-label}"/>
+								<g:Label text="2.Obligaciones contraídas en materia de pensiones de las cuales:" styleName="{style.inner-label}"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C97722" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C97721"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C977229" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C977219"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 						</tr>
 						<tr>
 							<td>
-								<g:Label text="b)Obligaciones con mienbros actuales del organo de administracion" styleName="{style.inner-label}"/>
+								<g:Label text="a)Obligaciones con miembros antiguos del órgano de administración" styleName="{style.inner-label}"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C97723" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C97722"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C977239" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C977229"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:Label text="b)Obligaciones con miembros actuales del órgano de administración" styleName="{style.inner-label}"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA12C97723"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA12C977239"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 						</tr>
 						<tr>
@@ -2994,32 +2994,32 @@
 								<g:Label text="3.Primas de seguro de vida pagadas, de las cuales:" styleName="{style.inner-label}"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C97724" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C97724"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C977249" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<g:Label text="a)Primas pagadas a miembros antiguos del organo de administracion" styleName="{style.inner-label}"/>
-							</td>
-							<td>
-								<g:TextBox ui:field="MA12C97725" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
-							</td>
-							<td>
-								<g:TextBox ui:field="MA12C977259" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C977249"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 						</tr>
 						<tr>
 							<td>
-								<g:Label text="b)Primas pagadas a miembros actuales del organo de administracion" styleName="{style.inner-label}"/>
+								<g:Label text="a)Primas pagadas a miembros antiguos del órgano de administración" styleName="{style.inner-label}"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C97726" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C97725"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C977269" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C977259"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:Label text="b)Primas pagadas a miembros actuales del órgano de administración" styleName="{style.inner-label}"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA12C97726"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="MA12C977269"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 						</tr>
 						<tr>
@@ -3027,10 +3027,10 @@
 								<g:Label text="4.Indemnizaciones por cese" styleName="{style.inner-label}"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C97727" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C97727"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C977279" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C977279"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 						</tr>
 						<tr>
@@ -3038,10 +3038,10 @@
 								<g:Label text="5.Pagos basados en instrumentos de patrimonio" styleName="{style.inner-label}"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C97728" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C97728"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C977289" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C977289"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 						</tr>
 						<tr>
@@ -3049,10 +3049,10 @@
 								<g:Label text="6.Anticipos y creditos concedidos, de los cuales:" styleName="{style.inner-label}"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C97729" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C97729"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C977299" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C977299"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 						</tr>
 						<tr>
@@ -3060,21 +3060,21 @@
 								<g:Label text="a)Importes devueltos" styleName="{style.inner-label}"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C97730" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C97730"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C977309" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C977309"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 						</tr>
 						<tr>
 							<td>
-								<g:Label text="b)Obligaciones asumidas por cuenta de ellos a titulo de garantia" styleName="{style.inner-label}"/>
+								<g:Label text="b)Obligaciones asumidas por cuenta de ellos a título de garantía" styleName="{style.inner-label}"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C97731" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C97731"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 							<td>
-								<g:TextBox ui:field="MA12C977319" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
+								<g:TextBox ui:field="MA12C977319"   styleName="aon-inputText" visibleLength="42" maxLength="40"/>
 							</td>
 						</tr>
 					</table>

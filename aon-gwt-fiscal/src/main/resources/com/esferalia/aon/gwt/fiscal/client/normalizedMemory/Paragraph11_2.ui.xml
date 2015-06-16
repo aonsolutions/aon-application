@@ -51,7 +51,7 @@
 			</tr>
 			<tr>
 				<td>
-					<g:Label text="Imputados en la cuenta de perdidas y ganancias" styleName="{style.inner-label}"/>
+					<g:Label text="Imputados en la cuenta de pérdidas y ganancias" styleName="{style.inner-label}"/>
 				</td>
 				<td>
 					<g:TextBox ui:field="MA1196001" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
@@ -62,7 +62,7 @@
 			</tr>
 			<tr>
 				<td>
-					<g:Label text="DEudas a largo plazo transformables en subvenciones" styleName="{style.inner-label}"/>
+					<g:Label text="Deudas a largo plazo transformables en subvenciones" styleName="{style.inner-label}"/>
 				</td>
 				<td>
 					<g:TextBox ui:field="MA1196002" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>
@@ -76,7 +76,7 @@
 				<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
 			<tr>
 				<td colspan="3">
-					<g:Label text="Subvenciones, donaciones y legados recogidos en el patrimonio neto del balance, otorgados por terceros distintos a los socios: analisis del movimiento" styleName="{aonResources.css.aonPageHeader}"/>
+					<g:Label text="Subvenciones, donaciones y legados recogidos en el patrimonio neto del balance, otorgados por terceros distintos a los socios: análisis del movimiento" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 			</tr>
 			<tr>
@@ -112,7 +112,7 @@
 			</tr>
 			<tr>
 				<td>
-					<g:Label text="(+) COnversion de deudas a largo plazo en subvenciones" styleName="{style.inner-label}"/>
+					<g:Label text="(+) Conversión de deudas a largo plazo en subvenciones" styleName="{style.inner-label}"/>
 				</td>
 				<td>
 					<g:TextBox ui:field="MA1196012" visibleLength="42" maxLength="40"  styleName="aon-inputText"/>

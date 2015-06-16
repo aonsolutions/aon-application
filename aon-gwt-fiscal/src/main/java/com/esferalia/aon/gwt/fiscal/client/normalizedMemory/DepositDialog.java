@@ -1,13 +1,13 @@
 package com.esferalia.aon.gwt.fiscal.client.normalizedMemory;
 
-import gwtupload.client.IUploader;
-import gwtupload.client.SingleUploader;
 import gwtupload.client.IFileInput.FileInputType;
 import gwtupload.client.IUploadStatus.Status;
+import gwtupload.client.IUploader;
 import gwtupload.client.IUploader.OnCancelUploaderHandler;
 import gwtupload.client.IUploader.OnFinishUploaderHandler;
 import gwtupload.client.IUploader.OnStartUploaderHandler;
 import gwtupload.client.IUploader.OnStatusChangedHandler;
+import gwtupload.client.SingleUploader;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialogB;
 import com.esferalia.aon.occam.api.model.Enterprise;
@@ -16,7 +16,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FormHandler;
@@ -36,7 +35,6 @@ public abstract class DepositDialog extends CustomDialogB {
 	}
 	private static final Binder binder = GWT.create(Binder.class);
 	
-
 	@UiField(provided = true) FlexTable flex_table;
 	@UiField(provided = true) Label label;
 	@UiField Button accept_button;
@@ -51,7 +49,7 @@ public abstract class DepositDialog extends CustomDialogB {
 		typeAux = type;
 		switch (type) {
 		case "new": newDeposit(enterprise);break;
-		case "import": importar(url);break;
+		case "import": importar(enterprise, url);break;
 		default:
 			break;
 		}
@@ -106,9 +104,9 @@ public abstract class DepositDialog extends CustomDialogB {
 		flex_table.setCellSpacing(0);
 		
 		ListBox lb = new ListBox();
-		lb.addItem("-");
+		//lb.addItem("-");
 		lb.addItem("Abreviado");
-		lb.addItem("Pymes");
+		//lb.addItem("Pymes");
 
 		flex_table.setWidget(0, 0, new Label("Tipo de Deposito"));
 		flex_table.setWidget(0, 1, lb);
@@ -141,7 +139,7 @@ public abstract class DepositDialog extends CustomDialogB {
 		flexTableCss();
 	}
 	
-	private void importar(String url){
+	private void importar(Enterprise enterprise,String url){
 		
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
@@ -150,9 +148,11 @@ public abstract class DepositDialog extends CustomDialogB {
 		
 		
 		
-		
 		flex_table.setWidget(0, 0, new Label("Fichero"));
-		flex_table.setWidget(0, 1, newUploader(url));
+		flex_table.setWidget(0, 1, newUploader(url+"gwt_deposit_upload?domain_id="+enterprise.getDomain()+
+																		"&cif="+enterprise.getDocument()));
+		
+		
 		flexTableCss();
 	}
 	

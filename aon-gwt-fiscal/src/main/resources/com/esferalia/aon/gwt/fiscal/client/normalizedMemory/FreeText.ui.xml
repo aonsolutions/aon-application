@@ -37,16 +37,31 @@
 	.text-center {
 		text-align: center;
 	}
+	.textArea-border{
+		
+		border: 0px !important;
+	}
 	</ui:style>
 	
-	<g:FlowPanel>
-		<g:HTMLPanel styleName="{style.headerPanel}">
-			<g:Label styleName="{style.header}" ui:field="title1" />
-			<g:Label styleName="{style.sub-header}" ui:field="title2" />
-		</g:HTMLPanel>
-		<g:HTMLPanel styleName="{style.text-center}">
-			<g:TextArea visibleLines="150" characterWidth="150" ui:field="value" />
-		</g:HTMLPanel>
-	</g:FlowPanel>
+	<g:HTMLPanel>
+		<g:Label ui:field="title2" styleName="{aonResources.css.aonPageHeader}"/>
+		
+
+		<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
+			<tr>
+				<td>
+					<g:Label ui:field="title1" styleName="{aonResources.css.aonPageHeader}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:TextArea visibleLines="150" characterWidth="128" styleName="{style.textArea-border}" ui:field="value" />
+				</td>
+			</tr>
+		</table>
+
+
+	
+	</g:HTMLPanel>
 	
 </ui:UiBinder>

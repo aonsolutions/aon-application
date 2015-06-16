@@ -38,7 +38,7 @@ public class DownloadXmlFileServlet extends HttpServlet {
         long length = f.length();
         FileInputStream fis = new FileInputStream(f);
         
-        p_response.addHeader("Content-Disposition","attachment; filename=\"" + f.getName() +"\"");
+        p_response.addHeader("Content-Disposition","attachment; filename=\"DEPOSITO\"");
         //p_response.setContentType("application/octet-stream");
         p_response.setContentType(MimeType.XML.getName());
 

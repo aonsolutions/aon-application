@@ -21,7 +21,7 @@
 	}
 	</ui:style>
 	<g:HTMLPanel>
-		<g:Label text="Apartado 15: Informacion sobre los aplazamientos de pago efectuados a proveedores" styleName="{aonResources.css.aonPageHeader}"/>
+		<g:Label text="Apartado 15: Información sobre los aplazamientos de pago efectuados a proveedores" styleName="{aonResources.css.aonPageHeader}"/>
 
 		<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
 			<tr>
@@ -39,40 +39,37 @@
 				</td>
 			</tr>
 			<tr>
-				<td></td>
 				<td>
-					<g:Label text="Importe" styleName="{style.inner-label}"/>
-				</td>
-				<td>
-					<g:Label text="%" styleName="{style.inner-label}"/>
-				</td>
-				<td>
-					<g:Label text="Importe" styleName="{style.inner-label}"/>
-				</td>
-				<td>
-					<g:Label text="%" styleName="{style.inner-label}"/>
-				</td>
-			</tr>
-			<tr>
-				<td colspan="5">
 					<g:Label text="PAGOS DEL EJERCICIO" styleName="{style.inner-label}"/>
 				</td>
+				<td>
+					<g:Label text="Importe" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="%" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="Importe" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="%" styleName="{style.inner-label}"/>
+				</td>
 			</tr>
 			<tr>
 				<td>
-					<g:Label text="Dentro del plazo maximo legal" styleName="{style.inner-label}"/>
+					<g:Label text="Dentro del plazo máximo legal" styleName="{style.inner-label}"/>
 				</td>
 				<td>
-					<g:TextBox ui:field="MA15947001"  visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+					<g:TextBox ui:field="MA15947001"   styleName="aon-inputText"/>
 				</td>
 				<td>
-					<g:TextBox ui:field="MA15947002"  visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+					<g:TextBox ui:field="MA15947002"   styleName="aon-inputText"/>
 				</td>
 				<td>
-					<g:TextBox ui:field="MA159470019"  visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+					<g:TextBox ui:field="MA159470019"   styleName="aon-inputText"/>
 				</td>
 				<td>
-					<g:TextBox ui:field="MA159470029"  visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+					<g:TextBox ui:field="MA159470029"   styleName="aon-inputText"/>
 				</td>
 			</tr>
 			<tr>
@@ -80,16 +77,16 @@
 					<g:Label text="Resto excedido" styleName="{style.inner-label}"/>
 				</td>
 				<td>
-					<g:TextBox ui:field="MA15947011"  visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+					<g:TextBox ui:field="MA15947011"   styleName="aon-inputText"/>
 				</td>
 				<td>
-					<g:TextBox ui:field="MA15947012"  visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+					<g:TextBox ui:field="MA15947012"   styleName="aon-inputText"/>
 				</td>
 				<td>
-					<g:TextBox ui:field="MA159470119"  visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+					<g:TextBox ui:field="MA159470119"   styleName="aon-inputText"/>
 				</td>
 				<td>
-					<g:TextBox ui:field="MA159470129"  visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+					<g:TextBox ui:field="MA159470129"   styleName="aon-inputText"/>
 				</td>
 			</tr>
 			<tr>
@@ -97,33 +94,33 @@
 					<g:Label text="TOTAL (1+2)" styleName="{style.inner-label}"/>
 				</td>
 				<td>
-					<g:TextBox ui:field="MA15947021"  visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+					<g:TextBox ui:field="MA15947021"   styleName="aon-inputText"/>
 				</td>
 				<td>
-					<g:TextBox ui:field="MA15947022"  visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+					<g:TextBox ui:field="MA15947022"   styleName="aon-inputText"/>
 				</td>
 				<td>
-					<g:TextBox ui:field="MA159470219"  visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+					<g:TextBox ui:field="MA159470219"   styleName="aon-inputText"/>
 				</td>
 				<td>
-					<g:TextBox ui:field="MA159470229"  visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+					<g:TextBox ui:field="MA159470229"   styleName="aon-inputText"/>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<g:Label text="Aplazamientos que a la fecha de cierre sobrepasan el plazo maximo legal." styleName="{style.inner-label}"/>
+					<g:Label text="Aplazamientos que a la fecha de cierre sobrepasan el plazo máximo legal." styleName="{style.inner-label}"/>
 				</td>
 				<td>
-					<g:TextBox ui:field="MA15947041"  visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+					<g:TextBox ui:field="MA15947041"   styleName="aon-inputText"/>
 				</td>
 				<td>
-					<g:TextBox ui:field="MA15947042"  visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+					<g:TextBox ui:field="MA15947042"   styleName="aon-inputText"/>
 				</td>
 				<td>
-					<g:TextBox ui:field="MA159470419"  visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+					<g:TextBox ui:field="MA159470419"   styleName="aon-inputText"/>
 				</td>
 				<td>
-					<g:TextBox ui:field="MA159470429"  visibleLength="42" maxLength="40" styleName="aon-inputText"/>
+					<g:TextBox ui:field="MA159470429"   styleName="aon-inputText"/>
 				</td>
 			</tr>
 		</table>

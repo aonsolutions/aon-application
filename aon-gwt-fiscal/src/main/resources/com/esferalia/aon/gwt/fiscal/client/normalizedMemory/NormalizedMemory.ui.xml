@@ -76,8 +76,8 @@
 							<g:Label styleName="aon-outputText"></g:Label>
 						</g:HTMLPanel>
 					</g:HTMLPanel>
-					<g:HorizontalPanel  ui:field="horizontal"  styleName="aon-finding-toolbar">
-						
+					<g:HorizontalPanel styleName="aon-finding-toolbar">
+						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 							<g:Button ui:field='newButton'
 								styleName='aon-finding-toolbar-item aon-icon-reset' text="{msg.newAction}" visible="false"/>
 							<g:Button ui:field='saveButton'
@@ -86,14 +86,13 @@
 								styleName='aon-finding-toolbar-item aon-icon-cancel' text="{msg.cancelAction}" visible="false"/>
 							<g:Button ui:field='deleteButton'
 								styleName='aon-finding-toolbar-item aon-icon-delete' text="{msg.deleteAction}" visible="false"/>
-							<!-- g:HTMLPanel ui:field='importButton'  visible="true"/--> 
 							<g:Button ui:field='importButton'
 								styleName='aon-finding-toolbar-item aon-icon-file-upload' text="Importar" visible="true"/>
 							
 							<g:Button ui:field='generateFileButton'
 								styleName='aon-finding-toolbar-item aon-icon-aeat' text="Exportar" visible="true"/>
 							<g:Anchor ui:field="download" visible="false"/>							
-					
+						</g:HTMLPanel>
 					</g:HorizontalPanel>
 				</g:HorizontalPanel>
 			</g:FlowPanel>

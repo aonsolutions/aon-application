@@ -1,12 +1,10 @@
 package com.esferalia.aon.gwt.fiscal.client.normalizedMemory;
 
-import gwtupload.client.DecoratedFileUpload;
 import gwtupload.client.IFileInput.FileInputType;
 import gwtupload.client.IUploader;
 import gwtupload.client.IUploader.OnFinishUploaderHandler;
 import gwtupload.client.IUploader.OnStartUploaderHandler;
 import gwtupload.client.SingleUploader;
-import gwtupload.client.Uploader;
 
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
@@ -18,9 +16,6 @@ import com.esferalia.aon.gwt.fiscal.shared.Memory;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -28,13 +23,10 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DecoratorPanel;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
@@ -83,8 +75,6 @@ public class NormalizedMemory extends ResizeComposite {
 	Anchor download;							
 	
 
-	@UiField HorizontalPanel horizontal;
-
 	
 	
 	// selected item content panel
@@ -95,9 +85,12 @@ public class NormalizedMemory extends ResizeComposite {
 	String page;
 	public NormalizedMemory(Enterprise enterprise,String page) {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
+		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
+
 		RESOURCES.css().ensureInjected();
 		depositType = new Label();
 		saveButton = new Button();
+       
         
 		cancelButton = new Button();
 		this.enterprise = enterprise;
@@ -108,9 +101,6 @@ public class NormalizedMemory extends ResizeComposite {
 		Widget ui = MODEL_NORMALIZED_MEMORY_BINDER.createAndBindUi(this);
 		initWidget(ui);
 		depositType.setText("Abreviado");
-		//SingleUploader upload = newUploader();
-		//horizontal.add(upload);
-		
 		
 		inma.isModify(enterprise.getDocument(),new AsyncCallback<Boolean>() {
 			
@@ -215,11 +205,22 @@ public class NormalizedMemory extends ResizeComposite {
 	@UiHandler("importButton")
 	void onImportButtonClick(ClickEvent event) {
 		String url = GWT.getModuleBaseURL()+"gwt_deposit_upload";
-		DepositDialog popup = new DepositDialog("Importar Deposito","import", enterprise, url) {
+		DepositDialog popup = new DepositDialog("Importar Deposito","import", enterprise, GWT.getModuleBaseURL()) {
 
 			@Override
 			protected void onAccept() {
-				//action
+				inma.saveDeposit(enterprise.getDocument(), enterprise.getDomain(), new AsyncCallback<Void>() {
+					
+					@Override
+					public void onSuccess(Void result) {
+						update();
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						
+					}
+				});
 				hide();
 			}
 
@@ -230,7 +231,7 @@ public class NormalizedMemory extends ResizeComposite {
 			
 		};
 		
-		popup.setStyleName("gwt-PopupPanel-template");
+		popup.addStyleName("gwt-PopupPanel-template");
 		popup.setGlassEnabled(true);
 		popup.show();
 		
@@ -275,108 +276,8 @@ public class NormalizedMemory extends ResizeComposite {
 			public void onSuccess(Void result) {
 				saveButton.setEnabled(false);
 				cancelButton.setVisible(false);
-				switch (page) {
-				case "IDA":
-					Header1 h1 = (Header1) pagesPanel.getWidget(0);
-					h1.init();
-					break;
-				case "MAT1":
-					FreeText ft = (FreeText) pagesPanel.getWidget(0);
-					ft.init();
-					break;
-				case "MAT2":
-					FreeText ft2 = (FreeText) pagesPanel.getWidget(0);
-					ft2.init();
-					break;
-				case "MAT3":
-					FreeText ft3 = (FreeText) pagesPanel.getWidget(0);
-					ft3.init();
-					break;
-				case "MA3":
-					Paragraph3_2 p32 = (Paragraph3_2) pagesPanel.getWidget(0);
-					p32.init();
-					break;
-				case "MAT4":
-					FreeText ft4 = (FreeText) pagesPanel.getWidget(0);
-					ft4.init();
-					break;
-				case "MAT5":
-					FreeText ft5 = (FreeText) pagesPanel.getWidget(0);
-					ft5.init();
-					break;
-				case "MA5":
-					Paragraph5_2 p52 = (Paragraph5_2) pagesPanel.getWidget(0);
-					p52.init();
-					break;
-				case "MAT6":
-					FreeText ft6 = (FreeText) pagesPanel.getWidget(0);
-					ft6.init();
-					break;
-				case "MA6":
-					Paragraph6_2 p62= (Paragraph6_2) pagesPanel.getWidget(0);
-					p62.init();
-					break;
-					
-				case "MAT7":
-					FreeText ft7 = (FreeText) pagesPanel.getWidget(0);
-					ft7.init();
-					break;
-				case "MA7":
-					Paragraph7_2 p72 = (Paragraph7_2) pagesPanel.getWidget(0);
-					p72.init();
-					break;
-				case "MAT8":
-					FreeText ft8 = (FreeText) pagesPanel.getWidget(0);
-					ft8.init();
-					break;
-				case "MAT9":
-					FreeText ft9 = (FreeText) pagesPanel.getWidget(0);
-					ft9.init();
-					break;
-				case "MA10":
-					Paragraph10 p10 = (Paragraph10) pagesPanel.getWidget(0);
-					p10.init();
-					break;
-				case "MAT11":
-					FreeText ft11 = (FreeText) pagesPanel.getWidget(0);
-					ft11.init();
-					break;
-				case "MA11":
-					Paragraph11_2 p112 = (Paragraph11_2) pagesPanel.getWidget(0);
-					p112.init();
-					break;
-				case "MAT12":
-					FreeText ft12 = (FreeText) pagesPanel.getWidget(0);
-					ft12.init();
-					break;
-				case "MA12":
-					Paragraph12_2 p122 = (Paragraph12_2) pagesPanel.getWidget(0);
-					p122.init();
-					break;
-				case "MAT13":
-					FreeText ft13 = (FreeText) pagesPanel.getWidget(0);
-					ft13.init();
-					break;
-				case "MA13":
-					Paragraph13_2 p132 = (Paragraph13_2) pagesPanel.getWidget(0);
-					p132.init();
-					break;
-				case "MAT14":
-					FreeText ft14 = (FreeText) pagesPanel.getWidget(0);
-					ft14.init();
-					break;
-				case "MA14":
-					Paragraph14_2 p142 = (Paragraph14_2) pagesPanel.getWidget(0);
-					p142.init();
-					break;
-				case "MA15":
-					Paragraph15 p15 = (Paragraph15) pagesPanel.getWidget(0);
-					p15.init();
-					break;
-				default:
-					break;
-				}
-
+				
+				update();
 			}
 			
 			@Override
@@ -452,6 +353,110 @@ public class NormalizedMemory extends ResizeComposite {
 		
 	}
 	
+	
+	private void update(){
+		switch (page) {
+		case "IDA":
+			Header1 h1 = (Header1) pagesPanel.getWidget(0);
+			h1.init();
+			break;
+		case "MAT1":
+			FreeText ft = (FreeText) pagesPanel.getWidget(0);
+			ft.init();
+			break;
+		case "MAT2":
+			FreeText ft2 = (FreeText) pagesPanel.getWidget(0);
+			ft2.init();
+			break;
+		case "MAT3":
+			FreeText ft3 = (FreeText) pagesPanel.getWidget(0);
+			ft3.init();
+			break;
+		case "MA3":
+			Paragraph3_2 p32 = (Paragraph3_2) pagesPanel.getWidget(0);
+			p32.init();
+			break;
+		case "MAT4":
+			FreeText ft4 = (FreeText) pagesPanel.getWidget(0);
+			ft4.init();
+			break;
+		case "MAT5":
+			FreeText ft5 = (FreeText) pagesPanel.getWidget(0);
+			ft5.init();
+			break;
+		case "MA5":
+			Paragraph5_2 p52 = (Paragraph5_2) pagesPanel.getWidget(0);
+			p52.init();
+			break;
+		case "MAT6":
+			FreeText ft6 = (FreeText) pagesPanel.getWidget(0);
+			ft6.init();
+			break;
+		case "MA6":
+			Paragraph6_2 p62= (Paragraph6_2) pagesPanel.getWidget(0);
+			p62.init();
+			break;
+			
+		case "MAT7":
+			FreeText ft7 = (FreeText) pagesPanel.getWidget(0);
+			ft7.init();
+			break;
+		case "MA7":
+			Paragraph7_2 p72 = (Paragraph7_2) pagesPanel.getWidget(0);
+			p72.init();
+			break;
+		case "MAT8":
+			FreeText ft8 = (FreeText) pagesPanel.getWidget(0);
+			ft8.init();
+			break;
+		case "MAT9":
+			FreeText ft9 = (FreeText) pagesPanel.getWidget(0);
+			ft9.init();
+			break;
+		case "MA10":
+			Paragraph10 p10 = (Paragraph10) pagesPanel.getWidget(0);
+			p10.init();
+			break;
+		case "MAT11":
+			FreeText ft11 = (FreeText) pagesPanel.getWidget(0);
+			ft11.init();
+			break;
+		case "MA11":
+			Paragraph11_2 p112 = (Paragraph11_2) pagesPanel.getWidget(0);
+			p112.init();
+			break;
+		case "MAT12":
+			FreeText ft12 = (FreeText) pagesPanel.getWidget(0);
+			ft12.init();
+			break;
+		case "MA12":
+			Paragraph12_2 p122 = (Paragraph12_2) pagesPanel.getWidget(0);
+			p122.init();
+			break;
+		case "MAT13":
+			FreeText ft13 = (FreeText) pagesPanel.getWidget(0);
+			ft13.init();
+			break;
+		case "MA13":
+			Paragraph13_2 p132 = (Paragraph13_2) pagesPanel.getWidget(0);
+			p132.init();
+			break;
+		case "MAT14":
+			FreeText ft14 = (FreeText) pagesPanel.getWidget(0);
+			ft14.init();
+			break;
+		case "MA14":
+			Paragraph14_2 p142 = (Paragraph14_2) pagesPanel.getWidget(0);
+			p142.init();
+			break;
+		case "MA15":
+			Paragraph15 p15 = (Paragraph15) pagesPanel.getWidget(0);
+			p15.init();
+			break;
+		default:
+			break;
+		}
+	}
 	
 	
 	

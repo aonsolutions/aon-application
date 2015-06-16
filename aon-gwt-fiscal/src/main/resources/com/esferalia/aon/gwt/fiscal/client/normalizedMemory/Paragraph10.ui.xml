@@ -26,7 +26,7 @@
 		<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
 			<tr>
 				<td colspan="3">
-					<g:Label text="Detalle de la cuenta de perdidas y ganancias" styleName="{aonResources.css.aonPageHeader}"/>
+					<g:Label text="Detalle de la cuenta de pérdidas y ganancias" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 			</tr>
 			<tr>
@@ -40,7 +40,7 @@
 			</tr>
 			<tr>
 				<td>
-					<g:Label text="1.Consumo de mercaderias" styleName="{style.inner-label}"/>
+					<g:Label text="1.Consumo de mercaderías" styleName="{style.inner-label}"/>
 				</td>
 				<td>
 					<g:TextBox ui:field="MA1095000" visibleLength="42" maxLength="40" styleName="aon-inputText" />
@@ -95,7 +95,7 @@
 			</tr>
 						<tr>
 				<td>
-					<g:Label text=" b) Variacion de existencias" styleName="{style.inner-label}"/>
+					<g:Label text=" b) Variación de existencias" styleName="{style.inner-label}"/>
 				</td>
 				<td>
 					<g:TextBox ui:field="MA1095005" visibleLength="42" maxLength="40" styleName="aon-inputText" />
@@ -161,7 +161,7 @@
 			</tr>
 						<tr>
 				<td>
-					<g:Label text=" b) Variacion de existencias" styleName="{style.inner-label}"/>
+					<g:Label text=" b) Variación de existencias" styleName="{style.inner-label}"/>
 				</td>
 				<td>
 					<g:TextBox ui:field="MA1095011" visibleLength="42" maxLength="40" styleName="aon-inputText" />
@@ -216,7 +216,7 @@
 			</tr>
 			<tr>
 				<td>
-					<g:Label text="4.Otros gastos de explotacion" styleName="{style.inner-label}"/>
+					<g:Label text="4.Otros gastos de explotación" styleName="{style.inner-label}"/>
 				</td>
 				<td>
 					<g:TextBox ui:field="MA1095016" visibleLength="42" maxLength="40" styleName="aon-inputText" />
@@ -227,7 +227,7 @@
 			</tr>
 			<tr>
 				<td>
-					<g:Label text=" a) Perdidas y deterioro de operaciones comerciales" styleName="{style.inner-label}"/>
+					<g:Label text=" a) Pérdidas y deterioro de operaciones comerciales" styleName="{style.inner-label}"/>
 				</td>
 				<td>
 					<g:TextBox ui:field="MA1095017" visibleLength="42" maxLength="40" styleName="aon-inputText" />
@@ -238,7 +238,7 @@
 			</tr>
 			<tr>
 				<td>
-					<g:Label text=" b) Resto de gastos de explotacion" styleName="{style.inner-label}"/>
+					<g:Label text=" b) Resto de gastos de explotación" styleName="{style.inner-label}"/>
 				</td>
 				<td>
 					<g:TextBox ui:field="MA1095018" visibleLength="42" maxLength="40" styleName="aon-inputText" />
@@ -249,7 +249,7 @@
 			</tr>
 			<tr>
 				<td>
-					<g:Label text="4.Venta de bienes y prestacion de servicios producidos por permuta d bienes no monetarios y servicios" styleName="{style.inner-label}"/>
+					<g:Label text="4.Venta de bienes y prestación de servicios producidos por permuta de bienes no monetarios y servicios" styleName="{style.inner-label}"/>
 				</td>
 				<td>
 					<g:TextBox ui:field="MA1095019" visibleLength="42" maxLength="40" styleName="aon-inputText" />
