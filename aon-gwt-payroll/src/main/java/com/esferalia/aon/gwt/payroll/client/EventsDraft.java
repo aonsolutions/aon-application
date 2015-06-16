@@ -790,7 +790,6 @@ public class EventsDraft extends ResizeComposite {
 					copyDateRangeListBox.setSelectedIndex(copyDateRangeListBox
 							.getItemCount() - 1);
 				}
-
 			}
 
 			@Override

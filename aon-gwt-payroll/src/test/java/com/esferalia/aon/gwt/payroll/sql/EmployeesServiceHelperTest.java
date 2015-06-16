@@ -24,7 +24,6 @@ public class EmployeesServiceHelperTest extends AbstractSQLTestCase {
 
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
-
 		DomainRecord domainI = newDomain(aonContext);
 
 		for (BonusType bonusType : BonusType.values())

@@ -14,10 +14,9 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraft.DateField;
-import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.BooleanEventMetaData;
-import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.DecimalEventMetaData;
-import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.EnumEventMetaData;
-import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.EventMetaData;
+import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraftObject.BooleanEventMetaData;
+import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraftObject.DecimalEventMetaData;
+import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraftObject.EventMetaData;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
@@ -344,7 +343,7 @@ public class Employees extends ResizeComposite implements
 							agreement != null ? agreement.getId() : null,
 							employeesService,
 							// @formatter:off
-							new EnumEventMetaData("DESEMPE\u00D1O",
+							new AbstractEventsDraftObject.EnumEventMetaData("DESEMPE\u00D1O",
 									"DESEMPE\u00D1O",
 									"Desempe\u00F1o por Trabajador y Jornada",
 									"", new String[] { "4", "8", "10", "12",

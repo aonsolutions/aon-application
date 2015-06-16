@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.Date;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.client.CalendarDraftObjectData.CalendarEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Position;
@@ -24,8 +25,10 @@ public abstract class AbstractEventsDraft extends ResizeComposite {
 			DateField getDateField();
 	
 			Date getStart(Date date);
+			
+			Date getEnd(Date date);
 	
-			Date getNext(Date date);
+			Date getNext(Date date);		
 	
 			Date getPrevious(Date date);
 	
@@ -64,6 +67,11 @@ public abstract class AbstractEventsDraft extends ResizeComposite {
 			public Date getStart(Date date) {
 				return DateUtils.getFirstDayOfWorkWeek(date);
 			}
+			
+			@Override
+			public Date getEnd(Date date) {			
+				return DateUtils.getLastDayOfWorkWeek(date);
+			}
 	
 			@Override
 			public Date getNext(Date date) {
@@ -75,8 +83,8 @@ public abstract class AbstractEventsDraft extends ResizeComposite {
 			@Override
 			public Date getPrevious(Date date) {
 				Date next = CalendarUtil.copyDate(date);
-				CalendarUtil.addDaysToDate(next, -1 * WEEK_DAYS);
-				return next;
+				//CalendarUtil.addDaysToDate(next, -1 * WEEK_DAYS);
+				return DateUtils.getFirstDayOfWorkWeek(next);
 			}
 	
 			@Override
@@ -131,6 +139,11 @@ public abstract class AbstractEventsDraft extends ResizeComposite {
 			public Date getStart(Date date) {
 				return DateUtils.getFirstDayOfMonth(date);
 			}
+			
+			@Override
+			public Date getEnd(Date date) {				
+				return DateUtils.getLastDayOfMonth(date);
+			}
 	
 			@Override
 			public Date getNext(Date date) {
@@ -141,9 +154,8 @@ public abstract class AbstractEventsDraft extends ResizeComposite {
 	
 			@Override
 			public Date getPrevious(Date date) {
-				Date prev = CalendarUtil.copyDate(date);
-				CalendarUtil.addMonthsToDate(prev, -1);
-				return prev;
+				Date prev = CalendarUtil.copyDate(date);				
+				return DateUtils.getFirstDayOfMonth(prev);
 			}
 	
 			@Override
@@ -200,6 +212,11 @@ public abstract class AbstractEventsDraft extends ResizeComposite {
 			@Override
 			public Date getStart(Date date) {
 				return DateUtils.getFirstDayOfYear(date);
+			}
+			
+			@Override
+			public Date getEnd(Date date) {			
+				return DateUtils.getLastDayOfYear(date);
 			}
 	
 			@Override

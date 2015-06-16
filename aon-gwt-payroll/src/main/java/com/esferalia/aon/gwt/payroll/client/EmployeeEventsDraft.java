@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.EmployeeEventsDraftObject.SaveCallback;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Events.Event;
@@ -156,6 +155,9 @@ public class EmployeeEventsDraft extends AbstractEventsDraft {
 			Date endDate = EmployeeEventsDraft.this.getEndDate(col);
 			String name = EmployeeEventsDraft.this.getSelectedEvent();
 			Event cellValue = new Event();
+			// *************
+			//Check cabecera
+			// *************
 			cellValue.setName(name);
 			cellValue.setEndDate(endDate);
 			cellValue.setStartDate(startDate);
@@ -192,7 +194,6 @@ public class EmployeeEventsDraft extends AbstractEventsDraft {
 			Set<String> consumedEvents = cell.getConsumedEvents();
 			return consumedEvents != null && consumedEvents.contains(eventType);
 		}
-
 	}
 
 	@UiField
@@ -303,13 +304,24 @@ public class EmployeeEventsDraft extends AbstractEventsDraft {
 
 	@UiHandler("previousDateRangeButton")
 	void onPreviousDateRangeButton(ClickEvent event) {
-		DateRange dateRange = getDateRange();
+		
+//		DateRange dateRange = getDateRange();
 
+//		Date endDate = employeeDraftObject.getStartDate();
+//		CalendarUtil.addDaysToDate(endDate, -1);
+
+//		Date startDate = dateRange.getPrevious(employeeDraftObject
+//				.getStartDate());
+//		
+//		Date endDate = dateRange.getPrevious(employeeDraftObject
+//				.getEndDate());
+		
+		DateRange dateRange = getDateRange();
+		
 		Date endDate = employeeDraftObject.getStartDate();
 		CalendarUtil.addDaysToDate(endDate, -1);
-		Date startDate = dateRange.getPrevious(employeeDraftObject
-				.getStartDate());
-
+		Date startDate = dateRange.getPrevious(endDate);
+		
 		employeeDraftObject.setPeriod(startDate, endDate,
 				new EmployeeEventsDraftObject.Callback() {
 
@@ -449,11 +461,11 @@ public class EmployeeEventsDraft extends AbstractEventsDraft {
 
 			for (int i = 0; i < splits.length; i++) {
 
-				Date start = splits[i];
-				Date end = DateUtils
-						.getPrevDay(i + 1 < splits.length ? splits[i + 1]
-								: dateRange.getNext(employeeDraftObject
-										.getStartDate()));
+//				Date start = splits[i];
+//				Date end = DateUtils
+//						.getPrevDay(i + 1 < splits.length ? splits[i + 1]
+//								: dateRange.getNext(employeeDraftObject
+//										.getStartDate()));
 
 				SafeHtmlBuilder sb = new SafeHtmlBuilder();
 
