@@ -23,6 +23,21 @@
 		</plugins>
 	</build>
 	<dependencies>
+	
+		<!--
+			******************************************************************
+			¡¡ANALIZAR EXHAUSTIVAMENTE SI ES NECESARIO CREAR UNA DEPENDENCIA!!  
+			******************************************************************
+		 -->
+
+
+
+
+		<!--
+			******************************************************************
+			******************************************************************
+		 -->
+		
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.pool</artifactId>
@@ -66,14 +81,7 @@
 			<version>2.2.4.Final</version>
 			<scope>compile</scope>
 		</dependency>
-		
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
-		</dependency>
-
-		
+	
 		<!-- Used to marshall unmarshall Mod390 declaration --> 
 		<dependency>
     		<groupId>com.sun.xml.bind</groupId>

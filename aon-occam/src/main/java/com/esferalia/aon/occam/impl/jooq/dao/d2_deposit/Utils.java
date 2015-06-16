@@ -23,7 +23,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -33,6 +32,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Cabecera;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves.Clave;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 
 
@@ -50,7 +50,7 @@ public class Utils {
 		fos.close();
 		FileInputStream fis = new FileInputStream("/tmp/"+schema.getCabecera().getCIF()+".xml");
 
-		return IOUtils.toByteArray(fis);
+		return AonIOUtils.toByteArray(fis);
 	}
 	
 	public static Esquema readXml(byte[] xmlFile) throws JAXBException{

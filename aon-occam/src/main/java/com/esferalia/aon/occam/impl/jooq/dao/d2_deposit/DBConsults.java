@@ -5,7 +5,10 @@ import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.jooq.Record1;
 import org.jooq.Record2;
@@ -13,6 +16,7 @@ import org.jooq.Record3;
 import org.jooq.Record7;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 public class DBConsults {
 
@@ -34,7 +38,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static File getXmlFile(String domain, Integer domainId) {
+	public static File getXmlFile(String domain, Integer domainId) throws IOException {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
@@ -51,12 +55,21 @@ public class DBConsults {
 			
 				
 				
-			File f = new File("/tmp/DEPOSITO.xml"); 
+			File f = File.createTempFile("","");
 			byte[] data;
 			if(record != null){
 				data = record.value5();
 				try {
-					org.apache.commons.io.FileUtils.writeByteArrayToFile(f, data);
+					FileInputStream fi =  new FileInputStream(f);
+					OutputStream out = null;
+			        try {
+			            out = openOutputStream(f);
+			            
+			          
+			            out.write(data);
+			        } finally {
+			            AonIOUtils.closeQuietly(out);
+			        }
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -67,6 +80,26 @@ public class DBConsults {
 			if (ctx != null) ctx.close();
 		}
 	}
+	
+	  
+    public static FileOutputStream openOutputStream(File file) throws IOException {
+        if (file.exists()) {
+            if (file.isDirectory()) {
+                throw new IOException("File '" + file + "' exists but is a directory");
+            }
+            if (file.canWrite() == false) {
+                throw new IOException("File '" + file + "' cannot be written to");
+            }
+        } else {
+            File parent = file.getParentFile();
+            if (parent != null && parent.exists() == false) {
+                if (parent.mkdirs() == false) {
+                    throw new IOException("File '" + file + "' could not be created");
+                }
+            }
+        }
+        return new FileOutputStream(file);
+    }
 	
 	public static Esquema getDeposit(String domain , Integer domainId){
 		AONContext ctx = null;
