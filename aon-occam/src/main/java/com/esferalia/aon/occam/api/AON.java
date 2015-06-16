@@ -1039,6 +1039,17 @@ public class AON {
 		return getFiscal().dumpAEATMod2002014(mod200);
 	}
 
+	public static Mod2002014 importMod2002013(String domainName, int domain,
+			Mod2002014 mod200) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain);
+			return getFiscal().importMod2002013(ctx,mod200);	
+		} finally {
+			if (ctx != null) ctx.close();	
+		}
+	}
+	
 	// ----------------------------------MODELO 390
 	public static ArrayList<Mod390> getMod390s(String domainName, int domainId) {
 		AONContext ctx = null;
@@ -1168,5 +1179,6 @@ public class AON {
 	public static void deleteFee(AONContext ctx, Stream<Fee> fs){
 		getFee().deleteFee(ctx, fs);
 	}
+
 
 }

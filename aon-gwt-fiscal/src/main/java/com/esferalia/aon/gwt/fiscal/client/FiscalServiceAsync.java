@@ -138,11 +138,13 @@ public interface FiscalServiceAsync {
 	void getMod2002014ById(String domainName, int domain, int id,AsyncCallback<Mod2002014> callback);
 	void saveMod2002014(String domainName, int domain, Mod2002014 mod200,AsyncCallback<Mod2002014> callback);
 	void validateMod2002014(Mod2002014 mod200, AsyncCallback<Mod2002014> callback);
+	void importMod2002013(String domainName, int domain, Mod2002014 mod200,AsyncCallback<Mod2002014> callback);
 
 	// --------------------------------------------------------------- NORMALIZED MEMORY
 	void readMemory(Memory memory, AsyncCallback<Memory> callback);
 	void saveMemory(Memory memory, AsyncCallback<Memory> callback);
 	void deleteMemory(Memory memory, AsyncCallback<Void> callback);
+
 
 
 }

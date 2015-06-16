@@ -478,6 +478,12 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 		return AON.dumpAEATMod2002014(mod200);
 	}
 
+	@Override
+	public Mod2002014 importMod2002013(String domainName, int domain,
+			Mod2002014 mod200) throws AonCoreException {
+		return AON.importMod2002013(domainName, domain, mod200);
+	}
+
 	// --------------------------------------------------------------- NORMALIZED MEMORY
 	@Override
 	public Memory readMemory(Memory memory) throws AonCoreException {
@@ -493,5 +499,6 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	public void deleteMemory(Memory memory) throws AonCoreException {
 		// TODO
 	}
+
 	
 }

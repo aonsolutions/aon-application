@@ -27,6 +27,8 @@ public class Mod2002014 implements IFiscalModel {
 		PYMES;
 	}
 	
+	private boolean initializedFromLastYear;
+	
 	private Integer id;
 	private int domain;
 	private int year;
@@ -73,6 +75,13 @@ public class Mod2002014 implements IFiscalModel {
 
 	private List<ValidationMessage2014> messages;
 
+	public boolean isInitializedFromLastYear() {
+		return initializedFromLastYear;
+	}
+	public void setInitializedFromLastYear(boolean initializedFromLastYear) {
+		this.initializedFromLastYear = initializedFromLastYear;
+	}
+	
 	@Override
 	public Integer getId() {
 		return id;

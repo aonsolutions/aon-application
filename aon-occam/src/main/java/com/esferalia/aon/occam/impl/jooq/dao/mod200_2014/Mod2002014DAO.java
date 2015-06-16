@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Secretary;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.DoubleVariable2014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014.BalanceType;
@@ -42,9 +43,11 @@ import com.esferalia.aon.occam.api.model.type.CNAE;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.mod200_2013.Mod2002013DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2013.jaxb.MOD2002013;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.MOD2002014;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.Mod2002014toMOD2002014;
+import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod2002014Import2013;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
@@ -439,50 +442,59 @@ public class Mod2002014DAO  {
 	}
 	
 	public static Mod2002014 initializeNewMod200(AONContext ctx, Mod2002014 mod200) {
-		mod200.setPeriodType(1);
-		mod200.setPeriodStart(AonDateUtils.getYearFirstDay(mod200.getYear()));
-		mod200.setPeriodEnd(AonDateUtils.getYearLastDay(mod200.getYear()));
-
-		mod200.setBalanceType( BalanceType.ABREVIADO );
-		mod200.setPygType(BalanceType.ABREVIADO );
-		
-		FiscalParameters fiscalParameters = AppParamDAO.getFiscalParameters(ctx);
-		
-		mod200.setEnterprise(fiscalParameters.getCompany());
-		mod200.setEnterpriseDocument(fiscalParameters.getDocument());
-		mod200.setEnterpriseName(fiscalParameters.getName());
-		mod200.setEnterprisePhone1(fiscalParameters.getContactPhone());
-		mod200.setEnterprisePhone2(fiscalParameters.getContactCellular());
-		Administration adm = fiscalParameters.getAdministration(Administration.COMMON_TERRITORY);
-		mod200.setAdministration(adm);
+		Mod2002013 old= Mod2002013DAO.getByYear(ctx, 2013);
+		if (old != null) {
+			Mod2002014Import2013.import2013(mod200,old);
+			mod200.setInitializedFromLastYear(true);
+		} else {
+			mod200.setPeriodType(1);
+			mod200.setPeriodStart(AonDateUtils.getYearFirstDay(mod200.getYear()));
+			mod200.setPeriodEnd(AonDateUtils.getYearLastDay(mod200.getYear()));
+	
+			mod200.setBalanceType( BalanceType.ABREVIADO );
+			mod200.setPygType(BalanceType.ABREVIADO );
+			
+			FiscalParameters fiscalParameters = AppParamDAO.getFiscalParameters(ctx);
+			
+			mod200.setEnterprise(fiscalParameters.getCompany());
+			mod200.setEnterpriseDocument(fiscalParameters.getDocument());
+			mod200.setEnterpriseName(fiscalParameters.getName());
+			mod200.setEnterprisePhone1(fiscalParameters.getContactPhone());
+			mod200.setEnterprisePhone2(fiscalParameters.getContactCellular());
+			Administration adm = fiscalParameters.getAdministration(Administration.COMMON_TERRITORY);
+			mod200.setAdministration(adm);
+			mod200.setInitializedFromLastYear(false);
+		}
 		return mod200;
 	}
 
 	
 	public static Mod2002014 initializeMod200(AONContext ctx, Mod2002014 mod200) {
-		List<CompanyAdministrator> adms = CompanyDAO.getDirStaff(ctx, mod200.getDomain());
-		if ( adms != null && adms.size() > 0 ) {
-			for (CompanyAdministrator ca : adms ) {
-				if (ca.isAdministrator()) {
-					mod200.getAdministrators().add(ca);
+		if (!mod200.isInitializedFromLastYear()) {
+			List<CompanyAdministrator> adms = CompanyDAO.getDirStaff(ctx, mod200.getDomain());
+			if ( adms != null && adms.size() > 0 ) {
+				for (CompanyAdministrator ca : adms ) {
+					if (ca.isAdministrator()) {
+						mod200.getAdministrators().add(ca);
+					}
+					if (ca.isShareholder()) {
+						CompanyParticipation cp = new CompanyParticipation();
+						cp.setDocument(ca.getDocument());
+						cp.setName(ca.getName());
+						cp.setProvince(ca.getProvince());
+						cp.setPercent(ca.getPercent());
+						cp.setNominalValue(ca.getNominalValue());
+						cp.setRepresentative(ca.isRepresentative());
+						mod200.getParticipationsIn().add(cp);		
+					}
+					if (ca.isRepresentative()) {
+						LegalRepresentative lr = new LegalRepresentative();
+						lr.setDocument(ca.getDocument());
+						lr.setName(ca.getName());
+						mod200.getRepresentatives().add(lr);		
+					}
 				}
-				if (ca.isShareholder()) {
-					CompanyParticipation cp = new CompanyParticipation();
-					cp.setDocument(ca.getDocument());
-					cp.setName(ca.getName());
-					cp.setProvince(ca.getProvince());
-					cp.setPercent(ca.getPercent());
-					cp.setNominalValue(ca.getNominalValue());
-					cp.setRepresentative(ca.isRepresentative());
-					mod200.getParticipationsIn().add(cp);		
-				}
-				if (ca.isRepresentative()) {
-					LegalRepresentative lr = new LegalRepresentative();
-					lr.setDocument(ca.getDocument());
-					lr.setName(ca.getName());
-					mod200.getRepresentatives().add(lr);		
-				}
-																							}
+			}
 		}
 
 		Mod2002014MVELContext mvelCtx = new Mod2002014MVELContext( mod200, ACCEPTER );
@@ -824,5 +836,10 @@ public class Mod2002014DAO  {
 		} catch (JAXBException e) {
 			throw new AonCoreException(e.getMessage(),e);
 		}				
+	}
+
+	public static Mod2002014 importMod2002013(AONContext ctx, Mod2002014 mod200) {
+		Mod2002013 old= Mod2002013DAO.getByYear(ctx, 2013);
+		return Mod2002014Import2013.import2013(old);
 	}	
 }

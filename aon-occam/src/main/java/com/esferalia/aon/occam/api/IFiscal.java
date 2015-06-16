@@ -119,5 +119,6 @@ public interface IFiscal {
 	public Mod2002014 saveMod2002014(AONContext ctx, Mod2002014 mod200);
 	public void deleteMod2002014(AONContext ctx, int id);
 	public String dumpAEATMod2002014(Mod2002014 mod200);
+	public Mod2002014 importMod2002013(AONContext ctx, Mod2002014 mod200);
 
 }

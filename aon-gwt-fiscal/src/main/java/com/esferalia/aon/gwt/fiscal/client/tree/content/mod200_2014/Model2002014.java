@@ -542,4 +542,21 @@ public class Model2002014 extends ResizeComposite  {
 			mod200Object.calculate();
 	}
 	
+	@UiHandler("importButton")
+	void onImportButtonClick(ClickEvent event) {
+		UploadDialog ud = new UploadDialog(new UploadDialog.AcceptCallBack() {
+			
+			@Override
+			public void onCancel() {
+				Window.alert("Cancel");
+			}
+			
+			@Override
+			public void onAccept() {
+				Window.alert("Accept");
+			}
+		},AON.MSG.import2013(),AON.MSG.officialFile2013());
+		ud.onShow();
+	}
+
 }

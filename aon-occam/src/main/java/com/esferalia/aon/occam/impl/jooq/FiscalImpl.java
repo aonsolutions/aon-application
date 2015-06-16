@@ -436,4 +436,9 @@ public class FiscalImpl implements IFiscal {
 	public String dumpAEATMod2002014(Mod2002014 mod200) {
 		return Mod2002014DAO.dumpAEAT(mod200);
 	}
+
+	@Override
+	public Mod2002014 importMod2002013(AONContext ctx, Mod2002014 mod200) {
+		return Mod2002014DAO.importMod2002013(ctx,mod200);
+	}
 }

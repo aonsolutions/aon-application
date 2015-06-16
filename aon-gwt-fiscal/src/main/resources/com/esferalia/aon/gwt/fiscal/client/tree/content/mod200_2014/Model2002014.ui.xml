@@ -27,7 +27,7 @@
 							<g:Button ui:field='initializeButton'
 								styleName='aon-finding-toolbar-item aon-icon-accept' text="{msg.continueAction}" />
 							<g:Button ui:field='importButton'
-								styleName='aon-finding-toolbar-item aon-icon-upload' text="{msg.continueAction}" />
+								styleName='aon-finding-toolbar-item aon-icon-moveUp' text="{msg.import2013}" />
 							<g:Button ui:field='saveButton'
 								styleName='aon-finding-toolbar-item aon-icon-accept' text="{msg.saveAction}" />
 							<g:Button ui:field='removeButton'

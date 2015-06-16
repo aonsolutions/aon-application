@@ -1719,14 +1719,21 @@ public class Mod2002014Import2013 {
 		}
 	}
 	
-	public static Mod2002014 import2013(Mod2002013 mod200old) {
+	public static void import2013(Mod2002014 mod2002014,Mod2002013 mod2002013) {
+		try {
+			Pages2014.fill(mod2002013, mod2002014);
+		} catch (Exception e) {
+			throw new AonCoreException(e);
+		}
+	}
+
+	public static Mod2002014 import2013(Mod2002013 mod2002013) {
 		
 		try {
 			// Creamos el objeto Mod200 donde importaremos todos los datos del fichero
-			Mod2002014 mod200new = new Mod2002014();
-			Pages2014.fill(mod200old, mod200new);
-			return mod200new;
-			
+			Mod2002014 mod2002014 = new Mod2002014();
+			import2013(mod2002014, mod2002013);
+			return mod2002014;
 		} catch (Exception e) {
 			throw new AonCoreException(e);
 		}
