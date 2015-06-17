@@ -37,12 +37,14 @@
 							<g:Button ui:field='calculateButton'
 								styleName='aon-finding-toolbar-item aon-icon-calc' text="{msg.calculateAction}" />
 							<g:CheckBox ui:field='calculateCheck' text="{msg.authomaticCalculation}"/>
+<!--
 							<g:Button ui:field='aeatFileButton'
 								styleName='aon-finding-toolbar-item aon-icon-aeat' text="{msg.generateFile}" />
 							<g:Button ui:field='aeatPrintButton'
 								styleName='aon-finding-toolbar-item aon-icon-aeat' text="{msg.printViaAeat}" />
 							<g:Button ui:field='aeatAccountingFileButton'
 								styleName='aon-finding-toolbar-item aon-icon-aeat-bw' text="{msg.aeatAccountingFile}" />
+-->
 						</g:HTMLPanel>
 						<g:FlowPanel ui:field="formContainer" />
 					</g:HorizontalPanel>

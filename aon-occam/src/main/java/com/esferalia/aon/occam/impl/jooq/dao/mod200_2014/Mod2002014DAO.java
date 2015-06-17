@@ -443,7 +443,7 @@ public class Mod2002014DAO  {
 	
 	public static Mod2002014 initializeNewMod200(AONContext ctx, Mod2002014 mod200) {
 		Mod2002013 old= Mod2002013DAO.getByYear(ctx, 2013);
-		if (old != null) {
+		if (old != null && old.getId() != null) {
 			Mod2002014Import2013.import2013(mod200,old);
 			mod200.setInitializedFromLastYear(true);
 		} else {
@@ -607,10 +607,10 @@ public class Mod2002014DAO  {
 		if (period == null) {
 			throw new AonCoreException("Ejercicio '"+mod200.getYear()+"' no encontrado.");
 		}
-		if (!period.isClosed()) {
-			throw new AonCoreException("Cierre el ejercicio contable '"+mod200.getYear()+"' para poder continuar.");
-		}
-		params.setPeriodId(period.getId());
+//		if (!period.isClosed()) {
+//			throw new AonCoreException("Cierre el ejercicio contable '"+mod200.getYear()+"' para poder continuar.");
+//		}
+//		params.setPeriodId(period.getId());
 		params.setStartDate(period.getInitiationDate());
 		params.setEndDate(period.getDeadline());
 		return params;

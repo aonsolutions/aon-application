@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
 
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
@@ -37,7 +38,9 @@ import com.esferalia.aon.occam.api.model.type.Activities.Type3Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type4Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type7Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.TypeActivity;
+import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod2002014Import2013;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 /**
  * The server side implementation of the RPC service.
@@ -436,7 +439,18 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	
 	@Override
 	public Mod2002014 initializeMod2002014(String domainName, int domain, Mod2002014 mod200) {
-		return AON.initializeMod2002014(domainName,domain,mod200);
+		HttpServletRequest request = getThreadLocalRequest();
+		try {
+			Mod2002013 mod2002013 = (Mod2002013) request.getSession().getAttribute("Mod2002013Import");
+			if (!AonStringUtils.equals( mod2002013.getDocument(), mod200.getDocument())) {
+				throw new AonCoreException("El NIF del documento importado no coincide");
+			}
+			Mod2002014Import2013.import2013(mod200, mod2002013);
+			mod200.setInitializedFromLastYear(true);
+			return AON.initializeMod2002014(domainName,domain,mod200);
+		} catch ( Throwable t) {
+			throw new AonCoreException(t);
+		}
 	}
 
 	@Override

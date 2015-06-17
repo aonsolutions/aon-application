@@ -432,8 +432,9 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 		        					TreeNode<Mod2002014TreeObject> node = 
 		        						TreeNodeFiscalModelTypes.CORPORATE_TAX_2014.getInstance().render(parentNode
 		            		    			,TreeNodeFiscalModelTypes.MODEL_200_2014.getFiscalModel(mod200));
+		        					getFiscalModelsNode().setState(true);
 		            		    	parentNode.setState(true);
-	            		    		tree.setSelectedItem(node);	
+	            		    		tree.setSelectedItem(node);
 								}
 			
 								@Override

@@ -69,12 +69,12 @@ public class Model2002014 extends ResizeComposite  {
 	Button validateButton;
 	@UiField
 	Button calculateButton;
-	@UiField
-	Button aeatAccountingFileButton;
-	@UiField
-	Button aeatFileButton;
-	@UiField
-	Button aeatPrintButton;
+//	@UiField
+//	Button aeatAccountingFileButton;
+//	@UiField
+//	Button aeatFileButton;
+//	@UiField
+//	Button aeatPrintButton;
 	@UiField
 	CheckBox calculateCheck;
 
@@ -249,7 +249,7 @@ public class Model2002014 extends ResizeComposite  {
 	
 	private void refreshButtonsVisibility() {
 		initializeButton.setVisible(!mod200Object.isInitialized());
-		importButton.setVisible(!mod200Object.isInitialized());
+		importButton.setVisible(!mod200Object.isInitialized() && !mod200Object.getMod200().isInitializedFromLastYear());
 		saveButton.setVisible(mod200Object.isInitialized());
 		removeButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
 		validateButton.setVisible(mod200Object.isInitialized());
@@ -257,10 +257,9 @@ public class Model2002014 extends ResizeComposite  {
 		calculateButton.setVisible(mod200Object.isInitialized() && !calculateCheck.isVisible());
 
 		//aeatAccountingFileButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() == null);
-		aeatAccountingFileButton.setVisible(false);
-		
-		aeatFileButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
-		aeatPrintButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
+//		aeatAccountingFileButton.setVisible(false);
+//		aeatFileButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
+//		aeatPrintButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
 	}
 	
 	protected void raiseException(Throwable t) {
@@ -481,7 +480,7 @@ public class Model2002014 extends ResizeComposite  {
 			}
 		}
 	}
-	
+	/*
 	@UiHandler("aeatAccountingFileButton")
 	void onAeatAccountingFileButtonClick(ClickEvent event) {
 		Window.alert(
@@ -541,20 +540,28 @@ public class Model2002014 extends ResizeComposite  {
 		if (calculateCheck.getValue())
 			mod200Object.calculate();
 	}
-	
+	*/
 	@UiHandler("importButton")
 	void onImportButtonClick(ClickEvent event) {
-		UploadDialog ud = new UploadDialog(new UploadDialog.AcceptCallBack() {
+		UploadDialog ud = new UploadDialog(AON.MSG.import2013()
+				,mod200Object.getMod200().getDomain()
+				,FiscalTree.getCurrentDomainName()) {
 			
 			@Override
-			public void onCancel() {}
-			
-			@Override
-			public void onAccept(String xmlResults) {
-				Window.alert("Accept");
+			protected void onCancel() {
+				hide();
 			}
-		},AON.MSG.import2013(),AON.MSG.officialFile2013(),FiscalTree.getCurrentDomainName(),mod200Object.getMod200().getDomain());
-		ud.onShow();
+			
+			@Override
+			protected void onAccept() {
+				hide();
+				onInitializeClick(null);
+			}
+		};
+		ud.addStyleName("gwt-PopupPanel-template");
+		ud.setGlassEnabled(true);
+		ud.center();
+		ud.show();
 	}
 
 }

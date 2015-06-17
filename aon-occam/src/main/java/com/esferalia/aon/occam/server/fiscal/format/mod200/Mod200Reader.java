@@ -2193,7 +2193,7 @@ public class Mod200Reader {
 	public static void main(String argv[]) throws FileNotFoundException {
 		
 		try {
-			String filename = "/AEAT/LOTES/ENVIAR/200/2013";  // directorio por defecto
+			String filename = "/home/ecastellano/AEAT/200/2013";  // directorio por defecto
 			
 			// Mostrar una ventana de dialogo para seleccionar ficheros
 			JFileChooser fc = new JFileChooser();
@@ -2211,10 +2211,9 @@ public class Mod200Reader {
 				System.out.println("***** Fin Fichero : "+filename);
 				System.out.println("");
 	        }	        
-		} 
-//	        catch (Exception e) {
-//			//e.printStackTrace();			
-//		}
+		} catch (Exception e) {
+			e.printStackTrace();			
+		}
 		finally {
 			System.exit(0);
 		}

@@ -491,7 +491,7 @@ public class Model2002013 extends ResizeComposite  {
 				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
 				+ "El fichero se genera a partir de los datos guardados.");
 		diskForm.setAction(GWT.getHostPageBaseURL()
-				+ "/aon_gwt_fiscal/Model200AccountingFile");
+				+ "/aon_gwt_fiscal/Model2002013AccountingFile");
 		modIdHidden.setValue(String.valueOf(mod200Object.getMod200().getId()));
 		domainIdHidden.setValue(String.valueOf(FiscalTree.getCurrentDomain()));
 		domainNameHidden.setValue(FiscalTree.getCurrentDomainName());
@@ -507,7 +507,7 @@ public class Model2002013 extends ResizeComposite  {
 				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
 				+ "El fichero se genera a partir de los datos guardados.");
 		diskForm.setAction(GWT.getHostPageBaseURL()
-				+ "/aon_gwt_fiscal/Model200File");
+				+ "/aon_gwt_fiscal/Model2002013File");
 		modIdHidden.setValue(String.valueOf(mod200Object.getMod200().getId()));
 		domainIdHidden.setValue(String.valueOf(FiscalTree.getCurrentDomain()));
 		domainNameHidden.setValue(FiscalTree.getCurrentDomainName());
@@ -523,7 +523,7 @@ public class Model2002013 extends ResizeComposite  {
 				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
 				+ "La petici\u00F3n se genera a partir de los datos guardados.");
 		diskForm.setAction(GWT.getHostPageBaseURL()
-				+ "/aon_gwt_fiscal/Model200Print");
+				+ "/aon_gwt_fiscal/Model2002013Print");
 		modIdHidden.setValue(String.valueOf(mod200Object.getMod200().getId()));
 		domainIdHidden.setValue(String.valueOf(FiscalTree.getCurrentDomain()));
 		domainNameHidden.setValue(FiscalTree.getCurrentDomainName());

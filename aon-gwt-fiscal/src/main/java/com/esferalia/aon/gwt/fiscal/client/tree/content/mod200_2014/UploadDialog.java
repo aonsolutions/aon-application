@@ -1,158 +1,174 @@
 package com.esferalia.aon.gwt.fiscal.client.tree.content.mod200_2014;
 
+import gwtupload.client.IFileInput.FileInputType;
+import gwtupload.client.IUploadStatus.Status;
+import gwtupload.client.IUploader;
+import gwtupload.client.IUploader.OnCancelUploaderHandler;
+import gwtupload.client.IUploader.OnFinishUploaderHandler;
+import gwtupload.client.IUploader.OnStartUploaderHandler;
+import gwtupload.client.IUploader.OnStatusChangedHandler;
 import gwtupload.client.SingleUploader;
 
-import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.CustomDialogB;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
-import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 
-public class UploadDialog extends CustomDialog {
-
-	public interface AcceptCallBack {
-		void onAccept(String xmlResults);
-		void onCancel();
+public abstract class UploadDialog extends CustomDialogB {
+	
+	interface Binder extends UiBinder<Widget, UploadDialog>{
+		
 	}
-
-	private AcceptCallBack callback;
-	private Button submit;
-	private CheckBox saveCheck;
-	private FlexTable flexTable;
-//	private long progress = 10;
+	private static final Binder binder = GWT.create(Binder.class);
+	
+	@UiField(provided = true) FlexTable flex_table;
+	@UiField(provided = true) Label label;
+	@UiField Button accept_button;
+	@UiField Button cancel_button;
+	
+	private int domainId;
 	private String domainName;
-	private int domain;
-
-	public UploadDialog(final AcceptCallBack callback,String title, String label, String domainName,int domain) {
-		AON.AON_RESOURCES.css().ensureInjected();
-		this.domainName = domainName; 
-		this.domain = domain;
-		
-		this.callback = callback;
-		setVisible(false);
+	
+	public UploadDialog(String title,int domainId,String domainName) {
+		String url = GWT.getModuleBaseURL() + "";
 		setCaption(title);
-		setAnimationEnabled(true);
-		setGlassEnabled(true);
-		setModal(true);
+		label = new Label();
+		flex_table = new FlexTable();
+		toImport(url);
+		setWidget(binder.createAndBindUi(this));
+		accept_button.setText("Importar");
+		accept_button.setVisible(true);
+		accept_button.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				onAccept();
+			}
+		});
 		
-		String url = GWT.getHostPageBaseURL() + "/aon_gwt_fiscal/Mod2002013BOEUpload";
-		
-		FlowPanel buttonsPanel = new FlowPanel();
-		buttonsPanel.setStyleName(AON.AON_CSS.aonTextCenter());
-		submit = new Button(AON.MSG.accept());
-		buttonsPanel.add(submit);
-		
-		FlowPanel panel = new FlowPanel();
-		panel.setWidth("550px");
-		panel.setHeight("100px");
-		panel.setStyleName(AON.AON_CSS.aonPadding());
-		flexTable = new FlexTable();	
-		flexTable.setStyleName(AON.AON_CSS.aonPanelGrid());
-		flexTable.addStyleName(AON.AON_CSS.aonWidthAll());
-		flexTable.setCellSpacing(0);
-		flexTable.setWidget(0, 0, new Label(label));
-		flexTable.setWidget(0, 1, newUploader(url));
-		panel.add(flexTable);
-		saveCheck = new CheckBox();
-		saveCheck.setName("saveCheck");
-		saveCheck.setText(AON.MSG.saveImportedModel());
-		saveCheck.setValue(true);
-		saveCheck.setEnabled(false);
-		panel.add(saveCheck);
-		panel.add(buttonsPanel);
-		this.setWidget(panel);
+		cancel_button.setText("Cancelar");
+		cancel_button.setVisible(true);
+		cancel_button.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onCancel();
+			}
+		});
 	}
 	
-	@Override
-	public void onClose() {
-		this.hide();
-		callback.onCancel();
-	}
-
-	public void onShow() {
-		center();
-		show();
-	}
-
+	protected abstract void onAccept();
 	
+	protected abstract void onCancel();
+	
+	private void toImport(String url){
+		flex_table.setStyleName("aon-panelGrid");
+		flex_table.setWidth("400px");
+		flex_table.setBorderWidth(1);
+		flex_table.setCellSpacing(0);
+		flex_table.setWidget(0, 0, new Label("Fichero"));
+		flex_table.setWidget(0, 1, newUploader(url+"Mod2002013BOEUpload"
+						+ "?domainId="+domainId
+						+ "&domainName="+domainName));
+		flexTableCss();
+	}
+	
+	
+	
+	long progress = 10;
+	SingleUploader up;
+	String urlAux;
+	private SingleUploader newUploader(String url) {
 
-	private SingleUploader newUploader(final String url) {
-		final SingleUploader upload =  new SingleUploader();
+		
+		SingleUploader upload=  new SingleUploader(FileInputType.BROWSER_INPUT);
+		
+		
 		upload.setAutoSubmit(true);
-		upload.setServletPath(url);
+        upload.setServletPath(url);
+        
         upload.getForm().getWidget().getElement().getChild(1).removeFromParent();
         upload.getForm().setAction(url);
         upload.getForm().setEncoding(FormPanel.ENCODING_MULTIPART);
         upload.getForm().setMethod(FormPanel.METHOD_POST);
-        upload.add(new Hidden("domainId",String.valueOf(this.domain)));
-        upload.add(new Hidden("domainName",this.domainName));
+        upload.setTitle("uploadFormElement");
         upload.avoidEmptyFiles(true);
+       
+        up = upload; urlAux = url;
+        upload.addOnCancelUploadHandler(new OnCancelUploaderHandler() {
+        	String url = urlAux;
+        	@Override
+			public void onCancel(IUploader uploader) {
+        		SingleUploader upload1 = newUploader(url);
+        		flex_table.setWidget(0, 1, upload1);
+			}
+		});
         
-//        upload.addOnCancelUploadHandler(new OnCancelUploaderHandler() {
-//        	@Override
-//			public void onCancel(IUploader uploader) {
-//        		SingleUploader upload1 = newUploader(url);
-//        		flexTable.setWidget(0, 1, upload1);
-//			}
-//		});
-//        
-//        upload.addOnStatusChangedHandler(new OnStatusChangedHandler() {
-//        	@Override
-//			public void onStatusChanged(IUploader uploader) {
-//				if(upload.getStatus() != Status.SUCCESS){
-//					upload.getStatusWidget().setProgress(progress, 100);
-//				}
-//				else{
-//					upload.getStatusWidget().setProgress(100, 100);
-//				}	
-//				progress=progress+20;
-//			}
-//		});
-//
-//        upload.addOnStartUploadHandler(new OnStartUploaderHandler() {
-//			@Override
-//			public void onStart(IUploader uploader) {
-//				upload.getStatusWidget().setVisible(true);
-//			}
-//		});
-//        upload.addOnFinishUploadHandler(new OnFinishUploaderHandler() {
-//			@Override
-//			public void onFinish(IUploader uploader) {
-//				upload.getStatusWidget().setProgress(100, 100);
-//				upload.getStatusWidget().setStatus(Status.DONE);
-//				upload.getStatusWidget().setVisible(true);
-////				progress = 0;
-//				upload.reset();
-//			}
-//		});
+        upload.addOnStatusChangedHandler(new OnStatusChangedHandler() {
+        	SingleUploader upload = up;
+			@Override
+			public void onStatusChanged(IUploader uploader) {
+				if(upload.getStatus() != Status.SUCCESS){
+			
+					upload.getStatusWidget().setProgress(progress, 100);
+			
+				}
+				else{
+					upload.getStatusWidget().setProgress(100, 100);
+				}	
+				progress=progress+20;
+				//upload.addStatusBar(uploader.getStatusWidget());
+			}
+		});
+
+        upload.addOnStartUploadHandler(new OnStartUploaderHandler() {
+        	SingleUploader upload = up;
+			@Override
+			public void onStart(IUploader uploader) {
+				upload.getStatusWidget().setVisible(true);
+			}
+		});
         
-        upload.getForm().addSubmitCompleteHandler(new SubmitCompleteHandler() {
+        upload.addOnFinishUploadHandler(new OnFinishUploaderHandler() {
+        	SingleUploader upload = up;
+			@Override
+			public void onFinish(IUploader uploader) {
+				upload.getStatusWidget().setProgress(100, 100);
+				upload.getStatusWidget().setStatus(Status.DONE);
+				upload.getStatusWidget().setVisible(true);
+				progress = 0;		
+			}
+		});
+        upload.getForm().addSubmitCompleteHandler( new SubmitCompleteHandler() {
+        	SingleUploader upload = up;
 			@Override
 			public void onSubmitComplete(SubmitCompleteEvent event) {
-                String xml = event.getResults();
-                callback.onAccept(xml);                
-                upload.getForm().getWidget().getElement().getChild(0).removeFromParent();
-                hide();
-			}
-			
-		});
-        submit.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				upload.submit();
-			}
+				upload.getForm().getWidget().getElement().getChild(0).removeFromParent();
+				}
 		});
         return upload;
 		
+	}
+	
+	public void flexTableCss(){
+		for (int i = 0; i < flex_table.getRowCount(); i++) {
+			for (int j = 0; j < flex_table.getCellCount(i); j++) {
+				if ((j % 2) == 0) {
+					flex_table.getCellFormatter().setStyleName(i, j,
+							"aon-panelGrid-odd");
+				} else {
+					flex_table.getCellFormatter().setStyleName(i, j,
+							"aon-panelGrid-even");
+				}
+			}
+		}
 	}
 }
