@@ -35,10 +35,13 @@ import org.jooq.Record4;
 import org.jooq.Record5;
 import org.jooq.Record6;
 import org.jooq.Result;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.company.Department;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Series;
+import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
 import com.esferalia.aon.gwt.template.server.AuditInfo;
@@ -54,7 +57,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 
 public class DBStock {
-
+	
 	static String stockquery ;
 	static String inventoryquery ;
 	
@@ -119,7 +122,7 @@ public class DBStock {
 							
 						s.setDomainId(domainId);
 						s.setItemId(itemId);
-						
+					
 						Result<Record1<Integer>> data2 = sctx.getDslContext().select(INVENTORY_DETAIL.ID).from(INVENTORY_DETAIL)
 						.where(INVENTORY_DETAIL.ITEM.eq(itemId))
 						.and(INVENTORY_DETAIL.INVENTORY.eq(inventoryId)).fetch();
@@ -198,52 +201,89 @@ public class DBStock {
 			Vector<Integer> updateIds = new Vector<Integer>();
 			
 			stock.stream().forEach(s ->{
-				
 				String code = s.getProduct();
 				
-				Record1<Integer> data = sctx.getDslContext().select(PRODUCT.ID)
+				if(code != null){
+					Result<Record2<Integer, Double>> data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE)
+						.from(ITEM)
+						.where(ITEM.BARCODE.eq(s.getProduct())).and(ITEM.DOMAIN.eq(domainId)).fetch();
+					if(data.isEmpty()){
+
+						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE)
+								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+								.where(PRODUCT.CODE.eq(s.getProduct()))
+										.and(PRODUCT.DOMAIN.eq(domainId)).fetch();
+					}
+					if(data.size()>1){
+						Condition detail = ITEM.DETAIL.eq(s.getDetail());
+						if(s.getDetail() == "") 
+							detail = ITEM.DETAIL.eq("").or(ITEM.DETAIL.isNull());
+						
+						Condition detail2 = ITEM.DETAIL2.eq(s.getDetail2());
+						if(s.getDetail2() == "") 
+							detail2 = ITEM.DETAIL2.eq("").or(ITEM.DETAIL2.isNull());
+						
+						Condition detail3 = ITEM.DETAIL3.eq(s.getDetail3());
+						if(s.getDetail3() == "") 
+							detail3 = ITEM.DETAIL3.eq("").or(ITEM.DETAIL3.isNull());
+						
+						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE)
+								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+								.where(PRODUCT.CODE.eq(s.getProduct()))
+									.and(detail)
+									.and(detail2)
+									.and(detail3)
+									.and(PRODUCT.DOMAIN.eq(domainId)).fetch();
+					}
+				/*	Record1<Integer> data = sctx.getDslContext().select(PRODUCT.ID)
 						.from(PRODUCT)
 						.where(PRODUCT.CODE.eq(code).and(PRODUCT.DOMAIN.eq(domainId))).fetchOne();
-				
-				Record1<Integer> record = sctx.getDslContext().select(ITEM.ID)
+			
+					Record1<Integer> record = sctx.getDslContext().select(ITEM.ID)
 						.from(ITEM)
 						.where(ITEM.PRODUCT.eq(data.value1()))
 						.fetchOne();
+				*/
+					// TODO update
+					if(!data.isEmpty()){
+						ProposalInfo pi = new ProposalInfo();
+						pi.setQuantity(s.getQuantity());
+						pi.setDomain(domainId);
+						pi.setProposal(proposal);
+						pi.setItem(data.get(0).value1());
+						pi.setStatus((byte) 0); 
+						pi.setDescription("");
+						pi.setDiscount((double) 0);
+						Double[] supplier = getSupplier(sctx, workplace, domainId,pi.getItem());
 				
-				// TODO update
-				
-				ProposalInfo pi = new ProposalInfo();
-				pi.setQuantity(s.getQuantity());
-				pi.setDomain(domainId);
-				pi.setProposal(proposal);
-				pi.setItem(record.value1());
-				pi.setStatus((byte) 0); 
-				pi.setDescription("");
-				pi.setDiscount((double) 0);
-				Double[] supplier = getSupplier(sctx, workplace, domainId,pi.getItem());
-				
-				if (supplier[0] != -1){
-					pi.setPrice(supplier[1]);
-					if(isCatalogue(sctx,pi)){
-						Timestamp t = new Timestamp(ai.getDate().getTime());
-						if(isProposal(sctx,pi)){
-							pi = getProposal(sctx,pi);
-							updateIds.add(pi.getId());
-							proposalUpdateQuery.values(pi.getId(), pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), supplier[0].intValue(), ai.getUsername(), t);
+						if (supplier[0] != -1){
+							pi.setPrice(supplier[1]);
+							if(isCatalogue(sctx,pi)){
+								Timestamp t = new Timestamp(ai.getDate().getTime());
+								if(isProposal(sctx,pi)){
+									pi = getProposal(sctx,pi);
+									updateIds.add(pi.getId());
+									proposalUpdateQuery.values(pi.getId(), pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), supplier[0].intValue(), ai.getUsername(), t);
+								}
+								else
+									proposalInsertQuery.values(pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), supplier[0].intValue(), ai.getUsername(), t, ai.getUsername(), t);
+							}
+							else{
+								v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
+								error.setError(false);
+								error.setTextError(v);
+							}
 						}
-						else
-							proposalInsertQuery.values(pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), supplier[0].intValue(), ai.getUsername(), t, ai.getUsername(), t);
-					}
-					else{
+						else{
+							v.add("*Fila " +(s.getRow()+1) + " : El producto no dispone de un proveedor asignable.");
+							error.setError(false);
+							error.setTextError(v);
+						}
+					}else{
 						v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
 						error.setError(false);
 						error.setTextError(v);
 					}
-				}
-				else{
-					v.add("*Fila " +(s.getRow()+1) + " : El producto no dispone de un proveedor asignable.");
-					error.setError(false);
-					error.setTextError(v);
 				}
 			});
 			if(error.getError()){
