@@ -423,6 +423,7 @@ public class ReservationInvoicing implements IReservationConstants {
 	private void createServiceDetails(Invoice invoice, ProjectReservation reservation, ReservationInvoiceTo reservationInvoiceTo) throws ManagerBeanException {
 		int line = 0;
 		IPriceStrategy strategy = PriceStrategyFactory.getPriceStrategy();
+		ReservationUtils reservationUtils = new ReservationUtils();
 
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		IManagerBean reservationServiceBean = BeanManager.getManagerBean(ProjectReservationService.class);
@@ -433,6 +434,7 @@ public class ReservationInvoicing implements IReservationConstants {
 				reservationService.setProjectReservation(reservation);
 				reservationService.setItem(service.getItem());
 				reservationService.setDescription(service.getItem().getProduct().getName());
+				reservationService.setMealPlan(reservationUtils.obtainMealPlan(service.getItem().getDetail()));
 				reservationService.setProjectReservationRoom(reservationInvoiceTo.getRoom().getId());
 				reservationService.setExtra(true);
 				reservationService = (ProjectReservationService)reservationServiceBean.insert(reservationService);

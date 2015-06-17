@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.25.0
+# Version: 8.25.1
 # Created by: girazu
-# Creation Date: 09/06/2015 19:45
+# Creation Date: 17/06/2015 12:55
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -3878,9 +3878,13 @@ CREATE TABLE `warehouse` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Almacen',
   `workplace` int(4) default NULL COMMENT 'Identificador del Centro de Trabajo',
+  `department` int(4) default NULL COMMENT 'Identificador del Departamento',
+  `active` tinyint(1) NOT NULL default '1' COMMENT 'Indica si el Almacen esta activo o no',
   PRIMARY KEY  (`id`),
   KEY `IDX_WAREHOUSE_WORKPLACE` (`workplace`),
   KEY `IDX_WAREHOUSE_DOMAIN` (`domain`),
+  KEY `IDX_WAREHOUSE_DEPARTMENT` (`department`),
+  CONSTRAINT `FK_WAREHOUSE_DEPARTMENT` FOREIGN KEY (`department`) REFERENCES `department` (`id`),
   CONSTRAINT `FK_WAREHOUSE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_WAREHOUSE_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Almacenes';
@@ -5041,6 +5045,7 @@ CREATE TABLE `proposal` (
   `issue_date` date default NULL COMMENT 'Fecha de emision de la Propuesta',
   `department` int(4) default NULL COMMENT 'Identificador del Departamento',
   `workplace` int(4) NOT NULL COMMENT 'Identificador del Centro de Trabajo',
+  `warehouse` int(4) default NULL COMMENT 'Identificador del Almacen',
   `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
   `remarks` text collate latin1_spanish_ci COMMENT 'Observaciones de la Propuesta',
   `item_return` tinyint(1) default '0' COMMENT 'Indica si es una devolucion',
@@ -5057,10 +5062,12 @@ CREATE TABLE `proposal` (
   KEY `IDX_PROPOSAL_WORKPLACE` (`workplace`),
   KEY `IDX_PROPOSAL_DEPARTMENT` (`department`),
   KEY `IDX_PROPOSAL_TRANSFER_PROPOSAL` (`transfer_proposal`),
+  KEY `IDX_PROPOSAL_WAREHOUSE` (`warehouse`),
   CONSTRAINT `FK_PROPOSAL_DEPARTMENT` FOREIGN KEY (`department`) REFERENCES `department` (`id`),
   CONSTRAINT `FK_PROPOSAL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_PROPOSAL_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
   CONSTRAINT `FK_PROPOSAL_TRANSFER_PROPOSAL` FOREIGN KEY (`transfer_proposal`) REFERENCES `proposal` (`id`),
+  CONSTRAINT `FK_PROPOSAL_WAREHOUSE` FOREIGN KEY (`warehouse`) REFERENCES `warehouse` (`id`),
   CONSTRAINT `FK_PROPOSAL_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Propuestas de Compra';
 
@@ -5116,6 +5123,7 @@ CREATE TABLE `purchase` (
   `comments` text collate latin1_spanish_ci COMMENT 'Comentarios del Pedido',
   `remarks` text collate latin1_spanish_ci COMMENT 'Observaciones del Pedido',
   `workplace` int(4) NOT NULL COMMENT 'Identificador del Centro de Trabajo',
+  `warehouse` int(4) default NULL COMMENT 'Identificador del Almacen',
   `scope` int(4) NOT NULL default '1' COMMENT 'Ambito del Pedido',
   `number_of_pymnts` smallint(2) default '0' COMMENT 'Numero de Vencimientos',
   `days_to_first_pymnt` smallint(2) default '0' COMMENT 'Dias al primer Vencimiento',
@@ -5148,6 +5156,7 @@ CREATE TABLE `purchase` (
   KEY `IDX_PURCHASE_DOMAIN` (`domain`),
   KEY `IDX_PURCHASE_RADDRESS` (`address`),
   KEY `IDX_PURCHASE_CARRIER` (`carrier`),
+  KEY `IDX_PURCHASE_WAREHOUSE` (`warehouse`),
   CONSTRAINT `FK_PURCHASE_CARRIER` FOREIGN KEY (`carrier`) REFERENCES `carrier` (`registry`),
   CONSTRAINT `FK_PURCHASE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_PURCHASE_PAY_METHOD` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`),
@@ -5155,6 +5164,7 @@ CREATE TABLE `purchase` (
   CONSTRAINT `FK_PURCHASE_RADDRESS` FOREIGN KEY (`address`) REFERENCES `raddress` (`id`),
   CONSTRAINT `FK_PURCHASE_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
   CONSTRAINT `FK_PURCHASE_SUPPLIER` FOREIGN KEY (`supplier`) REFERENCES `supplier` (`registry`),
+  CONSTRAINT `FK_PURCHASE_WAREHOUSE` FOREIGN KEY (`warehouse`) REFERENCES `warehouse` (`id`),
   CONSTRAINT `FK_PURCHASE_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Pedidos de Compra';
 
@@ -6586,7 +6596,7 @@ CREATE TABLE `project_reservation_service` (
   `service_code` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Codigo del Servicio en origen',
   `item` int(4) NOT NULL COMMENT 'Identificador del Servicio',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
-  `meal_plan` tinyint(2) default '0' COMMENT 'Regimen',
+  `meal_plan` varchar(3) collate latin1_spanish_ci default NULL COMMENT 'Regimen',
   `project_reservation_room` int(4) default NULL COMMENT 'Identificador de la Habitacion de la Reserva',
   `extra` tinyint(1) NOT NULL default '0' COMMENT 'Indica si se trata de un Servicio extra',
   `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
@@ -7933,6 +7943,7 @@ CREATE TABLE `workplace_department` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `workplace` int(4) NOT NULL COMMENT 'Identificador del Centro de Trabajo',
   `department` int(4) NOT NULL COMMENT 'Identificador del Departamento',
+  `warehouse` int(4) default NULL COMMENT 'Identificador del Almacen',
   `catalogue` int(4) default NULL COMMENT 'Identificador del Catalogo',
   `active` tinyint(1) default '1' COMMENT 'Indica si el Departamento esta activo o no',
   PRIMARY KEY  (`id`),
@@ -7940,14 +7951,16 @@ CREATE TABLE `workplace_department` (
   KEY `IDX_WORKPLACE_DEPARTMENT_WORKPLACE` (`workplace`),
   KEY `IDX_WORKPLACE_DEPARTMENT_DEPARTMENT` (`department`),
   KEY `IDX_WORKPLACE_DEPARTMENT_CATALOGUE` (`catalogue`),
+  KEY `IDX_WORKPLACE_DEPARTMENT_WAREHOUSE` (`warehouse`),
   CONSTRAINT `FK_WORKPLACE_DEPARTMENT_CATALOGUE` FOREIGN KEY (`catalogue`) REFERENCES `catalogue` (`id`),
   CONSTRAINT `FK_WORKPLACE_DEPARTMENT_DEPARTMENT` FOREIGN KEY (`department`) REFERENCES `department` (`id`),
   CONSTRAINT `FK_WORKPLACE_DEPARTMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_WORKPLACE_DEPARTMENT_WAREHOUSE` FOREIGN KEY (`warehouse`) REFERENCES `warehouse` (`id`),
   CONSTRAINT `FK_WORKPLACE_DEPARTMENT_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.25.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.25.1');
 
 COMMIT;
 

@@ -733,14 +733,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 
 	private Item obtainServiceItemComposition(Item roomItem, String mealPlanValue) throws ManagerBeanException {
 		if (StringUtils.isNotBlank(mealPlanValue)) {
-			MealPlan mealPlan = null;
-			for (MealPlan mealPlanTmp : MealPlan.values()) {
-				if (mealPlanTmp.getValue().equals(mealPlanValue) || mealPlanTmp.getCrsValue().equals(mealPlanValue)) {
-					mealPlan = mealPlanTmp;
-					break;
-				}
-			}
-
+			MealPlan mealPlan = obtainMealPlan(mealPlanValue);
 			if (mealPlan != null) {
 				if (mealPlan != MealPlan.SA) {
 					IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
@@ -823,8 +816,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		return comments;
 	}
 
-	public String obtainServiceMealPlan(Service service) {
-		//Devolver un ReservationMealPlan
+	public MealPlan obtainServiceMealPlan(Service service) {
 		String comments = "";
 		if (service.getServiceDetails() != null && service.getServiceDetails().getComments() != null) {
 			for (int i=0; i<service.getServiceDetails().getComments().sizeOfCommentArray(); i++) {
@@ -834,7 +826,16 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 				}
 			}
 		}
-		return comments;
+		return obtainMealPlan(comments);
+	}
+
+	public MealPlan obtainMealPlan(String mealPlanValue) {
+		for (MealPlan mealPlan : MealPlan.values()) {
+			if (mealPlan.getValue().equals(mealPlanValue) || mealPlan.getCrsValue().equals(mealPlanValue)) {
+				return mealPlan;
+			}
+		}
+		return null;
 	}
 
 	public boolean isServiceBreakdown(Item item) throws ManagerBeanException {

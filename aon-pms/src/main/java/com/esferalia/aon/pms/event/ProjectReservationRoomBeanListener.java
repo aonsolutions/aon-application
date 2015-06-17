@@ -4,12 +4,18 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservationRoom;
+import com.esferalia.aon.pms.ProjectReservationService;
 import com.esferalia.aon.pms.sql.SQLBooking;
 import com.esferalia.aon.pms.sql.SQLUtils;
 
@@ -56,5 +62,18 @@ public class ProjectReservationRoomBeanListener extends ManagerBeanListenerAdapt
     		to.setForceRefreshBooking(false);
     	}
     }
+
+	@Override
+	public void beanRemoved(ManagerBeanEvent evt) throws ManagerBeanException {
+		ProjectReservationRoom to = (ProjectReservationRoom)evt.getTo();
+		IManagerBean reservationServiceBean = BeanManager.getManagerBean(ProjectReservationService.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ROOM), to.getId());
+		for (ITransferObject ito : reservationServiceBean.getList(criteria)) {
+			ProjectReservationService reservationService = (ProjectReservationService)ito;
+			reservationService.setProjectReservationRoom(null);
+			reservationServiceBean.update(reservationService);
+		}
+	}
 
 }

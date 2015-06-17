@@ -756,6 +756,7 @@ public class ReservationRequestManager implements IReservationConstants {
 		reservationService.setServiceCode(serviceCode);
 		reservationService.setItem(serviceItem);
 		reservationService.setDescription(serviceItem.getProduct().getName());
+		reservationService.setMealPlan(getReservationUtils().obtainMealPlan(serviceItem.getDetail()));
 		reservationService.setProjectReservationRoom(reservationRoom.getId());
 		reservationService = (ProjectReservationService)BeanManager.getManagerBean(ProjectReservationService.class).insert(reservationService);
 

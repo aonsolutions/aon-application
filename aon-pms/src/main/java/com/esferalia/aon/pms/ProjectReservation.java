@@ -39,6 +39,7 @@ import com.code.aon.registry.Registry;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.ProjectReservationDB;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
+import com.esferalia.aon.pms.enumeration.MealPlan;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationSource;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
@@ -215,8 +216,9 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_ID), getId());
 		criteria.addOrder(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_GUEST_INDEX));
-		for (ITransferObject ito : reservationGuestBean.getList(criteria)) {
-			ProjectReservationGuest reservationGuest = (ProjectReservationGuest)ito;
+		List<ITransferObject> reservationGuestList = reservationGuestBean.getList(criteria);
+		if (reservationGuestList.size() > 0) {
+			ProjectReservationGuest reservationGuest = (ProjectReservationGuest)reservationGuestList.get(0);
 			return reservationGuest.getFullName();
 		}
 		return null;
@@ -312,6 +314,21 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		String alias = IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID;
 		criteria.addEqualExpression(reservationRoomDetailBean.getFieldName(alias), getId());
 		return reservationRoomDetailBean.getCount(criteria);
+	}
+
+	@Transient
+	public MealPlan getMealPlan() throws ManagerBeanException {
+		IManagerBean reservationServiceBean = BeanManager.getManagerBean(ProjectReservationService.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID), getId());
+		criteria.addNotNullExpression(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_MEAL_PLAN));
+		criteria.addOrder(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_ITEM_PRODUCT_COMPOSITION), false);
+		List<ITransferObject> reservationServiceList = reservationServiceBean.getList(criteria);
+		if (reservationServiceList.size() > 0) {
+			ProjectReservationService reservationService = (ProjectReservationService)reservationServiceList.get(0);
+			return reservationService.getMealPlan();
+		}
+		return null;
 	}
 
 	@Transient

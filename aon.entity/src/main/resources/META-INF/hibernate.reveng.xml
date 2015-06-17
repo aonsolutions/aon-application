@@ -1256,7 +1256,7 @@
 	
 	<table name="project_reservation_service">
 		<column name="service_index" type="int"/>
-		<column name="meal_plan" type="int"/>
+		<column name="meal_plan" type="com.esferalia.aon.pms.enumeration.MealPlan"/>
 	</table>
 	
 	<table name="project_tas">

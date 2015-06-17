@@ -10,11 +10,11 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.opentravel.ota.x2003.x05.AmountType;
 import org.opentravel.ota.x2003.x05.CommentType.Comment;
 import org.opentravel.ota.x2003.x05.ErrorType;
 import org.opentravel.ota.x2003.x05.HotelReservationIDsType;
 import org.opentravel.ota.x2003.x05.HotelReservationIDsType.HotelReservationID;
-import org.opentravel.ota.x2003.x05.AmountType;
 import org.opentravel.ota.x2003.x05.HotelReservationType;
 import org.opentravel.ota.x2003.x05.HotelReservationsType;
 import org.opentravel.ota.x2003.x05.OTAHotelResNotifRQDocument;
@@ -621,6 +621,7 @@ public class ReservationManager implements IReservationConstants {
 		reservationService.setServiceCode(serviceInventoryCode);
 		reservationService.setItem(item);
 		reservationService.setDescription(item.getProduct().getName());
+		reservationService.setMealPlan(getReservationUtils().obtainMealPlan(item.getDetail()));
 		if (roomServicesMap.containsKey(serviceRPH)) {
 			List<Integer> roomList = roomServicesMap.get(serviceRPH);
 			if (roomList.size() > 0) {
