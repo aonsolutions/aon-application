@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.common.client.widget;
 import java.text.ParseException;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -16,8 +17,11 @@ import com.google.gwt.user.client.ui.ValueBox;
 public class DoubleBox extends ValueBox<Double> {
 
 	private static final int VISIBLE_LENGTH = 12;
+	private static final int PRECISION = 2;
 	private static final int MAX_LENGTH = 15;
 	private static final int CHANGE_DISPLAY_MILLIS = 4000;
+	
+	private int precision;
 	
 	private static final Renderer<Double> RENDERER = new AbstractRenderer<Double>() {
 
@@ -50,6 +54,7 @@ public class DoubleBox extends ValueBox<Double> {
 	
 	public DoubleBox(int visibleLength) {
 		super(Document.get().createTextInputElement(), RENDERER, PARSER);
+		setPrecision( PRECISION );
 		setVisibleLength(visibleLength);
 		setMaxLength(MAX_LENGTH);
 		setStyleName(AON.AON_CSS.aonInputText());
@@ -68,6 +73,18 @@ public class DoubleBox extends ValueBox<Double> {
 		});
 	}
 
+	private int getPrecision() {
+		return this.precision;
+	}
+	public void setPrecision(int precision) {
+		this.precision = precision;
+	}
+
+	@Override
+	public void setValue(Double value, boolean fireEvents) {
+		super.setValue(AonMathUtils.round(value,getPrecision()), fireEvents);
+	}
+	
 	public void setValue(Double value, boolean fireEvents, boolean shouldDisplayChange) {
 		setValue(value, fireEvents);
 		if (shouldDisplayChange) {
@@ -81,4 +98,5 @@ public class DoubleBox extends ValueBox<Double> {
 				}.schedule(CHANGE_DISPLAY_MILLIS);
 		}
 	}
+
 }
