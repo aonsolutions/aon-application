@@ -256,4 +256,8 @@ public class Mod2002014TreeObject implements Serializable {
 			}
 		});
 	}
+	
+	public void deleteFromTree() {
+		fiscalTreeCallback.remove(this);
+	}
 }

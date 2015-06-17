@@ -254,10 +254,11 @@ public class Model2002014 extends ResizeComposite  {
 		importButton.setVisible(!mod200Object.isInitialized() && !mod200Object.getMod200().isInitializedFromLastYear());
 		importAccountingButton.setVisible(mod200Object.isInitialized());
 		saveButton.setVisible(mod200Object.isInitialized());
-		removeButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
-		validateButton.setVisible(mod200Object.isInitialized());
-		calculateCheck.setVisible(mod200Object.isInitialized());
-		calculateButton.setVisible(mod200Object.isInitialized() && !calculateCheck.isVisible());
+		removeButton.setVisible(mod200Object.isInitialized());
+		validateButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
+		calculateCheck.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
+		calculateButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null 
+								&& !calculateCheck.isVisible());
 		aeatAccountingFileButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() == null);
 		aeatFileButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
 		aeatPrintButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
@@ -341,32 +342,36 @@ public class Model2002014 extends ResizeComposite  {
 	@UiHandler("removeButton")
 	void onRemoveButtonClick(ClickEvent event) {
 		if (Window.confirm(AON.MSG.confirmDeleteAction())) {
-			final PopupPanel popup = new PopupPanel(false, true);
-			Label label = new Label(AON.MSG.processing());
-			label.addStyleName(AON.AON_CSS.aonTimer());
-			popup.add(label);
-			popup.setGlassEnabled(true);
-			popup.setAnimationEnabled(true);
-			popup.center();
-			try {
-				mod200Object.delete(new AsyncCallback<Void>() {
-					
-					@Override
-					public void onSuccess(Void result) {
-						popup.hide();
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						popup.hide();
-						Window.alert("No se han podido borrar los datos. \n"
-								+"Causa: \n" 
-								+ caught.getMessage());
-					}
-				});
-			} catch (IllegalArgumentException e) {
-				popup.hide();
-				DialogMessages.alertErrorWidget(e.getMessage()).center();
+			if (mod200Object.getMod200().getId() == null) {
+				mod200Object.deleteFromTree();
+			} else {
+				final PopupPanel popup = new PopupPanel(false, true);
+				Label label = new Label(AON.MSG.processing());
+				label.addStyleName(AON.AON_CSS.aonTimer());
+				popup.add(label);
+				popup.setGlassEnabled(true);
+				popup.setAnimationEnabled(true);
+				popup.center();
+				try {
+					mod200Object.delete(new AsyncCallback<Void>() {
+						
+						@Override
+						public void onSuccess(Void result) {
+							popup.hide();
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							popup.hide();
+							Window.alert("No se han podido borrar los datos. \n"
+									+"Causa: \n" 
+									+ caught.getMessage());
+						}
+					});
+				} catch (IllegalArgumentException e) {
+					popup.hide();
+					DialogMessages.alertErrorWidget(e.getMessage()).center();
+				}
 			}
 		}
 	}
