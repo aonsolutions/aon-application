@@ -47,6 +47,7 @@ public class CommonImpl implements ICommon {
 					)
 			);
 	}
+
 	@Override
 	public ArrayList<CompanyBank> getCompanyBanks(AONContext ctx, int enterprise) {
 		return CompanyDAO.getBanks(ctx, enterprise);

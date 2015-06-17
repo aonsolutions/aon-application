@@ -12,10 +12,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod200Reader;
 
@@ -31,12 +32,19 @@ public class Mod2002013BOEUpload extends HttpServlet {
     @Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+    	
         if (!ServletFileUpload.isMultipartContent(request)) {
             response.getWriter().println("Error: Form must has enctype=multipart/form-data.");
             response.getWriter().flush();
             return;
         }
-        DiskFileItemFactory factory = new DiskFileItemFactory();
+        
+		String domainName = request.getParameter("domainName");
+		int domainId = Integer.parseInt(request.getParameter("domainId"));
+		String saveCheck = request.getParameter("saveCheck");
+		System.out.println("saveCheck ...: " + saveCheck);
+
+		DiskFileItemFactory factory = new DiskFileItemFactory();
         factory.setSizeThreshold(MEMORY_THRESHOLD);
         factory.setRepository(new File(System.getProperty("java.io.tmpdir")));
  
@@ -46,18 +54,22 @@ public class Mod2002013BOEUpload extends HttpServlet {
  
         try {
             List<FileItem> formItems = upload.parseRequest(request);
-            
+            System.out.println( "SERVLET ..: " +  formItems.size() );            
             if (formItems != null && formItems.size() > 0) {
                 for (FileItem item : formItems) {
                     if (!item.isFormField()) {
                     	ByteArrayInputStream input = new ByteArrayInputStream(item.get());
-                    	Mod2002013 mod100 = Mod200Reader.getMod2002013(input);
-                    	System.out.println( mod100.toString() ); 
+                    	Mod2002013 mod200 = Mod200Reader.getMod2002013(input);
+                    	mod200.setDomain(domainId);
+                    	Company company = AON.getCompanyForDomain(domainName, domainId);
+                    	mod200.setEnterprise(company.getId());
+                    	AON.saveMod2002013(domainName, domainId, mod200);
                     }
                 }
             }
-        } catch (FileUploadException ex) {
-        	throw new ServletException(ex.getMessage(),ex); 
+        } catch (Exception ex) {
+            response.getWriter().println("Error: " + ex.getMessage());
+            response.getWriter().flush();
         }
 
     }

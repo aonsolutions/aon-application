@@ -547,15 +547,13 @@ public class Model2002014 extends ResizeComposite  {
 		UploadDialog ud = new UploadDialog(new UploadDialog.AcceptCallBack() {
 			
 			@Override
-			public void onCancel() {
-				Window.alert("Cancel");
-			}
+			public void onCancel() {}
 			
 			@Override
-			public void onAccept() {
+			public void onAccept(String xmlResults) {
 				Window.alert("Accept");
 			}
-		},AON.MSG.import2013(),AON.MSG.officialFile2013());
+		},AON.MSG.import2013(),AON.MSG.officialFile2013(),FiscalTree.getCurrentDomainName(),mod200Object.getMod200().getDomain());
 		ud.onShow();
 	}
 

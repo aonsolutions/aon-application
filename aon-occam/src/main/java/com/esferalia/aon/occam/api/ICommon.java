@@ -27,7 +27,7 @@ public interface ICommon {
 	public Enterprise getEnterprise(AONContext ctx, int id);
 	public ArrayList<Enterprise> getParentEnterprises(AONContext ctx,String query);
 	public ArrayList<CompanyBank> getCompanyBanks(AONContext ctx, int enterprise);
-	public Company getCompany(AONContext ctx, int enterprise);
+	public Company getCompany(AONContext ctx, int domain);
 	public ArrayList<CompanyBank> getCompanyBanks(AONContext ctx);
 	
 	// --------------------------------------------

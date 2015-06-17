@@ -1959,9 +1959,12 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Dep\u00F3sito Digital")
 	String digitalDeposit();
 	
-	@DefaultMessage("Importar 2013")
+	@DefaultMessage("Importar Fichero BOE - 2013")
 	String import2013();
 
 	@DefaultMessage("Fichero oficial del Ejercicio 2013")
 	String officialFile2013();
+
+	@DefaultMessage("Guardar la declaraci\u00F3n inclu\u00EDda en el modelo importado.")
+	String saveImportedModel();
 }

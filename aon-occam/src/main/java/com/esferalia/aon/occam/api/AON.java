@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.Agreement;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.BonusFilter;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
@@ -177,6 +178,17 @@ public class AON {
 			return getCommon().getEnterprise(ctx, id);
 		} finally {
 			if (ctx != null) ctx.close();	
+		}
+	}
+
+	public static Company getCompanyForDomain(String domainName, int domainId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			return getCommon().getCompany(ctx, domainId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 
