@@ -324,6 +324,7 @@ public class Mod2002014 implements IFiscalModel {
 	public void removeVariable(DoubleVariable2014 t) {
 		keysMap.remove(t.getKey());
 	}
+	
 	public void addDraftVariable(DoubleVariable2014 t) {
 		draftMap.put( t.getKey(), t);
 	}

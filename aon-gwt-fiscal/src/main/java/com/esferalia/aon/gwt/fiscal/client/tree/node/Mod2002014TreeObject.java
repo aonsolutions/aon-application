@@ -140,7 +140,9 @@ public class Mod2002014TreeObject implements Serializable {
 			
 			@Override
 			public void onSuccess(Mod2002014 result) {
-				setMod200(result);
+				mod200 = result;
+				calculate();
+				fireMod200Changed(mod200);
 				callback.onSuccess(result);
 			}
 			
