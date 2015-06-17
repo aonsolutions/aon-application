@@ -57,6 +57,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	private boolean forceRefreshBooking;
 	private double vatPercent;
 	private double realDiscountPercent;
+	private Double advancedAmount;
 	private Set<ProjectReservationGuest> guests = new HashSet<ProjectReservationGuest>();
 	private Set<ProjectReservationRoom> rooms = new HashSet<ProjectReservationRoom>();
 	private Set<Invoice> invoices = new HashSet<Invoice>();
@@ -98,6 +99,22 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 	public void setRealDiscountPercent(double realDiscountPercent) {
 		this.realDiscountPercent = CommonUtil.round(realDiscountPercent, 6);
+	}
+
+	@Transient
+	public Double getAdvancedAmount() {
+		if (advancedAmount == null) {
+			ReservationUtils reservationUtils = new ReservationUtils();
+			try {
+				advancedAmount = reservationUtils.getReservationAdvancedAmount(getId());
+			} catch (ManagerBeanException ex) {
+				LOGGER.error("Error obtaining advanced amount", ex);
+			}
+		}
+		return advancedAmount;
+	}
+	public void setAdvancedAmount(Double advancedAmount) {
+		this.advancedAmount = advancedAmount;
 	}
 
 	@OneToMany(mappedBy = "projectReservation", cascade={CascadeType.REMOVE})
@@ -446,12 +463,6 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 
 	@Transient
-	public double getAdvancedAmount() throws ManagerBeanException {
-		ReservationUtils reservationUtils = new ReservationUtils();
-		return reservationUtils.getReservationAdvancedAmount(getId());
-	}
-
-	@Transient
 	public double getPendingAmount() throws ManagerBeanException {
 		return CommonUtil.round(getTotal() - getAdvancedAmount());
 	}
@@ -481,8 +492,8 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 			alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA;
 			criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), false);
 			return reservationServiceDetailBean.getList(criteria);
-		} catch (ManagerBeanException e) {
-			LOGGER.error("Error obtaining services list", e);
+		} catch (ManagerBeanException ex) {
+			LOGGER.error("Error obtaining services list", ex);
 		}
 		return null;
 	}

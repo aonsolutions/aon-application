@@ -751,6 +751,7 @@ public class ProjectReservationController extends BasicController implements IPm
 
 				reservation.setAdvanceInvoiced(true);
 				reservation.setAdvance(0);
+        		reservation.setAdvancedAmount(null);
 				accept(event);
 				setSelectedTab(INVOICE);
 			}
@@ -1177,6 +1178,9 @@ public class ProjectReservationController extends BasicController implements IPm
 				}
 			}
 
+			if (getInvoiceToRectify().isAdvance()) {
+				reservation.setAdvancedAmount(null);
+			}
 			if (getInvoiceToRectify().isService()) {
 				IController reservationServiceController = (IController)AonUtil.getRegisteredBean(RESERVATION_SERVICE_CONTROLLER_NAME);
 				reservationServiceController.onSearch(null);

@@ -309,7 +309,7 @@ public class ProjectReservationPermission implements Serializable {
 	public boolean isNewReservationRoomAllowed() {
 		Date now = new Date();
 		boolean roleAllowed = (isRoleCommercial() && !isAfterCheckOut(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
-		return roleAllowed && reservation.isActive() && !reservation.isEarlyCheckOut() && isMyScope();
+		return roleAllowed && reservation.isActive() && reservation.getAdvancedAmount() == 0 && !reservation.isEarlyCheckOut() && isMyScope();
 	}
 
 	public boolean isSelectReservationRoomAllowed() {
@@ -329,7 +329,7 @@ public class ProjectReservationPermission implements Serializable {
 	public boolean isRemoveReservationRoomAllowed() throws ManagerBeanException {
 		Date now = new Date();
 		boolean roleAllowed = (isRoleCommercial() && !isAfterCheckOut(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
-		return roleAllowed && reservation.isActive() && reservationRoom.getRoomNumber() == null;
+		return roleAllowed && reservation.isActive() && reservation.getAdvancedAmount() == 0 && reservationRoom.getRoomNumber() == null;
 	}
 
 	public boolean isReservationRoomTariffAllowed() {
@@ -358,29 +358,29 @@ public class ProjectReservationPermission implements Serializable {
 	public boolean isNewReservationServiceAllowed() {
 		Date now = new Date();
 		boolean roleAllowed = (isRoleCommercial() && !isAfterCheckOut(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
-		return roleAllowed && reservation.isActive() && isMyScope();
+		return roleAllowed && reservation.isActive() && reservation.getAdvancedAmount() == 0 && isMyScope();
 	}
 
 	public boolean isSelectReservationServiceAllowed() throws ManagerBeanException {
-		return reservation.isActive() && isMyScope();
+		return reservation.isActive() && reservation.getAdvancedAmount() == 0 && isMyScope();
 	}
 
 	public boolean isAcceptReservationServiceAllowed() {
 		Date now = new Date();
 		boolean roleAllowed = (isRoleCommercial() && !isAfterCheckOut(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
-		return roleAllowed;
+		return roleAllowed && reservation.getAdvancedAmount() == 0;
 	}
 
 	public boolean isRemoveReservationServiceAllowed() {
 		Date now = new Date();
 		boolean roleAllowed = (isRoleCommercial() && !isAfterCheckOut(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
-		return roleAllowed && !reservationService.isExtra();
+		return roleAllowed && !reservationService.isExtra() && reservation.getAdvancedAmount() == 0;
 	}
 
 	public boolean isReservationServicesEditable() throws ManagerBeanException {
 		Date now = new Date();
 		boolean roleAllowed = (isRoleCommercial() && !isAfterCheckOut(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
-		return roleAllowed && !reservationService.isExtra();
+		return roleAllowed && !reservationService.isExtra() && reservation.getAdvancedAmount() == 0;
 	}
 
 }
