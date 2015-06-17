@@ -1965,7 +1965,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Fichero oficial del Ejercicio 2013")
 	String officialFile2013();
 	
-	@DefaultMessage("Importar Fichero Datos Contables")
+	@DefaultMessage("Importar Datos Contables")
 	String importAccounting();
 
 	@DefaultMessage("Guardar la declaraci\u00F3n inclu\u00EDda en el modelo importado.")

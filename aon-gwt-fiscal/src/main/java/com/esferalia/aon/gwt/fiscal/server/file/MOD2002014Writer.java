@@ -9,13 +9,13 @@ import java.io.UnsupportedEncodingException;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.type.Administration;
-import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod200File;
+import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod2002014File;
 
-public class MOD200Writer {
+public class MOD2002014Writer {
 	
-	public FileOutput createMOD200(Mod2002013 mod200) throws AonSQLException {
+	public FileOutput createMOD200(Mod2002014 mod200) throws AonSQLException {
 		try {
 			MOD200Format format = obtainFormat(mod200.getYear(), mod200.getAdministration());
 			if (format == null) {
@@ -25,7 +25,7 @@ public class MOD200Writer {
 								+ " en la administraci\u00F3n "
 								+ mod200.getAdministration());
 			}
-			Mod200File mod200file = new Mod200File( mod200 ); 
+			Mod2002014File mod200file = new Mod2002014File( mod200 ); 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;
 			try {
@@ -34,7 +34,7 @@ public class MOD200Writer {
 				wr = new OutputStreamWriter(output);
 			}
 			PrintWriter writer = new PrintWriter(wr);
-			FileFiller filler = new MOD200(mod200file, format, writer);
+			FileFiller filler = new MOD2002014(mod200file, format, writer);
 			FileOutput fileOutput = new FileOutput();
 			fileOutput.setErrors(filler.create());
 			fileOutput.setContent(output.toByteArray());

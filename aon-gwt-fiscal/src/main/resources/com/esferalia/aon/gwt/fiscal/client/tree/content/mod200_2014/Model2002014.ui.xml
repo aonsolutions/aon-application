@@ -28,8 +28,6 @@
 								styleName='aon-finding-toolbar-item aon-icon-accept' text="{msg.continueAction}" />
 							<g:Button ui:field='importButton'
 								styleName='aon-finding-toolbar-item aon-icon-moveUp' text="{msg.import2013}" />
-							<g:Button ui:field='importAccountingButton'
-								styleName='aon-finding-toolbar-item aon-icon-moveUp' text="{msg.importAccounting}" />
 							<g:Button ui:field='saveButton'
 								styleName='aon-finding-toolbar-item aon-icon-accept' text="{msg.saveAction}" />
 							<g:Button ui:field='removeButton'
@@ -39,14 +37,14 @@
 							<g:Button ui:field='calculateButton'
 								styleName='aon-finding-toolbar-item aon-icon-calc' text="{msg.calculateAction}" />
 							<g:CheckBox ui:field='calculateCheck' text="{msg.authomaticCalculation}"/>
-<!--
 							<g:Button ui:field='aeatFileButton'
 								styleName='aon-finding-toolbar-item aon-icon-aeat' text="{msg.generateFile}" />
 							<g:Button ui:field='aeatPrintButton'
 								styleName='aon-finding-toolbar-item aon-icon-aeat' text="{msg.printViaAeat}" />
+							<g:Button ui:field='importAccountingButton'
+								styleName='aon-finding-toolbar-item aon-icon-moveUp' text="{msg.importAccounting}" />
 							<g:Button ui:field='aeatAccountingFileButton'
 								styleName='aon-finding-toolbar-item aon-icon-aeat-bw' text="{msg.aeatAccountingFile}" />
--->
 						</g:HTMLPanel>
 						<g:FlowPanel ui:field="formContainer" />
 					</g:HorizontalPanel>

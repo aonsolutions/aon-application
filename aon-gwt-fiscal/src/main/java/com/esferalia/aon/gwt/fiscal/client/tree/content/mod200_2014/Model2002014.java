@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002014TreeObject;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.TreeNode;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
@@ -70,12 +71,12 @@ public class Model2002014 extends ResizeComposite  {
 	Button validateButton;
 	@UiField
 	Button calculateButton;
-//	@UiField
-//	Button aeatAccountingFileButton;
-//	@UiField
-//	Button aeatFileButton;
-//	@UiField
-//	Button aeatPrintButton;
+	@UiField
+	Button aeatAccountingFileButton;
+	@UiField
+	Button aeatFileButton;
+	@UiField
+	Button aeatPrintButton;
 	@UiField
 	CheckBox calculateCheck;
 
@@ -257,11 +258,9 @@ public class Model2002014 extends ResizeComposite  {
 		validateButton.setVisible(mod200Object.isInitialized());
 		calculateCheck.setVisible(mod200Object.isInitialized());
 		calculateButton.setVisible(mod200Object.isInitialized() && !calculateCheck.isVisible());
-
-		//aeatAccountingFileButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() == null);
-//		aeatAccountingFileButton.setVisible(false);
-//		aeatFileButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
-//		aeatPrintButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
+		aeatAccountingFileButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() == null);
+		aeatFileButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
+		aeatPrintButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
 	}
 	
 	protected void raiseException(Throwable t) {
@@ -482,7 +481,7 @@ public class Model2002014 extends ResizeComposite  {
 			}
 		}
 	}
-	/*
+
 	@UiHandler("aeatAccountingFileButton")
 	void onAeatAccountingFileButtonClick(ClickEvent event) {
 		Window.alert(
@@ -492,7 +491,7 @@ public class Model2002014 extends ResizeComposite  {
 				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
 				+ "El fichero se genera a partir de los datos guardados.");
 		diskForm.setAction(GWT.getHostPageBaseURL()
-				+ "/aon_gwt_fiscal/Model200AccountingFile");
+				+ "/aon_gwt_fiscal/Model2002014AccountingFile");
 		modIdHidden.setValue(String.valueOf(mod200Object.getMod200().getId()));
 		domainIdHidden.setValue(String.valueOf(FiscalTree.getCurrentDomain()));
 		domainNameHidden.setValue(FiscalTree.getCurrentDomainName());
@@ -508,7 +507,7 @@ public class Model2002014 extends ResizeComposite  {
 				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
 				+ "El fichero se genera a partir de los datos guardados.");
 		diskForm.setAction(GWT.getHostPageBaseURL()
-				+ "/aon_gwt_fiscal/Model200File");
+				+ "/aon_gwt_fiscal/Model2002014File");
 		modIdHidden.setValue(String.valueOf(mod200Object.getMod200().getId()));
 		domainIdHidden.setValue(String.valueOf(FiscalTree.getCurrentDomain()));
 		domainNameHidden.setValue(FiscalTree.getCurrentDomainName());
@@ -524,13 +523,13 @@ public class Model2002014 extends ResizeComposite  {
 				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
 				+ "La petici\u00F3n se genera a partir de los datos guardados.");
 		diskForm.setAction(GWT.getHostPageBaseURL()
-				+ "/aon_gwt_fiscal/Model200Print");
+				+ "/aon_gwt_fiscal/Model2002014Print");
 		modIdHidden.setValue(String.valueOf(mod200Object.getMod200().getId()));
 		domainIdHidden.setValue(String.valueOf(FiscalTree.getCurrentDomain()));
 		domainNameHidden.setValue(FiscalTree.getCurrentDomainName());
 		diskForm.submit();
 	}
-	*/
+
 	@UiHandler("calculateButton")
 	void onCalculateButtonClick(ClickEvent event) {
 		mod200Object.calculate();

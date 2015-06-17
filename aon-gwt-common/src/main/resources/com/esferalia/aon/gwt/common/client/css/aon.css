@@ -479,7 +479,8 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 	height: auto;
 }
 @sprite .aon-icon-aeat-bw{
-	gwt-image: "aonAeatBW"
+	gwt-image: "aonAeatBW";
+	width: auto;
 }
 @sprite .aon-icon-araba{
 	gwt-image: "aonIconAraba"

@@ -10,15 +10,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.file.format.output.FileOutput;
-import com.esferalia.aon.gwt.fiscal.server.file.MOD2002013Writer;
+import com.esferalia.aon.gwt.fiscal.server.file.MOD2002014Writer;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Mod200 - 2013 File download", urlPatterns = { "/aon_gwt_fiscal/Model2002013File" })
-public class Mod2002013File extends HttpServlet {
+@WebServlet(name = "Mod200 - 2014 File download", urlPatterns = { "/aon_gwt_fiscal/Model2002014File" })
+public class Mod2002014File extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -28,8 +28,8 @@ public class Mod2002013File extends HttpServlet {
 			int id = Integer.parseInt(req.getParameter("modId"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			Mod2002013 mod200 = AON.getMod2002013ById(domainName,domainId,id);
-			MOD2002013Writer writer = new MOD2002013Writer();
+			Mod2002014 mod200 = AON.getMod2002014ById(domainName,domainId,id);
+			MOD2002014Writer writer = new MOD2002014Writer();
 			FileOutput fileoutput = writer.createMOD200(mod200);
 			String s = mod200.getEnterpriseName();
 			StringBuilder sb = new StringBuilder();

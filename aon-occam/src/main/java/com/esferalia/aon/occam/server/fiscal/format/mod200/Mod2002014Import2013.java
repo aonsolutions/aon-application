@@ -56,7 +56,8 @@ public class Mod2002014Import2013 {
 		else return com.esferalia.aon.watson.server.AonDateUtils.addYears(d,1);
 	}
 	
-	// Ajuste de las casillas de la columna "deducción pendiente/generada" de los apartados "Deducciones por doble imposicion interna e internacional"
+	// Ajuste de las casillas de la columna "deducción pendiente/generada" de los 
+	// apartados "Deducciones por doble imposicion interna e internacional"
 	// Se recalcula la columna deduccion pendiente/generada de las deducciones
 	// por doble imposicion interna/internacional, si en la linea esta el tipo de
 	// gravamen, y el tipo de gravamen del ejercicio anterior es distinto al del
@@ -1347,11 +1348,13 @@ public class Mod2002014Import2013 {
 			,(mod200old,mod200new) -> mod200new.setPeriodEnd( addOneYear(mod200old.getPeriodEnd()))       // Periodo Impositivo - Fin
 			,(mod200old,mod200new) -> mod200new.setPeriodType( mod200old.getPeriodType())                 // Identificación - Tipo de ejercicio
 			,(mod200old,mod200new) -> mod200new.setCnae( convertCnae93toCnae2009( mod200old.getCnae()) )  // Identificación - C.N.A.E.  Actividad principal (convertido a CNAE 2009)
+			,(mod200old,mod200new) -> mod200new.setEnterprise( mod200old.getEnterprise()) 				  // Identificación - Empresa 
 			,(mod200old,mod200new) -> mod200new.setEnterpriseDocument( mod200old.getEnterpriseDocument()) // Identificación - NIF 
 			,(mod200old,mod200new) -> mod200new.setEnterpriseName(mod200old.getEnterpriseName())          // Identificación - Apellidos y nombre o Razón Social
 			,(mod200old,mod200new) -> mod200new.setEnterprisePhone1(mod200old.getEnterprisePhone1())      // Identificación - Teléfono 1
 			,(mod200old,mod200new) -> mod200new.setEnterprisePhone2(mod200old.getEnterprisePhone2())      // Identificación - Teléfono 2
 			,(mod200old,mod200new) -> mod200new.setYear( 2014 )                                           // Ejercicio
+			,(mod200old,mod200new) -> mod200new.setAdministration( mod200old.getAdministration() )		  // Administracion                                           // Ejercicio
 			
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002014Key.C0001, mod200old.getDoubleValue(Mod2002013Key.C0001))  // Entidad sin ánimo de lucro acogida régimen fiscal Título II Ley 49/2002 [001]			                                                    
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002014Key.C0002, mod200old.getDoubleValue(Mod2002013Key.C0002))  // Entidad parcialmente exenta [002]

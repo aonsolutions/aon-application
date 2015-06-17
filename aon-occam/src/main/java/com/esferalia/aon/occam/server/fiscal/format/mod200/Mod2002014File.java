@@ -12,15 +12,15 @@ import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.CompanyParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Secretary;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.DoubleVariable2013;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013.BalanceType;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.DoubleVariable2014;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014.BalanceType;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class Mod200File {
+public class Mod2002014File {
 	
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
 	private static final DateFormat DATE_FORMAT2 = new SimpleDateFormat("ddMMyy");
@@ -28,13 +28,13 @@ public class Mod200File {
 	private static final CompanyAdministrator EMPTY_COMPANY_ADMINISTRATOR = new CompanyAdministrator();
 	private static final CompanyParticipation EMPTY_COMPANY_PARTICIPATION = new CompanyParticipation();
 	
-	private Mod2002013 mod200;
+	private Mod2002014 mod200;
 	private Map<String,Double> keys;
 	
 	private Secretary secretary;
 	private List<LegalRepresentative> legalRepresentatives;	 
 	
-	public Mod200File(Mod2002013 mod200) {
+	public Mod2002014File(Mod2002014 mod200) {
 		this.mod200 = mod200;
 		if (this.mod200.getSecretary() == null) {
 			this.secretary = new Secretary();
@@ -52,7 +52,7 @@ public class Mod200File {
 		}
 	}
 
-	public Mod2002013 getMod200() {
+	public Mod2002014 getMod200() {
 		return mod200;
 	}
 	public int getYear() {
@@ -276,8 +276,8 @@ public class Mod200File {
 				@Override
 				public Double get(Object obj) {
 					String keyString = (String) obj;
-					Mod2002013Key key = Mod2002013Key.valueOf(keyString);
-					DoubleVariable2013 dv = getMod200().getKeysMap().get(key);
+					Mod2002014Key key = Mod2002014Key.valueOf(keyString);
+					DoubleVariable2014 dv = getMod200().getKeysMap().get(key);
 					Double ret = null;
 					if (dv != null) {
 						ret = AonMathUtils.round( dv.getValue());

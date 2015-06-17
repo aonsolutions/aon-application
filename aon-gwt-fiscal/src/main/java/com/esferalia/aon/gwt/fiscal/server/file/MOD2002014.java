@@ -11,14 +11,14 @@ import java.util.Map;
 import com.code.aon.file.format.core.DiskRegisterLoader;
 import com.code.aon.file.format.model.AbstractFileFiller;
 import com.code.aon.file.format.model.Fd0Exception;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013.BalanceType;
-import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod200File;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014.BalanceType;
+import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod2002014File;
 
-public class MOD200  extends AbstractFileFiller{
+public class MOD2002014  extends AbstractFileFiller{
 
-	private Mod200File mod200File;
+	private Mod2002014File mod200File;
 	
-	public MOD200(Mod200File mod200File, MOD200Format format, PrintWriter writer) throws FileNotFoundException, UnsupportedEncodingException {
+	public MOD2002014(Mod2002014File mod200File, MOD200Format format, PrintWriter writer) throws FileNotFoundException, UnsupportedEncodingException {
 		super(writer);
 		if (mod200File == null)  {
 			throw new IllegalArgumentException("Mod200File can not be null!");
@@ -29,7 +29,7 @@ public class MOD200  extends AbstractFileFiller{
 		
 		this.mod200File = mod200File;
 		for (String resource : format.getResources() ) {
-			InputStream input = MOD200.class.getResourceAsStream(resource);
+			InputStream input = MOD2002014.class.getResourceAsStream(resource);
 			DiskRegisterLoader.load(input, manager);
 		}
 	}
@@ -84,7 +84,7 @@ public class MOD200  extends AbstractFileFiller{
 	}
 
 
-	private boolean isValid(Mod200File mod200File) {
+	private boolean isValid(Mod2002014File mod200File) {
 		return true;
 	}
 
