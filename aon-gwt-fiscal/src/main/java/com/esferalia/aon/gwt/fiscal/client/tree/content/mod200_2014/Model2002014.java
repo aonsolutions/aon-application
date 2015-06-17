@@ -7,7 +7,6 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
-import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002014TreeObject;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.TreeNode;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
@@ -61,6 +60,8 @@ public class Model2002014 extends ResizeComposite  {
 	Button initializeButton;
 	@UiField
 	Button importButton;
+	@UiField
+	Button importAccountingButton;
 	@UiField
 	Button saveButton;
 	@UiField
@@ -250,6 +251,7 @@ public class Model2002014 extends ResizeComposite  {
 	private void refreshButtonsVisibility() {
 		initializeButton.setVisible(!mod200Object.isInitialized());
 		importButton.setVisible(!mod200Object.isInitialized() && !mod200Object.getMod200().isInitializedFromLastYear());
+		importAccountingButton.setVisible(mod200Object.isInitialized());
 		saveButton.setVisible(mod200Object.isInitialized());
 		removeButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
 		validateButton.setVisible(mod200Object.isInitialized());
@@ -528,7 +530,7 @@ public class Model2002014 extends ResizeComposite  {
 		domainNameHidden.setValue(FiscalTree.getCurrentDomainName());
 		diskForm.submit();
 	}
-
+	*/
 	@UiHandler("calculateButton")
 	void onCalculateButtonClick(ClickEvent event) {
 		mod200Object.calculate();
@@ -540,12 +542,10 @@ public class Model2002014 extends ResizeComposite  {
 		if (calculateCheck.getValue())
 			mod200Object.calculate();
 	}
-	*/
+	
 	@UiHandler("importButton")
 	void onImportButtonClick(ClickEvent event) {
-		UploadDialog ud = new UploadDialog(AON.MSG.import2013()
-				,mod200Object.getMod200().getDomain()
-				,FiscalTree.getCurrentDomainName()) {
+		UploadDialog ud = new UploadDialog(AON.MSG.import2013(),GWT.getModuleBaseURL() +"Mod2002013BOEUpload") {
 			
 			@Override
 			protected void onCancel() {
@@ -564,4 +564,34 @@ public class Model2002014 extends ResizeComposite  {
 		ud.show();
 	}
 
+	@UiHandler("importAccountingButton")
+	void onImportAccountingButtonClick(ClickEvent event) {
+		UploadDialog ud = new UploadDialog(AON.MSG.import2013(),GWT.getModuleBaseURL() +"Mod2002014AccountingUpload") {
+			
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+			
+			@Override
+			protected void onAccept() {
+				mod200Object.fillMod2002014AccountingData(new AsyncCallback<Mod2002014>() {
+					@Override
+					public void onSuccess(Mod2002014 result) {
+						hide();
+					}
+					
+					@Override
+					public void onFailure(Throwable e) {
+						hide();
+						raiseException(e);
+					}
+				});
+			}
+		};
+		ud.addStyleName("gwt-PopupPanel-template");
+		ud.setGlassEnabled(true);
+		ud.center();
+		ud.show();
+	}
 }

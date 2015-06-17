@@ -9,15 +9,16 @@ import java.util.List;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.fileupload.FileItem;
 
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
-import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod200Reader;
+import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.MOD2002014;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Mod200 - 2013 BOE Upload ", urlPatterns = { "/aon_gwt_fiscal/Mod2002013BOEUpload" })
-public class Mod2002013BOEUpload extends UploadAction {
+@WebServlet(name = "Mod200 - 2014 Accounting Upload ", urlPatterns = { "/aon_gwt_fiscal/Mod2002014AccountingUpload" })
+public class Mod2002014AccountingUpload extends UploadAction {
 
 	@Override
 	public void checkRequest(HttpServletRequest request) {
@@ -32,14 +33,14 @@ public class Mod2002013BOEUpload extends UploadAction {
 		for (FileItem item : sessionFiles) {
 			if (false == item.isFormField()) {
 				try {
-					ByteArrayInputStream input = new ByteArrayInputStream(
-							item.get());
-					Mod2002013 mod200 = Mod200Reader.getMod2002013(input);
-					request.getSession().setAttribute("Mod2002013Import", mod200);
+					ByteArrayInputStream input = new ByteArrayInputStream(item.get());
+					JAXBContext context = JAXBContext.newInstance(MOD2002014.class);
+					Unmarshaller um = context.createUnmarshaller();
+					MOD2002014 xml = (MOD2002014) um.unmarshal(input);
+					request.getSession().setAttribute("Mod2002014Accounting", xml);
 				} catch (Exception ex) {
 					throw new UploadException(ex);
 				}
-
 			}
 		}
 		// / Remove files from session because we have a copy of them

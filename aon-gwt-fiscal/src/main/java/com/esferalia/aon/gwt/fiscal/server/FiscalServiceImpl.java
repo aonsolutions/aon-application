@@ -38,6 +38,8 @@ import com.esferalia.aon.occam.api.model.type.Activities.Type3Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type4Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type7Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.TypeActivity;
+import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.MOD2002014;
+import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.XMLtoMod2002014;
 import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod2002014Import2013;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -442,14 +444,18 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 		HttpServletRequest request = getThreadLocalRequest();
 		try {
 			Mod2002013 mod2002013 = (Mod2002013) request.getSession().getAttribute("Mod2002013Import");
-			if (!AonStringUtils.equals( mod2002013.getDocument(), mod200.getDocument())) {
-				throw new AonCoreException("El NIF del documento importado no coincide");
+			if (mod2002013 != null) {
+				if (!AonStringUtils.equals( mod2002013.getDocument(), mod200.getDocument())) {
+					throw new AonCoreException("El NIF del documento importado no coincide");
+				}
+				Mod2002014Import2013.import2013(mod200, mod2002013);
+				mod200.setInitializedFromLastYear(true);
 			}
-			Mod2002014Import2013.import2013(mod200, mod2002013);
-			mod200.setInitializedFromLastYear(true);
 			return AON.initializeMod2002014(domainName,domain,mod200);
 		} catch ( Throwable t) {
 			throw new AonCoreException(t);
+		} finally {
+			request.getSession().removeAttribute("Mod2002013Import");
 		}
 	}
 
@@ -497,7 +503,23 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 			Mod2002014 mod200) throws AonCoreException {
 		return AON.importMod2002013(domainName, domain, mod200);
 	}
-
+	
+	@Override
+	public Mod2002014 fillMod2002014AccountingData(Mod2002014 mod200)
+			throws AonCoreException {
+		HttpServletRequest request = getThreadLocalRequest();
+		try {
+			MOD2002014 mod = (MOD2002014) request.getSession().getAttribute("Mod2002014Accounting");
+			if (mod200 != null) {
+				XMLtoMod2002014.fillMod2002014(mod, mod200);
+			}
+			return mod200; 
+		} catch ( Throwable t) {
+			throw new AonCoreException(t);
+		} finally {
+			request.getSession().removeAttribute("Mod2002014Accounting");
+		}
+	}
 	// --------------------------------------------------------------- NORMALIZED MEMORY
 	@Override
 	public Memory readMemory(Memory memory) throws AonCoreException {

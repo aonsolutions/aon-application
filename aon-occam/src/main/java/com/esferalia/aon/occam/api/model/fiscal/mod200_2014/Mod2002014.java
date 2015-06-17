@@ -312,6 +312,12 @@ public class Mod2002014 implements IFiscalModel {
 		return dv != null && (AonMathUtils.round(dv.getValue()) == 1.0);
 	}
 	
+	public void addVariable(Mod2002014Key key, Number d) {
+		DoubleVariable2014 dv = new DoubleVariable2014(key);
+		dv.setValue(d==null?0:d.doubleValue());
+		keysMap.put( dv.getKey(),dv );
+	}
+
 	public void addVariable(DoubleVariable2014 t) {
 		keysMap.put( t.getKey(), t);
 	}

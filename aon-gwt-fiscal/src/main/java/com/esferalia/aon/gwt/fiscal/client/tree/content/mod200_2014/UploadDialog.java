@@ -35,11 +35,7 @@ public abstract class UploadDialog extends CustomDialogB {
 	@UiField Button accept_button;
 	@UiField Button cancel_button;
 	
-	private int domainId;
-	private String domainName;
-	
-	public UploadDialog(String title,int domainId,String domainName) {
-		String url = GWT.getModuleBaseURL() + "";
+	public UploadDialog(String title,String url) {
 		setCaption(title);
 		label = new Label();
 		flex_table = new FlexTable();
@@ -75,9 +71,7 @@ public abstract class UploadDialog extends CustomDialogB {
 		flex_table.setBorderWidth(1);
 		flex_table.setCellSpacing(0);
 		flex_table.setWidget(0, 0, new Label("Fichero"));
-		flex_table.setWidget(0, 1, newUploader(url+"Mod2002013BOEUpload"
-						+ "?domainId="+domainId
-						+ "&domainName="+domainName));
+		flex_table.setWidget(0, 1, newUploader(url));
 		flexTableCss();
 	}
 	

@@ -643,6 +643,14 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 				new AsyncCallbackWrapper<Mod2002014>(callback));
 	}
 
+	@Override
+	public void fillMod2002014AccountingData(Mod2002014 mod200,
+			AsyncCallback<Mod2002014> callback) {
+		AON.start();
+		fsa.fillMod2002014AccountingData(mod200, 
+				new AsyncCallbackWrapper<Mod2002014>(callback));
+	}
+
 	// --------------------------------------------------------------- NORMALIZED MEMORY
 	@Override
 	public void readMemory(Memory memory, AsyncCallback<Memory> callback) {
@@ -659,6 +667,7 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		AON.start();
 		fsa.deleteMemory(memory, new AsyncCallbackWrapper<Void>(callback));
 	}
+
 
 
 

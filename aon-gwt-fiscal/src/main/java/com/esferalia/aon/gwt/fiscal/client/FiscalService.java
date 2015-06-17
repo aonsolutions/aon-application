@@ -138,6 +138,7 @@ public interface FiscalService extends RemoteService {
 	void deleteMod2002014(String domainName,int domain,int id) throws AonCoreException;
 	String dumpAEATMod2002014(Mod2002014 mod200) throws AonCoreException;
 	Mod2002014 importMod2002013(String domainName,int domain,Mod2002014 mod200) throws AonCoreException;
+	Mod2002014 fillMod2002014AccountingData(Mod2002014 mod200) throws AonCoreException;
 
 	// --------------------------------------------------------------- NORMALIZED MEMORY
 	Memory readMemory(Memory memory) throws AonCoreException;

@@ -9,10 +9,16 @@
 package com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb;
 
 import java.math.BigDecimal;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.mvel2.sh.Main;
+
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 /**
@@ -655,4 +661,108 @@ public class TipoPagina06 {
         this.t251 = value;
     }
 
+    public static void main(String[] args) {
+    	String[] propOrder = {
+    		    "t387",
+    		    "t388",
+    		    "t389",
+    		    "t390",
+    		    "t391",
+    		    "t392",
+    		    "t401",
+    		    "t402",
+    		    "t403",
+    		    "t404",
+    		    "t405",
+    		    "t406",
+    		    "t415",
+    		    "t416",
+    		    "t417",
+    		    "t418",
+    		    "t419",
+    		    "t420",
+    		    "t443",
+    		    "t444",
+    		    "t445",
+    		    "t446",
+    		    "t448",
+    		    "t457",
+    		    "t458",
+    		    "t461",
+    		    "t462",
+    		    "t485",
+    		    "t486",
+    		    "t489",
+    		    "t490",
+    		    "t499",
+    		    "t502",
+    		    "t503",
+    		    "t504",
+    		    "t527",
+    		    "t528",
+    		    "t529",
+    		    "t530",
+    		    "t531",
+    		    "t532",
+    		    "t541",
+    		    "t542",
+    		    "t543",
+    		    "t544",
+    		    "t545",
+    		    "t546",
+    		    "t555",
+    		    "t556",
+    		    "t557",
+    		    "t558",
+    		    "t560",
+    		    "t569",
+    		    "t570",
+    		    "t571",
+    		    "t572",
+    		    "t574",
+    		    "t583",
+    		    "t584",
+    		    "t585",
+    		    "t586",
+    		    "t588",
+    		    "t597",
+    		    "t598",
+    		    "t599",
+    		    "t600",
+    		    "t602",
+    		    "t611",
+    		    "t612",
+    		    "t613",
+    		    "t614",
+    		    "t615",
+    		    "t616",
+    		    "t625",
+    		    "t626",
+    		    "t627",
+    		    "t628",
+    		    "t629",
+    		    "t630",
+    		    "t722",
+    		    "t723",
+    		    "t724",
+    		    "t725",
+    		    "t726",
+    		    "t727",
+    		    "t736",
+    		    "t737",
+    		    "t738",
+    		    "t739",
+    		    "t740",
+    		    "t741"
+    		    };
+    	for (String a : propOrder) {
+    		System.out.println(
+    				"mod200.addVariable(Mod2002014Key.TC"
+    				+ AonStringUtils.substring(a, 1)
+    				+", pag.get"
+    				+ AonStringUtils.upperCase(a)
+    				+"());"
+    				);
+    	}
+	} 
 }

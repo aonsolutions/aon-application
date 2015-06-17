@@ -135,6 +135,23 @@ public class Mod2002014TreeObject implements Serializable {
 			}
 		});
 	}
+	public void fillMod2002014AccountingData(final AsyncCallback<Mod2002014> callback) {
+		FiscalTree.FISCAL_SERVICE.fillMod2002014AccountingData(mod200, new AsyncCallback<Mod2002014>() {
+			
+			@Override
+			public void onSuccess(Mod2002014 result) {
+				setMod200(result);
+				callback.onSuccess(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				initialized = false;
+				callback.onFailure(caught);
+			}
+		});
+	}
+	
 	// ************************************
 	
 	public Administration getAdministration() {
