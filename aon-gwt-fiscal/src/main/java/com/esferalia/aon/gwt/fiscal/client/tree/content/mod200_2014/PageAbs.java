@@ -173,6 +173,9 @@ public abstract class PageAbs extends ResizeComposite {
 			@Override
 			public void onChange(ChangeEvent event) {
 				try {
+					if (AonStringUtils.isEmpty(text.getText())) {
+						text.setValue(0.0,false);
+					}
 					Double d = text.getValueOrThrow();
 					text.addStyleName(AON.AON_CSS.aonChanged());
 					mod200Object.doubleValueChanged(key, d );
@@ -232,6 +235,9 @@ public abstract class PageAbs extends ResizeComposite {
 						@Override
 						public void onChange(ChangeEvent event) {
 							try {
+								if (AonStringUtils.isEmpty(text.getText())) {
+									text.setValue(0.0,false);
+								}
 								Double d = text.getValueOrThrow();
 								text.addStyleName(AON.AON_CSS.aonChanged());
 								mod200Object.doubleValueChanged(k, d);

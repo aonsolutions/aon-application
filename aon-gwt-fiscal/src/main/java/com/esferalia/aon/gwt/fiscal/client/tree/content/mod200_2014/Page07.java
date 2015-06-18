@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.widget.ModCellTable;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014.BalanceType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -139,6 +140,9 @@ public class Page07 extends PageAbs {
 							@Override
 							public void onChange(ChangeEvent event) {
 								try {
+									if (AonStringUtils.isEmpty(text.getText())) {
+										text.setValue(0.0,false);
+									}
 									Double d = text.getValueOrThrow();
 									text.addStyleName(AON.AON_CSS.aonChanged());
 									mod200Object.doubleValueChanged(key, d);

@@ -38,7 +38,7 @@ public class DoubleBox extends ValueBox<Double> {
 		@Override
 		public Double parse(CharSequence text) throws ParseException {
 			if (AonStringUtils.isEmpty(text))
-				return null;
+				return 0.0;
 			try {
 				return Double.parseDouble(text.toString());
 			} catch (NumberFormatException e) {
