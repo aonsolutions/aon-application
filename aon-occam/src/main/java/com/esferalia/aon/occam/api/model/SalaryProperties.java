@@ -8,6 +8,8 @@ public interface SalaryProperties{
 	
 	Property<Integer> getIdProperty();
 	
+	Property<String> getCCCProperty();
+
 	Property<Integer> getContractProperty();
 	
 	Property<Date> getStartDateProperty();

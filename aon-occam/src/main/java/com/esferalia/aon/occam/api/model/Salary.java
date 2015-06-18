@@ -12,12 +12,25 @@ import java.util.stream.Collector;
 public class Salary implements Serializable{
 	
 	
-	private static class ContextData {
+	public static class ContextData {
 		String expression;
 		Date startDate;
 		Date endDate;
 		
+		public Date getEndDate() {
+			return endDate;
+		}
+		
+		public Date getStartDate() {
+			return startDate;
+		}
+		
+		public String getExpression() {
+			return expression;
+		}
 	}
+
+	private Integer id;
 	
 	private Date startDate;
 	private Date endDate;
@@ -63,6 +76,16 @@ public class Salary implements Serializable{
 	
 	public Salary() {
 		contextdata = new HashMap<String, List<ContextData>>();
+	}
+	
+	public Integer getId() {
+		return id;
+	}
+	
+	
+	public Salary setId(Integer id) {
+		this.id = id;
+		return this;
 	}
 	
 	public String getEnterpriseCCC() {
@@ -339,6 +362,10 @@ public class Salary implements Serializable{
 	public Salary setEndDate(Date endDate) {
 		this.endDate = endDate;
 		return this;
+	}
+	
+	public Map<String, List<ContextData>> getContextData() {
+		return Collections.unmodifiableMap(contextdata);
 	}
 	
 

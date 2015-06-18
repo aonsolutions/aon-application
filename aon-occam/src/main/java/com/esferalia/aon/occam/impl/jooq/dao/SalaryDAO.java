@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.Keys.FK_SALARY_DATA_SALARY;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
@@ -31,6 +32,7 @@ import org.jooq.lambda.SQL;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.Unchecked;
 
+import com.esferalia.aon.jooq.tables.EnterpriseCcc;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Salary;
@@ -222,6 +224,7 @@ public class SalaryDAO {
 				return emptyList.stream();
 		}
 		
+		
 		//@formatter:off
 		Cursor<Record> rootCursor = 
 		ctx.getDslContext()
@@ -231,7 +234,7 @@ public class SalaryDAO {
 		.orderBy(SALARY.ID)
 		.fetchLazy();
 		//@formatter:on
-
+		
 		//@formatter:off
 		Cursor<Record> dataCursor = 
 		ctx.getDslContext()
@@ -248,6 +251,7 @@ public class SalaryDAO {
 		return Seq.seq(rootCursor)
 				.map(rootRecord-> {
 				Salary salary = supplier.get()
+				.setId(rootRecord.getValue(SALARY.ID))		
 				.setStartDate(rootRecord.getValue(SALARY.START_DATE))
 				.setEndDate(rootRecord.getValue(SALARY.END_DATE))
 				.setSalaryDays(rootRecord.getValue(SALARY.TIME_UNITS))
@@ -255,6 +259,9 @@ public class SalaryDAO {
 				.setEnterpriseName(rootRecord.getValue(SALARY.ENTERPRISE_NAME))
 				.setEnterpriseDocument(rootRecord.getValue(SALARY.ENTERPRISE_DOCUMENT))
 				.setIrpfBase(rootRecord.getValue(SALARY.IRPF_BASE))
+				.setEmployeeDocument(rootRecord.getValue(SALARY.EMPLOYEE_DOCUMENT))
+				.setTotalLiquid(rootRecord.getValue(SALARY.TOTAL_LIQUID))
+				.setTotalPayment(rootRecord.getValue(SALARY.TOTAL_PAYMENT))
 				.setCommonContingenciesBase(rootRecord.getValue(SALARY.CGC_BASE))
 				.setProfessionalContingenciesBase(rootRecord.getValue(SALARY.CGP_BASE))
 				;
@@ -304,6 +311,11 @@ public class SalaryDAO {
 		@Override
 		public Property<Integer> getIdProperty() {
 			return new FilterDAO.PropertyDAO<Integer>(SALARY.ID);
+		}
+
+		@Override
+		public Property<String> getCCCProperty() {
+			return new FilterDAO.PropertyDAO<String>(SALARY.CCC);
 		}
 
 		@Override
