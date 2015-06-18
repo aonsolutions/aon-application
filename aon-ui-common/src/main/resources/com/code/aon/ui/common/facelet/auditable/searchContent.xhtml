@@ -24,7 +24,7 @@
 					valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}" />
-		
+
 				<aon:outputLabel for="#{controller.pojoShortName}_creationDate-To" styleClass="aon-form-date-label aon-padding-right" 
 					value="#{bundle.aon_date_to}:" />
 				<aon:selectInputDate id="#{controller.pojoShortName}_creationDate-To"
@@ -49,7 +49,7 @@
 					valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}" />
-		
+
 				<aon:outputLabel for="#{controller.pojoShortName}_modificationDate-To" styleClass="aon-form-date-label aon-padding-right" 
 					value="#{bundle.aon_date_to}:" />
 				<aon:selectInputDate id="#{controller.pojoShortName}_modificationDate-To"
@@ -58,6 +58,8 @@
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}" />
 			</aon:div>
+
+			<ui:insert name="additionalAuditableContent"/>
 
 		</aon:panelGrid>
 	</aon:panelCollapsible>

@@ -225,6 +225,10 @@ public class ProjectReservationPermission implements Serializable {
 		return reservation.getModificationDate() != null;
 	}
 
+	public boolean isCancellationDateVisible() {
+		return reservation.getCancellationDate() != null;
+	}
+
 	public boolean isCrsCodeVisible() {
 		return StringUtils.isNotEmpty(reservation.getCrsCode());
 	}

@@ -596,6 +596,8 @@ public class ProjectReservationController extends BasicController implements IPm
 			reservation.setCheckStatus(ReservationCheckStatus.NO_SHOW);
 		}
 		reservation.setStatus(ReservationStatus.CANCELLED);
+		reservation.setCancellationUser(UserUtils.getInstance().getLoggedUser().getLogin());
+		reservation.setCancellationDate(new Date());
 		accept(event);
 
 		IController reservationRoomController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_ROOM_CONTROLLER_NAME);

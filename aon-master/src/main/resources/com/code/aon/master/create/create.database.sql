@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.25.2
+# Version: 8.25.3
 # Created by: girazu
-# Creation Date: 17/06/2015 13:20
+# Creation Date: 18/06/2015 18:45
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -2035,14 +2035,18 @@ CREATE TABLE `project_reservation` (
   `early_check_out` tinyint(1) default '0' COMMENT 'Indica si se ha producido una salida anticipada',
   `prepay` tinyint(1) default '0' COMMENT 'Indica si es un prepago',
   `bank_transaction` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Codigo de transaccion bancaria',
+  `credit_card_holder` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Titular de la tarjeta de credito',
+  `credit_card_number` varchar(24) collate latin1_spanish_ci default NULL COMMENT 'Numero de la tarjeta de credito',
+  `credit_card_expiration` varchar(4) collate latin1_spanish_ci default NULL COMMENT 'Mes y año de expiracion de la tarjeta de credito',
+  `credit_card_cvv` varchar(8) collate latin1_spanish_ci default NULL COMMENT 'Codigo de seguridad de la tarjeta de credito',
   `check_status` tinyint(2) NOT NULL COMMENT 'Estado de registro en el Hotel',
   `status` tinyint(2) NOT NULL COMMENT 'Estado de la Reserva',
   `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime default NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de modificacion',
   `modification_date` datetime default NULL COMMENT 'Fecha de modificacion',
-  `cancelation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de cancelacion',
-  `cancelation_date` datetime default NULL COMMENT 'Fecha de cancelacion',
+  `cancellation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de cancelacion',
+  `cancellation_date` datetime default NULL COMMENT 'Fecha de cancelacion',
   PRIMARY KEY  (`project`),
   KEY `IDX_PROJECT_RESERVATION_CODE` (`code`),
   KEY `IDX_PROJECT_RESERVATION_HOTEL` (`hotel`),
@@ -7964,7 +7968,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.25.2');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.25.3');
 
 COMMIT;
 

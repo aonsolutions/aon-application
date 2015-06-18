@@ -7,7 +7,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
-	
+
 	<aon:valueParam name="auditInfoWindowId" default="showAuditInfoWindow"/>
 
 	<aon:panelGroup id="#{auditInfoWindowId}">
@@ -36,7 +36,7 @@
 					<aon:div styleClass="aon-popupWindow-content">
 						<aon:div style="width:100%">
 							<aon:div styleClass="aon-popupWindow-content-internal">
-							
+
 								<aon:panelGrid columns="2"
 									styleClass="aon-margin-top"  
 									columnClasses="aon-panelGrid-even aon-noborder aon-bold, 
@@ -59,9 +59,11 @@
 										<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
 											timeZone="#{timeZoneController.timeZoneId}" />
 									</aon:outputText>
-																			
+
+									<ui:insert name="additionalAuditableContent"/>
+
 								</aon:panelGrid>
-								
+
 							</aon:div>
 						</aon:div>
 					</aon:div>							

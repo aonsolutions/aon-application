@@ -81,11 +81,20 @@
 			<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
 				timeZone="#{timeZoneController.timeZoneId}" />
 		</aon:outputText>
-		<aon:div>
-			<aon:outputLabel for="ProjectReservation_modificationDate" value="#{bundle.pms_reservation_modificationDate}:"
+		<aon:div rendered="#{!reservation.reservationPermission.cancellationDateVisible}">
+			<aon:outputLabel for="ProjectReservation_modificationDate" value="#{bundle.aon_modification_date}:"
 				styleClass="aon-margin-right aon-italic" rendered="#{reservation.reservationPermission.modificationDateVisible}" />
 			<aon:outputText id="ProjectReservation_modificationDate" value="#{reservation.to.modificationDate}" 
 				styleClass="aon-bold" rendered="#{reservation.reservationPermission.modificationDateVisible}">
+				<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+		</aon:div>
+		<aon:div rendered="#{reservation.reservationPermission.cancellationDateVisible}">
+			<aon:outputLabel for="ProjectReservation_cancellationDate" value="#{bundle.aon_cancellation_date}:"
+				styleClass="aon-margin-right aon-italic" rendered="#{reservation.reservationPermission.cancellationDateVisible}" />
+			<aon:outputText id="ProjectReservation_cancellationDate" value="#{reservation.to.cancellationDate}" 
+				styleClass="aon-bold" rendered="#{reservation.reservationPermission.cancellationDateVisible}">
 				<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
 					timeZone="#{timeZoneController.timeZoneId}" />
 			</aon:outputText>

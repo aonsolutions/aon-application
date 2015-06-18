@@ -780,6 +780,8 @@ public class ReservationManager implements IReservationConstants {
 			reservation.setStatus(ReservationStatus.CANCELLED);
 			reservation.setModificationUser(CRS);
 			reservation.setModificationDate(new Date());
+			reservation.setCancellationUser(CRS);
+			reservation.setCancellationDate(new Date());
 			BeanManager.getManagerBean(ProjectReservation.class).update(reservation);
 
 			connection = DatabaseUtil.getConnection(AdminUtil.getDomainName(reservation.getDomain()));
