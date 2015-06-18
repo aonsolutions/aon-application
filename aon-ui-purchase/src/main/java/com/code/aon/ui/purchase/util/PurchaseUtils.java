@@ -31,6 +31,7 @@ import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.warehouse.Warehouse;
 import com.esferalia.aon.carrier.Carrier;
 import com.esferalia.aon.carrier.enumeration.ShipmentPeriod;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -50,10 +51,10 @@ public class PurchaseUtils implements Serializable {
 	 * @return
 	 * @throws ManagerBeanException
 	 */
-	public Purchase createPurchase(Supplier supplier, WorkPlace workPlace,
+	public Purchase createPurchase(Supplier supplier, WorkPlace workPlace, Warehouse warehouse,
 			PurchaseDocumentType documentType, String comments)
 			throws ManagerBeanException {
-		return createPurchase(null, supplier, workPlace, documentType,
+		return createPurchase(null, supplier, workPlace, warehouse, documentType,
 				comments, null);
 	}
 	
@@ -67,18 +68,18 @@ public class PurchaseUtils implements Serializable {
 	 * @return
 	 * @throws ManagerBeanException
 	 */
-	public Purchase createPurchase(Supplier supplier, WorkPlace workPlace,
+	public Purchase createPurchase(Supplier supplier, WorkPlace workPlace, Warehouse warehouse,
 			PurchaseDocumentType documentType, String comments, String remarks)
 			throws ManagerBeanException {
-		return createPurchase(null, supplier, workPlace, documentType,
+		return createPurchase(null, supplier, workPlace, warehouse, documentType,
 				comments, remarks, null, null, null, null, null, null, null,
 				null, null, null);
 	}
 	
 	public Purchase createPurchase(String series, Supplier supplier,
-			WorkPlace workPlace, PurchaseDocumentType documentType,
+			WorkPlace workPlace, Warehouse warehouse, PurchaseDocumentType documentType,
 			String comments, String remarks) throws ManagerBeanException {
-		return createPurchase(series, supplier, workPlace, documentType,
+		return createPurchase(series, supplier, workPlace, warehouse, documentType,
 				comments, remarks, null, null, null, null, null, null, null,
 				null, null, null);
 	}
@@ -88,6 +89,7 @@ public class PurchaseUtils implements Serializable {
 	 * @param series
 	 * @param supplier
 	 * @param workPlace
+	 * @param warehouse 
 	 * @param documentType
 	 * @param comments
 	 * @param remarks
@@ -105,7 +107,7 @@ public class PurchaseUtils implements Serializable {
 	 * @throws ManagerBeanException
 	 */
 	public Purchase createPurchase(String series, Supplier supplier,
-			WorkPlace workPlace, PurchaseDocumentType documentType,
+			WorkPlace workPlace, Warehouse warehouse, PurchaseDocumentType documentType,
 			String comments, String remarks, Carrier carrier, String purchaseReference,
 			String shippingAlternativeAddress,
 			String shippingAlternativeAddress2, String shippingAlternativeZip,
@@ -121,6 +123,7 @@ public class PurchaseUtils implements Serializable {
 		pur.setPaymentDays("");
 		pur.setSupplier(supplier);
 		pur.setWorkPlace(workPlace);
+		pur.setWarehouse(warehouse);
 		pur.setIssueDate(new Date());
 		pur.setStatus(PurchaseStatus.PENDING);
 		pur.setDocumentType(documentType);

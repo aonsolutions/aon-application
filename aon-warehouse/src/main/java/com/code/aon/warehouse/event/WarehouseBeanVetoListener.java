@@ -28,21 +28,7 @@ public class WarehouseBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	}
 
 	private void checkWarehouse(Warehouse warehouse) throws ManagerBeanVetoListenerException{
-		if (warehouse.getWorkPlace() != null && warehouse.getWorkPlace().getId() != null) {
-			try {
-				IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
-				Criteria criteria = new Criteria();
-				if (warehouse.getId() != null) {
-					criteria.addNotEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_ID), warehouse.getId());
-				}
-				criteria.addEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_ID), warehouse.getWorkPlace().getId());
-				if (warehouseBean.getCount(criteria) > 0) {
-					throw new ManagerBeanVetoListenerException("El Centro de Trabajo ya tiene Almacen asignado.");
-				}
-			} catch(ManagerBeanException e) {
-				throw new ManagerBeanVetoListenerException(e.getMessage(), e);
-			}
-		} else {
+		if (warehouse.getWorkPlace() == null) {
 			try {
 				IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
 				Criteria criteria = new Criteria();

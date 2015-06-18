@@ -38,8 +38,6 @@ import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.sales.Sales;
@@ -422,6 +420,7 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 			IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
 			criteria = new Criteria();
 			criteria.addEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_ID), delivery.getWorkPlace().getId());
+			criteria.addEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_ACTIVE), Boolean.TRUE);
 			criteria.addOrder(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
 			iterator = warehouseBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
@@ -433,23 +432,7 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	
 	public List<SelectItem> getWarehouses() throws ManagerBeanException {
 		WorkPlace workPlace = ((Delivery)this.getTo()).getWorkPlace();
-		LinkedList<SelectItem> warehouses = new LinkedList<SelectItem>();
-		if(workPlace!=null){
-			IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
-			Criteria criteria = new Criteria();
-			Expression exp1 = ExpressionUtilities.getNullExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE));
-			Expression exp2 = ExpressionUtilities.getEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_ID), workPlace.getId());
-			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
-			criteria.addOrder(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
-			List<ITransferObject> c = warehouseBean.getList(criteria);
-			Iterator<ITransferObject> iter = c.iterator();
-			while (iter.hasNext()) {
-				Warehouse warehouse = (Warehouse) iter.next();
-				SelectItem item = new SelectItem(warehouse, warehouse.getName());
-				warehouses.add(item);
-			}
-		}
-		return warehouses;
+		return WarehouseCollectionsController.getWarehouses(workPlace);
 	}
 
 	public double getTaxableBase(){

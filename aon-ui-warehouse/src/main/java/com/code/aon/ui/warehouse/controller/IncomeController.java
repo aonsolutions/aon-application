@@ -397,36 +397,16 @@ public class IncomeController extends BasicController implements IWarehouseConst
 			IncomeDetail detail = (IncomeDetail) iterator.next();
 			setWarehouse( detail.getWarehouse() );
 		} else {
-			List<Warehouse> warehouses = getWarehouseList(income);
+			List<Warehouse> warehouses = WarehouseCollectionsController.getWarehouseList(income.getWorkPlace());
 			if ( warehouses.size() == 1 ) {
 		        setWarehouse(warehouses.get(0));	
 			}
 		}
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public List<Warehouse> getWarehouseList( Income income ) throws ManagerBeanException {
-		IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
-		Criteria criteria = new Criteria();
-		Expression exp1 = ExpressionUtilities.getNullExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE));
-		WorkPlace wp = income.getWorkPlace();
-		if( (wp!=null) && (wp.getId()!=null) ){
-			Expression exp2 = ExpressionUtilities.getEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_ID), wp.getId());
-			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
-		} else {
-			criteria.addExpression(exp1);
-		}
-		criteria.addOrder(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
-		return (List) warehouseBean.getList(criteria);
-	}
-	
 	public List<SelectItem> getWarehouses() throws ManagerBeanException {
-		List<SelectItem> warehouses = new LinkedList<SelectItem>();
-		for( Warehouse warehouse : getWarehouseList((Income)this.getTo()) ) {
-			SelectItem item = new SelectItem(warehouse, warehouse.getName());
-			warehouses.add(item);			
-		}
-		return warehouses;
+		Income income = (Income) getTo();
+		return WarehouseCollectionsController.getWarehouses(income.getWorkPlace());
 	}
 
 	public double getTaxableBase(){
@@ -478,36 +458,49 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		getPurchaseTransferManager().setFilterParams(null);
 		loadPurchaseTransferModel();
 	}
+	
+	private Criteria getPurchaseTransferCriteria( IManagerBean bean, Income income, boolean addAddress ) throws ManagerBeanException {
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PURCHASE_SUPPLIER_ID), income.getSupplier().getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PURCHASE_STATUS), PurchaseStatus.PENDING);
+		/*
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PURCHASE_SECURITY_LEVEL), income.getSecurityLevel());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PURCHASE_WORK_PLACE_ID), income.getWorkPlace().getId());
+		*/
+
+		Expression exp1 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.PURCHASE_WAREHOUSE));
+		if( (getWarehouse()!=null) && (getWarehouse().getId()!=null) ){
+			String ljAlias = StringUtils.replace(bean.getFieldName(IEntityAlias.PURCHASE_WAREHOUSE_ID), ".id", "<id");
+			Expression exp2 = ExpressionUtilities.getEqualExpression(ljAlias, getWarehouse().getId());
+			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
+		} else {
+			criteria.addExpression(exp1);
+		}
+		
+		if ( addAddress ) {
+			if (income.getRegistryAddress() != null && income.getRegistryAddress().getId() != null) {
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PURCHASE_REGISTRY_ADDRESS_ID), income.getRegistryAddress().getId());
+			}			
+		} else {
+			criteria.addNullExpression(bean.getFieldName(IEntityAlias.PURCHASE_REGISTRY_ADDRESS));			
+		}
+		addFilterCriteria(criteria, bean);
+		criteria.addOrder(bean.getFieldName(IEntityAlias.PURCHASE_ISSUE_DATE));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.PURCHASE_SERIES));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.PURCHASE_NUMBER));
+		return criteria;
+	}
+	
 	private void loadPurchaseTransferModel() throws ManagerBeanException {
 		Income to = (Income)this.getTo();
 
 		IManagerBean purchaseBean = BeanManager.getManagerBean(Purchase.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_SUPPLIER_ID), to.getSupplier().getId());
-		criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_STATUS), PurchaseStatus.PENDING);
-		criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_SECURITY_LEVEL), to.getSecurityLevel());
-		criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_WORK_PLACE_ID), to.getWorkPlace().getId());
-		if (to.getRegistryAddress() != null && to.getRegistryAddress().getId() != null) {
-			criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_REGISTRY_ADDRESS_ID), to.getRegistryAddress().getId());
-		}
-		addFilterCriteria(criteria, purchaseBean);
-		criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_ISSUE_DATE));
-		criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_SERIES));
-		criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_NUMBER));
+		Criteria criteria = getPurchaseTransferCriteria(purchaseBean, to, true);
 		getPurchaseTransferManager().setPurchaseList(purchaseBean.getList(criteria));
 
 		// si el albaran no tiene address definido, se tienen tambien en cuenta los pedidos cuyo address = null
 		if (to.getRegistryAddress() != null && to.getRegistryAddress().getId() != null) {
-			criteria = new Criteria();
-			criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_SUPPLIER_ID), to.getSupplier().getId());
-			criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_STATUS), PurchaseStatus.PENDING);
-			criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_SECURITY_LEVEL), to.getSecurityLevel());
-			criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_WORK_PLACE_ID), to.getWorkPlace().getId());
-			criteria.addNullExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_REGISTRY_ADDRESS));
-			addFilterCriteria(criteria, purchaseBean);
-			criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_ISSUE_DATE));
-			criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_SERIES));
-			criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_NUMBER));
+			criteria = getPurchaseTransferCriteria(purchaseBean, to, false);
 			getPurchaseTransferManager().getPurchaseList().addAll(purchaseBean.getList(criteria));
 		}
 		getPurchaseTransferManager().setPurchaseModel(null);

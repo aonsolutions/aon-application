@@ -24,13 +24,21 @@
 		</aon:outputText>
 	</aon:column>
 
+	<aon:column alias="Proposal.warehouse.name" 
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_module_warehouse}" />
+		</f:facet>
+		<aon:outputText value="#{to.warehouse.name}" />
+	</aon:column>
+	
 	<aon:column alias="Proposal.department.name" 
 		styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.purchase_department}" />
 		</f:facet>
 		<aon:outputText value="#{to.department.name}" />
-	</aon:column>
+	</aon:column>	
 
 	<aon:column alias="Proposal.workPlace.name" 
 		styleClass="aon-editDataTable-textColumn">

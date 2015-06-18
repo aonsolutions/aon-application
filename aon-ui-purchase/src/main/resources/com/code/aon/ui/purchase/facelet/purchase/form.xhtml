@@ -7,6 +7,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
 	template="/com/code/aon/ui/purchase/facelet/purchase/purchaseContent.xhtml">
 
 	<ui:define name="contentEx">
@@ -220,6 +221,30 @@
 						<f:selectItems value="#{configCollections.currentUserScopes}" />
 					</aon:selectOneMenu>
 
+					<aon:outputLabel for="Purchase_workPlace" 
+						value="#{bundle.purchase_workplace}" />
+					<aon:selectOneMenu id="Purchase_workPlace" 
+						value="#{purchase.to.workPlace}"
+						disabled="#{!purchase.pending}" required="#{true}"
+						valueChangeListener="#{purchase.onWorkPlaceChanged}" 
+						reRender="Purchase_scope,Purchase_warehouse">
+						<c:if test="#{fn:length(companyCollections.currentUserWorkPlaces) != 1}" >
+							<f:selectItem itemLabel=" - " itemValue="#{null}" />
+						</c:if>						
+						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Purchase_warehouse" 
+						value="#{bundle.aon_module_warehouse}" />
+					<aon:selectOneMenu id="Purchase_warehouse"
+						disabled="#{!purchase.pending}" 
+						value="#{purchase.to.warehouse}">
+						<c:if test="#{fn:length(purchase.warehouses) != 1}" >
+							<f:selectItem itemLabel=" - " itemValue="#{null}" />
+						</c:if>
+						<f:selectItems value="#{purchase.warehouses}" />
+					</aon:selectOneMenu>
+
 					<aon:outputLabel for="Purchase_address"
 						value="#{bundle.aon_address}" />
 					<aon:div id="PurchaseAddress">
@@ -232,16 +257,6 @@
 							rendered="#{purchase.addressCount == 0}"
 							styleClass="aon-italic" />
 					</aon:div>
-
-					<aon:outputLabel for="Purchase_workPlace" 
-						value="#{bundle.purchase_workplace}" />
-					<aon:selectOneMenu id="Purchase_workPlace" 
-						value="#{purchase.to.workPlace}"
-						disabled="#{!purchase.pending}"
-						valueChangeListener="#{purchase.onWorkPlaceChanged}" 
-						reRender="Purchase_scope">
-						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
-					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Purchase_defaultPayMethod" 
 						value="#{bundle.finance_payMethod}" />
