@@ -392,7 +392,7 @@
 					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_contact_data}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{pms_guest_info}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-59" mode="Opaque" x="686" y="31" width="125" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
