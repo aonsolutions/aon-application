@@ -14,7 +14,10 @@ public class PosShiftBeanVetoListener extends ManagerBeanVetoListenerAdapter {
     @Override
     public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		PosShift posShift = (PosShift) evt.getTo();
-		checkPosShift(posShift);
+		if (!posShift.isSkipCheckPosShift()) {
+			checkPosShift(posShift);
+		}
+		posShift.setSkipCheckPosShift(false);
     }
 
 	private void checkPosShift(PosShift posShift) {
