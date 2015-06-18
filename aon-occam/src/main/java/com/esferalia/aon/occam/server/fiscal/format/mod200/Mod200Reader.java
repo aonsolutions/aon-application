@@ -57,7 +57,10 @@ public class Mod200Reader {
 	
 	// Devuelve un String leyendo una cadena de la linea que se le pasa
 	private static String getString(String line, int pos, int lon) {
-		return AonStringUtils.substring(line,pos-1,pos+lon-1);
+		String c = AonStringUtils.substring(line,pos-1,pos+lon-1);
+		if (c!=null) c = c.trim();
+		//return AonStringUtils.substring(line,pos-1,pos+lon-1);
+		return c;
 	}
 	
 	// Devuelve un boolean leyendo una cadena de la linea que se le pasa

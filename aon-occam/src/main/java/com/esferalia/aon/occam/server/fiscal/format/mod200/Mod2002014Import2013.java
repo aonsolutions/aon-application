@@ -1348,7 +1348,9 @@ public class Mod2002014Import2013 {
 			,(mod200old,mod200new) -> mod200new.setPeriodEnd( addOneYear(mod200old.getPeriodEnd()))       // Periodo Impositivo - Fin
 			,(mod200old,mod200new) -> mod200new.setPeriodType( mod200old.getPeriodType())                 // Identificación - Tipo de ejercicio
 			,(mod200old,mod200new) -> mod200new.setCnae( convertCnae93toCnae2009( mod200old.getCnae()) )  // Identificación - C.N.A.E.  Actividad principal (convertido a CNAE 2009)
-			,(mod200old,mod200new) -> mod200new.setEnterprise( mod200old.getEnterprise()) 				  // Identificación - Empresa 
+			// No podemos asegurar que el id de enterprise viene bien cumplimentado en mod200old
+			// respetamos los id que vienen con mod200new
+			//,(mod200old,mod200new) -> mod200new.setEnterprise( mod200old.getEnterprise()) 				  // Identificación - Empresa 
 			,(mod200old,mod200new) -> mod200new.setEnterpriseDocument( mod200old.getEnterpriseDocument()) // Identificación - NIF 
 			,(mod200old,mod200new) -> mod200new.setEnterpriseName(mod200old.getEnterpriseName())          // Identificación - Apellidos y nombre o Razón Social
 			,(mod200old,mod200new) -> mod200new.setEnterprisePhone1(mod200old.getEnterprisePhone1())      // Identificación - Teléfono 1
