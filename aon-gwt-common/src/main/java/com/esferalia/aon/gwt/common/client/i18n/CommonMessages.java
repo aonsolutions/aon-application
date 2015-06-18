@@ -1970,4 +1970,76 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Guardar la declaraci\u00F3n inclu\u00EDda en el modelo importado.")
 	String saveImportedModel();
+
+	@DefaultMessage("Fichero")
+	String file();
+	
+	@DefaultMessage("Importar")
+	String importAction();
+	
+    @DefaultMessage("Se está enviando un archivo al servidor.\n Inténtelo mas tarde.")
+    String uploaderActiveUpload();
+
+    @DefaultMessage("Este archivo ya fué enviado.")
+    String uploaderAlreadyDone();
+
+    @DefaultMessage("Parece que esta aplicación está configurada para usar GAE-Blobstore.\nSin embargo el servidor ha retornado un error al crear la URL.\nRecuerda que para utilizar blobstore debes activar la opción de facturación en GAE.")
+    String uploaderBlobstoreError();
+
+    @DefaultMessage("Seleccione un fichero para enviar ...")
+    String uploaderBrowse();
+
+    @DefaultMessage("Sólo está permitido enviar estos tipos de archivo:\n")
+    String uploaderInvalidExtension();
+
+    @DefaultMessage("Enviar")
+    String uploaderSend();
+
+    @DefaultMessage("El servidor ha enviado una respuesta incorrecta.\n Compruebe que la aplicación en el servidor está bien configurada.")
+    String uploaderServerError();
+    
+    @DefaultMessage("Unable to auto submit the form, it seems your browser has security issues with this feature.\n Developer Info: If you are using jsupload and you do not need cross-domain, try a version compiled with the standard linker?")
+    String submitError();
+    
+    @DefaultMessage("Ha sido imposible conectar con el servidor de la aplicación.")
+    String uploaderServerUnavailable();
+
+    @DefaultMessage("Se ha sobrepasado el tiempo de espera al enviar el archivo.\n Es posible que su navegador no envíe correctamente archivos,\n o quizás ocurrió un error en el servidor\nPor favor inténtelo mas tarde")
+    String uploaderTimeout();
+    
+    @DefaultMessage("Error uploading the file, the server response has a format which can not be parsed by the application.\n.")
+    String uploaderBadServerResponse();
+
+    @DefaultMessage("Additional information: it seems that you are using blobstore, so in order to upload large files check that your application is billing enabled.")
+    String uploaderBlobstoreBilling();
+
+    @DefaultMessage("Error you have typed an invalid file name, please select a valid one.")
+    String uploaderInvalidPathError();
+    
+    @DefaultMessage("En espera")
+    String uploadStatusQueued();
+    
+    @DefaultMessage("Enviando ...")
+    String uploadStatusInProgress();
+    
+    @DefaultMessage("Finalizado")
+    String uploadStatusSuccess();
+    
+    @DefaultMessage("Error")
+    String uploadStatusError();
+    
+    @DefaultMessage("Cancelando ...")
+    String uploadStatusCanceling();
+    
+    @DefaultMessage("Cancelado")
+    String uploadStatusCanceled();
+    
+    @DefaultMessage("Borrado")
+    String uploadStatusDeleted();
+
+    @DefaultMessage("Enviando formulario ...")
+    String uploadStatusSubmitting();
+    
+    @DefaultMessage("Cancelar")
+    String uploadLabelCancel();
 }

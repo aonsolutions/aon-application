@@ -570,7 +570,7 @@ public class Model2002014 extends ResizeComposite  {
 
 	@UiHandler("importAccountingButton")
 	void onImportAccountingButtonClick(ClickEvent event) {
-		UploadDialog ud = new UploadDialog(AON.MSG.import2013(),GWT.getModuleBaseURL() +"Mod2002014AccountingUpload") {
+		UploadDialog ud = new UploadDialog(AON.MSG.importAccounting(),GWT.getModuleBaseURL() +"Mod2002014AccountingUpload") {
 			
 			@Override
 			protected void onCancel() {
