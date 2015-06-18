@@ -9,7 +9,7 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
-import com.esferalia.aon.gwt.common.client.widget.CnaePanel;
+import com.esferalia.aon.gwt.common.client.widget.Cnae2009Panel;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
@@ -21,7 +21,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014.BalanceType;
 import com.esferalia.aon.occam.api.model.type.Administration;
-import com.esferalia.aon.occam.api.model.type.CNAE;
+import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -110,7 +110,7 @@ public class Page00 extends PageAbs {
 	@UiField
 	Button showCnae;
 
-	CnaePanel cnaePanel;
+	Cnae2009Panel cnaePanel;
 	
 	@UiField
 	DocumentTextBox nif;
@@ -146,9 +146,9 @@ public class Page00 extends PageAbs {
 	
 	public Page00() {
 		
-		cnaePanel = new CnaePanel( new CnaePanel.SelectionCallBack() {
+		cnaePanel = new Cnae2009Panel( new Cnae2009Panel.SelectionCallBack() {
 			@Override
-			public void onSelect(CNAE selected) {
+			public void onSelect(CNAE2009 selected) {
 				cnae.setText(selected.getCode());
 				cnaeLabel.setText(selected.getDescription());
 			}
@@ -215,7 +215,7 @@ public class Page00 extends PageAbs {
 		cnaeLabel.setText(null);
 		cnae.setValue(this.mod200Object.getMod200().getCnae());
 		if (!AonUtil.isEmpty(this.mod200Object.getMod200().getCnae())) {
-			CNAE cnae = CNAE.valueOfCode(this.mod200Object.getMod200().getCnae());
+			CNAE2009 cnae = CNAE2009.valueOfCode(this.mod200Object.getMod200().getCnae());
 			cnaeLabel.setText(cnae==null?null:cnae.getDescription());	
 		}
 		this.mod200Object.register( new IMod200ChangeListener() {
