@@ -352,7 +352,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	public Date getEarlyCheckOutDate() throws ManagerBeanException {
 		if (isEarlyCheckOut()) {
 			if (getEndDate().after(getEndTime())) {
-				return DateUtils.addDays(DateUtils.truncate(getEndTime(), Calendar.DATE), 1);
+				return DateUtils.truncate(getEndTime(), Calendar.DATE);
 			} else {
 				IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
 				Criteria criteria = new Criteria();
