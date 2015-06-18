@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.25.1
+# Version: 8.25.2
 # Created by: girazu
-# Creation Date: 17/06/2015 12:55
+# Creation Date: 17/06/2015 13:20
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -2033,12 +2033,16 @@ CREATE TABLE `project_reservation` (
   `advance` double(15,2) NOT NULL default '0.00' COMMENT 'Anticipo',
   `advance_invoiced` tinyint(1) NOT NULL default '0' COMMENT 'Indica si el anticipo esta Facturado',
   `early_check_out` tinyint(1) default '0' COMMENT 'Indica si se ha producido una salida anticipada',
+  `prepay` tinyint(1) default '0' COMMENT 'Indica si es un prepago',
+  `bank_transaction` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Codigo de transaccion bancaria',
   `check_status` tinyint(2) NOT NULL COMMENT 'Estado de registro en el Hotel',
   `status` tinyint(2) NOT NULL COMMENT 'Estado de la Reserva',
   `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime default NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de modificacion',
   `modification_date` datetime default NULL COMMENT 'Fecha de modificacion',
+  `cancelation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de cancelacion',
+  `cancelation_date` datetime default NULL COMMENT 'Fecha de cancelacion',
   PRIMARY KEY  (`project`),
   KEY `IDX_PROJECT_RESERVATION_CODE` (`code`),
   KEY `IDX_PROJECT_RESERVATION_HOTEL` (`hotel`),
@@ -7960,7 +7964,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.25.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.25.2');
 
 COMMIT;
 

@@ -78,6 +78,14 @@
 					valueChangeListener="#{controller.addExpression}"
 					size="64" />
 
+				<aon:outputLabel for="ProjectReservation_prepay" 
+					value="#{bundle.pms_prepay}" />
+				<aon:selectOneRadio id="ProjectReservation_prepay"
+					valueChangeListener="#{controller.addExpression}">
+					<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+					<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+				</aon:selectOneRadio>				
+
 				<aon:outputLabel for="ProjectReservation_earlyCheckOut" 
 					value="#{bundle.pms_early_check_out}" />
 				<aon:selectOneRadio id="ProjectReservation_earlyCheckOut"
