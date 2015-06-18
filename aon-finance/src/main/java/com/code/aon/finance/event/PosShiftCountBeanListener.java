@@ -32,6 +32,7 @@ public class PosShiftCountBeanListener extends ManagerBeanListenerAdapter {
 	}
 
 	private void checkPosShift(PosShift posShift) throws ManagerBeanException {
+		posShift = (PosShift)BeanManager.getManagerBean(PosShift.class).get(posShift.getId());
 		if (posShift.isClosed()) {
 			posShift.setTotalShiftCountMap(null);
 			boolean imbalance = false;
