@@ -1269,46 +1269,46 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Resultado del \u00FAltimo ejercicio")
 	String partMsg17();
 
-	@DefaultMessage("Capital Escriturado")
+	@DefaultMessage("Capital Escriturado (N, A, P))")
 	String ecpnMsg1();
 
-	@DefaultMessage("Capital (No exigido)")
+	@DefaultMessage("Capital (No exigido) (N, A, P)")
 	String ecpnMsg2();
 
-	@DefaultMessage("Prima de emisi\u00F3n")
+	@DefaultMessage("Prima de emisi\u00F3n (N, A, P)")
 	String ecpnMsg3();
 
-	@DefaultMessage("Reservas")
+	@DefaultMessage("Reservas (N, A, P)")
 	String ecpnMsg4();
 
-	@DefaultMessage("(Acciones y partic. en patr. propias)")
+	@DefaultMessage("(Acciones y partic. en patr. propias) (N, A, P)")
 	String ecpnMsg5();
 
-	@DefaultMessage("Resultados de ejercicios anteriores")
+	@DefaultMessage("Resultados de ejercicios anteriores (N, A, P)")
 	String ecpnMsg6();
 
-	@DefaultMessage("Otras aportaciones de socios")
+	@DefaultMessage("Otras aportaciones de socios (N, A, P)")
 	String ecpnMsg7();
 
-	@DefaultMessage("Resultado del ejercicio")
+	@DefaultMessage("Resultado del ejercicio (N, A, P)")
 	String ecpnMsg8();
 
-	@DefaultMessage("(Dividendo a cuenta)")
+	@DefaultMessage("(Dividendo a cuenta) (N, A, P)")
 	String ecpnMsg9();
 
-	@DefaultMessage("Otros instrumentos de patrimonio neto")
+	@DefaultMessage("Otros instrumentos de patrimonio neto (N, A)")
 	String ecpnMsg10();
 
-	@DefaultMessage("Ajustes por cambios de valor")
+	@DefaultMessage("Ajustes por cambios de valor (N, A)")
 	String ecpnMsg11();
 
-	@DefaultMessage("Ajustes en patrimonio neto")
+	@DefaultMessage("Ajustes en patrimonio neto (P)")
 	String ecpnMsg12();
 
-	@DefaultMessage("Subv. donac. y legados recibidos")
+	@DefaultMessage("Subv. donac. y legados recibidos (N, A, P)")
 	String ecpnMsg13();
 
-	@DefaultMessage("TOTAL")
+	@DefaultMessage("TOTAL (N, A, P)")
 	String ecpnMsg14();
 	
 

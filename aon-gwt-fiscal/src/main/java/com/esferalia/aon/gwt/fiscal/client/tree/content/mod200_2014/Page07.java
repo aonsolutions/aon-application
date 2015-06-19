@@ -25,14 +25,55 @@ public class Page07 extends PageAbs {
 	}
 	
 	private static final Page7Binder page7Binder = GWT.create(Page7Binder.class);
-
-	private static final String[] COLS = new String[] {"",
-			AON.MSG.ecpnMsg1(),AON.MSG.ecpnMsg2(),AON.MSG.ecpnMsg3(),
-			AON.MSG.ecpnMsg4(),AON.MSG.ecpnMsg5(),AON.MSG.ecpnMsg6(),
-			AON.MSG.ecpnMsg7(),AON.MSG.ecpnMsg8(),AON.MSG.ecpnMsg9(),
-			AON.MSG.ecpnMsg10(),AON.MSG.ecpnMsg11(),AON.MSG.ecpnMsg12(),
-			AON.MSG.ecpnMsg14(),AON.MSG.ecpnMsg14()
-	};
+	private static enum Page7Column {
+		 COL00(""                 ,true ,true ,true )
+		,COL01(AON.MSG.ecpnMsg1() ,true ,true ,true )
+		,COL02(AON.MSG.ecpnMsg2() ,true ,true ,true )
+		,COL03(AON.MSG.ecpnMsg3() ,true ,true ,true )
+		,COL04(AON.MSG.ecpnMsg4() ,true ,true ,true )
+		,COL05(AON.MSG.ecpnMsg5() ,true ,true ,true )
+		,COL06(AON.MSG.ecpnMsg6() ,true ,true ,true )
+		,COL07(AON.MSG.ecpnMsg7() ,true ,true ,true )
+		,COL08(AON.MSG.ecpnMsg8() ,true ,true ,true )
+		,COL09(AON.MSG.ecpnMsg9() ,true ,true ,true )
+		,COL10(AON.MSG.ecpnMsg10(),true ,true ,false)
+		,COL11(AON.MSG.ecpnMsg11(),true ,true ,false)
+		,COL12(AON.MSG.ecpnMsg12(),false,false,true )
+		,COL13(AON.MSG.ecpnMsg13(),true ,true ,true )
+		,COL14(AON.MSG.ecpnMsg14(),true ,true ,true )
+		;
+		private String name;
+		private boolean normal;
+		private boolean abbreviate;
+		private boolean pymes;
+		
+		private Page7Column(String name,boolean normal,boolean abbreviate,boolean pymes) {
+			this.name = name;
+			this.normal = normal;
+			this.abbreviate = abbreviate;
+			this.pymes = pymes;
+		}
+		protected String getName() {
+			return name;
+		}
+		public boolean isNormal() {
+			return normal;
+		}
+		public boolean isAbbreviate() {
+			return abbreviate;
+		}
+		public boolean isPymes() {
+			return pymes;
+		}
+	}
+	
+//	private static final String[] COLS = new String[] {"",
+//			AON.MSG.ecpnMsg1(),AON.MSG.ecpnMsg2(),AON.MSG.ecpnMsg3(),
+//			AON.MSG.ecpnMsg4(),AON.MSG.ecpnMsg5(),AON.MSG.ecpnMsg6(),
+//			AON.MSG.ecpnMsg7(),AON.MSG.ecpnMsg8(),AON.MSG.ecpnMsg9(),
+//			AON.MSG.ecpnMsg10(),AON.MSG.ecpnMsg11(),AON.MSG.ecpnMsg12(),
+//			AON.MSG.ecpnMsg14(),AON.MSG.ecpnMsg14()
+//	};
 	
 	private static enum Page7Row {
 		 ROW1 (""             ,false,true ,true ,true ,null )
@@ -104,15 +145,29 @@ public class Page07 extends PageAbs {
 		table.setCellSpacing(0);
 		CellTable.Resources tableStyle = GWT.create(ModCellTable.class);
 		Label label = null;
-		for (int col = 0; col < COLS.length; col++) {
-			if (col > 0) {
-				label = new Label(COLS[col]);
-				table.setWidget(0, col, label);
+		int tableCol = 0;
+		for (int col = 0; col < Page7Column.values().length; col++) {
+			boolean colVisible  = (
+					   (mod200Object.getMod200().getBalanceType() == BalanceType.NORMAL && Page7Column.values()[col].isNormal())
+					|| (mod200Object.getMod200().getBalanceType() == BalanceType.ABREVIADO && Page7Column.values()[col].isAbbreviate())
+					|| (mod200Object.getMod200().getBalanceType() == BalanceType.PYMES && Page7Column.values()[col].isPymes())
+					);
+			if (colVisible) {
+				label = new Label(Page7Column.values()[col].getName());
+				table.setWidget(0, tableCol, label);
+				table.getColumnFormatter().setWidth(tableCol, (col == 0)?"150px":"100px");
+				table.getFlexCellFormatter().addStyleName(0, tableCol, tableStyle.cellTableStyle().cellTableHeader());
+				table.getFlexCellFormatter().addStyleName(0, tableCol, AON.AON_CSS.aonTextCenter());
+				++tableCol;
 			}
-			table.getColumnFormatter().setWidth(col, (col == 0)?"150px":"100px");
-			table.getFlexCellFormatter().addStyleName(0, col, tableStyle.cellTableStyle().cellTableHeader());
-			table.getFlexCellFormatter().addStyleName(0, col, AON.AON_CSS.aonTextCenter());	
 		}
+//		for (int col = 0; col < COLS.length; col++) {
+//			label = new Label(COLS[col]);
+//			table.setWidget(0, col, label);
+//			table.getColumnFormatter().setWidth(col, (col == 0)?"150px":"100px");
+//			table.getFlexCellFormatter().addStyleName(0, col, tableStyle.cellTableStyle().cellTableHeader());
+//			table.getFlexCellFormatter().addStyleName(0, col, AON.AON_CSS.aonTextCenter());	
+//		}
 		
 		for (int row = 1; row < Page7Row.values().length; row++) {
 			boolean rowVisible  = (
@@ -126,41 +181,50 @@ public class Page07 extends PageAbs {
 				if (Page7Row.values()[row].isTitle()) {
 					table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());	
 				}
-				for (int col = 1; col < COLS.length; col++) {
-					FlowPanel panel = new FlowPanel();
-					panel.setStyleName(AON.AON_CSS.aonNowrap());
-					final Mod2002014Key key = Page7Row.values()[row].getKeys()[col - 1];
-					if (key != null) {
-						BoxLabel code = new BoxLabel(key.getCode( mod200Object.getAdministration() ));
-						panel.add(code);
-						getLabels().put(key, code);
-						
-						final DoubleBox text = new DoubleBox(8);
-						text.addChangeHandler(new ChangeHandler() {
-							@Override
-							public void onChange(ChangeEvent event) {
-								try {
-									if (AonStringUtils.isEmpty(text.getText())) {
-										text.setValue(0.0,false);
+				tableCol = 1;
+				for (int col = 1; col < Page7Column.values().length; col++) {
+					boolean colVisible  = (
+							   (mod200Object.getMod200().getBalanceType() == BalanceType.NORMAL && Page7Column.values()[col].isNormal())
+							|| (mod200Object.getMod200().getBalanceType() == BalanceType.ABREVIADO && Page7Column.values()[col].isAbbreviate())
+							|| (mod200Object.getMod200().getBalanceType() == BalanceType.PYMES && Page7Column.values()[col].isPymes())
+							);
+					if (colVisible) {
+						FlowPanel panel = new FlowPanel();
+						panel.setStyleName(AON.AON_CSS.aonNowrap());
+						final Mod2002014Key key = Page7Row.values()[row].getKeys()[col - 1];
+						if (key != null) {
+							BoxLabel code = new BoxLabel(key.getCode( mod200Object.getAdministration() ));
+							panel.add(code);
+							getLabels().put(key, code);
+							
+							final DoubleBox text = new DoubleBox(8);
+							text.addChangeHandler(new ChangeHandler() {
+								@Override
+								public void onChange(ChangeEvent event) {
+									try {
+										if (AonStringUtils.isEmpty(text.getText())) {
+											text.setValue(0.0,false);
+										}
+										Double d = text.getValueOrThrow();
+										text.addStyleName(AON.AON_CSS.aonChanged());
+										mod200Object.doubleValueChanged(key, d);
+									} catch (ParseException e) {
+										// nothing.
 									}
-									Double d = text.getValueOrThrow();
-									text.addStyleName(AON.AON_CSS.aonChanged());
-									mod200Object.doubleValueChanged(key, d);
-								} catch (ParseException e) {
-									// nothing.
 								}
-							}
-						});
-						text.setValue(mod200Object.getDoubleValue(key));
-						text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
-						text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-						text.setEnabled( !isDisabled(key) );
-						text.setTabIndex((col * 100 + row));
-						getInputs().put(key, text);
-						panel.add(text);
-						table.setWidget(row, col, panel);
-					} else {
-						table.setWidget(row, col, panel);
+							});
+							text.setValue(mod200Object.getDoubleValue(key));
+							text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
+							text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
+							text.setEnabled( !isDisabled(key) );
+							text.setTabIndex((tableCol * 100 + row));
+							getInputs().put(key, text);
+							panel.add(text);
+							table.setWidget(row, tableCol, panel);
+						} else {
+							table.setWidget(row, tableCol, panel);
+						}
+						++tableCol;
 					}
 				}
 			}

@@ -104,10 +104,10 @@ public class Page07 extends PageAbs {
 		CellTable.Resources tableStyle = GWT.create(ModCellTable.class);
 		Label label = null;
 		for (int col = 0; col < COLS.length; col++) {
-			if (col > 0) {
+			//if (col > 0) {
 				label = new Label(COLS[col]);
 				table.setWidget(0, col, label);
-			}
+			//}
 			table.getColumnFormatter().setWidth(col, (col == 0)?"150px":"100px");
 			table.getFlexCellFormatter().addStyleName(0, col, tableStyle.cellTableStyle().cellTableHeader());
 			table.getFlexCellFormatter().addStyleName(0, col, AON.AON_CSS.aonTextCenter());	
