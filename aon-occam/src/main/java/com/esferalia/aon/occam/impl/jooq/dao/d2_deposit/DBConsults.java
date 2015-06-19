@@ -13,9 +13,11 @@ import java.io.OutputStream;
 import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Record3;
+import org.jooq.Record5;
 import org.jooq.Record7;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 public class DBConsults {
@@ -55,21 +57,12 @@ public class DBConsults {
 			
 				
 				
-			File f = File.createTempFile("","");
+			File f = File.createTempFile("fiscalTmp",".xml");
 			byte[] data;
 			if(record != null){
 				data = record.value5();
 				try {
-					FileInputStream fi =  new FileInputStream(f);
-					OutputStream out = null;
-			        try {
-			            out = openOutputStream(f);
-			            
-			          
-			            out.write(data);
-			        } finally {
-			            AonIOUtils.closeQuietly(out);
-			        }
+			       AonFileUtils.writeByteArrayToFile(f, data);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -80,26 +73,6 @@ public class DBConsults {
 			if (ctx != null) ctx.close();
 		}
 	}
-	
-	  
-    public static FileOutputStream openOutputStream(File file) throws IOException {
-        if (file.exists()) {
-            if (file.isDirectory()) {
-                throw new IOException("File '" + file + "' exists but is a directory");
-            }
-            if (file.canWrite() == false) {
-                throw new IOException("File '" + file + "' cannot be written to");
-            }
-        } else {
-            File parent = file.getParentFile();
-            if (parent != null && parent.exists() == false) {
-                if (parent.mkdirs() == false) {
-                    throw new IOException("File '" + file + "' could not be created");
-                }
-            }
-        }
-        return new FileOutputStream(file);
-    }
 	
 	public static Esquema getDeposit(String domain , Integer domainId){
 		AONContext ctx = null;
@@ -137,6 +110,40 @@ public class DBConsults {
 				insertDeposit(ctx, domain, data, domainId, name, document, registry);
 				
 			}
+			try {
+				schema = Utils.readXml(data);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return schema;
+		}finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static Esquema getDeposit(String domain , Integer domainId, String idstr){
+		Integer id = Integer.parseInt(idstr);
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain, domainId);
+				
+				
+			// DOMAIN + DOMAIN SON
+			Record5<Integer, String, Byte, String, byte[]> record = ctx.getDslContext()
+						.select(RATTACH.ID, RATTACH.DESCRIPTION,
+								RATTACH.MIMETYPE, RATTACH.DRIVE_ID, RATTACH.DATA)
+						.from(RATTACH)
+						.where(RATTACH.ID.eq(id))
+						.fetchOne();
+			
+				
+				
+			File f = new File("/tmp/DEPOSITO.xml"); 
+			byte[] data;
+			Esquema schema = null;
+		
+				data = record.value5();
+			
 			try {
 				schema = Utils.readXml(data);
 			} catch (Exception e) {
@@ -194,8 +201,41 @@ public class DBConsults {
 			if (ctx != null) ctx.close();
 		}
 		
-}
+	}
+	
+	public static void insertDeposit(String domain, byte[] b,Integer domainId, String idstr) {
+		Integer id  = Integer.parseInt(idstr);
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain, domainId);
+		
+			ctx.getDslContext().update(RATTACH).set(RATTACH.DATA, b).where(RATTACH.ID.eq(id)).execute();
 
+		}finally {
+			if (ctx != null) ctx.close();
+		}
+		
+	}
+
+	public static Integer insertDepositText(String domain,String name, byte[] b,Integer domainId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain, domainId);
+		
+			Record1<Integer> reg = ctx.getDslContext().select(ENTERPRISE.REGISTRY)
+					.from(ENTERPRISE.join(REGISTRY).on(REGISTRY.ID.eq(ENTERPRISE.REGISTRY)))
+					.where(ENTERPRISE.DOMAIN.eq(domainId)).fetchOne();
+			Integer registry = reg.value1();
+			
+			
+		return ctx.getDslContext().insertInto(RATTACH,RATTACH.REGISTRY,RATTACH.DOMAIN,RATTACH.CATEGORY,RATTACH.MIMETYPE,RATTACH.DESCRIPTION,RATTACH.TYPE,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.ATTACH_DATE,RATTACH.DATA,RATTACH.DRIVE_ID,RATTACH.DPARENT_ID)
+					.values(registry,domainId,null,(byte) com.esferalia.aon.occam.api.model.type.MimeType.XML.ordinal(), name ,(byte) 17,null,(byte)0,null,b,null,null).returning(RATTACH.ID).fetchOne().getId();
+		
+		}finally {
+			if (ctx != null) ctx.close();
+		}
+		
+	}
 	
 	
 
