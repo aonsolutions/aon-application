@@ -444,7 +444,8 @@ public class Mod2002014DAO  {
 	
 	public static Mod2002014 initializeNewMod200(AONContext ctx, Mod2002014 mod200) {
 		Mod2002013 old= Mod2002013DAO.getByYear(ctx, 2013);
-		if (old != null && old.getId() != null) {
+		if (old != null && old.getId() != null) { 
+			mod200.setEnterprise(old.getEnterprise());
 			Mod2002014Import2013.import2013(mod200,old);
 			mod200.setInitializedFromLastYear(true);
 		} else {
