@@ -24,6 +24,7 @@ public class XMLtoMod2002014 {
 
 	private static void fillPagina03(MOD2002014 mod, Mod2002014 mod200) {
 		TipoPagina03 pag = mod.getNormal().getBalance().getPagina03();
+		if (pag==null) return;
 		addVariable(mod200,Mod2002014Key.BA103,pag.getT103());
 		addVariable(mod200,Mod2002014Key.BA104,pag.getT104());
 		addVariable(mod200,Mod2002014Key.BA105,pag.getT105());
@@ -73,6 +74,7 @@ public class XMLtoMod2002014 {
 
 	private static void fillPagina04(MOD2002014 mod, Mod2002014 mod200) {
 		TipoPagina04 pag = mod.getNormal().getBalance().getPagina04();
+		if (pag==null) return;
 		//addDraftVariable(mod200,Mod2002014Key.BA150,pag.getT150());
 		addVariable(mod200,Mod2002014Key.BA151,pag.getT151());
 		addVariable(mod200,Mod2002014Key.BA152,pag.getT152());
@@ -106,6 +108,7 @@ public class XMLtoMod2002014 {
 	
 	private static void fillPagina05(MOD2002014 mod, Mod2002014 mod200) {
 		TipoPagina05 pag = mod.getNormal().getBalance().getPagina05();
+		if (pag==null) return;
 		addVariable(mod200,Mod2002014Key.BP188, pag.getT188());
 		addVariable(mod200,Mod2002014Key.BP189, pag.getT189());
 		addVariable(mod200,Mod2002014Key.BP190, pag.getT190());
@@ -148,6 +151,7 @@ public class XMLtoMod2002014 {
 	}
 	
 	private static void fillPagina06(MOD2002014 mod, Mod2002014 mod200) {
+		if (mod.getNormal().getBalance() == null) return;
 		TipoPagina06 pag = mod.getNormal().getBalance().getPagina06();
 		addVariable(mod200,Mod2002014Key.BP229, pag.getT229());
 		//addDraftVariable(mod200,Mod2002014Key.BP230, pag.getT230());
@@ -175,6 +179,7 @@ public class XMLtoMod2002014 {
 	
 	private static void fillPagina07(MOD2002014 mod, Mod2002014 mod200) {
 		TipoPagina07 pag = mod.getNormal().getCuentaPyG().getPagina07();
+		if (pag==null) return;
 		addVariable(mod200,Mod2002014Key.PG255, pag.getT255());
 		addVariable(mod200,Mod2002014Key.PG256, pag.getT256());
 		addVariable(mod200,Mod2002014Key.PG257, pag.getT257());
@@ -230,6 +235,7 @@ public class XMLtoMod2002014 {
 	
 	private static void fillPagina08(MOD2002014 mod, Mod2002014 mod200) {
 		TipoPagina08 pag = mod.getNormal().getCuentaPyG().getPagina08();
+		if (pag==null) return;
 		addVariable(mod200,Mod2002014Key.PG306, pag.getT306());
 		addVariable(mod200,Mod2002014Key.PG307, pag.getT307());
 		addVariable(mod200,Mod2002014Key.PG308, pag.getT308());
@@ -256,6 +262,7 @@ public class XMLtoMod2002014 {
 	
 	private static void fillPagina09(MOD2002014 mod, Mod2002014 mod200) {
 		TipoPagina09 pag = mod.getNormal().getCambiosPN().getPagina09();
+		if (pag==null) return;
 		addVariable(mod200,Mod2002014Key.T0336, pag.getT336());
 		addVariable(mod200,Mod2002014Key.T0337, pag.getT337());
 		addVariable(mod200,Mod2002014Key.T0338, pag.getT338());
@@ -277,6 +284,7 @@ public class XMLtoMod2002014 {
 
 	private static void fillPagina10(MOD2002014 mod, Mod2002014 mod200) {
 		TipoPagina10 pag = mod.getNormal().getCambiosPN().getPagina10();
+		if (pag==null) return;
 		addVariable(mod200,Mod2002014Key.TC380, pag.getT380());
 		addVariable(mod200,Mod2002014Key.TC381, pag.getT381());
 		addVariable(mod200,Mod2002014Key.TC382, pag.getT382());
@@ -400,6 +408,7 @@ public class XMLtoMod2002014 {
 
 	private static void fillPagina11(MOD2002014 mod, Mod2002014 mod200) {
 		TipoPagina11 pag = mod.getNormal().getCambiosPN().getPagina11();
+		if (pag==null) return;
 		addVariable(mod200,Mod2002014Key.TC387, pag.getT387());
 		addVariable(mod200,Mod2002014Key.TC388, pag.getT388());
 		addVariable(mod200,Mod2002014Key.TC389, pag.getT389());
