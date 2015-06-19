@@ -245,6 +245,12 @@ public class CompositeSalaryBuilder<E extends ISalary,T extends ISalaryBuilder<E
 		for (ISalaryBuilder<E> builder : builders)
 			builder.setTotalEnterprise(totalEnterprise);
 	}
+	
+	@Override
+	public void addData(String name, ITimedVariable<?> datas) {
+		for (ISalaryBuilder<E> builder : builders)
+			builder.addData(name, datas);
+	}
 
 	@Override
 	public void addBonus(Double amount, String description, IBonus bonus,

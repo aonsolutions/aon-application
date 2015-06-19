@@ -323,6 +323,10 @@ public class JooqSalaryBuilder implements ISalaryBuilder<ISalary> {
 		insertMoreSalary = insertMoreSalary.set(SALARY.TOTAL_ENTERPRISE,
 				totalEnterprise);
 	}
+	@Override
+	public void addData(String name, ITimedVariable<?> data) {
+		addVariable(name, data);
+	}
 
 	@Override
 	public void addEmbargo(Integer id, Double amount, String description,
@@ -331,7 +335,7 @@ public class JooqSalaryBuilder implements ISalaryBuilder<ISalary> {
 				.insertInto(SALARY_EMBARGO) : insertMoreEmbargo.newRecord();
 
 		insertMoreEmbargo = insertEmbargo
-				.set(SALARY_BONUS.DOMAIN, this.domainId)
+				.set(SALARY_EMBARGO.DOMAIN, this.domainId)
 				.set(SALARY_EMBARGO.SALARY, salaryId)
 				.set(SALARY_EMBARGO.AMOUNT, amount)
 				.set(SALARY_EMBARGO.CONTRACT_EMBARGO, id)
@@ -371,7 +375,8 @@ public class JooqSalaryBuilder implements ISalaryBuilder<ISalary> {
 		InsertSetStep<SalaryBonusRecord> insertBonus = insertMoreBonus == null ? dslContext
 				.insertInto(SALARY_BONUS) : insertMoreBonus.newRecord();
 
-		insertMoreBonus = insertBonus.set(SALARY_BONUS.DOMAIN, this.domainId)
+		insertMoreBonus = insertBonus
+				.set(SALARY_BONUS.DOMAIN, this.domainId)
 				.set(SALARY_BONUS.SALARY, salaryId)
 				.set(SALARY_BONUS.AMOUNT, amount)
 				.set(SALARY_BONUS.BONUS_CONCEPT, bonus.getName())

@@ -248,6 +248,11 @@ public class MockSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 		// TODO Auto-generated method stub
 
 	}
+	
+	@Override
+	public void addData(String name, ITimedVariable<?> datas) {
+		// TODO Auto-generated method stub
+	}
 
 	@Override
 	public void addBonus(Double amount, String description, IBonus bonus,

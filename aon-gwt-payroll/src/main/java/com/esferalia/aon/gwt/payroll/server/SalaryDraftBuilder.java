@@ -387,12 +387,16 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 	}
 
 	@Override
+	public void addData(String name, ITimedVariable<?> datas) {
+	}
+
+	@Override
 	public void addBonus(Double amount, String description, IBonus bonus,
 			Map<String, ITimedVariable<?>> context) {
 		addContext(context);
-		
+
 		IContractBonus contractBonus = (IContractBonus) bonus;
-		
+
 		Bonus myBonus = newBonus(contractBonus);
 		myBonus.setAmount(amount);
 		myBonus.setDescription(description);
@@ -729,7 +733,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 		// name, implicit.getValue(implicit.getPeriod()),
 		// redefined.getValue(redefined.getPeriod())));
 	}
-	
+
 	@Override
 	public void onRemove(IContractBonus contractBonus) {
 		Bonus draftBonus = newBonus(contractBonus);
@@ -832,7 +836,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 
 		return payment;
 	}
-	
+
 	private Bonus newBonus(IContractBonus contractBonus) {
 		Bonus bonus = new Bonus();
 		bonus.setId(contractBonus.getId());
