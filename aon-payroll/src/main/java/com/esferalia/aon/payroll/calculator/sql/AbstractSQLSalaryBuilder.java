@@ -227,6 +227,9 @@ public abstract class AbstractSQLSalaryBuilder<T extends ISalary> implements ISa
 	public void setTotalEnterprise(Double totalEnterprise) {
 		salary.setTotalEnterprise(totalEnterprise);
 	}
+	@Override
+	public void addData(String name, ITimedVariable<?> data) {
+	}
 	
 	@Override
 	public void addBonus(Double amount, String description, IBonus bonus,
