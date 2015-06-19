@@ -403,7 +403,7 @@ public class NormalizedMemory extends ResizeComposite {
 	
 	@UiHandler("cancelButton")
 	void onCancelButtonClick(ClickEvent event) {
-		Window.alert("onCancelButtonClick");
+		//Window.alert("onCancelButtonClick");
 		
 		if(textMode){
 			inma.clearSession(memoryTemplate.getId().toString(), new AsyncCallback<Void>() {
@@ -443,7 +443,7 @@ public class NormalizedMemory extends ResizeComposite {
 	@UiHandler("importTextButton")
 	void onImportTextButtonClick(ClickEvent event) {
 		
-		Window.alert("onImportTextButtonClick");
+		//Window.alert("onImportTextButtonClick");
 		inma.getParentDomain(enterprise.getDomain(), new AsyncCallback<Integer>() {
 
 			@Override
@@ -526,7 +526,7 @@ public class NormalizedMemory extends ResizeComposite {
 	
 	@UiHandler("deleteButton")
 	void onDeleteButtonClick(ClickEvent event) {
-		Window.alert("onDeleteButtonClick");
+	//	Window.alert("onDeleteButtonClick");
 	}
 	
 	@UiHandler("generateFileButton")
@@ -538,7 +538,7 @@ public class NormalizedMemory extends ResizeComposite {
 	
 	@UiHandler("download")
 	void onDownloadClick(ClickEvent event) {
-		Window.alert("onDownloadClick");
+		//Window.alert("onDownloadClick");
 	}
 
 	private void applySelectedStyle(FocusPanel panel) {
@@ -560,7 +560,7 @@ public class NormalizedMemory extends ResizeComposite {
 		SingleUploader upload=  new SingleUploader(FileInputType.BROWSER_INPUT);
 		
 		String url = GWT.getModuleBaseURL()+"gwt_deposit_upload";
-	 	Window.alert(url);
+	 	//Window.alert(url);
 		upload.setAutoSubmit(true);
         upload.setServletPath(url);
         upload.getFileInput().getWidget().setStyleName("aon-finding-toolbar-item aon-icon-file-upload");
