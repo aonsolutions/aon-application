@@ -5,13 +5,18 @@ import java.util.Map;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -768,6 +773,8 @@ public class Paragraph12_2 extends ResizeComposite {
 	@UiField TextBox MA12C977319;
 	
 	
+	@UiField TabPanel  tabPanel;
+	
 	final INormalizedMemoryAsync inma = GWT.create(INormalizedMemory.class);
 	
 	
@@ -796,6 +803,8 @@ public class Paragraph12_2 extends ResizeComposite {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		RESOURCES.css().ensureInjected();
 
+		tabPanel = new TabPanel();
+		
 		this.enterprise = enterprise;
 		this.normalizedMemory = nm;
 		
@@ -1551,10 +1560,12 @@ public class Paragraph12_2 extends ResizeComposite {
 		init();
 		Widget ui = binder.createAndBindUi(this);
 		initWidget(ui);
+		
+		tabPanel.selectTab(0);
 	}
 
 	public void init() {
-		inma.getSchema("MA12",enterprise.getDomain(), new AsyncCallback<Map<String, String>>() {
+		inma.getSchema(enterprise.getDocument(),"MA12",enterprise.getDomain(),false, new AsyncCallback<Map<String, String>>() {
 			
 			@Override
 			public void onSuccess(Map<String, String> result) {
@@ -2332,15 +2343,35 @@ public class Paragraph12_2 extends ResizeComposite {
 				TextBox t = tAux;
 				@Override
 				public void onChange(ChangeEvent event) {
-
-					normalizedMemory.saveButton.setEnabled(true);
-					normalizedMemory.cancelButton.setVisible(true);
-					inma.updateSchema(enterprise.getDomain(),key2, t.getValue(), new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {}
-						@Override
-						public void onSuccess(Void result) {}
-					});
+					String val  = t.getValue().replace(',', '.');
+					Integer n = AonStringUtils.countMatches(val, '.');
+					if(n<=1){
+						Double d = Double.parseDouble(val);
+						Double d2 = MemoryUtils.round(d, 2);
+						t.setValue(d2.toString());
+						normalizedMemory.saveButton.setEnabled(true);
+						normalizedMemory.cancelButton.setVisible(true);
+						inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key2, t.getValue(), new AsyncCallback<Void>() {
+							@Override
+							public void onFailure(Throwable caught) {}
+							@Override
+							public void onSuccess(Void result) {}
+						});
+					}
+					else{
+						//TODO ERROR
+						t.setValue("");
+						Window.alert("Valor incorrecto");
+					}
+				}
+			});
+			
+			t.addKeyPressHandler(new KeyPressHandler() {
+				
+				@Override
+				public void onKeyPress(KeyPressEvent event) {
+					if(!MemoryUtils.isNumeric(event.getCharCode()))
+						event.preventDefault();
 				}
 			});
 		}

@@ -32,6 +32,8 @@ public class FreeText extends ResizeComposite {
 	Enterprise enterprise;
 	String part;
 	NormalizedMemory normalizedMemory;
+	Boolean textMode;
+	
 	
 	interface FreeTextBinder extends UiBinder<Widget, FreeText> {
 	}
@@ -42,12 +44,34 @@ public class FreeText extends ResizeComposite {
 	private final static AonResources RESOURCES = GWT
 			.create(AonResources.class);
 
-	public FreeText(String pageHeader, boolean isFreeText, String part, Enterprise enterprise, NormalizedMemory nm) {
+	public FreeText(String pageHeader, boolean isFreeText, String part, Enterprise enterprise, NormalizedMemory nm, Boolean textMode) {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		RESOURCES.css().ensureInjected();
 		this.enterprise = enterprise;
 		this.part = part;
 		this.normalizedMemory = nm;
+		this.textMode = textMode;
+		value = new TextArea();
+		init();
+		Widget ui = binder.createAndBindUi(this);
+		initWidget(ui);
+		
+		if(isFreeText){
+			title1.setText("MEMORIA ABREVIADA - TEXTO LIBRE");
+		} else {
+			title1.setText("MEMORIA ABREVIADA - MODELO DE RESPUESTA NORMALIZADA");
+		}
+		title2.setText(pageHeader);
+	}
+	
+	public FreeText(String pageHeader, boolean isFreeText, String part, Enterprise enterprise, NormalizedMemory nm, Boolean textMode, String rattachId) {
+		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
+		RESOURCES.css().ensureInjected();
+		enterprise.setDocument(rattachId);
+		this.enterprise = enterprise;
+		this.part = part;
+		this.normalizedMemory = nm;
+		this.textMode = textMode;
 		value = new TextArea();
 		init();
 		Widget ui = binder.createAndBindUi(this);
@@ -63,7 +87,7 @@ public class FreeText extends ResizeComposite {
 	
 	public void init(){
 		
-		inma.getSchema(part,enterprise.getDomain(), new AsyncCallback<Map<String, String>>() {
+		inma.getSchema(enterprise.getDocument(),part,enterprise.getDomain(),textMode, new AsyncCallback<Map<String, String>>() {
 			
 			@Override
 			public void onSuccess(Map<String, String> result) {
@@ -116,7 +140,7 @@ public class FreeText extends ResizeComposite {
 
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
-					inma.updateSchema(enterprise.getDomain(),key2, t.getValue(), new AsyncCallback<Void>() {
+					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key2, t.getValue(), new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {}
 						@Override

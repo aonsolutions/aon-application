@@ -35,41 +35,41 @@
 	<g:HTMLPanel>
 		<g:Label text="Apartado 12: Operaciones con partes vinculadas" styleName="{aonResources.css.aonPageHeader}"/>
 
-		<g:TabPanel styleName="{style.width-all}">
+		<g:TabPanel ui:field="tabPanel" styleName="{style.width-all}">
 			<g:Tab text="MA12.1">
 				<g:HTMLPanel>
 				<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
 					<tr>
-						<td colspan="8">
+						<td colspan="9">
 							<g:Label text="Operaciones con partes vinculadas en el ejercicio 2014" styleName="{aonResources.css.aonPageHeader}"/>
 						</td>
 					</tr>
 					<tr>
-						<td></td>
+						<td colspan="2"></td>
 						<td>
-							<g:Label text="Entidad Dominante" styleName="{style.inner-label}"/>
+							<g:Label text="Entidad Dominante" styleName="{aonResources.css.aonPageHeader}"/>
 						</td>
 						<td>
-							<g:Label text="Otras empresas del grupo" styleName="{style.inner-label}"/>
+							<g:Label text="Otras empresas del grupo" styleName="{aonResources.css.aonPageHeader}"/>
 						</td>
 						<td>
-							<g:Label text="Negocios conjuntos en los que la empresa sea uno de los participantes" styleName="{style.inner-label}"/>
+							<g:Label text="Negocios conjuntos en los que la empresa sea uno de los participantes" styleName="{aonResources.css.aonPageHeader}"/>
 						</td>
 						<td>
-							<g:Label text="Empresas asociadas" styleName="{style.inner-label}"/>
+							<g:Label text="Empresas asociadas" styleName="{aonResources.css.aonPageHeader}"/>
 						</td>
 						<td>
-							<g:Label text="Empresas con control conjunto o influencia significativa sobre la empresa" styleName="{style.inner-label}"/>
+							<g:Label text="Empresas con control conjunto o influencia significativa sobre la empresa" styleName="{aonResources.css.aonPageHeader}"/>
 						</td>
 						<td>
-							<g:Label text="Personal clave de la dirección de la empresa o de la entidad dominante" styleName="{style.inner-label}"/>
+							<g:Label text="Personal clave de la dirección de la empresa o de la entidad dominante" styleName="{aonResources.css.aonPageHeader}"/>
 						</td>
 						<td>
-							<g:Label text="Otras partes vinculadas" styleName="{style.inner-label}"/>
+							<g:Label text="Otras partes vinculadas" styleName="{aonResources.css.aonPageHeader}"/>
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Ventas de activos corrientes" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -95,7 +95,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Beneficios(+) / Pérdidas(-)" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -121,7 +121,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Ventas de activos no corrientes, de las cuales:" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -147,7 +147,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2"> 
 							<g:Label text="Beneficios(+) / Pérdidas(-)" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -173,7 +173,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Compras de activos corrientes" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -199,7 +199,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Compras de activos no corrientes" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -225,7 +225,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Prestación de servicios, de la cual:" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -251,7 +251,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Beneficios(+) / Pérdidas(-)" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -277,7 +277,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Recepción de servicios" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -303,7 +303,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Contratos de arrendamiento financieros, de los cuales:" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -329,7 +329,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Beneficios(+) / Pérdidas(-)" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -355,7 +355,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Transferencia de investigación y desarrollo, de los cuales:" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -381,7 +381,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Beneficios(+) / Pérdidas(-)" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -407,7 +407,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Ingresos por intereses cobrados" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -433,7 +433,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Ingresos por intereses devengados pero no cobrados" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -459,7 +459,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Gastos por intereses pagados" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -485,7 +485,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Gastos por intereses devengados pero no pagados" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -511,7 +511,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Gastos consecuencia de deudas incobrables o de dudoso cobro" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -537,7 +537,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Dividendos y otros beneficios distribuidos" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -563,7 +563,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Garantías y avales recibidos" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -589,7 +589,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Garantías y avales prestados" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -621,36 +621,36 @@
 				<g:HTMLPanel>
 				<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
 					<tr>
-						<td colspan="8">
+						<td colspan="9">
 							<g:Label text="Operaciones con partes vinculadas en el ejercicio 2013" styleName="{aonResources.css.aonPageHeader}"/>
 						</td>
 					</tr>
 					<tr>
-						<td></td>
+						<td colspan="2"></td>
 						<td>
-							<g:Label text="Entidad Dominante" styleName="{style.inner-label}"/>
+							<g:Label text="Entidad Dominante" styleName="{aonResources.css.aonPageHeader}"/>
 						</td>
 						<td>
-							<g:Label text="Otras empresas del grupo" styleName="{style.inner-label}"/>
+							<g:Label text="Otras empresas del grupo" styleName="{aonResources.css.aonPageHeader}"/>
 						</td>
 						<td>
-							<g:Label text="Negocios conjuntos en los que la empresa sea uno de los participantes" styleName="{style.inner-label}"/>
+							<g:Label text="Negocios conjuntos en los que la empresa sea uno de los participantes" styleName="{aonResources.css.aonPageHeader}"/>
 						</td>
 						<td>
-							<g:Label text="Empresas asociadas" styleName="{style.inner-label}"/>
+							<g:Label text="Empresas asociadas" styleName="{aonResources.css.aonPageHeader}"/>
 						</td>
 						<td>
-							<g:Label text="Empresas con control conjunto o influencia significativa sobre la empresa" styleName="{style.inner-label}"/>
+							<g:Label text="Empresas con control conjunto o influencia significativa sobre la empresa" styleName="{aonResources.css.aonPageHeader}"/>
 						</td>
 						<td>
-							<g:Label text="Personal clave de la dirección de la empresa o de la entidad dominante" styleName="{style.inner-label}"/>
+							<g:Label text="Personal clave de la dirección de la empresa o de la entidad dominante" styleName="{aonResources.css.aonPageHeader}"/>
 						</td>
 						<td>
-							<g:Label text="Otras partes vinculadas" styleName="{style.inner-label}"/>
+							<g:Label text="Otras partes vinculadas" styleName="{aonResources.css.aonPageHeader}"/>
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2"> 
 							<g:Label text="Ventas de activos corrientes" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -676,7 +676,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Beneficios(+) / Pérdidas(-)" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -702,7 +702,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Ventas de activos no corrientes, de las cuales:" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -728,7 +728,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Beneficios(+) / Pérdidas(-)" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -754,7 +754,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Compras de activos corrientes" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -780,7 +780,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Compras de activos no corrientes" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -806,7 +806,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Prestación de servicios, de la cual:" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -832,7 +832,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Beneficios(+) / Pérdidas(-)" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -858,7 +858,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Recepción de servicios" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -884,7 +884,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Contratos de arrendamiento financieros, de los cuales:" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -910,7 +910,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Beneficios(+) / Pérdidas(-)" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -936,7 +936,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Transferencia de investigación y desarrollo, de los cuales:" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -962,7 +962,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Beneficios(+) / Pérdidas(-)" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -988,7 +988,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Ingresos por intereses cobrados" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -1014,7 +1014,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Ingresos por intereses devengados pero no cobrados" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -1040,7 +1040,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Gastos por intereses pagados" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -1066,7 +1066,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Gastos por intereses devengados pero no pagados" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -1092,7 +1092,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Gastos consecuencia de deudas incobrables o de dudoso cobro" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -1118,7 +1118,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Dividendos y otros beneficios distribuidos" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -1144,7 +1144,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Garantías y avales recibidos" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -1170,7 +1170,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<g:Label text="Garantías y avales prestados" styleName="{style.inner-label}"/>
 						</td>
 						<td>
@@ -1202,36 +1202,36 @@
 	<g:HTMLPanel>
 	<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
 		<tr>
-			<td colspan="8">
+			<td colspan="9">
 				<g:Label text="Saldos pendientes con partes vinculadas en el ejercicio 2014" styleName="{aonResources.css.aonPageHeader}"/>
 			</td>
 		</tr>
 		<tr>
-			<td></td>
+			<td colspan="2"></td>
 			<td>
-				<g:Label text="Entidad Dominante" styleName="{style.inner-label}"/>
+				<g:Label text="Entidad Dominante" styleName="{aonResources.css.aonPageHeader}"/>
 			</td>
 			<td>
-				<g:Label text="Otras empresas del grupo" styleName="{style.inner-label}"/>
+				<g:Label text="Otras empresas del grupo" styleName="{aonResources.css.aonPageHeader}"/>
 			</td>
 			<td>
-				<g:Label text="Negocios conjuntos en los que la empresa sea uno de los participantes" styleName="{style.inner-label}"/>
+				<g:Label text="Negocios conjuntos en los que la empresa sea uno de los participantes" styleName="{aonResources.css.aonPageHeader}"/>
 			</td>
 			<td>
-				<g:Label text="Empresas asociadas" styleName="{style.inner-label}"/>
+				<g:Label text="Empresas asociadas" styleName="{aonResources.css.aonPageHeader}"/>
 			</td>
 			<td>
-				<g:Label text="Empresas con control conjunto o influencia significativa sobre la empresa" styleName="{style.inner-label}"/>
+				<g:Label text="Empresas con control conjunto o influencia significativa sobre la empresa" styleName="{aonResources.css.aonPageHeader}"/>
 			</td>
 			<td>
-				<g:Label text="Personal clave de la dirección de la empresa o de la entidad dominante" styleName="{style.inner-label}"/>
+				<g:Label text="Personal clave de la dirección de la empresa o de la entidad dominante" styleName="{aonResources.css.aonPageHeader}"/>
 			</td>
 			<td>
-				<g:Label text="Otras partes vinculadas" styleName="{style.inner-label}"/>
+				<g:Label text="Otras partes vinculadas" styleName="{aonResources.css.aonPageHeader}"/>
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2"> 
 				<g:Label text="A) ACTIVO NO CORRIENTE" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1257,7 +1257,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="1.Invesiones financieras a largo plazo, de las cuales:" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1283,7 +1283,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="-Correcciones valorativas por créditos de dudoso cobro" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1309,7 +1309,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="B) ACTIVO CORRIENTE" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1335,7 +1335,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="1.Deudores comerciales y otras deudas a cobrar" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1361,7 +1361,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="a)Clientes por ventas y prestación de servicios a largo plazo, de las cuales:" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1387,7 +1387,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="-Correcciones valorativas por créditos de dudoso cobro a largo plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1413,7 +1413,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="b)CLientes por ventas y prestación de servicios a corto plazo. de las cuales:" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1439,7 +1439,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="-Correcciones valorativas por créditos de dudoso cobro a corto plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1465,7 +1465,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="Accionistas (socios) por desembolsos exigidos" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1491,7 +1491,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="d)Otros deudores, de los cuales:" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1517,7 +1517,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="-Correcciones valorativas por créditos de dudoso cobro" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1543,7 +1543,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="2.Inversiones financieras a corto plazo, de las cuales:" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1569,7 +1569,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="-Correcciones valorativas por créditos de dudoso cobro" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1595,7 +1595,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="C)PASIVO NO CORRIENTE" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1621,7 +1621,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="1.Deudas a largo plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1647,7 +1647,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="a)Deudas con entidades de crédito" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1673,7 +1673,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="b)Acreedores por arrendamiento financiero" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1699,7 +1699,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="c)Otras deudas a largo plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1725,7 +1725,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="2.Deuda con características especiales a largo plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1751,7 +1751,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="D)PASIVO CORRIENTE" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1778,7 +1778,7 @@
 		</tr>
 		
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="1.Deudas a corto plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1804,7 +1804,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="a)Deudas con entidades de crédito" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1830,7 +1830,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="b)Acreedores por arrendamiento financiero" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1856,7 +1856,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2"> 
 				<g:Label text="c)Otras deudas a corto plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1882,7 +1882,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="2.Acreedores comerciales y otras cuentas a pagar" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1908,7 +1908,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="a)Proveedores" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1934,7 +1934,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="b)Otros Acreedores" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1960,7 +1960,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="3.Deuda con características especiales a corto plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -1993,36 +1993,36 @@
 				<g:HTMLPanel>
 				<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
 					<tr>
-						<td colspan="8">
+						<td colspan="9">
 				<g:Label text="Saldos pendientes con partes vinculadas en el ejercicio 2013" styleName="{aonResources.css.aonPageHeader}"/>
 			</td>
 		</tr>
 		<tr>
-			<td></td>
+			<td colspan="2"></td>
 			<td>
-				<g:Label text="Entidad Dominante" styleName="{style.inner-label}"/>
+				<g:Label text="Entidad Dominante" styleName="{aonResources.css.aonPageHeader}"/>
 			</td>
 			<td>
-				<g:Label text="Otras empresas del grupo" styleName="{style.inner-label}"/>
+				<g:Label text="Otras empresas del grupo" styleName="{aonResources.css.aonPageHeader}"/>
 			</td>
 			<td>
-				<g:Label text="Negocios conjuntos en los que la empresa sea uno de los participantes" styleName="{style.inner-label}"/>
+				<g:Label text="Negocios conjuntos en los que la empresa sea uno de los participantes" styleName="{aonResources.css.aonPageHeader}"/>
 			</td>
 			<td>
-				<g:Label text="Empresas asociadas" styleName="{style.inner-label}"/>
+				<g:Label text="Empresas asociadas" styleName="{aonResources.css.aonPageHeader}"/>
 			</td>
 			<td>
-				<g:Label text="Empresas con control conjunto o influencia significativa sobre la empresa" styleName="{style.inner-label}"/>
+				<g:Label text="Empresas con control conjunto o influencia significativa sobre la empresa" styleName="{aonResources.css.aonPageHeader}"/>
 			</td>
 			<td>
-				<g:Label text="Personal clave de la dirección de la empresa o de la entidad dominante" styleName="{style.inner-label}"/>
+				<g:Label text="Personal clave de la dirección de la empresa o de la entidad dominante" styleName="{aonResources.css.aonPageHeader}"/>
 			</td>
 			<td>
-				<g:Label text="Otras partes vinculadas" styleName="{style.inner-label}"/>
+				<g:Label text="Otras partes vinculadas" styleName="{aonResources.css.aonPageHeader}"/>
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="A) ACTIVO NO CORRIENTE" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2048,7 +2048,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="1.Invesiones financieras a largo plazo, de las cuales:" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2074,7 +2074,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="-Correcciones valorativas por créditos de dudoso cobro" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2100,7 +2100,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="B) ACTIVO CORRIENTE" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2126,7 +2126,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="1.Deudores comerciales y otras deudas a cobrar" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2152,7 +2152,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="a)Clientes por ventas y prestación de servicios a largo plazo, de las cuales:" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2178,7 +2178,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="-Correcciones valorativas por créditos de dudoso cobro a largo plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2204,7 +2204,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="b)CLientes por ventas y prestación de servicios a corto plazo. de las cuales:" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2230,7 +2230,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="-Correcciones valorativas por créditos de dudoso cobro a corto plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2256,7 +2256,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="Accionistas (socios) por desembolsos exigidos" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2282,7 +2282,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="d)Otros deudores, de los cuales:" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2308,7 +2308,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="-Correcciones valorativas por créditos de dudoso cobro" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2334,7 +2334,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="2.Inversiones financieras a corto plazo, de las cuales:" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2360,7 +2360,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="-Correcciones valorativas por créditos de dudoso cobro" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2386,7 +2386,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="C)PASIVO NO CORRIENTE" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2412,7 +2412,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="1.Deudas a largo plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2438,7 +2438,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="a)Deudas con entidades de crédito" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2464,7 +2464,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="b)Acreedores por arrendamiento financiero" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2490,7 +2490,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="c)Otras deudas a largo plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2516,7 +2516,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="2.Deuda con características especiales a largo plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2542,7 +2542,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="D)PASIVO CORRIENTE" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2569,7 +2569,7 @@
 		</tr>
 		
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="1.Deudas a corto plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2595,7 +2595,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="a)Deudas con entidades de crédito" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2621,7 +2621,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="b)Acreedores por arrendamiento financiero" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2647,7 +2647,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="c)Otras deudas a corto plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2673,7 +2673,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="2.Acreedores comerciales y otras cuentas a pagar" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2699,7 +2699,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="a)Proveedores" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2725,7 +2725,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="b)Otros Acreedores" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2751,7 +2751,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<g:Label text="3.Deuda con características especiales a corto plazo" styleName="{style.inner-label}"/>
 			</td>
 			<td>
@@ -2790,10 +2790,10 @@
 						<tr>
 							<td></td>
 							<td>
-								<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+								<g:Label text="Ejercicio 2014" styleName="{aonResources.css.aonPageHeader}"/>
 							</td>
 							<td>
-								<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+								<g:Label text="Ejercicio 2013" styleName="{aonResources.css.aonPageHeader}"/>
 							</td>
 						</tr>
 						<tr>
@@ -2939,10 +2939,10 @@
 						<tr>
 							<td></td>
 							<td>
-								<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+								<g:Label text="Ejercicio 2014" styleName="{aonResources.css.aonPageHeader}"/>
 							</td>
 							<td>
-								<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+								<g:Label text="Ejercicio 2013" styleName="{aonResources.css.aonPageHeader}"/>
 							</td>
 						</tr>
 						<tr>

@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.normalizedMemory;
 
+import java.util.Vector;
+
 import gwtupload.client.IFileInput.FileInputType;
 import gwtupload.client.IUploadStatus.Status;
 import gwtupload.client.IUploader;
@@ -10,6 +12,7 @@ import gwtupload.client.IUploader.OnStatusChangedHandler;
 import gwtupload.client.SingleUploader;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialogB;
+import com.esferalia.aon.gwt.fiscal.shared.MemoryTemplate;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -24,6 +27,7 @@ import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormSubmitEvent;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -41,7 +45,7 @@ public abstract class DepositDialog extends CustomDialogB {
 	@UiField Button cancel_button;
 	@UiField(provided = true) VerticalPanel vp;
 	String typeAux;
-	public DepositDialog(String title, String type, Enterprise enterprise, String url) {
+	public DepositDialog(String title, String type, Enterprise enterprise, String url, Vector<MemoryTemplate> mts) {
 		setCaption(title);
 		label = new Label();
 		flex_table = new FlexTable();
@@ -49,7 +53,9 @@ public abstract class DepositDialog extends CustomDialogB {
 		typeAux = type;
 		switch (type) {
 		case "new": newDeposit(enterprise);break;
+		case "new2": newDeposit2();break;
 		case "import": importar(enterprise, url);break;
+		case "importText": importarTextos(mts);break;
 		default:
 			break;
 		}
@@ -57,7 +63,9 @@ public abstract class DepositDialog extends CustomDialogB {
 		setWidget(binder.createAndBindUi(this));
 		
 		if(type.equals("new")) accept_button.setText("Nuevo");
+		if(type.equals("new2")) accept_button.setText("Nuevo");
 		if(type.equals("import")) accept_button.setText("Importar");
+		if(type.equals("importText")) accept_button.setText("Importar");
 		accept_button.setVisible(true);
 		accept_button.addClickHandler(new ClickHandler() {
 			String type = typeAux;
@@ -79,6 +87,28 @@ public abstract class DepositDialog extends CustomDialogB {
 				}
 				if(type.equals("import")){
 					onAccept();
+				}
+				if(type.equals("importText")){
+					ListBox lb =(ListBox) flex_table.getWidget(0, 1);
+					if(!lb.getSelectedItemText().equals("-")){
+						onAccept();
+					}
+					else {
+						label.setText("*Faltan datos por a\u00f1adir");
+						label.setStyleName("aon-check-template");
+					}
+				}
+				if(type.equals("new2")){
+					ListBox lb = (ListBox)flex_table.getWidget(0, 1);
+					TextBox tb1 = (TextBox) flex_table.getWidget(1, 1);
+					if(!lb.getSelectedItemText().equals("-") && 
+							!tb1.getText().equals("")){
+							onAccept();	
+					}
+					else{
+						label.setText("*Faltan datos por a\u00f1adir");
+						label.setStyleName("aon-check-template");
+					}
 				}
 			}
 		});
@@ -139,6 +169,28 @@ public abstract class DepositDialog extends CustomDialogB {
 		flexTableCss();
 	}
 	
+	private void newDeposit2() {
+		flex_table.setStyleName("aon-panelGrid");
+		flex_table.setWidth("400px");
+		flex_table.setBorderWidth(1);
+		flex_table.setCellSpacing(0);
+		
+		ListBox lb = new ListBox();
+		//lb.addItem("-");
+		lb.addItem("Abreviado");
+		//lb.addItem("Pymes");
+
+		flex_table.setWidget(0, 0, new Label("Tipo de Deposito"));
+		flex_table.setWidget(0, 1, lb);
+		
+		TextBox tb1 = new TextBox();
+		tb1.setStyleName("aon-inputText");
+		flex_table.setWidget(1, 0, new Label("Nombre del Deposito"));
+		flex_table.setWidget(1, 1, tb1);
+		
+		flexTableCss();
+	}
+	
 	private void importar(Enterprise enterprise,String url){
 		
 		flex_table.setStyleName("aon-panelGrid");
@@ -156,6 +208,24 @@ public abstract class DepositDialog extends CustomDialogB {
 		flexTableCss();
 	}
 	
+	private void importarTextos(Vector<MemoryTemplate> mts) {
+		flex_table.setStyleName("aon-panelGrid");
+		flex_table.setWidth("400px");
+		flex_table.setBorderWidth(1);
+		flex_table.setCellSpacing(0);
+
+		ListBox lb = new ListBox();
+		if(mts.size()>1) lb.addItem("-");
+		for (MemoryTemplate memoryTemplate : mts) {
+			lb.addItem(memoryTemplate.getName());
+		}
+		flex_table.setWidget(0, 0, new Label("Textos de la Memoria"));
+		flex_table.setWidget(0, 1, lb);
+		
+		
+		flexTableCss();
+
+	}
 	
 	
 	long progress = 10;
@@ -176,7 +246,7 @@ public abstract class DepositDialog extends CustomDialogB {
         upload.getForm().setMethod(FormPanel.METHOD_POST);
         upload.setTitle("uploadFormElement");
         upload.avoidEmptyFiles(true);
-       
+        
         up = upload; urlAux = url;
         upload.addOnCancelUploadHandler(new OnCancelUploaderHandler() {
         	SingleUploader upload = up; String url = urlAux;
@@ -232,6 +302,7 @@ public abstract class DepositDialog extends CustomDialogB {
 			@Override
 			public void onSubmitComplete(FormSubmitCompleteEvent event) {
 				upload.getForm().getWidget().getElement().getChild(0).removeFromParent();
+				
 			}
 			
 			@Override

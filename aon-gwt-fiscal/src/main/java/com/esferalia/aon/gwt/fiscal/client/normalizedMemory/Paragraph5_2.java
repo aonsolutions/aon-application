@@ -5,11 +5,15 @@ import java.util.Map;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TextBox;
@@ -257,7 +261,7 @@ public class Paragraph5_2 extends ResizeComposite {
 	public void init() {
 		
 		
-		inma.getSchema("MA5",enterprise.getDomain(), new AsyncCallback<Map<String, String>>() {
+		inma.getSchema(enterprise.getDocument(),"MA5",enterprise.getDomain(),false, new AsyncCallback<Map<String, String>>() {
 			
 			@Override
 			public void onSuccess(Map<String, String> result) {
@@ -393,17 +397,67 @@ public class Paragraph5_2 extends ResizeComposite {
 				TextBox t = tAux;
 				@Override
 				public void onChange(ChangeEvent event) {
-
-					normalizedMemory.saveButton.setEnabled(true);
-					normalizedMemory.cancelButton.setVisible(true);
-					inma.updateSchema(enterprise.getDomain(),key2, t.getValue(), new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {}
-						@Override
-						public void onSuccess(Void result) {}
-					});
+					String val  = t.getValue().replace(',', '.');
+					Integer n = AonStringUtils.countMatches(val, '.');
+					if(n<=1){
+						Double d = Double.parseDouble(val);
+						Double d2 = round(d, 2);
+						t.setValue(d2.toString());
+						normalizedMemory.saveButton.setEnabled(true);
+						normalizedMemory.cancelButton.setVisible(true);
+						inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key2, t.getValue(), new AsyncCallback<Void>() {
+							@Override
+							public void onFailure(Throwable caught) {}
+							@Override
+							public void onSuccess(Void result) {}
+						});
+					}
+					else{
+						//TODO ERROR
+						t.setValue("");
+						Window.alert("Valor incorrecto");
+					}
 				}
 			});
+			
+
+			t.addKeyPressHandler(new KeyPressHandler() {
+					
+				@Override
+				public void onKeyPress(KeyPressEvent event) {
+					if(!isNumeric(event.getCharCode()))
+						event.preventDefault();
+				}
+			});
+			
 		}
+	}
+	
+	public static boolean isNumeric(Character cchar) {
+	    switch (cchar) {
+	      case '1':
+	      case '2':
+	      case '3':
+	      case '4':
+	      case '5':
+	      case '6':
+	      case '7':
+	      case '8':
+	      case '9':
+	      case '0':
+	      case '.':
+	      case ',':
+	        return true;
+	      default:
+	        return false;
+	    }
+	  }
+	public static Double round(Double value, Integer places) {
+	    if (places < 0) throw new IllegalArgumentException();
+
+	    Long factor = (long) Math.pow(10, places);
+	    value = value * factor;
+	    Long tmp = Math.round(value);
+	    return (double) tmp / factor;
 	}
 }

@@ -35,59 +35,59 @@
 	<g:HTMLPanel>
 		<g:Label text="Apartado 6: Activos financieros" styleName="{aonResources.css.aonPageHeader}"/>
 
-		<g:TabPanel styleName="{style.width-all}">
-			<g:Tab text="MA6.1 ">
+		<g:TabPanel ui:field="tabPanel" styleName="{style.width-all}">
+			<g:Tab text="MA6.1">
 				<g:HTMLPanel>
 				<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
 			<tr>
-				<td colspan="9">
+				<td colspan="10">
 					<g:Label text="Activos financieros a largo plazo, salvo inversiones en el patrimonio de empresas del grupo, multigrupo y asociadas." styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 			</tr>
 			<tr>
-				<td></td>
+				<td colspan="2"></td>
 				<td colspan="2">
-					<g:Label text="Instrumentos de patrimonio" styleName="{style.inner-label}"/>
+					<g:Label text="Instrumentos de patrimonio" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td colspan="2">
-					<g:Label text="Valores representables de deuda" styleName="{style.inner-label}"/>
+					<g:Label text="Valores representables de deuda" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td colspan="2">
-					<g:Label text="Créditos, derivados y otros" styleName="{style.inner-label}"/>
+					<g:Label text="Créditos, derivados y otros" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td colspan="2">
-					<g:Label text="TOTAL" styleName="{style.inner-label}"/>
+					<g:Label text="TOTAL" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 			</tr>
 			<tr>
-				<td></td>
+				<td colspan="2"></td>
 				<td>
-					<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+					<g:Label text="Ejercicio 2014" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+					<g:Label text="Ejercicio 2013" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+					<g:Label text="Ejercicio 2014" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+					<g:Label text="Ejercicio 2013" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+					<g:Label text="Ejercicio 2014" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+					<g:Label text="Ejercicio 2013" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+					<g:Label text="Ejercicio 2014" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+					<g:Label text="Ejercicio 2013" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 			</tr>
 			<tr>
-				<td>
+				<td colspan="2">
 					<g:Label text="Activos a valor razonable con cambios en pérdidas y ganancias" styleName="{style.inner-label}"/>
 				</td>
 				<td>
@@ -116,7 +116,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td>
+				<td colspan="2">
 					<g:Label text="Inversiones mantenidas hasta el vencimiento" styleName="{style.inner-label}"/>
 				</td>
 				<td>
@@ -145,7 +145,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td>
+				<td colspan="2">
 					<g:Label text="Préstamos y partidas a cobrar" styleName="{style.inner-label}"/>
 				</td>
 				<td>
@@ -174,7 +174,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td>
+				<td colspan="2">
 					<g:Label text="Activos disponibles para la venta" styleName="{style.inner-label}"/>
 				</td>
 				<td>
@@ -203,7 +203,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td>
+				<td colspan="2">
 					<g:Label text="Derivados de cobertura" styleName="{style.inner-label}"/>
 				</td>
 				<td>
@@ -232,7 +232,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td>
+				<td colspan="2">
 					<g:Label text="TOTAL" styleName="{style.inner-label}"/>
 				</td>
 				<td>
@@ -263,54 +263,54 @@
 		</table>
 		<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
 			<tr>
-				<td colspan="9">
+				<td colspan="10">
 					<g:Label text="Activos financieros a corto plazo, salvo inversiones en el patrimonio de empresas del grupo, multigrupo y asociadas." styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 			</tr>
 			<tr>
-				<td></td>
+				<td colspan="2"></td>
 				<td colspan="2">
-					<g:Label text="Instrumentos de patrimonio" styleName="{style.inner-label}"/>
+					<g:Label text="Instrumentos de patrimonio" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td colspan="2">
-					<g:Label text="Valores representables de deuda" styleName="{style.inner-label}"/>
+					<g:Label text="Valores representables de deuda" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td colspan="2">
-					<g:Label text="Créditos, derivados y otros" styleName="{style.inner-label}"/>
+					<g:Label text="Créditos, derivados y otros" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td colspan="2">
-					<g:Label text="TOTAL" styleName="{style.inner-label}"/>
+					<g:Label text="TOTAL" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 			</tr>
 			<tr>
-				<td></td>
+				<td colspan="2"></td>
 				<td>
-					<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+					<g:Label text="Ejercicio 2014" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+					<g:Label text="Ejercicio 2013" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+					<g:Label text="Ejercicio 2014" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+					<g:Label text="Ejercicio 2013" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+					<g:Label text="Ejercicio 2014" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+					<g:Label text="Ejercicio 2013" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+					<g:Label text="Ejercicio 2014" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+					<g:Label text="Ejercicio 2013" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 			</tr>
 			<tr>
-				<td>
+				<td colspan="2"> 
 					<g:Label text="Activos a valor razonable con cambios en pérdidas y ganancias" styleName="{style.inner-label}"/>
 				</td>
 				<td>
@@ -339,7 +339,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td>
+				<td colspan="2">
 					<g:Label text="Inversiones mantenidas hasta el vencimiento" styleName="{style.inner-label}"/>
 				</td>
 				<td>
@@ -368,7 +368,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td>
+				<td colspan="2">
 					<g:Label text="Préstamos y partidas a cobrar" styleName="{style.inner-label}"/>
 				</td>
 				<td>
@@ -397,7 +397,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td>
+				<td colspan="2">
 					<g:Label text="Activos disponibles para la venta" styleName="{style.inner-label}"/>
 				</td>
 				<td>
@@ -426,7 +426,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td>
+				<td colspan="2">
 					<g:Label text="Derivados de cobertura" styleName="{style.inner-label}"/>
 				</td>
 				<td>
@@ -455,7 +455,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td>
+				<td colspan="2">
 					<g:Label text="TOTAL" styleName="{style.inner-label}"/>
 				</td>
 				<td>
@@ -493,31 +493,31 @@
 			<tr>
 				<td colspan="3"></td>
 				<td colspan="3">
-					<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+					<g:Label text="Ejercicio 2014" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td colspan="3">
-					<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+					<g:Label text="Ejercicio 2013" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 			</tr>
 			<tr>
 				<td colspan="3"></td>
 				<td>
-					<g:Label text="Inversiones mantenidas hasta el vencimiento" styleName="{style.inner-label}"/>
+					<g:Label text="Inversiones mantenidas hasta el vencimiento" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Inversiones en el patrimonio de empresas del grupo, multigrupo y asociadas" styleName="{style.inner-label}"/>
+					<g:Label text="Inversiones en el patrimonio de empresas del grupo, multigrupo y asociadas" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Activos financieros disponibles para la venta" styleName="{style.inner-label}"/>
+					<g:Label text="Activos financieros disponibles para la venta" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Inversiones mantenidas hasta el vencimiento" styleName="{style.inner-label}"/>
+					<g:Label text="Inversiones mantenidas hasta el vencimiento" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Inversiones en el patrimonio de empresas del grupo, multigrupo y asociadas" styleName="{style.inner-label}"/>
+					<g:Label text="Inversiones en el patrimonio de empresas del grupo, multigrupo y asociadas" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Activos financieros disponibles para la venta" styleName="{style.inner-label}"/>
+					<g:Label text="Activos financieros disponibles para la venta" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 			</tr>
 			<tr>
@@ -639,45 +639,45 @@
 				
 				<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
 					<tr>
-						<td colspan="7">
+						<td colspan="8">
 							<g:Label text="Correcciones por deterioro del valor originadas por el riesgo de crédito" styleName="{aonResources.css.aonPageHeader}"/>
 						</td>
 					</tr>
 					<tr>
-						<td></td>
+						<td colspan="2"></td>
 						<td colspan="2">
-							<g:Label text="Valores representativos de deuda" styleName="{style.inner-label}"/>	
+							<g:Label text="Valores representativos de deuda" styleName="{aonResources.css.aonPageHeader}"/>	
 						</td>
 						<td colspan="2">
-							<g:Label text="Créditos, derivados y otros" styleName="{style.inner-label}"/>	
+							<g:Label text="Créditos, derivados y otros" styleName="{aonResources.css.aonPageHeader}"/>	
 						</td>
 						<td colspan="2">
-							<g:Label text="TOTAL" styleName="{style.inner-label}"/>	
+							<g:Label text="TOTAL" styleName="{aonResources.css.aonPageHeader}}"/>	
 						</td>
 					</tr>
 					<tr>
-						<td></td>
+						<td colspan="2"></td>
 						<td >
-							<g:Label text="Largo plazo" styleName="{style.inner-label}"/>	
+							<g:Label text="Largo plazo" styleName="{aonResources.css.aonPageHeader}"/>	
 						</td>
 						<td>
-							<g:Label text="Corto plazo" styleName="{style.inner-label}"/>	
+							<g:Label text="Corto plazo" styleName="{aonResources.css.aonPageHeader}"/>	
 						</td>
 						<td >
-							<g:Label text="Largo plazo" styleName="{style.inner-label}"/>	
+							<g:Label text="Largo plazo" styleName="{aonResources.css.aonPageHeader}"/>	
 						</td>
 						<td>
-							<g:Label text="Corto plazo" styleName="{style.inner-label}"/>	
+							<g:Label text="Corto plazo" styleName="{aonResources.css.aonPageHeader}"/>	
 						</td>
 						<td >
-							<g:Label text="Largo plazo" styleName="{style.inner-label}"/>	
+							<g:Label text="Largo plazo" styleName="{aonResources.css.aonPageHeader}"/>	
 						</td>
 						<td>
-							<g:Label text="Corto plazo" styleName="{style.inner-label}"/>	
+							<g:Label text="Corto plazo" styleName="{aonResources.css.aonPageHeader}"/>	
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 						<g:Label text="Pérdida por deterioro al inicio del ejercicio 2013" styleName="{style.inner-label}"/>
 						</td>
 						<td >
@@ -700,7 +700,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 						<g:Label text="(+)Correción valorativo por deterior " styleName="{style.inner-label}"/>
 						</td>
 						<td >
@@ -723,7 +723,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 						<g:Label text="(-) Reversión del deterioro" styleName="{style.inner-label}"/>
 						</td>
 						<td >
@@ -746,7 +746,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 						<g:Label text="(-) Salidas y reducciones" styleName="{style.inner-label}"/>
 						</td>
 						<td >
@@ -769,7 +769,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 						<g:Label text="(+/-) Traspasos y otras variaciones (combinaciones de negocio,etc.)" styleName="{style.inner-label}"/>
 						</td>
 						<td >
@@ -792,7 +792,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 						<g:Label text="Pérdida por deterioro al final del ejercicio 2013" styleName="{style.inner-label}"/>
 						</td>
 						<td >
@@ -815,7 +815,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 						<g:Label text="(+)Corrección valorativo por deterioro " styleName="{style.inner-label}"/>
 						</td>
 						<td >
@@ -838,7 +838,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 						<g:Label text="(-) Reversión del deterioro" styleName="{style.inner-label}"/>
 						</td>
 						<td >
@@ -861,7 +861,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 						<g:Label text="(-) Salidas y reducciones" styleName="{style.inner-label}"/>
 						</td>
 						<td >
@@ -884,7 +884,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 						<g:Label text="(+/-) Traspasos y otras variaciones (combinaciones de negocio,etc.)" styleName="{style.inner-label}"/>
 						</td>
 						<td >
@@ -907,7 +907,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 						<g:Label text="Pérdida por deterioro al final del ejercicio 2014" styleName="{style.inner-label}"/>
 						</td>
 						<td >
@@ -940,16 +940,16 @@
 					<tr>
 						<td colspan="3"></td>
 						<td >
-							<g:Label text="Activos a valor razonable con cambios en pérdidas y ganancias" styleName="{style.inner-label}"/>	
+							<g:Label text="Activos a valor razonable con cambios en pérdidas y ganancias" styleName="{aonResources.css.aonPageHeader}"/>	
 						</td>
 						<td>
-							<g:Label text="Activos mantenidos para negociar" styleName="{style.inner-label}"/>	
+							<g:Label text="Activos mantenidos para negociar" styleName="{aonResources.css.aonPageHeader}"/>	
 						</td>
 						<td >
-							<g:Label text="Activos disponibles para la venta" styleName="{style.inner-label}"/>	
+							<g:Label text="Activos disponibles para la venta" styleName="{aonResources.css.aonPageHeader}"/>	
 						</td>
 						<td >
-							<g:Label text="TOTAL" styleName="{style.inner-label}"/>	
+							<g:Label text="TOTAL" styleName="{aonResources.css.aonPageHeader}"/>	
 						</td>
 					</tr>
 					<tr>
@@ -1085,22 +1085,22 @@
 					<tr>
 						<td></td>
 						<td >
-							<g:Label text="Pérdida por deterioro al final del ejercicio 2013" styleName="{style.inner-label}"/>	
+							<g:Label text="Pérdida por deterioro al final del ejercicio 2013" styleName="{aonResources.css.aonPageHeader}"/>	
 						</td>
 						<td>
-							<g:Label text="(+/-) Variación deterioro a pérdidas y ganancias" styleName="{style.inner-label}"/>	
+							<g:Label text="(+/-) Variación deterioro a pérdidas y ganancias" styleName="{aonResources.css.aonPageHeader}"/>	
 						</td>
 						<td >
-							<g:Label text="(+) Variación contra patrimonio neto" styleName="{style.inner-label}"/>	
+							<g:Label text="(+) Variación contra patrimonio neto" styleName="{aonResources.css.aonPageHeader}"/>	
 						</td>
 						<td>
-							<g:Label text="(-) Salidas y reducciones" styleName="{style.inner-label}"/>	
+							<g:Label text="(-) Salidas y reducciones" styleName="{aonResources.css.aonPageHeader}"/>	
 						</td>
 						<td >
-							<g:Label text="(+/-) Traspasos y otras variaciones (combinaciones de negocio, etc.)" styleName="{style.inner-label}"/>	
+							<g:Label text="(+/-) Traspasos y otras variaciones (combinaciones de negocio, etc.)" styleName="{aonResources.css.aonPageHeader}"/>	
 						</td>
 						<td>
-							<g:Label text="Pérdida por deterioro al final del ejercicio 2014" styleName="{style.inner-label}"/>	
+							<g:Label text="Pérdida por deterioro al final del ejercicio 2014" styleName="{aonResources.css.aonPageHeader}"/>	
 						</td>
 					</tr>
 					<tr>

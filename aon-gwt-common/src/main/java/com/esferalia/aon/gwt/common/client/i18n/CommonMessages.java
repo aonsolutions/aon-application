@@ -2042,4 +2042,7 @@ public interface CommonMessages extends Messages {
     
     @DefaultMessage("Cancelar")
     String uploadLabelCancel();
+    
+	@DefaultMessage("Memorias Predefinidas")
+	String digitalDepositFreeText();
 }
