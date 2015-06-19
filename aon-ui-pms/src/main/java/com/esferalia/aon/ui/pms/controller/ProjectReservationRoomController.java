@@ -39,6 +39,7 @@ public class ProjectReservationRoomController extends LinesController {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private boolean showRoomDetailWindow;
+	private boolean showFeatures;
 	private Integer[] linkedServices;
 
 	public boolean isShowRoomDetailWindow() {
@@ -47,6 +48,14 @@ public class ProjectReservationRoomController extends LinesController {
 
 	public void setShowRoomDetailWindow(boolean showRoomDetailWindow) {
 		this.showRoomDetailWindow = showRoomDetailWindow;
+	}
+
+	public boolean isShowFeatures() {
+		return showFeatures;
+	}
+
+	public void setShowFeatures(boolean showFeatures) {
+		this.showFeatures = showFeatures;
 	}
 
 	public Integer[] getLinkedServices() {
@@ -143,7 +152,7 @@ public class ProjectReservationRoomController extends LinesController {
 			Date endDate = roomAvailability.getFilterParams().getViewerEndDate();
 	    	reservationUtils.updateProjectReservationRoomDetails(reservationRoom, startDate, endDate, availableRoom);
 		}
-		reservationRoom.setRoomNumber(null);
+		reservationRoom.setRoomNumber(availableRoom.getAsset().getName());
 
     	IController reservationServiceController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_SERVICE_CONTROLLER_NAME);
     	reservationServiceController.onSearch(event);
