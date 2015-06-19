@@ -3200,3 +3200,7 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 		font-weight: bold;
 		border: 1px solid #EEE;
  	} 	
+ 	
+ 	.aon-icon-registradores{
+		background:transparent url(images/aon-icon/aon-icon-registradores.png) scroll left center no-repeat;
+ 	}
