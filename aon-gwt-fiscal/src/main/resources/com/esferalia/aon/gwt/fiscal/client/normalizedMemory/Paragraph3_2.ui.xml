@@ -26,19 +26,14 @@
 
 		<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
 			<tr>
-				<td colspan="3">
+				<td>
 					<g:Label text="Base de Reparto" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
-			</tr>
-			<tr>
 				<td>
-					
+					<g:Label text="Ejercicio 2014" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
-				</td>
-				<td>
-					<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+					<g:Label text="Ejercicio 2013" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 			</tr>
 			<tr>
@@ -100,19 +95,14 @@
 		
 		<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
 			<tr>
-				<td colspan="3">
+				<td>
 					<g:Label text="Aplicación a" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
-			</tr>
-			<tr>
 				<td>
-					
+					<g:Label text="Ejercicio 2014" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
-				</td>
-				<td>
-					<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+					<g:Label text="Ejercicio 2013" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 			</tr>
 			<tr>

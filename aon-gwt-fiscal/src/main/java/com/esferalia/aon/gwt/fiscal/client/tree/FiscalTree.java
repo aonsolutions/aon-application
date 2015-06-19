@@ -145,12 +145,13 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 						} else if ( result.size() == 1) {
 							enterpriseSuggest.setText(result.get(0).toString());
 							enterpriseSuggest.setEnabled(false);
-							initialize(result.get(0));
+							initialize(result.get(0), false);
 						} else {
 							enterpriseSuggest.setText(AON.MSG.startTyping());
 							enterpriseSuggest.setEnabled(true);
 							enterpriseSuggest.getValueBox().selectAll();
 							enterpriseSuggest.setFocus(true);
+							memoryInitialize();
 						}
 					}
 
@@ -191,7 +192,7 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 		return null;
 	}
 
-	private void initialize(Enterprise enterprise) {
+	private void initialize(Enterprise enterprise, Boolean isParent) {
 		newContextMenu = new NewContextMenu();
 		this.enterprise = enterprise;
 		subtitle.setText(AON.MSG.enterprise());
@@ -214,7 +215,26 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 		// Nodo:  "Deposito Digital"
 		TreeNode<Enterprise> digitalDeposit = TreeNodeTypes.DIGITAL_DEPOSIT.getInstance().render(rootNode, enterprise);
 		
+
 		rootNode.setState(true);
+		tree.addItem(rootNode);
+		
+		if(isParent){
+			TreeNode<Integer> rootNode2 =  TreeNodeTypes.DIGITAL_DEPOSIT_FREETEXT.getInstance();
+			rootNode2.render(tree, getCurrentDomain());
+			tree.addItem(rootNode2);
+		}
+		tree.setSelectedItem(rootNode);
+	}
+	
+	private void memoryInitialize() {
+		newContextMenu = new NewContextMenu();
+		this.enterprise = enterprise;
+		subtitle.setText(AON.MSG.enterprise());
+		toolbar.setVisible(true);
+		tree.removeItems();
+		TreeNode<Integer> rootNode =  TreeNodeTypes.DIGITAL_DEPOSIT_FREETEXT.getInstance();
+		rootNode.render(tree, getCurrentDomain());
 		tree.addItem(rootNode);
 		tree.setSelectedItem(rootNode);
 	}
@@ -229,7 +249,7 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 	@UiHandler("enterpriseSuggest")
 	void onSelectEnterprise(SelectionEvent<Suggestion> suggestion) {
 		EnterpriseSuggestion sugg = (EnterpriseSuggestion) suggestion.getSelectedItem();
-		initialize( sugg.getEnterprise() );
+		initialize( sugg.getEnterprise(), true);
 	}
 	
 	class EnterpriseSuggestOracle extends MultiWordSuggestOracle {

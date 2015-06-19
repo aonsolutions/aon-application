@@ -25,7 +25,7 @@
 		<g:Label text="Estado abreviado de cambios en el patrimonio neto" styleName="{aonResources.css.aonPageHeader}"/>
 		
 		
-		<g:TabPanel styleName="{style.width-all}">
+		<g:TabPanel ui:field="tabPanel" styleName="{style.width-all}">
 			<g:Tab text="PNA1 ">
 				<g:HTMLPanel>
 					<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">

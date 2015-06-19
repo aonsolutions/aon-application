@@ -33,13 +33,13 @@
 			<tr>
 				<td></td>
 				<td>
-					<g:Label text="Inmovilizado intangible" styleName="{style.inner-label}"/>
+					<g:Label text="Inmovilizado intangible" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Inmovilizado material" styleName="{style.inner-label}"/>
+					<g:Label text="Inmovilizado material" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Inversiones inmobiliarias" styleName="{style.inner-label}"/>
+					<g:Label text="Inversiones inmobiliarias" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 			</tr>
 			<tr>
@@ -278,13 +278,13 @@
 			<tr>
 				<td></td>
 				<td>
-					<g:Label text="Inmovilizado intangible" styleName="{style.inner-label}"/>
+					<g:Label text="Inmovilizado intangible" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Inmovilizado material" styleName="{style.inner-label}"/>
+					<g:Label text="Inmovilizado material" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Inversiones inmobiliarias" styleName="{style.inner-label}"/>
+					<g:Label text="Inversiones inmobiliarias" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 			</tr>
 			<tr>
@@ -521,10 +521,10 @@
 			</tr>
 			<tr>
 				<td>
-					<g:Label text="Descripción del elemento objeto del contrato" styleName="{style.inner-label}"/>
+					<g:Label text="Descripción del elemento objeto del contrato" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td colspan="3">
-					<g:Label text="Total contratos" styleName="{style.inner-label}"/>
+					<g:Label text="Total contratos" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				
 			</tr>

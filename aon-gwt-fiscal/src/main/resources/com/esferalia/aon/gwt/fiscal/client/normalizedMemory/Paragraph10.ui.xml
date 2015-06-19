@@ -32,10 +32,10 @@
 			<tr>
 				<td></td>
 				<td>
-					<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+					<g:Label text="Ejercicio 2014" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+					<g:Label text="Ejercicio 2013" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 			</tr>
 			<tr>

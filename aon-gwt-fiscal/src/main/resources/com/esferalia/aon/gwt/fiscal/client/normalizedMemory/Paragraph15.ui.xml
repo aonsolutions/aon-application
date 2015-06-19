@@ -32,27 +32,27 @@
 			<tr>
 				<td></td>
 				<td colspan="2">
-					<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+					<g:Label text="Ejercicio 2014" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td colspan="2">
-					<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+					<g:Label text="Ejercicio 2013" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<g:Label text="PAGOS DEL EJERCICIO" styleName="{style.inner-label}"/>
+					<g:Label text="PAGOS DEL EJERCICIO" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Importe" styleName="{style.inner-label}"/>
+					<g:Label text="Importe" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="%" styleName="{style.inner-label}"/>
+					<g:Label text="%" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="Importe" styleName="{style.inner-label}"/>
+					<g:Label text="Importe" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 				<td>
-					<g:Label text="%" styleName="{style.inner-label}"/>
+					<g:Label text="%" styleName="{aonResources.css.aonPageHeader}"/>
 				</td>
 			</tr>
 			<tr>
