@@ -82,6 +82,15 @@
 						<f:setPropertyActionListener target="#{divert.showDivertWindow}"
 							value="#{true}" />
 					</aon:menuItem>
+					<aon:menuItem id="reservation-CreditCard"
+						value="#{bundle.aon_credit_card}" immediate="true" 
+						rendered="#{reservation.reservationPermission.creditCardVisible}"
+						iconClass="aon-icon-card"
+						actionListener="#{reservation.onCreditCardShow}"
+						reRender="showCreditCardWindow">
+						<f:setPropertyActionListener target="#{reservation.showCreditCardWindow}"
+							value="#{true}" />
+					</aon:menuItem>
 				</ui:define>
 				<ui:define name="beforeSpinToolbarContent">				
 					<ui:include
@@ -185,6 +194,9 @@
 			<ui:param name="skipReservation" value="true" />
 			<ui:param name="skipRequestHotel" value="true" />
 			<ui:param name="skipStatus" value="true" />
+		</ui:include>
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/creditCard/modalCreditCard.xhtml">
+			<ui:param name="controller" value="#{reservation}" />
 		</ui:include>
 	</ui:define>
 </ui:composition>

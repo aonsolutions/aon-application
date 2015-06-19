@@ -296,6 +296,16 @@ public class ProjectReservationPermission implements Serializable {
 		return isRoleAdmin();
 	}
 
+	public boolean isCreditCardVisible() throws ManagerBeanException {
+		boolean roleAllowed = isRoleCommercial() || isRoleFinance();
+		return roleAllowed && reservation.getCreationDate() != null;
+	}
+
+	public boolean isCreditCardEditable() throws ManagerBeanException {
+		boolean roleAllowed = isRoleCommercial();
+		return roleAllowed && reservation.getCreationDate() != null;
+	}
+
 
 	/*************************** RESERVATION GUEST *******************************/
 

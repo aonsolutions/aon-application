@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.25.3
+# Version: 8.26.0
 # Created by: girazu
-# Creation Date: 18/06/2015 18:45
+# Creation Date: 19/06/2015 12:40
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -2035,10 +2035,11 @@ CREATE TABLE `project_reservation` (
   `early_check_out` tinyint(1) default '0' COMMENT 'Indica si se ha producido una salida anticipada',
   `prepay` tinyint(1) default '0' COMMENT 'Indica si es un prepago',
   `bank_transaction` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Codigo de transaccion bancaria',
-  `credit_card_holder` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Titular de la tarjeta de credito',
-  `credit_card_number` varchar(24) collate latin1_spanish_ci default NULL COMMENT 'Numero de la tarjeta de credito',
-  `credit_card_expiration` varchar(4) collate latin1_spanish_ci default NULL COMMENT 'Mes y año de expiracion de la tarjeta de credito',
-  `credit_card_cvv` varchar(8) collate latin1_spanish_ci default NULL COMMENT 'Codigo de seguridad de la tarjeta de credito',
+  `credit_card_holder` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Titular de la tarjeta de credito',
+  `credit_card_number` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Numero de la tarjeta de credito',
+  `credit_card_expiration_month` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Mes de expiracion de la tarjeta de credito',
+  `credit_card_expiration_year` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Año de expiracion de la tarjeta de credito',
+  `credit_card_cvv` varchar(24) collate latin1_spanish_ci default NULL COMMENT 'Codigo de seguridad de la tarjeta de credito',
   `check_status` tinyint(2) NOT NULL COMMENT 'Estado de registro en el Hotel',
   `status` tinyint(2) NOT NULL COMMENT 'Estado de la Reserva',
   `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
@@ -7968,7 +7969,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.25.3');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.26.0');
 
 COMMIT;
 
