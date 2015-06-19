@@ -32,7 +32,7 @@
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	<xs:element name="Liquidacion">
+	<!--xs:element name="Liquidacion">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="Ccc"/>
@@ -61,6 +61,21 @@
 					</xs:sequence>
 					<xs:element ref="LiquidacionMes" maxOccurs="unbounded"/>
 				</xs:choice>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element-->
+	<xs:element name="Liquidacion">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Ccc"/>
+				<xs:element ref="CccConcertado"/>
+				<xs:element ref="PeriodoDesde"/>
+				<xs:element ref="PeriodoHasta"/>
+				<xs:element ref="Tipo"/>
+				<xs:element ref="FechaControl" minOccurs="0"/>
+				<xs:element ref="AceptarBasesAnteriores" minOccurs="0"/>
+				<xs:element ref="DatosLiquidacion"/>
+				<xs:element ref="LiquidacionMes" minOccurs="0" maxOccurs="unbounded"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -129,10 +144,18 @@
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	<xs:element name="Anho">
+	<!--xs:element name="Anho">
 		<xs:simpleType>
 			<xs:restriction base="xs:gYear">
 				<xs:minInclusive value="2006"/>
+				<xs:pattern value="\d{4}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element-->
+	<xs:element name="Anho">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="4"/>
 				<xs:pattern value="\d{4}"/>
 			</xs:restriction>
 		</xs:simpleType>
@@ -193,7 +216,7 @@
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	<xs:element name="LiquidacionMes">
+	<!--xs:element name="LiquidacionMes">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="MesLiquidativo"/>
@@ -204,6 +227,15 @@
 					</xs:sequence>
 					<xs:element ref="Trabajadores"/>
 				</xs:choice>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element-->
+	<xs:element name="LiquidacionMes">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="MesLiquidativo"/>
+				<xs:element ref="DatosMes"/>
+				<xs:element ref="Trabajadores"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

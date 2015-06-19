@@ -1,0 +1,55 @@
+package net.aonsolutions.tgss.creta.jaxb;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Writer;
+import java.time.Month;
+import java.util.UUID;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+
+public class Utils {
+
+
+	// -----------------------------------------------------------------------
+
+	public static <T> void marshal(T t, Writer writer) throws JAXBException {
+		newMarshaller(t.getClass()).marshal(t, writer);
+	}
+
+	public static <T> void marshal(T t, OutputStream os) throws JAXBException {
+		newMarshaller(t.getClass()).marshal(t, os);
+	}
+
+	// -----------------------------------------------------------------------
+
+	@SuppressWarnings("unchecked")
+	public static <T> T unmarshal(Class<T> clazz, InputStream is)
+			throws JAXBException {
+		return (T) newUnmarshaller(clazz).unmarshal(is);
+	}
+
+	// ------------------------------------------------------------------------
+
+	private static Marshaller newMarshaller(Class classToBeBound)
+			throws JAXBException {
+		Marshaller marshaller = newJAXBContext(classToBeBound)
+				.createMarshaller();
+		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		return marshaller;
+	}
+
+	private static Unmarshaller newUnmarshaller(Class classToBeBound)
+			throws JAXBException {
+		return newJAXBContext(classToBeBound).createUnmarshaller();
+	}
+
+	private static JAXBContext newJAXBContext(Class classToBeBound)
+			throws JAXBException {
+		return JAXBContext.newInstance(classToBeBound);
+	}
+
+}
