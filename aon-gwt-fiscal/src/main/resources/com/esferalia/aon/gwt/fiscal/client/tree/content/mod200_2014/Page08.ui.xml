@@ -19,6 +19,14 @@
 						<g:FlexTable ui:field="table" width="100%" styleName="{aonResources.css.aonMarginTop}" />
 					</div>
 				</div>				
+				<div class="{aonResources.css.aonGroup}">
+					<div class="{aonResources.css.aonGroupTitle}">
+						<g:InlineLabel text="{msg.liquidation1Label2}" />
+					</div>
+					<div class="{aonResources.css.aonGroupBody}">
+						<g:FlexTable ui:field="table1" width="100%" styleName="{aonResources.css.aonMarginTop}" />
+					</div>
+				</div>				
 			</g:HTMLPanel>
 		</g:HTMLPanel>
 	</g:ScrollPanel>

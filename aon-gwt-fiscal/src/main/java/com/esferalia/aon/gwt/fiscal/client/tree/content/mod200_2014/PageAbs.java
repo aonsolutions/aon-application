@@ -139,16 +139,28 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 	
 	protected void paintKeyDescription(FlexTable tab, Mod2002014Key key, int row,int col) {
-		String d = key.getDescription();
-		Label desc = new Label( AonStringUtils.abbreviate(d, 120) );
-		if (AonStringUtils.length(d) > 117) {
-			desc.setTitle(key.getDescription());
+		String description = key.getDescription();
+		paintDescription(tab, description, row,col,isTitle(key));	
+	}
+	protected void paintDescription(FlexTable tab, String description, int row,int col, boolean title) {
+		Label desc = new Label( AonStringUtils.abbreviate(description, 120) );
+		if (AonStringUtils.length(description) > 117) {
+			desc.setTitle(description);
 		}
-		if (isTitle(key)) {
+		if (title) {
 			desc.setStyleName(AON.AON_CSS.aonBold());
 		}
 		tab.setWidget(row, col, desc);
 		tab.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalBorderBottom());
+	}
+
+	protected void paintTitle(FlexTable tab, String description, int row,int col, boolean title) {
+		Label desc = new Label( description);
+		desc.setStyleName(AON.AON_CSS.aonBold());
+		tab.setWidget(row, col, desc);
+		tab.getFlexCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextUnderline());
+		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBold());
+		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextCenter());
 	}
 
 	protected void paintKeyField(FlexTable tab,final Mod2002014Key key,int row, int col) {
@@ -222,40 +234,41 @@ public abstract class PageAbs extends ResizeComposite {
 			col = 1;
 			for (final Mod2002014Key k : key.getKeys() ) {
 				if (k != null){
-					Boolean[] behaviour = BEHAVIOUR_KEYS_MAP.get(k.toString());
-					boolean disabled = behaviour != null && behaviour[1];
-	
-					FlowPanel panel = new FlowPanel();
-					BoxLabel code = new BoxLabel(k.getCode( mod200Object.getAdministration() ));
-					panel.add(code);
-					getLabels().put(k, code);
-					
-					final DoubleBox text = new DoubleBox(12);
-					text.addChangeHandler(new ChangeHandler() {
-						@Override
-						public void onChange(ChangeEvent event) {
-							try {
-								if (AonStringUtils.isEmpty(text.getText())) {
-									text.setValue(0.0,false);
-								}
-								Double d = text.getValueOrThrow();
-								text.addStyleName(AON.AON_CSS.aonChanged());
-								mod200Object.doubleValueChanged(k, d);
-							} catch (ParseException e) {
-								// nothing.
-							}
-						}
-					});
-					text.setValue(mod200Object.getDoubleValue(k));
-					text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
-					text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-					text.setEnabled(!disabled);
-					panel.add(text);
-					
-					getInputs().put(k, text);
-					tableDetail.setWidget(r, col, panel);
-					tableDetail.getFlexCellFormatter().addStyleName(r, col, AON.AON_CSS.aonTextRight());
-					tableDetail.getFlexCellFormatter().addStyleName(r, col, AON.AON_CSS.aonNowrap());
+					paintKeyField(tableDetail, k, r, col);
+//					Boolean[] behaviour = BEHAVIOUR_KEYS_MAP.get(k.toString());
+//					boolean disabled = behaviour != null && behaviour[1];
+//	
+//					FlowPanel panel = new FlowPanel();
+//					BoxLabel code = new BoxLabel(k.getCode( mod200Object.getAdministration() ));
+//					panel.add(code);
+//					getLabels().put(k, code);
+//					
+//					final DoubleBox text = new DoubleBox(12);
+//					text.addChangeHandler(new ChangeHandler() {
+//						@Override
+//						public void onChange(ChangeEvent event) {
+//							try {
+//								if (AonStringUtils.isEmpty(text.getText())) {
+//									text.setValue(0.0,false);
+//								}
+//								Double d = text.getValueOrThrow();
+//								text.addStyleName(AON.AON_CSS.aonChanged());
+//								mod200Object.doubleValueChanged(k, d);
+//							} catch (ParseException e) {
+//								// nothing.
+//							}
+//						}
+//					});
+//					text.setValue(mod200Object.getDoubleValue(k));
+//					text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
+//					text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
+//					text.setEnabled(!disabled);
+//					panel.add(text);
+//					
+//					getInputs().put(k, text);
+//					tableDetail.setWidget(r, col, panel);
+//					tableDetail.getFlexCellFormatter().addStyleName(r, col, AON.AON_CSS.aonTextRight());
+//					tableDetail.getFlexCellFormatter().addStyleName(r, col, AON.AON_CSS.aonNowrap());
 				}
 				++col;
 			}
