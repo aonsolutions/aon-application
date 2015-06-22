@@ -1387,6 +1387,13 @@ public interface CommonMessages extends Messages {
 		
 	@DefaultMessage("Liquidaci\u00F3n")
 	String liquidacion();
+	
+	@DefaultMessage("Resultado de la cuenta de p\u00E9rdidas y ganancias")
+	String liquidation1Label1();
+
+	@DefaultMessage("Detalle de las correcciones a la cuenta de p\u00E9rdidas y ganancias.")
+	String liquidation1Label2();
+	
 	@DefaultMessage("Liquidaci\u00F3n (I)")
 	String liquidacionI();
 	@DefaultMessage("Liquidaci\u00F3n (II)")
@@ -1414,6 +1421,15 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Correcciones al resultado de la cuenta de p\u00E9rdidas y ganancias")
 	String corrections();
 	
+	@DefaultMessage("Correcciones del ejericicio")
+	String yearCorrections();
+
+	@DefaultMessage("Saldo pendiente a fin de ejercicio")
+	String pendingCorrections();
+	
+	@DefaultMessage("Correcciones fiscales")
+	String fiscalCorrections();
+
 	@DefaultMessage("Bonificaciones y deducciones por doble imposici\u00F3n. Cuota \u00EDntegra ajustada positiva")
 	String bonus();
 	
