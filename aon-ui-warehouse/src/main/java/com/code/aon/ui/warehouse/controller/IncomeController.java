@@ -463,10 +463,8 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PURCHASE_SUPPLIER_ID), income.getSupplier().getId());
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PURCHASE_STATUS), PurchaseStatus.PENDING);
-		/*
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PURCHASE_SECURITY_LEVEL), income.getSecurityLevel());
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PURCHASE_WORK_PLACE_ID), income.getWorkPlace().getId());
-		*/
 
 		Expression exp1 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.PURCHASE_WAREHOUSE));
 		if( (getWarehouse()!=null) && (getWarehouse().getId()!=null) ){
