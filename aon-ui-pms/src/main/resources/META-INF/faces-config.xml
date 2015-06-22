@@ -1339,6 +1339,10 @@
 			<from-outcome>hotel_form</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/pms/facelet/hotel/form.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>hotel_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/hotel/search.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 
   	<!-- ============= Room ================================= -->
