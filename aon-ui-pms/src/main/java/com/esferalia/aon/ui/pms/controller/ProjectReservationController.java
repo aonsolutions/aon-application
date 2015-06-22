@@ -1316,19 +1316,10 @@ public class ProjectReservationController extends BasicController implements IPm
 	public List<SelectItem> getCreditCardYears() {
 		DateFormat formatter = new SimpleDateFormat("yy");
 		List<SelectItem> years = new LinkedList<SelectItem>();
-		int year = Integer.parseInt(formatter.format(new Date()));
-		SelectItem item = new SelectItem("" + year);
-		years.add(item);
-		item = new SelectItem("" + (year+1));
-		years.add(item);
-		item = new SelectItem("" + (year+2));
-		years.add(item);
-		item = new SelectItem("" + (year+3));
-		years.add(item);
-		item = new SelectItem("" + (year+4));
-		years.add(item);
-		item = new SelectItem("" + (year+5));
-		years.add(item);
+		for (int i=0,year=Integer.parseInt(formatter.format(new Date())); i<=5; i++) {
+			SelectItem item = new SelectItem("" + (year+i));
+			years.add(item);
+		}
 		return years;
 	}
 
