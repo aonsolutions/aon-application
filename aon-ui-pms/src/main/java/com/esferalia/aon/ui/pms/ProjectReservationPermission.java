@@ -376,7 +376,7 @@ public class ProjectReservationPermission implements Serializable {
 	}
 
 	public boolean isSelectReservationServiceAllowed() throws ManagerBeanException {
-		return reservation.isActive() && reservation.getAdvancedAmount() == 0 && isMyScope();
+		return reservation.isActive() && isMyScope();
 	}
 
 	public boolean isAcceptReservationServiceAllowed() {
