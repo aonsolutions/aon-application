@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.opentravel.ota.x2003.x05.AmountType;
 import org.opentravel.ota.x2003.x05.CommentType.Comment;
@@ -242,7 +243,9 @@ public class ReservationManager implements IReservationConstants {
 			if (!calculateTaxData && CommonUtil.round(taxableBase + vatQuota + otherTaxQuota) != total) {
 				throw new ReservationException("Reservation Total is not correct", reservationCrsCode, 197);
 			}
-			String prepayTransaction = findPrepayTransaction(reservationType.getResGlobalInfo());
+			String prepayTransaction = findPrepayInfo(reservationType.getResGlobalInfo(), BANK_TRANSACTION);
+			String prepayPayment = findPrepayInfo(reservationType.getResGlobalInfo(), PAYMENT_TRANSACTION);
+			
 
 			reservation.setHotel(hotel);
 			reservation.setHotelReservation(hotel);
@@ -267,7 +270,7 @@ public class ReservationManager implements IReservationConstants {
 			reservation.setRemarks(remarks);
 			reservation.setSource(ReservationSource.CRS);
 			reservation.setCrsCode(reservationCrsCode);
-			reservation.setAdvance((prepayTransaction!=null) ? reservation.getTotal() : 0);
+			reservation.setAdvance((NumberUtils.isNumber(prepayPayment)) ? Double.parseDouble(prepayPayment) : 0);
 			reservation.setPrepay(prepayTransaction!=null);
 			reservation.setBankTransaction(prepayTransaction);
 			reservation.setCheckStatus(ReservationCheckStatus.NO_CHECK);
@@ -893,14 +896,14 @@ public class ReservationManager implements IReservationConstants {
 		return CommonUtil.round(taxQuota);
 	}
 
-	private String findPrepayTransaction(ResGlobalInfoType resGlobalInfoType) {
+	private String findPrepayInfo(ResGlobalInfoType resGlobalInfoType, String guaranteeDescription) {
 		String transaction = null;
 		if (resGlobalInfoType.getGuarantee() != null && resGlobalInfoType.getGuarantee().getGuaranteeType() != null) {
 			if (resGlobalInfoType.getGuarantee().getGuaranteeType().toString().equals(GuaranteeType.PRE_PAY.toString())) {
 				transaction = "";
 				if (resGlobalInfoType.getGuarantee().sizeOfGuaranteeDescriptionArray() > 0) {
 					ParagraphType paragraphType = resGlobalInfoType.getGuarantee().getGuaranteeDescriptionArray(0);
-					if (paragraphType.getName().equals(BANK_TRANSACTION)) {
+					if (paragraphType.getName().equals(guaranteeDescription)) {
 						transaction = paragraphType.getTextArray(0).getStringValue();
 					}
 				}

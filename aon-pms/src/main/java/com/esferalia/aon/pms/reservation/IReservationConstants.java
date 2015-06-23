@@ -17,11 +17,12 @@ public interface IReservationConstants {
 	String VAT_TAX = "IVA";
 	String OTHER_TAX = "Others";
 	String BANK_TRANSACTION = "BankTransaction";
-	
+	String PAYMENT_TRANSACTION = "PaymentTransaction";
+
 	String ADD_RESERVATION = "A";
 	String MODIFY_RESERVATION = "M";
 	String CANCEL_RESERVATION = "B";
-	
+
 	String CRO_SOURCE = "2";
 
 	String AGENCY_TYPE = "5";
