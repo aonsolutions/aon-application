@@ -608,16 +608,16 @@ public class NormalizedMemory extends ResizeComposite {
 			h1.init();
 			break;
 		case "BA":
-			Header2 h2 = (Header2) pagesPanel.getWidget(0);
-			h2.init();
+			PageH2 h2 = (PageH2) pagesPanel.getWidget(0);
+			h2.dump(h2.d2DepositObject, "BA");
 			break;
 		case "PA":
-			Header3 h3 = (Header3) pagesPanel.getWidget(0);
-			h3.init();
+			PageH3 h3 = (PageH3) pagesPanel.getWidget(0);
+			h3.dump(h3.d2DepositObject, "PA");
 			break;
 		case "PNA":
-			Header4 h4 = (Header4) pagesPanel.getWidget(0);
-			h4.init();
+			PageH4 h4 = (PageH4) pagesPanel.getWidget(0);
+			h4.dump(h4.d2DepositObject, "PNA");
 			break;
 		case "IMA":
 			Header5 h5 = (Header5) pagesPanel.getWidget(0);

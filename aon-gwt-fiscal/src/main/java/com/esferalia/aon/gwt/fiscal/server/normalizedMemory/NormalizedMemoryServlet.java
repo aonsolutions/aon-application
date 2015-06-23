@@ -30,6 +30,8 @@ import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.shared.MemoryTemplate;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositFooterKey;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.DBConsults;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema;
@@ -84,8 +86,15 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements INo
 			// SI NO ESTA GETDEPOSIT() --> DE  DBCONSULTS.
 			// DEVOLVER SCHEMA
 		D2DepositKey[] keyList = null;
+		D2DepositHeaderKey[] keyListHeader = null;
+		D2DepositFooterKey[] keyListFooter = null;
+		
 		switch (part) {
-		case "IDA": keyList = D2DepositConstants.IDA_ABREVIATE_KEYS;break;
+		case "IDA": keyListHeader = D2DepositConstants.IDA_ABREVIATE_KEYS;break;
+		case "BA": keyListHeader = D2DepositConstants.BA_ABREVIATE_KEYS;break;
+		case "PA": keyListHeader = D2DepositConstants.PA_ABREVIATE_KEYS;break;
+		case "PNA": keyListHeader = D2DepositConstants.PNA_ABREVIATE_KEYS;break;
+		//case "IMA": keyListHeader = D2DepositConstants.IMA_ABREVIATE_KEYS;break;
 		case "MAT1": keyList = D2DepositConstants.MAT1_ABREVIATE_KEYS;break;
 		case "MAT2": keyList = D2DepositConstants.MAT2_ABREVIATE_KEYS;break;
 		case "MAT3": keyList = D2DepositConstants.MAT3_ABREVIATE_KEYS;break;
@@ -116,11 +125,26 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements INo
 		List<Clave> claves = schema.getClaves().getClave();
 		Map<String, String> map=  new HashMap<String, String>(); 
 		for(Integer i = 0; i < claves.size(); i++){
-			for(Integer j = 0; j < keyList.length; j++){
-				if(claves.get(i).getCodigo().toString().equals(keyList[j].getCode())){
-					map.put(keyList[j].getName(), claves.get(i).getValor());
+			if(keyList != null)
+				for(Integer j = 0; j < keyList.length; j++){
+					if(claves.get(i).getCodigo().toString().equals(keyList[j].getCode())){
+						map.put(keyList[j].getName(), claves.get(i).getValor());
+					}	
 				}
-			}
+			if(keyListHeader != null)
+				for(Integer j = 0; j < keyListHeader.length; j++){
+					if(claves.get(i).getCodigo().toString().equals(keyListHeader[j].getCode())){
+						map.put(keyListHeader[j].getName(), claves.get(i).getValor());
+					}	
+				}
+			if(keyListFooter != null)
+				for(Integer j = 0; j < keyListFooter.length; j++){
+					if(claves.get(i).getCodigo().toString().equals(keyListFooter[j].getCode())){
+						map.put(keyListFooter[j].getName(), claves.get(i).getValor());
+					}	
+				}
+
+				
 		}
 		return map;
 	}

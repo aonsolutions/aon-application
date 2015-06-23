@@ -10,6 +10,9 @@ import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.Header5;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemoryAsync;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.NormalizedMemory;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageH2;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageH3;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageH4;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageM10;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageM11_2;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageM12_2;
@@ -134,8 +137,10 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 			public void select(FiscalTree fiscalPanel) {
 				NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"BA");				
     			nm.paintHeaderTable("Cuentas Anuales");
-    			Header2 header2Page = new Header2(enterpriseAux, nm);
-    			nm.setPagesPanel(header2Page);
+    			//Header2 header2Page = new Header2(enterpriseAux, nm);
+    			PageH2 ph2 = new PageH2(enterpriseAux, nm);
+    			ph2.dump(new D2DepositTreeObject(), "BA");
+    			nm.setPagesPanel(ph2);
     			fiscalPanel.setContent(nm);	
 			}
 			
@@ -151,7 +156,7 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 			}
 		};
     	bs.setText("Balance de Situaci\u00F3n");
-    	//this.addItem(bs);
+    	this.addItem(bs);
     	
     	TreeNode<Enterprise> cpg = new TreeNode<Enterprise>() {
 			
@@ -159,8 +164,10 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 			public void select(FiscalTree fiscalPanel) {
 				NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"PA");
     			nm.paintHeaderTable("Cuentas Anuales");
-    			Header3 header3Page = new Header3(enterpriseAux, nm);
-    			nm.setPagesPanel(header3Page);
+    			//Header3 header3Page = new Header3(enterpriseAux, nm);
+    			PageH3 ph3 = new PageH3(enterpriseAux, nm);
+    			ph3.dump(new D2DepositTreeObject(), "PA");
+    			nm.setPagesPanel(ph3);
     			fiscalPanel.setContent(nm);	
 			}
 			
@@ -175,7 +182,7 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 			}
 		};
 		cpg.setText("Cuenta de P\u00e9rdidas y Ganancias");
-		//this.addItem(cpg);
+		this.addItem(cpg);
 		
 		TreeNode<Enterprise> ecpn = new TreeNode<Enterprise>() {
 			
@@ -183,8 +190,10 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 			public void select(FiscalTree fiscalPanel) {
 				NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"PNA");
     			nm.paintHeaderTable("Cuentas Anuales");
-    			Header4 header4Page = new Header4(enterpriseAux, nm);
-    			nm.setPagesPanel(header4Page);
+    			//Header4 header4Page = new Header4(enterpriseAux, nm);
+    			PageH4 ph4 = new PageH4(enterpriseAux, nm);
+    			ph4.dump(new D2DepositTreeObject(), "PNA");
+    			nm.setPagesPanel(ph4);
     			fiscalPanel.setContent(nm);
 			}
 			
@@ -199,7 +208,7 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 			}
 		};
 		ecpn.setText("Estado de Cambios en el Patrimonio Neto");
-		//this.addItem(ecpn);
+		this.addItem(ecpn);
 		
 		TreeNode<Enterprise> dm = new TreeNode<Enterprise>() {
 			

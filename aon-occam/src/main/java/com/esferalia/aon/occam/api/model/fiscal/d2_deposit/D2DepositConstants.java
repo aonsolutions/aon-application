@@ -6,18 +6,30 @@ package com.esferalia.aon.occam.api.model.fiscal.d2_deposit;
 
 public class D2DepositConstants {
 	
-	public static D2DepositKey[] IDA_ABREVIATE_KEYS = new D2DepositKey[]{
-		D2DepositKey.IDA01010, D2DepositKey.IDA01011, D2DepositKey.IDA01012, D2DepositKey.IDA01013,
-		D2DepositKey.IDA01020, D2DepositKey.IDA01022, D2DepositKey.IDA01023, D2DepositKey.IDA01024,
-		D2DepositKey.IDA01025, D2DepositKey.IDA01031, D2DepositKey.IDA01037, D2DepositKey.IDA01040,
-		D2DepositKey.IDA01041, D2DepositKey.IDA01060, D2DepositKey.IDA01061, D2DepositKey.IDA01101,
-		D2DepositKey.IDA011019, D2DepositKey.IDA01102, D2DepositKey.IDA011029, D2DepositKey.IDA01901,
-		D2DepositKey.IDA01903, D2DepositKey.IDA02001, D2DepositKey.IDA02009, D2DepositKey.IDA04001,
-		D2DepositKey.IDA040019, D2DepositKey.IDA04002, D2DepositKey.IDA040029, D2DepositKey.IDA04010,
-		D2DepositKey.IDA040109, D2DepositKey.IDA04120, D2DepositKey.IDA041209, D2DepositKey.IDA04121,
-		D2DepositKey.IDA041219, D2DepositKey.IDA04122, D2DepositKey.IDA041229, D2DepositKey.IDA04123,
-		D2DepositKey.IDA041239, D2DepositKey.IDA09001, D2DepositKey.IDA09002, D2DepositKey.IDA09003
+	public static D2DepositHeaderKey[] IDA_ABREVIATE_KEYS = new D2DepositHeaderKey[]{
+		D2DepositHeaderKey.IDA01010, D2DepositHeaderKey.IDA01011, D2DepositHeaderKey.IDA01012, D2DepositHeaderKey.IDA01013,
+		D2DepositHeaderKey.IDA01020, D2DepositHeaderKey.IDA01022, D2DepositHeaderKey.IDA01023, D2DepositHeaderKey.IDA01024,
+		D2DepositHeaderKey.IDA01025, D2DepositHeaderKey.IDA01031, D2DepositHeaderKey.IDA01037, D2DepositHeaderKey.IDA01040,
+		D2DepositHeaderKey.IDA01041, D2DepositHeaderKey.IDA01060, D2DepositHeaderKey.IDA01061, D2DepositHeaderKey.IDA01101,
+		D2DepositHeaderKey.IDA011019, D2DepositHeaderKey.IDA01102, D2DepositHeaderKey.IDA011029, D2DepositHeaderKey.IDA01901,
+		D2DepositHeaderKey.IDA01903, D2DepositHeaderKey.IDA02001, D2DepositHeaderKey.IDA02009, D2DepositHeaderKey.IDA04001,
+		D2DepositHeaderKey.IDA040019, D2DepositHeaderKey.IDA04002, D2DepositHeaderKey.IDA040029, D2DepositHeaderKey.IDA04010,
+		D2DepositHeaderKey.IDA040109, D2DepositHeaderKey.IDA04120, D2DepositHeaderKey.IDA041209, D2DepositHeaderKey.IDA04121,
+		D2DepositHeaderKey.IDA041219, D2DepositHeaderKey.IDA04122, D2DepositHeaderKey.IDA041229, D2DepositHeaderKey.IDA04123,
+		D2DepositHeaderKey.IDA041239, D2DepositHeaderKey.IDA09001, D2DepositHeaderKey.IDA09002, D2DepositHeaderKey.IDA09003
 	};
+	
+	public static D2DepositHeaderKey[] IDA_ABREVIATE_KEYS_2 = new D2DepositHeaderKey[]{
+		D2DepositHeaderKey.IDA02009, D2DepositHeaderKey.IDA02001
+	};
+	
+	public static D2DepositHeaderKey[] IDA_ABREVIATE_KEYS_1 = new D2DepositHeaderKey[]{
+		D2DepositHeaderKey.IDA01010, D2DepositHeaderKey.IDA01011, D2DepositHeaderKey.IDA01012, D2DepositHeaderKey.IDA01013,
+		D2DepositHeaderKey.IDA01020, D2DepositHeaderKey.IDA01022, D2DepositHeaderKey.IDA01023, D2DepositHeaderKey.IDA01025,
+		D2DepositHeaderKey.IDA01024, D2DepositHeaderKey.IDA01031, D2DepositHeaderKey.IDA01037, D2DepositHeaderKey.IDA01041, 
+		D2DepositHeaderKey.IDA01040,  D2DepositHeaderKey.IDA01061, D2DepositHeaderKey.IDA01060
+	};
+	
 	public static D2DepositHeaderKey[] BA_ABREVIATE_KEYS = new D2DepositHeaderKey[]{
 		D2DepositHeaderKey.BA111000
 		,D2DepositHeaderKey.BA1110009
@@ -219,6 +231,208 @@ public class D2DepositConstants {
 		
 	};
 
+	public static D2DepositHeaderKey[] BA_ABREVIATE_KEYS_1 = new D2DepositHeaderKey[]{
+		D2DepositHeaderKey.BA11100098
+		,D2DepositHeaderKey.BA111000
+		,D2DepositHeaderKey.BA1110009
+		,D2DepositHeaderKey.BA11110098
+		,D2DepositHeaderKey.BA111100
+		,D2DepositHeaderKey.BA1111009
+		,D2DepositHeaderKey.BA11120098	
+		,D2DepositHeaderKey.BA111200		
+		,D2DepositHeaderKey.BA1112009
+		,D2DepositHeaderKey.BA11130098
+		,D2DepositHeaderKey.BA111300
+		,D2DepositHeaderKey.BA1113009
+		,D2DepositHeaderKey.BA11140098
+		,D2DepositHeaderKey.BA111400
+		,D2DepositHeaderKey.BA1114009
+		,D2DepositHeaderKey.BA11150098
+		,D2DepositHeaderKey.BA111500
+		,D2DepositHeaderKey.BA1115009
+		,D2DepositHeaderKey.BA11160098
+		,D2DepositHeaderKey.BA111600
+		,D2DepositHeaderKey.BA1116009
+		,D2DepositHeaderKey.BA11170098
+		,D2DepositHeaderKey.BA111700
+		,D2DepositHeaderKey.BA1117009
+		,D2DepositHeaderKey.BA11200098
+		,D2DepositHeaderKey.BA112000
+		,D2DepositHeaderKey.BA1120009
+		,D2DepositHeaderKey.BA11210098
+		,D2DepositHeaderKey.BA112100
+		,D2DepositHeaderKey.BA1121009
+		,D2DepositHeaderKey.BA11220098
+		,D2DepositHeaderKey.BA112200
+		,D2DepositHeaderKey.BA1122009
+		,D2DepositHeaderKey.BA11230098
+		,D2DepositHeaderKey.BA112300
+		,D2DepositHeaderKey.BA1123009
+		,D2DepositHeaderKey.BA11238098
+		,D2DepositHeaderKey.BA112380
+		,D2DepositHeaderKey.BA1123809
+		,D2DepositHeaderKey.BA11238198
+		,D2DepositHeaderKey.BA112381
+		,D2DepositHeaderKey.BA1123819
+		,D2DepositHeaderKey.BA11238298
+		,D2DepositHeaderKey.BA112382
+		,D2DepositHeaderKey.BA1123829
+		,D2DepositHeaderKey.BA11237098
+		,D2DepositHeaderKey.BA112370
+		,D2DepositHeaderKey.BA1123709
+		,D2DepositHeaderKey.BA11239098
+		,D2DepositHeaderKey.BA112390
+		,D2DepositHeaderKey.BA1123909
+		,D2DepositHeaderKey.BA11240098
+		,D2DepositHeaderKey.BA112400
+		,D2DepositHeaderKey.BA1124009
+		,D2DepositHeaderKey.BA11250098
+		,D2DepositHeaderKey.BA112500
+		,D2DepositHeaderKey.BA1125009
+		,D2DepositHeaderKey.BA11260098
+		,D2DepositHeaderKey.BA112600
+		,D2DepositHeaderKey.BA1126009
+		,D2DepositHeaderKey.BA11270098
+		,D2DepositHeaderKey.BA112700
+		,D2DepositHeaderKey.BA1127009
+		,D2DepositHeaderKey.BA11000098
+		,D2DepositHeaderKey.BA110000
+		,D2DepositHeaderKey.BA1100009
+		
+	};
+	
+	public static D2DepositHeaderKey[] BA_ABREVIATE_KEYS_2 = new D2DepositHeaderKey[]{
+		D2DepositHeaderKey.BA2120000
+		,D2DepositHeaderKey.BA2121000
+		,D2DepositHeaderKey.BA2121100
+		,D2DepositHeaderKey.BA2121110
+		,D2DepositHeaderKey.BA2121120
+		,D2DepositHeaderKey.BA2121200
+		,D2DepositHeaderKey.BA2121300
+		,D2DepositHeaderKey.BA2121400
+		,D2DepositHeaderKey.BA2121500
+		,D2DepositHeaderKey.BA2121600
+		,D2DepositHeaderKey.BA2121700
+		,D2DepositHeaderKey.BA2121800
+		,D2DepositHeaderKey.BA2121900
+		,D2DepositHeaderKey.BA2122000
+		,D2DepositHeaderKey.BA2123000
+		,D2DepositHeaderKey.BA2131000
+		,D2DepositHeaderKey.BA2131100
+		,D2DepositHeaderKey.BA2131200
+		,D2DepositHeaderKey.BA2131220
+		,D2DepositHeaderKey.BA2131230
+		,D2DepositHeaderKey.BA2131290
+		,D2DepositHeaderKey.BA2131300
+		,D2DepositHeaderKey.BA2131400
+		,D2DepositHeaderKey.BA2131500
+		,D2DepositHeaderKey.BA2131600
+		,D2DepositHeaderKey.BA2131700
+		,D2DepositHeaderKey.BA21200009
+		,D2DepositHeaderKey.BA21210009
+		,D2DepositHeaderKey.BA21211009
+		,D2DepositHeaderKey.BA21211109
+		,D2DepositHeaderKey.BA21211209
+		,D2DepositHeaderKey.BA21212009
+		,D2DepositHeaderKey.BA21213009
+		,D2DepositHeaderKey.BA21214009
+		,D2DepositHeaderKey.BA21215009
+		,D2DepositHeaderKey.BA21216009
+		,D2DepositHeaderKey.BA21217009
+		,D2DepositHeaderKey.BA21218009
+		,D2DepositHeaderKey.BA21219009
+		,D2DepositHeaderKey.BA21220009
+		,D2DepositHeaderKey.BA21230009
+		,D2DepositHeaderKey.BA21310009
+		,D2DepositHeaderKey.BA21311009
+		,D2DepositHeaderKey.BA21312009
+		,D2DepositHeaderKey.BA21312209
+		,D2DepositHeaderKey.BA21312309
+		,D2DepositHeaderKey.BA21312909
+		,D2DepositHeaderKey.BA21313009
+		,D2DepositHeaderKey.BA21314009
+		,D2DepositHeaderKey.BA21315009
+		,D2DepositHeaderKey.BA21316009
+		,D2DepositHeaderKey.BA21317009
+		,D2DepositHeaderKey.BA212000098
+		,D2DepositHeaderKey.BA212100098
+		,D2DepositHeaderKey.BA212110098
+		,D2DepositHeaderKey.BA212111098
+		,D2DepositHeaderKey.BA212112098
+		,D2DepositHeaderKey.BA212120098
+		,D2DepositHeaderKey.BA212130098
+		,D2DepositHeaderKey.BA212140098
+		,D2DepositHeaderKey.BA212150098
+		,D2DepositHeaderKey.BA212160098
+		,D2DepositHeaderKey.BA212170098
+		,D2DepositHeaderKey.BA212180098
+		,D2DepositHeaderKey.BA212190098
+		,D2DepositHeaderKey.BA212200098
+		,D2DepositHeaderKey.BA212300098
+		,D2DepositHeaderKey.BA213100098
+		,D2DepositHeaderKey.BA213110098
+		,D2DepositHeaderKey.BA213120098
+		,D2DepositHeaderKey.BA213122098
+		,D2DepositHeaderKey.BA213123098
+		,D2DepositHeaderKey.BA213129098
+		,D2DepositHeaderKey.BA213130098
+		,D2DepositHeaderKey.BA213140098
+		,D2DepositHeaderKey.BA213150098
+		,D2DepositHeaderKey.BA213160098
+		,D2DepositHeaderKey.BA213170098
+		
+	};
+	
+	public static D2DepositHeaderKey[] BA_ABREVIATE_KEYS_3 = new D2DepositHeaderKey[]{
+		D2DepositHeaderKey.BA2232000
+		,D2DepositHeaderKey.BA2232100
+		,D2DepositHeaderKey.BA2232200
+		,D2DepositHeaderKey.BA2232300
+		,D2DepositHeaderKey.BA2232320
+		,D2DepositHeaderKey.BA2232330
+		,D2DepositHeaderKey.BA2232390
+		,D2DepositHeaderKey.BA2232400
+		,D2DepositHeaderKey.BA2232500
+		,D2DepositHeaderKey.BA2232580
+		,D2DepositHeaderKey.BA2232581
+		,D2DepositHeaderKey.BA2232582
+		,D2DepositHeaderKey.BA2232590
+		,D2DepositHeaderKey.BA2232600
+		,D2DepositHeaderKey.BA2232700
+		,D2DepositHeaderKey.BA2230000
+		,D2DepositHeaderKey.BA22320009
+		,D2DepositHeaderKey.BA22321009
+		,D2DepositHeaderKey.BA22322009
+		,D2DepositHeaderKey.BA22323009
+		,D2DepositHeaderKey.BA22323209
+		,D2DepositHeaderKey.BA22323309
+		,D2DepositHeaderKey.BA22323909
+		,D2DepositHeaderKey.BA22324009
+		,D2DepositHeaderKey.BA22325009
+		,D2DepositHeaderKey.BA22325809
+		,D2DepositHeaderKey.BA22325819
+		,D2DepositHeaderKey.BA22325829
+		,D2DepositHeaderKey.BA22325909
+		,D2DepositHeaderKey.BA22326009
+		,D2DepositHeaderKey.BA22327009
+		,D2DepositHeaderKey.BA22300009
+		,D2DepositHeaderKey.BA223200098
+		,D2DepositHeaderKey.BA223210098
+		,D2DepositHeaderKey.BA223220098
+		,D2DepositHeaderKey.BA223230098
+		,D2DepositHeaderKey.BA223232098
+		,D2DepositHeaderKey.BA223233098
+		,D2DepositHeaderKey.BA223239098
+		,D2DepositHeaderKey.BA223240098
+		,D2DepositHeaderKey.BA223250098
+		,D2DepositHeaderKey.BA223258098
+		,D2DepositHeaderKey.BA223258198
+		,D2DepositHeaderKey.BA223258298
+		,D2DepositHeaderKey.BA223259098
+		,D2DepositHeaderKey.BA223260098
+		,D2DepositHeaderKey.BA223270098
+		,D2DepositHeaderKey.BA223000098
+	};
 	public static D2DepositHeaderKey[] PA_ABREVIATE_KEYS = new D2DepositHeaderKey[]{
 
 	D2DepositHeaderKey.PA40100
@@ -691,7 +905,391 @@ public class D2DepositConstants {
 	,D2DepositHeaderKey.PNA252513
 	};
 	
+	public static D2DepositHeaderKey[] PNA_ABREVIATE_KEYS_1 = new D2DepositHeaderKey[]{
+
+	D2DepositHeaderKey.PNA159100
+	,D2DepositHeaderKey.PNA150010
+	,D2DepositHeaderKey.PNA150020
+	,D2DepositHeaderKey.PNA150030
+	,D2DepositHeaderKey.PNA150040
+	,D2DepositHeaderKey.PNA150050
+	,D2DepositHeaderKey.PNA150060
+	,D2DepositHeaderKey.PNA150070
+	,D2DepositHeaderKey.PNA159200
+	,D2DepositHeaderKey.PNA150080
+	,D2DepositHeaderKey.PNA150090
+	,D2DepositHeaderKey.PNA150100
+	,D2DepositHeaderKey.PNA150110
+	,D2DepositHeaderKey.PNA150120
+	,D2DepositHeaderKey.PNA150130
+	,D2DepositHeaderKey.PNA159300
+	,D2DepositHeaderKey.PNA159400
 	
+	,D2DepositHeaderKey.PNA1591009
+	,D2DepositHeaderKey.PNA1500109
+	,D2DepositHeaderKey.PNA1500209
+	,D2DepositHeaderKey.PNA1500309
+	,D2DepositHeaderKey.PNA1500409
+	,D2DepositHeaderKey.PNA1500509
+	,D2DepositHeaderKey.PNA1500609
+	,D2DepositHeaderKey.PNA1500709
+	,D2DepositHeaderKey.PNA1592009
+	,D2DepositHeaderKey.PNA1500809
+	,D2DepositHeaderKey.PNA1500909
+	,D2DepositHeaderKey.PNA1501009
+	,D2DepositHeaderKey.PNA1501109
+	,D2DepositHeaderKey.PNA1501209
+	,D2DepositHeaderKey.PNA1501309
+	,D2DepositHeaderKey.PNA1593009
+	,D2DepositHeaderKey.PNA1594009
+	
+	,D2DepositHeaderKey.PNA15910098
+	,D2DepositHeaderKey.PNA15001098
+	,D2DepositHeaderKey.PNA15002098
+	,D2DepositHeaderKey.PNA15003098
+	,D2DepositHeaderKey.PNA15004098
+	,D2DepositHeaderKey.PNA15005098
+	,D2DepositHeaderKey.PNA15006098
+	,D2DepositHeaderKey.PNA15007098
+	,D2DepositHeaderKey.PNA15920098
+	,D2DepositHeaderKey.PNA15008098
+	,D2DepositHeaderKey.PNA15009098
+	,D2DepositHeaderKey.PNA15010098
+	,D2DepositHeaderKey.PNA15011098
+	,D2DepositHeaderKey.PNA15012098
+	,D2DepositHeaderKey.PNA15013098
+	,D2DepositHeaderKey.PNA15930098
+	,D2DepositHeaderKey.PNA15940098
+	};
+	
+	
+	public static D2DepositHeaderKey[] PNA_ABREVIATE_KEYS_2 = new D2DepositHeaderKey[]{
+		D2DepositHeaderKey.PNA251101
+		,D2DepositHeaderKey.PNA251102
+		,D2DepositHeaderKey.PNA251103
+		,D2DepositHeaderKey.PNA251104
+		,D2DepositHeaderKey.PNA251105
+		,D2DepositHeaderKey.PNA251106
+		,D2DepositHeaderKey.PNA251107
+		,D2DepositHeaderKey.PNA251108
+		,D2DepositHeaderKey.PNA251109
+		,D2DepositHeaderKey.PNA251110
+		,D2DepositHeaderKey.PNA251111
+		,D2DepositHeaderKey.PNA251112
+		,D2DepositHeaderKey.PNA251113
+		,D2DepositHeaderKey.PNA251201
+		,D2DepositHeaderKey.PNA251202
+		,D2DepositHeaderKey.PNA251203
+		,D2DepositHeaderKey.PNA251204
+		,D2DepositHeaderKey.PNA251205
+		,D2DepositHeaderKey.PNA251206
+		,D2DepositHeaderKey.PNA251207
+		,D2DepositHeaderKey.PNA251208
+		,D2DepositHeaderKey.PNA251209
+		,D2DepositHeaderKey.PNA251210
+		,D2DepositHeaderKey.PNA251211
+		,D2DepositHeaderKey.PNA251212
+		,D2DepositHeaderKey.PNA251213
+		,D2DepositHeaderKey.PNA251301
+		,D2DepositHeaderKey.PNA251302
+		,D2DepositHeaderKey.PNA251303
+		,D2DepositHeaderKey.PNA251304
+		,D2DepositHeaderKey.PNA251305
+		,D2DepositHeaderKey.PNA251306
+		,D2DepositHeaderKey.PNA251307
+		,D2DepositHeaderKey.PNA251308
+		,D2DepositHeaderKey.PNA251309
+		,D2DepositHeaderKey.PNA251310
+		,D2DepositHeaderKey.PNA251311
+		,D2DepositHeaderKey.PNA251312
+		,D2DepositHeaderKey.PNA251313
+		,D2DepositHeaderKey.PNA251401
+		,D2DepositHeaderKey.PNA251402
+		,D2DepositHeaderKey.PNA251403
+		,D2DepositHeaderKey.PNA251404
+		,D2DepositHeaderKey.PNA251405
+		,D2DepositHeaderKey.PNA251406
+		,D2DepositHeaderKey.PNA251407
+		,D2DepositHeaderKey.PNA251408
+		,D2DepositHeaderKey.PNA251409
+		,D2DepositHeaderKey.PNA251410
+		,D2DepositHeaderKey.PNA251411
+		,D2DepositHeaderKey.PNA251412
+		,D2DepositHeaderKey.PNA251413
+		,D2DepositHeaderKey.PNA251501
+		,D2DepositHeaderKey.PNA251502
+		,D2DepositHeaderKey.PNA251503
+		,D2DepositHeaderKey.PNA251504
+		,D2DepositHeaderKey.PNA251505
+		,D2DepositHeaderKey.PNA251506
+		,D2DepositHeaderKey.PNA251507
+		,D2DepositHeaderKey.PNA251508
+		,D2DepositHeaderKey.PNA251509
+		,D2DepositHeaderKey.PNA251510
+		,D2DepositHeaderKey.PNA251511
+		,D2DepositHeaderKey.PNA251512
+		,D2DepositHeaderKey.PNA251513
+		,D2DepositHeaderKey.PNA251601
+		,D2DepositHeaderKey.PNA251602
+		,D2DepositHeaderKey.PNA251603
+		,D2DepositHeaderKey.PNA251604
+		,D2DepositHeaderKey.PNA251605
+		,D2DepositHeaderKey.PNA251606
+		,D2DepositHeaderKey.PNA251607
+		,D2DepositHeaderKey.PNA251608
+		,D2DepositHeaderKey.PNA251609
+		,D2DepositHeaderKey.PNA251610
+		,D2DepositHeaderKey.PNA251611
+		,D2DepositHeaderKey.PNA251612
+		,D2DepositHeaderKey.PNA251613
+		,D2DepositHeaderKey.PNA251701
+		,D2DepositHeaderKey.PNA251702
+		,D2DepositHeaderKey.PNA251703
+		,D2DepositHeaderKey.PNA251704
+		,D2DepositHeaderKey.PNA251705
+		,D2DepositHeaderKey.PNA251706
+		,D2DepositHeaderKey.PNA251707
+		,D2DepositHeaderKey.PNA251708
+		,D2DepositHeaderKey.PNA251709
+		,D2DepositHeaderKey.PNA251710
+		,D2DepositHeaderKey.PNA251711
+		,D2DepositHeaderKey.PNA251712
+		,D2DepositHeaderKey.PNA251713
+		,D2DepositHeaderKey.PNA251801
+		,D2DepositHeaderKey.PNA251802
+		,D2DepositHeaderKey.PNA251803
+		,D2DepositHeaderKey.PNA251804
+		,D2DepositHeaderKey.PNA251805
+		,D2DepositHeaderKey.PNA251806
+		,D2DepositHeaderKey.PNA251807
+		,D2DepositHeaderKey.PNA251808
+		,D2DepositHeaderKey.PNA251809
+		,D2DepositHeaderKey.PNA251810
+		,D2DepositHeaderKey.PNA251811
+		,D2DepositHeaderKey.PNA251812
+		,D2DepositHeaderKey.PNA251813
+		,D2DepositHeaderKey.PNA252601
+		,D2DepositHeaderKey.PNA252602
+		,D2DepositHeaderKey.PNA252603
+		,D2DepositHeaderKey.PNA252604
+		,D2DepositHeaderKey.PNA252605
+		,D2DepositHeaderKey.PNA252606
+		,D2DepositHeaderKey.PNA252607
+		,D2DepositHeaderKey.PNA252608
+		,D2DepositHeaderKey.PNA252609
+		,D2DepositHeaderKey.PNA252610
+		,D2DepositHeaderKey.PNA252611
+		,D2DepositHeaderKey.PNA252612
+		,D2DepositHeaderKey.PNA252613
+		,D2DepositHeaderKey.PNA252401
+		,D2DepositHeaderKey.PNA252402
+		,D2DepositHeaderKey.PNA252403
+		,D2DepositHeaderKey.PNA252404
+		,D2DepositHeaderKey.PNA252405
+		,D2DepositHeaderKey.PNA252406
+		,D2DepositHeaderKey.PNA252407
+		,D2DepositHeaderKey.PNA252408
+		,D2DepositHeaderKey.PNA252409
+		,D2DepositHeaderKey.PNA252410
+		,D2DepositHeaderKey.PNA252411
+		,D2DepositHeaderKey.PNA252412
+		,D2DepositHeaderKey.PNA252413
+		,D2DepositHeaderKey.PNA253101
+		,D2DepositHeaderKey.PNA253102
+		,D2DepositHeaderKey.PNA253103
+		,D2DepositHeaderKey.PNA253104
+		,D2DepositHeaderKey.PNA253105
+		,D2DepositHeaderKey.PNA253106
+		,D2DepositHeaderKey.PNA253107
+		,D2DepositHeaderKey.PNA253108
+		,D2DepositHeaderKey.PNA253109
+		,D2DepositHeaderKey.PNA253110
+		,D2DepositHeaderKey.PNA253111
+		,D2DepositHeaderKey.PNA253112
+		,D2DepositHeaderKey.PNA253113
+		,D2DepositHeaderKey.PNA253201
+		,D2DepositHeaderKey.PNA253202
+		,D2DepositHeaderKey.PNA253203
+		,D2DepositHeaderKey.PNA253204
+		,D2DepositHeaderKey.PNA253205
+		,D2DepositHeaderKey.PNA253206
+		,D2DepositHeaderKey.PNA253207
+		,D2DepositHeaderKey.PNA253208
+		,D2DepositHeaderKey.PNA253209
+		,D2DepositHeaderKey.PNA253210
+		,D2DepositHeaderKey.PNA253211
+		,D2DepositHeaderKey.PNA253212
+		,D2DepositHeaderKey.PNA253213
+		,D2DepositHeaderKey.PNA2511019
+		,D2DepositHeaderKey.PNA2511029
+		,D2DepositHeaderKey.PNA2511039
+		,D2DepositHeaderKey.PNA2511049
+		,D2DepositHeaderKey.PNA2511059
+		,D2DepositHeaderKey.PNA2511069
+		,D2DepositHeaderKey.PNA2511079
+		,D2DepositHeaderKey.PNA2511089
+		,D2DepositHeaderKey.PNA2511099
+		,D2DepositHeaderKey.PNA2511109
+		,D2DepositHeaderKey.PNA2511119
+		,D2DepositHeaderKey.PNA2511129
+		,D2DepositHeaderKey.PNA2511139
+		,D2DepositHeaderKey.PNA2512019
+		,D2DepositHeaderKey.PNA2512029
+		,D2DepositHeaderKey.PNA2512039
+		,D2DepositHeaderKey.PNA2512049
+		,D2DepositHeaderKey.PNA2512059
+		,D2DepositHeaderKey.PNA2512069
+		,D2DepositHeaderKey.PNA2512079
+		,D2DepositHeaderKey.PNA2512089
+		,D2DepositHeaderKey.PNA2512099
+		,D2DepositHeaderKey.PNA2512109
+		,D2DepositHeaderKey.PNA2512119
+		,D2DepositHeaderKey.PNA2512129
+		,D2DepositHeaderKey.PNA2512139
+		,D2DepositHeaderKey.PNA2513019
+		,D2DepositHeaderKey.PNA2513029
+		,D2DepositHeaderKey.PNA2513039
+		,D2DepositHeaderKey.PNA2513049
+		,D2DepositHeaderKey.PNA2513059
+		,D2DepositHeaderKey.PNA2513069
+		,D2DepositHeaderKey.PNA2513079
+		,D2DepositHeaderKey.PNA2513089
+		,D2DepositHeaderKey.PNA2513099
+		,D2DepositHeaderKey.PNA2513109
+		,D2DepositHeaderKey.PNA2513119
+		,D2DepositHeaderKey.PNA2513129
+		,D2DepositHeaderKey.PNA2513139
+		,D2DepositHeaderKey.PNA2514019
+		,D2DepositHeaderKey.PNA2514029
+		,D2DepositHeaderKey.PNA2514039
+		,D2DepositHeaderKey.PNA2514049
+		,D2DepositHeaderKey.PNA2514059
+		,D2DepositHeaderKey.PNA2514069
+		,D2DepositHeaderKey.PNA2514079
+		,D2DepositHeaderKey.PNA2514089
+		,D2DepositHeaderKey.PNA2514099
+		,D2DepositHeaderKey.PNA2514109
+		,D2DepositHeaderKey.PNA2514119
+		,D2DepositHeaderKey.PNA2514129
+		,D2DepositHeaderKey.PNA2514139
+		,D2DepositHeaderKey.PNA2515019
+		,D2DepositHeaderKey.PNA2515029
+		,D2DepositHeaderKey.PNA2515039
+		,D2DepositHeaderKey.PNA2515049
+		,D2DepositHeaderKey.PNA2515059
+		,D2DepositHeaderKey.PNA2515069
+		,D2DepositHeaderKey.PNA2515079
+		,D2DepositHeaderKey.PNA2515089
+		,D2DepositHeaderKey.PNA2515099
+		,D2DepositHeaderKey.PNA2515109
+		,D2DepositHeaderKey.PNA2515119
+		,D2DepositHeaderKey.PNA2515129
+		,D2DepositHeaderKey.PNA2515139
+		,D2DepositHeaderKey.PNA2516019
+		,D2DepositHeaderKey.PNA2516029
+		,D2DepositHeaderKey.PNA2516039
+		,D2DepositHeaderKey.PNA2516049
+		,D2DepositHeaderKey.PNA2516059
+		,D2DepositHeaderKey.PNA2516069
+		,D2DepositHeaderKey.PNA2516079
+		,D2DepositHeaderKey.PNA2516089
+		,D2DepositHeaderKey.PNA2516099
+		,D2DepositHeaderKey.PNA2516109
+		,D2DepositHeaderKey.PNA2516119
+		,D2DepositHeaderKey.PNA2516129
+		,D2DepositHeaderKey.PNA2516139
+		,D2DepositHeaderKey.PNA2517019
+		,D2DepositHeaderKey.PNA2517029
+		,D2DepositHeaderKey.PNA2517039
+		,D2DepositHeaderKey.PNA2517049
+		,D2DepositHeaderKey.PNA2517059
+		,D2DepositHeaderKey.PNA2517069
+		,D2DepositHeaderKey.PNA2517079
+		,D2DepositHeaderKey.PNA2517089
+		,D2DepositHeaderKey.PNA2517099
+		,D2DepositHeaderKey.PNA2517109
+		,D2DepositHeaderKey.PNA2517119
+		,D2DepositHeaderKey.PNA2517129
+		,D2DepositHeaderKey.PNA2517139
+		,D2DepositHeaderKey.PNA2518019
+		,D2DepositHeaderKey.PNA2518029
+		,D2DepositHeaderKey.PNA2518039
+		,D2DepositHeaderKey.PNA2518049
+		,D2DepositHeaderKey.PNA2518059
+		,D2DepositHeaderKey.PNA2518069
+		,D2DepositHeaderKey.PNA2518079
+		,D2DepositHeaderKey.PNA2518089
+		,D2DepositHeaderKey.PNA2518099
+		,D2DepositHeaderKey.PNA2518109
+		,D2DepositHeaderKey.PNA2518119
+		,D2DepositHeaderKey.PNA2518129
+		,D2DepositHeaderKey.PNA2518139
+		,D2DepositHeaderKey.PNA2526019
+		,D2DepositHeaderKey.PNA2526029
+		,D2DepositHeaderKey.PNA2526039
+		,D2DepositHeaderKey.PNA2526049
+		,D2DepositHeaderKey.PNA2526059
+		,D2DepositHeaderKey.PNA2526069
+		,D2DepositHeaderKey.PNA2526079
+		,D2DepositHeaderKey.PNA2526089
+		,D2DepositHeaderKey.PNA2526099
+		,D2DepositHeaderKey.PNA2526109
+		,D2DepositHeaderKey.PNA2526119
+		,D2DepositHeaderKey.PNA2526129
+		,D2DepositHeaderKey.PNA2526139
+		,D2DepositHeaderKey.PNA2524019
+		,D2DepositHeaderKey.PNA2524029
+		,D2DepositHeaderKey.PNA2524039
+		,D2DepositHeaderKey.PNA2524049
+		,D2DepositHeaderKey.PNA2524059
+		,D2DepositHeaderKey.PNA2524069
+		,D2DepositHeaderKey.PNA2524079
+		,D2DepositHeaderKey.PNA2524089
+		,D2DepositHeaderKey.PNA2524099
+		,D2DepositHeaderKey.PNA2524109
+		,D2DepositHeaderKey.PNA2524119
+		,D2DepositHeaderKey.PNA2524129
+		,D2DepositHeaderKey.PNA2524139
+		,D2DepositHeaderKey.PNA2531019
+		,D2DepositHeaderKey.PNA2531029
+		,D2DepositHeaderKey.PNA2531039
+		,D2DepositHeaderKey.PNA2531049
+		,D2DepositHeaderKey.PNA2531059
+		,D2DepositHeaderKey.PNA2531069
+		,D2DepositHeaderKey.PNA2531079
+		,D2DepositHeaderKey.PNA2531089
+		,D2DepositHeaderKey.PNA2531099
+		,D2DepositHeaderKey.PNA2531109
+		,D2DepositHeaderKey.PNA2531119
+		,D2DepositHeaderKey.PNA2531129
+		,D2DepositHeaderKey.PNA2531139
+		,D2DepositHeaderKey.PNA2532019
+		,D2DepositHeaderKey.PNA2532029
+		,D2DepositHeaderKey.PNA2532039
+		,D2DepositHeaderKey.PNA2532049
+		,D2DepositHeaderKey.PNA2532059
+		,D2DepositHeaderKey.PNA2532069
+		,D2DepositHeaderKey.PNA2532079
+		,D2DepositHeaderKey.PNA2532089
+		,D2DepositHeaderKey.PNA2532099
+		,D2DepositHeaderKey.PNA2532109
+		,D2DepositHeaderKey.PNA2532119
+		,D2DepositHeaderKey.PNA2532129
+		,D2DepositHeaderKey.PNA2532139
+		,D2DepositHeaderKey.PNA252501
+		,D2DepositHeaderKey.PNA252502
+		,D2DepositHeaderKey.PNA252503
+		,D2DepositHeaderKey.PNA252504
+		,D2DepositHeaderKey.PNA252505
+		,D2DepositHeaderKey.PNA252506
+		,D2DepositHeaderKey.PNA252507
+		,D2DepositHeaderKey.PNA252508
+		,D2DepositHeaderKey.PNA252509
+		,D2DepositHeaderKey.PNA252510
+		,D2DepositHeaderKey.PNA252511
+		,D2DepositHeaderKey.PNA252512
+		,D2DepositHeaderKey.PNA252513
+	};
 	public static D2DepositKey[] MAT1_ABREVIATE_KEYS = new D2DepositKey[]{
 		D2DepositKey.MAT19019001
 	};

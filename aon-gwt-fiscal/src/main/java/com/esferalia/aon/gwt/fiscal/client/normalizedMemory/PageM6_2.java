@@ -9,6 +9,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class PageM6_2 extends PageAbs {
@@ -33,6 +34,8 @@ public class PageM6_2 extends PageAbs {
 	@UiField(provided = true)
 	FlexTable table5;
 
+	@UiField TabPanel tabPanel;
+	
 	public PageM6_2() {
 		super();
 		table1 = new FlexTable();
@@ -40,9 +43,10 @@ public class PageM6_2 extends PageAbs {
 		table3 = new FlexTable();
 		table4 = new FlexTable();
 		table5 = new FlexTable();
-		
+		tabPanel = new TabPanel();
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
+		tabPanel.selectTab(0);
 	}
 	
 	public PageM6_2(Enterprise enterprise, NormalizedMemory nm) {
@@ -54,9 +58,10 @@ public class PageM6_2 extends PageAbs {
 		table3 = new FlexTable();
 		table4 = new FlexTable();
 		table5 = new FlexTable();
-		
+		tabPanel = new TabPanel();
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
+		tabPanel.selectTab(0);
 	}
 
 	@Override
