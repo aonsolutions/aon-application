@@ -40,7 +40,8 @@
 				value="#{controller.to.document}" size="15" maxlength="16"
 				valueChangeListener="#{controller.onDocumentChanged}"
 				reRender="GuestDocumentDiv#{suffix},GuestNameDiv#{suffix},GuestContactDiv#{suffix},GuestAddressDiv#{suffix}"
-				onblur="toUpperCase(this);" />
+				onblur="toUpperCase(this);"
+				converter="aon.TrimStringConverter" />
 		</aon:panelGrid>
 
 		<aon:outputText value="#{bundle.registry_document_incorrect}" styleClass="aon-label-error aon-margin-left"
