@@ -194,7 +194,14 @@
 		<servlet-name>DSI Import Servlet</servlet-name>
 		<url-pattern>/aon_gwt_connect/dsiimport</url-pattern>
 	</servlet-mapping>
-
+	<servlet>
+		<servlet-name>BOE Import Servlet</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.connect.server.BOEImportServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>BOE Import Servlet</servlet-name>
+		<url-pattern>/aon_gwt_connect/boeimport</url-pattern>
+	</servlet-mapping>
 	<servlet>
 		<servlet-name>TemplatePreview</servlet-name>
 		<servlet-class>
