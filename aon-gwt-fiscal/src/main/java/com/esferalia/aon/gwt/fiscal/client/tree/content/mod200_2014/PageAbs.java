@@ -21,19 +21,14 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.gwt.event.logical.shared.OpenEvent;
-import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.text.shared.SafeHtmlRenderer;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.DisclosurePanel;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ResizeComposite;
@@ -162,8 +157,10 @@ public abstract class PageAbs extends ResizeComposite {
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBold());
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextCenter());
 	}
-
 	protected void paintKeyField(FlexTable tab,final Mod2002014Key key,int row, int col) {
+		paintKeyField(tab, key, row, col, DoubleBox.VISIBLE_LENGTH);
+	}
+	protected void paintKeyField(FlexTable tab,final Mod2002014Key key,int row, int col, int fieldLength) {
 		boolean disabled = isDisabled(key);
 		
 		FlowPanel panel = new FlowPanel();
@@ -180,7 +177,7 @@ public abstract class PageAbs extends ResizeComposite {
 			panel.add(code);
 		}
 
-		final DoubleBox text = new DoubleBox();
+		final DoubleBox text = new DoubleBox(fieldLength);
 		text.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -222,9 +219,22 @@ public abstract class PageAbs extends ResizeComposite {
 		return (behaviour != null && behaviour[0]); 
 	}
 
-	protected int paintKeyBreakdown(FlexTable tab,int row,final String label, IMod200KeysProvider[] keysProvider,String[] headers) {
-		
-		FlexTable tableDetail = getFlexTable(tab,row,label,headers);
+	protected int paintKeyBreakdownLink(final FlexTable tab,int row,final String label, IMod200KeysProvider[] keysProvider,String[] headers) {
+		final int boxRow = row-1;
+		final int boxCell = tab.getCellCount(boxRow) - 1;
+		FlowPanel panel  = (FlowPanel) tab.getWidget( boxRow , boxCell );
+		panel.addStyleName(AON.AON_CSS.aonNowrap());
+		Button breakdown = new Button();
+		breakdown.setStyleName(AON.AON_CSS.aonIconModel());
+		breakdown.addStyleName(AON.AON_CSS.aonBorderNone());
+		breakdown.addStyleName(AON.AON_CSS.aonCursorPointer());
+		breakdown.addStyleName(AON.AON_CSS.aonMarginRight());
+		breakdown.setTitle(AON.MSG.breakdown());
+		panel.insert(breakdown,0);
+		final FlowPanel container = new FlowPanel();
+		container.setVisible(false);
+		final String backgroundColor = "#E0FFFF";
+		FlexTable tableDetail = getFlexTable(container,row,label,headers);
 		int r = 1;
 		int col = 0;
 		for (IMod200KeysProvider key : keysProvider) {
@@ -234,89 +244,37 @@ public abstract class PageAbs extends ResizeComposite {
 			col = 1;
 			for (final Mod2002014Key k : key.getKeys() ) {
 				if (k != null){
-					paintKeyField(tableDetail, k, r, col);
-//					Boolean[] behaviour = BEHAVIOUR_KEYS_MAP.get(k.toString());
-//					boolean disabled = behaviour != null && behaviour[1];
-//	
-//					FlowPanel panel = new FlowPanel();
-//					BoxLabel code = new BoxLabel(k.getCode( mod200Object.getAdministration() ));
-//					panel.add(code);
-//					getLabels().put(k, code);
-//					
-//					final DoubleBox text = new DoubleBox(12);
-//					text.addChangeHandler(new ChangeHandler() {
-//						@Override
-//						public void onChange(ChangeEvent event) {
-//							try {
-//								if (AonStringUtils.isEmpty(text.getText())) {
-//									text.setValue(0.0,false);
-//								}
-//								Double d = text.getValueOrThrow();
-//								text.addStyleName(AON.AON_CSS.aonChanged());
-//								mod200Object.doubleValueChanged(k, d);
-//							} catch (ParseException e) {
-//								// nothing.
-//							}
-//						}
-//					});
-//					text.setValue(mod200Object.getDoubleValue(k));
-//					text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
-//					text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-//					text.setEnabled(!disabled);
-//					panel.add(text);
-//					
-//					getInputs().put(k, text);
-//					tableDetail.setWidget(r, col, panel);
-//					tableDetail.getFlexCellFormatter().addStyleName(r, col, AON.AON_CSS.aonTextRight());
-//					tableDetail.getFlexCellFormatter().addStyleName(r, col, AON.AON_CSS.aonNowrap());
+					paintKeyField(tableDetail, k, r, col, 9);
 				}
 				++col;
 			}
 			++r;
 		}
+		tab.setWidget(row, 0, container);
+		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+
+		breakdown.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				container.setVisible( !container.isVisible() );
+				for ( int i = 0 ; i < tab.getCellCount(boxRow); i++) {
+					tab.getCellFormatter().getElement(boxRow , i).getStyle().setBackgroundColor(
+							container.isVisible()?backgroundColor:"#FFFFFF");	
+				}
+				container.getElement().getStyle().setBackgroundColor(
+						container.isVisible()?backgroundColor:"#FFFFFF");
+			}
+			
+		});
+		
 		return ++row;
 	}
 	
-	protected FlexTable getFlexTable(FlexTable tab,int row,final String label, String[] headers) {
-		FlowPanel container = new FlowPanel();
-		container.addStyleName(AON.AON_CSS.aonGroup());
-		
-		FlowPanel titleContainer = new FlowPanel();
-		titleContainer.addStyleName(AON.AON_CSS.aonGroupTitle());
-		container.add(titleContainer);
-		final InlineLabel titleLabel = new InlineLabel();
-		titleLabel.addStyleName(AON.AON_CSS.aonClickable());
-		titleContainer.add(titleLabel);
-		titleLabel.setText(label + " \u25BA");
-		
-		final DisclosurePanel bodyContainer = new DisclosurePanel();
-		bodyContainer.addStyleName(AON.AON_CSS.aonWidthAll());
-		titleLabel.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				bodyContainer.setOpen(!bodyContainer.isOpen());
-			}
-		});
-		bodyContainer.addOpenHandler(new OpenHandler<DisclosurePanel>() {
-			
-			@Override
-			public void onOpen(OpenEvent<DisclosurePanel> event) {
-				titleLabel.setText(label + " \u25BC");
-				bodyContainer.addStyleName(AON.AON_CSS.aonFiscalInnerGroupBody());
-			}
-		});
-		bodyContainer.addCloseHandler(new CloseHandler<DisclosurePanel>() {
-			@Override
-			public void onClose(CloseEvent<DisclosurePanel> event) {
-				titleLabel.setText(label + " \u25BA");
-				bodyContainer.removeStyleName(AON.AON_CSS.aonFiscalInnerGroupBody());
-			}
-		});
-		bodyContainer.addStyleName(AON.AON_CSS.aonGroupBody());
-		container.add(bodyContainer);
+	protected FlexTable getFlexTable(Panel container,int row,final String label, String[] headers) {
 		FlexTable tableDetail = new FlexTable();
 		tableDetail.addStyleName(AON.AON_CSS.aonWidthAll());
-		bodyContainer.add(tableDetail);
+		container.add(tableDetail);
 		int r = 0;
 		int col = 0;
 		if (headers != null) {
@@ -327,15 +285,16 @@ public abstract class PageAbs extends ResizeComposite {
 				tableDetail.getFlexCellFormatter().addStyleName(r, col, AON.AON_CSS.aonBorderBottom());
 				tableDetail.getFlexCellFormatter().addStyleName(r, col, AON.AON_CSS.aonTextCenter());
 				if (col>0) {
-					tableDetail.getColumnFormatter().setWidth(col, "160px");
+					tableDetail.getColumnFormatter().setWidth(col, "140px");
 				}
 				++col;
 			}
 		}
-		tab.setWidget(row, 0, container);
-		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 		return tableDetail;
 	}
-
+	
+	
+	
 	protected abstract void initializeTable();
+	
 }

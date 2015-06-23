@@ -147,6 +147,10 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 .aon-italic {
 	font-style: italic;
 }
+.aon-cursor-pointer {
+  cursor: pointer;
+}
+
 .aon-group {
     border: 1px solid #CCCCCC;
     margin: 1em 0;
@@ -796,7 +800,7 @@ input:disabled + label{
 }
 
 .aon-fiscal-border-bottom {
-	border-bottom: 0.5px solid #BBBBBB;
+	border-bottom: 1px solid #BBBBBB;
 }
 
 .aon-fiscal-container{

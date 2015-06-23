@@ -312,6 +312,10 @@ public interface CommonMessages extends Messages {
 	String requiredField(String field);
 
 	// ---------------------------------------------------------Button Messages
+	@DefaultMessage("Desglosar")
+	String breakdown();
+	
+	
 	@DefaultMessage("Nuevo")
 	String newAction();
 
