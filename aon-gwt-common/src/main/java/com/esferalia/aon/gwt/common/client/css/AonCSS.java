@@ -109,6 +109,9 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-italic")
 	String aonItalic();
 
+	@ClassName("aon-cursor-pointer")
+    String aonCursorPointer();
+
 	@ClassName("aon-group")
 	String aonGroup();
 

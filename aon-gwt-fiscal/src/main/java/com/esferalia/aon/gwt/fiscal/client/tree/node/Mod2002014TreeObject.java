@@ -208,7 +208,7 @@ public class Mod2002014TreeObject implements Serializable {
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				Window.alert("Error curante el c\u00E1lculo del impuesto.");
+				Window.alert("Error durante el c\u00E1lculo del impuesto.");
 			}
 		});
 	}

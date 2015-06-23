@@ -48,19 +48,19 @@ public class Page09 extends PageAbs {
 			if (mod200Object.isVisible(key)) {
 				row = paintKey(key,row);
 				if (key == Mod2002014Key.LQ554) {
-					row = paintKeyBreakdown(table,row,AON.MSG.cooperativeRegime()
+					row = paintKeyBreakdownLink(table,row,AON.MSG.cooperativeRegime()
 							,Mod2002014LQ554Key.values(),HEADERS_1);
 				}
 				if (key == Mod2002014Key.LQ561) {
-					row = paintKeyBreakdown(table,row,Mod2002014Key.LQ561.getDescription()
+					row = paintKeyBreakdownLink(table,row,Mod2002014Key.LQ561.getDescription()
 							,Mod2002014LQ561Key.values(),HEADERS_2);
 				}
 				if (key == Mod2002014Key.LQ579) {
-					row = paintKeyBreakdown(table,row,Mod2002014Key.LQ579.getDescription()
+					row = paintKeyBreakdownLink(table,row,Mod2002014Key.LQ579.getDescription()
 							,Mod2002014LQ579Key.values(),null);
 				}
 				if (key == Mod2002014Key.LQ547) {
-					row = paintKeyBreakdown(table,row,Mod2002014Key.LQ547.getDescription()
+					row = paintKeyBreakdownLink(table,row,Mod2002014Key.LQ547.getDescription()
 							,Mod2002014LQ547Key.values(),HEADERS_2);
 				}
 			}

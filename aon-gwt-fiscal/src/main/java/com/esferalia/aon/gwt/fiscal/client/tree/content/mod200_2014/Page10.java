@@ -76,19 +76,22 @@ public class Page10 extends PageAbs {
 			if (mod200Object.isVisible(key)) {
 				row = paintKey(table,key,row);
 				if (key == Mod2002014Key.BN570) {
-					row = paintKeyBreakdown(table,row,AON.MSG.doubleContributionNationalPrevious()
+//					row = paintKeyBreakdown(table,row,AON.MSG.doubleContributionNationalPrevious()
+//							,Mod2002014BN570Key.values(),HEADERS_1);
+					row = paintKeyBreakdownLink(table,row,AON.MSG.doubleContributionNationalPrevious()
 							,Mod2002014BN570Key.values(),HEADERS_1);
+										
 				} 
 				if (key == Mod2002014Key.BN571) {
-					row = paintKeyBreakdown(table,row,AON.MSG.doubleContributionNational2014()
+					row = paintKeyBreakdownLink(table,row,AON.MSG.doubleContributionNational2014()
 							,Mod2002014BN571Key.values(),HEADERS_2);
 				} 
 				if (key == Mod2002014Key.BN572) {
-					row = paintKeyBreakdown(table,row,AON.MSG.doubleContributionInternationalPrevious()
+					row = paintKeyBreakdownLink(table,row,AON.MSG.doubleContributionInternationalPrevious()
 							,Mod2002014BN572Key.values(),HEADERS_1);
 				} 
 				if (key == Mod2002014Key.BN573) {
-					row = paintKeyBreakdown(table,row,AON.MSG.doubleContributionInternational2014()
+					row = paintKeyBreakdownLink(table,row,AON.MSG.doubleContributionInternational2014()
 							,Mod2002014BN573Key.values(),HEADERS_2);
 				}
 			}
@@ -98,27 +101,27 @@ public class Page10 extends PageAbs {
 			row = paintKey(table1,key,row);
 			if (mod200Object.isVisible(key)) {
 				if (key == Mod2002014Key.BN585) {
-					row = paintKeyBreakdown(table1,row,Mod2002014Key.BN585.getDescription()
+					row = paintKeyBreakdownLink(table1,row,Mod2002014Key.BN585.getDescription()
 							,Mod2002014BN585Key.values(),HEADERS_3);
 				} 
 				if (key == Mod2002014Key.BN584) {
-					row = paintKeyBreakdown(table1,row,Mod2002014Key.BN584.getDescription()
+					row = paintKeyBreakdownLink(table1,row,Mod2002014Key.BN584.getDescription()
 							,Mod2002014BN584Key.values(),HEADERS_3);
 				} 
 				if (key == Mod2002014Key.BN588) {
-					row = paintKeyBreakdown(table1,row,Mod2002014Key.BN588.getDescription()
+					row = paintKeyBreakdownLink(table1,row,Mod2002014Key.BN588.getDescription()
 							,Mod2002014BN588Key.values(),HEADERS_3);
 				} 
 				if (key == Mod2002014Key.BN082) {
-					row = paintKeyBreakdown(table1,row,Mod2002014Key.BN082.getDescription()
+					row = paintKeyBreakdownLink(table1,row,Mod2002014Key.BN082.getDescription()
 							,Mod2002014BN082Key.values(),HEADERS_4);
 				} 
 				if (key == Mod2002014Key.BN565) {
-					row = paintKeyBreakdown(table1,row,Mod2002014Key.BN082.getDescription()
+					row = paintKeyBreakdownLink(table1,row,Mod2002014Key.BN082.getDescription()
 							,Mod2002014BN565Key.values(),HEADERS_3);
 				} 
 				if (key == Mod2002014Key.BN590) {
-					row = paintKeyBreakdown(table1,row,Mod2002014Key.BN590.getDescription()
+					row = paintKeyBreakdownLink(table1,row,Mod2002014Key.BN590.getDescription()
 							,Mod2002014BN590Key.values(),HEADERS_3);
 				}
 			}
