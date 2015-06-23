@@ -124,8 +124,6 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 		Assert.assertEquals("DIAS_HUELGA",
 				employeeEventsDraft.eventsTable.getText(4, 0));
 
-		// checkRangeDates(employeeEventsDraft);
-
 		checkRangeDates(employeeEventsDraft);
 
 	}
@@ -142,8 +140,6 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 		
 		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
-		System.out.println("Rango de fechas: "
-				+ employeeEventsDraft.dateRangeLabel.getText());
 		
 		employeeEventsDraft.onPreviousDateRangeButton(null);
 		endDate = DateUtils.addDays2Date(startDate, -1);
@@ -151,8 +147,6 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 		
 		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
-		System.out.println("Rango de fechas: "
-				+ employeeEventsDraft.dateRangeLabel.getText());
 
 		employeeEventsDraft.onPreviousDateRangeButton(null);
 		endDate = DateUtils.addDays2Date(startDate, -1);
@@ -164,8 +158,6 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 		
 		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
-		System.out.println("Rango de fechas: "
-				+ employeeEventsDraft.dateRangeLabel.getText());
 
 		employeeEventsDraft.onPreviousDateRangeButton(null);
 		endDate = DateUtils.addDays2Date(startDate, -1);
@@ -181,8 +173,6 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 		
 		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
-		System.out.println("Rango de fechas: "
-				+ employeeEventsDraft.dateRangeLabel.getText());
 
 		employeeEventsDraft.dateRangeListBox.setSelectedIndex(1);
 		employeeEventsDraft.onDateRangeListBoxChanged(null);
@@ -195,8 +185,6 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
-		System.out.println("Rango de fechas: "
-				+ employeeEventsDraft.dateRangeLabel.getText());
 
 		employeeEventsDraft.onNextDateRangeButton(null);
 		startDate = DateUtils.addDays2Date(endDate, 1);
@@ -208,8 +196,6 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 		
 		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
-		System.out.println("Rango de fechas: "
-				+ employeeEventsDraft.dateRangeLabel.getText());
 
 		employeeEventsDraft.onNextDateRangeButton(null);
 		startDate = DateUtils.addDays2Date(endDate, 1);
@@ -221,8 +207,6 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
-		System.out.println("Rango de fechas: "
-				+ employeeEventsDraft.dateRangeLabel.getText());
 
 		employeeEventsDraft.onPreviousDateRangeButton(null);
 		endDate = DateUtils.addDays2Date(startDate, -1);
@@ -230,8 +214,6 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 		
 		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
-		System.out.println("Rango de fechas: "
-				+ employeeEventsDraft.dateRangeLabel.getText());
 
 		employeeEventsDraft.onPreviousDateRangeButton(null);
 		endDate = DateUtils.addDays2Date(startDate, -1);
@@ -239,8 +221,6 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 		
 		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
-		System.out.println("Rango de fechas: "
-				+ employeeEventsDraft.dateRangeLabel.getText());
 
 		employeeEventsDraft.onPreviousDateRangeButton(null);
 		endDate = DateUtils.addDays2Date(startDate, -1);
@@ -248,41 +228,6 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 		
 		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
-		System.out.println("Rango de fechas: "
-				+ employeeEventsDraft.dateRangeLabel.getText());
-		employeeEventsDraft.onPreviousDateRangeButton(null);
-		endDate = DateUtils.addDays2Date(startDate, -1);
-		startDate = DateUtils.getFirstDayOfMonth(endDate);
-
-		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
-				employeeEventsDraft.dateRangeLabel.getText());
-		System.out.println("Rango de fechas: "
-				+ employeeEventsDraft.dateRangeLabel.getText());
-		employeeEventsDraft.onPreviousDateRangeButton(null);
-		endDate = DateUtils.addDays2Date(startDate, -1);
-		startDate = DateUtils.getFirstDayOfMonth(endDate);
-
-		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
-				employeeEventsDraft.dateRangeLabel.getText());
-		System.out.println("Rango de fechas: "
-				+ employeeEventsDraft.dateRangeLabel.getText());
-		employeeEventsDraft.onPreviousDateRangeButton(null);
-		endDate = DateUtils.addDays2Date(startDate, -1);
-		startDate = DateUtils.getFirstDayOfMonth(endDate);
-
-		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
-				employeeEventsDraft.dateRangeLabel.getText());
-		System.out.println("Rango de fechas: "
-				+ employeeEventsDraft.dateRangeLabel.getText());
-
-		employeeEventsDraft.onPreviousDateRangeButton(null);
-		endDate = DateUtils.addDays2Date(startDate, -1);
-		startDate = DateUtils.getFirstDayOfMonth(endDate);
-
-		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
-				employeeEventsDraft.dateRangeLabel.getText());
-		System.out.println("Rango de fechas: "
-				+ employeeEventsDraft.dateRangeLabel.getText());
 		
 		employeeEventsDraft.onPreviousDateRangeButton(null);
 		endDate = DateUtils.addDays2Date(startDate, -1);
@@ -290,8 +235,26 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
-		System.out.println("Rango de fechas: "
-				+ employeeEventsDraft.dateRangeLabel.getText());
+
+		employeeEventsDraft.onPreviousDateRangeButton(null);
+		endDate = DateUtils.addDays2Date(startDate, -1);
+		startDate = DateUtils.getFirstDayOfMonth(endDate);
+
+		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
+				employeeEventsDraft.dateRangeLabel.getText());
+		employeeEventsDraft.onPreviousDateRangeButton(null);
+		endDate = DateUtils.addDays2Date(startDate, -1);
+		startDate = DateUtils.getFirstDayOfMonth(endDate);
+
+		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
+				employeeEventsDraft.dateRangeLabel.getText());
+
+		employeeEventsDraft.onPreviousDateRangeButton(null);
+		endDate = DateUtils.addDays2Date(startDate, -1);
+		startDate = DateUtils.getFirstDayOfMonth(endDate);
+
+		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
+				employeeEventsDraft.dateRangeLabel.getText());
 		
 		employeeEventsDraft.onPreviousDateRangeButton(null);
 		endDate = DateUtils.addDays2Date(startDate, -1);
@@ -299,8 +262,13 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
-		System.out.println("Rango de fechas: "
-				+ employeeEventsDraft.dateRangeLabel.getText());
+		
+		employeeEventsDraft.onPreviousDateRangeButton(null);
+		endDate = DateUtils.addDays2Date(startDate, -1);
+		startDate = DateUtils.getFirstDayOfMonth(endDate);
+
+		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
+				employeeEventsDraft.dateRangeLabel.getText());
 
 		employeeEventsDraft.dateRangeListBox.setSelectedIndex(0);
 		employeeEventsDraft.onDateRangeListBoxChanged(null);
@@ -313,8 +281,6 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 		
 		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
-		System.out.println("Rango de fechas: "
-				+ employeeEventsDraft.dateRangeLabel.getText());
 
 		employeeEventsDraft.onPreviousDateRangeButton(null);
 		endDate = DateUtils.addDays2Date(startDate, -1);
@@ -322,8 +288,6 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 		
 		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
-		System.out.println("Rango de fechas: "
-				+ employeeEventsDraft.dateRangeLabel.getText());
 		
 		employeeEventsDraft.onNextDateRangeButton(null);
 		startDate = DateUtils.addDays2Date(endDate, 1);
@@ -343,12 +307,6 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 		
 		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
-		System.out.println("Rango de fechas: "
-				+ employeeEventsDraft.dateRangeLabel.getText());
-		System.out.println();
-		System.out.println("***************************************");
-		System.out.println("Chequeo finalizado con Exito");
-		System.out.println("***************************************");
 
 	}
 	// ------------------------------------------------------------------------
@@ -360,6 +318,4 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 				+ DateTimeFormat.getFormat("dd 'de' MMMM 'de' yyyy")
 						.format(end);
 	}
-
-
 }
