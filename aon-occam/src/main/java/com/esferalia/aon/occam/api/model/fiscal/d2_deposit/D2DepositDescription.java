@@ -13,6 +13,7 @@ public class D2DepositDescription {
 	// ¿ --> \u00BF
 	
 	public static EnumMap<D2DepositKey,String> DESCRIPTION_MAP = new EnumMap<D2DepositKey,String>(D2DepositKey.class);
+	public static EnumMap<D2DepositHeaderKey,String> DESCRIPTION_MAP_HEADER = new EnumMap<D2DepositHeaderKey,String>(D2DepositHeaderKey.class);
 
 	static {
 		DESCRIPTION_MAP.put(D2DepositKey.MA391000,"Saldo de la cuenta de p\u00e9rdidas y ganancias");
@@ -219,9 +220,9 @@ public class D2DepositDescription {
 
 		DESCRIPTION_MAP.put(D2DepositKey.MA1095018,"b) Resto de gastos de explotaci\u00F3n");
 
-		DESCRIPTION_MAP.put(D2DepositKey.MA1095019,"4.Venta de bienes y prestaci\u00F3n de servicios producidos por permuta de bienes no monetarios y servicios");
+		DESCRIPTION_MAP.put(D2DepositKey.MA1095019,"5.Venta de bienes y prestaci\u00F3n de servicios producidos por permuta de bienes no monetarios y servicios");
 
-		DESCRIPTION_MAP.put(D2DepositKey.MA1095020,"5.Resultados originados fuera de la actividad normal de la empresa incluidos en 'Otros resultados'");
+		DESCRIPTION_MAP.put(D2DepositKey.MA1095020,"6.Resultados originados fuera de la actividad normal de la empresa incluidos en 'Otros resultados'");
 
 	}
 	
@@ -470,4 +471,178 @@ public class D2DepositDescription {
 		DESCRIPTION_MAP.put(D2DepositKey.MA14294614,"Importe de las subvenciones imputadas a resultados como ingresos de ejercicio 2014");
 	}
 	
+	static{
+
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA11100098 ,"A) ACTIVO NO CORRIENTE");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA11110098,"I. Inmovilizado tangible");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA11120098,"II. Inmovilizado material");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA11130098,"III. Inversiones inmobiliarias");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA11140098,"IV. Inversiones en empresas del grupo y asociadas a largo plazo");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA11150098,"V. Inversiones financieras a largo plazo");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA11160098,"VI. Activos por impuesto diferido");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA11170098 ,"VII. Deudores comerciales no corrientes");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA11200098 ,"B) ACTIVO CORRIENTE");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA11210098,"I. Activos no corrientes mantenidos para la venta");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA11220098,"II. Existencias");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA11230098 ,"III. Deudores comerciales y otras cuentas a cobrar");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA11238098 ,"1. Clientes por ventas y prestaciones de servicios");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA11238198 ,"a) Clientes por ventas y prestaciones de servicios a largo plazo");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA11238298 ,"b) Clientes por ventas y prestaciones de servicios a corto plazo");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA11237098 ,"2. Accionistas (socios) por desembolsos exigidos");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA11239098 ,"3. Otros deudores");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA11240098,"IV. Inversiones en empresas del grupo y asociadas a corto plazo");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA11250098 ,"V. Inversiones financieras a corto plazo");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA11260098,"VI. Periodificaciones a corto plazo");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA11270098,"VII. Efectivo y otros activos liquidos equivalentes");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA11000098 ,"TOTAL ACTIVO (A + B)");
+		
+		
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA212000098,"A) PATRIMONIO NETO");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA212100098,"A-1) Fondos propios");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA212110098,"I. Capital");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA212111098,"1. Capital escriturado");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA212112098,"2. (Capital no exigido)");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA212120098,"II. Prima de emisi\u00F3n");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA212130098,"III. Reservas");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA212140098,"IV. (Acciones y participaciones en patrimonio propias)");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA212150098,"V. Resultados de ejercicios anteriores");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA212160098,"VI. Otras aportaciones de socios");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA212170098,"VII. Resultado del ejercicio");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA212180098,"VIII. (Dividendo a cuenta)");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA212190098,"IX. Otros instrumentos de patrimonio");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA212200098,"A-2) Ajustes por cambios de valor");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA212300098,"A-3) Subvenciones, donaciones y legados recibidos");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA213100098,"B) PASIVO NO CORRIENTE");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA213110098,"I. Provisiones a largo plazo");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA213120098,"II. Deudas a largo plazo");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA213122098,"1. Deudas con entidades de credito");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA213123098,"2. Acreedores por arrendamiento financiero");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA213129098,"3. Otras deudas a largo plazo");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA213130098,"III. Deudas con empresas del grupo y asodiadas a largo plazo");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA213140098,"IV. Pasivo por impuesto diferido");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA213150098,"V. Periodificaciones a largo plazo");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA213160098,"VI. Acreedores comerciales no corrientes");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA213170098,"VII. Deuda con caracteristicas especiales a largo plazo");
+		
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA223200098,"C) PASIVO CORRIENTE");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA223210098,"I. Pasivos vinculados con activos no corrientes mantenidos para la venta");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA223220098,"II. Provisiones a corto plazo");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA223230098,"III. Deudas a corto plazo");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA223232098,"1. Deudas con entidades de cr\u00E9dito");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA223233098,"2. Acreedores por arrendamiento financiero");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA223239098,"3. Otras deudas a corto plazo");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA223240098,"IV. Deudas con empresas del grupo y asociadas a corto plazo");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA223250098,"V. Acreedores comerciales y otras cuentas a pagar");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA223258098,"1. Proveedores");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA223258198,"a) Proveedores a largo plazo");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA223258298,"b) Proveedores a corto plazo");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA223259098,"2. Otros acreedores");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA223260098,"VI. Periodificaciones a corto plazo");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA223270098,"VII. Deuda con caracteristicas especiales a corto plazo");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA223000098,"TOTAL PATRIMONIO NETO Y PASIVO (A + B + C)");
+	}
+	
+	static{
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4010098,"1. Importe neto de la cifra de negocios");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4020098,"2. Variaci\u00F3n de existencias de productos terminados y en curso de fabricaci\u00F3n");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4030098,"3. Trabajos realizados por la empresa para su activo");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4040098,"4. Aprovisionamientos");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4050098,"5. Otros ingresos de explotaci\u00F3n");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4060098,"6. Gastos de personal");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4070098,"7. Otros gastos de explotaci\u00F3n");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4080098,"8. Amortizaci\u00F3n del inmovilizado");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4090098,"9. Imputaci\u00F3n de subvenciones de inmovilizado no financiero y otras");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4100098,"10. Excesos de provisiones");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4110098,"11. Deterioro y resultado por enajenaciones del inmovilizado");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4120098,"12. Diferencia negativa de combinaciones de negocio");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4130098,"13. Otros resultados");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4140098,"A) RESULTADO DE EXPLOTACI\u00D3N (1+2+3+4+5+6+7+8+9+10+11+12+13)");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4143098,"14. Ingresos financieros");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4149098,"a) Imputaci\u00F3n de subvenciones, donaciones y legados de caracter financiero");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4150098,"b) Otros ingresos financieros");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4160098,"15. Gastos financieros");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4170098,"16. Variaci\u00F3n de valor razonable en instrumentos financieros");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4180098,"17. Diferencias de cambio");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4190098,"18. Deterioro y resultado por enajenaciones de instrumentos financieros");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4210098,"19. Otros ingresos y gastos de caracter financiero");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4211098,"a) Incorporaci\u00F3n al activo de gastos financieros");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4212098,"b) Ingresos financieros derivados de convenios de acreedores");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4213098,"c) Resto de ingresos y gastos");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4910098,"B) RESULTADO FINANCIERO (14 + 15 + 16 + 17 + 18 + 19)");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4920098,"C) RESULTADO ANTES DE IMPUESTOS (A + B)");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4930098,"20. Impuesto sobre beneficios");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PA4950098,"D) RESULTADO DEL EJERCICIO (C + 20)");
+	}
+	
+	static{
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA15910098,"A) RESULTADO DE LA CUENTA DE P\u00C9RDIDAS Y GANANCIAS");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA15001098,"I. Por valoraci\u00F3n de instrumentos financieros");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA15002098,"II. Por coberturas de flujos de efectivo");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA15003098,"III. Subvenciones, donaciones y legados recibidos");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA15004098,"IV. Por ganancias y p\u00E9rdidas actuariales y otros ajustes");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA15005098,"V. Por activos no corrientes y pasivos vinculados, mantenidos para la venta");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA15006098,"VI. Diferencias de conversi\u00F3n");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA15007098,"VII. Efecto impositivo");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA15920098,"B) TOTAL INGRESOS Y GASTOS IMPUTADOS DIRECTAMENTE EN EL PATRIMONIO NETO (I+II+III+IV+V+VI+VII)");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA15008098,"VIII. Por valoraci\u00F3n de instrumentos financieros");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA15009098,"IX. Por coberturas de flujos de efectivo");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA15010098,"X. Subvenciones, donaciones y legados recibidos");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA15011098,"XI. Por activos no corrientes y pasivos vinculados, mantenidos para la venta");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA15012098,"XII. Diferencias de conversi\u00F3n");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA15013098,"XIII. Efecto impositivo");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA15930098,"C) TOTAL TRANSFERENCIAS A LA CUENTA DE P\u00C9RDIDAS Y GANANCIAS (VIII+IX+X+XI+XII+XIII)");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA15940098,"TOTAL DE INGRESOS Y GASTOS RECONOCIDOS (A + B +C)");
+	
+	
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251101,"A) SALDO, FINAL DEL EJERCICIO 2012");
+
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251201,"I. Ajustes por cambios de criterio del ejercicio 2012 y anteriores");
+
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251301,"II. Ajustes por errores del ejercicio 2012 y anteriores");
+
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251401,"B) SALDO AJUSTADO, INICIO DEL EJERCICIO 2013");
+		
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251501,"I. Total ingresos y gastos reconocidos");
+
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251601,"II. Operaciones con socios o propietarios");
+
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251701,"1. Aumentos de capital");
+
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251801,"2. (-) Reducciones de capital");
+
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA252601,"3. Otras operaciones con socios o propietarios");
+
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA252401,"III. Otras variaciones del patrimonio neto");
+
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA253101,"1. Movimiento de la reserva de revalorizaci\u00F3n");
+
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA253201,"2. Otras variaciones");
+
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2511019,"C) SALDO, FINAL DEL EJERCICIO 2013");
+
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2512019,"I. Ajustes por cambios de criterio en el ejercicio 2013");
+
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2513019,"II. Ajustes por errores del ejercicio 2013");
+
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2514019,"D) SALDO AJUSTADO, INICIO DEL EJERCICIO 2014 ");
+	
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2515019,"I. Total ingresos y gastos reconocidos");
+
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2516019,"II. Operaciones con socios o propietarios");
+
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2517019,"1. Aumentos de capital");
+
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2518019,"2. (-) Reducciones de capital");
+
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2526019,"3. Otras operaciones con socios o propietarios");
+
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2524019,"III. Otras variaciones del patrimonio neto");
+		
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2531019,"1. Movimiento de la reserva de revalorizaci\u00F3n");
+
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2532019,"2. Otras variaciones ");
+		
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA252501,"E) SALDO, FINAL DEL EJERCICIO 2014");
+		
+	}
 }

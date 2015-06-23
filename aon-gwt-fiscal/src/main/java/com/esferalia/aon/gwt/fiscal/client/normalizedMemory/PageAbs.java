@@ -11,6 +11,8 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.D2DepositTreeObject;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositBehaviour;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositFooterKey;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -109,7 +111,27 @@ public abstract class PageAbs extends ResizeComposite {
 		return paintKey(table,key,row);
 	}
 	
+	protected int paintKey(final D2DepositHeaderKey key,int row) {
+		return paintKey(table,key,row);
+	}
+	
+	protected int paintKey(final D2DepositFooterKey key,int row) {
+		return paintKey(table,key,row);
+	}
+	
 	protected int paintKey(FlexTable tab,final D2DepositKey key,int row) {
+		paintKeyDescription(tab,key,row,0);
+		paintKeyField(tab,key,row,1);	
+		return ++row;
+	}
+	
+	protected int paintKey(FlexTable tab,final D2DepositHeaderKey key,int row) {
+		paintKeyDescription(tab,key,row,0);
+		paintKeyField(tab,key,row,1);	
+		return ++row;
+	}
+	
+	protected int paintKey(FlexTable tab,final D2DepositFooterKey key,int row) {
 		paintKeyDescription(tab,key,row,0);
 		paintKeyField(tab,key,row,1);	
 		return ++row;
@@ -132,6 +154,32 @@ public abstract class PageAbs extends ResizeComposite {
 		tab.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalBorderBottom());
 	}
 
+	protected void paintKeyDescription(FlexTable tab, D2DepositHeaderKey key, int row,int col) {
+		String d = key.getDescription();
+		Label desc = new Label( AonStringUtils.abbreviate(d, 120) );
+		if (AonStringUtils.length(d) > 117) {
+			desc.setTitle(key.getDescription());
+		}
+		if (isTitle(key)) {
+			desc.setStyleName(AON.AON_CSS.aonBold());
+		}
+		tab.setWidget(row, col, desc);
+		tab.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalBorderBottom());
+	}
+	
+	protected void paintKeyDescription(FlexTable tab, D2DepositFooterKey key, int row,int col) {
+		String d = key.getDescription();
+		Label desc = new Label( AonStringUtils.abbreviate(d, 120) );
+		if (AonStringUtils.length(d) > 117) {
+			desc.setTitle(key.getDescription());
+		}
+		if (isTitle(key)) {
+			desc.setStyleName(AON.AON_CSS.aonBold());
+		}
+		tab.setWidget(row, col, desc);
+		tab.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalBorderBottom());
+	}
+	
 	String codeAux;
 	protected void paintKeyField(FlexTable tab,final D2DepositKey key,int row, int col) {
 		boolean disabled = isDisabled(key);
@@ -198,13 +246,164 @@ public abstract class PageAbs extends ResizeComposite {
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextRight());
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
 	}
+	
+	protected void paintKeyField(FlexTable tab,final D2DepositHeaderKey key,int row, int col) {
+		boolean disabled = isDisabled(key);
+		
+		FlowPanel panel = new FlowPanel();
+		String codeId = key.getCode();
+		boolean show = true;
+		try {
+			show = Integer.parseInt(codeId) > 0;
+		} catch (NumberFormatException e) {
+			// Nothing;
+		}
+		if (show) {
+			BoxLabel code = new BoxLabel(codeId);
+			//getLabels().put(key, code);
+			panel.add(code);
+		}
+
+		final DoubleBox text = new DoubleBox();
+		
+		codeAux = codeId;
+		text.addChangeHandler(new ChangeHandler() {
+			String code = codeAux;
+			@Override
+			public void onChange(ChangeEvent event) {
+				try {
+					if (AonStringUtils.isEmpty(text.getText())) {
+						text.setValue(0.0,false);
+					}
+					Double d = text.getValueOrThrow();
+					text.addStyleName(AON.AON_CSS.aonChanged());
+					
+					normalizedMemory.saveButton.setEnabled(true);
+					normalizedMemory.cancelButton.setVisible(true);
+					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),code, d.toString() , new AsyncCallback<Void>() {
+						@Override
+						public void onFailure(Throwable caught) {}
+						@Override
+						public void onSuccess(Void result) {}
+					});
+					//d2DepositObject.doubleValueChanged(key, d );
+				} catch (ParseException e) {
+					// nothing.
+				}
+				
+			}
+		});
+		//text.setValue(d2DepositObject.getDoubleValue(key));
+		if(map.containsKey(key.getName())){
+			Double d = Double.parseDouble(map.get(key.getName()));
+			text.setValue(d);
+		}
+		else text.setValue(0.0);
+		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
+		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
+		text.setEnabled(!disabled);
+		panel.add(text);
+		
+		//getInputs().put(key, text);
+		if (!isTitle(key)) {
+			panel.addStyleName(AON.AON_CSS.aonFiscalPaddingRight());
+		}
+		tab.setWidget(row, col, panel);
+		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextRight());
+		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
+	}
+	
+	protected void paintKeyField(FlexTable tab,final D2DepositFooterKey key,int row, int col) {
+		boolean disabled = isDisabled(key);
+		
+		FlowPanel panel = new FlowPanel();
+		String codeId = key.getCode();
+		boolean show = true;
+		try {
+			show = Integer.parseInt(codeId) > 0;
+		} catch (NumberFormatException e) {
+			// Nothing;
+		}
+		if (show) {
+			BoxLabel code = new BoxLabel(codeId);
+			//getLabels().put(key, code);
+			panel.add(code);
+		}
+
+		final DoubleBox text = new DoubleBox();
+		
+		codeAux = codeId;
+		text.addChangeHandler(new ChangeHandler() {
+			String code = codeAux;
+			@Override
+			public void onChange(ChangeEvent event) {
+				try {
+					if (AonStringUtils.isEmpty(text.getText())) {
+						text.setValue(0.0,false);
+					}
+					Double d = text.getValueOrThrow();
+					text.addStyleName(AON.AON_CSS.aonChanged());
+					
+					normalizedMemory.saveButton.setEnabled(true);
+					normalizedMemory.cancelButton.setVisible(true);
+					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),code, d.toString() , new AsyncCallback<Void>() {
+						@Override
+						public void onFailure(Throwable caught) {}
+						@Override
+						public void onSuccess(Void result) {}
+					});
+					//d2DepositObject.doubleValueChanged(key, d );
+				} catch (ParseException e) {
+					// nothing.
+				}
+				
+			}
+		});
+		//text.setValue(d2DepositObject.getDoubleValue(key));
+		if(map.containsKey(key.getName())){
+			Double d = Double.parseDouble(map.get(key.getName()));
+			text.setValue(d);
+		}
+		else text.setValue(0.0);
+		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
+		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
+		text.setEnabled(!disabled);
+		panel.add(text);
+		
+		//getInputs().put(key, text);
+		if (!isTitle(key)) {
+			panel.addStyleName(AON.AON_CSS.aonFiscalPaddingRight());
+		}
+		tab.setWidget(row, col, panel);
+		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextRight());
+		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
+	}
 
 	protected boolean isDisabled(D2DepositKey key) {
 		Boolean[] behaviour = D2DepositBehaviour.BEHAVIOUR_KEYS_MAP.get(key.getName());
 		return behaviour != null && behaviour[1];
 	}
+	protected boolean isDisabled(D2DepositHeaderKey key) {
+		Boolean[] behaviour = D2DepositBehaviour.BEHAVIOUR_KEYS_MAP.get(key.getName());
+		return behaviour != null && behaviour[1];
+	}
+	
+	protected boolean isDisabled(D2DepositFooterKey key) {
+		Boolean[] behaviour = D2DepositBehaviour.BEHAVIOUR_KEYS_MAP.get(key.getName());
+		return behaviour != null && behaviour[1];
+	}
 
 	protected boolean isTitle(D2DepositKey key) {
+		Boolean[] behaviour = D2DepositBehaviour.BEHAVIOUR_KEYS_MAP.get(key.getName());
+		return (behaviour != null && behaviour[0]); 
+	}
+	
+	protected boolean isTitle(D2DepositHeaderKey key) {
+		Boolean[] behaviour = D2DepositBehaviour.BEHAVIOUR_KEYS_MAP.get(key.getName());
+		return (behaviour != null && behaviour[0]); 
+	}
+	
+	protected boolean isTitle(D2DepositFooterKey key) {
 		Boolean[] behaviour = D2DepositBehaviour.BEHAVIOUR_KEYS_MAP.get(key.getName());
 		return (behaviour != null && behaviour[0]); 
 	}

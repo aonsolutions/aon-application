@@ -2179,4 +2179,33 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Pagos realizados y pendientes de pago en la fecha de cierre del Balance")
 	String memory15_2Table();
 	
+	@DefaultMessage("Datos generales de identificaci\u00f3n")
+	String header1Title();
+	
+	@DefaultMessage("Identificaci\u00f3n de la empresa")
+	String header1Table1();
+	
+	@DefaultMessage("Actividad")
+	String header1Table2();
+	
+	@DefaultMessage("Personal asalariado")
+	String header1Table3();
+	
+	@DefaultMessage("Presentaci\u00f3n de Cuentas")
+	String header1Table4();
+	
+	@DefaultMessage("Unidades")
+	String header1Table5();
+	
+	@DefaultMessage("Balance de situaci\u00f3n")
+	String header2Title();
+	
+	@DefaultMessage("Cuenta de p\u00E9rdidas y ganancias")
+	String header3Title();
+	
+	@DefaultMessage("Estado de cambios en el patrimonio neto")
+	String header4Title();
+	
+	
+
 }

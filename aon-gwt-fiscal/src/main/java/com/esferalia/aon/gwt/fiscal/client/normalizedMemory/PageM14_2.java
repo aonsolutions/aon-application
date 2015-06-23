@@ -9,6 +9,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class PageM14_2 extends PageAbs {
@@ -24,14 +25,16 @@ public class PageM14_2 extends PageAbs {
 	@UiField(provided = true)
 	FlexTable table2;
 	
+	@UiField TabPanel tabPanel;
 	public PageM14_2() {
 		super();
 		table1 = new FlexTable();
 		table2 = new FlexTable();
-
+		tabPanel = new TabPanel();
 		
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
+		tabPanel.selectTab(0);
 	}
 	
 	public PageM14_2(Enterprise enterprise, NormalizedMemory nm) {
@@ -40,10 +43,11 @@ public class PageM14_2 extends PageAbs {
 		this.normalizedMemory = nm;
 		table1 = new FlexTable();
 		table2 = new FlexTable();
-	
+		tabPanel = new TabPanel();
 		
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
+		tabPanel.selectTab(0);
 	}
 
 	@Override
@@ -77,6 +81,7 @@ public class PageM14_2 extends PageAbs {
 		
 		++row;
 		table.setWidget(row, 0, new Label("A) ACTIVOS DE NATURALEZA MEDIOAMBIENTAL"));
+		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
 		++row;
 		for(Integer i = 0; i< D2DepositConstants.MA14_ABREVIATE_KEYS_1.length; i+=2){
 			if(row == 4){
@@ -85,6 +90,7 @@ public class PageM14_2 extends PageAbs {
 			}
 			if(row == 8){
 				table.setWidget(row, 0, new Label("C)Riesgos cubiertos por las provisiones para actuaciones medioambientales"));
+				table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
 				++row;
 			}
 			if(row == 9){
