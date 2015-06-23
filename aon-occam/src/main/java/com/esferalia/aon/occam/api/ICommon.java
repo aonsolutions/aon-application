@@ -47,8 +47,6 @@ public interface ICommon {
 	// DOMAIN
 	// --------------------------------------------
 	
-	public boolean existDomain(AONContext ctx, String document);
-	
 	public Domain insertDomain(AONContext ctx, Integer parentDomain,
 			String document, String name);
 

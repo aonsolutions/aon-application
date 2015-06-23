@@ -1120,17 +1120,6 @@ public class AON {
 		return getFiscal().dumpAEATMod2002013(mod200);
 	}	
 	
-	public static boolean existDomain(String domainName, int parentDomain, String document) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, parentDomain);
-			return getCommon().existDomain(ctx, document);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
 	public static Domain insertDomain(String domainName, int parentDomain,
 			String cifEnterprise, String nameEnterprise) {
 		AONContext ctx = null;
