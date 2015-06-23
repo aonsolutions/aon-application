@@ -204,7 +204,7 @@ public class ReservationManager implements IReservationConstants {
 		try {
 			Hotel hotel = getReservationUtils().obtainHotel(reservationType.getRoomStays().getRoomStayArray(0).getBasicPropertyInfo().getHotelCode());
 			getReservationUtils().setDomain(hotel.getDomain());
-			String reservationCode = findReservationId(reservationType.getResGlobalInfo(), EXT);
+			String reservationCode = findReservationId(reservationType.getResGlobalInfo(), EXT, TYPE_GROUP);
 			String operationDate = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), OPERATION_TIME_STAMP, DATE);
 			String operationTime = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), OPERATION_TIME_STAMP, TIME);
 			Date checkIn = reservationType.getResGlobalInfo().getTimeSpan().getStart().getTime();
@@ -795,15 +795,27 @@ public class ReservationManager implements IReservationConstants {
 		}
 	}
 
+	private String findReservationId(ResGlobalInfoType resGlobalInfoType, String source, String type) {
+		if (resGlobalInfoType.getHotelReservationIDs() != null) {
+			for (int i=0; i<resGlobalInfoType.getHotelReservationIDs().sizeOfHotelReservationIDArray(); i++) {
+				HotelReservationID reservationCode = resGlobalInfoType.getHotelReservationIDs().getHotelReservationIDArray(i);
+				if (reservationCode.getResIDSource() == null && reservationCode.getResIDType().equals(type)) {
+					return reservationCode.getResIDValue();
+				}
+			}
+		}
+		return findReservationId(resGlobalInfoType, source);
+	}
+
 	private String findReservationId(ResGlobalInfoType resGlobalInfoType, String source) {
 		if (resGlobalInfoType.getHotelReservationIDs() != null) {
 			for (int i=0; i<resGlobalInfoType.getHotelReservationIDs().sizeOfHotelReservationIDArray(); i++) {
 				HotelReservationID reservationCode = resGlobalInfoType.getHotelReservationIDs().getHotelReservationIDArray(i);
-				if (reservationCode.getResIDSource() == null || reservationCode.getResIDSource().equals(source)) {
+				if (reservationCode.getResIDSource().equals(source)) {
 					return reservationCode.getResIDValue();
 				}
 			}
-			
+
 			if (resGlobalInfoType.getHotelReservationIDs().sizeOfHotelReservationIDArray() > 0) {
 				return resGlobalInfoType.getHotelReservationIDs().getHotelReservationIDArray(0).getResIDValue();
 			}
