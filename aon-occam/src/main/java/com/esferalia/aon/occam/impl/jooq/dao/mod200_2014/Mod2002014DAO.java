@@ -41,6 +41,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.ValidationMessage2014;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.CNAE;
+import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
@@ -724,7 +725,7 @@ public class Mod2002014DAO  {
 	private static void validateCNAE(List<ValidationMessage2014> list, Mod2002014 mod200) {
 		if (AonStringUtils.isEmpty(mod200.getCnae())) {
 			list.add(new ValidationMessage2014(PAGE00,"Rellene el CNAE de la empresa."));
-		} else if (CNAE.valueOfCode(mod200.getCnae()) == null) {
+		} else if (CNAE2009.valueOfCode(mod200.getCnae()) == null) {
 			list.add(new ValidationMessage2014(PAGE00,"CNAE de la empresa, no válido."));	
 		}
 	}
