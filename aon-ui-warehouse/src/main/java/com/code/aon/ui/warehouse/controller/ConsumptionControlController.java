@@ -52,6 +52,7 @@ public class ConsumptionControlController implements ICollectionProvider, Serial
 	private Inventory inventoryBefore;
 	private Inventory inventoryAfter;
 	private boolean printHeader;
+	private boolean errorControl;
 	
 	public Warehouse getWarehouse() {
 		return warehouse;
@@ -111,7 +112,7 @@ public class ConsumptionControlController implements ICollectionProvider, Serial
 			inventories = getInventories(getWarehouse());
 			beforeInventories = getList(inventories, 1, inventories.size());
 			afterInventories = getList(inventories, 0, inventories.size()-1);
-			if ( inventories.size() == 2 ) {
+			if ( errorControl || (inventories.size() == 2) ) {
 				setInventoryAfter(inventories.get(0));
 				setInventoryBefore(inventories.get(1));
 			}
@@ -223,6 +224,15 @@ public class ConsumptionControlController implements ICollectionProvider, Serial
 		Map<ConsumptionKey,Consumption> map = new TreeMap<ConsumptionKey,Consumption>();
 		fill(inventoryBefore, true, map);
 		fill(inventoryAfter, false, map);
+		if ( errorControl ) {
+			List<Consumption> list = new LinkedList<Consumption>();
+			for( Consumption consumption : map.values() ) {
+				if ( consumption.getConsumption() < 0 ) {
+					list.add(consumption);
+				}
+			}
+			return list;
+		}
 		return map.values();
 	}
 	
@@ -233,6 +243,14 @@ public class ConsumptionControlController implements ICollectionProvider, Serial
 
 	public void setPrintHeader(boolean printHeader) {
 		this.printHeader = printHeader;
+	}
+	
+	public boolean isErrorControl() {
+		return errorControl;
+	}
+
+	public void setErrorControl(boolean errorControl) {
+		this.errorControl = errorControl;
 	}
 
 	public static class Consumption {
@@ -276,6 +294,10 @@ public class ConsumptionControlController implements ICollectionProvider, Serial
 
 		public double getAfterQuantity() {
 			return afterQuantity;
+		}
+		
+		public double getConsumption() {
+			return (beforeQuantity+incomeQuantity)-afterQuantity;
 		}
 		
 	}

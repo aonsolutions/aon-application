@@ -49,6 +49,7 @@ public class DownloadConsumptionServlet extends HttpServlet {
         String final_date = p_request.getParameter("final_date");
         String initial_id = p_request.getParameter("initial_id");
         String final_id = p_request.getParameter("final_id");
+        String only_negative = p_request.getParameter("only_negative");
       
         Integer domainId = Integer.parseInt(domain_id);
         Integer warehouseId = Integer.parseInt(warehouse);
@@ -59,7 +60,7 @@ public class DownloadConsumptionServlet extends HttpServlet {
         Long finalDate2 = Long.parseLong(final_date);
         Long initialDate2 = Long.parseLong(initial_date);
         
-        
+        boolean onlyNegative = Boolean.parseBoolean(only_negative);
       
         Date initialDate = new Date(initialDate2);
         Date finalDate = new Date(finalDate2);
@@ -165,7 +166,8 @@ public class DownloadConsumptionServlet extends HttpServlet {
         			ci.getSales() == 0 &&
         			ci.getFinalQuantity() == 0 &&
         			(ci.getTransfersPlus()-ci.getTransfersMinus()) == 0 &&
-        			ci.getConsumption() == 0)){
+        			ci.getConsumption() == 0) && 
+        			(!onlyNegative || ci.getConsumption() < 0 )){
         		Row row = hoja.createRow((j-num)+2);
         	    for(Integer k = 0; k< columns; k++){
         			Cell celda = row.createCell(k);

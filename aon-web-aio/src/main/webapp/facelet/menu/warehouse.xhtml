@@ -128,7 +128,20 @@
 									<aon:commandLink id="consumptionControl" 
 										action="consumptionControl_search"
 										actionListener="#{consumptionControl.onEditSearch}"
-										value="#{bundle.warehouse_consumption_control}" />
+										value="#{bundle.warehouse_consumption_control}" >
+										<f:setPropertyActionListener value="#{false}"
+											target="#{consumptionControl.errorControl}" />										
+									</aon:commandLink>
+								</aon:div>														
+
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="countErrorControl" 
+										action="consumptionControl_search-countError"
+										actionListener="#{consumptionControl.onEditSearch}"
+										value="#{bundle.warehouse_count_error_control}" >
+										<f:setPropertyActionListener value="#{true}"
+											target="#{consumptionControl.errorControl}" />										
+									</aon:commandLink>
 								</aon:div>														
 							</aon:div>
 						</aon:panelGrid>

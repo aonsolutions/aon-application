@@ -1553,13 +1553,14 @@ public class Templates extends Composite implements EntryPoint {
 		popup.show();
 	}
 	
-	String warehouseAux, initialDateAux, finalDateAux, initialIdAux, finalIdAux;
-	private void exportConsumption(String warehouseId, String initialDate, String finalDate, String initialId, String finalId){
+	String warehouseAux, initialDateAux, finalDateAux, initialIdAux, finalIdAux, onlyNegativeAux;
+	private void exportConsumption(String warehouseId, String initialDate, String finalDate, String initialId, String finalId, String onlyNegative){
 		warehouseAux = warehouseId;
 		initialDateAux = initialDate;
 		finalDateAux = finalDate;
 		initialIdAux = initialId;
 		finalIdAux = finalId;
+		onlyNegativeAux = onlyNegative;
 		
 		Integer size = 0;
 		TemplateInfo templateInfo = null;
@@ -1579,6 +1580,7 @@ public class Templates extends Composite implements EntryPoint {
 				String finalDate = finalDateAux;
 				String initialId = initialIdAux;
 				String finalId = finalIdAux;
+				String onlyNegative = onlyNegativeAux;
 				@Override
 				protected void onCancel() {
 					hide();
@@ -1604,8 +1606,8 @@ public class Templates extends Composite implements EntryPoint {
 		            	+ "&initial_date=" + initialDate
 		            	+ "&final_date="+ finalDate
 		            	+ "&initial_id="+ initialId
-		            	+ "&final_id="+ finalId;
-				
+		            	+ "&final_id="+ finalId
+	            		+ "&only_negative="+ onlyNegative;					
 				
 				
 					Window.open( fileDownloadURL, "_blank",null);
@@ -1625,7 +1627,8 @@ public class Templates extends Composite implements EntryPoint {
 	            	+ "&initial_date=" + initialDate
 	            	+ "&final_date="+ finalDate
 	            	+ "&initial_id="+ initialId
-	            	+ "&final_id="+ finalId;
+	            	+ "&final_id="+ finalId
+            		+ "&only_negative="+ onlyNegative;					
 			
 			Window.open( fileDownloadURL, "_blank",null);
 		}
@@ -2103,12 +2106,12 @@ public class Templates extends Composite implements EntryPoint {
 		}
 	}-*/;
 	
-	public void consumptionx(String warehouse, String initialDate, String finalDate, String initialId, String finalId){
-		exportConsumption(warehouse,initialDate,finalDate, initialId, finalId);
+	public void consumptionx(String warehouse, String initialDate, String finalDate, String initialId, String finalId, String onlyNegative){
+		exportConsumption(warehouse,initialDate,finalDate, initialId, finalId, onlyNegative);
 	}
 	public static native void exportConsumptionx(Templates thiz) /*-{	
-		$wnd.consumptionx = function(warehouse, initialDate, finalDate, initialId, finalId) {
-			thiz.@com.esferalia.aon.gwt.template.client.Templates::consumptionx(*)(warehouse, initialDate, finalDate, initialId, finalId);
+		$wnd.consumptionx = function(warehouse, initialDate, finalDate, initialId, finalId, onlyNegative) {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::consumptionx(*)(warehouse, initialDate, finalDate, initialId, finalId, onlyNegative);
 		}
 	}-*/;
 	

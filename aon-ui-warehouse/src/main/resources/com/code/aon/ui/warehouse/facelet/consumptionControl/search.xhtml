@@ -11,7 +11,8 @@
 		<aon:form id="stockReportSearch">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{bundle.warehouse_consumption_control}" />
+				<ui:param name="toolbarTitle" value="#{(consumptionControl.errorControl)?
+					bundle.warehouse_count_error_control:bundle.warehouse_consumption_control}" />
 				<ui:param name="controller" value="#{consumptionControl}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipBackButton" value="true" />
@@ -35,6 +36,7 @@
 					<aon:outputLabel for="Stock_afterInventory"
 						value="#{bundle.warehouse_inventory_final}" />
 					<aon:selectOneMenu id="Stock_afterInventory"
+						disabled="#{consumptionControl.errorControl}"
 						reRender="Stock_beforeInventory,reportButtons"
 						actionListener="#{controller.onInventoryAfterChanged}"
 						value="#{controller.inventoryAfter}">
@@ -45,6 +47,7 @@
 					<aon:outputLabel for="Stock_beforeInventory"
 						value="#{bundle.warehouse_inventory_initial}" />
 					<aon:selectOneMenu id="Stock_beforeInventory"
+						disabled="#{consumptionControl.errorControl}"
 						reRender="Stock_afterInventory,reportButtons"
 						actionListener="#{controller.onInventoryBeforeChanged}"
 						value="#{controller.inventoryBefore}">
@@ -75,7 +78,7 @@
 								<aon:commandLink id="SearchButton-excel" 
 									disabled="#{(controller.inventoryBefore==null) or (controller.inventoryAfter==null)}"
 									value="#{bundle.aon_listing}"
-									onclick="consumptionx(#{controller.warehouse.id},#{controller.inventoryBefore.inventoryDate.time}, #{controller.inventoryAfter.inventoryDate.time},#{controller.inventoryBefore.id},#{controller.inventoryAfter.id})"
+									onclick="consumptionx(#{controller.warehouse.id},#{controller.inventoryBefore.inventoryDate.time}, #{controller.inventoryAfter.inventoryDate.time},#{controller.inventoryBefore.id},#{controller.inventoryAfter.id},#{consumptionControl.errorControl})"
 									accesskey="#{bundle.aon_key_search}"
 									styleClass="aon-icon-commandButton aon-icon-excel">								
 								</aon:commandLink>
