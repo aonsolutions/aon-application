@@ -132,11 +132,7 @@ public class BOEImportForm extends Composite implements EntryPoint {
 
 					@Override
 					public void onSubmitComplete(SubmitCompleteEvent event) {						
-						fileUpload.getStatusWidget().setProgress(100, 100);
-						
-						String json = event.getResults();
-						
-						Window.alert("Json: " + json);
+						fileUpload.getStatusWidget().setProgress(100, 100);										
 						
 						fileUpload.getStatusWidget().setStatus(Status.SUCCESS);						
 					}

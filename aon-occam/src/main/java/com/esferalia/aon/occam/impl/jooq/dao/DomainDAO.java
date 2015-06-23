@@ -32,7 +32,7 @@ public class DomainDAO {
 		DomainRecord parent = getParentDomain(ctx, parentDomain);
 
 		String lowerDocument = document.toLowerCase().concat("-")
-				.concat(parent.getValue(DOMAIN.NAME));
+				.concat(parent.getValue(DOMAIN.SUBDOMAINSUFFIX));
 
 		// DOMAIN
 
