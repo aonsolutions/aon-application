@@ -1,7 +1,8 @@
-package com.esferalia.aon.occam.impl.jooq.dao.d2_deposit;
+package com.esferalia.aon.occam.api.model.fiscal.d2_deposit;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Description;
 import com.esferalia.aon.occam.api.model.type.Administration;
 
 public enum D2DepositKey implements Serializable {
@@ -245,7 +246,6 @@ public enum D2DepositKey implements Serializable {
 		,MA61930229(930229,"MA61930229")
 		,MA6193023(93023,"MA6193023")
 		,MA61930239(930239,"MA61930239")
-	
 		,MA6193024(93024,"MA6193024")
 		,MA61930249(93024,"MA6193024")
 		
@@ -330,17 +330,34 @@ public enum D2DepositKey implements Serializable {
 		,MA6193154(93154,"MA6193154")
 		,MA61931549(931549,"MA61931549")
 
+		
+		
+		
+		,MA6193201(93201,"MA6193201")
+		,MA61932019(932019,"MA61932019")
+		,MA6193202(93202,"MA6193202")
+		,MA61932029(932029,"MA61932029")
 		,MA6193203(93203,"MA6193203")
 		,MA61932039(932039,"MA61932039")
 
+		,MA6193211(93211,"MA6193211")
+		,MA61932119(932119,"MA61932119")
 		,MA6193212(93212,"MA6193212")
 		,MA61932129(932129,"MA61932129")
+		,MA6193213(93213,"MA6193213")
+		,MA61932139(932139,"MA61932139")
 		
-	
+		,MA6193221(93221,"MA6193221")
+		,MA61932219(932219,"MA61932219")
 		,MA6193222(93222,"MA6193222")
 		,MA61932229(932229,"MA61932229")
+		,MA6193223(93223,"MA6193223")
+		,MA61932239(932239,"MA61932239")
 		
-		
+		,MA6193231(93231,"MA6193231")
+		,MA61932319(932319,"MA61932319")
+		,MA6193232(93232,"MA6193232")
+		,MA61932329(932329,"MA61932329")
 		,MA6193233(93233,"MA6193233")
 		,MA61932339(932339,"MA61932339")
 		
@@ -348,6 +365,8 @@ public enum D2DepositKey implements Serializable {
 		,MA61932419(932419,"MA61932419")
 		,MA6193242(93242,"MA6193242")
 		,MA61932429(932429,"MA61932429")
+		,MA6193243(93243,"MA6193243")
+		,MA61932439(932439,"MA61932439")
 		
 		// MEMORIA - AP6.2 CUADROS NORMALIZADOS
 		,MA6293301(93301,"MA6293301")
@@ -646,6 +665,8 @@ public enum D2DepositKey implements Serializable {
 		,MA794296(94296,"MA794296")
 		,MA794297(94297,"MA794297")
 		
+		,MA794301(94301,"MA794301")
+		,MA794302(94302,"MA794302")
 		,MA794303(94303,"MA794303")
 		,MA794311(94311,"MA794311")
 		,MA794312(94312,"MA794312")
@@ -1678,6 +1699,7 @@ public enum D2DepositKey implements Serializable {
 		;
 	private String code;
 	private String name;
+
 	private D2DepositKey(Integer code, String name) {
 		this(Integer.toString(code));
 		this.name = name;
@@ -1690,7 +1712,9 @@ public enum D2DepositKey implements Serializable {
 	public String getCode() {
 		return this.code;
 	}
-
+	public String getDescription() {
+		return D2DepositDescription.DESCRIPTION_MAP.get(this);
+	}
 	public String getName(){
 		return this.name;
 	}

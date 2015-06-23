@@ -103,9 +103,18 @@
 		</g:north>
 		
 		<g:center>
-			<g:ScrollPanel styleName="aon-scroll-area">
-				<g:FlowPanel ui:field="pagesPanel" />
-			</g:ScrollPanel>
+			<g:DockLayoutPanel unit="PX">
+				<g:north size="55">
+					<g:SimplePanel ui:field="headerPanel"/>
+				</g:north>
+				<g:center>
+
+				
+					<g:ScrollPanel styleName="aon-scroll-area">
+						<g:FlowPanel ui:field="pagesPanel" />
+					</g:ScrollPanel>
+				</g:center>
+			</g:DockLayoutPanel>
 		</g:center>
 		
 	

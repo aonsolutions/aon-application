@@ -162,6 +162,9 @@ public interface AonResources extends ClientBundle, Images {
 	@Source("images/aon-icon-unlock.png")
 	ImageResource aonIconUnlock();
 
+	@Source("images/aon-registro-mercantil-image.png")
+	ImageResource aonRegistroMercantilImage();
+
 	// ------------------------------------------------------------------------
 }
 

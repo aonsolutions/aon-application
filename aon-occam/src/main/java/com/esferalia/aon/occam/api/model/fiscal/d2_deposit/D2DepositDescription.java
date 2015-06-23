@@ -1,0 +1,473 @@
+package com.esferalia.aon.occam.api.model.fiscal.d2_deposit;
+
+import java.util.EnumMap;
+
+public class D2DepositDescription {
+	// Á --> \u00C1 á --> \u00E1
+	// É --> \u00C9 é --> \u00E9
+	// Í --> \u00CD í --> \u00ED
+	// Ó --> \u00D3 ó --> \u00F3
+	// Ú --> \u00DA ú --> \u00FA
+	// Ñ --> \u00D1 ñ --> \u00F1
+	// ª --> \u00AA º --> \u00BA
+	// ¿ --> \u00BF
+	
+	public static EnumMap<D2DepositKey,String> DESCRIPTION_MAP = new EnumMap<D2DepositKey,String>(D2DepositKey.class);
+
+	static {
+		DESCRIPTION_MAP.put(D2DepositKey.MA391000,"Saldo de la cuenta de p\u00e9rdidas y ganancias");
+		DESCRIPTION_MAP.put(D2DepositKey.MA391001,"Remanente");
+		DESCRIPTION_MAP.put(D2DepositKey.MA391002,"Reservas voluntarias");
+		DESCRIPTION_MAP.put(D2DepositKey.MA391003,"Otras reservas de libre disposici\u00f3n");
+		DESCRIPTION_MAP.put(D2DepositKey.MA391004,"TOTAL BASES DE REPARTO = TOTAL APLICACI\u00d3N");
+
+		
+		DESCRIPTION_MAP.put(D2DepositKey.MA391005,"Reserva Legal");
+		DESCRIPTION_MAP.put(D2DepositKey.MA391006, "Reserva por fondo de comercio");
+		DESCRIPTION_MAP.put(D2DepositKey.MA391007,"Reservas especiales");
+		DESCRIPTION_MAP.put(D2DepositKey.MA391008, "Reservas voluntarias");
+		DESCRIPTION_MAP.put(D2DepositKey.MA391009,"Dividendos");
+		DESCRIPTION_MAP.put(D2DepositKey.MA391010,"Remanente y otros"); 
+		DESCRIPTION_MAP.put(D2DepositKey.MA391011,"Compensaci\u00f3n de p\u00e9rdidas de ejercicios anteriores");
+		DESCRIPTION_MAP.put(D2DepositKey.MA391012,"TOTAL APLICAC\u00d3N = TOTAL BASES DE REPARTO");
+	}
+	
+	static {
+		DESCRIPTION_MAP.put(D2DepositKey.MA592001,"A) SALDO INICIAL BRUTO, EJERCICIO 2014");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592011,"(+) Entradas");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592141,"(+) Correcciones de valor por actualizaci\u00F3n");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592021,"(-) Salidas");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592031,"B) SALDO FINAL BRUTO, EJERCICIO 2014");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592041,"C) AMORTIZACI\u00D3N ACUMULADA, SALDO INICIAL EJERCICIO 2014");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592051,"(+) Dotaci\u00F3n a la amortizaci\u00F3n del ejercicio");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592151,"(+) Aumento de la amortizaci\u00F3n acumulada por efecto de la actualizaci\u00F3n");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592061,"(+) Aumentos por adquisiciones o traspasos");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592071,"(-) Disminuciones por salidas, bajas o traspasos");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592081,"D) AMORTIZACI\u00D3N ACUMULADA, SALDO FINAL EJERCICIO 2014");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592091,"E) CORRECCIONES DE VALOR POR DETERIORO, SALDO INICIAL EJERCICIO 2014");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592101,"(+) Correcciones valorativas por deterioro reconocidas en el periodo");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592111,"(-) Reversi\u00F3n de correcciones valorativas por deteriodo");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592121,"(-) Disminuciones por salidas, bajas o traspasos");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592131,"F) CORRECCIONES DE VALOR POR DETERIORO, SALDO FINAL EJERCICIO 2014");
+		
+		DESCRIPTION_MAP.put(D2DepositKey.MA5920019,"A) SALDO INICIAL BRUTO, EJERCICIO 2013");
+		DESCRIPTION_MAP.put(D2DepositKey.MA5920119,"(+) Entradas");
+		DESCRIPTION_MAP.put(D2DepositKey.MA5921419,"(+) Correcciones de valor por actualizaci\u00F3n");
+		DESCRIPTION_MAP.put(D2DepositKey.MA5920219,"(-) Salidas");
+		DESCRIPTION_MAP.put(D2DepositKey.MA5920319,"B) SALDO FINAL BRUTO, EJERCICIO 2013");
+		DESCRIPTION_MAP.put(D2DepositKey.MA5920419,"C) AMORTIZACI\u00D3N ACUMULADA, SALDO INICIAL EJERCICIO 2013");
+		DESCRIPTION_MAP.put(D2DepositKey.MA5920519,"(+) Dotaci\u00F3n a la amortizaci\u00F3n del ejercicio");
+		DESCRIPTION_MAP.put(D2DepositKey.MA5921519,"(+) Aumento de la amortizaci\u00F3n acumulada por efecto de la actualizaci\u00F3n");
+		DESCRIPTION_MAP.put(D2DepositKey.MA5920619,"(+) Aumentos por adquisiciones o traspasos");
+		DESCRIPTION_MAP.put(D2DepositKey.MA5920719,"(-) Disminuciones por salidas, bajas o traspasos");
+		DESCRIPTION_MAP.put(D2DepositKey.MA5920819,"D) AMORTIZACI\u00D3N ACUMULADA, SALDO FINAL EJERCICIO 2013");
+		DESCRIPTION_MAP.put(D2DepositKey.MA5920919,"E) CORRECCIONES DE VALOR POR DETERIORO, SALDO INICIAL EJERCICIO 2013");
+		DESCRIPTION_MAP.put(D2DepositKey.MA5921019,"(+) Correcciones valorativas por deterioro reconocidas en el periodo");
+		DESCRIPTION_MAP.put(D2DepositKey.MA5921119,"(-) Reversi\u00F3n de correcciones valorativas por deteriodo");
+		DESCRIPTION_MAP.put(D2DepositKey.MA5921219,"(-) Disminuciones por salidas, bajas o traspasos");
+		DESCRIPTION_MAP.put(D2DepositKey.MA5921319,"F) CORRECCIONES DE VALOR POR DETERIORO, SALDO FINAL EJERCICIO 2013");
+	
+		DESCRIPTION_MAP.put(D2DepositKey.MA592200,"Coste del bien en origen");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592201,"Cuotas satisfechas");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592202,"Ejercicios anteriores");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592203,"Ejercicio 2014");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592204,"Importe cuotas pendientes 2014");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592205,"Valor de la opci\u00f3n de compra");
+	}
+	
+	static {
+		DESCRIPTION_MAP.put(D2DepositKey.MA6193001,"Activos a valor razonable con cambios en p\u00E9rdidas y ganancias");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6193011,"Inversiones mantenidas hasta el vencimiento");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6193021,"Pr\u00E9stamos y partidas a cobrar");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6193031,"Activos disponibles para la venta");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6193041,"Derivados de cobertura");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6193051,"TOTAL");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA6193101,"Activos a valor razonable con cambios en p\u00E9rdidas y ganancias");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6193111,"Inversiones mantenidas hasta el vencimiento");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6193121,"Pr\u00E9stamos y partidas a cobrar");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6193131,"Activos disponibles para la venta");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6193141,"Derivados de cobertura");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6193151,"TOTAL");
+
+		
+		
+		DESCRIPTION_MAP.put(D2DepositKey.MA6193201,"Inversiones mantenidas hasta el vencimiento");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6193211,"Activos financieros mantenidos para negociar");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6193221,"Otros activos financieros a valor razonable con cambios en la cuenta de p\u00E9rdidas y ganancias");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6193231,"InversiOn en el patrimonio de empresas del grupo, multigrupo y asociados");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6193241,"Activos financieros disponibles para la venta");
+		
+		
+		DESCRIPTION_MAP.put(D2DepositKey.MA6293301,"P\u00E9rdida por deterioro al inicio del ejercicio 2013");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6293311,"(+)Correci\u00F3n valorativo por deterior");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6293321,"(-) Reversi\u00F3n del deterioro");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6293331,"(-) Salidas y reducciones");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6293341,"(+/-) Traspasos y otras variaciones (combinaciones de negocio,etc.)");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6293351,"P\u00E9rdida por deterioro al final del ejercicio 2013");
+		DESCRIPTION_MAP.put(D2DepositKey.MA62933119,"(+)Correcci\u00F3n valorativo por deterioro");
+		DESCRIPTION_MAP.put(D2DepositKey.MA62933219,"(-) Reversi\u00F3n del deterioro");
+		DESCRIPTION_MAP.put(D2DepositKey.MA62933319,"(-) Salidas y reducciones");
+		DESCRIPTION_MAP.put(D2DepositKey.MA62933419,"(+/-) Traspasos y otras variaciones (combinaciones de negocio,etc.)");
+		DESCRIPTION_MAP.put(D2DepositKey.MA62933519,"P\u00E9rdida por deterioro al final del ejercicio 2014");
+
+		
+		DESCRIPTION_MAP.put(D2DepositKey.MA6293401,"Valor razonable al inicio del ejercicio 2013");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6293411,"Variaciones del valor razonable registradas en p\u00E9rdidas y ganancias en el ejercicio 2013");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6293421,"Variaciones del valor razonable registradas en patrimonio neto en el ejercicio 2013");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6293431,"Valor razonable al final del ejercicio 2013");
+		DESCRIPTION_MAP.put(D2DepositKey.MA62934119,"Variaciones del valor razonable registradas en p\u00E9rdidas y ganancias en el ejercicio 2013");
+		DESCRIPTION_MAP.put(D2DepositKey.MA62934219,"Variaciones del valor razonable registradas en patrimonio neto en el ejercicio 2013");
+		DESCRIPTION_MAP.put(D2DepositKey.MA62934319,"Valor razonable al final del ejercicio 2013");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA62935059,"Empresas del grupo");
+		DESCRIPTION_MAP.put(D2DepositKey.MA62935159,"Empresas multigrupo");
+		DESCRIPTION_MAP.put(D2DepositKey.MA62935259,"Empresas asociadas	");
+		DESCRIPTION_MAP.put(D2DepositKey.MA62935359,"Total");
+
+	}
+	
+	static{
+		DESCRIPTION_MAP.put(D2DepositKey.MA794001,"D\u00E9bitos y partidas a pagar");
+		DESCRIPTION_MAP.put(D2DepositKey.MA794011,"Pasivos a valor razonable con cambios en p\u00E9rdidas y ganancias");
+		DESCRIPTION_MAP.put(D2DepositKey.MA794021,"Otros");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA794031,"TOTAL");
+
+		
+		DESCRIPTION_MAP.put(D2DepositKey.MA794101,"D\u00E9bitos y partidas a pagar");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA794111,"Pasivos a valor razonable con cambios en p\u00E9rdidas y ganancias");
+
+		
+		DESCRIPTION_MAP.put(D2DepositKey.MA794121,"Otros");
+
+		
+		DESCRIPTION_MAP.put(D2DepositKey.MA794131,"TOTAL");
+
+		
+		DESCRIPTION_MAP.put(D2DepositKey.MA794201,"Deudas con entidades de cr\u00E9dito");
+	
+		
+		DESCRIPTION_MAP.put(D2DepositKey.MA794211,"Acreedores por arrendamiento financiero");
+
+		
+		DESCRIPTION_MAP.put(D2DepositKey.MA794221,"Otras deudas");
+	
+		
+		DESCRIPTION_MAP.put(D2DepositKey.MA794231,"Deudas con empresas del grupo y asociadas");
+
+		
+		DESCRIPTION_MAP.put(D2DepositKey.MA794241,"Acreedores comerciales no corrientes");
+
+		
+		DESCRIPTION_MAP.put(D2DepositKey.MA794251,"Acreedores comerciales y otras cuentas a pagar");
+
+		
+		DESCRIPTION_MAP.put(D2DepositKey.MA794261,"Proveedores");
+
+		
+		DESCRIPTION_MAP.put(D2DepositKey.MA794271,"Otros acreedores");
+
+		
+		DESCRIPTION_MAP.put(D2DepositKey.MA794281,"Deuda con caracter\u00EDsticas especiales");
+
+		
+		DESCRIPTION_MAP.put(D2DepositKey.MA794291,"TOTAL");
+
+		
+		DESCRIPTION_MAP.put(D2DepositKey.MA794301,"Entidades de cr\u00E9dito");	
+		DESCRIPTION_MAP.put(D2DepositKey.MA794311,"Total p\u00F3lizas de cr\u00E9dito");
+
+	}
+	
+	static{
+		DESCRIPTION_MAP.put(D2DepositKey.MA1095000,"1.Consumo de mercader\u00EDas");
+		DESCRIPTION_MAP.put(D2DepositKey.MA1095001,"a)Compras, netas de devoluciones y cualquier descuento, de las cuales:");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1095002,"-nacionales");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1095003,"-adquisiciones intracomunitarias");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1095004,"-importaciones");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1095005,"b) Variaci\u00F3n de existencias");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1095006,"2.Consumo de materias primas y otras materias consumibles");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1095007,"a)Compras, netas de devoluciones y cualquier descuento, de las cuales:");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1095008,"-nacionales");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1095009,"-adquisiciones intracomunitarias");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1095010,"-importaciones");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1095011,"b) Variaci\u00F3n de existencias");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1095012,"3.Cargas sociales");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1095013,"a) Seguridad social a cargo de la empresa");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1095014,"b) Aportaciones y dotaciones para pensiones");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1095015,"c) Otras cargas sociales");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1095016,"4.Otros gastos de explotaci\u00F3n");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1095017,"a) P\u00E9rdidas y deterioro de operaciones comerciales");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1095018,"b) Resto de gastos de explotaci\u00F3n");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1095019,"4.Venta de bienes y prestaci\u00F3n de servicios producidos por permuta de bienes no monetarios y servicios");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1095020,"5.Resultados originados fuera de la actividad normal de la empresa incluidos en 'Otros resultados'");
+
+	}
+	
+	static{
+		DESCRIPTION_MAP.put(D2DepositKey.MA1196000,"Que aparecen en el balance");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1196001,"Imputados en la cuenta de p\u00E9rdidas y ganancias");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1196002,"Deudas a largo plazo transformables en subvenciones");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1196010,"Saldo al inicio del ejercicio");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1196011,"(+) Importes recibidos");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1196012,"(+) Conversi\u00F3n de deudas a largo plazo en subvenciones");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1196013,"(-) Subvenciones traspasadas a resultados del ejercicio");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1196014,"(-) Importes devueltos");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1196015,"(-) Otros movimientos");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1196016,"Saldo al cierre del ejercicio");
+
+	}
+	
+	static{
+		DESCRIPTION_MAP.put(D2DepositKey.MA1398000,"Directores generales y presidentes ejecutivos");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1398001,"Resto de directores y gerentes");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1398002,"T\u00E9cnicos y profesionales cient\u00EDficos e intelectuales y profesionales de apoyo");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1398003,"Empleados contables, administrativos y otros empleados de oficina");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1398004,"Comerciales, vendedores y similares");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1398005,"Resto de personal cualificado");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1398006,"Ocupaciones elementales");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA1398007,"Total empleado medio");
+
+	}
+	
+	
+	static{
+		DESCRIPTION_MAP.put(D2DepositKey.MA15947001,"Dentro del plazo m\u00E1ximo legal");
+
+	
+		DESCRIPTION_MAP.put(D2DepositKey.MA15947011,"Resto excedido");
+
+	
+		DESCRIPTION_MAP.put(D2DepositKey.MA15947021,"TOTAL (1+2)");
+
+	
+		DESCRIPTION_MAP.put(D2DepositKey.MA15947041,"Aplazamientos que a la fecha de cierre sobrepasan el plazo m\u00E1ximo legal");
+
+	}
+	
+	static{ // Apartado 12
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A97001,"Ventas de activos corrientes");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A97011,"Beneficios(+) / P\u00E9rdidas(-)");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A97021,"Ventas de activos no corrientes, de las cuales:");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A97031,"Beneficios(+) / P\u00E9rdidas(-)");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A97041,"Compras de activos corrientes");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A97051,"Compras de activos no corrientes");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A97061,"Prestaci\u00F3n de servicios, de la cual:");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A97071,"Beneficios(+) / P\u00E9rdidas(-)");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A97081,"Recepci\u00F3n de servicios");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A97091,"Contratos de arrendamiento financieros, de los cuales:");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A97101,"Beneficios(+) / P\u00E9rdidas(-)");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A97111,"Transferencia de investigaci\u00F3n y desarrollo, de los cuales:");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A97121,"Beneficios(+) / P\u00E9rdidas(-)");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A97131,"Ingresos por intereses cobrados");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A97141,"Ingresos por intereses devengados pero no cobrados");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A97151,"Gastos por intereses pagados");	
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A97161,"Gastos por intereses devengados pero no pagados");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A97171,"Gastos consecuencia de deudas incobrables o de dudoso cobro");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A97181,"Dividendos y otros beneficios distribuidos");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A97191,"Garant\u00EDas y avales recibidos");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A97201,"Garant\u00EDas y avales prestados");
+	
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A970019,"Ventas de activos corrientes");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A970119,"Beneficios(+) / P\u00E9rdidas(-)");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A970219,"Ventas de activos no corrientes, de las cuales:");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A970319,"Beneficios(+) / P\u00E9rdidas(-)");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A970419,"Compras de activos corrientes");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A970519,"Compras de activos no corrientes");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A970619,"Prestaci\u00F3n de servicios, de la cual:");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A970719,"Beneficios(+) / P\u00E9rdidas(-)");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A970819,"Recepci\u00F3n de servicios");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A970919,"Contratos de arrendamiento financieros, de los cuales:");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A971019,"Beneficios(+) / P\u00E9rdidas(-)");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A971119,"Transferencia de investigaci\u00F3n y desarrollo, de los cuales:");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A971219,"Beneficios(+) / P\u00E9rdidas(-)");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A971319,"Ingresos por intereses cobrados");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A971419,"Ingresos por intereses devengados pero no cobrados");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A971519,"Gastos por intereses pagados");	
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A971619,"Gastos por intereses devengados pero no pagados");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A971719,"Gastos consecuencia de deudas incobrables o de dudoso cobro");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A971819,"Dividendos y otros beneficios distribuidos");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A971919,"Garant\u00EDas y avales recibidos");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12A972019,"Garant\u00EDas y avales prestados");
+		
+		
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97301,"A) ACTIVO NO CORRIENTE");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97311,"1.Invesiones financieras a largo plazo, de las cuales:");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97321,"-Correcciones valorativas por cr\u00E9ditos de dudoso cobro");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97331,"B) ACTIVO CORRIENTE");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97341,"1.Deudores comerciales y otras deudas a cobrar");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97351,"a)Clientes por ventas y prestaci\u00F3n de servicios a largo plazo, de las cuales:");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97361,"-Correcciones valorativas por cr\u00E9ditos de dudoso cobro a largo plazo");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97371,"b)CLientes por ventas y prestaci\u00F3n de servicios a corto plazo. de las cuales:");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97381,"-Correcciones valorativas por cr\u00E9ditos de dudoso cobro a corto plazo");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97391,"Accionistas (socios) por desembolsos exigidos");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97401,"d)Otros deudores, de los cuales:");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97411,"-Correcciones valorativas por cr\u00E9ditos de dudoso cobro");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97421,"2.Inversiones financieras a corto plazo, de las cuales:");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97431,"-Correcciones valorativas por cr\u00E9ditos de dudoso cobro");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97441,"C)PASIVO NO CORRIENTE");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97451,"1.Deudas a largo plazo");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97461,"a)Deudas con entidades de cr\u00E9dito");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97471,"b)Acreedores por arrendamiento financiero");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97481,"c)Otras deudas a largo plazo");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97491,"2.Deuda con caracter\u00EDsticas especiales a largo plazo");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97501,"D)PASIVO CORRIENTE");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97511,"1.Deudas a corto plazo");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97521,"a)Deudas con entidades de cr\u00E9dito");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97531,"b)Acreedores por arrendamiento financiero");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97541,"c)Otras deudas a corto plazo");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97551,"2.Acreedores comerciales y otras cuentas a pagar");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97561,"a)Proveedores");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97571,"b)Otros Acreedores");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97581,"3.Deuda con caracter\u00EDsticas especiales a corto plazo");
+		
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B973019,"A) ACTIVO NO CORRIENTE");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B973119,"1.Invesiones financieras a largo plazo, de las cuales:");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B973219,"-Correcciones valorativas por cr\u00E9ditos de dudoso cobro");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B973319,"B) ACTIVO CORRIENTE");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B973419,"1.Deudores comerciales y otras deudas a cobrar");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B973519,"a)Clientes por ventas y prestaci\u00F3n de servicios a largo plazo, de las cuales:");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B973619,"-Correcciones valorativas por cr\u00E9ditos de dudoso cobro a largo plazo");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B973719,"b)CLientes por ventas y prestaci\u00F3n de servicios a corto plazo. de las cuales:");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B973819,"-Correcciones valorativas por cr\u00E9ditos de dudoso cobro a corto plazo");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B973919,"Accionistas (socios) por desembolsos exigidos");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B974019,"d)Otros deudores, de los cuales:");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B974119,"-Correcciones valorativas por cr\u00E9ditos de dudoso cobro");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B974219,"2.Inversiones financieras a corto plazo, de las cuales:");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B974319,"-Correcciones valorativas por cr\u00E9ditos de dudoso cobro");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B974419,"C)PASIVO NO CORRIENTE");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B974519,"1.Deudas a largo plazo");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B974619,"a)Deudas con entidades de cr\u00E9dito");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B974719,"b)Acreedores por arrendamiento financiero");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B974819,"c)Otras deudas a largo plazo");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B974919,"2.Deuda con caracter\u00EDsticas especiales a largo plazo");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B975019,"D)PASIVO CORRIENTE");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B975119,"1.Deudas a corto plazo");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B975219,"a)Deudas con entidades de cr\u00E9dito");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B975319,"b)Acreedores por arrendamiento financiero");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B975419,"c)Otras deudas a corto plazo");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B975519,"2.Acreedores comerciales y otras cuentas a pagar");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B975619,"a)Proveedores");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B975719,"b)Otros Acreedores");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B975819,"3.Deuda con caracter\u00EDsticas especiales a corto plazo");
+
+		
+		DESCRIPTION_MAP.put(D2DepositKey.MA12C97700,"1.Sueldos, dietas y otras remuneraciones");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12C97701,"2.Obligaciones contra\u00EDdas en materia de pensiones de las cuales:");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12C97702,"a)Obligaciones con miembros antiguos de la alta direcci\u00F3n");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12C97703,"b)Obligaciones con miembros actuales de la alta direcci\u00F3n");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12C97704,"3.Primas de seguro de vida pagadas, de las cuales:");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12C97705,"a)Primas pagadas a miembros antiguos de la alta direcci\u00F3n");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12C97706,"b)Primas pagadas a miembros actuales de la alta direcci\u00F3n");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12C97707,"4.Indemnizaciones por cese");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12C97708,"5.Pagos basados en instrumentos de patrimonio");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12C97709,"6.Anticipos y cr\u00E9ditos concedidos, de los cuales:");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12C97710,"a)Importes devueltos");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12C97711,"b)Obligaciones asumidas por cuenta de ellos a t\u00EDtulo de garant\u00EDa");
+
+		
+		DESCRIPTION_MAP.put(D2DepositKey.MA12C97720,"1.Sueldos, dietas y otras remuneraciones");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12C97721,"2.Obligaciones contra\u00EDdas en materia de pensiones de las cuales:");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12C97722,"a)Obligaciones con miembros antiguos del \u00F3rgano de administraci\u00F3n");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12C97723,"b)Obligaciones con miembros actuales del \u00F3rgano de administraci\u00F3n");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12C97724,"3.Primas de seguro de vida pagadas, de las cuales:");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12C97725,"a)Primas pagadas a miembros antiguos del \u00F3rgano de administraci\u00F3n");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12C97726,"b)Primas pagadas a miembros actuales del \u00F3rgano de administraci\u00F3n");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12C97727,"4.Indemnizaciones por cese");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12C97728,"5.Pagos basados en instrumentos de patrimonio");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12C97729,"6.Anticipos y creditos concedidos, de los cuales:");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12C97730,"a)Importes devueltos");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12C97731,"b)Obligaciones asumidas por cuenta de ellos a t\u00EDtulo de garant\u00EDa");
+		
+	}
+	
+	static{ // APARTADO 14
+		
+		DESCRIPTION_MAP.put(D2DepositKey.MA14199000,"1.Valor contable");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA14199001,"2.Amortizaci\u00F3n acumulada");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA14199002,"3.1.Reconocidas en el ejercicio");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA14199003,"3.2.Acumuladas");
+	
+		DESCRIPTION_MAP.put(D2DepositKey.MA14199004,"B) Gastos incurridos para la mejora y protecci\u00F3n del medio ambiente");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA14199005,"Saldo al inicio del ejercicio");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA14199006,"(+) Dotaciones");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA14199007,"(+) Aplicaciones");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA14199008,"(+/-) Otros ajustes realizados (combinaciones de negocios, etc) de los cuales");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA14199009,"(+/-) Combinaciones de negocios");
+		
+		DESCRIPTION_MAP.put(D2DepositKey.MA14199010,"(+/-) Variaciones por cambios de valoraci\u00F3n (inclu\u00EDdas modificaciones en el tipo de descuento)");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA14199011,"(+/-) Excesos");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA14199012,"Saldo al cierre del ejercicio");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA14199013,"2.Derechos de reembolso reconocidos en el activo");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA14199014,"D) INVERSIONES DEL EJERCICIO POR RAZONES MEDIOAMBIENTALES");
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA14199015,"E) COMPENSACIONES A RECIBIR DE TERCEROS");
+
+		
+
+		DESCRIPTION_MAP.put(D2DepositKey.MA14294600,"A) IMPORTE (BRUTO) AL INICIO DEL EJERCICIO 2014");
+		DESCRIPTION_MAP.put(D2DepositKey.MA14294601,"(+) Entradas o adquisiciones");
+		DESCRIPTION_MAP.put(D2DepositKey.MA14294602,"(-) Enajenaciones y otras bajas");
+		DESCRIPTION_MAP.put(D2DepositKey.MA14294603,"B) IMPORTE (BRUTO) AL CIERRE DEL EJERCICIO 2014");
+		DESCRIPTION_MAP.put(D2DepositKey.MA14294604,"C) CORRECCIONES DE VALOR POR DETERIORO AL INICIO DEL EJERCICIO 2014");
+		DESCRIPTION_MAP.put(D2DepositKey.MA14294605,"(+) Dotaciones");
+		DESCRIPTION_MAP.put(D2DepositKey.MA14294606,"(-) Aplicaci\u00F3n y bajas");
+		DESCRIPTION_MAP.put(D2DepositKey.MA14294607,"D) CORRECCIONES DE VALOR POR DETERIORO AL CIERRE DEL EJERCICIO 2014");
+		DESCRIPTION_MAP.put(D2DepositKey.MA14294608,"E) GASTOS DEL EJERCICIO 2014 POR EMISI\u00D3N DE GASES DE EFECTO INVERNADERO");
+		DESCRIPTION_MAP.put(D2DepositKey.MA14294610,"(+) Por derechos de emisi\u00F3n transferidos a la cuenta de haberes de las empresas del registro nacional de derechos de emisi\u00F3n, imputados a las emisiones en el año");
+		DESCRIPTION_MAP.put(D2DepositKey.MA14294611,"(+) Por restantes derechos de emisi\u00F3n, adquiridos o generados, que figuran en el balance, imputados a las emisiones del año");
+		DESCRIPTION_MAP.put(D2DepositKey.MA14294612,"(+) Cuant\u00EDa que procede por deficits de derechos de emisi\u00F3n");
+		DESCRIPTION_MAP.put(D2DepositKey.MA14294613,"F) SUBVENCIONES RECIBIDAS EN EL EJERCICIO 2014, POR DERECHOS DE EMISI\u00D3N DE GASES DE EFECTO INVERNADERO");
+		DESCRIPTION_MAP.put(D2DepositKey.MA14294614,"Importe de las subvenciones imputadas a resultados como ingresos de ejercicio 2014");
+	}
+	
+}

@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.impl.jooq.dao.d2_deposit;
+package com.esferalia.aon.occam.api.model.fiscal.d2_deposit;
 
 public enum D2DepositHeaderKey {
 	// balance de situacion
