@@ -901,8 +901,8 @@ public class ReservationManager implements IReservationConstants {
 		if (resGlobalInfoType.getGuarantee() != null && resGlobalInfoType.getGuarantee().getGuaranteeType() != null) {
 			if (resGlobalInfoType.getGuarantee().getGuaranteeType().toString().equals(GuaranteeType.PRE_PAY.toString())) {
 				transaction = "";
-				if (resGlobalInfoType.getGuarantee().sizeOfGuaranteeDescriptionArray() > 0) {
-					ParagraphType paragraphType = resGlobalInfoType.getGuarantee().getGuaranteeDescriptionArray(0);
+				for (int i=0; i<resGlobalInfoType.getGuarantee().sizeOfGuaranteeDescriptionArray(); i++) {
+					ParagraphType paragraphType = resGlobalInfoType.getGuarantee().getGuaranteeDescriptionArray(i);
 					if (paragraphType.getName().equals(guaranteeDescription)) {
 						transaction = paragraphType.getTextArray(0).getStringValue();
 					}
