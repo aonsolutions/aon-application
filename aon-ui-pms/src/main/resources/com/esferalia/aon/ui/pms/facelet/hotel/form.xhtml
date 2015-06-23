@@ -12,7 +12,6 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.pms_hotel_module}" />
 				<ui:param name="controller" value="#{hotel}" />
-				<ui:param name="skipSearchButton" value="true" />
 				<ui:param name="skipResetButton" value="#{companyCollections.currentUserEnterprisesCount == 0}" />
 			</ui:decorate>
 
@@ -180,7 +179,7 @@
 				
 				<aon:if test="#{!hotel.nevv}">
 					<aon:panelTabSet id="hotelTab" >
-						<aon:panelTab id="department" label="#{bundle.company_departments}">
+						<aon:panelTab id="warehouses" label="#{bundle.warehouse_warehouse_group}">
 							<ui:include	src="/com/code/aon/ui/company/facelet/workplaceDepartment/tab_grid.xhtml">
 								<ui:param name="controller" value="#{workplaceDepartment}" />
 							</ui:include>

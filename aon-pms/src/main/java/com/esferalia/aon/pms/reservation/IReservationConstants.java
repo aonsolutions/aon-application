@@ -16,6 +16,7 @@ public interface IReservationConstants {
 	String BOOKING_HOLDER = "BookingHolder";
 	String VAT_TAX = "IVA";
 	String OTHER_TAX = "Others";
+	String BANK_TRANSACTION = "BankTransaction";
 	
 	String ADD_RESERVATION = "A";
 	String MODIFY_RESERVATION = "M";

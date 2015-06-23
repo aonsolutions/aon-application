@@ -236,6 +236,10 @@
 			<value>company</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>WorkPlace_description</value>
+		</managed-property>						
+		<managed-property>
 			<property-name>propertyMap</property-name>
 			<map-entries>
 				<map-entry>
@@ -1066,6 +1070,10 @@
 			<property-name>masterControllerName</property-name>
 			<value>enterprise</value>
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>WorkPlace_description</value>
+		</managed-property>								
 		<managed-property>
 			<property-name>propertyMap</property-name>
 			<map-entries>

@@ -1,17 +1,19 @@
 package com.esferalia.aon.gwt.fiscal.client.normalizedMemory;
 
 import java.util.Map;
+import java.util.Vector;
 
+import com.esferalia.aon.gwt.fiscal.shared.MemoryTemplate;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface INormalizedMemoryAsync {
 
-	void getSchema(String part, Integer domainId,
+	void getSchema(String cif, String part, Integer domainId, Boolean textMode,
 			AsyncCallback<Map<String, String>> callback);
 
 	void initialize(AsyncCallback<Integer> callback);
 
-	void updateSchema(Integer domainId, String key, String value,
+	void updateSchema(String cif, Integer domainId, String key, String value,
 			AsyncCallback<Void> callback);
 
 	void isDigitalDeposit(Integer domainId, AsyncCallback<Boolean> callback);
@@ -20,6 +22,18 @@ public interface INormalizedMemoryAsync {
 
 	void clearSession(String cif, AsyncCallback<Void> callback);
 
-	void saveDeposit(String cif, Integer domainId, AsyncCallback<Void> callback);
+	void saveDeposit(String cif, Integer domainId, Boolean textMode,
+			AsyncCallback<Void> callback);
+
+	void getDigitalDepositTemplates(Integer domainId,
+			AsyncCallback<Vector<MemoryTemplate>> callback);
+
+	void createTextMemory(Integer domainId, String name,
+			AsyncCallback<MemoryTemplate> callback);
+
+	void updateTexts(MemoryTemplate mt, Integer domainId, String cif,
+			AsyncCallback<Void> callback);
+
+	void getParentDomain(Integer domainId, AsyncCallback<Integer> callback);
 
 }

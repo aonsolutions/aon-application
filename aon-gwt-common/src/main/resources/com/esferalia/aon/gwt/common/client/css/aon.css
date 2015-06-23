@@ -216,6 +216,9 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 .aon-text-center {
 	text-align: center;
 }
+.aon-text-underline {
+	text-decoration: underline;
+}
 .aon-text-left {
 	text-align: left;
 }

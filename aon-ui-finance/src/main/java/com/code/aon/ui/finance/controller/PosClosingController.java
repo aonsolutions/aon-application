@@ -180,7 +180,7 @@ public class PosClosingController implements IFinanceConstants, Serializable {
 
 	public void onSave(ActionEvent event) {
 		try {
-			setPosShift((PosShift)BeanManager.getManagerBean(PosShift.class).insertOrUpdate(getPosShift()));
+			setPosShift((PosShift)BeanManager.getManagerBean(PosShift.class).update(getPosShift()));
 		} catch (ManagerBeanException ex) {
 			String msg = "Error en el proceso de Cierre de Caja. " + ex.getMessage();
 			AonUtil.addErrorMessage(msg);

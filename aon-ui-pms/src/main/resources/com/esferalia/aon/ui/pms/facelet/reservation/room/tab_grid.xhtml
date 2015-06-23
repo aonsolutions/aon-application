@@ -28,6 +28,8 @@
 					actionListener="#{controller.onSelect}"
 					reRender="showRoomDetailWindow"
 					focus="#{(focusOnSelect != null)?(focusOnSelect):''}">
+					<f:setPropertyActionListener target="#{controller.showFeatures}"
+						value="#{false}" />
 					<f:setPropertyActionListener target="#{controller.showRoomDetailWindow}"
 						value="#{true}" />
 				</aon:commandButton>

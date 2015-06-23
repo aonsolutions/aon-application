@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.CompanyParticipation;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
+import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Secretary;
@@ -443,7 +444,8 @@ public class Mod2002014DAO  {
 	
 	public static Mod2002014 initializeNewMod200(AONContext ctx, Mod2002014 mod200) {
 		Mod2002013 old= Mod2002013DAO.getByYear(ctx, 2013);
-		if (old != null && old.getId() != null) {
+		if (old != null && old.getId() != null) { 
+			mod200.setEnterprise(old.getEnterprise());
 			Mod2002014Import2013.import2013(mod200,old);
 			mod200.setInitializedFromLastYear(true);
 		} else {
@@ -497,8 +499,14 @@ public class Mod2002014DAO  {
 			}
 		}
 
-		Mod2002014MVELContext mvelCtx = new Mod2002014MVELContext( mod200, ACCEPTER );
-		mvelCtx.setAccounts( AON.getAccountBalances(ctx, getParams(ctx,mod200)) );
+		
+		Mod2002014MVELContext mvelCtx = new Mod2002014MVELContext( mod200, ACCEPTER );		
+		AccMiningParameters params = getParams(ctx,mod200);
+		if (params != null) {
+			mvelCtx.setAccounts( AON.getAccountBalances(ctx, params) );
+		} else {
+			mvelCtx.setAccounts( new HashMap<String,AccountBalance>() );
+		}
 		mvelCtx.setExpressionMap(INITIALIZE_EXPRESSION_MAP);
 		addCharacters(mvelCtx,mod200);
 		addBalanceCharacters(mvelCtx,mod200);
@@ -605,12 +613,13 @@ public class Mod2002014DAO  {
 		 
 		AccountPeriod period =  AccountPeriodDAO.fetchOneByYear(ctx, mod200.getYear());
 		if (period == null) {
-			throw new AonCoreException("Ejercicio '"+mod200.getYear()+"' no encontrado.");
+//			throw new AonCoreException("Ejercicio '"+mod200.getYear()+"' no encontrado.");
+			return null;
 		}
 //		if (!period.isClosed()) {
 //			throw new AonCoreException("Cierre el ejercicio contable '"+mod200.getYear()+"' para poder continuar.");
 //		}
-//		params.setPeriodId(period.getId());
+		params.setPeriodId(period.getId());
 		params.setStartDate(period.getInitiationDate());
 		params.setEndDate(period.getDeadline());
 		return params;

@@ -3,6 +3,10 @@ package com.esferalia.aon.gwt.fiscal.client.tree.node;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.FreeText;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.Header1;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.Header2;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.Header3;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.Header4;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.Header5;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemoryAsync;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.NormalizedMemory;
@@ -35,7 +39,7 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 
 	@Override
 	public void select(final FiscalTree fiscalTree) {
-		//TODO SI NO TIENE DEPOSITO
+		
 		inma.isDigitalDeposit(enterpriseAux.getDomain(), new AsyncCallback<Boolean>(){
 			
 			@Override
@@ -63,15 +67,13 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 	public TreeNode<Enterprise> render(final HasTreeItems parent,Enterprise enterprise) {
     	InlineLabel label = new InlineLabel();
     	label.setText(AON.MSG.digitalDeposit()); 
-    	label.addStyleName(AON.AON_CSS.aonIconModel());
+    	label.addStyleName("aon-icon-registradores");
     	label.addStyleName(AON.AON_CSS.aonTreeIconNode() );
     	setWidget(label);
     	setUserObject(enterprise);
     	parent.addItem(this);
     	enterpriseAux = enterprise;
-    	
-    	//TODO Tiene el deposito creado??? 
-    	//TODO SI LO TIENE --> OPEN TREE
+
     	inma.isDigitalDeposit(enterprise.getDomain(), new AsyncCallback<Boolean>() {
 
 			@Override
@@ -119,8 +121,9 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 			
 			@Override
 			public void select(FiscalTree fiscalPanel) {
-				NormalizedMemory nm = new NormalizedMemory(getTreeObject(),"");
-   
+				NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"BA");
+    			Header2 header2Page = new Header2(enterpriseAux, nm);
+    			nm.setPagesPanel(header2Page);
     			fiscalPanel.setContent(nm);	
 			}
 			
@@ -136,14 +139,15 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 			}
 		};
     	bs.setText("Balance de Situaci\u00F3n");
-    	// TODO this.addItem(bs);
+    	//this.addItem(bs);
     	
     	TreeNode<Enterprise> cpg = new TreeNode<Enterprise>() {
 			
 			@Override
 			public void select(FiscalTree fiscalPanel) {
-				NormalizedMemory nm = new NormalizedMemory(getTreeObject(),"");
-				   
+				NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"PA");
+    			Header3 header3Page = new Header3(enterpriseAux, nm);
+    			nm.setPagesPanel(header3Page);
     			fiscalPanel.setContent(nm);	
 			}
 			
@@ -158,15 +162,16 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 			}
 		};
 		cpg.setText("Cuenta de P\u00e9rdidas y Ganancias");
-		// TODO this.addItem(cpg);
+		//this.addItem(cpg);
 		
 		TreeNode<Enterprise> ecpn = new TreeNode<Enterprise>() {
 			
 			@Override
 			public void select(FiscalTree fiscalPanel) {
-				NormalizedMemory nm = new NormalizedMemory(getTreeObject(),"");
-				   
-    			fiscalPanel.setContent(nm);	
+				NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"PNA");
+    			Header4 header4Page = new Header4(enterpriseAux, nm);
+    			nm.setPagesPanel(header4Page);
+    			fiscalPanel.setContent(nm);
 			}
 			
 			@Override
@@ -180,14 +185,15 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 			}
 		};
 		ecpn.setText("Estado de Cambios en el Patrimonio Neto");
-		// TODO this.addItem(ecpn);
+		//this.addItem(ecpn);
 		
 		TreeNode<Enterprise> dm = new TreeNode<Enterprise>() {
 			
 			@Override
 			public void select(FiscalTree fiscalPanel) {
-				NormalizedMemory nm = new NormalizedMemory(getTreeObject(),"");
-				   
+				NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"IMA");
+    			Header5 header5Page = new Header5(enterpriseAux, nm);
+    			nm.setPagesPanel(header5Page);
     			fiscalPanel.setContent(nm);	
 			}
 			
@@ -202,7 +208,7 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 			}
 		};
 		dm.setText("Declaraci\u00F3n Medioambiental");
-		// TODO this.addItem(dm);
+		//this.addItem(dm);
 		
 		TreeNode<Enterprise> memory = new TreeNode<Enterprise>() {
 			
@@ -228,7 +234,7 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 				@Override
 				public void select(FiscalTree fiscalPanel) {
 					NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"MAT1");
-	    			FreeText paragraph1Page = new FreeText("Apartado 1: Actividad de la empresa", true, "MAT1", enterpriseAux, nm);
+	    			FreeText paragraph1Page = new FreeText("Apartado 1: Actividad de la empresa", true, "MAT1", enterpriseAux, nm,false);
 	    			nm.setPagesPanel(paragraph1Page);
 	    			fiscalPanel.setContent(nm);	
 					
@@ -252,7 +258,7 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 				@Override
 				public void select(FiscalTree fiscalPanel) {
 					NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"MAT2");
-	    			FreeText paragraph2Page = new FreeText("Apartado 2: Bases de presentaci\u00F3n de las cuentas anuales", true, "MAT2", enterpriseAux, nm);
+	    			FreeText paragraph2Page = new FreeText("Apartado 2: Bases de presentaci\u00F3n de las cuentas anuales", true, "MAT2", enterpriseAux, nm, false);
 	    			nm.setPagesPanel(paragraph2Page);
 	    			fiscalPanel.setContent(nm);	
 				}
@@ -296,7 +302,7 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 					@Override
 					public void select(FiscalTree fiscalPanel) {
 						NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"MAT3");
-		    			FreeText paragraph3_1Page = new FreeText("Apartado 3: Aplicaci\u00F3n de resultados", true, "MAT3", enterpriseAux, nm);
+		    			FreeText paragraph3_1Page = new FreeText("Apartado 3: Aplicaci\u00F3n de resultados", true, "MAT3", enterpriseAux, nm,false);
 		    			nm.setPagesPanel(paragraph3_1Page);
 		    			fiscalPanel.setContent(nm);	
 					}
@@ -343,7 +349,7 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 				@Override
 				public void select(FiscalTree fiscalPanel) {
 					NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"MAT4");
-	    			FreeText paragraph4Page = new FreeText("Apartado 4: Normas de registro y valoraci\u00F3n", true, "MAT4", enterpriseAux, nm);
+	    			FreeText paragraph4Page = new FreeText("Apartado 4: Normas de registro y valoraci\u00F3n", true, "MAT4", enterpriseAux, nm, false);
 	    			nm.setPagesPanel(paragraph4Page);
 	    			fiscalPanel.setContent(nm);	
 				}
@@ -386,7 +392,7 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 					@Override
 					public void select(FiscalTree fiscalPanel) {
 						NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"MAT5");
-		    			FreeText paragraph5_1Page = new FreeText("Apartado 5: Inmovilizado material, intangible, e inversiones inmobiliarias", true, "MAT5", enterpriseAux, nm);
+		    			FreeText paragraph5_1Page = new FreeText("Apartado 5: Inmovilizado material, intangible, e inversiones inmobiliarias", true, "MAT5", enterpriseAux, nm,false);
 		    			nm.setPagesPanel(paragraph5_1Page);
 		    			fiscalPanel.setContent(nm);	
 					}
@@ -454,7 +460,7 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 					@Override
 					public void select(FiscalTree fiscalPanel) {
 						NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"MAT6");
-		    			FreeText paragraph6_1Page = new FreeText("Apartado 6: Activos financieros", true, "MAT6", enterpriseAux, nm);
+		    			FreeText paragraph6_1Page = new FreeText("Apartado 6: Activos financieros", true, "MAT6", enterpriseAux, nm,false);
 		    			nm.setPagesPanel(paragraph6_1Page);
 		    			fiscalPanel.setContent(nm);	
 					}
@@ -521,7 +527,7 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 					@Override
 					public void select(FiscalTree fiscalPanel) {
 						NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"MAT7");
-		    			FreeText paragraph7_1Page = new FreeText("Apartado 7: Pasivos financieros", true, "MAT7", enterpriseAux, nm);
+		    			FreeText paragraph7_1Page = new FreeText("Apartado 7: Pasivos financieros", true, "MAT7", enterpriseAux, nm, false);
 		    			nm.setPagesPanel(paragraph7_1Page);
 		    			fiscalPanel.setContent(nm);	
 					}
@@ -569,7 +575,7 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 				@Override
 				public void select(FiscalTree fiscalPanel) {
 					NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"MAT8");
-	    			FreeText paragraph8Page = new FreeText("Apartado 8: Fondos propios", true, "MAT8", enterpriseAux, nm);
+	    			FreeText paragraph8Page = new FreeText("Apartado 8: Fondos propios", true, "MAT8", enterpriseAux, nm, false);
 	    			nm.setPagesPanel(paragraph8Page);
 	    			fiscalPanel.setContent(nm);
 				}
@@ -592,7 +598,7 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 				@Override
 				public void select(FiscalTree fiscalPanel) {
 					NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"MAT9");
-	    			FreeText paragraph9Page = new FreeText("Apartado 9: Situaci\u00F3n fiscal", true, "MAT9", enterpriseAux, nm);
+	    			FreeText paragraph9Page = new FreeText("Apartado 9: Situaci\u00F3n fiscal", true, "MAT9", enterpriseAux, nm, false);
 	    			nm.setPagesPanel(paragraph9Page);
 	    			fiscalPanel.setContent(nm);
 				}
@@ -658,7 +664,7 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 					@Override
 					public void select(FiscalTree fiscalPanel) {
 						NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"MAT11");
-		    			FreeText paragraph11_1Page = new FreeText("Apartado 11: Subvenciones, donaciones y legados", true, "MAT11", enterpriseAux, nm);
+		    			FreeText paragraph11_1Page = new FreeText("Apartado 11: Subvenciones, donaciones y legados", true, "MAT11", enterpriseAux, nm, false);
 		    			nm.setPagesPanel(paragraph11_1Page);
 		    			fiscalPanel.setContent(nm);
 					}
@@ -725,7 +731,7 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 					@Override
 					public void select(FiscalTree fiscalPanel) {
 						NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"MAT12");
-		    			FreeText paragraph12_1Page = new FreeText("Apartado 12: Operaciones con partes vinculadas", true, "MAT12", enterpriseAux, nm);
+		    			FreeText paragraph12_1Page = new FreeText("Apartado 12: Operaciones con partes vinculadas", true, "MAT12", enterpriseAux, nm, false);
 		    			nm.setPagesPanel(paragraph12_1Page);
 		    			fiscalPanel.setContent(nm);
 					}
@@ -790,7 +796,7 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 					@Override
 					public void select(FiscalTree fiscalPanel) {
 						NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"MAT13");
-		    			FreeText paragraph13_1Page = new FreeText("Apartado 13: Otra informaci\u00F3n", true, "MAT13", enterpriseAux, nm);
+		    			FreeText paragraph13_1Page = new FreeText("Apartado 13: Otra informaci\u00F3n", true, "MAT13", enterpriseAux, nm, false);
 		    			nm.setPagesPanel(paragraph13_1Page);
 		    			fiscalPanel.setContent(nm);
 					}
@@ -857,7 +863,7 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 					@Override
 					public void select(FiscalTree fiscalPanel) {
 						NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"MAT14");
-		    			FreeText paragraph14_1Page = new FreeText("Apartado 14: Informaci\u00F3n sobre medio ambiente", true, "MAT14", enterpriseAux, nm);
+		    			FreeText paragraph14_1Page = new FreeText("Apartado 14: Informaci\u00F3n sobre medio ambiente", true, "MAT14", enterpriseAux, nm, false);
 		    			nm.setPagesPanel(paragraph14_1Page);
 		    			fiscalPanel.setContent(nm);
 					}

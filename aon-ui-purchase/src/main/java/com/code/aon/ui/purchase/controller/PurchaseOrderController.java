@@ -1,6 +1,6 @@
 package com.code.aon.ui.purchase.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.PURCHASE_DEPARTMENT;
+import static com.code.aon.ui.common.ICommonMessages.MODULE_WAREHOUSE;
 import static com.code.aon.ui.common.ICommonMessages.SOURCE;
 import static com.code.aon.ui.purchase.controller.IPurchaseConstants.PURCHASE_PRINT_CONTROLLER_NAME;
 
@@ -28,7 +28,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.domain.DomainManager;
-import com.code.aon.company.Department;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.WorkplaceDepartment;
 import com.code.aon.product.Item;
@@ -51,6 +50,8 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.purchase.event.PurchaseSearchListener;
 import com.code.aon.ui.purchase.util.PurchaseUtils;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.warehouse.controller.WarehouseCollectionsController;
+import com.code.aon.warehouse.Warehouse;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class PurchaseOrderController extends DataScrollerState {
@@ -159,7 +160,7 @@ public class PurchaseOrderController extends DataScrollerState {
 				+ (getParams().getStartDate() != null ? " AND ProposalDetail.proposal.issueDate >= :startDate" : "")
 				+ (getParams().getEndDate() != null ? " AND ProposalDetail.proposal.issueDate <= :endDate" : "")
 				+ workPlaceClause
-				+ ((getParams().getDepartment() != null && getParams().getDepartment().getId() != null ) ? " AND ProposalDetail.proposal.department = :departmentId"  : "")
+				+ ((getParams().getWarehouse() != null && getParams().getWarehouse().getId() != null ) ? " AND ProposalDetail.proposal.warehouse = :warehouseId"  : "")
 				+ " AND ProposalDetail.proposal.itemReturn = :itemReturn"
 				+ " AND ProposalDetail.proposal.transferStatus <> " + ProposalTransferStatus.TRANSFER_PENDING.ordinal()
 				+ " GROUP BY ProposalDetail.item"
@@ -175,8 +176,8 @@ public class PurchaseOrderController extends DataScrollerState {
 		if((getParams().getWorkPlace() != null && getParams().getWorkPlace().getId() != null ) ){
 			query.setInteger("workplaceId", getParams().getWorkPlace().getId());
 		}
-		if((getParams().getDepartment() != null && getParams().getDepartment().getId() != null ) ){
-			query.setInteger("departmentId", getParams().getDepartment().getId());
+		if((getParams().getWarehouse() != null && getParams().getWarehouse().getId() != null ) ){
+			query.setInteger("warehouseId", getParams().getWarehouse().getId());
 		}
 		query.setBoolean("itemReturn", getParams().isItemReturn());
 		itemGroupList = new LinkedList<ItemGroup>(); 
@@ -217,8 +218,8 @@ public class PurchaseOrderController extends DataScrollerState {
 			} else {
 				criteria.addInExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_WORK_PLACE_ID), getCompanyCollections().getCurrentUserWorkPlacesIds());
 			}
-			if((getParams().getDepartment() != null && getParams().getDepartment().getId() != null ) ){
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_DEPARTMENT_ID), getParams().getDepartment().getId());
+			if((getParams().getWarehouse() != null && getParams().getWarehouse().getId() != null ) ){
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_WAREHOUSE_ID), getParams().getWarehouse().getId());
 			}
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_ITEM_RETURN), getParams().isItemReturn());
 			criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_TRANSFER_STATUS), ProposalTransferStatus.TRANSFER_PENDING);
@@ -238,15 +239,15 @@ public class PurchaseOrderController extends DataScrollerState {
 		} else {
 			criteria.addInExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_WORK_PLACE_ID), getCompanyCollections().getCurrentUserWorkPlacesIds());
 		}
-		if((getParams().getDepartment() != null && getParams().getDepartment().getId() != null ) ){
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_DEPARTMENT_ID), getParams().getDepartment().getId());
+		if((getParams().getWarehouse() != null && getParams().getWarehouse().getId() != null ) ){
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_WAREHOUSE_ID), getParams().getWarehouse().getId());
 		}
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_ITEM_RETURN), getParams().isItemReturn());
 		criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_TRANSFER_STATUS), ProposalTransferStatus.TRANSFER_PENDING);
-		criteria.addOrder(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_DEPARTMENT_ID));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_WAREHOUSE_ID));
 		int groupIndex = -1;
 		Supplier supplier = null;
-		Department dep = null;
+		Warehouse warehouse = null;
 		WorkPlace wp = null;
 		PurchaseGroup purchaseGroup = null;
 		purchaseGroupList = new LinkedList<PurchaseOrderController.PurchaseGroup>();
@@ -254,16 +255,16 @@ public class PurchaseOrderController extends DataScrollerState {
 			ProposalDetail pd = (ProposalDetail) to;
 			if(groupIndex==-1 
 					|| !wp.equals(pd.getProposal().getWorkPlace()) 
-					|| !dep.equals(pd.getProposal().getDepartment()) 
+					|| !warehouse.equals(pd.getProposal().getWarehouse()) 
 					|| !supplier.equals(pd.getSupplier()) ){
 				supplier = pd.getSupplier();
-				dep = pd.getProposal().getDepartment();
+				warehouse = pd.getProposal().getWarehouse();
 				wp = pd.getProposal().getWorkPlace();
 				groupIndex++;
 				purchaseGroup = new PurchaseGroup();
 				purchaseGroup.setSupplier(supplier);
 				purchaseGroup.setWorkPlace(wp);
-				purchaseGroup.setDepartment(dep);
+				purchaseGroup.setWarehouse(warehouse);
 				purchaseGroup.setComments(pd.getProposal().getRemarks());
 				purchaseGroup.setGroupIndex(groupIndex);
 				purchaseGroup.setDetailList(new LinkedList<PurchaseOrderController.GroupDetail>());
@@ -297,8 +298,8 @@ public class PurchaseOrderController extends DataScrollerState {
 				PurchaseUtils utils = new PurchaseUtils();
 				for(PurchaseGroup pg: purchaseGroupList){
 					if(pg.hasCheckedDetail()){
-						comments = AonUtil.getMessage(PURCHASE_DEPARTMENT) +": "+ pg.getDepartment().getName()+". ";
-						Purchase purchase = utils.createPurchase(pg.getSupplier(), pg.getWorkPlace(),  
+						comments = AonUtil.getMessage(MODULE_WAREHOUSE) +": "+ pg.getWarehouse().getName()+". ";
+						Purchase purchase = utils.createPurchase(pg.getSupplier(), pg.getWorkPlace(), pg.getWarehouse(), 
 								pg.isItemReturn()?PurchaseDocumentType.ITEM_RETURN:null, comments + pg.getComments(), remarks);
 						purchaseIds.add(purchase.getId());
 						for(GroupDetail gd: pg.getDetailList()){
@@ -308,8 +309,8 @@ public class PurchaseOrderController extends DataScrollerState {
 								if(gd.getProposalDetail().getProposal().getTransferProposal()!=null){
 									remarks = remarks==null?(AonUtil.getMessage(SOURCE) +": "):(remarks);
 									remarks += gd.getProposalDetail().getProposal().getTransferProposal().getWorkPlace().getDescription();
-									if( !(pg.getDepartment().getId().equals(gd.getProposalDetail().getProposal().getTransferProposal().getDepartment())) ){
-										remarks += "("+gd.getProposalDetail().getProposal().getTransferProposal().getDepartment().getName()+"). ";
+									if( !(pg.getWarehouse().equals(gd.getProposalDetail().getProposal().getTransferProposal().getWarehouse())) ){
+										remarks += "("+gd.getProposalDetail().getProposal().getTransferProposal().getWarehouse().getName()+"). ";
 									}
 								}
 							}
@@ -423,31 +424,8 @@ public class PurchaseOrderController extends DataScrollerState {
 		return proposalDetail.getProposal().isItemReturn();
 	}
 
-	public List<SelectItem> getAvailableDepartments() throws ManagerBeanException{
-		if(getParams()==null || getParams().getWorkPlace()==null){
-			return ((CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME)).getDepartments();
-		} else {
-			List<SelectItem> list = new LinkedList<SelectItem>();
-			IManagerBean wdBean = BeanManager.getManagerBean(WorkplaceDepartment.class);
-			Criteria wdCriteria = new Criteria();
-			wdCriteria.addEqualExpression(wdBean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_WORK_PLACE_ID), getParams().getWorkPlace().getId());
-			wdCriteria.addEqualExpression(wdBean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_ACTIVE), Boolean.TRUE);
-			wdCriteria.addOrder(wdBean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_DEPARTMENT_ID));
-			IManagerBean dBean = BeanManager.getManagerBean(Department.class);
-			Criteria dCriteria = new Criteria();
-			List<Integer> idList = new LinkedList<Integer>();
-			for (ITransferObject ito : wdBean.getList(wdCriteria)) {
-				WorkplaceDepartment wd = (WorkplaceDepartment)ito;
-				idList.add(wd.getDepartment().getId());
-			}
-			dCriteria.addInExpression(dBean.getFieldName(IEntityAlias.DEPARTMENT_ID), idList);
-			for (ITransferObject ito : dBean.getList(dCriteria)) {
-				Department d = (Department)ito;
-				SelectItem item = new SelectItem(d, d.getName());
-				list.add(item);
-			}
-			return list;
-		}
+	public List<SelectItem> getAvailableWarehouses() throws ManagerBeanException {
+		return WarehouseCollectionsController.getWarehouses(getParams().getWorkPlace());
 	}
 	
 	/**************************************************/
@@ -487,7 +465,7 @@ public class PurchaseOrderController extends DataScrollerState {
 		
 		private Supplier supplier;
 		private WorkPlace workPlace;
-		private Department department;
+		private Warehouse warehouse;
 		private int groupIndex;
 		private List<GroupDetail> detailList;
 		private Double totalAmount;
@@ -518,11 +496,11 @@ public class PurchaseOrderController extends DataScrollerState {
 		public void setWorkPlace(WorkPlace workPlace) {
 			this.workPlace = workPlace;
 		}
-		public Department getDepartment() {
-			return department;
+		public Warehouse getWarehouse() {
+			return warehouse;
 		}
-		public void setDepartment(Department department) {
-			this.department = department;
+		public void setWarehouse(Warehouse warehouse) {
+			this.warehouse = warehouse;
 		}
 		public int getGroupIndex() {
 			return groupIndex;
@@ -609,7 +587,7 @@ public class PurchaseOrderController extends DataScrollerState {
 		private Date endDate;
 		private WorkPlace workPlace;
 		private WorkplaceDepartment workplaceDepartment;
-		private Department department;
+		private Warehouse warehouse;
 		private ProposalStatus status;
 		private boolean itemReturn;
 		
@@ -641,12 +619,15 @@ public class PurchaseOrderController extends DataScrollerState {
 		public void setWorkplaceDepartment(WorkplaceDepartment workplaceDepartment) {
 			this.workplaceDepartment = workplaceDepartment;
 		}
-		public Department getDepartment() {
-			return department;
+
+		public Warehouse getWarehouse() {
+			return warehouse;
 		}
-		public void setDepartment(Department department) {
-			this.department = department;
+
+		public void setWarehouse(Warehouse warehouse) {
+			this.warehouse = warehouse;
 		}
+
 		public ProposalStatus getStatus() {
 			return status;
 		}

@@ -16,6 +16,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -64,6 +65,7 @@ public class WarehouseCollectionsController implements Serializable {
 		String ljAlias = StringUtils.replace(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_SCOPE_ID), ".scope", "<scope");
 		Expression nullScopeExp = UserUtils.getInstance().getNullableScopeExpression(ljAlias);
 		criteria.addExpression(ExpressionUtilities.getOrExpression(nullWorkPlaceExp, nullScopeExp));
+		criteria.addEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_ACTIVE), Boolean.TRUE);
 		criteria.addOrder(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
 		List<ITransferObject> c = warehouseBean.getList(criteria);
 		Iterator<ITransferObject> iter = c.iterator();
@@ -71,6 +73,33 @@ public class WarehouseCollectionsController implements Serializable {
 			Warehouse warehouse = (Warehouse) iter.next();
 			SelectItem item = new SelectItem(warehouse, warehouse.getName());
 			warehouses.add(item);
+		}
+		return warehouses;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static List<Warehouse> getWarehouseList( WorkPlace workPlace ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Warehouse.class);
+		Criteria criteria = new Criteria();
+		String ljAlias = StringUtils.replace(bean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_SCOPE_ID), ".scope", "<scope");
+		UserUtils.getInstance().addNullableScopeExpression( criteria, ljAlias );		
+		Expression exp1 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE));
+		if( (workPlace!=null) && (workPlace.getId()!=null) ){
+			Expression exp2 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_ID), workPlace.getId());
+			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
+		} else {
+			criteria.addExpression(exp1);
+		}
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WAREHOUSE_ACTIVE), Boolean.TRUE);
+		criteria.addOrder(bean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
+		return (List) bean.getList(criteria);
+	}
+
+	public static List<SelectItem> getWarehouses( WorkPlace workPlace ) throws ManagerBeanException {
+		List<SelectItem> warehouses = new LinkedList<SelectItem>();
+		for( Warehouse warehouse : getWarehouseList(workPlace) ) {
+			SelectItem item = new SelectItem(warehouse, warehouse.getName());
+			warehouses.add(item);			
 		}
 		return warehouses;
 	}

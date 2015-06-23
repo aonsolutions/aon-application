@@ -24,7 +24,7 @@
 	<g:HTMLPanel>
 		<g:Label text="Balance de situacion abreviado" styleName="{aonResources.css.aonPageHeader}"/>
 		
-		<g:TabPanel styleName="{style.tab-panel}">
+		<g:TabPanel ui:field="tabPanel" styleName="{style.tab-panel}">
 		    <g:Tab text="A) ACTIVO">
 			    <g:HTMLPanel>
 					<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">

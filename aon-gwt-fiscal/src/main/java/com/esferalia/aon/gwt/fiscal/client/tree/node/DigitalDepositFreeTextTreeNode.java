@@ -1,0 +1,598 @@
+package com.esferalia.aon.gwt.fiscal.client.tree.node;
+
+import java.util.Vector;
+
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.FreeText;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemory;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemoryAsync;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.NormalizedMemory;
+import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree;
+import com.esferalia.aon.gwt.fiscal.shared.MemoryTemplate;
+import com.esferalia.aon.occam.api.model.Enterprise;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HasTreeItems;
+import com.google.gwt.user.client.ui.InlineLabel;
+
+public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
+	
+	final INormalizedMemoryAsync inma = GWT.create(INormalizedMemory.class);
+	
+	@Override
+	public Integer getTreeObject() {
+		return (Integer) getUserObject();
+	}
+
+
+	@Override
+	public void select(final FiscalTree fiscalTree) {
+		/*inma.getDigitalDepositTemplates(enterpriseAux.getDomain(), new AsyncCallback<Vector<MemoryTemplate>>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				
+			}
+
+			@Override
+			public void onSuccess(Vector<MemoryTemplate> result) {		
+				for (MemoryTemplate memoryTemplate : result) {
+					digitalDepositMenu(fiscalTree);
+				}						
+			}
+		});*/
+		digitalDepositMenu(fiscalTree);
+		
+	
+	}
+	
+	public void digitalDepositMenu(FiscalTree fiscalTree){
+		NormalizedMemory nm=  new NormalizedMemory(true, this, enterpriseAux);
+		nm.setPagesPanel(fiscalTree.getGenericContent(this));
+		fiscalTree.setContent(nm);
+	}
+	
+	Enterprise enterpriseAux;
+	@Override
+	public TreeNode<Integer> render(final HasTreeItems parent,Integer domainId) {
+    	InlineLabel label = new InlineLabel();
+    	label.setText(AON.MSG.digitalDepositFreeText()); 
+    	label.addStyleName("aon-icon-registradores");
+    	label.addStyleName(AON.AON_CSS.aonTreeIconNode() );
+    	setWidget(label);
+    	setUserObject(domainId);
+    	parent.addItem(this);
+    	Enterprise enterprise = new Enterprise();
+    	enterprise.setDomain(domainId);
+    	enterpriseAux = enterprise;
+
+    	inma.getDigitalDepositTemplates(domainId, new AsyncCallback<Vector<MemoryTemplate>>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				
+			}
+
+			@Override
+			public void onSuccess(Vector<MemoryTemplate> result) {		
+				for (MemoryTemplate memoryTemplate : result) {
+					items(memoryTemplate);
+				}
+									
+			}
+		
+    	});
+    	
+    	return this;
+	}
+	
+	
+	MemoryTemplate memoryTemplate;
+	public void items(MemoryTemplate mt) {
+		memoryTemplate = mt;
+		TreeNode<Enterprise> memory = new TreeNode<Enterprise>() {
+			
+			@Override
+			public void select(FiscalTree fiscalPanel) {
+				
+			}
+			
+			@Override
+			public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+				return null;
+			}
+			
+			@Override
+			public Enterprise getTreeObject() {
+				return (Enterprise) getUserObject();
+			}
+		};
+		memory.setText("Memoria - " + mt.getName());
+			
+			TreeNode<Enterprise> ae = new TreeNode<Enterprise>() {
+				MemoryTemplate mt = memoryTemplate;
+				@Override
+				public void select(FiscalTree fiscalPanel) {
+					NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"MAT1", mt);
+	    			FreeText paragraph1Page = new FreeText("Apartado 1: Actividad de la empresa", true, "MAT1", enterpriseAux, nm,true, mt.getId().toString());
+	    			nm.setPagesPanel(paragraph1Page);
+	    			fiscalPanel.setContent(nm);	
+					
+				}
+				
+				@Override
+				public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+					return null;
+				}
+				
+				@Override
+				public Enterprise getTreeObject() {
+					return (Enterprise) getUserObject();
+				}
+			};
+			ae.setText("Apartado 1:<<Actividad de la Empresa>>");
+			memory.addItem(ae);
+			
+			TreeNode<Enterprise> bpca = new TreeNode<Enterprise>() {
+				MemoryTemplate mt = memoryTemplate;
+				@Override
+				public void select(FiscalTree fiscalPanel) {
+					NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"MAT2", mt);
+	    			FreeText paragraph2Page = new FreeText("Apartado 2: Bases de presentaci\u00F3n de las cuentas anuales", true, "MAT2", enterpriseAux, nm,true, mt.getId().toString());
+	    			nm.setPagesPanel(paragraph2Page);
+	    			fiscalPanel.setContent(nm);	
+				}
+				
+				@Override
+				public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+					return null;
+				}
+				
+				@Override
+				public Enterprise getTreeObject() {
+					return (Enterprise) getUserObject();
+				}
+			};
+			bpca.setText("Apartado 2:<<Bases de Presentaci\u00F3n de las Cuentas Anuales>>");
+			memory.addItem(bpca);
+			
+			
+			TreeNode<Enterprise> ar = new TreeNode<Enterprise>() {
+				
+				@Override
+				public void select(FiscalTree fiscalPanel) {
+					// APARTADO 3 CARPETA
+				}
+				
+				@Override
+				public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+					return null;
+				}
+				
+				@Override
+				public Enterprise getTreeObject() {
+					return (Enterprise) getUserObject();
+				}
+			};
+			ar.setText("Apartado 3:<<Aplicaci\u00F3n de Resultados>>");
+			
+				
+				TreeNode<Enterprise> tl3 = new TreeNode<Enterprise>() {
+					MemoryTemplate mt = memoryTemplate;
+					@Override
+					public void select(FiscalTree fiscalPanel) {
+						NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"MAT3", mt);
+		    			FreeText paragraph3_1Page = new FreeText("Apartado 3: Aplicaci\u00F3n de resultados", true, "MAT3", enterpriseAux, nm,true, mt.getId().toString());
+		    			nm.setPagesPanel(paragraph3_1Page);
+		    			fiscalPanel.setContent(nm);	
+					}
+					
+					@Override
+					public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+						return null;
+					}
+					
+					@Override
+					public Enterprise getTreeObject() {
+						return (Enterprise) getUserObject();
+					}
+				};
+				tl3.setText("Texto Libre");
+				ar.addItem(tl3);
+			memory.addItem(ar);
+			
+			TreeNode<Enterprise> nrv = new TreeNode<Enterprise>() {
+				MemoryTemplate mt = memoryTemplate;
+				@Override
+				public void select(FiscalTree fiscalPanel) {
+					NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"MAT4", mt);
+	    			FreeText paragraph4Page = new FreeText("Apartado 4: Normas de registro y valoraci\u00F3n", true, "MAT4", enterpriseAux, nm,true, mt.getId().toString());
+	    			nm.setPagesPanel(paragraph4Page);
+	    			fiscalPanel.setContent(nm);	
+				}
+				
+				@Override
+				public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+					return null;
+				}
+				
+				@Override
+				public Enterprise getTreeObject() {
+					return (Enterprise) getUserObject();
+				}
+			};
+			nrv.setText("Apartado 4:<<Normas de Registro y Valoraci\u00F3n>>");
+			memory.addItem(nrv);
+			
+			TreeNode<Enterprise> imiii = new TreeNode<Enterprise>() {
+				
+				@Override
+				public void select(FiscalTree fiscalPanel) {
+					
+				}
+				
+				@Override
+				public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+					return null;
+				}
+				
+				@Override
+				public Enterprise getTreeObject() {
+					return (Enterprise) getUserObject();
+				}
+			};
+			imiii.setText("Apartado 5:<<Inmovilizado Material, Intangible e Inversiones Inmobiliarias>>");
+			
+				
+				TreeNode<Enterprise> tl5 = new TreeNode<Enterprise>() {
+					MemoryTemplate mt = memoryTemplate;
+					@Override
+					public void select(FiscalTree fiscalPanel) {
+						NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"MAT5", mt);
+		    			FreeText paragraph5_1Page = new FreeText("Apartado 5: Inmovilizado material, intangible, e inversiones inmobiliarias", true, "MAT5", enterpriseAux, nm,true, mt.getId().toString());
+		    			nm.setPagesPanel(paragraph5_1Page);
+		    			fiscalPanel.setContent(nm);	
+					}
+					
+					@Override
+					public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+						return null;
+					}
+					
+					@Override
+					public Enterprise getTreeObject() {
+						return (Enterprise) getUserObject();
+					}
+				};
+				tl5.setText("Texto Libre");
+				imiii.addItem(tl5);
+				
+			memory.addItem(imiii);
+			
+			
+			TreeNode<Enterprise> af = new TreeNode<Enterprise>() {
+				
+				@Override
+				public void select(FiscalTree fiscalPanel) {
+					
+				}
+				
+				@Override
+				public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+					return null;
+				}
+				
+				@Override
+				public Enterprise getTreeObject() {
+					return (Enterprise) getUserObject();
+				}
+			};
+			af.setText("Apartado 6:<<Activos Financieros");
+			
+				
+				TreeNode<Enterprise> tl6 = new TreeNode<Enterprise>() {
+					MemoryTemplate mt = memoryTemplate;
+					@Override
+					public void select(FiscalTree fiscalPanel) {
+						NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"MAT6", mt);
+		    			FreeText paragraph6_1Page = new FreeText("Apartado 6: Activos financieros", true, "MAT6", enterpriseAux, nm,true, mt.getId().toString());
+		    			nm.setPagesPanel(paragraph6_1Page);
+		    			fiscalPanel.setContent(nm);	
+					}
+					
+					@Override
+					public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+						return null;
+					}
+					
+					@Override
+					public Enterprise getTreeObject() {
+						return (Enterprise) getUserObject();
+					}
+				};
+				tl6.setText("Texto Libre");
+				af.addItem(tl6);
+				
+			memory.addItem(af);
+			
+			TreeNode<Enterprise> pf = new TreeNode<Enterprise>() {
+				
+				@Override
+				public void select(FiscalTree fiscalPanel) {
+					
+				}
+				
+				@Override
+				public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+					return null;
+				}
+				
+				@Override
+				public Enterprise getTreeObject() {
+					return (Enterprise) getUserObject();
+				}
+			};
+			pf.setText("Apartado 7:<<Pasivos Financieros>>");
+			
+				
+				TreeNode<Enterprise> tl7 = new TreeNode<Enterprise>() {
+					MemoryTemplate mt = memoryTemplate;
+					@Override
+					public void select(FiscalTree fiscalPanel) {
+						NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"MAT7", mt);
+		    			FreeText paragraph7_1Page = new FreeText("Apartado 7: Pasivos financieros", true, "MAT7", enterpriseAux, nm,true, mt.getId().toString());
+		    			nm.setPagesPanel(paragraph7_1Page);
+		    			fiscalPanel.setContent(nm);	
+					}
+					
+					@Override
+					public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+						return null;
+					}
+					
+					@Override
+					public Enterprise getTreeObject() {
+						return (Enterprise) getUserObject();
+					}
+				};
+				tl7.setText("Texto Libre");
+				pf.addItem(tl7);
+				
+				
+			memory.addItem(pf);
+			
+			
+			TreeNode<Enterprise> fp = new TreeNode<Enterprise>() {
+				MemoryTemplate mt = memoryTemplate;
+				@Override
+				public void select(FiscalTree fiscalPanel) {
+					NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"MAT8", mt);
+	    			FreeText paragraph8Page = new FreeText("Apartado 8: Fondos propios", true, "MAT8", enterpriseAux, nm,true, mt.getId().toString());
+	    			nm.setPagesPanel(paragraph8Page);
+	    			fiscalPanel.setContent(nm);
+				}
+				
+				@Override
+				public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+					return null;
+				}
+				
+				@Override
+				public Enterprise getTreeObject() {
+					return (Enterprise) getUserObject();
+				}
+			};
+			fp.setText("Apartado 8:<<Fondos Propios>>");
+			memory.addItem(fp);
+			
+			TreeNode<Enterprise> sf = new TreeNode<Enterprise>() {
+				MemoryTemplate mt = memoryTemplate;
+				@Override
+				public void select(FiscalTree fiscalPanel) {
+					NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"MAT9", mt);
+	    			FreeText paragraph9Page = new FreeText("Apartado 9: Situaci\u00F3n fiscal", true, "MAT9", enterpriseAux, nm,true, mt.getId().toString());
+	    			nm.setPagesPanel(paragraph9Page);
+	    			fiscalPanel.setContent(nm);
+				}
+				
+				@Override
+				public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+					return null;
+				}
+				
+				@Override
+				public Enterprise getTreeObject() {
+					return (Enterprise) getUserObject();
+				}
+			};
+			sf.setText("Apartado 9:<<Situaci\u00F3n Fiscal>>");
+			memory.addItem(sf);
+			
+			
+			
+			TreeNode<Enterprise> sdl = new TreeNode<Enterprise>() {
+				
+				@Override
+				public void select(FiscalTree fiscalPanel) {
+					
+				}
+				
+				@Override
+				public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+					return null;
+				}
+				
+				@Override
+				public Enterprise getTreeObject() {
+					return (Enterprise) getUserObject();
+				}
+			};
+			sdl.setText("Apartado 11:<<Subvenciones, Donaciones y Legados>>");
+			
+				
+				TreeNode<Enterprise> tl11 = new TreeNode<Enterprise>() {
+					MemoryTemplate mt = memoryTemplate;
+					@Override
+					public void select(FiscalTree fiscalPanel) {
+						NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"MAT11", mt);
+		    			FreeText paragraph11_1Page = new FreeText("Apartado 11: Subvenciones, donaciones y legados", true, "MAT11", enterpriseAux, nm,true, mt.getId().toString());
+		    			nm.setPagesPanel(paragraph11_1Page);
+		    			fiscalPanel.setContent(nm);
+					}
+					
+					@Override
+					public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+						return null;
+					}
+					
+					@Override
+					public Enterprise getTreeObject() {
+						return (Enterprise) getUserObject();
+					}
+				};
+				tl11.setText("Texto Libre");
+				sdl.addItem(tl11);
+				
+				
+			memory.addItem(sdl);
+			
+			TreeNode<Enterprise> opv = new TreeNode<Enterprise>() {
+				
+				@Override
+				public void select(FiscalTree fiscalPanel) {
+					
+				}
+				
+				@Override
+				public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+					return null;
+				}
+				
+				@Override
+				public Enterprise getTreeObject() {
+					return (Enterprise) getUserObject();
+				}
+			};
+			opv.setText("Apartado 12:<<Operaciones con Partes Vinculantes>>");
+			
+				
+				TreeNode<Enterprise> tl12 = new TreeNode<Enterprise>() {
+					MemoryTemplate mt = memoryTemplate;
+					@Override
+					public void select(FiscalTree fiscalPanel) {
+						NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"MAT12", mt);
+		    			FreeText paragraph12_1Page = new FreeText("Apartado 12: Operaciones con partes vinculadas", true, "MAT12", enterpriseAux, nm,true, mt.getId().toString());
+		    			nm.setPagesPanel(paragraph12_1Page);
+		    			fiscalPanel.setContent(nm);
+					}
+					
+					@Override
+					public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+						return null;
+					}
+					
+					@Override
+					public Enterprise getTreeObject() {
+						return (Enterprise) getUserObject();
+					}
+				};
+				tl12.setText("Texto Libre");
+				opv.addItem(tl12);
+				
+				
+			memory.addItem(opv);
+			
+			TreeNode<Enterprise> oi = new TreeNode<Enterprise>() {
+				
+				@Override
+				public void select(FiscalTree fiscalPanel) {
+					
+				}
+				
+				@Override
+				public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+					return null;
+				}
+				
+				@Override
+				public Enterprise getTreeObject() {
+					return (Enterprise) getUserObject();
+				}
+			};
+			oi.setText("Apartado 13:<<Otra Informaci\u00F3n>>");
+			
+				
+				TreeNode<Enterprise> tl13 = new TreeNode<Enterprise>() {
+					MemoryTemplate mt = memoryTemplate;
+					@Override
+					public void select(FiscalTree fiscalPanel) {
+						NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"MAT13", mt);
+		    			FreeText paragraph13_1Page = new FreeText("Apartado 13: Otra informaci\u00F3n", true, "MAT13", enterpriseAux, nm,true, mt.getId().toString());
+		    			nm.setPagesPanel(paragraph13_1Page);
+		    			fiscalPanel.setContent(nm);
+					}
+					
+					@Override
+					public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+						return null;
+					}
+					
+					@Override
+					public Enterprise getTreeObject() {
+						return (Enterprise) getUserObject();
+					}
+				};
+				tl13.setText("Texto Libre");
+				oi.addItem(tl13);
+				
+			memory.addItem(oi);
+			
+			TreeNode<Enterprise> ima = new TreeNode<Enterprise>() {
+				
+				@Override
+				public void select(FiscalTree fiscalPanel) {
+					
+				}
+				
+				@Override
+				public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+					return null;
+				}
+				
+				@Override
+				public Enterprise getTreeObject() {
+					return (Enterprise) getUserObject();
+				}
+			};
+			ima.setText("Apartado 14:<<Informaci\u00F3n sobre el Medio Ambiente>>");
+			
+				
+				TreeNode<Enterprise> tl14 = new TreeNode<Enterprise>() {
+					MemoryTemplate mt = memoryTemplate;
+					@Override
+					public void select(FiscalTree fiscalPanel) {
+						NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"MAT14", mt);
+		    			FreeText paragraph14_1Page = new FreeText("Apartado 14: Informaci\u00F3n sobre medio ambiente", true, "MAT14", enterpriseAux, nm, true, mt.getId().toString());
+		    			nm.setPagesPanel(paragraph14_1Page);
+		    			fiscalPanel.setContent(nm);
+					}
+					
+					@Override
+					public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+						return null;
+					}
+					
+					@Override
+					public Enterprise getTreeObject() {
+						return (Enterprise) getUserObject();
+					}
+				};
+				tl14.setText("Texto Libre");
+				ima.addItem(tl14);
+				
+			memory.addItem(ima);
+			
+		this.addItem(memory);
+	}
+	
+}

@@ -225,6 +225,10 @@ public class ProjectReservationPermission implements Serializable {
 		return reservation.getModificationDate() != null;
 	}
 
+	public boolean isCancellationDateVisible() {
+		return reservation.getCancellationDate() != null;
+	}
+
 	public boolean isCrsCodeVisible() {
 		return StringUtils.isNotEmpty(reservation.getCrsCode());
 	}
@@ -290,6 +294,16 @@ public class ProjectReservationPermission implements Serializable {
 
 	public boolean isRemarksEditable() throws ManagerBeanException {
 		return isRoleAdmin();
+	}
+
+	public boolean isCreditCardVisible() throws ManagerBeanException {
+		boolean roleAllowed = isRoleCommercial() || isRoleFinance();
+		return roleAllowed && reservation.getCreationDate() != null;
+	}
+
+	public boolean isCreditCardEditable() throws ManagerBeanException {
+		boolean roleAllowed = isRoleCommercial();
+		return roleAllowed && reservation.getCreationDate() != null;
 	}
 
 
@@ -362,7 +376,7 @@ public class ProjectReservationPermission implements Serializable {
 	}
 
 	public boolean isSelectReservationServiceAllowed() throws ManagerBeanException {
-		return reservation.isActive() && reservation.getAdvancedAmount() == 0 && isMyScope();
+		return reservation.isActive() && isMyScope();
 	}
 
 	public boolean isAcceptReservationServiceAllowed() {

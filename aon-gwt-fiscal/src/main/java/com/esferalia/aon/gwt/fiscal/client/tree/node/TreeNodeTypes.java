@@ -77,5 +77,12 @@ public abstract class TreeNodeTypes<T> {
 		}
 	};
 	
+	public static TreeNodeTypes<Integer> DIGITAL_DEPOSIT_FREETEXT = new TreeNodeTypes<Integer>() {
+		@Override
+		public TreeNode<Integer> getInstance() {
+			return new DigitalDepositFreeTextTreeNode();
+		}
+	};
+	
 	public abstract TreeNode<T> getInstance();
 }

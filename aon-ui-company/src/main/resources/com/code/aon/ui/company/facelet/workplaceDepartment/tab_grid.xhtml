@@ -13,19 +13,21 @@
 		
 			<aon:column styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="WorkplaceDepartment_department" value="#{bundle.aon_name}" />
+					<aon:outputLabel for="WorkplaceDepartment_warehouse" value="#{bundle.aon_name}" />
 				</f:facet>
-				<aon:outputText value="#{to.department.name}" rendered="#{formList}" />
-				<aon:selectOneMenu id="WorkplaceDepartment_department"
-					value="#{controller.to.department}" required="#{true}" 
+				<aon:outputText value="#{to.warehouse.name}" rendered="#{formList}" />
+				<aon:selectOneMenu id="WorkplaceDepartment_warehouse"
+					value="#{controller.to.warehouse}" required="#{true}" 
 					rendered="#{formEdit}">
-					<f:selectItems value="#{companyCollections.departments}" />
+					<f:selectItem itemLabel="-" value="#{null}"/>
+					<f:selectItems value="#{hotel.warehouses}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
-					<aon:selectOneMenu id="WorkplaceDepartment_department-New" 
-						value="#{controller.to.department}" required="#{true}" 
+					<aon:selectOneMenu id="WorkplaceDepartment_warehouse-New" 
+						value="#{controller.to.warehouse}" required="#{true}" 
 						rendered="#{formNew}">
-						<f:selectItems value="#{companyCollections.departments}" />
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{hotel.warehouses}" />
 					</aon:selectOneMenu>
 				</f:facet>
 			</aon:column>

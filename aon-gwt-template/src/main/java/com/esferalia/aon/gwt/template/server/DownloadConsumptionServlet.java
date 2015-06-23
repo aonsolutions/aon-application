@@ -155,7 +155,7 @@ public class DownloadConsumptionServlet extends HttpServlet {
  
         Map<Integer, ConsumptionItem> map = DBConsumption.getConsumption(domain, domainId, initialId, finalId, warehouseId, new java.sql.Date(initialDate.getTime()), new java.sql.Date(finalDate.getTime()));
         Vector<ConsumptionItem> v =  new Vector<ConsumptionItem>(map.values());
-        
+        Integer num = 0;
         for(Integer j = 0; j< v.size();j++){
         	ConsumptionItem ci = v.get(j);
         	ci.setConsumption(ci.getInitialQuantity()+ci.getPurchases()+ci.getTransfersPlus()-ci.getSales()-ci.getTransfersMinus()-ci.getFinalQuantity());
@@ -166,7 +166,7 @@ public class DownloadConsumptionServlet extends HttpServlet {
         			ci.getFinalQuantity() == 0 &&
         			(ci.getTransfersPlus()-ci.getTransfersMinus()) == 0 &&
         			ci.getConsumption() == 0)){
-        		Row row = hoja.createRow(j+2);
+        		Row row = hoja.createRow((j-num)+2);
         	    for(Integer k = 0; k< columns; k++){
         			Cell celda = row.createCell(k);
         			String type = aux.getColumns().get(k); 
@@ -193,6 +193,9 @@ public class DownloadConsumptionServlet extends HttpServlet {
         		Cell lastCell = row.createCell(columns);
         		lastCell.setCellStyle(style2);
         		row.setHeightInPoints(20);
+        	}
+        	else{
+        		num++;
         	}
 
         }

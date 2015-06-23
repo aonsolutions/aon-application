@@ -131,7 +131,7 @@ public class Header1 extends ResizeComposite {
 
 
 	public void init(){
-		inma.getSchema("IDA",enterprise.getDomain(), new AsyncCallback<Map<String, String>>() {
+		inma.getSchema(enterprise.getDocument(),"IDA",enterprise.getDomain(),false, new AsyncCallback<Map<String, String>>() {
 			
 			@Override
 			public void onSuccess(Map<String, String> result) {
@@ -245,7 +245,7 @@ public class Header1 extends ResizeComposite {
 
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
-					inma.updateSchema(enterprise.getDomain(),key2, t.getValue(), new AsyncCallback<Void>() {
+					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key2, t.getValue(), new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {}
 						@Override
@@ -273,7 +273,7 @@ public class Header1 extends ResizeComposite {
 				public void onValueChange(ValueChangeEvent<Boolean> event) {
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);		
-					inma.updateSchema(enterprise.getDomain(),key2, event.getValue()?"True":"False", new AsyncCallback<Void>() {
+					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key2, event.getValue()?"True":"False", new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {}
 						@Override
@@ -316,7 +316,7 @@ public class Header1 extends ResizeComposite {
 	
 	
 	private void specialUpdate(String key, String value ){
-		inma.updateSchema(enterprise.getDomain(),key, value, new AsyncCallback<Void>() {
+		inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key, value, new AsyncCallback<Void>() {
 			@Override
 			public void onFailure(Throwable caught) {}
 			@Override

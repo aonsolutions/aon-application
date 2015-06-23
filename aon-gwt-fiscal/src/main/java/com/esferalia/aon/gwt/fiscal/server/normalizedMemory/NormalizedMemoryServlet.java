@@ -1,22 +1,34 @@
 package com.esferalia.aon.gwt.fiscal.server.normalizedMemory;
 
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
+import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBException;
 
+import org.jooq.Record1;
+import org.jooq.Record2;
+import org.jooq.Result;
+
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemory;
+import com.esferalia.aon.gwt.fiscal.shared.MemoryTemplate;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2DepositKey;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.DBConsults;
@@ -54,14 +66,17 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements INo
 		}
 	}
 	
-	public Map<String, String> getSchema(String part, Integer domainId){
+	public Map<String, String> getSchema(String cif,String part, Integer domainId, Boolean textMode){
 		String domain = AonUtil.getDomainName();
 		HttpServletRequest request = getThreadLocalRequest();
-		String cif = DBConsults.getCIF(domain, domainId);
+	//String cif = DBConsults.getCIF(domain, domainId);
 		Esquema schema = (Esquema) request.getSession().getAttribute("d2DepositSchema"+cif);
 		if(schema == null){
 			//System.out.println(domainId);
-			schema = DBConsults.getDeposit(domain, domainId);
+			if(textMode){
+				schema = DBConsults.getDeposit(domain,domainId, cif);
+			}
+			else schema = DBConsults.getDeposit(domain, domainId);
 			request.getSession().putValue("d2DepositSchema"+cif, schema);
 		}
 		//TODO
@@ -110,10 +125,10 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements INo
 		return map;
 	}
 	
-	public void updateSchema(Integer domainId, String key, String value) {
+	public void updateSchema(String cif,Integer domainId, String key, String value) {
 		String domain = AonUtil.getDomainName();
 		HttpServletRequest request = getThreadLocalRequest();
-		String cif = DBConsults.getCIF(domain, domainId);
+		//String cif = DBConsults.getCIF(domain, domainId);
 		Esquema schema = (Esquema) request.getSession().getAttribute("d2DepositSchema"+cif);
 		Boolean bool = true;
 		for(Integer i = 0; i< schema.getClaves().getClave().size(); i++){
@@ -149,18 +164,141 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements INo
 		request.getSession().removeAttribute("ModifyD2DepositSchema"+cif);
 	}
 	
-	public void saveDeposit(String cif, Integer domainId){
+	public void saveDeposit(String cif, Integer domainId, Boolean textMode){
 		String domain = AonUtil.getDomainName();
 		HttpServletRequest request = getThreadLocalRequest();
 		Esquema schema = (Esquema) request.getSession().getAttribute("d2DepositSchema"+cif);
 		
 		try {
 			byte[] b = Utils.writeXml(schema);
-			DBConsults.insertDeposit(domain, b, domainId);
+			if(textMode){
+				DBConsults.insertDeposit(domain, b, domainId, cif);
+			}
+			else DBConsults.insertDeposit(domain, b, domainId);
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
 		request.getSession().removeAttribute("ModifyD2DepositSchema"+cif);
 	}
+
 	
+	public Vector<MemoryTemplate> getDigitalDepositTemplates(Integer domainId){
+		String domain = AonUtil.getDomainName();
+
+		
+		return  getDepositText(domain, domainId);
+
+	}
+	
+	private Vector<MemoryTemplate> getDepositText(String domain,Integer domainId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain, domainId);
+		
+		Result<Record2<Integer, String>> data = ctx.getDslContext().select(RATTACH.ID, RATTACH.DESCRIPTION)
+		 			.from(RATTACH)
+					.where(RATTACH.DOMAIN.eq(domainId))
+					.and(RATTACH.TYPE.eq((byte)RegistryAttachmentType.D2_DEPOSIT.ordinal())).fetch();
+		
+		Vector<MemoryTemplate> v = new Vector<MemoryTemplate>();
+		for (Record2<Integer, String> record2 : data) {
+			MemoryTemplate mt = new MemoryTemplate();
+			mt.setId(record2.value1());
+			mt.setName(record2.value2());
+			v.add(mt);
+		}
+		
+		return v;
+		}finally {
+			if (ctx != null) ctx.close();
+		}
+		
+	}
+	
+	public MemoryTemplate createTextMemory(Integer domainId, String name){
+		String domain = AonUtil.getDomainName();
+		MemoryTemplate mt = new MemoryTemplate();
+		
+		byte[] data = Utils.CreateXml("", name );
+		Integer id = DBConsults.insertDepositText(domain, name, data, domainId);
+		
+		mt.setId(id);
+		mt.setName(name);
+
+		return mt;
+		
+	}
+
+
+	public void updateTexts(MemoryTemplate mt, Integer domainId, String cif) {
+		String domain = AonUtil.getDomainName();
+		HttpServletRequest request = getThreadLocalRequest();
+		Esquema schema = DBConsults.getDeposit(domain, domainId, mt.getId().toString());
+
+		for(Integer i = 0; i< schema.getClaves().getClave().size(); i++){
+			if(schema.getClaves().getClave().get(i).getCodigo().toString().equals("9019001")){
+				updateSchema(cif, domainId, "9019001", schema.getClaves().getClave().get(i).getValor());
+			}
+			else if(schema.getClaves().getClave().get(i).getCodigo().toString().equals("9029001")){
+				updateSchema(cif, domainId, "9029001", schema.getClaves().getClave().get(i).getValor());
+			}
+			else if(schema.getClaves().getClave().get(i).getCodigo().toString().equals("9039001")){
+				updateSchema(cif, domainId, "9039001", schema.getClaves().getClave().get(i).getValor());
+			}
+			else if(schema.getClaves().getClave().get(i).getCodigo().toString().equals("9049001")){
+				updateSchema(cif, domainId, "9049001", schema.getClaves().getClave().get(i).getValor());
+			}
+			else if(schema.getClaves().getClave().get(i).getCodigo().toString().equals("9059001")){
+				updateSchema(cif, domainId, "9059001", schema.getClaves().getClave().get(i).getValor());
+			}
+			else if(schema.getClaves().getClave().get(i).getCodigo().toString().equals("9069001")){
+				updateSchema(cif, domainId, "9069001", schema.getClaves().getClave().get(i).getValor());
+			}
+			else if(schema.getClaves().getClave().get(i).getCodigo().toString().equals("9079001")){
+				updateSchema(cif, domainId, "9079001", schema.getClaves().getClave().get(i).getValor());
+			}
+			else if(schema.getClaves().getClave().get(i).getCodigo().toString().equals("9089001")){
+				updateSchema(cif, domainId, "9089001", schema.getClaves().getClave().get(i).getValor());
+			}
+			else if(schema.getClaves().getClave().get(i).getCodigo().toString().equals("9099001")){
+				updateSchema(cif, domainId, "9099001", schema.getClaves().getClave().get(i).getValor());
+			}
+			else if(schema.getClaves().getClave().get(i).getCodigo().toString().equals("9119001")){
+				updateSchema(cif, domainId, "9119001", schema.getClaves().getClave().get(i).getValor());
+			}
+			else if(schema.getClaves().getClave().get(i).getCodigo().toString().equals("9129001")){
+				updateSchema(cif, domainId, "9129001", schema.getClaves().getClave().get(i).getValor());
+			}
+			else if(schema.getClaves().getClave().get(i).getCodigo().toString().equals("9139001")){
+				updateSchema(cif, domainId, "9139001", schema.getClaves().getClave().get(i).getValor());
+			}
+			else if(schema.getClaves().getClave().get(i).getCodigo().toString().equals("9149001")){
+				updateSchema(cif, domainId, "9149001", schema.getClaves().getClave().get(i).getValor());
+			}
+		}
+		saveDeposit(cif, domainId, false);
+		
+	}
+	
+	
+	public Integer getParentDomain(Integer domainId) {
+		String domain = AonUtil.getDomainName();
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain, domainId);
+			
+			Record1<Integer> data = ctx.getDslContext().select(DOMAIN.PARENT)
+						.from(DOMAIN)
+						.where(DOMAIN.ID.eq(domainId))
+						.fetchOne();
+			
+			return data.value1();
+			
+				
+			
+		}finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+
 }

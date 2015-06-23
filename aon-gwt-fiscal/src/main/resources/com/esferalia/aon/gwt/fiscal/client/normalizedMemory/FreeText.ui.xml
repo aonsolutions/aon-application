@@ -55,7 +55,7 @@
 			</tr>
 			<tr>
 				<td>
-					<g:TextArea visibleLines="150" characterWidth="128" styleName="{style.textArea-border}" ui:field="value" />
+					<g:TextArea visibleLines="150" width="100%" styleName="{style.textArea-border}" ui:field="value" />
 				</td>
 			</tr>
 		</table>

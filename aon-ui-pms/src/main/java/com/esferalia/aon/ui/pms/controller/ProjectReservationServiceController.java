@@ -17,6 +17,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.AonVersion;
+
 import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.common.BeanManager;
@@ -30,6 +31,7 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -316,6 +318,9 @@ public class ProjectReservationServiceController extends LinesController {
 		ReservationUtils reservationUtils = new ReservationUtils();
 		reservationUtils.updateProjectReservationServiceDetails(reservationService, null, null, reservationRoom, getPriceStrategy());
 		reservationService.setRoomNumber(null);
+
+    	IController reservationServiceController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_SERVICE_CONTROLLER_NAME);
+    	reservationServiceController.onSearch(event);
 	}
 
 	public void onRemoveReservationService(ActionEvent event) throws ManagerBeanException {

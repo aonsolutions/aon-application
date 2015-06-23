@@ -82,6 +82,15 @@
 						<f:setPropertyActionListener target="#{divert.showDivertWindow}"
 							value="#{true}" />
 					</aon:menuItem>
+					<aon:menuItem id="reservation-CreditCard"
+						value="#{bundle.aon_credit_card}" immediate="true" 
+						rendered="#{reservation.reservationPermission.creditCardVisible}"
+						iconClass="aon-icon-card"
+						actionListener="#{reservation.onCreditCardShow}"
+						reRender="showCreditCardWindow">
+						<f:setPropertyActionListener target="#{reservation.showCreditCardWindow}"
+							value="#{true}" />
+					</aon:menuItem>
 				</ui:define>
 				<ui:define name="beforeSpinToolbarContent">				
 					<ui:include
@@ -148,9 +157,19 @@
 		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/modalConfirm.xhtml">
 			<ui:param name="controller" value="#{reservation}" />
 		</ui:include>
-		<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
+		<ui:decorate template="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
 			<ui:param name="auditableController" value="#{reservation}" />
-		</ui:include>
+			<ui:define name="additionalAuditableContent">
+				<aon:outputLabel value="#{bundle.aon_cancellation_user}:" />
+				<aon:outputText value="#{reservation.to.cancellationUser}" />
+
+				<aon:outputLabel value="#{bundle.aon_cancellation_date}:" />
+				<aon:outputText value="#{reservation.to.cancellationDate}">
+					<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</ui:define>
+		</ui:decorate>
 		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/modalAdvance.xhtml">
 			<ui:param name="controller" value="#{reservation}" />
 		</ui:include>
@@ -175,6 +194,9 @@
 			<ui:param name="skipReservation" value="true" />
 			<ui:param name="skipRequestHotel" value="true" />
 			<ui:param name="skipStatus" value="true" />
+		</ui:include>
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/creditCard/modalCreditCard.xhtml">
+			<ui:param name="controller" value="#{reservation}" />
 		</ui:include>
 	</ui:define>
 </ui:composition>

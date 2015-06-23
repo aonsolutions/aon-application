@@ -37,8 +37,13 @@ public class PosShift extends PosShiftDB {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Finance.class.getName());
 	
 	private Set<PosShiftCount> posShiftCount = new HashSet<PosShiftCount>();
+	private boolean skipCheckPosShift;
 	private Map<PayMethod, double[]> totalShiftCountMap;
 	private Double amount;
+
+	public PosShift() {
+		setSkipCheckPosShift(false);
+	}
 
 	@OneToMany(mappedBy = "posShift", cascade={CascadeType.REMOVE})
 	public Set<PosShiftCount> getPosShiftCount() {
@@ -48,6 +53,14 @@ public class PosShift extends PosShiftDB {
 		this.posShiftCount = posShiftCount;
 	}
 	
+	@Transient
+	public boolean isSkipCheckPosShift() {
+		return skipCheckPosShift;
+	}
+	public void setSkipCheckPosShift(boolean skipCheckPosShift) {
+		this.skipCheckPosShift = skipCheckPosShift;
+	}
+
 	@Transient
 	public Map<PayMethod, double[]> getTotalShiftCountMap() {
 		if (totalShiftCountMap == null || totalShiftCountMap.size() == 0) {
@@ -98,7 +111,7 @@ public class PosShift extends PosShiftDB {
 
 			for (PayMethod payMethod : totalShiftCountMap.keySet()) {
 				if (payMethod.getType() == PayMethodType.CASH_BASIS) {
-					double totals[] = totalShiftCountMap.get(payMethod);
+					double[] totals = (totalShiftCountMap.containsKey(payMethod)) ? totalShiftCountMap.get(payMethod) : new double[2];
 					totals[0] = CommonUtil.round(totals[0] - getInitialAmount());
 					totalShiftCountMap.put(payMethod, totals);
 					break;

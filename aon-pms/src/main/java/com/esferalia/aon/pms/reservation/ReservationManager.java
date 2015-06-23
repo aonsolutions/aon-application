@@ -21,7 +21,9 @@ import org.opentravel.ota.x2003.x05.OTAHotelResNotifRQDocument;
 import org.opentravel.ota.x2003.x05.OTAHotelResNotifRSDocument;
 import org.opentravel.ota.x2003.x05.OTAHotelResNotifRSDocument.OTAHotelResNotifRS;
 import org.opentravel.ota.x2003.x05.POSType;
+import org.opentravel.ota.x2003.x05.ParagraphType;
 import org.opentravel.ota.x2003.x05.ProfilesType.ProfileInfo;
+import org.opentravel.ota.x2003.x05.RequiredPaymentsType.GuaranteePayment.GuaranteeType;
 import org.opentravel.ota.x2003.x05.ResGlobalInfoType;
 import org.opentravel.ota.x2003.x05.ResGuestsType.ResGuest;
 import org.opentravel.ota.x2003.x05.RoomStaysType.RoomStay;
@@ -240,6 +242,7 @@ public class ReservationManager implements IReservationConstants {
 			if (!calculateTaxData && CommonUtil.round(taxableBase + vatQuota + otherTaxQuota) != total) {
 				throw new ReservationException("Reservation Total is not correct", reservationCrsCode, 197);
 			}
+			String prepayTransaction = findPrepayTransaction(reservationType.getResGlobalInfo());
 
 			reservation.setHotel(hotel);
 			reservation.setHotelReservation(hotel);
@@ -264,6 +267,9 @@ public class ReservationManager implements IReservationConstants {
 			reservation.setRemarks(remarks);
 			reservation.setSource(ReservationSource.CRS);
 			reservation.setCrsCode(reservationCrsCode);
+			reservation.setAdvance((prepayTransaction!=null) ? reservation.getTotal() : 0);
+			reservation.setPrepay(prepayTransaction!=null);
+			reservation.setBankTransaction(prepayTransaction);
 			reservation.setCheckStatus(ReservationCheckStatus.NO_CHECK);
 			reservation.setStatus(ReservationStatus.ACTIVE);
 
@@ -774,6 +780,8 @@ public class ReservationManager implements IReservationConstants {
 			reservation.setStatus(ReservationStatus.CANCELLED);
 			reservation.setModificationUser(CRS);
 			reservation.setModificationDate(new Date());
+			reservation.setCancellationUser(CRS);
+			reservation.setCancellationDate(new Date());
 			BeanManager.getManagerBean(ProjectReservation.class).update(reservation);
 
 			connection = DatabaseUtil.getConnection(AdminUtil.getDomainName(reservation.getDomain()));
@@ -871,6 +879,22 @@ public class ReservationManager implements IReservationConstants {
 			}
 		}
 		return CommonUtil.round(taxQuota);
+	}
+
+	private String findPrepayTransaction(ResGlobalInfoType resGlobalInfoType) {
+		String transaction = null;
+		if (resGlobalInfoType.getGuarantee() != null && resGlobalInfoType.getGuarantee().getGuaranteeType() != null) {
+			if (resGlobalInfoType.getGuarantee().getGuaranteeType().toString().equals(GuaranteeType.PRE_PAY.toString())) {
+				transaction = "";
+				if (resGlobalInfoType.getGuarantee().sizeOfGuaranteeDescriptionArray() > 0) {
+					ParagraphType paragraphType = resGlobalInfoType.getGuarantee().getGuaranteeDescriptionArray(0);
+					if (paragraphType.getName().equals(BANK_TRANSACTION)) {
+						transaction = paragraphType.getTextArray(0).getStringValue();
+					}
+				}
+			}
+		}
+		return transaction;
 	}
 
 	private Node findNode(Node parent, String nodeName, boolean deep) {

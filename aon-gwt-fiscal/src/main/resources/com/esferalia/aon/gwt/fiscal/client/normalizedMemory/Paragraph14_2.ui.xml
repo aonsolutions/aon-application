@@ -36,7 +36,7 @@
 	<g:HTMLPanel>
 		<g:Label text="Apartado 14: Información sobre el medio ambiente" styleName="{aonResources.css.aonPageHeader}"/>
 	
-		<g:TabPanel styleName="{style.width-all}">
+		<g:TabPanel ui:field="tabPanel" styleName="{style.width-all}">
 			<g:Tab text="MA14.1 ">
 				<g:HTMLPanel>
 					<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
@@ -50,10 +50,10 @@
 							
 							</td>
 							<td>
-								<g:Label text="Ejercicio 2014" styleName="{style.inner-label}"/>
+								<g:Label text="Ejercicio 2014" styleName="{aonResources.css.aonPageHeader}"/>
 							</td>
 							<td>
-								<g:Label text="Ejercicio 2013" styleName="{style.inner-label}"/>
+								<g:Label text="Ejercicio 2013" styleName="{aonResources.css.aonPageHeader}"/>
 							</td>
 						</tr>
 						<tr>
@@ -286,10 +286,10 @@
 						</tr>
 						<tr>
 							<td>
-								<g:Label text="DEERECHOS DE EMISIÓN DE GASES DE EFECTO INVERNADERO" styleName="{style.inner-label}"/>
+								<g:Label text="DEERECHOS DE EMISIÓN DE GASES DE EFECTO INVERNADERO" styleName="{aonResources.css.aonPageHeader}"/>
 							</td>
 							<td>
-								<g:Label text="Importe" styleName="{style.inner-label}"/>
+								<g:Label text="Importe" styleName="{aonResources.css.aonPageHeader}"/>
 							</td>
 						</tr>
 						<tr>
@@ -368,10 +368,10 @@
 						</tr>
 						<tr>
 							<td>
-								<g:Label text="CONCEPTO" styleName="{style.inner-label}"/>
+								<g:Label text="CONCEPTO" styleName="{aonResources.css.aonPageHeader}"/>
 							</td>
 							<td>
-								<g:Label text="Importe" styleName="{style.inner-label}"/>
+								<g:Label text="Importe" styleName="{aonResources.css.aonPageHeader}"/>
 							</td>
 						</tr>
 						<tr>

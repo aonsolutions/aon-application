@@ -24,6 +24,7 @@ public class XMLtoMod2002014 {
 
 	private static void fillPagina03(MOD2002014 mod, Mod2002014 mod200) {
 		TipoPagina03 pag = mod.getNormal().getBalance().getPagina03();
+		if (pag==null) return;
 		addVariable(mod200,Mod2002014Key.BA103,pag.getT103());
 		addVariable(mod200,Mod2002014Key.BA104,pag.getT104());
 		addVariable(mod200,Mod2002014Key.BA105,pag.getT105());
@@ -34,11 +35,11 @@ public class XMLtoMod2002014 {
 		addVariable(mod200,Mod2002014Key.BA701,pag.getT701());
 		addVariable(mod200,Mod2002014Key.BA109,pag.getT109());
 		addVariable(mod200,Mod2002014Key.BA110,pag.getT110());
-		//addDraftVariable(mod200,Mod2002014Key.BA111,pag.getT111());
+		addVariable(mod200,Mod2002014Key.BA111,pag.getT111());
 		addVariable(mod200,Mod2002014Key.BA112,pag.getT112());
 		addVariable(mod200,Mod2002014Key.BA113,pag.getT113());
 		addVariable(mod200,Mod2002014Key.BA114,pag.getT114());
-		//addDraftVariable(mod200,Mod2002014Key.BA115,pag.getT115());
+		addVariable(mod200,Mod2002014Key.BA115,pag.getT115());
 		addVariable(mod200,Mod2002014Key.BA116,pag.getT116());
 		addVariable(mod200,Mod2002014Key.BA117,pag.getT117());
 		addVariable(mod200,Mod2002014Key.BA119,pag.getT119());
@@ -58,13 +59,13 @@ public class XMLtoMod2002014 {
 		addVariable(mod200,Mod2002014Key.BA134,pag.getT134());
 		addVariable(mod200,Mod2002014Key.BA135,pag.getT135());
 		addVariable(mod200,Mod2002014Key.BA137,pag.getT137());
-		//addDraftVariable(mod200,Mod2002014Key.BA138,pag.getT138());
+		addVariable(mod200,Mod2002014Key.BA138,pag.getT138());
 		addVariable(mod200,Mod2002014Key.BA139,pag.getT139());
 		addVariable(mod200,Mod2002014Key.BA140,pag.getT140());
-		//addDraftVariable(mod200,Mod2002014Key.BA141,pag.getT141());
+		addVariable(mod200,Mod2002014Key.BA141,pag.getT141());
 		addVariable(mod200,Mod2002014Key.BA142,pag.getT142());
 		addVariable(mod200,Mod2002014Key.BA143,pag.getT143());
-		//addDraftVariable(mod200,Mod2002014Key.BA144,pag.getT144());
+		addVariable(mod200,Mod2002014Key.BA144,pag.getT144());
 		addVariable(mod200,Mod2002014Key.BA145,pag.getT145());
 		addVariable(mod200,Mod2002014Key.BA146,pag.getT146());
 		addVariable(mod200,Mod2002014Key.BA147,pag.getT147());
@@ -73,7 +74,8 @@ public class XMLtoMod2002014 {
 
 	private static void fillPagina04(MOD2002014 mod, Mod2002014 mod200) {
 		TipoPagina04 pag = mod.getNormal().getBalance().getPagina04();
-		//addDraftVariable(mod200,Mod2002014Key.BA150,pag.getT150());
+		if (pag==null) return;
+		addVariable(mod200,Mod2002014Key.BA150,pag.getT150());
 		addVariable(mod200,Mod2002014Key.BA151,pag.getT151());
 		addVariable(mod200,Mod2002014Key.BA152,pag.getT152());
 		addVariable(mod200,Mod2002014Key.BA153,pag.getT153());
@@ -98,18 +100,19 @@ public class XMLtoMod2002014 {
 		addVariable(mod200,Mod2002014Key.BA174,pag.getT174());
 		addVariable(mod200,Mod2002014Key.BA175,pag.getT175());
 		addVariable(mod200,Mod2002014Key.BA176,pag.getT176());
-		//addDraftVariable(mod200,Mod2002014Key.BA177,pag.getT177());
+		addVariable(mod200,Mod2002014Key.BA177,pag.getT177());
 		addVariable(mod200,Mod2002014Key.BA178,pag.getT178());
 		addVariable(mod200,Mod2002014Key.BA179,pag.getT179());
-		//addDraftVariable(mod200,Mod2002014Key.BA180,pag.getT180());
+		addVariable(mod200,Mod2002014Key.BA180,pag.getT180());
 	}
 	
 	private static void fillPagina05(MOD2002014 mod, Mod2002014 mod200) {
 		TipoPagina05 pag = mod.getNormal().getBalance().getPagina05();
+		if (pag==null) return;
 		addVariable(mod200,Mod2002014Key.BP188, pag.getT188());
 		addVariable(mod200,Mod2002014Key.BP189, pag.getT189());
 		addVariable(mod200,Mod2002014Key.BP190, pag.getT190());
-		//addDraftVariable(mod200,Mod2002014Key.BP191, pag.getT191());
+		addVariable(mod200,Mod2002014Key.BP191, pag.getT191());
 		addVariable(mod200,Mod2002014Key.BP192, pag.getT192());
 		addVariable(mod200,Mod2002014Key.BP193, pag.getT193());
 		addVariable(mod200,Mod2002014Key.BP702, pag.getT702());
@@ -121,7 +124,7 @@ public class XMLtoMod2002014 {
 		addVariable(mod200,Mod2002014Key.BP199, pag.getT199());
 		addVariable(mod200,Mod2002014Key.BP200, pag.getT200());
 		addVariable(mod200,Mod2002014Key.BP201, pag.getT201());
-		//addDraftVariable(mod200,Mod2002014Key.BP202, pag.getT202());
+		addVariable(mod200,Mod2002014Key.BP202, pag.getT202());
 		addVariable(mod200,Mod2002014Key.BP203, pag.getT203());
 		addVariable(mod200,Mod2002014Key.BP204, pag.getT204());
 		addVariable(mod200,Mod2002014Key.BP205, pag.getT205());
@@ -129,7 +132,7 @@ public class XMLtoMod2002014 {
 		addVariable(mod200,Mod2002014Key.BP207, pag.getT207());
 		addVariable(mod200,Mod2002014Key.BP208, pag.getT208());
 		addVariable(mod200,Mod2002014Key.BP209, pag.getT209());
-		//addDraftVariable(mod200,Mod2002014Key.BP211, pag.getT211());
+		addVariable(mod200,Mod2002014Key.BP211, pag.getT211());
 		addVariable(mod200,Mod2002014Key.BP212, pag.getT212());
 		addVariable(mod200,Mod2002014Key.BP213, pag.getT213());
 		addVariable(mod200,Mod2002014Key.BP214, pag.getT214());
@@ -148,9 +151,10 @@ public class XMLtoMod2002014 {
 	}
 	
 	private static void fillPagina06(MOD2002014 mod, Mod2002014 mod200) {
+		if (mod.getNormal().getBalance() == null) return;
 		TipoPagina06 pag = mod.getNormal().getBalance().getPagina06();
 		addVariable(mod200,Mod2002014Key.BP229, pag.getT229());
-		//addDraftVariable(mod200,Mod2002014Key.BP230, pag.getT230());
+		addVariable(mod200,Mod2002014Key.BP230, pag.getT230());
 		addVariable(mod200,Mod2002014Key.BP703, pag.getT703());
 		addVariable(mod200,Mod2002014Key.BP704, pag.getT704());
 		addVariable(mod200,Mod2002014Key.BP232, pag.getT232());
@@ -175,6 +179,7 @@ public class XMLtoMod2002014 {
 	
 	private static void fillPagina07(MOD2002014 mod, Mod2002014 mod200) {
 		TipoPagina07 pag = mod.getNormal().getCuentaPyG().getPagina07();
+		if (pag==null) return;
 		addVariable(mod200,Mod2002014Key.PG255, pag.getT255());
 		addVariable(mod200,Mod2002014Key.PG256, pag.getT256());
 		addVariable(mod200,Mod2002014Key.PG257, pag.getT257());
@@ -210,10 +215,10 @@ public class XMLtoMod2002014 {
 		addVariable(mod200,Mod2002014Key.PG284, pag.getT284());
 		addVariable(mod200,Mod2002014Key.PG285, pag.getT285());
 		addVariable(mod200,Mod2002014Key.PG286, pag.getT286());
-		//addDraftVariable(mod200,Mod2002014Key.PG288, pag.getT288());
+		addVariable(mod200,Mod2002014Key.PG288, pag.getT288());
 		addVariable(mod200,Mod2002014Key.PG289, pag.getT289());
 		addVariable(mod200,Mod2002014Key.PG290, pag.getT290());
-		//addDraftVariable(mod200,Mod2002014Key.PG291, pag.getT291());
+		addVariable(mod200,Mod2002014Key.PG291, pag.getT291());
 		addVariable(mod200,Mod2002014Key.PG292, pag.getT292());
 		addVariable(mod200,Mod2002014Key.PG293, pag.getT293());
 		addVariable(mod200,Mod2002014Key.PG710, pag.getT710());
@@ -222,7 +227,7 @@ public class XMLtoMod2002014 {
 		addVariable(mod200,Mod2002014Key.PG298, pag.getT298());
 		addVariable(mod200,Mod2002014Key.PG299, pag.getT299());
 		addVariable(mod200,Mod2002014Key.PG300, pag.getT300());
-		//addDraftVariable(mod200,Mod2002014Key.PG301, pag.getT301());
+		addVariable(mod200,Mod2002014Key.PG301, pag.getT301());
 		addVariable(mod200,Mod2002014Key.PG302, pag.getT302());
 		addVariable(mod200,Mod2002014Key.PG303, pag.getT303());
 		addVariable(mod200,Mod2002014Key.PG304, pag.getT304());
@@ -230,6 +235,7 @@ public class XMLtoMod2002014 {
 	
 	private static void fillPagina08(MOD2002014 mod, Mod2002014 mod200) {
 		TipoPagina08 pag = mod.getNormal().getCuentaPyG().getPagina08();
+		if (pag==null) return;
 		addVariable(mod200,Mod2002014Key.PG306, pag.getT306());
 		addVariable(mod200,Mod2002014Key.PG307, pag.getT307());
 		addVariable(mod200,Mod2002014Key.PG308, pag.getT308());
@@ -237,12 +243,12 @@ public class XMLtoMod2002014 {
 		addVariable(mod200,Mod2002014Key.PG310, pag.getT310());
 		addVariable(mod200,Mod2002014Key.PG311, pag.getT311());
 		addVariable(mod200,Mod2002014Key.PG312, pag.getT312());
-		//addDraftVariable(mod200,Mod2002014Key.PG314, pag.getT314());
+		addVariable(mod200,Mod2002014Key.PG314, pag.getT314());
 		addVariable(mod200,Mod2002014Key.PG315, pag.getT315());
 		addVariable(mod200,Mod2002014Key.PG316, pag.getT316());
 		addVariable(mod200,Mod2002014Key.PG317, pag.getT317());
 		addVariable(mod200,Mod2002014Key.PG318, pag.getT318());
-		//addDraftVariable(mod200,Mod2002014Key.PG319, pag.getT319());
+		addVariable(mod200,Mod2002014Key.PG319, pag.getT319());
 		addVariable(mod200,Mod2002014Key.PG320, pag.getT320());
 		addVariable(mod200,Mod2002014Key.PG321, pag.getT321());
 		addVariable(mod200,Mod2002014Key.PG322, pag.getT322());
@@ -256,6 +262,7 @@ public class XMLtoMod2002014 {
 	
 	private static void fillPagina09(MOD2002014 mod, Mod2002014 mod200) {
 		TipoPagina09 pag = mod.getNormal().getCambiosPN().getPagina09();
+		if (pag==null) return;
 		addVariable(mod200,Mod2002014Key.T0336, pag.getT336());
 		addVariable(mod200,Mod2002014Key.T0337, pag.getT337());
 		addVariable(mod200,Mod2002014Key.T0338, pag.getT338());
@@ -277,6 +284,7 @@ public class XMLtoMod2002014 {
 
 	private static void fillPagina10(MOD2002014 mod, Mod2002014 mod200) {
 		TipoPagina10 pag = mod.getNormal().getCambiosPN().getPagina10();
+		if (pag==null) return;
 		addVariable(mod200,Mod2002014Key.TC380, pag.getT380());
 		addVariable(mod200,Mod2002014Key.TC381, pag.getT381());
 		addVariable(mod200,Mod2002014Key.TC382, pag.getT382());
@@ -375,13 +383,13 @@ public class XMLtoMod2002014 {
 		addVariable(mod200,Mod2002014Key.TC608, pag.getT608());
 		addVariable(mod200,Mod2002014Key.TC609, pag.getT609());
 		addVariable(mod200,Mod2002014Key.TC610, pag.getT610());
-		//addDraftVariable(mod200,Mod2002014Key.TC618, pag.getT618());
-		//addDraftVariable(mod200,Mod2002014Key.TC619, pag.getT619());
-		//addDraftVariable(mod200,Mod2002014Key.TC620, pag.getT620());
-		//addDraftVariable(mod200,Mod2002014Key.TC621, pag.getT621());
-		//addDraftVariable(mod200,Mod2002014Key.TC622, pag.getT622());
-		//addDraftVariable(mod200,Mod2002014Key.TC623, pag.getT623());
-		//addDraftVariable(mod200,Mod2002014Key.TC624, pag.getT624());
+		addVariable(mod200,Mod2002014Key.TC618, pag.getT618());
+		addVariable(mod200,Mod2002014Key.TC619, pag.getT619());
+		addVariable(mod200,Mod2002014Key.TC620, pag.getT620());
+		addVariable(mod200,Mod2002014Key.TC621, pag.getT621());
+		addVariable(mod200,Mod2002014Key.TC622, pag.getT622());
+		addVariable(mod200,Mod2002014Key.TC623, pag.getT623());
+		addVariable(mod200,Mod2002014Key.TC624, pag.getT624());
 		addVariable(mod200,Mod2002014Key.TC715, pag.getT715());
 		addVariable(mod200,Mod2002014Key.TC716, pag.getT716());
 		addVariable(mod200,Mod2002014Key.TC717, pag.getT717());
@@ -400,6 +408,7 @@ public class XMLtoMod2002014 {
 
 	private static void fillPagina11(MOD2002014 mod, Mod2002014 mod200) {
 		TipoPagina11 pag = mod.getNormal().getCambiosPN().getPagina11();
+		if (pag==null) return;
 		addVariable(mod200,Mod2002014Key.TC387, pag.getT387());
 		addVariable(mod200,Mod2002014Key.TC388, pag.getT388());
 		addVariable(mod200,Mod2002014Key.TC389, pag.getT389());
@@ -473,12 +482,12 @@ public class XMLtoMod2002014 {
 		addVariable(mod200,Mod2002014Key.TC614, pag.getT614());
 		addVariable(mod200,Mod2002014Key.TC615, pag.getT615());
 		addVariable(mod200,Mod2002014Key.TC616, pag.getT616());
-		//addDraftVariable(mod200,Mod2002014Key.TC625, pag.getT625());
-		//addDraftVariable(mod200,Mod2002014Key.TC626, pag.getT626());
-		//addDraftVariable(mod200,Mod2002014Key.TC627, pag.getT627());
-		//addDraftVariable(mod200,Mod2002014Key.TC628, pag.getT628());
-		//addDraftVariable(mod200,Mod2002014Key.TC629, pag.getT629());
-		//addDraftVariable(mod200,Mod2002014Key.TC630, pag.getT630());
+		addVariable(mod200,Mod2002014Key.TC625, pag.getT625());
+		addVariable(mod200,Mod2002014Key.TC626, pag.getT626());
+		addVariable(mod200,Mod2002014Key.TC627, pag.getT627());
+		addVariable(mod200,Mod2002014Key.TC628, pag.getT628());
+		addVariable(mod200,Mod2002014Key.TC629, pag.getT629());
+		addVariable(mod200,Mod2002014Key.TC630, pag.getT630());
 		addVariable(mod200,Mod2002014Key.TC722, pag.getT722());
 		addVariable(mod200,Mod2002014Key.TC723, pag.getT723());
 		addVariable(mod200,Mod2002014Key.TC724, pag.getT724());

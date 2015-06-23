@@ -103,6 +103,8 @@ public interface ISalaryBuilder<T extends ISalary> {
 	// ------------------------------------------------------------------------
 	// Paymnets, deductions, embargos ...
 
+	public void addData(String name, ITimedVariable<?> datas);
+
 	public void addCost(Double amount, String description, IDeduction cost,
 			Map<String, ITimedVariable<?>> context);
 

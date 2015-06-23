@@ -91,6 +91,10 @@
 							
 							<g:Button ui:field='generateFileButton'
 								styleName='aon-finding-toolbar-item aon-icon-aeat' text="Exportar" visible="true"/>
+						
+							<g:Button ui:field='importTextButton'
+								styleName='aon-finding-toolbar-item aon-icon-copy' text="Importar Memoria" visible="true"/>
+							
 							<g:Anchor ui:field="download" visible="false"/>							
 						</g:HTMLPanel>
 					</g:HorizontalPanel>

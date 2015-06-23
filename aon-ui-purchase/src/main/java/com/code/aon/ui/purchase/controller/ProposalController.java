@@ -17,7 +17,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
-import com.code.aon.company.Department;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.WorkplaceDepartment;
 import com.code.aon.product.CatalogueItem;
@@ -39,6 +38,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.purchase.util.PurchaseUtils;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.warehouse.controller.WarehouseCollectionsController;
+import com.code.aon.warehouse.Warehouse;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProposalController extends BasicController implements IAuditableController {
@@ -47,11 +48,11 @@ public class ProposalController extends BasicController implements IAuditableCon
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProposalController.class);
 	
-	private IControllerListener departmentItemFilter;
+	private IControllerListener warehouseItemFilter;
 	private LinkedList<SelectItem> proposalTypes;
 	private ProposalType proposalType;
 	private WorkPlace destinationWorkPlace;
-	private Department destinationDepartment;
+	private Warehouse destinationWarehouse;
 	private PurchaseUtils utils;
 	private boolean showTransferWindow;
 	private boolean showAuditInfoWindow;
@@ -83,12 +84,12 @@ public class ProposalController extends BasicController implements IAuditableCon
 		this.destinationWorkPlace = destinationWorkPlace;
 	}
 
-	public Department getDestinationDepartment() {
-		return destinationDepartment;
+	public Warehouse getDestinationWarehouse() {
+		return destinationWarehouse;
 	}
 
-	public void setDestinationDepartment(Department destinationDepartment) {
-		this.destinationDepartment = destinationDepartment;
+	public void setDestinationWarehouse(Warehouse destinationWarehouse) {
+		this.destinationWarehouse = destinationWarehouse;
 	}
 	
 	public boolean isShowTransferWindow() {
@@ -131,7 +132,7 @@ public class ProposalController extends BasicController implements IAuditableCon
 	
 	public void init() {
 		setProposalType(ProposalType.ORDER);
-		setDestinationDepartment(null);
+		setDestinationWarehouse(null);
 		setDestinationWorkPlace(null);
 	}
 	
@@ -156,65 +157,33 @@ public class ProposalController extends BasicController implements IAuditableCon
 		return 107;
 	}
 	
-	public List<SelectItem> getDestinationDepartments() {
-		return getDepartments(getDestinationWorkPlace());
+	public List<SelectItem> getDestinationWarehouses() throws ManagerBeanException {
+		return WarehouseCollectionsController.getWarehouses(getDestinationWorkPlace());
 	}
 	
-	public List<SelectItem> getDepartments() {
+	public List<SelectItem> getWarehouses() throws ManagerBeanException {
 		Proposal proposal = (Proposal) getTo();
-		return getDepartments(proposal.getWorkPlace());
+		return WarehouseCollectionsController.getWarehouses(proposal.getWorkPlace());
 	}
 	
-	private List<SelectItem> getDepartments(WorkPlace workPlace) {
-		List<SelectItem> list = new LinkedList<SelectItem>();
-		try {
-			List<Integer> deptartmentIds = new LinkedList<Integer>();
-			if(workPlace != null){
-				for (ITransferObject ito : getWorkplaceDepartments(workPlace)) {
-					WorkplaceDepartment wd = (WorkplaceDepartment)ito;
-					deptartmentIds.add(wd.getDepartment().getId());
-				}
-				if(!deptartmentIds.isEmpty()){
-					IManagerBean dBean = BeanManager.getManagerBean(Department.class);
-					Criteria dCriteria = new Criteria();
-					dCriteria.addInExpression(dBean.getFieldName(IEntityAlias.DEPARTMENT_ID), deptartmentIds);
-					dCriteria.addOrder(dBean.getFieldName(IEntityAlias.DEPARTMENT_NAME));
-					for (ITransferObject ito : dBean.getList(dCriteria)) {
-						Department d = (Department)ito;
-						SelectItem item = new SelectItem(d, d.getName());
-						list.add(item);
-					}
-				}
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al obtener los departamentos";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
+	public IControllerListener getWarehouseItemFilter() {
+		if ( this.warehouseItemFilter == null ) {
+			this.warehouseItemFilter = new WarehouseItemFilter();
 		}
-		return list;
+		return this.warehouseItemFilter;
 	}
 	
-	public IControllerListener getDepartmentItemFilter() {
-		if ( this.departmentItemFilter == null ) {
-			this.departmentItemFilter = new DepartmentItemFilter();
-		}
-		return this.departmentItemFilter;
-	}
-	
-	private List<ITransferObject> getWorkplaceDepartments(WorkPlace workPlace) throws ManagerBeanException {
-		return getWorkplaceDepartments(workPlace, null, false);
-	}
-	
-	private static List<ITransferObject> getWorkplaceDepartments(WorkPlace workPlace, Department department, boolean  filterDepartment){
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static List<WorkplaceDepartment> getWorkplaceDepartments(WorkPlace workPlace, Warehouse warehouse, boolean  filterWarehouse){
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(WorkplaceDepartment.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_WORK_PLACE_ID), workPlace.getId());
-			if( filterDepartment){
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_DEPARTMENT_ID), department.getId());
+			if( filterWarehouse){
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_WAREHOUSE_ID), warehouse.getId());
 			}
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_ACTIVE), Boolean.TRUE);
-			return bean.getList(criteria);
+			return (List) bean.getList(criteria);
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los productos";
 			AonUtil.addErrorMessage(msg);
@@ -249,24 +218,24 @@ public class ProposalController extends BasicController implements IAuditableCon
 		}
 	}
 	
-	private Department obtainDestinationHotelDepartment() throws ManagerBeanException {
+	private Warehouse obtainDestinationHotelWarehouse() throws ManagerBeanException {
 		if(getDestinationWorkPlace()==null || getDestinationWorkPlace().getId()==null){
 			return null;
 		}
 		IManagerBean bean = BeanManager.getManagerBean(WorkplaceDepartment.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_WORK_PLACE_ID), getDestinationWorkPlace().getId());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_DEPARTMENT_ID), ((Proposal)getTo()).getDepartment().getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_WAREHOUSE_ID), ((Proposal)getTo()).getWarehouse().getId());
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_ACTIVE), true);
 		List<ITransferObject> list = bean.getList(criteria);
 		if(list.size() > 0){
-			return ((WorkplaceDepartment)list.get(0)).getDepartment();
+			return ((WorkplaceDepartment)list.get(0)).getWarehouse();
 		} 
 		return null;
 	}
 	
 	public void onChangeDestinationWorkPlace(ActionEvent event) throws ManagerBeanException{
-		setDestinationDepartment( obtainDestinationHotelDepartment() );
+		setDestinationWarehouse( obtainDestinationHotelWarehouse() );
 	}
 
 	public void onTransfer(ActionEvent event){
@@ -353,7 +322,8 @@ public class ProposalController extends BasicController implements IAuditableCon
 			destinationProposal.setTransferProposal(proposal);
 			destinationProposal.setItemReturn(false);
 			destinationProposal.setIssueDate(proposal.getIssueDate());
-			destinationProposal.setDepartment(this.getDestinationDepartment());
+			destinationProposal.setWarehouse(this.getDestinationWarehouse());
+			destinationProposal.setDepartment(this.getDestinationWarehouse().getDepartment());
 			destinationProposal.setWorkPlace(getDestinationWorkPlace());
 			destinationProposal.setRemarks(proposal.getRemarks());
 			destinationProposal.setScope(proposal.getScope());
@@ -452,26 +422,25 @@ public class ProposalController extends BasicController implements IAuditableCon
 		TRANSFER;
 	}
 	
-	private static class DepartmentItemFilter  extends ControllerAdapter {
+	private static class WarehouseItemFilter  extends ControllerAdapter {
 		
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
-		private List<ITransferObject> getWorkplaceDepartments(Proposal proposal){
-			return ProposalController.getWorkplaceDepartments(proposal.getWorkPlace(), proposal.getDepartment(), true);
+		private List<WorkplaceDepartment> getWorkplaceDepartments(Proposal proposal){
+			return ProposalController.getWorkplaceDepartments(proposal.getWorkPlace(), proposal.getWarehouse(), true);
 		}
 				
-		private List<Integer> getDepartmentsItemIds() throws ManagerBeanException{
+		private List<Integer> getWarehousesItemIds() throws ManagerBeanException{
 			List<Integer> list = new LinkedList<Integer>();
 			IController proposalController = FormUtil.getController(IPurchaseConstants.PROPOSAL_CONTROLLER_NAME);
 			Proposal proposal = (Proposal)proposalController.getTo(); 
-			if(proposal.getDepartment()!=null){
+			if(proposal.getWarehouse()!=null){
 				List<Integer> catalogueIds = new LinkedList<Integer>();
-				for(ITransferObject to: getWorkplaceDepartments(proposal)){
-					WorkplaceDepartment wd = (WorkplaceDepartment) to;
+				for(WorkplaceDepartment wd: getWorkplaceDepartments(proposal)){
 					catalogueIds.add(wd.getCatalogue().getId());
 				}
 				if(catalogueIds.isEmpty()){
-					String msg = "El departamento se ha desactivado.";
+					String msg = "El almacen se ha desactivado.";
 					AonUtil.addErrorMessage(msg);
 					catalogueIds.add(-1);
 				}
@@ -509,7 +478,7 @@ public class ProposalController extends BasicController implements IAuditableCon
 				throws ControllerListenerException {
 			IController controller = event.getController();
 			try {					
-				controller.getCriteria().addInExpression(controller.getFieldName(IEntityAlias.ITEM_ID), getDepartmentsItemIds());
+				controller.getCriteria().addInExpression(controller.getFieldName(IEntityAlias.ITEM_ID), getWarehousesItemIds());
 			} catch (ManagerBeanException e) {
 				LOGGER.error("Error filtering items", e);
 			}

@@ -20,6 +20,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.util.UserUtils;
@@ -257,7 +258,7 @@ public class DivertReceptionController extends BasicController {
 		return PmsUtils.getHotelRoomItems(((ProjectReservationDivert)getTo()).getDivertHotel());
 	}
 	
-	public List<Room> getAvailableRoomList() throws ManagerBeanException {
+	public List<Room> getAvailableRoomList() throws AonSQLException {
 		if(getPendingRoom()==null){
 			return null;
 		}

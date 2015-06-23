@@ -101,12 +101,21 @@
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	<xs:element name="Anho">
+	<!--xs:element name="Anho">
 		<xs:simpleType>
 			<xs:restriction base="xs:gYear">
 				<xs:minInclusive value="2006"/>
 				<xs:pattern value="\d{4}"/>
 			</xs:restriction>
 		</xs:simpleType>
+	</xs:element-->
+	<xs:element name="Anho">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="4"/>
+				<xs:pattern value="\d{4}"/>
+			</xs:restriction>
+		</xs:simpleType>
 	</xs:element>
+	
 </xs:schema>

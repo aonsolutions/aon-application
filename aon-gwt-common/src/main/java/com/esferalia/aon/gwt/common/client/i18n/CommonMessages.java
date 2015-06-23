@@ -1269,46 +1269,46 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Resultado del \u00FAltimo ejercicio")
 	String partMsg17();
 
-	@DefaultMessage("Capital Escriturado")
+	@DefaultMessage("Capital Escriturado (N, A, P))")
 	String ecpnMsg1();
 
-	@DefaultMessage("Capital (No exigido)")
+	@DefaultMessage("Capital (No exigido) (N, A, P)")
 	String ecpnMsg2();
 
-	@DefaultMessage("Prima de emisi\u00F3n")
+	@DefaultMessage("Prima de emisi\u00F3n (N, A, P)")
 	String ecpnMsg3();
 
-	@DefaultMessage("Reservas")
+	@DefaultMessage("Reservas (N, A, P)")
 	String ecpnMsg4();
 
-	@DefaultMessage("(Acciones y partic. en patr. propias)")
+	@DefaultMessage("(Acciones y partic. en patr. propias) (N, A, P)")
 	String ecpnMsg5();
 
-	@DefaultMessage("Resultados de ejercicios anteriores")
+	@DefaultMessage("Resultados de ejercicios anteriores (N, A, P)")
 	String ecpnMsg6();
 
-	@DefaultMessage("Otras aportaciones de socios")
+	@DefaultMessage("Otras aportaciones de socios (N, A, P)")
 	String ecpnMsg7();
 
-	@DefaultMessage("Resultado del ejercicio")
+	@DefaultMessage("Resultado del ejercicio (N, A, P)")
 	String ecpnMsg8();
 
-	@DefaultMessage("(Dividendo a cuenta)")
+	@DefaultMessage("(Dividendo a cuenta) (N, A, P)")
 	String ecpnMsg9();
 
-	@DefaultMessage("Otros instrumentos de patrimonio neto")
+	@DefaultMessage("Otros instrumentos de patrimonio neto (N, A)")
 	String ecpnMsg10();
 
-	@DefaultMessage("Ajustes por cambios de valor")
+	@DefaultMessage("Ajustes por cambios de valor (N, A)")
 	String ecpnMsg11();
 
-	@DefaultMessage("Ajustes en patrimonio neto")
+	@DefaultMessage("Ajustes en patrimonio neto (P)")
 	String ecpnMsg12();
 
-	@DefaultMessage("Subv. donac. y legados recibidos")
+	@DefaultMessage("Subv. donac. y legados recibidos (N, A, P)")
 	String ecpnMsg13();
 
-	@DefaultMessage("TOTAL")
+	@DefaultMessage("TOTAL (N, A, P)")
 	String ecpnMsg14();
 	
 
@@ -1387,6 +1387,13 @@ public interface CommonMessages extends Messages {
 		
 	@DefaultMessage("Liquidaci\u00F3n")
 	String liquidacion();
+	
+	@DefaultMessage("Resultado de la cuenta de p\u00E9rdidas y ganancias")
+	String liquidation1Label1();
+
+	@DefaultMessage("Detalle de las correcciones a la cuenta de p\u00E9rdidas y ganancias.")
+	String liquidation1Label2();
+	
 	@DefaultMessage("Liquidaci\u00F3n (I)")
 	String liquidacionI();
 	@DefaultMessage("Liquidaci\u00F3n (II)")
@@ -1414,6 +1421,15 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Correcciones al resultado de la cuenta de p\u00E9rdidas y ganancias")
 	String corrections();
 	
+	@DefaultMessage("Correcciones del ejericicio")
+	String yearCorrections();
+
+	@DefaultMessage("Saldo pendiente a fin de ejercicio")
+	String pendingCorrections();
+	
+	@DefaultMessage("Correcciones fiscales")
+	String fiscalCorrections();
+
 	@DefaultMessage("Bonificaciones y deducciones por doble imposici\u00F3n. Cuota \u00EDntegra ajustada positiva")
 	String bonus();
 	
@@ -1970,4 +1986,79 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Guardar la declaraci\u00F3n inclu\u00EDda en el modelo importado.")
 	String saveImportedModel();
+
+	@DefaultMessage("Fichero")
+	String file();
+	
+	@DefaultMessage("Importar")
+	String importAction();
+	
+    @DefaultMessage("Se está enviando un archivo al servidor.\n Inténtelo mas tarde.")
+    String uploaderActiveUpload();
+
+    @DefaultMessage("Este archivo ya fué enviado.")
+    String uploaderAlreadyDone();
+
+    @DefaultMessage("Parece que esta aplicación está configurada para usar GAE-Blobstore.\nSin embargo el servidor ha retornado un error al crear la URL.\nRecuerda que para utilizar blobstore debes activar la opción de facturación en GAE.")
+    String uploaderBlobstoreError();
+
+    @DefaultMessage("Seleccione un fichero para enviar ...")
+    String uploaderBrowse();
+
+    @DefaultMessage("Sólo está permitido enviar estos tipos de archivo:\n")
+    String uploaderInvalidExtension();
+
+    @DefaultMessage("Enviar")
+    String uploaderSend();
+
+    @DefaultMessage("El servidor ha enviado una respuesta incorrecta.\n Compruebe que la aplicación en el servidor está bien configurada.")
+    String uploaderServerError();
+    
+    @DefaultMessage("Unable to auto submit the form, it seems your browser has security issues with this feature.\n Developer Info: If you are using jsupload and you do not need cross-domain, try a version compiled with the standard linker?")
+    String submitError();
+    
+    @DefaultMessage("Ha sido imposible conectar con el servidor de la aplicación.")
+    String uploaderServerUnavailable();
+
+    @DefaultMessage("Se ha sobrepasado el tiempo de espera al enviar el archivo.\n Es posible que su navegador no envíe correctamente archivos,\n o quizás ocurrió un error en el servidor\nPor favor inténtelo mas tarde")
+    String uploaderTimeout();
+    
+    @DefaultMessage("Error uploading the file, the server response has a format which can not be parsed by the application.\n.")
+    String uploaderBadServerResponse();
+
+    @DefaultMessage("Additional information: it seems that you are using blobstore, so in order to upload large files check that your application is billing enabled.")
+    String uploaderBlobstoreBilling();
+
+    @DefaultMessage("Error you have typed an invalid file name, please select a valid one.")
+    String uploaderInvalidPathError();
+    
+    @DefaultMessage("En espera")
+    String uploadStatusQueued();
+    
+    @DefaultMessage("Enviando ...")
+    String uploadStatusInProgress();
+    
+    @DefaultMessage("Finalizado")
+    String uploadStatusSuccess();
+    
+    @DefaultMessage("Error")
+    String uploadStatusError();
+    
+    @DefaultMessage("Cancelando ...")
+    String uploadStatusCanceling();
+    
+    @DefaultMessage("Cancelado")
+    String uploadStatusCanceled();
+    
+    @DefaultMessage("Borrado")
+    String uploadStatusDeleted();
+
+    @DefaultMessage("Enviando formulario ...")
+    String uploadStatusSubmitting();
+    
+    @DefaultMessage("Cancelar")
+    String uploadLabelCancel();
+    
+	@DefaultMessage("Memorias Predefinidas")
+	String digitalDepositFreeText();
 }

@@ -136,21 +136,21 @@
 							required="true" 
 							rendered="#{proposal.nevv}" >
 							<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
-							<a4j:support event="onchange" reRender="Proposal_department" ignoreDupResponses="true" ajaxSingle="true" />
-							<a4j:support event="oninputchanged" reRender="Proposal_department" ignoreDupResponses="true" ajaxSingle="true" />
+							<a4j:support event="onchange" reRender="Proposal_warehouse" ignoreDupResponses="true" ajaxSingle="true" />
+							<a4j:support event="oninputchanged" reRender="Proposal_warehouse" ignoreDupResponses="true" ajaxSingle="true" />
 						</aon:selectOneMenu>
 					</aon:div>
 			
-					<aon:outputLabel for="Proposal_department" 
-						value="#{bundle.purchase_department}" />
+					<aon:outputLabel for="Proposal_warehouse" 
+						value="#{bundle.aon_module_warehouse}" />
 					<aon:div>
-						<aon:outputText	value="#{proposal.to.department.name}" styleClass="aon-bold"
+						<aon:outputText	value="#{proposal.to.warehouse.name}" styleClass="aon-bold"
 							rendered="#{!proposal.nevv}" />
-						<aon:selectOneMenu id="Proposal_department" 
+						<aon:selectOneMenu id="Proposal_warehouse" 
 							required="true" 
-							value="#{proposal.to.department}"
+							value="#{proposal.to.warehouse}"
 							rendered="#{proposal.nevv}" >
-							<f:selectItems value="#{proposal.departments}" />
+							<f:selectItems value="#{proposal.warehouses}" />
 						</aon:selectOneMenu>
 					</aon:div>	
 

@@ -37,7 +37,7 @@
 					<ui:define name="moreMenuContent">
 						<aon:menuItem id="purchaseTransfer"
 							value="#{bundle.aon_invoice_sales2}"
-							immediate="#{true}" rendered="#{income.pending}"
+							immediate="#{false}" rendered="#{income.pending}"
 							iconClass="aon-icon-sincronize"
 							actionListener="#{income.onPurchaseTransferShow}"
 							reRender="showPurchaseTransferWindow">

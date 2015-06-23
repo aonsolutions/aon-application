@@ -165,12 +165,12 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 		this.salary.setIrpfBase(irpfBase);
 
 	}
-	
+
 	@Override
 	public void setMoneyIrpfBase(Double moneyIrpfBase) {
 		this.salary.setMoneyIrpfBase(moneyIrpfBase);
 	}
-	
+
 	@Override
 	public void setInkindIrpfBase(Double inkindIrpfBase) {
 		this.salary.setInkindIrpfBase(inkindIrpfBase);
@@ -185,7 +185,7 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 	public void setItBase(Double itBase) {
 		this.salary.setIrpfBase(itBase);
 	}
-	
+
 	@Override
 	public void setRawCgcBase(Double rawCgcBase) {
 		this.salary.setRawCommonBase(rawCgcBase);
@@ -227,7 +227,18 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 	public void setTotalEnterprise(Double totalEnterprise) {
 		this.salary.setTotalEnterprise(totalEnterprise);
 	}
-	
+
+	@Override
+	public void addData(String name, ITimedVariable<?> data) {
+		Object value = data.getValue(data.getPeriod());
+		SalaryData salaryData = new SalaryData();
+		salaryData.setName(name);
+		salaryData.setStartDate(data.getPeriod().getStart());
+		salaryData.setEndDate(data.getPeriod().getEnd());
+		salaryData.setExpression(String.valueOf(value));
+		this.salary.getSalaryDatas().add(salaryData);
+	}
+
 	@Override
 	public void addBonus(Double amount, String description, IBonus bonus,
 			Map<String, ITimedVariable<?>> context) {
@@ -242,8 +253,8 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 	}
 
 	@Override
-	public void addCost(Double amount, String description,
-			IDeduction cost, Map<String, ITimedVariable<?>> context) {
+	public void addCost(Double amount, String description, IDeduction cost,
+			Map<String, ITimedVariable<?>> context) {
 		SalaryCost salaryCost = new SalaryCost();
 
 		salaryCost.setSalary(salary);
@@ -272,7 +283,7 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 		this.salary.getSalaryEmbargos().add(salaryEmbargo);
 
 	}
-	
+
 	@Override
 	public void addZeroEmbargo(Integer id, IDeduction embargo,
 			Map<String, ITimedVariable<?>> context) {
@@ -298,8 +309,9 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 	}
 
 	@Override
-	public void addZeroPayment( Double quote, Double tax, Date startDate,
-			Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
+	public void addZeroPayment(Double quote, Double tax, Date startDate,
+			Date endDate, IPayment payment,
+			Map<String, ITimedVariable<?>> context) {
 		// TODO: No payment, so we're not going to save it. But at upcoming
 		// versions
 		// we store taxes and quotes, so we'll have much more info.
@@ -346,7 +358,7 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 	public ISalaryBuilderListener getListener() {
 		return listener;
 	}
-	
+
 	// ------------------------------------------------------------------------
 
 	private ContractEmbargo getContractEmbargo(Integer id) {
@@ -355,5 +367,5 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 		contractEmbargo.setContract(salary.getContract());
 		return contractEmbargo;
 	}
-	
+
 }

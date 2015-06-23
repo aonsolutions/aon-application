@@ -59,6 +59,8 @@ public enum D2DepositKey implements Serializable {
 		,IDA09002(9002,"IDA09002")
 		,IDA09003(9003,"IDA09003")
 		
+		
+	
 	// MEMORIA - AP1 ACTIVIDAD DE LA EMPRESA
 		,MAT19019001(9019001,"MAT19019001")
 	

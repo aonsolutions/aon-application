@@ -71,6 +71,7 @@ import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.supplier.util.SupplierValidationManager;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.warehouse.controller.WarehouseCollectionsController;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
@@ -522,9 +523,9 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 		validate(to);
 		setIncomeReferenceCode(null);
 		setIncomeDate(new Date());
-		setIncomeWarehouse(obtainDeliveryWarehouse(to.getWorkPlace()));
+		setIncomeWarehouse(to.getWarehouse());
 	}
-
+		
 	private void validate(Purchase purchase) {
 		try {
 			IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
@@ -542,19 +543,6 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage());
 		}
-	}
-
-	private Warehouse obtainDeliveryWarehouse(WorkPlace workPlace) throws ManagerBeanException {
-		if (workPlace != null) {
-			IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_ID), workPlace.getId());
-			Iterator<?> iterator = warehouseBean.getList(criteria).iterator();
-			if (iterator.hasNext()) {
-				return (Warehouse)iterator.next();
-			}
-		}
-		return null;
 	}
 
 	public void onIncome(ActionEvent event) throws ManagerBeanException {
@@ -669,6 +657,7 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 			PurchaseUtils utils = new PurchaseUtils();
 			Purchase purchase = utils.createPurchase(returnSourcePurchase.getSeries(),
 					returnSourcePurchase.getSupplier(), returnSourcePurchase.getWorkPlace(),
+					returnSourcePurchase.getWarehouse(),
 							PurchaseDocumentType.ITEM_RETURN,
 							comments, returnSourcePurchase.getRemarks(),
 							returnSourcePurchase.getCarrier(),
@@ -809,6 +798,11 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
 		initializeModel();
+	}
+	
+	public List<SelectItem> getWarehouses() throws ManagerBeanException {
+		Purchase purchase = (Purchase)this.getTo();
+		return WarehouseCollectionsController.getWarehouses(purchase.getWorkPlace());
 	}
 	
 }

@@ -24,6 +24,7 @@ public class ProposalControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		setCurrentScope();
+		setDepartment();
 		Proposal to = (Proposal) getController().getTo();
 		if(((ProposalController)getController()).getProposalType()==ProposalType.ITEM_RETURN){
 			to.setItemReturn(true);
@@ -39,11 +40,17 @@ public class ProposalControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		setCurrentScope();
+		setDepartment();
 	}
 	
 	private void setCurrentScope() {
 		Proposal proposal = (Proposal) this.getController().getTo();
 		proposal.setScope(proposal.getWorkPlace().getScope());
+	}
+	
+	private void setDepartment() {
+		Proposal proposal = (Proposal) this.getController().getTo();
+		proposal.setDepartment(proposal.getWarehouse().getDepartment());
 	}
 	
 	@Override
@@ -57,7 +64,6 @@ public class ProposalControllerListener extends ControllerAdapter {
 		try {
 			if(!c.getCurrentUserWorkPlaces().isEmpty()){
 				((Proposal)getController().getTo()).setWorkPlace((WorkPlace) c.getCurrentUserWorkPlaces().get(0).getValue());
-				((ProposalController)getController()).setDestinationWorkPlace((WorkPlace) c.getCurrentUserWorkPlaces().get(0).getValue());
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());

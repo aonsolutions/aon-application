@@ -108,6 +108,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	private Invoice invoiceToRectify;
 	private boolean showModificationWindow;
 	private Invoice invoiceToModify;
+	private boolean showCreditCardWindow;
 	private List<Integer> multipleReservation;
 	private DataModel invoiceModel;
 
@@ -242,7 +243,6 @@ public class ProjectReservationController extends BasicController implements IPm
 	public boolean isShowAuditInfoWindow() {
 		return showAuditInfoWindow;
 	}
-
 	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
 		this.showAuditInfoWindow = showAuditInfoWindow;
 	}	
@@ -250,7 +250,6 @@ public class ProjectReservationController extends BasicController implements IPm
 	public boolean isShowAdvanceInvoiceWindow() {
 		return showAdvanceInvoiceWindow;
 	}
-
 	public void setShowAdvanceInvoiceWindow(boolean showAdvanceInvoiceWindow) {
 		this.showAdvanceInvoiceWindow = showAdvanceInvoiceWindow;
 	}
@@ -258,7 +257,6 @@ public class ProjectReservationController extends BasicController implements IPm
 	public AdvanceInvoiceTo getAdvanceInvoiceTo() {
 		return advanceInvoiceTo;
 	}
-
 	public void setAdvanceInvoiceTo(AdvanceInvoiceTo advanceInvoiceTo) {
 		this.advanceInvoiceTo = advanceInvoiceTo;
 	}
@@ -266,7 +264,6 @@ public class ProjectReservationController extends BasicController implements IPm
 	public boolean isShowInvoiceWindow() {
 		return showInvoiceWindow;
 	}
-
 	public void setShowInvoiceWindow(boolean showInvoiceWindow) {
 		this.showInvoiceWindow = showInvoiceWindow;
 	}
@@ -274,7 +271,6 @@ public class ProjectReservationController extends BasicController implements IPm
 	public ReservationInvoiceTo getReservationInvoiceTo() {
 		return reservationInvoiceTo;
 	}
-
 	public void setReservationInvoiceTo(ReservationInvoiceTo reservationInvoiceTo) {
 		this.reservationInvoiceTo = reservationInvoiceTo;
 	}
@@ -282,7 +278,6 @@ public class ProjectReservationController extends BasicController implements IPm
 	public boolean isShowRectificationWindow() {
 		return showRectificationWindow;
 	}
-
 	public void setShowRectificationWindow(boolean showRectificationWindow) {
 		this.showRectificationWindow = showRectificationWindow;
 	}
@@ -290,7 +285,6 @@ public class ProjectReservationController extends BasicController implements IPm
 	public Invoice getInvoiceToRectify() {
 		return invoiceToRectify;
 	}
-
 	public void setInvoiceToRectify(Invoice invoiceToRectify) {
 		this.invoiceToRectify = invoiceToRectify;
 	}
@@ -298,7 +292,6 @@ public class ProjectReservationController extends BasicController implements IPm
 	public boolean isShowModificationWindow() {
 		return showModificationWindow;
 	}
-
 	public void setShowModificationWindow(boolean showModificationWindow) {
 		this.showModificationWindow = showModificationWindow;
 	}
@@ -306,19 +299,23 @@ public class ProjectReservationController extends BasicController implements IPm
 	public Invoice getInvoiceToModify() {
 		return invoiceToModify;
 	}
-
 	public void setInvoiceToModify(Invoice invoiceToModify) {
 		this.invoiceToModify = invoiceToModify;
+	}
+
+	public boolean isShowCreditCardWindow() {
+		return showCreditCardWindow;
+	}
+	public void setShowCreditCardWindow(boolean showCreditCardWindow) {
+		this.showCreditCardWindow = showCreditCardWindow;
 	}
 
 	public List<Integer> getMultipleReservation() {
 		return multipleReservation;
 	}
-
 	public void setMultipleReservation(List<Integer> multipleReservation) {
 		this.multipleReservation = multipleReservation;
 	}
-
 	public int getMultipleReservationSize() {
 		return (multipleReservation != null) ? multipleReservation.size() : 0;
 	}
@@ -329,7 +326,6 @@ public class ProjectReservationController extends BasicController implements IPm
 		}
 		return invoiceModel;
 	}
-
 	public void setInvoiceModel(DataModel invoiceModel) {
 		this.invoiceModel = invoiceModel;
 	}
@@ -596,6 +592,8 @@ public class ProjectReservationController extends BasicController implements IPm
 			reservation.setCheckStatus(ReservationCheckStatus.NO_SHOW);
 		}
 		reservation.setStatus(ReservationStatus.CANCELLED);
+		reservation.setCancellationUser(UserUtils.getInstance().getLoggedUser().getLogin());
+		reservation.setCancellationDate(new Date());
 		accept(event);
 
 		IController reservationRoomController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_ROOM_CONTROLLER_NAME);
@@ -1308,6 +1306,27 @@ public class ProjectReservationController extends BasicController implements IPm
 		IController divertController = (IController)AonUtil.getRegisteredBean(DIVERT_CONTROLLER_NAME);
 		divertController.onReset(event);
 		((ProjectReservationDivert)divertController.getTo()).setProjectReservation((ProjectReservation)this.getTo());
+	}
+
+	public void onCreditCardShow(ActionEvent event) {
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		getReservationUtils().decryptReservationCreditCardData(reservation);
+	}
+
+	public List<SelectItem> getCreditCardYears() {
+		DateFormat formatter = new SimpleDateFormat("yy");
+		List<SelectItem> years = new LinkedList<SelectItem>();
+		for (int i=0,year=Integer.parseInt(formatter.format(new Date())); i<=5; i++) {
+			SelectItem item = new SelectItem("" + (year+i));
+			years.add(item);
+		}
+		return years;
+	}
+
+	public void onSaveCreditCard(ActionEvent event) {
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		getReservationUtils().encryptReservationCreditCardData(reservation);
+		accept(event);
 	}
 
 	public void onLoadInvoice(ActionEvent event) throws ManagerBeanException {

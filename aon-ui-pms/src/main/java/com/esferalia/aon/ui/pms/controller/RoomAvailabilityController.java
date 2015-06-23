@@ -1,6 +1,10 @@
 package com.esferalia.aon.ui.pms.controller;
 
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,25 +14,27 @@ import javax.faces.event.ValueChangeEvent;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.hibernate.Query;
-import org.hibernate.Session;
 
-import com.code.aon.asset.Asset;
 import com.code.aon.AonVersion;
+import com.code.aon.asset.Asset;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.dbutils.AonSQLException;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.Room;
+import com.esferalia.aon.pms.sql.ISQLConstants;
+import com.esferalia.aon.pms.sql.SQLUtils;
 
-public class RoomAvailabilityController implements IPmsConstants, Serializable {
+public class RoomAvailabilityController implements Serializable, ISQLConstants {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
@@ -46,13 +52,9 @@ public class RoomAvailabilityController implements IPmsConstants, Serializable {
 		this.filterParams = filterParams;
 	}
 
-	public List<Room> getAvailableRoomList() throws ManagerBeanException {
+	public List<Room> getAvailableRoomList() throws AonSQLException {
 		if (availableRoomList == null) {
-			availableRoomList = new LinkedList<Room>();
-			for (Object obj : obtainAvailableRoomList()) {
-				Object[] objs = (Object[])obj;
-				availableRoomList.add(obtainRoom((Integer)objs[0], (String)objs[1]));
-			}
+			availableRoomList = obtainAvailableRoomList();
 		}
 		return availableRoomList;
 	}
@@ -61,18 +63,8 @@ public class RoomAvailabilityController implements IPmsConstants, Serializable {
 		this.availableRoomList = availableRoomList;
 	}
 
-	public int getAvailableRoomCount() throws ManagerBeanException {
+	public int getAvailableRoomCount() throws AonSQLException {
 		return getAvailableRoomList().size();
-	}
-
-	private Room obtainRoom(Integer id, String name) {
-		Asset asset = new Asset();
-		asset.setId(id);
-		asset.setName(name);
-
-		Room room = new Room();
-		room.setAsset(asset);
-		return room;
 	}
 
 	public void onInitializeRoomList(ProjectReservationRoom reservationRoom, Date startDate, Date endDate) throws ManagerBeanException {
@@ -112,22 +104,65 @@ public class RoomAvailabilityController implements IPmsConstants, Serializable {
 		return null;
 	}
 
-	private List<?> obtainAvailableRoomList() {
-		String whereClause = "WHERE " + DomainManager.getSQLWhereClause("Room.domain");
-		whereClause += " AND Room.active = 1";
+	private List<Room> obtainAvailableRoomList() throws AonSQLException {
+		List<Room> roomList = new LinkedList<Room>();
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			stmt = connection.prepareStatement(getAvailableRoomListSQL());
+			int hostVar = 0;
+			if (getFilterParams().getViewerStartDate() != null && getFilterParams().getViewerEndDate() != null) {
+				SQLUtils.setDate(stmt, ++hostVar, getFilterParams().getViewerStartDate());
+				SQLUtils.setDate(stmt, ++hostVar, DateUtils.addDays(getFilterParams().getViewerEndDate(), -1));
+			}
+			if (!StringUtils.isEmpty(getFilterParams().getName())) {
+				SQLUtils.setString(stmt, ++hostVar, getFilterParams().getName().replace("*", "%"));
+			}
+			rs = stmt.executeQuery();
+			while (rs.next()) {
+				Room room = new Room();
+				room.setAsset(new Asset());
+				room.getAsset().setId(rs.getInt(ROOM));
+				room.getAsset().setName(rs.getString(ROOM_NUMBER));
+				roomList.add(room);
+			}
+			return roomList;
+		} catch (Throwable e) {
+			try {
+				connection.rollback();
+			} catch (SQLException ex) {
+			}
+			throw new AonSQLException(e.getMessage());
+		} finally {
+			SQLUtils.closeQuietly(rs);
+			SQLUtils.closeQuietly(stmt);
+			SQLUtils.closeQuietly(connection);
+		}
+	}
+
+	private String getAvailableRoomListSQL() {
+		StringBuffer stmt = new StringBuffer();
+		stmt.append("SELECT R.asset AS " + ROOM + ", A.name AS " + ROOM_NUMBER);
+		stmt.append(" FROM room AS R");
+		stmt.append(" LEFT JOIN asset AS A ON A.id = R.asset");
+		stmt.append(" LEFT JOIN asset_feature AS AF ON AF.asset = A.id");
+		stmt.append(" WHERE" + DomainManager.getSQLWhereClause("R.domain"));
+		stmt.append(" AND R.active = 1");
 		if (getFilterParams().getHotel() != null && getFilterParams().getHotel().getId() != null) {
-			whereClause += " AND Room.hotel = " + getFilterParams().getHotel().getId();
+			stmt.append(" AND R.hotel = " + getFilterParams().getHotel().getId());
 		} else {
-			whereClause += " AND Room.hotel IS NOT NULL";
+			stmt.append(" AND R.hotel IS NOT NULL");
 		}
 		if (getFilterParams().getItem() != null && getFilterParams().getItem().getId() != null) {
-			whereClause += " AND Room.item = " + getFilterParams().getItem().getId();
-		}
-		if (!StringUtils.isEmpty(getFilterParams().getName())) {
-			whereClause += " AND Room.asset IN (SELECT id FROM asset WHERE name LIKE :name)";
+			stmt.append(" AND R.item = " + getFilterParams().getItem().getId());
 		}
 		if (getFilterParams().getViewerStartDate() != null && getFilterParams().getViewerEndDate() != null) {
-			whereClause += " AND Room.asset NOT IN (SELECT asset FROM asset_activity WHERE date BETWEEN :start AND :end)";
+			stmt.append(" AND R.asset NOT IN (SELECT asset FROM asset_activity AS AA WHERE AA.date BETWEEN ? AND ?)");
+		}
+		if (!StringUtils.isEmpty(getFilterParams().getName())) {
+			stmt.append(" AND A.name LIKE ?");
 		}
 		if (getFilterParams().getFeatureFilter() != null && getFilterParams().getFeatureFilter().length > 0) {
 			String featureClause = "";
@@ -138,27 +173,13 @@ public class RoomAvailabilityController implements IPmsConstants, Serializable {
 				featureClause += id.toString();
 			}
 			if (featureClause != null) {
-				whereClause += " AND AssetFeature.feature IN (" + featureClause + ")";
+				stmt.append(" AND AF.feature IN (" + featureClause + ")");
 			}
 		}
+		stmt.append(" GROUP BY R.asset");
+		stmt.append(" ORDER BY A.name");
 
-		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
-		String sqlSelect = "SELECT Room.asset, Asset.name " +
-							"FROM room as Room " +
-							"LEFT JOIN asset as Asset on Asset.id = Room.asset " +
-							"LEFT JOIN asset_feature as AssetFeature on AssetFeature.asset = Room.asset " +
-							whereClause +
-							" GROUP BY Room.asset" +
-							" ORDER BY Asset.name";
-		Query sqlQuery = session.createSQLQuery(sqlSelect);
-		if (!StringUtils.isEmpty(getFilterParams().getName())) {
-			sqlQuery.setString("name", getFilterParams().getName() + "%");
-		}
-		if (getFilterParams().getViewerStartDate() != null && getFilterParams().getViewerEndDate() != null) {
-			sqlQuery.setDate("start", getFilterParams().getViewerStartDate());
-			sqlQuery.setDate("end", DateUtils.addDays(getFilterParams().getViewerEndDate(), -1));
-		}
-		return sqlQuery.list();
+		return stmt.toString();
 	}
 
 

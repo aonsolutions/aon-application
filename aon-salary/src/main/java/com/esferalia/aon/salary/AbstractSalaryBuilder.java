@@ -182,6 +182,10 @@ public abstract class AbstractSalaryBuilder<T extends ISalary> implements ISalar
 	public void setTotalEnterprise(Double totalEnterprise) {
 
 	}
+	
+	@Override
+	public void addData(String name, ITimedVariable<?> datas) {
+	}
 
 	@Override
 	public void addBonus(Double amount, String description, IBonus bonus,

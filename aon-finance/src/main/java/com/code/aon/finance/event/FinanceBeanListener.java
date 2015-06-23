@@ -21,6 +21,7 @@ public class FinanceBeanListener extends ManagerBeanListenerAdapter {
 				checkPosShift(finance.getInvoice().getPosShift());
 			}
 		}
+		finance.setSkipCheckPosShift(false);
 	}
 
 	@Override
@@ -31,6 +32,7 @@ public class FinanceBeanListener extends ManagerBeanListenerAdapter {
 				checkPosShift(finance.getInvoice().getPosShift());
 			}
 		}
+		finance.setSkipCheckPosShift(false);
 	}
 
 	@Override
@@ -41,6 +43,7 @@ public class FinanceBeanListener extends ManagerBeanListenerAdapter {
 				checkPosShift(finance.getInvoice().getPosShift());
 			}
 		}
+		finance.setSkipCheckPosShift(false);
 	}
 
 	private void checkPosShift(PosShift posShift) throws ManagerBeanException {
@@ -56,6 +59,7 @@ public class FinanceBeanListener extends ManagerBeanListenerAdapter {
 			}
 
 			posShift.setImbalance(imbalance);
+			posShift.setSkipCheckPosShift(true);
 			posShift = (PosShift)BeanManager.getManagerBean(PosShift.class).update(posShift);
 		}
 	}

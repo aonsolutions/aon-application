@@ -31,22 +31,6 @@
 					valueChangeListener="#{controller.addExpression}"
 					size="20" maxlength="25" />
 
-				<aon:outputLabel value="#{bundle.registry_rd_creation_date}" />
-				<aon:div>
-					<aon:outputLabel for="ProjectReservation_creationDate-From"
-						styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
-					<aon:selectInputDate id="ProjectReservation_creationDate-From"
-						value="#{searchController.creationDateFrom}"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}"/>
-					<aon:outputLabel for="ProjectReservation_creationDate-To"
-						styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
-					<aon:selectInputDate id="ProjectReservation_creationDate-To"
-						value="#{searchController.creationDateTo}"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}"/>
-				</aon:div>
-
 				<aon:outputLabel value="#{bundle.pms_reservation_insideDate}" />
 				<aon:div>
 					<aon:outputLabel for="ProjectReservation_insideDate-From"
@@ -78,6 +62,14 @@
 					valueChangeListener="#{controller.addExpression}"
 					size="64" />
 
+				<aon:outputLabel for="ProjectReservation_prepay" 
+					value="#{bundle.pms_prepay}" />
+				<aon:selectOneRadio id="ProjectReservation_prepay"
+					valueChangeListener="#{controller.addExpression}">
+					<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+					<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+				</aon:selectOneRadio>				
+
 				<aon:outputLabel for="ProjectReservation_earlyCheckOut" 
 					value="#{bundle.pms_early_check_out}" />
 				<aon:selectOneRadio id="ProjectReservation_earlyCheckOut"
@@ -88,6 +80,32 @@
 
 			</aon:panelGrid>
 		</aon:panelCollapsible>
+
+		<ui:decorate template="/com/code/aon/ui/common/facelet/auditable/searchContent.xhtml">
+			<ui:define name="additionalAuditableContent">
+				<aon:outputLabel for="ProjectReservation_cancellationUser"
+					value="#{bundle.aon_cancellation_user}" />
+				<aon:inputText id="ProjectReservation_cancellationUser" size="20"
+					valueChangeListener="#{controller.addExpression}" />			
+
+				<aon:outputLabel value="#{bundle.aon_cancellation_date}" />
+				<aon:div>
+					<aon:outputLabel for="ProjectReservation_cancellationDate-From" styleClass="aon-form-date-label aon-padding-right" 
+						value="#{bundle.aon_date_from}:" />
+					<aon:selectInputDate id="ProjectReservation_cancellationDate-From"
+						valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
+			
+					<aon:outputLabel for="ProjectReservation_cancellationDate-To" styleClass="aon-form-date-label aon-padding-right" 
+						value="#{bundle.aon_date_to}:" />
+					<aon:selectInputDate id="ProjectReservation_cancellationDate-To"
+						valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
+				</aon:div>
+			</ui:define>
+		</ui:decorate>
 
 	</aon:div>
 

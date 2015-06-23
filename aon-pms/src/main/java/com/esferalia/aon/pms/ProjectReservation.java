@@ -58,6 +58,11 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	private double vatPercent;
 	private double realDiscountPercent;
 	private Double advancedAmount;
+	private String hrCreditCardHolder;
+	private String hrCreditCardNumber;
+	private String hrCreditCardExpirationMonth;
+	private String hrCreditCardExpirationYear;
+	private String hrCreditCardCvv;
 	private Set<ProjectReservationGuest> guests = new HashSet<ProjectReservationGuest>();
 	private Set<ProjectReservationRoom> rooms = new HashSet<ProjectReservationRoom>();
 	private Set<Invoice> invoices = new HashSet<Invoice>();
@@ -115,6 +120,46 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 	public void setAdvancedAmount(Double advancedAmount) {
 		this.advancedAmount = advancedAmount;
+	}
+
+	@Transient
+	public String getHrCreditCardHolder() {
+		return hrCreditCardHolder;
+	}
+	public void setHrCreditCardHolder(String hrCreditCardHolder) {
+		this.hrCreditCardHolder = hrCreditCardHolder;
+	}
+
+	@Transient
+	public String getHrCreditCardNumber() {
+		return hrCreditCardNumber;
+	}
+	public void setHrCreditCardNumber(String hrCreditCardNumber) {
+		this.hrCreditCardNumber = hrCreditCardNumber;
+	}
+
+	@Transient
+	public String getHrCreditCardExpirationMonth() {
+		return hrCreditCardExpirationMonth;
+	}
+	public void setHrCreditCardExpirationMonth(String hrCreditCardExpirationMonth) {
+		this.hrCreditCardExpirationMonth = hrCreditCardExpirationMonth;
+	}
+
+	@Transient
+	public String getHrCreditCardExpirationYear() {
+		return hrCreditCardExpirationYear;
+	}
+	public void setHrCreditCardExpirationYear(String hrCreditCardExpirationYear) {
+		this.hrCreditCardExpirationYear = hrCreditCardExpirationYear;
+	}
+
+	@Transient
+	public String getHrCreditCardCvv() {
+		return hrCreditCardCvv;
+	}
+	public void setHrCreditCardCvv(String hrCreditCardCvv) {
+		this.hrCreditCardCvv = hrCreditCardCvv;
 	}
 
 	@OneToMany(mappedBy = "projectReservation", cascade={CascadeType.REMOVE})
@@ -352,7 +397,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	public Date getEarlyCheckOutDate() throws ManagerBeanException {
 		if (isEarlyCheckOut()) {
 			if (getEndDate().after(getEndTime())) {
-				return DateUtils.addDays(DateUtils.truncate(getEndTime(), Calendar.DATE), 1);
+				return DateUtils.truncate(getEndTime(), Calendar.DATE);
 			} else {
 				IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
 				Criteria criteria = new Criteria();

@@ -1,14 +1,22 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>8.25-SNAPSHOT</version>
+		<version>8.26-SNAPSHOT</version>
 	</parent>
 	<groupId>net.aonsolutions</groupId>
 	<artifactId>aon.tgss</artifactId>
 	<name>AON TGSS</name>
 	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8</version>
+			<type>jar</type>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -24,7 +32,7 @@
 						</goals>
 						<configuration>
 							<schemaFiles>SolicitudTrabajadoresTramos.xsd</schemaFiles>
-							<packageName>net.aonsolutions.tgss.creta.jaxb.request.employee</packageName> 
+							<packageName>net.aonsolutions.tgss.creta.jaxb.solicitud.trabajadorestramos</packageName>
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
@@ -35,7 +43,7 @@
 						</goals>
 						<configuration>
 							<schemaFiles>TrabajadoresTramos.xsd</schemaFiles>
-							<packageName>net.aonsolutions.tgss.creta.jaxb.response.employee</packageName> 
+							<packageName>net.aonsolutions.tgss.creta.jaxb.trabajadorestramos</packageName>
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
@@ -46,7 +54,7 @@
 						</goals>
 						<configuration>
 							<schemaFiles>SolicitudBorrador.xsd</schemaFiles>
-							<packageName>net.aonsolutions.tgss.creta.jaxb.request.draft</packageName> 
+							<packageName>net.aonsolutions.tgss.creta.jaxb.solicitud.borrador</packageName>
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
@@ -57,7 +65,7 @@
 						</goals>
 						<configuration>
 							<schemaFiles>SolicitudCalculos.xsd</schemaFiles>
-							<packageName>net.aonsolutions.tgss.creta.jaxb.request.calc</packageName> 
+							<packageName>net.aonsolutions.tgss.creta.jaxb.solicitud.calculos</packageName>
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
@@ -68,7 +76,7 @@
 						</goals>
 						<configuration>
 							<schemaFiles>Calculos.xsd</schemaFiles>
-							<packageName>net.aonsolutions.tgss.creta.jaxb.response.calc</packageName> 
+							<packageName>net.aonsolutions.tgss.creta.jaxb.calculos</packageName>
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
@@ -79,7 +87,7 @@
 						</goals>
 						<configuration>
 							<schemaFiles>SolicitudConfirmacion.xsd</schemaFiles>
-							<packageName>net.aonsolutions.tgss.creta.jaxb.request.confirm</packageName> 
+							<packageName>net.aonsolutions.tgss.creta.jaxb.solicitud.confirmacion</packageName>
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
@@ -90,7 +98,7 @@
 						</goals>
 						<configuration>
 							<schemaFiles>Respuesta.xsd</schemaFiles>
-							<packageName>net.aonsolutions.tgss.creta.jaxb.response</packageName> 
+							<packageName>net.aonsolutions.tgss.creta.jaxb.respuesta</packageName>
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
@@ -101,7 +109,7 @@
 						</goals>
 						<configuration>
 							<schemaFiles>Bases.xsd</schemaFiles>
-							<packageName>net.aonsolutions.tgss.creta.jaxb.response.bases</packageName> 
+							<packageName>net.aonsolutions.tgss.creta.jaxb.bases</packageName>
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
@@ -112,7 +120,7 @@
 						</goals>
 						<configuration>
 							<schemaFiles>DCL.xsd</schemaFiles>
-							<packageName>net.aonsolutions.tgss.creta.jaxb.response.dcl</packageName> 
+							<packageName>net.aonsolutions.tgss.creta.jaxb.dcl</packageName>
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
@@ -123,7 +131,7 @@
 						</goals>
 						<configuration>
 							<schemaFiles>RLC.xsd</schemaFiles>
-							<packageName>net.aonsolutions.tgss.creta.jaxb.response.rlc</packageName> 
+							<packageName>net.aonsolutions.tgss.creta.jaxb.rlc</packageName>
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
@@ -134,7 +142,7 @@
 						</goals>
 						<configuration>
 							<schemaFiles>RNT.xsd</schemaFiles>
-							<packageName>net.aonsolutions.tgss.creta.jaxb.response.rnt</packageName> 
+							<packageName>net.aonsolutions.tgss.creta.jaxb.rnt</packageName>
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
