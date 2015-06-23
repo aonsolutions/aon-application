@@ -1538,3 +1538,11 @@ input:disabled + label{
 	padding-right: 3px;
 	width: 155px;	
 }
+
+@sprite .aon-registro-mercantil-image {
+	gwt-image: "aonRegistroMercantilImage";
+}
+
+.aon-fiscal-registro-mercantil {
+	background-color:  #FA5858;
+}

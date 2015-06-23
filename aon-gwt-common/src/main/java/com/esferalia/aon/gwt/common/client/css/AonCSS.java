@@ -648,5 +648,10 @@ public interface AonCSS extends  CssResource {
 
 	@ClassName("aon-fiscal-model-data-table-data")
 	String aonFiscalModelDataTableData();
-
+	
+	@ClassName("aon-registro-mercantil-image")
+	String aonRegistroMercantilImage();
+	
+	@ClassName("aon-fiscal-registro-mercantil")
+	String aonFiscalRegistroMercantil();
 }

@@ -1,13 +1,14 @@
 package com.esferalia.aon.gwt.fiscal.client.normalizedMemory;
 
-import java.util.Vector;
-
 import gwtupload.client.IFileInput.FileInputType;
 import gwtupload.client.IUploader;
 import gwtupload.client.IUploader.OnFinishUploaderHandler;
 import gwtupload.client.IUploader.OnStartUploaderHandler;
 import gwtupload.client.SingleUploader;
 
+import java.util.Vector;
+
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
@@ -18,7 +19,6 @@ import com.esferalia.aon.gwt.fiscal.client.tree.node.DigitalDepositTreeNode;
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
 import com.esferalia.aon.gwt.fiscal.shared.MemoryTemplate;
 import com.esferalia.aon.occam.api.model.Enterprise;
-import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.DBConsults;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -29,12 +29,14 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FileUpload;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -80,6 +82,7 @@ public class NormalizedMemory extends ResizeComposite {
 
 	@UiField Button importTextButton;
 	
+	@UiField SimplePanel headerPanel;
 	
 	@UiField
 	Anchor download;							
@@ -114,6 +117,7 @@ public class NormalizedMemory extends ResizeComposite {
 		this.page = page;
 		this.textMode = false;
 		
+		headerPanel = new SimplePanel();
 		pagesPanel = new FlowPanel();
 		
 		Widget ui = MODEL_NORMALIZED_MEMORY_BINDER.createAndBindUi(this);
@@ -151,6 +155,7 @@ public class NormalizedMemory extends ResizeComposite {
 		this.memoryTemplate = mt;
 		
 		pagesPanel = new FlowPanel();
+		headerPanel = new SimplePanel();
 		
 		Widget ui = MODEL_NORMALIZED_MEMORY_BINDER.createAndBindUi(this);
 		initWidget(ui);
@@ -187,6 +192,7 @@ public class NormalizedMemory extends ResizeComposite {
 		this.textMode = false;
 		enterprise = e;
 		pagesPanel = new FlowPanel();
+		headerPanel = new SimplePanel();
 		
 		Widget ui = MODEL_NORMALIZED_MEMORY_BINDER.createAndBindUi(this);
 		initWidget(ui);
@@ -216,6 +222,7 @@ public class NormalizedMemory extends ResizeComposite {
 		
 		enterprise = e;
 		pagesPanel = new FlowPanel();
+		headerPanel = new SimplePanel();
 		
 		Widget ui = MODEL_NORMALIZED_MEMORY_BINDER.createAndBindUi(this);
 		initWidget(ui);
@@ -314,6 +321,7 @@ public class NormalizedMemory extends ResizeComposite {
 				public void onSuccess(Void result) {
 					saveButton.setEnabled(false);
 					cancelButton.setVisible(false);
+					update();
 				}
 				
 				@Override
@@ -617,35 +625,35 @@ public class NormalizedMemory extends ResizeComposite {
 			break;
 		case "MAT1":
 			FreeText ft = (FreeText) pagesPanel.getWidget(0);
-			ft.init();
+			ft.dump(ft.d2DepositObject, "MAT1");
 			break;
 		case "MAT2":
 			FreeText ft2 = (FreeText) pagesPanel.getWidget(0);
-			ft2.init();
+			ft2.dump(ft2.d2DepositObject, "MAT2");
 			break;
 		case "MAT3":
 			FreeText ft3 = (FreeText) pagesPanel.getWidget(0);
-			ft3.init();
+			ft3.dump(ft3.d2DepositObject, "MAT3");
 			break;
 		case "MA3":
-			Paragraph3_2 p32 = (Paragraph3_2) pagesPanel.getWidget(0);
-			p32.init();
+			PageM3_2 p32 = (PageM3_2) pagesPanel.getWidget(0);
+			p32.dump(p32.d2DepositObject, "MA3");
 			break;
 		case "MAT4":
 			FreeText ft4 = (FreeText) pagesPanel.getWidget(0);
-			ft4.init();
+			ft4.dump(ft4.d2DepositObject, "MAT4");
 			break;
 		case "MAT5":
 			FreeText ft5 = (FreeText) pagesPanel.getWidget(0);
-			ft5.init();
+			ft5.dump(ft5.d2DepositObject, "MAT5");;
 			break;
 		case "MA5":
-			Paragraph5_2 p52 = (Paragraph5_2) pagesPanel.getWidget(0);
-			p52.init();
+			PageM5_2 p52 = (PageM5_2) pagesPanel.getWidget(0);
+			p52.dump(p52.d2DepositObject, "MA3");;
 			break;
 		case "MAT6":
 			FreeText ft6 = (FreeText) pagesPanel.getWidget(0);
-			ft6.init();
+			ft6.dump(ft6.d2DepositObject, "MAT6");
 			break;
 		case "MA6":
 			Paragraph6_2 p62= (Paragraph6_2) pagesPanel.getWidget(0);
@@ -654,7 +662,7 @@ public class NormalizedMemory extends ResizeComposite {
 			
 		case "MAT7":
 			FreeText ft7 = (FreeText) pagesPanel.getWidget(0);
-			ft7.init();
+			ft7.dump(ft7.d2DepositObject, "MAT7");
 			break;
 		case "MA7":
 			Paragraph7_2 p72 = (Paragraph7_2) pagesPanel.getWidget(0);
@@ -662,11 +670,11 @@ public class NormalizedMemory extends ResizeComposite {
 			break;
 		case "MAT8":
 			FreeText ft8 = (FreeText) pagesPanel.getWidget(0);
-			ft8.init();
+			ft8.dump(ft8.d2DepositObject, "MAT8");
 			break;
 		case "MAT9":
 			FreeText ft9 = (FreeText) pagesPanel.getWidget(0);
-			ft9.init();
+			ft9.dump(ft9.d2DepositObject, "MAT9");
 			break;
 		case "MA10":
 			Paragraph10 p10 = (Paragraph10) pagesPanel.getWidget(0);
@@ -674,7 +682,7 @@ public class NormalizedMemory extends ResizeComposite {
 			break;
 		case "MAT11":
 			FreeText ft11 = (FreeText) pagesPanel.getWidget(0);
-			ft11.init();
+			ft11.dump(ft11.d2DepositObject, "MAT11");
 			break;
 		case "MA11":
 			Paragraph11_2 p112 = (Paragraph11_2) pagesPanel.getWidget(0);
@@ -682,7 +690,7 @@ public class NormalizedMemory extends ResizeComposite {
 			break;
 		case "MAT12":
 			FreeText ft12 = (FreeText) pagesPanel.getWidget(0);
-			ft12.init();
+			ft12.dump(ft12.d2DepositObject, "MAT12");
 			break;
 		case "MA12":
 			Paragraph12_2 p122 = (Paragraph12_2) pagesPanel.getWidget(0);
@@ -690,7 +698,7 @@ public class NormalizedMemory extends ResizeComposite {
 			break;
 		case "MAT13":
 			FreeText ft13 = (FreeText) pagesPanel.getWidget(0);
-			ft13.init();
+			ft13.dump(ft13.d2DepositObject, "MAT13");
 			break;
 		case "MA13":
 			Paragraph13_2 p132 = (Paragraph13_2) pagesPanel.getWidget(0);
@@ -698,7 +706,7 @@ public class NormalizedMemory extends ResizeComposite {
 			break;
 		case "MAT14":
 			FreeText ft14 = (FreeText) pagesPanel.getWidget(0);
-			ft14.init();
+			ft14.dump(ft14.d2DepositObject, "MAT14");
 			break;
 		case "MA14":
 			Paragraph14_2 p142 = (Paragraph14_2) pagesPanel.getWidget(0);
@@ -713,7 +721,34 @@ public class NormalizedMemory extends ResizeComposite {
 		}
 	}
 	
-	
+	public void paintHeaderTable(String text) {
+		headerPanel.setStyleName(AON.AON_CSS.aonWidthAll());
+		
+		FlexTable headerTable = new FlexTable();
+		headerTable.setStyleName(AON.AON_CSS.aonFiscalModelTable());
+		
+		Label image = new Label("");
+		image.setStyleName(AON.AON_CSS.aonRegistroMercantilImage());
+		
+		headerTable.setWidget(0, 0, image);
+		headerTable.getFlexCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonFiscalModelTableHeaderImage());
+		headerTable.getFlexCellFormatter().setRowSpan(0, 0, 2);
+		
+		headerTable.setWidget(0, 1, new Label(text));
+		headerTable.getFlexCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
+		headerTable.getFlexCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonFiscalRegistroMercantil());
+		headerTable.getFlexCellFormatter().setRowSpan(0, 1, 2);
+		
+		headerTable.setWidget(0, 2, new Label("D2"));
+		headerTable.getFlexCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonFiscalModelTableHeaderModel());
+		headerTable.getFlexCellFormatter().addStyleName(0, 2, AON.AON_CSS.aonFiscalRegistroMercantil());
+		
+		headerTable.setWidget(1, 0, new Label("2014"));
+		headerTable.getFlexCellFormatter().setStyleName(1, 0, AON.AON_CSS.aonFiscalModelTableHeaderModel());
+		headerTable.getFlexCellFormatter().addStyleName(1, 0, AON.AON_CSS.aonFiscalRegistroMercantil());
+		
+		headerPanel.setWidget(headerTable);
+	}
 	
 
 }
