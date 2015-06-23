@@ -75,6 +75,7 @@ public class DownloadStockServlet extends HttpServlet {
         String types = p_request.getParameter("types");
         String quantity = p_request.getParameter("quantity");
         String close_inventory = p_request.getParameter("close");
+        String only_non_cero = p_request.getParameter("only_non_cero");
         
         Boolean closeInventory = close_inventory.equals("true");
         Integer domainId = Integer.parseInt(domain_id);
@@ -288,7 +289,7 @@ public class DownloadStockServlet extends HttpServlet {
         	v= DBStock.getInventoryClosed(domain, domainId, inventoryId, c2);
         }
         else
-        	v= DBStock.getStocks(domain,domainId,w.getId(),c);
+        	v= DBStock.getStocks(domain,domainId,w.getId(),c,"1".equals(only_non_cero));
 
         for(Integer j = 0; j< v.size();j++){
         	Row row = hoja.createRow(j+2);

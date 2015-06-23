@@ -58,6 +58,7 @@ import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSe
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
@@ -1235,6 +1236,9 @@ public class Templates extends Composite implements EntryPoint {
 				}
 				ListBox lb2 = (ListBox) flex_table.getWidget(1, 1);
 				String warehouse = lb2.getItemText(lb2.getSelectedIndex());
+
+				CheckBox cb = (CheckBox) flex_table.getWidget(2, 0);
+				int onlyNonCero = cb.getValue() ? 1 : 0;
 				
 				String driveId="";
 				if(ti.getDriveId()!=null)driveId= ti.getDriveId();
@@ -1257,7 +1261,8 @@ public class Templates extends Composite implements EntryPoint {
 						+ "&types="+ei.getTypes()
 						+ "&quantity="+ei.getQuantity()
 						+ "&close="+closeInventory
-						+ "&inventory="+ ei.getInventory();
+						+ "&inventory="+ ei.getInventory()
+						+ "&only_non_cero="+ onlyNonCero;
 				
 				Window.open( fileDownloadURL, "_blank",null);
 				hide();

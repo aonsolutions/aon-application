@@ -37,6 +37,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FormHandler;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -513,6 +514,13 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		}
 		flex_table.setWidget(1, 0, new Label("Almac\u00e9n"));
 		flex_table.setWidget(1, 1, lb2);
+		
+		CheckBox cb = new CheckBox();
+		cb.setValue(true);
+		
+		flex_table.setWidget(2, 0, cb);		
+		flex_table.setWidget(2, 1, new Label("Incluir \u00FAnicamente productos con cantidad distinta de cero"));
+		
 		flexTableCss();
 	}
 	

@@ -60,7 +60,7 @@ public class DownloadConsumptionServlet extends HttpServlet {
         Long finalDate2 = Long.parseLong(final_date);
         Long initialDate2 = Long.parseLong(initial_date);
         
-        boolean onlyNegative = Boolean.parseBoolean(only_negative);
+        boolean onlyNegative = "1".equals(only_negative);
       
         Date initialDate = new Date(initialDate2);
         Date finalDate = new Date(finalDate2);

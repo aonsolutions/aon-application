@@ -35,15 +35,13 @@ import org.jooq.Record4;
 import org.jooq.Record5;
 import org.jooq.Record6;
 import org.jooq.Result;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.company.Department;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Series;
-import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
+import com.code.aon.product.enumeration.ProductStatus;
 import com.esferalia.aon.gwt.template.server.AuditInfo;
 import com.esferalia.aon.gwt.template.server.ProposalInfo;
 import com.esferalia.aon.gwt.template.server.StockInfo;
@@ -556,8 +554,8 @@ public class DBStock {
 			if (ctx != null) ctx.close();	
 		}
 	}
-	
-	public static Vector<StockInfo> getStocks(String domain, Integer domainId,Integer wid, Condition c) {
+
+	public static Vector<StockInfo> getStocks(String domain, Integer domainId,Integer wid, Condition c, boolean onlyNonCero) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
@@ -580,25 +578,29 @@ public class DBStock {
 				
 			Vector<StockInfo> v = new Vector<StockInfo>();
 			for (Record5<Integer, Integer, Integer, Double, Integer> d : data) {
-				StockInfo si = new StockInfo();
 				Item i = getItem(ctx.getDslContext(),domain,d.value2());
-				si.setDetail(i.getDetail());
-				si.setDetail2(i.getDetail2());
-				si.setDetail3(i.getDetail3());
-				if(i.getBarcode()!= null) si.setProduct(i.getBarcode());
-				else {
-					si.setProduct(i.getProduct().getCode());
+				if ( (d.value4() == 0) && ((i.getStatus() == ProductStatus.DISCONTINUED) || (!i.getProduct().isInventoriable()) ) ) {
+					ctx.getDslContext().delete(STOCK).where(STOCK.ID.equal(d.value1()));
+				} else if ( !onlyNonCero || (d.value4() != 0) ) {
+					StockInfo si = new StockInfo();
+					si.setDetail(i.getDetail());
+					si.setDetail2(i.getDetail2());
+					si.setDetail3(i.getDetail3());
+					if(i.getBarcode()!= null) si.setProduct(i.getBarcode());
+					else {
+						si.setProduct(i.getProduct().getCode());
+					}
+					
+					si.setQuantity(d.value4());
+					String[] s = getWarehouseComments(ctx.getDslContext(), d.value3());
+					Series ss = new Series();ss.setCode(s[1]);
+					//si.setSeries(ss);
+					//si.setComments(s[0]);
+					//si.setTargetWarehouse(getWarehouse(dslContext, d.value3()));
+					si.setProductId(d.value5());
+					si.setProductName(i.getProduct().getName());
+					v.add(si);					
 				}
-				
-				si.setQuantity(d.value4());
-				String[] s = getWarehouseComments(ctx.getDslContext(), d.value3());
-				Series ss = new Series();ss.setCode(s[1]);
-				//si.setSeries(ss);
-				//si.setComments(s[0]);
-				//si.setTargetWarehouse(getWarehouse(dslContext, d.value3()));
-				si.setProductId(d.value5());
-				si.setProductName(i.getProduct().getName());
-				v.add(si);
 			}
 			return v;
 		} finally {
@@ -657,7 +659,7 @@ public class DBStock {
 	
 	public static Item getItem(DSLContext dslContext, String domain, Integer id ){
 		
-		Result<Record5<String, String, String, String, Integer>> data = dslContext.select(ITEM.BARCODE, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3,ITEM.PRODUCT)
+		Result<Record6<String, String, String, String, Integer, Byte>> data = dslContext.select(ITEM.BARCODE, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3, ITEM.PRODUCT, ITEM.STATUS)
 			.from(ITEM)
 			.where(ITEM.ID.eq(id)).fetch();
 		
@@ -671,6 +673,7 @@ public class DBStock {
 		else i.setDetail3("");
 		Product p = getProduct(dslContext, data.get(0).value5());
 		i.setProduct(p);
+		i.setStatus( ProductStatus.values()[data.get(0).value6()] );
 		
 		return i;
 		
@@ -679,7 +682,7 @@ public class DBStock {
 
 	public static Product getProduct(DSLContext dslContext, Integer id ){
 		
-		Result<Record2<String,String>> data = dslContext.select(PRODUCT.CODE,PRODUCT.NAME)
+		Result<Record3<String,String,Byte>> data = dslContext.select(PRODUCT.CODE,PRODUCT.NAME,PRODUCT.INVENTORIABLE)
 			.from(PRODUCT)
 			.where(PRODUCT.ID.eq(id)).fetch();
 		
@@ -687,6 +690,7 @@ public class DBStock {
 		p.setId(id);
 		p.setCode(data.get(0).value1());
 		p.setName(data.get(0).value2());
+		p.setInventoriable(data.get(0).value3()==1);
 		return p;
 		
 	}
