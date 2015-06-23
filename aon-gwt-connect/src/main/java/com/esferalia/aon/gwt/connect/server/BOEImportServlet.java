@@ -168,19 +168,25 @@ public class BOEImportServlet extends HttpServlet {
 
 			String enterDocument = mod200.getEnterpriseDocument();
 			String enterName = mod200.getEnterpriseName();
-
-			if (AON.existDomain(domainName, parentDomain, enterDocument) == false) {
-				Domain createDomain = AON.insertDomain(domainName,
+			
+			try {
+				
+				Domain domain = AON.insertDomain(domainName,
 						parentDomain, enterDocument, enterName);
+				
 				Company company = AON.getCompanyForDomain(
-						createDomain.getName(), createDomain.getId());
+						domain.getName(), domain.getId());
 				int enterpriseID = company.getId();
 
-				mod200.setDomain(createDomain.getId());
+				mod200.setDomain(domain.getId());
 				mod200.setEnterprise(enterpriseID);
-				AON.saveMod2002013(createDomain.getName(),
-						createDomain.getId(), mod200);
+				AON.saveMod2002013(domain.getName(),
+						domain.getId(), mod200);
+				
+			} catch (Exception ex) {
+				
 			}
+			
 
 		}
 	}

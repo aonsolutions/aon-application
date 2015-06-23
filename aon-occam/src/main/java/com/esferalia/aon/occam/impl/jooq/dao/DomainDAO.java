@@ -8,6 +8,8 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.util.Date;
 
+import org.jooq.Record;
+
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
@@ -15,19 +17,30 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 
 public class DomainDAO {
-	
-	public static boolean existDomain (AONContext ctx, String document) {
-		
-		//EL DOMINIO YA EXISTE ?????		
-		RegistryRecord registry = ctx.getDslContext().selectFrom(REGISTRY)
-				.where(REGISTRY.DOCUMENT.eq(document))
-				.fetchOne();
-		
-		return registry != null;
-	}
 
 	public static Domain insertDomain(AONContext ctx, Integer parentDomain,
 			String document, String name) {
+		
+		Domain domain = null;
+
+			Record domainRecord = ctx.getDslContext()
+					.select()
+					.from(DOMAIN.join(REGISTRY).on(DOMAIN.ID.eq(REGISTRY.DOMAIN))
+							.join(COMPANY).on(REGISTRY.ID.eq(COMPANY.REGISTRY)))
+							.where(REGISTRY.DOCUMENT.eq(document).and(DOMAIN.PARENT.eq(parentDomain)))
+							.fetchAny();
+			
+			if (domainRecord != null) {
+				
+				domain = new Domain();
+				
+				domain.setId(domainRecord.getValue(DOMAIN.ID));
+				domain.setName(domainRecord.getValue(DOMAIN.NAME));
+				domain.setParentId(domainRecord.getValue(DOMAIN.PARENT));
+				
+				return domain;
+			}
+
 
 		DomainRecord parent = getParentDomain(ctx, parentDomain);
 
@@ -36,63 +49,57 @@ public class DomainDAO {
 
 		// DOMAIN
 
-		int newDomainId = ctx.getDslContext()
+		int newDomainId = ctx
+				.getDslContext()
 				.insertInto(DOMAIN)
 				.set(DOMAIN.CREATION_USER,
 						parent.getValue(DOMAIN.CREATION_USER))
 				.set(DOMAIN.CREATION_DATE,
-						new java.sql.Timestamp(new Date().getTime()))
+						new java.sql.Timestamp(System.currentTimeMillis()))
 				.set(DOMAIN.DOMAINMANAGEMENT, (byte) 0)
 				.set(DOMAIN.TYPE, (byte) 0)
 				.set(DOMAIN.PARENT, parent.getValue(DOMAIN.ID))
 				.set(DOMAIN.OWNER, parent.getValue(DOMAIN.OWNER))
-				.set(DOMAIN.NAME, lowerDocument)
-				.set(DOMAIN.DESCRIPTION, name)
+				.set(DOMAIN.NAME, lowerDocument).set(DOMAIN.DESCRIPTION, name)
 				.set(DOMAIN.ENABLEHEREDITY, (byte) 1)
-				.set(DOMAIN.MAXDEFINEDUSERS, 0)
-				.set(DOMAIN.MAXDOCUMENTSIZE, 1)
-				.set(DOMAIN.MAXTOTALDOCUMENTSIZE, 16)
-				.returning(DOMAIN.ID).fetchOne().getId();
-		
+				.set(DOMAIN.MAXDEFINEDUSERS, 0).set(DOMAIN.MAXDOCUMENTSIZE, 1)
+				.set(DOMAIN.MAXTOTALDOCUMENTSIZE, 16).returning(DOMAIN.ID)
+				.fetchOne().getId();
+
 		ctx.getDslContext().insertInto(DOMAIN_APPLICATION)
-		.set(DOMAIN_APPLICATION.DOMAIN, newDomainId)
-		.set(DOMAIN_APPLICATION.APPLICATION, 28)
-		.set(DOMAIN_APPLICATION.ACTIVE, (byte) 1)
-		.set(DOMAIN_APPLICATION.AUDIT_LEVEL, (byte) 0)
-		.execute();
-		
+				.set(DOMAIN_APPLICATION.DOMAIN, newDomainId)
+				.set(DOMAIN_APPLICATION.APPLICATION, 28)
+				.set(DOMAIN_APPLICATION.ACTIVE, (byte) 1)
+				.set(DOMAIN_APPLICATION.AUDIT_LEVEL, (byte) 0).execute();
+
 		int newRegistryId = ctx.getDslContext().insertInto(REGISTRY)
-		.set(REGISTRY.DOMAIN, newDomainId)
-		.set(REGISTRY.DOCUMENT, document)
-		.set(REGISTRY.DOCUMENT_TYPE, (byte)0)
-		.set(REGISTRY.NAME, name)
-		.set(REGISTRY.TYPE, (byte)1)
-		.returning(REGISTRY.ID).fetchOne().getId();
-		
+				.set(REGISTRY.DOMAIN, newDomainId)
+				.set(REGISTRY.DOCUMENT, document)
+				.set(REGISTRY.DOCUMENT_TYPE, (byte) 0).set(REGISTRY.NAME, name)
+				.set(REGISTRY.TYPE, (byte) 1).returning(REGISTRY.ID).fetchOne()
+				.getId();
+
 		ctx.getDslContext().insertInto(COMPANY)
-		.set(COMPANY.REGISTRY, newRegistryId)
-		.set(COMPANY.DOMAIN, newDomainId)
-		.execute();
-		
+				.set(COMPANY.REGISTRY, newRegistryId)
+				.set(COMPANY.DOMAIN, newDomainId).execute();
+
 		EnterpriseRecord registryRecord = ctx.getDslContext()
 				.selectFrom(ENTERPRISE)
-				.where(ENTERPRISE.DOMAIN.eq(parentDomain))
-				.fetchAny();
-		
-		ctx.getDslContext().insertInto(ENTERPRISE)
-		.set(ENTERPRISE.REGISTRY, newRegistryId)
-		.set(ENTERPRISE.DOMAIN, newDomainId)
-		.set(ENTERPRISE.SCOPE, registryRecord.getValue(ENTERPRISE.SCOPE))
-		.execute();
-		
-		Domain myDomain = new Domain();
-		myDomain.setId(newDomainId);
-		myDomain.setName(lowerDocument);
-		myDomain.setParentId(parent.getValue(DOMAIN.ID));
-		
-		return myDomain;
-		
-		
+				.where(ENTERPRISE.DOMAIN.eq(parentDomain)).fetchAny();
+
+		ctx.getDslContext()
+				.insertInto(ENTERPRISE)
+				.set(ENTERPRISE.REGISTRY, newRegistryId)
+				.set(ENTERPRISE.DOMAIN, newDomainId)
+				.set(ENTERPRISE.SCOPE,
+						registryRecord.getValue(ENTERPRISE.SCOPE)).execute();
+
+		domain = new Domain();
+		domain.setId(newDomainId);
+		domain.setName(lowerDocument);
+		domain.setParentId(parent.getValue(DOMAIN.ID));
+
+		return domain;
 
 	}
 

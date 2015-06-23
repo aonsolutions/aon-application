@@ -27,7 +27,7 @@
 	<set-configuration-property name="locale.useragent"
 		value="Y" />
 
-	<entry-point class='com.esferalia.aon.gwt.connect.client.DSIImportForm' />
+	<entry-point class='com.esferalia.aon.gwt.connect.client.MainEntryPoint' />
 
 	<source path='client' />
 	<source path='shared' />

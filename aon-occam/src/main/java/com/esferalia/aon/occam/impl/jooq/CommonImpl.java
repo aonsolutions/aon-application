@@ -79,10 +79,6 @@ public class CommonImpl implements ICommon {
 	// ------------------ DOMAIN
 	
 	@Override
-	public boolean existDomain(AONContext ctx, String document) {		
-		return DomainDAO.existDomain(ctx, document);
-	}
-	@Override
 	public Domain insertDomain(AONContext ctx, Integer parentDomain, String document, String name) {
 		return DomainDAO.insertDomain(ctx, parentDomain, document, name);
 		

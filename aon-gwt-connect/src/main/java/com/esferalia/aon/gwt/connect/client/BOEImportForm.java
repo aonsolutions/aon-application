@@ -109,14 +109,15 @@ public class BOEImportForm extends Composite implements EntryPoint {
 
 	protected void initFileUpload() {
 
-		uploadFormPanel.clear();
+		uploadFormPanel.clear();		
 		fileUpload = new SingleUploader(
 				FileInputType.BROWSER_INPUT.with(FileInputType.LABEL
 						.getInstance()));
-
-		uploadFormPanel.add(fileUpload);
-
+		
 		fileUpload.setAutoSubmit(true);
+		
+		uploadFormPanel.add(fileUpload);
+		
 		fileUpload.setServletPath(GWT.getModuleBaseURL() + "?" + URL);
 		fileUpload.getForm().setAction(URL);
 		fileUpload.avoidEmptyFiles(true);
@@ -126,17 +127,18 @@ public class BOEImportForm extends Composite implements EntryPoint {
 		fileUpload.addOnStartUploadHandler(onStartUploaderHandler);
 		fileUpload.addOnFinishUploadHandler(onFinishUploaderHandler);
 		fileUpload.addOnCancelUploadHandler(OnCancelUploaderHandler);		
-
+		
+		
 		fileUpload.getForm().addSubmitCompleteHandler(
 				new SubmitCompleteHandler() {
 
 					@Override
 					public void onSubmitComplete(SubmitCompleteEvent event) {						
-						fileUpload.getStatusWidget().setProgress(100, 100);										
-						
-						fileUpload.getStatusWidget().setStatus(Status.SUCCESS);						
+						fileUpload.getStatusWidget().setProgress(100, 100);							
+						fileUpload.getStatusWidget().setStatus(Status.SUCCESS);
+						Window.alert("Datos importados correctamente");
 					}
-				});
+				});		
 	}
 
 	// ====================================================================
