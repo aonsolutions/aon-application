@@ -9,11 +9,13 @@ import com.esferalia.aon.occam.api.ICommon;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
 
 public class CommonImpl implements ICommon {
@@ -73,5 +75,17 @@ public class CommonImpl implements ICommon {
 	public Map<Integer, String[]> getProductTagMap(AONContext ctx) {
 		return ProductDAO.getProductTagMap(ctx);
 	}
-
+	
+	// ------------------ DOMAIN
+	
+	@Override
+	public boolean existDomain(AONContext ctx, String document) {		
+		return DomainDAO.existDomain(ctx, document);
+	}
+	@Override
+	public Domain insertDomain(AONContext ctx, Integer parentDomain, String document, String name) {
+		return DomainDAO.insertDomain(ctx, parentDomain, document, name);
+		
+	
+	}
 }
