@@ -10,6 +10,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
@@ -76,6 +79,7 @@ import com.google.gwt.view.client.SingleSelectionModel;
 public class Templates extends Composite implements EntryPoint {
 
 	private static final String SILENT = "silent";
+	private static final Logger LOGGER = LoggerFactory.getLogger(Templates.class);
 	
 	class DocumentContextMenu extends ContextMenu {
 
@@ -208,14 +212,18 @@ public class Templates extends Composite implements EntryPoint {
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						LOGGER.error("Templates.java line 216 - " + caught.toString());
+					}
 				});
 				
 				
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {}
+			public void onFailure(Throwable caught) {
+				LOGGER.error(caught.toString());
+			}
 		});
 	}
 	
@@ -244,6 +252,11 @@ public class Templates extends Composite implements EntryPoint {
 			exportInventoryx(this);
 			exportIncomex(this);
 		}
+		
+		Widget ui = binder.createAndBindUi(this);
+		
+		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		root.add(ui);
 	}
 	
 	public void Load() {
@@ -647,7 +660,9 @@ public class Templates extends Composite implements EntryPoint {
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						LOGGER.error( caught.toString());
+					}
 				});
 			}
 		};
@@ -679,7 +694,9 @@ public class Templates extends Composite implements EntryPoint {
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						LOGGER.error(caught.toString());
+					}
 				});
 			}
 		};
@@ -747,13 +764,15 @@ public class Templates extends Composite implements EntryPoint {
 									
 									@Override
 									public void onFailure(Throwable caught) {
-										Window.alert(caught.toString());
+										LOGGER.error(caught.toString());
 									}
 								});
 							}
 					}
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						LOGGER.error(caught.toString());
+					}
 					
 				});
 			}
@@ -828,14 +847,16 @@ public class Templates extends Composite implements EntryPoint {
 									
 									@Override
 									public void onFailure(Throwable caught) {
-										Window.alert(caught.toString());
+										LOGGER.error(caught.toString());
 									}
 								});
 							}					
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						LOGGER.error(caught.toString());
+					}
 				});
 			}
 		};
@@ -993,7 +1014,7 @@ public class Templates extends Composite implements EntryPoint {
 							
 							@Override
 							public void onFailure(Throwable caught) {
-								Window.alert(caught.toString());
+								LOGGER.error(caught.toString());
 							}
 						});
 						}
@@ -1022,7 +1043,7 @@ public class Templates extends Composite implements EntryPoint {
 								
 								@Override
 								public void onFailure(Throwable caught) {
-									Window.alert(caught.toString());
+									LOGGER.error(caught.toString());
 								}
 							});
 						}
@@ -1031,7 +1052,7 @@ public class Templates extends Composite implements EntryPoint {
 					
 					@Override
 					public void onFailure(Throwable caught) {
-						Window.alert(caught.getMessage());
+						LOGGER.error(caught.toString());
 					}
 				});
 				
@@ -1156,7 +1177,7 @@ public class Templates extends Composite implements EntryPoint {
 							
 								@Override
 								public void onFailure(Throwable caught) {
-									Window.alert(caught.toString());
+									LOGGER.error(caught.toString());
 								}	
 							});
 						}
@@ -1185,7 +1206,7 @@ public class Templates extends Composite implements EntryPoint {
 								
 								@Override
 								public void onFailure(Throwable caught) {
-									Window.alert(caught.toString());
+									LOGGER.error(caught.toString());
 								}
 							});
 						}
@@ -1194,7 +1215,7 @@ public class Templates extends Composite implements EntryPoint {
 					
 					@Override
 					public void onFailure(Throwable caught) {
-						Window.alert(caught.getMessage());
+						LOGGER.error(caught.toString());
 					}
 				});
 			}
@@ -1434,7 +1455,7 @@ public class Templates extends Composite implements EntryPoint {
 									
 									@Override
 									public void onFailure(Throwable caught) {
-										Window.alert(caught.toString());
+										LOGGER.error(caught.toString());
 									}
 								});
 							}		
@@ -1463,14 +1484,16 @@ public class Templates extends Composite implements EntryPoint {
 									
 									@Override
 									public void onFailure(Throwable caught) {
-										Window.alert(caught.toString());
+										LOGGER.error(caught.toString());
 									}
 								});
 							}
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						LOGGER.error(caught.toString());
+					}
 				});
 			}
 		};
@@ -1732,7 +1755,7 @@ public class Templates extends Composite implements EntryPoint {
 
 					@Override
 					public void onFailure(Throwable caught) {
-
+						LOGGER.error(caught.toString());
 					}
 				});
 	}
@@ -1757,7 +1780,7 @@ public class Templates extends Composite implements EntryPoint {
 
 					@Override
 					public void onFailure(Throwable caught) {
-
+						LOGGER.error(caught.toString());
 					}
 				});
 	}
@@ -1805,7 +1828,9 @@ public class Templates extends Composite implements EntryPoint {
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						LOGGER.error(caught.toString());
+					}
 				});
 			
 				
@@ -1935,7 +1960,9 @@ public class Templates extends Composite implements EntryPoint {
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {}
+			public void onFailure(Throwable caught) {
+				LOGGER.error(caught.toString());
+			}
 		});
 	}
 	
@@ -1989,7 +2016,9 @@ public class Templates extends Composite implements EntryPoint {
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {}
+			public void onFailure(Throwable caught) {
+				LOGGER.error(caught.toString());
+			}
 		});
 	}
 	
@@ -2071,7 +2100,9 @@ public class Templates extends Composite implements EntryPoint {
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {}
+			public void onFailure(Throwable caught) {
+				LOGGER.error(caught.toString());
+			}
 		});
 	}
 	
