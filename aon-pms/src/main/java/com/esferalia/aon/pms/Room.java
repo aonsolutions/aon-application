@@ -1,5 +1,6 @@
 package com.esferalia.aon.pms;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,6 +10,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.asset.AssetActivity;
 import com.code.aon.asset.AssetFeature;
@@ -20,6 +23,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.RoomDB;
+import com.esferalia.aon.pms.enumeration.RoomStatus;
 
 @Entity
 @Table(name="room")
@@ -30,6 +34,7 @@ public class Room extends RoomDB implements IAsset{
 	private Set<AssetFeature> features = new HashSet<AssetFeature>();
 
 	public Room() {
+		setStatus(RoomStatus.DIRTY);
 		setActive(true);
 	}
 
@@ -40,6 +45,11 @@ public class Room extends RoomDB implements IAsset{
 	}
 	public void setFeatures(Set<AssetFeature> features) {
 		this.features = features;
+	}
+
+	@Transient
+	public boolean isCleanRoom() throws ManagerBeanException {
+		return DateUtils.isSameDay(getLastCleaningDate(), new Date()) && getStatus() == RoomStatus.CLEAN;
 	}
 
 	@Transient

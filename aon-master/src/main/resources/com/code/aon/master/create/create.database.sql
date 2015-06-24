@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.26.0
+# Version: 8.26.1
 # Created by: girazu
-# Creation Date: 19/06/2015 12:40
+# Creation Date: 24/06/2015 18:30
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -5818,6 +5818,7 @@ CREATE TABLE `mail_account` (
   `display_name` varchar(256) collate latin1_spanish_ci default NULL COMMENT 'Mostrar como',
   `signature` int(4) default NULL COMMENT 'Identificador de la Firma',
   `user_id` int(4) default NULL COMMENT 'Identificador del Usuario',
+  `type` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de la Cuenta de Correo',
   PRIMARY KEY  (`id`),
   KEY `IDX_MAIL_ACCOUNT_SIGNATURE` (`signature`),
   KEY `IDX_MAIL_ACCOUNT_DOMAIN` (`domain`),
@@ -7029,6 +7030,8 @@ CREATE TABLE `room` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `hotel` int(4) NOT NULL COMMENT 'Identificador del Hotel',
   `item` int(4) NOT NULL COMMENT 'Identificador del Producto',
+  `status` tinyint(2) NOT NULL default '1' COMMENT 'Estado de la Habitacion',
+  `last_cleaning_date` datetime default NULL COMMENT 'Ultima fecha de limpieza',
   `active` tinyint(1) NOT NULL default '1' COMMENT 'Indica si la Habitacion esta activa o no',
   PRIMARY KEY  (`asset`),
   KEY `IDX_ROOM_DOMAIN` (`domain`),
@@ -7969,7 +7972,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.26.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.26.1');
 
 COMMIT;
 

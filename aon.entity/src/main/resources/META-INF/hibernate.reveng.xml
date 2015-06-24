@@ -1395,6 +1395,7 @@
 		<primary-key>
 			<key-column name="asset" property="id" type="java.lang.Integer"/>
 		</primary-key>
+		<column name="status" type="com.esferalia.aon.pms.enumeration.RoomStatus"/>
 	</table>
 
 	<table name="rpaymethod" class="com.esferalia.aon.entity.master.RegistryPayMethod">
