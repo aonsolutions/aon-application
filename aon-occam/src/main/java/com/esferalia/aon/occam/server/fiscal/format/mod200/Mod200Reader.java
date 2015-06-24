@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.DoubleVariable2013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013.BalanceType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -2186,6 +2187,31 @@ public class Mod200Reader {
 			// Creamos el objeto Mod200 donde importaremos todos los datos del fichero
 			Mod2002013 mod200 = new Mod2002013();
 			Paginas.fill(doc, mod200);
+
+			DoubleVariable2013 bv = new DoubleVariable2013( Mod2002013Key.C0050 );
+			bv.setValue((mod200.getBalanceType() == BalanceType.NORMAL));
+			mod200.addVariable(bv);
+			
+			bv = new DoubleVariable2013( Mod2002013Key.C0051 );
+			bv.setValue((mod200.getBalanceType() == BalanceType.ABREVIADO));
+			mod200.addVariable(bv);
+			
+			bv = new DoubleVariable2013( Mod2002013Key.C0052 );
+			bv.setValue((mod200.getBalanceType() == BalanceType.PYMES));
+			mod200.addVariable(bv);
+				
+			bv = new DoubleVariable2013( Mod2002013Key.C0053 );
+			bv.setValue((mod200.getBalanceType() == BalanceType.NORMAL));
+			mod200.addVariable(bv);
+			
+			bv = new DoubleVariable2013( Mod2002013Key.C0054 );
+			bv.setValue((mod200.getBalanceType() == BalanceType.ABREVIADO));
+			mod200.addVariable(bv);
+			
+			bv = new DoubleVariable2013( Mod2002013Key.C0055 );
+			bv.setValue((mod200.getBalanceType() == BalanceType.PYMES));
+			mod200.addVariable(bv);
+			
 			return mod200;
 		
 		} catch (IOException | ParserConfigurationException | SAXException e) {
