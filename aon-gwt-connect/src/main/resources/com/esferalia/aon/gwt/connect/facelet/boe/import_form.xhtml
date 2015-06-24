@@ -5,10 +5,11 @@
 	
 	<ui:param name="showNewMessageWindow" value="#{false}" />
 
-	<ui:decorate
-		template="/com/esferalia/aon/gwt/connect/facelet/gwt.xhtml">		
+	<ui:decorate template="/com/esferalia/aon/gwt/connect/facelet/gwt.xhtml">		
 		<ui:param name="module" value="aon_gwt_connect" />
 		<ui:param name="entryPoint" value="BOEImportForm" />
+		<ui:param name="gwtDomain" value="#{domainSwitcher.domainId}" />
+		<ui:param name="gwtDomainName" value="#{domainSwitcher.domainNameURL}" />
 	</ui:decorate>
 
 </ui:composition>

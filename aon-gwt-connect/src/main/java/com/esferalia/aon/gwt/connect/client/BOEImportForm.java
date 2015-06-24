@@ -1,89 +1,77 @@
 package com.esferalia.aon.gwt.connect.client;
 
-import java.util.List;
-import java.util.Set;
-
 import gwtupload.client.IFileInput.FileInputType;
-import gwtupload.client.IUploadStatus;
 import gwtupload.client.IUploadStatus.Status;
-import gwtupload.client.IUploadStatus.UploadStatusConstants;
 import gwtupload.client.IUploader;
-import gwtupload.client.IUploader.UploadedInfo;
+import gwtupload.client.IUploader.OnCancelUploaderHandler;
+import gwtupload.client.IUploader.OnFinishUploaderHandler;
+import gwtupload.client.IUploader.OnStartUploaderHandler;
+import gwtupload.client.IUploader.OnStatusChangedHandler;
+import gwtupload.client.IUploader.UploaderConstants;
 import gwtupload.client.SingleUploader;
 
-import com.esferalia.aon.gwt.common.client.ProgressBar;
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Timer;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.ResizeLayoutPanel;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class BOEImportForm extends Composite implements EntryPoint {
+	
+	public static ConnectServiceAsync CONNECT_SERVICE;
+	
+	private UploaderConstants constants = new UploaderConstants() {
+	    @Override public String uploadStatusSuccess() { return AON.MSG.uploadStatusSuccess(); }
+		@Override public String uploadStatusSubmitting() {return AON.MSG.uploadStatusSubmitting();}
+		@Override public String uploadStatusQueued() { return AON.MSG.uploadStatusQueued();}
+		@Override public String uploadStatusInProgress() {return AON.MSG.uploadStatusInProgress();}
+		@Override public String uploadStatusError() {return AON.MSG.uploadStatusError();}
+		@Override public String uploadStatusDeleted() {return AON.MSG.uploadStatusDeleted();}
+		@Override public String uploadStatusCanceling() { return AON.MSG.uploadStatusCanceling();}
+		@Override public String uploadStatusCanceled() {return AON.MSG.uploadStatusCanceled();}
+		@Override public String uploadLabelCancel() {return AON.MSG.uploadLabelCancel();}
+		@Override public String uploaderTimeout() {return AON.MSG.uploaderTimeout();}
+		@Override public String uploaderServerUnavailable() {return AON.MSG.uploaderServerUnavailable();}
+		@Override public String uploaderServerError() {return AON.MSG.uploaderServerError();}
+		@Override public String uploaderSend() {return AON.MSG.uploaderSend();}
+		@Override public String uploaderInvalidPathError() {return AON.MSG.uploaderInvalidPathError();}
+		@Override public String uploaderInvalidExtension() {return AON.MSG.uploaderInvalidExtension();}
+		@Override public String uploaderBrowse() {return AON.MSG.uploaderBrowse();}
+		@Override public String uploaderBlobstoreError() {return AON.MSG.uploaderBlobstoreError();}
+		@Override public String uploaderBlobstoreBilling() {return AON.MSG.uploaderBlobstoreBilling();}
+		@Override public String uploaderBadServerResponse() {return AON.MSG.uploaderBadServerResponse();}
+		@Override public String uploaderAlreadyDone() {return AON.MSG.uploaderAlreadyDone();}
+		@Override public String uploaderActiveUpload() {return AON.MSG.uploaderActiveUpload();}
+		@Override public String submitError() {return AON.MSG.submitError();}
+	};
 
-	private static BOEImportFormUiBinder uiBinder = GWT
-			.create(BOEImportFormUiBinder.class);
+	private static BOEImportFormUiBinder uiBinder = GWT.create(BOEImportFormUiBinder.class);
 
-	interface BOEImportFormUiBinder extends UiBinder<Widget, BOEImportForm> {
-	}
+	interface BOEImportFormUiBinder extends UiBinder<Widget, BOEImportForm> {}
 
-	class ProgressBarCallBack extends Timer {
-
-		ProgressBar progressBar = null;
-
-		public ProgressBarCallBack() {
-			progressBar = new ProgressBar(20, ProgressBar.SHOW_TIME_REMAINING
-					+ ProgressBar.SHOW_TEXT);
-			this.progressBar.setText("Importando.. Espere por favor");
-			barPanel.clear();
-			barPanel.add(progressBar);
-		}
-
-		@Override
-		public void run() {
-			int progress = progressBar.getProgress() + 4;
-			if (progress > 100)
-				cancel();
-			progressBar.setProgress(progress);
-		}
-
-		private void setText(String text) {
-			progressBar.setCompletedMessage(text);
-		}
-	}
-
-	private static final String URL = "/aon-aio/aon_gwt_connect/boeimport";
-
-	@UiField
-	FormPanel uploadFormPanel;
-	@UiField
-	TabLayoutPanel footTabPanel;
+	private static final String URL = GWT.getModuleBaseURL() + "ZippedMod200BOEImportUpload";
 
 	@UiField
-	SplitLayoutPanel splitLayoutPanel;
+	FlexTable flexTable;
+	
 	@UiField
-	MinimizePanel footPanel;
-	@UiField
-	HorizontalPanel barPanel;
-
-	@UiField
-	ResizeLayoutPanel dockPanel;
-
-	private SingleUploader fileUpload;
+	Button button;
+	
 	private long progress = 10;
 
 	public BOEImportForm() {
@@ -92,116 +80,148 @@ public class BOEImportForm extends Composite implements EntryPoint {
 
 	@Override
 	public void onModuleLoad() {
-
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
+		
+		ConnectServiceAsync connectServiceRaw = GWT.create(ConnectService.class);
+		CONNECT_SERVICE = new ConnectServiceAsyncDecorator(connectServiceRaw);		
+		
 		Widget ui = uiBinder.createAndBindUi(this);
-
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
-
-		this.dockPanel.setSize("100%", "100%");
-		this.dockPanel.setVisible(false);
-
 		initFileUpload();
-
 	}
 
 	protected void initFileUpload() {
-
-		uploadFormPanel.clear();		
-		fileUpload = new SingleUploader(
-				FileInputType.BROWSER_INPUT.with(FileInputType.LABEL
-						.getInstance()));
+		button.setText(AON.MSG.importAction());
 		
-		fileUpload.setAutoSubmit(true);
-		
-		uploadFormPanel.add(fileUpload);
-		
-		fileUpload.setServletPath(GWT.getModuleBaseURL() + "?" + URL);
-		fileUpload.getForm().setAction(URL);
-		fileUpload.avoidEmptyFiles(true);
-		fileUpload.setMultipleSelection(false);
-		
-		fileUpload.addOnStatusChangedHandler(onStatusChangeUploaderHandler);
-		fileUpload.addOnStartUploadHandler(onStartUploaderHandler);
-		fileUpload.addOnFinishUploadHandler(onFinishUploaderHandler);
-		fileUpload.addOnCancelUploadHandler(OnCancelUploaderHandler);		
-		
-		
-		fileUpload.getForm().addSubmitCompleteHandler(
-				new SubmitCompleteHandler() {
-
-					@Override
-					public void onSubmitComplete(SubmitCompleteEvent event) {						
-						fileUpload.getStatusWidget().setProgress(100, 100);							
-						fileUpload.getStatusWidget().setStatus(Status.SUCCESS);
-						Window.alert("Datos importados correctamente");
-					}
-				});		
+		flexTable.setStyleName(AON.AON_CSS.aonPanelGrid());
+		flexTable.addStyleName(AON.AON_CSS.aonMarginTop());
+		flexTable.addStyleName(AON.AON_CSS.aonWidthAll());
+		flexTable.setBorderWidth(1);
+		flexTable.setCellSpacing(0);
+		flexTable.getColumnFormatter().setWidth(0, "200px;");
+		flexTable.setWidget(0, 0, new Label(AON.MSG.file()));
+		flexTable.setWidget(0, 1, newUploader(URL));
+		flexTable.setWidget(1, 0, button);
+		flexTableCss();
 	}
 
-	// ====================================================================
-
-	private IUploader.OnStatusChangedHandler onStatusChangeUploaderHandler = new IUploader.OnStatusChangedHandler() {
-
-		@Override
-		public void onStatusChanged(IUploader uploader) {
-
-			if (uploader.getStatus() != Status.SUCCESS) {
-				UploadedInfo info = uploader.getServerInfo();
-				System.out.println("File name " + info.name);
-				System.out.println("File content-type " + info.ctype);
-				System.out.println("File size " + info.size);
-
-				System.out.println("Server message " + info.message);
-
-				uploader.getStatusWidget().setProgress(progress, 100);
-			} else {
-				uploader.getStatusWidget().setProgress(100, 100);
-			}
-			progress += 20;
-		}
-	};
-
-	private IUploader.OnStartUploaderHandler onStartUploaderHandler = new IUploader.OnStartUploaderHandler() {
-
-		@Override
-		public void onStart(IUploader uploader) {
-			uploader.getStatusWidget().setVisible(true);
-			uploader.submit();
-		}
-	};
-
-	private IUploader.OnFinishUploaderHandler onFinishUploaderHandler = new IUploader.OnFinishUploaderHandler() {
-
-		@Override
-		public void onFinish(IUploader uploader) {
-
-			if (uploader.getStatus() == Status.SUCCESS) {
-				UploadedInfo info = uploader.getServerInfo();
-				System.out.println("File name " + info.name);
-				System.out.println("File content-type " + info.ctype);
-				System.out.println("File size " + info.size);
-
-				System.out.println("Server message " + info.message);
-
-				uploader.getStatusWidget().setProgress(100, 100);
-				uploader.getStatusWidget().setStatus(Status.DONE);
-
-				uploader.getStatusWidget().setVisible(true);
-				progress = 0;
+	public void flexTableCss(){
+		for (int i = 0; i < flexTable.getRowCount(); i++) {
+			for (int j = 0; j < flexTable.getCellCount(i); j++) {
+				if ((j % 2) == 0) {
+					flexTable.getCellFormatter().setStyleName(i, j,AON.AON_CSS.aonPanelGridOdd());
+				} else {
+					flexTable.getCellFormatter().setStyleName(i, j,AON.AON_CSS.aonPanelGridOdd());
+				}
 			}
 		}
-	};
+	}
 
-	private IUploader.OnCancelUploaderHandler OnCancelUploaderHandler = new IUploader.OnCancelUploaderHandler() {
+	SingleUploader up;
+	String urlAux;
+	private SingleUploader newUploader(String url) {
 
-		@Override
-		public void onCancel(IUploader uploader) {
+		
+		SingleUploader upload=  new SingleUploader(FileInputType.BROWSER_INPUT);
+		upload.setAutoSubmit(true);
+        upload.setServletPath(url);
+        upload.setI18Constants( constants ); 
+        
+        upload.getForm().getWidget().getElement().getChild(1).removeFromParent();
+        upload.getForm().setAction(url);
+        upload.getForm().setEncoding(FormPanel.ENCODING_MULTIPART);
+        upload.getForm().setMethod(FormPanel.METHOD_POST);
+        upload.setTitle("uploadFormElement");
+        upload.avoidEmptyFiles(true);
+       
+        up = upload; urlAux = url;
+        upload.addOnCancelUploadHandler(new OnCancelUploaderHandler() {
+        	String url = urlAux;
+        	@Override
+			public void onCancel(IUploader uploader) {
+        		SingleUploader upload1 = newUploader(url);
+        		flexTable.setWidget(0, 1, upload1);
+			}
+		});
+        
+        upload.addOnStatusChangedHandler(new OnStatusChangedHandler() {
+        	SingleUploader upload = up;
+			@Override
+			public void onStatusChanged(IUploader uploader) {
+				if(upload.getStatus() != Status.SUCCESS){
 			
-			initFileUpload();
-		}
-	};
+					upload.getStatusWidget().setProgress(progress, 100);
+			
+				}
+				else{
+					upload.getStatusWidget().setProgress(100, 100);
+				}	
+				progress=progress+20;
+			}
+		});
 
+        upload.addOnStartUploadHandler(new OnStartUploaderHandler() {
+        	SingleUploader upload = up;
+			@Override
+			public void onStart(IUploader uploader) {
+				upload.getStatusWidget().setVisible(true);
+			}
+		});
+        
+        upload.addOnFinishUploadHandler(new OnFinishUploaderHandler() {
+        	SingleUploader upload = up;
+			@Override
+			public void onFinish(IUploader uploader) {
+				upload.getStatusWidget().setProgress(100, 100);
+				upload.getStatusWidget().setStatus(Status.DONE);
+				upload.getStatusWidget().setVisible(true);
+				progress = 0;		
+			}
+		});
+        upload.getForm().addSubmitCompleteHandler( new SubmitCompleteHandler() {
+        	SingleUploader upload = up;
+			@Override
+			public void onSubmitComplete(SubmitCompleteEvent event) {
+				upload.getForm().getWidget().getElement().getChild(0).removeFromParent();
+				}
+		});
+        return upload;
+		
+	}
+	
+	@UiHandler("button")
+	public void onButtonClick(ClickEvent event) {
+		if (Window.confirm(AON.MSG.continueAction()+"?")) {
+			CONNECT_SERVICE.importZippedMod2002013(getCurrentDomainName()
+					,getCurrentDomain()
+					,new AsyncCallback<Void>() {
+					
+						@Override
+						public void onSuccess(Void result) {
+							Window.alert("Proceso realizado correctamente.");
+							flexTable.setWidget(0, 1, newUploader(URL));
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							Window.alert("Se ha producido un error durante la importacion.");
+							flexTable.setWidget(0, 1, newUploader(URL));
+						}
+					});
+		
+		}
+	}
+	
+	
+	public static native String getCurrentDomainName()
+	/*-{
+		return $wnd.getCurrentDomainName();
+	}-*/;
+
+	public static native int getCurrentDomain()
+	/*-{
+		return $wnd.getCurrentDomain();
+	}-*/;
 }

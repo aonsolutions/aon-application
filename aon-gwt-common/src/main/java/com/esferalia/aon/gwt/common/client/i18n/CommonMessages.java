@@ -315,7 +315,6 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Desglosar")
 	String breakdown();
 	
-	
 	@DefaultMessage("Nuevo")
 	String newAction();
 
@@ -348,7 +347,6 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Ir")
 	String goAction();
-
 
 	@DefaultMessage("Aceptar")
 	String accept();
