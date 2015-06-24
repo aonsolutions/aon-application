@@ -2204,6 +2204,8 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Estado de cambios en el patrimonio neto")
 	String header4Title();
 	
+	@DefaultMessage("Declaraci\u00f3n medioambiental")
+	String header5Title();
 	
 
 }

@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.normalizedMemory;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.Vector;
 
@@ -31,4 +32,6 @@ public interface INormalizedMemory extends RemoteService{
 	public void updateTexts(MemoryTemplate mt, Integer domainId, String cif);
 	
 	public Integer getParentDomain(Integer domainId);
+	
+	public Date getDate(String str);
 }
