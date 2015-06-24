@@ -114,6 +114,13 @@
 		<managed-bean-class>com.code.aon.ui.common.controller.BeanConfiguration</managed-bean-class>
 		<managed-bean-scope>application</managed-bean-scope>
 	</managed-bean>
+	
+	<!-- ***************** AUDITABLE SEARCH ******************** --> 
+	<managed-bean>
+		<managed-bean-name>auditableSearch</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.common.controller.AuditableSearchController</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
 
 	<!-- *************************************** -->
 	<!-- ************ NAVIGATION *************** -->

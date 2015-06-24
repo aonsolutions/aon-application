@@ -6,13 +6,15 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:h="http://java.sun.com/jsf/html">
 
+	<aon:valueParam name="valueController" default="#{auditableSearch}" />
+
 	<aon:panelCollapsible expanded="false" label="#{bundle.aon_audit}" >
 		<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 
 			<aon:outputLabel for="#{controller.pojoShortName}_creationUser"
 				value="#{bundle.aon_creation_user}" />
 			<aon:inputText id="#{controller.pojoShortName}_creationUser" size="20"
-				value="#{productExport.creationUser}"
+				value="#{valueController.creationUser}"
 				valueChangeListener="#{controller.addExpression}" />			
 
 			<aon:outputLabel value="#{bundle.aon_creation_date}" />
@@ -20,7 +22,7 @@
 				<aon:outputLabel for="#{controller.pojoShortName}_creationDate-From" styleClass="aon-form-date-label aon-padding-right" 
 					value="#{bundle.aon_date_from}:" />
 				<aon:selectInputDate id="#{controller.pojoShortName}_creationDate-From"
-					value="#{productExport.creationDate1}"
+					value="#{valueController.creationDate1}"
 					valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}" />
@@ -28,7 +30,7 @@
 				<aon:outputLabel for="#{controller.pojoShortName}_creationDate-To" styleClass="aon-form-date-label aon-padding-right" 
 					value="#{bundle.aon_date_to}:" />
 				<aon:selectInputDate id="#{controller.pojoShortName}_creationDate-To"
-					value="#{productExport.creationDate2}"
+					value="#{valueController.creationDate2}"
 					valueChangeListener="#{controller.addLessThanOrEqualExpression}"
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}" />
@@ -37,7 +39,7 @@
 			<aon:outputLabel for="#{controller.pojoShortName}_modificationUser"
 				value="#{bundle.aon_modification_user}" />
 			<aon:inputText id="#{controller.pojoShortName}_modificationUser" size="20"
-				value="#{productExport.modificationUser}"
+				value="#{valueController.modificationUser}"
 				valueChangeListener="#{controller.addExpression}" />			
 
 			<aon:outputLabel value="#{bundle.aon_modification_date}" />
@@ -45,7 +47,7 @@
 				<aon:outputLabel for="#{controller.pojoShortName}_modificationDate-From" styleClass="aon-form-date-label aon-padding-right" 
 					value="#{bundle.aon_date_from}:" />
 				<aon:selectInputDate id="#{controller.pojoShortName}_modificationDate-From"
-					value="#{productExport.modificationDate1}"
+					value="#{valueController.modificationDate1}"
 					valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}" />
@@ -53,7 +55,7 @@
 				<aon:outputLabel for="#{controller.pojoShortName}_modificationDate-To" styleClass="aon-form-date-label aon-padding-right" 
 					value="#{bundle.aon_date_to}:" />
 				<aon:selectInputDate id="#{controller.pojoShortName}_modificationDate-To"
-					value="#{productExport.modificationDate2}"
+					value="#{valueController.modificationDate2}"
 					valueChangeListener="#{controller.addLessThanOrEqualExpression}"
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}" />

@@ -23,7 +23,9 @@
 			</aon:panelGrid>
 		</aon:panelCollapsible>
 				
-		<ui:include src="/com/code/aon/ui/common/facelet/auditable/searchContent.xhtml" />
+		<ui:include src="/com/code/aon/ui/common/facelet/auditable/searchContent.xhtml" >
+			<ui:param name="valueController" value="#{productExport}" />
+		</ui:include>
 				
 	</aon:div>
 		

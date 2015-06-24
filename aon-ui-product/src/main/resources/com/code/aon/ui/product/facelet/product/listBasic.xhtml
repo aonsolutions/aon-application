@@ -7,6 +7,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html">
 
+	<aon:valueParam name="abbreviateName" default="#{false}" />
 
 	<aon:if test="#{lookup != null}">
 		<ui:param name="controller" value="#{lookup}"/>

@@ -1,6 +1,7 @@
 package com.code.aon.ui.product.controller;
 
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,9 +14,9 @@ import com.code.aon.product.ProductCategory;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.supplier.Supplier;
-import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.common.controller.AuditableSearchController;
 
-public class ProductExportGwtController extends BasicController {
+public class ProductExportGwtController extends AuditableSearchController implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -61,17 +62,6 @@ public class ProductExportGwtController extends BasicController {
 	private static ProductStatus[] itemStatuses;
 	private static String itemStatusesStr;
 	
-	
-	//-------------------- AUDIT FILTER
-	
-	private String creationUser;
-	private String creationDate1;
-	private String creationDate2;
-	private String modificationUser;
-	private String modificationDate1;
-	private String modificationDate2;
-	
-	
 	public String getInitialize(){
 		
 		itemSerialDate1 ="";
@@ -88,12 +78,12 @@ public class ProductExportGwtController extends BasicController {
 		price = null;
 		internet = null;
 		
-		creationUser = "";
-		creationDate1 = "";
-		creationDate2 = "";
-		modificationUser = "";
-		modificationDate1 = "";
-		modificationDate2 = "";
+		setCreationUser("");
+		setCreationDate1(null);
+		setCreationDate2(null);
+		setModificationUser("");
+		setModificationDate1(null);
+		setModificationDate2(null);
 		
 		types = null;
 	
@@ -121,54 +111,6 @@ public class ProductExportGwtController extends BasicController {
 
 	}
 	
-	public String getCreationUser() {
-		return creationUser;
-	}
-
-	public void setCreationUser(String creationUser) {
-		this.creationUser = creationUser;
-	}
-
-	public String getCreationDate1() {
-		return creationDate1;
-	}
-
-	public void setCreationDate1(String creationDate1) {
-		this.creationDate1 = creationDate1;
-	}
-
-	public String getCreationDate2() {
-		return creationDate2;
-	}
-
-	public void setCreationDate2(String creationDate2) {
-		this.creationDate2 = creationDate2;
-	}
-
-	public String getModificationUser() {
-		return modificationUser;
-	}
-
-	public void setModificationUser(String modificationUser) {
-		this.modificationUser = modificationUser;
-	}
-
-	public String getModificationDate1() {
-		return modificationDate1;
-	}
-
-	public void setModificationDate1(String modificationDate1) {
-		this.modificationDate1 = modificationDate1;
-	}
-
-	public String getModificationDate2() {
-		return modificationDate2;
-	}
-
-	public void setModificationDate2(String modificationDate2) {
-		this.modificationDate2 = modificationDate2;
-	}
-
 	public Integer getSerialNumber() {
 		return serialNumber;
 	}
