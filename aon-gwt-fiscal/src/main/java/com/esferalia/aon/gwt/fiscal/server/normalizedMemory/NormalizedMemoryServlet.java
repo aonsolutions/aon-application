@@ -8,6 +8,9 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +28,7 @@ import org.jooq.Result;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.shared.MemoryTemplate;
@@ -94,7 +98,7 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements INo
 		case "BA": keyListHeader = D2DepositConstants.BA_ABREVIATE_KEYS;break;
 		case "PA": keyListHeader = D2DepositConstants.PA_ABREVIATE_KEYS;break;
 		case "PNA": keyListHeader = D2DepositConstants.PNA_ABREVIATE_KEYS;break;
-		//case "IMA": keyListHeader = D2DepositConstants.IMA_ABREVIATE_KEYS;break;
+		case "IMA": keyListHeader = D2DepositConstants.IMA_ABREVIATE_KEYS;break;
 		case "MAT1": keyList = D2DepositConstants.MAT1_ABREVIATE_KEYS;break;
 		case "MAT2": keyList = D2DepositConstants.MAT2_ABREVIATE_KEYS;break;
 		case "MAT3": keyList = D2DepositConstants.MAT3_ABREVIATE_KEYS;break;
@@ -304,7 +308,20 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements INo
 		
 	}
 	
+	public String getDateStr(Date date){
+		return "";
+	}
 	
+	public Date getDate(String str){
+		SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+		Date date = null;
+		try {
+        	date = formatter.parse(str);
+        }catch (ParseException e) {
+			e.printStackTrace();
+        }
+		return date;
+	}
 	public Integer getParentDomain(Integer domainId) {
 		String domain = AonUtil.getDomainName();
 		AONContext ctx = null;

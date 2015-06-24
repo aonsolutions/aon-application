@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.normalizedMemory;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.Vector;
 
@@ -35,5 +36,7 @@ public interface INormalizedMemoryAsync {
 			AsyncCallback<Void> callback);
 
 	void getParentDomain(Integer domainId, AsyncCallback<Integer> callback);
+
+	void getDate(String str, AsyncCallback<Date> callback);
 
 }

@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMessages;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.tree.node.D2DepositTreeObject;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.DigitalDepositFreeTextTreeNode;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.DigitalDepositTreeNode;
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
@@ -605,7 +606,7 @@ public class NormalizedMemory extends ResizeComposite {
 		switch (page) {
 		case "IDA":
 			Header1 h1 = (Header1) pagesPanel.getWidget(0);
-			h1.init();
+			h1.dump(new D2DepositTreeObject(), "IDA");
 			break;
 		case "BA":
 			PageH2 h2 = (PageH2) pagesPanel.getWidget(0);
@@ -620,8 +621,8 @@ public class NormalizedMemory extends ResizeComposite {
 			h4.dump(h4.d2DepositObject, "PNA");
 			break;
 		case "IMA":
-			Header5 h5 = (Header5) pagesPanel.getWidget(0);
-			h5.init();
+			PageH5 h5 = (PageH5) pagesPanel.getWidget(0);
+			h5.dump(new D2DepositTreeObject(), "IMA");;
 			break;
 		case "MAT1":
 			FreeText ft = (FreeText) pagesPanel.getWidget(0);

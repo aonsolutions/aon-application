@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.NormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageH2;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageH3;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageH4;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageH5;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageM10;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageM11_2;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageM12_2;
@@ -113,6 +114,7 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
     			NormalizedMemory nm = new NormalizedMemory(enterpriseAux, "IDA");
     			nm.paintHeaderTable("Cuentas Anuales");
     			Header1 header1Page = new Header1(enterpriseAux, nm);
+    			header1Page.dump(new D2DepositTreeObject(), "IDA");
     			nm.setPagesPanel(header1Page);
     			fiscalPanel.setContent(nm);	
     		}
@@ -129,7 +131,7 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 			}
 		};
     	his.setText("Hoja Identificativa de la Sociedad");
-    	//this.addItem(his);
+    	this.addItem(his);
     	
     	TreeNode<Enterprise> bs = new TreeNode<Enterprise>() {
 			
@@ -216,8 +218,10 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 			public void select(FiscalTree fiscalPanel) {
 				NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"IMA");
     			nm.paintHeaderTable("Cuentas Anuales");
-    			Header5 header5Page = new Header5(enterpriseAux, nm);
-    			nm.setPagesPanel(header5Page);
+    			//Header5 header5Page = new Header5(enterpriseAux, nm);
+    			PageH5 ph5 = new PageH5(enterpriseAux,nm);
+    			ph5.dump(new D2DepositTreeObject(), "IMA");
+    			nm.setPagesPanel(ph5);
     			fiscalPanel.setContent(nm);	
 			}
 			
@@ -232,7 +236,7 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 			}
 		};
 		dm.setText("Declaraci\u00F3n Medioambiental");
-		//this.addItem(dm);
+		this.addItem(dm);
 		
 		TreeNode<Enterprise> memory = new TreeNode<Enterprise>() {
 			
