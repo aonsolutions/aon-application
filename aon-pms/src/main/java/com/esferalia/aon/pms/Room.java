@@ -24,6 +24,7 @@ import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.RoomDB;
 import com.esferalia.aon.pms.enumeration.RoomStatus;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 @Entity
 @Table(name="room")
@@ -49,7 +50,7 @@ public class Room extends RoomDB implements IAsset{
 
 	@Transient
 	public boolean isCleanRoom() throws ManagerBeanException {
-		return DateUtils.isSameDay(getLastCleaningDate(), new Date()) && getStatus() == RoomStatus.CLEAN;
+		return AonDateUtils.isSameDay(getLastCleaningDate(), new Date()) && getStatus() == RoomStatus.CLEAN;
 	}
 
 	@Transient
