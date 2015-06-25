@@ -136,6 +136,7 @@ public class AdminMainController implements IAdminConstants, Serializable {
 		String title = (user == null) ? AonUtil.getMessage(ICommonMessages.MAIL_ACCOUNT_ENTERPRISE_TITLE) : null;
 		mailConfig.setMailAccountTitle(title);
 		mailConfig.setSkipDefaultAccountColumn(true);
+		mailConfig.setSkipTypeColumn(false);
 	}
 
 	private void initContact( User user ) throws ManagerBeanException {

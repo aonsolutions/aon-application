@@ -21,7 +21,7 @@
 			<ui:define name="columns">
 
 				<aon:column alias="MailAccount.name"
-					styleClass="aon-editDataTable-textColumn aon-width-80">
+					styleClass="aon-editDataTable-textColumn aon-width-80 aon-nowrap">
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.aon_name}" />
 					</f:facet>
@@ -29,7 +29,7 @@
 				</aon:column>
 
 				<aon:column alias="MailAccount.displayName"
-					styleClass="aon-editDataTable-textColumn">
+					styleClass="aon-editDataTable-textColumn aon-nowrap">
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.aon_displayName}" />
 					</f:facet>
@@ -51,6 +51,15 @@
 					</f:facet>
 					<aon:outputText value="#{to.signature.name}" />
 				</aon:column>
+
+				<aon:if test="#{!mailConfig.skipTypeColumn}">	
+					<aon:column styleClass="aon-editDataTable-iconColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_type}" />
+						</f:facet>
+						<aon:outputText value="#{to.type}" />
+					</aon:column>
+				</aon:if>
 
 				<aon:if test="#{!mailConfig.skipDefaultAccountColumn}">	
 					<aon:column styleClass="aon-editDataTable-iconColumn">

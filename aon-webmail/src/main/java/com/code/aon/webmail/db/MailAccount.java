@@ -13,6 +13,7 @@ import com.code.aon.AonVersion;
 import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.ISignature;
 import com.code.aon.webmail.enumeration.ConnectionSecurity;
+import com.code.aon.webmail.enumeration.MailAccountType;
 import com.esferalia.aon.entity.master.MailAccountDB;
 
 @Entity
@@ -26,6 +27,7 @@ public class MailAccount extends MailAccountDB implements IMailAccount {
 	    setOutgoingVerification(true);
 	    setOutgoingPort(DEFAULT_SMTP_PORT);
 	    setOutgoingSecurity(ConnectionSecurity.NONE);
+	    setType(MailAccountType.USER);
 	}
 
 	@Override

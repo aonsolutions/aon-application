@@ -56,6 +56,7 @@ import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.seller.Seller;
 import com.code.aon.seller.enumeration.SellerStatus;
 import com.code.aon.webmail.db.MailAccount;
+import com.code.aon.webmail.enumeration.MailAccountType;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
@@ -1099,6 +1100,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		Criteria criteria = new Criteria();
 		criteria.addNullExpression(mailAccountBean.getFieldName(IEntityAlias.MAIL_ACCOUNT_USER));
 		criteria.addEqualExpression(mailAccountBean.getFieldName(IEntityAlias.MAIL_ACCOUNT_DOMAIN), domain);
+		criteria.addEqualExpression(mailAccountBean.getFieldName(IEntityAlias.MAIL_ACCOUNT_TYPE), MailAccountType.SYSTEM);
 		List<ITransferObject> mailAccountList = mailAccountBean.getList(criteria);
 		if (mailAccountList.size() > 0) {
 			return (MailAccount)mailAccountList.get(0);

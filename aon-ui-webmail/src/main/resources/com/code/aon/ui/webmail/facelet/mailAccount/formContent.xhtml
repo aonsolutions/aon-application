@@ -45,6 +45,15 @@
 				<aon:inputText id="MailAccount_replyToMail"
 					size="60" value="#{controller.to.replyToMail}" />
 
+				<aon:if test="#{!mailConfig.skipTypeColumn}">
+					<aon:outputLabel for="MailAccount_type"
+						value="#{bundle.aon_type}" />
+					<aon:selectOneMenu id="MailAccount_type"
+						value="#{controller.to.type}" required="true">
+						<f:selectItems value="#{mailConfig.mailAccountTypes}" />
+					</aon:selectOneMenu>
+				</aon:if>
+				
 				<aon:outputLabel for="MailAccount_signature"
 					value="#{bundle.aon_signature}" />
 				<aon:selectOneMenu id="MailAccount_signature"

@@ -946,6 +946,7 @@
 	<table name="mail_account">
 		<column name="incoming_security" property="incomingSecurity" type="com.code.aon.webmail.enumeration.ConnectionSecurity"/>
 		<column name="outgoing_security" property="outgoingSecurity" type="com.code.aon.webmail.enumeration.ConnectionSecurity"/>
+		<column name="type" type="com.code.aon.webmail.enumeration.MailAccountType"/>
 		<column name="replyto_mail" property="replyToMail" />
 		<column name="incoming_port" type="int"/>
 		<column name="outgoing_port" type="int"/>

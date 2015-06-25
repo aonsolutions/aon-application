@@ -33,6 +33,7 @@ import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.bean.AonServer;
 import com.code.aon.webmail.bean.EmailFolder;
 import com.code.aon.webmail.enumeration.ConnectionSecurity;
+import com.code.aon.webmail.enumeration.MailAccountType;
 
 public class MailConfigController implements Serializable {
 	
@@ -62,11 +63,15 @@ public class MailConfigController implements Serializable {
 	
 	private List<SelectItem> connectionSecurities;
 	
+	private List<SelectItem> mailAccountTypes;
+	
 	private String mailAccountTitle;
 	
 	private String signatureTitle;
 	
 	private boolean skipDefaultAccountColumn;
+	
+	private boolean skipTypeColumn;
 	
 	private boolean showFolderWindow;
 	
@@ -294,6 +299,7 @@ public class MailConfigController implements Serializable {
 	
 	public void onInitMailAccount( ActionEvent event ) throws ManagerBeanException {
 		setSkipDefaultAccountColumn(false);
+		setSkipTypeColumn(true);
 		setMailAccountTitle(null);
 		if ( getMailAccount() instanceof MailAccountDBController ) {
 			MailAccountDBController controller = (MailAccountDBController) getMailAccount();
@@ -368,6 +374,30 @@ public class MailConfigController implements Serializable {
 
 	public void setShowFolderWindow(boolean showFolderWindow) {
 		this.showFolderWindow = showFolderWindow;
+	}
+
+	public boolean isSkipTypeColumn() {
+		return skipTypeColumn;
+	}
+
+	public void setSkipTypeColumn(boolean skipTypeColumn) {
+		this.skipTypeColumn = skipTypeColumn;
+	}
+
+	public List<SelectItem> getMailAccountTypes() {
+		if (mailAccountTypes == null) {
+			Locale locale = AonUtil.getCurrentLocale();
+			mailAccountTypes = new LinkedList<SelectItem>();
+			for (MailAccountType type : MailAccountType.values()) {
+				SelectItem item = new SelectItem(type, type.getName(locale));
+				mailAccountTypes.add(item);			
+			}
+		}
+		return mailAccountTypes;
+	}
+
+	public void setMailAccountTypes(List<SelectItem> mailAccountTypes) {
+		this.mailAccountTypes = mailAccountTypes;
 	}	
 	
 }

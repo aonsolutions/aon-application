@@ -536,8 +536,8 @@
 	
 	<!-- ** AON WEBMAIL   **************************************************** -->
 	<bean class="com.code.aon.webmail.db.MailAccount">
-		<alias names="defaultAccount,displayName,domain,draftFolder,email,id,incomingHost,incomingPort,incomingSecurity,mailUsername,name,outgoingHost,outgoingPort,outgoingSecurity,outgoingVerification,passwordString,protocol,replyToMail,sentFolder,signature_id,spamFolder,trashFolder,user_id,user"/>
-		<hibernate names="defaultAccount,displayName,domain,draftFolder,email,id,incomingHost,incomingPort,incomingSecurity,mailUsername,name,outgoingHost,outgoingPort,outgoingSecurity,outgoingVerification,passwordString,protocol,replyToMail,sentFolder,signature.id,spamFolder,trashFolder,user.id,user"/>
+		<alias names="defaultAccount,displayName,domain,draftFolder,email,id,incomingHost,incomingPort,incomingSecurity,mailUsername,name,outgoingHost,outgoingPort,outgoingSecurity,outgoingVerification,passwordString,protocol,replyToMail,sentFolder,signature_id,spamFolder,trashFolder,user_id,user,type"/>
+		<hibernate names="defaultAccount,displayName,domain,draftFolder,email,id,incomingHost,incomingPort,incomingSecurity,mailUsername,name,outgoingHost,outgoingPort,outgoingSecurity,outgoingVerification,passwordString,protocol,replyToMail,sentFolder,signature.id,spamFolder,trashFolder,user.id,user,type"/>
 	</bean>
 	
 </dao>
