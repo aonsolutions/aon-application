@@ -1992,34 +1992,34 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Importar")
 	String importAction();
 	
-    @DefaultMessage("Se está enviando un archivo al servidor.\n Inténtelo mas tarde.")
+    @DefaultMessage("Se est\u00E1 enviando un archivo al servidor.\n Inténtelo mas tarde.")
     String uploaderActiveUpload();
 
     @DefaultMessage("Este archivo ya fué enviado.")
     String uploaderAlreadyDone();
 
-    @DefaultMessage("Parece que esta aplicación está configurada para usar GAE-Blobstore.\nSin embargo el servidor ha retornado un error al crear la URL.\nRecuerda que para utilizar blobstore debes activar la opción de facturación en GAE.")
+    @DefaultMessage("Parece que esta aplicaci\u00F3n est\u00E1 configurada para usar GAE-Blobstore.\nSin embargo el servidor ha retornado un error al crear la URL.\nRecuerda que para utilizar blobstore debes activar la opci\u00F3n de facturaci\u00F3n en GAE.")
     String uploaderBlobstoreError();
 
     @DefaultMessage("Seleccione un fichero para enviar ...")
     String uploaderBrowse();
 
-    @DefaultMessage("Sólo está permitido enviar estos tipos de archivo:\n")
+    @DefaultMessage("S\u00F3lo est\u00E1 permitido enviar estos tipos de archivo:\n")
     String uploaderInvalidExtension();
 
     @DefaultMessage("Enviar")
     String uploaderSend();
 
-    @DefaultMessage("El servidor ha enviado una respuesta incorrecta.\n Compruebe que la aplicación en el servidor está bien configurada.")
+    @DefaultMessage("El servidor ha enviado una respuesta incorrecta.\n Compruebe que la aplicaci\u00F3n en el servidor est\u00E1 bien configurada.")
     String uploaderServerError();
     
     @DefaultMessage("Unable to auto submit the form, it seems your browser has security issues with this feature.\n Developer Info: If you are using jsupload and you do not need cross-domain, try a version compiled with the standard linker?")
     String submitError();
     
-    @DefaultMessage("Ha sido imposible conectar con el servidor de la aplicación.")
+    @DefaultMessage("Ha sido imposible conectar con el servidor de la aplicaci\u00F3n.")
     String uploaderServerUnavailable();
 
-    @DefaultMessage("Se ha sobrepasado el tiempo de espera al enviar el archivo.\n Es posible que su navegador no envíe correctamente archivos,\n o quizás ocurrió un error en el servidor\nPor favor inténtelo mas tarde")
+    @DefaultMessage("Se ha sobrepasado el tiempo de espera al enviar el archivo.\n Es posible que su navegador no env\u00EDe correctamente archivos,\n o quiz\u00E1s ocurri\u00F3 un error en el servidor\nPor favor inténtelo mas tarde")
     String uploaderTimeout();
     
     @DefaultMessage("Error uploading the file, the server response has a format which can not be parsed by the application.\n.")
@@ -2150,7 +2150,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Importes recibidos por el personal de alta direcci\u00f3n")
 	String memory12_2Table5();
 	
-	@DefaultMessage("Importes recibidos por los miembros de los \u00f3rganos de administración")
+	@DefaultMessage("Importes recibidos por los miembros de los \u00f3rganos de administraci\u00F3n")
 	String memory12_2Table6();
 	
 	@DefaultMessage("Apartado 13: Otra Informaci\u00f3n")
