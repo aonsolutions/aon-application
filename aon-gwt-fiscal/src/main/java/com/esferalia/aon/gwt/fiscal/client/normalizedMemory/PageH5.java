@@ -2,17 +2,12 @@ package com.esferalia.aon.gwt.fiscal.client.normalizedMemory;
 
 import java.util.Map;
 
-import java_cup.action_part;
-
-import org.apache.commons.lang.time.DateUtils;
-
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Widget;
