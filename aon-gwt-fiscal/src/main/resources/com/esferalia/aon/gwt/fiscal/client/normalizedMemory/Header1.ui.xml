@@ -40,33 +40,18 @@
 										<tr>
 											<td>
 												<g:Label text="{msg.companyName}" styleName="{aonResources.css.aonInnerLabel}" />
-												<g:TextBox ui:field="companyName"
+												<g:TextBox ui:field="IDA01020"
 													styleName="{aonResources.css.aonInputText}" />
 											</td>
 											<td>
 												<g:Label text="Domicilio Social" styleName="{aonResources.css.aonInnerLabel}" />
-												<g:TextBox ui:field="companyPlace"
+												<g:TextBox ui:field="IDA01022"
 													styleName="{aonResources.css.aonInputText}" />
 											</td>
 
 										</tr>
 									</table>
-									<table style="margin-top: 10px;" class="{aonResources.css.aonWidthAll}">
-										<tr>
-											<td>
-												<g:Label text="Denominación social" styleName="{aonResources.css.aonInnerLabel}" />
-												<g:TextBox ui:field="IDA01020"
-													styleName="{aonResources.css.aonInputText}" />
-											</td>
-										</tr>
-										<tr>
-											<td>
-												<g:Label text="Domicilio social" styleName="{aonResources.css.aonInnerLabel}" />
-												<g:TextBox ui:field="IDA01022"
-													styleName="{aonResources.css.aonInputText}" />
-											</td>
-										</tr>
-									</table>
+									
 									<table style="margin-top: 10px;" class="{aonResources.css.aonWidthAll}">
 										<tr>
 											<td>

@@ -1,10 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.server.normalizedMemory;
 
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
-import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
-import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -12,6 +10,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -28,7 +27,6 @@ import org.jooq.Result;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.shared.MemoryTemplate;
@@ -37,9 +35,13 @@ import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositFooterKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.DBConsults;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves.Clave;
+import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002013toD2;
+import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002014toD2;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Utils;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -122,6 +124,11 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements INo
 		case "MAT14": keyList = D2DepositConstants.MAT14_ABREVIATE_KEYS;break;
 		case "MA14": keyList = D2DepositConstants.MA14_ABREVIATE_KEYS;
 		case "MA15": keyList = D2DepositConstants.MA15_ABREVIATE_KEYS;break;
+		case "A": keyListFooter = D2DepositConstants.A_ABREVIATE_KEYS;break;
+		case "PR": keyListFooter = D2DepositConstants.PR_ABREVIATE_KEYS;
+					keyListHeader = D2DepositConstants.PR_DATOS_EXTRA;
+					break;
+		case "H": keyListFooter = D2DepositConstants.H_ABREVIATE_KEYS; break;
 		
 		default:
 			break;
@@ -341,5 +348,48 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements INo
 			if (ctx != null) ctx.close();
 		}
 	}
+	
+	public String getDomainName(Integer domainId){
+		String domain = AonUtil.getDomainName();
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain, domainId);
+			
+			Record1<String> data = ctx.getDslContext().select(DOMAIN.NAME)
+						.from(DOMAIN)
+						.where(DOMAIN.ID.eq(domainId))
+						.fetchOne();
+			
+			return data.value1();
+			
+				
+			
+		}finally {
+			if (ctx != null) ctx.close();
+		}
+	}
 
+	public void importSocietyValues(String document, Integer domainId){
+		String domainName = getDomainName(domainId);
+		
+		// 2014
+		
+		Mod2002014 mod2002014 = com.esferalia.aon.occam.api.AON.getMod2002014ByYear(domainName, domainId, 2014);
+		Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
+		Mod2002014toD2.fill(ctx, mod2002014);
+		
+		for(D2DepositHeaderKey key : ctx.keySet()){
+			updateSchema(document, domainId, key.getCode(), ctx.get(key).toString());
+		}
+		
+		// 2013
+
+		/*Mod2002013 mod2002013 = com.esferalia.aon.occam.api.AON.getMod2002013ByYear(domainName, domainId, 2013);
+		ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
+		Mod2002013toD2.fill(ctx, mod2002013);
+				
+		for(D2DepositHeaderKey key : ctx.keySet()){
+			updateSchema(document, domainId, key.getCode(), ctx.get(key).toString());
+		}*/
+	}
 }

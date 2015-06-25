@@ -3,13 +3,12 @@ package com.esferalia.aon.gwt.fiscal.client.tree.node;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.FreeText;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.Header1;
-import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.Header2;
-import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.Header3;
-import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.Header4;
-import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.Header5;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemoryAsync;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.NormalizedMemory;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageF1;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageF2;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageF3;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageH2;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageH3;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageH4;
@@ -24,16 +23,6 @@ import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageM3_2;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageM5_2;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageM6_2;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageM7_2;
-import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.Paragraph10;
-import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.Paragraph11_2;
-import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.Paragraph12_2;
-import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.Paragraph13_2;
-import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.Paragraph14_2;
-import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.Paragraph15;
-import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.Paragraph3_2;
-import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.Paragraph5_2;
-import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.Paragraph6_2;
-import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.Paragraph7_2;
 import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.google.gwt.core.client.GWT;
@@ -70,8 +59,8 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 	public void digitalDepositMenu(Boolean result, FiscalTree fiscalTree){
 		NormalizedMemory nm;
 		if(result)
-			nm = new NormalizedMemory(getTreeObject(),"main");
-		else nm = new NormalizedMemory(true, this, getTreeObject());
+			nm = new NormalizedMemory(enterpriseAux,"main");
+		else nm = new NormalizedMemory(true, this, enterpriseAux);
 		nm.setPagesPanel(fiscalTree.getGenericContent(this));
 		fiscalTree.setContent(nm);
 	}
@@ -1009,8 +998,11 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 			
 			@Override
 			public void select(FiscalTree fiscalPanel) {
-				NormalizedMemory nm = new NormalizedMemory(getTreeObject(),"");
+				NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"A");
 				nm.paintHeaderTable("Cuentas Anuales");
+				PageF1 pf1 = new PageF1(enterpriseAux, nm);
+				pf1.dump(new D2DepositTreeObject(), "A");
+				nm.setPagesPanel(pf1);
     			fiscalPanel.setContent(nm);	
 			}
 			
@@ -1025,14 +1017,17 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 			}
 		}; 
 		ma.setText("Modelo de Autocartera");
-		// TODO this.addItem(ma);
+		this.addItem(ma);
 		
 		TreeNode<Enterprise> ip = new TreeNode<Enterprise>() {
 			
 			@Override
 			public void select(FiscalTree fiscalPanel) {
-				NormalizedMemory nm = new NormalizedMemory(getTreeObject(),"");
+				NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"PR");
 				nm.paintHeaderTable("Cuentas Anuales");
+				PageF2 pf2 = new PageF2(enterpriseAux, nm);
+				pf2.dump(new D2DepositTreeObject(), "PR");
+				nm.setPagesPanel(pf2);
     			fiscalPanel.setContent(nm);	
 			}
 			
@@ -1047,15 +1042,19 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 			}
 		};
 		ip.setText("Instancia de Presentaci\u00F3n");
-		// TODO this.addItem(ip);
+		this.addItem(ip);
 		
 		TreeNode<Enterprise> chd = new TreeNode<Enterprise>() {
 			
 			@Override
 			public void select(FiscalTree fiscalPanel) {
-				NormalizedMemory nm = new NormalizedMemory(getTreeObject(),"");
+				NormalizedMemory nm = new NormalizedMemory(enterpriseAux,"H");
 				nm.paintHeaderTable("Cuentas Anuales");
+				PageF3 pf3 = new PageF3(enterpriseAux, nm);
+				pf3.dump(new D2DepositTreeObject(), "H");
+				nm.setPagesPanel(pf3);
     			fiscalPanel.setContent(nm);	
+    			
 			}
 			
 			@Override
@@ -1069,7 +1068,7 @@ public class DigitalDepositTreeNode extends TreeNode<Enterprise> {
 			}
 		}; 
 		chd.setText("Certificaci\u00F3n de la Huella Digital");
-		// TODO this.addItem(chd);
+		this.addItem(chd);
 	}
 	
 }

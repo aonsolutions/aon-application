@@ -16,7 +16,9 @@ import com.code.aon.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
+import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002013toD2;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002014toD2;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -32,7 +34,7 @@ public class Mod200toD2Test {
 //	private static String DOMAIN_NAME = "a50111111-masdemar.ecastellano.dev";
 //	private static int DOMAIN_ID = 5151;
 	private static int DOMAIN_ID = 802;
-	private static String DOMAIN_NAME = "GOLDWIN-masdemar.ecastellano.dev";
+	private static String DOMAIN_NAME = "GOLDWIN-masdemar.aibanez.net";
 		
 
 	@BeforeClass
@@ -47,9 +49,21 @@ public class Mod200toD2Test {
 		Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 		Mod2002014toD2.fillBalance(ctx, mod200);
 		System.out.println(AonStringUtils.repeat('-', 104));
-		System.out.println(AonStringUtils.center("BALANCE DE SITUACION", 104));
+		System.out.println(AonStringUtils.center("BALANCE DE SITUACION 2014", 104));
 		System.out.println(AonStringUtils.repeat('-', 104));
 		toString(ctx);
+		System.out.println(AonStringUtils.repeat('-', 104));
+		
+		System.out.println();
+		System.out.println();
+		
+		Mod2002013 mod2002013 = AON.getMod2002013ByYear(DOMAIN_NAME, DOMAIN_ID, 2013);
+		Map<D2DepositHeaderKey, Double> ctx2013 = new LinkedHashMap<D2DepositHeaderKey, Double>();
+		Mod2002013toD2.fillBalance(ctx2013, mod2002013);
+		System.out.println(AonStringUtils.repeat('-', 104));
+		System.out.println(AonStringUtils.center("BALANCE DE SITUACION 2013", 104));
+		System.out.println(AonStringUtils.repeat('-', 104));
+		toString(ctx2013);
 		System.out.println(AonStringUtils.repeat('-', 104));
 		
 		System.out.println();
@@ -58,9 +72,20 @@ public class Mod200toD2Test {
 		ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 		Mod2002014toD2.fillPyg(ctx, mod200);
 		System.out.println(AonStringUtils.repeat('-', 104));
-		System.out.println(AonStringUtils.center("BALANCE DE PERDIDAS Y GANANCIAS", 104));
+		System.out.println(AonStringUtils.center("BALANCE DE PERDIDAS Y GANANCIAS 2014", 104));
 		System.out.println(AonStringUtils.repeat('-', 104));
 		toString(ctx);
+		System.out.println(AonStringUtils.repeat('-', 104));
+
+		System.out.println();
+		System.out.println();
+		
+		ctx2013 = new LinkedHashMap<D2DepositHeaderKey, Double>();
+		Mod2002013toD2.fillPyg(ctx2013, mod2002013);
+		System.out.println(AonStringUtils.repeat('-', 104));
+		System.out.println(AonStringUtils.center("BALANCE DE PERDIDAS Y GANANCIAS 2013", 104));
+		System.out.println(AonStringUtils.repeat('-', 104));
+		toString(ctx2013);
 		System.out.println(AonStringUtils.repeat('-', 104));
 
 		System.out.println();
@@ -69,9 +94,20 @@ public class Mod200toD2Test {
 		ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 		Mod2002014toD2.fillEcpn(ctx, mod200);
 		System.out.println(AonStringUtils.repeat('-', 104));
-		System.out.println(AonStringUtils.center("BALANCE E.C.P.N.", 104));
+		System.out.println(AonStringUtils.center("BALANCE E.C.P.N. 2014", 104));
 		System.out.println(AonStringUtils.repeat('-', 104));
 		toString(ctx);
+		System.out.println(AonStringUtils.repeat('-', 104));
+
+		System.out.println();
+		System.out.println();
+		
+		ctx2013 = new LinkedHashMap<D2DepositHeaderKey, Double>();
+		Mod2002013toD2.fillEcpn(ctx2013, mod2002013);
+		System.out.println(AonStringUtils.repeat('-', 104));
+		System.out.println(AonStringUtils.center("BALANCE E.C.P.N. 2013", 104));
+		System.out.println(AonStringUtils.repeat('-', 104));
+		toString(ctx2013);
 		System.out.println(AonStringUtils.repeat('-', 104));
 
 		System.out.println();
@@ -80,11 +116,22 @@ public class Mod200toD2Test {
 		ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 		Mod2002014toD2.fillEcpn2(ctx, mod200);
 		System.out.println(AonStringUtils.repeat('-', 104));
-		System.out.println(AonStringUtils.center("BALANCE E.C.P.N. (II)", 104));
+		System.out.println(AonStringUtils.center("BALANCE E.C.P.N. (II) 2014", 104));
 		System.out.println(AonStringUtils.repeat('-', 104));
 		toString(ctx);
 		System.out.println(AonStringUtils.repeat('-', 104));
-}
+		
+		System.out.println();
+		System.out.println();
+
+		ctx2013 = new LinkedHashMap<D2DepositHeaderKey, Double>();
+		Mod2002013toD2.fillEcpn2(ctx2013, mod2002013);
+		System.out.println(AonStringUtils.repeat('-', 104));
+		System.out.println(AonStringUtils.center("BALANCE E.C.P.N. (II) 2013", 104));
+		System.out.println(AonStringUtils.repeat('-', 104));
+		toString(ctx2013);
+		System.out.println(AonStringUtils.repeat('-', 104));
+	}
 
 	@AfterClass
 	public static void afterClass() {

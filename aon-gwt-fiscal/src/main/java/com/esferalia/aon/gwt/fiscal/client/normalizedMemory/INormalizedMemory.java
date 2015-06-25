@@ -34,4 +34,6 @@ public interface INormalizedMemory extends RemoteService{
 	public Integer getParentDomain(Integer domainId);
 	
 	public Date getDate(String str);
+	
+	public void importSocietyValues(String document, Integer domainId);
 }

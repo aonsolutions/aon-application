@@ -1,0 +1,445 @@
+package com.esferalia.aon.gwt.fiscal.client.normalizedMemory;
+
+import java.util.Date;
+import java.util.Map;
+
+import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.datepicker.client.DateBox;
+
+public class PageF2 extends PageAbs {
+
+	interface PageBinder extends UiBinder<Widget, PageF2> {
+	}
+
+	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
+
+	@UiField Label IDA01010;
+	@UiField Label IDA01020;
+	
+	@UiField Label IDA01101;
+	
+	
+	@UiField ListBox PR8081001 ; // ciudad / provinci
+	@UiField TextBox PR8081002 ; // tomo
+	@UiField TextBox PR8081003 ; // folio
+	@UiField TextBox PR8081004 ; // num hojas registral
+	
+	@UiField CheckBox PR8080805 ; //CHECKBOX Abreviado - memoria
+	@UiField CheckBox PR8080854 ; //CHECKBOX Abreviado - ecpn
+	@UiField CheckBox PR8080801 ; //CHECKBOX Abreviado - balance
+	@UiField CheckBox PR8080803 ; //CHECKBOX Abreviado - pyg
+	@UiField CheckBox PR8080811 ; //CHECKBOX Abreviado - certificacion acuerdo
+	@UiField CheckBox PR8080800 ; //CHECKBOX Abreviado - hoja identificacion
+	@UiField CheckBox PR8080819 ; //CHECKBOX Abreviado - declaracion medioambiental
+	
+	@UiField TextBox PR8081201 ; //Nombre y apellidos
+	@UiField TextBox PR8081202 ; //  dni
+	@UiField TextBox PR8081203 ; // domicilio
+	@UiField TextBox PR8081204 ; // ciudad
+	@UiField TextBox PR8081205 ; // codigo postal
+	@UiField ListBox PR8081206 ; // provincia
+	@UiField TextBox PR8081207 ; // fax
+	@UiField TextBox PR8081208 ; // telefono
+	@UiField TextBox PR8081209 ; // email
+
+	public PageF2() {
+		super();
+		
+
+		IDA01010 = new Label();
+		IDA01020 = new Label();
+		
+		IDA01101 = new Label();
+		
+		
+		PR8081001 = new ListBox(); // ciudad / provinci
+		PR8081002 = new TextBox(); // tomo
+		PR8081003 = new TextBox(); // folio
+		PR8081004 = new TextBox(); // num hojas registral
+		
+		PR8080805 = new CheckBox(); //CHECKBOX Abreviado - memoria
+		PR8080854 = new CheckBox(); //CHECKBOX Abreviado - ecpn
+		PR8080801 = new CheckBox(); //CHECKBOX Abreviado - balance
+		PR8080803 = new CheckBox(); //CHECKBOX Abreviado - pyg
+		PR8080811 = new CheckBox(); //CHECKBOX Abreviado - certificacion acuerdo
+		PR8080800 = new CheckBox(); //CHECKBOX Abreviado - hoja identificacion
+		PR8080819 = new CheckBox(); //CHECKBOX Abreviado - declaracion medioambiental
+		
+		PR8081201 = new TextBox(); //Nombre y apellidos
+		PR8081202 = new TextBox(); //  dni
+		PR8081203 = new TextBox(); // domicilio
+		PR8081204 = new TextBox(); // ciudad
+		PR8081205 = new TextBox(); // codigo postal
+		PR8081206 = new ListBox(); // provincia
+		PR8081207 = new TextBox(); // fax
+		PR8081208 = new TextBox(); // telefono
+		PR8081209 = new TextBox(); // email
+		Widget ui = pageBinder.createAndBindUi(this);
+		initWidget(ui);
+	}
+	
+	public PageF2(Enterprise enterprise, NormalizedMemory nm) {
+		super();
+		this.enterprise = enterprise;
+		this.normalizedMemory = nm;
+		IDA01010 = new Label();
+		IDA01020 = new Label();
+		
+		IDA01101 = new Label();
+		
+		PR8081001 = new ListBox(); // ciudad / provinci
+		PR8081002 = new TextBox(); // tomo
+		PR8081003 = new TextBox(); // folio
+		PR8081004 = new TextBox(); // num hojas registral
+		
+		PR8080805 = new CheckBox(); //CHECKBOX Abreviado - memoria
+		PR8080854 = new CheckBox(); //CHECKBOX Abreviado - ecpn
+		PR8080801 = new CheckBox(); //CHECKBOX Abreviado - balance
+		PR8080803 = new CheckBox(); //CHECKBOX Abreviado - pyg
+		PR8080811 = new CheckBox(); //CHECKBOX Abreviado - certificacion acuerdo
+		PR8080800 = new CheckBox(); //CHECKBOX Abreviado - hoja identificacion
+		PR8080819 = new CheckBox(); //CHECKBOX Abreviado - declaracion medioambiental
+		
+		PR8081201 = new TextBox(); //Nombre y apellidos
+		PR8081202 = new TextBox(); //  dni
+		PR8081203 = new TextBox(); // domicilio
+		PR8081204 = new TextBox(); // ciudad
+		PR8081205 = new TextBox(); // codigo postal
+		PR8081206 = new ListBox(); // provincia
+		PR8081207 = new TextBox(); // fax
+		PR8081208 = new TextBox(); // telefono
+		PR8081209 = new TextBox(); // email
+		
+		init();
+		Widget ui = pageBinder.createAndBindUi(this);
+		initWidget(ui);
+	}
+
+	private void init() {
+		inma.getSchema(enterprise.getDocument(),"PR",enterprise.getDomain(),false, new AsyncCallback<Map<String, String>>() {
+			
+			@Override
+			public void onSuccess(Map<String, String> result) {
+				map = result;
+				
+
+
+				if(map.containsKey("IDA01010")) IDA01010.setText(map.get("IDA01010"));
+				if(map.containsKey("IDA01020")) IDA01020.setText(map.get("IDA01020"));
+				if(map.containsKey("IDA01101")) IDA01101.setText(map.get("IDA01101"));
+				
+				keyExe(map, "PR8081001", "80810001", PR8081001, "list", true);
+
+				keyExe(map, "PR8081002", "80810002", PR8081002, "text", true);
+				keyExe(map, "PR8081003", "80810003", PR8081003, "text", true);
+				keyExe(map, "PR8081004", "80810004", PR8081004, "text", true);
+
+				keyExe(map, "PR8080805", "8080805", PR8080805, "check", false);
+				keyExe(map, "PR8080854", "8080854", PR8080854, "check", false);
+				keyExe(map, "PR8080801", "8080801", PR8080801, "check", false);
+				keyExe(map, "PR8080803", "8080803", PR8080803, "check", false);
+				keyExe(map, "PR8080811", "8080811", PR8080811, "check", false);
+				keyExe(map, "PR8080800", "8080800", PR8080800, "check", false);
+				keyExe(map, "PR8080819", "8080819", PR8080819, "check", false);
+
+				
+				keyExe(map, "PR8081201", "8081201", PR8081201, "text", true);
+				keyExe(map, "PR8081202", "8081202", PR8081202, "text", true);
+				keyExe(map, "PR8081203", "8081203", PR8081203, "text", true);
+				keyExe(map, "PR8081204", "8081204", PR8081204, "text", true);
+				keyExe(map, "PR8081205", "8081205", PR8081205, "text", true);
+				listBoxItemAdd(PR8081206);
+				keyExe(map, "PR8081206", "8081206", PR8081206, "list", true);
+				keyExe(map, "PR8081207", "8081207", PR8081207, "text", true);
+				keyExe(map, "PR8081208", "8081208", PR8081208, "text", true);
+				keyExe(map, "PR8081209", "8081209", PR8081209, "text", true);
+				
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				
+			}
+		});
+	}
+	
+	@Override
+	protected void initializeTable() {
+	
+	}
+	
+
+	protected int paintKey(FlexTable tab, D2DepositKey[] keys,  int row) {
+		paintKeyDescription(tab, keys[0], row, 0);
+		for (Integer i = 0; i < keys.length ; i++) {
+			paintKeyField(tab,keys[i],row,i+1);
+		}
+		return  ++row;
+	}
+
+	
+	String key2Aux;
+	TextBox tAux;
+	DateBox dAux;
+	ListBox lbAux;
+	DoubleBox dlAux;
+	private void keyExe(Map<String, String> map, String key, String key2, Widget w, String type, Boolean enable) {
+		key2Aux = key2;
+		if(type.equals("text")) {
+			TextBox t = (TextBox) w;
+			if(map.containsKey(key)){
+				t.setValue(map.get(key));
+				t.setEnabled(enable);
+			}
+			tAux = t;
+			t.addChangeHandler(new ChangeHandler() {
+				String key2 = key2Aux ;
+				TextBox t = tAux;
+				@Override
+				public void onChange(ChangeEvent event) {
+
+					normalizedMemory.saveButton.setEnabled(true);
+					normalizedMemory.cancelButton.setVisible(true);
+					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key2, t.getValue(), new AsyncCallback<Void>() {
+						@Override
+						public void onFailure(Throwable caught) {}
+						@Override
+						public void onSuccess(Void result) {}
+					});
+				}
+			});
+		}
+		
+		if(type.equals("check")) {
+			CheckBox c = (CheckBox) w;
+			if(map.containsKey(key)){
+				c.setValue(map.get(key).equals("True")); 
+				c.setEnabled(enable);
+			}
+			c.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+				String key2 = key2Aux;
+				@Override
+				public void onValueChange(ValueChangeEvent<Boolean> event) {
+					normalizedMemory.saveButton.setEnabled(true);
+					normalizedMemory.cancelButton.setVisible(true);		
+					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key2, event.getValue()?"True":"False", new AsyncCallback<Void>() {
+						@Override
+						public void onFailure(Throwable caught) {}
+						@Override
+						public void onSuccess(Void result) {}
+					});					
+					
+				}
+			});
+		}
+		if(type.equals("date")){
+		    
+			//SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+  
+			DateBox d = (DateBox) w;
+			dAux = d;
+			if(map.containsKey(key)){
+				
+				String datestr = map.get(key);
+				inma.getDate(datestr, new AsyncCallback<Date>() {
+					DateBox d = dAux;
+					@Override
+					public void onSuccess(Date result) {
+						d.setValue(result); 
+						
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						
+					}
+				} );
+				d.setEnabled(enable);
+
+			}
+			
+			d.addValueChangeHandler(new ValueChangeHandler<Date>() {
+				String key2 = key2Aux;
+				DateBox d = dAux;
+				@Override
+				public void onValueChange(ValueChangeEvent<Date> event) {
+					normalizedMemory.saveButton.setEnabled(true);
+					normalizedMemory.cancelButton.setVisible(true);
+					Integer day = d.getValue().getDate();
+					Integer month = d.getValue().getMonth();
+					Integer year = d.getValue().getYear()+1900;
+					String value = day+"."+month+"."+year;
+					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key2, value, new AsyncCallback<Void>() {
+						@Override
+						public void onFailure(Throwable caught) {}
+						@Override
+						public void onSuccess(Void result) {}
+					});	
+					
+					String dayKey = null;
+					String monthKey = null;
+					String yearKey = null;
+					if(key2.equals("1102")){
+						yearKey = "11021";
+						monthKey = "11022";
+						dayKey = "11023";
+					}
+					if(key2.equals("11029")){
+						yearKey = "110219";
+						monthKey = "110229";
+						dayKey = "110239";
+					}
+					if(key2.equals("1101")){
+						yearKey = "11011";
+						monthKey = "11012";
+						dayKey = "11013";
+					}
+					if(key2.equals("11019")){
+						yearKey = "110119";
+						monthKey = "110129";
+						dayKey = "110139";
+					}
+					if(dayKey != null)
+						inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),dayKey, day.toString(), new AsyncCallback<Void>() {
+							@Override
+							public void onFailure(Throwable caught) {}
+							@Override
+							public void onSuccess(Void result) {}
+						});	
+					if(monthKey != null)
+						inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),monthKey, month.toString(), new AsyncCallback<Void>() {
+							@Override
+							public void onFailure(Throwable caught) {}
+							@Override
+							public void onSuccess(Void result) {}
+						});	
+					if(yearKey != null)
+						inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),yearKey, year.toString(), new AsyncCallback<Void>() {
+							@Override
+							public void onFailure(Throwable caught) {}
+							@Override
+							public void onSuccess(Void result) {}
+						});		
+				}
+			});
+		}
+		
+		
+		if(type.equals("list")){
+			ListBox lb = (ListBox) w;
+			if(map.containsKey(key)){
+				String value = map.get(key);
+				String value2 = "";
+				if(key2.equals("8081206")){
+					for(Integer i = 0;i< D2DepositConstants.PROVINCES.length; i++){
+						if(D2DepositConstants.PROVINCES[i].getId().equals(value)){
+							value2 = D2DepositConstants.PROVINCES[i].getName();
+						}
+					}
+				}
+				if(key2.equals("80810001")){
+					for(Integer i = 0;i< D2DepositConstants.CITIES.length; i++){
+						if(D2DepositConstants.CITIES[i].getId().equals(value)){
+							value2 = D2DepositConstants.CITIES[i].getName();
+						}
+					}
+				}
+				
+				for (Integer i = 0; i< lb.getItemCount(); i++) {
+					if(lb.getItemText(i).equals(value2)){
+						lb.setSelectedIndex(i);
+					}
+					
+				}
+				lb.setEnabled(enable);
+			}
+			lbAux = lb;
+			lb.addChangeHandler(new ChangeHandler() {
+				String key2 = key2Aux ;
+				ListBox lb = lbAux;
+				@Override
+				public void onChange(ChangeEvent event) {
+					String value ="";
+					if(key2.equals("8081206")){
+						for(Integer i = 0;i< D2DepositConstants.PROVINCES.length; i++){
+							if(D2DepositConstants.PROVINCES[i].getName().equals(lb.getSelectedItemText())){
+								value = D2DepositConstants.CITIES[i].getId(); 
+							}
+						}
+					}
+					if(key2.equals("80810001")){
+						for(Integer i = 0;i< D2DepositConstants.CITIES.length; i++){
+							if(D2DepositConstants.CITIES[i].getName().equals(lb.getSelectedItemText())){
+								value = D2DepositConstants.CITIES[i].getId(); 
+							}
+						}
+					}
+					normalizedMemory.saveButton.setEnabled(true);
+					normalizedMemory.cancelButton.setVisible(true);
+					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key2, value, new AsyncCallback<Void>() {
+						@Override
+						public void onFailure(Throwable caught) {}
+						@Override
+						public void onSuccess(Void result) {}
+					});
+					
+				}
+			});
+		}
+		
+		if(type.equals("double")){
+			DoubleBox dl = (DoubleBox) w;
+			if(map.containsKey(key)){
+				Double d = Double.parseDouble(map.get(key));
+				dl.setValue(d);
+				dl.setEnabled(enable);
+			}
+			dlAux = dl;
+			dl.addChangeHandler(new ChangeHandler() {
+				String key2 = key2Aux ;
+				DoubleBox dl = dlAux;
+				@Override
+				public void onChange(ChangeEvent event) {
+
+					normalizedMemory.saveButton.setEnabled(true);
+					normalizedMemory.cancelButton.setVisible(true);
+					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key2, dl.getValue().toString(), new AsyncCallback<Void>() {
+						@Override
+						public void onFailure(Throwable caught) {}
+						@Override
+						public void onSuccess(Void result) {}
+					});
+				}
+			});
+		}
+	}
+	private void listBoxItemAdd(ListBox lb) {
+
+		
+		for(Integer i = 0; i< D2DepositConstants.PROVINCES.length; i++){
+			Provinces p = D2DepositConstants.PROVINCES[i];
+			lb.addItem(p.getName());
+		}
+		
+	}
+	
+
+	
+}

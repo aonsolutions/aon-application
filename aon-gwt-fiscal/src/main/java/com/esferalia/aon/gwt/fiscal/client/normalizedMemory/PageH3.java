@@ -48,6 +48,7 @@ public class PageH3 extends PageAbs {
 
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
+		normalizedMemory.importSocietyButton.setVisible(true);
 	}
 
 	@Override

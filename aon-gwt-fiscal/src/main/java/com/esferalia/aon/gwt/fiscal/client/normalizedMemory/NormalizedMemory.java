@@ -85,6 +85,11 @@ public class NormalizedMemory extends ResizeComposite {
 	
 	@UiField SimplePanel headerPanel;
 	
+	@UiField Button importSocietyButton;
+
+	
+	
+	
 	@UiField
 	Anchor download;							
 	
@@ -103,6 +108,7 @@ public class NormalizedMemory extends ResizeComposite {
 	DigitalDepositTreeNode digitalDepositTreeNode;
 	DigitalDepositFreeTextTreeNode digitalDepositFreeTextTreeNode;
 	
+
 	
 	public NormalizedMemory(Enterprise enterprise,String page) {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
@@ -124,7 +130,7 @@ public class NormalizedMemory extends ResizeComposite {
 		Widget ui = MODEL_NORMALIZED_MEMORY_BINDER.createAndBindUi(this);
 		initWidget(ui);
 		depositType.setText("Abreviado");
-		
+	
 		inma.isModify(enterprise.getDocument(),new AsyncCallback<Boolean>() {
 			
 			@Override
@@ -253,8 +259,23 @@ public class NormalizedMemory extends ResizeComposite {
 	}
 	
 	
-
-	
+	@UiHandler("importSocietyButton")
+	void onSocietyButtonClick(ClickEvent event) {
+		
+		inma.importSocietyValues(enterprise.getDocument(), enterprise.getDomain(), new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				update();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+		
+		
+		
+	}
 	
 	@UiHandler("newButton")
 	void onNewButtonClick(ClickEvent event) {
@@ -657,8 +678,8 @@ public class NormalizedMemory extends ResizeComposite {
 			ft6.dump(ft6.d2DepositObject, "MAT6");
 			break;
 		case "MA6":
-			Paragraph6_2 p62= (Paragraph6_2) pagesPanel.getWidget(0);
-			p62.init();
+			PageM6_2 p62= (PageM6_2) pagesPanel.getWidget(0);
+			p62.dump(p62.d2DepositObject, "MA6");
 			break;
 			
 		case "MAT7":
@@ -666,8 +687,8 @@ public class NormalizedMemory extends ResizeComposite {
 			ft7.dump(ft7.d2DepositObject, "MAT7");
 			break;
 		case "MA7":
-			Paragraph7_2 p72 = (Paragraph7_2) pagesPanel.getWidget(0);
-			p72.init();
+			PageM7_2 p72 = (PageM7_2) pagesPanel.getWidget(0);
+			p72.dump(p72.d2DepositObject, "MA7");
 			break;
 		case "MAT8":
 			FreeText ft8 = (FreeText) pagesPanel.getWidget(0);
@@ -678,44 +699,56 @@ public class NormalizedMemory extends ResizeComposite {
 			ft9.dump(ft9.d2DepositObject, "MAT9");
 			break;
 		case "MA10":
-			Paragraph10 p10 = (Paragraph10) pagesPanel.getWidget(0);
-			p10.init();
+			PageM10 p10 = (PageM10) pagesPanel.getWidget(0);
+			p10.dump(new D2DepositTreeObject(), "MA10");
 			break;
 		case "MAT11":
 			FreeText ft11 = (FreeText) pagesPanel.getWidget(0);
 			ft11.dump(ft11.d2DepositObject, "MAT11");
 			break;
 		case "MA11":
-			Paragraph11_2 p112 = (Paragraph11_2) pagesPanel.getWidget(0);
-			p112.init();
+			PageM11_2 p112 = (PageM11_2) pagesPanel.getWidget(0);
+			p112.dump(new D2DepositTreeObject(), "MA11");
 			break;
 		case "MAT12":
 			FreeText ft12 = (FreeText) pagesPanel.getWidget(0);
 			ft12.dump(ft12.d2DepositObject, "MAT12");
 			break;
 		case "MA12":
-			Paragraph12_2 p122 = (Paragraph12_2) pagesPanel.getWidget(0);
-			p122.init();
+			PageM12_2 p122 = (PageM12_2) pagesPanel.getWidget(0);
+			p122.dump(new D2DepositTreeObject(), "MA12");
 			break;
 		case "MAT13":
 			FreeText ft13 = (FreeText) pagesPanel.getWidget(0);
 			ft13.dump(ft13.d2DepositObject, "MAT13");
 			break;
 		case "MA13":
-			Paragraph13_2 p132 = (Paragraph13_2) pagesPanel.getWidget(0);
-			p132.init();
+			PageM13_2 p132 = (PageM13_2) pagesPanel.getWidget(0);
+			p132.dump(new D2DepositTreeObject(), "MA13");
 			break;
 		case "MAT14":
 			FreeText ft14 = (FreeText) pagesPanel.getWidget(0);
 			ft14.dump(ft14.d2DepositObject, "MAT14");
 			break;
 		case "MA14":
-			Paragraph14_2 p142 = (Paragraph14_2) pagesPanel.getWidget(0);
-			p142.init();
+			PageM14_2 p142 = (PageM14_2) pagesPanel.getWidget(0);
+			p142.dump(new D2DepositTreeObject(), "MA14");
 			break;
 		case "MA15":
-			Paragraph15 p15 = (Paragraph15) pagesPanel.getWidget(0);
-			p15.init();
+			PageM15 p15 = (PageM15) pagesPanel.getWidget(0);
+			p15.dump(new D2DepositTreeObject(), "MA15");
+			break;
+		case "A":
+			PageF1 pf1 = (PageF1) pagesPanel.getWidget(0);
+			pf1.dump(new D2DepositTreeObject(), "A");
+			break;
+		case "PR":
+			PageF2 pf2 = (PageF2)  pagesPanel.getWidget(0);
+			pf2.dump(new D2DepositTreeObject(), "PR");
+			break;
+		case "H":
+			PageF3  pf3 = (PageF3)  pagesPanel.getWidget(0);
+			pf3.dump(new D2DepositTreeObject(), "H");
 			break;
 		default:
 			break;

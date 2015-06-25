@@ -11,6 +11,8 @@ import com.esferalia.aon.gwt.common.client.widget.Cnae2009Panel;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -116,7 +118,13 @@ public class Header1 extends PageAbs {
 					@Override
 					public void onSuccess(Void result) {}
 				});	
-				cnaeLabel.setText(selected.getDescription());
+				IDA02009.setValue(selected.getDescription());
+				inma.updateSchema(Header1.this.enterprise.getDocument(),Header1.this.enterprise.getDomain(),"2009", selected.getDescription(), new AsyncCallback<Void>() {
+					@Override
+					public void onFailure(Throwable caught) {}
+					@Override
+					public void onSuccess(Void result) {}
+				});	
 			}
 			@Override
 			public void onClose() {
@@ -179,11 +187,13 @@ public class Header1 extends PageAbs {
 
 
 	private void listBoxItemAdd(ListBox lb) {
-		Vector<String> provincias = new Vector<String>();
-		provincias.add("Alava");
-		for (String provincia : provincias) {
-			lb.addItem(provincia);
+		
+	
+		for(Integer i = 0; i< D2DepositConstants.PROVINCES.length; i++){
+			Provinces p = D2DepositConstants.PROVINCES[i];
+			lb.addItem(p.getName());
 		}
+		
 	}
 	
 	@UiHandler("showCnae")
@@ -475,8 +485,15 @@ public class Header1 extends PageAbs {
 			if(map.containsKey(key)){
 				
 				String value = map.get(key);
+				String value2 ="";
+				for (Integer i = 0 ; i< D2DepositConstants.PROVINCES.length; i++){
+		
+					if(D2DepositConstants.PROVINCES[i].getId().equals(value)){
+						value2 = D2DepositConstants.PROVINCES[i].getName();
+					}
+				}
 				for (Integer i = 0; i< lb.getItemCount(); i++) {
-					if(lb.getItemText(i).equals(value)){
+					if(lb.getItemText(i).equals(value2)){
 						lb.setSelectedIndex(i);
 					}
 					
@@ -489,10 +506,17 @@ public class Header1 extends PageAbs {
 				ListBox lb = lbAux;
 				@Override
 				public void onChange(ChangeEvent event) {
-
+					String value ="";
+					for(Integer i = 0; i< D2DepositConstants.PROVINCES.length;i++){
+						Provinces p = D2DepositConstants.PROVINCES[i];
+						if(lb.getSelectedItemText().equals(p.getName())){
+							value = p.getId(); 
+						}
+					}
+					
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
-					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key2, lb.getSelectedItemText(), new AsyncCallback<Void>() {
+					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key2, value, new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {}
 						@Override

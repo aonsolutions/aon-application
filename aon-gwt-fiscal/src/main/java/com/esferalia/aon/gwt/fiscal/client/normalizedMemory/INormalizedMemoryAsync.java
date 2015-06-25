@@ -39,4 +39,9 @@ public interface INormalizedMemoryAsync {
 
 	void getDate(String str, AsyncCallback<Date> callback);
 
+	void importSocietyValues(String document, Integer domainId,
+			AsyncCallback<Void> callback);
+
+
+
 }

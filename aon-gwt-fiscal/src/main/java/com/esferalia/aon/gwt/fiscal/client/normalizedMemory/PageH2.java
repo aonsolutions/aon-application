@@ -4,13 +4,10 @@ import java.text.ParseException;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
-import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.common.collect.Table;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -59,6 +56,7 @@ public class PageH2 extends PageAbs {
 
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
+		normalizedMemory.importSocietyButton.setVisible(true);
 		tabPanel.selectTab(0);
 	}
 

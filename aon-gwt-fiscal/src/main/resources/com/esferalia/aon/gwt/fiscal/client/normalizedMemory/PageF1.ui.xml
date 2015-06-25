@@ -1,0 +1,244 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:cell='urn:import:com.google.gwt.user.cellview.client' 
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+
+	
+	<g:TabPanel ui:field="tabPanel" styleName="{aonResources.css.aonWidthAll}">
+		<g:Tab text="A1">
+			<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
+				<g:HTMLPanel ui:field="basePanel"
+					styleName="{aonResources.css.aonFiscalContainer}">
+
+					<div class="{aonResources.css.aonGroup}">
+						<div class="{aonResources.css.aonGroupTitle}">
+							<g:InlineLabel text="Modelo de autocartera" />
+						</div>
+						<div class="{aonResources.css.aonGroupBody}">
+							<table>
+								<tr> 
+									<td>
+										<g:Label text="La sociedad no ha realizado durante el presente ejercicio operaci\u00f3n alguna sobre acciones / participaciones propias" />
+										<g:CheckBox ui:field="A18009050"></g:CheckBox>
+									</td>
+								</tr>
+							</table>
+							<table>
+								<tr>
+									<td>
+										<g:Label text="Saldo al cierre del ejercicio precedente"/>
+										<aon:DoubleBox ui:field="A18009020" />
+									</td>
+									<td>
+										<g:Label text="Acciones / participaciones"/>
+										<aon:DoubleBox ui:field="A18009040" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<g:Label text="Saldo al cierre del ejercicio"/>
+										<aon:DoubleBox ui:field="A18009010" />
+									</td>
+									<td>
+										<g:Label text="Acciones / participaciones"/>
+										<aon:DoubleBox ui:field="A18009030" />
+									</td>
+								</tr>
+							</table>
+							<div class="{aonResources.css.aonBorderBottom} {aonResources.css.aonFiscalScrollTableWrapper}">
+								<g:FlexTable ui:field="table" />
+							</div>
+							
+						</div>
+					</div>
+				</g:HTMLPanel>
+			</g:ScrollPanel>
+		</g:Tab>
+		<g:Tab text="A1.1">
+			<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
+				<g:HTMLPanel
+					styleName="{aonResources.css.aonFiscalContainer}">
+
+					<div class="{aonResources.css.aonGroup}">
+						<div class="{aonResources.css.aonGroupTitle}">
+							<g:InlineLabel text="{msg.memory6_2Title}" />
+						</div>
+						<div class="{aonResources.css.aonGroupBody}">
+							
+							<div class="{aonResources.css.aonBorderBottom} {aonResources.css.aonFiscalScrollTableWrapper}">
+								<g:FlexTable ui:field="table1" />
+							</div>
+							
+						</div>
+					</div>
+				</g:HTMLPanel>
+			</g:ScrollPanel>
+		</g:Tab>
+		<g:Tab text="A2">
+			<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
+				<g:HTMLPanel
+					styleName="{aonResources.css.aonFiscalContainer}">
+
+					<div class="{aonResources.css.aonGroup}">
+						<div class="{aonResources.css.aonGroupTitle}">
+							<g:InlineLabel text="{msg.memory6_2Title}" />
+						</div>
+						<div class="{aonResources.css.aonGroupBody}">
+							<table>
+								<tr> 
+									<td>
+										<g:Label text="Transcripci\u00f3n de acuerdos de Juntas generales, del \u00faltimo o anteriores ejercicios, autorizando negocios sobre acciones o participaciones propias realizados en el \u00faltimo ejercicio cerrado." />
+									</td>
+								</tr>
+							</table>
+							
+							<div class="{aonResources.css.aonBorderBottom} {aonResources.css.aonFiscalScrollTableWrapper}">
+								<g:FlexTable ui:field="table2" />
+							</div>
+							
+						</div>
+					</div>
+				</g:HTMLPanel>
+			</g:ScrollPanel>
+		</g:Tab>
+		<g:Tab text="A3">
+			<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
+				<g:HTMLPanel
+					styleName="{aonResources.css.aonFiscalContainer}">
+
+					<div class="{aonResources.css.aonGroup}">
+						<div class="{aonResources.css.aonGroupTitle}">
+							<g:InlineLabel text="{msg.memory6_2Title}" />
+						</div>
+						<div class="{aonResources.css.aonGroupBody}">
+							<table>
+								<tr> 
+									<td>
+										<g:Label text="Relaci\u00f3n de acciones o participaciones adquiridas al amparo de los art\u00edculos 140, 144 y 146 de la Ley de SOciedades de Capital, durante el ejercicio." />
+									</td>
+								</tr>
+							</table>
+							
+							<div class="{aonResources.css.aonBorderBottom} {aonResources.css.aonFiscalScrollTableWrapper}">
+								<g:FlexTable ui:field="table3" />
+							</div>
+							
+						</div>
+					</div>
+				</g:HTMLPanel>
+			</g:ScrollPanel>
+		</g:Tab>
+		<g:Tab text="A4">
+			<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
+				<g:HTMLPanel
+					styleName="{aonResources.css.aonFiscalContainer}">
+
+					<div class="{aonResources.css.aonGroup}">
+						<div class="{aonResources.css.aonGroupTitle}">
+							<g:InlineLabel text="{msg.memory6_2Title}" />
+						</div>
+						<div class="{aonResources.css.aonGroupBody}">
+							<table>
+								<tr> 
+									<td>
+										<g:Label text="Relaci\u00f3n de acciones o participaciones adquiridas por los mismo t\u00edtulos, enajenadas o amortizadas durante el presente ejercicio" />
+									</td>
+								</tr>
+							</table>
+							
+							<div class="{aonResources.css.aonBorderBottom} {aonResources.css.aonFiscalScrollTableWrapper}">
+								<g:FlexTable ui:field="table4" />
+							</div>
+							
+						</div>
+					</div>
+				</g:HTMLPanel>
+			</g:ScrollPanel>
+		</g:Tab>
+		<g:Tab text="A5">
+			<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
+				<g:HTMLPanel
+					styleName="{aonResources.css.aonFiscalContainer}">
+
+					<div class="{aonResources.css.aonGroup}">
+						<div class="{aonResources.css.aonGroupTitle}">
+							<g:InlineLabel text="{msg.memory6_2Title}" />
+						</div>
+						<div class="{aonResources.css.aonGroupBody}">
+							<table>
+								<tr> 
+									<td>
+										<g:Label text="Negocios que han impicado la aceptaci\u00f3n en garant\u00eda de acciones propias, con las excepciones legales (art\u00edculo 149 de la Ley de Sociedades de Capital)." />
+									</td>
+								</tr>
+							</table>
+							
+							<div class="{aonResources.css.aonBorderBottom} {aonResources.css.aonFiscalScrollTableWrapper}">
+								<g:FlexTable ui:field="table5" />
+							</div>
+							
+						</div>
+					</div>
+				</g:HTMLPanel>
+			</g:ScrollPanel>
+		</g:Tab>
+		<g:Tab text="A6">
+			<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
+				<g:HTMLPanel
+					styleName="{aonResources.css.aonFiscalContainer}">
+
+					<div class="{aonResources.css.aonGroup}">
+						<div class="{aonResources.css.aonGroupTitle}">
+							<g:InlineLabel text="{msg.memory6_2Title}" />
+						</div>
+						<div class="{aonResources.css.aonGroupBody}">
+							<table>
+								<tr> 
+									<td>
+										<g:Label text="Negocios que han impicado la asistencia finanaciera para la adquisicin de acciones propias salvo las excepciones legales (art\u00edculo 150 de la Ley de Sociedades de Capital)." />
+									</td>
+								</tr>
+							</table>
+							
+							<div class="{aonResources.css.aonBorderBottom} {aonResources.css.aonFiscalScrollTableWrapper}">
+								<g:FlexTable ui:field="table6" />
+							</div>
+							
+						</div>
+					</div>
+				</g:HTMLPanel>
+			</g:ScrollPanel>
+		</g:Tab>
+		<g:Tab text="A7">
+			<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
+				<g:HTMLPanel
+					styleName="{aonResources.css.aonFiscalContainer}">
+
+					<div class="{aonResources.css.aonGroup}">
+						<div class="{aonResources.css.aonGroupTitle}">
+							<g:InlineLabel text="{msg.memory6_2Title}" />
+						</div>
+						<div class="{aonResources.css.aonGroupBody}">
+							<table>
+								<tr> 
+									<td>
+										<g:Label text="Supuestos de infracci\u00f3n de las normas sobre participaciones rec\u00edprocas de capital (art\u00edculo 151 y siguiente de la Ley de Sociedades de Capital)." />
+									</td>
+								</tr>
+							</table>
+							
+							<div class="{aonResources.css.aonBorderBottom} {aonResources.css.aonFiscalScrollTableWrapper}">
+								<g:FlexTable ui:field="table7" />
+							</div>
+							
+						</div>
+					</div>
+				</g:HTMLPanel>
+			</g:ScrollPanel>
+		</g:Tab>
+	</g:TabPanel>
+</ui:UiBinder>

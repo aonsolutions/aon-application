@@ -240,7 +240,7 @@ public abstract class PageAbs extends ResizeComposite {
 		
 		getInputs().put(key, text);
 		if (!isTitle(key)) {
-			panel.addStyleName(AON.AON_CSS.aonFiscalPaddingRight());
+			//panel.addStyleName(AON.AON_CSS.aonFiscalPaddingRight());
 		}
 		tab.setWidget(row, col, panel);
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextRight());
