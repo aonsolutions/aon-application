@@ -25,46 +25,46 @@ public class CommonImpl implements ICommon {
 	public ApplicationParameter fetchOne(AONContext ctx, AppParam param) {
 		return AppParamDAO.fetchOne(ctx, param);
 	}
+
 	// ------------------ FISCAL PARAMETERS
 
 	@Override
 	public FiscalParameters getFiscalParameters(AONContext ctx) {
 		return AppParamDAO.getFiscalParameters(ctx);
 	}
+
 	// ------------------ ENTERPRISE
 	@Override
 	public Enterprise getEnterprise(AONContext ctx, int id) {
-		return CompanyDAO.getEnterprise(ctx,id);
+		return CompanyDAO.getEnterprise(ctx, id);
 	}
-	
+
 	@Override
-	public ArrayList<Enterprise> getParentEnterprises(AONContext ctx, String query) {
-		return CompanyDAO.getParentEnterprises(ctx
-			, p -> (p.getDomainProperty().eq(ctx.getDomainId())
-				   .or(p.getParentDomainProperty().eq(ctx.getDomainId())))
-				.and(
-					p.getNameProperty().like(query)
-					.or(p.getAliasProperty().like(query))
-					.or(p.getDocumentProperty().like(query))						
-					)
-			);
+	public ArrayList<Enterprise> getParentEnterprises(AONContext ctx,
+			String query) {
+		return CompanyDAO.getParentEnterprises(ctx, p -> (p.getDomainProperty()
+				.eq(ctx.getDomainId()).or(p.getParentDomainProperty().eq(
+				ctx.getDomainId()))).and(p.getNameProperty().like(query)
+				.or(p.getAliasProperty().like(query))
+				.or(p.getDocumentProperty().like(query))));
 	}
 
 	@Override
 	public ArrayList<CompanyBank> getCompanyBanks(AONContext ctx, int enterprise) {
 		return CompanyDAO.getBanks(ctx, enterprise);
 	}
+
 	@Override
 	public ArrayList<CompanyBank> getCompanyBanks(AONContext ctx) {
 		Company company = CompanyDAO.getCompany(ctx, ctx.getDomainId());
 		return CompanyDAO.getBanks(ctx, company.getId());
 	}
-	
+
 	@Override
 	public Company getCompany(AONContext ctx, int domain) {
 		return CompanyDAO.getCompany(ctx, domain);
 	}
-	
+
 	// ------------------ PRODUCT
 	@Override
 	public List<String> getProductTags(AONContext ctx) {
@@ -75,13 +75,13 @@ public class CommonImpl implements ICommon {
 	public Map<Integer, String[]> getProductTagMap(AONContext ctx) {
 		return ProductDAO.getProductTagMap(ctx);
 	}
-	
+
 	// ------------------ DOMAIN
-	
+
 	@Override
-	public Domain insertDomain(AONContext ctx, Integer parentDomain, String document, String name) {
-		return DomainDAO.insertDomain(ctx, parentDomain, document, name);
-		
-	
+	public Domain insertDomain(AONContext ctx, Integer parentDomain,
+			String document, String name, List<String> messages) {
+		return DomainDAO.insertDomain(ctx, parentDomain, document, name, messages);
+
 	}
 }

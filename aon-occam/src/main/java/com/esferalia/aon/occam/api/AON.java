@@ -1121,12 +1121,12 @@ public class AON {
 	}	
 	
 	public static Domain insertDomain(String domainName, int parentDomain,
-			String cifEnterprise, String nameEnterprise) {
+			String cifEnterprise, String nameEnterprise, List<String> messages) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, parentDomain);
 			return getCommon().insertDomain(ctx, parentDomain, cifEnterprise,
-					nameEnterprise);
+					nameEnterprise, messages);
 		} finally {
 			if (ctx != null)
 				ctx.close();

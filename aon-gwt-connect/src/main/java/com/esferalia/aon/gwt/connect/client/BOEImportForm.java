@@ -10,6 +10,9 @@ import gwtupload.client.IUploader.OnStatusChangedHandler;
 import gwtupload.client.IUploader.UploaderConstants;
 import gwtupload.client.SingleUploader;
 
+import java.util.Iterator;
+import java.util.List;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
@@ -25,6 +28,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
@@ -71,6 +75,9 @@ public class BOEImportForm extends Composite implements EntryPoint {
 	
 	@UiField
 	Button button;
+	
+	@UiField
+	FlowPanel messages;
 	
 	private long progress = 10;
 
@@ -122,7 +129,6 @@ public class BOEImportForm extends Composite implements EntryPoint {
 	SingleUploader up;
 	String urlAux;
 	private SingleUploader newUploader(String url) {
-
 		
 		SingleUploader upload=  new SingleUploader(FileInputType.BROWSER_INPUT);
 		upload.setAutoSubmit(true);
@@ -135,6 +141,7 @@ public class BOEImportForm extends Composite implements EntryPoint {
         upload.getForm().setMethod(FormPanel.METHOD_POST);
         upload.setTitle("uploadFormElement");
         upload.avoidEmptyFiles(true);
+        upload.setValidExtensions(".zip");
        
         up = upload; urlAux = url;
         upload.addOnCancelUploadHandler(new OnCancelUploaderHandler() {
@@ -192,25 +199,32 @@ public class BOEImportForm extends Composite implements EntryPoint {
 	}
 	
 	@UiHandler("button")
-	public void onButtonClick(ClickEvent event) {
-		if (Window.confirm(AON.MSG.continueAction()+"?")) {
-			CONNECT_SERVICE.importZippedMod2002013(getCurrentDomainName()
-					,getCurrentDomain()
-					,new AsyncCallback<Void>() {
-					
-						@Override
-						public void onSuccess(Void result) {
-							Window.alert("Proceso realizado correctamente.");
-							flexTable.setWidget(0, 1, newUploader(URL));
-						}
-						
-						@Override
-						public void onFailure(Throwable caught) {
-							Window.alert("Se ha producido un error durante la importacion.");
-							flexTable.setWidget(0, 1, newUploader(URL));
-						}
-					});
+	public void onButtonClick(ClickEvent event) {		
+		if (up == null)
+			return;	
 		
+		if (Window.confirm(AON.MSG.continueAction()+"?")) {
+			CONNECT_SERVICE.importZippedMod2002013(getCurrentDomainName(), getCurrentDomain(), new AsyncCallback<List<String>>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void onSuccess(List<String> result) {
+					flexTable.setWidget(0, 1, newUploader(URL));
+					List<String> list = result;
+					
+					Label label = null;
+					Iterator<String> iterator = list.iterator();
+					while (iterator.hasNext()) {
+						label = new Label(iterator.next());
+						messages.add(label);
+					}				
+				}
+			});
 		}
 	}
 	

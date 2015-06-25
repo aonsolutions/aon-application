@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.connect.client;
 
+import java.util.List;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -14,12 +16,11 @@ public class ConnectServiceAsyncDecorator implements ConnectServiceAsync {
 
 	@Override
 	public void importZippedMod2002013(String domainName, int domain,
-			AsyncCallback<Void> callback) {
+			AsyncCallback<List<String>> callback) {
 		AON.start();
-		csa.importZippedMod2002013(domainName, domain, 
-				new AsyncCallbackWrapper<Void>(callback));
+		csa.importZippedMod2002013(domainName, domain,
+				new AsyncCallbackWrapper<List<String>>(callback));
+
 	}
-
-
 
 }
