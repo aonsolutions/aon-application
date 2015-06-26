@@ -1189,6 +1189,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Caracteres de la declaraci\u00F3n")
 	String declarationCharacters();
+	
+	@DefaultMessage("La declaraci\u00F3n para el car\u00E1cter [{0}] no se encuentra disponible")
+	String unsupportedCharacter(String character);
 
 	@DefaultMessage("Tipo de declaraci\u00F3n")
 	String declarationType();
