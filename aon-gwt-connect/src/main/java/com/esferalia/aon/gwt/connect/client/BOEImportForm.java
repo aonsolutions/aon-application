@@ -203,6 +203,8 @@ public class BOEImportForm extends Composite implements EntryPoint {
 		if (up == null)
 			return;	
 		
+		messages.clear();
+		
 		if (Window.confirm(AON.MSG.continueAction()+"?")) {
 			CONNECT_SERVICE.importZippedMod2002013(getCurrentDomainName(), getCurrentDomain(), new AsyncCallback<List<String>>() {
 
