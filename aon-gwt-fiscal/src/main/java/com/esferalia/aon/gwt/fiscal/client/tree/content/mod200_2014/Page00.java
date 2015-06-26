@@ -19,10 +19,11 @@ import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002014TreeObject;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002014TreeObject.IMod200ChangeListener;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.DoubleVariable2014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014.BalanceType;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -326,6 +327,22 @@ public class Page00 extends PageAbs {
 	@UiHandler("periodType")
 	void onChangePeriodType( ChangeEvent event) {
 		periodPanel.setVisible((periodType.getSelectedIndex() != 0));
+	}
+	
+	@UiHandler("cnae")
+	void onChangeCNAE( ChangeEvent event) {
+		if (AonStringUtils.isEmpty(cnae.getText())) {
+			cnaeLabel.setText(AonStringUtils.EMPTY);
+		} else {
+			CNAE2009 c = CNAE2009.valueOfCode(cnae.getText()); 
+			if (c == null) {
+				Window.alert("CNAE no encontrado");
+				cnaeLabel.setText(AonStringUtils.EMPTY);
+			} else {
+				cnaeLabel.setText(c.getDescription());
+			}
+		}
+		
 	}
 
 	public void populate(Mod2002014TreeObject obj) {
