@@ -59,7 +59,8 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	private static void processZIPFiles(File parent, ZipInputStream zin,
-			String domainName, int parentDomain, List<String> messages) throws IOException {
+			String domainName, int parentDomain, List<String> messages)
+			throws IOException {
 
 		byte buff[] = new byte[1024];
 
@@ -67,30 +68,31 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements
 				.getNextEntry()) {
 			String name = entry.getName();
 			File file = new File(parent, name);
-			
-			messages.add(file.getAbsolutePath());
-			
+
+			messages.add("Unzip in file ... : " + file.getAbsolutePath());
+
 			if (entry.isDirectory()) {
 				file.mkdirs();
 				continue;
 			}
 
 			FileOutputStream fout = new FileOutputStream(file);
-			
+
 			for (int read = zin.read(buff, 0, 1024); read > 0; read = zin.read(
 					buff, 0, 1024))
 				fout.write(buff, 0, read);
 			fout.close();
 
 			FileInputStream input = new FileInputStream(file);
-			
+
 			Mod2002013 mod200 = Mod200Reader.getMod2002013(input);
-			
+
 			String enterDocument = mod200.getEnterpriseDocument();
 			String enterName = mod200.getEnterpriseName();
-			
-			messages.add(enterDocument + "-" + enterName);
-			
+
+			messages.add("Documento: " + enterDocument);
+			messages.add("Nombre: " + enterName);
+
 			Domain domain = AON.insertDomain(domainName, parentDomain,
 					enterDocument, enterName, messages);
 			Company company = AON.getCompanyForDomain(domain.getName(),

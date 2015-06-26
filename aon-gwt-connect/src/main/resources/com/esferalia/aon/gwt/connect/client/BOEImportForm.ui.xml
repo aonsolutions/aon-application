@@ -17,12 +17,11 @@
 						<div>
 							<g:Button ui:field="button" />
 						</div>
-						<div>
-							<g:FlowPanel ui:field="messages"/>
-						</div>
-
 					</div>
 
+					<div>
+						<g:FlowPanel ui:field="messages" />
+					</div>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 		</g:center>

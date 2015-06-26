@@ -19,14 +19,12 @@ import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 
-public class DomainDAO  {
+public class DomainDAO {
 
 	public static Domain insertDomain(AONContext ctx, Integer parentDomain,
 			String document, String name, List<String> messages) {
 		
-		Domain domain = null;
-		
-		messages.add(document + " " + name);
+		Domain domain = null;		
 		
 		Record domainRecord = ctx.getDslContext()
 					.select()
@@ -43,12 +41,12 @@ public class DomainDAO  {
 				domain.setName(domainRecord.getValue(DOMAIN.NAME));
 				domain.setParentId(domainRecord.getValue(DOMAIN.PARENT));
 				
-				messages.add("Empresa ya registrada en la base de datos. Nada importado");
+				messages.add (name + " ya se encuentra registrada en la base de datos. Nada importado");
 				
 				return domain;
 				
 			}
-			else {
+			
 				DomainRecord parent = getParentDomain(ctx, parentDomain);
 
 				String lowerDocument = document.toLowerCase().concat("-")
@@ -115,11 +113,6 @@ public class DomainDAO  {
 				domain.setParentId(parent.getValue(DOMAIN.ID));
 				
 				return domain;
-
-			}
-
-
-
 	}
 
 	private static DomainRecord getParentDomain(AONContext ctx,
