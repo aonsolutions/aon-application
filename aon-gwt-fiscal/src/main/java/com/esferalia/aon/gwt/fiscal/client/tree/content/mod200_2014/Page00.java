@@ -5,6 +5,7 @@ import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Cha
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Character.CHARACTER_INCOMPATIBILITY_MAP;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -42,8 +43,18 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Page00 extends PageAbs {
-	
-	public static final Mod2002014Key[] DECLARATION_CHARATERS_BLOCK1 = new Mod2002014Key[] {
+	public static final HashSet<Mod2002014Key> NOT_SUPPORTED_CHARACTERS = new HashSet<Mod2002014Key>();
+	static {
+		NOT_SUPPORTED_CHARACTERS.add(Mod2002014Key.C0003);
+		NOT_SUPPORTED_CHARACTERS.add(Mod2002014Key.C0004);
+		NOT_SUPPORTED_CHARACTERS.add(Mod2002014Key.C0024);
+		NOT_SUPPORTED_CHARACTERS.add(Mod2002014Key.C0025);
+		NOT_SUPPORTED_CHARACTERS.add(Mod2002014Key.C0036);
+		NOT_SUPPORTED_CHARACTERS.add(Mod2002014Key.C0058);
+		NOT_SUPPORTED_CHARACTERS.add(Mod2002014Key.C0061);
+	};
+
+	public static final Mod2002014Key[] DECLARATION_CHARACTERS_BLOCK1 = new Mod2002014Key[] {
 		 Mod2002014Key.C0001,Mod2002014Key.C0021
 		,Mod2002014Key.C0002,Mod2002014Key.C0023
 		,Mod2002014Key.C0003,Mod2002014Key.C0024
@@ -57,7 +68,7 @@ public class Page00 extends PageAbs {
 		,Mod2002014Key.C0019
 	};
 
-	public static final Mod2002014Key[] DECLARATION_CHARATERS_BLOCK2 = new Mod2002014Key[] {
+	public static final Mod2002014Key[] DECLARATION_CHARACTERS_BLOCK2 = new Mod2002014Key[] {
 	 	 Mod2002014Key.C0006,Mod2002014Key.C0034
 		,Mod2002014Key.C0015,Mod2002014Key.C0038
 		,Mod2002014Key.C0022,Mod2002014Key.C0046
@@ -69,7 +80,7 @@ public class Page00 extends PageAbs {
 		
 	};
 	
-	public static final Mod2002014Key[] DECLARATION_CHARATERS_BLOCK3 = new Mod2002014Key[] {
+	public static final Mod2002014Key[] DECLARATION_CHARACTERS_BLOCK3 = new Mod2002014Key[] {
 		 Mod2002014Key.C0056,Mod2002014Key.C0037
 		,Mod2002014Key.C0007,Mod2002014Key.C0039 
 		,Mod2002014Key.C0008,Mod2002014Key.C0043
@@ -235,9 +246,9 @@ public class Page00 extends PageAbs {
 		inputs.put(Mod2002014Key.C0061, c061);
 		
 		int row = 0;
-		row = initializeBlock(charactersTable1,row, DECLARATION_CHARATERS_BLOCK1);
-		row = initializeBlock(charactersTable2,row, DECLARATION_CHARATERS_BLOCK2);
-		row = initializeBlock(charactersTable3,row, DECLARATION_CHARATERS_BLOCK3);
+		row = initializeBlock(charactersTable1,row, DECLARATION_CHARACTERS_BLOCK1);
+		row = initializeBlock(charactersTable2,row, DECLARATION_CHARACTERS_BLOCK2);
+		row = initializeBlock(charactersTable3,row, DECLARATION_CHARACTERS_BLOCK3);
 	}
 
 	private int initializeBlock(FlexTable table,int row, Mod2002014Key[] declarationCharatersBlock) {
@@ -253,24 +264,17 @@ public class Page00 extends PageAbs {
 			BoxLabel l = new BoxLabel( key.getCode( adm ) );
 			table.setWidget(row, col++, l);
 			
-			final CheckBox check = new CheckBox(key.getDescription());
+			final CheckBox check = new CheckBox(key.getDescription() 
+				+ (NOT_SUPPORTED_CHARACTERS.contains(key)?" (NO)":""));
 			check.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					if (key == Mod2002014Key.C0003
-						|| key == Mod2002014Key.C0004
-						|| key == Mod2002014Key.C0024
-						|| key == Mod2002014Key.C0025
-						|| key == Mod2002014Key.C0036
-						|| key == Mod2002014Key.C0058
-						|| key == Mod2002014Key.C0061) {
-						Window.alert("La declaraci\u00F3n para el caracter '" +
-								key.getDescription()+ "' no se encuentra disponible");
-						check.setValue(false);						
+					if (NOT_SUPPORTED_CHARACTERS.contains(key)) {
+						Window.alert(AON.MSG.unsupportedCharacter(key.getDescription()));
+						check.setValue(false);
 					} else {
-						changeAvailability(key); 
+						changeAvailability(key);
 					}
-						
 				}
 
 			});
@@ -392,4 +396,32 @@ public class Page00 extends PageAbs {
 		c061.setEnabled(enabled);
 	}
 
+//	private changeCharacters() {
+//		C0050
+//		C0051
+//		C0052
+//		C0055
+//		C0053
+//		C0053
+//		C0054
+//		C0022
+//		C0017
+//		C0018
+//		C0019
+//		C0013
+//		C0015
+//		C0012
+//		X0000
+//		C0047
+//		C0028
+//		C0024
+//		C0003
+//		C0004
+//		C0009 
+//		C0010 
+//		C0024 
+//		C0025
+//	}
+
+	
 }
