@@ -4,11 +4,12 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -28,7 +29,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema;
+import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Cabecera;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves.Clave;
@@ -221,6 +223,207 @@ public class Utils {
 		c1010.setCodigo(BigInteger.valueOf(1010));
 		c1010.setValor(document);
 		keys.getClave().add(c1010);
+		
+		Clave c11021 = new Clave();
+		c11021.setCodigo(BigInteger.valueOf(11021));
+		c11021.setValor("2014");
+		keys.getClave().add(c11021);
+		   
+		Clave c11022 = new Clave();
+		c11022.setCodigo(BigInteger.valueOf(11022));
+		c11022.setValor("1");
+		keys.getClave().add(c11022);
+		
+		Clave c11023 = new Clave();
+		c11023.setCodigo(BigInteger.valueOf(11023));
+		c11023.setValor("1");
+		keys.getClave().add(c11023);
+		    
+		Clave c11011 = new Clave();
+		c11011.setCodigo(BigInteger.valueOf(11011));
+		c11011.setValor("2014");
+		keys.getClave().add(c11011);
+		
+		Clave c11012 = new Clave();
+		c11012.setCodigo(BigInteger.valueOf(11012));
+		c11012.setValor("12");
+		keys.getClave().add(c11012);
+		
+		Clave c110139 = new Clave();
+		c110139.setCodigo(BigInteger.valueOf(110139));
+		c110139.setValor("31");
+		keys.getClave().add(c110139);
+		
+		Clave c110219 = new Clave();
+		c110219.setCodigo(BigInteger.valueOf(110219));
+		c110219.setValor("2013");
+		keys.getClave().add(c110219);
+		
+		Clave c110229 = new Clave();
+		c110229.setCodigo(BigInteger.valueOf(110229));
+		c110229.setValor("1");
+		keys.getClave().add(c110229);
+		
+		Clave c110239 = new Clave();
+		c110239.setCodigo(BigInteger.valueOf(110239));
+		c110239.setValor("1");
+		keys.getClave().add(c110239);
+		   
+		Clave c8009010 = new Clave();
+		c8009010.setCodigo(BigInteger.valueOf(8009010));
+		c8009010.setValor("0");
+		keys.getClave().add(c8009010);
+
+		Clave c8009040 = new Clave();
+		c8009040.setCodigo(BigInteger.valueOf(8009040));
+		c8009040.setValor("0");
+		keys.getClave().add(c8009040);    
+
+		Clave c8009030 = new Clave();
+		c8009030.setCodigo(BigInteger.valueOf(8009030));
+		c8009030.setValor("0");
+		keys.getClave().add(c8009030);  
+		
+		Clave c8080854 = new Clave();
+		c8080854.setCodigo(BigInteger.valueOf(8080854));
+		c8080854.setValor("1");
+		keys.getClave().add(c8080854);
+		
+		Clave c110119 = new Clave();
+		c110119.setCodigo(BigInteger.valueOf(110119));
+		c110119.setValor("2013");
+		keys.getClave().add(c110119);
+		
+		Clave c11013 = new Clave();
+		c11013.setCodigo(BigInteger.valueOf(11013));
+		c11013.setValor("31");
+		keys.getClave().add(c11013);
+		
+		Clave c8080801 = new Clave();
+		c8080801.setCodigo(BigInteger.valueOf(8080801));
+		c8080801.setValor("1");
+		keys.getClave().add(c8080801);
+
+		Clave c8080803 = new Clave();
+		c8080803.setCodigo(BigInteger.valueOf(8080803));
+		c8080803.setValor("1");
+		keys.getClave().add(c8080803);
+		
+		Clave c8080811 = new Clave();
+		c8080811.setCodigo(BigInteger.valueOf(8080811));
+		c8080811.setValor("1");
+		keys.getClave().add(c8080811);
+		
+		Clave c8080800 = new Clave();
+		c8080800.setCodigo(BigInteger.valueOf(8080800));
+		c8080800.setValor("1");
+		keys.getClave().add(c8080800);
+		
+		Clave c8080819 = new Clave();
+		c8080819.setCodigo(BigInteger.valueOf(8080819));
+		c8080819.setValor("1");
+		keys.getClave().add(c8080819);
+		
+		Clave c9000000 = new Clave();
+		c9000000.setCodigo(BigInteger.valueOf(9000000));
+		c9000000.setValor("1");
+		keys.getClave().add(c9000000);
+		
+		schema.setClaves(keys);
+		
+		byte[] b = null;
+		try {
+			b = writeXml(schema);
+		} catch (JAXBException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return b;
+	}
+	
+	public static byte[] CreateXml(Enterprise enterprise, String name) {
+		Esquema schema = new Esquema();
+		Cabecera header = new Cabecera();
+		Claves keys = new Claves();
+		
+		header.setCIF(enterprise.getDocument());
+		header.setEjercicio(BigInteger.valueOf(2014));
+		header.setRazonSocial("");
+		header.setTipoCuestionario("Abreviado");
+		header.setIdiomaCuestionario("Castellano");
+		header.setMemoriaNormalizada(true);
+		schema.setCabecera(header);
+		
+		Clave c8080805 = new Clave();
+		c8080805.setCodigo(BigInteger.valueOf(8080805));
+		c8080805.setValor("1");
+		keys.getClave().add(c8080805);
+		
+		Clave c8009020 = new Clave();
+		c8009020.setCodigo(BigInteger.valueOf(8009020));
+		c8009020.setValor("0");
+		keys.getClave().add(c8009020);
+		
+		//---------- Enterprise Information
+		
+		Clave c1010 = new Clave();
+		c1010.setCodigo(BigInteger.valueOf(1010));
+		c1010.setValor(enterprise.getDocument());
+		keys.getClave().add(c1010);
+	
+		if(enterprise.getDocument().contains("A")){
+			Clave c1011 = new Clave();
+			c1011.setCodigo(BigInteger.valueOf(1011));
+			c1011.setValor("True");
+			keys.getClave().add(c1011);
+		}
+		else if(enterprise.getDocument().contains("B")){
+			Clave c1012 = new Clave();
+			c1012.setCodigo(BigInteger.valueOf(1012));
+			c1012.setValor("True");
+			keys.getClave().add(c1012);
+		}
+		
+		
+		Clave c1020 = new Clave();
+		c1020.setCodigo(BigInteger.valueOf(1020));
+		c1020.setValor(enterprise.getName());
+		keys.getClave().add(c1020);
+		
+		Clave c1022 = new Clave();
+		c1022.setCodigo(BigInteger.valueOf(1022));
+		c1022.setValor(enterprise.getAddress()+ " " + enterprise.getAddress2()+ " " + enterprise.getAddress3());
+		keys.getClave().add(c1022);
+		
+		Clave c1023 = new Clave();
+		c1023.setCodigo(BigInteger.valueOf(1023));
+		c1023.setValor(enterprise.getCity());
+		keys.getClave().add(c1023);
+		
+		Clave c1024 = new Clave();
+		c1024.setCodigo(BigInteger.valueOf(1024));
+		c1024.setValor(enterprise.getZip());
+		keys.getClave().add(c1024);
+		
+		
+		Clave c1025 = new Clave();
+		c1025.setCodigo(BigInteger.valueOf(1025));
+		Map<Province,String> ctx = new HashMap<>();
+		ProvincetoProvinces.fill(ctx);
+		c1025.setValor(ctx.get(enterprise.getProvince()));
+		keys.getClave().add(c1025);
+		
+		Clave c1031 = new Clave();
+		c1031.setCodigo(BigInteger.valueOf(1031));
+		c1031.setValor(enterprise.getPhone());
+		keys.getClave().add(c1031);
+		
+		Clave c1037 = new Clave();
+		c1037.setCodigo(BigInteger.valueOf(1037));
+		c1037.setValor(enterprise.getEmail());
+		keys.getClave().add(c1037);
+		
+		//---------- //
 		
 		Clave c11021 = new Clave();
 		c11021.setCodigo(BigInteger.valueOf(11021));

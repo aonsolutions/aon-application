@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Cities;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
@@ -146,6 +147,7 @@ public class PageF2 extends PageAbs {
 				if(map.containsKey("IDA01020")) IDA01020.setText(map.get("IDA01020"));
 				if(map.containsKey("IDA01101")) IDA01101.setText(map.get("IDA01101"));
 				
+				listBoxItemAddCities(PR8081001);
 				keyExe(map, "PR8081001", "80810001", PR8081001, "list", true);
 
 				keyExe(map, "PR8081002", "80810002", PR8081002, "text", true);
@@ -160,16 +162,24 @@ public class PageF2 extends PageAbs {
 				keyExe(map, "PR8080800", "8080800", PR8080800, "check", false);
 				keyExe(map, "PR8080819", "8080819", PR8080819, "check", false);
 
-				
+				PR8081201.setWidth("99%");
 				keyExe(map, "PR8081201", "8081201", PR8081201, "text", true);
+				PR8081202.setWidth("99%");
 				keyExe(map, "PR8081202", "8081202", PR8081202, "text", true);
+				PR8081203.setWidth("99%");
 				keyExe(map, "PR8081203", "8081203", PR8081203, "text", true);
+				PR8081204.setWidth("99%");
 				keyExe(map, "PR8081204", "8081204", PR8081204, "text", true);
+				PR8081205.setWidth("99%");
 				keyExe(map, "PR8081205", "8081205", PR8081205, "text", true);
+				PR8081206.setWidth("99%");
 				listBoxItemAdd(PR8081206);
 				keyExe(map, "PR8081206", "8081206", PR8081206, "list", true);
+				PR8081207.setWidth("99%");
 				keyExe(map, "PR8081207", "8081207", PR8081207, "text", true);
+				PR8081208.setWidth("99%");
 				keyExe(map, "PR8081208", "8081208", PR8081208, "text", true);
+				PR8081209.setWidth("99%");
 				keyExe(map, "PR8081209", "8081209", PR8081209, "text", true);
 				
 			}
@@ -439,7 +449,15 @@ public class PageF2 extends PageAbs {
 		}
 		
 	}
-	
+	private void listBoxItemAddCities(ListBox lb) {
+
+		
+		for(Integer i = 0; i< D2DepositConstants.CITIES.length; i++){
+			Cities p = D2DepositConstants.CITIES[i];
+			lb.addItem(p.getName());
+		}
+		
+	}
 
 	
 }

@@ -12,31 +12,31 @@
 			<g:SimplePanel ui:field="headerPanel"/>
 		 	<div class="{aonResources.css.aonGroup}">
 				<div class="{aonResources.css.aonGroupTitle}">
-					<g:InlineLabel text="Instancia de Presentaci\u00f3n" />
+					<g:InlineLabel text="{msg.footer2Title}" />
 				</div>
 				<div class="{aonResources.css.aonGroupBody}">
 					
 					<table>
 						<tr>
 							<td>
-								<g:Label text="SOLICITUD DE PRESENTACI\u00d3N EN EL REGISTRO MERCANTIL DE " />
+								<g:Label text="{msg.footer2Label1}" />
 								<g:ListBox ui:field="PR8081001"  /> 
 							</td>
 						</tr>
 					</table>
 		 			<div class="{aonResources.css.aonGroup}">
 						<div class="{aonResources.css.aonGroupTitle}">
-							<g:InlineLabel text="IDENTIFICACI\u00d3N DE LA ENTIDAD QUE PRESENTA LAS CUENTAS A DEP\u00d3SITO" />
+							<g:InlineLabel text="{msg.footer2Label2}" />
 						</div>
 						<div class="{aonResources.css.aonGroupBody}">
 							<table>
 								<tr>
 									<td colspan="2">
-										<g:Label text="Denominaci\u00f3n de la entidad" />
+										<g:Label text="{msg.footer2Label3}" />
 										<g:Label ui:field="IDA01020" />
 									</td>
 									<td colspan="2">
-										<g:Label text="NIF" />
+										<g:Label text="{msg.nif}" />
 										<g:Label ui:field="IDA01010" />
 									
 									</td>
@@ -48,19 +48,19 @@
 								</tr>
 								<tr>
 									<td>
-										<g:Label text="Tomo" />
+										<g:Label text="{msg.footer2Label4}" />
 										<g:TextBox ui:field="PR8081002"  styleName="{aonResources.css.aonInputText}"/>
 									</td>
 									<td>
-										<g:Label text="Folio" />
+										<g:Label text="{msg.footer2Label5}" />
 										<g:TextBox ui:field="PR8081003"  styleName="{aonResources.css.aonInputText}"/>
 									</td>
 									<td>
-										<g:Label text="Nº Hoja Registral" />
+										<g:Label text="{msg.footer2Label6}" />
 										<g:TextBox ui:field="PR8081004"  styleName="{aonResources.css.aonInputText}"/>
 									</td>
 									<td>
-										<g:Label text="Fecha de cierre ejercicio social" />
+										<g:Label text="{msg.footer2Label7}" />
 										<g:Label ui:field="IDA01101" />
 									</td>
 								</tr>
@@ -72,72 +72,72 @@
 		 		
 		 			<div class="{aonResources.css.aonGroup}">
 						<div class="{aonResources.css.aonGroupTitle}">
-							<g:InlineLabel text="IDENTIFICACI\u00d3N DE LOS DOCUMENTOS CONTABLES CUYO DEP\u00d3SITO SE SOLICITA" />
+							<g:InlineLabel text="{msg.footer2Label8}" />
 						</div>
 						<div class="{aonResources.css.aonGroupBody}">
 							<table>
 								<tr>
 									<td>
-										<g:Label text="Balance"></g:Label>
+										<g:Label text="{msg.balanceSheet}"></g:Label>
 									</td>
 									<td>
-										<g:Label text="P\u00e9rdidas y ganancias"></g:Label>
+										<g:Label text="{msg.profitAndLoss}"></g:Label>
 									</td>
 									<td>
-										<g:Label text="Memoria"></g:Label>
+										<g:Label text="{msg.memory}"></g:Label>
 									</td>
 									<td>
-										<g:Label text="Estado cambios patrimonio neto"></g:Label>
+										<g:Label text="{msg.footer2Label9}"></g:Label>
 									</td>
 									<td>
-										<g:Label text="Estado de Flujos de efectivo"></g:Label>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<g:CheckBox ui:field="balanceNormal" enabled="false" text="Normal" />
-									</td>
-									<td>
-										<g:CheckBox ui:field="pygNormal" enabled="false" text="Normal" />
-									</td>
-									<td>
-										<g:CheckBox ui:field="memoriaNormal" enabled="false" text="Normal" />
-									</td>
-									<td>
-										<g:CheckBox ui:field="ecpnNormal" enabled="false" text="Normal" />
-									</td>
-									<td>
-										<g:CheckBox ui:field="efeNormal" enabled="false" text="Normal" />
+										<g:Label text="{msg.footer2Label10}"></g:Label>
 									</td>
 								</tr>
 								<tr>
 									<td>
-										<g:CheckBox ui:field="PR8080801" enabled="false" value="true" text="Abreviado" />
+										<g:CheckBox ui:field="balanceNormal" enabled="false" text="{msg.normal}" />
 									</td>
 									<td>
-										<g:CheckBox ui:field="PR8080803" enabled="false" value="true" text="Abreviado" />
+										<g:CheckBox ui:field="pygNormal" enabled="false" text="{msg.normal}" />
 									</td>
 									<td>
-										<g:CheckBox ui:field="PR8080805" enabled="false" value="true" text="Abreviado" />
+										<g:CheckBox ui:field="memoriaNormal" enabled="false" text="{msg.normal}" />
 									</td>
 									<td>
-										<g:CheckBox ui:field="PR8080854" enabled="false" value="true" text="Abreviado" />
+										<g:CheckBox ui:field="ecpnNormal" enabled="false" text="{msg.normal}" />
+									</td>
+									<td>
+										<g:CheckBox ui:field="efeNormal" enabled="false" text="{msg.normal}" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<g:CheckBox ui:field="PR8080801" enabled="false" value="true" text="{msg.abreviate}" />
+									</td>
+									<td>
+										<g:CheckBox ui:field="PR8080803" enabled="false" value="true" text="{msg.abreviate}" />
+									</td>
+									<td>
+										<g:CheckBox ui:field="PR8080805" enabled="false" value="true" text="{msg.abreviate}" />
+									</td>
+									<td>
+										<g:CheckBox ui:field="PR8080854" enabled="false" value="true" text="{msg.abreviate}" />
 									</td>
 									<td>
 									</td>
 								</tr>
 								<tr>
 									<td>
-										<g:CheckBox ui:field="balanpyme" enabled="false" text="PYME" />
+										<g:CheckBox ui:field="balanpyme" enabled="false" text="{msg.pyme}" />
 									</td>
 									<td>
-										<g:CheckBox ui:field="pygpye" enabled="false" text="PYME" />
+										<g:CheckBox ui:field="pygpye" enabled="false" text="{msg.pyme}" />
 									</td>
 									<td>
-										<g:CheckBox ui:field="memoriapyme" enabled="false" text="PYME" />
+										<g:CheckBox ui:field="memoriapyme" enabled="false" text="{msg.pyme}" />
 									</td>
 									<td>
-										<g:CheckBox ui:field="ecpnpyme" enabled="false" text="PYME" />
+										<g:CheckBox ui:field="ecpnpyme" enabled="false" text="{msg.pyme}" />
 									</td>
 									<td>
 									</td>
@@ -146,36 +146,36 @@
 							<table>
 								<tr>
 									<td>
-										<g:CheckBox ui:field="PR8080800" enabled="false" value="true" text="Hoja de Identificaci\u00f3n de la sociedad" />
+										<g:CheckBox ui:field="PR8080800" enabled="false" value="true" text="{msg.footer2Label11}" />
 									</td>
 									<td>
-										<g:CheckBox ui:field="PR8080819" enabled="false" value="true" text="Declaraci\u00f3n medioambiental" />
+										<g:CheckBox ui:field="PR8080819" enabled="false" value="true" text="{msg.footer2Label12}" />
 									</td>
 									<td>
-										<g:CheckBox ui:field="IG" enabled="false" text="Informe de gestion" />
+										<g:CheckBox ui:field="IG" enabled="false" text="{msg.footer2Label13}" />
 									</td>
 									<td>
-										<g:CheckBox ui:field="IA" enabled="false" text="Informe de Auditor\u00eda" />
+										<g:CheckBox ui:field="IA" enabled="false" text="{msg.footer2Label14}" />
 									</td>
 									<td>
-										<g:CheckBox ui:field="MA" enabled="false" text="Modelo e Autocartera" />
+										<g:CheckBox ui:field="MA" enabled="false" text="{msg.footer1Title}" />
 									</td>
 								</tr>
 								<tr>
 									<td>
-										<g:CheckBox ui:field="ac" enabled="false" text="Anuncios de convocatoria" />
+										<g:CheckBox ui:field="ac" enabled="false" text="{msg.footer2Label15}" />
 									</td>
 									<td>
-										<g:CheckBox ui:field="SICAV" enabled="false" text="Certificado SICAV" />
+										<g:CheckBox ui:field="SICAV" enabled="false" text="{msg.footer2Label16}" />
 									</td>
 									<td>
-										<g:CheckBox ui:field="PR8080811" enabled="true" value="true" text="Certificaci\u00f3n acuerdo" />
+										<g:CheckBox ui:field="PR8080811" enabled="true" value="true" text="{msg.footer2Label17}" />
 									</td>
 									<td>
-										<g:CheckBox ui:field="OTROS" enabled="false" text="Otros Documentos" />
+										<g:CheckBox ui:field="OTROS" enabled="false" text="{msg.footer2Label18}" />
 									</td>
 									<td>
-										<g:Label text="Nº "/>
+										<g:Label text="{msg.footer2Label19}"/>
 										<g:Label ui:field="NUM" />									</td>
 								</tr>
 							</table>
@@ -186,48 +186,48 @@
 					
 					<div class="{aonResources.css.aonGroup}">
 						<div class="{aonResources.css.aonGroupTitle}">
-							<g:InlineLabel text="IDENTIFICACI\u00d3N DEL PRESENTANTE QUE HACE LA SOLICITUD" />
+							<g:InlineLabel text="{msg.footer2Label20}" />
 						</div>
 						<div class="{aonResources.css.aonGroupBody}">
 							<table style="width:100%;">
 								<tr>
 									<td>
-										<g:Label text="Nombre y Apellidos" />
+										<g:Label text="{msg.nameAndSurname}" />
 										<g:TextBox ui:field="PR8081201"  styleName="{aonResources.css.aonInputText}"/>
 									</td>
 									<td>
-										<g:Label text="DNI" />
+										<g:Label text="{msg.dni}" />
 										<g:TextBox ui:field="PR8081202" styleName="{aonResources.css.aonInputText}"/>
 									</td>
 								</tr>
 								<tr>
 									<td>
-										<g:Label text="Domicilio" />
+										<g:Label text="{msg.domicilio}" />
 										<g:TextBox ui:field="PR8081203" styleName="{aonResources.css.aonInputText}"/>
 									</td>
 									<td>
-										<g:Label text="C\u00f3digo Postal" />
+										<g:Label text="{msg.zip}" />
 										<g:TextBox ui:field="PR8081205" styleName="{aonResources.css.aonInputText}"/>
 									</td>
 								</tr>
 								<tr>
 									<td>
-										<g:Label text="Ciudad" />
+										<g:Label text="{msg.ciudad}" />
 										<g:TextBox ui:field="PR8081204" styleName="{aonResources.css.aonInputText}"/>
 									</td>
 									<td>
-										<g:Label text="Provincia" />
+										<g:Label text="{msg.province}" />
 										<g:ListBox ui:field="PR8081206" styleName="{aonResources.css.aonInputText}"/>
 									</td>
 									<tr>
 									<td>
-										<g:Label text="Tel\u00e9fono" />
+										<g:Label text="{msg.phone}" />
 										<g:TextBox ui:field="PR8081208" styleName="{aonResources.css.aonInputText}"/>
-										<g:Label text="Fax" />
+										<g:Label text="{msg.fax}" />
 										<g:TextBox ui:field="PR8081207" styleName="{aonResources.css.aonInputText}"/>
 									</td>
 									<td>
-										<g:Label text="Correo electronico" />
+										<g:Label text="{msg.mail}" />
 										<g:TextBox ui:field="PR8081209" styleName="{aonResources.css.aonInputText}"/>
 									</td>
 								</tr>

@@ -30,17 +30,18 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.shared.MemoryTemplate;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositFooterKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
+import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.DBConsults;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves.Clave;
-import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002013toD2;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002014toD2;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Utils;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -391,5 +392,12 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements INo
 		for(D2DepositHeaderKey key : ctx.keySet()){
 			updateSchema(document, domainId, key.getCode(), ctx.get(key).toString());
 		}*/
+	}
+	
+	public void createD2Deposit(Integer domainId, Integer id, String name){
+		String domainName = AonUtil.getDomainName();
+		Enterprise enterprise = AON.getEnterprise(domainName, domainId, id);
+		byte[] b = Utils.CreateXml(enterprise, name);
+		Integer depositId = DBConsults.insertDeposit(domainName, b, domainId);
 	}
 }

@@ -12,13 +12,13 @@
 			<g:SimplePanel ui:field="headerPanel"/>
 		 	<div class="{aonResources.css.aonGroup}">
 				<div class="{aonResources.css.aonGroupTitle}">
-					<g:InlineLabel text="Certificaci\u00f3n de huella digital" />
+					<g:InlineLabel text="{msg.footer3Title}" />
 				</div>
 				<div class="{aonResources.css.aonGroupBody}">
 				
 		 			<div class="{aonResources.css.aonGroup}">
 						<div class="{aonResources.css.aonGroupTitle}">
-							<g:InlineLabel text="Nombre de las personas que expiden la certificaci\u00f3n" />
+							<g:InlineLabel text="{msg.footer3Label}" />
 						</div>
 						<div class="{aonResources.css.aonGroupBody}">
 							<g:FlexTable ui:field="table"/>

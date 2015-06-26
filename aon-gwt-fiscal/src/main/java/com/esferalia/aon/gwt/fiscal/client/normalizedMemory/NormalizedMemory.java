@@ -87,7 +87,7 @@ public class NormalizedMemory extends ResizeComposite {
 	
 	@UiField Button importSocietyButton;
 
-	
+	@UiField Button importAllButton;
 	
 	
 	@UiField
@@ -319,12 +319,26 @@ public class NormalizedMemory extends ResizeComposite {
 			
 				@Override
 				protected void onAccept() {
+					TextBox tb = (TextBox) flex_table.getWidget(1, 1);
 					hide();
-					digitalDepositTreeNode.items();
-					newButton.setVisible(false);
-					saveButton.setVisible(true);
-					saveButton.setEnabled(false);
-					generateFileButton.setVisible(true);
+					
+					inma.createD2Deposit(enterprise.getDomain(), enterprise.getId(), tb.getValue() , new AsyncCallback<Void>() {
+
+								@Override
+								public void onFailure(Throwable caught) {
+									
+								}
+
+								@Override
+								public void onSuccess(Void result) {
+									digitalDepositTreeNode.items();
+									newButton.setVisible(false);
+									saveButton.setVisible(true);
+									saveButton.setEnabled(false);
+									generateFileButton.setVisible(true);									
+								}
+					});
+					
 				}
 			};
 		}
@@ -369,6 +383,7 @@ public class NormalizedMemory extends ResizeComposite {
 	
 	@UiHandler("importButton")
 	void onImportButtonClick(ClickEvent event) {
+		
 		String url = GWT.getModuleBaseURL()+"gwt_deposit_upload";
 		DepositDialog popup = new DepositDialog("Importar Deposito","import", enterprise, GWT.getModuleBaseURL(), null) {
 
@@ -469,6 +484,56 @@ public class NormalizedMemory extends ResizeComposite {
 	
 	Vector<MemoryTemplate> mts ;
 	
+	
+	@UiHandler("importAllButton")
+	void onImportAllButtonClick(ClickEvent event){
+		inma.getParentDomain(enterprise.getDomain(), new AsyncCallback<Integer>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				
+			}
+
+			@Override
+			public void onSuccess(Integer result) {
+				inma.getDigitalDepositTemplates(result,
+						new AsyncCallback<Vector<MemoryTemplate>>() {
+
+							@Override
+							public void onSuccess(Vector<MemoryTemplate> result) {
+								String url = GWT.getModuleBaseURL()
+										+ "gwt_deposit_upload";
+								mts = result;
+								DepositDialog popup = new DepositDialog(
+										"Importar", "importAll", enterprise,
+										url, result) {
+									Vector<MemoryTemplate> vector = mts;
+
+									@Override
+									protected void onCancel() {
+										hide();
+
+									}
+
+									@Override
+									protected void onAccept() {
+										hide();
+									}
+								};
+								popup.addStyleName("gwt-PopupPanel-template");
+								popup.setGlassEnabled(true);
+								popup.show();
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								
+							}
+							
+				});
+			}
+		});
+	}
 	
 	@UiHandler("importTextButton")
 	void onImportTextButtonClick(ClickEvent event) {

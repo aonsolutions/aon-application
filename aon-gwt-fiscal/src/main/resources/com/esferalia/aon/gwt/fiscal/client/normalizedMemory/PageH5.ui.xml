@@ -21,7 +21,7 @@
 						<tr>
 							<td>
 								<g:Label text="Los abajo firmantes, como Administradores de la Sociedad citada, manifiestan que en la contabilidad correspondiente a las presentes cuentas anuales NO existe ninguna partida de naturaleza medioambiental que deba ser incluida de acuerdo a la norma de elaboración '4ª Cuentas anuales abreviadas' en su punto 5, de la tercera parte del Plan General de Contabilidad (Real Decreto 1514/2007 de 16 de Noviembre)." />
-								<g:CheckBox ui:field="IMA8099000" />
+								<g:CheckBox ui:field="IMA8099000" styleName="{aonResources.css.aonTextCenter}"/>
 							</td>
 						</tr> 
 					</table>
@@ -29,7 +29,7 @@
 						<tr>
 							<td>
 							<g:Label text="Los abajo firmantes, como Administradores de la Sociedad citada, manifiestan que en la contabilidad correspondiente a las presentes cuentas anuales SI existen partidas de naturaleza medioambiental, y han sido incluidas en un Apartado adiciones de la Memoria de acuerdo a la norma de elaboración '4ª Cuentas anuales abreviadas' en su punto 5, de la tercera parte del Plan General de Contabilidad (Real Decreto 1514/2007 de 16 de Noviembre)." />
-							<g:CheckBox ui:field="IMA8099010"></g:CheckBox>
+							<g:CheckBox ui:field="IMA8099010"  styleName="{aonResources.css.aonTextCenter}"></g:CheckBox>
 							</td>
 						</tr> 
 					</table>

@@ -5,7 +5,7 @@ import java.io.Serializable;
 public enum Cities implements Serializable{
 
 
-	ACORUNA("A CORUÑA", "15021"),
+	ACORUNA("A CORU\u00d1A", "15021"),
 	ALBACETE("ALBACETE","2010"),
 	ALICANTE("ALICANTE","3026"),
 	ALMERIA("ALMERIA","4015"),
@@ -31,7 +31,7 @@ public enum Cities implements Serializable{
 	LASPALMAS("LAS PALMAS","35009"),
 	LEON("LE\u00d3N","24014"),
 	LLEIDA("LLEIDA","25011"),
-	LOGRONO("LOGROÑO","26010"),
+	LOGRONO("LOGRO\u00d1O","26010"),
 	LUGO("LUGO","27013"),
 	MADRID("MADRID","28065"),
 	MAHON("MAHON","7013"),

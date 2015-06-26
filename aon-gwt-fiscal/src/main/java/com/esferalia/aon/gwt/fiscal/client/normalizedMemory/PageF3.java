@@ -76,6 +76,7 @@ public class PageF3 extends PageAbs {
 		
 		final TextBox text = new TextBox();
 		text.setStyleName(AON.AON_CSS.aonInputText());
+		text.setWidth("99%");
 		codeAux = codeId;
 		text.addChangeHandler(new ChangeHandler() {
 			String code = codeAux;

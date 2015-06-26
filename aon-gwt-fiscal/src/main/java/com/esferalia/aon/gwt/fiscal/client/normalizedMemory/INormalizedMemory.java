@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.fiscal.shared.MemoryTemplate;
+import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -36,4 +37,6 @@ public interface INormalizedMemory extends RemoteService{
 	public Date getDate(String str);
 	
 	public void importSocietyValues(String document, Integer domainId);
+	
+	public void createD2Deposit(Integer domainId, Integer id, String name);
 }

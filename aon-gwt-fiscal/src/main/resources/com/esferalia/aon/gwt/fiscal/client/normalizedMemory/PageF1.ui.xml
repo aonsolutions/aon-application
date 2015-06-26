@@ -16,35 +16,35 @@
 
 					<div class="{aonResources.css.aonGroup}">
 						<div class="{aonResources.css.aonGroupTitle}">
-							<g:InlineLabel text="Modelo de autocartera" />
+							<g:InlineLabel text="{msg.footer1Title}" />
 						</div>
 						<div class="{aonResources.css.aonGroupBody}">
 							<table>
 								<tr> 
 									<td>
-										<g:Label text="La sociedad no ha realizado durante el presente ejercicio operaci\u00f3n alguna sobre acciones / participaciones propias" />
+										<g:Label text="{msg.footer1Label1}" />
 										<g:CheckBox ui:field="A18009050"></g:CheckBox>
 									</td>
 								</tr>
 							</table>
-							<table>
+							<table style="width:50%">
 								<tr>
 									<td>
-										<g:Label text="Saldo al cierre del ejercicio precedente"/>
+										<g:Label text="{msg.footer1Label2"/>
 										<aon:DoubleBox ui:field="A18009020" />
 									</td>
 									<td>
-										<g:Label text="Acciones / participaciones"/>
+										<g:Label text="{msg.footer1Label3}"/>
 										<aon:DoubleBox ui:field="A18009040" />
 									</td>
 								</tr>
 								<tr>
 									<td>
-										<g:Label text="Saldo al cierre del ejercicio"/>
+										<g:Label text="{msg.footer1Label4}"/>
 										<aon:DoubleBox ui:field="A18009010" />
 									</td>
 									<td>
-										<g:Label text="Acciones / participaciones"/>
+										<g:Label text="{msg.footer1Label3}"/>
 										<aon:DoubleBox ui:field="A18009030" />
 									</td>
 								</tr>
@@ -65,7 +65,7 @@
 
 					<div class="{aonResources.css.aonGroup}">
 						<div class="{aonResources.css.aonGroupTitle}">
-							<g:InlineLabel text="{msg.memory6_2Title}" />
+							<g:InlineLabel text="{msg.footer1Title}" />
 						</div>
 						<div class="{aonResources.css.aonGroupBody}">
 							
@@ -85,13 +85,13 @@
 
 					<div class="{aonResources.css.aonGroup}">
 						<div class="{aonResources.css.aonGroupTitle}">
-							<g:InlineLabel text="{msg.memory6_2Title}" />
+							<g:InlineLabel text="{msg.footer1Title}" />
 						</div>
 						<div class="{aonResources.css.aonGroupBody}">
 							<table>
 								<tr> 
 									<td>
-										<g:Label text="Transcripci\u00f3n de acuerdos de Juntas generales, del \u00faltimo o anteriores ejercicios, autorizando negocios sobre acciones o participaciones propias realizados en el \u00faltimo ejercicio cerrado." />
+										<g:Label text="{msg.footer1Label5}" />
 									</td>
 								</tr>
 							</table>
@@ -112,13 +112,13 @@
 
 					<div class="{aonResources.css.aonGroup}">
 						<div class="{aonResources.css.aonGroupTitle}">
-							<g:InlineLabel text="{msg.memory6_2Title}" />
+							<g:InlineLabel text="{msg.footer1Title}" />
 						</div>
 						<div class="{aonResources.css.aonGroupBody}">
 							<table>
 								<tr> 
 									<td>
-										<g:Label text="Relaci\u00f3n de acciones o participaciones adquiridas al amparo de los art\u00edculos 140, 144 y 146 de la Ley de SOciedades de Capital, durante el ejercicio." />
+										<g:Label text="{msg.footer1Label6}" />
 									</td>
 								</tr>
 							</table>
@@ -139,13 +139,13 @@
 
 					<div class="{aonResources.css.aonGroup}">
 						<div class="{aonResources.css.aonGroupTitle}">
-							<g:InlineLabel text="{msg.memory6_2Title}" />
+							<g:InlineLabel text="{msg.footer1Title}" />
 						</div>
 						<div class="{aonResources.css.aonGroupBody}">
 							<table>
 								<tr> 
 									<td>
-										<g:Label text="Relaci\u00f3n de acciones o participaciones adquiridas por los mismo t\u00edtulos, enajenadas o amortizadas durante el presente ejercicio" />
+										<g:Label text="{msg.footer1Label7}" />
 									</td>
 								</tr>
 							</table>
@@ -166,13 +166,13 @@
 
 					<div class="{aonResources.css.aonGroup}">
 						<div class="{aonResources.css.aonGroupTitle}">
-							<g:InlineLabel text="{msg.memory6_2Title}" />
+							<g:InlineLabel text="{msg.footer1Title}" />
 						</div>
 						<div class="{aonResources.css.aonGroupBody}">
 							<table>
 								<tr> 
 									<td>
-										<g:Label text="Negocios que han impicado la aceptaci\u00f3n en garant\u00eda de acciones propias, con las excepciones legales (art\u00edculo 149 de la Ley de Sociedades de Capital)." />
+										<g:Label text="{msg.footer1Label8" />
 									</td>
 								</tr>
 							</table>
@@ -193,13 +193,13 @@
 
 					<div class="{aonResources.css.aonGroup}">
 						<div class="{aonResources.css.aonGroupTitle}">
-							<g:InlineLabel text="{msg.memory6_2Title}" />
+							<g:InlineLabel text="{msg.footer1Title}" />
 						</div>
 						<div class="{aonResources.css.aonGroupBody}">
 							<table>
 								<tr> 
 									<td>
-										<g:Label text="Negocios que han impicado la asistencia finanaciera para la adquisicin de acciones propias salvo las excepciones legales (art\u00edculo 150 de la Ley de Sociedades de Capital)." />
+										<g:Label text="{msg.footer1Label9}" />
 									</td>
 								</tr>
 							</table>
@@ -220,13 +220,13 @@
 
 					<div class="{aonResources.css.aonGroup}">
 						<div class="{aonResources.css.aonGroupTitle}">
-							<g:InlineLabel text="{msg.memory6_2Title}" />
+							<g:InlineLabel text="{msg.footer1Title}" />
 						</div>
 						<div class="{aonResources.css.aonGroupBody}">
 							<table>
 								<tr> 
 									<td>
-										<g:Label text="Supuestos de infracci\u00f3n de las normas sobre participaciones rec\u00edprocas de capital (art\u00edculo 151 y siguiente de la Ley de Sociedades de Capital)." />
+										<g:Label text="{msg.footer1Label10}" />
 									</td>
 								</tr>
 							</table>

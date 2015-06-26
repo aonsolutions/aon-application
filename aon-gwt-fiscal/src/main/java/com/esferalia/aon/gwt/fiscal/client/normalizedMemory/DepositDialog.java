@@ -1,7 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.client.normalizedMemory;
 
-import java.util.Vector;
-
 import gwtupload.client.IFileInput.FileInputType;
 import gwtupload.client.IUploadStatus.Status;
 import gwtupload.client.IUploader;
@@ -11,10 +9,14 @@ import gwtupload.client.IUploader.OnStartUploaderHandler;
 import gwtupload.client.IUploader.OnStatusChangedHandler;
 import gwtupload.client.SingleUploader;
 
+import java.util.Vector;
+
 import com.esferalia.aon.gwt.common.client.widget.CustomDialogB;
 import com.esferalia.aon.gwt.fiscal.shared.MemoryTemplate;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -27,7 +29,6 @@ import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormSubmitEvent;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -56,6 +57,7 @@ public abstract class DepositDialog extends CustomDialogB {
 		case "new2": newDeposit2();break;
 		case "import": importar(enterprise, url);break;
 		case "importText": importarTextos(mts);break;
+		case "importAll": importAll(mts, enterprise, url); break;
 		default:
 			break;
 		}
@@ -66,6 +68,7 @@ public abstract class DepositDialog extends CustomDialogB {
 		if(type.equals("new2")) accept_button.setText("Nuevo");
 		if(type.equals("import")) accept_button.setText("Importar");
 		if(type.equals("importText")) accept_button.setText("Importar");
+		if(type.equals("importAll")) accept_button.setText("Importar");
 		accept_button.setVisible(true);
 		accept_button.addClickHandler(new ClickHandler() {
 			String type = typeAux;
@@ -204,6 +207,102 @@ public abstract class DepositDialog extends CustomDialogB {
 		flex_table.setWidget(0, 1, newUploader(url+"gwt_deposit_upload?domain_id="+enterprise.getDomain()+
 																		"&cif="+enterprise.getDocument()));
 		
+		
+		flexTableCss();
+	}
+	
+	Vector<MemoryTemplate> mtsAux;
+	Enterprise enterpriseAux;	
+	private void importAll(Vector<MemoryTemplate> mts, Enterprise enterprise, String url){
+		flex_table.setStyleName("aon-panelGrid");
+		flex_table.setWidth("400px");
+		flex_table.setBorderWidth(1);
+		flex_table.setCellSpacing(0);
+		
+		final ListBox lb = new ListBox();
+		lb.addItem("Balance");
+		lb.addItem("Perdidas y ganancias");
+		lb.addItem("ECPN");
+		lb.addItem("Memoria predefinida");
+		lb.addItem("Memoria");
+		
+		mtsAux = mts;urlAux = url; enterpriseAux = enterprise;
+		lb.addChangeHandler(new ChangeHandler() {
+			Vector<MemoryTemplate> mts = mtsAux;
+			String url = urlAux;
+			Enterprise enterprise = enterpriseAux;
+			@Override
+			public void onChange(ChangeEvent event) {
+				if(lb.getSelectedItemText().equals("Balance")){
+					ListBox lb1 = new ListBox();
+					lb1.addItem("Sociedades");
+					lb1.addItem("D2");
+					//lb1.addItem("Contabilidad");
+					flex_table.setWidget(1, 0, new Label("De"));
+					flex_table.setWidget(1,	1, lb1);
+					
+					ListBox lb2 = new ListBox();
+					lb2.addItem("2013");
+					lb2.addItem("2014");
+					flex_table.setWidget(2, 0, new Label("Ejercicio"));
+					flex_table.setWidget(2,	1, lb2);					
+				}
+				if(lb.getSelectedItemText().equals("Perdidas y ganancias")){
+					ListBox lb1 = new ListBox();
+					lb1.addItem("Sociedades");
+					lb1.addItem("D2");
+					//lb1.addItem("Contabilidad");
+					flex_table.setWidget(1, 0, new Label("De"));
+					flex_table.setWidget(1,	1, lb1);
+					
+					ListBox lb2 = new ListBox();
+					lb2.addItem("2013");
+					lb2.addItem("2014");
+					flex_table.setWidget(2, 0, new Label("Ejercicio"));
+					flex_table.setWidget(2,	1, lb2);	
+				}
+				if(lb.getSelectedItemText().equals("ECPN")){
+					ListBox lb1 = new ListBox();
+					lb1.addItem("Sociedades");
+					lb1.addItem("D2");
+					//lb1.addItem("Contabilidad");
+					flex_table.setWidget(1, 0, new Label("De"));
+					flex_table.setWidget(1,	1, lb1);
+					
+					ListBox lb2 = new ListBox();
+					lb2.addItem("2013");
+					lb2.addItem("2014");
+					flex_table.setWidget(2, 0, new Label("Ejercicio"));
+					flex_table.setWidget(2,	1, lb2);	
+				}
+				if(lb.getSelectedItemText().equals("Memoria predefinida")){
+					ListBox lb1 = new ListBox();
+					if(mts.size()>1) lb1.addItem("-");
+					for (MemoryTemplate memoryTemplate : mts) {
+						lb1.addItem(memoryTemplate.getName());
+					}
+					flex_table.setWidget(1, 0, new Label("Memoria Predefinida"));
+					flex_table.setWidget(1, 1, lb1);
+				}
+
+				if(lb.getSelectedItemText().equals("Memoria")){
+					ListBox lb1 = new ListBox();
+					lb1.addItem("2013");
+					lb1.addItem("2014");
+					flex_table.setWidget(1, 0, new Label("Ejercicio"));
+					flex_table.setWidget(1,	1, lb1);	
+					
+					flex_table.setWidget(2, 0, new Label("Fichero"));
+					flex_table.setWidget(2, 1, newUploader(url+"gwt_deposit_upload?domain_id="+enterprise.getDomain()+
+																					"&cif="+enterprise.getDocument()));
+					
+				}
+				flexTableCss();
+			}
+		});
+		flex_table.setWidget(0, 0, new Label("Que"));
+		flex_table.setWidget(0,	1, lb);
+	
 		
 		flexTableCss();
 	}

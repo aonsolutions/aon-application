@@ -2063,152 +2063,280 @@ public interface CommonMessages extends Messages {
    
     //-------------------- D2 CUENTAS ANUALES - MEMORIA NORMALIZADA
     
-	@DefaultMessage("Memorias Predefinidas")
-	String digitalDepositFreeText();
-	
-	@DefaultMessage("Cuentas Anuales")
-	String digitalDeposit();
-	
-	@DefaultMessage("Apartado 3: Aplicaci\u00F3n de resultados")
-	String memory3_2Title();
-	
-	@DefaultMessage("Apartado 5: Inmovilizado material, intangible e inversiones inmobiliarias")
-	String memory5_2Title();
-	
-	@DefaultMessage("Estado de movimientos del inmovilizado material, intangible e inversiones inmobiliarias del ejercicio actual")
-	String memory5_2Table1();
-	
-	@DefaultMessage("Estado de movimientos del inmovilizado material, intangible e inversiones inmobiliarias del ejercicio anterior")
-	String memory5_2Table2();
-	
-	@DefaultMessage("Arrendamientos financieros y otras operaciones de naturaleza similar sobre activos no corrientes")
-	String memory5_2Table3();
-	
-	@DefaultMessage("Apartado 6: Activos financieros")
-	String memory6_2Title();
-	
-	@DefaultMessage("Activos financieros a largo plazo, salvo inversiones en el patrimonio de empresas del grupo, multigrupo y asociadas.")
-	String memory6_2Table1();
-	
-	@DefaultMessage("Activos financieros a corto plazo, salvo inversiones en el patrimonio de empresas del grupo, multigrupo y asociadas.")
-	String memory6_2Table2();
-	
-	@DefaultMessage("Traspasos o reclasificaciones de activos financieros")
-	String memory6_2Table3();
-	
-	@DefaultMessage("Correcciones por deterioro del valor originadas por el riesgo de cr\u00e9dito")
-	String memory6_2Table4();
-	
-	@DefaultMessage("Correcciones por deterioro del valor originadas por el riesgo de cr\u00e9dito")
-	String memory6_2Table5();
-	
-	@DefaultMessage("Correcciones valorativas por deterioro registradas en las distintas participaciones")
-	String memory6_2Table6();
-	
-	@DefaultMessage("Apartado 7: Pasivos Financieros")
-	String memory7_2Title();
-	
-	@DefaultMessage("Pasivos financieros a largo plazo")
-	String memory7_2Table1();
-	
-	@DefaultMessage("Pasivos financieros a corto plazos")
-	String memory7_2Table2();
+ 	@DefaultMessage("Memoria")
+ 	String memory();
+     
+ 	@DefaultMessage("Memorias Predefinidas")
+ 	String digitalDepositFreeText();
+ 	
+ 	@DefaultMessage("Cuentas Anuales")
+ 	String digitalDeposit();
+ 	
+ 	@DefaultMessage("Apartado 3: Aplicaci\u00F3n de resultados")
+ 	String memory3_2Title();
+ 	
+ 	@DefaultMessage("Apartado 5: Inmovilizado material, intangible e inversiones inmobiliarias")
+ 	String memory5_2Title();
+ 	
+ 	@DefaultMessage("Estado de movimientos del inmovilizado material, intangible e inversiones inmobiliarias del ejercicio actual")
+ 	String memory5_2Table1();
+ 	
+ 	@DefaultMessage("Estado de movimientos del inmovilizado material, intangible e inversiones inmobiliarias del ejercicio anterior")
+ 	String memory5_2Table2();
+ 	
+ 	@DefaultMessage("Arrendamientos financieros y otras operaciones de naturaleza similar sobre activos no corrientes")
+ 	String memory5_2Table3();
+ 	
+ 	@DefaultMessage("Apartado 6: Activos financieros")
+ 	String memory6_2Title();
+ 	
+ 	@DefaultMessage("Activos financieros a largo plazo, salvo inversiones en el patrimonio de empresas del grupo, multigrupo y asociadas.")
+ 	String memory6_2Table1();
+ 	
+ 	@DefaultMessage("Activos financieros a corto plazo, salvo inversiones en el patrimonio de empresas del grupo, multigrupo y asociadas.")
+ 	String memory6_2Table2();
+ 	
+ 	@DefaultMessage("Traspasos o reclasificaciones de activos financieros")
+ 	String memory6_2Table3();
+ 	
+ 	@DefaultMessage("Correcciones por deterioro del valor originadas por el riesgo de cr\u00e9dito")
+ 	String memory6_2Table4();
+ 	
+ 	@DefaultMessage("Correcciones por deterioro del valor originadas por el riesgo de cr\u00e9dito")
+ 	String memory6_2Table5();
+ 	
+ 	@DefaultMessage("Correcciones valorativas por deterioro registradas en las distintas participaciones")
+ 	String memory6_2Table6();
+ 	
+ 	@DefaultMessage("Apartado 7: Pasivos Financieros")
+ 	String memory7_2Title();
+ 	
+ 	@DefaultMessage("Pasivos financieros a largo plazo")
+ 	String memory7_2Table1();
+ 	
+ 	@DefaultMessage("Pasivos financieros a corto plazos")
+ 	String memory7_2Table2();
 
-	@DefaultMessage("Vencimiento de las deudas al cierre del ejercicio 2014")
-	String memory7_2Table3();
+ 	@DefaultMessage("Vencimiento de las deudas al cierre del ejercicio 2014")
+ 	String memory7_2Table3();
 
-	@DefaultMessage("Lineas de descuento y p\u00f3lizas al cierre del ejercicio 2014")
-	String memory7_2Table4();
+ 	@DefaultMessage("Lineas de descuento y p\u00f3lizas al cierre del ejercicio 2014")
+ 	String memory7_2Table4();
+ 	
+ 	@DefaultMessage("Apartado 10: Ingresos y gastos")
+ 	String memory10_2Title();
+ 	
+ 	@DefaultMessage("Detalle de la cuenta de p\u00e9rdidas y ganancias")
+ 	String memory10_2Table();
+ 	
+ 	@DefaultMessage("Apartado 11: Subvenciones, donaciones y legados")
+ 	String memory11_2Title();
+ 	
+ 	@DefaultMessage("Subvenciones, donaciones y legados recibidos, otorgados por terceros distintos de los socios.")
+ 	String memory11_2Table1();
+ 	
+ 	@DefaultMessage("Subvenciones, donaciones y legados recogidos en el patrimonio neto del balance, otorgados por terceros distintos a los socios: an\u00E1lisis del movimiento")
+ 	String memory11_2Table2();
+ 	
+ 	@DefaultMessage("Apartado 12: Operaciones con partes vinculadas")
+ 	String memory12_2Title();
+ 	
+ 	@DefaultMessage("Operaciones con partes vinculadas en el ejercicio 2014")
+ 	String memory12_2Table1();
+ 	
+ 	@DefaultMessage("Operaciones con partes vinculadas en el ejercicio 2013")
+ 	String memory12_2Table2();
+ 	
+ 	@DefaultMessage("Saldos pendientes con partes vinculadas en el ejercicio 2014")
+ 	String memory12_2Table3();
+ 	
+ 	@DefaultMessage("Saldos pendientes con partes vinculadas en el ejercicio 2013")
+ 	String memory12_2Table4();
+ 	
+ 	@DefaultMessage("Importes recibidos por el personal de alta direcci\u00f3n")
+ 	String memory12_2Table5();
+ 	
+ 	@DefaultMessage("Importes recibidos por los miembros de los \u00f3rganos de administraci\u00F3n")
+ 	String memory12_2Table6();
+ 	
+ 	@DefaultMessage("Apartado 13: Otra Informaci\u00f3n")
+ 	String memory13_2Title();
+ 	
+ 	@DefaultMessage("N\u00famero medio de personas empleadas en el curso del ejercicio, por categor\u00EDas (adaptadas a la CNO-11)")
+ 	String memory13_2Table();
+ 	
+ 	@DefaultMessage("Apartado 14: Informaci\u00f3n sobre el medio ambiente")
+ 	String memory14_2Title();
+ 	
+ 	@DefaultMessage("Descripci\u00f3n del concepto")
+ 	String memory14_2Table1();
+ 	
+ 	@DefaultMessage("Movimiento durante el ejercicio")
+ 	String memory14_2Table2();
+ 	
+ 	@DefaultMessage("Otra Informaci\u00f3n")
+ 	String memory14_2Table3();
+ 	
+ 	@DefaultMessage("Apartado 15: Informaci\u00f3n sobre los aplazamientos de pago efectuados a proveedores")
+ 	String memory15_2Title();
+ 	
+ 	@DefaultMessage("Pagos realizados y pendientes de pago en la fecha de cierre del Balance")
+ 	String memory15_2Table();
+ 	
+ 	@DefaultMessage("Datos generales de identificaci\u00f3n")
+ 	String header1Title();
+ 	
+ 	@DefaultMessage("Identificaci\u00f3n de la empresa")
+ 	String header1Table1();
+ 	
+ 	@DefaultMessage("Actividad")
+ 	String header1Table2();
+ 	
+ 	@DefaultMessage("Personal asalariado")
+ 	String header1Table3();
+ 	
+ 	@DefaultMessage("Presentaci\u00f3n de Cuentas")
+ 	String header1Table4();
+ 	
+ 	@DefaultMessage("Unidades")
+ 	String header1Table5();
+ 	
+ 	@DefaultMessage("Balance de situaci\u00f3n")
+ 	String header2Title();
+ 	
+ 	@DefaultMessage("Cuenta de p\u00E9rdidas y ganancias")
+ 	String header3Title();
+ 	
+ 	@DefaultMessage("Estado de cambios en el patrimonio neto")
+ 	String header4Title();
+ 	
+ 	@DefaultMessage("Declaraci\u00f3n medioambiental")
+ 	String header5Title();
+
+ 	@DefaultMessage("Modelo de autocartera")
+	String footer1Title();
+
+	@DefaultMessage("La sociedad no ha realizado durante el presente ejercicio operaci\u00f3n alguna sobre acciones / participaciones propias")
+	String footer1Label1();
+ 	
+ 	@DefaultMessage("Saldo al cierre del ejercicio precedente")
+	String footer1Label2();
 	
-	@DefaultMessage("Apartado 10: Ingresos y gastos")
-	String memory10_2Title();
+	@DefaultMessage("Acciones / participaciones")
+	String footer1Label3();
 	
-	@DefaultMessage("Detalle de la cuenta de p\u00e9rdidas y ganancias")
-	String memory10_2Table();
+	@DefaultMessage("Saldo al cierre del ejercicio")
+	String footer1Label4();
+
+	@DefaultMessage("Transcripci\u00f3n de acuerdos de Juntas generales, del \u00faltimo o anteriores ejercicios, autorizando negocios sobre acciones o participaciones propias realizados en el \u00faltimo ejercicio cerrado.")
+	String footer1Label5();
 	
-	@DefaultMessage("Apartado 11: Subvenciones, donaciones y legados")
-	String memory11_2Title();
+ 	@DefaultMessage("Relaci\u00f3n de acciones o participaciones adquiridas al amparo de los art\u00edculos 140, 144 y 146 de la Ley de SOciedades de Capital, durante el ejercicio.")
+	String footer1Label6();
 	
-	@DefaultMessage("Subvenciones, donaciones y legados recibidos, otorgados por terceros distintos de los socios.")
-	String memory11_2Table1();
+	@DefaultMessage("Relaci\u00f3n de acciones o participaciones adquiridas por los mismo t\u00edtulos, enajenadas o amortizadas durante el presente ejercicio")
+	String footer1Label7();
+ 	
+	@DefaultMessage("Negocios que han implicado la aceptaci\u00f3n en garant\u00eda de acciones propias, con las excepciones legales (art\u00edculo 149 de la Ley de Sociedades de Capital).")
+	String footer1Label8();
 	
-	@DefaultMessage("Subvenciones, donaciones y legados recogidos en el patrimonio neto del balance, otorgados por terceros distintos a los socios: an\u00E1lisis del movimiento")
-	String memory11_2Table2();
+	@DefaultMessage("Negocios que han implicado la asistencia finanaciera para la adquisicin de acciones propias salvo las excepciones legales (art\u00edculo 150 de la Ley de Sociedades de Capital).")
+	String footer1Label9();
 	
-	@DefaultMessage("Apartado 12: Operaciones con partes vinculadas")
-	String memory12_2Title();
+ 	@DefaultMessage("Supuestos de infracci\u00f3n de las normas sobre participaciones rec\u00edprocas de capital (art\u00edculo 151 y siguiente de la Ley de Sociedades de Capital).")
+	String footer1Label10();
+ 	
+ 	@DefaultMessage("Instancia de Presentaci\u00f3n")
+	String footer2Title();
+
+	@DefaultMessage("SOLICITUD DE PRESENTACI\u00d3N EN EL REGISTRO MERCANTIL DE ")
+	String footer2Label1();
+
+	@DefaultMessage("IDENTIFICACI\u00d3N DE LA ENTIDAD QUE PRESENTA LAS CUENTAS A DEP\u00d3SITO")
+	String footer2Label2();
 	
-	@DefaultMessage("Operaciones con partes vinculadas en el ejercicio 2014")
-	String memory12_2Table1();
+	@DefaultMessage("Denominaci\u00f3n de la entidad")
+	String footer2Label3();
 	
-	@DefaultMessage("Operaciones con partes vinculadas en el ejercicio 2013")
-	String memory12_2Table2();
+	@DefaultMessage("Tomo")
+	String footer2Label4();
 	
-	@DefaultMessage("Saldos pendientes con partes vinculadas en el ejercicio 2014")
-	String memory12_2Table3();
+	@DefaultMessage("Folio")
+	String footer2Label5();
 	
-	@DefaultMessage("Saldos pendientes con partes vinculadas en el ejercicio 2013")
-	String memory12_2Table4();
+	@DefaultMessage("N\u00AA Hoja registral")
+	String footer2Label6();
 	
-	@DefaultMessage("Importes recibidos por el personal de alta direcci\u00f3n")
-	String memory12_2Table5();
+	@DefaultMessage("Fecha de cierre ejercicio social")
+	String footer2Label7();
 	
-	@DefaultMessage("Importes recibidos por los miembros de los \u00f3rganos de administraci\u00F3n")
-	String memory12_2Table6();
+	@DefaultMessage("IDENTIFICACI\u00d3N DE LOS DOCUMENTOS CONTABLES CUYO DEP\u00d3SITO SE SOLICITA")
+	String footer2Label8();
 	
-	@DefaultMessage("Apartado 13: Otra Informaci\u00f3n")
-	String memory13_2Title();
+	@DefaultMessage("Estado cambios patrimonio neto")
+	String footer2Label9();
 	
-	@DefaultMessage("N\u00famero medio de personas empleadas en el curso del ejercicio, por categor\u00EDas (adaptadas a la CNO-11)")
-	String memory13_2Table();
+	@DefaultMessage("Estado de Flujos de efectivo")
+	String footer2Label10();
 	
-	@DefaultMessage("Apartado 14: Informaci\u00f3n sobre el medio ambiente")
-	String memory14_2Title();
-	
-	@DefaultMessage("Descripci\u00f3n del concepto")
-	String memory14_2Table1();
-	
-	@DefaultMessage("Movimiento durante el ejercicio")
-	String memory14_2Table2();
-	
-	@DefaultMessage("Otra Informaci\u00f3n")
-	String memory14_2Table3();
-	
-	@DefaultMessage("Apartado 15: Informaci\u00f3n sobre los aplazamientos de pago efectuados a proveedores")
-	String memory15_2Title();
-	
-	@DefaultMessage("Pagos realizados y pendientes de pago en la fecha de cierre del Balance")
-	String memory15_2Table();
-	
-	@DefaultMessage("Datos generales de identificaci\u00f3n")
-	String header1Title();
-	
-	@DefaultMessage("Identificaci\u00f3n de la empresa")
-	String header1Table1();
-	
-	@DefaultMessage("Actividad")
-	String header1Table2();
-	
-	@DefaultMessage("Personal asalariado")
-	String header1Table3();
-	
-	@DefaultMessage("Presentaci\u00f3n de Cuentas")
-	String header1Table4();
-	
-	@DefaultMessage("Unidades")
-	String header1Table5();
-	
-	@DefaultMessage("Balance de situaci\u00f3n")
-	String header2Title();
-	
-	@DefaultMessage("Cuenta de p\u00E9rdidas y ganancias")
-	String header3Title();
-	
-	@DefaultMessage("Estado de cambios en el patrimonio neto")
-	String header4Title();
+	@DefaultMessage("Hoja de Identificaci\u00f3n de la sociedad")
+	String footer2Label11();
 	
 	@DefaultMessage("Declaraci\u00f3n medioambiental")
-	String header5Title();
+	String footer2Label12();
 	
+	@DefaultMessage("Informe de gestion")
+	String footer2Label13();
+	
+	@DefaultMessage("Informe de Auditor\u00eda")
+	String footer2Label14();
+
+	@DefaultMessage("Anuncios de convocatoria")
+	String footer2Label15();
+	
+	@DefaultMessage("Certificado SICAV")
+	String footer2Label16();
+	
+	@DefaultMessage("Certificaci\u00f3n acuerdo")
+	String footer2Label17();
+	
+	@DefaultMessage("Otros Documentos")
+	String footer2Label18();
+	
+	@DefaultMessage("N\u00AA")
+	String footer2Label19();
+	
+	@DefaultMessage("IDENTIFICACI\u00d3N DEL PRESENTANTE QUE HACE LA SOLICITUD")
+	String footer2Label20();
+ 	
+	@DefaultMessage("DNI")
+	String dni();
+	
+	@DefaultMessage("Nombre y Apellidos")
+	String nameAndSurname();
+	
+	@DefaultMessage("Domicilio")
+	String domicilio();
+	
+	@DefaultMessage("Ciudad")
+	String ciudad();
+
+	@DefaultMessage("Correo electronico")
+	String mail();
+	
+	@DefaultMessage("Normal")
+	String normal();
+	
+	@DefaultMessage("Abreviado")
+	String abreviate();
+	
+	@DefaultMessage("PYME")
+	String pyme();
+	
+ 	@DefaultMessage("Certificaci\u00f3n de huella digital")
+ 	String footer3Title();
+ 	
+ 	@DefaultMessage("Nombre de las personas que expiden la certificaci\u00f3n")
+ 	String footer3Label();
 
 }

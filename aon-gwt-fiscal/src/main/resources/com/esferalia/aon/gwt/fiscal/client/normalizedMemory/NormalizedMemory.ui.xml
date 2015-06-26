@@ -98,6 +98,8 @@
 							<g:Button ui:field='importSocietyButton'
 								styleName='aon-finding-toolbar-item aon-icon-copy' text="Importar de Sociedades" visible="false"/>
 							
+							<g:Button ui:field='importAllButton'
+								styleName='aon-finding-toolbar-item aon-icon-file-upload' text="Importar" visible="false"/>
 							
 							<g:Anchor ui:field="download" visible="false"/>							
 						</g:HTMLPanel>
