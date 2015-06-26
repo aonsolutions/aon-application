@@ -55,6 +55,10 @@ public class MailAccountDBController extends MailDBController implements IMailAc
 
 	@Override
 	public List<SelectItem> getMailAccounts() {
+		return getMailAccounts(true);
+	}
+
+	public List<SelectItem> getMailAccounts( boolean filterType ) {
 		List<SelectItem> accounts = new LinkedList<SelectItem>();
 		try {		
     		Criteria criteria = new Criteria();
@@ -62,7 +66,9 @@ public class MailAccountDBController extends MailDBController implements IMailAc
 			Expression userExp = ExpressionUtilities.getEqualExpression("MailAccount.user<id", user.getId());
 			userExp = ExpressionUtilities.getOrExpression(userExp, getExpression(null)); 					
 			criteria.addExpression(userExp);
-			criteria.addEqualExpression(getFieldName(IEntityAlias.MAIL_ACCOUNT_TYPE), MailAccountType.USER);
+			if ( filterType ) {
+				criteria.addEqualExpression(getFieldName(IEntityAlias.MAIL_ACCOUNT_TYPE), MailAccountType.USER);	
+			}
 			if ( DomainManager.isParentDomainUserInChildDomain() ) {
 	    		criteria.setSkipDomainFilter(true);
 				String domainId = getFieldName(IEntityAlias.MAIL_ACCOUNT_DOMAIN);
@@ -81,7 +87,7 @@ public class MailAccountDBController extends MailDBController implements IMailAc
 		}		
 		return accounts;
 	}
-
+	
 	@Override
 	protected String getUserAlias() throws ManagerBeanException {
 		return getFieldName( IEntityAlias.MAIL_ACCOUNT_USER_ID );

@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -50,6 +51,9 @@ import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.finance.util.FinanceUtil;
+import com.code.aon.marketing.MailProcess;
+import com.code.aon.marketing.enumeration.MailProcessType;
+import com.code.aon.marketing.util.MailProcessUtil;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
@@ -61,8 +65,10 @@ import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.marketing.controller.TemplateController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.EmailSender;
+import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.db.MailAccount;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -609,17 +615,17 @@ public class ProjectReservationController extends BasicController implements IPm
 	private void sendAgencyNoShowEmail(ProjectReservation reservation) throws ManagerBeanException {
 		String agencyEmail = getReservationUtils().obtainAgencyAdministrativeEmail(reservation.getAgency());
 		if (agencyEmail != null) {
-			MailAccount companyMailAccount = getReservationUtils().obtainCompanyMailAccount();
+			MailAccount companyMailAccount = obtainNoShowMailAccount();
 			if (companyMailAccount != null) {
 				try {
 					Address companyMailAddress = new InternetAddress(companyMailAccount.getEmail(), companyMailAccount.getDisplayName());
 					EmailSender mailSender = new EmailSender(companyMailAddress, companyMailAccount);
-					AonMessage message = mailSender.createMessage(createAgencyNoShowEmailSubject(reservation));
+					AonMessage message = mailSender.createMessage();
 					message.setRecipientsTo(agencyEmail);
 					if (StringUtils.isNotBlank(reservation.getHotelReservation().getEmail())) {
 						message.setRecipientsCc(reservation.getHotelReservation().getEmail());
 					}
-					mailSender.addMessageContent(message, createAgencyNoShowEmailMessage(reservation), MimeType.MIME_TXT);
+					setAgencyNoShowEmailContent(mailSender, message, reservation);
 					mailSender.sendMessage(message);
 				} catch (Exception ex) {
 					setShowConfirmWindow(false);
@@ -632,9 +638,17 @@ public class ProjectReservationController extends BasicController implements IPm
 		}
 	}
 
+	public MailAccount obtainNoShowMailAccount() throws ManagerBeanException {
+		MailProcess mp = MailProcessUtil.get(MailProcessType.AGENCY_NO_SHOW);
+		if ( mp != null ) {
+			return mp.getMailAccount();
+		}
+		return getReservationUtils().obtainCompanyMailAccount();
+	}
+	
 	public boolean isSendAgencyNoShowEmailEnabled() throws ManagerBeanException {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
-		return reservation.isAgencyHolder() && getReservationUtils().obtainCompanyMailAccount() != null;
+		return reservation.isAgencyHolder() && obtainNoShowMailAccount() != null;
 	}
 
 	private String createAgencyNoShowEmailSubject(ProjectReservation reservation) {
@@ -643,6 +657,37 @@ public class ProjectReservationController extends BasicController implements IPm
 		message.append(reservation.getCode() + " - ");
 		message.append(StringUtils.substring(reservation.getHotelReservation().getWorkPlace().getDescription(), 0, 30));
 		return message.toString();
+	}
+	
+	private Map<String,String> getAgencyNoShowMap(ProjectReservation reservation) throws ManagerBeanException {
+		DateFormat formatter = new SimpleDateFormat(AonUtil.getMessage(DATE_PATTERN));
+
+		Map<String,String> map = new HashMap<String,String>();		
+		map.put("hotel_description", reservation.getHotelReservation().getWorkPlace().getDescription() );
+		map.put("reservation_id", reservation.getId().toString() );
+		map.put("reservation_code", reservation.getCode().toString() );
+		map.put("reservation_startDate", formatter.format(reservation.getStartDate()) );
+		map.put("reservation_endDate", formatter.format(reservation.getEndDate()) );
+		map.put("reservation_guestFullName", reservation.getGuestFullName() );
+		map.put("reservation_roomCount", String.valueOf(reservation.getRoomCount()) );
+		map.put("reservation_personCount", String.valueOf(reservation.getPersonCount()) );	
+		return map;
+	}
+	
+	private void setAgencyNoShowEmailContent(EmailSender mailSender, AonMessage message, ProjectReservation reservation) throws ManagerBeanException, WebmailException {
+		String subject = null;
+		MailProcess mp = MailProcessUtil.get(MailProcessType.AGENCY_NO_SHOW);
+		if ( mp != null ) {
+			Map<String,String> map = getAgencyNoShowMap(reservation);
+			subject = TemplateController.createSubject(mp.getTemplate(), map);
+			String content = TemplateController.createContent(mp.getTemplate(), map);
+			mailSender.addMessageContent(message, content, MimeType.MIME_HTML);
+		} else {
+			subject = createAgencyNoShowEmailSubject(reservation);
+			String content = createAgencyNoShowEmailMessage(reservation);
+			mailSender.addMessageContent(message, content, MimeType.MIME_TXT);
+		}
+		message.setSubject(subject);
 	}
 
 	private String createAgencyNoShowEmailMessage(ProjectReservation reservation) throws ManagerBeanException {

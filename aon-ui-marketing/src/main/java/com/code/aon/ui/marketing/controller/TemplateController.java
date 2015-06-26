@@ -2,9 +2,11 @@ package com.code.aon.ui.marketing.controller;
 
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
+import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -12,6 +14,10 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
@@ -32,6 +38,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class TemplateController extends BasicController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(TemplateController.class.getName());
 	
 	private Double width;
 	
@@ -57,6 +65,35 @@ public class TemplateController extends BasicController {
 			controller.setSubject(template.getSubject());	
 		}
 		controller.updateMessageBody(getMessageBody(template, body));
+	}
+	
+	private static String replaceText( String text, Map<String,String> map )  {
+        VelocityContext context = new VelocityContext();
+        for( Map.Entry<String,String> entry : map.entrySet() ) {
+        	context.put(entry.getKey(), entry.getValue());
+        }
+
+        StringWriter out = new StringWriter();
+        
+        try {
+			Velocity.evaluate( context, out, "template text", text);
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+		}	
+		return out.toString();
+	}
+	
+	public static String createSubject( Template template, Map<String,String> map ) {
+		String subject = null;
+		if ( template!=null && !StringUtils.isEmpty(template.getSubject()) ) {
+			subject = replaceText(template.getSubject(), map);
+		}
+		return subject;
+	}
+
+	public static String createContent( Template template, Map<String,String> map ) {
+		String content = getMessageBody(template, null);
+		return replaceText(content, map);
 	}
 	
 	public static String getMessageBody( Template template, String body ) {

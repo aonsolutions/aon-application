@@ -74,15 +74,19 @@ public class AppParamUtil {
     }	
 	
 	public static ApplicationParameter insertParameter( AppParam appParam, String value ) {
-		ApplicationParameter ap = getParameter(appParam);
+		return insertParameter(appParam.getValue(), value);
+    }	
+
+	public static ApplicationParameter insertParameter( String paramName, String value ) {
+		ApplicationParameter ap = getParameter(paramName);
 		if ( ap == null ) {
 			ap = new ApplicationParameter();
-			ap.setName(appParam.getValue());
+			ap.setName(paramName);
 		}
 		ap.setValue(value);		
 		return insertParameter(ap);
     }	
-
+	
 	public static ApplicationParameter insertParameter( AppParam appParam, boolean value ) {
 		return insertParameter(appParam, Boolean.valueOf(value).toString());
     }	
@@ -97,7 +101,11 @@ public class AppParamUtil {
     }	
 	
 	public static boolean removeParameter( AppParam appParam ) {
-		ApplicationParameter ap = getParameter(appParam);
+		return removeParameter(appParam.getValue());
+    }	
+
+	public static boolean removeParameter( String paramName ) {
+		ApplicationParameter ap = getParameter(paramName);
 		if ( ap != null ) {
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(ApplicationParameter.class);
@@ -108,7 +116,7 @@ public class AppParamUtil {
 		}	
 		return false;
     }	
-
+	
 	public static String getValue( AppParam appParam, Integer domainId ) {
 		ApplicationParameter ap = getParameter(appParam, domainId);
 		if ( ap != null ) {

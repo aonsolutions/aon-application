@@ -63,8 +63,13 @@ public class EmailSender implements Serializable {
 		return aonMessage;
 	}
 
-	public AonMessage createMessage( String subject  ) throws WebmailException {
+	public AonMessage createMessage() throws WebmailException {
 		AonMessage aonMessage = server.createAonMessage(from);
+		return aonMessage;
+	}	
+	
+	public AonMessage createMessage( String subject  ) throws WebmailException {
+		AonMessage aonMessage = createMessage();
 		aonMessage.setSubject(subject);
 		return aonMessage;
 	}	

@@ -1136,6 +1136,17 @@
 		</managed-property>		
 	</managed-bean>
 
+	<!-- ************ Mail Process Controller ************** -->
+	<managed-bean>
+		<managed-bean-name>mailProcess</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.marketing.controller.MailProcessController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>mailProcess</value>
+		</managed-property>		
+	</managed-bean>	
+
 	<!-- =================== RSS ================= -->	
 	<navigation-rule>
 		<navigation-case>
@@ -1317,6 +1328,14 @@
 		<navigation-case>
 			<from-outcome>htmlTemplate_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/marketing/facelet/htmlTemplate/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>				
+
+	<!-- =================== Mail Process ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>mailProcess_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/marketing/facelet/mailProcess/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>				
 	
