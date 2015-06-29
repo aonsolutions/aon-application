@@ -292,7 +292,13 @@ public class CustomizeBean implements Serializable {
 	}
 
 	public String getBuildNumber() {
-		return buildNumber;
+		//#ifndef env.GPS
+		//#echo Compiling for AON
+		return buildNumber; 
+		//#else
+		//#echo Compiling for GPS
+		return buildNumber == null ? "GPS" : (buildNumber + " GPS"); 
+		//#endif
 	}
 
 	public String getBuildDate() {
