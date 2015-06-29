@@ -17,6 +17,7 @@
 	</style>
 	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
 	<parameter name="freeText" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="barcodePattern" class="java.lang.String" isForPrompting="false"/>
 	<field name="id" class="java.lang.Integer"/>
 	<field name="product" class="com.code.aon.product.Product"/>
 	<field name="status" class="com.code.aon.product.enumeration.ProductStatus"/>
@@ -40,6 +41,20 @@
 	<variable name="DoubleFormater" class="java.text.DecimalFormat" resetType="None">
 		<variableExpression><![CDATA[new java.text.DecimalFormat("#,##0.00")]]></variableExpression>
 		<initialValueExpression><![CDATA[new java.text.DecimalFormat("#,##0.00")]]></initialValueExpression>
+	</variable>
+	<variable name="barcode" class="java.lang.String">
+		<variableExpression><![CDATA[$F{barcode}!=null?$F{barcode}:
+($F{product}.getBaseItem().getBarcode()!=null?
+    ($P{barcodePattern}.replaceAll("\\$\\{codigo_barras\\}", $F{product}.getBaseItem().getBarcode())
+        .replaceAll("\\$\\{lote\\}", $F{serialNumber})
+        .replaceAll("\\$\\{fecha_caducidad\\}", new SimpleDateFormat("yyMMdd").format($F{serialDate})))
+:"")]]></variableExpression>
+		<initialValueExpression><![CDATA[$F{barcode}!=null?$F{barcode}:
+($F{product}.getBaseItem().getBarcode()!=null?
+    ($P{barcodePattern}.replaceAll("\\$\\{codigo_barras\\}", $F{product}.getBaseItem().getBarcode())
+        .replaceAll("\\$\\{lote\\}", $F{serialNumber})
+        .replaceAll("\\$\\{fecha_caducidad\\}", new SimpleDateFormat("yyMMdd").format($F{serialDate})))
+:"")]]></initialValueExpression>
 	</variable>
 	<detail>
 		<band height="215" splitType="Stretch">
@@ -97,10 +112,10 @@
 			</textField>
 			<componentElement>
 				<reportElement uuid="6a29d75e-33f3-4ba2-8300-03accb14907f" style="Barcode" x="7" y="36" width="272" height="40">
-					<printWhenExpression><![CDATA[$F{id}!=null && $F{barcode}!=null && !"".equals($F{barcode})]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{id}!=null && $V{barcode}!=null && !"".equals($V{barcode})]]></printWhenExpression>
 				</reportElement>
-				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false" barHeight="40">
-					<jr:codeExpression><![CDATA[$F{barcode}]]></jr:codeExpression>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false" barWidth="1" barHeight="40">
+					<jr:codeExpression><![CDATA[$V{barcode}]]></jr:codeExpression>
 				</jr:barbecue>
 			</componentElement>
 			<staticText>
@@ -164,7 +179,7 @@
 					<font fontName="SansSerif" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{barcode}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{barcode}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement uuid="9849c62b-b20e-4e80-93f3-d2d1b980735f" key="textField-8" positionType="Float" mode="Transparent" x="7" y="146" width="272" height="20" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF">
