@@ -30,7 +30,7 @@
 							<table style="width:50%">
 								<tr>
 									<td>
-										<g:Label text="{msg.footer1Label2"/>
+										<g:Label text="{msg.footer1Label2}"/>
 										<aon:DoubleBox ui:field="A18009020" />
 									</td>
 									<td>

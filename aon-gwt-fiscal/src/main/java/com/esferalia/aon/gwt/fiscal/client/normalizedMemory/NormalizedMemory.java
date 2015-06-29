@@ -9,11 +9,13 @@ import gwtupload.client.SingleUploader;
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMessages;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.D2DepositTreeObject;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.DigitalDepositFreeTextTreeNode;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.DigitalDepositTreeNode;
@@ -85,7 +87,7 @@ public class NormalizedMemory extends ResizeComposite {
 	
 	@UiField SimplePanel headerPanel;
 	
-	@UiField Button importSocietyButton;
+	//@UiField Button importSocietyButton;
 
 	@UiField Button importAllButton;
 	
@@ -109,28 +111,33 @@ public class NormalizedMemory extends ResizeComposite {
 	DigitalDepositFreeTextTreeNode digitalDepositFreeTextTreeNode;
 	
 
-	
-	public NormalizedMemory(Enterprise enterprise,String page) {
+	FiscalTree fiscalTree;
+	public NormalizedMemory(Enterprise enterprise,String page, DigitalDepositTreeNode ddtn, FiscalTree ft) {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 
 		RESOURCES.css().ensureInjected();
 		depositType = new Label();
 		saveButton = new Button();
-       
-        
+		importButton = new Button();
+       	importTextButton = new Button();
+        deleteButton = new Button();
 		cancelButton = new Button();
 		this.enterprise = enterprise;
 		this.page = page;
 		this.textMode = false;
+		digitalDepositTreeNode = ddtn;
+		fiscalTree = ft;
 		
 		headerPanel = new SimplePanel();
 		pagesPanel = new FlowPanel();
 		
 		Widget ui = MODEL_NORMALIZED_MEMORY_BINDER.createAndBindUi(this);
 		initWidget(ui);
-		depositType.setText("Abreviado");
-	
+		depositType.setText("Deposito");
+		deleteButton.setVisible(true);
+		importButton.setVisible(false);
+		importTextButton.setVisible(false);
 		inma.isModify(enterprise.getDocument(),new AsyncCallback<Boolean>() {
 			
 			@Override
@@ -152,8 +159,9 @@ public class NormalizedMemory extends ResizeComposite {
 		depositType = new Label();
 		saveButton = new Button();
 		newButton = new Button();	
-        importButton = new Button();
-        importTextButton = new Button();
+		importButton = new Button();
+       	importTextButton = new Button();
+        deleteButton = new Button();
         generateFileButton = new Button();
 		cancelButton = new Button();
 		this.enterprise = enterprise;
@@ -171,6 +179,7 @@ public class NormalizedMemory extends ResizeComposite {
 		importButton.setVisible(false);
 		importTextButton.setVisible(false);
 		generateFileButton.setVisible(false);
+		//deleteButton.setVisible(true);
 		inma.isModify(mt.getId().toString(),new AsyncCallback<Boolean>() {
 			
 			@Override
@@ -192,7 +201,8 @@ public class NormalizedMemory extends ResizeComposite {
 		RESOURCES.css().ensureInjected();
 		depositType = new Label();
 		newButton = new Button();
-		importTextButton = new Button();
+		importButton = new Button();
+       	importTextButton = new Button();
 		saveButton = new Button();
 		generateFileButton = new Button();
 		digitalDepositTreeNode = ddtn;
@@ -203,6 +213,8 @@ public class NormalizedMemory extends ResizeComposite {
 		
 		Widget ui = MODEL_NORMALIZED_MEMORY_BINDER.createAndBindUi(this);
 		initWidget(ui);
+		importButton.setVisible(false);
+		importTextButton.setVisible(false);
 		if(type){
 			newButton.setVisible(true);
 			saveButton.setVisible(false);
@@ -233,6 +245,8 @@ public class NormalizedMemory extends ResizeComposite {
 		
 		Widget ui = MODEL_NORMALIZED_MEMORY_BINDER.createAndBindUi(this);
 		initWidget(ui);
+		importButton.setVisible(false);
+		importTextButton.setVisible(false);
 		if(type){
 			importButton.setVisible(false);
 			importTextButton.setVisible(false);
@@ -259,7 +273,7 @@ public class NormalizedMemory extends ResizeComposite {
 	}
 	
 	
-	@UiHandler("importSocietyButton")
+	//@UiHandler("importSocietyButton")
 	void onSocietyButtonClick(ClickEvent event) {
 		
 		inma.importSocietyValues(enterprise.getDocument(), enterprise.getDomain(), new AsyncCallback<Void>() {
@@ -319,10 +333,11 @@ public class NormalizedMemory extends ResizeComposite {
 			
 				@Override
 				protected void onAccept() {
+					ListBox lb = (ListBox) flex_table.getWidget(0, 1);
 					TextBox tb = (TextBox) flex_table.getWidget(1, 1);
 					hide();
 					
-					inma.createD2Deposit(enterprise.getDomain(), enterprise.getId(), tb.getValue() , new AsyncCallback<Void>() {
+					inma.createD2Deposit(enterprise.getDomain(), enterprise.getId(), tb.getValue(), lb.getSelectedItemText() , new AsyncCallback<Void>() {
 
 								@Override
 								public void onFailure(Throwable caught) {
@@ -518,6 +533,107 @@ public class NormalizedMemory extends ResizeComposite {
 									@Override
 									protected void onAccept() {
 										hide();
+										
+										ListBox lb = (ListBox) flex_table.getWidget(0,1);
+										String t = lb.getSelectedItemText();
+										
+										if(t.equals("Balance")){
+											ListBox ej = (ListBox) flex_table.getWidget(2, 1);
+											String ejercicio = ej.getSelectedItemText();
+											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(), new AsyncCallback<Void>() {
+												@Override
+												public void onFailure(
+														Throwable caught) {
+												}
+
+												@Override
+												public void onSuccess(Void result) {
+													update();
+												}
+											
+											});
+											
+										
+											
+										}
+										else if(t.equals("Perdidas y ganancias")){
+											ListBox ej = (ListBox) flex_table.getWidget(1, 1);
+											String ejercicio = ej.getSelectedItemText();
+											
+											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(), new AsyncCallback<Void>() {
+												@Override
+												public void onFailure(
+														Throwable caught) {
+												}
+
+												@Override
+												public void onSuccess(Void result) {
+													update();
+												}
+											
+											});
+											
+										}
+										else if(t.equals("ECPN")){
+											ListBox ej = (ListBox) flex_table.getWidget(1, 1);
+											String ejercicio = ej.getSelectedItemText();
+											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(), new AsyncCallback<Void>() {
+												@Override
+												public void onFailure(
+														Throwable caught) {
+												}
+
+												@Override
+												public void onSuccess(Void result) {
+													update();
+												}
+											
+											});
+											
+										}
+										else if(t.equals("Memoria predefinida")){
+									
+											ListBox lb1 = (ListBox) flex_table.getWidget(1,1);
+											String text = lb1.getSelectedItemText();
+											MemoryTemplate m = new MemoryTemplate();
+											for (MemoryTemplate mt : vector) {
+												if (mt.getName().equals(text))
+													m = mt;
+											}
+											
+											inma.updateTexts(m, enterprise.getDomain(),
+													enterprise.getDocument(),
+													new AsyncCallback<Void>() {
+
+														@Override
+														public void onFailure(
+																Throwable caught) {
+														}
+
+														@Override
+														public void onSuccess(Void result) {
+															update();
+														}
+													});
+										}
+										else if(t.equals("Memoria")){
+											ListBox ej = (ListBox) flex_table.getWidget(1, 1);
+											String ejercicio = ej.getSelectedItemText();
+											
+											inma.saveDeposit(enterprise.getDocument(), enterprise.getDomain(),false, new AsyncCallback<Void>() {
+												
+												@Override
+												public void onSuccess(Void result) {
+													update();
+												}
+												
+												@Override
+												public void onFailure(Throwable caught) {
+													
+												}
+											});
+										}
+										
 									}
 								};
 								popup.addStyleName("gwt-PopupPanel-template");
@@ -621,7 +737,42 @@ public class NormalizedMemory extends ResizeComposite {
 	
 	@UiHandler("deleteButton")
 	void onDeleteButtonClick(ClickEvent event) {
-	//	Window.alert("onDeleteButtonClick");
+		if(!textMode){
+			DepositDialog popup = new DepositDialog(
+					"Borrar Deposito", "delete", enterprise,
+					"", null) {
+			
+				@Override
+				protected void onCancel() {
+					hide();
+
+				}
+
+				@Override
+				protected void onAccept() {
+					hide();
+					inma.delete(enterprise.getDomain(), enterprise.getDocument(), new AsyncCallback<Void>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							
+						}
+
+						@Override
+						public void onSuccess(Void result) {
+				
+							digitalDepositTreeNode.removeItems();
+							
+							digitalDepositTreeNode.select(fiscalTree);
+						}
+					});
+			}
+			
+			};
+			popup.addStyleName("gwt-PopupPanel-template");
+			popup.setGlassEnabled(true);
+			popup.show();
+		
+		}
 	}
 	
 	@UiHandler("generateFileButton")

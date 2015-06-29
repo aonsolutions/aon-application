@@ -58,6 +58,7 @@ public abstract class DepositDialog extends CustomDialogB {
 		case "import": importar(enterprise, url);break;
 		case "importText": importarTextos(mts);break;
 		case "importAll": importAll(mts, enterprise, url); break;
+		case "delete": label.setText("Esta seguro de eliminar el Deposito");
 		default:
 			break;
 		}
@@ -69,6 +70,7 @@ public abstract class DepositDialog extends CustomDialogB {
 		if(type.equals("import")) accept_button.setText("Importar");
 		if(type.equals("importText")) accept_button.setText("Importar");
 		if(type.equals("importAll")) accept_button.setText("Importar");
+		if(type.equals("delete")) accept_button.setText("Eliminar");
 		accept_button.setVisible(true);
 		accept_button.addClickHandler(new ClickHandler() {
 			String type = typeAux;
@@ -87,6 +89,12 @@ public abstract class DepositDialog extends CustomDialogB {
 						label.setText("*Faltan datos por a\u00f1adir");
 						label.setStyleName("aon-check-template");
 					}
+				}
+				if(type.equals("delete")){
+					onAccept();
+				}
+				if(type.equals("importAll")){
+					onAccept();
 				}
 				if(type.equals("import")){
 					onAccept();
@@ -220,6 +228,7 @@ public abstract class DepositDialog extends CustomDialogB {
 		flex_table.setCellSpacing(0);
 		
 		final ListBox lb = new ListBox();
+		lb.addItem("-");
 		lb.addItem("Balance");
 		lb.addItem("Perdidas y ganancias");
 		lb.addItem("ECPN");
@@ -236,7 +245,7 @@ public abstract class DepositDialog extends CustomDialogB {
 				if(lb.getSelectedItemText().equals("Balance")){
 					ListBox lb1 = new ListBox();
 					lb1.addItem("Sociedades");
-					lb1.addItem("D2");
+					//lb1.addItem("D2");
 					//lb1.addItem("Contabilidad");
 					flex_table.setWidget(1, 0, new Label("De"));
 					flex_table.setWidget(1,	1, lb1);
@@ -250,7 +259,7 @@ public abstract class DepositDialog extends CustomDialogB {
 				if(lb.getSelectedItemText().equals("Perdidas y ganancias")){
 					ListBox lb1 = new ListBox();
 					lb1.addItem("Sociedades");
-					lb1.addItem("D2");
+					//lb1.addItem("D2");
 					//lb1.addItem("Contabilidad");
 					flex_table.setWidget(1, 0, new Label("De"));
 					flex_table.setWidget(1,	1, lb1);
@@ -264,7 +273,7 @@ public abstract class DepositDialog extends CustomDialogB {
 				if(lb.getSelectedItemText().equals("ECPN")){
 					ListBox lb1 = new ListBox();
 					lb1.addItem("Sociedades");
-					lb1.addItem("D2");
+					//lb1.addItem("D2");
 					//lb1.addItem("Contabilidad");
 					flex_table.setWidget(1, 0, new Label("De"));
 					flex_table.setWidget(1,	1, lb1);
@@ -283,11 +292,13 @@ public abstract class DepositDialog extends CustomDialogB {
 					}
 					flex_table.setWidget(1, 0, new Label("Memoria Predefinida"));
 					flex_table.setWidget(1, 1, lb1);
+			
+					flex_table.removeRow(2);
 				}
 
 				if(lb.getSelectedItemText().equals("Memoria")){
 					ListBox lb1 = new ListBox();
-					lb1.addItem("2013");
+					//lb1.addItem("2013");
 					lb1.addItem("2014");
 					flex_table.setWidget(1, 0, new Label("Ejercicio"));
 					flex_table.setWidget(1,	1, lb1);	
@@ -296,6 +307,10 @@ public abstract class DepositDialog extends CustomDialogB {
 					flex_table.setWidget(2, 1, newUploader(url+"gwt_deposit_upload?domain_id="+enterprise.getDomain()+
 																					"&cif="+enterprise.getDocument()));
 					
+				}
+				if(lb.getSelectedItemText().equals("-")){
+					flex_table.removeRow(1);
+					flex_table.removeRow(2);
 				}
 				flexTableCss();
 			}

@@ -38,5 +38,10 @@ public interface INormalizedMemory extends RemoteService{
 	
 	public void importSocietyValues(String document, Integer domainId);
 	
-	public void createD2Deposit(Integer domainId, Integer id, String name);
+	public void createD2Deposit(Integer domainId, Integer id, String name, String type);
+	
+	public void importAll(String type, String ejercicio,MemoryTemplate mt, Integer domainId, String cif);
+
+	public void delete(Integer domainId, String document);
+
 }

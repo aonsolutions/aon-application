@@ -59,7 +59,7 @@ public class PageH4 extends PageAbs {
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
 		tabPanel.selectTab(0);
-		normalizedMemory.importSocietyButton.setVisible(true);
+		// normalizedMemory.importSocietyButton.setVisible(true);
 	}
 
 	@Override
