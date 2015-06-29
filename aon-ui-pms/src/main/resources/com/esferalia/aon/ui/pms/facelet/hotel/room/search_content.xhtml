@@ -30,9 +30,10 @@
 
 	<aon:outputLabel value="#{bundle.aon_status}" />
 	<aon:selectOneRadio id="Rooom_active"
-		valueChangeListener="#{controller.addExpression}">
+		value="#{roomSearch.active}">
 		<f:selectItem itemLabel="#{bundle.aon_active}" itemValue="#{true}" />
 		<f:selectItem itemLabel="#{bundle.aon_inactive}" itemValue="#{false}" />
+		<f:selectItem itemLabel="#{bundle.aon_indifferent}" itemValue="#{null}" />
 	</aon:selectOneRadio>				
 
 </ui:composition>
