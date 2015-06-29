@@ -313,6 +313,7 @@ public class SQLGrossTestCase extends AbstractSQLTestCase {
 						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
 						"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
 						"BRUTO(3333.00 * DIAS_TRABAJADOS / DIAS_MES)" ,
+						"TRACE('DIAS_TRABAJADOS = %f\r\n',DIAS_TRABAJADOS);0.00"
 						}
 				, new String[] {
 						"BASE_CGC * 0.10", 
@@ -349,8 +350,8 @@ public class SQLGrossTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
-		for(com.esferalia.aon.payroll.SalaryPayment payment: salary.getSalaryPayments())
-			System.out.println(payment.getName() +  " = " + payment.getAmount() + " (" + payment.getExpression() +")");
+//		for(com.esferalia.aon.payroll.SalaryPayment payment: salary.getSalaryPayments())
+//			System.out.println(payment.getName() +  " = " + payment.getAmount() + " (" + payment.getExpression() +")");
 
 		int monthDays = AonDateUtils.getMax(getToday(), DATE) ;
 		int workDays = get(getToday(), DATE)-1;
@@ -358,7 +359,7 @@ public class SQLGrossTestCase extends AbstractSQLTestCase {
 		//@formatter:off
 		Assert.assertEquals(
 				(3333.00 * workDays / monthDays)
-				+(500 * 0.90) * ( monthDays - workDays -3), 
+				+(500 * 0.90) * Math.max( monthDays - workDays -3, 0), 
 				salary.getTotalPayment() 
 				, DELTA);
 		//@formatter:on
