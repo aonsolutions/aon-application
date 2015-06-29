@@ -37,7 +37,7 @@ public class AuthenticationServlet extends HttpServlet implements ISQLConstants 
 			"	, asset_activity AS AA, asset AS A, room AS R" +
 			" WHERE PR.domain = ?" +
 			" AND PR.start_date <= ?" +
-			" AND PR.end_date > ?" +
+			" AND PR.end_date >= ?" +
 			" AND PR.status <> " + ReservationStatus.CANCELLED.ordinal() +
 			" AND PR.status <> " + ReservationStatus.BLOCKED.ordinal() +
 			" AND PR.project = PRG.project_reservation" +
@@ -45,7 +45,7 @@ public class AuthenticationServlet extends HttpServlet implements ISQLConstants 
 			" AND PR.project = PRR.project_reservation" +
 			" AND PRR.id = PRRD.project_reservation_room" +
 			" AND PRRD.asset_activity = AA.id" +
-			" AND AA.date = ?" +
+			" AND (AA.date = ? OR AA.date = ?)" +
 			" AND AA.asset = A.id" +
 			" AND A.name = ?" +
 			" AND A.id = R.asset" +
@@ -92,7 +92,8 @@ public class AuthenticationServlet extends HttpServlet implements ISQLConstants 
 					SQLUtils.setDate(stmt, 3, today);
 					SQLUtils.setString(stmt, 4, document.toUpperCase());
 					SQLUtils.setDate(stmt, 5, today);
-					SQLUtils.setString(stmt, 6, room);
+					SQLUtils.setDate(stmt, 6, DateUtils.addDays(today, -1));
+					SQLUtils.setString(stmt, 7, room);
 					rs = stmt.executeQuery();
 					if (rs.next()) {
 						int reservationGuest = rs.getInt(RESERVATION_GUEST);

@@ -58,13 +58,13 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.webmail</artifactId>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.watson</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.esferalia.aon</groupId>
-			<artifactId>aon.watson</artifactId>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.webmail</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
