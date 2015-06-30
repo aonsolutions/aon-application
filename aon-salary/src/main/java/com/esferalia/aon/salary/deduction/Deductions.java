@@ -81,7 +81,7 @@ public class Deductions implements Serializable {
 	public IDeduction getOther() {
 		return map.get(DeductionType.OTHER);
 	}
-	public void setOther(IDeduction d) {
+	public void addOther(IDeduction d) {
 		put(DeductionType.OTHER, d);
 	}
 
@@ -90,7 +90,12 @@ public class Deductions implements Serializable {
 	}
 
 	protected void put(DeductionType type, IDeduction d) {
-		map.put(type,d);
+		IDeduction deduction = map.get(type);
+		if ( deduction == null )
+			map.put(type,d);
+		else 
+			map.put(type,new CompositeDeduction(d, deduction));
+			
 	}
 
 	public Double getTotal() {
