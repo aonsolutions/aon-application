@@ -99,24 +99,28 @@ public class DownloadXmlFileServlet extends HttpServlet {
 			zos = new ZipOutputStream(os);
 			res = zos;
 			while (!queue.isEmpty()) {
-				directory = queue.pop();
 				
+				directory = queue.pop();
+				String dirName = directory.getName()+"/";								
+
 				for (File kid : directory.listFiles()) {
 					
 					String name = base.relativize(kid.toURI()).getPath();
 					if (kid.isDirectory()) {
 						queue.push(kid);
-						name = name.endsWith("/") ? name : name + "/";
-						zos.putNextEntry(new ZipEntry(name));
+						String fileName = dirName + ((name.endsWith("/")) ? name : name + "/");
+						zos.putNextEntry(new ZipEntry(fileName));
 						
 					} else {
-						zos.putNextEntry(new ZipEntry(name));
+						String fileName= dirName+"/"+name;
+						zos.putNextEntry(new ZipEntry(fileName));
 						copy(kid, zos);
 						zos.closeEntry();
 					}
 					
 					kid.delete();
 				}
+				zos.putNextEntry(new ZipEntry(dirName));
 				directory.delete();
 			}
 		} finally {
