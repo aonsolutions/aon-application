@@ -215,6 +215,8 @@ public class ContractLeaveLoader {
 
 			@Override
 			public Void visitPregnacyRisk(LeaveType leaveType) {
+				exprCtx.setVariable(ContextVariable.MATERNITY_DAYS, leaveDays,
+						start, end);
 				return null;
 			}
 

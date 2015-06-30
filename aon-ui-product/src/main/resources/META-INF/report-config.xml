@@ -76,6 +76,7 @@
 		<collection provider="#{itemTagPrint}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
+			<param id="barcodePattern" value="#{company.getItemTagBarcodePattern}" />
 			<param id="freeText" value="#{itemTagPrint.getFreeTextAll}" />
 		</params>
 	</report>

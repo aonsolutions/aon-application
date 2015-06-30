@@ -56,7 +56,7 @@ public class PageH2 extends PageAbs {
 
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
-		normalizedMemory.importSocietyButton.setVisible(true);
+		//normalizedMemory.importSocietyButton.setVisible(true);
 		tabPanel.selectTab(0);
 	}
 

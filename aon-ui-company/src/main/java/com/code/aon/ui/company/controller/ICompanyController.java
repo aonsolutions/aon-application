@@ -34,6 +34,9 @@ public interface ICompanyController extends IController {
 	String getItemTagDefaultText();
 	void setItemTagDefaultText(String itemTagDefaultText);
 	
+	String getItemTagBarcodePattern();
+	void setItemTagBarcodePattern(String iitemTagBarcodePattern);
+	
 	boolean isPrintLogo();
 	void setPrintLogo(boolean printLogo);
 
@@ -74,6 +77,7 @@ public interface ICompanyController extends IController {
 	FinancePaymentTemplate obtainFinancePaymentTemplate() throws ManagerBeanException;
 	ItemTagTemplate obtainItemTagTemplate() throws ManagerBeanException;
 	String obtainItemTagDefaultText() throws ManagerBeanException;
+	String obtainItemTagBarcodePattern() throws ManagerBeanException;
 	boolean obtainPrintLogo() throws ManagerBeanException;
 	boolean obtainPrintReferenceCode() throws ManagerBeanException;
 	boolean obtainPrintProductCode() throws ManagerBeanException;

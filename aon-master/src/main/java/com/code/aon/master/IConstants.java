@@ -54,6 +54,13 @@ public interface IConstants {
 			"8.16.1",	"8.16.2",	"8.16.3",	"8.17.0",	"8.17.1",	"8.18.0",	"8.20.0",	"8.20.1",
 			"8.21.0",	"8.21.1",	"8.21.2",	"8.22.0",	"8.23.0",	"8.23.1",	"8.23.2",	"8.23.3",
 			"8.23.4",	"8.24.0",	"8.25.0",	"8.25.1",	"8.25.2",	"8.25.3",	"8.26.0",	"8.26.1"
+
+			//#ifdef env.GPS
+			//#echo Version for GPS only
+		 	//Uncomment line below this  to set new database version for GPS  
+			//,"8.26.2"
+			//#endif
+
 			};
 
 	String[] DEFAULTS = {

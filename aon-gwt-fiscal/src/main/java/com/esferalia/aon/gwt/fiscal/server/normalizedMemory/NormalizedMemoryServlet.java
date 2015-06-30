@@ -37,10 +37,12 @@ import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositFooterKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.DBConsults;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema;
+import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002013toD2;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves.Clave;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002014toD2;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Utils;
@@ -95,9 +97,11 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements INo
 		D2DepositKey[] keyList = null;
 		D2DepositHeaderKey[] keyListHeader = null;
 		D2DepositFooterKey[] keyListFooter = null;
-		
+		String type = schema.getCabecera().getTipoCuestionario();
 		switch (part) {
-		case "IDA": keyListHeader = D2DepositConstants.IDA_ABREVIATE_KEYS;break;
+		case "IDA": if(type.equalsIgnoreCase("Abreviado")) keyListHeader = D2DepositConstants.IDA_ABREVIATE_KEYS;
+					else if(type.equalsIgnoreCase("PYME")) keyListHeader = null; // D2DepositConstants.IDA_PYME_KEYS;
+					break;
 		case "BA": keyListHeader = D2DepositConstants.BA_ABREVIATE_KEYS;break;
 		case "PA": keyListHeader = D2DepositConstants.PA_ABREVIATE_KEYS;break;
 		case "PNA": keyListHeader = D2DepositConstants.PNA_ABREVIATE_KEYS;break;
@@ -394,10 +398,95 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements INo
 		}*/
 	}
 	
-	public void createD2Deposit(Integer domainId, Integer id, String name){
+	public void importAll(String type, String ejercicio,MemoryTemplate mt, Integer domainId, String cif){
+		String domainName = getDomainName(domainId);
+		if(type.equals("Balance")){
+			if(ejercicio.equals("2013")){
+				Mod2002013 mod2002013 = com.esferalia.aon.occam.api.AON.getMod2002013ByYear(domainName, domainId, 2013);
+				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
+				Mod2002013toD2.fillBalance(ctx, mod2002013);
+						
+				for(D2DepositHeaderKey key : ctx.keySet()){
+					updateSchema(cif, domainId, key.getCode(), ctx.get(key).toString());
+				}
+			}
+			else if(ejercicio.equals("2014")){
+				Mod2002014 mod2002014 = com.esferalia.aon.occam.api.AON.getMod2002014ByYear(domainName, domainId, 2014);
+				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
+				Mod2002014toD2.fillBalance(ctx, mod2002014);
+				
+				for(D2DepositHeaderKey key : ctx.keySet()){
+					updateSchema(cif, domainId, key.getCode(), ctx.get(key).toString());
+				}
+			}
+		}
+		else if(type.equals("Perdidas y ganancias")){
+			if(ejercicio.equals("2013")){
+				Mod2002013 mod2002013 = com.esferalia.aon.occam.api.AON.getMod2002013ByYear(domainName, domainId, 2013);
+				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
+				Mod2002013toD2.fillPyg(ctx, mod2002013);
+						
+				for(D2DepositHeaderKey key : ctx.keySet()){
+					updateSchema(cif, domainId, key.getCode(), ctx.get(key).toString());
+				}
+			}
+			else if(ejercicio.equals("2014")){
+				Mod2002014 mod2002014 = com.esferalia.aon.occam.api.AON.getMod2002014ByYear(domainName, domainId, 2014);
+				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
+				Mod2002014toD2.fillPyg(ctx, mod2002014);
+				
+				for(D2DepositHeaderKey key : ctx.keySet()){
+					updateSchema(cif, domainId, key.getCode(), ctx.get(key).toString());
+				}
+			}
+		}
+		else if(type.equals("ECPN")){
+			if(ejercicio.equals("2013")){
+				Mod2002013 mod2002013 = com.esferalia.aon.occam.api.AON.getMod2002013ByYear(domainName, domainId, 2013);
+				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
+				Mod2002013toD2.fillEcpn(ctx, mod2002013);
+				Mod2002013toD2.fillEcpn2(ctx, mod2002013);
+
+				for(D2DepositHeaderKey key : ctx.keySet()){
+					updateSchema(cif, domainId, key.getCode(), ctx.get(key).toString());
+				}
+			}
+			else if(ejercicio.equals("2014")){
+				Mod2002014 mod2002014 = com.esferalia.aon.occam.api.AON.getMod2002014ByYear(domainName, domainId, 2014);
+				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
+				Mod2002014toD2.fillEcpn(ctx, mod2002014);
+				Mod2002014toD2.fillEcpn2(ctx, mod2002014);
+				
+				for(D2DepositHeaderKey key : ctx.keySet()){
+					updateSchema(cif, domainId, key.getCode(), ctx.get(key).toString());
+				}
+			}
+		}
+		else if(type.equals("Memoria predefinida")){
+			updateTexts(mt, domainId, cif);
+		}
+		else if(type.equals("Memoria")){
+			if(ejercicio.equals("2013")){
+				
+			}
+			else if(ejercicio.equals("2014")){
+				
+			}
+		}
+		
+		
+	}
+	
+	public void delete(Integer domainId, String document){
+		String domain = AonUtil.getDomainName();
+		clearSession(document);
+		DBConsults.deleteDeposit(domain, domainId);
+	}
+	
+	public void createD2Deposit(Integer domainId, Integer id, String name, String type){
 		String domainName = AonUtil.getDomainName();
 		Enterprise enterprise = AON.getEnterprise(domainName, domainId, id);
-		byte[] b = Utils.CreateXml(enterprise, name);
+		byte[] b = Utils.CreateXml(enterprise, name, type, domainName);
 		Integer depositId = DBConsults.insertDeposit(domainName, b, domainId);
 	}
 }

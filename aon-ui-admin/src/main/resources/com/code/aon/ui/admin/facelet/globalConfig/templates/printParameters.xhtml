@@ -140,13 +140,23 @@
 					<f:facet name="header">
 						<aon:outputLabel value="#{bundle.product_tag_module}" />
 					</f:facet>
-					<aon:panelGrid columns="2" style="width:350px">
+					<aon:panelGrid id="itemTag-panel" columns="2" style="width:350px">
 						<aon:outputLabel for="Company_itemTag_template"
 							value="#{bundle.product_tag_print_template}" />
 						<aon:selectOneMenu id="Company_itemTag_template"
 							value="#{company.itemTagTemplate}" >
-								<f:selectItems value="#{companyCollections.itemTagTemplate}" />
+							<f:selectItems value="#{companyCollections.itemTagTemplate}" />
+							<a4j:support event="onchange" reRender="itemTag-panel" ajaxSingle="#{true}" />
 						</aon:selectOneMenu>
+							
+						<!-- rendered only for TEMPLATE_3 (Zebra 101.6x76.2, 1 column) -->
+						<aon:outputLabel for="Company_itemTag_serializable_barcode"
+							value="#{bundle.product_tag_print_serializable_barcode}"
+							rendered="#{company.itemTagTemplate=='TEMPLATE_3'}" />
+						<aon:inputText id="Company_itemTag_serializable_barcode" size="64"
+							value="#{company.itemTagBarcodePattern}"
+							rendered="#{company.itemTagTemplate=='TEMPLATE_3'}"/>
+						
 						<aon:outputLabel for="Company_itemTag_default_text"
 							value="#{bundle.aon_text}" />
 						<aon:inputText id="Company_itemTag_default_text" size="64"

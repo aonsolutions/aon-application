@@ -53,7 +53,7 @@ public class WarehouseTransferDetailController extends LinesController {
 			throw new ValidatorException(fm);		
 		}
 		WarehouseTransferDetail wtd = (WarehouseTransferDetail) getTo();
-		if ( wtd.getItem().getProduct().isSerializable() && (quantity != 1) ) {
+		if ( wtd.getItem().getProduct().isSerializable() && !wtd.getItem().getProduct().isLotable() && (quantity != 1) ) {
 			FacesMessage fm = new FacesMessage(AonUtil.getMessage(ICommonMessages.WAREHOUSE_QUANTITY_SERIALIZABLE));
 			fm.setSeverity(SEVERITY_ERROR);
 			throw new ValidatorException(fm);					

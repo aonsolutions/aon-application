@@ -205,7 +205,7 @@ public class Page01 extends PageAbs {
 				input) {
 			@Override
 			public String getValue(LegalRepresentative lr) {
-				return lr.getName();
+				return lr.getNotary();
 			}
 		};
 		col.setFieldUpdater(new FieldUpdater<LegalRepresentative, String>() {

@@ -45,6 +45,7 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
@@ -121,6 +122,50 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		Date startITDate = getToday();
 		addIT(aonContext, contract, LeaveType.MATERNITY, startITDate,
+				null, 100.00);
+
+		
+		Date startDate = add(getFirstDayOfMonth(getToday()),MONTH,1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		Assert.assertEquals(0.00, salary.getTotalPayment());
+		Assert.assertEquals(0.00, salary.getTotalLiquid());
+		Assert.assertEquals(get(endDate, DAY_OF_MONTH) * 100.00, salary.getCommonBase());
+
+	}
+
+	@Test
+	public void testPregnancyRiskIT() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {						
+				"BASE_CGC * 0.10", 
+				"BASE_CGP * 0.05",
+				"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				}, null);
+		//@formatter:on
+		
+		
+		PaymentConceptRecord maternity = addConcept(aonContext, MATERNITY.getName());
+		addPayment(aonContext, contract, maternity, "DIAS_MATERNIDAD * 0", "DIAS_MATERNIDAD * BASE_REGULADORA");
+		
+		Date startITDate = getToday();
+		addIT(aonContext, contract, LeaveType.PREGNANCY_RISK, startITDate,
 				null, 100.00);
 
 		
@@ -283,6 +328,225 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(2, salary.getSalaryPayments().size());
 
 	}
+
+	@Test
+	public void testCommonDiseaseITV() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				"TRACE('BASE_CGC=%f\r\n', BASE_CGC);BASE_CGC * 4.70 / 100"
+				}, null);
+		//@formatter:on
+		
+		addPayment(aonContext, contract, (String) null, "DIAS_ENFERMEDAD_COMUN_1_3 * BASE_REGULADORA");
+
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				startITDate, null);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryDeduction deduction : salary
+				.getSalaryDeductions()) {
+			System.out.println(deduction.getExpression() + " = " + deduction.getAmount());
+		}
+		
+
+		Assert.assertEquals( salary.getCommonBase() * 4.70d/100, salary.getTotalDeduction(), DELTA);
+
+	}
+
+	@Test
+	public void testCommonDiseaseITVI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				"TRACE('BASE_CGC=%f\r\n', BASE_CGC);BASE_CGC * 4.70 / 100"
+				}, null);
+		//@formatter:on
+		
+		addPayment(aonContext, contract, (String) null, "DIAS_ENFERMEDAD_COMUN_1_3 * BASE_REGULADORA");
+		addPayment(aonContext, contract, (String) null, "DIAS_ENFERMEDAD_COMUN_4_15 * BASE_REGULADORA");
+
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
+		Date endITDate = add(startITDate, DAY_OF_MONTH, 5);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				endITDate, null);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryDeduction deduction : salary
+				.getSalaryDeductions()) {
+			System.out.println(deduction.getExpression() + " = " + deduction.getAmount());
+		}
+		
+
+		Assert.assertEquals( salary.getCommonBase() * 4.70d/100, salary.getTotalDeduction(), DELTA);
+
+	}
+
+	@Test
+	public void testCommonDiseaseITVII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				"TRACE('BASE_CGC=%f\r\n', BASE_CGC);BASE_CGC * 4.70 / 100.00"
+				}, null);
+		//@formatter:on
+		
+		addPayment(aonContext, contract, (String) null, "DIAS_ENFERMEDAD_COMUN_1_3 * BASE_REGULADORA");
+		addPayment(aonContext, contract, (String) null, "DIAS_ENFERMEDAD_COMUN_4_15 * BASE_REGULADORA");
+		addPayment(aonContext, contract, (String) null, "DIAS_ENFERMEDAD_COMUN_16_20 * BASE_REGULADORA");
+
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
+		Date endITDate = add(startITDate, DAY_OF_MONTH, 5);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				null, null);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryDeduction deduction : salary
+				.getSalaryDeductions()) {
+			System.out.println(deduction.getExpression() + " = " + deduction.getAmount());
+		}
+		
+
+		Assert.assertEquals( salary.getCommonBase() * 4.70d/100, salary.getTotalDeduction(), DELTA);
+
+	}
+
+	@Test
+	public void testCommonDiseaseITVIII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				"TRACE('BASE_CGC=%f\r\n', BASE_CGC);BASE_CGC * 4.70 / 100.00"
+				}, null);
+		//@formatter:on
+		
+		addPayment(aonContext, contract, (String) null, "DIAS_ENFERMEDAD_COMUN_1_3 * BASE_REGULADORA");
+		addPayment(aonContext, contract, (String) null, "DIAS_ENFERMEDAD_COMUN_4_15 * BASE_REGULADORA");
+		addPayment(aonContext, contract, (String) null, "DIAS_ENFERMEDAD_COMUN_16_20 * BASE_REGULADORA");
+		addPayment(aonContext, contract, (String) null, "DIAS_ENFERMEDAD_COMUN_21 * BASE_REGULADORA");
+
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				null, null);
+
+		Date startDate = add(getFirstDayOfMonth(getToday()),MONTH,1);
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryDeduction deduction : salary
+				.getSalaryDeductions()) {
+			System.out.println(deduction.getExpression() + " = " + deduction.getAmount());
+		}
+		
+
+		Assert.assertEquals( salary.getCommonBase() * 4.70d/100, salary.getTotalDeduction(), DELTA);
+
+	}
+	@Test
+	public void testCommonDiseaseITIX() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				"TRACE('BASE_CGP=%f\r\n', BASE_CGP);BASE_CGC * 1.55 / 100",
+				"TRACE('BASE_CGP=%f\r\n', BASE_CGP);BASE_CGC * 0.10 / 100"
+				}, null);
+		//@formatter:on
+		
+		addPayment(aonContext, contract, (String) null, "DIAS_ENFERMEDAD_COMUN_1_3 * 100");
+
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				startITDate, null);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryDeduction deduction : salary
+				.getSalaryDeductions()) {
+			System.out.println(deduction.getExpression() + " = " + deduction.getAmount());
+		}
+		
+
+		Assert.assertEquals( salary.getProfessionalBase() * 1.65d/100, salary.getTotalDeduction(), DELTA);
+
+	}
+
 	// ------------------------------------------------------------------------
 
 

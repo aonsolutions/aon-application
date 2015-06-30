@@ -47,7 +47,7 @@ import com.esferalia.aon.gwt.template.jooq.DBProduct;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.google.api.services.drive.Drive;
 
-@WebServlet(name = "DownloadTemplatesProduct", urlPatterns = { "/aon_gwt_template/gwt_download_product/*" })
+@WebServlet(name = "DownloadTemplatesDelivery", urlPatterns = { "/aon_gwt_template/gwt_download_delivery/*" })
 public class DownloadDeliveryServlet extends HttpServlet {
 
 

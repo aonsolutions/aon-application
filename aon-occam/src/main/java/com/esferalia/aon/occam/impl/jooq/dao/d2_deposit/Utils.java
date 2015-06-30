@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao.d2_deposit;
 
+import static com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2DepositInitialization.INITIALIZE_EXPRESSION_MAP_D2;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -9,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
@@ -29,12 +32,31 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.AccountPeriod;
+import com.esferalia.aon.occam.api.model.CompanyAdministrator;
+import com.esferalia.aon.occam.api.model.CompanyParticipation;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
+import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
+import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.DoubleVariable2014;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key;
 import com.esferalia.aon.occam.api.model.type.Province;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Cabecera;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves.Clave;
+import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.Mod2002014MVELContext;
+import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.esferalia.aon.watson.util.AonUtils;
 
 
 
@@ -341,7 +363,7 @@ public class Utils {
 		return b;
 	}
 	
-	public static byte[] CreateXml(Enterprise enterprise, String name) {
+	public static byte[] CreateXml(Enterprise enterprise, String name, String type , String domain) {
 		Esquema schema = new Esquema();
 		Cabecera header = new Cabecera();
 		Claves keys = new Claves();
@@ -349,7 +371,7 @@ public class Utils {
 		header.setCIF(enterprise.getDocument());
 		header.setEjercicio(BigInteger.valueOf(2014));
 		header.setRazonSocial("");
-		header.setTipoCuestionario("Abreviado");
+		header.setTipoCuestionario(type);
 		header.setIdiomaCuestionario("Castellano");
 		header.setMemoriaNormalizada(true);
 		schema.setCabecera(header);
@@ -530,6 +552,23 @@ public class Utils {
 		c9000000.setValor("1");
 		keys.getClave().add(c9000000);
 		
+		AONContext ctx2 = null;
+		try {
+			ctx2 = AONContext.getAONContext( domain ,enterprise.getDomain());
+			AccMiningMVELContext acc = initialize(ctx2);
+			for (String value : acc.keySet()) {
+				D2DepositKey k = D2DepositKey.valueOf(value);
+
+				Clave clave = new Clave();
+				Integer code = Integer.parseInt(k.getCode());
+				clave.setCodigo(BigInteger.valueOf(code));
+				clave.setValor(acc.get(value).toString());
+				keys.getClave().add(clave);
+			}
+		}finally {
+			if (ctx2 != null) ctx2.close();
+		}
+		
 		schema.setClaves(keys);
 		
 		byte[] b = null;
@@ -540,6 +579,62 @@ public class Utils {
 			e.printStackTrace();
 		}
 		return b;
+	}
+	
+	
+	private static final IAccMiningKeyAccept ACCEPTER = new IAccMiningKeyAccept() {
+		
+		@Override
+		public boolean acceptKey(Object key) {
+			try {
+				return (D2DepositKey.valueOf((String) key) != null);	
+			} catch (IllegalArgumentException e) {
+				return false;
+			}
+		}
+	};
+	
+	private static AccMiningParameters getParams(AONContext ctx, Integer domainId, Integer year) throws AonCoreException {
+		AccMiningParameters params = new AccMiningParameters();
+		params.setDomain(domainId);
+		params.setYear(year);
+		 
+		AccountPeriod period =  AccountPeriodDAO.fetchOneByYear(ctx, year);
+		if (period == null) {
+//			throw new AonCoreException("Ejercicio '"+mod200.getYear()+"' no encontrado.");
+			return null;
+		}
+//		if (!period.isClosed()) {
+//			throw new AonCoreException("Cierre el ejercicio contable '"+mod200.getYear()+"' para poder continuar.");
+//		}
+		params.setPeriodId(period.getId());
+		params.setStartDate(period.getInitiationDate());
+		params.setEndDate(period.getDeadline());
+		return params;
+	}
+	
+	public static AccMiningMVELContext initialize(AONContext ctx) {
+		
+		
+		Integer domainId = 1;
+		Integer year = 2014;
+		AccMiningMVELContext mvlCtx = new AccMiningMVELContext(ACCEPTER);
+		AccMiningParameters params =  getParams(ctx, domainId, year); //getParams(ctx,mod200);
+		if (params != null) {
+			mvlCtx.setAccounts(AON.getAccountBalances(ctx, params) );
+		} else {
+			mvlCtx.setAccounts( new HashMap<String,AccountBalance>() );
+		}
+		mvlCtx.setExpressionMap(INITIALIZE_EXPRESSION_MAP_D2);
+		for (String stringKey : INITIALIZE_EXPRESSION_MAP_D2.keySet()) {
+			D2DepositKey k = D2DepositKey.valueOf(stringKey.toString());
+			String expression = INITIALIZE_EXPRESSION_MAP_D2.get(stringKey);
+			mvlCtx.put(stringKey, 0.0 );
+			Object ret = mvlCtx.evaluateExpression(stringKey,expression);
+			mvlCtx.put(stringKey, ret );
+		}	
+	
+		return mvlCtx;
 	}
 	
 }

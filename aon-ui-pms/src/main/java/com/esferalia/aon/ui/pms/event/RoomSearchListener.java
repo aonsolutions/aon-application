@@ -22,11 +22,11 @@ public class RoomSearchListener extends ControllerSearchListener {
 	
 	private Hotel hotel;
 	private Item item;
+	private Boolean active;
 	
 	public Hotel getHotel() {
 		return hotel;
 	}
-
 	public void setHotel(Hotel hotel) {
 		this.hotel = hotel;
 	}
@@ -34,15 +34,22 @@ public class RoomSearchListener extends ControllerSearchListener {
 	public Item getItem() {
 		return item;
 	}
-
 	public void setItem(Item item) {
 		this.item = item;
+	}
+	
+	public Boolean getActive() {
+		return active;
+	}
+	public void setActive(Boolean active) {
+		this.active = active;
 	}
 	
 	@Override
 	protected void init() throws ManagerBeanException {
 		setHotel((Hotel)BeanManager.getManagerBean(Hotel.class).createNewTo());
 		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
+		setActive(Boolean.TRUE);
 
 		((RoomController)getController()).clearCheckedRooms();
 	}
@@ -58,6 +65,9 @@ public class RoomSearchListener extends ControllerSearchListener {
 		}
 		if (getItem() != null && getItem().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.ROOM_ITEM_ID), getItem().getId());			
+		}
+		if (getActive() != null) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.ROOM_ACTIVE), getActive());			
 		}
 	}
 	

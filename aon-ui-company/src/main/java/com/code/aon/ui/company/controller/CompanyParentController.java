@@ -3,6 +3,7 @@ package com.code.aon.ui.company.controller;
 import static com.code.aon.common.enumeration.AppParam.APP_FPAYMENT_TEMPLATE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_ITEM_TAG_TEMPLATE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_ITEM_TAG_TEXT_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_ITEM_TAG_BARCODE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_ADDRESS_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_DISCOUNT_PRICE_APPLIED;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_HEADER_PARAM;
@@ -156,6 +157,8 @@ public class CompanyParentController extends BasicController implements ICompany
 	private ItemTagTemplate itemTagTemplate;
 	
 	private String itemTagDefaultText;
+	
+	private String itemTagBarcodePattern;
 	
 	private boolean smartCard;
 	
@@ -880,6 +883,14 @@ public class CompanyParentController extends BasicController implements ICompany
 	public void setItemTagDefaultText(String itemTagDefaultText) {
 		this.itemTagDefaultText = itemTagDefaultText;
 	}
+	
+	public String getItemTagBarcodePattern() {
+		return itemTagBarcodePattern;
+	}
+
+	public void setItemTagBarcodePattern(String itemTagBarcodePattern) {
+		this.itemTagBarcodePattern = itemTagBarcodePattern;
+	}
 
 	public boolean isSmartCard() {
 		return smartCard;
@@ -938,6 +949,11 @@ public class CompanyParentController extends BasicController implements ICompany
 
 	public String obtainItemTagDefaultText() throws ManagerBeanException {
 		String value = AppParamUtil.getValue(APP_ITEM_TAG_TEXT_PARAM);
+		return value;
+	}
+
+	public String obtainItemTagBarcodePattern() throws ManagerBeanException {
+		String value = AppParamUtil.getValue(APP_ITEM_TAG_BARCODE_PARAM);
 		return value;
 	}
 	

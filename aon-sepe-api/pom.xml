@@ -32,6 +32,16 @@
 	</dependencies>
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>com.igormaznitsa</groupId>
+				<artifactId>jcp</artifactId>
+				<executions>
+					<execution>
+						<id>preprocessSources</id>
+						<phase/>
+					</execution>
+				</executions>
+			</plugin>
 			<!-- Para añadir la carpeta de los fuentes generados como source folder. -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>

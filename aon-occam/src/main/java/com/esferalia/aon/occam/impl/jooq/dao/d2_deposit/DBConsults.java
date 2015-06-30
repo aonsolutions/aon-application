@@ -273,6 +273,19 @@ public class DBConsults {
 		}
 
 	}
+	
+	public static void deleteDeposit(String domain, Integer domainId){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain, domainId);
+		
+			ctx.getDslContext().delete(RATTACH).where(RATTACH.DOMAIN.eq(domainId))
+			.and(RATTACH.TYPE.eq((byte)17)).execute();
+			
+		}finally {
+			if (ctx != null) ctx.close();
+		}
+	}	
 
 	public static Integer insertDepositText(String domain, String name,
 			byte[] b, Integer domainId) {

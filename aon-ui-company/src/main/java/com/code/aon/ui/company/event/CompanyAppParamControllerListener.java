@@ -8,13 +8,17 @@ import static com.code.aon.common.enumeration.AppParam.APP_PRINT_INTERNET_DATA_P
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_LOGO_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_NAME_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_NIF_PARAM;
-import static com.code.aon.common.enumeration.AppParam.APP_PRINT_REFERENCE_CODE_PARAM;
-import static com.code.aon.common.enumeration.AppParam.APP_PRINT_RECORD_DATA_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_PRODUCT_CODE_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_RECORD_DATA_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_REFERENCE_CODE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_S_INVOICE_FOOTER_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_SMART_CARD_PARAM;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
@@ -30,6 +34,7 @@ import com.code.aon.ui.company.controller.ICompanyController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
 public class CompanyAppParamControllerListener extends ControllerAdapter {
 	
@@ -55,6 +60,7 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 			companyController.setFinancePaymentTemplate(companyController.obtainFinancePaymentTemplate());
 			companyController.setItemTagTemplate(companyController.obtainItemTagTemplate());
 			companyController.setItemTagDefaultText(companyController.obtainItemTagDefaultText());
+			companyController.setItemTagBarcodePattern(companyController.obtainItemTagBarcodePattern());
 			companyController.searchCustomReportTemplate();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
@@ -124,8 +130,26 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 		// Item Tag
 		updateParam(APP_ITEM_TAG_TEMPLATE_PARAM, companyController.getItemTagTemplate());
 		updateParam(AppParam.APP_ITEM_TAG_TEXT_PARAM, companyController.getItemTagDefaultText());
+		if(checkItemTagBarcodePattern(companyController.getItemTagBarcodePattern())){
+			updateParam(AppParam.APP_ITEM_TAG_BARCODE_PARAM, companyController.getItemTagBarcodePattern());
+		} else {
+			AonUtil.addErrorMessage("Invalid barcode pattern!");
+		}
 	}
 	
+	private boolean checkItemTagBarcodePattern(String itemTagBarcodePattern) {
+		final String[] VALID_VAR_NAMES = {"codigo_barras", "lote", "fecha_caducidad"}; 
+		final Pattern TAG_REGEX = Pattern.compile("\\$\\{(.+?)\\}");
+	    Matcher matcher = TAG_REGEX.matcher(itemTagBarcodePattern);
+	    boolean validPattern = true;
+	    while (matcher.find() && validPattern) {
+	    	if( !ArrayUtils.contains(VALID_VAR_NAMES, matcher.group(1)) ){
+	    		validPattern = false;
+	    	}
+	    }
+		return validPattern;
+	}
+
 	private void updateParam(AppParam appParam, ReportPrintOption value) throws ManagerBeanException {
 		AppParamUtil.insertParameter(appParam, (value != null) ? String.valueOf(value.ordinal()) : null);
 	}

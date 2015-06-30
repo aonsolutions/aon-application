@@ -9,11 +9,33 @@
 
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
-		<ui:param name="skipResetButton" value="#{!reservation.reservationPermission.newReservationGuestAllowed}" />
-		<ui:param name="skipLineEdition" value="#{!reservation.reservationPermission.editReservationGuestAllowed}" />
+		<ui:param name="skipSelectRow" value="#{true}" />
+		<ui:param name="skipLineEdition" value="#{true}" />
 		<ui:param name="skipRemoveButton" value="#{controller.to.guestIndex == 1}" />
 
 		<ui:define name="columns">
+
+			<aon:column styleClass="aon-editDataTable-iconColumn">
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:commandButton id="Guest-selectButton"
+					styleClass="aon-editDataTable-button aon-table-row-link"
+					rendered="#{reservation.reservationPermission.editReservationGuestAllowed}"
+					actionListener="#{controller.onSelect}"
+					focus="#{(focusOnSelect != null)?(focusOnSelect):''}" />
+				<f:facet name="footer">
+					<aon:div>
+						<aon:commandButton id="Guest-resetButton" 
+							title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
+							styleClass="aon-editDataTable-button aon-icon-reset"
+							rendered="#{reservation.reservationPermission.newReservationGuestAllowed}" 
+							actionListener="#{controller.onReset}"
+							accesskey="#{bundle.aon_key_new_line}" 
+							focus="#{(focusOnAdd != null)?(focusOnAdd):''}" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-10">
 				<f:facet name="header">
