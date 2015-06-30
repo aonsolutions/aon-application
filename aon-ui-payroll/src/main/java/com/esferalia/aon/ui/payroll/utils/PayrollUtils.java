@@ -37,9 +37,11 @@ import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryData;
+import com.esferalia.aon.payroll.enumeration.ss.T54;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
+import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 
@@ -57,6 +59,21 @@ public class PayrollUtils {
 			instance = new PayrollUtils();
 		}
 		return instance;
+	}
+	
+	public BonusType getBonusTypeByCode(String code){
+		
+		if(T54.getEnumByValue(code)==T54.T54_3262){
+			return BonusType.REDUCTION_FLAT_RATE_RDL03_2014; 
+		} else if(T54.getEnumByValue(code)==T54.T54_3263){
+			return BonusType.REDUCTION_FLAT_RATE_RDL03_2014;
+		} else if(T54.getEnumByValue(code)==T54.T54_3266){
+			return BonusType.REDUCTION_RATE_RDL01_2015; 
+		} else if(T54.getEnumByValue(code)==T54.T54_3268){
+			return BonusType.REDUCTION_RATE_RDL01_2015;
+		}
+		
+		return null;
 	}
 	
 	// //////////////////////////////////

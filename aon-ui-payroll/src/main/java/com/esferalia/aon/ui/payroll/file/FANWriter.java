@@ -50,6 +50,7 @@ import com.esferalia.aon.file.payroll.fan.data.MPG;
 import com.esferalia.aon.file.payroll.fan.data.RZS;
 import com.esferalia.aon.file.payroll.fan.data.TCT;
 import com.esferalia.aon.file.payroll.fan.data.TRA;
+import com.esferalia.aon.payroll.BonusConcept;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractBonus;
 import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
@@ -63,7 +64,6 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.LiquidationType;
 import com.esferalia.aon.payroll.enumeration.Mutual;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
-import com.esferalia.aon.payroll.enumeration.ss.T54;
 import com.esferalia.aon.payroll.enumeration.ss.T86;
 import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -708,17 +708,7 @@ public class FANWriter implements Serializable {
 					if(bonusType==BonusType.SOCIAL_SECURITY){
 						fanFactory.createEDLCd07Segment(bonus.getAmount(), dat);
 					} else if(bonusType==BonusType.EMPLOYMENT_PROMOTION){
-						
-						Date bonusStart = bonus.getSalary().getStartDate();
-						Date bonusEnd = bonus.getSalary().getEndDate();
-						int bonusDays = 30;
-						if(bonusStart.after(getStartDate()) || (bonusEnd!=null && bonusEnd.before(getEndDate())) ){
-							bonusStart = bonusStart.before(getStartDate())?getStartDate():bonusStart;
-							bonusEnd = (bonusEnd!=null && bonusEnd.after(getEndDate()))?getEndDate():bonusEnd;
-							bonusDays = differenceBetweenDates(bonusStart, bonusEnd);
-						}
-						
-						fanFactory.createEDLCd22Segment(bonusDays, bonus.getAmount(), dat);
+						fanFactory.createEDLCd22Segment(getBonusDays(bonus), bonus.getAmount(), dat);
 					} else if(bonusType==BonusType.CEUTA_MELILLA){
 						fanFactory.createEDLCd20Segment(bonus.getAmount(), dat);
 					} else if(bonusType==BonusType.HANDICAP){
@@ -748,7 +738,7 @@ public class FANWriter implements Serializable {
 							populateBonusAmount(datList, "CD31");
 						}
 					} else if(bonusType==BonusType.REDUCTION_RATE_RDL01_2015){
-						fanFactory.createEDLCd34Segment(bonus.getAmount(), dat);
+						fanFactory.createEDLCd34Segment(getBonusDays(bonus), bonus.getAmount(), dat);
 					}
 				} else if(bonus!=null && bonusType==null) {
 					fanFactory.createEDLCd07Segment(bonus.getAmount(), dat);
@@ -772,6 +762,18 @@ public class FANWriter implements Serializable {
 				fanFactory.createEDLCd30Segment(dat);
 			}
 		}
+	}
+	
+	private int getBonusDays(SalaryBonus bonus){
+		Date bonusStart = bonus.getSalary().getStartDate();
+		Date bonusEnd = bonus.getSalary().getEndDate();
+		int bonusDays = 30;
+		if(bonusStart.after(getStartDate()) || (bonusEnd!=null && bonusEnd.before(getEndDate())) ){
+			bonusStart = bonusStart.before(getStartDate())?getStartDate():bonusStart;
+			bonusEnd = (bonusEnd!=null && bonusEnd.after(getEndDate()))?getEndDate():bonusEnd;
+			bonusDays = differenceBetweenDates(bonusStart, bonusEnd);
+		}
+		return bonusDays;
 	}
 	
 	private void populateBonusAmount(List<DAT> datList, String key) {
@@ -900,6 +902,18 @@ public class FANWriter implements Serializable {
 	private BonusType obtainBonusType(SalaryBonus bonus) {
 		BonusType type = null;
 		try {
+			if(bonus.getBonusConcept()!=null && NumberUtils.isNumber(bonus.getBonusConcept())){
+				IManagerBean bean = BeanManager.getManagerBean(BonusConcept.class);
+				BonusConcept bc = (BonusConcept) bean.get(bonus.getBonusConcept());
+				type = bc.getType();
+				if ( type == null )
+					type = PayrollUtils.getInstance().getBonusTypeByCode(bonus.getBonusConcept());
+				return bc.getType();
+			}
+		} catch (ManagerBeanException e) {
+			// continue
+		}
+		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractBonus.class);
 			Criteria criteria = new Criteria();
 			criteria.setSkipDomainFilter(true);
@@ -911,7 +925,7 @@ public class FANWriter implements Serializable {
 					if(cb.getBonusConcept()!=null){
 						type = ((ContractBonus) list.get(0)).getBonusConcept().getType();
 						if ( type == null )
-							type = getByT54(Integer.toString(cb.getBonusConcept().getId()));
+							type = PayrollUtils.getInstance().getBonusTypeByCode(Integer.toString(cb.getBonusConcept().getId()));
 					}
 				} else {
 					for(ITransferObject to: list){
@@ -919,7 +933,7 @@ public class FANWriter implements Serializable {
 						if(StringUtils.isNotBlank(bonus.getDescription()) && bonus.getDescription().equals(cb.getBonusConcept().getDescription())){
 							type = cb.getBonusConcept().getType();
 							if ( type == null )
-								type = getByT54(Integer.toString(cb.getBonusConcept().getId()));
+								type = PayrollUtils.getInstance().getBonusTypeByCode(Integer.toString(cb.getBonusConcept().getId()));
 							break;
 						}
 					}
@@ -927,7 +941,7 @@ public class FANWriter implements Serializable {
 				
 			}
 			if ( type == null )
-				type = getByT54(bonus.getBonusConcept());
+				type = PayrollUtils.getInstance().getBonusTypeByCode(bonus.getBonusConcept());
 			
 		} catch (ManagerBeanException e) {
 			// NADA
@@ -1077,15 +1091,22 @@ public class FANWriter implements Serializable {
 	}
 	
 	/**
-	 * Nº días alta trabaj. extr. REA y trabaj. a T. Parcial bonificados R.D.L. 5/2006
-		Este campo es obligatorio con formato numérico para contratos a tiempo parcial bonificados con el
-		programa de fomento de empleo (R.D.L. 5/2006 de 9 de junio)
-		Podrá tomar valor entre 1 y 31. Se cumplimentará en un solo segmento DAT de los varios que pueda tener un mismo trabajador y
-		periodo (diferentes situaciones contractuales en el mismo mes).
+	 * 
+		Nº días alta trabaj. extr. REA y trabaj. a T. Parcial bonificados R.D.L. 5/2006
+		Este  campo  es  obligatorio  con  formato  numérico  para contratos  a  tiempo  parcial  bonificados  con  el 
+		programa  de  fomento  de  empleo  (R.D.L.  5/2006  de  9  de  junio).  
 		
-		Obligatorio para contratos a tiempo parcial bonificados con el programa de fomento de empleo (R.D.L. 5/2006 de 9 de junio). 
-		Obligatorio para TRL 930 (socios cooperativas ) con contrato a tiempo parcial. 
-		Obligatorio para contratos a tiempo parcial bonificados por el R.D.L. 3/2014
+		Obligatorio  para  contratos  a  tiempo parcial bonificados por el R.D.L. 3/2014, R.D.L 8/2014, R.D.L. 1/2015. 
+		Podrá tomar valor entre 1 y 31. 
+		Se  cumplimentará  en  un  solo  segmento  DAT  de  los  varios  que  pueda  tener  un  mismo  trabajador  y 
+		periodo (diferentes situaciones contractuales en el mismo mes)
+	* 
+		Obligatorio para contratos a tiempo parcial bonificados con el programa de fomento de empleo (R.D.L. 5/2006 de 9 de junio).
+		Obligatorio para TRL 930 (socios cooperativas) con contrato a tiempo parcial. 
+		Obligatorio para contratos a tiempo parcial bonificados por el R.D.L. 3/2014, 
+			R.D.L 8/2014 
+			y R.D.L 1/2015
+		
 	 * @param c
 	 * @return
 	 */
@@ -1096,7 +1117,8 @@ public class FANWriter implements Serializable {
 			for(ITransferObject to: getSalaryBonuses(getSalary(contract, SalaryType.SALARY))){
 				SalaryBonus bonus = (SalaryBonus) to;
 				BonusType bonusType = obtainBonusType(bonus);
-				if(bonusType==BonusType.REDUCTION_FLAT_RATE_RDL03_2014){
+				if(bonusType==BonusType.REDUCTION_FLAT_RATE_RDL03_2014
+					|| bonusType==BonusType.REDUCTION_RATE_RDL01_2015){
 					match = true;
 				}
 			}
@@ -1201,17 +1223,24 @@ public class FANWriter implements Serializable {
 	}
 	
 	private Integer getEreDays(List<ITransferObject> list) {
-		String o;
-		o = null;
+		String _workedDays = null;
+		String _monthDays = null;
+		String _ereFactor = null;
 		for(ITransferObject to: list){
-			SalaryData sa = (SalaryData) to;
-			if(sa.getName().equals(ContextVariable.ERE_DAYS.getName())){
-				o = sa.getExpression();
+			SalaryData sd = (SalaryData) to;
+			if(sd.getName().equals(ContextVariable.WORKED_DAYS.getName())){
+				_workedDays = sd.getExpression();
+			}
+			if(sd.getName().equals(ContextVariable.MONTH_DAYS.getName())){
+				_monthDays = sd.getExpression();
+			}
+			if(sd.getName().equals(ContextVariable.ERE_FACTOR.getName())){
+				_ereFactor = sd.getExpression();
 			}
 		}
-		if(o!=null && NumberUtils.isNumber(o)){
-			Integer ereDays = Double.valueOf(o).intValue();
-			if(ereDays>0){
+		if(_ereFactor!=null && NumberUtils.isNumber(_ereFactor)){
+			Integer ereDays = Double.valueOf(_monthDays).intValue() - Double.valueOf(_workedDays).intValue();
+			if(Double.valueOf(_ereFactor)>0.0 && ereDays>0){
 				return ereDays;
 			}
 		}
@@ -1379,7 +1408,7 @@ public class FANWriter implements Serializable {
 			
 			fanFactory.createEDTCa01Segment(obtainCGCTotalEnterprise(ccc), obtainCGCTotalEmployee(ccc), emp);
 			
-			fanFactory.createEDTCa02Segment(emp);
+			fanFactory.createEDTCa02Segment(obtainCGCTotalEnterprise(ccc), emp);
 			fanFactory.createEDTCa03Segment(emp);
 			fanFactory.createEDTCa11Segment(obtainLessThanSevenDaysContractAmount(ccc), emp);
 			fanFactory.createEDTCa12Segment(emp);
@@ -2010,18 +2039,6 @@ public class FANWriter implements Serializable {
 		}
 		return diffDays;
 	}
-	
-	
-	private static BonusType getByT54(String code){
-		if ( AonStringUtils.isEmpty(code))
-			return null;
-		for ( T54 t54: T54.values() ) 
-			if ( code.equals( t54.getCode()))
-				return t54.getType();
-		return null;
-	}
-	
-
 	
 	
 }

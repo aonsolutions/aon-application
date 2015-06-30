@@ -448,9 +448,17 @@ public class ContractController extends BasicController {
 		boolean indicatorRequired = false;
 		for(ITransferObject to: this.getParams().getBonuses()){
 			ContractBonus bonus = (ContractBonus) to;
-			if(bonus.getBonusConcept().getType()==BonusType.REDUCTION_FLAT_RATE_RDL03_2014){
+			
+			BonusType type = bonus.getBonusConcept().getType();
+			if(bonus.getBonusConcept().getType()==null){
+				type = PayrollUtils.getInstance().getBonusTypeByCode(Integer.toString(bonus.getBonusConcept().getId()));
+			}
+			
+			if(type==BonusType.REDUCTION_FLAT_RATE_RDL03_2014
+					|| type==BonusType.REDUCTION_RATE_RDL01_2015){
 				indicatorRequired = true;
 			}
+			
 		}
 		return isPartiallyTimeContract() && indicatorRequired;
 	}

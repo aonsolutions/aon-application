@@ -673,9 +673,10 @@ public class FANGeneral implements Serializable, IFanFactory {
 	 * @param bonus
 	 * @param emp
 	 */
-	public void createEDLCd34Segment(Double bonusAmount, DAT dat) {
+	public void createEDLCd34Segment(Integer bonusDays, Double bonusAmount, DAT dat) {
 		EDL edl = dat.getEdlSegment("CD34");
-		createEDLRecord(edl, "CD", 34, new Double(CommonUtil.round(bonusAmount)*100).intValue());
+		dat.setDiasAlta(bonusDays);
+		createEDLRecord(edl, "CD", 34, bonusDays, new Double(CommonUtil.round(bonusAmount)*100).intValue());
 	}
 	
 	
@@ -1350,32 +1351,54 @@ public class FANGeneral implements Serializable, IFanFactory {
 	}
 
 	/**
-	 * 31 Reducciones RDL-3/2014 Sólo para Regimen General,Régimen Especial del
-	 * Mar y Régimen Especial de la Minería del Carbón
+	 * 31 Reducciones RDL-3/2014 
+	 * 
+	 * Sólo para Regimen General, 
+	 * Régimen Especial del Mar y 
+	 * Régimen Especial de la Minería del Carbón
 	 * 
 	 * @param ccc
 	 * @param emp
 	 */
 	public void createEDTCd31Segment(EnterpriseCCC ccc, EMP emp) {
-//		if (ccc.getActivity().getType() == SSRegimeType.GENERAL
-//				|| ccc.getActivity().getType() == SSRegimeType.SEA_WORKERS
-//				|| ccc.getActivity().getType() == SSRegimeType.COAL_MINING) {
-			Integer amount = 0;
-			for (TRA tra : emp.getTrabajadores()) {
-				for (DAT dat : tra.getDat()) {
-					amount += dat.getEdl().containsKey("CD31") ? dat.getEdlSegment("CD31").getImporte() : 0;
-				}
+		Integer amount = 0;
+		for (TRA tra : emp.getTrabajadores()) {
+			for (DAT dat : tra.getDat()) {
+				amount += dat.getEdl().containsKey("CD31") ? dat.getEdlSegment("CD31").getImporte() : 0;
 			}
-			if (amount != 0) {
-				EDT edt = emp.getEdtSegment("EDTCD31");
-				edt.setTipoElemento("CD");
-				edt.setClave(31);
-				edt.setImporte(amount);
-			}
-//		}
+		}
+		if (amount != 0) {
+			EDT edt = emp.getEdtSegment("EDTCD31");
+			edt.setTipoElemento("CD");
+			edt.setClave(31);
+			edt.setImporte(amount);
+		}
 	}	
 	
-	
+	/**
+	 * 34 Reducción Tarifa Reducida RDL 1/2015 
+	 * 	 
+	 * Sólo para Régimen General, 
+	 * Régimen Especial del Mar y 
+	 * Régimen Especial de la Minería del Carbón. 
+	 * 
+	 * @param ccc
+	 * @param emp
+	 */
+	public void createEDTCd34Segment(EnterpriseCCC ccc, EMP emp) {
+		Integer amount = 0;
+		for (TRA tra : emp.getTrabajadores()) {
+			for (DAT dat : tra.getDat()) {
+				amount += dat.getEdl().containsKey("CD34") ? dat.getEdlSegment("CD34").getImporte() : 0;
+			}
+		}
+		if (amount != 0) {
+			EDT edt = emp.getEdtSegment("EDTCD34");
+			edt.setTipoElemento("CD");
+			edt.setClave(34);
+			edt.setImporte(amount);
+		}
+	}	
 	
 	
 	
@@ -1388,13 +1411,13 @@ public class FANGeneral implements Serializable, IFanFactory {
 	/**
 	 * 01 Contingencias Comunes
 	 * 
+	 * @param cgcTotalEnterprise
+	 * @param cgcTotalEmployee
 	 * @param emp
 	 */
 	public void createEDTCa01Segment(Double cgcTotalEnterprise, Double cgcTotalEmployee, EMP emp) {
-		// TODO
 		Integer base = emp.getEdt().containsKey("EDTBA01") ? emp.getEdtSegment("EDTBA01").getBase() : 0;
-		// Double amount = new Double(base*0.283);
-
+	
 		Double amount = 0.0;
 		amount += cgcTotalEnterprise;
 		amount += cgcTotalEmployee;
@@ -1414,10 +1437,41 @@ public class FANGeneral implements Serializable, IFanFactory {
 		}
 	}
 
-	public void createEDTCa02Segment(EMP emp) {
-		// TODO 02 Cuota empresarial por Contingencias Comunes
-		// Cotización empresarial / Toneladas Régimen Especial de Manipulado y
-		// Empaquetado de Tomate Fresco (0134)
+	/**
+	 * 02 Cuota empresarial por Contingencias Comunes
+	 * Cotización empresarial / Toneladas Régimen Especial de Manipulado y Empaquetado de Tomate Fresco (0134)
+	 * 
+	 * @param cgcTotalEnterprise
+	 * @param cgcTotalEmployee
+	 * @param emp
+	 */
+	public void createEDTCa02Segment(Double cgcOnlyEnterprise, EMP emp) {
+		Integer base = emp.getEdt().containsKey("EDTBA21") ? emp.getEdtSegment("EDTBA21").getBase() : 0;
+		
+		if (base != 0) {
+			if(emp.getEdt().containsKey("EDTBA01") && emp.getEdt().containsKey("EDTBA21")){
+				emp.getEdtSegment("EDTBA01").setBase(emp.getEdtSegment("EDTBA01").getBase() - emp.getEdtSegment("EDTBA21").getBase());
+			}
+			if(emp.getEdt().containsKey("EDTCA01")){
+				emp.getEdtSegment("EDTCA01").setBase(emp.getEdtSegment("EDTCA01").getBase() - emp.getEdtSegment("EDTBA21").getBase());
+				emp.getEdtSegment("EDTCA01").setImporte(emp.getEdtSegment("EDTCA01").getImporte() - (new Double(cgcOnlyEnterprise * 100)).intValue());
+			}
+			
+			Double amount = 0.0;
+			amount += cgcOnlyEnterprise;
+			amount = CommonUtil.round(amount, 2);
+			
+			EDT edt = emp.getEdtSegment("EDTCA02");
+			edt.setTipoElemento("CA");
+			edt.setClave(2);
+			edt.setCalificadorClave(null);
+			edt.setBase(base);
+			edt.setIndicadorFactorTipo("T");
+			edt.setParteEnteraTipo(0);
+			edt.setParteDecimalFactorTipo(0);
+			edt.setImporte((new Double(amount * 100)).intValue());
+			edt.setSigno(" ");
+		}
 	}
 
 	public void createEDTCa03Segment(EMP emp) {
@@ -1492,6 +1546,8 @@ public class FANGeneral implements Serializable, IFanFactory {
 		amount += emp.getEdt().containsKey("EDTCD06") ? emp.getEdtSegment("EDTCD06").getImporte() : 0;
 		amount += emp.getEdt().containsKey("EDTCD17") ? emp.getEdtSegment("EDTCD17").getImporte() : 0;
 		amount += emp.getEdt().containsKey("EDTCD31") ? emp.getEdtSegment("EDTCD31").getImporte() : 0;
+		amount += emp.getEdt().containsKey("EDTCD34") ? emp.getEdtSegment("EDTCD34").getImporte() : 0;
+		
 		if (amount != 0) {
 			EDT edt = emp.getEdtSegment("EDTCA22");
 			edt.setTipoElemento("CA");

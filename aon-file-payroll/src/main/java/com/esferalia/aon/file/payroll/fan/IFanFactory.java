@@ -97,7 +97,7 @@ public interface IFanFactory {
 	public void createEDLCd29Segment(Double cgcTotalEnterprise, Double cgcTotalEmployee, DAT dat);
 	public void createEDLCd30Segment(DAT dat);
 	public void createEDLCd31Segment(Double bonusAmount, DAT dat);
-	public void createEDLCd34Segment(Double bonusAmount, DAT dat);
+	public void createEDLCd34Segment(Integer bonusDays, Double bonusAmount, DAT dat);
 	
 	
 	// *********************************************
@@ -153,9 +153,10 @@ public interface IFanFactory {
 	public void createEDTCd29Segment(EMP emp);
 	public void createEDTCd30Segment(EMP emp);
 	public void createEDTCd31Segment(EnterpriseCCC ccc, EMP emp);
+	public void createEDTCd34Segment(EnterpriseCCC ccc, EMP emp);
 			
 	public void createEDTCa01Segment(Double cgcTotalEnterprise, Double cgcTotalEmployee, EMP emp);
-	public void createEDTCa02Segment(EMP emp);
+	public void createEDTCa02Segment(Double cgcOnlyEnterprise, EMP emp);
 	public void createEDTCa03Segment(EMP emp);
 	public void createEDTCa11Segment(Double lessThanSevenDaysContractAmount, EMP emp);
 	public void createEDTCa12Segment(EMP emp);
