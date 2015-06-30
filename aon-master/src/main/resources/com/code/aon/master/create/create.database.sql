@@ -7973,7 +7973,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.26.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.26.2');
 
 COMMIT;
 
