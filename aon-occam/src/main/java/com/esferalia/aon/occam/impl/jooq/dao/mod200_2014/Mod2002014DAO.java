@@ -40,7 +40,6 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Character;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.ValidationMessage2014;
 import com.esferalia.aon.occam.api.model.type.Administration;
-import com.esferalia.aon.occam.api.model.type.CNAE;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
@@ -144,6 +143,7 @@ public class Mod2002014DAO  {
 				detail.setDocument(cp.getDocument());
 				detail.setName(cp.getName());
 				detail.setProvince( (byte) cp.getProvince() );
+				detail.setCountry( cp.getCountry() );
 				detail.setType((byte) 1);
 				detail.setPercent(cp.getPercent());
 				detail.setNominalValue(cp.getNominalValue());
@@ -168,6 +168,7 @@ public class Mod2002014DAO  {
 				detail.setDocument(cp.getDocument());
 				detail.setName(cp.getName());
 				detail.setProvince( (byte) cp.getProvince() );
+				detail.setCountry( cp.getCountry() );
 				detail.setType((byte) 2);
 				detail.setRepresentative( (byte) (cp.isRepresentative()?1:0) );
 				detail.setPercent(cp.getPercent());
@@ -410,6 +411,7 @@ public class Mod2002014DAO  {
 				cp.setDocument(reg.getDocument());
 				cp.setName(reg.getName());
 				cp.setProvince( reg.getProvince() );
+				cp.setCountry( reg.getCountry() );
 				cp.setPercent(reg.getPercent());
 				cp.setNominalValue(reg.getNominalValue());
 				cp.setBookValue(reg.getBookValue());
@@ -428,6 +430,7 @@ public class Mod2002014DAO  {
 				cp.setDocument(reg.getDocument());
 				cp.setName(reg.getName());
 				cp.setProvince(reg.getProvince() );
+				cp.setCountry( reg.getCountry() );
 				cp.setRepresentative( reg.getRepresentative() == 1 );
 				cp.setPercent(reg.getPercent());
 				cp.setNominalValue(reg.getNominalValue());

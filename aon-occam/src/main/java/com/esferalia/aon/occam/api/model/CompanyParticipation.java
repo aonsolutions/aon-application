@@ -11,6 +11,7 @@ public class CompanyParticipation implements Serializable {
 	private String document;
 	private String name;
 	private int province;
+	private String country;
 	private boolean representative;
 	private double percent;
 	private double nominalValue;
@@ -48,6 +49,14 @@ public class CompanyParticipation implements Serializable {
 	public void setProvince(int province) {
 		this.province = province;
 	}
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
 	public boolean isRepresentative() {
 		return representative;
 	}

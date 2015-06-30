@@ -83,8 +83,9 @@ public class FiscalModelsTreeNode extends TreeNode<Enterprise> {
 			}
 			@Override
 			public Mod2002013TreeObject getFiscalModel(IFiscalModel fm) {
-				Mod2002013TreeObject treeObj = new Mod2002013TreeObject(
-						FiscalTree.getCurrentDomainName(), fm.getDomain(), fm.getYear(), fm.getId());
+				Mod2002013TreeObject treeObj = fm.getId() == null
+					?new Mod2002013TreeObject(FiscalTree.getCurrentDomainName(), fm.getDomain(), fm.getYear())
+					:new Mod2002013TreeObject(FiscalTree.getCurrentDomainName(), fm.getDomain(), fm.getYear(), fm.getId());
 				return treeObj;
 			}
 		};
@@ -100,8 +101,9 @@ public class FiscalModelsTreeNode extends TreeNode<Enterprise> {
 			}
 			@Override
 			public Mod2002014TreeObject getFiscalModel(IFiscalModel fm) {
-				Mod2002014TreeObject treeObj = new Mod2002014TreeObject(
-						FiscalTree.getCurrentDomainName(), fm.getDomain(), fm.getYear(), fm.getId());
+				Mod2002014TreeObject treeObj = fm.getId() == null
+					?new Mod2002014TreeObject(FiscalTree.getCurrentDomainName(), fm.getDomain(), fm.getYear())
+					:new Mod2002014TreeObject(FiscalTree.getCurrentDomainName(), fm.getDomain(), fm.getYear(), fm.getId());
 				return treeObj;
 			}
 		};

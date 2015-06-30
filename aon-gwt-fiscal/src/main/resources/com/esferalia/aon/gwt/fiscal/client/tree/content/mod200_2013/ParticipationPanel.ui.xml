@@ -37,7 +37,7 @@
 					</tr>
 					<tr>
 						<td class="{aonResources.css.aonFiscalBorderBottom}">
-							<g:Label text="{msg.province}"/>
+							<g:Label text="{msg.province}/{msg.country}"/>
 						</td>
 						<td>
 							<aon:ProvinceCountryListBox ui:field="province"/>

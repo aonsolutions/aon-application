@@ -203,11 +203,13 @@ public class Page02 extends PageAbs {
 			@Override
 			public String getValue(CompanyParticipation ca) {
 				int idx = ca.getProvince();
+				String country = ca.getCountry();
 				String name = null; 
-				if (idx < Province.values().length) {
+				if (idx > 0 && idx < Province.values().length) {
 					name = AON.MSG.provinceName( Province.values()[idx] ); 
 				} else {
-					name = Country.values()[idx].getName();
+					Country c = Country.safeValueOf(country);
+					name = (c==null?null:c.getName());
 				}
 				return name;
 			}
@@ -215,13 +217,20 @@ public class Page02 extends PageAbs {
 		provinceColumn.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
 		    public void update(int index, CompanyParticipation cp, String value) {
 		    	Province p = null;
+		    	Country c = null;
 		    	if (AonUtil.isNotEmpty(value)) {
-		    		p = Province.values()[options.indexOf(value)]; 
-		    	}
+		    		int idx = options.indexOf(value);
+		    		if (idx < (Province.values().length)) {
+		    			p = Province.values()[idx];	
+		    		} else {
+		    			c = Country.values()[idx - Province.values().length];
+		    		}
+		    	} 
 		    	dataProviderIn.getList().get(index).setProvince(p==null?0:p.ordinal());
+		    	dataProviderIn.getList().get(index).setCountry(c==null?null:c.getIso2());
 		    }
 		});		
-		tableIn.addColumn(provinceColumn, AON.MSG.province());
+		tableIn.addColumn(provinceColumn, AON.MSG.province() + "/" + AON.MSG.country());
 		tableIn.setColumnWidth(provinceColumn, 150, Unit.PX);
 		provinceColumn.setCellStyleNames(AON.AON_CSS.aonTextLeft());
 	}

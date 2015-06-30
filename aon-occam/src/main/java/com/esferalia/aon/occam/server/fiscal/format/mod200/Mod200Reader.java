@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.DoubleVariable2013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013.BalanceType;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -166,7 +167,7 @@ public class Mod200Reader {
 	
     // Añade una participacion (apartado B1) a la lista de participaciones (B1)
 	// Se asume que si el nombre no está cumplimentado la participacion está vacia, en ese caso no se añade
-	private static void addCompanyParticipationOut(Mod2002013 mod200, String document,	String name, int province, double percent, double nominalValue,	double bookValue, double incomes, double aValue, double bValue, double cValue, double dValue, double capital, double reserve, double otherAmounts, double result) {
+	private static void addCompanyParticipationOut(Mod2002013 mod200, String document,	String name, String provinceCountry, double percent, double nominalValue,	double bookValue, double incomes, double aValue, double bValue, double cValue, double dValue, double capital, double reserve, double otherAmounts, double result) {
 		
 		// Si el nombre está en blanco no se hace nada
 		if (AonStringUtils.isBlank(name)) {
@@ -178,11 +179,20 @@ public class Mod200Reader {
 			mod200.setParticipationsOut(new LinkedList<CompanyParticipation>());
 		}
 
+		Country c = null;
+		int province = 0; 
+		if (AonStringUtils.isNumeric(provinceCountry)) {
+			province = Integer.parseInt(provinceCountry);
+		} else {
+			c = Country.safeValueOf(provinceCountry);
+		}
+
 	    // Crear un objeto y asignar los datos		
 		CompanyParticipation cp = new CompanyParticipation();
 		cp.setDocument(document);
 		cp.setName(name);
-		cp.setProvince(province);
+		cp.setProvince(province);		
+		cp.setCountry(c==null?null:c.getIso2());		
 		cp.setPercent(percent);
 		cp.setNominalValue(nominalValue);
 		cp.setBookValue(bookValue);
@@ -203,7 +213,7 @@ public class Mod200Reader {
 	
     // Añade una participacion (apartado B2) a la lista de participaciones (B2)
 	// Se asume que si el nombre no está cumplimentado la participacion está vacia, en ese caso no se añade
-	private static void addCompanyParticipationIn(Mod2002013 mod200, String document, boolean isRepresentative, String name, int province, double nominalValue, double percent) {
+	private static void addCompanyParticipationIn(Mod2002013 mod200, String document, boolean isRepresentative, String name, String provinceCountry, double nominalValue, double percent) {
 		
 		// Si el nombre está en blanco no se hace nada
 		if (AonStringUtils.isBlank(name)) {
@@ -214,6 +224,13 @@ public class Mod200Reader {
 		if (mod200.getParticipationsIn() == null ) {
 			mod200.setParticipationsIn(new LinkedList<CompanyParticipation>());
 		}
+		Country c = null;
+		int province = 0; 
+		if (AonStringUtils.isNumeric(provinceCountry)) {
+			province = Integer.parseInt(provinceCountry);
+		} else {
+			c = Country.safeValueOf(provinceCountry);
+		}
 
 	    // Crear un objeto y asignar los datos		
 		CompanyParticipation cp = new CompanyParticipation();
@@ -221,6 +238,7 @@ public class Mod200Reader {
 		cp.setRepresentative(isRepresentative);
 		cp.setName(name);
 		cp.setProvince(province);		
+		cp.setCountry(c==null?null:c.getIso2());		
 		cp.setNominalValue(nominalValue);
 		cp.setPercent(percent);		
 				
@@ -371,7 +389,7 @@ public class Mod200Reader {
 				
 			,(line,mod200) ->  addCompanyParticipationOut(mod200, getString(line, 431,15),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 1 - Datos participada - N.I.F.
 			                                                      getString(line, 446,30),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 1 - Datos participada - Nombre o razón social
-			                                                      getInt(   line, 476, 2),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 1 - Datos participada - Código provincia / país 
+			                                                      getString(line, 476, 2),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 1 - Datos participada - Código provincia / país 
 			                                                      getDouble(line, 478, 5),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 1 - Datos de la declarante - Porcentaje de participación 
 			                                                      getDouble(line, 483,17),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 1 - Datos de la declarante - Valor nominal total de la participación
 			                                                      getDouble(line, 500,17),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 1 - Datos de la declarante - Valor en libros (en el activo de la declarante) de la participación
@@ -387,7 +405,7 @@ public class Mod200Reader {
 			                                                                                 
             ,(line,mod200) ->  addCompanyParticipationOut(mod200, getString(line, 670,15),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 2 - Datos participada - N.I.F.
 			                                                      getString(line, 685,30),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 2 - Datos participada - Nombre o razón social 
-			                                                      getInt(   line, 715, 2),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 2 - Datos participada - Código provincia / país 
+			                                                      getString(line, 715, 2),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 2 - Datos participada - Código provincia / país 
 			                                                      getDouble(line, 717, 5),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 2 - Datos de la declarante - Porcentaje de participación 
 			                                                      getDouble(line, 722,17),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 2 - Datos de la declarante - Valor nominal total de la participación
 			                                                      getDouble(line, 739,17),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 2 - Datos de la declarante - Valor en libros (en el activo de la declarante) de la participación
@@ -403,7 +421,7 @@ public class Mod200Reader {
 			                                                                                 
 			,(line,mod200) ->  addCompanyParticipationOut(mod200, getString(line, 909,15),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 3 - Datos participada - N.I.F.
 			                                                      getString(line, 924,30),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 3 - Datos participada - Nombre o razón social
-			                                                      getInt(   line, 954, 2),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 3 - Datos participada - Código provincia / país
+			                                                      getString(line, 954, 2),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 3 - Datos participada - Código provincia / país
 			                                                      getDouble(line, 956, 5),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 3 - Datos de la declarante - Porcentaje de participación 
 			                                                      getDouble(line, 961,17),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 3 - Datos de la declarante - Valor nominal total de la participación
 			                                                      getDouble(line, 978,17),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 3 - Datos de la declarante - Valor en libros (en el activo de la declarante) de la participación
@@ -419,7 +437,7 @@ public class Mod200Reader {
 			                                                                                 
 			,(line,mod200) ->  addCompanyParticipationOut(mod200, getString(line,1148,15),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 4 - Datos participada - N.I.F.
 			                                                      getString(line,1163,30),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 4 - Datos participada - Nombre o razón social 
-			                                                      getInt(   line,1193, 2),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 4 - Datos participada - Código provincia / país
+			                                                      getString(line,1193, 2),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 4 - Datos participada - Código provincia / país
 			                                                      getDouble(line,1195, 5),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 4 - Datos de la declarante - Porcentaje de participación 
 			                                                      getDouble(line,1200,17),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 4 - Datos de la declarante - Valor nominal total de la participación
 			                                                      getDouble(line,1217,17),	// B. Participaciones directas - B.1. Participaciones declarante en otras entidades - Entidad 4 - Datos de la declarante - Valor en libros (en el activo de la declarante) de la participación
@@ -436,42 +454,42 @@ public class Mod200Reader {
 			,(line,mod200) ->  addCompanyParticipationIn(mod200, getString( line,1387,15),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 1 - N.I.F. 
 			                                                     getBoolean(line,1402, 1),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 1 - RPTE.			                                                      
 			                                                     getString( line,1404,37),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 1 - Apellidos y nombre / Razón social 
-			                                                     getInt(    line,1441, 2),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 1 - Código provincia / país
+			                                                     getString( line,1441, 2),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 1 - Código provincia / país
 			                                                     getDouble( line,1443,17),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 1 - Nominal 
 			                                                     getDouble( line,1460, 5))	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 1 - % Particip.
 			                                                 	  	                         
 			,(line,mod200) ->  addCompanyParticipationIn(mod200, getString( line,1465,15),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 2 - N.I.F. 
 			                                                     getBoolean(line,1480, 1),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 2 - RPTE. 
 			                                                     getString( line,1482,37),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 2 - Apellidos y nombre / Razón social 
-			                                                     getInt(    line,1519, 2),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 2 - Código provincia / país 
+			                                                     getString( line,1519, 2),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 2 - Código provincia / país 
 			                                                     getDouble( line,1521,17),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 2 - Nominal 
 			                                                     getDouble( line,1538, 5))	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 2 - % Particip.
 			                                                                                 
 		    ,(line,mod200) ->  addCompanyParticipationIn(mod200, getString( line,1543,15),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 3 - N.I.F. 
 			                                                     getBoolean(line,1558, 1), 	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 3 - RPTE.
 			                                                     getString( line,1560,37),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 3 - Apellidos y nombre / Razón social 
-			                                                     getInt(    line,1597, 2),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 3 - Código provincia / país 
+			                                                     getString( line,1597, 2),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 3 - Código provincia / país 
 			                                                     getDouble( line,1599,17),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 3 - Nominal 
 			                                                     getDouble( line,1616, 5))	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 3 - % Particip.
 			                                                                                 
 			,(line,mod200) ->  addCompanyParticipationIn(mod200, getString( line,1621,15),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 4 - N.I.F. 
 			                                                     getBoolean(line,1636, 1),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 4 - RPTE. 
 			                                                     getString( line,1638,37),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 4 - Apellidos y nombre / Razón social 
-			                                                     getInt(    line,1675, 2),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 4 - Código provincia / país 
+			                                                     getString( line,1675, 2),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 4 - Código provincia / país 
 			                                                     getDouble( line,1677,17),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 4 - Nominal 
 			                                                     getDouble( line,1694, 5)) 	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 4 - % Particip.
 			                                                                                 
 			,(line,mod200) ->  addCompanyParticipationIn(mod200, getString( line,1699,15),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 5 - N.I.F. 
 			                                                     getBoolean(line,1714, 1),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 5 - RPTE.
 			                                                     getString( line,1716,37),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 5 - Apellidos y nombre / Razón social. 
-			                                                     getInt(    line,1753, 2),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 5 - Código provincia / país 
+			                                                     getString( line,1753, 2),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 5 - Código provincia / país 
 			                                                     getDouble( line,1755,17),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 5 - Nominal
 			                                                     getDouble( line,1772, 5))	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 5 - % Particip.
 			                                                                                 
 			,(line,mod200) ->  addCompanyParticipationIn(mod200, getString( line,1777,15),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 6 - N.I.F. 
 			                                                     getBoolean(line,1792, 1),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 6 - RPTE.
 			                                                     getString( line,1794,37),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 6 - Apellidos y nombre / Razón social 
-			                                                     getInt(    line,1831, 2),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 6 - Código provincia / país 
+			                                                     getString( line,1831, 2),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 6 - Código provincia / país 
 			                                                     getDouble( line,1833,17),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 6 - Nominal
 			                                                     getDouble( line,1850, 5))	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 6 - % Particip.
 			

@@ -392,7 +392,6 @@ public class Model2002014TreeNode extends TreeNode<Mod2002014TreeObject>  {
 		InlineLabel label = new InlineLabel();
 		label.setText(AON.MSG.fiscalModelType(FiscalModelType.M200)
 				+ (comp?" - Compl.":"")
-				+ (mod200Obj.getId() == null?" (*)":"")
 				);
 		label.addStyleName(AON.AON_CSS.aonTreeIconNode() );
 		label.addStyleName(TreeNode.getAdministrationIconBW(adm));

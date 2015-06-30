@@ -36,7 +36,7 @@ public class Mod2002014TreeObject implements Serializable {
 	
 	private boolean authomaticCalculation = true;
 	
-	public Mod2002014TreeObject(String currentDomainName,int currentDomain,int year,int id) {
+	public Mod2002014TreeObject(String currentDomainName,int currentDomain,int year,Integer id) {
 		this(currentDomainName, currentDomain, year);
 		this.id = id;
 	}

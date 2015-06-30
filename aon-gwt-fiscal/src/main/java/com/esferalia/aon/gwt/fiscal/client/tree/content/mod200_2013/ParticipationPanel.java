@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceCountryListBox;
 import com.esferalia.aon.occam.api.model.CompanyParticipation;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -85,7 +86,15 @@ public class ParticipationPanel extends CustomDialog {
 		this.companyParticipation = cp;
 		this.document.setValue(companyParticipation.getDocument());
 		this.name.setValue(companyParticipation.getName());
-		this.province.setSelectedIndex(companyParticipation.getProvince());
+		int idx = companyParticipation.getProvince();
+		if (idx > 0 && idx < Province.values().length) {
+			this.province.setSelectedIndex(idx);
+		} else {
+			Country c = Country.safeValueOf(companyParticipation.getCountry());
+			if (c != null) {
+				this.province.setSelectedIndex(c.ordinal() + Province.values().length);
+			}
+		}
 		this.percent.setValue(companyParticipation.getPercent());
 		this.nominalValue.setValue(companyParticipation.getNominalValue());
 		this.bookValue.setValue(companyParticipation.getBookValue());
@@ -104,7 +113,12 @@ public class ParticipationPanel extends CustomDialog {
 	public void onClose() {
 		companyParticipation.setDocument(this.document.getValue());
 		companyParticipation.setName(this.name.getValue());
-		companyParticipation.setProvince(this.province.getSelectedIndex());
+		if (this.province.getSelectedIndex() < Province.values().length) {
+			companyParticipation.setProvince(this.province.getSelectedIndex());
+		} else {
+			Country c = Country.values()[this.province.getSelectedIndex() - Province.values().length];
+			companyParticipation.setCountry(c.getIso2());
+		}
 		companyParticipation.setPercent(this.percent.getValue());
 		companyParticipation.setNominalValue(this.nominalValue.getValue());
 		companyParticipation.setBookValue(this.bookValue.getValue());

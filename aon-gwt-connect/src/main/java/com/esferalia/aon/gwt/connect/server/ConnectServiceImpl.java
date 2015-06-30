@@ -84,28 +84,34 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements
 
 			FileInputStream input = new FileInputStream(file);
 
-			Mod2002013 mod200 = Mod200Reader.getMod2002013(input);
-
-			String enterDocument = mod200.getEnterpriseDocument();
-			String enterName = mod200.getEnterpriseName();
-
-			messages.add("Documento: " + enterDocument);
-			messages.add("Nombre: " + enterName);
-
-			Domain domain = AON.insertDomain(domainName, parentDomain,
-					enterDocument, enterName, messages);
-			Company company = AON.getCompanyForDomain(domain.getName(),
-					domain.getId());
-			int enterpriseID = company.getId();
-			mod200.setDomain(domain.getId());
-			mod200.setEnterprise(enterpriseID);
-			Mod2002013 mod2002013 = AON.getMod2002013ByYear(domain.getName(), domain.getId(), 2013);
-			if (mod2002013 != null && mod2002013.getId() != null) {
-				messages.add("Modelo 200 ya creado en el ejercicio 2013, no se graba");
-			} else {
-				AON.saveMod2002013(domain.getName(), domain.getId(), mod200);
+			try {
+				Mod2002013 mod200 = Mod200Reader.getMod2002013(input);
+	
+				String enterDocument = mod200.getEnterpriseDocument();
+				String enterName = mod200.getEnterpriseName();
+	
+				messages.add("Documento: " + enterDocument);
+				messages.add("Nombre: " + enterName);
+	
+				Domain domain = AON.insertDomain(domainName, parentDomain,
+						enterDocument, enterName, messages);
+				Company company = AON.getCompanyForDomain(domain.getName(),
+						domain.getId());
+				int enterpriseID = company.getId();
+				mod200.setDomain(domain.getId());
+				mod200.setEnterprise(enterpriseID);
+				Mod2002013 mod2002013 = AON.getMod2002013ByYear(domain.getName(), domain.getId(), 2013);
+				if (mod2002013 != null && mod2002013.getId() != null) {
+					messages.add("Modelo 200 ya creado en el ejercicio 2013, no se graba");
+				} else {
+					AON.saveMod2002013(domain.getName(), domain.getId(), mod200);
+					messages.add("Modelo 200 del ejercicio 2013 grabado.");
+				}
+				messages.add("");
+			} catch (Throwable t) {
+				t.printStackTrace();
+				messages.add("ERROR: " + t.getMessage());
 			}
-			messages.add("");
 		}
 		messages.add("Fin del proceso de importación");
 	}
