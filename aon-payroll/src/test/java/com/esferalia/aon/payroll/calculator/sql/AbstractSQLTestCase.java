@@ -830,6 +830,12 @@ public abstract class AbstractSQLTestCase {
 	public static final void addPayment(AONContext aonContext,
 			ContractRecord contract, PaymentConceptRecord concept,
 			String expression, String quoteExpression) {
+		addPayment(aonContext, contract, concept, expression, quoteExpression, PaymentType.CRA_0001);
+	}
+
+	public static final void addPayment(AONContext aonContext,
+			ContractRecord contract, PaymentConceptRecord concept,
+			String expression, String quoteExpression, PaymentType type) {
 		aonContext
 				.getDslContext()
 				.insertInto(CONTRACT_PAYMENT)
@@ -842,7 +848,7 @@ public abstract class AbstractSQLTestCase {
 				.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
 				.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, "_P")
 				.set(CONTRACT_PAYMENT.TYPE,
-						(byte) PaymentType.CRA_0001.ordinal())
+						(byte) type.ordinal())
 				.set(CONTRACT_PAYMENT.SALARY_TYPE,
 						(byte) SalaryType.SALARY.ordinal()).execute();
 
