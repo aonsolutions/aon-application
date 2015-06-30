@@ -61,7 +61,6 @@ public class Mod200Reader {
 	private static String getString(String line, int pos, int lon) {
 		String c = AonStringUtils.substring(line,pos-1,pos+lon-1);
 		if (c!=null) c = c.trim();
-		//return AonStringUtils.substring(line,pos-1,pos+lon-1);
 		return c;
 	}
 	
@@ -256,7 +255,14 @@ public class Mod200Reader {
 			 (line,mod200) ->  mod200.setPeriodStart(getDate(line,11,8))            // Periodo Impositivo - Inicio					
 			,(line,mod200) ->  mod200.setPeriodEnd(getDate(line,19,8))    			// Periodo Impositivo - Fin
 			,(line,mod200) ->  mod200.setPeriodType(getInt(line,27,1))              // Identificación - Tipo de ejercicio
-			,(line,mod200) ->  { String c=getString(line,28,4); mod200.setCnae(c.substring(0,2)+"."+c.substring(2)); }                // Identificación - C.N.A.E.  Actividad principal
+			,(line,mod200) ->  { 
+				        // Controlar la posibilidad de que pueda venir el CNAE en blanco
+				        // solo se inserta el punto si vienen los 4 digitos 
+						String c=getString(line,28,4);
+						if (c.length()==4)
+							mod200.setCnae(c.substring(0,2)+"."+c.substring(2));
+						else mod200.setCnae(c);
+						}                // Identificación - C.N.A.E.  Actividad principal
 			,(line,mod200) ->  mod200.setEnterpriseDocument(getString(line,32,9))   // Identificación - NIF 
 			,(line,mod200) ->  mod200.setEnterpriseName(getString(line,41,40))      // Identificación - Apellidos y nombre o Razón Social
 			,(line,mod200) ->  mod200.setEnterprisePhone1(getString(line,81,9))     // Identificación - Teléfono 1
@@ -493,7 +499,6 @@ public class Mod200Reader {
 			                                                     getDouble( line,1833,17),	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 6 - Nominal
 			                                                     getDouble( line,1850, 5))	// B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante - 6 - % Particip.
 			
-			// Estas dos casillas faltan en Mod2002013Key, las he añadido momentaneamente en local, con esos nombres
 		    // Estas casillas solo deben asignarse con los valores de la primera pagina, pues las paginas complementarias los pueden llevar a cero
 			// La posicion 10 de la linea indica si es pagina complementaria, si esta vacia no lo es y si lleva una "C" si que lo es                                                     
 		    ,(line,mod200) -> { if (AonStringUtils.isBlank(getString(line,10,1))) setCasilla(mod200,Mod2002013Key.POR51,getDouble(line,1855,5)); } // B .Participaciones directas - B.2. Suma de  porcentajes de participación de personas o entidades en el capital de la  declarante inferiores al 5% o al 1% si se trata de valores que coticen en un mercado secundario organizado 
@@ -2240,23 +2245,28 @@ public class Mod200Reader {
 	public static void main(String argv[]) throws FileNotFoundException {
 		
 		try {
-			String filename = "/home/ecastellano/AEAT/200/2013";  // directorio por defecto
+			String filename = "/AEAT/200/2013";  // directorio por defecto
 			
 			// Mostrar una ventana de dialogo para seleccionar ficheros
 			JFileChooser fc = new JFileChooser();
 			fc.setCurrentDirectory(new File(filename));
+			fc.setMultiSelectionEnabled(true);
             int res = fc.showOpenDialog(new JFrame());
 		    
-	        if (res == JFileChooser.APPROVE_OPTION) {
-	        	filename = fc.getSelectedFile().getAbsolutePath();
-        		System.out.println("***** Inicio Fichero : "+filename);
-				System.out.println("");
-				InputStream input = new FileInputStream(filename);
-				Mod2002013 mod200 = getMod2002013(input);
-				if (mod200!=null) toString(mod200);
-        		System.out.println("");
-				System.out.println("***** Fin Fichero : "+filename);
-				System.out.println("");
+	        if (res == JFileChooser.APPROVE_OPTION) {	        	
+	        	for (File file : fc.getSelectedFiles()) {	        	
+		        	//filename = fc.getSelectedFile().getAbsolutePath();
+	        		filename = file.getAbsolutePath();
+	        		System.out.println("***** Inicio Fichero : "+filename);
+					System.out.println("");
+					InputStream input = new FileInputStream(filename);
+					Mod2002013 mod200 = getMod2002013(input);
+					if (mod200!=null) toString(mod200);
+					if (mod200!=null) System.out.println("OK");
+	        		System.out.println("");
+					System.out.println("***** Fin Fichero : "+filename);
+					System.out.println("");
+	        	}
 	        }	        
 		} catch (Exception e) {
 			e.printStackTrace();			
