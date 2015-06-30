@@ -1,12 +1,12 @@
 package com.esferalia.aon.occam.impl.jooq.dao.mod200_2014;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key;
 
 public class Mod2002014Activation {
-	public static Map<String,String> ACTIVE_EXPRESSION_MAP = new HashMap<String,String>();
+	public static Map<String,String> ACTIVE_EXPRESSION_MAP = new LinkedHashMap<String,String>();
 
 	static { // BALANCE: ACTIVO
 		ACTIVE_EXPRESSION_MAP.put(Mod2002014Key.BA103.toString(),"C0050");

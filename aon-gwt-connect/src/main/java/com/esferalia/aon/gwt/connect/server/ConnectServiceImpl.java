@@ -4,10 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -62,14 +60,15 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements
 			String domainName, int parentDomain, List<String> messages)
 			throws IOException {
 
+		messages.add("Comienza el proceso de importación");
+		messages.add("");
+
 		byte buff[] = new byte[1024];
 
 		for (ZipEntry entry = zin.getNextEntry(); entry != null; entry = zin
 				.getNextEntry()) {
 			String name = entry.getName();
 			File file = new File(parent, name);
-
-			messages.add("Unzip in file ... : " + file.getAbsolutePath());
 
 			if (entry.isDirectory()) {
 				file.mkdirs();
@@ -100,9 +99,15 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements
 			int enterpriseID = company.getId();
 			mod200.setDomain(domain.getId());
 			mod200.setEnterprise(enterpriseID);
-			AON.saveMod2002013(domain.getName(), domain.getId(), mod200);
-
+			Mod2002013 mod2002013 = AON.getMod2002013ByYear(domain.getName(), domain.getId(), 2013);
+			if (mod2002013 != null && mod2002013.getId() != null) {
+				messages.add("Modelo 200 ya creado en el ejercicio 2013, no se graba");
+			} else {
+				AON.saveMod2002013(domain.getName(), domain.getId(), mod200);
+			}
+			messages.add("");
 		}
+		messages.add("Fin del proceso de importación");
 	}
 
 }

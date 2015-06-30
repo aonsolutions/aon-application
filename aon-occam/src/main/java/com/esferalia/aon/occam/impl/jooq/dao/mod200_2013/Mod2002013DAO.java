@@ -282,6 +282,7 @@ public class Mod2002013DAO  {
 				.selectFrom(FS_MODEL200)
 				.where(FS_MODEL200.DOMAIN.equal(ctx.getDomainId()))
 				.and(FS_MODEL200.YEAR.equal(year))
+				.limit(1)
 				.fetchOne();
 		Mod2002013 mod200 = populateMod200(ctx,record);
 		if (mod200 == null) {

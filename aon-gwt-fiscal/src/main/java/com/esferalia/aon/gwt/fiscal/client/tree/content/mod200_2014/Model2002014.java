@@ -270,7 +270,7 @@ public class Model2002014 extends ResizeComposite  {
 		showResultsPanel();
 	}
 	
-	public void startModel(final Mod2002014TreeObject treeObject, final AsyncCallback<Mod2002014> callback) {
+	public void startModel(final Mod2002014TreeObject treeObject, final AsyncCallback<Mod2002014> cb) {
 		mod200Object = treeObject;
 		final PopupPanel popup = new PopupPanel(false, true);
 		Label label = new Label(AON.MSG.processing());
@@ -279,10 +279,10 @@ public class Model2002014 extends ResizeComposite  {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		mod200Object.getMod200ByYear( new AsyncCallback<Mod2002014>() {
+		AsyncCallback<Mod2002014> callback = new AsyncCallback<Mod2002014>() {
 			@Override
 			public void onSuccess(Mod2002014 result) {
-				callback.onSuccess(result);
+				cb.onSuccess(result);
 				paintHeaderTable(mod200Object.getMod200());				
 				calculateCheck.setValue(mod200Object.isAuthomaticCalculation());
 				if (result.getId() == null) {
@@ -300,9 +300,14 @@ public class Model2002014 extends ResizeComposite  {
 				popup.hide();
 				raiseException(e);
 				refreshButtonsVisibility();
-				callback.onFailure(e);
+				cb.onFailure(e);
 			}
-		});
+		};
+		if (mod200Object.getId() != null ) {
+			mod200Object.getMod200ById( callback );
+		} else {
+			mod200Object.getMod200ByYear( callback );
+		}
 	}
 	
 	@UiHandler("saveButton")

@@ -84,7 +84,7 @@ public class FiscalModelsTreeNode extends TreeNode<Enterprise> {
 			@Override
 			public Mod2002013TreeObject getFiscalModel(IFiscalModel fm) {
 				Mod2002013TreeObject treeObj = new Mod2002013TreeObject(
-						FiscalTree.getCurrentDomainName(), fm.getDomain(), fm.getYear());
+						FiscalTree.getCurrentDomainName(), fm.getDomain(), fm.getYear(), fm.getId());
 				return treeObj;
 			}
 		};
@@ -101,7 +101,7 @@ public class FiscalModelsTreeNode extends TreeNode<Enterprise> {
 			@Override
 			public Mod2002014TreeObject getFiscalModel(IFiscalModel fm) {
 				Mod2002014TreeObject treeObj = new Mod2002014TreeObject(
-						FiscalTree.getCurrentDomainName(), fm.getDomain(), fm.getYear());
+						FiscalTree.getCurrentDomainName(), fm.getDomain(), fm.getYear(), fm.getId());
 				return treeObj;
 			}
 		};
@@ -235,8 +235,21 @@ public class FiscalModelsTreeNode extends TreeNode<Enterprise> {
     						parentNode.setState(true);	
         				} else if (TreeNodeFiscalModelTypes.MODEL_200_2013.accept(fm) ) {
         					final ModelTreeNode parentNode = getModelNode(fm.getYear(),fm.getModel());
-            		    	TreeNodeFiscalModelTypes.CORPORATE_TAX_2013.getInstance().render(parentNode
-            		    			,TreeNodeFiscalModelTypes.MODEL_200_2013.getFiscalModel(fm));
+        					Mod2002013TreeObject to = TreeNodeFiscalModelTypes.MODEL_200_2013.getFiscalModel(fm);
+        					final TreeItem item = TreeNodeFiscalModelTypes.CORPORATE_TAX_2013.getInstance().render(parentNode,to);
+        					to.setFiscalTreeCallback(new FiscalTreeCallback<Mod2002013TreeObject>() {
+								
+								@Override
+								public void remove(Mod2002013TreeObject treeObject) {
+									item.remove();
+									parentNode.getTree().setSelectedItem(parentNode);
+								}
+
+								@Override
+								public void onError(Mod2002013TreeObject treeObject) {
+									
+								}
+							});
             		    	parentNode.setState(true);
         				} else if (TreeNodeFiscalModelTypes.MODEL_200_2014.accept(fm) ) {
         					final ModelTreeNode parentNode = getModelNode(fm.getYear(),fm.getModel());

@@ -19,7 +19,7 @@
 						</div>
 					</div>
 
-					<div>
+					<div class="aon-margin-top">
 						<g:FlowPanel ui:field="messages" />
 					</div>
 				</g:HTMLPanel>

@@ -31,10 +31,16 @@ public class Mod2002014TreeObject implements Serializable {
 	private String domainName;
 	private int domain;
 	private int year;
+	private Integer id;
 	private Mod2002014 mod200;
 	
 	private boolean authomaticCalculation = true;
 	
+	public Mod2002014TreeObject(String currentDomainName,int currentDomain,int year,int id) {
+		this(currentDomainName, currentDomain, year);
+		this.id = id;
+	}
+
 	public Mod2002014TreeObject(String currentDomainName,int currentDomain,int year) {
 		this.domainName = currentDomainName;
 		this.domain = currentDomain;
@@ -44,7 +50,9 @@ public class Mod2002014TreeObject implements Serializable {
 			FiscalTreeCallback<Mod2002014TreeObject> fiscalTreeCallback) {
 		this.fiscalTreeCallback = fiscalTreeCallback;
 	}
-	
+	public Integer getId() {
+		return id;
+	}
 	public boolean isInitialized() {
 		return initialized;
 	}
@@ -118,6 +126,24 @@ public class Mod2002014TreeObject implements Serializable {
 		});
 	}
 	
+	public void getMod200ById(final AsyncCallback<Mod2002014> callback) {
+		FiscalTree.FISCAL_SERVICE.getMod2002014ById(domainName,domain, getId(), new AsyncCallback<Mod2002014>() {
+			
+			@Override
+			public void onSuccess(Mod2002014 result) {
+				mod200 = result;
+				initialized = mod200.getId()!=null;
+				callback.onSuccess(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				initialized = false;
+				callback.onFailure(caught);
+			}
+		});
+	}
+
 	public void getMod200ByYear(final AsyncCallback<Mod2002014> callback) {
 		FiscalTree.FISCAL_SERVICE.getMod2002014ByYear(domainName,domain, year, new AsyncCallback<Mod2002014>() {
 			

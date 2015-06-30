@@ -10,13 +10,13 @@ import gwtupload.client.IUploader.OnStatusChangedHandler;
 import gwtupload.client.IUploader.UploaderConstants;
 import gwtupload.client.SingleUploader;
 
-import java.util.Iterator;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -217,14 +217,18 @@ public class BOEImportForm extends Composite implements EntryPoint {
 				@Override
 				public void onSuccess(List<String> result) {
 					flexTable.setWidget(0, 1, newUploader(URL));
-					List<String> list = result;
-					
 					Label label = null;
-					Iterator<String> iterator = list.iterator();
-					while (iterator.hasNext()) {
-						label = new Label(iterator.next());
-						messages.add(label);
-					}				
+					for (String msg : result) {
+						if (AonStringUtils.isEmpty(msg)) {
+							label = new Label("");
+							label.setStyleName(AON.AON_CSS.aonBorderBottom());
+							messages.add(label);
+						} else {
+							label = new Label(msg);
+							label.setStyleName(AON.AON_CSS.aonPaddingLeft());
+							messages.add(label);
+						}
+					}
 				}
 			});
 		}

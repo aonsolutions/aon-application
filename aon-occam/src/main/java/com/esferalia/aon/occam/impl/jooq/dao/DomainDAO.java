@@ -7,13 +7,9 @@ import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.util.List;
-import java.util.Map;
 
-import org.jooq.InsertSetMoreStep;
 import org.jooq.Record;
-import org.jooq.exception.DataAccessException;
 
-import com.esferalia.aon.jooq.tables.records.DomainApplicationRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -41,7 +37,7 @@ public class DomainDAO {
 				domain.setName(domainRecord.getValue(DOMAIN.NAME));
 				domain.setParentId(domainRecord.getValue(DOMAIN.PARENT));
 				
-				messages.add (name + " ya se encuentra registrada en la base de datos. Nada importado");
+				messages.add (name + " ya se encuentra registrada en la base de datos. No se crea el dominio.");
 				
 				return domain;
 				
