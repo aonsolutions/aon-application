@@ -65,14 +65,17 @@ public class DBConsults {
 			byte[] data;
 			if (record != null) {
 
-				parent = new File(record.value2());
+				parent = new File(record.value2()+"/");
 				parent.mkdir();
 				new File(parent, "Documentos").mkdir();
 				new File(parent, "Documentos TMP").mkdir();
 				new File(parent, "Otros Documentos").mkdir();
 				new File(parent, "Otros Documentos TMP").mkdir();
 
-				File f = File.createTempFile("DEPOSITO", ".xml", parent);				
+				//File f = File.createTempFile("DEPOSITO", ".xml", parent);
+				
+				File f = new File(parent, "Deposito.xml");
+				
 				data = record.value5();
 
 				try {
