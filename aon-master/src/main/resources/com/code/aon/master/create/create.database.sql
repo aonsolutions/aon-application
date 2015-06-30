@@ -4736,6 +4736,7 @@ CREATE TABLE `fs_model200_registry` (
   `document` varchar(9) collate latin1_spanish_ci default NULL COMMENT 'NIF',
   `name` varchar(45) collate latin1_spanish_ci default NULL COMMENT 'Nombre',
   `province` tinyint(1) NOT NULL default '0' COMMENT 'Provincia',
+  `country` varchar(2) DEFAULT NULL COMMENT 'Pais',
   `residence` varchar(45) collate latin1_spanish_ci default NULL COMMENT 'Residencia',
   `representative` tinyint(1) NOT NULL default '0' COMMENT 'Representante',
   `type` tinyint(1) NOT NULL default '0' COMMENT 'Tipo. Administrador/participacion ',
